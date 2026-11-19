@@ -690,14 +690,14 @@ describe("Needs you offline (app v4 part 9): safe taps wait for the network, mon
   });
 });
 
-describe("Needs you: a Lead Desk plan's one upsell row (owner decision 4 Nov)", () => {
-  const upsell: NeedsCard = { type: "item", key: "plan_upsell-lead_finder", at: "2026-10-11T03:12:00Z", item: { kind: "plan_upsell", id: "lead_finder", customer: "Find new retailers near you", city: null, agent: "lead_finder", summary: "part of AI Workforce", at: "2026-10-11T03:12:00Z", amount_paise: null, href: "/app/tenants/T/settings?section=plan" } };
-  it("is one short row, 'Find new retailers near you · part of AI Workforce', that opens Settings -> Plan", () => {
+describe("Needs you: a plan without the Lead Finder: one upsell row (owner decision 4 Nov)", () => {
+  const upsell: NeedsCard = { type: "item", key: "plan_upsell-lead_finder", at: "2026-10-11T03:12:00Z", item: { kind: "plan_upsell", id: "lead_finder", customer: "Find new retailers near you", city: null, agent: "lead_finder", summary: "not on your plan yet", at: "2026-10-11T03:12:00Z", amount_paise: null, href: "/app/tenants/T/settings?section=plan" } };
+  it("is one short row, 'Find new retailers near you · not on your plan yet', that opens Settings -> Plan", () => {
     compactNext = true;
     board([upsell]);
     const row = document.querySelector('[data-needs-row="plan_upsell-lead_finder"]') as HTMLElement;
     expect(row.textContent).toContain("Plan");
-    expect(row.textContent).toContain("Find new retailers near you · part of AI Workforce");
+    expect(row.textContent).toContain("Find new retailers near you · not on your plan yet");
     expect(within(row).getByRole("link", { name: "See plans" })).toHaveAttribute("href", "/app/tenants/T/settings?section=plan");
   });
   it("is not counted as something that waits", () => {

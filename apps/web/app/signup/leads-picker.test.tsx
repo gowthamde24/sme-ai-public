@@ -36,19 +36,19 @@ const optionIds = () => {
 };
 const groupLabels = () => within(screen.getByRole("listbox")).getAllByRole("group").map((g) => g.querySelector("p")?.textContent);
 
-describe("sign-up step 1: one list, grouped (Built especially for / Lead Desk / Other)", () => {
-  it("with the Lead Desk flag off the types are one plain group, and the templates are not asked", async () => {
+describe("sign-up step 1: one list, grouped (Built especially for / Businesses with enquiries / Other)", () => {
+  it("with the leads flag off the types are one plain group, and the templates are not asked", async () => {
     render(await SignupPage(props()));
     expect(optionIds()).toEqual([...DEEP, ...MOCK_TEMPLATES].map((p) => ("packId" in p ? p.packId : "")));
     expect(groupLabels()).toEqual(["Business types"]);
     expect(templates).not.toHaveBeenCalled();
   });
-  it("with the flag on the types with their own pages and the nine of Lead Desk are two groups, in that order", async () => {
+  it("with the flag on the types with their own pages and the nine with enquiries are two groups, in that order", async () => {
     vi.stubEnv("LEADS_SCREENS", "1");
     render(await SignupPage(props()));
     const ids = optionIds();
     expect(ids).toEqual([...DEEP.map((p) => p.packId), ...MOCK_TEMPLATES.map((t) => t.packId)]);
-    expect(groupLabels()).toEqual(["Built especially for", "Lead Desk"]);
+    expect(groupLabels()).toEqual(["Built especially for", "Businesses with enquiries"]);
   });
   it("a business type the API lists as 'Other' is the last group, and choosing it goes on to step 2 like any other", async () => {
     vi.stubEnv("LEADS_SCREENS", "1");

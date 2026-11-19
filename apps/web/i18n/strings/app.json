@@ -71317,10 +71317,10 @@
   }
  },
  "tu.picker.main": {
-  "en": "Workforce plans",
-  "te": "వర్క్‌ఫోర్స్ ప్లాన్‌లు",
-  "hi": "वर्कफ़ोर्स प्लान",
-  "kn": "ವರ್ಕ್‌ಫೋರ್ಸ್ ಪ್ಲಾನ್‌ಗಳು",
+  "en": "Team plans",
+  "te": "టీమ్ ప్లాన్‌లు",
+  "hi": "टीम प्लान",
+  "kn": "ಟೀಮ್ ಪ್ಲಾನ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -71328,10 +71328,10 @@
   }
  },
  "tu.picker.main.sub": {
-  "en": "Lead Desk plus your industry pack and research.",
-  "te": "Lead Desk తో పాటు మీ ఇండస్ట్రీ ప్యాక్, రీసెర్చ్.",
-  "hi": "Lead Desk के साथ आपका इंडस्ट्री पैक और रिसर्च।",
-  "kn": "Lead Desk ಜೊತೆಗೆ ನಿಮ್ಮ ಇಂಡಸ್ಟ್ರಿ ಪ್ಯಾಕ್ ಮತ್ತು ರಿಸರ್ಚ್.",
+  "en": "Every feature, with your industry pack and finding new customers.",
+  "te": "అన్ని ఫీచర్లు, మీ ఇండస్ట్రీ ప్యాక్, కొత్త కస్టమర్లను వెతకడంతో సహా.",
+  "hi": "हर फ़ीचर, आपके इंडस्ट्री पैक और नए ग्राहक ढूँढने के साथ।",
+  "kn": "ಎಲ್ಲಾ ಫೀಚರ್‌ಗಳು, ನಿಮ್ಮ ಇಂಡಸ್ಟ್ರಿ ಪ್ಯಾಕ್ ಮತ್ತು ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದರ ಜೊತೆಗೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -71339,10 +71339,10 @@
   }
  },
  "tu.picker.calls": {
-  "en": "Lead Desk plans",
-  "te": "Lead Desk ప్లాన్‌లు",
-  "hi": "Lead Desk प्लान",
-  "kn": "Lead Desk ಪ್ಲಾನ್‌ಗಳು",
+  "en": "Calls plans",
+  "te": "కాల్స్ ప్లాన్‌లు",
+  "hi": "कॉल प्लान",
+  "kn": "ಕಾಲ್ ಪ್ಲಾನ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -71350,10 +71350,10 @@
   }
  },
  "tu.picker.calls.sub": {
-  "en": "Lead Desk on its own: lead sources, AI calls, WhatsApp, follow-ups and reports.",
-  "te": "Lead Desk మాత్రమే: లీడ్ సోర్స్‌లు, AI కాల్స్, WhatsApp, ఫాలో-అప్‌లు, రిపోర్ట్‌లు.",
-  "hi": "सिर्फ़ Lead Desk: लीड सोर्स, AI कॉल, WhatsApp, फ़ॉलो-अप और रिपोर्ट।",
-  "kn": "ಕೇವಲ Lead Desk: ಲೀಡ್ ಮೂಲಗಳು, AI ಕಾಲ್, WhatsApp, ಫಾಲೋ-ಅಪ್ ಮತ್ತು ವರದಿಗಳು.",
+  "en": "Your assistant on its own: lead sources, AI calls, WhatsApp, follow-ups and reports.",
+  "te": "మీ అసిస్టెంట్ మాత్రమే: లీడ్ సోర్స్‌లు, AI కాల్స్, WhatsApp, ఫాలో-అప్‌లు, రిపోర్ట్‌లు.",
+  "hi": "सिर्फ़ आपका असिस्टेंट: लीड सोर्स, AI कॉल, WhatsApp, फ़ॉलो-अप और रिपोर्ट।",
+  "kn": "ಕೇವಲ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್: ಲೀಡ್ ಮೂಲಗಳು, AI ಕಾಲ್, WhatsApp, ಫಾಲೋ-ಅಪ್ ಮತ್ತು ವರದಿಗಳು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -80348,10 +80348,10 @@
   }
  },
  "lf.outcome.qualified": {
-  "en": "Interested: a lead was made on the Lead Desk",
-  "te": "ఆసక్తి ఉంది: లీడ్ డెస్క్‌లో లీడ్ వచ్చింది",
-  "hi": "रुचि है: लीड डेस्क पर लीड बनी",
-  "kn": "ಆಸಕ್ತಿ ಇದೆ: ಲೀಡ್ ಡೆಸ್ಕ್‌ನಲ್ಲಿ ಲೀಡ್ ಬಂತು",
+  "en": "Interested: added to your leads",
+  "te": "ఆసక్తి ఉంది: మీ లీడ్స్‌లో చేరింది",
+  "hi": "रुचि है: आपकी लीड्स में जुड़ गया",
+  "kn": "ಆಸಕ್ತಿ ಇದೆ: ನಿಮ್ಮ ಲೀಡ್‌ಗಳಲ್ಲಿ ಸೇರಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -81921,10 +81921,10 @@
   }
  },
  "bv.work.cant.not_in_plan.ai_workforce": {
-  "en": "Finding new customers is part of AI Workforce.",
-  "te": "కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం.",
-  "hi": "नए ग्राहक ढूँढना AI Workforce का हिस्सा है।",
-  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ.",
+  "en": "Finding new customers is not on your plan yet.",
+  "te": "కొత్త కస్టమర్లను వెతకడం ఇంకా మీ ప్లాన్‌లో లేదు.",
+  "hi": "नए ग्राहक ढूँढना अभी आपके प्लान में नहीं है।",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು ಇನ್ನೂ ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -89248,10 +89248,10 @@
   }
  },
  "tier.inc.finder.off": {
-  "en": "Lead Finder: part of AI Workforce",
-  "te": "లీడ్ ఫైండర్: AI Workforce లో భాగం",
-  "hi": "लीड फ़ाइंडर: AI Workforce का हिस्सा",
-  "kn": "ಲೀಡ್ ಫೈಂಡರ್: AI Workforce ನ ಭಾಗ",
+  "en": "Lead Finder: not on your plan yet",
+  "te": "లీడ్ ఫైండర్: ఇంకా మీ ప్లాన్‌లో లేదు",
+  "hi": "लीड फ़ाइंडर: अभी आपके प्लान में नहीं",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್: ಇನ್ನೂ ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -89281,10 +89281,10 @@
   }
  },
  "tier.move.write": {
-  "en": "To move to AI Workforce, write to us:",
-  "te": "AI Workforce కి మారాలంటే మాకు రాయండి:",
-  "hi": "AI Workforce पर जाने के लिए हमें लिखें:",
-  "kn": "AI Workforce ಗೆ ಬದಲಾಗಲು ನಮಗೆ ಬರೆಯಿರಿ:",
+  "en": "To add finding new customers to your plan, write to us:",
+  "te": "కొత్త కస్టమర్లను వెతకడం మీ ప్లాన్‌లో చేర్చాలంటే మాకు రాయండి:",
+  "hi": "अपने प्लान में नए ग्राहक ढूँढना जोड़ने के लिए हमें लिखें:",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ಗೆ ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದನ್ನು ಸೇರಿಸಲು ನಮಗೆ ಬರೆಯಿರಿ:",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -89314,10 +89314,10 @@
   }
  },
  "tier.upsell.title": {
-  "en": "Finding new customers is part of AI Workforce",
-  "te": "కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం",
-  "hi": "नए ग्राहक ढूँढना AI Workforce का हिस्सा है",
-  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ",
+  "en": "Finding new customers is not on your plan yet",
+  "te": "కొత్త కస్టమర్లను వెతకడం ఇంకా మీ ప్లాన్‌లో లేదు",
+  "hi": "नए ग्राहक ढूँढना अभी आपके प्लान में नहीं है",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು ಇನ್ನೂ ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -89336,10 +89336,10 @@
   }
  },
  "tier.upsell.now": {
-  "en": "This workspace is on Lead Desk: everything else works as it does.",
-  "te": "ఈ వర్క్‌స్పేస్ Lead Desk లో ఉంది: మిగతావన్నీ ఎప్పటిలాగే పనిచేస్తాయి.",
-  "hi": "यह वर्कस्पेस Lead Desk पर है: बाकी सब पहले जैसा चलता है।",
-  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ Lead Desk ನಲ್ಲಿದೆ: ಉಳಿದೆಲ್ಲವೂ ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "en": "Everything else in your plan works as it does.",
+  "te": "మీ ప్లాన్‌లో మిగతావన్నీ ఎప్పటిలాగే పనిచేస్తాయి.",
+  "hi": "आपके प्लान में बाकी सब पहले जैसा चलता है।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಉಳಿದೆಲ್ಲವೂ ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -89424,10 +89424,10 @@
   }
  },
  "today.upsell.sum": {
-  "en": "part of AI Workforce",
-  "te": "AI Workforce లో భాగం",
-  "hi": "AI Workforce का हिस्सा",
-  "kn": "AI Workforce ನ ಭಾಗ",
+  "en": "not on your plan yet",
+  "te": "ఇంకా మీ ప్లాన్‌లో లేదు",
+  "hi": "अभी आपके प्लान में नहीं",
+  "kn": "ಇನ್ನೂ ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -89721,10 +89721,10 @@
   }
  },
  "tier.upsell.title@organisations": {
-  "en": "Finding organisations near the school is part of AI Workforce",
-  "te": "స్కూల్ దగ్గర సంస్థలను వెతకడం AI Workforce లో భాగం",
-  "hi": "स्कूल के पास संस्थाएँ ढूँढना AI Workforce का हिस्सा है",
-  "kn": "ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ",
+  "en": "Finding organisations near the school is not on your plan yet",
+  "te": "స్కూల్ దగ్గర సంస్థలను వెతకడం ఇంకా మీ ప్లాన్‌లో లేదు",
+  "hi": "स्कूल के पास संस्थाएँ ढूँढना अभी आपके प्लान में नहीं है",
+  "kn": "ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕುವುದು ಇನ್ನೂ ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -90986,10 +90986,10 @@
   }
  },
  "tt.intro.note": {
-  "en": "This is for your own test calls. Calls to your customers from Lead Desk keep the business name for now.",
-  "te": "ఇది మీ సొంత టెస్ట్ కాల్స్ కోసం. Lead Desk నుంచి మీ కస్టమర్లకు చేసే కాల్స్ ప్రస్తుతానికి బిజినెస్ పేరునే వాడతాయి.",
-  "hi": "यह आपकी अपनी टेस्ट कॉल के लिए है। Lead Desk से आपके ग्राहकों को जाने वाली कॉल अभी बिज़नेस का नाम ही रखती हैं।",
-  "kn": "ಇದು ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಗಳಿಗೆ. Lead Desk ನಿಂದ ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ ಹೋಗುವ ಕರೆಗಳು ಸದ್ಯಕ್ಕೆ ಬಿಸಿನೆಸ್ ಹೆಸರನ್ನೇ ಬಳಸುತ್ತವೆ.",
+  "en": "This is for your own test calls. Calls to your customers from your assistant keep the business name for now.",
+  "te": "ఇది మీ సొంత టెస్ట్ కాల్స్ కోసం. మీ అసిస్టెంట్ నుంచి మీ కస్టమర్లకు చేసే కాల్స్ ప్రస్తుతానికి బిజినెస్ పేరునే వాడతాయి.",
+  "hi": "यह आपकी अपनी टेस्ट कॉल के लिए है। आपके असिस्टेंट से आपके ग्राहकों को जाने वाली कॉल अभी बिज़नेस का नाम ही रखती हैं।",
+  "kn": "ಇದು ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಗಳಿಗೆ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ನಿಂದ ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ ಹೋಗುವ ಕರೆಗಳು ಸದ್ಯಕ್ಕೆ ಬಿಸಿನೆಸ್ ಹೆಸರನ್ನೇ ಬಳಸುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -91825,10 +91825,10 @@
   "humanOnly": true
  },
  "apierr.code.not_in_plan": {
-  "en": "Finding new customers is part of AI Workforce, which is not on your plan. Contact us to add it.",
-  "te": "Finding new customers is part of AI Workforce, which is not on your plan. Contact us to add it.",
-  "hi": "Finding new customers is part of AI Workforce, which is not on your plan. Contact us to add it.",
-  "kn": "Finding new customers is part of AI Workforce, which is not on your plan. Contact us to add it.",
+  "en": "Finding new customers is not on your plan yet. Contact us to add it.",
+  "te": "Finding new customers is not on your plan yet. Contact us to add it.",
+  "hi": "Finding new customers is not on your plan yet. Contact us to add it.",
+  "kn": "Finding new customers is not on your plan yet. Contact us to add it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -110271,10 +110271,10 @@
   }
  },
  "lf.quota.used": {
-  "en": "You've used this month's free search. More searches come with Sales Assistant + Lead Finder.",
-  "te": "ఈ నెల ఉచిత సెర్చ్ వాడేశారు. ఎక్కువ సెర్చ్‌లు Sales Assistant + Lead Finder తో వస్తాయి.",
-  "hi": "इस महीने की फ्री सर्च आप इस्तेमाल कर चुके हैं। ज़्यादा सर्च Sales Assistant + Lead Finder के साथ मिलती हैं।",
-  "kn": "ಈ ತಿಂಗಳ ಉಚಿತ ಸರ್ಚ್ ಬಳಸಿದ್ದೀರಿ. ಹೆಚ್ಚು ಸರ್ಚ್‌ಗಳು Sales Assistant + Lead Finder ನೊಂದಿಗೆ ಬರುತ್ತವೆ.",
+  "en": "You've used this month's free search. More searches come with the Business plan.",
+  "te": "ఈ నెల ఉచిత సెర్చ్ వాడేశారు. ఎక్కువ సెర్చ్‌లు Business ప్లాన్‌తో వస్తాయి.",
+  "hi": "इस महीने की फ्री सर्च आप इस्तेमाल कर चुके हैं। ज़्यादा सर्च Business प्लान के साथ मिलती हैं।",
+  "kn": "ಈ ತಿಂಗಳ ಉಚಿತ ಸರ್ಚ್ ಬಳಸಿದ್ದೀರಿ. ಹೆಚ್ಚು ಸರ್ಚ್‌ಗಳು Business ಪ್ಲಾನ್‌ನೊಂದಿಗೆ ಬರುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

@@ -116,12 +116,12 @@ describe("TOPUP_SCREENS=mock", () => {
     expect(document.querySelector("[data-topup-needs='100']")).not.toBeNull();
     expect(screen.getByRole("heading", { name: "12 leads waiting for calls · Top up" })).toBeInTheDocument();
   });
-  it("/plans: the waiting card above the plans, and the plans are the Lead Desk plans (workforce plans first)", async () => {
+  it("/plans: the waiting card above the plans, and the team plans first, then the calls plans", async () => {
     h.jar.set(MOCK_COOKIE, JSON.stringify({ v: 1, ps: "2026-10-01", um: 300, ug: 10 }));
     render(await PlansPage(plansProps()));
     expect(screen.getByRole("heading", { name: "12 leads waiting for calls · Top up" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 2, name: "Lead Desk plans" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 2, name: "Workforce plans" })).toBeInTheDocument();
-    expect(screen.getAllByRole("heading", { level: 3 }).map((x) => x.textContent)).toEqual(["Starter", "Growth", "Business", "Pay as you go", "Lead Desk 300", "Lead Desk 1,000"]);
+    expect(screen.getByRole("heading", { level: 2, name: "Calls plans" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "Team plans" })).toBeInTheDocument();
+    expect(screen.getAllByRole("heading", { level: 3 }).map((x) => x.textContent)).toEqual(["Starter", "Growth", "Business", "Pay as you go", "Pro", "Business"]);
   });
 });

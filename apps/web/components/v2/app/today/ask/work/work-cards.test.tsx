@@ -253,17 +253,17 @@ describe("can't do yet", () => {
     expect(screen.getByText("I can’t do this yet.")).toBeTruthy();
     expect(screen.getByRole("link", { name: "Open Orders" })).toBeTruthy();
   });
-  it("not in the plan: 'part of AI Workforce' with the Plans link, no price and no checkout (en and te)", () => {
+  it("not in the plan: 'not on your plan yet' with the Plans link, no price and no checkout (en and te)", () => {
     draw([card(NOT_IN_PLAN_JSON)]);
     const el = document.querySelector<HTMLElement>("[data-work=cant-do]") as HTMLElement;
     expect(el.dataset.reason).toBe("not_in_plan");
     expect(el.dataset.upgrade).toBe("ai_workforce");
-    expect(within(el).getByText("Finding new customers is part of AI Workforce.")).toBeTruthy();
+    expect(within(el).getByText("Finding new customers is not on your plan yet.")).toBeTruthy();
     expect(within(el).getByText("Finding new retailers in Guntur")).toBeTruthy();
     expect(within(el).getByRole("link", { name: "Open Plans" }).getAttribute("href")).toBe(`${TENANT_BASE}/plans`);
     expect(el.textContent).not.toMatch(/₹|Rs\.?\s?\d|price|pay|buy|checkout|trial/i);
     expect(within(el).queryAllByRole("button")).toHaveLength(0);
-    expect((appDict("te") as Record<string, string>)["bv.work.cant.not_in_plan.ai_workforce"]).toBe("కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం.");
+    expect((appDict("te") as Record<string, string>)["bv.work.cant.not_in_plan.ai_workforce"]).toBe("కొత్త కస్టమర్లను వెతకడం ఇంకా మీ ప్లాన్‌లో లేదు.");
   });
 });
 

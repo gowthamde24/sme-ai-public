@@ -1,6 +1,8 @@
+import { planName } from "@/lib/plan/names";
+
 /**
  * The plans and their prices (C1's `GET /v1/pricing`, any signed-in user; docs/contracts/pricing-v2.md): `{gst_text, free_start_text, plans: [{id, name, monthly_text, yearly_text, yearly_saving_text, included_minutes, rate_text, numbers_included, lead_finder, lines}]}`.
- * The ids are data (payg, sales_assistant, sales_lead_finder): the screen loops over `plans`, it never names one. The texts are C1's own words; the screen shows them as they are. Pure.
+ * The ids are data (payg, sales_assistant, sales_lead_finder): the screen loops over `plans`, it never names one. The texts are C1's own words; the screen shows them as they are, except the plan NAME, which goes through lib/plan/names.ts (Pay as you go / Pro / Business). Pure.
  */
 export type PricePlan = { id: string; name: string; monthlyText: string; yearlyText: string | null; yearlySavingText: string | null; includedMinutes: number | null; rateText: string | null; numbersIncluded: number | null; leadFinder: boolean };
 export type Pricing = { gstText: string | null; freeStartText: string | null; plans: PricePlan[] };
@@ -17,21 +19,22 @@ export function parsePricing(json: unknown): Pricing | null {
     if (typeof p !== "object" || p === null || Array.isArray(p)) return null;
     const x = p as Record<string, unknown>;
     const id = text(x.id, 60);
-    const name = text(x.name, 60);
+    const apiName = text(x.name, 60);
     const monthly = text(x.monthly_text, 60);
-    if (id === null || name === null || monthly === null) return null;
+    if (id === null || apiName === null || monthly === null) return null;
+    const name = planName(id, apiName) ?? apiName;
     plans.push({ id, name, monthlyText: monthly, yearlyText: text(x.yearly_text, 60), yearlySavingText: text(x.yearly_saving_text, 60), includedMinutes: whole(x.included_minutes), rateText: text(x.rate_text, 60), numbersIncluded: whole(x.numbers_included), leadFinder: x.lead_finder === true });
   }
   return { gstText: text(o.gst_text), freeStartText: text(o.free_start_text), plans };
 }
 
-/** The test catalogue (the owner's final pricing of 13 Nov): pay as you go, Sales assistant, Sales assistant with Lead Finder. */
+/** The test catalogue (the owner's final pricing of 13 Nov): pay as you go, Pro, Business (the ids are C1's: payg, sales_assistant, sales_lead_finder). */
 export const MOCK_PRICING: Pricing = {
   gstText: "+18% GST on invoices",
   freeStartText: "₹50 free to start, no card",
   plans: [
     { id: "payg", name: "Pay as you go", monthlyText: "₹499 a month", yearlyText: "₹4,990 a year", yearlySavingText: "2 months free", includedMinutes: 0, rateText: "₹5 a minute", numbersIncluded: 1, leadFinder: false },
-    { id: "sales_assistant", name: "Sales assistant", monthlyText: "₹1,999 a month", yearlyText: "₹19,990 a year", yearlySavingText: "2 months free", includedMinutes: 500, rateText: "₹4.50 a minute", numbersIncluded: 1, leadFinder: false },
-    { id: "sales_lead_finder", name: "Sales assistant with Lead Finder", monthlyText: "₹5,999 a month", yearlyText: "₹59,990 a year", yearlySavingText: "2 months free", includedMinutes: 1500, rateText: "₹4 a minute", numbersIncluded: 3, leadFinder: true },
+    { id: "sales_assistant", name: "Pro", monthlyText: "₹1,999 a month", yearlyText: "₹19,990 a year", yearlySavingText: "2 months free", includedMinutes: 500, rateText: "₹4.50 a minute", numbersIncluded: 1, leadFinder: false },
+    { id: "sales_lead_finder", name: "Business", monthlyText: "₹5,999 a month", yearlyText: "₹59,990 a year", yearlySavingText: "2 months free", includedMinutes: 1500, rateText: "₹4 a minute", numbersIncluded: 3, leadFinder: true },
   ],
 };

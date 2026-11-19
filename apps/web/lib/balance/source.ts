@@ -1,6 +1,7 @@
 import { apiRequest } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { formatRupeesShort } from "@/lib/money";
+import { planName } from "@/lib/plan/names";
 import { balanceScreens } from "@/lib/screens/flag";
 
 /**
@@ -16,7 +17,8 @@ export function parseBalance(json: unknown): Balance | null {
   const paise = o.balance_paise;
   if (typeof paise !== "number" || !Number.isSafeInteger(paise) || paise < 0 || paise > MAX) return null;
   const num = (v: unknown): number | null => (typeof v === "number" && Number.isSafeInteger(v) && v >= 0 ? v : null);
-  const name = typeof o.plan_name === "string" && o.plan_name.length > 0 && o.plan_name.length <= 60 ? o.plan_name : null;
+  const apiName = typeof o.plan_name === "string" && o.plan_name.length > 0 && o.plan_name.length <= 60 ? o.plan_name : null;
+  const name = planName(typeof o.plan_id === "string" && o.plan_id.length <= 60 ? o.plan_id : null, apiName);
   return { paise, text: formatRupeesShort(paise), low: o.low === true, minutesEstimate: num(o.minutes_estimate), planName: name, topupAvailable: o.topup_available === true, freeStartLeftPaise: num(o.free_start_left_paise) };
 }
 
@@ -27,7 +29,7 @@ export async function readBalance(accessToken: string, tenantId: string): Promis
     // the Billing page's test top-ups and free start (a cookie of this browser) show in the menu's business card too; with none it is the made-up ₹1,550
     const { paiseOf, readState } = await import("@/lib/billing-v6/mock-state");
     const paise = paiseOf(await readState());
-    return { paise, text: formatRupeesShort(paise), low: false, minutesEstimate: Math.floor(paise / 500), planName: "Sales assistant", topupAvailable: true, freeStartLeftPaise: null };
+    return { paise, text: formatRupeesShort(paise), low: false, minutesEstimate: Math.floor(paise / 500), planName: "Pro", topupAvailable: true, freeStartLeftPaise: null };
   }
   try {
     return parseBalance(await apiRequest(`/v1/tenants/${tenantId}/billing/balance`, accessToken));

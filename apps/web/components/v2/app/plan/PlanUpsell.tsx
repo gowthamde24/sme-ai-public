@@ -4,7 +4,7 @@ import Link from "next/link";
 import { makeT, type Words } from "../words";
 
 /**
- * "Finding new customers is part of AI Workforce" (owner decision 4 Nov: plan tiers): what a Lead Desk workspace sees where the Lead Finder would be (the Prospects tab, the chat's search card), one sentence of what it does and the way to Settings ->
+ * "Finding new customers is not on your plan yet" (owner decision 4 Nov: plan tiers): what a workspace whose plan has no Lead Finder sees where the Lead Finder would be (the Prospects tab, the chat's search card), one sentence of what it does and the way to Settings ->
  * Plan or the plans page (lib/plan/tier-source.ts `upgradeHref`). NO payment here: the link only shows what each plan includes. `planHref` null = the person cannot change the plan (Sales, a Viewer): the card says who can instead. No hooks, so the server pages and the chat panel (a client
  * component) draw the same card. Words: `tier.upsell.*` (a school's own sentence is `tier.upsell.finder@programmes`, chosen by the page).
  */

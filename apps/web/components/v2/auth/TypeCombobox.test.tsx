@@ -6,7 +6,7 @@ import { TypeCombobox, type TypeGroup } from "./TypeCombobox";
 const WORDS = { label: "Business type", placeholder: "Choose or search", none: "No match. Choose Other.", otherAsk: "What is your business?", otherHint: "2 to 60 letters." };
 const GROUPS: TypeGroup[] = [
   { key: "deep", label: "Built especially for", options: [{ id: "textiles", name: "Saree & textile shop", tagline: "Sarees and fabric" }, { id: "school", name: "School", tagline: "Admissions and fees" }] },
-  { key: "leads", label: "Lead Desk", options: [{ id: "gym", name: "Gym", tagline: "Memberships" }, { id: "clinic", name: "Clinic", tagline: "Appointments" }] },
+  { key: "leads", label: "Businesses with enquiries", options: [{ id: "gym", name: "Gym", tagline: "Memberships" }, { id: "clinic", name: "Clinic", tagline: "Appointments" }] },
   { key: "other", label: "Other", options: [{ id: "other", name: "Other", tagline: "Anything else" }] },
 ];
 const box = () => screen.getByRole("combobox", { name: "Business type" });
@@ -19,7 +19,7 @@ describe("the business-type list", () => {
     fireEvent.focus(box());
     expect(box()).toHaveAttribute("aria-expanded", "true");
     const list = screen.getByRole("listbox");
-    expect(within(list).getAllByRole("group").map((g) => g.querySelector("p")?.textContent)).toEqual(["Built especially for", "Lead Desk", "Other"]);
+    expect(within(list).getAllByRole("group").map((g) => g.querySelector("p")?.textContent)).toEqual(["Built especially for", "Businesses with enquiries", "Other"]);
     expect(within(list).getAllByRole("option").map((o) => o.getAttribute("data-pack-card"))).toEqual(["textiles", "school", "gym", "clinic", "other"]);
   });
   it("typing filters by name and by line, drops empty groups, and says so when nothing matches", () => {
