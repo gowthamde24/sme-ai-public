@@ -22,6 +22,8 @@ import { parseToday } from "@/lib/api/today";
 import { agentsStatus, todayFor } from "./today-fixtures";
 import { SETTINGS_JSON, STATUS_JSON } from "@/lib/api/scheduler-fixtures";
 import { SETTINGS, TODAY_VISITS, parseVisitFixture, slotsJson, visitJson } from "@/lib/api/visits-fixtures";
+import { parseQueuedMessage } from "@/lib/api/chat-queue";
+import { QUEUED_FIXTURES } from "@/lib/api/chat-queue.fixtures";
 import { parseCallRequestPage, parseOutboxPage, parseOutboxSummary } from "@/lib/api/outbox";
 import { CALL_JSON, PRICE_JSON, QUIET_JSON, SENT_JSON, page as outboxPage } from "@/lib/api/outbox-fixtures";
 import { parseItem, parseItemPage } from "@/lib/api/catalogue";
@@ -120,6 +122,13 @@ add({
   roles: ["owner"],
   render: async () => (await import("@/app/app/page")).default(),
   handlers: () => ({ fetchMe: () => parseMe({ user_id: "11111111-1111-4111-8111-111111111111", memberships: [] }), fetchAccountSetup: () => parseAccountSetup({ state: "none", tenant_id: null, business_name: null }) }),
+});
+add({
+  id: "account-preview-staging",
+  roles: ["owner"],
+  env: { PREVIEW_JOBS: "1" },
+  render: async () => (await import("@/app/app/preview/page")).default(),
+  handlers: () => ({}),
 });
 add({
   id: "account-security",
@@ -1184,6 +1193,46 @@ const jobPageOf = (jobId: string) => async () => {
     else process.env.JOBS = before;
   }
 };
+// JOBS (owner 19 Nov, mocks r3-01, r3-02, r3-07): the Jobs page as the renamed Office in each state: the grouped list, a filter, "Off", the New job sheet open (the live preview cards), the empty page with its three cards, and the loading skeleton. Owner and Admin start jobs; Sales reads.
+const jobsPage = (search: Record<string, string> = {}) => async () => {
+  const before = process.env.JOBS;
+  process.env.JOBS = "mock";
+  try {
+    return await (await import("@/app/app/tenants/[tenantId]/jobs/page")).default(props({}, search));
+  } finally {
+    if (before === undefined) delete process.env.JOBS;
+    else process.env.JOBS = before;
+  }
+};
+add({ id: "jobs-mock-needs-you", roles: ["owner"], render: jobsPage({ filter: "needs_you" }), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "jobs-mock-off", roles: ["owner"], render: jobsPage({ filter: "paused" }), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "jobs-sheet-mock", roles: ["owner", "sales"], render: jobsPage({ new: "1" }), handlers: (role) => ({ ...cons(role) }) });
+add({
+  id: "jobs-empty-mock",
+  roles: ["owner"],
+  render: async () => {
+    const { JobsList } = await import("@/components/v2/app/jobs/JobsList");
+    const { PageTop } = await import("@/components/v2/app/parts");
+    const { wordsFor } = await import("@/i18n/app-words");
+    const { parseNewJobSheet } = await import("@/lib/api/job-templates");
+    const { wireNewJobSheet } = await import("@/lib/jobs/template-fixtures");
+    const words = wordsFor("en", ["jobs."]);
+    const never = async () => ({ ok: false as const, kind: "unavailable" as const, error: "" });
+    return (
+      <main>
+        <PageTop title={words["jobs.page.title"] ?? "Jobs"} sub={words["jobs.page.sub"]} />
+        <JobsList jobs={[]} filter="all" words={words} base={`/app/tenants/${TENANT}`} actions={null} sheet={{ actions: { plan: never, start: never, test: never, load: never }, load: { data: parseNewJobSheet(wireNewJobSheet()), lang: "en", business: "Neelambari Silks", assistant: "Asha" }, open: false }} />
+      </main>
+    );
+  },
+  handlers: (role) => ({ ...cons(role) }),
+});
+add({
+  id: "jobs-loading-mock",
+  roles: ["owner"],
+  render: async () => (await import("@/app/app/tenants/[tenantId]/jobs/loading")).default(),
+  handlers: (role) => ({ ...cons(role) }),
+});
 add({ id: "jobs-new-mock", roles: ["owner", "admin", "sales"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
 add({ id: "jobs-new-mock-construction", roles: ["owner"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(CONSTRUCTION) }) });
 add({ id: "jobs-new-mock-look-first", roles: ["owner"], render: jobsNew({ look: "followups" }), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
@@ -1221,6 +1270,16 @@ add({
 });
 add({ id: "jobs-detail-mock", roles: ["owner", "admin", "sales"], render: jobPageOf("66666666-6666-4666-8666-666666666601"), handlers: (role) => ({ ...cons(role) }) });
 add({ id: "jobs-detail-failed-mock", roles: ["owner", "sales"], render: jobPageOf("66666666-6666-4666-8666-666666666603"), handlers: (role) => ({ ...cons(role) }) });
+// JOBS: the Who talks card (language, tone, voice, number, the job's own name, "Make the visits job speak Telugu"): the voice sample route is on, so each voice has its Play button; and the named visits job ("Priya") with no command
+add({ id: "jobs-detail-who-mock", roles: ["owner", "sales"], render: () => withEnv({ VOICE_SAMPLE_SCREENS: "mock" }, jobPageOf("66666666-6666-4666-8666-666666666601")), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "jobs-detail-who-named-mock", roles: ["owner"], render: jobPageOf("66666666-6666-4666-8666-666666666605"), handlers: (role) => ({ ...cons(role) }) });
+// JOBS: Chats > Templates with "Your own messages" (the builder opens from its button; the made-up list: Waiting, Approved, Needs a change); Sales has no access to this tab
+add({
+  id: "chats-templates-own-mock",
+  roles: ["owner", "admin", "sales"],
+  render: () => withEnv({ JOBS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/chats/templates/page")).default(props({}))),
+  handlers: (role) => waHandlers(role),
+});
 add({ id: "call-list-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({})), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList(CALL_LIST_JSON) }) });
 add({ id: "call-list-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({}, { tab: "done" })), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList({ items: [], next_cursor: null }) }) });
 add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });
@@ -1531,6 +1590,14 @@ add({ id: "campaigns-v6-reminders-empty", roles: ["owner"], render: () => withEn
 const billingV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({})));
 add({ id: "billing-v6", roles: ["owner", "admin", "sales"], render: billingV6({ BALANCE_SCREENS: "mock" }), handlers: (role) => base(role) });
 add({ id: "billing-v6-unavailable", roles: ["owner"], render: billingV6({}), handlers: (role) => base(role) });
+// billing v2 (BILLING_V2=mock, owner's final pricing 19 Nov): ONE wallet, a usage line per feature, limits, 80% and 100% warnings, the upgrade hint, numbers on demand; made-up usage marked "Preview"
+const billingV2 = (demo: string | null) => () => withEnv({ ...V6_ENV, BILLING_V2: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}, demo ? { demo } : {})));
+add({ id: "billing-v2-mock", roles: ["owner", "admin", "sales"], render: billingV2(null), handlers: (role) => base(role) });
+add({ id: "billing-v2-low80", roles: ["owner"], render: billingV2("low80"), handlers: (role) => base(role) });
+add({ id: "billing-v2-full100", roles: ["owner"], render: billingV2("full100"), handlers: (role) => base(role) });
+add({ id: "billing-v2-over-limit", roles: ["owner"], render: billingV2("over"), handlers: (role) => base(role) });
+add({ id: "billing-v2-upgrade-hint", roles: ["owner"], render: billingV2("upgrade"), handlers: (role) => base(role) });
+add({ id: "billing-v2-numbers", roles: ["owner", "admin"], render: billingV2("numbers"), handlers: (role) => base(role) });
 // phone numbers (design system v6): the status card, then the test screen's panel; without the test screen the page shows its next step
 const phoneV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})));
 add({ id: "phone-number-v6-test-screen", roles: ["owner", "admin"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started") }) });
@@ -1561,6 +1628,19 @@ for (const tab of ["knowledge", "voice", "rules", "practice", "golive"] as const
     handlers: myaHandlers,
   });
 }
+// Voice & tone as ONE plain card (owner, 19 Nov 2026): the voice, "Speak to customers" with its example, the greeting in one box, More choices; the talk training and "How your assistant speaks" in their made-up modes
+const VOICE_CARD_ENV = { ...MYA_ENV, TALK_TRAINING_SCREENS: "1", SPEAKS_PANEL_SCREENS: "mock", OPENING_LINE_SCREENS: "mock" };
+const TALK_DOC = { greeting: {}, address: "plain", questions: ["What is the saree for?"], never_say: ["guaranteed"], objections: [{ hears: "Too costly", answer: "We have sarees in many ranges." }], examples: [], say_like: [], introduce_as: { kind: "business", text: null } };
+const talkTrainingRead = () => ({ training: TALK_DOC, defaults: { ...TALK_DOC, greeting: { te: "నమస్కారం {customer} గారూ, నేను {assistant}, {business} {agent_role}. ఒక్క నిమిషం మాట్లాడొచ్చా?", en: "Hello {customer}, this is {assistant}, the {agent_role} of {business}. Do you have a minute?" } }, saved: false, rules: ["Always says it is an AI assistant."], updated_at: null });
+add({ id: "my-assistant-voice-card", roles: ["owner", "admin"], render: () => withEnv(VOICE_CARD_ENV, async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({}, { section: "voice" }))), handlers: (role) => ({ ...myaHandlers(role), getTalkTraining: async () => (await import("@/lib/api/talk-training")).parseTalkTraining(talkTrainingRead()) }) });
+// Introduce as moved to Place a test call (the saved setting, above the form)
+add({
+  id: "phone-call-test-introduce",
+  roles: ["owner"],
+  env: { APP_V4: "1", TEST_CALL_SCREENS: "1", TALK_TRAINING_SCREENS: "1", SPEAKS_PANEL_SCREENS: "mock" },
+  render: async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}, { test: "1" })),
+  handlers: (role) => ({ ...base(role), listTestNumbers: async () => ({ defaultIntroduceAs: null, items: [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }] }), getTalkTraining: async () => (await import("@/lib/api/talk-training")).parseTalkTraining(talkTrainingRead()) }),
+});
 // "How it talks to you" (owner item G, OWNER_TALK_PREFS=mock): the Voice & tone tab gets its second, per-person part (the choices sit in a cookie; the samples show only their words)
 add({ id: "my-assistant-voice-talk-to-you", roles: ["owner"], render: () => withEnv({ ...MYA_ENV, OWNER_TALK_PREFS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({}, { section: "voice" }))), handlers: myaHandlers });
 // no status (the flag off): the page and the tabs still work, and the Go live tab says the status is not available
@@ -1628,6 +1708,27 @@ add({ id: "v6-chats-needs-you", roles: ["owner"], render: () => withEnv(V6, asyn
 add({ id: "v6-chats-empty", roles: ["owner"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/page")).default(props({}, {}))), handlers: (role) => ({ ...base(role), listConversations: () => parseConversationPage({ conversations: [], next_before: null }), listOutboxApprovals: async () => parseOutboxPage(outboxPage([])) }) as never });
 add({ id: "v6-chat", roles: ["owner", "sales"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID }, {}))), handlers: (role) => v6ChatHandlers(role) as never });
 add({ id: "v6-chat-card", roles: ["owner"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID }, { card: "1" }))), handlers: (role) => v6ChatHandlers(role) as never });
+// ---- the Chats composer when the 24 hour window is closed (owner, 19 Nov 2026) --------------------------------------------------------------------------
+// flag off (CHAT_QUEUE_SCREENS unset): the old behaviour, the template picker, unchanged
+const THREAD_CLOSED = () => parseThread({ ...THREAD, window_open: false });
+const V6_TPLS = [
+  { id: "77777777-aaaa-4aaa-8aaa-000000000001", name: "shop_update", language: "en", purpose: "followup", preview: "Hello Ravi, we tried to call you. Reply when you can.", variables: [] },
+  { id: "77777777-aaaa-4aaa-8aaa-000000000002", name: "lead_ack", language: "en", purpose: "lead_ack", preview: "Hello Ravi, thank you for contacting Demo Silks.", variables: [] },
+];
+add({ id: "v6-chat-24h", roles: ["owner", "sales"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID }, {}))), handlers: (role) => ({ ...v6ChatHandlers(role), getThread: THREAD_CLOSED, listChatTemplates: () => V6_TPLS }) as never });
+// flag on: the box is always there; the queued message is read (QUEUED_FIXTURES are answers in the real wire shape)
+const V6_QUEUE = { ...V6, CHAT_QUEUE_SCREENS: "1" };
+const v6Queue = (role: Role, queued: keyof typeof QUEUED_FIXTURES | null) => ({ ...v6ChatHandlers(role), listOutboxApprovals: async () => parseOutboxPage(outboxPage([])), getThread: THREAD_CLOSED, readQueued: () => (queued === null ? null : parseQueuedMessage(QUEUED_FIXTURES[queued])) });
+const queueScenario = (id: string, queued: keyof typeof QUEUED_FIXTURES | null, roles: readonly Role[] = ["owner"]) =>
+  add({ id, roles, render: () => withEnv(V6_QUEUE, async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID }, {}))), handlers: (role) => v6Queue(role, queued) as never });
+queueScenario("v6-chat-queue", null, ["owner", "sales", "viewer"]);
+queueScenario("v6-chat-queue-waiting", "waiting");
+queueScenario("v6-chat-queue-sending", "sending");
+queueScenario("v6-chat-queue-sent", "sent"); // a message that went is not shown again after a reload: the box
+queueScenario("v6-chat-queue-failed", "failed");
+queueScenario("v6-chat-queue-expired", "expired");
+queueScenario("v6-chat-queue-stopped", "stopped");
+queueScenario("v6-chat-queue-night", "legacy_morning"); // the old night word reads as Sending…
 
 // JOBS (the simplicity pass, Settings group A): Business, Team, Notifications and Language and theme as plain sentences with the choice inside, a "What it will do:" line and More choices. Same data as the cards of before; only drawn while JOBS is on.
 const SETA_ENV = { DESIGN_V6: "1", JOBS: "mock", APP_V4: "1" };
@@ -1685,3 +1786,12 @@ add({ id: "jobs-pg-catalogue", roles: ["owner", "sales"], render: jpCatalogue(),
 add({ id: "jobs-pg-catalogue-filtered", roles: ["owner"], render: jpCatalogue({ fabric: "soft_silk", stock: "few_left", colour: "blue", q: "blue" }), handlers: catalogueHandlers });
 add({ id: "jobs-pg-catalogue-new", roles: ["owner", "admin"], render: () => withEnv({ ...V6_ENV, ...JP_ENV }, async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({}, {}))), handlers: base });
 add({ id: "jobs-pg-catalogue-edit", roles: ["owner", "admin"], render: () => withEnv({ ...V6_ENV, ...JP_ENV }, async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/edit/page")).default(props({ itemId: ITEM_A }, {}))), handlers: catalogueHandlers });
+// JOBS (owner 19 Nov, mock r3-04): What you sell in test mode (JOBS=mock: made-up examples). The style follows the business type's pack (a saree shop: Products; a clinic: Services; coaching: Courses; real estate: Properties; wholesale: Price lists);
+// the Owner and an Admin fill and change it, Sales reads. The Owner's price rule (the exact price is the Owner's) is in the sheet's unit tests.
+const sellPage = () => withEnv({ JOBS: "mock" }, async () => await (await import("@/app/app/tenants/[tenantId]/what-you-sell/page")).default(props({})));
+const sellPack = (pack: string) => (role: Role): Record<string, Handler> => ({ ...base(role), getWorkspacePack: packOf(pack) });
+add({ id: "what-you-sell-mock", roles: ["owner", "admin", "sales"], render: sellPage, handlers: sellPack("textiles") });
+add({ id: "what-you-sell-mock-services", roles: ["owner"], render: sellPage, handlers: sellPack("clinic") });
+add({ id: "what-you-sell-mock-courses", roles: ["owner"], render: sellPage, handlers: sellPack("coaching") });
+add({ id: "what-you-sell-mock-properties", roles: ["owner"], render: sellPage, handlers: sellPack("real_estate") });
+add({ id: "what-you-sell-mock-pricelist", roles: ["owner", "sales"], render: sellPage, handlers: sellPack("wholesale_b2b") });

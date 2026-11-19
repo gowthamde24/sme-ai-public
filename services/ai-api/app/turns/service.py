@@ -33,7 +33,7 @@ from app.tasks.models import AnswerIn, PlanIn, TaskOut
 from app.tenancy.models import Role
 from app.turns import act, words
 from app.turns import lead_finder as lf_turn
-from app.turns.intent import Intent, Kind, classify
+from app.turns.intent import Intent, Kind, classify, is_identity_question, normalise
 from app.turns.models import AskConsentIn, AskConsentOut, ConfirmOut, TaskRef, TurnIn
 from app.turns.status import PLAN_MINUTES, action_status
 
@@ -452,7 +452,7 @@ def _dispatch(
         if runtime.tasks is not None and _SCHOOL_TOPIC.search(body.text) and runtime.tasks.is_school(runtime, ctx.principal.token, ctx.tenant.id):
             return runner.finish_with(Reply(SCHOOL_REFUSAL[language], language, "answer"), reply_id, emit)
         if intent.reason == "about_assistant":   # "what can you do?": fixed, accurate words, no model call (13 Nov 2026)
-            return runner.finish_with(Reply(words.ABOUT_ASSISTANT[language], language, "answer"), reply_id, emit)
+            return runner.finish_with(Reply(words.about_words(is_identity_question(normalise(body.text)), language), language, "answer"), reply_id, emit)
         name = _assistant_name(runtime, ctx)
         return runner.run_chat(
             question=body.text, language=language, history=history, emit=emit, message_id=reply_id,

@@ -2,7 +2,9 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  applyOwnerSheet,
   applyReviewCsv,
+  isOwnerSheet,
   buildReviewCsv,
   countStatus,
   csvLine,
@@ -166,5 +168,65 @@ describe("PUBLIC_LAUNCH_REQUIRES_REVIEWED", () => {
     const r = run("1");
     expect(r.status).toBe(1);
     expect(r.stderr).toMatch(/still draft/);
+  });
+});
+
+describe("the owner's Customer Zero sheet", () => {
+  const store = (): Sets => ({
+    app: {
+      "a.one": { en: "Today", te: "old1", hi: "x", kn: "x", status: { te: "draft", hi: "draft", kn: "draft" } },
+      "a.two": { en: "{n} new", te: "old2 {n}", hi: "x", kn: "x", status: { te: "draft", hi: "draft", kn: "draft" } },
+      "a.money": { en: "Costs {rupees}", te: "Costs {rupees}", hi: "x", kn: "x", status: { te: "draft", hi: "draft", kn: "draft" }, humanOnly: true } as never,
+    },
+  });
+  const head = "key,screen,English,telugu,planner_check,planner_note,owner_edit,draft_before";
+  const sheet = (...lines: string[]) => [head, ...lines].join("\r\n");
+  const ROWS = [
+    "a.one,Today,Today,ఈరోజు,ok,,,",
+    "a.two,Today,{n} new,{n} కొత్తవి,CHANGED,,,",
+    'a.money,Phone,Costs {rupees},"{rupees} ఖర్చు",YOU MUST READ (consent/money/legal),,,',
+  ];
+  it("is recognised by its header, and the older review sheet is not", () => {
+    expect(isOwnerSheet(sheet())).toBe(true);
+    expect(isOwnerSheet("key,language,where it appears,English,current text,new draft,owner-edit,status")).toBe(false);
+  });
+  it("drafts: writes the proposed Telugu as drafts, nothing reviewed, and skips the consent / money / legal line", () => {
+    const s = store();
+    const r = applyOwnerSheet(s, sheet(...ROWS), { mode: "drafts" });
+    expect(r).toMatchObject({ written: 2, skippedHumanOnly: ["a.money"], errors: [] });
+    expect(s.app["a.one"].te).toBe("ఈరోజు");
+    expect(s.app["a.two"].te).toBe("{n} కొత్తవి");
+    expect(s.app["a.one"].status.te).toBe("draft");
+    expect(s.app["a.money"].te).toBe("Costs {rupees}");
+  });
+  it("approve: a blank owner_edit approves the proposed Telugu, but NOT on a YOU MUST READ row", () => {
+    const s = store();
+    const r = applyOwnerSheet(s, sheet(...ROWS));
+    expect(r).toMatchObject({ approved: 2, pending: ["a.money"], errors: [] });
+    expect(s.app["a.one"]).toMatchObject({ te: "ఈరోజు" });
+    expect(s.app["a.one"].status.te).toBe("reviewed");
+    expect(s.app["a.money"].status.te).toBe("draft");
+    expect(s.app["a.money"].te).toBe("Costs {rupees}");
+  });
+  it("approve: ok approves a YOU MUST READ row as proposed; text in owner_edit replaces the Telugu; hi and kn are never touched", () => {
+    const s = store();
+    const rows = ["a.one,Today,Today,ఈరోజు,ok,,నేడు,", "a.two,Today,{n} new,{n} కొత్తవి,CHANGED,,ok,", 'a.money,Phone,Costs {rupees},"{rupees} ఖర్చు",YOU MUST READ (consent/money/legal),,ok,'];
+    const r = applyOwnerSheet(s, sheet(...rows));
+    expect(r).toMatchObject({ approved: 3, edited: 1, pending: [], errors: [] });
+    expect(s.app["a.one"].te).toBe("నేడు");
+    expect(s.app["a.money"]).toMatchObject({ te: "{rupees} ఖర్చు" });
+    expect(s.app["a.money"].status.te).toBe("reviewed");
+    expect(s.app["a.one"].status.hi).toBe("draft");
+  });
+  it("a refusal word in owner_edit approves nothing and an edit that drops a placeholder is refused", () => {
+    const s = store();
+    const r = applyOwnerSheet(s, sheet("a.one,Today,Today,ఈరోజు,ok,,no,", "a.two,Today,{n} new,{n} కొత్తవి,CHANGED,,కొత్తవి,"));
+    expect(r.refused).toEqual(["a.one"]);
+    expect(r.errors[0]).toContain("placeholders");
+    expect(s.app["a.one"].status.te).toBe("draft");
+    expect(s.app["a.two"].status.te).toBe("draft");
+  });
+  it("an unknown key is reported", () => {
+    expect(applyOwnerSheet(store(), sheet("zz.none,X,X,ఎ,ok,,,")).errors).toEqual(["unknown key zz.none"]);
   });
 });

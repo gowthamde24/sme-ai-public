@@ -10,6 +10,7 @@ import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { saveLimit } from "@/lib/api/wallet";
 import { claimFreeStart, testTopup, type Moved } from "@/lib/billing-v6/source";
 import { clock } from "@/lib/clock";
 
@@ -46,4 +47,17 @@ export async function topupAction(tenantId: string, paise: unknown): Promise<Bil
   const out = said(t, await testTopup(paise, new Date(clock()), randomUUID().slice(0, 8)));
   if (out.ok) revalidatePath(`/app/tenants/${tenantId}`, "layout");
   return out;
+}
+
+/** The optional spending limit of one feature for the month (Owner and Admin): paise, or null for no limit. Billing v2 (BILLING_V2) only; the answer is a sentence in our words. */
+export async function setLimitAction(tenantId: string, feature: unknown, paise: unknown): Promise<BillingResult> {
+  const t = appT(await getLang());
+  const me = await who(tenantId, false);
+  if (!me) return { ok: false, error: t("bill.limit.role") };
+  const out = await saveLimit(me.token, tenantId, feature, paise);
+  if (out.ok) {
+    revalidatePath(`/app/tenants/${tenantId}/billing`);
+    return { ok: true };
+  }
+  return { ok: false, error: t(out.error === "forbidden" ? "bill.limit.role" : out.error === "not_available" ? "bill.limit.na" : "bill.limit.err") };
 }

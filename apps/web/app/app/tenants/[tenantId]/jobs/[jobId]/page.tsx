@@ -6,21 +6,22 @@ import { ChevronRight } from "lucide-react";
 import { cache } from "react";
 
 import { JobPage } from "@/components/v2/app/jobs/detail/JobPage";
-import type { JobPageActions } from "@/components/v2/app/jobs/detail/types";
+import type { JobPageActions, WhoExtra } from "@/components/v2/app/jobs/detail/types";
 import { pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
+import { readWhoTarget } from "@/lib/api/job-who";
 import { getJob } from "@/lib/api/jobs";
 import { requireUser } from "@/lib/auth/session";
 import { agoOf } from "@/lib/jobs/detail";
 import { jobNameKey } from "@/lib/jobs/types";
-import { jobsScreens } from "@/lib/screens/flag";
+import { jobsScreens, voiceSampleScreens } from "@/lib/screens/flag";
 
 import { setJobEnabledAction } from "../actions";
-import { addJobFaqAction, removeJobFaqAction, renameJobAction, setJobFindsOutAction, setJobSettingAction, testJobAction } from "./actions";
+import { addJobFaqAction, removeJobFaqAction, renameJobAction, setJobFindsOutAction, setJobSettingAction, setJobSpeaksAction, testJobAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 const clock = (): number => Date.now();
@@ -36,7 +37,7 @@ const load = cache(async (tenantId: string, jobId: string) => {
     notFound();
   }
   const detail = await getJob(user.accessToken, tenantId, jobId);
-  return { role, detail };
+  return { role, detail, token: user.accessToken };
 });
 
 /** The tab's title is the job's name (the one the owner gave it, else the plain name). */
@@ -54,7 +55,7 @@ export default async function JobRoute({ params }: PageProps<"/app/tenants/[tena
   if (jobsScreens() === "off") notFound();
   const { tenantId, jobId } = await params;
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(jobId)) notFound();
-  const { role, detail } = await load(tenantId, jobId);
+  const { role, detail, token } = await load(tenantId, jobId);
   if (!detail) notFound();
   const lang = await getLang();
   const words = wordsFor(lang, ["jobs."]);
@@ -69,8 +70,14 @@ export default async function JobRoute({ params }: PageProps<"/app/tenants/[tena
         addFaq: addJobFaqAction.bind(null, tenantId, jobId),
         removeFaq: removeJobFaqAction.bind(null, tenantId, jobId),
         test: testJobAction.bind(null, tenantId, jobId),
+        setSpeaks: setJobSpeaksAction.bind(null, tenantId, jobId),
       }
     : null;
+  // Who talks: the play buttons use the voice sample route when it is on; the command offers the visits job (a read of the jobs list)
+  const whoExtra: WhoExtra | null =
+    decides && detail.who
+      ? { sampleEndpoint: voiceSampleScreens() === "off" ? null : `${base}/voice-sample`, target: await readWhoTarget(token, tenantId, detail), changeJob: setJobSpeaksAction.bind(null, tenantId) }
+      : null;
   const name = detail.job.customName ?? words[jobNameKey(detail.job.kind)] ?? "";
   return (
     <main className={pageMain} lang={lang}>
@@ -83,7 +90,7 @@ export default async function JobRoute({ params }: PageProps<"/app/tenants/[tena
           {name}
         </span>
       </nav>
-      <JobPage detail={detail} words={words} base={base} lang={lang} ago={agoOf(detail.job.lastRunAt, clock())} actions={actions} allSettingsHref={ALL_SETTINGS[detail.job.kind] ? `${base}${ALL_SETTINGS[detail.job.kind]}` : null} />
+      <JobPage detail={detail} words={words} base={base} lang={lang} ago={agoOf(detail.job.lastRunAt, clock())} actions={actions} allSettingsHref={ALL_SETTINGS[detail.job.kind] ? `${base}${ALL_SETTINGS[detail.job.kind]}` : null} whoExtra={whoExtra} />
     </main>
   );
 }

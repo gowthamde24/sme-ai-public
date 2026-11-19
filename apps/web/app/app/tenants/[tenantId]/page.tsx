@@ -15,7 +15,9 @@ import { activateRequestMemo } from "@/lib/api/request-memo";
 import { AddButton } from "@/components/v2/app/AddButton";
 import { PageTop, SectionTabs } from "@/components/v2/app/parts";
 import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataThSecondary, dataTdSecondary, dataTr, inlineLink, link, pageH2, pageMain, spaceTop, warnBox } from "@/components/v2/app/ui";
+import { startBriefing } from "./today-briefing-once";
 import { requireUser } from "@/lib/auth/session";
+import { mark, timed } from "@/lib/observe/server-timing";
 
 import { createCompanyAction } from "./actions";
 import { TodayScreen } from "./today-screen";
@@ -49,19 +51,20 @@ export default async function TenantPage({
   params,
   searchParams,
 }: PageProps<"/app/tenants/[tenantId]">) {
+  mark("page_start"); // (SERVER_TIMING=1 only, lib/observe)
   activateRequestMemo(); // (REQUEST_MEMO=1 only: the page and its layout render at the same time; either one switches the one-read-per-request memo on)
-  const lang = await getLang();
+  // the language, the session, the address and the query are independent: asked together (staging, 19 Nov 2026, Server-Timing: the page waited for the language, 140 ms, before it even started the tenant read)
+  const [lang, user, { tenantId }, query] = await Promise.all([getLang(), requireUser(), params, searchParams]);
   const words = wordsFor(lang, ["ws."]);
   const t = makeT(words);
-  const user = await requireUser();
-  const { tenantId } = await params;
-  const query = await searchParams;
+  // Today (no ?tab=): C1's small briefing read starts NOW, in the same request as everything else, so it is done long before the page shell needs it (it used to start after the tenant read, about 0.5 s later)
+  const briefingEarly = query.tab === undefined && isCanonicalUuid(tenantId) ? startBriefing(user.accessToken, tenantId) : undefined;
 
   if (!isCanonicalUuid(tenantId)) notFound();
 
   let tenant;
   try {
-    tenant = await fetchTenant(user.accessToken, tenantId);
+    tenant = await timed("page_tenant", () => fetchTenant(user.accessToken, tenantId));
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -72,7 +75,7 @@ export default async function TenantPage({
 
   const requestedTab = pick(query.tab);
   // no tab: Today (Job AC, C2). The records tables are reached with ?tab= (Customers: companies and contacts; Leads: leads).
-  if (requestedTab === undefined) return TodayScreen({ accessToken: user.accessToken, userId: user.id, tenantId, role: tenant.role, shop: tenant.name, example: pick(query.example) ?? null, setup: pick(query.setup) ?? null, liveParam: pick(query.live) ?? null, kept: Math.min(100_000, Math.max(0, Number.parseInt(pick(query.kept) ?? "0", 10) || 0)) });
+  if (requestedTab === undefined) return TodayScreen({ briefing: briefingEarly, accessToken: user.accessToken, userId: user.id, tenantId, role: tenant.role, shop: tenant.name, example: pick(query.example) ?? null, setup: pick(query.setup) ?? null, liveParam: pick(query.live) ?? null, kept: Math.min(100_000, Math.max(0, Number.parseInt(pick(query.kept) ?? "0", 10) || 0)) });
   const tab: EntityKey = (ENTITY_KEYS as readonly string[]).includes(
     requestedTab ?? "",
   )

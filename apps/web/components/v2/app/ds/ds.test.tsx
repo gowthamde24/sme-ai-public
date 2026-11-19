@@ -50,7 +50,7 @@ describe("the v6 side menu (owner, 13 Nov 2026)", () => {
   it("is Today, My assistant, Calls, Chats, Leads, Campaigns, Reports, then Setup: Catalogue, Phone numbers, Billing", () => {
     expect(MENU_V6.map((g) => [g.label, g.rows.map((r) => r.label)])).toEqual([
       ["", ["Today", "Jobs", "My assistant", "Calls", "Chats", "Leads", "Campaigns", "Reports"]],
-      ["Setup", ["Catalogue", "Phone numbers", "Billing", "Settings"]],
+      ["Setup", ["What you sell", "Catalogue", "Phone numbers", "Billing", "Settings"]],
     ]);
     const drawn = owner.map((g) => [g.label, g.items.map((i) => i.label)]);
     expect(drawn[0][0]).toBe("");

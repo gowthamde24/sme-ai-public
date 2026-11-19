@@ -245,7 +245,7 @@ describe("Today's composer (the final design)", () => {
       return c as HTMLElement;
     });
     expect(within(card).getByRole("button", { name: "Yes, call them (14)" })).toBeInTheDocument();
-    expect(card.textContent).not.toMatch(/సరే, కాల్ చెయ్యి/);
+    expect(card.textContent).not.toMatch(/సరే, కాల్ చేయండి/);
     expect(screen.getByRole("button", { name: /Do it/ })).toBeInTheDocument();
   });
 

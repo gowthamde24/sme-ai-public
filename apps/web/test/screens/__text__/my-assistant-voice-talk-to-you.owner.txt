@@ -9,84 +9,64 @@ Not live Teach your assistant how to speak on calls: how to greet, what to ask, 
 Sections
 <select label="SectionsKnowledgeVoice & toneRulesPractice">
   options: Knowledge=knowledge | Voice & tone=voice* | Rules=rules | Practice=practice
-Using defaults How your assistant sounds and speaks. Pick a sound, then fine-tune it.
-## How it talks to customers
-{label="Choose a sound"}
-## Choose a sound
-Three sounds for the phone. Hear a greeting in each, then use the one that fits your business. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
-{role=group label="Language of the voice"}
+Using defaults
+{label="How your assistant sounds"}
+## How your assistant sounds
+Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
+{role=group label="Language"}
 [button type=button: తెలుగు]
 [button type=button: English]
 [button type=button: हिन्दी]
 [button type=button: ಕನ್ನಡ]
-### Warm
-Friendly and close, like a neighbour.
-[button type=button: ▶ Hear greeting]
-✓ In use
-### Calm
-Steady and unhurried. Builds trust. No voice with this sound in this language yet.
-### Bright
-Quick and cheerful, full of energy.
-[button type=button: ▶ Hear greeting]
-[button type=button: Use this sound]
+legend: Voice
+{role=radiogroup label="Voice"}
+<radio name=vt-voice label="WarmIn useFriendly and close, like a neighbour." value=warm checked>
+Warm In use Friendly and close, like a neighbour.
+[button type=button: Play: Warm]
+<radio name=vt-voice label="CalmNo voice with this sound in this language yet." disabled value=calm>
+Calm No voice with this sound in this language yet.
+<radio name=vt-voice label="BrightQuick and cheerful, full of energy." value=bright>
+Bright Quick and cheerful, full of energy.
+[button type=button: Play: Bright]
 {label="How it talks to you"}
 ## How it talks to you
-Choose how your assistant sounds and speaks when it talks to you: in Talk live, in chat and in everything it tells you. Customers are not affected. These choices are only yours. Everyone on your team chooses their own. Test version: your choices are kept in this browser only, and a sample shows its words, not a voice. Using defaults: Respectful, normal speed.
-{role=group label="Language"}
-[button type=button: తెలుగు]
-[button type=button: English]
-### Voice
-Three sounds, named by how they sound. Pick one, then tap play to hear it.
+Only yours. Your team chooses their own, and customers are not affected. Test version: your choices are kept in this browser only, and a sample shows its words, not a voice. Talk to me in
+<select label="Talk to me in … at a … speed.">
+  options: తెలుగు=te* | English=en
+at a
+<select label="Talk to me in … at a … speed.">
+  options: Slower=slower | Normal=normal* | Faster=faster
+speed. Be
+<select label="Be … and call me ….">
+  options: Friendly=friendly | Respectful=respectful* | Very formal=very_formal | Short & direct=short_direct
+and call me
+<select label="Be … and call me ….">
+  options: By name=by_name* | Name + garu=garu | Sir / Madam=sir_madam | Anna / Akka=anna_akka
+. For example: “ నమస్కారం. మూడు కొత్త enquiries వచ్చాయండి. కాల్ చెయ్యమంటారా? ”
+[button type=button: Hear it]
+summary: More choices Voice and words
+legend: Voice
 {role=group label="Voice"}
 [button type=button: Female]
 [button type=button: Male]
 {role=radiogroup label="Voice"}
-[button type=button: Warm]
+<radio name=vt-me-voice label="Warm" value=te-mock-f-warm>
+Warm
 [button type=button: Hear it: Warm]
-[button type=button: Calm✓ In use]
+<radio name=vt-me-voice label="Calm" value=te-mock-f-calm checked>
+Calm
 [button type=button: Hear it: Calm]
-[button type=button: Bright]
+<radio name=vt-me-voice label="Bright" value=te-mock-f-bright>
+Bright
 [button type=button: Hear it: Bright]
-### Style
-How polite and how long its answers are. Friendly is relaxed, Respectful is polite, Very formal uses complete sentences, Short & direct gives the answer first.
-{role=radiogroup label="Style"}
-[button type=button: Friendly]
-[button type=button: Hear it: Friendly]
-[button type=button: Respectful]
-[button type=button: Hear it: Respectful]
-[button type=button: Very formal]
-[button type=button: Hear it: Very formal]
-[button type=button: Short & direct]
-[button type=button: Hear it: Short & direct]
-### Calls you
-What your assistant calls you when it talks to you.
-{role=radiogroup label="Calls you"}
-[button type=button: By name]
-[button type=button: Hear it: By name]
-[button type=button: Name + garu]
-[button type=button: Hear it: Name + garu]
-[button type=button: Sir / Madam]
-[button type=button: Hear it: Sir / Madam]
-[button type=button: Anna / Akka]
-[button type=button: Hear it: Anna / Akka]
-### Words
-Whether it uses the language's own words or English words, the way people really speak.
+legend: Words
 {role=radiogroup label="Words"}
-[button type=button: Pure తెలుగు]
-[button type=button: Hear it: Pure తెలుగు]
-[button type=button: Natural mix]
-[button type=button: Hear it: Natural mix]
-[button type=button: More English]
-[button type=button: Hear it: More English]
-### Speed
-How fast it speaks. Slower also uses shorter sentences.
-{role=radiogroup label="Speed"}
-[button type=button: Slower]
-[button type=button: Hear it: Slower]
-[button type=button: Normal]
-[button type=button: Hear it: Normal]
-[button type=button: Faster]
-[button type=button: Hear it: Faster]
+<radio name=vt-me-words label="Pure తెలుగు" value=pure>
+Pure తెలుగు
+<radio name=vt-me-words label="Natural mix" value=mix checked>
+Natural mix
+<radio name=vt-me-words label="More English" value=more_english>
+More English
 {label="Practice"}
 ## Practice
 Try your assistant the way a customer would.

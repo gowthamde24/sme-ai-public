@@ -196,9 +196,24 @@ def is_call_prospects(text: str) -> bool:
     return wants_call and about_prospects and not asks_not_to
 
 
+# owner, 19 Nov 2026: "who are you / what is Stack19" is answered with WHO the assistant is, first person, saying Stack19 and AI assistant (the capabilities list above answers "what can you do?"). Other languages fall back to English.
+IDENTITY_ANSWER: dict[Language, str] = {
+    "en": "I'm your AI assistant in Stack19. I bring every enquiry from WhatsApp, calls and forms into one place, reply and follow up in the customer's own language, book store visits, and find new businesses for you, whom you contact yourself. Ask me what I can do and I'll tell you more.",
+    "te": "నేను Stack19 లోని మీ AI assistant ని. WhatsApp, కాల్స్, ఫారమ్స్ నుంచి వచ్చే ఎంక్వైరీలు అన్నీ ఒకే చోట చూపిస్తాను, కస్టమర్ భాషలోనే జవాబు ఇచ్చి follow up చేస్తాను, store విజిట్లు బుక్ చేస్తాను, కొత్త businesses ని వెతికి పెడతాను, వాళ్ళకి మీరే కాల్ చేస్తారు. నేను ఇంకా ఏం చేయగలనో అడగండి.",
+    "hi": "मैं Stack19 में आपका AI assistant हूँ। WhatsApp, कॉल और फ़ॉर्म से आने वाली सारी पूछताछ एक ही जगह दिखाता हूँ, ग्राहक की अपनी भाषा में जवाब देकर follow up करता हूँ, store visit book करता हूँ, और नए businesses ढूँढकर देता हूँ, जिनसे आप खुद बात करते हैं। पूछिए, मैं और क्या कर सकता हूँ।",
+    "kn": "ನಾನು Stack19 ನಲ್ಲಿರುವ ನಿಮ್ಮ AI assistant. WhatsApp, ಕರೆಗಳು, ಫಾರ್ಮ್‌ಗಳಿಂದ ಬರುವ ವಿಚಾರಣೆಗಳನ್ನೆಲ್ಲ ಒಂದೇ ಕಡೆ ತೋರಿಸುತ್ತೇನೆ, ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲೇ ಉತ್ತರ ಕೊಟ್ಟು follow up ಮಾಡುತ್ತೇನೆ, store ಭೇಟಿಗಳನ್ನು book ಮಾಡುತ್ತೇನೆ, ಹೊಸ businesses ಹುಡುಕಿ ಕೊಡುತ್ತೇನೆ, ಅವರಿಗೆ ನೀವೇ ಕರೆ ಮಾಡುತ್ತೀರಿ. ಇನ್ನೇನು ಮಾಡಬಲ್ಲೆ ಅಂತ ಕೇಳಿ.",
+}
+
+
+def about_words(identity: bool, language: str) -> str:
+    """The fixed answer to a question about the assistant: who it is (identity) or what it can do."""
+    table: dict[str, str] = {str(k): v for k, v in (IDENTITY_ANSWER if identity else ABOUT_ASSISTANT).items()}
+    return table.get(language, table["en"])
+
+
 ABOUT_ASSISTANT: dict[Language, str] = {
     "en": "I answer questions about your business from your own records: customers, enquiries, quotes, orders, visits, calls and stock. I draft replies and quotes for you to approve, and I plan calls or messages to your customers, which start only after you say yes. Try asking: how many new enquiries came today?",
-    "te": "మీ రికార్డుల నుంచి మీ వ్యాపారం గురించి చెప్పగలను: కస్టమర్లు, ఎంక్వైరీలు, కొటేషన్లు, ఆర్డర్లు, విజిట్లు, కాల్స్, స్టాక్. రిప్లైలు, కొటేషన్లు డ్రాఫ్ట్ చేస్తాను, మీరు ఓకే చెప్పాకే వెళ్తాయి. కస్టమర్లకు కాల్స్ లేదా మెసేజ్‌ల ప్లాన్ చేస్తాను, మీరు అవును అంటేనే మొదలవుతాయి. ఉదాహరణకు అడగండి: ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి?",
+    "te": "మీ రికార్డుల నుంచి మీ వ్యాపారం గురించి చెప్పగలను: కస్టమర్లు, ఎంక్వైరీలు, కొటేషన్లు, ఆర్డర్లు, విజిట్లు, కాల్స్, స్టాక్. రిప్లైలు, కొటేషన్లు డ్రాఫ్ట్ చేస్తాను, మీరు OK చెప్పాకే వెళ్తాయి. కస్టమర్లకు కాల్స్ లేదా మెసేజ్‌ల ప్లాన్ చేస్తాను, మీరు అవును అంటేనే మొదలవుతాయి. ఉదాహరణకు అడగండి: ఈరోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి?",
     "hi": "मैं आपके अपने रिकॉर्ड से आपके बिज़नेस के सवालों के जवाब देता हूँ: ग्राहक, पूछताछ, कोटेशन, ऑर्डर, विज़िट, कॉल और स्टॉक। मैं जवाब और कोटेशन का ड्राफ़्ट बनाता हूँ, जो आपकी मंज़ूरी के बाद ही जाते हैं, और ग्राहकों को कॉल या मैसेज की योजना बनाता हूँ, जो आपके हाँ कहने पर ही शुरू होती है। जैसे पूछिए: आज कितनी नई पूछताछ आईं?",
     "kn": "ನಿಮ್ಮ ದಾಖಲೆಗಳಿಂದ ನಿಮ್ಮ ವ್ಯವಹಾರದ ಬಗ್ಗೆ ಹೇಳಬಲ್ಲೆ: ಗ್ರಾಹಕರು, ವಿಚಾರಣೆಗಳು, ಕೊಟೇಶನ್‌ಗಳು, ಆರ್ಡರ್‌ಗಳು, ಭೇಟಿಗಳು, ಕರೆಗಳು ಮತ್ತು ಸ್ಟಾಕ್. ಉತ್ತರಗಳು ಮತ್ತು ಕೊಟೇಶನ್‌ಗಳ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತೇನೆ, ನೀವು ಒಪ್ಪಿದ ಮೇಲೆಯೇ ಹೋಗುತ್ತವೆ. ಗ್ರಾಹಕರಿಗೆ ಕರೆ ಅಥವಾ ಸಂದೇಶಗಳ ಯೋಜನೆ ಮಾಡುತ್ತೇನೆ, ನೀವು ಹೌದು ಎಂದ ಮೇಲೆಯೇ ಶುರುವಾಗುತ್ತವೆ. ಉದಾಹರಣೆಗೆ ಕೇಳಿ: ಇಂದು ಎಷ್ಟು ಹೊಸ ವಿಚಾರಣೆಗಳು ಬಂದವು?",
     "ta": "என் பதில்கள் உங்கள் சொந்தப் பதிவுகளிலிருந்து வரும்: வாடிக்கையாளர்கள், விசாரணைகள், விலைப்புள்ளிகள், ஆர்டர்கள், வருகைகள், அழைப்புகள், இருப்பு. பதில்கள், விலைப்புள்ளிகளை வரைவாக எழுதுவேன், நீங்கள் ஒப்புக்கொண்ட பிறகே போகும். அழைப்புகள், செய்திகளைத் திட்டமிடுவேன், நீங்கள் ஆம் என்றால்தான் தொடங்கும். உதாரணம்: இன்று எத்தனை புதிய விசாரணைகள் வந்தன?",

@@ -1,21 +1,22 @@
 import { ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
-import { parseFaq, parseJob, parseJobDetail, parseJobs, parseJobsToday, parsePlan, parseSays, parseSuggestionHeading, parseSuggestions, parseTested } from "./jobs-parse";
+import { parseFaq, parseJob, parseJobDetail, parseJobs, parseJobsToday, parsePlan, parseSays, parseSuggestionHeading, parseSuggestions, parseTested, parseWho } from "./jobs-parse";
 import { bad, oneOf, rec, uuid, word } from "./shape";
 import { FAQ_A_MAX, FAQ_Q_MAX, type JobDetail, type JobFaq, type JobSays, type TestChannel } from "@/lib/jobs/detail";
 import { mockJobDetail, mockSays } from "@/lib/jobs/detail-mock";
 import { JOB_KINDS, type Job, type JobKind, type JobStatus, type JobSwitched, type TodayJobs } from "@/lib/jobs/types";
-import { MOCK_JOBS, mockToday } from "@/lib/jobs/mock";
+import { MOCK_PAGE_JOBS, mockToday } from "@/lib/jobs/mock";
 import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput, SuggestionList } from "@/lib/jobs/plan";
 import { APPROVAL_KINDS, PLAN_TEXT_MAX, PLAN_TEXT_MIN } from "@/lib/jobs/plan";
 import { mockPlan, mockStartPlan, mockStartedFor, mockSuggestions, mockTest } from "@/lib/jobs/plan-mock";
 import { jobsScreens } from "@/lib/screens/flag";
+import type { SpeaksPatch } from "@/lib/jobs/who";
 
 /**
  * The jobs of a workspace (JOBS; C1's contract, FINAL 1.0: contracts/jobs-contract-DRAFT.md). SERVER ONLY, with the signed-in person's own token. This file makes the calls; every PARSER of the contract is in lib/api/jobs-parse.ts (re-exported here), so a contract
  * change is an edit there. Every answer goes through lib/api/shape.ts: closed words (kind, status), bounded numbers and strings; anything else is an ApiContractError, never drawn. With JOBS=mock the made-up jobs of lib/jobs/fixtures.ts answer and nothing leaves the server.
  */
-export { parseFaq, parseJob, parseJobDetail, parseJobs, parseJobsToday, parsePlan, parseSuggestions, parseTested };
+export { parseFaq, parseJob, parseJobDetail, parseJobs, parseJobsToday, parsePlan, parseSuggestions, parseTested, parseWho };
 
 const base = (tenantId: string): string => {
   if (!isCanonicalUuid(tenantId)) throw new ApiContractError("Unexpected workspace id.");
@@ -26,7 +27,7 @@ const base = (tenantId: string): string => {
 export async function readJobs(token: string, tenantId: string): Promise<Job[] | null> {
   const mode = jobsScreens();
   if (mode === "off") return null;
-  if (mode === "mock") return [...MOCK_JOBS];
+  if (mode === "mock") return [...MOCK_PAGE_JOBS];
   try {
     return parseJobs(await apiRequest(`${base(tenantId)}/jobs`, token));
   } catch {
@@ -49,11 +50,14 @@ export async function readJobsToday(token: string, tenantId: string): Promise<To
   }
 }
 
+/** A mock job by id: the Jobs page lists MOCK_PAGE_JOBS (the demo's eight, "Ravi" and "Diwali calls" included), so a switch or a change finds any of them. */
+const mockJobById = (id: string) => MOCK_PAGE_JOBS.find((m) => m.id === id);
+
 /** `PATCH /jobs/{id}` `{enabled}`: the switch. With JOBS=mock the answer is made up from the job's own state. */
 export async function setJobEnabled(token: string, tenantId: string, jobId: string, enabled: boolean): Promise<JobSwitched> {
   if (!isCanonicalUuid(jobId)) bad("job id");
   if (jobsScreens() === "mock") {
-    const j = MOCK_JOBS.find((m) => m.id === jobId);
+    const j = mockJobById(jobId);
     return { id: jobId, enabled, status: enabled ? (j && j.status !== "paused" ? j.status : "running") : "paused" };
   }
   const j = parseJob(await apiRequest(`${base(tenantId)}/jobs/${jobId}`, token, { method: "PATCH", body: JSON.stringify({ enabled }) }));
@@ -145,14 +149,14 @@ export async function getJob(token: string, tenantId: string, id: string): Promi
 }
 
 /** What changed in one `PATCH /jobs/{id}`: the name (null = the plain name), the switch, the words customers hear (recomposed by the API when the name changed, else null). */
-export type JobPatch = { name?: string | null; enabled?: boolean; settings?: Readonly<Record<string, string | boolean>>; findsOut?: Readonly<Record<string, boolean>> };
+export type JobPatch = { name?: string | null; enabled?: boolean; settings?: Readonly<Record<string, string | boolean>>; findsOut?: Readonly<Record<string, boolean>>; /** The Who talks card: only what changed (lib/jobs/who.ts). */ speaks?: SpeaksPatch };
 export type JobPatched = { customName: string | null; enabled: boolean; status: JobStatus; says: JobSays[] | null };
 
-/** `PATCH /jobs/{id}` `{enabled?, name?, settings?: {key: value}, finds_out?}` (a choice is sent as its word, a toggle as true/false; an empty name clears it; the hours are the settings `from_hour` and `to_hour`). With JOBS=mock the answer is made up from the mock job and the change; nothing is stored. */
+/** `PATCH /jobs/{id}` `{enabled?, name?, settings?: {key: value}, finds_out?, speaks?: {language?, tone?, voice?, number?}}` (a choice is sent as its word, a toggle as true/false; an empty name clears it; the hours are the settings `from_hour` and `to_hour`). With JOBS=mock the answer is made up from the mock job and the change; nothing is stored. */
 export async function patchJob(token: string, tenantId: string, id: string, patch: JobPatch): Promise<JobPatched> {
   jobId(id);
   if (jobsScreens() === "mock") {
-    const j = MOCK_JOBS.find((m) => m.id === id);
+    const j = mockJobById(id);
     if (!j) bad("job id");
     const customName = patch.name !== undefined ? patch.name : j.customName;
     const enabled = patch.enabled ?? j.enabled;
@@ -163,6 +167,7 @@ export async function patchJob(token: string, tenantId: string, id: string, patc
   if (patch.name !== undefined) body.name = patch.name ?? "";
   if (patch.settings) body.settings = patch.settings;
   if (patch.findsOut) body.finds_out = patch.findsOut;
+  if (patch.speaks) body.speaks = patch.speaks;
   const raw = await apiRequest(`${base(tenantId)}/jobs/${id}`, token, { method: "PATCH", body: JSON.stringify(body) });
   const x = rec(raw, "job");
   const j = parseJob(x);

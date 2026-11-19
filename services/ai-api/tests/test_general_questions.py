@@ -15,8 +15,8 @@ import pytest
 
 from app.assistant import prompts
 from app.assistant.language import COULD_NOT_ANSWER
-from app.turns.intent import classify
-from app.turns.words import ABOUT_ASSISTANT
+from app.turns.intent import classify, is_identity_question, normalise
+from app.turns.words import ABOUT_ASSISTANT, IDENTITY_ANSWER, about_words
 from tests.test_ea_turns import done, events, text_of, turn, world
 
 CASES = [json.loads(line) for line in (Path(__file__).resolve().parents[3] / "tests" / "evals" / "general" / "cases.jsonl").read_text(encoding="utf8").splitlines() if line.strip()]
@@ -35,12 +35,28 @@ def test_the_fixed_answer_exists_in_every_language_is_short_enough_to_speak_and_
         assert "_" not in text and "tool" not in text.lower(), language
 
 
+def test_the_identity_answer_says_stack19_and_ai_assistant_in_the_first_person_in_every_owner_language() -> None:
+    assert set(IDENTITY_ANSWER) == {"en", "te", "hi", "kn"}
+    for language, text in IDENTITY_ANSWER.items():
+        assert "Stack19" in text and "AI assistant" in text, language
+        assert "_" not in text and len(text) <= 520, language
+    assert "అది" not in IDENTITY_ANSWER["te"] and "స్టాక్" not in IDENTITY_ANSWER["te"] and "ఓకే" not in IDENTITY_ANSWER["te"] and "ఈ రోజు" not in ABOUT_ASSISTANT["te"]
+    assert about_words(True, "ta") == IDENTITY_ANSWER["en"] and about_words(False, "ta") == ABOUT_ASSISTANT["ta"]
+
+
+@pytest.mark.parametrize(("question", "language"), [("స్టాక్19 అంటే ఏమిటి? మీరు ఎవరు?", "te"), ("నువ్వు ఎవరు? ఈ యాప్ ఏం చేస్తుంది?", "te"), ("स्टैक19 क्या है?", "hi"), ("ಸ್ಟ್ಯಾಕ್19 ಅಂದರೆ ಏನು?", "kn")])
+def test_who_are_you_is_answered_with_who_the_assistant_is_and_no_model_call(question: str, language: str) -> None:
+    client, llm, _, _ = world()
+    evs = events(turn(client, question, language=language))
+    assert text_of(evs) == about_words(True, language) and llm.requests == []
+
+
 @pytest.mark.parametrize("case", [c for c in CASES if c["reason"] == "about_assistant"], ids=lambda c: c["id"])
 def test_what_can_you_do_is_answered_at_once_with_no_model_call(case: dict[str, Any]) -> None:
     client, llm, _, _ = world()   # a model with NO answers: a call would fail the test
     evs = events(turn(client, case["text"], language=case["language"]))
     assert evs[0][1]["kind"] == "general"
-    assert text_of(evs) == ABOUT_ASSISTANT[case["language"]]
+    assert text_of(evs) == about_words(is_identity_question(normalise(case["text"])), case["language"])
     assert done(evs)["kind"] == "answer" and llm.requests == []
 
 

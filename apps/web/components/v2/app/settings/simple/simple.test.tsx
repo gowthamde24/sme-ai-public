@@ -49,7 +49,7 @@ const type = (label: string | RegExp, value: string) => act(async () => void fir
 const submit = (el: Element) => act(async () => void fireEvent.submit(el.closest("form")!));
 
 const TYPE_WORDS: TypeWords = { label: "Kind of business", placeholder: "Search", none: "Nothing", otherAsk: "What is your business?", otherHint: "2 to 60 letters" };
-const GROUPS: TypeGroup[] = [{ key: "leads", label: "Lead Desk", options: [{ id: "salon", name: "Salon", tagline: "" }] }, { key: "other", label: "Other", options: [{ id: "other", name: "Other", tagline: "" }] }];
+const GROUPS: TypeGroup[] = [{ key: "leads", label: "Businesses with enquiries", options: [{ id: "salon", name: "Salon", tagline: "" }] }, { key: "other", label: "Other", options: [{ id: "other", name: "Other", tagline: "" }] }];
 const OWNER = { groups: GROUPS, typeWords: TYPE_WORDS, otherId: "other", type: "salon", typeLabel: "", phone: "+91 98765 43210" };
 
 describe("Business as sentences (JOBS)", () => {

@@ -18,7 +18,7 @@ const ALL_DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 const MON_SAT = ALL_DAYS.slice(0, 6);
 
 /* ---- jobs (section 1) and Today (section 3) ---- */
-type JobIn = { n: number; kind: string; name?: string | null; enabled?: boolean; status: string; result: { code: string; params?: Wire }; needs?: number; last?: string | null; fix?: { code: string; count: number } | null; gate?: string | null };
+type JobIn = { n: number; kind: string; name?: string | null; enabled?: boolean; status: string; result: { code: string; params?: Wire }; needs?: number; last?: string | null; fix?: { code: string; count: number } | null; gate?: string | null; speaks?: Wire };
 export const wireJob = (j: JobIn): Wire => ({
   id: jobId(j.n),
   kind: j.kind,
@@ -30,6 +30,7 @@ export const wireJob = (j: JobIn): Wire => ({
   last_run_at: j.last ?? null,
   fix: j.fix ?? null,
   plan_gate: j.gate ? { code: j.gate } : null,
+  ...(j.speaks ? { speaks: j.speaks } : {}),
 });
 
 /** The six made-up jobs of the demo shop (the ones in mocks/jobs). `payment_reminders` is v1.1: the API sends no job of that kind in v1, so the demo has none (the web still accepts the word). */
@@ -38,8 +39,14 @@ export const WIRE_JOBS: readonly Wire[] = [
   wireJob({ n: 2, kind: "answer_calls", status: "running", result: { code: "answered_today", params: { answered: 3, missed: 1, messages: 2 } }, last: "2026-11-19T04:02:00Z" }),
   wireJob({ n: 3, kind: "followups", status: "failed", result: { code: "template_needed", params: { count: 2 } }, needs: 2, last: "2026-11-19T03:42:00Z", fix: { code: "template_needed", count: 2 } }),
   wireJob({ n: 4, kind: "offers", status: "waiting", result: { code: "offer_ready", params: { customers: 38 } }, needs: 1 }),
-  wireJob({ n: 5, kind: "store_visits", name: "Priya", status: "done", result: { code: "reminders_today", params: { sent: 3, confirmed: 2 } }, last: "2026-11-19T03:30:00Z" }),
+  wireJob({ n: 5, kind: "store_visits", name: "Priya", status: "done", result: { code: "reminders_today", params: { sent: 3, confirmed: 2 } }, last: "2026-11-19T03:30:00Z", speaks: { language: "te", voice: "Janvi", number: "shop" } }),
   wireJob({ n: 6, kind: "researcher", status: "running", result: { code: "search_left", params: { left: 1, per_month: 1, last_search_at: "2026-11-12T08:00:00Z" } }, last: "2026-11-12T08:00:00Z" }),
+];
+
+/** More made-up jobs for the JOBS PAGE only (Today keeps the six above): two named jobs of kind `custom` with their own voice and number (the Jobs page has no fixed number of jobs), one of them Off. `speaks` is C1's contract 1.1 (assumed). */
+export const WIRE_JOBS_EXTRA: readonly Wire[] = [
+  wireJob({ n: 9, kind: "custom", name: "Ravi", status: "running", result: { code: "answered_today", params: { answered: 2, missed: 0, messages: 1 } }, last: "2026-11-19T04:10:00Z", speaks: { language: "en", voice: "Arjun", number: "second" } }),
+  wireJob({ n: 10, kind: "custom", name: "Diwali calls", enabled: false, status: "paused", result: { code: "paused_on", params: { since: "2026-11-14T05:00:00Z" } }, speaks: { language: "te", voice: "Janvi", number: "shop" } }),
 ];
 
 /** Jobs the demo does not show but the contract allows: every other result code, and every plan gate. (Not `payment_reminders`: it is v1.1; its word is tested to be tolerated, lib/api/jobs.test.ts.) They are here so the parser test covers them. */
@@ -188,7 +195,7 @@ export const WHAT_CODE: Record<string, string> = {
  * A failed job carries its `failure {code, params, items[]}`.
  */
 export function wireJobDetail(id: string, now: number = Date.now()): Wire | null {
-  const base = (WIRE_JOBS as readonly Wire[]).find((j) => j.id === id);
+  const base = [...WIRE_JOBS, ...WIRE_JOBS_EXTRA].find((j) => j.id === id);
   if (!base) return null;
   const kind = base.kind as string;
   const last = base.last_run_at ? new Date(now - (kind === "researcher" ? 7 * 86_400_000 : 9 * 60_000)).toISOString() : null;
@@ -215,8 +222,23 @@ export function wireJobDetail(id: string, now: number = Date.now()): Wire | null
     test_channel: TEST[kind] ?? null,
     // the month so far (the plan card's `cost` is the per-plan estimate)
     cost: { minutes_used: 8, minutes_included: 60, rupees: null },
+    // how the job sounds (the Who talks card): a job that talks to nobody (the researcher) has none
+    ...(WHO_SPEAKS[kind] ? { speaks: WHO_SPEAKS[kind], numbers: WHO_NUMBERS } : {}),
   };
 }
+
+/** How each made-up job sounds, in the proposed wire shape (`speaks`), and the two numbers the demo shop has (the middle digits hidden). */
+const WHO_SPEAKS: Record<string, Wire> = {
+  speed_to_lead: { language: "te", tone: "friendly", voice: "female_warm", number: "shop" },
+  answer_calls: { language: "customer", tone: "respectful", voice: "female_clear", number: "shop" },
+  followups: { language: "en", tone: "respectful", voice: "male_calm", number: "second" },
+  offers: { language: "te", tone: "friendly", voice: "female_warm", number: "shop" },
+  store_visits: { language: "en", tone: "friendly", voice: "female_clear", number: "shop" },
+};
+const WHO_NUMBERS: Wire[] = [
+  { key: "shop", masked: "+91 98480 xxx10" },
+  { key: "second", masked: "+91 90000 xxx45" },
+];
 
 /* ---- the test buttons (section 3): `{placed: true, minutes_used: n}` ---- */
 export const WIRE_TEST_CALL: Wire = { placed: true, minutes_used: 1 };

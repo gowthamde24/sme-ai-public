@@ -1,0 +1,20 @@
+# What you sell
+Your assistant answers customers from this list. Add to it in whichever way is easiest.
+{role=status} Test mode: these are made-up examples. Nothing is saved.
+{label="Fill it your way"}
+## Fill it your way
+[button type=button: Say it“Haircut, 30 minutes, 200 rupees, book any day.” Talk like you would to a helper.]
+[button type=button: Take photosPhotograph the shelf or your bill book. I read the names and prices.]
+[button type=button: Import a sheetExcel, CSV or Google Sheet. I match the columns for you.]
+{label="Services4"}
+## Services 4
+[button type=button: Add a service]
+For a clinic, gym or salon
+-
+[button type=button: Haircut30 minutes₹200Any day]
+-
+[button type=button: Facial45 minutes₹700Any day]
+-
+[button type=button: Hair spa1 hour₹900Not Sunday]
+-
+[button type=button: Bridal makeup3 hours · At the shop or at homefrom ₹6,000Book ahead]

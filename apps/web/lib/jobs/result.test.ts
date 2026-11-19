@@ -36,3 +36,15 @@ describe("the result line of a job", () => {
     expect([...RESULT_CODES]).toEqual(["calls_today", "answered_today", "not_sent_window", "offer_ready", "reminders_today", "search_left", "paused_on", "needs_approval", "template_needed", "minutes_used", "no_whatsapp", "no_number"]);
   });
 });
+
+describe("a count of exactly one reads singular in English", () => {
+  it("1 message, 1 call, 1 new enquiry, 1 store visit; other numbers and other words stay", async () => {
+    const { singular } = await import("./result");
+    expect(singular("Today: answered 1 calls · 0 missed · 1 messages sent")).toBe("Today: answered 1 call · 0 missed · 1 message sent");
+    expect(singular("Today: called 1 new enquiries · 1 picked up · 1 store visits booked")).toBe("Today: called 1 new enquiry · 1 picked up · 1 store visit booked");
+    expect(singular("Ready to send to 1 customers")).toBe("Ready to send to 1 customer");
+    expect(singular("Today: answered 11 calls · 21 messages sent")).toBe("Today: answered 11 calls · 21 messages sent");
+    expect(singular("1.5 messages")).toBe("1.5 messages");
+    expect(singular("2 messages sent")).toBe("2 messages sent");
+  });
+});

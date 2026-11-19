@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 
 import { safeRedirectPath } from "@/lib/auth/redirect";
+import { timed } from "@/lib/observe/server-timing";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type AuthenticatedUser = {
@@ -46,7 +47,7 @@ async function loginTarget(): Promise<string> {
 async function load(strict: boolean): Promise<AuthenticatedUser> {
   const supabase = await createSupabaseServerClient();
 
-  const { data, error } = await supabase.auth.getUser();
+  const { data, error } = await timed("session_getuser", () => supabase.auth.getUser()); // (SERVER_TIMING=1 only: the one network call of the session check)
   if (error || !data.user) redirect(await loginTarget());
 
   const { data: sessionData } = await supabase.auth.getSession();
@@ -95,7 +96,23 @@ async function load(strict: boolean): Promise<AuthenticatedUser> {
  * decide who the caller is. It is called after `getUser()` has succeeded, and only to obtain the
  * access token to forward to the API (which re-verifies the signature, issuer and audience).
  */
-export const requireUser = cache(() => load(true));
+export const requireUser = cache(() => timed("session", () => load(true)));
 
 /** The same gate for the pages a password-only session must be able to reach: the authenticator challenge and enrolment. */
 export const requireUserBeforeSecondFactor = cache(() => load(false));
+
+/**
+ * A fresh second-factor check for one action (the own WhatsApp messages, JOBS): the person's own authenticator code, the same challengeAndVerify as the sign-in step.
+ * Returns the access token that carries the fresh level, so the API sees it. No authenticator is `no_factor` (never let through); a wrong code is `bad_code`.
+ */
+export type SecondStep = { ok: true; token: string } | { ok: false; reason: "no_factor" | "bad_code" };
+export async function freshSecondStep(code: string): Promise<SecondStep> {
+  const supabase = await createSupabaseServerClient();
+  const { data: factors } = await supabase.auth.mfa.listFactors();
+  const factor = factors?.totp?.[0];
+  if (!factor) return { ok: false, reason: "no_factor" };
+  const verified = await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code });
+  if (verified.error) return { ok: false, reason: "bad_code" };
+  const token = (await supabase.auth.getSession()).data.session?.access_token;
+  return token ? { ok: true, token } : { ok: false, reason: "bad_code" };
+}

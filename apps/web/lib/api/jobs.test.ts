@@ -5,7 +5,7 @@ vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>
 vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => h.mode.v }));
 
 import { WIRE_JOB_VARIANTS } from "@/lib/jobs/fixtures";
-import { MOCK_JOBS } from "@/lib/jobs/mock";
+import { MOCK_JOBS, MOCK_PAGE_JOBS } from "@/lib/jobs/mock";
 import { CHIP_TONE, JOB_KINDS, JOB_STATUSES, filterJobs } from "@/lib/jobs/types";
 
 import { parseJob, parseJobs, parseJobsToday, readJobs, readJobsToday, setJobEnabled } from "./jobs";
@@ -61,7 +61,7 @@ describe("reading and switching", () => {
     h.mode.v = "off";
     expect(await readJobs("tok", T)).toBeNull();
     h.mode.v = "mock";
-    expect((await readJobs("tok", T))?.length).toBe(MOCK_JOBS.length);
+    expect((await readJobs("tok", T))?.length).toBe(MOCK_PAGE_JOBS.length); // the page: Today's six and the named jobs
     expect(h.req).not.toHaveBeenCalled();
     h.mode.v = "on";
     h.req.mockResolvedValueOnce({ items: [wire] });
@@ -79,6 +79,13 @@ describe("reading and switching", () => {
     expect(await setJobEnabled("tok", T, MOCK_JOBS[0].id, false)).toMatchObject({ enabled: false, status: "paused" });
     expect(await setJobEnabled("tok", T, MOCK_JOBS[0].id, true)).toMatchObject({ enabled: true, status: "running" });
     await expect(setJobEnabled("tok", T, "nope", true)).rejects.toThrow();
+  });
+  it("mock: every job the Jobs page lists can be switched, the named ones (Ravi, Diwali calls) too", async () => {
+    h.mode.v = "mock";
+    for (const j of MOCK_PAGE_JOBS) {
+      expect(await setJobEnabled("tok", T, j.id, false), j.customName ?? j.kind).toMatchObject({ id: j.id, enabled: false, status: "paused" });
+      expect((await setJobEnabled("tok", T, j.id, true)).enabled).toBe(true);
+    }
   });
 });
 
@@ -124,5 +131,25 @@ describe("the filters", () => {
     const withPaused = [...MOCK_JOBS, ...WIRE_JOB_VARIANTS.map(parseJob)];
     expect(filterJobs(withPaused, "paused").every((j) => !j.enabled || j.status === "paused")).toBe(true);
     expect(filterJobs(withPaused, "paused").length).toBeGreaterThan(0);
+  });
+});
+
+describe("how a named job sounds (speaks, contract 1.1 assumed)", () => {
+  it("language, voice and number are read as closed words and a short name; absent = nothing (older answers still parse)", () => {
+    expect(parseJob({ ...wire, speaks: { language: "te", voice: "Janvi", number: "shop" } }).speaks).toEqual({ language: "te", voice: "Janvi", number: "shop" });
+    expect(parseJob({ ...wire, speaks: { language: "customer" } }).speaks).toEqual({ language: "customer", voice: null, number: null });
+    expect(parseJob({ ...wire, speaks: null }).speaks).toBeNull();
+    expect("speaks" in parseJob(wire)).toBe(false);
+  });
+  it("an odd value is not shown, and never takes the whole list (or Today's Running now) down", () => {
+    expect(parseJob({ ...wire, speaks: { language: "te; drop table", voice: "Janvi", number: "shop" } }).speaks).toEqual({ language: null, voice: "Janvi", number: "shop" });
+    expect(parseJob({ ...wire, speaks: { language: "te", voice: "x".repeat(41), number: 7 } }).speaks).toEqual({ language: "te", voice: null, number: null });
+    for (const odd of ["te", 5, ["te"], true]) expect(parseJob({ ...wire, speaks: odd }).speaks).toBeNull();
+    const rows = [wire, { ...wire, id: MOCK_JOBS[0].id, speaks: { language: "x".repeat(13), voice: { a: 1 }, number: "y y" } }, { ...wire, id: MOCK_JOBS[1].id, speaks: "odd" }];
+    expect(parseJobs(rows).map((j) => j.id)).toEqual([J, MOCK_JOBS[0].id, MOCK_JOBS[1].id]);
+    expect(parseJobsToday({ jobs: rows }).jobs).toHaveLength(3);
+  });
+  it("the demo's named jobs carry them", () => {
+    expect(MOCK_PAGE_JOBS.filter((j) => j.speaks).map((j) => j.customName)).toEqual(["Priya", "Ravi", "Diwali calls"]);
   });
 });

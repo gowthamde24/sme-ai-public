@@ -1,0 +1,19 @@
+# What you sell
+Your assistant answers customers from this list. Add to it in whichever way is easiest.
+{role=status} Test mode: these are made-up examples. Nothing is saved.
+{label="Fill it your way"}
+## Fill it your way
+[button type=button: Say it“Cotton shirting 40s, minimum 50 metres, 118 rupees.” Talk like you would to a helper.]
+[button type=button: Take photosPhotograph the shelf or your bill book. I read the names and prices.]
+[button type=button: Import a sheetExcel, CSV or Google Sheet. I match the columns for you.]
+{label="Price lists3"}
+## Price lists 3
+[button type=button: Add an item]
+For wholesale and dealers
+-
+[button type=button: Cotton shirting 40sMinimum order 50 metres50 m+ ₹118200 m+ ₹110500 m+ ₹104]
+-
+[button type=button: Silk blend dupattaMinimum order 24 pieces24+ ₹320100+ ₹295]
+-
+[button type=button: Handloom towelMinimum order 12 pieces12+ ₹9660+ ₹88240+ ₹80]
+[Open the old page](/app/tenants/22222222-2222-2222-2222-222222222222/price-list)

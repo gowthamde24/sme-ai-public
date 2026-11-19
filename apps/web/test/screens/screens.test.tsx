@@ -27,9 +27,18 @@ vi.mock("@/components/v2/app/jobs/pages/LazyLinkSentence", async () => ({ LinkSe
 vi.mock("@/components/v2/app/phone/LazyPhoneGetSimple", async () => ({ PhoneGetSimple: (await import("@/components/v2/app/phone/PhoneGetSimple")).PhoneGetSimple }));
 vi.mock("@/components/v2/app/catalogue/LazyItemFieldsSimple", async () => ({ ItemFieldsSimple: (await import("@/components/v2/app/catalogue/ItemFieldsSimple")).ItemFieldsSimple }));
 vi.mock("@/components/v2/app/jobs/rules/LazyPolicySentences", async () => ({ PolicySentences: (await import("@/components/v2/app/jobs/rules/PolicySentences")).PolicySentences }));
+// JOBS (What you sell): the list and its sheet are lazy chunks on a real page; the snapshot draws the list at once
+vi.mock("@/components/v2/app/sell/LazySection", async () => ({ SellSection: (await import("@/components/v2/app/sell/SellSection")).SellSection }));
 vi.mock("@/components/v2/app/jobs/LazyJobRow", async () => ({ JobRow: (await import("@/components/v2/app/jobs/JobRow")).JobRow }));
-vi.mock("@/components/v2/app/jobs/detail/LazyJobLists", async () => (await import("@/components/v2/app/jobs/detail/JobLists")));
+vi.mock("@/components/v2/app/jobs/detail/LazyJobLists", async () => ({ ...(await import("@/components/v2/app/jobs/detail/JobLists")), WhoTalks: (await import("@/components/v2/app/jobs/detail/WhoTalks")).WhoTalks }));
+vi.mock("@/components/v2/app/whatsapp/builder/LazyOwnMessages", async () => ({ OwnMessages: (await import("@/components/v2/app/whatsapp/builder/OwnMessages")).OwnMessages }));
 vi.mock("@/components/v2/app/whatsapp/LazyConnectWithFacebook", async () => (await import("@/components/v2/app/whatsapp/ConnectWithFacebook")));
+// (the small briefing read of Today: "not told" here, so the screens keep drawing their briefing from the big reads as they were taken)
+vi.mock("@/lib/api/today-briefing", async (orig) => ({ ...(await orig<typeof import("@/lib/api/today-briefing")>()), getTodayBriefing: async () => null }));
+// the New job sheet (JOBS, mocks r3-01 and r3-02): the sheet, the empty page's three cards and Today's festival suggestion are lazy chunks on a real page; the snapshot draws them at once
+vi.mock("@/components/v2/app/jobs/sheet/LazySheet", async () => ({ loadSheet: async () => undefined, SheetVeil: () => null, LazySheet: (await import("@/components/v2/app/jobs/sheet/NewJobSheet")).default }));
+vi.mock("@/components/v2/app/jobs/sheet/LazyJobsEmpty", async () => ({ JobsEmpty: (await import("@/components/v2/app/jobs/sheet/JobsEmpty")).JobsEmpty }));
+vi.mock("@/components/v2/app/jobs/sheet/LazyFestival", async () => ({ FestivalSuggestion: (await import("@/components/v2/app/jobs/sheet/FestivalSuggestion")).FestivalSuggestion }));
 vi.mock("@/components/v2/app/jobs/LazyPlanCard", async () => ({ PlanCard: (await import("@/components/v2/app/jobs/PlanCard")).PlanCard }));
 vi.mock("@/components/v2/app/prospects/LazyResearcherCard", async () => ({ ResearcherCard: (await import("@/components/v2/app/prospects/ResearcherCard")).ResearcherCard }));
 vi.mock("@/components/v2/app/prospects/LazyMarkContacted", async () => ({ MarkContacted: (await import("@/components/v2/app/prospects/MarkContacted")).MarkContacted }));
@@ -51,6 +60,7 @@ vi.mock("@/components/v2/app/today/ask/work/LazyWorkPreview", async () => ({ Wor
 vi.mock("@/components/v2/app/my-assistant/LazyMyAssistant", async () => ({
   PracticePanel: (await import("@/components/v2/app/my-assistant/PracticePanel")).PracticePanel,
   VoiceCards: (await import("@/components/v2/app/my-assistant/VoiceCards")).VoiceCards,
+  VoiceTone: (await import("@/components/v2/app/my-assistant/VoiceTone")).VoiceTone,
   VoiceSegments: (await import("@/components/v2/app/my-assistant/VoiceSegments")).VoiceSegments,
   TalkToYou: (await import("@/components/v2/app/my-assistant/TalkToYou")).TalkToYou,
   KnowledgeStep: (await import("@/components/v2/app/lead-setup/KnowledgeStep")).KnowledgeStep,
@@ -68,6 +78,8 @@ vi.mock("@/components/v2/app/lead-desk/LazyLeadSources", async () => ({ LazyLead
 vi.mock("@/components/v2/app/calls/v6/Lazy", async () => ({ LiveStrip: (await import("@/components/v2/app/calls/v6/LiveStrip")).LiveStrip, PanelIslands: (await import("@/components/v2/app/calls/v6/PanelIslands")).PanelIslands, Repoll: () => null }));
 vi.mock("@/components/v2/app/calls/v6/LazyLive", async () => ({ LiveControls: (await import("@/components/v2/app/calls/v6/LiveControls")).LiveControls }));
 vi.mock("@/components/v2/app/chats/v6/Lazy", async () => ({ Conversation: (await import("@/components/v2/app/chats/v6/Conversation")).Conversation, QuoteOutcome: (await import("@/components/v2/app/ds/QuoteOutcome")).QuoteOutcome }));
+vi.mock("@/components/v2/app/chats/v6/queue/LazyQueueComposer", async () => ({ QueueComposer: (await import("@/components/v2/app/chats/v6/queue/QueueComposer")).QueueComposer }));
+vi.mock("@/lib/api/chat-queue", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/chat-queue")>(), ["readQueued"]));
 // the Reports page: its charts and the Download PDF button are a lazy chunk on a real page; the snapshot draws them at once
 vi.mock("@/components/v2/app/report-v6/Lazy", async () => ({ EnquiryChart: (await import("@/components/v2/app/report-v6/charts")).EnquiryChart, SalesChart: (await import("@/components/v2/app/report-v6/charts")).SalesChart, PrintButton: (await import("@/components/v2/app/report-v6/charts")).PrintButton }));
 vi.mock("next/navigation", () => ({
@@ -88,6 +100,8 @@ vi.mock("@/lib/auth/session", async () => {
   return { requireUser: async () => session.user, getUser: async () => session.user };
 });
 vi.mock("@/lib/api/client", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/client")>(), ["fetchMe", "fetchTenant"]));
+vi.mock("@/components/v2/app/calls/LazyTestCallIntroduce", async () => ({ TestCallIntroduce: (await import("@/components/v2/app/calls/TestCallIntroduce")).TestCallIntroduce }));
+vi.mock("@/lib/api/talk-training", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/talk-training")>(), ["getTalkTraining"]));
 vi.mock("@/lib/api/agents", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/agents")>(), ["fetchAgentSettings", "fetchRuns", "fetchClaims", "fetchAgentClaims", "fetchAgentCost"]));
 vi.mock("@/lib/api/crm", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/crm")>(), ["fetchPage", "fetchCompany", "fetchContact", "fetchLead"]));
 vi.mock("@/lib/api/activity-log", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/activity-log")>(), ["listActivityLog"]));
@@ -117,7 +131,7 @@ vi.mock("@/lib/api/privacy", async (orig) => (await import("./state")).wrap(awai
 vi.mock("@/lib/api/consent-list", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/consent-list")>(), ["readConsentList"]));
 vi.mock("@/lib/api/lead-finder", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-finder")>(), ["readAvailability", "redecideProspects", "listProspects", "getProspectStats", "getProspect", "getFinderSettings", "listSearches"]));
 vi.mock("@/lib/api/team", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/team")>(), ["getTeam", "listInvitations"]));
-vi.mock("@/lib/api/whatsapp", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/whatsapp")>(), ["getWhatsappAccount", "getConnectConfig", "listTemplates", "listConversations", "getThread"]));
+vi.mock("@/lib/api/whatsapp", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/whatsapp")>(), ["getWhatsappAccount", "getConnectConfig", "listTemplates", "listConversations", "getThread", "listChatTemplates"]));
 vi.mock("@/lib/api/phone-kyc", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/phone-kyc")>(), ["getKycStatus", "getKycOptions"]));
 vi.mock("@/lib/api/gstin", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/gstin")>(), ["getBusinessProfile"]));
 vi.mock("@/lib/api/policy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/policy")>(), ["getPolicyStatus"]));
@@ -180,7 +194,7 @@ async function capture(scenario: (typeof SCENARIOS)[number], role: (typeof ROLES
       container = render(element).container;
     });
     // Today and Leads draw in parts that finish one after another: wait until it has not changed for three rounds of the clock (one awaited act was not enough on a loaded machine, where the lazy modules load slower)
-    const streams = scenario.env !== undefined || /^(today|lead-desk)/.test(scenario.id);
+    const streams = scenario.env !== undefined || /^(today|lead-desk|phone-call-test)/.test(scenario.id);
     const started = Date.now();
     for (let round = 0, before = "", still = 0; streams && round < 400; round += 1) {
       await act(async () => void (await new Promise((r) => setTimeout(r, round < 2 ? 0 : 5))));

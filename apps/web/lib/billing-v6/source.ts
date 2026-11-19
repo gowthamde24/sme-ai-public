@@ -1,6 +1,6 @@
 import { ApiAuthError, ApiRequestError, apiRequest } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { balanceScreens } from "@/lib/screens/flag";
+import { balanceScreens, billingV2 } from "@/lib/screens/flag";
 
 import { parseBillingBalance, type BillingBalance } from "./balance";
 import { mockInvoices, type Invoice } from "./invoices";
@@ -18,7 +18,7 @@ export async function readBillingBalance(token: string, tenantId: string): Promi
   if (mode === "mock") {
     const s = await readState();
     const paise = paiseOf(s);
-    return { paise, text: formatRupeesShort(paise), minutesEstimate: Math.floor(paise / 500), planId: "sales_assistant", planName: "Sales assistant", low: false, topupAvailable: true, freeStartGranted: s.freeStart, freeStartLeftText: s.freeStart ? formatRupeesShort(FREE_START_PAISE) : null, includedMinutes: 500, includedMinutesLeft: 342, subscription: { interval: "monthly", status: "active", periodEnd: "2026-12-13T05:00:00Z", cancelAtPeriodEnd: false } };
+    return { paise, text: formatRupeesShort(paise), minutesEstimate: Math.floor(paise / 500), planId: "sales_assistant", planName: "Pro", low: false, topupAvailable: true, freeStartGranted: s.freeStart, freeStartLeftText: s.freeStart ? formatRupeesShort(FREE_START_PAISE) : null, includedMinutes: 500, includedMinutesLeft: 342, subscription: { interval: "monthly", status: "active", periodEnd: "2026-12-13T05:00:00Z", cancelAtPeriodEnd: false } };
   }
   try {
     return parseBillingBalance(await apiRequest(`/v1/tenants/${tenantId}/billing/balance`, token));
@@ -72,7 +72,7 @@ export async function claimFreeStart(token: string, tenantId: string): Promise<M
 
 /** A TEST top-up (only in `mock`): one of the four amounts, recorded in this browser. The real top-up is Razorpay's (C1, P3). */
 export async function testTopup(paise: unknown, now: Date, id: string): Promise<Moved> {
-  if (balanceScreens() !== "mock") return { ok: false, error: "not_available" };
+  if (balanceScreens() !== "mock" && billingV2() !== "mock") return { ok: false, error: "not_available" };
   if (!(TOPUP_CHOICES as readonly unknown[]).includes(paise)) return { ok: false, error: "invalid" };
   const s = await readState();
   if (s.topups.length >= 6) return { ok: false, error: "invalid" };

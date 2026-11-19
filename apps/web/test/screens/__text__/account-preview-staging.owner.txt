@@ -1,0 +1,6 @@
+# Preview Jobs (sample data)
+Shows the new Jobs screens and the new billing screens in this browser only, with made-up data. Nothing is sent, charged or saved, and nobody else sees any change. Turn it off here or from the bar at the top. The preview is off.
+form:
+<hidden name=on value=1>
+[button type=submit: Turn the preview on]
+[Back to your workspaces](/app)

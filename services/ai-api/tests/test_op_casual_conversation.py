@@ -87,3 +87,26 @@ def test_telugu_and_the_other_indian_languages_get_a_larger_reply_budget_than_en
 
     assert budget("en") == prompts.CHAT_TOKENS_EN == 900
     assert all(budget(lang) == prompts.CHAT_TOKENS_INDIAN >= 2000 for lang in ("te", "hi", "kn", "ta", "ml"))
+
+
+def test_both_assistant_prompts_say_what_stack19_is_and_never_quote_prices() -> None:
+    """Owner, 19 Nov 2026: the main assistant did not know what Stack19 is. Both the chat prompt and the Main agent prompt carry the same plain facts."""
+    assert "called Stack19" in prompts.ABOUT_STACK19 and "Never say you do not know what Stack19 is" in prompts.ABOUT_STACK19
+    assert prompts.ABOUT_STACK19 in prompts.CHAT_SYSTEM_PROMPT
+    assert prompts.ABOUT_STACK19_SHORT in prompts.SYSTEM_PROMPT and len(prompts.ABOUT_STACK19_SHORT) < 260, "the Main agent prompt has a token budget: one short line only"
+    assert "Stack19" in prompts.ABOUT_STACK19_SHORT and "₹" not in prompts.ABOUT_STACK19_SHORT
+    assert "₹" not in prompts.ABOUT_STACK19 and "unlimited" not in prompts.ABOUT_STACK19.lower(), "no price and no promise of what is not built"
+    assert "{" not in prompts.ABOUT_STACK19, "the chat prompt fills {assistant} and {business} by replace: no stray braces"
+
+
+def test_the_stack19_pitch_is_only_in_the_owner_facing_prompts() -> None:
+    """Customers hear "the AI assistant of <shop>", never Stack19's own pitch: the block lives in app/assistant/prompts.py and is used by the owner chat and the Main agent only."""
+    from pathlib import Path
+
+    app = Path(prompts.__file__).resolve().parents[1]
+    holders = sorted(str(p.relative_to(app)) for p in app.rglob("*.py") if "called Stack19" in p.read_text(encoding="utf-8"))
+    assert holders == ["assistant/prompts.py"]
+    users = sorted(str(p.relative_to(app)) for p in app.rglob("*.py") if "ABOUT_STACK19" in p.read_text(encoding="utf-8"))
+    assert users == ["assistant/prompts.py"], "no customer-facing module (calls, WhatsApp replies, drafts) may import or use it"
+    assert "Lead Finder" in prompts.ABOUT_STACK19 and "Jobs" not in prompts.ABOUT_STACK19
+    assert "large language model" in prompts.ABOUT_STACK19 and "Never pretend to be a person" in prompts.ABOUT_STACK19

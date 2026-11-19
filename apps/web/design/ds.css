@@ -458,6 +458,117 @@
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { padding-right: 3.25rem !important; }
   }
 }
+/* ==========================================================================
+   DESKTOP DENSITY (owner 19 Nov 2026: "look at their font size": the desktop read too big, only the phone had been tightened). Their SCALE is a reference only.
+   ONE token set for every screen from 1024px up (the app's own desktop breakpoint: the side menu's `lg`), applied through the shared kit classes (components/v2/app/ui.ts, cc/kit, v6/ui, ds/*, SideNav, TopBar):
+   body 14, help 13 (12), section labels 11 uppercase, page title 24, card titles 16 semibold, stat numbers 22; controls 34 with a 1px border, icon buttons 32; rows 44; page padding 28, card padding 16, gaps 12; the menu 232 wide with 34px rows; the top bar 52.
+   Same layer and !important as PHONE DENSITY v2 (a layered important rule beats Tailwind's utilities). Scoped to the v2 root with the design system on, and to min-width 1024px: the phone and the tablet keep their own sizes (they are not touched here).
+   Rules that read a Tailwind class use :where(...) so a heading or a control rule below always wins over a text-size rule. Colours and outlines are not touched. Indic text keeps its size (no 11px labels) and its no-capitals rule.
+   ========================================================================== */
+@layer theme {
+  @media (min-width: 1024px) {
+    [data-ui="v2"][data-ds="6"] {
+      --dk-body: 14px;
+      --dk-help: 13px;
+      --dk-label: 11px;
+      --dk-title: 24px;
+      --dk-card-title: 16px;
+      --dk-stat: 22px;
+      --dk-ctl-h: 34px;
+      --dk-icon-btn: 32px;
+      --dk-row-h: 44px;
+      --dk-pad-page: 28px;
+      --dk-pad-card: 16px;
+      --dk-gap: 12px;
+      --dk-side-w: 232px;
+      --dk-side-row: 34px;
+      --dk-top-h: 52px;
+    }
+
+    /* ---- the page: body size, padding ---- */
+    [data-ui="v2"][data-ds="6"] main { font-size: var(--dk-body) !important; padding-inline: var(--dk-pad-page) !important; }
+    [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-base"], [class*="text-[15px]"], [class*="text-[16px]"], [class*="text-[17px]"], [class*="text-[14.5px]"]):not(h1, h2, h3, h4) { font-size: var(--dk-body) !important; line-height: 1.5 !important; }
+    [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-sm"]):not(h1, h2, h3, h4) { font-size: var(--dk-body) !important; }
+    [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-sm"]):not(h1, h2, h3, h4, [class*="leading-"]) { line-height: 1.45 !important; }
+    /* help text (the grey lines under a title or a field): 13px */
+    [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-muted"]):where([class*="text-sm"], [class*="text-xs"]):not(h1, h2, h3, h4) { font-size: var(--dk-help) !important; }
+    [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-xs"]):not(h1, h2, h3, h4) { font-size: calc(var(--dk-help) - 1px) !important; }
+    [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-lg"], [class*="text-xl"]):not(h1, h2, h3, h4) { font-size: var(--dk-card-title) !important; line-height: 1.35 !important; }
+    /* numbers in stat tiles */
+    [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-2xl"], [class*="text-3xl"], [class*="text-4xl"], [class*="text-[26px]"], [class*="text-[28px]"]):not(h1, h2, h3, h4) { font-size: var(--dk-stat) !important; line-height: 1.2 !important; }
+    /* titles: the page's title, the card and section titles */
+    [data-ui="v2"][data-ds="6"] main h1:not(.ds-greet) { font-size: var(--dk-title) !important; line-height: 1.2 !important; }
+    [data-ui="v2"][data-ds="6"] main :is(h2, h3):not(.ds-greet):not([data-part="greeting"]) { font-size: var(--dk-card-title) !important; line-height: 1.3 !important; font-weight: 600 !important; }
+    [data-ui="v2"][data-ds="6"] main h4 { font-size: var(--dk-body) !important; line-height: 1.35 !important; }
+    /* section labels: 11px capitals (not in Indic scripts, which keep their size and have no capitals) */
+    [data-ui="v2"][data-ds="6"] main [class*="uppercase"]:not(:lang(te)):not(:lang(hi)):not(:lang(kn)) { font-size: var(--dk-label) !important; line-height: 1.3 !important; letter-spacing: 0.06em !important; }
+
+    /* ---- controls: 34px, a 1px border, text 14 ---- */
+    [data-ui="v2"][data-ds="6"] :is(#main-content, header.sticky) :is(button, summary, select, input, label, [class*="inline-flex"]):is([class*="min-h-10"], [class*="min-h-11"], [class*="min-h-12"], [class*="min-h-14"], [class*="min-h-16"]):not([type="checkbox"]):not([type="radio"]) { min-height: var(--dk-ctl-h) !important; }
+    [data-ui="v2"][data-ds="6"] #main-content :is(input, select):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]):not([class*="size-"]) { font-size: var(--dk-body) !important; line-height: 1.4 !important; }
+    [data-ui="v2"][data-ds="6"] #main-content :is(input, select)[class*="min-h-"]:not([type="checkbox"]):not([type="radio"]):not([type="file"]) { padding-block: 0 !important; }
+    [data-ui="v2"][data-ds="6"] #main-content textarea { font-size: var(--dk-body) !important; }
+    [data-ui="v2"][data-ds="6"] #main-content :is(button, a)[class*="border-2"] { border-width: 1px !important; }
+    /* icon buttons: 32px */
+    [data-ui="v2"][data-ds="6"] :is(#main-content, header.sticky) :is(button, a, label)[class*="size-9"],
+    [data-ui="v2"][data-ds="6"] :is(#main-content, header.sticky) :is(button, a, label)[class*="size-10"],
+    [data-ui="v2"][data-ds="6"] :is(#main-content, header.sticky) :is(button, a, label)[class*="size-11"],
+    [data-ui="v2"][data-ds="6"] :is(#main-content, header.sticky) :is(button, a, label)[class*="size-12"] { width: var(--dk-icon-btn) !important; height: var(--dk-icon-btn) !important; min-height: 0 !important; }
+    [data-ui="v2"][data-ds="6"] :is(#main-content, header.sticky) :is(button, a)[class*="min-w-11"] { min-width: var(--dk-icon-btn) !important; }
+    /* chips and pills keep their 13px text */
+    [data-ui="v2"][data-ds="6"] #main-content :is(button, a)[class*="rounded-full"][class*="text-sm"], [data-ui="v2"][data-ds="6"] #main-content :is(button, a)[data-chip] { font-size: var(--dk-help) !important; }
+
+    /* ---- cards: 16px padding, 12px gaps ---- */
+    [data-ui="v2"][data-ds="6"] main :is(div, section, article, li, form, details, aside)[class*="rounded-"][class*="border"]:is([class~="p-4"], [class~="p-5"], [class~="sm:p-5"], [class~="md:p-5"]) { padding: var(--dk-pad-card) !important; }
+    [data-ui="v2"][data-ds="6"] main :is(div, section, article, form)[class*="rounded-"][class*="border"][class*="bg-surface"]:is([class~="px-5"], [class~="px-6"]) { padding-inline: var(--dk-pad-card) !important; }
+    [data-ui="v2"][data-ds="6"] main :is(div, section, article, form)[class*="rounded-"][class*="border"][class*="bg-surface"][class~="p-6"] { padding: var(--dk-pad-card) !important; }
+    [data-ui="v2"][data-ds="6"] main :is([class*="gap-4"], [class*="gap-5"]) { gap: var(--dk-gap) !important; }
+    [data-ui="v2"][data-ds="6"] main [class*="gap-6"] { gap: calc(var(--dk-gap) * 4 / 3) !important; }
+
+    /* ---- tables and lists: rows 44px ---- */
+    [data-ui="v2"][data-ds="6"] main :is(td, th) { padding-block: 10px !important; }
+    [data-ui="v2"][data-ds="6"] main tbody tr { height: var(--dk-row-h); }
+    [data-ui="v2"][data-ds="6"] main :is(li, div, a, article)[class*="min-h-12"]:not([class*="inline-flex"]):not(input):not(select),
+    [data-ui="v2"][data-ds="6"] main :is(li, div, a, article)[class*="min-h-14"]:not([class*="inline-flex"]),
+    [data-ui="v2"][data-ds="6"] main :is(li, div, a, article)[class*="min-h-16"]:not([class*="inline-flex"]) { min-height: var(--dk-row-h) !important; }
+
+    /* ---- the side menu: 232px, rows of 34px ---- */
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside { width: var(--dk-side-w) !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside :where([class*="text-base"], [class*="text-sm"]) { font-size: var(--dk-body) !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside :where([class*="text-muted"]):where([class*="text-sm"]) { font-size: var(--dk-help) !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-row] { min-height: var(--dk-side-row) !important; font-size: var(--dk-body) !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-label] { padding-block: 0 !important; line-height: 1.3 !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-badge] { height: 1.25rem !important; font-size: 11.5px !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-group] > p:not(:lang(te)):not(:lang(hi)):not(:lang(kn)) { font-size: var(--dk-label) !important; font-weight: 600 !important; text-transform: uppercase !important; letter-spacing: 0.06em !important; padding-top: 0.75rem !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-group] > p:is(:lang(te), :lang(hi), :lang(kn)) { font-size: 12px !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside nav { padding-block: 0.25rem !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside a[class*="min-h-16"] { min-height: 3.25rem !important; padding: 0.5rem 0.75rem !important; gap: 0.625rem !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-business-logo] { width: 2rem !important; height: 2rem !important; font-size: var(--dk-help) !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-part="balance-box"] { padding-block: 0.375rem !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-part="balance-box"] :is(a, button) { display: inline-flex !important; min-height: var(--dk-icon-btn) !important; align-items: center !important; }
+
+    /* ---- the top bar: compact ---- */
+    [data-ui="v2"][data-ds="6"] header.sticky { min-height: var(--dk-top-h) !important; padding-inline: var(--dk-pad-page) !important; }
+    [data-ui="v2"][data-ds="6"] header.sticky :is(button, a, select, input) { font-size: var(--dk-body) !important; }
+    [data-ui="v2"][data-ds="6"] header.sticky select { padding-block: 0 !important; }
+    [data-ui="v2"][data-ds="6"] header.sticky svg { width: 18px !important; height: 18px !important; }
+    [data-ui="v2"][data-ds="6"] header.sticky kbd { font-size: var(--dk-label) !important; }
+    [data-ui="v2"][data-ds="6"] :is([data-frame="legal"], [data-frame="group-tabs"], [data-frame="usage-banner"]) { padding-inline: var(--dk-pad-page) !important; }
+
+    /* ---- Today's band (fixed pixel sizes of the hero, so the tokens reach it): a compact band, the title at the page-title size ---- */
+    [data-ui="v2"][data-ds="6"] .ds-hero { border-radius: 20px !important; padding: 14px 20px 16px !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { font-size: var(--dk-title) !important; line-height: 1.2 !important; letter-spacing: -0.4px !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { margin-top: 4px !important; font-size: var(--dk-body) !important; line-height: 1.45 !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz { width: 96px !important; height: 108px !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz-in { height: 90px !important; transform: scale(0.68) !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz-halo { top: 45px !important; width: 160px !important; height: 160px !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-compin { padding: 12px 14px 10px 16px !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-ln { font-size: var(--dk-card-title) !important; line-height: 1.4 !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-glass { height: var(--dk-ctl-h) !important; font-size: var(--dk-help) !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-chip { padding: 5px 10px !important; font-size: 12px !important; }
+    [data-ui="v2"][data-ds="6"] .ds-do { min-height: var(--dk-ctl-h) !important; border-radius: 10px !important; padding-inline: 14px !important; font-size: var(--dk-body) !important; }
+  }
+}
 /* ---- Reports (design system v6, c2/ds-reports-v2): the glossy charts, the donut's swatches and the busiest-times heatmap. Only classes and variables of the Reports page. ---- */
 [data-ui="v2"][data-ds="6"] [data-part="reports-v6"] {
   --ds-ch-enq-1: #fdba74;

@@ -9,7 +9,8 @@ import { checkPlanInput, planJob, startPlan, startSuggestion, testPlan } from "@
 import { JOB_KINDS, type JobKind } from "@/lib/jobs/types";
 import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput } from "@/lib/jobs/plan";
 
-import { DECIDERS, invalid, who } from "../../retailers/finder-guard";
+import { DECIDERS, invalid } from "../../retailers/finder-guard";
+import { jobsWho } from "../guard";
 import { jobsRefusal } from "../refusal";
 
 /**
@@ -28,7 +29,7 @@ export async function planJobAction(tenantId: string, input: PlanInput): Promise
   } catch {
     return invalid(appT(lang), "jobs.new.err.text");
   }
-  const ctx = await who(tenantId, DECIDERS);
+  const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
   try {
     return { ok: true, data: await planJob(ctx.token, tenantId, body, lang) };
@@ -39,7 +40,7 @@ export async function planJobAction(tenantId: string, input: PlanInput): Promise
 
 /** "Start" on a plan card: the one thing that begins a job. */
 export async function startPlanAction(tenantId: string, planId: string): Promise<Reply<JobStarted>> {
-  const ctx = await who(tenantId, DECIDERS);
+  const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
   if (!isPlanId(planId)) return invalid(ctx.t);
   try {
@@ -54,7 +55,7 @@ export async function startPlanAction(tenantId: string, planId: string): Promise
 
 /** "Start" on a suggested job: one tap. */
 export async function startSuggestionAction(tenantId: string, kind: JobKind): Promise<Reply<JobStarted>> {
-  const ctx = await who(tenantId, DECIDERS);
+  const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
   if (typeof kind !== "string" || !(JOB_KINDS as readonly string[]).includes(kind)) return invalid(ctx.t);
   try {
@@ -69,7 +70,7 @@ export async function startSuggestionAction(tenantId: string, kind: JobKind): Pr
 
 /** "Test call / test message to my phone": to the owner's OWN phone only, never to a customer. */
 export async function testPlanAction(tenantId: string, planId: string, channel: PlanChannel): Promise<Reply<JobTested>> {
-  const ctx = await who(tenantId, DECIDERS);
+  const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
   if (!isPlanId(planId) || (channel !== "call" && channel !== "whatsapp")) return invalid(ctx.t);
   try {

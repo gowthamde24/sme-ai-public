@@ -180,11 +180,11 @@ describe("Needs you: editing the words", () => {
     expect((box as HTMLTextAreaElement).value).toContain("ధర 500");
     expect(screen.getByText("The line that says an AI assistant wrote it stays. Nothing is sent until you approve.")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Approve and send" })).toBeNull(); // no approving while editing
-    fireEvent.change(box, { target: { value: "మా కొత్త చీరలు చూడండి" } });
+    fireEvent.change(box, { target: { value: "మా కొత్త చీరలు చూపించండి" } });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Save the new words" })));
-    expect(actions.editMessage).toHaveBeenCalledWith(MESSAGE_ID, "మా కొత్త చీరలు చూడండి");
+    expect(actions.editMessage).toHaveBeenCalledWith(MESSAGE_ID, "మా కొత్త చీరలు చూపించండి");
     expect(actions.approveMessage).not.toHaveBeenCalled();
-    expect(screen.getByText("మా కొత్త చీరలు చూడండి")).toBeInTheDocument(); // back to reading, with the new words
+    expect(screen.getByText("మా కొత్త చీరలు చూపించండి")).toBeInTheDocument(); // back to reading, with the new words
     expect(screen.getByRole("button", { name: "Approve and send" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("Saved. Read it once more, then approve.");
   });
@@ -500,7 +500,7 @@ describe("the call row on a desktop, as the owner's target draws it", () => {
     const row = document.querySelector("[data-needs-row]") as HTMLElement;
     const text = row.textContent ?? "";
     expect(text).toContain("Ramesh");
-    expect(text).toContain("ధర మరియు విజిట్");
+    expect(text).toContain("ధర ఇంకా విజిట్");
     expect(text.replace("Ramesh", "")).not.toMatch(/[A-Za-z]{3}/); // no English word is left
   });
 });
@@ -558,7 +558,7 @@ describe("Needs you: a caller who asked for a person (C1 #347)", () => {
     const a = cardOf(/^Ravi K\. wants to visit on .*10:00/);
     expect(within(a).getByRole("link", { name: "Book" })).toHaveAttribute("href", book);
     expect(within(a).queryByRole("link", { name: "Call back" })).toBeNull();
-    expect(within(a).getByText("Book it in Visits, then mark it done.")).toBeInTheDocument();
+    expect(within(a).getByText("Book it in Visits, then press Done.")).toBeInTheDocument();
     await act(async () => fireEvent.click(within(a).getByRole("button", { name: "Done, we called back" })));
     expect(actions.callHandled).toHaveBeenCalledWith(CALL_ID);
   });
@@ -690,14 +690,14 @@ describe("Needs you offline (app v4 part 9): safe taps wait for the network, mon
   });
 });
 
-describe("Needs you: a Lead Desk plan's one upsell row (owner decision 4 Nov)", () => {
-  const upsell: NeedsCard = { type: "item", key: "plan_upsell-lead_finder", at: "2026-10-11T03:12:00Z", item: { kind: "plan_upsell", id: "lead_finder", customer: "Find new retailers near you", city: null, agent: "lead_finder", summary: "part of AI Workforce", at: "2026-10-11T03:12:00Z", amount_paise: null, href: "/app/tenants/T/settings?section=plan" } };
-  it("is one short row, 'Find new retailers near you · part of AI Workforce', that opens Settings -> Plan", () => {
+describe("Needs you: a plan without the Lead Finder: one upsell row (owner decision 4 Nov)", () => {
+  const upsell: NeedsCard = { type: "item", key: "plan_upsell-lead_finder", at: "2026-10-11T03:12:00Z", item: { kind: "plan_upsell", id: "lead_finder", customer: "Find new retailers near you", city: null, agent: "lead_finder", summary: "not on your plan yet", at: "2026-10-11T03:12:00Z", amount_paise: null, href: "/app/tenants/T/settings?section=plan" } };
+  it("is one short row, 'Find new retailers near you · not on your plan yet', that opens Settings -> Plan", () => {
     compactNext = true;
     board([upsell]);
     const row = document.querySelector('[data-needs-row="plan_upsell-lead_finder"]') as HTMLElement;
     expect(row.textContent).toContain("Plan");
-    expect(row.textContent).toContain("Find new retailers near you · part of AI Workforce");
+    expect(row.textContent).toContain("Find new retailers near you · not on your plan yet");
     expect(within(row).getByRole("link", { name: "See plans" })).toHaveAttribute("href", "/app/tenants/T/settings?section=plan");
   });
   it("is not counted as something that waits", () => {

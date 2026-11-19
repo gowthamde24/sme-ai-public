@@ -186,7 +186,7 @@ describe("the upload field", () => {
   });
   it("says its words in Telugu", () => {
     show({ words: appDict("te") as Record<string, string> });
-    expect(zone()).toHaveTextContent("మీ డాక్యుమెంట్ ఇక్కడ వదలండి లేదా ఫైల్ ఎంచుకోండి");
+    expect(zone()).toHaveTextContent("డాక్యుమెంట్‌ని ఇక్కడికి లాగండి, లేదా ఫైల్ ఎంచుకోండి");
   });
 });
 

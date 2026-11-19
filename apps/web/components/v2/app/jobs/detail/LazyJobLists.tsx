@@ -1,23 +1,27 @@
 "use client";
 
-import { Suspense, lazy, type ComponentProps } from "react";
+import { Suspense, lazy, type ComponentType, type ReactNode } from "react";
 
-const Faq = lazy(() => import("./JobLists").then((m) => ({ default: m.FaqCard })));
-const Finds = lazy(() => import("./JobLists").then((m) => ({ default: m.FindsOutCard })));
+import type { FaqCard as FaqCardType, FindsOutCard as FindsOutCardType } from "./JobLists";
+import type { WhoTalks as WhoTalksType } from "./WhoTalks";
 
-/** The two lists of the job page (what it finds out, the answers it gives) as their own lazy chunk: they sit below the first screen and the page must stay under its route-JS ceiling. Same props as in `JobLists`. */
-export function FaqCard(props: ComponentProps<typeof Faq>) {
-  return (
-    <Suspense fallback={null}>
-      <Faq {...props} />
-    </Suspense>
-  );
+/**
+ * The parts of the job page that sit below the first screen, or that most jobs never show, as their own lazy chunks: the page must stay under its route-JS ceiling.
+ * One small helper builds the three wrappers (a quiet fallback while a chunk loads; the Who talks card draws a block of about its height so the page does not jump). Same props as the real components.
+ */
+function card<P extends object>(Lazy: ComponentType<P>, fallback: ReactNode = null) {
+  return function Card(props: P) {
+    return (
+      <Suspense fallback={fallback}>
+        <Lazy {...props} />
+      </Suspense>
+    );
+  };
 }
 
-export function FindsOutCard(props: ComponentProps<typeof Finds>) {
-  return (
-    <Suspense fallback={null}>
-      <Finds {...props} />
-    </Suspense>
-  );
-}
+export const FaqCard = card(lazy(() => import("./JobLists").then((m) => ({ default: m.FaqCard as typeof FaqCardType }))));
+export const FindsOutCard = card(lazy(() => import("./JobLists").then((m) => ({ default: m.FindsOutCard as typeof FindsOutCardType }))));
+export const WhoTalks = card(
+  lazy(() => import("./WhoTalks").then((m) => ({ default: m.WhoTalks as typeof WhoTalksType }))),
+  <span data-skeleton="" className="jb-skeleton block h-72 rounded-2xl" />,
+);

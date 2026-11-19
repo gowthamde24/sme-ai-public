@@ -42,12 +42,13 @@ describe("the Lead Finder for a school: organisations only", () => {
     expect(en["nav.item.retailers"]).toBe("Find organisations");
     expect(en["lf.find.label"]).toBe("Find organisations near your school in …");
     expect(en["lf.sub"]).toMatch(/^Apartment associations, companies, coaching centres and vendors near your school/);
-    expect(en["tier.upsell.title"]).toBe("Finding organisations near the school is part of AI Workforce");
+    expect(en["tier.upsell.title"]).toBe("Finding organisations near the school is not on your plan yet");
   });
   it("Telugu has its own words for each of them (none is the English left as it is)", () => {
     const en = schoolWords("en");
     const te = schoolWords("te");
-    const same = Object.keys(en).filter((k) => te[k] === en[k] || !/[ఀ-౿]/.test(te[k]));
+    const LATIN_ONLY = ["lf.plan.ok"]; // "OK" stays in Latin letters in Telugu (the owner's unified terms)
+    const same = Object.keys(en).filter((k) => !LATIN_ONLY.includes(k) && (te[k] === en[k] || !/[ఀ-౿]/.test(te[k])));
     expect(same).toEqual([]);
     expect(te["nav.item.retailers"]).toBe("సంస్థలను వెతకండి");
     // the organisation variant really replaced the business words in Telugu too

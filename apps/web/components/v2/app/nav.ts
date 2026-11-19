@@ -62,6 +62,8 @@ export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
 export const V6_PAGES: readonly NavItem[] = [
   { id: "myassistant", label: "My assistant", icon: "assistant", path: "/my-assistant", roles: ADMINS },
   { id: "billing", label: "Billing", icon: "dues", path: "/billing", also: ["/plans"], roles: ADMINS, unlessFeature: "early_access" }, // free early access (EARLY_ACCESS=1): the row is not offered; the page says so
+  // JOBS (planner, 19 Nov): "What you sell" takes the place of Catalogue in the menu; its page is offered by the feature "jobs" (the page itself answers 404 while the flag is off). Every member reads it, Owner and Admin change it.
+  { id: "sell", label: "What you sell", icon: "catalogue", path: "/what-you-sell", feature: "jobs", roles: ALL_ROLES },
 ];
 export const NAV: readonly NavGroup[] = [
   {
@@ -142,7 +144,8 @@ export const NAV: readonly NavGroup[] = [
     items: [
       // job CC: the people in the business, with their owls; everyone sees who is on the team, the Owner and Admin manage it
       { id: "team", label: "Team", icon: "team", path: "/team", roles: ALL_ROLES },
-      { id: "office", label: "Office", icon: "office", path: "/ai-team", also: ["/office", "/agents"], bar: true, module: "office", roles: ALL_ROLES },
+      // JOBS on: "Office" / "AI team" is the Jobs page (planner, 19 Nov); the address still opens, and goes there (lib/jobs/redirect.ts)
+      { id: "office", label: "Office", icon: "office", path: "/ai-team", also: ["/office", "/agents"], bar: true, module: "office", unlessFeature: "jobs", roles: ALL_ROLES },
       // sidebar v2: how the assistant talks (Settings > AI assistant, the Owner's) and the number it calls from (its own page; "not set up yet" until telephony exists; the WhatsApp number is Integrations > WhatsApp)
       { id: "train", label: "Train how it talks", icon: "train", path: "/ai-team/training", roles: ["owner"] },
       { id: "phone", label: "Phone number", icon: "phone", path: "/phone-number", roles: ADMINS },
@@ -514,7 +517,9 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
     id: "d-setup",
     label: "Setup",
     rows: [
-      { id: "v6-catalogue", label: "Catalogue", icon: "catalogue", pages: ["sarees", "catalogue", "programmes"] },
+      // JOBS (planner, 19 Nov): "What you sell" replaces Catalogue in this place while JOBS is on; the old pages keep their addresses and are one tap away from it
+      { id: "v6-sell", label: "What you sell", icon: "catalogue", pages: ["sell"], onlyWith: "jobs" },
+      { id: "v6-catalogue", label: "Catalogue", icon: "catalogue", pages: ["sarees", "catalogue", "programmes"], hiddenWith: "jobs" },
       { id: "v6-phone", label: "Phone numbers", icon: "phone", pages: ["phone", "integrations"] },
       { id: "v6-billing", label: "Billing", icon: "dues", pages: ["billing"] },
       { id: "v6-settings", label: "Settings", icon: "settings", pages: ["settings", "team"] },

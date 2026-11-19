@@ -8,25 +8,25 @@ Not live Teach your assistant how to speak on calls: how to greet, what to ask, 
 Sections
 <select label="SectionsKnowledgeVoice & toneRulesPractice">
   options: Knowledge=knowledge | Voice & tone=voice* | Rules=rules | Practice=practice
-Using defaults How your assistant sounds and speaks. Pick a sound, then fine-tune it.
-{label="Choose a sound"}
-## Choose a sound
-Three sounds for the phone. Hear a greeting in each, then use the one that fits your business. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
-{role=group label="Language of the voice"}
+Using defaults
+{label="How your assistant sounds"}
+## How your assistant sounds
+Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
+{role=group label="Language"}
 [button type=button: తెలుగు]
 [button type=button: English]
 [button type=button: हिन्दी]
 [button type=button: ಕನ್ನಡ]
-### Warm
-Friendly and close, like a neighbour.
-[button type=button: ▶ Hear greeting]
-✓ In use
-### Calm
-Steady and unhurried. Builds trust. No voice with this sound in this language yet.
-### Bright
-Quick and cheerful, full of energy.
-[button type=button: ▶ Hear greeting]
-[button type=button: Use this sound]
+legend: Voice
+{role=radiogroup label="Voice"}
+<radio name=vt-voice label="WarmIn useFriendly and close, like a neighbour." value=warm checked>
+Warm In use Friendly and close, like a neighbour.
+[button type=button: Play: Warm]
+<radio name=vt-voice label="CalmNo voice with this sound in this language yet." disabled value=calm>
+Calm No voice with this sound in this language yet.
+<radio name=vt-voice label="BrightQuick and cheerful, full of energy." value=bright>
+Bright Quick and cheerful, full of energy.
+[button type=button: Play: Bright]
 {label="Practice"}
 ## Practice
 Try your assistant the way a customer would.

@@ -35,7 +35,8 @@ def w() -> World:
 
 def test_the_browser_gets_only_public_ids_and_only_when_it_can_connect(w: World) -> None:
     got = w.call("GET", T + "/whatsapp/connect/config", "a_owner").json()
-    assert got == {"available": True, "app_id": "1407102551140162", "config_id": "999000111222", "graph_version": "v25.0", "missing": [], "onboarding_types": ["cloud_api", "coexistence"]}
+    assert got == {"available": True, "app_id": "1407102551140162", "config_id": "999000111222", "graph_version": "v25.0", "missing": [], "onboarding_types": ["cloud_api", "coexistence"],
+                   "embedded_version": "v5", "launch_extras": {"setup": {}, "version": "v5"}}
     assert w.call("GET", T + "/whatsapp/connect/config", "a_sales").status_code == 403
     bare = World(configured=False)
     out = bare.call("GET", T + "/whatsapp/connect/config", "a_owner").json()
@@ -157,3 +158,27 @@ def test_a_number_kept_on_the_whatsapp_business_app_is_recorded_as_coexistence_a
     assert w.call("POST", T + "/whatsapp/connect", "a_owner", {**BODY, "coexistence": True}).status_code == 200
     assert w.repo.account is not None and w.repo.account["coexistence"] is True
     assert w.call("POST", T + "/whatsapp/connect", "a_owner", {**BODY, "coexistence": "yes please"}).status_code == 422, "a typed boolean, nothing else"
+
+
+def test_a_version_5_payload_names_the_account_by_messaging_account_ids_and_the_number_is_found(w: World) -> None:
+    """Embedded Signup v5 (20 Oct 2026): `messaging_account_ids` instead of `waba_id`, `is_on_biz_app` instead of the event name; the number may not be named: the account's only number is used."""
+    body = {"messaging_account_ids": ["999999999999999", WABA], "code": BODY["code"], "is_on_biz_app": True}
+    r = w.call("POST", T + "/whatsapp/connect", "a_owner", body)
+    assert r.status_code == 200, r.text
+    account = w.repo.account
+    assert account is not None and account["waba_id"] == WABA and account["phone_number_id"] == PNID and account["coexistence"] is True, "the shared account, its one number, coexistence from is_on_biz_app"
+    w.repo.account = None
+    foreign = w.call("POST", T + "/whatsapp/connect", "a_owner", {"messaging_account_ids": ["999999999999999"], "code": BODY["code"]})
+    assert foreign.status_code == 409 and foreign.json()["error"]["code"] == "whatsapp_signup_invalid" and w.repo.account is None, "an account the signup did not share is refused"
+    w.graph.waba_phones[WABA] = {PNID, "200000000000999"}
+    two = w.call("POST", T + "/whatsapp/connect", "a_owner", {"messaging_account_ids": [WABA], "code": BODY["code"]})
+    assert two.status_code == 409 and two.json()["error"]["code"] == "whatsapp_no_access", "two numbers and none named: we do not guess"
+    none = w.call("POST", T + "/whatsapp/connect", "a_owner", {"code": BODY["code"]})
+    assert none.status_code == 422, "an account id is required"
+
+
+def test_the_launch_extras_follow_the_version_of_the_configuration(w: World) -> None:
+    from app.whatsapp.routes import _launch_extras
+
+    assert _launch_extras("v5") == {"setup": {}, "version": "v5"}
+    assert _launch_extras("v4") == {"setup": {}, "featureType": "whatsapp_business_app_onboarding", "sessionInfoVersion": "3"}

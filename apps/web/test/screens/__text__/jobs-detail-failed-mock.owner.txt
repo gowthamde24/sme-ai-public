@@ -4,6 +4,31 @@
 [button type=button: Rename]
 When a customer asked a price or you promised to get back, your assistant follows up on WhatsApp so nobody is forgotten. Needs a fix Last run 9 min ago On
 [button type=button: Follow up on price questions and promises]
+{label="Who talks"}
+## Who talks
+Always says it is an AI F Follow up on price questions and promises
+[button type=button: Rename]
+Customers hear: “the AI assistant of Neelambari Silks”
+{label="This job speaks … in a … voice from …."} This job speaks
+<select label="This job speaks … in a … voice from …. (1)">
+  options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn
+in a
+<select label="This job speaks … in a … voice from …. (2)">
+  options: respectful* | friendly | casual
+voice from
+<select label="This job speaks … in a … voice from …. (3)">
+  options: the shop number=shop | the second number=second*
+.
+respectful “Namaskaram Suresh garu, …” · +91 90000 xxx45
+legend: Voice
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Soft woman voiceWarm, a little slow" value=female_warm>
+Soft woman voice Warm, a little slow
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Bright woman voiceQuick and cheerful" value=female_clear>
+Bright woman voice Quick and cheerful
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Calm man voiceSteady and clear" value=male_calm checked>
+Calm man voice Steady and clear
+What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the second number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off. Or just ask your assistant
+[button type=button: “Make the visits job speak Telugu.”]
 {role=alert} Why: WhatsApp only lets us write first with an approved template once a customer’s 24 hours are over. Pick a template and it goes out after your OK.
 - Sravani Reddy Asked a price 2 days ago. WhatsApp’s 24 hours are over. [Send template](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
 - Padma Asked about the blue Pochampally saree 3 days ago. WhatsApp’s 24 hours are over. [Send template](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
@@ -23,9 +48,7 @@ What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → 
 - 10 am WhatsApp
 - 10:30 am call
 ## What it says
-[Change by saying it](/app/tenants/22222222-2222-2222-2222-222222222222?say=About%20%E2%80%9CFollow%20up%20on%20price%20questions%20and%20promises%E2%80%9D%3A%20) WhatsApp message · English “ Namaskaram Ravi garu, this is the AI assistant of Neelambari Silks. You asked about a price. Shall I send you the details? ” Speak in
-<select label="Speak in …">
-  options: the customer’s language=customer* | English=en | Telugu=te | Hindi=hi | Kannada=kn
+[Change by saying it](/app/tenants/22222222-2222-2222-2222-222222222222?say=About%20%E2%80%9CFollow%20up%20on%20price%20questions%20and%20promises%E2%80%9D%3A%20) WhatsApp message · English “ Namaskaram Ravi garu, this is the AI assistant of Neelambari Silks. You asked about a price. Shall I send you the details? ”
 ## What it finds out
 <checkbox label="Which item and price they asked about" checked>
 Which item and price they asked about

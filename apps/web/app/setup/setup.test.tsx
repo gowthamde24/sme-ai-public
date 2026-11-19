@@ -30,7 +30,7 @@ const TYPE_WORDS = { label: "Business type", placeholder: "Choose or search your
 const words: SetupWords = { type: TYPE_WORDS, name: "Your business name", nameHelp: "Customers see this name.", language: "Which language should the app use?", submit: "Continue", error: "Something went wrong." };
 const groups = [
   { key: "deep", label: "Built especially for", options: [{ id: "textiles", name: "Textiles", tagline: "Sarees" }] },
-  { key: "leads", label: "Lead Desk", options: [{ id: "gym", name: "Gym", tagline: "Memberships" }] },
+  { key: "leads", label: "Businesses with enquiries", options: [{ id: "gym", name: "Gym", tagline: "Memberships" }] },
   { key: "other", label: "Other", options: [{ id: "other", name: "Other", tagline: "Anything else" }] },
 ];
 const pick = (name: string) => {

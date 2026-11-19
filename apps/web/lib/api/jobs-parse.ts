@@ -2,7 +2,8 @@ import { bad, bool, int, iso, list, oneOf, optInt, optIso, optStr, rec, str, uui
 import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
 import type { ExcludedCode, JobPlan, PlanBasisCode, Suggestion } from "@/lib/jobs/plan";
 import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "@/lib/jobs/plan";
-import { JOB_KINDS, JOB_STATUSES, NEEDS_TARGETS, PLAN_GATES, type Job, type JobParams, type NeedsYouItem, type TodayJobs } from "@/lib/jobs/types";
+import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES, type JobWho, type WhoNumberInfo } from "@/lib/jobs/who";
+import { JOB_KINDS, JOB_STATUSES, NEEDS_TARGETS, PLAN_GATES, type Job, type JobParams, type JobSpeaks, type NeedsYouItem, type TodayJobs } from "@/lib/jobs/types";
 
 /**
  * THE ADAPTER: every parser of the Jobs contract (C1's FINAL 1.0, contracts/jobs-contract-DRAFT.md sections 1 to 8, 14 and 15) lives in this file, with no request and no mock in it, so the mock fixtures (lib/jobs/fixtures.ts) are parsed by
@@ -22,6 +23,24 @@ export function params(v: unknown): JobParams {
   return out;
 }
 
+/**
+ * `speaks {language, voice, number}` of a job (C1 contract 1.1, assumed: see jobs-templates-web-needs.md): closed words and a short voice name; absent = nothing to show. It is an extra of a row, so it is LENIENT like `parseWho`: a value the web has no word for
+ * (a long word, a number where a word is expected, a speaks that is not an object) is simply not shown (null), never an error that would take the whole jobs list (and Today's "Running now") down with it.
+ */
+function parseSpeaks(v: unknown): JobSpeaks | null {
+  if (v === null || v === undefined || typeof v !== "object" || Array.isArray(v)) return null;
+  const x = v as Record<string, unknown>;
+  const opt = (k: string, max: number, closed: boolean): string | null => {
+    if (x[k] === null || x[k] === undefined) return null;
+    try {
+      return closed ? word(x[k], `speaks.${k}`, max) : str(x[k], `speaks.${k}`, max);
+    } catch {
+      return null;
+    }
+  };
+  return { language: opt("language", 12, true), voice: opt("voice", 40, false), number: opt("number", 20, true) };
+}
+
 /* ---- a job (section 1) ---- */
 export function parseJob(json: unknown): Job {
   const x = rec(json, "job");
@@ -39,6 +58,7 @@ export function parseJob(json: unknown): Job {
     lastRunAt: optIso(x.last_run_at, "last_run_at"),
     fix: fix ? { code: word(fix.code, "fix.code"), count: int(fix.count, "fix.count", 0, 1_000_000) } : null,
     planGate: gate ? oneOf(gate.code, PLAN_GATES, "plan_gate.code") : null,
+    ...(x.speaks !== undefined ? { speaks: parseSpeaks(x.speaks) } : {}),
   };
 }
 export const parseJobs = (json: unknown): Job[] => list(Array.isArray(json) ? json : rec(json, "jobs").items, "jobs", 100).map(parseJob);
@@ -122,7 +142,30 @@ export function parseJobDetail(json: unknown): JobDetail {
     failure: failure ? { code: word(failure.code, "failure.code"), params: params(failure.params), items: list(failure.items ?? [], "failure.items", 50).map(item) } : null,
     test: x.test_channel === null || x.test_channel === undefined ? null : oneOf(x.test_channel, TEST_CHANNELS, "test_channel"),
     cost: parseJobCost(x.cost),
+    who: parseWho(x.speaks, x.numbers),
   };
+}
+
+/**
+ * `JobDetail.speaks {language, tone, voice, number}` and the workspace's `numbers [{key, masked}]` (the proposal, contracts/template-builder-web-needs.md): the Who talks card. The card is an extra, so a word the web does not know (a fourth voice, another number) draws no card instead of breaking the page: null.
+ */
+export function parseWho(speaks: unknown, numbers: unknown): JobWho | null {
+  if (speaks === null || speaks === undefined || typeof speaks !== "object" || Array.isArray(speaks)) return null;
+  const s = speaks as Record<string, unknown>;
+  const closed = <T extends string>(v: unknown, allowed: readonly T[]): T | null => (typeof v === "string" && (allowed as readonly string[]).includes(v) ? (v as T) : null);
+  const language = closed(s.language, WHO_LANGUAGES);
+  const tone = closed(s.tone, WHO_TONES);
+  const voice = closed(s.voice, WHO_VOICES);
+  const number = closed(s.number, WHO_NUMBERS);
+  if (!language || !tone || !voice || !number) return null;
+  const rows = Array.isArray(numbers) ? numbers.slice(0, 4) : [];
+  const known: WhoNumberInfo[] = [];
+  for (const r of rows) {
+    const key = r && typeof r === "object" ? closed((r as Record<string, unknown>).key, WHO_NUMBERS) : null;
+    const masked = r && typeof r === "object" ? (r as Record<string, unknown>).masked : null;
+    if (key && typeof masked === "string" && /^[+0-9 xX*•-]{4,24}$/.test(masked) && !known.some((k) => k.key === key)) known.push({ key, masked });
+  }
+  return { language, tone, voice, number, numbers: known };
 }
 /** `JobDetail.cost {minutes_used, minutes_included, rupees|null}`: the month so far (the plan card's `cost` is the per-plan estimate, see parsePlan). */
 function parseJobCost(v: unknown): JobCost {

@@ -135,6 +135,27 @@ describe("proxy", () => {
     expect(req.headers.get("x-sme-path")).toBe("/app/tenants/t1/orders?tab=open");
   });
 
+  it("SERVER_TIMING=1: a workspace page answers with a Server-Timing header (numbers and fixed names only) and the render is told when the proxy took the request; off, none of it", async () => {
+    refreshSession.mockImplementation(async () => signedIn());
+    const off = request("/app/tenants/t1");
+    expect((await proxy(off)).headers.get("server-timing")).toBeNull();
+    expect(off.headers.get("x-sme-t0")).toBeNull();
+    vi.stubEnv("SERVER_TIMING", "1");
+    try {
+      const on = request("/app/tenants/t1/leads?x=secret");
+      on.headers.set("x-sme-t0", "1"); // a caller cannot choose it
+      const header = (await proxy(on)).headers.get("server-timing") ?? "";
+      expect(header).toMatch(/^proxy_pre;dur=[\d.]+, proxy_session;dur=[\d.]+, proxy_total;dur=[\d.]+$/);
+      expect(header).not.toMatch(/secret|t1/);
+      expect(Number(on.headers.get("x-sme-t0"))).toBeGreaterThan(1_000_000);
+      // only the workspace's own pages
+      expect((await proxy(request("/app"))).headers.get("server-timing")).toBeNull();
+      expect((await proxy(request("/app/tenants"))).headers.get("server-timing")).toBeNull();
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it("does not touch the session for pages that need none", async () => {
     await proxy(request("/"));
     expect(refreshSession).not.toHaveBeenCalled();
@@ -230,5 +251,44 @@ describe("the staff console (/staff, STAFF_CONSOLE)", () => {
     const response = await proxy(request("/staffing"));
     expect(response.headers.get("location")).toBeNull();
     expect(refreshSession).not.toHaveBeenCalled();
+  });
+
+  describe("JOBS off: the Jobs pages and What you sell answer a true 404 (a rewrite with status 404)", () => {
+    const T = "/app/tenants/11111111-1111-4111-8111-111111111111";
+    const withCookie = (path: string, cookie: string) => new NextRequest(new URL(path, "http://localhost:3000"), { headers: { cookie } });
+    afterEach(() => vi.unstubAllEnvs());
+    it("a signed-in person gets 404 for /jobs, /jobs/new, /jobs/x and /what-you-sell", async () => {
+      vi.stubEnv("JOBS", "");
+      refreshSession.mockResolvedValue(signedIn());
+      for (const p of ["/jobs", "/jobs/new", "/jobs/abc", "/what-you-sell"]) {
+        const response = await proxy(request(`${T}${p}`));
+        expect(response.status, p).toBe(404);
+        expect(response.headers.get("x-middleware-rewrite"), p).toContain("not-found-while-jobs-is-off");
+        expect(response.headers.get("Content-Security-Policy")).toContain("nonce-");
+      }
+    });
+    it("other pages, and JOBS on or mock, are not touched", async () => {
+      vi.stubEnv("JOBS", "");
+      refreshSession.mockResolvedValue(signedIn());
+      expect((await proxy(request(`${T}/billing`))).status).toBe(200);
+      for (const v of ["1", "mock"]) {
+        vi.stubEnv("JOBS", v);
+        expect((await proxy(request(`${T}/jobs`))).status, v).toBe(200);
+      }
+    });
+    it("a signed-out visitor still goes to the sign-in page (nothing shows the page exists)", async () => {
+      vi.stubEnv("JOBS", "");
+      refreshSession.mockResolvedValue(signedOut());
+      expect(new URL((await proxy(request(`${T}/jobs`))).headers.get("location") ?? "").pathname).toBe("/login");
+    });
+    it("staging preview: a browser with the preview cookie is let through; without PREVIEW_JOBS the cookie means nothing", async () => {
+      vi.stubEnv("JOBS", "");
+      refreshSession.mockResolvedValue(signedIn());
+      vi.stubEnv("PREVIEW_JOBS", "1");
+      expect((await proxy(withCookie(`${T}/jobs`, "s19_preview=jobs"))).status).toBe(200);
+      expect((await proxy(withCookie(`${T}/jobs`, "s19_preview=1"))).status).toBe(404);
+      vi.stubEnv("PREVIEW_JOBS", "");
+      expect((await proxy(withCookie(`${T}/jobs`, "s19_preview=jobs"))).status).toBe(404);
+    });
   });
 });

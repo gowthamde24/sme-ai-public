@@ -1,0 +1,20 @@
+# Jobs
+What your assistant is doing for you
+{label="Filter jobs"} [All 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Paused 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
+[button type=button: New job]
+## No jobs yet
+A job is one thing your assistant does for you, like calling every new enquiry. Start with one.
+{label="Call every new enquiry right away"}
+### Call every new enquiry right away
+Phone call and WhatsApp N Neelambari Silks Business account Hi Lakshmi! Thank you for asking about Kanchipuram silk sarees at Neelambari Silks. We will call you to help you choose. – Neelambari Silks A Assistant Asha, the AI assistant of Neelambari Silks. Hi Lakshmi, you enquired about Kanchipuram silk sarees. A Is now a good time for two quick questions? A thank-you message and a quick call while they are still looking
+[button type=button: Use this]
+{label="Answer my calls when I can't"}
+### Answer my calls when I can't
+Phone call A Assistant Asha, the AI assistant of Neelambari Silks. Our team is busy at the moment, how can I help you? A Tell me what you are looking for and I will pass it on to them. No customer call goes unanswered, and you see who wanted what
+[button type=button: Use this]
+{label="New collection arrived"}
+### New collection arrived
+WhatsApp message N Neelambari Silks Business account Hi Lakshmi! New arrivals at Neelambari Silks: Kanchipuram silk sarees. Reply YES and we will send you the photos. Reply STOP if you do not want these messages. Tell customers who said yes to messages, with photos on request
+[button type=button: Use this]
+[button type=button: Or say what you need…]
+[Do-Not-Call list Numbers your assistant never calls or messages](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call)

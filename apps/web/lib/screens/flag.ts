@@ -3,6 +3,8 @@
  * the bundle, like PLAN_SCREENS and lib/auth/signup-open.ts), so a Cloud Run environment variable is enough. Off by default: unset or anything else = off (the screen is not there). "mock" = on with FAKE data that lives in a cookie of the
  * browser (for review and the pictures: no network, nothing stored on a server). "on" = the API of that part, which C1 has not published yet (ADR 0092 and contract-outcomes.md): until it exists the screen says "Not available yet", never a guess.
  */
+import { previewMode } from "./preview";
+
 export type ScreenMode = "off" | "on" | "mock";
 
 export function screenMode(value: string | undefined): ScreenMode {
@@ -34,7 +36,7 @@ export const outreachScreens = (value: string | undefined = process.env.OUTREACH
 /** Offer campaigns and marketing consent (campaigns S3 and S4, 17 Nov): "Who wants offers", the offer form and its approval screen. OFFER_SCREENS=1 shows them (staging); unset = off (production). Nothing here sends anything. */
 export const offerScreens = (value: string | undefined = process.env.OFFER_SCREENS): ScreenMode => screenMode(value);
 /** JOBS (owner decision 19 Nov 2026, docs: decision-ai-team): jobs on Today, the job pages, and the one design system (round ticks, solid status chips, v2 density, the branded loading). `1` = on (staging first); unset = off (production, and Customer Zero's first weeks). */
-export const jobsScreens = (value: string | undefined = process.env.JOBS): ScreenMode => screenMode(value);
+export const jobsScreens = (value?: string): ScreenMode => screenMode(value ?? previewMode() ?? process.env.JOBS); // PREVIEW_JOBS (staging only): one browser can see the screens with sample data (lib/screens/preview.ts)
 export const taskScreens = (value: string | undefined = process.env.TASK_SCREENS): ScreenMode => screenMode(value);
 export const topupScreens = (value: string | undefined = process.env.TOPUP_SCREENS): ScreenMode => (earlyAccess() ? "off" : screenMode(value));
 
@@ -150,6 +152,18 @@ export const outboxWhatsappScreens = (value: string | undefined = process.env.OU
 export const legalDraftPages = (value: string | undefined = process.env.LEGAL_DRAFT_PAGES): boolean => value === "1";
 
 /**
+ * The new animated landing page with the plans and the questions, a DRAFT for the owner (19 Nov 2026; route /landing-draft, app/landing-draft/route.ts). `1` serves it (staging, under a "Draft: not live" bar, never indexed);
+ * anything else = a plain 404, so it is never public. The live home page is not touched by it.
+ */
+export const landingDraft = (value: string | undefined = process.env.LANDING_DRAFT): boolean => value === "1";
+
+/**
+ * Billing v2 (owner's final pricing, 19 Nov 2026): the Billing page as ONE ₹ wallet with a usage line per feature, optional spending limits, top-up, warnings at 80% and 100%, the upgrade hint and numbers on demand. The paid-plan parts come from Feb 2027, so `mock` shows them as a clear "Preview" with made-up usage (nothing is charged or sent;
+ * the state of a scenario is chosen with ?demo=low80|full100|over|upgrade|numbers), `1` = C1's balance route where it exists (lib/api/wallet.ts says which parts are real); anything else = off and the Billing page is exactly what it was. Needs DESIGN_V6.
+ */
+export const billingV2 = (value?: string): ScreenMode => (earlyAccess() ? "off" : screenMode(value ?? previewMode() ?? process.env.BILLING_V2));
+
+/**
  * Today v5, "quiet Today" (decided by C2, 13 Nov 2026, under the owner's standing rule; the owner can reverse it): what needs the person, the assistant and the day's cards stay in view; the team strip and the totals after calls are folded under ONE line, "More on Today". Off unless `1`; ON in staging.
  */
 export const todayV5 = (value: string | undefined = process.env.TODAY_V5): boolean => value === "1";
@@ -213,3 +227,9 @@ export const ownerTalkPrefs = (value: string | undefined = process.env.OWNER_TAL
  * /billing says "Free during early access", and the site's pricing page says so above the future plans. Unset = the app as it was (staging today). Read by the server at request time.
  */
 export const earlyAccess = (value: string | undefined = process.env.EARLY_ACCESS): boolean => value === "1";
+
+/**
+ * The Chats composer queue (owner, 19 Nov 2026): the text box is always there; when the 24 hour WhatsApp window is closed the message is QUEUED, the approved hello (`continue_chat`) goes first and the message goes the moment the customer replies (C1's `/conversations/{lead}/queued-message`,
+ * contracts/composer-queue-DRAFT.md). `1` = C1's routes, `mock` = made-up answers kept in a cookie of the browser (nothing is sent; texts with a `#` word walk through every state, see lib/api/chat-queue.ts), unset = the old behaviour (the template picker), unchanged. Only with DESIGN_V6.
+ */
+export const chatQueueScreens = (value: string | undefined = process.env.CHAT_QUEUE_SCREENS): ScreenMode => screenMode(value);
