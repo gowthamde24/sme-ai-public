@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import { jobsScreens } from "@/lib/screens/flag";
 
 /**
- * The Jobs pages are not there while JOBS is off. The answer is given HERE, in the layout, and not in the page: the page has a loading screen (loading.tsx), so by the time it decides, the reply has already started with status 200;
- * a layout runs before that, so a missing page is a true 404 (planner's decision, 19 Nov).
+ * A second guard behind proxy.ts (lib/jobs/closed.ts): with JOBS off these pages answer "not found" at the proxy with a true 404 status, before anything renders. Here it only makes sure the page is never drawn if a request ever got past the proxy
+ * (a layout cannot give the status itself: the pages have a loading screen, so the reply has already started with 200 by then).
  */
 export default function JobsLayout({ children }: { children: ReactNode }) {
   if (jobsScreens() === "off") notFound();
