@@ -7,8 +7,8 @@ import { ApiRequestError } from "@/lib/api/client";
 import { failureOf } from "@/lib/api/failure";
 import { submitOwnMessage, writeOwnMessage } from "@/lib/api/template-builder";
 import { parseTotpCode } from "@/lib/auth/otp";
+import { freshSecondStep } from "@/lib/auth/session";
 import { jobsScreens } from "@/lib/screens/flag";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canSend } from "@/lib/templates/meta-checks";
 import { DRAFT_TEXT_MAX, DRAFT_TEXT_MIN, readMessage, readSubmit, type DraftAnswer, type OwnMessage } from "@/lib/templates/types";
 
@@ -40,14 +40,9 @@ export async function submitOwnMessageAction(tenantId: string, input: unknown, c
   if (!submit || !canSend(submit.message) || !digits) return invalid(ctx.t);
   let token = ctx.token;
   if (jobsScreens() !== "mock") {
-    const supabase = await createSupabaseServerClient();
-    const { data: factors } = await supabase.auth.mfa.listFactors();
-    const factor = factors?.totp?.[0];
-    if (!factor) return { ok: false, kind: "mfa", mfa: true, error: ctx.t("jobs.tb.s5.no_factor") };
-    const verified = await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code: digits });
-    if (verified.error) return { ok: false, kind: "invalid", code: "bad_code", error: ctx.t("jobs.tb.s5.bad_code") };
-    // the session now holds the fresh level: the API gets the token that carries it
-    token = (await supabase.auth.getSession()).data.session?.access_token ?? token;
+    const step = await freshSecondStep(digits);
+    if (!step.ok) return step.reason === "no_factor" ? { ok: false, kind: "mfa", mfa: true, error: ctx.t("jobs.tb.s5.no_factor") } : { ok: false, kind: "invalid", code: "bad_code", error: ctx.t("jobs.tb.s5.bad_code") };
+    token = step.token; // the session now holds the fresh level: the API gets the token that carries it
   }
   try {
     const data = await submitOwnMessage(token, tenantId, submit);

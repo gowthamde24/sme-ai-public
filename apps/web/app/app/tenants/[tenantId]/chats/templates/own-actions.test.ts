@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`REDIRECT ${to}`); } }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 const requireUser = vi.fn();
-vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
+const second = vi.fn();
+vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser(), freshSecondStep: (c: string) => second(c) }));
 vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
 const fetchTenant = vi.fn();
 import { ApiRequestError } from "@/lib/api/client";
@@ -12,9 +13,6 @@ const api = { writeOwnMessage: vi.fn(), submitOwnMessage: vi.fn() };
 vi.mock("@/lib/api/template-builder", () => ({ writeOwnMessage: (...a: unknown[]) => api.writeOwnMessage(...a), submitOwnMessage: (...a: unknown[]) => api.submitOwnMessage(...a) }));
 const h = vi.hoisted(() => ({ mode: { v: "on" as "off" | "mock" | "on" } }));
 vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => h.mode.v }));
-const mfa = { listFactors: vi.fn(), challengeAndVerify: vi.fn() };
-const getSession = vi.fn();
-vi.mock("@/lib/supabase/server", () => ({ createSupabaseServerClient: async () => ({ auth: { mfa, getSession } }) }));
 
 import type { Message } from "@/lib/templates/meta-checks";
 
@@ -32,9 +30,7 @@ beforeEach(() => {
   fetchTenant.mockResolvedValue({ role: "owner" });
   api.submitOwnMessage.mockResolvedValue(sent);
   api.writeOwnMessage.mockResolvedValue({ kind: "unclear" });
-  mfa.listFactors.mockResolvedValue({ data: { totp: [{ id: "factor-1" }] } });
-  mfa.challengeAndVerify.mockResolvedValue({ error: null });
-  getSession.mockResolvedValue({ data: { session: { access_token: "fresh" } } });
+  second.mockResolvedValue({ ok: true, token: "fresh" });
 });
 
 describe("writing a draft (Owner and Admin; nothing is sent anywhere)", () => {
@@ -59,18 +55,18 @@ describe("sending to WhatsApp needs the second step", () => {
   it("checks the code on the person's own authenticator first, then sends with the fresh token", async () => {
     const r = await submitOwnMessageAction(T, input(), " 482 913 ");
     expect(r).toEqual({ ok: true, data: sent });
-    expect(mfa.challengeAndVerify).toHaveBeenCalledWith({ factorId: "factor-1", code: "482913" });
+    expect(second).toHaveBeenCalledWith("482913");
     expect(api.submitOwnMessage).toHaveBeenCalledWith("fresh", T, { title: { en: "Order update", te: null }, message: GOOD });
   });
   it("a wrong code is refused in plain words and nothing is sent", async () => {
-    mfa.challengeAndVerify.mockResolvedValue({ error: { message: "invalid" } });
+    second.mockResolvedValue({ ok: false, reason: "bad_code" });
     expect(await submitOwnMessageAction(T, input(), "111111")).toMatchObject({ ok: false, kind: "invalid", code: "bad_code", error: expect.stringContaining("That code did not work") });
     expect(api.submitOwnMessage).not.toHaveBeenCalled();
   });
   it("no authenticator: told to set one up (kind mfa), never let through", async () => {
-    mfa.listFactors.mockResolvedValue({ data: { totp: [] } });
+    second.mockResolvedValue({ ok: false, reason: "no_factor" });
     expect(await submitOwnMessageAction(T, input(), "482913")).toMatchObject({ ok: false, kind: "mfa", mfa: true });
-    expect(mfa.challengeAndVerify).not.toHaveBeenCalled();
+    expect(api.submitOwnMessage).not.toHaveBeenCalled();
     expect(api.submitOwnMessage).not.toHaveBeenCalled();
   });
   it("the API's own mfa_required refusal reads the same way", async () => {
@@ -83,18 +79,18 @@ describe("sending to WhatsApp needs the second step", () => {
     expect(await submitOwnMessageAction(T, input(shouted), "482913")).toMatchObject({ ok: false, kind: "invalid" });
     expect(await submitOwnMessageAction(T, { title: { en: "" }, message: GOOD }, "482913")).toMatchObject({ ok: false, kind: "invalid" });
     expect(await submitOwnMessageAction(T, null, "482913")).toMatchObject({ ok: false, kind: "invalid" });
-    expect(mfa.listFactors).not.toHaveBeenCalled();
+    expect(second).not.toHaveBeenCalled();
     expect(api.submitOwnMessage).not.toHaveBeenCalled();
   });
   it("Sales is refused before anything", async () => {
     fetchTenant.mockResolvedValue({ role: "sales" });
     expect(await submitOwnMessageAction(T, input(), "482913")).toMatchObject({ ok: false, kind: "forbidden" });
-    expect(mfa.listFactors).not.toHaveBeenCalled();
+    expect(second).not.toHaveBeenCalled();
   });
   it("JOBS=mock: six digits are enough, no authenticator is asked, nothing leaves (the adapter answers Waiting)", async () => {
     h.mode.v = "mock";
     expect(await submitOwnMessageAction(T, input(), "482913")).toMatchObject({ ok: true });
-    expect(mfa.listFactors).not.toHaveBeenCalled();
+    expect(second).not.toHaveBeenCalled();
     expect(api.submitOwnMessage).toHaveBeenCalledWith("tok", T, expect.anything());
     expect(await submitOwnMessageAction(T, input(), "1234")).toMatchObject({ ok: false, kind: "invalid" });
   });
