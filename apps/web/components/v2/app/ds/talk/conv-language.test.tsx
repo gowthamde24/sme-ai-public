@@ -41,7 +41,7 @@ describe("Talk live: the chrome follows the APP language, what is said follows t
     render(<TalkLiveBody variant={variant} appLang="te" live={live({ step: "looking" })} words={TE} language="తెలుగు" onType={() => undefined} />);
     expect(screen.getByRole("button", { name: "సరే, కాల్ చేయండి" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "మార్చండి" })).toBeInTheDocument();
-    expect(document.querySelector('[data-part="plan-when"]')).toHaveTextContent("ఈరోజు సాయంత్రం 6 గంటలకి");
+    expect(document.querySelector('[data-part="plan-when"]')).toHaveTextContent("ఈ రోజు సాయంత్రం 6 గంటలకి");
     expect(document.querySelector('[data-part="talk-step"]')).toHaveTextContent("మీ రికార్డులు చూస్తున్నాం…");
     expect(document.querySelector('[data-part="talk-plan"]')).toHaveTextContent("₹274.40");
   });

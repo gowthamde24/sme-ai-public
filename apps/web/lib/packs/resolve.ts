@@ -14,6 +14,8 @@ import type { WorkspacePack } from "./types";
 export const RENAMED_BEFORE: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "nav.item.sarees": { en: "Catalogue", te: "క్యాటలాగ్" },
   "nav.item.catalogue": { en: "Prices and products", te: "ధరలు, ప్రొడక్ట్స్" },
+  // the owner's unified Telugu word for a quote is కొటేషన్ (19 Nov); a synced pack file is never edited, so its old Telugu word yields to the dictionary's (en is empty on purpose: the English never matches)
+  "agent.quote_writer": { en: "", te: "కోట్ రైటర్" },
 };
 
 /** The words a pack changes, as a flat key -> text record in one language (the pack's own keys; English fills any key the language lacks). */
