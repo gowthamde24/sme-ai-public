@@ -20,15 +20,15 @@ const withFit = (file: Wire): Wire => ({
 });
 
 const PACKS: readonly { pack: string; file: Wire; name: Wire; item: Wire }[] = [
-  { pack: "textiles", file: textiles, name: t("saree shops", "చీరల షాపులు"), item: t("Kanchipuram silk sarees", "కంచి పట్టు చీరలు") },
-  { pack: "clinic", file: clinic, name: t("clinics", "క్లినిక్‌లు"), item: t("a general check-up", "జనరల్ చెకప్") },
-  { pack: "coaching", file: coaching, name: t("coaching centres", "కోచింగ్ సెంటర్లు"), item: t("the NEET course", "NEET కోర్సు") },
-  { pack: "real_estate", file: realEstate, name: t("real estate", "రియల్ ఎస్టేట్"), item: t("the garden-view flat", "గార్డెన్ వ్యూ ఫ్లాట్") },
-  { pack: "wholesale_b2b", file: wholesale, name: t("wholesalers", "హోల్‌సేల్ వ్యాపారులు"), item: t("cotton fabric rolls", "కాటన్ ఫ్యాబ్రిక్ రోల్స్") },
+  { pack: "textiles", file: textiles, name: t("saree shops", "చీరల షాపులు"), item: t("Kanchipuram silk sarees", "కంచి పట్టు చీరలు") }, // pack-id-ok: the mock copies five real packs
+  { pack: "clinic", file: clinic, name: t("clinics", "క్లినిక్‌లు"), item: t("a general check-up", "జనరల్ చెకప్") }, // pack-id-ok: the mock copies five real packs
+  { pack: "coaching", file: coaching, name: t("coaching centres", "కోచింగ్ సెంటర్లు"), item: t("the NEET course", "NEET కోర్సు") }, // pack-id-ok: the mock copies five real packs
+  { pack: "real_estate", file: realEstate, name: t("real estate", "రియల్ ఎస్టేట్"), item: t("the garden-view flat", "గార్డెన్ వ్యూ ఫ్లాట్") }, // pack-id-ok: the mock copies five real packs
+  { pack: "wholesale_b2b", file: wholesale, name: t("wholesalers", "హోల్‌సేల్ వ్యాపారులు"), item: t("cotton fabric rolls", "కాటన్ ఫ్యాబ్రిక్ రోల్స్") }, // pack-id-ok: the mock copies five real packs
 ];
 
 /** `GET /jobs/templates` for the demo shop (a saree shop): its own templates and the four other business types'. */
-export function wireNewJobSheet(own = "textiles"): Wire {
+export function wireNewJobSheet(own = "textiles"): Wire { // pack-id-ok: the mock copies five real packs
   const mine = PACKS.find((p) => p.pack === own) ?? PACKS[0];
   return {
     business_type: { pack: mine.pack, name: mine.name },
