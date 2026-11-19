@@ -1,3 +1,4 @@
+import { ALL_SETTINGS } from "@/lib/jobs/redirect";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -82,7 +83,7 @@ export default async function JobRoute({ params }: PageProps<"/app/tenants/[tena
           {name}
         </span>
       </nav>
-      <JobPage detail={detail} words={words} base={base} lang={lang} ago={agoOf(detail.job.lastRunAt, clock())} actions={actions} />
+      <JobPage detail={detail} words={words} base={base} lang={lang} ago={agoOf(detail.job.lastRunAt, clock())} actions={actions} allSettingsHref={ALL_SETTINGS[detail.job.kind] ? `${base}${ALL_SETTINGS[detail.job.kind]}` : null} />
     </main>
   );
 }

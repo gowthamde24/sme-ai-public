@@ -12,6 +12,7 @@ import { readPolicy, readRuleTemplates, readRules } from "@/lib/outreach/source"
 import { goalNames, languageNames, sourceNames, clockText } from "@/lib/outreach/words";
 import { buildSteps, retryPhrase } from "@/components/v2/app/outreach/plan-text";
 import { makeT } from "@/components/v2/app/words";
+import { redirectToJob } from "@/lib/jobs/redirect";
 import { outreachScreens } from "@/lib/screens/flag";
 
 import { leadContext } from "../../lead-context";
@@ -26,10 +27,11 @@ const DAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
  * /app/tenants/[tenantId]/outreach/rules (owner, 17 Nov): the tab next to Campaigns. The STANDING RULES per lead source (approved once, then nobody clicks per lead) and the calling hours and tries, which used to sit in a folded block under the
  * campaigns. Owner and Admin change the rules; a Sales member reads the hours and tries. Same reads and the same actions as before: nothing was removed, only moved.
  */
-export default async function OutreachRulesPage({ params }: PageProps<"/app/tenants/[tenantId]/outreach/rules">) {
+export default async function OutreachRulesPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/outreach/rules">) {
   const { tenantId } = await params;
   const got = await leadContext(tenantId, { roles: ["owner", "admin", "sales"], on: outreachScreens() !== "off" });
   if (!got.ok) return got.page;
+  await redirectToJob(got.ctx.accessToken, tenantId, "speed_to_lead", (await searchParams).all); // JOBS on: the standing rules are the speed-to-lead job's
   const { accessToken, userId, tenant, pack } = got.ctx;
   const lang = await getLang();
   const words = withPackGoalWords(wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day.", "today.lang.", "cv6."]), pack?.packId);

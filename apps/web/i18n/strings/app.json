@@ -114460,5 +114460,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.job.all_settings": {
+  "en": "All settings for this job",
+  "te": "ఈ జాబ్ సెట్టింగ్స్ అన్నీ",
+  "hi": "इस जॉब की सारी सेटिंग्स",
+  "kn": "ಈ ಜಾಬ್‌ನ ಎಲ್ಲಾ ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

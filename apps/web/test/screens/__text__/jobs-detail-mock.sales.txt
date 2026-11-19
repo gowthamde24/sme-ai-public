@@ -49,7 +49,7 @@ Call from
 <checkbox label="Tell me on WhatsApp when a store visit is booked" disabled checked>
 Tell me on WhatsApp when a store visit is booked
 <checkbox label="Stop a customer's job after 3 tries" disabled checked>
-Stop a customer's job after 3 tries These always stay on: STOP, quiet hours and the AI line. They never change here.
+Stop a customer's job after 3 tries These always stay on: STOP, quiet hours and the AI line. They never change here. [All settings for this job](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/rules?all=1)
 ## Results
 Last 7 days
 38

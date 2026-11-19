@@ -20,7 +20,7 @@ type Toast = { id: number; text: string; undo: () => Promise<void> };
  * ONE job's page (JOBS, mocks 04, 06 and 09): the job and its switch, When (sentences with the choice inside, and what it will do), What it says, What it finds out, FAQs, More choices, Results, and "Try it".
  * Every change answers at once (optimistic) and is put back, with the reason, if the API says no. A rename or a switch also leaves an Undo for a few seconds. `actions` null = the person only reads.
  */
-export function JobPage({ detail, words, base, lang, ago, actions }: { detail: JobDetail; words: Words; base: string; lang: string; ago: Ago | null; actions: JobPageActions | null }) {
+export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHref = null }: { detail: JobDetail; words: Words; base: string; lang: string; ago: Ago | null; actions: JobPageActions | null; /** The old page that holds every setting of this job (JOBS on: Rules and Campaigns redirect to the job, this link opens them with ?all=1), or null. */ allSettingsHref?: string | null }) {
   const t = makeT(words);
   const { job } = detail;
   const canChange = actions !== null;
@@ -219,7 +219,20 @@ export function JobPage({ detail, words, base, lang, ago, actions }: { detail: J
               ))}
             </div>
             <p className="m-0 mt-3 text-sm text-muted">{t("jobs.job.safe")}</p>
+            {allSettingsHref ? (
+              <p className="m-0 mt-2">
+                <a href={allSettingsHref} data-part="all-settings" className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text underline underline-offset-4">
+                  {t("jobs.job.all_settings")}
+                </a>
+              </p>
+            ) : null}
           </details>
+        ) : allSettingsHref ? (
+          <p className="m-0">
+            <a href={allSettingsHref} data-part="all-settings" className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text underline underline-offset-4">
+              {t("jobs.job.all_settings")}
+            </a>
+          </p>
         ) : null}
       </div>
 

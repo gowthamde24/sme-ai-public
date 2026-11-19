@@ -492,7 +492,7 @@ export function itemFor(pathname: string, tab: string | null): { group: NavGroup
  * DESIGN SYSTEM v6 (DESIGN_V6; owner 13 Nov 2026): the side menu is ONE short list, Today, My assistant (with its status), Calls, Chats, Leads, Campaigns, Reports, and under "Setup": Catalogue, Phone numbers, Billing. A row is made of the PAGES (nav ids above) it holds; it goes to the first page the role and
  * the business type are offered and owns the paths of all of them, so the current marker and the way back stay right. A row with no page offered is not drawn. Every page keeps its address.
  */
-export type V6Row = { id: string; label: string; icon: IconKey; pages: readonly string[]; count?: CountKey; status?: "assistant" };
+export type V6Row = { id: string; label: string; icon: IconKey; pages: readonly string[]; count?: CountKey; status?: "assistant"; /** The row exists only while this feature is on (JOBS: the Jobs row). */ onlyWith?: string; /** The row leaves the menu while this feature is on (JOBS: Campaigns and Rules are jobs; their other pages move under Jobs). */ hiddenWith?: string };
 export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly V6Row[] }[] = [
   {
     id: "d-main",
@@ -500,13 +500,13 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
     rows: [
       { id: "v6-today", label: "Today", icon: "today", pages: ["today", "assistant"], count: "today" },
       // JOBS (owner 19 Nov): everything the assistant does for the shop, one row of its own; there only while JOBS is on (the page is offered by the feature "jobs")
-      { id: "v6-jobs", label: "Jobs", icon: "jobs", pages: ["jobs"] },
+      { id: "v6-jobs", label: "Jobs", icon: "jobs", pages: ["jobs", "offerconsent", "calllist", "tasks"], onlyWith: "jobs" },
       { id: "v6-myassistant", label: "My assistant", icon: "assistant", pages: ["myassistant", "train", "office"], status: "assistant" },
       { id: "v6-calls", label: "Calls", icon: "calls", pages: ["phonecalls", "live"], count: "calls" },
       { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox", "templates"], count: "chats" },
       { id: "v6-leads", label: "Leads", icon: "leads", pages: ["leaddesk", "leads", "followups", "visits", "map", "retailers", "import", "sites", "lead-sources"], count: "leads" },
       // Campaigns is its own page (owner, 13 Nov 2026: not inside the Calls tabs); the call list and the tasks are its tabs
-      { id: "v6-campaigns", label: "Campaigns", icon: "campaigns", pages: ["outreach", "outreachrules", "offerconsent", "campaigns", "calllist", "tasks"] },
+      { id: "v6-campaigns", label: "Campaigns", icon: "campaigns", pages: ["outreach", "outreachrules", "offerconsent", "campaigns", "calllist", "tasks"], hiddenWith: "jobs" },
       { id: "v6-reports", label: "Reports", icon: "report", pages: ["report", "leadreport", "everything"] },
     ],
   },
@@ -527,6 +527,8 @@ export function menuGroupsV6(role: Role, view?: PackFrame | null): V6Group[] {
   const pages = PAGES();
   return MENU_V6.flatMap((g): V6Group[] => {
     const items = g.rows.flatMap((r): V6Item[] => {
+      const features = view?.features ?? [];
+      if ((r.onlyWith && !features.includes(r.onlyWith)) || (r.hiddenWith && features.includes(r.hiddenWith))) return [];
       const mine = r.pages.flatMap((id) => pages.filter((p) => p.id === id)).filter((p) => p.roles.includes(role) && offered(p, view)).map((p) => (p.pathIf && view?.modules.includes(p.pathIf.module) ? { ...p, path: p.pathIf.path } : p));
       const first = mine[0];
       if (!first) return [];
