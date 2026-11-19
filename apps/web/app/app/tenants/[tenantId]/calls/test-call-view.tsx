@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { Repoll } from "@/components/v2/app/calls/CallClient";
 import { TestCallForm } from "@/components/v2/app/calls/LazyTestCallForm";
+import { TestCallIntroduce } from "@/components/v2/app/calls/LazyTestCallIntroduce";
 import { PageTop } from "@/components/v2/app/parts";
 import { alertBox, btnMain, btnQuiet, noteBox, pageMain, pillAmber, pillGreen, pillNeutral, surface } from "@/components/v2/app/ui";
 import { wordsFor } from "@/i18n/app-words";
@@ -12,8 +13,13 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { refusedKey, TEST_LANGUAGES } from "@/lib/calls/test-call";
 
 import { getTalkTraining } from "@/lib/api/talk-training";
+import { readSpeaks } from "@/lib/talk-training/speaks-source";
+import type { TalkTraining } from "@/lib/talk-training/types";
 import { talkTrainingScreens, testCallTone } from "@/lib/screens/flag";
 import { INTRODUCE_DEFAULT, type IntroduceAs } from "@/lib/talk-training/introduce";
+import { readFacts } from "../ai-team/training/speaks-facts";
+import { saveSpeaksAction } from "../ai-team/training/speaks-actions";
+import { saveTalkTrainingAction } from "../talk-training-actions";
 import { placeTestCallAction } from "./actions";
 
 /**
@@ -21,7 +27,7 @@ import { placeTestCallAction } from "./actions";
  * route-JS budget of /outbox has 29 B of room). Only with APP_V4 and TEST_CALL_SCREENS, only for the Owner (the page checks both before it calls this). `&call=<id>` shows that call's state, read again every few seconds while it is live,
  * with a link to the call under Phone calls (tagged "Test call"). The phones that may be rung come from C1's masked list; a full number never reaches the browser.
  */
-export async function TestCallView({ token, tenantId, callId, business = null }: { token: string; tenantId: string; callId: string | null; business?: string | null }) {
+export async function TestCallView({ token, tenantId, callId, business = null, userId = null }: { token: string; tenantId: string; callId: string | null; business?: string | null; userId?: string | null }) {
   let call: CallDetail | null = null;
   if (callId) {
     try {
@@ -47,15 +53,29 @@ export async function TestCallView({ token, tenantId, callId, business = null }:
   }
   // "Introduce as" (C1, 11 Nov): the saved setting, read only where the API has the field (an older API: nothing is offered, nothing is sent)
   let introduceSaved: IntroduceAs | null = null;
+  let trainingDoc: TalkTraining | null = null;
   if (!callId && talkTrainingScreens()) {
     try {
-      introduceSaved = (await getTalkTraining(token, tenantId)).training.introduceAs;
+      trainingDoc = (await getTalkTraining(token, tenantId)).training;
+      introduceSaved = trainingDoc.introduceAs;
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+    }
+  }
+  // the saved "Introduce as" is drawn HERE now (owner, 19 Nov 2026: it left Voice & tone): saved with "How your assistant speaks" when that is on, else with the whole Talk training document, as before
+  let introduceCard: { initial: IntroduceAs; ownerName: string | null | undefined; via: "speaks" | "training" } | null = null;
+  if (!callId && trainingDoc) {
+    try {
+      const facts = userId ? await readFacts(token, tenantId, userId).catch(() => null) : null;
+      const speaksRead = await readSpeaks({ token, tenantId }, facts ?? { legacyAddress: null, packDefault: "friendly", ownerName: null });
+      if (speaksRead.mode === "ok") introduceCard = { initial: speaksRead.data.introduceAs, ownerName: speaksRead.data.introduceAs.ownerName, via: "speaks" };
+      else if (trainingDoc.introduceAs !== null) introduceCard = { initial: trainingDoc.introduceAs, ownerName: undefined, via: "training" };
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
     }
   }
   const lang = await getLang();
-  const w = wordsFor(lang, ["tc.", "ph.state.", "ph.test", "tt.intro."]);
+  const w = wordsFor(lang, ["tc.", "ph.state.", "ph.test", "tt.intro.", "vt.", "sp.err.", "tt.err."], ["sp.save", "sp.saving", "sp.saved", "today.err.mfa.link"]);
   const names = (() => {
     try {
       return new Intl.DisplayNames([lang], { type: "language" });
@@ -111,7 +131,10 @@ export async function TestCallView({ token, tenantId, callId, business = null }:
             {w["tc.nonumbers"]}
           </p>
         ) : (
+          <>
+          {introduceCard ? <TestCallIntroduce words={w} initial={introduceCard.initial} ownerName={introduceCard.ownerName} business={business} securityHref="/app/security" via={introduceCard.via === "speaks" ? { kind: "speaks", save: saveSpeaksAction.bind(null, tenantId) as never } : { kind: "training", doc: trainingDoc as TalkTraining, save: saveTalkTrainingAction.bind(null, tenantId) as never }} /> : null}
           <TestCallForm w={w} base={base} numbers={numbers} languages={languages} place={placeTestCallAction.bind(null, tenantId)} introduce={introduceSaved || introduceDefault ? { saved: introduceSaved ?? INTRODUCE_DEFAULT, business, suggested: introduceDefault } : null} tone={testCallTone()} />
+          </>
         )}
       </div>
       {live ? <Repoll seconds={3} /> : null}

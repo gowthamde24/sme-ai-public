@@ -27,7 +27,8 @@ import type { AppT } from "@/i18n/app";
 import type { Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { getExampleStatus } from "@/lib/api/example-data";
-import { getTodayBriefing } from "@/lib/api/today-briefing";
+import { getTodayBriefing, type TodayBriefing } from "@/lib/api/today-briefing";
+import { timed } from "@/lib/observe/server-timing";
 import { getNavCounts, todayCount, type NavCounts } from "@/lib/api/nav-counts";
 import { mayHaveCampusCard, readPackCards, type PackCard } from "@/lib/packs/pack-cards";
 import { usesChecklist } from "@/lib/packs/activation";
@@ -61,6 +62,9 @@ const orNull = (error: unknown): null => {
 };
 
 export type StreamIn = {
+  /** C1's small briefing read, asked by the caller at once (`briefing`), and what it had said within 300 ms (`briefingNow`, null = not yet or not told): the placeholders are sized from it. */
+  briefing?: Promise<TodayBriefing | null>;
+  briefingNow?: TodayBriefing | null;
   accessToken: string;
   userId: string;
   tenantId: string;
@@ -93,9 +97,9 @@ export function streamedToday(i: StreamIn): ReactElement {
 
   // ---- every read of the page starts here, once ----
   const agentsAsked = early(readAgentsCached(accessToken, tenantId));
-  const todayAsked = early(readToday(accessToken, tenantId, role, Date.now, { agents: agentsAsked }));
+  const todayAsked = early(timed("today_read", () => readToday(accessToken, tenantId, role, Date.now, { agents: agentsAsked })));
   const nameAsked = early(readDisplayName(accessToken, tenantId, userId));
-  const countsAsked: Promise<NavCounts | null> = early(getNavCounts(accessToken, tenantId).catch(orNull)); // the menu's numbers (C1's nav-counts, cached 30 s by the API): one that cannot be read is no number
+  const countsAsked: Promise<NavCounts | null> = early(timed("nav_counts", () => getNavCounts(accessToken, tenantId)).catch(orNull)); // the menu's numbers (C1's nav-counts, cached 30 s by the API): one that cannot be read is no number
   const deskAsked = early(readLeadDesk(ctx, role, base, tt, (tag) => sourceNameOf(tt, tag), now, false)); // (the Lead Desk workers of "Your team" are not drawn in v6: their reads are not made)
   const finderAsked = early(readFinderNeeds({ token: accessToken, tenantId }, role, i.finderState, base, tt));
   // the business type's own cards are not drawn in v6; only a school's campus card still matters (it takes the visits off the band's line), so only a business type that can have it reads them
@@ -134,7 +138,9 @@ export function streamedToday(i: StreamIn): ReactElement {
     })(),
   );
   // C1's small briefing read (counts only, about 150 bytes, 19 Nov): the first sentence and the count of things waiting are painted from it at once; the quote sentence replaces the count in the second slot when the finished list is read (the fallback is the same sentence made from the count, so nothing moves). A business type that can have a campus card (it takes the visits off the line) or an API without the route waits for the big reads as before.
-  const briefingAsked = early(campusMay ? Promise.resolve(null) : getTodayBriefing(accessToken, tenantId));
+  const briefingAsked = early(campusMay ? Promise.resolve(null) : (i.briefing ?? getTodayBriefing(accessToken, tenantId)));
+  // (the caller waited for it up to 300 ms) the placeholders are sized for what is coming: a phone's "Needs you" rows, a quote's long sentence: nothing moves when the real parts arrive
+  const fastEarly = campusMay ? null : (i.briefingNow ?? null);
   const briefNode = settle(
     briefingAsked.then(async (fast): Promise<ReactNode> => {
       if (!fast || (fast.newLeads === null && fast.visitsToday === null && fast.needsYou === null)) {
@@ -143,7 +149,7 @@ export function streamedToday(i: StreamIn): ReactElement {
       }
       const counted = briefingSecond(null, fast.needsYou, briefWords);
       const finalSecond = settle(brief.then((b): ReactNode => briefingSecond(b.top, b.waiting, briefWords)));
-      return <BriefingFast facts={{ enquiries: fast.newLeads, visits: fast.visitsToday }} words={briefWords} second={<Part of={finalSecond} fallback={counted} quiet={counted} />} />;
+      return <BriefingFast facts={{ enquiries: fast.newLeads, visits: fast.visitsToday }} reserveQuote={(fast.quotesWaiting ?? 0) > 0} words={briefWords} second={<Part of={finalSecond} fallback={counted} quiet={counted} />} />;
     }),
   );
 
@@ -169,7 +175,7 @@ export function streamedToday(i: StreamIn): ReactElement {
           chips={chips}
           language={b.language}
           businessLang={b.businessLang}
-          briefing={<Part of={briefNode} fallback={<BriefingPlaceholder />} />}
+          briefing={<Part of={briefNode} fallback={<BriefingPlaceholder lines={(fastEarly?.quotesWaiting ?? 0) > 0 ? 4 : 2} />} />}
         />
       );
     }),
@@ -234,7 +240,7 @@ export function streamedToday(i: StreamIn): ReactElement {
             />
           }
           yourDay={<Part of={yourDayNode} fallback={<YourDayPlaceholder />} />}
-          needs={<Part of={needsNode} fallback={<NeedsPlaceholder />} />}
+          needs={<Part of={needsNode} fallback={<NeedsPlaceholder rows={fastEarly?.needsYou ?? null} />} />}
           working={<Part of={workingNode} fallback={<WorkingPlaceholder />} />}
           visits={<Part of={visitsNode} fallback={<VisitsPlaceholder />} />}
           results={<Part of={resultsNode} fallback={<ResultsPlaceholder />} />}

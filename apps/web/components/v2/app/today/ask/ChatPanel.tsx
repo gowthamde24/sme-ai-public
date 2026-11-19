@@ -472,6 +472,11 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
               {bar ? null : chipsEl}
             </div>
           ) : null}
+          {s.resumable && s.earlier.length === 0 && s.phase === "idle" ? (
+            <button type="button" data-chat="continue" onClick={() => { talk.stop(); s.newChat(s.resumable!.id, s.resumable!.thread); }} className="mb-3 inline-flex min-h-10 max-w-full items-center truncate rounded-full border border-line bg-surface px-3 text-sm font-semibold text-brand-text">
+              {makeT(voice.words)("bv.chat.state.continue" as "bv.chat.new", { title: s.resumable.title })}
+            </button>
+          ) : null}
           <ul data-chat="thread" className="flex flex-col gap-4">
             {s.earlier.map((x, i) => (
               <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} onSay={say} {...(!current && i === s.earlier.length - 1 ? { onNext: () => say("next") } : {})} mis={mis} finder={finders[i]} words={voice.words} onSearch={onSearch} work={work.env} upsell={voice.finderUpsell} />

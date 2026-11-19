@@ -1,13 +1,14 @@
 "use client";
 
-import { withFirstName } from "@/lib/talk-prefs/mock";
 import { Pause, Play } from "lucide-react";
 import * as React from "react";
 
 import type { Fail, PrefsResult, PreviewResult } from "@/app/app/tenants/[tenantId]/talk-prefs-actions";
-import { addressFor, type Field, type Patch, type TalkLang, type TalkPrefs, type TalkVoice } from "@/lib/talk-prefs/types";
+import { callFor, exampleFor } from "@/lib/talk-prefs/example";
+import { addressFor, type Field, type Patch, type Style, type TalkLang, type TalkPrefs, type TalkVoice } from "@/lib/talk-prefs/types";
 
-import { alertBox, fieldHelp, okBox } from "../ui";
+import { Choose, MoreChoices, Sentence } from "../jobs/rules/parts";
+import { alertBox, checkRow, fieldHelp, okBox } from "../ui";
 import { makeT, type Words } from "../words";
 
 export type TalkToYouActions = {
@@ -44,9 +45,9 @@ function play(base64: string, contentType: string, onEnd: () => void): HTMLAudio
 }
 
 /**
- * "How it talks to you" (owner item G): the person's OWN way of being talked to, saved per user (not per business), never the customers' voice. Voice (three sounds, female or male), Style, Calls you, Words, Speed:
- * every option has a "Hear it" (a short sample in the chosen language, cached by the API; in the test mode only the words are shown, never a made-up voice). A tap saves at once and shows "Saved" with Undo
- * (15 minutes); the lists and the voices come from the API, the labels are ours. The language chips decide which voices and which "Calls you" options exist.
+ * "How it talks to you" (owner item G; made plain, owner 19 Nov 2026): the person's OWN way of being talked to, saved per user (not per business), never the customers' voice. ONE card: two sentences with the choice inside ("Talk to me in [Telugu] at a [Normal] speed." / "Be [Respectful] and call me [By name].")
+ * and ONE live example line that follows them; the voice (female or male, three sounds, each with a play button) and the words are under More choices. One "Hear it" plays the sample of the chosen style (cached by the API; in the test mode only the words are shown, never a made-up voice). A choice saves at once and shows
+ * "Saved" with Undo (15 minutes); the lists and the voices come from the API, the labels are ours. The language decides which voices and which "call me" options exist. Nothing about how it is saved changed.
  */
 export function TalkToYou({ words, initial, languages, first, langNames, mock, actions, ownerFirst = null }: { words?: Words; /** The signed-in person's first name: the friendly sample greets them with it. */ ownerFirst?: string | null; initial: TalkPrefs; languages: readonly TalkLang[]; first: TalkLang; langNames: Record<string, string>; mock: boolean; actions: TalkToYouActions }) {
   const t = makeT(words);
@@ -128,95 +129,102 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
   const addresses = addressFor(lang, o.address);
   const langName = langNames[lang] ?? lang;
   const label = (field: Field, value: string): string => (field === "words" && value === "pure" ? t("otp.words.pure", { lang: langName }) : t(`otp.${field}.${value}` as "otp.style.friendly"));
-  const hearButton = (field: Field, value: string, text: string) => (
-    <button type="button" aria-pressed={playing === `${field}:${value}`} aria-label={t("otp.hear.one", { what: text })} data-hear={`${field}:${value}`} onClick={() => hear(field, value)} className={hearBtn}>
-      {playing === `${field}:${value}` ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
-    </button>
-  );
-  const group = (field: Exclude<Field, "voice">, values: readonly string[], current: string) => (
-    <div key={field} data-group={field} className="flex flex-col gap-2">
-      <h3 className="m-0 font-display text-lg font-semibold">{t(`otp.${field}.t` as "otp.style.t")}</h3>
-      <p className="m-0 text-sm text-muted">{t(`otp.${field}.d` as "otp.style.d")}</p>
-      <div role="radiogroup" aria-label={t(`otp.${field}.t` as "otp.style.t")} className="flex flex-wrap gap-2">
-        {values.map((v) => (
-          <span key={v} className="inline-flex items-center gap-1">
-            <button type="button" role="radio" aria-checked={current === v} disabled={busy} data-option={`${field}:${v}`} onClick={() => current !== v && choose(field, v)} className={chip(current === v)}>
-              {label(field, v)}
-            </button>
-            {hearButton(field, v, label(field, v))}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
+  const call = callFor(prefs.address, ownerFirst, (name) => t(`vt.me.call.${prefs.address}` as "vt.me.call.garu", { name }));
+  const example = exampleFor(lang, prefs.style as Style, call);
+  const chosen = (field: Exclude<Field, "voice">) => (value: string) => value !== prefs[field] && choose(field, value);
   const nameOf = (v: TalkVoice) => (v.sound ? t(`mya.v.${v.sound}` as "mya.v.warm") : v.name);
+  const hearPlaying = playing !== null;
 
   return (
     <section data-part="mya-talk-to-you" aria-labelledby="mya-ty-h" className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4 md:p-5">
       <div>
-        <h2 id="mya-ty-h" className="font-display text-xl font-semibold">
-          {t("otp.t")}
+        <h2 id="mya-ty-h" className="m-0 font-display text-[18px] font-bold leading-tight md:text-xl">
+          {t("vt.me.title")}
         </h2>
-        <p className={fieldHelp}>{t("otp.sub")}</p>
         <p className={fieldHelp} data-part="otp-peruser">
-          {t("otp.peruser")}
+          {t("vt.me.help")}
         </p>
         {mock ? <p className={`${fieldHelp} rounded-lg bg-surface-2 px-3 py-2`}>{t("otp.mock")}</p> : null}
-        {prefs.isDefault ? (
-          <p className={fieldHelp} data-part="otp-defaults">
-            {t("otp.defaults")}
+      </div>
+
+      <div className="flex flex-col gap-1" data-part="vt-me-lines">
+        <Sentence
+          line="me-lang"
+          template={t("vt.me.s1")}
+          parts={{
+            lang: (a) => <Choose aria={a} value={lang} options={languages} text={(l) => langNames[l] ?? l} disabled={busy} onChange={(l) => l !== lang && changeLang(l as TalkLang)} />,
+            speed: (a) => <Choose aria={a} value={prefs.speed} options={o.speed} text={(v) => label("speed", v)} disabled={busy} onChange={chosen("speed")} />,
+          }}
+        />
+        <Sentence
+          line="me-style"
+          template={t("vt.me.s2")}
+          parts={{
+            style: (a) => <Choose aria={a} value={prefs.style} options={o.style} text={(v) => label("style", v)} disabled={busy} onChange={chosen("style")} />,
+            address: (a) => <Choose aria={a} value={prefs.address} options={addresses} text={(v) => label("address", v)} disabled={busy} onChange={chosen("address")} />,
+          }}
+        />
+        <p data-part="vt-me-example" aria-live="polite" lang={lang} className="m-0 text-[15px] text-muted">
+          {t("vt.ex.label")} <span className="font-medium text-ink">“{example}”</span>
+        </p>
+        <div className="mt-1">
+          <button type="button" aria-pressed={hearPlaying} data-hear={`style:${prefs.style}`} onClick={() => hear("style", prefs.style)} className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2">
+            {hearPlaying ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
+            {t(hearPlaying ? "vt.stop" : "vt.hear")}
+          </button>
+        </div>
+        {sample && !sample.sound ? (
+          <p data-part="otp-sample" className="m-0 text-sm text-muted">
+            {t("otp.nosound")}
           </p>
         ) : null}
       </div>
-      <div role="group" aria-label={t("otp.lang")} className="flex flex-wrap gap-2">
-        {languages.map((l) => (
-          <button key={l} type="button" aria-pressed={l === lang} disabled={busy} data-lang={l} onClick={() => l !== lang && changeLang(l)} className={chip(l === lang)}>
-            {langNames[l] ?? l}
-          </button>
-        ))}
-      </div>
 
-      <div data-group="voice" className="flex flex-col gap-2">
-        <h3 className="m-0 font-display text-lg font-semibold">{t("otp.voice.t")}</h3>
-        <p className="m-0 text-sm text-muted">{t("otp.voice.d")}</p>
-        <div role="group" aria-label={t("otp.voice.t")} className="flex flex-wrap gap-2">
-          {(["female", "male"] as const).map((g) => (
-            <button key={g} type="button" aria-pressed={gender === g} data-gender={g} onClick={() => setGender(g)} className={chip(gender === g)}>
-              {t(`otp.gender.${g}` as "otp.gender.female")}
-            </button>
-          ))}
-        </div>
-        {voices.length === 0 ? (
-          <p className="m-0 text-sm text-muted" data-part="otp-novoice">
-            {t("otp.voice.none")}
-          </p>
-        ) : (
-          <div role="radiogroup" aria-label={t("otp.voice.t")} className="grid gap-2 md:grid-cols-3">
-            {voices.map((v) => (
-              <div key={v.id} data-voice={v.id} data-selected={prefs.voice?.id === v.id ? "true" : "false"} className={`flex items-center justify-between gap-2 rounded-xl border p-3 ${prefs.voice?.id === v.id ? "border-brand-edge bg-brand-bg" : "border-line bg-surface-2/40"}`}>
-                <button type="button" role="radio" aria-checked={prefs.voice?.id === v.id} disabled={busy} onClick={() => prefs.voice?.id !== v.id && choose("voice", v.id)} className="min-h-11 flex-1 text-left text-base font-semibold">
-                  {nameOf(v)}
-                  {prefs.voice?.id === v.id ? <span className="ml-2 text-sm text-green-text">✓ {t("mya.v.selected")}</span> : null}
-                </button>
-                {v.sample ? hearButton("voice", v.id, nameOf(v)) : null}
-              </div>
+      <MoreChoices title={t("vt.more.t")} sub={t("vt.me.more.sub")}>
+        <fieldset data-group="voice" className="m-0 min-w-0 border-0 p-0">
+          <legend className="m-0 text-[16px] font-semibold">{t("otp.voice.t")}</legend>
+          <div role="group" aria-label={t("otp.voice.t")} className="mt-1 flex flex-wrap gap-2">
+            {(["female", "male"] as const).map((g) => (
+              <button key={g} type="button" aria-pressed={gender === g} data-gender={g} onClick={() => setGender(g)} className={chip(gender === g)}>
+                {t(`otp.gender.${g}` as "otp.gender.female")}
+              </button>
             ))}
           </div>
-        )}
-      </div>
+          {voices.length === 0 ? (
+            <p className="m-0 mt-2 text-sm text-muted" data-part="otp-novoice">
+              {t("otp.voice.none")}
+            </p>
+          ) : (
+            <div role="radiogroup" aria-label={t("otp.voice.t")} className="mt-1 flex flex-col">
+              {voices.map((v) => (
+                <div key={v.id} data-voice={v.id} data-selected={prefs.voice?.id === v.id ? "true" : "false"} className="flex min-h-14 items-center gap-2">
+                  <label className="flex min-h-11 min-w-0 flex-1 cursor-pointer items-center gap-3 text-base">
+                    <input type="radio" name="vt-me-voice" value={v.id} checked={prefs.voice?.id === v.id} disabled={busy} onChange={() => prefs.voice?.id !== v.id && choose("voice", v.id)} className="size-5 shrink-0 accent-brand-text" />
+                    <span className="font-semibold">{nameOf(v)}</span>
+                  </label>
+                  {v.sample ? (
+                    <button type="button" aria-pressed={playing === `voice:${v.id}`} aria-label={t("otp.hear.one", { what: nameOf(v) })} data-hear={`voice:${v.id}`} onClick={() => hear("voice", v.id)} className={hearBtn}>
+                      {playing === `voice:${v.id}` ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
+                    </button>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          )}
+        </fieldset>
+        <fieldset data-group="words" className="m-0 min-w-0 border-0 p-0">
+          <legend className="m-0 text-[16px] font-semibold">{t("otp.words.t")}</legend>
+          <div role="radiogroup" aria-label={t("otp.words.t")} className="mt-1 flex flex-col">
+            {o.words.map((v) => (
+              <label key={v} className={checkRow}>
+                <input type="radio" name="vt-me-words" value={v} checked={prefs.words === v} disabled={busy} onChange={() => prefs.words !== v && choose("words", v)} className="size-5 shrink-0 accent-brand-text" />
+                {label("words", v)}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      </MoreChoices>
 
-      {group("style", o.style, prefs.style)}
-      {group("address", addresses, prefs.address)}
-      {group("words", o.words, prefs.words)}
-      {group("speed", o.speed, prefs.speed)}
-
-      {sample ? (
-        <p data-part="otp-sample" className="m-0 rounded-lg bg-surface-2 px-3 py-2 text-base">
-          <span className="text-sm text-muted">{t("otp.sample")} </span>
-          {withFirstName(sample.text, ownerFirst)}
-          {!sample.sound ? <span className="block text-sm text-muted">{t("otp.nosound")}</span> : null}
-        </p>
-      ) : null}
       {note?.kind === "saved" ? (
         <p role="status" className={`${okBox} m-0 flex flex-wrap items-center gap-3`} data-part="otp-saved">
           <span>{t("otp.saved")}</span>
@@ -240,4 +248,3 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
     </section>
   );
 }
-

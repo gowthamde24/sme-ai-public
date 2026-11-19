@@ -52,7 +52,7 @@ export default async function CallsPage({ params, searchParams }: PageProps<"/ap
   if (pick(sp.test) === "1" && testCallScreens()) {
     if (role !== "owner") notFound();
     const callRaw = pick(sp.call);
-    return TestCallView({ token: user.accessToken, tenantId, business, callId: callRaw && isCanonicalUuid(callRaw) ? callRaw : null }); // (called, not drawn as a tag: it reads, so it is awaited here)
+    return TestCallView({ token: user.accessToken, tenantId, business, userId: user.id, callId: callRaw && isCanonicalUuid(callRaw) ? callRaw : null }); // (called, not drawn as a tag: it reads, so it is awaited here)
   }
   if (designV6()) return await CallsV6Page({ token: user.accessToken, tenantId, role, callId: null, searchParams: sp }); // the page of design system v6: the table with the open call beside it
   let page: CallsPage | null = null;

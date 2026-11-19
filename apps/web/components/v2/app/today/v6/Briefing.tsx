@@ -50,10 +50,10 @@ export function Briefing({ facts, top, waiting, words }: { facts: BandFacts; top
  * The briefing painted from C1's small `GET /today/briefing` (counts only, about 150 bytes) before the big Today reads arrive: the first sentence is final; the second slot is `second` (a streamed part that is
  * replaced by the quote sentence when the finished list is read; its fallback is the same sentence made from the counts, so nothing moves).
  */
-export function BriefingFast({ facts, second, words }: { facts: BandFacts; second: React.ReactNode; words: Words }) {
+export function BriefingFast({ facts, second, words, reserveQuote = false }: { facts: BandFacts; second: React.ReactNode; words: Words; reserveQuote?: boolean }) {
   const first = briefingFirst(facts, words);
   return (
-    <p data-part="briefing" className="ds-brief text-balance">
+    <p data-part="briefing" className={`ds-brief text-balance ${reserveQuote ? "min-h-[4lh]" : ""}`}>
       {first}
       {first ? " " : null}
       {second}
