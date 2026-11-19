@@ -450,6 +450,7 @@ class Settings(BaseSettings):
     # in-app KYC of a business's phone number (owner, 14 Nov 2026). OFF until the owner says so:
     # the form is checked and nothing is sent to Plivo. ON files the application with Plivo.
     plivo_kyc_live: bool = False
+    phone_numbers_provider: str = "off"   # off | fake | plivo (app/phone_numbers)
     telephony_inbound_language: str = "en"
     telephony_inbound_business: str = "the business"
     # how the Voicebot URL answers: json ({"url": "wss://..."}) | text (the bare address)

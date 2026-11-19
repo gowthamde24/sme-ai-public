@@ -86,6 +86,16 @@ class PlivoAdmin(PlivoApi):
         self._send("POST", f"Number/{digits(number)}/", {"app_id": app_id})
 
 
+    def release_number(self, number: str) -> None:
+        """Give a rented number back (Plivo's DELETE Number/<number>/: "unrent"). Plivo no longer knowing the number (404) counts as released: the call is repeated safely."""
+        try:
+            self._send("DELETE", f"Number/{digits(number)}/")
+        except PlivoError as exc:
+            if exc.reason == "rejected" and exc.status == 404:
+                return
+            raise
+
+
 class ComplianceRefused(PlivoError):
     """Plivo answered 4xx to a compliance request. `detail` is Plivo's own sentence (at most 300 characters) so the Owner can be told what to fix; it is shown to the Owner of that business only, never logged."""
 

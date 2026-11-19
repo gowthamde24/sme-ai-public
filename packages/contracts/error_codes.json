@@ -124,6 +124,18 @@
       "extras": []
     },
     {
+      "code": "already_has_number",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "This business already has a phone number. Give it back first.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "already_member",
       "statuses": [
         409
@@ -2795,6 +2807,42 @@
       "extras": []
     },
     {
+      "code": "number_not_available",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "That number is not available any more. Choose another.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "number_provider_unavailable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "The phone provider did not answer. Try again in a minute.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "numbers_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "Phone numbers are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "open_payment_link",
       "statuses": [
         409
@@ -3167,6 +3215,18 @@
         "pricing"
       ],
       "default_message": "This change has an amount to pay. Pay it first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "phone_kyc_required",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "The phone provider has not accepted your business registration. A number can be taken once it has.",
       "wait": false,
       "extras": []
     },

@@ -207,6 +207,8 @@ class Runtime:
     workspace_secrets: Any = None
     # the in-app KYC of a business's phone number (app/phone_kyc); None without a Plivo account
     phone_kyc: Any = None
+    # a business's own phone number (app/phone_numbers); None unless the provider is on
+    phone_numbers: Any = None
     # how the assistant talks on calls (app/talk_training: the Owner's training)
     talk_training: Any = None
     # My AI team v2 (app/ai_team: the day view and the panels, one database read)
