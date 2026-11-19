@@ -1,4 +1,4 @@
-import { ApiRequestError, apiBaseUrl } from "./client";
+import { ApiRequestError, apiBaseUrl, originFetch } from "./client";
 
 // SERVER ONLY, and a file of its own on purpose: lib/api/client.ts is part of the browser's script, so nothing only the server needs may live there (the route-JS ceilings).
 /**
@@ -9,7 +9,7 @@ export async function apiPublicStream(path: string, headers: Record<string, stri
   const control = new AbortController();
   const timer = setTimeout(() => control.abort(), timeoutMs);
   try {
-    return await fetch(`${apiBaseUrl()}${path}`, { cache: "no-store", method: "GET", headers, signal: control.signal });
+    return await originFetch(`${apiBaseUrl()}${path}`, { cache: "no-store", method: "GET", headers, signal: control.signal });
   } catch {
     throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
   } finally {
