@@ -85,6 +85,7 @@ class FakeOutbox:
         }
         self.filtered_rows: list[dict[str, Any]] = []
         self.templates: list[dict[str, Any]] = []
+        self.queued: dict[str, Any] | None = None
         self.consent_info: dict[str, Any] = {"lead_id": "x", "contact_id": "y", "customer": "Kalyani Gowda", "whatsapp_consent": "unknown", "stopped": False, "has_number": True, "language": "en", "window_open": True, "template_id": None}
 
     def _log(self, name: str, token: str, args: dict[str, Any]) -> None:
@@ -102,6 +103,24 @@ class FakeOutbox:
         mid = args["p_message_id"]
         self.messages.setdefault(mid, message_row(mid, body="Hello Kavitha, this is a reminder from Synthetic Silks.", language="en", category="visit", lead_id=args["p_lead_id"]))
         return self.submit_answer
+
+    def queued_create(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        self._log("queued_reply_create", token, args)
+        self.queued = {"id": "99999999-9999-4999-8999-999999999991", "text": args["p_text"], "language": "en", "status": "waiting_for_reply", "queued_at": "2026-11-20T10:00:00+00:00", "expires_at": "2026-11-27T10:00:00+00:00", "continue_chat": "sent", "send_at": None, "sent_at": None, "failure_code": None}
+        return dict(self.queued)
+
+    def queued_get(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any]:
+        self._log("queued_reply_get", token, {"tenant": str(tenant_id), "lead": str(lead_id)})
+        return {"queued": dict(self.queued) if self.queued else None}
+
+    def queued_cancel(self, token: str, tenant_id: uuid.UUID, queued_id: uuid.UUID) -> dict[str, Any]:
+        self._log("queued_reply_cancel", token, {"tenant": str(tenant_id), "id": str(queued_id)})
+        self.queued = None
+        return {"id": str(queued_id), "status": "cancelled"}
+
+    def queued_attention(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
+        self._log("queued_reply_attention", token, {"tenant": str(tenant_id)})
+        return [dict(self.queued, status="expired", lead_id="cccccccc-cccc-4ccc-8ccc-ccccccccccc1")] if self.queued else []
 
     def consent_ask_info(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any]:
         self._log("consent_ask_info", token, {"tenant": str(tenant_id), "lead": str(lead_id)})

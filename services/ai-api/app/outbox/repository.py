@@ -14,7 +14,7 @@ from typing import Any, Protocol
 import httpx
 
 from app.crm.repository import classify_error
-from app.outbox.errors import CustomerStoppedError, OutboxStateError
+from app.outbox.errors import ComposerRefused, CustomerStoppedError, OutboxStateError
 from app.tenancy.repository import MfaRequired, UpstreamError
 
 logger = logging.getLogger("app.outbox.repository")
@@ -32,6 +32,10 @@ class OutboxRepository(Protocol):
     def submit(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def template_send(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def conversation_templates(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> list[dict[str, Any]]: ...
+    def queued_create(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
+    def queued_get(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any]: ...
+    def queued_cancel(self, token: str, tenant_id: uuid.UUID, queued_id: uuid.UUID) -> dict[str, Any]: ...
+    def queued_attention(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
     def consent_ask_info(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any]: ...
     def edit(
         self,
@@ -177,6 +181,8 @@ class PostgrestOutboxRepository:
             return CustomerStoppedError(code)
         if code == "SM306":
             return MfaRequired(code)
+        if code in ("SM990", "SM991", "SM992", "SM993", "SM994", "SM995", "SM996", "SM997", "SM998"):
+            return ComposerRefused(code)
         return classify_error(status, body)
 
     def _rows(self, path: str, token: str, params: dict[str, str]) -> list[dict[str, Any]]:
@@ -205,6 +211,22 @@ class PostgrestOutboxRepository:
     def consent_ask_info(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any]:
         """What the draft of the consent ask needs for this lead's contact (migration 20261231982300): reads only."""
         return self._rpc_object(token, "consent_ask_info", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id)})
+
+    def queued_create(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        """What the owner typed while the 24-hour window is closed (migration 20261231985700): the hello goes, the text waits for the customer's reply."""
+        return self._rpc_object(token, "queued_reply_create", args)
+
+    def queued_get(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc_object(token, "queued_reply_get", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id)})
+
+    def queued_cancel(self, token: str, tenant_id: uuid.UUID, queued_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc_object(token, "queued_reply_cancel", {"p_tenant_id": str(tenant_id), "p_id": str(queued_id)})
+
+    def queued_attention(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
+        rows = self._rpc(token, "queued_reply_attention", {"p_tenant_id": str(tenant_id)})
+        if not isinstance(rows, list) or any(not isinstance(r, dict) for r in rows):
+            raise UpstreamError("unexpected list shape")
+        return rows
 
     def conversation_templates(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> list[dict[str, Any]]:
         rows = self._rpc(token, "conversation_templates", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id)})
