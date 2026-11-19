@@ -50,7 +50,7 @@ export function PricingPage({ t, lang }: { t: SiteT; lang: Lang }) {
         <div className="mt-10">
           <h2 className="font-display text-2xl font-bold">{t("ld.plans.ld.t")}</h2>
           <div className="mt-4">
-            <PublicPlanCards t={t} start={start} />
+            <PublicPlanCards t={t} start={{ href: start.href, label: t("h3.cta") }} />
           </div>
         </div>
 

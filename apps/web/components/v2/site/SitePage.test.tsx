@@ -271,6 +271,8 @@ describe("the pricing page", () => {
     for (const x of ["Pay as you go", "\u20b9499", "Pro", "\u20b91,999", "Recommended", "Business", "\u20b95,999", "+ 18% GST", "Calls: \u20b95 a minute", "500 minutes included", "1,500 minutes included", "Find customers: 2 searches free a month, then \u20b949 each", "Find customers: 10 searches a month, then \u20b939 each", "Find customers: 100 searches a month, then \u20b929 each", "Priority set-up", "Done-for-you setup", "Founding offer", "Early access is free. Paid plans start in February 2027"]) expect(text, x).toContain(x);
     for (const x of ["1 phone number included. More numbers: \u20b9299 a month each", "Calls are billed every 30 seconds", "Calls nobody answers are free", "WhatsApp at Meta's own price, no markup from us", "No charge for AI actions", "Pay yearly and get 2 months free", "Launch prices locked for 12 months", "Start with \u20b950 free in your wallet", "from about 300 minutes a month Pro costs less than Pay as you go"]) expect(text, x).toContain(x);
     expect(text).toContain("Join early access");
+    expect(text.match(/Get free early access/g)).toHaveLength(3); // the plans' button (owner, 19 Nov 2026), and the same line as the home page
+    expect(text).toContain("Free early access until paid plans start");
     expect(text).not.toMatch(/unlimited|most popular|Lead Desk/i);
     expect(html).not.toMatch(/guarantee/i);
   });
