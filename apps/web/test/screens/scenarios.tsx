@@ -77,6 +77,8 @@ export type Scenario = {
   aal?: "aal1" | "aal2";
   render: () => Promise<ReactElement>;
   handlers: (role: Role) => Record<string, Handler>;
+  /** Environment flags kept on from the call of `render` until the text has been taken (not only until `render` has returned): a page that draws in parts (Today with DESIGN_V6) reads the rest of its data after `render` returned. */
+  env?: Record<string, string>;
 };
 
 export const tenantOf = (role: Role) => ({ id: TENANT, name: "Demo Silks (synthetic)", slug: "demo-silks", role });
@@ -996,6 +998,13 @@ add({ id: "today-education-example-loaded", roles: ["owner"], render: todayPage(
 add({ id: "today-no-example-data", roles: ["owner"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(NO_EXAMPLES), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "today-example-failed", roles: ["owner"], render: todayPage({ example: "unavailable" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "today-example-removed-some-kept", roles: ["owner"], render: todayPage({ example: "removed", kept: "3" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+
+// Today in the design system v6 (DESIGN_V6): the page draws in parts as they are read (the band, "Needs you", the rest). The text must be the same whether the parts arrive together or one by one, and the same as when the page waited for everything.
+const TODAY_V6_ENV = { DESIGN_V6: "1", LEADS_SCREENS: "mock", OUTREACH_SCREENS: "mock", TASK_SCREENS: "mock", CALL_SCREENS: "mock" };
+add({ id: "today-v6", env: TODAY_V6_ENV, render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "today-v6-day-one", roles: ["owner", "admin"], env: { ...TODAY_V6_ENV, ASSISTANT_STATUS: "mock" }, render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "today-v6-example-loaded", roles: ["owner"], env: TODAY_V6_ENV, render: todayPage({ example: "loaded" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_LOADED, getProfile: PROFILE_DONE }) });
+add({ id: "today-v6-education", roles: ["owner"], env: TODAY_V6_ENV, render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(EDUCATION), ...eduCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 const school = (role: Role): Record<string, Handler> => ({ ...base(role), getWorkspacePack: packOf(EDUCATION) });
 const eduCardReads: Record<string, Handler> = {
   runReport: (_t: unknown, _tenant: unknown, code: unknown) => parseReport(code === "education.today" ? EDU.TODAY_REPORT_JSON : code === "education.funnel" ? EDU.FUNNEL_REPORT_JSON : EDU.COLLECTION_REPORT_JSON),
@@ -1462,12 +1471,14 @@ const leadsV6Reads = (role: Role): Record<string, Handler> => ({
   listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [parseVisitFixture(visitJson({ lead_id: V6_LEADS[2].id, status: "booked", date: "2026-10-08", starts_at: "2026-10-08T05:30:00Z", ends_at: "2026-10-08T06:00:00Z" }))] }),
   getTouches: () => ({ items: [{ at: "2026-10-05T04:00:00Z", kind: "first" as const, source: "meta_lead_ads", message: null }, { at: "2026-10-05T09:00:00Z", kind: "repeat" as const, source: "indiamart", message: null }], flags: [] }),
 });
-const leadsV6Page = (search: Record<string, string>) => () => withEnv({ ...V6_ENV, LEADS_SCREENS: "1", OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}, search)));
-add({ id: "leads-v6", render: leadsV6Page({}), handlers: leadsV6Reads });
-add({ id: "leads-v6-open", roles: ["owner", "sales"], render: leadsV6Page({ open: `l-${LEAD}` }), handlers: leadsV6Reads });
-add({ id: "leads-v6-visit-chip", roles: ["owner"], render: leadsV6Page({ chip: "visit_booked" }), handlers: leadsV6Reads });
-add({ id: "leads-v6-empty", roles: ["owner", "viewer"], render: leadsV6Page({}), handlers: (role) => ({ ...outreachReads(role), ...finderHandlers(null, [])(role), listDeskLeads: () => ({ leads: [], nextCursor: null }), listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [] }) }) });
-add({ id: "leads-v6-mock", roles: ["owner"], render: () => withEnv({ ...V6_ENV, LEADS_SCREENS: "mock", OUTREACH_SCREENS: "off" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}))), handlers: (role) => base(role) });
+// (the Leads page draws its leads as a part that is read after the page's heading went out: its flags stay on until the text is taken, `env`, not only while the page is made)
+const LEADS_V6_ENV = { ...V6_ENV, LEADS_SCREENS: "1", OUTREACH_SCREENS: "1" };
+const leadsV6Page = (search: Record<string, string>) => async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}, search));
+add({ id: "leads-v6", env: LEADS_V6_ENV, render: leadsV6Page({}), handlers: leadsV6Reads });
+add({ id: "leads-v6-open", env: LEADS_V6_ENV, roles: ["owner", "sales"], render: leadsV6Page({ open: `l-${LEAD}` }), handlers: leadsV6Reads });
+add({ id: "leads-v6-visit-chip", env: LEADS_V6_ENV, roles: ["owner"], render: leadsV6Page({ chip: "visit_booked" }), handlers: leadsV6Reads });
+add({ id: "leads-v6-empty", env: LEADS_V6_ENV, roles: ["owner", "viewer"], render: leadsV6Page({}), handlers: (role) => ({ ...outreachReads(role), ...finderHandlers(null, [])(role), listDeskLeads: () => ({ leads: [], nextCursor: null }), listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [] }) }) });
+add({ id: "leads-v6-mock", env: { ...V6_ENV, LEADS_SCREENS: "mock", OUTREACH_SCREENS: "off" }, roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({})), handlers: (role) => base(role) });
 const V6_OUTREACH_REPORT = () => parseOutreachReport({ from_day: "2026-10-05", to_day: "2026-10-06", by_source: [{ source: "meta_lead_ads", leads: 120, first_touch_median_seconds: 96, calls: 140, connected_rate: 61, interested_pct: 24, bookings: 14, call_cost_paise: 168000, lead_cost_paise: 1080000, cost_per_booking_paise: 89143 }, { source: "indiamart", leads: 40, first_touch_median_seconds: 45, calls: 44, connected_rate: 55, interested_pct: 30, bookings: 0, call_cost_paise: 52800, lead_cost_paise: 600000, cost_per_booking_paise: null }], total: { leads: 160, calls: 184, connected_rate: 59.5, interested_pct: 25.5, bookings: 14, call_cost_paise: 220800, lead_cost_paise: 1680000, cost_per_booking_paise: 135771 } });
 const reportsV6Page = (search: Record<string, string> = {}) => () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({}, search)));
 // the day-by-day reads of the approved Reports page: leads by day and source, visits (one bought, with its order), the orders, the calls (six incoming on one Saturday evening)

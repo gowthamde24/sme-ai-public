@@ -24,7 +24,7 @@ import { LIST_JSON } from "@/lib/api/campaigns-fixtures";
 import { TODAY_REPORT_JSON } from "@/lib/api/education-fixtures";
 import { parseReport } from "@/lib/api/reports";
 
-import { readPackCards } from "./pack-cards";
+import { mayHaveCampusCard, readPackCards } from "./pack-cards";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const NOW = Date.parse("2026-10-06T10:00:00+05:30");
@@ -100,5 +100,21 @@ describe("the cards a business type adds to Today", () => {
   });
   it("Sales sees quotes as drafts that wait for someone else", async () => {
     expect((await readPackCards(input(["materials"], "sales")))[0].subKey).toBe("today.pack.quotes.sales");
+  });
+});
+
+describe("the campus card is the one card the design system v6's band waits for", () => {
+  const MODULES = ["deliveries", "materials", "fees", "programmes", "campaigns", "visits", "orders", "catalogue"];
+  const subsets = (): string[][] => MODULES.reduce<string[][]>((all, m) => [...all, ...all.map((s) => [...s, m])], [[]]);
+  it("mayHaveCampusCard is true exactly where readPackCards can return the campus card: for every set of modules and every role", async () => {
+    for (const modules of subsets()) {
+      for (const role of ["owner", "admin", "sales", "viewer"] as const) {
+        const has = (await readPackCards(input(modules, role))).some((c) => c.id === "campus");
+        // (can: the read of the day's visits may fail and then the card is left out; it can never appear where the answer is no)
+        if (has) expect(mayHaveCampusCard({ modules }, role)).toBe(true);
+        else if (!(modules.includes("programmes") && modules.includes("visits") && role !== "viewer")) expect(mayHaveCampusCard({ modules }, role)).toBe(false);
+      }
+    }
+    expect(mayHaveCampusCard(null, "owner")).toBe(false);
   });
 });

@@ -1,0 +1,66 @@
+# Today
+{role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
+## Welcome, Demo Silks (synthetic). Let's get your assistant ready.
+About 15 minutes. Your assistant starts answering calls when you switch it on in the last step.
+form:
+[button type=submit: Skip for now]
+- Tell us about your shop · done Name, address, timings, what you sell 2 min
+- 2 [Add your catalogue & prices](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue) Upload a price list, photos, or your website [Start →](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+- 3 [Choose how your assistant speaks](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=voice) Voice, tone, region, how it introduces itself · Optional · defaults are set 2 min
+- 4 [Set the rules](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=rules) What it does alone, what needs your OK, calling hours · Optional · defaults are set 2 min
+- 5 [Practise with your assistant](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=practice) Talk to it here, or get a call on your phone · Optional · defaults are set 2 min
+- 6 [Connect your phone number](/app/tenants/22222222-2222-2222-2222-222222222222/phone-number) Get a business number, forward your shop number 1 min
+- 7 [Connect enquiry sources](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources) Instagram, Facebook, IndiaMART, your website 2 min
+1 of 7 done Next: Add your catalogue & prices Upload a price list, photos, or your website [Continue setup →](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+[button type=button: Go live]
+form:
+[button type=submit: Use a test number (staging)]
+[button type=button: Talk live]
+Not sure? Just talk. Tap the orb and tell it about your shop. It fills the steps for you. Need help? [WhatsApp our team. We'll set it up with you.](/app/support/whatsapp?page=today) 📪 No calls yet. Once your assistant is live, calls, chats and visits show up here. [Make a test call](/app/tenants/22222222-2222-2222-2222-222222222222/calls)
+{label="Needs you"}
+## Needs you
+6 6 waiting for you
+[button type=button: See all]
+-
+### Hot lead : Ravi K.
+Hot lead · Showed interest and nobody has called back yet. [Call back](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?hot=1)
+[button type=button: Details]
+-
+### Price : Reply to Synthetic Buyer
+Price reply · ₹500 ₹500
+[button type=button: Approve and send]
+[button type=button: Not now]
+[button type=button: Details]
+-
+### Hot lead : Anitha R.
+Hot lead · Showed interest and nobody has called back yet. [Call back](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?hot=1)
+[button type=button: Details]
+-
+### Follow-up : Synthetic Buyer
+Follow-up [Review](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
+[button type=button: Details]
+-
+### Visit : Your assistant proposed a visit for Priya S.
+Visit · Thu, 8 Oct, 11:00 · 3 people · Bridal sarees 11:00
+[button type=button: Confirm the visit]
+[button type=button: Details]
+- ₹
+### Quote : Synthetic Buyer, Hyderabad
+Quote · 7:30 ₹50,400 [Review](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888)
+[button type=button: Details]
+{role=status}
+{label="Today's visits"}
+## Today's visits
+- 10:30 Anita R.
+- 12:00 Priya S. +2 Bridal sarees
+- 16:00 Lakshmi Textiles Silk saree wholesale
+{label="This week's results"}
+## This week's results
+- Enquiries 222
+- Called 152
+- Visits booked 1
+- Quotes sent 1
+- Sales 0
+- Your website form ₹82 / visit
+- Meta lead ads ₹891.43 / visit
+- IndiaMART ₹1,162.67 / visit

@@ -1,0 +1,70 @@
+# Today
+{role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
+{label="Good morning"} Tuesday, 6 October · Demo Silks (synthetic) Ready to answer
+## Good morning
+[button type=button: Tap to talk]
+3 visits booked today. One quote of [₹50,400 for Synthetic Buyer](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) is waiting for you.
+[button type=button: Tap to talk]
+{label="Your day13 calls handled · next visit: Anita R. at 10:30"}
+## Your day 13 calls handled · next visit: Anita R. at 10:30
+Calls Visits Planned Anita R. 10:30 Priya S. 12:00 Lakshmi Textiles 16:00 Now 10:00 9am 11am 1pm 3pm 5pm 7pm 9pm
+{label="Needs you"}
+## Needs you
+8 8 waiting for you
+[button type=button: See all]
+-
+### Hot lead : Ravi K.
+Hot lead · Showed interest and nobody has called back yet. [Call back](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?hot=1)
+[button type=button: Details]
+-
+### Price : Reply to Synthetic Buyer
+Price reply · ₹500 ₹500
+[button type=button: Approve and send]
+[button type=button: Not now]
+[button type=button: Details]
+-
+### Call : Synthetic Buyer asked for a call
+Call · order
+[button type=button: Approve call]
+[button type=button: Offer a store visit]
+[button type=button: Details]
+-
+### Hot lead : Anitha R.
+Hot lead · Showed interest and nobody has called back yet. [Call back](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?hot=1)
+[button type=button: Details]
+-
+### Follow-up : Synthetic Buyer
+Follow-up [Review](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
+[button type=button: Details]
+-
+### Visit : Your assistant proposed a visit for Priya S.
+Visit · Thu, 8 Oct, 11:00 · 3 people · Bridal sarees 11:00
+[button type=button: Confirm the visit]
+[button type=button: Details]
+-
+### Order : Synthetic Buyer, Hyderabad
+Order · 8:30 ₹400 [Review](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1)
+[button type=button: Details]
+- ₹
+### Quote : Synthetic Buyer, Hyderabad
+Quote · 7:30 ₹50,400 [Review](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888)
+[button type=button: Details]
+{role=status}
+{label="Your assistant is working on"}
+## Your assistant is working on
+Nothing is running. Tell your assistant what to do above, and it shows here once you approve.
+{label="Today's visits"}
+## Today's visits
+- 10:30 Anita R.
+- 12:00 Priya S. +2 Bridal sarees
+- 16:00 Lakshmi Textiles Silk saree wholesale
+{label="This week's results"}
+## This week's results
+- Enquiries 222
+- Called 152
+- Visits booked 1
+- Quotes sent 1
+- Sales 0
+- Your website form ₹82 / visit
+- Meta lead ads ₹891.43 / visit
+- IndiaMART ₹1,162.67 / visit

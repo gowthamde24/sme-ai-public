@@ -13,7 +13,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 
 import { SCENARIOS, ROLES } from "./scenarios";
 import { screenText } from "./screen-text";
-import { fixtureErrors, setHandlers } from "./state";
+import { callLog, fixtureErrors, setHandlers } from "./state";
 
 // a lazy chunk (next/dynamic) may or may not have arrived when the snapshot is taken: draw the form itself, always
 // night 4 F2: the same for the lazy top-up controls of the Plan part
@@ -29,6 +29,11 @@ vi.mock("@/components/v2/app/prospects/LazyFinderSettingsForm", async () => ({ F
 vi.mock("@/components/v2/app/assistant/LazyCallSettingsAdvanced", async () => ({ CallSettingsAdvanced: (await import("@/components/v2/app/assistant/CallSettingsAdvanced")).CallSettingsAdvanced }));
 vi.mock("@/lib/api/outreach", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/outreach")>(), ["listBatches", "getBatch", "getBatchItems", "listRules", "listHandoffs", "getOutreachReport", "getPolicy"]));
 vi.mock("@/lib/api/lead-desk", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-desk")>(), ["listDeskLeads", "getTouches", "listLeadArrivals"]));
+// design system v6 (Today): the band, the day-one checklist, "Your day" and "Your assistant is working on" are lazy chunks on a real page; the snapshot draws them at once (the phone's bottom bar is client-only: nothing in the text)
+vi.mock("@/components/v2/app/today/v6/LazyTodayBand", async () => ({ LazyTodayBand: (await import("@/components/v2/app/today/v6/TodayBand")).TodayBand, LazyTodayBandAfter: () => null }));
+vi.mock("@/components/v2/app/today/v6/day-one/LazyDayOne", async () => ({ LazyDayOne: (await import("@/components/v2/app/today/v6/day-one/DayOne")).default }));
+vi.mock("@/components/v2/app/today/v6/LazyYourDay", async () => ({ LazyYourDay: (await import("@/components/v2/app/today/v6/YourDay")).default }));
+vi.mock("@/components/v2/app/today/v6/LazyWorkingOn", async () => ({ LazyWorkingOn: (await import("@/components/v2/app/today/v6/WorkingOn")).default }));
 vi.mock("@/components/v2/app/lead-desk/LazyImportScreen", async () => ({ LazyImportScreen: (await import("@/components/v2/app/lead-desk/ImportScreen")).ImportScreen }));
 vi.mock("@/components/v2/app/ds/LazyFileField", async () => ({ LazyFileField: (await import("@/components/v2/app/ds/FileField")).FileField }));
 vi.mock("@/components/v2/app/today/ask/work/LazyWorkPreview", async () => ({ WorkPreview: (await import("@/components/v2/app/today/ask/work/WorkPreview")).WorkPreview }));
@@ -153,6 +158,10 @@ async function capture(scenario: (typeof SCENARIOS)[number], role: (typeof ROLES
   const { session } = await import("./state");
   session.user = { id: "11111111-1111-4111-8111-111111111111", email: "owner@example.test", accessToken: "tok", aal: scenario.aal ?? (role === "owner" || role === "admin" ? "aal2" : "aal1"), hasSecondFactor: role === "owner" || role === "admin" };
   setHandlers(scenario.handlers(role));
+  // the flags of a scenario stay on until the text is taken: a page that draws in parts reads the rest of its data after `render` has returned
+  const env = process.env as Record<string, string | undefined>;
+  const before = Object.fromEntries(Object.keys(scenario.env ?? {}).map((k) => [k, env[k]]));
+  Object.assign(env, scenario.env ?? {});
   try {
     const element = await scenario.render();
     // rendered inside an awaited act, so the parts that read a promise (the outbox log under its Suspense) have settled when the text is taken
@@ -160,11 +169,24 @@ async function capture(scenario: (typeof SCENARIOS)[number], role: (typeof ROLES
     await act(async () => {
       container = render(element).container;
     });
+    // Today and Leads draw in parts that finish one after another: wait until it has not changed for three rounds of the clock (one awaited act was not enough on a loaded machine, where the lazy modules load slower)
+    const streams = scenario.env !== undefined || /^(today|lead-desk)/.test(scenario.id);
+    for (let round = 0, before = "", still = 0; streams && round < 100 && still < 3; round += 1) {
+      await act(async () => void (await new Promise((r) => setTimeout(r, round < 2 ? 0 : 5))));
+      const now = container.innerHTML;
+      still = now === before ? still + 1 : 0;
+      before = now;
+    }
     return screenText(container);
   } catch (error) {
     if (error instanceof Error && error.message === "NEXT_NOT_FOUND") return "[not found]\n";
     if (error instanceof Error && error.message.startsWith("NEXT_REDIRECT:")) return `[redirect to ${error.message.slice("NEXT_REDIRECT:".length)}]\n`;
     throw error;
+  } finally {
+    for (const [k, v] of Object.entries(before)) {
+      if (v === undefined) delete env[k];
+      else env[k] = v;
+    }
   }
 }
 
@@ -229,5 +251,27 @@ describe("the example data offer (night 4 clean-up)", () => {
     expect(read("today-no-example-data")).not.toMatch(/example data/i);
     expect(read("today-no-example-data")).not.toMatch(/fee-reminder/i); // a fee-reminder campaign is the first step of a school only
     expect(read("today-education-example-loaded")).toMatch(/fee-reminder/i);
+  });
+});
+
+describe("Today reads each thing once, however the page is drawn", () => {
+  // The calls (by name, at most) the page made when it waited for all of its data, taken before it drew in parts (19 Nov 2026). A test has no request, so nothing is remembered between two askers of the same thing; the real page asks each once.
+  const BEFORE: Record<string, Record<string, number>> = {
+  "today-v6/owner": { fetchMembers: 1, fetchQuotes: 2, fetchTenant: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getExampleStatus: 1, getMyProfile: 1, getOutboxSettings: 1, getProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 4, listCallRequests: 1, listOutboxApprovals: 1, listOutboxMessages: 1, listVisits: 2, readAvailability: 3 },
+  "today-v6/admin": { fetchMembers: 1, fetchQuotes: 2, fetchTenant: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getExampleStatus: 1, getMyProfile: 1, getOutboxSettings: 1, getProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 4, listOutboxApprovals: 1, listOutboxMessages: 1, listVisits: 2, readAvailability: 3 },
+  "today-v6/sales": { fetchMembers: 1, fetchTenant: 1, getAgentsStatus: 1, getMyProfile: 1, getProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 4, listOutboxMessages: 1, listVisits: 1, readAvailability: 3 },
+  "today-v6/viewer": { fetchMembers: 1, fetchTenant: 1, getAgentsStatus: 1, getMyProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 2, readAvailability: 1 },
+  "today-v6-day-one/owner": { fetchMembers: 1, fetchQuotes: 2, fetchTenant: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getExampleStatus: 1, getMyProfile: 1, getOutboxSettings: 1, getProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 4, listCallRequests: 1, listCatalogueItems: 1, listOutboxApprovals: 1, listOutboxMessages: 1, listVisits: 2, readAvailability: 3 },
+  "today-v6-education/owner": { fetchMembers: 1, fetchQuotes: 2, fetchTenant: 1, getAccountSecurity: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getExampleStatus: 1, getInstitutionProfile: 1, getMyProfile: 1, getOutboxSettings: 1, getProfile: 2, getSlots: 1, getToday: 1, getTodayVisits: 1, getWhatsappAccount: 1, getWorkspacePack: 4, listAdmissions: 1, listCallRequests: 1, listCampaigns: 2, listFeePlans: 1, listOutboxApprovals: 1, listOutboxMessages: 1, listStudents: 1, listVisits: 3, readAvailability: 3, runReport: 1 },
+  "today-v6-example-loaded/owner": { fetchMembers: 1, fetchQuotes: 2, fetchTenant: 1, getAccountSecurity: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getExampleStatus: 1, getLedgerSummary: 1, getMaterialPolicy: 1, getMyProfile: 1, getOutboxSettings: 1, getProfile: 2, getSlots: 1, getToday: 1, getTodayVisits: 1, getWhatsappAccount: 1, getWorkspacePack: 4, listCallRequests: 1, listMaterialItems: 1, listMaterialQuotes: 2, listOutboxApprovals: 1, listOutboxMessages: 1, listTrips: 1, listVisits: 2, readAvailability: 3 },
+  "today/owner": { fetchMembers: 2, fetchQuotes: 1, fetchTenant: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getMyProfile: 1, getOutboxSettings: 2, getSlots: 1, getToday: 1, getTodayVisits: 1, getVisitSettings: 1, getWorkspacePack: 4, listCallRequests: 1, listCatalogueItems: 1, listOutboxApprovals: 1, listOutboxMessages: 1, listVisits: 1, readAvailability: 3 },
+  "today/viewer": { fetchMembers: 1, fetchTenant: 1, getAgentsStatus: 1, getMyProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 2, readAvailability: 1 },
+  };
+  it.each(Object.keys(BEFORE))("%s: no read more often than before, and none new", async (key) => {
+    const [id, role] = key.split("/") as [string, (typeof ROLES)[number]];
+    await capture(SCENARIOS.find((s) => s.id === id)!, role);
+    const now: Record<string, number> = {};
+    for (const name of callLog) now[name] = (now[name] ?? 0) + 1;
+    for (const [name, n] of Object.entries(now)) expect(n, `${key}: ${name}`).toBeLessThanOrEqual(BEFORE[key][name] ?? 0);
   });
 });

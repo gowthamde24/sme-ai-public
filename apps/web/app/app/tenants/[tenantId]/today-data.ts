@@ -36,11 +36,11 @@ export function balanceLine(b: { text: string; minutesEstimate: number | null })
   return [`${b.text} left`, b.minutesEstimate !== null ? `about ${b.minutesEstimate} call minutes` : null, "Top up"].filter((x) => x !== null).join(" · ");
 }
 
-export async function readToday(accessToken: string, tenantId: string, role: Role, now: () => number = Date.now): Promise<TodayData> {
+export async function readToday(accessToken: string, tenantId: string, role: Role, now: () => number = Date.now, pre: { /** The agents' status, when the page has already started that read (the band needs it too: one read, not two). */ agents?: Promise<Awaited<ReturnType<typeof readAgentsCached>>> } = {}): Promise<TodayData> {
   const digest = role === "viewer" ? null : readDigest(accessToken, tenantId, now); // a Viewer may not read the outbox: nothing to ask
   const [today, team, store, proposals, week, sending, asks] = await Promise.allSettled([
     readTodayCached(accessToken, tenantId),
-    readAgentsCached(accessToken, tenantId),
+    pre.agents ?? readAgentsCached(accessToken, tenantId),
     readStore(accessToken, tenantId, now()),
     role === "viewer" ? Promise.resolve([] as NeedsCard[]) : readProposals(accessToken, tenantId, now()),
     role === "owner" || role === "admin" ? readWeek(accessToken, tenantId) : Promise.resolve(null),

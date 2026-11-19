@@ -16,12 +16,13 @@ import { SIDE_GRID } from "./side-card";
 import type { TodayActions } from "./actions-types";
 import { TODAY_CHIPS, type ChipKey } from "./ask/ask-chips";
 import { topDecision } from "./v6/band-data";
-import { buildDay } from "./v6/day-data";
+import { availabilityOf, dayViewOf, readyStore, visitRowsOf } from "./v6/stream-data";
 import { LazyDayOne } from "./v6/day-one/LazyDayOne";
 import { LazyTodayBand, LazyTodayBandAfter } from "./v6/LazyTodayBand";
 import { LazyWorkingOn } from "./v6/LazyWorkingOn";
 import { LazyYourDay } from "./v6/LazyYourDay";
 import { ResultsCard, VisitsCard } from "./v6/Lower";
+import { NeedsBox, ResultsBox, V6Layout, VisitsBox, WorkingBox, YourDayBox } from "./v6/V6Layout";
 import type { V6In } from "./v6/types";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
@@ -87,27 +88,16 @@ function timeText(iso: string, lang: string): string {
 
 export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chipKeys = null, newLeads = null, hasOrders = true, intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, offers = null, packCards = [], demo = false }: { /** "1 offer is waiting for your approval" (Owner only, OFFER_SCREENS): a quiet line above Needs you, already in the person's language; null = none. */ offers?: { line: string; open: string; href: string } | null;  /** The design system v6 (DESIGN_V6): the top band (or the day-one checklist) replaces the hero and the command bar; null = Today as it was. */ v6?: V6In | null; /** App v4's hero (APP_V4): drawn first, with the composer under it and Needs you after; null = Today as it was. */ hero?: React.ReactNode; /** App v4's morning plan or evening report, under the composer; null = none. */ plan?: React.ReactNode; /** Today v5 (TODAY_V5): the totals after calls and the team strip are folded under one line, "More on Today". */ v5?: boolean; /** The assistant's chips (`todayChips`): the four this workspace can do; null = the three that always work. */ chipKeys?: readonly ChipKey[] | null; /** New leads not opened yet (C1's nav-counts, server side); null = not known: no New leads card unless Lead Desk says it. */ newLeads?: number | null; /** The business takes orders (its pack has the module): the Money held card. */ hasOrders?: boolean; /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS): the first cards of the summary row. */ packCards?: readonly PackCard[]; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
   const { cards, needs, team, deskTeam, store, sending, digest } = data;
-  const main = team?.find((a) => a.agent === "main")?.state;
-  const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
+  const availability: Availability = availabilityOf(team);
   const greet = t(hour < 12 ? "today.greeting.morning" : hour < 17 ? "today.greeting.afternoon" : "today.greeting.evening");
   const words = todayWords(t);
   const chips = (chipKeys ?? TODAY_CHIPS).map((k) => t(k));
   // design system v6: the band's facts are Today's own data (a part that cannot be read is left out, never guessed)
-  const ready = store?.state === "ready" ? store : null;
+  const ready = readyStore(store);
   const bandFacts = { enquiries: newLeads, visits: ready ? ready.visits.length : null };
   const askWords: Record<string, string> = Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]));
-  // "Your day": today's calls (read by the page), the visits (the store's own list), the call-backs still planned (the people left to call in the approved job)
-  const dayView = v6
-    ? buildDay({
-        now,
-        calls: v6.dayCalls,
-        visits: ready ? ready.visits.map((v) => ({ startsAt: v.starts_at, who: v.who })) : null,
-        sent: v6.dayTransferred,
-        planned: v6.working && v6.working.waiting > 0 ? { n: v6.working.waiting, toMinute: v6.working.toMinute } : null,
-      })
-    : null;
-  // Today's visits for the v6 list: the time in India (24 hours), the name, the topic
-  const visitRows = (ready?.visits ?? []).map((v) => ({ id: v.id, time: new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Kolkata" }).format(new Date(v.starts_at)), who: v.extra > 0 ? `${v.who} +${v.extra}` : v.who, line: v.topic }));
+  const dayView = v6 ? dayViewOf(now, v6, ready) : null;
+  const visitRows = visitRowsOf(ready);
   return (
     <div data-screen="today" {...(v6 ? { "data-v6": "" } : {})} className="flex flex-col gap-4 md:gap-5">
       <header className={v6 ? "sr-only" : "flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4"}>
@@ -157,44 +147,48 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
         {hero && !v6 ? plan : null}
         {v6 && dayView ? (
           // design system v6, the final Today: the dark band (or the day-one checklist), the full-width "Your day", then two columns: Needs you and "Your assistant is working on" | Today's visits and "This week's results". On a phone the sections follow each other (the order classes) and "Your day" scrolls sideways.
-          <>
-            <div className="order-1 min-w-0">
-              {v6.dayOne ? (
+          <V6Layout
+            band={
+              v6.dayOne ? (
                 <LazyDayOne {...v6.dayOne} words={v6.words} language={v6.language} />
               ) : (
                 <LazyTodayBand lang={lang} base={base} availability={availability} greeting={name ? t("today.greeting.named", { greet, name }) : greet} dateLine={dayLine(now, lang)} shop={v6.shop} facts={bandFacts} top={topDecision(needs)} waiting={cards.waiting} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} demoCall={v6.demoCall} liveCalls={v6.liveCalls} chip={v6.chip} words={v6.words} askWords={askWords} chips={chips} language={v6.language} businessLang={v6.businessLang} />
-              )}
-            </div>
-            {v6.dayOne ? null : (
-              <div className="order-3 min-w-0 lg:order-2">
-                <LazyYourDay view={dayView} words={v6.words} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} liveCalls={v6.liveCalls} />
-              </div>
-            )}
-            <div data-part="v6-lower" className="contents lg:order-3 lg:grid lg:min-w-0 lg:grid-cols-[1.25fr_1fr] lg:items-start lg:gap-[18px]">
-              <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-[18px]">
-                <div className="order-2 min-w-0 lg:order-none">
-                  {offers ? <div className="mb-3"><OffersLine {...offers} /></div> : null}
-                  <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} design />
-                  {v6.jobs ? <div className="mt-[18px]">{v6.jobs}</div> : null}
-                </div>
-                {v6.dayOne ? null : (
-                  <div className="order-4 min-w-0 lg:order-none">
-                    <LazyWorkingOn working={v6.working} words={v6.words} />
-                  </div>
-                )}
-              </div>
-              <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-[18px]">
-                {ready ? (
-                  <div className="order-5 min-w-0 lg:order-none">
-                    <VisitsCard rows={visitRows} t={t} />
-                  </div>
-                ) : null}
-                <div className="order-6 min-w-0 lg:order-none">
-                  <ResultsCard stages={v6.results.stages} costs={v6.results.costs} t={t} />
-                </div>
-              </div>
-            </div>
-          </>
+              )
+            }
+            yourDay={
+              v6.dayOne ? null : (
+                <YourDayBox>
+                  <LazyYourDay view={dayView} words={v6.words} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} liveCalls={v6.liveCalls} />
+                </YourDayBox>
+              )
+            }
+            needs={
+              <NeedsBox>
+                {offers ? <div className="mb-3"><OffersLine {...offers} /></div> : null}
+                <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} design />
+                {v6.jobs ? <div className="mt-[18px]">{v6.jobs}</div> : null}
+              </NeedsBox>
+            }
+            working={
+              v6.dayOne ? null : (
+                <WorkingBox>
+                  <LazyWorkingOn working={v6.working} words={v6.words} />
+                </WorkingBox>
+              )
+            }
+            visits={
+              ready ? (
+                <VisitsBox>
+                  <VisitsCard rows={visitRows} t={t} />
+                </VisitsBox>
+              ) : null
+            }
+            results={
+              <ResultsBox>
+                <ResultsCard stages={v6.results.stages} costs={v6.results.costs} t={t} />
+              </ResultsBox>
+            }
+          />
         ) : null}
         {hero ? <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} /> : null}
         {v6 && !v6.dayOne ? (

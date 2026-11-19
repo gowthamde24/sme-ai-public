@@ -72,13 +72,22 @@ async function readDone(token: string, tenantId: string, shop: string, modules: 
   };
 }
 
+/** What the dark band (or the day-one checklist) needs besides Today's own data: the words, the language, the business, the checklist or the chip, the demo button and the calls that are live now. */
+export type V6Band = Pick<V6In, "words" | "language" | "businessLang" | "shop" | "mockLive" | "demoCall" | "dayOne" | "chip" | "liveCalls">;
+/** What the sections under the band need: the approved job, this week's results and today's calls (for "Your day"). */
+export type V6Lower = Pick<V6In, "working" | "results" | "dayCalls" | "dayTransferred">;
+
 /**
- * Everything the page gives Today for the design system v6 (null where DESIGN_V6 is off): the words, the business name and language, today's calls (for "Your day"), the approved job, this week's results, and the day one checklist (until the assistant is live, unless skipped) or the "Finish setup" chip.
+ * Everything the page gives Today for the design system v6 (null where DESIGN_V6 is off), in TWO parts that start at once and share every read: `band` (the words, the business name and language, the day one checklist, which is shown until the assistant is live unless
+ * skipped, or the "Finish setup" chip, the demo button and the calls live now) and `lower` (the approved job, this week's results, today's calls for "Your day"). The page draws the band as soon as ITS part is read, and the sections under it when theirs is. `userName` may
+ * still be on its way (the checklist greets the person by it, nothing else here needs it).
  * The calls flag `mock` makes pretend calls for the timeline, and `?live=1` a pretend live call (staging); with the real API the calls are read from the calls list and a live call comes from the live-call poll in the browser.
  */
 export { businessLanguage } from "@/lib/assistant/business-language";
 
-export async function readV6({ token, tenantId, userId = "", role, lang, shop, userName, modules, setup, live, base }: { token: string; tenantId: string; userId?: string; role: "owner" | "admin" | "sales" | "viewer"; lang: Lang; shop: string; userName: string | null; modules: readonly string[]; /** `?setup=1`: the chip's link reopens the checklist. */ setup: string | null; /** `?live=1`: the pretend live call (CALL_SCREENS=mock only). */ live: string | null; base: string }): Promise<V6In | null> {
+type V6Args = { token: string; tenantId: string; userId?: string; role: "owner" | "admin" | "sales" | "viewer"; lang: Lang; shop: string; userName: string | null | Promise<string | null>; modules: readonly string[]; /** `?setup=1`: the chip's link reopens the checklist. */ setup: string | null; /** `?live=1`: the pretend live call (CALL_SCREENS=mock only). */ live: string | null; base: string };
+
+export function startV6({ token, tenantId, userId = "", role, lang, shop, userName, modules, setup, live, base }: V6Args): { band: Promise<V6Band>; lower: Promise<V6Lower>; jobs: Promise<ReactNode> } | null {
   if (!designV6()) return null;
   const manages = role === "owner" || role === "admin";
   const words = wordsFor(lang, ["tv6.", "dst.", "bv.chat.plan.", "bv.chat.state.", "bv.chat.err.", "bv.end.", "bv.live."], ["frame.ailight"]);
@@ -97,47 +106,67 @@ export async function readV6({ token, tenantId, userId = "", role, lang, shop, u
         })().catch((): ResultsView => ({ stages: [], costs: [] }))
       : Promise.resolve<ResultsView>({ stages: [], costs: [] }),
   );
-  const [status, choice, profile] = await Promise.all([readAssistantStatus(token, tenantId), readChoice(tenantId), profileAsked]);
-  const missing = (await missingFor(status, shop)) ?? [];
-  // an assistant whose status cannot be known is taken as live: no checklist is drawn on a guess
-  const isLive = status === null || status.state === "live";
-  const checklist = showChecklist({ live: isLive, choice, reopen: setup === "1", manages });
-  const wantDone = status !== null && manages && (checklist || choice !== "dismissed");
-  const done = wantDone && status ? await readDone(token, tenantId, shop, modules, status, missing) : null;
-  const steps = done ? stepViews(done, base) : null;
-  const count = steps ? doneCount(steps) : 0;
-  const dayOne: DayOneIn | null =
-    checklist && steps
-      ? {
-          name: userName ?? shop,
-          steps,
-          canGoLive: missing.length === 0,
-          missing: missing.filter((m): m is "business_name" | "phone_number" => m === "business_name" || m === "phone_number"),
-          actions: { skip: skipSetupAction.bind(null, tenantId), goLive: goLiveAction.bind(null, tenantId), testNumber: manages && assistantStatusScreens() === "mock" ? testNumberAction.bind(null, tenantId) : null },
-          helpHref: "/app/support/whatsapp?page=today",
-          testCallHref: `${base}/calls`,
-        }
-      : null;
-  const chip: ReactNode = steps && showChip({ done: count, choice, checklistShown: checklist, manages }) ? <FinishChip done={count} base={base} words={words} dismiss={dismissChipAction.bind(null, tenantId)} /> : null;
-  // JOBS: "Running now" under Needs you (null when JOBS is off or the API has no jobs yet)
-  const jobList = (await readJobsToday(token, tenantId))?.jobs ?? null;
-  const jobs: ReactNode = jobList && jobList.length > 0 ? <JobsToday jobs={jobList} words={wordsFor(lang, ["jobs."])} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} /> : null;
-  const mockOn = callMode === "mock";
-  const calls = await callsAsked;
-  return {
-    words,
-    language: LANGUAGE_NAMES[lang].native,
-    businessLang: businessLanguage(profile?.languages ?? []),
-    shop,
-    working: await workingAsked,
-    results: await resultsAsked,
-    dayCalls: calls ? calls.times : null,
-    dayTransferred: calls ? calls.transferred : null,
-    liveCalls: calls ? calls.live : [],
-    mockLive: mockOn && live === "1" ? { caller: MOCK_CALL.callee } : null,
-    demoCall: manages && demoCall() && (await readIsDemo(token, tenantId, shop)) ? { start: startDemoCallAction.bind(null, tenantId), end: endDemoCallAction.bind(null, tenantId) } : null,
-    dayOne,
-    chip,
-    jobs,
-  };
+  const band = early(
+    (async (): Promise<V6Band> => {
+      const [status, choice, profile] = await Promise.all([readAssistantStatus(token, tenantId), readChoice(tenantId), profileAsked]);
+      const missing = (await missingFor(status, shop)) ?? [];
+      // an assistant whose status cannot be known is taken as live: no checklist is drawn on a guess
+      const isLive = status === null || status.state === "live";
+      const checklist = showChecklist({ live: isLive, choice, reopen: setup === "1", manages });
+      const wantDone = status !== null && manages && (checklist || choice !== "dismissed");
+      const done = wantDone && status ? await readDone(token, tenantId, shop, modules, status, missing) : null;
+      const steps = done ? stepViews(done, base) : null;
+      const count = steps ? doneCount(steps) : 0;
+      const dayOne: DayOneIn | null =
+        checklist && steps
+          ? {
+              name: (await userName) ?? shop,
+              steps,
+              canGoLive: missing.length === 0,
+              missing: missing.filter((m): m is "business_name" | "phone_number" => m === "business_name" || m === "phone_number"),
+              actions: { skip: skipSetupAction.bind(null, tenantId), goLive: goLiveAction.bind(null, tenantId), testNumber: manages && assistantStatusScreens() === "mock" ? testNumberAction.bind(null, tenantId) : null },
+              helpHref: "/app/support/whatsapp?page=today",
+              testCallHref: `${base}/calls`,
+            }
+          : null;
+      const chip: ReactNode = steps && showChip({ done: count, choice, checklistShown: checklist, manages }) ? <FinishChip done={count} base={base} words={words} dismiss={dismissChipAction.bind(null, tenantId)} /> : null;
+      const mockOn = callMode === "mock";
+      const calls = await callsAsked;
+      return {
+        words,
+        language: LANGUAGE_NAMES[lang].native,
+        businessLang: businessLanguage(profile?.languages ?? []),
+        shop,
+        liveCalls: calls ? calls.live : [],
+        mockLive: mockOn && live === "1" ? { caller: MOCK_CALL.callee } : null,
+        demoCall: manages && demoCall() && (await readIsDemo(token, tenantId, shop)) ? { start: startDemoCallAction.bind(null, tenantId), end: endDemoCallAction.bind(null, tenantId) } : null,
+        dayOne,
+        chip,
+      };
+    })(),
+  );
+  const lower = early(
+    (async (): Promise<V6Lower> => {
+      const calls = await callsAsked;
+      return { working: await workingAsked, results: await resultsAsked, dayCalls: calls ? calls.times : null, dayTransferred: calls ? calls.transferred : null };
+    })(),
+  );
+  // JOBS: "Running now" under Needs you (null when JOBS is off or the API has no jobs yet); asked at once with the rest, and a read that fails draws nothing
+  const jobs = early(
+    readJobsToday(token, tenantId)
+      .then((r): ReactNode => {
+        const list = r?.jobs ?? null;
+        return list && list.length > 0 ? <JobsToday jobs={list} words={wordsFor(lang, ["jobs."])} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} /> : null;
+      })
+      .catch((e): ReactNode => (e instanceof ApiAuthError ? Promise.reject(e) : null)),
+  );
+  return { band, lower, jobs };
+}
+
+/** The two parts together, for a caller that wants Today's whole v6 input at once (the tests of it, the pages that wait for everything). */
+export async function readV6(args: V6Args): Promise<V6In | null> {
+  const started = startV6(args);
+  if (!started) return null;
+  const [band, lower, jobs] = await Promise.all([started.band, started.lower, started.jobs]);
+  return { ...band, ...lower, jobs };
 }

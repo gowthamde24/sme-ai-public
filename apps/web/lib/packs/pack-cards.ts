@@ -34,6 +34,14 @@ export type PackCardInput = { accessToken: string; tenantId: string; role: Role;
 
 const money = (cards: PackCardInput) => cards.formatMoney;
 
+/**
+ * Can `readPackCards` return the "campus" card (a school's visits of the day) for this business type and role? Only then does Today leave the shop's "At the store today" out (owner, 4 Nov), so only then does the first line of the
+ * design system v6's band (it counts the visits) have to wait for the cards. For every other business type the answer is known without a read, and the band does not wait.
+ */
+export function mayHaveCampusCard(pack: Pick<WorkspacePack, "modules"> | null, role: Role): boolean {
+  return pack !== null && role !== "viewer" && hasModule(pack, "programmes") && hasModule(pack, "visits");
+}
+
 export async function readPackCards(input: PackCardInput): Promise<PackCard[]> {
   const { accessToken, tenantId, role, pack, now } = input;
   if (!pack || role === "viewer") return [];
