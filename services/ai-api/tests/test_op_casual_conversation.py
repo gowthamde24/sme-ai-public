@@ -87,3 +87,12 @@ def test_telugu_and_the_other_indian_languages_get_a_larger_reply_budget_than_en
 
     assert budget("en") == prompts.CHAT_TOKENS_EN == 900
     assert all(budget(lang) == prompts.CHAT_TOKENS_INDIAN >= 2000 for lang in ("te", "hi", "kn", "ta", "ml"))
+
+
+def test_both_assistant_prompts_say_what_stack19_is_and_never_quote_prices() -> None:
+    """Owner, 19 Nov 2026: the main assistant did not know what Stack19 is. Both the chat prompt and the Main agent prompt carry the same plain facts."""
+    assert "called Stack19" in prompts.ABOUT_STACK19 and "Never say you do not know what Stack19 is" in prompts.ABOUT_STACK19
+    for text in (prompts.CHAT_SYSTEM_PROMPT, prompts.SYSTEM_PROMPT):
+        assert prompts.ABOUT_STACK19 in text
+    assert "₹" not in prompts.ABOUT_STACK19 and "unlimited" not in prompts.ABOUT_STACK19.lower(), "no price and no promise of what is not built"
+    assert "{" not in prompts.ABOUT_STACK19, "the chat prompt fills {assistant} and {business} by replace: no stray braces"
