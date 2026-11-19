@@ -40,7 +40,8 @@ def test_every_first_template_obeys_the_rules_of_meta_and_of_the_database() -> N
 def test_the_offers_and_the_visit_messages_exist_in_english_and_telugu_only_until_a_native_reader_has_checked_hindi_and_kannada() -> None:
     assert {(d["name"], d["language"]) for d in first_templates.drafts() if d["name"] in THREE} == {(n, lang) for n in THREE for lang in ("en", "te")}
     every = first_templates.drafts(include_unreviewed=True)
-    assert len(every) == 32 and {(d["name"], d["language"]) for d in every if d["name"] in THREE} == {(n, lang) for n in THREE for lang in ("en", "te", "hi", "kn")}
+    FOUR = THREE - {"continue_chat"}   # continue_chat is en and te only until a native reader has read Hindi and Kannada
+    assert len(every) == 34 and {(d["name"], d["language"]) for d in every if d["name"] in FOUR} == {(n, lang) for n in FOUR for lang in ("en", "te", "hi", "kn")}
     by = {(d["name"], d["language"]): d for d in every}
     # the owner's exact words (16 Nov 2026) for English and Telugu
     assert by[("new_collection_offer", "en")]["body"] == "Hello {{1}}, {{2}} has new arrivals: {{3}}. Visit us or reply here to know more. Reply STOP to unsubscribe."
@@ -97,7 +98,7 @@ def test_seeding_makes_twenty_drafts_once_and_only_for_owner_and_admin(w: World)
     assert again.json()["created"] == 0 and len(again.json()["templates"]) == 26
     only = World()
     only.call("PUT", T + "/whatsapp/account", "a_owner", ACCOUNT)
-    assert only.call("POST", T + "/whatsapp/templates/first?languages=en,te", "a_owner").json()["created"] == 16
+    assert only.call("POST", T + "/whatsapp/templates/first?languages=en,te", "a_owner").json()["created"] == 18
 
 
 def test_submit_all_sends_each_draft_to_meta_once_and_sync_reads_its_decision_back(w: World) -> None:
@@ -133,7 +134,7 @@ def test_one_template_can_be_submitted_alone_with_its_samples(w: World) -> None:
         assert r.status_code == 200 and r.json()["template"]["status"] == "submitted", r.text
     assert sorted((c["name"], c["language"]) for c in w.graph.templates_created) == [("lead_ack", "en"), ("lead_ack", "te")]
     assert all(c["components"][0]["example"] == {"body_text": [["Ravi", "Sri Lakshmi Silks"]]} for c in w.graph.templates_created)
-    assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()["submitted"] == 22, "the other 22 stay drafts until they are submitted"
+    assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()["submitted"] == 24, "the other 24 stay drafts until they are submitted"
 
 
 def test_without_a_connected_number_nothing_goes_to_meta() -> None:
@@ -179,7 +180,7 @@ def test_a_name_meta_already_holds_is_refused_with_its_reason_in_the_answer_and_
     stuck.graph.meta_has = {(n, "en") for n in ("lead_ack", *(f"lead_ack_v{i}" for i in range(2, 8)))}
     stuck.call("POST", T + "/whatsapp/templates/first", "a_owner")
     out = stuck.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
-    assert out["submitted"] == 23 and out["refused"] == 1 and [(f["name"], f["language"], f["code"]) for f in out["failed"]] == [("lead_ack", "en", "name_exists")]
+    assert out["submitted"] == 25 and out["refused"] == 1 and [(f["name"], f["language"], f["code"]) for f in out["failed"]] == [("lead_ack", "en", "name_exists")]
     assert "lead_ack_v6" in out["failed"][0]["reason"] and out["failed"][0]["meta_message"]
     one = next(t for t in stuck.call("GET", T + "/whatsapp/templates", "a_owner").json()["templates"] if t["name"] == "lead_ack" and t["status"] == "draft")
     r = stuck.call("POST", T + f"/whatsapp/templates/{one['id']}/submit", "a_owner")
