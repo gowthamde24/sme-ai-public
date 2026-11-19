@@ -83,6 +83,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: ./scripts/check-no-leftovers.sh
       - run: python3 scripts/test-lanes.py
+      # the packs rule "no pack id in code" also covers the web's non-test code: a web-only change must hit it too (19 Nov 2026: a web merge turned main red through the API's test of it)
+      - run: pip install jsonschema && python3 scripts/packs_check.py
 
   # The web check is three jobs: web-static (lint, types, build, the route budget) and web-tests (two parts of the vitest suite, in parallel); THE required check `web` sums them up.
   web-static:
