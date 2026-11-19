@@ -180,13 +180,14 @@ describe("Today's dark band on a desktop", () => {
     expect(document.body).not.toHaveTextContent("Watching for leads");
   });
 
-  it("on a phone the first lines are compact: the date and the shop on one line, the status on its own line without the left border, and the chip on one line that never wraps", () => {
+  it("on a phone the first line is one line (phone density v2): the date, then the status after it; the shop's name shows from a desktop up; the chip on one line that never wraps", () => {
     render(provider(<TodayBand {...props({ chip: <a data-part="finish-chip" href="#x">Finish setup · 5/7</a> })} />));
     const eye = document.querySelector('[data-part="eyebrow"]') as HTMLElement;
     const first = eye.firstElementChild as HTMLElement;
-    expect(first).toHaveClass("max-md:basis-full");
+    expect(first).not.toHaveClass("max-md:basis-full");
     expect(first).toHaveTextContent("Sri Lakshmi Silks");
-    expect(eye.querySelector('[data-part="ready"]')).toHaveClass("max-md:basis-full", "max-md:border-0", "max-md:pl-0");
+    expect(first.querySelector("span")).toHaveClass("max-md:hidden");
+    expect(eye.querySelector('[data-part="ready"]')).not.toHaveClass("max-md:basis-full");
     const chips = document.querySelector('[data-part="eyebrow-chips"]') as HTMLElement;
     expect(chips).toHaveClass("max-md:flex-nowrap", "max-md:whitespace-nowrap");
     expect(chips.querySelector('[data-part="eyebrow-chip"]')).not.toBeNull();
