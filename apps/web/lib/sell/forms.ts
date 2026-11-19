@@ -37,7 +37,7 @@ export function bandOfPaise(paise: number): PriceBand {
 export const EMPTY: { [S in SellStyle]: SellForm[S] } = {
   products: { name: "", price: "", colours: [], stock: "in_stock", count: "" },
   services: { name: "", minutes: "30", price: "", priceFrom: false, booking: "any_day", place: "" },
-  courses: { name: "", batch: "", startsOn: "", fee: "", seats: "" },
+  courses: { name: "", batch: "", startsOn: "", fee: "", seats: "", description: "" },
   properties: { name: "", location: "", size: "", sizeUnit: "sq_ft", price: "", status: "available", note: "" },
   pricelist: { name: "", moq: "", unit: "piece", rates: [{ fromQty: "", rate: "" }], goodUntil: "" },
 };
@@ -50,11 +50,11 @@ export function formOf(entry: SellEntry): SellForm[SellStyle] {
     case "products":
       return { name: entry.name, price: entry.pricePaise === null ? "" : plain(entry.pricePaise), colours: entry.colours, stock: entry.stock.state === "sold_out" ? "in_stock" : entry.stock.state, count: entry.stock.count === null ? "" : String(entry.stock.count) };
     case "services":
-      return { name: entry.name, minutes: String(entry.minutes), price: plain(entry.pricePaise), priceFrom: entry.priceFrom, booking: entry.booking, place: entry.place ?? "" };
+      return { name: entry.name, minutes: entry.minutes === null ? "" : String(entry.minutes), price: entry.pricePaise === null ? "" : plain(entry.pricePaise), priceFrom: entry.priceFrom, booking: entry.booking, place: entry.place ?? "" };
     case "courses":
-      return { name: entry.name, batch: entry.batch, startsOn: dayFromShort(entry.startsOn), fee: entry.feePaise === null ? "" : plain(entry.feePaise), seats: entry.total === null ? "" : String(entry.total) };
+      return { name: entry.name, batch: entry.batch, startsOn: dayFromShort(entry.startsOn), fee: entry.feePaise === null ? "" : plain(entry.feePaise), seats: entry.total === null ? "" : String(entry.total), description: entry.description ?? "" };
     case "properties":
-      return { name: entry.name, location: entry.location, size: String(entry.size), sizeUnit: entry.sizeUnit, price: bigMoneyText(entry.pricePaise).replace("₹", ""), status: entry.status, note: entry.note ?? "" };
+      return { name: entry.name, location: entry.location, size: String(entry.size), sizeUnit: entry.sizeUnit, price: entry.pricePaise === null ? "" : bigMoneyText(entry.pricePaise).replace("₹", ""), status: entry.status, note: entry.note ?? "" };
     case "pricelist":
       return { name: entry.name, moq: String(entry.moq), unit: entry.unit, rates: entry.rates.map((r) => ({ fromQty: String(r.fromQty), rate: plain(r.ratePaise) })), goodUntil: dayFromShort(entry.goodUntil) };
   }
@@ -89,8 +89,9 @@ export function buildProduct(id: string, f: SellForm["products"], prior: Product
 export function buildService(id: string, f: SellForm["services"]): Built<ServiceEntry> {
   const name = trimmed(f.name, 120);
   if (!name) return no("name", "name");
-  const minutes = wholeNumber(f.minutes, 1440);
-  if (minutes === null || minutes < 5) return no("minutes", "minutes");
+  // no time written = no fixed time (a gym membership); a time is 5 minutes to 24 hours
+  const minutes = f.minutes.trim() === "" ? null : wholeNumber(f.minutes, 1440);
+  if (f.minutes.trim() !== "" && (minutes === null || minutes < 5)) return no("minutes", "minutes");
   const price = rupeesOf(f.price);
   if (price === null) return no("price", "price");
   return { ok: true, entry: { style: "services", id, name, minutes, pricePaise: price, priceFrom: f.priceFrom, booking: f.booking, place: f.place === "" ? null : f.place } };
@@ -105,7 +106,9 @@ export function buildCourse(id: string, f: SellForm["courses"], prior: CourseEnt
   const total = f.seats.trim() === "" ? null : wholeNumber(f.seats, 100_000);
   if (f.seats.trim() !== "" && total === null) return no("seats", "seats");
   if (f.startsOn.trim() !== "" && (!/^\d{4}-\d{2}-\d{2}$/.test(f.startsOn.trim()) || Number.isNaN(Date.parse(f.startsOn.trim())))) return no("day", "startsOn");
-  return { ok: true, entry: { style: "courses", id, name, batch, startsOn: f.startsOn.trim() === "" ? null : f.startsOn.trim(), feePaise: fee, seats: prior && prior.total === total ? prior.seats : total === null ? { state: "open", count: null } : { state: "left", count: total }, total } };
+  const description = (f.description ?? "").trim() === "" ? null : trimmed(f.description, 200);
+  if ((f.description ?? "").trim() !== "" && description === null) return no("name", "description");
+  return { ok: true, entry: { style: "courses", id, name, batch, startsOn: f.startsOn.trim() === "" ? null : f.startsOn.trim(), feePaise: fee, seats: prior && prior.total === total ? prior.seats : total === null ? { state: "open", count: null } : { state: "left", count: total }, total, description } };
 }
 export function buildProperty(id: string, f: SellForm["properties"]): Built<PropertyEntry> {
   const name = trimmed(f.name, 120);
@@ -116,7 +119,8 @@ export function buildProperty(id: string, f: SellForm["properties"]): Built<Prop
   if (size === null) return no("size", "size");
   const price = parseBigMoney(f.price);
   if (price === null) return no("price", "price");
-  const note = f.note.trim() === "" ? null : trimmed(f.note, 120);
+  const note = f.note.trim() === "" ? null : trimmed(f.note, 200);
+  if (f.note.trim() !== "" && note === null) return no("name", "note");
   return { ok: true, entry: { style: "properties", id, name, location, size, sizeUnit: f.sizeUnit, note, pricePaise: price, status: f.status } };
 }
 export function buildPrice(id: string, f: SellForm["pricelist"]): Built<PriceEntry> {

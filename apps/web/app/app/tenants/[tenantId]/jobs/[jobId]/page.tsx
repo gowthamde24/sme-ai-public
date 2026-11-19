@@ -13,7 +13,7 @@ import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { readWhoTarget } from "@/lib/api/job-who";
+import { readWhoTarget, readWhoVoices } from "@/lib/api/job-who";
 import { getJob } from "@/lib/api/jobs";
 import { requireUser } from "@/lib/auth/session";
 import { agoOf } from "@/lib/jobs/detail";
@@ -76,7 +76,7 @@ export default async function JobRoute({ params }: PageProps<"/app/tenants/[tena
   // Who talks: the play buttons use the voice sample route when it is on; the command offers the visits job (a read of the jobs list)
   const whoExtra: WhoExtra | null =
     decides && detail.who
-      ? { sampleEndpoint: voiceSampleScreens() === "off" ? null : `${base}/voice-sample`, target: await readWhoTarget(token, tenantId, detail), changeJob: setJobSpeaksAction.bind(null, tenantId) }
+      ? { sampleEndpoint: voiceSampleScreens() === "off" ? null : `${base}/voice-sample`, target: await readWhoTarget(token, tenantId, detail), changeJob: setJobSpeaksAction.bind(null, tenantId), voices: await readWhoVoices(token, tenantId) }
       : null;
   const name = detail.job.customName ?? words[jobNameKey(detail.job.kind)] ?? "";
   return (

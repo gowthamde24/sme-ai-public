@@ -17,6 +17,8 @@ export const JOBS_CODE_WORDS = {
   stopped_by_customer: "jobs.dnc.err.stopped",
   plan_expired: "jobs.err.plan_expired",
   approval_needed: "jobs.err.approval_needed",
+  // an own message: our checks and the API's disagree (contract 1.1 part 1, A4)
+  checks_failed: "jobs.tb.s5.checks_failed",
 } as const satisfies Record<string, Parameters<AppT>[0]>;
 
 export function jobsRefusal(error: unknown, t: AppT, lang: string): Refused {

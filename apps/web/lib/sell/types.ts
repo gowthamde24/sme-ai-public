@@ -27,6 +27,11 @@ export type QtyUnit = (typeof QTY_UNITS)[number];
 export const SEAT_STATES = ["open", "left", "full"] as const;
 export type SeatState = (typeof SEAT_STATES)[number];
 
+/** What the reading call may say about its drafts (C1, W4): a closed list, each with a plain sentence (`jobs.sell.note.<code>`); `row` is the draft it is about (1 to 20), when it names one. */
+export const NOTE_CODES = ["price_missing", "unit_missing", "too_many", "unreadable"] as const;
+export type NoteCode = (typeof NOTE_CODES)[number];
+export type SellNote = { code: NoteCode; row: number | null };
+
 export type ProductEntry = {
   style: "products";
   id: string;
@@ -43,9 +48,10 @@ export type ProductEntry = {
   /** What the catalogue keeps and the sheet does not ask: a save sends the WHOLE item, so these are carried as they are (the same payload the old form sends). */
   keep: { fabric: Fabric; zari: Zari; border: string | null; occasions: Occasion[]; active: boolean };
 };
-export type ServiceEntry = { style: "services"; id: string; name: string; minutes: number; pricePaise: number; priceFrom: boolean; booking: Booking; place: Place | null };
-export type CourseEntry = { style: "courses"; id: string; name: string; batch: string; startsOn: string | null; feePaise: number | null; seats: { state: SeatState; count: number | null }; total: number | null };
-export type PropertyEntry = { style: "properties"; id: string; name: string; location: string; size: number; sizeUnit: SizeUnit; note: string | null; pricePaise: number; status: PropertyStatus };
+/** `minutes` null = no fixed time (a membership); `pricePaise` null only in a DRAFT the assistant read without a stated price (a price is never guessed: the owner fills it before Save). */
+export type ServiceEntry = { style: "services"; id: string; name: string; minutes: number | null; pricePaise: number | null; priceFrom: boolean; booking: Booking; place: Place | null };
+export type CourseEntry = { style: "courses"; id: string; name: string; batch: string; startsOn: string | null; feePaise: number | null; seats: { state: SeatState; count: number | null }; total: number | null; /** One line about the batch (More choices), at most 200 characters. */ description?: string | null };
+export type PropertyEntry = { style: "properties"; id: string; name: string; location: string; size: number; sizeUnit: SizeUnit; note: string | null; pricePaise: number | null; status: PropertyStatus };
 export type PriceRate = { fromQty: number; ratePaise: number };
 export type PriceEntry = { style: "pricelist"; id: string; name: string; moq: number; unit: QtyUnit; rates: PriceRate[]; goodUntil: string | null };
 
@@ -59,7 +65,7 @@ export type SellData = { style: SellStyle; entries: SellEntry[]; live: boolean; 
 /** The sheet's choices for one entry (strings as typed; the server action checks and turns them into the payload). */
 export type ProductForm = { name: string; price: string; colours: Colour[]; stock: "in_stock" | "few_left" | "made_to_order"; count: string };
 export type ServiceForm = { name: string; minutes: string; price: string; priceFrom: boolean; booking: Booking; place: Place | "" };
-export type CourseForm = { name: string; batch: string; startsOn: string; fee: string; seats: string };
+export type CourseForm = { name: string; batch: string; startsOn: string; fee: string; seats: string; description: string };
 export type PropertyForm = { name: string; location: string; size: string; sizeUnit: SizeUnit; price: string; status: PropertyStatus; note: string };
 export type PriceForm = { name: string; moq: string; unit: QtyUnit; rates: { fromQty: string; rate: string }[]; goodUntil: string };
 export type SellForm = { products: ProductForm; services: ServiceForm; courses: CourseForm; properties: PropertyForm; pricelist: PriceForm };

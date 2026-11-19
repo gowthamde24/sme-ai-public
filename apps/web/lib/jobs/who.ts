@@ -14,23 +14,29 @@ export type WhoTone = (typeof WHO_TONES)[number];
 /** Three voices, named by how they sound (never by an invented person's name): the catalogue's ids, the ones the voice sample route plays. */
 export const WHO_VOICES = ["female_warm", "female_clear", "male_calm"] as const;
 export type WhoVoice = (typeof WHO_VOICES)[number];
-/** Which number the job calls and writes from: the shop's own, or a second one the shop has. */
-export const WHO_NUMBERS = ["shop", "second"] as const;
+/** A voice of the catalogue with its name as the API says it ("Soft woman"). */
+export type WhoVoiceName = { id: WhoVoice; name: string };
+/**
+ * Which number the job calls and writes from: the SHOP's own, and only that (C1 contract 1.1 part 1, section 4 C4: the second number is NOT a product yet; `numbers` lists only `shop`, `number: "second"` is never sent and a PATCH to it is `422 setting_invalid`).
+ * So the card shows the shop's number in the sentence as a plain word (no choice), and the web never sends a change of number.
+ */
+export const WHO_NUMBERS = ["shop"] as const;
 export type WhoNumber = (typeof WHO_NUMBERS)[number];
 
 export type WhoNumberInfo = { key: WhoNumber; /** shown as the API sends it, the middle digits hidden: "+91 98480 xxx10" */ masked: string };
-export type JobWho = { language: WhoLanguage; tone: WhoTone; voice: WhoVoice; number: WhoNumber; numbers: readonly WhoNumberInfo[] };
+/** `voice` is the catalogue id (the Play button uses it); `voiceName` is the owner's word for the sound ("Soft woman"), always sent with the voice: the chip shows the NAME. */
+export type JobWho = { language: WhoLanguage; tone: WhoTone; voice: WhoVoice; voiceName: string | null; number: WhoNumber; numbers: readonly WhoNumberInfo[] };
 export type Speaks = Pick<JobWho, "language" | "tone" | "voice" | "number">;
-/** What a change carries: only what changed. */
-export type SpeaksPatch = Partial<Speaks>;
+/** What a change carries: only what changed (language, tone, voice: the number is not a choice). */
+export type SpeaksPatch = Partial<Pick<Speaks, "language" | "tone" | "voice">>;
 
-const LISTS = { language: WHO_LANGUAGES, tone: WHO_TONES, voice: WHO_VOICES, number: WHO_NUMBERS } as const;
+const LISTS = { language: WHO_LANGUAGES, tone: WHO_TONES, voice: WHO_VOICES } as const;
 export type SpeaksKey = keyof typeof LISTS;
 export const isSpeaksKey = (k: unknown): k is SpeaksKey => typeof k === "string" && k in LISTS;
 
 /** ONE choice as the patch the adapter sends (`PATCH /jobs/{id} {speaks: patch}`); null when the value is not one of the closed words. The page, the action and the tests all build the patch HERE. */
 export function speaksPatch(key: SpeaksKey, value: string): SpeaksPatch | null {
-  return (LISTS[key] as readonly string[]).includes(value) ? ({ [key]: value } as SpeaksPatch) : null;
+  return isSpeaksKey(key) && (LISTS[key] as readonly string[]).includes(value) ? ({ [key]: value } as SpeaksPatch) : null;
 }
 /** The patch as it goes on the wire. */
 export const speaksBody = (patch: SpeaksPatch): { speaks: SpeaksPatch } => ({ speaks: patch });

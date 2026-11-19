@@ -120694,17 +120694,6 @@
    "kn": "draft"
   }
  },
- "jobs.page.number.second": {
-  "en": "Second number",
-  "te": "రెండో నంబర్",
-  "hi": "दूसरा नंबर",
-  "kn": "ಎರಡನೇ ನಂಬರ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.page.number.other": {
   "en": "Own number",
   "te": "సొంత నంబర్",
@@ -121711,17 +121700,6 @@
   "te": "షాప్ నంబర్",
   "hi": "दुकान का नंबर",
   "kn": "ಅಂಗಡಿ ನಂಬರ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.who.number.second": {
-  "en": "the second number",
-  "te": "రెండో నంబర్",
-  "hi": "दूसरा नंबर",
-  "kn": "ಎರಡನೇ ನಂಬರ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -125264,6 +125242,347 @@
   "te": "ఆఫ్ చేయండి",
   "hi": "बंद करें",
   "kn": "ಆಫ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.c.description": {
+  "en": "One line about it (if you like)",
+  "te": "దీని గురించి ఒక లైన్ (ఇష్టమైతే)",
+  "hi": "इसके बारे में एक लाइन (चाहें तो)",
+  "kn": "ಇದರ ಬಗ್ಗೆ ಒಂದು ಲೈನ್ (ಬೇಕಾದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.remove": {
+  "en": "Remove this",
+  "te": "ఇది తీసేయండి",
+  "hi": "इसे हटाएं",
+  "kn": "ಇದನ್ನು ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.remove.sure": {
+  "en": "Tap again to remove it",
+  "te": "తీసేయడానికి మళ్ళీ నొక్కండి",
+  "hi": "हटाने के लिए फिर से दबाएं",
+  "kn": "ತೆಗೆಯಲು ಮತ್ತೆ ಒತ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.unclear": {
+  "en": "I could not understand that. Say it again with the name and the price.",
+  "te": "అది నాకు అర్థం కాలేదు. పేరు, రేటుతో మళ్ళీ చెప్పండి.",
+  "hi": "यह मुझे समझ नहीं आया। नाम और रेट के साथ फिर से बोलें।",
+  "kn": "ಅದು ನನಗೆ ಅರ್ಥವಾಗಲಿಲ್ಲ. ಹೆಸರು, ರೇಟ್ ಜೊತೆ ಮತ್ತೆ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.left": {
+  "en": "Some are not complete yet. Tap Change on each one to finish it.",
+  "te": "కొన్ని ఇంకా పూర్తి కాలేదు. ప్రతిదానిపై Change నొక్కి పూర్తి చేయండి.",
+  "hi": "कुछ अभी पूरे नहीं हैं। हर एक पर Change दबाकर पूरा करें।",
+  "kn": "ಕೆಲವು ಇನ್ನೂ ಪೂರ್ತಿಯಾಗಿಲ್ಲ. ಪ್ರತಿಯೊಂದರ ಮೇಲೆ Change ಒತ್ತಿ ಪೂರ್ತಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.note.row": {
+  "en": "Row {n}:",
+  "te": "వరుస {n}:",
+  "hi": "पंक्ति {n}:",
+  "kn": "ಸಾಲು {n}:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.note.price_missing": {
+  "en": "No price was said, so I left it empty. Add the price before you save.",
+  "te": "రేటు చెప్పలేదు, అందుకే ఖాళీగా వదిలాను. Save చేసే ముందు రేటు రాయండి.",
+  "hi": "रेट नहीं बताया गया, इसलिए खाली छोड़ा है। Save करने से पहले रेट डालें।",
+  "kn": "ರೇಟ್ ಹೇಳಿಲ್ಲ, ಅದಕ್ಕೆ ಖಾಲಿ ಬಿಟ್ಟಿದ್ದೇನೆ. Save ಮಾಡುವ ಮುನ್ನ ರೇಟ್ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.note.unit_missing": {
+  "en": "No unit was said (piece, metre, kg). I used piece. Change it if that is wrong.",
+  "te": "యూనిట్ చెప్పలేదు (piece, metre, kg). Piece అని తీసుకున్నాను. తప్పైతే మార్చండి.",
+  "hi": "यूनिट नहीं बताई गई (piece, metre, kg)। मैंने piece लिया है। गलत हो तो बदलें।",
+  "kn": "ಯೂನಿಟ್ ಹೇಳಿಲ್ಲ (piece, metre, kg). Piece ಎಂದು ತೆಗೆದುಕೊಂಡಿದ್ದೇನೆ. ತಪ್ಪಾದರೆ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.note.too_many": {
+  "en": "That was a long list. I took the first 20. Send the rest in another go.",
+  "te": "లిస్ట్ చాలా పెద్దది. మొదటి 20 తీసుకున్నాను. మిగతావి మళ్ళీ పంపండి.",
+  "hi": "लिस्ट बहुत लंबी थी। मैंने पहले 20 लिए हैं। बाकी अगली बार भेजें।",
+  "kn": "ಲಿಸ್ಟ್ ತುಂಬಾ ಉದ್ದ ಇತ್ತು. ಮೊದಲ 20 ತೆಗೆದುಕೊಂಡಿದ್ದೇನೆ. ಉಳಿದದ್ದನ್ನು ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.note.unreadable": {
+  "en": "I could not read some of it clearly. Check it before you save.",
+  "te": "కొంత భాగం స్పష్టంగా చదవలేకపోయాను. Save చేసే ముందు చూడండి.",
+  "hi": "कुछ हिस्सा साफ पढ़ नहीं पाया। Save करने से पहले देख लें।",
+  "kn": "ಸ್ವಲ್ಪ ಭಾಗ ಸ್ಪಷ್ಟವಾಗಿ ಓದಲಾಗಲಿಲ್ಲ. Save ಮಾಡುವ ಮುನ್ನ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.file.size": {
+  "en": "That file is too big. Please send one up to 15 MB.",
+  "te": "ఆ ఫైల్ చాలా పెద్దది. 15 MB లోపు ఫైల్ పంపండి.",
+  "hi": "यह फाइल बहुत बड़ी है। 15 MB तक की फाइल भेजें।",
+  "kn": "ಆ ಫೈಲ್ ತುಂಬಾ ದೊಡ್ಡದು. 15 MB ಒಳಗಿನ ಫೈಲ್ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.file.type": {
+  "en": "I can read photos, PDFs and sheets (CSV, TSV, Excel) only.",
+  "te": "నేను ఫోటోలు, PDF, షీట్లు (CSV, TSV, Excel) మాత్రమే చదవగలను.",
+  "hi": "मैं सिर्फ फोटो, PDF और शीट (CSV, TSV, Excel) पढ़ सकता हूं।",
+  "kn": "ನಾನು ಫೋಟೋ, PDF ಮತ್ತು ಶೀಟ್ (CSV, TSV, Excel) ಮಾತ್ರ ಓದಬಲ್ಲೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.file.empty": {
+  "en": "That file is empty.",
+  "te": "ఆ ఫైల్ ఖాళీగా ఉంది.",
+  "hi": "वह फाइल खाली है।",
+  "kn": "ಆ ಫೈಲ್ ಖಾಲಿ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.file.forbidden": {
+  "en": "Only the Owner and Admins can add what you sell.",
+  "te": "మీరు అమ్మేవి చేర్చగలిగేది Owner, Admin మాత్రమే.",
+  "hi": "आप क्या बेचते हैं यह सिर्फ Owner और Admin जोड़ सकते हैं।",
+  "kn": "ನೀವು ಮಾರುವುದನ್ನು ಸೇರಿಸಲು Owner, Admin ಮಾತ್ರ ಸಾಧ್ಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.file.down": {
+  "en": "The file did not go up. Please try again.",
+  "te": "ఫైల్ వెళ్ళలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "फाइल नहीं गई। फिर से कोशिश करें।",
+  "kn": "ಫೈಲ್ ಹೋಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.pick.photos": {
+  "en": "Choose a photo of your shelf, bill book or price board. I read the names and prices. You check them before anything is saved.",
+  "te": "మీ షెల్ఫ్, బిల్ బుక్ లేదా రేట్ బోర్డ్ ఫోటో ఎంచుకోండి. పేర్లు, రేట్లు నేను చదువుతాను. Save చేసే ముందు మీరు చూస్తారు.",
+  "hi": "अपनी शेल्फ, बिल बुक या रेट बोर्ड की फोटो चुनें। नाम और रेट मैं पढ़ता हूं। Save से पहले आप देख लेंगे।",
+  "kn": "ನಿಮ್ಮ ಶೆಲ್ಫ್, ಬಿಲ್ ಬುಕ್ ಅಥವಾ ರೇಟ್ ಬೋರ್ಡ್ ಫೋಟೋ ಆರಿಸಿ. ಹೆಸರು, ರೇಟ್ ನಾನು ಓದುತ್ತೇನೆ. Save ಮಾಡುವ ಮುನ್ನ ನೀವು ನೋಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.pick.photos.go": {
+  "en": "Choose a photo",
+  "te": "ఫోటో ఎంచుకోండి",
+  "hi": "फोटो चुनें",
+  "kn": "ಫೋಟೋ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.pick.sheet": {
+  "en": "Choose your Excel or CSV sheet. I match the columns. You check them before anything is saved.",
+  "te": "మీ Excel లేదా CSV షీట్ ఎంచుకోండి. కాలమ్స్ నేను సరిపోలుస్తాను. Save చేసే ముందు మీరు చూస్తారు.",
+  "hi": "अपनी Excel या CSV शीट चुनें। कॉलम मैं मिलाता हूं। Save से पहले आप देख लेंगे।",
+  "kn": "ನಿಮ್ಮ Excel ಅಥವಾ CSV ಶೀಟ್ ಆರಿಸಿ. ಕಾಲಂ ನಾನು ಹೊಂದಿಸುತ್ತೇನೆ. Save ಮಾಡುವ ಮುನ್ನ ನೀವು ನೋಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.pick.sheet.go": {
+  "en": "Choose a sheet",
+  "te": "షీట్ ఎంచుకోండి",
+  "hi": "शीट चुनें",
+  "kn": "ಶೀಟ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.pick.reading": {
+  "en": "Reading it…",
+  "te": "చదువుతున్నాను…",
+  "hi": "पढ़ रहा हूं…",
+  "kn": "ಓದುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.use.sentence": {
+  "en": "Let {job} send this message.",
+  "te": "ఈ మెసేజ్‌ని {job} పంపేలా చేయండి.",
+  "hi": "इस मैसेज को {job} भेजे, ऐसा करें।",
+  "kn": "ಈ ಮೆಸೇಜ್ ಅನ್ನು {job} ಕಳುಹಿಸುವಂತೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.use.label": {
+  "en": "Which job",
+  "te": "ఏ జాబ్",
+  "hi": "कौन सा जॉब",
+  "kn": "ಯಾವ ಜಾಬ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.use.go": {
+  "en": "Use it",
+  "te": "ఇది వాడండి",
+  "hi": "इसे इस्तेमाल करें",
+  "kn": "ಇದನ್ನು ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.use.done": {
+  "en": "{job} now sends this message.",
+  "te": "{job} ఇప్పుడు ఈ మెసేజ్ పంపుతుంది.",
+  "hi": "{job} अब यह मैसेज भेजेगा।",
+  "kn": "{job} ಈಗ ಈ ಮೆಸೇಜ್ ಕಳುಹಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.use.undo": {
+  "en": "Back to the standard message",
+  "te": "మామూలు మెసేజ్‌కి వెనక్కి",
+  "hi": "सामान्य मैसेज पर वापस",
+  "kn": "ಸಾಮಾನ್ಯ ಮೆಸೇಜ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.uses": {
+  "en": "Uses your message: {title}",
+  "te": "మీ మెసేజ్ వాడుతోంది: {title}",
+  "hi": "आपका मैसेज इस्तेमाल हो रहा है: {title}",
+  "kn": "ನಿಮ್ಮ ಮೆಸೇಜ್ ಬಳಸುತ್ತಿದೆ: {title}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.checks_failed": {
+  "en": "Our checks and WhatsApp's disagree. Change the message and try again.",
+  "te": "మా చెక్స్, WhatsApp చెక్స్ ఒకేలా లేవు. మెసేజ్ మార్చి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "हमारी जांच और WhatsApp की जांच मेल नहीं खाती। मैसेज बदलकर फिर कोशिश करें।",
+  "kn": "ನಮ್ಮ ಚೆಕ್ ಮತ್ತು WhatsApp ಚೆಕ್ ಹೊಂದುತ್ತಿಲ್ಲ. ಮೆಸೇಜ್ ಬದಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.need.one": {
+  "en": "A message of yours needs a change",
+  "te": "మీ మెసేజ్ ఒకటి మార్చాలి",
+  "hi": "आपका एक मैसेज बदलना है",
+  "kn": "ನಿಮ್ಮ ಒಂದು ಮೆಸೇಜ್ ಬದಲಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.need.n": {
+  "en": "{n} of your messages need a change",
+  "te": "మీ {n} మెసేజ్‌లు మార్చాలి",
+  "hi": "आपके {n} मैसेज बदलने हैं",
+  "kn": "ನಿಮ್ಮ {n} ಮೆಸೇಜ್‌ಗಳನ್ನು ಬದಲಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.need.sub": {
+  "en": "WhatsApp sent it back. Open it to see why and change it.",
+  "te": "WhatsApp వెనక్కి పంపింది. ఎందుకో చూసి మార్చడానికి తెరవండి.",
+  "hi": "WhatsApp ने वापस भेज दिया। क्यों, यह देखने और बदलने के लिए खोलें।",
+  "kn": "WhatsApp ಹಿಂದೆ ಕಳುಹಿಸಿದೆ. ಏಕೆ ಎಂದು ನೋಡಿ ಬದಲಿಸಲು ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.need.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

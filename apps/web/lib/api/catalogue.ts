@@ -64,6 +64,8 @@ export interface ItemBase {
   price_text: string | null;
   stock_status: StockStatus;
   stock_label: string;
+  /** `stock_count` (C1 contract 1.1 part 1, W3): the quantity written by `PUT .../quantity`. null = not counted, 0 = sold out. Left out by an older API (then undefined). */
+  stock_count?: number | null;
   active: boolean;
   photo_count: number;
   created_at: string;
@@ -163,6 +165,8 @@ function parseBase(json: Rec): ItemBase {
     price_text: nullableStr(json.price_text, "price_text", 40),
     stock_status: oneOf(STOCK_STATUSES, json.stock_status, "stock_status"),
     stock_label: str(json.stock_label, "stock_label", 40),
+    // lenient: a count that is not a whole number >= 0 reads as "not counted" (the catalogue must never fail for this extra)
+    ...(json.stock_count !== undefined ? { stock_count: typeof json.stock_count === "number" && Number.isSafeInteger(json.stock_count) && json.stock_count >= 0 && json.stock_count <= 1_000_000 ? json.stock_count : null } : {}),
     active: bool(json.active, "active"),
     photo_count: int(json.photo_count, "photo_count", 0, MAX_PHOTOS),
     created_at: when(json.created_at, "created_at"),

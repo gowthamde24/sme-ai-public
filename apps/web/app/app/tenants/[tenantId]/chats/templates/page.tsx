@@ -13,6 +13,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { settle } from "@/lib/api/part";
+import { readJobs } from "@/lib/api/jobs";
 import { readOwnMessages } from "@/lib/api/template-builder";
 import { listTemplates } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
@@ -20,11 +21,13 @@ import { BRAND_NAME } from "@/design/brand";
 import { jobsScreens } from "@/lib/screens/flag";
 
 import { submitDraftsAction, submitTemplateAction, syncTemplatesAction } from "./actions";
-import { submitOwnMessageAction, writeOwnMessageAction } from "./own-actions";
+import { submitOwnMessageAction, useOwnMessageAction, writeOwnMessageAction } from "./own-actions";
 
 export const metadata = { title: `Templates · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
+/** The jobs that may send one of the shop's own messages (contract 1.1 part 1, A8). */
+const SENDING: readonly string[] = ["offers", "followups", "store_visits"];
 
 /**
  * /app/tenants/[tenantId]/chats/templates: the third tab of Chats (owner, 16 Nov: moved out of the WhatsApp connection page). The WhatsApp message templates, the same table with "Send drafts to WhatsApp for review" and "Check WhatsApp's answer" (Owner and Admin; sending needs the second factor, which the API asks). The WhatsApp connection page keeps only the number.
@@ -56,16 +59,22 @@ export default async function TemplatesPage({ params }: PageProps<"/app/tenants/
   const words = wordsFor(lang, ["wa.", "apierr.", "problem.", "today.lang."], ["dta.btn.working"]);
   // JOBS: "Your own messages" (the builder with the checks) above the table; off = nothing here changes
   const jobs = jobsScreens();
-  const own = jobs === "off" ? null : await readOwnMessages(user.accessToken, tenantId).catch(() => null);
+  // ONLY a 404 means "not there yet" (the part is then not drawn, quietly); any other refusal is said in that part's place
+  const ownRead = jobs === "off" ? null : await settle(() => readOwnMessages(user.accessToken, tenantId));
+  const own = ownRead?.ok ? ownRead.data : null;
+  // "Use it in a job": the jobs that send offers, follow-ups or store visits (plain data: the choice is drawn inside the lazy chunk)
+  const sending = own ? ((await readJobs(user.accessToken, tenantId).catch(() => null)) ?? []).filter((j) => SENDING.includes(j.kind)).map((j) => ({ id: j.id, kind: j.kind, customName: j.customName })) : [];
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={t("chats6.tab.templates")} sub={t("chats6.tab.templates.sub")} />
       <div className={`mt-6 flex flex-col gap-5 ${own ? "max-w-5xl" : "max-w-3xl"}`}>
+        {ownRead && !ownRead.ok ? <PartProblem kind={ownRead.kind} retryAfter={ownRead.retryAfter} words={words} title={wordsFor(lang, ["jobs.tb.own.title"])["jobs.tb.own.title"]} /> : null}
         {own ? (
           <LazyOwnMessages
-            words={wordsFor(lang, ["jobs.tb."], ["today.err.generic"])}
+            words={wordsFor(lang, ["jobs.tb.", "jobs.kind."], ["today.err.generic"])}
             items={own}
-            actions={{ write: writeOwnMessageAction.bind(null, tenantId), submit: submitOwnMessageAction.bind(null, tenantId) }}
+            jobs={sending}
+            actions={{ write: writeOwnMessageAction.bind(null, tenantId), submit: submitOwnMessageAction.bind(null, tenantId), use: useOwnMessageAction.bind(null, tenantId) }}
             secondFactor={user.hasSecondFactor}
             mock={jobs === "mock"}
             securityHref="/app/security"

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
@@ -10,9 +10,10 @@ const fetchTenant = vi.fn();
 const listTemplates = vi.fn();
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
-vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/whatsapp", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/whatsapp")>()), listTemplates: (...a: unknown[]) => listTemplates(...a) }));
 vi.mock("./actions", () => ({ submitDraftsAction: vi.fn(), submitTemplateAction: vi.fn(), syncTemplatesAction: vi.fn() }));
+const apiRequest = vi.fn();
+vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a), apiRequest: (...a: unknown[]) => apiRequest(...a) }));
 
 import TemplatesPage from "./page";
 
@@ -25,6 +26,31 @@ beforeEach(() => {
   requireUser.mockResolvedValue({ id: "u", email: "e@example.test", accessToken: "tok" });
   fetchTenant.mockResolvedValue(tenant("owner"));
   listTemplates.mockResolvedValue([TPL]);
+});
+
+describe("/chats/templates: Your own messages (JOBS)", () => {
+  it("JOBS=mock: the own messages are there (nothing is asked of the API for them)", async () => {
+    vi.stubEnv("JOBS", "mock");
+    render(await TemplatesPage(props()));
+    expect(await screen.findByText("Your own messages")).toBeInTheDocument();
+    expect(apiRequest).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+  });
+  it("JOBS on: ONLY a 404 of the own-messages route is quiet (the part is not drawn); a refusal is said in that part's place and the table stays", async () => {
+    vi.stubEnv("JOBS", "1");
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x"));
+    render(await TemplatesPage(props()));
+    expect(document.querySelector('[data-problem]')).toBeNull();
+    expect(screen.queryByText("Your own messages")).toBeNull();
+    expect(screen.getByText("lead_ack")).toBeInTheDocument();
+    cleanup();
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(503, "down", "x"));
+    render(await TemplatesPage(props()));
+    expect(document.querySelector('[data-problem="500"]')).toBeTruthy();
+    expect(screen.getByText("Your own messages")).toBeInTheDocument();
+    expect(screen.getByText("lead_ack")).toBeInTheDocument();
+    vi.unstubAllEnvs();
+  });
 });
 
 describe("/chats/templates (the third tab of Chats)", () => {

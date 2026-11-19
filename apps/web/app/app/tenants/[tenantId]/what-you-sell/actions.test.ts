@@ -3,19 +3,22 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { appT } from "@/i18n/app";
 import { itemJson } from "@/lib/api/catalogue-fixtures";
 import { parseItem } from "@/lib/api/catalogue";
+import { ApiRequestError } from "@/lib/api/client";
 import { EMPTY } from "@/lib/sell/forms";
 
 const T = "22222222-2222-2222-2222-222222222222";
 const ITEM = "c27a36f2-ef14-5f33-b10f-3e03bade04aa";
+const FRESH = "5e110002-0000-4000-8000-0000000000f1";
 vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
-const m = vi.hoisted(() => ({ who: vi.fn(), saveItem: vi.fn(), getItem: vi.fn(), putQuantity: vi.fn(), fetchTenant: vi.fn(), pack: vi.fn() }));
+const m = vi.hoisted(() => ({ who: vi.fn(), saveItem: vi.fn(), getItem: vi.fn(), putQuantity: vi.fn(), fetchTenant: vi.fn(), pack: vi.fn(), put: vi.fn(), remove: vi.fn(), read: vi.fn() }));
 vi.mock("../retailers/finder-guard", async (orig) => ({ ...(await orig<typeof import("../retailers/finder-guard")>()), who: m.who }));
 vi.mock("../catalogue/catalogue-actions", () => ({ saveItemAction: m.saveItem }));
 vi.mock("@/lib/api/catalogue", async (orig) => ({ ...(await orig<typeof import("@/lib/api/catalogue")>()), getCatalogueItem: m.getItem, putQuantity: m.putQuantity }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: m.fetchTenant }));
 vi.mock("@/lib/packs/read", () => ({ readPackCached: m.pack }));
+vi.mock("@/lib/api/what-you-sell", async (orig) => ({ ...(await orig<typeof import("@/lib/api/what-you-sell")>()), putSellEntry: m.put, removeSellEntry: m.remove, readSellDrafts: m.read }));
 
-import { readSheetAction, saveEntryAction, understandAction } from "./actions";
+import { readAction, readSheetAction, removeEntryAction, saveEntryAction, understandAction } from "./actions";
 
 const products = { ...EMPTY.products, name: "Red silk", price: "9,000", colours: ["red" as const], stock: "few_left" as const, count: "2" };
 beforeEach(() => {
@@ -97,13 +100,113 @@ describe("saving one entry", () => {
       m.putQuantity.mockRejectedValue(new Error("down"));
       expect(await saveEntryAction(T, "products", null, products)).toMatchObject({ ok: true, data: { note: "count" } });
     });
-    it("a business with no catalogue (or a style with no API yet) is told it is not ready, and nothing is sent", async () => {
+    it("a business with no catalogue is told it is not ready, and nothing is sent", async () => {
       m.pack.mockResolvedValue({ modules: ["materials"] });
       expect(await saveEntryAction(T, "products", null, products)).toMatchObject({ ok: false, kind: "unavailable" });
-      m.pack.mockResolvedValue({ modules: ["catalogue"] });
-      expect(await saveEntryAction(T, "services", null, { ...EMPTY.services, name: "Facial", price: "700" })).toMatchObject({ ok: false, kind: "unavailable" });
       expect(m.saveItem).not.toHaveBeenCalled();
     });
+    it("the sheet's own id for a NEW product is the id the catalogue gets (a retry is the same item)", async () => {
+      m.saveItem.mockImplementation(async (_t: string, id: string) => ({ ok: true, item: parseItem(itemJson({ id }, [])) }));
+      m.putQuantity.mockResolvedValue(undefined);
+      await saveEntryAction(T, "products", null, products, { freshId: FRESH });
+      expect(m.saveItem.mock.calls[0][1]).toBe(FRESH);
+    });
+  });
+
+  describe("the other four styles are PUT /what-you-sell/{style}/{id} (C1 contract 1.1 part 1)", () => {
+    const service = { ...EMPTY.services, name: "Facial", price: "700" };
+    beforeEach(() => vi.stubEnv("JOBS", "1"));
+    it("a new entry is sent with the id the sheet minted (the same id again is a retry); nothing touches the catalogue", async () => {
+      m.put.mockImplementation(async (_tok: string, _t: string, entry: unknown) => entry);
+      const r = await saveEntryAction(T, "services", null, service, { freshId: FRESH });
+      expect(m.put).toHaveBeenCalledWith("tok", T, expect.objectContaining({ style: "services", id: FRESH, name: "Facial", pricePaise: 70_000 }));
+      expect(r).toMatchObject({ ok: true, data: { entry: { id: FRESH }, photosPath: null, note: null } });
+      await saveEntryAction(T, "services", null, service, { freshId: FRESH });
+      expect(m.put.mock.calls[1][2].id).toBe(FRESH);
+      expect(m.saveItem).not.toHaveBeenCalled();
+    });
+    it("a changed entry keeps its own id; an id that is not a UUID is refused before anything is sent", async () => {
+      m.put.mockImplementation(async (_tok: string, _t: string, entry: unknown) => entry);
+      await saveEntryAction(T, "services", ITEM, service, { freshId: FRESH });
+      expect(m.put.mock.calls[0][2].id).toBe(ITEM);
+      expect(await saveEntryAction(T, "services", "nope", service)).toMatchObject({ ok: false, kind: "invalid" });
+      expect(m.put).toHaveBeenCalledTimes(1);
+    });
+    it("a form that is not valid is refused here with the field, nothing is sent", async () => {
+      expect(await saveEntryAction(T, "services", null, { ...service, price: "" }, { freshId: FRESH })).toMatchObject({ ok: false, kind: "invalid", fields: ["price"] });
+      expect(m.put).not.toHaveBeenCalled();
+    });
+    it("a course keeps the owner's seats count when the total did not change, and a bad hint is ignored", async () => {
+      m.put.mockImplementation(async (_tok: string, _t: string, entry: unknown) => entry);
+      const form = { ...EMPTY.courses, name: "NEET", batch: "Mon 6 pm", fee: "24000", seats: "30" };
+      await saveEntryAction(T, "courses", ITEM, form, { course: { seats: { state: "left", count: 6 }, total: 30 } });
+      expect(m.put.mock.calls[0][2]).toMatchObject({ seats: { state: "left", count: 6 }, total: 30 });
+      await saveEntryAction(T, "courses", ITEM, form, { course: { seats: { state: "plenty", count: 6 }, total: 30 } as never });
+      expect(m.put.mock.calls[1][2]).toMatchObject({ seats: { state: "left", count: 30 } });
+    });
+    it("ONLY a 404 is 'not ready'; the second step missing is `mfa` with the Security path; a real refusal is shown as it is", async () => {
+      m.put.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "no"));
+      expect(await saveEntryAction(T, "services", null, service, { freshId: FRESH })).toMatchObject({ ok: false, kind: "unavailable", error: "This is not ready for your kind of business yet. Your assistant still answers from what you tell it." });
+      m.put.mockRejectedValueOnce(new ApiRequestError(403, "mfa_required", "no"));
+      expect(await saveEntryAction(T, "services", null, service, { freshId: FRESH })).toMatchObject({ ok: false, kind: "mfa", mfa: true });
+      m.put.mockRejectedValueOnce(new ApiRequestError(403, "forbidden", "no"));
+      expect(await saveEntryAction(T, "services", null, service, { freshId: FRESH })).toMatchObject({ ok: false, kind: "forbidden" });
+      m.put.mockRejectedValueOnce(new ApiRequestError(422, "setting_invalid", "no", undefined, undefined, undefined, { fields: ["price_paise"] }));
+      expect(await saveEntryAction(T, "services", null, service, { freshId: FRESH })).toMatchObject({ ok: false, kind: "invalid", fields: ["price_paise"] });
+      m.put.mockRejectedValueOnce(new ApiRequestError(503, "down", "no"));
+      expect(await saveEntryAction(T, "services", null, service, { freshId: FRESH })).toMatchObject({ ok: false, kind: "unavailable" });
+    });
+  });
+});
+
+describe("removing an entry", () => {
+  it("JOBS off: nothing happens; mock: ok and nothing sent; products are never removed here", async () => {
+    expect(await removeEntryAction(T, "services", ITEM)).toMatchObject({ ok: false, kind: "invalid" });
+    vi.stubEnv("JOBS", "mock");
+    expect(await removeEntryAction(T, "services", ITEM)).toEqual({ ok: true, data: { id: ITEM } });
+    expect(await removeEntryAction(T, "products", ITEM)).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await removeEntryAction(T, "services", "nope")).toMatchObject({ ok: false, kind: "invalid" });
+    expect(m.remove).not.toHaveBeenCalled();
+  });
+  it("a real workspace: POST remove; a 404 is 'not ready', a refusal is shown as it is", async () => {
+    vi.stubEnv("JOBS", "1");
+    m.remove.mockResolvedValueOnce(undefined);
+    expect(await removeEntryAction(T, "pricelist", ITEM)).toEqual({ ok: true, data: { id: ITEM } });
+    expect(m.remove).toHaveBeenCalledWith("tok", T, "pricelist", ITEM);
+    m.remove.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "no"));
+    expect(await removeEntryAction(T, "pricelist", ITEM)).toMatchObject({ ok: false, kind: "unavailable" });
+    m.remove.mockRejectedValueOnce(new ApiRequestError(403, "forbidden", "no"));
+    expect(await removeEntryAction(T, "pricelist", ITEM)).toMatchObject({ ok: false, kind: "forbidden" });
+  });
+});
+
+describe("the reading call", () => {
+  const out = { entries: [], unclear: false, notes: [] };
+  it("JOBS off: nothing is asked; mock: not ready (the closed-word parser and the made-up readings are the mock's)", async () => {
+    expect(await readAction(T, "services", { kind: "talk", text: "haircut 200" })).toMatchObject({ ok: false, kind: "invalid" });
+    vi.stubEnv("JOBS", "mock");
+    expect(await readAction(T, "services", { kind: "talk", text: "haircut 200" })).toMatchObject({ ok: false, kind: "unavailable" });
+    expect(m.read).not.toHaveBeenCalled();
+  });
+  it("a real workspace: talk and file requests are checked, then asked in the language of the screen", async () => {
+    vi.stubEnv("JOBS", "1");
+    m.read.mockResolvedValue(out);
+    expect(await readAction(T, "services", { kind: "talk", text: "  haircut 200  " })).toEqual({ ok: true, data: out });
+    expect(m.read).toHaveBeenLastCalledWith("tok", T, "services", { kind: "talk", text: "haircut 200" }, "en");
+    expect(await readAction(T, "pricelist", { kind: "photo", fileId: FRESH })).toEqual({ ok: true, data: out });
+    expect(m.read).toHaveBeenLastCalledWith("tok", T, "pricelist", { kind: "photo", fileId: FRESH }, "en");
+    for (const bad of [{ kind: "talk", text: "hi" }, { kind: "talk", text: "x".repeat(2001) }, { kind: "sheet", fileId: "nope" }, { kind: "video", fileId: FRESH }, null] as never[]) expect(await readAction(T, "services", bad)).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await readAction(T, "products", { kind: "talk", text: "red saree" })).toMatchObject({ ok: false, kind: "invalid" });
+    expect(m.read).toHaveBeenCalledTimes(2);
+  });
+  it("404 = not ready; the 30-an-hour limit and any other refusal are shown as they are", async () => {
+    vi.stubEnv("JOBS", "1");
+    m.read.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "no"));
+    expect(await readAction(T, "services", { kind: "talk", text: "haircut 200" })).toMatchObject({ ok: false, kind: "unavailable" });
+    m.read.mockRejectedValueOnce(new ApiRequestError(429, "rate_limited", "no", undefined, undefined, 60));
+    expect(await readAction(T, "services", { kind: "talk", text: "haircut 200" })).toMatchObject({ ok: false, kind: "rate_limited" });
+    m.read.mockRejectedValueOnce(new ApiRequestError(403, "forbidden", "no"));
+    expect(await readAction(T, "services", { kind: "talk", text: "haircut 200" })).toMatchObject({ ok: false, kind: "forbidden" });
   });
 });
 

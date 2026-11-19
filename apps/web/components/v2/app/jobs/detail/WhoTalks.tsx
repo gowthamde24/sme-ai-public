@@ -85,7 +85,7 @@ export function WhoTalks(p: WhoTalksProps) {
         }
       : null);
   const { t } = p;
-  const [now, setNow] = useState<Speaks>({ language: who.language, tone: who.tone, voice: who.voice, number: who.number });
+  const [now, setNow] = useState<Speaks>({ language: who.language, tone: who.tone, voice: who.voice, number: "shop" });
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
@@ -134,14 +134,16 @@ export function WhoTalks(p: WhoTalksProps) {
 
   const plainSentence = t("jobs.who.sentence").replace(/\{\w+\}/g, "…");
   const langText = t(`jobs.opt.language.${now.language}`);
-  const numberKeys = who.numbers.length > 0 ? who.numbers.map((n) => n.key) : [now.number];
-  const numberText = (k: string) => t(`jobs.who.number.${k}`);
-  const masked = who.numbers.find((n) => n.key === now.number)?.masked ?? null;
+  // the number is the shop's, and only that (the second number is not a product): a plain word in the sentence, never a choice
+  const numberText = t("jobs.who.number.shop");
+  const masked = who.numbers.find((n) => n.key === "shop")?.masked ?? null;
+  // a voice's name: the catalogue's own word for it when the page read it (`GET /ai-assistant/voices`), else ours
+  const voiceName = (v: WhoVoice) => p.extra?.voices?.find((x) => x.id === v)?.name ?? t(`jobs.who.voice.${v}`);
   const label = (n: number) => `${plainSentence} (${n})`;
   const parts: Record<string, () => ReactNode> = {
     language: () => <PillSelect label={label(1)} value={now.language} options={WHO_LANGUAGES} optionText={(v) => t(`jobs.opt.language.${v}`)} disabled={off} onChange={(v) => void choose("language", v)} />,
     tone: () => <PillSelect label={label(2)} value={now.tone} options={WHO_TONES} optionText={(v) => t(`jobs.who.tone.${v}`)} disabled={off} onChange={(v) => void choose("tone", v)} />,
-    number: () => <PillSelect label={label(3)} value={now.number} options={numberKeys} optionText={numberText} disabled={off} onChange={(v) => void choose("number", v)} />,
+    number: () => <b data-part="who-number-word" className="font-semibold">{numberText}</b>,
   };
   const sentence = t("jobs.who.sentence").split(/(\{language\}|\{tone\}|\{number\})/g);
 
@@ -226,9 +228,9 @@ export function WhoTalks(p: WhoTalksProps) {
         <div className="flex flex-col">
           {WHO_VOICES.map((v) => (
             <div key={v} data-voice={v} className="flex items-center gap-2">
-              <Radio className="min-w-0 flex-1" name={`who-voice-${jobId}`} value={v} checked={now.voice === v} disabled={off} onChange={() => void choose("voice", v)} label={<span className="text-[16px] font-semibold text-ink">{t(`jobs.who.voice.${v}`)}</span>} sub={t(`jobs.who.voice.${v}.d`)} />
+              <Radio className="min-w-0 flex-1" name={`who-voice-${jobId}`} value={v} checked={now.voice === v} disabled={off} onChange={() => void choose("voice", v)} label={<span className="text-[16px] font-semibold text-ink">{voiceName(v)}</span>} sub={t(`jobs.who.voice.${v}.d`)} />
               {sampleUrl ? (
-                <button type="button" data-play={v} aria-pressed={playing === v} aria-label={`${t(playing === v ? "jobs.who.stop" : "jobs.who.play")}: ${t(`jobs.who.voice.${v}`)}`} onClick={() => play(v)} className={`${jobBtnQuiet} shrink-0`}>
+                <button type="button" data-play={v} aria-pressed={playing === v} aria-label={`${t(playing === v ? "jobs.who.stop" : "jobs.who.play")}: ${voiceName(v)}`} onClick={() => play(v)} className={`${jobBtnQuiet} shrink-0`}>
                   {playing === v ? <Pause aria-hidden="true" className="size-4" /> : <Play aria-hidden="true" className="size-4" />}
                   {t(playing === v ? "jobs.who.stop" : "jobs.who.play")}
                 </button>
@@ -245,8 +247,14 @@ export function WhoTalks(p: WhoTalksProps) {
 
       {effectText ? (
         <div data-part="who-effect" className="mt-3 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink">
-          <b>{t("jobs.job.effect")}</b> {effectText} {t("jobs.who.fx.talks", { name: shownName, language: langText, number: numberText(now.number) })}
+          <b>{t("jobs.job.effect")}</b> {effectText} {t("jobs.who.fx.talks", { name: shownName, language: langText, number: numberText })}
         </div>
+      ) : null}
+
+      {p.detail?.message ? (
+        <p data-part="who-message" className="m-0 mt-3 text-[15px] leading-snug text-ink">
+          {t("jobs.tb.uses", { title: p.uiLang === "te" && p.detail.message.title.te ? p.detail.message.title.te : p.detail.message.title.en })}
+        </p>
       ) : null}
 
       <p data-part="who-ai-line" className="m-0 mt-3 flex items-start gap-2.5 rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-[14px] leading-snug text-ink">
