@@ -30,7 +30,7 @@ export type WhoTalksProps = {
   /** Or the raw effect (the card writes the sentence itself, in the lazy chunk): the job's kind and `effectOf`'s answer. */
   fx?: { kind: string; who: string; steps: readonly { at: number }[] } | null;
   t: Say;
-  canChange: boolean;
+  canChange?: boolean;
   uiLang: string;
   /** Our own voice sample route (`<workspace>/voice-sample`) when it is on; null = no play buttons. */
   sampleEndpoint?: string | null;
@@ -38,7 +38,7 @@ export type WhoTalksProps = {
   onChange?: (patch: SpeaksPatch) => Promise<{ ok: true } | { ok: false; error: string }>;
   /** Or the job page's own save and what to do after a language change (the card builds `onChange` itself). */
   setSpeaks?: (patch: SpeaksPatch) => Promise<{ ok: true } | { ok: false; error: string }>;
-  onLanguage?: (language: string) => void;
+  onLang?: (language: string) => void;
   onRename: (name: string) => Promise<boolean>;
   command?: WhoCommandProps | null;
   /** The other jobs' side of "Make the visits job speak Telugu": the card builds its own command from this (kept here, in the lazy chunk, so the job page carries less code). */
@@ -62,7 +62,7 @@ export function WhoTalks(p: WhoTalksProps) {
   async function saveSpeaks(patch: SpeaksPatch): Promise<{ ok: true } | { ok: false; error: string }> {
     const r = p.setSpeaks ? await p.setSpeaks(patch) : { ok: false as const, error: "" };
     if (!r.ok) return { ok: false, error: r.error };
-    if (patch.language) p.onLanguage?.(patch.language);
+    if (patch.language) p.onLang?.(patch.language);
     return { ok: true };
   }
   const target = p.extra?.target;
@@ -93,7 +93,7 @@ export function WhoTalks(p: WhoTalksProps) {
   const [sampleError, setSampleError] = useState(false);
   const audio = useRef<HTMLAudioElement | null>(null);
   useEffect(() => () => audio.current?.pause(), []);
-  const off = !p.canChange;
+  const off = !(p.canChange ?? !!p.setSpeaks);
   const checked = checkJobName(draft);
   const typed = checked.ok ? checked.name : draft.trim();
 

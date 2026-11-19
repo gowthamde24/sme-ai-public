@@ -168,16 +168,15 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
           onSwitch={(next) => void switchTo(next)}
           onRename={(name) => renameTo(name)}
         />
-        {detail.who && detail.says.length > 0 ? (
+        {detail.who && detail.says.length ? (
           <WhoTalks
             detail={detail}
             values={values}
             customName={now.customName}
             t={t}
-            canChange={!!actions?.setSpeaks}
             uiLang={lang}
             setSpeaks={actions?.setSpeaks}
-            onLanguage={(l) => setValues((v) => ({ ...v, language: l }))}
+            onLang={(l) => setValues((v) => ({ ...v, language: l }))}
             onRename={renameTo}
             extra={whoExtra}
           />
