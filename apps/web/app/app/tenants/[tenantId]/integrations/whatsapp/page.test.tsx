@@ -43,14 +43,14 @@ describe("/integrations/whatsapp", () => {
     expect(listTemplates).not.toHaveBeenCalled();
   });
   it("the owner sees the Connect with Facebook card when the API says it is ready; the manual form is under More choices", async () => {
-    getConnectConfig.mockResolvedValue({ available: true, appId: "APP1", configId: "CFG1", graphVersion: "v25.0", missing: [] });
+    getConnectConfig.mockResolvedValue({ available: true, appId: "APP1", configId: "CFG1", graphVersion: "v25.0", missing: [], onboardingTypes: ["cloud_api", "coexistence"] });
     render(await ConnectPage(props()));
     expect(await screen.findByRole("button", { name: "Connect with Facebook" })).toBeInTheDocument();
     expect(screen.getByText("More choices (for support only)")).toBeInTheDocument();
     expect(document.querySelector('[data-part="manual-connect"]')).not.toHaveAttribute("open");
   });
   it("without a configuration (staging today) it says WhatsApp connect is being set up and draws no button", async () => {
-    getConnectConfig.mockResolvedValue({ available: false, appId: null, configId: null, graphVersion: "v25.0", missing: ["app_id", "config_id"] });
+    getConnectConfig.mockResolvedValue({ available: false, appId: null, configId: null, graphVersion: "v25.0", missing: ["app_id", "config_id"], onboardingTypes: [] });
     render(await ConnectPage(props()));
     expect(screen.getByText("WhatsApp connect is being set up. The button will be here soon.")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Connect with Facebook" })).toBeNull();

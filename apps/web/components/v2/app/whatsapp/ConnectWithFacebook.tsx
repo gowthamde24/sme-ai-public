@@ -11,7 +11,7 @@ import { makeT, type Words } from "../words";
 import type { Out } from "./wa-types";
 import { waSentence } from "./wa-model";
 
-export type SignupConfig = { appId: string; configId: string; graphVersion: string };
+export type SignupConfig = { appId: string; configId: string; graphVersion: string; /** The API can record a number that stays on the WhatsApp Business app (its `onboarding_types` has "coexistence"). */ coexistence?: boolean };
 type State = "idle" | "connecting" | "saving" | "connected" | "cancelled" | "failed";
 
 /**
@@ -19,13 +19,13 @@ type State = "idle" | "connecting" | "saving" | "connected" | "cancelled" | "fai
  * Meta's SDK is loaded only here, on first press (route-JS budget). Two answers arrive in either order: the short `code` (from `FB.login`) and the account and number (a window message); when both are in, they go to our API once. The states are plain:
  * connecting, connected (the number and the name WhatsApp verified), cancelled, failed (with Meta's reason in words when it gave one). `sdk` is for the tests.
  */
-export function ConnectWithFacebook({ words, config, connect, onConnected, sdk = loadFacebookSdk }: { words: Words; config: SignupConfig; connect: (f: { code: string; wabaId: string; phoneNumberId: string }) => Promise<Out<Connected>>; onConnected?: (c: Connected) => void; sdk?: (appId: string, version: string) => Promise<FbSdk> }) {
+export function ConnectWithFacebook({ words, config, connect, onConnected, sdk = loadFacebookSdk }: { words: Words; config: SignupConfig; connect: (f: { code: string; wabaId: string; phoneNumberId: string; coexistence?: true }) => Promise<Out<Connected>>; onConnected?: (c: Connected) => void; sdk?: (appId: string, version: string) => Promise<FbSdk> }) {
   const t = makeT(words);
   const [state, setState] = useState<State>("idle");
   const [reason, setReason] = useState("");
   const [failure, setFailure] = useState<Failed | null>(null);
   const [done, setDone] = useState<Connected | null>(null);
-  const got = useRef<{ code: string | null; ids: { wabaId: string; phoneNumberId: string } | null; sent: boolean }>({ code: null, ids: null, sent: false });
+  const got = useRef<{ code: string | null; ids: { wabaId: string; phoneNumberId: string; coexistence: boolean } | null; sent: boolean }>({ code: null, ids: null, sent: false });
   const listener = useRef<((e: MessageEvent) => void) | null>(null);
 
   useEffect(
@@ -40,7 +40,7 @@ export function ConnectWithFacebook({ words, config, connect, onConnected, sdk =
     if (g.sent || !g.code || !g.ids) return;
     g.sent = true;
     setState("saving");
-    const r = await connect({ code: g.code, wabaId: g.ids.wabaId, phoneNumberId: g.ids.phoneNumberId });
+    const r = await connect({ code: g.code, wabaId: g.ids.wabaId, phoneNumberId: g.ids.phoneNumberId, ...(config.coexistence && g.ids.coexistence ? { coexistence: true as const } : {}) });
     stopListening();
     if (!r.ok) {
       setFailure(r);
@@ -83,7 +83,7 @@ export function ConnectWithFacebook({ words, config, connect, onConnected, sdk =
         setState("cancelled");
       } else if (m.kind === "error") fail(m.reason);
       else {
-        got.current.ids = { wabaId: m.wabaId, phoneNumberId: m.phoneNumberId };
+        got.current.ids = { wabaId: m.wabaId, phoneNumberId: m.phoneNumberId, coexistence: m.coexistence };
         void finishIfReady();
       }
     };

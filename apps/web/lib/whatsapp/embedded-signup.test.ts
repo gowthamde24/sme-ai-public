@@ -18,9 +18,9 @@ describe("what FB.login is asked", () => {
 describe("the window message of Meta's signup", () => {
   const ok = { type: "WA_EMBEDDED_SIGNUP", event: "FINISH", data: { waba_id: "123456789", phone_number_id: "987654321" } };
   it("FINISH with both ids (an object or a JSON string) means finished; the app-onboarding event does too", () => {
-    expect(readSignupMessage({ origin: "https://www.facebook.com", data: ok })).toEqual({ kind: "finish", wabaId: "123456789", phoneNumberId: "987654321" });
-    expect(readSignupMessage({ origin: "https://web.facebook.com", data: JSON.stringify(ok) })).toEqual({ kind: "finish", wabaId: "123456789", phoneNumberId: "987654321" });
-    expect(readSignupMessage({ origin: "https://www.facebook.com", data: { ...ok, event: "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" } })?.kind).toBe("finish");
+    expect(readSignupMessage({ origin: "https://www.facebook.com", data: ok })).toEqual({ kind: "finish", wabaId: "123456789", phoneNumberId: "987654321", coexistence: false });
+    expect(readSignupMessage({ origin: "https://web.facebook.com", data: JSON.stringify(ok) })).toEqual({ kind: "finish", wabaId: "123456789", phoneNumberId: "987654321", coexistence: false });
+    expect(readSignupMessage({ origin: "https://www.facebook.com", data: { ...ok, event: "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" } })).toEqual({ kind: "finish", wabaId: "123456789", phoneNumberId: "987654321", coexistence: true });
   });
   it("CANCEL means the person closed the window; ERROR carries Meta's reason, cleaned", () => {
     expect(readSignupMessage({ origin: "https://www.facebook.com", data: { type: "WA_EMBEDDED_SIGNUP", event: "CANCEL", data: { current_step: "PHONE" } } })).toEqual({ kind: "cancel" });

@@ -10,7 +10,8 @@ beforeEach(() => h.req.mockReset());
 
 describe("the Embedded Signup configuration", () => {
   it("reads what the browser needs and what is missing; the Graph version has a default", () => {
-    expect(parseConnectConfig({ available: true, app_id: "1234567890", config_id: "9988776655", graph_version: "v25.0", missing: [] })).toEqual({ available: true, appId: "1234567890", configId: "9988776655", graphVersion: "v25.0", missing: [] });
+    expect(parseConnectConfig({ available: true, app_id: "1234567890", config_id: "9988776655", graph_version: "v25.0", missing: [] })).toEqual({ available: true, appId: "1234567890", configId: "9988776655", graphVersion: "v25.0", missing: [], onboardingTypes: [] });
+    expect(parseConnectConfig({ available: true, app_id: "1234567890", config_id: "9988776655", onboarding_types: ["cloud_api", "coexistence"], missing: [] }).onboardingTypes).toEqual(["cloud_api", "coexistence"]);
     expect(parseConnectConfig({ available: false, app_id: null, config_id: null, missing: ["app_id", "config_id"] })).toMatchObject({ available: false, appId: null, graphVersion: "v25.0", missing: ["app_id", "config_id"] });
   });
   it("is never 'available' without both ids, and refuses ids of odd shape", () => {
@@ -32,6 +33,13 @@ describe("POST /whatsapp/connect", () => {
     h.req.mockResolvedValueOnce({ connected: true, display_phone: "+91 98765 43210", verified_name: "Neelambari Silks", status: "active" });
     expect(await connectWhatsapp("tok", T, { code: "AQBcodecodecode1234", wabaId: "123456789", phoneNumberId: "987654321" })).toEqual({ connected: true, displayPhone: "+91 98765 43210", verifiedName: "Neelambari Silks", status: "active" });
     expect(h.req).toHaveBeenCalledWith(`/v1/tenants/${T}/whatsapp/connect`, "tok", { method: "POST", body: JSON.stringify({ code: "AQBcodecodecode1234", waba_id: "123456789", phone_number_id: "987654321" }) });
+  });
+  it("sends coexistence:true only when asked to (the API's model is strict: an older API must never get the field)", async () => {
+    h.req.mockResolvedValue({ connected: true, display_phone: null, verified_name: null, status: "active" });
+    await connectWhatsapp("tok", T, { code: "AQBcodecodecode1234", wabaId: "123456789", phoneNumberId: "987654321", coexistence: true });
+    expect(JSON.parse((h.req.mock.calls[0][2] as { body: string }).body)).toEqual({ code: "AQBcodecodecode1234", waba_id: "123456789", phone_number_id: "987654321", coexistence: true });
+    await connectWhatsapp("tok", T, { code: "AQBcodecodecode1234", wabaId: "123456789", phoneNumberId: "987654321" });
+    expect(JSON.parse((h.req.mock.calls[1][2] as { body: string }).body)).not.toHaveProperty("coexistence");
   });
   it("never sends a code or an id of the wrong shape", async () => {
     await expect(connectWhatsapp("tok", T, { code: "x", wabaId: "123456789", phoneNumberId: "987654321" })).rejects.toThrow();

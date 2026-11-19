@@ -45,13 +45,13 @@ export async function disableWhatsappAction(tenantId: string): Promise<Out<Whats
  * "Connect with Facebook" (Meta Embedded Signup): the browser finished Meta's window and hands over the short code and the account and number the shop picked. The Owner only, with the second factor (the API checks, and checks the signup was made in OUR app and shared this account).
  * The format of each value is checked here first, so nothing odd travels to the API. The answer is the number and the name WhatsApp verified; a refusal is one sentence of ours for the API's closed code.
  */
-export async function connectWithFacebookAction(tenantId: string, f: { code: string; wabaId: string; phoneNumberId: string }): Promise<Out<Connected>> {
+export async function connectWithFacebookAction(tenantId: string, f: { code: string; wabaId: string; phoneNumberId: string; coexistence?: true }): Promise<Out<Connected>> {
   const user = await requireUser();
   const t = appT(await getLang());
-  const ok = isCanonicalUuid(tenantId) && typeof f?.code === "string" && SIGNUP_CODE.test(f.code) && typeof f.wabaId === "string" && SIGNUP_ID.test(f.wabaId) && typeof f.phoneNumberId === "string" && SIGNUP_ID.test(f.phoneNumberId);
+  const ok = isCanonicalUuid(tenantId) && typeof f?.code === "string" && SIGNUP_CODE.test(f.code) && typeof f.wabaId === "string" && SIGNUP_ID.test(f.wabaId) && typeof f.phoneNumberId === "string" && SIGNUP_ID.test(f.phoneNumberId) && (f.coexistence === undefined || f.coexistence === true);
   if (!ok) return { ok: false, kind: "invalid", error: t("apierr.invalid") };
   try {
-    const data = await connectWhatsapp(user.accessToken, tenantId, f);
+    const data = await connectWhatsapp(user.accessToken, tenantId, { code: f.code, wabaId: f.wabaId, phoneNumberId: f.phoneNumberId, ...(f.coexistence === true ? { coexistence: true as const } : {}) });
     revalidatePath(`/app/tenants/${tenantId}/integrations`);
     return { ok: true, data };
   } catch (error) {

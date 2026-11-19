@@ -51,6 +51,12 @@ describe("Connect with Facebook (Embedded Signup)", () => {
     expect(await connectWithFacebookAction(T, SIGNUP)).toEqual({ ok: true, data: { connected: true, displayPhone: "+91 98765 43210", verifiedName: "Neelambari Silks", status: "active" } });
     expect(h.api).toHaveBeenCalledWith("connect", "tok", T, SIGNUP);
   });
+  it("passes coexistence:true on; anything else in that field is refused", async () => {
+    h.api.mockResolvedValue({ connected: true });
+    await connectWithFacebookAction(T, { ...SIGNUP, coexistence: true });
+    expect(h.api).toHaveBeenLastCalledWith("connect", "tok", T, { ...SIGNUP, coexistence: true });
+    expect(await connectWithFacebookAction(T, { ...SIGNUP, coexistence: false as never })).toMatchObject({ ok: false, kind: "invalid" });
+  });
   it("refuses a code or ids of the wrong shape, and a bad workspace, before asking the API", async () => {
     for (const bad of [{ ...SIGNUP, code: "short" }, { ...SIGNUP, code: "has space in it 123" }, { ...SIGNUP, wabaId: "12ab" }, { ...SIGNUP, phoneNumberId: "" }]) expect(await connectWithFacebookAction(T, bad)).toMatchObject({ ok: false, kind: "invalid" });
     expect(await connectWithFacebookAction("nope", SIGNUP)).toMatchObject({ ok: false, kind: "invalid" });

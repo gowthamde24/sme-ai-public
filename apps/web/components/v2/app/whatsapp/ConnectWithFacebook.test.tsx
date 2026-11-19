@@ -21,7 +21,7 @@ function fake() {
   const sdk = vi.fn(async () => ({ init: vi.fn(), login }) as FbSdk);
   return { sdk, login, answer: (r: FbLoginResponse) => act(() => cb?.(r)) };
 }
-const connect = (over?: object) => vi.fn(async () => ({ ok: true as const, data: { connected: true, displayPhone: "+91 98765 43210", verifiedName: "Neelambari Silks", status: "active", ...over } }));
+const connect = (over?: object) => vi.fn(async (_f?: object) => ({ ok: true as const, data: { connected: true, displayPhone: "+91 98765 43210", verifiedName: "Neelambari Silks", status: "active", ...over } }));
 const view = (f: ReturnType<typeof fake>, c = connect(), onConnected = vi.fn()) => {
   render(<ConnectWithFacebook words={WORDS} config={CONFIG} connect={c} onConnected={onConnected} sdk={f.sdk} />);
   return { c, onConnected };
@@ -109,5 +109,24 @@ describe("Connect with Facebook", () => {
     await post(finish);
     expect(await screen.findByText("That sign-up could not be checked. Connect again.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Connect with Facebook" })).toBeEnabled();
+  });
+  it("coexistence: only the app-onboarding event AND an API that supports it send coexistence:true; otherwise the field is left out (the API's model is strict)", async () => {
+    const appOnboarding = { ...finish, event: "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" };
+    const run = async (config: typeof CONFIG & { coexistence?: boolean }, message: unknown) => {
+      const f = fake();
+      const c = connect();
+      render(<ConnectWithFacebook words={WORDS} config={config} connect={c} sdk={f.sdk} />);
+      await press();
+      f.answer({ authResponse: { code: "AQBcodecodecode1234" } });
+      await post(message);
+      await waitFor(() => expect(c).toHaveBeenCalledTimes(1));
+      const sent = c.mock.calls[0][0];
+      cleanup();
+      return sent;
+    };
+    expect(await run({ ...CONFIG, coexistence: true }, appOnboarding)).toEqual({ code: "AQBcodecodecode1234", wabaId: "123456789", phoneNumberId: "987654321", coexistence: true });
+    expect(await run({ ...CONFIG, coexistence: false }, appOnboarding)).not.toHaveProperty("coexistence");
+    expect(await run({ ...CONFIG, coexistence: true }, finish)).not.toHaveProperty("coexistence");
+    expect(await run(CONFIG, appOnboarding)).not.toHaveProperty("coexistence");
   });
 });

@@ -99,6 +99,8 @@ export interface ConnectConfig {
   configId: string | null;
   graphVersion: string;
   missing: string[];
+  /** What the API can record (`cloud_api`, `coexistence`); empty from an older API: the web then never sends the `coexistence` field. */
+  onboardingTypes: string[];
 }
 export function parseConnectConfig(json: unknown): ConnectConfig {
   const x = rec(json, "connect config");
@@ -106,7 +108,7 @@ export function parseConnectConfig(json: unknown): ConnectConfig {
   const version = typeof x.graph_version === "string" && /^v\d{1,2}\.\d{1,2}$/.test(x.graph_version) ? x.graph_version : "v25.0";
   const appId = id(x.app_id, "app_id");
   const configId = id(x.config_id, "config_id");
-  return { available: bool(x.available, "available") && appId !== null && configId !== null, appId, configId, graphVersion: version, missing: list(x.missing ?? [], "missing", 20).map((m) => word(m, "missing")) };
+  return { available: bool(x.available, "available") && appId !== null && configId !== null, appId, configId, graphVersion: version, missing: list(x.missing ?? [], "missing", 20).map((m) => word(m, "missing")), onboardingTypes: list(x.onboarding_types ?? [], "onboarding_types", 10).map((m) => word(m, "onboarding_type")) };
 }
 /** null when it cannot be told (an API without the route, a failure): the card then says "being set up" and draws no button. */
 export async function getConnectConfig(token: string, tenantId: string): Promise<ConnectConfig | null> {
@@ -122,6 +124,8 @@ export interface ConnectInput {
   code: string;
   wabaId: string;
   phoneNumberId: string;
+  /** true only when the signup was Meta's app-onboarding one AND the API said it can record it (`onboarding_types` has "coexistence"); otherwise absent, because the API's model is strict (an unknown field is a 422). */
+  coexistence?: true;
 }
 export interface Connected {
   connected: boolean;
@@ -134,7 +138,7 @@ export const SIGNUP_CODE = /^[A-Za-z0-9_.~-]{10,512}$/;
 /** `POST /whatsapp/connect` (Owner, with the second factor): the API checks that the signup was made in OUR app and shared THIS account, that the number is on it, subscribes our app to its webhooks and records the account for this business only. */
 export async function connectWhatsapp(token: string, tenantId: string, i: ConnectInput): Promise<Connected> {
   if (!SIGNUP_ID.test(i.wabaId) || !SIGNUP_ID.test(i.phoneNumberId) || !SIGNUP_CODE.test(i.code)) bad("signup");
-  const x = rec(await post(`${base(tenantId)}/whatsapp/connect`, token, { code: i.code, waba_id: i.wabaId, phone_number_id: i.phoneNumberId }), "connected");
+  const x = rec(await post(`${base(tenantId)}/whatsapp/connect`, token, { code: i.code, waba_id: i.wabaId, phone_number_id: i.phoneNumberId, ...(i.coexistence === true ? { coexistence: true } : {}) }), "connected");
   return { connected: bool(x.connected, "connected"), displayPhone: optStr(x.display_phone, "display_phone", 40), verifiedName: optStr(x.verified_name, "verified_name", 100), status: optStr(x.status, "status", 20) };
 }
 export async function listTemplates(token: string, tenantId: string): Promise<Template[]> {

@@ -53,7 +53,8 @@ export function resetSdkForTests(): void {
   inited = false;
 }
 
-export type SignupMessage = { kind: "finish"; wabaId: string; phoneNumberId: string } | { kind: "cancel" } | { kind: "error"; reason: string };
+/** `coexistence` = the event was Meta's app-onboarding one (the number stays on the WhatsApp Business app). */
+export type SignupMessage = { kind: "finish"; wabaId: string; phoneNumberId: string; coexistence: boolean } | { kind: "cancel" } | { kind: "error"; reason: string };
 
 const ID = /^[0-9]{5,30}$/;
 /** A short, plain, single-line text from Meta (its own words about what went wrong), never longer than 160 characters and without control characters. */
@@ -82,7 +83,7 @@ export function readSignupMessage(e: { origin: string; data: unknown }): SignupM
   if (m.event === "FINISH" || m.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING") {
     const waba = String(data.waba_id ?? "");
     const phone = String(data.phone_number_id ?? "");
-    return ID.test(waba) && ID.test(phone) ? { kind: "finish", wabaId: waba, phoneNumberId: phone } : { kind: "error", reason: "" };
+    return ID.test(waba) && ID.test(phone) ? { kind: "finish", wabaId: waba, phoneNumberId: phone, coexistence: m.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" } : { kind: "error", reason: "" };
   }
   return null;
 }
