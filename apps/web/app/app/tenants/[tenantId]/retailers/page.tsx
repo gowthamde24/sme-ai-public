@@ -18,7 +18,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { getProspect, getProspectStats, listProspects, listSearches, redecideProspects } from "@/lib/api/lead-finder";
-import { appV4, sweepScreens } from "@/lib/screens/flag";
+import { appV4, jobsScreens, sweepScreens } from "@/lib/screens/flag";
 import { readSweeps } from "@/lib/lead-finder/sweeps-source";
 import { SweepPanel } from "@/components/v2/app/prospects/SweepPanel";
 import { buildRadar, checkedOf } from "@/lib/lead-finder/radar";
@@ -97,7 +97,19 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
   const finder = access?.availability ?? null;
   if (access?.access === "hidden" && finder) notFound();
   // the free searches of every plan (owner, 18 Nov 2026): how many are left this month, or the way to more when they are used up; the page itself stays
-  const quota = <FinderQuota words={wordsFor(lang, ["lf.quota."])} availability={finder} plansHref={upgradeHref(base, tenant.role) ?? `${base}/plans`} />;
+  // JOBS (mock 05): the Researcher cards, "1 free search a month · 1 left · last search 12 Nov" and "Find shops now"
+  const jobs = jobsScreens() !== "off";
+  const latest = finder && jobs ? await listSearches(token, tenantId, 1).then((x) => x[0] ?? null, orNull) : undefined;
+  const quota = (
+    <FinderQuota
+      words={wordsFor(lang, ["lf.quota.", ...(jobs ? ["jobs.trust."] : [])])}
+      availability={finder}
+      plansHref={upgradeHref(base, tenant.role) ?? `${base}/plans`}
+      jobs={jobs}
+      lastSearchAt={latest ? (latest.finishedAt ?? latest.createdAt) : null}
+      findHref={jobs ? "#finder-box" : null}
+    />
+  );
 
   const statusRaw = one(query.status);
   const status = (STATUS_FILTER as readonly string[]).includes(statusRaw ?? "") ? (statusRaw as ProspectStatus) : null;
@@ -136,7 +148,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
     throw error;
   }
 
-  const words = withModuleWords(wordsFor(lang, ["lf.", "apierr."], ["today.state.draft"]), own);
+  const words = withModuleWords(wordsFor(lang, ["lf.", "apierr.", ...(jobs ? ["jobs.trust."] : [])], ["today.state.draft"]), own);
   const admin = tenant.role === "owner" || tenant.role === "admin";
   const href = (s: ProspectStatus | null) => (s ? `${base}/retailers?${new URLSearchParams({ status: s })}` : `${base}/retailers`);
   const count = (s: ProspectStatus) => stats?.byStatus[s];
@@ -160,16 +172,17 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
     ) : null;
   if (appV4()) {
     // app v4 part 5 (from app-Finder.png): the search box, the radar, the shops with their decision, the three kinds of decision explained
-    const latest = finder ? await listSearches(token, tenantId, 1).then((x) => x[0] ?? null, orNull) : null;
+    const latestSearch = latest !== undefined ? latest : finder ? await listSearches(token, tenantId, 1).then((x) => x[0] ?? null, orNull) : null;
     return (
       <FinderV4
         lang={lang}
         t={t}
-        w={wordsFor(lang, ["lf.", "apierr.", "nav.item.v4d-finder"], ["today.state.draft"])}
+        w={wordsFor(lang, ["lf.", "apierr.", "nav.item.v4d-finder", ...(jobs ? ["jobs.trust."] : [])], ["today.state.draft"])}
+        jobs={jobs}
         words={words}
         base={base}
         finder={finder}
-        around={latest?.area ?? null}
+        around={latestSearch?.area ?? null}
         radar={buildRadar(page?.items ?? [])}
         checked={checkedOf(stats)}
         total={stats?.total ?? page?.items.length ?? 0}
@@ -242,7 +255,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
           ) : page.items.length === 0 ? (
             gone ? null : <p className={mutedText}>{t(status ? "lf.none.filter" : "lf.none")}</p>
           ) : (
-            <ProspectList practiceOpen={practiceOpen} items={page.items} words={words} base={base} canPractice={admin} businesses={audience === "businesses"} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId), mark: markContactedAction.bind(null, tenantId) }} />
+            <ProspectList jobs={jobs} practiceOpen={practiceOpen} items={page.items} words={words} base={base} canPractice={admin} businesses={audience === "businesses"} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId), mark: markContactedAction.bind(null, tenantId) }} />
           )}
           {page?.nextCursor ? (
             <p>

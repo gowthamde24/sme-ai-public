@@ -18,7 +18,7 @@ export type MetaPage = { id: string; name: string; selected: boolean };
 export type EmailAddress = { address: string; guide: { step: number; text: string }[]; portals: string[]; confirmation: { code: string; receivedAt: string | null } | null };
 export type WebsiteSnippet = { snippet: string; formLink: string | null; webhookUrl: string | null };
 /** The closed words a refusal becomes. */
-export type SourceError = "badkey" | "notavailable" | "state" | "forbidden" | "slow" | "down" | "notconnected" | "paused";
+export type SourceError = "badkey" | "consent_required" | "notavailable" | "state" | "forbidden" | "slow" | "down" | "notconnected" | "paused";
 /** What a test leaves behind: nothing real, one marked lead the owner can see arrive. */
 export const TEST_RESULTS = ["lead_created", "reachable", "key_valid", "key_rejected", "rate_limited", "waiting_for_provider"] as const;
 export type TestResult = { result: (typeof TEST_RESULTS)[number]; message: string; leadId: string | null; /** The portal the e-mail parser recognised in its test mail (e-mail card only). */ portal: string | null };

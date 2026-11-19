@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * POST /app/tenants/[tenantId]/lead-sources/cards: the source cards' calls, one JSON request each, always this person's own token (it stays here), Owner and Admin only, only where SOURCE_CARDS_SCREENS is on and only from this site:
- *   {op: "cards"} · {op: "meta_connect"} · {op: "meta_pages"} · {op: "meta_select", pageId} · {op: "meta_disconnect"} · {op: "indiamart_key", key} · {op: "indiamart_disconnect"} · {op: "pull"} · {op: "email", rotate?} · {op: "website"} · {op: "resume", card} · {op: "test", card} · {op: "disconnect", card} · {op: "cost", source, paise}
+ *   {op: "cards"} · {op: "meta_connect", consentConfirmed?: true} · {op: "meta_pages"} · {op: "meta_select", pageId} · {op: "meta_disconnect"} · {op: "indiamart_key", key} · {op: "indiamart_disconnect"} · {op: "pull"} · {op: "email", rotate?} · {op: "website"} · {op: "resume", card} · {op: "test", card} · {op: "disconnect", card} · {op: "connect", card, consentConfirmed?: true} · {op: "cost", source, paise}
  * Answers are `{ok: true, data}` or `{ok: false, error: <closed word>}`. A key is passed on and forgotten: it is never logged, stored or returned. A plain route, not a server action: the page must not redraw under a half-filled form.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         done = await api.cards();
         break;
       case "meta_connect":
-        done = await api.metaConnect();
+        done = await api.metaConnect(body.consentConfirmed === true);
         break;
       case "meta_pages":
         done = await api.metaPages();
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       case "connect":
       case "rotate":
         if (typeof body.card !== "string" || !/^[a-z_]{1,20}$/.test(body.card)) return bad;
-        done = body.op === "connect" ? await api.connect(body.card) : await api.rotate(body.card);
+        done = body.op === "connect" ? await api.connect(body.card, body.consentConfirmed === true) : await api.rotate(body.card);
         break;
       case "cost":
         if (typeof body.source !== "string" || !/^[a-z0-9_]{1,40}$/.test(body.source) || typeof body.paise !== "number" || !Number.isInteger(body.paise) || body.paise < 0 || body.paise > 10_000_000) return bad;

@@ -45,6 +45,8 @@ export type SettingsV6Props = {
   developerActions?: DeveloperActions;
   /** The assistant's name field (Owner and Admin, ASSISTANT_SCREENS on): the saved name (null = none) and the action that changes it; null = the card is not drawn. */
   assistant?: { name: string | null; rename: RenameFn } | null;
+  /** JOBS: where the Do-Not-Call list is (a card under Connections, for everyone who may open Settings); null = JOBS is off, no card. */
+  dncHref?: string | null;
 };
 
 const WA_STATUS: Record<ConnectionState, Status> = { connected: "completed", connecting: "spam", needs_attention: "rejected", not_connected: "no_answer" };
@@ -124,7 +126,7 @@ function Card({ id, title, edit, children }: { id: string; title: string; edit?:
  * invented: a value that cannot be read says "Not set yet". ONE place edits here: the Business card (name and city, with one "Publish"); everything else is changed on its own screen. The old tabbed Settings stays at `?section=...`. Privacy and data lines are human-only drafts and
  * start no deletion or export from this page. Developer API keys are test mode only: no key is ever shown.
  */
-export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, assistant = null, owner = false }: SettingsV6Props) {
+export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, assistant = null, owner = false, dncHref = null }: SettingsV6Props) {
   const t = makeT(words);
   const settings = `${base}/settings`;
   const biz = data.business;
@@ -203,6 +205,12 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
             <p className="mt-2 text-base text-muted">{t("sv6.con.admins")}</p>
           )}
         </Card>
+
+        {dncHref ? (
+          <Card id="dnc" title={t("jobs.dnc.title")} edit={<Link href={dncHref} aria-label={`${t("jobs.dnc.settings.open")}: ${t("jobs.dnc.title")}`} className={btnQuiet}>{t("jobs.dnc.settings.open")}</Link>}>
+            <p className="mt-2 text-base text-muted">{t("jobs.dnc.settings.text")}</p>
+          </Card>
+        ) : null}
 
         <Card id="notifications" title={t("sv6.not.title")} edit={notificationsHref ? <Link href={notificationsHref} aria-label={t("sv6.edit.for", { what: t("sv6.not.title") })} className={btnQuiet}>{t("today.act.edit")}</Link> : null}>
           <p className="mt-2 text-base text-muted">{t("sv6.not.text")}</p>

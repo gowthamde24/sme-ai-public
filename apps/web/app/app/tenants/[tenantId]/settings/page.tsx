@@ -115,7 +115,7 @@ import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person }
 import { signOutEverywhereAction } from "../../../actions";
 import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantActivity";
 import { readActivity } from "@/lib/assistant-work/source";
-import { appV4, assistantWorkScreens, designV6, moreLanguages } from "@/lib/screens/flag";
+import { appV4, assistantWorkScreens, designV6, jobsScreens, moreLanguages } from "@/lib/screens/flag";
 import { SettingsV6 } from "@/components/v2/app/settings/SettingsV6";
 import { readSettingsV6 } from "./settings-v6-data";
 import { createKeyAction, revokeKeyAction, rotateKeyAction } from "./developer-actions";
@@ -182,7 +182,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     }
     return (
       <SettingsV6
-        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role."], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
+        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
         lang={lang}
         base={base}
         title={await menuTitle("settings", lang, user.accessToken, tenantId)}
@@ -196,6 +196,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         langLabel={authT(lang)("lang.label")}
         notificationsHref={appV4() ? `${base}/settings?section=notifications` : null}
         save={saveBusinessAction.bind(null, tenantId)}
+        dncHref={jobsScreens() !== "off" ? `${base}/do-not-call` : null}
         developerActions={{ create: createKeyAction.bind(null, tenantId), rotate: rotateKeyAction.bind(null, tenantId), revoke: revokeKeyAction.bind(null, tenantId) }}
       />
     );

@@ -10,7 +10,8 @@ import { COST_SOURCE, type Card, type ConnectInfo, type Done, EmailAddress, Meta
 /** The one door the cards' route and the sources page go through: the API (`1`) or a stand-in in the memory of this server (`mock`, nothing leaves the process). Every call ends in `Done`: the data, or a closed word. */
 export type SourcesApi = {
   cards(): Promise<Done<Card[]>>;
-  metaConnect(): Promise<Done<string>>;
+  /** `consent` (JOBS): the person ticked the consent sentence; the API gets `consent_confirmed: true`. */
+  metaConnect(consent?: boolean): Promise<Done<string>>;
   metaPages(): Promise<Done<MetaPage[]>>;
   metaSelect(pageId: string): Promise<Done<null>>;
   metaDisconnect(): Promise<Done<null>>;
@@ -26,7 +27,7 @@ export type SourcesApi = {
   /** The quiet "Disconnect" of a card (a key or login is forgotten, an address is paused; nothing is deleted). */
   disconnect(card: string): Promise<Done<null>>;
   /** The website form's own steps: make its address (connect) and change it (rotate). */
-  connect(card: string): Promise<Done<ConnectInfo | null>>;
+  connect(card: string, consent?: boolean): Promise<Done<ConnectInfo | null>>;
   rotate(card: string): Promise<Done<ConnectInfo | null>>;
   /** What one lead from this card's source costs, in paise (Reports use it for the cost per visit). */
   cost(source: string, paise: number): Promise<Done<null>>;
@@ -43,7 +44,7 @@ async function wrap<T>(run: () => Promise<T>): Promise<Done<T>> {
 
 export const liveApi = (token: string, tenantId: string): SourcesApi => ({
   cards: () => wrap(() => getCards(token, tenantId)),
-  metaConnect: () => wrap(() => metaConnect(token, tenantId)),
+  metaConnect: (consent) => wrap(() => metaConnect(token, tenantId, consent === true)),
   metaPages: () => wrap(() => metaPages(token, tenantId)),
   metaSelect: (id) => wrap(async () => (await metaSelect(token, tenantId, id), null)),
   metaDisconnect: () => wrap(async () => (await metaDisconnect(token, tenantId), null)),
@@ -55,7 +56,7 @@ export const liveApi = (token: string, tenantId: string): SourcesApi => ({
   resume: (card) => wrap(async () => (await resumeCard(token, tenantId, card), null)),
   test: (card) => wrap(() => testCard(token, tenantId, card)),
   disconnect: (card) => wrap(async () => (await disconnectCard(token, tenantId, card), null)),
-  connect: (card) => wrap(() => connectCard(token, tenantId, card)),
+  connect: (card, consent) => wrap(() => connectCard(token, tenantId, card, consent === true)),
   rotate: (card) => wrap(() => rotateCard(token, tenantId, card)),
   cost: (source, paise) => wrap(async () => (await setCardCost(token, tenantId, source, paise), null)),
 });

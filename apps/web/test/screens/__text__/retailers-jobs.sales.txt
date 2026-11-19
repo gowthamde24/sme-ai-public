@@ -1,0 +1,80 @@
+# Lead Finder
+It finds shops that could buy from you. You contact them yourself. Businesses only, never families. You contact these businesses yourself. Your assistant only calls people who enquired. 1 search left 1 free search a month · 1 left · last search 12 Nov [Find shops now](#finder-box)
+{role=note} Made-up businesses for the demo
+{label="Find new retailers in …"}
+form:
+Find new retailers in …
+<text label="Find new retailers in …" placeholder="find new retailers in Jayanagar" maxlength=300 described-by="Nothing is searched until you press OK.">
+[button type=submit: Plan the search]
+Nothing is searched until you press OK.
+{label="The radar"}
+## The radar
+Searching around Hyderabad
+{role=img label="Where 3 of the businesses are, around the middle of the search"}
+Checked 18 businesses. 11 worth a call. Rings are kilometres from the middle of the businesses it found.
+{label="Shops it found. You decide."}
+## Shops it found. You decide.
+3 of 18
+{label="Show prospects by status"} [All (18)](/app/tenants/22222222-2222-2222-2222-222222222222/retailers current=page) [Needs you (11)](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=needs_owner) [Good fit](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=call_ready) [Waiting](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=researching) [Contacted](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=contacted) [Qualified](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=qualified) [Skipped (7)](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=skipped) [Not interested](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=not_interested) [New](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=new)
+In stock: Kanchi Pattu Bridal
+-
+{role=img label="Fit 86 out of 100"} 86 fit
+### Sri Lakshmi Boutique
+Strong fit Saree shop · Kukatpally, Hyderabad · ★ 4.5 · 220 reviews
+{label="Why it fits"}
+#### Why it fits
+Sells silk sarees and dress material. 4.5 stars from 220 reviews. Open 10 am to 9 pm, so a visit in the afternoon works.
+{label="Talking points"}
+#### Talking points
+- Ask if they stock Pochampally ikat, which they do not list online
+- Offer a sample set of 5 sarees to look at
+- Mention you already supply 3 shops nearby
+[Call from your phone](tel:+0000051234501) [Plan a visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
+[button type=button: Mark as contacted]
+[button type=button: Find more like this shop]
+summary: More
+[button type=button: Not now]
+[button type=button: Skip]
+[button type=button: Not interested]
+[button type=button: Do not call]
+Example search (made-up businesses) 'saree shops Jayanagar Bengaluru', 6 Oct
+-
+{role=img label="Fit 74 out of 100"} 74 fit
+### Vasundhara Textiles
+Good fit Textile shop · Dilsukhnagar, Hyderabad · ★ 4.3 · 96 reviews Contacted · 19 Nov by Ramesh Spoke to the owner. Wants to see samples next week.
+{label="Why it fits"}
+#### Why it fits
+Wholesale and retail cloth shop with wedding sarees. Open 9:30 am to 8:30 pm.
+{label="Talking points"}
+#### Talking points
+- Ask who buys their wedding range
+- Bring the Kanchipuram border samples
+[Call from your phone](tel:+0000051234502) [Plan a visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
+[button type=button: Edit note]
+[button type=button: Find more like this shop]
+summary: More
+[button type=button: Skip]
+[button type=button: Not interested]
+[button type=button: Do not call]
+Example search (made-up businesses) 'saree shops Jayanagar Bengaluru', 6 Oct
+-
+{role=img label="Fit 58 out of 100"} 58 fit
+### Kavya Collections
+Maybe Readymade shop · Secunderabad · ★ 4 · 48 reviews
+{label="Why it fits"}
+#### Why it fits
+Mostly ready-made kurtis. A few sarees in the window.
+{label="Talking points"}
+#### Talking points
+- Ask if they want to add a saree corner
+- Leave your card, do not push
+[Call from your phone](tel:+0000051234503) [Plan a visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
+[button type=button: Mark as contacted]
+[button type=button: Find more like this shop]
+summary: More
+[button type=button: Not now]
+[button type=button: Skip]
+[button type=button: Not interested]
+[button type=button: Do not call]
+Example search (made-up businesses) 'saree shops Jayanagar Bengaluru', 6 Oct
+{role=note} These are public business listings. We never call or send WhatsApp to them for you. When you call, you speak for yourself.

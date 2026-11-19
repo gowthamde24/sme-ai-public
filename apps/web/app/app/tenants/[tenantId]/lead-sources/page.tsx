@@ -12,6 +12,7 @@ import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { readSources, sourcesMode } from "@/lib/lead-desk/sources/source";
+import { jobsScreens } from "@/lib/screens/flag";
 import { cardsMode, sourcesApiFor } from "@/lib/sources/server";
 
 import {
@@ -68,6 +69,7 @@ export default async function LeadSourcesRoute({
     "li.cost.",
     "sc.",
     "lsrc.copy",
+    ...(jobsScreens() !== "off" ? ["jobs.trust.consent"] : []),
   ]);
   const list =
     read.mode === "ok" ? (
@@ -99,6 +101,7 @@ export default async function LeadSourcesRoute({
           endpoint={`/app/tenants/${tenantId}/lead-sources/cards`}
           base={`/app/tenants/${tenantId}`}
           metaReturn={meta === "connected"}
+          consentTick={jobsScreens() !== "off"}
           openCard={typeof openCard === "string" && (CARD_KINDS as readonly string[]).includes(openCard) ? (openCard as CardKind) : null}
         />
       ) : null}

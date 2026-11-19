@@ -830,6 +830,16 @@ add({
   render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({}))),
   handlers: (role) => ({ ...finderHandlers(LF.AVAILABLE, V4_SPREAD)(role), listSearches: async () => [(await import("@/lib/api/lead-finder")).parseSearch({ ...LF.SEARCH_DONE, area: "Hyderabad" })] }),
 });
+// JOBS (owner 19 Nov): the Researcher cards of the Lead Finder in test mode (JOBS=mock): fit ring, why it fits, talking points, Call from your phone / Plan a visit / Mark as contacted, the free-search line and "Find shops now"
+add({
+  id: "retailers-jobs",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1", JOBS: "mock" }, async () => await (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({}))),
+  handlers: (role) => ({
+    ...finderHandlers({ ...LF.AVAILABLE, access: "available", searches_per_month: 1, searches_left_this_month: 1 }, [LF.PROSPECT_STRONG, LF.PROSPECT_CONTACTED, LF.PROSPECT_MAYBE])(role),
+    listSearches: async () => [(await import("@/lib/api/lead-finder")).parseSearch({ ...LF.SEARCH_DONE, area: "Hyderabad", finished_at: "2026-11-12T08:00:00Z" })],
+  }),
+});
 // app v4 part 5: Customers > Map, where the customers are (only with APP_V4)
 add({
   id: "map",
@@ -1116,6 +1126,22 @@ const jobsNew = (search: Record<string, string> = {}) => async () => {
 add({ id: "jobs-new-mock", roles: ["owner", "admin", "sales"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
 add({ id: "jobs-new-mock-construction", roles: ["owner"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(CONSTRUCTION) }) });
 add({ id: "jobs-new-mock-look-first", roles: ["owner"], render: jobsNew({ look: "followups" }), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
+// JOBS (mock 08 part 2): the Do-Not-Call list in test mode; the Owner and an Admin add a number, only the Owner removes one, the others read
+add({
+  id: "do-not-call-mock",
+  roles: ["owner", "admin", "sales"],
+  render: async () => {
+    const before = process.env.JOBS;
+    process.env.JOBS = "mock";
+    try {
+      return await (await import("@/app/app/tenants/[tenantId]/do-not-call/page")).default(props({}));
+    } finally {
+      if (before === undefined) delete process.env.JOBS;
+      else process.env.JOBS = before;
+    }
+  },
+  handlers: (role) => ({ ...cons(role) }),
+});
 add({ id: "call-list-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({})), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList(CALL_LIST_JSON) }) });
 add({ id: "call-list-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({}, { tab: "done" })), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList({ items: [], next_cursor: null }) }) });
 add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });

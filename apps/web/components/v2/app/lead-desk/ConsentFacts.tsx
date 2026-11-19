@@ -7,12 +7,13 @@ import { BASES, type Basis } from "@/lib/lead-desk/imports/types";
 
 import { checkBox, checkRow, fieldHelp, fieldInput, fieldLabel, fieldsetLine, formGrid, legendText, warnBox } from "../ui";
 import { makeT, type Words } from "../words";
+import { ConsentTick } from "./ConsentTick";
 
 /**
  * The consent confirmation (night 4, Lead Desk): ONE tick box and the four facts (the name of the list, what you will contact them about, why you may, how you got the numbers). It is the owner's own word, so only the
  * Owner and an Admin see the box; a Sales member sees why nothing is sent to the leads they add. Used by the import screen and when a live source is made.
  */
-export function ConsentFacts({ words, state, onChange, canConfirm, idPrefix, hint, one = false }: { words: Words; state: ConsentState; onChange: (next: ConsentState) => void; canConfirm: boolean; idPrefix: string; hint?: string; /** One lead (Add a lead): the same words about "this person", not "these people". */ one?: boolean }) {
+export function ConsentFacts({ words, state, onChange, canConfirm, idPrefix, hint, one = false, trust = false }: { /** JOBS (mock 08): the box is the round tick with the one consent sentence and its help line, not the older sentence. */ trust?: boolean;  words: Words; state: ConsentState; onChange: (next: ConsentState) => void; canConfirm: boolean; idPrefix: string; hint?: string; /** One lead (Add a lead): the same words about "this person", not "these people". */ one?: boolean }) {
   const w = makeT(words);
   const t = (key: string, vars?: Record<string, string | number>) => w(one && /^li\.consent\.(title|check|list_name|purpose|basis|how|none|sales)$/.test(key) ? key.replace("li.consent.", "li.one.consent.") : key, vars);
   if (!canConfirm) {
@@ -31,10 +32,14 @@ export function ConsentFacts({ words, state, onChange, canConfirm, idPrefix, hin
     <fieldset className={fieldsetLine}>
       <legend className={legendText}>{t("li.consent.title")}</legend>
       {hint ? <p className={fieldHelp}>{hint}</p> : null}
-      <label htmlFor={`${idPrefix}-on`} className={checkRow}>
-        <input id={`${idPrefix}-on`} type="checkbox" className={checkBox} checked={state.on} onChange={(e) => set({ on: e.target.checked })} />
-        {t("li.consent.check")}
-      </label>
+      {trust && !one ? (
+        <ConsentTick words={words} id={`${idPrefix}-on`} checked={state.on} onChange={(on) => set({ on })} />
+      ) : (
+        <label htmlFor={`${idPrefix}-on`} className={checkRow}>
+          <input id={`${idPrefix}-on`} type="checkbox" className={checkBox} checked={state.on} onChange={(e) => set({ on: e.target.checked })} />
+          {t("li.consent.check")}
+        </label>
+      )}
       {state.on ? (
         <div className={formGrid}>
           <div>
@@ -74,7 +79,7 @@ export function ConsentFacts({ words, state, onChange, canConfirm, idPrefix, hin
           {t("li.consent.incomplete")}
         </p>
       ) : null}
-      <p className={fieldHelp}>{state.on ? t("li.consent.help") : t("li.consent.none")}</p>
+      {trust && !one ? state.on ? <p className={fieldHelp}>{t("li.consent.help")}</p> : null : <p className={fieldHelp}>{state.on ? t("li.consent.help") : t("li.consent.none")}</p>}
     </fieldset>
   );
 }
