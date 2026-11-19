@@ -437,6 +437,8 @@ class Settings(BaseSettings):
     # when a person from the business takes over. OFF by default (the owner will choose);
     # TAKEOVER_ANNOUNCE=true turns it on.
     takeover_announce: bool = False
+    takeover_allowed: bool = False
+    # TAKEOVER_ALLOWED: listening in on a live call is NOT available at launch (owner, 18 Nov 2026)  # noqa: E501
     exotel_stream_secret: SecretStr | None = None
     # Plivo (job 3 phase A, 10 Nov 2026): inbound calls on a Plivo number. The Auth Token (Secret
     # Manager: sme-plivo-auth-token) signs Plivo's requests to us and, with a fixed word, our

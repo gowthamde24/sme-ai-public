@@ -90,7 +90,7 @@ def resolve(
     state = row if row is not None else _repo(runtime).opening(ctx.principal.token, ctx.tenant.id)
     lines = state.get("lines", [])
     overrides = state.get("campaign_overrides", [])
-    mention = mention_ai if mention_ai is not None else render.pick_mention(bool(state.get("mention_ai", True)), overrides if isinstance(overrides, list) else [], campaign_id)
+    mention = True if mention_ai is not None else render.pick_mention(bool(state.get("mention_ai", True)), overrides if isinstance(overrides, list) else [], campaign_id)
     rows = lines if isinstance(lines, list) else []
     stored = render.pick_line(rows, language, campaign_id)
     campaign = render.campaign_line(rows, language, campaign_id)

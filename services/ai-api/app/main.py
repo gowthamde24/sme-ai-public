@@ -469,6 +469,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         calls=CallsService(
             PostgrestCallsRepository(config.rest_url, config.anon_key),
             announce_takeover=settings.takeover_announce,
+            takeover_allowed=settings.takeover_allowed,
         ),
         live_calls=LiveCalls(),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),

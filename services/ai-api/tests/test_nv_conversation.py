@@ -353,13 +353,13 @@ def test_the_call_style_is_strict_short_one_filler_mirroring_and_never_a_list(la
     assert len(prompt.split("HOW TO SOUND ON A CALL")[1]) < 2400  # the block is paid for by the token on every turn
 
 
-def test_the_assistant_is_not_told_to_announce_it_is_an_ai_unless_the_owners_switch_is_on_and_the_honesty_rule_is_always_there() -> None:
+def test_the_assistant_always_says_it_is_an_ai_whatever_the_switch_says_and_the_honesty_rule_is_always_there() -> None:
     from app.opening.honesty import HONESTY_RULE
 
     off = call_prompt(speaking_style="everyday_mixed", mention_ai=False)
     on = call_prompt(speaking_style="everyday_mixed", mention_ai=True)
-    assert "Do NOT say that you are an AI assistant on your own" in off and "answer truthfully" in off
-    assert "already told the caller you are an AI assistant" in on and "Do NOT say that you are an AI assistant on your own" not in on
+    assert "already told the caller you are an AI assistant" in off and "already told the caller you are an AI assistant" in on, "the switch is read and ignored (owner, 18 Nov 2026)"
+    assert "Do NOT say that you are an AI assistant on your own" not in off and "Do NOT say that you are an AI assistant on your own" not in on
     assert HONESTY_RULE in off and HONESTY_RULE in on and HONESTY_RULE in call_prompt()
 
 

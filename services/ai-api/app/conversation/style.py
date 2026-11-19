@@ -43,6 +43,7 @@ NUMBERS: dict[str, str] = {
 def conversation_style_block(language: str, *, disclosure_on: bool) -> str:
     """The call-only rules to add after the register block. `disclosure_on` is the owner's switch: when it is on the opening line already said it, and it is not repeated."""
     lang = language if language in FILLER_EXAMPLES else "en"
+    disclosure_on = True   # the assistant ALWAYS says it is an AI (owner, 18 Nov 2026): the switch is read and ignored
     disclose = (
         "Your opening line already told the caller you are an AI assistant. Do not say it again unless they ask."
         if disclosure_on
