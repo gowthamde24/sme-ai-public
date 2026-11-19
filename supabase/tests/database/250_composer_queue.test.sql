@@ -62,7 +62,7 @@ select pg_temp.sc('a_owner', format($q$select public.auto_reply_set(%L, true)::t
 
 -- the customers: each wrote once, long ago (the window is closed unless a test says otherwise)
 select pg_temp.pin(timestamptz '2026-10-30 14:00:00+05:30');
-select pg_temp.mk('cq1'); select pg_temp.mk('cq2'); select pg_temp.mk('cq3'); select pg_temp.mk('cq4'); select pg_temp.mk('cq5', 'a', false); select pg_temp.mk('cqb', 'b');
+select pg_temp.mk('cq1'); select pg_temp.mk('cq2'); select pg_temp.mk('cq3'); select pg_temp.mk('cq4'); select pg_temp.mk('cq5'); select pg_temp.mk('cq6', 'a', false); select pg_temp.mk('cqb', 'b');
 select pg_temp.inbound('cq1', '2026-10-30 13:00:00+05:30', 'Hello');
 select pg_temp.inbound('cq2', '2026-10-30 13:00:00+05:30', 'Hello');
 select pg_temp.inbound('cq3', '2026-10-30 13:00:00+05:30', 'Hello');
@@ -81,7 +81,7 @@ select is(pg_temp.q('cq1', '', 'cq_c0'), 'ERR:22023', 'A5 an empty message is re
 select is(pg_temp.q('cq1', 'We have it in stock.', 'cq_c1'), 'ERR:SM997', 'B1 the "continue chat" hello is not approved yet: refused at once');
 select is((select count(*)::int from public.queued_replies where tenant_id = tests.tid('a')), 0, 'B2 ... and nothing was queued');
 select pg_temp.mkt('cq_tpl', 'continue_chat', 'Hi {{1}}, you contacted {{2}} about {{3}}. Reply here if you would like to continue.');
-select is(pg_temp.q('cq5', 'We have it in stock.', 'cq_c2'), 'ERR:SM992', 'B3 a customer who did not agree to WhatsApp: refused');
+select is(pg_temp.q('cq6', 'We have it in stock.', 'cq_c2'), 'ERR:SM992', 'B3 a customer who never wrote and never agreed to WhatsApp: refused');
 select is(pg_temp.sc('b_owner', format($q$select public.queued_reply_create(%L, %L, 'We have it.', %L)::text$q$, tests.tid('b'), tests.rid('cqb'), tests.rid('cq_c3'))), 'ERR:SM994', 'B4 a business without a connected WhatsApp: refused');
 select pg_temp.pin(timestamptz '2026-10-30 14:30:00+05:30');
 select is(pg_temp.q('cq1', 'We have it in stock.', 'cq_c4'), 'ERR:SM990', 'B5 the customer wrote 30 minutes ago: the window is open, so the owner just sends it');
@@ -121,7 +121,8 @@ select pg_temp.pin(timestamptz '2026-11-14 23:00:00+05:30');
 create temp table qf as select pg_temp.inbound('cq3', '2026-11-14 22:55:00+05:30', 'Yes please') as e;
 select is((select status from public.queued_replies where client_id = tests.rid('cq_f1')), 'released', 'F2 the customer wrote back at night: the message is released');
 select is((select m.category || '/' || m.source from public.outbox_messages m where m.id = (select outbox_message_id from public.queued_replies where client_id = tests.rid('cq_f1'))), 'reply_to_inbound/owner', 'F3 it is an owner-typed REPLY in the outbox');
-select is((select m.scheduled_for from public.outbox_messages m where m.id = (select outbox_message_id from public.queued_replies where client_id = tests.rid('cq_f1'))), timestamptz '2026-11-14 23:00:00+05:30', 'F4 it goes AT ONCE (23:00), not at 09:00 (the night rule)');
+select is((select m.scheduled_for from public.outbox_messages m where m.id = (select outbox_message_id from public.queued_replies where client_id = tests.rid('cq_f1'))), timestamptz '2026-11-14 23:00:00+05:30', 'F4 it goes AT ONCE (23:00), not at 09:00 (the night rule), although the workspace''s automatic sending is off: the owner typed it');
+select is((select m.status || '/' || m.reason from public.outbox_messages m where m.id = (select outbox_message_id from public.queued_replies where client_id = tests.rid('cq_f1'))), 'queued/owner_approved', 'F4b it is queued as approved by the owner');
 select is(pg_temp.sc('a_owner', format($q$select public.queued_reply_get(%L, %L)::text$q$, tests.tid('a'), tests.rid('cq3')))::jsonb -> 'queued' ->> 'status', 'sending', 'F5 the chat shows it as sending');
 select is(pg_temp.q('cq3', 'And the red one too.', 'cq_f2'), 'ERR:SM990', 'F6 right after the reply the window is open again: the owner just sends it, nothing is queued');
 

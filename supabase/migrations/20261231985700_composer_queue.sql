@@ -37,7 +37,7 @@ create table public.queued_replies (
   lead_id             uuid not null,
   client_id           uuid not null,
   body                text not null check (char_length(body) between 1 and 1000 and app.text_is_clean(body)),
-  language            text not null check (language in ('en', 'te', 'hi', 'kn', 'ta')),
+  language            text not null check (language in ('en', 'te', 'hi', 'kn', 'ta', 'ml')),
   status              text not null default 'waiting_for_reply' check (status in ('waiting_for_reply', 'released', 'cancelled', 'failed')),
   continue_chat       text not null check (continue_chat in ('sent', 'already')),
   template_message_id uuid,
@@ -130,7 +130,7 @@ begin
   if v_uid is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin', 'sales']::public.app_role[]) then
     perform app.composer_error('deny');
   end if;
-  if p_lead_id is null or p_client_id is null or char_length(v_text) not between 1 and 1000 or not app.text_is_clean(v_text) or (p_language is not null and p_language not in ('en', 'te', 'hi', 'kn', 'ta')) then
+  if p_lead_id is null or p_client_id is null or char_length(v_text) not between 1 and 1000 or not app.text_is_clean(v_text) or (p_language is not null and p_language not in ('en', 'te', 'hi', 'kn', 'ta', 'ml')) then
     perform app.composer_error('invalid');
   end if;
   -- the same client id again is the same message
@@ -174,7 +174,7 @@ begin
     perform app.composer_error('window_open');
   end if;
   v_lang := coalesce(p_language, (select p.language from public.lead_profiles p where p.tenant_id = p_tenant_id and p.lead_id = p_lead_id), 'en');
-  if v_lang not in ('en', 'te', 'hi', 'kn', 'ta') then
+  if v_lang not in ('en', 'te', 'hi', 'kn', 'ta', 'ml') then
     v_lang := 'en';
   end if;
   -- continue_chat: once in 24 hours; only an APPROVED template; marketing without consent is blocked by the send itself
@@ -298,6 +298,9 @@ begin
   begin
     v_res := app.outbox_submit_core(q.created_by, q.outbox_message_id, q.tenant_id, q.lead_id, 'whatsapp', q.body, q.language, 'reply_to_inbound', 'owner', false, false, '{}'::uuid[], false, null);
     update public.queued_replies set status = 'released', released_at = app.outbox_now(), updated_at = app.outbox_now() where id = q.id;
+    -- the owner typed these words and the customer's reply is the go-ahead: the workspace's automatic-sending switch (off) must not hold them back; every OTHER reason (money, a promise, a complaint, STOP, ...) still stops them for a person
+    update public.outbox_messages set status = 'queued', reason = 'owner_approved', decided_by = q.created_by, decided_at = app.outbox_now(), scheduled_for = app.outbox_now()
+     where id = q.outbox_message_id and tenant_id = q.tenant_id and status = 'needs_approval' and reason = 'auto_off';
   exception when others then
     update public.queued_replies set status = 'failed', failure_code = 'not_sent', updated_at = app.outbox_now() where id = q.id;
   end;

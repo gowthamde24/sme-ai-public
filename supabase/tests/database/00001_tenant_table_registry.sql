@@ -470,7 +470,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    'item = item', $$delete from public.price_asks where id = %2$L$$, false),
   -- owner 19 Nov 2026: what the owner typed while a chat's 24-hour window was closed (written only by the queued_reply_* functions)
   ('queued_replies',
-   $$insert into public.queued_replies (id, tenant_id, lead_id, client_id, body, language, continue_chat, created_by) select %2$L, %1$L, l.id, %2$L, 'Generic queued message', 'en', 'already', %5$L from public.leads l where l.tenant_id = %1$L order by l.id limit 1$$,
+   $$insert into public.queued_replies (id, tenant_id, lead_id, client_id, body, language, status, continue_chat, created_by) select %2$L, %1$L, l.id, %2$L, 'Generic queued message', 'en', 'cancelled', 'already', %5$L from public.leads l where l.tenant_id = %1$L order by l.id limit 1$$,
    'body = body', $$delete from public.queued_replies where id = %2$L$$, true),
   -- job DM: outcomes (written only by the definer functions; no module guard, like the billing tables)
   ('outcomes',
