@@ -16,6 +16,12 @@ import { appV4, designV6 } from "@/lib/screens/flag";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { PhoneV6 } from "@/components/v2/app/phone/PhoneV6";
 import { PhoneNumberPanel } from "@/components/v2/app/phone/PhoneNumberPanel";
+import { KycCard } from "@/components/v2/app/phone/KycCard";
+import { SecondStepNotice } from "@/components/v2/app/security/SecondStepNotice";
+import { getAccountSecurity } from "@/lib/api/pack";
+import { settle } from "@/lib/api/part";
+import { getKycOptions, getKycStatus } from "@/lib/api/phone-kyc";
+import { CAN_SEND } from "@/lib/phone-kyc/types";
 import { readPhone } from "@/lib/phone-number/source";
 import { menuTitle } from "../menu-title";
 import { readIsDemo } from "../today-read";
@@ -46,6 +52,7 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
   const t = appT(lang);
   if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("phone.title")} message={t("int.admins_only")} />;
   const phone = await readPhone();
+  const kyc = await readKyc(user.accessToken, tenantId, tenant.role === "owner", t, lang, user.email);
   // design system v6: plain-language cards (the status, then the test screen's own panel: Edit = the city, one main button)
   if (designV6()) {
     const base = `/app/tenants/${tenantId}`;
@@ -63,12 +70,14 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
           ) : null
         }
         connectHref={`${base}/integrations`}
+        kyc={kyc}
       />
     );
   }
   return (
     <main className={pageMain}>
       <PageTop title={await menuTitle("phone", lang, user.accessToken, tenantId)} sub={`${t("phone.title")}. ${t("phone.sub")}`} />
+      {kyc ? <div className="mt-4" data-part="kyc-slot">{kyc}</div> : null}
       {phone.mode === "ok" ? (
         <PhoneNumberPanel
           words={wordsFor(lang, ["phone."], ["today.act.cancel"])}
@@ -98,5 +107,32 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
         </p>
       ) : null}
     </main>
+  );
+}
+
+/**
+ * The registration card of the Phone number page (not behind a flag: the API answers on its own when registration is not switched on). Everyone who sees the page reads where it stands; the Owner also reads the documents on offer (only while a filing can be sent) and the
+ * session's level, for the second-step notice. A part that cannot be read leaves the page whole: the card then says "being set up".
+ */
+async function readKyc(token: string, tenantId: string, owner: boolean, t: ReturnType<typeof appT>, lang: Awaited<ReturnType<typeof getLang>>, email: string | null) {
+  let status, security;
+  try {
+    [status, security] = await Promise.all([settle(() => getKycStatus(token, tenantId)), owner ? getAccountSecurity(token).catch(() => null) : Promise.resolve(null)]);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    escalate(error);
+    throw error;
+  }
+  const current = status.ok ? status.data : null;
+  let options = null;
+  if (owner && current && CAN_SEND.has(current.state)) {
+    const read = await settle(() => getKycOptions(token, tenantId));
+    options = read.ok ? read.data : null;
+  }
+  return (
+    <div className="flex max-w-2xl flex-col gap-4">
+      {owner && security?.level === "aal1" && current && CAN_SEND.has(current.state) && options ? <SecondStepNotice message={t("phkyc.mfa")} t={t} /> : null}
+      <KycCard words={wordsFor(lang, ["phkyc.", "apierr."], ["dta.btn.working"])} status={current} options={options} canEdit={owner} defaultEmail={email ?? ""} endpoint={`/app/tenants/${tenantId}/phone-kyc`} />
+    </div>
   );
 }

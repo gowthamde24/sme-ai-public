@@ -6,6 +6,7 @@ also masks anything in any log message that looks like an e-mail address or a lo
 
 from __future__ import annotations
 
+import contextvars
 import json
 import logging
 import re
@@ -78,11 +79,62 @@ class Metrics:
         return "\n".join(lines) + "\n"
 
 
+# ---------------------------------------------------------------------------------------------------------------- Server-Timing (planner, 19 Nov 2026: measure first, change after)
+# One request's time spent waiting on other services, by call: the data layer (PostgREST functions, named by function) and anything else (the model, a provider). Off by default (SERVER_TIMING_HEADERS);
+# the header carries only function names and milliseconds, never a value from a request or an answer.
+_TIMING: contextvars.ContextVar[list[tuple[str, str, float]] | None] = contextvars.ContextVar("server_timing", default=None)
+_SAFE_NAME = re.compile(r"[^A-Za-z0-9_]+")
+
+
+def install_timing() -> None:
+    """Wrap httpx.Client.send once: every outgoing call of a request that collects timing is measured by where it went."""
+    import httpx
+
+    if getattr(httpx.Client.send, "_timed", False):
+        return
+    original = httpx.Client.send
+
+    def timed(self: Any, request: Any, **kwargs: Any) -> Any:
+        sink = _TIMING.get()
+        if sink is None:
+            return original(self, request, **kwargs)
+        started = time.perf_counter()
+        try:
+            return original(self, request, **kwargs)
+        finally:
+            ms = (time.perf_counter() - started) * 1000
+            path = request.url.path
+            if "/rest/v1/rpc/" in path:
+                sink.append(("db", path.rsplit("/", 1)[-1], ms))
+            elif "/rest/v1/" in path:
+                sink.append(("db", "table", ms))
+            else:
+                sink.append(("upstream", _SAFE_NAME.sub("_", request.url.host or "other")[:30], ms))
+
+    timed._timed = True  # type: ignore[attr-defined]
+    httpx.Client.send = timed  # type: ignore[method-assign]
+
+
+def server_timing_value(total_ms: float, calls: list[tuple[str, str, float]]) -> str:
+    """The Server-Timing header: the whole request, the data layer's sum and count, the other services' sum, and the six slowest single calls by name."""
+    db = [c for c in calls if c[0] == "db"]
+    up = [c for c in calls if c[0] == "upstream"]
+    parts = [f"app;dur={total_ms:.0f}", f"db;dur={sum(c[2] for c in db):.0f};desc=\"{len(db)} calls\""]
+    if up:
+        parts.append(f"upstream;dur={sum(c[2] for c in up):.0f};desc=\"{len(up)} calls\"")
+    for i, (_, name, ms) in enumerate(sorted(calls, key=lambda c: -c[2])[:6], start=1):
+        parts.append(f"c{i}_{_SAFE_NAME.sub('_', name)[:40]};dur={ms:.0f}")
+    return ", ".join(parts)
+
+
 class ObserveMiddleware:
-    def __init__(self, app: Any, *, metrics: Metrics, trusted_hops: int = 0) -> None:
+    def __init__(self, app: Any, *, metrics: Metrics, trusted_hops: int = 0, server_timing: bool = False) -> None:
         self.app = app
         self.metrics = metrics
         self.hops = trusted_hops
+        self.server_timing = server_timing
+        if server_timing:
+            install_timing()
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
@@ -93,13 +145,19 @@ class ObserveMiddleware:
         scope.setdefault("state", {})["request_id"] = request_id  # app/errors.py puts it in every error body
         started = time.perf_counter()
         status = 500
+        calls: list[tuple[str, str, float]] = []
+        if self.server_timing:
+            _TIMING.set(calls)
 
         async def respond(message: Message) -> None:
             nonlocal status
             if message["type"] == "http.response.start":
                 status = int(message["status"])
                 message = dict(message)
-                message["headers"] = [*message.get("headers", []), (b"x-request-id", request_id.encode())]
+                extra = [(b"x-request-id", request_id.encode())]
+                if self.server_timing:
+                    extra.append((b"server-timing", server_timing_value((time.perf_counter() - started) * 1000, calls).encode()))
+                message["headers"] = [*message.get("headers", []), *extra]
             await send(message)
 
         try:

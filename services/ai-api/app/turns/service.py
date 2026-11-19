@@ -498,7 +498,7 @@ def _chain_turn(runtime: Runtime, ctx: TenantContext, db: AssistantDb, body: Tur
         return None
     if not steps:
         return None
-    first, rest = steps[0], steps[1:]
+    first, rest = steps[0], chain.without_prospect_steps(steps[0], steps[1:])
     emit("chain", {"type": "chain", "step": first, "remaining": rest})
     logger.info("assistant turn: chain step, remaining=%d language=%s", len(rest), language)
     step_body = body.model_copy(update={"text": first})

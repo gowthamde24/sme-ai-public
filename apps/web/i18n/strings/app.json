@@ -116176,5 +116176,720 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "phkyc.title": {
+  "en": "Register your business",
+  "te": "మీ బిజినెస్ రిజిస్ట్రేషన్",
+  "hi": "अपना बिज़नेस रजिस्टर करें",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ರಿಜಿಸ್ಟ್ರೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.state.not_started": {
+  "en": "Not registered yet",
+  "te": "ఇంకా రిజిస్టర్ చేయలేదు",
+  "hi": "अभी रजिस्टर नहीं हुआ",
+  "kn": "ಇನ್ನೂ ರಿಜಿಸ್ಟರ್ ಮಾಡಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.state.checking": {
+  "en": "Being checked",
+  "te": "చెక్ చేస్తున్నారు",
+  "hi": "जाँच हो रही है",
+  "kn": "ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.state.accepted": {
+  "en": "Registered",
+  "te": "రిజిస్టర్ అయింది",
+  "hi": "रजिस्टर हो गया",
+  "kn": "ರಿಜಿಸ್ಟರ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.state.rejected": {
+  "en": "Not accepted",
+  "te": "ఒప్పుకోలేదు",
+  "hi": "मंज़ूर नहीं हुआ",
+  "kn": "ಒಪ್ಪಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.state.failed": {
+  "en": "Not sent",
+  "te": "పంపలేదు",
+  "hi": "भेजा नहीं गया",
+  "kn": "ಕಳುಹಿಸಲಾಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.state.suspended": {
+  "en": "Paused",
+  "te": "ఆపేశారు",
+  "hi": "रोका गया है",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.state.expired": {
+  "en": "Expired",
+  "te": "గడువు అయిపోయింది",
+  "hi": "अवधि ख़त्म हो गई",
+  "kn": "ಅವಧಿ ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.state.unavailable": {
+  "en": "Being set up",
+  "te": "సెట్ చేస్తున్నాం",
+  "hi": "सेट हो रहा है",
+  "kn": "ಸೆಟ್ ಮಾಡುತ್ತಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.text.not_started": {
+  "en": "Before you can choose a phone number, the phone company needs to know your business. One document is enough: GST, Udyam or company registration.",
+  "te": "ఫోన్ నంబర్ ఎంచుకునే ముందు ఫోన్ కంపెనీకి మీ బిజినెస్ గురించి తెలియాలి. ఒక్క డాక్యుమెంట్ చాలు: GST, Udyam లేదా కంపెనీ రిజిస్ట్రేషన్.",
+  "hi": "फ़ोन नंबर चुनने से पहले फ़ोन कंपनी को आपके बिज़नेस के बारे में जानना ज़रूरी है। एक डॉक्यूमेंट काफ़ी है: GST, Udyam या कंपनी रजिस्ट्रेशन।",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಆರಿಸುವ ಮೊದಲು ಫೋನ್ ಕಂಪನಿಗೆ ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ತಿಳಿಯಬೇಕು. ಒಂದು ಡಾಕ್ಯುಮೆಂಟ್ ಸಾಕು: GST, Udyam ಅಥವಾ ಕಂಪನಿ ರಿಜಿಸ್ಟ್ರೇಶನ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.text.checking": {
+  "en": "Your details are with the phone company and they are checking them. You do not need to do anything. The answer will show here.",
+  "te": "మీ వివరాలు ఫోన్ కంపెనీ దగ్గర ఉన్నాయి, వాళ్ళు చెక్ చేస్తున్నారు. మీరు ఏమీ చేయక్కర్లేదు. జవాబు ఇక్కడే కనిపిస్తుంది.",
+  "hi": "आपकी जानकारी फ़ोन कंपनी के पास है और वे जाँच रहे हैं। आपको कुछ करने की ज़रूरत नहीं है। जवाब यहीं दिखेगा।",
+  "kn": "ನಿಮ್ಮ ವಿವರಗಳು ಫೋನ್ ಕಂಪನಿಯ ಬಳಿ ಇವೆ, ಅವರು ಪರಿಶೀಲಿಸುತ್ತಿದ್ದಾರೆ. ನೀವು ಏನೂ ಮಾಡಬೇಕಿಲ್ಲ. ಉತ್ತರ ಇಲ್ಲೇ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.text.accepted": {
+  "en": "Your business is registered; you can choose your number now.",
+  "te": "మీ బిజినెస్ రిజిస్టర్ అయింది; ఇప్పుడు మీ నంబర్ ఎంచుకోవచ్చు.",
+  "hi": "आपका बिज़नेस रजिस्टर हो गया है; अब आप अपना नंबर चुन सकते हैं।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ರಿಜಿಸ್ಟರ್ ಆಗಿದೆ; ಈಗ ನಿಮ್ಮ ನಂಬರ್ ಆರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.text.rejected": {
+  "en": "The phone company did not accept it. Check the details below, fix what is wrong and send again.",
+  "te": "ఫోన్ కంపెనీ ఒప్పుకోలేదు. కింద వివరాలు చూసి, తప్పు ఉన్నది సరిచేసి మళ్ళీ పంపండి.",
+  "hi": "फ़ोन कंपनी ने इसे मंज़ूर नहीं किया। नीचे की जानकारी देखें, जो ग़लत है उसे ठीक करें और फिर से भेजें।",
+  "kn": "ಫೋನ್ ಕಂಪನಿ ಒಪ್ಪಲಿಲ್ಲ. ಕೆಳಗಿನ ವಿವರಗಳನ್ನು ನೋಡಿ, ತಪ್ಪಿದ್ದನ್ನು ಸರಿಪಡಿಸಿ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.text.failed": {
+  "en": "It was not sent. Check the details below and send again.",
+  "te": "పంపలేదు. కింద వివరాలు చూసి మళ్ళీ పంపండి.",
+  "hi": "यह भेजा नहीं गया। नीचे की जानकारी देखें और फिर से भेजें।",
+  "kn": "ಕಳುಹಿಸಲಾಗಿಲ್ಲ. ಕೆಳಗಿನ ವಿವರಗಳನ್ನು ನೋಡಿ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.text.suspended": {
+  "en": "The phone company has paused your registration. Send your details again to start a new one.",
+  "te": "ఫోన్ కంపెనీ మీ రిజిస్ట్రేషన్ ఆపేసింది. కొత్తది మొదలుపెట్టడానికి వివరాలు మళ్ళీ పంపండి.",
+  "hi": "फ़ोन कंपनी ने आपका रजिस्ट्रेशन रोक दिया है। नया शुरू करने के लिए जानकारी फिर से भेजें।",
+  "kn": "ಫೋನ್ ಕಂಪನಿ ನಿಮ್ಮ ರಿಜಿಸ್ಟ್ರೇಶನ್ ನಿಲ್ಲಿಸಿದೆ. ಹೊಸದು ಶುರು ಮಾಡಲು ವಿವರಗಳನ್ನು ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.text.expired": {
+  "en": "Your registration has run out. Send your details again to renew it.",
+  "te": "మీ రిజిస్ట్రేషన్ గడువు అయిపోయింది. రెన్యూ చేయడానికి వివరాలు మళ్ళీ పంపండి.",
+  "hi": "आपके रजिस्ट्रेशन की अवधि ख़त्म हो गई है। रिन्यू करने के लिए जानकारी फिर से भेजें।",
+  "kn": "ನಿಮ್ಮ ರಿಜಿಸ್ಟ್ರೇಶನ್ ಅವಧಿ ಮುಗಿದಿದೆ. ರಿನ್ಯೂ ಮಾಡಲು ವಿವರಗಳನ್ನು ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.text.unavailable": {
+  "en": "Registering your business number is being set up. Please check back soon.",
+  "te": "మీ బిజినెస్ నంబర్ రిజిస్ట్రేషన్ సెట్ చేస్తున్నాం. కొంచెం సేపటి తర్వాత చూడండి.",
+  "hi": "आपके बिज़नेस नंबर का रजिस्ट्रेशन सेट हो रहा है। थोड़ी देर बाद देखें।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ನಂಬರ್ ರಿಜಿಸ್ಟ್ರೇಶನ್ ಸೆಟ್ ಮಾಡುತ್ತಿದ್ದೇವೆ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.reason": {
+  "en": "The phone company says:",
+  "te": "ఫోన్ కంపెనీ చెప్పింది:",
+  "hi": "फ़ोन कंपनी ने कहा:",
+  "kn": "ಫೋನ್ ಕಂಪನಿ ಹೇಳಿದ್ದು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.testmode": {
+  "en": "Test mode: nothing is sent to the phone company.",
+  "te": "టెస్ట్ మోడ్: ఫోన్ కంపెనీకి ఏదీ పంపరు.",
+  "hi": "टेस्ट मोड: फ़ोन कंपनी को कुछ नहीं भेजा जाता।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಫೋನ್ ಕಂಪನಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.owneronly": {
+  "en": "Only the owner can send the registration. You can see here where it stands.",
+  "te": "రిజిస్ట్రేషన్ ఓనర్ మాత్రమే పంపగలరు. ఎంత వరకు వచ్చిందో ఇక్కడ చూడొచ్చు.",
+  "hi": "रजिस्ट्रेशन सिर्फ़ ओनर भेज सकते हैं। यहाँ आप देख सकते हैं कि बात कहाँ तक पहुँची है।",
+  "kn": "ರಿಜಿಸ್ಟ್ರೇಶನ್ ಅನ್ನು ಓನರ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು. ಎಲ್ಲಿಯವರೆಗೆ ಬಂದಿದೆ ಎಂದು ಇಲ್ಲಿ ನೋಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.setting_up": {
+  "en": "The form is being set up. Please check back soon.",
+  "te": "ఫారమ్ సెట్ చేస్తున్నాం. కొంచెం సేపటి తర్వాత చూడండి.",
+  "hi": "फ़ॉर्म सेट हो रहा है। थोड़ी देर बाद देखें।",
+  "kn": "ಫಾರ್ಮ್ ಸೆಟ್ ಮಾಡುತ್ತಿದ್ದೇವೆ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.doc.title": {
+  "en": "Which document do you have?",
+  "te": "మీ దగ్గర ఏ డాక్యుమెంట్ ఉంది?",
+  "hi": "आपके पास कौन सा डॉक्यूमेंट है?",
+  "kn": "ನಿಮ್ಮ ಬಳಿ ಯಾವ ಡಾಕ್ಯುಮೆಂಟ್ ಇದೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.doc.one": {
+  "en": "One is enough.",
+  "te": "ఒకటి చాలు.",
+  "hi": "एक काफ़ी है।",
+  "kn": "ಒಂದು ಸಾಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.doc.gst": {
+  "en": "GST registration",
+  "te": "GST రిజిస్ట్రేషన్",
+  "hi": "GST रजिस्ट्रेशन",
+  "kn": "GST ರಿಜಿಸ್ಟ್ರೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.doc.udyam": {
+  "en": "Udyam registration",
+  "te": "Udyam రిజిస్ట్రేషన్",
+  "hi": "Udyam रजिस्ट्रेशन",
+  "kn": "Udyam ರಿಜಿಸ್ಟ್ರೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.doc.coi": {
+  "en": "Company or LLP registration (CIN or LLPIN)",
+  "te": "కంపెనీ లేదా LLP రిజిస్ట్రేషన్ (CIN లేదా LLPIN)",
+  "hi": "कंपनी या LLP रजिस्ट्रेशन (CIN या LLPIN)",
+  "kn": "ಕಂಪನಿ ಅಥವಾ LLP ರಿಜಿಸ್ಟ್ರೇಶನ್ (CIN ಅಥವಾ LLPIN)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.number.example": {
+  "en": "For example {example}",
+  "te": "ఉదాహరణకు {example}",
+  "hi": "जैसे {example}",
+  "kn": "ಉದಾಹರಣೆಗೆ {example}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.f.legal": {
+  "en": "Business name",
+  "te": "బిజినెస్ పేరు",
+  "hi": "बिज़नेस का नाम",
+  "kn": "ಬಿಸಿನೆಸ್ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.f.legal.help": {
+  "en": "Exactly as it is written on the document.",
+  "te": "డాక్యుమెంట్‌లో ఎలా రాసి ఉందో అలాగే.",
+  "hi": "डॉक्यूमेंट में जैसा लिखा है, बिल्कुल वैसा।",
+  "kn": "ಡಾಕ್ಯುಮೆಂಟ್‌ನಲ್ಲಿ ಹೇಗೆ ಬರೆದಿದೆಯೋ ಹಾಗೆಯೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.f.email": {
+  "en": "E-mail",
+  "te": "ఈమెయిల్",
+  "hi": "ईमेल",
+  "kn": "ಇಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.f.addr1": {
+  "en": "Address",
+  "te": "అడ్రస్",
+  "hi": "पता",
+  "kn": "ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.f.addr2": {
+  "en": "Address, second line (if any)",
+  "te": "అడ్రస్, రెండో లైన్ (ఉంటే)",
+  "hi": "पता, दूसरी लाइन (हो तो)",
+  "kn": "ವಿಳಾಸ, ಎರಡನೇ ಸಾಲು (ಇದ್ದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.f.city": {
+  "en": "City",
+  "te": "సిటీ",
+  "hi": "शहर",
+  "kn": "ನಗರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.f.state": {
+  "en": "State",
+  "te": "రాష్ట్రం",
+  "hi": "राज्य",
+  "kn": "ರಾಜ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.f.postal": {
+  "en": "PIN code",
+  "te": "పిన్ కోడ్",
+  "hi": "पिन कोड",
+  "kn": "ಪಿನ್ ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.f.file": {
+  "en": "Your document",
+  "te": "మీ డాక్యుమెంట్",
+  "hi": "आपका डॉक्यूमेंट",
+  "kn": "ನಿಮ್ಮ ಡಾಕ್ಯುಮೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.f.file.help": {
+  "en": "A PDF, JPG or PNG file, up to {mb} MB.",
+  "te": "PDF, JPG లేదా PNG ఫైల్, {mb} MB వరకు.",
+  "hi": "PDF, JPG या PNG फ़ाइल, {mb} MB तक।",
+  "kn": "PDF, JPG ಅಥವಾ PNG ಫೈಲ್, {mb} MB ವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.kept": {
+  "en": "Your document goes to the phone company and is not kept by us.",
+  "te": "మీ డాక్యుమెంట్ ఫోన్ కంపెనీకి వెళ్తుంది, మా దగ్గర ఉండదు.",
+  "hi": "आपका डॉक्यूमेंट फ़ोन कंपनी को जाता है, हमारे पास नहीं रखा जाता।",
+  "kn": "ನಿಮ್ಮ ಡಾಕ್ಯುಮೆಂಟ್ ಫೋನ್ ಕಂಪನಿಗೆ ಹೋಗುತ್ತದೆ, ನಮ್ಮ ಬಳಿ ಉಳಿಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.btn.send": {
+  "en": "Send for registration",
+  "te": "రిజిస్ట్రేషన్‌కి పంపండి",
+  "hi": "रजिस्ट्रेशन के लिए भेजें",
+  "kn": "ರಿಜಿಸ್ಟ್ರೇಶನ್‌ಗೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.btn.again": {
+  "en": "Fix and send again",
+  "te": "సరిచేసి మళ్ళీ పంపండి",
+  "hi": "ठीक करके फिर से भेजें",
+  "kn": "ಸರಿಪಡಿಸಿ ಮತ್ತೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.number": {
+  "en": "That does not look like a {label}. For example {example}.",
+  "te": "ఇది {label} లాగా లేదు. ఉదాహరణకు {example}.",
+  "hi": "यह {label} जैसा नहीं लग रहा। जैसे {example}।",
+  "kn": "ಇದು {label} ತರ ಕಾಣುತ್ತಿಲ್ಲ. ಉದಾಹರಣೆಗೆ {example}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.legal": {
+  "en": "Type the business name as it is on the document.",
+  "te": "డాక్యుమెంట్‌లో ఉన్న బిజినెస్ పేరు రాయండి.",
+  "hi": "डॉक्यूमेंट में जो बिज़नेस का नाम है वही लिखें।",
+  "kn": "ಡಾಕ್ಯುಮೆಂಟ್‌ನಲ್ಲಿರುವ ಬಿಸಿನೆಸ್ ಹೆಸರನ್ನು ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.email": {
+  "en": "Type an e-mail address, like name@example.com.",
+  "te": "ఈమెయిల్ అడ్రస్ రాయండి, name@example.com లాగా.",
+  "hi": "ईमेल पता लिखें, जैसे name@example.com।",
+  "kn": "ಇಮೇಲ್ ವಿಳಾಸ ಬರೆಯಿರಿ, name@example.com ತರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.addr1": {
+  "en": "Type the address of your business.",
+  "te": "మీ బిజినెస్ అడ్రస్ రాయండి.",
+  "hi": "अपने बिज़नेस का पता लिखें।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ವಿಳಾಸ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.city": {
+  "en": "Type the city.",
+  "te": "సిటీ రాయండి.",
+  "hi": "शहर लिखें।",
+  "kn": "ನಗರ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.state": {
+  "en": "Type the state.",
+  "te": "రాష్ట్రం రాయండి.",
+  "hi": "राज्य लिखें।",
+  "kn": "ರಾಜ್ಯ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.postal": {
+  "en": "The PIN code has 6 digits.",
+  "te": "పిన్ కోడ్‌లో 6 అంకెలు ఉంటాయి.",
+  "hi": "पिन कोड में 6 अंक होते हैं।",
+  "kn": "ಪಿನ್ ಕೋಡ್‌ನಲ್ಲಿ 6 ಅಂಕೆಗಳಿರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.file": {
+  "en": "Choose your document.",
+  "te": "మీ డాక్యుమెంట్ ఎంచుకోండి.",
+  "hi": "अपना डॉक्यूमेंट चुनें।",
+  "kn": "ನಿಮ್ಮ ಡಾಕ್ಯುಮೆಂಟ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.file_type": {
+  "en": "Choose a PDF, JPG or PNG file.",
+  "te": "PDF, JPG లేదా PNG ఫైల్ ఎంచుకోండి.",
+  "hi": "PDF, JPG या PNG फ़ाइल चुनें।",
+  "kn": "PDF, JPG ಅಥವಾ PNG ಫೈಲ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.file_size": {
+  "en": "That file is over {mb} MB. Choose a smaller PDF or photo.",
+  "te": "ఆ ఫైల్ {mb} MB కంటే ఎక్కువ ఉంది. చిన్న PDF లేదా ఫోటో ఎంచుకోండి.",
+  "hi": "वह फ़ाइल {mb} MB से बड़ी है। छोटी PDF या फ़ोटो चुनें।",
+  "kn": "ಆ ಫೈಲ್ {mb} MB ಗಿಂತ ದೊಡ್ಡದಾಗಿದೆ. ಚಿಕ್ಕ PDF ಅಥವಾ ಫೋಟೋ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.file_read": {
+  "en": "We could not read that file. Choose it again.",
+  "te": "ఆ ఫైల్ చదవలేకపోయాం. మళ్ళీ ఎంచుకోండి.",
+  "hi": "वह फ़ाइल पढ़ नहीं पाए। उसे फिर से चुनें।",
+  "kn": "ಆ ಫೈಲ್ ಓದಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.bad.summary": {
+  "en": "Nothing was sent. Please fix the points marked above.",
+  "te": "ఏదీ పంపలేదు. పైన గుర్తు పెట్టినవి సరిచేయండి.",
+  "hi": "कुछ नहीं भेजा गया। ऊपर जो निशान लगे हैं उन्हें ठीक करें।",
+  "kn": "ಏನೂ ಕಳುಹಿಸಿಲ್ಲ. ಮೇಲೆ ಗುರುತಿಸಿದವನ್ನು ಸರಿಪಡಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.sent": {
+  "en": "Sent. The phone company is checking your details.",
+  "te": "పంపాం. ఫోన్ కంపెనీ మీ వివరాలు చెక్ చేస్తోంది.",
+  "hi": "भेज दिया। फ़ोन कंपनी आपकी जानकारी जाँच रही है।",
+  "kn": "ಕಳುಹಿಸಿದ್ದೇವೆ. ಫೋನ್ ಕಂಪನಿ ನಿಮ್ಮ ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.sent.test": {
+  "en": "Checked and fine. Test mode: nothing was sent to the phone company.",
+  "te": "చెక్ చేశాం, అంతా బాగుంది. టెస్ట్ మోడ్: ఫోన్ కంపెనీకి ఏదీ పంపలేదు.",
+  "hi": "जाँच ली, सब ठीक है। टेस्ट मोड: फ़ोन कंपनी को कुछ नहीं भेजा गया।",
+  "kn": "ಪರಿಶೀಲಿಸಿದ್ದೇವೆ, ಎಲ್ಲವೂ ಸರಿಯಿದೆ. ಟೆಸ್ಟ್ ಮೋಡ್: ಫೋನ್ ಕಂಪನಿಗೆ ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.mfa": {
+  "en": "Sending the registration needs your two-step code first (an authenticator code). Set it up in Security, then come back here.",
+  "te": "రిజిస్ట్రేషన్ పంపే ముందు మీ టూ-స్టెప్ కోడ్ (ఆథెంటికేటర్ కోడ్) కావాలి. సెక్యూరిటీలో సెట్ చేసి, ఇక్కడికి తిరిగి రండి.",
+  "hi": "रजिस्ट्रेशन भेजने से पहले आपका टू-स्टेप कोड (ऑथेंटिकेटर कोड) ज़रूरी है। सिक्योरिटी में सेट करें, फिर यहाँ लौटें।",
+  "kn": "ರಿಜಿಸ್ಟ್ರೇಶನ್ ಕಳುಹಿಸುವ ಮೊದಲು ನಿಮ್ಮ ಟೂ-ಸ್ಟೆಪ್ ಕೋಡ್ (ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್) ಬೇಕು. ಸೆಕ್ಯುರಿಟಿಯಲ್ಲಿ ಹೊಂದಿಸಿ, ನಂತರ ಇಲ್ಲಿಗೆ ಬನ್ನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.err.field": {
+  "en": "Nothing was sent. Please check the details and try again.",
+  "te": "ఏదీ పంపలేదు. వివరాలు చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कुछ नहीं भेजा गया। जानकारी देखें और फिर से कोशिश करें।",
+  "kn": "ಏನೂ ಕಳುಹಿಸಿಲ್ಲ. ವಿವರಗಳನ್ನು ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.err.not_owner": {
+  "en": "Only the owner can send the registration.",
+  "te": "రిజిస్ట్రేషన్ ఓనర్ మాత్రమే పంపగలరు.",
+  "hi": "रजिस्ट्रेशन सिर्फ़ ओनर भेज सकते हैं।",
+  "kn": "ರಿಜಿಸ್ಟ್ರೇಶನ್ ಅನ್ನು ಓನರ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.err.kyc_file_too_large": {
+  "en": "That file is over 5 MB. Choose a smaller PDF or photo.",
+  "te": "ఆ ఫైల్ 5 MB కంటే ఎక్కువ ఉంది. చిన్న PDF లేదా ఫోటో ఎంచుకోండి.",
+  "hi": "वह फ़ाइल 5 MB से बड़ी है। छोटी PDF या फ़ोटो चुनें।",
+  "kn": "ಆ ಫೈಲ್ 5 MB ಗಿಂತ ದೊಡ್ಡದಾಗಿದೆ. ಚಿಕ್ಕ PDF ಅಥವಾ ಫೋಟೋ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.err.kyc_file_type": {
+  "en": "That does not look like a PDF, JPG or PNG file. Choose one of those.",
+  "te": "అది PDF, JPG లేదా PNG ఫైల్ లాగా లేదు. వాటిలో ఒకటి ఎంచుకోండి.",
+  "hi": "वह PDF, JPG या PNG फ़ाइल जैसी नहीं लग रही। इनमें से कोई एक चुनें।",
+  "kn": "ಅದು PDF, JPG ಅಥವಾ PNG ಫೈಲ್ ತರ ಕಾಣುತ್ತಿಲ್ಲ. ಅವುಗಳಲ್ಲಿ ಒಂದನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.err.kyc_file_unreadable": {
+  "en": "We could not read that file, or it is empty. Choose another copy of it.",
+  "te": "ఆ ఫైల్ చదవలేకపోయాం, లేదా అది ఖాళీగా ఉంది. దాని ఇంకో కాపీ ఎంచుకోండి.",
+  "hi": "वह फ़ाइल पढ़ी नहीं जा सकी, या ख़ाली है। उसकी दूसरी कॉपी चुनें।",
+  "kn": "ಆ ಫೈಲ್ ಓದಲಾಗಲಿಲ್ಲ, ಅಥವಾ ಖಾಲಿಯಾಗಿದೆ. ಅದರ ಇನ್ನೊಂದು ಕಾಪಿ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.err.kyc_not_accepted": {
+  "en": "The phone company did not accept this. Check the document and the details, then send again.",
+  "te": "ఫోన్ కంపెనీ దీన్ని ఒప్పుకోలేదు. డాక్యుమెంట్, వివరాలు చూసి మళ్ళీ పంపండి.",
+  "hi": "फ़ोन कंपनी ने इसे मंज़ूर नहीं किया। डॉक्यूमेंट और जानकारी देखें, फिर से भेजें।",
+  "kn": "ಫೋನ್ ಕಂಪನಿ ಇದನ್ನು ಒಪ್ಪಲಿಲ್ಲ. ಡಾಕ್ಯುಮೆಂಟ್ ಮತ್ತು ವಿವರಗಳನ್ನು ನೋಡಿ, ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.err.kyc_document_not_offered": {
+  "en": "The phone company does not take that document right now. Choose another one.",
+  "te": "ఫోన్ కంపెనీ ఇప్పుడు ఆ డాక్యుమెంట్ తీసుకోవడం లేదు. ఇంకోటి ఎంచుకోండి.",
+  "hi": "फ़ोन कंपनी अभी वह डॉक्यूमेंट नहीं ले रही। कोई दूसरा चुनें।",
+  "kn": "ಫೋನ್ ಕಂಪನಿ ಈಗ ಆ ಡಾಕ್ಯುಮೆಂಟ್ ತೆಗೆದುಕೊಳ್ಳುತ್ತಿಲ್ಲ. ಇನ್ನೊಂದನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.err.kyc_field_not_supported": {
+  "en": "The phone company cannot take one of these details yet. Please contact support.",
+  "te": "ఈ వివరాల్లో ఒకటి ఫోన్ కంపెనీ ఇంకా తీసుకోదు. దయచేసి సపోర్ట్‌ని సంప్రదించండి.",
+  "hi": "इनमें से एक जानकारी फ़ोन कंपनी अभी नहीं ले सकती। कृपया सपोर्ट से बात करें।",
+  "kn": "ಈ ವಿವರಗಳಲ್ಲಿ ಒಂದನ್ನು ಫೋನ್ ಕಂಪನಿ ಇನ್ನೂ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ. ದಯವಿಟ್ಟು ಸಪೋರ್ಟ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.err.kyc_provider_unavailable": {
+  "en": "The phone company did not answer. Wait a minute and press the button again; it will not be sent twice.",
+  "te": "ఫోన్ కంపెనీ జవాబు ఇవ్వలేదు. ఒక నిమిషం ఆగి మళ్ళీ బటన్ నొక్కండి; రెండుసార్లు వెళ్ళదు.",
+  "hi": "फ़ोन कंपनी ने जवाब नहीं दिया। एक मिनट रुककर फिर से बटन दबाएँ; यह दो बार नहीं जाएगा।",
+  "kn": "ಫೋನ್ ಕಂಪನಿ ಉತ್ತರಿಸಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಬಟನ್ ಒತ್ತಿ; ಎರಡು ಸಲ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phkyc.err.kyc_unavailable": {
+  "en": "Registering a number is not available right now. Please try again later.",
+  "te": "నంబర్ రిజిస్ట్రేషన్ ఇప్పుడు అందుబాటులో లేదు. కొంచెం సేపటి తర్వాత ప్రయత్నించండి.",
+  "hi": "नंबर का रजिस्ट्रेशन अभी उपलब्ध नहीं है। थोड़ी देर बाद कोशिश करें।",
+  "kn": "ನಂಬರ್ ರಿಜಿಸ್ಟ್ರೇಶನ್ ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -59,6 +59,9 @@ class FakeRepo:
         self.approvals_asked: list[tuple[str, uuid.UUID | None]] = []
         self.numbers_asked: list[str | None] = []
         self.approval_error = False
+        self.facts_override: dict[str, Any] = {}   # what the database says about THIS call's person, on top of "all good"
+        self.facts_error = False
+        self.facts_asked: list[tuple[uuid.UUID, str]] = []
 
     def line_for_tenant(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         self.tokens.append(token)
@@ -91,6 +94,14 @@ class FakeRepo:
         if self.prospect_error:
             raise RuntimeError("data layer down")
         return self.prospect_answer
+    def facts(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, number: str) -> dict[str, Any]:
+        self.facts_asked.append((lead_id, number))
+        self.proof_asked.append(lead_id)
+        if self.facts_error:
+            raise RuntimeError("data layer down")
+        return {"contact_found": True, "can_contact": True, "suppressed": False, "erased_or_archived": False, "proof": self.proof_answer is not None, "proof_source": "website_form", "prospect": False,
+                "weekly_calls": 0, "weekly_limit": 1, "calls_today": 0, "minutes_today": 0, "hours": None, "holidays": [], "active_to_number": 0, **self.facts_override}
+
     def approved(self, token: str, tenant_id: uuid.UUID, kind: str, ref: uuid.UUID | None, number: str | None) -> bool:
         self.approvals_asked.append((kind, ref))
         self.numbers_asked.append(number)
@@ -472,3 +483,75 @@ def test_a_number_that_is_not_a_prospect_is_called_as_before() -> None:
     out, repo, api = placer()
     out.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert len(api.placed) == 1 and repo.prospect_asked == [OWNER]
+
+
+# ---- live call-backs (planner, 19 Nov 2026): the SAME facts for every mode, each missing piece refuses with its own word
+LEAD = uuid.UUID("11111111-2222-3333-4444-555555555555")
+PERSON = "+919845012345"   # a customer's number: not on the sandbox list
+
+
+def _live(**override: Any) -> tuple[PlivoOutbound, FakeRepo, FakePlivoApi]:
+    repo = FakeRepo()
+    repo.proof_answer = {"lead_id": str(LEAD), "source": "website_form"}
+    repo.facts_override = override
+    out, _, api = placer(mode="live", confirmed=True, repo=repo, numbers=frozenset({OWNER}))
+    return out, repo, api
+
+
+def test_a_live_call_back_with_consent_and_proof_is_placed_and_the_row_keeps_the_proof() -> None:
+    out, repo, api = _live()
+    out.place("tok", TENANT, PERSON, lead_id=LEAD, approval_kind="standing_rule", purpose="sales_followup", kind="task")
+    assert len(api.placed) == 1 and repo.facts_asked == [(LEAD, PERSON)] and repo.proof_kept, "allowed, the facts were asked for THIS lead and number, the row keeps the proof"
+
+
+def test_every_missing_piece_refuses_a_live_call_back_with_its_own_reason() -> None:
+    cases: dict[str, dict[str, Any]] = {
+        "no_consent": {"can_contact": False},
+        "suppressed": {"suppressed": True},
+        "erased_or_archived": {"erased_or_archived": True},
+        "no_proof_of_request": {"proof": False},
+        "weekly_limit": {"weekly_calls": 1, "weekly_limit": 1},
+        "already_calling": {"active_to_number": 1},
+        "outside_hours": {"hours": {"days": [7], "from_minute": 600, "to_minute": 1080}},   # the call is on a Tuesday 10:00 (INDIA_10AM); the shop calls on Sundays only
+        "holiday": {"holidays": ["2026-11-10"]},
+    }
+    for reason, override in cases.items():
+        out, repo, api = _live(**override)
+        with pytest.raises(OutboundRefused) as caught:
+            out.place("tok", TENANT, PERSON, lead_id=LEAD, approval_kind="standing_rule", purpose="sales_followup", kind="task")
+        assert caught.value.reason == reason and api.placed == [], reason
+        assert [r["refuse_reason"] for r in repo.rows.values()] == [reason], f"{reason}: kept on a refused row"
+
+
+def test_a_prospect_and_an_unreadable_answer_and_no_lead_are_refused() -> None:
+    out, repo, api = _live()
+    repo.prospect_answer = True
+    with pytest.raises(OutboundRefused) as prospect:
+        out.place("tok", TENANT, PERSON, lead_id=LEAD, approval_kind="standing_rule", purpose="sales_followup", kind="task")
+    assert prospect.value.reason == "prospect_no_ai_call"
+    out2, repo2, api2 = _live()
+    repo2.facts_error = True
+    with pytest.raises(OutboundRefused) as unread:
+        out2.place("tok", TENANT, PERSON, lead_id=LEAD, approval_kind="standing_rule", purpose="sales_followup", kind="task")
+    assert unread.value.reason == "no_proof_of_request" and api2.placed == [], "facts we could not read: no proof, no call"
+    out3, repo3, api3 = _live()
+    with pytest.raises(OutboundRefused) as nolead:
+        out3.place("tok", TENANT, PERSON, approval_kind="standing_rule", purpose="sales_followup", kind="task")
+    assert nolead.value.reason == "no_proof_of_request" and repo3.facts_asked == [] and api3.placed == []
+
+
+def test_the_sandbox_list_is_the_owners_own_phones_and_needs_no_facts_while_any_other_number_is_refused_before_them() -> None:
+    repo = FakeRepo()
+    repo.facts_override = {"can_contact": False}
+    out, _, api = placer(mode="sandbox", repo=repo, numbers=frozenset({OWNER}))
+    with pytest.raises(OutboundRefused) as caught:
+        out.place("tok", TENANT, PERSON, lead_id=LEAD, approval_kind="standing_rule", purpose="sales_followup", kind="task")
+    assert caught.value.reason == "not_on_sandbox_list" and api.placed == [], "a sandbox rings the owner's own phones only: a customer's number never"
+    out.place("tok", TENANT, OWNER, lead_id=LEAD, approval_kind="owner_test")
+    assert len(api.placed) == 1 and (LEAD, OWNER) not in repo.facts_asked, "a call to oneself: no facts needed"
+
+
+def test_a_person_who_asked_to_be_called_is_not_refused_for_an_unknown_do_not_disturb_status() -> None:
+    out, _, api = _live()
+    out.place("tok", TENANT, PERSON, lead_id=LEAD, approval_kind="standing_rule", purpose="sales_followup", kind="task")
+    assert len(api.placed) == 1, "a sales_followup is promotional, but THIS call answers the person's own request"

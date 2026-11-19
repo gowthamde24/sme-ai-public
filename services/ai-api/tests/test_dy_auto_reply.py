@@ -429,3 +429,12 @@ def test_a_promise_without_a_price_is_a_follow_up_and_a_reply_without_any_of_it_
     broken.note_fails = True
     out = AutoReplyRunner(broken, FakeDrafter(Draft("I will check and let you know.", "en", "ok", 0.9, False)), today=lambda: THURSDAY).run("tok")
     assert out.held == 1 and broken.submitted, "the reply is submitted even when the promise could not be written down"
+
+
+def test_the_prompt_keeps_the_assistant_task_specific_never_a_general_assistant() -> None:
+    """Meta bans general-purpose AI assistants on WhatsApp (terms from 15 Jan 2026): the reply prompt scopes the assistant to the business and says what to do with an off-topic question."""
+    from app.autoreply.drafter import build_prompt
+
+    system, _ = build_prompt({"business": "Neelambari Silks", "assistant_name": "Priya", "facts": [], "turns": []}, "en")
+    assert "ONLY the assistant of Neelambari Silks" in system and "never a general assistant" in system
+    assert "general knowledge, writing, homework, advice, jokes" in system and "you will ask the owner" in system

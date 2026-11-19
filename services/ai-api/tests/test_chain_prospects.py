@@ -1,0 +1,19 @@
+"""A search for new businesses never chains on to calling or messaging them (owner, 18 Nov 2026)."""
+
+# ruff: noqa: E501
+
+from __future__ import annotations
+
+from app.assistant_work.chain import without_prospect_steps
+
+
+def test_the_steps_that_would_call_or_message_what_the_finder_found_are_dropped() -> None:
+    rest = ["Save the 10 jewellery shops found in Jayanagar as leads", "Send our catalogue to the jewellery shops"]
+    assert without_prospect_steps("Find 10 jewellery shops in Jayanagar", rest) == [rest[0]]
+    assert without_prospect_steps("Find new shops in Jayanagar", ["Call them and ask what they need"]) == []
+
+
+def test_other_chains_are_untouched() -> None:
+    rest = ["Call Ravi and ask about a visit"]
+    assert without_prospect_steps("Add Ravi Teja as a lead", rest) == rest
+    assert without_prospect_steps("Check who has not replied for 3 days", ["Send them a reminder"]) == ["Send them a reminder"]

@@ -52,6 +52,19 @@ FINAL = ToolSpec(
 )
 
 
+_REACHES = re.compile(r"\b(send|message|whatsapp|call|ring|phone|text|mail|e-?mail|contact|invite)\b|పంపు|కాల్|మెసేజ్|भेज|कॉल|ಕಳುಹಿಸ|ಕರೆ", re.IGNORECASE)
+
+
+def without_prospect_steps(first: str, rest: list[str]) -> list[str]:
+    """A search for new businesses (the Lead Finder) never leads on to calling or messaging them (owner, 18 Nov 2026: prospects are never AI-called or cold-messaged; the owner reaches out personally).
+    The steps that would are dropped from the chain; "save them as leads" and the like stay. The database refuses them anyway; this keeps the assistant from offering them."""
+    from app.lead_finder.intent import wants_lead_finder
+
+    if not wants_lead_finder(first):
+        return rest
+    return [step for step in rest if not _REACHES.search(step)]
+
+
 def looks_chained(text: str | None) -> bool:
     return bool(_HINT.search(text or ""))
 

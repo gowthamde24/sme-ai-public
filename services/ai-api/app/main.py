@@ -1412,7 +1412,12 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
         ),
     )
     app.add_middleware(SecurityHeadersMiddleware, production=not settings.is_development)
-    app.add_middleware(ObserveMiddleware, metrics=metrics, trusted_hops=settings.trusted_proxy_hops)
+    app.add_middleware(
+        ObserveMiddleware,
+        metrics=metrics,
+        trusted_hops=settings.trusted_proxy_hops,
+        server_timing=settings.server_timing_headers,
+    )
     app.include_router(
         build_ops_router(
             metrics, settings.metrics_token.get_secret_value() if settings.metrics_token else None

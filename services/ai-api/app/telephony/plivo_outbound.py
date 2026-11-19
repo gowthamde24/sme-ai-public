@@ -134,6 +134,7 @@ class OutboundRepo(Protocol):
     def set_proof(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> None: ...
     def prospect(self, token: str, tenant_id: uuid.UUID, number: str) -> bool: ...
     def approved(self, token: str, tenant_id: uuid.UUID, kind: str, ref: uuid.UUID | None, number: str | None) -> bool: ...
+    def facts(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, number: str) -> dict[str, Any]: ...
 
 
 class PostgrestOutboundRepo:
@@ -173,6 +174,10 @@ class PostgrestOutboundRepo:
 
     def approved(self, token: str, tenant_id: uuid.UUID, kind: str, ref: uuid.UUID | None, number: str | None) -> bool:
         return self._rpc.call(token, "call_approved", {"p_tenant_id": str(tenant_id), "p_kind": kind, "p_ref": str(ref) if ref else None, "p_number": number}) is True
+
+    def facts(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, number: str) -> dict[str, Any]:
+        """Everything the gate needs about this call from the database in one answer (consent, STOP, archive, proof of request, prospect, counts, hours): the same for the sandbox and the live path."""
+        return self._rpc.object(token, "call_facts", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id), "p_number": number})
 
 
 class PlivoCaller(Protocol):
@@ -231,9 +236,20 @@ class PlivoOutbound:
         line = self._repo.line_for_tenant(token, tenant_id)
         # casual is selectable ONLY on the Owner's own test call (`owner_test`, set by the Owner-only route); a Lead Desk task call to a customer is respectful or friendly, whatever is asked
         use_tone = (tone if tone in tone_mod.TONES else tone_mod.DEFAULT_TONE) if owner_test else tone_mod.for_task_call(tone)
+        # the facts of THIS call, from the database, the same for the sandbox and the live path (planner, 19 Nov 2026): consent, STOP, archive, the person's own request, the counts, the hours. The owner's own phone in a
+        # sandbox is exempt (a call to oneself); a call with no lead has no facts, so nobody is contacted on a guess; an answer we could not read is a refusal.
+        sandbox_own = self._gate.mode == "sandbox" and number is not None and number in self._gate.sandbox_numbers
+        facts: dict[str, Any] | None = None
+        facts_unread = False
+        if lead_id is not None and number is not None and line is not None and self._gate.mode != "off" and not sandbox_own:
+            try:
+                facts = self._repo.facts(token, tenant_id, lead_id, number)
+            except Exception as exc:  # noqa: BLE001 - fail closed, never into the caller
+                log.warning("plivo_outbound facts not read: %s", exc.__class__.__name__)
+                facts_unread = True
         proof = None   # a LIVE call-back needs a request the person made (owner, 18 Nov 2026): found by the database from the lead's contact; the sandbox does not ask
         if self._gate.mode == "live":
-            proof = lead_id is not None and self._repo.proof(token, tenant_id, lead_id) is not None
+            proof = bool(facts is not None and facts.get("proof") is True)
         prospect = False   # a Lead Finder prospect is never called (every mode); an answer we could not get counts as yes
         if number is not None and line is not None and self._gate.mode != "off":
             try:
@@ -247,7 +263,7 @@ class PlivoOutbound:
                 approved = self._repo.approved(token, tenant_id, approval_kind, approval_ref, number)
             except Exception as exc:  # noqa: BLE001 - an answer we could not get is a refusal (a refused row with its closed word), never an escape into the caller
                 log.warning("plivo_outbound approval not read: %s", exc.__class__.__name__)
-        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"), proof=proof, prospect=prospect, approval=approval_kind if approved else None)
+        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"), proof=proof, prospect=prospect, approval=approval_kind if approved else None, facts=facts, facts_unread=facts_unread)
         if reason is not None:
             self._repo.begin(token, tenant_id, purpose, language, refuse_reason=reason)   # the refusal is recorded, with its closed word
             raise OutboundRefused(reason)
@@ -288,16 +304,26 @@ class PlivoOutbound:
         log.info("plivo_outbound cancelled call_fp=%s", str(call_id)[:8])
         return "cancelled"
 
-    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE, approval: gate.Approval | None = None, billing_ok: bool = True, proof: bool | None = None, prospect: bool = False) -> str | None:
+    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE, approval: gate.Approval | None = None, billing_ok: bool = True, proof: bool | None = None, prospect: bool = False, facts: dict[str, Any] | None = None, facts_unread: bool = False) -> str | None:
         if number is None:
             return "bad_number"
         if not have_line:
             return "no_such_line"
         own = self._gate.mode == "sandbox" and number in self._gate.sandbox_numbers   # an owner's own phone: the only consent a SANDBOX call has (a test call to oneself). `live` has no consent path yet: it refuses (no_consent)
         opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for(kind, language, tone), inbound=False)
-        facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=gate.Hours(days=ALL_DAYS, from_minute=gate.WINDOW_FROM_MINUTE, to_minute=gate.WINDOW_TO_MINUTE),
-                                   approval=approval, approval_valid=True, can_contact=own, dnd="no" if own else "unknown", opening_line=opening, active_calls_total=self._active(), billing_ok=billing_ok, proof_of_request=proof, prospect=prospect)
-        decision = gate.check_outbound(self._gate, facts)
+        hours = gate.Hours(days=ALL_DAYS, from_minute=gate.WINDOW_FROM_MINUTE, to_minute=gate.WINDOW_TO_MINUTE)
+        extra: dict[str, Any] = {}
+        if facts is not None and not own:
+            row_hours = facts.get("hours")
+            if isinstance(row_hours, dict) and isinstance(row_hours.get("days"), list):
+                hours = gate.Hours(days=[int(d) for d in row_hours["days"]], from_minute=int(row_hours.get("from_minute", gate.WINDOW_FROM_MINUTE)), to_minute=int(row_hours.get("to_minute", gate.WINDOW_TO_MINUTE)))
+            extra = {"can_contact": facts.get("can_contact") is True, "suppressed": facts.get("suppressed") is True, "erased_or_archived": facts.get("erased_or_archived") is True,
+                     "calls_to_contact_this_week": int(facts.get("weekly_calls") or 0), "weekly_limit": max(1, int(facts.get("weekly_limit") or 1)), "calls_today": int(facts.get("calls_today") or 0),
+                     "minutes_today": float(facts.get("minutes_today") or 0), "holidays": tuple(str(h) for h in (facts.get("holidays") or [])), "active_calls_to_number": int(facts.get("active_to_number") or 0)}
+        out_facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=hours,
+                                       approval=approval, approval_valid=True, **{"can_contact": own, "dnd": "no" if own else "unknown", **extra}, opening_line=opening, active_calls_total=self._active(),
+                                       billing_ok=billing_ok, proof_of_request=proof, prospect=prospect)
+        decision = gate.check_outbound(self._gate, out_facts)
         return decision.reason if isinstance(decision, gate.Refused) else None
 
 
