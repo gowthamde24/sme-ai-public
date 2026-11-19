@@ -34,3 +34,40 @@ export const DRAFT_TEXT_MAX = 500;
 export type SubmitInput = { title: OwnTitle; message: Message };
 
 export type { Category, Draft, DraftLang, Message };
+
+/** A moment as the shop says it ("19 Nov, 10:42 am"): India time, the words of the person's language. */
+export function momentText(iso: string | null, lang: string): string {
+  const ms = iso ? Date.parse(iso) : NaN;
+  if (!Number.isFinite(ms)) return "";
+  const loc = lang === "te" ? "te-IN" : lang === "hi" ? "hi-IN" : lang === "kn" ? "kn-IN" : "en-IN";
+  return new Intl.DateTimeFormat(loc, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }).format(ms);
+}
+
+/* ---- what a server action reads from the browser: never trusted, checked down to the letter ---- */
+const BRACES = /[{}]/;
+const textOk = (v: unknown, max: number): v is string => typeof v === "string" && v.length <= max && !BRACES.test(v.split("{name}").join(""));
+function readDraft(v: unknown): Draft | null {
+  if (typeof v !== "object" || v === null) return null;
+  const x = v as Record<string, unknown>;
+  const buttons = x.buttons;
+  if (!textOk(x.body, 1100) || (x.header !== null && !textOk(x.header, 80)) || (x.footer !== null && !textOk(x.footer, 80)) || !Array.isArray(buttons) || buttons.length > 3 || !buttons.every((b) => textOk(b, 40))) return null;
+  return { header: x.header as string | null, body: x.body, footer: x.footer as string | null, buttons: buttons as string[] };
+}
+/** A message from outside: both languages, a closed group, only `{name}` as a variable, every part within WhatsApp's own limits of the wire. */
+export function readMessage(v: unknown): Message | null {
+  if (typeof v !== "object" || v === null) return null;
+  const x = v as { category?: unknown; drafts?: unknown };
+  const d = x.drafts as Record<string, unknown> | null;
+  if ((x.category !== "utility" && x.category !== "marketing") || typeof d !== "object" || d === null) return null;
+  const te = readDraft(d.te);
+  const en = readDraft(d.en);
+  return te && en ? { category: x.category, drafts: { te, en } } : null;
+}
+export function readSubmit(v: unknown): SubmitInput | null {
+  if (typeof v !== "object" || v === null) return null;
+  const x = v as { title?: unknown; message?: unknown };
+  const t = x.title as { en?: unknown; te?: unknown } | null;
+  const message = readMessage(x.message);
+  if (!t || typeof t.en !== "string" || t.en.trim() === "" || t.en.length > 60 || (t.te !== null && t.te !== undefined && (typeof t.te !== "string" || t.te.length > 60)) || !message) return null;
+  return { title: { en: t.en.trim(), te: typeof t.te === "string" && t.te.trim() !== "" ? t.te.trim() : null }, message };
+}

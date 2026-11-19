@@ -121365,22 +121365,11 @@
    "kn": "draft"
   }
  },
- "jobs.tb.sent.today": {
-  "en": "Sent at {time}. WhatsApp usually answers within a few hours, and at most a day. We tell you here.",
-  "te": "{time}కి పంపాం. WhatsApp సాధారణంగా కొన్ని గంటల్లో, గరిష్ఠంగా ఒక రోజులో చెబుతుంది. ఇక్కడే చెబుతాం.",
-  "hi": "{time} बजे भेजा। WhatsApp आमतौर पर कुछ घंटों में, ज़्यादा से ज़्यादा एक दिन में जवाब देता है। हम यहीं बताएँगे।",
-  "kn": "{time}ಕ್ಕೆ ಕಳುಹಿಸಿದ್ದೇವೆ. WhatsApp ಸಾಮಾನ್ಯವಾಗಿ ಕೆಲವು ಗಂಟೆಗಳಲ್ಲಿ, ಹೆಚ್ಚೆಂದರೆ ಒಂದು ದಿನದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ. ಇಲ್ಲಿಯೇ ತಿಳಿಸುತ್ತೇವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.tb.sent.day": {
-  "en": "Sent on {date}. WhatsApp usually answers within a few hours, and at most a day. We tell you here.",
-  "te": "{date}న పంపాం. WhatsApp సాధారణంగా కొన్ని గంటల్లో, గరిష్ఠంగా ఒక రోజులో చెబుతుంది. ఇక్కడే చెబుతాం.",
+  "en": "Sent {date}. WhatsApp usually answers within a few hours, and at most a day. We tell you here.",
+  "te": "{date}కి పంపాం. WhatsApp సాధారణంగా కొన్ని గంటల్లో, గరిష్ఠంగా ఒక రోజులో చెబుతుంది. ఇక్కడే చెబుతాం.",
   "hi": "{date} को भेजा। WhatsApp आमतौर पर कुछ घंटों में, ज़्यादा से ज़्यादा एक दिन में जवाब देता है। हम यहीं बताएँगे।",
-  "kn": "{date}ರಂದು ಕಳುಹಿಸಿದ್ದೇವೆ. WhatsApp ಸಾಮಾನ್ಯವಾಗಿ ಕೆಲವು ಗಂಟೆಗಳಲ್ಲಿ, ಹೆಚ್ಚೆಂದರೆ ಒಂದು ದಿನದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ. ಇಲ್ಲಿಯೇ ತಿಳಿಸುತ್ತೇವೆ.",
+  "kn": "{date}ಕ್ಕೆ ಕಳುಹಿಸಿದ್ದೇವೆ. WhatsApp ಸಾಮಾನ್ಯವಾಗಿ ಕೆಲವು ಗಂಟೆಗಳಲ್ಲಿ, ಹೆಚ್ಚೆಂದರೆ ಒಂದು ದಿನದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ. ಇಲ್ಲಿಯೇ ತಿಳಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

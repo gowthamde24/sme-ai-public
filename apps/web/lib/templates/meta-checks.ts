@@ -120,7 +120,7 @@ export function runChecks(m: Message): CheckResult[] {
     out.push(missing ? result("opt_out", "warn", "", {}, missing.langs, "add_opt_out") : result("opt_out", "ok", "", {}, [], null));
   } else out.push(result("opt_out", "ok", "not_needed", {}, [], null));
 
-  const tooMany = hits(m, (d) => {
+  const tooMany = hits(m, (d): CheckParams | null => {
     const long = d.buttons.find((b) => len(b) > LIMITS.button);
     if (long !== undefined) return { text: long, max: LIMITS.button };
     return d.buttons.length > LIMITS.buttons ? { n: d.buttons.length, max: LIMITS.buttons } : null;
