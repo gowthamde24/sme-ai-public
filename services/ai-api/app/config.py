@@ -55,6 +55,8 @@ class Settings(BaseSettings):
     policy_cache_s: float = 0.0
     # how many proxies in front of the API may write X-Forwarded-For (0: the header is ignored)
     trusted_proxy_hops: int = 0
+    # SERVER_TIMING_HEADERS: a Server-Timing header on every answer (where the time went); off
+    server_timing_headers: bool = False
     # /metrics answers 404 unless this is set, and then only to `Authorization: Bearer <it>`
     metrics_token: SecretStr | None = None
     # job DT (security): when set, the API answers only requests that carry this secret in
