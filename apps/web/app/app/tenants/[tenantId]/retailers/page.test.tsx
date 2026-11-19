@@ -155,11 +155,11 @@ describe("/retailers on every plan (owner, 18 Nov 2026: one free search a month;
     vi.stubEnv("PLAN_TIER_SCREENS", "mock");
     vi.stubEnv("PLAN_TIER_MOCK", "lead_desk");
   };
-  it("the web's own Lead Desk tier does not hide or replace the page: the search box and the list are there when the API says available", async () => {
+  it("the web's own tier without the Lead Finder does not hide or replace the page: the search box and the list are there when the API says available", async () => {
     leadDesk();
     render(await ProspectsPage(props()));
     expect(screen.getByRole("textbox", { name: "Find new retailers in …" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Finding new customers is part of AI Workforce" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Finding new customers is not on your plan yet" })).toBeNull();
     expect(lf.listProspects).toHaveBeenCalled();
   });
   it("the free searches: '1 free search a month on every plan · 1 left this month'", async () => {
@@ -170,7 +170,7 @@ describe("/retailers on every plan (owner, 18 Nov 2026: one free search a month;
   it("used up: the page stays, with the sentence and a Plans link (no price)", async () => {
     lf.readAvailability.mockResolvedValue(parseAvailability({ access: "limit_reached", searches_per_month: 1, searches_left_this_month: 0, upgrade: { to: "sales_lead_finder" } }));
     render(await ProspectsPage(props()));
-    expect(screen.getByText("You've used this month's free search. More searches come with Sales Assistant + Lead Finder.")).toBeInTheDocument();
+    expect(screen.getByText("You've used this month's free search. More searches come with the Business plan.")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "See plans" })).toBeInTheDocument();
     expect(screen.getByRole("textbox", { name: "Find new retailers in …" })).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/₹/);
@@ -182,7 +182,7 @@ describe("/retailers on every plan (owner, 18 Nov 2026: one free search a month;
   it("the API's own older `not_in_plan` still shows the friendly card (the fallback)", async () => {
     lf.readAvailability.mockResolvedValue(parseAvailability({ available: false, source: null, reason: "not_in_plan", upgrade_to: "ai_workforce" }));
     render(await ProspectsPage(props()));
-    expect(screen.getByRole("heading", { name: "Finding new customers is part of AI Workforce" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Finding new customers is not on your plan yet" })).toBeInTheDocument();
     expect(lf.listProspects).not.toHaveBeenCalled();
   });
   it("a salesperson gets no upgrade link on that card: it says who can change the plan", async () => {
@@ -192,7 +192,7 @@ describe("/retailers on every plan (owner, 18 Nov 2026: one free search a month;
     expect(screen.queryByRole("link", { name: "See what's in each plan" })).toBeNull();
     expect(screen.getByText("Only the owner can change the plan. Ask them if you need it.")).toBeInTheDocument();
   });
-  it("a school on Lead Desk (not for this business at all) still has no page", async () => {
+  it("a school on a plan without the Lead Finder (not for this business at all) still has no page", async () => {
     leadDesk();
     lf.readAvailability.mockResolvedValue(parseAvailability(SCHOOL));
     await expect(ProspectsPage(props())).rejects.toThrow("NEXT_NOT_FOUND");
@@ -222,10 +222,10 @@ describe("/retailers for a school: organisations only (C1, 5 Nov: availability a
     render(await ProspectsPage(props()));
     expect(screen.getByRole("textbox", { name: "Find new retailers in …" })).toBeInTheDocument();
   });
-  it("a school on Lead Desk sees the organisations upgrade card", async () => {
+  it("a school on a plan without the Lead Finder sees the organisations upgrade card", async () => {
     lf.readAvailability.mockResolvedValue(parseAvailability({ available: false, source: null, reason: "not_in_plan", upgrade_to: "ai_workforce", audience: "organisations" }));
     render(await ProspectsPage(props()));
-    expect(screen.getByRole("heading", { name: "Finding organisations near the school is part of AI Workforce" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Finding organisations near the school is not on your plan yet" })).toBeInTheDocument();
     expect(screen.getByText(/apartment associations, companies, coaching centres and vendors near your school/)).toBeInTheDocument();
   });
 });

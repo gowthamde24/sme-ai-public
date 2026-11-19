@@ -125,7 +125,7 @@ This is always done by a person, on its own screen. Opening the real-data gate [
 I can’t do this yet. Making a GST invoice [Open Orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
 I can’t do this yet. Reading leads or details from brochure-diwali.pdf (a PDF) [Open About my business](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=assistant#knowledge)
 I can’t do this yet. Adding a price list from a file [Open Catalogue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
-Finding new customers is part of AI Workforce. Finding new retailers in Guntur [Open Plans](/app/tenants/22222222-2222-2222-2222-222222222222/plans)
+Finding new customers is not on your plan yet. Finding new retailers in Guntur [Open Plans](/app/tenants/22222222-2222-2222-2222-222222222222/plans)
 {label="What the assistant changed"}
 ## What the assistant changed
 Every change the assistant made on a request, newest first. Undo where it can be undone.

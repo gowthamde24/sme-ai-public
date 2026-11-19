@@ -9,7 +9,7 @@ const WIRE = { balance_paise: 155_000, balance_text: "₹1,550", minutes_estimat
 
 describe("the balance of the Billing page", () => {
   it("reads C1's answer and makes the rupee text itself", () => {
-    expect(parseBillingBalance({ ...WIRE, balance_text: "credits 1550" })).toMatchObject({ paise: 155_000, text: "₹1,550", minutesEstimate: 310, planId: "sales_assistant", planName: "Sales assistant", topupAvailable: true, freeStartGranted: true, freeStartLeftText: "₹40", includedMinutes: 500, includedMinutesLeft: 342, subscription: { interval: "monthly", status: "active", cancelAtPeriodEnd: false } });
+    expect(parseBillingBalance({ ...WIRE, balance_text: "credits 1550" })).toMatchObject({ paise: 155_000, text: "₹1,550", minutesEstimate: 310, planId: "sales_assistant", planName: "Pro", topupAvailable: true, freeStartGranted: true, freeStartLeftText: "₹40", includedMinutes: 500, includedMinutesLeft: 342, subscription: { interval: "monthly", status: "active", cancelAtPeriodEnd: false } });
   });
   it("copes with no plan, no subscription, nothing of the free start left", () => {
     const b = parseBillingBalance({ balance_paise: 0 });

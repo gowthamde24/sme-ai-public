@@ -37,7 +37,7 @@ describe("Billing (design system v6)", () => {
   it("shows the plan with its price from the catalogue, the minutes left and when it renews, with Change plan", () => {
     render(<BillingV6 {...props()} />);
     const plan = screen.getByRole("region", { name: "Your plan" });
-    expect(plan).toHaveTextContent("Sales assistant");
+    expect(plan).toHaveTextContent("Pro");
     expect(plan).toHaveTextContent("₹1,999 a month");
     expect(plan).toHaveTextContent("342 of 500 minutes left this month");
     expect(plan).toHaveTextContent("Renews on December 13, 2026");

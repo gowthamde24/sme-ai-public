@@ -37,13 +37,15 @@ describe("the upgrade link (C1's #317 says /plans)", () => {
   });
 });
 
-describe("the plan tier (owner decision 4 Nov: AI Workforce = every feature, Lead Desk = all but the Lead Finder)", () => {
+describe("the plan tier (owner decision 4 Nov: `ai_workforce` = every feature, `lead_desk` = all but the Lead Finder; the owner sees plan names only)", () => {
   it("reads C1's draft shape and the shorter one C2 proposed", () => {
-    // the badge is the API's product_name (C1's #317)
-    expect(parseEntitlements(C1_LEAD_DESK)).toEqual({ ...LEAD_DESK, name: "Lead Desk" });
-    expect(parseEntitlements(C1_AI_WORKFORCE)).toEqual({ ...ALL_IN, name: "AI Workforce" });
-    expect(parseEntitlements({ ...C1_LEAD_DESK, product_name: { en: "Lead Desk Plus" } })?.name).toBe("Lead Desk Plus");
-    expect(parseEntitlements({ ...C1_LEAD_DESK, product_name: null })?.name).toBeNull();
+    // the badge is the owner-facing name of the plan id (lib/plan/names.ts), never the API's product_name ("Lead Desk" / "AI Workforce" are retired names); a plan id with no such name has none
+    expect(parseEntitlements(C1_LEAD_DESK)).toEqual({ ...LEAD_DESK, name: "Pro" });
+    expect(parseEntitlements(C1_AI_WORKFORCE)).toEqual(ALL_IN);
+    expect(parseEntitlements({ ...C1_LEAD_DESK, product_name: { en: "Lead Desk Plus" } })?.name).toBe("Pro");
+    expect(parseEntitlements({ ...C1_LEAD_DESK, plan: "calls_payg" })?.name).toBe("Pay as you go");
+    expect(parseEntitlements({ ...C1_LEAD_DESK, plan: "something_new" })?.name).toBeNull();
+    expect(parseEntitlements({ ...C1_LEAD_DESK, plan: null })?.name).toBeNull();
     expect(parseEntitlements({ tier: "lead_desk", features: { lead_finder: false }, upgrade_to: "ai_workforce" })).toEqual(LEAD_DESK);
     expect(parseEntitlements({ tier: "ai_workforce", features: { lead_finder: true }, upgrade_to: null })).toEqual(ALL_IN);
   });
@@ -64,7 +66,7 @@ describe("the plan tier (owner decision 4 Nov: AI Workforce = every feature, Lea
     for (const tier of TIERS) expect(ids).not.toContain(tier);
   });
   it("tier names are names: the same in every language", () => {
-    expect(TIER_NAMES).toEqual({ ai_workforce: "AI Workforce", lead_desk: "Lead Desk" });
+    expect(TIER_NAMES).toEqual({ ai_workforce: "With Find customers", lead_desk: "Without Find customers" });
   });
   it("the mock fixture is AI Workforce unless PLAN_TIER_MOCK=lead_desk", () => {
     expect(mockEntitlements(undefined)).toEqual(ALL_IN);
@@ -89,7 +91,7 @@ describe("readEntitlements: flag off / mock / the API", () => {
   });
   it("on: the API's answer, from the workspace's own route with the person's token", async () => {
     apiRequest.mockResolvedValue(C1_LEAD_DESK);
-    expect(await readEntitlements("tok", T, "on")).toEqual({ ...LEAD_DESK, name: "Lead Desk" });
+    expect(await readEntitlements("tok", T, "on")).toEqual({ ...LEAD_DESK, name: "Pro" });
     expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/billing/entitlements`, "tok");
   });
   it("on, with a bad answer, no route yet or a failure: AI Workforce (a tier never hides a feature by accident)", async () => {
