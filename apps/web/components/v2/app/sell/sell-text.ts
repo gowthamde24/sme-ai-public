@@ -8,7 +8,7 @@ import type { Say } from "../words";
  * The words of one entry in the list (pure: the row, the "I understood" card and the tests use it). Every sentence is `jobs.sell.*`; money, numbers and the units "sq ft" and "kg" are written as they are in every language.
  * Stock and sale status are neutral chips, except Booked = amber (waiting) and Sold = green (done) (owner-approved mock r3-04, choice 4).
  */
-export type EntryText = { title: string; line: string; price: string; chip: { tone: JobTone; text: string } | null; rates: string[] };
+export type EntryText = { title: string; line: string; price: string; chip: { tone: JobTone; text: string; solid?: boolean } | null; rates: string[] };
 
 const plural = (t: Say, base: string, n: number): string => (n === 1 ? t(`${base}.one`) : t(`${base}.n`, { n }));
 export function minutesText(t: Say, minutes: number): string {
@@ -28,7 +28,7 @@ export function entryText(t: Say, e: SellEntry): EntryText {
     case "products": {
       const names = e.colours.map((c) => t(`catalogue.colour.${c}`)).join(", ");
       const s = e.stock;
-      const chip = { tone: "info" as const, text: s.state === "sold_out" ? t("jobs.sell.stock.sold_out") : s.state === "made_to_order" ? t("jobs.sell.stock.made_to_order") : s.count !== null ? t(s.state === "few_left" ? "jobs.sell.stock.left" : "jobs.sell.stock.in", { n: s.count }) : t(s.state === "few_left" ? "jobs.sell.stock.few_left" : "jobs.sell.stock.in_stock") };
+      const chip = { tone: "info" as const, solid: s.state === "sold_out", text: s.state === "sold_out" ? t("jobs.sell.stock.sold_out") : s.state === "made_to_order" ? t("jobs.sell.stock.made_to_order") : s.count !== null ? t(s.state === "few_left" ? "jobs.sell.stock.left" : "jobs.sell.stock.in", { n: s.count }) : t(s.state === "few_left" ? "jobs.sell.stock.few_left" : "jobs.sell.stock.in_stock") };
       return { title: e.name, line: `${plural(t, "jobs.sell.colour", e.colours.length)}${names ? ` · ${names}` : ""}`, price: e.pricePaise !== null ? rupeeText(e.pricePaise) : "", chip, rates: [] };
     }
     case "services":
@@ -54,7 +54,7 @@ export function entryText(t: Say, e: SellEntry): EntryText {
         title: `${e.name}, ${e.location}`,
         line: [`${groupedNumber(e.size)} ${SIZE_SHORT[e.sizeUnit]}`, e.note ?? ""].filter(Boolean).join(" · "),
         price: bigMoneyText(e.pricePaise),
-        chip: { tone: e.status === "booked" ? "wait" : e.status === "sold" ? "done" : "info", text: t(`jobs.sell.status.${e.status}`) },
+        chip: { tone: e.status === "booked" ? "wait" : e.status === "sold" ? "done" : "info", solid: e.status !== "available", text: t(`jobs.sell.status.${e.status}`) },
         rates: [],
       };
     case "pricelist":

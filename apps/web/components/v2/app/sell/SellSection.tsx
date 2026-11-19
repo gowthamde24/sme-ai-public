@@ -44,16 +44,16 @@ export function SellSection({ style, entries: first, words, base, actions, live,
     { id: "photos", icon: <Camera aria-hidden="true" className="size-5" />, href: live && paths.photos ? `${base}${paths.photos}` : null },
     { id: "sheet", icon: <FileSpreadsheet aria-hidden="true" className="size-5" />, href: live && paths.sheet ? `${base}${paths.sheet}` : null },
   ];
-  const card = "jb-press flex min-h-[72px] flex-1 items-start gap-3 rounded-2xl border border-line bg-surface p-3.5 text-left no-underline shadow-[var(--v2-shadow)]";
+  const card = "jb-press flex min-h-[88px] flex-col items-start gap-2 rounded-2xl border border-line bg-surface p-3 text-left no-underline shadow-[var(--v2-shadow)] md:flex-row md:gap-3 md:p-3.5";
 
   return (
-    <div data-part="what-you-sell" data-style={style} className="flex flex-col gap-5">
+    <div data-part="what-you-sell" data-style={style} className="mt-4 flex flex-col gap-5">
       {actions ? (
         <section aria-labelledby="sell-fill" data-part="fill" className="flex flex-col gap-2.5">
           <h2 id="sell-fill" className="m-0 font-display text-[18px] font-bold leading-tight text-ink">
             {t("jobs.sell.fill.title")}
           </h2>
-          <div className="grid gap-2.5 md:grid-cols-3">
+          <div className="grid grid-cols-3 gap-2.5">
             {ways.map((w) => {
               const inner = (
                 <>
@@ -61,8 +61,8 @@ export function SellSection({ style, entries: first, words, base, actions, live,
                     {w.icon}
                   </span>
                   <span className="min-w-0">
-                    <span className="block text-[16px] font-bold leading-snug text-ink">{t(`jobs.sell.${w.id}.title`)}</span>
-                    <span className="block text-[13.5px] leading-snug text-muted">{w.id === "say" ? t("jobs.sell.say.sub", { example: SAY_EXAMPLE[style] }) : t(`jobs.sell.${w.id}.sub`)}</span>
+                    <span className="block text-[15px] font-bold leading-snug text-ink md:text-[16px]">{t(`jobs.sell.${w.id}.title`)}</span>
+                    <span className="hidden text-[13.5px] leading-snug text-muted md:block">{w.id === "say" ? t("jobs.sell.say.sub", { example: SAY_EXAMPLE[style] }) : t(`jobs.sell.${w.id}.sub`)}</span>
                   </span>
                 </>
               );

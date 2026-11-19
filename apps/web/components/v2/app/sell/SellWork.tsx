@@ -30,15 +30,31 @@ type View =
   | { v: "done"; entry: SellEntry; photosPath: string | null; note: boolean }
   | { v: "message"; text: string; href: string | null };
 
-/** A sentence with its choices inside: "It sells for {price} and comes in {colours}." The `{slot}` marks come from the words (so every language puts them where its own sentence needs them). */
-function Sentence({ text, slots }: { text: string; slots: Record<string, ReactNode> }) {
+/** A sentence with its choices inside: "It sells for {price} and comes in {colours}." The `{slot}` marks come from the words (so every language puts them where its own sentence needs them). A full stop or comma after a choice stays with it. */
+function Sentence({ text, slots, nowrap = false }: { text: string; slots: Record<string, ReactNode>; nowrap?: boolean }) {
+  const nodes: { key: number; node: ReactNode; tail: string }[] = [];
+  text.split(/(\{[a-z0-9]+\})/).forEach((part, i) => {
+    const slot = /^\{([a-z0-9]+)\}$/.exec(part);
+    if (slot) {
+      nodes.push({ key: i, node: slots[slot[1]], tail: "" });
+      return;
+    }
+    let rest = part;
+    const punct = /^[.,:;!?]+/.exec(rest.trimStart());
+    if (punct && nodes.length > 0 && /^[.,:;!?]/.test(rest.trimStart()) && rest.trimStart() === rest.slice(rest.length - rest.trimStart().length)) {
+      nodes[nodes.length - 1].tail = punct[0];
+      rest = rest.trimStart().slice(punct[0].length);
+    }
+    if (rest.trim() !== "") nodes.push({ key: i, node: rest.trim(), tail: "" });
+  });
   return (
-    <p className="m-0 flex flex-wrap items-center gap-x-2 gap-y-2.5 text-[16px] leading-snug text-ink">
-      {text.split(/(\{[a-z0-9]+\})/).map((part, i) => {
-        const slot = /^\{([a-z0-9]+)\}$/.exec(part);
-        if (slot) return <span key={i}>{slots[slot[1]]}</span>;
-        return part.trim() === "" ? null : <span key={i}>{part.trim()}</span>;
-      })}
+    <p className={`m-0 flex items-center gap-x-2 gap-y-2.5 text-[16px] leading-snug text-ink ${nowrap ? "min-w-0 flex-1 flex-nowrap gap-x-1.5 text-[15px]" : "flex-wrap"}`}>
+      {nodes.map((n) => (
+        <span key={n.key} className="inline-flex items-center">
+          {n.node}
+          {n.tail}
+        </span>
+      ))}
     </p>
   );
 }
@@ -63,33 +79,33 @@ function Pick<T extends string>({ value, onChange, options, label }: { value: T;
   );
 }
 
-function ColourChoice({ chosen, onChange, t, invalid }: { chosen: readonly string[]; onChange: (c: string[]) => void; t: Say; invalid: boolean }) {
-  const [open, setOpen] = useState(chosen.length === 0);
+function ColourButton({ chosen, open, onToggle, t, invalid }: { chosen: readonly string[]; open: boolean; onToggle: () => void; t: Say; invalid: boolean }) {
   return (
-    <span className="inline-flex flex-col gap-2">
-      <button type="button" data-part="colours-open" aria-expanded={open} data-invalid={invalid ? "" : undefined} onClick={() => setOpen((o) => !o)} className={`${pill} jb-press data-[invalid]:border-red-text`}>
-        {chosen.length === 0 ? t("jobs.sell.p.pick") : chosen.length === 1 ? t("jobs.sell.colour.one") : t("jobs.sell.colour.n", { n: chosen.length })}
-      </button>
-      {open ? (
-        <span role="group" aria-label={t("jobs.sell.p.colours")} data-part="colours" className="flex max-w-[420px] flex-wrap gap-1.5">
-          {COLOURS.map((c) => {
-            const on = chosen.includes(c);
-            const full = !on && chosen.length >= MAX_COLOURS;
-            return (
-              <button key={c} type="button" aria-pressed={on} disabled={full} onClick={() => onChange(on ? chosen.filter((x) => x !== c) : [...chosen, c])} className={`jb-press min-h-9 rounded-full border px-3 text-[14px] font-semibold disabled:opacity-40 ${on ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
-                {t(`catalogue.colour.${c}`)}
-              </button>
-            );
-          })}
-          <span className="basis-full text-[13px] text-muted">{t("jobs.sell.p.colours.max", { n: MAX_COLOURS })}</span>
-        </span>
-      ) : null}
+    <button type="button" data-part="colours-open" aria-expanded={open} data-invalid={invalid ? "" : undefined} onClick={onToggle} className={`${pill} jb-press data-[invalid]:border-red-text`}>
+      {chosen.length === 0 ? t("jobs.sell.p.pick") : chosen.length === 1 ? t("jobs.sell.colour.one") : t("jobs.sell.colour.n", { n: chosen.length })}
+    </button>
+  );
+}
+function ColourPanel({ chosen, onChange, t }: { chosen: readonly string[]; onChange: (c: string[]) => void; t: Say }) {
+  return (
+    <span role="group" aria-label={t("jobs.sell.p.colours")} data-part="colours" className="flex flex-wrap gap-1.5">
+      {COLOURS.map((c) => {
+        const on = chosen.includes(c);
+        const full = !on && chosen.length >= MAX_COLOURS;
+        return (
+          <button key={c} type="button" aria-pressed={on} disabled={full} onClick={() => onChange(on ? chosen.filter((x) => x !== c) : [...chosen, c])} className={`jb-press min-h-9 rounded-full border px-3 text-[14px] font-semibold disabled:opacity-40 ${on ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
+            {t(`catalogue.colour.${c}`)}
+          </button>
+        );
+      })}
+      <span className="basis-full text-[13px] text-muted">{t("jobs.sell.p.colours.max", { n: MAX_COLOURS })}</span>
     </span>
   );
 }
 
 function Fields({ style, form, set, t, bad, owner }: { style: SellStyle; form: SellForm[SellStyle]; set: (f: SellForm[SellStyle]) => void; t: Say; bad: Refusal | null; owner: boolean }) {
   const inv = (field: string) => bad?.field === field;
+  const [coloursOpen, setColoursOpen] = useState(style === "products" && (form as SellForm["products"]).colours.length === 0);
   const u = <K extends string>(k: K, v: unknown) => set({ ...form, [k]: v } as SellForm[SellStyle]);
   const name = (
     <label className="flex flex-col gap-1.5">
@@ -106,8 +122,9 @@ function Fields({ style, form, set, t, bad, owner }: { style: SellStyle; form: S
         {name}
         {sentence("jobs.sell.p.s1", {
           price: <Num value={f.price} onChange={(v) => u("price", v)} label={t("jobs.sell.f.price")} width="w-28" invalid={inv("price")} suffix={undefined} />,
-          colours: <ColourChoice chosen={f.colours} onChange={(c) => u("colours", c)} t={t} invalid={inv("colours")} />,
+          colours: <ColourButton chosen={f.colours} open={coloursOpen} onToggle={() => setColoursOpen((o) => !o)} t={t} invalid={inv("colours")} />,
         })}
+        {coloursOpen ? <ColourPanel chosen={f.colours} onChange={(c) => u("colours", c)} t={t} /> : null}
         {!owner ? <p className="m-0 text-[13.5px] text-muted">{t("jobs.sell.p.admin")}</p> : null}
         {sentence("jobs.sell.p.s2", {
           stock: <Pick value={f.stock} onChange={(v) => u("stock", v)} options={options(["in_stock", "few_left", "made_to_order"] as const, "jobs.sell.stock")} label={t("jobs.sell.f.stock")} />,
@@ -177,9 +194,9 @@ function Fields({ style, form, set, t, bad, owner }: { style: SellStyle; form: S
         <legend className="mb-1 text-[15px] font-bold text-ink">{t("jobs.sell.w.rates")}</legend>
         {f.rates.map((r, i) => (
           <div key={i} data-part="rate" className="flex items-center gap-2">
-            {sentence("jobs.sell.w.rate", { qty: <Num value={r.fromQty} onChange={(v) => setRate(i, "fromQty", v)} label={t("jobs.sell.w.from")} width="w-20" invalid={inv("rates")} />, unit: <span>{shortUnit(unit) || t(`jobs.sell.unit.${unit}`)}</span>, rate: <Num value={r.rate} onChange={(v) => setRate(i, "rate", v)} label={t("jobs.sell.f.rate")} width="w-24" invalid={inv("rates")} />, per: <span>{t(`jobs.sell.unit.${unit}.one`)}</span> })}
+            <Sentence nowrap text={t("jobs.sell.w.rate")} slots={{ qty: <Num value={r.fromQty} onChange={(v) => setRate(i, "fromQty", v)} label={t("jobs.sell.w.from")} width="w-[4.5rem]" invalid={inv("rates")} />, unit: <span>{shortUnit(unit) || t(`jobs.sell.unit.${unit}`)}</span>, rate: <Num value={r.rate} onChange={(v) => setRate(i, "rate", v)} label={t("jobs.sell.f.rate")} width="w-[4.5rem]" invalid={inv("rates")} />, per: <span>{t(`jobs.sell.unit.${unit}.one`)}</span> }} />
             {f.rates.length > 1 ? (
-              <button type="button" aria-label={t("jobs.sell.w.remove")} onClick={() => u("rates", f.rates.filter((_, n) => n !== i))} className="jb-press grid size-11 shrink-0 place-items-center rounded-full text-muted">
+              <button type="button" aria-label={t("jobs.sell.w.remove")} onClick={() => u("rates", f.rates.filter((_, n) => n !== i))} className="jb-press -mr-2 grid size-11 shrink-0 place-items-center rounded-full text-muted">
                 <Trash2 aria-hidden="true" className="size-4" />
               </button>
             ) : null}

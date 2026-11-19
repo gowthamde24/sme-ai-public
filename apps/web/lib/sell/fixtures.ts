@@ -51,3 +51,11 @@ export function wireUnderstood(style: SellStyle, from: "photos" | "sheet"): Wire
   const rows = BY_STYLE[style].slice(from === "photos" ? 0 : 1, from === "photos" ? 2 : 3).map((r, i) => ({ ...r, id: id(90 + i, "draf") }));
   return { style, items: rows };
 }
+
+/** A made-up photo for the test mode: a plain coloured picture (an inline SVG) of the product's first colour, so the list can be seen without a storage service. Never used for a real shop. */
+const SWATCH: Record<string, [string, string]> = { red: ["#b91c1c", "#f59e0b"], maroon: ["#7f1d3d", "#d97706"], pink: ["#db2777", "#fbcfe8"], orange: ["#ea580c", "#fde68a"], yellow: ["#eab308", "#fef3c7"], green: ["#15803d", "#bbf7d0"], blue: ["#1d4ed8", "#bfdbfe"], navy: ["#1e3a8a", "#93c5fd"], purple: ["#6d28d9", "#ddd6fe"], black: ["#1f2937", "#9ca3af"], white: ["#e5e7eb", "#ffffff"], cream: ["#f5e6c8", "#fffbeb"], gold: ["#b45309", "#fde68a"], silver: ["#9ca3af", "#e5e7eb"], brown: ["#78350f", "#d6a771"], grey: ["#6b7280", "#d1d5db"], multi: ["#0e7490", "#f59e0b"] };
+export function mockPhoto(colour: string): string {
+  const [a, b] = SWATCH[colour] ?? SWATCH.multi;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect width="96" height="96" fill="${a}"/><rect y="64" width="96" height="32" fill="${b}"/></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}

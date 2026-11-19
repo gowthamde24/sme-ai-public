@@ -55,7 +55,7 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
       <PageTop title={words["jobs.sell.page.title"] ?? "What you sell"} sub={words["jobs.sell.page.sub"]} />
       {read.state === "ready" ? (
         <>
-          {read.data.live ? null : <EffectLine part="test-mode" text={words["jobs.sell.mock"] ?? ""} />}
+          {read.data.live ? null : <div className="mt-4"><EffectLine part="test-mode" text={words["jobs.sell.mock"] ?? ""} /></div>}
           <SellSection
             style={style}
             entries={read.data.entries}

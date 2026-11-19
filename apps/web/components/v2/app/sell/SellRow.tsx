@@ -22,7 +22,7 @@ export function SellRowBody({ entry, t }: { entry: SellEntry; t: Say }) {
         </span>
       ) : null}
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[16px] font-semibold leading-snug text-ink">{x.title}</span>
+        <span className="line-clamp-2 block text-[16px] font-semibold leading-snug text-ink">{x.title}</span>
         <span className="block truncate text-[13px] leading-snug text-muted">{x.line}</span>
         {x.rates.length > 0 ? (
           <span data-part="rates" className="mt-1.5 flex flex-wrap gap-1.5">
@@ -37,7 +37,7 @@ export function SellRowBody({ entry, t }: { entry: SellEntry; t: Say }) {
       {x.price || x.chip ? (
         <span className="flex shrink-0 flex-col items-end gap-1">
           {x.price ? <span className="text-[16px] font-bold leading-tight text-ink">{x.price}</span> : null}
-          {x.chip ? <JobChip tone={x.chip.tone}>{x.chip.text}</JobChip> : null}
+          {x.chip ? x.chip.solid ? <JobChip tone={x.chip.tone}>{x.chip.text}</JobChip> : <span data-part="chip" className="inline-flex h-7 items-center whitespace-nowrap rounded-full bg-[var(--jb-info-soft)] px-3 text-[13px] font-semibold text-ink">{x.chip.text}</span> : null}
         </span>
       ) : null}
     </>

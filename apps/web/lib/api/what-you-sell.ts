@@ -138,7 +138,11 @@ export type SellRead = { state: "off" } | { state: "unready" } | { state: "unrea
 export async function readWhatYouSell(token: string, tenantId: string, style: SellStyle, modules: readonly string[] | null): Promise<SellRead> {
   const mode = jobsScreens();
   if (mode === "off") return { state: "off" };
-  if (mode === "mock") return { state: "ready", data: { style, entries: parseSellList((await import("@/lib/sell/fixtures")).wireSell(style), style), live: false } };
+  if (mode === "mock") {
+    const fx = await import("@/lib/sell/fixtures");
+    const entries = parseSellList(fx.wireSell(style), style).map((e) => (e.style === "products" && e.photo !== null ? { ...e, photo: fx.mockPhoto(e.colours[0] ?? "multi") } : e));
+    return { state: "ready", data: { style, entries, live: false } };
+  }
   const t = base(tenantId);
   const source: LiveSource | null = liveSource(style, modules) ?? (WHAT_YOU_SELL_LIVE ? "what_you_sell" : null);
   if (!source) return { state: "unready" };
