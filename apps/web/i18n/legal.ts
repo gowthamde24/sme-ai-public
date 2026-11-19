@@ -15,7 +15,7 @@ export type LegalT = (key: LegalKey, vars?: Vars) => string;
 const cache = new Map<string, Record<LegalKey, string>>();
 
 export function legalDict(lang: Lang): Record<LegalKey, string> {
-  return namedDict<Record<LegalKey, string>>(cache, lang, () => dictFor(legal as never, lang));
+  return namedDict<Record<LegalKey, string>>(cache, lang, () => dictFor(legal as never, lang), legal as never);
 }
 
 export function legalT(lang: Lang): LegalT {

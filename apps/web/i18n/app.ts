@@ -19,7 +19,7 @@ export type AppT = (key: AppKey, vars?: Vars) => string;
 const cache = new Map<string, AppDict>();
 
 export function appDict(lang: Lang): AppDict {
-  return namedDict<AppDict>(cache, lang, () => dictFor(app, lang));
+  return namedDict<AppDict>(cache, lang, () => dictFor(app, lang), app);
 }
 
 export function appT(lang: Lang): AppT {
