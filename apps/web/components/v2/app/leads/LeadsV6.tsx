@@ -117,9 +117,9 @@ export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, source
                 {rows.map((r) => {
                   const on = selected?.key === r.key;
                   return (
-                    <tr key={r.key} data-lead={r.key} data-selected={on ? "true" : undefined} className={`block rounded-xl border bg-surface shadow-[var(--v2-shadow)] md:table-row ${on ? "border-brand-edge" : "border-line"}`}>
-                      <td className="block px-3 pb-1 pt-3 md:table-cell md:py-3">
-                        <Link href={rowHref(r)} aria-current={on ? "true" : undefined} className="break-words font-display text-lg font-semibold text-brand-text hover:underline">
+                    <tr key={r.key} data-lead={r.key} data-selected={on ? "true" : undefined} className={`block rounded-xl border bg-surface shadow-[var(--v2-shadow)] max-md:relative max-md:grid max-md:grid-cols-[minmax(0,1fr)_auto] max-md:items-start max-md:gap-x-3 max-md:gap-y-0.5 max-md:px-3 max-md:py-2.5 md:table-row ${on ? "border-brand-edge" : "border-line"}`}>
+                      <td className="block px-3 pb-1 pt-3 max-md:col-start-1 max-md:row-start-1 max-md:p-0 md:table-cell md:py-3">
+                        <Link href={rowHref(r)} aria-current={on ? "true" : undefined} className="break-words font-display text-lg font-semibold text-brand-text hover:underline max-md:text-base max-md:after:absolute max-md:after:inset-0 max-md:after:content-['']">
                           {r.name}
                         </Link>
                         <span className="ml-2 inline-flex flex-wrap gap-1 align-middle">
@@ -129,12 +129,12 @@ export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, source
                           {r.nearby ? <span className="rounded-full bg-surface-2 px-2 text-xs font-semibold text-muted">{t("lv6.nearby")}</span> : null}
                         </span>
                       </td>
-                      <td className="block px-3 py-1 text-base text-muted md:table-cell md:py-3">{r.line || "-"}</td>
-                      <td className="block px-3 py-1 text-sm text-muted md:table-cell md:py-3">{sourceOf(r)}</td>
-                      <td className="block px-3 py-1 md:table-cell md:py-3">
+                      <td className="block px-3 py-1 text-base text-muted max-md:col-span-2 max-md:row-start-2 max-md:line-clamp-2 max-md:p-0 max-md:text-sm md:table-cell md:py-3">{r.line || "-"}</td>
+                      <td className="block px-3 py-1 text-sm text-muted max-md:col-start-1 max-md:row-start-3 max-md:p-0 max-md:text-xs md:table-cell md:py-3">{sourceOf(r)}</td>
+                      <td className="block px-3 py-1 max-md:col-start-2 max-md:row-start-1 max-md:justify-self-end max-md:p-0 md:table-cell md:py-3">
                         <StatusPill status={CHIP_STATUS[r.chip]}>{t(`lv6.chip.${r.chip}`)}</StatusPill>
                       </td>
-                      <td className="block whitespace-nowrap px-3 pb-3 pt-1 text-sm text-muted md:table-cell md:py-3">{dateText(r.at, lang)}</td>
+                      <td className="block whitespace-nowrap px-3 pb-3 pt-1 text-sm text-muted max-md:col-start-2 max-md:row-start-3 max-md:p-0 max-md:text-right max-md:text-xs md:table-cell md:py-3">{dateText(r.at, lang)}</td>
                     </tr>
                   );
                 })}
