@@ -252,4 +252,43 @@ describe("the staff console (/staff, STAFF_CONSOLE)", () => {
     expect(response.headers.get("location")).toBeNull();
     expect(refreshSession).not.toHaveBeenCalled();
   });
+
+  describe("JOBS off: the Jobs pages and What you sell answer a true 404 (a rewrite with status 404)", () => {
+    const T = "/app/tenants/11111111-1111-4111-8111-111111111111";
+    const withCookie = (path: string, cookie: string) => new NextRequest(new URL(path, "http://localhost:3000"), { headers: { cookie } });
+    afterEach(() => vi.unstubAllEnvs());
+    it("a signed-in person gets 404 for /jobs, /jobs/new, /jobs/x and /what-you-sell", async () => {
+      vi.stubEnv("JOBS", "");
+      refreshSession.mockResolvedValue(signedIn());
+      for (const p of ["/jobs", "/jobs/new", "/jobs/abc", "/what-you-sell"]) {
+        const response = await proxy(request(`${T}${p}`));
+        expect(response.status, p).toBe(404);
+        expect(response.headers.get("x-middleware-rewrite"), p).toContain("not-found-while-jobs-is-off");
+        expect(response.headers.get("Content-Security-Policy")).toContain("nonce-");
+      }
+    });
+    it("other pages, and JOBS on or mock, are not touched", async () => {
+      vi.stubEnv("JOBS", "");
+      refreshSession.mockResolvedValue(signedIn());
+      expect((await proxy(request(`${T}/billing`))).status).toBe(200);
+      for (const v of ["1", "mock"]) {
+        vi.stubEnv("JOBS", v);
+        expect((await proxy(request(`${T}/jobs`))).status, v).toBe(200);
+      }
+    });
+    it("a signed-out visitor still goes to the sign-in page (nothing shows the page exists)", async () => {
+      vi.stubEnv("JOBS", "");
+      refreshSession.mockResolvedValue(signedOut());
+      expect(new URL((await proxy(request(`${T}/jobs`))).headers.get("location") ?? "").pathname).toBe("/login");
+    });
+    it("staging preview: a browser with the preview cookie is let through; without PREVIEW_JOBS the cookie means nothing", async () => {
+      vi.stubEnv("JOBS", "");
+      refreshSession.mockResolvedValue(signedIn());
+      vi.stubEnv("PREVIEW_JOBS", "1");
+      expect((await proxy(withCookie(`${T}/jobs`, "s19_preview=jobs"))).status).toBe(200);
+      expect((await proxy(withCookie(`${T}/jobs`, "s19_preview=1"))).status).toBe(404);
+      vi.stubEnv("PREVIEW_JOBS", "");
+      expect((await proxy(withCookie(`${T}/jobs`, "s19_preview=jobs"))).status).toBe(404);
+    });
+  });
 });
