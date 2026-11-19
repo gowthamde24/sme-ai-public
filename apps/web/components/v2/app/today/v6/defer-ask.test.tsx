@@ -192,8 +192,9 @@ describe("the first use starts them", () => {
     expect(seen.filter(isAsk)).toEqual([]);
     act(() => composer().focus());
     await waitFor(() => expect(names()).toEqual(expect.arrayContaining(["GET ask/voice", "POST conversation:list", "POST conversation:open", "POST voice-token"])));
-    // and the earlier thread is drawn
-    await waitFor(() => expect(document.body).toHaveTextContent("Fourteen."));
+    // the earlier conversation is only read (for a plan still waiting): it is NOT drawn, the box starts a new chat
+    await settle();
+    expect(document.body).not.toHaveTextContent("Fourteen.");
   });
 
   it("a press on the orb starts them too (before any focus)", async () => {
@@ -274,7 +275,7 @@ describe("the idle prefetch", () => {
 });
 
 describe("the first send works whether or not the requests had started", () => {
-  it("a send before anything started waits for the earlier conversation (one moment) and goes on in it", async () => {
+  it("a send before anything started goes at once, in a NEW conversation (a reload starts a new chat)", async () => {
     let open: () => void = () => undefined;
     listGate = new Promise<void>((r) => (open = r));
     render(bands());
@@ -284,10 +285,9 @@ describe("the first send works whether or not the requests had started", () => {
     fireEvent.change(composer(), { target: { value: "and today?" } });
     fireEvent.click(screen.getByRole("button", { name: /Do it/ }));
     await waitFor(() => expect(names()).toContain("POST conversation:list"));
-    expect(requests).toEqual([]); // held: the earlier conversation is still being read
+    await waitFor(() => expect(requests.map((r) => r.question)).toEqual(["and today?"])); // not held by the earlier conversation's read
     open();
-    await waitFor(() => expect(requests.map((r) => r.question)).toEqual(["and today?"]));
-    expect(requests[0].conversationId).toBe("c-last"); // the same conversation
+    expect(requests[0].conversationId).toBeFalsy(); // a new conversation
     expect(composer().value).toBe(""); // the box emptied once it went in
   });
 
@@ -310,11 +310,11 @@ describe("the first send works whether or not the requests had started", () => {
     render(bands());
     await sessionReady();
     act(() => composer().focus());
-    await waitFor(() => expect(document.body).toHaveTextContent("Fourteen."));
+    await waitFor(() => expect(names()).toContain("POST conversation:open"));
     fireEvent.change(composer(), { target: { value: "next question" } });
     fireEvent.keyDown(composer(), { key: "Enter" });
     await waitFor(() => expect(requests.map((r) => r.question)).toEqual(["next question"]));
-    expect(requests[0].conversationId).toBe("c-last");
+    expect(requests[0].conversationId).toBeFalsy(); // a new conversation
   });
 
   it("a send on a phone before the box was focused works the same", async () => {

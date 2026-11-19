@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import type { Connected } from "@/lib/api/whatsapp";
+import type { Connected, ConnectInput } from "@/lib/api/whatsapp";
 import { loadFacebookSdk, loginOptions, readSignupMessage, type FbSdk } from "@/lib/whatsapp/embedded-signup";
 
 import { FailureNote } from "../cc/FailureNote";
@@ -11,7 +11,7 @@ import { makeT, type Words } from "../words";
 import type { Out } from "./wa-types";
 import { waSentence } from "./wa-model";
 
-export type SignupConfig = { appId: string; configId: string; graphVersion: string; /** The API can record a number that stays on the WhatsApp Business app (its `onboarding_types` has "coexistence"). */ coexistence?: boolean };
+export type SignupConfig = { appId: string; configId: string; graphVersion: string; /** The `extras` of `FB.login` ready-made by the API for its Embedded Signup version (v5), passed to Meta as they are; null = the v4 ones. */ launchExtras?: Record<string, unknown> | null; /** The API can record a number that stays on the WhatsApp Business app (its `onboarding_types` has "coexistence"). */ coexistence?: boolean };
 type State = "idle" | "connecting" | "saving" | "connected" | "cancelled" | "failed";
 
 /**
@@ -19,13 +19,13 @@ type State = "idle" | "connecting" | "saving" | "connected" | "cancelled" | "fai
  * Meta's SDK is loaded only here, on first press (route-JS budget). Two answers arrive in either order: the short `code` (from `FB.login`) and the account and number (a window message); when both are in, they go to our API once. The states are plain:
  * connecting, connected (the number and the name WhatsApp verified), cancelled, failed (with Meta's reason in words when it gave one). `sdk` is for the tests.
  */
-export function ConnectWithFacebook({ words, config, connect, onConnected, sdk = loadFacebookSdk }: { words: Words; config: SignupConfig; connect: (f: { code: string; wabaId: string; phoneNumberId: string; coexistence?: true }) => Promise<Out<Connected>>; onConnected?: (c: Connected) => void; sdk?: (appId: string, version: string) => Promise<FbSdk> }) {
+export function ConnectWithFacebook({ words, config, connect, onConnected, sdk = loadFacebookSdk }: { words: Words; config: SignupConfig; connect: (f: ConnectInput) => Promise<Out<Connected>>; onConnected?: (c: Connected) => void; sdk?: (appId: string, version: string) => Promise<FbSdk> }) {
   const t = makeT(words);
   const [state, setState] = useState<State>("idle");
   const [reason, setReason] = useState("");
   const [failure, setFailure] = useState<Failed | null>(null);
   const [done, setDone] = useState<Connected | null>(null);
-  const got = useRef<{ code: string | null; ids: { wabaId: string; phoneNumberId: string; coexistence: boolean } | null; sent: boolean }>({ code: null, ids: null, sent: false });
+  const got = useRef<{ code: string | null; ids: { wabaId: string | null; messagingAccountIds: string[]; phoneNumberId: string | null; coexistence: boolean; isOnBizApp: boolean | null } | null; sent: boolean }>({ code: null, ids: null, sent: false });
   const listener = useRef<((e: MessageEvent) => void) | null>(null);
 
   useEffect(
@@ -40,7 +40,15 @@ export function ConnectWithFacebook({ words, config, connect, onConnected, sdk =
     if (g.sent || !g.code || !g.ids) return;
     g.sent = true;
     setState("saving");
-    const r = await connect({ code: g.code, wabaId: g.ids.wabaId, phoneNumberId: g.ids.phoneNumberId, ...(config.coexistence && g.ids.coexistence ? { coexistence: true as const } : {}) });
+    const ids = g.ids;
+    // version 4 names the account `waba_id`, version 5 `messaging_account_ids` (and may not name the number): the API takes either; `coexistence` (the v4 field) only where the API said it can record it; `is_on_biz_app` is v5's own fact
+    const r = await connect({
+      code: g.code,
+      ...(ids.wabaId !== null ? { wabaId: ids.wabaId } : {}),
+      ...(ids.messagingAccountIds.length > 0 ? { messagingAccountIds: ids.messagingAccountIds } : {}),
+      ...(ids.phoneNumberId !== null ? { phoneNumberId: ids.phoneNumberId } : {}),
+      ...(ids.isOnBizApp !== null ? { isOnBizApp: ids.isOnBizApp } : config.coexistence && ids.coexistence ? { coexistence: true as const } : {}),
+    });
     stopListening();
     if (!r.ok) {
       setFailure(r);
@@ -83,7 +91,7 @@ export function ConnectWithFacebook({ words, config, connect, onConnected, sdk =
         setState("cancelled");
       } else if (m.kind === "error") fail(m.reason);
       else {
-        got.current.ids = { wabaId: m.wabaId, phoneNumberId: m.phoneNumberId, coexistence: m.coexistence };
+        got.current.ids = { wabaId: m.wabaId, messagingAccountIds: m.messagingAccountIds, phoneNumberId: m.phoneNumberId, coexistence: m.coexistence, isOnBizApp: m.isOnBizApp };
         void finishIfReady();
       }
     };
@@ -99,7 +107,7 @@ export function ConnectWithFacebook({ words, config, connect, onConnected, sdk =
       }
       got.current.code = code;
       void finishIfReady();
-    }, loginOptions(config.configId));
+    }, loginOptions(config.configId, config.launchExtras ?? null));
   }
 
   const busy = state === "connecting" || state === "saving";

@@ -24,6 +24,7 @@ const getOutcomeTotals = vi.fn();
 const listPriceAsks = vi.hoisted(() => vi.fn(async (..._args: unknown[]): Promise<unknown[]> => []));
 const fetchMembers = vi.fn();
 const redirect = vi.fn();
+const readTemplates = vi.hoisted(() => vi.fn(async (): Promise<unknown[]> => []));
 
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirect(to), notFound: () => undefined, useRouter: () => ({ refresh: () => undefined, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: () => undefined }) }));
@@ -37,6 +38,7 @@ vi.mock("@/lib/api/visits", async (orig) => ({ ...(await orig<typeof import("@/l
 vi.mock("@/lib/api/outcomes", async (orig) => ({ ...(await orig<typeof import("@/lib/api/outcomes")>()), getOutcomeTotals: (...a: unknown[]) => getOutcomeTotals(...a) }));
 vi.mock("@/lib/api/orders", async (orig) => ({ ...(await orig<typeof import("@/lib/api/orders")>()), fetchMembers: (...a: unknown[]) => fetchMembers(...a) }));
 vi.mock("@/lib/api/price-asks", async (orig) => ({ ...(await orig<typeof import("@/lib/api/price-asks")>()), listPriceAsks: (...a: unknown[]) => listPriceAsks(...a) }));
+vi.mock("@/lib/lead-desk/source", async (orig) => ({ ...(await orig<typeof import("@/lib/lead-desk/source")>()), readTemplates: () => readTemplates() }));
 vi.mock("./lead-desk-today", async (orig) => ({ ...(await orig<typeof import("./lead-desk-today")>()), readLeadDesk: (...a: unknown[]) => readLeadDesk(...a) }));
 vi.mock("./lead-finder-today", async (orig) => ({ ...(await orig<typeof import("./lead-finder-today")>()), readFinderNeeds: (...a: unknown[]) => readFinderNeeds(...a) }));
 vi.mock("./today-actions", () => ({ approveMessageAction: vi.fn(), rejectMessageAction: vi.fn(), editMessageAction: vi.fn(), approveCallAction: vi.fn(), offerVisitAction: vi.fn(), skipProspectAction: vi.fn(), priceAskAnsweredAction: vi.fn(), enquiryDoneAction: vi.fn(), callHandledAction: vi.fn() }));
@@ -105,6 +107,7 @@ beforeEach(() => {
   getToday.mockResolvedValue(todayFor("owner"));
   getAgentsStatus.mockResolvedValue(agentsStatus());
   getNavCounts.mockResolvedValue(COUNTS);
+  readTemplates.mockReset().mockResolvedValue([]);
   getTodayBriefing.mockResolvedValue(null); // (not told: the briefing waits for the big reads, as before; the fast path has its own tests)
   readLeadDesk.mockResolvedValue({ needs: [], team: [] });
   readFinderNeeds.mockResolvedValue([]);
@@ -143,7 +146,7 @@ describe("the briefing line", () => {
     const desk = deferred<{ needs: never[]; team: never[] }>();
     readLeadDesk.mockReturnValue(desk.promise);
     await show();
-    expect(briefing()).toHaveTextContent("35 new enquiries to look at");
+    await waitFor(() => expect(briefing()).toHaveTextContent("35 new enquiries to look at")); // (not a fixed number of clock ticks: slower on a loaded machine)
     expect(briefingPlaceholder()).toBeNull();
     expect(needsRows()).toHaveLength(0);
     expect(needsBox()?.querySelector("[data-placeholder]")).not.toBeNull(); // the box of "Needs you" holds its room
@@ -250,11 +253,42 @@ describe("the briefing painted from C1's small read", () => {
     expect(briefing()?.textContent).toContain("35 new enquiries to look at");
   });
 
+  it("sizes the placeholders from the small read: the rows of Needs you (the count and one more, 80 px each) and four lines for a briefing that names a quote, so nothing moves when they arrive", async () => {
+    getTodayBriefing.mockResolvedValue({ ...FAST, needsYou: 2, quotesWaiting: 1 });
+    const desk = deferred<{ needs: never[]; team: never[] }>();
+    readLeadDesk.mockReturnValue(desk.promise);
+    getToday.mockReturnValue(new Promise(() => undefined)); // the big read never answers: the placeholders stay
+    await show();
+    const card = needsBox()?.querySelector("[data-placeholder] > div:last-child") as HTMLElement | null;
+    expect(card?.className).toContain("min-h-[244px]"); // two waiting = three rows reserved (the list is sometimes one longer than the count: Lead Desk, the Lead Finder, the plan's upsell row; measured 244 px)
+    expect(briefing()?.className).toContain("min-h-[4lh]"); // the line that is drawn from the small read keeps room for the quote sentence
+  });
+
   it("asks the small read once, with the person's token, and not for a business type that can have a campus card", async () => {
     getTodayBriefing.mockResolvedValue(FAST);
     await show();
     expect(getTodayBriefing).toHaveBeenCalledTimes(1);
     expect(getTodayBriefing.mock.calls[0][0]).toBeTruthy();
+  });
+
+  it("asks the small read at the start, together with the lead templates and the Lead Finder's access, not after them (its 300 ms wait began only once those had answered)", async () => {
+    getTodayBriefing.mockResolvedValue(FAST);
+    const templates = deferred<unknown[]>();
+    readTemplates.mockReturnValue(templates.promise);
+    const drawn = TenantPage(props());
+    await waitFor(() => expect(readTemplates).toHaveBeenCalled());
+    await waitFor(() => expect(getTodayBriefing).toHaveBeenCalledTimes(1)); // asked while the templates are still on their way
+    await act(async () => templates.resolve([]));
+    await act(async () => void render(await drawn));
+    await flush();
+    expect(getTodayBriefing).toHaveBeenCalledTimes(1); // and only once
+    expect(briefing()).toHaveTextContent("35 new enquiries to look at");
+  });
+
+  it("a Viewer, who has no briefing line, does not ask for it", async () => {
+    fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme Silks", slug: "acme", role: "viewer" });
+    await show();
+    expect(getTodayBriefing).not.toHaveBeenCalled();
   });
 
   it("an API that cannot tell (null) leaves the briefing to the big reads, as before", async () => {

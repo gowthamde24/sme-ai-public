@@ -1,0 +1,36 @@
+# Place a test call
+Your AI assistant rings one phone from your business line: a short line check, or a call about what you write below.
+{label="Introduce as, on your test calls"}
+## Introduce as, on your test calls
+legend: Introduce as
+How the assistant introduces itself on your own test call. It always says it is an AI assistant. Your first name is not in your profile yet, so "My name" cannot be used.
+<radio name=tt-introduce label="The business name (the default)" value=business checked>
+The business name (the default)
+<radio name=tt-introduce label="My name" disabled value=owner>
+My name
+<radio name=tt-introduce label="My own words" value=custom>
+My own words Preview: Hello, this is the AI assistant of Demo Silks (synthetic). Calls to your customers always use the business name for now.
+[button type=button disabled: Save]
+form:
+Phone to ring
+<select label="Phone to ring" described-by="Only the phones on the test list can be rung.">
+  options: +91 ••••• 90129=a1b2c3d4e5f60718*
+Only the phones on the test list can be rung.
+legend: What kind of test call?
+<radio name=tc-mode label="A call about somethingThe assistant talks about what you write below, in the language you pick." value=goal checked>
+A call about something The assistant talks about what you write below, in the language you pick.
+<radio name=tc-mode label="Line check onlyA short call in English to check that the phone line works. You write nothing." value=line>
+Line check only A short call in English to check that the phone line works. You write nothing.
+Language of the call
+<select label="Language of the call">
+  options: English=en* | Telugu=te | Kannada=kn | Hindi=hi
+What should the call be about?
+<textarea label="What should the call be about?" placeholder="For example: ask if they would like to visit the shop on Saturday to see the new silk sarees." aria-invalid=false described-by="Say it in plain words: what the call is for and what you want to find out. No phone number, e-mail address or link, and no new line. 10 to 400 characters. 0 of 400 characters">
+Say it in plain words: what the call is for and what you want to find out. No phone number, e-mail address or link, and no new line. 10 to 400 characters. 0 of 400 characters
+legend: Introduce as, for this call only
+Introduce as, for this call only
+<select label="Introduce as, for this call only">
+  options: My usual introduction (set on this page)=saved* | The business name (the default)=business | My name=owner | My own words=custom
+Preview: Hello, this is the AI assistant of Demo Silks (synthetic).
+No sound is recorded. The words of the call are kept as text under Phone calls.
+[button type=submit: Check and continue]

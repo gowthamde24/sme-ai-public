@@ -209,7 +209,7 @@ export function TestCallForm({ w, base, numbers, languages, place, introduce = n
             {w["tc.intro.label"]}
           </label>
           <select id="tc-intro" value={introKind} className={fieldInput} onChange={(e) => setIntroKind(e.target.value as "saved" | IntroduceKind)}>
-            <option value="saved">{w[introduce.suggested ? "tc.intro.default" : "tc.intro.saved"]}</option>
+            <option value="saved">{w[introduce.suggested ? "tc.intro.default" : "vt.tc.saved"] ?? w["tc.intro.saved"]}</option>
             {INTRODUCE_KINDS.map((k) => (
               <option key={k} value={k}>
                 {w[`tt.intro.kind.${k}`]}

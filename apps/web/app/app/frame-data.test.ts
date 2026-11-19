@@ -11,6 +11,10 @@ vi.mock("@/lib/api/ai-usage", () => ({ getAiUsage: (...a: unknown[]) => getAiUsa
 const readPack = vi.fn();
 vi.mock("@/lib/packs/read", () => ({ readPackCached: (...a: unknown[]) => readPack(...a) }));
 vi.mock("./tenants/[tenantId]/today-read", () => ({ readTodayCached: (...a: unknown[]) => readToday(...a) }));
+const readBalance = vi.fn(async (..._a: unknown[]): Promise<unknown> => null);
+const readAssistantStatus = vi.fn(async (..._a: unknown[]): Promise<unknown> => null);
+vi.mock("@/lib/balance/source", () => ({ readBalance: (...a: unknown[]) => readBalance(...a) }));
+vi.mock("@/lib/assistant-status/source", () => ({ readAssistantStatus: (...a: unknown[]) => readAssistantStatus(...a) }));
 const readAvailability = vi.fn();
 vi.mock("@/lib/api/lead-finder", () => ({ readAvailability: (...a: unknown[]) => readAvailability(...a) }));
 
@@ -45,6 +49,41 @@ describe("readFrameData", () => {
     expect(getPlan).toHaveBeenCalledWith("tok", T);
     expect(getAiUsage).toHaveBeenCalledWith("tok", T);
     expect(readToday).toHaveBeenCalledWith("tok", T);
+  });
+  it("design system v6: the balance and the assistant's state are asked together with the six reads, not after the slowest of them", async () => {
+    vi.stubEnv("DESIGN_V6", "1");
+    try {
+      let planAnswer: (v: unknown) => void = () => undefined;
+      getPlan.mockReturnValue(new Promise((r) => (planAnswer = r)));
+      getAiUsage.mockResolvedValue(USAGE);
+      readToday.mockResolvedValue(TODAY);
+      readBalance.mockResolvedValue({ text: "₹1,550", low: false, minutesEstimate: 3 });
+      readAssistantStatus.mockResolvedValue({ state: "live" });
+      const asked = readFrameData("tok", T);
+      await new Promise((r) => setTimeout(r, 20));
+      expect(readBalance).toHaveBeenCalledWith("tok", T); // asked while the plan is still on its way
+      expect(readAssistantStatus).toHaveBeenCalledWith("tok", T);
+      planAnswer(PLAN);
+      const data = await asked;
+      expect(data.ds).toBe(true);
+      expect(data.balance).toEqual({ text: "₹1,550", low: false, minutes: 3 });
+      expect(data.assistant).toBe("live");
+      expect(readBalance).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllEnvs();
+      readBalance.mockResolvedValue(null);
+      readAssistantStatus.mockResolvedValue(null);
+    }
+  });
+  it("without the design system v6 neither is asked", async () => {
+    getPlan.mockResolvedValue(PLAN);
+    getAiUsage.mockResolvedValue(USAGE);
+    readToday.mockResolvedValue(TODAY);
+    readBalance.mockClear();
+    readAssistantStatus.mockClear();
+    await readFrameData("tok", T);
+    expect(readBalance).not.toHaveBeenCalled();
+    expect(readAssistantStatus).not.toHaveBeenCalled();
   });
   it("a 403 on the usage (Sales, Viewer) means the card is not drawn, and the rest is still shown", async () => {
     getPlan.mockResolvedValue(PLAN);

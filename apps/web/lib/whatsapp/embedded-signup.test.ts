@@ -18,9 +18,9 @@ describe("what FB.login is asked", () => {
 describe("the window message of Meta's signup", () => {
   const ok = { type: "WA_EMBEDDED_SIGNUP", event: "FINISH", data: { waba_id: "123456789", phone_number_id: "987654321" } };
   it("FINISH with both ids (an object or a JSON string) means finished; the app-onboarding event does too", () => {
-    expect(readSignupMessage({ origin: "https://www.facebook.com", data: ok })).toEqual({ kind: "finish", wabaId: "123456789", phoneNumberId: "987654321", coexistence: false });
-    expect(readSignupMessage({ origin: "https://web.facebook.com", data: JSON.stringify(ok) })).toEqual({ kind: "finish", wabaId: "123456789", phoneNumberId: "987654321", coexistence: false });
-    expect(readSignupMessage({ origin: "https://www.facebook.com", data: { ...ok, event: "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" } })).toEqual({ kind: "finish", wabaId: "123456789", phoneNumberId: "987654321", coexistence: true });
+    expect(readSignupMessage({ origin: "https://www.facebook.com", data: ok })).toEqual({ kind: "finish", wabaId: "123456789", messagingAccountIds: [], phoneNumberId: "987654321", coexistence: false, isOnBizApp: null });
+    expect(readSignupMessage({ origin: "https://web.facebook.com", data: JSON.stringify(ok) })).toEqual({ kind: "finish", wabaId: "123456789", messagingAccountIds: [], phoneNumberId: "987654321", coexistence: false, isOnBizApp: null });
+    expect(readSignupMessage({ origin: "https://www.facebook.com", data: { ...ok, event: "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" } })).toEqual({ kind: "finish", wabaId: "123456789", messagingAccountIds: [], phoneNumberId: "987654321", coexistence: true, isOnBizApp: null });
   });
   it("CANCEL means the person closed the window; ERROR carries Meta's reason, cleaned", () => {
     expect(readSignupMessage({ origin: "https://www.facebook.com", data: { type: "WA_EMBEDDED_SIGNUP", event: "CANCEL", data: { current_step: "PHONE" } } })).toEqual({ kind: "cancel" });
@@ -63,5 +63,27 @@ describe("loading Meta's SDK", () => {
     const p = loadFacebookSdk("APP1", "v25.0");
     (document.head.querySelector("script") as HTMLScriptElement).onerror?.(new Event("error"));
     await expect(p).rejects.toThrow("sdk_blocked");
+  });
+});
+
+describe("Embedded Signup version 5 (20 Oct 2026)", () => {
+  const msg = (event: string, data: Record<string, unknown>) => ({ origin: "https://www.facebook.com", data: { type: "WA_EMBEDDED_SIGNUP", event, data } });
+
+  it("passes the API's launch extras to FB.login as they are; without them the v4 ones", () => {
+    expect(loginOptions("CFG123", { setup: {}, version: "v5" })).toEqual({ config_id: "CFG123", response_type: "code", override_default_response_type: true, extras: { setup: {}, version: "v5" } });
+    expect((loginOptions("CFG123", null).extras as Record<string, unknown>).featureType).toBe("whatsapp_business_app_onboarding");
+  });
+  it("FINISH with messaging_account_ids and no waba_id (the number may not be named) is a finish", () => {
+    expect(readSignupMessage(msg("FINISH", { messaging_account_ids: ["111222333", "444555666"], primary_waac_ids: ["777888999"], is_on_biz_app: false }))).toEqual({ kind: "finish", wabaId: null, messagingAccountIds: ["111222333", "444555666"], phoneNumberId: null, coexistence: false, isOnBizApp: false });
+  });
+  it("is_on_biz_app true (with FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING) means the number stays on the WhatsApp Business app", () => {
+    expect(readSignupMessage(msg("FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING", { messaging_account_ids: ["111222333"], phone_number_id: "987654321", is_on_biz_app: true }))).toMatchObject({ kind: "finish", coexistence: true, isOnBizApp: true, phoneNumberId: "987654321" });
+    expect(readSignupMessage(msg("FINISH", { messaging_account_ids: ["111222333"], is_on_biz_app: true }))).toMatchObject({ coexistence: true });
+  });
+  it("an account list of the wrong shape, or none at all, is an error, not a finish", () => {
+    expect(readSignupMessage(msg("FINISH", { messaging_account_ids: ["abc"] }))).toEqual({ kind: "error", reason: "" });
+    expect(readSignupMessage(msg("FINISH", { messaging_account_ids: [] }))).toEqual({ kind: "error", reason: "" });
+    expect(readSignupMessage(msg("FINISH", { is_on_biz_app: false }))).toEqual({ kind: "error", reason: "" });
+    expect(readSignupMessage(msg("FINISH", { messaging_account_ids: ["1", "2", "3", "4", "5", "6"].map((x) => x.repeat(6)) }))).toEqual({ kind: "error", reason: "" });
   });
 });

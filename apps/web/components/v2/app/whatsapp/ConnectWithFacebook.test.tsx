@@ -142,3 +142,42 @@ describe("Connect with Facebook", () => {
     document.head.querySelectorAll("script").forEach((el) => el.remove());
   });
 });
+
+describe("Connect with Facebook, Embedded Signup version 5 (20 Oct 2026)", () => {
+  const V5 = { appId: "APP1", configId: "CFG1", graphVersion: "v25.0", launchExtras: { setup: {}, version: "v5" } };
+  const render5 = (f: ReturnType<typeof fake>, c = connect(), config: typeof V5 & { coexistence?: boolean } = V5) => {
+    render(<ConnectWithFacebook words={WORDS} config={config} connect={c} sdk={f.sdk} />);
+    return c;
+  };
+
+  it("passes the API's launch extras to Meta as they are, and sends the account by messaging_account_ids (no waba_id, no number) with is_on_biz_app", async () => {
+    const f = fake();
+    const c = render5(f);
+    fireEvent.click(screen.getByRole("button", { name: "Connect with Facebook" }));
+    await waitFor(() => expect(f.login).toHaveBeenCalled());
+    expect(f.login.mock.calls[0][1]).toMatchObject({ config_id: "CFG1", response_type: "code", override_default_response_type: true, extras: { setup: {}, version: "v5" } });
+    expect((f.login.mock.calls[0][1]?.extras as Record<string, unknown>).featureType).toBeUndefined();
+    f.answer({ authResponse: { code: "AQBcodecodecode1234" } });
+    await post({ type: "WA_EMBEDDED_SIGNUP", event: "FINISH", data: { messaging_account_ids: ["111222333"], primary_waac_ids: ["777888999"], is_on_biz_app: false } });
+    await waitFor(() => expect(c).toHaveBeenCalledWith({ code: "AQBcodecodecode1234", messagingAccountIds: ["111222333"], isOnBizApp: false }));
+    expect(c).toHaveBeenCalledTimes(1);
+  });
+  it("a number that stays on the WhatsApp Business app (FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING, is_on_biz_app true) says so to the API", async () => {
+    const f = fake();
+    const c = render5(f);
+    fireEvent.click(screen.getByRole("button", { name: "Connect with Facebook" }));
+    await waitFor(() => expect(f.login).toHaveBeenCalled());
+    await post({ type: "WA_EMBEDDED_SIGNUP", event: "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING", data: { messaging_account_ids: ["111222333"], phone_number_id: "987654321", is_on_biz_app: true } });
+    f.answer({ authResponse: { code: "AQBcodecodecode1234" } });
+    await waitFor(() => expect(c).toHaveBeenCalledWith({ code: "AQBcodecodecode1234", messagingAccountIds: ["111222333"], phoneNumberId: "987654321", isOnBizApp: true }));
+  });
+  it("the older v4 payload still works against a v5 page (waba_id and the number)", async () => {
+    const f = fake();
+    const c = render5(f);
+    fireEvent.click(screen.getByRole("button", { name: "Connect with Facebook" }));
+    await waitFor(() => expect(f.login).toHaveBeenCalled());
+    f.answer({ authResponse: { code: "AQBcodecodecode1234" } });
+    await post(finish);
+    await waitFor(() => expect(c).toHaveBeenCalledWith({ code: "AQBcodecodecode1234", wabaId: "123456789", phoneNumberId: "987654321" }));
+  });
+});

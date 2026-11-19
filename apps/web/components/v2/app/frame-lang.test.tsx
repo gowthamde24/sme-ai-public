@@ -67,7 +67,7 @@ describe("the frame in Telugu", () => {
     frame("te");
     const menu = screen.getByRole("navigation", { name: "వర్క్‌స్పేస్ మెనూ" });
     for (const group of ["అవలోకనం", "అమ్మకం", "వ్యాపారం", "AI టీమ్", "సెటప్"]) expect(within(menu).getByRole("group", { name: group })).toBeInTheDocument();
-    for (const word of ["ఈరోజు", "లీడ్స్", "చాట్‌లు", "కాల్స్", "ఆర్డర్లు", "రిపోర్టులు", "నా AI టీమ్"]) expect(within(menu).getByRole("link", { name: word })).toBeInTheDocument();
+    for (const word of ["ఈరోజు", "లీడ్స్", "చాట్స్", "కాల్స్", "ఆర్డర్లు", "రిపోర్టులు", "నా AI టీమ్"]) expect(within(menu).getByRole("link", { name: word })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "సెట్టింగ్స్" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "సహాయం" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
   });

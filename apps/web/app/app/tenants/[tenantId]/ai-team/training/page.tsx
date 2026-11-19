@@ -81,7 +81,7 @@ export default async function TrainingPage({ params, searchParams }: PageProps<"
           <TalkTraining
             offered={offeredLangs(moreLanguages())}
             assistantName={currentAssistantName()}
-            words={wordsFor(lang, ["tt.", "bv.end.", "sp."], ["today.err.mfa.link", "ope.insert", "ope.preview", "ope.err.unknown", "ope.ai.label", "ope.ai.help", "ope.ai.warn", "ope.ai.ok"])}
+            words={wordsFor(lang, ["tt.", "bv.end.", "sp.", "vt.intro."], ["today.err.mfa.link", "ope.insert", "ope.preview", "ope.err.unknown", "ope.ai.label", "ope.ai.help", "ope.ai.warn", "ope.ai.ok"])}
             initial={training}
             langNames={CALL_LANG_NAMES}
             canEdit
