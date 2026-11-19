@@ -24,6 +24,7 @@ from app.auth.deps import (
     require_tenant_role,
 )
 from app.errors import ApiError
+from app.hardening import admission
 from app.tenancy.models import Role
 from app.today import service
 from app.today.models import (
@@ -33,6 +34,7 @@ from app.today.models import (
     AiUsageOut,
     AiUsagePercentOut,
     AiUsageWeekOut,
+    BriefingOut,
     NavCountsOut,
     TodayOut,
 )
@@ -110,6 +112,42 @@ def get_nav_counts(ctx: AnyMember, runtime: RuntimeDep) -> dict[str, Any]:
         if len(_nav_cache) >= _NAV_MAX:
             _nav_cache.clear()
         _nav_cache[key] = (now, out)
+    return out
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------- the briefing's numbers (planner, 19 Nov 2026)
+BRIEFING_TTL_S = 5.0
+_briefing_cache: dict[tuple[str, uuid.UUID], tuple[float, dict[str, Any]]] = {}
+_briefing_lock = threading.Lock()
+
+
+def _forget_briefing(caller: str) -> None:
+    with _briefing_lock:
+        for key in [k for k in _briefing_cache if k[0] == caller]:
+            del _briefing_cache[key]
+
+
+admission.WRITE_HOOKS.append(_forget_briefing)
+
+
+@router.get("/today/briefing", response_model=BriefingOut)
+def get_today_briefing(ctx: AnyMember, runtime: RuntimeDep) -> dict[str, Any]:
+    """The numbers of the briefing line in one small answer (under 1 KB), so the page can paint it before the big Today reads arrive: one counts read, kept 5 s per person and workspace, dropped when that person
+    writes (a number changes the moment they act). Each by the caller's role; null = not known or not for you."""
+    key = (admission.caller_key(f"Bearer {ctx.principal.token}".encode()), ctx.tenant.id)
+    now = time.monotonic()
+    with _briefing_lock:
+        hit = _briefing_cache.get(key)
+        if hit is not None and now - hit[0] < BRIEFING_TTL_S:
+            return hit[1]
+    raw = _repo(runtime).nav_counts(ctx.principal.token, ctx.tenant.id)
+    if not isinstance(raw, dict):
+        raise ApiError(502, "upstream_error", "The counts could not be read.")
+    out = BriefingOut.model_validate({k: raw.get(k) for k in BriefingOut.model_fields}).model_dump(mode="json")
+    with _briefing_lock:
+        if len(_briefing_cache) >= _NAV_MAX:
+            _briefing_cache.clear()
+        _briefing_cache[key] = (now, out)
     return out
 
 
