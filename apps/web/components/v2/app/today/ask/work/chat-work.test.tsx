@@ -12,8 +12,11 @@ import { ChatPanel } from "../ChatPanel";
 import { useAskSession, type AskSession } from "../use-ask-session";
 import type { WorkOptions } from "./use-chat-work";
 
-// the made-up answers are a chunk of their own (loaded on first use): loaded once here, so each test sees answers at the pace it expects
-beforeAll(async () => void (await import("@/lib/assistant-work/fixture-transport")));
+// the made-up answers (and the transport that serves them) are chunks of their own (loaded on first use): loaded once here, so each test sees answers at the pace it expects
+beforeAll(async () => {
+  await import("@/lib/assistant-work/client");
+  await import("@/lib/assistant-work/fixture-transport");
+});
 
 // the browser's made-up answers without their pauses
 vi.mock("@/lib/assistant-work/client", async (orig) => {

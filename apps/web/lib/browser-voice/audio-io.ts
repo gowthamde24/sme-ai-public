@@ -1,6 +1,6 @@
 import type { AudioIO } from "./client";
 import { fromPcm16, level, toPcm16At16k } from "./pcm";
-import { OUT_RATE } from "./protocol";
+import { OUT_RATE } from "./langs";
 
 /**
  * The browser's half of "Talk to your assistant": the microphone (echo cancelling and noise suppression on, one channel), cut into 16 kHz PCM16 frames, and a queue that plays the assistant's 24 kHz voice as it arrives and can be emptied at once (barge-in).

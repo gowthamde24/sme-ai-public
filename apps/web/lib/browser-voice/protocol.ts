@@ -4,17 +4,16 @@ import { languageTag, parseWhen } from "@/lib/api/plan-when";
 import { parsePlanExtras } from "@/lib/api/plan-extras";
 import type { LeadFinderCard } from "@/lib/lead-finder/types";
 
+import { IN_RATE, isVoiceLang, OUT_RATE, VOICE_LANGS, type VoiceLang } from "./langs";
+
 /**
  * "Talk to your assistant" in the browser (job DV, C1's contract-browser-voice.md, ADR 0118): the messages of the WebSocket `wss://<api>/v1/tenants/{id}/voice-chat`, checked as they arrive (the API's words are untrusted text and are drawn as plain text),
  * and the closed words for every refusal. Text frames are JSON; binary frames are audio (to the API: PCM 16-bit little-endian, 16 kHz, mono; from it: PCM 16-bit LE, 24 kHz, mono).
  */
-// mr (6 Nov, C1 #355): the chat pill offers it; Live talk answers a Marathi speaker in Hindi until there are Marathi voices (C1's M2)
-export const VOICE_LANGS = ["te", "en", "hi", "kn", "ta", "ml", "mr"] as const;
-export type VoiceLang = (typeof VOICE_LANGS)[number];
-export const isVoiceLang = (v: unknown): v is VoiceLang => (VOICE_LANGS as readonly unknown[]).includes(v);
+// mr (6 Nov, C1 #355): the chat pill offers it; Live talk answers a Marathi speaker in Hindi until there are Marathi voices (C1's M2). The languages and the audio rates are in ./langs (the page reads them without this file's parsers).
 
-export const IN_RATE = 16_000;
-export const OUT_RATE = 24_000;
+export { IN_RATE, isVoiceLang, OUT_RATE, VOICE_LANGS };
+export type { VoiceLang };
 
 /** "paused": something made a sound while the assistant spoke and the API is judging it (a cough or "hmm" = the reply goes on, real words = it ends); no sound is played meanwhile. */
 export type VoiceState = "listening" | "thinking" | "speaking" | "paused";

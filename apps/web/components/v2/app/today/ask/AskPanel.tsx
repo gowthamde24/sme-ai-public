@@ -8,6 +8,7 @@ import { Orb } from "@/components/v2/Orb";
 import { useAnalyser } from "./audio-level";
 import { AskAnswer, AskChips, AskForm, AskVoiceMode } from "./AskView";
 import { DoItBar } from "./AskDoItLazy";
+import { wakeAsk } from "./ask-wake";
 import type { AskSession } from "./use-ask-session";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -19,6 +20,7 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
 export function AskPanel({ session, chips, onClose }: { session: AskSession; chips: readonly string[]; onClose: () => void }) {
   const s = session;
   const { w } = s;
+  React.useEffect(() => wakeAsk(), []); // the panel was opened: the voice check starts now (ask-wake.ts)
   const analyser = useAnalyser();
   const box = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {

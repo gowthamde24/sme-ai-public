@@ -1,4 +1,4 @@
-import { IN_RATE } from "./protocol";
+import { IN_RATE } from "./langs";
 
 /** The sound the API wants and gives (PCM 16-bit little-endian), and the arithmetic around it. Pure: no browser objects. */
 

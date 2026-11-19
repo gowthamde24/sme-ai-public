@@ -11,6 +11,7 @@ import { AskTeam } from "./AskTeam";
 import type { Availability } from "./ask-types";
 import type { AskWords } from "./ask-words";
 import { AskProvidedContext, AskVoiceContext, useStoredAsk } from "./ask-store";
+import { wakeAsk } from "./ask-wake";
 
 /** The chat in the card (where the spoken conversation is on): its own chunk. */
 const ChatCard = dynamic(() => import("./ChatCardHost"), { ssr: false });
@@ -24,6 +25,10 @@ export function AskCard({ lang, base, availability, words, chips, onMood }: { la
   const shared = useStoredAsk();
   const voice = React.useContext(AskVoiceContext);
   const mood = shared?.mood;
+  const hasSession = shared !== null;
+  React.useEffect(() => {
+    if (hasSession) wakeAsk(); // this card IS the ask box (the older Today): its voice check starts with it (ask-wake.ts)
+  }, [hasSession]);
   React.useEffect(() => {
     if (mood) onMood(mood);
   }, [mood, onMood]);

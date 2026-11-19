@@ -20,6 +20,7 @@ import { callLog, fixtureErrors, setHandlers } from "./state";
 vi.mock("@/components/v2/app/jobs/rules/LazyRulesSimple", async () => ({ RulesSimple: (await import("@/components/v2/app/jobs/rules/RulesSimple")).RulesSimple }));
 vi.mock("@/components/v2/app/jobs/rules/LazyPolicySentences", async () => ({ PolicySentences: (await import("@/components/v2/app/jobs/rules/PolicySentences")).PolicySentences }));
 vi.mock("@/components/v2/app/jobs/LazyJobRow", async () => ({ JobRow: (await import("@/components/v2/app/jobs/JobRow")).JobRow }));
+vi.mock("@/components/v2/app/jobs/detail/LazyJobLists", async () => (await import("@/components/v2/app/jobs/detail/JobLists")));
 vi.mock("@/components/v2/app/jobs/LazyPlanCard", async () => ({ PlanCard: (await import("@/components/v2/app/jobs/PlanCard")).PlanCard }));
 vi.mock("@/components/v2/app/prospects/LazyResearcherCard", async () => ({ ResearcherCard: (await import("@/components/v2/app/prospects/ResearcherCard")).ResearcherCard }));
 vi.mock("@/components/v2/app/prospects/LazyMarkContacted", async () => ({ MarkContacted: (await import("@/components/v2/app/prospects/MarkContacted")).MarkContacted }));
@@ -171,11 +172,14 @@ async function capture(scenario: (typeof SCENARIOS)[number], role: (typeof ROLES
     });
     // Today and Leads draw in parts that finish one after another: wait until it has not changed for three rounds of the clock (one awaited act was not enough on a loaded machine, where the lazy modules load slower)
     const streams = scenario.env !== undefined || /^(today|lead-desk)/.test(scenario.id);
-    for (let round = 0, before = "", still = 0; streams && round < 100 && still < 3; round += 1) {
+    const started = Date.now();
+    for (let round = 0, before = "", still = 0; streams && round < 400; round += 1) {
       await act(async () => void (await new Promise((r) => setTimeout(r, round < 2 ? 0 : 5))));
       const now = container.innerHTML;
       still = now === before ? still + 1 : 0;
       before = now;
+      // done when nothing is waiting for its data any more and the page has not changed for three rounds (a part whose data never comes keeps its placeholder: give up after two seconds)
+      if (still >= 3 && (container.querySelector("[data-placeholder]") === null || Date.now() - started > 2000)) break;
     }
     return screenText(container);
   } catch (error) {

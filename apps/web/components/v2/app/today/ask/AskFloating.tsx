@@ -11,6 +11,7 @@ import { orbStateOf } from "../../mark/orb-state";
 import { chipsForPath, isTodayHome, orbHidden } from "./ask-chips";
 import { ASK_EVENT } from "./ask-event";
 import { useStoredAsk } from "./ask-store";
+import { wakeAsk } from "./ask-wake";
 import type { AskWords } from "./ask-words";
 import type { BrowserVoice } from "./browser-voice";
 import { NO_FRAME_DATA } from "../../contract";
@@ -51,6 +52,7 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
   }
   const unseen = !open && finished > seenAt;
   const openPanel = React.useCallback(() => {
+    wakeAsk();
     setOpen(true);
     setSeenAt(finished);
   }, [finished]);
@@ -61,6 +63,7 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
   }, [finished]);
   React.useEffect(() => {
     const go = () => {
+      wakeAsk();
       if (today && (typeof window.matchMedia !== "function" || window.matchMedia("(min-width: 768px)").matches)) (document.getElementById("chat-input") ?? document.getElementById("ask-input"))?.focus(); // Today on a desktop: the command bar's own line
       else if (here) openPanel();
       else document.getElementById("ask-input")?.focus(); // (the live call: no orb)
@@ -98,8 +101,15 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
         aria-expanded={open}
         title={name}
         onClick={() => (open ? closePanel() : openPanel())}
-        onMouseEnter={() => void import("./AskPanelHost")}
-        onFocus={() => void import("./AskPanelHost")}
+        onMouseEnter={() => {
+          wakeAsk();
+          void import("./AskPanelHost");
+        }}
+        onPointerDown={wakeAsk}
+        onFocus={() => {
+          wakeAsk();
+          void import("./AskPanelHost");
+        }}
         className={`${today ? "md:hidden " : ""}[body:has([data-orb-avoid])_&]:max-md:hidden [body:has(main_:is(input,textarea,select):focus)_&]:max-md:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-brand-edge/70 bg-surface shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
       >
         <Orb px={44} state={session?.floatOrb ?? "ambient"} />

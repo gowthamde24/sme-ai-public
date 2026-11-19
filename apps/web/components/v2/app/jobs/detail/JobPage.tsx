@@ -8,7 +8,7 @@ import { jobNameKey, type JobStatus } from "@/lib/jobs/types";
 import { groupIndian } from "@/lib/money";
 
 import { makeT, type Words } from "../../words";
-import { FaqCard, FindsOutCard } from "./JobLists";
+import { FaqCard, FindsOutCard } from "./LazyJobLists";
 import { JobHeader } from "./JobHeader";
 import { FailureCard, ResultsCard, TryCard } from "./JobResults";
 import { JobSaysCard } from "./JobSays";

@@ -14,6 +14,7 @@ import { canRecord } from "./recorder";
 import { fetchVoiceStatus, makeAskTransport, makeVoiceTransport } from "./transport";
 import { useRecorder, type RecorderProblem } from "./use-recorder";
 import type { VoicePhase } from "./VoiceMode";
+import { useAskAwake } from "./ask-wake";
 import { useDoIt, type DoItOptions, type Mode, type TaskEntry } from "./use-do-it";
 
 import { MAX_QUESTION } from "./ask-constants";
@@ -80,13 +81,16 @@ export type AskSessionOptions = {
   voiceTransport?: VoiceTransport | null;
   /** Night 4 (tasks): present only when "Ask Vijaya to do it" is on and the person may make a plan; adds the "Ask | Do it" switch. */
   doIt?: DoItOptions | null;
+  /** The voice check (`<base>/ask/voice`) waits until the machinery is woken (ask-wake.ts: the first use, or the browser idle 4 s after load) instead of running at mount. The layout's conversation sets it; a session of its own (AskTeam) does not. */
+  deferVoiceStatus?: boolean;
 };
 
 /**
  * The state of the Ask box, in one place (job DQ part 0): the question, the streaming answer, the drafts and sources, the microphone, the spoken answer and the thread of earlier exchanges. The Today card and the floating panel
  * of the other screens are two views of the SAME session (AskProvider makes one per workspace layout), so a question asked on Leads is on Today: one conversation, one Ask API. `AskTeam` makes its own session when there is no provider.
  */
-export function useAskSession({ lang, base, words, availability, transport: given, voiceStatus: givenStatus, voiceTransport: givenVoice, doIt: doItOptions }: AskSessionOptions) {
+export function useAskSession({ lang, base, words, availability, transport: given, voiceStatus: givenStatus, voiceTransport: givenVoice, doIt: doItOptions, deferVoiceStatus = false }: AskSessionOptions) {
+  const waitingToWake = !useAskAwake() && deferVoiceStatus; // (the voice check below starts when this turns false)
   const w = React.useCallback((key: string) => words[key] ?? key, [words]);
   const own = React.useMemo(() => (availability === "live" && given === undefined ? makeAskTransport(`${base}/ask`) : null), [availability, given, base]);
   const transport = given === undefined ? own : given;
@@ -149,13 +153,13 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const showMic = live && status.available && voiceTransport !== null && canRecordHere;
 
   React.useEffect(() => {
-    if (!live || givenStatus !== undefined || !canRecordHere) return;
+    if (!live || givenStatus !== undefined || !canRecordHere || waitingToWake) return;
     const controller = new AbortController();
     void fetchVoiceStatus(voiceEndpoint, controller.signal).then((s) => {
       if (!controller.signal.aborted) setFetchedStatus(s);
     });
     return () => controller.abort();
-  }, [live, givenStatus, canRecordHere, voiceEndpoint]);
+  }, [live, givenStatus, canRecordHere, voiceEndpoint, waitingToWake]);
   const setAutoplay = (on: boolean) => {
     setChosenAutoplay(on);
     saveAutoplay(on);
