@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 
-import { JobsList } from "@/components/v2/app/jobs/JobsList";
+import { JobsList, type JobsSheet } from "@/components/v2/app/jobs/JobsList";
 import { PageTop } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
@@ -15,7 +15,9 @@ import { readPackCached } from "@/lib/packs/read";
 import { jobsScreens } from "@/lib/screens/flag";
 
 import { setJobEnabledAction } from "./actions";
-import { startSuggestionAction } from "./new/actions";
+import { planJobAction, startPlanAction, startSuggestionAction, testPlanAction } from "./new/actions";
+import { loadNewJobSheetAction } from "./sheet-actions";
+import { readSheetLoad } from "./sheet-load";
 
 export const metadata = { title: `Jobs · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -25,7 +27,7 @@ export default async function JobsRoute({ params, searchParams }: PageProps<"/ap
   if (jobsScreens() === "off") notFound();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
-  const { filter } = await searchParams;
+  const { filter, new: openNew } = await searchParams;
   const user = await requireUser();
   let role: string;
   try {
@@ -41,12 +43,20 @@ export default async function JobsRoute({ params, searchParams }: PageProps<"/ap
   // the empty page offers the business type's suggested jobs (Owner and Admin start them; the others see no empty-state offer)
   const suggestions = jobs && jobs.length === 0 && owns ? ((await listSuggestions(user.accessToken, tenantId, (await readPackCached(user.accessToken, tenantId).catch(() => null))?.modules ?? null))?.items ?? []) : [];
   const base = `/app/tenants/${tenantId}`;
+  // the New job sheet (Owner and Admin): its ideas are read here only when the page needs them at once (no jobs yet: three live cards; `?new=1`: the sheet is open); otherwise the sheet asks when it is opened
+  const sheet: JobsSheet | null = owns
+    ? {
+        actions: { plan: planJobAction.bind(null, tenantId), start: startPlanAction.bind(null, tenantId), test: testPlanAction.bind(null, tenantId), load: loadNewJobSheetAction.bind(null, tenantId) },
+        load: jobs && (jobs.length === 0 || openNew === "1") ? await readSheetLoad(user.accessToken, tenantId).catch(() => null) : null,
+        open: openNew === "1",
+      }
+    : null;
   const f: JobFilter = typeof filter === "string" && (JOB_FILTERS as readonly string[]).includes(filter) ? (filter as JobFilter) : "all";
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={words["jobs.page.title"] ?? "Jobs"} sub={words["jobs.page.sub"]} />
       {jobs ? (
-        <JobsList jobs={jobs} filter={f} words={words} base={base} actions={owns ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} suggestions={suggestions} suggestionActions={owns ? { start: startSuggestionAction.bind(null, tenantId) } : null} />
+        <JobsList jobs={jobs} filter={f} words={words} base={base} actions={owns ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} suggestions={suggestions} suggestionActions={owns ? { start: startSuggestionAction.bind(null, tenantId) } : null} sheet={sheet ?? { actions: null, load: null, open: false }} />
       ) : (
         <p className="m-0 text-muted">{words["jobs.page.na"]}</p>
       )}

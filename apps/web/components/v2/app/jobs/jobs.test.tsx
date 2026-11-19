@@ -114,7 +114,7 @@ describe("Today's Running now and the Jobs page", () => {
     const { container, rerender } = render(<JobsList jobs={MOCK_JOBS} filter="all" words={words} base={BASE} actions={acts()} />);
     expect(screen.getByRole("link", { name: "All 6" })).toHaveAttribute("aria-current", "true");
     expect(screen.getByRole("link", { name: "Needs you 2" })).toHaveAttribute("href", `${BASE}/jobs?filter=needs_you`);
-    expect(screen.getByRole("link", { name: "Start a job" })).toHaveAttribute("href", `${BASE}/jobs/new`);
+    expect(screen.getByRole("link", { name: "New job" })).toHaveAttribute("href", `${BASE}/jobs/new`);
     expect(container.querySelectorAll("[data-job]")).toHaveLength(6);
     // the six of the demo are all on; a paused job (a variant) is the one Paused shows
     const paused = parseJob(WIRE_JOB_VARIANTS.find((j) => (j.result as { code: string }).code === "paused_on")!);
