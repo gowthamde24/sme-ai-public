@@ -313,8 +313,7 @@ class FakeOutbound:
     def __init__(self, repo: FakeRepo, refuse: str | None = None, fail: bool = False) -> None:
         self.repo, self.refuse, self.fail = repo, refuse, fail
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, language: str = "en", purpose: str = "x", kind: str = "task", business: str = "b") -> Any:
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, approval_kind: str = "owner_test", approval_ref: uuid.UUID | None = None, language: str = "en", purpose: str = "x", kind: str = "task", business: str = "b") -> Any:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, approval_kind: str = "owner_test", approval_ref: uuid.UUID | None = None, language: str = "en", purpose: str = "x", kind: str = "task", business: str = "b") -> Any:
         if self.refuse:
             raise OutboundRefused(self.refuse)
         if self.fail:
@@ -435,18 +434,18 @@ def test_a_live_call_is_refused_without_a_proof_of_request_and_the_proof_is_kept
     lead = uuid.uuid4()
     out, repo, api = placer(mode="live", confirmed=True)
     with pytest.raises(OutboundRefused) as caught:
-        out.place("tok", TENANT, OWNER, lead_id=lead)
+        out.place("tok", TENANT, OWNER, lead_id=lead, approval_kind="owner_test")
     assert caught.value.reason == "no_proof_of_request" and api.placed == [] and repo.proof_asked == [lead]
     assert [r["refuse_reason"] for r in repo.rows.values()] == ["no_proof_of_request"], "the refusal is kept on a refused row"
     out2, repo2, _ = placer(mode="live", confirmed=True)
     with pytest.raises(OutboundRefused) as caught2:
-        out2.place("tok", TENANT, OWNER)   # no lead at all: no proof
+        out2.place("tok", TENANT, OWNER, approval_kind="owner_test")   # no lead at all: no proof
     assert caught2.value.reason == "no_proof_of_request" and repo2.proof_asked == []
 
 
 def test_a_sandbox_call_never_asks_for_a_proof() -> None:
     out, repo, api = placer()
-    out.place("tok", TENANT, OWNER, lead_id=uuid.uuid4())
+    out.place("tok", TENANT, OWNER, lead_id=uuid.uuid4(), approval_kind="owner_test")
     assert len(api.placed) == 1 and repo.proof_asked == [] and repo.proof_kept == []
 
 
@@ -471,5 +470,5 @@ def test_an_unreadable_prospect_check_is_a_refusal_not_a_call() -> None:
 
 def test_a_number_that_is_not_a_prospect_is_called_as_before() -> None:
     out, repo, api = placer()
-    out.place("tok", TENANT, OWNER)
+    out.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert len(api.placed) == 1 and repo.prospect_asked == [OWNER]
