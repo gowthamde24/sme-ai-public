@@ -107406,7 +107406,7 @@
   "hi": "The customer chose not to receive promotions, so WhatsApp did not deliver it.",
   "kn": "The customer chose not to receive promotions, so WhatsApp did not deliver it.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -107418,7 +107418,7 @@
   "hi": "Do not send promotions to them; a message they asked for is still fine.",
   "kn": "Do not send promotions to them; a message they asked for is still fine.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -107584,7 +107584,7 @@
   "hi": "The customer asked us to stop, so nothing more is sent.",
   "kn": "The customer asked us to stop, so nothing more is sent.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -107596,7 +107596,7 @@
   "hi": "Do not message them; they can write to you first.",
   "kn": "Do not message them; they can write to you first.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -107608,7 +107608,7 @@
   "hi": "The customer's record was erased, so nothing more is sent.",
   "kn": "The customer's record was erased, so nothing more is sent.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -107620,7 +107620,7 @@
   "hi": "Nothing to do.",
   "kn": "Nothing to do.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -107632,7 +107632,7 @@
   "hi": "We hold no sign that the customer agreed to WhatsApp messages, and they have never written to you.",
   "kn": "We hold no sign that the customer agreed to WhatsApp messages, and they have never written to you.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -107644,7 +107644,7 @@
   "hi": "Get their consent first (the customer's page), or wait for them to write.",
   "kn": "Get their consent first (the customer's page), or wait for them to write.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },

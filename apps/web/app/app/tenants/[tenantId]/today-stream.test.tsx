@@ -1,4 +1,4 @@
-import { act, cleanup, render } from "@testing-library/react";
+import { act, cleanup, render, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError } from "@/lib/api/client";
@@ -171,8 +171,10 @@ describe("the briefing line", () => {
     expect(briefingPlaceholder()).not.toBeNull();
     await act(async () => desk.resolve({ needs: [], team: [] }));
     await flush();
-    expect(briefingPlaceholder()).toBeNull();
-    expect(briefing()).not.toBeNull();
+    await waitFor(() => {
+      expect(briefingPlaceholder()).toBeNull();
+      expect(briefing()).not.toBeNull();
+    });
   });
 });
 
@@ -180,9 +182,9 @@ describe("a read that fails", () => {
   it("leaves 'Needs you' out (the way the page leaves a part out that cannot be read) and the rest of the page is drawn: never an unhandled error", async () => {
     readLeadDesk.mockRejectedValue(new Error("down"));
     await show();
+    await waitFor(() => expect(document.querySelector("[data-placeholder]:not([data-part])")).toBeNull()); // no placeholder is left holding a room (the rejected read settles after the lazy modules have loaded: slower on a loaded machine)
     expect(needsRows()).toHaveLength(0);
     expect(document.querySelector("[data-needs-design]")).toBeNull();
-    expect(document.querySelector("[data-placeholder]:not([data-part])")).toBeNull(); // no placeholder is left holding a room
     expect(briefing()).toHaveTextContent("35 new enquiries to look at"); // the briefing did not need it
     expect(document.querySelector('[data-part="band"]')).not.toBeNull();
     expect(redirect).not.toHaveBeenCalled();

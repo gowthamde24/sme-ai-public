@@ -16,7 +16,7 @@ export type Status = "draft" | "reviewed";
 export type TranslatedLang = "te" | "hi" | "kn";
 export const TRANSLATED_LANGS: readonly TranslatedLang[] = ["te", "hi", "kn"];
 
-type Raw = Record<string, { en: string; te: string; hi: string; kn: string }>;
+type Raw = Record<string, { en: string; te: string; hi: string; kn: string; status?: Partial<Record<TranslatedLang, string>> }>;
 
 /**
  * A browser may break a line right after a hyphen, which splits a word like फ़ॉलो-अप ("follow-up") into
@@ -45,6 +45,16 @@ export function namedDict<D>(store: Map<string, D>, lang: Lang, build: () => Rec
 /** One flat key -> text dictionary for a language, typed by the keys of the JSON file. */
 export function dictFor<T extends Raw>(data: T, lang: Lang): { [K in keyof T]: string } {
   const out = {} as { [K in keyof T]: string };
-  for (const k of Object.keys(data) as (keyof T)[]) out[k] = lang === "en" ? data[k][lang] : keepHyphenatedWordsWhole(data[k][lang]);
+  const strict = lang !== "en" && reviewedOnly();
+  for (const k of Object.keys(data) as (keyof T)[]) {
+    // reviewed-only mode (Customer Zero): a Telugu, Hindi or Kannada string nobody who reads the language has approved shows the English instead (never a machine draft, never a bare key)
+    if (lang === "en" || (strict && data[k].status?.[lang] !== "reviewed")) out[k] = data[k].en;
+    else out[k] = keepHyphenatedWordsWhole(data[k][lang]);
+  }
   return out;
+}
+
+/** `REVIEWED_TRANSLATIONS_ONLY=1`: only strings a person who reads the language has reviewed are shown in Telugu, Hindi or Kannada; every other string shows its English. Off by default (staging and the demo show the drafts so they can be read and corrected). */
+export function reviewedOnly(): boolean {
+  return process.env.REVIEWED_TRANSLATIONS_ONLY === "1";
 }
