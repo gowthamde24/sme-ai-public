@@ -17,7 +17,7 @@ import { Instructions, List, Pairs, SayLikes, type TalkTrainingActions } from ".
 import { Choose, MoreChoices, Sentence } from "../jobs/rules/parts";
 import { alertBox, btnMain, btnQuiet, checkRow, fieldHelp, okBox } from "../ui";
 import { makeT, type Words } from "../words";
-import { GreetingBox, shownGreeting, type GreetingInsert } from "./GreetingBox";
+import { GreetingBox, shownGreeting, type GreetingHandle } from "./GreetingBox";
 import { inUseId, SOUNDS, voiceFor } from "./sounds";
 import type { ChooseVoice } from "./VoiceCards";
 
@@ -85,7 +85,7 @@ export function VoiceTone({ words, uiLang, picker, languages, first, endpoint, c
   const [msg, setMsg] = React.useState<Msg | null>(null);
   const [busy, start] = React.useTransition();
   const off = !canEdit || busy;
-  const insert = React.useRef<GreetingInsert["current"]>(null) as GreetingInsert;
+  const greetRef = React.useRef<GreetingHandle>(null);
   const [hearing, setHearing] = React.useState(false);
 
   const chips: CallLang[] = [...new Set<CallLang>([...(picker ? (languages as readonly CallLang[]) : []), ...withKept(offered, ...Object.keys(doc?.greeting ?? {}), first)])];
@@ -307,7 +307,7 @@ export function VoiceTone({ words, uiLang, picker, languages, first, endpoint, c
             disabled={off}
             maxLength={LIMITS.greeting.max}
             pillText={pillText}
-            insert={insert}
+            ref={greetRef}
             onChange={(stored) => {
               const greeting = { ...doc.greeting };
               if (stored.trim() === "") delete greeting[lang];
@@ -318,7 +318,7 @@ export function VoiceTone({ words, uiLang, picker, languages, first, endpoint, c
           {canEdit ? (
             <div className="flex flex-wrap items-center gap-2" data-part="vt-greeting-add">
               {GREETING_NAMES.map((p) => (
-                <button key={p} type="button" disabled={off} onClick={() => insert.current?.(p)} className="min-h-11 rounded-full border border-edge bg-surface px-3.5 text-sm font-semibold hover:bg-surface-2">
+                <button key={p} type="button" disabled={off} onClick={() => greetRef.current?.insert(p)} className="min-h-11 rounded-full border border-edge bg-surface px-3.5 text-sm font-semibold hover:bg-surface-2">
                   {t("vt.add", { what: pillText(p) })}
                 </button>
               ))}

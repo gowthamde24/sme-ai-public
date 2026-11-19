@@ -31,13 +31,21 @@ export function toSegments(stored: string): Segment[] {
 /** The segments back as the stored text. */
 export const fromSegments = (segments: readonly Segment[]): string => segments.map((s) => (s.kind === "pill" ? `{${s.name}}` : s.text)).join("");
 
-const esc = (s: string): string => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+/** The look of a pill in the box (a string in a source file, so Tailwind sees it). */
+export const PILL_CLASS = "vt-pill mx-0.5 inline-block select-none rounded-full bg-brand-bg px-2.5 py-0.5 align-baseline text-[15px] font-semibold leading-snug text-brand-text";
 
-/** The box's content as HTML: text, and each pill as a fixed (not editable) chip carrying its name in `data-ph` and its plain words as its text. `words` gives the plain words of a pill. */
-export const segmentsToHtml = (segments: readonly Segment[], words: (name: Placeholder) => string): string =>
-  segments
-    .map((s) => (s.kind === "pill" ? `<span contenteditable="false" data-ph="${s.name}" class="vt-pill mx-0.5 inline-block select-none rounded-full bg-brand-bg px-2.5 py-0.5 align-baseline text-[15px] font-semibold leading-snug text-brand-text">${esc(words(s.name))}</span>` : esc(s.text)))
-    .join("");
+/** The box's content as DOM nodes: text, and each pill as a fixed (not editable) chip carrying its name in `data-ph` and its plain words as its text. `words` gives the plain words of a pill. */
+export function segmentNodes(segments: readonly Segment[], words: (name: Placeholder) => string): Node[] {
+  return segments.map((s) => {
+    if (s.kind === "text") return document.createTextNode(s.text);
+    const pill = document.createElement("span");
+    pill.contentEditable = "false";
+    pill.setAttribute("data-ph", s.name);
+    pill.className = PILL_CLASS;
+    pill.textContent = words(s.name);
+    return pill;
+  });
+}
 
 /** What the box holds, read back from its DOM: text nodes are text, a pill is its placeholder, a line break is a space (the greeting is one paragraph). */
 export function readBox(root: Node): string {
