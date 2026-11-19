@@ -115901,5 +115901,192 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "wa.fb.title": {
+  "en": "Connect your WhatsApp number",
+  "te": "మీ WhatsApp నంబర్ కనెక్ట్ చేయండి",
+  "hi": "अपना WhatsApp नंबर जोड़ें",
+  "kn": "ನಿಮ್ಮ WhatsApp ನಂಬರ್ ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.body": {
+  "en": "Press the button. A Meta window opens: choose your WhatsApp Business account and your number, and follow the steps. It takes about two minutes.",
+  "te": "బటన్ నొక్కండి. Meta విండో తెరుచుకుంటుంది: మీ WhatsApp Business అకౌంట్, నంబర్ ఎంచుకుని స్టెప్స్ ఫాలో అవ్వండి. రెండు నిమిషాలు పడుతుంది.",
+  "hi": "बटन दबाएँ। Meta की एक विंडो खुलेगी: अपना WhatsApp Business अकाउंट और नंबर चुनें और स्टेप्स पूरे करें। लगभग दो मिनट लगते हैं।",
+  "kn": "ಬಟನ್ ಒತ್ತಿ. Meta ವಿಂಡೋ ತೆರೆಯುತ್ತದೆ: ನಿಮ್ಮ WhatsApp Business ಅಕೌಂಟ್, ನಂಬರ್ ಆಯ್ಕೆ ಮಾಡಿ ಮತ್ತು ಸ್ಟೆಪ್ಸ್ ಪೂರ್ಣಗೊಳಿಸಿ. ಎರಡು ನಿಮಿಷ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.coexistence": {
+  "en": "If your shop already uses the WhatsApp Business app on this number, you can keep using it: the app and your assistant work on the same number.",
+  "te": "ఈ నంబర్‌లో మీ షాప్ ఇప్పటికే WhatsApp Business యాప్ వాడుతుంటే, అదే కొనసాగించవచ్చు: యాప్, మీ అసిస్టెంట్ రెండూ ఒకే నంబర్‌లో పనిచేస్తాయి.",
+  "hi": "अगर आपकी दुकान इसी नंबर पर पहले से WhatsApp Business ऐप इस्तेमाल करती है, तो वह चलता रहेगा: ऐप और आपका असिस्टेंट एक ही नंबर पर काम करते हैं।",
+  "kn": "ಈ ನಂಬರ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಅಂಗಡಿ ಈಗಾಗಲೇ WhatsApp Business ಆ್ಯಪ್ ಬಳಸುತ್ತಿದ್ದರೆ ಅದೇ ಮುಂದುವರಿಸಬಹುದು: ಆ್ಯಪ್ ಮತ್ತು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಒಂದೇ ನಂಬರ್‌ನಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.button": {
+  "en": "Connect with Facebook",
+  "te": "Facebook తో కనెక్ట్ చేయండి",
+  "hi": "Facebook से जोड़ें",
+  "kn": "Facebook ನೊಂದಿಗೆ ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.connecting": {
+  "en": "Opening Meta…",
+  "te": "Meta తెరుస్తున్నాం…",
+  "hi": "Meta खुल रहा है…",
+  "kn": "Meta ತೆರೆಯುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.saving": {
+  "en": "Connecting…",
+  "te": "కనెక్ట్ చేస్తున్నాం…",
+  "hi": "जोड़ रहे हैं…",
+  "kn": "ಕನೆಕ್ಟ್ ಮಾಡುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.waiting": {
+  "en": "Finish the steps in Meta's window. This page waits for you.",
+  "te": "Meta విండోలో స్టెప్స్ పూర్తి చేయండి. ఈ పేజీ మీ కోసం వేచి ఉంది.",
+  "hi": "Meta की विंडो में स्टेप्स पूरे करें। यह पेज आपका इंतज़ार कर रहा है।",
+  "kn": "Meta ವಿಂಡೋದಲ್ಲಿ ಸ್ಟೆಪ್ಸ್ ಪೂರ್ಣಗೊಳಿಸಿ. ಈ ಪುಟ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.connected": {
+  "en": "Connected: {phone} {name}",
+  "te": "కనెక్ట్ అయింది: {phone} {name}",
+  "hi": "जुड़ गया: {phone} {name}",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿದೆ: {phone} {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.cancelled": {
+  "en": "You closed Meta's window, so nothing was connected. Press the button to try again.",
+  "te": "మీరు Meta విండో మూసేశారు, కాబట్టి ఏదీ కనెక్ట్ కాలేదు. మళ్ళీ ప్రయత్నించడానికి బటన్ నొక్కండి.",
+  "hi": "आपने Meta की विंडो बंद कर दी, इसलिए कुछ नहीं जुड़ा। फिर से कोशिश के लिए बटन दबाएँ।",
+  "kn": "ನೀವು Meta ವಿಂಡೋ ಮುಚ್ಚಿದ್ದೀರಿ, ಆದ್ದರಿಂದ ಏನೂ ಕನೆಕ್ಟ್ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಲು ಬಟನ್ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.failed": {
+  "en": "It did not work. Nothing was connected.",
+  "te": "పని చేయలేదు. ఏదీ కనెక్ట్ కాలేదు.",
+  "hi": "काम नहीं हुआ। कुछ नहीं जुड़ा।",
+  "kn": "ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ಏನೂ ಕನೆಕ್ಟ್ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.failed.why": {
+  "en": "It did not work. Meta said: {why}",
+  "te": "పని చేయలేదు. Meta చెప్పింది: {why}",
+  "hi": "काम नहीं हुआ। Meta ने कहा: {why}",
+  "kn": "ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. Meta ಹೇಳಿದ್ದು: {why}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.tryagain": {
+  "en": "You can press the button again. If it keeps failing, use More choices below or ask us.",
+  "te": "మళ్ళీ బటన్ నొక్కవచ్చు. మళ్ళీ మళ్ళీ ఫెయిల్ అయితే కింద ఉన్న More choices వాడండి లేదా మమ్మల్ని అడగండి.",
+  "hi": "आप बटन फिर दबा सकते हैं। बार-बार न चले तो नीचे More choices इस्तेमाल करें या हमसे पूछें।",
+  "kn": "ಮತ್ತೆ ಬಟನ್ ಒತ್ತಬಹುದು. ಮತ್ತೆ ಮತ್ತೆ ವಿಫಲವಾದರೆ ಕೆಳಗಿನ More choices ಬಳಸಿ ಅಥವಾ ನಮ್ಮನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.soon": {
+  "en": "WhatsApp connect is being set up. The button will be here soon.",
+  "te": "WhatsApp కనెక్ట్ సెటప్ అవుతోంది. బటన్ త్వరలో ఇక్కడ ఉంటుంది.",
+  "hi": "WhatsApp कनेक्ट सेट हो रहा है। बटन जल्द ही यहाँ होगा।",
+  "kn": "WhatsApp ಕನೆಕ್ಟ್ ಸೆಟಪ್ ಆಗುತ್ತಿದೆ. ಬಟನ್ ಶೀಘ್ರದಲ್ಲೇ ಇಲ್ಲಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.more": {
+  "en": "More choices (for support only)",
+  "te": "More choices (సపోర్ట్ కోసం మాత్రమే)",
+  "hi": "More choices (सिर्फ़ सपोर्ट के लिए)",
+  "kn": "More choices (ಸಪೋರ್ಟ್‌ಗಾಗಿ ಮಾತ್ರ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.err.whatsapp_signup_invalid": {
+  "en": "That sign-up could not be checked. Connect again.",
+  "te": "ఆ సైన్-అప్ చెక్ చేయలేకపోయాం. మళ్ళీ కనెక్ట్ చేయండి.",
+  "hi": "वह साइन-अप जाँचा नहीं जा सका। फिर से जोड़ें।",
+  "kn": "ಆ ಸೈನ್-ಅಪ್ ಪರಿಶೀಲಿಸಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.err.whatsapp_no_access": {
+  "en": "We cannot reach that number yet. Finish the sign-up in Meta's window and try again.",
+  "te": "ఆ నంబర్ మాకు ఇంకా అందడం లేదు. Meta విండోలో సైన్-అప్ పూర్తి చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "हम उस नंबर तक अभी नहीं पहुँच पा रहे। Meta की विंडो में साइन-अप पूरा करके फिर कोशिश करें।",
+  "kn": "ಆ ನಂಬರ್ ನಮಗೆ ಇನ್ನೂ ಸಿಗುತ್ತಿಲ್ಲ. Meta ವಿಂಡೋದಲ್ಲಿ ಸೈನ್-ಅಪ್ ಪೂರ್ಣಗೊಳಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.err.whatsapp_connect_refused": {
+  "en": "WhatsApp did not accept the connection. Try again in a minute.",
+  "te": "WhatsApp కనెక్షన్ ఒప్పుకోలేదు. ఒక నిమిషం తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "WhatsApp ने कनेक्शन स्वीकार नहीं किया। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "WhatsApp ಕನೆಕ್ಷನ್ ಒಪ್ಪಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

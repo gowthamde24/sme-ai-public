@@ -35,7 +35,7 @@ def w() -> World:
 
 def test_the_browser_gets_only_public_ids_and_only_when_it_can_connect(w: World) -> None:
     got = w.call("GET", T + "/whatsapp/connect/config", "a_owner").json()
-    assert got == {"available": True, "app_id": "1407102551140162", "config_id": "999000111222", "graph_version": "v25.0", "missing": []}
+    assert got == {"available": True, "app_id": "1407102551140162", "config_id": "999000111222", "graph_version": "v25.0", "missing": [], "onboarding_types": ["cloud_api", "coexistence"]}
     assert w.call("GET", T + "/whatsapp/connect/config", "a_sales").status_code == 403
     bare = World(configured=False)
     out = bare.call("GET", T + "/whatsapp/connect/config", "a_owner").json()
@@ -148,3 +148,12 @@ def test_a_reconnect_that_fails_to_record_keeps_the_live_subscription(w: World, 
     with pytest.raises(RuntimeError):
         w.call("POST", T + "/whatsapp/connect", "a_owner", BODY)
     assert WABA in w.graph.subscribed, "an already connected business keeps its subscription when a second attempt fails"
+
+
+def test_a_number_kept_on_the_whatsapp_business_app_is_recorded_as_coexistence_and_the_default_is_cloud_api(w: World) -> None:
+    """Planner, 19 Nov 2026: the browser says which Meta event ended the signup; the app-onboarding one means the shop keeps its WhatsApp Business app on this number."""
+    assert w.call("POST", T + "/whatsapp/connect", "a_owner", BODY).status_code == 200
+    assert w.repo.account is not None and w.repo.account["coexistence"] is False, "without the field: cloud_api, as before"
+    assert w.call("POST", T + "/whatsapp/connect", "a_owner", {**BODY, "coexistence": True}).status_code == 200
+    assert w.repo.account is not None and w.repo.account["coexistence"] is True
+    assert w.call("POST", T + "/whatsapp/connect", "a_owner", {**BODY, "coexistence": "yes please"}).status_code == 422, "a typed boolean, nothing else"

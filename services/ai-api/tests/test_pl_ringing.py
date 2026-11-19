@@ -39,7 +39,7 @@ def test_a_call_with_nobody_behind_it_is_a_test_call_and_the_others_keep_their_n
 
 def test_cancel_asks_plivo_by_the_request_id_and_closes_the_row_as_cancelled() -> None:
     out, repo, api = placer()
-    placed = out.place("t", TENANT_A.id, OWNER)
+    placed = out.place("t", TENANT_A.id, OWNER, approval_kind="owner_test")
     assert repo.rows[placed.call_id]["state"] == "ringing"
     assert out.cancel("t", TENANT_A.id, placed.call_id) == "cancelled"
     assert api.cancelled == [placed.provider_call_id] and api.hung_up == []
@@ -49,7 +49,7 @@ def test_cancel_asks_plivo_by_the_request_id_and_closes_the_row_as_cancelled() -
 
 def test_when_plivo_no_longer_knows_the_request_it_is_ended_as_a_call_and_the_row_still_closes() -> None:
     out, repo, api = placer()
-    placed = out.place("t", TENANT_A.id, OWNER)
+    placed = out.place("t", TENANT_A.id, OWNER, approval_kind="owner_test")
     api.cancel_result = False
     assert out.cancel("t", TENANT_A.id, placed.call_id) == "cancelled"
     assert api.hung_up == [placed.provider_call_id] and repo.rows[placed.call_id]["state"] == "cancelled"
@@ -57,7 +57,7 @@ def test_when_plivo_no_longer_knows_the_request_it_is_ended_as_a_call_and_the_ro
 
 def test_an_answered_or_finished_or_foreign_row_is_left_alone() -> None:
     out, repo, api = placer()
-    placed = out.place("t", TENANT_A.id, OWNER)
+    placed = out.place("t", TENANT_A.id, OWNER, approval_kind="owner_test")
     repo.rows[placed.call_id]["state"] = "in_progress"
     assert out.cancel("t", TENANT_A.id, placed.call_id) == "not_ringing"
     repo.rows[placed.call_id]["state"] = "completed"
@@ -76,7 +76,7 @@ def test_end_call_on_a_ringing_call_cancels_it_over_http_and_says_so_when_there_
     out, repo, api = placer()
     svc = outbound_service()
     svc.outbound = out
-    placed = out.place("t", TENANT_A.id, OWNER)
+    placed = out.place("t", TENANT_A.id, OWNER, approval_kind="owner_test")
     calls = FakeCallsRepo()
     calls.rows[placed.call_id] = {**calls.rows[LIVE_ID], "id": placed.call_id, "state": "ringing", "answered_at": None}
     client, _ = make_client(phone_inbound=svc, calls=CallsService(calls, clock=lambda: NOW), live_calls=LiveCalls())
@@ -87,7 +87,7 @@ def test_end_call_on_a_ringing_call_cancels_it_over_http_and_says_so_when_there_
     again = client.post(f"{URL}/{placed.call_id}/hang-up", headers=auth("a_owner"))
     assert again.status_code == 409 and again.json()["error"]["code"] == "call_not_here", "a second End call finds nothing to end"
     api.fail_with = None
-    other = out.place("t", TENANT_A.id, OWNER)
+    other = out.place("t", TENANT_A.id, OWNER, approval_kind="owner_test")
     calls.rows[other.call_id] = {**calls.rows[LIVE_ID], "id": other.call_id, "state": "ringing", "answered_at": None}
     from app.telephony.plivo_api import PlivoError
 
@@ -102,7 +102,7 @@ def test_end_call_on_a_ringing_call_cancels_it_over_http_and_says_so_when_there_
 def test_a_refused_placing_is_unchanged() -> None:
     out, _, _ = placer(numbers=frozenset({"+919000000001"}))
     try:
-        out.place("t", TENANT_A.id, OWNER)
+        out.place("t", TENANT_A.id, OWNER, approval_kind="owner_test")
     except OutboundRefused as refused:
         assert refused.reason == "not_on_sandbox_list"
     else:

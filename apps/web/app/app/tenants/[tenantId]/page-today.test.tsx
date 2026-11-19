@@ -1,5 +1,5 @@
-import { act, render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { act, cleanup, render, screen, within } from "@testing-library/react";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { parseCallRequestPage, parseOutboxPage } from "@/lib/api/outbox";
@@ -62,7 +62,7 @@ import TenantPage from "./page";
 const TENANT = "22222222-2222-2222-2222-222222222222";
 const props = (query: Record<string, string> = {}) => ({ params: Promise.resolve({ tenantId: TENANT }), searchParams: Promise.resolve(query) }) as unknown as Parameters<typeof TenantPage>[0];
 
-beforeEach(() => {
+function arrange() {
   vi.clearAllMocks();
   getNavCounts.mockImplementation(async () => { throw new Error("nav counts are not read in most of these tests"); });
   provideRequestAssistantName(DEFAULT_ASSISTANT_NAME);
@@ -78,7 +78,8 @@ beforeEach(() => {
   getVisitSettings.mockRejectedValue(new Error("not read")); // the setup facts are unknown unless a test gives them: Today is then shown as it is
   listCatalogueItems.mockRejectedValue(new Error("not read"));
   getOutboxSettings.mockRejectedValue(new Error("not read"));
-});
+}
+beforeEach(arrange);
 
 const settle = async () => {
   for (let i = 0; i < 4; i += 1) await act(async () => void (await Promise.resolve()));
@@ -88,6 +89,13 @@ const show = async (props_: ReturnType<typeof props> = props()) => {
   await act(async () => void render(element));
   await settle();
 };
+
+// Today is a big page: its first render is cold (5 s under CI load) and used to land in the first test's time; it is paid here once, outside any test
+beforeAll(async () => {
+  arrange();
+  await show();
+  cleanup();
+}, 30_000);
 
 /** Where the assistant is named on Today now: the words of the command bar (its placeholder, its accessible names) and the text of the cards. */
 const named = () => [document.body.textContent, ...[...document.querySelectorAll("[placeholder],[aria-label]")].map((e) => `${e.getAttribute("placeholder") ?? ""} ${e.getAttribute("aria-label") ?? ""}`)].join(" ");

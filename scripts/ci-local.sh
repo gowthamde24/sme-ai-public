@@ -90,7 +90,8 @@ need_web() {
 }
 
 lane_hygiene() { ./scripts/check-no-leftovers.sh && python3 scripts/test-lanes.py && python3 scripts/test-packages.py; }
-lane_api_static() { need_py && (cd services/ai-api && "$PYBIN/ruff" check . && PYTHONPATH=$PWD "$PYBIN/mypy"); }
+# api-static also checks that the generated contracts are current (what CI api-tests fails on: "run make contracts"); it takes 20 s
+lane_api_static() { need_py && (cd services/ai-api && "$PYBIN/ruff" check . && PYTHONPATH=$PWD "$PYBIN/mypy" && PYTHONPATH=$PWD "$PYBIN/pytest" -q -p no:cacheprovider tests/test_error_catalog.py); }
 lane_api_tests() {
   need_py || return 1
   cd services/ai-api || return 1
@@ -109,8 +110,16 @@ db_reset() {   # the container sometimes misses its health check while the machi
 lane_db_pgtap() { ./scripts/db-lock.sh bash scripts/ci/pgtap_psql.sh; }   # the same files fed to psql in the container: `supabase test db` cannot bind-mount a folder of this Mac's /Volumes disk
 lane_db_integration() {
   need_py || return 1
-  db_reset || return 1
-  (cd services/ai-api && files=($(python3 ../../scripts/ci/shard_integration.py 1 1)) && PYTHONPATH="$PWD" ../../scripts/db-lock.sh ../../scripts/with-local-supabase-env.sh "$PYBIN/pytest" -c pyproject.toml "${files[@]}" -q -p no:cacheprovider)   # PYTHONPATH: the shared venv has an editable install of ANOTHER checkout; the integration files live outside services/ai-api, so without it `app` is imported from there
+  # Like CI: SEVEN parts, each on a freshly reset database. One part with everything on one database ran 35 minutes against the per-business hourly run cap (30) and failed ~55 tests that pass in CI.
+  local part rc=0
+  # the two files that read the e-mail templates need Docker to mount supabase/templates: impossible from /Volumes on this Mac (the auth e-mail is then GoTrue's default); CI runs them
+  local SKIP_MAIL_TESTS='^$'; case "$PWD" in /Volumes/*) SKIP_MAIL_TESTS='test_auth_templates\.py|test_open_signup\.py';; esac
+  for part in 1 2 3 4 5 6 7; do
+    echo "== db-integration part $part/7"
+    db_reset || return 1
+    (cd services/ai-api && files=($(python3 ../../scripts/ci/shard_integration.py 7 $part)) && files=($(printf '%s\n' "${files[@]}" | grep -vE "$SKIP_MAIL_TESTS")) && PYTHONPATH="$PWD" ../../scripts/db-lock.sh ../../scripts/with-local-supabase-env.sh "$PYBIN/pytest" -c pyproject.toml "${files[@]}" -q -p no:cacheprovider) || rc=1   # PYTHONPATH: the shared venv has an editable install of ANOTHER checkout; the integration files live outside services/ai-api, so without it `app` is imported from there
+  done
+  return $rc
 }
 
 echo "ci-local: base $(printf '%.8s' "${BASE:-none}"), $(printf '%s\n' "$FILES" | grep -c . || true) changed files; lanes: unit=$unit integration=${integration} (${INTEGRATION} -> ${integ}) pgtap=$pgtap web=$web webtests=$webtests"

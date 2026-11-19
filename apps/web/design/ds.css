@@ -447,7 +447,7 @@
     [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] :is(button, a, span, div) { min-height: 0 !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] :is(button, a)[class] { height: 1.75rem !important; padding-block: 0 !important; font-size: 12px !important; line-height: 1 !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { margin-top: 0 !important; }
-    [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     /* the top bar: 40px round buttons with 20px icons (was 44px), a 48px bar (was 64px) */
     [data-ui="v2"][data-ds="6"] header.sticky { min-height: 3rem !important; }
     [data-ui="v2"][data-ds="6"] header.sticky :is(button, a)[class*="size-11"] { width: 2.5rem !important; height: 2.5rem !important; }

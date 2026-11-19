@@ -22,6 +22,7 @@ ROUTE_WORDS = frozenset(
     {
         "template",   # POST /conversations/{id}/template (a template picked in a chat, 16 Nov)
         "marketing-consent", "consented",   # campaigns S3, 17 Nov
+        "contacted",   # POST /prospects/{id}/contacted (Lead Finder "Mark as contacted", 19 Nov)
         "rule-templates",   # GET /outreach/rule-templates (rules v2, 16 Nov)
         "staff",   # GET /visits/staff, PUT /visits/staff/{id} (14 Nov)
         "practice",   # POST /talk-training/practice (app v4)
@@ -31,6 +32,7 @@ ROUTE_WORDS = frozenset(
         "call-limit", "ask-consent", "ask-first", "dismiss", "rows", "unsend",   # tasks, imports
         "alerts", "ack", "google",   # admin usage and alerts (14 Nov)
         "phone-kyc", "options",   # /phone-kyc (14 Nov)
+        "phone-line", "available", "release",   # /phone-line (18 Nov)
         "reply", "assign",   # POST /admin/support/tickets/{id}/reply and /assign (14 Nov)
         "demo", "start", "end",   # POST /calls/demo/start and /end (13 Nov)
         "corrections",   # POST /knowledge/corrections and /corrections/{id}/undo (13 Nov)

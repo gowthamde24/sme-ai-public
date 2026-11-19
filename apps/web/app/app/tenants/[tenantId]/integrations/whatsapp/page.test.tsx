@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
@@ -8,12 +8,14 @@ import { notFoundMock, redirectMock } from "@/test/helpers";
 const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const getWhatsappAccount = vi.fn();
+const getConnectConfig = vi.fn();
 const listTemplates = vi.fn();
-vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock() }));
+vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock(), useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock("@/components/v2/app/whatsapp/LazyConnectWithFacebook", async () => ({ ConnectWithFacebook: (await import("@/components/v2/app/whatsapp/ConnectWithFacebook")).ConnectWithFacebook }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
-vi.mock("@/lib/api/whatsapp", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/whatsapp")>()), getWhatsappAccount: (...a: unknown[]) => getWhatsappAccount(...a), listTemplates: (...a: unknown[]) => listTemplates(...a) }));
-vi.mock("./actions", () => ({ saveWhatsappAction: vi.fn(), activateWhatsappAction: vi.fn(), disableWhatsappAction: vi.fn(), submitDraftsAction: vi.fn(), submitTemplateAction: vi.fn(), syncTemplatesAction: vi.fn() }));
+vi.mock("@/lib/api/whatsapp", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/whatsapp")>()), getWhatsappAccount: (...a: unknown[]) => getWhatsappAccount(...a), getConnectConfig: (...a: unknown[]) => getConnectConfig(...a), listTemplates: (...a: unknown[]) => listTemplates(...a) }));
+vi.mock("./actions", () => ({ connectWithFacebookAction: vi.fn(), saveWhatsappAction: vi.fn(), activateWhatsappAction: vi.fn(), disableWhatsappAction: vi.fn(), submitDraftsAction: vi.fn(), submitTemplateAction: vi.fn(), syncTemplatesAction: vi.fn() }));
 
 import ConnectPage from "./page";
 
@@ -26,6 +28,7 @@ beforeEach(() => {
   requireUser.mockResolvedValue({ id: "u", email: "e@example.test", accessToken: "tok" });
   fetchTenant.mockResolvedValue(tenant("owner"));
   getWhatsappAccount.mockResolvedValue(ACCOUNT);
+  getConnectConfig.mockResolvedValue(null);
   listTemplates.mockResolvedValue([]);
 });
 
@@ -38,6 +41,29 @@ describe("/integrations/whatsapp", () => {
     expect(screen.queryByRole("heading", { name: "Message templates" })).toBeNull();
     expect(screen.getByRole("link", { name: "Open Templates" })).toHaveAttribute("href", `/app/tenants/${TENANT}/chats/templates`);
     expect(listTemplates).not.toHaveBeenCalled();
+  });
+  it("the owner sees the Connect with Facebook card when the API says it is ready; the manual form is under More choices", async () => {
+    getConnectConfig.mockResolvedValue({ available: true, appId: "APP1", configId: "CFG1", graphVersion: "v25.0", missing: [], onboardingTypes: ["cloud_api", "coexistence"] });
+    render(await ConnectPage(props()));
+    expect(await screen.findByRole("button", { name: "Connect with Facebook" })).toBeInTheDocument();
+    expect(screen.getByText("More choices (for support only)")).toBeInTheDocument();
+    expect(document.querySelector('[data-part="manual-connect"]')).not.toHaveAttribute("open");
+  });
+  it("without a configuration (staging today) it says WhatsApp connect is being set up and draws no button", async () => {
+    getConnectConfig.mockResolvedValue({ available: false, appId: null, configId: null, graphVersion: "v25.0", missing: ["app_id", "config_id"], onboardingTypes: [] });
+    render(await ConnectPage(props()));
+    expect(screen.getByText("WhatsApp connect is being set up. The button will be here soon.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Connect with Facebook" })).toBeNull();
+    cleanup();
+    getConnectConfig.mockResolvedValue(null);
+    render(await ConnectPage(props()));
+    expect(screen.getByText(/being set up/)).toBeInTheDocument();
+  });
+  it("an admin is not asked for the configuration and sees no connect card", async () => {
+    fetchTenant.mockResolvedValue(tenant("admin"));
+    render(await ConnectPage(props()));
+    expect(getConnectConfig).not.toHaveBeenCalled();
+    expect(screen.queryByText(/being set up/)).toBeNull();
   });
   it("an admin reads the state but cannot change it", async () => {
     fetchTenant.mockResolvedValue(tenant("admin"));

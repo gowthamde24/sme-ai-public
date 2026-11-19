@@ -25,6 +25,14 @@ class _Out(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class UpgradeNote(_Out):
+    """What more searches need: no price, no charge. The screen shows the words and the link."""
+
+    to: Literal["ai_workforce"] = "ai_workforce"
+    note: str
+    href: str = "/plans"
+
+
 class AvailabilityOut(_Out):
     """Whether this business has the Lead Finder at all (a school: never) and which source a search would use here. Never an error: the screens hide the feature when `available` is false."""
 
@@ -33,8 +41,14 @@ class AvailabilityOut(_Out):
     source: Literal["fixture", "places"] | None
     # not_for_your_role: a Viewer (who reads no prospect): hide the feature for them
     # not_in_plan: the workspace is on Lead Desk (owner decision 4 Nov 2026: the Lead Finder is part of AI Workforce); the screens show the upgrade card, not the feature
-    reason: Literal["ok", "not_for_this_business", "switched_off", "not_for_your_role", "not_in_plan"]
+    reason: Literal["ok", "not_for_this_business", "switched_off", "not_for_your_role", "not_in_plan"]   # "not_in_plan" is never answered any more (owner, 18 Nov 2026: every plan has the Lead Finder); kept so an older screen still parses
     upgrade_to: Literal["ai_workforce"] | None = None
+    # the owner's rule (18 Nov 2026): the Lead Finder is visible on EVERY plan with ONE free search a calendar month (India time) where the plan does not carry it.
+    #   available: usable now; limit_reached: visible, the free search of this month is used (the upgrade note says what more needs); hidden: not for this business type / switched off / not for a Viewer
+    access: Literal["available", "limit_reached", "hidden"] = "hidden"
+    searches_per_month: int | None = None        # 1 on a plan without the Lead Finder; null = no monthly limit (AI Workforce)
+    searches_left_this_month: int | None = None  # null = no monthly limit
+    upgrade: UpgradeNote | None = None           # null when nothing is needed
     # who it finds (owner decision 4 Nov 2026): a shop's buyers ("businesses") or, for a school, organisations only (associations, companies, coaching centres, vendors, institutions; never individuals)
     audience: Literal["businesses", "organisations"] = "businesses"
 
@@ -138,6 +152,8 @@ class ProspectOut(_Out):
     created_at: datetime
     updated_at: datetime
     details_available: bool = True
+    contacted_by: str | None = None   # the member's display name who marked it contacted ("Mark as contacted", 19 Nov)
+    contact_note: str | None = None
 
 
 class ProspectListOut(_Out):
@@ -148,6 +164,13 @@ class ProspectListOut(_Out):
 class StatsOut(_Out):
     total: int
     by_status: dict[str, int]
+
+
+class ContactedIn(_In):
+    """"Mark as contacted": the owner reached this business personally (own phone, a visit). Omitted time = now; not in the future, at most 60 days back; the note is the owner's own words."""
+
+    contacted_at: datetime | None = None
+    note: Annotated[str | None, Field(max_length=500)] = None
 
 
 class ActionsIn(_In):

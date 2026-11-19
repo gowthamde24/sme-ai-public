@@ -17,6 +17,9 @@ from typing import Any
 
 import pytest
 
+# these tests write and compare files in the shared stacks/ folder (gen.sync, the agent stack's copies): run in parallel with each other or with another file that syncs it, a copy changes under them (#864: api-tests (3), a 60 s mtime difference); they run alone, after the parallel tests
+pytestmark = pytest.mark.serial
+
 ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))

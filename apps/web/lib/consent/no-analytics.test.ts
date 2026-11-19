@@ -25,7 +25,9 @@ describe("no analytics is loaded anywhere (job BH)", () => {
     const hits = files.filter((f) => VENDORS.test(readFileSync(f, "utf8"))).map((f) => path.relative(ROOT, f));
     // ONE file is exempt (job DP part 6, C1): the web server's error reporting. It is OFF unless SENTRY_DSN is set, it runs on the server only (the browser's policy stays `connect-src 'self'`), it sends a scrubbed envelope (the error's class
     // name and stack frames: no message, address, header, cookie, body, user or breadcrumb) and only to the host of the DSN the owner gives. It is not analytics and no visitor is followed; the owner decides to switch it on (docs/runbooks/error-reporting-sentry.md).
-    expect(hits).toEqual(["lib/observability/report.ts"]);
+    // A SECOND file is exempt (Customer Zero, 19 Nov): lib/whatsapp/embedded-signup.ts holds the address of Meta's JS SDK, which opens Meta's own WhatsApp sign-up window ("Connect with Facebook"). It is not analytics: it is added only when the Owner
+    // presses that button on the WhatsApp page (never on a page view), with app-event logging off (autoLogAppEvents false), and the policy allows Meta's frames and connections on that one page only (lib/security/csp.ts). The Privacy Policy must say it.
+    expect(hits).toEqual(["lib/observability/report.ts", "lib/whatsapp/embedded-signup.ts"]);
   });
   it("no such package is a dependency", () => {
     const pkg = JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")) as Record<string, Record<string, string> | undefined>;

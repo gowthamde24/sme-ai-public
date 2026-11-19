@@ -24,7 +24,7 @@ WINDOW_TO_MINUTE = 21 * 60
 Mode = Literal["off", "sandbox", "live"]
 Dnd = Literal["yes", "no", "unknown"]
 Purpose = Literal["sales_followup", "payment_reminder", "admission_followup", "visit_reminder", "event_reminder"]
-Approval = Literal["plan", "standing_rule", "task"]
+Approval = Literal["plan", "standing_rule", "task", "owner_test"]
 
 # which purposes are promotional (sales) and which are transactional (about something the person already has with the business). ASSUMPTION until the owner's lawyer answers (job-phone-calls.md, Needs owner 2):
 # the stricter class is used whenever in doubt.
@@ -49,7 +49,7 @@ class Refused:
 REASONS: tuple[str, ...] = (
     "telephony_off", "live_not_confirmed", "bad_number", "not_on_sandbox_list", "not_approved", "workspace_paused", "billing_blocked", "purpose_not_allowed", "school_rule",
     "outside_window", "outside_hours", "holiday", "weekly_limit", "daily_cap", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "no_ai_disclosure",
-    "already_calling", "too_many_calls", "no_proof_of_request",
+    "already_calling", "too_many_calls", "no_proof_of_request", "prospect_no_ai_call",
     "inbound_off", "no_such_line", "blocked_caller",
     "trial_not_sandbox", "trial_account", "trial_app_id", "trial_busy", "trial_day_limit",
 )
@@ -87,6 +87,7 @@ class OutboundFacts:
     approval_valid: bool = False          # the plan's hash still matches / the rule is still on
     workspace_paused: bool = False
     billing_ok: bool = True
+    prospect: bool = False                # a Lead Finder prospect that has not made a request: the AI NEVER calls it, in any mode (owner, 18 Nov 2026; TRAI promotional-call directions)
     proof_of_request: bool | None = None   # live only: the person asked for this call (a recorded request within 30 days from a source that counts); None = not asked (sandbox)
     allowed_purposes: Collection[str] = field(default_factory=lambda: tuple(PROMOTIONAL | TRANSACTIONAL))
     is_school: bool = False
@@ -117,6 +118,8 @@ def has_ai_disclosure(line: str) -> bool:
 def check_outbound(settings: Settings, f: OutboundFacts) -> Allowed | Refused:
     if settings.mode == "off" or not settings.outbound:
         return Refused("telephony_off")
+    if f.prospect:
+        return Refused("prospect_no_ai_call")   # before anything else about the call: a prospect is reached by the owner personally
     if settings.mode == "live" and not settings.live_confirmed:
         return Refused("live_not_confirmed")
     number = normalise(f.number)

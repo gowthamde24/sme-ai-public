@@ -28,6 +28,7 @@ export const TERMS: LegalText = {
             "300 WhatsApp messages that your business starts (replies inside WhatsApp's 24 hours, quotes and orders are not counted).",
             "One business phone number, once we have it ready for you.",
             "AI help for your day, within a fair daily limit.",
+            "One search for new customers (Lead Finder) a month. You contact the businesses it finds yourself; the assistant never calls or messages them.",
           ],
         },
         { p: "When one runs out, that one stops until next month (or until we add more). Everything else keeps working. You can see how much you have used. We may change these numbers; we tell you before we do." },

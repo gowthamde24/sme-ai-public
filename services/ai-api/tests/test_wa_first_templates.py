@@ -13,13 +13,13 @@ from app.whatsapp import first_templates
 from tests.test_whatsapp_routes import ACCOUNT, T, World
 
 OFFERS = {"new_collection_offer", "festival_offer"}
-THREE = OFFERS | {"visit_reminder", "visit_confirmation"}   # the templates with a third variable: a label (offers) or the visit's date and time
+THREE = OFFERS | {"visit_reminder", "visit_confirmation", "continue_chat"}   # the templates with a third variable: a label (offers) or the visit's date and time
 
 
 def test_every_first_template_obeys_the_rules_of_meta_and_of_the_database() -> None:
     drafts = first_templates.drafts()
-    assert len(drafts) == 24 and {d["language"] for d in drafts} == {"en", "te", "hi", "kn"}   # 4 templates x 4 languages + 4 templates (2 offers, visit reminder and confirmation) x the 2 reviewed languages (en, te)
-    assert {d["name"] for d in drafts} == {"visit_reminder", "visit_confirmation", "followup_nudge", "catalogue_share", "missed_call_followup", "lead_ack"} | OFFERS
+    assert len(drafts) == 26 and {d["language"] for d in drafts} == {"en", "te", "hi", "kn"}   # 4 templates x 4 languages + 5 templates (2 offers, visit reminder and confirmation, continue_chat) x the 2 reviewed languages (en, te)
+    assert {d["name"] for d in drafts} == {"visit_reminder", "visit_confirmation", "followup_nudge", "catalogue_share", "missed_call_followup", "lead_ack", "continue_chat"} | OFFERS
     for d in drafts:
         b = d["body"]
         assert re.fullmatch(r"[a-z][a-z0-9_]{0,59}", d["name"]) and 10 <= len(b) <= 1024, d
@@ -27,7 +27,7 @@ def test_every_first_template_obeys_the_rules_of_meta_and_of_the_database() -> N
         assert (b.count("{{3}}") == 1) == (d["name"] in THREE), d   # the third variable: a short label (the two offers) or the visit's date and time (reminder, confirmation)
         assert not re.match(r"^\s*\{\{", b) and not re.search(r"\}\}[.!?\s]*$", b), d   # words before and after the variables
         assert not re.search(r"\}\}\s*\{\{", b), d   # never two variables side by side
-        third = {"new_collection_offer": "Silk sarees", "festival_offer": "Diwali"}.get(d["name"], "Sat 22 Nov, 11:00 AM")
+        third = {"new_collection_offer": "Silk sarees", "festival_offer": "Diwali", "continue_chat": "silk sarees"}.get(d["name"], "Sat 22 Nov, 11:00 AM")
         assert first_templates.sample_values(b, d["name"]) == (["Ravi", "Sri Lakshmi Silks", third] if d["name"] in THREE else ["Ravi", "Sri Lakshmi Silks"]), d
         assert not re.search(r"₹|\brs\.?\s?\d|\d\s?%|https?://|www\.|guarantee|promise|discount", b, re.IGNORECASE), "no price, link or promise: " + b
         assert d["category"] in ("utility", "marketing") and d["purpose"] in ("visit", "followup", "info", "lead", "offer")
@@ -40,7 +40,8 @@ def test_every_first_template_obeys_the_rules_of_meta_and_of_the_database() -> N
 def test_the_offers_and_the_visit_messages_exist_in_english_and_telugu_only_until_a_native_reader_has_checked_hindi_and_kannada() -> None:
     assert {(d["name"], d["language"]) for d in first_templates.drafts() if d["name"] in THREE} == {(n, lang) for n in THREE for lang in ("en", "te")}
     every = first_templates.drafts(include_unreviewed=True)
-    assert len(every) == 32 and {(d["name"], d["language"]) for d in every if d["name"] in THREE} == {(n, lang) for n in THREE for lang in ("en", "te", "hi", "kn")}
+    FOUR = THREE - {"continue_chat"}   # continue_chat is en and te only until a native reader has read Hindi and Kannada
+    assert len(every) == 34 and {(d["name"], d["language"]) for d in every if d["name"] in FOUR} == {(n, lang) for n in FOUR for lang in ("en", "te", "hi", "kn")}
     by = {(d["name"], d["language"]): d for d in every}
     # the owner's exact words (16 Nov 2026) for English and Telugu
     assert by[("new_collection_offer", "en")]["body"] == "Hello {{1}}, {{2}} has new arrivals: {{3}}. Visit us or reply here to know more. Reply STOP to unsubscribe."
@@ -92,18 +93,18 @@ def w() -> World:
 def test_seeding_makes_twenty_drafts_once_and_only_for_owner_and_admin(w: World) -> None:
     assert w.call("POST", T + "/whatsapp/templates/first", "a_sales").status_code == 403
     first = w.call("POST", T + "/whatsapp/templates/first", "a_admin")
-    assert first.status_code == 200 and first.json()["created"] == 24 and all(t["status"] == "draft" for t in first.json()["templates"])
+    assert first.status_code == 200 and first.json()["created"] == 26 and all(t["status"] == "draft" for t in first.json()["templates"])
     again = w.call("POST", T + "/whatsapp/templates/first", "a_owner")
-    assert again.json()["created"] == 0 and len(again.json()["templates"]) == 24
+    assert again.json()["created"] == 0 and len(again.json()["templates"]) == 26
     only = World()
     only.call("PUT", T + "/whatsapp/account", "a_owner", ACCOUNT)
-    assert only.call("POST", T + "/whatsapp/templates/first?languages=en,te", "a_owner").json()["created"] == 16
+    assert only.call("POST", T + "/whatsapp/templates/first?languages=en,te", "a_owner").json()["created"] == 18
 
 
 def test_submit_all_sends_each_draft_to_meta_once_and_sync_reads_its_decision_back(w: World) -> None:
     w.call("POST", T + "/whatsapp/templates/first", "a_owner")
     done = w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
-    assert done["submitted"] == 24 and done["refused"] == 0 and len(w.graph.templates_created) == 24
+    assert done["submitted"] == 26 and done["refused"] == 0 and len(w.graph.templates_created) == 26
     assert all(t["status"] == "submitted" for t in done["templates"])
     assert all(c["components"][0]["example"] == {"body_text": [["Ravi", "Sri Lakshmi Silks"]]} for c in w.graph.templates_created if c["name"].removesuffix("_v2") not in THREE), "Meta's samples: a first name and a business name, never a sample message"
     offers = [c for c in w.graph.templates_created if c["name"] in OFFERS]
@@ -133,7 +134,7 @@ def test_one_template_can_be_submitted_alone_with_its_samples(w: World) -> None:
         assert r.status_code == 200 and r.json()["template"]["status"] == "submitted", r.text
     assert sorted((c["name"], c["language"]) for c in w.graph.templates_created) == [("lead_ack", "en"), ("lead_ack", "te")]
     assert all(c["components"][0]["example"] == {"body_text": [["Ravi", "Sri Lakshmi Silks"]]} for c in w.graph.templates_created)
-    assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()["submitted"] == 22, "the other 22 stay drafts until they are submitted"
+    assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()["submitted"] == 24, "the other 24 stay drafts until they are submitted"
 
 
 def test_without_a_connected_number_nothing_goes_to_meta() -> None:
@@ -168,7 +169,7 @@ def test_a_name_meta_already_holds_is_refused_with_its_reason_in_the_answer_and_
     held.graph.meta_has = {("lead_ack", "en"), ("lead_ack", "te")}
     held.call("POST", T + "/whatsapp/templates/first", "a_owner")
     out = held.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
-    assert out["submitted"] == 24 and out["refused"] == 0 and out["failed"] == []
+    assert out["submitted"] == 26 and out["refused"] == 0 and out["failed"] == []
     assert {(r["name"], r["language"], r["meta_name"]) for r in out["renamed"]} == {("lead_ack", "en", "lead_ack_v2"), ("lead_ack", "te", "lead_ack_v2")}
     by = {(t["name"], t["language"]): t for t in out["templates"]}
     assert by[("lead_ack", "en")]["meta_name"] == "lead_ack_v2" and by[("lead_ack", "en")]["status"] == "submitted", "the accepted name is kept on the template"
@@ -179,8 +180,21 @@ def test_a_name_meta_already_holds_is_refused_with_its_reason_in_the_answer_and_
     stuck.graph.meta_has = {(n, "en") for n in ("lead_ack", *(f"lead_ack_v{i}" for i in range(2, 8)))}
     stuck.call("POST", T + "/whatsapp/templates/first", "a_owner")
     out = stuck.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
-    assert out["submitted"] == 23 and out["refused"] == 1 and [(f["name"], f["language"], f["code"]) for f in out["failed"]] == [("lead_ack", "en", "name_exists")]
+    assert out["submitted"] == 25 and out["refused"] == 1 and [(f["name"], f["language"], f["code"]) for f in out["failed"]] == [("lead_ack", "en", "name_exists")]
     assert "lead_ack_v6" in out["failed"][0]["reason"] and out["failed"][0]["meta_message"]
     one = next(t for t in stuck.call("GET", T + "/whatsapp/templates", "a_owner").json()["templates"] if t["name"] == "lead_ack" and t["status"] == "draft")
     r = stuck.call("POST", T + f"/whatsapp/templates/{one['id']}/submit", "a_owner")
     assert r.status_code == 502 and r.json()["error"]["code"] == "whatsapp_refused" and "new name" in r.json()["error"]["message"] and "WhatsApp says" in r.json()["error"]["message"]
+
+
+def test_continue_the_chat_has_three_structured_variables_and_enough_words_around_them() -> None:
+    """Meta refuses a body with too many variables for its length. Its exact limit is not published, so this pins what we know: continue_chat keeps at least 3 plain words per variable in each language
+    (the visit reminder, approved, has 7; the offers 5), and the owner's wording (18 Nov 2026) is exactly this."""
+    ours = {d["language"]: d["body"] for d in first_templates.drafts() if d["name"] == "continue_chat"}
+    assert set(ours) == {"en", "te"}, "only English and Telugu are in the catalogue; Hindi and Kannada wait for a native reader"
+    assert ours["en"] == "Hi {{1}}, you contacted {{2}} about {{3}}. Reply here if you would like to continue."
+    assert ours["te"] == "నమస్కారం {{1}} గారు! మీరు {{3}} గురించి {{2}} ని అడిగారు. కొనసాగించాలంటే ఇక్కడే reply ఇవ్వండి."
+    for lang, body in ours.items():
+        plain = [w for w in re.sub(r"\{\{\d\}\}", " ", body).split() if re.search(r"\w", w)]
+        assert len(plain) / 3 >= 3, (lang, len(plain))
+    assert first_templates.sample_values(ours["en"], "continue_chat") == ["Ravi", "Sri Lakshmi Silks", "silk sarees"]

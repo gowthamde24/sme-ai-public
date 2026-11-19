@@ -49,32 +49,56 @@ def finder(plan_has_lead_finder: bool, pack: str = "textiles") -> tuple[Any, Fak
     return client, repo
 
 
-def test_a_lead_desk_workspace_has_no_lead_finder_and_is_told_where_it_is() -> None:
+def test_a_lead_desk_workspace_has_the_lead_finder_with_one_free_search_a_month() -> None:
+    """Owner, 18 Nov 2026: the Lead Finder is visible on EVERY plan; a plan without it has one free search a calendar month (India time); used up it says so, never hidden."""
     client, repo = finder(False)
     avail = client.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json()
-    assert avail == {"available": False, "source": None, "reason": "not_in_plan", "upgrade_to": "ai_workforce", "audience": "businesses"}
-    refused = client.post(f"{URL}/lead-finder/plan", json={"text": "find new retailers in Jayanagar"}, headers=auth("a_owner"))
-    assert refused.status_code == 403 and refused.json()["error"]["code"] == "not_in_plan"
-    assert repo.searches_rows == {}, "nothing searched, nothing charged"
+    assert avail["available"] is True and avail["access"] == "available" and avail["reason"] == "ok"
+    assert avail["searches_per_month"] == 1 and avail["searches_left_this_month"] == 1
+    assert avail["upgrade"] == {"to": "ai_workforce", "note": "More searches are part of AI Workforce.", "href": "/plans"}
+    planned = client.post(f"{URL}/lead-finder/plan", json={"text": "find new retailers in Jayanagar"}, headers=auth("a_owner"))
+    assert planned.status_code == 201, planned.text
+    assert client.post(f"{URL}/lead-finder/searches/{planned.json()['id']}/approve", headers=auth("a_owner")).status_code == 200
+    used = client.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json()
+    assert used["available"] is True and used["access"] == "limit_reached" and used["searches_left_this_month"] == 0 and used["upgrade"]["to"] == "ai_workforce", "visible, never hidden"
+    refused = client.post(f"{URL}/lead-finder/plan", json={"text": "find new retailers in Malleshwaram"}, headers=auth("a_owner"))
+    assert refused.status_code == 403 and refused.json()["error"]["code"] == "free_search_used"
+    assert len(repo.searches_rows) == 1, "the second search was never planned"
+    assert client.get(f"{URL}/lead-finder/searches", headers=auth("a_owner")).status_code == 200, "what was found stays readable"
 
 
-def test_an_ai_workforce_workspace_keeps_the_lead_finder() -> None:
+def test_an_ai_workforce_workspace_keeps_the_lead_finder_with_no_monthly_limit() -> None:
     client, _ = finder(True)
-    assert client.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json()["available"] is True
+    out = client.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json()
+    assert out["available"] is True and out["access"] == "available" and out["searches_per_month"] is None and out["searches_left_this_month"] is None and out["upgrade"] is None
+
+
+def test_a_viewer_and_a_school_without_data_still_read_hidden() -> None:
+    client, _ = finder(False)
+    viewer = client.get(f"{URL}/lead-finder/availability", headers=auth("a_viewer")).json()
+    assert viewer["available"] is False and viewer["reason"] == "not_for_your_role" and viewer["access"] == "hidden"
+    client2, _ = finder(False, pack="no_such_pack")
+    nothing = client2.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json()
+    assert nothing["access"] == "hidden" and nothing["reason"] == "not_for_this_business"
 
 
 @pytest.mark.parametrize("text", ["find new retailers in Jayanagar", "జయనగర్‌లో కొత్త రీటైలర్లను వెతకండి"])
-def test_in_the_chat_a_lead_desk_workspace_gets_the_part_of_ai_workforce_card(text: str) -> None:
+def test_in_the_chat_a_lead_desk_workspace_gets_the_plan_card_and_after_its_free_search_the_plain_limit_sentence(text: str) -> None:
     llm = Scripted()
     db = FakeTurnDb()
     repo = FakeLeadFinderRepo("textiles", plan_has_lead_finder=False)
     agents = SimpleNamespace(assistant_db=lambda token, run_id: db, assistant_llm=lambda: llm, llm_for=lambda job: (lambda: llm), unavailable=None)
     client, _ = make_client(agents=agents, lead_finder=LeadFinderService(repo, mode="fixture", clock=lambda: NOW))  # type: ignore[arg-type]
-    evs = events(turn(client, text, message=uuid.uuid4()))
-    cards = [d["card"] for n, d in evs if n == "work_card"]
+    first = events(turn(client, text, message=uuid.uuid4()))
+    assert "lead_finder" in [n for n, _ in first] and not [d for n, d in first if n == "work_card"], "every plan gets the plan card"
+    card = next(d for n, d in first if n == "lead_finder")
+    approved = client.post(f"{URL}/lead-finder/searches/{card['search']['id']}/approve", headers=auth("a_owner"))
+    assert approved.status_code == 200, approved.text
+    again = events(turn(client, text, message=uuid.uuid4()))
+    cards = [d["card"] for n, d in again if n == "work_card"]
     assert len(cards) == 1 and cards[0]["kind"] == "cant_do" and cards[0]["reason"] == "not_in_plan" and cards[0]["upgrade_to"] == "ai_workforce" and cards[0]["screen"]["href"] == "/plans"
-    assert "AI Workforce" in text_of(evs) and "lead_finder" not in [n for n, _ in evs]
-    assert llm.requests == [] and repo.searches_rows == {}, "no model call, nothing searched"
+    assert ("AI Workforce" in text_of(again)) and "lead_finder" not in [n for n, _ in again]
+    assert llm.requests == [] and len(repo.searches_rows) == 1, "no model call, no second search"
 
 
 def billing(plan: str | None) -> Any:

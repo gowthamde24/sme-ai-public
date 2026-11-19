@@ -30,6 +30,7 @@ export const PRIVACY_KN: LegalText = {
           },
         },
         { p: "We do not collect your contacts or address book, your precise location, or advertising or tracking data. We use no advertising and no analytics. Our cookies only keep you signed in and remember your language and theme." },
+        { p: "When you press Connect with Facebook, Meta's sign-up window opens and Meta handles that step under its own terms; we load nothing from Meta before that." },
       ],
     },
     {

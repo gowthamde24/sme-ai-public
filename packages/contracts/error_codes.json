@@ -124,6 +124,18 @@
       "extras": []
     },
     {
+      "code": "already_has_number",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "This business already has a phone number. Give it back first.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "already_member",
       "statuses": [
         409
@@ -743,6 +755,18 @@
       "extras": []
     },
     {
+      "code": "contacted_at_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "The time must not be in the future, and not more than 60 days back.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "context_changed",
       "statuses": [
         409
@@ -1342,6 +1366,22 @@
       "default_message": "Not allowed.",
       "wait": false,
       "extras": []
+    },
+    {
+      "code": "free_search_used",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "lead_finder",
+        "main"
+      ],
+      "default_message": "Your free search for this month is used. More searches are part of AI Workforce.",
+      "wait": false,
+      "extras": [
+        "feature",
+        "upgrade_to"
+      ]
     },
     {
       "code": "glance_unavailable",
@@ -2613,8 +2653,7 @@
         403
       ],
       "areas": [
-        "lead_finder",
-        "main"
+        "lead_finder"
       ],
       "default_message": "Finding new customers is part of AI Workforce.",
       "wait": false,
@@ -2764,6 +2803,42 @@
         "notifications"
       ],
       "default_message": "This is not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "number_not_available",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "That number is not available any more. Choose another.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "number_provider_unavailable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "The phone provider did not answer. Try again in a minute.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "numbers_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "Phone numbers are not available right now.",
       "wait": false,
       "extras": []
     },
@@ -3144,6 +3219,18 @@
       "extras": []
     },
     {
+      "code": "phone_kyc_required",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "The phone provider has not accepted your business registration. A number can be taken once it has.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "photo_animated",
       "statuses": [
         422
@@ -3499,6 +3586,18 @@
         "main"
       ],
       "default_message": "A proof of delivery needs a photo and the name of the person who received the goods.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "prospect_no_ai_call",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "Prospects are not called by the assistant. You can call them yourself from your phone or plan a visit.",
       "wait": false,
       "extras": []
     },

@@ -202,6 +202,8 @@ from app.packs.routes import public_router as packs_public_router
 from app.packs.routes import router as packs_router
 from app.phone_kyc.routes import router as phone_kyc_router
 from app.phone_kyc.wiring import build_phone_kyc
+from app.phone_numbers.routes import router as phone_numbers_router
+from app.phone_numbers.wiring import build_phone_numbers
 from app.price_asks.repository import PostgrestPriceAsksRepository
 from app.price_asks.routes import router as price_asks_router
 from app.pricelists.repository import PostgrestPriceListRepository
@@ -445,6 +447,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
             settings, config.rest_url, config.supabase_url, config.anon_key, workspace_secrets
         ),
         phone_kyc=build_phone_kyc(settings, config.rest_url, config.anon_key, workspace_secrets),
+        phone_numbers=build_phone_numbers(
+            settings, config.rest_url, config.anon_key, workspace_secrets
+        ),
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
         ai_team=PostgrestAiTeamRepository(config.rest_url, config.anon_key),
         activity=PostgrestActivityRepository(config.rest_url, config.anon_key),
@@ -1002,10 +1007,10 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "lead_finder_not_available",
         "Finding new customers is not available for this business.",
     ),
-    lead_finder_errors.NotInPlanError: ApiError(
+    lead_finder_errors.FreeSearchUsedError: ApiError(
         403,
-        "not_in_plan",
-        "Finding new customers is part of AI Workforce.",
+        "free_search_used",
+        "Your free search for this month is used. More searches are part of AI Workforce.",
         extra={"feature": "lead_finder", "upgrade_to": "ai_workforce"},
     ),
     lead_finder_errors.SearchCapError: ApiError(
@@ -1492,6 +1497,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(dpdp_me_router)
     app.include_router(speaking_router)
     app.include_router(phone_kyc_router)
+    app.include_router(phone_numbers_router)
     app.include_router(how_speaks_router)
     app.include_router(bootstrap_router)
     app.include_router(today_summary_router)

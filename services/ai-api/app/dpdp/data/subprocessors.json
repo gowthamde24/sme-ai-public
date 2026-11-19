@@ -46,10 +46,10 @@
   },
   {
    "id": "meta_whatsapp",
-   "name": "Meta (WhatsApp Business Platform)",
-   "purpose": "Delivers WhatsApp messages between your business and your customers",
+   "name": "Meta (WhatsApp, lead ads, and the Connect with Facebook sign-up)",
+   "purpose": "Delivers WhatsApp messages between your business and your customers, hands us the lead forms of your Facebook and Instagram ads, and signs you in to connect your WhatsApp number",
    "country": "Global (Meta's data centres)",
-   "data": "Customers' phone numbers and the messages",
+   "data": "Customers' phone numbers and the messages, the answers on your lead forms, and your Facebook sign-in when you connect WhatsApp",
    "link": "https://www.whatsapp.com/legal/business-data-processing-terms"
   },
   {

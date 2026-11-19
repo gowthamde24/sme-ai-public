@@ -7,6 +7,7 @@ Owner decision: real businesses use the product for free at launch; no billing. 
 | call minutes a month | 60 | `billing.plan_overrides.call_minutes` |
 | business-initiated WhatsApp messages a month | 300 | `billing.plan_overrides.whatsapp_messages` |
 | numbers per business | 1 | the Plivo number routes (item 3 of the launch blockers) |
+| Lead Finder searches a month | 1 (India calendar month, any source; planner decision 19 Nov, owner can reverse) | `billing.plan_overrides.lead_finder_per_month`; one business: `app.operator_set_lead_finder_limit(tenant, n)` |
 | AI | fair use, as `free_trial` (Rs 20 a day, Rs 300 a month, hard daily cap 3 times the day figure) | `public.plan_ai_allowances` |
 | assistant requests that spend model money | 30 an hour (120 of any kind) | `agent_limits` / code default |
 
@@ -18,6 +19,8 @@ How it works: a workspace on the plan `early_access` never lapses (`tenants.bill
 select app.operator_set_plan_allowance('early_access', 60, 300);
 -- new workspaces start on early_access from now on (nothing changes until this is run)
 select app.operator_set_new_tenant_plan('early_access');
+-- raise (or take away, with null) one business's Lead Finder searches a month, e.g. Customer Zero
+select app.operator_set_lead_finder_limit('<workspace id>', 5);
 -- put an existing workspace on it
 update public.tenants set plan = 'early_access' where id = '<workspace id>';
 -- enforce the allowances (staging first, for the test; production needs the owner's OK)

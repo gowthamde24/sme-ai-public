@@ -13,13 +13,33 @@ gets **422 `individuals_not_allowed`** from `POST /lead-finder/plan` (any busine
 
 ## 0. `GET /lead-finder/availability` -> 200
 ```json
-{ "available": true, "source": "fixture | places | null", "reason": "ok | not_for_this_business | switched_off | not_for_your_role | not_in_plan", "upgrade_to": "ai_workforce | null", "audience": "businesses | organisations" }
+{ "available": true, "source": "fixture | places | null", "reason": "ok | not_for_this_business | switched_off | not_for_your_role", "upgrade_to": "ai_workforce | null", "audience": "businesses | organisations",
+  "access": "available | limit_reached | hidden", "searches_per_month": 1, "searches_left_this_month": 1,
+  "upgrade": { "to": "ai_workforce", "note": "More searches are part of AI Workforce.", "href": "/plans" } }
 ```
-**`not_in_plan` (5 Nov 2026, owner decision of 4 Nov):** the workspace is on **Lead Desk**; the Lead Finder is part of **AI Workforce**. Show the upgrade card (no price, nothing is charged) where the
-Prospects tab would be, linking to `/plans`. Every other route answers **403 `not_in_plan`** (`extra: { feature: "lead_finder", upgrade_to: "ai_workforce" }`). In the chat, "find new retailers ..."
-gets a `work_card` `cant_do` with `reason: "not_in_plan"` and `upgrade_to: "ai_workforce"` (docs/contracts/assistant-tools.md).
-Use it to show or hide the Prospects tab, the plan card and Settings -> Lead Finder. Never an error for a member: a **Viewer** gets `available: false, reason: "not_for_your_role"` (a Viewer reads
+**Visible on every plan, one free search a month (owner decision, 18 Nov 2026; replaces the 4 Nov `not_in_plan` gate).** A business on a plan that does not carry the Lead Finder (Lead Desk) has **one free search per
+calendar month, India time**; a search counts when it is approved (an unapproved plan or a cancelled search costs nothing); a business whose plan carries it (AI Workforce) has no monthly limit
+(`searches_per_month: null`, `searches_left_this_month: null`, `upgrade: null`; the daily cap of Settings still applies).
+* `access: "available"`: use it. `access: "limit_reached"` (the free search of this month is used): STILL VISIBLE; show the note from `upgrade` and the link; planning another search answers **403 `free_search_used`**
+  (`extra: { feature: "lead_finder", upgrade_to: "ai_workforce" }`, the same code from `approve`); what was found stays readable. `access: "hidden"`: not for this business type (`not_for_this_business`: no module / no data),
+  the platform switch is off (`switched_off`) or a Viewer (`not_for_your_role`): hide every Lead Finder screen, button and word then. **`not_in_plan` is never answered any more** (the value stays in the enum so an older screen still parses).
+* In the chat, "find new customers near Anantapur" (and the Telugu, Hindi and Kannada words) makes the plan card on every plan. When the free search is used the assistant answers with a plain sentence (no plan card, no model call)
+  and a `work_card` `cant_do` with `reason: "not_in_plan"` and `upgrade_to: "ai_workforce"` (docs/contracts/assistant-tools.md): "Your free search for this month is used. More searches are part of AI Workforce ...".
+* The Lead Finder never calls a prospect with the AI (owner decision, 18 Nov 2026, migration 983500): prospects are shown with their contact details and the owner reaches out personally.
+Use `access` to show or hide the Prospects tab, the plan card and Settings -> Lead Finder. Never an error for a member: a **Viewer** gets `available: false, reason: "not_for_your_role", access: "hidden"` (a Viewer reads
 no prospect; every other route answers a Viewer 403).
+
+## 0a. Free early access and the monthly search (planner decision, 19 Nov 2026; the owner can reverse it)
+
+A workspace on the `early_access` plan counts as a plan WITHOUT the Lead Finder: `per_month = 1`, `left` counts down by the searches approved this India calendar month (any source: fixture, mock or places). The operator can raise one business's number (`app.operator_set_lead_finder_limit(tenant, n)`; null takes it away) or the plan's (`billing.plan_overrides.lead_finder_per_month`). A plan that carries the finder (AI Workforce) stays `per_month = null`.
+
+## 0b. "Mark as contacted" (owner, 19 Nov 2026)
+
+`POST /v1/tenants/{t}/prospects/{id}/contacted` (Owner, Admin, Sales) body `{"contacted_at": ISO | omitted = now, "note": string | null}` -> `200 ProspectOut` with `status = "contacted"`, `last_contacted_at`, and the new `contacted_by` (display name of the member, or null) and `contact_note` (string or null).
+
+- `contacted_at` is not in the future (5 minutes of clock slack) and at most 60 days back, else `422 contacted_at_invalid`. `note` is at most 500 characters. A repeat call updates the time and, when a note is sent, the note (an omitted note keeps the old one; there is no undo).
+- A suppressed or "not interested" business answers `409 prospect_state`; an unknown one `404`; a Viewer `403`.
+- It never creates a call, a task or an outreach item. The database refuses any AI call to a prospect (`prospect_no_ai_call`) and any outbox message to one: the message is made as `blocked` with reason `no_opt_in` and nothing is sent. A prospect who writes to us has a proof of request and is a normal lead again, so a reply goes through then.
 
 ## 1. The plan card: `POST /lead-finder/plan` -> 201 `SearchOut` (state `planned`)
 Request (closed; one of `text` or `query`):

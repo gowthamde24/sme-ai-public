@@ -81,7 +81,7 @@ def test_when_google_cannot_answer_the_screen_says_the_details_are_unavailable()
     item = client.get(f"{URL}/prospects", headers=auth("a_owner")).json()["items"][0]
     assert item["details_available"] is False and item["name"] is None and item["phone"] is None and item["fit_score"] == 80
     call = client.post(f"{URL}/prospects/{rid}/simulated-call", json={"persona": "interested"}, headers=auth("a_owner"))
-    assert call.status_code == 409 and call.json()["error"]["code"] == "details_unavailable", call.text
+    assert call.status_code == 409 and call.json()["error"]["code"] == "prospect_no_ai_call", "a real Google prospect is never called, not even in a simulation (owner decision 18 Nov 2026)"
 
 
 def test_with_the_gate_closed_or_the_flag_off_nothing_reaches_a_places_source() -> None:
@@ -98,7 +98,7 @@ def test_google_place_details_asks_only_for_its_field_mask_and_reads_the_answer(
         seen.append(request)
         if request.url.path.endswith("/ChIJ_gone"):
             return httpx.Response(404, json={})
-        return httpx.Response(200, json={"id": "ChIJ_one", "displayName": {"text": "Sri Lakshmi Sarees"}, "nationalPhoneNumber": "098450 12345", "formattedAddress": "12, 4th Block, Jayanagar, Bengaluru, Karnataka 560011, India",
+        return httpx.Response(200, json={"id": "ChIJ_one", "types": ["clothing_store", "establishment"], "displayName": {"text": "Sri Lakshmi Sarees"}, "nationalPhoneNumber": "098450 12345", "formattedAddress": "12, 4th Block, Jayanagar, Bengaluru, Karnataka 560011, India",
                                          "rating": 4.4, "userRatingCount": 210, "businessStatus": "OPERATIONAL", "location": {"latitude": 12.93, "longitude": 77.58}})
 
     source = GooglePlaceDetails("test-key-not-real", client=httpx.Client(transport=httpx.MockTransport(handler)))

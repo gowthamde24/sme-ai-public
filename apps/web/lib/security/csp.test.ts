@@ -134,3 +134,18 @@ describe("Razorpay's Checkout (owner's C9): its addresses only while RAZORPAY_CH
   });
 });
 
+describe("Meta's Embedded Signup (the WhatsApp page only)", () => {
+  it("adds the frames and connections of the SDK only when asked; never a script host, never a wildcard", () => {
+    const off = buildCsp("n", false);
+    expect(off).not.toContain("facebook.com");
+    const on = buildCsp("n", false, null, false, null, false, true);
+    expect(on).toContain("frame-src https://www.facebook.com https://web.facebook.com");
+    expect(on).toContain("connect-src 'self' https://graph.facebook.com https://www.facebook.com https://web.facebook.com");
+    expect(on).toMatch(/script-src 'self' 'nonce-n' 'strict-dynamic'(;|$)/);
+    expect(on).not.toContain("*");
+  });
+  it("sits next to the others in one frame-src", () => {
+    expect(buildCsp("n", false, null, true, null, true, true)).toMatch(/frame-src https:\/\/challenges\.cloudflare\.com https:\/\/api\.razorpay\.com https:\/\/www\.facebook\.com https:\/\/web\.facebook\.com/);
+  });
+});
+

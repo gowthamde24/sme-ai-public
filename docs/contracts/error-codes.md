@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (414)
+## Codes (422)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -26,6 +26,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `agents_disabled` | 409 | assistant, main |  |  | Agents are not enabled for this workspace. |
 | `agents_unavailable` | 503 | agent_runs |  |  | Agents are not available right now. |
 | `ai_team_unavailable` | 503 | ai_team |  |  | This is not available right now. |
+| `already_has_number` | 409 | phone_numbers |  |  | This business already has a phone number. Give it back first. |
 | `already_member` | 409 | main |  |  | You are already a member of that workspace. |
 | `already_sent` | 409 | outbox |  |  | This message was already sent. |
 | `already_voided` | 409 | main |  |  | That was already voided. |
@@ -76,6 +77,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `consent_sentence_mismatch` | 422 | main |  |  | The sentence does not match the one to read. Ask for it again. |
 | `consent_source_required` | 422 | assistant_work |  |  | Say how these people agreed to be contacted (they walked in, they asked us, or they are existing customers). |
 | `contact_suppressed` | 409 | main |  |  | The contact is suppressed; lift the suppression first. |
+| `contacted_at_invalid` | 422 | lead_finder |  |  | The time must not be in the future, and not more than 60 days back. |
 | `context_changed` | 409 | assistant_context |  | current | Someone else saved these notes first. Read the new text and save again. |
 | `cooling_off` | 409 | main |  |  | The waiting period has not ended yet. Try again after it. |
 | `correction_invalid` | 422 | telephony |  |  | A note can't hold a phone number or an e-mail address. |
@@ -125,6 +127,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `followup_cadence_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
 | `followups_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
 | `forbidden` | 403 | assistant_work, browser_voice, connectors, errors, hardening, lead_sources, main, whatsapp |  |  | Not allowed. |
+| `free_search_used` | 403 | lead_finder, main |  | feature, upgrade_to | Your free search for this month is used. More searches are part of AI Workforce. |
 | `glance_unavailable` | 503 | glance |  |  | This is not available right now. |
 | `goodwill_limit` | 409 | admin |  |  | That is over the goodwill limit: ₹3,000 per business in 30 days. |
 | `google_calendar_needs_reconnect` | 409 | google_calendar |  |  | Connect Google Calendar again: Google no longer accepts the old permission. |
@@ -227,7 +230,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_found` | 404 | assistant, assistant_work, connectors, errors, lead_sources, main |  |  | Not found. |
 | `not_generated` | 404 | ai_team |  |  | Today's stand-up has not been made yet. |
 | `not_in_a_state_for_this` | 409 | connectors |  |  | This cannot be done in its present state. |
-| `not_in_plan` | 403 | lead_finder, main |  | feature, upgrade_to | Finding new customers is part of AI Workforce. |
+| `not_in_plan` | 403 | lead_finder |  | feature, upgrade_to | Finding new customers is part of AI Workforce. |
 | `not_lapsed` | 409 | main |  |  | Your plan has not ended, so there is nothing to start again. |
 | `not_on_sandbox_list` | 403 | telephony |  |  | This number is not answered here. |
 | `not_qualified` | 409 | lead_finder |  |  | Only a qualified call has a quote suggestion. Run the call first. |
@@ -240,6 +243,9 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `nothing_to_test` | 409 | lead_sources |  |  | There is nothing to test for this source yet. |
 | `nothing_to_undo` | 409 | assistant_work |  |  | This change cannot be undone. |
 | `notifications_unavailable` | 503 | notifications |  |  | This is not available on this system. |
+| `number_not_available` | 409 | phone_numbers |  |  | That number is not available any more. Choose another. |
+| `number_provider_unavailable` | 502 | phone_numbers |  |  | The phone provider did not answer. Try again in a minute. |
+| `numbers_unavailable` | 503 | phone_numbers |  |  | Phone numbers are not available right now. |
 | `open_payment_link` | 409 | connectors |  |  | This order already has an open payment link. |
 | `order_changed` | 409 | main |  |  | The order changed while you were working on it. Reload it and try again. |
 | `order_closed` | 409 | main |  |  | This order is closed. |
@@ -271,6 +277,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `payment_not_verified` | 402 | pricing |  |  | The payment could not be verified. Nothing was added. |
 | `payment_provider_failed` | 502 | connectors |  |  | The payment service could not make the link. Nothing was sent to the customer. |
 | `payment_required` | 422 | pricing |  |  | This change has an amount to pay. Pay it first. |
+| `phone_kyc_required` | 409 | phone_numbers |  |  | The phone provider has not accepted your business registration. A number can be taken once it has. |
 | `photo_animated` | 422 | catalogue |  |  | Use a still photo, not an animation. |
 | `photo_files_missing` | 409 | main |  |  | The photo did not finish uploading. Try again. |
 | `photo_too_big` | 422 | catalogue |  |  | That photo has too many pixels. Use a smaller one. |
@@ -300,6 +307,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `privacy_state` | 409 | main |  |  | That cannot be done in the state it is in now. Reload and look again. |
 | `privacy_unavailable` | 503 | dpdp, privacy |  |  | This is not available on this system. |
 | `proof_incomplete` | 422 | main |  |  | A proof of delivery needs a photo and the name of the person who received the goods. |
+| `prospect_no_ai_call` | 409 | lead_finder |  |  | Prospects are not called by the assistant. You can call them yourself from your phone or plan a visit. |
 | `prospect_state` | 409 | lead_finder, main |  |  | That is not possible in the state it is in now. |
 | `provider_unreachable` | 502 | lead_sources |  |  | The test lead did not arrive. Try again in a minute. |
 | `purchase_id_used` | 409 | main |  |  | That purchase number was already used for a different pack. |

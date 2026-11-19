@@ -184,7 +184,7 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
     # 12 Nov 2026: what the form sent and what the call will use (kinds only, never the text): form=absent means the form sent nothing and the Owner's default was used
     log.info("call_place introduce_form=%s introduce_used=%s tone_sent=%s", one_line(body.introduce_as.kind) if body.introduce_as is not None else "absent", one_line(chosen_intro[0]), one_line(body.tone or "absent"))
     try:
-        placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal, tone=body.tone or tone_keyword(body.goal) or _pack_tone(runtime, ctx), owner_test=True,
+        placed = placer.place(ctx.principal.token, ctx.tenant.id, to, approval_kind="owner_test", language=body.language, business=ctx.tenant.name, goal=body.goal, tone=body.tone or tone_keyword(body.goal) or _pack_tone(runtime, ctx), owner_test=True,
                               introduce=chosen_intro)
     except OutboundRefused as refused:
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None

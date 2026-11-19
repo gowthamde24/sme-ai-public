@@ -5,7 +5,7 @@ import type { Say } from "../words";
 /** The pure parts of the WhatsApp screens (job CC, screen 5). */
 export const STATE_TONE: Record<ConnectionState, "neutral" | "amber" | "green" | "red"> = { not_connected: "neutral", connecting: "amber", connected: "green", needs_attention: "red" };
 export const STATE_MOOD: Record<ConnectionState, "idle" | "thinking" | "answering" | "resting"> = { not_connected: "resting", connecting: "thinking", connected: "answering", needs_attention: "resting" };
-export const WA_CODES = ["whatsapp_unavailable", "whatsapp_not_configured", "validation_error"] as const;
+export const WA_CODES = ["whatsapp_unavailable", "whatsapp_not_configured", "validation_error", "whatsapp_signup_invalid", "whatsapp_no_access", "whatsapp_connect_refused"] as const;
 export const waSentence = (code: string, t: Say): string | null => ((WA_CODES as readonly string[]).includes(code) ? t(`wa.err.${code}`) : null);
 
 /** The ids as WhatsApp's console shows them: digits only (the API checks again). */

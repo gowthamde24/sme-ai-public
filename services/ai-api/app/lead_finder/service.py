@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 import uuid
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from app.errors import ApiError
@@ -25,6 +25,7 @@ from app.lead_finder.models import (
     ActionsIn,
     ActionsOut,
     AvailabilityOut,
+    ContactedIn,
     PlanIn,
     ProspectListOut,
     ProspectOut,
@@ -37,6 +38,7 @@ from app.lead_finder.models import (
     SimulateIn,
     StatsOut,
     TurnOut,
+    UpgradeNote,
 )
 from app.lead_finder.repository import LeadFinderRepository
 from app.lead_finder.sources import (
@@ -68,9 +70,17 @@ def not_available() -> ApiError:
     return ApiError(403, "lead_finder_not_available", "Finding new customers is not available for this business.")
 
 
+UPGRADE_NOTE = "More searches are part of AI Workforce."
+
+
 def not_in_plan() -> ApiError:
-    """The workspace's plan (Lead Desk) does not have the Lead Finder: it is part of AI Workforce. No charge: the screen shows an upgrade link."""
+    """No longer raised (owner, 18 Nov 2026: every plan has the Lead Finder). The code stays in the source because a published code is never taken away (a screen or a script may still know it)."""
     return ApiError(403, "not_in_plan", "Finding new customers is part of AI Workforce.", extra={"feature": "lead_finder", "upgrade_to": "ai_workforce"})
+
+
+def free_search_used() -> ApiError:
+    """The free search of this calendar month is used (a plan without the Lead Finder has one a month; owner decision 18 Nov 2026). No charge: the screen shows an upgrade link."""
+    return ApiError(403, "free_search_used", "Your free search for this month is used. " + UPGRADE_NOTE, extra={"feature": "lead_finder", "upgrade_to": "ai_workforce"})
 
 
 INDIVIDUALS = {
@@ -144,9 +154,7 @@ class LeadFinderService:
         data = packdata.for_pack(self.repo.pack_id(token, tenant_id))
         if data is None:
             raise not_available()
-        if not self.repo.entitled(token, tenant_id):
-            raise not_in_plan()
-        return data
+        return data   # no refusal for the plan: every plan has the Lead Finder, one free search a month where the plan does not carry it (see allowance)
 
     def _stock(self, token: str, tenant_id: uuid.UUID, data: packdata.PackLeadFinder) -> list[decide.StockLine]:
         """Our stock, when this business type matches prospects against it (a school sells no stock: nothing is read)."""
@@ -199,16 +207,32 @@ class LeadFinderService:
             out.append({**r, "name": p.name, "category": p.category, "area": p.area, "phone": p.phone, "website": p.website, "rating": p.rating, "review_count": p.review_count, "details_available": True})
         return out
 
+    def free_left(self, token: str, tenant_id: uuid.UUID) -> tuple[int | None, int | None]:
+        """(searches per month, searches left this month) of this business; (None, None) = no monthly limit. A failure to tell is NO limit here (the database refuses the approval itself)."""
+        try:
+            got = self.repo.allowance(token, tenant_id)
+        except Exception as exc:  # noqa: BLE001 - the screen still shows the feature
+            logger.warning("lead finder allowance unknown: %s", exc.__class__.__name__)
+            return None, None
+        per, left = got.get("per_month"), got.get("left")
+        return (int(per) if isinstance(per, int) else None, int(left) if isinstance(left, int) else None)
+
     def availability(self, token: str, tenant_id: uuid.UUID) -> AvailabilityOut:
         try:
             data = self.data_for(token, tenant_id)
         except ApiError as exc:
-            reason = {"lead_finder_off": "switched_off", "not_in_plan": "not_in_plan"}.get(exc.code, "not_for_this_business")
-            return AvailabilityOut(available=False, source=None, reason=reason, upgrade_to="ai_workforce" if reason == "not_in_plan" else None)  # type: ignore[arg-type]
+            reason = "switched_off" if exc.code == "lead_finder_off" else "not_for_this_business"
+            return AvailabilityOut(available=False, source=None, reason=reason, access="hidden")  # type: ignore[arg-type]
         except NotForThisBusinessError:
-            return AvailabilityOut(available=False, source=None, reason="not_for_this_business")
+            return AvailabilityOut(available=False, source=None, reason="not_for_this_business", access="hidden")
         ctx = self.repo.context(token, tenant_id)
-        return AvailabilityOut(available=True, source=self.source_for(data, bool(ctx.get("real_data_open"))).provider, reason="ok", audience=data.audience)  # type: ignore[arg-type]
+        per, left = self.free_left(token, tenant_id)
+        limited = left == 0
+        return AvailabilityOut(
+            available=True, source=self.source_for(data, bool(ctx.get("real_data_open"))).provider, reason="ok", audience=data.audience,  # type: ignore[arg-type]
+            access="limit_reached" if limited else "available", searches_per_month=per, searches_left_this_month=left,
+            upgrade=UpgradeNote(note=UPGRADE_NOTE) if per is not None else None,
+        )
 
     # ------------------------------------------------------------------------------------------------------------------- settings
     def settings(self, token: str, tenant_id: uuid.UUID) -> SettingsOut:
@@ -229,6 +253,8 @@ class LeadFinderService:
         data = self.data_for(token, tenant_id)
         if intent.names_individuals(body.text or body.query or ""):
             raise individuals_not_allowed(data)
+        if self.free_left(token, tenant_id)[1] == 0:
+            raise free_search_used()   # the free search of this month is used: said at once, not after the plan card
         if body.text:
             parsed = intent.parse(body.text, data)
             if parsed is None:
@@ -343,6 +369,17 @@ class LeadFinderService:
                 results.append(ActionResultOut(id=pid, ok=False, status=None, error=code))
         return ActionsOut(results=results)
 
+    def mark_contacted(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, body: ContactedIn) -> ProspectOut:
+        """The owner reached the business personally: it moves to `contacted` (never to a call queue; the database refuses any AI call to a prospect). Again = a new time and note."""
+        self.data_for(token, tenant_id)
+        now = self._clock()
+        if body.contacted_at is not None:
+            at = body.contacted_at if body.contacted_at.tzinfo else body.contacted_at.replace(tzinfo=UTC)
+            if at > now + timedelta(minutes=5) or at < now - timedelta(days=60):
+                raise ApiError(422, "contacted_at_invalid", "The time must not be in the future, and not more than 60 days back.")
+        row = self.repo.mark_contacted(token, tenant_id, prospect_id, body.contacted_at, body.note)
+        return prospect_out(self.live(token, tenant_id, [row])[0])
+
     def redecide(self, token: str, tenant_id: uuid.UUID) -> RedecideOut:
         """Prospects that waited for the calling hours or the day's cap are decided again, and so are those that need the Owner only for a reason that can change (REDECIDE_NEEDS). The worker can call this;
         so can the screen."""
@@ -372,6 +409,8 @@ class LeadFinderService:
     def simulate_call(self, token: str, tenant_id: uuid.UUID, business: str, prospect_id: uuid.UUID, body: SimulateIn) -> SimulatedCallOut:
         data = self.data_for(token, tenant_id)
         row = self.live(token, tenant_id, [self.repo.prospect_get(token, tenant_id, prospect_id)])[0]
+        if row.get("source") == "google_maps":   # a real business from Google Maps is never "called", not even in a simulation (owner decision 18 Nov 2026: prospects are never AI-called; the owner reaches out personally)
+            raise ApiError(409, "prospect_no_ai_call", "Prospects are not called by the assistant. You can call them yourself from your phone or plan a visit.")
         if row.get("status") != "call_ready" or row.get("suppressed"):
             raise ApiError(409, "prospect_state", "Only a business marked ready to call can be called.")
         if row.get("details_available") is False:

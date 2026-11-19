@@ -76,7 +76,7 @@ class TaskRunner:
         if channel in ("call", "both"):
             called = self._dialer.call(
                 business=tenant_name, language=language, questions=plan.get("questions") or [], template=task.get("template", "custom"), seed=f"{task['id']}|{row['contact_id']}",
-                phone=str(row.get("phone") or ""), token=token, tenant_id=tenant_id, goal=_goal_with_notes(plan), person_name=real_name(row.get("name")) or "",
+                phone=str(row.get("phone") or ""), token=token, tenant_id=tenant_id, goal=_goal_with_notes(plan), person_name=real_name(row.get("name")) or "", task_id=uuid.UUID(str(task["id"])),
             )
             result["simulated"] = called.simulated   # a real call is never labelled simulated
             if called.transcript and not has_ai_disclosure(called.transcript[0]["text"]):

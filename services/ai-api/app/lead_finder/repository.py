@@ -5,13 +5,14 @@
 from __future__ import annotations
 
 import uuid
+from datetime import datetime
 from typing import Any, Protocol
 
 import httpx
 
 from app.lead_finder.errors import (
+    FreeSearchUsedError,
     NotForThisBusinessError,
-    NotInPlanError,
     ProspectStateError,
     SearchCapError,
 )
@@ -33,16 +34,17 @@ class LeadFinderRepository(Protocol):
     def stats(self, token: str, tenant_id: uuid.UUID, search_id: uuid.UUID | None) -> dict[str, Any]: ...
     def decisions_apply(self, token: str, tenant_id: uuid.UUID, items: list[dict[str, Any]]) -> int: ...
     def act(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, action: str) -> dict[str, Any]: ...
+    def mark_contacted(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, contacted_at: datetime | None, note: str | None) -> dict[str, Any]: ...
     def call_finish(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, call_id: uuid.UUID, result: str, qualification: dict[str, Any] | None) -> dict[str, Any]: ...
     def pack_id(self, token: str, tenant_id: uuid.UUID) -> str | None: ...
     def module_on(self, token: str, tenant_id: uuid.UUID) -> bool: ...
-    def entitled(self, token: str, tenant_id: uuid.UUID) -> bool: ...
+    def allowance(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def stock(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
 
 
 class PostgrestLeadFinderRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
-        self._rpc = RpcClient(rest_url, anon_key, {"SM971": NotForThisBusinessError, "SM972": SearchCapError, "SM973": ProspectStateError, "SM974": NotInPlanError}, client=client)
+        self._rpc = RpcClient(rest_url, anon_key, {"SM971": NotForThisBusinessError, "SM972": SearchCapError, "SM973": ProspectStateError, "SM974": FreeSearchUsedError}, client=client)
 
     def close(self) -> None:
         self._rpc.close()
@@ -90,6 +92,9 @@ class PostgrestLeadFinderRepository:
     def act(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, action: str) -> dict[str, Any]:
         return self._rpc.object(token, "prospect_act", {"p_tenant_id": str(tenant_id), "p_id": str(prospect_id), "p_action": action})
 
+    def mark_contacted(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, contacted_at: datetime | None, note: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "prospect_mark_contacted", {"p_tenant_id": str(tenant_id), "p_id": str(prospect_id), "p_contacted_at": contacted_at.isoformat() if contacted_at else None, "p_note": note})
+
     def call_finish(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, call_id: uuid.UUID, result: str, qualification: dict[str, Any] | None) -> dict[str, Any]:
         return self._rpc.object(token, "prospect_call_finish", {"p_tenant_id": str(tenant_id), "p_id": str(prospect_id), "p_call_id": str(call_id), "p_result": result, "p_qualification": qualification})
 
@@ -102,10 +107,9 @@ class PostgrestLeadFinderRepository:
         rows = self._rpc.array(token, "workspace_modules", {"p_tenant_id": str(tenant_id)})
         return any(r.get("module") == "lead_finder" and r.get("enabled") is True for r in rows)
 
-    def entitled(self, token: str, tenant_id: uuid.UUID) -> bool:
-        """The plan's switch (public.workspace_entitlements): AI Workforce has the Lead Finder, Lead Desk does not."""
-        out = self._rpc.object(token, "workspace_entitlements", {"p_tenant_id": str(tenant_id)})
-        return bool((out.get("features") or {}).get("lead_finder"))
+    def allowance(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        """The free search of this calendar month (India time): {entitled, per_month (1, or null when the plan carries the Lead Finder), used, left (null = no limit)}."""
+        return self._rpc.object(token, "lead_finder_allowance", {"p_tenant_id": str(tenant_id)})
 
     def stock(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         return self._rpc.array(token, "catalogue_search", {"p_tenant_id": str(tenant_id), "p_limit": 50})
