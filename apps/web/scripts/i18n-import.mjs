@@ -3,7 +3,7 @@
 // A row with text in "owner-edit" replaces the string and becomes "reviewed". A row with no edit whose
 // status the owner changed to "reviewed" is accepted as it is. With --blank-is-approved (a sheet that says "empty = approved", like the Customer Zero week-one sheet) a row left empty is accepted as reviewed too. Edits that change the {placeholders} are refused.
 import { readFileSync } from "node:fs";
-import { existsSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import path from "node:path";
 import { SETS, applyOwnerSheet, applyReviewCsv, isOwnerSheet, loadSets, saveSet } from "./lib/i18n-data.mjs";
 
@@ -18,7 +18,12 @@ if (isOwnerSheet(readFileSync(file, "utf8"))) {
   // the owner's Customer Zero sheet: `--drafts` writes the proposed Telugu as drafts (nothing reviewed); otherwise it is his returned sheet and what he approved becomes reviewed
   const mode = args.includes("--drafts") ? "drafts" : "approve";
   const packFile = path.join(import.meta.dirname, "../i18n/review/pack-labels-reviewed.json");
-  const packReviewed = existsSync(packFile) ? JSON.parse(readFileSync(packFile, "utf8")) : { te: {}, hi: {}, kn: {} };
+  let packReviewed = { te: {}, hi: {}, kn: {} };
+  try {
+    packReviewed = JSON.parse(readFileSync(packFile, "utf8")); // (read, not "exists then read": the file may change in between)
+  } catch (e) {
+    if (e?.code !== "ENOENT") throw e;
+  }
   const r = applyOwnerSheet(sets, readFileSync(file, "utf8"), { mode, packReviewed });
   for (const e of r.errors) console.error("  - " + e);
   if (mode === "drafts") console.log(`${r.written} Telugu draft(s) written (still drafts); ${r.skippedHumanOnly.length} consent / money / legal line(s) skipped (they stay English until he approves them).`);
