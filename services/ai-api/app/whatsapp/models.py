@@ -32,6 +32,7 @@ class ConnectIn(_Strict):
     waba_id: Annotated[str, StringConstraints(pattern=r"^[0-9]{5,30}$")]
     phone_number_id: Annotated[str, StringConstraints(pattern=r"^[0-9]{5,30}$")]
     code: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9_.~-]{10,512}$")]   # required (18 Nov 2026): the signup must be proved ours
+    coexistence: bool = False   # the shop kept its WhatsApp Business app on this number (Meta's event FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING); only sent when /connect/config lists "coexistence" in onboarding_types
 
 
 class TemplateIn(_Strict):

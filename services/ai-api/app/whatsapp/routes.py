@@ -164,7 +164,7 @@ def connect_config(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
     """What the browser needs to open Meta's Embedded Signup: our public app id and the signup configuration id. `available` is false until both are set."""
     wa = _wa(runtime)
     missing = [name for name, ok in (("app_id", bool(wa.app_id)), ("config_id", bool(wa.config_id)), ("app_secret", wa.app_secret is not None), ("platform_token", wa.tokens.get("default") is not None), ("graph", wa.graph is not None)) if not ok]
-    return {"available": not missing, "app_id": wa.app_id, "config_id": wa.config_id, "graph_version": wa.graph_version, "missing": missing}
+    return {"available": not missing, "app_id": wa.app_id, "config_id": wa.config_id, "graph_version": wa.graph_version, "missing": missing, "onboarding_types": ["cloud_api", "coexistence"]}
 
 
 @router.post("/whatsapp/connect")
@@ -205,7 +205,7 @@ def connect_whatsapp(body: ConnectIn, ctx: OwnerStrong, runtime: RuntimeDep) -> 
         saved = wa.repository.account_save(
             ctx.principal.token,
             ctx.tenant.id,
-            {"p_waba_id": body.waba_id, "p_phone_number_id": body.phone_number_id, "p_display_phone": display[:24] if isinstance(display, str) and len(display) >= 5 else None, "p_coexistence": False, "p_token_ref": "default"},
+            {"p_waba_id": body.waba_id, "p_phone_number_id": body.phone_number_id, "p_display_phone": display[:24] if isinstance(display, str) and len(display) >= 5 else None, "p_coexistence": body.coexistence, "p_token_ref": "default"},
         )
     except Exception:
         if not already_subscribed:   # a business that is already connected on this account keeps its live subscription
