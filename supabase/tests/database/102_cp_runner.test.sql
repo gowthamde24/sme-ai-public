@@ -284,7 +284,7 @@ insert into public.lead_arrivals (tenant_id, lead_id, contact_id, source_tag, ki
   (tests.tid('a'), tests.rid('k2_l'), tests.rid('k2'), 'website_form', 'first', '2026-12-02T20:15:00+05:30');
 select is(pg_temp.sc(format($$select app.campaign_submit(%L, %L, %L, %L, 'Thank you for contacting us.', 'en', true)$$, tests.uid('outsider'), tests.rid('k1_m'), tests.tid('a'), tests.rid('k1_l'))), 'ok', 'K0 the thank-you is submitted');
 select is((select scheduled_for from public.outbox_messages where id = tests.rid('k1_m')), '2026-12-02T22:15:00+05:30'::timestamptz, 'K1 a FRESH form (5 minutes old) at 22:15: the thank-you goes AT ONCE');
-select pg_temp.sc(format($$select app.campaign_submit(%L, %L, %L, %L, 'Thank you for contacting us.', 'en', true)$$, tests.uid('outsider'), tests.rid('k2_m'), tests.tid('a'), tests.rid('k2_l')));
+select is(pg_temp.sc(format($$select app.campaign_submit(%L, %L, %L, %L, 'Thank you for contacting us.', 'en', true)$$, tests.uid('outsider'), tests.rid('k2_m'), tests.tid('a'), tests.rid('k2_l'))), 'ok', 'K1b the old import is submitted');
 select is((select scheduled_for from public.outbox_messages where id = tests.rid('k2_m')), '2026-12-03T09:00:00+05:30'::timestamptz, 'K2 a 2-hour-old import at 22:15: it waits for 09:00');
 insert into public.enquiries (id, tenant_id, lead_id, contact_id, channel, received_at, body) values (tests.rid('k3_e'), tests.tid('a'), tests.rid('k3_l'), tests.rid('k3'), 'whatsapp', '2026-11-10T19:30:00+05:30', 'Do you have silk sarees?');
 select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('k3_l'), 'reply_to_inbound', '2026-11-10T23:00:00+05:30'::timestamptz), true, 'K3 a REPLY to the customer''s own message (3.5 h earlier, inside the 24 h window) at 23:00 goes at once');
