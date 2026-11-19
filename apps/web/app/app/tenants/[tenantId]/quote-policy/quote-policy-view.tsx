@@ -5,7 +5,7 @@ import { formatBps, formatDate, formatRupees } from "@/lib/api/quotes";
 
 import { LocalTime } from "../../../local-time";
 import { JobChip } from "@/components/v2/app/ds/JobChip";
-import { MoreChoices } from "@/components/v2/app/jobs/rules/parts";
+import { MoreDetails } from "@/components/v2/app/settings/MoreDetails";
 import { jbCard, jbHeading, jbHelp } from "@/components/v2/app/settings/simple-b-styles";
 import { detailsBox, kvList, listItemCard, listPlain, metaLine, noteBox, pageH1, summaryLine } from "@/components/v2/app/ui";
 import { Rich } from "@/components/v2/app/rich";
@@ -80,7 +80,7 @@ export function QuotePolicyView({ versions, today, form, words, embedded = false
       <p className="m-0 text-[16px] leading-snug text-ink">{t("jobs.set.b.q.now.valid", { n: v.validity_days })}</p>
       <p className="m-0 text-[16px] leading-snug text-ink">{t("jobs.set.b.q.now.advance", { a: formatBps(v.new_advance_bps), b: formatBps(v.repeat_advance_bps) })}</p>
       <p className="m-0 text-[16px] leading-snug text-ink">{t("jobs.set.b.q.now.balance", { a: v.new_net_days, b: v.repeat_net_days })}</p>
-      <MoreChoices title={t("jobs.set.b.more")} sub={t("jobs.set.b.q.more_sub")}>
+      <MoreDetails title={t("jobs.set.b.more")} sub={t("jobs.set.b.q.more_sub")}>
         <dl className={kvList}>
           <dt>{t("qp.gst_rate_prices_typed_by_hand")}</dt>
           <dd>{`${formatBps(v.gst_rate_bps)} from ${formatDate(v.gst_effective_from)}`}</dd>
@@ -96,7 +96,7 @@ export function QuotePolicyView({ versions, today, form, words, embedded = false
         <p className={jbHelp}>
           <Rich t={t} k="qp.published_line" with={{ time: <LocalTime iso={v.created_at} /> }} />
         </p>
-      </MoreChoices>
+      </MoreDetails>
     </li>
   );
 

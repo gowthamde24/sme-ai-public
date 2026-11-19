@@ -6,7 +6,7 @@ import type { Part } from "@/lib/api/part";
 
 import { card, h2 } from "../cc/kit";
 import { PartProblem } from "../cc/PartProblem";
-import { MoreChoices } from "../jobs/rules/parts";
+import { MoreDetails } from "../settings/MoreDetails";
 import { link, listPlain } from "../ui";
 import { makeT, type Words } from "../words";
 import { ConsentListView } from "./ConsentList";
@@ -58,13 +58,13 @@ export function PrivacySection({ tenantId, words, role, email, workspaceName, ex
           <PartProblem kind={myDeletions.ok ? (workspaceDeletions && !workspaceDeletions.ok ? workspaceDeletions.kind : "other") : myDeletions.kind} retryAfter={myDeletions.ok ? undefined : myDeletions.retryAfter} words={words} title={t("prx.del.account.title")} />
         )}
         {dpdp ? <GrievanceForm words={words} lang={lang} action={dpdp.grievance} defaults={{ name: dpdp.name, contact: email }} days={dpdp.days} email={dpdp.privacyEmail} /> : null}
-        <MoreChoices title={t("jobs.set.b.more")} sub={t("jobs.set.b.priv.more_sub")}>
+        <MoreDetails title={t("jobs.set.b.more")} sub={t("jobs.set.b.priv.more_sub")}>
           {consent ? consent.ok ? <ConsentListView tenantId={tenantId} words={words} list={consent.data} /> : <PartProblem kind={consent.kind} retryAfter={consent.retryAfter} words={words} title={t("prx.consent.title")} /> : null}
           <h2 id="prx-more-h" className={h2}>
             {t("prx.more.title")}
           </h2>
           {more}
-        </MoreChoices>
+        </MoreDetails>
       </div>
     );
   }
