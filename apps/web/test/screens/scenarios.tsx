@@ -798,6 +798,14 @@ add({ id: "live-call-flag-off", roles: ["owner", "viewer"], render: async () => 
 add({ id: "my-assistant-flag-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "billing-flag-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "plans-flag-off", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/plans/page")).default(props({})), handlers: (role) => base(role) });
+// the new Settings cards (DESIGN_V6) with the staging-only link to the preview (PREVIEW_JOBS=1): the link is drawn below the cards
+add({
+  id: "settings-v6-preview-staging",
+  roles: ["owner"],
+  env: { DESIGN_V6: "1", PREVIEW_JOBS: "1" },
+  render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, {})),
+  handlers: (role) => ({ ...base(role), getProfile: () => parseProfile({ name: "Pavers Corner (synthetic)", town: "Guntur", languages: ["en", "te"], setup_complete: true }) }),
+});
 add({ id: "settings-business-edit", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "business" })), handlers: (role) => ({ ...base(role), getProfile: () => parseProfile({ name: "Pavers Corner (synthetic)", town: "Guntur", languages: ["en", "te"], setup_complete: true }) }) });
 add({ id: "settings-business-type", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "business" })), handlers: (role) => ({ ...base(role), listPacks: async () => (await import("@/lib/packs/pack-test-kit")).packsWire().packs.map(parsePackSummary), getWorkspaceProfile: () => parseWorkspaceProfile({ name: "Pavers Corner (synthetic)", type: "hardware_store", type_name: "Hardware store", type_label: null, city: "Guntur", phone: "+00 000 000 0001", languages: ["en", "te"], logo_url: null, name_used_in: ["menu_header", "assistant_greeting", "voice_preview", "call_opening", "whatsapp_opening"], updated_at: null }) }) });
 add({ id: "settings-business-fresh", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "business" })), handlers: (role) => ({ ...base(role), getWorkspaceProfile: () => parseWorkspaceProfile({ name: "My business", type: "other", type_name: null, type_label: "Pet grooming (synthetic)", city: null, phone: null, languages: [], logo_url: null, name_used_in: ["menu_header"], updated_at: null }) }) });

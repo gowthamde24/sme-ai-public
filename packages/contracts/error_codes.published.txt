@@ -10,6 +10,7 @@ agents_unavailable
 ai_team_unavailable
 already_has_number
 already_member
+already_queued
 already_sent
 already_voided
 archived
@@ -71,6 +72,7 @@ customer_phone_needed
 customer_phone_unusable
 customer_stopped
 daily_cap_exceeded
+daily_limit
 date_out_of_range
 date_past
 deliveries_unavailable
@@ -119,6 +121,7 @@ google_calendar_secret_unavailable
 google_calendar_try_later
 google_calendar_unavailable
 held_by_support
+hello_not_approved
 http_error
 image_too_large
 import_file_changed
@@ -173,6 +176,7 @@ line_not_found
 live_not_available
 locked_for_business_type
 mapping_required_missing
+marketing_blocked
 marks_bad_request
 marks_count_changed
 marks_file_changed
@@ -201,6 +205,7 @@ no_speech
 no_subscription
 no_template
 no_text_found
+no_whatsapp
 nobody_to_ask
 not_a_search
 not_an_answer
@@ -220,6 +225,7 @@ not_on_sandbox_list
 not_qualified
 not_staff
 not_switchable
+not_waiting
 not_yet
 nothing_to_add
 nothing_to_cancel
@@ -362,6 +368,7 @@ source_too_large
 speaking_style_unavailable
 speech_unavailable
 standup_limit
+stopped_by_customer
 storage_unavailable
 student_not_active
 suggestion_changed
@@ -419,6 +426,7 @@ whatsapp_signup_invalid
 whatsapp_state
 whatsapp_template_state
 whatsapp_unavailable
+window_open
 workspace_limit_reached
 workspace_read_only
 workspace_unavailable

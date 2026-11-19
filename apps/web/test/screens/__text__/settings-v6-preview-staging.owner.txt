@@ -1,0 +1,63 @@
+# Settings
+Your business, your team and how it all connects. Press Edit on a card to change it.
+{label="Business"}
+## Business
+Business name
+Demo Silks (synthetic)
+City or area
+Not set yet
+Address
+Not set yet
+Shop timings
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/visits?view=hours label="Edit Shop timings")
+GST number
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business label="Edit GST number")
+Logo
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business label="Edit Logo")
+{label="Team"}
+## Team
+[Edit](/app/tenants/22222222-2222-2222-2222-222222222222/team label="Edit Team") Not set yet
+Who can approve quotes
+Owners and Admins, with a second factor Quotes follow your quote rules, which the owner and admins set. [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes label="Edit Who can approve quotes")
+{label="Quotes"}
+## Quotes
+[Open Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes label="Edit Quotes") The rules every quote follows: how long it is valid, the advance and the discount limit.
+{label="Connections"}
+## Connections
+WhatsApp number
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp label="Edit WhatsApp number")
+Message templates
+Not set yet [Open](/app/tenants/22222222-2222-2222-2222-222222222222/chats/templates label="Open Message templates")
+Lead sources
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources label="Edit Lead sources")
+Business number for calls
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/phone-number label="Edit Business number for calls")
+Business phone
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business label="Edit Business phone")
+Calls put through to you
+Not set yet Decide in My assistant, under Rules, when a call is passed to you. [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=rules label="Edit Calls put through to you")
+{label="Notifications"}
+## Notifications
+Choose whether this device tells you when a call starts.
+{label="Language and theme"}
+## Language and theme
+Language Language
+<select label="LanguageEnglishతెలుగుहिन्दीಕನ್ನಡ">
+  options: English=en* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn
+Appearance
+{role=group label="Appearance"}
+[button type=button: System]
+[button type=button: Light]
+[button type=button: Dark]
+{label="Privacy and data"}
+## Privacy and data
+[Open Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{role=note} Draft wording. Our privacy and legal text is still being reviewed.
+- Export your data Ask for a file of your business data in Privacy.
+- Delete your account or workspace Deleting is done only in Privacy, with its own confirmation. Nothing is deleted from this page.
+- Consent records See who agreed to messages and who asked us to stop.
+{label="Developer API keys"}
+## Developer API keys
+Test mode only Keys let your own software send enquiries to your assistant. Only test keys exist for now, and no key is shown on this page. No keys yet
+[button type=button disabled: Create a test key (coming soon)]
+[Preview Jobs (sample data)](/app/preview)
