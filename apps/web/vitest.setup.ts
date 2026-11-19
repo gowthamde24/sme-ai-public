@@ -1,9 +1,13 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 
 import { setFallbackWords } from "@/components/v2/app/words";
 import { appDict } from "@/i18n/app";
+
+// findBy*/waitFor wait 1 second by default: on a busy machine (CI runners, a parallel local run) a render that needs a few more event-loop turns missed that and the test went red for no
+// reason, then green on the rerun (owner rule 18 Nov 2026: no "rerun and hope"). A test that passes does not wait longer; only one that would have failed does.
+configure({ asyncUtilTimeout: 8000 });
 
 // the screens take their words as a prop (job BK); a unit test that renders one part on its own gets the English words
 setFallbackWords(appDict("en") as Record<string, string>);

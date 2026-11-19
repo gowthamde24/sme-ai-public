@@ -1,4 +1,4 @@
-.PHONY: hooks test-integration-run eval-run e2e-new-owner seed-demo-school docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-whatsapp staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: ci-local ci-hooks hooks test-integration-run eval-run e2e-new-owner seed-demo-school docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-whatsapp staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -26,6 +26,15 @@ install:
 hooks:
 	git config core.hooksPath scripts/hooks
 	@echo "pre-push hook on: lint + type-check of the changed parts before every push (scripts/hooks/pre-push)"
+
+# THE CI on this machine (owner rule 18 Nov 2026: CI must pass on the first attempt): the lanes the change touches, the same commands as .github/workflows/ci.yml (scripts/ci-local.sh)
+ci-local:
+	./scripts/ci-local.sh $(ARGS)
+
+# Opt in to the push gate: scripts/hooks/pre-push then refuses a tree that `make ci-local` has not passed (worktrees share it)
+ci-hooks: hooks
+	git config sme.ciGate true
+	@echo "push gate on: a push needs a green 'make ci-local' on the same tree (turn off: git config sme.ciGate false)"
 
 lint:
 	cd $(WEB) && npm run lint

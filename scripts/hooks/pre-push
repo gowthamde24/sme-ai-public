@@ -11,6 +11,17 @@ set -uo pipefail
 
 ROOT=$(git rev-parse --show-toplevel)
 cd "$ROOT" || exit 1
+# THE CI GATE (opt-in: `make ci-hooks`; owner rule 18 Nov 2026, CI must pass on the first attempt): refuse the push unless `make ci-local` passed on THIS tree (scripts/ci-local.sh stamps it).
+# A push that deletes a branch, or pushes nothing new, is not gated. `git push --no-verify` skips the hook; the planner sees the first-attempt pass rate.
+if [ "$(git config --bool sme.ciGate 2>/dev/null)" = true ]; then
+  TREE=$(git rev-parse 'HEAD^{tree}')
+  STAMP="$(git rev-parse --git-common-dir)/ci-local/passed/$TREE"
+  if [ ! -f "$STAMP" ]; then
+    echo "pre-push: NOT pushed. \`make ci-local\` has not passed on this commit (tree ${TREE:0:12}). Run it, fix what is red, then push. (Never rerun and hope.)"
+    exit 1
+  fi
+  echo "pre-push: ci-local passed on this tree ($(cat "$STAMP"))"
+fi
 BASE=$(git merge-base HEAD origin/main 2>/dev/null || echo "")
 if [ -z "$BASE" ]; then
   echo "pre-push: origin/main is unknown here (run: git fetch origin main); checking everything"

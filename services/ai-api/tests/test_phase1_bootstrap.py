@@ -9,6 +9,7 @@ import uuid
 from types import SimpleNamespace
 from typing import Any
 
+import pytest
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.testclient import TestClient
@@ -62,6 +63,7 @@ def build(limit: int = 2) -> TestClient:
     return TestClient(app, raise_server_exceptions=False)
 
 
+@pytest.mark.serial   # real time: runs alone, after the parallel tests
 def test_one_request_gives_every_part_each_failed_part_says_its_status_and_the_others_still_arrive(monkeypatch: Any) -> None:
     monkeypatch.setattr(routes, "PART_TIMEOUT_S", 0.2)
     client = build()

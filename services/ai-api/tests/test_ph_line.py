@@ -205,6 +205,7 @@ async def drain(line: PhoneLine, wait: float = 0.2) -> list[tuple[str, object]]:
             return out
 
 
+@pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_the_caller_talking_over_the_assistant_is_a_barge_in_but_only_while_it_speaks() -> None:
     line, sim = await connected()
@@ -219,6 +220,7 @@ async def test_the_caller_talking_over_the_assistant_is_a_barge_in_but_only_whil
     await sim.close()
 
 
+@pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_a_backchannel_while_it_speaks_does_not_stop_it_and_is_logged() -> None:
     """Owner, 6 Nov 2026: "haa", "hmm", "avunu", "sare", "ji" (short sounds) let her keep talking."""
@@ -251,6 +253,7 @@ async def test_a_stop_fades_out_instead_of_cutting() -> None:
     await sim.close()
 
 
+@pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_a_short_blip_while_it_speaks_is_not_a_barge_in() -> None:
     line, sim = await connected()
@@ -285,6 +288,7 @@ async def test_a_closed_line_sends_nothing_more() -> None:
     await sim.close()
 
 
+@pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_a_person_takes_the_call_over_and_hands_it_back() -> None:
     """Take over (app v4): the AI stops (the same faded stop), the caller's audio reaches the person, the person's audio reaches the caller at the call's rate, no barge-in meanwhile; hand back ends it."""
@@ -345,6 +349,7 @@ class _Logs:
         self._logger.setLevel(self._old)
 
 
+@pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_a_sound_of_500_ms_is_an_interruption_now_and_one_of_400_ms_is_not() -> None:
     logs = _Logs()
@@ -365,6 +370,7 @@ async def test_a_sound_of_500_ms_is_an_interruption_now_and_one_of_400_ms_is_not
         logs.close()
 
 
+@pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_a_long_sound_whose_words_are_only_a_backchannel_is_ignored_and_a_real_one_is_not() -> None:
     logs = _Logs()
@@ -505,6 +511,7 @@ async def speaking_line() -> tuple[PhoneLine, SimulatedExotel, _Logs]:
     return line, sim, logs
 
 
+@pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_a_long_sound_whose_words_have_not_arrived_is_given_a_moment_and_a_backchannel_that_arrives_late_is_ignored() -> None:
     line, sim, logs = await speaking_line()
@@ -523,6 +530,7 @@ async def test_a_long_sound_whose_words_have_not_arrived_is_given_a_moment_and_a
         logs.close()
 
 
+@pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_a_long_sound_with_no_words_at_all_is_an_interruption_after_the_grace() -> None:
     line, sim, logs = await speaking_line()
@@ -535,6 +543,7 @@ async def test_a_long_sound_with_no_words_at_all_is_an_interruption_after_the_gr
         logs.close()
 
 
+@pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_every_backchannel_word_is_ignored_even_when_the_sound_is_long() -> None:
     for word in ("ఆ", "సరే", "హా", "ok", "hmm", "ఆ సరే"):
@@ -550,6 +559,7 @@ async def test_every_backchannel_word_is_ignored_even_when_the_sound_is_long() -
             logs.close()
 
 
+@pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_during_the_closing_line_a_sound_needs_800_ms_or_a_stop_word() -> None:
     line, sim, logs = await speaking_line()
