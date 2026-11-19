@@ -25,7 +25,7 @@ export class ApiRequestError extends Error {
   }
 }
 
-export type RefusalExtra = { approval?: { id: string; kind: string }; fields?: string[]; /** `409 free_minutes_used_up` (the owner's own test call): the business's monthly free minutes and the day they start again (YYYY-MM-DD, India). */ minutes?: number; restartsOn?: string };
+export type RefusalExtra = { approval?: { id: string; kind: string }; fields?: string[]; /** `409 free_minutes_used_up` (read by ./free-minutes, server only): the free minutes of the month and the day they restart (YYYY-MM-DD). */ free?: { minutes: number; restartsOn: string } };
 const CLOSED = /^[A-Za-z0-9_.:-]{1,80}$/;
 /** The closed extras of a refusal body: `approval` (top level of the body, or inside `error`) and `fields` (the same); anything that is not a short closed word is dropped. */
 function extraOf(body: unknown, err: ApiError["error"] | null): RefusalExtra | undefined {
@@ -39,12 +39,7 @@ function extraOf(body: unknown, err: ApiError["error"] | null): RefusalExtra | u
     const fields = fieldsRaw.filter((f): f is string => typeof f === "string" && CLOSED.test(f) && f.length <= 40).slice(0, 10);
     if (fields.length > 0) out.fields = fields;
   }
-  const minutes = typeof inner.minutes === "number" ? inner.minutes : typeof top.minutes === "number" ? top.minutes : null;
-  if (minutes !== null && Number.isInteger(minutes) && minutes >= 0 && minutes <= 100_000) out.minutes = minutes;
-  const restarts = typeof inner.restarts_on === "string" ? inner.restarts_on : typeof top.restarts_on === "string" ? top.restarts_on : null;
-  const day = restarts ? /^(\d{4}-\d{2}-\d{2})/.exec(restarts)?.[1] : undefined;
-  if (day) out.restartsOn = day;
-  return out.approval || out.fields || out.minutes !== undefined || out.restartsOn ? out : undefined;
+  return out.approval || out.fields ? out : undefined;
 }
 
 export class ApiContractError extends Error {}
@@ -232,7 +227,12 @@ async function askApi(
 
   if (response.status === 401)
     throw new ApiAuthError("The API rejected the session.");
-  if (!response.ok) throw refusal(response.status, body, response.headers.get("Retry-After"));
+  if (!response.ok) {
+    const refused = refusal(response.status, body, response.headers.get("Retry-After"));
+    // server only (the test is false in the browser's build, so none of this is part of a page's script)
+    if (typeof window === "undefined") (await import("./free-minutes")).keepFreeMinutes(refused, body);
+    throw refused;
+  }
   return body;
 }
 

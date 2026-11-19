@@ -150,7 +150,7 @@ describe("Place a test call (job test-call; C1's PR #434)", () => {
     expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "refused", reason: "outside_window" });
     h.place.mockRejectedValueOnce(new ApiRequestError(409, "call_not_allowed", "x", "Not A Word!"));
     expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "refused", reason: null });
-    h.place.mockRejectedValueOnce(new ApiRequestError(409, "free_minutes_used_up", "x", undefined, undefined, undefined, { minutes: 500, restartsOn: "2026-12-01" }));
+    h.place.mockRejectedValueOnce(new ApiRequestError(409, "free_minutes_used_up", "x", undefined, undefined, undefined, { free: { minutes: 500, restartsOn: "2026-12-01" } }));
     expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "minutes_used", minutes: 500, restartsOn: "1 Dec" }); // C1's 409 free_minutes_used_up: the monthly free minutes and the day they restart (India)
     h.place.mockRejectedValueOnce(new ApiRequestError(409, "free_minutes_used_up", "x"));
     expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "minutes_used", minutes: null, restartsOn: null });

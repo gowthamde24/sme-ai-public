@@ -124,7 +124,7 @@ export async function placeTestCallAction(tenantId: string, input: unknown): Pro
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError) {
       if (error.code === "call_not_allowed") return { ok: false, error: "refused", reason: error.reason && /^[a-z_]{1,40}$/.test(error.reason) ? error.reason : null };
-      if (error.code === "free_minutes_used_up") return { ok: false, error: "minutes_used", minutes: error.extra?.minutes ?? null, restartsOn: error.extra?.restartsOn ? fmtDay(`${error.extra.restartsOn}T00:00:00+05:30`) || null : null };
+      if (error.code === "free_minutes_used_up") return { ok: false, error: "minutes_used", minutes: error.extra?.free?.minutes ?? null, restartsOn: error.extra?.free ? fmtDay(`${error.extra.free.restartsOn}T00:00:00+05:30`) || null : null };
       if (error.code === "call_provider_failed") return { ok: false, error: "provider" };
       if (error.code === "calls_unavailable") return { ok: false, error: "off" };
       if (error.status === 403) return { ok: false, error: "forbidden" };
