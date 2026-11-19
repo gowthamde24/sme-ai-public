@@ -21,9 +21,9 @@ export type WhoTalksProps = {
   detail?: JobDetail;
   values?: Readonly<Record<string, string>>;
   /** The name shown now (the owner's name for the job, else the plain job name) and the plain name. */
-  shownName: string;
+  shownName?: string;
   customName: string | null;
-  plainName: string;
+  plainName?: string;
   business?: string;
   /** "What it will do" for this job from the page, as a sentence, or null. */
   effect?: string | null;
@@ -52,6 +52,8 @@ export type WhoTalksProps = {
  */
 export function WhoTalks(p: WhoTalksProps) {
   const sampleUrl = p.sampleEndpoint ?? p.extra?.sampleEndpoint ?? null;
+  const plainName = p.plainName ?? p.t(jobNameKey(p.detail?.job.kind ?? "custom"));
+  const shownName = p.shownName ?? p.customName ?? plainName;
   const jobId = p.jobId ?? p.detail?.job.id ?? "";
   const who = (p.who ?? p.detail?.who) as JobWho;
   const business = p.business ?? p.detail?.business ?? "";
@@ -152,10 +154,10 @@ export function WhoTalks(p: WhoTalksProps) {
 
       <div className="mt-3 flex items-center gap-3">
         <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-bg text-lg font-bold text-brand-text">
-          {[...p.shownName][0] ?? "?"}
+          {[...shownName][0] ?? "?"}
         </span>
         <p data-part="who-name" className="m-0 min-w-0 flex-1 truncate font-display text-[19px] font-bold leading-tight text-ink">
-          {p.shownName}
+          {shownName}
         </p>
         {off || editing ? null : (
           <button type="button" data-action="who-rename" onClick={() => (setDraft(p.customName ?? ""), setNameError(null), setEditing(true))} className={jobBtnQuiet}>
@@ -179,7 +181,7 @@ export function WhoTalks(p: WhoTalksProps) {
           <p aria-live="polite" className="m-0 text-[15px] text-muted">
             {typed ? t("jobs.job.name.hear", { name: typed, business: business }) : t("jobs.job.name.hear_plain", { business: business })}
           </p>
-          <p className="m-0 text-[13.5px] text-muted">{t("jobs.who.name.help", { plain: p.plainName })}</p>
+          <p className="m-0 text-[13.5px] text-muted">{t("jobs.who.name.help", { plain: plainName })}</p>
           {nameError ? (
             <p role="alert" className="m-0 text-sm text-red-text">
               {nameError}
@@ -241,7 +243,7 @@ export function WhoTalks(p: WhoTalksProps) {
 
       {effectText ? (
         <div data-part="who-effect" className="mt-3 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink">
-          <b>{t("jobs.job.effect")}</b> {effectText} {t("jobs.who.fx.talks", { name: p.shownName, language: langText, number: numberText(now.number) })}
+          <b>{t("jobs.job.effect")}</b> {effectText} {t("jobs.who.fx.talks", { name: shownName, language: langText, number: numberText(now.number) })}
         </div>
       ) : null}
 

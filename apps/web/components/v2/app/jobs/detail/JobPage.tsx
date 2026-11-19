@@ -172,9 +172,7 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
           <WhoTalks
             detail={detail}
             values={values}
-            shownName={shownName}
             customName={now.customName}
-            plainName={plainName}
             t={t}
             canChange={!!actions?.setSpeaks}
             uiLang={lang}
