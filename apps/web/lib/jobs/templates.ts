@@ -89,8 +89,11 @@ export function fillText(text: string, v: FillValues): string {
 
 /** A call preview is two lines (the assistant opens with its name and "AI assistant of {business}"); a text that is not exactly two lines is shown as it is, in one block. */
 export const callLines = (text: string): string[] => text.split("\n").map((l) => l.trim()).filter((l) => l !== "");
-/** The whole days from the calendar day of `from` (the person's own today) to the calendar day of `to` (an ISO date or timestamp, its date part): 0 = today, negative = past. Whole calendar days, so the answer does not move with the time zone. */
+/** The calendar day in India (`YYYY-MM-DD`) of an instant: the server runs in UTC, and between 00:00 and 05:30 in India it is still the day before there. */
+const indiaDay = (at: Date): string => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" }).format(at);
+/** The whole days from today in India (the calendar day of the instant `from`, in Asia/Kolkata whatever the server's zone) to the calendar day of `to` (an ISO date or timestamp, its date part): 0 = today, negative = past. */
 export function daysUntil(to: string, from: Date): number {
   const [y, m, d] = to.slice(0, 10).split("-").map(Number);
-  return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(from.getFullYear(), from.getMonth(), from.getDate())) / 86_400_000);
+  const [fy, fm, fd] = indiaDay(from).split("-").map(Number);
+  return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(fy, fm - 1, fd)) / 86_400_000);
 }

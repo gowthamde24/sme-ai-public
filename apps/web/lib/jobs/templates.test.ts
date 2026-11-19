@@ -47,7 +47,16 @@ describe("the next festival (from the calendar, never written in the web)", () =
     expect(festivalHint([f("diwali", "Diwali", "2026-11-08")], "en", now)).toBeNull();
     expect(festivalHint([f("diwali", "Diwali", "2027-02-01")], "en", now)).toBeNull();
     expect(festivalHint([f("diwali", "Diwali", "2026-11-19")], "en", now)?.days).toBe(0);
-    expect(daysUntil("2026-11-26", new Date("2026-11-19T23:30:00"))).toBe(7);
+    expect(daysUntil("2026-11-26", new Date("2026-11-19T23:30:00+05:30"))).toBe(7);
     expect(daysUntil("2026-11-08T08:00:00Z", now)).toBe(-11);
+  });
+  it("the day is the day in India, not the server's (UTC): at 20:00 UTC it is already tomorrow in India", () => {
+    const evening = new Date("2026-11-18T20:00:00Z"); // 01:30 on 19 Nov in India
+    expect(daysUntil("2026-11-19", evening)).toBe(0);
+    expect(daysUntil("2026-11-20", evening)).toBe(1);
+    expect(daysUntil("2026-11-18", evening)).toBe(-1);
+    expect(festivalHint([f("diwali", "Diwali", "2026-11-19")], "en", evening)?.days).toBe(0);
+    expect(daysUntil("2026-11-20", new Date("2026-11-19T18:29:00Z"))).toBe(1); // 23:59 in India: still 19 Nov
+    expect(daysUntil("2026-11-20", new Date("2026-11-19T18:30:00Z"))).toBe(0); // midnight in India
   });
 });
