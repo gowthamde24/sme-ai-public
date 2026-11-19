@@ -9,3 +9,4 @@ export { MarketingSwitch } from "../privacy/MarketingSwitch";
 export { GrievanceForm } from "../privacy/GrievanceForm";
 export { GstinForm } from "../gstin/GstinForm";
 export { SendingForm, QuietHoursForm, RemindersForm } from "../agent-settings/AgentSettingsForms";
+export { AutomationSimple } from "../agent-settings/AutomationSimple";
