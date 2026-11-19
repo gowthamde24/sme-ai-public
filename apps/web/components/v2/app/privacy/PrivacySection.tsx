@@ -6,6 +6,7 @@ import type { Part } from "@/lib/api/part";
 
 import { card, h2 } from "../cc/kit";
 import { PartProblem } from "../cc/PartProblem";
+import { MoreChoices } from "../jobs/rules/parts";
 import { link, listPlain } from "../ui";
 import { makeT, type Words } from "../words";
 import { ConsentListView } from "./ConsentList";
@@ -17,7 +18,7 @@ import type { PrivacyActions } from "./types";
  * The "Privacy" part of Settings (job CC, screen 2): download my data, delete my account (and the workspace, for the Owner), the consent and opt-out list, and the two older pages (erasing a customer's personal data; the
  * do-not-contact keys). Each part was read on its own: one that could not be read says so in its place (refused, too many tries, or not loaded) and the rest works.
  */
-export function PrivacySection({ tenantId, words, role, email, workspaceName, exports, myDeletions, workspaceDeletions, consent, actions, now, dpdp = null, lang = "en" }: { /** The DPDP parts (job DQ part 2): the marketing switch and the grievance form; null = the API is not there yet (DPDP_SCREENS off), neither is drawn. `consents` null = could not be read. */ dpdp?: { consents: Consents | null; setMarketing: (given: boolean) => Promise<MarketingResult>; grievance: (input: unknown) => Promise<GrievanceResult>; days: number; privacyEmail: string; name: string } | null; lang?: "en" | "te" | "hi" | "kn"; tenantId: string; words: Words; role: string; email: string; workspaceName: string; exports: Part<DataExport[]>; myDeletions: Part<Deletion[]>; workspaceDeletions: Part<Deletion[]> | null; consent: Part<ConsentList> | null; actions: PrivacyActions; now: number }) {
+export function PrivacySection({ tenantId, words, role, email, workspaceName, exports, myDeletions, workspaceDeletions, consent, actions, now, dpdp = null, lang = "en", simple = false }: { /** JOBS on (the simplicity pass): the same parts in plain order with one button each; the workspace's data and deletion, the consent list and the older pages sit under "More choices". Every sentence keeps its words. */ simple?: boolean; /** The DPDP parts (job DQ part 2): the marketing switch and the grievance form; null = the API is not there yet (DPDP_SCREENS off), neither is drawn. `consents` null = could not be read. */ dpdp?: { consents: Consents | null; setMarketing: (given: boolean) => Promise<MarketingResult>; grievance: (input: unknown) => Promise<GrievanceResult>; days: number; privacyEmail: string; name: string } | null; lang?: "en" | "te" | "hi" | "kn"; tenantId: string; words: Words; role: string; email: string; workspaceName: string; exports: Part<DataExport[]>; myDeletions: Part<Deletion[]>; workspaceDeletions: Part<Deletion[]> | null; consent: Part<ConsentList> | null; actions: PrivacyActions; now: number }) {
   const t = makeT(words);
   const isOwner = role === "owner";
   const admin = isOwner || role === "admin";
@@ -25,6 +26,48 @@ export function PrivacySection({ tenantId, words, role, email, workspaceName, ex
   const latest = (list: Deletion[]): Deletion | null => list.find((d) => d.status === "scheduled") ?? list.find((d) => d.status === "blocked") ?? null;
   const mine = myDeletions.ok ? latest(myDeletions.data.filter((d) => d.kind === "account")) : null;
   const space = workspaceDeletions?.ok ? latest(workspaceDeletions.data.filter((d) => d.kind === "workspace")) : null;
+  const more = (
+    <>
+      <ul className={listPlain}>
+        {admin ? (
+          <li>
+            <Link href={`${base}/privacy`} className={link}>
+              {t("settings.privacy.erasure")}
+            </Link>
+          </li>
+        ) : null}
+        {isOwner ? (
+          <li>
+            <Link href={`${base}/suppression`} className={link}>
+              {t("settings.privacy.suppression")}
+            </Link>
+          </li>
+        ) : null}
+      </ul>
+      {admin ? null : <p className="text-sm text-muted">{t("settings.privacy.note")}</p>}
+    </>
+  );
+  if (simple) {
+    return (
+      <div className="flex flex-col gap-4" data-settings="privacy" data-simple="">
+        {exports.ok ? <ExportMyData words={words} actions={actions} initial={exports.data} isOwner={isOwner} workspaceName={workspaceName} simple /> : <PartProblem kind={exports.kind} retryAfter={exports.retryAfter} words={words} title={t("prx.exp.title")} />}
+        {dpdp ? (dpdp.consents ? <MarketingSwitch words={words} lang={lang} initial={dpdp.consents} action={dpdp.setMarketing} simple /> : <PartProblem kind="other" words={words} title={t("dpdp.mk.title")} />) : null}
+        {myDeletions.ok && (!isOwner || workspaceDeletions?.ok !== false) ? (
+          <DeleteData words={words} actions={actions} email={email} workspaceName={workspaceName} isOwner={isOwner} accountDeletion={mine} workspaceDeletion={space} now={now} simple />
+        ) : (
+          <PartProblem kind={myDeletions.ok ? (workspaceDeletions && !workspaceDeletions.ok ? workspaceDeletions.kind : "other") : myDeletions.kind} retryAfter={myDeletions.ok ? undefined : myDeletions.retryAfter} words={words} title={t("prx.del.account.title")} />
+        )}
+        {dpdp ? <GrievanceForm words={words} lang={lang} action={dpdp.grievance} defaults={{ name: dpdp.name, contact: email }} days={dpdp.days} email={dpdp.privacyEmail} /> : null}
+        <MoreChoices title={t("jobs.set.b.more")} sub={t("jobs.set.b.priv.more_sub")}>
+          {consent ? consent.ok ? <ConsentListView tenantId={tenantId} words={words} list={consent.data} /> : <PartProblem kind={consent.kind} retryAfter={consent.retryAfter} words={words} title={t("prx.consent.title")} /> : null}
+          <h2 id="prx-more-h" className={h2}>
+            {t("prx.more.title")}
+          </h2>
+          {more}
+        </MoreChoices>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-5" data-settings="privacy">
       {exports.ok ? <ExportMyData words={words} actions={actions} initial={exports.data} isOwner={isOwner} workspaceName={workspaceName} /> : <PartProblem kind={exports.kind} retryAfter={exports.retryAfter} words={words} title={t("prx.exp.title")} />}

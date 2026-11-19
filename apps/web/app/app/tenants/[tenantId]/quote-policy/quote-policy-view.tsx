@@ -4,6 +4,9 @@ import type { QuotePolicyVersion } from "@/lib/api/quote-policies";
 import { formatBps, formatDate, formatRupees } from "@/lib/api/quotes";
 
 import { LocalTime } from "../../../local-time";
+import { JobChip } from "@/components/v2/app/ds/JobChip";
+import { MoreChoices } from "@/components/v2/app/jobs/rules/parts";
+import { jbCard, jbHeading, jbHelp } from "@/components/v2/app/settings/simple-b-styles";
 import { detailsBox, kvList, listItemCard, listPlain, metaLine, noteBox, pageH1, summaryLine } from "@/components/v2/app/ui";
 import { Rich } from "@/components/v2/app/rich";
 import { makeT, type Say, type Words } from "@/components/v2/app/words";
@@ -23,7 +26,7 @@ function noPolicyText(versions: QuotePolicyVersion[], t: Say): string {
 }
 
 /** The published versions, newest first, in plain words. A version never changes: the owner or admin publishes a new one. The one in force is the API's own marker, not worked out here. */
-export function QuotePolicyView({ versions, today, form, words, embedded = false }: { versions: QuotePolicyVersion[]; today: string; form: ReactNode; words?: Words; /** Drawn inside the Settings page (Quotes section): an H2, not the page heading. */ embedded?: boolean }) {
+export function QuotePolicyView({ versions, today, form, words, embedded = false, simple = false }: { versions: QuotePolicyVersion[]; today: string; form: ReactNode; words?: Words; /** JOBS on: the version in force as three plain sentences (the rest of its numbers under "More choices"), its state as a solid chip. */ simple?: boolean; /** Drawn inside the Settings page (Quotes section): an H2, not the page heading. */ embedded?: boolean }) {
   const t = makeT(words);
   const inForce = versions.some((v) => v.in_force);
   // The version in force (and any that has not started yet) first; the replaced ones behind "Earlier versions" so the page stays short. The newest is always shown.
@@ -62,6 +65,41 @@ export function QuotePolicyView({ versions, today, form, words, embedded = false
             </li>
   );
 
+  const lead = (v: QuotePolicyVersion) => (
+    <>
+      <strong>{t("qp.version_n", { n: v.version_no })}</strong> · {t("qp.starts_line", { date: formatDate(v.effective_from) })}
+    </>
+  );
+  const plain = (key: string) => t(key).replace(/^[\s·]+/, "").trim();
+  const simpleVersion = (v: QuotePolicyVersion) => (
+    <li key={v.id} data-part="quote-simple-version" className={`${jbCard} list-none`}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className={jbHeading}>{lead(v)}</h3>
+        {v.in_force ? <JobChip tone="done">{plain("qp.in_force_today")}</JobChip> : v.effective_from > today ? <JobChip tone="wait">{plain("qp.not_started_yet")}</JobChip> : <JobChip tone="info">{plain("qp.replaced_by_a_newer_version")}</JobChip>}
+      </div>
+      <p className="m-0 text-[16px] leading-snug text-ink">{t("jobs.set.b.q.now.valid", { n: v.validity_days })}</p>
+      <p className="m-0 text-[16px] leading-snug text-ink">{t("jobs.set.b.q.now.advance", { a: formatBps(v.new_advance_bps), b: formatBps(v.repeat_advance_bps) })}</p>
+      <p className="m-0 text-[16px] leading-snug text-ink">{t("jobs.set.b.q.now.balance", { a: v.new_net_days, b: v.repeat_net_days })}</p>
+      <MoreChoices title={t("jobs.set.b.more")} sub={t("jobs.set.b.q.more_sub")}>
+        <dl className={kvList}>
+          <dt>{t("qp.gst_rate_prices_typed_by_hand")}</dt>
+          <dd>{`${formatBps(v.gst_rate_bps)} from ${formatDate(v.gst_effective_from)}`}</dd>
+          <dt>{t("qp.most_credit_for_one_repeat_customer_2")}</dt>
+          <dd>{formatRupees(v.repeat_credit_limit_paise)}</dd>
+          <dt>{t("qp.state_where_the_shop_is")}</dt>
+          <dd>{v.seller_state}</dd>
+          <dt>{t("qp.discount_ceiling")}</dt>
+          <dd>{formatBps(v.discount_ceiling_bps)}</dd>
+          <dt>{t("qp.shipping")}</dt>
+          <dd>{shippingText(v)}</dd>
+        </dl>
+        <p className={jbHelp}>
+          <Rich t={t} k="qp.published_line" with={{ time: <LocalTime iso={v.created_at} /> }} />
+        </p>
+      </MoreChoices>
+    </li>
+  );
+
   return (
     <section aria-labelledby="quote-policy-heading">
       {embedded ? (
@@ -80,14 +118,14 @@ export function QuotePolicyView({ versions, today, form, words, embedded = false
       )}
       {versions.length > 0 && (
         <ul aria-label={t("qp.quote_policy_versions_newest_first")} className={listPlain}>
-          {current.map(version)}
+          {current.map(simple ? simpleVersion : version)}
         </ul>
       )}
       {earlier.length > 0 && (
         <details className={detailsBox}>
           <summary className={summaryLine}>{t("qp.earlier_n", { n: earlier.length })}</summary>
           <ul aria-label={t("qp.earlier_quote_policy_versions")} className={listPlain}>
-            {earlier.map(version)}
+            {earlier.map(simple ? simpleVersion : version)}
           </ul>
         </details>
       )}

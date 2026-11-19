@@ -12,10 +12,12 @@ import { DAYS, HOURS, NAME_MAX, parseSettings, validName, type AssistantSettings
 import type { AssistantProfile } from "@/lib/assistant/defaults";
 
 import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, surface } from "../ui";
+import { primary } from "../visits/styles";
 import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import { SAMPLE_CUSTOMER, SAMPLE_ROLE, fillOpening } from "@/lib/opening-line/types";
 import { makeT, type Words } from "../words";
 import { PanelTabs, type Panel } from "./PanelTabs";
+import { SimpleBasics, SimpleBehaviour } from "./AssistantSentences";
 
 export type AssistantActions = { save: (input: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; /** The simulated test call (job DQ part 3); absent = the button is not drawn. */ testCall?: () => Promise<TestCallResult> };
 /** The voice samples (job DQ part 3): where the browser asks for one (our own route), and whether it is the fake sound of the test screens. null = no "Hear it" anywhere. */
@@ -42,7 +44,7 @@ function Switch({ on, label, onChange, disabled }: { on: boolean; label: string;
  * may do on calls (and the highest discount), when it hands over to the owner, the calling hours, and on the right a live preview with the circle speaking. It starts from the defaults of the business type (`profile`), so an owner can
  * skip it; nothing is kept until "Save". Only the Owner can change it (`canEdit`). Voice samples and test calls do not exist yet, so "Hear it" is switched off and "Call me now for a test" says so. The words come in as props.
  */
-export function AssistantSettings({ words, initial, profile, shop, langs, canEdit, testMode, saved, actions, samples = null, voiceInUse = null, defaultName = null, openingLine = null, extras = {}, offered = LAUNCH_LANGS }: { /** The languages to offer (lib/languages.ts); the one in use stays even if it is not in the list. */ offered?: readonly CallLang[]; words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null; /** The other parts of Settings > AI assistant, drawn by the page, each in its own tab (a part with nothing to show is left out). */ extras?: { basics?: React.ReactNode; knowledge?: React.ReactNode; behaviour?: React.ReactNode; pronunciation?: React.ReactNode; advanced?: React.ReactNode } }) {
+export function AssistantSettings({ words, initial, profile, shop, langs, canEdit, testMode, saved, actions, samples = null, voiceInUse = null, defaultName = null, openingLine = null, extras = {}, offered = LAUNCH_LANGS, simple = false }: { /** JOBS on (the simplicity pass): the name, language and what it may do as sentences with the choice inside (AssistantSentences.tsx); the same fields, the same save. */ simple?: boolean; /** The languages to offer (lib/languages.ts); the one in use stays even if it is not in the list. */ offered?: readonly CallLang[]; words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null; /** The other parts of Settings > AI assistant, drawn by the page, each in its own tab (a part with nothing to show is left out). */ extras?: { basics?: React.ReactNode; knowledge?: React.ReactNode; behaviour?: React.ReactNode; pronunciation?: React.ReactNode; advanced?: React.ReactNode } }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<Settings>(initial);
@@ -139,7 +141,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
   };
   const saveRow = (part: Part, ok: boolean) => (
     <div className="flex flex-wrap items-center gap-3">
-      <button type="submit" disabled={!canEdit || busy || !ok} className={btnMain}>
+      <button type="submit" disabled={!canEdit || busy || !ok} className={simple ? `${primary} jb-press` : btnMain}>
         {t("asst.save")}
       </button>
       {part === "behaviour" && !validName(lastSaved.name) ? <p className="text-sm text-muted" data-part="needname">{t("asst.behaviour.needname")}</p> : null}
@@ -152,6 +154,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
       <form
         data-write
         data-part="behaviour-form"
+        data-simple={simple ? "" : undefined}
         className="flex min-w-0 flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
@@ -159,6 +162,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
         }}
       >
         <fieldset disabled={!canEdit || busy} className="contents">
+          {simple ? <SimpleBehaviour t={t} s={s} set={set} disabled={!canEdit || busy} profile={profile} hoursOk={hoursOk} rangeOk={rangeOk} /> : (<>
             <section className={block} aria-labelledby="asst-may-h">
               <h3 id="asst-may-h" className="text-[17px] font-semibold">{t("asst.may.t")}</h3>
               <div>
@@ -225,6 +229,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
                 )}
               </div>
             </section>
+          </>)}
         </fieldset>
         {saveRow("behaviour", okBehaviour)}
       </form>
@@ -238,6 +243,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
         <form
           data-write
           data-part="basics-form"
+          data-simple={simple ? "" : undefined}
           className="flex min-w-0 flex-col gap-4"
           onSubmit={(e) => {
             e.preventDefault();
@@ -245,6 +251,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
           }}
         >
           <fieldset disabled={!canEdit || busy} className="contents">
+            {simple ? <SimpleBasics t={t} s={s} set={set} disabled={!canEdit || busy} offered={offered} langs={langs} shop={shop} shownName={shownName} unnamed={s.name.trim() === "" || s.name.trim() === DEFAULT_ASSISTANT_NAME} nameBlank={nameBlank} nameOk={nameOk} saved={saved} defaultName={defaultName ?? DEFAULT_ASSISTANT_NAME} /> : (<>
             <section className={block} aria-labelledby="asst-name-h">
               <div>
                 <h3 id="asst-name-h" className="text-[17px] font-semibold">{t("asst.name.t")}</h3>
@@ -274,7 +281,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
               <Switch on={s.autoSwitch} label={t("asst.lang.auto")} onChange={(v) => set({ autoSwitch: v })} disabled={!canEdit || busy} />
               <Switch on={s.mixEnglish} label={t("asst.lang.mix")} onChange={(v) => set({ mixEnglish: v })} disabled={!canEdit || busy} />
             </section>
-
+            </>)}
           </fieldset>
           {saveRow("basics", okBasics)}
         </form>

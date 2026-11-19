@@ -6,10 +6,12 @@ import { startTransition, useActionState, useState, type ChangeEvent } from "rea
 import { makeT, type Words } from "@/components/v2/app/words";
 import type { QuotePolicyState } from "./quote-policy-actions";
 import { EMPTY_VALUES, policyFromForm, type FieldName, type PolicyValues } from "./quote-policy-logic";
+import { QuotePolicySimpleFields } from "./quote-policy-simple-fields";
+import { primary } from "@/components/v2/app/visits/styles";
 import { alertBox, bodyText, btnMain, fieldHelp, fieldInput, fieldLabel, fieldsetPlain, formCard, formTitle, legendText, link, mutedText, okBox } from "@/components/v2/app/ui";
 
 type Action = (prev: QuotePolicyState, formData: FormData) => Promise<QuotePolicyState>;
-type Props = { action: Action; policyId: string; today: string; minDate: string; words?: Words };
+type Props = { action: Action; policyId: string; today: string; minDate: string; words?: Words; /** JOBS on: the rules as sentences with the number typed inside (quote-policy-simple-fields.tsx); the same field names, checks, action and refusals. */ simple?: boolean };
 
 /**
  * Publish a new quote policy version. EVERY field starts empty: nothing is selected and there is no default of ours. The shipping is not an input: it is fixed at zero (the shop charges no courier)
@@ -34,7 +36,7 @@ export function QuotePolicyForm(props: Props) {
   );
 }
 
-function QuotePolicyBody({ action, policyId, today, minDate, onSaved, onPress, words }: Props & { onSaved: (message: string) => void; onPress: () => void }) {
+function QuotePolicyBody({ action, policyId, today, minDate, onSaved, onPress, words, simple = false }: Props & { onSaved: (message: string) => void; onPress: () => void }) {
   const t = makeT(words);
   const [id, setId] = useState(policyId);
   const [values, setValues] = useState<PolicyValues>(EMPTY_VALUES);
@@ -66,15 +68,17 @@ function QuotePolicyBody({ action, policyId, today, minDate, onSaved, onPress, w
         startTransition(() => formAction(data));
       }}
       noValidate
-      className={formCard}
+      className={simple ? "flex flex-col gap-4" : formCard}
+      data-simple={simple ? "" : undefined}
       aria-labelledby="quote-policy-title"
     >
       <h3 id="quote-policy-title" className={formTitle}>
         {t("qp.publish_a_new_version")}
       </h3>
-      <p className={mutedText}>{t("qp.a_published_version_never_changes_a")}</p>
-      <p className={mutedText}>{t("qp.this_page_does_not_have_a")}</p>
+      {simple ? null : <p className={mutedText}>{t("qp.a_published_version_never_changes_a")}</p>}
+      {simple ? null : <p className={mutedText}>{t("qp.this_page_does_not_have_a")}</p>}
       <input type="hidden" name="policy_id" value={id} />
+      {simple ? <QuotePolicySimpleFields t={t} values={values} change={change} pending={pending} minDate={minDate} /> : (<>
 
       <label htmlFor="qp-from" className={fieldLabel}>
         {t("qp.starts_on")}
@@ -145,6 +149,7 @@ function QuotePolicyBody({ action, policyId, today, minDate, onSaved, onPress, w
       </p>
 
       <p className={bodyText}>{t("qp.shipping_none_no_courier_charge")}</p>
+      </>)}
 
       {error && (
         <div role="alert" className={alertBox}>
@@ -158,7 +163,7 @@ function QuotePolicyBody({ action, policyId, today, minDate, onSaved, onPress, w
           )}
         </div>
       )}
-      <button type="submit" className={btnMain} disabled={pending}>
+      <button type="submit" className={simple ? `${primary} jb-press self-start` : btnMain} disabled={pending}>
         {pending ? t("qp.publishing") : t("qp.publish_this_version")}
       </button>
     </form>
