@@ -324,6 +324,8 @@ class Settings(BaseSettings):
     # Signup configuration id the web SDK opens with.
     whatsapp_app_id: str | None = None
     whatsapp_embedded_config_id: str | None = None
+    # WHATSAPP_EMBEDDED_VERSION: the Embedded Signup version of the owner's configuration (v4 or v5)
+    whatsapp_embedded_version: str = "v5"
     whatsapp_waba_id: str | None = None
     # the account the API signs in as to hand a webhook to the database (registered by the
     # operator; belongs to no workspace)
