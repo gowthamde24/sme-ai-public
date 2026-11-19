@@ -23,11 +23,21 @@ export function params(v: unknown): JobParams {
   return out;
 }
 
-/** `speaks {language, voice, number}` of a job (C1 contract 1.1, assumed: see jobs-templates-web-needs.md): closed words and a short voice name; absent = nothing to show. */
+/**
+ * `speaks {language, voice, number}` of a job (C1 contract 1.1, assumed: see jobs-templates-web-needs.md): closed words and a short voice name; absent = nothing to show. It is an extra of a row, so it is LENIENT like `parseWho`: a value the web has no word for
+ * (a long word, a number where a word is expected, a speaks that is not an object) is simply not shown (null), never an error that would take the whole jobs list (and Today's "Running now") down with it.
+ */
 function parseSpeaks(v: unknown): JobSpeaks | null {
-  if (v === null || v === undefined) return null;
-  const x = rec(v, "speaks");
-  const opt = (k: string, max: number, closed: boolean) => (x[k] === null || x[k] === undefined ? null : closed ? word(x[k], `speaks.${k}`, max) : str(x[k], `speaks.${k}`, max));
+  if (v === null || v === undefined || typeof v !== "object" || Array.isArray(v)) return null;
+  const x = v as Record<string, unknown>;
+  const opt = (k: string, max: number, closed: boolean): string | null => {
+    if (x[k] === null || x[k] === undefined) return null;
+    try {
+      return closed ? word(x[k], `speaks.${k}`, max) : str(x[k], `speaks.${k}`, max);
+    } catch {
+      return null;
+    }
+  };
   return { language: opt("language", 12, true), voice: opt("voice", 40, false), number: opt("number", 20, true) };
 }
 
