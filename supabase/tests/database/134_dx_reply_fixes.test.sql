@@ -57,8 +57,8 @@ select pg_temp.inbound('dx2', '2026-10-05 20:50:00+05:30');   -- 160 minutes ago
 select pg_temp.inbound('dx3', '2026-10-05 23:20:00+05:30');
 select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-05 23:30:00+05:30'), true, 'A1: 20 minutes after the customer wrote, a reply is inside the conversation');
 select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-06 01:10:00+05:30'), true, 'A2: exactly 2 hours after counts');
-select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-06 01:11:00+05:30'), false, 'A3: 2 hours and a minute after: no longer');
-select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx2'), 'reply_to_inbound', timestamptz '2026-10-05 23:30:00+05:30'), false, 'A4: 160 minutes after: not active');
+select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-06 01:11:00+05:30'), true, 'A3: 2 hours and a minute after: still a reply to the customer, AT ONCE (night rule 19 Nov)');
+select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx2'), 'reply_to_inbound', timestamptz '2026-10-05 23:30:00+05:30'), true, 'A4: 160 minutes after: still inside the 24 hours, a reply goes at once');
 select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx3'), 'followup', timestamptz '2026-10-05 23:30:00+05:30'), false, 'A5: a follow-up is business-initiated, whatever the customer wrote a minute ago');
 select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx4'), 'reply_to_inbound', timestamptz '2026-10-05 23:30:00+05:30'), false, 'A6: a customer who never wrote: no conversation');
 select is(app.outbox_active_conversation(tests.tid('b'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-05 23:30:00+05:30'), false, 'A7: another business cannot see our customer''s conversation');
@@ -67,8 +67,8 @@ select pg_temp.sub('dx_m1', 'dx1', 'owner', 'reply_to_inbound');
 select is(pg_temp.st('dx_m1'), 'queued/auto_allowed', 'A8: AT NIGHT, a reply in an active conversation goes now (not held for the morning)');
 select is(pg_temp.at('dx_m1'), '10-05 23:30', 'A9: ...scheduled for this very minute');
 select pg_temp.sub('dx_m2', 'dx2', 'owner', 'reply_to_inbound');
-select is(pg_temp.st('dx_m2'), 'queued/quiet_hours', 'A10: the same reply 160 minutes after the customer wrote waits for morning');
-select is(pg_temp.at('dx_m2'), '10-06 09:00', 'A11: ...until 09:00');
+select is(pg_temp.st('dx_m2'), 'queued/auto_allowed', 'A10: the same reply 160 minutes after the customer wrote goes at once too (night rule)');
+select is(pg_temp.at('dx_m2'), '10-05 23:30', 'A11: ...this very minute');
 select pg_temp.sub('dx_m3', 'dx3', 'assistant', 'followup', 'Just checking in on the saree.');
 select is(pg_temp.st('dx_m3'), 'queued/quiet_hours', 'A12: a follow-up waits for morning even a minute after the customer wrote');
 select pg_temp.sub('dx_m4', 'dx1', 'assistant', 'info', 'We open at nine.');
@@ -85,13 +85,13 @@ select pg_temp.sc('a_owner', format($q$select public.outbox_decide(%L, %L, 'appr
 select pg_temp.sc('a_owner', format($q$select public.outbox_decide(%L, %L, 'approve')$q$, tests.tid('a'), tests.rid('dx_m6')));
 select is(pg_temp.st('dx_m5'), 'queued/owner_approved', 'A15: approved');
 select is(pg_temp.at('dx_m5'), '10-05 23:30', 'A16: APPROVED AT NIGHT INSIDE THE CONVERSATION: it goes now');
-select is(pg_temp.at('dx_m6'), '10-06 09:00', 'A17: approved at night, the customer wrote 3 hours ago: it waits for 09:00');
+select is(pg_temp.at('dx_m6'), '10-05 23:30', 'A17: approved at night, the customer wrote 3 hours ago: it goes now (a reply to the customer)');
 
 -- the release (the worker's claim): a conversation reply is handed out at night, an old one is held
 select pg_temp.pin(timestamptz '2026-10-05 23:36:00+05:30');
 select is((select count(*)::int from jsonb_array_elements(app.outbox_claim_due_core(tests.tid('a'), 10, false)) e where e ->> 'id' = tests.rid('dx_m5')::text), 1, 'A18: the release hands out the approved conversation reply at night');
-select is((select count(*)::int from jsonb_array_elements(app.outbox_claim_due_core(tests.tid('a'), 10, false)) e where e ->> 'id' = tests.rid('dx_m2')::text), 0, 'A19: and not the reply that waits for 09:00');
-select is((select claimed_at is null from public.outbox_messages where id = tests.rid('dx_m6')), true, 'A20: the old approved one was not claimed');
+select is((select claimed_at is not null from public.outbox_messages where id = tests.rid('dx_m2')), true, 'A19: and the older reply too (it answers the customer: it no longer waits for 09:00)');
+select is((select claimed_at is not null from public.outbox_messages where id = tests.rid('dx_m6')), true, 'A20: the older approved one was handed out too');
 select pg_temp.pin(timestamptz '2026-10-05 23:30:00+05:30');
 
 -- B. the AI line

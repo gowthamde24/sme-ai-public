@@ -155,7 +155,6 @@ def test_a_plain_reply_within_24_hours_goes_out_through_the_fake_channel_with_th
 ) -> None:
     lead = box.lead()
     box.inbound(lead)
-    before = len(box.adapter.sent)
     out = body_of(
         box.submit(
             "owner",
@@ -169,23 +168,16 @@ def test_a_plain_reply_within_24_hours_goes_out_through_the_fake_channel_with_th
         "the first message the assistant writes to a customer says it is from the AI assistant"
     )
     assert message["flags"] == [] and message["channel"] == "whatsapp"
-    if quiet():
-        assert (message["status"], message["reason"]) == ("queued", "quiet_hours") and message[
-            "scheduled_for"
-        ] is not None
-        assert sf(out["dispatched"]) == {"sent": 0, "failed": 0} and len(box.adapter.sent) == before, (
-            "no message goes between 9 pm and 9 am"
-        )
-    else:
-        assert sf(out["dispatched"]) == {"sent": 1, "failed": 0}
-        sent = box.adapter.sent[-1]
-        assert sent.body == message["text"] and sent.to_phone == lead.phone
-        row = body_of(box.call("owner", "GET", f"/outbox/messages/{message['id']}"))
-        assert (
-            row["status"] == "sent"
-            and row["reason"] == "auto_allowed"
-            and row["sent_at"] is not None
-        )
+    # the night rule (19 Nov 2026): a reply to a customer who wrote first goes at once, at any hour
+    assert sf(out["dispatched"]) == {"sent": 1, "failed": 0}
+    sent = box.adapter.sent[-1]
+    assert sent.body == message["text"] and sent.to_phone == lead.phone
+    row = body_of(box.call("owner", "GET", f"/outbox/messages/{message['id']}"))
+    assert (
+        row["status"] == "sent"
+        and row["reason"] == "auto_allowed"
+        and row["sent_at"] is not None
+    )
     second = body_of(box.submit("owner", lead, "Our shop is open every day.", category="info"))[
         "message"
     ]
@@ -360,7 +352,7 @@ def test_a_retry_with_the_same_id_replays_and_sends_once(box: Box) -> None:
     again = body_of(box.submit("owner", lead, "Thank you for writing to us.", message_id=mid))
     assert first["replayed"] is False and again["replayed"] is True and again["dispatched"] is None
     assert again["message"]["id"] == first["message"]["id"]
-    assert len(box.adapter.sent) - before == (0 if quiet() else 1)
+    assert len(box.adapter.sent) - before == 1   # a reply goes at once, at night too (owner, 19 Nov)
     other = box.submit("owner", lead, "Some other words entirely.", message_id=mid)
     assert other.status_code == 409, "the same id with other words is refused"
     assert sf(box.call("owner", "POST", "/outbox/dispatch").json()) == {"sent": 0, "failed": 0}, (
@@ -374,11 +366,6 @@ def test_a_failing_channel_marks_the_message_failed(box: Box) -> None:
     mid = uuid.uuid4()
     box.adapter.fail_next(mid, "timeout")
     out = body_of(box.submit("owner", lead, "Thank you for writing to us.", message_id=str(mid)))
-    if quiet():
-        # at night nothing reaches the channel, so the failure cannot happen yet: the message is only held for 09:00
-        assert sf(out["dispatched"]) == {"sent": 0, "failed": 0}
-        assert (out["message"]["status"], out["message"]["reason"]) == ("queued", "quiet_hours")
-        return
     assert sf(out["dispatched"]) == {"sent": 0, "failed": 1}
     assert (out["message"]["status"], out["message"]["reason"], out["message"]["failure_code"]) == (
         "failed",
@@ -645,8 +632,9 @@ def test_a_follow_up_or_an_old_conversation_still_waits_for_morning(box: Box) ->
     stale = body_of(box.submit("owner", old, "Thank you for writing to us.", source="owner"))
     if quiet():
         assert (follow["message"]["status"], follow["message"]["reason"]) == ("queued", "quiet_hours")
-        assert (stale["message"]["status"], stale["message"]["reason"]) == ("queued", "quiet_hours")
-        assert len(box.adapter.sent) == before
+        # the older reply (3 h, inside 24 h) is an answer to the customer: it goes at once (night rule, 19 Nov 2026)
+        assert stale["message"]["reason"] == "auto_allowed"
+        assert len(box.adapter.sent) - before == 1
     else:
         assert follow["message"]["reason"] == "auto_allowed" and stale["message"]["reason"] == "auto_allowed"
 
