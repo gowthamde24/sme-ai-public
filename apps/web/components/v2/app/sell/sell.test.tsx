@@ -54,7 +54,7 @@ describe("each of the five styles draws its list in its own words", () => {
     expect(rows).toHaveLength(entriesOf(style).length);
     expect(rows[0].textContent).toContain(first);
     expect(rows[0].textContent).toContain(price);
-    expect(document.querySelector('[data-part="what-you-sell"]')).toHaveAttribute("data-style", style);
+    expect(document.querySelector('[data-part="what-you-sell"]')).toHaveAttribute("data-sell-kind", style);
   });
   it("an empty list says what to do, in one sentence", () => {
     section("services", { entries: [] });

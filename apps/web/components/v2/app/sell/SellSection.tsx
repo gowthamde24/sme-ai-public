@@ -47,7 +47,7 @@ export function SellSection({ style, entries: first, words, base, actions, live,
   const card = "jb-press flex min-h-[88px] flex-col items-start gap-2 rounded-2xl border border-line bg-surface p-3 text-left no-underline shadow-[var(--v2-shadow)] md:flex-row md:gap-3 md:p-3.5";
 
   return (
-    <div data-part="what-you-sell" data-style={style} className="mt-4 flex flex-col gap-5">
+    <div data-part="what-you-sell" data-sell-kind={style} className="mt-4 flex flex-col gap-5">
       {actions ? (
         <section aria-labelledby="sell-fill" data-part="fill" className="flex flex-col gap-2.5">
           <h2 id="sell-fill" className="m-0 font-display text-[18px] font-bold leading-tight text-ink">
