@@ -670,5 +670,37 @@
   "say": "ಅನಂತಪುರದ ಹತ್ತಿರ ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕಿ",
   "expect": "plan_card",
   "note": "Lead Finder is visible on every plan (owner 18 Nov 2026): the plan card, whatever the plan; when the month's free search is used the answer is a plain limit sentence with the upgrade note (unit test test_pe_entitlements)"
+ },
+ {
+  "id": 85,
+  "area": "about",
+  "lang": "te",
+  "say": "స్టాక్19 అంటే ఏమిటి? మీరు ఎవరు?",
+  "expect": "answer",
+  "note": "19 Nov 2026: who the assistant is / what Stack19 is goes to the chat path (not \"nothing to show\"), in the first person (unit test test_ea_intent)"
+ },
+ {
+  "id": 86,
+  "area": "about",
+  "lang": "te",
+  "say": "నువ్వు ఎవరు? ఈ యాప్ ఏం చేస్తుంది?",
+  "expect": "answer",
+  "note": "19 Nov 2026: who the assistant is / what Stack19 is goes to the chat path (not \"nothing to show\"), in the first person (unit test test_ea_intent)"
+ },
+ {
+  "id": 87,
+  "area": "about",
+  "lang": "hi",
+  "say": "स्टैक19 क्या है?",
+  "expect": "answer",
+  "note": "19 Nov 2026: who the assistant is / what Stack19 is goes to the chat path (not \"nothing to show\"), in the first person (unit test test_ea_intent)"
+ },
+ {
+  "id": 88,
+  "area": "about",
+  "lang": "kn",
+  "say": "ಸ್ಟ್ಯಾಕ್19 ಅಂದರೆ ಏನು?",
+  "expect": "answer",
+  "note": "19 Nov 2026: who the assistant is / what Stack19 is goes to the chat path (not \"nothing to show\"), in the first person (unit test test_ea_intent)"
  }
 ]
