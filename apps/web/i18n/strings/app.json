@@ -120880,5 +120880,1941 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "jobs.sell.page.title": {
+  "en": "What you sell",
+  "te": "మీరు ఏమి అమ్ముతారు",
+  "hi": "आप क्या बेचते हैं",
+  "kn": "ನೀವು ಏನು ಮಾರುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.page.sub": {
+  "en": "Your assistant answers customers from this list. Add to it in whichever way is easiest.",
+  "te": "ఈ లిస్ట్ చూసి మీ అసిస్టెంట్ కస్టమర్లకు సమాధానం చెబుతుంది. మీకు ఏది సులభమో ఆ పద్ధతిలో ఇందులో కలపండి.",
+  "hi": "आपका असिस्टेंट इसी लिस्ट से ग्राहकों को जवाब देता है। जो तरीका आसान लगे, उससे इसमें जोड़ें।",
+  "kn": "ಈ ಲಿಸ್ಟ್ ನೋಡಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರ ಕೊಡುತ್ತದೆ. ನಿಮಗೆ ಯಾವುದು ಸುಲಭವೋ ಆ ರೀತಿಯಲ್ಲಿ ಇದಕ್ಕೆ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.mock": {
+  "en": "Test mode: these are made-up examples. Nothing is saved.",
+  "te": "టెస్ట్ మోడ్: ఇవి ఉదాహరణలు మాత్రమే. ఏదీ సేవ్ అవ్వదు.",
+  "hi": "टेस्ट मोड: ये सिर्फ़ उदाहरण हैं। कुछ भी सेव नहीं होता।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಇವು ಉದಾಹರಣೆಗಳು ಮಾತ್ರ. ಏನೂ ಸೇವ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unready": {
+  "en": "This part is not ready for your kind of business yet. Your assistant still answers from what you tell it.",
+  "te": "మీ రకం బిజినెస్‌కి ఈ భాగం ఇంకా సిద్ధంగా లేదు. మీరు చెప్పినదాన్ని బట్టే అసిస్టెంట్ ఇప్పటికీ సమాధానం చెబుతుంది.",
+  "hi": "आपके तरह के बिज़नेस के लिए यह हिस्सा अभी तैयार नहीं है। आपका असिस्टेंट अभी भी आपके बताए अनुसार जवाब देता है।",
+  "kn": "ನಿಮ್ಮ ರೀತಿಯ ಬಿಸಿನೆಸ್‌ಗೆ ಈ ಭಾಗ ಇನ್ನೂ ಸಿದ್ಧವಿಲ್ಲ. ನೀವು ಹೇಳಿದ್ದನ್ನು ನೋಡಿಯೇ ಅಸಿಸ್ಟೆಂಟ್ ಈಗಲೂ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unread": {
+  "en": "I could not read your list just now. Try again in a moment.",
+  "te": "మీ లిస్ట్ ఇప్పుడు చదవలేకపోయాను. కాసేపటి తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "अभी आपकी लिस्ट नहीं पढ़ पाया। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಈಗ ನಿಮ್ಮ ಲಿಸ್ಟ್ ಓದಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.old": {
+  "en": "Open the old page",
+  "te": "పాత పేజీ తెరవండి",
+  "hi": "पुराना पेज खोलें",
+  "kn": "ಹಳೆಯ ಪೇಜ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.old.prices": {
+  "en": "Open the price list for quotes",
+  "te": "కొటేషన్ల కోసం ప్రైస్ లిస్ట్ తెరవండి",
+  "hi": "कोटेशन के लिए प्राइस लिस्ट खोलें",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳಿಗಾಗಿ ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.empty": {
+  "en": "Nothing here yet. Say it, take a photo or import a sheet, and your assistant can answer from it.",
+  "te": "ఇక్కడ ఇంకా ఏమీ లేదు. చెప్పండి, ఫోటో తీయండి లేదా షీట్ ఇంపోర్ట్ చేయండి, అప్పుడు అసిస్టెంట్ దీన్ని చూసి సమాధానం చెబుతుంది.",
+  "hi": "यहाँ अभी कुछ नहीं है। बोलकर बताएं, फ़ोटो लें या शीट इम्पोर्ट करें, फिर असिस्टेंट इससे जवाब देगा।",
+  "kn": "ಇಲ್ಲಿ ಇನ್ನೂ ಏನೂ ಇಲ್ಲ. ಹೇಳಿ, ಫೋಟೋ ತೆಗೆಯಿರಿ ಅಥವಾ ಶೀಟ್ ಇಂಪೋರ್ಟ್ ಮಾಡಿ, ಆಗ ಅಸಿಸ್ಟೆಂಟ್ ಇದನ್ನು ನೋಡಿ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.fill.title": {
+  "en": "Fill it your way",
+  "te": "మీకు నచ్చిన పద్ధతిలో నింపండి",
+  "hi": "अपने तरीके से भरें",
+  "kn": "ನಿಮಗೆ ಇಷ್ಟವಾದ ರೀತಿಯಲ್ಲಿ ತುಂಬಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.say.title": {
+  "en": "Say it",
+  "te": "చెప్పండి",
+  "hi": "बोलकर बताएं",
+  "kn": "ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.say.sub": {
+  "en": "{example} Talk like you would to a helper.",
+  "te": "{example} మీ హెల్పర్‌తో మాట్లాడినట్టే మాట్లాడండి.",
+  "hi": "{example} जैसे अपने सहायक से बात करते हैं, वैसे बोलें।",
+  "kn": "{example} ನಿಮ್ಮ ಸಹಾಯಕರ ಜೊತೆ ಮಾತಾಡುವಂತೆ ಮಾತಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.say.eg.products": {
+  "en": "“Kanjivaram silk saree, 8,500 rupees, red and green, 4 in stock.”",
+  "te": "“Kanjivaram silk saree, 8,500 rupees, red and green, 4 in stock.”",
+  "hi": "“Kanjivaram silk saree, 8,500 rupees, red and green, 4 in stock.”",
+  "kn": "“Kanjivaram silk saree, 8,500 rupees, red and green, 4 in stock.”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.say.eg.services": {
+  "en": "“Haircut, 30 minutes, 200 rupees, book any day.”",
+  "te": "“Haircut, 30 minutes, 200 rupees, book any day.”",
+  "hi": "“Haircut, 30 minutes, 200 rupees, book any day.”",
+  "kn": "“Haircut, 30 minutes, 200 rupees, book any day.”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.say.eg.courses": {
+  "en": "“NEET crash course, Mon to Fri 6 pm, 24,000 rupees, 30 seats.”",
+  "te": "“NEET crash course, Mon to Fri 6 pm, 24,000 rupees, 30 seats.”",
+  "hi": "“NEET crash course, Mon to Fri 6 pm, 24,000 rupees, 30 seats.”",
+  "kn": "“NEET crash course, Mon to Fri 6 pm, 24,000 rupees, 30 seats.”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.say.eg.properties": {
+  "en": "“2 BHK flat in Kukatpally, 1,150 sq ft, 68 lakh, available.”",
+  "te": "“2 BHK flat in Kukatpally, 1,150 sq ft, 68 lakh, available.”",
+  "hi": "“2 BHK flat in Kukatpally, 1,150 sq ft, 68 lakh, available.”",
+  "kn": "“2 BHK flat in Kukatpally, 1,150 sq ft, 68 lakh, available.”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.say.eg.pricelist": {
+  "en": "“Cotton shirting 40s, minimum 50 metres, 118 rupees.”",
+  "te": "“Cotton shirting 40s, minimum 50 metres, 118 rupees.”",
+  "hi": "“Cotton shirting 40s, minimum 50 metres, 118 rupees.”",
+  "kn": "“Cotton shirting 40s, minimum 50 metres, 118 rupees.”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.photos.title": {
+  "en": "Take photos",
+  "te": "ఫోటోలు తీయండి",
+  "hi": "फ़ोटो लें",
+  "kn": "ಫೋಟೋ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.photos.sub": {
+  "en": "Photograph the shelf or your bill book. I read the names and prices.",
+  "te": "షెల్ఫ్ లేదా మీ బిల్ బుక్ ఫోటో తీయండి. పేర్లు, ప్రైస్‌లు నేను చదువుతాను.",
+  "hi": "शेल्फ़ या अपनी बिल बुक की फ़ोटो लें। नाम और कीमतें मैं पढ़ लूँगा।",
+  "kn": "ಶೆಲ್ಫ್ ಅಥವಾ ನಿಮ್ಮ ಬಿಲ್ ಬುಕ್‌ನ ಫೋಟೋ ತೆಗೆಯಿರಿ. ಹೆಸರು, ಬೆಲೆಗಳನ್ನು ನಾನು ಓದುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.sheet.title": {
+  "en": "Import a sheet",
+  "te": "షీట్ ఇంపోర్ట్ చేయండి",
+  "hi": "शीट इम्पोर्ट करें",
+  "kn": "ಶೀಟ್ ಇಂಪೋರ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.sheet.sub": {
+  "en": "Excel, CSV or Google Sheet. I match the columns for you.",
+  "te": "Excel, CSV లేదా Google Sheet. కాలమ్స్ నేను సరిపోల్చుతాను.",
+  "hi": "Excel, CSV या Google Sheet। कॉलम मैं मिला दूँगा।",
+  "kn": "Excel, CSV ಅಥವಾ Google Sheet. ಕಾಲಮ್‌ಗಳನ್ನು ನಾನು ಹೊಂದಿಸುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.say.label": {
+  "en": "Tell me what you sell",
+  "te": "మీరు ఏమి అమ్ముతారో చెప్పండి",
+  "hi": "बताएं आप क्या बेचते हैं",
+  "kn": "ನೀವು ಏನು ಮಾರುತ್ತೀರಿ ಎಂದು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.say.go": {
+  "en": "Show what you understood",
+  "te": "అర్థమైనది చూపించండి",
+  "hi": "जो समझा वह दिखाएं",
+  "kn": "ಅರ್ಥವಾಗಿದ್ದನ್ನು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.say.err": {
+  "en": "Say a little more: at least the name.",
+  "te": "ఇంకొంచెం చెప్పండి: కనీసం పేరు.",
+  "hi": "थोड़ा और बताएं: कम से कम नाम।",
+  "kn": "ಇನ್ನೂ ಸ್ವಲ್ಪ ಹೇಳಿ: ಕನಿಷ್ಠ ಹೆಸರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.title": {
+  "en": "I understood",
+  "te": "నాకు అర్థమైనది",
+  "hi": "मैंने यह समझा",
+  "kn": "ನನಗೆ ಅರ್ಥವಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.after": {
+  "en": "After you say it",
+  "te": "మీరు చెప్పిన తర్వాత",
+  "hi": "आपके बोलने के बाद",
+  "kn": "ನೀವು ಹೇಳಿದ ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.note": {
+  "en": "I show what I understood. Nothing is saved until you tap Save. Photos and sheets work the same way: you check a list first.",
+  "te": "నాకు అర్థమైనది చూపిస్తాను. మీరు సేవ్ నొక్కేవరకు ఏదీ సేవ్ అవ్వదు. ఫోటోలు, షీట్లు కూడా ఇలాగే: ముందు మీరు లిస్ట్ చూస్తారు.",
+  "hi": "मैं जो समझा वह दिखाता हूँ। सेव दबाने तक कुछ भी सेव नहीं होता। फ़ोटो और शीट भी ऐसे ही: पहले आप लिस्ट देखते हैं।",
+  "kn": "ನನಗೆ ಅರ್ಥವಾದದ್ದನ್ನು ತೋರಿಸುತ್ತೇನೆ. ನೀವು ಸೇವ್ ಒತ್ತುವವರೆಗೆ ಏನೂ ಸೇವ್ ಆಗುವುದಿಲ್ಲ. ಫೋಟೋ, ಶೀಟ್ ಕೂಡ ಹೀಗೆಯೇ: ಮೊದಲು ನೀವು ಲಿಸ್ಟ್ ನೋಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.save_all": {
+  "en": "Save all",
+  "te": "అన్నీ సేవ్ చేయండి",
+  "hi": "सब सेव करें",
+  "kn": "ಎಲ್ಲವನ್ನೂ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.change": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.not_now": {
+  "en": "Not now",
+  "te": "ఇప్పుడు వద్దు",
+  "hi": "अभी नहीं",
+  "kn": "ಈಗ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.none": {
+  "en": "I could not find a name in that. Say it again, or add it yourself.",
+  "te": "ఇందులో పేరు కనిపించలేదు. మళ్లీ చెప్పండి, లేదా మీరే కలపండి.",
+  "hi": "इसमें नाम नहीं मिला। फिर से बोलें, या खुद जोड़ें।",
+  "kn": "ಇದರಲ್ಲಿ ಹೆಸರು ಸಿಗಲಿಲ್ಲ. ಮತ್ತೆ ಹೇಳಿ, ಅಥವಾ ನೀವೇ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.u.more": {
+  "en": "I got most of it. Please fill in what is missing, then save.",
+  "te": "ఎక్కువ భాగం అర్థమైంది. లేనివి నింపి, సేవ్ చేయండి.",
+  "hi": "ज़्यादातर समझ आ गया। जो बाकी है वह भरें, फिर सेव करें।",
+  "kn": "ಹೆಚ್ಚಿನದು ಅರ್ಥವಾಯಿತು. ಇಲ್ಲದ್ದನ್ನು ತುಂಬಿ, ನಂತರ ಸೇವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.saving": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सेव हो रहा है…",
+  "kn": "ಸೇವ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.done": {
+  "en": "Saved",
+  "te": "సేవ్ అయింది",
+  "hi": "सेव हो गया",
+  "kn": "ಸೇವ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.done.chip": {
+  "en": "Saved",
+  "te": "సేవ్ అయింది",
+  "hi": "सेव हो गया",
+  "kn": "ಸೇವ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.done.photos": {
+  "en": "Customers see a product once it has a photo. Add its photos now?",
+  "te": "ఫోటో ఉన్నప్పుడే కస్టమర్లకు ప్రొడక్ట్ కనిపిస్తుంది. ఇప్పుడు ఫోటోలు కలుపుతారా?",
+  "hi": "फ़ोटो होने पर ही ग्राहकों को प्रोडक्ट दिखता है। अभी फ़ोटो जोड़ें?",
+  "kn": "ಫೋಟೋ ಇದ್ದಾಗಲೇ ಗ್ರಾಹಕರಿಗೆ ಪ್ರಾಡಕ್ಟ್ ಕಾಣಿಸುತ್ತದೆ. ಈಗ ಫೋಟೋ ಸೇರಿಸುವಿರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.done.count": {
+  "en": "I saved it, but could not save the count. Try the count again.",
+  "te": "సేవ్ అయింది, కానీ కౌంట్ సేవ్ కాలేదు. కౌంట్ మళ్లీ ప్రయత్నించండి.",
+  "hi": "सेव हो गया, पर गिनती सेव नहीं हो पाई। गिनती फिर से डालें।",
+  "kn": "ಸೇವ್ ಆಯಿತು, ಆದರೆ ಕೌಂಟ್ ಸೇವ್ ಆಗಲಿಲ್ಲ. ಕೌಂಟ್ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.done.add": {
+  "en": "Add photos",
+  "te": "ఫోటోలు కలపండి",
+  "hi": "फ़ोटो जोड़ें",
+  "kn": "ಫೋಟೋ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.done.later": {
+  "en": "Later",
+  "te": "తర్వాత",
+  "hi": "बाद में",
+  "kn": "ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.products.title": {
+  "en": "Products",
+  "te": "ప్రొడక్ట్స్",
+  "hi": "प्रोडक्ट",
+  "kn": "ಪ್ರಾಡಕ್ಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.products.for": {
+  "en": "For a saree shop, jewellery, kirana or a dealer",
+  "te": "చీరల షాపు, జ్యువెలరీ, కిరాణా లేదా డీలర్ కోసం",
+  "hi": "साड़ी की दुकान, ज्वेलरी, किराना या डीलर के लिए",
+  "kn": "ಸೀರೆ ಅಂಗಡಿ, ಜ್ಯುವೆಲ್ಲರಿ, ಕಿರಾಣಾ ಅಥವಾ ಡೀಲರ್‌ಗಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.products.add": {
+  "en": "Add a product",
+  "te": "ప్రొడక్ట్ కలపండి",
+  "hi": "प्रोडक्ट जोड़ें",
+  "kn": "ಪ್ರಾಡಕ್ಟ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.products.edit": {
+  "en": "Change a product",
+  "te": "ప్రొడక్ట్ మార్చండి",
+  "hi": "प्रोडक्ट बदलें",
+  "kn": "ಪ್ರಾಡಕ್ಟ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.products.save": {
+  "en": "Save product",
+  "te": "ప్రొడక్ట్ సేవ్ చేయండి",
+  "hi": "प्रोडक्ट सेव करें",
+  "kn": "ಪ್ರಾಡಕ್ಟ್ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.services.title": {
+  "en": "Services",
+  "te": "సర్వీసులు",
+  "hi": "सर्विस",
+  "kn": "ಸರ್ವಿಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.services.for": {
+  "en": "For a clinic, gym or salon",
+  "te": "క్లినిక్, జిమ్ లేదా సెలూన్ కోసం",
+  "hi": "क्लिनिक, जिम या सैलून के लिए",
+  "kn": "ಕ್ಲಿನಿಕ್, ಜಿಮ್ ಅಥವಾ ಸೆಲೂನ್‌ಗಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.services.add": {
+  "en": "Add a service",
+  "te": "సర్వీస్ కలపండి",
+  "hi": "सर्विस जोड़ें",
+  "kn": "ಸರ್ವಿಸ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.services.edit": {
+  "en": "Change a service",
+  "te": "సర్వీస్ మార్చండి",
+  "hi": "सर्विस बदलें",
+  "kn": "ಸರ್ವಿಸ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.services.save": {
+  "en": "Save service",
+  "te": "సర్వీస్ సేవ్ చేయండి",
+  "hi": "सर्विस सेव करें",
+  "kn": "ಸರ್ವಿಸ್ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.courses.title": {
+  "en": "Courses",
+  "te": "కోర్సులు",
+  "hi": "कोर्स",
+  "kn": "ಕೋರ್ಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.courses.for": {
+  "en": "For a coaching centre or school",
+  "te": "కోచింగ్ సెంటర్ లేదా స్కూల్ కోసం",
+  "hi": "कोचिंग सेंटर या स्कूल के लिए",
+  "kn": "ಕೋಚಿಂಗ್ ಸೆಂಟರ್ ಅಥವಾ ಸ್ಕೂಲ್‌ಗಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.courses.add": {
+  "en": "Add a course",
+  "te": "కోర్సు కలపండి",
+  "hi": "कोर्स जोड़ें",
+  "kn": "ಕೋರ್ಸ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.courses.edit": {
+  "en": "Change a course",
+  "te": "కోర్సు మార్చండి",
+  "hi": "कोर्स बदलें",
+  "kn": "ಕೋರ್ಸ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.courses.save": {
+  "en": "Save course",
+  "te": "కోర్సు సేవ్ చేయండి",
+  "hi": "कोर्स सेव करें",
+  "kn": "ಕೋರ್ಸ್ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.properties.title": {
+  "en": "Properties",
+  "te": "ప్రాపర్టీలు",
+  "hi": "प्रॉपर्टी",
+  "kn": "ಪ್ರಾಪರ್ಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.properties.for": {
+  "en": "For real estate",
+  "te": "రియల్ ఎస్టేట్ కోసం",
+  "hi": "रियल एस्टेट के लिए",
+  "kn": "ರಿಯಲ್ ಎಸ್ಟೇಟ್‌ಗಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.properties.add": {
+  "en": "Add a property",
+  "te": "ప్రాపర్టీ కలపండి",
+  "hi": "प्रॉपर्टी जोड़ें",
+  "kn": "ಪ್ರಾಪರ್ಟಿ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.properties.edit": {
+  "en": "Change a property",
+  "te": "ప్రాపర్టీ మార్చండి",
+  "hi": "प्रॉपर्टी बदलें",
+  "kn": "ಪ್ರಾಪರ್ಟಿ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.properties.save": {
+  "en": "Save property",
+  "te": "ప్రాపర్టీ సేవ్ చేయండి",
+  "hi": "प्रॉपर्टी सेव करें",
+  "kn": "ಪ್ರಾಪರ್ಟಿ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.pricelist.title": {
+  "en": "Price lists",
+  "te": "ప్రైస్ లిస్ట్‌లు",
+  "hi": "प्राइस लिस्ट",
+  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.pricelist.for": {
+  "en": "For wholesale and dealers",
+  "te": "హోల్‌సేల్, డీలర్ల కోసం",
+  "hi": "होलसेल और डीलर के लिए",
+  "kn": "ಹೋಲ್‌ಸೇಲ್ ಮತ್ತು ಡೀಲರ್‌ಗಳಿಗಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.pricelist.add": {
+  "en": "Add an item",
+  "te": "ఐటెమ్ కలపండి",
+  "hi": "आइटम जोड़ें",
+  "kn": "ಐಟಂ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.pricelist.edit": {
+  "en": "Change an item",
+  "te": "ఐటెమ్ మార్చండి",
+  "hi": "आइटम बदलें",
+  "kn": "ಐಟಂ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.style.pricelist.save": {
+  "en": "Save item",
+  "te": "ఐటెమ్ సేవ్ చేయండి",
+  "hi": "आइटम सेव करें",
+  "kn": "ಐಟಂ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.name.eg.products": {
+  "en": "Kanjivaram silk saree",
+  "te": "Kanjivaram silk saree",
+  "hi": "Kanjivaram silk saree",
+  "kn": "Kanjivaram silk saree",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.name.eg.services": {
+  "en": "Haircut",
+  "te": "Haircut",
+  "hi": "Haircut",
+  "kn": "Haircut",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.name.eg.courses": {
+  "en": "NEET crash course",
+  "te": "NEET crash course",
+  "hi": "NEET crash course",
+  "kn": "NEET crash course",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.name.eg.properties": {
+  "en": "2 BHK flat",
+  "te": "2 BHK flat",
+  "hi": "2 BHK flat",
+  "kn": "2 BHK flat",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.name.eg.pricelist": {
+  "en": "Cotton shirting 40s",
+  "te": "Cotton shirting 40s",
+  "hi": "Cotton shirting 40s",
+  "kn": "Cotton shirting 40s",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.price": {
+  "en": "Price in rupees",
+  "te": "ధర (రూపాయల్లో)",
+  "hi": "कीमत (रुपये में)",
+  "kn": "ಬೆಲೆ (ರೂಪಾಯಿಗಳಲ್ಲಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.count": {
+  "en": "How many",
+  "te": "ఎన్ని ఉన్నాయి",
+  "hi": "कितने हैं",
+  "kn": "ಎಷ್ಟಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.stock": {
+  "en": "Stock",
+  "te": "స్టాక్",
+  "hi": "स्टॉक",
+  "kn": "ಸ್ಟಾಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.minutes": {
+  "en": "minutes",
+  "te": "నిమిషాలు",
+  "hi": "मिनट",
+  "kn": "ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.booking": {
+  "en": "When it can be booked",
+  "te": "ఎప్పుడు బుక్ చేసుకోవచ్చు",
+  "hi": "कब बुक हो सकता है",
+  "kn": "ಯಾವಾಗ ಬುಕ್ ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.batch": {
+  "en": "Batch",
+  "te": "బ్యాచ్",
+  "hi": "बैच",
+  "kn": "ಬ್ಯಾಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.batch.eg": {
+  "en": "Mon to Fri, 6 pm",
+  "te": "Mon to Fri, 6 pm",
+  "hi": "Mon to Fri, 6 pm",
+  "kn": "Mon to Fri, 6 pm",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.starts": {
+  "en": "Starts on",
+  "te": "ఎప్పుడు మొదలు",
+  "hi": "कब शुरू",
+  "kn": "ಯಾವಾಗ ಶುರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.fee": {
+  "en": "Fee in rupees",
+  "te": "ఫీజు (రూపాయల్లో)",
+  "hi": "फ़ीस (रुपये में)",
+  "kn": "ಫೀಸ್ (ರೂಪಾಯಿಗಳಲ್ಲಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.seats": {
+  "en": "Seats",
+  "te": "సీట్లు",
+  "hi": "सीटें",
+  "kn": "ಸೀಟುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.location": {
+  "en": "Place",
+  "te": "ప్రదేశం",
+  "hi": "जगह",
+  "kn": "ಸ್ಥಳ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.location.eg": {
+  "en": "Kukatpally",
+  "te": "Kukatpally",
+  "hi": "Kukatpally",
+  "kn": "Kukatpally",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.size": {
+  "en": "Size",
+  "te": "సైజు",
+  "hi": "साइज़",
+  "kn": "ಸೈಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.size.unit": {
+  "en": "Size unit",
+  "te": "సైజు యూనిట్",
+  "hi": "साइज़ की इकाई",
+  "kn": "ಸೈಜ್ ಯುನಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.status": {
+  "en": "Status",
+  "te": "స్టేటస్",
+  "hi": "स्टेटस",
+  "kn": "ಸ್ಟೇಟಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.moq": {
+  "en": "Smallest order",
+  "te": "కనీస ఆర్డర్",
+  "hi": "न्यूनतम ऑर्डर",
+  "kn": "ಕನಿಷ್ಠ ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.unit": {
+  "en": "Counted in",
+  "te": "ఎలా లెక్కిస్తారు",
+  "hi": "किसमें गिनते हैं",
+  "kn": "ಹೇಗೆ ಎಣಿಸುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.rate": {
+  "en": "Rate in rupees",
+  "te": "రేటు (రూపాయల్లో)",
+  "hi": "रेट (रुपये में)",
+  "kn": "ರೇಟ್ (ರೂಪಾಯಿಗಳಲ್ಲಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.until": {
+  "en": "Good until",
+  "te": "ఎప్పటి వరకు చెల్లుతుంది",
+  "hi": "कब तक मान्य",
+  "kn": "ಯಾವಾಗ ವರೆಗೆ ಸಲ್ಲುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.p.s1": {
+  "en": "It sells for {price} and comes in {colours}.",
+  "te": "ధర {price}. రంగులు: {colours}.",
+  "hi": "कीमत {price} है और रंग: {colours}।",
+  "kn": "ಬೆಲೆ {price}. ಬಣ್ಣಗಳು: {colours}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.p.s2": {
+  "en": "Right now it is {stock}. I have {count} of it.",
+  "te": "ప్రస్తుతం ఇది {stock}. నా దగ్గర {count} ఉన్నాయి.",
+  "hi": "अभी यह {stock} है। मेरे पास {count} हैं।",
+  "kn": "ಈಗ ಇದು {stock}. ನನ್ನ ಬಳಿ {count} ಇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.p.pick": {
+  "en": "Pick colours",
+  "te": "రంగులు ఎంచుకోండి",
+  "hi": "रंग चुनें",
+  "kn": "ಬಣ್ಣಗಳನ್ನು ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.p.colours": {
+  "en": "Colours",
+  "te": "రంగులు",
+  "hi": "रंग",
+  "kn": "ಬಣ್ಣಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.p.colours.max": {
+  "en": "Up to {n} colours.",
+  "te": "గరిష్టంగా {n} రంగులు.",
+  "hi": "ज़्यादा से ज़्यादा {n} रंग।",
+  "kn": "ಗರಿಷ್ಠ {n} ಬಣ್ಣಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.p.admin": {
+  "en": "Only the owner sets the exact price. What you type here picks the price range customers are told.",
+  "te": "కచ్చితమైన ధర ఓనర్ మాత్రమే పెడతారు. ఇక్కడ మీరు రాసింది కస్టమర్లకు చెప్పే ధర పరిధిని ఎంచుకుంటుంది.",
+  "hi": "सटीक कीमत सिर्फ़ ओनर तय करते हैं। आप जो यहाँ लिखेंगे उससे ग्राहकों को बताई जाने वाली कीमत की रेंज चुनी जाएगी।",
+  "kn": "ನಿಖರವಾದ ಬೆಲೆಯನ್ನು ಓನರ್ ಮಾತ್ರ ಇಡುತ್ತಾರೆ. ನೀವು ಇಲ್ಲಿ ಬರೆದದ್ದು ಗ್ರಾಹಕರಿಗೆ ಹೇಳುವ ಬೆಲೆಯ ಶ್ರೇಣಿಯನ್ನು ಆರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.p.photos": {
+  "en": "Photos, fabric, border and occasions",
+  "te": "ఫోటోలు, ఫ్యాబ్రిక్, బార్డర్, సందర్భాలు",
+  "hi": "फ़ोटो, फ़ैब्रिक, बॉर्डर और मौके",
+  "kn": "ಫೋಟೋ, ಫ್ಯಾಬ್ರಿಕ್, ಬಾರ್ಡರ್, ಸಂದರ್ಭಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.p.photos.soon": {
+  "en": "Photos, fabric, border and occasions are on the product's own page once it is saved.",
+  "te": "ఫోటోలు, ఫ్యాబ్రిక్, బార్డర్, సందర్భాలు సేవ్ చేసిన తర్వాత ప్రొడక్ట్ పేజీలో ఉంటాయి.",
+  "hi": "फ़ोटो, फ़ैब्रिक, बॉर्डर और मौके सेव करने के बाद प्रोडक्ट के अपने पेज पर होते हैं।",
+  "kn": "ಫೋಟೋ, ಫ್ಯಾಬ್ರಿಕ್, ಬಾರ್ಡರ್, ಸಂದರ್ಭಗಳು ಸೇವ್ ಮಾಡಿದ ನಂತರ ಪ್ರಾಡಕ್ಟ್‌ನ ಪೇಜ್‌ನಲ್ಲಿರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.s.s1": {
+  "en": "It takes {minutes} and costs {price}. Customers can book it {booking}.",
+  "te": "దీనికి {minutes} పడుతుంది, ధర {price}. కస్టమర్లు {booking} బుక్ చేసుకోవచ్చు.",
+  "hi": "इसमें {minutes} लगते हैं और कीमत {price} है। ग्राहक इसे {booking} बुक कर सकते हैं।",
+  "kn": "ಇದಕ್ಕೆ {minutes} ಬೇಕು, ಬೆಲೆ {price}. ಗ್ರಾಹಕರು {booking} ಬುಕ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.s.from": {
+  "en": "The price is a “from” price",
+  "te": "ఇది “నుంచి” ధర",
+  "hi": "यह “से शुरू” कीमत है",
+  "kn": "ಇದು “ಇಂದ” ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.s.place": {
+  "en": "Where it is done",
+  "te": "ఎక్కడ చేస్తారు",
+  "hi": "कहाँ होता है",
+  "kn": "ಎಲ್ಲಿ ಮಾಡುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.s.place.none": {
+  "en": "Not said",
+  "te": "చెప్పలేదు",
+  "hi": "नहीं बताया",
+  "kn": "ಹೇಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.c.s1": {
+  "en": "The batch meets {batch} from {date}. The fee is {fee} for the whole course, with {seats} seats.",
+  "te": "బ్యాచ్ {batch}, {date} నుంచి. మొత్తం కోర్సుకు ఫీజు {fee}, {seats} సీట్లు.",
+  "hi": "बैच {batch} को लगता है, {date} से। पूरे कोर्स की फ़ीस {fee} है, {seats} सीटें हैं।",
+  "kn": "ಬ್ಯಾಚ್ {batch}, {date} ಇಂದ. ಇಡೀ ಕೋರ್ಸ್‌ಗೆ ಫೀಸ್ {fee}, {seats} ಸೀಟುಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.r.s1": {
+  "en": "It is in {location}, {size}, and costs {price}. It is {status}.",
+  "te": "ఇది {location} లో ఉంది, {size}, ధర {price}. ఇది {status}.",
+  "hi": "यह {location} में है, {size}, कीमत {price}। यह {status} है।",
+  "kn": "ಇದು {location} ನಲ್ಲಿದೆ, {size}, ಬೆಲೆ {price}. ಇದು {status}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.r.price.help": {
+  "en": "Write the price like 68 lakh or 1.2 crore.",
+  "te": "ధర ఇలా రాయండి: 68 lakh లేదా 1.2 crore.",
+  "hi": "कीमत ऐसे लिखें: 68 lakh या 1.2 crore।",
+  "kn": "ಬೆಲೆಯನ್ನು ಹೀಗೆ ಬರೆಯಿರಿ: 68 lakh ಅಥವಾ 1.2 crore.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.r.note": {
+  "en": "A short note",
+  "te": "చిన్న నోట్",
+  "hi": "छोटा नोट",
+  "kn": "ಚಿಕ್ಕ ನೋಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.r.note.eg": {
+  "en": "3rd floor, corner plot",
+  "te": "3rd floor, corner plot",
+  "hi": "3rd floor, corner plot",
+  "kn": "3rd floor, corner plot",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.s1": {
+  "en": "The smallest order is {moq} {unit}.",
+  "te": "కనీస ఆర్డర్ {moq} {unit}.",
+  "hi": "सबसे छोटा ऑर्डर {moq} {unit} है।",
+  "kn": "ಕನಿಷ್ಠ ಆರ್ಡರ್ {moq} {unit}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.rates": {
+  "en": "Rate for bigger orders",
+  "te": "పెద్ద ఆర్డర్లకు రేటు",
+  "hi": "बड़े ऑर्डर का रेट",
+  "kn": "ದೊಡ್ಡ ಆರ್ಡರ್‌ಗಳಿಗೆ ರೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.rate": {
+  "en": "From {qty} {unit}: ₹ {rate} a {per}",
+  "te": "{qty} {unit} నుంచి: {per}కి ₹ {rate}",
+  "hi": "{qty} {unit} से: ₹ {rate} प्रति {per}",
+  "kn": "{qty} {unit} ಇಂದ: {per}ಗೆ ₹ {rate}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.add": {
+  "en": "Add a rate",
+  "te": "రేటు కలపండి",
+  "hi": "रेट जोड़ें",
+  "kn": "ರೇಟ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.from": {
+  "en": "From quantity",
+  "te": "ఈ క్వాంటిటీ నుంచి",
+  "hi": "इस मात्रा से",
+  "kn": "ಈ ಪ್ರಮಾಣದಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.remove": {
+  "en": "Remove this rate",
+  "te": "ఈ రేటు తీసేయండి",
+  "hi": "यह रेट हटाएं",
+  "kn": "ಈ ರೇಟ್ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.until": {
+  "en": "These rates are good until {date}.",
+  "te": "ఈ రేట్లు {date} వరకు చెల్లుతాయి.",
+  "hi": "ये रेट {date} तक मान्य हैं।",
+  "kn": "ಈ ರೇಟ್‌ಗಳು {date} ವರೆಗೆ ಸಲ್ಲುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.more": {
+  "en": "More choices",
+  "te": "ఇంకా ఎంపికలు",
+  "hi": "और विकल्प",
+  "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.more.products": {
+  "en": "Photos, fabric, border, occasions",
+  "te": "ఫోటోలు, ఫ్యాబ్రిక్, బార్డర్, సందర్భాలు",
+  "hi": "फ़ोटो, फ़ैब्रिक, बॉर्डर, मौके",
+  "kn": "ಫೋಟೋ, ಫ್ಯಾಬ್ರಿಕ್, ಬಾರ್ಡರ್, ಸಂದರ್ಭಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.more.services": {
+  "en": "Price “from”, where it is done",
+  "te": "“నుంచి” ధర, ఎక్కడ చేస్తారు",
+  "hi": "कीमत “से शुरू”, कहाँ होता है",
+  "kn": "“ಇಂದ” ಬೆಲೆ, ಎಲ್ಲಿ ಮಾಡುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.more.courses": {
+  "en": "Free demo class, pay in parts, other batches",
+  "te": "ఫ్రీ డెమో క్లాస్, వాయిదాల్లో చెల్లింపు, ఇతర బ్యాచ్‌లు",
+  "hi": "फ़्री डेमो क्लास, किस्तों में भुगतान, दूसरे बैच",
+  "kn": "ಫ್ರೀ ಡೆಮೊ ಕ್ಲಾಸ್, ಕಂತುಗಳಲ್ಲಿ ಪಾವತಿ, ಇತರ ಬ್ಯಾಚ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.more.properties": {
+  "en": "Floor, facing, documents, owner’s name",
+  "te": "ఫ్లోర్, ఫేసింగ్, డాక్యుమెంట్లు, ఓనర్ పేరు",
+  "hi": "फ़्लोर, फ़ेसिंग, डॉक्यूमेंट, ओनर का नाम",
+  "kn": "ಫ್ಲೋರ್, ಫೇಸಿಂಗ್, ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳು, ಓನರ್ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.more.pricelist": {
+  "en": "Pack size, delivery charge, tax",
+  "te": "ప్యాక్ సైజు, డెలివరీ ఛార్జీ, ట్యాక్స్",
+  "hi": "पैक साइज़, डिलीवरी चार्ज, टैक्स",
+  "kn": "ಪ್ಯಾಕ್ ಸೈಜ್, ಡೆಲಿವರಿ ಚಾರ್ಜ್, ಟ್ಯಾಕ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.more.courses.help": {
+  "en": "Another batch? Add the course again with that batch. Free demo class and paying in parts: ask your assistant.",
+  "te": "ఇంకో బ్యాచ్ ఉందా? ఆ బ్యాచ్‌తో కోర్సును మళ్లీ కలపండి. ఫ్రీ డెమో క్లాస్, వాయిదాల చెల్లింపు: అసిస్టెంట్‌ని అడగండి.",
+  "hi": "दूसरा बैच है? उस बैच के साथ कोर्स फिर से जोड़ें। फ़्री डेमो क्लास और किस्तों में भुगतान: असिस्टेंट से कहें।",
+  "kn": "ಇನ್ನೊಂದು ಬ್ಯಾಚ್ ಇದೆಯೇ? ಆ ಬ್ಯಾಚ್‌ನೊಂದಿಗೆ ಕೋರ್ಸ್ ಮತ್ತೆ ಸೇರಿಸಿ. ಫ್ರೀ ಡೆಮೊ ಕ್ಲಾಸ್, ಕಂತಿನ ಪಾವತಿ: ಅಸಿಸ್ಟೆಂಟ್‌ನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.more.pricelist.help": {
+  "en": "Pack size, delivery charge and tax: tell your assistant and it adds them to the item.",
+  "te": "ప్యాక్ సైజు, డెలివరీ ఛార్జీ, ట్యాక్స్: అసిస్టెంట్‌కి చెప్పండి, అది ఐటెమ్‌కి కలుపుతుంది.",
+  "hi": "पैक साइज़, डिलीवरी चार्ज और टैक्स: असिस्टेंट को बताएं, वह आइटम में जोड़ देगा।",
+  "kn": "ಪ್ಯಾಕ್ ಸೈಜ್, ಡೆಲಿವರಿ ಚಾರ್ಜ್, ಟ್ಯಾಕ್ಸ್: ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೇಳಿ, ಅದು ಐಟಂಗೆ ಸೇರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.colour.one": {
+  "en": "1 colour",
+  "te": "1 రంగు",
+  "hi": "1 रंग",
+  "kn": "1 ಬಣ್ಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.colour.n": {
+  "en": "{n} colours",
+  "te": "{n} రంగులు",
+  "hi": "{n} रंग",
+  "kn": "{n} ಬಣ್ಣಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.stock.in": {
+  "en": "{n} in stock",
+  "te": "{n} స్టాక్‌లో",
+  "hi": "{n} स्टॉक में",
+  "kn": "{n} ಸ್ಟಾಕ್‌ನಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.stock.left": {
+  "en": "{n} left",
+  "te": "{n} మిగిలాయి",
+  "hi": "{n} बचे हैं",
+  "kn": "{n} ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.stock.in_stock": {
+  "en": "In stock",
+  "te": "స్టాక్‌లో ఉంది",
+  "hi": "स्टॉक में है",
+  "kn": "ಸ್ಟಾಕ್‌ನಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.stock.few_left": {
+  "en": "Few left",
+  "te": "కొన్నే మిగిలాయి",
+  "hi": "कुछ ही बचे हैं",
+  "kn": "ಕೆಲವೇ ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.stock.made_to_order": {
+  "en": "Made to order",
+  "te": "ఆర్డర్ మీద చేస్తారు",
+  "hi": "ऑर्डर पर बनता है",
+  "kn": "ಆರ್ಡರ್ ಮೇಲೆ ಮಾಡುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.stock.sold_out": {
+  "en": "Sold out",
+  "te": "అయిపోయింది",
+  "hi": "ख़त्म हो गया",
+  "kn": "ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.minutes": {
+  "en": "{n} minutes",
+  "te": "{n} నిమిషాలు",
+  "hi": "{n} मिनट",
+  "kn": "{n} ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.hour": {
+  "en": "1 hour",
+  "te": "1 గంట",
+  "hi": "1 घंटा",
+  "kn": "1 ಗಂಟೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.hours": {
+  "en": "{n} hours",
+  "te": "{n} గంటలు",
+  "hi": "{n} घंटे",
+  "kn": "{n} ಗಂಟೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.from": {
+  "en": "from {price}",
+  "te": "{price} నుంచి",
+  "hi": "{price} से",
+  "kn": "{price} ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.booking.any_day": {
+  "en": "Any day",
+  "te": "ఏ రోజైనా",
+  "hi": "किसी भी दिन",
+  "kn": "ಯಾವ ದಿನವಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.booking.not_sunday": {
+  "en": "Not Sunday",
+  "te": "ఆదివారం కాదు",
+  "hi": "रविवार को नहीं",
+  "kn": "ಭಾನುವಾರ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.booking.book_ahead": {
+  "en": "Book ahead",
+  "te": "ముందే బుక్ చేయాలి",
+  "hi": "पहले से बुक करें",
+  "kn": "ಮುಂಚೆಯೇ ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.place.at_shop": {
+  "en": "At the shop",
+  "te": "షాపులో",
+  "hi": "दुकान पर",
+  "kn": "ಅಂಗಡಿಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.place.at_home": {
+  "en": "At the customer’s home",
+  "te": "కస్టమర్ ఇంట్లో",
+  "hi": "ग्राहक के घर पर",
+  "kn": "ಗ್ರಾಹಕರ ಮನೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.place.both": {
+  "en": "At the shop or at home",
+  "te": "షాపులో లేదా ఇంట్లో",
+  "hi": "दुकान पर या घर पर",
+  "kn": "ಅಂಗಡಿಯಲ್ಲಿ ಅಥವಾ ಮನೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.course.line": {
+  "en": "{batch} · starts {date}",
+  "te": "{batch} · {date} నుంచి",
+  "hi": "{batch} · {date} से शुरू",
+  "kn": "{batch} · {date} ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.seats.left": {
+  "en": "{n} seats left",
+  "te": "{n} సీట్లు మిగిలాయి",
+  "hi": "{n} सीटें बची हैं",
+  "kn": "{n} ಸೀಟುಗಳು ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.seats.full": {
+  "en": "Full",
+  "te": "నిండిపోయింది",
+  "hi": "भरा हुआ",
+  "kn": "ತುಂಬಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.prop.title": {
+  "en": "{name}, {place}",
+  "te": "{name}, {place}",
+  "hi": "{name}, {place}",
+  "kn": "{name}, {place}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.status.available": {
+  "en": "Available",
+  "te": "అందుబాటులో ఉంది",
+  "hi": "उपलब्ध",
+  "kn": "ಲಭ್ಯವಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.status.booked": {
+  "en": "Booked",
+  "te": "బుక్ అయింది",
+  "hi": "बुक हो गया",
+  "kn": "ಬುಕ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.status.sold": {
+  "en": "Sold",
+  "te": "అమ్ముడైంది",
+  "hi": "बिक गया",
+  "kn": "ಮಾರಾಟವಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.moq": {
+  "en": "Minimum order {n} {unit}",
+  "te": "కనీస ఆర్డర్ {n} {unit}",
+  "hi": "न्यूनतम ऑर्डर {n} {unit}",
+  "kn": "ಕನಿಷ್ಠ ಆರ್ಡರ್ {n} {unit}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.piece": {
+  "en": "pieces",
+  "te": "ముక్కలు",
+  "hi": "पीस",
+  "kn": "ಪೀಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.piece.one": {
+  "en": "piece",
+  "te": "ముక్క",
+  "hi": "पीस",
+  "kn": "ಪೀಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.piece.short": {
+  "en": "",
+  "te": "",
+  "hi": "",
+  "kn": "",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.metre": {
+  "en": "metres",
+  "te": "మీటర్లు",
+  "hi": "मीटर",
+  "kn": "ಮೀಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.metre.one": {
+  "en": "metre",
+  "te": "మీటర్",
+  "hi": "मीटर",
+  "kn": "ಮೀಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.metre.short": {
+  "en": "m",
+  "te": "m",
+  "hi": "m",
+  "kn": "m",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.kg": {
+  "en": "kg",
+  "te": "కిలోలు",
+  "hi": "किलो",
+  "kn": "ಕಿಲೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.kg.one": {
+  "en": "kg",
+  "te": "కిలో",
+  "hi": "किलो",
+  "kn": "ಕಿಲೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.kg.short": {
+  "en": "kg",
+  "te": "kg",
+  "hi": "kg",
+  "kn": "kg",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.set": {
+  "en": "sets",
+  "te": "సెట్లు",
+  "hi": "सेट",
+  "kn": "ಸೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.set.one": {
+  "en": "set",
+  "te": "సెట్",
+  "hi": "सेट",
+  "kn": "ಸೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.set.short": {
+  "en": "set",
+  "te": "set",
+  "hi": "set",
+  "kn": "set",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.dozen": {
+  "en": "dozen",
+  "te": "డజన్లు",
+  "hi": "दर्जन",
+  "kn": "ಡಜನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.dozen.one": {
+  "en": "dozen",
+  "te": "డజను",
+  "hi": "दर्जन",
+  "kn": "ಡಜನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.unit.dozen.short": {
+  "en": "doz",
+  "te": "doz",
+  "hi": "doz",
+  "kn": "doz",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.name": {
+  "en": "Please write a name.",
+  "te": "దయచేసి పేరు రాయండి.",
+  "hi": "कृपया नाम लिखें।",
+  "kn": "ದಯವಿಟ್ಟು ಹೆಸರು ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.price": {
+  "en": "The price should be an amount in rupees, like 8,500.",
+  "te": "ధర రూపాయల్లో ఉండాలి, ఉదాహరణకు 8,500.",
+  "hi": "कीमत रुपये में होनी चाहिए, जैसे 8,500।",
+  "kn": "ಬೆಲೆ ರೂಪಾಯಿಗಳಲ್ಲಿರಬೇಕು, ಉದಾಹರಣೆಗೆ 8,500.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.minutes": {
+  "en": "Say how many minutes it takes, at least 5.",
+  "te": "ఎన్ని నిమిషాలు పడుతుందో రాయండి, కనీసం 5.",
+  "hi": "बताएं कितने मिनट लगते हैं, कम से कम 5।",
+  "kn": "ಎಷ್ಟು ನಿಮಿಷ ಬೇಕು ಎಂದು ಬರೆಯಿರಿ, ಕನಿಷ್ಠ 5.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.colours": {
+  "en": "Pick one to four colours.",
+  "te": "ఒకటి నుంచి నాలుగు రంగులు ఎంచుకోండి.",
+  "hi": "एक से चार रंग चुनें।",
+  "kn": "ಒಂದರಿಂದ ನಾಲ್ಕು ಬಣ್ಣಗಳನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.count": {
+  "en": "The count should be a whole number, like 4.",
+  "te": "కౌంట్ పూర్తి సంఖ్య అయి ఉండాలి, ఉదాహరణకు 4.",
+  "hi": "गिनती पूरी संख्या होनी चाहिए, जैसे 4।",
+  "kn": "ಕೌಂಟ್ ಪೂರ್ಣ ಸಂಖ್ಯೆಯಾಗಿರಬೇಕು, ಉದಾಹರಣೆಗೆ 4.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.fee": {
+  "en": "The fee should be an amount in rupees, like 24,000.",
+  "te": "ఫీజు రూపాయల్లో ఉండాలి, ఉదాహరణకు 24,000.",
+  "hi": "फ़ीस रुपये में होनी चाहिए, जैसे 24,000।",
+  "kn": "ಫೀಸ್ ರೂಪಾಯಿಗಳಲ್ಲಿರಬೇಕು, ಉದಾಹರಣೆಗೆ 24,000.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.seats": {
+  "en": "Seats should be a whole number, like 30.",
+  "te": "సీట్లు పూర్తి సంఖ్య అయి ఉండాలి, ఉదాహరణకు 30.",
+  "hi": "सीटें पूरी संख्या होनी चाहिए, जैसे 30।",
+  "kn": "ಸೀಟುಗಳು ಪೂರ್ಣ ಸಂಖ್ಯೆಯಾಗಿರಬೇಕು, ಉದಾಹರಣೆಗೆ 30.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.size": {
+  "en": "The size should be a whole number, like 1,150.",
+  "te": "సైజు పూర్తి సంఖ్య అయి ఉండాలి, ఉదాహరణకు 1,150.",
+  "hi": "साइज़ पूरी संख्या होनी चाहिए, जैसे 1,150।",
+  "kn": "ಸೈಜ್ ಪೂರ್ಣ ಸಂಖ್ಯೆಯಾಗಿರಬೇಕು, ಉದಾಹರಣೆಗೆ 1,150.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.moq": {
+  "en": "The smallest order should be a whole number, like 50.",
+  "te": "కనీస ఆర్డర్ పూర్తి సంఖ్య అయి ఉండాలి, ఉదాహరణకు 50.",
+  "hi": "न्यूनतम ऑर्डर पूरी संख्या होना चाहिए, जैसे 50।",
+  "kn": "ಕನಿಷ್ಠ ಆರ್ಡರ್ ಪೂರ್ಣ ಸಂಖ್ಯೆಯಾಗಿರಬೇಕು, ಉದಾಹರಣೆಗೆ 50.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.rates": {
+  "en": "Each rate needs a quantity and a price. Bigger orders never cost more, and the first rate starts at the smallest order.",
+  "te": "ప్రతి రేటుకి క్వాంటిటీ, ధర కావాలి. పెద్ద ఆర్డర్‌కి ధర ఎక్కువ ఉండకూడదు, మొదటి రేటు కనీస ఆర్డర్ దగ్గర మొదలవ్వాలి.",
+  "hi": "हर रेट में मात्रा और कीमत चाहिए। बड़े ऑर्डर का रेट ज़्यादा नहीं होना चाहिए, और पहला रेट न्यूनतम ऑर्डर से शुरू हो।",
+  "kn": "ಪ್ರತಿ ರೇಟ್‌ಗೆ ಪ್ರಮಾಣ ಮತ್ತು ಬೆಲೆ ಬೇಕು. ದೊಡ್ಡ ಆರ್ಡರ್‌ಗೆ ಬೆಲೆ ಹೆಚ್ಚಿರಬಾರದು, ಮೊದಲ ರೇಟ್ ಕನಿಷ್ಠ ಆರ್ಡರ್‌ನಿಂದ ಶುರುವಾಗಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.day": {
+  "en": "Pick a date from the calendar.",
+  "te": "క్యాలెండర్ నుంచి తేదీ ఎంచుకోండి.",
+  "hi": "कैलेंडर से तारीख़ चुनें।",
+  "kn": "ಕ್ಯಾಲೆಂಡರ್‌ನಿಂದ ದಿನಾಂಕ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.err.not_ready": {
+  "en": "This is not ready for your kind of business yet. Your assistant still answers from what you tell it.",
+  "te": "ఇది మీ రకం బిజినెస్‌కి ఇంకా సిద్ధంగా లేదు. మీరు చెప్పినదాన్ని బట్టే అసిస్టెంట్ సమాధానం చెబుతుంది.",
+  "hi": "यह आपके तरह के बिज़नेस के लिए अभी तैयार नहीं है। असिस्टेंट अभी भी आपके बताए अनुसार जवाब देता है।",
+  "kn": "ಇದು ನಿಮ್ಮ ರೀತಿಯ ಬಿಸಿನೆಸ್‌ಗೆ ಇನ್ನೂ ಸಿದ್ಧವಿಲ್ಲ. ನೀವು ಹೇಳಿದ್ದನ್ನು ನೋಡಿಯೇ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-sell": {
+  "en": "What you sell",
+  "te": "మీరు ఏమి అమ్ముతారు",
+  "hi": "आप क्या बेचते हैं",
+  "kn": "ನೀವು ಏನು ಮಾರುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
