@@ -120880,5 +120880,1853 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "jobs.who.title": {
+  "en": "Who talks",
+  "te": "ఎవరు మాట్లాడతారు",
+  "hi": "कौन बात करता है",
+  "kn": "ಯಾರು ಮಾತನಾಡುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.ai_chip": {
+  "en": "Always says it is an AI",
+  "te": "ఎప్పుడూ AI అని చెబుతుంది",
+  "hi": "हमेशा बताता है कि यह AI है",
+  "kn": "ಯಾವಾಗಲೂ AI ಎಂದು ಹೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.name.help": {
+  "en": "Clear it, and it goes back to “{plain}”.",
+  "te": "తీసేస్తే మళ్లీ “{plain}” అవుతుంది.",
+  "hi": "हटाएँगे तो वापस “{plain}” हो जाएगा।",
+  "kn": "ತೆಗೆದರೆ ಮತ್ತೆ “{plain}” ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.sentence": {
+  "en": "This job speaks {language} in a {tone} voice from {number}.",
+  "te": "ఈ జాబ్ {number} నుంచి {language} మాట్లాడుతుంది, {tone} వాయిస్‌తో.",
+  "hi": "यह जॉब {number} से {language} बोलता है, {tone} आवाज़ में।",
+  "kn": "ಈ ಜಾಬ್ {number} ನಿಂದ {language} ಮಾತನಾಡುತ್ತದೆ, {tone} ಧ್ವನಿಯಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.tone.respectful": {
+  "en": "respectful",
+  "te": "మర్యాదైన",
+  "hi": "सम्मानजनक",
+  "kn": "ಗೌರವದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.tone.friendly": {
+  "en": "friendly",
+  "te": "స్నేహంగా ఉండే",
+  "hi": "दोस्ताना",
+  "kn": "ಸ್ನೇಹದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.tone.casual": {
+  "en": "casual",
+  "te": "మామూలు",
+  "hi": "आम",
+  "kn": "ಸಾಮಾನ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.tone.ex.respectful": {
+  "en": "“Namaskaram Suresh garu, …”",
+  "te": "“నమస్కారం Suresh గారు, …”",
+  "hi": "“नमस्ते Suresh जी, …”",
+  "kn": "“ನಮಸ್ಕಾರ Suresh ಅವರೇ, …”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.tone.ex.friendly": {
+  "en": "“Hi Suresh garu, …”",
+  "te": "“హాయ్ Suresh గారు, …”",
+  "hi": "“हाय Suresh जी, …”",
+  "kn": "“ಹಾಯ್ Suresh ಅವರೇ, …”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.tone.ex.casual": {
+  "en": "“Hi Suresh, …”",
+  "te": "“హాయ్ Suresh, …”",
+  "hi": "“हाय Suresh, …”",
+  "kn": "“ಹಾಯ್ Suresh, …”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.number.shop": {
+  "en": "the shop number",
+  "te": "షాప్ నంబర్",
+  "hi": "दुकान का नंबर",
+  "kn": "ಅಂಗಡಿ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.number.second": {
+  "en": "the second number",
+  "te": "రెండో నంబర్",
+  "hi": "दूसरा नंबर",
+  "kn": "ಎರಡನೇ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.voice": {
+  "en": "Voice",
+  "te": "వాయిస్",
+  "hi": "आवाज़",
+  "kn": "ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.voice.female_warm": {
+  "en": "Soft woman voice",
+  "te": "మృదువైన ఆడ గొంతు",
+  "hi": "नरम महिला आवाज़",
+  "kn": "ಮೃದು ಮಹಿಳಾ ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.voice.female_warm.d": {
+  "en": "Warm, a little slow",
+  "te": "వెచ్చగా, కొంచెం నెమ్మదిగా",
+  "hi": "गर्मजोशी भरी, थोड़ी धीमी",
+  "kn": "ಬೆಚ್ಚಗಿನ, ಸ್ವಲ್ಪ ನಿಧಾನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.voice.female_clear": {
+  "en": "Bright woman voice",
+  "te": "చురుకైన ఆడ గొంతు",
+  "hi": "तेज़ महिला आवाज़",
+  "kn": "ಚುರುಕಾದ ಮಹಿಳಾ ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.voice.female_clear.d": {
+  "en": "Quick and cheerful",
+  "te": "చకచకా, ఉల్లాసంగా",
+  "hi": "फुर्तीली और खुशमिज़ाज",
+  "kn": "ವೇಗ ಮತ್ತು ಉಲ್ಲಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.voice.male_calm": {
+  "en": "Calm man voice",
+  "te": "ప్రశాంతమైన మగ గొంతు",
+  "hi": "शांत पुरुष आवाज़",
+  "kn": "ಶಾಂತ ಪುರುಷ ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.voice.male_calm.d": {
+  "en": "Steady and clear",
+  "te": "స్థిరంగా, స్పష్టంగా",
+  "hi": "स्थिर और साफ़",
+  "kn": "ನಿಧಾನ ಮತ್ತು ಸ್ಪಷ್ಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.play": {
+  "en": "Play",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.stop": {
+  "en": "Stop",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.sample.err": {
+  "en": "That sample could not be played.",
+  "te": "ఆ శాంపిల్ ప్లే కాలేదు.",
+  "hi": "वह सैंपल चल नहीं सका।",
+  "kn": "ಆ ಸ್ಯಾಂಪಲ್ ಪ್ಲೇ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.sample.note": {
+  "en": "Samples play on your phone only. No customer hears them.",
+  "te": "శాంపిల్స్ మీ ఫోన్‌లోనే వినిపిస్తాయి. ఏ కస్టమర్‌కి వినిపించవు.",
+  "hi": "सैंपल सिर्फ़ आपके फ़ोन पर चलते हैं। कोई ग्राहक नहीं सुनता।",
+  "kn": "ಸ್ಯಾಂಪಲ್‌ಗಳು ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲಿ ಮಾತ್ರ ಕೇಳಿಸುತ್ತವೆ. ಯಾವ ಗ್ರಾಹಕರಿಗೂ ಕೇಳಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.fx.talks": {
+  "en": "{name} talks in {language} from {number}.",
+  "te": "{name} {number} నుంచి {language} మాట్లాడుతుంది.",
+  "hi": "{name} {number} से {language} बोलता है।",
+  "kn": "{name} {number} ನಿಂದ {language} ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.ai_line": {
+  "en": "Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.",
+  "te": "కస్టమర్లకి ప్రతి కాల్‌లో, ప్రతి మెసేజ్‌లో ఇది AI అసిస్టెంట్ అని ఎప్పుడూ చెబుతారు. ఇది ఆఫ్ చేయడం కుదరదు.",
+  "hi": "ग्राहकों को हर कॉल और हर मैसेज में हमेशा बताया जाता है कि यह AI असिस्टेंट है। इसे बंद नहीं किया जा सकता।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಪ್ರತಿ ಕಾಲ್ ಮತ್ತು ಮೆಸೇಜ್‌ನಲ್ಲಿ ಇದು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಯಾವಾಗಲೂ ಹೇಳಲಾಗುತ್ತದೆ. ಇದನ್ನು ಆಫ್ ಮಾಡಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.ask.title": {
+  "en": "Or just ask your assistant",
+  "te": "లేదా మీ అసిస్టెంట్‌ని అడగండి",
+  "hi": "या बस अपने असिस्टेंट से कहिए",
+  "kn": "ಅಥವಾ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.ask.say": {
+  "en": "Make the {job} job speak {language}.",
+  "te": "{job} జాబ్‌ని {language} మాట్లాడేలా చేయండి.",
+  "hi": "{job} जॉब को {language} बोलने वाला बनाइए।",
+  "kn": "{job} ಜಾಬ್ ಅನ್ನು {language} ಮಾತನಾಡುವಂತೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.ask.job.store_visits": {
+  "en": "visits",
+  "te": "విజిట్స్",
+  "hi": "विज़िट",
+  "kn": "ವಿಸಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.plan.eyebrow": {
+  "en": "Change a job · nothing changes until you say yes",
+  "te": "జాబ్ మార్పు · మీరు ఓకే అనే వరకు ఏదీ మారదు",
+  "hi": "जॉब में बदलाव · आपके हाँ कहने तक कुछ नहीं बदलता",
+  "kn": "ಜಾಬ್ ಬದಲಾವಣೆ · ನೀವು ಹೌದು ಅನ್ನುವವರೆಗೆ ಏನೂ ಬದಲಾಗುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.plan.title": {
+  "en": "Change “{job}”",
+  "te": "“{job}” మార్చండి",
+  "hi": "“{job}” बदलें",
+  "kn": "“{job}” ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.plan.language": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.plan.help": {
+  "en": "The next reminder and call go out in {language}. Nothing already sent changes. Same voice, same number.",
+  "te": "తర్వాతి రిమైండర్, కాల్ {language}లో వెళ్తాయి. ఇప్పటికే పంపినవి మారవు. అదే వాయిస్, అదే నంబర్.",
+  "hi": "अगला रिमाइंडर और कॉल {language} में जाएँगे। जो पहले भेजा जा चुका है वह नहीं बदलता। वही आवाज़, वही नंबर।",
+  "kn": "ಮುಂದಿನ ರಿಮೈಂಡರ್ ಮತ್ತು ಕಾಲ್ {language}ನಲ್ಲಿ ಹೋಗುತ್ತವೆ. ಈಗಾಗಲೇ ಕಳುಹಿಸಿದ್ದು ಬದಲಾಗುವುದಿಲ್ಲ. ಅದೇ ಧ್ವನಿ, ಅದೇ ನಂಬರ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.plan.yes": {
+  "en": "Yes, change it",
+  "te": "అవును, మార్చండి",
+  "hi": "हाँ, बदलिए",
+  "kn": "ಹೌದು, ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.plan.no": {
+  "en": "No",
+  "te": "వద్దు",
+  "hi": "नहीं",
+  "kn": "ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.plan.done": {
+  "en": "{job} now speaks {language}",
+  "te": "{job} ఇప్పుడు {language} మాట్లాడుతుంది",
+  "hi": "{job} अब {language} बोलता है",
+  "kn": "{job} ಈಗ {language} ಮಾತನಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.changed": {
+  "en": "Changed. Undo is here for a few seconds.",
+  "te": "మార్చాం. కొన్ని సెకన్లు వెనక్కి తీసుకోవచ్చు.",
+  "hi": "बदल दिया। कुछ सेकंड तक वापस ले सकते हैं।",
+  "kn": "ಬದಲಾಯಿಸಿದ್ದೇವೆ. ಕೆಲವು ಸೆಕೆಂಡ್ ವಾಪಸ್ ತೆಗೆದುಕೊಳ್ಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.own.title": {
+  "en": "Your own messages",
+  "te": "మీ సొంత మెసేజ్‌లు",
+  "hi": "आपके अपने मैसेज",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.own.sub": {
+  "en": "Say what you want. Your assistant writes it, checks it and sends it to WhatsApp for you.",
+  "te": "మీకు ఏం కావాలో చెప్పండి. మీ అసిస్టెంట్ రాసి, చెక్ చేసి, WhatsAppకి పంపుతుంది.",
+  "hi": "जो चाहिए वह बोलिए। आपका असिस्टेंट लिखता है, जाँचता है और WhatsApp को भेजता है।",
+  "kn": "ನಿಮಗೆ ಏನು ಬೇಕು ಎಂದು ಹೇಳಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಬರೆದು, ಪರಿಶೀಲಿಸಿ, WhatsAppಗೆ ಕಳುಹಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.new": {
+  "en": "Make a new message",
+  "te": "కొత్త మెసేజ్ చేయండి",
+  "hi": "नया मैसेज बनाइए",
+  "kn": "ಹೊಸ ಮೆಸೇಜ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.none": {
+  "en": "You have not made a message yet. Say what you want and your assistant writes it.",
+  "te": "మీరు ఇంకా మెసేజ్ చేయలేదు. కావాల్సింది చెప్పండి, మీ అసిస్టెంట్ రాస్తుంది.",
+  "hi": "आपने अभी कोई मैसेज नहीं बनाया। जो चाहिए वह बोलिए, असिस्टेंट लिखेगा।",
+  "kn": "ನೀವು ಇನ್ನೂ ಮೆಸೇಜ್ ಮಾಡಿಲ್ಲ. ಬೇಕಾದ್ದನ್ನು ಹೇಳಿ, ಅಸಿಸ್ಟೆಂಟ್ ಬರೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.status.waiting": {
+  "en": "Waiting for WhatsApp",
+  "te": "WhatsApp కోసం ఆగుతున్నాం",
+  "hi": "WhatsApp के जवाब का इंतज़ार",
+  "kn": "WhatsApp ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.status.approved": {
+  "en": "Approved",
+  "te": "ఓకే అయింది",
+  "hi": "मंज़ूर",
+  "kn": "ಒಪ್ಪಿಗೆಯಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.status.needs_change": {
+  "en": "Needs a change",
+  "te": "మార్పు కావాలి",
+  "hi": "बदलाव चाहिए",
+  "kn": "ಬದಲಾವಣೆ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.sent.today": {
+  "en": "Sent at {time}. WhatsApp usually answers within a few hours, and at most a day. We tell you here.",
+  "te": "{time}కి పంపాం. WhatsApp సాధారణంగా కొన్ని గంటల్లో, గరిష్ఠంగా ఒక రోజులో చెబుతుంది. ఇక్కడే చెబుతాం.",
+  "hi": "{time} बजे भेजा। WhatsApp आमतौर पर कुछ घंटों में, ज़्यादा से ज़्यादा एक दिन में जवाब देता है। हम यहीं बताएँगे।",
+  "kn": "{time}ಕ್ಕೆ ಕಳುಹಿಸಿದ್ದೇವೆ. WhatsApp ಸಾಮಾನ್ಯವಾಗಿ ಕೆಲವು ಗಂಟೆಗಳಲ್ಲಿ, ಹೆಚ್ಚೆಂದರೆ ಒಂದು ದಿನದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ. ಇಲ್ಲಿಯೇ ತಿಳಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.sent.day": {
+  "en": "Sent on {date}. WhatsApp usually answers within a few hours, and at most a day. We tell you here.",
+  "te": "{date}న పంపాం. WhatsApp సాధారణంగా కొన్ని గంటల్లో, గరిష్ఠంగా ఒక రోజులో చెబుతుంది. ఇక్కడే చెబుతాం.",
+  "hi": "{date} को भेजा। WhatsApp आमतौर पर कुछ घंटों में, ज़्यादा से ज़्यादा एक दिन में जवाब देता है। हम यहीं बताएँगे।",
+  "kn": "{date}ರಂದು ಕಳುಹಿಸಿದ್ದೇವೆ. WhatsApp ಸಾಮಾನ್ಯವಾಗಿ ಕೆಲವು ಗಂಟೆಗಳಲ್ಲಿ, ಹೆಚ್ಚೆಂದರೆ ಒಂದು ದಿನದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ. ಇಲ್ಲಿಯೇ ತಿಳಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.track.sent": {
+  "en": "Sent",
+  "te": "పంపాం",
+  "hi": "भेजा",
+  "kn": "ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.track.checking": {
+  "en": "WhatsApp is checking",
+  "te": "WhatsApp చెక్ చేస్తోంది",
+  "hi": "WhatsApp जाँच रहा है",
+  "kn": "WhatsApp ಪರಿಶೀಲಿಸುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.track.answer": {
+  "en": "Answer",
+  "te": "జవాబు",
+  "hi": "जवाब",
+  "kn": "ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.approved.line": {
+  "en": "Ready. Jobs can send it now.",
+  "te": "రెడీ. జాబ్స్ ఇప్పుడు పంపవచ్చు.",
+  "hi": "तैयार। जॉब अब इसे भेज सकते हैं।",
+  "kn": "ಸಿದ್ಧ. ಜಾಬ್‌ಗಳು ಈಗ ಇದನ್ನು ಕಳುಹಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.use_in_job": {
+  "en": "Use it in a job",
+  "te": "జాబ్‌లో వాడండి",
+  "hi": "जॉब में इस्तेमाल करें",
+  "kn": "ಜಾಬ್‌ನಲ್ಲಿ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.change_btn": {
+  "en": "Change it by saying it",
+  "te": "చెప్పి మార్చండి",
+  "hi": "बोलकर बदलिए",
+  "kn": "ಹೇಳಿ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.cat.utility": {
+  "en": "Order update",
+  "te": "ఆర్డర్ అప్‌డేట్",
+  "hi": "ऑर्डर अपडेट",
+  "kn": "ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.cat.marketing": {
+  "en": "Promotion",
+  "te": "ప్రమోషన్",
+  "hi": "प्रमोशन",
+  "kn": "ಪ್ರಮೋಷನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.category_mismatch": {
+  "en": "WhatsApp says this is not about their order. Send it as a promotion instead, or change the words.",
+  "te": "ఇది వాళ్ల ఆర్డర్ గురించి కాదని WhatsApp అంటోంది. ప్రమోషన్‌గా పంపండి, లేదా మాటలు మార్చండి.",
+  "hi": "WhatsApp कहता है कि यह उनके ऑर्डर के बारे में नहीं है। इसे प्रमोशन की तरह भेजिए, या शब्द बदलिए।",
+  "kn": "ಇದು ಅವರ ಆರ್ಡರ್ ಬಗ್ಗೆ ಅಲ್ಲ ಎಂದು WhatsApp ಹೇಳುತ್ತದೆ. ಪ್ರಮೋಷನ್ ಆಗಿ ಕಳುಹಿಸಿ, ಅಥವಾ ಮಾತುಗಳನ್ನು ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.price_or_offer": {
+  "en": "WhatsApp says this sounds like an offer, but you chose “about their order”. Take out the word {word}, or send it as an offer instead.",
+  "te": "ఇది ఆఫర్‌లా ఉందని WhatsApp అంటోంది, కానీ మీరు “వాళ్ల ఆర్డర్ గురించి” అని ఎంచుకున్నారు. {word} అనే మాట తీసేయండి, లేదా ఆఫర్‌గా పంపండి.",
+  "hi": "WhatsApp कहता है कि यह ऑफ़र जैसा लगता है, पर आपने “उनके ऑर्डर के बारे में” चुना है। {word} शब्द हटाइए, या इसे ऑफ़र की तरह भेजिए।",
+  "kn": "ಇದು ಆಫರ್‌ನಂತಿದೆ ಎಂದು WhatsApp ಹೇಳುತ್ತದೆ, ಆದರೆ ನೀವು “ಅವರ ಆರ್ಡರ್ ಬಗ್ಗೆ” ಎಂದು ಆರಿಸಿದ್ದೀರಿ. {word} ಎಂಬ ಮಾತನ್ನು ತೆಗೆಯಿರಿ, ಅಥವಾ ಆಫರ್ ಆಗಿ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.price_or_offer_plain": {
+  "en": "WhatsApp says this sounds like an offer, but you chose “about their order”. Take out the price or offer words, or send it as an offer instead.",
+  "te": "ఇది ఆఫర్‌లా ఉందని WhatsApp అంటోంది, కానీ మీరు “వాళ్ల ఆర్డర్ గురించి” అని ఎంచుకున్నారు. ధర, ఆఫర్ మాటలు తీసేయండి, లేదా ఆఫర్‌గా పంపండి.",
+  "hi": "WhatsApp कहता है कि यह ऑफ़र जैसा लगता है, पर आपने “उनके ऑर्डर के बारे में” चुना है। दाम या ऑफ़र वाले शब्द हटाइए, या इसे ऑफ़र की तरह भेजिए।",
+  "kn": "ಇದು ಆಫರ್‌ನಂತಿದೆ ಎಂದು WhatsApp ಹೇಳುತ್ತದೆ, ಆದರೆ ನೀವು “ಅವರ ಆರ್ಡರ್ ಬಗ್ಗೆ” ಎಂದು ಆರಿಸಿದ್ದೀರಿ. ಬೆಲೆ ಅಥವಾ ಆಫರ್ ಮಾತುಗಳನ್ನು ತೆಗೆಯಿರಿ, ಅಥವಾ ಆಫರ್ ಆಗಿ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.variable_edge": {
+  "en": "WhatsApp does not allow the customer’s name as the very first or last word. Add a few words before or after it.",
+  "te": "కస్టమర్ పేరు మొదటి లేదా చివరి మాటగా ఉండకూడదని WhatsApp అంటోంది. దాని ముందు లేదా వెనక కొన్ని మాటలు చేర్చండి.",
+  "hi": "WhatsApp ग्राहक का नाम सबसे पहले या सबसे आख़िर में नहीं चाहता। उसके पहले या बाद में कुछ शब्द जोड़िए।",
+  "kn": "ಗ್ರಾಹಕರ ಹೆಸರು ಮೊದಲ ಅಥವಾ ಕೊನೆಯ ಮಾತಾಗಿರಬಾರದು ಎಂದು WhatsApp ಹೇಳುತ್ತದೆ. ಅದರ ಮೊದಲು ಅಥವಾ ನಂತರ ಕೆಲವು ಮಾತುಗಳನ್ನು ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.capitals": {
+  "en": "WhatsApp does not like words in capital letters. Write them in small letters.",
+  "te": "క్యాపిటల్ అక్షరాల మాటలు WhatsAppకి నచ్చవు. వాటిని చిన్న అక్షరాల్లో రాయండి.",
+  "hi": "WhatsApp को कैपिटल अक्षरों वाले शब्द पसंद नहीं। उन्हें छोटे अक्षरों में लिखिए।",
+  "kn": "ದೊಡ್ಡ ಅಕ್ಷರಗಳ ಮಾತುಗಳು WhatsAppಗೆ ಇಷ್ಟವಿಲ್ಲ. ಅವುಗಳನ್ನು ಸಣ್ಣ ಅಕ್ಷರಗಳಲ್ಲಿ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.too_long": {
+  "en": "The message is too long for WhatsApp. Make it shorter.",
+  "te": "మెసేజ్ WhatsAppకి చాలా పెద్దది. చిన్నగా చేయండి.",
+  "hi": "मैसेज WhatsApp के लिए बहुत लंबा है। छोटा कीजिए।",
+  "kn": "ಮೆಸೇಜ್ WhatsAppಗೆ ತುಂಬಾ ಉದ್ದವಾಗಿದೆ. ಚಿಕ್ಕದು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.format": {
+  "en": "WhatsApp could not read the layout. Change the words a little and send again.",
+  "te": "WhatsAppకి లేఅవుట్ అర్థం కాలేదు. మాటలు కొంచెం మార్చి మళ్లీ పంపండి.",
+  "hi": "WhatsApp लेआउट पढ़ नहीं सका। शब्द थोड़े बदलकर फिर भेजिए।",
+  "kn": "WhatsAppಗೆ ಲೇಔಟ್ ಓದಲಾಗಲಿಲ್ಲ. ಮಾತುಗಳನ್ನು ಸ್ವಲ್ಪ ಬದಲಿಸಿ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.abusive": {
+  "en": "WhatsApp thinks some words are rude or unsafe. Take them out.",
+  "te": "కొన్ని మాటలు అసభ్యంగా లేదా ప్రమాదకరంగా ఉన్నాయని WhatsApp అనుకుంటోంది. వాటిని తీసేయండి.",
+  "hi": "WhatsApp को लगता है कि कुछ शब्द बदतमीज़ या असुरक्षित हैं। उन्हें हटाइए।",
+  "kn": "ಕೆಲವು ಮಾತುಗಳು ಅಸಭ್ಯ ಅಥವಾ ಅಸುರಕ್ಷಿತ ಎಂದು WhatsApp ಭಾವಿಸುತ್ತದೆ. ಅವುಗಳನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.scam_like": {
+  "en": "WhatsApp thinks it looks like a scam (asking for money, a code or a link). Take that out.",
+  "te": "ఇది మోసంలా ఉందని WhatsApp అనుకుంటోంది (డబ్బు, కోడ్ లేదా లింక్ అడగడం). అది తీసేయండి.",
+  "hi": "WhatsApp को लगता है कि यह धोखाधड़ी जैसा है (पैसे, कोड या लिंक माँगना)। उसे हटाइए।",
+  "kn": "ಇದು ಮೋಸದಂತಿದೆ ಎಂದು WhatsApp ಭಾವಿಸುತ್ತದೆ (ಹಣ, ಕೋಡ್ ಅಥವಾ ಲಿಂಕ್ ಕೇಳುವುದು). ಅದನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.opt_out_missing": {
+  "en": "A promotion must tell customers how to stop it. Add a line like “Reply STOP to opt out”.",
+  "te": "ప్రమోషన్‌లో ఆపడం ఎలాగో కస్టమర్లకి చెప్పాలి. “ఆపాలంటే STOP అని రిప్లై చేయండి” లాంటి లైన్ చేర్చండి.",
+  "hi": "प्रमोशन में ग्राहकों को बताना ज़रूरी है कि इसे कैसे रोकें। “रोकने के लिए STOP लिखें” जैसी लाइन जोड़िए।",
+  "kn": "ಪ್ರಮೋಷನ್‌ನಲ್ಲಿ ನಿಲ್ಲಿಸುವುದು ಹೇಗೆ ಎಂದು ಗ್ರಾಹಕರಿಗೆ ಹೇಳಬೇಕು. “ನಿಲ್ಲಿಸಲು STOP ಎಂದು ಕಳುಹಿಸಿ” ಎಂಬ ಸಾಲು ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.quality_paused": {
+  "en": "Many customers reported this message, so WhatsApp paused it. Write it again in other words.",
+  "te": "చాలామంది కస్టమర్లు ఈ మెసేజ్ గురించి రిపోర్ట్ చేశారు, అందుకే WhatsApp ఆపేసింది. వేరే మాటల్లో మళ్లీ రాయండి.",
+  "hi": "कई ग्राहकों ने इस मैसेज की शिकायत की, इसलिए WhatsApp ने इसे रोक दिया। दूसरे शब्दों में फिर से लिखिए।",
+  "kn": "ಅನೇಕ ಗ್ರಾಹಕರು ಈ ಮೆಸೇಜ್ ಬಗ್ಗೆ ವರದಿ ಮಾಡಿದ್ದಾರೆ, ಆದ್ದರಿಂದ WhatsApp ನಿಲ್ಲಿಸಿದೆ. ಬೇರೆ ಮಾತುಗಳಲ್ಲಿ ಮತ್ತೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.why.other": {
+  "en": "WhatsApp sent it back. Change the words a little and send again.",
+  "te": "WhatsApp వెనక్కి పంపింది. మాటలు కొంచెం మార్చి మళ్లీ పంపండి.",
+  "hi": "WhatsApp ने इसे लौटा दिया। शब्द थोड़े बदलकर फिर भेजिए।",
+  "kn": "WhatsApp ವಾಪಸ್ ಕಳುಹಿಸಿದೆ. ಮಾತುಗಳನ್ನು ಸ್ವಲ್ಪ ಬದಲಿಸಿ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.title": {
+  "en": "Write your own WhatsApp message",
+  "te": "మీ సొంత WhatsApp మెసేజ్ రాయండి",
+  "hi": "अपना WhatsApp मैसेज लिखिए",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ WhatsApp ಮೆಸೇಜ್ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.steps": {
+  "en": "Steps",
+  "te": "దశలు",
+  "hi": "चरण",
+  "kn": "ಹಂತಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.step.say": {
+  "en": "Say it",
+  "te": "చెప్పండి",
+  "hi": "बोलिए",
+  "kn": "ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.step.written": {
+  "en": "Written",
+  "te": "రాసింది",
+  "hi": "लिखा गया",
+  "kn": "ಬರೆದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.step.preview": {
+  "en": "Preview",
+  "te": "ప్రివ్యూ",
+  "hi": "प्रिव्यू",
+  "kn": "ಪ್ರಿವ್ಯೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.step.checks": {
+  "en": "Checks",
+  "te": "చెక్‌లు",
+  "hi": "जाँच",
+  "kn": "ಪರಿಶೀಲನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.step.send": {
+  "en": "Send",
+  "te": "పంపండి",
+  "hi": "भेजें",
+  "kn": "ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.step.status": {
+  "en": "Status",
+  "te": "స్థితి",
+  "hi": "स्थिति",
+  "kn": "ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s1.title": {
+  "en": "Say what you want",
+  "te": "మీకు ఏం కావాలో చెప్పండి",
+  "hi": "जो चाहिए वह बोलिए",
+  "kn": "ನಿಮಗೆ ಏನು ಬೇಕು ಎಂದು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s1.sub": {
+  "en": "Talk or type, in Telugu or English",
+  "te": "మాట్లాడండి లేదా టైప్ చేయండి, తెలుగులో లేదా ఇంగ్లీష్‌లో",
+  "hi": "बोलिए या टाइप कीजिए, तेलुगु या अंग्रेज़ी में",
+  "kn": "ಮಾತನಾಡಿ ಅಥವಾ ಟೈಪ್ ಮಾಡಿ, ತೆಲುಗು ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s1.placeholder": {
+  "en": "Tell customers the blouse is ready for pickup",
+  "te": "blouse రెడీ అని, pickup చేసుకోమని కస్టమర్లకి చెప్పండి",
+  "hi": "ग्राहकों को बताइए कि ब्लाउज़ तैयार है, ले जाइए",
+  "kn": "ಬ್ಲೌಸ್ ಸಿದ್ಧವಾಗಿದೆ, ತೆಗೆದುಕೊಂಡು ಹೋಗಿ ಎಂದು ಗ್ರಾಹಕರಿಗೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s1.write_in": {
+  "en": "Write it in",
+  "te": "ఏ భాషలో రాయాలి",
+  "hi": "किस भाषा में लिखें",
+  "kn": "ಯಾವ ಭಾಷೆಯಲ್ಲಿ ಬರೆಯಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s1.langs": {
+  "en": "Telugu and English",
+  "te": "తెలుగు, ఇంగ్లీష్",
+  "hi": "तेलुगु और अंग्रेज़ी",
+  "kn": "ತೆಲುಗು ಮತ್ತು ಇಂಗ್ಲಿಷ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s1.go": {
+  "en": "Write it for me",
+  "te": "నా కోసం రాయండి",
+  "hi": "मेरे लिए लिखिए",
+  "kn": "ನನಗಾಗಿ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s1.writing": {
+  "en": "Writing it…",
+  "te": "రాస్తున్నాం…",
+  "hi": "लिख रहे हैं…",
+  "kn": "ಬರೆಯುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s1.hint": {
+  "en": "Not sure what to say? Try “Remind customers their order is out for delivery”.",
+  "te": "ఏం చెప్పాలో తెలియదా? “ఆర్డర్ డెలివరీకి బయలుదేరిందని కస్టమర్లకి గుర్తు చేయండి” అని ప్రయత్నించండి.",
+  "hi": "क्या कहें, समझ नहीं आ रहा? “ग्राहकों को याद दिलाइए कि उनका ऑर्डर डिलीवरी के लिए निकल गया” आज़माइए।",
+  "kn": "ಏನು ಹೇಳಬೇಕೆಂದು ತಿಳಿಯುತ್ತಿಲ್ಲವೇ? “ಆರ್ಡರ್ ಡೆಲಿವರಿಗೆ ಹೊರಟಿದೆ ಎಂದು ಗ್ರಾಹಕರಿಗೆ ನೆನಪಿಸಿ” ಎಂದು ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s1.unclear": {
+  "en": "I could not tell what to write. Say it a little differently, for example “Tell customers the blouse is ready for pickup”.",
+  "te": "ఏం రాయాలో అర్థం కాలేదు. కొంచెం వేరేగా చెప్పండి, ఉదాహరణకు “blouse రెడీ అని కస్టమర్లకి చెప్పండి”.",
+  "hi": "समझ नहीं आया कि क्या लिखूँ। थोड़ा अलग तरह से कहिए, जैसे “ग्राहकों को बताइए कि ब्लाउज़ तैयार है”।",
+  "kn": "ಏನು ಬರೆಯಬೇಕೆಂದು ತಿಳಿಯಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಬೇರೆ ರೀತಿ ಹೇಳಿ, ಉದಾಹರಣೆಗೆ “ಬ್ಲೌಸ್ ಸಿದ್ಧವಾಗಿದೆ ಎಂದು ಗ್ರಾಹಕರಿಗೆ ಹೇಳಿ”.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s2.title": {
+  "en": "Your assistant writes it",
+  "te": "మీ అసిస్టెంట్ రాస్తుంది",
+  "hi": "आपका असिस्टेंट लिखता है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಬರೆಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s2.sub": {
+  "en": "Both languages. The customer’s name fills in by itself.",
+  "te": "రెండు భాషల్లో. కస్టమర్ పేరు దానంతట అదే చేరుతుంది.",
+  "hi": "दोनों भाषाओं में। ग्राहक का नाम अपने आप भर जाता है।",
+  "kn": "ಎರಡೂ ಭಾಷೆಗಳಲ್ಲಿ. ಗ್ರಾಹಕರ ಹೆಸರು ತಾನಾಗಿಯೇ ತುಂಬುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.lang.te": {
+  "en": "Telugu",
+  "te": "తెలుగు",
+  "hi": "तेलुगु",
+  "kn": "ತೆಲುಗು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.lang.en": {
+  "en": "English",
+  "te": "ఇంగ్లీష్",
+  "hi": "अंग्रेज़ी",
+  "kn": "ಇಂಗ್ಲಿಷ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.name.note": {
+  "en": "The orange Name becomes each customer’s first name.",
+  "te": "నారింజ రంగు పేరు ప్రతి కస్టమర్ మొదటి పేరుగా మారుతుంది.",
+  "hi": "नारंगी नाम हर ग्राहक का पहला नाम बन जाता है।",
+  "kn": "ಕಿತ್ತಳೆ ಬಣ್ಣದ ಹೆಸರು ಪ್ರತಿ ಗ್ರಾಹಕರ ಮೊದಲ ಹೆಸರಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.edit": {
+  "en": "Edit",
+  "te": "మార్చండి",
+  "hi": "बदलिए",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.edit.done": {
+  "en": "Done",
+  "te": "అయింది",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.edit.hint": {
+  "en": "Keep [Name] where the customer’s name should go.",
+  "te": "కస్టమర్ పేరు ఎక్కడ రావాలో అక్కడ [Name] ఉంచండి.",
+  "hi": "जहाँ ग्राहक का नाम आना है वहाँ [Name] रखिए।",
+  "kn": "ಗ್ರಾಹಕರ ಹೆಸರು ಎಲ್ಲಿ ಬರಬೇಕೋ ಅಲ್ಲಿ [Name] ಇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.part.header": {
+  "en": "title",
+  "te": "టైటిల్",
+  "hi": "टाइटल",
+  "kn": "ಶೀರ್ಷಿಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.part.body": {
+  "en": "message",
+  "te": "మెసేజ్",
+  "hi": "मैसेज",
+  "kn": "ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.part.footer": {
+  "en": "small line at the bottom",
+  "te": "కింద చిన్న లైన్",
+  "hi": "नीचे की छोटी लाइन",
+  "kn": "ಕೆಳಗಿನ ಚಿಕ್ಕ ಸಾಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.part.buttons": {
+  "en": "buttons",
+  "te": "బటన్లు",
+  "hi": "बटन",
+  "kn": "ಬಟನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.change.go": {
+  "en": "Change by saying it",
+  "te": "చెప్పి మార్చండి",
+  "hi": "बोलकर बदलिए",
+  "kn": "ಹೇಳಿ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.change.placeholder": {
+  "en": "What should change?",
+  "te": "ఏం మారాలి?",
+  "hi": "क्या बदलना है?",
+  "kn": "ಏನು ಬದಲಾಗಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.change.apply": {
+  "en": "Change it",
+  "te": "మార్చండి",
+  "hi": "बदलिए",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s3.title": {
+  "en": "Preview on WhatsApp",
+  "te": "WhatsAppలో ప్రివ్యూ",
+  "hi": "WhatsApp पर प्रिव्यू",
+  "kn": "WhatsAppನಲ್ಲಿ ಪ್ರಿವ್ಯೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s3.sub": {
+  "en": "Exactly what the customer sees, with a sample name",
+  "te": "కస్టమర్‌కి కనిపించేది అచ్చం ఇదే, ఒక శాంపిల్ పేరుతో",
+  "hi": "ग्राहक को ठीक यही दिखता है, एक नमूने के नाम के साथ",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಕಾಣುವುದು ಇದೇ, ಒಂದು ಮಾದರಿ ಹೆಸರಿನೊಂದಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.sample_name": {
+  "en": "Lakshmi",
+  "te": "లక్ష్మి",
+  "hi": "लक्ष्मी",
+  "kn": "ಲಕ್ಷ್ಮಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s3.account": {
+  "en": "Business account",
+  "te": "బిజినెస్ అకౌంట్",
+  "hi": "बिज़नेस अकाउंट",
+  "kn": "ಬಿಸಿನೆಸ್ ಅಕೌಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s3.today": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s3.note": {
+  "en": "Title, message, small line at the bottom and buttons.",
+  "te": "టైటిల్, మెసేజ్, కింద చిన్న లైన్, బటన్లు.",
+  "hi": "टाइटल, मैसेज, नीचे की छोटी लाइन और बटन।",
+  "kn": "ಶೀರ್ಷಿಕೆ, ಮೆಸೇಜ್, ಕೆಳಗಿನ ಚಿಕ್ಕ ಸಾಲು ಮತ್ತು ಬಟನ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s4.title": {
+  "en": "Automatic checks",
+  "te": "ఆటోమేటిక్ చెక్‌లు",
+  "hi": "अपने आप जाँच",
+  "kn": "ತಾನಾಗಿ ಪರಿಶೀಲನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s4.sub": {
+  "en": "Against WhatsApp’s rules, so it is not sent back",
+  "te": "WhatsApp రూల్స్ ప్రకారం, వెనక్కి రాకుండా",
+  "hi": "WhatsApp के नियमों के हिसाब से, ताकि वापस न आए",
+  "kn": "WhatsApp ನಿಯಮಗಳ ಪ್ರಕಾರ, ವಾಪಸ್ ಬರದಂತೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s4.fix_n": {
+  "en": "{n} to fix",
+  "te": "{n} సరిచేయాలి",
+  "hi": "{n} ठीक करने हैं",
+  "kn": "{n} ಸರಿಪಡಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s4.allgood": {
+  "en": "All good",
+  "te": "అన్నీ బాగున్నాయి",
+  "hi": "सब ठीक है",
+  "kn": "ಎಲ್ಲವೂ ಸರಿಯಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s4.fix_all": {
+  "en": "Fix all",
+  "te": "అన్నీ సరిచేయండి",
+  "hi": "सब ठीक करें",
+  "kn": "ಎಲ್ಲವನ್ನೂ ಸರಿಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s4.fix": {
+  "en": "Fix",
+  "te": "సరిచేయండి",
+  "hi": "ठीक करें",
+  "kn": "ಸರಿಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s4.legend": {
+  "en": "Green: fine. Amber: one tap fixes it, or change it by saying it.",
+  "te": "ఆకుపచ్చ: బాగుంది. అంబర్: ఒక్క ట్యాప్‌తో సరవుతుంది, లేదా చెప్పి మార్చండి.",
+  "hi": "हरा: ठीक। एम्बर: एक टैप से ठीक होता है, या बोलकर बदलिए।",
+  "kn": "ಹಸಿರು: ಸರಿ. ಅಂಬರ್: ಒಂದು ಟ್ಯಾಪ್‌ನಲ್ಲಿ ಸರಿಯಾಗುತ್ತದೆ, ಅಥವಾ ಹೇಳಿ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.category.title": {
+  "en": "Category: {group}",
+  "te": "కేటగిరీ: {group}",
+  "hi": "श्रेणी: {group}",
+  "kn": "ವರ್ಗ: {group}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.price_promise.title": {
+  "en": "No price promise in an order update",
+  "te": "ఆర్డర్ అప్‌డేట్‌లో ధర హామీ ఉండకూడదు",
+  "hi": "ऑर्डर अपडेट में दाम का वादा नहीं",
+  "kn": "ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್‌ನಲ್ಲಿ ಬೆಲೆ ಭರವಸೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.capitals.title": {
+  "en": "No shouting in capitals",
+  "te": "క్యాపిటల్స్‌లో అరవడం లేదు",
+  "hi": "कैपिटल अक्षरों में चिल्लाना नहीं",
+  "kn": "ದೊಡ್ಡ ಅಕ್ಷರಗಳಲ್ಲಿ ಕೂಗುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.name_edge.title": {
+  "en": "Names are not the very first or last word",
+  "te": "పేరు మొదటి లేదా చివరి మాట కాదు",
+  "hi": "नाम सबसे पहला या आख़िरी शब्द नहीं",
+  "kn": "ಹೆಸರು ಮೊದಲ ಅಥವಾ ಕೊನೆಯ ಮಾತಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.length.title": {
+  "en": "Short enough for WhatsApp",
+  "te": "WhatsAppకి సరిపడా చిన్నది",
+  "hi": "WhatsApp के लिए काफ़ी छोटा",
+  "kn": "WhatsAppಗೆ ಸಾಕಷ್ಟು ಚಿಕ್ಕದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.emoji.title": {
+  "en": "Not too many emoji",
+  "te": "ఎమోజీలు ఎక్కువ లేవు",
+  "hi": "ज़्यादा इमोजी नहीं",
+  "kn": "ಹೆಚ್ಚು ಎಮೋಜಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.opt_out.title": {
+  "en": "A way to stop promotions",
+  "te": "ప్రమోషన్లు ఆపే మార్గం",
+  "hi": "प्रमोशन रोकने का तरीका",
+  "kn": "ಪ್ರಮೋಷನ್ ನಿಲ್ಲಿಸುವ ಮಾರ್ಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.buttons.title": {
+  "en": "Buttons are short enough",
+  "te": "బటన్లు చిన్నగా ఉన్నాయి",
+  "hi": "बटन काफ़ी छोटे हैं",
+  "kn": "ಬಟನ್‌ಗಳು ಚಿಕ್ಕದಾಗಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.same_in_both.title": {
+  "en": "Telugu and English say the same thing",
+  "te": "తెలుగు, ఇంగ్లీష్ ఒకటే చెబుతున్నాయి",
+  "hi": "तेलुगु और अंग्रेज़ी एक ही बात कहते हैं",
+  "kn": "ತೆಲುಗು ಮತ್ತು ಇಂಗ್ಲಿಷ್ ಒಂದೇ ಹೇಳುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.category.ok_utility": {
+  "en": "It is about their order, so it goes in the “order update” group. No promotions.",
+  "te": "ఇది వాళ్ల ఆర్డర్ గురించి, కాబట్టి “ఆర్డర్ అప్‌డేట్” గ్రూప్‌లో వెళ్తుంది. ప్రమోషన్లు ఉండకూడదు.",
+  "hi": "यह उनके ऑर्डर के बारे में है, इसलिए “ऑर्डर अपडेट” समूह में जाएगा। प्रमोशन नहीं।",
+  "kn": "ಇದು ಅವರ ಆರ್ಡರ್ ಬಗ್ಗೆ, ಆದ್ದರಿಂದ “ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್” ಗುಂಪಿನಲ್ಲಿ ಹೋಗುತ್ತದೆ. ಪ್ರಮೋಷನ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.category.ok_marketing": {
+  "en": "It is an offer or news, so it goes in the “promotion” group. Customers must be able to say STOP.",
+  "te": "ఇది ఆఫర్ లేదా వార్త, కాబట్టి “ప్రమోషన్” గ్రూప్‌లో వెళ్తుంది. కస్టమర్లు STOP అని చెప్పగలగాలి.",
+  "hi": "यह ऑफ़र या ख़बर है, इसलिए “प्रमोशन” समूह में जाएगा। ग्राहक STOP कह सकें, यह ज़रूरी है।",
+  "kn": "ಇದು ಆಫರ್ ಅಥವಾ ಸುದ್ದಿ, ಆದ್ದರಿಂದ “ಪ್ರಮೋಷನ್” ಗುಂಪಿನಲ್ಲಿ ಹೋಗುತ್ತದೆ. ಗ್ರಾಹಕರು STOP ಎನ್ನಲು ಸಾಧ್ಯವಾಗಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.category.warn": {
+  "en": "This sounds like a promotion, but it is set as an order update. WhatsApp can refuse that.",
+  "te": "ఇది ప్రమోషన్‌లా ఉంది, కానీ ఆర్డర్ అప్‌డేట్‌గా పెట్టారు. WhatsApp తిరస్కరించవచ్చు.",
+  "hi": "यह प्रमोशन जैसा लगता है, पर ऑर्डर अपडेट के रूप में रखा है। WhatsApp मना कर सकता है।",
+  "kn": "ಇದು ಪ್ರಮೋಷನ್‌ನಂತಿದೆ, ಆದರೆ ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್ ಎಂದು ಇಟ್ಟಿದೆ. WhatsApp ನಿರಾಕರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.price_promise.ok": {
+  "en": "No discount, offer or price in the text.",
+  "te": "టెక్స్ట్‌లో డిస్కౌంట్, ఆఫర్, ధర ఏదీ లేదు.",
+  "hi": "टेक्स्ट में कोई डिस्काउंट, ऑफ़र या दाम नहीं।",
+  "kn": "ಪಠ್ಯದಲ್ಲಿ ರಿಯಾಯಿತಿ, ಆಫರ್ ಅಥವಾ ಬೆಲೆ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.price_promise.ok_marketing": {
+  "en": "You can talk about offers and prices in a promotion.",
+  "te": "ప్రమోషన్‌లో ఆఫర్లు, ధరల గురించి చెప్పవచ్చు.",
+  "hi": "प्रमोशन में ऑफ़र और दाम की बात कर सकते हैं।",
+  "kn": "ಪ್ರಮೋಷನ್‌ನಲ್ಲಿ ಆಫರ್ ಮತ್ತು ಬೆಲೆಗಳ ಬಗ್ಗೆ ಹೇಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.price_promise.warn": {
+  "en": "The {lang} message says “{word}”. An order update cannot promise a price or an offer.",
+  "te": "{lang} మెసేజ్‌లో “{word}” ఉంది. ఆర్డర్ అప్‌డేట్‌లో ధర లేదా ఆఫర్ హామీ ఇవ్వకూడదు.",
+  "hi": "{lang} मैसेज में “{word}” है। ऑर्डर अपडेट में दाम या ऑफ़र का वादा नहीं कर सकते।",
+  "kn": "{lang} ಮೆಸೇಜ್‌ನಲ್ಲಿ “{word}” ಇದೆ. ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್‌ನಲ್ಲಿ ಬೆಲೆ ಅಥವಾ ಆಫರ್ ಭರವಸೆ ಕೊಡಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.capitals.ok": {
+  "en": "No word is written in capital letters.",
+  "te": "ఏ మాటా క్యాపిటల్ అక్షరాల్లో లేదు.",
+  "hi": "कोई शब्द कैपिटल अक्षरों में नहीं है।",
+  "kn": "ಯಾವ ಮಾತೂ ದೊಡ್ಡ ಅಕ್ಷರಗಳಲ್ಲಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.capitals.warn": {
+  "en": "The {lang} message has {word} in capital letters. WhatsApp can refuse that.",
+  "te": "{lang} మెసేజ్‌లో {word} క్యాపిటల్ అక్షరాల్లో ఉంది. WhatsApp తిరస్కరించవచ్చు.",
+  "hi": "{lang} मैसेज में {word} कैपिटल अक्षरों में है। WhatsApp मना कर सकता है।",
+  "kn": "{lang} ಮೆಸೇಜ್‌ನಲ್ಲಿ {word} ದೊಡ್ಡ ಅಕ್ಷರಗಳಲ್ಲಿದೆ. WhatsApp ನಿರಾಕರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.name_edge.ok": {
+  "en": "The customer’s name is in the middle, not first or last.",
+  "te": "కస్టమర్ పేరు మధ్యలో ఉంది, మొదట లేదా చివర కాదు.",
+  "hi": "ग्राहक का नाम बीच में है, पहले या आख़िर में नहीं।",
+  "kn": "ಗ್ರಾಹಕರ ಹೆಸರು ಮಧ್ಯದಲ್ಲಿದೆ, ಮೊದಲು ಅಥವಾ ಕೊನೆಯಲ್ಲಿ ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.name_edge.warn_start": {
+  "en": "The {lang} message starts with the customer’s name. WhatsApp can refuse that.",
+  "te": "{lang} మెసేజ్ కస్టమర్ పేరుతో మొదలవుతోంది. WhatsApp తిరస్కరించవచ్చు.",
+  "hi": "{lang} मैसेज ग्राहक के नाम से शुरू होता है। WhatsApp मना कर सकता है।",
+  "kn": "{lang} ಮೆಸೇಜ್ ಗ್ರಾಹಕರ ಹೆಸರಿನಿಂದ ಶುರುವಾಗುತ್ತದೆ. WhatsApp ನಿರಾಕರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.name_edge.warn_end": {
+  "en": "The {lang} message ends with the customer’s name. WhatsApp can refuse that.",
+  "te": "{lang} మెసేజ్ కస్టమర్ పేరుతో ముగుస్తోంది. WhatsApp తిరస్కరించవచ్చు.",
+  "hi": "{lang} मैसेज ग्राहक के नाम पर ख़त्म होता है। WhatsApp मना कर सकता है।",
+  "kn": "{lang} ಮೆಸೇಜ್ ಗ್ರಾಹಕರ ಹೆಸರಿನಲ್ಲಿ ಮುಗಿಯುತ್ತದೆ. WhatsApp ನಿರಾಕರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.length.ok": {
+  "en": "Title, message and small line fit.",
+  "te": "టైటిల్, మెసేజ్, చిన్న లైన్ సరిపోతాయి.",
+  "hi": "टाइटल, मैसेज और छोटी लाइन सही लंबाई में हैं।",
+  "kn": "ಶೀರ್ಷಿಕೆ, ಮೆಸೇಜ್ ಮತ್ತು ಚಿಕ್ಕ ಸಾಲು ಹೊಂದುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.length.warn": {
+  "en": "The {lang} {part} is {n} letters. WhatsApp allows {max}. Make it shorter by saying it.",
+  "te": "{lang} {part} {n} అక్షరాలు. WhatsApp {max} వరకే ఒప్పుకుంటుంది. చెప్పి చిన్నగా చేయండి.",
+  "hi": "{lang} {part} {n} अक्षर का है। WhatsApp {max} तक ही मानता है। बोलकर छोटा कीजिए।",
+  "kn": "{lang} {part} {n} ಅಕ್ಷರಗಳು. WhatsApp {max} ವರೆಗೆ ಮಾತ್ರ ಒಪ್ಪುತ್ತದೆ. ಹೇಳಿ ಚಿಕ್ಕದು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.emoji.ok": {
+  "en": "A few emoji at most.",
+  "te": "ఎమోజీలు ఉన్నా కొన్నే.",
+  "hi": "इमोजी हों भी तो कुछ ही।",
+  "kn": "ಎಮೋಜಿ ಇದ್ದರೂ ಕೆಲವೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.emoji.warn": {
+  "en": "The {lang} message has {n} emoji. WhatsApp can treat that as spam. Keep two.",
+  "te": "{lang} మెసేజ్‌లో {n} ఎమోజీలు ఉన్నాయి. WhatsApp దాన్ని స్పామ్‌గా చూడవచ్చు. రెండే ఉంచండి.",
+  "hi": "{lang} मैसेज में {n} इमोजी हैं। WhatsApp इसे स्पैम मान सकता है। दो ही रखिए।",
+  "kn": "{lang} ಮೆಸೇಜ್‌ನಲ್ಲಿ {n} ಎಮೋಜಿ ಇವೆ. WhatsApp ಇದನ್ನು ಸ್ಪ್ಯಾಮ್ ಎಂದು ಪರಿಗಣಿಸಬಹುದು. ಎರಡು ಮಾತ್ರ ಇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.opt_out.ok": {
+  "en": "Customers can say STOP.",
+  "te": "కస్టమర్లు STOP అని చెప్పవచ్చు.",
+  "hi": "ग्राहक STOP कह सकते हैं।",
+  "kn": "ಗ್ರಾಹಕರು STOP ಎನ್ನಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.opt_out.ok_not_needed": {
+  "en": "Not needed for an order update.",
+  "te": "ఆర్డర్ అప్‌డేట్‌కి అవసరం లేదు.",
+  "hi": "ऑर्डर अपडेट के लिए ज़रूरी नहीं।",
+  "kn": "ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್‌ಗೆ ಬೇಕಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.opt_out.warn": {
+  "en": "A promotion must say how to stop it. The {lang} message has no STOP line.",
+  "te": "ప్రమోషన్‌లో ఆపడం ఎలాగో చెప్పాలి. {lang} మెసేజ్‌లో STOP లైన్ లేదు.",
+  "hi": "प्रमोशन में रोकने का तरीका बताना ज़रूरी है। {lang} मैसेज में STOP लाइन नहीं है।",
+  "kn": "ಪ್ರಮೋಷನ್‌ನಲ್ಲಿ ನಿಲ್ಲಿಸುವ ವಿಧಾನ ಹೇಳಬೇಕು. {lang} ಮೆಸೇಜ್‌ನಲ್ಲಿ STOP ಸಾಲು ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.buttons.ok": {
+  "en": "Every button is short enough.",
+  "te": "ప్రతి బటన్ చిన్నగా ఉంది.",
+  "hi": "हर बटन काफ़ी छोटा है।",
+  "kn": "ಪ್ರತಿ ಬಟನ್ ಚಿಕ್ಕದಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.buttons.warn_long": {
+  "en": "The {lang} button “{text}” has more than {max} letters. Make it shorter.",
+  "te": "{lang} బటన్ “{text}” {max} అక్షరాల కంటే ఎక్కువ. చిన్నగా చేయండి.",
+  "hi": "{lang} बटन “{text}” में {max} से ज़्यादा अक्षर हैं। छोटा कीजिए।",
+  "kn": "{lang} ಬಟನ್ “{text}” {max} ಅಕ್ಷರಗಳಿಗಿಂತ ಹೆಚ್ಚಿದೆ. ಚಿಕ್ಕದು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.buttons.warn_many": {
+  "en": "The {lang} message has {n} buttons. WhatsApp allows {max}.",
+  "te": "{lang} మెసేజ్‌లో {n} బటన్లు ఉన్నాయి. WhatsApp {max} వరకే ఒప్పుకుంటుంది.",
+  "hi": "{lang} मैसेज में {n} बटन हैं। WhatsApp {max} तक ही मानता है।",
+  "kn": "{lang} ಮೆಸೇಜ್‌ನಲ್ಲಿ {n} ಬಟನ್‌ಗಳಿವೆ. WhatsApp {max} ವರೆಗೆ ಮಾತ್ರ ಒಪ್ಪುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.same_in_both.ok": {
+  "en": "Both messages use the customer’s name the same way.",
+  "te": "రెండు మెసేజ్‌లూ కస్టమర్ పేరును ఒకేలా వాడుతున్నాయి.",
+  "hi": "दोनों मैसेज ग्राहक का नाम एक ही तरह इस्तेमाल करते हैं।",
+  "kn": "ಎರಡೂ ಮೆಸೇಜ್‌ಗಳು ಗ್ರಾಹಕರ ಹೆಸರನ್ನು ಒಂದೇ ರೀತಿ ಬಳಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.same_in_both.warn_empty": {
+  "en": "The {lang} message is empty.",
+  "te": "{lang} మెసేజ్ ఖాళీగా ఉంది.",
+  "hi": "{lang} मैसेज ख़ाली है।",
+  "kn": "{lang} ಮೆಸೇಜ್ ಖಾಲಿಯಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.check.same_in_both.warn_name": {
+  "en": "Telugu and English do not use the customer’s name the same number of times.",
+  "te": "తెలుగు, ఇంగ్లీష్ కస్టమర్ పేరును ఒకే సంఖ్యలో వాడడం లేదు.",
+  "hi": "तेलुगु और अंग्रेज़ी में ग्राहक का नाम बराबर बार नहीं आता।",
+  "kn": "ತೆಲುಗು ಮತ್ತು ಇಂಗ್ಲಿಷ್ ಗ್ರಾಹಕರ ಹೆಸರನ್ನು ಒಂದೇ ಸಂಖ್ಯೆಯಲ್ಲಿ ಬಳಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.fix.to_marketing": {
+  "en": "Send it as a promotion",
+  "te": "ప్రమోషన్‌గా పంపండి",
+  "hi": "प्रमोशन की तरह भेजिए",
+  "kn": "ಪ್ರಮೋಷನ್ ಆಗಿ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.fix.remove_price_words": {
+  "en": "Take out the price words",
+  "te": "ధర మాటలు తీసేయండి",
+  "hi": "दाम वाले शब्द हटाइए",
+  "kn": "ಬೆಲೆ ಮಾತುಗಳನ್ನು ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.fix.lowercase_caps": {
+  "en": "Change to {to}",
+  "te": "{to} గా మార్చండి",
+  "hi": "{to} में बदलिए",
+  "kn": "{to} ಎಂದು ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.fix.greet_first": {
+  "en": "Start with {greeting} instead",
+  "te": "బదులుగా {greeting}తో మొదలుపెట్టండి",
+  "hi": "इसके बजाय {greeting} से शुरू कीजिए",
+  "kn": "ಬದಲಿಗೆ {greeting} ನಿಂದ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.fix.close_last": {
+  "en": "End with a thank-you instead",
+  "te": "బదులుగా ధన్యవాదాలతో ముగించండి",
+  "hi": "इसके बजाय धन्यवाद पर ख़त्म कीजिए",
+  "kn": "ಬದಲಿಗೆ ಧನ್ಯವಾದದೊಂದಿಗೆ ಮುಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.fix.trim_emoji": {
+  "en": "Keep two emoji",
+  "te": "రెండు ఎమోజీలు ఉంచండి",
+  "hi": "दो इमोजी रखिए",
+  "kn": "ಎರಡು ಎಮೋಜಿ ಇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.fix.add_opt_out": {
+  "en": "Add the STOP line",
+  "te": "STOP లైన్ చేర్చండి",
+  "hi": "STOP लाइन जोड़िए",
+  "kn": "STOP ಸಾಲು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.title": {
+  "en": "Send it to WhatsApp",
+  "te": "WhatsAppకి పంపండి",
+  "hi": "WhatsApp को भेजिए",
+  "kn": "WhatsAppಗೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.sub": {
+  "en": "WhatsApp checks every message once",
+  "te": "WhatsApp ప్రతి మెసేజ్‌ని ఒకసారి చెక్ చేస్తుంది",
+  "hi": "WhatsApp हर मैसेज को एक बार जाँचता है",
+  "kn": "WhatsApp ಪ್ರತಿ ಮೆಸೇಜ್ ಅನ್ನು ಒಮ್ಮೆ ಪರಿಶೀಲಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.summary": {
+  "en": "Telugu and English · {group}",
+  "te": "తెలుగు, ఇంగ్లీష్ · {group}",
+  "hi": "तेलुगु और अंग्रेज़ी · {group}",
+  "kn": "ತೆಲುಗು ಮತ್ತು ಇಂಗ್ಲಿಷ್ · {group}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.blocked": {
+  "en": "Fix the amber checks first. WhatsApp sends back a message that breaks them.",
+  "te": "ముందు అంబర్ చెక్‌లను సరిచేయండి. వాటిని ఉల్లంఘించే మెసేజ్‌ని WhatsApp వెనక్కి పంపుతుంది.",
+  "hi": "पहले एम्बर जाँचें ठीक कीजिए। जो मैसेज इन्हें तोड़ता है उसे WhatsApp लौटा देता है।",
+  "kn": "ಮೊದಲು ಅಂಬರ್ ಪರಿಶೀಲನೆಗಳನ್ನು ಸರಿಪಡಿಸಿ. ಇವನ್ನು ಮುರಿಯುವ ಮೆಸೇಜ್ ಅನ್ನು WhatsApp ವಾಪಸ್ ಕಳುಹಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.step.title": {
+  "en": "Saving needs your two-step code first.",
+  "te": "సేవ్ చేయడానికి ముందు మీ టూ-స్టెప్ కోడ్ కావాలి.",
+  "hi": "सेव करने से पहले आपका टू-स्टेप कोड चाहिए।",
+  "kn": "ಉಳಿಸುವ ಮೊದಲು ನಿಮ್ಮ ಟು-ಸ್ಟೆಪ್ ಕೋಡ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.step.body": {
+  "en": "Open your code app and type the 6 digits. This keeps your shop safe.",
+  "te": "మీ కోడ్ యాప్ తెరిచి 6 అంకెలు టైప్ చేయండి. ఇది మీ షాప్‌ని సురక్షితంగా ఉంచుతుంది.",
+  "hi": "अपना कोड ऐप खोलिए और 6 अंक टाइप कीजिए। इससे आपकी दुकान सुरक्षित रहती है।",
+  "kn": "ನಿಮ್ಮ ಕೋಡ್ ಆ್ಯಪ್ ತೆರೆದು 6 ಅಂಕೆಗಳನ್ನು ಟೈಪ್ ಮಾಡಿ. ಇದು ನಿಮ್ಮ ಅಂಗಡಿಯನ್ನು ಸುರಕ್ಷಿತವಾಗಿಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.code": {
+  "en": "Your two-step code",
+  "te": "మీ టూ-స్టెప్ కోడ్",
+  "hi": "आपका टू-स्टेप कोड",
+  "kn": "ನಿಮ್ಮ ಟು-ಸ್ಟೆಪ್ ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.send": {
+  "en": "Send to WhatsApp",
+  "te": "WhatsAppకి పంపండి",
+  "hi": "WhatsApp को भेजिए",
+  "kn": "WhatsAppಗೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.sending": {
+  "en": "Sending…",
+  "te": "పంపుతున్నాం…",
+  "hi": "भेज रहे हैं…",
+  "kn": "ಕಳುಹಿಸುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.foot": {
+  "en": "Nothing reaches customers until WhatsApp says yes. You can still change the words while you wait.",
+  "te": "WhatsApp ఓకే అనే వరకు కస్టమర్లకి ఏదీ వెళ్లదు. ఎదురుచూస్తున్నప్పుడు కూడా మాటలు మార్చవచ్చు.",
+  "hi": "WhatsApp के हाँ कहने तक ग्राहकों तक कुछ नहीं पहुँचता। इंतज़ार के दौरान भी शब्द बदल सकते हैं।",
+  "kn": "WhatsApp ಹೌದು ಅನ್ನುವವರೆಗೆ ಗ್ರಾಹಕರಿಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ. ಕಾಯುತ್ತಿರುವಾಗಲೂ ಮಾತುಗಳನ್ನು ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.bad_code": {
+  "en": "That code did not work. Use the newest code from your code app.",
+  "te": "ఆ కోడ్ పని చేయలేదు. మీ కోడ్ యాప్‌లోని కొత్త కోడ్ వాడండి.",
+  "hi": "वह कोड नहीं चला। अपने कोड ऐप का सबसे नया कोड इस्तेमाल कीजिए।",
+  "kn": "ಆ ಕೋಡ್ ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ನಿಮ್ಮ ಕೋಡ್ ಆ್ಯಪ್‌ನ ಹೊಸ ಕೋಡ್ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.no_factor": {
+  "en": "You have not set up your two-step code yet. Set it up in Security, then come back here.",
+  "te": "మీరు ఇంకా టూ-స్టెప్ కోడ్ సెట్ చేయలేదు. సెక్యూరిటీలో సెట్ చేసి, ఇక్కడికి తిరిగి రండి.",
+  "hi": "आपने अभी टू-स्टेप कोड सेट नहीं किया। सिक्योरिटी में सेट करके यहाँ लौटिए।",
+  "kn": "ನೀವು ಇನ್ನೂ ಟು-ಸ್ಟೆಪ್ ಕೋಡ್ ಹೊಂದಿಸಿಲ್ಲ. ಸೆಕ್ಯುರಿಟಿಯಲ್ಲಿ ಹೊಂದಿಸಿ, ಇಲ್ಲಿಗೆ ಮರಳಿ ಬನ್ನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.security": {
+  "en": "Open Security",
+  "te": "సెక్యూరిటీ తెరవండి",
+  "hi": "सिक्योरिटी खोलिए",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.sent": {
+  "en": "Sent. WhatsApp is checking it. You can follow it in the list above.",
+  "te": "పంపాం. WhatsApp చెక్ చేస్తోంది. పైన లిస్ట్‌లో చూడవచ్చు.",
+  "hi": "भेज दिया। WhatsApp जाँच रहा है। ऊपर की सूची में देख सकते हैं।",
+  "kn": "ಕಳುಹಿಸಿದೆ. WhatsApp ಪರಿಶೀಲಿಸುತ್ತಿದೆ. ಮೇಲಿನ ಪಟ್ಟಿಯಲ್ಲಿ ನೋಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.mock_note": {
+  "en": "Test mode: nothing is sent to WhatsApp and nothing is saved.",
+  "te": "టెస్ట్ మోడ్: WhatsAppకి ఏదీ పంపం, ఏదీ సేవ్ చేయం.",
+  "hi": "टेस्ट मोड: WhatsApp को कुछ नहीं भेजा जाता और कुछ सेव नहीं होता।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: WhatsAppಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ, ಏನೂ ಉಳಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.readonly": {
+  "en": "Only the Owner and Admins can make messages.",
+  "te": "ఓనర్, అడ్మిన్‌లు మాత్రమే మెసేజ్‌లు చేయగలరు.",
+  "hi": "सिर्फ़ ओनर और एडमिन मैसेज बना सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ಮೆಸೇಜ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

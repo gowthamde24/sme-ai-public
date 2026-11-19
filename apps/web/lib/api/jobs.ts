@@ -1,6 +1,6 @@
 import { ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
-import { parseFaq, parseJob, parseJobDetail, parseJobs, parseJobsToday, parsePlan, parseSays, parseSuggestionHeading, parseSuggestions, parseTested } from "./jobs-parse";
+import { parseFaq, parseJob, parseJobDetail, parseJobs, parseJobsToday, parsePlan, parseSays, parseSuggestionHeading, parseSuggestions, parseTested, parseWho } from "./jobs-parse";
 import { bad, oneOf, rec, uuid, word } from "./shape";
 import { FAQ_A_MAX, FAQ_Q_MAX, type JobDetail, type JobFaq, type JobSays, type TestChannel } from "@/lib/jobs/detail";
 import { mockJobDetail, mockSays } from "@/lib/jobs/detail-mock";
@@ -10,12 +10,13 @@ import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput, Suggestion
 import { APPROVAL_KINDS, PLAN_TEXT_MAX, PLAN_TEXT_MIN } from "@/lib/jobs/plan";
 import { mockPlan, mockStartPlan, mockStartedFor, mockSuggestions, mockTest } from "@/lib/jobs/plan-mock";
 import { jobsScreens } from "@/lib/screens/flag";
+import type { SpeaksPatch } from "@/lib/jobs/who";
 
 /**
  * The jobs of a workspace (JOBS; C1's contract, FINAL 1.0: contracts/jobs-contract-DRAFT.md). SERVER ONLY, with the signed-in person's own token. This file makes the calls; every PARSER of the contract is in lib/api/jobs-parse.ts (re-exported here), so a contract
  * change is an edit there. Every answer goes through lib/api/shape.ts: closed words (kind, status), bounded numbers and strings; anything else is an ApiContractError, never drawn. With JOBS=mock the made-up jobs of lib/jobs/fixtures.ts answer and nothing leaves the server.
  */
-export { parseFaq, parseJob, parseJobDetail, parseJobs, parseJobsToday, parsePlan, parseSuggestions, parseTested };
+export { parseFaq, parseJob, parseJobDetail, parseJobs, parseJobsToday, parsePlan, parseSuggestions, parseTested, parseWho };
 
 const base = (tenantId: string): string => {
   if (!isCanonicalUuid(tenantId)) throw new ApiContractError("Unexpected workspace id.");
@@ -145,10 +146,10 @@ export async function getJob(token: string, tenantId: string, id: string): Promi
 }
 
 /** What changed in one `PATCH /jobs/{id}`: the name (null = the plain name), the switch, the words customers hear (recomposed by the API when the name changed, else null). */
-export type JobPatch = { name?: string | null; enabled?: boolean; settings?: Readonly<Record<string, string | boolean>>; findsOut?: Readonly<Record<string, boolean>> };
+export type JobPatch = { name?: string | null; enabled?: boolean; settings?: Readonly<Record<string, string | boolean>>; findsOut?: Readonly<Record<string, boolean>>; /** The Who talks card: only what changed (lib/jobs/who.ts). */ speaks?: SpeaksPatch };
 export type JobPatched = { customName: string | null; enabled: boolean; status: JobStatus; says: JobSays[] | null };
 
-/** `PATCH /jobs/{id}` `{enabled?, name?, settings?: {key: value}, finds_out?}` (a choice is sent as its word, a toggle as true/false; an empty name clears it; the hours are the settings `from_hour` and `to_hour`). With JOBS=mock the answer is made up from the mock job and the change; nothing is stored. */
+/** `PATCH /jobs/{id}` `{enabled?, name?, settings?: {key: value}, finds_out?, speaks?: {language?, tone?, voice?, number?}}` (a choice is sent as its word, a toggle as true/false; an empty name clears it; the hours are the settings `from_hour` and `to_hour`). With JOBS=mock the answer is made up from the mock job and the change; nothing is stored. */
 export async function patchJob(token: string, tenantId: string, id: string, patch: JobPatch): Promise<JobPatched> {
   jobId(id);
   if (jobsScreens() === "mock") {
@@ -163,6 +164,7 @@ export async function patchJob(token: string, tenantId: string, id: string, patc
   if (patch.name !== undefined) body.name = patch.name ?? "";
   if (patch.settings) body.settings = patch.settings;
   if (patch.findsOut) body.finds_out = patch.findsOut;
+  if (patch.speaks) body.speaks = patch.speaks;
   const raw = await apiRequest(`${base(tenantId)}/jobs/${id}`, token, { method: "PATCH", body: JSON.stringify(body) });
   const x = rec(raw, "job");
   const j = parseJob(x);

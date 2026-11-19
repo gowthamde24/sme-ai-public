@@ -215,8 +215,23 @@ export function wireJobDetail(id: string, now: number = Date.now()): Wire | null
     test_channel: TEST[kind] ?? null,
     // the month so far (the plan card's `cost` is the per-plan estimate)
     cost: { minutes_used: 8, minutes_included: 60, rupees: null },
+    // how the job sounds (the Who talks card): a job that talks to nobody (the researcher) has none
+    ...(WHO_SPEAKS[kind] ? { speaks: WHO_SPEAKS[kind], numbers: WHO_NUMBERS } : {}),
   };
 }
+
+/** How each made-up job sounds, in the proposed wire shape (`speaks`), and the two numbers the demo shop has (the middle digits hidden). */
+const WHO_SPEAKS: Record<string, Wire> = {
+  speed_to_lead: { language: "te", tone: "friendly", voice: "female_warm", number: "shop" },
+  answer_calls: { language: "customer", tone: "respectful", voice: "female_clear", number: "shop" },
+  followups: { language: "en", tone: "respectful", voice: "male_calm", number: "second" },
+  offers: { language: "te", tone: "friendly", voice: "female_warm", number: "shop" },
+  store_visits: { language: "en", tone: "friendly", voice: "female_clear", number: "shop" },
+};
+const WHO_NUMBERS: Wire[] = [
+  { key: "shop", masked: "+91 98480 xxx10" },
+  { key: "second", masked: "+91 90000 xxx45" },
+];
 
 /* ---- the test buttons (section 3): `{placed: true, minutes_used: n}` ---- */
 export const WIRE_TEST_CALL: Wire = { placed: true, minutes_used: 1 };

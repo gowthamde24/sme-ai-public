@@ -1,5 +1,6 @@
 import { fmtMinutes } from "./clock";
 import type { Job, JobParams } from "./types";
+import type { JobWho } from "./who";
 
 /**
  * The page of ONE job (JOBS; the contract's JobDetail, FINAL 1.0). The API sends CODES with PARAMS and closed words; the sentences are ours (`jobs.page.*`, `jobs.job.*`, `jobs.line.*`, `jobs.opt.*`, `jobs.finds.*`, `jobs.rd.*`).
@@ -45,6 +46,8 @@ export type JobDetail = {
   test: TestChannel | null;
   /** What the month has cost so far: "Used 8 of your 60 free minutes this month" (or rupees). */
   cost: JobCost;
+  /** The Who talks card: how this job sounds (language, tone, voice, number); null = the API says nothing, no card. */
+  who: JobWho | null;
 };
 
 /** A name the owner may give: letters (any script), digits, spaces, dots, apostrophes and hyphens; at most 40 characters. Empty = back to the plain name. Nothing else reaches a voice or a message. */
