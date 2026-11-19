@@ -96,6 +96,7 @@ vi.mock("@/lib/api/consent-list", async (orig) => (await import("./state")).wrap
 vi.mock("@/lib/api/lead-finder", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-finder")>(), ["readAvailability", "redecideProspects", "listProspects", "getProspectStats", "getProspect", "getFinderSettings", "listSearches"]));
 vi.mock("@/lib/api/team", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/team")>(), ["getTeam", "listInvitations"]));
 vi.mock("@/lib/api/whatsapp", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/whatsapp")>(), ["getWhatsappAccount", "listTemplates", "listConversations", "getThread"]));
+vi.mock("@/lib/api/phone-kyc", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/phone-kyc")>(), ["getKycStatus", "getKycOptions"]));
 vi.mock("@/lib/api/gstin", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/gstin")>(), ["getBusinessProfile"]));
 vi.mock("@/lib/api/policy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/policy")>(), ["getPolicyStatus"]));
 vi.mock("@/lib/api/pack", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/pack")>(), ["getWorkspacePack", "getAccountSecurity", "listPacks"]));
