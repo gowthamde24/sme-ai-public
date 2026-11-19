@@ -3,7 +3,7 @@
 import { ChevronDown } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { effectOf, fmtMinutes, linesOf, type Ago, type JobDetail, type JobFaq, type JobSays } from "@/lib/jobs/detail";
+import { effectOf, fmtMinutes, linesOf, testWord, type Ago, type JobDetail, type JobFaq, type JobSays } from "@/lib/jobs/detail";
 import { jobNameKey, type JobStatus } from "@/lib/jobs/types";
 
 import { makeT, type Words } from "../../words";
@@ -31,6 +31,8 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
   const [says, setSays] = useState<readonly JobSays[]>(detail.says);
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [busy, setBusy] = useState(false);
+  // the settings the API refused (`setting_invalid` names them in `fields`): marked until the next change
+  const [badKeys, setBadKeys] = useState<readonly string[]>([]);
   const [toast, setToast] = useState<Toast | null>(null);
   const seq = useRef(0);
   const plainName = t(jobNameKey(job.kind));
@@ -87,10 +89,12 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
     const before = values[key];
     setValues((v) => ({ ...v, [key]: value }));
     fail("settings", null);
+    setBadKeys([]);
     const r = await actions.setSetting(key, value);
     if (!r.ok) {
       setValues((v) => ({ ...v, [key]: before }));
       fail("settings", r.error);
+      setBadKeys(r.fields && r.fields.length > 0 ? r.fields : [key]);
     }
   }
   async function tick(key: string, on: boolean) {
@@ -126,16 +130,19 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
       fail("faqs", r.error);
     }
   }
-  async function test(): Promise<{ ok: boolean; text: string }> {
+  async function test(): Promise<{ ok: boolean; text: string; quiet?: boolean }> {
     if (!actions || !detail.test) return { ok: false, text: "" };
     const r = await actions.test(detail.test);
-    if (!r.ok) return { ok: false, text: r.error };
-    return { ok: true, text: t(r.data.sent ? `jobs.job.test.sent_${r.data.channel}` : "jobs.job.test.mock") };
+    // outside 9 am to 9 pm the API refuses (`409 quiet_hours`): the button goes off and the sentence says when tests are sent
+    if (!r.ok) return r.code === "quiet_hours" ? { ok: false, text: t("jobs.job.test.quiet"), quiet: true } : { ok: false, text: r.error };
+    const sent = t(r.data.sent ? `jobs.job.test.sent_${testWord(r.data.channel)}` : "jobs.job.test.mock");
+    // a test call is a real call to the owner's own phone: say how many free minutes it used
+    return { ok: true, text: r.data.sent && r.data.minutesUsed > 0 ? `${sent} ${t("jobs.job.test.used", { n: r.data.minutesUsed })}` : sent };
   }
 
   const mainLines = linesOf(main);
   const moreLines = linesOf(more);
-  const lineProps = { byKey, values, t, disabled: !canChange, onChange: (k: string, v: string) => void choose(k, v) };
+  const lineProps = { byKey, values, t, disabled: !canChange, invalid: badKeys, onChange: (k: string, v: string) => void choose(k, v) };
 
   return (
     <div data-part="job-page" data-job-kind={job.kind} className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-6">
@@ -149,6 +156,7 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
           what={t(`jobs.what.${detail.whatCode}`)}
           status={now.status}
           needsYou={job.needsYou}
+          gate={job.planGate}
           enabled={now.enabled}
           ago={ago}
           t={t}

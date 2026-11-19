@@ -1,6 +1,5 @@
 /**
- * JOBS (decision-ai-team.md, owner 19 Nov 2026): everything the assistant does for the shop is a JOB, a plain sentence card with an on/off switch and its results. The shape follows contracts/jobs-web-needs.md (C2's needs, for C1's contract
- * draft): the API sends CODES with PARAMS (never prose); the web holds the sentences in four languages (`jobs.*` words). Until C1's API is live the screens run on `lib/jobs/mock.ts` (JOBS=mock).
+ * JOBS (decision-ai-team.md, owner 19 Nov 2026): everything the assistant does for the shop is a JOB, a plain sentence card with an on/off switch and its results. The shape is C1's FINAL 1.0 contract (contracts/jobs-contract-DRAFT.md; lib/api/jobs.ts parses it): the API sends CODES with PARAMS (never prose); the web holds the sentences in four languages (`jobs.*` words). Until C1's API is live the screens run on `lib/jobs/mock.ts` (JOBS=mock).
  */
 export const JOB_KINDS = ["speed_to_lead", "answer_calls", "followups", "store_visits", "offers", "researcher", "payment_reminders", "custom"] as const;
 export type JobKind = (typeof JOB_KINDS)[number];
@@ -11,6 +10,11 @@ export type JobStatus = (typeof JOB_STATUSES)[number];
 
 export type JobParams = Readonly<Record<string, string | number>>;
 export type JobResult = { code: string; params: JobParams };
+
+/** Why a job cannot run yet, the closed list of the contract (`plan_gate.code`): the plan or the setup blocks it. The web holds one short note for each (`jobs.gate.<code>`). */
+export const PLAN_GATES = ["billing_blocked", "no_number", "no_whatsapp", "minutes_used"] as const;
+export type PlanGate = (typeof PLAN_GATES)[number];
+export const jobGateKey = (gate: PlanGate): string => `jobs.gate.${gate}`;
 
 export type Job = {
   id: string;
@@ -26,6 +30,8 @@ export type Job = {
   lastRunAt: string | null;
   /** A failed job's one-tap fix (for example `template_needed` for 2 messages), or null. */
   fix: { code: string; count: number } | null;
+  /** What blocks the job before it can run (a phone number, WhatsApp, free minutes, billing), or null. */
+  planGate: PlanGate | null;
 };
 
 /** Which of the four solid chips a status wears (design/jobs.css): the colour is never the only sign, the word and an icon sit with it. */
@@ -47,3 +53,6 @@ export function filterJobs(jobs: readonly Job[], f: JobFilter): Job[] {
   if (f === "paused") return jobs.filter((j) => !j.enabled || j.status === "paused");
   return [...jobs];
 }
+
+/** `GET /jobs/today` (the first paint of Today in one call): the jobs (full Job objects), what waits for the owner (ids and codes, the same list Today has) and the main assistant's name. */
+export type TodayJobs = { jobs: Job[]; needsYou: { id: string | null; code: string | null }[]; assistantName: string | null };

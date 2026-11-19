@@ -20,6 +20,8 @@ export interface Failure {
   retryAfter?: number;
   /** The API's closed code (letters and underscores only), for a screen that has a sentence of its own for it. */
   code?: string;
+  /** The names of the fields a 422 refused (the Jobs contract's `setting_invalid`), so the screen can mark them. */
+  fields?: string[];
 }
 
 export function kindOf(error: unknown): FailureKind {
@@ -109,7 +111,7 @@ export function failureOf(error: unknown, t: AppT): Failure {
   // a code with words of its own says what is true for it (a 403 `module_off` is "your kind of business does not use this part", not "your role cannot"); a second step that is missing keeps its own sentence; the rest is said by its kind
   const own = kind === "mfa" ? null : codeSentence(code, t);
   return { ok: false, kind, error: own ?? (kind === "rate_limited" ? rateSentence(t, retryAfter) : t(KEY[kind])),
- ...(kind === "mfa" ? { mfa: true } : {}), ...(retryAfter !== undefined ? { retryAfter } : {}), ...(code ? { code } : {}) };
+ ...(kind === "mfa" ? { mfa: true } : {}), ...(retryAfter !== undefined ? { retryAfter } : {}), ...(code ? { code } : {}), ...(api?.extra?.fields ? { fields: api.extra.fields } : {}) };
 }
 
 /**

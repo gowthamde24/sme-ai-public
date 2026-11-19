@@ -66,5 +66,5 @@ store visits booked
 - Ravi Kumar Visit booked, Saturday, 4 pm Done
 - Padma Will be called Friday, 9:30 am Waiting
 - Anitha Number switched off. A WhatsApp was sent instead. WhatsApp sent instead
-Try it Hear exactly what a customer would hear, on your own phone. Nothing is sent to customers.
+Try it This calls YOUR phone and uses about 1 of your free minutes. Nothing is sent to customers.
 [button type=button: Test call to my phone]

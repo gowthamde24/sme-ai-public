@@ -4,11 +4,13 @@ import { Gift, MessageCircle, Phone, Search, Sparkles, Store, Wallet, Zap } from
 import Link from "next/link";
 import { useState } from "react";
 
-import { CHIP_TONE, jobNameKey, jobResultKey, jobStatusKey, type Job, type JobKind, type JobSwitched } from "@/lib/jobs/types";
+import { resultSentence } from "@/lib/jobs/result";
+import { CHIP_TONE, jobNameKey, jobStatusKey, type Job, type JobKind, type JobSwitched } from "@/lib/jobs/types";
 
 import { JobChip } from "../ds/JobChip";
 import type { Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
+import { GateNote } from "./GateNote";
 
 export type JobActions = { setEnabled: (jobId: string, enabled: boolean) => Promise<Reply<JobSwitched>> };
 
@@ -60,7 +62,8 @@ export function JobRow({ job, words, base, actions }: { job: Job; words: Words; 
       </span>
       <Link href={href} prefetch={false} className="min-w-0 flex-1 no-underline">
         <span className="block text-[15px] font-semibold leading-snug text-ink max-md:line-clamp-2">{name}</span>
-        <span className="block text-[12.5px] leading-snug text-muted">{t(jobResultKey(job.result.code), job.result.params as Record<string, string | number>)}</span>
+        <span className="block text-[12.5px] leading-snug text-muted">{resultSentence(t, job.result)}</span>
+        {job.planGate ? <GateNote gate={job.planGate} t={t} className="mt-1" /> : null}
         {showChip || job.fix ? (
           <span className="mt-1.5 flex flex-wrap items-center gap-2">
             {showChip ? <JobChip tone={now.status === job.status ? CHIP_TONE[job.status] : CHIP_TONE[now.status]}>{t(jobStatusKey(now.status), { n: job.needsYou })}</JobChip> : null}

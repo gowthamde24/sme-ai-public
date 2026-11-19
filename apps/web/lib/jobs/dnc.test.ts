@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { DNC_REASONS, dncReasonKey, indianMobile, isMaskedNumber, maskIndianMobile } from "./dnc";
+import { DNC_REASONS, dncReasonKey, dncRemovable, indianMobile, isMaskedNumber, maskIndianMobile } from "./dnc";
 import { MOCK_DNC } from "./dnc-mock";
 
 describe("Do-Not-Call: the number a person types", () => {
@@ -20,8 +20,11 @@ describe("Do-Not-Call: the number a person types", () => {
     expect(isMaskedNumber("<b>+91</b>")).toBe(false);
     expect(isMaskedNumber("")).toBe(false);
   });
+  it("only a number the owner added can be removed: STOP from the customer and a legal or complaint rule stay", () => {
+    expect(DNC_REASONS.filter((reason) => dncRemovable({ reason }))).toEqual(["added_by_owner"]);
+  });
   it("every reason has words, and the made-up list uses only known reasons", () => {
-    expect(DNC_REASONS.map(dncReasonKey)).toEqual(["jobs.dnc.reason.stop_whatsapp", "jobs.dnc.reason.asked_on_call", "jobs.dnc.reason.added_by_owner"]);
+    expect(DNC_REASONS.map(dncReasonKey)).toEqual(["jobs.dnc.reason.stop_whatsapp", "jobs.dnc.reason.asked_on_call", "jobs.dnc.reason.added_by_owner", "jobs.dnc.reason.other"]);
     for (const e of MOCK_DNC) expect(DNC_REASONS).toContain(e.reason);
   });
 });

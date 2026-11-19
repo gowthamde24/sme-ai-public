@@ -110711,10 +110711,10 @@
   }
  },
  "jobs.res.answered_today": {
-  "en": "Today: answered {answered} missed calls · {callbacks} asked for a call-back",
-  "te": "ఈరోజు: {answered} మిస్డ్ కాల్స్‌కి సమాధానం · {callbacks} మంది కాల్ బ్యాక్ అడిగారు",
-  "hi": "आज: {answered} मिस्ड कॉल का जवाब · {callbacks} ने कॉल-बैक माँगा",
-  "kn": "ಇವತ್ತು: {answered} ಮಿಸ್ಡ್ ಕಾಲ್‌ಗೆ ಉತ್ತರ · {callbacks} ಜನ ಕಾಲ್-ಬ್ಯಾಕ್ ಕೇಳಿದರು",
+  "en": "Today: answered {answered} calls · {missed} missed · {messages} messages sent",
+  "te": "ఈరోజు: {answered} కాల్స్‌కి జవాబు · {missed} మిస్డ్ · {messages} మెసేజ్‌లు పంపాం",
+  "hi": "आज: {answered} कॉल का जवाब · {missed} मिस्ड · {messages} मैसेज भेजे",
+  "kn": "ಇವತ್ತು: {answered} ಕಾಲ್‌ಗೆ ಉತ್ತರ · {missed} ಮಿಸ್ಡ್ · {messages} ಮೆಸೇಜ್ ಕಳುಹಿಸಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -110722,10 +110722,10 @@
   }
  },
  "jobs.res.not_sent_window": {
-  "en": "Could not send {n} WhatsApp replies (the customer’s 24 hours were over)",
-  "te": "{n} WhatsApp జవాబులు పంపలేకపోయాం (కస్టమర్ 24 గంటలు అయిపోయాయి)",
-  "hi": "{n} WhatsApp जवाब नहीं भेज पाए (ग्राहक के 24 घंटे खत्म हो गए)",
-  "kn": "{n} WhatsApp ಉತ್ತರ ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ (ಗ್ರಾಹಕರ 24 ಗಂಟೆ ಮುಗಿದಿದೆ)",
+  "en": "{count} messages wait until {opens_at}: quiet hours",
+  "te": "{count} మెసేజ్‌లు {opens_at} వరకు ఆగుతాయి: quiet hours",
+  "hi": "{count} मैसेज {opens_at} तक रुके हैं: quiet hours",
+  "kn": "{count} ಮೆಸೇಜ್ {opens_at} ವರೆಗೆ ಕಾಯುತ್ತಿವೆ: quiet hours",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -110744,10 +110744,10 @@
   }
  },
  "jobs.res.reminders_today": {
-  "en": "Done today: {sent} reminders sent · {tomorrow} visits tomorrow",
-  "te": "ఈరోజు పూర్తైంది: {sent} రిమైండర్లు పంపాం · రేపు {tomorrow} విజిట్స్",
-  "hi": "आज पूरा: {sent} रिमाइंडर भेजे · कल {tomorrow} विज़िट",
-  "kn": "ಇವತ್ತು ಮುಗಿದಿದೆ: {sent} ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿದೆ · ನಾಳೆ {tomorrow} ವಿಸಿಟ್",
+  "en": "Done today: {sent} reminders sent · {confirmed} confirmed",
+  "te": "ఈరోజు పూర్తైంది: {sent} రిమైండర్లు పంపాం · {confirmed} కన్ఫర్మ్ అయ్యాయి",
+  "hi": "आज पूरा: {sent} रिमाइंडर भेजे · {confirmed} कन्फर्म हुए",
+  "kn": "ಇವತ್ತು ಮುಗಿದಿದೆ: {sent} ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿದೆ · {confirmed} ಕನ್ಫರ್ಮ್ ಆಯಿತು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -110755,10 +110755,10 @@
   }
  },
  "jobs.res.search_left": {
-  "en": "Last search {last}: {shops} shops found · {per_month} free search a month, {left} left",
-  "te": "చివరి search {last}: {shops} షాపులు దొరికాయి · నెలకు {per_month} ఉచిత search, ఇంకా {left} ఉంది",
-  "hi": "पिछली search {last}: {shops} दुकानें मिलीं · महीने में {per_month} मुफ़्त search, {left} बाकी",
-  "kn": "ಕೊನೆಯ search {last}: {shops} ಅಂಗಡಿ ಸಿಕ್ಕಿವೆ · ತಿಂಗಳಿಗೆ {per_month} ಉಚಿತ search, {left} ಉಳಿದಿದೆ",
+  "en": "{left} of {per_month} free searches left this month · last search {last_search_at}",
+  "te": "ఈ నెల {per_month} ఉచిత search లలో {left} మిగిలింది · చివరి search {last_search_at}",
+  "hi": "इस महीने {per_month} मुफ़्त search में से {left} बाकी · पिछली search {last_search_at}",
+  "kn": "ಈ ತಿಂಗಳು {per_month} ಉಚಿತ search ಗಳಲ್ಲಿ {left} ಉಳಿದಿದೆ · ಕೊನೆಯ search {last_search_at}",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -110766,10 +110766,10 @@
   }
  },
  "jobs.res.paused_on": {
-  "en": "Paused on {day}",
-  "te": "{day} నాడు ఆపారు",
-  "hi": "{day} को रोका",
-  "kn": "{day} ರಂದು ನಿಲ್ಲಿಸಿದಿರಿ",
+  "en": "Paused on {since}",
+  "te": "{since} నాడు ఆపారు",
+  "hi": "{since} को रोका",
+  "kn": "{since} ರಂದು ನಿಲ್ಲಿಸಿದಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -111250,10 +111250,10 @@
   }
  },
  "jobs.new.who.bought_calls": {
-  "en": "{eligible} of the {total} who bought {item} in the last 30 days and agreed to calls.",
-  "te": "గత 30 రోజుల్లో {item} కొని, కాల్స్‌కి ఓకే అన్న {total} మందిలో {eligible} మందికి.",
-  "hi": "पिछले 30 दिनों में {item} खरीदने वाले और कॉल के लिए हाँ कहने वाले {total} में से {eligible} को।",
-  "kn": "ಕಳೆದ 30 ದಿನಗಳಲ್ಲಿ {item} ಕೊಂಡು, ಕಾಲ್‌ಗೆ ಒಪ್ಪಿದ {total} ಮಂದಿಯಲ್ಲಿ {eligible} ಮಂದಿಗೆ.",
+  "en": "{eligible} of the {total} who bought in the last {days} days and agreed to calls.",
+  "te": "గత {days} రోజుల్లో కొని, కాల్స్‌కి ఓకే అన్న {total} మందిలో {eligible} మందికి.",
+  "hi": "पिछले {days} दिनों में खरीदने वाले और कॉल के लिए हाँ कहने वाले {total} में से {eligible} को।",
+  "kn": "ಕಳೆದ {days} ದಿನಗಳಲ್ಲಿ ಕೊಂಡು, ಕಾಲ್‌ಗೆ ಒಪ್ಪಿದ {total} ಮಂದಿಯಲ್ಲಿ {eligible} ಮಂದಿಗೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -111265,138 +111265,6 @@
   "te": "కాల్ వాళ్లు కొన్నదాని గురించి మాత్రమే. STOP అన్నవాళ్లని వదిలేస్తాను.",
   "hi": "कॉल सिर्फ़ उनकी खरीद के बारे में है। जिसने STOP कहा उसे छोड़ दिया जाता है।",
   "kn": "ಕಾಲ್ ಅವರು ಕೊಂಡದ್ದರ ಬಗ್ಗೆ ಮಾತ್ರ. STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.bought_whatsapp": {
-  "en": "{eligible} of the {total} who bought {item} in the last 30 days and said yes to messages.",
-  "te": "గత 30 రోజుల్లో {item} కొని, మెసేజ్‌లకి ఓకే అన్న {total} మందిలో {eligible} మందికి.",
-  "hi": "पिछले 30 दिनों में {item} खरीदने वाले और मैसेज के लिए हाँ कहने वाले {total} में से {eligible} को।",
-  "kn": "ಕಳೆದ 30 ದಿನಗಳಲ್ಲಿ {item} ಕೊಂಡು, ಮೆಸೇಜ್‌ಗೆ ಒಪ್ಪಿದ {total} ಮಂದಿಯಲ್ಲಿ {eligible} ಮಂದಿಗೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.bought_whatsapp.more": {
-  "en": "Anyone who said STOP is left out.",
-  "te": "STOP అన్నవాళ్లని వదిలేస్తాను.",
-  "hi": "जिसने STOP कहा उसे छोड़ दिया जाता है।",
-  "kn": "STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.missed_calls": {
-  "en": "{eligible} people who called and were not answered yesterday.",
-  "te": "నిన్న కాల్ చేసి, ఎవరూ ఎత్తని {eligible} మందికి.",
-  "hi": "कल कॉल करने वाले और जिनका कॉल नहीं उठा, ऐसे {eligible} लोगों को।",
-  "kn": "ನಿನ್ನೆ ಕಾಲ್ ಮಾಡಿ, ಯಾರೂ ಎತ್ತದ {eligible} ಮಂದಿಗೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.missed_calls.more": {
-  "en": "Anyone who said STOP is left out.",
-  "te": "STOP అన్నవాళ్లని వదిలేస్తాను.",
-  "hi": "जिसने STOP कहा उसे छोड़ दिया जाता है।",
-  "kn": "STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.new_enquiries": {
-  "en": "Each new enquiry, the moment it comes in.",
-  "te": "ప్రతి కొత్త enquiry, వచ్చిన వెంటనే.",
-  "hi": "हर नई enquiry, आते ही।",
-  "kn": "ಪ್ರತಿ ಹೊಸ enquiry, ಬಂದ ತಕ್ಷಣ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.new_enquiries.more": {
-  "en": "Only people who asked you. Anyone who said STOP is left out.",
-  "te": "మిమ్మల్ని అడిగినవాళ్లకే. STOP అన్నవాళ్లని వదిలేస్తాను.",
-  "hi": "सिर्फ़ उन्हें जिन्होंने आपसे पूछा। जिसने STOP कहा उसे छोड़ दिया जाता है।",
-  "kn": "ನಿಮ್ಮನ್ನು ಕೇಳಿದವರಿಗೆ ಮಾತ್ರ. STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.price_questions": {
-  "en": "{eligible} customers who asked a price and are still waiting.",
-  "te": "ధర అడిగి ఇంకా జవాబు కోసం ఎదురుచూస్తున్న {eligible} మంది కస్టమర్లకి.",
-  "hi": "जिन {eligible} कस्टमर ने दाम पूछा और जवाब का इंतज़ार है उन्हें।",
-  "kn": "ಬೆಲೆ ಕೇಳಿ ಇನ್ನೂ ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿರುವ {eligible} ಗ್ರಾಹಕರಿಗೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.price_questions.more": {
-  "en": "Only people who asked you. Anyone who said STOP is left out.",
-  "te": "మిమ్మల్ని అడిగినవాళ్లకే. STOP అన్నవాళ్లని వదిలేస్తాను.",
-  "hi": "सिर्फ़ उन्हें जिन्होंने आपसे पूछा। जिसने STOP कहा उसे छोड़ दिया जाता है।",
-  "kn": "ನಿಮ್ಮನ್ನು ಕೇಳಿದವರಿಗೆ ಮಾತ್ರ. STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.visits_promised": {
-  "en": "{eligible} customers who said they will visit.",
-  "te": "విజిట్ చేస్తామని చెప్పిన {eligible} మంది కస్టమర్లకి.",
-  "hi": "जिन {eligible} कस्टमर ने आने को कहा उन्हें।",
-  "kn": "ಭೇಟಿ ಮಾಡುತ್ತೇವೆ ಎಂದ {eligible} ಗ್ರಾಹಕರಿಗೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.visits_promised.more": {
-  "en": "A reminder goes the day before. Anyone who said STOP is left out.",
-  "te": "ముందు రోజు రిమైండర్ వెళ్తుంది. STOP అన్నవాళ్లని వదిలేస్తాను.",
-  "hi": "एक दिन पहले रिमाइंडर जाता है। जिसने STOP कहा उसे छोड़ दिया जाता है।",
-  "kn": "ಹಿಂದಿನ ದಿನ ರಿಮೈಂಡರ್ ಹೋಗುತ್ತದೆ. STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.offer_yes": {
-  "en": "{eligible} customers who said yes to offers.",
-  "te": "ఆఫర్లకి ఓకే అన్న {eligible} మంది కస్టమర్లకి.",
-  "hi": "ऑफ़र के लिए हाँ कहने वाले {eligible} कस्टमर को।",
-  "kn": "ಆಫರ್‌ಗೆ ಒಪ್ಪಿದ {eligible} ಗ್ರಾಹಕರಿಗೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.who.offer_yes.more": {
-  "en": "It goes out only after your OK. Anyone who said STOP is left out.",
-  "te": "మీ ఓకే తర్వాత మాత్రమే వెళ్తుంది. STOP అన్నవాళ్లని వదిలేస్తాను.",
-  "hi": "आपके OK के बाद ही जाता है। जिसने STOP कहा उसे छोड़ दिया जाता है।",
-  "kn": "ನಿಮ್ಮ OK ನಂತರ ಮಾತ್ರ ಹೋಗುತ್ತದೆ. STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -114363,10 +114231,10 @@
   }
  },
  "jobs.job.try_text.call": {
-  "en": "Hear exactly what a customer would hear, on your own phone. Nothing is sent to customers.",
-  "te": "కస్టమర్‌కి ఏం వినిపిస్తుందో మీ సొంత ఫోన్‌లో వినండి. కస్టమర్లకి ఏమీ వెళ్ళదు.",
-  "hi": "ग्राहक को जो सुनाई देगा वही अपने फोन पर सुनें। ग्राहकों को कुछ नहीं भेजा जाता।",
-  "kn": "ಗ್ರಾಹಕರಿಗೆ ಏನು ಕೇಳಿಸುತ್ತದೋ ಅದನ್ನು ನಿಮ್ಮ ಸ್ವಂತ ಫೋನ್‌ನಲ್ಲಿ ಕೇಳಿ. ಗ್ರಾಹಕರಿಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "en": "This calls YOUR phone and uses about 1 of your free minutes. Nothing is sent to customers.",
+  "te": "ఇది మీ ఫోన్‌కే కాల్ చేస్తుంది, మీ ఉచిత నిమిషాల్లో సుమారు 1 వాడుతుంది. కస్టమర్లకి ఏమీ వెళ్ళదు.",
+  "hi": "यह आपके ही फोन पर कॉल करेगा और आपके मुफ़्त मिनट में से लगभग 1 लगेगा। ग्राहकों को कुछ नहीं भेजा जाता।",
+  "kn": "ಇದು ನಿಮ್ಮ ಫೋನ್‌ಗೇ ಕಾಲ್ ಮಾಡುತ್ತದೆ, ನಿಮ್ಮ ಉಚಿತ ನಿಮಿಷಗಳಲ್ಲಿ ಸುಮಾರು 1 ಬಳಕೆಯಾಗುತ್ತದೆ. ಗ್ರಾಹಕರಿಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -114429,10 +114297,10 @@
   }
  },
  "jobs.job.test.mock": {
-  "en": "Test mode: nothing was called or sent. When this is live, it reaches your own phone only.",
-  "te": "టెస్ట్ మోడ్: ఏమీ కాల్ చేయలేదు, పంపలేదు. లైవ్ అయ్యాక అది మీ సొంత ఫోన్‌కి మాత్రమే వెళ్తుంది.",
-  "hi": "टेस्ट मोड: कुछ भी कॉल या भेजा नहीं गया। लाइव होने पर यह सिर्फ़ आपके अपने फोन पर जाएगा।",
-  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಏನೂ ಕಾಲ್ ಅಥವಾ ಕಳುಹಿಸಿಲ್ಲ. ಲೈವ್ ಆದಾಗ ಇದು ನಿಮ್ಮ ಸ್ವಂತ ಫೋನ್‌ಗೆ ಮಾತ್ರ ಹೋಗುತ್ತದೆ.",
+  "en": "Test mode: nothing was called or sent. When this is live, a test call rings your own phone only and uses about 1 free minute.",
+  "te": "టెస్ట్ మోడ్: ఏమీ కాల్ చేయలేదు, పంపలేదు. లైవ్ అయ్యాక టెస్ట్ కాల్ మీ సొంత ఫోన్‌కే వెళ్తుంది, సుమారు 1 ఉచిత నిమిషం వాడుతుంది.",
+  "hi": "टेस्ट मोड: कुछ भी कॉल या भेजा नहीं गया। लाइव होने पर टेस्ट कॉल सिर्फ़ आपके अपने फोन पर जाएगा और लगभग 1 मुफ़्त मिनट लगेगा।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಏನೂ ಕಾಲ್ ಅಥವಾ ಕಳುಹಿಸಿಲ್ಲ. ಲೈವ್ ಆದಾಗ ಟೆಸ್ಟ್ ಕಾಲ್ ನಿಮ್ಮ ಸ್ವಂತ ಫೋನ್‌ಗೇ ಹೋಗುತ್ತದೆ, ಸುಮಾರು 1 ಉಚಿತ ನಿಮಿಷ ಬಳಕೆಯಾಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -115401,6 +115269,633 @@
   "te": "కస్టమర్ భాష",
   "hi": "ग्राहक की भाषा",
   "kn": "ಗ್ರಾಹಕರ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.not_sent_window.one": {
+  "en": "1 message waits until {opens_at}: quiet hours",
+  "te": "1 మెసేజ్ {opens_at} వరకు ఆగుతుంది: quiet hours",
+  "hi": "1 मैसेज {opens_at} तक रुका है: quiet hours",
+  "kn": "1 ಮೆಸೇಜ್ {opens_at} ವರೆಗೆ ಕಾಯುತ್ತಿದೆ: quiet hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.search_left.never": {
+  "en": "{left} of {per_month} free searches left this month · no search yet",
+  "te": "ఈ నెల {per_month} ఉచిత search లలో {left} మిగిలింది · ఇంకా search చేయలేదు",
+  "hi": "इस महीने {per_month} मुफ़्त search में से {left} बाकी · अभी तक कोई search नहीं",
+  "kn": "ಈ ತಿಂಗಳು {per_month} ಉಚಿತ search ಗಳಲ್ಲಿ {left} ಉಳಿದಿದೆ · ಇನ್ನೂ search ಮಾಡಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.needs_approval": {
+  "en": "{count} things wait for your OK",
+  "te": "{count} విషయాలు మీ OK కోసం వేచి ఉన్నాయి",
+  "hi": "{count} बातें आपके OK का इंतज़ार कर रही हैं",
+  "kn": "{count} ವಿಷಯಗಳು ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.needs_approval.one": {
+  "en": "1 thing waits for your OK",
+  "te": "1 విషయం మీ OK కోసం వేచి ఉంది",
+  "hi": "1 बात आपके OK का इंतज़ार कर रही है",
+  "kn": "1 ವಿಷಯ ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.template_needed": {
+  "en": "{count} messages need a template to go out",
+  "te": "{count} మెసేజ్‌లు వెళ్ళడానికి template కావాలి",
+  "hi": "{count} मैसेज जाने के लिए template चाहिए",
+  "kn": "{count} ಮೆಸೇಜ್ ಹೋಗಲು template ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.template_needed.one": {
+  "en": "1 message needs a template to go out",
+  "te": "1 మెసేజ్ వెళ్ళడానికి template కావాలి",
+  "hi": "1 मैसेज जाने के लिए template चाहिए",
+  "kn": "1 ಮೆಸೇಜ್ ಹೋಗಲು template ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.minutes_used": {
+  "en": "Your free minutes are used up",
+  "te": "మీ ఉచిత నిమిషాలు అయిపోయాయి",
+  "hi": "आपके मुफ़्त मिनट खत्म हो गए",
+  "kn": "ನಿಮ್ಮ ಉಚಿತ ನಿಮಿಷಗಳು ಮುಗಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.no_whatsapp": {
+  "en": "WhatsApp is not connected yet",
+  "te": "WhatsApp ఇంకా కనెక్ట్ కాలేదు",
+  "hi": "WhatsApp अभी कनेक्ट नहीं है",
+  "kn": "WhatsApp ಇನ್ನೂ ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.no_number": {
+  "en": "There is no phone number yet",
+  "te": "ఇంకా ఫోన్ నంబర్ లేదు",
+  "hi": "अभी कोई फ़ोन नंबर नहीं है",
+  "kn": "ಇನ್ನೂ ಫೋನ್ ನಂಬರ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.other": {
+  "en": "Working on it. Open the job to see more.",
+  "te": "పని జరుగుతోంది. ఇంకా చూడడానికి job తెరవండి.",
+  "hi": "काम चल रहा है। और देखने के लिए job खोलें।",
+  "kn": "ಕೆಲಸ ನಡೆಯುತ್ತಿದೆ. ಇನ್ನಷ್ಟು ನೋಡಲು job ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.gate.billing_blocked": {
+  "en": "Billing needs a look",
+  "te": "బిల్లింగ్ ఒకసారి చూడాలి",
+  "hi": "बिलिंग एक बार देखनी है",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ಒಮ್ಮೆ ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.gate.no_number": {
+  "en": "Needs a phone number first",
+  "te": "ముందు ఫోన్ నంబర్ కావాలి",
+  "hi": "पहले फ़ोन नंबर चाहिए",
+  "kn": "ಮೊದಲು ಫೋನ್ ನಂಬರ್ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.gate.no_whatsapp": {
+  "en": "Connect WhatsApp first",
+  "te": "ముందు WhatsApp కనెక్ట్ చేయండి",
+  "hi": "पहले WhatsApp कनेक्ट करें",
+  "kn": "ಮೊದಲು WhatsApp ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.gate.minutes_used": {
+  "en": "Free minutes used",
+  "te": "ఉచిత నిమిషాలు అయిపోయాయి",
+  "hi": "मुफ़्त मिनट खत्म",
+  "kn": "ಉಚಿತ ನಿಮಿಷಗಳು ಮುಗಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.test.used": {
+  "en": "That test used {n} of your free minutes.",
+  "te": "ఆ టెస్ట్ మీ ఉచిత నిమిషాల్లో {n} వాడింది.",
+  "hi": "उस टेस्ट में आपके मुफ़्त मिनट में से {n} लगे।",
+  "kn": "ಆ ಟೆಸ್ಟ್ ನಿಮ್ಮ ಉಚಿತ ನಿಮಿಷಗಳಲ್ಲಿ {n} ಬಳಸಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.test.quiet": {
+  "en": "Test calls and messages are only sent between 9 am and 9 pm.",
+  "te": "టెస్ట్ కాల్స్, మెసేజ్‌లు ఉదయం 9 నుంచి రాత్రి 9 మధ్యే వెళ్తాయి.",
+  "hi": "टेस्ट कॉल और मैसेज सिर्फ़ सुबह 9 से रात 9 बजे के बीच भेजे जाते हैं।",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ಮತ್ತು ಮೆಸೇಜ್ ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಹೋಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.test.cost": {
+  "en": "This calls YOUR phone and uses about 1 of your free minutes.",
+  "te": "ఇది మీ ఫోన్‌కే కాల్ చేస్తుంది, మీ ఉచిత నిమిషాల్లో సుమారు 1 వాడుతుంది.",
+  "hi": "यह आपके ही फोन पर कॉल करेगा और आपके मुफ़्त मिनट में से लगभग 1 लगेगा।",
+  "kn": "ಇದು ನಿಮ್ಮ ಫೋನ್‌ಗೇ ಕಾಲ್ ಮಾಡುತ್ತದೆ, ನಿಮ್ಮ ಉಚಿತ ನಿಮಿಷಗಳಲ್ಲಿ ಸುಮಾರು 1 ಬಳಕೆಯಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.waiting": {
+  "en": "Waiting for your OK",
+  "te": "మీ OK కోసం వేచి ఉంది",
+  "hi": "आपके OK का इंतज़ार",
+  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.waiting.sub": {
+  "en": "This job reaches out to people, so it starts only after your OK.",
+  "te": "ఈ job మనుషులకి కాల్ లేదా మెసేజ్ చేస్తుంది, కాబట్టి మీ OK తర్వాతే మొదలవుతుంది.",
+  "hi": "यह job लोगों से संपर्क करता है, इसलिए आपके OK के बाद ही शुरू होगा।",
+  "kn": "ಈ job ಜನರನ್ನು ಸಂಪರ್ಕಿಸುತ್ತದೆ, ಆದ್ದರಿಂದ ನಿಮ್ಮ OK ನಂತರವೇ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.waiting.link": {
+  "en": "See it in Needs you",
+  "te": "Needs you లో చూడండి",
+  "hi": "Needs you में देखें",
+  "kn": "Needs you ನಲ್ಲಿ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.enquired_calls": {
+  "en": "{eligible} of the {total} who asked you in the last {days} days and agreed to calls.",
+  "te": "గత {days} రోజుల్లో మిమ్మల్ని అడిగి, కాల్స్‌కి ఓకే అన్న {total} మందిలో {eligible} మందికి.",
+  "hi": "पिछले {days} दिनों में आपसे पूछने वाले और कॉल के लिए हाँ कहने वाले {total} में से {eligible} को।",
+  "kn": "ಕಳೆದ {days} ದಿನಗಳಲ್ಲಿ ನಿಮ್ಮನ್ನು ಕೇಳಿ, ಕಾಲ್‌ಗೆ ಒಪ್ಪಿದ {total} ಮಂದಿಯಲ್ಲಿ {eligible} ಮಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.enquired_calls.more": {
+  "en": "Only people who asked you. Anyone who said STOP is left out.",
+  "te": "మిమ్మల్ని అడిగినవాళ్లకే. STOP అన్నవాళ్లని వదిలేస్తాను.",
+  "hi": "सिर्फ़ वे जिन्होंने आपसे पूछा। जिसने STOP कहा उसे छोड़ दिया जाता है।",
+  "kn": "ನಿಮ್ಮನ್ನು ಕೇಳಿದವರಿಗೆ ಮಾತ್ರ. STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.consented_messages": {
+  "en": "{eligible} of the {total} who said yes to messages.",
+  "te": "మెసేజ్‌లకి ఓకే అన్న {total} మందిలో {eligible} మందికి.",
+  "hi": "मैसेज के लिए हाँ कहने वाले {total} में से {eligible} को।",
+  "kn": "ಮೆಸೇಜ್‌ಗೆ ಒಪ್ಪಿದ {total} ಮಂದಿಯಲ್ಲಿ {eligible} ಮಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.consented_messages.more": {
+  "en": "Anyone who said STOP is left out.",
+  "te": "STOP అన్నవాళ్లని వదిలేస్తాను.",
+  "hi": "जिसने STOP कहा उसे छोड़ दिया जाता है।",
+  "kn": "STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.named_list": {
+  "en": "{eligible} of the {count} people you named.",
+  "te": "మీరు చెప్పిన {count} మందిలో {eligible} మందికి.",
+  "hi": "आपके बताए {count} लोगों में से {eligible} को।",
+  "kn": "ನೀವು ಹೇಳಿದ {count} ಮಂದಿಯಲ್ಲಿ {eligible} ಮಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.named_list.more": {
+  "en": "Only people who asked you or agreed to be contacted. Anyone who said STOP is left out.",
+  "te": "మిమ్మల్ని అడిగినవాళ్లకి, లేదా అనుమతి ఇచ్చినవాళ్లకే. STOP అన్నవాళ్లని వదిలేస్తాను.",
+  "hi": "सिर्फ़ वे जिन्होंने आपसे पूछा या संपर्क की अनुमति दी। जिसने STOP कहा उसे छोड़ दिया जाता है।",
+  "kn": "ನಿಮ್ಮನ್ನು ಕೇಳಿದವರಿಗೆ ಅಥವಾ ಅನುಮತಿ ಕೊಟ್ಟವರಿಗೆ ಮಾತ್ರ. STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.said_yes_offer": {
+  "en": "{eligible} customers who said yes to offers.",
+  "te": "ఆఫర్లకి ఓకే అన్న {eligible} మంది కస్టమర్లకి.",
+  "hi": "ऑफ़र के लिए हाँ कहने वाले {eligible} ग्राहकों को।",
+  "kn": "ಆಫರ್‌ಗೆ ಒಪ್ಪಿದ {eligible} ಗ್ರಾಹಕರಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.said_yes_offer.more": {
+  "en": "It goes out only after your OK. Anyone who said STOP is left out.",
+  "te": "మీ OK తర్వాతే వెళ్తుంది. STOP అన్నవాళ్లని వదిలేస్తాను.",
+  "hi": "आपके OK के बाद ही जाता है। जिसने STOP कहा उसे छोड़ दिया जाता है।",
+  "kn": "ನಿಮ್ಮ OK ನಂತರ ಮಾತ್ರ ಹೋಗುತ್ತದೆ. STOP ಎಂದವರನ್ನು ಬಿಡುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.none": {
+  "en": "Nobody matches yet.",
+  "te": "ఇంకా ఎవరూ సరిపోలేదు.",
+  "hi": "अभी कोई मेल नहीं खाता।",
+  "kn": "ಇನ್ನೂ ಯಾರೂ ಹೊಂದುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.excl.no_consent": {
+  "en": "did not say yes to be contacted",
+  "te": "సంప్రదించడానికి అనుమతి ఇవ్వలేదు",
+  "hi": "संपर्क की अनुमति नहीं दी",
+  "kn": "ಸಂಪರ್ಕಿಸಲು ಅನುಮತಿ ಕೊಡಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.excl.no_proof_of_request": {
+  "en": "did not buy or ask in the last 30 days",
+  "te": "గత 30 రోజుల్లో కొనలేదు, అడగలేదు",
+  "hi": "पिछले 30 दिनों में न खरीदा, न पूछा",
+  "kn": "ಕಳೆದ 30 ದಿನಗಳಲ್ಲಿ ಕೊಂಡಿಲ್ಲ, ಕೇಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.excl.prospect": {
+  "en": "are shops you found by searching: you reach out to them yourself",
+  "te": "మీరు search లో కనుగొన్న షాపులు: వాళ్లని మీరే సంప్రదించాలి",
+  "hi": "आपकी search में मिली दुकानें हैं: उनसे आप खुद संपर्क करें",
+  "kn": "ನೀವು search ನಲ್ಲಿ ಕಂಡ ಅಂಗಡಿಗಳು: ಅವರನ್ನು ನೀವೇ ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.excl.already_contacted_recently": {
+  "en": "were contacted very recently",
+  "te": "ఇప్పుడే సంప్రదించాం",
+  "hi": "अभी हाल ही में संपर्क किया गया",
+  "kn": "ಈಗಷ್ಟೇ ಸಂಪರ್ಕಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.blocker.no_number": {
+  "en": "Add a phone number first, so the assistant can call.",
+  "te": "ముందు ఫోన్ నంబర్ జోడించండి, అప్పుడు assistant కాల్ చేయగలదు.",
+  "hi": "पहले फ़ोन नंबर जोड़ें, तभी assistant कॉल कर पाएगा।",
+  "kn": "ಮೊದಲು ಫೋನ್ ನಂಬರ್ ಸೇರಿಸಿ, ಆಗ assistant ಕಾಲ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.blocker.no_whatsapp": {
+  "en": "Connect WhatsApp first, so the assistant can write.",
+  "te": "ముందు WhatsApp కనెక్ట్ చేయండి, అప్పుడు assistant మెసేజ్ చేయగలదు.",
+  "hi": "पहले WhatsApp कनेक्ट करें, तभी assistant मैसेज भेज पाएगा।",
+  "kn": "ಮೊದಲು WhatsApp ಕನೆಕ್ಟ್ ಮಾಡಿ, ಆಗ assistant ಮೆಸೇಜ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.blocker.minutes_used": {
+  "en": "Your free minutes are used up, so this plan cannot start.",
+  "te": "మీ ఉచిత నిమిషాలు అయిపోయాయి, కాబట్టి ఈ ప్లాన్ స్టార్ట్ కాదు.",
+  "hi": "आपके मुफ़्त मिनट खत्म हो गए, इसलिए यह प्लान शुरू नहीं हो सकता।",
+  "kn": "ನಿಮ್ಮ ಉಚಿತ ನಿಮಿಷಗಳು ಮುಗಿದಿವೆ, ಆದ್ದರಿಂದ ಈ ಪ್ಲಾನ್ ಶುರುವಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.why.no_number": {
+  "en": "Add a phone number first, then this job can start.",
+  "te": "ముందు ఫోన్ నంబర్ జోడించండి, తర్వాత ఈ job మొదలవుతుంది.",
+  "hi": "पहले फ़ोन नंबर जोड़ें, फिर यह job शुरू हो सकता है।",
+  "kn": "ಮೊದಲು ಫೋನ್ ನಂಬರ್ ಸೇರಿಸಿ, ನಂತರ ಈ job ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.why.no_whatsapp": {
+  "en": "Connect WhatsApp first, then this job can start.",
+  "te": "ముందు WhatsApp కనెక్ట్ చేయండి, తర్వాత ఈ job మొదలవుతుంది.",
+  "hi": "पहले WhatsApp कनेक्ट करें, फिर यह job शुरू हो सकता है।",
+  "kn": "ಮೊದಲು WhatsApp ಕನೆಕ್ಟ್ ಮಾಡಿ, ನಂತರ ಈ job ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.err.name_invalid": {
+  "en": "That name will not do. Use a plain name, without a phone number or a link.",
+  "te": "ఆ పేరు సరిపోదు. ఫోన్ నంబర్, లింక్ లేకుండా సాదా పేరు పెట్టండి.",
+  "hi": "यह नाम नहीं चलेगा। फ़ोन नंबर या लिंक के बिना सादा नाम रखें।",
+  "kn": "ಆ ಹೆಸರು ಆಗುವುದಿಲ್ಲ. ಫೋನ್ ನಂಬರ್ ಅಥವಾ ಲಿಂಕ್ ಇಲ್ಲದ ಸರಳ ಹೆಸರು ಇಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.err.setting_invalid": {
+  "en": "That choice was not accepted. Pick another one.",
+  "te": "ఆ ఎంపిక ఒప్పుకోలేదు. వేరేది ఎంచుకోండి.",
+  "hi": "यह चुनाव नहीं माना गया। कोई और चुनें।",
+  "kn": "ಆ ಆಯ್ಕೆ ಒಪ್ಪಲಿಲ್ಲ. ಬೇರೆ ಆಯ್ಕೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.err.job_off_by_plan": {
+  "en": "This job is not part of your plan.",
+  "te": "ఈ job మీ ప్లాన్‌లో లేదు.",
+  "hi": "यह job आपके प्लान में नहीं है।",
+  "kn": "ಈ job ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.err.job_unknown_kind": {
+  "en": "This kind of job does not exist.",
+  "te": "ఈ రకమైన job లేదు.",
+  "hi": "इस तरह का job नहीं है।",
+  "kn": "ಈ ರೀತಿಯ job ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.err.faq_not_allowed": {
+  "en": "A job answer may not promise a price or a discount.",
+  "te": "job జవాబులో ధర లేదా డిస్కౌంట్ మాట ఇవ్వకూడదు.",
+  "hi": "job के जवाब में दाम या डिस्काउंट का वादा नहीं हो सकता।",
+  "kn": "job ಉತ್ತರದಲ್ಲಿ ಬೆಲೆ ಅಥವಾ ಡಿಸ್ಕೌಂಟ್ ಮಾತು ಕೊಡುವಂತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.err.consent_required": {
+  "en": "First confirm that these people agreed to be contacted.",
+  "te": "ముందు వీళ్లు సంప్రదించడానికి అనుమతి ఇచ్చారని నిర్ధారించండి.",
+  "hi": "पहले पक्का करें कि इन लोगों ने संपर्क की अनुमति दी है।",
+  "kn": "ಮೊದಲು ಇವರು ಸಂಪರ್ಕಿಸಲು ಅನುಮತಿ ಕೊಟ್ಟಿದ್ದಾರೆ ಎಂದು ಖಚಿತಪಡಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.err.plan_expired": {
+  "en": "This plan has expired: say it again.",
+  "te": "ఈ ప్లాన్ గడువు ముగిసింది: మళ్ళీ చెప్పండి.",
+  "hi": "इस प्लान की समय सीमा खत्म हो गई: फिर से बोलें।",
+  "kn": "ಈ ಪ್ಲಾನ್ ಅವಧಿ ಮುಗಿದಿದೆ: ಮತ್ತೆ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.err.approval_needed": {
+  "en": "This needs your OK first. You will find it in Needs you on Today.",
+  "te": "ముందు మీ OK కావాలి. Today లో Needs you లో కనిపిస్తుంది.",
+  "hi": "पहले आपका OK चाहिए। यह Today के Needs you में मिलेगा।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ OK ಬೇಕು. Today ನ Needs you ನಲ್ಲಿ ಸಿಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.reason.other": {
+  "en": "Legal or complaint rule",
+  "te": "చట్టపరమైన లేదా ఫిర్యాదు నియమం",
+  "hi": "कानूनी या शिकायत का नियम",
+  "kn": "ಕಾನೂನು ಅಥವಾ ದೂರಿನ ನಿಯಮ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.kept": {
+  "en": "Kept by a legal or complaint rule",
+  "te": "చట్టపరమైన లేదా ఫిర్యాదు నియమం వల్ల ఉంచారు",
+  "hi": "कानूनी या शिकायत के नियम से रखा गया",
+  "kn": "ಕಾನೂನು ಅಥವಾ ದೂರಿನ ನಿಯಮದಿಂದ ಇಡಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.added_by": {
+  "en": "Added by {name}",
+  "te": "{name} చేర్చారు",
+  "hi": "{name} ने जोड़ा",
+  "kn": "{name} ಸೇರಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.history.customer": {
+  "en": "{date}: the customer asked for contact again",
+  "te": "{date}: కస్టమర్ మళ్ళీ సంప్రదించమని అడిగారు",
+  "hi": "{date}: ग्राहक ने फिर संपर्क के लिए कहा",
+  "kn": "{date}: ಗ್ರಾಹಕರು ಮತ್ತೆ ಸಂಪರ್ಕಿಸಲು ಕೇಳಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.history.owner_recorded": {
+  "en": "{date}: the owner recorded the customer's yes",
+  "te": "{date}: కస్టమర్ ఓకే అన్నారని owner రాసుకున్నారు",
+  "hi": "{date}: owner ने ग्राहक की हाँ दर्ज की",
+  "kn": "{date}: ಗ್ರಾಹಕರ ಒಪ್ಪಿಗೆಯನ್ನು owner ಬರೆದುಕೊಂಡರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rnum.left": {
+  "en": "free searches left",
+  "te": "మిగిలిన ఉచిత search లు",
+  "hi": "बाकी मुफ़्त search",
+  "kn": "ಉಳಿದ ಉಚಿತ search ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rnum.per_month": {
+  "en": "free searches a month",
+  "te": "నెలకు ఉచిత search లు",
+  "hi": "महीने में मुफ़्त search",
+  "kn": "ತಿಂಗಳಿಗೆ ಉಚಿತ search ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.enquired_calls.all": {
+  "en": "{eligible} who asked you in the last {days} days and agreed to calls.",
+  "te": "గత {days} రోజుల్లో మిమ్మల్ని అడిగి, కాల్స్‌కి ఓకే అన్న {eligible} మందికి.",
+  "hi": "पिछले {days} दिनों में आपसे पूछने वाले और कॉल के लिए हाँ कहने वाले {eligible} को।",
+  "kn": "ಕಳೆದ {days} ದಿನಗಳಲ್ಲಿ ನಿಮ್ಮನ್ನು ಕೇಳಿ, ಕಾಲ್‌ಗೆ ಒಪ್ಪಿದ {eligible} ಮಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.bought_calls.all": {
+  "en": "{eligible} who bought in the last {days} days and agreed to calls.",
+  "te": "గత {days} రోజుల్లో కొని, కాల్స్‌కి ఓకే అన్న {eligible} మందికి.",
+  "hi": "पिछले {days} दिनों में खरीदने वाले और कॉल के लिए हाँ कहने वाले {eligible} को।",
+  "kn": "ಕಳೆದ {days} ದಿನಗಳಲ್ಲಿ ಕೊಂಡು, ಕಾಲ್‌ಗೆ ಒಪ್ಪಿದ {eligible} ಮಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.consented_messages.all": {
+  "en": "{eligible} who said yes to messages.",
+  "te": "మెసేజ్‌లకి ఓకే అన్న {eligible} మందికి.",
+  "hi": "मैसेज के लिए हाँ कहने वाले {eligible} को।",
+  "kn": "ಮೆಸೇಜ್‌ಗೆ ಒಪ್ಪಿದ {eligible} ಮಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.who.named_list.all": {
+  "en": "The {eligible} people you named.",
+  "te": "మీరు చెప్పిన {eligible} మందికి.",
+  "hi": "आपके बताए {eligible} लोगों को।",
+  "kn": "ನೀವು ಹೇಳಿದ {eligible} ಮಂದಿಗೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

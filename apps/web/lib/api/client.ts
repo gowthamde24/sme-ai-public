@@ -18,9 +18,28 @@ export class ApiRequestError extends Error {
     readonly until?: string,
     /** A 429 or a 503 only: the seconds the API asks the caller to wait (its Retry-After header), when it gave a sensible number. */
     readonly retryAfter?: number,
+    /** Closed extras of a few refusals (the Jobs contract): `approval {id, kind}` of a `409 approval_needed`, and the `fields` of a `422 setting_invalid`. Never free text. */
+    readonly extra?: RefusalExtra,
   ) {
     super(message);
   }
+}
+
+export type RefusalExtra = { approval?: { id: string; kind: string }; fields?: string[] };
+const CLOSED = /^[A-Za-z0-9_.:-]{1,80}$/;
+/** The closed extras of a refusal body: `approval` (top level of the body, or inside `error`) and `fields` (the same); anything that is not a short closed word is dropped. */
+function extraOf(body: unknown, err: ApiError["error"] | null): RefusalExtra | undefined {
+  const top = isRecord(body) ? body : {};
+  const inner = err ? (err as unknown as Record<string, unknown>) : {};
+  const approval = isRecord(top.approval) ? top.approval : isRecord(inner.approval) ? inner.approval : null;
+  const fieldsRaw = Array.isArray(inner.fields) ? inner.fields : Array.isArray(top.fields) ? top.fields : null;
+  const out: RefusalExtra = {};
+  if (approval && typeof approval.id === "string" && CLOSED.test(approval.id) && typeof approval.kind === "string" && CLOSED.test(approval.kind)) out.approval = { id: approval.id, kind: approval.kind };
+  if (fieldsRaw) {
+    const fields = fieldsRaw.filter((f): f is string => typeof f === "string" && CLOSED.test(f) && f.length <= 40).slice(0, 10);
+    if (fields.length > 0) out.fields = fields;
+  }
+  return out.approval || out.fields ? out : undefined;
 }
 
 export class ApiContractError extends Error {}
@@ -131,7 +150,7 @@ export function refusal(status: number, body: unknown, retryAfterHeader: string 
   const code = err && isString(err.code) ? err.code : (plain ?? (status === 429 ? "rate_limited" : "http_error"));
   // since job CD every refusal is {error: {code, message, retry_after, request_id}}: the seconds are in the body as well as in the header (the header wins)
   const inBody = err && typeof (err as { retry_after?: unknown }).retry_after === "number" ? retryAfterSeconds(String((err as { retry_after: number }).retry_after)) : undefined;
-  return new ApiRequestError(status, code, err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err), status === 429 || status === 503 ? (retryAfterSeconds(retryAfterHeader) ?? inBody) : undefined);
+  return new ApiRequestError(status, code, err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err), status === 429 || status === 503 ? (retryAfterSeconds(retryAfterHeader) ?? inBody) : undefined, extraOf(body, err));
 }
 
 /** The API says it is busy right now (its page-read limiter, C1's Phase 1: `503 {error:{code:"busy"}}` with Retry-After): try again shortly, it is not a failure. */

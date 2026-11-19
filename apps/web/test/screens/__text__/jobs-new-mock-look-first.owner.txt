@@ -12,7 +12,7 @@ Say it, or type it
 {label="Follow up on price questions and promises"} The plan · nothing has started Draft
 ## Follow up on price questions and promises
 ### Who
-5 customers who asked a price and are still waiting. Only people who asked you. Anyone who said STOP is left out.
+5 who said yes to messages. Anyone who said STOP is left out.
 ### What it says
 “Namaskaram Sravani garu, this is the AI assistant of Neelambari Silks. The green Kanchipuram saree is ₹18,500. Shall I keep it for you? Reply STOP to stop these messages.”
 ### When

@@ -10,7 +10,7 @@ import { addDnc, parseDncEntry, parseDncPage, readDnc, removeDnc } from "./do-no
 
 const T = "22222222-2222-4222-8222-222222222222";
 const E = "77777777-7777-4777-8777-777777777701";
-const wire = { id: E, phone_masked: "+91 98480 ••• 21", reason: "stop_whatsapp", at: "2026-11-12T08:10:00Z" };
+const wire = { id: E, phone_masked: "+91 98480 ••• 21", reason: "stop_whatsapp", at: "2026-11-12T08:10:00Z", added_by: null, history: [] };
 
 beforeEach(() => {
   h.req.mockReset();
@@ -19,8 +19,18 @@ beforeEach(() => {
 
 describe("Do-Not-Call: what the API sends", () => {
   it("reads an entry: a masked number, a closed reason and a date; the whole number is never part of it", () => {
-    expect(parseDncEntry(wire)).toEqual({ id: E, phoneMasked: "+91 98480 ••• 21", reason: "stop_whatsapp", at: "2026-11-12T08:10:00Z" });
+    expect(parseDncEntry(wire)).toEqual({ id: E, phoneMasked: "+91 98480 ••• 21", reason: "stop_whatsapp", at: "2026-11-12T08:10:00Z", addedBy: null, history: [] });
     expect(JSON.stringify(parseDncEntry({ ...wire, phone: "+919848012321" }))).not.toContain("919848012321");
+  });
+  it("reasons are stop_whatsapp, asked_on_call, added_by_owner and other (legal, complained, bounced); the entry carries who added it and, once lifted, its history", () => {
+    for (const reason of ["stop_whatsapp", "asked_on_call", "added_by_owner", "other"]) expect(parseDncEntry({ ...wire, reason }).reason).toBe(reason);
+    const e = parseDncEntry({ ...wire, reason: "added_by_owner", added_by: "Ramesh", history: [{ at: "2026-11-20T09:00:00Z", how: "new_message", by: "customer" }, { at: "2026-11-21T09:00:00Z", how: "recorded_yes", by: "owner_recorded" }] });
+    expect(e.addedBy).toBe("Ramesh");
+    expect(e.history).toEqual([{ at: "2026-11-20T09:00:00Z", how: "new_message", by: "customer" }, { at: "2026-11-21T09:00:00Z", how: "recorded_yes", by: "owner_recorded" }]);
+    expect(parseDncEntry({ ...wire, added_by: "  " }).addedBy).toBeNull();
+    expect(parseDncEntry({ id: E, phone_masked: wire.phone_masked, reason: "other", at: wire.at }).history).toEqual([]);
+    expect(() => parseDncEntry({ ...wire, history: [{ at: "2026-11-20T09:00:00Z", how: "x", by: "staff" }] })).toThrow();
+    expect(() => parseDncEntry({ ...wire, history: [{ at: "later", how: "x", by: "customer" }] })).toThrow();
   });
   it("refuses a reason it does not know, a number that is not masked-looking and a bad date", () => {
     expect(() => parseDncEntry({ ...wire, reason: "because" })).toThrow();

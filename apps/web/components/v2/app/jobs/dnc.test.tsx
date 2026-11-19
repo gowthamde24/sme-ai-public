@@ -11,7 +11,7 @@ const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, 
 const BASE = "/app/tenants/t";
 const page = { items: [...MOCK_DNC], count: MOCK_DNC_COUNT, nextCursor: null };
 const acts = (over = {}) => ({
-  add: vi.fn(async (phone: string) => ({ ok: true as const, data: { id: "77777777-7777-4777-8777-777777777799", phoneMasked: phone.includes("90000") ? "+91 90000 ••• 64" : "+91 98480 ••• 99", reason: "added_by_owner" as const, at: "2026-11-19T04:00:00Z" } })),
+  add: vi.fn(async (phone: string) => ({ ok: true as const, data: { id: "77777777-7777-4777-8777-777777777799", phoneMasked: phone.includes("90000") ? "+91 90000 ••• 64" : "+91 98480 ••• 99", reason: "added_by_owner" as const, at: "2026-11-19T04:00:00Z", addedBy: null, history: [] } })),
   remove: vi.fn(async (id: string) => ({ ok: true as const, data: { id } })),
   ...over,
 });
@@ -25,13 +25,14 @@ describe("the Do-Not-Call list", () => {
   it("shows each number masked, the reason in words and the date", () => {
     show();
     const rows = document.querySelectorAll("[data-dnc]");
-    expect(rows).toHaveLength(4);
+    expect(rows).toHaveLength(6);
     const first = rows[0] as HTMLElement;
     expect(within(first).getByText("+91 98480 ••• 21")).toBeInTheDocument();
     expect(within(first).getByText("Said STOP on WhatsApp")).toBeInTheDocument();
     expect(within(first).getByText("12 Nov")).toBeInTheDocument();
     expect(within(rows[1] as HTMLElement).getByText("Asked on a call not to be called")).toBeInTheDocument();
-    expect(within(rows[2] as HTMLElement).getByText("Added by you")).toBeInTheDocument();
+    // an owner-added number says WHO added it
+    expect(within(rows[2] as HTMLElement).getByText("Added by Ramesh")).toBeInTheDocument();
   });
   it("the search box is a plain GET form to this page (it works before any script)", () => {
     show(acts(), { q: "984" });
@@ -70,7 +71,7 @@ describe("the Do-Not-Call list", () => {
   it("Remove (Owner): asks once with the line about when a number may leave, only then removes", async () => {
     const a = acts();
     show(a);
-    const row = document.querySelector(`[data-dnc="${MOCK_DNC[2].id}"]`) as HTMLElement; // "Added by you": the only kind with a Remove
+    const row = document.querySelector(`[data-dnc="${MOCK_DNC[2].id}"]`) as HTMLElement; // added by the owner: the only kind with a Remove
     fireEvent.click(within(row).getByRole("button", { name: "Remove +91 90000 ••• 64 from the list" }));
     const ask = within(row).getByRole("alertdialog");
     expect(within(ask).getByText(/A number you added yourself leaves the list when you remove it/)).toBeInTheDocument();
@@ -81,12 +82,12 @@ describe("the Do-Not-Call list", () => {
     fireEvent.click(within(row).getByRole("button", { name: "Yes, remove it" }));
     await waitFor(() => expect(a.remove).toHaveBeenCalledWith(MOCK_DNC[2].id));
     expect(await screen.findByText("Removed from the list.")).toBeInTheDocument();
-    expect(document.querySelectorAll("[data-dnc]")).toHaveLength(3);
+    expect(document.querySelectorAll("[data-dnc]")).toHaveLength(5);
     expect(screen.getByText("127 numbers. The assistant never calls or messages these.")).toBeInTheDocument();
   });
   it("a number that said STOP itself has NO Remove, for anyone: it says it was stopped by the customer; the numbers use the theme font, not a monospace one", () => {
     show(acts());
-    for (const i of [0, 1, 3]) {
+    for (const i of [0, 1, 3, 5]) {
       const row = document.querySelector(`[data-dnc="${MOCK_DNC[i].id}"]`) as HTMLElement;
       expect(within(row).queryByRole("button", { name: /^Remove/ })).toBeNull();
       expect(within(row).getByText("Stopped by the customer")).toBeInTheDocument();
@@ -96,6 +97,23 @@ describe("the Do-Not-Call list", () => {
       expect(n.className).toContain("tabular-nums");
       expect(n.className).not.toContain("font-mono");
     }
+  });
+  it("a legal or complaint rule (`other`) stays too: no Remove, and it says it is kept by a rule", () => {
+    show(acts());
+    const row = document.querySelector(`[data-dnc="${MOCK_DNC[4].id}"]`) as HTMLElement;
+    expect(MOCK_DNC[4].reason).toBe("other");
+    expect(within(row).getByText("Legal or complaint rule")).toBeInTheDocument();
+    expect(within(row).getByText("Kept by a legal or complaint rule")).toBeInTheDocument();
+    expect(within(row).queryByRole("button", { name: /^Remove/ })).toBeNull();
+    expect(within(row).queryByText("Stopped by the customer")).toBeNull();
+  });
+  it("a number the customer came back on shows its history under it, one line each", () => {
+    show(acts());
+    const row = document.querySelector(`[data-dnc="${MOCK_DNC[5].id}"]`) as HTMLElement;
+    const lines = [...row.querySelectorAll('[data-part="dnc-history"] li')].map((li) => li.textContent);
+    expect(lines).toEqual(["5 Nov: the customer asked for contact again", "6 Nov: the owner recorded the customer's yes"]);
+    // an entry that never came back has no history lines
+    expect(document.querySelector(`[data-dnc="${MOCK_DNC[0].id}"] [data-part="dnc-history"]`)).toBeNull();
   });
   it("an Admin or a Sales member has no Remove; a Sales member has no Add either", () => {
     show(acts({ remove: null }));

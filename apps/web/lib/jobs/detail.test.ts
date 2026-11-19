@@ -25,8 +25,9 @@ describe("a FAQ", () => {
     expect(checkFaq("  Open on Sundays? ", " Yes. ")).toEqual({ ok: true, question: "Open on Sundays?", answer: "Yes." });
     expect(checkFaq("ab", "x").ok).toBe(false);
     expect(checkFaq("Open?", "").ok).toBe(false);
-    expect(checkFaq("q".repeat(201), "x").ok).toBe(false);
-    expect(checkFaq("Open?", "a".repeat(501)).ok).toBe(false);
+    expect(checkFaq("q".repeat(301), "x").ok).toBe(false);
+    expect(checkFaq("q".repeat(300), "a".repeat(300)).ok).toBe(true);
+    expect(checkFaq("Open?", "a".repeat(301)).ok).toBe(false);
     expect(checkFaq("Open?", "Yes\u0007").ok).toBe(false);
   });
 });

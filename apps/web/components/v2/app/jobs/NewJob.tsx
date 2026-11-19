@@ -23,7 +23,7 @@ export type NewJobActions = {
 };
 
 const EXAMPLES = ["jobs.new.example.silk", "jobs.new.example.missed"] as const;
-const IDLE: PlanCardState = { starting: false, testing: false, swapping: false, note: null, error: null };
+const IDLE: PlanCardState = { starting: false, testing: false, swapping: false, note: null, error: null, waiting: false, quiet: false };
 
 /**
  * "Start a job" (JOBS; mock sheets 02 and 03): a box to say or type what the assistant should do, two examples, then the PLAN card; and below, the suggested jobs for this kind of business. Nothing starts until Start (on the plan card or on a suggested job) is pressed;
@@ -85,6 +85,11 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
       setCard((c) => ({ ...c, starting: false, error: r.error }));
       return;
     }
+    // `409 approval_needed`: nothing is wrong, the Owner's OK comes first (it is in Needs you on Today)
+    if ("approval" in r.data) {
+      setCard((c) => ({ ...c, starting: false, waiting: true }));
+      return;
+    }
     setStarted(true);
     router.push(`${base}/jobs/${r.data.jobId}?started=1`);
   }
@@ -93,7 +98,14 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
     const channel: PlanChannel = plan.says[0]?.channel ?? "call";
     setCard((c) => ({ ...c, testing: true, error: null, note: null }));
     const r = await actions.test(plan.planId, channel);
-    setCard((c) => ({ ...c, testing: false, ...(r.ok ? { note: t(r.data.mock ? "jobs.new.test.mock" : channel === "call" ? "jobs.new.test.sent_call" : "jobs.new.test.sent_message") } : { error: r.error }) }));
+    if (!r.ok && r.code === "quiet_hours") {
+      // a test call or message is only sent between 9 am and 9 pm: the button stays off and the line says why
+      setCard((c) => ({ ...c, testing: false, quiet: true, note: t("jobs.job.test.quiet") }));
+      return;
+    }
+    const sent = r.ok ? t(r.data.mock ? "jobs.new.test.mock" : channel === "call" ? "jobs.new.test.sent_call" : "jobs.new.test.sent_message") : "";
+    const used = r.ok && !r.data.mock && r.data.minutesUsed > 0 ? ` ${t("jobs.job.test.used", { n: r.data.minutesUsed })}` : "";
+    setCard((c) => ({ ...c, testing: false, ...(r.ok ? { note: `${sent}${used}` } : { error: r.error }) }));
   }
   function change() {
     if (!plan) return;
@@ -104,7 +116,7 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
   function swap() {
     const alt = plan?.alternatives.find((a) => a.kind === "whatsapp");
     if (!alt) return;
-    void ask(source && "text" in source ? { text: source.text, as: "whatsapp" } : { text: plan?.title ?? "", as: "whatsapp" }, true);
+    if (plan) void ask({ as: "whatsapp", planId: plan.planId }, true);
   }
 
   const unclear = plan?.blockers.includes("unclear_who") === true;
@@ -164,7 +176,7 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
       </div>
       {plan && !unclear ? (
         <div className="min-w-0 md:sticky md:top-4 md:col-start-2 md:row-span-2 md:row-start-1">
-          <PlanCard plan={plan} words={words} state={card} onStart={() => void start()} onSwap={swap} onChange={change} onTest={() => void test()} headingRef={planRef} />
+          <PlanCard plan={plan} words={words} base={base} state={card} onStart={() => void start()} onSwap={swap} onChange={change} onTest={() => void test()} headingRef={planRef} />
         </div>
       ) : null}
       <div className="min-w-0 md:col-start-1">

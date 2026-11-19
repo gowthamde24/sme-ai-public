@@ -8,7 +8,8 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { setJobEnabled } from "@/lib/api/jobs";
 import type { JobSwitched } from "@/lib/jobs/types";
 
-import { DECIDERS, invalid, refusal, who } from "../retailers/finder-guard";
+import { DECIDERS, invalid, who } from "../retailers/finder-guard";
+import { jobsRefusal } from "./refusal";
 
 /** The switch of a job (owner 19 Nov: "a switch per job"): Owner and Admin. It stops or starts only that job; nothing is sent by pressing it (a job starts working on the next event or at its next time). */
 export async function setJobEnabledAction(tenantId: string, jobId: string, enabled: boolean): Promise<Reply<JobSwitched>> {
@@ -21,6 +22,6 @@ export async function setJobEnabledAction(tenantId: string, jobId: string, enabl
     revalidatePath(`/app/tenants/${tenantId}/jobs`);
     return { ok: true, data };
   } catch (error) {
-    return refusal(error, ctx.t, await getLang());
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }

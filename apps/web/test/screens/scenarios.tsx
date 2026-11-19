@@ -1345,6 +1345,8 @@ const TOPUP_ENV = { TOPUP_SCREENS: "mock" };
 add({ id: "demo-video-off", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/demo-video/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "settings-plan-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "plan" }))), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: null, state: null }) }) });
 add({ id: "today-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, todayPage()), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+// JOBS: Today's "Running now" in test mode (JOBS=mock): GET /jobs/today (the full Job objects: a failed job with its fix, a job a missing WhatsApp blocks); the Owner switches
+add({ id: "today-jobs-mock", roles: ["owner"], render: () => withEnv({ DESIGN_V6: "1", JOBS: "mock" }, todayPage()), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 // -- scenarios: lead desk site (web/ds-lead-desk)
 // -- scenarios: leads core (web/dr-leads)
 const OUT_BATCH = "ba000000-0000-4000-8000-0000000000b1";

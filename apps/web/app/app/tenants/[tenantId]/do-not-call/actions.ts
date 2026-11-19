@@ -8,7 +8,8 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { addDnc, removeDnc } from "@/lib/api/do-not-call";
 import { indianMobile, type DncEntry } from "@/lib/jobs/dnc";
 
-import { DECIDERS, invalid, refusal, who } from "../retailers/finder-guard";
+import { DECIDERS, invalid, who } from "../retailers/finder-guard";
+import { jobsRefusal } from "../jobs/refusal";
 
 /** "Add" a number to the Do-Not-Call list (JOBS): Owner and Admin. The number is checked here (an Indian mobile number) before anything is sent; the API answers with the masked entry. */
 export async function addDncAction(tenantId: string, phone: string): Promise<Reply<DncEntry>> {
@@ -20,7 +21,7 @@ export async function addDncAction(tenantId: string, phone: string): Promise<Rep
     revalidatePath(`/app/tenants/${tenantId}/do-not-call`);
     return { ok: true, data };
   } catch (error) {
-    return refusal(error, ctx.t, await getLang());
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }
 
@@ -34,7 +35,7 @@ export async function removeDncAction(tenantId: string, id: string): Promise<Rep
     revalidatePath(`/app/tenants/${tenantId}/do-not-call`);
     return { ok: true, data: { id } };
   } catch (error) {
-    const f = refusal(error, ctx.t, await getLang());
-    return f.code === "stopped_by_customer" ? { ...f, error: ctx.t("jobs.dnc.err.stopped") } : f;
+    // 409 stopped_by_customer ("This number said STOP...") has its sentence in jobsRefusal
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }

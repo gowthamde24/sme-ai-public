@@ -2,6 +2,8 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { appDict } from "@/i18n/app";
+import { parseJob } from "@/lib/api/jobs-parse";
+import { WIRE_JOB_VARIANTS } from "@/lib/jobs/fixtures";
 import { MOCK_JOBS } from "@/lib/jobs/mock";
 
 import { JobRow } from "./JobRow";
@@ -37,6 +39,40 @@ describe("a job row", () => {
     const failed = document.querySelector('[data-job-kind="followups"]') as HTMLElement;
     expect(failed.querySelector(".jb-chip")).toHaveAttribute("data-tone", "fail");
     expect(within(failed).getByText("Send template")).toBeInTheDocument();
+  });
+  it("every result code of the contract has its sentence, in the contract's param names; dates are formatted by the web; an unknown code gets the generic line", () => {
+    const variants = WIRE_JOB_VARIANTS.map(parseJob);
+    const line = (j: (typeof variants)[number]) => {
+      const { container } = render(<JobRow job={j} words={words} base={BASE} actions={null} />);
+      const text = (container.querySelector("a > span:nth-of-type(2)") as HTMLElement).textContent;
+      cleanup();
+      return text;
+    };
+    const byCode = Object.fromEntries(variants.map((j) => [j.result.code + (j.result.params.last_search_at === undefined && j.result.code === "search_left" ? ".never" : ""), line(j)]));
+    expect(byCode.not_sent_window).toBe("3 messages wait until 9 am: quiet hours");
+    expect(byCode.needs_approval).toBe("2 things wait for your OK");
+    expect(byCode.minutes_used).toBe("Your free minutes are used up");
+    expect(byCode.no_whatsapp).toBe("WhatsApp is not connected yet");
+    expect(byCode.no_number).toBe("There is no phone number yet");
+    expect(byCode["search_left.never"]).toBe("1 of 1 free searches left this month · no search yet");
+    expect(byCode.a_code_the_web_has_no_words_for).toBe("Working on it. Open the job to see more.");
+    expect(line(job("answer_calls"))).toBe("Today: answered 3 calls · 1 missed · 2 messages sent");
+    expect(line(job("store_visits"))).toBe("Done today: 3 reminders sent · 2 confirmed");
+    expect(line(job("researcher"))).toBe("1 of 1 free searches left this month · last search 12 Nov");
+    expect(line(job("payment_reminders"))).toBe("Paused on 14 Nov");
+    expect(line(job("followups"))).toBe("2 messages need a template to go out");
+    expect(line(job("offers"))).toBe("Ready to send to 38 customers");
+  });
+  it("a job the plan or the setup blocks wears a short note: a phone number, WhatsApp, free minutes or billing; a job with no gate has none", () => {
+    const notes: Record<string, string> = { billing_blocked: "Billing needs a look", no_number: "Needs a phone number first", no_whatsapp: "Connect WhatsApp first", minutes_used: "Free minutes used" };
+    for (const j of WIRE_JOB_VARIANTS.map(parseJob).filter((v) => v.planGate)) {
+      const { container } = render(<JobRow job={j} words={words} base={BASE} actions={null} />);
+      expect(container.querySelector("[data-part='job-gate']")).toHaveTextContent(notes[j.planGate!]);
+      cleanup();
+    }
+    expect(job("payment_reminders").planGate).toBe("no_whatsapp");
+    render(<JobRow job={job("speed_to_lead")} words={words} base={BASE} actions={null} />);
+    expect(document.querySelector("[data-part='job-gate']")).toBeNull();
   });
   it("the switch answers at once, calls the action once with the new state, and takes the API's answer", async () => {
     const a = acts();

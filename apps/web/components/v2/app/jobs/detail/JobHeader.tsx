@@ -4,10 +4,11 @@ import { Gift, MessageCircle, Pencil, Phone, Search, Sparkles, Store, Wallet, Za
 import { useState } from "react";
 
 import { JOB_NAME_MAX, checkJobName, type Ago } from "@/lib/jobs/detail";
-import { CHIP_TONE, jobStatusKey, type JobKind, type JobStatus } from "@/lib/jobs/types";
+import { CHIP_TONE, jobStatusKey, type JobKind, type JobStatus, type PlanGate } from "@/lib/jobs/types";
 
 import { JobChip } from "../../ds/JobChip";
 import type { Say } from "../../words";
+import { GateNote } from "../GateNote";
 import { jobBtnMain, jobBtnQuiet, jobCard } from "./types";
 
 const ICON: Record<JobKind, typeof Zap> = { speed_to_lead: Zap, answer_calls: Phone, followups: MessageCircle, store_visits: Store, offers: Gift, researcher: Search, payment_reminders: Wallet, custom: Sparkles };
@@ -23,6 +24,8 @@ export type HeaderProps = {
   what: string;
   status: JobStatus;
   needsYou: number;
+  /** What blocks the job before it can run (a phone number, WhatsApp, free minutes, billing), or null. */
+  gate: PlanGate | null;
   enabled: boolean;
   ago: Ago | null;
   t: Say;
@@ -163,6 +166,7 @@ export function JobHeader(p: HeaderProps) {
           </button>
         </span>
       </div>
+      {p.gate ? <GateNote gate={p.gate} t={t} className="mt-3 rounded-xl bg-[var(--jb-wait-soft)] px-3 py-2.5" /> : null}
       {p.error ? (
         <p role="alert" className="m-0 mt-2 text-sm text-red-text">
           {p.error}

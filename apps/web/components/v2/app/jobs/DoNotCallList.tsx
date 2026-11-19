@@ -4,7 +4,7 @@ import { Ban, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { useId, useState } from "react";
 
-import { dncReasonKey, indianMobile, type DncEntry, type DncPage } from "@/lib/jobs/dnc";
+import { dncReasonKey, dncRemovable, indianMobile, type DncEntry, type DncPage } from "@/lib/jobs/dnc";
 
 import type { Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
@@ -154,23 +154,32 @@ export function DoNotCallList({ page, q, words, base, actions, moreHref }: { pag
                   <p className="m-0 text-[17px] font-bold tabular-nums tracking-tight" data-part="dnc-number">
                     {e.phoneMasked}
                   </p>
-                  <p className="m-0 text-[15px] text-muted">{t(dncReasonKey(e.reason))}</p>
+                  <p className="m-0 text-[15px] text-muted" data-part="dnc-reason">
+                    {e.reason === "added_by_owner" && e.addedBy ? t("jobs.dnc.added_by", { name: e.addedBy }) : t(dncReasonKey(e.reason))}
+                  </p>
+                  {e.history.length > 0 ? (
+                    <ul className="m-0 mt-1 flex list-none flex-col gap-0.5 p-0 text-sm text-muted" data-part="dnc-history">
+                      {e.history.map((h, i) => (
+                        <li key={`${h.at}-${i}`}>{t(`jobs.dnc.history.${h.by}`, { date: day(h.at) })}</li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <span className="text-sm text-muted">{day(e.at)}</span>
-                  {actions.remove && e.reason === "added_by_owner" && asking !== e.id ? (
+                  {actions.remove && dncRemovable(e) && asking !== e.id ? (
                     <button type="button" className="write-ctl inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text underline underline-offset-4" aria-label={t("jobs.dnc.remove.aria", { number: e.phoneMasked })} onClick={() => (setAsking(e.id), setRemoveError(null))} data-act="dnc-remove">
                       {t("jobs.dnc.remove")}
                     </button>
                   ) : null}
-                  {e.reason !== "added_by_owner" ? (
+                  {!dncRemovable(e) ? (
                     <span className="max-w-[11rem] text-right text-xs text-muted" data-part="dnc-stopped">
-                      {t("jobs.dnc.stopped")}
+                      {t(e.reason === "other" ? "jobs.dnc.kept" : "jobs.dnc.stopped")}
                     </span>
                   ) : null}
                 </div>
               </div>
-              {asking === e.id && actions.remove && e.reason === "added_by_owner" ? (
+              {asking === e.id && actions.remove && dncRemovable(e) ? (
                 <div role="alertdialog" aria-label={t("jobs.dnc.remove.ask", { number: e.phoneMasked })} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface-2 p-3" data-part="dnc-confirm">
                   <p className="m-0 font-semibold">{t("jobs.dnc.remove.ask", { number: e.phoneMasked })}</p>
                   <p className="m-0 text-sm text-muted">{t("jobs.dnc.remove.rule")}</p>

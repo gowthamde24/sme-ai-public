@@ -17,10 +17,10 @@ export function optionLabel(t: Say, key: string, value: string): string {
 }
 
 /** A choice made to look like a pill inside a sentence (the mock's `.sel`): a real native select, so the keyboard, the screen reader and the phone's own picker all work. */
-export function PillSelect({ label, value, options, optionText, disabled, onChange }: { label: string; value: string; options: readonly string[]; optionText: (v: string) => string; disabled: boolean; onChange: (v: string) => void }) {
+export function PillSelect({ label, value, options, optionText, disabled, invalid = false, onChange }: { label: string; value: string; options: readonly string[]; optionText: (v: string) => string; disabled: boolean; /** the API refused this choice (`setting_invalid`): it is marked */ invalid?: boolean; onChange: (v: string) => void }) {
   return (
     <span className="relative my-0.5 inline-block max-w-full align-middle">
-      <select aria-label={label} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} className="jb-press write-ctl min-h-10 max-w-full cursor-pointer text-ellipsis appearance-none rounded-full border border-transparent bg-brand-bg py-1 pl-3.5 pr-8 text-[16px] font-semibold text-brand-text disabled:cursor-default disabled:opacity-80">
+      <select aria-label={label} value={value} disabled={disabled} aria-invalid={invalid ? true : undefined} data-invalid={invalid ? "" : undefined} onChange={(e) => onChange(e.target.value)} className={`jb-press write-ctl min-h-10 max-w-full cursor-pointer text-ellipsis appearance-none rounded-full border ${invalid ? "border-red-text" : "border-transparent"} bg-brand-bg py-1 pl-3.5 pr-8 text-[16px] font-semibold text-brand-text disabled:cursor-default disabled:opacity-80`}>
         {options.map((o) => (
           <option key={o} value={o}>
             {optionText(o)}
@@ -36,7 +36,7 @@ export function PillSelect({ label, value, options, optionText, disabled, onChan
  * One line of settings as a sentence with the choice inside ("Call new enquiries [right away]"). The sentence is `jobs.line.<id>` with `{key}` where each choice goes; a tick (a yes or no) is its own line with the sentence as its label.
  * The selects have names for the screen reader: the whole sentence without the choice markers.
  */
-export function SettingLineView({ line, byKey, values, t, disabled, onChange }: { line: SettingLine; byKey: ReadonlyMap<string, JobSetting>; values: Readonly<Record<string, string>>; t: Say; disabled: boolean; onChange: (key: string, value: string) => void }) {
+export function SettingLineView({ line, byKey, values, t, disabled, invalid = [], onChange }: { line: SettingLine; byKey: ReadonlyMap<string, JobSetting>; values: Readonly<Record<string, string>>; t: Say; disabled: boolean; /** keys of the settings the API refused */ invalid?: readonly string[]; onChange: (key: string, value: string) => void }) {
   const first = byKey.get(line.keys[0]);
   if (!first) return null;
   if (first.type === "toggle") {
@@ -51,7 +51,7 @@ export function SettingLineView({ line, byKey, values, t, disabled, onChange }: 
         const key = /^\{(\w+)\}$/.exec(part)?.[1];
         const s = key ? byKey.get(key) : undefined;
         if (!s) return <Fragment key={i}>{part}</Fragment>;
-        return <PillSelect key={i} label={many ? `${plain} (${line.keys.indexOf(s.key) + 1})` : plain} value={values[s.key] ?? s.value} options={s.options} optionText={(v) => optionLabel(t, s.key, v)} disabled={disabled} onChange={(v) => onChange(s.key, v)} />;
+        return <PillSelect key={i} label={many ? `${plain} (${line.keys.indexOf(s.key) + 1})` : plain} value={values[s.key] ?? s.value} options={s.options} optionText={(v) => optionLabel(t, s.key, v)} disabled={disabled} invalid={invalid.includes(s.key)} onChange={(v) => onChange(s.key, v)} />;
       })}
     </p>
   );

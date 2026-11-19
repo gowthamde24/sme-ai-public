@@ -35,6 +35,8 @@ export interface Failed {
   code?: string;
   retryAfter?: number;
   mfa?: boolean;
+  /** The fields a 422 named (for example the setting `setting_invalid` refused). */
+  fields?: string[];
 }
 export type Reply<T> = { ok: true; data: T } | Failed;
 

@@ -7,11 +7,11 @@ vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => h.mode.v }));
 import { MOCK_JOBS } from "@/lib/jobs/mock";
 import { CHIP_TONE, JOB_STATUSES, filterJobs } from "@/lib/jobs/types";
 
-import { parseJob, parseJobs, readJobs, setJobEnabled } from "./jobs";
+import { parseJob, parseJobs, parseJobsToday, readJobs, readJobsToday, setJobEnabled } from "./jobs";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const J = "66666666-6666-4666-8666-666666666601";
-const wire = { id: J, kind: "followups", custom_name: null, enabled: true, status: "failed", result: { code: "not_sent_window", params: { n: 2 } }, needs_you: 2, last_run_at: "2026-11-19T03:42:00Z", fix: { code: "template_needed", count: 2 } };
+const wire = { id: J, kind: "followups", custom_name: null, enabled: true, status: "failed", result: { code: "template_needed", params: { count: 2 } }, needs_you: 2, last_run_at: "2026-11-19T03:42:00Z", fix: { code: "template_needed", count: 2 }, plan_gate: null };
 
 beforeEach(() => {
   h.req.mockReset();
@@ -20,7 +20,7 @@ beforeEach(() => {
 
 describe("jobs: what the API sends", () => {
   it("reads a job: closed kind and status, a result code with numbers, a fix; nothing is prose", () => {
-    expect(parseJob(wire)).toEqual({ id: J, kind: "followups", customName: null, enabled: true, status: "failed", result: { code: "not_sent_window", params: { n: 2 } }, needsYou: 2, lastRunAt: "2026-11-19T03:42:00Z", fix: { code: "template_needed", count: 2 } });
+    expect(parseJob(wire)).toEqual({ id: J, kind: "followups", customName: null, enabled: true, status: "failed", result: { code: "template_needed", params: { count: 2 } }, needsYou: 2, lastRunAt: "2026-11-19T03:42:00Z", fix: { code: "template_needed", count: 2 }, planGate: null });
     expect(parseJob({ ...wire, custom_name: "Priya", fix: null, needs_you: undefined }).customName).toBe("Priya");
     expect(parseJobs({ items: [wire] })).toHaveLength(1);
     expect(parseJobs([wire])).toHaveLength(1);
@@ -30,6 +30,17 @@ describe("jobs: what the API sends", () => {
     expect(() => parseJob({ ...wire, status: "exploding" })).toThrow();
     expect(() => parseJob({ ...wire, custom_name: "x".repeat(41) })).toThrow();
     expect(() => parseJob({ ...wire, result: { code: "has space", params: {} } })).toThrow();
+  });
+  it("plan_gate {code} is the closed list billing_blocked, no_number, no_whatsapp, minutes_used and nothing else; null or missing is no gate", () => {
+    for (const code of ["billing_blocked", "no_number", "no_whatsapp", "minutes_used"]) expect(parseJob({ ...wire, plan_gate: { code } }).planGate).toBe(code);
+    expect(parseJob({ ...wire, plan_gate: null }).planGate).toBeNull();
+    expect(parseJob({ ...wire, plan_gate: undefined }).planGate).toBeNull();
+    expect(() => parseJob({ ...wire, plan_gate: { code: "other_reason" } })).toThrow();
+    expect(() => parseJob({ ...wire, plan_gate: "no_number" })).toThrow();
+  });
+  it("result params: ISO dates stay text (the web formats them), a null (no search yet) is simply not there", () => {
+    expect(parseJob({ ...wire, result: { code: "search_left", params: { left: 1, per_month: 1, last_search_at: null } } }).result.params).toEqual({ left: 1, per_month: 1 });
+    expect(parseJob({ ...wire, result: { code: "paused_on", params: { since: "2026-11-14T05:00:00Z" } } }).result.params).toEqual({ since: "2026-11-14T05:00:00Z" });
   });
   it("every status wears one of the four solid chips", () => {
     for (const s of JOB_STATUSES) expect(["done", "wait", "fail", "info"]).toContain(CHIP_TONE[s]);
@@ -62,6 +73,34 @@ describe("reading and switching", () => {
     expect(await setJobEnabled("tok", T, MOCK_JOBS[0].id, false)).toMatchObject({ enabled: false, status: "paused" });
     expect(await setJobEnabled("tok", T, MOCK_JOBS[0].id, true)).toMatchObject({ enabled: true, status: "running" });
     await expect(setJobEnabled("tok", T, "nope", true)).rejects.toThrow();
+  });
+});
+
+describe("GET /jobs/today", () => {
+  const today = { jobs: [wire, { ...wire, id: MOCK_JOBS[0].id, kind: "speed_to_lead", fix: null, plan_gate: { code: "no_number" } }], needs_you: [{ id: "a-1", code: "needs_approval" }, "junk", { id: "<x>", code: "template_needed" }], assistant: { name: "Asha" } };
+  it("reads the full Job objects (plan_gate and fix included), what waits for the owner (ids and codes) and the assistant's name", () => {
+    const t = parseJobsToday(today);
+    expect(t.jobs.map((j) => [j.kind, j.planGate, j.fix?.code ?? null])).toEqual([["followups", null, "template_needed"], ["speed_to_lead", "no_number", null]]);
+    expect(t.needsYou).toEqual([{ id: "a-1", code: "needs_approval" }, { id: null, code: "template_needed" }]);
+    expect(t.assistantName).toBe("Asha");
+    expect(parseJobsToday({ jobs: [] })).toEqual({ jobs: [], needsYou: [], assistantName: null });
+    expect(() => parseJobsToday({ jobs: "no" })).toThrow();
+    expect(() => parseJobsToday({ jobs: [{ ...wire, plan_gate: { code: "x y" } }] })).toThrow();
+  });
+  it("off: nothing; mock: the mock jobs in the same shape and no request; on: a plain GET of /jobs/today (not /jobs), null when the API has none", async () => {
+    h.mode.v = "off";
+    expect(await readJobsToday("tok", T)).toBeNull();
+    h.mode.v = "mock";
+    const m = await readJobsToday("tok", T);
+    expect(m?.jobs.map((j) => j.id)).toEqual(MOCK_JOBS.map((j) => j.id));
+    expect(m?.assistantName).toBeTruthy();
+    expect(h.req).not.toHaveBeenCalled();
+    h.mode.v = "on";
+    h.req.mockResolvedValueOnce(today);
+    expect((await readJobsToday("tok", T))?.jobs).toHaveLength(2);
+    expect(h.req).toHaveBeenCalledWith(`/v1/tenants/${T}/jobs/today`, "tok");
+    h.req.mockRejectedValueOnce(new Error("404"));
+    expect(await readJobsToday("tok", T)).toBeNull();
   });
 });
 

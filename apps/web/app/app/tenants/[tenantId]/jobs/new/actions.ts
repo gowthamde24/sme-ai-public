@@ -9,7 +9,8 @@ import { checkPlanInput, planJob, startPlan, startSuggestion, testPlan } from "@
 import { JOB_KINDS, type JobKind } from "@/lib/jobs/types";
 import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput } from "@/lib/jobs/plan";
 
-import { DECIDERS, invalid, refusal, who } from "../../retailers/finder-guard";
+import { DECIDERS, invalid, who } from "../../retailers/finder-guard";
+import { jobsRefusal } from "../refusal";
 
 /**
  * Starting a job by saying it (owner 19 Nov): Owner and Admin. The input is checked first (the sentence is 3 to 500 characters, a kind is one of ours); then the person's role. `planJobAction` and `testPlanAction` start nothing:
@@ -32,7 +33,7 @@ export async function planJobAction(tenantId: string, input: PlanInput): Promise
   try {
     return { ok: true, data: await planJob(ctx.token, tenantId, body, lang) };
   } catch (error) {
-    return refusal(error, ctx.t, lang);
+    return jobsRefusal(error, ctx.t, lang);
   }
 }
 
@@ -47,7 +48,7 @@ export async function startPlanAction(tenantId: string, planId: string): Promise
     revalidatePath(`/app/tenants/${tenantId}`);
     return { ok: true, data };
   } catch (error) {
-    return refusal(error, ctx.t, await getLang());
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }
 
@@ -62,7 +63,7 @@ export async function startSuggestionAction(tenantId: string, kind: JobKind): Pr
     revalidatePath(`/app/tenants/${tenantId}`);
     return { ok: true, data };
   } catch (error) {
-    return refusal(error, ctx.t, await getLang());
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }
 
@@ -74,6 +75,6 @@ export async function testPlanAction(tenantId: string, planId: string, channel: 
   try {
     return { ok: true, data: await testPlan(ctx.token, tenantId, planId, channel) };
   } catch (error) {
-    return refusal(error, ctx.t, await getLang());
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }

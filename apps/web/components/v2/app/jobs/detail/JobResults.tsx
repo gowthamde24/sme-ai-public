@@ -4,7 +4,7 @@ import { Phone, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { RESULT_TONE, whenText, type JobFailure, type JobResultItem, type JobResults, type TestChannel } from "@/lib/jobs/detail";
+import { RESULT_TONE, testWord, whenText, type JobFailure, type JobResultItem, type JobResults, type TestChannel } from "@/lib/jobs/detail";
 import type { JobParams } from "@/lib/jobs/types";
 
 import { JobChip } from "../../ds/JobChip";
@@ -33,7 +33,7 @@ export function ResultsCard({ results, t, lang }: { results: JobResults; t: Say;
       ) : null}
       {results.numbers.length > 0 ? (
         <dl className="m-0 mt-3 grid grid-cols-3 gap-x-3 gap-y-3">
-          {results.numbers.map((n) => (
+          {results.numbers.filter((n) => t(`jobs.rnum.${n.key}`) !== `jobs.rnum.${n.key}`).map((n) => (
             <div key={n.key} data-number={n.key}>
               <dd className="m-0 font-display text-[28px] font-bold leading-none text-ink">{n.value}</dd>
               <dt className="mt-1 text-[13.5px] leading-snug text-muted">{t(`jobs.rnum.${n.key}`)}</dt>
@@ -94,26 +94,31 @@ export function FailureCard({ failure, fixCount, t, lang, fixHref, canChange }: 
 }
 
 /** "Try it": a test call or message to the OWNER's own phone, never to a customer. In test mode nothing is called and the answer says so. */
-export function TryCard({ channel, t, onTest }: { channel: TestChannel; t: Say; onTest: () => Promise<{ ok: boolean; text: string }> }) {
+export function TryCard({ channel, t, onTest }: { channel: TestChannel; t: Say; onTest: () => Promise<{ ok: boolean; text: string; quiet?: boolean }> }) {
   const [busy, setBusy] = useState(false);
+  // outside 9 am to 9 pm a test is refused (`409 quiet_hours`): the button stays off from then on
+  const [quiet, setQuiet] = useState(false);
   const [answer, setAnswer] = useState<{ ok: boolean; text: string } | null>(null);
   const Icon = channel === "call" ? Phone : MessageCircle;
+  const word = testWord(channel);
   return (
     <section data-part="job-try" className={jobCard}>
       <p className="m-0 text-xs font-bold uppercase tracking-wider text-muted">{t("jobs.job.try")}</p>
-      <p className="m-0 mt-1.5 text-[15px] leading-snug text-ink">{t(`jobs.job.try_text.${channel}`)}</p>
+      <p className="m-0 mt-1.5 text-[15px] leading-snug text-ink">{t(`jobs.job.try_text.${word}`)}</p>
       <button
         type="button"
-        disabled={busy}
+        disabled={busy || quiet}
         onClick={async () => {
           setBusy(true);
-          setAnswer(await onTest());
+          const r = await onTest();
+          setAnswer(r);
+          if (r.quiet) setQuiet(true);
           setBusy(false);
         }}
         className={`${jobBtnQuiet} mt-3 min-h-12 w-full`}
       >
         <Icon aria-hidden="true" className="size-[18px]" />
-        {t(`jobs.job.test.${channel}`)}
+        {t(`jobs.job.test.${word}`)}
       </button>
       {answer ? (
         <p role={answer.ok ? "status" : "alert"} className={`m-0 mt-2 text-sm leading-snug ${answer.ok ? "text-ink" : "text-red-text"}`}>

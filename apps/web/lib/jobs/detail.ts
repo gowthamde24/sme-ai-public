@@ -1,11 +1,12 @@
+import { fmtMinutes } from "./clock";
 import type { Job, JobParams } from "./types";
 
 /**
- * The page of ONE job (JOBS; contracts/jobs-web-needs.md section 2 and 3). The API sends CODES with PARAMS and closed words; the sentences are ours (`jobs.page.*`, `jobs.job.*`, `jobs.line.*`, `jobs.opt.*`, `jobs.finds.*`, `jobs.rd.*`).
- * Everything the screen reads goes through `parseJobDetail` (lib/api/jobs.ts), so C1's final contract changes one parser, not the screen.
+ * The page of ONE job (JOBS; the contract's JobDetail, FINAL 1.0). The API sends CODES with PARAMS and closed words; the sentences are ours (`jobs.page.*`, `jobs.job.*`, `jobs.line.*`, `jobs.opt.*`, `jobs.finds.*`, `jobs.rd.*`).
+ * Everything the screen reads goes through `parseJobDetail` (lib/api/jobs.ts), so a contract change is one parser, not the screen.
  */
 export type SettingType = "choice" | "toggle";
-/** One choice of the job. `value` is one of `options` (a toggle is "on" or "off"); `more` puts it under "More choices" instead of on the main part of the page. */
+/** One choice of the job. `value` is one of `options` (a toggle is "on" or "off"); `more` puts it under "More choices" instead of on the main part of the page (the contract's `settings {main, more}`: which list it came in; a Setting has no `area`). */
 export type JobSetting = { key: string; type: SettingType; value: string; options: readonly string[]; more: boolean };
 /** What the customer hears or reads; the API composes it with the real business name and the job's name + the AI disclosure ("Priya, the AI assistant of {business}"). The web only shows it. */
 export type JobSays = { language: string; channel: "call" | "whatsapp"; text: string };
@@ -20,7 +21,10 @@ export type JobResultItem = { customer: string; status: ResultStatus; detailCode
 export type JobResults = { days: number; numbers: readonly { key: string; value: number }[]; items: readonly JobResultItem[] };
 /** A failed job: why (a code with numbers), the people waiting, and the one-tap fix (`job.fix`). */
 export type JobFailure = { code: string; params: JobParams; items: readonly { customer: string; detailCode: string; params: JobParams; at: string }[] };
-export type TestChannel = "call" | "message";
+/** Which "Test ... to my phone" a job has: `test_channel` of the contract (a call or a WhatsApp message). The API routes are /test-call and /test-message. */
+export type TestChannel = "call" | "whatsapp";
+/** The words of the test lines (`jobs.job.test.*`, `jobs.job.try_text.*`) say "message" for a WhatsApp. */
+export const testWord = (c: TestChannel): "call" | "message" => (c === "call" ? "call" : "message");
 
 export type JobDetail = {
   job: Job;
@@ -52,8 +56,9 @@ export function checkJobName(raw: string): NameCheck {
 }
 
 export const FAQ_MAX = 20;
-export const FAQ_Q_MAX = 200;
-export const FAQ_A_MAX = 500;
+/** An FAQ question and answer: at most 300 characters each (contract section 6). */
+export const FAQ_Q_MAX = 300;
+export const FAQ_A_MAX = 300;
 const CONTROL = /[\u0000-\u0008\u000b-\u001f\u007f]/;
 export function checkFaq(question: string, answer: string): { ok: true; question: string; answer: string } | { ok: false } {
   const q = question.replace(/\s+/g, " ").trim();
@@ -68,13 +73,7 @@ export function minutesOf(hhmm: string): number | null {
   const m = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(hhmm);
   return m ? Number(m[1]) * 60 + Number(m[2]) : null;
 }
-export function fmtMinutes(total: number): string {
-  const t = ((Math.round(total) % 1440) + 1440) % 1440;
-  const h = Math.floor(t / 60);
-  const m = t % 60;
-  const h12 = h % 12 === 0 ? 12 : h % 12;
-  return `${h12}${m === 0 ? "" : `:${String(m).padStart(2, "0")}`} ${h < 12 ? "am" : "pm"}`;
-}
+export { fmtMinutes };
 export const fmtHhmm = (hhmm: string): string => {
   const m = minutesOf(hhmm);
   return m === null ? hhmm : fmtMinutes(m);

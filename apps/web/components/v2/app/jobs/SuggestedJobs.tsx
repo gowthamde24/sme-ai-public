@@ -8,6 +8,7 @@ import { useState } from "react";
 import type { JobStarted, Suggestion } from "@/lib/jobs/plan";
 import { jobNameKey, type JobKind } from "@/lib/jobs/types";
 
+import { JobChip } from "../ds/JobChip";
 import type { Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
 import { StartedToast } from "./StartedToast";
@@ -26,6 +27,8 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
   const [busy, setBusy] = useState<JobKind | null>(null);
   const [error, setError] = useState<{ kind: JobKind; text: string } | null>(null);
   const [started, setStarted] = useState(false);
+  // jobs whose start answered `409 approval_needed`: the Owner's OK is asked first (it is in Needs you on Today)
+  const [waiting, setWaiting] = useState<readonly JobKind[]>([]);
 
   async function start(kind: JobKind) {
     if (!actions || busy) return;
@@ -35,6 +38,11 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
     if (!r.ok) {
       setBusy(null);
       setError({ kind, text: r.error });
+      return;
+    }
+    if ("approval" in r.data) {
+      setBusy(null);
+      setWaiting((w) => [...w, kind]);
       return;
     }
     setStarted(true);
@@ -49,6 +57,7 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
           const Icon = ICON[s.kind];
           const title = s.title && words[`jobs.new.title.${s.title.code}`] ? t(`jobs.new.title.${s.title.code}`) : t(jobNameKey(s.kind));
           const isBusy = busy === s.kind;
+          const isWaiting = waiting.includes(s.kind);
           return (
             <li key={s.kind} data-suggestion={s.kind} className="rounded-2xl border border-line bg-surface p-3.5 md:p-4">
               <div className="flex items-start gap-3">
@@ -65,7 +74,7 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
                   ) : null}
                 </div>
                 {compact ? (
-                  <button type="button" data-action="start" disabled={!actions || busy !== null} onClick={() => void start(s.kind)} className="jb-press inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60">
+                  <button type="button" data-action="start" disabled={!actions || busy !== null || !s.ready || isWaiting} onClick={() => void start(s.kind)} className="jb-press inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60">
                     {t("jobs.new.start")}
                   </button>
                 ) : null}
@@ -76,7 +85,7 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
                     <span className="text-muted">{t("jobs.new.sug.says")}</span> {`“${s.preview}”`}
                   </p>
                   <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] gap-2.5">
-                    <button type="button" data-action="start" disabled={!actions || busy !== null || !s.ready} onClick={() => void start(s.kind)} className="jb-press inline-flex min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60">
+                    <button type="button" data-action="start" disabled={!actions || busy !== null || !s.ready || isWaiting} onClick={() => void start(s.kind)} className="jb-press inline-flex min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60">
                       {isBusy ? t("jobs.new.starting") : t("jobs.new.start")}
                     </button>
                     {onLook ? (
@@ -90,6 +99,17 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
                     )}
                   </div>
                 </>
+              ) : null}
+              {isWaiting ? (
+                <div data-part="suggestion-waiting" role="status" className="mt-2.5 flex flex-col gap-1 rounded-xl bg-surface-2 p-3">
+                  <JobChip tone="wait" className="self-start">
+                    {t("jobs.new.waiting")}
+                  </JobChip>
+                  <p className="m-0 text-[14px] leading-snug text-ink">{t("jobs.new.waiting.sub")}</p>
+                  <Link href={`${base}#needs-you`} prefetch={false} data-action="see-needs-you" className="-mb-1 inline-flex min-h-11 items-center text-[15px] font-semibold text-brand-text underline underline-offset-4">
+                    {t("jobs.new.waiting.link")}
+                  </Link>
+                </div>
               ) : null}
               {error?.kind === s.kind ? (
                 <p role="alert" className="m-0 mt-2 text-sm text-red-text">

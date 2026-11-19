@@ -1,11 +1,17 @@
 /**
- * The Do-Not-Call list (JOBS, mock 08 part 2; contracts/jobs-web-needs.md section 7): the numbers the assistant never calls or messages. The API sends a MASKED number (the web never holds the whole number of a person who said STOP), a reason CODE and a date;
+ * The Do-Not-Call list (JOBS, mock 08 part 2; contract section 6, FINAL 1.0): the numbers the assistant never calls or messages. The API sends a MASKED number (the web never holds the whole number of a person who said STOP), a reason CODE and a date;
  * the sentences are ours (`jobs.dnc.*`). Pure: no request, safe in the browser.
  */
-export const DNC_REASONS = ["stop_whatsapp", "asked_on_call", "added_by_owner"] as const;
+export const DNC_REASONS = ["stop_whatsapp", "asked_on_call", "added_by_owner", "other"] as const;
 export type DncReason = (typeof DNC_REASONS)[number];
 
-export type DncEntry = { id: string; phoneMasked: string; reason: DncReason; at: string };
+/** One time the customer (or the owner, recording their yes) lifted the stop: when, how it was given (a closed word) and by whom. */
+export type DncHistory = { at: string; how: string; by: "customer" | "owner_recorded" };
+/** `addedBy` is the display name of the person who added an owner-added number; `history` is there once an entry was lifted (the customer came back). */
+export type DncEntry = { id: string; phoneMasked: string; reason: DncReason; at: string; addedBy: string | null; history: readonly DncHistory[] };
+
+/** Only a number the owner added may be removed; STOP from the customer and the legal or complaint rule stay (a lifted STOP is the customer's to do). */
+export const dncRemovable = (e: Pick<DncEntry, "reason">): boolean => e.reason === "added_by_owner";
 export type DncPage = { items: DncEntry[]; count: number; nextCursor: string | null };
 
 export const dncReasonKey = (r: DncReason): string => `jobs.dnc.reason.${r}`;

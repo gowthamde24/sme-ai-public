@@ -23,7 +23,7 @@ const acts = (over: Partial<JobPageActions> = {}): JobPageActions => ({
   setFindsOut: vi.fn(async () => patched()),
   addFaq: vi.fn(async (question: string, answer: string) => ({ ok: true as const, data: { id: "new-1", question, answer } })),
   removeFaq: vi.fn(async (id: string) => ({ ok: true as const, data: { id } })),
-  test: vi.fn(async (channel) => ({ ok: true as const, data: { channel, sent: false } })),
+  test: vi.fn(async (channel) => ({ ok: true as const, data: { channel, sent: false, minutesUsed: 0 } })),
   ...over,
 });
 const view = (kind = "speed_to_lead", a: JobPageActions | null = acts()) => render(<JobPage detail={detailOf(kind)} words={words} base={BASE} lang="en" ago={{ unit: "min", n: 9 }} actions={a} />);
@@ -144,6 +144,29 @@ describe("the job page: changing things", () => {
     await waitFor(() => expect(a.removeFaq).toHaveBeenCalledWith("faq-speed_to_lead-1"));
     expect(screen.queryByText("Do you open on Sundays?")).toBeNull();
   });
+  it("a refused choice (422 setting_invalid) is put back and the setting it names in `fields` is marked", async () => {
+    const bad = acts({ setSetting: vi.fn(async () => ({ ok: false as const, kind: "invalid" as const, error: "That choice was not accepted. Pick another one.", code: "setting_invalid", fields: ["from_hour"] })) });
+    view("speed_to_lead", bad);
+    const from = within(part("job-when")).getByRole("combobox", { name: "Only between … and … (1)" });
+    fireEvent.change(from, { target: { value: "10:30" } });
+    expect(await within(part("job-when")).findByRole("alert")).toHaveTextContent("That choice was not accepted. Pick another one.");
+    expect(from).toHaveValue("09:30");
+    expect(from).toHaveAttribute("aria-invalid", "true");
+    expect(within(part("job-when")).getByRole("combobox", { name: "Only between … and … (2)" })).not.toHaveAttribute("aria-invalid");
+    expect(within(part("job-when")).getByRole("combobox", { name: "Call new enquiries …" })).not.toHaveAttribute("aria-invalid");
+  });
+  it("FAQs: a refused answer (422 faq_not_allowed) is said inline and the form stays open; question and answer stop at 300 characters", async () => {
+    const a = acts({ addFaq: vi.fn(async () => ({ ok: false as const, kind: "invalid" as const, error: "A job answer may not promise a price or a discount.", code: "faq_not_allowed" })) });
+    view("speed_to_lead", a);
+    fireEvent.click(screen.getByRole("button", { name: "Add a question" }));
+    expect(screen.getByLabelText("Question")).toHaveAttribute("maxlength", "300");
+    expect(screen.getByLabelText("Answer")).toHaveAttribute("maxlength", "300");
+    fireEvent.change(screen.getByLabelText("Question"), { target: { value: "Do you give discounts?" } });
+    fireEvent.change(screen.getByLabelText("Answer"), { target: { value: "Yes, 20 percent off." } });
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+    expect(await within(part("job-faqs")).findByRole("alert")).toHaveTextContent("A job answer may not promise a price or a discount.");
+    expect(screen.getByLabelText("Question")).toHaveValue("Do you give discounts?");
+  });
   it("Test call: the answer is a plain sentence; in test mode it says nothing was called", async () => {
     const a = acts();
     view("speed_to_lead", a);
@@ -153,6 +176,46 @@ describe("the job page: changing things", () => {
     cleanup();
     view("followups", a);
     expect(screen.getByRole("button", { name: "Test message to my phone" })).toBeInTheDocument();
+  });
+  it("a test call IS a real call to the owner's own phone: the card says it uses about 1 free minute before the button, and after the call how many it used; a message says nothing of minutes", async () => {
+    const a = acts({ test: vi.fn(async (channel) => ({ ok: true as const, data: { channel, sent: true, minutesUsed: channel === "call" ? 1 : 0 } })) });
+    view("speed_to_lead", a);
+    expect(part("job-try")).toHaveTextContent("This calls YOUR phone and uses about 1 of your free minutes. Nothing is sent to customers.");
+    fireEvent.click(screen.getByRole("button", { name: "Test call to my phone" }));
+    expect(await screen.findByRole("status")).toHaveTextContent("Calling your phone now. Pick up to hear it. That test used 1 of your free minutes.");
+    cleanup();
+    view("followups", a);
+    expect(part("job-try")).not.toHaveTextContent("free minutes");
+    fireEvent.click(screen.getByRole("button", { name: "Test message to my phone" }));
+    expect(await screen.findByRole("status")).toHaveTextContent("Sent to your own phone.");
+    expect(screen.getByRole("status")).not.toHaveTextContent("free minutes");
+    expect(a.test).toHaveBeenLastCalledWith("whatsapp");
+  });
+  it("outside 9 am to 9 pm the test is refused (409 quiet_hours): the button goes off and the sentence says when tests are sent", async () => {
+    const a = acts({ test: vi.fn(async () => ({ ok: false as const, kind: "conflict" as const, error: "x", code: "quiet_hours" })) });
+    view("speed_to_lead", a);
+    fireEvent.click(screen.getByRole("button", { name: "Test call to my phone" }));
+    expect(await within(part("job-try")).findByRole("alert")).toHaveTextContent("Test calls and messages are only sent between 9 am and 9 pm.");
+    expect(screen.getByRole("button", { name: "Test call to my phone" })).toBeDisabled();
+    expect(a.test).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("the job page: a job the plan or the setup blocks", () => {
+  it("shows a short note under the name: a phone number, WhatsApp, free minutes or billing", () => {
+    const detail = detailOf("payment_reminders");
+    for (const [code, text] of [["no_whatsapp", "Connect WhatsApp first"], ["no_number", "Needs a phone number first"], ["minutes_used", "Free minutes used"], ["billing_blocked", "Billing needs a look"]] as const) {
+      render(<JobPage detail={{ ...detail, job: { ...detail.job, planGate: code } }} words={words} base={BASE} lang="en" ago={null} actions={acts()} />);
+      expect(part("job-header").querySelector("[data-part='job-gate']")).toHaveTextContent(text);
+      cleanup();
+    }
+    view("speed_to_lead");
+    expect(part("job-header").querySelector("[data-part='job-gate']")).toBeNull();
+  });
+  it("Results hide a number the web has no words for, and show the researcher's free searches without the date or the flag", () => {
+    view("researcher");
+    const res = part("job-results");
+    expect([...res.querySelectorAll("[data-number]")].map((n) => n.textContent)).toEqual(["12shops found", "3contacted by you", "1free searches a month", "1free searches left"]);
   });
 });
 

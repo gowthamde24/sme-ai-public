@@ -8,7 +8,8 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { addJobFaq, patchJob, removeJobFaq, testJob, type JobDetailTested, type JobPatched } from "@/lib/api/jobs";
 import { checkFaq, checkJobName, isCode, type JobFaq, type TestChannel } from "@/lib/jobs/detail";
 
-import { DECIDERS, invalid, refusal, who } from "../../retailers/finder-guard";
+import { DECIDERS, invalid, who } from "../../retailers/finder-guard";
+import { jobsRefusal } from "../refusal";
 
 /**
  * The changes of one job's page (JOBS, owner 19 Nov): Owner and Admin only (Sales and Viewer read). Each one checks its input BEFORE the API is asked, and answers in the person's words when the API says no.
@@ -33,7 +34,7 @@ async function change(tenantId: string, id: string, ctx: Ctx, patch: Parameters<
     done(tenantId, id);
     return { ok: true, data };
   } catch (error) {
-    return refusal(error, ctx.t, await getLang());
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }
 
@@ -74,7 +75,7 @@ export async function addJobFaqAction(tenantId: string, jobId: string, question:
     done(tenantId, jobId);
     return { ok: true, data };
   } catch (error) {
-    return refusal(error, ctx.t, await getLang());
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }
 
@@ -87,7 +88,7 @@ export async function removeJobFaqAction(tenantId: string, jobId: string, faqId:
     done(tenantId, jobId);
     return { ok: true, data: { id: faqId } };
   } catch (error) {
-    return refusal(error, ctx.t, await getLang());
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }
 
@@ -95,10 +96,10 @@ export async function removeJobFaqAction(tenantId: string, jobId: string, faqId:
 export async function testJobAction(tenantId: string, jobId: string, channel: TestChannel): Promise<Reply<JobDetailTested>> {
   const ctx = await allowed(tenantId, jobId);
   if ("ok" in ctx) return ctx;
-  if (channel !== "call" && channel !== "message") return invalid(ctx.t);
+  if (channel !== "call" && channel !== "whatsapp") return invalid(ctx.t);
   try {
     return { ok: true, data: await testJob(ctx.token, tenantId, jobId, channel) };
   } catch (error) {
-    return refusal(error, ctx.t, await getLang());
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }

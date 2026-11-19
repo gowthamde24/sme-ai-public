@@ -1,11 +1,12 @@
 import { CalendarDays, Info, MessageCircle, Mic, Phone, Target, Users, Wallet } from "lucide-react";
+import Link from "next/link";
 import type { ReactNode, Ref } from "react";
 
 import { planChannel, type JobPlan } from "@/lib/jobs/plan";
 
 import { JobChip } from "../ds/JobChip";
 import { makeT, type Words } from "../words";
-import { costText, excludedTotal, hasWord, hourText, whenText, whoText } from "./plan-text";
+import { costText, excludedTotal, findsText, hasWord, hourText, whenText, whoText } from "./plan-text";
 
 const primary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60";
 const secondary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60";
@@ -22,27 +23,28 @@ function Part({ icon: Icon, label, children, part }: { icon: typeof Users; label
   );
 }
 
-export type PlanCardState = { starting: boolean; testing: boolean; swapping: boolean; note: string | null; error: string | null };
+/** `waiting`: the Owner's OK was asked first (`409 approval_needed`), so the plan has no Start now. `quiet`: the test was refused for quiet hours (outside 9 am to 9 pm), so the test button is off. */
+export type PlanCardState = { starting: boolean; testing: boolean; swapping: boolean; note: string | null; error: string | null; waiting: boolean; quiet: boolean };
 
 /**
  * The PLAN card (mock sheet 02): what the assistant understood, and nothing has started. Title and a Draft chip, who is left out and why (and the WhatsApp instead), then Who, What it says (with the AI line), When, What it finds out and Cost, and the buttons:
  * Start is the ONLY one that begins anything; Change by talking puts the sentence back in the box; the test goes to the owner's own phone. A plan that cannot start (`blockers`) shows why and has no Start.
  */
-export function PlanCard({ plan, words, state, onStart, onSwap, onChange, onTest, headingRef }: { plan: JobPlan; words: Words; state: PlanCardState; onStart: () => void; onSwap: () => void; onChange: () => void; onTest: () => void; headingRef?: Ref<HTMLHeadingElement> }) {
+export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, onTest, headingRef }: { plan: JobPlan; words: Words; /** the workspace's address, for the link to Needs you on Today */ base: string; state: PlanCardState; onStart: () => void; onSwap: () => void; onChange: () => void; onTest: () => void; headingRef?: Ref<HTMLHeadingElement> }) {
   const t = makeT(words);
   const channel = planChannel(plan);
   const left = excludedTotal(plan);
   const alt = plan.alternatives.find((a) => a.kind === "whatsapp" && a.count > 0) ?? null;
   const who = whoText(t, words, plan);
   const cost = costText(t, plan);
-  const finds = plan.findsOut.filter((k) => hasWord(words, `jobs.new.finds.${k}`));
+  const finds = findsText(t, words, plan);
   const blocked = plan.blockers.length > 0;
   const busy = state.starting || state.testing || state.swapping;
   const swapFirst = plan.primary === "send_whatsapp" && alt !== null;
   const reasons = plan.who.excluded.filter((e) => e.count > 0).map((e) => ({ count: e.count, reason: t(hasWord(words, `jobs.new.excl.${e.code}`) ? `jobs.new.excl.${e.code}` : "jobs.new.excl.other") }));
   const Chan = channel === "call" ? Phone : MessageCircle;
-  const from = hourText(t, plan.when.fromHour);
-  const to = hourText(t, plan.when.toHour);
+  const from = hourText(t, plan.when.fromMin);
+  const to = hourText(t, plan.when.toMin);
   return (
     <article data-part="plan" data-channel={channel} aria-labelledby="plan-title" className="jb-enter rounded-[20px] border border-line bg-surface p-3.5 shadow-[var(--v2-shadow)] md:p-5">
       <p className="m-0 mb-2 flex items-center gap-2 text-[11.5px] font-bold uppercase leading-tight tracking-wider text-muted">
@@ -93,7 +95,7 @@ export function PlanCard({ plan, words, state, onStart, onSwap, onChange, onTest
           </Part>
           {finds.length > 0 ? (
             <Part icon={Target} label={t("jobs.new.finds")} part="plan-finds">
-              {finds.map((k) => t(`jobs.new.finds.${k}`)).join(" · ")}
+              {finds.join(" · ")}
             </Part>
           ) : null}
           <Part icon={Wallet} label={t("jobs.new.cost")} part="plan-cost">
@@ -105,19 +107,36 @@ export function PlanCard({ plan, words, state, onStart, onSwap, onChange, onTest
                 {state.error}
               </p>
             ) : null}
-            <button type="button" data-action="start" onClick={swapFirst ? onSwap : onStart} disabled={busy} className={primary}>
-              {state.starting ? t("jobs.new.starting") : swapFirst && alt ? t("jobs.new.start.whatsapp", { count: alt.count }) : t("jobs.new.start")}
-            </button>
+            {state.waiting ? (
+              <div data-part="plan-waiting" role="status" className="flex flex-col gap-1.5 rounded-xl bg-surface-2 p-3">
+                <JobChip tone="wait" className="self-start">
+                  {t("jobs.new.waiting")}
+                </JobChip>
+                <p className="m-0 text-[14px] leading-snug text-ink">{t("jobs.new.waiting.sub")}</p>
+                <Link href={`${base}#needs-you`} prefetch={false} data-action="see-needs-you" className="-mb-1 inline-flex min-h-11 items-center text-[15px] font-semibold text-brand-text underline underline-offset-4">
+                  {t("jobs.new.waiting.link")}
+                </Link>
+              </div>
+            ) : (
+              <button type="button" data-action="start" onClick={swapFirst ? onSwap : onStart} disabled={busy} className={primary}>
+                {state.starting ? t("jobs.new.starting") : swapFirst && alt ? t("jobs.new.start.whatsapp", { count: alt.count }) : t("jobs.new.start")}
+              </button>
+            )}
             <div className="grid gap-2.5 sm:grid-cols-2">
               <button type="button" data-action="change" onClick={onChange} disabled={busy} className={secondary}>
                 <Mic aria-hidden="true" className="size-[18px]" />
                 {t("jobs.new.change")}
               </button>
-              <button type="button" data-action="test" onClick={onTest} disabled={busy} className={secondary}>
+              <button type="button" data-action="test" onClick={onTest} disabled={busy || state.quiet} className={secondary}>
                 <Chan aria-hidden="true" className="size-[18px]" />
                 {t(channel === "call" ? "jobs.new.test.call" : "jobs.new.test.message")}
               </button>
             </div>
+            {channel === "call" && !state.quiet && plan.cost.rupees === null ? (
+              <p data-part="test-cost" className="m-0 text-[13px] leading-snug text-muted">
+                {t("jobs.new.test.cost")}
+              </p>
+            ) : null}
             {state.note ? (
               <p role="status" data-part="test-note" className="m-0 text-sm font-semibold text-ink">
                 {state.note}
