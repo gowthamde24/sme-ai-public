@@ -106,7 +106,7 @@ export function fileTypeOf(name: string, type: string): FileType | null {
 }
 
 /** The codes of a refusal that mean "this exact filing will not work as it is": the next try is a NEW attempt (a new kyc_id). Anything else (the phone company did not answer, no network) is the same attempt again, so it files once. */
-export const DEFINITE_REFUSALS: ReadonlySet<string> = new Set(["kyc_file_too_large", "kyc_file_type", "kyc_file_unreadable", "kyc_not_accepted", "kyc_document_not_offered", "kyc_field_not_supported"]);
+export const DEFINITE_REFUSALS: ReadonlySet<string> = new Set(["kyc_file_too_large", "kyc_file_type", "kyc_file_unreadable", "kyc_not_accepted", "kyc_document_not_offered", "kyc_field_not_supported", "kyc_closed"]);
 
 /** A refusal as our route reports it (the sentence is already in the person's language). */
 export interface KycFailed {

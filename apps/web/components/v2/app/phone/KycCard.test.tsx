@@ -268,6 +268,19 @@ describe("sending", () => {
     expect(send.mock.calls[0][0].kyc_id).not.toBe(send.mock.calls[1][0].kyc_id);
     expect(send.mock.calls[1][0].legal_name).toBe("Demo Silks Private Limited");
   });
+  it("a filing the phone company closed (409 kyc_closed) is refused for good: the next try is a NEW attempt", async () => {
+    const send = vi
+      .fn<Send>()
+      .mockResolvedValueOnce({ ok: false, kind: "invalid", error: "The phone company closed that application. Check the details, then send it again as a new one.", code: "kyc_closed" })
+      .mockResolvedValueOnce({ ok: true, data: status("submitted") });
+    show(status("not_started"), { send });
+    fill();
+    choose(pdf());
+    await press();
+    expect(document.querySelector('[data-part="kyc-failure"]')).toHaveTextContent("The phone company closed that application.");
+    await press();
+    expect(send.mock.calls[0][0].kyc_id).not.toBe(send.mock.calls[1][0].kyc_id);
+  });
   it("says the 413 and 415 refusals in our words and marks the file", async () => {
     const send = vi.fn<Send>().mockResolvedValueOnce({ ok: false, kind: "too_big", error: "That file is over 5 MB. Choose a smaller PDF or photo.", code: "kyc_file_too_large" });
     show(status("not_started"), { send });

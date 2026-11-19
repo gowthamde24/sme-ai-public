@@ -116946,5 +116946,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "phkyc.err.kyc_closed": {
+  "en": "The phone company closed that application. Check the details, then send it again as a new one.",
+  "te": "ఫోన్ కంపెనీ ఆ దరఖాస్తును మూసివేసింది. వివరాలు చూసి, కొత్తదిగా మళ్ళీ పంపండి.",
+  "hi": "फ़ोन कंपनी ने वह आवेदन बंद कर दिया। विवरण जाँचकर उसे नए आवेदन के रूप में फिर से भेजें।",
+  "kn": "ಫೋನ್ ಕಂಪನಿ ಆ ಅರ್ಜಿಯನ್ನು ಮುಚ್ಚಿದೆ. ವಿವರಗಳನ್ನು ನೋಡಿ, ಹೊಸದಾಗಿ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
