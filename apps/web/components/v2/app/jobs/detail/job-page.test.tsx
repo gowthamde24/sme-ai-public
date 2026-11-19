@@ -8,8 +8,7 @@ import { MOCK_JOBS } from "@/lib/jobs/mock";
 import { JobPage } from "./JobPage";
 import type { JobPageActions } from "./types";
 
-vi.mock("./LazyJobLists", async () => await import("./JobLists"));
-vi.mock("./LazyWhoTalks", async () => await import("./WhoTalks"));
+vi.mock("./LazyJobLists", async () => ({ ...(await import("./JobLists")), WhoTalks: (await import("./WhoTalks")).WhoTalks }));
 
 afterEach(() => {
   cleanup();

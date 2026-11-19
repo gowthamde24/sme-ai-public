@@ -30,8 +30,7 @@ vi.mock("@/components/v2/app/jobs/rules/LazyPolicySentences", async () => ({ Pol
 // JOBS (What you sell): the list and its sheet are lazy chunks on a real page; the snapshot draws the list at once
 vi.mock("@/components/v2/app/sell/LazySection", async () => ({ SellSection: (await import("@/components/v2/app/sell/SellSection")).SellSection }));
 vi.mock("@/components/v2/app/jobs/LazyJobRow", async () => ({ JobRow: (await import("@/components/v2/app/jobs/JobRow")).JobRow }));
-vi.mock("@/components/v2/app/jobs/detail/LazyJobLists", async () => (await import("@/components/v2/app/jobs/detail/JobLists")));
-vi.mock("@/components/v2/app/jobs/detail/LazyWhoTalks", async () => ({ WhoTalks: (await import("@/components/v2/app/jobs/detail/WhoTalks")).WhoTalks }));
+vi.mock("@/components/v2/app/jobs/detail/LazyJobLists", async () => ({ ...(await import("@/components/v2/app/jobs/detail/JobLists")), WhoTalks: (await import("@/components/v2/app/jobs/detail/WhoTalks")).WhoTalks }));
 vi.mock("@/components/v2/app/whatsapp/builder/LazyOwnMessages", async () => ({ OwnMessages: (await import("@/components/v2/app/whatsapp/builder/OwnMessages")).OwnMessages }));
 vi.mock("@/components/v2/app/whatsapp/LazyConnectWithFacebook", async () => (await import("@/components/v2/app/whatsapp/ConnectWithFacebook")));
 // (the small briefing read of Today: "not told" here, so the screens keep drawing their briefing from the big reads as they were taken)

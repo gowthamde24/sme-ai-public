@@ -8,8 +8,7 @@ import { jobNameKey, type JobStatus } from "@/lib/jobs/types";
 import { groupIndian } from "@/lib/money";
 
 import { makeT, type Words } from "../../words";
-import { FaqCard, FindsOutCard } from "./LazyJobLists";
-import { WhoTalks } from "./LazyWhoTalks";
+import { FaqCard, FindsOutCard, WhoTalks } from "./LazyJobLists";
 import { JobHeader } from "./JobHeader";
 import { FailureCard, ResultsCard, TryCard } from "./JobResults";
 import { JobSaysCard } from "./JobSays";
@@ -179,12 +178,11 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
             business={detail.business}
             fx={effect ? { kind: job.kind, who: effect.who, steps: effect.steps } : null}
             t={t}
-            canChange={canChange && actions?.setSpeaks !== undefined}
+            canChange={!!actions?.setSpeaks}
             uiLang={lang}
-            sampleEndpoint={whoExtra?.sampleEndpoint ?? null}
             setSpeaks={actions?.setSpeaks}
             onLanguage={(l) => setValues((v) => ({ ...v, language: l }))}
-            onRename={(name) => renameTo(name)}
+            onRename={renameTo}
             extra={whoExtra}
           />
         ) : null}

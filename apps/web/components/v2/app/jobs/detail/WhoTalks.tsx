@@ -30,7 +30,7 @@ export type WhoTalksProps = {
   canChange: boolean;
   uiLang: string;
   /** Our own voice sample route (`<workspace>/voice-sample`) when it is on; null = no play buttons. */
-  sampleEndpoint: string | null;
+  sampleEndpoint?: string | null;
   /** One change of how it sounds: the patch the adapter defines; the answer is whether it was saved (and why not). */
   onChange?: (patch: SpeaksPatch) => Promise<{ ok: true } | { ok: false; error: string }>;
   /** Or the job page's own save and what to do after a language change (the card builds `onChange` itself). */
@@ -48,6 +48,7 @@ export type WhoTalksProps = {
  * made (the adapter's one patch: lib/jobs/who.ts) and put back, with the reason, if the API says no. A person who only reads sees the same card with the choices off.
  */
 export function WhoTalks(p: WhoTalksProps) {
+  const sampleUrl = p.sampleEndpoint ?? p.extra?.sampleEndpoint ?? null;
   const fx = p.fx;
   const effectText = p.effect ?? (fx ? p.t(`jobs.effect.${fx.kind}`, { who: fx.who, t1: fmtMinutes(fx.steps[0].at), t2: fmtMinutes(fx.steps[1].at), t3: fmtMinutes(fx.steps[2].at) }) : null);
   async function saveSpeaks(patch: SpeaksPatch): Promise<{ ok: true } | { ok: false; error: string }> {
@@ -103,9 +104,9 @@ export function WhoTalks(p: WhoTalksProps) {
   function play(voice: WhoVoice) {
     audio.current?.pause();
     if (playing === voice) return setPlaying(null);
-    if (!p.sampleEndpoint) return;
+    if (!sampleUrl) return;
     setSampleError(false);
-    const a = new Audio(whoSample(p.sampleEndpoint, now, voice, p.uiLang, p.customName));
+    const a = new Audio(whoSample(sampleUrl, now, voice, p.uiLang, p.customName));
     audio.current = a;
     a.onended = () => setPlaying((cur) => (cur === voice ? null : cur));
     a.onerror = () => (setPlaying(null), setSampleError(true));
@@ -216,7 +217,7 @@ export function WhoTalks(p: WhoTalksProps) {
           {WHO_VOICES.map((v) => (
             <div key={v} data-voice={v} className="flex items-center gap-2">
               <Radio className="min-w-0 flex-1" name={`who-voice-${p.jobId}`} value={v} checked={now.voice === v} disabled={off} onChange={() => void choose("voice", v)} label={<span className="text-[16px] font-semibold text-ink">{t(`jobs.who.voice.${v}`)}</span>} sub={t(`jobs.who.voice.${v}.d`)} />
-              {p.sampleEndpoint ? (
+              {sampleUrl ? (
                 <button type="button" data-play={v} aria-pressed={playing === v} aria-label={`${t(playing === v ? "jobs.who.stop" : "jobs.who.play")}: ${t(`jobs.who.voice.${v}`)}`} onClick={() => play(v)} className={`${jobBtnQuiet} shrink-0`}>
                   {playing === v ? <Pause aria-hidden="true" className="size-4" /> : <Play aria-hidden="true" className="size-4" />}
                   {t(playing === v ? "jobs.who.stop" : "jobs.who.play")}
@@ -225,7 +226,7 @@ export function WhoTalks(p: WhoTalksProps) {
             </div>
           ))}
         </div>
-        {p.sampleEndpoint ? (
+        {sampleUrl ? (
           <p className="m-0 mt-1 text-[13px] text-muted">
             {sampleError ? t("jobs.who.sample.err") : t("jobs.who.sample.note")}
           </p>

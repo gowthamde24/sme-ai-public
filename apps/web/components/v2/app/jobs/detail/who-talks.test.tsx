@@ -9,8 +9,7 @@ import { speaksPatch, type SpeaksPatch, type WhoTarget } from "@/lib/jobs/who";
 import { JobPage } from "./JobPage";
 import type { JobPageActions, WhoExtra } from "./types";
 
-vi.mock("./LazyJobLists", async () => await import("./JobLists"));
-vi.mock("./LazyWhoTalks", async () => await import("./WhoTalks"));
+vi.mock("./LazyJobLists", async () => ({ ...(await import("./JobLists")), WhoTalks: (await import("./WhoTalks")).WhoTalks }));
 
 afterEach(cleanup);
 const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("jobs.")));
