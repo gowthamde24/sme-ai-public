@@ -1533,6 +1533,14 @@ add({ id: "campaigns-v6-reminders-empty", roles: ["owner"], render: () => withEn
 const billingV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({})));
 add({ id: "billing-v6", roles: ["owner", "admin", "sales"], render: billingV6({ BALANCE_SCREENS: "mock" }), handlers: (role) => base(role) });
 add({ id: "billing-v6-unavailable", roles: ["owner"], render: billingV6({}), handlers: (role) => base(role) });
+// billing v2 (BILLING_V2=mock, owner's final pricing 19 Nov): ONE wallet, a usage line per feature, limits, 80% and 100% warnings, the upgrade hint, numbers on demand; made-up usage marked "Preview"
+const billingV2 = (demo: string | null) => () => withEnv({ ...V6_ENV, BILLING_V2: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}, demo ? { demo } : {})));
+add({ id: "billing-v2-mock", roles: ["owner", "admin", "sales"], render: billingV2(null), handlers: (role) => base(role) });
+add({ id: "billing-v2-low80", roles: ["owner"], render: billingV2("low80"), handlers: (role) => base(role) });
+add({ id: "billing-v2-full100", roles: ["owner"], render: billingV2("full100"), handlers: (role) => base(role) });
+add({ id: "billing-v2-over-limit", roles: ["owner"], render: billingV2("over"), handlers: (role) => base(role) });
+add({ id: "billing-v2-upgrade-hint", roles: ["owner"], render: billingV2("upgrade"), handlers: (role) => base(role) });
+add({ id: "billing-v2-numbers", roles: ["owner", "admin"], render: billingV2("numbers"), handlers: (role) => base(role) });
 // phone numbers (design system v6): the status card, then the test screen's panel; without the test screen the page shows its next step
 const phoneV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})));
 add({ id: "phone-number-v6-test-screen", roles: ["owner", "admin"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started") }) });

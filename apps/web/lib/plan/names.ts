@@ -20,3 +20,14 @@ export function planName(id: string | null | undefined, fallback: string | null 
   if (typeof id !== "string" || !Object.hasOwn(PLAN_NAMES, id)) return fallback;
   return PLAN_NAMES[id] ?? fallback;
 }
+
+/** The three owner-facing plans as keys (billing v2: the upgrade hint, the plans table and the wallet screen work with these, never with an API id). */
+export const PLAN_KEYS = ["payg", "pro", "business"] as const; // plan-id-ok: owner-facing keys, not API ids
+export type PlanKey = (typeof PLAN_KEYS)[number];
+export const PLAN_KEY_NAMES: Readonly<Record<PlanKey, string>> = { payg: "Pay as you go", pro: "Pro", business: "Business" }; // plan-id-ok
+
+/** The owner-facing plan of an API plan id (through PLAN_NAMES, so there is ONE table), or null for an id that has none. */
+export function planKeyOf(id: string | null | undefined): PlanKey | null {
+  const name = planName(id);
+  return PLAN_KEYS.find((k) => PLAN_KEY_NAMES[k] === name) ?? null;
+}
