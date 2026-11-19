@@ -1,4 +1,5 @@
 import {
+  CONTACT_NOTE_MAX,
   ACTIONS,
   AUDIENCES,
   AVAILABILITY_REASONS,
@@ -184,6 +185,8 @@ export function parseProspect(json: unknown): Prospect {
     suppressed: bool(x.suppressed, "suppressed"),
     askAfter: optIso(x.ask_after, "ask_after"),
     lastContactedAt: optIso(x.last_contacted_at, "last_contacted_at"),
+    contactedBy: optStr(x.contacted_by, "contacted_by", 120),
+    contactNote: optStr(x.contact_note, "contact_note", 500),
     leadId: optUuid(x.lead_id, "lead_id"),
     qualification: parseQualification(x.qualification),
     createdAt: iso(x.created_at, "created_at"),
@@ -229,6 +232,15 @@ export function parseActionResults(json: unknown): ActionResult[] {
 export async function actOnProspects(token: string, tenantId: string, ids: readonly string[], action: ProspectAction): Promise<ActionResult[]> {
   if (ids.length < 1 || ids.length > MAX_BULK || !ids.every(isCanonicalUuid) || new Set(ids).size !== ids.length) bad("prospect ids");
   return parseActionResults(await apiRequest(`${base(tenantId)}/prospects/actions`, token, { method: "POST", body: JSON.stringify({ ids, action: oneOf(action, ACTIONS, "action") }) }));
+}
+/** `POST /prospects/{id}/contacted`: the person says they contacted this business themselves. `contactedAt` omitted = now (never the future, at most 60 days back); `note` is optional. It never starts a call or a message, and repeating it only updates the time and the note. */
+export async function markProspectContacted(token: string, tenantId: string, prospectId: string, input: { contactedAt?: string | null; note?: string | null } = {}): Promise<Prospect> {
+  const body: Record<string, string> = {};
+  if (input.contactedAt) body.contacted_at = iso(input.contactedAt, "contacted_at");
+  const note = (input.note ?? "").trim();
+  if (note.length > CONTACT_NOTE_MAX) bad("note");
+  if (note) body.note = note;
+  return parseProspect(await apiRequest(`${base(tenantId)}/prospects/${id(prospectId, "prospect id")}/contacted`, token, { method: "POST", body: JSON.stringify(body) }));
 }
 /** `POST /prospects/redecide`: decide again the ones that waited for the calling hours or the day's cap (the screen calls it when it opens). */
 export async function redecideProspects(token: string, tenantId: string): Promise<number> {

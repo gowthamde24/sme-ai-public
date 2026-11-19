@@ -5,7 +5,7 @@ import { E1, P1, P2, Q1, S1, T } from "@/lib/api/lead-finder-fixtures";
 
 const langNow = vi.hoisted(() => ({ v: "en" as "en" | "te" }));
 vi.mock("@/i18n/get-lang", () => ({ getLang: async () => langNow.v }));
-const h = vi.hoisted(() => ({ tenant: vi.fn(), plan: vi.fn(), approve: vi.fn(), cancel: vi.fn(), act: vi.fn(), practice: vi.fn(), revalidate: vi.fn(), preview: vi.fn(), make: vi.fn(), quote: vi.fn() }));
+const h = vi.hoisted(() => ({ tenant: vi.fn(), plan: vi.fn(), approve: vi.fn(), cancel: vi.fn(), act: vi.fn(), practice: vi.fn(), revalidate: vi.fn(), preview: vi.fn(), make: vi.fn(), quote: vi.fn(), mark: vi.fn() }));
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`NEXT_REDIRECT:${to}`); } }));
 vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => h.revalidate(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", email: "e@example.test", accessToken: "tok" }) }));
@@ -19,10 +19,11 @@ vi.mock("@/lib/api/lead-finder", async (orig) => ({
   practiceCall: (...a: unknown[]) => h.practice(...a),
   getQuoteDraft: (...a: unknown[]) => h.preview(...a),
   makeQuoteDraft: (...a: unknown[]) => h.make(...a),
+  markProspectContacted: (...a: unknown[]) => h.mark(...a),
 }));
 vi.mock("@/lib/api/quotes", () => ({ fetchQuote: (...a: unknown[]) => h.quote(...a) }));
 
-import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
+import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, markContactedAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
 
 const as = (role: string) => h.tenant.mockResolvedValue({ id: T, name: "Acme Silks", slug: "acme-silks", role });
 const SEARCH = { id: S1, state: "planned" };
@@ -205,5 +206,34 @@ describe("a search that names people (C1 #319: 422 individuals_not_allowed, any 
     h.plan.mockRejectedValueOnce(new ApiRequestError(422, "individuals_not_allowed", " "));
     expect(await planSearchAction(T, "parents in Anantapur")).toMatchObject({ ok: false, error: "లీడ్ ఫైండర్ వ్యాపారాలు, సంస్థల కోసం మాత్రమే వెతుకుతుంది, వ్యక్తుల కోసం కాదు. ఎలాంటి చోట్ల కోసం వెతకాలో చెప్పండి." });
     langNow.v = "en";
+  });
+});
+
+describe("Mark as contacted", () => {
+  it("Owner, Admin and Sales may: today sends no time, a day ago sends that moment, and the note goes as written", async () => {
+    h.mark.mockResolvedValue({ id: P1, status: "contacted" });
+    as("sales");
+    expect(await markContactedAction(T, P1, { daysAgo: 0, note: "Spoke to the owner" })).toEqual({ ok: true, data: { id: P1, status: "contacted" } });
+    expect(h.mark).toHaveBeenLastCalledWith("tok", T, P1, { contactedAt: null, note: "Spoke to the owner" });
+    await markContactedAction(T, P1, { daysAgo: 2, note: "" });
+    const at = h.mark.mock.calls[1][3].contactedAt as string;
+    expect(Date.now() - new Date(at).getTime()).toBeGreaterThan(2 * 86_400_000 - 5_000);
+    expect(Date.now() - new Date(at).getTime()).toBeLessThan(2 * 86_400_000 + 5_000);
+    expect(h.revalidate).toHaveBeenCalled();
+  });
+  it("refuses a Viewer, a bad id, a bad day and a note over 500 characters before asking the API", async () => {
+    as("viewer");
+    expect(await markContactedAction(T, P1, { daysAgo: 0, note: "" })).toMatchObject({ ok: false, kind: "forbidden" });
+    as("owner");
+    expect(await markContactedAction(T, "nope", { daysAgo: 0, note: "" })).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await markContactedAction(T, P1, { daysAgo: 3 as never, note: "" })).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await markContactedAction(T, P1, { daysAgo: 0, note: "x".repeat(501) })).toMatchObject({ ok: false, kind: "invalid" });
+    expect(h.mark).not.toHaveBeenCalled();
+  });
+  it("a suppressed or missing business (409 prospect_state) and a bad time (422) say so in our words", async () => {
+    h.mark.mockRejectedValueOnce(new ApiRequestError(409, "prospect_state", "x"));
+    expect(await markContactedAction(T, P1, { daysAgo: 0, note: "" })).toMatchObject({ ok: false, error: "This business can’t be marked as contacted." });
+    h.mark.mockRejectedValueOnce(new ApiRequestError(422, "contacted_at_invalid", "x"));
+    expect(await markContactedAction(T, P1, { daysAgo: 7, note: "" })).toMatchObject({ ok: false, error: "Check the day and the note (up to 500 characters), then try again." });
   });
 });

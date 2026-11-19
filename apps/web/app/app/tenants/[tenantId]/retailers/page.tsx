@@ -32,7 +32,7 @@ import { STATUS_FILTER, type ProspectPage, type ProspectStats, type ProspectStat
 import { requireUser } from "@/lib/auth/session";
 
 import { addSweepAction, changeSweepAction, previewSweepAction, removeSweepAction, runSweepAction } from "./sweep-actions";
-import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, planLikeThisAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
+import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, markContactedAction, planLikeThisAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
 import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Prospects · ${BRAND_NAME}` };
@@ -192,6 +192,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
           planLikeThis: planLikeThisAction.bind(null, tenantId),
           approve: approveSearchAction.bind(null, tenantId),
           cancel: cancelSearchAction.bind(null, tenantId),
+          mark: markContactedAction.bind(null, tenantId),
         }}
       />
     );
@@ -241,7 +242,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
           ) : page.items.length === 0 ? (
             gone ? null : <p className={mutedText}>{t(status ? "lf.none.filter" : "lf.none")}</p>
           ) : (
-            <ProspectList practiceOpen={practiceOpen} items={page.items} words={words} base={base} canPractice={admin} businesses={audience === "businesses"} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId) }} />
+            <ProspectList practiceOpen={practiceOpen} items={page.items} words={words} base={base} canPractice={admin} businesses={audience === "businesses"} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId), mark: markContactedAction.bind(null, tenantId) }} />
           )}
           {page?.nextCursor ? (
             <p>

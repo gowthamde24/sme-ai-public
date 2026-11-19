@@ -110368,5 +110368,170 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "lf.v6.mark.button": {
+  "en": "Mark as contacted",
+  "te": "సంప్రదించారని గుర్తు పెట్టండి",
+  "hi": "संपर्क किया, चिह्नित करें",
+  "kn": "ಸಂಪರ್ಕಿಸಿದ್ದೇನೆ ಎಂದು ಗುರುತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.edit": {
+  "en": "Edit note",
+  "te": "నోట్ మార్చండి",
+  "hi": "नोट बदलें",
+  "kn": "ನೋಟ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.when": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.when.0": {
+  "en": "Today",
+  "te": "ఈరోజు",
+  "hi": "आज",
+  "kn": "ಇವತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.when.1": {
+  "en": "Yesterday",
+  "te": "నిన్న",
+  "hi": "कल",
+  "kn": "ನಿನ್ನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.when.2": {
+  "en": "2 days ago",
+  "te": "2 రోజుల క్రితం",
+  "hi": "2 दिन पहले",
+  "kn": "2 ದಿನಗಳ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.when.7": {
+  "en": "A week ago",
+  "te": "వారం క్రితం",
+  "hi": "एक हफ़्ते पहले",
+  "kn": "ಒಂದು ವಾರದ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.note": {
+  "en": "Note (optional)",
+  "te": "నోట్ (ఇష్టమైతే)",
+  "hi": "नोट (वैकल्पिक)",
+  "kn": "ನೋಟ್ (ಬೇಕಿದ್ದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.note.ph": {
+  "en": "What did they say?",
+  "te": "వాళ్ళు ఏం చెప్పారు?",
+  "hi": "उन्होंने क्या कहा?",
+  "kn": "ಅವರು ಏನು ಹೇಳಿದರು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.cancel": {
+  "en": "Cancel",
+  "te": "వద్దు",
+  "hi": "रद्द करें",
+  "kn": "ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.chip": {
+  "en": "Contacted · {date}",
+  "te": "సంప్రదించారు · {date}",
+  "hi": "संपर्क किया · {date}",
+  "kn": "ಸಂಪರ್ಕಿಸಿದ್ದಾರೆ · {date}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.by": {
+  "en": "by {name}",
+  "te": "{name} ద్వారా",
+  "hi": "{name} द्वारा",
+  "kn": "{name} ಅವರಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.err.invalid": {
+  "en": "Check the day and the note (up to 500 characters), then try again.",
+  "te": "రోజు, నోట్ (500 అక్షరాల లోపు) చూసి మళ్ళీ try చేయండి.",
+  "hi": "दिन और नोट (500 अक्षर तक) जाँचकर फिर कोशिश करें।",
+  "kn": "ದಿನ ಮತ್ತು ನೋಟ್ (500 ಅಕ್ಷರಗಳವರೆಗೆ) ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.mark.err.state": {
+  "en": "This business can’t be marked as contacted.",
+  "te": "ఈ బిజినెస్‌ని సంప్రదించినట్టు గుర్తు పెట్టలేం.",
+  "hi": "इस बिज़नेस को संपर्क किया चिह्नित नहीं किया जा सकता।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿದ್ದೆಂದು ಗುರುತಿಸಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

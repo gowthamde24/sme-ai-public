@@ -22,7 +22,7 @@ vi.mock("@/lib/api/lead-finder", async (importOriginal) => ({
   getProspectStats: (...a: unknown[]) => lf.getProspectStats(...a),
   getProspect: (...a: unknown[]) => lf.getProspect(...a),
 }));
-vi.mock("./actions", () => ({ planSearchAction: vi.fn(), approveSearchAction: vi.fn(), cancelSearchAction: vi.fn(), prospectActionsAction: vi.fn(), practiceCallAction: vi.fn(), quoteDraftAction: vi.fn(), makeQuoteDraftAction: vi.fn() }));
+vi.mock("./actions", () => ({ planSearchAction: vi.fn(), approveSearchAction: vi.fn(), cancelSearchAction: vi.fn(), prospectActionsAction: vi.fn(), practiceCallAction: vi.fn(), quoteDraftAction: vi.fn(), makeQuoteDraftAction: vi.fn(), markContactedAction: vi.fn() }));
 
 import ProspectsPage from "./page";
 

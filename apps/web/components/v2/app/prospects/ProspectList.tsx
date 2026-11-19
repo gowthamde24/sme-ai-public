@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
-import { FOR_GOOD, reasonLine, type ActionResult, type CallLanguage, type Persona, type PracticeCall as Call, type Prospect, type ProspectAction, type ProspectStatus, type QuoteDraftMade, type QuoteDraftView } from "@/lib/lead-finder/types";
+import { FOR_GOOD, reasonLine, type ActionResult, type CallLanguage, type ContactDaysAgo, type Persona, type PracticeCall as Call, type Prospect, type ProspectAction, type ProspectStatus, type QuoteDraftMade, type QuoteDraftView } from "@/lib/lead-finder/types";
 
 import { FailureNote } from "../cc/FailureNote";
 import { card, danger, muted, pillClass, secondary, type Failed, type Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
 import { GoogleMark } from "./SearchCards";
 import { PracticeCall } from "./PracticeCall";
+import { MarkContacted } from "./MarkContacted";
 import { ProspectContact } from "./ProspectContact";
 import { QuoteDraft } from "./QuoteDraft";
 
@@ -21,6 +22,8 @@ export type ListActions = {
   /** The draft quote of a qualified call (contract section 7): the preview, and making it (Owner, Admin). */
   quoteDraft: (prospectId: string) => Promise<Reply<QuoteDraftView>>;
   makeQuoteDraft: (prospectId: string) => Promise<Reply<QuoteDraftMade>>;
+  /** "Mark as contacted" (owner 19 Nov); absent = the button is not drawn. */
+  mark?: (prospectId: string, input: { daysAgo: ContactDaysAgo; note: string }) => Promise<Reply<Prospect>>;
 };
 
 const TONE: Record<ProspectStatus, Parameters<typeof pillClass>[0]> = { new: "brand", researching: "info", call_ready: "green", needs_owner: "amber", skipped: "neutral", contacted: "brand", qualified: "green", not_interested: "red" };
@@ -156,6 +159,7 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
               </div>
             </div>
             <ProspectContact prospect={p} words={words} base={base} />
+            {actions.mark && !p.suppressed && p.status !== "not_interested" ? <MarkContacted prospect={p} words={words} actions={{ mark: actions.mark }} /> : null}
             {demoPracticeCall && p.status === "call_ready" && canPractice ? <PracticeCall open={practiceOpen === p.id} prospect={p} words={words} base={base} langNames={langNames} run={(persona, language) => actions.practice!(p.id, persona, language)} draft={businesses ? { preview: actions.quoteDraft, make: actions.makeQuoteDraft } : undefined} quotes={businesses} /> : null}
             {p.status === "qualified" && p.leadId && businesses ? <QuoteDraft words={words} base={base} canMake={canPractice} actions={{ preview: () => actions.quoteDraft(p.id), make: () => actions.makeQuoteDraft(p.id) }} /> : null}
           </li>
