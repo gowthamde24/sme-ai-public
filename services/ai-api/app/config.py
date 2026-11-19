@@ -424,6 +424,10 @@ class Settings(BaseSettings):
     # The developer API (ADR 0121; docs/contracts/developer-api.md): off (default) |
     # test (test-mode keys and the sandbox; no live keys exist)
     developer_api: Literal["off", "test"] = "off"
+    # Jobs (jobs contract 1.0, 1.1): off (default) | on. Off: every /jobs route is a 404.
+    # JOBS_GET_PAID: off (default) hides the "get paid" job templates (Get paid ships in v1.1).
+    jobs: Literal["off", "on"] = "off"
+    jobs_get_paid: Literal["off", "on"] = "off"
     # Who speaks on a call: haiku (default, steady) | sarvam (Sarvam 105B first, ~320 ms faster
     # to the first word, behind a first-token deadline that falls back to Haiku).
     # Measured 31 Oct 2026: docs/runbooks/phone-model.md.

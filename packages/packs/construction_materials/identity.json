@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "construction_materials",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "building material shops",
+    "te": "బిల్డింగ్ మెటీరియల్ షాపులు"
+  }
+}

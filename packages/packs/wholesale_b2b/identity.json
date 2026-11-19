@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "wholesale_b2b",
+  "status": "draft",
+  "sell_style": "pricelist",
+  "plural_names": {
+    "en": "wholesalers and distributors",
+    "te": "హోల్‌సేలర్లు, డిస్ట్రిబ్యూటర్లు"
+  }
+}

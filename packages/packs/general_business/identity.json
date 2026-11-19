@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "general_business",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "local businesses",
+    "te": "లోకల్ బిజినెస్‌లు"
+  }
+}
