@@ -162,7 +162,7 @@ def check_outbound(settings: Settings, f: OutboundFacts) -> Allowed | Refused:
     promotional = is_promotional(f.purpose)
     if f.dnd == "yes":
         return Refused("dnd")   # DND blocks every purpose here; the lawyer may allow transactional calls to a DND number later
-    if f.dnd == "unknown" and promotional:
+    if f.dnd == "unknown" and promotional and f.proof_of_request is not True:   # a person who asked to be called is not a cold call: the do-not-disturb scrub is for numbers we reach without a request
         return Refused("dnd_unknown")
     if not has_ai_disclosure(f.opening_line):
         return Refused("no_ai_disclosure")
