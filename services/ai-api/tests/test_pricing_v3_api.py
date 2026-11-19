@@ -12,8 +12,8 @@ from typing import Any
 
 import pytest
 
-from app.billing.fake import FakeBillingProvider
 from app.billing.errors import WorkspaceReadOnlyError
+from app.billing.fake import FakeBillingProvider
 from app.pricing.service import PricingService
 from app.pricing.v3_service import (
     INTERNAL,
