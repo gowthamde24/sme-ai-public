@@ -8,6 +8,11 @@ import { control } from "@/components/v2/landing/ui";
 import { LANGS, LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { LANG_COOKIE, readLang, serializePreference } from "@/i18n/preferences";
 
+/** Saves the language choice in the functional cookie `sme_lang` (the one writer of it; the sentence version of Settings uses it too). */
+export function saveLang(next: Lang): void {
+  document.cookie = serializePreference(LANG_COOKIE, next, window.location.protocol === "https:");
+}
+
 /**
  * The language control. It writes the functional cookie `sme_lang` and asks the server to render the page again; the
  * response is already in the chosen language (no client-side dictionary, no flash). `label` comes from the server.
@@ -25,7 +30,7 @@ export function LangSelect({ lang, label, landingRoutes = false, hrefs }: { lang
         onChange={(e) => {
           const next = readLang(e.target.value);
           setValue(next);
-          document.cookie = serializePreference(LANG_COOKIE, next, window.location.protocol === "https:");
+          saveLang(next);
           const address = next === "en" ? "/" : `/${next}`;
           if (hrefs) return startTransition(() => router.push(hrefs[next]));
           startTransition(() => (landingRoutes && ["/", "/te", "/hi", "/kn"].includes(window.location.pathname) && window.location.pathname !== address ? router.push(address) : router.refresh()));

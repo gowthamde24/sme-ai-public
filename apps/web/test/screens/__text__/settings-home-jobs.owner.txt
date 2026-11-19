@@ -2,12 +2,8 @@
 Your business, your team and how it all connects. Press Edit on a card to change it.
 {label="Business"}
 ## Business
-Business name
-Demo Silks (synthetic)
-City or area
-Not set yet
-Address
-Not set yet
+My business is called Demo Silks (synthetic) . It is in Not set yet .
+summary: More choices Shop timings, GST number and logo
 Shop timings
 - Mon 10:00-20:30
 - Tue 10:00-20:30
@@ -23,10 +19,11 @@ Logo
 Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business label="Edit Logo")
 {label="Team"}
 ## Team
-[Edit](/app/tenants/22222222-2222-2222-2222-222222222222/team label="Edit Team") 3 people
-- Asha Rao Owner
-- Ravi Kumar Sales
-- a team member Viewer
+[Add or change people](/app/tenants/22222222-2222-2222-2222-222222222222/team) 3 people
+- You are the owner.
+- Ravi Kumar can work with customers .
+- A team member can only look, not change .
+summary: More choices Who can approve quotes
 Who can approve quotes
 Owners and Admins, with a second factor Quotes follow your quote rules, which the owner and admins set. [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes label="Edit Who can approve quotes")
 {label="Quotes"}
@@ -49,14 +46,14 @@ summary: More choices Your business phone and calls put through to you
 Choose whether this device tells you when a call starts.
 {label="Language and theme"}
 ## Language and theme
-Language Language
-<select label="LanguageEnglishతెలుగుहिन्दीಕನ್ನಡ">
+form:
+The app changes at once. Your assistant's languages are saved when you tap Save. The app speaks
+<select label="The app speaks ….">
   options: English=en* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn
-Appearance
-{role=group label="Appearance"}
-[button type=button: System]
-[button type=button: Light]
-[button type=button: Dark]
+. The app looks
+<select label="The app looks ….">
+  options: like my phone=system* | light | dark
+. What it will do: The app will show in English and look light or dark like your phone.
 {label="Privacy and data"}
 ## Privacy and data
 [Open Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)

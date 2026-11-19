@@ -1,0 +1,51 @@
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business current=page) [My profile](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=profile) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Quotes](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Automation](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Notifications](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=notifications) [Limits](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=limits) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Business details"}
+## Business details
+form:
+Customers see this name in messages and calls. Change it any time. My business is called
+<text name=name label="My business is called …." required placeholder="business name" maxlength=120 autocomplete=organization value=Pavers Corner (synthetic)>
+. It is in
+<text name=town label="It is in …." placeholder="city or area" maxlength=80 minlength=2 autocomplete=address-level2 value=Guntur>
+. I talk to my customers in
+[button type=button: I talk to my customers in ….]
+.
+[hidden element <div>]
+<hidden name=languages value=en>
+<hidden name=languages value=te>
+What it will do: Customers will see Pavers Corner (synthetic) in your messages and calls, and your assistant will talk to them in English and తెలుగు.
+summary: More choices Kind of business and phone
+Business type
+<text label="Business type" placeholder="Choose or search your business type" autocomplete=off>
+[button type=button: Business type]
+<hidden name=type value=>
+Changing the kind of business changes the words, the checklist and the starter messages. Your customers, leads and messages stay. Customers can call me on
+<text name=phone label="Customers can call me on …." placeholder="phone number" maxlength=20 inputmode=tel autocomplete=tel value=+00 000 000 0001>
+.
+[button type=submit disabled: Save]
+### Business logo
+P
+form:
+Choose a picture
+<file name=logo label="Choose a picture" accept=image/jpeg,image/png,image/webp>
+[button type=submit: Save logo]
+JPG, PNG or WebP, up to 5 MB.
+{label="Business and plan"}
+Plan
+Getting started plan
+URL name
+demo-silks
+{label="Our GSTIN"}
+## Our GSTIN
+The shop's GST registration number. It is shown on quotes and orders and goes into the files for your accountant. 27AAPFU0939F1ZV State: Maharashtra
+form:
+GSTIN (15 characters)
+<text label="GSTIN (15 characters)" maxlength=30 autocomplete=off value=27AAPFU0939F1ZV described-by="For example 27AAPFU0939F1ZV. Spaces, dashes and small letters are fine.">
+For example 27AAPFU0939F1ZV. Spaces, dashes and small letters are fine. We only check that the number is well formed. We do not check with the GST portal that the business exists or is active. Saving needs your two-step code, if you turned it on. If you are asked, sign in again with it.
+[button type=submit disabled: Save GSTIN]
+[button type=button: Remove the GSTIN]
+{label="AI usage today"}
+## AI usage today
+AI usage today 7% used
+{role=meter label="AI usage today"}
+3% of this month
