@@ -29,7 +29,7 @@ table:
 Incoming · 6 Oct, 10:40 am · 2:06 · Telugu · Test call Completed
 {label="What happened"} Summary : Priya wants 20 Kanchi silk sarees for a wedding on 2 November and will visit on Saturday. Wants 20 Kanchi silk sarees for a wedding, visiting Saturday
 {label="What to do next"} Quote ₹48,000 [Change](/app/tenants/22222222-2222-2222-2222-222222222222/quotes/99999999-9999-4999-8999-999999999912)
-[button type=button: Approve & send]
+[button type=button: Approve]
 Approving sends nothing. After you approve, WhatsApp opens on your phone with the words ready and you press send there.
 {label="Recording"}
 [button type=button: Play]
