@@ -33,7 +33,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   // landing v2: four parts of the home page (owner, 6 Nov 2026: fewer links in the bar; the Lead Finder and the business number are in the footer); from another page they lead back to it
   const nav = [
     { href: `${base}#how`, label: t("nav.how"), here: false },
-    { href: `${base}#voices`, label: t("h3.nav.voices"), here: false },
+    { href: `${base}#finder`, label: t("h2.nav.finder"), here: false },
     { href: onHome ? "#plans" : pricingPage, label: t("h2.nav.plans"), here: target.kind === "page" && target.page === "pricing" },
   ];
   // "Get early access": the home page's closing form; on a page without the form, where "start" leads today

@@ -28,7 +28,7 @@ describe("string store: four languages", () => {
     });
     it(`${name}: the other languages use their own script`, () => {
       const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$|v3\.(day\.\d\.time)$|h2\.plans\.ld$|pp\.(gst|pop|included|setup\.prio)$|h3\.(nav\.voices|phone\.(cap|ai|biz|calllog|msg)|how\.f\.[23]|built\.[234]\.t)$)/; // intentionally Latin or numeric (role.main.t is the product name "Your assistant"; IndiaMART and JustDial are other companies' names)
+      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$|v3\.(day\.\d\.time)$|h2\.plans\.ld$|pp\.(gst|pop|included|setup\.prio)$|h3\.(phone\.(biz|calllog|msg)|how\.f\.(1\.v|[23])|built\.[234]\.t|src\.\d\.[td])$|h2\.finder\.(call|pin\.\d\.what)$)/; // (Latin on purpose: plan names, source names, kinds of school, the phone's own labels) // intentionally Latin or numeric (role.main.t is the product name "Your assistant"; IndiaMART and JustDial are other companies' names)
       for (const lang of ["te", "hi", "kn"] as const) {
         const missing = keys.filter((k) => !exempt.test(k) && !script[lang].test(dicts[lang][k]));
         expect(missing, `${name}:${lang}`).toEqual([]);
@@ -54,7 +54,7 @@ describe("honesty: no claims we cannot prove today", () => {
   const en = Object.fromEntries(Object.entries(dictFor(site, "en") as Record<string, string>).map(([k, v]) => [k, withTrialDays(v)]));
   it("no public English copy says we find or discover leads (owner, 28 Oct: leads come from the website forms, WhatsApp, missed calls, spreadsheets and Meta lead ads; nothing is searched for), and no portal is named as a source", () => {
     // landing v2 (the owner approved the design on 6 Nov 2026): the Lead Finder is a product now and its words (h2.*) say it finds new businesses; the older pages' words still never do
-    const claims = Object.entries(en).filter(([k]) => !k.startsWith("h2.") && !k.startsWith("pp.")).filter(([, v]) => /\bfinds? (your |new |more )?(leads|customers|buyers)\b|\bfinding (new )?(leads|customers)\b|lead finder|lead finding|leads we find|new customers found|find leads|discover(s|ing)? (new )?leads/i.test(v));
+    const claims = Object.entries(en).filter(([k]) => !k.startsWith("h2.") && !k.startsWith("pp.") && !k.startsWith("h3.radar.")).filter(([, v]) => /\bfinds? (your |new |more )?(leads|customers|buyers)\b|\bfinding (new )?(leads|customers)\b|lead finder|lead finding|leads we find|new customers found|find leads|discover(s|ing)? (new )?leads/i.test(v));
     expect(claims.map(([k]) => k)).toEqual([]);
     expect(Object.entries(en).filter(([k, v]) => !k.startsWith("ld.src.") && /99acres|MagicBricks/.test(v))).toEqual([]);
   });

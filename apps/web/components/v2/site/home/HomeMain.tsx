@@ -1,10 +1,10 @@
-import { ArrowRight, Check, Clock, Languages, MessageCircle, Moon, Phone, PhoneCall as PhoneCallIcon, Play, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Check, Clock, Languages, MessageCircle, Moon, Phone, PhoneCall as PhoneCallIcon, ShieldCheck, Zap } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
-import { PhoneCall, PhoneChat, PpBubble, PpDay, PpLine } from "@/components/v2/PhonePreview";
-import { WaitlistForm } from "@/components/v2/site/LazyIslands";
+import { PhoneChat, PpBubble, PpDay } from "@/components/v2/PhonePreview";
+import { HeroStage, LeakCalc, RadarFinder, WaitlistForm } from "@/components/v2/site/LazyIslands";
 import { publicPlanLines } from "@/components/v2/site/PublicPlans";
 import { hasWaitlist, waitlistWords, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { teluguFontVariable } from "@/design/fonts";
@@ -17,30 +17,59 @@ import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 
 import { AskBox } from "./AskBox";
-import { CALL_TE, VOICES, WA_TE } from "./demo-lines";
+import { WA_TE } from "./demo-lines";
 import { WithWhatsapp } from "../home2/WithWhatsapp";
 
 type Start = { href: string; label: string };
 const k = (s: string) => s as SiteKey;
+/** The words a client island needs, filled on the server (the site's dictionaries never reach the browser whole). */
+const words = (t: SiteT, keys: readonly string[]): Record<string, string> => Object.fromEntries(keys.map((key) => [key, t(k(key))]));
+const HERO_KEYS = [
+  "h2.mode.picked",
+  "h2.mode.listening",
+  "h2.mode.wait",
+  ...["te", "ta", "kn", "ml", "hi", "mr", "en"].map((c) => `h2.lang.${c}`),
+  ...[1, 2, 3].flatMap((i) => [`h2.out.${i}.t`, `h2.out.${i}.d`]),
+  ...[1, 2, 3, 4, 5, 6].flatMap((i) => [`h3.src.${i}.t`, `h3.src.${i}.d`]),
+  "h2.hear",
+  "h2.hear.on",
+];
+const FINDER_KEYS = [...["city", "near", "checked", "call", "ask", "skip", "list", "of", "empty"].map((x) => `h2.finder.${x}`), ...[1, 2, 3, 4].flatMap((i) => [`h2.finder.pin.${i}.what`, `h2.finder.pin.${i}.why`])];
+const LEAK_KEYS = ["title", "sub", "enq", "miss", "buy", "avg", "warm", "cold", "note", "in"].map((x) => `h2.leak.${x}`);
 
 /** The English (or Hindi, Kannada) meaning under a Telugu line of the sample phones; none on the Telugu page, where the line is already in the reader's language. */
 const Gloss = ({ lang, text }: { lang: Lang; text: string }) => (lang === "te" ? null : <span className="h3-gloss">{text}</span>);
 
 /**
- * THE HOME PAGE (owner, 19 Nov 2026: "we don't need to mention each and every business"; "all the same in all layouts"). One page, one markup that reflows: every section is the same at 390, 430, 768, 980, 1280 and 1440 px
- * (columns stack, sizes follow clamp(), the spacing rhythm scales; design/home3.css). There is NO second markup for a phone, no section hidden or swapped at a width, no script to measure the screen.
- * Top to bottom: the hero (what the product is, three pills, the CTA, a phone with a call), "What should your assistant do?" (a box and example chips that lead to sign-up), how it works (one phone: the Telugu call, the WhatsApp that
- * follows, what it found out; the dark band), "Hear our voices" (example calls; no audio exists, so the buttons are disabled), what is built in, the plans, the final call to action. The footer is the home footer.
- * No business type is named or linked anywhere on it.
+ * THE HOME PAGE (owner, 19 and 20 Nov 2026: "we don't need to mention each and every business"; "all the same in all layouts"; "keep the three animations"; "clean"). One page, one markup that reflows: every section is the same at 390, 430, 768,
+ * 980, 1280 and 1440 px (columns stack, sizes follow clamp(), the spacing rhythm scales; the drawings are scaled whole, never swapped for a phone version; design/home3.css). Top to bottom: the hero (what the product is, three pills, the call
+ * to action, and the stage: enquiries flying in from the platforms into the orb), "What should your assistant do?", the demo (one phone: the Telugu call's WhatsApp, three steps, what it found out), how many enquiries are reached in time
+ * (the counter), the Lead Finder radar, what is built in, the plans, the final call to action. No business type is named or linked: the variety is in the examples.
  */
 export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang: Lang; start: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
   const cta: Start = { href: start.href, label: t("h3.cta") };
   return (
     <div className={`h3 ${teluguFontVariable}`} data-part="home3">
-      <Hero t={t} lang={lang} cta={cta} />
+      <Hero t={t} cta={cta} />
       <Ask t={t} cta={cta} />
       <How t={t} lang={lang} />
-      <Voices t={t} />
+      <section id="calc" aria-labelledby="calc-title" className="h3-sec">
+        <div className="h3-wrap">
+          <LeakCalc w={words(t, LEAK_KEYS)} />
+        </div>
+      </section>
+      <section id="finder" aria-labelledby="finder-title" className="h3-sec">
+        <div className="h3-wrap">
+          <header className="h3-head">
+            <h2 id="finder-title" className="h3-h2">
+              {t("h3.radar.t")}
+            </h2>
+            <p className="h3-lead">{t("h3.radar.sub")}</p>
+          </header>
+          <RadarFinder w={words(t, FINDER_KEYS)} />
+          <p className="h3-small h3-note">{t("h2.finder.note")}</p>
+        </div>
+      </section>
       <Built t={t} />
       <Plans t={t} cta={cta} />
       <Final t={t} lang={lang} cta={cta} hasForm={hasForm} waitlist={waitlist} />
@@ -50,7 +79,7 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
 
 function Pill({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
-    <li className="h3-pill h2-glass">
+    <li className="h3-pill">
       <span className="h3-pill-ico" aria-hidden="true">
         {icon}
       </span>
@@ -59,52 +88,42 @@ function Pill({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   );
 }
 
-function Hero({ t, lang, cta }: { t: SiteT; lang: Lang; cta: Start }) {
-  const words = t("h3.hero.t").split(". ").map((s, i, a) => (i < a.length - 1 ? `${s}.` : s));
+function Hero({ t, cta }: { t: SiteT; cta: Start }) {
+  const lines = t("h3.hero.t").split(". ").map((x, i, a) => (i < a.length - 1 ? `${x}.` : x));
   return (
     <section id="top-hero" aria-labelledby="h1" className="h3-sec h3-hero">
-      <span aria-hidden="true" className="h3-glow" />
-      <div className="h3-wrap h3-hero-grid">
-        <div className="h3-hero-text">
-          <h1 id="h1" className="h3-h1">
-            {words.map((w, i) => (
-              <span key={i} className="h3-line">
-                {w}{" "}
-              </span>
-            ))}
-          </h1>
-          <p className="h3-lead h3-hero-p">{t("h3.hero.p")}</p>
-          <ul className="h3-pills" aria-label={t("h3.hero.t")}>
-            <Pill icon={<Zap size={16} strokeWidth={2.4} />}>{t("h3.pill.1")}</Pill>
-            <Pill icon={<Clock size={16} strokeWidth={2.4} />}>{t("h3.pill.2")}</Pill>
-            <Pill icon={<MessageCircle size={16} strokeWidth={2.4} />}>{t("h3.pill.3")}</Pill>
-          </ul>
-          <div className="h3-cta-row">
-            <Link href={cta.href} className="h3-btn h3-btn-main" data-part="hero-cta">
-              {cta.label}
-              <ArrowRight size={18} strokeWidth={2.4} aria-hidden="true" />
-            </Link>
-            <Link href="#voices" className="h3-btn h3-btn-line" data-part="hear-call">
-              <PhoneCallIcon size={17} strokeWidth={2.3} aria-hidden="true" />
-              {t("h2.hero.hear")}
-            </Link>
-          </div>
-          {websiteOnly() ? (
-            <p className="h3-small" data-part="trial-note">
-              {t("demo.note")}
-            </p>
-          ) : null}
+      <div className="h3-wrap h3-hero-text">
+        <h1 id="h1" className="h3-h1">
+          {lines.map((x, i) => (
+            <span key={i} className="h3-line">
+              {x}{" "}
+            </span>
+          ))}
+        </h1>
+        <p className="h3-lead h3-hero-p">{t("h3.hero.p")}</p>
+        <ul className="h3-pills" aria-label={t("h3.hero.t")}>
+          <Pill icon={<Zap size={16} strokeWidth={2.2} />}>{t("h3.pill.1")}</Pill>
+          <Pill icon={<Clock size={16} strokeWidth={2.2} />}>{t("h3.pill.2")}</Pill>
+          <Pill icon={<MessageCircle size={16} strokeWidth={2.2} />}>{t("h3.pill.3")}</Pill>
+        </ul>
+        <div className="h3-cta-row">
+          <Link href={cta.href} className="h3-btn h3-btn-main" data-part="hero-cta">
+            {cta.label}
+            <ArrowRight size={18} strokeWidth={2.2} aria-hidden="true" />
+          </Link>
+          <Link href="#how" className="h3-btn h3-btn-line" data-part="hear-call">
+            <PhoneCallIcon size={17} strokeWidth={2.2} aria-hidden="true" />
+            {t("h2.hero.hear")}
+          </Link>
         </div>
-        <div className="h3-hero-phone" data-part="hero-phone">
-          <PhoneCall name="Padma Silks" sub="00:42" captions={t("h3.phone.cap")} animate keepFrame>
-            {CALL_TE.map((line, i) => (
-              <PpLine key={i} from={i % 2 === 0 ? "them" : "me"} who={i % 2 === 0 ? t("h3.phone.ai") : t("h3.phone.you")}>
-                {line}
-                <Gloss lang={lang} text={t(k(`h3.call.${i + 1}.g`))} />
-              </PpLine>
-            ))}
-          </PhoneCall>
-        </div>
+        {websiteOnly() ? (
+          <p className="h3-small" data-part="trial-note">
+            {t("demo.note")}
+          </p>
+        ) : null}
+      </div>
+      <div className="h3-wrap h3-stage-wrap">
+        <HeroStage w={words(t, HERO_KEYS)} />
       </div>
     </section>
   );
@@ -134,7 +153,6 @@ function How({ t, lang }: { t: SiteT; lang: Lang }) {
   const found = [1, 2, 3] as const;
   return (
     <section id="how" aria-labelledby="how-title" className="h3-sec h3-band">
-      <span aria-hidden="true" className="h3-band-glow" />
       <div className="h3-wrap">
         <header className="h3-head">
           <h2 id="how-title" className="h3-h2">
@@ -144,7 +162,7 @@ function How({ t, lang }: { t: SiteT; lang: Lang }) {
         </header>
         <div className="h3-how-grid">
           <div className="h3-how-phone" data-part="how-phone">
-            <PhoneChat name="Padma Silks" sub={t("h3.phone.biz")} placeholder={t("h3.phone.msg")} theme="dark" keepFrame>
+            <PhoneChat name="Bright Path Academy" sub={t("h3.phone.biz")} placeholder={t("h3.phone.msg")} theme="dark" keepFrame>
               <PpDay>{t("h3.phone.today")}</PpDay>
               <PpDay>{t("h3.phone.calllog")}</PpDay>
               {WA_TE.map((line, i) => (
@@ -182,38 +200,6 @@ function How({ t, lang }: { t: SiteT; lang: Lang }) {
             ))}
           </ol>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function Voices({ t }: { t: SiteT }) {
-  return (
-    <section id="voices" aria-labelledby="voices-title" className="h3-sec">
-      <div className="h3-wrap">
-        <header className="h3-head">
-          <h2 id="voices-title" className="h3-h2">
-            {t("h3.voices.title")}
-          </h2>
-          <p className="h3-lead">{t("h3.voices.sub")}</p>
-        </header>
-        <ul className="h3-grid h3-grid-4" data-part="voices">
-          {VOICES.map((v, i) => (
-            <li key={v.name} className="h3-card h3-voice" data-voice={v.name}>
-              <span className="h3-avatar" aria-hidden="true">
-                {v.name[0]}
-              </span>
-              <h3 className="h3-h3">{v.name}</h3>
-              <p className="h3-voice-lang">{t(k(`h2.lang.${v.lang}`))}</p>
-              <p className="h3-card-d">{t(k(`h3.voice.${i + 1}.d`))}</p>
-              {/* no recording exists yet: a disabled button that says so, never a player that plays nothing */}
-              <button type="button" disabled aria-disabled="true" className="h3-play">
-                <Play size={15} strokeWidth={2.4} aria-hidden="true" />
-                {t("h3.voice.soon")}
-              </button>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );
@@ -304,15 +290,11 @@ function Plans({ t, cta }: { t: SiteT; cta: Start }) {
 /** The final call to action: the orb with its rings, the line, and the early-access bar (name, phone, type of business, city) on the existing joinWaitlist action; without the waitlist, the button stands in. The section is `#demo`, where every "early access" leads. */
 function Final({ t, lang, cta, hasForm, waitlist }: { t: SiteT; lang: Lang; cta: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
   const form = hasForm && hasWaitlist(waitlist);
-  const words = { ...waitlistWords(t), name: t("h2.join.name"), contact: t("h2.join.phone"), type: t("h2.join.biz"), city: t("h2.join.city"), submit: t("demo.submit"), thanksTitle: t("h2.join.thanks"), thanksBody: t("h2.join.once") };
+  const formWords = { ...waitlistWords(t), name: t("h2.join.name"), contact: t("h2.join.phone"), type: t("h2.join.biz"), city: t("h2.join.city"), submit: t("demo.submit"), thanksTitle: t("h2.join.thanks"), thanksBody: t("h2.join.once") };
   return (
     <section id={form ? "demo" : "join"} aria-labelledby="join-title" className="h3-sec h3-final">
-      <span aria-hidden="true" className="h3-final-glow" />
       <div className="h3-wrap h3-narrow h3-final-in">
         <div className="h3-orb">
-          <span aria-hidden="true" className="h2-ring absolute inset-0 rounded-full" />
-          <span aria-hidden="true" className="h2-ring h2-ring-2 absolute inset-0 rounded-full" />
-          <span aria-hidden="true" className="h2-ring h2-ring-3 absolute inset-0 rounded-full" />
           <span className="h2-orbwrap relative block size-full overflow-hidden">
             <AssistantOrb state="idle" />
           </span>
@@ -329,7 +311,7 @@ function Final({ t, lang, cta, hasForm, waitlist }: { t: SiteT; lang: Lang; cta:
             lang={lang}
             types={SITE_PACKS.map((p) => ({ slug: p.slug, name: textIn(p.names, lang) })).concat([{ slug: "other", name: t("contact.type.other") }])}
             langs={WAITLIST_LANGS.map((code) => ({ code, name: WAITLIST_LANG_NAMES[code] }))}
-            words={words}
+            words={formWords}
             turnstile={turnstileSiteKey()}
             action={waitlist}
             privacyHref="/privacy"

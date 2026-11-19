@@ -1,9 +1,7 @@
 import Link from "next/link";
 
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
-import { BrandDots } from "@/components/v2/site/LazyIslands";
 import { SupportedBy } from "@/components/v2/site/SupportedBy";
-import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
 import { LANGS, type Lang } from "@/i18n/lang";
 import { isServed } from "@/lib/site/mode";
@@ -12,7 +10,7 @@ import { sitePath, SITE_PAGES, type SitePage } from "@/lib/site/paths";
 import { WithWhatsapp } from "./WithWhatsapp";
 
 const link = "inline-flex min-h-11 items-center text-[15px] font-semibold text-muted hover:text-ink";
-const head = "mb-1.5 text-[13px] font-extrabold text-brand-text";
+const head = "mb-1.5 text-[13px] font-extrabold text-muted";
 const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help" };
 const LANG_NAME: Record<Lang, string> = { en: "English", te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ" };
 
@@ -22,9 +20,7 @@ const LANG_NAME: Record<Lang, string> = { en: "English", te: "తెలుగు
  */
 export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { href: string; label: string } }) {
   return (
-    <footer id="end" className="relative overflow-hidden px-[var(--h3-gutter,clamp(16px,3vw,32px))] pt-[clamp(32px,6vw,80px)]" data-part="home-footer">
-      {/* the soft floor light: an oval light that is fully gone at its own edge (closest-side), so no edge of its box can show */}
-      <span aria-hidden="true" className="absolute bottom-[-380px] left-1/2 block h-[760px] w-[1400px] -translate-x-1/2 bg-[radial-gradient(closest-side,rgba(255,140,90,.28),rgba(236,72,110,.08)_55%,rgba(255,140,90,0))]" />
+    <footer id="end" className="relative overflow-hidden px-[var(--h3-gutter,clamp(16px,3vw,32px))] pb-4 pt-[clamp(32px,6vw,80px)]" data-part="home-footer">
       <div className="h3-foot-grid relative mx-auto max-w-[1240px] border-b border-line pb-9">
         <div className="flex flex-col gap-3.5">
           <p className="m-0 max-w-[380px] font-display text-[clamp(22px,calc(1vw+16px),28px)] font-extrabold leading-[1.15] tracking-[-0.02em]">
@@ -35,7 +31,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
         <nav aria-label={t("h2.foot.product")} className="flex flex-col">
           <span className={head}>{t("h2.foot.product")}</span>
           <a className={link} href="#how">{t("nav.how")}</a>
-          <a className={link} href="#voices">{t("h3.nav.voices")}</a>
+          <a className={link} href="#finder">{t("h2.nav.finder")}</a>
           <a className={link} href="#built">{t("h3.built.title")}</a>
           <a className={link} href="#plans">{t("h2.nav.plans")}</a>
         </nav>
@@ -81,8 +77,6 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
         </a>
         <SupportedBy t={t} />
       </div>
-      {/* the dot wordmark is the very last thing on the page, its letters on the bottom edge (owner, 6 Nov 2026) */}
-      <BrandDots label={BRAND_NAME} rebuild={t("h2.foot.rebuild")} />
     </footer>
   );
 }

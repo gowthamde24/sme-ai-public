@@ -108,7 +108,7 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
             <span className={small}>{words.city}</span>
             <input id={`${idPrefix}-city`} autoComplete="address-level2" maxLength={80} value={city} onChange={(e) => setCity(e.target.value)} className={input} />
           </label>
-          <button type="submit" disabled={pending || (turnstile !== null && token === null)} className="m-1 inline-flex min-h-[60px] items-center justify-center gap-2 rounded-full bg-[#ff773c] px-[30px] text-[17px] font-extrabold text-[#1e1e24] shadow-[0_10px_24px_-10px_rgba(255,119,60,.8)] disabled:opacity-60">
+          <button type="submit" disabled={pending || (turnstile !== null && token === null)} className="m-1 inline-flex min-h-[60px] items-center justify-center gap-2 rounded-full bg-[#c2410c] px-[30px] text-[17px] font-extrabold text-white shadow-[0_10px_24px_-10px_rgba(194,65,12,.8)] disabled:opacity-60">
             {words.submit}
           </button>
         </div>

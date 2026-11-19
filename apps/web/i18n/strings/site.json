@@ -6332,10 +6332,10 @@
   }
  },
  "h2.out.1.t": {
-  "en": "Called back within minutes",
-  "te": "కొన్ని నిమిషాల్లోనే తిరిగి కాల్",
-  "hi": "कुछ ही मिनटों में कॉल बैक",
-  "kn": "ಕೆಲವೇ ನಿಮಿಷಗಳಲ್ಲಿ ಮರಳಿ ಕರೆ",
+  "en": "Answered in seconds",
+  "te": "సెకన్లలో జవాబు",
+  "hi": "seconds में जवाब",
+  "kn": "seconds ನಲ್ಲಿ ಉತ್ತರ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6376,10 +6376,10 @@
   }
  },
  "h2.out.3.t": {
-  "en": "Shop visit booked",
-  "te": "షాప్ విజిట్ బుక్ అయింది",
-  "hi": "दुकान पर आना तय",
-  "kn": "ಅಂಗಡಿ ಭೇಟಿ ಬುಕ್ ಆಯಿತು",
+  "en": "Visit booked",
+  "te": "Visit book అయింది",
+  "hi": "Visit book हो गई",
+  "kn": "Visit book ಆಯಿತು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7355,10 +7355,10 @@
   }
  },
  "h2.finder.near": {
-  "en": "Saree retailers near {city}",
-  "te": "{city} దగ్గర చీరల షాపులు",
-  "hi": "{city} के पास साड़ी की दुकानें",
-  "kn": "{city} ಹತ್ತಿರ ಸೀರೆ ಅಂಗಡಿಗಳು",
+  "en": "Schools near {city}",
+  "te": "{city} దగ్గర schools",
+  "hi": "{city} के पास schools",
+  "kn": "{city} ಹತ್ತಿರ schools",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7366,10 +7366,10 @@
   }
  },
  "h2.finder.checked": {
-  "en": "Checked {n} businesses. {worth} worth a call.",
-  "te": "{n} వ్యాపారాలు చూసింది. {worth} కి కాల్ చేయొచ్చు.",
-  "hi": "{n} कारोबार जाँचे। {worth} को कॉल करना ठीक।",
-  "kn": "{n} ವ್ಯಾಪಾರಗಳನ್ನು ನೋಡಿತು. {worth} ಕ್ಕೆ ಕರೆ ಮಾಡಬಹುದು.",
+  "en": "Checked {n} places. {worth} worth contacting.",
+  "te": "{n} places చూసింది. {worth} ని contact చేయొచ్చు.",
+  "hi": "{n} places देखे। {worth} को contact करना ठीक है।",
+  "kn": "{n} places ನೋಡಿದೆ. {worth} ಅನ್ನು contact ಮಾಡಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7377,10 +7377,10 @@
   }
  },
  "h2.finder.call": {
-  "en": "Call now",
-  "te": "ఇప్పుడే కాల్",
-  "hi": "अभी कॉल",
-  "kn": "ಈಗಲೇ ಕರೆ",
+  "en": "Contact",
+  "te": "Contact",
+  "hi": "Contact",
+  "kn": "Contact",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7388,10 +7388,10 @@
   }
  },
  "h2.finder.ask": {
-  "en": "Ask you first",
-  "te": "ముందు మిమ్మల్ని అడుగుతుంది",
-  "hi": "पहले आपसे पूछे",
-  "kn": "ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ",
+  "en": "Check first",
+  "te": "ముందు చూడండి",
+  "hi": "पहले देखें",
+  "kn": "ಮೊದಲು ನೋಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7401,7 +7401,7 @@
  "h2.finder.skip": {
   "en": "Skip",
   "te": "వదిలేయండి",
-  "hi": "छोड़ें",
+  "hi": "छोड़ दें",
   "kn": "ಬಿಟ್ಟುಬಿಡಿ",
   "status": {
    "te": "draft",
@@ -7412,8 +7412,8 @@
  "h2.finder.list": {
   "en": "Found on this sweep",
   "te": "ఈ రౌండ్‌లో దొరికినవి",
-  "hi": "इस चक्कर में मिले",
-  "kn": "ಈ ಸುತ್ತಿನಲ್ಲಿ ಸಿಕ್ಕವು",
+  "hi": "इस round में मिले",
+  "kn": "ಈ round ನಲ್ಲಿ ಸಿಕ್ಕಿದ್ದು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7432,10 +7432,10 @@
   }
  },
  "h2.finder.empty": {
-  "en": "Businesses appear here as the sweep finds them.",
-  "te": "రౌండ్‌లో దొరికిన వ్యాపారాలు ఇక్కడ కనిపిస్తాయి.",
-  "hi": "चक्कर में मिलते ही कारोबार यहाँ दिखेंगे।",
-  "kn": "ಸುತ್ತಿನಲ್ಲಿ ಸಿಕ್ಕ ವ್ಯಾಪಾರಗಳು ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ.",
+  "en": "Places appear here as the sweep finds them.",
+  "te": "Round లో దొరికిన places ఇక్కడ కనిపిస్తాయి.",
+  "hi": "Round में मिले places यहाँ दिखेंगे।",
+  "kn": "Round ನಲ್ಲಿ ಸಿಕ್ಕ places ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7443,10 +7443,10 @@
   }
  },
  "h2.finder.pin.1.what": {
-  "en": "Saree retailer",
-  "te": "చీరల షాపు",
-  "hi": "साड़ी की दुकान",
-  "kn": "ಸೀರೆ ಅಂಗಡಿ",
+  "en": "CBSE school",
+  "te": "CBSE school",
+  "hi": "CBSE school",
+  "kn": "CBSE school",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7454,10 +7454,10 @@
   }
  },
  "h2.finder.pin.1.why": {
-  "en": "Sells silk sarees. No supplier named on its listing.",
-  "te": "పట్టు చీరలు అమ్ముతుంది. దాని లిస్టింగ్‌లో సప్లయర్ పేరు లేదు.",
-  "hi": "सिल्क साड़ियाँ बेचती है। लिस्टिंग में किसी सप्लायर का नाम नहीं।",
-  "kn": "ರೇಷ್ಮೆ ಸೀರೆ ಮಾರುತ್ತದೆ. ಲಿಸ್ಟಿಂಗ್‌ನಲ್ಲಿ ಸಪ್ಲೈಯರ್ ಹೆಸರಿಲ್ಲ.",
+  "en": "Classes 8 to 12. No coaching partner named on its site.",
+  "te": "8 నుంచి 12 classes. వాళ్ళ site లో coaching partner పేరు లేదు.",
+  "hi": "Class 8 से 12। इनकी site पर कोई coaching partner नहीं दिखता।",
+  "kn": "8 ರಿಂದ 12 classes. ಅವರ site ನಲ್ಲಿ coaching partner ಹೆಸರಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7465,10 +7465,10 @@
   }
  },
  "h2.finder.pin.2.what": {
-  "en": "Textile shop",
-  "te": "బట్టల షాపు",
-  "hi": "कपड़े की दुकान",
-  "kn": "ಬಟ್ಟೆ ಅಂಗಡಿ",
+  "en": "Junior college",
+  "te": "Junior college",
+  "hi": "Junior college",
+  "kn": "Junior college",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7476,10 +7476,10 @@
   }
  },
  "h2.finder.pin.2.why": {
-  "en": "Sells sarees, open today, well reviewed.",
-  "te": "చీరలు అమ్ముతుంది, ఈ రోజు తెరిచి ఉంది, మంచి పేరు ఉంది.",
-  "hi": "साड़ियाँ बेचती है, आज खुली है, अच्छे रिव्यू।",
-  "kn": "ಸೀರೆ ಮಾರುತ್ತದೆ, ಇಂದು ತೆರೆದಿದೆ, ಒಳ್ಳೆಯ ಹೆಸರಿದೆ.",
+  "en": "Large intake, open today, well reviewed.",
+  "te": "పెద్ద intake, ఈ రోజు తెరిచి ఉంది, మంచి reviews.",
+  "hi": "बड़ा intake, आज खुला है, अच्छे reviews।",
+  "kn": "ದೊಡ್ಡ intake, ಇಂದು ತೆರೆದಿದೆ, ಒಳ್ಳೆಯ reviews.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7487,10 +7487,10 @@
   }
  },
  "h2.finder.pin.3.what": {
-  "en": "Saree retailer",
-  "te": "చీరల షాపు",
-  "hi": "साड़ी की दुकान",
-  "kn": "ಸೀರೆ ಅಂಗಡಿ",
+  "en": "Tuition centre",
+  "te": "Tuition centre",
+  "hi": "Tuition centre",
+  "kn": "Tuition centre",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7499,9 +7499,9 @@
  },
  "h2.finder.pin.3.why": {
   "en": "Already in your leads.",
-  "te": "ఇప్పటికే మీ లీడ్స్‌లో ఉంది.",
-  "hi": "पहले से आपकी लीड में है।",
-  "kn": "ಈಗಾಗಲೇ ನಿಮ್ಮ ಲೀಡ್‌ಗಳಲ್ಲಿದೆ.",
+  "te": "ఇప్పటికే మీ leads లో ఉంది.",
+  "hi": "पहले से आपके leads में है।",
+  "kn": "ಈಗಾಗಲೇ ನಿಮ್ಮ leads ನಲ್ಲಿದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7509,10 +7509,10 @@
   }
  },
  "h2.finder.pin.4.what": {
-  "en": "Boutique",
-  "te": "బొటీక్",
-  "hi": "बुटीक",
-  "kn": "ಬೊಟಿಕ್",
+  "en": "International school",
+  "te": "International school",
+  "hi": "International school",
+  "kn": "International school",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7520,10 +7520,10 @@
   }
  },
  "h2.finder.pin.4.why": {
-  "en": "A bigger shop. Worth a word from you before the first call.",
-  "te": "పెద్ద షాపు. మొదటి కాల్‌కి ముందు మీరు ఒక మాట చెబితే మంచిది.",
-  "hi": "बड़ी दुकान है। पहली कॉल से पहले आपकी एक राय ठीक रहेगी।",
-  "kn": "ದೊಡ್ಡ ಅಂಗಡಿ. ಮೊದಲ ಕರೆಗೆ ಮುಂಚೆ ನಿಮ್ಮ ಒಂದು ಮಾತು ಒಳ್ಳೆಯದು.",
+  "en": "A bigger name. Worth a word from you first.",
+  "te": "పెద్ద పేరు. ముందు మీరే ఒక మాట చెప్పడం మంచిది.",
+  "hi": "बड़ा नाम। पहले आप खुद बात करें तो अच्छा।",
+  "kn": "ದೊಡ್ಡ ಹೆಸರು. ಮೊದಲು ನೀವೇ ಒಂದು ಮಾತು ಹೇಳುವುದು ಒಳ್ಳೆಯದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7531,10 +7531,10 @@
   }
  },
  "h2.finder.note": {
-  "en": "An example sweep for a sample saree shop. The areas are real; the businesses are examples.",
-  "te": "ఇది ఒక నమూనా చీరల షాపు కోసం ఉదాహరణ రౌండ్. ప్రాంతాలు నిజం; వ్యాపారాలు ఉదాహరణలు.",
-  "hi": "यह एक नमूना साड़ी दुकान के लिए उदाहरण चक्कर है। इलाके असली हैं; कारोबार उदाहरण हैं।",
-  "kn": "ಇದು ಒಂದು ಮಾದರಿ ಸೀರೆ ಅಂಗಡಿಗಾಗಿ ಉದಾಹರಣೆ ಸುತ್ತು. ಪ್ರದೇಶಗಳು ನಿಜ; ವ್ಯಾಪಾರಗಳು ಉದಾಹರಣೆ.",
+  "en": "An example for a sample coaching centre. The areas are real; the schools are examples.",
+  "te": "ఒక sample coaching centre కి example. Areas నిజం; schools example కి మాత్రమే.",
+  "hi": "एक sample coaching centre का example। Areas असली हैं; schools example के लिए हैं।",
+  "kn": "ಒಂದು sample coaching centre ಗೆ example. Areas ನಿಜ; schools example ಗಾಗಿ ಮಾತ್ರ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9389,17 +9389,6 @@
    "kn": "draft"
   }
  },
- "h3.nav.voices": {
-  "en": "Voices",
-  "te": "Voices",
-  "hi": "Voices",
-  "kn": "Voices",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "h3.cta": {
   "en": "Get free early access",
   "te": "Free early access తీసుకోండి",
@@ -9466,39 +9455,6 @@
    "kn": "draft"
   }
  },
- "h3.phone.cap": {
-  "en": "Live captions",
-  "te": "Live captions",
-  "hi": "Live captions",
-  "kn": "Live captions",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.phone.ai": {
-  "en": "AI assistant",
-  "te": "AI assistant",
-  "hi": "AI assistant",
-  "kn": "AI assistant",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.phone.you": {
-  "en": "You",
-  "te": "మీరు",
-  "hi": "आप",
-  "kn": "ನೀವು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "h3.phone.biz": {
   "en": "Business account",
   "te": "Business account",
@@ -9543,44 +9499,11 @@
    "kn": "draft"
   }
  },
- "h3.call.1.g": {
-  "en": "Hello, welcome to Padma Silks. What do you need?",
-  "te": "నమస్తే అండీ, Padma Silks కి స్వాగతం. చెప్పండి, ఏం కావాలి?",
-  "hi": "नमस्ते, Padma Silks में स्वागत है। बताइए, क्या चाहिए?",
-  "kn": "ನಮಸ್ಕಾರ, Padma Silks ಗೆ ಸ್ವಾಗತ. ಹೇಳಿ, ಏನು ಬೇಕು?",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.call.2.g": {
-  "en": "Do you have a Kanchi silk saree? For a wedding, in red.",
-  "te": "Kanchi silk saree ఉందా? Wedding కోసం, red colour.",
-  "hi": "Kanchi silk saree है क्या? Wedding के लिए, red।",
-  "kn": "Kanchi silk saree ಇದೆಯಾ? Wedding ಗೆ, red.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.call.3.g": {
-  "en": "Yes! Come to the shop on Saturday at 11. I will send photos on WhatsApp.",
-  "te": "ఉందండీ! శనివారం 11 కి shop కి రండి. Photos WhatsApp లో పంపుతాను.",
-  "hi": "हाँ! शनिवार 11 बजे shop आइए। Photos WhatsApp पर भेजता हूँ।",
-  "kn": "ಹೌದು! ಶನಿವಾರ 11 ಕ್ಕೆ shop ಗೆ ಬನ್ನಿ. Photos WhatsApp ನಲ್ಲಿ ಕಳುಹಿಸುತ್ತೇನೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "h3.wa.1.g": {
-  "en": "Hello! We just spoke on the call. These are our red Kanchi silk sarees, from 12,500 rupees. Come on Saturday at 11.",
-  "te": "నమస్తే అండీ! ఇప్పుడే call లో మాట్లాడాం కదా. ఇవి మా red Kanchi silk sarees, 12,500 rupees నుంచి. శనివారం 11 కి రండి.",
-  "hi": "नमस्ते! अभी call पर बात हुई थी। ये हमारी red Kanchi silk sarees हैं, 12,500 rupees से। शनिवार 11 बजे आइए।",
-  "kn": "ನಮಸ್ಕಾರ! ಈಗಷ್ಟೇ call ನಲ್ಲಿ ಮಾತನಾಡಿದೆವು. ಇವು ನಮ್ಮ red Kanchi silk sarees, 12,500 rupees ನಿಂದ. ಶನಿವಾರ 11 ಕ್ಕೆ ಬನ್ನಿ.",
+  "en": "Hello! We just spoke on the call. Here are the EAMCET weekend batch details: Saturday and Sunday, 9 to 1. There is a demo class on Saturday at 10.",
+  "te": "నమస్తే అండీ! ఇప్పుడే call లో మాట్లాడాం కదా. EAMCET weekend batch details ఇవిగో: శని, ఆది 9 నుంచి 1 వరకు. శనివారం 10 కి demo class ఉంది.",
+  "hi": "नमस्ते! अभी call पर बात हुई थी। ये EAMCET weekend batch की details हैं: शनिवार-रविवार, 9 से 1। शनिवार 10 बजे demo class है।",
+  "kn": "ನಮಸ್ಕಾರ! ಈಗಷ್ಟೇ call ನಲ್ಲಿ ಮಾತನಾಡಿದೆವು. ಇವು EAMCET weekend batch details: ಶನಿವಾರ-ಭಾನುವಾರ, 9 ರಿಂದ 1. ಶನಿವಾರ 10 ಕ್ಕೆ demo class ಇದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9588,10 +9511,10 @@
   }
  },
  "h3.wa.2.g": {
-  "en": "They look good. I will come on Saturday.",
-  "te": "బాగున్నాయి అండీ. శనివారం వస్తాను.",
-  "hi": "अच्छी हैं। शनिवार को आऊँगा।",
-  "kn": "ಚೆನ್ನಾಗಿವೆ. ಶನಿವಾರ ಬರುತ್ತೇನೆ.",
+  "en": "Okay, I will come on Saturday.",
+  "te": "సరే అండీ, శనివారం వస్తాను.",
+  "hi": "ठीक है, शनिवार को आऊँगा।",
+  "kn": "ಸರಿ, ಶನಿವಾರ ಬರುತ್ತೇನೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9599,10 +9522,10 @@
   }
  },
  "h3.wa.3.g": {
-  "en": "Done. Your visit is booked for Saturday at 11.",
-  "te": "సరే అండీ, శనివారం 11 కి మీ visit book చేశాను.",
-  "hi": "ठीक है, शनिवार 11 बजे की आपकी visit book कर दी।",
-  "kn": "ಸರಿ, ಶನಿವಾರ 11 ಕ್ಕೆ ನಿಮ್ಮ visit book ಮಾಡಿದ್ದೇನೆ.",
+  "en": "Done. Your demo class is booked for Saturday at 10.",
+  "te": "సరే అండీ, శనివారం 10 కి మీ demo class book చేశాను.",
+  "hi": "ठीक है, शनिवार 10 बजे की आपकी demo class book कर दी।",
+  "kn": "ಸರಿ, ಶನಿವಾರ 10 ಕ್ಕೆ ನಿಮ್ಮ demo class book ಮಾಡಿದ್ದೇನೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9687,10 +9610,10 @@
   }
  },
  "h3.ask.chip.1": {
-  "en": "Call every new enquiry right away",
-  "te": "ప్రతి కొత్త enquiry కి వెంటనే call చేయండి",
-  "hi": "हर नई enquiry को तुरंत call करो",
-  "kn": "ಪ್ರತಿ ಹೊಸ enquiry ಗೆ ತಕ್ಷಣ call ಮಾಡಿ",
+  "en": "Book site visits for new property leads",
+  "te": "కొత్త property leads కి site visits book చేయండి",
+  "hi": "नए property leads की site visit book करो",
+  "kn": "ಹೊಸ property leads ಗೆ site visit book ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9698,10 +9621,10 @@
   }
  },
  "h3.ask.chip.2": {
-  "en": "Tell customers their order is ready",
-  "te": "Order ready అని customers కి చెప్పండి",
-  "hi": "customers को बताओ कि order ready है",
-  "kn": "order ready ಅಂತ customers ಗೆ ಹೇಳಿ",
+  "en": "Call every admission enquiry right away",
+  "te": "ప్రతి admission enquiry కి వెంటనే call చేయండి",
+  "hi": "हर admission enquiry को तुरंत call करो",
+  "kn": "ಪ್ರತಿ admission enquiry ಗೆ ತಕ್ಷಣ call ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9709,10 +9632,10 @@
   }
  },
  "h3.ask.chip.3": {
-  "en": "Remind people about their store visit",
-  "te": "Store visit గుర్తు చేయండి",
-  "hi": "store visit की याद दिलाओ",
-  "kn": "store visit ನೆನಪಿಸಿ",
+  "en": "Remind students about the demo class",
+  "te": "Demo class గురించి students కి గుర్తు చేయండి",
+  "hi": "students को demo class की याद दिलाओ",
+  "kn": "demo class ಬಗ್ಗೆ students ಗೆ ನೆನಪಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9720,10 +9643,10 @@
   }
  },
  "h3.ask.chip.4": {
-  "en": "Send our festival offer to customers who said yes",
-  "te": "Yes అన్న customers కి మా festival offer పంపండి",
-  "hi": "जिन customers ने हाँ कहा, उन्हें festival offer भेजो",
-  "kn": "ಒಪ್ಪಿದ customers ಗೆ festival offer ಕಳುಹಿಸಿ",
+  "en": "Book test drives for new enquiries",
+  "te": "కొత్త enquiries కి test drives book చేయండి",
+  "hi": "नई enquiries के लिए test drive book करो",
+  "kn": "ಹೊಸ enquiries ಗೆ test drive book ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9731,10 +9654,10 @@
   }
  },
  "h3.ask.chip.5": {
-  "en": "Find new shops that could buy from me",
-  "te": "నా దగ్గర కొనగలిగే కొత్త shops ని వెతకండి",
-  "hi": "मुझसे खरीद सकने वाली नई shops ढूँढो",
-  "kn": "ನನ್ನಿಂದ ಕೊಳ್ಳಬಹುದಾದ ಹೊಸ shops ಹುಡುಕಿ",
+  "en": "Tell customers their order is ready",
+  "te": "Order ready అని customers కి చెప్పండి",
+  "hi": "customers को बताओ कि order ready है",
+  "kn": "order ready ಅಂತ customers ಗೆ ಹೇಳಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9819,10 +9742,10 @@
   }
  },
  "h3.how.3.d": {
-  "en": "What the customer wants, the budget and the day they will come, written up for you to act on.",
-  "te": "Customer కి ఏం కావాలి, budget ఎంత, ఏ రోజు వస్తారు: అన్నీ రాసి ఉంటాయి.",
-  "hi": "customer को क्या चाहिए, budget कितना है, किस दिन आएँगे: सब लिखा मिलता है।",
-  "kn": "customer ಗೆ ಏನು ಬೇಕು, budget ಎಷ್ಟು, ಯಾವ ದಿನ ಬರುತ್ತಾರೆ: ಎಲ್ಲಾ ಬರೆದಿರುತ್ತದೆ.",
+  "en": "What the customer wants, who it is for and the day they will come, written up for you to act on.",
+  "te": "Customer కి ఏం కావాలి, ఎవరికి, ఏ రోజు వస్తారు: అన్నీ రాసి ఉంటాయి.",
+  "hi": "customer को क्या चाहिए, किसके लिए, किस दिन आएँगे: सब लिखा मिलता है।",
+  "kn": "customer ಗೆ ಏನು ಬೇಕು, ಯಾರಿಗೆ, ಯಾವ ದಿನ ಬರುತ್ತಾರೆ: ಎಲ್ಲಾ ಬರೆದಿರುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9852,10 +9775,10 @@
   }
  },
  "h3.how.f.1.v": {
-  "en": "Kanchi silk saree, red, for a wedding",
-  "te": "Kanchi silk saree, red, wedding కోసం",
-  "hi": "Kanchi silk saree, red, wedding के लिए",
-  "kn": "Kanchi silk saree, red, wedding ಗೆ",
+  "en": "EAMCET weekend batch",
+  "te": "EAMCET weekend batch",
+  "hi": "EAMCET weekend batch",
+  "kn": "EAMCET weekend batch",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9863,10 +9786,10 @@
   }
  },
  "h3.how.f.2": {
-  "en": "Budget",
-  "te": "Budget",
-  "hi": "Budget",
-  "kn": "Budget",
+  "en": "For",
+  "te": "ఎవరికి",
+  "hi": "किसके लिए",
+  "kn": "ಯಾರಿಗೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9874,10 +9797,10 @@
   }
  },
  "h3.how.f.2.v": {
-  "en": "Under 15,000 rupees",
-  "te": "15,000 rupees లోపు",
-  "hi": "15,000 rupees के अंदर",
-  "kn": "15,000 rupees ಒಳಗೆ",
+  "en": "A Class 12 student",
+  "te": "Class 12 student కి",
+  "hi": "Class 12 के student के लिए",
+  "kn": "Class 12 student ಗೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9896,87 +9819,10 @@
   }
  },
  "h3.how.f.3.v": {
-  "en": "Saturday, 11 am",
-  "te": "శనివారం, 11 am",
-  "hi": "शनिवार, 11 am",
-  "kn": "ಶನಿವಾರ, 11 am",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.voices.title": {
-  "en": "Hear our voices",
-  "te": "మా voices వినండి",
-  "hi": "हमारी voices सुनिए",
-  "kn": "ನಮ್ಮ voices ಕೇಳಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.voices.sub": {
-  "en": "Example calls in four languages. The recordings are coming soon; the names are made up.",
-  "te": "నాలుగు భాషల్లో example calls. Recordings త్వరలో వస్తాయి; పేర్లు example కి మాత్రమే.",
-  "hi": "चार भाषाओं में example calls। Recordings जल्द आ रही हैं; नाम सिर्फ़ example के लिए हैं।",
-  "kn": "ನಾಲ್ಕು ಭಾಷೆಗಳಲ್ಲಿ example calls. Recordings ಶೀಘ್ರದಲ್ಲಿ ಬರುತ್ತವೆ; ಹೆಸರುಗಳು example ಗಾಗಿ ಮಾತ್ರ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.voice.soon": {
-  "en": "Sample soon",
-  "te": "Sample త్వరలో",
-  "hi": "Sample जल्द ही",
-  "kn": "Sample ಶೀಘ್ರದಲ್ಲಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.voice.1.d": {
-  "en": "Asks if her saree order is ready",
-  "te": "తన saree order ready అయిందా అని అడుగుతోంది",
-  "hi": "पूछ रही हैं कि saree order ready है या नहीं",
-  "kn": "saree order ready ಆಯ್ತಾ ಅಂತ ಕೇಳುತ್ತಿದ್ದಾರೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.voice.2.d": {
-  "en": "Asks for a price and a delivery day",
-  "te": "Price, delivery day అడుగుతున్నారు",
-  "hi": "price और delivery का दिन पूछ रहे हैं",
-  "kn": "price ಮತ್ತು delivery ದಿನ ಕೇಳುತ್ತಿದ್ದಾರೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.voice.3.d": {
-  "en": "Books a visit for next week",
-  "te": "వచ్చే వారం visit book చేస్తోంది",
-  "hi": "अगले हफ़्ते की visit book कर रही हैं",
-  "kn": "ಮುಂದಿನ ವಾರದ visit book ಮಾಡುತ್ತಿದ್ದಾರೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h3.voice.4.d": {
-  "en": "Wants a call back after 6 pm",
-  "te": "6 pm తర్వాత call back కావాలి",
-  "hi": "6 pm के बाद call back चाहिए",
-  "kn": "6 pm ನಂತರ call back ಬೇಕು",
+  "en": "Demo class, Saturday 10 am",
+  "te": "Demo class, శనివారం 10 am",
+  "hi": "Demo class, शनिवार 10 am",
+  "kn": "Demo class, ಶನಿವಾರ 10 am",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10109,6 +9955,182 @@
   "te": "మీ next enquiry కి seconds లో జవాబు వెళ్ళొచ్చు.",
   "hi": "आपकी अगली enquiry का जवाब seconds में जा सकता है।",
   "kn": "ನಿಮ್ಮ ಮುಂದಿನ enquiry ಗೆ seconds ನಲ್ಲಿ ಉತ್ತರ ಹೋಗಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.1.t": {
+  "en": "Meta ads",
+  "te": "Meta ads",
+  "hi": "Meta ads",
+  "kn": "Meta ads",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.1.d": {
+  "en": "2BHK in Kondapur",
+  "te": "Kondapur లో 2BHK",
+  "hi": "Kondapur में 2BHK",
+  "kn": "Kondapur ನಲ್ಲಿ 2BHK",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.2.t": {
+  "en": "JustDial, IndiaMART",
+  "te": "JustDial, IndiaMART",
+  "hi": "JustDial, IndiaMART",
+  "kn": "JustDial, IndiaMART",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.2.d": {
+  "en": "Price for 200 bags",
+  "te": "200 bags price",
+  "hi": "200 bags का price",
+  "kn": "200 bags price",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.3.t": {
+  "en": "Website form",
+  "te": "Website form",
+  "hi": "Website form",
+  "kn": "Website form",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.3.d": {
+  "en": "B.Tech admission",
+  "te": "B.Tech admission",
+  "hi": "B.Tech admission",
+  "kn": "B.Tech admission",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.4.t": {
+  "en": "WhatsApp",
+  "te": "WhatsApp",
+  "hi": "WhatsApp",
+  "kn": "WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.4.d": {
+  "en": "Saree for a wedding",
+  "te": "Wedding కి saree",
+  "hi": "शादी के लिए saree",
+  "kn": "Wedding ಗೆ saree",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.5.t": {
+  "en": "Missed call",
+  "te": "Missed call",
+  "hi": "Missed call",
+  "kn": "Missed call",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.5.d": {
+  "en": "Test drive: SUV",
+  "te": "Test drive: SUV",
+  "hi": "Test drive: SUV",
+  "kn": "Test drive: SUV",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.6.t": {
+  "en": "Google",
+  "te": "Google",
+  "hi": "Google",
+  "kn": "Google",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.src.6.d": {
+  "en": "Demo class timings",
+  "te": "Demo class timings",
+  "hi": "Demo class timings",
+  "kn": "Demo class timings",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.stage.t": {
+  "en": "Enquiries from every platform, answered in seconds",
+  "te": "అన్ని platforms నుంచి వచ్చే enquiries కి seconds లో జవాబు",
+  "hi": "हर platform की enquiry का जवाब seconds में",
+  "kn": "ಎಲ್ಲಾ platforms ನ enquiries ಗೆ seconds ನಲ್ಲಿ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.t": {
+  "en": "How many enquiries are reached in time?",
+  "te": "ఎన్ని enquiries కి టైమ్ కి జవాబు వెళ్తోంది?",
+  "hi": "कितनी enquiries को time पर जवाब मिलता है?",
+  "kn": "ಎಷ್ಟು enquiries ಗೆ time ಗೆ ಉತ್ತರ ಹೋಗುತ್ತದೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.radar.t": {
+  "en": "Lead Finder: new customers near you",
+  "te": "Lead Finder: మీ దగ్గర కొత్త customers",
+  "hi": "Lead Finder: आपके पास नए customers",
+  "kn": "Lead Finder: ನಿಮ್ಮ ಹತ್ತಿರ ಹೊಸ customers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.radar.sub": {
+  "en": "It scans the map around you, checks every business it finds and shows who is worth contacting. You contact them yourself.",
+  "te": "ఇది మీ చుట్టూ map చూస్తుంది, దొరికిన ప్రతి business ని చెక్ చేసి, ఎవరిని contact చేయొచ్చో చూపిస్తుంది. Contact చేసేది మీరే.",
+  "hi": "यह आपके आसपास का map देखता है, मिले हर business को check करता है और दिखाता है किसे contact करना ठीक है। Contact आप खुद करते हैं।",
+  "kn": "ಇದು ನಿಮ್ಮ ಸುತ್ತಲಿನ map ನೋಡಿ, ಸಿಕ್ಕ ಪ್ರತಿ business ಅನ್ನು check ಮಾಡಿ, ಯಾರನ್ನು contact ಮಾಡಬಹುದು ಅಂತ ತೋರಿಸುತ್ತದೆ. Contact ಮಾಡುವುದು ನೀವೇ.",
   "status": {
    "te": "draft",
    "hi": "draft",

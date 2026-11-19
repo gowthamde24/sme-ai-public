@@ -59,7 +59,7 @@
   --pp-input: #2a3942;
   --pp-status-ink: #e9edef;
   --pp-home: rgba(233, 237, 239, 0.85);
-  --pp-avatar: #ea580c;
+  --pp-avatar: #c2410c;
   --pp-cap-me: #26343c;
 }
 @media (prefers-color-scheme: dark) {
@@ -81,7 +81,7 @@
     --pp-input: #2a3942;
     --pp-status-ink: #e9edef;
     --pp-home: rgba(233, 237, 239, 0.85);
-    --pp-avatar: #ea580c;
+    --pp-avatar: #c2410c;
     --pp-cap-me: #26343c;
   }
 }
@@ -103,7 +103,7 @@
   --pp-input: #2a3942;
   --pp-status-ink: #e9edef;
   --pp-home: rgba(233, 237, 239, 0.85);
-  --pp-avatar: #ea580c;
+  --pp-avatar: #c2410c;
   --pp-cap-me: #26343c;
 }
 
