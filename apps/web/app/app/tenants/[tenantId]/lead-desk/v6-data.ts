@@ -54,18 +54,20 @@ export async function readLeadsV6(ctx: Ctx, o: { handoffs: readonly Handoff[] | 
   const page = await readDeskLeads(ctx, o.handoffs, o.after, o.now, filter);
   if (page === null) return { rows: [], nextCursor: null, unavailable: true, mock };
   const leads = applyFilter(page.leads, filter, ctx.userId);
-  let signals = new Map<string, LeadSignals>();
-  if (mock) signals = mockSignals(page.leads);
-  else {
+  // the chips a visit tells and the businesses found nearby do not need each other: both are asked now, together (they were asked one after the other); each is asked exactly when it was before (not at all when the leads could not be read)
+  const signalsAsked = (async (): Promise<Map<string, LeadSignals>> => {
+    if (mock) return mockSignals(page.leads);
     try {
       const today = todayInIndia(o.now.getTime());
-      signals = signalsFromVisits((await listVisits(ctx.token, ctx.tenantId, { from: shiftDay(today, -45), to: shiftDay(today, 16) })).items);
+      return signalsFromVisits((await listVisits(ctx.token, ctx.tenantId, { from: shiftDay(today, -45), to: shiftDay(today, 16) })).items);
     } catch (error) {
       if (error instanceof ApiAuthError) throw error;
+      return new Map();
     }
-  }
+  })();
+  const foundAsked = o.after === null ? foundRows(ctx.token, ctx.tenantId, o.unavailable) : Promise.resolve<LeadRow[]>([]);
+  const [signals, found] = await Promise.all([signalsAsked, foundAsked]);
   const leadRows = leads.map((l) => rowFromLead(l, signals.get(l.id) ?? {}, o.newEnquiry));
-  const found = o.after === null ? await foundRows(ctx.token, ctx.tenantId, o.unavailable) : [];
   const q = o.q.toLowerCase();
   const foundShown = q === "" ? found : found.filter((r) => `${r.name} ${r.line}`.toLowerCase().includes(q));
   return { rows: sortRows([...leadRows, ...foundShown]), nextCursor: page.nextCursor, unavailable: false, mock };

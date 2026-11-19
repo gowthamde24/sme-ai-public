@@ -1361,12 +1361,14 @@ const leadsV6Reads = (role: Role): Record<string, Handler> => ({
   listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [parseVisitFixture(visitJson({ lead_id: V6_LEADS[2].id, status: "booked", date: "2026-10-08", starts_at: "2026-10-08T05:30:00Z", ends_at: "2026-10-08T06:00:00Z" }))] }),
   getTouches: () => ({ items: [{ at: "2026-10-05T04:00:00Z", kind: "first" as const, source: "meta_lead_ads", message: null }, { at: "2026-10-05T09:00:00Z", kind: "repeat" as const, source: "indiamart", message: null }], flags: [] }),
 });
-const leadsV6Page = (search: Record<string, string>) => () => withEnv({ ...V6_ENV, LEADS_SCREENS: "1", OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}, search)));
-add({ id: "leads-v6", render: leadsV6Page({}), handlers: leadsV6Reads });
-add({ id: "leads-v6-open", roles: ["owner", "sales"], render: leadsV6Page({ open: `l-${LEAD}` }), handlers: leadsV6Reads });
-add({ id: "leads-v6-visit-chip", roles: ["owner"], render: leadsV6Page({ chip: "visit_booked" }), handlers: leadsV6Reads });
-add({ id: "leads-v6-empty", roles: ["owner", "viewer"], render: leadsV6Page({}), handlers: (role) => ({ ...outreachReads(role), ...finderHandlers(null, [])(role), listDeskLeads: () => ({ leads: [], nextCursor: null }), listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [] }) }) });
-add({ id: "leads-v6-mock", roles: ["owner"], render: () => withEnv({ ...V6_ENV, LEADS_SCREENS: "mock", OUTREACH_SCREENS: "off" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}))), handlers: (role) => base(role) });
+// (the Leads page draws its leads as a part that is read after the page's heading went out: its flags stay on until the text is taken, `env`, not only while the page is made)
+const LEADS_V6_ENV = { ...V6_ENV, LEADS_SCREENS: "1", OUTREACH_SCREENS: "1" };
+const leadsV6Page = (search: Record<string, string>) => async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}, search));
+add({ id: "leads-v6", env: LEADS_V6_ENV, render: leadsV6Page({}), handlers: leadsV6Reads });
+add({ id: "leads-v6-open", env: LEADS_V6_ENV, roles: ["owner", "sales"], render: leadsV6Page({ open: `l-${LEAD}` }), handlers: leadsV6Reads });
+add({ id: "leads-v6-visit-chip", env: LEADS_V6_ENV, roles: ["owner"], render: leadsV6Page({ chip: "visit_booked" }), handlers: leadsV6Reads });
+add({ id: "leads-v6-empty", env: LEADS_V6_ENV, roles: ["owner", "viewer"], render: leadsV6Page({}), handlers: (role) => ({ ...outreachReads(role), ...finderHandlers(null, [])(role), listDeskLeads: () => ({ leads: [], nextCursor: null }), listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [] }) }) });
+add({ id: "leads-v6-mock", env: { ...V6_ENV, LEADS_SCREENS: "mock", OUTREACH_SCREENS: "off" }, roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({})), handlers: (role) => base(role) });
 const V6_OUTREACH_REPORT = () => parseOutreachReport({ from_day: "2026-10-05", to_day: "2026-10-06", by_source: [{ source: "meta_lead_ads", leads: 120, first_touch_median_seconds: 96, calls: 140, connected_rate: 61, interested_pct: 24, bookings: 14, call_cost_paise: 168000, lead_cost_paise: 1080000, cost_per_booking_paise: 89143 }, { source: "indiamart", leads: 40, first_touch_median_seconds: 45, calls: 44, connected_rate: 55, interested_pct: 30, bookings: 0, call_cost_paise: 52800, lead_cost_paise: 600000, cost_per_booking_paise: null }], total: { leads: 160, calls: 184, connected_rate: 59.5, interested_pct: 25.5, bookings: 14, call_cost_paise: 220800, lead_cost_paise: 1680000, cost_per_booking_paise: 135771 } });
 const reportsV6Page = (search: Record<string, string> = {}) => () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({}, search)));
 // the day-by-day reads of the approved Reports page: leads by day and source, visits (one bought, with its order), the orders, the calls (six incoming on one Saturday evening)

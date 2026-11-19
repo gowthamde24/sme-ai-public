@@ -44,41 +44,37 @@ export type LeadsV6Props = {
 
 const dateText = (iso: string, lang: string): string => (iso ? new Date(iso).toLocaleDateString(lang, { day: "numeric", month: "short", timeZone: "Asia/Kolkata" }) : "");
 
-/**
- * The Leads page of design system v6 (owner 13 Nov 2026): the Calls-style table with the six status chips and their counts, a search, and the customer's panel on the right (under the table on a phone). Lead Desk's leads and the businesses the
- * Lead Finder found nearby sit in the same table; a found business says "Found nearby" and names the Lead Finder as its source. A server part: the state is in the address, so every chip and row is a link.
- */
-export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, sourceNames, selected, touches, chipHref, rowHref, moreHref, canAdd, unavailable, mock }: LeadsV6Props) {
+/** The page's box and its heading (the title, the line under it, "?" and "Add a lead"): what a person reads first. It needs no data, so the page sends it before the leads are read. */
+export function LeadsV6Shell({ words, lang, base, help, canAdd, children }: { words: Words; lang: string; base: string; help: ReactNode; canAdd: boolean; children: ReactNode }) {
   const t = makeT(words);
-  const sourceOf = (r: LeadRow): string => (r.kind === "found" ? t("lv6.finder") : r.source ? (sourceNames[r.source] ?? r.source.replace(/_/g, " ")) : t("lv6.nosource"));
   const addLink = canAdd ? (
     <Link href={`${base}/add-lead`} className={btnMain}>
       {t("lv6.add")}
     </Link>
   ) : null;
-  const header = <PageHeader title={t("lv6.title")} sub={t("lv6.sub")} right={<>{help}{addLink}</>} />;
-  if (unavailable) {
-    return (
-      <main className={pageMain} lang={lang} data-part="leads-v6">
-        {header}
-        <InlineError text={t("lv6.na")} retry={t("lv6.retry")} />
-      </main>
-    );
-  }
+  return (
+    <main className={pageMain} lang={lang} data-part="leads-v6">
+      <PageHeader title={t("lv6.title")} sub={t("lv6.sub")} right={<>{help}{addLink}</>} />
+      {children}
+    </main>
+  );
+}
+
+/** The leads themselves (a message when they could not be read, the first steps when there are none, else the search, the chips, the table and the customer's panel): the part of the page that waits for the data. */
+export function LeadsV6Body({ words, lang, base, rows, counts, chip, q, sourceNames, selected, touches, chipHref, rowHref, moreHref, canAdd, unavailable, mock }: Omit<LeadsV6Props, "help">) {
+  const t = makeT(words);
+  const sourceOf = (r: LeadRow): string => (r.kind === "found" ? t("lv6.finder") : r.source ? (sourceNames[r.source] ?? r.source.replace(/_/g, " ")) : t("lv6.nosource"));
+  if (unavailable) return <InlineError text={t("lv6.na")} retry={t("lv6.retry")} />;
   if (counts.all === 0 && q === "") {
     return (
-      <main className={pageMain} lang={lang} data-part="leads-v6">
-        {header}
-        <div className="mt-8">
-          <EmptyNext title={t("lv6.empty.title")} text={t("lv6.empty.text")} action={{ href: canAdd ? `${base}/add-lead` : base, label: canAdd ? t("lv6.add") : t("lv6.empty.today") }} />
-        </div>
-      </main>
+      <div className="mt-8">
+        <EmptyNext title={t("lv6.empty.title")} text={t("lv6.empty.text")} action={{ href: canAdd ? `${base}/add-lead` : base, label: canAdd ? t("lv6.add") : t("lv6.empty.today") }} />
+      </div>
     );
   }
   const chips = [{ id: "all", label: t("lv6.chip.all"), count: counts.all, href: chipHref("all") }, ...LEAD_CHIPS.map((c) => ({ id: c, label: t(`lv6.chip.${c}`), count: counts[c], href: chipHref(c) }))];
   return (
-    <main className={pageMain} lang={lang} data-part="leads-v6">
-      {header}
+    <>
       <AssistantNote />
       {mock ? (
         <p role="note" className="mt-3 text-sm text-muted">
@@ -221,6 +217,19 @@ export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, source
           )}
         </aside>
       </div>
-    </main>
+    </>
+  );
+}
+
+/**
+ * The Leads page of design system v6 (owner 13 Nov 2026): the Calls-style table with the six status chips and their counts, a search, and the customer's panel on the right (under the table on a phone). Lead Desk's leads and the businesses the
+ * Lead Finder found nearby sit in the same table; a found business says "Found nearby" and names the Lead Finder as its source. A server part: the state is in the address, so every chip and row is a link.
+ * Drawn in two parts so a page can send the heading first (`LeadsV6Shell`) and the leads when they are read (`LeadsV6Body`); this is the two together.
+ */
+export function LeadsV6({ help, ...body }: LeadsV6Props) {
+  return (
+    <LeadsV6Shell words={body.words} lang={body.lang} base={body.base} help={help} canAdd={body.canAdd}>
+      <LeadsV6Body {...body} />
+    </LeadsV6Shell>
   );
 }

@@ -19,14 +19,20 @@ export function linePieces(f: BandFacts): LinePiece[] {
 
 /** The decision at the top of the person's list, for the briefing's link: a quote waiting for the OK (its amount and the customer, opening the quote) is the one the briefing names. null = no quote with an amount waits. */
 export type TopDecision = { amountText: string; name: string; href: string };
+/** A card the briefing may name: a quote waiting for the OK, with an amount. */
+const isQuoteWithAmount = (c: NeedsCard): c is NeedsCard & { type: "item" } => c.type === "item" && (c.item.kind === "quote_approval" || c.item.kind === "material_quote_approval") && typeof c.item.amount_paise === "number" && c.item.amount_paise > 0;
 export function topDecision(needs: readonly NeedsCard[] | null): TopDecision | null {
   for (const c of needs ?? []) {
-    if (c.type !== "item") continue;
-    if ((c.item.kind === "quote_approval" || c.item.kind === "material_quote_approval") && typeof c.item.amount_paise === "number" && c.item.amount_paise > 0) {
-      return { amountText: formatRupeesShort(c.item.amount_paise), name: c.item.customer, href: c.item.href };
-    }
+    if (isQuoteWithAmount(c)) return { amountText: formatRupeesShort(c.item.amount_paise as number), name: c.item.customer, href: c.item.href };
   }
   return null;
+}
+/**
+ * How many quotes the briefing could name. With none or one, which one it names does not depend on the order of the list, so the briefing can be drawn before Lead Desk's items have joined (they re-sort the list, newest first); with two or more it
+ * waits for them, so it still names the quote at the top of "Needs you".
+ */
+export function quoteCandidates(needs: readonly NeedsCard[] | null): number {
+  return (needs ?? []).filter(isQuoteWithAmount).length;
 }
 
 /** The example instructions the composer cycles through as its ghost text (real things the assistant does). */

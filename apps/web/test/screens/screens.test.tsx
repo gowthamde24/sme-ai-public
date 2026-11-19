@@ -13,7 +13,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 
 import { SCENARIOS, ROLES } from "./scenarios";
 import { screenText } from "./screen-text";
-import { fixtureErrors, setHandlers } from "./state";
+import { callLog, fixtureErrors, setHandlers } from "./state";
 
 // a lazy chunk (next/dynamic) may or may not have arrived when the snapshot is taken: draw the form itself, always
 // night 4 F2: the same for the lazy top-up controls of the Plan part
@@ -236,5 +236,27 @@ describe("the example data offer (night 4 clean-up)", () => {
     expect(read("today-no-example-data")).not.toMatch(/example data/i);
     expect(read("today-no-example-data")).not.toMatch(/fee-reminder/i); // a fee-reminder campaign is the first step of a school only
     expect(read("today-education-example-loaded")).toMatch(/fee-reminder/i);
+  });
+});
+
+describe("Today reads each thing once, however the page is drawn", () => {
+  // The calls (by name, at most) the page made when it waited for all of its data, taken before it drew in parts (19 Nov 2026). A test has no request, so nothing is remembered between two askers of the same thing; the real page asks each once.
+  const BEFORE: Record<string, Record<string, number>> = {
+  "today-v6/owner": { fetchMembers: 1, fetchQuotes: 2, fetchTenant: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getExampleStatus: 1, getMyProfile: 1, getOutboxSettings: 1, getProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 4, listCallRequests: 1, listOutboxApprovals: 1, listOutboxMessages: 1, listVisits: 2, readAvailability: 3 },
+  "today-v6/admin": { fetchMembers: 1, fetchQuotes: 2, fetchTenant: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getExampleStatus: 1, getMyProfile: 1, getOutboxSettings: 1, getProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 4, listOutboxApprovals: 1, listOutboxMessages: 1, listVisits: 2, readAvailability: 3 },
+  "today-v6/sales": { fetchMembers: 1, fetchTenant: 1, getAgentsStatus: 1, getMyProfile: 1, getProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 4, listOutboxMessages: 1, listVisits: 1, readAvailability: 3 },
+  "today-v6/viewer": { fetchMembers: 1, fetchTenant: 1, getAgentsStatus: 1, getMyProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 2, readAvailability: 1 },
+  "today-v6-day-one/owner": { fetchMembers: 1, fetchQuotes: 2, fetchTenant: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getExampleStatus: 1, getMyProfile: 1, getOutboxSettings: 1, getProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 4, listCallRequests: 1, listCatalogueItems: 1, listOutboxApprovals: 1, listOutboxMessages: 1, listVisits: 2, readAvailability: 3 },
+  "today-v6-education/owner": { fetchMembers: 1, fetchQuotes: 2, fetchTenant: 1, getAccountSecurity: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getExampleStatus: 1, getInstitutionProfile: 1, getMyProfile: 1, getOutboxSettings: 1, getProfile: 2, getSlots: 1, getToday: 1, getTodayVisits: 1, getWhatsappAccount: 1, getWorkspacePack: 4, listAdmissions: 1, listCallRequests: 1, listCampaigns: 2, listFeePlans: 1, listOutboxApprovals: 1, listOutboxMessages: 1, listStudents: 1, listVisits: 3, readAvailability: 3, runReport: 1 },
+  "today-v6-example-loaded/owner": { fetchMembers: 1, fetchQuotes: 2, fetchTenant: 1, getAccountSecurity: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getExampleStatus: 1, getLedgerSummary: 1, getMaterialPolicy: 1, getMyProfile: 1, getOutboxSettings: 1, getProfile: 2, getSlots: 1, getToday: 1, getTodayVisits: 1, getWhatsappAccount: 1, getWorkspacePack: 4, listCallRequests: 1, listMaterialItems: 1, listMaterialQuotes: 2, listOutboxApprovals: 1, listOutboxMessages: 1, listTrips: 1, listVisits: 2, readAvailability: 3 },
+  "today/owner": { fetchMembers: 2, fetchQuotes: 1, fetchTenant: 1, getAgentsStatus: 1, getAiUsageWeek: 1, getMyProfile: 1, getOutboxSettings: 2, getSlots: 1, getToday: 1, getTodayVisits: 1, getVisitSettings: 1, getWorkspacePack: 4, listCallRequests: 1, listCatalogueItems: 1, listOutboxApprovals: 1, listOutboxMessages: 1, listVisits: 1, readAvailability: 3 },
+  "today/viewer": { fetchMembers: 1, fetchTenant: 1, getAgentsStatus: 1, getMyProfile: 1, getSlots: 1, getToday: 1, getTodayVisits: 1, getWorkspacePack: 2, readAvailability: 1 },
+  };
+  it.each(Object.keys(BEFORE))("%s: no read more often than before, and none new", async (key) => {
+    const [id, role] = key.split("/") as [string, (typeof ROLES)[number]];
+    await capture(SCENARIOS.find((s) => s.id === id)!, role);
+    const now: Record<string, number> = {};
+    for (const name of callLog) now[name] = (now[name] ?? 0) + 1;
+    for (const [name, n] of Object.entries(now)) expect(n, `${key}: ${name}`).toBeLessThanOrEqual(BEFORE[key][name] ?? 0);
   });
 });

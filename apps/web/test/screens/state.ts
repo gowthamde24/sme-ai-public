@@ -6,9 +6,12 @@
 export type Handler = (...args: unknown[]) => unknown;
 export const handlers: Record<string, Handler> = {};
 export const fixtureErrors: string[] = [];
+/** Every call a page made to the API layer, by name, in the order made (reset with the handlers): a test of how many reads a page makes counts here. */
+export const callLog: string[] = [];
 
 export function setHandlers(next: Record<string, Handler>): void {
   fixtureErrors.length = 0;
+  callLog.length = 0;
   for (const k of Object.keys(handlers)) delete handlers[k];
   Object.assign(handlers, next);
 }
@@ -18,6 +21,7 @@ export function wrap<T extends object>(mod: T, names: readonly string[]): T {
   const out: Record<string, unknown> = { ...(mod as Record<string, unknown>) };
   for (const name of names) {
     out[name] = async (...args: unknown[]) => {
+      callLog.push(name);
       const h = handlers[name];
       if (!h) throw new Error(`screens snapshot: no handler for ${name}(${args.map((a) => JSON.stringify(a)).join(", ").slice(0, 80)})`);
       try {

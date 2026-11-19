@@ -37,10 +37,12 @@ export type BandProps = {
   dateLine: string;
   /** The business's name (the eyebrow). */
   shop: string;
-  facts: BandFacts;
+  facts?: BandFacts;
   /** The quote at the top of the list (the briefing's link), or null. */
-  top: TopDecision | null;
-  waiting: number | null;
+  top?: TopDecision | null;
+  waiting?: number | null;
+  /** The briefing already made (the page draws it in its own part, `<Briefing/>` under a Suspense, because it waits for less than the rest of the page): drawn in place of the one made from `facts`, `top` and `waiting`. */
+  briefing?: React.ReactNode;
   /** The workspace id, for the live-call poll. */
   tenantId: string;
   /** Staging (CALL_SCREENS=mock and `?live=1`): a made-up live call. */
@@ -215,7 +217,7 @@ export function TodayBand(p: BandProps) {
           <OrbRing state="ambient" size="sm" />
         </button>
       </div>
-      <Briefing facts={p.facts} top={p.top} waiting={p.waiting} words={p.words} />
+      {p.briefing !== undefined ? p.briefing : <Briefing facts={p.facts ?? { enquiries: null, visits: null }} top={p.top ?? null} waiting={p.waiting ?? null} words={p.words} />}
       {talking && !desktop ? (
         <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-black/30">
           <LazyLiveBar variant="bar" words={p.words} appLang={p.lang} language={p.language} {...(isVoiceLang(p.businessLang) ? { voiceLanguage: p.businessLang, stt: p.businessLang } : {})} onClose={() => setTalking(false)} />
