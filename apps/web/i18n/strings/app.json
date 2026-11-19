@@ -120759,5 +120759,841 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bill.title": {
+  "en": "Billing",
+  "te": "బిల్లింగ్",
+  "hi": "बिलिंग",
+  "kn": "ಬಿಲ್ಲಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.sub": {
+  "en": "Your wallet, what you used this month and your plan.",
+  "te": "మీ వాలెట్, ఈ నెల మీరు వాడినది, మీ ప్లాన్.",
+  "hi": "आपका वॉलेट, इस महीने आपने क्या इस्तेमाल किया और आपका प्लान।",
+  "kn": "ನಿಮ್ಮ ವಾಲೆಟ್, ಈ ತಿಂಗಳು ಬಳಸಿದ್ದು ಮತ್ತು ನಿಮ್ಮ ಪ್ಲಾನ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.preview": {
+  "en": "Preview",
+  "te": "ప్రివ్యూ",
+  "hi": "प्रीव्यू",
+  "kn": "ಪ್ರಿವ್ಯೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.wallet.title": {
+  "en": "Wallet",
+  "te": "వాలెట్",
+  "hi": "वॉलेट",
+  "kn": "ವಾಲೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.wallet.minutes": {
+  "en": "About {n} call minutes",
+  "te": "సుమారు {n} కాల్ నిమిషాలు",
+  "hi": "लगभग {n} कॉल मिनट",
+  "kn": "ಸುಮಾರು {n} ಕಾಲ್ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.wallet.low": {
+  "en": "Wallet is low",
+  "te": "వాలెట్‌లో డబ్బులు తక్కువగా ఉన్నాయి",
+  "hi": "वॉलेट में पैसे कम हैं",
+  "kn": "ವಾಲೆಟ್‌ನಲ್ಲಿ ಹಣ ಕಡಿಮೆ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.wallet.empty": {
+  "en": "Wallet is empty",
+  "te": "వాలెట్ ఖాళీగా ఉంది",
+  "hi": "वॉलेट खाली है",
+  "kn": "ವಾಲೆಟ್ ಖಾಲಿ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.until": {
+  "en": "Month ends {date}",
+  "te": "ఈ నెల {date} న ముగుస్తుంది",
+  "hi": "महीना {date} को खत्म होता है",
+  "kn": "ತಿಂಗಳು {date} ರಂದು ಮುಗಿಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.usage.title": {
+  "en": "This month",
+  "te": "ఈ నెల",
+  "hi": "इस महीने",
+  "kn": "ಈ ತಿಂಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.usage.soon": {
+  "en": "Usage of numbers, searches and WhatsApp will show here when it is ready.",
+  "te": "నంబర్లు, సెర్చ్‌లు, WhatsApp వాడకం సిద్ధమైనప్పుడు ఇక్కడ కనిపిస్తుంది.",
+  "hi": "नंबर, सर्च और WhatsApp का इस्तेमाल तैयार होते ही यहाँ दिखेगा।",
+  "kn": "ನಂಬರ್, ಸರ್ಚ್ ಮತ್ತು WhatsApp ಬಳಕೆ ಸಿದ್ಧವಾದಾಗ ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.f.calls": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕಾಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.f.numbers": {
+  "en": "Phone numbers",
+  "te": "ఫోన్ నంబర్లు",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.f.find": {
+  "en": "Find customers",
+  "te": "కొత్త కస్టమర్లను వెతకడం",
+  "hi": "नए ग्राहक ढूँढना",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.f.whatsapp": {
+  "en": "WhatsApp messages",
+  "te": "WhatsApp మెసేజ్‌లు",
+  "hi": "WhatsApp मैसेज",
+  "kn": "WhatsApp ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.calls.used": {
+  "en": "{used} of {included} minutes used",
+  "te": "{included} నిమిషాల్లో {used} వాడారు",
+  "hi": "{included} मिनट में से {used} इस्तेमाल हुए",
+  "kn": "{included} ನಿಮಿಷಗಳಲ್ಲಿ {used} ಬಳಸಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.numbers.have": {
+  "en": "You have {n} numbers",
+  "te": "మీకు {n} నంబర్లు ఉన్నాయి",
+  "hi": "आपके पास {n} नंबर हैं",
+  "kn": "ನಿಮ್ಮ ಬಳಿ {n} ನಂಬರ್‌ಗಳಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.numbers.have.one": {
+  "en": "You have 1 number",
+  "te": "మీకు 1 నంబర్ ఉంది",
+  "hi": "आपके पास 1 नंबर है",
+  "kn": "ನಿಮ್ಮ ಬಳಿ 1 ನಂಬರ್ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.numbers.add": {
+  "en": "Add a number",
+  "te": "నంబర్ జోడించండి",
+  "hi": "नंबर जोड़ें",
+  "kn": "ನಂಬರ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.find.used": {
+  "en": "{used} of {free} free searches used",
+  "te": "{free} ఉచిత సెర్చ్‌లలో {used} వాడారు",
+  "hi": "{free} फ्री सर्च में से {used} इस्तेमाल हुईं",
+  "kn": "{free} ಉಚಿತ ಸರ್ಚ್‌ಗಳಲ್ಲಿ {used} ಬಳಸಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.limit.none": {
+  "en": "No limit",
+  "te": "పరిమితి లేదు",
+  "hi": "कोई सीमा नहीं",
+  "kn": "ಮಿತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.limit.saved": {
+  "en": "Saved",
+  "te": "సేవ్ అయింది",
+  "hi": "सेव हो गया",
+  "kn": "ಸೇವ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.limit.err": {
+  "en": "Could not save. Try again.",
+  "te": "సేవ్ కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "सेव नहीं हो पाया। फिर कोशिश करें।",
+  "kn": "ಸೇವ್ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.limit.na": {
+  "en": "Limits cannot be set yet.",
+  "te": "పరిమితులు ఇంకా పెట్టలేరు.",
+  "hi": "सीमा अभी तय नहीं की जा सकती।",
+  "kn": "ಮಿತಿಗಳನ್ನು ಇನ್ನೂ ಹೊಂದಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.limit.role": {
+  "en": "Only the Owner and Admins can change limits.",
+  "te": "ఓనర్, అడ్మిన్‌లు మాత్రమే పరిమితులు మార్చగలరు.",
+  "hi": "सिर्फ़ ओनर और एडमिन सीमा बदल सकते हैं।",
+  "kn": "ಓನರ್ ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ಮಿತಿ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.warn.at80": {
+  "en": "80 percent used",
+  "te": "80 శాతం వాడారు",
+  "hi": "80 प्रतिशत इस्तेमाल हुआ",
+  "kn": "80 ಶೇಕಡಾ ಬಳಸಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.warn.at100": {
+  "en": "All used",
+  "te": "అంతా వాడేశారు",
+  "hi": "सब इस्तेमाल हो गया",
+  "kn": "ಎಲ್ಲವೂ ಬಳಕೆಯಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.warn.paused": {
+  "en": "Stopped for this month",
+  "te": "ఈ నెల ఆగిపోయింది",
+  "hi": "इस महीने बंद है",
+  "kn": "ಈ ತಿಂಗಳು ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.warn.calls.at80": {
+  "en": "You have used 80 percent of your included minutes.",
+  "te": "మీ ప్లాన్‌లోని నిమిషాల్లో 80 శాతం వాడారు.",
+  "hi": "आपके प्लान के मिनट में से 80 प्रतिशत इस्तेमाल हो चुके हैं।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನ ನಿಮಿಷಗಳಲ್ಲಿ 80 ಶೇಕಡಾ ಬಳಸಿದ್ದೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.warn.find.at80": {
+  "en": "You have used 80 percent of your free searches.",
+  "te": "ఉచిత సెర్చ్‌లలో 80 శాతం వాడారు.",
+  "hi": "फ्री सर्च में से 80 प्रतिशत इस्तेमाल हो चुकी हैं।",
+  "kn": "ಉಚಿತ ಸರ್ಚ್‌ಗಳಲ್ಲಿ 80 ಶೇಕಡಾ ಬಳಸಿದ್ದೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.hint.basis": {
+  "en": "Worked out from what you used so far this month.",
+  "te": "ఈ నెల ఇప్పటి వరకు మీరు వాడిన దాని ఆధారంగా లెక్క.",
+  "hi": "इस महीने अब तक के इस्तेमाल से निकाला गया।",
+  "kn": "ಈ ತಿಂಗಳು ಇದುವರೆಗಿನ ಬಳಕೆಯ ಆಧಾರದ ಮೇಲೆ ಲೆಕ್ಕ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.hint.see": {
+  "en": "See {plan}",
+  "te": "{plan} చూడండి",
+  "hi": "{plan} देखें",
+  "kn": "{plan} ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.plans.title": {
+  "en": "Plans",
+  "te": "ప్లాన్లు",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.plans.every": {
+  "en": "Every plan gets every feature.",
+  "te": "ప్రతి ప్లాన్‌లో అన్ని ఫీచర్లు ఉంటాయి.",
+  "hi": "हर प्लान में हर फ़ीचर मिलता है।",
+  "kn": "ಪ್ರತಿ ಪ್ಲಾನ್‌ನಲ್ಲೂ ಎಲ್ಲಾ ಫೀಚರ್‌ಗಳು ಇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.plan.popular": {
+  "en": "Most popular",
+  "te": "అందరూ ఎక్కువగా తీసుకునేది",
+  "hi": "सबसे लोकप्रिय",
+  "kn": "ಅತ್ಯಂತ ಜನಪ್ರಿಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.plan.current": {
+  "en": "Your plan",
+  "te": "మీ ప్లాన్",
+  "hi": "आपका प्लान",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.plan.change": {
+  "en": "Change plan",
+  "te": "ప్లాన్ మార్చండి",
+  "hi": "प्लान बदलें",
+  "kn": "ಪ್ಲಾನ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.plan.priority": {
+  "en": "Priority onboarding",
+  "te": "ప్రయారిటీ ఆన్‌బోర్డింగ్",
+  "hi": "प्रायोरिटी ऑनबोर्डिंग",
+  "kn": "ಪ್ರಯಾರಿಟಿ ಆನ್‌ಬೋರ್ಡಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.plan.self": {
+  "en": "Set up yourself, with your assistant",
+  "te": "మీ అసిస్టెంట్‌తో కలిసి మీరే సెటప్ చేసుకోండి",
+  "hi": "अपने असिस्टेंट के साथ खुद सेटअप करें",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಜೊತೆ ನೀವೇ ಸೆಟಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.how.title": {
+  "en": "How billing works",
+  "te": "బిల్లింగ్ ఎలా పనిచేస్తుంది",
+  "hi": "बिलिंग कैसे काम करती है",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.how.sub": {
+  "en": "Plans, prices and a few rules",
+  "te": "ప్లాన్లు, ధరలు, కొన్ని నియమాలు",
+  "hi": "प्लान, कीमतें और कुछ नियम",
+  "kn": "ಪ್ಲಾನ್‌ಗಳು, ಬೆಲೆಗಳು ಮತ್ತು ಕೆಲವು ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bill.preview.text": {
+  "en": "This is how billing will look when paid plans start. The numbers are made up and nothing is charged.",
+  "te": "This is how billing will look when paid plans start. The numbers are made up and nothing is charged.",
+  "hi": "This is how billing will look when paid plans start. The numbers are made up and nothing is charged.",
+  "kn": "This is how billing will look when paid plans start. The numbers are made up and nothing is charged.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.wallet.low.text": {
+  "en": "Add money so your assistant's calls do not wait.",
+  "te": "Add money so your assistant's calls do not wait.",
+  "hi": "Add money so your assistant's calls do not wait.",
+  "kn": "Add money so your assistant's calls do not wait.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.wallet.empty.text": {
+  "en": "Calls wait in a queue, they are not lost. They go out when you add money.",
+  "te": "Calls wait in a queue, they are not lost. They go out when you add money.",
+  "hi": "Calls wait in a queue, they are not lost. They go out when you add money.",
+  "kn": "Calls wait in a queue, they are not lost. They go out when you add money.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.wallet.carry": {
+  "en": "Money you add can be used for 90 days.",
+  "te": "Money you add can be used for 90 days.",
+  "hi": "Money you add can be used for 90 days.",
+  "kn": "Money you add can be used for 90 days.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.calls.payg": {
+  "en": "{used} minutes used, {rate} a minute",
+  "te": "{used} minutes used, {rate} a minute",
+  "hi": "{used} minutes used, {rate} a minute",
+  "kn": "{used} minutes used, {rate} a minute",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.calls.extra": {
+  "en": "{n} extra minutes: {amount} from your wallet",
+  "te": "{n} extra minutes: {amount} from your wallet",
+  "hi": "{n} extra minutes: {amount} from your wallet",
+  "kn": "{n} extra minutes: {amount} from your wallet",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.numbers.rule": {
+  "en": "1 number is included. Each extra number is {price} a month.",
+  "te": "1 number is included. Each extra number is {price} a month.",
+  "hi": "1 number is included. Each extra number is {price} a month.",
+  "kn": "1 number is included. Each extra number is {price} a month.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.numbers.extra": {
+  "en": "Extra numbers this month: {amount}",
+  "te": "Extra numbers this month: {amount}",
+  "hi": "Extra numbers this month: {amount}",
+  "kn": "Extra numbers this month: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.find.then": {
+  "en": "After that, each search is {price}.",
+  "te": "After that, each search is {price}.",
+  "hi": "After that, each search is {price}.",
+  "kn": "After that, each search is {price}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.find.paid": {
+  "en": "{n} paid searches: {amount} from your wallet",
+  "te": "{n} paid searches: {amount} from your wallet",
+  "hi": "{n} paid searches: {amount} from your wallet",
+  "kn": "{n} paid searches: {amount} from your wallet",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.wa.rule": {
+  "en": "WhatsApp costs what Meta charges. We add nothing.",
+  "te": "WhatsApp costs what Meta charges. We add nothing.",
+  "hi": "WhatsApp costs what Meta charges. We add nothing.",
+  "kn": "WhatsApp costs what Meta charges. We add nothing.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.wa.spent": {
+  "en": "{amount} this month",
+  "te": "{amount} this month",
+  "hi": "{amount} this month",
+  "kn": "{amount} this month",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.limit.calls": {
+  "en": "Stop calls for this month after {limit}",
+  "te": "Stop calls for this month after {limit}",
+  "hi": "Stop calls for this month after {limit}",
+  "kn": "Stop calls for this month after {limit}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.limit.find": {
+  "en": "Stop searches for this month after {limit}",
+  "te": "Stop searches for this month after {limit}",
+  "hi": "Stop searches for this month after {limit}",
+  "kn": "Stop searches for this month after {limit}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.limit.wa": {
+  "en": "Stop WhatsApp messages for this month after {limit}",
+  "te": "Stop WhatsApp messages for this month after {limit}",
+  "hi": "Stop WhatsApp messages for this month after {limit}",
+  "kn": "Stop WhatsApp messages for this month after {limit}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.limit.help": {
+  "en": "Optional. With no limit, a feature keeps going as long as your wallet has money.",
+  "te": "Optional. With no limit, a feature keeps going as long as your wallet has money.",
+  "hi": "Optional. With no limit, a feature keeps going as long as your wallet has money.",
+  "kn": "Optional. With no limit, a feature keeps going as long as your wallet has money.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.warn.calls.at100": {
+  "en": "All included minutes are used. Extra minutes cost {rate} each from your wallet.",
+  "te": "All included minutes are used. Extra minutes cost {rate} each from your wallet.",
+  "hi": "All included minutes are used. Extra minutes cost {rate} each from your wallet.",
+  "kn": "All included minutes are used. Extra minutes cost {rate} each from your wallet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.warn.find.at100": {
+  "en": "All free searches are used. Each search now costs {price} from your wallet.",
+  "te": "All free searches are used. Each search now costs {price} from your wallet.",
+  "hi": "All free searches are used. Each search now costs {price} from your wallet.",
+  "kn": "All free searches are used. Each search now costs {price} from your wallet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.warn.limit.at80": {
+  "en": "You have used 80 percent of the limit you set ({limit}).",
+  "te": "You have used 80 percent of the limit you set ({limit}).",
+  "hi": "You have used 80 percent of the limit you set ({limit}).",
+  "kn": "You have used 80 percent of the limit you set ({limit}).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.warn.limit.at100": {
+  "en": "Stopped for this month: you reached your limit of {limit}. Choose a higher limit to carry on.",
+  "te": "Stopped for this month: you reached your limit of {limit}. Choose a higher limit to carry on.",
+  "hi": "Stopped for this month: you reached your limit of {limit}. Choose a higher limit to carry on.",
+  "kn": "Stopped for this month: you reached your limit of {limit}. Choose a higher limit to carry on.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.hint.save": {
+  "en": "You'd save {amount} on {plan} this month.",
+  "te": "You'd save {amount} on {plan} this month.",
+  "hi": "You'd save {amount} on {plan} this month.",
+  "kn": "You'd save {amount} on {plan} this month.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.plan.price": {
+  "en": "{price} a month + GST",
+  "te": "{price} a month + GST",
+  "hi": "{price} a month + GST",
+  "kn": "{price} a month + GST",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.plan.minutes.payg": {
+  "en": "Calls {rate} a minute",
+  "te": "Calls {rate} a minute",
+  "hi": "Calls {rate} a minute",
+  "kn": "Calls {rate} a minute",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.plan.minutes": {
+  "en": "{n} minutes included, extra minutes {rate} each",
+  "te": "{n} minutes included, extra minutes {rate} each",
+  "hi": "{n} minutes included, extra minutes {rate} each",
+  "kn": "{n} minutes included, extra minutes {rate} each",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.plan.searches": {
+  "en": "{free} free searches, then {price} each",
+  "te": "{free} free searches, then {price} each",
+  "hi": "{free} free searches, then {price} each",
+  "kn": "{free} free searches, then {price} each",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.plan.numbers": {
+  "en": "1 number included, each extra number {price} a month",
+  "te": "1 number included, each extra number {price} a month",
+  "hi": "1 number included, each extra number {price} a month",
+  "kn": "1 number included, each extra number {price} a month",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.plan.yearly": {
+  "en": "Pay for a year: 2 months free",
+  "te": "Pay for a year: 2 months free",
+  "hi": "Pay for a year: 2 months free",
+  "kn": "Pay for a year: 2 months free",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.plans.gst": {
+  "en": "All prices are plus 18 percent GST. Launch prices stay the same for 12 months.",
+  "te": "All prices are plus 18 percent GST. Launch prices stay the same for 12 months.",
+  "hi": "All prices are plus 18 percent GST. Launch prices stay the same for 12 months.",
+  "kn": "All prices are plus 18 percent GST. Launch prices stay the same for 12 months.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.how.30s": {
+  "en": "Calls are billed every 30 seconds. Calls nobody answers are free.",
+  "te": "Calls are billed every 30 seconds. Calls nobody answers are free.",
+  "hi": "Calls are billed every 30 seconds. Calls nobody answers are free.",
+  "kn": "Calls are billed every 30 seconds. Calls nobody answers are free.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.how.ai": {
+  "en": "Nothing is charged for the assistant's actions or answers.",
+  "te": "Nothing is charged for the assistant's actions or answers.",
+  "hi": "Nothing is charged for the assistant's actions or answers.",
+  "kn": "Nothing is charged for the assistant's actions or answers.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.how.carry": {
+  "en": "Money you add can be used for 90 days.",
+  "te": "Money you add can be used for 90 days.",
+  "hi": "Money you add can be used for 90 days.",
+  "kn": "Money you add can be used for 90 days.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.how.readonly": {
+  "en": "If a payment is missed at the end, your account becomes read-only and your data is kept for 90 days.",
+  "te": "If a payment is missed at the end, your account becomes read-only and your data is kept for 90 days.",
+  "hi": "If a payment is missed at the end, your account becomes read-only and your data is kept for 90 days.",
+  "kn": "If a payment is missed at the end, your account becomes read-only and your data is kept for 90 days.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bill.how.start": {
+  "en": "New businesses get ₹50 free to start.",
+  "te": "New businesses get ₹50 free to start.",
+  "hi": "New businesses get ₹50 free to start.",
+  "kn": "New businesses get ₹50 free to start.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }
