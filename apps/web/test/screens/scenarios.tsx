@@ -720,6 +720,22 @@ add({
   render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "agent" })),
   handlers: (role) => ({ ...outboxHandlers(role), getSchedulerSettings: () => SETTINGS_JSON }),
 });
+// JOBS (owner 19 Nov): Settings > Automation as sentences with the choice inside, the "What it will do" lines, "More choices" and ONE Save (the same three actions as the three forms of before)
+add({
+  id: "settings-agent-jobs",
+  roles: ["owner"],
+  render: async () => {
+    const before = process.env.JOBS;
+    process.env.JOBS = "mock";
+    try {
+      return await (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "agent" }));
+    } finally {
+      if (before === undefined) delete process.env.JOBS;
+      else process.env.JOBS = before;
+    }
+  },
+  handlers: (role) => ({ ...outboxHandlers(role), getSchedulerSettings: () => SETTINGS_JSON }),
+});
 add({ id: "help", render: async () => (await import("@/app/app/tenants/[tenantId]/help/page")).default(props({})), handlers: (role) => ({ ...base(role) }) });
 add({ id: "help-guide-today", render: async () => (await import("@/app/app/tenants/[tenantId]/help/[guide]/page")).default(props({ guide: "today" })), handlers: (role) => ({ ...base(role) }) });
 add({ id: "help-guide-outbox-english-only", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/help/[guide]/page")).default(props({ guide: "outbox" })), handlers: (role) => ({ ...base(role) }) });
@@ -841,6 +857,16 @@ add({
   roles: ["owner", "sales"],
   render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({}))),
   handlers: (role) => ({ ...finderHandlers(LF.AVAILABLE, V4_SPREAD)(role), listSearches: async () => [(await import("@/lib/api/lead-finder")).parseSearch({ ...LF.SEARCH_DONE, area: "Hyderabad" })] }),
+});
+// JOBS (owner 19 Nov): the Researcher cards of the Lead Finder in test mode (JOBS=mock): fit ring, why it fits, talking points, Call from your phone / Plan a visit / Mark as contacted, the free-search line and "Find shops now"
+add({
+  id: "retailers-jobs",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1", JOBS: "mock" }, async () => await (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({}))),
+  handlers: (role) => ({
+    ...finderHandlers({ ...LF.AVAILABLE, access: "available", searches_per_month: 1, searches_left_this_month: 1 }, [LF.PROSPECT_STRONG, LF.PROSPECT_CONTACTED, LF.PROSPECT_MAYBE])(role),
+    listSearches: async () => [(await import("@/lib/api/lead-finder")).parseSearch({ ...LF.SEARCH_DONE, area: "Hyderabad", finished_at: "2026-11-12T08:00:00Z" })],
+  }),
 });
 // app v4 part 5: Customers > Map, where the customers are (only with APP_V4)
 add({
@@ -1069,6 +1095,13 @@ add({ id: "campaigns-construction-empty", roles: ["owner"], render: async () => 
 add({ id: "campaign-new-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/new/page")).default(props({})), handlers: (role) => ({ ...cons(role), listTemplates: () => parseTemplates({ templates: [{ id: "7e000000-0000-4000-8000-000000000001", name: "payment_reminder_en", language: "en", purpose: "reminder", status: "approved" }] }) }) });
 add({ id: "campaign-new-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), listTemplates: () => parseTemplates({ templates: [] }) }) });
 add({ id: "campaign-edit-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/[campaignId]/edit/page")).default(props({ campaignId: CAMPAIGN })), handlers: (role) => ({ ...cons(role), ...campaignReads(), listTemplates: () => parseTemplates({ templates: [] }) }) });
+// JOBS (the simplicity pass): one campaign's call settings as sentences (the campaign is marked where it differs; "Use my assistant's settings" stays)
+add({
+  id: "jobs-campaign-call-settings",
+  roles: ["owner", "admin"],
+  render: () => withEnv({ CALL_SETTINGS_SCREENS: "mock", JOBS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/campaigns/[campaignId]/call-settings/page")).default(props({ campaignId: CAMPAIGN }))),
+  handlers: (role) => ({ ...cons(role), ...campaignReads() }),
+});
 // job DQ part 3: one campaign's own call settings (the Owner saves, an Admin reads), in test mode
 add({
   id: "campaign-call-settings-construction",
@@ -1098,6 +1131,81 @@ add({ id: "offer-new-no-template", roles: ["owner"], render: () => offerOn(async
 add({ id: "offer-audience", roles: ["owner", "sales"], render: () => offerOn(campaignOf("audience")), handlers: (role) => ({ ...cons(role), ...campaignReads(OFFER_DETAIL) }) });
 add({ id: "offer-approve", roles: ["owner", "sales"], render: () => offerOn(campaignOf("approve")), handlers: (role) => ({ ...cons(role), ...campaignReads(OFFER_DETAIL), getPreview: () => parsePreview(OFFER_PREVIEW) }) });
 add({ id: "campaign-results", roles: ["owner", "admin"], render: campaignOf("results"), handlers: (role) => ({ ...cons(role), ...campaignReads(DETAIL_RUNNING_JSON) }) });
+// JOBS (owner 19 Nov): the Jobs page in test mode (JOBS=mock: the made-up jobs of the demo shop); the Owner and an Admin switch, the others read
+add({
+  id: "jobs-mock",
+  roles: ["owner", "admin", "sales"],
+  render: async () => {
+    const before = process.env.JOBS;
+    process.env.JOBS = "mock";
+    try {
+      return await (await import("@/app/app/tenants/[tenantId]/jobs/page")).default(props({}));
+    } finally {
+      if (before === undefined) delete process.env.JOBS;
+      else process.env.JOBS = before;
+    }
+  },
+  handlers: (role) => ({ ...cons(role) }),
+});
+// JOBS: Start a job (owner 19 Nov): the box, the examples and the suggested jobs of the pack (the saree shop's four, the plain three for another business type); Sales read one sentence
+const jobsNew = (search: Record<string, string> = {}) => async () => {
+  const before = process.env.JOBS;
+  process.env.JOBS = "mock";
+  try {
+    return await (await import("@/app/app/tenants/[tenantId]/jobs/new/page")).default(props({}, search));
+  } finally {
+    if (before === undefined) delete process.env.JOBS;
+    else process.env.JOBS = before;
+  }
+};
+// JOBS: ONE job's page in test mode (JOBS=mock): Call every new enquiry (running, the full page) and the follow-up job that failed (the reason and its fix); Owner and Admin change, Sales reads
+const jobPageOf = (jobId: string) => async () => {
+  const before = process.env.JOBS;
+  process.env.JOBS = "mock";
+  try {
+    return await (await import("@/app/app/tenants/[tenantId]/jobs/[jobId]/page")).default(props({ jobId }));
+  } finally {
+    if (before === undefined) delete process.env.JOBS;
+    else process.env.JOBS = before;
+  }
+};
+add({ id: "jobs-new-mock", roles: ["owner", "admin", "sales"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
+add({ id: "jobs-new-mock-construction", roles: ["owner"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(CONSTRUCTION) }) });
+add({ id: "jobs-new-mock-look-first", roles: ["owner"], render: jobsNew({ look: "followups" }), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
+// JOBS (mock 08 part 2): the Do-Not-Call list in test mode; the Owner and an Admin add a number, only the Owner removes one, the others read
+add({
+  id: "do-not-call-mock",
+  roles: ["owner", "admin", "sales"],
+  render: async () => {
+    const before = process.env.JOBS;
+    process.env.JOBS = "mock";
+    try {
+      return await (await import("@/app/app/tenants/[tenantId]/do-not-call/page")).default(props({}));
+    } finally {
+      if (before === undefined) delete process.env.JOBS;
+      else process.env.JOBS = before;
+    }
+  },
+  handlers: (role) => ({ ...cons(role) }),
+});
+// the same list with "Show numbers that came off the list" opened (`?lifted=1`: asks with include=lifted and shows how each came off)
+add({
+  id: "do-not-call-mock-lifted",
+  roles: ["owner"],
+  render: async () => {
+    const before = process.env.JOBS;
+    process.env.JOBS = "mock";
+    try {
+      return await (await import("@/app/app/tenants/[tenantId]/do-not-call/page")).default(props({}, { lifted: "1" }));
+    } finally {
+      if (before === undefined) delete process.env.JOBS;
+      else process.env.JOBS = before;
+    }
+  },
+  handlers: (role) => ({ ...cons(role) }),
+});
+add({ id: "jobs-detail-mock", roles: ["owner", "admin", "sales"], render: jobPageOf("66666666-6666-4666-8666-666666666601"), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "jobs-detail-failed-mock", roles: ["owner", "sales"], render: jobPageOf("66666666-6666-4666-8666-666666666603"), handlers: (role) => ({ ...cons(role) }) });
 add({ id: "call-list-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({})), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList(CALL_LIST_JSON) }) });
 add({ id: "call-list-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({}, { tab: "done" })), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList({ items: [], next_cursor: null }) }) });
 add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });
@@ -1265,6 +1373,8 @@ const TOPUP_ENV = { TOPUP_SCREENS: "mock" };
 add({ id: "demo-video-off", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/demo-video/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "settings-plan-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "plan" }))), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: null, state: null }) }) });
 add({ id: "today-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, todayPage()), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+// JOBS: Today's "Running now" in test mode (JOBS=mock): GET /jobs/today (the full Job objects: a failed job with its fix, a job a missing WhatsApp blocks); the Owner switches
+add({ id: "today-jobs-mock", roles: ["owner"], render: () => withEnv({ DESIGN_V6: "1", JOBS: "mock" }, todayPage()), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 // -- scenarios: lead desk site (web/ds-lead-desk)
 // -- scenarios: leads core (web/dr-leads)
 const OUT_BATCH = "ba000000-0000-4000-8000-0000000000b1";
@@ -1383,6 +1493,10 @@ const outreachV6 = (extra: Record<string, string> = {}) => () => withEnv({ ...V6
 add({ id: "campaigns-v6-lists", roles: ["owner", "admin", "sales"], render: outreachV6({ BALANCE_SCREENS: "mock" }), handlers: outreachReads });
 add({ id: "campaigns-v6-lists-plan-numbers", roles: ["owner"], render: outreachV6(), handlers: outreachReads });
 add({ id: "campaigns-v6-rules", roles: ["owner", "admin", "sales"], render: () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/rules/page")).default(props({}))), handlers: outreachReads });
+// JOBS (the simplicity pass, owner 19 Nov): the same Rules page with JOBS on: each standing rule is one sentence with the choice inside and a switch, the calling hours and tries are sentences, the rest sits under More choices
+add({ id: "jobs-rules-simple", roles: ["owner", "admin", "sales"], render: () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1", JOBS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/rules/page")).default(props({}, { all: "1" }))), handlers: outreachReads });
+// JOBS (the simplicity pass): the call settings of Train how it talks > Rules as sentences with the choice inside, "What it will do:" and More choices
+add({ id: "jobs-rules-call-settings", roles: ["owner", "admin"], render: () => withEnv({ ...MYA_ENV, JOBS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({}, { section: "rules" }))), handlers: (role) => myaHandlers(role) });
 const MC_ROWS = [
   { contact_id: "ca000000-0000-4000-8000-0000000000c1", name: "Ramesh K.", phone: null, state: "granted", at: "2026-11-16T09:30:00Z", via: "owner_recorded", by: "Meena", note: "said yes in shop", stopped: false },
   { contact_id: "ca000000-0000-4000-8000-0000000000c2", name: "Padmaja Naidu", phone: null, state: "unknown", at: null, via: null, by: null, note: null, stopped: false },

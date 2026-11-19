@@ -11,6 +11,7 @@ import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { importMode, recentImports, sheetState } from "@/lib/lead-desk/imports/source";
+import { jobsScreens } from "@/lib/screens/flag";
 
 import { createSheetLinkAction, importLeadsAction, previewLeadsAction, readLeadsAction, sheetLinkAction } from "../import-actions";
 import { leadDeskContext } from "../lead-desk-prelude";
@@ -39,7 +40,8 @@ export default async function ImportRoute({ params }: PageProps<"/app/tenants/[t
     throw error;
   }
   const lang = await getLang();
-  const words = wordsFor(lang, ["li."]);
+  const tick = jobsScreens() !== "off";
+  const words = wordsFor(lang, ["li.", ...(tick ? ["jobs.trust.consent"] : [])]);
   const base = `/app/tenants/${tenantId}`;
   const whenOf = (iso: string) => `${indiaDay(iso)} ${indiaClock(iso)}`;
   return (
@@ -49,6 +51,7 @@ export default async function ImportRoute({ params }: PageProps<"/app/tenants/[t
         words={words}
         base={base}
         role={role}
+        consentTick={tick}
         test={importMode() === "mock"}
         fileEndpoint={`${base}/import/send`}
         sheets={sheets?.mode === "ok" ? { access: sheets.access, links: sheets.links } : null}

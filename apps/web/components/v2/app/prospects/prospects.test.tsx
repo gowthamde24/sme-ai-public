@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const refresh = vi.fn();
+vi.mock("./LazyMarkContacted", async () => ({ MarkContacted: (await import("./MarkContacted")).MarkContacted }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 
 import { appDict } from "@/i18n/app";

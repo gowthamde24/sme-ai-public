@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 
+import { JobsToday } from "@/components/v2/app/jobs/JobsToday";
 import { FinishChip } from "@/components/v2/app/today/v6/day-one/FinishChip";
 import { doneCount, showChecklist, showChip, stepViews, type StepId } from "@/components/v2/app/today/v6/day-one/steps";
 import type { DayOneIn, LiveCallSeed, V6In } from "@/components/v2/app/today/v6/types";
@@ -7,6 +8,7 @@ import { wordsFor } from "@/i18n/app-words";
 import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { listCalls } from "@/lib/api/calls";
+import { readJobsToday } from "@/lib/api/jobs";
 import { getProfile } from "@/lib/api/profile";
 import { businessLanguage } from "@/lib/assistant/business-language";
 import { endDemoCallAction, startDemoCallAction } from "./demo-call-actions";
@@ -25,6 +27,7 @@ import type { StepCheck } from "@/lib/packs/activation";
 import { readFacts } from "@/lib/packs/activation-facts";
 import { assistantStatusScreens, callScreens, demoCall, designV6, outreachScreens, taskScreens } from "@/lib/screens/flag";
 import { readResultsV6 } from "./report/v6-data";
+import { setJobEnabledAction } from "./jobs/actions";
 
 import { dismissChipAction, goLiveAction, skipSetupAction, testNumberAction } from "./day-one-actions";
 
@@ -116,6 +119,9 @@ export async function readV6({ token, tenantId, userId = "", role, lang, shop, u
         }
       : null;
   const chip: ReactNode = steps && showChip({ done: count, choice, checklistShown: checklist, manages }) ? <FinishChip done={count} base={base} words={words} dismiss={dismissChipAction.bind(null, tenantId)} /> : null;
+  // JOBS: "Running now" under Needs you (null when JOBS is off or the API has no jobs yet)
+  const jobList = (await readJobsToday(token, tenantId))?.jobs ?? null;
+  const jobs: ReactNode = jobList && jobList.length > 0 ? <JobsToday jobs={jobList} words={wordsFor(lang, ["jobs."])} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} /> : null;
   const mockOn = callMode === "mock";
   const calls = await callsAsked;
   return {
@@ -132,5 +138,6 @@ export async function readV6({ token, tenantId, userId = "", role, lang, shop, u
     demoCall: manages && demoCall() && (await readIsDemo(token, tenantId, shop)) ? { start: startDemoCallAction.bind(null, tenantId), end: endDemoCallAction.bind(null, tenantId) } : null,
     dayOne,
     chip,
+    jobs,
   };
 }

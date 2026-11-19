@@ -18,9 +18,7 @@ const day = (iso: string): string => new Intl.DateTimeFormat("en-GB", { day: "nu
  * "Mark as contacted" (Lead Finder v1.0, owner 19 Nov 2026), the third thing a person can do with a business the Lead Finder found, beside "Call from your phone" and "Plan a visit": they say they spoke to it themselves. It asks when (today, yesterday,
  * 2 days ago, a week ago) and an optional note, records who marked it, and then shows a solid "Contacted · 19 Nov" chip with the name and the note. It never calls or messages anyone; marking again only updates the day and the note.
  */
-export function MarkContacted({ prospect, words, actions }: { prospect: Shown; words: Words; actions: MarkContactedActions }) {
-  const t = makeT(words);
-  const id = useId();
+export function useMarkContacted(prospect: Shown, actions: MarkContactedActions) {
   const [now, setNow] = useState<Shown>(prospect);
   const [open, setOpen] = useState(false);
   const [daysAgo, setDaysAgo] = useState<ContactDaysAgo>(0);
@@ -39,57 +37,81 @@ export function MarkContacted({ prospect, words, actions }: { prospect: Shown; w
     setNote(r.data.contactNote ?? "");
     setOpen(false);
   }
+  return { now, open, setOpen, daysAgo, setDaysAgo, note, setNote, busy, failure, contacted, save };
+}
+export type MarkState = ReturnType<typeof useMarkContacted>;
 
+/** The solid "Contacted · 19 Nov" chip with who marked it and the note (nothing when it was not marked). */
+export function ContactedNote({ m, words }: { m: Pick<MarkState, "now" | "contacted">; words: Words }) {
+  const t = makeT(words);
+  if (!m.contacted) return null;
+  return (
+    <div className="flex flex-col gap-1" data-part="contacted">
+      <span className="flex flex-wrap items-center gap-2">
+        <span className="inline-flex min-h-8 items-center whitespace-nowrap rounded-full bg-ink px-3 text-sm font-bold text-surface" data-chip="contacted">
+          {t("lf.v6.mark.chip", { date: day(m.now.lastContactedAt as string) })}
+        </span>
+        {m.now.contactedBy ? <span className="text-sm text-muted">{t("lf.v6.mark.by", { name: m.now.contactedBy })}</span> : null}
+      </span>
+      {m.now.contactNote ? <p className="m-0 break-words text-sm text-ink" data-part="contact-note">{m.now.contactNote}</p> : null}
+    </div>
+  );
+}
+
+/** The small form that opens under the button: when (today, yesterday, 2 days ago, a week ago), an optional note, Save and Cancel. */
+export function MarkForm({ m, words }: { m: MarkState; words: Words }) {
+  const t = makeT(words);
+  const id = useId();
+  return (
+    <form
+      className="flex flex-col gap-2 rounded-2xl border border-line bg-surface-2 p-3"
+      onSubmit={(e) => {
+        e.preventDefault();
+        void m.save();
+      }}
+    >
+      <label htmlFor={`${id}-when`} className="text-sm font-semibold">
+        {t("lf.v6.mark.when")}
+      </label>
+      <select id={`${id}-when`} value={m.daysAgo} onChange={(e) => m.setDaysAgo(Number(e.target.value) as ContactDaysAgo)} className="min-h-11 rounded-xl border border-edge bg-surface px-3" data-part="mark-when">
+        {CONTACT_DAYS_AGO.map((d) => (
+          <option key={d} value={d}>
+            {t(`lf.v6.mark.when.${d}`)}
+          </option>
+        ))}
+      </select>
+      <label htmlFor={`${id}-note`} className="text-sm font-semibold">
+        {t("lf.v6.mark.note")}
+      </label>
+      <textarea id={`${id}-note`} value={m.note} maxLength={CONTACT_NOTE_MAX} rows={3} onChange={(e) => m.setNote(e.target.value)} placeholder={t("lf.v6.mark.note.ph")} className="rounded-xl border border-edge bg-surface p-3" data-part="mark-note" />
+      <div className="flex flex-wrap gap-2">
+        <button type="submit" disabled={m.busy} className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-5 font-bold text-on-brand disabled:opacity-60" data-act="mark-save">
+          {t("lf.v6.mark.save")}
+        </button>
+        <button type="button" disabled={m.busy} className={btn} onClick={() => m.setOpen(false)} data-act="mark-cancel">
+          {t("lf.v6.mark.cancel")}
+        </button>
+      </div>
+      {m.failure ? <FailureNote failure={m.failure} words={words} /> : null}
+    </form>
+  );
+}
+
+export function MarkContacted({ prospect, words, actions }: { prospect: Shown; words: Words; actions: MarkContactedActions }) {
+  const t = makeT(words);
+  const m = useMarkContacted(prospect, actions);
   return (
     <div className="flex flex-col gap-2" data-part="mark-contacted">
-      {contacted ? (
-        <div className="flex flex-col gap-1" data-part="contacted">
-          <span className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex min-h-8 items-center whitespace-nowrap rounded-full bg-ink px-3 text-sm font-bold text-surface" data-chip="contacted">
-              {t("lf.v6.mark.chip", { date: day(now.lastContactedAt as string) })}
-            </span>
-            {now.contactedBy ? <span className="text-sm text-muted">{t("lf.v6.mark.by", { name: now.contactedBy })}</span> : null}
-          </span>
-          {now.contactNote ? <p className="m-0 break-words text-sm text-ink" data-part="contact-note">{now.contactNote}</p> : null}
-        </div>
-      ) : null}
-      {!open ? (
-        <button type="button" className={`${btn} write-ctl w-fit`} onClick={() => setOpen(true)} data-act="mark-contacted">
-          {contacted ? t("lf.v6.mark.edit") : t("lf.v6.mark.button")}
+      <ContactedNote m={m} words={words} />
+      {!m.open ? (
+        <button type="button" className={`${btn} write-ctl w-fit`} onClick={() => m.setOpen(true)} data-act="mark-contacted">
+          {m.contacted ? t("lf.v6.mark.edit") : t("lf.v6.mark.button")}
         </button>
       ) : (
-        <form
-          className="flex flex-col gap-2 rounded-2xl border border-line bg-surface-2 p-3"
-          onSubmit={(e) => {
-            e.preventDefault();
-            void save();
-          }}
-        >
-          <label htmlFor={`${id}-when`} className="text-sm font-semibold">
-            {t("lf.v6.mark.when")}
-          </label>
-          <select id={`${id}-when`} value={daysAgo} onChange={(e) => setDaysAgo(Number(e.target.value) as ContactDaysAgo)} className="min-h-11 rounded-xl border border-edge bg-surface px-3" data-part="mark-when">
-            {CONTACT_DAYS_AGO.map((d) => (
-              <option key={d} value={d}>
-                {t(`lf.v6.mark.when.${d}`)}
-              </option>
-            ))}
-          </select>
-          <label htmlFor={`${id}-note`} className="text-sm font-semibold">
-            {t("lf.v6.mark.note")}
-          </label>
-          <textarea id={`${id}-note`} value={note} maxLength={CONTACT_NOTE_MAX} rows={3} onChange={(e) => setNote(e.target.value)} placeholder={t("lf.v6.mark.note.ph")} className="rounded-xl border border-edge bg-surface p-3" data-part="mark-note" />
-          <div className="flex flex-wrap gap-2">
-            <button type="submit" disabled={busy} className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-5 font-bold text-on-brand disabled:opacity-60" data-act="mark-save">
-              {t("lf.v6.mark.save")}
-            </button>
-            <button type="button" disabled={busy} className={btn} onClick={() => setOpen(false)} data-act="mark-cancel">
-              {t("lf.v6.mark.cancel")}
-            </button>
-          </div>
-          {failure ? <FailureNote failure={failure} words={words} /> : null}
-        </form>
+        <MarkForm m={m} words={words} />
       )}
     </div>
   );
 }
+
+export default MarkContacted;

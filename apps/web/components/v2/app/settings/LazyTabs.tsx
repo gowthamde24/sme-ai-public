@@ -18,3 +18,4 @@ export const GstinForm = dynamic(() => import("../gstin/GstinForm").then((m) => 
 export const SendingForm = dynamic(() => import("../agent-settings/AgentSettingsForms").then((m) => m.SendingForm));
 export const QuietHoursForm = dynamic(() => import("../agent-settings/AgentSettingsForms").then((m) => m.QuietHoursForm));
 export const RemindersForm = dynamic(() => import("../agent-settings/AgentSettingsForms").then((m) => m.RemindersForm));
+export const AutomationSimple = dynamic(() => import("../agent-settings/AutomationSimple").then((m) => m.AutomationSimple));

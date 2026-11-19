@@ -11,7 +11,7 @@ import { ApiRequestError } from "@/lib/api/client";
 import { getCampaign } from "@/lib/api/campaigns";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { readCampaignCalls } from "@/lib/call-settings/campaign-source";
-import { callSettingsScreens, openingLineScreens } from "@/lib/screens/flag";
+import { callSettingsScreens, jobsScreens, openingLineScreens } from "@/lib/screens/flag";
 import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { currentAssistantName } from "@/lib/assistant/name";
@@ -46,7 +46,7 @@ export default async function CampaignCallSettingsRoute({ params }: PageProps<"/
   const base = `/app/tenants/${tenantId}`;
   const opening = openingLineScreens() !== "off" ? await readCampaignOpeningLine({ token: accessToken, tenantId }, campaignId) : null;
   const read = callSettingsScreens() !== "off" ? await readCampaignCalls({ token: accessToken, tenantId }, campaignId, pack?.modules ?? null) : null;
-  const words = wordsFor(lang, ["calls."], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link", "frame.notyet", "nav.item.campaigns"]);
+  const words = wordsFor(lang, ["calls.", ...(jobsScreens() !== "off" ? ["jobs.rules."] : [])], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link", "frame.notyet", "nav.item.campaigns"]);
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={words["calls.c.title"] ?? "Call settings for this campaign"} sub={campaign.name} />
@@ -63,6 +63,7 @@ export default async function CampaignCallSettingsRoute({ params }: PageProps<"/
             locked={read.lockedPurposes as never}
             canEdit={tenant.role === "owner"}
             mock={callSettingsScreens() === "mock"}
+            simple={jobsScreens() !== "off"}
             saved={read.overridden.length > 0}
             actions={{ save: saveCampaignCallsAction.bind(null, tenantId, campaignId) }}
             campaign={{ base: read.base, clear: clearCampaignCallsAction.bind(null, tenantId, campaignId), settingsHref: `${base}/settings?section=assistant`, backHref: `${base}/campaigns/${campaignId}` }}

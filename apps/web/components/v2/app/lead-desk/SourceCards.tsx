@@ -9,6 +9,7 @@ import type { Card, CardAction, CardKind, ConnectInfo, Done, EmailAddress, MetaP
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, okBox, surface, warnBox } from "../ui";
 import { makeT, type Words } from "../words";
 import { makeCardsPost, type CardsPost } from "./cards-post";
+import { ConsentTick } from "./ConsentTick";
 import { CopyBox } from "./CopyBox";
 
 const BADGE: Record<Card["state"], string> = {
@@ -24,7 +25,7 @@ const BADGE: Record<Card["state"], string> = {
  * copy the address to forward JustDial / Sulekha mails to, with a short Gmail guide; copy a snippet or form link for the website; add a file (the existing import); WhatsApp and missed calls say what they do. A card that has a problem says so in plain words with one tap to fix it:
  * never silent. The card's own sentences come from the API as they are; the titles, buttons and answers are this app's words. Calls go to this app's own route (`endpoint`), never the API.
  */
-export function SourceCards({ words, initial, endpoint, base, metaReturn, openCard = null, post: given }: { words?: Words; initial: Card[]; endpoint: string; base: string; metaReturn: boolean; /** a card to open at once (the assistant's "connect my IndiaMART": `?card=indiamart`) */ openCard?: CardKind | null; post?: CardsPost }) {
+export function SourceCards({ words, initial, endpoint, base, metaReturn, openCard = null, post: given, consentTick = false }: { /** JOBS: Connect (Facebook, the website form) waits for the round consent tick and sends `consentConfirmed`. */ consentTick?: boolean; words?: Words; initial: Card[]; endpoint: string; base: string; metaReturn: boolean; /** a card to open at once (the assistant's "connect my IndiaMART": `?card=indiamart`) */ openCard?: CardKind | null; post?: CardsPost }) {
   const t = makeT(words);
   const post = React.useMemo(() => given ?? makeCardsPost(endpoint), [given, endpoint]);
   const [cards, setCards] = React.useState(initial);
@@ -53,7 +54,7 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, openCa
             {!c.available ? (
               <p className={fieldHelp}>{t("sc.unavailable")}</p>
             ) : (
-              <CardBody card={c} t={t} words={words} post={post} base={base} open={open === c.kind} onOpen={(o) => setOpen(o ? c.kind : null)} onChanged={refresh} />
+              <CardBody card={c} t={t} words={words} post={post} base={base} consentTick={consentTick} open={open === c.kind} onOpen={(o) => setOpen(o ? c.kind : null)} onChanged={refresh} />
             )}
           </li>
         ))}
@@ -73,7 +74,7 @@ function testSaid(d: TestResult, t: T): string {
   return d.message || t("sc.test.done");
 }
 
-function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { card: Card; t: T; words?: Words; post: CardsPost; base: string; open: boolean; onOpen: (o: boolean) => void; onChanged: () => Promise<void> }) {
+function CardBody({ card, t, words, post, base, open, onOpen, onChanged, consentTick }: { consentTick: boolean; card: Card; t: T; words?: Words; post: CardsPost; base: string; open: boolean; onOpen: (o: boolean) => void; onChanged: () => Promise<void> }) {
   const action: CardAction = card.problem?.fix && card.problem.fix !== "none" ? card.problem.fix : card.action;
   const label = card.status === "connected" ? t("sc.manage") : card.status === "needs_attention" ? t("sc.fix") : t(`sc.act.${action}` as "sc.act.oauth");
   // the e-mail parser (slice 5) is shown the once-only way when the API gives it a Test; the older card (the address read any time) stays until then
@@ -87,7 +88,7 @@ function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { car
   return (
     <div className="flex flex-col gap-3">
       <div><button type="button" className={card.status === "connected" ? btnQuiet : btnMain} aria-expanded={open} onClick={() => onOpen(!open)}>{label}</button></div>
-      {open ? <Panel card={card} action={action} t={t} words={words} post={post} onChanged={onChanged} /> : null}
+      {open ? <Panel card={card} action={action} t={t} words={words} post={post} onChanged={onChanged} consentTick={consentTick} /> : null}
       {card.kind === "indiamart" && (card.state === "connected" || card.state === "waiting") ? <PullNow t={t} post={post} onChanged={onChanged} /> : null}
       <Tools card={card} t={t} words={words} post={post} onChanged={onChanged} />
       <CostBox card={card} t={t} post={post} onChanged={onChanged} />
@@ -221,7 +222,7 @@ function ResumeButton({ card, label, t, post, onChanged }: { card: CardKind; lab
   );
 }
 
-function Panel({ card, action, t, words, post, onChanged }: { card: Card; action: CardAction; t: T; words?: Words; post: CardsPost; onChanged: () => Promise<void> }) {
+function Panel({ card, action, t, words, post, onChanged, consentTick }: { consentTick: boolean; card: Card; action: CardAction; t: T; words?: Words; post: CardsPost; onChanged: () => Promise<void> }) {
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<SourceError | null>(null);
   const [note, setNote] = React.useState<string | null>(null);
@@ -230,6 +231,9 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
   const [email, setEmail] = React.useState<EmailAddress | null>(null);
   const [site, setSite] = React.useState<WebsiteSnippet | null>(null);
   const [asking, setAsking] = React.useState(false);
+  const [agreed, setAgreed] = React.useState(false);
+  const waits = consentTick && !agreed;
+  const sure = consentTick ? ({ consentConfirmed: true } as const) : {};
   const run = async <R,>(body: Parameters<CardsPost>[0], then: (data: R) => void | Promise<void>) => {
     setBusy(true);
     setError(null);
@@ -263,8 +267,9 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
       {action === "oauth" && !connected ? (
         <>
           <p className="text-sm text-muted">{t("sc.meta.how")}</p>
+          {consentTick ? <ConsentTick words={words} id="sc-consent-meta" checked={agreed} onChange={setAgreed} /> : null}
           <div>
-            <button type="button" className={btnMain} disabled={busy} onClick={() => void run<string>({ op: "meta_connect" }, (url) => window.location.assign(url))}>{t("sc.meta.go")}</button>
+            <button type="button" className={btnMain} disabled={busy || waits} onClick={() => void run<string>({ op: "meta_connect", ...sure }, (url) => window.location.assign(url))}>{t("sc.meta.go")}</button>
           </div>
         </>
       ) : null}
@@ -312,8 +317,9 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
       {action === "copy_snippet" ? (
         <>
           <p className="text-sm text-muted">{t("sc.web.how")}</p>
+          {card.state === "off" && consentTick ? <ConsentTick words={words} id="sc-consent-website" checked={agreed} onChange={setAgreed} /> : null}
           {card.state === "off" ? (
-            <div><button type="button" className={btnMain} disabled={busy} onClick={() => void run({ op: "connect", card: card.kind }, onChanged)}>{t("sc.web.connect")}</button></div>
+            <div><button type="button" className={btnMain} disabled={busy || waits} onClick={() => void run({ op: "connect", card: card.kind, ...sure }, onChanged)}>{t("sc.web.connect")}</button></div>
           ) : null}
           {site && card.state !== "off" ? (
             <>

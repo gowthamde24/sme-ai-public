@@ -29,8 +29,22 @@ describe("the command palette's items (owner, 6 Nov 2026)", () => {
     const te = paletteNames("te");
     expect(te.names.settings?.[0]).toMatch(/[ఀ-౿]/);
     expect(te.names.settings).toContain("Settings");
-    for (const a of ACTIONS) expect(paletteNames("en").names[`action:${a.id}`]?.[0], a.id).toBeTruthy();
+    for (const a of ACTIONS.filter((x) => x.id !== "dnc")) expect(paletteNames("en").names[`action:${a.id}`]?.[0], a.id).toBeTruthy();
     expect(paletteNames("en").words["palette.ask"]).toContain("{text}");
+  });
+  it("the Do-Not-Call list is offered only while JOBS is on (an action without words is not drawn), in the person's own language first", () => {
+    const before = process.env.JOBS;
+    try {
+      delete process.env.JOBS;
+      expect(paletteNames("en").names["action:dnc"]).toBeUndefined();
+      process.env.JOBS = "mock";
+      expect(paletteNames("en").names["action:dnc"]?.[0]).toBe("Do-Not-Call list");
+      expect(paletteNames("te").names["action:dnc"]?.[0]).toMatch(/[ఀ-౿]/);
+      expect(ACTIONS.find((a) => a.id === "dnc")?.path).toBe("/do-not-call");
+    } finally {
+      if (before === undefined) delete process.env.JOBS;
+      else process.env.JOBS = before;
+    }
   });
   it("routes a record by its kind and id only, never by an address the API wrote", () => {
     expect(recordHref(B, "lead", ID)).toBe(`${B}/leads/${ID}`);

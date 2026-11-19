@@ -11,9 +11,11 @@ import { card, danger, muted, pillClass, secondary, type Failed, type Reply } fr
 import { makeT, type Words } from "../words";
 import { GoogleMark } from "./SearchCards";
 import { PracticeCall } from "./PracticeCall";
-import { MarkContacted } from "./MarkContacted";
+import { facts } from "./facts";
+import { MarkContacted } from "./LazyMarkContacted";
 import { ProspectContact } from "./ProspectContact";
 import { QuoteDraft } from "./QuoteDraft";
+import { ResearcherCard } from "./LazyResearcherCard";
 
 export type ListActions = {
   act: (ids: string[], action: ProspectAction) => Promise<Reply<ActionResult[]>>;
@@ -34,7 +36,7 @@ const BULK: readonly ProspectAction[] = ["later", "skip", "not_interested", "do_
  * the bulk buttons (Call, Ask me later, Skip; Not interested and Do not call behind a confirm: they are for good) and the result of each one. A Ready to call business has the practice call (Owner, Admin); a Qualified one links
  * to its lead and has its draft quote (the preview for everyone; "Make the draft quote" for the Owner and Admin). Nothing here dials: the only call is the simulator, and nothing here approves or sends a quote.
  */
-export function ProspectList({ items, words, base, canPractice, labelFixture = false, langNames, actions, practiceOpen = null, businesses = true, demoPracticeCall = false }: { /** ONLY the presenter's demo video (components/v2/app/demo-video, a storyboard made before the Lead Finder v1.0 decision of 18 Nov: its story still has a practice call). Everywhere else false: a business is never called by the assistant. */ demoPracticeCall?: boolean;  /** false: an organisations Lead Finder (a school): no stock sentence and no draft quote (nothing is sold to them). */ businesses?: boolean; /** The business whose practice call is open at first (Today's Call, `?practice=1`). */ practiceOpen?: string | null; items: Prospect[]; words: Words; base: string; canPractice: boolean; /** Say "Made-up businesses for the demo" on each made-up row (the page has not said it once on top). */ labelFixture?: boolean; langNames: Record<CallLanguage, string>; actions: ListActions }) {
+export function ProspectList({ items, words, base, canPractice, labelFixture = false, langNames, actions, practiceOpen = null, businesses = true, demoPracticeCall = false, jobs = false }: { /** JOBS (mock 05): each business is a Researcher card. */ jobs?: boolean; /** ONLY the presenter's demo video (components/v2/app/demo-video, a storyboard made before the Lead Finder v1.0 decision of 18 Nov: its story still has a practice call). Everywhere else false: a business is never called by the assistant. */ demoPracticeCall?: boolean;  /** false: an organisations Lead Finder (a school): no stock sentence and no draft quote (nothing is sold to them). */ businesses?: boolean; /** The business whose practice call is open at first (Today's Call, `?practice=1`). */ practiceOpen?: string | null; items: Prospect[]; words: Words; base: string; canPractice: boolean; /** Say "Made-up businesses for the demo" on each made-up row (the page has not said it once on top). */ labelFixture?: boolean; langNames: Record<CallLanguage, string>; actions: ListActions }) {
   const t = makeT(words);
   const id = useId();
   const router = useRouter();
@@ -137,6 +139,16 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
                 <input type="checkbox" className="size-6 accent-brand-text" checked={picked.includes(p.id)} onChange={(e) => toggle(p.id, e.target.checked)} />
                 <span className="sr-only">{t("lf.select", { name: p.name ?? t("lf.details.unavailable") })}</span>
               </label>
+              {jobs ? (
+                <div className="min-w-0 flex-1">
+                  <ResearcherCard prospect={p} words={words} base={base} mark={actions.mark && !p.suppressed && p.status !== "not_interested" ? actions.mark : undefined} badges={<>{p.attribution ? <GoogleMark /> : null}{labelFixture && p.source === "fixture" ? <span className={pillClass("info")}>{t("lf.demo")}</span> : null}</>} />
+                  {p.status === "qualified" && p.leadId ? (
+                    <Link href={`${base}/leads/${p.leadId}`} className="inline-flex min-h-11 items-center font-semibold text-brand-text underline">
+                      {t("lf.lead")}
+                    </Link>
+                  ) : null}
+                </div>
+              ) : (
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="break-words font-display text-lg font-bold leading-snug">{p.name ?? t("lf.details.unavailable")}</h3>
@@ -157,9 +169,10 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
                   </Link>
                 ) : null}
               </div>
+              )}
             </div>
-            <ProspectContact prospect={p} words={words} base={base} />
-            {actions.mark && !p.suppressed && p.status !== "not_interested" ? <MarkContacted prospect={p} words={words} actions={{ mark: actions.mark }} /> : null}
+            {jobs ? null : <ProspectContact prospect={p} words={words} base={base} />}
+            {!jobs && actions.mark && !p.suppressed && p.status !== "not_interested" ? <MarkContacted prospect={p} words={words} actions={{ mark: actions.mark }} /> : null}
             {demoPracticeCall && p.status === "call_ready" && canPractice ? <PracticeCall open={practiceOpen === p.id} prospect={p} words={words} base={base} langNames={langNames} run={(persona, language) => actions.practice!(p.id, persona, language)} draft={businesses ? { preview: actions.quoteDraft, make: actions.makeQuoteDraft } : undefined} quotes={businesses} /> : null}
             {p.status === "qualified" && p.leadId && businesses ? <QuoteDraft words={words} base={base} canMake={canPractice} actions={{ preview: () => actions.quoteDraft(p.id), make: () => actions.makeQuoteDraft(p.id) }} /> : null}
           </li>
@@ -176,8 +189,4 @@ export function stockOf(items: readonly Pick<Prospect, "stockMatch">[]): string[
   return [...seen.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([m]) => m).slice(0, 8);
 }
 
-/** One line of facts per card: what it is, where, the rating and the number of reviews (distance only once the API gives one). */
-export function facts(p: Pick<Prospect, "category" | "area" | "rating" | "reviewCount">, t: (key: string, vars?: Record<string, string | number>) => string): string {
-  const parts = [p.category, p.area, p.rating !== null ? `★ ${p.rating.toLocaleString("en-IN", { maximumFractionDigits: 1 })}` : null, p.reviewCount !== null ? t("lf.reviews", { n: p.reviewCount.toLocaleString("en-IN") }) : null];
-  return parts.filter((x): x is string => typeof x === "string" && x !== "").join(" · ");
-}
+export { facts } from "./facts";

@@ -17,7 +17,7 @@ import { authT } from "@/i18n/auth";
 import { getLang } from "@/i18n/get-lang";
 import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
 import { SchedulerCard, SystemSwitchCard } from "@/components/v2/app/agent-settings/AgentStatusCards";
-import { GstinForm, QuietHoursForm, RemindersForm, SendingForm } from "@/components/v2/app/settings/LazyTabs";
+import { AutomationSimple, GstinForm, QuietHoursForm, RemindersForm, SendingForm } from "@/components/v2/app/settings/LazyTabs";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { getOutboxSettings, type OutboxSettings } from "@/lib/api/outbox";
@@ -115,7 +115,7 @@ import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person }
 import { signOutEverywhereAction } from "../../../actions";
 import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantActivity";
 import { readActivity } from "@/lib/assistant-work/source";
-import { appV4, assistantWorkScreens, designV6, moreLanguages } from "@/lib/screens/flag";
+import { appV4, assistantWorkScreens, designV6, jobsScreens, moreLanguages } from "@/lib/screens/flag";
 import { SettingsV6 } from "@/components/v2/app/settings/SettingsV6";
 import { readSettingsV6 } from "./settings-v6-data";
 import { createKeyAction, revokeKeyAction, rotateKeyAction } from "./developer-actions";
@@ -182,7 +182,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     }
     return (
       <SettingsV6
-        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role."], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
+        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
         lang={lang}
         base={base}
         title={await menuTitle("settings", lang, user.accessToken, tenantId)}
@@ -196,6 +196,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         langLabel={authT(lang)("lang.label")}
         notificationsHref={appV4() ? `${base}/settings?section=notifications` : null}
         save={saveBusinessAction.bind(null, tenantId)}
+        dncHref={jobsScreens() !== "off" ? `${base}/do-not-call` : null}
         developerActions={{ create: createKeyAction.bind(null, tenantId), rotate: rotateKeyAction.bind(null, tenantId), revoke: revokeKeyAction.bind(null, tenantId) }}
       />
     );
@@ -433,11 +434,12 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                       ) : null}
                       {callSettings?.mode === "ok" ? (
                         <CallSettingsAdvanced
-                          words={wordsFor(lang, ["calls."], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link"])}
+                          words={wordsFor(lang, ["calls.", ...(jobsScreens() !== "off" ? ["jobs.rules."] : [])], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link"])}
                           initial={callSettings.settings}
                           locked={callSettings.lockedPurposes}
                           canEdit={tenant.role === "owner"}
                           mock={callSettingsScreens() === "mock"}
+                          simple={jobsScreens() !== "off"}
                           saved={callSettings.saved}
                           actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
                         />
@@ -669,9 +671,20 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         ) : null}
         {section === "agent" ? (
           <div className="flex flex-col gap-5">
-            {sending ? <SendingForm words={words} settings={sending} save={saveSendingAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
-            {sending ? <QuietHoursForm words={words} settings={sending} reminders={reminders} save={saveQuietHoursAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
-            {reminders ? <RemindersForm words={words} settings={reminders} save={saveRemindersAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
+            {jobsScreens() !== "off" ? (
+              // JOBS: the three forms as one page of sentences with the choice inside and ONE Save (the same three actions)
+              sending ? (
+                <AutomationSimple words={words} settings={sending} reminders={reminders} actions={{ saveSending: saveSendingAction.bind(null, tenantId), saveQuietHours: saveQuietHoursAction.bind(null, tenantId), saveReminders: saveRemindersAction.bind(null, tenantId) }} />
+              ) : (
+                <UnreadCard note={t("frame.notyet")} />
+              )
+            ) : (
+              <>
+                {sending ? <SendingForm words={words} settings={sending} save={saveSendingAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
+                {sending ? <QuietHoursForm words={words} settings={sending} reminders={reminders} save={saveQuietHoursAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
+                {reminders ? <RemindersForm words={words} settings={reminders} save={saveRemindersAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
+              </>
+            )}
             <SystemSwitchCard words={words} settings={sending} />
             <SchedulerCard words={words} status={scheduler} now={clock()} />
           </div>

@@ -1,0 +1,279 @@
+/* ==========================================================================
+   JOBS design foundation (decision-ai-team.md "Visual quality rules", owner 19 Nov 2026; mocks: mocks/jobs, sheet 07 and 07b). Scoped to [data-ui="v2"][data-jobs="1"] (V2Root sets data-jobs only with DESIGN_V6 and JOBS on),
+   so with the flag off nothing here applies. One theme, light and dark first-class:
+   - SOLID status chips: Done = green with a check, Waiting = amber, Failed = red, Info = neutral; ONE shape (28px high, a pill, an icon and the word) on cards, plan cards, toasts and lists.
+   - ROUND tick boxes and radios everywhere (no square checkbox): every native checkbox and radio under the flag is drawn round; the fill and the tick animate with transform and opacity only.
+   - Motion: only transform and opacity, a gentle spring of about 200-300 ms, a skeleton instead of a spinner, an instant press (scale) on a tap, prefers-reduced-motion respected.
+   - The branded loading: the floating orb breathes while the next page loads (after 300 ms, never for a fast page); the brand mark once on the first open.
+   Every colour is a plain #rrggbb on its own line: design/jobs.test.ts reads them and keeps chip text at WCAG AA (4.5:1) in both themes.
+   ========================================================================== */
+[data-ui="v2"][data-jobs="1"] {
+  /* radii, shadows, spacing, motion: the tokens every Jobs screen is built from */
+  --jb-r-sm: 8px;
+  --jb-r-md: 12px;
+  --jb-r-lg: 16px;
+  --jb-r-xl: 24px;
+  --jb-r-pill: 999px;
+  --jb-sp-1: 4px;
+  --jb-sp-2: 8px;
+  --jb-sp-3: 12px;
+  --jb-sp-4: 16px;
+  --jb-sp-5: 24px;
+  --jb-sp-6: 32px;
+  --jb-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --jb-dur-fast: 120ms;
+  --jb-dur: 240ms;
+  --jb-dur-slow: 300ms;
+
+  --jb-done-bg: #15803d;
+  --jb-done-fg: #ffffff;
+  --jb-wait-bg: #f5a30b;
+  --jb-wait-fg: #2a1a00;
+  --jb-fail-bg: #b91c1c;
+  --jb-fail-fg: #ffffff;
+  --jb-info-bg: #4b5565;
+  --jb-info-fg: #ffffff;
+  --jb-done-soft: #e6f4ea;
+  --jb-wait-soft: #fff3d6;
+  --jb-fail-soft: #fde7e7;
+  --jb-info-soft: #eef0f3;
+}
+[data-ui="v2"][data-jobs="1"][data-theme="dark"] {
+  --jb-done-bg: #4ade80;
+  --jb-done-fg: #052e16;
+  --jb-wait-bg: #fbbf24;
+  --jb-wait-fg: #2a1a00;
+  --jb-fail-bg: #f87171;
+  --jb-fail-fg: #3b0a0a;
+  --jb-info-bg: #cbd2dc;
+  --jb-info-fg: #10151c;
+  --jb-done-soft: #12301f;
+  --jb-wait-soft: #3a2a0c;
+  --jb-fail-soft: #3a1717;
+  --jb-info-soft: #2a2520;
+}
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"][data-jobs="1"]:not([data-theme="light"]) {
+    --jb-done-bg: #4ade80;
+    --jb-done-fg: #052e16;
+    --jb-wait-bg: #fbbf24;
+    --jb-wait-fg: #2a1a00;
+    --jb-fail-bg: #f87171;
+    --jb-fail-fg: #3b0a0a;
+    --jb-info-bg: #cbd2dc;
+    --jb-info-fg: #10151c;
+    --jb-done-soft: #12301f;
+    --jb-wait-soft: #3a2a0c;
+    --jb-fail-soft: #3a1717;
+    --jb-info-soft: #2a2520;
+  }
+}
+
+/* ---- the one status chip (components/v2/app/ds/JobChip.tsx) ---- */
+[data-ui="v2"][data-jobs="1"] .jb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px 0 8px;
+  border-radius: var(--jb-r-pill);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+}
+[data-ui="v2"][data-jobs="1"] .jb-chip svg { width: 14px; height: 14px; stroke-width: 2.4; }
+[data-ui="v2"][data-jobs="1"] .jb-chip[data-tone="done"] { background: var(--jb-done-bg); color: var(--jb-done-fg); }
+[data-ui="v2"][data-jobs="1"] .jb-chip[data-tone="wait"] { background: var(--jb-wait-bg); color: var(--jb-wait-fg); }
+[data-ui="v2"][data-jobs="1"] .jb-chip[data-tone="fail"] { background: var(--jb-fail-bg); color: var(--jb-fail-fg); }
+[data-ui="v2"][data-jobs="1"] .jb-chip[data-tone="info"] { background: var(--jb-info-bg); color: var(--jb-info-fg); }
+
+/* ---- round tick boxes and radios (every native checkbox and radio; components/v2/app/ds/Tick.tsx wraps them with a label) ---- */
+[data-ui="v2"][data-jobs="1"] input[type="checkbox"],
+[data-ui="v2"][data-jobs="1"] input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  display: inline-grid;
+  place-content: center;
+  flex: none;
+  inline-size: 24px;
+  block-size: 24px;
+  margin: 0;
+  border: 2px solid var(--v2-border-strong);
+  border-radius: 50%;
+  background: var(--v2-surface);
+  cursor: pointer;
+  isolation: isolate;
+  overflow: hidden;
+}
+/* the fill grows from the middle (transform), the tick/dot fades in (opacity + transform) */
+[data-ui="v2"][data-jobs="1"] input[type="checkbox"]::before,
+[data-ui="v2"][data-jobs="1"] input[type="radio"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--v2-brand);
+  transform: scale(0);
+  z-index: -1;
+}
+[data-ui="v2"][data-jobs="1"] input[type="checkbox"]::after {
+  content: "";
+  inline-size: 11px;
+  block-size: 6px;
+  border: solid #ffffff;
+  border-width: 0 0 2.5px 2.5px;
+  transform: translateY(-1px) rotate(-45deg) scale(0.4);
+  opacity: 0;
+}
+[data-ui="v2"][data-jobs="1"] input[type="radio"]::after {
+  content: "";
+  inline-size: 10px;
+  block-size: 10px;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: scale(0.4);
+  opacity: 0;
+}
+[data-ui="v2"][data-jobs="1"] input[type="checkbox"]:checked,
+[data-ui="v2"][data-jobs="1"] input[type="radio"]:checked { border-color: var(--v2-brand); }
+[data-ui="v2"][data-jobs="1"] input[type="checkbox"]:checked::before,
+[data-ui="v2"][data-jobs="1"] input[type="radio"]:checked::before { transform: scale(1); }
+[data-ui="v2"][data-jobs="1"] input[type="checkbox"]:checked::after { transform: translateY(-1px) rotate(-45deg) scale(1); opacity: 1; }
+[data-ui="v2"][data-jobs="1"] input[type="radio"]:checked::after { transform: scale(1); opacity: 1; }
+[data-ui="v2"][data-jobs="1"] input[type="checkbox"]:disabled,
+[data-ui="v2"][data-jobs="1"] input[type="radio"]:disabled { opacity: 0.5; cursor: not-allowed; }
+[data-ui="v2"][data-jobs="1"] input[type="checkbox"]:focus-visible,
+[data-ui="v2"][data-jobs="1"] input[type="radio"]:focus-visible { outline: 2px solid var(--v2-ring); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"][data-jobs="1"] input[type="checkbox"]::before,
+  [data-ui="v2"][data-jobs="1"] input[type="radio"]::before { transition: transform var(--jb-dur) var(--jb-ease); }
+  [data-ui="v2"][data-jobs="1"] input[type="checkbox"]::after,
+  [data-ui="v2"][data-jobs="1"] input[type="radio"]::after { transition: transform var(--jb-dur) var(--jb-ease), opacity var(--jb-dur-fast) linear; }
+}
+
+/* ---- motion utilities: transform and opacity only ---- */
+@keyframes jb-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes jb-pulse { 50% { opacity: 0.45; } }
+@keyframes jb-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+@keyframes jb-ring { 0% { transform: scale(1); opacity: 0.45; } 100% { transform: scale(1.6); opacity: 0; } }
+@keyframes jb-mark { 0% { opacity: 0; transform: scale(0.86); } 55% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.04); } }
+@keyframes jb-veil { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"][data-jobs="1"] .jb-enter { animation: jb-enter var(--jb-dur-slow) var(--jb-ease) both; }
+  [data-ui="v2"][data-jobs="1"] .jb-press { transition: transform var(--jb-dur-fast) var(--jb-ease); }
+  [data-ui="v2"][data-jobs="1"] .jb-press:active { transform: scale(0.97); }
+  [data-ui="v2"][data-jobs="1"] .jb-skeleton { animation: jb-pulse 1.4s ease-in-out infinite; }
+}
+[data-ui="v2"][data-jobs="1"] .jb-skeleton { background: color-mix(in srgb, var(--v2-ink) 16%, var(--v2-surface)); border-radius: var(--jb-r-sm); }
+
+/* ---- the branded loading: the floating orb breathes while the next page loads (components/v2/app/ds/BrandLoading.tsx sets data-nav-loading after 300 ms) ---- */
+[data-ui="v2"][data-jobs="1"] [data-ask="orb"] { isolation: isolate; }
+[data-ui="v2"][data-jobs="1"] [data-ask="orb"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  background: var(--v2-brand);
+  opacity: 0;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-nav-loading] [data-ui="v2"][data-jobs="1"] [data-ask="orb"] { animation: jb-breathe 1.2s ease-in-out infinite; }
+  html[data-nav-loading] [data-ui="v2"][data-jobs="1"] [data-ask="orb"]::before { animation: jb-ring 1.2s ease-out infinite; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-nav-loading] [data-ui="v2"][data-jobs="1"] [data-ask="orb"] { opacity: 0.7; }
+}
+/* the brand mark on the first open: under 600 ms, over the page, never taking a tap */
+[data-ui="v2"][data-jobs="1"] .jb-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background: var(--v2-bg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"][data-jobs="1"] .jb-intro { animation: jb-veil 600ms linear both; }
+  [data-ui="v2"][data-jobs="1"] .jb-intro > * { animation: jb-mark 600ms var(--jb-ease) both; }
+}
+
+/* ---- EVERY status pill is solid, one shape, with its icon (planner and owner, 19 Nov): the tinted pills of the earlier screens take the four states. In @layer theme with !important, like the phone slice of ds.css: a layered important rule beats the important utilities. ---- */
+[data-ui="v2"][data-jobs="1"] {
+  --jb-ic-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+  --jb-ic-clock: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+  --jb-ic-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4l9 16H3z'/%3E%3Cpath d='M12 10v4M12 17.4v.1'/%3E%3C/svg%3E");
+  --jb-ic-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v5M12 8v.1'/%3E%3C/svg%3E");
+  --jb-ic-x: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E");
+  --jb-ic-ban: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M5.6 5.6l12.8 12.8'/%3E%3C/svg%3E");
+  --jb-ic-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+  --jb-ic-minus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12h8'/%3E%3C/svg%3E");
+  --jb-ic-dot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4' fill='black'/%3E%3C/svg%3E");
+}
+@layer theme {
+  /* which state each pill is: the colour tone says it (green = Done, amber = Waiting, red = Failed, the rest Info); a call's status is Done only when completed, the others are Info (nothing for the owner to fix) */
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill-green, [data-status="completed"]) { --p-bg: var(--jb-done-bg); --p-fg: var(--jb-done-fg); --p-ic: var(--jb-ic-check); }
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill-amber, [data-needs-tag]) { --p-bg: var(--jb-wait-bg); --p-fg: var(--jb-wait-fg); --p-ic: var(--jb-ic-clock); }
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill-red, [data-needs-late]) { --p-bg: var(--jb-fail-bg); --p-fg: var(--jb-fail-fg); --p-ic: var(--jb-ic-alert); }
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill-info, .jb-pill-neutral, .jb-pill-brand, [data-status="transferred"], [data-status="no_answer"], [data-status="rejected"], [data-status="spam"], [data-status="live"]) { --p-bg: var(--jb-info-bg); --p-fg: var(--jb-info-fg); --p-ic: var(--jb-ic-info); }
+  [data-ui="v2"][data-jobs="1"] [data-status="transferred"] { --p-ic: var(--jb-ic-arrow); }
+  [data-ui="v2"][data-jobs="1"] [data-status="no_answer"] { --p-ic: var(--jb-ic-minus); }
+  [data-ui="v2"][data-jobs="1"] [data-status="rejected"] { --p-ic: var(--jb-ic-x); }
+  [data-ui="v2"][data-jobs="1"] [data-status="spam"] { --p-ic: var(--jb-ic-ban); }
+  [data-ui="v2"][data-jobs="1"] [data-status="live"] { --p-ic: var(--jb-ic-dot); }
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill, [data-status], [data-needs-late], [data-needs-tag]) {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    min-height: 28px !important;
+    padding: 0 10px 0 8px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: var(--p-bg) !important;
+    color: var(--p-fg) !important;
+    font-size: 13px !important;
+    font-weight: 650 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill, [data-status], [data-needs-late], [data-needs-tag])::before {
+    content: "";
+    flex: none;
+    inline-size: 14px;
+    block-size: 14px;
+    background: currentColor;
+    -webkit-mask: var(--p-ic) center / contain no-repeat;
+    mask: var(--p-ic) center / contain no-repeat;
+  }
+  [data-ui="v2"][data-jobs="1"] [data-status] [data-dot] { display: none !important; }
+}
+
+/* ---- the switch of a job: a round knob, the knob moves with transform; the track's colour changes at once (no animated paint) ---- */
+[data-ui="v2"][data-jobs="1"] .jb-switch {
+  position: relative;
+  display: block;
+  inline-size: 46px;
+  block-size: 28px;
+  border-radius: var(--jb-r-pill);
+  background: var(--v2-border-strong);
+}
+[data-ui="v2"][data-jobs="1"] .jb-switch::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 3px;
+  inset-inline-start: 3px;
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+[data-ui="v2"][data-jobs="1"] .jb-switch[data-on] { background: var(--v2-brand); }
+[data-ui="v2"][data-jobs="1"] .jb-switch[data-on]::after { transform: translateX(18px); }
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"][data-jobs="1"] .jb-switch::after { transition: transform var(--jb-dur) var(--jb-ease); }
+}

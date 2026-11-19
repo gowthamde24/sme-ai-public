@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("./LazyMarkContacted", async () => ({ MarkContacted: (await import("./MarkContacted")).MarkContacted }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 import { appDict } from "@/i18n/app";
