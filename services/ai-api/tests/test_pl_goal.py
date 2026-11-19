@@ -85,7 +85,7 @@ def test_the_goal_goes_nowhere_but_memory_and_the_gate_still_decides_first() -> 
         logging.getLogger(name).addHandler(records)
         logging.getLogger(name).setLevel(logging.INFO)
     try:
-        placed = out.place("tok", TENANT, OWNER, goal=GOAL, business="Padma Silks")
+        placed = out.place("tok", TENANT, OWNER, approval_kind="owner_test", goal=GOAL, business="Padma Silks")
     finally:
         for name in ("app.telephony.plivo_outbound", "app.telephony.plivo"):
             logging.getLogger(name).removeHandler(records)
@@ -95,7 +95,7 @@ def test_the_goal_goes_nowhere_but_memory_and_the_gate_still_decides_first() -> 
     assert PENDING.take(placed.call_id) == GOAL
     refusing, repo2, api2 = placer(now=__import__("datetime").datetime(2026, 11, 9, 21, 30, tzinfo=__import__("datetime").timezone.utc))   # 03:00 in India
     with pytest.raises(OutboundRefused) as caught:
-        refusing.place("tok", TENANT, OWNER, goal=GOAL)
+        refusing.place("tok", TENANT, OWNER, approval_kind="owner_test", goal=GOAL)
     assert caught.value.reason == "outside_window" and api2.placed == [] and [r["refuse_reason"] for r in repo2.rows.values()] == ["outside_window"]
     assert not any(v for v in PENDING._items.values() if v[1] == GOAL and False), "a refused call keeps no goal"
 
@@ -106,7 +106,7 @@ def test_a_provider_failure_drops_the_goal() -> None:
     api.fail_with = "unavailable"
     out, repo, _ = placer(api=api)
     with pytest.raises(PlivoError):
-        out.place("tok", TENANT, OWNER, goal=GOAL)
+        out.place("tok", TENANT, OWNER, approval_kind="owner_test", goal=GOAL)
     assert PENDING._items == {}
 
 
@@ -114,7 +114,7 @@ def test_a_refused_call_leaves_no_goal_behind() -> None:
     PENDING._items.clear()
     out, _, _ = placer(numbers=frozenset({"+919000000001"}))
     with pytest.raises(OutboundRefused):
-        out.place("tok", TENANT, OWNER, goal=GOAL)
+        out.place("tok", TENANT, OWNER, approval_kind="owner_test", goal=GOAL)
     assert PENDING._items == {}
 
 
@@ -179,7 +179,7 @@ def test_a_goal_call_opens_in_its_language_with_a_plain_line_that_says_it_is_an_
 
 def test_the_line_check_stays_english_even_when_another_language_is_asked_for() -> None:
     out, repo, api = placer()
-    placed = out.place("tok", TENANT, OWNER, language="te")
+    placed = out.place("tok", TENANT, OWNER, approval_kind="owner_test", language="te")
     assert repo.rows[placed.call_id]["language"] == "en" and "lang=en" in api.placed[0]["answer_url"] and opening_for("test", "te") == opening_for("test", "en")
 
 

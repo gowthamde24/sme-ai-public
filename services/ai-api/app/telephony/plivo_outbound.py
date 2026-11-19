@@ -133,6 +133,7 @@ class OutboundRepo(Protocol):
     def proof(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any] | None: ...
     def set_proof(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> None: ...
     def prospect(self, token: str, tenant_id: uuid.UUID, number: str) -> bool: ...
+    def approved(self, token: str, tenant_id: uuid.UUID, kind: str, ref: uuid.UUID | None, number: str | None) -> bool: ...
 
 
 class PostgrestOutboundRepo:
@@ -169,6 +170,9 @@ class PostgrestOutboundRepo:
 
     def prospect(self, token: str, tenant_id: uuid.UUID, number: str) -> bool:
         return self._rpc.call(token, "prospect_no_ai_call", {"p_tenant_id": str(tenant_id), "p_number": number}) is True
+
+    def approved(self, token: str, tenant_id: uuid.UUID, kind: str, ref: uuid.UUID | None, number: str | None) -> bool:
+        return self._rpc.call(token, "call_approved", {"p_tenant_id": str(tenant_id), "p_kind": kind, "p_ref": str(ref) if ref else None, "p_number": number}) is True
 
 
 class PlivoCaller(Protocol):
@@ -217,7 +221,7 @@ class PlivoOutbound:
                 return number
         return None
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, person_name: str | None = None, person_gender: str | None = None, questions: tuple[dict[str, str], ...] = ()) -> PlacedCall:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, approval_kind: gate.Approval | None = None, approval_ref: uuid.UUID | None = None, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, person_name: str | None = None, person_gender: str | None = None, questions: tuple[dict[str, str], ...] = ()) -> PlacedCall:
         language = language if language in LANGUAGES else "en"
         if goal and kind == "test":
             kind = "goal"   # the owner typed what the call is for: not the plain line-check
@@ -237,7 +241,13 @@ class PlivoOutbound:
             except Exception as exc:  # noqa: BLE001 - fail closed, never into the caller
                 log.warning("plivo_outbound prospect check not read: %s", exc.__class__.__name__)
                 prospect = True
-        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"), proof=proof, prospect=prospect)
+        approved = False   # the Owner's approval of THIS call (their own press, an approved task, a rule that is on, an approved batch, for THIS person's number): found by the database, never assumed; no kind given = not approved
+        if approval_kind is not None and number is not None and line is not None and self._gate.mode != "off":
+            try:
+                approved = self._repo.approved(token, tenant_id, approval_kind, approval_ref, number)
+            except Exception as exc:  # noqa: BLE001 - an answer we could not get is a refusal (a refused row with its closed word), never an escape into the caller
+                log.warning("plivo_outbound approval not read: %s", exc.__class__.__name__)
+        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"), proof=proof, prospect=prospect, approval=approval_kind if approved else None)
         if reason is not None:
             self._repo.begin(token, tenant_id, purpose, language, refuse_reason=reason)   # the refusal is recorded, with its closed word
             raise OutboundRefused(reason)
@@ -278,7 +288,7 @@ class PlivoOutbound:
         log.info("plivo_outbound cancelled call_fp=%s", str(call_id)[:8])
         return "cancelled"
 
-    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE, billing_ok: bool = True, proof: bool | None = None, prospect: bool = False) -> str | None:
+    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE, approval: gate.Approval | None = None, billing_ok: bool = True, proof: bool | None = None, prospect: bool = False) -> str | None:
         if number is None:
             return "bad_number"
         if not have_line:
@@ -286,7 +296,7 @@ class PlivoOutbound:
         own = self._gate.mode == "sandbox" and number in self._gate.sandbox_numbers   # an owner's own phone: the only consent a SANDBOX call has (a test call to oneself). `live` has no consent path yet: it refuses (no_consent)
         opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for(kind, language, tone), inbound=False)
         facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=gate.Hours(days=ALL_DAYS, from_minute=gate.WINDOW_FROM_MINUTE, to_minute=gate.WINDOW_TO_MINUTE),
-                                   approval="task", approval_valid=True, can_contact=own, dnd="no" if own else "unknown", opening_line=opening, active_calls_total=self._active(), billing_ok=billing_ok, proof_of_request=proof, prospect=prospect)
+                                   approval=approval, approval_valid=True, can_contact=own, dnd="no" if own else "unknown", opening_line=opening, active_calls_total=self._active(), billing_ok=billing_ok, proof_of_request=proof, prospect=prospect)
         decision = gate.check_outbound(self._gate, facts)
         return decision.reason if isinstance(decision, gate.Refused) else None
 
@@ -300,6 +310,10 @@ def finish_after_hangup(repo: OutboundRepo, token: str, tenant_id: uuid.UUID, ca
     mapped = UNANSWERED.get(call_status.lower(), ("failed", "error"))
     repo.finish_unanswered(token, tenant_id, call_id, mapped[0], mapped[1])
     return mapped[0]
+
+
+# an outreach item belongs to a standing rule or to an approved batch; any other kind is refused (not guessed as a batch)
+_APPROVAL_OF: dict[str, gate.Approval] = {"rule": "standing_rule", "batch": "plan", "plan": "plan"}
 
 
 def _uuid_or_none(value: Any) -> uuid.UUID | None:
@@ -325,7 +339,7 @@ class PlivoDialer:
         language = str(call.get("language") or "en")
         token = self._token()
         try:
-            placed = self._outbound.place(token, tenant, str(call.get("phone") or ""), lead_id=_uuid_or_none(call.get("lead_id")), language=language, purpose="sales_followup", kind="task")
+            placed = self._outbound.place(token, tenant, str(call.get("phone") or ""), lead_id=_uuid_or_none(call.get("lead_id")), approval_kind=_APPROVAL_OF.get(str(call.get("owner_kind"))), approval_ref=_uuid_or_none(call.get("item_id")), language=language, purpose="sales_followup", kind="task")
         except (OutboundRefused, PlivoError):
             return DialResult("failed")
         deadline = self._clock() + self._max_wait

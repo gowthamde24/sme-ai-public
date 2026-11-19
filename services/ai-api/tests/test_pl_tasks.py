@@ -44,6 +44,7 @@ def dialer_for(*, numbers: frozenset[str] = frozenset({PERSON}), end: str = "com
 
 def ask(dialer: PlivoTaskDialer, **kw: Any) -> Any:
     args: dict[str, Any] = dict(business="Padma Silks", language="en", questions=[{"key": "colour", "text": "Which colour do you want?", "type": "text"}], template="custom", seed="s", phone=PERSON, token="tok", tenant_id=TENANT, goal="Find out what she needs for the wedding.")
+    args.setdefault("task_id", uuid.UUID("77777777-7777-4777-8777-777777777777"))   # a task call always has the task that approved it
     args.update(kw)
     return dialer.call(**args)
 

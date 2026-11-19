@@ -55,6 +55,10 @@ class FakeRepo:
         self.proof_answer: dict[str, Any] | None = None   # the proof of request the database would find (live calls only)
         self.proof_asked: list[uuid.UUID] = []
         self.proof_kept: list[uuid.UUID] = []
+        self.approval_answer = True   # what the database says about the Owner's approval of this call
+        self.approvals_asked: list[tuple[str, uuid.UUID | None]] = []
+        self.numbers_asked: list[str | None] = []
+        self.approval_error = False
 
     def line_for_tenant(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         self.tokens.append(token)
@@ -87,6 +91,12 @@ class FakeRepo:
         if self.prospect_error:
             raise RuntimeError("data layer down")
         return self.prospect_answer
+    def approved(self, token: str, tenant_id: uuid.UUID, kind: str, ref: uuid.UUID | None, number: str | None) -> bool:
+        self.approvals_asked.append((kind, ref))
+        self.numbers_asked.append(number)
+        if self.approval_error:
+            raise RuntimeError("data layer down")
+        return self.approval_answer
 
 
 def placer(*, mode: str = "sandbox", numbers: frozenset[str] = frozenset({OWNER}), now: datetime = INDIA_10AM, repo: FakeRepo | None = None, api: FakePlivoApi | None = None,
@@ -99,7 +109,7 @@ def placer(*, mode: str = "sandbox", numbers: frozenset[str] = frozenset({OWNER}
 # ---------------------------------------------------------------------------------------------------------------------------------- the gate decides first
 def test_a_test_call_to_the_owners_own_phone_is_placed_from_the_businesss_line_with_ids_only_in_the_addresses() -> None:
     out, repo, api = placer()
-    placed = out.place("tok", TENANT, OWNER, business="Padma Silks")
+    placed = out.place("tok", TENANT, OWNER, approval_kind="owner_test", business="Padma Silks")
     assert repo.rows[placed.call_id]["state"] == "ringing" and repo.rows[placed.call_id]["provider_call_sid"] == placed.provider_call_id
     call = api.placed[0]
     assert call["from"] == LINE and call["to"] == OWNER
@@ -122,7 +132,7 @@ def test_a_test_call_to_the_owners_own_phone_is_placed_from_the_businesss_line_w
 def test_every_refusal_is_a_closed_word_kept_on_a_refused_row_and_nothing_is_dialled(kw: dict[str, Any], number: str, reason: str) -> None:
     out, repo, api = placer(**kw)
     with pytest.raises(OutboundRefused) as caught:
-        out.place("tok", TENANT, number)
+        out.place("tok", TENANT, number, approval_kind="owner_test")
     assert caught.value.reason == reason and api.placed == []
     assert [r["refuse_reason"] for r in repo.rows.values()] == [reason] and [r["state"] for r in repo.rows.values()] == ["refused"]
 
@@ -131,18 +141,18 @@ def test_a_business_that_used_its_free_call_minutes_places_nothing() -> None:
     line = {"line_id": str(uuid.uuid4()), "number": LINE, "provider": "plivo", "account_ref": None, "external_ref": None, "billing_blocked": True}
     out, repo, api = placer(repo=FakeRepo(line=line))
     with pytest.raises(OutboundRefused) as caught:
-        out.place("tok", TENANT, OWNER)
+        out.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert caught.value.reason == "billing_blocked" and api.placed == []
     assert [r["refuse_reason"] for r in repo.rows.values()] == ["billing_blocked"], "the refusal is kept on a refused row"
     out2, _, api2 = placer(repo=FakeRepo(line={**line, "billing_blocked": False}))
-    out2.place("tok", TENANT, OWNER)
+    out2.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert len(api2.placed) == 1, "not blocked: the call goes"
 
 
 def test_a_business_with_no_plivo_line_places_nothing() -> None:
     out, repo, api = placer(repo=FakeRepo(line={}))
     with pytest.raises(OutboundRefused) as caught:
-        out.place("tok", TENANT, OWNER)
+        out.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert caught.value.reason == "no_such_line" and api.placed == []
 
 
@@ -151,7 +161,7 @@ def test_plivo_failing_ends_the_row_as_failed_and_says_so() -> None:
     api.fail_with = "unavailable"
     out, repo, _ = placer(api=api)
     with pytest.raises(PlivoError):
-        out.place("tok", TENANT, OWNER)
+        out.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert [(r["state"], r["end_reason"]) for r in repo.rows.values()] == [("failed", "error")], "never left ringing"
 
 
@@ -303,7 +313,7 @@ class FakeOutbound:
     def __init__(self, repo: FakeRepo, refuse: str | None = None, fail: bool = False) -> None:
         self.repo, self.refuse, self.fail = repo, refuse, fail
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, language: str = "en", purpose: str = "x", kind: str = "task", business: str = "b") -> Any:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, approval_kind: str = "owner_test", approval_ref: uuid.UUID | None = None, language: str = "en", purpose: str = "x", kind: str = "task", business: str = "b") -> Any:
         if self.refuse:
             raise OutboundRefused(self.refuse)
         if self.fail:
@@ -424,18 +434,18 @@ def test_a_live_call_is_refused_without_a_proof_of_request_and_the_proof_is_kept
     lead = uuid.uuid4()
     out, repo, api = placer(mode="live", confirmed=True)
     with pytest.raises(OutboundRefused) as caught:
-        out.place("tok", TENANT, OWNER, lead_id=lead)
+        out.place("tok", TENANT, OWNER, lead_id=lead, approval_kind="owner_test")
     assert caught.value.reason == "no_proof_of_request" and api.placed == [] and repo.proof_asked == [lead]
     assert [r["refuse_reason"] for r in repo.rows.values()] == ["no_proof_of_request"], "the refusal is kept on a refused row"
     out2, repo2, _ = placer(mode="live", confirmed=True)
     with pytest.raises(OutboundRefused) as caught2:
-        out2.place("tok", TENANT, OWNER)   # no lead at all: no proof
+        out2.place("tok", TENANT, OWNER, approval_kind="owner_test")   # no lead at all: no proof
     assert caught2.value.reason == "no_proof_of_request" and repo2.proof_asked == []
 
 
 def test_a_sandbox_call_never_asks_for_a_proof() -> None:
     out, repo, api = placer()
-    out.place("tok", TENANT, OWNER, lead_id=uuid.uuid4())
+    out.place("tok", TENANT, OWNER, lead_id=uuid.uuid4(), approval_kind="owner_test")
     assert len(api.placed) == 1 and repo.proof_asked == [] and repo.proof_kept == []
 
 
@@ -460,5 +470,5 @@ def test_an_unreadable_prospect_check_is_a_refusal_not_a_call() -> None:
 
 def test_a_number_that_is_not_a_prospect_is_called_as_before() -> None:
     out, repo, api = placer()
-    out.place("tok", TENANT, OWNER)
+    out.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert len(api.placed) == 1 and repo.prospect_asked == [OWNER]
