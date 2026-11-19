@@ -677,7 +677,8 @@
   "lang": "te",
   "say": "స్టాక్19 అంటే ఏమిటి? మీరు ఎవరు?",
   "expect": "answer",
-  "note": "19 Nov 2026: who the assistant is / what Stack19 is goes to the chat path (not \"nothing to show\"), in the first person (unit test test_ea_intent)"
+  "contains": ["Stack19", "AI assistant"],
+  "note": "19 Nov 2026: who the assistant is / what Stack19 is: a fixed identity answer in the first person that says Stack19 and AI assistant (unit test test_general_questions)"
  },
  {
   "id": 86,
@@ -685,7 +686,8 @@
   "lang": "te",
   "say": "నువ్వు ఎవరు? ఈ యాప్ ఏం చేస్తుంది?",
   "expect": "answer",
-  "note": "19 Nov 2026: who the assistant is / what Stack19 is goes to the chat path (not \"nothing to show\"), in the first person (unit test test_ea_intent)"
+  "contains": ["Stack19", "AI assistant"],
+  "note": "19 Nov 2026: who the assistant is / what Stack19 is: a fixed identity answer in the first person that says Stack19 and AI assistant (unit test test_general_questions)"
  },
  {
   "id": 87,
@@ -693,7 +695,8 @@
   "lang": "hi",
   "say": "स्टैक19 क्या है?",
   "expect": "answer",
-  "note": "19 Nov 2026: who the assistant is / what Stack19 is goes to the chat path (not \"nothing to show\"), in the first person (unit test test_ea_intent)"
+  "contains": ["Stack19", "AI assistant"],
+  "note": "19 Nov 2026: who the assistant is / what Stack19 is: a fixed identity answer in the first person that says Stack19 and AI assistant (unit test test_general_questions)"
  },
  {
   "id": 88,
@@ -701,6 +704,7 @@
   "lang": "kn",
   "say": "ಸ್ಟ್ಯಾಕ್19 ಅಂದರೆ ಏನು?",
   "expect": "answer",
-  "note": "19 Nov 2026: who the assistant is / what Stack19 is goes to the chat path (not \"nothing to show\"), in the first person (unit test test_ea_intent)"
+  "contains": ["Stack19", "AI assistant"],
+  "note": "19 Nov 2026: who the assistant is / what Stack19 is: a fixed identity answer in the first person that says Stack19 and AI assistant (unit test test_general_questions)"
  }
 ]

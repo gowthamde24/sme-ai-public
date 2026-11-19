@@ -271,11 +271,16 @@ def _is_smalltalk(norm: str) -> bool:
     return _word_count(norm) <= SMALLTALK_WORDS and (_latin(_SMALLTALK_LATIN, norm) or _indian(_SMALLTALK_INDIAN, norm))
 
 
+def is_identity_question(norm: str) -> bool:
+    """"Who are you / what is Stack19": answered with who the assistant is, not with what it can do."""
+    return _latin(_IDENTITY_LATIN, norm) or _indian(_IDENTITY_INDIAN, norm)
+
+
 def is_about_assistant(norm: str) -> bool:
     """A question about the assistant itself ("what can you do?"). A business word makes it a question about the records ("what can you do about Ramesh's order?"), except the plain "...for my business"."""
     if _CAPABILITY_Q.search(norm):
         return True
-    if _latin(_IDENTITY_LATIN, norm) or _indian(_IDENTITY_INDIAN, norm):
+    if is_identity_question(norm):
         return True
     asks = _latin(_ABOUT_LATIN, norm) or _indian(_ABOUT_INDIAN, norm)
     if not asks:

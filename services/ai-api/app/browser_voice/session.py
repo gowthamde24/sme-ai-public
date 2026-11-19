@@ -48,10 +48,17 @@ from app.conversation.turntaking import (
 )
 from app.conversation.voices import SPEAKS_INSTEAD
 from app.ops.usage import UsageRecorder, record_best_effort
-from app.turns.intent import Intent, classify, is_about_assistant, is_yes_no, normalise
+from app.turns.intent import (
+    Intent,
+    classify,
+    is_about_assistant,
+    is_identity_question,
+    is_yes_no,
+    normalise,
+)
 from app.turns.intent import Kind as TurnKind
 from app.turns.lead_finder import is_answer as lf_is_answer
-from app.turns.words import ABOUT_ASSISTANT
+from app.turns.words import about_words
 from app.voice.interface import VoiceError
 
 log = logging.getLogger("app.browser_voice")
@@ -826,8 +833,7 @@ class VoiceSession:
 
     async def _answer(self, text: str, tm: TurnTimings) -> None:
         if is_about_assistant(normalise(text)):   # "what can you do?": the fixed, accurate answer, spoken at once (no model call, nothing to wait for), the same words as the written chat
-            spoken: dict[str, str] = {str(k): v for k, v in ABOUT_ASSISTANT.items()}
-            await self._say(spoken.get(self.language, spoken["en"]))
+            await self._say(about_words(is_identity_question(normalise(text)), self.language))
             return
         try:
             await self.conv.respond(text, tm)

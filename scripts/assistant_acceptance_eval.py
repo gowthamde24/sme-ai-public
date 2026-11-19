@@ -230,7 +230,9 @@ def main() -> int:
         got = classify(evs) if not any(n == "error" for n, _ in evs) else "error"
         put_back(owner, evs)   # what the command did is undone, so the next run starts from the same workspace
         cancel_planned_searches(owner)   # ... including a Lead Finder search that was only planned
-        results[c["id"]] = {"got": got, "ok": got == c["expect"] or (c["expect"] == "answer" and got == "records_answer") or (c["expect"] == "plan_card" and got == "call_plan") or (c["expect"] == "records_answer" and got == "clarify" and answered_from_records(evs)), "secs": round(time.perf_counter() - t0, 1)}
+        said_all = "".join(str(d.get("text") or d.get("delta") or "") for n, d in evs if n == "text")
+        missing = [w for w in c.get("contains", []) if w not in said_all]   # words the answer must say (19 Nov 2026: the identity answer names Stack19 and AI assistant)
+        results[c["id"]] = {"got": got if not missing else f"{got} (missing: {', '.join(missing)})", "ok": not missing and (got == c["expect"] or (c["expect"] == "answer" and got == "records_answer") or (c["expect"] == "plan_card" and got == "call_plan") or (c["expect"] == "records_answer" and got == "clarify" and answered_from_records(evs))), "secs": round(time.perf_counter() - t0, 1)}
         print(f"{c['id']:>2} {c['area']:<9} {'PASS' if results[c['id']]['ok'] else 'FAIL':<5} want {c['expect']:<13} got {got:<13} {results[c['id']]['secs']:>5}s  {c['say'][:50]}", flush=True)
         if a.verbose and not results[c["id"]]["ok"]:
             said = "".join(str(d.get("text") or d.get("delta") or "") for n, d in evs if n == "text")
