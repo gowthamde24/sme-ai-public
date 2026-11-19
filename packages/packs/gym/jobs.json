@@ -1,0 +1,385 @@
+{
+  "$comment": "Job templates of the gym business type (jobs contract section 5). DRAFT: every customer-facing text is for a native reader to check before it goes live. Written for gyms, yoga and fitness studios. No price, discount, delivery promise, refund promise or guarantee anywhere; templates are for enquirers and consenting customers only; the researcher template never calls or messages prospects (the owner reaches out personally). The invented prospects are fictional.",
+  "status": "draft",
+  "pack": "gym",
+  "version": 1,
+  "templates": [
+    {
+      "id": "enquiry_call_right_away",
+      "kind": "speed_to_lead",
+      "goal": "answer_every_enquiry",
+      "popular": true,
+      "title": {
+        "en": "Call every new enquiry right away",
+        "te": "కొత్త ఎంక్వైరీకి వెంటనే కాల్ చేయండి"
+      },
+      "benefit": {
+        "en": "A thank-you message and a quick call, while the person is still thinking about joining",
+        "te": "జాయిన్ అవ్వాలని ఇంకా ఆలోచిస్తున్నప్పుడే థాంక్యూ మెసేజ్, ఒక చిన్న కాల్"
+      },
+      "ask": {
+        "en": "Call every new gym enquiry right away",
+        "te": "కొత్త జిమ్ ఎంక్వైరీ రాగానే వెంటనే కాల్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Thank you for asking about {item} at {business}. We will call you to tell you more. – {business}",
+          "te": "హాయ్ {customer}! {business} లో {item} గురించి అడిగినందుకు థాంక్యూ. మరిన్ని వివరాలు చెప్పడానికి మేం కాల్ చేస్తాం. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, you enquired about {item}.\nIs now a good time to tell me what you would like to achieve?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} గురించి మీరు ఎంక్వైరీ చేశారు.\nమీరు ఏం సాధించాలనుకుంటున్నారో ఇప్పుడు చెప్తారా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "lead_source"
+      ],
+      "finds_out": [
+        "need",
+        "when",
+        "visit"
+      ]
+    },
+    {
+      "id": "answer_calls_when_busy",
+      "kind": "answer_calls",
+      "goal": "answer_every_enquiry",
+      "popular": false,
+      "title": {
+        "en": "Answer my calls when I can't",
+        "te": "నేను ఎత్తలేనప్పుడు నా కాల్స్ ఎత్తండి"
+      },
+      "benefit": {
+        "en": "No call goes unanswered while the trainers are with members, and you see what each one wanted",
+        "te": "ట్రైనర్లు మెంబర్లతో ఉన్నప్పుడు కూడా ఏ కాల్ మిస్ అవ్వదు, ఎవరికి ఏం కావాలో మీకు కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Answer the gym calls when nobody can pick up",
+        "te": "ఎవరూ ఎత్తలేనప్పుడు జిమ్ కాల్స్ ఎత్తండి"
+      },
+      "preview": {
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. The team is busy with members right now, how can I help you?\nTell me what you are looking for and I will pass it on to them.",
+          "te": "{assistant}ని, {business} AI assistant ని. ఇప్పుడు టీమ్ మెంబర్లతో బిజీగా ఉన్నారు, నేను ఎలా హెల్ప్ చేయగలను?\nమీకు ఏం కావాలో చెప్పండి, నేను వాళ్ళకి చెప్తాను."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "phone_number"
+      ],
+      "finds_out": [
+        "need",
+        "when",
+        "visit"
+      ]
+    },
+    {
+      "id": "trial_session_booking",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": true,
+      "title": {
+        "en": "Trial session booking",
+        "te": "ట్రయల్ సెషన్ బుకింగ్"
+      },
+      "benefit": {
+        "en": "Turns an enquiry into a trial session: the person picks a day, you see it on Today",
+        "te": "ఎంక్వైరీని ట్రయల్ సెషన్‌గా మారుస్తుంది: వాళ్ళు ఒక రోజు ఎంచుకుంటారు, మీకు Today లో కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Ask people who enquired to book a trial session",
+        "te": "ఎంక్వైరీ చేసిన వాళ్ళని ట్రయల్ సెషన్ బుక్ చేసుకోమని అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Would you like to try a session at {business}? Tell us a day and time that suits you and we will book it.",
+          "te": "హాయ్ {customer}! {business} లో ఒక ట్రయల్ సెషన్ చేస్తారా? మీకు వీలైన రోజు, టైమ్ చెప్పండి, మేం బుక్ చేస్తాం."
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, would you like to try a session at our gym?\nWhich day and time suit you?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, మా జిమ్‌లో ఒక ట్రయల్ సెషన్ చేస్తారా?\nమీకు ఏ రోజు, ఏ టైమ్ వీలవుతుంది?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "visit",
+        "when"
+      ]
+    },
+    {
+      "id": "trial_reminder",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Trial session reminder",
+        "te": "ట్రయల్ సెషన్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "Fewer no-shows: a reminder the day before, and an easy way to change the time",
+        "te": "నో-షోలు తగ్గుతాయి: ముందు రోజు రిమైండర్, టైమ్ మార్చుకోవడం కూడా సులువు"
+      },
+      "ask": {
+        "en": "Remind people the day before their trial session",
+        "te": "ట్రయల్ సెషన్ ముందు రోజు వాళ్ళకి రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A small reminder: your session at {business} is tomorrow. Reply here if you want to change the time. – {business}",
+          "te": "హాయ్ {customer}! చిన్న రిమైండర్: రేపు {business} లో మీ సెషన్ ఉంది. టైమ్ మార్చాలంటే ఇక్కడే రిప్లై ఇవ్వండి. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "when"
+      ]
+    },
+    {
+      "id": "after_trial_follow_up",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": true,
+      "title": {
+        "en": "Follow-up after a trial session",
+        "te": "ట్రయల్ సెషన్ తర్వాత ఫాలో అప్"
+      },
+      "benefit": {
+        "en": "A friendly check-in the day after, to learn how it felt and whether they want to join",
+        "te": "మరుసటి రోజు ఫ్రెండ్లీగా అడుగుతుంది, ఎలా అనిపించింది, జాయిన్ అవుతారా అని"
+      },
+      "ask": {
+        "en": "Check in with people a day after their trial session",
+        "te": "ట్రయల్ సెషన్ అయిన మరుసటి రోజు వాళ్ళని ఎలా అనిపించిందని అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Thank you for trying a session at {business}. How did it feel? Tell us if you would like to join or have any question. – {business}",
+          "te": "హాయ్ {customer}! {business} లో సెషన్ చేసినందుకు థాంక్యూ. ఎలా అనిపించింది? జాయిన్ అవ్వాలనుకుంటే లేదా ఏమైనా సందేహాలు ఉంటే చెప్పండి. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, thank you for trying a session with us.\nHow did it feel, and would you like to join?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, మా దగ్గర సెషన్ చేసినందుకు థాంక్యూ.\nఎలా అనిపించింది, జాయిన్ అవుతారా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number"
+      ],
+      "finds_out": [
+        "still_interested",
+        "need"
+      ]
+    },
+    {
+      "id": "missed_workout_check_in",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": true,
+      "title": {
+        "en": "Missed workouts check-in",
+        "te": "వర్కౌట్స్ మిస్ అయినప్పుడు చెక్-ఇన్"
+      },
+      "benefit": {
+        "en": "A kind message to members who have not come for a while, before they quit",
+        "te": "కొన్ని రోజులు రాని మెంబర్లకు మర్యాదగా మెసేజ్, వాళ్ళు మానేసే ముందే"
+      },
+      "ask": {
+        "en": "Message members who have not come to the gym for a while",
+        "te": "కొన్ని రోజులుగా జిమ్‌కి రాని మెంబర్లకు మెసేజ్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! We have not seen you at {business} for a while. Is everything fine? We would love to see you back. – {business}",
+          "te": "హాయ్ {customer}! చాలా రోజులుగా {business} లో మిమ్మల్ని చూడలేదు. అంతా బాగుందా? మళ్ళీ మిమ్మల్ని చూడాలని ఉంది. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [
+        "still_interested"
+      ]
+    },
+    {
+      "id": "membership_renewal_reminder",
+      "kind": "custom",
+      "goal": "get_paid",
+      "popular": false,
+      "title": {
+        "en": "Membership renewal reminder",
+        "te": "మెంబర్‌షిప్ రెన్యువల్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "A friendly reminder before a membership ends, no amount in the message",
+        "te": "మెంబర్‌షిప్ ముగిసేలోపు ఫ్రెండ్లీ రిమైండర్, మెసేజ్‌లో అమౌంట్ ఉండదు"
+      },
+      "ask": {
+        "en": "Remind my members before their membership ends",
+        "te": "మెంబర్‌షిప్ ముగిసేలోపు నా మెంబర్లకు రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A friendly reminder from {business}: your membership is ending soon. Reply here and we will help you renew it. Thank you!",
+          "te": "హాయ్ {customer}! {business} నుంచి ఒక ఫ్రెండ్లీ రిమైండర్: మీ మెంబర్‌షిప్ త్వరలో ముగుస్తోంది. ఇక్కడే రిప్లై ఇవ్వండి, రెన్యూ చేయడంలో హెల్ప్ చేస్తాం. థాంక్యూ!"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "new_batch_or_class",
+      "kind": "offers",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "New batch or class",
+        "te": "కొత్త బ్యాచ్ లేదా క్లాస్"
+      },
+      "benefit": {
+        "en": "Tells members and enquirers who said yes to messages about a new batch or class",
+        "te": "ఓకే చెప్పిన మెంబర్లకు, ఎంక్వైరీ చేసిన వాళ్ళకి కొత్త బ్యాచ్ లేదా క్లాస్ గురించి చెప్తుంది"
+      },
+      "ask": {
+        "en": "Tell my members about the new batch",
+        "te": "కొత్త బ్యాచ్ గురించి నా మెంబర్లకు చెప్పండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A new batch of {item} is starting at {business}. Reply YES and we will send you the timings.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! {business} లో {item} కొత్త బ్యాచ్ మొదలవుతోంది. టైమింగ్స్ కావాలంటే YES అని రిప్లై ఇవ్వండి.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "catalogue_item"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "new_year_start",
+      "kind": "offers",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "New year fresh start",
+        "te": "న్యూ ఇయర్ ఫ్రెష్ స్టార్ట్"
+      },
+      "benefit": {
+        "en": "A warm new-year message to customers who said yes to messages, when many people want to start",
+        "te": "న్యూ ఇయర్‌కి చాలా మంది మొదలుపెట్టాలనుకునే టైమ్‌లో, ఓకే చెప్పిన కస్టమర్లకు మెసేజ్"
+      },
+      "ask": {
+        "en": "Send my customers a new-year message and invite them back",
+        "te": "నా కస్టమర్లకు న్యూ ఇయర్ మెసేజ్ పంపి, మళ్ళీ రమ్మని పిలవండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Happy New Year from {business}. If you would like to start fresh, reply YES and we will help you.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! {business} నుంచి న్యూ ఇయర్ శుభాకాంక్షలు. కొత్తగా మొదలుపెట్టాలనుకుంటే YES అని రిప్లై ఇవ్వండి, హెల్ప్ చేస్తాం.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [],
+      "season": "new_year"
+    },
+    {
+      "id": "quiet_enquiry_follow_up",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "Follow up on enquiries that went quiet",
+        "te": "సైలెంట్ అయిన ఎంక్వైరీలను ఫాలో అప్ చేయండి"
+      },
+      "benefit": {
+        "en": "A gentle check-in with people who asked and then stopped replying",
+        "te": "అడిగి, తర్వాత రిప్లై ఇవ్వని వాళ్ళని మెల్లగా అడుగుతుంది"
+      },
+      "ask": {
+        "en": "Follow up with people who enquired and did not reply",
+        "te": "ఎంక్వైరీ చేసి రిప్లై ఇవ్వని వాళ్ళని ఫాలో అప్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! You asked about {item} at {business} a few days ago. Are you still thinking about it? Tell us and we will help you. – {business}",
+          "te": "హాయ్ {customer}! కొన్ని రోజుల క్రితం {business} లో {item} గురించి అడిగారు. ఇంకా ఆలోచిస్తున్నారా? చెప్పండి, మేం హెల్ప్ చేస్తాం. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [
+        "still_interested",
+        "when"
+      ]
+    },
+    {
+      "id": "find_offices_and_colleges",
+      "kind": "researcher",
+      "goal": "find_new_customers",
+      "popular": false,
+      "title": {
+        "en": "Find offices and colleges for group plans",
+        "te": "గ్రూప్ ప్లాన్‌ల కోసం ఆఫీసులను, కాలేజీలను వెతకండి"
+      },
+      "benefit": {
+        "en": "Finds offices, colleges and residents' associations near you that could be a fit for group plans. You contact them yourself.",
+        "te": "మీ దగ్గరి ఆఫీసులను, కాలేజీలను, రెసిడెంట్స్ అసోసియేషన్‌లను, గ్రూప్ ప్లాన్‌లకు సరిపోతాయేమో చూపిస్తుంది. మీరే వాళ్ళని కాంటాక్ట్ చేస్తారు."
+      },
+      "ask": {
+        "en": "Find offices and colleges near us for group plans; I will contact them myself",
+        "te": "గ్రూప్ ప్లాన్‌ల కోసం దగ్గరలోని ఆఫీసులను, కాలేజీలను వెతకండి, నేనే వాళ్ళని కాంటాక్ట్ చేస్తాను"
+      },
+      "examples": [
+        {
+          "name": "Orbit Software Park (example)",
+          "area": "Tech Corridor",
+          "why": {
+            "en": "A large office with many young staff, close to the gym",
+            "te": "చాలా మంది యంగ్ స్టాఫ్ ఉన్న పెద్ద ఆఫీస్, జిమ్‌కి దగ్గరలో"
+          }
+        },
+        {
+          "name": "Lakeview Degree College (example)",
+          "area": "College Road",
+          "why": {
+            "en": "A college with sports interest and no gym tie-up listed",
+            "te": "స్పోర్ట్స్ ఇష్టపడే కాలేజీ, జిమ్ టై-అప్ లిస్ట్‌లో లేదు"
+          }
+        },
+        {
+          "name": "Maple Heights Residents Association (example)",
+          "area": "Garden Colony",
+          "why": {
+            "en": "A big community, some distance away, with many residents",
+            "te": "దూరం కొంచెం ఎక్కువున్న, చాలా మంది రెసిడెంట్లు ఉండే పెద్ద కమ్యూనిటీ"
+          }
+        }
+      ],
+      "needs": [],
+      "finds_out": []
+    }
+  ]
+}
