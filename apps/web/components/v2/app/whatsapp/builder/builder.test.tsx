@@ -105,7 +105,7 @@ describe("the builder: say it, written, preview, checks, send", () => {
     view();
     await written();
     expect(part("step-checks")).toHaveTextContent("2 to fix");
-    expect([...document.querySelectorAll('[data-status="warn"]')].map((e) => e.getAttribute("data-check"))).toEqual(["capitals", "name_edge"]);
+    expect([...document.querySelectorAll('[data-state="warn"]')].map((e) => e.getAttribute("data-check"))).toEqual(["capitals", "name_edge"]);
     expect(part("send-blocked")).toBeTruthy();
     expect(document.querySelector('input[name="code"]')).toBeNull();
     fireEvent.click(document.querySelector('[data-check="capitals"] [data-action="fix"]') as HTMLElement);
@@ -132,7 +132,7 @@ describe("the builder: say it, written, preview, checks, send", () => {
     expect(body.value).not.toMatch(/[{}]/);
     fireEvent.change(body, { target: { value: "Hello [Name], your blouse is ready. {x}" } });
     expect(body.value).toBe("Hello [Name], your blouse is ready. x");
-    expect(document.querySelector('[data-check="capitals"]')).toHaveAttribute("data-status", "ok");
+    expect(document.querySelector('[data-check="capitals"]')).toHaveAttribute("data-state", "ok");
   });
   it("Change by saying it asks the writer again with the message so far", async () => {
     const a = acts();

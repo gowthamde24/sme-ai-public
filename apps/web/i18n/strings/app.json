@@ -121256,10 +121256,10 @@
   }
  },
  "jobs.who.plan.done": {
-  "en": "{job} now speaks {language}",
-  "te": "{job} ఇప్పుడు {language} మాట్లాడుతుంది",
-  "hi": "{job} अब {language} बोलता है",
-  "kn": "{job} ಈಗ {language} ಮಾತನಾಡುತ್ತದೆ",
+  "en": "The {job} job now speaks {language}",
+  "te": "{job} జాబ్ ఇప్పుడు {language} మాట్లాడుతుంది",
+  "hi": "{job} जॉब अब {language} बोलता है",
+  "kn": "{job} ಜಾಬ್ ಈಗ {language} ಮಾತನಾಡುತ್ತದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

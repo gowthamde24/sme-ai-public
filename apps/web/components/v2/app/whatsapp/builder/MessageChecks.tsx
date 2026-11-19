@@ -44,7 +44,7 @@ export function MessageChecks({ results, t, canFix, onFix, onFixAll }: { results
           const bad = r.status === "warn";
           const Icon = bad ? AlertTriangle : Check;
           return (
-            <li key={r.code} data-check={r.code} data-status={r.status} className="grid grid-cols-[28px_minmax(0,1fr)] gap-x-3">
+            <li key={r.code} data-check={r.code} data-state={r.status} className="grid grid-cols-[28px_minmax(0,1fr)] gap-x-3">
               <span aria-hidden="true" className={`mt-0.5 grid size-7 place-items-center rounded-full ${bad ? "bg-[var(--jb-wait-bg)] text-[var(--jb-wait-fg)]" : "bg-[var(--jb-done-bg)] text-[var(--jb-done-fg)]"}`}>
                 <Icon className="size-4" />
               </span>

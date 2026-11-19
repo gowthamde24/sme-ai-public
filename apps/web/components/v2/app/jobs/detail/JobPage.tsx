@@ -5,15 +5,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { effectOf, fmtMinutes, linesOf, testWord, type Ago, type JobDetail, type JobFaq, type JobSays } from "@/lib/jobs/detail";
 import { jobNameKey, type JobStatus } from "@/lib/jobs/types";
+import type { SpeaksPatch } from "@/lib/jobs/who";
 import { groupIndian } from "@/lib/money";
 
 import { makeT, type Words } from "../../words";
 import { FaqCard, FindsOutCard } from "./LazyJobLists";
+import { WhoTalks } from "./LazyWhoTalks";
 import { JobHeader } from "./JobHeader";
 import { FailureCard, ResultsCard, TryCard } from "./JobResults";
 import { JobSaysCard } from "./JobSays";
 import { SettingLineView } from "./SettingLines";
-import { jobCard, type JobPageActions } from "./types";
+import { jobCard, type JobPageActions, type WhoExtra } from "./types";
 
 type Toast = { id: number; text: string; undo: () => Promise<void> };
 
@@ -21,7 +23,7 @@ type Toast = { id: number; text: string; undo: () => Promise<void> };
  * ONE job's page (JOBS, mocks 04, 06 and 09): the job and its switch, When (sentences with the choice inside, and what it will do), What it says, What it finds out, FAQs, More choices, Results, and "Try it".
  * Every change answers at once (optimistic) and is put back, with the reason, if the API says no. A rename or a switch also leaves an Undo for a few seconds. `actions` null = the person only reads.
  */
-export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHref = null }: { detail: JobDetail; words: Words; base: string; lang: string; ago: Ago | null; actions: JobPageActions | null; /** The old page that holds every setting of this job (JOBS on: Rules and Campaigns redirect to the job, this link opens them with ?all=1), or null. */ allSettingsHref?: string | null }) {
+export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHref = null, whoExtra = null }: { detail: JobDetail; words: Words; base: string; lang: string; ago: Ago | null; actions: JobPageActions | null; /** The old page that holds every setting of this job (JOBS on: Rules and Campaigns redirect to the job, this link opens them with ?all=1), or null. */ allSettingsHref?: string | null; /** The Who talks card's extras (the voice sample route, the other job the command offers, the change of any job); null = no play buttons and no command. */ whoExtra?: WhoExtra | null }) {
   const t = makeT(words);
   const { job } = detail;
   const canChange = actions !== null;
@@ -85,6 +87,18 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
     return true;
   }
 
+  /** Who talks: one change of language, tone, voice or number (the adapter's one patch). A language change also moves "What it says" to that language. */
+  async function changeSpeaks(patch: SpeaksPatch): Promise<{ ok: true } | { ok: false; error: string }> {
+    if (!actions?.setSpeaks) return { ok: false, error: "" };
+    const r = await actions.setSpeaks(patch);
+    if (!r.ok) return { ok: false, error: r.error };
+    if (patch.language) setValues((v) => ({ ...v, language: patch.language as string }));
+    return { ok: true };
+  }
+  async function changeOther(jobId: string, patch: SpeaksPatch): Promise<{ ok: true } | { ok: false; error: string }> {
+    const r = whoExtra?.changeJob ? await whoExtra.changeJob(jobId, patch) : null;
+    return r?.ok ? { ok: true } : { ok: false, error: r && !r.ok ? r.error : "" };
+  }
   async function choose(key: string, value: string) {
     if (!actions) return;
     const before = values[key];
@@ -168,6 +182,24 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
           onSwitch={(next) => void switchTo(next)}
           onRename={(name) => renameTo(name)}
         />
+        {detail.who && detail.says.length > 0 ? (
+          <WhoTalks
+            jobId={job.id}
+            who={detail.who}
+            shownName={shownName}
+            customName={now.customName}
+            plainName={plainName}
+            business={detail.business}
+            effect={effect ? t(`jobs.effect.${job.kind}`, { who: effect.who, t1: fmtMinutes(effect.steps[0].at), t2: fmtMinutes(effect.steps[1].at), t3: fmtMinutes(effect.steps[2].at) }) : null}
+            t={t}
+            canChange={canChange && actions?.setSpeaks !== undefined}
+            uiLang={lang}
+            sampleEndpoint={whoExtra?.sampleEndpoint ?? null}
+            onChange={changeSpeaks}
+            onRename={(name) => renameTo(name)}
+            command={whoExtra?.target && whoExtra.changeJob ? { jobId: whoExtra.target.id, jobName: whoExtra.target.customName ?? t(jobNameKey(whoExtra.target.kind)), short: t(`jobs.who.ask.job.${whoExtra.target.kind}`), from: whoExtra.target.language, to: whoExtra.target.to, change: changeOther } : null}
+          />
+        ) : null}
         {detail.failure && job.fix ? <FailureCard failure={detail.failure} fixCount={job.fix.count} t={t} lang={lang} fixHref={`${base}/integrations/whatsapp`} canChange={canChange} /> : null}
 
         <section data-part="job-when" className={jobCard}>
@@ -203,7 +235,7 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
           ) : null}
         </section>
 
-        {detail.says.length > 0 ? <JobSaysCard says={says} language={language} values={values} t={t} disabled={!canChange} byKey={byKey} jobName={shownName} base={base} onChange={(k, v) => void choose(k, v)} /> : null}
+        {detail.says.length > 0 ? <JobSaysCard says={says} language={detail.who ? undefined : language} values={values} t={t} disabled={!canChange} byKey={byKey} jobName={shownName} base={base} onChange={(k, v) => void choose(k, v)} /> : null}
 
         <FindsOutCard items={detail.findsOut} enabled={finds} t={t} disabled={!canChange} onChange={(k, on) => void tick(k, on)} />
         {errors.finds ? (

@@ -103,8 +103,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
     <div data-part="builder" className="flex flex-col gap-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="m-0 font-display text-[22px] font-bold leading-tight text-ink md:text-2xl">{t("jobs.tb.title")}</h2>
-          <p className="m-0 mt-1 text-[15px] leading-snug text-muted">{t("jobs.tb.own.sub")}</p>
+          <h3 className="m-0 font-display text-[20px] font-bold leading-tight text-ink md:text-[22px]">{t("jobs.tb.title")}</h3>
         </div>
         <button type="button" onClick={onClose} className={jobBtnQuiet}>
           {t("jobs.tb.close")}
@@ -165,7 +164,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
 
         {message ? (
           <Step n={2} part="step-written" title={t("jobs.tb.s2.title")} sub={t("jobs.tb.s2.sub")}>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3">
               {DRAFT_LANGS.map((lang) => {
                 const d = message.drafts[lang];
                 const open = editing[lang] === true;

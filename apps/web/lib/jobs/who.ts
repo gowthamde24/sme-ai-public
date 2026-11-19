@@ -1,3 +1,4 @@
+import type { JobKind } from "./types";
 import { sampleUrl, type SampleQuery } from "@/lib/voice-samples/types";
 
 /**
@@ -50,3 +51,6 @@ export function whoSample(endpoint: string, who: Pick<Speaks, "language" | "tone
   const q: SampleQuery = { voice, lang: lang as SampleQuery["lang"], tone: who.tone === "respectful" ? "crisp" : "warm", name: name !== null && /^[\p{L}\p{M}\p{N} ]{1,24}$/u.test(name) ? name : "" };
   return sampleUrl(endpoint, q);
 }
+
+/** The one other job the card offers to change by talking ("Make the visits job speak Telugu"): its id, kind and own name, how it speaks now and how the command would make it speak. */
+export type WhoTarget = { id: string; kind: JobKind; customName: string | null; language: WhoLanguage; to: WhoLanguage };

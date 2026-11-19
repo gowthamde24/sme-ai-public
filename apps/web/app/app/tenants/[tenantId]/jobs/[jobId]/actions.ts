@@ -7,6 +7,7 @@ import { getLang } from "@/i18n/get-lang";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { addJobFaq, patchJob, removeJobFaq, testJob, type JobDetailTested, type JobPatched } from "@/lib/api/jobs";
 import { checkFaq, checkJobName, isCode, type JobFaq, type TestChannel } from "@/lib/jobs/detail";
+import { readSpeaksPatch } from "@/lib/jobs/who";
 
 import { DECIDERS, invalid, who } from "../../retailers/finder-guard";
 import { jobsRefusal } from "../refusal";
@@ -54,6 +55,15 @@ export async function setJobSettingAction(tenantId: string, jobId: string, key: 
   if ("ok" in ctx) return ctx;
   if (!isCode(key) || !(typeof value === "boolean" || isCode(value))) return invalid(ctx.t);
   return change(tenantId, jobId, ctx, { settings: { [key]: value } });
+}
+
+/** Who talks: how the job sounds (language, tone, voice, number), only what changed, in the closed words of lib/jobs/who.ts. The assistant's "make the visits job speak Telugu" is this same change on another job. */
+export async function setJobSpeaksAction(tenantId: string, jobId: string, patch: unknown): Promise<Reply<JobPatched>> {
+  const ctx = await allowed(tenantId, jobId);
+  if ("ok" in ctx) return ctx;
+  const speaks = readSpeaksPatch(patch);
+  if (!speaks) return invalid(ctx.t);
+  return change(tenantId, jobId, ctx, { speaks });
 }
 
 /** One tick of "What it finds out". */
