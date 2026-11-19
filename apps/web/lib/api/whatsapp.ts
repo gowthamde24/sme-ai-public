@@ -101,6 +101,10 @@ export interface ConnectConfig {
   missing: string[];
   /** What the API can record (`cloud_api`, `coexistence`); empty from an older API: the web then never sends the `coexistence` field. */
   onboardingTypes: string[];
+  /** The Embedded Signup version of the owner's configuration (`v4`: the app-coexistence feature type is opted into; `v5`, 20 Oct 2026: coexistence is on by default). An older API says nothing: v4. */
+  embeddedVersion: "v4" | "v5";
+  /** The `extras` of `FB.login`, ready-made by the API for this version: passed to Meta as they are. null from an older API: the web then uses the v4 ones it always used. */
+  launchExtras: Record<string, unknown> | null;
 }
 export function parseConnectConfig(json: unknown): ConnectConfig {
   const x = rec(json, "connect config");
@@ -108,7 +112,9 @@ export function parseConnectConfig(json: unknown): ConnectConfig {
   const version = typeof x.graph_version === "string" && /^v\d{1,2}\.\d{1,2}$/.test(x.graph_version) ? x.graph_version : "v25.0";
   const appId = id(x.app_id, "app_id");
   const configId = id(x.config_id, "config_id");
-  return { available: bool(x.available, "available") && appId !== null && configId !== null, appId, configId, graphVersion: version, missing: list(x.missing ?? [], "missing", 20).map((m) => word(m, "missing")), onboardingTypes: list(x.onboarding_types ?? [], "onboarding_types", 10).map((m) => word(m, "onboarding_type")) };
+  const embeddedVersion: "v4" | "v5" = x.embedded_version === "v5" ? "v5" : "v4";
+  const extras = typeof x.launch_extras === "object" && x.launch_extras !== null && !Array.isArray(x.launch_extras) && JSON.stringify(x.launch_extras).length <= 600 ? (x.launch_extras as Record<string, unknown>) : null;
+  return { embeddedVersion, launchExtras: extras, available: bool(x.available, "available") && appId !== null && configId !== null, appId, configId, graphVersion: version, missing: list(x.missing ?? [], "missing", 20).map((m) => word(m, "missing")), onboardingTypes: list(x.onboarding_types ?? [], "onboarding_types", 10).map((m) => word(m, "onboarding_type")) };
 }
 /** null when it cannot be told (an API without the route, a failure): the card then says "being set up" and draws no button. */
 export async function getConnectConfig(token: string, tenantId: string): Promise<ConnectConfig | null> {
@@ -122,8 +128,13 @@ export async function getConnectConfig(token: string, tenantId: string): Promise
 /** What Meta's Embedded Signup gave the browser: the short `code` and the account and number the shop picked. No token, no secret. */
 export interface ConnectInput {
   code: string;
-  wabaId: string;
-  phoneNumberId: string;
+  /** Version 4 names the account `waba_id`; version 5 (20 Oct 2026) names the accounts `messaging_account_ids` instead: the API accepts either and checks the ids against what the signup really shared. */
+  wabaId?: string;
+  messagingAccountIds?: string[];
+  /** Version 5 may not name the number: the API then takes the account's only number. */
+  phoneNumberId?: string;
+  /** Version 5's own fact: the number is also on the WhatsApp Business app (Meta's `is_on_biz_app`). */
+  isOnBizApp?: boolean;
   /** true only when the signup was Meta's app-onboarding one AND the API said it can record it (`onboarding_types` has "coexistence"); otherwise absent, because the API's model is strict (an unknown field is a 422). */
   coexistence?: true;
 }
@@ -137,8 +148,16 @@ export const SIGNUP_ID = /^[0-9]{5,30}$/;
 export const SIGNUP_CODE = /^[A-Za-z0-9_.~-]{10,512}$/;
 /** `POST /whatsapp/connect` (Owner, with the second factor): the API checks that the signup was made in OUR app and shared THIS account, that the number is on it, subscribes our app to its webhooks and records the account for this business only. */
 export async function connectWhatsapp(token: string, tenantId: string, i: ConnectInput): Promise<Connected> {
-  if (!SIGNUP_ID.test(i.wabaId) || !SIGNUP_ID.test(i.phoneNumberId) || !SIGNUP_CODE.test(i.code)) bad("signup");
-  const x = rec(await post(`${base(tenantId)}/whatsapp/connect`, token, { code: i.code, waba_id: i.wabaId, phone_number_id: i.phoneNumberId, ...(i.coexistence === true ? { coexistence: true } : {}) }), "connected");
+  const ids = i.messagingAccountIds ?? [];
+  const named = (i.wabaId !== undefined && SIGNUP_ID.test(i.wabaId)) || (ids.length > 0 && ids.length <= 5 && ids.every((x) => SIGNUP_ID.test(x)));
+  if (!named || (i.wabaId !== undefined && !SIGNUP_ID.test(i.wabaId)) || (i.phoneNumberId !== undefined && !SIGNUP_ID.test(i.phoneNumberId)) || !SIGNUP_CODE.test(i.code)) bad("signup");
+  const body: Record<string, unknown> = { code: i.code };
+  if (i.wabaId !== undefined) body.waba_id = i.wabaId;
+  if (ids.length > 0) body.messaging_account_ids = ids;
+  if (i.phoneNumberId !== undefined) body.phone_number_id = i.phoneNumberId;
+  if (i.coexistence === true) body.coexistence = true;
+  if (typeof i.isOnBizApp === "boolean") body.is_on_biz_app = i.isOnBizApp;
+  const x = rec(await post(`${base(tenantId)}/whatsapp/connect`, token, body), "connected");
   return { connected: bool(x.connected, "connected"), displayPhone: optStr(x.display_phone, "display_phone", 40), verifiedName: optStr(x.verified_name, "verified_name", 100), status: optStr(x.status, "status", 20) };
 }
 export async function listTemplates(token: string, tenantId: string): Promise<Template[]> {
