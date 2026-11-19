@@ -109,7 +109,7 @@ export function ConnectWithFacebook({ words, config, connect, onConnected, sdk =
         {t("wa.fb.title")}
       </h2>
       <p className="text-base">{t("wa.fb.body")}</p>
-      <p className={help}>{t("wa.fb.coexistence")}</p>
+      {config.coexistence ? <p className={help}>{t("wa.fb.coexistence")}</p> : null}
       {state === "connected" && done ? (
         <p role="status" className={okLine} data-part="fb-connected">
           {t("wa.fb.connected", { phone: done.displayPhone ?? "", name: done.verifiedName ?? "" })}
