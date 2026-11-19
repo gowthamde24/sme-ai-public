@@ -169,6 +169,14 @@ async function capture(scenario: (typeof SCENARIOS)[number], role: (typeof ROLES
     await act(async () => {
       container = render(element).container;
     });
+    // Today and Leads draw in parts that finish one after another: wait until it has not changed for three rounds of the clock (one awaited act was not enough on a loaded machine, where the lazy modules load slower)
+    const streams = scenario.env !== undefined || /^(today|lead-desk)/.test(scenario.id);
+    for (let round = 0, before = "", still = 0; streams && round < 100 && still < 3; round += 1) {
+      await act(async () => void (await new Promise((r) => setTimeout(r, round < 2 ? 0 : 5))));
+      const now = container.innerHTML;
+      still = now === before ? still + 1 : 0;
+      before = now;
+    }
     return screenText(container);
   } catch (error) {
     if (error instanceof Error && error.message === "NEXT_NOT_FOUND") return "[not found]\n";

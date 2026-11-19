@@ -70,8 +70,16 @@ function deferred<V>() {
   });
   return { promise, resolve, reject };
 }
+/** Lets the streamed parts settle: rounds of the clock until the page has not changed for five rounds in a row (a fixed number of rounds was not enough on a loaded machine, where the lazy modules load slower). */
 const flush = async () => {
-  for (let i = 0; i < 4; i += 1) await act(async () => void (await new Promise((r) => setTimeout(r, 0))));
+  let before = "";
+  let still = 0;
+  for (let i = 0; i < 200 && still < 5; i += 1) {
+    await act(async () => void (await new Promise((r) => setTimeout(r, i < 4 ? 0 : 10))));
+    const now = document.body.innerHTML;
+    still = now === before ? still + 1 : 0;
+    before = now;
+  }
 };
 const show = async () => {
   const element = await TenantPage(props());
