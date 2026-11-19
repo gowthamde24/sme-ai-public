@@ -176,7 +176,7 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
             t={t}
             uiLang={lang}
             setSpeaks={actions?.setSpeaks}
-            onLang={(l) => setValues((v) => ({ ...v, language: l }))}
+            setValues={setValues}
             onRename={renameTo}
             extra={whoExtra}
           />

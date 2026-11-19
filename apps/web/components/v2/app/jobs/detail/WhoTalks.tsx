@@ -38,7 +38,8 @@ export type WhoTalksProps = {
   onChange?: (patch: SpeaksPatch) => Promise<{ ok: true } | { ok: false; error: string }>;
   /** Or the job page's own save and what to do after a language change (the card builds `onChange` itself). */
   setSpeaks?: (patch: SpeaksPatch) => Promise<{ ok: true } | { ok: false; error: string }>;
-  onLang?: (language: string) => void;
+  /** The job page's values: after a language change the card writes the new language into them ("What it says" follows). */
+  setValues?: (change: (v: Record<string, string>) => Record<string, string>) => void;
   onRename: (name: string) => Promise<boolean>;
   command?: WhoCommandProps | null;
   /** The other jobs' side of "Make the visits job speak Telugu": the card builds its own command from this (kept here, in the lazy chunk, so the job page carries less code). */
@@ -62,7 +63,8 @@ export function WhoTalks(p: WhoTalksProps) {
   async function saveSpeaks(patch: SpeaksPatch): Promise<{ ok: true } | { ok: false; error: string }> {
     const r = p.setSpeaks ? await p.setSpeaks(patch) : { ok: false as const, error: "" };
     if (!r.ok) return { ok: false, error: r.error };
-    if (patch.language) p.onLang?.(patch.language);
+    const language = patch.language;
+    if (language) p.setValues?.((v) => ({ ...v, language }));
     return { ok: true };
   }
   const target = p.extra?.target;
