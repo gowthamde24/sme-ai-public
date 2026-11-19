@@ -500,7 +500,7 @@ describe("the call row on a desktop, as the owner's target draws it", () => {
     const row = document.querySelector("[data-needs-row]") as HTMLElement;
     const text = row.textContent ?? "";
     expect(text).toContain("Ramesh");
-    expect(text).toContain("ధర మరియు విజిట్");
+    expect(text).toContain("ధర ఇంకా విజిట్");
     expect(text.replace("Ramesh", "")).not.toMatch(/[A-Za-z]{3}/); // no English word is left
   });
 });
