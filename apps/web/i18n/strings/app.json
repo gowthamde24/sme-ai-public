@@ -119637,5 +119637,269 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "vt.title": {
+  "en": "How your assistant sounds",
+  "te": "మీ అసిస్టెంట్ ఎలా వినిపిస్తుంది",
+  "hi": "आपका असिस्टेंट कैसा सुनाई देता है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೇಗೆ ಕೇಳಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.lang": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.voice": {
+  "en": "Voice",
+  "te": "వాయిస్",
+  "hi": "आवाज़",
+  "kn": "ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.play": {
+  "en": "Play",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.stop": {
+  "en": "Stop",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.speak": {
+  "en": "Speak to customers: {tone}",
+  "te": "కస్టమర్లతో మాట్లాడే తీరు: {tone}",
+  "hi": "ग्राहकों से बात करने का तरीका: {tone}",
+  "kn": "ಗ್ರಾಹಕರ ಜೊತೆ ಮಾತನಾಡುವ ರೀತಿ: {tone}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.usual": {
+  "en": "{tone} (the usual)",
+  "te": "{tone} (మామూలు)",
+  "hi": "{tone} (आम तौर पर)",
+  "kn": "{tone} (ಸಾಮಾನ್ಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.ex.label": {
+  "en": "For example:",
+  "te": "ఉదాహరణకు:",
+  "hi": "जैसे:",
+  "kn": "ಉದಾಹರಣೆಗೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.ex.friendly": {
+  "en": "Hi {name}, …",
+  "te": "నమస్కారం {name}, …",
+  "hi": "नमस्ते {name}, …",
+  "kn": "ನಮಸ್ಕಾರ {name}, …",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.ex.respectful": {
+  "en": "Good morning, Mr. {name}, …",
+  "te": "నమస్కారం {name} గారు, …",
+  "hi": "नमस्ते {name} जी, …",
+  "kn": "ನಮಸ್ಕಾರ {name} ಅವರೇ, …",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.greet": {
+  "en": "Greeting",
+  "te": "గ్రీటింగ్",
+  "hi": "ग्रीटिंग",
+  "kn": "ಗ್ರೀಟಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.greet.help": {
+  "en": "Customers hear this first. Keep our suggestion or change it.",
+  "te": "కస్టమర్ ముందుగా ఇదే వింటారు. మా సూచన అలాగే ఉంచండి, లేదా మార్చండి.",
+  "hi": "ग्राहक सबसे पहले यही सुनते हैं। हमारा सुझाव रखें या बदल दें।",
+  "kn": "ಗ್ರಾಹಕರು ಮೊದಲು ಇದನ್ನೇ ಕೇಳುತ್ತಾರೆ. ನಮ್ಮ ಸಲಹೆಯನ್ನು ಹಾಗೇ ಇಡಿ, ಅಥವಾ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.hear": {
+  "en": "Hear it",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.ph.customer": {
+  "en": "the customer's name",
+  "te": "కస్టమర్ పేరు",
+  "hi": "ग्राहक का नाम",
+  "kn": "ಗ್ರಾಹಕರ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.ph.assistant": {
+  "en": "your assistant's name",
+  "te": "మీ అసిస్టెంట్ పేరు",
+  "hi": "आपके असिस्टेंट का नाम",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.ph.business": {
+  "en": "your shop name",
+  "te": "మీ షాప్ పేరు",
+  "hi": "आपकी दुकान का नाम",
+  "kn": "ನಿಮ್ಮ ಅಂಗಡಿಯ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.ph.agent_role": {
+  "en": "AI assistant",
+  "te": "AI అసిస్టెంట్",
+  "hi": "AI असिस्टेंट",
+  "kn": "AI ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.add": {
+  "en": "Add {what}",
+  "te": "{what} చేర్చండి",
+  "hi": "{what} जोड़ें",
+  "kn": "{what} ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.greet.braces": {
+  "en": "Please take out the curly brackets.",
+  "te": "దయచేసి వంకర బ్రాకెట్లను తీసేయండి.",
+  "hi": "कृपया घुंघराले ब्रैकेट हटा दें।",
+  "kn": "ದಯವಿಟ್ಟು ಕರ್ಲಿ ಬ್ರಾಕೆಟ್‌ಗಳನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.more.t": {
+  "en": "More choices",
+  "te": "ఇంకా ఎంపికలు",
+  "hi": "और विकल्प",
+  "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.more.sub": {
+  "en": "Words, what never to say, questions and answers",
+  "te": "మాటలు, ఏమి అనకూడదు, ప్రశ్నలు, సమాధానాలు",
+  "hi": "शब्द, क्या कभी नहीं कहना, सवाल और जवाब",
+  "kn": "ಪದಗಳು, ಏನು ಹೇಳಬಾರದು, ಪ್ರಶ್ನೆಗಳು ಮತ್ತು ಉತ್ತರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.intro.card": {
+  "en": "Introduce as, on your test calls",
+  "te": "టెస్ట్ కాల్స్‌లో ఇలా పరిచయం చేసుకోండి",
+  "hi": "टेस्ट कॉल में ऐसे परिचय दें",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್‌ಗಳಲ್ಲಿ ಹೀಗೆ ಪರಿಚಯಿಸಿಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.intro.note": {
+  "en": "Calls to your customers always use the business name for now.",
+  "te": "కస్టమర్లకు చేసే కాల్స్ ప్రస్తుతానికి బిజినెస్ పేరునే వాడతాయి.",
+  "hi": "ग्राहकों को किए जाने वाले कॉल अभी बिज़नेस का नाम ही इस्तेमाल करते हैं।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಮಾಡುವ ಕಾಲ್‌ಗಳು ಸದ್ಯಕ್ಕೆ ಬಿಸಿನೆಸ್ ಹೆಸರನ್ನೇ ಬಳಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.tc.saved": {
+  "en": "My usual introduction (set on this page)",
+  "te": "నా మామూలు పరిచయం (ఈ పేజీలో సెట్ చేసింది)",
+  "hi": "मेरा आम परिचय (इसी पेज पर सेट किया)",
+  "kn": "ನನ್ನ ಸಾಮಾನ್ಯ ಪರಿಚಯ (ಈ ಪುಟದಲ್ಲಿ ಹೊಂದಿಸಿದ್ದು)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
