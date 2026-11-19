@@ -3,7 +3,8 @@ import path from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { pageJson, summaryJson } from "@/lib/api/catalogue-fixtures";
+import { parseItem } from "@/lib/api/catalogue";
+import { itemJson, pageJson, summaryJson } from "@/lib/api/catalogue-fixtures";
 import { wireSell, wireUnderstood } from "@/lib/sell/fixtures";
 import { PACK_STYLE, liveSource, oldPagesOf, styleOfPack } from "@/lib/sell/style";
 import { SELL_STYLES } from "@/lib/sell/types";
@@ -73,7 +74,7 @@ describe("products are rows of the REAL catalogue contract", () => {
     expect(stockOf("made_to_order", null)).toBe("made_to_order");
   });
   it("productOf takes any catalogue row (an item read on its own has no cover)", () => {
-    expect(productOf(parseProduct(row())).name).toBe("DEMO Maroon Kanchi pattu");
+    expect(productOf(parseItem(itemJson())).name).toBe("DEMO Maroon Kanchi pattu");
   });
 });
 
