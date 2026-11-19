@@ -38,7 +38,7 @@ jobs:
       web: ${{ steps.decide.outputs.web }}
       webtests: ${{ steps.decide.outputs.webtests }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - id: decide
@@ -71,7 +71,7 @@ jobs:
   packages:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -80,7 +80,7 @@ jobs:
   hygiene:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: ./scripts/check-no-leftovers.sh
       - run: python3 scripts/test-lanes.py
       # the packs rule "no pack id in code" also covers the web's non-test code: a web-only change must hit it too (19 Nov 2026: a web merge turned main red through the API's test of it)
@@ -95,7 +95,7 @@ jobs:
       run:
         working-directory: apps/web
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -130,7 +130,7 @@ jobs:
       run:
         working-directory: apps/web
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -168,7 +168,7 @@ jobs:
       run:
         working-directory: services/ai-api
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -197,7 +197,7 @@ jobs:
       run:
         working-directory: services/ai-api
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -281,7 +281,7 @@ jobs:
     if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.pgtap == 'true') }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: supabase/setup-cli@v1
         with:
           version: 2.119.0
@@ -306,7 +306,7 @@ jobs:
         part: [1, 2, 3, 4, 5, 6, 7]
     name: db-integration (${{ matrix.part }})
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: supabase/setup-cli@v1
         with:
           version: 2.119.0
@@ -359,7 +359,7 @@ jobs:
           else
             echo "visual: SKIPPED on purpose (nothing under apps/web/, e2e/visual/ or the visual workflows changed)" >> "$GITHUB_STEP_SUMMARY"
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: ${{ env.RUN_VISUAL == 'true' }}
       - name: Are there Linux baselines?
         id: baselines
