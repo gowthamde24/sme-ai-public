@@ -116957,5 +116957,676 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.pg.more": {
+  "en": "More choices",
+  "te": "మరిన్ని ఎంపికలు",
+  "hi": "और विकल्प",
+  "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.line": {
+  "en": "Show {status} calls from {when}.",
+  "te": "{status} కాల్స్ చూపించు, {when}.",
+  "hi": "{status} कॉल दिखाओ, {when}।",
+  "kn": "{status} ಕರೆಗಳನ್ನು ತೋರಿಸಿ, {when}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.status": {
+  "en": "Which calls",
+  "te": "ఏ కాల్స్",
+  "hi": "कौन से कॉल",
+  "kn": "ಯಾವ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.st.all": {
+  "en": "all",
+  "te": "అన్ని",
+  "hi": "सभी",
+  "kn": "ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.st.completed": {
+  "en": "completed",
+  "te": "పూర్తయిన",
+  "hi": "पूरे हुए",
+  "kn": "ಪೂರ್ಣಗೊಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.st.transferred": {
+  "en": "transferred",
+  "te": "ట్రాన్స్‌ఫర్ అయిన",
+  "hi": "ट्रांसफर हुए",
+  "kn": "ಟ್ರಾನ್ಸ್‌ಫರ್ ಆದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.st.no_answer": {
+  "en": "unanswered",
+  "te": "జవాబు లేని",
+  "hi": "बिना जवाब के",
+  "kn": "ಉತ್ತರ ಇಲ್ಲದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.st.rejected": {
+  "en": "refused",
+  "te": "రిజెక్ట్ అయిన",
+  "hi": "रिजेक्ट हुए",
+  "kn": "ರಿಜೆಕ್ಟ್ ಆದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.st.spam": {
+  "en": "spam",
+  "te": "స్పామ్",
+  "hi": "स्पैम",
+  "kn": "ಸ್ಪ್ಯಾಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.st.live": {
+  "en": "live",
+  "te": "లైవ్",
+  "hi": "लाइव",
+  "kn": "ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.when.any": {
+  "en": "any time",
+  "te": "ఎప్పటివైనా",
+  "hi": "किसी भी समय",
+  "kn": "ಯಾವಾಗಲಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.when.today": {
+  "en": "today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.when.7d": {
+  "en": "the last 7 days",
+  "te": "గత 7 రోజులు",
+  "hi": "पिछले 7 दिन",
+  "kn": "ಕಳೆದ 7 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.when.30d": {
+  "en": "the last 30 days",
+  "te": "గత 30 రోజులు",
+  "hi": "पिछले 30 दिन",
+  "kn": "ಕಳೆದ 30 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.effect.all": {
+  "en": "Calls on the screen: {n}.",
+  "te": "స్క్రీన్ మీద కాల్స్: {n}.",
+  "hi": "स्क्रीन पर कॉल: {n}।",
+  "kn": "ಪರದೆಯ ಮೇಲೆ ಕರೆಗಳು: {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.effect.some": {
+  "en": "Calls on the screen: {shown} of {total}.",
+  "te": "స్క్రీన్ మీద కాల్స్: {total} లో {shown}.",
+  "hi": "स्क्रीन पर कॉल: {total} में से {shown}।",
+  "kn": "ಪರದೆಯ ಮೇಲೆ ಕರೆಗಳು: {total} ರಲ್ಲಿ {shown}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.more.sub": {
+  "en": "Only one of your numbers.",
+  "te": "మీ నంబర్లలో ఒకటి మాత్రమే.",
+  "hi": "सिर्फ़ आपका एक नंबर।",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್‌ಗಳಲ್ಲಿ ಒಂದು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.line.sentence": {
+  "en": "Show calls that came in on {line}.",
+  "te": "{line} కి వచ్చిన కాల్స్ చూపించు.",
+  "hi": "{line} पर आए कॉल दिखाओ।",
+  "kn": "{line} ಗೆ ಬಂದ ಕರೆಗಳನ್ನು ತೋರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.calls.line.all": {
+  "en": "any of my numbers",
+  "te": "నా నంబర్లలో ఏదైనా",
+  "hi": "मेरा कोई भी नंबर",
+  "kn": "ನನ್ನ ಯಾವುದೇ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.line": {
+  "en": "Show {status} leads from {source}.",
+  "te": "{source} నుంచి వచ్చిన {status} లీడ్స్ చూపించు.",
+  "hi": "{source} से आए {status} लीड दिखाओ।",
+  "kn": "{source} ನಿಂದ ಬಂದ {status} ಲೀಡ್‌ಗಳನ್ನು ತೋರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.source": {
+  "en": "Where the leads came from",
+  "te": "లీడ్స్ ఎక్కడి నుంచి",
+  "hi": "लीड कहाँ से आए",
+  "kn": "ಲೀಡ್‌ಗಳು ಎಲ್ಲಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.src.all": {
+  "en": "everywhere",
+  "te": "అన్ని చోట్ల",
+  "hi": "हर जगह",
+  "kn": "ಎಲ್ಲೆಡೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.st.all": {
+  "en": "all",
+  "te": "అన్ని",
+  "hi": "सभी",
+  "kn": "ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.st.new": {
+  "en": "new",
+  "te": "కొత్త",
+  "hi": "नए",
+  "kn": "ಹೊಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.st.contacted": {
+  "en": "contacted",
+  "te": "మాట్లాడిన",
+  "hi": "जिनसे बात हुई",
+  "kn": "ಮಾತಾಡಿದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.st.visit_booked": {
+  "en": "with a visit booked",
+  "te": "విజిట్ బుక్ అయిన",
+  "hi": "जिनकी विज़िट बुक है",
+  "kn": "ವಿಸಿಟ್ ಬುಕ್ ಆದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.st.quote": {
+  "en": "with a quote",
+  "te": "కోట్ ఇచ్చిన",
+  "hi": "जिन्हें कोट दिया",
+  "kn": "ಕೋಟ್ ಕೊಟ್ಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.st.won": {
+  "en": "won",
+  "te": "గెలిచిన",
+  "hi": "जीते हुए",
+  "kn": "ಗೆದ್ದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.st.lost": {
+  "en": "lost",
+  "te": "పోయిన",
+  "hi": "खोए हुए",
+  "kn": "ಕಳೆದುಕೊಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.effect": {
+  "en": "Leads on the screen: {n}.",
+  "te": "స్క్రీన్ మీద లీడ్స్: {n}.",
+  "hi": "स्क्रीन पर लीड: {n}।",
+  "kn": "ಪರದೆಯ ಮೇಲೆ ಲೀಡ್‌ಗಳು: {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.leads.effect.q": {
+  "en": "Leads on the screen: {n}, matching “{q}”.",
+  "te": "స్క్రీన్ మీద లీడ్స్: {n}, “{q}” కి సరిపోయేవి.",
+  "hi": "स्क्रीन पर लीड: {n}, “{q}” से मेल खाते।",
+  "kn": "ಪರದೆಯ ಮೇಲೆ ಲೀಡ್‌ಗಳು: {n}, “{q}” ಗೆ ಹೊಂದುವವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.rep.line": {
+  "en": "Show {period}.",
+  "te": "{period} చూపించు.",
+  "hi": "{period} दिखाओ।",
+  "kn": "{period} ತೋರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.rep.per.today": {
+  "en": "today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.rep.per.14": {
+  "en": "the last 14 days",
+  "te": "గత 14 రోజులు",
+  "hi": "पिछले 14 दिन",
+  "kn": "ಕಳೆದ 14 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.rep.per.month": {
+  "en": "this month",
+  "te": "ఈ నెల",
+  "hi": "इस महीने",
+  "kn": "ಈ ತಿಂಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.rep.per.custom": {
+  "en": "{from} to {to}",
+  "te": "{from} నుంచి {to} వరకు",
+  "hi": "{from} से {to} तक",
+  "kn": "{from} ರಿಂದ {to} ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.rep.effect": {
+  "en": "Showing {from} to {to}, compared with {pfrom} to {pto}.",
+  "te": "{from} నుంచి {to} వరకు చూపిస్తున్నాం; పోలిక: {pfrom} నుంచి {pto} వరకు.",
+  "hi": "{from} से {to} तक दिख रहा है; तुलना: {pfrom} से {pto} तक।",
+  "kn": "{from} ರಿಂದ {to} ವರೆಗೆ ತೋರಿಸುತ್ತಿದ್ದೇವೆ; ಹೋಲಿಕೆ: {pfrom} ರಿಂದ {pto} ವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.rep.effect.one": {
+  "en": "Showing {day}, compared with {prev}.",
+  "te": "{day} చూపిస్తున్నాం; పోలిక: {prev}.",
+  "hi": "{day} दिख रहा है; तुलना: {prev}।",
+  "kn": "{day} ತೋರಿಸುತ್ತಿದ್ದೇವೆ; ಹೋಲಿಕೆ: {prev}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.rep.more.sub": {
+  "en": "Pick your own two days.",
+  "te": "మీకు కావాల్సిన రెండు తేదీలు ఎంచుకోండి.",
+  "hi": "अपनी दो तारीखें चुनें।",
+  "kn": "ನಿಮಗೆ ಬೇಕಾದ ಎರಡು ದಿನಾಂಕಗಳನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.phone.line": {
+  "en": "Get a number in {city}.",
+  "te": "{city} లో నంబర్ తీసుకోండి.",
+  "hi": "{city} में नंबर लें।",
+  "kn": "{city} ನಲ್ಲಿ ನಂಬರ್ ಪಡೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.phone.effect.label": {
+  "en": "What happens next:",
+  "te": "తర్వాత ఏమవుతుంది:",
+  "hi": "आगे क्या होगा:",
+  "kn": "ಮುಂದೆ ಏನಾಗುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.phone.effect": {
+  "en": "Your assistant gets a {city} number. It starts calling only after your business registration is approved.",
+  "te": "మీ అసిస్టెంట్‌కు {city} నంబర్ వస్తుంది. మీ బిజినెస్ రిజిస్ట్రేషన్ ఆమోదం అయ్యాకే కాల్ చేయడం మొదలవుతుంది.",
+  "hi": "आपके असिस्टेंट को {city} का नंबर मिलेगा। बिज़नेस रजिस्ट्रेशन मंज़ूर होने के बाद ही कॉल शुरू होंगे।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ {city} ನಂಬರ್ ಸಿಗುತ್ತದೆ. ಬಿಸಿನೆಸ್ ರಿಜಿಸ್ಟ್ರೇಶನ್ ಅನುಮೋದನೆ ಆದ ಮೇಲೆಯೇ ಕರೆ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.cat.line": {
+  "en": "Show {stock} made of {fabric}.",
+  "te": "{stock} చూపించు, ఫాబ్రిక్: {fabric}.",
+  "hi": "{stock} दिखाओ, कपड़ा: {fabric}।",
+  "kn": "{stock} ತೋರಿಸಿ, ಬಟ್ಟೆ: {fabric}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.cat.st.all": {
+  "en": "all sarees",
+  "te": "అన్ని చీరలు",
+  "hi": "सभी साड़ियाँ",
+  "kn": "ಎಲ್ಲಾ ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.cat.st.available": {
+  "en": "sarees in stock",
+  "te": "స్టాక్‌లో ఉన్న చీరలు",
+  "hi": "स्टॉक वाली साड़ियाँ",
+  "kn": "ಸ್ಟಾಕ್‌ನಲ್ಲಿರುವ ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.cat.st.few_left": {
+  "en": "sarees with few left",
+  "te": "కొన్నే మిగిలిన చీరలు",
+  "hi": "कुछ ही बची साड़ियाँ",
+  "kn": "ಕೆಲವೇ ಉಳಿದ ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.cat.st.made_to_order": {
+  "en": "made-to-order sarees",
+  "te": "ఆర్డర్ మీద చేసే చీరలు",
+  "hi": "ऑर्डर पर बनने वाली साड़ियाँ",
+  "kn": "ಆರ್ಡರ್ ಮೇಲೆ ಮಾಡುವ ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.cat.fab.any": {
+  "en": "any fabric",
+  "te": "ఏదైనా",
+  "hi": "कोई भी",
+  "kn": "ಯಾವುದಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.cat.effect": {
+  "en": "Showing {what}.",
+  "te": "{what} చూపిస్తున్నాం.",
+  "hi": "{what} दिख रही हैं।",
+  "kn": "{what} ತೋರಿಸುತ್ತಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.cat.more.sub": {
+  "en": "Colour, occasion and price.",
+  "te": "రంగు, సందర్భం, ధర.",
+  "hi": "रंग, मौक़ा और कीमत।",
+  "kn": "ಬಣ್ಣ, ಸಂದರ್ಭ ಮತ್ತು ಬೆಲೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.card": {
+  "en": "About this saree",
+  "te": "ఈ చీర గురించి",
+  "hi": "इस साड़ी के बारे में",
+  "kn": "ಈ ಸೀರೆಯ ಬಗ್ಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.line": {
+  "en": "A {fabric} saree, about {band}.",
+  "te": "ఇది {fabric} చీర, ధర సుమారు {band}.",
+  "hi": "{fabric} साड़ी, कीमत लगभग {band}।",
+  "kn": "{fabric} ಸೀರೆ, ಬೆಲೆ ಸುಮಾರು {band}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.colours": {
+  "en": "In these colours:",
+  "te": "ఈ రంగుల్లో:",
+  "hi": "इन रंगों में:",
+  "kn": "ಈ ಬಣ್ಣಗಳಲ್ಲಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.colours.none": {
+  "en": "Choose colours",
+  "te": "రంగులు ఎంచుకోండి",
+  "hi": "रंग चुनें",
+  "kn": "ಬಣ್ಣಗಳನ್ನು ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.noname": {
+  "en": "this saree",
+  "te": "ఈ చీర",
+  "hi": "यह साड़ी",
+  "kn": "ಈ ಸೀರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.effect.label": {
+  "en": "What customers see:",
+  "te": "కస్టమర్లకు కనిపించేది:",
+  "hi": "ग्राहकों को क्या दिखेगा:",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಕಾಣುವುದು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.effect.shown": {
+  "en": "“{name}”, {fabric}, about {band}.",
+  "te": "“{name}”, {fabric}, సుమారు {band}.",
+  "hi": "“{name}”, {fabric}, लगभग {band}।",
+  "kn": "“{name}”, {fabric}, ಸುಮಾರು {band}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.effect.hidden": {
+  "en": "nothing yet. Tick “Show this saree to customers” when “{name}” is ready.",
+  "te": "ఇంకా ఏమీ లేదు. “{name}” సిద్ధమైనప్పుడు “ఈ చీరను కస్టమర్లకు చూపించండి” టిక్ చేయండి.",
+  "hi": "अभी कुछ नहीं। “{name}” तैयार हो जाए तब “यह साड़ी ग्राहकों को दिखाएँ” पर टिक करें।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಇಲ್ಲ. “{name}” ಸಿದ್ಧವಾದಾಗ “ಈ ಸೀರೆಯನ್ನು ಗ್ರಾಹಕರಿಗೆ ತೋರಿಸಿ” ಟಿಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.more.sub": {
+  "en": "Zari, border, occasion, stock and the exact price.",
+  "te": "జరీ, బోర్డర్, సందర్భం, స్టాక్, కచ్చితమైన ధర.",
+  "hi": "ज़री, बॉर्डर, मौक़ा, स्टॉक और सही कीमत।",
+  "kn": "ಜರಿ, ಬಾರ್ಡರ್, ಸಂದರ್ಭ, ಸ್ಟಾಕ್ ಮತ್ತು ನಿಖರ ಬೆಲೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.zari": {
+  "en": "Zari: {zari}.",
+  "te": "జరీ: {zari}.",
+  "hi": "ज़री: {zari}।",
+  "kn": "ಜರಿ: {zari}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.item.stock": {
+  "en": "Stock: {stock}.",
+  "te": "స్టాక్: {stock}.",
+  "hi": "स्टॉक: {stock}।",
+  "kn": "ಸ್ಟಾಕ್: {stock}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
