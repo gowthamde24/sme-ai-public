@@ -180,11 +180,11 @@ describe("Needs you: editing the words", () => {
     expect((box as HTMLTextAreaElement).value).toContain("ధర 500");
     expect(screen.getByText("The line that says an AI assistant wrote it stays. Nothing is sent until you approve.")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Approve and send" })).toBeNull(); // no approving while editing
-    fireEvent.change(box, { target: { value: "మా కొత్త చీరలు చూడండి" } });
+    fireEvent.change(box, { target: { value: "మా కొత్త చీరలు చూపించండి" } });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Save the new words" })));
-    expect(actions.editMessage).toHaveBeenCalledWith(MESSAGE_ID, "మా కొత్త చీరలు చూడండి");
+    expect(actions.editMessage).toHaveBeenCalledWith(MESSAGE_ID, "మా కొత్త చీరలు చూపించండి");
     expect(actions.approveMessage).not.toHaveBeenCalled();
-    expect(screen.getByText("మా కొత్త చీరలు చూడండి")).toBeInTheDocument(); // back to reading, with the new words
+    expect(screen.getByText("మా కొత్త చీరలు చూపించండి")).toBeInTheDocument(); // back to reading, with the new words
     expect(screen.getByRole("button", { name: "Approve and send" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("Saved. Read it once more, then approve.");
   });
@@ -558,7 +558,7 @@ describe("Needs you: a caller who asked for a person (C1 #347)", () => {
     const a = cardOf(/^Ravi K\. wants to visit on .*10:00/);
     expect(within(a).getByRole("link", { name: "Book" })).toHaveAttribute("href", book);
     expect(within(a).queryByRole("link", { name: "Call back" })).toBeNull();
-    expect(within(a).getByText("Book it in Visits, then mark it done.")).toBeInTheDocument();
+    expect(within(a).getByText("Book it in Visits, then press Done.")).toBeInTheDocument();
     await act(async () => fireEvent.click(within(a).getByRole("button", { name: "Done, we called back" })));
     expect(actions.callHandled).toHaveBeenCalledWith(CALL_ID);
   });

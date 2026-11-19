@@ -229,19 +229,23 @@ const AS_IS = /^(ok|okay|yes|y|✓)$/i;
  *   approves the proposed `telugu` EXCEPT on a row planner_check "YOU MUST READ ...", which needs an "ok" or an edit. Approved = status "reviewed".
  *   A refusal word in owner_edit ("no", "not ok", "x") approves nothing and is reported.
  */
-export function applyOwnerSheet(sets, csvText, { mode = "approve" } = {}) {
+export function applyOwnerSheet(sets, csvText, { mode = "approve", packReviewed = { te: {}, hi: {}, kn: {} } } = {}) {
   const rows = parseCsv(csvText);
   const head = rows.shift() ?? [];
-  const col = Object.fromEntries(["key", "telugu", "planner_check", "owner_edit"].map((h) => [h, head.indexOf(h)]));
+  const col = Object.fromEntries(["key", "telugu", "planner_check", "owner_edit", "English"].map((h) => [h, head.indexOf(h)]));
   const errors = [];
-  const out = { written: 0, edited: 0, approved: 0, pending: [], skippedHumanOnly: [], refused: [], errors };
-  for (const h of Object.keys(col)) if (col[h] < 0) errors.push(`missing column "${h}"`);
+  const out = { written: 0, edited: 0, approved: 0, pending: [], skippedHumanOnly: [], skipped: [], packApproved: 0, refused: [], errors };
+  for (const h of ["key", "telugu", "planner_check", "owner_edit"]) if (col[h] < 0) errors.push(`missing column "${h}"`);
   if (errors.length) return out;
   const app = sets.app ?? {};
   for (const r of rows) {
     const key = (r[col.key] ?? "").trim();
     if (!key) continue;
-    const entry = app[key];
+    // a row the planner marked "skip" is not part of the import
+    if (/^skip/i.test((r[col.planner_check] ?? "").trim())) { out.skipped.push(key); continue; }
+    // "pack.<label key>": a word of the business-type pack file (packages/packs/*/pack.json labels.te); approved words go to i18n/review/pack-labels-reviewed.json
+    const isPack = key.startsWith("pack.");
+    const entry = isPack ? { en: (r[col.English] ?? "").trim(), status: {} } : app[key];
     if (!entry) { errors.push(`unknown key ${key}`); continue; }
     const proposed = (r[col.telugu] ?? "").trim();
     const edit = (r[col.owner_edit] ?? "").trim();
@@ -249,6 +253,7 @@ export function applyOwnerSheet(sets, csvText, { mode = "approve" } = {}) {
     let text = proposed;
     let approved = false;
     if (mode === "drafts") {
+      if (isPack) continue; // (a pack word has no draft in the store: the pack file keeps it)
       if (entry.humanOnly) { out.skippedHumanOnly.push(key); continue; }
     } else {
       if (edit && NOT_AN_APPROVAL.test(edit)) { out.refused.push(key); continue; }
@@ -259,6 +264,12 @@ export function applyOwnerSheet(sets, csvText, { mode = "approve" } = {}) {
     }
     if (!text) { errors.push(`${key}: no Telugu text`); continue; }
     if (phKey(key, text) !== phKey(key, entry.en)) { errors.push(`${key}: the Telugu has different {placeholders} from English`); continue; }
+    if (isPack) {
+      packReviewed.te ??= {};
+      packReviewed.te[key.slice(5)] = text;
+      out.packApproved++;
+      continue;
+    }
     entry.te = text;
     if (mode === "approve") { entry.status.te = "reviewed"; out.approved++; }
     else out.written++;

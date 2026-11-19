@@ -80,8 +80,8 @@ describe("the desktop live bar", () => {
   });
   it("the sentence is the language's own words, with the source word of that language", () => {
     set([call(1)]);
-    render(<LiveBar tenantId={T} labels={{ "frame.live.bar.one": "{who} తో కాల్‌లో ఉంది", "frame.live.src.indiamart": "ఇండియామార్ట్" }} enabled />);
-    expect(screen.getByRole("status")).toHaveTextContent("Lakshmi తో కాల్‌లో ఉంది · ఇండియామార్ట్");
+    render(<LiveBar tenantId={T} labels={{ "frame.live.bar.one": "{who} తో కాల్‌లో ఉంది", "frame.live.src.indiamart": "IndiaMART" }} enabled />);
+    expect(screen.getByRole("status")).toHaveTextContent("Lakshmi తో కాల్‌లో ఉంది · IndiaMART");
   });
 });
 
