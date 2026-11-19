@@ -147,12 +147,12 @@ describe("the style of a business follows its pack (ONE closed map, until C1 add
 
 describe("what the section reads (readWhatYouSell)", () => {
   it("JOBS off: nothing is read", async () => {
-    expect(await readWhatYouSell("tok", TENANT, "products", ["catalogue"])).toEqual({ state: "off" });
+    expect(await readWhatYouSell("tok", TENANT, "products", ["catalogue"], true)).toEqual({ state: "off" });
     expect(request).not.toHaveBeenCalled();
   });
   it("JOBS=mock: the made-up list, marked as not live, and nothing leaves the server", async () => {
     vi.stubEnv("JOBS", "mock");
-    const r = await readWhatYouSell("tok", TENANT, "services", null);
+    const r = await readWhatYouSell("tok", TENANT, "services", null, true);
     expect(r.state === "ready" && r.data.live).toBe(false);
     expect(r.state === "ready" ? r.data.entries : []).toHaveLength(4);
     expect(request).not.toHaveBeenCalled();
@@ -160,17 +160,42 @@ describe("what the section reads (readWhatYouSell)", () => {
   it("a real saree shop reads its catalogue (hidden sarees too: the Owner and Admin keep them)", async () => {
     vi.stubEnv("JOBS", "1");
     request.mockResolvedValueOnce(pageJson());
-    const r = await readWhatYouSell("tok", TENANT, "products", ["catalogue"]);
+    const r = await readWhatYouSell("tok", TENANT, "products", ["catalogue"], true);
     expect(request).toHaveBeenCalledWith(expect.stringContaining("/catalogue/items?limit=50&include_inactive=true"), "tok");
     expect(r.state === "ready" && r.data.live).toBe(true);
     expect(r.state === "ready" ? r.data.entries.length : 0).toBe(4);
+    expect(r.state === "ready" && r.data.cut).toBeUndefined();
+  });
+  it("Sales and Viewer do not ask for the switched-off items", async () => {
+    vi.stubEnv("JOBS", "1");
+    request.mockResolvedValueOnce(pageJson());
+    await readWhatYouSell("tok", TENANT, "products", ["catalogue"], false);
+    expect(request).toHaveBeenCalledTimes(1);
+    expect(request.mock.calls[0][0]).toContain("/catalogue/items?limit=50");
+    expect(request.mock.calls[0][0]).not.toContain("include_inactive");
+  });
+  it("more than 50 items: the next pages are followed by their cursor, up to 200; a longer list is cut and says so", async () => {
+    vi.stubEnv("JOBS", "1");
+    const row = (n: number) => summaryJson({ id: `c27a36f2-ef14-5f33-b10f-${String(n).padStart(12, "0")}` });
+    const rows = (from: number) => Array.from({ length: 50 }, (_, i) => row(from + i));
+    request.mockResolvedValueOnce(pageJson(rows(0), "c1")).mockResolvedValueOnce(pageJson(rows(50), null));
+    const two = await readWhatYouSell("tok", TENANT, "products", ["catalogue"], true);
+    expect(two.state === "ready" ? two.data.entries.length : 0).toBe(100);
+    expect(two.state === "ready" && two.data.cut).toBeUndefined();
+    expect(request.mock.calls[1][0]).toContain("after=c1");
+    request.mockReset();
+    request.mockResolvedValueOnce(pageJson(rows(0), "c1")).mockResolvedValueOnce(pageJson(rows(50), "c2")).mockResolvedValueOnce(pageJson(rows(100), "c3")).mockResolvedValueOnce(pageJson(rows(150), "c4"));
+    const cut = await readWhatYouSell("tok", TENANT, "products", ["catalogue"], true);
+    expect(request).toHaveBeenCalledTimes(4);
+    expect(cut.state === "ready" ? cut.data.entries.length : 0).toBe(200);
+    expect(cut.state === "ready" && cut.data.cut).toBe(true);
   });
   it("a style with no API yet is `unready` (never a guess), and a read that fails is `unread`", async () => {
     vi.stubEnv("JOBS", "1");
-    expect(await readWhatYouSell("tok", TENANT, "properties", ["quotes"])).toEqual({ state: "unready" });
+    expect(await readWhatYouSell("tok", TENANT, "properties", ["quotes"], true)).toEqual({ state: "unready" });
     expect(request).not.toHaveBeenCalled();
     request.mockRejectedValueOnce(new Error("down"));
-    expect(await readWhatYouSell("tok", TENANT, "products", ["catalogue"])).toEqual({ state: "unread" });
+    expect(await readWhatYouSell("tok", TENANT, "products", ["catalogue"], true)).toEqual({ state: "unread" });
   });
   it("the made-up reading of photos or a sheet exists in test mode only", async () => {
     expect(await readUnderstood("products", "photos")).toBeNull();

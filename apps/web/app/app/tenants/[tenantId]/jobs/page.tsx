@@ -47,7 +47,7 @@ export default async function JobsRoute({ params, searchParams }: PageProps<"/ap
   const sheet: JobsSheet | null = owns
     ? {
         actions: { plan: planJobAction.bind(null, tenantId), start: startPlanAction.bind(null, tenantId), test: testPlanAction.bind(null, tenantId), load: loadNewJobSheetAction.bind(null, tenantId) },
-        load: jobs && (jobs.length === 0 || openNew === "1") ? await readSheetLoad(user.accessToken, tenantId).catch(() => null) : null,
+        load: jobs && (jobs.length === 0 || openNew === "1") ? await readSheetLoad(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)) : null,
         open: openNew === "1",
       }
     : null;

@@ -80,6 +80,13 @@ describe("reading and switching", () => {
     expect(await setJobEnabled("tok", T, MOCK_JOBS[0].id, true)).toMatchObject({ enabled: true, status: "running" });
     await expect(setJobEnabled("tok", T, "nope", true)).rejects.toThrow();
   });
+  it("mock: every job the Jobs page lists can be switched, the named ones (Ravi, Diwali calls) too", async () => {
+    h.mode.v = "mock";
+    for (const j of MOCK_PAGE_JOBS) {
+      expect(await setJobEnabled("tok", T, j.id, false), j.customName ?? j.kind).toMatchObject({ id: j.id, enabled: false, status: "paused" });
+      expect((await setJobEnabled("tok", T, j.id, true)).enabled).toBe(true);
+    }
+  });
 });
 
 describe("GET /jobs/today", () => {
@@ -133,8 +140,14 @@ describe("how a named job sounds (speaks, contract 1.1 assumed)", () => {
     expect(parseJob({ ...wire, speaks: { language: "customer" } }).speaks).toEqual({ language: "customer", voice: null, number: null });
     expect(parseJob({ ...wire, speaks: null }).speaks).toBeNull();
     expect("speaks" in parseJob(wire)).toBe(false);
-    expect(() => parseJob({ ...wire, speaks: { language: "te; drop table" } })).toThrow();
-    expect(() => parseJob({ ...wire, speaks: { voice: "x".repeat(41) } })).toThrow();
+  });
+  it("an odd value is not shown, and never takes the whole list (or Today's Running now) down", () => {
+    expect(parseJob({ ...wire, speaks: { language: "te; drop table", voice: "Janvi", number: "shop" } }).speaks).toEqual({ language: null, voice: "Janvi", number: "shop" });
+    expect(parseJob({ ...wire, speaks: { language: "te", voice: "x".repeat(41), number: 7 } }).speaks).toEqual({ language: "te", voice: null, number: null });
+    for (const odd of ["te", 5, ["te"], true]) expect(parseJob({ ...wire, speaks: odd }).speaks).toBeNull();
+    const rows = [wire, { ...wire, id: MOCK_JOBS[0].id, speaks: { language: "x".repeat(13), voice: { a: 1 }, number: "y y" } }, { ...wire, id: MOCK_JOBS[1].id, speaks: "odd" }];
+    expect(parseJobs(rows).map((j) => j.id)).toEqual([J, MOCK_JOBS[0].id, MOCK_JOBS[1].id]);
+    expect(parseJobsToday({ jobs: rows }).jobs).toHaveLength(3);
   });
   it("the demo's named jobs carry them", () => {
     expect(MOCK_PAGE_JOBS.filter((j) => j.speaks).map((j) => j.customName)).toEqual(["Priya", "Ravi", "Diwali calls"]);

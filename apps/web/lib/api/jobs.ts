@@ -5,7 +5,7 @@ import { bad, oneOf, rec, uuid, word } from "./shape";
 import { FAQ_A_MAX, FAQ_Q_MAX, type JobDetail, type JobFaq, type JobSays, type TestChannel } from "@/lib/jobs/detail";
 import { mockJobDetail, mockSays } from "@/lib/jobs/detail-mock";
 import { JOB_KINDS, type Job, type JobKind, type JobStatus, type JobSwitched, type TodayJobs } from "@/lib/jobs/types";
-import { MOCK_JOBS, MOCK_PAGE_JOBS, mockToday } from "@/lib/jobs/mock";
+import { MOCK_PAGE_JOBS, mockToday } from "@/lib/jobs/mock";
 import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput, SuggestionList } from "@/lib/jobs/plan";
 import { APPROVAL_KINDS, PLAN_TEXT_MAX, PLAN_TEXT_MIN } from "@/lib/jobs/plan";
 import { mockPlan, mockStartPlan, mockStartedFor, mockSuggestions, mockTest } from "@/lib/jobs/plan-mock";
@@ -50,11 +50,14 @@ export async function readJobsToday(token: string, tenantId: string): Promise<To
   }
 }
 
+/** A mock job by id: the Jobs page lists MOCK_PAGE_JOBS (the demo's eight, "Ravi" and "Diwali calls" included), so a switch or a change finds any of them. */
+const mockJobById = (id: string) => MOCK_PAGE_JOBS.find((m) => m.id === id);
+
 /** `PATCH /jobs/{id}` `{enabled}`: the switch. With JOBS=mock the answer is made up from the job's own state. */
 export async function setJobEnabled(token: string, tenantId: string, jobId: string, enabled: boolean): Promise<JobSwitched> {
   if (!isCanonicalUuid(jobId)) bad("job id");
   if (jobsScreens() === "mock") {
-    const j = MOCK_JOBS.find((m) => m.id === jobId);
+    const j = mockJobById(jobId);
     return { id: jobId, enabled, status: enabled ? (j && j.status !== "paused" ? j.status : "running") : "paused" };
   }
   const j = parseJob(await apiRequest(`${base(tenantId)}/jobs/${jobId}`, token, { method: "PATCH", body: JSON.stringify({ enabled }) }));
@@ -153,7 +156,7 @@ export type JobPatched = { customName: string | null; enabled: boolean; status: 
 export async function patchJob(token: string, tenantId: string, id: string, patch: JobPatch): Promise<JobPatched> {
   jobId(id);
   if (jobsScreens() === "mock") {
-    const j = MOCK_JOBS.find((m) => m.id === id);
+    const j = mockJobById(id);
     if (!j) bad("job id");
     const customName = patch.name !== undefined ? patch.name : j.customName;
     const enabled = patch.enabled ?? j.enabled;

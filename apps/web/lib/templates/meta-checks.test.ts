@@ -95,6 +95,39 @@ describe("runChecks", () => {
     expect(byCode(withEn(GOOD, { body: "Hello {name} 🎉 your blouse is ready 🙏" }), "emoji").status).toBe("ok");
   });
 
+  it("emoji: the check counts every field (header, body, footer, buttons), so the fix trims to three IN ALL, earliest field first, and one fix is enough", () => {
+    const m = withEn(GOOD, { header: "Sale 🎉🎊", body: "Hello {name} 🙏✨ your blouse is ready", footer: "🎁", buttons: ["OK 👍"] });
+    expect(byCode(m, "emoji")).toMatchObject({ status: "warn", fix: "trim_emoji", params: { n: 6, max: LIMITS.emoji }, langs: ["en"] });
+    const fixed = applyFix(m, "trim_emoji");
+    expect(fixed.drafts.en).toEqual({ header: "Sale 🎉🎊", body: "Hello {name} 🙏 your blouse is ready", footer: null, buttons: ["OK"] });
+    expect(byCode(fixed, "emoji").status).toBe("ok");
+    // two in the header and two in the body: four warns, and the fix used to leave each field as it was
+    const four = withEn(GOOD, { header: "Hi 🎉🎊", body: "Hello {name} 🙏✨ ready" });
+    expect(byCode(four, "emoji").status).toBe("warn");
+    expect(byCode(applyFix(four, "trim_emoji"), "emoji").status).toBe("ok");
+    expect(applyFix(four, "trim_emoji").drafts.en.header).toBe("Hi 🎉🎊");
+    expect(applyFix(four, "trim_emoji").drafts.en.body).toBe("Hello {name} 🙏 ready");
+    expect(byCode(fixAll(four), "emoji").status).toBe("ok");
+    // three the same in a row is only two after the fix
+    expect(applyFix(withEn(GOOD, { body: "Hello {name} 🎉🎉🎉 ok" }), "trim_emoji").drafts.en.body).toBe("Hello {name} 🎉🎉 ok");
+  });
+
+  it("opt-out: only the real STOP reply line counts; 'bus stop' and 'stop by' do not", () => {
+    const promo: Message = { ...GOOD, category: "marketing" };
+    for (const text of ["Hello {name}, new sarees near the bus stop.", "Hello {name}, stop by the shop today.", "Hello {name}. Do not STOP by late.", "STOP the bus"]) {
+      expect(byCode(withEn(promo, { footer: text }), "opt_out").langs, text).toEqual(["te", "en"]);
+    }
+    for (const line of ["Reply STOP if you do not want these messages.", "Reply STOP to opt out", "reply STOP to unsubscribe", "Send STOP to stop", "Neelambari Silks · Reply STOP to opt out"]) {
+      expect(byCode(withEn(promo, { footer: line }), "opt_out").langs, line).toEqual(["te"]);
+    }
+    expect(byCode(withBoth(promo, () => ({ footer: "ఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి." })), "opt_out").status).toBe("ok");
+    // the fix line is the real one, and a promotion with only a lower-case "stop" gets it
+    const bus = withBoth(promo, () => ({ footer: "Near the bus stop" }));
+    expect(byCode(bus, "opt_out").status).toBe("warn");
+    expect(byCode(fixAll(bus), "opt_out").status).toBe("ok");
+    expect(fixAll(bus).drafts.en.footer).toBe("Near the bus stop · Reply STOP to opt out");
+  });
+
   it("opt-out: a promotion needs a STOP line (footer, message or button), an order update does not; the fix adds the footer line", () => {
     const promo: Message = { ...GOOD, category: "marketing" };
     expect(byCode(promo, "opt_out")).toMatchObject({ status: "warn", fix: "add_opt_out" });

@@ -53,7 +53,8 @@ export type SellEntry = ProductEntry | ServiceEntry | CourseEntry | PropertyEntr
 export type EntryOf<S extends SellStyle> = Extract<SellEntry, { style: S }>;
 
 /** What the section reads: the style, its entries, and whether they are the shop's real ones (`live`) or the test mode's made-up ones. */
-export type SellData = { style: SellStyle; entries: SellEntry[]; live: boolean };
+/** `cut` = the list is longer than what was read (the first entries are shown; the page says so). */
+export type SellData = { style: SellStyle; entries: SellEntry[]; live: boolean; cut?: boolean };
 
 /** The sheet's choices for one entry (strings as typed; the server action checks and turns them into the payload). */
 export type ProductForm = { name: string; price: string; colours: Colour[]; stock: "in_stock" | "few_left" | "made_to_order"; count: string };

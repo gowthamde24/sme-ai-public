@@ -46,9 +46,9 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
   const pick = typeof asked === "string" && jobsScreens() === "mock" ? SELL_STYLES.find((s) => s === asked) : undefined;
   const style = pick ?? styleOfPack(pack?.packId);
   const modules = pack?.modules ?? null;
-  const read = await readWhatYouSell(user.accessToken, tenantId, style, modules);
   const base = `/app/tenants/${tenantId}`;
   const owns = role === "owner" || role === "admin";
+  const read = await readWhatYouSell(user.accessToken, tenantId, style, modules, owns);
   const old = oldPagesOf(style, modules, jobsScreens() === "mock").map((o) => ({ href: `${base}${o.path}`, word: o.word }));
   return (
     <main className={pageMain} lang={lang}>
@@ -67,6 +67,11 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
             paths={ENTRY_PATH[style]}
             oldLinks={old}
           />
+          {read.data.cut ? (
+            <p data-part="cut" className="m-0 mt-3 text-[14px] text-muted">
+              {(words["jobs.sell.cut"] ?? "Showing the first {n} items. The rest are on the old page.").replace("{n}", String(read.data.entries.length))}
+            </p>
+          ) : null}
         </>
       ) : (
         <div data-part={read.state} className="flex flex-col gap-3">

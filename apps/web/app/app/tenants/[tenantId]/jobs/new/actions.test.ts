@@ -93,3 +93,17 @@ describe("start a job: the server actions", () => {
     expect(r.ok).toBe(false);
   });
 });
+
+describe("JOBS off", () => {
+  it("nothing is called: no plan, start or test, and the person and the API are not asked", async () => {
+    h.mode.v = "off";
+    const off = { ok: false, kind: "invalid" };
+    expect(await planJobAction(T, { text: SILK })).toMatchObject(off);
+    expect(await startPlanAction(T, "plan-1")).toMatchObject(off);
+    expect(await startSuggestionAction(T, "offers")).toMatchObject(off);
+    expect(await testPlanAction(T, "plan-1", "call")).toMatchObject(off);
+    expect(h.tenant).not.toHaveBeenCalled();
+    expect(h.req).not.toHaveBeenCalled();
+    expect(h.revalidate).not.toHaveBeenCalled();
+  });
+});
