@@ -1,0 +1,11 @@
+# What you sell
+Your assistant answers customers from this list. Add to it in whichever way is easiest.
+{role=status} Test mode: these are made-up examples. Nothing is saved.
+{label="Products4"}
+## Products 4
+For a saree shop, jewellery, kirana or a dealer
+- [image: ] Kanjivaram silk saree 3 colours · Red, Green, Gold ₹8,500 4 in stock
+- [image: ] Mysore silk saree 2 colours · Maroon, Green ₹5,200 12 in stock
+- [image: ] Pochampally ikat cotton 4 colours · Red, Blue, Green, Yellow ₹1,450 2 left
+- Brocade blouse piece 1 colour · Gold ₹650 Sold out
+[Open the old page](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)

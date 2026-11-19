@@ -1,0 +1,18 @@
+# What you sell
+Your assistant answers customers from this list. Add to it in whichever way is easiest.
+{role=status} Test mode: these are made-up examples. Nothing is saved.
+{label="Fill it your way"}
+## Fill it your way
+[button type=button: Say it“2 BHK flat in Kukatpally, 1,150 sq ft, 68 lakh, available.” Talk like you would to a helper.]
+[button type=button: Take photosPhotograph the shelf or your bill book. I read the names and prices.]
+[button type=button: Import a sheetExcel, CSV or Google Sheet. I match the columns for you.]
+{label="Properties3"}
+## Properties 3
+[button type=button: Add a property]
+For real estate
+-
+[button type=button: 2 BHK flat, Kukatpally1,150 sq ft · 3rd floor₹68 lakhAvailable]
+-
+[button type=button: Plot, Shamshabad200 sq yd · corner plot₹1.2 croreBooked]
+-
+[button type=button: 3 BHK villa, Gachibowli2,400 sq ft · with garden₹2.4 croreSold]
