@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { fromSegments, readBox, segmentNodes, toSegments } from "./pills";
+import { fromSegments, offsetOf, positionAt, readBox, segmentNodes, toSegments } from "./pills";
 import { PLACEHOLDERS } from "./types";
 
 const WORDS = { customer: "the customer's name", assistant: "your assistant's name", business: "your shop name", agent_role: "AI assistant" } as const;
@@ -41,5 +41,26 @@ describe("the greeting's pills <-> the stored placeholders", () => {
     box.appendChild(document.createElement("br"));
     box.appendChild(document.createTextNode("ok"));
     expect(readBox(box)).toBe("Hi {customer} <b>&</b> ok");
+  });
+});
+
+describe("the caret in the box <-> a place in the stored text (for dictation)", () => {
+  const box = () => {
+    const b = document.createElement("div");
+    b.append(...segmentNodes(toSegments("Hi {customer}, ok"), (n) => WORDS[n]));
+    return b; // text "Hi " | pill | text ", ok"
+  };
+  it("counts a pill as its placeholder", () => {
+    const b = box();
+    expect(offsetOf(b, b.childNodes[0], 3)).toBe(3);
+    expect(offsetOf(b, b.childNodes[2], 0)).toBe("Hi {customer}".length);
+    expect(offsetOf(b, b.childNodes[2], 4)).toBe("Hi {customer}, ok".length);
+  });
+  it("finds the place again, in the text or beside a pill", () => {
+    const b = box();
+    expect(positionAt(b, 3)).toEqual([b.childNodes[0], 3]);
+    expect(positionAt(b, 5)).toEqual([b.childNodes[2], 0]); // inside a pill is not a place in the text: it falls after the pill
+    expect(positionAt(b, "Hi {customer}".length + 2)).toEqual([b.childNodes[2], 2]);
+    expect(positionAt(b, 99)).toEqual([b.childNodes[2], 4]); // past the end: the end of the last text
   });
 });

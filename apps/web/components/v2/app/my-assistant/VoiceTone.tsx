@@ -9,7 +9,7 @@ import { LAUNCH_LANGS, withKept } from "@/lib/languages";
 import { SAMPLE_CUSTOMER, SAMPLE_ROLE, fillOpening, unknownPlaceholders, type Placeholder } from "@/lib/opening-line/types";
 import { STYLES, SPEAK_LANGS, TONES, type HowSpeaks, type SpeakLang, type SpeakStyle, type SpeakTone } from "@/lib/talk-training/speaks";
 import { ADDRESSES, LIMITS, type TalkError, type TalkTrainingState } from "@/lib/talk-training/types";
-import { sampleUrl } from "@/lib/voice-samples/types";
+import type { Preview } from "@/lib/opening-line/types";
 import type { Gender, PickerLang, PickerVoice } from "@/lib/voice-picker/types";
 
 import { draftOf, changeOf, type Draft, type SpeaksPanel } from "../assistant/HowAssistantSpeaks";
@@ -24,6 +24,8 @@ import type { ChooseVoice } from "./VoiceCards";
 const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 const h3 = "m-0 text-[16px] font-semibold text-ink";
 const GREETING_NAMES = ["customer", "business", "assistant"] as const satisfies readonly Placeholder[];
+
+export type PreviewFn = (language: CallLang, text: string, mentionAi: null, unsaved: boolean) => Promise<{ ok: true; preview: Preview } | { ok: false; error: string }>;
 
 export type VoiceToneProps = {
   words?: Words;
@@ -46,8 +48,8 @@ export type VoiceToneProps = {
   langNames: Record<CallLang, string>;
   business: string | null;
   assistantName: string | null;
-  /** "Hear it" beside the greeting: this workspace's voice-sample route; null = not there */
-  hearIt: { endpoint: string } | null;
+  /** "Hear it" beside the greeting: the opening-line preview (the greeting as it is on the screen, in the voice in force, nothing saved); null = not there */
+  hearIt: PreviewFn | null;
   /** The say-it-like-this list and what goes into the instructions (APP_V4) */
   v4?: boolean;
 };
@@ -175,17 +177,43 @@ export function VoiceTone({ words, uiLang, picker, languages, first, endpoint, c
   const pillText = (name: Placeholder) => t(`vt.ph.${name}` as "vt.ph.customer");
   const greetingText = doc && state ? shownGreeting(doc.greeting[lang], state.defaults.greeting[lang]) : "";
   const unknownHere = unknownPlaceholders(doc?.greeting[lang] ?? "");
+  // "Hear it": the greeting AS IT IS ON THE SCREEN (the pills filled with the example names, as in the line under the box), in the voice in force: the one picked above, which is saved the moment it is picked. The preview route takes a language and the text; it has no tone yet (the line under the button says so).
+  const [heard, setHeard] = React.useState(false);
+  const [hearNote, setHearNote] = React.useState<"words" | "none" | "error" | null>(null);
   const hear = () => {
     if (!hearIt) return;
     audio.current?.pause();
     if (hearing) return setHearing(false);
-    const a = new Audio(sampleUrl(hearIt.endpoint, { voice: "female_warm", lang, tone: "warm", name: "" }));
-    audio.current = a;
-    a.onended = () => setHearing(false);
-    a.onerror = () => setHearing(false);
+    const text = fillOpening(greetingText, { customer: SAMPLE_CUSTOMER[lang], assistant: assistantName ?? "{assistant}", business: business ?? "{business}", agent_role: SAMPLE_ROLE[lang] });
     setHearing(true);
-    a.play().catch(() => setHearing(false));
+    setHearNote(null);
+    setHeard(true);
+    void hearIt(lang, text, null, true)
+      .catch(() => ({ ok: false as const, error: "down" }))
+      .then((out) => {
+        if (!out.ok) {
+          setHearing(false);
+          return setHearNote(out.error === "unsupported" ? "words" : "error");
+        }
+        const a = out.preview.audio;
+        if (!a) {
+          setHearing(false);
+          return setHearNote("none");
+        }
+        // a blob: address, not a data: one: the page's media rule allows only this app's own address and blob: (lib/security/csp.ts)
+        const url = URL.createObjectURL(new Blob([Uint8Array.from(atob(a.base64), (c) => c.charCodeAt(0))], { type: a.mime }));
+        const player = new Audio(url);
+        audio.current = player;
+        const end = () => {
+          URL.revokeObjectURL(url);
+          setHearing(false);
+        };
+        player.onended = end;
+        player.onerror = () => (end(), setHearNote("error"));
+        player.play().catch(() => (end(), setHearNote("error")));
+      });
   };
+  const voiceName = picker && pickLang && current ? SOUNDS.find((x) => voiceFor(picker.voices, x, pickLang, picker.gender, current)?.id === current) : undefined;
 
   // ---- tone and words ----
   const toneText = (v: string) => (speaksState && v === speaksState.tone.packDefault ? t("vt.usual", { tone: t(`sp.tone.${v}` as "sp.tone.friendly") }) : t(`sp.tone.${v}` as "sp.tone.friendly"));
@@ -336,6 +364,11 @@ export function VoiceTone({ words, uiLang, picker, languages, first, endpoint, c
                 {t(hearing ? "vt.stop" : "vt.hear")}
               </button>
             </div>
+          ) : null}
+          {hearIt && heard ? (
+            <p className="m-0 text-sm text-muted" data-part="vt-hear-limit">
+              {hearNote === "words" ? t("vt.hear.words") : hearNote === "none" ? t("vt.hear.none") : hearNote === "error" ? t("vp.err.sample") : voiceName ? t("vt.hear.limit", { voice: t(`mya.v.${voiceName}` as "mya.v.warm") }) : t("vt.hear.limit2")}
+            </p>
           ) : null}
           {greetingText.trim() !== "" ? (
             <div className="rounded-xl bg-surface-2 px-3.5 py-3" data-part="tt-greeting-preview">

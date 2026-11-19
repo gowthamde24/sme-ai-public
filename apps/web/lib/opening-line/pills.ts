@@ -61,3 +61,37 @@ export function readBox(root: Node): string {
   });
   return out.replace(/ /g, " ").replace(/\s+/g, (m) => (m.includes("\n") ? " " : m));
 }
+
+/** The stored length of one child of the box: text is its length, a pill is its placeholder (`{customer}`), a line break is one space. */
+function nodeLength(n: Node): number {
+  if (n.nodeType === 3) return (n.textContent ?? "").length;
+  if (n instanceof HTMLElement) {
+    const ph = n.getAttribute("data-ph");
+    if (ph) return ph.length + 2;
+    if (n.tagName === "BR") return 1;
+  }
+  return readBox(n).length;
+}
+
+/** Where a point in the box is in the STORED text (dictation works on the stored text, with the pills as their placeholders). */
+export function offsetOf(root: HTMLElement, node: Node, offset: number): number {
+  const r = document.createRange();
+  r.setStart(root, 0);
+  r.setEnd(node, offset);
+  return readBox(r.cloneContents()).length;
+}
+
+/** The point in the box that a place in the stored text is: inside the text it falls in, or beside the pill. */
+export function positionAt(root: HTMLElement, offset: number): [Node, number] {
+  let acc = 0;
+  const kids = Array.from(root.childNodes);
+  for (let i = 0; i < kids.length; i += 1) {
+    const n = kids[i];
+    const len = nodeLength(n);
+    if (n.nodeType === 3 && offset <= acc + len) return [n, Math.max(0, offset - acc)];
+    if (n.nodeType !== 3 && offset <= acc) return [root, i];
+    acc += len;
+  }
+  const last = kids[kids.length - 1];
+  return last && last.nodeType === 3 ? [last, (last.textContent ?? "").length] : [root, kids.length];
+}

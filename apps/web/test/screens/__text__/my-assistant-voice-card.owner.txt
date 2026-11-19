@@ -33,6 +33,7 @@ Speak to customers:
   options: Respectful=respectful | Friendly (the usual)=friendly*
 For example: “ Hi Ravi, … ” Greeting
 {role=textbox label="Greeting"} నమస్కారం the customer's name గారూ, నేను your assistant's name , your shop name AI assistant . ఒక్క నిమిషం మాట్లాడొచ్చా?
+<textarea maxlength=200>
 [button type=button: Add the customer's name]
 [button type=button: Add your shop name]
 [button type=button: Add your assistant's name]

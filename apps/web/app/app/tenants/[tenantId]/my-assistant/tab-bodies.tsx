@@ -11,10 +11,11 @@ import type { Lang } from "@/i18n/lang";
 import { CALL_LANG_NAMES, type CallLang } from "@/lib/assistant/types";
 import { offeredLangs } from "@/lib/languages";
 import { currentAssistantName } from "@/lib/assistant/name";
-import { appV4, moreLanguages, autoReplyScreens, callSettingsScreens, jobsScreens, voiceSampleScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { appV4, moreLanguages, autoReplyScreens, callSettingsScreens, jobsScreens, openingLineScreens, voicePickerScreens } from "@/lib/screens/flag";
 
 import { setAutoReplyAction } from "../auto-reply-actions";
 import { saveCallSettingsAction } from "../call-settings-actions";
+import { previewOpeningLineAction } from "../opening-line-actions";
 import { saveTalkTrainingAction, resetTalkTrainingAction } from "../talk-training-actions";
 import { chooseVoiceAction } from "../voice-picker-actions";
 import { saveCallLimitAction } from "../call-limit-actions";
@@ -100,7 +101,7 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
         langNames={CALL_LANG_NAMES}
         business={business}
         assistantName={currentAssistantName()}
-        hearIt={voiceSampleScreens() !== "off" ? { endpoint: `${base}/voice-sample` } : null}
+        hearIt={openingLineScreens() !== "off" ? previewOpeningLineAction.bind(null, tenantId) : null}
         v4={appV4()}
       />
       {you}

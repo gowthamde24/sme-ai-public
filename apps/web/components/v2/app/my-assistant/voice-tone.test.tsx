@@ -10,7 +10,7 @@ import { parseHowSpeaks, type HowSpeaks } from "@/lib/talk-training/speaks";
 import type { TalkTrainingState } from "@/lib/talk-training/types";
 import { MOCK_VOICES } from "@/lib/voice-picker/types";
 
-import { VoiceTone, type VoiceToneProps } from "./VoiceTone";
+import { VoiceTone, type PreviewFn, type VoiceToneProps } from "./VoiceTone";
 
 const W = (lang: "en" | "te" | "hi" | "kn" = "en") => wordsFor(lang, ["tt.", "sp.", "vt.", "mya.v.", "bv.end."], ["today.err.mfa.link", "ope.preview", "vp.mock", "vp.err.sample", "vp.owneronly"]);
 const lang = (style = "everyday_mixed") => ({ style, region: "neutral", saved: false, examples: "draft" });
@@ -34,7 +34,9 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+const WAV = btoa("RIFF....WAVEfmt ");
 function setup(over: Partial<VoiceToneProps> = {}) {
+  const hearIt = vi.fn<PreviewFn>(async () => ({ ok: true as const, preview: { audio: { base64: WAV, mime: "audio/wav", seconds: 2 }, fake: false } }));
   const choose = vi.fn(async () => ({ ok: true as const }));
   const actions = { save: vi.fn(async (d: unknown) => ({ ok: true as const, data: { ...STATE, saved: true, training: d as never } })), reset: vi.fn(async () => ({ ok: true as const, data: STATE })) };
   const speaks = { initial: H(), demo: false, save: vi.fn(async () => ({ ok: true as const, data: H({ tone: { value: "respectful", source: "saved", pack_default: "friendly", options: [] } }) })) };
@@ -54,11 +56,11 @@ function setup(over: Partial<VoiceToneProps> = {}) {
     langNames: CALL_LANG_NAMES,
     business: "Lakshmi Silks",
     assistantName: "Priya",
-    hearIt: { endpoint: "/app/tenants/t1/voice-sample" },
+    hearIt,
     ...over,
   };
   render(<VoiceTone {...props} />);
-  return { choose, actions, speaks };
+  return { choose, actions, speaks, hearIt };
 }
 const root = () => document.querySelector('[data-part="mya-voice-tone"]') as HTMLElement;
 const box = () => document.querySelector('[data-part="vt-greeting-box"]') as HTMLElement;
@@ -252,13 +254,76 @@ describe("Voice & tone: one plain card (owner, 19 Nov 2026)", () => {
     expect(screen.queryByRole("button", { name: "Save" })).toBeNull();
   });
 
-  it("Hear it plays the greeting sample and Stop ends it", async () => {
+  const stubAudio = () => {
     const play = vi.fn(async () => undefined);
     const pause = vi.fn();
     vi.stubGlobal("Audio", function (this: Record<string, unknown>, src: string) { this.src = src; this.play = play; this.pause = pause; });
-    setup();
+    vi.stubGlobal("URL", Object.assign(URL, { createObjectURL: () => "blob:greeting", revokeObjectURL: () => undefined }));
+    return { play, pause };
+  };
+
+  it("Hear it speaks the greeting as it is on the screen (pills filled with example names, in the language chosen), in the voice in force, and says the tone comes later", async () => {
+    const { play } = stubAudio();
+    const { hearIt } = setup();
+    fireEvent.click(screen.getByRole("button", { name: "Add the customer's name" })); // an unsaved change is heard too
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Hear it/ })));
-    expect(play).toHaveBeenCalled();
+    expect(hearIt).toHaveBeenCalledTimes(1);
+    const [language, text, mentionAi, unsaved] = hearIt.mock.calls[0];
+    expect(language).toBe("en");
+    expect(text).toBe("Hello Ravi, this is Priya, the AI assistant of Lakshmi Silks. Do you have a minute?Ravi"); // no braces: what is read is what is heard
+    expect(text).not.toMatch(/[{}]/);
+    expect(mentionAi).toBeNull();
+    expect(unsaved).toBe(true); // the API never answers with the saved line instead
+    await waitFor(() => expect(play).toHaveBeenCalled());
     expect(screen.getByRole("button", { name: /Stop/ })).toBeInTheDocument();
+    expect(document.querySelector('[data-part="vt-hear-limit"]')).toHaveTextContent("Preview uses the Warm voice. The tone comes with the next update.");
+  });
+
+  it("when the API cannot speak the text yet it says so, plays nothing and never plays the saved line instead", async () => {
+    const { play } = stubAudio();
+    const hearIt = vi.fn<PreviewFn>(async () => ({ ok: false as const, error: "unsupported" }));
+    setup({ hearIt });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Hear it/ })));
+    expect(document.querySelector('[data-part="vt-hear-limit"]')).toHaveTextContent("Your own words cannot be heard yet. They come with the next update.");
+    expect(play).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: /Hear it/ })).toBeInTheDocument();
+  });
+
+  it("no sound in the test mode, and a failed preview, are said in words", async () => {
+    stubAudio();
+    setup({ hearIt: vi.fn<PreviewFn>(async () => ({ ok: true as const, preview: { audio: null, fake: true } })) });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Hear it/ })));
+    expect(document.querySelector('[data-part="vt-hear-limit"]')).toHaveTextContent("There is no sound to play here yet.");
+    cleanup();
+    setup({ hearIt: vi.fn<PreviewFn>(async () => ({ ok: false as const, error: "down" })) });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Hear it/ })));
+    expect(document.querySelector('[data-part="vt-hear-limit"]')).toHaveTextContent("could not be played");
+  });
+
+  it("dictation: the box has a microphone's field; dictated words go in at the caret as plain text, the pills stay whole, and the saved payload is the stored text", async () => {
+    const { actions } = setup();
+    const proxy = document.querySelector("#vt-greeting-dictation") as HTMLTextAreaElement;
+    expect(proxy).toBeInTheDocument();
+    expect(proxy).toHaveAttribute("aria-hidden", "true");
+    expect(proxy).toHaveAttribute("data-voice", "allow");
+    expect(proxy).toHaveAttribute("lang", "en");
+    expect(proxy.value).toBe(SUGGESTED_EN); // the field carries the stored text (what the microphone works on)
+    // what the microphone does: the native setter, then an input event
+    const said = (value: string) => {
+      Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set?.call(proxy, value);
+      proxy.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    const at = "Hello {customer}".length;
+    said(`${SUGGESTED_EN.slice(0, at)} Ravi sir${SUGGESTED_EN.slice(at)}`);
+    expect(box()).toHaveTextContent("Hello the customer's name Ravi sir, this is your assistant's name");
+    expect(box().querySelectorAll("[data-ph]")).toHaveLength(4);
+    expect(root().textContent).not.toMatch(/[{}]/);
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(actions.save).toHaveBeenCalledWith({ ...DOC, greeting: { en: `${SUGGESTED_EN.slice(0, at)} Ravi sir${SUGGESTED_EN.slice(at)}` } }));
+  });
+
+  it("a read-only card has no microphone field", () => {
+    setup({ canEdit: false });
+    expect(document.querySelector("#vt-greeting-dictation")).toBeNull();
   });
 });
