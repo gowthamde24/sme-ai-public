@@ -20,6 +20,7 @@ import { callLog, fixtureErrors, setHandlers } from "./state";
 vi.mock("@/components/v2/app/jobs/rules/LazyRulesSimple", async () => ({ RulesSimple: (await import("@/components/v2/app/jobs/rules/RulesSimple")).RulesSimple }));
 vi.mock("@/components/v2/app/jobs/rules/LazyPolicySentences", async () => ({ PolicySentences: (await import("@/components/v2/app/jobs/rules/PolicySentences")).PolicySentences }));
 vi.mock("@/components/v2/app/jobs/LazyJobRow", async () => ({ JobRow: (await import("@/components/v2/app/jobs/JobRow")).JobRow }));
+vi.mock("@/components/v2/app/jobs/detail/LazyJobLists", async () => (await import("@/components/v2/app/jobs/detail/JobLists")));
 vi.mock("@/components/v2/app/jobs/LazyPlanCard", async () => ({ PlanCard: (await import("@/components/v2/app/jobs/PlanCard")).PlanCard }));
 vi.mock("@/components/v2/app/prospects/LazyResearcherCard", async () => ({ ResearcherCard: (await import("@/components/v2/app/prospects/ResearcherCard")).ResearcherCard }));
 vi.mock("@/components/v2/app/prospects/LazyMarkContacted", async () => ({ MarkContacted: (await import("@/components/v2/app/prospects/MarkContacted")).MarkContacted }));
