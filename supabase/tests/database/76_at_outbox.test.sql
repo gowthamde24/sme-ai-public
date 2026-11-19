@@ -550,10 +550,10 @@ select pg_temp.pin('2026-10-05 23:30:00+05:30');
 select pg_temp.mk('pn1'); select pg_temp.inbound('pn1', 'Hello');
 select pg_temp.mk('pn2'); select pg_temp.inbound('pn2', 'Hello');
 select pg_temp.mk('pm2'); select pg_temp.inbound('pm2', 'Hello');
-select is(pg_temp.verdict(pg_temp.sub('pna', 'pn1', 'Thanks for writing to us.', 'reply_to_inbound')), 'queued/quiet_hours', 'NIGHT 23:30 IST: the same reply is queued with reason quiet_hours');
+select is(pg_temp.verdict(pg_temp.sub('pna', 'pn1', 'Thanks for writing to us.', 'followup')), 'queued/quiet_hours', 'NIGHT 23:30 IST: a follow-up (we start it) is queued with reason quiet_hours');
 select is(pg_temp.sched('pna'), '2026-10-06 09:00:00+05:30'::timestamptz, 'NIGHT: ...until 09:00 India time the next morning');
-select is(pg_temp.verdict(pg_temp.sub('pnb', 'pn2', 'Thanks for writing to us.', 'reply_to_inbound')), 'queued/quiet_hours', 'NIGHT: a second customer is held the same way');
-select is(pg_temp.verdict(pg_temp.sub('pmb', 'pm2', 'The price is ₹800 each', 'reply_to_inbound')), 'needs_approval/money', 'NIGHT: a price still waits for a person (the hour does not change that)');
+select is(pg_temp.verdict(pg_temp.sub('pnb', 'pn2', 'Thanks for writing to us.', 'followup')), 'queued/quiet_hours', 'NIGHT: a second customer is held the same way');
+select is(pg_temp.verdict(pg_temp.sub('pmb', 'pm2', 'The price is ₹800 each', 'followup')), 'needs_approval/money', 'NIGHT: a price still waits for a person (the hour does not change that)');
 select is(pg_temp.approve('pmb'), 'queued/owner_approved', 'NIGHT: approved by the Owner');
 select is(pg_temp.sched('pmb'), '2026-10-06 09:00:00+05:30'::timestamptz, 'NIGHT: an approved message also waits for 09:00');
 update public.outbox_messages set scheduled_for = app.outbox_now() - interval '1 minute' where id in (tests.rid('pna'), tests.rid('pnb'), tests.rid('pmb'));  -- forced due, to show that the claim itself keeps quiet hours
