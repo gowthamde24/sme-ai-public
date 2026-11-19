@@ -40,7 +40,7 @@ export function MarketingSwitch({ words, lang, initial, action, canEdit = true, 
   const rows: ConsentHistoryRow[] = consents.history.slice(0, 5);
   const history = (
     <>
-      <h3 className="text-sm font-semibold">{t("dpdp.mk.history")}</h3>
+      {simple ? null : <h3 className="text-sm font-semibold">{t("dpdp.mk.history")}</h3>}
       <ul className="mt-1 text-sm text-muted">
         {rows.map((r) => (
           <li key={`${r.at}-${r.action}`}>

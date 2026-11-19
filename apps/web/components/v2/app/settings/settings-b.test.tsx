@@ -67,7 +67,7 @@ describe("Settings > Connections under JOBS", () => {
     const card = document.querySelector('[data-part="settings-connections"]') as HTMLElement;
     expect(card).toHaveAttribute("data-simple");
     const lines = within(card).getAllByText(/./, { selector: "li[data-part=connection] > div > p:first-child" }).map((p) => p.textContent);
-    expect(lines).toEqual(["Customers can reach you on WhatsApp at +91 90000 00000.", "6 message templates are approved and 4 are under review.", "2 lead sources are connected.", "Your business number for calls is +91 80000 00000.", "Your business phone is +91 98480 00000.", "Decide in My assistant, under Rules, when a call is passed to you."]);
+    expect(lines).toEqual(["Customers can reach you on WhatsApp at +91 90000 00000.", "Message templates: 6 approved, 4 under review.", "Lead sources connected: 2.", "Your business number for calls is +91 80000 00000.", "Your business phone is +91 98480 00000.", "Decide in My assistant, under Rules, when a call is passed to you."]);
     expect(card.querySelectorAll('.jb-chip[data-tone="done"]')).toHaveLength(1);
     expect(card.querySelectorAll('.jb-chip[data-tone="wait"]')).toHaveLength(1);
     expect(within(card).getByRole("link", { name: "Manage: WhatsApp number" })).toHaveAttribute("href", "/app/tenants/t1/integrations/whatsapp");

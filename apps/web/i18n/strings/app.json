@@ -117542,10 +117542,10 @@
   }
  },
  "jobs.set.b.con.templates.line": {
-  "en": "{approved} message templates are approved and {review} are under review.",
-  "te": "{approved} message templates approve అయ్యాయి, {review} review లో ఉన్నాయి.",
-  "hi": "{approved} message templates approve हो गए हैं, {review} review में हैं.",
-  "kn": "{approved} message templates approve ಆಗಿವೆ, {review} review ನಲ್ಲಿವೆ.",
+  "en": "Message templates: {approved} approved, {review} under review.",
+  "te": "message templates: {approved} approve అయ్యాయి, {review} review లో ఉన్నాయి.",
+  "hi": "message templates: {approved} approve हो गए, {review} review में हैं.",
+  "kn": "message templates: {approved} approve ಆಗಿವೆ, {review} review ನಲ್ಲಿವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -117564,10 +117564,10 @@
   }
  },
  "jobs.set.b.con.sources.line": {
-  "en": "{n} lead sources are connected.",
-  "te": "{n} lead sources కనెక్ట్ అయ్యాయి.",
-  "hi": "{n} lead sources कनेक्ट हैं.",
-  "kn": "{n} lead sources ಕನೆಕ್ಟ್ ಆಗಿವೆ.",
+  "en": "Lead sources connected: {n}.",
+  "te": "కనెక్ట్ అయిన lead sources: {n}.",
+  "hi": "कनेक्ट हुए lead sources: {n}.",
+  "kn": "ಕನೆಕ್ಟ್ ಆದ lead sources: {n}.",
   "status": {
    "te": "draft",
    "hi": "draft",

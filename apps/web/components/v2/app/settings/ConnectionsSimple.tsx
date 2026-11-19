@@ -14,7 +14,7 @@ const WA_TONE: Record<ConnectionState, JobTone> = { connected: "done", connectin
 const PHONE_TONE: Record<"not_set_up" | "kyc_pending" | "active", JobTone> = { not_set_up: "info", kyc_pending: "wait", active: "done" };
 
 /** One connection as one sentence, its state as the solid chip and ONE button that opens the screen that already does it (the same screens the Edit buttons of before opened). */
-function Line({ t, what, href, action, children, chip }: { t: Say; what: string; href: string; action: string; children: ReactNode; chip?: ReactNode }) {
+function Line({ what, href, action, children, chip }: { what: string; href: string; action: string; children: ReactNode; chip?: ReactNode }) {
   return (
     <li className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 py-3" data-part="connection">
       <div className="min-w-0 flex-1">
@@ -46,7 +46,6 @@ export function ConnectionsSimple({ t, base, settings, admin, data, bizPhone }: 
         <>
           <ul className="mt-1 divide-y divide-line">
             <Line
-              t={t}
               what={t("sv6.con.wa")}
               href={`${base}/integrations/whatsapp`}
               action={wa?.state === "connected" ? t("jobs.set.b.con.manage") : t("jobs.set.b.con.connect")}
@@ -54,14 +53,13 @@ export function ConnectionsSimple({ t, base, settings, admin, data, bizPhone }: 
             >
               {wa === null ? t("jobs.set.b.con.wa.unknown") : wa.phone ? t("jobs.set.b.con.wa.line", { phone: wa.phone }) : t("jobs.set.b.con.wa.none")}
             </Line>
-            <Line t={t} what={t("sv6.con.templates")} href={`${base}/chats/templates`} action={t("jobs.set.b.con.open")}>
+            <Line what={t("sv6.con.templates")} href={`${base}/chats/templates`} action={t("jobs.set.b.con.open")}>
               {data.templates ? t("jobs.set.b.con.templates.line", { approved: data.templates.approved, review: data.templates.review }) : t("jobs.set.b.con.templates.unknown")}
             </Line>
-            <Line t={t} what={t("sv6.con.sources")} href={`${base}/lead-sources`} action={sources && sources.active > 0 ? t("jobs.set.b.con.open") : t("jobs.set.b.con.connect")}>
+            <Line what={t("sv6.con.sources")} href={`${base}/lead-sources`} action={sources && sources.active > 0 ? t("jobs.set.b.con.open") : t("jobs.set.b.con.connect")}>
               {sources === null ? t("jobs.set.b.con.sources.unknown") : sources.active > 0 ? t("jobs.set.b.con.sources.line", { n: sources.active }) : t("jobs.set.b.con.sources.none")}
             </Line>
             <Line
-              t={t}
               what={t("sv6.con.number")}
               href={`${base}/phone-number`}
               action={phone?.state === "active" ? t("jobs.set.b.con.manage") : t("jobs.set.b.con.setup")}
@@ -79,10 +77,10 @@ export function ConnectionsSimple({ t, base, settings, admin, data, bizPhone }: 
               <ChevronDown aria-hidden="true" className="size-5 shrink-0 text-muted transition-transform group-open:rotate-180" />
             </summary>
             <ul className="divide-y divide-line pb-2">
-              <Line t={t} what={t("settings.biz.phone")} href={`${settings}?section=business`} action={t("today.act.edit")}>
+              <Line what={t("settings.biz.phone")} href={`${settings}?section=business`} action={t("today.act.edit")}>
                 {bizPhone ? t("jobs.set.b.con.biz.line", { phone: bizPhone }) : t("jobs.set.b.con.biz.none")}
               </Line>
-              <Line t={t} what={t("sv6.con.rules")} href={`${base}/ai-team/training?section=rules`} action={t("jobs.set.b.con.open")}>
+              <Line what={t("sv6.con.rules")} href={`${base}/ai-team/training?section=rules`} action={t("jobs.set.b.con.open")}>
                 {t("sv6.con.rules.text")}
               </Line>
             </ul>

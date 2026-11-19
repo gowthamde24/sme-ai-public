@@ -1,0 +1,48 @@
+# Settings
+Your business, your team and how it all connects. Press Edit on a card to change it.
+{label="Business"}
+## Business
+Business name
+Demo Silks (synthetic)
+City or area
+Not set yet
+Address
+Not set yet
+GST number
+Not set yet
+Logo
+Not set yet
+{label="Team"}
+## Team
+[Edit](/app/tenants/22222222-2222-2222-2222-222222222222/team label="Edit Team") 3 people
+- Asha Rao Owner
+- Ravi Kumar Sales
+- a team member Viewer
+Who can approve quotes
+Owners and Admins, with a second factor Quotes follow your quote rules, which the owner and admins set.
+{label="Connections"}
+## Connections
+Only the owner and admins see the connections.
+{label="Do-Not-Call list"}
+## Do-Not-Call list
+[Open](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call label="Open: Do-Not-Call list") The numbers the assistant never calls or messages.
+{label="Notifications"}
+## Notifications
+Choose whether this device tells you when a call starts.
+{label="Language and theme"}
+## Language and theme
+Language Language
+<select label="LanguageEnglishతెలుగుहिन्दीಕನ್ನಡ">
+  options: English=en* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn
+Appearance
+{role=group label="Appearance"}
+[button type=button: System]
+[button type=button: Light]
+[button type=button: Dark]
+{label="Privacy and data"}
+## Privacy and data
+[Open Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{role=note} Draft wording. Our privacy and legal text is still being reviewed.
+- Export your data Ask for a file of your business data in Privacy.
+- Delete your account or workspace Deleting is done only in Privacy, with its own confirmation. Nothing is deleted from this page.
+- Consent records See who agreed to messages and who asked us to stop.
