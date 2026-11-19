@@ -285,6 +285,7 @@ export const API_ERROR_CODES = [
   "privacy_state",
   "privacy_unavailable",
   "proof_incomplete",
+  "prospect_no_ai_call",
   "prospect_state",
   "provider_unreachable",
   "purchase_id_used",

@@ -82,10 +82,10 @@ select is(pg_temp.sc('b_owner', format($q$select public.prospects_list(%L)::text
 select is(pg_temp.sc('b_owner', format($q$select count(*)::text from public.prospects where tenant_id = %L$q$, tests.tid('a'))), '0', 'D2: and sees no row');
 select is(pg_temp.sc('b_owner', format($q$select public.prospect_act(%L, (select id from public.prospects where place_id = 'fx_p1' and tenant_id = %L), 'call')::text$q$, tests.tid('b'), tests.tid('a'))), 'ERR:23503', 'D3: a prospect of another workspace is not found');
 
--- E: the module. A business type without it is refused; a school has it since its pack version 3 (owner decision 4 Nov 2026: organisations only, decided by the API's words)
+-- E: the module. Every business type has it since migration 984100 (before: a business type without it was refused); a school has it since its pack version 3 (owner decision 4 Nov 2026: organisations only, decided by the API's words)
 select tests.cp_pack('b', 'general_business');
-select is(pg_temp.sc('b_owner', format($q$select public.prospect_search_plan(%L, %L, 'shops', null, null, 5, 'fixture', 'fixture', 0, 'x')::text$q$, tests.tid('b'), tests.rid('sb'))), 'ERR:SM971', 'E1: a business type without the module cannot search');
-select is(pg_temp.sc('b_owner', format($q$select public.lead_finder_settings_get(%L)::text$q$, tests.tid('b'))), 'ERR:SM971', 'E2: nor read the settings');
+select ok(pg_temp.sc('b_owner', format($q$select public.prospect_search_plan(%L, %L, 'shops', null, null, 5, 'fixture', 'fixture', 0, 'x')::text$q$, tests.tid('b'), tests.rid('sb'))) like '{%', 'E1: a general business can plan a search too (every business type has the Lead Finder since 984100; the free search is counted at approval)');
+select ok(pg_temp.sc('b_owner', format($q$select public.lead_finder_settings_get(%L)::text$q$, tests.tid('b'))) like '{%', 'E2: and read the settings');
 select tests.cp_pack('b', 'education');
 select ok(pg_temp.sc('b_owner', format($q$select public.lead_finder_settings_get(%L)::text$q$, tests.tid('b'))) like '{%', 'E3: a school has the Lead Finder (pack version 3)');
 select tests.cp_pack('b', 'textiles');
