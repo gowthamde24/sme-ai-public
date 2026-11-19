@@ -5,7 +5,6 @@ import * as React from "react";
 import type { LocalAnswer } from "../ask/ask-types";
 import { useStoredAsk } from "../ask/ask-store";
 import { wakeAsk } from "../ask/ask-wake";
-import { restoreSettled } from "../ask/use-restore-thread";
 
 /**
  * "Do it" for Today's v6 parts (the command bar, a suggested job, the phone): hands an instruction to the EXISTING plan-card flow of the workspace's shared conversation (plan, then Approve, then it runs, then Undo). The conversation is put into its "do" mode first
@@ -45,15 +44,8 @@ export function usePlanSubmit(reply?: string, onSent?: () => void) {
       void session.ask(q, reply, ids, local);
       sent.current?.();
     };
-    const waiting = restoreSettled();
-    if (waiting === null) go();
-    else {
-      holding.current = true;
-      void waiting.then(() => {
-        holding.current = false;
-        go();
-      });
-    }
+    // a reload starts a new chat (owner, 19 Nov): there is no earlier conversation to wait for, the message goes at once
+    go();
     return true;
   };
   return { session, submit };

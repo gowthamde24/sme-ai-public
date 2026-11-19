@@ -9,8 +9,8 @@ import type { AskSession } from "./use-ask-session";
 
 const THREAD = [{ asked: "send Kalyani: how are you?", heardByVoice: false, answer: "Done.", sources: [], drafts: [], errorCode: null, failed: false, task: null }];
 const session = (over: Record<string, unknown> = {}) => {
-  const s = { base: "/app/tenants/T", earlier: [], phase: "idle", conversationId: () => null, newChat: vi.fn(), ...over };
-  return s as unknown as AskSession & { newChat: ReturnType<typeof vi.fn> };
+  const s = { base: "/app/tenants/T", earlier: [], phase: "idle", conversationId: () => null, newChat: vi.fn(), setResumable: vi.fn(), ...over };
+  return s as unknown as AskSession & { newChat: ReturnType<typeof vi.fn>; setResumable: ReturnType<typeof vi.fn> };
 };
 
 beforeEach(() => {
@@ -18,16 +18,29 @@ beforeEach(() => {
   api.openHistory.mockReset();
 });
 
-describe("the one conversation survives a reload", () => {
-  it("opens the most recent conversation once, when this page's conversation is empty", async () => {
+const WAITING = [{ ...THREAD[0], plan: { actionId: "a1", status: "proposed" } }];
+
+describe("a reload starts a NEW chat (owner, 19 Nov); the last conversation is only an earlier one", () => {
+  it("never reopens the last conversation by itself: the box starts empty", async () => {
     api.listHistory.mockResolvedValue([{ id: "c-new", title: "x", updatedAt: "", messageCount: 2, lastText: "" }, { id: "c-old", title: "y", updatedAt: "", messageCount: 2, lastText: "" }]);
     api.openHistory.mockResolvedValue(THREAD);
     const s = session();
     const { rerender } = renderHook(({ x }) => useRestoreThread(x), { initialProps: { x: s as AskSession | null } });
-    await waitFor(() => expect(s.newChat).toHaveBeenCalledWith("c-new", THREAD));
-    expect(api.openHistory).toHaveBeenCalledWith("/app/tenants/T", "c-new");
+    await waitFor(() => expect(api.openHistory).toHaveBeenCalledWith("/app/tenants/T", "c-new"));
+    await new Promise((r) => setTimeout(r, 20));
+    expect(s.newChat).not.toHaveBeenCalled();
+    expect(s.setResumable).not.toHaveBeenCalled();
     rerender({ x: s });
     expect(api.listHistory).toHaveBeenCalledTimes(1);
+  });
+
+  it("a plan still waiting for his answer is kept as a small Continue chip (`resumable`), not reopened", async () => {
+    api.listHistory.mockResolvedValue([{ id: "c-new", title: "Send the offer", updatedAt: "", messageCount: 2, lastText: "" }]);
+    api.openHistory.mockResolvedValue(WAITING);
+    const s = session();
+    renderHook(() => useRestoreThread(s));
+    await waitFor(() => expect(s.setResumable).toHaveBeenCalledWith({ id: "c-new", title: "Send the offer", thread: WAITING }));
+    expect(s.newChat).not.toHaveBeenCalled();
   });
 
   it("does nothing when a conversation is already going on in this tab, or there is no history", async () => {
@@ -56,5 +69,6 @@ describe("the one conversation survives a reload", () => {
     finish(THREAD);
     await new Promise((r) => setTimeout(r, 20));
     expect(s.newChat).not.toHaveBeenCalled();
+    expect(s.setResumable).not.toHaveBeenCalled();
   });
 });
