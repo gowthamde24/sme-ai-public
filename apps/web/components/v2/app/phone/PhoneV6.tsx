@@ -15,12 +15,13 @@ const STATE_STATUS: Record<PhoneNumber["state"], Status> = { not_set_up: "no_ans
  * Phone numbers of design system v6 (owner 13 Nov 2026): the page header with the "?", a plain-language card that says where the business number stands (not set up, waiting for approval, active) in one of the status colours, and below it the Settings >
  * Phone number test screen's own panel (Edit = the city, ONE main button: Get this number, then Ring my phone to test). `phone` is null where the test screen is not on: the page then shows its next step (use the WhatsApp number meanwhile). Nothing is bought, rented or rung.
  */
-export function PhoneV6({ words, lang, title, help, phone, panel, connectHref, voiceLink = null }: { words: Words; lang: string; title: string; help: ReactNode; phone: PhoneNumber | null; panel: ReactNode; connectHref: string; voiceLink?: ReactNode }) {
+export function PhoneV6({ words, lang, title, help, phone, panel, connectHref, voiceLink = null, kyc = null }: { words: Words; lang: string; title: string; help: ReactNode; phone: PhoneNumber | null; panel: ReactNode; connectHref: string; voiceLink?: ReactNode; kyc?: ReactNode }) {
   const t = makeT(words);
   const state = phone?.state ?? "not_set_up";
   return (
     <main className={pageMain} lang={lang} data-part="phone-v6">
       <PageHeader title={title} sub={t("phv6.sub")} right={help} />
+      {kyc ? <div className="mt-5" data-part="kyc-slot">{kyc}</div> : null}
       {phone === null ? (
       <section aria-labelledby="phv6-status" data-part="phone-status" data-phone-state={state} className={`${card} mt-5 max-w-2xl`}>
         <div className="flex flex-wrap items-center justify-between gap-3">

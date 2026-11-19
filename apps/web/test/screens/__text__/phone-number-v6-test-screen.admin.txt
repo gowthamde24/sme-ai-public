@@ -1,5 +1,8 @@
 # Phone number
 The number your assistant calls your customers from.
+{label="Register your business"}
+## Register your business
+Not registered yet Before you can choose a phone number, the phone company needs to know your business. One document is enough: GST, Udyam or company registration. Only the owner can send the registration. You can see here where it stands.
 {label="Your business number"}
 ## Your business number
 Not set up yet Only the owner changes this. Pick a city and your assistant gets a number to call from. Until then, calls cannot go out.
