@@ -443,6 +443,7 @@
     /* Needs you: ONE compact button per row on a phone; Done / Not now are in the card the row opens (tap the words) */
     [data-ui="v2"][data-ds="6"] [data-needs-row] .row-quiet { display: none !important; }
     /* Today's band: the status sits on the date's line, the round mark is a smaller corner mark (transform only), and the greeting no longer leaves room for the big one */
+    [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] { margin-bottom: 0.5rem !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] :is(button, a, span, div) { min-height: 0 !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] :is(button, a)[class] { height: 1.75rem !important; padding-block: 0 !important; font-size: 12px !important; line-height: 1 !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { margin-top: 0 !important; }
