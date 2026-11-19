@@ -135,6 +135,27 @@ describe("proxy", () => {
     expect(req.headers.get("x-sme-path")).toBe("/app/tenants/t1/orders?tab=open");
   });
 
+  it("SERVER_TIMING=1: a workspace page answers with a Server-Timing header (numbers and fixed names only) and the render is told when the proxy took the request; off, none of it", async () => {
+    refreshSession.mockImplementation(async () => signedIn());
+    const off = request("/app/tenants/t1");
+    expect((await proxy(off)).headers.get("server-timing")).toBeNull();
+    expect(off.headers.get("x-sme-t0")).toBeNull();
+    vi.stubEnv("SERVER_TIMING", "1");
+    try {
+      const on = request("/app/tenants/t1/leads?x=secret");
+      on.headers.set("x-sme-t0", "1"); // a caller cannot choose it
+      const header = (await proxy(on)).headers.get("server-timing") ?? "";
+      expect(header).toMatch(/^proxy_pre;dur=[\d.]+, proxy_session;dur=[\d.]+, proxy_total;dur=[\d.]+$/);
+      expect(header).not.toMatch(/secret|t1/);
+      expect(Number(on.headers.get("x-sme-t0"))).toBeGreaterThan(1_000_000);
+      // only the workspace's own pages
+      expect((await proxy(request("/app"))).headers.get("server-timing")).toBeNull();
+      expect((await proxy(request("/app/tenants"))).headers.get("server-timing")).toBeNull();
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it("does not touch the session for pages that need none", async () => {
     await proxy(request("/"));
     expect(refreshSession).not.toHaveBeenCalled();

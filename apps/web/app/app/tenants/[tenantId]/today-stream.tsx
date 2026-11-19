@@ -28,6 +28,7 @@ import type { Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { getExampleStatus } from "@/lib/api/example-data";
 import { getTodayBriefing, type TodayBriefing } from "@/lib/api/today-briefing";
+import { timed } from "@/lib/observe/server-timing";
 import { getNavCounts, todayCount, type NavCounts } from "@/lib/api/nav-counts";
 import { mayHaveCampusCard, readPackCards, type PackCard } from "@/lib/packs/pack-cards";
 import { usesChecklist } from "@/lib/packs/activation";
@@ -96,9 +97,9 @@ export function streamedToday(i: StreamIn): ReactElement {
 
   // ---- every read of the page starts here, once ----
   const agentsAsked = early(readAgentsCached(accessToken, tenantId));
-  const todayAsked = early(readToday(accessToken, tenantId, role, Date.now, { agents: agentsAsked }));
+  const todayAsked = early(timed("today_read", () => readToday(accessToken, tenantId, role, Date.now, { agents: agentsAsked })));
   const nameAsked = early(readDisplayName(accessToken, tenantId, userId));
-  const countsAsked: Promise<NavCounts | null> = early(getNavCounts(accessToken, tenantId).catch(orNull)); // the menu's numbers (C1's nav-counts, cached 30 s by the API): one that cannot be read is no number
+  const countsAsked: Promise<NavCounts | null> = early(timed("nav_counts", () => getNavCounts(accessToken, tenantId)).catch(orNull)); // the menu's numbers (C1's nav-counts, cached 30 s by the API): one that cannot be read is no number
   const deskAsked = early(readLeadDesk(ctx, role, base, tt, (tag) => sourceNameOf(tt, tag), now, false)); // (the Lead Desk workers of "Your team" are not drawn in v6: their reads are not made)
   const finderAsked = early(readFinderNeeds({ token: accessToken, tenantId }, role, i.finderState, base, tt));
   // the business type's own cards are not drawn in v6; only a school's campus card still matters (it takes the visits off the band's line), so only a business type that can have it reads them
