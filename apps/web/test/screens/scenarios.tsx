@@ -1102,6 +1102,20 @@ add({
   },
   handlers: (role) => ({ ...cons(role) }),
 });
+// JOBS: Start a job (owner 19 Nov): the box, the examples and the suggested jobs of the pack (the saree shop's four, the plain three for another business type); Sales read one sentence
+const jobsNew = (search: Record<string, string> = {}) => async () => {
+  const before = process.env.JOBS;
+  process.env.JOBS = "mock";
+  try {
+    return await (await import("@/app/app/tenants/[tenantId]/jobs/new/page")).default(props({}, search));
+  } finally {
+    if (before === undefined) delete process.env.JOBS;
+    else process.env.JOBS = before;
+  }
+};
+add({ id: "jobs-new-mock", roles: ["owner", "admin", "sales"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
+add({ id: "jobs-new-mock-construction", roles: ["owner"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(CONSTRUCTION) }) });
+add({ id: "jobs-new-mock-look-first", roles: ["owner"], render: jobsNew({ look: "followups" }), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
 add({ id: "call-list-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({})), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList(CALL_LIST_JSON) }) });
 add({ id: "call-list-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({}, { tab: "done" })), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList({ items: [], next_cursor: null }) }) });
 add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });
