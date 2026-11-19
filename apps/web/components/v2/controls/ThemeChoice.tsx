@@ -7,7 +7,7 @@ import { THEME_COOKIE, serializePreference, type Theme } from "@/i18n/preference
 export type ThemePick = Theme | "system";
 
 /** Saves the choice (or forgets it, for System) and flips data-theme on every v2 wrapper and on <html> at once. */
-function applyTheme(pick: ThemePick): void {
+export function applyTheme(pick: ThemePick): void {
   const secure = window.location.protocol === "https:";
   const effective: Theme = pick === "system" ? (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light") : pick;
   document.cookie = pick === "system" ? `${THEME_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax${secure ? "; Secure" : ""}` : serializePreference(THEME_COOKIE, pick, secure);
