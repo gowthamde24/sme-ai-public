@@ -4,7 +4,7 @@
 --   * app.web_consent_apply grants nothing for a tick that has no wording (a backstop behind the API's own check).
 alter table public.lead_consent_evidence add column consent_given_at timestamptz, add column form_name text check (form_name is null or (char_length(form_name) between 1 and 80 and app.text_is_clean(form_name)));
 comment on column public.lead_consent_evidence.consent_given_at is 'SAFE: a timestamp: when the person agreed, as the connected tool says (a hosted form: the time we received it)';
-comment on column public.lead_consent_evidence.form_name is 'SAFE: the form or page the tool says the person ticked on, a short label the business chose. CLEAN-EXEMPT: length CHECK and text_is_clean';
+comment on column public.lead_consent_evidence.form_name is 'SAFE: the form or page the tool says the person ticked on, a short label the business chose.';
 
 create or replace function app.web_consent_apply(p_tenant uuid, p_lead uuid, p_contact uuid, p_tag text, p_item jsonb) returns text
 language plpgsql
