@@ -21,7 +21,7 @@ export function FitRing({ score, words }: { score: number; words: Words }) {
   const t = makeT(words);
   const stroke = fitWord(score) === "maybe" ? "var(--jb-wait-bg, #f5a30b)" : "var(--jb-done-bg, #15803d)";
   return (
-    <span role="img" aria-label={t("jobs.trust.fit.aria", { n: score })} data-part="fit-ring" data-fit={fitWord(score)} className="relative grid shrink-0 place-items-center" style={{ width: RING, height: RING }}>
+    <span role="img" aria-label={t("jobs.trust.fit.aria", { n: score })} data-part="fit-ring" data-fit={fitWord(score)} className="relative grid size-[56px] shrink-0 place-items-center">
       <svg width={RING} height={RING} viewBox={`0 0 ${RING} ${RING}`} aria-hidden="true" className="-rotate-90">
         <circle cx={RING / 2} cy={RING / 2} r={R} fill="none" stroke="var(--color-line, #e5e7eb)" strokeWidth={STROKE} />
         <circle cx={RING / 2} cy={RING / 2} r={R} fill="none" stroke={stroke} strokeWidth={STROKE} strokeLinecap="round" strokeDasharray={`${(C * Math.min(100, Math.max(0, score))) / 100} ${C}`} />

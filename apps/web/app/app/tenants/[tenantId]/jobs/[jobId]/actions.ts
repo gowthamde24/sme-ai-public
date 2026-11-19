@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import type { Reply } from "@/components/v2/app/cc/kit";
 import { getLang } from "@/i18n/get-lang";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { addJobFaq, patchJob, removeJobFaq, testJob, type JobPatched, type JobTested } from "@/lib/api/jobs";
+import { addJobFaq, patchJob, removeJobFaq, testJob, type JobDetailTested, type JobPatched } from "@/lib/api/jobs";
 import { checkFaq, checkJobName, isCode, type JobFaq, type TestChannel } from "@/lib/jobs/detail";
 
 import { DECIDERS, invalid, refusal, who } from "../../retailers/finder-guard";
@@ -92,7 +92,7 @@ export async function removeJobFaqAction(tenantId: string, jobId: string, faqId:
 }
 
 /** "Test call/message to my phone": the owner's own phone only; with JOBS=mock nothing is called or sent. */
-export async function testJobAction(tenantId: string, jobId: string, channel: TestChannel): Promise<Reply<JobTested>> {
+export async function testJobAction(tenantId: string, jobId: string, channel: TestChannel): Promise<Reply<JobDetailTested>> {
   const ctx = await allowed(tenantId, jobId);
   if ("ok" in ctx) return ctx;
   if (channel !== "call" && channel !== "message") return invalid(ctx.t);

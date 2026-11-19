@@ -278,8 +278,8 @@ export async function removeJobFaq(token: string, tenantId: string, id: string, 
 }
 
 /** "Test call/message to my phone" (the owner's own phone only; needs doc section 4, here per job). With JOBS=mock nothing is called or sent: `sent` is false and the page says so in plain words. */
-export type JobTested = { channel: TestChannel; sent: boolean };
-export async function testJob(token: string, tenantId: string, id: string, channel: TestChannel): Promise<JobTested> {
+export type JobDetailTested = { channel: TestChannel; sent: boolean };
+export async function testJob(token: string, tenantId: string, id: string, channel: TestChannel): Promise<JobDetailTested> {
   jobId(id);
   if (jobsScreens() === "mock") return { channel, sent: false };
   await apiRequest(`${base(tenantId)}/jobs/${id}/${channel === "call" ? "test-call" : "test-message"}`, token, { method: "POST", body: "{}" });
