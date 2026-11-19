@@ -235,7 +235,7 @@ export function Conversation(p: ConversationProps) {
         </span>
         <div className="min-w-[7.5rem] flex-1 basis-0">
           <h2 className="m-0 truncate text-[15px] font-bold">{p.name}</h2>
-          <p className="m-0 truncate text-[12.5px] text-muted">{[t("chats6.channel"), p.source ? t("chats6.came_from", { source: p.source }) : null].filter(Boolean).join(" · ")}</p>
+          <p data-chat-sub="" className="m-0 truncate text-[12.5px] text-muted">{[t("chats6.channel"), p.source ? t("chats6.came_from", { source: p.source }) : null].filter(Boolean).join(" · ")}</p>
         </div>
         <Link href={p.cardHref} className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand-text lg:hidden" data-part="chat-card-link">
           <UserRound aria-hidden="true" className="size-4" />

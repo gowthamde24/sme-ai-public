@@ -48,7 +48,7 @@ export function CallsTable({ words, base, query, items, selectedId, when }: Call
                     </Link>
                     <span className="shrink-0 whitespace-nowrap text-xs text-muted" title={t(c.direction === "inbound" ? "calls6.dir.in" : "calls6.dir.out")}>
                       <span aria-hidden="true">{c.direction === "inbound" ? "↙" : "↗"}</span>
-                      <span className="max-xl:sr-only"> {t(c.direction === "inbound" ? "calls6.dir.in" : "calls6.dir.out")}</span>
+                      <span data-call-dir-label="" className="max-xl:sr-only"> {t(c.direction === "inbound" ? "calls6.dir.in" : "calls6.dir.out")}</span>
                     </span>
                   </span>
                 </td>
