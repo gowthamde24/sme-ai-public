@@ -31,7 +31,7 @@ from app.telephony.exotel import (  # noqa: F401 - re-exported: one set of event
     event_name,
 )
 
-__all__ = ["Connected", "Dtmf", "Event", "Mark", "Media", "Start", "Stop", "Unknown", "closed_word", "event_name", "parse", "chunk_bytes", "media_message", "mark_message", "clear_message", "valid_out_chunk", "stream_xml", "hangup_xml", "NAME", "RATES", "DEFAULT_RATE", "ENCODING_L16"]
+__all__ = ["Connected", "Dtmf", "Event", "Mark", "Media", "Start", "Stop", "Unknown", "closed_word", "event_name", "parse", "chunk_bytes", "media_message", "mark_message", "clear_message", "valid_out_chunk", "stream_xml", "hangup_xml", "dial_xml", "NAME", "RATES", "DEFAULT_RATE", "ENCODING_L16"]
 
 NAME = "plivo"
 RATES = (8000, 16000)       # linear PCM; mu-law (8 kHz) is offered by Plivo too but never asked for
@@ -134,3 +134,12 @@ def stream_xml(ws_url: str, rate: int = DEFAULT_RATE, *, status_callback: str | 
 def hangup_xml() -> str:
     """For a call we refuse: hang up at once (the caller hears the line drop)."""
     return '<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>'
+
+
+def dial_xml(number: str, *, timeout: int = 40) -> str:
+    """For an incoming call that must ring a person's own phone instead of the assistant answering (a business whose free minutes are used up): dial `number` (digits with the country code) and let it ring for `timeout`
+    seconds. No caller id is set, so Plivo passes the caller's own number on (whether the Indian carriers keep it is the three-phone test of the go-live checklist)."""
+    from xml.sax.saxutils import escape
+
+    digits = "".join(c for c in number if c.isdigit())
+    return f'<?xml version="1.0" encoding="UTF-8"?><Response><Dial timeout="{int(timeout)}"><Number>{escape(digits)}</Number></Dial></Response>'

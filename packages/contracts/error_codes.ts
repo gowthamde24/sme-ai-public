@@ -113,6 +113,7 @@ export const API_ERROR_CODES = [
   "followup_cadence_unavailable",
   "followups_unavailable",
   "forbidden",
+  "free_minutes_used_up",
   "free_search_used",
   "glance_unavailable",
   "goodwill_limit",

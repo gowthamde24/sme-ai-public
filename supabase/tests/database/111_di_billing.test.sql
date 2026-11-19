@@ -185,8 +185,8 @@ select is(pg_temp.get('a_owner', 'usage,whatsapp_messages,allowance') || '/' || 
 select pg_temp.q(app.outbox_claim_due_core(tests.tid('a'), 10, false));
 select isnt((select status || '/' || attempts::text from public.outbox_messages where id = tests.rid('h4')), 'queued/0', 'E16 and the held message is handed out at the next claim');
 select app.operator_set_billing_enforced(false);
-select is((select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname in ('public', 'app') and p.prosrc like '%billing\_stopped(%' and p.proname <> 'billing_stopped'), 'billing_check_usage,outbox_claim_due_core,phone_line_find,phone_line_for_tenant,scheduler_outreach_run',
-          'E17 ONLY the call start check (the two line lookups the call paths read, 18 Nov) and the outbox claim ask the meter: quotes, orders, follow-ups and customers never consult it, so they never stop');
+select is((select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname in ('public', 'app') and p.prosrc like '%billing\_stopped(%' and p.proname <> 'billing_stopped'), 'billing_check_usage,free_minutes_forward,outbox_claim_due_core,phone_line_find,phone_line_for_tenant,scheduler_outreach_run',
+          'E17 ONLY the call start check (the two line lookups the call paths read, 18 Nov, and the helper that says where an incoming call goes once Customer Zero''s own minutes are used up, 19 Nov) and the outbox claim ask the meter: quotes, orders, follow-ups and customers never consult it, so they never stop');
 select pg_temp.pin('2026-10-14T11:00:00+05:30'::timestamptz);
 -- job DM: the 14 days count from the day WhatsApp is connected: both workspaces connect today
 insert into integrations.whatsapp_accounts (tenant_id, waba_id, phone_number_id, display_phone, token_ref, status) values

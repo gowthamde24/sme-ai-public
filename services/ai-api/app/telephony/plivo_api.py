@@ -95,6 +95,16 @@ class PlivoApi:
             raise
         return True
 
+    def account_details(self) -> dict[str, Any]:
+        """The account's own details (GET /v1/Account/<auth id>/, a read only): among them `cash_credits` (a string; Plivo's documentation says USD) and `auto_recharge` (whether automatic recharge is on)."""
+        try:
+            body = self._send("GET", "").json()
+        except ValueError:
+            raise PlivoError("bad_response") from None
+        if not isinstance(body, dict):
+            raise PlivoError("bad_response")
+        return body
+
     def hang_up(self, call_uuid: str) -> bool:
         """End a live call. False when Plivo no longer knows it (it had ended)."""
         if not _UUID.fullmatch(call_uuid or ""):
@@ -117,6 +127,7 @@ class FakePlivoApi:
         self.cancelled: list[str] = []
         self.cancel_result = True
         self.fail_with: str | None = None
+        self.account_body: dict[str, Any] = {"cash_credits": "5.00000", "auto_recharge": False}
 
     def place_call(self, *, from_number: str, to_number: str, answer_url: str, hangup_url: str, ring_timeout: int = 30, time_limit: int = 180) -> str:
         if self.fail_with:
@@ -127,6 +138,11 @@ class FakePlivoApi:
     def cancel_request(self, request_uuid: str) -> bool:
         self.cancelled.append(request_uuid)
         return self.cancel_result
+
+    def account_details(self) -> dict[str, Any]:
+        if self.fail_with:
+            raise PlivoError(self.fail_with)
+        return dict(self.account_body)
 
     def hang_up(self, call_uuid: str) -> bool:
         self.hung_up.append(call_uuid)
