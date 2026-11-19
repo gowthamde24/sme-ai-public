@@ -10,7 +10,10 @@ beforeEach(() => h.req.mockReset());
 
 describe("the Embedded Signup configuration", () => {
   it("reads what the browser needs and what is missing; the Graph version has a default", () => {
-    expect(parseConnectConfig({ available: true, app_id: "1234567890", config_id: "9988776655", graph_version: "v25.0", missing: [] })).toEqual({ available: true, appId: "1234567890", configId: "9988776655", graphVersion: "v25.0", missing: [], onboardingTypes: [] });
+    expect(parseConnectConfig({ available: true, app_id: "1234567890", config_id: "9988776655", graph_version: "v25.0", missing: [] })).toEqual({ embeddedVersion: "v4", launchExtras: null, available: true, appId: "1234567890", configId: "9988776655", graphVersion: "v25.0", missing: [], onboardingTypes: [] });
+    // Embedded Signup v5: the version and the ready-made extras of FB.login come from the API; an older API says nothing (v4, no extras)
+    expect(parseConnectConfig({ available: true, app_id: "1234567890", config_id: "9988776655", embedded_version: "v5", launch_extras: { setup: {}, version: "v5" }, missing: [] })).toMatchObject({ embeddedVersion: "v5", launchExtras: { setup: {}, version: "v5" } });
+    expect(parseConnectConfig({ available: true, app_id: "1234567890", config_id: "9988776655", embedded_version: "v9", launch_extras: [1], missing: [] })).toMatchObject({ embeddedVersion: "v4", launchExtras: null });
     expect(parseConnectConfig({ available: true, app_id: "1234567890", config_id: "9988776655", onboarding_types: ["cloud_api", "coexistence"], missing: [] }).onboardingTypes).toEqual(["cloud_api", "coexistence"]);
     expect(parseConnectConfig({ available: false, app_id: null, config_id: null, missing: ["app_id", "config_id"] })).toMatchObject({ available: false, appId: null, graphVersion: "v25.0", missing: ["app_id", "config_id"] });
   });
@@ -38,6 +41,7 @@ describe("POST /whatsapp/connect", () => {
     h.req.mockResolvedValue({ connected: true, display_phone: null, verified_name: null, status: "active" });
     await connectWhatsapp("tok", T, { code: "AQBcodecodecode1234", wabaId: "123456789", phoneNumberId: "987654321", coexistence: true });
     expect(JSON.parse((h.req.mock.calls[0][2] as { body: string }).body)).toEqual({ code: "AQBcodecodecode1234", waba_id: "123456789", phone_number_id: "987654321", coexistence: true });
+
     await connectWhatsapp("tok", T, { code: "AQBcodecodecode1234", wabaId: "123456789", phoneNumberId: "987654321" });
     expect(JSON.parse((h.req.mock.calls[1][2] as { body: string }).body)).not.toHaveProperty("coexistence");
   });
