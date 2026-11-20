@@ -167,58 +167,58 @@ describe("ReviewQueuePage", () => {
     expect(screen.queryByRole("link", { name: "← Workspace" })).toBeNull();
   });
 
-  it("shows active ICP banner with version and sha256 prefix", async () => {
+  it("shows who-you-want-to-find banner with version and short id prefix", async () => {
     render(await ReviewQueuePage(props()));
-    expect(screen.getByText(/Active ICP Profile:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Who you want to find:/i)).toBeInTheDocument();
     expect(screen.getByText(/Version 1/i)).toBeInTheDocument();
     expect(screen.getByText(/0123456789ab/i)).toBeInTheDocument();
   });
 
-  it("indicates when no active ICP profile exists", async () => {
+  it("indicates when no active profile exists", async () => {
     fetchActiveIcpConfig.mockResolvedValue(null);
     render(await ReviewQueuePage(props()));
     expect(
-      screen.getByText(/No profile published yet/i),
+      screen.getByText(/Not set up yet/i),
     ).toBeInTheDocument();
   });
 
-  it("shows export links for Owner and Admin roles, hiding them for Sales and Viewer", async () => {
+  it("shows download links for Owner and Admin roles, hiding them for Sales and Viewer", async () => {
     render(await ReviewQueuePage(props()));
-    expect(screen.getByRole("link", { name: "Export CSV" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Export JSON" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Download spreadsheet (CSV)" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Download your list" })).toBeInTheDocument();
 
     fetchTenant.mockResolvedValue(tenant("admin"));
     render(await ReviewQueuePage(props()));
-    expect(screen.getAllByRole("link", { name: "Export CSV" })).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: "Download spreadsheet (CSV)" })).toHaveLength(2);
 
     fetchTenant.mockResolvedValue(tenant("sales"));
     const { container: salesContainer } = render(await ReviewQueuePage(props()));
     expect(
-      within(salesContainer).queryByRole("link", { name: "Export CSV" }),
+      within(salesContainer).queryByRole("link", { name: "Download spreadsheet (CSV)" }),
     ).not.toBeInTheDocument();
 
     fetchTenant.mockResolvedValue(tenant("viewer"));
     const { container: viewerContainer } = render(await ReviewQueuePage(props()));
     expect(
-      within(viewerContainer).queryByRole("link", { name: "Export CSV" }),
+      within(viewerContainer).queryByRole("link", { name: "Download spreadsheet (CSV)" }),
     ).not.toBeInTheDocument();
   });
 
-  it("defaults to blind scoring enabled", async () => {
+  it("defaults to hidden-score check enabled", async () => {
     render(await ReviewQueuePage(props()));
-    expect(screen.getByText("Blind Scoring: ON")).toBeInTheDocument();
+    expect(screen.getByText("Hidden-score check: ON")).toBeInTheDocument();
     expect(fetchReviewQueue).toHaveBeenCalledWith(
       "tok",
       TENANT,
       expect.objectContaining({ blind: true }),
     );
-    // Unreviewed lead shows Score Hidden (Blind)
-    expect(screen.getByText("Score Hidden (Blind)")).toBeInTheDocument();
+    // Unreviewed lead shows Score hidden
+    expect(screen.getByText("Score hidden")).toBeInTheDocument();
   });
 
-  it("toggles blind scoring off when ?blind=false", async () => {
+  it("toggles hidden-score check off when ?blind=false", async () => {
     render(await ReviewQueuePage(props({ query: { blind: "false" } })));
-    expect(screen.getByText("Blind Scoring: OFF")).toBeInTheDocument();
+    expect(screen.getByText("Hidden-score check: OFF")).toBeInTheDocument();
     expect(fetchReviewQueue).toHaveBeenCalledWith(
       "tok",
       TENANT,
@@ -232,7 +232,7 @@ describe("ReviewQueuePage", () => {
     expect(options.blind).toBe(true);
     expect(options.score_band).toBeUndefined();
     expect(screen.queryByRole("link", { name: "Priority (80+)" })).not.toBeInTheDocument();
-    expect(screen.getByText(/Score filters are available only/i)).toBeInTheDocument();
+    expect(screen.getByText(/Score filters show only/i)).toBeInTheDocument();
   });
 
   it("offers band filters only in the deliberate non-blind view", async () => {
@@ -245,7 +245,7 @@ describe("ReviewQueuePage", () => {
       expect.objectContaining({ blind: false, score_band: "priority" }),
     );
     expect(screen.getByRole("link", { name: "Priority (80+)" })).toBeInTheDocument();
-    expect(screen.queryByText(/Score filters are available only/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Score filters show only/i)).not.toBeInTheDocument();
   });
 
   it("gives every lead card its own label id, generated per render", async () => {
@@ -317,7 +317,7 @@ describe("ReviewQueuePage", () => {
       screen.queryByRole("button", { name: "Good" }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: /import/i }),
+      screen.queryByRole("button", { name: /add a list of leads/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -397,7 +397,7 @@ describe("ReviewQueuePage", () => {
   it("keeps 'unreviewed' when turning blindness off and when paging", async () => {
     fetchReviewQueue.mockResolvedValue({ ...standardQueue, next_cursor: "cur-1" });
     render(await ReviewQueuePage(props({ query: { unreviewed: "true" } })));
-    expect(screen.getByRole("link", { name: /Blind Scoring: ON/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Hidden-score check: ON/i })).toHaveAttribute(
       "href",
       `/app/tenants/${TENANT}/review?blind=false&unreviewed=true`,
     );
