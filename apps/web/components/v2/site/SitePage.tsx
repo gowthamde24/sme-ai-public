@@ -27,11 +27,13 @@ export function SitePage({ lang, theme, target, actions }: { lang: SiteLang; the
   else if (target.kind === "pack") {
     const pack = packBySlug(target.slug);
     body = pack ? <PackPage pack={pack} t={t} lang={lang} actions={{ quoteChat: actions.quoteChat, chatAvailable: actions.chatAvailable, waitlist: actions.waitlist }} /> : null;
-  } else if (target.page === "pricing") body = <PricingPage t={t} lang={lang} />;
-  else if (target.page === "how-it-works") body = <HowPage t={t} lang={lang} />;
-  else if (target.page === "security") body = <SecurityPage t={t} lang={lang} />;
-  else if (target.page === "contact") body = <ContactPage t={t} lang={lang} chatAvailable={actions.chatAvailable} action={actions.contactChat} waitlist={actions.waitlist} />;
-  else body = <HelpPage t={t} lang={lang} />;
+  } else if (target.kind === "page") {
+    if (target.page === "pricing") body = <PricingPage t={t} lang={lang} />;
+    else if (target.page === "how-it-works") body = <HowPage t={t} lang={lang} />;
+    else if (target.page === "security") body = <SecurityPage t={t} lang={lang} />;
+    else if (target.page === "contact") body = <ContactPage t={t} lang={lang} chatAvailable={actions.chatAvailable} action={actions.contactChat} waitlist={actions.waitlist} />;
+    else body = <HelpPage t={t} lang={lang} />;
+  }
   return (
     <SiteShell lang={lang} theme={theme} t={t} target={target}>
       {body}

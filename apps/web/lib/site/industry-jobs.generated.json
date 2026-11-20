@@ -1,0 +1,190 @@
+{
+  "industries": [
+    {
+      "slug": "real-estate",
+      "label": "For real estate",
+      "headline": "Your AI assistant for real estate.",
+      "oneLiner": "Calls new property enquiries right away in Telugu, Hindi, Kannada or English and books site visits.",
+      "metaTitle": "AI Assistant for Real Estate — Stack19",
+      "metaDescription": "Call back property enquiries fast, answer buyer calls during site visits, and book visits in Telugu, Hindi, Kannada and English.",
+      "jobs": [
+        {
+          "id": "enquiry_call_right_away",
+          "kind": "speed_to_lead",
+          "title": "Call every new enquiry right away",
+          "benefit": "A thank-you message and a quick call, because a buyer who enquired often asks several agents",
+          "ask": "Call every new property enquiry right away"
+        },
+        {
+          "id": "answer_calls_when_busy",
+          "kind": "answer_calls",
+          "title": "Answer my calls when I can't",
+          "benefit": "No buyer call goes unanswered while you are on a site visit, and you see what each one wanted",
+          "ask": "Answer my calls when I am on a site visit"
+        },
+        {
+          "id": "site_visit_booking",
+          "kind": "store_visits",
+          "title": "Site visit booking",
+          "benefit": "Turns an enquiry into a site visit: the buyer picks a day, you see it on Today",
+          "ask": "Ask buyers who enquired to book a site visit"
+        }
+      ]
+    },
+    {
+      "slug": "education",
+      "label": "For education",
+      "headline": "Your AI assistant for schools and colleges.",
+      "oneLiner": "Answers parent calls and admission enquiries in Telugu, Hindi, Kannada or English and schedules campus visits.",
+      "metaTitle": "AI Assistant for Schools & Education — Stack19",
+      "metaDescription": "Follow up on admission enquiries right away, answer office calls when busy, and book campus visits in four languages.",
+      "jobs": [
+        {
+          "id": "enquiry_call_right_away",
+          "kind": "speed_to_lead",
+          "title": "Call every new admission enquiry right away",
+          "benefit": "A thank-you message and a quick call, while the parents are still comparing schools",
+          "ask": "Call every new admission enquiry right away"
+        },
+        {
+          "id": "answer_calls_when_busy",
+          "kind": "answer_calls",
+          "title": "Answer my calls when I can't",
+          "benefit": "No parent call goes unanswered, even when the office is busy or closed, and you see what each one asked",
+          "ask": "Answer the office calls when nobody can pick up"
+        },
+        {
+          "id": "campus_visit_booking",
+          "kind": "store_visits",
+          "title": "Campus visit booking",
+          "benefit": "Parents pick a day to see the campus; you see it on Today",
+          "ask": "Invite parents who enquired to visit the campus and book a day"
+        }
+      ]
+    },
+    {
+      "slug": "healthcare",
+      "label": "For healthcare",
+      "headline": "Your AI assistant for clinics and diagnostics.",
+      "oneLiner": "Handles patient enquiries in Telugu, Hindi, Kannada or English and books appointments even after hours.",
+      "metaTitle": "AI Assistant for Clinics & Healthcare — Stack19",
+      "metaDescription": "Answer patient calls, respond to enquiries quickly, and schedule clinic appointments in Telugu, Hindi, Kannada and English.",
+      "jobs": [
+        {
+          "id": "enquiry_call_right_away",
+          "kind": "speed_to_lead",
+          "title": "Call every new enquiry right away",
+          "benefit": "A thank-you message and a quick call, so a patient who asked is not left waiting",
+          "ask": "Call every new enquiry right away and offer an appointment"
+        },
+        {
+          "id": "answer_calls_when_busy",
+          "kind": "answer_calls",
+          "title": "Answer my calls when I can't",
+          "benefit": "No patient call goes unanswered, even after clinic hours, and you see what each one needed",
+          "ask": "Answer the clinic calls when we cannot pick up"
+        },
+        {
+          "id": "appointment_booking",
+          "kind": "store_visits",
+          "title": "Appointment booking",
+          "benefit": "Turns an enquiry into an appointment: the patient picks a day, you see it on Today",
+          "ask": "Ask patients who enquired to book an appointment"
+        }
+      ]
+    },
+    {
+      "slug": "automotive",
+      "label": "For automotive",
+      "headline": "Your AI assistant for auto dealerships.",
+      "oneLiner": "Calls back vehicle enquiries in Telugu, Hindi, Kannada or English and books showroom test drives.",
+      "metaTitle": "AI Assistant for Auto Dealerships — Stack19",
+      "metaDescription": "Respond to vehicle enquiries quickly, handle showroom calls when teams are busy, and schedule test drives in four languages.",
+      "jobs": [
+        {
+          "id": "enquiry_call_right_away",
+          "kind": "speed_to_lead",
+          "title": "Call every new enquiry right away",
+          "benefit": "A thank-you message and a quick call, while the buyer is still looking at other showrooms",
+          "ask": "Call every new vehicle enquiry right away"
+        },
+        {
+          "id": "answer_calls_when_busy",
+          "kind": "answer_calls",
+          "title": "Answer my calls when I can't",
+          "benefit": "No buyer call goes unanswered while the team is with customers, and you see what each one wanted",
+          "ask": "Answer the showroom calls when nobody can pick up"
+        },
+        {
+          "id": "test_drive_booking",
+          "kind": "store_visits",
+          "title": "Test drive booking",
+          "benefit": "Turns an enquiry into a test drive: the buyer picks a day, you see it on Today",
+          "ask": "Ask buyers who enquired to book a test drive"
+        }
+      ]
+    },
+    {
+      "slug": "retail",
+      "label": "For retail",
+      "headline": "Your AI assistant for retail stores.",
+      "oneLiner": "Answers missed customer calls in Telugu, Hindi, Kannada or English and checks back on quiet enquiries.",
+      "metaTitle": "AI Assistant for Retail Stores — Stack19",
+      "metaDescription": "Answer store calls when busy, call back customer enquiries quickly, and follow up in Telugu, Hindi, Kannada and English.",
+      "jobs": [
+        {
+          "id": "enquiry_call_right_away",
+          "kind": "speed_to_lead",
+          "title": "Call every new enquiry right away",
+          "benefit": "A thank-you message and a quick call, while the customer is still looking",
+          "ask": "Call every new enquiry right away"
+        },
+        {
+          "id": "answer_calls_when_busy",
+          "kind": "answer_calls",
+          "title": "Answer my calls when I can't",
+          "benefit": "No customer call goes unanswered, and you see who wanted what",
+          "ask": "Answer my business calls when I cannot pick up"
+        },
+        {
+          "id": "quiet_enquiry_follow_up",
+          "kind": "followups",
+          "title": "Follow up on enquiries that went quiet",
+          "benefit": "A gentle check-in with people who asked and then stopped replying",
+          "ask": "Follow up with customers who enquired and did not reply"
+        }
+      ]
+    },
+    {
+      "slug": "wholesale",
+      "label": "For wholesale",
+      "headline": "Your AI assistant for wholesale and B2B.",
+      "oneLiner": "Calls back trade enquiries in Telugu, Hindi, Kannada or English and reminds dealers when to reorder.",
+      "metaTitle": "AI Assistant for Wholesale & B2B — Stack19",
+      "metaDescription": "Follow up on business enquiries right away, answer trade calls when busy, and remind dealers to reorder in four languages.",
+      "jobs": [
+        {
+          "id": "enquiry_call_right_away",
+          "kind": "speed_to_lead",
+          "title": "Call every new business enquiry right away",
+          "benefit": "A thank-you message and a quick call, so a buyer does not go to the next supplier",
+          "ask": "Call every new business enquiry right away"
+        },
+        {
+          "id": "answer_calls_when_busy",
+          "kind": "answer_calls",
+          "title": "Answer my calls when I can't",
+          "benefit": "No buyer call goes unanswered, and you see what each one wanted",
+          "ask": "Answer my business calls when I cannot pick up"
+        },
+        {
+          "id": "dealer_reorder_reminder",
+          "kind": "followups",
+          "title": "Dealer reorder reminder",
+          "benefit": "Reminds regular dealers when it is time to reorder, so repeat orders do not slip away",
+          "ask": "Remind my dealers when it is time to reorder"
+        }
+      ]
+    }
+  ]
+}

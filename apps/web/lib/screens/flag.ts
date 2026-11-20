@@ -227,3 +227,6 @@ export const earlyAccess = (value: string | undefined = process.env.EARLY_ACCESS
  * contracts/composer-queue-DRAFT.md). `1` = C1's routes, `mock` = made-up answers kept in a cookie of the browser (nothing is sent; texts with a `#` word walk through every state, see lib/api/chat-queue.ts), unset = the old behaviour (the template picker), unchanged. Only with DESIGN_V6.
  */
 export const chatQueueScreens = (value: string | undefined = process.env.CHAT_QUEUE_SCREENS): ScreenMode => screenMode(value);
+
+/** Industry SEO landing pages (`/for/real-estate`, `/for/education`, `/for/healthcare`, `/for/automotive`, `/for/retail`, `/for/wholesale`), English only first: `1` enables them; unset = 404. */
+export const industryPages = (value: string | undefined = process.env.INDUSTRY_PAGES): boolean => value === "1";

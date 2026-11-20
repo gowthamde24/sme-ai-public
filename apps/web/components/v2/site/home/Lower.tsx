@@ -75,6 +75,31 @@ function PlanCard({ plan, t }: { plan: PublicPlan; t: SiteT }) {
   );
 }
 
+export function PlansSection({ t }: { t: SiteT }) {
+  return (
+    <Section id="pricing" labelledBy="plans-title">
+      <Head id="plans-title" title={t("h4.pl.title")} />
+      <ul className="h4-plans" data-part="plans">
+        {PUBLIC_PLANS.map((p) => (
+          <PlanCard key={p.id} plan={p} t={t} />
+        ))}
+      </ul>
+      <p className="h4-every" data-part="every-plan">
+        <b>{t("h4.pl.every")}</b> {[t("h4.pl.e1"), t("pp.sh.1"), t("h4.pl.e2"), t("pp.sh.2", planVars()), t("pp.sh.5"), t("pp.sh.3"), t("pp.sh.4")].join(" · ")}
+      </p>
+      <div className="h4-plans-note">
+        <p data-part="plans-free">
+          {t("h4.pl.line", { gst: `${PLAN_FACTS.gstPercent}%` })}{" "}
+          <Link href="/pricing" className="h4-more-link" data-part="plans-more">
+            {t("h4.pl.more")}
+            <ArrowRight size={14} strokeWidth={2.4} aria-hidden="true" />
+          </Link>
+        </p>
+      </div>
+    </Section>
+  );
+}
+
 /**
  * The sections of the home page between the try-it box and the FAQ (website-spec-v4): what late call-backs cost, the Lead Finder, the plans, and "Built in from day one" as a still bento (the voices are gone: the length rule). Designed at 390 px first
  * (design/home4.css). Each is a title of at most six words, one grey line and one visual. Every word comes from the string store; the page reads fully with JavaScript off (everything is server markup; only the radar's slow sweep moves).
@@ -90,26 +115,7 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
         <Head id="finder-title" title={t("h4.finder.t")} sub={t("h4.finder.sub")} />
         <RadarFinder w={words(t, FINDER_KEYS)} />
       </Section>
-      <Section id="pricing" labelledBy="plans-title">
-        <Head id="plans-title" title={t("h4.pl.title")} />
-        <ul className="h4-plans" data-part="plans">
-          {PUBLIC_PLANS.map((p) => (
-            <PlanCard key={p.id} plan={p} t={t} />
-          ))}
-        </ul>
-        <p className="h4-every" data-part="every-plan">
-          <b>{t("h4.pl.every")}</b> {[t("h4.pl.e1"), t("pp.sh.1"), t("h4.pl.e2"), t("pp.sh.2", planVars()), t("pp.sh.5"), t("pp.sh.3"), t("pp.sh.4")].join(" · ")}
-        </p>
-        <div className="h4-plans-note">
-          <p data-part="plans-free">
-            {t("h4.pl.line", { gst: `${PLAN_FACTS.gstPercent}%` })}{" "}
-            <Link href="/pricing" className="h4-more-link" data-part="plans-more">
-              {t("h4.pl.more")}
-              <ArrowRight size={14} strokeWidth={2.4} aria-hidden="true" />
-            </Link>
-          </p>
-        </div>
-      </Section>
+      <PlansSection t={t} />
       <Section id="built" labelledBy="built-title">
         <Head id="built-title" title={t("h4.built.t")} />
         <Bento t={t} />
