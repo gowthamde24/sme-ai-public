@@ -14,7 +14,7 @@ from pydantic import SecretStr
 from app.config import Settings
 from app.ops import token_expiry as te
 
-SECRET = "EAAB-this-token-must-never-appear-anywhere"
+PROBE = "marker-7Qx2-must-never-be-logged"
 NOW = datetime(2026, 11, 20, 9, 0, tzinfo=UTC)
 
 
@@ -97,18 +97,18 @@ def test_the_token_never_reaches_the_log(caplog: pytest.LogCaptureFixture) -> No
     import httpx
 
     def refuse(request: httpx.Request) -> httpx.Response:
-        assert request.url.params["input_token"] == SECRET and request.url.params["access_token"] == SECRET
-        return httpx.Response(400, json={"error": {"message": f"bad token {SECRET}"}})
+        assert request.url.params["input_token"] == PROBE and request.url.params["access_token"] == PROBE
+        return httpx.Response(400, json={"error": {"message": f"bad token {PROBE}"}})
 
-    reader = te.MetaDebugToken("https://graph.example", "v25.0", SECRET, client=httpx.Client(transport=httpx.MockTransport(refuse)))
+    reader = te.MetaDebugToken("https://graph.example", "v25.0", PROBE, client=httpx.Client(transport=httpx.MockTransport(refuse)))
     with caplog.at_level(logging.DEBUG), pytest.raises(te.TokenCheckError) as err:
         reader.facts()
-    assert err.value.reason == "refused" and SECRET not in caplog.text and SECRET not in repr(err.value)
+    assert err.value.reason == "refused" and PROBE not in caplog.text and PROBE not in repr(err.value)
 
 
 def test_it_is_off_by_default_and_on_without_a_token_stops_the_worker_at_start() -> None:
     assert te.build_token_expiry(settings(), "http://x", "k") is None
     with pytest.raises(te.ConfigurationError):
         te.build_token_expiry(settings(token_expiry_check=True), "http://x", "k")
-    built = te.build_token_expiry(settings(token_expiry_check=True, whatsapp_access_token=SecretStr(SECRET)), "http://x", "k")
+    built = te.build_token_expiry(settings(token_expiry_check=True, whatsapp_access_token=SecretStr(PROBE)), "http://x", "k")
     assert built is not None
