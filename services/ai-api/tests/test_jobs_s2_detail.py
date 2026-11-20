@@ -817,3 +817,36 @@ def test_a_paused_job_is_not_made_waiting_by_what_waits() -> None:
     w = World(today=Today(("hot_lead_waiting", "lead")), outreach=Outreach(rule(1, active=False, reason="owner")))
     job = w.get("speed_to_lead").json()
     assert job["status"] == "paused" and job["needs_you"] == 1
+
+
+# ------------------------------------------------------------------------------------------------ the docs' nullability (docs/contracts/jobs-detail.md), asserted on every answer
+NULLABLE_JOB = {"custom_name", "last_run_at", "fix", "plan_gate"}
+NULLABLE_DETAIL = NULLABLE_JOB | {"failure"}
+
+
+def _nulls(body: dict[str, Any], allowed_top: set[str]) -> set[str]:
+    found: set[str] = set()
+    for key, value in body.items():
+        if value is None and key not in allowed_top:
+            found.add(key)
+    return found
+
+
+@pytest.mark.parametrize("kind", KINDS)
+def test_the_answers_are_null_only_where_the_docs_say_so(kind: str) -> None:
+    """A null anywhere else is a contract bug (the web crashed on `setting.value` once): top level of a Job and a JobDetail, the nested objects, and `value` of a Setting (null = "the stored value matches none of the options": never "the default")."""
+    w = World(offers=(offer(),))
+    detail = w.get(kind).json()
+    assert _nulls(detail, NULLABLE_DETAIL) == set(), _nulls(detail, NULLABLE_DETAIL)
+    for parent, key in (("when", "from_hour"), ("when", "to_hour"), ("when", "pace_per_hour")):
+        assert key in detail[parent]
+    assert {k for k, v in detail["when"].items() if v is None} <= {"from_hour", "to_hour", "pace_per_hour"}
+    assert {k for k, v in detail["effect"]["inputs"].items() if v is None} <= {"who", "event_at", "booked_at"}
+    assert {k for k, v in detail["cost"].items() if v is None} <= {"minutes_included", "rupees"} and detail["cost"]["minutes_used"] is not None
+    assert detail["result"]["code"] and isinstance(detail["result"]["params"], dict) and detail["status"] and isinstance(detail["enabled"], bool) and isinstance(detail["needs_you"], int)
+    assert isinstance(detail["results"]["days"], int)
+    for s in detail["settings"]["main"] + detail["settings"]["more"]:
+        assert isinstance(s["key"], str) and s["type"] in ("choice", "toggle")
+        assert s["value"] is None or (isinstance(s["value"], str) if s["type"] == "choice" else isinstance(s["value"], bool))
+        if s["type"] == "choice":
+            assert isinstance(s["options"], list) and s["options"] and (s["value"] is None or s["value"] in s["options"])
