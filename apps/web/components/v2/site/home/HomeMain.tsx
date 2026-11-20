@@ -1,10 +1,9 @@
-import { ArrowRight, Check, Clock, Languages, MessageCircle, Moon, Phone, PhoneCall as PhoneCallIcon, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Clock, MessageCircle, PhoneCall as PhoneCallIcon, Zap } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
-import { HeroStage, LeakCalc, RadarFinder, WaitlistForm } from "@/components/v2/site/LazyIslands";
-import { publicPlanLines } from "@/components/v2/site/PublicPlans";
+import { HeroStage, WaitlistForm } from "@/components/v2/site/LazyIslands";
 import { hasWaitlist, waitlistWords, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { teluguFontVariable } from "@/design/fonts";
 import type { SiteLang } from "@/i18n/lang";
@@ -12,13 +11,13 @@ import type { SiteKey, SiteT } from "@/i18n/site";
 import { SITE_LANGUAGE_NAMES } from "@/i18n/site-lang";
 import { websiteOnly } from "@/lib/site/mode";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
-import { PUBLIC_PLANS, planVars, rupees, type PublicPlan } from "@/lib/site/plans";
 import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 
 import { AskBox } from "./AskBox";
 import { ChatStack } from "./ChatStack";
 import { STACK } from "./chat-stack";
+import { LowerSections } from "./Lower";
 import { WithWhatsapp } from "../home2/WithWhatsapp";
 
 type Start = { href: string; label: string };
@@ -35,8 +34,6 @@ const HERO_KEYS = [
   "h2.hear",
   "h2.hear.on",
 ];
-const FINDER_KEYS = [...["city", "near", "checked", "call", "ask", "skip", "list", "of", "empty"].map((x) => `h2.finder.${x}`), ...[1, 2, 3, 4].flatMap((i) => [`h2.finder.pin.${i}.what`, `h2.finder.pin.${i}.why`])];
-const LEAK_KEYS = [...["enq", "miss", "buy", "avg", "in"].map((x) => `h2.leak.${x}`), ...["q", "sub", "s1", "s2", "s3", "s4", "warm", "cold", "with", "of", "note"].map((x) => `h3.leak.${x}`)];
 
 
 /**
@@ -52,25 +49,7 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
       <Hero t={t} cta={cta} />
       <Ask t={t} cta={cta} />
       <How t={t} />
-      <section id="calc" aria-labelledby="calc-title" className="h3-sec">
-        <div className="h3-wrap">
-          <LeakCalc w={words(t, LEAK_KEYS)} />
-        </div>
-      </section>
-      <section id="finder" aria-labelledby="finder-title" className="h3-sec">
-        <div className="h3-wrap">
-          <header className="h3-head">
-            <h2 id="finder-title" className="h3-h2">
-              {t("h3.radar.t")}
-            </h2>
-            <p className="h3-lead">{t("h3.radar.sub")}</p>
-          </header>
-          <RadarFinder w={words(t, FINDER_KEYS)} />
-          <p className="h3-small h3-note">{t("h2.finder.note")}</p>
-        </div>
-      </section>
-      <Built t={t} />
-      <Plans t={t} cta={cta} />
+      <LowerSections t={t} />
       <Final t={t} lang={lang} cta={cta} hasForm={hasForm} waitlist={waitlist} />
     </div>
   );
@@ -190,88 +169,6 @@ function How({ t }: { t: SiteT }) {
             ))}
           </ol>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function Built({ t }: { t: SiteT }) {
-  const icons = [<Phone key="1" size={22} strokeWidth={2.2} />, <ShieldCheck key="2" size={22} strokeWidth={2.2} />, <Moon key="3" size={22} strokeWidth={2.2} />, <Languages key="4" size={22} strokeWidth={2.2} />];
-  return (
-    <section id="built" aria-labelledby="built-title" className="h3-sec">
-      <div className="h3-wrap">
-        <header className="h3-head">
-          <h2 id="built-title" className="h3-h2">
-            {t("h3.built.title")}
-          </h2>
-        </header>
-        <ul className="h3-grid h3-grid-4" data-part="built-in">
-          {icons.map((ico, i) => (
-            <li key={i} className="h3-card" data-built={i + 1}>
-              <span className="h3-ico" aria-hidden="true">
-                {ico}
-              </span>
-              <h3 className="h3-h3">{t(k(`h3.built.${i + 1}.t`))}</h3>
-              <p className="h3-card-d">{t(k(`h3.built.${i + 1}.d`))}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-function PlanCard({ plan, t, cta }: { plan: PublicPlan; t: SiteT; cta: Start }) {
-  return (
-    <li className={`h3-card h3-plan ${plan.recommended ? "h3-plan-rec" : ""}`} data-plan={plan.id}>
-      <div className="h3-plan-top">
-        <h3 className="h3-h3">{plan.name}</h3>
-        {plan.recommended ? <span className="h3-rec">{t("pp.pop")}</span> : null}
-      </div>
-      <p className="h3-price" data-part="plan-cost">
-        {rupees(plan.monthly)} <span>{t("pp.mo")}</span>
-      </p>
-      <p className="h3-small">{t("pp.gst")}</p>
-      <ul className="h3-plan-lines">
-        {publicPlanLines(plan, t).map((line) => (
-          <li key={line}>
-            <Check size={16} strokeWidth={2.6} aria-hidden="true" />
-            {line}
-          </li>
-        ))}
-      </ul>
-      <Link href={cta.href} className={`h3-btn ${plan.recommended ? "h3-btn-main" : "h3-btn-line"}`}>
-        {cta.label}
-      </Link>
-    </li>
-  );
-}
-
-function Plans({ t, cta }: { t: SiteT; cta: Start }) {
-  return (
-    <section id="plans" aria-labelledby="plans-title" className="h3-sec">
-      <div className="h3-wrap">
-        <header className="h3-head">
-          <h2 id="plans-title" className="h3-h2">
-            {t("h2.plans.title")}
-          </h2>
-          <p className="h3-lead">{t("h2.plans.sub")}</p>
-        </header>
-        <ul className="h3-grid h3-grid-3" data-part="plans">
-          {PUBLIC_PLANS.map((p) => (
-            <PlanCard key={p.id} plan={p} t={t} cta={cta} />
-          ))}
-        </ul>
-        <p className="h3-plans-free" data-part="plans-free">
-          {t("h3.plans.free")}
-        </p>
-        <p className="h3-plans-foot">
-          <span>{t("pp.sh.2", planVars())}</span>
-          <Link href="/pricing" className="h3-link" data-part="plans-more">
-            {t("h3.plans.more")}
-            <ArrowRight size={16} strokeWidth={2.4} aria-hidden="true" />
-          </Link>
-        </p>
       </div>
     </section>
   );
