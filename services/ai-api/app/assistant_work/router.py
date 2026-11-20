@@ -120,7 +120,7 @@ def _final_record() -> ToolSpec:
 
 FINAL_RECORD = _final_record()
 # words that make a request unmistakably a record action: when the model still says "not mine" to these (15 Nov: "Cancel Anitha Hegde's visit on Saturday at 4:30 pm" fell through to a chat that said "I cannot cancel visits"), it gets one more try that cannot say it
-_RECORDY = re.compile(r"(?i)\b(?:(?:book|schedule|move|reschedule|cancel)\b.{0,40}\bvisit|archive (?:the )?lead|stop (?:messaging|sending|texting|calling)\b.{0,30}|(?:has|have) agreed to (?:get|receive)|\bmark\b.{1,40}\bas\b.{1,30})")
+_RECORDY = re.compile(r"(?i)(?:\b(?:book|schedule|move|reschedule|cancel)\b.{0,40}\b(?:test drive|demo class|appointment|consultation)|(?:బుక్|बुक|ಬುಕ್)\s*(?:చెయ్|చేయ|कर|ಮಾಡ))|\b(?:(?:book|schedule|move|reschedule|cancel)\b.{0,40}\bvisit|archive (?:the )?lead|stop (?:messaging|sending|texting|calling)\b.{0,30}|(?:has|have) agreed to (?:get|receive)|\bmark\b.{1,40}\bas\b.{1,30})")
 
 
 @dataclass
