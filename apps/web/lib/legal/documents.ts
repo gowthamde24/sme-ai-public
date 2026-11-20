@@ -1,5 +1,5 @@
 import { BRAND_TEXT } from "@/design/brand";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { TRIAL_DAYS } from "@/lib/plan/trial-days";
 import { LEGAL_TOKENS } from "@/lib/site/business";
 
@@ -18,20 +18,27 @@ import type { LegalText } from "./types";
  */
 export type DocId = "privacy" | "terms" | "data-deletion" | "refund";
 
-const DOCS: Record<DocId, { en: LegalText } & Partial<Record<Exclude<Lang, "en">, LegalText>>> = {
+const DOCS: Record<DocId, { en: LegalText } & Partial<Record<Exclude<SiteLang, "en">, LegalText>>> = {
   privacy: { en: PRIVACY }, // English only until the owner approves a translation (18 Nov 2026); privacy-text.te/.hi/.kn.ts keep the same English for the review kit
   terms: { en: TERMS },
   refund: { en: REFUND },
   "data-deletion": { en: DATA_DELETION, te: DATA_DELETION_TE, hi: DATA_DELETION_HI, kn: DATA_DELETION_KN },
 };
 
+/**
+ * Tamil (a language of the public website only) has NO legal words: the legal pages stay English and carry ONE plain Tamil line, "this page is in English" (owner-gated: no Tamil legal text ships until the owner approves it; a draft like the rest of the Tamil).
+ * Every other word of a legal page, for a Tamil visitor, is English (`legalLang`).
+ */
+export const LEGAL_ENGLISH_ONLY_TA = "இந்தப் பக்கம் ஆங்கிலத்தில் உள்ளது";
+export const legalLang = (lang: SiteLang): SiteLang => (lang === "ta" ? "en" : lang);
+
 /** The text in the visitor's language, or English where there is none; `lang` is the language the returned text is really in. */
-export function legalDocument(id: DocId, lang: Lang): { doc: LegalText; lang: Lang } {
+export function legalDocument(id: DocId, lang: SiteLang): { doc: LegalText; lang: SiteLang } {
   const doc = lang === "en" ? undefined : DOCS[id][lang];
   return doc ? { doc, lang } : { doc: DOCS[id].en, lang: "en" };
 }
 
-export const languagesOf = (id: DocId): Lang[] => (["en", ...(["te", "hi", "kn"] as const).filter((l) => DOCS[id][l])] as Lang[]);
+export const languagesOf = (id: DocId): SiteLang[] => (["en", ...(["te", "hi", "kn"] as const).filter((l) => DOCS[id][l])] as SiteLang[]);
 
 /** A text with {brand} and the other {tokens} of lib/site/business.ts filled in (the facts are written there once). An unknown {word} stays as it is, so a typo shows on the page and a test catches it. */
 export function fillLegal(text: string): string {

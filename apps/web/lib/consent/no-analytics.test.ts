@@ -58,6 +58,7 @@ describe("the cookies the code writes are the cookies the policy lists (job BH)"
       "app/setup/setup-form.tsx", // sme_lang
       "components/v2/app/setup/SetupWizard.tsx", // sme_lang (the language choice of the setup wizard, the same cookie as the language button)
       "components/v2/controls/LangSelect.tsx", // sme_lang
+      "components/v2/controls/SiteLangSelect.tsx", // sme_lang (the public site's switch, with Tamil: the same cookie, the same listing in the cookie policy)
       "components/v2/controls/ThemeButton.tsx", // sme_theme
       "components/v2/controls/ThemeChoice.tsx", // sme_theme
       "i18n/preferences.ts", // the serializer of the two above

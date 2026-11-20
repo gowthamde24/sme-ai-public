@@ -1,7 +1,7 @@
 import legal from "@/i18n/strings/legal.json";
 
 import { fill, type Vars } from "@/i18n/fill";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { dictFor, namedDict } from "@/i18n/strings";
 
 /**
@@ -14,11 +14,11 @@ export type LegalT = (key: LegalKey, vars?: Vars) => string;
 
 const cache = new Map<string, Record<LegalKey, string>>();
 
-export function legalDict(lang: Lang): Record<LegalKey, string> {
+export function legalDict(lang: SiteLang): Record<LegalKey, string> {
   return namedDict<Record<LegalKey, string>>(cache, lang, () => dictFor(legal as never, lang), legal as never);
 }
 
-export function legalT(lang: Lang): LegalT {
+export function legalT(lang: SiteLang): LegalT {
   const dict = legalDict(lang);
   return (key, vars) => fill(dict[key], vars);
 }

@@ -1,4 +1,4 @@
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { legalT } from "@/i18n/legal";
 import type { Subprocessors } from "@/lib/dpdp/types";
 import { ADDRESSES } from "@/lib/site/business";
@@ -9,7 +9,7 @@ import { updatedOn } from "./LegalDoc";
  * The companies that process personal data for us, in the Privacy notice (job DQ part 2): read from the API (`GET /v1/privacy/subprocessors`, contract-dpdp.md) when the page is drawn, so the notice can never name a company the service does not use
  * or leave out one it does. The names, purposes, countries and data are the API's own words (English); the headings are ours. When the list cannot be read the page says so and gives the address to ask: it never guesses a list.
  */
-export function SubprocessorList({ data, lang }: { data: Subprocessors | null; lang: Lang }) {
+export function SubprocessorList({ data, lang }: { data: Subprocessors | null; lang: SiteLang }) {
   const t = legalT(lang);
   if (!data || data.items.length === 0)
     return (

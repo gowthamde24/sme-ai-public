@@ -1,13 +1,13 @@
-import type { Lang } from "@/i18n/lang";
-import { LANGS } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 
 import { isSitePage, SITE_PAGES, type SiteTarget } from "./paths";
 import { SITE_PACKS, packBySlug } from "./packs";
 
 /** What an address means: the language and the page, or null when it is neither (a 404). SERVER ONLY (it knows the business types). One or two segments; "en" is not a prefix (English is unprefixed). */
-const isLang = (v: string): v is Lang => (LANGS as readonly string[]).includes(v);
+const isLang = (v: string): v is SiteLang => (SITE_LANGS as readonly string[]).includes(v);
 
-export function resolveSite(segments: readonly string[]): { lang: Lang; target: SiteTarget } | null {
+export function resolveSite(segments: readonly string[]): { lang: SiteLang; target: SiteTarget } | null {
   if (segments.length === 0) return { lang: "en", target: { kind: "home" } };
   if (segments.length > 2) return null;
   const [first, second] = segments;

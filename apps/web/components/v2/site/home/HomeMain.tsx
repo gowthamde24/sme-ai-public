@@ -8,7 +8,7 @@ import { HeroStage, LeakCalc, RadarFinder, WaitlistForm } from "@/components/v2/
 import { publicPlanLines } from "@/components/v2/site/PublicPlans";
 import { hasWaitlist, waitlistWords, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { teluguFontVariable } from "@/design/fonts";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import type { SiteKey, SiteT } from "@/i18n/site";
 import { websiteOnly } from "@/lib/site/mode";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
@@ -38,7 +38,7 @@ const FINDER_KEYS = [...["city", "near", "checked", "call", "ask", "skip", "list
 const LEAK_KEYS = [...["enq", "miss", "buy", "avg", "in"].map((x) => `h2.leak.${x}`), ...["q", "sub", "s1", "s2", "s3", "s4", "warm", "cold", "with", "of", "note"].map((x) => `h3.leak.${x}`)];
 
 /** The English (or Hindi, Kannada) meaning under a Telugu line of the sample phones; none on the Telugu page, where the line is already in the reader's language. */
-const Gloss = ({ lang, text }: { lang: Lang; text: string }) => (lang === "te" ? null : <span className="h3-gloss">{text}</span>);
+const Gloss = ({ lang, text }: { lang: SiteLang; text: string }) => (lang === "te" ? null : <span className="h3-gloss">{text}</span>);
 
 /**
  * THE HOME PAGE (owner, 19 and 20 Nov 2026: "we don't need to mention each and every business"; "all the same in all layouts"; "keep the three animations"; "clean"). One page, one markup that reflows: every section is the same at 390, 430, 768,
@@ -46,7 +46,7 @@ const Gloss = ({ lang, text }: { lang: Lang; text: string }) => (lang === "te" ?
  * to action, and the stage: enquiries flying in from the platforms into the orb), "What should your assistant do?", the demo (one phone: the Telugu call's WhatsApp, three steps, what it found out), how many enquiries are reached in time
  * (the counter), the Lead Finder radar, what is built in, the plans, the final call to action. No business type is named or linked: the variety is in the examples.
  */
-export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang: Lang; start: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
+export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang: SiteLang; start: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
   const cta: Start = { href: start.href, label: t("h3.cta") };
   return (
     <div className={`h3 ${teluguFontVariable}`} data-part="home3">
@@ -149,7 +149,7 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
   );
 }
 
-function How({ t, lang }: { t: SiteT; lang: Lang }) {
+function How({ t, lang }: { t: SiteT; lang: SiteLang }) {
   const found = [1, 2, 3] as const;
   return (
     <section id="how" aria-labelledby="how-title" className="h3-sec h3-band">
@@ -288,7 +288,7 @@ function Plans({ t, cta }: { t: SiteT; cta: Start }) {
 }
 
 /** The final call to action: the orb with its rings, the line, and the early-access bar (name, phone, type of business, city) on the existing joinWaitlist action; without the waitlist, the button stands in. The section is `#demo`, where every "early access" leads. */
-function Final({ t, lang, cta, hasForm, waitlist }: { t: SiteT; lang: Lang; cta: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
+function Final({ t, lang, cta, hasForm, waitlist }: { t: SiteT; lang: SiteLang; cta: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
   const form = hasForm && hasWaitlist(waitlist);
   const formWords = { ...waitlistWords(t), name: t("h2.join.name"), contact: t("h2.join.phone"), type: t("h2.join.biz"), city: t("h2.join.city"), submit: t("demo.submit"), thanksTitle: t("h2.join.thanks"), thanksBody: t("h2.join.once") };
   return (

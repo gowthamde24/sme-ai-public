@@ -2,47 +2,51 @@ import { describe, expect, it } from "vitest";
 import site from "@/i18n/strings/site.json";
 import legal from "@/i18n/strings/legal.json";
 import login from "@/i18n/strings/login.json";
-import { LANGS } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 import { TRANSLATED_LANGS, dictFor, keepHyphenatedWordsWhole } from "@/i18n/strings";
 import { FORBIDDEN_CLAIMS as FORBIDDEN } from "@/i18n/strings/forbidden";
 import { withTrialDays } from "@/lib/plan/trial-days";
 
-type Entry = { en: string; te: string; hi: string; kn: string; status: Record<string, string>; only?: string[] };
+type Entry = { en: string; te: string; hi: string; kn: string; ta?: string; status: Record<string, string>; only?: string[] };
 const SETS: Record<string, Record<string, Entry>> = { site, login, legal } as never;
-const langsOf = (e: Entry) => e.only ?? [...TRANSLATED_LANGS];
+// Tamil (ta) is a language of the public website only: an entry has it where the site has a Tamil text; the others fall back to their English (and the test of the unused keys below says which)
+const langsOf = (e: Entry) => e.only ?? [...TRANSLATED_LANGS, ...(e.ta !== undefined ? ["ta"] : [])];
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
 
-describe("string store: four languages", () => {
+describe("string store: four languages (and Tamil on the public site)", () => {
   for (const [name, data] of Object.entries(SETS)) {
-    const dicts = Object.fromEntries(LANGS.map((l) => [l, dictFor(data as never, l) as Record<string, string>]));
+    const dicts = Object.fromEntries(SITE_LANGS.map((l) => [l, dictFor(data as never, l) as Record<string, string>]));
     const keys = Object.keys(data);
-    it(`${name}: the same keys in English, Telugu, Hindi and Kannada`, () => {
-      for (const lang of LANGS) expect(Object.keys(dicts[lang]).sort(), `${name}:${lang}`).toEqual([...keys].sort());
+    it(`${name}: the same keys in English, Telugu, Hindi, Kannada and Tamil`, () => {
+      for (const lang of SITE_LANGS) expect(Object.keys(dicts[lang]).sort(), `${name}:${lang}`).toEqual([...keys].sort());
     });
     it(`${name}: no empty string, and the same {placeholders} everywhere`, () => {
-      for (const lang of LANGS)
+      for (const lang of SITE_LANGS)
         for (const k of keys) {
           expect(dicts[lang][k].trim().length, `${lang}:${k}`).toBeGreaterThan(0);
           expect(placeholders(dicts[lang][k]), `${lang}:${k}`).toEqual(placeholders(dicts.en[k]));
         }
     });
     it(`${name}: the other languages use their own script`, () => {
-      const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$|v3\.(day\.\d\.time)$|h2\.plans\.ld$|pp\.(gst|pop|included|setup\.prio)$|h3\.(phone\.(biz|calllog|msg)|how\.f\.(1\.v|[23])|built\.[234]\.t|src\.\d\.[td])$|h2\.finder\.(call|pin\.\d\.what)$)/; // (Latin on purpose: plan names, source names, kinds of school, the phone's own labels) // intentionally Latin or numeric (role.main.t is the product name "Your assistant"; IndiaMART and JustDial are other companies' names)
-      for (const lang of ["te", "hi", "kn"] as const) {
-        const missing = keys.filter((k) => !exempt.test(k) && !script[lang].test(dicts[lang][k]));
+      const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/, ta: /[஀-௿]/ } as const;
+      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$|v3\.(day\.\d\.time)$|h2\.plans\.ld$|pp\.(gst|pop|included|setup\.prio)$|h3\.(phone\.(biz|calllog|msg)|how\.f\.(1\.v|[23])|built\.[234]\.t|src\.\d\.[td])$|h2\.out\.2\.t|h2\.finder\.(call|pin\.\d\.what)$)/; // (Latin on purpose: plan names, source names, kinds of school, the phone's own labels) // intentionally Latin or numeric (role.main.t is the product name "Your assistant"; IndiaMART and JustDial are other companies' names)
+      // Hindi, Kannada and Tamil: single business words and names that stand alone in Latin on purpose (the owner's style: WhatsApp, plan, OK, enquiry, call, quote in Latin): menu labels, plan terms, units
+      const LATIN_LABELS = /^(price\.founding\.t|contact\.(copy|mail|who\.phone)|contact\.addr\.billing|calc\.(unit\.sq_(ft|m)|pieces|pallets|trips)|hm\.(wf\.early|w\.[2-6]\.n)|ld\.deep\.(tag|\w+\.t)|h2\.nav\.(finder|plans|login|early\.short)|h2\.(hear\.on|finder\.skip|foot\.(product|whatsapp))|help\.(4|7)\.t|cookie\.(notice|panel|analytics)\.title)$/;
+      for (const lang of ["te", "hi", "kn", "ta"] as const) {
+        // a key with no Tamil text shows its English (nothing to check); one with a Tamil text must be in Tamil script unless it is on the list of Latin-on-purpose words
+        const missing = keys.filter((k) => !exempt.test(k) && !(lang !== "te" && LATIN_LABELS.test(k)) && (lang !== "ta" || (data[k] as Entry).ta !== undefined) && !script[lang].test(dicts[lang][k]));
         expect(missing, `${name}:${lang}`).toEqual([]);
       }
     });
     it(`${name}: never hard-codes the brand name (it comes from {brand})`, () => {
-      for (const lang of LANGS) for (const k of keys) expect(dicts[lang][k], `${lang}:${k}`).not.toMatch(/sme-?ai/i);
+      for (const lang of SITE_LANGS) for (const k of keys) expect(dicts[lang][k], `${lang}:${k}`).not.toMatch(/sme-?ai/i);
     });
   }
 });
 
 describe("honesty: no claims we cannot prove today", () => {
   for (const [name, data] of Object.entries(SETS)) {
-    for (const lang of LANGS) {
+    for (const lang of SITE_LANGS) {
       it(`${name} / ${lang}: no forbidden claim`, () => {
         const d = dictFor(data as never, lang) as Record<string, string>;
         // the plans' own numbers (18% GST, the 80% and 100% usage warnings) are the owner's final pricing (19 Nov 2026): the percentage rule does not apply to the plan words
@@ -85,7 +89,7 @@ describe("honesty: no claims we cannot prove today", () => {
   });
   it("never says the trial needs no card, and holds no price in any website or sign-in string (job CX: the owner decides prices after usage tests)", () => {
     for (const set of [site, login] as unknown as Record<string, Entry>[])
-      for (const lang of LANGS) {
+      for (const lang of SITE_LANGS) {
         const d = dictFor(set as never, lang) as Record<string, string>;
         for (const [k, v] of Object.entries(d)) {
           // landing v2's examples (h2.*: a customer's budget, the visitor's own estimate) may show rupees; none is a price of ours
@@ -141,20 +145,22 @@ describe("string store: status", () => {
 });
 
 // The register brief (i18n/STYLE.md) bans bookish words. A guard, not the whole style.
-const BANNED: Record<"te" | "hi" | "kn", string[]> = {
+const BANNED: Record<"te" | "hi" | "kn" | "ta", string[]> = {
   te: ["దయచేసి", "తెలియజేయ", "ఆమోదించ", "సమాధానం", "నమోదు", "పరిశోధ", "సందేశం", "చెల్లింపు", "వినియోగదారు", "ధృవీకరించ", "అభ్యర్థన", "ఏజెంట్"],
   hi: ["कृपया", "निर्णय", "संदेश", "भुगतान", "अग्रिम", "उपभोक्ता", "प्रतीक्षा", "पंजीकरण", "सत्यापित", "अनुरोध", "उपयोगकर्ता", "प्रदर्शित", "अनुमोदित", "एजेंट"],
   kn: ["ದಯವಿಟ್ಟು", "ನಿರ್ಧಾರ", "ಸಂದೇಶ", "ಅನುಮೋದ", "ಪಾವತಿ", "ದಾಖಲಿಸ", "ದಾಖಲಾಗ", "ಪರಿಶೀಲ", "ಬಳಕೆದಾರ", "ಧೃಢೀಕರ", "ಏಜೆಂಟ್", "ಮನವಿ"],
+  // Tamil: the business words (customer, enquiry, call, plan, ...) are written in Latin like the other languages, and no bookish or official word is used where a spoken one is
+  ta: ["தயவுசெய்து", "வாடிக்கையாளர்", "விசாரணை", "அழைப்பு", "வணிகம்", "பயனர்", "கைபேசி", "அலைபேசி", "கட்டணம் செலுத்த", "தயவு செய்து"],
 };
 describe("string store: everyday register", () => {
-  it("none of the Telugu, Hindi or Kannada strings uses a bookish word from the style brief", () => {
+  it("none of the Telugu, Hindi, Kannada or Tamil strings uses a bookish word from the style brief", () => {
     const hits: string[] = [];
     for (const [set, data] of Object.entries(SETS)) {
       for (const [key, e] of Object.entries(data)) {
-        for (const l of langsOf(e) as ("te" | "hi" | "kn")[]) {
+        for (const l of langsOf(e) as ("te" | "hi" | "kn" | "ta")[]) {
           // the Telugu stand-up of landing v2 is C1's recorded script word for word (the captions follow the recording); it waits for its native review, which may change the recording and these words together
           if (set === "site" && /^h2\.meet\.\d\.text$/.test(key) && l === "te") continue;
-          for (const w of BANNED[l]) if (e[l].includes(w)) hits.push(`${set}.${key}:${l} has "${w}"`);
+          for (const w of BANNED[l]) if ((e[l] ?? "").includes(w)) hits.push(`${set}.${key}:${l} has "${w}"`);
         }
       }
     }
@@ -165,8 +171,8 @@ describe("string store: everyday register", () => {
     for (const [set, data] of Object.entries(SETS)) {
       for (const [key, e] of Object.entries(data)) {
         if (/^meta\.description$/.test(key)) continue;
-        for (const l of langsOf(e) as ("te" | "hi" | "kn")[]) {
-          const words = e[l].split(/\s+/).length;
+        for (const l of langsOf(e) as ("te" | "hi" | "kn" | "ta")[]) {
+          const words = (e[l] ?? "").split(/\s+/).length;
           if (words > 45) long.push(`${set}.${key}:${l} has ${words} words`);
         }
       }
@@ -176,7 +182,7 @@ describe("string store: everyday register", () => {
 });
 
 describe("string store: no bad hyphen wrap", () => {
-  it("puts an invisible word joiner after a hyphen between two letters, in te / hi / kn only", () => {
+  it("puts an invisible word joiner after a hyphen between two letters, in te / hi / kn / ta only", () => {
     expect(keepHyphenatedWordsWhole("फ़ॉलो-अप")).toBe("फ़ॉलो-⁠अप");
     expect(keepHyphenatedWordsWhole("ఫాలో-అప్ డ్రాఫ్ట్")).toBe("ఫాలో-⁠అప్ డ్రాఫ్ట్");
     expect(keepHyphenatedWordsWhole("GST 5% - ok")).toBe("GST 5% - ok");
@@ -184,10 +190,10 @@ describe("string store: no bad hyphen wrap", () => {
   });
   it("inserts only U+2060 (word joiner), never ZWJ or ZWNJ: without it every built string equals the stored text", () => {
     for (const [set, data] of Object.entries({ site, login })) {
-      for (const l of ["te", "hi", "kn"] as const) {
+      for (const l of ["te", "hi", "kn", "ta"] as const) {
         const d = dictFor(data as never, l) as Record<string, string>;
         for (const [k, v] of Object.entries(d)) {
-          const raw = (data as unknown as Record<string, Record<string, string>>)[k][l];
+          const raw = (data as unknown as Record<string, Record<string, string>>)[k][l] ?? (data as unknown as Record<string, Record<string, string>>)[k].en; // (no Tamil text: the English)
           expect(v.replaceAll("⁠", ""), `${set}.${k}:${l}`).toBe(raw);
           for (const c of [...v].filter((ch) => !raw.includes(ch))) expect(c, `${set}.${k}:${l}`).toBe("⁠");
         }
@@ -197,7 +203,7 @@ describe("string store: no bad hyphen wrap", () => {
   it("leaves no breakable hyphen between letters in any built dictionary", () => {
     const bad: string[] = [];
     for (const [set, data] of Object.entries({ site, login })) {
-      for (const l of ["te", "hi", "kn"] as const) {
+      for (const l of ["te", "hi", "kn", "ta"] as const) {
         const d = dictFor(data as never, l) as Record<string, string>;
         for (const [k, v] of Object.entries(d)) if (/[\p{L}\p{M}]-[\p{L}\p{M}]/u.test(v)) bad.push(`${set}.${k}:${l}`);
       }

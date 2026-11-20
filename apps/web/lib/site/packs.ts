@@ -1,5 +1,5 @@
 import { fillPlain } from "@/i18n/fill";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 
 import bundle from "./site-packs.generated.json";
 import type { OwlId, SitePack, Text } from "./types";
@@ -18,16 +18,16 @@ export function packBySlug(slug: string): SitePack | null {
 }
 
 /** A text in one language, English when the language has none. */
-export function textIn(text: Text | undefined, lang: Lang): string {
+export function textIn(text: Text | undefined, lang: SiteLang): string {
   if (!text) return "";
   return (lang === "en" ? text.en : text[lang]) || text.en;
 }
 
 /** `textIn` with {brand} filled for running text in a page. */
-export const say = (text: Text | undefined, lang: Lang): string => fillPlain(textIn(text, lang));
+export const say = (text: Text | undefined, lang: SiteLang): string => fillPlain(textIn(text, lang));
 
 /** The owl's name in this business type's own words (Fee Desk, Site Measurer), English when the pack has none. */
-export function owlName(pack: SitePack, owl: OwlId, lang: Lang): string | null {
+export function owlName(pack: SitePack, owl: OwlId, lang: SiteLang): string | null {
   const t = pack.agents[owl];
   return t ? textIn(t, lang) : null;
 }

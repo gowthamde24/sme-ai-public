@@ -1,13 +1,14 @@
 import { Menu } from "lucide-react";
 import Link from "next/link";
 
-import { LangSelect } from "@/components/v2/controls/LangSelect";
+import { SiteLangSelect } from "@/components/v2/controls/SiteLangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
 import { container } from "@/components/v2/site/ui";
 import { Wordmark } from "@/components/v2/Wordmark";
 import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
-import { LANGS, type Lang } from "@/i18n/lang";
+import { type SiteLang } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 import type { Theme } from "@/i18n/preferences";
 import { startEntry } from "@/lib/site/entry";
 import { websiteOnly } from "@/lib/site/mode";
@@ -21,8 +22,8 @@ const link = "inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-
  * to the plans page there), Sign in, the language (this page in the other languages), the theme, and the one button of the site, "Start trial". From 900 px (the width of a phone with "Desktop site" switched on is about 980) the links sit in the bar; below that they are a native
  * disclosure (`<details>`, no script); the button stays in the bar, and the language and theme stay there from 640 px (below that they are in the menu).
  */
-export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; theme?: Theme; target: SiteTarget }) {
-  const hrefs = Object.fromEntries(LANGS.map((l) => [l, sitePath(l, target)])) as Record<Lang, string>;
+export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLang; theme?: Theme; target: SiteTarget }) {
+  const hrefs = Object.fromEntries(SITE_LANGS.map((l) => [l, sitePath(l, target)])) as Record<SiteLang, string>;
   const home = sitePath(lang, { kind: "home" });
   const onHome = target.kind === "home";
   const base = onHome ? "" : home;
@@ -38,7 +39,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   ];
   // "Get early access": the home page's closing form; on a page without the form, where "start" leads today
   // (website mode and the app-open home page both say "Join early access": one call to action, owner 11 Nov 2026)
-  const early = !web && onHome && waitlistMode() !== "off" ? { href: "#demo", label: t("h2.nav.early"), short: t("h2.nav.early.short") } : { href: start.href, label: start.label, short: start.label };
+  const early = !web && onHome && waitlistMode() !== "off" ? { href: "#demo", label: t("h2.nav.early"), short: t("h2.nav.early.short") } : { href: start.href, label: start.label, short: web && lang !== "en" ? t("h2.nav.early.short") : start.label }; // (website mode: the one button reads "Early access" below 1280 px in te, hi, kn and ta: the full words push the menu button off a 360 to 430 px screen)
   return (
     <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/[0.86] backdrop-blur-lg backdrop-saturate-150">
       {/* the scroll's progress, a thin line under the bar (drawn by the scroll where the browser can; none where it cannot) */}
@@ -63,7 +64,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
           )}
           {/* a phone keeps the one button in the bar (the landing v2 phone design) and finds the language and the theme in the menu */}
           <span className="hidden items-center gap-2 sm:flex">
-            <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} />
+            <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
             <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
           </span>
           <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-ink px-3.5 text-sm font-bold text-bg sm:px-[18px] sm:text-[15px]">
@@ -92,7 +93,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
                   </li>
                 )}
                 <li className="mt-1 flex items-center gap-2 border-t border-line px-1 pt-2 sm:hidden">
-                  <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} />
+                  <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
                   <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
                 </li>
               </ul>

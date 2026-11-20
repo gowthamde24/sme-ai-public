@@ -163,6 +163,20 @@ describe("in the visitor's language (job DB)", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Terms of Use");
     expect(document.getElementById("what")!.closest("div")).toHaveAttribute("lang", "en");
   });
+  it.each(["privacy", "terms", "data-deletion"] as const)("ta: no Tamil legal text is shipped (owner-gated): the %s page is English with ONE plain Tamil line, \"this page is in English\", and no Tamil summary or note", async (which) => {
+    jarValues.sme_lang = "ta";
+    render(await (which === "privacy" ? PrivacyPage() : which === "terms" ? TermsPage() : DataDeletionPage()));
+    const line = document.querySelector('[data-legal="english-only"]')!;
+    expect(line).toHaveAttribute("lang", "ta");
+    expect(line.textContent).toBe("இந்தப் பக்கம் ஆங்கிலத்தில் உள்ளது");
+    expect(document.querySelectorAll('[data-legal="english-only"]')).toHaveLength(1);
+    expect(document.querySelector('[data-legal="translated"]')).toBeNull();
+    expect(document.getElementById("summary-h")).toBeNull();
+    // the one Tamil line is the only Tamil on the page
+    const rest = document.body.textContent!.replace("இந்தப் பக்கம் ஆங்கிலத்தில் உள்ளது", "");
+    expect(rest).not.toMatch(/[\u0B80-\u0BFF]/);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveAttribute("lang", "en");
+  });
   it("English has no 'machine translation' note", async () => {
     render(await TermsPage());
     expect(document.body.textContent).not.toContain("machine-written translation");
@@ -237,6 +251,12 @@ describe("the root layout carries the notice (job BH)", () => {
   it("the words follow the language cookie", async () => {
     jarValues.sme_lang = "kn";
     expect(await html()).toContain(legalT("kn")("cookie.notice.ok"));
+  });
+  it("a Tamil cookie leaves the cookie notice in English (no Tamil legal words ship)", async () => {
+    jarValues.sme_lang = "ta";
+    const out = await html();
+    expect(out).toContain(legalT("en")("cookie.notice.ok"));
+    expect(out).not.toMatch(/[\u0B80-\u0BFF]/);
   });
   it("loads no outside script and no analytics tag", async () => {
     const out = await html();

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { SupportedBy } from "@/components/v2/site/SupportedBy";
 import type { SiteT } from "@/i18n/site";
-import { LANGS, type Lang } from "@/i18n/lang";
+import { type SiteLang } from "@/i18n/lang";
+import { SITE_LANGS, SITE_LANGUAGE_NAMES } from "@/i18n/site-lang";
 import { isServed } from "@/lib/site/mode";
 import { sitePath, SITE_PAGES, type SitePage } from "@/lib/site/paths";
 
@@ -12,13 +13,12 @@ import { WithWhatsapp } from "./WithWhatsapp";
 const link = "inline-flex min-h-11 items-center text-[15px] font-semibold text-muted hover:text-ink";
 const head = "mb-1.5 text-sm font-extrabold text-muted";
 const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help" };
-const LANG_NAME: Record<Lang, string> = { en: "English", te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ" };
 
 /**
  * The home page's footer (landing v2 part B.13): the line, the product's sections (no business type is linked from the home page), the company's pages (only the ones that are served), "Talk to us" with the WhatsApp placeholder, then the dot-built wordmark
  * on its reflecting floor, then the copyright, the languages of this page and "Back to the top". Server markup; the wordmark is a lazy island.
  */
-export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { href: string; label: string } }) {
+export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early: { href: string; label: string } }) {
   return (
     <footer id="end" className="relative overflow-hidden px-[var(--h3-gutter,clamp(16px,3vw,32px))] pb-4 pt-[clamp(32px,6vw,80px)]" data-part="home-footer">
       <div className="h3-foot-grid relative mx-auto max-w-[1240px] border-b border-line pb-9">
@@ -60,10 +60,10 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
         <span>{t("h2.foot.copy")}</span>
         <nav aria-label={t("nav.languages")}>
           <ul className="m-0 flex list-none flex-wrap p-0" data-part="foot-langs">
-            {LANGS.map((l) => (
+            {SITE_LANGS.map((l) => (
               <li key={l}>
                 <Link href={sitePath(l, { kind: "home" })} lang={l} hrefLang={l} aria-current={l === lang ? "true" : undefined} className={`inline-flex min-h-11 min-w-11 items-center justify-center px-2 font-medium text-ink hover:underline ${l === lang ? "font-bold" : ""}`}>
-                  {LANG_NAME[l]}
+                  {SITE_LANGUAGE_NAMES[l].native}
                 </Link>
               </li>
             ))}

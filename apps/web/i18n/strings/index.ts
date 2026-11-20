@@ -1,4 +1,4 @@
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { withNamedAssistant } from "@/lib/assistant/default-name";
 import { currentAssistantName } from "@/lib/assistant/name";
 import { withTrialDays } from "@/lib/plan/trial-days";
@@ -16,7 +16,8 @@ export type Status = "draft" | "reviewed";
 export type TranslatedLang = "te" | "hi" | "kn";
 export const TRANSLATED_LANGS: readonly TranslatedLang[] = ["te", "hi", "kn"];
 
-type Raw = Record<string, { en: string; te: string; hi: string; kn: string; status?: Partial<Record<TranslatedLang, string>> }>;
+/** `ta` (Tamil) exists in the public site's words only (job: Tamil on the site); a key without it shows its English. */
+type Raw = Record<string, { en: string; te: string; hi: string; kn: string; ta?: string; status?: Partial<Record<TranslatedLang | "ta", string>> }>;
 
 /**
  * A browser may break a line right after a hyphen, which splits a word like फ़ॉलो-अप ("follow-up") into
@@ -30,7 +31,7 @@ export const keepHyphenatedWordsWhole = (text: string): string => text.replace(N
  * A dictionary built once per language AND assistant name (job DN): every `{assistant}` in it is already the name of the workspace being drawn, so `wordsFor`, `frameLabels` and the words passed to client parts need no
  * further step (`source`: the JSON the dictionary is built from, so reviewed-only mode can tell an English fallback from a reviewed string). The store keeps a few entries only (the default name and the names in use now); it is cleared when it grows, so a long-running server cannot fill up with names.
  */
-export function namedDict<D>(store: Map<string, D>, lang: Lang, build: () => Record<string, string>, source?: Raw): D {
+export function namedDict<D>(store: Map<string, D>, lang: SiteLang, build: () => Record<string, string>, source?: Raw): D {
   const name = currentAssistantName();
   const key = `${lang}|${name}`;
   let dict = store.get(key);
@@ -38,7 +39,7 @@ export function namedDict<D>(store: Map<string, D>, lang: Lang, build: () => Rec
     if (store.size >= 40) store.clear();
     // reviewed-only mode: a string that shows its English (not reviewed in this language) keeps the English word for the default assistant too, so "{assistant} proposed a visit" never reads "మీ అసిస్టెంట్ proposed a visit"
     const strict = source !== undefined && lang !== "en" && reviewedOnly();
-    const langOf = (k: string): Lang => (strict && source[k] !== undefined && source[k].status?.[lang as TranslatedLang] !== "reviewed" ? "en" : lang);
+    const langOf = (k: string): SiteLang => (strict && source[k] !== undefined && source[k].status?.[lang as TranslatedLang | "ta"] !== "reviewed" ? "en" : lang);
     dict = Object.fromEntries(Object.entries(build()).map(([k, v]) => [k, withTrialDays(withNamedAssistant(v, name, langOf(k)))])) as D;
     store.set(key, dict);
   }
@@ -46,13 +47,14 @@ export function namedDict<D>(store: Map<string, D>, lang: Lang, build: () => Rec
 }
 
 /** One flat key -> text dictionary for a language, typed by the keys of the JSON file. */
-export function dictFor<T extends Raw>(data: T, lang: Lang): { [K in keyof T]: string } {
+export function dictFor<T extends Raw>(data: T, lang: SiteLang): { [K in keyof T]: string } {
   const out = {} as { [K in keyof T]: string };
   const strict = lang !== "en" && reviewedOnly();
   for (const k of Object.keys(data) as (keyof T)[]) {
     // reviewed-only mode (Customer Zero): a Telugu, Hindi or Kannada string nobody who reads the language has approved shows the English instead (never a machine draft, never a bare key)
+    // a Tamil text exists only where the site has one (the app's dictionaries have none): without it, and in reviewed-only mode while it is a draft, the English shows
     if (lang === "en" || (strict && data[k].status?.[lang] !== "reviewed")) out[k] = data[k].en;
-    else out[k] = keepHyphenatedWordsWhole(data[k][lang]);
+    else out[k] = keepHyphenatedWordsWhole(data[k][lang] ?? data[k].en);
   }
   return out;
 }

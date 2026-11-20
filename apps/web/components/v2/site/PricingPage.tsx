@@ -7,7 +7,7 @@ import { CtaBand, FaqList, Section } from "@/components/v2/site/sections";
 import { btnPrimary, btnSecondary, card, container, lead } from "@/components/v2/site/ui";
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { earlyAccess } from "@/lib/screens/flag";
 import { startEntry } from "@/lib/site/entry";
 import { planVars } from "@/lib/site/plans";
@@ -18,7 +18,7 @@ import { sitePath } from "@/lib/site/paths";
  * plan includes and where the plans cross (components/v2/site/PublicPlans.tsx; the numbers are lib/site/plans.ts), all worded "With paid plans (from February 2027)"; the founding offer, done-for-you set-up, how fair use works and six
  * questions. The old two kinds of plans (Lead Desk plans, Workforce plans) and the per-business "what each plan fits" cards are gone: their plan names no longer exist.
  */
-export function PricingPage({ t, lang }: { t: SiteT; lang: Lang }) {
+export function PricingPage({ t, lang }: { t: SiteT; lang: SiteLang }) {
   const start = startEntry(t, lang, t("h2.nav.early"));
   const vars = planVars();
   const faq = ([1, 2, 3, 4, 5, 6] as const).map((n) => ({ q: t(`price.faq.${n}.q`, vars), a: t(`price.faq.${n}.a`, vars) }));

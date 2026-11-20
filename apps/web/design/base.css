@@ -19,10 +19,11 @@
   text-wrap: balance;
 }
 
-/* Telugu, Hindi and Kannada need more line height than Latin. */
+/* Telugu, Hindi, Kannada and Tamil need more line height than Latin. */
 [data-ui="v2"]:lang(te),
 [data-ui="v2"]:lang(hi),
-[data-ui="v2"]:lang(kn) {
+[data-ui="v2"]:lang(kn),
+[data-ui="v2"]:lang(ta) {
   line-height: 1.7;
 }
 /* Kannada letters stack tall (a vowel mark and a sub-letter under one consonant): the tight leading utilities

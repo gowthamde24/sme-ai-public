@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { isNotFound, notFoundMock } from "@/test/helpers";
 
 vi.mock("next/navigation", () => ({ notFound: () => notFoundMock() }));
-vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
+vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en", getSiteLang: async () => "en" }));
 
 import RefundPolicyPage, { generateMetadata } from "./page";
 

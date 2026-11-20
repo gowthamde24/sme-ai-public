@@ -36,7 +36,7 @@
   width: 100%;
   max-width: calc(var(--pp-w) + 2 * (var(--pp-bezel) + var(--pp-edge)));
   margin-inline: auto;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Noto Sans", var(--v2-font-telugu, "Noto Sans Telugu"), var(--v2-font-devanagari, "Noto Sans Devanagari"), var(--v2-font-kannada, "Noto Sans Kannada"), "Noto Sans Devanagari", "Noto Sans Kannada", system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Noto Sans", var(--v2-font-telugu, "Noto Sans Telugu"), var(--v2-font-devanagari, "Noto Sans Devanagari"), var(--v2-font-kannada, "Noto Sans Kannada"), var(--v2-font-tamil, "Noto Sans Tamil"), "Noto Sans Devanagari", "Noto Sans Kannada", "Noto Sans Tamil", system-ui, sans-serif;
   color: var(--pp-ink);
   text-align: left;
   -webkit-font-smoothing: antialiased;

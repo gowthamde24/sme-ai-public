@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { LANGS } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 import { siteT } from "@/i18n/site";
 
 import { SupportedBy } from "./SupportedBy";
@@ -12,7 +12,7 @@ import { SupportedBy } from "./SupportedBy";
 const brand = (f: string) => readFileSync(path.join(process.cwd(), "public/brand", f), "utf8");
 
 describe("Supported by Cartesia (the footer row)", () => {
-  it.each(LANGS)("%s: the words, one link to cartesia.ai, both of Cartesia's own files, the name only as 'Cartesia'", (lang) => {
+  it.each(SITE_LANGS)("%s: the words, one link to cartesia.ai, both of Cartesia's own files, the name only as 'Cartesia'", (lang) => {
     const t = siteT(lang);
     const html = renderToStaticMarkup(<SupportedBy t={t} />);
     expect(html).toContain(t("foot.supported"));

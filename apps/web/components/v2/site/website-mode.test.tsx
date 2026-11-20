@@ -7,7 +7,8 @@ vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverC
 
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { LANGS, type Lang } from "@/i18n/lang";
+import { type SiteLang } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 import { siteDict } from "@/i18n/site";
 import { isServed } from "@/lib/site/mode";
 import { SITE_PACKS } from "@/lib/site/packs";
@@ -18,7 +19,7 @@ import { OpeningSoon } from "./OpeningSoon";
 import { SitePage, type SiteActions } from "./SitePage";
 
 const actions: SiteActions = { contactChat: vi.fn(), quoteChat: vi.fn(), chatAvailable: true, waitlist: vi.fn() };
-const render = (lang: Lang, target: SiteTarget, a: SiteActions = actions) => renderToStaticMarkup(<SitePage lang={lang} target={target} actions={a} />);
+const render = (lang: SiteLang, target: SiteTarget, a: SiteActions = actions) => renderToStaticMarkup(<SitePage lang={lang} target={target} actions={a} />);
 const name = (t: SiteTarget) => (t.kind === "home" ? "home" : t.kind === "page" ? t.page : t.slug);
 const hrefs = (html: string) => [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1].replace(/&amp;/g, "&"));
 const text = (html: string) => htmlText(html);
@@ -30,7 +31,7 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllEnvs());
 
 const served = allTargets().filter((t) => isServed(t, "website"));
-const cases = served.flatMap((t) => LANGS.map((l) => [`${name(t)} ${l}`, l, t] as const));
+const cases = served.flatMap((t) => SITE_LANGS.map((l) => [`${name(t)} ${l}`, l, t] as const));
 
 describe("website mode: the public pages (job DQ)", () => {
   it("serves exactly the home page, the three business pages, plans and contact", () => {
@@ -65,7 +66,7 @@ describe("website mode: the public pages (job DQ)", () => {
   });
 
   it("the footer lists only the pages that are served; the pages that are not are not linked from anywhere", () => {
-    for (const lang of LANGS) {
+    for (const lang of SITE_LANGS) {
       const all = cases.filter(([, l]) => l === lang).flatMap(([, , t]) => hrefs(render(lang, t)));
       for (const page of ["how-it-works", "security", "help"] as const) expect(all.filter((h) => h.endsWith(`/${page}`)), `${lang} ${page}`).toEqual([]);
       expect(all).toContain(sitePath(lang, { kind: "page", page: "pricing" }));
@@ -80,7 +81,7 @@ describe("website mode: the public pages (job DQ)", () => {
   });
 
   it("making no claim we cannot prove: no 'stored in India', no 'includes GST', no 'most popular', no customer logos or praise", () => {
-    for (const lang of LANGS)
+    for (const lang of SITE_LANGS)
       for (const [, , t] of cases.filter(([, l]) => l === lang)) {
         const body = text(render(lang, t));
         expect(body, `${lang} ${name(t)}`).not.toMatch(/stored in India|Data stored|include[sd]? GST|incl\.? GST|most popular|testimonial|trusted by|used by|customers love/i);
@@ -111,7 +112,7 @@ describe("website mode: the public pages (job DQ)", () => {
 });
 
 describe("Opening soon — join early access", () => {
-  it.each(LANGS)("%s: one headline, one line, the form, no way into the app", (lang) => {
+  it.each(SITE_LANGS)("%s: one headline, one line, the form, no way into the app", (lang) => {
     const html = renderToStaticMarkup(<OpeningSoon lang={lang} waitlist={vi.fn()} />);
     const d = siteDict(lang);
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);

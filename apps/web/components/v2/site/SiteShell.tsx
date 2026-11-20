@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/v2/site/SiteHeader";
 import { homeEarly } from "@/components/v2/site/home2/early";
 import { V2Root } from "@/components/v2/V2Root";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
 import type { SiteTarget } from "@/lib/site/paths";
 
@@ -13,7 +13,7 @@ import type { SiteTarget } from "@/lib/site/paths";
  * The frame of every public page (job CM): skip link, header, the page in `<main id="main">`, the footer. A pure server component: it takes the language and the (optional)
  * theme, so a test renders every page in every language without Next's request APIs; the route files read the theme cookie.
  */
-export function SiteShell({ lang, theme, t, target, children }: { lang: Lang; theme?: Theme; t: SiteT; target: SiteTarget; children: ReactNode }) {
+export function SiteShell({ lang, theme, t, target, children }: { lang: SiteLang; theme?: Theme; t: SiteT; target: SiteTarget; children: ReactNode }) {
   return (
     <V2Root theme={theme} lang={lang} className="min-h-screen">
       <div id="top" data-screen="landing" data-page={target.kind === "home" ? "home" : target.kind === "page" ? target.page : "business"}>

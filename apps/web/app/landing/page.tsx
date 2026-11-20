@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
 import { SitePage } from "@/components/v2/site/SitePage";
-import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
+import { LANG_COOKIE, THEME_COOKIE, readTheme } from "@/i18n/preferences";
+import { readSiteLangCookie } from "@/i18n/site-lang";
 import { requestIndexable } from "@/lib/seo/index-rule";
 import { siteMetadata } from "@/lib/seo/site-metadata";
 import { chatAvailable } from "@/lib/site/whatsapp";
@@ -16,10 +17,10 @@ import { joinWaitlist } from "../waitlist-actions";
  */
 export async function generateMetadata(): Promise<Metadata> {
   const jar = await cookies();
-  return siteMetadata(readLang(jar.get(LANG_COOKIE)?.value), { kind: "home" }, "/", await requestIndexable());
+  return siteMetadata(readSiteLangCookie(jar.get(LANG_COOKIE)?.value), { kind: "home" }, "/", await requestIndexable());
 }
 
 export default async function LandingPage() {
   const jar = await cookies();
-  return <SitePage lang={readLang(jar.get(LANG_COOKIE)?.value)} theme={readTheme(jar.get(THEME_COOKIE)?.value)} target={{ kind: "home" }} actions={{ contactChat: prepareContactChat, quoteChat: prepareQuoteChat, chatAvailable: chatAvailable(), waitlist: joinWaitlist }} />;
+  return <SitePage lang={readSiteLangCookie(jar.get(LANG_COOKIE)?.value)} theme={readTheme(jar.get(THEME_COOKIE)?.value)} target={{ kind: "home" }} actions={{ contactChat: prepareContactChat, quoteChat: prepareQuoteChat, chatAvailable: chatAvailable(), waitlist: joinWaitlist }} />;
 }

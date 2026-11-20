@@ -13,7 +13,7 @@ import { btnPrimary, h1Home, h3Row, linkQuiet, pillHome, wrapHome } from "@/comp
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import type { LeadResult } from "@/lib/site/lead";
 import { startEntry } from "@/lib/site/entry";
 import { websiteOnly } from "@/lib/site/mode";
@@ -27,7 +27,7 @@ type Actions = { quoteChat: (input: unknown) => Promise<LeadResult>; chatAvailab
  * The page of one business type (job CM, blueprint section 7), built ENTIRELY from its landing.json (and the pack's names and owl labels): the problem, a day with the owls, what it does, then the blocks the file asks for
  * (the calculator, the children's data promise), the questions and the call to action. Nothing here names a business type: a new landing.json is a new page.
  */
-export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT; lang: Lang; actions: Actions }) {
+export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT; lang: SiteLang; actions: Actions }) {
   const faq = pack.faq.map((f) => ({ q: say(f.q, lang), a: say(f.a, lang) }));
   const start = startEntry(t, lang, t("hero.cta"), { hasForm: hasWaitlist(actions.waitlist) });
   return (

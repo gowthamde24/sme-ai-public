@@ -2,7 +2,7 @@ import type { WaitlistWords } from "@/components/v2/site/WaitlistForm";
 import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { WaitlistForm as LazyWaitlistForm } from "@/components/v2/site/LazyIslands";
 import { Section } from "@/components/v2/site/sections";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import type { SiteT } from "@/i18n/site";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { waitlistMode } from "@/lib/waitlist/mode";
@@ -21,7 +21,7 @@ export function waitlistWords(t: SiteT): WaitlistWords {
 }
 
 /** The "Join early access" section (id `demo`): the title, one line, and the form. Drawn on the server, live when its chunk arrives. Nothing when the waitlist is off. */
-export function WaitlistSection({ t, lang, action, tone }: { t: SiteT; lang: Lang; action: WaitlistAction | undefined; tone?: "soft" }) {
+export function WaitlistSection({ t, lang, action, tone }: { t: SiteT; lang: SiteLang; action: WaitlistAction | undefined; tone?: "soft" }) {
   if (!hasWaitlist(action)) return null;
   return (
     <Section id="demo" title={t("demo.title")} sub={t("demo.sub")} tone={tone}>

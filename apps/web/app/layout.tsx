@@ -45,7 +45,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const jar = await cookies();
   const theme = readTheme(jar.get(THEME_COOKIE)?.value);
   const lang = readLang(jar.get(LANG_COOKIE)?.value);
-  const t = legalT(lang);
+  const t = legalT(lang); // (a Tamil visitor reads the cookie notice in English: no Tamil legal words are shipped)
   // the cookie notice (job BH): shown once on every page until the visitor answers; the server reads the answer from the sme_consent cookie, so it never flickers for someone who has answered
   return (
     <html lang="en" data-theme={theme}>

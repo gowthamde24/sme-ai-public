@@ -9,7 +9,7 @@ import { Section } from "@/components/v2/site/sections";
 import { WaitlistSection, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { container, lead } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { ADDRESSES, ADDRESS_KEYS, BUSINESS, CONTACT_FACTS, RESPONSE_DAYS, RESPONSE_HOURS } from "@/lib/site/business";
 import type { LeadResult } from "@/lib/site/lead";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
@@ -18,7 +18,7 @@ import { SITE_PACKS, textIn } from "@/lib/site/packs";
  * Contact (jobs CM, DB): the four public e-mail addresses as selectable text with a Copy button and a mailto: link as an extra (lib/site/business.ts: no phone number and no postal address are published), then WhatsApp click-to-chat and a small form with consent. Both end in OUR WhatsApp number with a message filled in; nothing typed is stored on the site, and when our number is not set up the page says so
  * and shows no button. Our number is not in the page's HTML: the server hands back the chat address only after the visitor has ticked consent.
  */
-export function ContactPage({ t, lang, chatAvailable, action, waitlist }: { t: SiteT; lang: Lang; chatAvailable: boolean; action: (input: unknown) => Promise<LeadResult>; waitlist?: WaitlistAction }) {
+export function ContactPage({ t, lang, chatAvailable, action, waitlist }: { t: SiteT; lang: SiteLang; chatAvailable: boolean; action: (input: unknown) => Promise<LeadResult>; waitlist?: WaitlistAction }) {
   const words: ContactWords = { name: t("contact.name"), type: t("contact.type"), other: t("contact.type.other"), what: t("contact.what"), consent: t("contact.consent"), privacy: t("contact.privacy"), submit: t("contact.submit"), nosave: t("contact.nosave"), errConsent: t("contact.err.consent"), errName: t("contact.err.name"), errRate: t("contact.err.rate"), errGeneric: t("contact.err.generic"), errCheck: t("contact.err.check"), unavailable: t("contact.unavailable") };
   return (
     <>

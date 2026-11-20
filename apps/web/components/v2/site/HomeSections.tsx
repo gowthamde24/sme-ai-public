@@ -3,12 +3,12 @@ import Link from "next/link";
 import { btnPrimary, wrapHome } from "@/components/v2/site/ui";
 import { Orb } from "@/components/v2/Orb";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { startEntry } from "@/lib/site/entry";
 import { waitlistMode } from "@/lib/waitlist/mode";
 
 /** The closing band of a business type's page and the security page: the assistant's orb, the last line, one button. (The home page has its own closing section, components/v2/site/home/HomeMain.tsx.) */
-export function CloseBand({ t, lang }: { t: SiteT; lang: Lang }) {
+export function CloseBand({ t, lang }: { t: SiteT; lang: SiteLang }) {
   const start = startEntry(t, lang, t("cta.start"), { hasForm: waitlistMode() !== "off" });
   return (
     <section id="start" aria-labelledby="start-h" className="scroll-mt-20 bg-surface py-[84px] sm:py-[120px]">

@@ -11,10 +11,11 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3
 export const PUBLIC_URL = CANONICAL_ORIGIN;
 export const SITE_LIVE = process.env.NEXT_PUBLIC_SITE_LIVE === "1";
 
-export const LANDING_LANGS = ["en", "te", "hi", "kn"] as const;
+/** The languages of the public site, in the order of the language switch (Tamil added 20 Nov 2026: the site only; the product speaks te, en, hi and kn). */
+export const LANDING_LANGS = ["en", "te", "hi", "kn", "ta"] as const;
 export type LandingLang = (typeof LANDING_LANGS)[number];
 /** The languages that have an address of their own ("/" is English). */
-export const ROUTE_LANGS = ["te", "hi", "kn"] as const;
+export const ROUTE_LANGS = ["te", "hi", "kn", "ta"] as const;
 export type RouteLang = (typeof ROUTE_LANGS)[number];
 export const isRouteLang = (v: string): v is RouteLang => (ROUTE_LANGS as readonly string[]).includes(v);
 

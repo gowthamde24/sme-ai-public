@@ -26,9 +26,9 @@ describe("SEO (job BS)", () => {
     expect(SITE_PACKS.length).toBeGreaterThanOrEqual(3);
     for (const p of SITE_PACKS) for (const l of LANDING_LANGS) expect(pngSize(ogImagePathForSlug(p.slug, l)), `${p.slug} ${l}`).toEqual(OG_SIZE);
   });
-  it("English is '/', the others have '/te', '/hi', '/kn'", () => {
-    expect(LANDING_LANGS.map(landingPath)).toEqual(["/", "/te", "/hi", "/kn"]);
-    expect(["te", "hi", "kn"].every(isRouteLang)).toBe(true);
+  it("English is '/', the others have '/te', '/hi', '/kn', '/ta'", () => {
+    expect(LANDING_LANGS.map(landingPath)).toEqual(["/", "/te", "/hi", "/kn", "/ta"]);
+    expect(["te", "hi", "kn", "ta"].every(isRouteLang)).toBe(true);
     expect(isRouteLang("en")).toBe(false);
   });
   it("before launch (the switch is off) robots.txt turns every crawler away and the sitemap is empty", async () => {
@@ -56,7 +56,7 @@ describe("SEO with the launch switch on", () => {
     expect(live.SITE_URL).toBe("https://shop.example"); // the sign-in redirect
     expect(live.PUBLIC_URL).toBe("https://stack19.com");
     const rule = Array.isArray(r.rules) ? r.rules[0] : r.rules;
-    expect(rule.allow).toEqual(expect.arrayContaining(["/", "/te", "/hi", "/kn"]));
+    expect(rule.allow).toEqual(expect.arrayContaining(["/", "/te", "/hi", "/kn", "/ta"]));
     expect(rule.disallow).toEqual(expect.arrayContaining(["/app", "/auth", "/api", "/login", "/signup"]));
     expect(r.sitemap).toBe("https://stack19.com/sitemap.xml");
     expect(r.host).toBe("https://stack19.com");
@@ -65,9 +65,9 @@ describe("SEO with the launch switch on", () => {
     // every page of the site in every language, then the three legal pages
     const expected = allTargets().flatMap((t) => LANDING_LANGS.map((l) => `https://stack19.com${sitePath(l, t) === "/" ? "/" : sitePath(l, t)}`));
     expect(urls).toEqual([...expected, "https://stack19.com/privacy", "https://stack19.com/terms", "https://stack19.com/data-deletion"]);
-    expect(urls).toEqual(expect.arrayContaining(["https://stack19.com/pricing", "https://stack19.com/te/pricing", "https://stack19.com/hi/construction", "https://stack19.com/kn/education", "https://stack19.com/textiles"]));
+    expect(urls).toEqual(expect.arrayContaining(["https://stack19.com/pricing", "https://stack19.com/te/pricing", "https://stack19.com/hi/construction", "https://stack19.com/kn/education", "https://stack19.com/ta/pricing", "https://stack19.com/textiles"]));
     expect(new Set(urls).size).toBe(urls.length);
-    for (const e of s.filter((x) => x.url.includes("/pricing"))) expect(Object.keys(e.alternates?.languages ?? {}).sort()).toEqual(["en-IN", "hi-IN", "kn-IN", "te-IN"]);
+    for (const e of s.filter((x) => x.url.includes("/pricing"))) expect(Object.keys(e.alternates?.languages ?? {}).sort()).toEqual(["en-IN", "hi-IN", "kn-IN", "ta-IN", "te-IN"]);
     expect(s.find((e) => e.url === "https://stack19.com/te/pricing")?.alternates?.languages).toMatchObject({ "en-IN": "https://stack19.com/pricing", "kn-IN": "https://stack19.com/kn/pricing" });
     expect(s[0].alternates?.languages).toMatchObject({ "te-IN": "https://stack19.com/te", "en-IN": "https://stack19.com/" });
   });

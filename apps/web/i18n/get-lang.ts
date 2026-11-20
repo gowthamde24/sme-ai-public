@@ -1,7 +1,8 @@
 import { cookies, headers } from "next/headers";
 
-import type { Lang } from "@/i18n/lang";
+import type { Lang, SiteLang } from "@/i18n/lang";
 import { LANG_COOKIE, readLang } from "@/i18n/preferences";
+import { readSiteLangCookie } from "@/i18n/site-lang";
 import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import { provideRequestAssistantName } from "@/lib/assistant/request-name";
 import { readAssistantName, type CtxAssistant } from "@/lib/assistant/source";
@@ -20,6 +21,15 @@ export async function getLang(): Promise<Lang> {
   await primeAssistantName();
   try {
     return readLang((await cookies()).get(LANG_COOKIE)?.value);
+  } catch {
+    return "en";
+  }
+}
+
+/** The language of the person asking, for the PUBLIC SITE'S own pages (the legal pages): like `getLang`, plus Tamil. English outside a request. */
+export async function getSiteLang(): Promise<SiteLang> {
+  try {
+    return readSiteLangCookie((await cookies()).get(LANG_COOKIE)?.value);
   } catch {
     return "en";
   }

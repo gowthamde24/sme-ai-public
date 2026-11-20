@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { FeatureIcon } from "@/components/v2/site/icons";
 import { btnPrimary, card, chip, container, h2, lead, section } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { say } from "@/lib/site/packs";
 import { startEntry } from "@/lib/site/entry";
 import type { IconId, OwlId, SitePack, Text } from "@/lib/site/types";
@@ -46,7 +46,7 @@ export function FaqList({ items }: { items: readonly { q: string; a: string }[] 
 }
 
 /** The call to action at the foot of every inner page: start the trial (the sign-up asks which business). */
-export function CtaBand({ t, lang, hasForm = false }: { t: SiteT; lang: Lang; hasForm?: boolean }) {
+export function CtaBand({ t, lang, hasForm = false }: { t: SiteT; lang: SiteLang; hasForm?: boolean }) {
   const start = startEntry(t, lang, t("cta.start"), { hasForm });
   return (
     <section aria-labelledby="cta-h" className={`${section} bg-brand-bg`}>
@@ -66,7 +66,7 @@ export function CtaBand({ t, lang, hasForm = false }: { t: SiteT; lang: Lang; ha
 }
 
 /** The rows of a pack page: a titled grid of feature cards. */
-export function FeatureGrid({ items, lang }: { items: readonly { icon: IconId; title: Text; body: Text }[]; lang: Lang }) {
+export function FeatureGrid({ items, lang }: { items: readonly { icon: IconId; title: Text; body: Text }[]; lang: SiteLang }) {
   return (
     <ul className="grid gap-4 sm:grid-cols-2">
       {items.map((f, i) => (
