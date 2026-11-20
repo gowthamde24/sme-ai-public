@@ -43,9 +43,9 @@ describe("the cookie notice (job BH)", () => {
     expect(n).not.toBeNull();
     expect(n).toHaveAttribute("role", "region");
     expect(n).not.toHaveAttribute("aria-modal");
-    expect(within(n).getByText(/only the cookies this site needs to work/)).toBeInTheDocument();
-    expect(within(n).getByText(/no advertising or tracking cookies/)).toBeInTheDocument();
-    expect(within(n).getByRole("link", { name: "Read the Privacy notice" })).toHaveAttribute("href", "/privacy");
+    expect(within(n).getByText("We only use cookies the site needs.")).toBeInTheDocument(); // ONE line; the full wording and the Privacy link are behind Settings
+    expect(within(n).queryByRole("link")).toBeNull();
+    expect(n.className).toContain("min-h-14"); // a slim bar, 56 px
     expect(n.className).not.toContain("fixed"); // in the flow of the page (the root layout makes its wrapper sticky), so it never covers the footer
     expect(document.querySelector('[role="dialog"]')).toBeNull(); // not a wall: no dialog, no backdrop
     expect(document.querySelector(".bg-black\\/50")).toBeNull();
@@ -56,7 +56,7 @@ describe("the cookie notice (job BH)", () => {
   });
   it("OK dismisses it, remembers the choice in the cookie (analytics OFF), and it does not come back on a new page", () => {
     const { unmount } = mount();
-    fireEvent.click(screen.getByRole("button", { name: "OK, got it" }));
+    fireEvent.click(screen.getByRole("button", { name: "OK" }));
     expect(notice()).toBeNull();
     expect(document.cookie).toContain("sme_consent=1.a0");
     expect(stored()).toEqual({ decided: true, analytics: false });
@@ -70,15 +70,16 @@ describe("the cookie notice (job BH)", () => {
       throw new Error("blocked");
     });
     mount();
-    fireEvent.click(screen.getByRole("button", { name: "OK, got it" }));
+    fireEvent.click(screen.getByRole("button", { name: "OK" }));
     expect(notice()).toBeNull();
   });
   it("the controls are 44 px tall and the words come in the visitor's language (the privacy link too)", () => {
     mount(NOT_ASKED, "hi");
     const n = notice() as HTMLElement;
     for (const el of n.querySelectorAll("button, a")) expect(el.className, el.textContent ?? "").toMatch(/min-h-11/);
-    expect(n.textContent).toContain(legalT("hi")("cookie.notice.ok"));
-    expect(n.textContent).not.toContain("OK, got it");
+    expect(n.textContent).toContain(legalT("hi")("cookie.bar.ok"));
+    expect(n.textContent).toContain(legalT("hi")("cookie.bar.text"));
+    expect(n.textContent).not.toContain("OK");
   });
 });
 
@@ -88,6 +89,8 @@ describe("the cookie settings (job BH)", () => {
     expect(document.querySelector('[role="dialog"]')).toBeNull();
     fireEvent.click(footerLink());
     const d = screen.getByRole("dialog", { name: "Cookie settings" });
+    expect(within(d).getByText(/no advertising or tracking cookies/)).toBeInTheDocument(); // the full wording is behind Settings
+    expect(within(d).getByRole("link", { name: "Read the Privacy notice" })).toHaveAttribute("href", "/privacy");
     expect(d).toHaveAttribute("aria-modal", "true");
     const sw = within(d).getAllByRole("switch");
     expect(sw).toHaveLength(2);
@@ -127,7 +130,7 @@ describe("the cookie settings (job BH)", () => {
   });
   it("opening it from the notice's own button shows the panel instead of the notice, and Save answers the notice", () => {
     mount();
-    fireEvent.click(within(notice() as HTMLElement).getByRole("button", { name: "Cookie settings" }));
+    fireEvent.click(within(notice() as HTMLElement).getByRole("button", { name: "Settings" }));
     expect(notice()).toBeNull();
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Save my choice" }));
@@ -178,7 +181,7 @@ describe("a second window of the same page", () => {
     mount();
     expect(notice()).not.toBeNull();
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "OK, got it" }));
+      fireEvent.click(screen.getByRole("button", { name: "OK" }));
     });
     expect(notice()).toBeNull();
   });
@@ -188,7 +191,7 @@ describe("the notice and the phone's bottom bar (found by the staging smoke of 2
   it("inside the app the notice sits above the bottom bar (64 px and the safe area), not over its More button; on the public pages it is where it was", () => {
     nav.path = "/app/tenants/T/orders";
     mount();
-    expect(notice()?.className).toContain("max-md:mb-[calc(4rem+env(safe-area-inset-bottom)+0.75rem)]");
+    expect(notice()?.className).toContain("max-md:mb-[calc(4rem+env(safe-area-inset-bottom))]");
     cleanup();
     resetConsentStore();
     nav.path = "/pricing";

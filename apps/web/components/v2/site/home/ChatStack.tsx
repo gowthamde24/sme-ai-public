@@ -35,9 +35,10 @@ export function ChatStack({ chats, captions, sub, placeholder, icons }: { chats:
   const chat = chats[idx];
   return (
     <div ref={root} className="h3-stack" data-phase={phase} data-out={phase === "out" ? "" : undefined} data-paused={!visible || phase !== "call" ? "" : undefined} data-part="chat-stack" data-lang={chat.code}>
-      {/* every conversation's two screens sit in the same grid cell (only the current one shows): the box is as tall as the tallest of them, so there is no empty band under a short chat and nothing moves when the language changes */}
+      {/* only the CURRENT conversation's two screens are in the page (the call and its WhatsApp, in one grid cell: they cross-fade); the phone has a fixed shape, so nothing moves when the language changes, and the page carries a quarter of the nodes it did with all four */}
       <div className="h3-duo">
-        {chats.map((c, i) => {
+        {[chat].map((c) => {
+          const i = idx;
           const cur = i === idx;
           const callShown = cur && phase === "call" ? n : c.call.lines.length;
           const line = c.call.lines[Math.max(0, callShown - 1)];

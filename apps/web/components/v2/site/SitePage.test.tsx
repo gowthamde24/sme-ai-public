@@ -87,7 +87,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(home.indexOf("<footer")).toBeGreaterThan(at[7]);
     expect(foot).toContain('data-part="home-footer"');
     expect(foot).toMatch(/<canvas[^>]*role="img"[^>]*aria-label="Stack19"/); // the dot-matrix wordmark: one image to a screen reader, its name once
-    for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "Back to the top", "WhatsApp +91 95023 80998"]) expect(text(foot), l).toContain(l);
+    for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "WhatsApp +91 95023 80998"]) expect(text(foot), l).toContain(l);
     expect(foot).toContain('href="https://wa.me/919502380998?text=Hi%20Stack19%2C%20I&#x27;d%20like%20early%20access."');
     for (const gone of ["greetings", "call", "team", "after", "number", "voices", "sources", "day", "industries", "start", "built"]) expect(home, gone).not.toContain(`id="${gone}"`);
     expect(home).not.toContain('data-part="greetings"');
@@ -133,14 +133,14 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
   });
   it("the demo: one phone box with the call and the chat of ONE conversation (the approved frame, a fifth smaller), the language chip, a caption, and the card; the markup is the still state (the chat whole, its card first)", () => {
     const how = home.match(/<section id="how-it-works"[\s\S]*?<\/section>/)![0];
-    expect(how.match(/data-part="dark-phone"/g)).toHaveLength(8); // the call screen and the chat screen of each of the four conversations, all in one cell (the box is as tall as the tallest)
+    expect(how.match(/data-part="dark-phone"/g)).toHaveLength(2); // only the current conversation's call screen and chat screen are in the page (one cell, cross-fading)
     expect(how.match(/data-part="stack-call"[^>]*data-on/g) ?? []).toHaveLength(0); // the still markup shows the chat of the first conversation
     expect(how).not.toContain("data-pp-keep"); // on a phone the frame is its slim form, edge to edge (no phone inside the phone)
     expect(how).not.toContain("data-step="); // no numbered steps: the demo itself shows call, WhatsApp, found out
     for (const x of ["Watch it handle an enquiry", "EAMCET weekend batch", "Demo class, Saturday 10 am", "A coaching centre, in Telugu.", "Call ముగిసింది"]) expect(text(how), x).toContain(x);
     expect(how).toContain('data-part="chat-stack"');
-    expect(how.match(/class="pp-b"/g)).toHaveLength(16);
-    expect(how.match(/class="h3-dp-cap"/g)).toHaveLength(4); // one caption on each call screen (ONE caption at a time)
+    expect(how.match(/class="pp-b"/g)).toHaveLength(4);
+    expect(how.match(/class="h3-dp-cap"/g)).toHaveLength(1); // one caption on the call screen (ONE caption at a time)
     expect(how).toMatch(/data-part="stack-lang"[\s\S]*?aria-pressed="true"[^>]*>తెలుగు</); // the language chips (a tap switches the demo language)
     expect(how).toContain('data-phase="chat"');
   });
@@ -239,7 +239,8 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
   it("one orange: the page's own css names no other orange and no gradient (the owner's colour rule, 20 Nov 2026)", () => {
     const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace("radial-gradient(circle, var(--h3-dot) 1px, transparent 1.3px)", "").replace(/radial-gradient\(120% 55% at 50% 0%.*?70%\)/, "").replace(/linear-gradient\(90deg, transparent 0, #000 var\(--h3-gutter\)[^;]*?transparent 100%\)/g, ""); // (the gradients allowed: the page's dot grid, and the dark call screen's very faint warm light drawn inside the phone)
     expect(css).not.toMatch(/#ff773c|#ec486e|#ff9a6b|#ea580c|#f97316|gradient/i);
-    expect(css).toMatch(/background-attachment: fixed/); // the white dotted page stays with the window
+    expect(css).not.toMatch(/background-attachment/); // (it repaints on every scroll)
+    expect(css).toMatch(/\[data-page="home"\]::before \{[^}]*position: fixed[^}]*will-change: transform/); // the white dotted page stays with the window: a fixed layer of its own
     expect(css.match(/font-weight:\s*(\d+)/g)!.map((m) => m.replace(/\D/g, "")).filter((v, i, a) => a.indexOf(v) === i).sort()).toEqual(["400", "500", "600", "700"]); // Plus Jakarta Sans at 400, 500, 600 and 700 only
   });
   it("the lower sections' css (home4.css): designed for a phone, one orange, the site's one font, no uppercase or spacing, the owner's final type scale (22 px titles at 390, 15 px body, 16 px gutter), no font size from the viewport width, the 14 px floor", () => {

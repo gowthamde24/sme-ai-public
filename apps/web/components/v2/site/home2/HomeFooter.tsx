@@ -20,15 +20,12 @@ const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.
  * The home page's footer (landing v2 part B.13): the line, the product's sections (no business type is linked from the home page), the company's pages (only the ones that are served), "Talk to us" with the WhatsApp placeholder, then the dot-built wordmark
  * on its reflecting floor, then the copyright, the languages of this page and "Back to the top". Server markup; the wordmark is a lazy island.
  */
-export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early: { href: string; label: string } }) {
+export function HomeFooter({ t, lang }: { t: SiteT; lang: SiteLang; early?: { href: string; label: string } }) {
   return (
     <footer id="end" className="relative overflow-hidden px-[var(--h3-gutter,clamp(16px,3vw,32px))] pb-0 pt-[clamp(32px,6vw,80px)]" data-part="home-footer">
       <div className="h3-foot-grid relative mx-auto max-w-[1240px] border-b border-line pb-9">
-        <div className="h3-foot-wide flex flex-col gap-3.5">
-          <p className="m-0 max-w-[380px] font-display text-[clamp(22px,calc(1vw+16px),28px)] font-extrabold leading-[1.15] tracking-[-0.02em]">
-            {t("h3.hero.t")}
-          </p>
-          <p className="m-0 max-w-[380px] text-sm leading-relaxed text-muted">{t("h2.foot.line")}</p>
+        <div className="h3-foot-wide flex flex-col">
+          <p className="m-0 max-w-[420px] text-[15px] leading-snug text-muted">{t("h2.foot.line")}</p>
         </div>
         <nav aria-label={t("h2.foot.product")} className="flex flex-col">
           <span className={head}>{t("h2.foot.product")}</span>
@@ -46,17 +43,14 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
               </Link>
             ))}
           </nav>
-          <LegalLinks lang={lang} direction="column" contact={false} linkClass={link} />
         </div>
-        <div className="h3-foot-wide flex flex-col gap-2.5">
-          <span className={head}>{t("h2.foot.talk")}</span>
+        <div className="h3-foot-wide flex flex-wrap items-center gap-x-3">
+          <span className="text-sm font-extrabold text-muted">{t("h2.foot.talk")}</span>
           <p className="m-0 text-[15px] font-semibold">
             <WithWhatsapp text={t("h2.foot.whatsapp")} />
           </p>
-          <Link href={early.href} className="inline-flex min-h-11 self-start items-center rounded-full bg-ink px-5 text-sm font-extrabold text-bg">
-            {early.label}
-          </Link>
         </div>
+        <LegalLinks lang={lang} direction="row" contact={false} linkClass={link} className="h3-foot-wide" />
       </div>
       <div className="relative mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-[18px] text-sm text-muted">
         <span>{t("h2.foot.copy")}</span>
@@ -71,12 +65,6 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
             ))}
           </ul>
         </nav>
-        <a href="#top" className="inline-flex min-h-11 items-center gap-2 font-bold text-muted hover:text-ink">
-          {t("h2.foot.top")}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M12 19V5M6 11l6-6 6 6" />
-          </svg>
-        </a>
         <SupportedBy t={t} />
       </div>
       {/* the dot-matrix wordmark: the logo and the name built from the page's own dots, the letters standing on the page's bottom edge (a lazy island; one image to a screen reader) */}

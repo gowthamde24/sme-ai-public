@@ -5,7 +5,7 @@
 export type CookieWords = Readonly<Record<string, string>>;
 
 export const COOKIE_WORD_KEYS = [
-  "cookie.notice.title", "cookie.notice.text", "cookie.notice.ok", "cookie.notice.privacy", "cookie.panel.title", "cookie.necessary.title", "cookie.necessary.text", "cookie.analytics.title", "cookie.analytics.text",
+  "cookie.bar.text", "cookie.bar.ok", "cookie.bar.settings", "cookie.notice.title", "cookie.notice.text", "cookie.notice.ok", "cookie.notice.privacy", "cookie.panel.title", "cookie.necessary.title", "cookie.necessary.text", "cookie.analytics.title", "cookie.analytics.text",
   "cookie.analytics.switch", "cookie.list.title", "cookie.col.name", "cookie.col.what", "cookie.save", "cookie.close", "cookie.ck.auth", "cookie.ck.lang", "cookie.ck.theme", "cookie.ck.consent",
 ] as const;
 

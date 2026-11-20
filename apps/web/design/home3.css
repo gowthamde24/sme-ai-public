@@ -28,9 +28,18 @@
   --h3-bg: #ffffff;
   --h3-dot: rgba(22, 24, 29, 0.14);
   background-color: var(--h3-bg);
+  isolation: isolate;
+}
+/* the dot grid stays with the window: a fixed layer of its own (composited; it is not repainted while the page scrolls, unlike background-attachment: fixed) */
+[data-ui="v2"] [data-page="home"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-image: radial-gradient(circle, var(--h3-dot) 1px, transparent 1.3px);
   background-size: 22px 22px;
-  background-attachment: fixed;
+  will-change: transform;
 }
 [data-ui="v2"][data-theme="dark"] [data-page="home"] { --h3-bg: #131216; --h3-dot: rgba(244, 242, 238, 0.09); }
 @media (prefers-color-scheme: dark) { [data-ui="v2"]:not([data-theme="light"]) [data-page="home"] { --h3-bg: #131216; --h3-dot: rgba(244, 242, 238, 0.09); } }
@@ -379,3 +388,23 @@
   [data-ui="v2"] .h3-how-phone { width: 100%; max-width: 700px; margin-inline: auto; }
   [data-ui="v2"] .h3-how-grid > .h3-found { width: 100%; }
 }
+
+/* speed: everything below the first screen skips its style and layout work until it is near the window (content-visibility), with the section's known height reserved so nothing moves when it is drawn (the numbers are the measured heights at 390 and at 1440 px; "auto" then remembers the real one). Anchors, find-in-page and the sticky bar's observer still work: the box is there, only its insides wait. */
+[data-ui="v2"] [data-page="home"] :is(#ask, #calc, #lead-finder, #pricing, #faq, #join, #demo, #end) { content-visibility: auto; }
+[data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 529px; }
+[data-ui="v2"] [data-page="home"] #calc { contain-intrinsic-size: auto 652px; }
+[data-ui="v2"] [data-page="home"] #lead-finder { contain-intrinsic-size: auto 648px; }
+[data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 601px; }
+[data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 306px; }
+[data-ui="v2"] [data-page="home"] :is(#join, #demo) { contain-intrinsic-size: auto 300px; }
+[data-ui="v2"] [data-page="home"] #end { contain-intrinsic-size: auto 700px; }
+@media (min-width: 900px) {
+  [data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 645px; }
+  [data-ui="v2"] [data-page="home"] #calc { contain-intrinsic-size: auto 664px; }
+  [data-ui="v2"] [data-page="home"] #lead-finder { contain-intrinsic-size: auto 739px; }
+  [data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 481px; }
+  [data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 403px; }
+  [data-ui="v2"] [data-page="home"] #end { contain-intrinsic-size: auto 760px; }
+}
+/* the cookie bar and the sticky "Get free early access" bar stack: the bar goes above the notice while it is open */
+html:has([data-cookie="notice"]) [data-ui="v2"] .h3-sticky { bottom: 56px; }
