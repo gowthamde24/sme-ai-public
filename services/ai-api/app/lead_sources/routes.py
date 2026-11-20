@@ -30,7 +30,7 @@ from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_ro
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
 from app.hardening.replay import ReplayGuard
-from app.lead_sources import mime
+from app.lead_sources import consent_tick, mime
 from app.lead_sources.columns_ai import RunColumnMatcher
 from app.lead_sources.models import (
     Card,
@@ -234,18 +234,27 @@ def card_test(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
 
 @router.post("/lead-sources/cards/{kind}/connect", response_model=CardConnected)
 async def card_connect(kind: str, request: Request, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
-    if kind == "indiamart":   # the key is typed INTO the card: the body is read by hand so a refused key is never echoed back in a validation error
-        import asyncio
-
-        from app.lead_sources import indiamart
-
+    """Turn a card on. With JOBS on the body must carry `consent_confirmed: true` (422 `consent_required` otherwise: nothing is connected); who ticked, when and which wording are stored on the source."""
+    body: Any = None
+    if kind == "indiamart" or runtime.jobs is not None:   # the body is read by hand (the IndiaMART key is typed INTO the card: a refused key is never echoed back in a validation error)
         try:
             body = await request.json()
         except ValueError:
             body = None
-        key = body.get("key") if isinstance(body, dict) and set(body) == {"key"} else None
-        return await asyncio.to_thread(indiamart.connect, runtime, _service(runtime), ctx, key)
-    return _service(runtime).card_connect(ctx.principal.token, ctx.tenant.id, kind)
+    ticked = consent_tick.required(runtime, body)
+    if kind == "indiamart":
+        import asyncio
+
+        from app.lead_sources import indiamart
+
+        wanted = {"key", "consent_confirmed"} if ticked else {"key"}
+        key = body.get("key") if isinstance(body, dict) and set(body) == wanted else None
+        out = await asyncio.to_thread(indiamart.connect, runtime, _service(runtime), ctx, key)
+    else:
+        out = _service(runtime).card_connect(ctx.principal.token, ctx.tenant.id, kind)
+    if ticked:
+        _service(runtime).consent_tick(ctx.principal.token, ctx.tenant.id, kind)
+    return out
 
 
 @router.post("/lead-sources/cards/{kind}/rotate", response_model=CardConnected)

@@ -24,8 +24,8 @@ from typing import Any, Protocol
 from app.errors import ApiError, not_found
 from app.integrations.sheet import MAX_UPLOAD_BYTES, Grid, SheetRefused, load_grid
 from app.lead_sources import cards as cards_mod
+from app.lead_sources import consent_tick, portals, reading
 from app.lead_sources import mapping as mp
-from app.lead_sources import portals, reading
 from app.lead_sources.dnd import DndLookup
 from app.lead_sources.meta import LeadgenRef, MetaError, MetaLeadFetcher, refs_of, signature_ok
 from app.lead_sources.phones import check_phone
@@ -529,6 +529,10 @@ class LeadSourcesService:
             raise ApiError(409, "not_available", "This source cannot be connected from here yet.")
         self.website(token, tenant_id)
         return self._card(token, tenant_id, kind)
+
+    def consent_tick(self, token: str, tenant_id: uuid.UUID, card: str) -> None:
+        """Store who ticked, when and which wording on the sources behind this card (only with JOBS on: see consent_tick.py)."""
+        self.repo.consent_tick(token, tenant_id, consent_tick.source_kinds(card), consent_tick.TEXT_VERSION)
 
     def card_rotate(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
         if kind in WEBHOOK_KINDS or kind == "email_forward":

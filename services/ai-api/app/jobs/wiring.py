@@ -11,6 +11,7 @@ from pathlib import Path
 
 from app.config import Settings
 from app.jobs.samples import SampleStore
+from app.jobs.trust import TrustStore
 from app.packs.registry import default_directory
 
 
@@ -24,10 +25,12 @@ class JobsRuntime:
     directory: Path | None = None
     clock: Callable[[], datetime] = field(default=_now)
     samples: SampleStore | None = None   # the spoken samples of the job cards (ops.job_samples); None in tests that do not use them
+    trust: TrustStore | None = None      # the do-not-call list and the FAQs (migration 20261231986900); None in tests that do not use them
 
 
 def build_jobs(settings: Settings, rest_url: str | None = None, anon_key: str | None = None) -> JobsRuntime | None:
     if settings.jobs != "on":
         return None
     directory = Path(settings.packs_dir) if settings.packs_dir else default_directory()
-    return JobsRuntime(get_paid=settings.jobs_get_paid == "on", directory=directory, samples=SampleStore(rest_url, anon_key) if rest_url and anon_key else None)
+    return JobsRuntime(get_paid=settings.jobs_get_paid == "on", directory=directory, samples=SampleStore(rest_url, anon_key) if rest_url and anon_key else None,
+                       trust=TrustStore(rest_url, anon_key) if rest_url and anon_key else None)
