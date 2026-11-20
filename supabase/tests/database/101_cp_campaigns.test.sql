@@ -4,6 +4,7 @@
 begin;
 select no_plan();
 select tests.seed_two_tenants();
+insert into public.talk_training (tenant_id, doc, updated_by) values (tests.tid('a'), '{"say_ai_when_greeting": true}', gen_random_uuid());   -- 21 Nov 2026: the AI sentence follows the business's setting (default OFF); this business turned it on
 -- business b is a textiles shop still on version 1 of the pack, which has no campaigns (version 2, 16 Nov 2026, adds them): the "campaigns are not on" cases
 update packs.workspace_pack set pack_version = 1 where tenant_id = tests.tid('b') and pack_code = 'textiles';
 select tests.seed_crm();
@@ -228,6 +229,9 @@ select is(pg_temp.prev('m1', 'recipients'), '10', 'E1 the preview counts the peo
 select is(pg_temp.prev('m1', 'total_amount_paise'), '10911900', 'E2 ... and the total of the amounts, from the list (Rs 1,09,119.00)');
 select is(pg_temp.prev('m1', 'first_due') || ' / ' || pg_temp.prev('m1', 'last_due'), '2026-11-10 / 2026-11-20', 'E3 ... the range of dates');
 select is(pg_temp.prev('m1', 'disclosure'), 'This message is from the business''s AI assistant.', 'E4 and the AI-disclosure line the outbox adds to a person''s first message');
+update public.talk_training set doc = '{"say_ai_when_greeting": false}' where tenant_id = tests.tid('a');
+select is(pg_temp.prev('m1', 'disclosure'), '', 'E4b with the greeting setting OFF the preview carries no AI sentence (the STOP wording is the template''s)');
+update public.talk_training set doc = '{"say_ai_when_greeting": true}' where tenant_id = tests.tid('a');
 select is(pg_temp.issues('m1'), 'none', 'E5 nothing stands in the way');
 select is(pg_temp.val('a_owner', format($q$select jsonb_array_length(public.campaign_preview(%L, %L)->'samples')::text$q$, tests.tid('a'), tests.rid('m1'))), '6', 'E6 six samples: the first, the longest, the highest amount and three at random');
 select is(pg_temp.val('a_owner', format($q$select (select e->>'body' from jsonb_array_elements(public.campaign_preview(%L, %L)->'samples') e where e->'labels' ? 'first')$q$, tests.tid('a'), tests.rid('m1'))),
