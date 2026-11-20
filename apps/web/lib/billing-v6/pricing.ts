@@ -1,10 +1,10 @@
 import { planName } from "@/lib/plan/names";
 
 /**
- * The plans and their prices (C1's `GET /v1/pricing`, any signed-in user; docs/contracts/pricing-v2.md): `{gst_text, free_start_text, plans: [{id, name, monthly_text, yearly_text, yearly_saving_text, included_minutes, rate_text, numbers_included, lead_finder, lines}]}`.
+ * The plans and their prices (C1's `GET /v1/pricing`, any signed-in user; docs/contracts/pricing-v2.md): `{gst_text, free_start_text, plans: [{id, name, monthly_text, included_minutes (the API may still send yearly fields: the web ignores them, monthly only, owner 20 Nov), rate_text, numbers_included, lead_finder, lines}]}`.
  * The ids are data (payg, sales_assistant, sales_lead_finder): the screen loops over `plans`, it never names one. The texts are C1's own words; the screen shows them as they are, except the plan NAME, which goes through lib/plan/names.ts (Pay as you go / Pro / Business). Pure.
  */
-export type PricePlan = { id: string; name: string; monthlyText: string; yearlyText: string | null; yearlySavingText: string | null; includedMinutes: number | null; rateText: string | null; numbersIncluded: number | null; leadFinder: boolean };
+export type PricePlan = { id: string; name: string; monthlyText: string; includedMinutes: number | null; rateText: string | null; numbersIncluded: number | null; leadFinder: boolean };
 export type Pricing = { gstText: string | null; freeStartText: string | null; plans: PricePlan[] };
 
 const text = (v: unknown, max = 120): string | null => (typeof v === "string" && v.trim().length > 0 && v.length <= max ? v : null);
@@ -23,7 +23,7 @@ export function parsePricing(json: unknown): Pricing | null {
     const monthly = text(x.monthly_text, 60);
     if (id === null || apiName === null || monthly === null) return null;
     const name = planName(id, apiName) ?? apiName;
-    plans.push({ id, name, monthlyText: monthly, yearlyText: text(x.yearly_text, 60), yearlySavingText: text(x.yearly_saving_text, 60), includedMinutes: whole(x.included_minutes), rateText: text(x.rate_text, 60), numbersIncluded: whole(x.numbers_included), leadFinder: x.lead_finder === true });
+    plans.push({ id, name, monthlyText: monthly, includedMinutes: whole(x.included_minutes), rateText: text(x.rate_text, 60), numbersIncluded: whole(x.numbers_included), leadFinder: x.lead_finder === true });
   }
   return { gstText: text(o.gst_text), freeStartText: text(o.free_start_text), plans };
 }
@@ -33,8 +33,8 @@ export const MOCK_PRICING: Pricing = {
   gstText: "+18% GST on invoices",
   freeStartText: "₹50 free to start, no card",
   plans: [
-    { id: "payg", name: "Pay as you go", monthlyText: "₹499 a month", yearlyText: "₹4,990 a year", yearlySavingText: "2 months free", includedMinutes: 0, rateText: "₹5 a minute", numbersIncluded: 1, leadFinder: false },
-    { id: "sales_assistant", name: "Pro", monthlyText: "₹1,999 a month", yearlyText: "₹19,990 a year", yearlySavingText: "2 months free", includedMinutes: 500, rateText: "₹4.50 a minute", numbersIncluded: 1, leadFinder: false },
-    { id: "sales_lead_finder", name: "Business", monthlyText: "₹5,999 a month", yearlyText: "₹59,990 a year", yearlySavingText: "2 months free", includedMinutes: 1500, rateText: "₹4 a minute", numbersIncluded: 3, leadFinder: true },
+    { id: "payg", name: "Pay as you go", monthlyText: "₹499 a month", includedMinutes: 0, rateText: "₹5 a minute", numbersIncluded: 1, leadFinder: false },
+    { id: "sales_assistant", name: "Pro", monthlyText: "₹1,999 a month", includedMinutes: 500, rateText: "₹4.50 a minute", numbersIncluded: 1, leadFinder: false },
+    { id: "sales_lead_finder", name: "Business", monthlyText: "₹5,999 a month", includedMinutes: 1500, rateText: "₹4 a minute", numbersIncluded: 3, leadFinder: true },
   ],
 };

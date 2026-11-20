@@ -9989,32 +9989,6 @@
    "ta": "draft"
   }
  },
- "pp.sh.7": {
-  "en": "Pay yearly and get 2 months free",
-  "te": "Yearly pay చేస్తే 2 నెలలు free",
-  "hi": "साल भर का pay करें तो 2 महीने free",
-  "kn": "ವರ್ಷಕ್ಕೆ pay ಮಾಡಿದರೆ 2 ತಿಂಗಳು free",
-  "ta": "ஆண்டுக்குச் சேர்த்துக் கட்டினால் 2 மாதம் இலவசம்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "pp.sh.8": {
-  "en": "Launch prices locked for 12 months",
-  "te": "Launch prices 12 నెలలు మారవు",
-  "hi": "Launch prices 12 महीने तक नहीं बदलेंगे",
-  "kn": "Launch prices 12 ತಿಂಗಳು ಬದಲಾಗುವುದಿಲ್ಲ",
-  "ta": "Launch prices 12 மாதங்களுக்கு மாறாது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "pp.sh.9": {
   "en": "Start with ₹{start} free in your wallet",
   "te": "Wallet లో ₹{start} free తో మొదలుపెట్టండి",

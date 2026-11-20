@@ -98251,18 +98251,6 @@
    "kn": "draft"
   }
  },
- "bv6.plan.yearly": {
-  "en": "Yearly: {price}, {saving}",
-  "te": "Yearly: {price}, {saving}",
-  "hi": "Yearly: {price}, {saving}",
-  "kn": "Yearly: {price}, {saving}",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
  "bv6.plan.included": {
   "en": "{n} call minutes a month included",
   "te": "నెలకు {n} కాల్ నిమిషాలు ఉన్నాయి",
@@ -121501,23 +121489,11 @@
   },
   "humanOnly": true
  },
- "bill.plan.yearly": {
-  "en": "Pay for a year: 2 months free",
-  "te": "Pay for a year: 2 months free",
-  "hi": "Pay for a year: 2 months free",
-  "kn": "Pay for a year: 2 months free",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
  "bill.plans.gst": {
-  "en": "All prices are plus 18 percent GST. Launch prices stay the same for 12 months.",
-  "te": "All prices are plus 18 percent GST. Launch prices stay the same for 12 months.",
-  "hi": "All prices are plus 18 percent GST. Launch prices stay the same for 12 months.",
-  "kn": "All prices are plus 18 percent GST. Launch prices stay the same for 12 months.",
+  "en": "All prices are plus 18 percent GST.",
+  "te": "All prices are plus 18 percent GST.",
+  "hi": "All prices are plus 18 percent GST.",
+  "kn": "All prices are plus 18 percent GST.",
   "status": {
    "te": "draft",
    "hi": "draft",
