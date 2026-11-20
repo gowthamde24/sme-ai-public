@@ -2,6 +2,7 @@ import { ApiAuthError } from "@/lib/api/client";
 import { fetchQuote, fetchQuotes } from "@/lib/api/quotes";
 import { summaryEnquiry } from "@/lib/api/today-summary";
 import type { Target } from "@/lib/api/today";
+import { jobsScreens } from "@/lib/screens/flag";
 
 /**
  * "Open" for something the API names by `target` ({type, id}): the page of this workspace that decides it. An order, a lead (its follow-ups) and an enquiry have a page; a QUOTE has no page
@@ -31,6 +32,10 @@ export async function targetPaths(accessToken: string, tenantId: string, targets
         return `${base}/campaigns/${target.id}`;
       case "fees": // the school's list of who has fees pending (the id is the workspace's own)
         return `${base}/fees/pending`;
+      case "calls": // outreach paused because 2+ people asked to stop (the id is the workspace's own): the Do-Not-Call list (JOBS), else the chats
+        return jobsScreens() === "off" ? `${base}/chats` : `${base}/do-not-call`;
+      case "message": // a WhatsApp message sent back by WhatsApp: Chats > Templates shows why
+        return `${base}/chats/templates`;
       case "billing": // the voice credits' warning (the id is the workspace's own): Settings > Plan & usage
         return `${base}/settings?section=plan`;
       case "outbox_message":

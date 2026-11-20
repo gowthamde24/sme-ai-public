@@ -403,6 +403,14 @@ describe("Needs you: Lead Desk (hot leads, plans, callbacks, limits) and the 'Al
     expect(within(a).getByRole("link", { name: step })).toHaveAttribute("href", "/app/tenants/T/outreach");
     expect(within(a).getByText(`summary of ${kind}`)).toBeInTheDocument();
   });
+  it("calls paused because 2+ people asked to stop (target `calls`) is not the limit card: it says Calls paused, shows the API's sentence and 'See who' opens the Do-Not-Call list", () => {
+    board([desk("outreach_paused", { customer: "Calls", summary: "Calls are paused: 2 people asked us to stop this week.", target: { type: "calls", id: U }, href: "/app/tenants/T/do-not-call" })]);
+    const a = cardOf(/^Calls/);
+    expect(within(a).getByText("Calls paused")).toBeInTheDocument();
+    expect(within(a).queryByText("Limit reached")).toBeNull();
+    expect(within(a).getByRole("link", { name: "See who" })).toHaveAttribute("href", "/app/tenants/T/do-not-call");
+    expect(within(a).getByText("Calls are paused: 2 people asked us to stop this week.")).toBeInTheDocument();
+  });
   it("a hot lead with no name is 'a customer'", () => {
     board([desk("hot_lead_waiting", { customer: "" })]);
     expect(within(cardOf(/^a customer/i)).getByText("Hot lead")).toBeInTheDocument();
