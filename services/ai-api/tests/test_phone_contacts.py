@@ -169,3 +169,42 @@ def test_importing_a_range_again_gives_the_same_vouchers() -> None:
     guids = re.findall(r"<GUID>([^<]+)</GUID>", first)
     assert len(guids) == 5 and len(set(guids)) == 5 and re.findall(r"<REMOTEID>([^<]+)</REMOTEID>", first) == guids
     assert re.findall(r"<VOUCHERNUMBER>([^<]+)</VOUCHERNUMBER>", first) == ["SO-00012", "SO-00013", "SO-00014", "RC-00012-aaaaaaaa", "PY-00013-bbbbbbbb"]
+
+
+# ------------------------------------------------------------------------------------------------------------------------ a business of people (20 Nov 2026)
+class PeopleDb:
+    """A real estate / coaching / car dealer workspace: no company carries the person's name, the CONTACT does (and a "(demo)" suffix)."""
+
+    CONTACT = str(uuid.UUID(int=21))
+    LEAD = str(uuid.UUID(int=22))
+
+    def __init__(self) -> None:
+        self.asked: list[tuple[str, dict[str, str]]] = []
+
+    def rest_rows(self, what: str, path: str, params: dict[str, str]) -> list[dict[str, Any]]:
+        self.asked.append((path, params))
+        if path == "/companies":
+            return []
+        if path == "/contacts" and params.get("full_name", "").startswith("ilike.") and "demo" not in params["full_name"].lower() and "Naveen" in params["full_name"]:
+            return [{"id": self.CONTACT}]
+        if path == "/contacts" and params.get("limit") == "2000":   # the sounds of the name
+            return [{"id": self.CONTACT, "full_name": "Naveen E (demo)"}]
+        if path == "/contacts" and "id" in params:
+            return [{"id": self.CONTACT, "full_name": "Naveen E (demo)", "phone": "+00 000 000 9422", "whatsapp_consent": "granted", "phone_consent": "granted", "suppressed_at": None, "erased_at": None, "archived_at": None}]
+        if path == "/leads":
+            return [{"id": self.LEAD, "contact_id": self.CONTACT, "status": "new", "created_at": "2026-11-19T10:00:00+00:00"}]
+        return []
+
+
+@pytest.mark.parametrize("query", ["Naveen E", "Naveen", "naveen e (demo)", "Naveen  E", "నవీన్ E", "నవీన్"])
+def test_a_customer_who_is_a_contact_with_no_company_is_found_by_name_in_any_spelling_or_script(query: str) -> None:
+    out = find_customers(ctx_with(PeopleDb(), HolderLookup()), FindCustomersArgs(query=query))  # type: ignore[arg-type]
+    assert [i.type for i in out.items] == ["lead"] and out.items[0].label == "Naveen E (demo) (lead)" and str(out.items[0].id) == PeopleDb.LEAD, query
+    assert "9422" not in repr(out.items), "no number is shown to the model"
+
+
+def test_a_name_nobody_has_finds_nothing_and_a_number_never_searches_contacts_by_name() -> None:
+    assert find_customers(ctx_with(PeopleDb(), HolderLookup()), FindCustomersArgs(query="Zzqx Plmk")).items == ()  # type: ignore[arg-type]
+    db = PeopleDb()
+    find_customers(ctx_with(db, HolderLookup()), FindCustomersArgs(query="98765 00000"))  # type: ignore[arg-type]
+    assert not any(p.get("full_name") for _, p in db.asked), "a phone number is never turned into a name search"
