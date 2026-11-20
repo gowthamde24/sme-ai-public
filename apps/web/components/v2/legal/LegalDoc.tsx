@@ -1,13 +1,13 @@
 import { Fragment, type ReactNode } from "react";
 
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { legalT } from "@/i18n/legal";
 import { fillLegal, legalDocument, type DocId } from "@/lib/legal/documents";
 import { DRAFT_DOC_IDS, LEGAL_IS_DRAFT, LEGAL_UPDATED, LEGAL_VERSION } from "@/lib/legal/version";
 import { PLACEHOLDER, type Block } from "@/lib/legal/types";
 
 /** The day of the last change, written in the visitor's language ("24 October 2026"). UTC, so the day does not move with the server's clock. */
-export function updatedOn(iso: string, lang: Lang): string {
+export function updatedOn(iso: string, lang: SiteLang): string {
   return new Intl.DateTimeFormat(`${lang}-IN`, { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
 }
 
@@ -83,7 +83,7 @@ type SummaryKey = "legal.sum.privacy.1" | "legal.sum.privacy.2" | "legal.sum.pri
  * The full text is in the visitor's language where one exists (the Privacy Policy and the data-deletion page; a machine-written draft, said so in a note, the English text counts) and in English otherwise (the Terms; then the
  * summary note says the English text is the one that counts). Every block of text carries the `lang` of the text it holds.
  */
-export function LegalDoc({ id, summaryKeys, lang, extras }: { id: DocId; summaryKeys?: readonly SummaryKey[]; lang: Lang; /** Something drawn from live data, inserted after the FIRST block of a section by its id (the Privacy notice's list of processors comes from the API). */ extras?: Readonly<Record<string, ReactNode>> }) {
+export function LegalDoc({ id, summaryKeys, lang, extras }: { id: DocId; summaryKeys?: readonly SummaryKey[]; lang: SiteLang; /** Something drawn from live data, inserted after the FIRST block of a section by its id (the Privacy notice's list of processors comes from the API). */ extras?: Readonly<Record<string, ReactNode>> }) {
   const t = legalT(lang);
   const { doc, lang: docLang } = legalDocument(id, lang);
   const translated = docLang !== "en";

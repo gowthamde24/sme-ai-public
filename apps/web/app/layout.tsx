@@ -7,7 +7,7 @@ import { BRAND_NAME, SHORT_NAME } from "@/design/brand";
 import { ServiceWorker } from "@/components/v2/pwa/ServiceWorker";
 import { V2Root } from "@/components/v2/V2Root";
 import { legalT } from "@/i18n/legal";
-import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
+import { LANG_COOKIE, THEME_COOKIE, readLang, readSiteLangCookie, readTheme } from "@/i18n/preferences";
 import { CONSENT_COOKIE, readConsent } from "@/lib/consent/consent";
 import { PUBLIC_URL } from "@/lib/seo/site";
 import { websiteOnly } from "@/lib/site/mode";
@@ -45,14 +45,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const jar = await cookies();
   const theme = readTheme(jar.get(THEME_COOKIE)?.value);
   const lang = readLang(jar.get(LANG_COOKIE)?.value);
-  const t = legalT(lang);
+  const siteLang = readSiteLangCookie(jar.get(LANG_COOKIE)?.value); // the cookie notice speaks Tamil too (the app, the service worker and the rest stay on the product's four languages)
+  const t = legalT(siteLang);
   // the cookie notice (job BH): shown once on every page until the visitor answers; the server reads the answer from the sme_consent cookie, so it never flickers for someone who has answered
   return (
     <html lang="en" data-theme={theme}>
       <body>
         {children}
         {websiteOnly() ? null : <ServiceWorker lang={lang} />}
-        <V2Root theme={theme} lang={lang} className="sticky bottom-0 z-[70]">
+        <V2Root theme={theme} lang={siteLang} className="sticky bottom-0 z-[70]">
           <CookieConsent initial={readConsent(jar.get(CONSENT_COOKIE)?.value)} words={Object.fromEntries(COOKIE_WORD_KEYS.map((k) => [k, t(k)]))} />
         </V2Root>
       </body>

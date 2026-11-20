@@ -5,7 +5,7 @@ import { hasWaitlist, type WaitlistAction } from "@/components/v2/site/WaitlistS
 import { BRAND_NAME } from "@/design/brand";
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { PUBLIC_URL } from "@/lib/seo/site";
 import { startEntry } from "@/lib/site/entry";
 import { siteTrialCopy } from "@/lib/screens/flag";
@@ -14,7 +14,7 @@ import { sitePath } from "@/lib/site/paths";
 /**
  * The home page (19 Nov 2026, owner: "we don't need to mention each and every business"; one page for every width): components/v2/site/home/HomeMain.tsx, then the home footer. Every word is a string of i18n/strings/site.json (`h3.*`, `pp.*`, `h2.plans.*`, `h2.join.*`).
  */
-export function HomePage({ t, lang, waitlist }: { t: SiteT; lang: Lang; waitlist?: WaitlistAction }) {
+export function HomePage({ t, lang, waitlist }: { t: SiteT; lang: SiteLang; waitlist?: WaitlistAction }) {
   // where the page's buttons lead: the closing early-access form (`#demo`), or sign-up (website mode and the trial copy say so in lib/site/entry.ts)
   const start = siteTrialCopy() ? startEntry(t, lang, t("h2.later.start"), { hasForm: hasWaitlist(waitlist) }) : homeEarly(t, lang);
   return (
@@ -29,6 +29,7 @@ export function HomePage({ t, lang, waitlist }: { t: SiteT; lang: Lang; waitlist
           operatingSystem: "Web",
           url: PUBLIC_URL + sitePath(lang, { kind: "home" }),
           description: fillPlain(t("meta.description")),
+          // the product speaks these four; Tamil is a language of this website only (it is not listed here, so no search engine reads it as a product language)
           inLanguage: ["en-IN", "te-IN", "hi-IN", "kn-IN"],
         }}
       />

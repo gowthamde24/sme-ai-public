@@ -4,7 +4,7 @@ import Link from "next/link";
 import { V3Section } from "@/components/v2/site/PackSections";
 import { linkQuiet } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { packFlowKeys } from "@/lib/site/lead-desk";
 import { sitePath } from "@/lib/site/paths";
 
@@ -12,7 +12,7 @@ import { sitePath } from "@/lib/site/paths";
  * "How Lead Desk works for <this business>" on a business type's page (night 4, F1): a short numbered flow from the first enquiry to the visit, quote or booking, and for a school the plain note that the assistant never talks about
  * fees, marks or dues. The words are `ld.pack.<id>.*` in site.json, listed in lib/site/lead-desk.ts; a business type without them gets no block. Server markup only. Links only to the plans page, which every mode serves.
  */
-export function PackLeadDesk({ packId, t, lang }: { packId: string; t: SiteT; lang: Lang }) {
+export function PackLeadDesk({ packId, t, lang }: { packId: string; t: SiteT; lang: SiteLang }) {
   const keys = packFlowKeys(packId);
   if (!keys) return null;
   return (

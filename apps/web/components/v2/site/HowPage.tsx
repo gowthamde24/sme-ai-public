@@ -6,11 +6,11 @@ import { workerSteps } from "@/components/v2/site/steps";
 import { WORKER_ICONS } from "@/components/v2/app/mark/workers";
 import { card, container, lead } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { SITE_PACKS, say, textIn } from "@/lib/site/packs";
 
 /** How it works (job CM; the six AI workers in the order of the workflow since job DM; Lead Desk's own six steps first since night 4): the six steps of Lead Desk, then the six AI workers of the full team, each with the icon of its job and, where a kind of business uses other words, those words (a school's own steps), then what always waits for the owner and the habits that keep a WhatsApp number safe. */
-export function HowPage({ t, lang }: { t: SiteT; lang: Lang }) {
+export function HowPage({ t, lang }: { t: SiteT; lang: SiteLang }) {
   return (
     <>
       <section aria-labelledby="h1" className={`${container} pb-6 pt-8 sm:pt-12`}>

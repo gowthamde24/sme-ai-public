@@ -3,14 +3,14 @@ import { SiteShell } from "@/components/v2/site/SiteShell";
 import { WaitlistSection, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { container, lead } from "@/components/v2/site/ui";
 import { siteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
 
 /**
  * "Opening soon — join early access" (job DQ): what the app, sign-in and sign-up show while the site is in website mode (SITE_MODE=website; proxy.ts rewrites those addresses here). The public site's frame, one headline, one line, and the same
  * "Join early access" form as the home page. Pure: the route reads the language and theme cookies and passes them in.
  */
-export function OpeningSoon({ lang, theme, waitlist }: { lang: Lang; theme?: Theme; waitlist?: WaitlistAction }) {
+export function OpeningSoon({ lang, theme, waitlist }: { lang: SiteLang; theme?: Theme; waitlist?: WaitlistAction }) {
   const t = siteT(lang);
   return (
     <SiteShell lang={lang} theme={theme} t={t} target={{ kind: "home" }}>

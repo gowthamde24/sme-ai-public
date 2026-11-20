@@ -3,7 +3,7 @@ import Link from "next/link";
 import { CtaBand, Section } from "@/components/v2/site/sections";
 import { card, container, lead, linkQuiet } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
 
 /** What each topic points to ("Read more"): the page that explains it, or sign-up. */
@@ -20,7 +20,7 @@ const TOPICS: { n: 1 | 2 | 3 | 4 | 5 | 6 | 7; to: SiteTarget | "signup" }[] = [
 /**
  * The help index (job CM): short answers by topic, each pointing to the page that explains it, and the way to ask us on WhatsApp. There are no separate help articles yet; the in-app help is for signed-in people.
  */
-export function HelpPage({ t, lang }: { t: SiteT; lang: Lang }) {
+export function HelpPage({ t, lang }: { t: SiteT; lang: SiteLang }) {
   return (
     <>
       <section aria-labelledby="h1" className={`${container} pb-6 pt-8 sm:pt-12`}>

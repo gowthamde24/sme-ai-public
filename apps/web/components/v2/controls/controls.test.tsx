@@ -6,6 +6,7 @@ const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push }) }));
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
+import { SITE_LANGS } from "@/i18n/lang";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
 
 const clearCookies = () => {
@@ -36,12 +37,26 @@ describe("LangSelect", () => {
     await vi.waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
   });
   it("on a page of the public site, the choice goes to the same page in that language (an address, not a refresh)", async () => {
-    const hrefs = { en: "/pricing", te: "/te/pricing", hi: "/hi/pricing", kn: "/kn/pricing" } as const;
+    const hrefs = { en: "/pricing", te: "/te/pricing", hi: "/hi/pricing", kn: "/kn/pricing", ta: "/ta/pricing" } as const;
     render(<LangSelect lang="en" label="Language" hrefs={hrefs} />);
     fireEvent.change(screen.getByLabelText("Language"), { target: { value: "kn" } });
     await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/kn/pricing"));
     expect(refresh).not.toHaveBeenCalled();
     expect(document.cookie).toContain("sme_lang=kn");
+  });
+  it("the public site's switch also offers Tamil (the app's does not), and Tamil goes to its own address", async () => {
+    const hrefs = { en: "/pricing", te: "/te/pricing", hi: "/hi/pricing", kn: "/kn/pricing", ta: "/ta/pricing" } as const;
+    render(<LangSelect lang="en" label="Language" hrefs={hrefs} langs={SITE_LANGS} />);
+    const select = screen.getByLabelText("Language") as HTMLSelectElement;
+    expect([...select.options].map((o) => o.textContent)).toEqual(["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "தமிழ்"]);
+    fireEvent.change(select, { target: { value: "ta" } });
+    await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/ta/pricing"));
+    expect(document.cookie).toContain("sme_lang=ta");
+  });
+  it("the app's switch refuses Tamil: it is not in its list", () => {
+    render(<LangSelect lang="en" label="Language" />);
+    fireEvent.change(screen.getByLabelText("Language"), { target: { value: "ta" } });
+    expect(document.cookie).not.toContain("sme_lang=ta");
   });
   it("never writes a value outside the allow-list", () => {
     render(<LangSelect lang="en" label="Language" />);

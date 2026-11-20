@@ -20,6 +20,7 @@ describe("what a visitor typed is checked, never trusted", () => {
   });
   it("knows the four languages and falls back to English", () => {
     expect(readSiteLang("te")).toBe("te");
+    expect(readSiteLang("ta")).toBe("ta");
     for (const bad of ["fr", undefined, 3, "EN"]) expect(readSiteLang(bad)).toBe("en");
   });
   it("the hourly limit is a whole number from 1 to 500, else the default", () => {

@@ -10,7 +10,8 @@ import { V2Root } from "@/components/v2/V2Root";
 import { Wordmark } from "@/components/v2/Wordmark";
 import { BRAND_NAME } from "@/design/brand";
 import { legalT } from "@/i18n/legal";
-import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
+import { SITE_LANGS } from "@/i18n/lang";
+import { LANG_COOKIE, THEME_COOKIE, readSiteLangCookie, readTheme } from "@/i18n/preferences";
 
 import { LegalLinks } from "./LegalLinks";
 
@@ -20,7 +21,7 @@ import { LegalLinks } from "./LegalLinks";
  */
 export async function LegalFrame({ children }: { children: ReactNode }) {
   const jar = await cookies();
-  const lang = readLang(jar.get(LANG_COOKIE)?.value);
+  const lang = readSiteLangCookie(jar.get(LANG_COOKIE)?.value);
   const theme = readTheme(jar.get(THEME_COOKIE)?.value);
   const t = legalT(lang);
   return (
@@ -35,7 +36,7 @@ export async function LegalFrame({ children }: { children: ReactNode }) {
               <Wordmark />
             </Link>
             <div className="ml-auto flex items-center gap-1 sm:gap-2">
-              <LangSelect lang={lang} label={t("legal.lang.label")} />
+              <LangSelect lang={lang} label={t("legal.lang.label")} langs={SITE_LANGS} />
               <ThemeButton initial={theme} toDark={t("legal.theme.toDark")} toLight={t("legal.theme.toLight")} />
             </div>
           </div>

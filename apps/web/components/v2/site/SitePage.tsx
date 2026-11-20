@@ -8,7 +8,7 @@ import { SecurityPage } from "@/components/v2/site/SecurityPage";
 import { SiteShell } from "@/components/v2/site/SiteShell";
 import type { WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { siteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
 import type { LeadResult } from "@/lib/site/lead";
 import { packBySlug } from "@/lib/site/packs";
@@ -20,7 +20,7 @@ export type SiteActions = { contactChat: (input: unknown) => Promise<LeadResult>
  * One page of the public site in one language, as a pure component (job CM): the route files read the cookie for the theme and our WhatsApp number's availability and pass them in, so a test renders every page in every
  * language without Next's request APIs. A target that is not a page of the site (an unknown business type slug) renders nothing: the route has already answered 404.
  */
-export function SitePage({ lang, theme, target, actions }: { lang: Lang; theme?: Theme; target: SiteTarget; actions: SiteActions }) {
+export function SitePage({ lang, theme, target, actions }: { lang: SiteLang; theme?: Theme; target: SiteTarget; actions: SiteActions }) {
   const t = siteT(lang);
   let body = null;
   if (target.kind === "home") body = <HomePage t={t} lang={lang} waitlist={actions.waitlist} />;

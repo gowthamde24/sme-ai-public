@@ -2,18 +2,18 @@ import type { Metadata } from "next";
 
 import { BRAND_NAME } from "@/design/brand";
 import { fillPlain } from "@/i18n/fill";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { siteDict } from "@/i18n/site";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
 
 import { LANDING_LANGS, OG_SIZE, SITE_LIVE, ogImagePath, ogImagePathForSlug } from "./site";
 
-const LOCALE: Record<Lang, string> = { en: "en_IN", te: "te_IN", hi: "hi_IN", kn: "kn_IN" };
-const HREFLANG: Record<Lang, string> = { en: "en-IN", te: "te-IN", hi: "hi-IN", kn: "kn-IN" };
+const LOCALE: Record<SiteLang, string> = { en: "en_IN", te: "te_IN", hi: "hi_IN", kn: "kn_IN", ta: "ta_IN" };
+const HREFLANG: Record<SiteLang, string> = { en: "en-IN", te: "te-IN", hi: "hi-IN", kn: "kn-IN", ta: "ta-IN" };
 
 /** The title and the description of a page in one language. */
-export function pageText(lang: Lang, target: SiteTarget): { title: string; description: string; image: string; imageAlt: string } {
+export function pageText(lang: SiteLang, target: SiteTarget): { title: string; description: string; image: string; imageAlt: string } {
   const d = siteDict(lang);
   const home = { title: d["meta.title"], description: d["meta.description"], image: ogImagePath(lang), imageAlt: d["hero.h1"] };
   if (target.kind === "home") return { ...home, title: fillPlain(home.title), description: fillPlain(home.description), imageAlt: fillPlain(home.imageAlt) };
@@ -30,7 +30,7 @@ export function pageText(lang: Lang, target: SiteTarget): { title: string; descr
  * picture with the owl (Open Graph and Twitter; a business type's page has its own), and the robots rule: noindex unless `index` (lib/seo/index-rule.ts: the launch switch, or website mode served from stack19.com). `canonical` is the address this response is served at ("/"
  * is cookie-driven, so it is "/" whatever language the cookie says; "/te" is always Telugu).
  */
-export function siteMetadata(lang: Lang, target: SiteTarget, canonical: string = sitePath(lang, target), index: boolean = SITE_LIVE): Metadata {
+export function siteMetadata(lang: SiteLang, target: SiteTarget, canonical: string = sitePath(lang, target), index: boolean = SITE_LIVE): Metadata {
   const { title, description, image, imageAlt } = pageText(lang, target);
   const img = { url: image, width: OG_SIZE.width, height: OG_SIZE.height, alt: imageAlt };
   return {

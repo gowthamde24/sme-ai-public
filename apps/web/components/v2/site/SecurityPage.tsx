@@ -5,7 +5,7 @@ import { DashRows, slate, V3Section } from "@/components/v2/site/PackSections";
 import { h1Home, linkQuiet, wrapHome } from "@/components/v2/site/ui";
 import { SECURITY_ADDRESS } from "@/lib/site/business";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 import { sitePath } from "@/lib/site/paths";
 
 const BLOCKS = ["apart", "who", "transit", "signin", "rights", "ai", "kids", "where"] as const;
@@ -14,7 +14,7 @@ const BLOCKS = ["apart", "who", "transit", "signin", "rights", "ai", "kids", "wh
  * Security and privacy (job CM), in plain words and only what is true today: each business kept apart, who sees what, the owner's rights, AI labelling, children's data (rules, not live) and where data is kept (not hosted
  * for real customers yet). It ends with what has NOT been done: an independent review, real customer data in a hosted system, the legal review of children's data.
  */
-export function SecurityPage({ t, lang }: { t: SiteT; lang: Lang }) {
+export function SecurityPage({ t, lang }: { t: SiteT; lang: SiteLang }) {
   return (
     <>
       <section aria-labelledby="h1" className="bg-surface pb-[60px] pt-10 sm:pb-[84px]">

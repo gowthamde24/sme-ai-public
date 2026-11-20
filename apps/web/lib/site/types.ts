@@ -1,7 +1,7 @@
-import type { Lang } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
 
 /** The shapes of the generated bundle (scripts/site-packs.mjs: packs/<id>/pack.json + landing.json). English is always there; a language that has no text falls back to English. */
-export type Text = { readonly en: string } & Partial<Record<Exclude<Lang, "en">, string>>;
+export type Text = { readonly en: string } & Partial<Record<Exclude<SiteLang, "en">, string>>;
 export type OwlId = "main" | "lead_finder" | "researcher" | "requirement_analyst" | "quote_writer" | "followup_desk" | "order_desk";
 export type IconId = "message" | "file" | "bell" | "truck" | "calendar" | "wallet" | "users" | "image" | "calculator" | "shield";
 

@@ -1,5 +1,5 @@
-import type { Lang } from "@/i18n/lang";
-import { LANGS } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/lang";
 
 /**
  * Pure checks for the two ways a visitor starts a WhatsApp chat with us (job CM): the contact form and the calculator's "Get exact quote on WhatsApp". Nothing is stored: the server checks the input, counts the try against
@@ -21,7 +21,7 @@ export function oneLine(raw: unknown, max: number): string | null {
   return [...text].slice(0, max).join("");
 }
 
-export const readSiteLang = (raw: unknown): Lang => (typeof raw === "string" && (LANGS as readonly string[]).includes(raw) ? (raw as Lang) : "en");
+export const readSiteLang = (raw: unknown): SiteLang => (typeof raw === "string" && (SITE_LANGS as readonly string[]).includes(raw) ? (raw as SiteLang) : "en");
 
 export type LeadError = "consent" | "name" | "rate" | "unavailable" | "invalid" | "check";
 export type LeadResult = { ok: true; url: string } | { ok: false; error: LeadError };

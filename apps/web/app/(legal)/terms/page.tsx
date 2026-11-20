@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { LegalDoc } from "@/components/v2/legal/LegalDoc";
-import { getLang } from "@/i18n/get-lang";
+import { getSiteLang } from "@/i18n/get-lang";
 import { legalMetadata } from "@/lib/legal/page-metadata";
 import { requestIndexable } from "@/lib/seo/index-rule";
 
@@ -11,5 +11,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** /terms (jobs BH, DB): the Terms of Use. English text with a summary in the visitor's language. A stable address: Meta and Google review it. */
 export default async function TermsPage() {
-  return <LegalDoc id="terms" lang={await getLang()} summaryKeys={["legal.sum.terms.1", "legal.sum.terms.4"]} />;
+  return <LegalDoc id="terms" lang={await getSiteLang()} summaryKeys={["legal.sum.terms.1", "legal.sum.terms.4"]} />;
 }

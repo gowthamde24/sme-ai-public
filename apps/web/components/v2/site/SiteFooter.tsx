@@ -8,8 +8,8 @@ import { HomeFooter } from "@/components/v2/site/home2/HomeFooter";
 import { SupportedBy } from "@/components/v2/site/SupportedBy";
 import { Wordmark } from "@/components/v2/Wordmark";
 import type { SiteT } from "@/i18n/site";
-import type { Lang } from "@/i18n/lang";
-import { LANGS } from "@/i18n/lang";
+import type { SiteLang } from "@/i18n/lang";
+import { SITE_LANGS, SITE_LANGUAGE_NAMES } from "@/i18n/lang";
 import { ADDRESSES } from "@/lib/site/business";
 import { isServed } from "@/lib/site/mode";
 import { sitePath, SITE_PAGES, type SitePage, type SiteTarget } from "@/lib/site/paths";
@@ -18,9 +18,8 @@ const row = "inline-flex min-h-11 min-w-11 items-center text-sm font-medium text
 const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help" };
 
 /** The name of each language in that language, for the footer's language links (the same page in each). */
-const LANG_NAME: Record<(typeof LANGS)[number], string> = { en: "English", te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ" };
 
-export function SiteFooter({ t, lang, target = { kind: "home" }, early }: { t: SiteT; lang: Lang; target?: SiteTarget; /** The home page's "Get early access" (landing v2): its footer is the new one. */ early?: { href: string; label: string } }) {
+export function SiteFooter({ t, lang, target = { kind: "home" }, early }: { t: SiteT; lang: SiteLang; target?: SiteTarget; /** The home page's "Get early access" (landing v2): its footer is the new one. */ early?: { href: string; label: string } }) {
   if (target.kind === "home" && early) return <HomeFooter t={t} lang={lang} early={early} />;
   return (
     <footer className="border-t border-line bg-surface">
@@ -51,10 +50,10 @@ export function SiteFooter({ t, lang, target = { kind: "home" }, early }: { t: S
         <p>{t("foot.copy")}</p>
         <nav aria-label={t("nav.languages")} className="ml-auto">
           <ul className="flex flex-wrap" data-part="foot-langs">
-            {LANGS.map((l) => (
+            {SITE_LANGS.map((l) => (
               <li key={l}>
                 <Link href={sitePath(l, target)} lang={l} hrefLang={l} aria-current={l === lang ? "true" : undefined} className={`inline-flex min-h-11 min-w-11 items-center justify-center px-2 font-medium text-ink hover:underline ${l === lang ? "font-bold" : ""}`}>
-                  {LANG_NAME[l]}
+                  {SITE_LANGUAGE_NAMES[l].native}
                 </Link>
               </li>
             ))}

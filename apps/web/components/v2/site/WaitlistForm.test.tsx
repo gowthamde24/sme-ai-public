@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { LANGS } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/lang";
 import { siteT } from "@/i18n/site";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
@@ -10,7 +10,7 @@ import { WaitlistForm } from "./WaitlistForm";
 import { waitlistWords } from "./WaitlistSection";
 
 afterEach(cleanup);
-const draw = (lang: (typeof LANGS)[number], action = vi.fn(async () => ({ ok: true }) as const)) => {
+const draw = (lang: (typeof SITE_LANGS)[number], action = vi.fn(async () => ({ ok: true }) as const)) => {
   const t = siteT(lang);
   render(<WaitlistForm lang={lang} types={SITE_PACKS.map((p) => ({ slug: p.slug, name: textIn(p.names, lang) })).concat([{ slug: "other", name: t("contact.type.other") }])} langs={WAITLIST_LANGS.map((code) => ({ code, name: WAITLIST_LANG_NAMES[code] }))} words={waitlistWords(t)} action={action} privacyHref="/privacy" />);
   return { t, action };
@@ -64,7 +64,7 @@ describe("Book a demo / join the waitlist (job DQ)", () => {
     expect(action).toHaveBeenLastCalledWith(expect.objectContaining({ language: "kn" }));
   });
 
-  it.each(LANGS)("%s: after a good answer the form is replaced by the thank-you in that language", async (lang) => {
+  it.each(SITE_LANGS)("%s: after a good answer the form is replaced by the thank-you in that language", async (lang) => {
     const { t } = draw(lang);
     fill(t);
     fireEvent.click(screen.getByRole("button", { name: t("demo.submit") }));
