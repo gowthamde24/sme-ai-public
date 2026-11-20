@@ -62,7 +62,6 @@ export default async function TemplatesPage({ params }: PageProps<"/app/tenants/
   // ONLY a 404 means "not there yet" (the part is then not drawn, quietly); any other refusal is said in that part's place
   const ownRead = jobs === "off" ? null : await settle(() => readOwnMessages(user.accessToken, tenantId));
   const own = ownRead?.ok ? ownRead.data : null;
-  const systemWords = wordsFor(lang, ["jobs.tb.system."]);
   // "Use it in a job": the jobs that send offers, follow-ups or store visits (plain data: the choice is drawn inside the lazy chunk)
   const sending = own ? ((await readJobs(user.accessToken, tenantId).catch(() => null)) ?? []).filter((j) => SENDING.includes(j.kind)).map((j) => ({ id: j.id, kind: j.kind, customName: j.customName })) : [];
   return (
@@ -88,8 +87,8 @@ export default async function TemplatesPage({ params }: PageProps<"/app/tenants/
           // JOBS: the table of the messages Stack19 itself sends (their technical names, WhatsApp's review) is not the owner's page: it sits in a closed part that opens by itself when one of them is waiting for the admin or was refused
           <details data-part="system-messages" open={templates.ok ? templates.data.some((x) => x.status !== "approved") : true} className="rounded-2xl border border-line bg-surface p-4">
             <summary className="cursor-pointer list-none text-[15px] font-semibold text-ink">
-              {systemWords["jobs.tb.system.title"]}
-              <span className="mt-1 block text-[13px] font-normal text-muted">{systemWords["jobs.tb.system.sub"]}</span>
+              {t("jobs.tb.system.title")}
+              <span className="mt-1 block text-[13px] font-normal text-muted">{t("jobs.tb.system.sub")}</span>
             </summary>
             <div className="mt-4">{templates.ok ? (
               <TemplatesList words={words} items={templates.data} actions={{ submitDrafts: submitDraftsAction.bind(null, tenantId), submitOne: submitTemplateAction.bind(null, tenantId), sync: syncTemplatesAction.bind(null, tenantId) }} />

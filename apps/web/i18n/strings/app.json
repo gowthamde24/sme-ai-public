@@ -125590,10 +125590,10 @@
   }
  },
  "jobs.tb.system.title": {
-  "en": "The messages Stack19 sends for you",
-  "te": "Stack19 మీ తరఫున పంపే messages",
-  "hi": "Stack19 आपकी तरफ़ से जो messages भेजता है",
-  "kn": "Stack19 ನಿಮ್ಮ ಪರವಾಗಿ ಕಳುಹಿಸುವ messages",
+  "en": "The messages {brand} sends for you",
+  "te": "{brand} మీ తరఫున పంపే messages",
+  "hi": "{brand} आपकी तरफ़ से जो messages भेजता है",
+  "kn": "{brand} ನಿಮ್ಮ ಪರವಾಗಿ ಕಳುಹಿಸುವ messages",
   "status": {
    "te": "draft",
    "hi": "draft",
