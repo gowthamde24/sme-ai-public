@@ -82,6 +82,8 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
     if kind == "call_approval":
         return "A request to phone a customer is waiting for your approval."
     if kind == "outreach_paused":
+        if ref == "complaints":
+            return "Calling is paused: 2 people asked us to stop in the last 10 days. Check your do-not-call list and your messages before calling again. It restarts by itself when the 10 days pass."
         return "Calling is paused: you reached the minutes you allowed." if ref == "cap_minutes" else "Calling is paused: you reached the day's limit."
     if kind == "topup_low":
         return "Your call minutes are at 80 percent of this month's allowance. Top up before they run out." if ref == "call_minutes" else "Your business messages are at 80 percent of this month's allowance. Top up before they run out."

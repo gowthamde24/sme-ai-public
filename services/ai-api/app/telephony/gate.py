@@ -31,6 +31,7 @@ Approval = Literal["plan", "standing_rule", "task", "owner_test"]
 PROMOTIONAL: frozenset[str] = frozenset({"sales_followup", "admission_followup"})
 TRANSACTIONAL: frozenset[str] = frozenset({"payment_reminder", "visit_reminder", "event_reminder"})
 
+COMPLAINT_PAUSE_AT = 2   # 21 Nov 2026: outbound AI calls pause at this many people asking us to stop in 10 days; lifts by itself
 AI_MARK = re.compile(r"\bAI\b|ఏఐ|एआई|ಎಐ|ஏஐ|എഐ")
 
 
@@ -49,7 +50,7 @@ class Refused:
 REASONS: tuple[str, ...] = (
     "telephony_off", "live_not_confirmed", "bad_number", "not_on_sandbox_list", "not_approved", "workspace_paused", "billing_blocked", "purpose_not_allowed", "school_rule",
     "outside_window", "outside_hours", "holiday", "weekly_limit", "daily_cap", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "no_ai_disclosure",
-    "already_calling", "too_many_calls", "no_proof_of_request", "prospect_no_ai_call",
+    "already_calling", "too_many_calls", "no_proof_of_request", "prospect_no_ai_call", "complaints_pause",
     "inbound_off", "no_such_line", "blocked_caller",
     "trial_not_sandbox", "trial_account", "trial_app_id", "trial_busy", "trial_day_limit",
 )
@@ -88,7 +89,8 @@ class OutboundFacts:
     workspace_paused: bool = False
     billing_ok: bool = True
     prospect: bool = False                # a Lead Finder prospect that has not made a request: the AI NEVER calls it, in any mode (owner, 18 Nov 2026; TRAI promotional-call directions)
-    proof_of_request: bool | None = None   # live only: the person asked for this call (a recorded request within 30 days from a source that counts); None = not asked (sandbox)
+    proof_of_request: bool | None = None   # live only: the person asked for this call (a written/digital request within 7 days, or a purchase within 30 days; TRAI Third Amendment); None = not asked (sandbox)
+    recent_complaints: int = 0            # customers who asked us to stop on or after our call or WhatsApp in the last 10 days (app.outbound_complaints)
     allowed_purposes: Collection[str] = field(default_factory=lambda: tuple(PROMOTIONAL | TRANSACTIONAL))
     is_school: bool = False
     calls_to_contact_this_week: int = 0
@@ -133,6 +135,8 @@ def check_outbound(settings: Settings, f: OutboundFacts) -> Allowed | Refused:
         return Refused("workspace_paused")
     if not f.billing_ok:
         return Refused("billing_blocked")
+    if f.recent_complaints >= COMPLAINT_PAUSE_AT:
+        return Refused("complaints_pause")   # TRAI suspends outgoing calls at 3 complaints in 10 days (with a spam flag) or 5: we pause at 2 and tell the owner
     if settings.mode == "live" and f.proof_of_request is not True:
         return Refused("no_proof_of_request")   # a call-back needs a request the person made (owner, 18 Nov 2026): imported lists and typed-in leads never count
     if f.is_school and f.purpose in PROMOTIONAL | {"payment_reminder"}:

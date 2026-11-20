@@ -132,6 +132,15 @@ def test_the_sandbox_list_is_the_only_door_in_sandbox_and_does_not_apply_live() 
     assert isinstance(gate.check_outbound(SANDBOX, facts(number=sorted(SANDBOX.sandbox_numbers)[0])), Allowed), "a sandbox call to an owner's own phone needs no proof"
 
 
+def test_two_stops_in_ten_days_pause_outbound_calls_and_one_does_not() -> None:
+    """21 Nov 2026 (TRAI Third Amendment): the pause comes well before TRAI's triggers (3 with a spam flag, or 5); it holds in the sandbox and live, and lifts when the count falls."""
+    assert isinstance(gate.check_outbound(LIVE, facts(number="+919123456789", proof_of_request=True, recent_complaints=1)), Allowed)
+    assert refused(LIVE, facts(number="+919123456789", proof_of_request=True, recent_complaints=2)) == "complaints_pause"
+    assert refused(SANDBOX, facts(number=sorted(SANDBOX.sandbox_numbers)[0], recent_complaints=5)) == "complaints_pause"
+    assert "complaints_pause" in gate.REASONS
+    assert gate.COMPLAINT_PAUSE_AT == 2
+
+
 def test_the_disclosure_is_recognised_in_every_language() -> None:
     for line in ("this is the AI assistant", "నేను AI assistant ని", "मैं एआई सहायक हूँ", "ನಾನು AI assistant", "நான் AI assistant", "ഞാൻ AI assistant"):
         assert gate.has_ai_disclosure(line), line

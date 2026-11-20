@@ -46,7 +46,7 @@ class Target(_Out):
     """Where "Open" goes for an item: a quote, a lead (its follow-ups), an enquiry, an order, a message held for approval or a call request."""
 
     # material_quote: the building-materials quote; campaign: a message campaign; fees: the school's fee list (the id is the workspace's)
-    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "billing", "material_quote", "campaign", "fees", "phone_call", "message"]
+    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "billing", "material_quote", "campaign", "fees", "phone_call", "message", "calls"]
     id: uuid.UUID
 
 
