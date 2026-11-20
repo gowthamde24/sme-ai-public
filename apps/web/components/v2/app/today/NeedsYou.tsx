@@ -53,6 +53,8 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   unknown_item: { kind: "today.kind.unknown", step: "today.step.unknown", tone: "bg-surface-2 text-ink", who: "today.fact.customer" },
   plan_upsell: { kind: "today.kind.upsell", step: "today.step.upsell", tone: "bg-surface-2 text-ink", who: "today.fact.what" },
 };
+/** Calls paused because 2+ people asked to stop (C1, 20 Nov: kind outreach_paused, target {type: "calls"}): not a limit, so not the limit's words; "See who" opens the Do-Not-Call list. */
+const CALLS_PAUSED = { kind: "today.kind.callspaused", step: "today.step.callspaused", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" };
 /** The kinds whose one-line reason is made in the person's language by the server (the others' reasons are the API's English): their row shows it in every language. */
 const OWN_WORDS: readonly NeedsYouItem["kind"][] = ["prospect_waiting", "plan_upsell"];
 
@@ -278,7 +280,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   // "Enquired again": a person handled it (C1 #810): Done takes it off Today; the lead's id is the item's target (Owner, Admin and Sales; the API checks)
   const leadId = item.kind === "enquired_again" && ctx.role !== "viewer" && ctx.actions?.enquiryDone && item.target?.id ? item.target.id : null;
   const enquiryDone = leadId ? () => void decide(() => ctx.actions!.enquiryDone!(leadId), { safe: true }) : null;
-  const k = KIND[item.kind];
+  const k = item.kind === "outreach_paused" && item.target?.type === "calls" ? CALLS_PAUSED : KIND[item.kind];
   const facts: [string, string][] = [[say(words, k.who), customerName(item.customer, words)]];
   if (item.city) facts.push([say(words, "today.fact.city"), item.city]);
   if (item.amount_paise !== null) facts.push([say(words, "today.fact.amount"), formatRupeesShort(item.amount_paise)]);
