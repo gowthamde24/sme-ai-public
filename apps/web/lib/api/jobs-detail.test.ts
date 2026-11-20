@@ -57,6 +57,8 @@ describe("one job's page: what the API sends (the adapter)", () => {
   });
   it("cost is the month so far {minutes_used, minutes_included, rupees|null}: rupees on a paid plan; it is required, and a plan's per-estimate shape is not it", () => {
     expect(parseJobDetail(wire).cost).toEqual({ minutesUsed: 8, minutesIncluded: 60, rupees: null });
+    // a plan with no included minutes (Pay as you go) sends null: the page must still draw (staging 20 Nov: "Unexpected cost.minutes_included" crashed it)
+    expect(parseJobDetail({ ...wire, cost: { minutes_used: 12, minutes_included: null, rupees: null } }).cost).toEqual({ minutesUsed: 12, minutesIncluded: null, rupees: null });
     expect(parseJobDetail({ ...wire, cost: { minutes_used: 0, minutes_included: 0, rupees: 190 } }).cost).toEqual({ minutesUsed: 0, minutesIncluded: 0, rupees: 190 });
     expect(() => parseJobDetail({ ...wire, cost: undefined })).toThrow();
     expect(() => parseJobDetail({ ...wire, cost: { minutes: 34, minutes_included: 60, rupees: null } })).toThrow();

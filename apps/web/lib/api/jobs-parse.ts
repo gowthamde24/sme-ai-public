@@ -186,10 +186,10 @@ export function parseJobMessage(v: unknown): JobMessage | null {
   if (typeof en !== "string" || en.trim() === "" || en.length > 60) return null;
   return { id: x.id, title: { en: en.trim(), te: typeof te === "string" && te.trim() !== "" && te.length <= 60 ? te.trim() : null } };
 }
-/** `JobDetail.cost {minutes_used, minutes_included, rupees|null}`: the month so far (the plan card's `cost` is the per-plan estimate, see parsePlan). */
+/** `JobDetail.cost {minutes_used, minutes_included: int|null, rupees|null}` (contract jobs-detail.md: null = the plan includes no minutes, e.g. Pay as you go; staging 20 Nov: the strict int crashed the whole job page): the month so far (the plan card's `cost` is the per-plan estimate, see parsePlan). */
 function parseJobCost(v: unknown): JobCost {
   const c = rec(v, "cost");
-  return { minutesUsed: int(c.minutes_used, "cost.minutes_used", 0, 1_000_000), minutesIncluded: int(c.minutes_included, "cost.minutes_included", 0, 1_000_000), rupees: optInt(c.rupees, "cost.rupees", 0, 100_000_000) };
+  return { minutesUsed: int(c.minutes_used, "cost.minutes_used", 0, 1_000_000), minutesIncluded: optInt(c.minutes_included, "cost.minutes_included", 0, 1_000_000), rupees: optInt(c.rupees, "cost.rupees", 0, 100_000_000) };
 }
 /** An FAQ: the question and the answer are at most 300 characters each (the owner's own text). */
 export function parseFaq(row: unknown): JobFaq {

@@ -126005,5 +126005,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.job.cost.minutes_only": {
+  "en": "{used} minutes used this month",
+  "te": "ఈ నెల {used} నిమిషాలు వాడారు",
+  "hi": "इस महीने {used} मिनट इस्तेमाल हुए",
+  "kn": "ಈ ತಿಂಗಳು {used} ನಿಮಿಷ ಬಳಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
