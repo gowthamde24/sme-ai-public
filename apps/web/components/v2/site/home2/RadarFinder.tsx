@@ -239,7 +239,7 @@ export function RadarFinder({ w }: { w: W }) {
   const off = React.useRef<(() => void) | undefined>(undefined);
   // one canvas at every width: wide, it draws the whole 780 x 520 map; in a narrow box (a phone) it crops to the rings, with its words and pins drawn larger, so they stay readable
   const start = React.useCallback(() => {
-    const sans = desk.current ? fontOf(desk.current, "sans") : '"Plus Jakarta Sans", system-ui, sans-serif';
+    const sans = desk.current ? fontOf(desk.current) : '"Plus Jakarta Sans", system-ui, sans-serif';
     return desk.current ? addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, W / H < 1.2, sans)) : undefined;
   }, []);
   React.useEffect(() => {

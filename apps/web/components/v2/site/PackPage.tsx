@@ -55,7 +55,7 @@ export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT;
             {!pack.validated ? <p className="mt-2 text-sm font-medium text-pack-text" data-accent={pack.accent}>{t("packs.notValidated")}</p> : null}
           </div>
           <div className="relative grid place-items-center max-lg:pt-2">
-            <span aria-hidden="true" data-part="hero-orb" className="relative block aspect-square w-[min(360px,78%)] rounded-full bg-[radial-gradient(circle_at_80%_70%,#4a1a0c,#24100b_55%,#120807)] shadow-[0_40px_90px_-20px_rgba(255,106,43,0.55)]">
+            <span aria-hidden="true" data-part="hero-orb" className="relative block aspect-square w-[min(360px,78%)] rounded-full bg-[radial-gradient(circle_at_80%_70%,#2b2a31,#1a1920_55%,#0e0d11)] shadow-[0_40px_90px_-20px_rgba(255,106,43,0.55)]">
               <AssistantOrb state="speaking" />
             </span>
           </div>

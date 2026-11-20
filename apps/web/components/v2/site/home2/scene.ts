@@ -112,9 +112,9 @@ export function bez(p0: Pt, p1: Pt, p2: Pt, p3: Pt, u: number): Pt {
 /** The ink of a scene's lines in the page's theme (the v2 tokens' ink, light on dark). */
 export const inkOf = (look: Look): string => (look.dark ? "244,242,238" : "30,30,36");
 
-/** The page's own font for a canvas: next/font gives each family a generated name, so a canvas asks the v2 root for it (`--v2-font-display`, `--v2-font-sans`) instead of naming "Bricolage Grotesque" (which would fall back to the system font). */
-export function fontOf(el: Element, kind: "display" | "sans"): string {
+/** The page's own font for a canvas: next/font gives the family a generated name, so a canvas asks the v2 root for it (`--v2-font-sans`) instead of naming it (which would fall back to the system font). There is ONE face. */
+export function fontOf(el: Element): string {
   const root = el.closest('[data-ui="v2"]') ?? document.documentElement;
-  const v = getComputedStyle(root).getPropertyValue(kind === "display" ? "--v2-font-display" : "--v2-font-sans").trim();
-  return v || (kind === "display" ? '"Bricolage Grotesque", system-ui, sans-serif' : '"Plus Jakarta Sans", system-ui, sans-serif');
+  const v = getComputedStyle(root).getPropertyValue("--v2-font-sans").trim();
+  return v || '"Plus Jakarta Sans", system-ui, sans-serif';
 }

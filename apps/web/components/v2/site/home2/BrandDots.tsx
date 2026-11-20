@@ -87,7 +87,7 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
       el.addEventListener("pointerleave", leave);
     }
     const off = addScene(el, (ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look) => {
-      const family = fontOf(el, "sans");
+      const family = fontOf(el);
       const fontReady = document.fonts?.check?.(`700 40px ${family}`) === true;
       // fewer, larger dots on a phone (under 640 px wide), so the wordmark still reads at a third of its size
       const step = el.clientWidth < 640 ? 14 : 7;

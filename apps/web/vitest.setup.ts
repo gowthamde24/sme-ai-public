@@ -16,7 +16,7 @@ setFallbackWords(appDict("en") as Record<string, string>);
 // would fail without this; a test that checks the fonts themselves (design/fonts.test.ts) mocks the module its own way, which wins over this one.
 vi.mock("next/font/google", () => {
   const font = () => () => ({ variable: "font-var", className: "font-class" });
-  return { Plus_Jakarta_Sans: font(), Bricolage_Grotesque: font(), Noto_Sans_Telugu: font(), Noto_Sans_Devanagari: font(), Noto_Sans_Kannada: font(), Geist: font(), Geist_Mono: font() };
+  return { Plus_Jakarta_Sans: font(), Noto_Sans_Telugu: font(), Noto_Sans_Devanagari: font(), Noto_Sans_Kannada: font(), Geist: font(), Geist_Mono: font() };
 });
 vi.mock("next/font/local", () => ({ default: () => ({ variable: "font-var", className: "font-class" }) }));
 

@@ -76,7 +76,7 @@ export function PracticePanel({ words, language, langName, practice, teach, test
     setError(null);
   };
   return (
-    <aside id="mya-practice" data-part="practice-panel" aria-labelledby="mya-practice-h" className="ds-glow flex flex-col gap-4 rounded-2xl p-4 md:p-5">
+    <aside id="mya-practice" data-part="practice-panel" aria-labelledby="mya-practice-h" className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5">
       <div>
         <h2 id="mya-practice-h" className="font-display text-xl font-semibold">
           {t("mya.p.title")}

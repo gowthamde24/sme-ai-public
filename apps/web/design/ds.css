@@ -1,6 +1,6 @@
 /* ==========================================================================
    Design system v6 ("DESIGN_V6", owner 13 Nov 2026): ONE token set for light and dark, the same layout and the same orange accent.
-   Light = warm cream + a dotted pattern + an orange glow. Dark = deep brown-black + the same dots + an orange glow.
+   Light = pure white. Dark = neutral near-black (the landing's palette, no brown). Both carry the same faint dot grid behind the page only, and orange is only the accent (owner, 21 Nov 2026).
    Scoped to [data-ui="v2"][data-ds="6"] (V2Root sets data-ds only while the flag is on), so with the flag off nothing here applies.
    It overrides the --v2-* tokens of tokens.css, so every existing page takes the new look without a change, and adds the status colours (--ds-st-*).
    Every colour is a plain #rrggbb or rgba() on its own line: design/ds.test.ts reads them and keeps text at WCAG AA (4.5:1) and UI edges at 3:1 in both themes.
@@ -9,7 +9,7 @@
   color-scheme: light;
 
   /* neutral off-white (owner, 14 Nov: the cream was too sepia): page #fafafa, cards white with a 1px #ececec edge, cool-grey text */
-  --v2-bg: #fafafa;
+  --v2-bg: #ffffff;
   --v2-surface: #ffffff;
   --v2-surface-2: #f4f5f7;
   --v2-ink: #16181d;
@@ -24,18 +24,16 @@
   --v2-brand-bg: #ffe9d6;
   --v2-ring: #c2410c;
 
-  --v2-dot: #e5e5e5;
+  --v2-dot: rgba(22, 24, 29, 0.14);
   --v2-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 4px 16px rgba(16, 24, 40, 0.06);
   --v2-shadow-pop: 0 10px 36px rgba(16, 24, 40, 0.16);
 
   /* the glow: orange light from the top-right corner, and the glowing border of the command bar */
-  --ds-glow: rgba(255, 122, 61, 0.3);
+  --ds-glow: rgba(255, 122, 61, 0.14);
   --ds-glow-edge-1: #ff7a3d;
   --ds-glow-edge-2: #ec486e;
   --ds-glow-edge-3: #ffb078;
-  --ds-grid: #e5e5e5;
-  /* the page itself gets only a breath of the orange glow in light; the dark band keeps the full one */
-  --ds-page-glow: rgba(255, 122, 61, 0.08);
+  --ds-grid: rgba(22, 24, 29, 0.14);
 
   /* the status colours: Completed green, Transferred blue, No answer grey, Rejected red, Spam orange, Live purple (text on its own background) */
   --ds-st-completed-text: #14532d;
@@ -55,37 +53,37 @@
 [data-ui="v2"][data-ds="6"][data-theme="dark"] {
   color-scheme: dark;
 
-  --v2-bg: #15100c;
-  --v2-surface: #1f1712;
-  --v2-surface-2: #2a1f17;
-  --v2-ink: #f7ede0;
-  --v2-muted: #b8a692;
-  --v2-border: #3b2d21;
-  --v2-border-strong: #8d7a66;
+  --v2-bg: #131216;
+  --v2-surface: #1c1b20;
+  --v2-surface-2: #25242a;
+  --v2-ink: #f4f4f5;
+  --v2-muted: #a5a3ac;
+  --v2-border: #2f2e35;
+  --v2-border-strong: #7a7881;
 
   --v2-brand: #c2410c;
   --v2-on-brand: #ffffff;
   --v2-brand-edge: #c2410c;
   --v2-brand-text: #ff9d6e;
-  --v2-brand-bg: #3a2113;
+  --v2-brand-bg: #2a1810;
   --v2-ring: #ff9d6e;
 
-  --v2-dot: rgba(255, 170, 110, 0.16);
+  --v2-dot: rgba(244, 244, 245, 0.09);
   --v2-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.35);
   --v2-shadow-pop: 0 10px 36px rgba(0, 0, 0, 0.6);
 
-  --ds-glow: rgba(255, 122, 61, 0.22);
+  --ds-glow: rgba(255, 122, 61, 0.12);
   --ds-glow-edge-1: #ff7a3d;
   --ds-glow-edge-2: #ec486e;
   --ds-glow-edge-3: #ffb078;
-  --ds-grid: rgba(255, 170, 110, 0.06);
+  --ds-grid: rgba(244, 244, 245, 0.05);
 
   --ds-st-completed-text: #6ee79a;
   --ds-st-completed-bg: #12301f;
   --ds-st-transferred-text: #9db8ff;
   --ds-st-transferred-bg: #162349;
-  --ds-st-noanswer-text: #c4baad;
-  --ds-st-noanswer-bg: #2d261f;
+  --ds-st-noanswer-text: #c4c4cb;
+  --ds-st-noanswer-bg: #26262b;
   --ds-st-rejected-text: #fca5a5;
   --ds-st-rejected-bg: #3a1717;
   --ds-st-spam-text: #ffb27a;
@@ -99,37 +97,37 @@
   [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --v2-bg: #15100c;
-    --v2-surface: #1f1712;
-    --v2-surface-2: #2a1f17;
-    --v2-ink: #f7ede0;
-    --v2-muted: #b8a692;
-    --v2-border: #3b2d21;
-    --v2-border-strong: #8d7a66;
+    --v2-bg: #131216;
+    --v2-surface: #1c1b20;
+    --v2-surface-2: #25242a;
+    --v2-ink: #f4f4f5;
+    --v2-muted: #a5a3ac;
+    --v2-border: #2f2e35;
+    --v2-border-strong: #7a7881;
 
     --v2-brand: #c2410c;
     --v2-on-brand: #ffffff;
     --v2-brand-edge: #c2410c;
     --v2-brand-text: #ff9d6e;
-    --v2-brand-bg: #3a2113;
+    --v2-brand-bg: #2a1810;
     --v2-ring: #ff9d6e;
 
-    --v2-dot: rgba(255, 170, 110, 0.16);
+    --v2-dot: rgba(244, 244, 245, 0.09);
     --v2-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.35);
     --v2-shadow-pop: 0 10px 36px rgba(0, 0, 0, 0.6);
 
-    --ds-glow: rgba(255, 122, 61, 0.22);
+    --ds-glow: rgba(255, 122, 61, 0.12);
     --ds-glow-edge-1: #ff7a3d;
     --ds-glow-edge-2: #ec486e;
     --ds-glow-edge-3: #ffb078;
-    --ds-grid: rgba(255, 170, 110, 0.06);
+    --ds-grid: rgba(244, 244, 245, 0.05);
 
     --ds-st-completed-text: #6ee79a;
     --ds-st-completed-bg: #12301f;
     --ds-st-transferred-text: #9db8ff;
     --ds-st-transferred-bg: #162349;
-    --ds-st-noanswer-text: #c4baad;
-    --ds-st-noanswer-bg: #2d261f;
+    --ds-st-noanswer-text: #c4c4cb;
+    --ds-st-noanswer-bg: #26262b;
     --ds-st-rejected-text: #fca5a5;
     --ds-st-rejected-bg: #3a1717;
     --ds-st-spam-text: #ffb27a;
@@ -139,14 +137,22 @@
   }
 }
 
-/* The page behind everything: LIGHT and DARK alike: the same 18px dots (warm, faint on brown-black in dark) with an orange glow from the top-right corner (owner, 13 Nov 2026: dark uses the SAME dotted pattern, not a grid). Fixed, so it does not scroll with the page. */
+/* The page behind everything, like the landing (owner, 21 Nov 2026): LIGHT is pure white, DARK a neutral near-black, with the same faint 22px dot grid on a FIXED LAYER of its own behind the content (not background-attachment: fixed: it is composited and not repainted while the page scrolls).
+   The dots are only the page canvas: every card, list, chat thread and form has a solid surface above them (nothing is drawn under text inside a card). The orange glow is gone from the page; only the Today band and the command bar keep a faint one. */
 [data-ui="v2"][data-ds="6"] [data-frame="app"] {
   background-color: var(--v2-bg);
-  background-image:
-    radial-gradient(60% 38% at 88% -6%, var(--ds-page-glow, var(--ds-glow)), transparent 72%),
-    radial-gradient(circle at 1px 1px, var(--v2-dot) 1px, transparent 1.4px);
-  background-size: 100% 100%, 18px 18px;
-  background-attachment: fixed;
+  background-image: none;
+  isolation: isolate;
+}
+[data-ui="v2"][data-ds="6"] [data-frame="app"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(circle, var(--v2-dot) 1px, transparent 1.3px);
+  background-size: 22px 22px;
+  will-change: transform;
 }
 /* The glowing border (the command bar, a reply that waits for the owner's OK): a gradient edge and a soft orange halo. Still when the person asks for less motion. */
 [data-ui="v2"][data-ds="6"] .ds-glow {
@@ -234,9 +240,8 @@
   background-color: var(--v2-surface-2);
   background-image:
     radial-gradient(700px 360px at 85% -10%, var(--ds-glow), transparent 65%),
-    radial-gradient(500px 300px at 0% 110%, var(--ds-glow), transparent 60%),
-    radial-gradient(circle, var(--v2-dot) 1px, transparent 1.3px);
-  background-size: 100% 100%, 100% 100%, 18px 18px;
+    radial-gradient(500px 300px at 0% 110%, var(--ds-glow), transparent 60%);
+  background-size: 100% 100%, 100% 100%;
   isolation: isolate;
 }
 /* The command bar: a 1.5px conic gradient edge, a soft orange halo behind it, a plain card inside. */
@@ -304,11 +309,11 @@
    The band is glossy dark in BOTH themes: inside it the tokens are the dark ones, so every utility class there (text-ink, text-muted, border-line, bg-surface-2 ...) reads right whatever the theme.
    ========================================================================== */
 [data-ui="v2"][data-ds="6"] .ds-hero {
-  --v2-bg: #15100c;
-  --v2-surface: #1f1712;
-  --v2-surface-2: #2a1f17;
-  --v2-ink: #fff7f1;
-  --v2-muted: #c9ab96;
+  --v2-bg: #131216;
+  --v2-surface: #1c1b20;
+  --v2-surface-2: #25242a;
+  --v2-ink: #fafafa;
+  --v2-muted: #b4b3bb;
   --v2-border: rgba(255, 255, 255, 0.12);
   --v2-border-strong: rgba(255, 255, 255, 0.22);
   --v2-brand-text: #ff9d6e;
@@ -321,13 +326,9 @@
   overflow: hidden;
   border-radius: 28px;
   padding: 22px 26px 22px;
-  color: #fff7f1;
-  background:
-    radial-gradient(640px 320px at 88% -20%, rgba(234, 88, 12, 0.55), transparent 65%),
-    radial-gradient(520px 300px at -5% 120%, rgba(194, 65, 12, 0.32), transparent 60%),
-    radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1.3px) 0 0 / 18px 18px,
-    linear-gradient(160deg, #2b1d16, #120c0a 55%, #1c120e);
-  box-shadow: 0 30px 70px rgba(20, 12, 8, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+  color: #fafafa;
+  background: linear-gradient(160deg, #1c1b20, #131216);
+  box-shadow: 0 30px 70px rgba(8, 8, 12, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.6);
 }
 [data-ui="v2"][data-ds="6"] .ds-hero::before {
   content: "";
@@ -338,27 +339,27 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 38%), linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.06) 40%, transparent 48%);
   pointer-events: none;
 }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { font-size: 38px; line-height: 1.1; letter-spacing: -1.2px; }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { font-size: 38px; line-height: 1.1; letter-spacing: 0; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { margin-top: 8px; max-width: 1000px; font-size: 17px; line-height: 1.5; font-weight: 500; color: #c7b3a5; }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-brief b { font-weight: 700; color: #fff7f1; }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-brief b.ds-hl { background: linear-gradient(90deg, #fdba74, #fb923c 45%, #f43f5e); -webkit-background-clip: text; background-clip: text; color: transparent; }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-brief a { color: #fff7f1; font-weight: 700; text-decoration: underline; text-decoration-color: rgba(251, 146, 60, 0.8); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-brief b { font-weight: 700; color: #fafafa; }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-brief b.ds-hl { background: linear-gradient(90deg, #fdba74, #fb923c 45%, #ea580c); -webkit-background-clip: text; background-clip: text; color: transparent; }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-brief a { color: #fafafa; font-weight: 700; text-decoration: underline; text-decoration-color: rgba(251, 146, 60, 0.8); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
 /* the orb with its halo; sized by a scale so the real orb (a fixed px size) follows the breakpoints */
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz { position: relative; display: flex; width: 132px; height: 150px; flex: none; flex-direction: column; align-items: center; cursor: pointer; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz-halo { position: absolute; left: 50%; top: 62px; width: 230px; height: 230px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(249, 115, 22, 0.42), rgba(249, 115, 22, 0.12) 40%, transparent 66%); filter: blur(6px); pointer-events: none; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz-in { position: relative; height: 132px; transform-origin: top center; }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-tap { position: relative; margin-top: 2px; display: flex; align-items: center; gap: 7px; white-space: nowrap; border-radius: 99px; border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.07); padding: 5px 12px; font-size: 12px; font-weight: 700; color: #f3e7df; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12); }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-tap { position: relative; margin-top: 2px; display: flex; align-items: center; gap: 7px; white-space: nowrap; border-radius: 99px; border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.07); padding: 5px 12px; font-size: 12px; font-weight: 700; color: #f1f1f3; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12); }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-tap i { width: 7px; height: 7px; border-radius: 50%; background: #fb923c; box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.3); }
 /* the composer: a glowing conic edge around a glass box */
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-comp { min-width: 0; flex: 1; border-radius: 26px; padding: 1.5px; background: conic-gradient(from 200deg at 12% 50%, #fdba74, #ea580c 22%, #e11d48 40%, rgba(251, 146, 60, 0.25) 60%, #fb923c 85%, #fdba74); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 0 6px rgba(251, 146, 60, 0.06); }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-compin { border-radius: 24.5px; padding: 20px 18px 12px 22px; background: linear-gradient(180deg, rgba(58, 40, 31, 0.96), rgba(20, 13, 10, 0.98)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 0 rgba(0, 0, 0, 0.5); }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-ln { font-size: 22px; line-height: 1.35; letter-spacing: -0.2px; }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-ghost { color: #7d6b60; }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-glass { display: inline-flex; height: 40px; align-items: center; gap: 6px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.09); background: rgba(255, 255, 255, 0.05); padding: 0 11px; font-size: 13px; color: #eadbd1; white-space: nowrap; }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-compin { border-radius: 24.5px; padding: 20px 18px 12px 22px; background: linear-gradient(180deg, rgba(38, 37, 44, 0.96), rgba(14, 13, 17, 0.98)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 0 rgba(0, 0, 0, 0.5); }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-ln { font-size: 22px; line-height: 1.35; letter-spacing: 0; }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-ghost { color: #8b8a93; }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-glass { display: inline-flex; height: 40px; align-items: center; gap: 6px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.09); background: rgba(255, 255, 255, 0.05); padding: 0 11px; font-size: 13px; color: #e4e4e7; white-space: nowrap; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-chip { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; border-radius: 99px; border: 1px solid rgba(255, 255, 255, 0.09); background: rgba(255, 255, 255, 0.04); padding: 7px 11px; font-size: 12.5px; color: #e3d3c8; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-do { min-height: 44px; border-radius: 14px; padding: 0 18px 0 20px; gap: 10px; font-size: 15px; box-shadow: 0 10px 26px rgba(234, 88, 12, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.15); }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-do kbd { font-family: inherit; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 6px; background: rgba(0, 0, 0, 0.2); }
-[data-ui="v2"][data-ds="6"] .ds-hero kbd.ds-key { font-family: inherit; font-size: 11px; color: #eadbd1; border: 1px solid rgba(255, 255, 255, 0.18); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; margin-right: 4px; background: rgba(255, 255, 255, 0.05); }
+[data-ui="v2"][data-ds="6"] .ds-hero kbd.ds-key { font-family: inherit; font-size: 11px; color: #e4e4e7; border: 1px solid rgba(255, 255, 255, 0.18); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; margin-right: 4px; background: rgba(255, 255, 255, 0.05); }
 /* laptops: the mock's own rules */
 @media (max-width: 1400px) {
   [data-ui="v2"][data-ds="6"] .ds-hero .ds-chip { padding: 6px 9px; font-size: 12px; gap: 5px; }
@@ -380,7 +381,7 @@
 /* the phone: a compact band */
 @media (max-width: 767px) {
   [data-ui="v2"][data-ds="6"] .ds-hero { border-radius: 20px; padding: 10px 14px; }
-  [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { font-size: 22px; line-height: 1.15; letter-spacing: -0.4px; }
+  [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { font-size: 22px; line-height: 1.15; letter-spacing: 0; }
   [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { font-size: 14px; line-height: 1.4; margin-top: 4px; }
 }
 /* "Your day": the timeline's pulse for the newest call during a live call; still for reduced motion */
@@ -557,7 +558,7 @@
 
     /* ---- Today's band (fixed pixel sizes of the hero, so the tokens reach it): a compact band, the title at the page-title size ---- */
     [data-ui="v2"][data-ds="6"] .ds-hero { border-radius: 20px !important; padding: 14px 20px 16px !important; }
-    [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { font-size: var(--dk-title) !important; line-height: 1.2 !important; letter-spacing: -0.4px !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { font-size: var(--dk-title) !important; line-height: 1.2 !important; letter-spacing: 0 !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { margin-top: 4px !important; font-size: var(--dk-body) !important; line-height: 1.45 !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz { width: 96px !important; height: 108px !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz-in { height: 90px !important; transform: scale(0.68) !important; }
