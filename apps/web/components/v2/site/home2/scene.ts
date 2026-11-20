@@ -48,21 +48,31 @@ export function addScene(el: HTMLCanvasElement, draw: SceneDraw): () => void {
   const ctx = el.getContext("2d");
   if (!ctx) return () => undefined;
   if (!start) start = performance.now();
-  const s: Scene = { el, draw, visible: true, ctx };
+  // a scene is drawn only once it is near the window (the observer says so; a browser without one draws at once): nothing below the first screen is set up or painted while the page loads
+  const hasIo = typeof IntersectionObserver !== "undefined";
+  const s: Scene = { el, draw, visible: !hasIo, ctx };
   scenes.add(s);
   const calm = isCalm();
-  if (typeof IntersectionObserver !== "undefined" && !io)
-    io = new IntersectionObserver((es) => {
-      for (const e of es) for (const sc of scenes) if (sc.el === e.target) sc.visible = e.isIntersecting;
-    });
+  if (hasIo && !io)
+    io = new IntersectionObserver(
+      (es) => {
+        for (const e of es)
+          for (const sc of scenes)
+            if (sc.el === e.target) {
+              sc.visible = e.isIntersecting;
+              if (sc.visible) paint(sc, performance.now()); // the first frame when it comes near (and the only one with "reduce motion")
+            }
+      },
+      { rootMargin: "200px 0px" },
+    );
   io?.observe(el);
   if (typeof ResizeObserver !== "undefined" && !ro)
     ro = new ResizeObserver((es) => {
       if (!isCalm()) return;
-      for (const e of es) for (const sc of scenes) if (sc.el === e.target) paint(sc, performance.now());
+      for (const e of es) for (const sc of scenes) if (sc.el === e.target && sc.visible) paint(sc, performance.now());
     });
   ro?.observe(el);
-  paint(s, performance.now());
+  if (s.visible) paint(s, performance.now());
   if (!calm && !frame) frame = requestAnimationFrame(loop);
   return () => {
     scenes.delete(s);

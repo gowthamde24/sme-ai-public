@@ -151,7 +151,7 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
     state.current.seen = true;
   };
   return (
-    <div className="relative mx-auto mt-[clamp(24px,3vw,40px)] aspect-[1240/266] w-full max-w-[1240px]">
+    <div className="relative mx-auto mt-[clamp(12px,3vw,40px)] aspect-[1240/266] w-full max-w-[1240px]">
       {/* as tall as the drawing down to the letters' foot (266 of 300 units): the letters stand on the page's bottom edge, with the floor line just under them */}
       <canvas ref={canvas} role="img" aria-label={label} onClick={again} className="absolute inset-0 block size-full cursor-pointer" data-part="brand-dots" />
       <button type="button" onClick={again} className="sr-only focus:not-sr-only focus:absolute focus:right-0 focus:top-0 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2">

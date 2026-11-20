@@ -63,6 +63,13 @@ function Panel({ words, consent }: { words: CookieWords; consent: Consent }) {
           {words["cookie.panel.title"]}
         </h2>
 
+        <p className="mt-3 text-base">{words["cookie.notice.text"]}</p>
+        <p className="mt-1">
+          <Link href="/privacy" className="inline-flex min-h-11 items-center text-base font-semibold text-brand-text hover:underline">
+            {words["cookie.notice.privacy"]}
+          </Link>
+        </p>
+
         <section aria-labelledby="cookie-nec-h" className="mt-4">
           <Switch checked disabled label={words["cookie.necessary.title"]} describedBy="cookie-nec-d" />
           <p id="cookie-nec-d" className="text-base text-muted">
@@ -119,7 +126,7 @@ function Panel({ words, consent }: { words: CookieWords; consent: Consent }) {
 }
 
 /**
- * The cookie notice and the cookie settings (job BH), mounted once in the root layout. The notice is small and does not block anything (it sits at the end of the page and sticks to the bottom of the window while you scroll, so at the end of a page it is below the footer, never over it): it is shown once, until the visitor presses OK or saves a choice in
+ * The cookie notice and the cookie settings (job BH), mounted once in the root layout. The notice is a slim one-line bar (owner/planner, 21 Nov 2026; the full wording and the Privacy link are in the settings behind it) and does not block anything (it sits at the end of the page and sticks to the bottom of the window while you scroll, so at the end of a page it is below the footer, never over it): it is shown once, until the visitor presses OK or saves a choice in
  * the settings (the choice is remembered in the `sme_consent` cookie; `initial` is what the server read from it, so a visitor who has answered never sees it, and nothing flickers). The settings panel opens from the
  * "Cookie settings" link of any footer. Analytics is OFF by default and nothing here, or anywhere in the app, loads analytics.
  */
@@ -130,24 +137,17 @@ export function CookieConsent({ initial, words }: { initial: Consent; words: Coo
   return (
     <>
       {!consent.decided && !settingsOpen ? (
-        <section role="region" aria-labelledby="cookie-notice-h" data-cookie="notice" className={`mx-3 mb-3 rounded-xl border border-edge bg-surface p-4 text-ink shadow-[var(--v2-shadow)] sm:ml-auto sm:mr-4 sm:max-w-md ${aboveBar ? "max-md:mb-[calc(4rem+env(safe-area-inset-bottom)+0.75rem)]" : ""}`}>
-          <h2 id="cookie-notice-h" className="text-base font-semibold">
+        <section role="region" aria-labelledby="cookie-notice-h" data-cookie="notice" className={`flex min-h-[55px] items-center gap-2 border-t border-edge bg-surface px-3 py-1 text-ink shadow-[var(--v2-shadow)] ${aboveBar ? "max-md:mb-[calc(4rem+env(safe-area-inset-bottom))]" : ""}`}>
+          <h2 id="cookie-notice-h" className="sr-only font-sans">
             {words["cookie.notice.title"]}
           </h2>
-          <p className="mt-1 text-base">{words["cookie.notice.text"]}</p>
-          <p className="mt-1">
-            <Link href="/privacy" className="inline-flex min-h-11 items-center text-base font-semibold text-brand-text hover:underline">
-              {words["cookie.notice.privacy"]}
-            </Link>
-          </p>
-          <div className="mt-2 flex flex-wrap gap-3">
-            <button type="button" onClick={() => saveConsent(false)} className={primary}>
-              {words["cookie.notice.ok"]}
-            </button>
-            <button type="button" onClick={openCookieSettings} className={secondary}>
-              {words["cookie.panel.title"]}
-            </button>
-          </div>
+          <p className="m-0 min-w-0 flex-1 text-sm leading-tight">{words["cookie.bar.text"]}</p>
+          <button type="button" onClick={() => saveConsent(false)} className={`${primary} !px-4 !text-sm`}>
+            {words["cookie.bar.ok"]}
+          </button>
+          <button type="button" onClick={openCookieSettings} className={`${secondary} !px-3 !text-sm`}>
+            {words["cookie.bar.settings"]}
+          </button>
         </section>
       ) : null}
       {settingsOpen ? <Panel key="panel" words={words} consent={consent} /> : null}

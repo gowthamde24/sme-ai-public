@@ -6,7 +6,7 @@ vi.mock("next/headers", () => ({
   headers: async () => ({ get: () => null }),
 }));
 vi.mock("next/navigation", () => ({ notFound: () => { throw new Error("NEXT_NOT_FOUND"); }, useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
-vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars", teluguFontVariable: "te-font" }));
+vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars", teluguFontVariable: "te-font", teluguDemoFontVariable: "te-font-demo" }));
 
 import SiteFirstPage, { generateMetadata as firstMetadata } from "./[first]/page";
 import SiteSecondPage, { generateMetadata as secondMetadata } from "./[first]/[second]/page";

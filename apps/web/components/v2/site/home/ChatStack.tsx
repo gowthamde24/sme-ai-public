@@ -35,17 +35,17 @@ export function ChatStack({ chats, captions, sub, placeholder, icons }: { chats:
   const chat = chats[idx];
   return (
     <div ref={root} className="h3-stack" data-phase={phase} data-out={phase === "out" ? "" : undefined} data-paused={!visible || phase !== "call" ? "" : undefined} data-part="chat-stack" data-lang={chat.code}>
-      {/* every conversation's two screens sit in the same grid cell (only the current one shows): the box is as tall as the tallest of them, so there is no empty band under a short chat and nothing moves when the language changes */}
+      {/* only the CURRENT conversation's two screens are in the page (the call and its WhatsApp, in one grid cell: they cross-fade); the phone has a fixed shape, so nothing moves when the language changes, and the page carries a quarter of the nodes it did with all four */}
       <div className="h3-duo">
-        {chats.map((c, i) => {
-          const cur = i === idx;
-          const callShown = cur && phase === "call" ? n : c.call.lines.length;
+        {[chat].map((c) => {
+          const i = idx;
+          const callShown = phase === "call" ? n : c.call.lines.length;
           const line = c.call.lines[Math.max(0, callShown - 1)];
-          const callOn = cur && (phase === "call" || phase === "ended");
-          const chatOn = cur && (phase === "chat" || phase === "out");
+          const callOn = phase === "call" || phase === "ended";
+          const chatOn = phase === "chat" || phase === "out";
           return (
             <React.Fragment key={c.code}>
-              <div className="h3-duo-call" data-part="stack-call" data-shown={callShown} data-on={callOn ? "" : undefined} data-cur={cur ? "" : undefined} aria-hidden={cur ? undefined : true} inert={!cur}>
+              <div className="h3-duo-call" data-part="stack-call" data-shown={callShown} data-on={callOn ? "" : undefined} data-cur="">
                 <DarkPhone part="dark-phone">
                   <div className="h3-dp-call">
                     <span className="h3-dp-av" aria-hidden="true">
@@ -60,7 +60,7 @@ export function ChatStack({ chats, captions, sub, placeholder, icons }: { chats:
                         <i key={k} />
                       ))}
                     </div>
-                    <p className="h3-dp-live">{cur && phase === "call" ? c.call.live : c.call.ended}</p>
+                    <p className="h3-dp-live">{phase === "call" ? c.call.live : c.call.ended}</p>
                     <div className="h3-dp-capbox">
                       {line ? (
                         <p key={`${i}-${callShown}`} className="h3-dp-cap" data-from={line.from} lang={c.code}>
@@ -77,7 +77,7 @@ export function ChatStack({ chats, captions, sub, placeholder, icons }: { chats:
                   </div>
                 </DarkPhone>
               </div>
-              <div className="h3-duo-chat" data-part="stack-chat" data-shown={cur && phase === "chat" ? n : c.lines.length} data-on={chatOn ? "" : undefined} data-cur={cur ? "" : undefined} aria-hidden={cur ? undefined : true} inert={!cur}>
+              <div className="h3-duo-chat" data-part="stack-chat" data-shown={phase === "chat" ? n : c.lines.length} data-on={chatOn ? "" : undefined} data-cur="">
                 <DarkPhone part="dark-phone">
                   <div className="pp h3-dp-chat" data-pp-theme="dark" data-pp-variant="peek">
                     <div className="pp-head">

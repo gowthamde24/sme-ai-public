@@ -626,5 +626,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "cookie.bar.text": {
+  "en": "We only use cookies the site needs.",
+  "te": "ఈ సైట్‌కు అవసరమైన కుకీలను మాత్రమే వాడతాము.",
+  "hi": "हम सिर्फ़ वही कुकी इस्तेमाल करते हैं जो साइट के लिए ज़रूरी हैं।",
+  "kn": "ಈ ಸೈಟ್‌ಗೆ ಬೇಕಾದ ಕುಕೀಗಳನ್ನು ಮಾತ್ರ ಬಳಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.bar.ok": {
+  "en": "OK",
+  "te": "సరే",
+  "hi": "ठीक है",
+  "kn": "ಸರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.bar.settings": {
+  "en": "Settings",
+  "te": "సెట్టింగ్‌లు",
+  "hi": "सेटिंग",
+  "kn": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

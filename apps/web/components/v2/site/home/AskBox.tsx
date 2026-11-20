@@ -8,6 +8,7 @@ import { useOnViewOnce } from "./use-on-view-once";
 /** One of the example jobs: the words of its plan card, already in the visitor's language (static; nothing is asked of an AI). */
 export type AskJob = { chip: string; who: string; says: string; when: string; keys: string[] };
 
+const reduced = (): boolean => typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches === true;
 const TYPE_MS = 1200; // the example is typed in about this long, at a steady pace
 const ROW_MS = 380; // then the plan card's four lines come in one by one
 
@@ -112,7 +113,7 @@ export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: 
               aria-pressed={picked === i}
               onClick={() => {
                 started.current = true;
-                play(i, typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches === true);
+                play(i, reduced());
               }}
               data-chip={i + 1}
             >

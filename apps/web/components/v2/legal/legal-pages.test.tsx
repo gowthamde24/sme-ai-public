@@ -237,7 +237,7 @@ describe("the root layout carries the notice (job BH)", () => {
     expect(out).toMatch(/<div[^>]*class="[^"]*sticky bottom-0[^"]*"[^>]*>\s*<section[^>]*data-cookie="notice"/);
     expect(out.indexOf("<p>page</p>")).toBeLessThan(out.indexOf('data-cookie="notice"'));
     expect(out).toContain('data-cookie="notice"');
-    expect(out).toContain("only the cookies this site needs to work");
+    expect(out).toContain("We only use cookies the site needs.");
     expect(out).toContain("<p>page</p>");
   });
   it.each(["1.a0", "1.a1"])("after an answer (%s) it is not drawn", async (v) => {
@@ -250,12 +250,12 @@ describe("the root layout carries the notice (job BH)", () => {
   });
   it("the words follow the language cookie", async () => {
     jarValues.sme_lang = "kn";
-    expect(await html()).toContain(legalT("kn")("cookie.notice.ok"));
+    expect(await html()).toContain(legalT("kn")("cookie.bar.ok"));
   });
   it("a Tamil cookie leaves the cookie notice in English (no Tamil legal words ship)", async () => {
     jarValues.sme_lang = "ta";
     const out = await html();
-    expect(out).toContain(legalT("en")("cookie.notice.ok"));
+    expect(out).toContain(legalT("en")("cookie.bar.text"));
     expect(out).not.toMatch(/[\u0B80-\u0BFF]/);
   });
   it("loads no outside script and no analytics tag", async () => {
