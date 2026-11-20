@@ -268,7 +268,7 @@ export function RadarFinder({ w }: { w: W }) {
         </div>
         <ul className="h4-found-list">
           {rows.map((p, i) => (
-            <li key={`${city}-${p.id}`} className="h4-fc" data-found={p.id} style={{ "--i": i } as React.CSSProperties}>
+            <li key={`${city}-${p.id}`} className={`h4-fc h4-d${i}`} data-found={p.id}>
               <p className="h4-fc-top">
                 <span>
                   <b>{w[`h2.finder.pin.${p.id + 1}.what`]}</b> <span className="h4-fc-km">{p.km}</span>

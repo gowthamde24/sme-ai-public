@@ -18,9 +18,9 @@ export function TrustRow({ w }: { w: Words }) {
       <li className="h4-mini" data-trust="1">
         <div className="h4-moment" data-illustration="" aria-hidden="true">
           <span className="h4-num">
-            <span className="h4-s" style={{ "--i": 0 } as React.CSSProperties}>080</span> <span className="h4-s" style={{ "--i": 1 } as React.CSSProperties}>4•••</span> <span className="h4-s" style={{ "--i": 2 } as React.CSSProperties}>••12</span>
+            <span className="h4-s h4-d0">080</span> <span className="h4-s h4-d1">4•••</span> <span className="h4-s h4-d2">••12</span>
           </span>
-          <span className="h4-ok h4-s" style={{ "--i": 4 } as React.CSSProperties}>
+          <span className="h4-ok h4-s h4-d4">
             <Check size={12} strokeWidth={3} /> {w.kyc}
           </span>
         </div>
@@ -30,11 +30,11 @@ export function TrustRow({ w }: { w: Words }) {
         <div className="h4-moment" data-illustration="" aria-hidden="true">
           <span className="h4-cb">
             <span className="h4-box">
-              <Check className="h4-s h4-tick" style={{ "--i": 1 } as React.CSSProperties} size={12} strokeWidth={3.5} />
+              <Check className="h4-s h4-tick h4-d1" size={12} strokeWidth={3.5} />
             </span>
             {w.yes}
           </span>
-          <span className="h4-ok h4-s" style={{ "--i": 3 } as React.CSSProperties}>
+          <span className="h4-ok h4-s h4-d3">
             {w.added}
           </span>
         </div>
@@ -42,10 +42,10 @@ export function TrustRow({ w }: { w: Words }) {
       </li>
       <li className="h4-mini" data-trust="3">
         <div className="h4-moment" data-illustration="" aria-hidden="true">
-          <span className="h4-b h4-b-out h4-s" style={{ "--i": 0 } as React.CSSProperties}>
+          <span className="h4-b h4-b-out h4-s h4-d0">
             STOP
           </span>
-          <span className="h4-b h4-b-in h4-s" style={{ "--i": 3 } as React.CSSProperties}>
+          <span className="h4-b h4-b-in h4-s h4-d3">
             {w.done} <Check size={12} strokeWidth={3} className="h4-chk" />
           </span>
         </div>
@@ -53,10 +53,10 @@ export function TrustRow({ w }: { w: Words }) {
       </li>
       <li className="h4-mini" data-trust="4">
         <div className="h4-moment" data-illustration="" aria-hidden="true">
-          <span className="h4-time h4-s" style={{ "--i": 0 } as React.CSSProperties}>
+          <span className="h4-time h4-s h4-d0">
             <Moon size={13} strokeWidth={2.4} /> 9:40 pm
           </span>
-          <span className="h4-wait h4-s" style={{ "--i": 3 } as React.CSSProperties}>
+          <span className="h4-wait h4-s h4-d3">
             {w.wait}
           </span>
         </div>

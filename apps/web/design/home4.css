@@ -184,6 +184,7 @@
 @media (min-width: 1024px) { [data-ui="v2"] .h4-h2 { font-size: 36px; } [data-ui="v2"] .h4-lead { font-size: 17px; } [data-ui="v2"] .h4-h3 { font-size: 18px; } }
 @media (min-width: 1280px) { [data-ui="v2"] .h4-h2 { font-size: 40px; } }
 
+[data-ui="v2"] .h4-d0 { --i: 0; } [data-ui="v2"] .h4-d1 { --i: 1; } [data-ui="v2"] .h4-d2 { --i: 2; } [data-ui="v2"] .h4-d3 { --i: 3; } [data-ui="v2"] .h4-d4 { --i: 4; }
 /* the tiny live moments: each plays ONCE when its block is 40% in view (components/v2/site/home/use-on-view-once.ts). "final" (no JavaScript, "reduce motion") is the page as drawn above, finished; "ready" is the start (opacity and transform only, nothing changes size);
    "played" runs to the end. The Pro plan's minutes bar fills; the Lead Finder's rows slide in as the sweep passes; the trust row's moments run one after the other. */
 @media (prefers-reduced-motion: no-preference) {
