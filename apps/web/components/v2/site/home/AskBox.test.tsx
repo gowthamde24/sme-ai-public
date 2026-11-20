@@ -7,7 +7,7 @@ const jobs: AskJob[] = [
   { chip: "Book site visits", who: "New property enquiries", says: "Can you visit this Saturday?", when: "Right away", keys: ["site visit"] },
   { chip: "Order ready", who: "Customers whose order is ready", says: "Your order is ready.", when: "As soon as it is ready", keys: ["order"] },
 ];
-const words = { label: "Tell it", placeholder: "e.g.", go: "Set this up", who: "Who", says: "What it says", when: "When", cost: "Cost", costValue: "Calls are charged at your plan's rate", plan: "Plan" };
+const words = { label: "Tell it", placeholder: "e.g.", go: "Set this up", orb: "Play an example", eg: "Example", who: "Who", says: "What it says", when: "When", cost: "Cost", costValue: "Calls are charged at your plan's rate", plan: "Plan" };
 let seeIt: () => void;
 
 // the page's scenes start after the first scroll (use-on-view-once.ts keeps that in the module): a fresh module for each test
@@ -82,5 +82,32 @@ describe("try-it: a live moment played once when seen (no AI, nothing sent)", ()
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "tell people the order is ready" } });
     expect(container.querySelectorAll(".h3-plan-row[data-in]")).toHaveLength(4);
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+  it("the orb plays a scripted example: a pulse with the word Example, then the NEXT sample sentence is typed in and its card fills (no microphone, no network)", () => {
+    vi.stubGlobal("matchMedia", () => ({ matches: false }));
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+    const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" arrow={null} />);
+    const orb = screen.getByRole("button", { name: "Play an example" });
+    expect(orb).toHaveAttribute("title", "Play an example");
+    expect(screen.queryByText("Listening…")).toBeNull();
+    fireEvent.click(orb);
+    expect(screen.getByText("Example")).toBeInTheDocument(); // the pulse's label (never "Listening")
+    act(() => void vi.advanceTimersByTime(1300 + 1300));
+    expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("Order ready"); // the next example (after the first)
+    expect(screen.queryByText("Example")).toBeNull();
+    act(() => void vi.advanceTimersByTime(3000));
+    expect(container.querySelectorAll(".h3-plan-row[data-in]")).toHaveLength(4);
+    expect(container.textContent).toContain("Customers whose order is ready");
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+  it("orb with reduced motion: no pulse, the sentence just appears", () => {
+    vi.stubGlobal("matchMedia", () => ({ matches: true }));
+    const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" arrow={null} />);
+    fireEvent.click(screen.getByRole("button", { name: "Play an example" }));
+    act(() => void vi.advanceTimersByTime(10));
+    expect(screen.queryByText("Example")).toBeNull();
+    expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("Order ready");
+    expect(container.querySelectorAll(".h3-plan-row[data-in]")).toHaveLength(4);
   });
 });

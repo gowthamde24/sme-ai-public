@@ -2,7 +2,7 @@ import { ArrowRight, ChevronDown, Grip, Mic, Phone, PhoneCall as PhoneCallIcon, 
 import Link from "next/link";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
-import { HeroStage, WaitlistForm } from "@/components/v2/site/LazyIslands";
+import { WaitlistForm } from "@/components/v2/site/LazyIslands";
 import { hasWaitlist, waitlistWords, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { teluguDemoFontVariable, teluguFontVariable } from "@/design/fonts";
 import type { SiteLang } from "@/i18n/lang";
@@ -17,15 +17,12 @@ import { AskBox } from "./AskBox";
 import { ChatStack } from "./ChatStack";
 import { FOUND_KEYS, GREETING_MENTIONS_AI, STACK } from "./chat-stack";
 import { LowerSections } from "./Lower";
-import { OrbGate } from "./OrbGate";
 import { StickyCta } from "./StickyCta";
 import { FoundCard, LangTabs, StackProvider } from "./StackState";
 import { WithWhatsapp } from "../home2/WithWhatsapp";
 
 type Start = { href: string; label: string };
 const k = (s: string) => s as SiteKey;
-/** The words a client island needs, filled on the server (the site's dictionaries never reach the browser whole). */
-const words = (t: SiteT, keys: readonly string[]): Record<string, string> => Object.fromEntries(keys.map((key) => [key, t(k(key))]));
 /** The demo phone's icons, drawn on the server so the page's script carries no icon code for them. */
 const DEMO_ICONS = {
   callButtons: (
@@ -60,16 +57,6 @@ const JOB_KEYS = [
   ["demo", "remind", "class", "డెమో", "डेमो", "ಡೆಮೊ"],
   ["test drive", "car", "bike", "టెస్ట్", "टेस्ट", "ಟೆಸ್ಟ್"],
   ["order", "ready", "pickup", "ఆర్డర్", "ऑर्डर", "ಆರ್ಡರ್"],
-];
-const HERO_KEYS = [
-  "h2.mode.picked",
-  "h2.mode.listening",
-  "h2.mode.wait",
-  ...["te", "kn", "hi", "en"].map((c) => `h2.lang.${c}`),
-  ...[1, 2, 3].flatMap((i) => [`h2.out.${i}.t`, `h2.out.${i}.d`]),
-  ...[1, 2, 3, 4, 5, 6].flatMap((i) => [`h3.src.${i}.t`, `h3.src.${i}.d`]),
-  "h2.hear",
-  "h2.hear.on",
 ];
 
 
@@ -124,13 +111,6 @@ function Hero({ t, cta }: { t: SiteT; cta: Start }) {
           </p>
         ) : null}
       </div>
-      <div className="h3-wrap h3-stage-wrap">
-        <div className="h3-stage-slot" data-part="hero-stage-slot">
-          <OrbGate>
-            <HeroStage w={words(t, HERO_KEYS)} />
-          </OrbGate>
-        </div>
-      </div>
     </section>
   );
 }
@@ -148,7 +128,7 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
         <AskBox
           href={cta.href}
           arrow={<ArrowRight size={18} strokeWidth={2.4} aria-hidden="true" />}
-          words={{ label: t("h3.ask.label"), placeholder: t("h3.ask.ph"), go: t("h3.ask.go"), who: t("h3.plan.l.who"), says: t("h3.plan.l.says"), when: t("h3.plan.l.when"), cost: t("h3.plan.l.cost"), costValue: t("h3.plan.cost"), plan: t("h3.plan.t") }}
+          words={{ label: t("h3.ask.label"), placeholder: t("h3.ask.ph"), go: t("h3.ask.go"), orb: t("h3.ask.orb"), eg: t("h3.ask.eg"), who: t("h3.plan.l.who"), says: t("h3.plan.l.says"), when: t("h3.plan.l.when"), cost: t("h3.plan.l.cost"), costValue: t("h3.plan.cost"), plan: t("h3.plan.t") }}
           jobs={[1, 2, 3, 4, 5].map((i) => ({ chip: t(k(`h3.ask.chip.${i}`)), who: t(k(`h3.job.${i}.who`)), says: t(k(`h3.job.${i}.says`)), when: t(k(`h3.job.${i}.when`)), keys: JOB_KEYS[i - 1] }))}
         />
       </div>

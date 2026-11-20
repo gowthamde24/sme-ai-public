@@ -6740,32 +6740,6 @@
    "kn": "draft"
   }
  },
- "h2.mode.picked": {
-  "en": "Customer picked up",
-  "te": "కస్టమర్ ఫోన్ ఎత్తారు",
-  "hi": "Customer ने फ़ोन उठाया",
-  "kn": "Customer ಫೋನ್ ಎತ್ತಿದರು",
-  "ta": "Customer call-ஐ எடுத்தார்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.mode.listening": {
-  "en": "Listening",
-  "te": "వింటోంది",
-  "hi": "सुन रही है",
-  "kn": "ಕೇಳುತ್ತಿದೆ",
-  "ta": "கேட்கிறது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h2.mode.in": {
   "en": "Your enquiry is in. Calling you",
   "te": "మీ ఎంక్వైరీ వచ్చింది. మీకు కాల్ చేస్తోంది",
@@ -6786,19 +6760,6 @@
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  }
- },
- "h2.mode.wait": {
-  "en": "Waiting for your reply",
-  "te": "మీ జవాబు కోసం చూస్తోంది",
-  "hi": "आपके जवाब का इंतज़ार",
-  "kn": "ನಿಮ್ಮ ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದೆ",
-  "ta": "உங்கள் பதிலுக்காகக் காத்திருக்கிறது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
   }
  },
  "h2.lang.te": {
@@ -6885,84 +6846,6 @@
   "hi": "अंग्रेज़ी",
   "kn": "ಇಂಗ್ಲಿಷ್",
   "ta": "ஆங்கிலம்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.1.t": {
-  "en": "Answered in seconds",
-  "te": "సెకన్లలో జవాబు",
-  "hi": "Seconds में जवाब",
-  "kn": "Seconds ನಲ್ಲಿ ಉತ್ತರ",
-  "ta": "சில seconds-இல் பதில்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.1.d": {
-  "en": "In the customer's language",
-  "te": "కస్టమర్ భాషలో",
-  "hi": "Customer की भाषा में",
-  "kn": "Customer ಭಾಷೆಯಲ್ಲಿ",
-  "ta": "Customer-இன் மொழியில்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.2.t": {
-  "en": "Quote ready",
-  "te": "Quote ready",
-  "hi": "Quote तैयार",
-  "kn": "Quote ಸಿದ್ಧ",
-  "ta": "Quote தயார்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.2.d": {
-  "en": "Waiting for your OK",
-  "te": "మీ OK కోసం చూస్తోంది",
-  "hi": "आपके OK का इंतज़ार",
-  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
-  "ta": "உங்கள் OK-க்காகக் காத்திருக்கிறது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.3.t": {
-  "en": "Visit booked",
-  "te": "Visit book అయింది",
-  "hi": "Visit book हो गई",
-  "kn": "Visit book ಆಯಿತು",
-  "ta": "Visit book ஆனது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.3.d": {
-  "en": "Saturday, 11 am",
-  "te": "శనివారం, ఉదయం 11",
-  "hi": "शनिवार, सुबह 11 बजे",
-  "kn": "ಶನಿವಾರ, ಬೆಳಿಗ್ಗೆ 11",
-  "ta": "சனிக்கிழமை, காலை 11 மணி",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7199,32 +7082,6 @@
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  }
- },
- "h2.hear": {
-  "en": "Hear it",
-  "te": "వినండి",
-  "hi": "सुनें",
-  "kn": "ಕೇಳಿ",
-  "ta": "கேளுங்கள்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.hear.on": {
-  "en": "Sound on",
-  "te": "శబ్దం ఆన్",
-  "hi": "आवाज़ चालू",
-  "kn": "ಧ್ವನಿ ಆನ್",
-  "ta": "Sound on",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
   }
  },
  "h2.greet.label": {
@@ -10290,162 +10147,6 @@
    "ta": "draft"
   }
  },
- "h3.src.1.t": {
-  "en": "Meta ads",
-  "te": "Meta ads",
-  "hi": "Meta ads",
-  "kn": "Meta ads",
-  "ta": "Meta ads",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.1.d": {
-  "en": "2BHK in Kondapur",
-  "te": "Kondapur లో 2BHK",
-  "hi": "Kondapur में 2BHK",
-  "kn": "Kondapur ನಲ್ಲಿ 2BHK",
-  "ta": "Kondapur-இல் 2BHK",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.2.t": {
-  "en": "JustDial, IndiaMART",
-  "te": "JustDial, IndiaMART",
-  "hi": "JustDial, IndiaMART",
-  "kn": "JustDial, IndiaMART",
-  "ta": "JustDial, IndiaMART",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.2.d": {
-  "en": "Price for 200 bags",
-  "te": "200 bags price",
-  "hi": "200 bags का price",
-  "kn": "200 bags price",
-  "ta": "200 bags-க்கு price",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.3.t": {
-  "en": "Website form",
-  "te": "Website form",
-  "hi": "Website form",
-  "kn": "Website form",
-  "ta": "Website form",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.3.d": {
-  "en": "B.Tech admission",
-  "te": "B.Tech admission",
-  "hi": "B.Tech admission",
-  "kn": "B.Tech admission",
-  "ta": "B.Tech admission",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.4.t": {
-  "en": "WhatsApp",
-  "te": "WhatsApp",
-  "hi": "WhatsApp",
-  "kn": "WhatsApp",
-  "ta": "WhatsApp",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.4.d": {
-  "en": "Saree for a wedding",
-  "te": "Wedding కి saree",
-  "hi": "शादी के लिए saree",
-  "kn": "Wedding ಗೆ saree",
-  "ta": "கல்யாணத்துக்கு saree",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.5.t": {
-  "en": "Missed call",
-  "te": "Missed call",
-  "hi": "Missed call",
-  "kn": "Missed call",
-  "ta": "Missed call",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.5.d": {
-  "en": "Test drive: SUV",
-  "te": "Test drive: SUV",
-  "hi": "Test drive: SUV",
-  "kn": "Test drive: SUV",
-  "ta": "Test drive: SUV",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.6.t": {
-  "en": "Google",
-  "te": "Google",
-  "hi": "Google",
-  "kn": "Google",
-  "ta": "Google",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.6.d": {
-  "en": "Demo class timings",
-  "te": "Demo class timings",
-  "hi": "Demo class timings",
-  "kn": "Demo class timings",
-  "ta": "Demo class timings",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h3.stage.t": {
   "en": "Enquiries from every platform, answered in seconds",
   "te": "అన్ని platforms నుంచి వచ్చే enquiries కి seconds లో జవాబు",
@@ -11633,6 +11334,32 @@
   "hi": "KYC हो गया",
   "kn": "KYC ಆಯಿತು",
   "ta": "KYC முடிந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.ask.orb": {
+  "en": "Play an example",
+  "te": "ఉదాహరణ ప్లే చేయండి",
+  "hi": "उदाहरण चलाएँ",
+  "kn": "ಉದಾಹರಣೆ ಪ್ಲೇ ಮಾಡಿ",
+  "ta": "எடுத்துக்காட்டை இயக்கு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.ask.eg": {
+  "en": "Example",
+  "te": "ఉదాహరణ",
+  "hi": "उदाहरण",
+  "kn": "ಉದಾಹರಣೆ",
+  "ta": "எடுத்துக்காட்டு",
   "status": {
    "te": "draft",
    "hi": "draft",

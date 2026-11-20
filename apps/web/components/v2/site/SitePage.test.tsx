@@ -9,7 +9,7 @@ vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars", teluguFon
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 
 // next/dynamic loads a chunk on the client; a test renders the real components at once
-vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, HeroStage: (await import("./home2/HeroStage")).HeroStage, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc, BrandDots: (await import("./home2/BrandDots")).BrandDots }));
+vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc, BrandDots: (await import("./home2/BrandDots")).BrandDots }));
 
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -100,15 +100,14 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     }
     expect(home).not.toMatch(/data-pack=|data-business=/);
   });
-  it("the hero: a headline, ONE plain line, ONE call to action and a small Hear a call link; no pills; the orb stage is only a slot in the server markup (it mounts from 768 px, see OrbGate)", () => {
+  it("the hero: a headline, ONE plain line, ONE call to action and a small Hear a call link; no pills, no orb stage at any width", () => {
     const hero = home.match(/<section[^>]*aria-labelledby="h1"[\s\S]*?<\/section>/)![0];
     expect(text(hero.match(/<h1[\s\S]*?<\/h1>/)![0]).trim()).toBe("Every enquiry answered. Every call picked up.");
     for (const x of ["Your AI assistant answers calls and WhatsApp in your customer's language.", "Get free early access", "Hear a call"]) expect(text(hero), x).toContain(x);
     expect(hero).not.toMatch(/h3-pill|data-part="hero-stage"/);
     expect(hero).toContain('href="#how-it-works"');
     expect(hero).toMatch(/class="h3-btn h3-btn-main h3-btn-block"[^>]*data-part="hero-cta"|data-part="hero-cta"/);
-    expect(hero).toContain('data-part="hero-stage-slot"');
-    expect(hero).not.toContain("data-source="); // no orb markup for a phone
+    expect(home).not.toMatch(/hero-stage|data-source=|h3-stage/); // no orb, no source chips, no canvas for them: the hero goes straight into How it works
     expect(home.match(/<h1[\s>]/g)).toHaveLength(1);
     expect(text(home)).not.toMatch(/working name|Sme-?AI/i);
   });
@@ -118,7 +117,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(main.match(/class="h3-fit h3-fit-stage/g) ?? []).toHaveLength(0); // the stage (the one scaled drawing) mounts from 768 px; the map and the pipe reflow in their own canvases
     expect(main).not.toMatch(/data-part="(sources|caption|found|try|checked)-phone"|data-(source|out)-phone=/);
     const dir = path.join(__dirname, "home");
-    const src = [...fs.readdirSync(dir).filter((f) => /\.tsx$/.test(f)).map((f) => fs.readFileSync(path.join(dir, f), "utf8")), ...["HeroStage", "RadarFinder", "LeakCalc"].map((f) => fs.readFileSync(path.join(__dirname, `home2/${f}.tsx`), "utf8"))].join("\n");
+    const src = [...fs.readdirSync(dir).filter((f) => /\.tsx$/.test(f)).map((f) => fs.readFileSync(path.join(dir, f), "utf8")), ...["RadarFinder", "LeakCalc"].map((f) => fs.readFileSync(path.join(__dirname, `home2/${f}.tsx`), "utf8"))].join("\n");
     expect(src).not.toMatch(/innerWidth|useMedia|:hidden|hidden (sm|md|lg|xl):|max-(sm|md|lg|xl):|\blg:/);
   });
   it("what should your assistant do: a labelled box (type only, no microphone), five example chips across kinds of business and a button to sign-up; it calls no AI", () => {
@@ -236,10 +235,11 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     const dark = home.match(/data-part="dark-phone"[\s\S]*?<\/div><\/div><\/div>/)![0];
     expect(dark).not.toMatch(/h3-dp-key|data-key/); // the keys are CSS only: nothing in the markup
   });
-  it("the demo from 768 px: the call phone and the WhatsApp phone side by side (320 px each), the found-out card under them, no cross-fade (both shown); a phone keeps one", () => {
+  it("the demo from 768 px: the call phone and the WhatsApp phone side by side (260 px each), the found-out card under them (and in the same row from 1100 px), no cross-fade (both shown); a phone keeps one", () => {
     const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
     const block = css.match(/@media \(min-width: 768px\) \{\s*\[data-ui="v2"\] \.h3-how-grid \{[\s\S]*?\n\}/)![0];
-    expect(block).toMatch(/\.h3-duo \{ grid-template-columns: repeat\(2, minmax\(0, 320px\)\)/);
+    expect(block).toMatch(/\.h3-duo \{ grid-template-columns: repeat\(2, 260px\)/);
+    expect(block).toMatch(/\.h3-dp \{ width: 300px; zoom: 0\.8667; \}/); // drawn at 300 px, shown at 260
     expect(block).toMatch(/\.h3-duo-call, \[data-ui="v2"\] \.h3-duo-chat \{ grid-area: auto; opacity: 1; visibility: visible/);
     expect(block).toMatch(/\.h3-how-grid \{ grid-template-columns: minmax\(0, 1fr\)/); // the card is under the phones, not far to the right
   });

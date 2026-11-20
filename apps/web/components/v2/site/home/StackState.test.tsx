@@ -70,7 +70,7 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
   it("starts with the first conversation's chat whole and its card (the still state: Telugu coaching)", () => {
     const { container } = mount();
     expect(state(container)).toMatchObject({ lang: "te", phase: "chat", set: "0", rows: 3 });
-    expect(container.querySelectorAll(".h3-duo-chat[data-cur] .pp-b")).toHaveLength(4);
+    expect(container.querySelectorAll(".h3-duo-chat .pp-b")).toHaveLength(4);
   });
   it("each language runs call -> call ended -> chat -> fade, then the next; the card follows the same conversation (fields listening, then filled in time with the call), and fades with it; a full cycle takes 12 to 16 s each", async () => {
     const { container } = mount();
@@ -105,13 +105,13 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
     const { container } = mount();
     await scroll();
     await act(async () => { vi.advanceTimersByTime(3000); });
-    const before = JSON.stringify(state(container)) + container.querySelector(".h3-duo-call[data-cur]")!.getAttribute("data-shown");
+    const before = JSON.stringify(state(container)) + container.querySelector(".h3-duo-call")!.getAttribute("data-shown");
     await act(async () => { cb([{ isIntersecting: false }]); });
     await act(async () => { vi.advanceTimersByTime(20000); });
-    expect(JSON.stringify(state(container)) + container.querySelector(".h3-duo-call[data-cur]")!.getAttribute("data-shown")).toBe(before);
+    expect(JSON.stringify(state(container)) + container.querySelector(".h3-duo-call")!.getAttribute("data-shown")).toBe(before);
     await act(async () => { cb([{ isIntersecting: true }]); });
     await act(async () => { vi.advanceTimersByTime(20000); });
-    expect(JSON.stringify(state(container)) + container.querySelector(".h3-duo-call[data-cur]")!.getAttribute("data-shown")).not.toBe(before);
+    expect(JSON.stringify(state(container)) + container.querySelector(".h3-duo-call")!.getAttribute("data-shown")).not.toBe(before);
   });
 });
 
