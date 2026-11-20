@@ -1,5 +1,7 @@
-import { ArrowRight, ChevronDown, Grip, Mic, Phone, PhoneCall as PhoneCallIcon, PhoneOff, Volume2 } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Clock, Grip, MessageCircle, Mic, Phone, PhoneOff, Play, Volume2, Zap } from "lucide-react";
 import Link from "next/link";
+
+import { Mark } from "@/components/v2/Mark";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
 import { WaitlistForm } from "@/components/v2/site/LazyIslands";
@@ -15,6 +17,7 @@ import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 
 import { AskBox } from "./AskBox";
 import { ChatStack } from "./ChatStack";
+import { GreetBand } from "./GreetBand";
 import { FOUND_KEYS, GREETING_MENTIONS_AI, STACK } from "./chat-stack";
 import { LowerSections } from "./Lower";
 import { StickyCta } from "./StickyCta";
@@ -72,6 +75,10 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
     <div className={`h3 ${lang === "te" ? teluguFontVariable : teluguDemoFontVariable}`} data-part="home3">
       <Hero t={t} cta={cta} />
       <How t={t} />
+      <section id="languages" aria-label={t("h5.greet.aria")} className="h3-sec">
+        <GreetBand words={["నమస్కారం", "नमस्ते", "ನಮಸ್ಕಾರ", "Hello"]} line={t("h2.greet.line")} label={t("h5.greet.aria")} />
+      </section>
+      <Works t={t} />
       <Ask t={t} cta={cta} />
       <LowerSections t={t} />
       <Faq t={t} />
@@ -83,9 +90,22 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
 
 function Hero({ t, cta }: { t: SiteT; cta: Start }) {
   const lines = t("h3.hero.t").split(". ").map((x, i, a) => (i < a.length - 1 ? `${x}.` : x));
+  const feats = [
+    { icon: <Zap size={18} strokeWidth={2.2} />, text: t("h5.f.1") },
+    { icon: <Clock size={18} strokeWidth={2.2} />, text: t("h5.f.2") },
+    { icon: <MessageCircle size={18} strokeWidth={2.2} />, text: t("h5.f.3") },
+  ];
   return (
     <section id="top-hero" aria-labelledby="h1" className="h3-sec h3-hero">
       <div className="h3-wrap h3-hero-text">
+        {/* the pill: our greeting, the four languages and the way to hear a call (a link to the demo's call) */}
+        <Link href="#how-it-works" className="h3-hero-pill" data-part="hear-call">
+          <span>{t("h5.pill")}</span>
+          <span className="h3-pill-hear">
+            <Play size={13} strokeWidth={2.4} fill="currentColor" aria-hidden="true" />
+            {t("h2.hero.hear")}
+          </span>
+        </Link>
         <h1 id="h1" className="h3-h1">
           {lines.map((x, i) => (
             <span key={i} className="h3-line">
@@ -99,17 +119,51 @@ function Hero({ t, cta }: { t: SiteT; cta: Start }) {
             {cta.label}
             <ArrowRight size={18} strokeWidth={2.2} aria-hidden="true" />
           </Link>
-          <Link href="#how-it-works" className="h3-textlink" data-part="hear-call">
-            <PhoneCallIcon size={17} strokeWidth={2.2} aria-hidden="true" />
-            {t("h2.hero.hear")}
-          </Link>
         </div>
-        <p className="h3-hero-plain">{t("h3.hero.langs")}</p>
+        <ul className="h3-feats" data-part="hero-feats">
+          {feats.map((f, i) => (
+            <li key={i} className="h3-feat">
+              <span className="h3-feat-ico" aria-hidden="true">
+                {f.icon}
+              </span>
+              {f.text}
+            </li>
+          ))}
+        </ul>
         {websiteOnly() ? (
           <p className="h3-small" data-part="trial-note">
             {t("demo.note")}
           </p>
         ) : null}
+      </div>
+    </section>
+  );
+}
+
+/** "While it talks, it works": a calm hub, STILL: the assistant's mark in the middle and what a call leaves done, each a thing the product does today (the booking and the WhatsApp of the demo, the outcome on Today, the follow-up, the owner told with a short summary). */
+function Works({ t }: { t: SiteT }) {
+  return (
+    <section id="works" aria-labelledby="works-title" className="h3-sec">
+      <div className="h3-wrap h3-narrow">
+        <header className="h3-head h3-head-center">
+          <h2 id="works-title" className="h3-h2">
+            {t("h5.works.t")}
+          </h2>
+          <p className="h3-lead">{t("h5.works.sub")}</p>
+        </header>
+        <div className="h3-hub" data-part="hub">
+          <span className="h3-hub-mark" aria-hidden="true">
+            <Mark px={36} />
+          </span>
+          <ul className="h3-hub-chips">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <li key={i} className="h3-hub-chip">
+                <Check size={16} strokeWidth={2.6} aria-hidden="true" />
+                {t(k(`h5.w.${i}`))}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );

@@ -2,7 +2,6 @@
 
 import * as React from "react";
 
-import { useOnViewOnce } from "../home/use-on-view-once";
 import { addScene, inkOf, type Look } from "./scene";
 
 type W = Readonly<Record<string, string>>;
@@ -112,29 +111,10 @@ export function LeakCalc({ w }: { w: W }) {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  // the rupee figure counts up ONCE when it scrolls into view (the final figure is in the page from the start, so nothing flashes or shifts: a sizer holds the final width)
-  const [viewRef, phase] = useOnViewOnce<HTMLDivElement>();
-  const [count, setCount] = React.useState<number | null>(null);
-  const finalLost = React.useRef(0);
   const cold = Math.round((enq * miss) / 100);
   const warm = enq - cold;
   const buyers = Math.round((cold * buy) / 100);
   const lost = buyers * avg;
-  React.useEffect(() => {
-    finalLost.current = lost;
-  });
-  React.useEffect(() => {
-    if (phase !== "played") return;
-    let raf = 0;
-    const t0 = performance.now();
-    const step = (now: number) => {
-      const u = Math.min(1, (now - t0) / 900);
-      setCount(u >= 1 ? null : Math.round(finalLost.current * (1 - (1 - u) ** 3)));
-      if (u < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [phase]);
   const slider = (x: Slider) => (
     <div className="h4-slider" key={x.id}>
       <div className="h4-slider-row">
@@ -176,13 +156,10 @@ export function LeakCalc({ w }: { w: W }) {
             <span className="h4-flow-n">{num(cold)}</span>
           </p>
         </div>
-        <div className="h4-result" aria-live={count === null ? "polite" : "off"} data-part="steps" ref={viewRef} data-phase={phase}>
+        <div className="h4-result" aria-live="polite" data-part="steps">
           <p className="h4-result-n h4-hot">
-            <span className="h4-count-sizer" aria-hidden="true">
-              {inr(lost)}
-            </span>
             <span className="h4-count" data-part="at-stake">
-              {inr(count ?? lost)}
+              {inr(lost)}
             </span>
           </p>
           <p className="h4-result-d">{w["h4.leak.slip"]}</p>

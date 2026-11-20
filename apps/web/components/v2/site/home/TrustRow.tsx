@@ -3,19 +3,17 @@
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useOnViewOnce } from "./use-on-view-once";
 
 type Words = { t1: string; t2: string; t3: string; t4: string; kyc: string; yes: string; added: string; done: string; wait: string };
 
 /**
- * The trust row under the plans: four mini cards, each a tiny live moment of the real product that plays ONCE when the row scrolls into view (calm: opacity and transform, about 1.5 s, "reduce motion" or no JavaScript = the finished state at once):
+ * The trust row under the plans: four mini cards, each a tiny picture of the real product, still (no motion; opacity and transform, about 1.5 s, "reduce motion" or no JavaScript = the finished state at once):
  * the business number filling in with its KYC chip, a consent box ticked and "Added to your list", a STOP and its reply, and the quiet hours holding a late message till morning. The moment is a picture ([data-illustration], hidden from assistive
  * technology); the card's title is the real text and carries the meaning. The numbers are examples (digits are masked); the hours are the business's own, so the card says "till morning", never a fixed time of ours.
  */
 export function TrustRow({ w, moon }: { w: Words; /** The moon, drawn on the server (no icon code for it in the page's script). */ moon: ReactNode }) {
-  const [ref, phase] = useOnViewOnce<HTMLUListElement>();
   return (
-    <ul className="h4-trust" ref={ref} data-phase={phase} data-part="trust">
+    <ul className="h4-trust" data-part="trust">
       <li className="h4-mini" data-trust="1">
         <div className="h4-moment" data-illustration="" aria-hidden="true">
           <span className="h4-num">

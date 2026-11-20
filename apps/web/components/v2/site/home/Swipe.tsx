@@ -2,7 +2,6 @@
 
 import * as React from "react";
 
-import { useOnViewOnce } from "./use-on-view-once";
 
 /**
  * A row of cards that swipes sideways on a phone (scroll-snap, the next card peeks in) and lies side by side from 768 px (design/home4.css). The dots under it say where you are and move the row; they are drawn for the phone only. The row is a
@@ -10,7 +9,6 @@ import { useOnViewOnce } from "./use-on-view-once";
  */
 export function Swipe({ label, dotWord, className = "", children }: { label: string; dotWord: string; className?: string; children: React.ReactNode[] }) {
   const track = React.useRef<HTMLUListElement>(null);
-  const [viewRef, phase] = useOnViewOnce<HTMLDivElement>();
   const [at, setAt] = React.useState(0);
   const slides = (): HTMLElement[] => (track.current ? ([...track.current.children] as HTMLElement[]).sort((a, b) => a.offsetLeft - b.offsetLeft) : []);
   React.useEffect(() => {
@@ -53,7 +51,7 @@ export function Swipe({ label, dotWord, className = "", children }: { label: str
   };
   const n = children.length;
   return (
-    <div className={`h4-swipe ${className}`} ref={viewRef} data-phase={phase}>
+    <div className={`h4-swipe ${className}`}>
       {/* a scrolling region the keyboard can reach (arrow keys scroll it) */}
       <ul ref={track} className="h4-track" aria-label={label} tabIndex={0}>
         {children.map((c, i) => (

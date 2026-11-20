@@ -9,7 +9,7 @@ vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars", teluguFon
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 
 // next/dynamic loads a chunk on the client; a test renders the real components at once
-vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc, BrandDots: (await import("./home2/BrandDots")).BrandDots }));
+vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc }));
 
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -86,11 +86,11 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     const foot = home.match(/<footer[\s\S]*?<\/footer>/)![0];
     expect(home.indexOf("<footer")).toBeGreaterThan(at[7]);
     expect(foot).toContain('data-part="home-footer"');
-    expect(foot).toMatch(/<canvas[^>]*role="img"[^>]*aria-label="Stack19"/); // the dot-matrix wordmark: one image to a screen reader, its name once
+    expect(foot).toMatch(/role="img"[^>]*aria-label="Stack19"/); // the dot-matrix wordmark: one image to a screen reader, its name once
     for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "WhatsApp +91 95023 80998"]) expect(text(foot), l).toContain(l);
     expect(foot).toContain('href="https://wa.me/919502380998?text=Hi%20Stack19%2C%20I&#x27;d%20like%20early%20access."');
     for (const gone of ["greetings", "call", "team", "after", "number", "voices", "sources", "day", "industries", "start", "built"]) expect(home, gone).not.toContain(`id="${gone}"`);
-    expect(home).not.toContain('data-part="greetings"');
+    expect(home.match(/data-part="greetings"/g)).toHaveLength(1); // the greetings band (te, hi, kn, en only: no Tamil greeting)
     expect(home.match(/id="top"/g)).toHaveLength(1);
   });
   it("names no business and links to none: no business-type page address, no list of businesses", () => {
@@ -104,7 +104,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     const hero = home.match(/<section[^>]*aria-labelledby="h1"[\s\S]*?<\/section>/)![0];
     expect(text(hero.match(/<h1[\s\S]*?<\/h1>/)![0]).trim()).toBe("Every enquiry answered. Every call picked up.");
     for (const x of ["Your AI assistant answers calls and WhatsApp in your customer's language.", "Get free early access", "Hear a call"]) expect(text(hero), x).toContain(x);
-    expect(hero).not.toMatch(/h3-pill|data-part="hero-stage"/);
+    expect(hero).not.toMatch(/class="h3-pill"|data-part="hero-stage"/);
     expect(hero).toContain('href="#how-it-works"');
     expect(hero).toMatch(/class="h3-btn h3-btn-main h3-btn-block"[^>]*data-part="hero-cta"|data-part="hero-cta"/);
     expect(home).not.toMatch(/hero-stage|data-source=|h3-stage/); // no orb, no source chips, no canvas for them: the hero goes straight into How it works
@@ -208,7 +208,6 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
   it("the trust row under the plans: four mini cards with a tiny live moment each (a picture, hidden from assistive technology) and the title as real text; the server draws every moment finished; no Voices or Built-in section", () => {
     const plans = home.match(/<section id="pricing"[\s\S]*?<\/section>/)![0];
     const row = plans.match(/<ul class="h4-trust"[\s\S]*?<\/ul>/)![0];
-    expect(row).toContain('data-phase="final"'); // no JavaScript: finished
     expect(row.match(/data-trust="\d"/g)).toHaveLength(4);
     expect(row.match(/data-illustration=""[^>]*aria-hidden="true"|aria-hidden="true"[^>]*data-illustration=""/g)).toHaveLength(4);
     for (const x of ["Your own number", "Only people who said yes", "STOP works at once", "Quiet hours"]) expect(row.match(/<p class="h4-mini-t">([^<]+)<\/p>/g)!.join(" "), x).toContain(x);
@@ -435,7 +434,7 @@ describe("Tamil, a language of the public website only", () => {
     const home = htmlText(render("ta", { kind: "home" }));
     expect(home).toMatch(/[\u0B80-\u0BFF]/);
     expect(home).toContain("WhatsApp");
-    expect(home).toContain("தெலுங்கு · இந்தி · கன்னடம் · ஆங்கிலம்"); // the hero's language line
+    expect(home).toContain("தெலுங்கு · இந்தி · கன்னடம்"); // the hero pill's language names
   });
   it("never says the assistant speaks Tamil: the word Tamil appears only as the name of the language itself (the language switch, one label)", () => {
     for (const [k, v] of Object.entries(siteJson as Record<string, { en: string; ta?: string }>)) {
@@ -470,5 +469,41 @@ describe("free early access on the pricing page (owner's launch scope, 18 Nov)",
     vi.stubEnv("EARLY_ACCESS", "");
     expect(render("en", { kind: "page", page: "pricing" })).not.toContain("use everything free while we open");
     vi.unstubAllEnvs();
+  });
+});
+
+describe("the home page's new pieces (22 Nov 2026): the hero pill and cells, the greetings band, the hub, no motion but the demo and the sweep", () => {
+  const home = render("en", { kind: "home" });
+  const text = (html: string) => htmlText(html).replace(/\s+/g, " ");
+  it("the hero: a pill above the headline that links to the demo's call, then the headline, the line, ONE button and three cells in one row; no language line under the button", () => {
+    const hero = home.match(/<section[^>]*aria-labelledby="h1"[\s\S]*?<\/section>/)![0];
+    expect(hero.indexOf("h3-hero-pill")).toBeLessThan(hero.indexOf("<h1"));
+    expect(hero).toMatch(/<a[^>]*class="h3-hero-pill"[^>]*href="#how-it-works"|<a[^>]*href="#how-it-works"[^>]*class="h3-hero-pill"/);
+    expect(text(hero)).toContain("నమస్కారం · తెలుగు · हिन्दी · ಕನ್ನಡ · English");
+    expect(text(hero)).toContain("Hear a call");
+    for (const x of ["Answers every enquiry in seconds", "Answers your calls day and night", "Follows up on WhatsApp"]) expect(text(hero.match(/<ul class="h3-feats"[\s\S]*?<\/ul>/)![0]), x).toContain(x);
+    expect(hero).not.toContain("h3-hero-plain");
+  });
+  it("the greetings band sits right after the demo and before 'While it talks, it works': four greetings only (Telugu, Hindi, Kannada, English), decoration for a screen reader, the real sentence as text", () => {
+    expect(home.indexOf('id="how-it-works"')).toBeLessThan(home.indexOf('data-part="greetings"'));
+    expect(home.indexOf('data-part="greetings"')).toBeLessThan(home.indexOf('id="works"'));
+    const band = home.match(/<div class="h3-gband"[\s\S]*?<\/div><\/section>/)![0];
+    expect(band).toContain('role="img"');
+    expect(band.match(/data-w="([^"]+)"/g)!.map((m) => m.slice(8, -1)).filter((v, i, a) => a.indexOf(v) === i).sort()).toEqual(["Hello", "नमस्ते", "ನಮಸ್ಕಾರ", "నమస్కారం"].sort());
+    expect(band).not.toMatch(/வணக்கம்|நமஸ்காரம்/); // no Tamil greeting: the assistant does not speak Tamil
+    expect(text(band)).toContain("It answers in the language the customer speaks, including the mixed way people really talk.");
+    expect(band).not.toMatch(/<span[^>]*class="h3-gw"[^>]*>[^<]+</); // the lettering is drawn from data-w: no text node
+  });
+  it("'While it talks, it works': a still hub with the mark and five results, each one the product does today", () => {
+    const hub = home.match(/<section id="works"[\s\S]*?<\/section>/)![0];
+    expect(text(hub)).toContain("While it talks, it works");
+    expect(hub.match(/class="h3-hub-chip"/g)).toHaveLength(5);
+    for (const x of ["WhatsApp sent", "Visit booked", "Added to Today", "Follow-up set", "Owner told"]) expect(text(hub), x).toContain(x);
+  });
+  it("only two things move: no hero rise, no section fades, no count-up, no scatter wordmark, no live-moment classes", () => {
+    const dir = path.join(__dirname, "../../../design");
+    const css = ["home3.css", "home4.css", "footer-mark.css"].map((f) => fs.readFileSync(path.join(dir, f), "utf8").replace(/\/\*[\s\S]*?\*\//g, "")).join("\n");
+    expect(css).not.toMatch(/h3-rise|h4-in\b|animation-timeline|data-phase|h4-count-sizer/);
+    expect(home).not.toMatch(/data-phase="(final|ready|played)"|<canvas[^>]*brand-dots/); // (the demo's own data-phase is its call, chat, fade sequence)
   });
 });

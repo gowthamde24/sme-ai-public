@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
-import { BrandDots } from "@/components/v2/site/LazyIslands";
 import { SupportedBy } from "@/components/v2/site/SupportedBy";
 import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
@@ -10,6 +9,7 @@ import { SITE_LANGS, SITE_LANGUAGE_NAMES } from "@/i18n/site-lang";
 import { isServed } from "@/lib/site/mode";
 import { sitePath, SITE_PAGES, type SitePage } from "@/lib/site/paths";
 
+import { BrandMark } from "./BrandMark";
 import { WithWhatsapp } from "./WithWhatsapp";
 
 const link = "inline-flex min-h-11 min-w-11 items-center text-[15px] font-semibold text-muted hover:text-ink";
@@ -69,8 +69,8 @@ export function HomeFooter({ t, lang }: { t: SiteT; lang: SiteLang; early?: { hr
         </nav>
         <SupportedBy t={t} />
       </div>
-      {/* the dot-matrix wordmark: the logo and the name built from the page's own dots, the letters standing on the page's bottom edge (a lazy island; one image to a screen reader) */}
-      <BrandDots label={BRAND_NAME} rebuild={t("h2.foot.rebuild")} />
+      {/* the dot-matrix wordmark: the logo and the name built from the page's own dots, the letters standing on the page's bottom edge (a still picture in CSS; one image to a screen reader) */}
+      <BrandMark label={BRAND_NAME} />
     </footer>
   );
 }

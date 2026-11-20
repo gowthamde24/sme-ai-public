@@ -7103,8 +7103,10 @@
   "status": {
    "te": "draft",
    "hi": "draft",
-   "kn": "draft"
-  }
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Customer பேசும் மொழியிலேயே பதில் சொல்லும், மக்கள் உண்மையில் கலந்து பேசும் விதத்திலும்."
  },
  "h2.call.title": {
   "en": "Hear a call, or just read it.",
@@ -10600,19 +10602,6 @@
    "ta": "draft"
   }
  },
- "h3.hero.langs": {
-  "en": "Telugu · Hindi · Kannada · English",
-  "te": "తెలుగు · हिन्दी · ಕನ್ನಡ · English",
-  "hi": "తెలుగు · हिन्दी · ಕನ್ನಡ · English",
-  "kn": "తెలుగు · हिन्दी · ಕನ್ನಡ · English",
-  "ta": "தெலுங்கு · இந்தி · கன்னடம் · ஆங்கிலம்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h3.plan.l.who": {
   "en": "Who",
   "te": "ఎవరికి",
@@ -11360,6 +11349,162 @@
   "hi": "उदाहरण",
   "kn": "ಉದಾಹರಣೆ",
   "ta": "எடுத்துக்காட்டு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.pill": {
+  "en": "నమస్కారం · తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "te": "నమస్కారం · తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "hi": "నమస్కారం · తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "kn": "నమస్కారం · తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "ta": "నమస్కారం · தெலுங்கு · இந்தி · கன்னடம் · English",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.f.1": {
+  "en": "Answers every enquiry in seconds",
+  "te": "ప్రతి enquiry కి సెకన్లలో జవాబిస్తుంది",
+  "hi": "हर enquiry का जवाब कुछ ही seconds में",
+  "kn": "ಪ್ರತಿ enquiry ಗೆ ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಉತ್ತರ",
+  "ta": "ஒவ்வொரு enquiry-க்கும் சில விநாடிகளில் பதில்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.f.2": {
+  "en": "Answers your calls day and night",
+  "te": "మీ calls కి పగలూ రాత్రీ జవాబిస్తుంది",
+  "hi": "आपकी calls का जवाब दिन-रात देता है",
+  "kn": "ಹಗಲು ರಾತ್ರಿ ನಿಮ್ಮ calls ಗೆ ಉತ್ತರಿಸುತ್ತದೆ",
+  "ta": "இரவும் பகலும் உங்கள் calls-க்கு பதில் சொல்லும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.f.3": {
+  "en": "Follows up on WhatsApp",
+  "te": "WhatsApp లో follow up చేస్తుంది",
+  "hi": "WhatsApp पर follow up करता है",
+  "kn": "WhatsApp ನಲ್ಲಿ follow up ಮಾಡುತ್ತದೆ",
+  "ta": "WhatsApp-இல் follow up செய்யும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.works.t": {
+  "en": "While it talks, it works",
+  "te": "మాట్లాడుతూనే పని చేస్తుంది",
+  "hi": "बात करते हुए ही काम करता है",
+  "kn": "ಮಾತಾಡುತ್ತಲೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "ta": "பேசும்போதே வேலை செய்யும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.works.sub": {
+  "en": "Every call ends with the next step done.",
+  "te": "ప్రతి call తర్వాతి step తో ముగుస్తుంది.",
+  "hi": "हर call अगले step के साथ खत्म होती है।",
+  "kn": "ಪ್ರತಿ call ಮುಂದಿನ step ನೊಂದಿಗೆ ಮುಗಿಯುತ್ತದೆ.",
+  "ta": "ஒவ்வொரு call-உம் அடுத்த step-உடன் முடியும்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.w.1": {
+  "en": "WhatsApp sent",
+  "te": "WhatsApp పంపింది",
+  "hi": "WhatsApp भेजा",
+  "kn": "WhatsApp ಕಳುಹಿಸಿದೆ",
+  "ta": "WhatsApp அனுப்பப்பட்டது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.w.2": {
+  "en": "Visit booked",
+  "te": "Visit book అయింది",
+  "hi": "Visit book हुई",
+  "kn": "Visit book ಆಗಿದೆ",
+  "ta": "Visit book ஆனது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.w.3": {
+  "en": "Added to Today",
+  "te": "Today లో చేరింది",
+  "hi": "Today में जुड़ा",
+  "kn": "Today ಗೆ ಸೇರಿದೆ",
+  "ta": "Today-இல் சேர்ந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.w.4": {
+  "en": "Follow-up set",
+  "te": "Follow-up పెట్టింది",
+  "hi": "Follow-up तय हुआ",
+  "kn": "Follow-up ಹೊಂದಿಸಿದೆ",
+  "ta": "Follow-up அமைக்கப்பட்டது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.w.5": {
+  "en": "Owner told",
+  "te": "Owner కి చెప్పింది",
+  "hi": "Owner को बताया",
+  "kn": "Owner ಗೆ ತಿಳಿಸಿದೆ",
+  "ta": "Owner-க்கு தெரிவிக்கப்பட்டது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.greet.aria": {
+  "en": "Hello in Telugu, Hindi, Kannada and English",
+  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్ లో నమస్కారం",
+  "hi": "तेलुगु, हिंदी, कन्नड़ और अंग्रेज़ी में नमस्ते",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್ ನಲ್ಲಿ ನಮಸ್ಕಾರ",
+  "ta": "தெலுங்கு, இந்தி, கன்னடம், ஆங்கிலத்தில் வணக்கம்",
   "status": {
    "te": "draft",
    "hi": "draft",

@@ -78,8 +78,6 @@
 [data-ui="v2"] .h4-flow-in .h4-flow-n { color: var(--v2-ink); }
 [data-ui="v2"] .h4-result { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 10px; border-top: 1px solid var(--v2-border); padding: 6px var(--h4-pad) 6px; }
 [data-ui="v2"] .h4-result-n { margin: 0; font-size: 32px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-[data-ui="v2"] .h4-count-sizer { visibility: hidden; }
-[data-ui="v2"] .h4-count { position: absolute; left: 0; top: 0; white-space: nowrap; }
 [data-ui="v2"] .h4-result-n { position: relative; }
 [data-ui="v2"] .h4-result-d { margin: 0; font-size: 15px; line-height: 1.4; color: var(--v2-muted); }
 [data-ui="v2"] .h4-with { display: flex; flex-direction: column; gap: 6px; padding-bottom: 4px; }
@@ -185,21 +183,4 @@
 @media (min-width: 1280px) { [data-ui="v2"] .h4-h2 { font-size: 40px; } }
 
 [data-ui="v2"] .h4-d0 { --i: 0; } [data-ui="v2"] .h4-d1 { --i: 1; } [data-ui="v2"] .h4-d2 { --i: 2; } [data-ui="v2"] .h4-d3 { --i: 3; } [data-ui="v2"] .h4-d4 { --i: 4; }
-/* the tiny live moments: each plays ONCE when its block is 40% in view (components/v2/site/home/use-on-view-once.ts). "final" (no JavaScript, "reduce motion") is the page as drawn above, finished; "ready" is the start (opacity and transform only, nothing changes size);
-   "played" runs to the end. The Pro plan's minutes bar fills; the Lead Finder's rows slide in as the sweep passes; the trust row's moments run one after the other. */
-@media (prefers-reduced-motion: no-preference) {
-  [data-ui="v2"] .h4-trust[data-phase="ready"] .h4-s, [data-ui="v2"] .h4-radar[data-phase="ready"] .h4-fc, [data-ui="v2"] .h4-trust[data-phase="ready"] .h4-tick { opacity: 0; transform: translateY(6px); }
-  [data-ui="v2"] .h4-trust[data-phase="ready"] .h4-tick { transform: scale(0.4); }
-  [data-ui="v2"] .h4-swipe[data-phase="ready"] .h4-minbar span { transform: scaleX(0); }
-  [data-ui="v2"] .h4-trust[data-phase="played"] .h4-s { transition: opacity 400ms ease, transform 400ms ease; transition-delay: calc(var(--i, 0) * 350ms); }
-  [data-ui="v2"] .h4-radar[data-phase="played"] .h4-fc { transition: opacity 500ms ease, transform 500ms ease; transition-delay: calc(0.2s + var(--i, 0) * 0.3s); }
-  [data-ui="v2"] .h4-swipe[data-phase="played"] .h4-minbar span { transition: transform 1500ms cubic-bezier(0.23, 1, 0.32, 1); }
-}
-
-/* a section fades in once as it comes into view (browsers with scroll-driven animations only; elsewhere it is simply there; never with "reduce motion"; and only after the visitor's first scroll (`html[data-moved]`, set by use-on-view-once.ts): a picture of the whole page taken at load shows every section drawn, not held at opacity 0 below the window) */
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    html[data-moved] [data-ui="v2"] .h4-wrap { animation: h4-in linear both; animation-timeline: view(); animation-range: entry 0% entry 30%; }
-  }
-}
-@keyframes h4-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+/* (no motion in these blocks: the trust moments, the plan bar, the rupee figure and the section fades are still; only the Lead Finder's sweep and the phone demo move) */

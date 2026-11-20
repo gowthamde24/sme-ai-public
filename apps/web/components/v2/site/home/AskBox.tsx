@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 
-import { useOnViewOnce } from "./use-on-view-once";
-
 /** One of the example jobs: the words of its plan card, already in the visitor's language (static; nothing is asked of an AI). */
 export type AskJob = { chip: string; who: string; says: string; when: string; keys: string[] };
 
@@ -24,7 +22,6 @@ export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: 
   const [rows, setRows] = useState(4); // how many of the card's four lines are in
   const [pulse, setPulse] = useState(false); // the orb's short pulse before the next example is typed
   const id = useId();
-  const [box, phase] = useOnViewOnce<HTMLDivElement>();
   const timers = useRef<number[]>([]);
   const stop = useCallback(() => {
     timers.current.forEach((t) => window.clearTimeout(t));
@@ -59,27 +56,9 @@ export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: 
     },
     [jobs, later, stop],
   );
-  const started = useRef(false);
-  // "ready": the block waits below the fold, empty (the start state); "played": it was seen once, the example is typed in; "final": reduced motion or no script: it stays whole
-  useEffect(() => {
-    if (started.current) return;
-    if (phase === "ready") {
-      const id = window.setTimeout(() => {
-        setText("");
-        setPicked(null);
-        setRows(0);
-      }, 0);
-      return () => window.clearTimeout(id);
-    }
-    if (phase === "played") {
-      started.current = true;
-      play(0, false);
-    }
-  }, [phase, play]);
   useEffect(() => stop, [stop]);
   // the orb plays a SCRIPTED example (it listens to nothing and sends nothing): a short pulse with the word "Example", then the next sample sentence is typed in and its card fills, as when a chip is tapped
   const playNext = () => {
-    started.current = true;
     stop();
     const next = ((picked ?? -1) + 1) % jobs.length;
     if (reduced()) return play(next, true);
@@ -97,7 +76,7 @@ export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: 
   const job = picked === null ? null : jobs[picked];
   const rowsData = job ? [[words.who, job.who], [words.says, job.says], [words.when, job.when], [words.cost, words.costValue]] : [];
   return (
-    <div className="h3-ask" data-part="ask-box" ref={box}>
+    <div className="h3-ask" data-part="ask-box">
       <label htmlFor={id} className="sr-only">
         {words.label}
       </label>
@@ -107,8 +86,7 @@ export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: 
           value={text}
           onChange={(e) => {
             stop();
-            started.current = true;
-            setPulse(false);
+                    setPulse(false);
             setText(e.target.value);
             const p = fromText(e.target.value);
             setPicked(p);
@@ -132,8 +110,7 @@ export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: 
               className="h3-chip"
               aria-pressed={picked === i}
               onClick={() => {
-                started.current = true;
-                play(i, reduced());
+                            play(i, reduced());
               }}
               data-chip={i + 1}
             >

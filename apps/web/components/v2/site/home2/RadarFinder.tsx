@@ -2,7 +2,6 @@
 
 import * as React from "react";
 
-import { useOnViewOnce } from "../home/use-on-view-once";
 import { addScene, fontOf, isCalm, sceneTime, type Look } from "./scene";
 
 type W = Readonly<Record<string, string>>;
@@ -235,7 +234,6 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
  */
 export function RadarFinder({ w }: { w: W }) {
   const [city, setCity] = React.useState<City>("Hyderabad");
-  const [viewRef, phase] = useOnViewOnce<HTMLDivElement>();
   const live = React.useRef({ city, since: 0 });
   const desk = React.useRef<HTMLCanvasElement>(null);
   const off = React.useRef<(() => void) | undefined>(undefined);
@@ -261,7 +259,7 @@ export function RadarFinder({ w }: { w: W }) {
   };
   const rows = [PINS.find((p) => p.d === "call"), PINS.find((p) => p.d === "ask")].filter((p): p is Pin => p !== undefined);
   return (
-    <div className="h4-radar" data-part="radar" data-city={city} ref={viewRef} data-phase={phase}>
+    <div className="h4-radar" data-part="radar" data-city={city}>
       <div className="h4-panel h4-radar-card">
         <div className="h4-cities-wrap">
           <div role="radiogroup" aria-label={w["h2.finder.city"]} className="h4-cities">

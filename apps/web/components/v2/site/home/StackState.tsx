@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import type { StackChat } from "./chat-types";
-import { afterFirstScroll } from "./use-on-view-once";
+import { afterFirstScroll } from "./first-scroll";
 
 // the pace of one conversation (about 13 s in all): the call's captions one by one, the call ends, the WhatsApp stacks in, it holds, it fades, the next language starts
 const CALL_FIRST = 600;
