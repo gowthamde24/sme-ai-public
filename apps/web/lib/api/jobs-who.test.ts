@@ -10,17 +10,18 @@ vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => h.mode.v }));
 import { mockJobDetail } from "@/lib/jobs/detail-mock";
 import { WIRE_JOBS } from "@/lib/jobs/fixtures";
 import { MOCK_JOBS } from "@/lib/jobs/mock";
-import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES, readSpeaksPatch, speaksBody, speaksPatch, whoSample } from "@/lib/jobs/who";
-import { parseWhoVoices } from "@/lib/api/job-who";
+import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, isWhoVoice, readSpeaksPatch, speaksBody, speaksPatch } from "@/lib/jobs/who";
+import { whoVoicesOf } from "@/lib/api/job-who";
 import { parseSpeaks as parseSpeaksForTest } from "./jobs-parse";
+import { parsePicker } from "@/lib/voice-picker/types";
 
 import { parseJobDetail, parseWho, patchJob } from "./jobs";
 import { parseJobMessage } from "./jobs-parse";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const J = MOCK_JOBS[0].id;
-const speaks = { language: "te", tone: "friendly", voice: "female_warm", number: "shop" };
-const speaksNamed = { ...speaks, voice_name: "Soft woman" };
+const speaks = { language: "te", tone: "friendly", voice: "te-ramya", number: "shop" };
+const speaksNamed = { ...speaks, voice_name: "Ramya" };
 const numbers = [{ key: "shop", masked: "+91 98480 xxx10" }];
 
 beforeEach(() => {
@@ -30,10 +31,10 @@ beforeEach(() => {
 
 describe("Who talks: what the API sends", () => {
   it("reads speaks {language, tone, voice, number} and the numbers the shop has", () => {
-    expect(parseWho(speaks, numbers)).toEqual({ language: "te", tone: "friendly", voice: "female_warm", voiceName: null, number: "shop", numbers: [{ key: "shop", masked: "+91 98480 xxx10" }] });
+    expect(parseWho(speaks, numbers)).toEqual({ language: "te", tone: "friendly", voice: "te-ramya", voiceName: null, number: "shop", numbers: [{ key: "shop", masked: "+91 98480 xxx10" }] });
   });
   it("voice is the catalogue id and voice_name the owner's word for it (the chip shows the NAME); an odd name is not used, never a throw", () => {
-    expect(parseWho(speaksNamed, numbers)).toMatchObject({ voice: "female_warm", voiceName: "Soft woman" });
+    expect(parseWho(speaksNamed, numbers)).toMatchObject({ voice: "te-ramya", voiceName: "Ramya" });
     expect(parseWho({ ...speaks, voice_name: "<b>x</b>" }, numbers)?.voiceName).toBeNull();
     expect(parseWho({ ...speaks, voice_name: 7 }, numbers)?.voiceName).toBeNull();
     expect(parseWho({ ...speaks, voice_name: "x".repeat(41) }, numbers)?.voiceName).toBeNull();
@@ -44,20 +45,19 @@ describe("Who talks: what the API sends", () => {
     expect(WHO_NUMBERS).toEqual(["shop"]);
   });
   it("a job in the list (parseSpeaks) is lenient too: an odd value is null, never a throw, and the voice shows by name", () => {
-    expect(parseSpeaksForTest({ language: "te", voice: "female_warm", voice_name: "Soft woman", number: "shop" })).toEqual({ language: "te", voice: "female_warm", voiceName: "Soft woman", number: "shop" });
-    expect(parseSpeaksForTest({ language: "te", voice: "female_warm", number: "second" })).toEqual({ language: "te", voice: "female_warm", voiceName: null, number: null });
+    expect(parseSpeaksForTest({ language: "te", voice: "te-ramya", voice_name: "Ramya", number: "shop" })).toEqual({ language: "te", voice: "te-ramya", voiceName: "Ramya", number: "shop" });
+    expect(parseSpeaksForTest({ language: "te", voice: "te-ramya", number: "second" })).toEqual({ language: "te", voice: "te-ramya", voiceName: null, number: null });
     expect(parseSpeaksForTest({ language: 7, voice: { a: 1 }, voice_name: ["x"], number: "<x>" })).toEqual({ language: null, voice: null, voiceName: null, number: null });
     expect(parseSpeaksForTest("none")).toBeNull();
     expect(parseSpeaksForTest([])).toBeNull();
   });
-  it("the three voices by name come from the catalogue answer in any of its shapes; unknown ids and odd names are left out", () => {
-    const rows = [{ id: "female_warm", name: "Soft woman", sample: "/v1/x.mp3" }, { id: "female_clear", name: "Bright woman" }, { id: "male_calm", name: "Calm man" }];
-    expect(parseWhoVoices({ voices: rows })).toEqual([{ id: "female_warm", name: "Soft woman" }, { id: "female_clear", name: "Bright woman" }, { id: "male_calm", name: "Calm man" }]);
-    expect(parseWhoVoices(rows)?.length).toBe(3);
-    expect(parseWhoVoices({ languages: [{ language: "te", voices: [rows[0]] }, { language: "en", voices: [rows[0], rows[2]] }] })?.map((v) => v.id)).toEqual(["female_warm", "male_calm"]);
-    expect(parseWhoVoices({ voices: [{ id: "te-janvi", name: "Janvi" }, { id: "male_calm", name: "<x>" }, { id: "male_calm" }] })).toBeNull();
-    expect(parseWhoVoices(null)).toBeNull();
-    expect(parseWhoVoices({ voices: "x" })).toBeNull();
+  it("the voices of a job's card are the voice card's own list (the workspace's gender, by first name and language); the three retired ids are no voices", () => {
+    const picker = parsePicker({ gender: "female", languages: [{ language: "te", default_id: "te-ramya", chosen_id: null, active_id: "te-ramya", voices: [{ id: "te-ramya", name: "Ramya", label: "Warm", gender: "female", default: true, recommended: true, sample_url: "/v1/voice-samples/te-ramya.mp3", sample_ready: true }, { id: "te-kavitha", name: "Kavitha", label: "Calm", gender: "female", default: false, sample_url: "/v1/voice-samples/te-kavitha.mp3", sample_ready: false }, { id: "te-karthik", name: "Karthik", label: "Calm", gender: "male", default: true, sample_url: null }] }] });
+    expect(whoVoicesOf(picker)).toEqual([{ id: "te-ramya", name: "Ramya", language: "te", recommended: true }, { id: "te-kavitha", name: "Kavitha", language: "te", recommended: false }]);
+    expect(whoVoicesOf(null)).toBeNull();
+    expect(whoVoicesOf({ gender: "male", voices: [], choices: {}, active: {}, fake: false })).toBeNull();
+    for (const ok of ["te-ramya", "hi-kabir", "en-janvi"]) expect(isWhoVoice(ok)).toBe(true);
+    for (const gone of ["female_warm", "female_clear", "male_calm", "male_lively", "own_voice", "../x", "", 7]) expect(isWhoVoice(gone)).toBe(false);
   });
   it("a job that does not talk (no speaks) or a word the web does not know draws no card instead of breaking the page", () => {
     expect(parseWho(undefined, numbers)).toBeNull();
@@ -77,11 +77,11 @@ describe("Who talks: what the API sends", () => {
       else {
         expect(d.who, j.kind as string).not.toBeNull();
         expect(d.who?.numbers.map((n) => n.key)).toEqual(["shop"]);
-        expect(d.who?.voiceName, j.kind as string).toMatch(/woman|man/);
+        expect(d.who?.voiceName, j.kind as string).toMatch(/^[A-Z][a-z]+$/);
       }
     }
     const wire = { id: J, kind: "speed_to_lead", custom_name: null, enabled: true, status: "running", result: { code: "calls_today", params: {} }, business_name: "X", cost: { minutes_used: 0, minutes_included: 60, rupees: null }, speaks, numbers };
-    expect(parseJobDetail(wire).who?.voice).toBe("female_warm");
+    expect(parseJobDetail(wire).who?.voice).toBe("te-ramya");
     expect(parseJobDetail({ ...wire, speaks: undefined }).who).toBeNull();
   });
 });
@@ -123,8 +123,10 @@ describe("JobDetail.message {id, title {en, te?}} | null (A8)", () => {
 
 describe("Who talks: the change", () => {
   it("one choice is one patch of closed words; anything else is no patch", () => {
-    expect(speaksPatch("tone", "casual")).toEqual({ tone: "casual" });
-    expect(speaksPatch("voice", "male_calm")).toEqual({ voice: "male_calm" });
+    expect(speaksPatch("tone", "quick")).toEqual({ tone: "quick" });
+    expect(speaksPatch("voice", "hi-kabir")).toEqual({ voice: "hi-kabir" });
+    expect(speaksPatch("voice", "male_calm")).toBeNull(); // the Jobs 1.1 draft ids are retired
+    expect(speaksPatch("tone", "casual")).toBeNull(); // casual is only the owner's own test call
     // the number is not a choice: it is never sent, whatever the word (a PATCH to `second` is 422 setting_invalid)
     expect(speaksPatch("number" as never, "shop")).toBeNull();
     expect(speaksPatch("number" as never, "second")).toBeNull();
@@ -132,11 +134,11 @@ describe("Who talks: the change", () => {
     expect(speaksPatch("language", "customer")).toEqual({ language: "customer" });
     expect(speaksPatch("tone", "Casual")).toBeNull();
     expect(speaksPatch("voice", "own_voice")).toBeNull();
-    for (const [key, list] of [["language", WHO_LANGUAGES], ["tone", WHO_TONES], ["voice", WHO_VOICES]] as const) for (const v of list) expect(speaksPatch(key, v)).toEqual({ [key]: v });
+    for (const [key, list] of [["language", WHO_LANGUAGES], ["tone", WHO_TONES]] as const) for (const v of list) expect(speaksPatch(key, v)).toEqual({ [key]: v });
   });
   it("a patch from outside is read the same way: closed words only, at least one, nothing else", () => {
     expect(readSpeaksPatch({ language: "te" })).toEqual({ language: "te" });
-    expect(readSpeaksPatch({ language: "te", tone: "casual" })).toEqual({ language: "te", tone: "casual" });
+    expect(readSpeaksPatch({ language: "te", tone: "quick" })).toEqual({ language: "te", tone: "quick" });
     expect(readSpeaksPatch({})).toBeNull();
     expect(readSpeaksPatch({ language: "fr" })).toBeNull();
     expect(readSpeaksPatch({ language: "te", extra: "x" })).toBeNull();
@@ -145,26 +147,14 @@ describe("Who talks: the change", () => {
     expect(readSpeaksPatch(null)).toBeNull();
   });
   it("goes on the wire as PATCH /jobs/{id} {speaks: {only what changed}}; mock sends nothing", async () => {
-    expect(speaksBody({ tone: "casual" })).toEqual({ speaks: { tone: "casual" } });
-    await patchJob("tok", T, J, { speaks: { tone: "casual" } });
+    expect(speaksBody({ tone: "quick" })).toEqual({ speaks: { tone: "quick" } });
+    await patchJob("tok", T, J, { speaks: { tone: "quick" } });
     expect(h.req).not.toHaveBeenCalled();
     h.mode.v = "on";
-    h.req.mockResolvedValue({ id: J, kind: "speed_to_lead", custom_name: null, enabled: true, status: "running", result: { code: "calls_today", params: {} }, speaks: { ...speaks, tone: "casual" } });
-    await patchJob("tok", T, J, { speaks: { tone: "casual" } });
+    h.req.mockResolvedValue({ id: J, kind: "speed_to_lead", custom_name: null, enabled: true, status: "running", result: { code: "calls_today", params: {} }, speaks: { ...speaks, tone: "quick" } });
+    await patchJob("tok", T, J, { speaks: { tone: "quick" } });
     const [path, , init] = h.req.mock.calls[0];
     expect([path, init.method]).toEqual([`/v1/tenants/${T}/jobs/${J}`, "PATCH"]);
-    expect(JSON.parse(init.body)).toEqual({ speaks: { tone: "casual" } });
-  });
-});
-
-describe("Who talks: the play buttons reuse the voice sample route", () => {
-  it("builds the route's own query: the voice, a language, warm or crisp, a name only when the route accepts it", () => {
-    expect(whoSample("/s", { language: "te", tone: "friendly" }, "female_warm", "en", "Priya")).toBe("/s?voice=female_warm&lang=te&tone=warm&name=Priya");
-    expect(whoSample("/s", { language: "en", tone: "respectful" }, "male_calm", "te", null)).toBe("/s?voice=male_calm&lang=en&tone=crisp");
-    // the customer's own language: the person's language when a call language, else English
-    expect(whoSample("/s", { language: "customer", tone: "casual" }, "female_clear", "kn", null)).toContain("lang=kn");
-    expect(whoSample("/s", { language: "customer", tone: "casual" }, "female_clear", "de", null)).toContain("lang=en");
-    // a name the route would refuse (a dot or an apostrophe) is left out, the sample still plays
-    expect(whoSample("/s", { language: "te", tone: "friendly" }, "female_warm", "te", "Dr. Rao")).not.toContain("name=");
+    expect(JSON.parse(init.body)).toEqual({ speaks: { tone: "quick" } });
   });
 });

@@ -60,9 +60,8 @@ vi.mock("@/components/v2/app/today/ask/work/LazyWorkPreview", async () => ({ Wor
 // My assistant (design system v6): its interactive parts, and the working parts of Settings it reuses, are lazy chunks on a real page; the snapshot draws them itself
 vi.mock("@/components/v2/app/my-assistant/LazyMyAssistant", async () => ({
   PracticePanel: (await import("@/components/v2/app/my-assistant/PracticePanel")).PracticePanel,
-  VoiceCards: (await import("@/components/v2/app/my-assistant/VoiceCards")).VoiceCards,
+  VoiceCard: (await import("@/components/v2/app/my-assistant/VoiceCard")).VoiceCard,
   VoiceTone: (await import("@/components/v2/app/my-assistant/VoiceTone")).VoiceTone,
-  VoiceSegments: (await import("@/components/v2/app/my-assistant/VoiceSegments")).VoiceSegments,
   TalkToYou: (await import("@/components/v2/app/my-assistant/TalkToYou")).TalkToYou,
   KnowledgeStep: (await import("@/components/v2/app/lead-setup/KnowledgeStep")).KnowledgeStep,
 }));

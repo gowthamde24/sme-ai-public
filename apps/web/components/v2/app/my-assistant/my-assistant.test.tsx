@@ -1,22 +1,16 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 const refresh = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 
-import { appDict } from "@/i18n/app";
-import { CALL_LANG_NAMES } from "@/lib/assistant/types";
-import { MOCK_VOICES, type PickerLang } from "@/lib/voice-picker/types";
 
 import type { TeachActions } from "../ds/TeachThis";
 import { GoLiveButton, type GoLiveAct } from "./GoLiveButton";
 import { GoLivePanel } from "./GoLivePanel";
 import { TrainSections } from "./TrainSections";
 import { PracticePanel } from "./PracticePanel";
-import { inUseId, SOUNDS, voiceFor } from "./sounds";
 import { SECTIONS, TABS, fixHref, sectionOf, tabHref, tabOf, tabUsesDefaults } from "./tabs";
-import { VoiceCards } from "./VoiceCards";
-import { VoiceSegments } from "./VoiceSegments";
 
 const BASE = "/app/tenants/t1";
 afterEach(() => {
@@ -163,133 +157,6 @@ describe("the Go live tab", () => {
     render(<GoLivePanel base={BASE} status={null} button={null} mock={false} />);
     expect(document.querySelector('[data-part="empty-next"]')).toHaveTextContent("Status is not available yet");
     expect(screen.getByRole("link", { name: "Open Settings" })).toHaveAttribute("href", `${BASE}/settings?section=business`);
-  });
-});
-
-describe("the three sounds", () => {
-  it("are Warm, Calm, Bright; a card's voice is of the workspace's gender, preferring the one in use, then the sound as first tag", () => {
-    expect(SOUNDS).toEqual(["warm", "calm", "bright"]);
-    expect(voiceFor(MOCK_VOICES, "warm", "te", "female", null)?.id).toBe("te-ramya");
-    expect(voiceFor(MOCK_VOICES, "bright", "te", "female", null)?.id).toBe("te-sindhu");
-    expect(voiceFor(MOCK_VOICES, "calm", "te", "male", null)?.id).toBe("te-kiran");
-    // kn: Disha is [warm, calm] and the only female with both; the one in use wins
-    expect(voiceFor(MOCK_VOICES, "calm", "kn", "female", "kn-disha")?.id).toBe("kn-disha");
-  });
-  it("a sound no voice of the gender has in the language is null (a voice of the other gender would not take effect)", () => {
-    expect(voiceFor(MOCK_VOICES, "calm", "te", "female", null)).toBeNull();
-    expect(voiceFor(MOCK_VOICES, "bright", "hi", "male", null)).toBeNull();
-  });
-  it("the voice in use is the chosen one of the gender, else the default", () => {
-    expect(inUseId(MOCK_VOICES, {}, "te", "female")).toBe("te-ramya");
-    expect(inUseId(MOCK_VOICES, { te: "te-sindhu" }, "te", "female")).toBe("te-sindhu");
-    expect(inUseId(MOCK_VOICES, { te: "te-kiran" }, "te", "female")).toBe("te-ramya");
-  });
-});
-
-describe("the voice cards", () => {
-  type Fake = { src: string; play: ReturnType<typeof vi.fn>; pause: ReturnType<typeof vi.fn>; onended: (() => void) | null; onerror: (() => void) | null };
-  let made: Fake[] = [];
-  beforeEach(() => {
-    made = [];
-    vi.stubGlobal("Audio", function (this: Fake, src: string) {
-      this.src = src;
-      this.play = vi.fn(async () => undefined);
-      this.pause = vi.fn();
-      this.onended = null;
-      this.onerror = null;
-      made.push(this);
-    });
-  });
-  const draw = (over: Partial<{ canEdit: boolean; mock: boolean; choices: Partial<Record<PickerLang, string | null>>; choose: (l: PickerLang, v: string | null) => Promise<{ ok: true } | { ok: false; error: string }> }> = {}) => {
-    const choose = over.choose ?? vi.fn(async () => ({ ok: true as const }));
-    render(<VoiceCards voices={MOCK_VOICES} choices={over.choices ?? {}} gender="female" languages={["te", "kn", "en", "hi"]} first="te" langNames={CALL_LANG_NAMES} canEdit={over.canEdit ?? true} endpoint={`${BASE}/voice-pick`} mock={over.mock ?? false} choose={choose} />);
-    return choose;
-  };
-  const card = (s: string) => document.querySelector(`[data-sound="${s}"]`) as HTMLElement;
-
-  it("draws three cards named by their sound, with no person's name anywhere", () => {
-    draw();
-    expect([...document.querySelectorAll("[data-sound]")].map((c) => c.getAttribute("data-sound"))).toEqual(["warm", "calm", "bright"]);
-    expect(within(card("warm")).getByRole("heading")).toHaveTextContent("Warm");
-    const text = document.body.textContent ?? "";
-    for (const v of MOCK_VOICES) expect(text).not.toContain(v.name);
-  });
-  it("marks the voice in use; the default of the gender is in use until another is chosen", () => {
-    draw();
-    expect(card("warm")).toHaveAttribute("data-selected", "true");
-    expect(card("warm")).toHaveTextContent("In use");
-    expect(card("bright")).toHaveAttribute("data-selected", "false");
-    expect(within(card("bright")).getByRole("button", { name: "Use this sound" })).toBeInTheDocument();
-  });
-  it("a sound the language does not have is said so, not drawn empty", () => {
-    draw();
-    expect(card("calm")).toHaveTextContent("No voice with this sound in this language yet.");
-    expect(within(card("calm")).queryByRole("button")).toBeNull();
-  });
-  it("Hear greeting plays the recorded sample of that card's voice through the app's own route, one at a time; again stops it", () => {
-    draw();
-    fireEvent.click(within(card("warm")).getByRole("button", { name: /Hear greeting/ }));
-    expect(made).toHaveLength(1);
-    expect(made[0].src).toBe(`${BASE}/voice-pick?id=te-ramya`);
-    expect(made[0].play).toHaveBeenCalled();
-    fireEvent.click(within(card("bright")).getByRole("button", { name: /Hear greeting/ }));
-    expect(made[0].pause).toHaveBeenCalled();
-    expect(made[1].src).toBe(`${BASE}/voice-pick?id=te-sindhu`);
-    fireEvent.click(within(card("bright")).getByRole("button", { name: /Stop/ }));
-    expect(made[1].pause).toHaveBeenCalled();
-  });
-  it("a sample that cannot play is said", async () => {
-    draw();
-    fireEvent.click(within(card("warm")).getByRole("button", { name: /Hear greeting/ }));
-    act(() => made[0].onerror?.());
-    expect(screen.getByRole("alert")).toBeInTheDocument();
-  });
-  it("Use this sound saves the voice for the language shown (the default as 'back to default'), says so and redraws", async () => {
-    const choose = draw();
-    fireEvent.click(within(card("bright")).getByRole("button", { name: "Use this sound" }));
-    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Sound saved."));
-    expect(choose).toHaveBeenCalledWith("te", "te-sindhu");
-    // the status line and the selected card are separate state updates: wait for the card too (it was flaky on a loaded runner)
-    await waitFor(() => expect(card("bright")).toHaveAttribute("data-selected", "true"), { timeout: 4000 });
-    expect(card("warm")).toHaveAttribute("data-selected", "false");
-    expect(refresh).toHaveBeenCalled();
-    fireEvent.click(within(card("warm")).getByRole("button", { name: "Use this sound" }));
-    await waitFor(() => expect(choose).toHaveBeenLastCalledWith("te", null));
-  });
-  it("a refused save goes back to the previous choice and says so", async () => {
-    draw({ choose: vi.fn(async () => ({ ok: false as const, error: "down" })) });
-    fireEvent.click(within(card("bright")).getByRole("button", { name: "Use this sound" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("Could not save the sound");
-    expect(card("warm")).toHaveAttribute("data-selected", "true");
-  });
-  it("another language draws its own voices; a person who cannot edit gets no Use button; the test mode says the sounds are tones", () => {
-    draw({ canEdit: false, mock: true });
-    fireEvent.click(screen.getByRole("button", { name: CALL_LANG_NAMES.hi }));
-    expect(card("calm")).toHaveAttribute("data-selected", "true"); // Hindi: the default (calm) is in use
-    expect(card("warm")).toHaveAttribute("data-selected", "false");
-    fireEvent.click(within(card("warm")).getByRole("button", { name: /Hear greeting/ }));
-    expect(made[0].src).toBe(`${BASE}/voice-pick?id=hi-esha`);
-    expect(screen.queryByRole("button", { name: "Use this sound" })).toBeNull();
-    expect(screen.getByText(appDict("en")["vp.mock"] as string)).toBeInTheDocument();
-  });
-});
-
-describe("the segmented control over how it speaks", () => {
-  it("shows one part at a time (Tone first); the parts are chosen by data-seg, which design/ds.css turns into hiding", () => {
-    render(
-      <VoiceSegments>
-        <p>panel</p>
-      </VoiceSegments>,
-    );
-    const group = screen.getByRole("group", { name: "Fine-tune how it speaks" });
-    expect([...group.querySelectorAll("button")].map((b) => b.textContent)).toEqual(["Tone", "Words", "Region", "Addresses"]);
-    expect(document.querySelector("[data-seg]")).toHaveAttribute("data-seg", "tone");
-    expect(screen.getByRole("button", { name: "Tone" })).toHaveAttribute("aria-pressed", "true");
-    fireEvent.click(screen.getByRole("button", { name: "Addresses" }));
-    expect(document.querySelector("[data-seg]")).toHaveAttribute("data-seg", "address");
-    expect(screen.getByRole("button", { name: "Addresses" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "Tone" })).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByText("panel")).toBeInTheDocument();
   });
 });
 

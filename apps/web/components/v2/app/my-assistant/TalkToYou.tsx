@@ -132,7 +132,7 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
   const call = callFor(prefs.address, ownerFirst, (name) => t(`vt.me.call.${prefs.address}` as "vt.me.call.garu", { name }));
   const example = exampleFor(lang, prefs.style as Style, call);
   const chosen = (field: Exclude<Field, "voice">) => (value: string) => value !== prefs[field] && choose(field, value);
-  const nameOf = (v: TalkVoice) => (v.sound ? t(`mya.v.${v.sound}` as "mya.v.warm") : v.name);
+  const nameOf = (v: TalkVoice) => v.name;
   const hearPlaying = playing !== null;
 
   return (

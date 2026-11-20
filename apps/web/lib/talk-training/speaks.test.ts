@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import { parseHowSpeaks, speaksProblem, speaksToApi, toneFromLegacy } from "./speaks";
 
-const lang = (style = "everyday_mixed", region = "neutral") => ({ style, region, saved: false, examples: "approved" });
+const lang = (style = "everyday_mixed") => ({ style, saved: false, examples: "approved" });
 const RAW = (over: Record<string, unknown> = {}) => ({
-  tone: { value: "friendly", source: "saved", pack_default: "friendly", options: ["respectful", "friendly"] },
+  tone: { value: "friendly", source: "saved", pack_default: "friendly", options: ["friendly", "respectful", "quick"] },
   words: { languages: { te: lang(), kn: lang(), hi: lang(), ta: lang(), en: lang(), ml: lang() }, options: {} },
   introduce_as: { kind: "owner", text: "Gowtham", owner_name: "Gowtham" },
   pack_defaults: { tone: "friendly" },
@@ -14,11 +14,12 @@ const RAW = (over: Record<string, unknown> = {}) => ({
 });
 
 describe("How your assistant speaks (C1's fixed contract): the shapes and the rules", () => {
-  it("reads the object; formal is shown as everyday_pure; a region of another language is neutral; an odd answer is null", () => {
-    const h = parseHowSpeaks(RAW({ words: { languages: { te: lang("formal", "telangana"), kn: lang("everyday_pure", "telangana"), hi: lang(), ta: lang(), en: lang(), ml: lang() }, options: {} } }));
+  it("reads the object; formal is shown as everyday_pure; the three tones; an odd answer is null", () => {
+    const h = parseHowSpeaks(RAW({ words: { languages: { te: lang("formal"), kn: lang("everyday_pure"), hi: lang(), ta: lang(), en: lang(), ml: lang() }, options: {} } }));
     expect(h).toMatchObject({ tone: { value: "friendly", source: "saved", packDefault: "friendly" }, introduceAs: { kind: "owner", text: "Gowtham", ownerName: "Gowtham" }, legacyAddress: "garu" });
-    expect(h?.words.te).toMatchObject({ style: "everyday_pure", region: "telangana" }); // formal is hidden: read as everyday_pure
-    expect(h?.words.kn.region).toBe("neutral"); // telangana is not a Kannada region
+    expect(h?.words.te).toMatchObject({ style: "everyday_pure" }); // formal is hidden: read as everyday_pure
+    expect(h?.words.te).not.toHaveProperty("region"); // there is no Region any more (C1, 21 Nov 2026)
+    expect(parseHowSpeaks(RAW({ tone: { value: "quick", source: "saved", pack_default: "friendly" } }))?.tone.value).toBe("quick");
     expect(parseHowSpeaks(RAW({ tone: { value: "casual", source: "saved", pack_default: "friendly" } }))).toBeNull(); // casual is not a tone here
     expect(parseHowSpeaks(RAW({ introduce_as: { kind: "robot" } }))).toBeNull();
     expect(parseHowSpeaks({ nope: 1 })).toBeNull();
@@ -30,13 +31,19 @@ describe("How your assistant speaks (C1's fixed contract): the shapes and the ru
     expect(toneFromLegacy(null, "respectful")).toBe("respectful"); // a school that never touched it is not forced to Friendly
     for (const a of ["sir_madam", "garu", "ji"] as const) expect(toneFromLegacy(a, "friendly")).toBe("respectful");
   });
-  it("a change is checked with the contract's rules: tone respectful, friendly or null (never casual), words per language with its own regions, Introduce as with its rules", () => {
+  it("a change is checked with the contract's rules: tone friendly, respectful, quick or null (never casual), words per language, the background, the AI switch, Introduce as with its rules", () => {
     expect(speaksProblem({ tone: "respectful" })).toBeNull();
     expect(speaksProblem({ tone: null })).toBeNull();
     expect(speaksProblem({ tone: "casual" })).toBe("tone");
-    expect(speaksProblem({ words: { te: { style: "everyday_pure", region: "telangana" }, ta: { region: "kongu" } } })).toBeNull();
+    expect(speaksProblem({ tone: "quick" })).toBeNull();
+    expect(speaksProblem({ words: { te: { style: "everyday_pure" }, ta: { style: "everyday_mixed" } } })).toBeNull();
     expect(speaksProblem({ words: { te: { style: "formal" } } })).toBe("style");
-    expect(speaksProblem({ words: { kn: { region: "coastal" } } })).toBe("region");
+    expect(speaksProblem({ words: { kn: { region: "coastal" } } })).toBe("language"); // Region is gone
+    expect(speaksProblem({ background: "shop" })).toBeNull();
+    expect(speaksProblem({ background: null })).toBeNull();
+    expect(speaksProblem({ background: "stadium" })).toBe("background");
+    expect(speaksProblem({ sayAi: true })).toBeNull();
+    expect(speaksProblem({ sayAi: "yes" })).toBe("say_ai");
     expect(speaksProblem({ words: { ml: { style: "everyday_pure" } } })).toBe("language");
     expect(speaksProblem({ words: { te: {} } })).toBe("language");
     expect(speaksProblem({ introduceAs: { kind: "custom", text: "Gowtham's AI assistant" } })).toBeNull();
@@ -45,8 +52,21 @@ describe("How your assistant speaks (C1's fixed contract): the shapes and the ru
     expect(speaksProblem({ tone: "friendly", extra: 1 })).toBe("empty");
     expect(speaksProblem(null)).toBe("empty");
   });
-  it("the PUT body is the contract's own: tone, words by language, introduce_as; null resets the tone", () => {
-    expect(speaksToApi({ tone: null, words: { te: { region: "coastal" } }, introduceAs: { kind: "business", text: null } })).toEqual({ tone: null, words: { te: { region: "coastal" } }, introduce_as: { kind: "business", text: null } });
+  it("the PUT body is the contract's own: tone, words by language, introduce_as, background, say_ai_when_greeting; null resets", () => {
+    expect(speaksToApi({ tone: null, words: { te: { style: "everyday_pure" } }, introduceAs: { kind: "business", text: null } })).toEqual({ tone: null, words: { te: { style: "everyday_pure" } }, introduce_as: { kind: "business", text: null } });
+    expect(speaksToApi({ background: "shop", sayAi: true })).toEqual({ background: "shop", say_ai_when_greeting: true });
+    expect(speaksToApi({ background: null, sayAi: null })).toEqual({ background: null, say_ai_when_greeting: null });
     expect(speaksToApi({})).toEqual({});
+  });
+  it("background and the AI switch are read when the API has them and are null when it has not (nothing is drawn then)", () => {
+    expect(parseHowSpeaks(RAW())).toMatchObject({ background: null, sayAi: null });
+    const bg = { value: "shop", saved: true, options: [{ id: "quiet_office", label: { en: "Quiet office", te: "ప్రశాంతమైన ఆఫీస్" } }, { id: "shop", label: { en: "Shop" } }, { id: "off", label: { en: "Off" } }, { id: "stadium", label: { en: "Stadium" } }] };
+    const h = parseHowSpeaks(RAW({ background: bg, say_ai_when_greeting: { value: true, saved: true } }));
+    expect(h?.background).toMatchObject({ value: "shop", saved: true });
+    expect(h?.background?.options.map((o) => o.id)).toEqual(["quiet_office", "shop", "off"]); // a word the web does not know is left out
+    expect(h?.background?.options[0].label.te).toBe("ప్రశాంతమైన ఆఫీస్");
+    expect(h?.sayAi).toEqual({ value: true, saved: true });
+    expect(parseHowSpeaks(RAW({ background: { value: "stadium", options: [] } }))?.background).toBeNull();
+    expect(parseHowSpeaks(RAW({ say_ai_when_greeting: { value: "yes" } }))?.sayAi).toBeNull();
   });
 });

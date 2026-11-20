@@ -29,19 +29,21 @@ beforeEach(() => {
 
 describe("Who talks: the change of how a job sounds (Owner and Admin only)", () => {
   it("asks the API with exactly the patch the adapter defines", async () => {
-    expect(await setJobSpeaksAction(T, J, speaksPatch("tone", "casual"))).toEqual({ ok: true, data: patched });
-    expect(api.patchJob).toHaveBeenCalledWith("tok", T, J, { speaks: { tone: "casual" } });
+    expect(await setJobSpeaksAction(T, J, speaksPatch("tone", "quick"))).toEqual({ ok: true, data: patched });
+    expect(api.patchJob).toHaveBeenCalledWith("tok", T, J, { speaks: { tone: "quick" } });
     await setJobSpeaksAction(T, J, { language: "te" });
     expect(api.patchJob).toHaveBeenLastCalledWith("tok", T, J, { speaks: { language: "te" } });
+    await setJobSpeaksAction(T, J, { voice: "te-ramya" }); // a catalogue voice id (voices-tones.md section 9)
+    expect(api.patchJob).toHaveBeenLastCalledWith("tok", T, J, { speaks: { voice: "te-ramya" } });
   });
   it("closed words only: anything else never reaches the API", async () => {
-    for (const bad of [{}, { language: "fr" }, { voice: "own_voice" }, { tone: "casual", x: 1 }, null, "te", ["te"]]) expect(await setJobSpeaksAction(T, J, bad)).toMatchObject({ ok: false, kind: "invalid" });
-    expect(await setJobSpeaksAction(T, "not-a-uuid", { tone: "casual" })).toMatchObject({ ok: false, kind: "invalid" });
+    for (const bad of [{}, { language: "fr" }, { voice: "own_voice" }, { voice: "female_warm" }, { tone: "casual" }, { tone: "casual", x: 1 }, null, "te", ["te"]]) expect(await setJobSpeaksAction(T, J, bad)).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await setJobSpeaksAction(T, "not-a-uuid", { tone: "quick" })).toMatchObject({ ok: false, kind: "invalid" });
     expect(api.patchJob).not.toHaveBeenCalled();
   });
   it("Sales and Viewer are refused", async () => {
     fetchTenant.mockResolvedValue({ role: "sales" });
-    expect(await setJobSpeaksAction(T, J, { tone: "casual" })).toMatchObject({ ok: false, kind: "forbidden" });
+    expect(await setJobSpeaksAction(T, J, { tone: "quick" })).toMatchObject({ ok: false, kind: "forbidden" });
     expect(api.patchJob).not.toHaveBeenCalled();
   });
 });
@@ -49,7 +51,7 @@ describe("Who talks: the change of how a job sounds (Owner and Admin only)", () 
 describe("JOBS off", () => {
   it("Who talks changes nothing: invalid, and the person, the role and the API are not asked", async () => {
     vi.stubEnv("JOBS", "");
-    expect(await setJobSpeaksAction(T, J, speaksPatch("tone", "casual"))).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await setJobSpeaksAction(T, J, speaksPatch("tone", "quick"))).toMatchObject({ ok: false, kind: "invalid" });
     expect(requireUser).not.toHaveBeenCalled();
     expect(fetchTenant).not.toHaveBeenCalled();
     expect(api.patchJob).not.toHaveBeenCalled();

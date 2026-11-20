@@ -10,9 +10,9 @@ Sections
 <select label="SectionsKnowledgeVoice & toneRulesPractice">
   options: Knowledge=knowledge | Voice & tone=voice* | Rules=rules | Practice=practice
 Using defaults
-{label="How your assistant sounds"}
-## How your assistant sounds
-Test mode: these choices are kept in this browser only. Nothing is sent to your assistant yet. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
+{label="Your assistant's voice"}
+## Your assistant's voice
+Pick a voice for each language. Customers hear it on calls. Test mode: these choices are kept in this browser only. Nothing is sent to your assistant yet. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
 {role=group label="Language"}
 [button type=button: తెలుగు]
 [button type=button: English]
@@ -20,18 +20,41 @@ Test mode: these choices are kept in this browser only. Nothing is sent to your 
 [button type=button: ಕನ್ನಡ]
 legend: Voice
 {role=radiogroup label="Voice"}
-<radio name=vt-voice label="WarmIn useFriendly and close, like a neighbour." value=warm checked>
-Warm In use Friendly and close, like a neighbour.
-[button type=button: Play: Warm]
-<radio name=vt-voice label="CalmNo voice with this sound in this language yet." disabled value=calm>
-Calm No voice with this sound in this language yet.
-<radio name=vt-voice label="BrightQuick and cheerful, full of energy." value=bright>
-Bright Quick and cheerful, full of energy.
-[button type=button: Play: Bright]
-Speak to customers:
-<select label="Speak to customers: …">
-  options: Respectful=respectful | Friendly (the usual)=friendly*
-For example: “ Hi Ravi, … ” Greeting
+<radio name=vc-voice label="RamyaWomanRecommendedIn use" value=te-ramya checked>
+Ramya Woman Recommended In use
+[button type=button: Hear Ramya]
+<radio name=vc-voice label="KavithaWoman" value=te-kavitha>
+Kavitha Woman
+[button type=button: Hear Kavitha]
+legend: How it talks
+{role=radiogroup label="How it talks"}
+<radio name=vc-tone label="FriendlyRelaxed and warm." value=friendly checked>
+Friendly Relaxed and warm.
+<radio name=vc-tone label="RespectfulPolite, a little more formal." value=respectful>
+Respectful Polite, a little more formal.
+<radio name=vc-tone label="Short and quickThe answer first, in a few words." value=quick>
+Short and quick The answer first, in a few words.
+For example: “ హాయ్! శనివారం షాప్‌కి వస్తారా? ” This example wording is a draft.
+legend: Background sound
+{role=radiogroup label="Background sound"}
+<radio name=vc-bg label="Quiet office" value=quiet_office checked>
+Quiet office
+<radio name=vc-bg label="Shop" value=shop>
+Shop
+<radio name=vc-bg label="Off" value=off>
+Off
+A very quiet sound behind the voice on calls.
+[button type=button: Say 'AI assistant' when greeting]
+If a customer asks, it always says it's your AI assistant. [Test call to my phone](/app/tenants/22222222-2222-2222-2222-222222222222/calls?test=1) We call your own phone, so you hear it the way a customer does.
+{label="Greeting and more choices"}
+## Greeting and more choices
+Test mode: these choices are kept in this browser only. Nothing is sent to your assistant yet.
+{role=group label="Language"}
+[button type=button: English]
+[button type=button: తెలుగు]
+[button type=button: हिन्दी]
+[button type=button: ಕನ್ನಡ]
+Greeting
 {role=textbox label="Greeting"} నమస్కారం the customer's name గారూ, నేను your assistant's name , your shop name AI assistant . ఒక్క నిమిషం మాట్లాడొచ్చా?
 <textarea maxlength=200>
 [button type=button: Add the customer's name]
@@ -61,6 +84,8 @@ Never say Words or phrases your assistant must never speak. Every line is checke
 <text label="Never say 1" maxlength=80 value=guaranteed>
 [button type=button: Remove 1]
 [button type=button: Add a phrase]
+Say it like this Your business's own words, used on every call. If you like, also the word each one replaces. Up to 20.
+[button type=button: Add a word]
 Questions to ask What to find out, one at a time, in this order. Up to 8.
 {label="Questions to ask"}
 - 1 .
@@ -76,15 +101,16 @@ Your assistant answers
 [button type=button: Add an answer]
 Good answers A few answers the way you would give them. Your assistant copies the tone and length, not the words. Up to 5.
 [button type=button: Add an example]
-Always on (you can't change these)
+In its instructions What your assistant is told about words on every call. A saved change counts from the next call. Never say
+- "guaranteed"
+Say it like this Nothing yet. Always on (you can't change these)
 - Always says it is an AI assistant.
 [button type=button disabled: Save]
 {label="Practice"}
 ## Practice
 Try your assistant the way a customer would.
 [button type=button: Talk now]
-[button type=button disabled: Call my phone]
-Test calls are not switched on here.
+[Call my phone](/app/tenants/22222222-2222-2222-2222-222222222222/calls?test=1) Rings a phone on the test list. Never a customer.
 {label="Your assistant's answers"}
 ### Your assistant's answers
 Press Talk now, or type what a customer would ask.

@@ -5,7 +5,7 @@ import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { checkJobName, effectOf, fmtMinutes, JOB_NAME_MAX, type JobDetail } from "@/lib/jobs/detail";
 import { jobNameKey } from "@/lib/jobs/types";
-import { WHO_LANGUAGES, WHO_TONES, WHO_VOICES, speaksPatch, whoSample, type JobWho, type Speaks, type SpeaksKey, type SpeaksPatch, type WhoVoice } from "@/lib/jobs/who";
+import { WHO_LANGUAGES, WHO_TONES, speaksPatch, type JobWho, type Speaks, type SpeaksKey, type SpeaksPatch, type WhoVoice } from "@/lib/jobs/who";
 
 import { JobChip } from "../../ds/JobChip";
 import { Radio } from "../../ds/Tick";
@@ -32,7 +32,7 @@ export type WhoTalksProps = {
   t: Say;
   canChange?: boolean;
   uiLang: string;
-  /** Our own voice sample route (`<workspace>/voice-sample`) when it is on; null = no play buttons. */
+  /** This workspace's `voice-pick` route (the recorded sample of one voice) when it is on; null = no play buttons. */
   sampleEndpoint?: string | null;
   /** One change of how it sounds: the patch the adapter defines; the answer is whether it was saved (and why not). */
   onChange?: (patch: SpeaksPatch) => Promise<{ ok: true } | { ok: false; error: string }>;
@@ -116,7 +116,7 @@ export function WhoTalks(p: WhoTalksProps) {
     if (playing === voice) return setPlaying(null);
     if (!sampleUrl) return;
     setSampleError(false);
-    const a = new Audio(whoSample(sampleUrl, now, voice, p.uiLang, p.customName));
+    const a = new Audio(`${sampleUrl}?id=${encodeURIComponent(voice)}&tone=${now.tone}`); // (a voice with no recording is spoken live in this tone)
     audio.current = a;
     a.onended = () => setPlaying((cur) => (cur === voice ? null : cur));
     a.onerror = () => (setPlaying(null), setSampleError(true));
@@ -137,8 +137,9 @@ export function WhoTalks(p: WhoTalksProps) {
   // the number is the shop's, and only that (the second number is not a product): a plain word in the sentence, never a choice
   const numberText = t("jobs.who.number.shop");
   const masked = who.numbers.find((n) => n.key === "shop")?.masked ?? null;
-  // a voice's name: the catalogue's own word for it when the page read it (`GET /ai-assistant/voices`), else ours
-  const voiceName = (v: WhoVoice) => p.extra?.voices?.find((x) => x.id === v)?.name ?? t(`jobs.who.voice.${v}`);
+  // the voices of the language this job speaks ("the customer's language" offers the app's own), by their first names: the same list as the voice card (`GET /ai-assistant/voices`); none read = no list
+  const voiceLang = now.language === "customer" ? (["te", "hi", "kn", "en"].includes(p.uiLang) ? p.uiLang : "en") : now.language;
+  const voices = (p.extra?.voices ?? []).filter((v) => v.language === voiceLang);
   const label = (n: number) => `${plainSentence} (${n})`;
   const parts: Record<string, () => ReactNode> = {
     language: () => <PillSelect label={label(1)} value={now.language} options={WHO_LANGUAGES} optionText={(v) => t(`jobs.opt.language.${v}`)} disabled={off} onChange={(v) => void choose("language", v)} />,
@@ -223,27 +224,25 @@ export function WhoTalks(p: WhoTalksProps) {
         </p>
       ) : null}
 
-      <fieldset data-part="who-voices" className="m-0 mt-3 min-w-0 border-0 p-0">
-        <legend className="mb-1 p-0 text-[12px] font-bold uppercase tracking-wider text-muted">{t("jobs.who.voice")}</legend>
-        <div className="flex flex-col">
-          {WHO_VOICES.map((v) => (
-            <div key={v} data-voice={v} className="flex items-center gap-2">
-              <Radio className="min-w-0 flex-1" name={`who-voice-${jobId}`} value={v} checked={now.voice === v} disabled={off} onChange={() => void choose("voice", v)} label={<span className="text-[16px] font-semibold text-ink">{voiceName(v)}</span>} sub={t(`jobs.who.voice.${v}.d`)} />
-              {sampleUrl ? (
-                <button type="button" data-play={v} aria-pressed={playing === v} aria-label={`${t(playing === v ? "jobs.who.stop" : "jobs.who.play")}: ${voiceName(v)}`} onClick={() => play(v)} className={`${jobBtnQuiet} shrink-0`}>
-                  {playing === v ? <Pause aria-hidden="true" className="size-4" /> : <Play aria-hidden="true" className="size-4" />}
-                  {t(playing === v ? "jobs.who.stop" : "jobs.who.play")}
-                </button>
-              ) : null}
-            </div>
-          ))}
-        </div>
-        {sampleUrl ? (
-          <p className="m-0 mt-1 text-[13px] text-muted">
-            {sampleError ? t("jobs.who.sample.err") : t("jobs.who.sample.note")}
-          </p>
-        ) : null}
-      </fieldset>
+      {voices.length > 0 ? (
+        <fieldset data-part="who-voices" className="m-0 mt-3 min-w-0 border-0 p-0">
+          <legend className="mb-1 p-0 text-[12px] font-bold uppercase tracking-wider text-muted">{t("jobs.who.voice")}</legend>
+          <div className="flex flex-col">
+            {voices.map((v) => (
+              <div key={v.id} data-voice={v.id} className="flex items-center gap-2">
+                <Radio className="min-w-0 flex-1" name={`who-voice-${jobId}`} value={v.id} checked={now.voice === v.id} disabled={off} onChange={() => void choose("voice", v.id)} label={<span className="text-[16px] font-semibold text-ink">{v.name}</span>} sub={v.recommended ? t("jobs.who.voice.recommended") : undefined} />
+                {sampleUrl ? (
+                  <button type="button" data-play={v.id} aria-pressed={playing === v.id} aria-label={`${t(playing === v.id ? "jobs.who.stop" : "jobs.who.play")}: ${v.name}`} onClick={() => play(v.id)} className={`${jobBtnQuiet} shrink-0`}>
+                    {playing === v.id ? <Pause aria-hidden="true" className="size-4" /> : <Play aria-hidden="true" className="size-4" />}
+                    {t(playing === v.id ? "jobs.who.stop" : "jobs.who.play")}
+                  </button>
+                ) : null}
+              </div>
+            ))}
+          </div>
+          {sampleUrl ? <p className="m-0 mt-1 text-sm text-muted">{sampleError ? t("jobs.who.sample.err") : t("jobs.who.sample.note")}</p> : null}
+        </fieldset>
+      ) : null}
 
       {effectText ? (
         <div data-part="who-effect" className="mt-3 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink">

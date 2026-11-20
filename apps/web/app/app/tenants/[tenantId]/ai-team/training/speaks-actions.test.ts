@@ -23,7 +23,7 @@ beforeEach(() => {
 });
 
 describe("How your assistant speaks: the Owner's save", () => {
-  it("only the Owner, with the flags on; the change is checked with the contract's rules before anything is asked; Introduce as is cleaned", async () => {
+  it("only the Owner and an Admin (C1: Owner, Admin write), with the flags on; the change is checked with the contract's rules before anything is asked; Introduce as is cleaned", async () => {
     expect(await saveSpeaksAction(T, { tone: "respectful" })).toEqual({ ok: true, data: { tone: { value: "respectful" } } });
     expect(h.save).toHaveBeenCalledWith({ token: "tok", tenantId: T }, { tone: "respectful" }, expect.objectContaining({ ownerName: "Gowtham" }));
     expect(h.revalidate).toHaveBeenCalledWith(`/app/tenants/${T}/ai-team/training`);
@@ -31,12 +31,18 @@ describe("How your assistant speaks: the Owner's save", () => {
     expect(h.save).toHaveBeenLastCalledWith({ token: "tok", tenantId: T }, { introduceAs: { kind: "custom", text: "Gowtham's AI assistant" } }, expect.anything());
     h.save.mockClear();
     expect(await saveSpeaksAction(T, { tone: "casual" })).toEqual({ ok: false, error: "tone" });
-    expect(await saveSpeaksAction(T, { words: { kn: { region: "coastal" } } })).toEqual({ ok: false, error: "region" });
+    expect(await saveSpeaksAction(T, { words: { kn: { region: "coastal" } } })).toEqual({ ok: false, error: "language" }); // Region is gone
+    expect(await saveSpeaksAction(T, { background: "stadium" })).toEqual({ ok: false, error: "background" });
+    expect(await saveSpeaksAction(T, { sayAi: "yes" })).toEqual({ ok: false, error: "say_ai" });
     expect(await saveSpeaksAction(T, { introduceAs: { kind: "custom", text: "a human AI assistant" } })).toEqual({ ok: false, error: "introduce" });
     expect(await saveSpeaksAction(T, {})).toEqual({ ok: false, error: "empty" });
     expect(await saveSpeaksAction("../x", { tone: "friendly" })).toEqual({ ok: false, error: "forbidden" });
-    h.tenant.mockResolvedValue({ role: "admin" });
+    h.tenant.mockResolvedValue({ role: "sales" });
     expect(await saveSpeaksAction(T, { tone: "friendly" })).toEqual({ ok: false, error: "forbidden" });
+    h.tenant.mockResolvedValue({ role: "admin" });
+    expect(await saveSpeaksAction(T, { tone: "quick" })).toEqual({ ok: true, data: { tone: { value: "respectful" } } });
+    expect(await saveSpeaksAction(T, { background: "shop", sayAi: true })).toMatchObject({ ok: true });
+    h.save.mockClear();
     vi.stubEnv("SPEAKS_PANEL_SCREENS", "");
     h.tenant.mockResolvedValue({ role: "owner" });
     expect(await saveSpeaksAction(T, { tone: "friendly" })).toEqual({ ok: false, error: "not_available" });
@@ -47,8 +53,6 @@ describe("How your assistant speaks: the Owner's save", () => {
     expect(await saveSpeaksAction(T, { tone: "friendly" })).toEqual({ ok: false, error: "mfa" });
     h.save.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "no_ai_assistant"));
     expect(await saveSpeaksAction(T, { introduceAs: { kind: "owner", text: "Gowtham" } })).toEqual({ ok: false, error: "introduce" });
-    h.save.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x", "region_not_of_language"));
-    expect(await saveSpeaksAction(T, { words: { te: { region: "coastal" } } })).toEqual({ ok: false, error: "region" });
     h.save.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x", "too_short"));
     expect(await saveSpeaksAction(T, { introduceAs: { kind: "custom", text: "Gowtham's AI assistant" } })).toEqual({ ok: false, error: "introduce" });
     h.save.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x"));

@@ -91282,116 +91282,6 @@
    "kn": "draft"
   }
  },
- "sp.region": {
-  "en": "Region",
-  "te": "ప్రాంతం",
-  "hi": "क्षेत्र",
-  "kn": "ಪ್ರದೇಶ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "sp.region.help": {
-  "en": "How people in your area say things. Telugu, Kannada and Tamil only.",
-  "te": "మీ ప్రాంతంలో ప్రజలు ఎలా మాట్లాడతారో. తెలుగు, కన్నడ, తమిళం మాత్రమే.",
-  "hi": "आपके इलाके में लोग कैसे बोलते हैं। सिर्फ़ तेलुगु, कन्नड़ और तमिल।",
-  "kn": "ನಿಮ್ಮ ಪ್ರದೇಶದ ಜನ ಹೇಗೆ ಮಾತನಾಡುತ್ತಾರೆ. ತೆಲುಗು, ಕನ್ನಡ, ತಮಿಳು ಮಾತ್ರ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "sp.region.neutral": {
-  "en": "Neutral (understood everywhere)",
-  "te": "తటస్థం (అంతటా అర్థమయ్యేలా)",
-  "hi": "तटस्थ (हर जगह समझ में आने वाला)",
-  "kn": "ತಟಸ್ಥ (ಎಲ್ಲೆಡೆ ಅರ್ಥವಾಗುವ)",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "sp.region.te.coastal": {
-  "en": "Coastal Andhra",
-  "te": "కోస్తా ఆంధ్ర",
-  "hi": "तटीय आंध्र",
-  "kn": "ಕರಾವಳಿ ಆಂಧ್ರ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "sp.region.te.telangana": {
-  "en": "Telangana",
-  "te": "తెలంగాణ",
-  "hi": "तेलंगाना",
-  "kn": "ತೆಲಂಗಾಣ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "sp.region.te.rayalaseema": {
-  "en": "Rayalaseema",
-  "te": "రాయలసీమ",
-  "hi": "रायलसीमा",
-  "kn": "ರಾಯಲಸೀಮ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "sp.region.kn.bengaluru": {
-  "en": "Bengaluru",
-  "te": "బెంగళూరు",
-  "hi": "बेंगलुरु",
-  "kn": "ಬೆಂಗಳೂರು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "sp.region.kn.north_karnataka": {
-  "en": "North Karnataka",
-  "te": "ఉత్తర కర్ణాటక",
-  "hi": "उत्तर कर्नाटक",
-  "kn": "ಉತ್ತರ ಕರ್ನಾಟಕ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "sp.region.ta.chennai": {
-  "en": "Chennai",
-  "te": "చెన్నై",
-  "hi": "चेन्नई",
-  "kn": "ಚೆನ್ನೈ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "sp.region.ta.kongu": {
-  "en": "Kongu",
-  "te": "కొంగు",
-  "hi": "कोंगु",
-  "kn": "ಕೊಂಗು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "sp.hear": {
   "en": "Hear an example",
   "te": "ఒక ఉదాహరణ వినండి",
@@ -96034,17 +95924,6 @@
    "kn": "draft"
   }
  },
- "mya.v.sub": {
-  "en": "How your assistant sounds and speaks. Pick a sound, then fine-tune it.",
-  "te": "మీ అసిస్టెంట్ ఎలా వినిపిస్తుంది, ఎలా మాట్లాడుతుంది. ఒక సౌండ్ ఎంచుకుని, తర్వాత సరిచేయండి.",
-  "hi": "आपका असिस्टेंट कैसा सुनाई देता है और कैसे बोलता है। एक आवाज़ चुनें, फिर उसे ठीक करें।",
-  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೇಗೆ ಕೇಳಿಸುತ್ತದೆ, ಹೇಗೆ ಮಾತನಾಡುತ್ತದೆ. ಒಂದು ಧ್ವನಿ ಆರಿಸಿ, ನಂತರ ಸರಿಪಡಿಸಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "mya.v.empty.t": {
   "en": "Voice and tone are not switched on here",
   "te": "వాయిస్, టోన్ ఇక్కడ ఇంకా ఆన్ కాలేదు",
@@ -96078,116 +95957,6 @@
    "kn": "draft"
   }
  },
- "mya.v.cards.t": {
-  "en": "Choose a sound",
-  "te": "ఒక సౌండ్ ఎంచుకోండి",
-  "hi": "एक आवाज़ चुनें",
-  "kn": "ಒಂದು ಧ್ವನಿ ಆರಿಸಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.cards.sub": {
-  "en": "Three sounds for the phone. Hear a greeting in each, then use the one that fits your business.",
-  "te": "ఫోన్ కోసం మూడు సౌండ్‌లు. ప్రతిదాంట్లో గ్రీటింగ్ విని, మీ బిజినెస్‌కు సరిపోయేదాన్ని వాడండి.",
-  "hi": "फ़ोन के लिए तीन आवाज़ें। हर एक में अभिवादन सुनें, फिर जो आपके बिज़नेस को जँचे उसे चुनें।",
-  "kn": "ಫೋನ್‌ಗಾಗಿ ಮೂರು ಧ್ವನಿಗಳು. ಪ್ರತಿಯೊಂದರಲ್ಲಿ ಶುಭಾಶಯ ಕೇಳಿ, ನಿಮ್ಮ ಬಿಸಿನೆಸ್‌ಗೆ ಹೊಂದುವುದನ್ನು ಬಳಸಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.lang": {
-  "en": "Language of the voice",
-  "te": "వాయిస్ భాష",
-  "hi": "आवाज़ की भाषा",
-  "kn": "ಧ್ವನಿಯ ಭಾಷೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.warm": {
-  "en": "Warm",
-  "te": "వెచ్చని",
-  "hi": "गर्मजोशी भरी",
-  "kn": "ಆತ್ಮೀಯ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.warm.d": {
-  "en": "Friendly and close, like a neighbour.",
-  "te": "స్నేహంగా, పక్కింటివారిలా దగ్గరగా.",
-  "hi": "दोस्ताना और अपनापन भरी, पड़ोसी जैसी।",
-  "kn": "ಸ್ನೇಹಪರ ಮತ್ತು ಹತ್ತಿರದ, ನೆರೆಹೊರೆಯವರಂತೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.calm": {
-  "en": "Calm",
-  "te": "ప్రశాంతమైన",
-  "hi": "शांत",
-  "kn": "ಶಾಂತ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.calm.d": {
-  "en": "Steady and unhurried. Builds trust.",
-  "te": "నెమ్మదిగా, తొందరలేకుండా. నమ్మకం కలిగిస్తుంది.",
-  "hi": "स्थिर और बिना जल्दबाज़ी की। भरोसा बनाती है।",
-  "kn": "ನಿಧಾನ, ತರಾತುರಿ ಇಲ್ಲದ. ನಂಬಿಕೆ ಮೂಡಿಸುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.bright": {
-  "en": "Bright",
-  "te": "ఉత్సాహమైన",
-  "hi": "चमकदार",
-  "kn": "ಉಲ್ಲಾಸದ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.bright.d": {
-  "en": "Quick and cheerful, full of energy.",
-  "te": "చురుకుగా, ఉల్లాసంగా, ఉత్సాహంతో.",
-  "hi": "तेज़ और हँसमुख, ऊर्जा से भरी।",
-  "kn": "ಚುರುಕು ಮತ್ತು ಉಲ್ಲಾಸ, ಶಕ್ತಿಯಿಂದ ತುಂಬಿದ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.hear": {
-  "en": "▶ Hear greeting",
-  "te": "▶ గ్రీటింగ్ వినండి",
-  "hi": "▶ अभिवादन सुनें",
-  "kn": "▶ ಶುಭಾಶಯ ಕೇಳಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "mya.v.stop": {
   "en": "■ Stop",
   "te": "■ ఆపండి",
@@ -96199,110 +95968,11 @@
    "kn": "draft"
   }
  },
- "mya.v.use": {
-  "en": "Use this sound",
-  "te": "ఈ సౌండ్ వాడండి",
-  "hi": "यह आवाज़ इस्तेमाल करें",
-  "kn": "ಈ ಧ್ವನಿ ಬಳಸಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "mya.v.selected": {
   "en": "In use",
   "te": "వాడుకలో ఉంది",
   "hi": "इस्तेमाल में",
   "kn": "ಬಳಕೆಯಲ್ಲಿದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.none": {
-  "en": "No voice with this sound in this language yet.",
-  "te": "ఈ భాషలో ఈ సౌండ్‌తో వాయిస్ ఇంకా లేదు.",
-  "hi": "इस भाषा में इस आवाज़ वाली कोई आवाज़ अभी नहीं है।",
-  "kn": "ಈ ಭಾಷೆಯಲ್ಲಿ ಈ ಧ್ವನಿಯ ವಾಯ್ಸ್ ಇನ್ನೂ ಇಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.saved": {
-  "en": "Sound saved.",
-  "te": "సౌండ్ సేవ్ అయింది.",
-  "hi": "आवाज़ सेव हो गई।",
-  "kn": "ಧ್ವನಿ ಉಳಿಸಲಾಗಿದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.err": {
-  "en": "Could not save the sound. Please try again.",
-  "te": "సౌండ్ సేవ్ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
-  "hi": "आवाज़ सेव नहीं हो सकी। फिर कोशिश करें।",
-  "kn": "ಧ್ವನಿ ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.seg.label": {
-  "en": "Fine-tune how it speaks",
-  "te": "ఎలా మాట్లాడాలో సరిచేయండి",
-  "hi": "कैसे बोले, यह ठीक करें",
-  "kn": "ಹೇಗೆ ಮಾತನಾಡಬೇಕು ಎಂದು ಸರಿಪಡಿಸಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.seg.tone": {
-  "en": "Tone",
-  "te": "టోన్",
-  "hi": "लहजा",
-  "kn": "ಶೈಲಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.seg.words": {
-  "en": "Words",
-  "te": "పదాలు",
-  "hi": "शब्द",
-  "kn": "ಪದಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.seg.region": {
-  "en": "Region",
-  "te": "ప్రాంతం",
-  "hi": "क्षेत्र",
-  "kn": "ಪ್ರದೇಶ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "mya.v.seg.address": {
-  "en": "Addresses",
-  "te": "సంబోధన",
-  "hi": "संबोधन",
-  "kn": "ಸಂಬೋಧನೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -119681,55 +119351,11 @@
    "kn": "draft"
   }
  },
- "vt.speak": {
-  "en": "Speak to customers: {tone}",
-  "te": "కస్టమర్లతో మాట్లాడే తీరు: {tone}",
-  "hi": "ग्राहकों से बात करने का तरीका: {tone}",
-  "kn": "ಗ್ರಾಹಕರ ಜೊತೆ ಮಾತನಾಡುವ ರೀತಿ: {tone}",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "vt.usual": {
-  "en": "{tone} (the usual)",
-  "te": "{tone} (మామూలు)",
-  "hi": "{tone} (आम तौर पर)",
-  "kn": "{tone} (ಸಾಮಾನ್ಯ)",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "vt.ex.label": {
   "en": "For example:",
   "te": "ఉదాహరణకు:",
   "hi": "जैसे:",
   "kn": "ಉದಾಹರಣೆಗೆ:",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "vt.ex.friendly": {
-  "en": "Hi {name}, …",
-  "te": "నమస్కారం {name}, …",
-  "hi": "नमस्ते {name}, …",
-  "kn": "ನಮಸ್ಕಾರ {name}, …",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "vt.ex.respectful": {
-  "en": "Good morning, Mr. {name}, …",
-  "te": "నమస్కారం {name} గారు, …",
-  "hi": "नमस्ते {name} जी, …",
-  "kn": "ನಮಸ್ಕಾರ {name} ಅವರೇ, …",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -119891,10 +119517,10 @@
   }
  },
  "vt.hear.limit": {
-  "en": "Preview uses the {voice} voice. The tone comes with the next update.",
-  "te": "ప్రివ్యూ {voice} వాయిస్‌లో వినిపిస్తుంది. టోన్ తర్వాతి అప్‌డేట్‌లో వస్తుంది.",
-  "hi": "प्रीव्यू {voice} आवाज़ में सुनाई देगा। टोन अगले अपडेट में आएगा।",
-  "kn": "ಪ್ರಿವ್ಯೂ {voice} ಧ್ವನಿಯಲ್ಲಿ ಕೇಳಿಸುತ್ತದೆ. ಟೋನ್ ಮುಂದಿನ ಅಪ್‌ಡೇಟ್‌ನಲ್ಲಿ ಬರುತ್ತದೆ.",
+  "en": "Preview uses the {voice} voice and your saved tone.",
+  "te": "ప్రివ్యూ {voice} వాయిస్‌లో, మీరు సేవ్ చేసిన టోన్‌తో వినిపిస్తుంది.",
+  "hi": "प्रीव्यू {voice} आवाज़ में, आपके सेव किए टोन के साथ सुनाई देगा।",
+  "kn": "ಪ್ರಿವ್ಯೂ {voice} ಧ್ವನಿಯಲ್ಲಿ, ನೀವು ಸೇವ್ ಮಾಡಿದ ಟೋನ್‌ನೊಂದಿಗೆ ಕೇಳಿಸುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -119902,10 +119528,10 @@
   }
  },
  "vt.hear.limit2": {
-  "en": "Preview uses your saved voice. The tone comes with the next update.",
-  "te": "ప్రివ్యూ మీరు సేవ్ చేసిన వాయిస్‌లో వినిపిస్తుంది. టోన్ తర్వాతి అప్‌డేట్‌లో వస్తుంది.",
-  "hi": "प्रीव्यू आपकी सेव की हुई आवाज़ में सुनाई देगा। टोन अगले अपडेट में आएगा।",
-  "kn": "ಪ್ರಿವ್ಯೂ ನೀವು ಸೇವ್ ಮಾಡಿದ ಧ್ವನಿಯಲ್ಲಿ ಕೇಳಿಸುತ್ತದೆ. ಟೋನ್ ಮುಂದಿನ ಅಪ್‌ಡೇಟ್‌ನಲ್ಲಿ ಬರುತ್ತದೆ.",
+  "en": "Preview uses your saved voice and tone.",
+  "te": "ప్రివ్యూ మీరు సేవ్ చేసిన వాయిస్, టోన్‌తో వినిపిస్తుంది.",
+  "hi": "प्रीव्यू आपकी सेव की हुई आवाज़ और टोन के साथ सुनाई देगा।",
+  "kn": "ಪ್ರಿವ್ಯೂ ನೀವು ಸೇವ್ ಮಾಡಿದ ಧ್ವನಿ ಮತ್ತು ಟೋನ್‌ನೊಂದಿಗೆ ಕೇಳಿಸುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -121627,17 +121253,6 @@
    "kn": "draft"
   }
  },
- "jobs.who.tone.casual": {
-  "en": "casual",
-  "te": "మామూలు",
-  "hi": "आम",
-  "kn": "ಸಾಮಾನ್ಯ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.who.tone.ex.respectful": {
   "en": "“Namaskaram Suresh garu, …”",
   "te": "“నమస్కారం Suresh గారు, …”",
@@ -121650,17 +121265,6 @@
   }
  },
  "jobs.who.tone.ex.friendly": {
-  "en": "“Hi Suresh garu, …”",
-  "te": "“హాయ్ Suresh గారు, …”",
-  "hi": "“हाय Suresh जी, …”",
-  "kn": "“ಹಾಯ್ Suresh ಅವರೇ, …”",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.who.tone.ex.casual": {
   "en": "“Hi Suresh, …”",
   "te": "“హాయ్ Suresh, …”",
   "hi": "“हाय Suresh, …”",
@@ -121687,72 +121291,6 @@
   "te": "వాయిస్",
   "hi": "आवाज़",
   "kn": "ಧ್ವನಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.who.voice.female_warm": {
-  "en": "Soft woman voice",
-  "te": "మృదువైన ఆడ గొంతు",
-  "hi": "नरम महिला आवाज़",
-  "kn": "ಮೃದು ಮಹಿಳಾ ಧ್ವನಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.who.voice.female_warm.d": {
-  "en": "Warm, a little slow",
-  "te": "వెచ్చగా, కొంచెం నెమ్మదిగా",
-  "hi": "गर्मजोशी भरी, थोड़ी धीमी",
-  "kn": "ಬೆಚ್ಚಗಿನ, ಸ್ವಲ್ಪ ನಿಧಾನ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.who.voice.female_clear": {
-  "en": "Bright woman voice",
-  "te": "చురుకైన ఆడ గొంతు",
-  "hi": "तेज़ महिला आवाज़",
-  "kn": "ಚುರುಕಾದ ಮಹಿಳಾ ಧ್ವನಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.who.voice.female_clear.d": {
-  "en": "Quick and cheerful",
-  "te": "చకచకా, ఉల్లాసంగా",
-  "hi": "फुर्तीली और खुशमिज़ाज",
-  "kn": "ವೇಗ ಮತ್ತು ಉಲ್ಲಾಸ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.who.voice.male_calm": {
-  "en": "Calm man voice",
-  "te": "ప్రశాంతమైన మగ గొంతు",
-  "hi": "शांत पुरुष आवाज़",
-  "kn": "ಶಾಂತ ಪುರುಷ ಧ್ವನಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.who.voice.male_calm.d": {
-  "en": "Steady and clear",
-  "te": "స్థిరంగా, స్పష్టంగా",
-  "hi": "स्थिर और साफ़",
-  "kn": "ನಿಧಾನ ಮತ್ತು ಸ್ಪಷ್ಟ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -126028,6 +125566,391 @@
    "kn": "draft"
   }
  },
+ "vc.title": {
+  "en": "Your assistant's voice",
+  "te": "మీ అసిస్టెంట్ వాయిస్",
+  "hi": "आपके असिस्टेंट की आवाज़",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.sub": {
+  "en": "Pick a voice for each language. Customers hear it on calls.",
+  "te": "ప్రతి భాషకు ఒక వాయిస్ ఎంచుకోండి. కాల్స్‌లో కస్టమర్లకు ఇదే వినిపిస్తుంది.",
+  "hi": "हर भाषा के लिए एक आवाज़ चुनें। कॉल पर कस्टमर यही सुनते हैं।",
+  "kn": "ಪ್ರತಿ ಭಾಷೆಗೆ ಒಂದು ಧ್ವನಿ ಆರಿಸಿ. ಕರೆಯಲ್ಲಿ ಕಸ್ಟಮರ್‌ಗೆ ಇದೇ ಕೇಳಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.woman": {
+  "en": "Woman",
+  "te": "మహిళ",
+  "hi": "महिला",
+  "kn": "ಮಹಿಳೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.man": {
+  "en": "Man",
+  "te": "పురుషుడు",
+  "hi": "पुरुष",
+  "kn": "ಪುರುಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.later": {
+  "en": "Choose it, then you can hear it.",
+  "te": "ముందు ఎంచుకోండి, తర్వాత వినొచ్చు.",
+  "hi": "पहले चुनें, फिर सुन सकते हैं।",
+  "kn": "ಮೊದಲು ಆರಿಸಿ, ನಂತರ ಕೇಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.play.aria": {
+  "en": "Hear {name}",
+  "te": "{name} వాయిస్ వినండి",
+  "hi": "{name} की आवाज़ सुनें",
+  "kn": "{name} ಧ್ವನಿ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.stop.aria": {
+  "en": "Stop {name}",
+  "te": "{name} ఆపండి",
+  "hi": "{name} रोकें",
+  "kn": "{name} ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.saved": {
+  "en": "Saved. New calls use it.",
+  "te": "సేవ్ అయింది. కొత్త కాల్స్ దీన్ని వాడతాయి.",
+  "hi": "सेव हो गया। नए कॉल इसे इस्तेमाल करेंगे।",
+  "kn": "ಸೇವ್ ಆಯಿತು. ಹೊಸ ಕರೆಗಳು ಇದನ್ನು ಬಳಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.err.save": {
+  "en": "Could not save the voice. Please try again.",
+  "te": "వాయిస్ సేవ్ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+  "hi": "आवाज़ सेव नहीं हो पाई। फिर कोशिश करें।",
+  "kn": "ಧ್ವನಿ ಸೇವ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.err.live": {
+  "en": "Could not play this voice now. Choose it first, then press play.",
+  "te": "ఈ వాయిస్ ఇప్పుడు వినిపించలేకపోయాం. ముందు ఎంచుకుని, తర్వాత వినండి.",
+  "hi": "यह आवाज़ अभी नहीं चल सकी। पहले इसे चुनें, फिर सुनें।",
+  "kn": "ಈ ಧ್ವನಿಯನ್ನು ಈಗ ಕೇಳಿಸಲು ಆಗಲಿಲ್ಲ. ಮೊದಲು ಆರಿಸಿ, ನಂತರ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.err.rate": {
+  "en": "Too many tries. Wait a minute and press play again.",
+  "te": "చాలాసార్లు ప్రయత్నించారు. ఒక నిమిషం ఆగి మళ్లీ నొక్కండి.",
+  "hi": "बहुत बार कोशिश हो गई। एक मिनट रुककर फिर दबाएँ।",
+  "kn": "ತುಂಬಾ ಸಲ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. ಒಂದು ನಿಮಿಷ ಕಾಯಿರಿ, ಮತ್ತೆ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.err.other": {
+  "en": "Could not make the sound now. Try again in a moment.",
+  "te": "సౌండ్ ఇప్పుడు రాలేదు. కాసేపట్లో మళ్లీ ప్రయత్నించండి.",
+  "hi": "आवाज़ अभी नहीं बन सकी। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಧ್ವನಿ ಈಗ ಬರಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.tone.t": {
+  "en": "How it talks",
+  "te": "ఎలా మాట్లాడాలి",
+  "hi": "कैसे बात करे",
+  "kn": "ಹೇಗೆ ಮಾತನಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.tone.friendly": {
+  "en": "Friendly",
+  "te": "స్నేహంగా",
+  "hi": "दोस्ताना",
+  "kn": "ಸ್ನೇಹದಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.tone.friendly.d": {
+  "en": "Relaxed and warm.",
+  "te": "ఆప్యాయంగా, సులభంగా.",
+  "hi": "आराम से, अपनेपन के साथ।",
+  "kn": "ಆರಾಮವಾಗಿ, ಆತ್ಮೀಯವಾಗಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.tone.respectful": {
+  "en": "Respectful",
+  "te": "మర్యాదగా",
+  "hi": "आदर के साथ",
+  "kn": "ಗೌರವದಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.tone.respectful.d": {
+  "en": "Polite, a little more formal.",
+  "te": "మర్యాదగా, కొంచెం ఫార్మల్‌గా.",
+  "hi": "विनम्र, थोड़ा औपचारिक।",
+  "kn": "ವಿನಯದಿಂದ, ಸ್ವಲ್ಪ ಫಾರ್ಮಲ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.tone.quick": {
+  "en": "Short and quick",
+  "te": "చిన్నగా, త్వరగా",
+  "hi": "छोटा और तेज़",
+  "kn": "ಚಿಕ್ಕದಾಗಿ, ಬೇಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.tone.quick.d": {
+  "en": "The answer first, in a few words.",
+  "te": "ముందు జవాబు, తక్కువ మాటల్లో.",
+  "hi": "पहले जवाब, कम शब्दों में।",
+  "kn": "ಮೊದಲು ಉತ್ತರ, ಕಡಿಮೆ ಮಾತಿನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ex.friendly": {
+  "en": "Hi! Can you drop by the shop on Saturday?",
+  "te": "హాయ్! శనివారం షాప్‌కి వస్తారా?",
+  "hi": "हाय! शनिवार को शॉप आ रहे हैं?",
+  "kn": "ಹಾಯ್! ಶನಿವಾರ ಶಾಪ್‌ಗೆ ಬರ್ತೀರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ex.respectful": {
+  "en": "Good morning. Would it be convenient for you to visit the shop on Saturday?",
+  "te": "నమస్కారం అండీ. శనివారం షాప్‌కి రావడానికి మీకు వీలవుతుందా అండీ?",
+  "hi": "नमस्ते जी, क्या आप शनिवार को शॉप पर आ सकेंगे?",
+  "kn": "ನಮಸ್ಕಾರ. ಶನಿವಾರ ಶಾಪ್‌ಗೆ ಬರಲು ನಿಮಗೆ ಅನುಕೂಲವಾಗುತ್ತಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ex.quick": {
+  "en": "Saturday, 11 am, at the shop. Does it work?",
+  "te": "శనివారం ఉదయం 11కి షాప్‌కి రండి. వీలవుతుందా?",
+  "hi": "शनिवार, सुबह 11 बजे शॉप पर। हो पाएगा?",
+  "kn": "ಶನಿವಾರ ಬೆಳಗ್ಗೆ 11ಕ್ಕೆ ಶಾಪ್‌ಗೆ ಬನ್ನಿ. ಆಗುತ್ತಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ex.draft": {
+  "en": "This example wording is a draft.",
+  "te": "ఈ ఉదాహరణ మాటలు డ్రాఫ్ట్ మాత్రమే.",
+  "hi": "ये उदाहरण के शब्द अभी ड्राफ़्ट हैं।",
+  "kn": "ಈ ಉದಾಹರಣೆ ಮಾತುಗಳು ಡ್ರಾಫ್ಟ್ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.bg.t": {
+  "en": "Background sound",
+  "te": "బ్యాక్‌గ్రౌండ్ సౌండ్",
+  "hi": "बैकग्राउंड साउंड",
+  "kn": "ಬ್ಯಾಕ್‌ಗ್ರೌಂಡ್ ಸೌಂಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.bg.d": {
+  "en": "A very quiet sound behind the voice on calls.",
+  "te": "కాల్స్‌లో వాయిస్ వెనక చాలా తక్కువ సౌండ్.",
+  "hi": "कॉल पर आवाज़ के पीछे बहुत हल्की आवाज़।",
+  "kn": "ಕರೆಯಲ್ಲಿ ಧ್ವನಿಯ ಹಿಂದೆ ತುಂಬಾ ಕಡಿಮೆ ಸೌಂಡ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.t": {
+  "en": "Say 'AI assistant' when greeting",
+  "te": "గ్రీటింగ్‌లో 'AI అసిస్టెంట్' అని చెప్పండి",
+  "hi": "ग्रीटिंग में 'AI असिस्टेंट' बोलें",
+  "kn": "ಗ್ರೀಟಿಂಗ್‌ನಲ್ಲಿ 'AI ಅಸಿಸ್ಟೆಂಟ್' ಎಂದು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.d": {
+  "en": "If a customer asks, it always says it's your AI assistant.",
+  "te": "కస్టమర్ అడిగితే, అది ఎప్పుడూ మీ AI అసిస్టెంట్ అనే చెబుతుంది.",
+  "hi": "अगर कस्टमर पूछे, तो वह हमेशा बताता है कि वह आपका AI असिस्टेंट है।",
+  "kn": "ಕಸ್ಟಮರ್ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.test": {
+  "en": "Test call to my phone",
+  "te": "నా ఫోన్‌కు టెస్ట్ కాల్",
+  "hi": "मेरे फ़ोन पर टेस्ट कॉल",
+  "kn": "ನನ್ನ ಫೋನ್‌ಗೆ ಟೆಸ್ಟ್ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.test.d": {
+  "en": "We call your own phone, so you hear it the way a customer does.",
+  "te": "మీ సొంత ఫోన్‌కే కాల్ చేస్తాం, కస్టమర్‌కి వినిపించినట్టే మీకు వినిపిస్తుంది.",
+  "hi": "हम आपके अपने फ़ोन पर कॉल करते हैं, ताकि आप वैसे ही सुनें जैसे कस्टमर सुनता है।",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಫೋನ್‌ಗೇ ಕರೆ ಮಾಡುತ್ತೇವೆ, ಕಸ್ಟಮರ್‌ಗೆ ಕೇಳಿಸುವಂತೆಯೇ ನಿಮಗೆ ಕೇಳಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.gm.title": {
+  "en": "Greeting and more choices",
+  "te": "గ్రీటింగ్, ఇంకా ఎంపికలు",
+  "hi": "ग्रीटिंग और बाकी विकल्प",
+  "kn": "ಗ್ರೀಟಿಂಗ್ ಮತ್ತು ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.quick": {
+  "en": "Short and quick",
+  "te": "చిన్నగా, త్వరగా",
+  "hi": "छोटा और तेज़",
+  "kn": "ಚಿಕ್ಕದಾಗಿ, ಬೇಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.quick.help": {
+  "en": "The answer first, in a few words. No filler, one short sentence at a time.",
+  "te": "ముందు జవాబు, తక్కువ మాటల్లో. ఎక్కువ మాటలు లేవు, ఒక్కసారికి ఒక చిన్న వాక్యం.",
+  "hi": "पहले जवाब, कम शब्दों में। फालतू बातें नहीं, एक बार में एक छोटा वाक्य।",
+  "kn": "ಮೊದಲು ಉತ್ತರ, ಕಡಿಮೆ ಮಾತಿನಲ್ಲಿ. ಅನಗತ್ಯ ಮಾತಿಲ್ಲ, ಒಮ್ಮೆಗೆ ಒಂದು ಚಿಕ್ಕ ವಾಕ್ಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.tone.quick": {
+  "en": "short and quick",
+  "te": "చిన్నగా, త్వరగా ఉండే",
+  "hi": "छोटा और तेज़",
+  "kn": "ಚಿಕ್ಕ ಮತ್ತು ಬೇಗನೆಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.tone.ex.quick": {
+  "en": "“Hello Suresh, one minute? …”",
+  "te": "“హలో Suresh, ఒక్క నిమిషం? …”",
+  "hi": "“हैलो Suresh, एक मिनट? …”",
+  "kn": "“ಹಲೋ Suresh, ಒಂದು ನಿಮಿಷ? …”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.who.voice.recommended": {
+  "en": "Recommended",
+  "te": "సిఫార్సు",
+  "hi": "अनुशंसित",
+  "kn": "ಶಿಫಾರಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.kind.callspaused": {
   "en": "Calls paused",
   "te": "Calls ఆగాయి",
@@ -126066,6 +125989,17 @@
   "te": "ఎవరో చూడండి",
   "hi": "देखें कौन",
   "kn": "ಯಾರು ಅಂತ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.err.unknown": {
+  "en": "That voice is not available.",
+  "te": "ఆ వాయిస్ ఇప్పుడు అందుబాటులో లేదు.",
+  "hi": "वह आवाज़ अभी उपलब्ध नहीं है।",
+  "kn": "ಆ ಧ್ವನಿ ಈಗ ಲಭ್ಯವಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",

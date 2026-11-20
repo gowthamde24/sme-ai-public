@@ -166,7 +166,7 @@ describe("reading and changing one job", () => {
     for (const j of named) {
       expect((await patchJob("tok", T, j.id, { name: "Anil" })).customName).toBe("Anil");
       expect((await patchJob("tok", T, j.id, { enabled: true })).status).toBe("running");
-      expect(await patchJob("tok", T, j.id, { speaks: { voice: "female_warm" } })).toMatchObject({ customName: j.customName, enabled: j.enabled });
+      expect(await patchJob("tok", T, j.id, { speaks: { voice: "te-ramya" } })).toMatchObject({ customName: j.customName, enabled: j.enabled });
     }
     expect(h.req).not.toHaveBeenCalled();
   });

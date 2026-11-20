@@ -14,7 +14,7 @@ const WORDS = Object.fromEntries(Object.keys(appDict("en")).filter((k) => k.star
 const rows: VoiceRow[] = [
   { language: "te", voices: MOCK_VOICES.filter((v) => v.language === "te"), choice: null },
   { language: "hi", voices: MOCK_VOICES.filter((v) => v.language === "hi"), choice: null },
-  { language: "kn", voices: MOCK_VOICES.filter((v) => v.language === "kn"), choice: "kn-divya" },
+  { language: "kn", voices: MOCK_VOICES.filter((v) => v.language === "kn"), choice: "kn-chaitra" },
 ];
 type Fake = { src: string; play: ReturnType<typeof vi.fn>; pause: ReturnType<typeof vi.fn>; onended: (() => void) | null; onerror: (() => void) | null };
 let made: Fake[] = [];
@@ -48,12 +48,12 @@ describe("Settings > AI assistant > Voice", () => {
   it("is ONE row per language: the language name, a dropdown of that language's voices for the chosen gender ('Name — style tags', '· Recommended' first), and a separate Hear button", () => {
     draw();
     expect([...document.querySelectorAll("[data-voice-lang]")].map((r) => r.getAttribute("data-voice-lang"))).toEqual(["te", "hi", "kn"]);
-    expect(optionsOf("te")).toEqual(["Ramya — warm, mature · Recommended", "Sindhu — bright, young · Recommended"]);
-    expect(optionsOf("hi")).toEqual(["Sanya — calm, mature · Recommended", "Esha — warm, young · Recommended"]); // the male Hindi voice is not listed
+    expect(optionsOf("te")).toEqual(["Ramya — warm · Recommended", "Kavitha — calm"]);
+    expect(optionsOf("hi")).toEqual(["Sanya — calm · Recommended", "Pooja — warm"]); // the male Hindi voice is not listed
     expect(select("te").labels?.[0]).toHaveTextContent("తెలుగు");
     expect(select("te").value).toBe("te-ramya"); // nothing chosen: the default
-    expect(select("kn").value).toBe("kn-divya"); // chosen
-    expect(optionsOf("kn")).toEqual(["Disha — warm, calm · Recommended", "Divya — bright, young"]); // recommended first
+    expect(select("kn").value).toBe("kn-chaitra"); // chosen
+    expect(optionsOf("kn")).toEqual(["Disha — warm · Recommended", "Chaitra — calm"]); // recommended first
     expect(within(document.querySelector('[data-voice-lang="te"]') as HTMLElement).getByRole("button", { name: "Play the sample of Ramya" })).toHaveTextContent("Hear");
     expect(document.querySelectorAll("[data-voice]").length).toBe(0); // no cards any more
   });
@@ -74,15 +74,15 @@ describe("Settings > AI assistant > Voice", () => {
   it("Male lists the male voices of every language and nothing of the female ones", () => {
     draw({ gender: "male" });
     expect(screen.getByRole("radio", { name: "Male" })).toBeChecked();
-    expect(optionsOf("te")).toEqual(["Kiran — deep, calm · Recommended", "Arjun — energetic, young"]);
-    expect(select("te").value).toBe("te-kiran"); // the male default
+    expect(optionsOf("te")).toEqual(["Karthik — calm · Recommended", "Naveen — bright"]);
+    expect(select("te").value).toBe("te-karthik"); // the male default
   });
-  it("changing the dropdown saves at once (and reads the page again) with a toast like 'తెలుగు voice: Sindhu'; choosing the default goes back to it (null)", async () => {
+  it("changing the dropdown saves at once (and reads the page again) with a toast like 'తెలుగు voice: Kavitha'; choosing the default goes back to it (null)", async () => {
     const choose = draw();
-    fireEvent.change(select("te"), { target: { value: "te-sindhu" } });
-    await waitFor(() => expect(choose).toHaveBeenCalledWith("te", "te-sindhu"));
-    expect(await screen.findByText("తెలుగు voice: Sindhu")).toBeInTheDocument();
-    expect(select("te").value).toBe("te-sindhu");
+    fireEvent.change(select("te"), { target: { value: "te-kavitha" } });
+    await waitFor(() => expect(choose).toHaveBeenCalledWith("te", "te-kavitha"));
+    expect(await screen.findByText("తెలుగు voice: Kavitha")).toBeInTheDocument();
+    expect(select("te").value).toBe("te-kavitha");
     expect(refresh).toHaveBeenCalled();
     fireEvent.change(select("kn"), { target: { value: "kn-disha" } });
     await waitFor(() => expect(choose).toHaveBeenCalledWith("kn", null)); // Disha is the default of Kannada
@@ -90,7 +90,7 @@ describe("Settings > AI assistant > Voice", () => {
   it("a refusal is said in words and the dropdown goes back; a member who may not change it can listen but not choose", async () => {
     const choose = vi.fn(async () => ({ ok: false as const, error: "forbidden" }));
     draw({ choose });
-    fireEvent.change(select("hi"), { target: { value: "hi-esha" } });
+    fireEvent.change(select("hi"), { target: { value: "hi-pooja" } });
     expect(await screen.findByText("Only the Owner or an Admin can change the voice.", { selector: "[role=alert]" })).toBeInTheDocument();
     expect(select("hi").value).toBe("hi-sanya");
     cleanup();
@@ -116,9 +116,9 @@ describe("Settings > AI assistant > Voice", () => {
     fireEvent.click(te); // the same button stops
     expect(te).toHaveAttribute("aria-pressed", "false");
     fireEvent.click(hi);
-    fireEvent.change(select("hi"), { target: { value: "hi-esha" } }); // a new choice stops the sound too
+    fireEvent.change(select("hi"), { target: { value: "hi-pooja" } }); // a new choice stops the sound too
     expect(made[made.length - 1].pause).toHaveBeenCalled();
-    expect(document.querySelector('[data-voice-lang="hi"] [data-play="hi-esha"]')).not.toBeNull(); // Hear now plays the new one
+    expect(document.querySelector('[data-voice-lang="hi"] [data-play="hi-pooja"]')).not.toBeNull(); // Hear now plays the new one
   });
   it("a sample that cannot be played says so in words", async () => {
     draw();

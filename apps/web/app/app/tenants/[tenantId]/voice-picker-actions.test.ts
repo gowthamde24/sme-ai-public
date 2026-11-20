@@ -5,14 +5,16 @@ import { ApiAuthError } from "@/lib/api/client";
 const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const save = vi.fn();
+const hear = vi.fn();
+const example = vi.fn();
 const revalidatePath = vi.fn();
 vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => revalidatePath(...a) }));
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`redirect:${to}`); } }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
-vi.mock("@/lib/voice-picker/source", () => ({ saveVoiceChoice: (...a: unknown[]) => save(...a) }));
+vi.mock("@/lib/voice-picker/source", () => ({ saveVoiceChoice: (...a: unknown[]) => save(...a), hearActive: (...a: unknown[]) => hear(...a), toneExample: (...a: unknown[]) => example(...a) }));
 
-import { chooseVoiceAction } from "./voice-picker-actions";
+import { chooseVoiceAction, hearVoiceAction, toneExampleAction } from "./voice-picker-actions";
 
 const T = "22222222-2222-4222-8222-222222222222";
 beforeEach(() => {
@@ -41,5 +43,29 @@ describe("the voice picker's move", () => {
     expect(await chooseVoiceAction(T, "hi", "x")).toEqual({ ok: false, error: "invalid" });
     fetchTenant.mockRejectedValue(new ApiAuthError());
     await expect(chooseVoiceAction(T, "hi", null)).rejects.toThrow("redirect:/login");
+  });
+});
+
+describe("the voice card's live Hear it and its tone example", () => {
+  it("Hear it is for the Owner and an Admin only, asks the source for the voice (and tone) named, or the voice in force and passes its answer on", async () => {
+    hear.mockResolvedValue({ ok: true, data: { audio: null, fake: true } });
+    expect(await hearVoiceAction(T, "te")).toEqual({ ok: true, preview: { audio: null, fake: true } });
+    expect(hear).toHaveBeenCalledWith({ token: "tok", tenantId: T }, "te", null, null);
+    await hearVoiceAction(T, "te", "te-kavitha", "quick");
+    expect(hear).toHaveBeenLastCalledWith({ token: "tok", tenantId: T }, "te", "te-kavitha", "quick");
+    hear.mockResolvedValue({ ok: false, error: "rate" });
+    expect(await hearVoiceAction(T, "te")).toEqual({ ok: false, error: "rate" });
+    fetchTenant.mockResolvedValue({ role: "sales" });
+    hear.mockClear();
+    expect(await hearVoiceAction(T, "te")).toEqual({ ok: false, error: "forbidden" });
+    expect(await hearVoiceAction("nope", "te")).toEqual({ ok: false, error: "forbidden" });
+    expect(hear).not.toHaveBeenCalled();
+  });
+  it("the tone example is the source's text, or null for anybody who may not ask", async () => {
+    example.mockResolvedValue("Hello");
+    expect(await toneExampleAction(T, "te", "quick")).toBe("Hello");
+    expect(example).toHaveBeenCalledWith({ token: "tok", tenantId: T }, "te", "quick");
+    fetchTenant.mockResolvedValue({ role: "viewer" });
+    expect(await toneExampleAction(T, "te", "quick")).toBeNull();
   });
 });

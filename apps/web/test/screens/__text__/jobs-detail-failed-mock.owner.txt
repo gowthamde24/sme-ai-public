@@ -14,16 +14,14 @@ Customers hear: “the AI assistant of Neelambari Silks”
   options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn
 in a
 <select label="This job speaks … in a … voice from …. (2)">
-  options: respectful* | friendly | casual
+  options: friendly | respectful* | short and quick=quick
 voice from the shop number .
 respectful “Namaskaram Suresh garu, …” · +91 98480 xxx10
 legend: Voice
-<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Soft womanWarm, a little slow" value=female_warm>
-Soft woman Warm, a little slow
-<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Bright womanQuick and cheerful" value=female_clear>
-Bright woman Quick and cheerful
-<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Calm manSteady and clear" value=male_calm checked>
-Calm man Steady and clear
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="JanviRecommended" value=en-janvi checked>
+Janvi Recommended
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Sophia" value=en-sophia>
+Sophia
 What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the shop number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off. Or just ask your assistant
 [button type=button: “Make the visits job speak Telugu.”]
 {role=alert} Why: WhatsApp only lets us write first with an approved template once a customer’s 24 hours are over. Pick a template and it goes out after your OK.

@@ -1669,8 +1669,8 @@ for (const tab of ["knowledge", "voice", "rules", "practice", "golive"] as const
     handlers: myaHandlers,
   });
 }
-// Voice & tone as ONE plain card (owner, 19 Nov 2026): the voice, "Speak to customers" with its example, the greeting in one box, More choices; the talk training and "How your assistant speaks" in their made-up modes
-const VOICE_CARD_ENV = { ...MYA_ENV, TALK_TRAINING_SCREENS: "1", SPEAKS_PANEL_SCREENS: "mock", OPENING_LINE_SCREENS: "mock" };
+// Voice & tone (owner, 20 Nov 2026): the voice card ("Your assistant's voice": named voices per language, three tones with an example, the background, the AI switch, the test call), then the greeting in one box and More choices; the talk training and "How your assistant speaks" in their made-up modes
+const VOICE_CARD_ENV = { ...MYA_ENV, TALK_TRAINING_SCREENS: "1", SPEAKS_PANEL_SCREENS: "mock", OPENING_LINE_SCREENS: "mock", APP_V4: "1", TEST_CALL_SCREENS: "1" };
 const TALK_DOC = { greeting: {}, address: "plain", questions: ["What is the saree for?"], never_say: ["guaranteed"], objections: [{ hears: "Too costly", answer: "We have sarees in many ranges." }], examples: [], say_like: [], introduce_as: { kind: "business", text: null } };
 const talkTrainingRead = () => ({ training: TALK_DOC, defaults: { ...TALK_DOC, greeting: { te: "నమస్కారం {customer} గారూ, నేను {assistant}, {business} {agent_role}. ఒక్క నిమిషం మాట్లాడొచ్చా?", en: "Hello {customer}, this is {assistant}, the {agent_role} of {business}. Do you have a minute?" } }, saved: false, rules: ["Always says it is an AI assistant."], updated_at: null });
 add({ id: "my-assistant-voice-card", roles: ["owner", "admin"], render: () => withEnv(VOICE_CARD_ENV, async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({}, { section: "voice" }))), handlers: (role) => ({ ...myaHandlers(role), getTalkTraining: async () => (await import("@/lib/api/talk-training")).parseTalkTraining(talkTrainingRead()) }) });

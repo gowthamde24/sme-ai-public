@@ -31,12 +31,14 @@ export type PickerVoice = {
   isDefault: boolean;
   /** A path on the API of the pre-rendered sample, or null when there is none yet. The browser never gets it: it asks this app's route. */
   sampleUrl: string | null;
+  /** The pre-rendered file exists (C1: `sample_ready`). false = the file answers 404 and ONLY the live "Hear it" can play this voice (it speaks the voice in force). An answer without the field is read as "ready when it names a file". */
+  sampleReady: boolean;
   /** The exact words of the sample (C1's `sample_text`), shown under the voice once it has been played; null when the API does not say. */
   sampleText: string | null;
 };
 export type Choices = Partial<Record<PickerLang, string | null>>;
 /** `gender`: the ONE switch of the workspace (Female / Male); `voices` has the voices of both genders for every language (the screen shows the ones of the gender), `choices` the voice picked per language. */
-export type Picker = { gender: Gender; voices: PickerVoice[]; choices: Choices; fake: boolean };
+export type Picker = { gender: Gender; voices: PickerVoice[]; choices: Choices; /** The voice that SPEAKS now for each language (C1: `active_id`): the choice, else the default. Absent in an older answer: the screen works it out. */ active: Choices; fake: boolean };
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const isPickerLang = (l: unknown): l is PickerLang => (PICKER_LANGS as readonly unknown[]).includes(l);
@@ -48,6 +50,7 @@ export function parsePicker(json: unknown): Picker | null {
   if (!isRecord(json) || !Array.isArray(json.languages)) return null;
   const voices: PickerVoice[] = [];
   const choices: Choices = {};
+  const active: Choices = {};
   for (const row of json.languages) {
     if (!isRecord(row) || typeof row.language !== "string" || !Array.isArray(row.voices)) return null;
     if (!isPickerLang(row.language)) continue; // a language the picker has no row for is left out
@@ -56,14 +59,15 @@ export function parsePicker(json: unknown): Picker | null {
       if (!isRecord(r) || typeof r.id !== "string" || !VOICE_ID.test(r.id) || typeof r.name !== "string" || r.name.length < 1 || r.name.length > 40 || (r.label !== undefined && (typeof r.label !== "string" || r.label.length > 30)) || typeof r.default !== "boolean") return null;
       if (!(GENDERS as readonly unknown[]).includes(r.gender)) return null;
       const tags = Array.isArray(r.tags) ? r.tags.filter((x): x is string => typeof x === "string" && x.length > 0 && x.length <= 20).slice(0, 6).map((x) => x.toLowerCase()) : [];
-      voices.push({ id: r.id, language, name: r.name, label: typeof r.label === "string" && r.label !== "" ? r.label : (tags[0] ?? ""), tags: tags.length > 0 ? tags : typeof r.label === "string" && r.label !== "" ? [r.label.toLowerCase()] : [], recommended: r.recommended === true, gender: r.gender as Gender, isDefault: r.default, sampleUrl: r.sample_url === null || r.sample_url === undefined ? null : safeSamplePath(r.sample_url), sampleText: typeof r.sample_text === "string" && r.sample_text.trim() !== "" && r.sample_text.length <= 1000 ? r.sample_text : null });
+      voices.push({ id: r.id, language, name: r.name, label: typeof r.label === "string" && r.label !== "" ? r.label : (tags[0] ?? ""), tags: tags.length > 0 ? tags : typeof r.label === "string" && r.label !== "" ? [r.label.toLowerCase()] : [], recommended: r.recommended === true, gender: r.gender as Gender, isDefault: r.default, sampleUrl: r.sample_url === null || r.sample_url === undefined ? null : safeSamplePath(r.sample_url), sampleReady: r.sample_ready === undefined ? typeof r.sample_url === "string" : r.sample_ready === true && typeof r.sample_url === "string", sampleText: typeof r.sample_text === "string" && r.sample_text.trim() !== "" && r.sample_text.length <= 1000 ? r.sample_text : null });
     }
+    if (typeof row.active_id === "string" && VOICE_ID.test(row.active_id)) active[language] = row.active_id;
     const chosen = row.chosen_id;
     if (chosen === undefined || chosen === null) continue;
     if (typeof chosen !== "string" || !VOICE_ID.test(chosen)) return null;
     choices[language] = chosen;
   }
-  return { gender: json.gender === "male" ? "male" : "female", voices, choices, fake: json.fake === true };
+  return { gender: json.gender === "male" ? "male" : "female", voices, choices, active, fake: json.fake === true };
 }
 
 /** The voice in force for a language: the one chosen, if it is still in the catalogue (and of the workspace's gender), else the default of that gender. */
@@ -72,24 +76,28 @@ export function inForce(picker: Picker, language: PickerLang): PickerVoice | nul
   return mine.find((v) => v.id === picker.choices[language]) ?? mine.find((v) => v.isDefault) ?? null;
 }
 
-/** The catalogue as the test screens (VOICE_PICKER_SCREENS=mock) show it before C1's v2 endpoint is live: every language has voices of both genders, a default of each gender and two or three "Recommended". */
-const V = (id: string, language: PickerLang, name: string, gender: Gender, tags: string[], o: { isDefault?: boolean; recommended?: boolean } = {}): PickerVoice => ({ id, language, name, label: tags[0] ?? "", tags, gender, isDefault: o.isDefault === true, recommended: o.recommended === true, sampleUrl: `/mock/${id}`, sampleText: null });
+/** The catalogue as the test screens (VOICE_PICKER_SCREENS=mock) show it. */
+const V = (id: string, language: PickerLang, name: string, gender: Gender, tags: string[], o: { isDefault?: boolean; recommended?: boolean; ready?: boolean } = {}): PickerVoice => ({ id, language, name, label: tags[0] ?? "", tags, gender, isDefault: o.isDefault === true, recommended: o.recommended === true, sampleUrl: `/mock/${id}`, sampleReady: o.ready !== false, sampleText: null });
+/** The short list as C1's voices-tones contract describes it (21 Nov 2026): per language and gender, two voices of different providers (one pre-rendered, one that is only heard live), the default first and the only one marked Recommended. */
 export const MOCK_VOICES: readonly PickerVoice[] = [
-  V("te-ramya", "te", "Ramya", "female", ["warm", "mature"], { isDefault: true, recommended: true }),
-  V("te-sindhu", "te", "Sindhu", "female", ["bright", "young"], { recommended: true }),
-  V("te-kiran", "te", "Kiran", "male", ["deep", "calm"], { isDefault: true, recommended: true }),
-  V("te-arjun", "te", "Arjun", "male", ["energetic", "young"]),
-  V("en-janvi", "en", "Janvi", "female", ["calm", "warm"], { isDefault: true, recommended: true }),
-  V("en-riya", "en", "Riya", "female", ["bright", "energetic"]),
-  V("en-dev", "en", "Dev", "male", ["deep", "mature"], { isDefault: true, recommended: true }),
-  V("hi-sanya", "hi", "Sanya", "female", ["calm", "mature"], { isDefault: true, recommended: true }),
-  V("hi-esha", "hi", "Esha", "female", ["warm", "young"], { recommended: true }),
-  V("hi-rohan", "hi", "Rohan", "male", ["deep", "calm"], { isDefault: true, recommended: true }),
-  V("kn-disha", "kn", "Disha", "female", ["warm", "calm"], { isDefault: true, recommended: true }),
-  V("kn-divya", "kn", "Divya", "female", ["bright", "young"]),
-  V("kn-prakash", "kn", "Prakash", "male", ["deep", "mature"], { isDefault: true, recommended: true }),
-  V("ta-meena", "ta", "Meena", "female", ["warm", "mature"], { isDefault: true, recommended: true }),
-  V("ta-vijay", "ta", "Vijay", "male", ["calm", "deep"], { isDefault: true, recommended: true }),
-  V("ml-anjali", "ml", "Anjali", "female", ["calm", "warm"], { isDefault: true, recommended: true }),
-  V("ml-arun", "ml", "Arun", "male", ["deep", "calm"], { isDefault: true, recommended: true }),
+  V("te-ramya", "te", "Ramya", "female", ["warm"], { isDefault: true, recommended: true }),
+  V("te-kavitha", "te", "Kavitha", "female", ["calm"], { ready: false }),
+  V("te-karthik", "te", "Karthik", "male", ["calm"], { isDefault: true, recommended: true }),
+  V("te-naveen", "te", "Naveen", "male", ["bright"], { ready: false }),
+  V("en-janvi", "en", "Janvi", "female", ["warm"], { isDefault: true, recommended: true }),
+  V("en-sophia", "en", "Sophia", "female", ["bright"], { ready: false }),
+  V("en-dev", "en", "Dev", "male", ["calm"], { isDefault: true, recommended: true }),
+  V("en-aarav", "en", "Aarav", "male", ["bright"], { ready: false }),
+  V("hi-sanya", "hi", "Sanya", "female", ["calm"], { isDefault: true, recommended: true }),
+  V("hi-pooja", "hi", "Pooja", "female", ["warm"], { ready: false }),
+  V("hi-kabir", "hi", "Kabir", "male", ["calm"], { isDefault: true, recommended: true }),
+  V("hi-rohan", "hi", "Rohan", "male", ["bright"], { ready: false }),
+  V("kn-disha", "kn", "Disha", "female", ["warm"], { isDefault: true, recommended: true }),
+  V("kn-chaitra", "kn", "Chaitra", "female", ["calm"], { ready: false }),
+  V("kn-prakash", "kn", "Prakash", "male", ["calm"], { isDefault: true, recommended: true }),
+  V("kn-chetan", "kn", "Chetan", "male", ["bright"], { ready: false }),
+  V("ta-meena", "ta", "Meena", "female", ["warm"], { isDefault: true, recommended: true }),
+  V("ta-vijay", "ta", "Vijay", "male", ["calm"], { isDefault: true, recommended: true }),
+  V("ml-anjali", "ml", "Anjali", "female", ["calm"], { isDefault: true, recommended: true }),
+  V("ml-arun", "ml", "Arun", "male", ["calm"], { isDefault: true, recommended: true }),
 ];

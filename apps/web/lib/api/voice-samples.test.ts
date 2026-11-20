@@ -6,7 +6,7 @@ const bin = vi.fn();
 const req = vi.fn();
 vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>()), apiBinaryRequest: (...a: unknown[]) => bin(...a), apiRequest: (...a: unknown[]) => req(...a) }));
 
-import { getVoicePreview, getVoicePreviewText } from "./voice-samples";
+import { getToneExample, getVoicePreview, getVoicePreviewText } from "./voice-samples";
 
 const T = "22222222-2222-2222-2222-222222222222";
 const q = { voice: "male_calm" as const, lang: "ml" as const, tone: "crisp" as const, name: "Asha" };
@@ -48,5 +48,30 @@ describe("the words of the preview", () => {
     expect(await getVoicePreviewText("tok", T, q)).toBeNull();
     req.mockResolvedValueOnce({ text: "" });
     await expect(getVoicePreviewText("tok", T, q)).rejects.toThrow();
+  });
+});
+
+describe("the example words of one tone (the voice card)", () => {
+  it("asks for the language and the tone in the API's words (friendly is warm) and reads the text", async () => {
+    req.mockResolvedValueOnce({ text: "  Hello from Pavers Corner  ", sound: {} });
+    expect(await getToneExample("tok", T, "te", "friendly")).toBe("Hello from Pavers Corner");
+    expect(req.mock.calls[0][0]).toBe(`/v1/tenants/${T}/ai-assistant/voice-preview/text?language=te&style=warm`);
+    req.mockResolvedValueOnce({ text: "Hi" });
+    await getToneExample("tok", T, "en", "quick");
+    expect(req.mock.calls[1][0]).toBe(`/v1/tenants/${T}/ai-assistant/voice-preview/text?language=en&style=quick`);
+  });
+  it("is null when the API has none (404) or the text is empty or odd; other failures are thrown; a bad workspace id or language is refused before any request", async () => {
+    req.mockRejectedValueOnce(new ApiRequestError(404, "no_sample", "x"));
+    expect(await getToneExample("tok", T, "te", "respectful")).toBeNull();
+    req.mockResolvedValueOnce({ text: " " });
+    expect(await getToneExample("tok", T, "te", "respectful")).toBeNull();
+    req.mockResolvedValueOnce({});
+    expect(await getToneExample("tok", T, "te", "respectful")).toBeNull();
+    req.mockRejectedValueOnce(new ApiRequestError(500, "boom", "x"));
+    await expect(getToneExample("tok", T, "te", "respectful")).rejects.toThrow();
+    req.mockClear();
+    await expect(getToneExample("tok", "x", "te", "quick")).rejects.toThrow();
+    await expect(getToneExample("tok", T, "../", "quick")).rejects.toThrow();
+    expect(req).not.toHaveBeenCalled();
   });
 });
