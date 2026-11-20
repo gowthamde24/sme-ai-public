@@ -19,8 +19,8 @@ export const GREETING_MENTIONS_AI = false;
 /** The name-only first line of each call (the alternative to "I am the AI assistant of <business>"), same order as STACK: spoken style, drafts for the owner's read. */
 const NAME_ONLY_GREETING: Record<StackCode, string> = {
   te: "నమస్తే అండీ, నేను Bright Path Academy నుంచి Priya. ఏ course, ఎవరికి కావాలి?",
-  hi: "नमस्ते! मैं Shree Homes से Priya बोल रही हूँ। कौन सा flat चाहिए?",
-  kn: "ನಮಸ್ಕಾರ! ನಾನು Sunrise Clinic ನಿಂದ Priya. ನಿಮಗೆ ಏನು ಬೇಕು?",
+  hi: "नमस्ते! मैं Shree Homes से Priya बोल रही हूँ। बताइए, आपको किस तरह का flat चाहिए?",
+  kn: "ನಮಸ್ಕಾರ! ನಾನು Sunrise Clinic ಇಂದ Priya ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ. ಹೇಗೆ help ಮಾಡಲಿ?",
   en: "Hi! This is Priya from Green Leaf Store. How can I help?",
 };
 
@@ -72,7 +72,7 @@ const STACK_TODAY: readonly StackChat[] = [
       ],
     },
     lines: [
-      { from: "them", text: "नमस्ते! अभी call पर बात हुई थी। 2BHK के photos और location यहाँ हैं।", time: "11:05 am" },
+      { from: "them", text: "नमस्ते! अभी call पर बात हुई थी। ये रहे 2BHK के photos और location।", time: "11:05 am" },
       { from: "me", time: "11:05 am", text: "मिल गए, शनिवार को आता हूँ।" },
       { from: "them", time: "11:06 am", text: "Done, शनिवार 11 बजे की site visit book हो गई।" },
       { from: "me", time: "11:06 am", text: "Thanks!" },
@@ -82,7 +82,7 @@ const STACK_TODAY: readonly StackChat[] = [
     code: "kn",
     name: "Sunrise Clinic",
     place: "Bengaluru",
-    day: "ಇಂದು",
+    day: "ಇವತ್ತು",
     call: {
       you: "ನೀವು",
       live: "Live captions",
@@ -90,13 +90,13 @@ const STACK_TODAY: readonly StackChat[] = [
       lines: [
         { from: "them", text: "ನಮಸ್ಕಾರ! ನಾನು Sunrise Clinic ನ AI assistant. ನಿಮಗೆ ಏನು ಬೇಕು?" },
         { from: "me", text: "ನಾಳೆ ಬೆಳಿಗ್ಗೆ doctor appointment ಬೇಕು." },
-        { from: "them", text: "ನಾಳೆ 10:30 ಕ್ಕೆ doctor ಇದ್ದಾರೆ. ಆಗುತ್ತದೆಯಾ?" },
+        { from: "them", text: "ನಾಳೆ 10:30 ಕ್ಕೆ doctor ಇದ್ದಾರೆ, ನಿಮಗೆ ಓಕೆ ನಾ?" },
         { from: "me", text: "ಹೌದು, book ಮಾಡಿ." },
       ],
     },
     lines: [
-      { from: "them", time: "8:20 am", text: "ನಮಸ್ಕಾರ! ಈಗಷ್ಟೇ call ನಲ್ಲಿ ಮಾತನಾಡಿದೆವು. ನಿಮ್ಮ appointment details ಇವು." },
-      { from: "me", time: "8:20 am", text: "ಸರಿ, ಬರುತ್ತೇನೆ." },
+      { from: "them", time: "8:20 am", text: "ನಮಸ್ಕಾರ! ಈಗಷ್ಟೇ call ನಲ್ಲಿ ಮಾತಾಡಿದ್ವಿ ಅಲ್ವಾ. ನಿಮ್ಮ appointment details ಇಲ್ಲಿದೆ ನೋಡಿ." },
+      { from: "me", time: "8:20 am", text: "ಸರಿ, ಬರ್ತೀನಿ." },
       { from: "them", time: "8:21 am", text: "Done, ನಾಳೆ 10:30 ಕ್ಕೆ ನಿಮ್ಮ appointment book ಆಗಿದೆ." },
       { from: "me", time: "8:21 am", text: "Thank you!" },
     ],
