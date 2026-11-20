@@ -8,7 +8,7 @@ import { mockJobDetail } from "@/lib/jobs/detail-mock";
 import { MOCK_JOBS, MOCK_PAGE_JOBS } from "@/lib/jobs/mock";
 import { JOB_KINDS } from "@/lib/jobs/types";
 
-import { addJobFaq, getJob, parseJobDetail, patchJob, removeJobFaq, testJob } from "./jobs";
+import { addJobFaq, getJob, parseJobDetail, parseJobs, patchJob, removeJobFaq, testJob } from "./jobs";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const J = MOCK_JOBS[0].id;
@@ -57,11 +57,25 @@ describe("one job's page: what the API sends (the adapter)", () => {
   });
   it("cost is the month so far {minutes_used, minutes_included, rupees|null}: rupees on a paid plan; it is required, and a plan's per-estimate shape is not it", () => {
     expect(parseJobDetail(wire).cost).toEqual({ minutesUsed: 8, minutesIncluded: 60, rupees: null });
+    // one part the web cannot read leaves THAT part out (named in `unavailable`), never the whole page; the core stays strict
+    const broken = parseJobDetail({ ...wire, results: { days: "x", numbers: {}, items: [] }, faqs: "nope" });
+    expect([...broken.unavailable].sort()).toEqual(["faqs", "results"]);
+    expect(broken.job.id).toBe(parseJobDetail(wire).job.id);
+    expect(broken.results).toEqual({ days: 7, numbers: [], items: [] });
+    expect(parseJobDetail(wire).unavailable).toEqual([]);
+    expect(() => parseJobDetail({ ...wire, id: "not-a-uuid" })).toThrow();
+    // a list row it cannot read is skipped, the other jobs stay
+    const one = parseJobDetail(wire).job;
+    expect(parseJobs({ items: [wire, { nonsense: true }] }).map((j) => j.id)).toEqual([one.id]);
+    // a setting the owner has not chosen sends value null: the default shows, the page still draws (staging 20 Nov: "Unexpected setting.value" crashed a job page)
+    const withNulls = parseJobDetail({ ...wire, settings: { main: [{ key: "say_ai_when_greeting", type: "choice", value: null, options: ["business", "on", "off"] }, { key: "quiet", type: "toggle", value: null }], more: [] } });
+    expect(withNulls.settings.find((x) => x.key === "say_ai_when_greeting")).toMatchObject({ value: "", options: ["business", "on", "off"] }); // null = "your own setting": nothing is picked for the owner
+    expect(withNulls.settings.find((x) => x.key === "quiet")).toMatchObject({ value: "" });
     // a plan with no included minutes (Pay as you go) sends null: the page must still draw (staging 20 Nov: "Unexpected cost.minutes_included" crashed it)
     expect(parseJobDetail({ ...wire, cost: { minutes_used: 12, minutes_included: null, rupees: null } }).cost).toEqual({ minutesUsed: 12, minutesIncluded: null, rupees: null });
     expect(parseJobDetail({ ...wire, cost: { minutes_used: 0, minutes_included: 0, rupees: 190 } }).cost).toEqual({ minutesUsed: 0, minutesIncluded: 0, rupees: 190 });
-    expect(() => parseJobDetail({ ...wire, cost: undefined })).toThrow();
-    expect(() => parseJobDetail({ ...wire, cost: { minutes: 34, minutes_included: 60, rupees: null } })).toThrow();
+    expect(parseJobDetail({ ...wire, cost: undefined }).unavailable).toContain("cost"); // an unreadable part is left out and named, never the whole page
+    expect(parseJobDetail({ ...wire, cost: { minutes: 34, minutes_included: 60, rupees: null } }).unavailable.length).toBeGreaterThan(0);
   });
   it("settings are {main, more} with no `area` (which list a setting is in says where it goes); hours are the settings from_hour and to_hour; `when` is only read-only input", () => {
     const hours = [{ key: "from_hour", type: "choice", value: "09:30", options: ["09:00", "09:30"] }, { key: "to_hour", type: "choice", value: "19:00", options: ["18:00", "19:00"] }];
@@ -73,10 +87,10 @@ describe("one job's page: what the API sends (the adapter)", () => {
     expect(parseJobDetail({ ...wire, settings: { main: [], more: [{ key: "stop_after", type: "toggle", value: false }] } }).settings[0]).toMatchObject({ value: "off", options: ["on", "off"], more: true });
     expect(parseJobDetail(wire).settings[1]).toMatchObject({ key: "notify_visit", type: "toggle", value: "on" });
     // the old words are not the contract any more: "on"/"off" strings are refused, never guessed
-    expect(() => parseJobDetail({ ...wire, settings: { main: [], more: [{ key: "stop_after", type: "toggle", value: "on", options: ["on", "off"] }] } })).toThrow();
+    expect(parseJobDetail({ ...wire, settings: { main: [], more: [{ key: "stop_after", type: "toggle", value: "on", options: ["on", "off"] }] } }).unavailable).toContain("settings");
     // the old flat array (with `area`) is not the contract: it is refused, never guessed
-    expect(() => parseJobDetail({ ...wire, settings: [{ key: "response", type: "choice", value: "right_away", options: ["right_away"], area: "main" }] })).toThrow();
-    expect(() => parseJobDetail({ ...wire, settings: { main: [{ key: "x", type: "slider", value: "1", options: ["1"] }], more: [] } })).toThrow();
+    expect(parseJobDetail({ ...wire, settings: [{ key: "response", type: "choice", value: "right_away", options: ["right_away"], area: "main" }] }).unavailable.length).toBeGreaterThan(0);
+    expect(parseJobDetail({ ...wire, settings: { main: [{ key: "x", type: "slider", value: "1", options: ["1"] }], more: [] } }).unavailable.length).toBeGreaterThan(0);
   });
   it("results.numbers keeps whole numbers only (the researcher's free-search state has a date and a flag in it)", () => {
     expect(parseJobDetail(wire).results.numbers).toEqual([{ key: "called", value: 38 }]);
@@ -92,11 +106,11 @@ describe("one job's page: what the API sends (the adapter)", () => {
     expect(d.whatCode).toBe("custom");
   });
   it("refuses what it has no words for: a result status, a setting value that is not one of its options, a channel, a long business name", () => {
-    expect(() => parseJobDetail({ ...wire, results: { ...wire.results, items: [{ ...wire.results.items[0], status: "exploded" }] } })).toThrow();
-    expect(() => parseJobDetail({ ...wire, settings: { main: [{ key: "response", type: "choice", value: "never", options: ["right_away"] }], more: [] } })).toThrow();
-    expect(() => parseJobDetail({ ...wire, says: [{ language: "en", channel: "pigeon", text: "x" }] })).toThrow();
-    expect(() => parseJobDetail({ ...wire, test_channel: "fax" })).toThrow();
-    expect(() => parseJobDetail({ ...wire, test_channel: "message" })).toThrow();
+    expect(parseJobDetail({ ...wire, results: { ...wire.results, items: [{ ...wire.results.items[0], status: "exploded" }] } }).unavailable).toContain("results");
+    expect(parseJobDetail({ ...wire, settings: { main: [{ key: "response", type: "choice", value: "never", options: ["right_away"] }], more: [] } }).unavailable).toContain("settings");
+    expect(parseJobDetail({ ...wire, says: [{ language: "en", channel: "pigeon", text: "x" }] }).unavailable).toContain("says");
+    expect(parseJobDetail({ ...wire, test_channel: "fax" }).unavailable).toContain("test");
+    expect(parseJobDetail({ ...wire, test_channel: "message" }).unavailable.length).toBeGreaterThan(0);
     expect(parseJobDetail({ ...wire, test_channel: "whatsapp" }).test).toBe("whatsapp");
     expect(() => parseJobDetail({ ...wire, business_name: "x".repeat(81) })).toThrow();
   });

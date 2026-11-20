@@ -22,7 +22,7 @@ export function PillSelect({ label, value, options, optionText, disabled, invali
     <span className="relative my-0.5 inline-block max-w-full align-middle">
       <select aria-label={label} value={value} disabled={disabled} aria-invalid={invalid ? true : undefined} data-invalid={invalid ? "" : undefined} onChange={(e) => onChange(e.target.value)} className={`jb-press write-ctl min-h-10 max-w-full cursor-pointer text-ellipsis appearance-none rounded-full border ${invalid ? "border-red-text" : "border-[color:var(--v2-pill-edge)]"} bg-brand-bg py-1 pl-3.5 pr-8 text-[16px] font-semibold text-brand-text disabled:cursor-default disabled:opacity-80`}>
         {options.map((o) => (
-          <option key={o} value={o}>
+          <option key={o} value={o} disabled={o === ""}>
             {optionText(o)}
           </option>
         ))}
@@ -51,7 +51,7 @@ export function SettingLineView({ line, byKey, values, t, disabled, invalid = []
         const key = /^\{(\w+)\}$/.exec(part)?.[1];
         const s = key ? byKey.get(key) : undefined;
         if (!s) return <Fragment key={i}>{part}</Fragment>;
-        return <PillSelect key={i} label={many ? `${plain} (${line.keys.indexOf(s.key) + 1})` : plain} value={values[s.key] ?? s.value} options={s.options} optionText={(v) => optionLabel(t, s.key, v)} disabled={disabled} invalid={invalid.includes(s.key)} onChange={(v) => onChange(s.key, v)} />;
+        return <PillSelect key={i} label={many ? `${plain} (${line.keys.indexOf(s.key) + 1})` : plain} value={values[s.key] ?? s.value} options={(values[s.key] ?? s.value) === "" && !s.options.includes("") ? ["", ...s.options] : s.options} optionText={(v) => (v === "" ? t("jobs.job.setting.own") : optionLabel(t, s.key, v))} disabled={disabled} invalid={invalid.includes(s.key)} onChange={(v) => onChange(s.key, v)} />;
       })}
     </p>
   );
