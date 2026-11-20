@@ -30,11 +30,11 @@ describe("string store: four languages (and Tamil on the public site)", () => {
     it(`${name}: the other languages use their own script`, () => {
       const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/, ta: /[஀-௿]/ } as const;
       const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$|v3\.(day\.\d\.time)$|h2\.plans\.ld$|pp\.(gst|pop|included|setup\.prio)$|h3\.(phone\.(biz|calllog|msg)|how\.f\.(1\.v|[23])|built\.[234]\.t|src\.\d\.[td])$|h2\.out\.2\.t|h2\.finder\.(call|pin\.\d\.what)$)/; // (Latin on purpose: plan names, source names, kinds of school, the phone's own labels) // intentionally Latin or numeric (role.main.t is the product name "Your assistant"; IndiaMART and JustDial are other companies' names)
-      // Tamil: single business words and names that stay in Latin on purpose (the owner's style: WhatsApp, plan, OK, enquiry, call, quote in Latin): menu labels, plan terms, units
-      const TA_LATIN = /^(price\.founding\.t|contact\.(copy|mail|who\.phone)|contact\.addr\.billing|calc\.(unit\.sq_(ft|m)|pieces|pallets|trips)|hm\.(wf\.early|w\.[2-6]\.n)|ld\.deep\.(tag|\w+\.t)|h2\.nav\.(finder|plans|login|early\.short)|h2\.(hear\.on|finder\.skip|foot\.(product|whatsapp))|help\.(4|7)\.t|cookie\.(notice|panel|analytics)\.title)$/;
+      // Hindi, Kannada and Tamil: single business words and names that stand alone in Latin on purpose (the owner's style: WhatsApp, plan, OK, enquiry, call, quote in Latin): menu labels, plan terms, units
+      const LATIN_LABELS = /^(price\.founding\.t|contact\.(copy|mail|who\.phone)|contact\.addr\.billing|calc\.(unit\.sq_(ft|m)|pieces|pallets|trips)|hm\.(wf\.early|w\.[2-6]\.n)|ld\.deep\.(tag|\w+\.t)|h2\.nav\.(finder|plans|login|early\.short)|h2\.(hear\.on|finder\.skip|foot\.(product|whatsapp))|help\.(4|7)\.t|cookie\.(notice|panel|analytics)\.title)$/;
       for (const lang of ["te", "hi", "kn", "ta"] as const) {
         // a key with no Tamil text shows its English (nothing to check); one with a Tamil text must be in Tamil script unless it is on the list of Latin-on-purpose words
-        const missing = keys.filter((k) => !exempt.test(k) && !(lang === "ta" && TA_LATIN.test(k)) && (lang !== "ta" || (data[k] as Entry).ta !== undefined) && !script[lang].test(dicts[lang][k]));
+        const missing = keys.filter((k) => !exempt.test(k) && !(lang !== "te" && LATIN_LABELS.test(k)) && (lang !== "ta" || (data[k] as Entry).ta !== undefined) && !script[lang].test(dicts[lang][k]));
         expect(missing, `${name}:${lang}`).toEqual([]);
       }
     });
