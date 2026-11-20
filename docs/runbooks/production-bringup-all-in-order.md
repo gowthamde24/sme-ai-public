@@ -16,6 +16,9 @@ Older, narrower plans (kept as reference, this file supersedes their ORDER): `do
 5. **[OWNER]** The early-access terms and privacy text approved as dated drafts (privacy page stays a draft until the owner says; version string `PRIVACY_VERSION`).
 6. **[OWNER]** The business's allowed list for the first week (WHATSAPP_ALLOWED_RECIPIENTS) = the owner's own number plus the new business owner's own number only, until the owner says "open".
 
+## 0. BEFORE ANY DATABASE COMMAND: which project is this checkout linked to? (owner's `supabase link` of 21 Nov 2026 linked the MAIN checkout to PRODUCTION)
+`deploy/db_target.sh staging` (or `production`) exits 0 only when `supabase/.temp/project-ref` is that project (staging `uiallwgywitryxatcqxf`, production `ijmsusgyilwskpjxfauu`) and says which one it is otherwise. Rules, in both directions: (a) staging pushes, resets and `db query --linked` run ONLY from a `c1wt-*` worktree and only after `deploy/db_target.sh staging` passes; (b) the main checkout (`~/Desktop/sme-ai-public` = `/Volumes/Stack19/stack19/sme-ai-public`) is linked to PRODUCTION: nothing runs there except the production steps below, with the owner's go and after `deploy/db_target.sh production` passes; (c) re-linking a checkout is a deliberate act: say which project, then re-check. C2 and C3: if you ever touch the database, the same rule.
+
 ## 1. Accounts and public ids [OWNER, then C1 checks]
 ```
 cp deploy/production.env.example deploy/.env.production     # git ignores it
