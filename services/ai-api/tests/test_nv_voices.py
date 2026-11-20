@@ -38,12 +38,16 @@ def run(coro: Any) -> Any:
 # ---- the config -------------------------------------------------------------------------------------------------------------------------------------
 
 
-def test_the_default_config_has_cartesia_first_and_bulbul_v4_flash_behind_it_for_every_call_language() -> None:
+def test_the_default_config_has_bulbul_v4_first_for_te_hi_kn_and_cartesia_first_elsewhere_with_the_other_behind_it() -> None:
     cfg = default_config()
     assert set(CALL_LANGUAGES) == {"te", "en", "hi", "kn", "ta", "ml", "mr"}
     assert set(cfg.languages) == set(VOICED_LANGUAGES) == set(CALL_LANGUAGES) - {"mr"}, "Marathi is a call language with no voice yet (job M1)"
     for lang in VOICED_LANGUAGES:
         v = cfg.for_language(lang)
+        if lang in ("te", "hi", "kn"):   # owner, 21 Nov 2026: "We move to Bulbul v4": the Sarvam voice is the default, a Cartesia voice of the same language and gender is behind it
+            assert v.primary.engine == "sarvam_v4" and v.primary.model == "bulbul:v4-flash" and v.primary.voice.endswith(("_conversation", "_conversational", "_customer", "_narration"))
+            assert v.fallback.engine == "cartesia" and v.fallback.model == "sonic-3.6"
+            continue
         assert v.primary.engine == "cartesia" and v.primary.model == "sonic-3.6"
         assert v.fallback.engine == "sarvam_v4" and v.fallback.model == ("bulbul:v3" if lang == "ml" else "bulbul:v4-flash") and (lang == "ml" or v.fallback.voice.endswith(("_conversation", "_conversational", "_customer", "_narration")))   # Malayalam is not on Bulbul v4 Flash: its fallback is a v3 speaker (20 Nov 2026)
     assert cfg.first_audio_timeout_ms == 800
@@ -61,7 +65,7 @@ def test_bulbul_v3_is_not_a_choice_anywhere() -> None:
 
 def test_the_config_is_data_a_voice_swaps_without_touching_code(tmp_path: Path) -> None:
     raw = json.loads(DEFAULT_FILE.read_text(encoding="utf-8"))
-    next(e for e in raw["catalogue"] if e["id"] == "te-ramya")["primary"]["voice"] = "some-other-voice-id"
+    next(e for e in raw["catalogue"] if e["id"] == "te-kavitha")["primary"]["voice"] = "some-other-voice-id"
     next(e for e in raw["catalogue"] if e["id"] == "en-janvi")["fallback"]["voice"] = "ritu_en_latenight"
     raw["first_audio_timeout_ms"] = 600
     path = tmp_path / "voices.json"
@@ -128,11 +132,16 @@ class Engine:
             self.closed += 1
 
 
+# The tests below are about a Cartesia voice with Bulbul behind it. Since 21 Nov 2026 the DEFAULT voices of te, hi and kn are the Sarvam Bulbul v4 ones (Cartesia behind them), so these tests choose the Cartesia voice
+# explicitly (a workspace's saved choice), exactly what an unset workspace spoke before: nothing about the Cartesia path is weakened.
+CARTESIA_FIRST = {"te": "te-ramya", "hi": "hi-sanya", "kn": "kn-disha"}
+
+
 def build(primary: Engine, fallback: Engine, *, timeout_ms: int = 800, clock: Any = None, cooldown_s: float = 30.0) -> FallbackTts:
     cfg = default_config()
     cfg = dataclasses.replace(cfg, first_audio_timeout_ms=timeout_ms, cooldown_s=cooldown_s)
     engines = {"cartesia": primary, "sarvam_v4": fallback}
-    return FallbackTts(cfg, lambda choice, language: engines[choice.engine], clock=clock or (lambda: 0.0))
+    return FallbackTts(cfg, lambda choice, language: engines[choice.engine], clock=clock or (lambda: 0.0), chosen=CARTESIA_FIRST)
 
 
 async def speak(tts: FallbackTts, text: str = "హా అండీ", language: str = "te") -> list[bytes]:
@@ -238,7 +247,7 @@ def test_cartesia_out_of_credits_switches_the_call_to_sarvam_bulbul_at_once() ->
     cartesia = CartesiaStreamTts("test-key", voice_id="v", client=httpx.AsyncClient(transport=httpx.MockTransport(handler)))
     fallback = Engine("s")
     cfg = dataclasses.replace(default_config(), first_audio_timeout_ms=800)
-    tts = FallbackTts(cfg, lambda choice, language: cartesia if choice.engine == "cartesia" else fallback)
+    tts = FallbackTts(cfg, lambda choice, language: cartesia if choice.engine == "cartesia" else fallback, chosen=CARTESIA_FIRST)
     tts.begin_turn()
     began = time.perf_counter()
     first = run(speak(tts, "నమస్కారం"))
@@ -322,7 +331,7 @@ def test_a_400_for_one_text_is_spoken_by_the_fallback_but_the_call_stays_on_the_
 
     cartesia = CartesiaStreamTts("test-key", voice_id="v", client=httpx.AsyncClient(transport=httpx.MockTransport(handler)))
     fallback = Engine("s")
-    tts = FallbackTts(default_config(), lambda choice, language: cartesia if choice.engine == "cartesia" else fallback)
+    tts = FallbackTts(default_config(), lambda choice, language: cartesia if choice.engine == "cartesia" else fallback, chosen=CARTESIA_FIRST)
     tts.begin_turn()
     assert run(speak(tts, "bad")) and tts.served_engine == "sarvam_v4" and tts.fallback_reason == "bad_text" and not tts.primary_off
     tts.begin_turn()

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import base64
 import json
+import re
 from collections.abc import Sequence
 
 import httpx
@@ -20,6 +21,11 @@ MAX_KEYTERMS, MAX_KEYTERM_CHARS = 50, 64
 MIN_PACE, MAX_PACE = 0.5, 2.0   # Bulbul v3 / v4-flash (docs.sarvam.ai, text-to-speech)
 MIN_TEMPERATURE, MAX_TEMPERATURE = 0.01, 1.0
 SAMPLE_RATE = 24000   # one of the rates the REST endpoint takes; plenty for speech that is then coded at 16 kHz
+V3_MODEL = "bulbul:v3"
+# The four Bulbul v3 speakers the product has used for voice notes, samples and previews (app/voicesample SPEAKERS) and their gender. Speakers are NOT shared between the models (docs.sarvam.ai: "a mismatched speaker returns a 400"), so on
+# Bulbul v4 each one is replaced by the catalogue's listed Sarvam voice of the language and gender (app/conversation/data/voices.json); no speaker at all means the woman's voice (as the default always was).
+V3_SPEAKER_GENDER = {"ritu": "female", "priya": "female", "aditya": "male", "rahul": "male"}
+_V4_PERSONA = re.compile(r"^[a-z]+_[a-z]+_[a-z_]+$")   # <name>_<language>_<style>: "kavitha_te_conversation"
 
 
 class SarvamStt:
@@ -78,18 +84,36 @@ class SarvamTts:
     def __repr__(self) -> str:
         return f"SarvamTts(model={self._model})"
 
+    def _model_and_speaker(self, language: str, speaker: str | None) -> tuple[str, str | None]:
+        """(the model and the speaker this call is sent with). On Bulbul v4 a v3 speaker name (ritu, priya, aditya, rahul) or none is replaced by the listed Sarvam v4 voice of the language and gender; a v4 persona is used as it is.
+        Where v4 has nothing to say it with (Malayalam is not on v4 Flash; an unknown v3 name) the call keeps the v3 model, so it is never refused with a 400 for a speaker of the wrong model."""
+        chosen = speaker or self._speaker
+        if not self._model.startswith("bulbul:v4"):
+            return self._model, chosen
+        if chosen is not None and _V4_PERSONA.match(chosen):
+            return self._model, chosen
+        if chosen is not None and chosen not in V3_SPEAKER_GENDER:
+            return V3_MODEL, chosen   # a v3 name we cannot place on v4: v3 speaks it
+        from app.conversation.voices import default_config
+
+        gender = V3_SPEAKER_GENDER.get(chosen or "", "female")
+        for voice in default_config().voices_of(language, gender, listed_only=True):
+            if voice.provider == "sarvam" and voice.voices.primary.model.startswith("bulbul:v4"):
+                return voice.voices.primary.model, voice.voices.primary.voice
+        return V3_MODEL, chosen   # no listed Sarvam v4 voice for this language (Malayalam): v3, with the speaker it was given (or its own default)
+
     def synthesize(self, text: str, language: str, *, speaker: str | None = None, pace: float | None = None, temperature: float | None = None) -> Speech:
         tag = TAGS.get(language)
         if tag is None:
             raise VoiceError("unsupported_language")
+        model, chosen = self._model_and_speaker(language, speaker)
         payload: dict[str, object] = {
             "text": text[:2500],
             "language_code": tag,
-            "model": self._model,
+            "model": model,
             "output_audio_codec": "wav",   # Bulbul v3 refuses `opus`; app.voice.convert turns the WAV into OGG/Opus, which is what WhatsApp plays
             "speech_sample_rate": SAMPLE_RATE,
         }
-        chosen = speaker or self._speaker
         if chosen:
             payload["speaker"] = chosen
         if temperature is not None:

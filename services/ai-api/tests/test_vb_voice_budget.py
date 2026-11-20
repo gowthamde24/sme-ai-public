@@ -16,12 +16,12 @@ from app.conversation.voices import default_config
 from app.today.service import needs_item
 from app.voice.budget import FixedBudget, Hold, RpcVoiceBudget
 from tests.test_dv_browser_voice import arun, until
-from tests.test_nv_voices import Engine, run, speak
+from tests.test_nv_voices import CARTESIA_FIRST, Engine, run, speak
 
 
 def build(primary: Engine, fallback: Engine) -> FallbackTts:
     cfg = dataclasses.replace(default_config(), first_audio_timeout_ms=800)
-    return FallbackTts(cfg, lambda choice, language: primary if choice.engine == "cartesia" else fallback)
+    return FallbackTts(cfg, lambda choice, language: primary if choice.engine == "cartesia" else fallback, chosen=CARTESIA_FIRST)   # (the Cartesia voice, chosen: the cap is on Cartesia)
 
 
 def test_the_call_speaks_with_cartesia_until_its_allowance_is_spent_then_with_sarvam_for_the_rest_of_the_call() -> None:

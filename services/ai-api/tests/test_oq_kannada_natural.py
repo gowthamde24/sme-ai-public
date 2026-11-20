@@ -94,8 +94,9 @@ def test_the_prompt_teaches_kannada_from_the_anchors_only_and_without_the_draft_
     assert "drafts for native review" in register.register_block("hi")
 
 
-def test_disha_stays_the_default_kannada_voice() -> None:
+def test_chaitra_is_the_default_kannada_voice_and_disha_stays_a_listed_choice() -> None:
     from app.conversation.voices import default_config
 
     cfg = default_config()
-    assert cfg.default_for("kn").id == "kn-disha" and cfg.default_for("kn").gender == "female"
+    assert cfg.default_for("kn").id == "kn-chaitra" and cfg.default_for("kn").gender == "female", "Bulbul v4 is the default (owner, 21 Nov 2026)"
+    assert cfg.catalogue["kn-disha"].listed and not cfg.catalogue["kn-disha"].default, "the Cartesia woman stays a choice"
