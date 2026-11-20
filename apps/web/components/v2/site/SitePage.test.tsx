@@ -198,6 +198,18 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(text(join)).toContain("Or WhatsApp us on +91 95023 80998");
     expect(home).not.toContain("[WHATSAPP NUMBER]");
   });
+  it("the phones have side keys on the RIGHT edge only (a longer volume rocker above a shorter power key), drawn with pseudo-elements (no markup to read), nothing on the left, inside the width (the page does not grow)", () => {
+    const strip = (f: string) => fs.readFileSync(path.join(__dirname, "../../../design", f), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+    for (const [file, sel] of [["home3.css", /\.h3-dp::before, \[data-ui="v2"\] \.h3-dp::after \{([^}]*)\}/], ["phone-preview.css", /\.pp-frame::before,\s*\.pp\[data-pp-variant="full"\] \.pp-frame::after \{([^}]*)\}/]] as const) {
+      const css = strip(file);
+      const rule = css.match(sel)![1];
+      expect(rule, file).toMatch(/right:\s*(-3px|calc\(-3px)/);
+      expect(rule, file).not.toMatch(/\bleft\s*:/);
+      expect(rule, file).toMatch(/pointer-events:\s*none/);
+    }
+    const dark = home.match(/data-part="dark-phone"[\s\S]*?<\/div><\/div><\/div>/)![0];
+    expect(dark).not.toMatch(/h3-dp-key|data-key/); // the keys are CSS only: nothing in the markup
+  });
   it("one orange: the page's own css names no other orange and no gradient (the owner's colour rule, 20 Nov 2026)", () => {
     const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace("radial-gradient(circle, var(--h3-dot) 1px, transparent 1.3px)", "").replace(/radial-gradient\(120% 55% at 50% 0%.*?70%\)/, "").replace(/linear-gradient\(90deg, transparent 0, #000 var\(--h3-gutter\)[^;]*?transparent 100%\)/g, ""); // (the gradients allowed: the page's dot grid, and the dark call screen's very faint warm light drawn inside the phone)
     expect(css).not.toMatch(/#ff773c|#ec486e|#ff9a6b|#ea580c|#f97316|gradient/i);

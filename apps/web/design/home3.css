@@ -128,6 +128,10 @@
 /* the phone: a black body, a thin bezel, a dynamic island, a status bar, a home bar; the screen fills it (so the box never changes size) */
 [data-ui="v2"] .h3-dp { position: relative; flex: none; width: min(100%, 300px); margin-inline: auto; aspect-ratio: 1 / 2.05; border-radius: 13% / 6.34%; padding: 3%; background: #0a0a0c; box-shadow: inset 0 0 0 1.5px #2e2e33, 0 28px 56px -28px rgba(22, 24, 29, 0.55); color: #f4f2ee; }
 @media (min-width: 768px) { [data-ui="v2"] .h3-dp { width: min(100%, 320px); } }
+/* the side keys, all on the RIGHT edge like a Galaxy S: a longer volume rocker in the upper third (14% of the body) and a shorter power key just below (7%); nothing on the left; thin, the bezel's metal tone with a soft top highlight, 3 px proud, rounded ends; decorative */
+[data-ui="v2"] .h3-dp::before, [data-ui="v2"] .h3-dp::after { content: ""; position: absolute; right: -3px; width: 3px; border-radius: 0 2px 2px 0; background-color: #3a3a40; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28); pointer-events: none; }
+[data-ui="v2"] .h3-dp::before { top: 17%; height: 14%; }
+[data-ui="v2"] .h3-dp::after { top: 35%; height: 7%; }
 [data-ui="v2"] .h3-dp-screen { position: relative; display: flex; width: 100%; height: 100%; flex-direction: column; overflow: hidden; border-radius: 10% / 4.9%; background-color: #0e0d10; }
 [data-ui="v2"] .h3-dp-island { position: absolute; top: 15px; left: 50%; z-index: 3; width: 88px; height: 25px; transform: translateX(-50%); border-radius: 999px; background: #000; }
 [data-ui="v2"] .h3-dp-status { position: absolute; top: 15px; left: 28px; right: 28px; z-index: 3; display: flex; align-items: center; justify-content: space-between; height: 25px; font-size: 14px; font-weight: 600; color: #fff; }

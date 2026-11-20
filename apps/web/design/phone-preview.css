@@ -118,6 +118,23 @@
   background: linear-gradient(var(--pp-bezel-color), var(--pp-bezel-color)) padding-box, linear-gradient(150deg, #dfe2e7 0%, #8b9099 28%, #c9ccd2 52%, #6f737b 78%, #b4b8bf 100%) border-box;
   box-shadow: 0 34px 60px -26px rgba(0, 0, 0, 0.5), 0 14px 26px -14px rgba(0, 0, 0, 0.35), 0 2px 5px rgba(0, 0, 0, 0.25);
 }
+/* the side keys (owner, 21 Nov 2026: "Samsung buttons"): ALL on the RIGHT edge, a longer volume rocker in the upper third (14% of the body) and a shorter power key just below it (7%); nothing on the left. Thin, the bezel's metal tone with a soft top highlight,
+   3 px proud of the body, rounded ends; decorative (pseudo-elements: no markup, nothing to read), and inside the wrapper's own width (the full frame gives its right side 3 px of padding), so the page does not grow. */
+.pp[data-pp-variant="full"] { padding-inline-end: 3px; box-sizing: border-box; }
+.pp[data-pp-variant="full"] .pp-frame { position: relative; }
+.pp[data-pp-variant="full"] .pp-frame::before,
+.pp[data-pp-variant="full"] .pp-frame::after {
+  content: "";
+  position: absolute;
+  right: calc(-3px - var(--pp-edge));
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background-color: #4a4d54;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+.pp[data-pp-variant="full"] .pp-frame::before { top: 17%; height: 14%; }
+.pp[data-pp-variant="full"] .pp-frame::after { top: 35%; height: 7%; }
 .pp-screen {
   position: relative;
   box-sizing: border-box;
@@ -484,6 +501,9 @@
   .pp:not([data-pp-keep])[data-pp-variant="peek"] {
     max-width: 420px;
   }
+  .pp:not([data-pp-keep])[data-pp-variant="full"] { padding-inline-end: 0; }
+  .pp:not([data-pp-keep]) .pp-frame::before,
+  .pp:not([data-pp-keep]) .pp-frame::after { display: none; } /* (the slim phone form has no bezel, so no keys) */
   .pp:not([data-pp-keep]) .pp-frame {
     padding: 0;
     border: 0;
