@@ -20,3 +20,6 @@ In `GET /jobs/{id}` (full S2) `settings.more` has one setting:
 * Greeting: calls (inbound and outbound) and WhatsApp openings add "I'm the AI assistant of {business}" only when the resolved value is true (job override, else business setting, else false). Previews and the test call use the same resolution as real calls (`resolve_sound`).
 * The honest answer: fixed, in te / hi / kn / en (and the other call languages), the same in both settings; evals check both.
 * Errors: a non-boolean value is `422 invalid_value`; Owner and Admin only (403 otherwise).
+
+## Text we append ourselves (21 Nov 2026, migration 20261231987500)
+The AI sentence ("This message is from the business's AI assistant.") that we add to a person's first message follows the same resolved setting: campaign messages, trip updates, the assistant's first reply and the campaign preview (`preview.disclosure` is `""` when it is OFF, so the approval screen's quote matches what is sent). The STOP wording is never touched: it is part of the approved template or the consent ask ("Reply STOP any time to stop."). A template already approved by Meta keeps its approved text.
