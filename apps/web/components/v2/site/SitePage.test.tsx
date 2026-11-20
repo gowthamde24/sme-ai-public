@@ -13,8 +13,9 @@ vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverC
 
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { LANGS, type Lang } from "@/i18n/lang";
+import { SITE_LANGS, type SiteLang } from "@/i18n/lang";
 import { siteDict } from "@/i18n/site";
+import siteJson from "@/i18n/strings/site.json";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
 import { SITE_PACKS } from "@/lib/site/packs";
 import { allTargets } from "@/lib/site/routes";
@@ -22,9 +23,9 @@ import { allTargets } from "@/lib/site/routes";
 import { SitePage, type SiteActions } from "./SitePage";
 
 const actions = (chatAvailable: boolean): SiteActions => ({ contactChat: vi.fn(), quoteChat: vi.fn(), chatAvailable });
-const render = (lang: Lang, target: SiteTarget, chat = true) => renderToStaticMarkup(<SitePage lang={lang} target={target} actions={actions(chat)} />);
+const render = (lang: SiteLang, target: SiteTarget, chat = true) => renderToStaticMarkup(<SitePage lang={lang} target={target} actions={actions(chat)} />);
 const name = (t: SiteTarget) => (t.kind === "home" ? "home" : t.kind === "page" ? t.page : t.slug);
-const cases = allTargets().flatMap((t) => LANGS.map((l) => [`${name(t)} ${l}`, l, t] as const));
+const cases = allTargets().flatMap((t) => SITE_LANGS.map((l) => [`${name(t)} ${l}`, l, t] as const));
 
 describe("every page of the public site, in every language", () => {
   it.each(cases)("%s: one h1, the sign-up call to action, no raw key or placeholder, the right <html> language marker", (_n, lang, target) => {
@@ -269,7 +270,7 @@ describe("The assistant's flow on the business pages and the other pages (night 
     expect(html.indexOf('data-part="ld-steps"')).toBeLessThan(html.indexOf('data-part="steps"'));
     expect(text(html)).toContain("The assistant at the core");
   });
-  it.each(["te", "hi", "kn"] as const)("%s: the new home sections read in the language (no English headline, no raw key)", (lang) => {
+  it.each(["te", "hi", "kn", "ta"] as const)("%s: the new home sections read in the language (no English headline, no raw key)", (lang) => {
     const html = render(lang, { kind: "home" });
     const d = siteDict(lang);
     for (const k of ["h3.hero.t", "h3.ask.title", "h3.how.title", "h3.radar.t", "h3.built.title", "h2.plans.title", "h3.final.t"] as const) expect(text(html), k).toContain(d[k].replace(/&/g, "&amp;").replace(/&amp;/g, "&"));
@@ -335,12 +336,45 @@ describe("how it works (job DM): the same six AI workers as the home page", () =
     expect(stepsOf(edu.slug).join(" ")).toContain("never written by the AI");
     for (const p of SITE_PACKS.filter((x) => !x.steps)) expect(stepsOf(p.slug).join(" "), p.slug).toBe("");
   });
-  it("reads the same six steps in every language (te, hi, kn are drafts) and never an English fallback key", () => {
-    for (const lang of ["te", "hi", "kn"] as const) {
+  it("reads the same six steps in every language (te, hi, kn and ta are drafts) and never an English fallback key", () => {
+    for (const lang of ["te", "hi", "kn", "ta"] as const) {
       const h = render(lang, { kind: "page", page: "how-it-works" });
       expect(h.match(/<ol[^>]*data-part="steps"[\s\S]*?<\/ol>/)![0].match(/data-step=/g), lang).toHaveLength(6);
       expect(h, lang).not.toMatch(/hm\.w\.|how\.steps\./);
     }
+  });
+});
+
+describe("Tamil, a language of the public website only", () => {
+  it("is /ta, the header and footer link to every page in Tamil and to the other languages, and the switch lists the five languages by their own names", () => {
+    const html = render("ta", { kind: "page", page: "pricing" });
+    for (const href of ["/ta", "/ta/pricing", "/ta/contact", "/", "/te/pricing", "/hi/pricing", "/kn/pricing"]) expect(html, href).toContain(`href="${href === "/" ? "/pricing" : href}"`);
+    const names = [...html.matchAll(/<option[^>]*>([^<]+)<\/option>/g)].map((m) => m[1]);
+    expect(names.slice(0, 5)).toEqual(["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "தமிழ்"]); // (the header's switch; the phone menu has a second copy)
+    expect(names).toHaveLength(10);
+    expect(html).toContain('lang="ta"');
+    expect(html).toContain("font-vars");
+  });
+  it("reads in Tamil script with the business words in Latin, and the home page lists the product's four languages in Tamil words", () => {
+    const home = htmlText(render("ta", { kind: "home" }));
+    expect(home).toMatch(/[\u0B80-\u0BFF]/);
+    expect(home).toContain("WhatsApp");
+    expect(home).toContain("தெலுங்கு, ஆங்கிலம், இந்தி, கன்னடம்");
+  });
+  it("never says the assistant speaks Tamil: the word Tamil appears only as the name of the language itself (the language switch, one label)", () => {
+    for (const [k, v] of Object.entries(siteJson as Record<string, { en: string; ta?: string }>)) {
+      if (k === "h2.lang.ta") continue;
+      expect(v.ta ?? "", k).not.toMatch(/தமிழ்|தமிழில்|தமிழ|Tamil/);
+      if (v.ta !== undefined) expect(v.en, k).not.toMatch(/Tamil/); // (an English line that names Tamil would make the Tamil line claim it too)
+    }
+    // the pages as drawn: Tamil is named only in the language switch
+    for (const target of allTargets().filter((t) => t.kind !== "pack")) expect(htmlText(render("ta", target)).replace(/தமிழ்/g, ""), name(target)).not.toMatch(/தமிழ|Tamil/);
+  });
+  it("a business type's page has no Tamil text yet and shows its English (the same small fallback every missing word has)", () => {
+    const slug = SITE_PACKS[0].slug;
+    const html = render("ta", { kind: "pack", slug });
+    expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
+    expect(htmlText(html)).toContain(SITE_PACKS[0].hero.h1.en.replace(/\{assistant\}/g, "").slice(0, 8));
   });
 });
 
