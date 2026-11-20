@@ -38,7 +38,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
   ];
   // "Get early access": the home page's closing form; on a page without the form, where "start" leads today
   // (website mode and the app-open home page both say "Join early access": one call to action, owner 11 Nov 2026)
-  const early = !web && onHome && waitlistMode() !== "off" ? { href: "#demo", label: t("h2.nav.early"), short: t("h2.nav.early.short") } : { href: start.href, label: start.label, short: start.label };
+  const early = !web && onHome && waitlistMode() !== "off" ? { href: "#demo", label: t("h2.nav.early"), short: t("h2.nav.early.short") } : { href: start.href, label: start.label, short: web && lang !== "en" ? t("h2.nav.early.short") : start.label }; // (website mode: the one button reads "Early access" below 1280 px in te, hi, kn and ta: the full words push the menu button off a 360 to 430 px screen)
   return (
     <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/[0.86] backdrop-blur-lg backdrop-saturate-150">
       {/* the scroll's progress, a thin line under the bar (drawn by the scroll where the browser can; none where it cannot) */}
