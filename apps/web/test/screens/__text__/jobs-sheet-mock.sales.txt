@@ -1,6 +1,6 @@
 # Jobs
 What your assistant is doing for you
-{label="Filter jobs"} [All 8](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 7](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 2](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Paused 1](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
+{label="Filter jobs"} [All 8](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 5](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 2](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Paused 1](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
 {label="Needs you"}
 ## Needs you 2
 [Follow up on price questions and promises 2 messages need a template to go out Needs a fix Send template](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666603)

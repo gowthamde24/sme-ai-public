@@ -77,7 +77,7 @@ export function JobsList({ jobs, filter, words, base, actions, suggestions = [],
                   <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-surface-2 px-1.5 text-[12px] font-bold normal-case tracking-normal text-ink">{rows.length}</span>
                 </h2>
               ) : null}
-              <div className="grid gap-x-4 gap-y-0 overflow-hidden rounded-2xl border border-line bg-surface md:grid-cols-2 [&>div]:border-b [&>div]:border-line">{rows.map(rowOf)}</div>
+              <div className="grid grid-cols-1 gap-x-4 gap-y-0 overflow-hidden rounded-2xl border border-line bg-surface md:grid-cols-2 [&>div]:min-w-0 [&>div]:border-b [&>div]:border-line">{rows.map(rowOf)}</div>
             </section>
           ))}
         </div>

@@ -357,7 +357,7 @@ export const WIRE_PLANS: Record<string, Wire> = {
     basis: { code: "said_yes_offer", params: { days: 30, count: 38 } },
     total: 38,
     eligible: 38,
-    says: { channel: "whatsapp", text: `This is the AI assistant of ${MOCK_BUSINESS}. Wedding season offer: free blouse stitching on silk sarees till 30 November. Reply STOP to stop these messages.` },
+    says: { channel: "whatsapp", text: `This is the AI assistant of ${MOCK_BUSINESS}. Wedding season offer on silk sarees till 30 November. Reply STOP to stop these messages.` },
     when: { start: "after_ok", from: "10:00", to: "18:00", days: MON_SAT, pace: 20 },
     finds: [["interested", "Are they interested"]],
     minutes: 0,
@@ -403,7 +403,7 @@ export const WIRE_SUGGESTIONS_TEXTILES: Wire = {
     sug("speed_to_lead", { code: "enquiries_waited", params: { enquiries: 14, waited: 9 } }, "Thank you for asking about our silk sarees. Which occasion is it for?"),
     sug("followups", { code: "price_waiting", params: { n: 5 } }, "Namaskaram Sravani garu, the green Kanchipuram saree is ₹18,500. Shall I keep it for you?"),
     sug("store_visits", { code: "visits_said", params: { n: 3 } }, `Reminder: tomorrow 11 am, ${MOCK_BUSINESS}, Begum Bazaar. See you!`),
-    sug("offers", { code: "offer_yes", params: { n: 38 } }, "Wedding season offer: free blouse stitching on silk sarees till 30 November.", { code: "offers_wedding" }),
+    sug("offers", { code: "offer_yes", params: { n: 38 } }, "Wedding season offer on silk sarees till 30 November.", { code: "offers_wedding" }),
   ],
 };
 /** The plain three for every other business type (no heading). */

@@ -129,7 +129,7 @@ describe("the filters", () => {
     expect(filterJobs(MOCK_JOBS, "all")).toHaveLength(6);
     expect(filterJobs(MOCK_JOBS, "paused")).toEqual([]);
     expect(filterJobs(MOCK_JOBS, "needs_you").map((j) => j.kind)).toEqual(["followups", "offers"]);
-    expect(filterJobs(MOCK_JOBS, "running")).toHaveLength(6);
+    expect(filterJobs(MOCK_JOBS, "running")).toHaveLength(4); // running and well: the two that need the owner are under Needs you (the chips and the groups of the page count the same jobs)
     // a paused job (a variant the contract allows) is the one Paused shows
     const withPaused = [...MOCK_JOBS, ...WIRE_JOB_VARIANTS.map(parseJob)];
     expect(filterJobs(withPaused, "paused").every((j) => !j.enabled || j.status === "paused")).toBe(true);
