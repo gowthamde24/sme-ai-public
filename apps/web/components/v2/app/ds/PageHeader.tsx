@@ -8,7 +8,7 @@ export function PageHeader({ title, sub, right = null, badge = null }: { title: 
     <header data-part="page-header" className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="font-display text-[28px] font-semibold leading-[1.1] md:text-4xl">{title}</h1>
+          <h1 className="font-display text-2xl font-semibold leading-[1.15]">{title}</h1>
           {badge}
         </div>
         {sub ? <p className="mt-1.5 max-w-2xl text-base text-muted">{sub}</p> : null}

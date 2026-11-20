@@ -76,6 +76,7 @@ describe("How I talk to customers", () => {
     render(<TalkTraining initial={DEFAULTS} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" actions={{ save, reset: vi.fn() }} v4 />);
     const preview = () => document.querySelector('[data-part="tt-preview"]')!;
     expect(preview()).toHaveTextContent('"guaranteed"');
+    expect(preview().querySelector("ul")).not.toHaveClass("font-mono");
     fireEvent.click(screen.getByRole("button", { name: "Add a word" }));
     fireEvent.change(screen.getByLabelText("Say"), { target: { value: "pattu cheera" } });
     fireEvent.change(screen.getByLabelText("Instead of (optional)"), { target: { value: "silk saree" } });
