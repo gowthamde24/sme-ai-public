@@ -604,6 +604,17 @@
           ],
           "title": "Source",
           "type": "string"
+        },
+        "sound": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SoundOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -615,6 +626,73 @@
         "wording"
       ],
       "title": "PreviewOut",
+      "type": "object"
+    },
+    "SoundOut": {
+      "additionalProperties": false,
+      "description": "How the assistant sounds, as a real call and every preview resolve it (app/conversation/sound.py): the voice, the tone, the speed.",
+      "properties": {
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta",
+            "ml",
+            "mr"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "voice_id": {
+          "title": "Voice Id",
+          "type": "string"
+        },
+        "voice_name": {
+          "title": "Voice Name",
+          "type": "string"
+        },
+        "gender": {
+          "enum": [
+            "female",
+            "male"
+          ],
+          "title": "Gender",
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "cartesia",
+            "sarvam"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "tone": {
+          "enum": [
+            "friendly",
+            "respectful",
+            "quick"
+          ],
+          "title": "Tone",
+          "type": "string"
+        },
+        "speed": {
+          "title": "Speed",
+          "type": "number"
+        }
+      },
+      "required": [
+        "language",
+        "voice_id",
+        "voice_name",
+        "gender",
+        "provider",
+        "tone",
+        "speed"
+      ],
+      "title": "SoundOut",
       "type": "object"
     },
     "TestCallOut": {
@@ -643,6 +721,17 @@
         },
         "outcome": {
           "$ref": "#/$defs/OutcomePreviewOut"
+        },
+        "sound": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SoundOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [

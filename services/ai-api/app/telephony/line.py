@@ -25,6 +25,7 @@ from typing import Any, Literal, Protocol
 from app.browser_voice.audio import OUT_RATE
 from app.conversation.endpointing import rms
 from app.telephony import exotel
+from app.telephony.ambience import Bed
 from app.telephony.pcm import Resampler, pad_to_multiple
 from app.telephony.wire import EXOTEL, WireProtocol
 from app.text_spacing import space_scripts
@@ -133,6 +134,7 @@ class PhoneLine:
         self.fade_ms: list[int] = []
         self.notice_speaker: Callable[[], Awaitable[None]] | None = None   # set by the call session: speaks the take-over announcement (only used when TAKEOVER_ANNOUNCE is on)
         self._closed = False
+        self.ambience: Bed | None = None   # the quiet background bed (app/telephony/ambience.py), set by the call's preparation once the line's rate is known; mixed into OUR audio only
         # how the call ended, for the end-of-call log (names and numbers only, 5 Nov 2026: the 11:57 UTC call ended 0.4 s after admission and the log could not say whether Exotel sent `stop` or dropped
         # the socket, nor whether any of our audio had gone out)
         self.end_how: str | None = None          # stop | socket_closed
@@ -320,7 +322,7 @@ class PhoneLine:
         while len(self._owner_pending) >= self.chunk and not self._closed:
             part = bytes(self._owner_pending[: self.chunk])
             del self._owner_pending[: self.chunk]
-            await self._emit(part, keep=False)
+            await self._emit(part, keep=False, bed=False)   # the owner's own voice: no bed
 
     def _end_sound_run(self) -> None:
         if self._talk_ms >= MIN_SOUND_MS and not self._stopped_run:
@@ -372,7 +374,7 @@ class PhoneLine:
             samples[i] = int(samples[i] * (1.0 - (i + 1) / n))
         tail = pad_to_multiple(samples.tobytes(), self.chunk)
         for i in range(0, len(tail), self.chunk):
-            await self._emit(tail[i : i + self.chunk], keep=False)
+            await self._emit(tail[i : i + self.chunk], keep=False, bed=False)   # (what was sent already carries the bed)
         ms = round(n / self.rate * 1000)
         self.fade_ms.append(ms)
         self._faded_at = self.chunks_out
@@ -448,8 +450,10 @@ class PhoneLine:
         self._mark_sent_at = self._clock()
         await self._wire.send_text(self._p.mark_message(self.start.stream_sid, f"turn-{self._seq}"))
 
-    async def _emit(self, chunk: bytes, *, keep: bool = True) -> None:
+    async def _emit(self, chunk: bytes, *, keep: bool = True, bed: bool = True) -> None:
         assert self.start is not None   # noqa: S101 - callers check
+        if bed and self.ambience is not None:
+            chunk = self.ambience.mix_into(chunk)   # the same length in, the same length out: nothing is delayed
         ahead = self._play_until - self._clock()
         if ahead > LEAD_S:   # real-time pace: wait until what was sent has (nearly) played
             await self._sleep(ahead - LEAD_S)

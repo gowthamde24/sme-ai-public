@@ -15,6 +15,11 @@ from __future__ import annotations
 import re
 
 TONES = ("respectful", "friendly", "casual")
+# What the Owner chooses (owner, 19-20 Nov 2026): THREE tones that change the WORDS and the pacing, never the voice or the loudness: friendly (the default) | respectful (polite forms, "గారు" after a name, ji) | quick (short and direct).
+# `casual` is only the Owner's own test call. `quick` is a tone like the others: it has its own opening, honest line, goodbye and rules below, and the same address rules as friendly (no "గారు", no sir or madam).
+CHOICES = ("friendly", "respectful", "quick")
+QUICK = "quick"
+ALL_TONES = (*TONES, QUICK)
 DEFAULT_TONE = "friendly"
 CASUAL_LANGUAGES = frozenset({"te", "en"})   # the languages whose informal register has been written out; the others stay friendly
 
@@ -49,7 +54,7 @@ def for_task_call(requested: str | None = None) -> str:
 
 def usable(tone: str | None, language: str) -> str:
     """The tone this language can really speak: casual only where it has been written out."""
-    if tone not in TONES:
+    if tone not in ALL_TONES:
         return DEFAULT_TONE
     return DEFAULT_TONE if tone == "casual" and language not in CASUAL_LANGUAGES else tone
 
@@ -61,7 +66,7 @@ OPENERS_TE = {
     "casual": "హాయ్! నేను {business} AI assistant ని. ఒక్క నిమిషం మాట్లాడతావా?",
 }
 OPENERS_EN = {
-    "respectful": "Hello, this is the AI assistant of {business}. Is this a good time to talk?",
+    "respectful": "Good day, this is the AI assistant of {business}. Would this be a good time to speak?",
     "friendly": "Hello, this is the AI assistant of {business}. Is this a good time to talk?",
     "casual": "Hey! I'm the AI assistant of {business}. Got a minute to chat?",
 }
@@ -70,7 +75,7 @@ HONEST_TE = {   # "are you a robot / a person?": honest, and no promise in it (t
     "friendly": "అవును, నేను AI assistant ని.",
     "casual": "అవును, నేను AI assistant ని, మనిషిని కాదు.",
 }
-HONEST_EN = {"respectful": "Yes, I'm an AI assistant.", "friendly": "Yes, I'm an AI assistant.", "casual": "Yes, I'm an AI assistant, not a person."}
+HONEST_EN = {"respectful": "Yes, I am an AI assistant.", "friendly": "Yes, I'm an AI assistant.", "casual": "Yes, I'm an AI assistant, not a person."}
 CHECK_IN_TE = {"respectful": "హలో, ఉన్నారా అండి?", "friendly": "హలో, ఉన్నారా?", "casual": "హలో, ఉన్నావా?"}
 BYE_TE = {"respectful": "సరే, thank you, bye!", "friendly": "సరే, thank you, bye!", "casual": "సరే, thanks, bye bye!"}
 BYE_EN = {"respectful": "Okay, thank you, bye!", "friendly": "Okay, thanks, bye!", "casual": "Okay, cool, bye!"}
@@ -127,16 +132,40 @@ RULES_EN = {
     "friendly": "TONE: friendly and relaxed, like a helpful person on the phone. Never a gendered word of address.",
     "casual": "TONE: casual, like talking to a close friend: contractions, short and relaxed, still kind. Never a gendered word of address.",
 }
+# ---- the QUICK tone: the answer first, as few words as possible; everything the table does not say here is the friendly line
+OPENERS_TE[QUICK] = "హలో, {business} AI assistant ని. ఒక్క నిమిషం?"
+OPENERS_EN[QUICK] = "Hi, AI assistant of {business}. A quick minute?"
+HONEST_TE[QUICK] = "అవును, AI assistant ని."
+HONEST_EN[QUICK] = "Yes, an AI assistant."
+CHECK_IN_TE[QUICK] = "హలో?"
+BYE_TE[QUICK] = "సరే, bye!"
+BYE_EN[QUICK] = "Okay, bye!"
+INTERRUPTED_TE[QUICK] = "ఆ, చెప్పండి"
+ACKS_TE[QUICK] = "సరే / ఆ"
+CANT_TE[QUICK] = CANT_TE["friendly"]
+QUESTION_TE[QUICK] = "ఈ నెల stock చూశారా?"
+ONLY_PARENTS_TE[QUICK] = ONLY_PARENTS_TE["friendly"]
+ONLY_PARENTS_2_TE[QUICK] = ONLY_PARENTS_2_TE["friendly"]
+REFUSED_CLOSE_TE[QUICK] = "సరే, థాంక్స్, బై!"
+CLOSE_TE[QUICK] = "సరే, ఇంకేమైనా?"
+AS_THE_SCHOOL_TE[QUICK] = AS_THE_SCHOOL_TE["friendly"]
+ACK_LINE_TE[QUICK] = "సరే."
+RULES[QUICK] = (
+    "TONE: short and quick. Answer first, in as few words as possible: ONE short sentence when you can, never more than two. No repeated greeting, no chain of thank-yous, no filler, no 'అండీ' after the greeting. "
+    "Use the 'మీరు' forms, NEVER 'గారు', never a gendered word of address. One question at a time, the question last. Everyday English words stay English (stock, price, OK)."
+)
+RULES_EN[QUICK] = "TONE: short and quick. Answer first, ONE short sentence when you can, never more than two. No filler, no repeated greeting, no chain of thank-yous. Never a gendered word of address."
+
 EXAMPLES_TE = {
     chosen: [OPENERS_TE[chosen], QUESTION_TE[chosen], ACK_LINE_TE[chosen] + " ఇంకొక విషయం అడగొచ్చా?", CANT_TE[chosen], AS_THE_SCHOOL_TE[chosen], ONLY_PARENTS_TE[chosen], CLOSE_TE[chosen], BYE_TE[chosen]]
-    for chosen in TONES
+    for chosen in ALL_TONES
 }
 
 
-GREET_TE = {"respectful": "నమస్కారం అండీ,", "friendly": "హలో,", "casual": "హాయ్!"}
-ASK_TE = {"respectful": "ఒక్క నిమిషం మాట్లాడొచ్చా?", "friendly": "ఒక్క నిమిషం మాట్లాడొచ్చా?", "casual": "ఒక్క నిమిషం మాట్లాడతావా?"}
-GREET_EN = {"respectful": "Hello,", "friendly": "Hello,", "casual": "Hey!"}
-ASK_EN = {"respectful": "Is this a good time to talk?", "friendly": "Is this a good time to talk?", "casual": "Got a minute to chat?"}
+GREET_TE = {"respectful": "నమస్కారం అండీ,", "friendly": "హలో,", "casual": "హాయ్!", QUICK: "హలో,"}
+ASK_TE = {"respectful": "ఒక్క నిమిషం మాట్లాడొచ్చా?", "friendly": "ఒక్క నిమిషం మాట్లాడొచ్చా?", "casual": "ఒక్క నిమిషం మాట్లాడతావా?", QUICK: "ఒక్క నిమిషం?"}
+GREET_EN = {"respectful": "Good day,", "friendly": "Hello,", "casual": "Hey!", QUICK: "Hi,"}
+ASK_EN = {"respectful": "Would this be a good time to speak?", "friendly": "Is this a good time to talk?", "casual": "Got a minute to chat?", QUICK: "A quick minute?"}
 
 
 def opener(language: str, tone: str, introduce: object | None = None) -> str | None:
@@ -326,7 +355,7 @@ def addressing_rule(chosen: str, language: str, name: str | None = None, gender:
         return ("ADDRESSING PEOPLE (respectful): use the polite 'మీరు' forms. " + who + title + ". A child or any third person is called by NAME, or \"మీ అబ్బాయి\" / \"మీ అమ్మాయి\" when the gender is clear from the goal; "
                 "never \"గారు\", never \"వాడు\", \"అది\" or \"ఆయన\" for them.")
     use = f" Use their name ({name}) at most once in the call." if name else ""
-    return ("ADDRESSING PEOPLE: use the 'మీరు' forms, no \"గారు\", no sir, no madam, no title of any kind." + use if chosen == "friendly" else
+    return ("ADDRESSING PEOPLE: use the 'మీరు' forms, no \"గారు\", no sir, no madam, no title of any kind." + use if chosen in ("friendly", QUICK) else
             "ADDRESSING PEOPLE: casual, the informal 'నువ్వు'; no \"గారు\", no sir, no madam, no title of any kind." + use)
 
 
@@ -347,14 +376,41 @@ def sentences_in(text: str) -> int:
 LEGACY_ADDRESS_TONE = {"sir_madam": "respectful", "garu": "respectful", "ji": "respectful"}   # the old "How to address customers" values; "plain" was the default and so maps to nothing (the business type decides)
 
 
-def effective_tone(training: dict[str, object] | None, pack_default: str) -> tuple[str, str]:
+STYLE_TONE = {"warm": "friendly", "respectful": "respectful", "quick": "quick"}   # the words of Settings > AI assistant (`style`) as tones
+
+
+def effective_tone(training: dict[str, object] | None, pack_default: str, assistant_style: str | None = None) -> tuple[str, str]:
     """(the tone in force, where it came from) for a workspace's calls to customers: the tone the Owner SAVED, else the old "How to address customers" value mapped (sir_madam / garu / ji -> respectful), else the business type's
     default. Casual never appears here. The old value is left in the document untouched, so nothing is lost."""
     doc = training or {}
     saved = doc.get("tone")
-    if saved in ("respectful", "friendly"):
+    if saved in CHOICES:
         return str(saved), "saved"
+    if assistant_style in STYLE_TONE:   # the Owner saved the AI-assistant settings but never the tone panel: its `style` is the tone
+        return STYLE_TONE[str(assistant_style)], "assistant_settings"
     legacy = LEGACY_ADDRESS_TONE.get(str(doc.get("address") or ""))
     if legacy is not None:
         return legacy, "migrated"
-    return (pack_default if pack_default in ("respectful", "friendly") else DEFAULT_TONE), "pack_default"
+    return (pack_default if pack_default in CHOICES else DEFAULT_TONE), "pack_default"
+
+
+# ---- the tone of an INBOUND call (owner finding of 19 Nov 2026: Friendly and Respectful did not change one word of a call the Owner's customers made to the assistant)
+POLITE_WORDS = {"hi": "'आप' and 'जी' after a name or a yes", "kn": "'ನೀವು' and a polite verb ending", "ta": "'நீங்கள்' and the polite verb endings", "ml": "'നിങ്ങൾ' and a polite verb ending", "mr": "'आपण' and 'जी'"}
+
+
+def inbound_rule(language: str, tone: str) -> str | None:
+    """The TONE paragraph an inbound call's prompt gets for this tone, or None for friendly (the call's own base wording IS friendly). Built by code; no model call."""
+    tone = usable(tone, language)
+    if tone == "respectful":
+        if language == "te":
+            return RULES["respectful"]
+        if language == "en":
+            return RULES_EN["respectful"]
+        return f"TONE: respectful and polite, still spoken and natural: always {POLITE_WORDS.get(language, 'the polite forms')}; polite requests and thank-yous; never slang; never a gendered word of address."
+    if tone == QUICK:
+        if language == "te":
+            return RULES[QUICK]
+        if language == "en":
+            return RULES_EN[QUICK]
+        return "TONE: short and quick. Answer first, ONE short sentence when you can, never more than two. No filler, no repeated greeting, no chain of thank-yous. Keep the polite 'you' of the language. Never a gendered word of address."
+    return None

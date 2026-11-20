@@ -133,6 +133,20 @@ class PreviewOut(_Strict):
     resolved_opening_line: str = ""
     spoken_text: str = ""
     source: Literal["stored", "default", "draft", ""] = ""
+    # the voice, tone and speed this preview (and a real call) speaks with
+    sound: SoundOut | None = None
+
+
+class SoundOut(_Strict):
+    """How the assistant sounds, as a real call and every preview resolve it (app/conversation/sound.py): the voice, the tone, the speed."""
+
+    language: LanguageWord
+    voice_id: str
+    voice_name: str
+    gender: Literal["female", "male"]
+    provider: Literal["cartesia", "sarvam"]
+    tone: Literal["friendly", "respectful", "quick"]
+    speed: float
 
 
 class TranscriptLineOut(_Strict):
@@ -153,6 +167,8 @@ class TestCallOut(_Strict):
     note: str
     transcript: list[TranscriptLineOut]
     outcome: OutcomePreviewOut
+    # the voice, tone and speed this test (and a real call) speaks with: the same function (app/conversation/sound.py)
+    sound: SoundOut | None = None
 
 
 class NameIn(BaseModel):

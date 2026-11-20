@@ -14,10 +14,12 @@ from collections.abc import Callable
 
 from app.conversation.fallback import EngineFactory, FallbackTts
 from app.conversation.voices import VoiceConfig
+from app.integrations.ratelimit import SlidingWindow
 from app.voice.interface import VoiceError
 
 PREVIEW_DAILY_CHARS = 3000  # per workspace and day (the voice provider's characters cost money)
 PREVIEW_CACHE = 48
+PREVIEW_PER_MINUTE = 12   # per workspace (the old voice sample's limit, doubled: one screen asks for the voice, the tone and the speed)
 
 
 class CallVoicePreview:
@@ -28,21 +30,25 @@ class CallVoicePreview:
         self._today = today or (lambda: time.strftime("%Y-%m-%d"))
         self._cache: OrderedDict[str, tuple[bytes, str, str]] = OrderedDict()
         self._spent: dict[tuple[str, str], int] = {}
+        self._minute = SlidingWindow(PREVIEW_PER_MINUTE, 60.0, clock=clock)
 
-    async def speak(self, tenant_id: uuid.UUID, language: str, chosen: str | None, text: str, gender: str = "female") -> tuple[bytes, str, str]:
+    async def speak(self, tenant_id: uuid.UUID, language: str, chosen: str | None, text: str, gender: str = "female", pace: float = 1.0) -> tuple[bytes, str, str]:
         """(wav, the engine that spoke, the catalogue voice id). Raises VoiceError('rate_limited') over the daily cap and VoiceError('tts_unavailable') when no engine could."""
         voice = self._config.resolve(language, chosen, gender)
-        key = hashlib.sha256(f"{voice.id}|{text}".encode()).hexdigest()
+        key = hashlib.sha256(f"{voice.id}|{pace}|{text}".encode()).hexdigest()
         hit = self._cache.get(key)
         if hit is not None:
             self._cache.move_to_end(key)
             return hit
+        if not self._minute.allow(str(tenant_id)):
+            raise VoiceError("rate_limited")
         slot = (str(tenant_id), self._today())
         if self._spent.get(slot, 0) + len(text) > PREVIEW_DAILY_CHARS:
             raise VoiceError("rate_limited")
         self._spent = {k: v for k, v in self._spent.items() if k[1] == slot[1]}
         self._spent[slot] = self._spent.get(slot, 0) + len(text)
         tts = FallbackTts(self._config, self._factory, chosen={language: voice.id}, gender=gender, clock=self._clock)
+        tts.pace = pace
         tts.begin_turn()
         pcm = b"".join([c async for c in tts.stream(text, language)])
         buf = io.BytesIO()

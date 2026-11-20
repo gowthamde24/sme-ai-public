@@ -24,6 +24,7 @@ from pydantic import BaseModel, ConfigDict, StringConstraints, model_validator
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.conversation.preview import PREVIEW_DAILY_CHARS as PREVIEW_DAILY_CHARS  # noqa: F401
+from app.conversation.sound_read import sound_of
 from app.conversation.voices import (
     CALL_LANGUAGES,
     ID_FORMAT,
@@ -77,6 +78,9 @@ class VoiceOut(_Strict):
     chosen: bool
     sample_url: str
     sample_text: str   # the exact words of the pre-rendered sample (the same line for every voice of a language)
+    provider: Literal["cartesia", "sarvam"]   # who speaks it first; the other provider is its fallback (same language, same gender)
+    sample_ready: bool   # a pre-rendered sample file exists (a new voice has none until the sample script has been run; the live "Hear it" preview always works)
+    to_confirm: bool   # chosen by documented gender and style: no native listener has confirmed it yet
 
 
 class LanguageOut(_Strict):
@@ -84,7 +88,7 @@ class LanguageOut(_Strict):
     default_id: str   # the default voice of the workspace's gender
     chosen_id: str | None
     active_id: str
-    voices: list[VoiceOut]   # voices of BOTH genders; the screen shows the workspace's
+    voices: list[VoiceOut]   # the SHORT LIST (two voices of each gender); the screen shows the workspace's
 
 
 class VoicesOut(_Strict):
@@ -99,7 +103,7 @@ def _repo(runtime: Runtime) -> WorkspaceRepository:
 
 
 def _voice(c: CatalogueVoice, chosen: str | None) -> VoiceOut:
-    return VoiceOut(id=c.id, name=c.name, label=c.label, gender=c.gender, tags=list(c.tags), recommended=c.recommended, default=c.default, chosen=c.id == chosen, sample_url=SAMPLE_URL.format(id=c.id), sample_text=sample_text(c.language))  # type: ignore[arg-type]
+    return VoiceOut(id=c.id, name=c.name, label=c.label, gender=c.gender, tags=list(c.tags), recommended=c.recommended, default=c.default, chosen=c.id == chosen, sample_url=SAMPLE_URL.format(id=c.id), sample_text=sample_text(c.language), provider=c.provider, sample_ready=c.sample_file.is_file(), to_confirm=c.to_confirm)  # type: ignore[arg-type]
 
 
 def out(config: VoiceConfig, choices: dict[str, str], gender: str = "female") -> VoicesOut:
@@ -110,9 +114,9 @@ def out(config: VoiceConfig, choices: dict[str, str], gender: str = "female") ->
             continue   # a call language with no voice in the catalogue yet (job M1: Marathi): nothing to choose
         default = config.default_for(lang, gender)
         picked = config.catalogue.get(choices.get(lang, ""))
-        chosen = picked.id if picked is not None and picked.language == lang and picked.gender == gender else None
+        chosen = picked.id if picked is not None and picked.language == lang and picked.gender == gender and picked.listed else None
         active = config.resolve(lang, chosen, gender).id
-        rows.append(LanguageOut(language=lang, default_id=default.id, chosen_id=chosen, active_id=active, voices=[_voice(c, chosen) for c in config.voices_of(lang)]))  # type: ignore[arg-type]
+        rows.append(LanguageOut(language=lang, default_id=default.id, chosen_id=chosen, active_id=active, voices=[_voice(c, chosen) for c in config.voices_of(lang, listed_only=True)]))  # type: ignore[arg-type]
     return VoicesOut(gender=gender, languages=rows)  # type: ignore[arg-type]
 
 
@@ -147,7 +151,7 @@ def put_voices(body: VoiceIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> VoicesOut
         current = gender_of(runtime, ctx)
         if body.voice_id is not None:
             picked = config.catalogue.get(body.voice_id) if ID_FORMAT.match(body.voice_id) else None
-            if picked is None or picked.language != body.language or picked.gender != current:
+            if picked is None or picked.language != body.language or picked.gender != current or not picked.listed:
                 raise ApiError(422, "validation_error", "Choose one of the voices on the list for this language and voice type.", extra={"fields": ["voice_id"]})
         row = _repo(runtime).set_voice_choice(ctx.principal.token, ctx.tenant.id, str(body.language), body.voice_id)
     raw = row.get("choices", {})
@@ -205,9 +209,9 @@ async def _speak_opening(runtime: Runtime, ctx: TenantContext, body: PreviewIn) 
     found = detect_language(spoken)
     if found != "en" and found != body.language and {found, body.language} != {"hi", "mr"}:   # Hindi and Marathi share a script: a short line cannot always tell them apart
         raise ApiError(422, "language_mismatch", "This line is written in a different language from the one chosen.", extra={"fields": ["language"]})
-    choices, gender = voice_state(runtime, ctx)
     try:
-        wav, engine, voice_id = await service.speak(ctx.tenant.id, body.language, choices.get(body.language), spoken, gender)
+        sound = sound_of(runtime, ctx, body.language)   # THE resolution a call uses (app/conversation/sound.py): the voice, and the speed
+        wav, engine, voice_id = await service.speak(ctx.tenant.id, body.language, sound.voice.id, spoken, sound.gender, sound.pace)
     except VoiceError as err:
         if err.code == "rate_limited":
             raise ApiError(429, "rate_limited", "Too many previews today. Please try again tomorrow.", retry_after=3600) from None

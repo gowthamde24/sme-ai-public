@@ -98,10 +98,10 @@ def test_every_member_reads_the_defaults_with_the_options_and_the_state_of_the_e
     client, repo = world()
     for user in ("a_owner", "a_admin", "a_sales", "a_viewer"):
         body = client.get(URL, headers=auth(user)).json()
-        assert body["languages"]["te"] == {"style": "everyday_mixed", "region": "neutral", "saved": False, "examples": "approved"}, user
+        assert body["languages"]["te"] == {"style": "everyday_mixed", "saved": False, "examples": "approved"}, user
         assert body["languages"]["ml"]["examples"] == "draft" and body["languages"]["mr"]["examples"] == "draft"
-    assert body["options"]["styles"] == ["everyday_mixed", "everyday_pure", "formal"] and body["options"]["regions"]["ta"] == ["neutral", "chennai", "kongu"]
-    assert set(body["languages"]) == {"en", "te", "hi", "kn", "ta", "ml", "mr"} and body["options"]["regions"]["mr"] == ["neutral"]
+    assert body["options"]["styles"] == ["everyday_mixed", "everyday_pure", "formal"] and "regions" not in body["options"]
+    assert set(body["languages"]) == {"en", "te", "hi", "kn", "ta", "ml", "mr"}
     assert client.get(URL).status_code == 401
     assert client.get(f"/v1/tenants/{uuid_other()}/speaking-style", headers=auth("a_owner")).status_code == 404
 
@@ -120,9 +120,9 @@ def test_only_the_owner_with_a_second_factor_sets_it_and_a_language_left_out_is_
     assert client.put(URL, json=doc, headers=auth("a_owner", aal="aal1")).status_code == 403, "the second factor is needed"
     assert repo.saved == {}
     answer = client.put(URL, json=doc, headers=auth("a_owner")).json()
-    assert answer["languages"]["te"] == {"style": "everyday_pure", "region": "telangana", "saved": True, "examples": "approved"}
+    assert answer["languages"]["te"] == {"style": "everyday_pure", "saved": True, "examples": "approved"}
     assert answer["languages"]["ta"]["style"] == "formal" and answer["languages"]["hi"]["saved"] is False
-    assert client.get(URL, headers=auth("a_viewer")).json()["languages"]["te"]["region"] == "telangana"
+    assert "region" not in client.get(URL, headers=auth("a_viewer")).json()["languages"]["te"]
 
 
 @pytest.mark.parametrize(

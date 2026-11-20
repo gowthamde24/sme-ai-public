@@ -209,7 +209,7 @@ def examples_block(language: str, business: str) -> str:
 
 
 def system_prompt(*, business: str, assistant: str | None, language: str, purpose: str, facts: Sequence[dict[str, Any]], customer_first_name: str | None, goal: str | None = None, notes: str = "",
-                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = (), opening: str | None = None, opening_says_ai: bool = True) -> str:
+                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = (), opening: str | None = None, opening_says_ai: bool = True, tone: str | None = None) -> str:
     """The rules of a phone call. The customer's words are DATA between a per-call delimiter. `opening`: the line the caller has ALREADY heard (an inbound call opens with it before the model is asked anything)."""
     marker = secrets.token_hex(6)
     who = assistant or "the assistant"
@@ -217,6 +217,7 @@ def system_prompt(*, business: str, assistant: str | None, language: str, purpos
         f"You are {who}, the AI assistant of {business}, on a PHONE CALL with a customer, on behalf of the owner. Speak {LANGUAGE_NAMES.get(language, 'English')} (the customer's language; English words they use may stay). "
         "This is spoken aloud: plain and warm, no markup, no emoji. Let the customer finish.",
         *conversation_rules(language, business),
+        *([tone_line] if (tone_line := tone_mod.inbound_rule(language, tone or tone_mod.DEFAULT_TONE)) else []),   # the Owner's tone (friendly: the base wording above; respectful and quick add their own rule)
         *([f"ALREADY SAID: the call opened with this line, and the customer has heard it: \"{opening}\" Never introduce yourself or say you are an AI assistant again unless they ask, never greet again, never repeat "
            "the opening or its question: answer what they say, or go straight to your next question."] if opening else []),
         *([] if opening_says_ai else ["The opening you gave did NOT say that you are an AI (the owner chose a plain greeting). Do not bring it up yourself, but the moment the customer asks anything about who or what you are "

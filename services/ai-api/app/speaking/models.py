@@ -19,7 +19,7 @@ class _Strict(BaseModel):
 
 class LanguageStyle(_Strict):
     style: Style
-    region: Region = "neutral"
+    region: Region = "neutral"   # DEPRECATED (21 Nov 2026): accepted, never returned, never used: a region never changed a word a customer hears
 
 
 class SpeakingStyleIn(_Strict):
@@ -37,7 +37,6 @@ class SpeakingStyleIn(_Strict):
 
 class LanguageStyleOut(_Strict):
     style: Style
-    region: Region
     saved: bool
     # `approved`: the owner read the example lines of this language; `draft`: they wait for a native reader
     examples: Literal["approved", "draft"]
@@ -46,7 +45,6 @@ class LanguageStyleOut(_Strict):
 class OptionsOut(_Strict):
     styles: list[Style]
     default_style: Style
-    regions: dict[Language, list[Region]]
 
 
 class SpeakingStyleOut(_Strict):

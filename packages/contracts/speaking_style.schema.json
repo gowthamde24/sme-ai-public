@@ -50,20 +50,6 @@
           "title": "Style",
           "type": "string"
         },
-        "region": {
-          "enum": [
-            "neutral",
-            "coastal",
-            "telangana",
-            "rayalaseema",
-            "chennai",
-            "kongu",
-            "bengaluru",
-            "north_karnataka"
-          ],
-          "title": "Region",
-          "type": "string"
-        },
         "saved": {
           "title": "Saved",
           "type": "boolean"
@@ -79,7 +65,6 @@
       },
       "required": [
         "style",
-        "region",
         "saved",
         "examples"
       ],
@@ -109,43 +94,11 @@
           ],
           "title": "Default Style",
           "type": "string"
-        },
-        "regions": {
-          "additionalProperties": {
-            "items": {
-              "enum": [
-                "neutral",
-                "coastal",
-                "telangana",
-                "rayalaseema",
-                "chennai",
-                "kongu",
-                "bengaluru",
-                "north_karnataka"
-              ],
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "propertyNames": {
-            "enum": [
-              "en",
-              "te",
-              "hi",
-              "kn",
-              "ta",
-              "ml",
-              "mr"
-            ]
-          },
-          "title": "Regions",
-          "type": "object"
         }
       },
       "required": [
         "styles",
-        "default_style",
-        "regions"
+        "default_style"
       ],
       "title": "OptionsOut",
       "type": "object"
