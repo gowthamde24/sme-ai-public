@@ -1,4 +1,4 @@
--- Proof of request for a call-back (migration 20261231982700; owner, 18 Nov 2026): found by the database, six kinds of source, at most 30 days, never a list.
+-- Proof of request for a call-back (migration 20261231982700; owner, 18 Nov 2026): found by the database, written/digital sources only, at most 7 days since 21 Nov 2026 (TRAI Third Amendment, migration 20261231987300), never a list.
 begin;
 select no_plan();
 select tests.seed_two_tenants();
@@ -27,7 +27,7 @@ insert into public.contacts (id, tenant_id, company_id, full_name, phone, phone_
   (tests.rid('k6'), tests.tid('a'), tests.rid('co'), 'Caller', '+91 98333 10006', 'granted'),
   (tests.rid('k7'), tests.tid('a'), tests.rid('co'), 'Prospect', '+91 98333 10007', 'granted');
 insert into public.leads (id, tenant_id, company_id, contact_id, source, created_at) values
-  (tests.rid('l1'), tests.tid('a'), tests.rid('co'), tests.rid('k1'), 'website_form', '2026-11-10T10:00:00+05:30'),
+  (tests.rid('l1'), tests.tid('a'), tests.rid('co'), tests.rid('k1'), 'website_form', '2026-11-14T10:00:00+05:30'),
   (tests.rid('l2'), tests.tid('a'), tests.rid('co'), tests.rid('k2'), 'excel_upload', '2026-11-15T10:00:00+05:30'),
   (tests.rid('l3'), tests.tid('a'), tests.rid('co'), tests.rid('k3'), 'website_form', '2026-10-04T10:00:00+05:30'),
   (tests.rid('l4'), tests.tid('a'), tests.rid('co'), tests.rid('k4'), 'manual', '2026-11-16T10:00:00+05:30'),
@@ -36,12 +36,12 @@ insert into public.leads (id, tenant_id, company_id, contact_id, source, created
   (tests.rid('l7'), tests.tid('a'), tests.rid('co'), tests.rid('k7'), 'lead_finder', '2026-11-16T10:00:00+05:30');
 
 -- A. what counts
-select is(pg_temp.src('l1'), 'website_form', 'P1 a website form enquiry 8 days ago is a proof');
+select is(pg_temp.src('l1'), 'website_form', 'P1 a website form enquiry 4 days ago is a proof');
 select is((pg_temp.proof('l1')::jsonb ->> 'lead_id'), tests.rid('l1')::text, 'P2 ... for that lead');
 select is(pg_temp.proof('l2'), 'null', 'P3 an imported list never counts, even with consent granted');
 select is(pg_temp.proof('l4'), 'null', 'P4 a lead the owner typed in does not count');
 select is(pg_temp.proof('l7'), 'null', 'P5 a Lead Finder prospect does not count');
-select is(pg_temp.proof('l3'), 'null', 'P6 a website enquiry from 45 days ago is too old');
+select is(pg_temp.proof('l3'), 'null', 'P6 a website enquiry from 45 days ago is too old (the window is 7 days)');
 
 -- B. an arrival through a live source, a WhatsApp message and a call the person made
 insert into public.lead_arrivals (tenant_id, lead_id, contact_id, source_tag, kind, received_at) values (tests.tid('a'), tests.rid('l3'), tests.rid('k3'), 'meta_lead_ads', 'again', '2026-11-12T10:00:00+05:30');
@@ -53,7 +53,7 @@ values (gen_random_uuid(), tests.tid('a'), tests.rid('l5'), tests.rid('co'), tes
 select is(pg_temp.src('l5'), 'whatsapp', 'P9 a WhatsApp message the person sent is a proof');
 insert into public.phone_calls (id, tenant_id, direction, state, provider, sandbox, contact_id, lead_id, created_at, ended_at)
 values (gen_random_uuid(), tests.tid('a'), 'inbound', 'completed', 'plivo', false, tests.rid('k6'), tests.rid('l6'), '2026-11-17T11:00:00+05:30', '2026-11-17T11:02:00+05:30');
-select is(pg_temp.src('l6'), 'inbound_call', 'P10 a call the person made to the business is a proof');
+select is(pg_temp.proof('l6'), 'null', 'P10 a call the person made to the business is NOT a proof (phone only: not written or digital)');
 select pg_temp.pin('2026-12-20T12:00:00+05:30');
 select is(pg_temp.proof('l5'), 'null', 'P11 a month later the same WhatsApp message is too old');
 select pg_temp.pin('2026-11-18T12:00:00+05:30');
@@ -62,7 +62,7 @@ select pg_temp.pin('2026-11-18T12:00:00+05:30');
 insert into public.phone_calls (id, tenant_id, direction, state, provider, sandbox, contact_id, lead_id) values (tests.rid('c1'), tests.tid('a'), 'outbound', 'queued', 'plivo', true, tests.rid('k1'), tests.rid('l1'));
 select is(pg_temp.val('outsider', format($q$select public.phone_call_set_proof(%L, %L)::jsonb ->> 'source'$q$, tests.tid('a'), tests.rid('c1'))), 'website_form', 'P12 the phone server keeps the proof on the call row');
 select is((select request_source || '/' || (request_lead_id = tests.rid('l1'))::text from public.phone_calls where id = tests.rid('c1')), 'website_form/true', 'P13 the row has the lead and the source');
-select is((select request_at from public.phone_calls where id = tests.rid('c1')), '2026-11-10T10:00:00+05:30'::timestamptz, 'P14 ... and when the person asked');
+select is((select request_at from public.phone_calls where id = tests.rid('c1')), '2026-11-14T10:00:00+05:30'::timestamptz, 'P14 ... and when the person asked');
 select is(pg_temp.val('b_owner', format($q$select public.call_back_proof(%L, %L)::text$q$, tests.tid('a'), tests.rid('l1'))), 'ERR:42501', 'P15 another workspace''s Owner is refused');
 select is(pg_temp.val('a_sales', format($q$select public.call_back_proof(%L, %L)::text$q$, tests.tid('a'), tests.rid('l1'))), 'ERR:42501', 'P16 Sales is not the one who decides a call-back');
 select lives_ok($q$insert into public.phone_calls (id, tenant_id, direction, state, refuse_reason, provider, sandbox, ended_at) values (gen_random_uuid(), tests.tid('a'), 'outbound', 'refused', 'no_proof_of_request', 'plivo', false, now())$q$, 'P17 the closed word no_proof_of_request is a legal refusal');

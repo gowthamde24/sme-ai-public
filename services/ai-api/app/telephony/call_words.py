@@ -25,7 +25,7 @@ REFUSED_SENTENCE = {
     "blocked_caller": "Blocked caller",
     "outside_window": "Not called: outside calling hours", "outside_hours": "Not called: outside calling hours", "holiday": "Not called: a holiday",
     "no_consent": "Not called: no consent", "no_proof_of_request": "Not called: this person has not asked us to call", "prospect_no_ai_call": "Not called: Lead Finder prospects are never called by the assistant", "suppressed": "Not called: asked us to stop", "dnd": "Not called: on the do-not-disturb list", "dnd_unknown": "Not called: do-not-disturb could not be checked",
-    "workspace_paused": "Not called: the assistant is paused", "billing_blocked": "Not called: balance too low",
+    "workspace_paused": "Not called: the assistant is paused", "complaints_pause": "Not called: calls are paused after people asked us to stop", "billing_blocked": "Not called: balance too low",
 }
 
 

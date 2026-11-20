@@ -322,7 +322,7 @@ class PlivoOutbound:
                 hours = gate.Hours(days=[int(d) for d in row_hours["days"]], from_minute=int(row_hours.get("from_minute", gate.WINDOW_FROM_MINUTE)), to_minute=int(row_hours.get("to_minute", gate.WINDOW_TO_MINUTE)))
             extra = {"can_contact": facts.get("can_contact") is True, "suppressed": facts.get("suppressed") is True, "erased_or_archived": facts.get("erased_or_archived") is True,
                      "calls_to_contact_this_week": int(facts.get("weekly_calls") or 0), "weekly_limit": max(1, int(facts.get("weekly_limit") or 1)), "calls_today": int(facts.get("calls_today") or 0),
-                     "minutes_today": float(facts.get("minutes_today") or 0), "holidays": tuple(str(h) for h in (facts.get("holidays") or [])), "active_calls_to_number": int(facts.get("active_to_number") or 0)}
+                     "minutes_today": float(facts.get("minutes_today") or 0), "holidays": tuple(str(h) for h in (facts.get("holidays") or [])), "active_calls_to_number": int(facts.get("active_to_number") or 0), "recent_complaints": int(facts.get("complaints_10d") or 0)}
         out_facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=hours,
                                        approval=approval, approval_valid=True, **{"can_contact": own, "dnd": "no" if own else "unknown", **extra}, opening_line=opening, active_calls_total=self._active(),
                                        billing_ok=billing_ok, proof_of_request=proof, prospect=prospect)
