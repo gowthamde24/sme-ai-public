@@ -163,6 +163,8 @@ ROUTE_WORDS = frozenset(
         "notifications", "seen", "enquiry-done", "consent-ask", "push",
         # the Chats composer queue (19 Nov 2026)
         "queued-message", "queued-messages", "attention",
+        # JOBS S1 (20 Nov 2026): the do-not-call list and the FAQs of a job
+        "do-not-call", "faqs",
         "push-subscriptions", "public-key",
         "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",
