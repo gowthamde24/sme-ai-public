@@ -12,6 +12,3 @@ export const LANGUAGE_NAMES: Record<Lang, { english: string; native: string }> =
  * addresses ("/ta"), its fonts and the legal page labels. A site string without a Tamil text shows its English.
  */
 export type SiteLang = Lang | "ta";
-export const SITE_LANGS: readonly SiteLang[] = ["en", "te", "hi", "kn", "ta"];
-export const SITE_LANGUAGE_NAMES: Record<SiteLang, { english: string; native: string }> = { ...LANGUAGE_NAMES, ta: { english: "Tamil", native: "தமிழ்" } };
-export const isSiteLang = (v: unknown): v is SiteLang => typeof v === "string" && (SITE_LANGS as readonly string[]).includes(v);

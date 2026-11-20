@@ -1,5 +1,5 @@
 import type { SiteLang } from "@/i18n/lang";
-import { SITE_LANGS } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 
 /**
  * Pure checks for the two ways a visitor starts a WhatsApp chat with us (job CM): the contact form and the calculator's "Get exact quote on WhatsApp". Nothing is stored: the server checks the input, counts the try against

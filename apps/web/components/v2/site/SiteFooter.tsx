@@ -9,7 +9,7 @@ import { SupportedBy } from "@/components/v2/site/SupportedBy";
 import { Wordmark } from "@/components/v2/Wordmark";
 import type { SiteT } from "@/i18n/site";
 import type { SiteLang } from "@/i18n/lang";
-import { SITE_LANGS, SITE_LANGUAGE_NAMES } from "@/i18n/lang";
+import { SITE_LANGS, SITE_LANGUAGE_NAMES } from "@/i18n/site-lang";
 import { ADDRESSES } from "@/lib/site/business";
 import { isServed } from "@/lib/site/mode";
 import { sitePath, SITE_PAGES, type SitePage, type SiteTarget } from "@/lib/site/paths";

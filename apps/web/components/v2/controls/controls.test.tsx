@@ -7,7 +7,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push }) }));
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { SiteLangSelect } from "@/components/v2/controls/SiteLangSelect";
-import { SITE_LANGS } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
 
 const clearCookies = () => {

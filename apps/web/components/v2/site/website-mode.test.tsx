@@ -7,7 +7,8 @@ vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverC
 
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { SITE_LANGS, type SiteLang } from "@/i18n/lang";
+import { type SiteLang } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 import { siteDict } from "@/i18n/site";
 import { isServed } from "@/lib/site/mode";
 import { SITE_PACKS } from "@/lib/site/packs";

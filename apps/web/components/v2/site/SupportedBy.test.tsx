@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { SITE_LANGS } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 import { siteT } from "@/i18n/site";
 
 import { SupportedBy } from "./SupportedBy";

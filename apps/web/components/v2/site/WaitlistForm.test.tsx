@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { SITE_LANGS } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 import { siteT } from "@/i18n/site";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { SupportedBy } from "@/components/v2/site/SupportedBy";
 import type { SiteT } from "@/i18n/site";
-import { SITE_LANGS, SITE_LANGUAGE_NAMES, type SiteLang } from "@/i18n/lang";
+import { type SiteLang } from "@/i18n/lang";
+import { SITE_LANGS, SITE_LANGUAGE_NAMES } from "@/i18n/site-lang";
 import { isServed } from "@/lib/site/mode";
 import { sitePath, SITE_PAGES, type SitePage } from "@/lib/site/paths";
 

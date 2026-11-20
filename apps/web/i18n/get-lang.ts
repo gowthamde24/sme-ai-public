@@ -1,7 +1,8 @@
 import { cookies, headers } from "next/headers";
 
 import type { Lang, SiteLang } from "@/i18n/lang";
-import { LANG_COOKIE, readLang, readSiteLangCookie } from "@/i18n/preferences";
+import { LANG_COOKIE, readLang } from "@/i18n/preferences";
+import { readSiteLangCookie } from "@/i18n/site-lang";
 import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import { provideRequestAssistantName } from "@/lib/assistant/request-name";
 import { readAssistantName, type CtxAssistant } from "@/lib/assistant/source";

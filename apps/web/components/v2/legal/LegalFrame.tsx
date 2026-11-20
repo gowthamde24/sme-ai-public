@@ -10,8 +10,9 @@ import { V2Root } from "@/components/v2/V2Root";
 import { Wordmark } from "@/components/v2/Wordmark";
 import { BRAND_NAME } from "@/design/brand";
 import { legalT } from "@/i18n/legal";
-import { SITE_LANGS } from "@/i18n/lang";
-import { LANG_COOKIE, THEME_COOKIE, readSiteLangCookie, readTheme } from "@/i18n/preferences";
+import { SITE_LANGS } from "@/i18n/site-lang";
+import { LANG_COOKIE, THEME_COOKIE, readTheme } from "@/i18n/preferences";
+import { readSiteLangCookie } from "@/i18n/site-lang";
 
 import { LegalLinks } from "./LegalLinks";
 

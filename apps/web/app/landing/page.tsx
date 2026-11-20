@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
 import { SitePage } from "@/components/v2/site/SitePage";
-import { LANG_COOKIE, THEME_COOKIE, readSiteLangCookie, readTheme } from "@/i18n/preferences";
+import { LANG_COOKIE, THEME_COOKIE, readTheme } from "@/i18n/preferences";
+import { readSiteLangCookie } from "@/i18n/site-lang";
 import { requestIndexable } from "@/lib/seo/index-rule";
 import { siteMetadata } from "@/lib/seo/site-metadata";
 import { chatAvailable } from "@/lib/site/whatsapp";

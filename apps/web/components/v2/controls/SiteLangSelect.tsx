@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { control } from "@/components/v2/landing/ui";
-import { LANGS, SITE_LANGUAGE_NAMES, isSiteLang, type SiteLang } from "@/i18n/lang";
+import { LANGS, type SiteLang } from "@/i18n/lang";
+import { SITE_LANGUAGE_NAMES, isSiteLang } from "@/i18n/site-lang";
 import { LANG_COOKIE, serializePreference } from "@/i18n/preferences";
 
 /** Saves the language choice in the functional cookie `sme_lang` (the one writer of it; the sentence version of Settings uses it too). */

@@ -1,5 +1,5 @@
 import type { SiteLang } from "@/i18n/lang";
-import { SITE_LANGS } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 
 import { isSitePage, SITE_PAGES, type SiteTarget } from "./paths";
 import { SITE_PACKS, packBySlug } from "./packs";

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import site from "@/i18n/strings/site.json";
 import legal from "@/i18n/strings/legal.json";
 import login from "@/i18n/strings/login.json";
-import { SITE_LANGS } from "@/i18n/lang";
+import { SITE_LANGS } from "@/i18n/site-lang";
 import { TRANSLATED_LANGS, dictFor, keepHyphenatedWordsWhole } from "@/i18n/strings";
 import { FORBIDDEN_CLAIMS as FORBIDDEN } from "@/i18n/strings/forbidden";
 import { withTrialDays } from "@/lib/plan/trial-days";
