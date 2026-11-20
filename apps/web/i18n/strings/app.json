@@ -126007,5 +126007,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.tb.s5.confirm.title": {
+  "en": "Send to WhatsApp?",
+  "te": "WhatsApp కి పంపాలా?",
+  "hi": "WhatsApp को भेजें?",
+  "kn": "WhatsApp ಗೆ ಕಳುಹಿಸಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.confirm.body": {
+  "en": "WhatsApp checks the message once. Nothing reaches a customer before WhatsApp approves it.",
+  "te": "WhatsApp ఈ message ని ఒకసారి check చేస్తుంది. WhatsApp approve చేసే వరకు ఏ customer కి ఏమీ వెళ్లదు.",
+  "hi": "WhatsApp इस message को एक बार check करता है। WhatsApp के approve करने तक किसी customer को कुछ नहीं जाता।",
+  "kn": "WhatsApp ಈ message ಅನ್ನು ಒಮ್ಮೆ check ಮಾಡುತ್ತದೆ. WhatsApp approve ಮಾಡುವವರೆಗೆ ಯಾವ customer ಗೂ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.confirm.btn": {
+  "en": "Yes, send it",
+  "te": "అవును, పంపండి",
+  "hi": "हाँ, भेजें",
+  "kn": "ಹೌದು, ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
