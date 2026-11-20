@@ -126007,5 +126007,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.err.plan_not_ready": {
+  "en": "Starting a job from this card is not ready yet. Nothing was started. Try again later, or tell your assistant what you want.",
+  "te": "ఈ card నుంచి job మొదలుపెట్టడం ఇంకా సిద్ధంగా లేదు. ఏదీ మొదలు కాలేదు. కొంచెం సేపటి తర్వాత మళ్లీ ప్రయత్నించండి, లేదా మీకు ఏం కావాలో మీ assistant కి చెప్పండి.",
+  "hi": "इस card से job शुरू करना अभी तैयार नहीं है। कुछ शुरू नहीं हुआ। थोड़ी देर बाद फिर कोशिश करें, या अपने assistant को बताएँ कि आपको क्या चाहिए।",
+  "kn": "ಈ card ನಿಂದ job ಶುರು ಮಾಡುವುದು ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ. ಏನೂ ಶುರುವಾಗಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ನಿಮಗೆ ಏನು ಬೇಕು ಎಂದು ನಿಮ್ಮ assistant ಗೆ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
