@@ -79,17 +79,17 @@ describe("the business type pages come from the pack data", () => {
 describe("the home page (20 Nov 2026: one page for every width, the three animations kept, no business named or linked)", () => {
   const home = render("en", { kind: "home" });
   const text = (html: string) => htmlText(html).replace(/\s+/g, " ");
-  it("the sections in order: hero, the phone demo, tell it what to do, calls in time, the Lead Finder, plans with the trust row, three questions, the final call to action, then the footer", () => {
-    const at = ["h1", "how-it-works", "ask", "calc", "lead-finder", "pricing", "faq", "join"].map((id) => home.indexOf(`id="${id}"`)); // (without the waitlist the closing section is #join; with it, #demo)
+  it("the sections in order: hero, the phone demo, tell it what to do, calls in time, the Lead Finder, plans, built in, three questions, the final call to action, then the footer", () => {
+    const at = ["h1", "how-it-works", "ask", "calc", "lead-finder", "pricing", "built", "faq", "join"].map((id) => home.indexOf(`id="${id}"`)); // (without the waitlist the closing section is #join; with it, #demo)
     expect(at.every((i) => i > 0), JSON.stringify(at)).toBe(true);
     expect([...at].sort((x, y) => x - y)).toEqual(at);
     const foot = home.match(/<footer[\s\S]*?<\/footer>/)![0];
-    expect(home.indexOf("<footer")).toBeGreaterThan(at[7]);
+    expect(home.indexOf("<footer")).toBeGreaterThan(at[8]);
     expect(foot).toContain('data-part="home-footer"');
     expect(foot).toMatch(/<canvas[^>]*role="img"[^>]*aria-label="Stack19"/); // the dot-matrix wordmark: one image to a screen reader, its name once
     for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "WhatsApp +91 95023 80998"]) expect(text(foot), l).toContain(l);
     expect(foot).toContain('href="https://wa.me/919502380998?text=Hi%20Stack19%2C%20I&#x27;d%20like%20early%20access."');
-    for (const gone of ["greetings", "call", "team", "after", "number", "voices", "sources", "day", "industries", "start", "built"]) expect(home, gone).not.toContain(`id="${gone}"`);
+    for (const gone of ["greetings", "call", "team", "after", "number", "voices", "sources", "day", "industries", "start"]) expect(home, gone).not.toContain(`id="${gone}"`);
     expect(home).not.toContain('data-part="greetings"');
     expect(home.match(/id="top"/g)).toHaveLength(1);
   });
@@ -169,7 +169,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(text(home)).not.toMatch(/AI always labelled|always labelled|written by an AI/);
   });
   it("not too much information (owner, 21 Nov 2026): every lower section is a title of at most 6 words and (where it has one) ONE grey line of at most 12, in English, with no paragraph", () => {
-    for (const id of ["calc", "lead-finder", "pricing"]) {
+    for (const id of ["calc", "lead-finder", "pricing", "built"]) {
       const sec = home.match(new RegExp(`<section id="${id}"[\\s\\S]*?</section>`))![0];
       const title = text(sec.match(/<h2[\s\S]*?<\/h2>/)![0]);
       expect(title.split(" ").length, `${id}: ${title}`).toBeLessThanOrEqual(6);
@@ -201,30 +201,32 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(text(finder)).not.toMatch(/Checked \d+ places|Found on this sweep/); // no count line, no note
     expect(finder.match(/<canvas/g)).toHaveLength(1); // one map at every width
   });
-  it("the plans (spec: Pay as you go + ₹5 a minute, Pro with 500 minutes recommended, Business with 1,500): rupees, two facts under each price, ONE line for GST, the number and free early access, a link to /pricing; the Pro minutes bar", () => {
+  it("the plans (spec 8): three cards stacked on a phone (no carousel, no dots), what comes under each plan in tick lines from the plan data, one 'Every plan has' line, ONE line for GST, the number and free early access, a link to /pricing; the Pro minutes bar", () => {
     const plans = home.match(/<section id="pricing"[\s\S]*?<\/section>/)![0];
-    expect([...plans.matchAll(/data-plan="(\w+)"/g)].map((m) => m[1])).toEqual(["payg", "pro", "business"]);
-    for (const x of ["Simple plans in rupees", "Pay as you go", "₹499", "₹5/min · 1 number", "Pro", "₹1,999", "500 minutes · 1 number", "Recommended", "Business", "₹5,999", "1,500 minutes · 1 number", "+18% GST · 1 business number included · Free early access until paid plans start.", "See full pricing"]) expect(text(plans), x).toContain(x);
+    expect([...plans.matchAll(/data-plan="(\w+)"/g)].map((m) => m[1])).toEqual(["payg", "pro", "business"]); // the spec's order
+    for (const x of ["Simple plans in rupees", "Pay as you go", "₹499", "Calls: ₹5 a minute", "Find customers: 2 searches free a month, then ₹49 each", "Set up on your own, with your assistant", "Pro", "₹1,999", "Recommended", "500 minutes included", "Extra minutes: ₹5 each", "Find customers: 10 searches a month, then ₹39 each", "Business", "₹5,999", "1,500 minutes included", "Find customers: 100 searches a month, then ₹29 each", "Priority set-up"]) expect(text(plans), x).toContain(x);
+    expect([...plans.matchAll(/<ul class="h4-plan-lines">[\s\S]*?<\/ul>/g)].map((m) => m[0].match(/<li/g)!.length)).toEqual([4, 5, 5]); // 4 or 5 tick lines each, "1 business number" among them
+    expect(plans.match(/1 business number<\/li>/g)).toHaveLength(3);
+    const every = text(plans.match(/<p class="h4-every"[\s\S]*?<\/p>/)![0]);
+    for (const x of ["Every plan has", "AI calls and WhatsApp replies", "Every feature, on every plan", "Telugu, Hindi, Kannada, English", "1 phone number included. More numbers: ₹299 a month each", "WhatsApp at Meta's own price, no markup from us", "Calls are billed every 30 seconds", "Calls nobody answers are free"]) expect(every, x).toContain(x);
+    for (const x of ["+18% GST · 1 business number included · Free early access until paid plans start.", "See full pricing"]) expect(text(plans), x).toContain(x);
     expect(text(plans)).not.toMatch(/most popular|best value|unlimited|Lead Desk|AI Workforce|Price at launch|voice|yearly|annual|2 months free|locked/i); // nothing about voice pricing, nothing yearly
     expect(plans).toContain('href="/pricing"');
-    expect(plans.match(/class="h4-slide"/g)).toHaveLength(3);
-    expect(plans.match(/class="h4-dot"/g)).toHaveLength(3);
-    expect(plans.match(/class="h4-minbar"/g)).toHaveLength(1); // only Pro's bar fills
+    expect(plans).not.toMatch(/h4-dot|h4-track|h4-swipe/); // stacked, not a carousel
+    expect(plans.match(/class="h4-minbar"/g)).toHaveLength(1); // only Pro has the bar, and it is drawn full and still
     const css = fs.readFileSync(path.join(__dirname, "../../../design/home4.css"), "utf8");
-    expect(css).toMatch(/\.h4-plans \.h4-slide:nth-child\(2\) \{ order: -1; \}/); // Pro first in view on a phone
-    expect(css).toMatch(/@media \(min-width: 768px\) \{[\s\S]*\.h4-plans \.h4-track \{ grid-template-columns: repeat\(3/);
+    expect(css).toMatch(/\.h4-plans \{ display: grid; grid-template-columns: minmax\(0, 1fr\)/); // one column on a phone
+    expect(css).toMatch(/@media \(min-width: 768px\) \{ \[data-ui="v2"\] \.h4-plans \{ grid-template-columns: repeat\(3/); // three side by side from 768 px
   });
-  it("the trust row under the plans: four mini cards with a tiny live moment each (a picture, hidden from assistive technology) and the title as real text; the server draws every moment finished; no Voices or Built-in section", () => {
-    const plans = home.match(/<section id="pricing"[\s\S]*?<\/section>/)![0];
-    const row = plans.match(/<ul class="h4-trust"[\s\S]*?<\/ul>/)![0];
-    expect(row).toContain('data-phase="final"'); // no JavaScript: finished
-    expect(row.match(/data-trust="\d"/g)).toHaveLength(4);
-    expect(row.match(/data-illustration=""[^>]*aria-hidden="true"|aria-hidden="true"[^>]*data-illustration=""/g)).toHaveLength(4);
-    for (const x of ["Your own number", "Only people who said yes", "STOP works at once", "Quiet hours"]) expect(row.match(/<p class="h4-mini-t">([^<]+)<\/p>/g)!.join(" "), x).toContain(x);
-    for (const x of ["080 4••• •• 12".replace(" •• 12", ""), "KYC done", "Yes, contact me", "Added to your list", "STOP", "Done, no more messages", "9:40 pm", "Waits till morning"]) expect(text(row), x).toContain(x);
-    expect(text(row)).not.toMatch(/\b\d{10}\b|9:40 pm.*till \d/); // masked digits only; "till morning", never a fixed hour of ours
+  it("Built in from day one: a STILL bento after the plans (a wide card of numbers, a timeline, three small cards); nothing on the lower sections animates", () => {
+    const built = home.match(/<section id="built"[\s\S]*?<\/section>/)![0];
+    expect(text(built)).toContain("Built in from day one");
+    expect(built.match(/data-bento="\w+"/g)).toEqual(['data-bento="numbers"', 'data-bento="retry"', 'data-bento="consent"', 'data-bento="stop"', 'data-bento="quiet"']);
+    for (const x of ["Your own number", "080 4••• ••12".replace("••12", "••12"), "KYC done", "Extra number", "Calls again if busy", "Example", "10:00 Busy", "Tries again later", "5:00 pm Connected, visit booked", "Only people who said yes", "Yes, contact me", "Added to your list", "STOP works at once", "STOP", "Done, no more messages", "Quiet hours", "9:40 pm", "Waits till morning"]) expect(text(built), x).toContain(x);
+    expect(built.match(/data-illustration=""[^>]*aria-hidden="true"|aria-hidden="true"[^>]*data-illustration=""/g)).toHaveLength(4); // four pictures; the timeline is real text
+    expect(text(built)).not.toMatch(/\b\d{10}\b/); // masked digits only; "till morning", never a fixed hour of ours
+    for (const sec of ["calc", "lead-finder", "pricing", "built"]) expect(home.match(new RegExp(`<section id="${sec}"[\\s\\S]*?</section>`))![0], sec).not.toMatch(/data-phase|animation|transition/); // no play-once moments, no count-up, no slide-in
     for (const gone of ["voices", "trust"]) expect(home, gone).not.toContain(`id="${gone}"`);
-    expect(home).not.toContain('<section id="built"');
   });
   it("the final call to action: the line, the WhatsApp number and the closing form on joinWaitlist", () => {
     const join = home.match(/<section id="(demo|join)"[\s\S]*?<\/section>/)![0];

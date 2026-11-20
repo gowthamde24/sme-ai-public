@@ -11354,19 +11354,6 @@
    "ta": "draft"
   }
  },
- "h4.pl.payg": {
-  "en": "{p}/min · 1 number",
-  "te": "{p}/నిమిషం · 1 number",
-  "hi": "{p}/मिनट · 1 number",
-  "kn": "{p}/ನಿಮಿಷ · 1 number",
-  "ta": "{p}/நிமிடம் · 1 number",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h4.m.yes": {
   "en": "Yes, contact me",
   "te": "అవును, contact చేయండి",
@@ -11458,19 +11445,6 @@
    "ta": "draft"
   }
  },
- "h4.pl.min": {
-  "en": "{n} minutes · 1 number",
-  "te": "{n} నిమిషాలు · 1 number",
-  "hi": "{n} मिनट · 1 number",
-  "kn": "{n} ನಿಮಿಷ · 1 number",
-  "ta": "{n} நிமிடம் · 1 number",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h4.pl.title": {
   "en": "Simple plans in rupees",
   "te": "Rupees లో simple plans",
@@ -11516,19 +11490,6 @@
   "hi": "late call-back से आपका कितना नुकसान",
   "kn": "late call-back ನಿಂದ ನಿಮಗೆ ಎಷ್ಟು ನಷ್ಟ",
   "ta": "late call-back-ஆல் உங்களுக்கு எவ்வளவு இழப்பு",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.dot": {
-  "en": "Show item {n} of {total}",
-  "te": "{total} లో {n} వది చూపించు",
-  "hi": "{total} में से {n} दिखाएँ",
-  "kn": "{total} ರಲ್ಲಿ {n} ತೋರಿಸಿ",
-  "ta": "{total}-இல் {n} காட்டு",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11633,6 +11594,136 @@
   "hi": "KYC हो गया",
   "kn": "KYC ಆಯಿತು",
   "ta": "KYC முடிந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.num": {
+  "en": "1 business number",
+  "te": "ఒక business number",
+  "hi": "एक business number",
+  "kn": "ಒಂದು business number",
+  "ta": "ஒரு business number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.every": {
+  "en": "Every plan has",
+  "te": "ప్రతి plan లో ఉండేవి",
+  "hi": "हर plan में",
+  "kn": "ಪ್ರತಿ plan ನಲ್ಲಿ ಇರುವುದು",
+  "ta": "ஒவ்வொரு plan-இலும் உள்ளவை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.e1": {
+  "en": "AI calls and WhatsApp replies",
+  "te": "AI calls, WhatsApp కి replies",
+  "hi": "AI calls और WhatsApp replies",
+  "kn": "AI calls, WhatsApp ಗೆ replies",
+  "ta": "AI calls மற்றும் WhatsApp replies",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.e2": {
+  "en": "Telugu, Hindi, Kannada, English",
+  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్",
+  "hi": "तेलुगु, हिन्दी, कन्नड़, अंग्रेज़ी",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್",
+  "ta": "தெலுங்கு, இந்தி, கன்னடம், ஆங்கிலம்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.m.extra": {
+  "en": "Extra number",
+  "te": "ఎక్స్‌ట్రా number",
+  "hi": "एक्स्ट्रा number",
+  "kn": "ಹೆಚ್ಚುವರಿ number",
+  "ta": "கூடுதல் number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.t": {
+  "en": "Calls again if busy",
+  "te": "Busy అయితే మళ్ళీ call చేస్తుంది",
+  "hi": "Busy हो तो दोबारा call करता है",
+  "kn": "Busy ಆದರೆ ಮತ್ತೆ call ಮಾಡುತ್ತದೆ",
+  "ta": "Busy என்றால் மீண்டும் call செய்யும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.1": {
+  "en": "Busy",
+  "te": "Busy అయింది",
+  "hi": "Busy था",
+  "kn": "Busy ಆಗಿತ್ತು",
+  "ta": "Busy-ஆக இருந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.2": {
+  "en": "Tries again later",
+  "te": "తర్వాత మళ్ళీ ప్రయత్నిస్తుంది",
+  "hi": "बाद में फिर कोशिश करता है",
+  "kn": "ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ",
+  "ta": "பிறகு மீண்டும் முயற்சிக்கும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.3": {
+  "en": "Connected, visit booked",
+  "te": "Connect అయింది, visit book అయింది",
+  "hi": "बात हुई, visit book हुई",
+  "kn": "Connect ಆಯಿತು, visit book ಆಯಿತು",
+  "ta": "Connect ஆனது, visit book ஆனது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.built.t": {
+  "en": "Built in from day one",
+  "te": "మొదటి రోజు నుంచే ఉన్నవి",
+  "hi": "पहले दिन से शामिल",
+  "kn": "ಮೊದಲ ದಿನದಿಂದಲೇ ಇರುವುದು",
+  "ta": "முதல் நாளிலிருந்தே உள்ளவை",
   "status": {
    "te": "draft",
    "hi": "draft",
