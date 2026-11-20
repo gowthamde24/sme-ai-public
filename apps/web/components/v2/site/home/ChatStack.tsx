@@ -22,7 +22,12 @@ export function ChatStack({ chats, captions, sub, placeholder, icons }: { chats:
   const root = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
     const el = root.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      // no way to tell: run (the clock only starts once the phone is "seen")
+      const id = window.setTimeout(() => setVisible(true), 0);
+      return () => window.clearTimeout(id);
+    }
     const io = new IntersectionObserver((es) => setVisible(es.some((e) => e.isIntersecting)));
     io.observe(el);
     return () => io.disconnect();

@@ -88,7 +88,7 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
       if (s.phase === "call") expect(s.rows).toBeLessThanOrEqual(3);
       if (s.phase === "ended" || s.phase === "chat") expect(s.rows).toBe(3);
     }
-    expect(seen.slice(0, 9)).toEqual(["te:call", "te:ended", "te:chat", "te:out", "hi:call", "hi:ended", "hi:chat", "hi:out", "kn:call"]);
+    expect(seen.slice(0, 10)).toEqual(["te:chat", "te:call", "te:ended", "te:chat", "te:out", "hi:call", "hi:ended", "hi:chat", "hi:out", "kn:call"]); // (the first "te:chat" is the still state until the phone is seen)
     const t0 = Object.values(starts);
     expect(t0[1] - t0[0]).toBeGreaterThanOrEqual(12000);
     expect(t0[1] - t0[0]).toBeLessThanOrEqual(16000);
@@ -127,6 +127,7 @@ describe("the language chips", () => {
         <FoundCard heading="What it found out" listening="Listening…" summary="Summary is written the moment the call ends." sets={sets} />
       </StackProvider>,
     );
+    await act(async () => { vi.advanceTimersByTime(200); }); // (the phone is "seen", then the clock starts)
     await act(async () => { vi.advanceTimersByTime(200); });
     const tab = (c: string) => container.querySelector(`[data-tab="${c}"]`) as HTMLElement;
     await act(async () => { tab("kn").click(); });

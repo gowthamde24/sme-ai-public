@@ -46,7 +46,7 @@ const STACK_TODAY: readonly StackChat[] = [
     code: "te",
     name: "Bright Path Academy",
     place: "Hyderabad",
-    day: "ఈ రోజు",
+    day: "ఈరోజు",
     call: {
       you: "మీరు",
       live: "Live captions",

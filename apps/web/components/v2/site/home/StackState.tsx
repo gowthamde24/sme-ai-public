@@ -33,21 +33,24 @@ export const useStack = (): Value => {
 export function StackProvider({ chats, children }: { chats: readonly StackChat[]; children: React.ReactNode }) {
   const [st, setSt] = React.useState<StackState>({ idx: 0, phase: "chat", n: chats[0].lines.length });
   const [live, setLive] = React.useState(false);
-  const [visible, setVisible] = React.useState(true); // the clock stands still while the phone is off screen
+  const [visible, setVisible] = React.useState(false); // the clock stands still while the phone is off screen (and does not start until it has been seen once: until then the first chat and its filled card are shown whole)
   const holdUntil = React.useRef(0); // after a tap on a language the demo stays on it for 30 s
   const still = React.useRef(false); // reduced motion: no clock at all
+  const started = React.useRef(false);
   React.useEffect(() => {
+    if (!visible || started.current) return;
+    started.current = true;
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
       still.current = true;
       return;
     }
-    // the first chat is whole in the server markup; once the script runs, the conversation starts from its call
+    // the first chat is whole in the server markup; once the phone is seen, the conversation starts from its call
     const id = window.setTimeout(() => {
       setSt({ idx: 0, phase: "call", n: 0 });
       setLive(true);
     }, 0);
     return () => window.clearTimeout(id);
-  }, []);
+  }, [visible]);
   React.useEffect(() => {
     if (!live || !visible) return;
     const { idx, phase, n } = st;
