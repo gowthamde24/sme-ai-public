@@ -17,7 +17,7 @@ const FADE = 600;
 
 export type Phase = "call" | "ended" | "chat" | "out";
 type StackState = { idx: number; phase: Phase; n: number };
-type Value = StackState & { setVisible: (v: boolean) => void; select: (i: number) => void };
+type Value = StackState & { visible: boolean; setVisible: (v: boolean) => void; select: (i: number) => void };
 const Ctx = React.createContext<Value | null>(null);
 export const useStack = (): Value => {
   const s = React.useContext(Ctx);
@@ -79,7 +79,7 @@ export function StackProvider({ chats, children }: { chats: readonly StackChat[]
     },
     [chats],
   );
-  const value = React.useMemo(() => ({ ...st, setVisible, select }), [st, select]);
+  const value = React.useMemo(() => ({ ...st, visible, setVisible, select }), [st, visible, select]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

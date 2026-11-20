@@ -9,7 +9,7 @@
    ========================================================================== */
 [data-ui="v2"] .h3 {
   --h3-gutter: clamp(16px, 3vw, 32px);
-  --h3-sec: clamp(48px, 9vw, 120px);
+  --h3-sec: clamp(48px, calc(6vw + 24px), 96px); /* THE section spacing, the same for every section of the home page (48 px on a phone, 96 px on a desktop); the lower sections use it too */
   --h3-gap: clamp(24px, 3.4vw, 48px);
   --h3-or: #c2410c;
   --h3-ot: #b23a08;
@@ -51,7 +51,7 @@
 }
 
 /* type: one scale, clamp() between a phone and the 1240 px design */
-[data-ui="v2"] .h3-h1 { margin: 0; font-family: var(--v2-font-display-stack); font-weight: 700; font-size: clamp(30px, calc(4vw + 14px), 66px); line-height: 1.06; letter-spacing: -0.035em; text-wrap: balance; }
+[data-ui="v2"] .h3-h1 { margin: 0; font-family: var(--v2-font-display-stack); font-weight: 700; font-size: clamp(32px, calc(4.2vw + 17px), 72px); line-height: 1.08; letter-spacing: -0.02em; text-wrap: balance; }
 [data-ui="v2"] .h3-h2 { margin: 0; font-family: var(--v2-font-display-stack); font-weight: 700; font-size: clamp(24px, calc(2.4vw + 14px), 48px); line-height: 1.1; letter-spacing: -0.03em; text-wrap: balance; }
 [data-ui="v2"] .h3-h3 { margin: 0; font-family: var(--v2-font-display-stack); font-weight: 700; font-size: clamp(18px, calc(0.5vw + 15px), 22px); line-height: 1.25; letter-spacing: -0.015em; }
 [data-ui="v2"] .h3-lead { margin: 0; font-size: clamp(15px, calc(0.3vw + 14px), 19px); line-height: 1.5; color: var(--v2-muted); text-wrap: pretty; }

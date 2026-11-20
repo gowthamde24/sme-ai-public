@@ -10,6 +10,8 @@ export type CallLine = { from: "me" | "them"; text: string };
 export type StackChat = {
   code: StackCode;
   name: string;
+  /** The city shown with the call's timer. */
+  place: string;
   day: string;
   /** The call screen's own words, in the conversation's language: the customer's label, the live chip and the ended chip. */
   call: { you: string; live: string; ended: string; lines: CallLine[] };
@@ -21,6 +23,7 @@ export const STACK: readonly StackChat[] = [
   {
     code: "te",
     name: "Bright Path Academy",
+    place: "Hyderabad",
     day: "ఈ రోజు",
     call: {
       you: "మీరు",
@@ -43,6 +46,7 @@ export const STACK: readonly StackChat[] = [
   {
     code: "hi",
     name: "Shree Homes",
+    place: "Hyderabad",
     day: "आज",
     call: {
       you: "आप",
@@ -65,6 +69,7 @@ export const STACK: readonly StackChat[] = [
   {
     code: "kn",
     name: "Sunrise Clinic",
+    place: "Bengaluru",
     day: "ಇಂದು",
     call: {
       you: "ನೀವು",
@@ -87,6 +92,7 @@ export const STACK: readonly StackChat[] = [
   {
     code: "en",
     name: "Green Leaf Store",
+    place: "Chennai",
     day: "Today",
     call: {
       you: "You",
