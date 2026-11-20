@@ -8,7 +8,9 @@ import type { JobWho } from "./who";
  */
 export type SettingType = "choice" | "toggle";
 /** One choice of the job. `value` is one of `options` (a toggle is a boolean on the wire and "on" or "off" here, so the page's ticks keep one way of saying it); `more` puts it under "More choices" instead of on the main part of the page (the contract's `settings {main, more}`: which list it came in; a Setting has no `area`). */
-export type JobSetting = { key: string; type: SettingType; value: string; options: readonly string[]; more: boolean };
+/** A setting's value when the API sends null: "your own setting" (nothing chosen from the options): the page shows that and selects nothing. */
+export const OWN_SETTING = "";
+export type JobSetting = { key: string; type: SettingType; /** `OWN_SETTING` ("") when the API sent null. */ value: string; options: readonly string[]; more: boolean };
 /** What the customer hears or reads; the API composes it with the real business name and the job's name + the AI disclosure ("Priya, the AI assistant of {business}"). The web only shows it. */
 export type JobSays = { language: string; channel: "call" | "whatsapp"; text: string };
 /** The month so far (`JobDetail.cost`): the free minutes used of those included, or the rupees on a paid plan (`rupees` not null). */
@@ -50,6 +52,8 @@ export type JobDetail = {
   who: JobWho | null;
   /** The shop's OWN WhatsApp message this job sends instead of its default approved one (`JobDetail.message {id, title {en, te?}}`, contract 1.1 part 1, A8); null = the job uses its default. */
   message: JobMessage | null;
+  /** The parts of the page the web could not read from the API's answer (left out, each said in plain words on the page): `says`, `settings`, `results`, `faqs`, `cost`, `findsOut`, `failure`, ... Empty = everything was read. */
+  unavailable: readonly string[];
 };
 export type JobMessage = { id: string; title: { en: string; te: string | null } };
 

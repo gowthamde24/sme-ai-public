@@ -21,6 +21,10 @@ type Toast = { id: number; text: string; undo: () => Promise<void> };
  * ONE job's page (JOBS, mocks 04, 06 and 09): the job and its switch, When (sentences with the choice inside, and what it will do), What it says, What it finds out, FAQs, More choices, Results, and "Try it".
  * Every change answers at once (optimistic) and is put back, with the reason, if the API says no. A rename or a switch also leaves an Undo for a few seconds. `actions` null = the person only reads.
  */
+/** The parts of the page that can be left out when the API's answer for them cannot be read (parseJobDetail `unavailable`): each is said in plain words, the rest of the page works (planner, 20 Nov). */
+const PART_WORD = { says: "jobs.job.part.says", settings: "jobs.job.part.settings", results: "jobs.job.part.results", faqs: "jobs.job.part.faqs", cost: "jobs.job.part.cost", findsOut: "jobs.job.part.finds" } as const;
+const PART_KEYS = Object.keys(PART_WORD) as (keyof typeof PART_WORD)[];
+
 export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHref = null, whoExtra = null }: { detail: JobDetail; words: Words; base: string; lang: string; ago: Ago | null; actions: JobPageActions | null; /** The old page that holds every setting of this job (JOBS on: Rules and Campaigns redirect to the job, this link opens them with ?all=1), or null. */ allSettingsHref?: string | null; /** The Who talks card's extras (the voice sample route, the other job the command offers, the change of any job); null = no play buttons and no command. */ whoExtra?: WhoExtra | null }) {
   const t = makeT(words);
   const { job } = detail;
@@ -216,6 +220,15 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
           ) : null}
         </section>
 
+        {PART_KEYS.some((k) => detail.unavailable.includes(k)) ? (
+          <ul data-part="job-parts-down" role="status" className="m-0 flex list-none flex-col gap-2 p-0">
+            {PART_KEYS.filter((k) => detail.unavailable.includes(k)).map((k) => (
+              <li key={k} className="rounded-xl bg-[var(--jb-wait-soft)] px-3 py-2.5 text-[14.5px] leading-snug text-ink">
+                {t("jobs.job.part.down", { part: t(PART_WORD[k]) })}
+              </li>
+            ))}
+          </ul>
+        ) : null}
         {detail.says.length > 0 ? <JobSaysCard says={says} language={detail.who ? undefined : language} values={values} t={t} disabled={!canChange} byKey={byKey} jobName={shownName} base={base} onChange={(k, v) => void choose(k, v)} /> : null}
 
         <FindsOutCard items={detail.findsOut} enabled={finds} t={t} disabled={!canChange} onChange={(k, on) => void tick(k, on)} />

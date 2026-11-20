@@ -1,5 +1,5 @@
 import { bad, bool, int, iso, list, oneOf, optInt, optIso, optStr, rec, str, uuid, word } from "./shape";
-import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobMessage, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
+import { FAQ_A_MAX, FAQ_Q_MAX, OWN_SETTING, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobMessage, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
 import type { ExcludedCode, JobPlan, PlanBasisCode, PlanCost, PlanSearch, Suggestion } from "@/lib/jobs/plan";
 import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "@/lib/jobs/plan";
 import { SEARCH_AREA_MAX } from "@/lib/jobs/plan-const";
@@ -64,7 +64,19 @@ export function parseJob(json: unknown): Job {
     ...(x.speaks !== undefined ? { speaks: parseSpeaks(x.speaks) } : {}),
   };
 }
-export const parseJobs = (json: unknown): Job[] => list(Array.isArray(json) ? json : rec(json, "jobs").items, "jobs", 100).map(parseJob);
+/** One row of a list the API sends that this screen cannot read is left out (logged), never a failed page: the owner sees the other jobs (staging walk, 20 Nov). */
+function rows<T>(items: readonly unknown[], one: (row: unknown) => T, what: string): T[] {
+  const out: T[] = [];
+  for (const row of items) {
+    try {
+      out.push(one(row));
+    } catch (error) {
+      console.warn(`${what}: a row could not be read and is left out (${String(error).slice(0, 100)})`);
+    }
+  }
+  return out;
+}
+export const parseJobs = (json: unknown): Job[] => rows(list(Array.isArray(json) ? json : rec(json, "jobs").items, "jobs", 100), parseJob, "jobs list");
 
 /** One item of what waits for the owner: `{id, code, kind, at, target {type, id}}`, closed (Today uses only the count; its own list draws the cards). */
 function parseNeedsYou(row: unknown): NeedsYouItem {
@@ -77,7 +89,7 @@ function parseNeedsYou(row: unknown): NeedsYouItem {
 export function parseJobsToday(json: unknown): TodayJobs {
   const x = rec(json, "today");
   return {
-    jobs: list(x.jobs, "jobs", 100).map(parseJob),
+    jobs: rows(list(x.jobs, "jobs", 100), parseJob, "today jobs"),
     needsYou: list(x.needs_you ?? [], "needs_you", 200).map(parseNeedsYou),
     assistantName: x.assistant === null || x.assistant === undefined ? null : optStr(rec(x.assistant, "assistant").name, "assistant.name", 60),
   };
@@ -95,14 +107,14 @@ function parseSetting(row: unknown, more: boolean): JobSetting {
   const x = rec(row, "setting");
   const type = oneOf(x.type ?? "choice", ["choice", "toggle"] as const, "setting.type");
   const key = word(x.key, "setting.key");
-  // contract jobs-detail.md: `value` is `string|null` (choice) and `boolean|null` (toggle): null = the owner has not chosen, so the DEFAULT shows (a toggle: off; a choice: its first option, which C1 lists as the default). Staging 20 Nov: a null crashed the whole job page ("Unexpected setting.value").
+  // contract jobs-detail.md: `value` is `string|null` (choice) and `boolean|null` (toggle): NULL = "your own setting" (what is stored matches none of the options, or could not be read): the page shows that and selects NOTHING; it never picks an option for the owner (that would silently change the job). It is the empty string here (OWN_SETTING). Staging 20 Nov: a null crashed the whole job page.
   if (type === "toggle") {
-    const value = x.value === null || x.value === undefined ? "off" : bool(x.value, "setting.value") ? "on" : "off";
+    const value = x.value === null || x.value === undefined ? OWN_SETTING : bool(x.value, "setting.value") ? "on" : "off";
     return { key, type, value, options: ["on", "off"], more };
   }
   const options = list(x.options, "setting.options", 40).map((o) => word(o, "option", 40));
-  const value = x.value === null || x.value === undefined ? (options[0] ?? bad("setting.options")) : word(x.value, "setting.value", 40);
-  if (!options.includes(value)) bad("setting.value");
+  const value = x.value === null || x.value === undefined ? OWN_SETTING : word(x.value, "setting.value", 40);
+  if (value !== OWN_SETTING && !options.includes(value)) bad("setting.value");
   return { key, type, value, options, more };
 }
 /** `settings {main: [Setting], more: [Setting]}`: at most 4 in `main` by the contract (the web draws what it is given: a bigger list is C1's to answer for, the fixtures test holds the fixtures to 4). */
@@ -114,41 +126,65 @@ function parseSettings(v: unknown): JobSetting[] {
 /** `GET /jobs/{id}`: everything of the page in one call. */
 export function parseJobDetail(json: unknown): JobDetail {
   const x = rec(json, "job");
+  // the CORE (the job, its business, its what-it-does code) must be readable; every other part is read on its own: a part that cannot be read is left out, logged and named in `unavailable`, and the page says so for that part only (planner, 20 Nov: never crash the whole page for one odd field)
+  const unavailable: string[] = [];
+  const part = <T,>(name: string, fallback: T, read: () => T): T => {
+    try {
+      return read();
+    } catch (error) {
+      console.warn(`job detail: the part "${name}" could not be read and is left out (${String(error).slice(0, 100)})`);
+      unavailable.push(name);
+      return fallback;
+    }
+  };
   const what = rec(x.what_it_does ?? { code: "custom" }, "what_it_does");
-  const effect = x.effect === null || x.effect === undefined ? null : rec(x.effect, "effect");
-  const results = rec(x.results ?? {}, "results");
-  const failure = x.failure === null || x.failure === undefined ? null : rec(x.failure, "failure");
   const item = (row: unknown) => {
     const r = rec(row, "item");
     return { customer: str(r.customer, "item.customer", 80), detailCode: word(r.detail_code, "item.detail_code"), params: params(r.params), at: optIso(r.at, "item.at") ?? "" };
   };
-  return {
-    job: parseJob(x),
-    business: str(x.business_name, "business_name", 80),
-    whatCode: word(what.code, "what_it_does.code"),
-    says: parseSays(x.says),
-    settings: parseSettings(x.settings),
-    effectInputs: effect ? params(effect.inputs) : null,
-    findsOut: list(x.finds_out ?? [], "finds_out", 30).map((row) => {
-      const r = rec(row, "finds_out");
-      return { key: word(r.key, "finds_out.key"), enabled: bool(r.enabled, "finds_out.enabled") };
+  const job = parseJob(x);
+  const business = str(x.business_name, "business_name", 80);
+  const whatCode = word(what.code, "what_it_does.code");
+  const result: JobDetail = {
+    job,
+    business,
+    whatCode,
+    says: part("says", [] as JobSays[], () => parseSays(x.says)),
+    settings: part("settings", [] as JobSetting[], () => parseSettings(x.settings)),
+    effectInputs: part("effect", null as JobDetail["effectInputs"], () => {
+      const effect = x.effect === null || x.effect === undefined ? null : rec(x.effect, "effect");
+      return effect ? params(effect.inputs) : null;
     }),
-    faqs: list(x.faqs ?? [], "faqs", 100).map(parseFaq),
-    results: {
-      days: int(results.days ?? 7, "results.days", 1, 365),
-      // `numbers {key: n}`; the researcher's free-search state sits here too (`last_search_at` is a date, `weekly` a flag): only whole numbers are numbers
-      numbers: Object.entries(rec(results.numbers ?? {}, "results.numbers"))
-        .filter(([, value]) => typeof value === "number" && Number.isSafeInteger(value) && value >= 0 && value <= 100_000_000)
-        .slice(0, 6)
-        .map(([key, value]) => ({ key: word(key, "number"), value: value as number })),
-      items: list(results.items ?? [], "results.items", 50).map((row) => ({ ...item(row), status: oneOf(rec(row, "item").status, RESULT_STATUSES, "item.status") })),
-    },
-    failure: failure ? { code: word(failure.code, "failure.code"), params: params(failure.params), items: list(failure.items ?? [], "failure.items", 50).map(item) } : null,
-    test: x.test_channel === null || x.test_channel === undefined ? null : oneOf(x.test_channel, TEST_CHANNELS, "test_channel"),
-    cost: parseJobCost(x.cost),
-    who: parseWho(x.speaks, x.numbers),
-    message: parseJobMessage(x.message),
+    findsOut: part("findsOut", [] as JobDetail["findsOut"], () =>
+      list(x.finds_out ?? [], "finds_out", 30).map((row) => {
+        const r = rec(row, "finds_out");
+        return { key: word(r.key, "finds_out.key"), enabled: bool(r.enabled, "finds_out.enabled") };
+      }),
+    ),
+    faqs: part("faqs", [] as JobFaq[], () => list(x.faqs ?? [], "faqs", 100).map(parseFaq)),
+    results: part("results", { days: 7, numbers: [], items: [] } as JobDetail["results"], () => {
+      const results = rec(x.results ?? {}, "results");
+      return {
+        days: int(results.days ?? 7, "results.days", 1, 365),
+        // `numbers {key: n}`; the researcher's free-search state sits here too (`last_search_at` is a date, `weekly` a flag): only whole numbers are numbers
+        numbers: Object.entries(rec(results.numbers ?? {}, "results.numbers"))
+          .filter(([, value]) => typeof value === "number" && Number.isSafeInteger(value) && value >= 0 && value <= 100_000_000)
+          .slice(0, 6)
+          .map(([key, value]) => ({ key: word(key, "number"), value: value as number })),
+        items: list(results.items ?? [], "results.items", 50).map((row) => ({ ...item(row), status: oneOf(rec(row, "item").status, RESULT_STATUSES, "item.status") })),
+      };
+    }),
+    failure: part("failure", null as JobDetail["failure"], () => {
+      const failure = x.failure === null || x.failure === undefined ? null : rec(x.failure, "failure");
+      return failure ? { code: word(failure.code, "failure.code"), params: params(failure.params), items: list(failure.items ?? [], "failure.items", 50).map(item) } : null;
+    }),
+    test: part("test", null as JobDetail["test"], () => (x.test_channel === null || x.test_channel === undefined ? null : oneOf(x.test_channel, TEST_CHANNELS, "test_channel"))),
+    cost: part("cost", { minutesUsed: 0, minutesIncluded: null, rupees: null } as JobDetail["cost"], () => parseJobCost(x.cost)),
+    who: part("who", null as JobDetail["who"], () => parseWho(x.speaks, x.numbers)),
+    message: part("message", null as JobDetail["message"], () => parseJobMessage(x.message)),
+    unavailable,
   };
+  return result;
 }
 
 /**
