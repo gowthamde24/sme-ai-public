@@ -44,10 +44,11 @@ describe("the Indic fonts are the cut files in design/indic-fonts (job CH)", () 
   const CEILING = { "--v2-font-telugu": 70_000, "--v2-font-devanagari": 90_000, "--v2-font-kannada": 52_000, "--v2-font-tamil": 30_000 };
 
   it("each language's font is its own local file, 400 to 700, never preloaded, with a unicode-range", () => {
-    expect(localCalls.map((c) => c.variable).sort()).toEqual(Object.keys(FILES).sort());
+    expect([...new Set(localCalls.map((c) => c.variable))].sort()).toEqual(Object.keys(FILES).sort());
+    // (the Telugu variable is declared twice: the full file, and the cut-down one for the home page's sample call on a page that is not in Telugu)
     for (const call of localCalls) {
       expect(call.src).toHaveLength(1);
-      expect(call.src[0].path).toBe(`./indic-fonts/${FILES[call.variable as keyof typeof FILES]}`);
+      expect(call.src[0].path).toMatch(new RegExp(`^\\./indic-fonts/(${FILES[call.variable as keyof typeof FILES].replace(".", "\\.")}|NotoSansTelugu-demo\\.woff2)$`));
       expect(call.src[0].weight).toBe("400 700");
       expect(call.preload).toBe(false);
       expect(call.declarations.find((d) => d.prop === "unicode-range")?.value).toMatch(/^U\+/);
@@ -56,7 +57,7 @@ describe("the Indic fonts are the cut files in design/indic-fonts (job CH)", () 
   it("every font loader is a plain `const x = localFont({...})` in the module (the build refuses a helper around it: the unit test cannot see that, the build does)", () => {
     const source = fs.readFileSync(path.join(__dirname, "fonts.ts"), "utf8");
     const calls = source.split("\n").filter((line) => line.includes("localFont("));
-    expect(calls.length).toBe(4);
+    expect(calls.length).toBe(5);
     for (const line of calls) expect(line).toMatch(/^const \w+ = localFont\(\{$/);
   });
   it("the files exist, are woff2, stay under their measured size, and the licence is next to them", () => {

@@ -17,9 +17,9 @@ export function SupportedBy({ t, className = "" }: { t: SiteT; className?: strin
       <span>{t("foot.supported")}</span>
       <a href={HREF} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center">
         {/* eslint-disable-next-line @next/next/no-img-element -- Cartesia's own SVG, committed to /public/brand, shown as it is (their rule: no resizing tricks) */}
-        <img src="/brand/cartesia-startups-primary.svg" alt="Cartesia" width={LIGHT.width} height={LIGHT.height} className="supported-by-light" />
+        <img src="/brand/cartesia-startups-primary.svg" alt="Cartesia" width={LIGHT.width} height={LIGHT.height} className="supported-by-light" loading="lazy" decoding="async" />
         {/* eslint-disable-next-line @next/next/no-img-element -- the white file for dark backgrounds */}
-        <img src="/brand/cartesia-startups-white.svg" alt="Cartesia" width={DARK.width} height={DARK.height} className="supported-by-dark" />
+        <img src="/brand/cartesia-startups-white.svg" alt="Cartesia" width={DARK.width} height={DARK.height} className="supported-by-dark" loading="lazy" decoding="async" />
       </a>
     </p>
   );

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
 import { HeroStage, WaitlistForm } from "@/components/v2/site/LazyIslands";
 import { hasWaitlist, waitlistWords, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
-import { teluguFontVariable } from "@/design/fonts";
+import { teluguDemoFontVariable, teluguFontVariable } from "@/design/fonts";
 import type { SiteLang } from "@/i18n/lang";
 import type { SiteKey, SiteT } from "@/i18n/site";
 import { SITE_LANGUAGE_NAMES } from "@/i18n/site-lang";
@@ -82,7 +82,7 @@ const HERO_KEYS = [
 export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang: SiteLang; start: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
   const cta: Start = { href: start.href, label: t("h3.cta") };
   return (
-    <div className={`h3 ${teluguFontVariable}`} data-part="home3">
+    <div className={`h3 ${lang === "te" ? teluguFontVariable : teluguDemoFontVariable}`} data-part="home3">
       <Hero t={t} cta={cta} />
       <How t={t} />
       <Ask t={t} cta={cta} />

@@ -22,6 +22,14 @@ const telugu = localFont({
   preload: false,
   declarations: [{ prop: "unicode-range", value: "U+951-952,U+964-965,U+B83,U+C00-C7F,U+1CD5-1CD6,U+1CD8,U+1CDA,U+1CF2,U+200C-200D,U+25CC" }],
 });
+// the same Telugu font cut down to the letters of the home page's sample call (27 KB instead of 67): every home page that is NOT in Telugu shows Telugu only there (design/indic-fonts/make-telugu-demo.py); a Telugu page uses the full file
+const teluguDemo = localFont({
+  src: [{ path: "./indic-fonts/NotoSansTelugu-demo.woff2", weight: "400 700", style: "normal" }],
+  variable: "--v2-font-telugu",
+  display: "swap",
+  preload: false,
+  declarations: [{ prop: "unicode-range", value: "U+951-952,U+964-965,U+B83,U+C00-C7F,U+1CD5-1CD6,U+1CD8,U+1CDA,U+1CF2,U+200C-200D,U+25CC" }],
+});
 const devanagari = localFont({
   src: [{ path: "./indic-fonts/NotoSansDevanagari-400-700.woff2", weight: "400 700", style: "normal" }],
   variable: "--v2-font-devanagari",
@@ -47,6 +55,8 @@ const tamil = localFont({
 
 /** The Telugu font's variable, for a page that shows a Telugu example whatever its own language is (the home page's sample call): the file is requested only when a Telugu letter is on screen (unicode-range). */
 export const teluguFontVariable: string = telugu.variable;
+/** The cut-down Telugu font's variable (same CSS variable, the small file): for the home page in any language but Telugu. */
+export const teluguDemoFontVariable: string = teluguDemo.variable;
 
 const INDIC = { te: telugu, hi: devanagari, kn: kannada, ta: tamil } as const;
 

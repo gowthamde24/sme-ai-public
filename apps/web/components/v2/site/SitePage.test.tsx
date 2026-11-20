@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { htmlText } from "@/test/html-text";
 
-vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars", teluguFontVariable: "te-font" }));
+vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars", teluguFontVariable: "te-font", teluguDemoFontVariable: "te-demo-font" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 
 // next/dynamic loads a chunk on the client; a test renders the real components at once
