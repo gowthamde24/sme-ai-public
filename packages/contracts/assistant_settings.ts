@@ -92,6 +92,17 @@ export interface PreviewOut {
   resolved_opening_line?: string;
   spoken_text?: string;
   source?: "stored" | "default" | "draft" | "";
+  sound?: SoundOut | null;
+}
+
+export interface SoundOut {
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
+  voice_id: string;
+  voice_name: string;
+  gender: "female" | "male";
+  provider: "cartesia" | "sarvam";
+  tone: "friendly" | "respectful" | "quick";
+  speed: number;
 }
 
 export interface TestCallOut {
@@ -100,6 +111,7 @@ export interface TestCallOut {
   note: string;
   transcript: TranscriptLineOut[];
   outcome: OutcomePreviewOut;
+  sound?: SoundOut | null;
 }
 
 export interface TranscriptLineOut {

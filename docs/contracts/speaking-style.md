@@ -1,3 +1,5 @@
+> **Update 21 Nov 2026**: `region` and `options.regions` are no longer returned; PUT still accepts a `region` and ignores it (docs/contracts/voices-tones.md).
+
 # Contract: speaking style (job DS, night run 27 Oct; C1 -> C2)
 
 How the assistant TALKS. The owner (a native Telugu speaker) said the samples sound like "an AI reading pure bookish Telugu"; customers talk everyday Telugu with English words mixed in. Generated schema: `packages/contracts/speaking_style.schema.json` / `.ts`.

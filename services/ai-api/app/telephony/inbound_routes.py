@@ -37,10 +37,11 @@ from app.conversation.providers import (
     SarvamChatStream,
     SarvamRealtimeStt,
 )
+from app.conversation.sound import Stored, resolve_sound
 from app.errors import ApiError
 from app.logging_safety import one_line
 from app.talk_training import introduce as introduce_mod
-from app.telephony import caller_guard, exotel, gate, inbound, persona
+from app.telephony import ambience, caller_guard, exotel, gate, inbound, persona
 from app.telephony import tone as tone_mod
 from app.telephony.call_session import CallPlan, run_call
 from app.telephony.greeting_audio import GREETINGS
@@ -195,7 +196,7 @@ def visit_label(slot: dict[str, Any]) -> str:
 
 
 def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = (), assistant: str | None = None,
-                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool = True) -> tuple[Parts, str]:
+                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool = True, stored: Stored | None = None) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in the CALL's language (te-IN on a Telugu line; owner, 6 Nov 2026: "auto" let a caller's "hello" turn a Telugu call English),
     following the call when it switches (app/telephony/language_rule.py), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
@@ -229,7 +230,10 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
                                            introduced_as=introduce_mod.phrase(lang, introduction()), person_name=outbound.person_name, person_gender=outbound.person_gender)
 
     # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it; on an outbound goal call a sentence that PROMISES an action is replaced by a true line, and the tone's particles are taken out
-    tts: Any = GuardedTts(FallbackTts(bv.config, bv.factory, chosen={}, gender="female", pronunciations=default_pronunciations()), (training or {}).get("never_say") or [],
+    stored = stored or Stored(training=training)
+    base_tts = FallbackTts(bv.config, bv.factory, chosen=dict(stored.choices), gender=stored.gender, pronunciations=default_pronunciations())   # the workspace's chosen voice and gender (before 21 Nov 2026 a call always spoke the default woman's voice)
+    base_tts.pace = resolve_sound(bv.config, stored, language).pace
+    tts: Any = GuardedTts(base_tts, (training or {}).get("never_say") or [],
                           goal_tone=outbound.tone if outbound is not None and outbound.goal else None,
                           addressed_name=outbound.person_name if outbound is not None else None, titles_gender=outbound.person_gender if outbound is not None and not outbound.person_name else None)
     parts = Parts(
@@ -237,11 +241,11 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         tts=tts,
         llm=llm,
         system_for=lambda lang: goal_prompt(lang) if outbound is not None and outbound.goal else persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose=outbound.purpose if outbound else "inbound", goal=outbound.goal if outbound else None, facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
-                                                      corrections=corrections, opening=opening_for(lang), opening_says_ai=outbound is not None or persona.mention_ai_applies(lang, mention_ai)),
+                                                      corrections=corrections, opening=opening_for(lang), opening_says_ai=outbound is not None or persona.mention_ai_applies(lang, mention_ai), tone=resolve_sound(bv.config, stored, lang).tone),
         greeting_for=opening_for,
         models={"fast": model, "strong": model},
-        voice_for=lambda lang: bv.config.resolve(lang, None, "female").id,
-        voice_name=lambda lang: bv.config.resolve(lang, None, "female").name,
+        voice_for=lambda lang: resolve_sound(bv.config, stored, lang).voice.id,
+        voice_name=lambda lang: resolve_sound(bv.config, stored, lang).voice.name,
         fillers=bv.fillers,
     )
     return parts, model
@@ -255,6 +259,7 @@ class Prepared:
     slots: list[dict[str, Any]]
     text: str | None = None
     rendering: "asyncio.Future[bytes | None] | None" = None
+    background: str = "quiet_office"   # the quiet bed under our voice (app/telephony/ambience.py): quiet_office | shop | off
     ai_disclosed: bool = True   # whether the opening this call speaks really says it is an AI (stored on the call row, truthfully)
 
 
@@ -284,12 +289,13 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             log.warning("exotel_inbound %s_unreadable %s", name, exc.__class__.__name__)
             return default
 
-    training, slots, corrections, switch = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("mention_ai", True))
+    training, slots, corrections, switch, sound_row = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("mention_ai", True), read("call_sound", None))
+    stored = Stored.from_call_row(sound_row if isinstance(sound_row, dict) else None, training if isinstance(training, dict) else None)   # the workspace's voice, tone and speed: the SAME values and the same function as the previews (app/conversation/sound.py)
     mention_ai = switch is not False   # unreadable or unclear: ON
     slots = list(slots or [])
     labels = tuple(visit_label(sl) for sl in slots)
     if service.parts_for is None:
-        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, assistant=assistant, corrections=tuple(corrections or ()), mention_ai=mention_ai, **({"outbound": outbound} if outbound is not None else {}))
+        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, assistant=assistant, corrections=tuple(corrections or ()), mention_ai=mention_ai, stored=stored, **({"outbound": outbound} if outbound is not None else {}))
     else:
         parts, model = service.parts_for(bv, business, language, service.llm_choice)
     text = parts.greeting_for(language)
@@ -317,7 +323,8 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             return kept
 
         parts.greeting_keep = keep_and_store
-    return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering, ai_disclosed=not text or gate.has_ai_disclosure(text))
+    return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering, ai_disclosed=not text or gate.has_ai_disclosure(text),
+                    background=ambience.valid((training or {}).get("background") if isinstance(training, dict) else None))
 
 
 def assistant_of(info: dict[str, Any] | None) -> str | None:
@@ -456,6 +463,8 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
         again = await _prepare(service, bv, start, outbound)   # the workspace's names come with the line
         prepared = again if again is not None and again.tenant_id == tenant else await _prepare_for(service, bv, tenant, outbound=outbound)
     parts, model, slots = prepared.parts, prepared.model, prepared.slots
+    with suppress(Exception):   # never a failed call because of the bed (no file, no bed)
+        line.ambience = ambience.load_bed(prepared.background, int(getattr(line, "rate", ambience.BED_RATE)))
     if reserving is not None:
         held = reserving
 

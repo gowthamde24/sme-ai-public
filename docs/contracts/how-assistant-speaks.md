@@ -1,3 +1,5 @@
+> **Update 21 Nov 2026** (see docs/contracts/voices-tones.md): `tone` has three options (`friendly`, `respectful`, `quick`); a new `background` object (`quiet_office` | `shop` | `off`); **Region is removed** from GET (`words.languages.*.region`, `words.options.regions`, `pack_defaults.region` are gone); PUT still accepts `words.*.region` and ignores it.
+
 # Contract: "How your assistant speaks" (one panel for every business). C1 -> C2, 11 Nov 2026
 
 Status: **fixed contract**, built after the tone/addressing PR (branch `c1/pack-tone`). Owner decision (project doc `claude/decision-how-assistant-speaks.md`): one panel; "How to address customers" is folded into **Tone**. Same error shape as everywhere `{error:{code,message,retry_after,request_id}}`. Base `/v1/tenants/{tenant_id}`.

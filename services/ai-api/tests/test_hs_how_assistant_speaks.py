@@ -42,12 +42,12 @@ def world(pack_id: str = "textiles", doc: dict[str, Any] | None = None) -> tuple
 def test_nothing_saved_the_business_type_decides_and_formal_is_not_offered() -> None:
     client, _, _ = world("textiles")
     body = client.get(URL, headers=auth("a_owner")).json()
-    assert body["tone"] == {"value": "friendly", "source": "pack_default", "pack_default": "friendly", "options": ["respectful", "friendly"]}
+    assert body["tone"] == {"value": "friendly", "source": "pack_default", "pack_default": "friendly", "options": ["friendly", "respectful", "quick"]}
     assert body["words"]["options"]["styles"] == ["everyday_mixed", "everyday_pure"] and set(body["words"]["languages"]) == {"te", "en", "hi", "kn", "ta", "ml"}
-    assert body["words"]["languages"]["te"] == {"style": "everyday_mixed", "region": "neutral", "saved": False, "examples": "approved"}
+    assert body["words"]["languages"]["te"] == {"style": "everyday_mixed", "saved": False, "examples": "approved"}
     assert body["introduce_as"]["kind"] == "business" and body["introduce_as"]["owner_name"] == "Gowtham" and body["introduce_as"]["options"] == ["business", "owner", "custom"]
     assert "AI assistant" in body["introduce_as"]["preview"]["te"] or "AI assistant" in body["introduce_as"]["preview"]["en"]
-    assert body["pack_defaults"] == {"tone": "friendly", "words": "everyday_mixed", "region": "neutral"} and body["legacy_address"] is None and body["updated_at"] is None
+    assert body["pack_defaults"] == {"tone": "friendly", "words": "everyday_mixed"} and body["legacy_address"] is None and body["updated_at"] is None
     school = world("education")[0].get(URL, headers=auth("a_owner")).json()
     assert school["tone"]["value"] == "respectful" and school["tone"]["source"] == "pack_default" and school["pack_defaults"]["tone"] == "respectful"
 
@@ -60,7 +60,7 @@ def test_the_old_address_value_is_mapped_and_nothing_is_lost() -> None:
     friendly_school_never_touched, _, _ = world("textiles", {"address": "plain"})
     assert friendly_school_never_touched.get(URL, headers=auth("a_owner")).json()["tone"]["value"] == "friendly"
     client, training, _ = world("education", {"address": "garu"})
-    assert client.put(URL, json={"tone": "friendly"}, headers=auth("a_owner")).json()["tone"] == {"value": "friendly", "source": "saved", "pack_default": "respectful", "options": ["respectful", "friendly"]}
+    assert client.put(URL, json={"tone": "friendly"}, headers=auth("a_owner")).json()["tone"] == {"value": "friendly", "source": "saved", "pack_default": "respectful", "options": ["friendly", "respectful", "quick"]}
     assert training.rows[TENANT_A.id]["doc"]["address"] == "garu", "the old value stays in the document"
 
 
@@ -82,16 +82,16 @@ def test_a_subset_changes_only_that_part_and_null_resets_it() -> None:
     client, training, speaking = world("education")
     done = client.put(URL, json={"tone": "friendly", "words": {"te": {"style": "everyday_pure", "region": "telangana"}}, "introduce_as": {"kind": "custom", "text": "Gowtham High School's AI assistant"}}, headers=auth("a_owner")).json()
     assert done["tone"]["value"] == "friendly" and done["tone"]["source"] == "saved"
-    assert done["words"]["languages"]["te"] == {"style": "everyday_pure", "region": "telangana", "saved": True, "examples": "approved"}
+    assert done["words"]["languages"]["te"] == {"style": "everyday_pure", "saved": True, "examples": "approved"}
     assert done["introduce_as"]["kind"] == "custom" and "AI assistant" in done["introduce_as"]["preview"]["en"] and "Gowtham High School" in done["introduce_as"]["preview"]["en"]
     assert training.rows[TENANT_A.id]["doc"]["questions"], "the business type's own questions are kept when the first save writes the document"
     # another part alone: the rest is untouched
     again = client.put(URL, json={"words": {"ta": {"style": "everyday_pure"}}}, headers=auth("a_owner")).json()
-    assert again["words"]["languages"]["te"]["region"] == "telangana" and again["words"]["languages"]["ta"]["saved"] is True
+    assert "region" not in again["words"]["languages"]["te"] and again["words"]["languages"]["ta"]["saved"] is True
     assert again["tone"]["value"] == "friendly" and again["introduce_as"]["kind"] == "custom"
     # null puts it back
     reset = client.put(URL, json={"tone": None, "words": {"te": None}, "introduce_as": None}, headers=auth("a_owner")).json()
-    assert reset["tone"] == {"value": "respectful", "source": "pack_default", "pack_default": "respectful", "options": ["respectful", "friendly"]}
+    assert reset["tone"] == {"value": "respectful", "source": "pack_default", "pack_default": "respectful", "options": ["friendly", "respectful", "quick"]}
     assert reset["words"]["languages"]["te"]["saved"] is False and reset["words"]["languages"]["ta"]["saved"] is True and reset["introduce_as"]["kind"] == "business"
     assert set(speaking.saved) == {"ta"}
 
@@ -125,3 +125,41 @@ def test_another_workspace_is_not_reachable() -> None:
 
     client, _, _ = world()
     assert client.get(f"/v1/tenants/{TENANT_B.id}/how-assistant-speaks", headers=auth("a_owner")).status_code == 404
+
+
+# ---- 21 Nov 2026: three tones, the quiet background, and no Region --------------------------------------------------------------------------------------
+
+
+def test_the_three_tones_are_the_options_and_quick_can_be_saved_and_is_what_the_calls_read() -> None:
+    client, training, _ = world("textiles")
+    body = client.put(URL, json={"tone": "quick"}, headers=auth("a_owner")).json()
+    assert body["tone"] == {"value": "quick", "source": "saved", "pack_default": "friendly", "options": ["friendly", "respectful", "quick"]}
+    assert training.rows[TENANT_A.id]["doc"]["tone"] == "quick"
+    assert client.put(URL, json={"tone": "casual"}, headers=auth("a_owner")).status_code == 422
+
+
+def test_the_background_is_quiet_office_until_chosen_then_a_closed_word_with_labels_in_seven_languages() -> None:
+    client, training, _ = world("textiles")
+    first = client.get(URL, headers=auth("a_owner")).json()["background"]
+    assert first["value"] == "quiet_office" and first["saved"] is False and [o["id"] for o in first["options"]] == ["quiet_office", "shop", "off"]
+    assert all(set(o["label"]) == {"en", "te", "hi", "kn", "ta", "ml", "mr"} and all(o["label"].values()) for o in first["options"])
+    shop = client.put(URL, json={"background": "shop"}, headers=auth("a_owner")).json()["background"]
+    assert shop["value"] == "shop" and shop["saved"] is True and training.rows[TENANT_A.id]["doc"]["background"] == "shop"
+    assert client.put(URL, json={"background": "off"}, headers=auth("a_owner")).json()["background"]["value"] == "off"
+    reset = client.put(URL, json={"background": None}, headers=auth("a_owner")).json()["background"]
+    assert reset["value"] == "quiet_office" and reset["saved"] is False
+    assert client.put(URL, json={"background": "stadium"}, headers=auth("a_owner")).status_code == 422
+    assert client.put(URL, json={"background": "shop"}, headers=auth("a_admin")).status_code in (401, 403)
+
+
+def test_there_is_no_region_in_the_answer_and_an_old_region_is_accepted_but_changes_nothing() -> None:
+    client, _, speaking = world("textiles")
+    body = client.get(URL, headers=auth("a_owner")).json()
+    assert "regions" not in body["words"]["options"] and all("region" not in one for one in body["words"]["languages"].values()) and "region" not in body["pack_defaults"]
+    done = client.put(URL, json={"words": {"te": {"style": "everyday_pure", "region": "telangana"}}}, headers=auth("a_owner"))
+    assert done.status_code == 200 and "region" not in done.json()["words"]["languages"]["te"]
+    # a region that an older version stored is never used: the prompts always ask for the neutral one
+    speaking.saved = {"te": {"style": "everyday_mixed", "region": "telangana"}}
+    from app.speaking.service import SpeakingService
+
+    assert SpeakingService(speaking).style_for("t", TENANT_A.id, "te") == ("everyday_mixed", "neutral")

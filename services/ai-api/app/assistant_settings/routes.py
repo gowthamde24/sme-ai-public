@@ -20,6 +20,7 @@ from app.assistant_settings.models import (
     NameIn,
     NameOut,
     PreviewOut,
+    SoundOut,
     StyleWord,
     TestCallOut,
 )
@@ -74,7 +75,7 @@ def preview(
     if runtime.workspace is None:
         return out
     got = resolve(runtime, ctx, language, name=name)   # the one opening line: the card shows what "Hear it" speaks
-    return out.model_copy(update={"text": got.text, "resolved_opening_line": got.text, "spoken_text": got.spoken_text, "source": got.source})
+    return out.model_copy(update={"text": got.text, "resolved_opening_line": got.text, "spoken_text": got.spoken_text, "source": got.source, "sound": _sound(runtime, ctx, language, style)})
 
 
 @router.post("/test-call", response_model=TestCallOut)
@@ -86,4 +87,12 @@ def test_call(ctx: OwnerStrong, runtime: RuntimeDep) -> TestCallOut:
         return out
     language = _service(runtime).get(ctx.principal.token, ctx.tenant.id).settings.main_language
     first = out.transcript[0].model_copy(update={"text": resolve(runtime, ctx, language).text})   # the call opens with the one opening line
-    return out.model_copy(update={"transcript": [first, *out.transcript[1:]]})
+    return out.model_copy(update={"transcript": [first, *out.transcript[1:]], "sound": _sound(runtime, ctx, language, None)})
+
+
+def _sound(runtime: Runtime, ctx: TenantContext, language: str, style: str | None) -> SoundOut:
+    """The voice, tone and speed a real call speaks with: the SAME function (app/conversation/sound.py) on what this workspace saved; `style` is a tone the screen wants to hear before it saves."""
+    from app.conversation.sound_read import sound_of
+    from app.telephony.tone import STYLE_TONE
+
+    return SoundOut.model_validate(sound_of(runtime, ctx, language, tone=STYLE_TONE.get(style) if style else None).public())

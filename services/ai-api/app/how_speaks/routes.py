@@ -18,6 +18,8 @@ from app.agents import register
 from app.auth.deps import OwnerOrAdmin, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError
 from app.how_speaks.models import (
+    BackgroundOption,
+    BackgroundOut,
     HowAssistantSpeaksIn,
     HowAssistantSpeaksOut,
     IntroduceOut,
@@ -32,6 +34,7 @@ from app.speaking.models import LanguageStyle, SpeakingStyleIn
 from app.talk_training import introduce
 from app.talk_training.models import TalkTraining
 from app.talk_training.routes import _defaults, _repo
+from app.telephony import ambience
 from app.telephony import tone as tone_mod
 from app.tenancy.models import Role
 
@@ -87,18 +90,19 @@ def _out(runtime: Runtime, ctx: TenantContext) -> HowAssistantSpeaksOut:
     languages: dict[Any, WordsLanguageOut] = {}
     for lang in LANGUAGES:
         one = style.languages[lang]
-        languages[lang] = WordsLanguageOut(style="everyday_pure" if one.style == "formal" else one.style, region=one.region, saved=one.saved, examples=one.examples)
-    options = WordsOptionsOut(styles=["everyday_mixed", "everyday_pure"], regions={lang: list(register.REGIONS[lang]) for lang in LANGUAGES})  # type: ignore[misc,arg-type]
+        languages[lang] = WordsLanguageOut(style="everyday_pure" if one.style == "formal" else one.style, saved=one.saved, examples=one.examples)
+    options = WordsOptionsOut(styles=["everyday_mixed", "everyday_pure"])
     pick = introduce.Introduce(training.introduce_as.kind, training.introduce_as.text)
     business = ctx.tenant.name
     return HowAssistantSpeaksOut(
-        tone=ToneOut(value=value, source=source, pack_default=pack_default, options=["respectful", "friendly"]),  # type: ignore[arg-type]
+        tone=ToneOut(value=value, source=source, pack_default=pack_default, options=list(tone_mod.CHOICES)),  # type: ignore[arg-type]
         words=WordsOut(languages=languages, options=options),
         introduce_as=IntroduceOut(
             kind=pick.kind, text=pick.text, options=["business", "owner", "custom"], owner_name=_owner_name(runtime, ctx),  # type: ignore[arg-type]
             preview=IntroducePreviewOut(te=_preview("te", value, business, pick), en=_preview("en", value, business, pick)),
         ),
-        pack_defaults=PackDefaultsOut(tone=pack_default, words=register.DEFAULT_STYLE, region="neutral"),  # type: ignore[arg-type]
+        background=BackgroundOut(value=ambience.valid(training.background), saved=training.background is not None, options=[BackgroundOption(id=word, label=dict(ambience.LABELS[word])) for word in ambience.BACKGROUNDS]),  # type: ignore[arg-type]
+        pack_defaults=PackDefaultsOut(tone=pack_default, words=register.DEFAULT_STYLE),  # type: ignore[arg-type]
         legacy_address=(training.address if row is not None else None),
         updated_at=row.get("updated_at") if row is not None else None,
     )
@@ -123,14 +127,16 @@ def put_how_assistant_speaks(ctx: OwnerStrong, runtime: RuntimeDep, body: HowAss
             raise ApiError(422, "validation_error", f"Invalid input: introduce_as ({err.reason})", extra={"fields": ["introduce_as"], "reason": err.reason}) from None
     words = body.words or {}
     for lang, choice in words.items():
-        if choice is not None and choice.region not in register.REGIONS[lang]:
+        if choice is not None and choice.region is not None and choice.region not in register.REGIONS[lang]:
             raise ApiError(422, "validation_error", f"Invalid input: words.{lang}.region", extra={"fields": [f"words.{lang}.region"], "reason": "region_not_of_language"})
     # 2. the Talk training document (tone, introduce_as): the saved document, else the business type's defaults, with only these parts changed
-    if "tone" in sent or "introduce_as" in sent:
+    if "tone" in sent or "introduce_as" in sent or "background" in sent:
         _, training = _row_and_training(runtime, ctx)
         doc = training.model_dump(mode="json")
         if "tone" in sent:
             doc["tone"] = body.tone   # None = back to "not chosen yet" (the business type decides)
+        if "background" in sent:
+            doc["background"] = body.background   # None = back to "not chosen yet": quiet_office
         if "introduce_as" in sent:
             doc["introduce_as"] = {"kind": pick.kind, "text": pick.text} if pick is not None else {"kind": "business", "text": None}
         _repo(runtime).save(ctx.principal.token, ctx.tenant.id, TalkTraining.model_validate(doc).model_dump(mode="json"))
@@ -138,11 +144,11 @@ def put_how_assistant_speaks(ctx: OwnerStrong, runtime: RuntimeDep, body: HowAss
     if words:
         service = _speaking(runtime)
         current = service.get(ctx.principal.token, ctx.tenant.id)
-        merged: dict[Any, LanguageStyle] = {lang: LanguageStyle(style=one.style, region=one.region) for lang, one in current.languages.items() if one.saved}
+        merged: dict[Any, LanguageStyle] = {lang: LanguageStyle(style=one.style) for lang, one in current.languages.items() if one.saved}
         for lang, choice in words.items():
             if choice is None:
                 merged.pop(lang, None)
             else:
-                merged[lang] = LanguageStyle(style=choice.style, region=choice.region)
+                merged[lang] = LanguageStyle(style=choice.style)   # (a region is no longer kept: it never changed a word)
         service.save(ctx.principal.token, ctx.tenant.id, SpeakingStyleIn(languages=merged))
     return _out(runtime, ctx)

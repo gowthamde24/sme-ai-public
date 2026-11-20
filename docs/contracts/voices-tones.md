@@ -1,0 +1,54 @@
+# Contract: voices, tones, speed, background (C1 -> C2), 21 Nov 2026
+
+Why: the owner's findings of 19 Nov in the assistant setup (Warm, Calm and Bright sound the same and "Calm is only quieter"; Friendly and Respectful used the same voice; Region changes nothing; previews do not equal real calls). Everything below is **drafts for a native listener**: nobody has listened to the new list yet (`to_confirm: true`).
+
+## 1. One function decides how the assistant sounds
+`app/conversation/sound.py: resolve_sound(config, stored, language)` turns what a workspace saved into the **voice** (name, gender, provider), the **tone** and the **speed**. A real phone call (the line reads the values with the scheduler account, `public.call_sound_for_call`) and every preview (the opening-line "Hear it", `voice-sample`, `voice-preview`, the test call: the member's own reads, `app/conversation/sound_read.py`) call the same function. A test proves they resolve the same.
+
+Before 21 Nov a phone call always spoke the DEFAULT WOMAN's voice (it ignored the chosen voice, the gender, the speed and the tone); the AI-assistant `voice-sample`/`voice-preview` spoke four Sarvam v3 "personas" that no call ever used. That was the cause of "previews do not equal real calls".
+
+## 2. GET /v1/tenants/{t}/ai-assistant/voices (any member)
+```
+{ "gender": "female|male",
+  "languages": [ { "language": "te", "default_id": "te-ramya", "chosen_id": null|"te-kavitha", "active_id": "te-ramya",
+      "voices": [   // the SHORT LIST: two women and two men (where the catalogue has them), women first, default first
+        { "id": "te-ramya", "name": "Ramya", "label": "Warm", "gender": "female", "tags": ["warm"], "recommended": true, "default": true, "chosen": false,
+          "provider": "cartesia|sarvam", "sample_url": "/v1/voice-samples/te-ramya.mp3", "sample_ready": true, "sample_text": "...", "to_confirm": true } ] } ] }
+```
+* Show the voice by its **name** (Ramya, Kavitha); `label`/`tags` are only plain style hints. Two voices of a gender and language are of DIFFERENT providers (one Cartesia, one Sarvam Bulbul v4) so they really sound different.
+* `sample_ready: false` (the new Sarvam voices): no pre-rendered file yet, `sample_url` answers 404; use the live "Hear it" (`POST .../voices/preview`) for those. The files are rendered by `scripts/voice_catalogue_samples.py` once the owner says so.
+* Kannada has one man's Cartesia voice and one Sarvam man (Chetan): 2 + 2. Tamil: 2 + 2 (both Cartesia). Malayalam: one woman, one man. Marathi: no voice yet (not listed). Telugu, Hindi, English, Kannada: one Cartesia and one Sarvam voice of each gender.
+* `PUT .../voices` `{language, voice_id}` accepts ONLY a listed voice of that language and of the workspace's gender (422 otherwise). A voice that was chosen earlier and is no longer listed is shown as "no choice" and the default speaks (nothing breaks).
+* A call uses the chosen voice's provider first; if it fails or is slow (800 ms, then 30 s cooldown: `first_audio_timeout_ms`, `cooldown_s` in `voices.json`) the OTHER provider's voice of the SAME language and gender speaks, the rest of that call included. Logged with the engine and the reason only.
+
+## 3. Tone: three words, same voice, same loudness
+`friendly` (default) | `respectful` | `quick` ("Short and quick"). They change the WORDS and the pacing, never the voice or the volume.
+* `GET/PUT /v1/tenants/{t}/how-assistant-speaks`: `tone.value`, `tone.options = ["friendly","respectful","quick"]`; `PUT {"tone": "quick"}`; `"casual"` is still a 422 (the Owner's own test call only).
+* Order in which the tone of a call is found: the tone saved in "How your assistant speaks", else the `style` saved in Settings > AI assistant (`warm` = friendly, `respectful`, `quick`), else the old "How to address customers" value, else the business type's default.
+* What changes: Friendly = relaxed, "మీరు", the polite particle rarely, never "గారు". Respectful = polite forms, "అండి", "గారు" only directly after the person's own name, "आप/जी", "ನೀವು". Quick = the answer first, one short sentence, no filler, the opening is "హలో, {business} AI assistant ని. ఒక్క నిమిషం?". The AI-assistant disclosure is in every opening of every tone and the inbound opening line is unchanged.
+* Previews: `voice-preview`, `voice-preview/text` and `voice-sample` take `style=warm|respectful|quick` (optional; omitted = the saved tone). The line after the opening is spoken in the tone's own words. `voice-preview/text` answers `{"text", "resolved_opening_line", "assistant_name", "business_name", "language", "style", "sound": {"language","voice_id","voice_name","gender","provider","tone","speed"}}`. The old `voice` (four personas) is accepted and ignored.
+* `GET /ai-assistant/preview` and `POST /ai-assistant/test-call` answer the same `sound` block.
+
+## 4. Region is gone
+`GET /how-assistant-speaks` no longer has `words.languages.*.region`, `words.options.regions` or `pack_defaults.region`; `GET /speaking-style` no longer has `region` or `options.regions`. `PUT` still ACCEPTS a `region` (so an older screen does not break) and ignores it; stored values stay in the database, are never returned and are never used (the prompts always ask for the neutral register). Reason: on a phone call a region was never read at all, and in the written chat it was one soft hint to the model that nobody could hear or verify.
+
+## 5. Speed and loudness
+* Speed is `assistant_settings.speed` (0.75 to 1.25), now applied on calls and previews: Cartesia gets `generation_config.speed` ONLY when it is not 1.0 (so a workspace that never touched it speaks exactly as before; **not yet tried against Cartesia: a first call at 1.1 on staging will show it**); Bulbul gets `pace` = its own pace x speed.
+* Loudness: every voice, engine and tone is brought to the same RMS (about -21 dBFS) with a peak limiter (`app/voice/loudness.py`): "Calm" is no longer quieter. Applied in the one place all call audio passes (`FallbackTts.stream`), so previews, live talk and phone calls get it.
+
+## 6. Background (a very quiet bed under OUR voice)
+`GET/PUT how-assistant-speaks`: `background: {value: "quiet_office"|"shop"|"off", saved, options: [{id, label: {en,te,hi,kn,ta,ml,mr}}]}`; `PUT {"background": "shop"}`, `null` = back to the default `quiet_office`. Stored in the Talk training document (no DB change). The bed is mixed only into the audio we send, 30 dB under the voice, through the same soft limiter; the caller's own audio is never touched; nothing is added before the first sound and no buffer is added (a chunk goes out the same length it came in). The files `app/telephony/data/ambience/{quiet_office,shop}.pcm` (8 kHz s16le) are a deterministic SYNTHETIC placeholder (`scripts/make_ambience_placeholders.py`); real recordings can replace the two files without a code change. A missing or unusable file means no background, never a failed call.
+
+## 7. Sarvam Bulbul v4: what the docs say (read 20 Nov 2026, no paid call made)
+* Languages on v4 Flash: Hindi, English (and Hindi-English `enhi`), Bengali, Gujarati, **Kannada, Marathi, Punjabi, Tamil, Telugu**. **Malayalam is NOT offered** (v3 only). So te, kn, hi, en are all on v4; ml keeps Bulbul v3 as its fallback, **per language, in data** (`voices.json`: the `ml-*` fallback entries name model `bulbul:v3` and a v3 speaker).
+* Speakers: 222 persona ids `<name>_<language>_<style>`; the docs state no gender. Telugu has 4 (`kavitha_te_conversation`, `pooja_te_conversation`, ...), Kannada 4 (`chaitra_kn_conversation`, `chetan_kn_conversation`, ...), Hindi 116, English 62 (`dev_en_conversational`, `deven_en_conversation`, `amelia_en_conversational`, `sophia_en_conversational` are candidates for the native-listener round). The list uses the speakers that already worked as fallbacks. `to_confirm: true`.
+* Price: the docs pricing page shows Rs 1.00 per 1,000 characters (pay as you go) for v4 Flash and Rs 3.00 for v3; the launch blog and press say Rs 20 per 10,000 characters (Rs 2 per 1,000) with half price until 12 Nov. **Plan on Rs 2 per 1,000 until the owner's dashboard says otherwise.** Stop line Rs 800.
+* Latency: Sarvam claims under 250 ms to first audio in production and "up to 40% faster than v3"; the docs make no latency claim and there is no vendor comparison with Cartesia. Not measured by us (no paid call); `scripts/voice_latency_live.py` measures it on the owner's go-ahead.
+* Model per call: set by DATA per voice (`voices.json`: v4-flash everywhere except Malayalam). `SARVAM_TTS_MODEL` (default `bulbul:v3`, unchanged) is the model of the REST path (voice notes, WhatsApp voice replies): flip it on staging to move those to v4 (the speaker names differ between v3 and v4: check one voice note first); the calls do not read it, so flipping it cannot move a call to the wrong model. One-line rollback: set it back.
+* Naturalness vs Cartesia: cannot be judged from documents. `scripts/voice_blind_samples.py` (NOT run) renders two blind samples per language and gender (one Cartesia, one Sarvam, shuffled file names, answer key in a separate file) for the owner to choose between; a dry run prints about Rs 0.90 of Sarvam characters for 8 pairs. Recommendation until then: the Cartesia voice stays each language's default (it is covered by the subscription, and it is what has been speaking); the Sarvam voice is the second choice.
+
+## 8. Pronunciation
+`app/conversation/data/pronunciations.json` gained 26 Indian place names and common business words (Hyderabad, Warangal, Visakhapatnam, Chennai, Mysuru, Sri, Lakshmi, ...). They are DRAFT respellings that `scripts/pronunciation_check.py` has not confirmed (it spends credits) and a native listener must confirm; a workspace's own words still win. Amounts and times were already spoken as words (`Rs. 2,600` -> "two thousand six hundred rupees", `6:30 pm` -> "six thirty in the evening"). A test proves the respelled text is what reaches BOTH engines in a call and in a preview.
+
+## 9. Jobs
+The per-job voice (`speaks.voice`, `voice_name`) uses THE SAME list: a catalogue id from section 2 (`te-ramya`, `hi-kabir`, ...), checked against `default_config().voices_of(language, gender, listed_only=True)`; `voice_name` is that voice's `name`. The three ids of the Jobs 1.1 draft (`female_warm`, `female_clear`, `male_calm`) are retired; the tone words are `friendly | respectful | quick` (the draft's `POST /voices/preview {voice, language, tone}` with `crisp`/`warm` aliases is NOT built here: `POST .../voices/preview` still takes the opening line, and the tone is previewed with `GET .../voice-preview?style=`). The 222 job-card samples (`ops.job_samples`, spoken by "ritu" on Bulbul v3) are NOT regenerated by this change. The Jobs `speaks` field is not in the API yet; when it lands it must call `resolve_sound` like everything else.

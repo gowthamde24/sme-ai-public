@@ -16,6 +16,8 @@ from pathlib import Path
 from app.voice.interface import VoiceError
 
 ENGINES: tuple[str, ...] = ("cartesia", "sarvam_v4")
+# the provider words of the data (owner, 20 Nov 2026: "we can use both"): the engine that speaks a voice FIRST; the other is its fallback of the same language and gender, in either direction
+PROVIDERS: dict[str, str] = {"cartesia": "cartesia", "sarvam_v4": "sarvam"}
 CALL_LANGUAGES: tuple[str, ...] = ("te", "en", "hi", "kn", "ta", "ml", "mr")
 # The call languages that MUST have voices in the catalogue. Marathi (job M1, owner decision 5 Nov 2026) is a call language with no voice yet: the file may add its voices later (then, like every
 # language, exactly one default per gender); until then GET /voices does not list it and `default_for("mr")` is "unsupported_language", the way any language without a voice was before.
@@ -45,6 +47,7 @@ SAMPLE_LINES: dict[str, str] = {
 def sample_text(language: str) -> str:
     """The exact words of the pre-rendered sample of a voice of this language."""
     return SAMPLE_LINES[language].replace("{b}", SAMPLE_BUSINESS)
+MAX_LISTED = 2   # per language and gender: the owner chooses between two clearly different voices of each kind
 LOWEST_TIMEOUT_MS, HIGHEST_TIMEOUT_MS = 200, 3000
 ID_FORMAT = re.compile(r"^[a-z]{2}-[a-z0-9_]{2,40}$")  # the same pattern the database holds
 
@@ -75,6 +78,9 @@ class CatalogueVoice:
     voices: LanguageVoices
     tags: tuple[str, ...] = ()  # plain style words for the screen (TAGS)
     recommended: bool = False
+    provider: str = "cartesia"  # cartesia | sarvam: who speaks it first (always the engine of `voices.primary`)
+    listed: bool = False        # on the short list the owner sees and picks from; an unlisted voice is only kept so an old stored choice does not break
+    to_confirm: bool = False    # chosen by documented gender and style: no native listener has confirmed it yet
 
     @property
     def sample_file(self) -> Path:
@@ -96,9 +102,9 @@ class VoiceConfig:
         """Does the catalogue have any voice of this language (job M1: Marathi has none yet)?"""
         return any(c.language == language for c in self.catalogue.values())
 
-    def voices_of(self, language: str, gender: str | None = None) -> list[CatalogueVoice]:
-        """The catalogue of a language (of one gender when given): women's voices first, in each gender the default first, then the recommended ones."""
-        return sorted((c for c in self.catalogue.values() if c.language == language and (gender is None or c.gender == gender)), key=lambda c: (c.gender == "male", not c.default, not c.recommended, c.name))
+    def voices_of(self, language: str, gender: str | None = None, *, listed_only: bool = False) -> list[CatalogueVoice]:
+        """The catalogue of a language (of one gender when given): women's voices first, in each gender the default first, then the recommended ones. `listed_only`: the short list the owner sees."""
+        return sorted((c for c in self.catalogue.values() if c.language == language and (gender is None or c.gender == gender) and (c.listed or not listed_only)), key=lambda c: (c.gender == "male", not c.default, not c.recommended, c.name))
 
     def default_for(self, language: str, gender: str = "female") -> CatalogueVoice:
         for c in self.catalogue.values():
@@ -107,9 +113,9 @@ class VoiceConfig:
         raise VoiceError("unsupported_language")
 
     def resolve(self, language: str, chosen_id: str | None = None, gender: str = "female") -> CatalogueVoice:
-        """The voice that speaks `language`: the workspace's choice when it is a catalogue voice OF THAT LANGUAGE and of the workspace's GENDER, else that gender's default (an id that was removed from the catalogue, or is stale, is ignored)."""
+        """The voice that speaks `language`: the workspace's choice when it is a catalogue voice OF THAT LANGUAGE and of the workspace's GENDER, else that gender's default (an id that was removed from the catalogue, is no longer on the short list, or is stale, is ignored)."""
         picked = self.catalogue.get(chosen_id) if chosen_id else None
-        return picked if picked is not None and picked.language == language and picked.gender == gender else self.default_for(language, gender)
+        return picked if picked is not None and picked.language == language and picked.gender == gender and picked.listed else self.default_for(language, gender)
 
     def for_language(self, language: str, chosen_id: str | None = None, gender: str = "female") -> LanguageVoices:
         return self.resolve(language, chosen_id, gender).voices
@@ -136,6 +142,7 @@ def parse_config(data: object) -> VoiceConfig:
     timeout = int(data.get("first_audio_timeout_ms", 800))
     if not LOWEST_TIMEOUT_MS <= timeout <= HIGHEST_TIMEOUT_MS:
         raise ValueError(f"voices: first_audio_timeout_ms must be {LOWEST_TIMEOUT_MS} to {HIGHEST_TIMEOUT_MS}")
+    every_voice_listed = not any(isinstance(r, dict) and "listed" in r for r in data["catalogue"])   # a file that never says `listed` (a small test file) lists every voice
     catalogue: dict[str, CatalogueVoice] = {}
     for raw in data["catalogue"]:
         if not isinstance(raw, dict):
@@ -154,10 +161,13 @@ def parse_config(data: object) -> VoiceConfig:
             raise ValueError(f"{where}: the fallback must be a different engine from the primary")
         if fallback.gender != gender:
             raise ValueError(f"{where}: the fallback voice must be the same gender as the voice")
+        provider, listed = str(raw.get("provider", PROVIDERS[primary.engine])), bool(raw.get("listed", every_voice_listed))
+        if provider != PROVIDERS[primary.engine]:
+            raise ValueError(f"{where}: the provider must be {PROVIDERS[primary.engine]} (the engine of its primary voice)")
         tags = tuple(str(t) for t in raw.get("tags", ()))
         if any(t not in TAGS for t in tags) or len(tags) > 3:
             raise ValueError(f"{where}: tags are at most three of {TAGS}")
-        catalogue[vid] = CatalogueVoice(vid, lang, name, label, gender, bool(raw.get("default", False)), LanguageVoices(primary, fallback), tags, bool(raw.get("recommended", False)))
+        catalogue[vid] = CatalogueVoice(vid, lang, name, label, gender, bool(raw.get("default", False)), LanguageVoices(primary, fallback), tags, bool(raw.get("recommended", False)), provider, listed, bool(raw.get("to_confirm_by_native_listener", False)))
     for lang in CALL_LANGUAGES:
         if lang not in VOICED_LANGUAGES and not any(c.language == lang for c in catalogue.values()):
             continue   # a language with no voice yet (job M1): nothing to check until the file gives it one
@@ -165,6 +175,10 @@ def parse_config(data: object) -> VoiceConfig:
             defaults = [c for c in catalogue.values() if c.language == lang and c.gender == gender and c.default]
             if len(defaults) != 1:
                 raise ValueError(f"voices: language {lang} needs exactly one {gender} default (has {len(defaults)})")
+            if not defaults[0].listed:
+                raise ValueError(f"voices: the {gender} default of {lang} must be on the short list")
+            if sum(1 for c in catalogue.values() if c.language == lang and c.gender == gender and c.listed) > MAX_LISTED:
+                raise ValueError(f"voices: language {lang} lists at most {MAX_LISTED} {gender} voices")
     return VoiceConfig(catalogue, timeout, float(data.get("cooldown_s", 30.0)))
 
 

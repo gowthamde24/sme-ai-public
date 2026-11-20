@@ -45,13 +45,14 @@ def test_the_default_config_has_cartesia_first_and_bulbul_v4_flash_behind_it_for
     for lang in VOICED_LANGUAGES:
         v = cfg.for_language(lang)
         assert v.primary.engine == "cartesia" and v.primary.model == "sonic-3.6"
-        assert v.fallback.engine == "sarvam_v4" and v.fallback.model == "bulbul:v4-flash" and v.fallback.voice.endswith(("_conversation", "_conversational", "_customer", "_narration"))
+        assert v.fallback.engine == "sarvam_v4" and v.fallback.model == ("bulbul:v3" if lang == "ml" else "bulbul:v4-flash") and (lang == "ml" or v.fallback.voice.endswith(("_conversation", "_conversational", "_customer", "_narration")))   # Malayalam is not on Bulbul v4 Flash: its fallback is a v3 speaker (20 Nov 2026)
     assert cfg.first_audio_timeout_ms == 800
 
 
 def test_bulbul_v3_is_not_a_choice_anywhere() -> None:
     raw = json.loads(DEFAULT_FILE.read_text(encoding="utf-8"))
-    assert "bulbul:v3" not in json.dumps(raw) and "sarvam_v3" not in json.dumps(raw)
+    assert "sarvam_v3" not in json.dumps(raw)
+    assert {e["id"] for e in raw["catalogue"] if "bulbul:v3" in json.dumps(e)} == {e["id"] for e in raw["catalogue"] if e["language"] == "ml"}, "Bulbul v3 only where v4 Flash has no language (Malayalam)"
     bad = copy.deepcopy(raw)
     bad["catalogue"][0]["fallback"]["engine"] = "sarvam_v3"
     with pytest.raises(ValueError, match="engine must be one of"):

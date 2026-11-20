@@ -175,4 +175,4 @@ def test_the_call_prompt_always_carries_the_honesty_rule_and_the_voice_preview_s
         assert honesty.HONESTY_RULE in prompt and "Open 10 to 7." in prompt and "Asked about 3 BHK" in prompt
     from app.voicesample import service as vs
 
-    assert vs.preview_text("en", "warm", "Vijaya", "X Ltd", "Hi Ravi, Vijaya from X Ltd here.").startswith("Hi Ravi, Vijaya from X Ltd here. " + vs.REPLIES["en"][:5])
+    assert vs.preview_text("en", "warm", "Vijaya", "X Ltd", "Hi Ravi, Vijaya from X Ltd here.").startswith("Hi Ravi, Vijaya from X Ltd here. " + vs.REPLIES["warm"]["en"][:5])

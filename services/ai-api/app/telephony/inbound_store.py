@@ -71,6 +71,11 @@ class InboundStore:
         out = self._call("phone_mention_ai_for_call", {"p_tenant_id": str(tenant_id)})
         return out is not False
 
+    def call_sound(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
+        """The workspace's voice choices, voice gender, speed and style for this call (the scheduler account reads them; app/conversation/sound.py decides what they mean). None when unreadable."""
+        out = self._call("call_sound_for_call", {"p_tenant_id": str(tenant_id)})
+        return out if isinstance(out, dict) else None
+
     def talk_training(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """The Owner's "How I talk to customers" for this call (the scheduler account reads it); None when nothing is saved."""
         out = self._call("talk_training_for_call", {"p_tenant_id": str(tenant_id)})

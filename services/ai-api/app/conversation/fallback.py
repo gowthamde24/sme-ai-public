@@ -28,6 +28,7 @@ from app.conversation.voices import VoiceChoice, VoiceConfig
 from app.pronunciation.lexicon import OwnerWord
 from app.pronunciation.speech import SpeechText
 from app.voice.interface import VoiceError
+from app.voice.loudness import StreamNormaliser
 
 log = logging.getLogger("app.conversation.voice")
 BUDGET_WAIT_S = 1.5
@@ -58,6 +59,8 @@ class FallbackTts:
         self._engines: dict[tuple[str, str, str, str], StreamingTts] = {}
         self._skip_primary_until: dict[str, float] = {}
         self._fallback_in_turn = False
+        self._loud = StreamNormaliser(self.sample_rate)   # one loudness for every voice and engine (app/voice/loudness.py); started again at every turn
+        self.pace = 1.0   # the speaking speed of the workspace (1.0 = the engine's own); passed to an engine that can take it
         self.served_engine = ""  # the engine that spoke the most recent piece: cartesia | sarvam_v4
         self.fallback_reason = ""  # "", "error", "timeout", "cooldown", "mid_stream"
         self.first_audio_ms: float | None = None
@@ -91,6 +94,7 @@ class FallbackTts:
 
     def begin_turn(self) -> None:
         self._fallback_in_turn = False
+        self._loud = StreamNormaliser(self.sample_rate)
         self.served_engine = self.fallback_reason = ""
         self.first_audio_ms = None
 
@@ -98,7 +102,11 @@ class FallbackTts:
         key = (language, choice.engine, choice.model, choice.voice)
         if key not in self._engines:
             self._engines[key] = self._factory(choice, language)
-        return self._engines[key]
+        engine = self._engines[key]
+        set_pace = getattr(engine, "set_pace", None)
+        if set_pace is not None:
+            set_pace(self.pace)   # an engine that can speak faster or slower is told the workspace's speed before every piece
+        return engine
 
     async def prewarm(self) -> None:
         voices = self.config.for_language(self._prewarm_language, self._chosen.get(self._prewarm_language), self.gender)
@@ -108,6 +116,15 @@ class FallbackTts:
     # ---- one piece of text ----------------------------------------------------------------------------------------------------------------
 
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
+        """The audio of one piece, at the one loudness every voice has (the engines' own levels differ: owner finding of 19 Nov 2026)."""
+        inner = self._stream_raw(text, language)
+        try:
+            async for chunk in inner:
+                yield self._loud.process(chunk)
+        finally:
+            await _close(inner)
+
+    async def _stream_raw(self, text: str, language: str) -> AsyncIterator[bytes]:
         tag = language if language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "other"   # what the log says about the language is one of ours, never the caller's string
         text = address.clean(text, self.address_allow)   # the last gate: nothing says sir / madam aloud unless the person asked for it
         if not any(ch.isalnum() for ch in text):
@@ -119,13 +136,14 @@ class FallbackTts:
         fallback_text = self._speech.prepare(text, language, voices.fallback.engine)
         now = self._clock()
         use_primary = not self.primary_off and not self._fallback_in_turn and now >= self._skip_primary_until.get(language, 0.0)
-        if use_primary and self._budget_wait is not None:
+        capped = voices.primary.engine == "cartesia"   # our spending cap is on Cartesia (app/voice/budget.py); a voice that Sarvam speaks first is not counted against it
+        if use_primary and capped and self._budget_wait is not None:
             wait, self._budget_wait = self._budget_wait, None
             try:
                 self.primary_budget = max(0, int(await asyncio.wait_for(asyncio.shield(asyncio.ensure_future(wait)), BUDGET_WAIT_S)))
             except Exception:  # noqa: BLE001 - no allowance in time: the fallback speaks (never over the cap)
                 self.primary_budget = 0
-        if use_primary and self.primary_budget is not None and self.primary_chars + len(primary_text) > self.primary_budget:
+        if use_primary and capped and self.primary_budget is not None and self.primary_chars + len(primary_text) > self.primary_budget:
             use_primary = False
             self._off_for_call("budget", voices.primary.engine, tag, None)
             self.fallback_reason = "budget"
@@ -154,7 +172,7 @@ class FallbackTts:
                     self._off_for_call("error", voices.primary.engine, tag, err)
             else:
                 self.served_engine = voices.primary.engine
-                self.primary_chars += len(primary_text)   # what the primary bills: the characters it was given, once it has started speaking them
+                self.primary_chars += len(primary_text) if capped else 0   # what the primary bills: the characters it was given, once it has started speaking them
                 self.first_audio_ms = self.first_audio_ms if self.first_audio_ms is not None else (time.perf_counter() - started) * 1000.0
                 yield first
                 died = False

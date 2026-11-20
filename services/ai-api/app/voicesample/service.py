@@ -1,4 +1,6 @@
-"""The voice picker's listening sample (job DS, C2's question 3): the assistant says its own opening line in the chosen voice, language and way of sounding. One short clip, Owner and Admin only.
+"""LEGACY (21 Nov 2026): the routes no longer use `VoiceSampleService` (they speak through the call voice, app/conversation/sound.py); the words (`line_for`, `preview_text`) are still used by them.
+
+The voice picker's listening sample (job DS, C2's question 3): the assistant says its own opening line in the chosen voice, language and way of sounding. One short clip, Owner and Admin only.
 
 Sarvam credits are limited, so a sample is cached for 24 hours per (workspace, voice, language, style, name), a workspace may ask for six a minute, and the characters sent to the voice service are capped per workspace per day. A synthetic (fake) voice makes no sample: the answer is "no sample" and the screen says so. Nothing here is stored in the database and nothing personal is spoken: the line is the fixed everyday-spoken opening with the assistant's name and the business's name."""
 
@@ -48,22 +50,37 @@ class _Entry:
 
 def line_for(language: str, style: str, name: str, business: str) -> str:
     """The words: the assistant's opening line in the everyday spoken style (the sample lines of the AI-assistant settings, which always say it is an AI assistant)."""
-    return settings_data.sample(None, language, "warm" if style == "warm" else "quick", name, business)
+    return settings_data.sample(None, language, style if style in ("warm", "respectful", "quick") else "warm", name, business)   # (21 Nov 2026: "respectful" used to be read as "quick": its own line was never spoken)
 
 
 # One reply after the opening line, so the preview sounds like a call and not a recording of one sentence ("call me later": the model line of native-lines/te.md; hi and kn are drafts for a native reader).
 # Tamil and Malayalam have no reply line yet: their preview is the opening line alone.
-REPLIES = {
-    "en": "Sure, no problem. Which time shall I call you? Six in the evening, is that okay?",
-    "te": "సరేనండీ, no problem. ఏ time కి call చేయమంటారు? సాయంత్రం ఆరు గంటలకి ఓకేనా?",
-    "hi": "ठीक है, कोई बात नहीं। मैं किस time पर call करूँ? शाम को छह बजे ठीक रहेगा?",
-    "kn": "ಸರಿ, no problem. ಯಾವ time ಗೆ call ಮಾಡ್ಲಿ? ಸಂಜೆ ಆರು ಗಂಟೆಗೆ ಓಕೆನಾ?",
+REPLIES: dict[str, dict[str, str]] = {
+    "warm": {
+        "en": "Sure, no problem. Which time shall I call you? Six in the evening, is that okay?",
+        "te": "సరేనండీ, no problem. ఏ time కి call చేయమంటారు? సాయంత్రం ఆరు గంటలకి ఓకేనా?",
+        "hi": "ठीक है, कोई बात नहीं। मैं किस time पर call करूँ? शाम को छह बजे ठीक रहेगा?",
+        "kn": "ಸರಿ, no problem. ಯಾವ time ಗೆ call ಮಾಡ್ಲಿ? ಸಂಜೆ ಆರು ಗಂಟೆಗೆ ಓಕೆನಾ?",
+    },
+    # 21 Nov 2026: the reply changes with the tone too (the opening line is the owner's own and stays as it is). Respectful: polite forms (మీరు, అండీ, आप, जी, ನೀವು); quick: the shortest words. Drafts for a native reader.
+    "respectful": {
+        "en": "Certainly, that is no problem at all. At what time would you like me to call you? Would six in the evening be convenient for you?",
+        "te": "తప్పకుండా అండీ, ఏమీ ఇబ్బంది లేదు. మీకు ఏ time కి call చేయమంటారు అండీ? సాయంత్రం ఆరు గంటలకి మీకు వీలవుతుందా అండీ?",
+        "hi": "जी बिल्कुल, कोई बात नहीं। आप किस समय बात करना चाहेंगे? क्या शाम को छह बजे आपके लिए ठीक रहेगा, जी?",
+        "kn": "ಖಂಡಿತ, ಯಾವುದೇ ತೊಂದರೆ ಇಲ್ಲ. ನೀವು ಯಾವ ಸಮಯಕ್ಕೆ call ಮಾಡಬೇಕೆಂದು ಬಯಸುತ್ತೀರಿ? ಸಂಜೆ ಆರು ಗಂಟೆಗೆ ನಿಮಗೆ ಅನುಕೂಲವೇ?",
+    },
+    "quick": {
+        "en": "Sure. What time? Six in the evening?",
+        "te": "సరే. ఏ time కి call చేయాలి? సాయంత్రం ఆరుకి ఓకేనా?",
+        "hi": "ठीक है। कब call करूँ? शाम छह बजे?",
+        "kn": "ಸರಿ. ಯಾವ time ಗೆ call ಮಾಡ್ಲಿ? ಸಂಜೆ ಆರಕ್ಕೆ ಓಕೆನಾ?",
+    },
 }
 
 
 def preview_text(language: str, style: str, name: str, business: str, opening: str | None = None) -> str:
     """What the preview says: the opening line with the workspace's REAL assistant name and business name (or the Owner's own line, already filled: job DT ADR 0116), then one reply."""
-    reply = REPLIES.get(language)
+    reply = REPLIES.get(style if style in REPLIES else "warm", {}).get(language)
     opening = opening or line_for(language, style, name, business)
     return f"{opening} {reply}" if reply else opening
 
