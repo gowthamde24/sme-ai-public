@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (443)
+## Codes (445)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -105,6 +105,8 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `education_unavailable` | 503 | education, integrations |  |  | Education is not available right now. |
 | `email_not_confirmed` | 403 | main |  |  | Confirm your email address first: use the link we sent you. |
 | `empty_enquiry` | 422 | enquiries |  |  | There is no text left to store after cleaning it. |
+| `enhance_busy` | 429 | enhance | yes |  | That is a lot of rewrites for one hour. Try again a little later. |
+| `enhance_unavailable` | 503 | enhance |  |  | Enhance is not available right now. |
 | `enquiries_unavailable` | 503 | enquiries, followups |  |  | Enquiries are not available right now. |
 | `enquiry_has_requirement` | 409 | main |  |  | This enquiry already has a requirement from the line-by-line flow. Discard it before making a quote with typed prices. |
 | `enquiry_unusable` | 409 | agent_runs |  |  | This enquiry cannot be read by an agent. |

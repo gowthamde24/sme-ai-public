@@ -1100,6 +1100,30 @@
       "extras": []
     },
     {
+      "code": "enhance_busy",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "enhance"
+      ],
+      "default_message": "That is a lot of rewrites for one hour. Try again a little later.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "enhance_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "enhance"
+      ],
+      "default_message": "Enhance is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "enquiries_unavailable",
       "statuses": [
         503

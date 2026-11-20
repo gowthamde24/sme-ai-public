@@ -105,6 +105,7 @@ from app.dues.routes import router as dues_router
 from app.education import errors as education_errors
 from app.education.repository import PostgrestEducationRepository
 from app.education.routes import router as education_router
+from app.enhance.routes import router as enhance_router
 from app.enquiries import repository as enquiries_repo
 from app.enquiries.repository import PostgrestEnquiriesRepository
 from app.enquiries.routes import router as enquiries_router
@@ -1533,6 +1534,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_sources_router)
     app.include_router(assistant_work_router)
     app.include_router(talk_training_router)
+    app.include_router(enhance_router)
     app.include_router(ai_team_router)
     app.include_router(activity_log_router)
     app.include_router(search_router)

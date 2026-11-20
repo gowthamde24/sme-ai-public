@@ -89,6 +89,8 @@ export const API_ERROR_CODES = [
   "education_unavailable",
   "email_not_confirmed",
   "empty_enquiry",
+  "enhance_busy",
+  "enhance_unavailable",
   "enquiries_unavailable",
   "enquiry_has_requirement",
   "enquiry_unusable",
