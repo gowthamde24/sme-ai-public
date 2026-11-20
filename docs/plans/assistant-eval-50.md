@@ -107,3 +107,6 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 99 | records | te | ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి? | `answer` · Telugu records question, real estate |  |
 | 100 | records | te | ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి? | `answer` · Telugu records question, coaching |  |
 | 101 | records | te | ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి? | `answer` · Telugu records question, car dealer |  |
+| 102 | records | en | Is Naveen E in my contacts? | `answer` · a contact with no company is found by name (20 Nov 2026): the answer names the person |  |
+| 103 | records | te | నవీన్ ని contacts లో చూడు | `answer` · Telugu script finds a contact written in Latin letters |  |
+| 104 | records | en | Is Naveen E in my contacts? | `answer` · same lookup in the car dealer workspace |  |

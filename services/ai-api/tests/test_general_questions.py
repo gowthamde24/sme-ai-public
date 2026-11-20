@@ -44,7 +44,7 @@ def test_the_identity_answer_says_stack19_and_ai_assistant_in_the_first_person_i
     assert about_words(True, "ta") == IDENTITY_ANSWER["en"] and about_words(False, "ta") == ABOUT_ASSISTANT["ta"]
 
 
-@pytest.mark.parametrize(("question", "language"), [("స్టాక్19 అంటే ఏమిటి? మీరు ఎవరు?", "te"), ("నువ్వు ఎవరు? ఈ యాప్ ఏం చేస్తుంది?", "te"), ("स्टैक19 क्या है?", "hi"), ("ಸ್ಟ್ಯಾಕ್19 ಅಂದರೆ ಏನು?", "kn")])
+@pytest.mark.parametrize(("question", "language"), [("స్టాక్19 అంటే ఏమిటి? మీరు ఎవరు?", "te"), ("నువ్వు ఎవరు? ఈ యాప్ ఏం చేస్తుంది?", "te"), ("स्टैक19 क्या है?", "hi"), ("Stack19 అంటే ఏమిటి?", "te"), ("ಸ್ಟ್ಯಾಕ್19 ಅಂದರೆ ಏನು?", "kn")])
 def test_who_are_you_is_answered_with_who_the_assistant_is_and_no_model_call(question: str, language: str) -> None:
     client, llm, _, _ = world()
     evs = events(turn(client, question, language=language))
