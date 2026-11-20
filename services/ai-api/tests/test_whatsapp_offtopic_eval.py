@@ -5,18 +5,10 @@ between the per-call markers; the judge catches an answered question. The live r
 
 from __future__ import annotations
 
-import importlib.util
-import json
-from pathlib import Path
-
+from app.autoreply import offtopic_eval as runner
 from app.autoreply.drafter import build_prompt
 
-ROOT = Path(__file__).resolve().parents[3]
-CASES = [json.loads(line) for line in (ROOT / "tests" / "evals" / "whatsapp_offtopic" / "cases.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
-spec = importlib.util.spec_from_file_location("eval_whatsapp_offtopic", ROOT / "scripts" / "eval_whatsapp_offtopic.py")
-assert spec is not None and spec.loader is not None
-runner = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(runner)
+CASES = runner.load_cases()
 
 
 def test_the_cases_cover_the_four_languages_and_the_traps() -> None:

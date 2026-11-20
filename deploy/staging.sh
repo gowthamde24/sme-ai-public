@@ -109,6 +109,10 @@ if [ -n "$FLAGS_BEFORE" ] && [ -n "$execute" ]; then guard_after "$PROJECT_ID" "
 if { [ "$what" = "api" ] || [ "$what" = "all" ]; } && [ -n "$execute" ] && gcloud run jobs describe sme-pron-qa --project "$PROJECT_ID" --region "$REGION" >/dev/null 2>&1; then
   gcloud run jobs update sme-pron-qa --project "$PROJECT_ID" --region "$REGION" --image "$REGION-docker.pkg.dev/$PROJECT_ID/${REPO:-sme}/api:$TAG"
 fi
+# the off-topic eval of the automatic WhatsApp reply (docs/runbooks/offtopic-eval.md) is a Cloud Run job on the API's image with the model key bound from Secret Manager: each API deploy moves it to the new image
+if { [ "$what" = "api" ] || [ "$what" = "all" ]; } && [ -n "$execute" ] && gcloud run jobs describe sme-offtopic-eval --project "$PROJECT_ID" --region "$REGION" >/dev/null 2>&1; then
+  gcloud run jobs update sme-offtopic-eval --project "$PROJECT_ID" --region "$REGION" --image "$REGION-docker.pkg.dev/$PROJECT_ID/${REPO:-sme}/api:$TAG"
+fi
 if [ "$what" = "web" ] || [ "$what" = "all" ]; then
   # the staging web's feature flags live in the repo (owner, 9 Nov 2026): every deploy sets them again, so none can be lost
   WEB_FLAGS="^|^$(grep -v -e '^#' -e '^$' deploy/staging-web-flags.env | paste -sd'|' -)"
