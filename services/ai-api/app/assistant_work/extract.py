@@ -103,8 +103,9 @@ class LocalTools:
         return "+".join(self._languages)
 
     def _run(self, args: list[str], timeout: int = OCR_TIMEOUT_S) -> bytes | None:
+        env = {**os.environ, "OMP_THREAD_LIMIT": os.environ.get("OMP_THREAD_LIMIT", "1")}
         try:
-            out = subprocess.run(args, capture_output=True, timeout=timeout, check=False, preexec_fn=_limits if os.name == "posix" else None)  # noqa: S603, PLW1509
+            out = subprocess.run(args, capture_output=True, timeout=timeout, check=False, env=env, preexec_fn=_limits if os.name == "posix" else None)  # noqa: S603, PLW1509
         except (OSError, subprocess.SubprocessError) as exc:
             logger.warning("local reader did not run: %s", exc.__class__.__name__)
             return None
