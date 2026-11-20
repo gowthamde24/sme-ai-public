@@ -469,6 +469,9 @@ class Settings(BaseSettings):
     # utility template PLIVO_BALANCE_TEMPLATE with one variable, from the platform's own WhatsApp
     # number (WHATSAPP_PHONE_NUMBER_ID).
     plivo_balance_check: bool = False
+    # The WhatsApp platform token's expiry, read once a day (app/ops/token_expiry.py).
+    # Off by default; the worker's own WHATSAPP_ACCESS_TOKEN is the token asked about.
+    token_expiry_check: bool = False
     plivo_balance_min_inr: int = 300
     plivo_balance_currency: str = "USD"
     plivo_balance_inr_per_unit: float = 0.0

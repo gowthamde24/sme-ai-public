@@ -54,6 +54,7 @@ from app.observability.sentry import capture as sentry_capture
 from app.observability.sentry import init_sentry
 from app.ops.alerts import GoogleCapAlerts
 from app.ops.plivo_balance import PlivoBalanceCheck, build_plivo_balance
+from app.ops.token_expiry import TokenExpiryCheck, build_token_expiry
 from app.ops.usage import TIMEOUT_S as USAGE_TIMEOUT_S
 from app.ops.usage import PostgrestUsageRecorder
 from app.outbox.adapter import ChannelAdapter, build_adapter
@@ -119,6 +120,7 @@ class Worker:
         standups: StandupRunner | None = None,
         google_calendar: GoogleCalendarSync | None = None,
         plivo_balance: PlivoBalanceCheck | None = None,
+        token_expiry: TokenExpiryCheck | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -167,6 +169,8 @@ class Worker:
         self._google_calendar = google_calendar
         # owner decision 19 Nov 2026: Plivo's balance read once a day (None unless PLIVO_BALANCE_CHECK is on); a Needs-you item and a WhatsApp message to the owner's own number when it is low
         self._plivo_balance = plivo_balance
+        # planner 20 Nov 2026: the WhatsApp platform token's expiry read from Meta once a day (None unless TOKEN_EXPIRY_CHECK is on)
+        self._token_expiry = token_expiry
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -200,6 +204,7 @@ class Worker:
             self._usage_alerts_pass(token)
             self._google_alerts_pass(token)
             self._plivo_balance_pass(token)
+            self._token_expiry_pass(token)
             self._google_calendar_pass(token)
             return result
         except TokenRejected:
@@ -344,6 +349,17 @@ class Worker:
         except Exception as exc:
             logger.error("plivo balance check crashed: %s", exc.__class__.__name__)
 
+    def _token_expiry_pass(self, token: str) -> None:
+        """The daily read of the WhatsApp platform token's expiry (app/ops/token_expiry.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._token_expiry is None:
+            return
+        try:
+            self._token_expiry.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("token expiry check crashed: %s", exc.__class__.__name__)
+
     def _usage_alerts_pass(self, token: str) -> None:
         if self._usage_alerts is None:
             return
@@ -453,6 +469,7 @@ def build_worker(settings: Settings) -> Worker:
         standups=StandupRunner(PostgrestAiTeamRepository(config.rest_url, config.anon_key)),
         google_calendar=build_google_calendar_sync(settings, config.rest_url, config.anon_key),
         plivo_balance=build_plivo_balance(settings, config.rest_url, config.anon_key, adapter),
+        token_expiry=build_token_expiry(settings, config.rest_url, config.anon_key),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         google_alerts=GoogleCapAlerts(RpcClient(config.rest_url, config.anon_key), _billing_sender(settings)),
         storage=storage,

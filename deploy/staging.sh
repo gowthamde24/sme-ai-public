@@ -121,6 +121,8 @@ if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
   fi
   # Google Calendar sync (appointment booking slice 4, WORKER_GOOGLE_CALENDAR=1): the worker writes the appointments to the Owners' calendars and reads their busy times. It needs the OAuth client (the
   # owner runs scripts/google_oauth_client_register.py, then grants sme-worker-run secretAccessor on both secrets) and the workspace-secrets store the API writes the refresh tokens to.
+  # The daily read of the WhatsApp platform token's expiry from Meta (planner, 20 Nov 2026; docs/runbooks/hosting-env-and-secrets.md TOKEN_EXPIRY_CHECK): off unless WORKER_TOKEN_EXPIRY=1
+  if [ "${WORKER_TOKEN_EXPIRY:-0}" = 1 ]; then WORKER_AR_ENV="$WORKER_AR_ENV,TOKEN_EXPIRY_CHECK=true"; fi
   if [ "${WORKER_GOOGLE_CALENDAR:-0}" = 1 ]; then
     WORKER_AR_ENV="$WORKER_AR_ENV,WORKSPACE_SECRETS=gcp,WORKSPACE_SECRETS_PROJECT=$PROJECT_ID,PUBLIC_BASE_URL=$API_URL"
     WORKER_AR_SECRETS="$WORKER_AR_SECRETS,GOOGLE_OAUTH_CLIENT_ID=sme-google-oauth-client-id:latest,GOOGLE_OAUTH_CLIENT_SECRET=sme-google-oauth-client-secret:latest"
