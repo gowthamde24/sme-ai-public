@@ -115,7 +115,7 @@ class RazorpayBilling:
         if request.price_paise is None or request.price_paise <= 0:
             raise PlanHasNoPriceError(request.plan_id)
         body: dict[str, Any] = {
-            "plan_id": self._plan(request.plan_id, request.price_paise, "yearly" if request.interval == "yearly" else "monthly"), "total_count": 10 if request.interval == "yearly" else 120, "quantity": 1,
+            "plan_id": self._plan(request.plan_id, request.price_paise, "monthly"), "total_count": 120, "quantity": 1,
             "customer_notify": False, "notes": {"tenant_id": request.tenant_id, "plan": request.plan_id, "interval": request.interval},
         }
         if request.trial_days > 0:   # the old card trial: the first charge at the end of it. The final pricing has none: no start_at, the first charge is when the customer authorises.

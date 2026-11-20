@@ -16,11 +16,11 @@ from tests.fakes import TENANT_A, auth, make_client
 
 URL = f"/v1/tenants/{TENANT_A.id}/billing"
 CATALOGUE = {
-    "gst_percent": 18.0, "free_start_paise": 5000, "lot_days": 90,
+    "gst_percent": 18.0, "free_start_paise": 5000, "lot_days": 90, "extra_number_paise": 29900,
     "plans": [
-        {"id": "payg", "name": "Pay as you go", "monthly_paise": 49900, "yearly_paise": 499000, "included_minutes": 0, "rate_paise_per_minute": 500, "numbers_included": 1, "lead_finder": False, "free_searches_month": 1, "extra_search_paise": 4900},
-        {"id": "sales_assistant", "name": "Sales Assistant", "monthly_paise": 199900, "yearly_paise": 1999000, "included_minutes": 500, "rate_paise_per_minute": 450, "numbers_included": 1, "lead_finder": False, "free_searches_month": 1, "extra_search_paise": 4900},
-        {"id": "sales_lead_finder", "name": "Sales Assistant + Lead Finder", "monthly_paise": 599900, "yearly_paise": 5999000, "included_minutes": 1500, "rate_paise_per_minute": 400, "numbers_included": 3, "lead_finder": True, "free_searches_month": 300, "extra_search_paise": 0},
+        {"id": "payg", "name": "Pay as you go", "monthly_paise": 49900, "included_minutes": 0, "rate_paise_per_minute": 500, "numbers_included": 1, "lead_finder": False, "free_searches_month": 2, "extra_search_paise": 4900},
+        {"id": "sales_assistant", "name": "Pro", "monthly_paise": 199900, "included_minutes": 500, "rate_paise_per_minute": 500, "numbers_included": 1, "lead_finder": False, "free_searches_month": 10, "extra_search_paise": 3900},
+        {"id": "sales_lead_finder", "name": "Business", "monthly_paise": 599900, "included_minutes": 1500, "rate_paise_per_minute": 500, "numbers_included": 1, "lead_finder": False, "free_searches_month": 100, "extra_search_paise": 2900},
     ],
 }
 
@@ -74,9 +74,14 @@ def test_the_catalogue_is_the_owners_prices_with_their_words() -> None:
     c = world().get("/v1/pricing", headers=auth("a_owner")).json()
     plans = {p["id"]: p for p in c["plans"]}
     assert plans["payg"]["monthly_text"] == "₹499 a month" and plans["payg"]["rate_text"] == "₹5 a minute"
-    assert plans["sales_assistant"]["monthly_text"] == "₹1,999 a month" and plans["sales_assistant"]["rate_text"] == "₹4.50 a minute" and plans["sales_assistant"]["included_minutes"] == 500
-    assert plans["sales_lead_finder"]["monthly_text"] == "₹5,999 a month" and plans["sales_lead_finder"]["numbers_included"] == 3 and plans["sales_lead_finder"]["rate_text"] == "₹4 a minute"
-    assert plans["sales_assistant"]["yearly_text"] == "₹19,990 a year" and plans["sales_assistant"]["yearly_saving_text"] == "2 months free"
+    assert plans["sales_assistant"]["name"] == "Pro" and plans["sales_assistant"]["monthly_text"] == "₹1,999 a month" and plans["sales_assistant"]["rate_text"] == "₹5 a minute" and plans["sales_assistant"]["included_minutes"] == 500
+    assert plans["sales_lead_finder"]["name"] == "Business" and plans["sales_lead_finder"]["monthly_text"] == "₹5,999 a month" and plans["sales_lead_finder"]["numbers_included"] == 1 and plans["sales_lead_finder"]["rate_text"] == "₹5 a minute"
+    assert plans["sales_lead_finder"]["included_minutes"] == 1500
+    # the owner's final table (19-20 Nov 2026): Lead Finder on every plan, 2 / 10 / 100 searches a month, then Rs 49 / 39 / 29; one number on every plan, each extra Rs 299 a month; monthly only
+    assert [(p["id"], p["free_searches_month"], p["extra_search_paise"], p["numbers_included"]) for p in c["plans"]] == [("payg", 2, 4900, 1), ("sales_assistant", 10, 3900, 1), ("sales_lead_finder", 100, 2900, 1)]
+    assert c["extra_number_paise"] == 29900 and c["extra_number_text"] == "₹299 a month for each extra number"
+    assert "Lead Finder: 10 free searches a month, then ₹39 each" in plans["sales_assistant"]["lines"] and "1 business number included, ₹299 a month for each extra one" in plans["payg"]["lines"]
+    assert not any(k.startswith("yearly") for p in c["plans"] for k in p), "monthly plans only: no yearly price, no '2 months free'"
     assert c["gst_text"] == "+18% GST on invoices" and c["free_start_text"] == "₹50 free to start, no card"
     text = json.dumps(c).lower()
     assert "credit" not in text and "token" not in text
@@ -100,9 +105,9 @@ def test_the_estimate_rounds_each_call_up_to_a_half_minute_and_uses_the_plan_rat
 
 def test_the_estimate_uses_included_minutes_first_and_says_what_is_short() -> None:
     sub = {"interval": "monthly", "status": "active", "period_end": "2026-12-13T00:00:00+00:00", "cancel_at_period_end": False, "price_locked_until": None}
-    inc = world(plan_id="sales_assistant", plan_name="Sales Assistant", rate_paise_per_minute=450, included_minutes=500, included_half_used=980, subscription=sub, balance_paise=1000)
+    inc = world(plan_id="sales_assistant", plan_name="Pro", rate_paise_per_minute=500, included_minutes=500, included_half_used=980, subscription=sub, balance_paise=1000)
     r = inc.post(f"{URL}/estimate", json={"calls": 20, "avg_minutes": 1}, headers=auth("a_owner")).json()
-    assert r["included_minutes_used"] == 10.0 and r["paid_minutes"] == 10.0 and r["cost_paise"] == 4500 and r["enough"] is False and r["shortfall_text"] == "₹35 more needed" and r["time_text"] == "about 20 min of calling"
+    assert r["included_minutes_used"] == 10.0 and r["paid_minutes"] == 10.0 and r["cost_paise"] == 5000 and r["enough"] is False and r["shortfall_text"] == "₹40 more needed" and r["time_text"] == "about 20 min of calling"
     long = world().post(f"{URL}/estimate", json={"calls": 100, "avg_minutes": 1.5}, headers=auth("a_owner")).json()
     assert long["time_text"] == "about 2 h 30 min of calling"
     assert world().post(f"{URL}/estimate", json={"calls": 0, "avg_minutes": 1}, headers=auth("a_owner")).status_code == 422
