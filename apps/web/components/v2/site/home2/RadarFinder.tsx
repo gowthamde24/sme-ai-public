@@ -180,15 +180,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
   const names = AREAS[state.city];
   for (const p of PINS) {
     if (st.fresh && a < p.ang) continue;
-    const age = ((((a - p.ang) % TAU) + TAU) % TAU) / 1.1;
     const col = p.d === "call" ? "194,65,12" : p.d === "ask" ? ink : "169,165,160";
-    if (age < 1.6 && !look.calm) {
-      ctx.strokeStyle = `rgba(${col},${0.7 * (1 - age / 1.6)})`;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 7 + age * 22, 0, TAU);
-      ctx.stroke();
-    }
     ctx.fillStyle = look.dark ? "#1f1e23" : "#fff";
     ctx.beginPath();
     ctx.arc(p.x, p.y, 9 * u, 0, TAU);

@@ -21,9 +21,9 @@ function brandDots(family: string, step: number): Dot[] {
   x.lineCap = "round";
   x.lineWidth = 46;
   const bars: [number, number, number, string][] = [
-    [40, 112, 70, "#ff773c"],
+    [40, 112, 70, "#c2410c"],
     [40, 168, 150, "#1e1e24"],
-    [96, 168, 230, "#ff9a6b"],
+    [96, 168, 230, "#e29a7a"],
   ];
   for (const [x1, x2, y, col] of bars) {
     x.strokeStyle = col;
@@ -124,52 +124,19 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
         }
         let col: string;
         let rad = 2.6 * big;
-        if (p.o) col = p.light ? `rgba(255,154,107,${0.75 + 0.25 * wv})` : `rgba(255,119,60,${0.8 + 0.2 * wv})`;
-        else if (heat > 0.05) col = `rgba(${Math.round(30 + 225 * heat)},${Math.round(30 + 89 * heat)},${Math.round(36 + 24 * heat)},.95)`;
-        else if (wv > 0.965 && !look.calm) col = "rgba(255,119,60,.9)";
+        if (p.o) col = p.light ? `rgba(226,154,122,${0.8 + 0.2 * wv})` : look.dark ? `rgba(255,157,110,${0.85 + 0.15 * wv})` : `rgba(194,65,12,${0.85 + 0.15 * wv})`;
+        else if (heat > 0.05) col = "rgba(194,65,12,.95)";
         else col = `rgba(${ink},${0.5 + 0.45 * wv})`;
         if (u < 1) {
-          col = p.o ? `rgba(255,119,60,${0.3 + 0.7 * e})` : `rgba(${ink},${0.15 + 0.8 * e})`;
+          col = p.o ? `rgba(194,65,12,${0.3 + 0.7 * e})` : `rgba(${ink},${0.15 + 0.8 * e})`;
           rad = (1.4 + 1.2 * e) * big;
         }
         ctx.fillStyle = col;
         ctx.beginPath();
         ctx.arc(x, y, rad + heat * 1.6, 0, TAU);
         ctx.fill();
-        // its reflection on the glass floor
-        if (u > 0.6) {
-          const ry = 2 * 268 - y;
-          const fall = 1 - (ry - 268) / 128;
-          if (fall > 0) {
-            ctx.globalAlpha = fall * fall * 0.22 * Math.min(1, (u - 0.6) / 0.4);
-            ctx.beginPath();
-            ctx.arc(x, ry + 4, rad * 0.9, 0, TAU);
-            ctx.fill();
-            ctx.globalAlpha = 1;
-          }
-        }
       }
-      const fl = ctx.createLinearGradient(0, 0, 1240, 0);
-      fl.addColorStop(0, "rgba(255,119,60,0)");
-      fl.addColorStop(0.5, "rgba(255,119,60,.55)");
-      fl.addColorStop(1, "rgba(255,119,60,0)");
-      ctx.fillStyle = fl;
-      ctx.fillRect(0, 264, 1240, 1.5);
-      if (!look.calm) {
-        const lx = ((t * 0.18) % 1) * 1400 - 80;
-        // a soft glow travelling along the floor: an ellipse filled with a radial light, no hard edges
-        ctx.save();
-        ctx.translate(lx, 265);
-        ctx.scale(1, 0.14);
-        const lg = ctx.createRadialGradient(0, 0, 0, 0, 0, 90);
-        lg.addColorStop(0, "rgba(255,119,60,.55)");
-        lg.addColorStop(1, "rgba(255,119,60,0)");
-        ctx.fillStyle = lg;
-        ctx.beginPath();
-        ctx.arc(0, 0, 90, 0, TAU);
-        ctx.fill();
-        ctx.restore();
-      }
+      // (no floor line, no glow: the clean footer)
     });
     return () => {
       off();
@@ -184,7 +151,7 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
     state.current.seen = true;
   };
   return (
-    <div className="relative mx-auto mt-6 aspect-[1240/266] w-full max-w-[1240px] lg:mt-10">
+    <div className="relative mx-auto mt-[clamp(24px,3vw,40px)] aspect-[1240/266] w-full max-w-[1240px]">
       {/* as tall as the drawing down to the letters' foot (266 of 300 units): the letters stand on the page's bottom edge, with the floor line just under them */}
       <canvas ref={canvas} role="img" aria-label={label} onClick={again} className="absolute inset-0 block size-full cursor-pointer" data-part="brand-dots" />
       <button type="button" onClick={again} className="sr-only focus:not-sr-only focus:absolute focus:right-0 focus:top-0 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2">

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
-import { Mark } from "@/components/v2/Mark";
+import { BrandDots } from "@/components/v2/site/LazyIslands";
 import { SupportedBy } from "@/components/v2/site/SupportedBy";
 import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
@@ -79,11 +79,8 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
         </a>
         <SupportedBy t={t} />
       </div>
-      {/* the big wordmark: the logo and the name across the foot of the page, the letters on its bottom edge */}
-      <p className="h3-brandword" data-part="brand-word" aria-label={BRAND_NAME}>
-        <Mark px={100} />
-        <span aria-hidden="true">{BRAND_NAME}</span>
-      </p>
+      {/* the dot-matrix wordmark: the logo and the name built from the page's own dots, the letters standing on the page's bottom edge (a lazy island; one image to a screen reader) */}
+      <BrandDots label={BRAND_NAME} rebuild={t("h2.foot.rebuild")} />
     </footer>
   );
 }

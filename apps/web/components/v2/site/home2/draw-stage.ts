@@ -94,17 +94,13 @@ export function stageDrawer(get: () => StageState) {
     if (!(look.calm || t > 0.9)) return;
     const run = (list: [Pt, Pt, Pt, Pt][], speed: number, col: string) => {
       list.forEach((p, i) => {
-        for (let q = 0; q < 2; q++) {
+        for (let q = 0; q < 1; q++) {
           const u0 = (((t * speed + i * 0.23 + q * 0.5) % 1) + 1) % 1;
-          for (let j = 9; j >= 0; j--) {
-            const u = u0 - j * 0.014;
+          for (let j = 5; j >= 0; j--) {
+            const u = u0 - j * 0.016;
             if (u < 0) continue;
             const pt = bez(p[0], p[1], p[2], p[3], u);
-            ctx.fillStyle = `rgba(${col},${(1 - j / 10) * 0.9})`;
-            if (j === 0) {
-              ctx.shadowColor = `rgba(${col},.9)`;
-              ctx.shadowBlur = 12;
-            } else ctx.shadowBlur = 0;
+            ctx.fillStyle = `rgba(${col},${(1 - j / 6) * 0.85})`;
             ctx.beginPath();
             ctx.arc(pt[0], pt[1], 3 - j * 0.22, 0, 6.2832);
             ctx.fill();
@@ -113,58 +109,10 @@ export function stageDrawer(get: () => StageState) {
       });
       ctx.shadowBlur = 0;
     };
-    const flare = (x: number, y: number, f: number, col: string) => {
-      const g = ctx.createRadialGradient(x, y, 0, x, y, 34);
-      g.addColorStop(0, `rgba(${col},${0.45 * f})`);
-      g.addColorStop(1, `rgba(${col},0)`);
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(x, y, 34, 0, 6.2832);
-      ctx.fill();
-    };
     ctx.globalAlpha = look.calm ? 1 : Math.min(1, (t - 0.9) / 0.8);
-    paths.forEach((p, i) => {
-      for (let q = 0; q < 2; q++) {
-        const u0 = (((t * 0.3 + i * 0.23 + q * 0.5) % 1) + 1) % 1;
-        if (u0 < 0.12) flare(p[0][0], p[0][1], 1 - u0 / 0.12, "194,65,12");
-      }
-    });
-    outs.forEach((p, i) => {
-      for (let q = 0; q < 2; q++) {
-        const u0 = (((t * 0.26 + i * 0.23 + q * 0.5) % 1) + 1) % 1;
-        if (u0 > 0.86) flare(p[3][0], p[3][1], (u0 - 0.86) / 0.14, "194,65,12");
-      }
-    });
     run(paths, 0.3, "194,65,12");
     run(outs, 0.26, "194,65,12");
     ctx.globalAlpha = 1;
-    // the visitor's own enquiry: a big spark in from its source, then out to its outcome
-    const c = s.custom;
-    if (!c) return;
-    const age = t - c.at;
-    const big = (p: [Pt, Pt, Pt, Pt], u: number, col: string) => {
-      for (let j = 14; j >= 0; j--) {
-        const pt = bez(p[0], p[1], p[2], p[3], Math.max(0, u - j * 0.02));
-        ctx.fillStyle = `rgba(${col},${(1 - j / 15) * 0.9})`;
-        if (j === 0) {
-          ctx.shadowColor = `rgba(${col},1)`;
-          ctx.shadowBlur = 26;
-        }
-        ctx.beginPath();
-        ctx.arc(pt[0], pt[1], j === 0 ? 8 : 6 - j * 0.3, 0, 6.2832);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-    };
-    const ease = (u: number) => 1 - (1 - u) ** 3;
-    if (age < 1.1) {
-      const u = ease(Math.min(1, age / 1.1));
-      big(paths[c.src], u, "194,65,12");
-      flare(paths[c.src][0][0], paths[c.src][0][1], 1 - u, "194,65,12");
-    }
-    const outAt = 1.1 + c.replySecs + 0.4;
-    if (age > outAt && age < outAt + 1.1) big(outs[c.out], ease((age - outAt) / 1.1), "194,65,12");
-    if (age >= outAt + 1.0 && age < outAt + 4) flare(outs[c.out][3][0], outs[c.out][3][1], 1 - (age - outAt - 1) / 3, "194,65,12");
   };
 }
 

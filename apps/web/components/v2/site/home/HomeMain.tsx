@@ -18,7 +18,8 @@ import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 
 import { AskBox } from "./AskBox";
 import { ChatStack } from "./ChatStack";
-import { STACK } from "./chat-stack";
+import { FOUND_KEYS, STACK } from "./chat-stack";
+import { FoundCard, StackProvider } from "./StackState";
 import { WithWhatsapp } from "../home2/WithWhatsapp";
 
 type Start = { href: string; label: string };
@@ -159,6 +160,7 @@ function How({ t }: { t: SiteT }) {
           </h2>
           <p className="h3-lead">{t("h3.how.sub")}</p>
         </header>
+        <StackProvider chats={STACK}>
         <div className="h3-how-grid">
           <div className="h3-how-phone" data-part="how-phone">
             <ChatStack chats={[...STACK]} chips={STACK.map((c) => SITE_LANGUAGE_NAMES[c.code].native)} captions={[1, 2, 3, 4].map((i) => t(k(`h3.stack.${i}`)))} sub={t("h3.phone.biz")} placeholder={t("h3.phone.msg")} />
@@ -173,23 +175,14 @@ function How({ t }: { t: SiteT }) {
                   <h3 className="h3-h3">{t(k(`h3.how.${n}.t`))}</h3>
                   <p className="h3-step-d">{t(k(`h3.how.${n}.d`))}</p>
                   {n === 3 ? (
-                    <div className="h3-found" data-part="found-out">
-                      <p className="h3-found-h">{t("h3.how.f.h")}</p>
-                      <dl>
-                        {found.map((f) => (
-                          <div key={f}>
-                            <dt>{t(k(`h3.how.f.${f}`))}</dt>
-                            <dd>{t(k(`h3.how.f.${f}.v`))}</dd>
-                          </div>
-                        ))}
-                      </dl>
-                    </div>
+                    <FoundCard heading={t("h3.how.f.h")} sets={FOUND_KEYS.map((rows) => rows.map(([l, v]) => ({ l: t(k(l)), v: t(k(v)) })))} />
                   ) : null}
                 </div>
               </li>
             ))}
           </ol>
         </div>
+        </StackProvider>
       </div>
     </section>
   );

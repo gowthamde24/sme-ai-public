@@ -52,7 +52,7 @@ function drawLeak(ctx: CanvasRenderingContext2D, W: number, H: number, t: number
   ctx.arc(712, 120, 8, 0, TAU);
   ctx.fill();
   // enquiries: more of them as the month gets busier; the missed share peels off and turns grey
-  const n = Math.round(16 + (s.enq / 1000) * 70);
+  const n = Math.round(12 + (s.enq / 1000) * 30);
   for (let i = 0; i < n; i++) {
     const yo = (hsh(i, 1) - 0.5) * 46;
     const isCold = hsh(i, 2) * 100 < s.miss;

@@ -9556,8 +9556,10 @@
   "status": {
    "te": "draft",
    "hi": "draft",
-   "kn": "draft"
-  }
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "பெயரை மீண்டும் உருவாக்கு"
  },
  "h2.later.start": {
   "en": "Start {trial_days}-day trial",
@@ -11143,5 +11145,239 @@
    "ta": "draft"
   },
   "ta": "ஒரு shop ஆங்கிலத்தில் order ready என்று சொல்கிறது."
+ },
+ "h3.found.2.l.1": {
+  "en": "Looking for",
+  "te": "కావాలి",
+  "hi": "चाहिए",
+  "kn": "ಬೇಕು",
+  "ta": "தேவை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.v.1": {
+  "en": "2BHK in Kondapur",
+  "te": "Kondapur లో 2BHK",
+  "hi": "Kondapur में 2BHK",
+  "kn": "Kondapur ನಲ್ಲಿ 2BHK",
+  "ta": "Kondapur-இல் 2BHK",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.l.2": {
+  "en": "Budget",
+  "te": "Budget",
+  "hi": "Budget",
+  "kn": "Budget",
+  "ta": "Budget",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.v.2": {
+  "en": "Up to 80 lakh",
+  "te": "80 లక్షల లోపు",
+  "hi": "80 लाख तक",
+  "kn": "80 ಲಕ್ಷದ ಒಳಗೆ",
+  "ta": "80 லட்சத்துக்குள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.l.3": {
+  "en": "Visit",
+  "te": "Visit",
+  "hi": "Visit",
+  "kn": "Visit",
+  "ta": "Visit",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.v.3": {
+  "en": "Site visit, Saturday 11 am",
+  "te": "Site visit, శనివారం 11 am",
+  "hi": "Site visit, शनिवार 11 am",
+  "kn": "Site visit, ಶನಿವಾರ 11 am",
+  "ta": "Site visit, சனிக்கிழமை 11 am",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.l.1": {
+  "en": "Wants",
+  "te": "కావాలి",
+  "hi": "चाहिए",
+  "kn": "ಬೇಕು",
+  "ta": "தேவை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.v.1": {
+  "en": "A doctor's appointment",
+  "te": "Doctor appointment",
+  "hi": "Doctor की appointment",
+  "kn": "Doctor appointment",
+  "ta": "Doctor appointment",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.l.2": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "ta": "எப்போது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.v.2": {
+  "en": "Tomorrow morning",
+  "te": "రేపు ఉదయం",
+  "hi": "कल सुबह",
+  "kn": "ನಾಳೆ ಬೆಳಿಗ್ಗೆ",
+  "ta": "நாளை காலை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.l.3": {
+  "en": "Booked",
+  "te": "Book అయింది",
+  "hi": "Book हुआ",
+  "kn": "Book ಆಗಿದೆ",
+  "ta": "Book ஆனது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.v.3": {
+  "en": "Tomorrow, 10:30 am",
+  "te": "రేపు, 10:30 am",
+  "hi": "कल, 10:30 am",
+  "kn": "ನಾಳೆ, 10:30 am",
+  "ta": "நாளை, 10:30 am",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.l.1": {
+  "en": "Order",
+  "te": "Order",
+  "hi": "Order",
+  "kn": "Order",
+  "ta": "Order",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.v.1": {
+  "en": "Ready for pickup",
+  "te": "Pickup కి ready",
+  "hi": "Pickup के लिए ready",
+  "kn": "Pickup ಗೆ ready",
+  "ta": "Pickup-க்கு ready",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.l.2": {
+  "en": "Pickup",
+  "te": "Pickup",
+  "hi": "Pickup",
+  "kn": "Pickup",
+  "ta": "Pickup",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.v.2": {
+  "en": "At the counter",
+  "te": "Counter దగ్గర",
+  "hi": "Counter पर",
+  "kn": "Counter ಹತ್ತಿರ",
+  "ta": "Counter-இல்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.l.3": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "ta": "எப்போது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.v.3": {
+  "en": "Today, after 6 pm",
+  "te": "ఈ రోజు, 6 pm తర్వాత",
+  "hi": "आज, 6 pm के बाद",
+  "kn": "ಇಂದು, 6 pm ನಂತರ",
+  "ta": "இன்று, 6 pm-க்குப் பிறகு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
  }
 }

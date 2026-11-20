@@ -2,69 +2,61 @@
 
 import * as React from "react";
 
-import { PhoneChat, PpBubble, PpDay } from "@/components/v2/PhonePreview";
+import { PhoneCall, PhoneChat, PpBubble, PpDay, PpLine } from "@/components/v2/PhonePreview";
 
-import type { StackChat } from "./chat-stack";
+import { AI_LABEL, type StackChat } from "./chat-stack";
+import { useStack } from "./StackState";
 
-const STEP = 1100; // one bubble every 1.1 s
-const HOLD = 3000; // the whole chat stays for about 3 s
-const FADE = 600; // then it fades out, and the next language starts
+const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
- * The home page's chat stack: one phone (the approved frame, at a fixed size, so nothing moves when the language changes) that cycles through the conversations in turn: the bubbles rise in one by one and stack, the chat holds for about 3 s,
- * fades out, and the next language starts. A small chip at the top of the screen names the language. The words come from the server (`chats`, already in each conversation's own language); `captions` say in the page's language what
- * each conversation is. Transform and opacity only. With "reduce motion" (and before the script runs) it is ONE still chat: the first, whole.
+ * The home page's phone demo: ONE conversation at a time of a made-up business, in the approved frame, at a fixed size. The shared clock (StackState) says where it is: the CALL first (the assistant's lines on the left labelled "AI assistant",
+ * the customer's on the right, appearing one by one, the timer running, "Live captions"), then "Call ended" (the timer stops), then the WhatsApp that follows up stacks in (the same business, the same facts), holds, fades, and the next language
+ * starts. The call and the chat are two screens in the SAME box (they cross-fade, nothing moves); a small chip above the phone names the language. The words come from the server; `captions` say in the page's language what each
+ * conversation is. Transform and opacity only. With "reduce motion" (and before the script runs) it is ONE still state: the chat, whole, and the style sheet shows the call beside it (stacked on a narrow screen).
  */
-export function ChatStack({ chats, chips, captions, sub, placeholder }: { chats: StackChat[]; chips: string[]; captions: string[]; sub: string; placeholder: string }) {
-  const [idx, setIdx] = React.useState(0);
-  const [shown, setShown] = React.useState(chats[0].lines.length);
-  const [out, setOut] = React.useState(false);
-  const [live, setLive] = React.useState(false);
+export function ChatStack({ chats, chips, captions, sub, placeholder }: { chats: readonly StackChat[]; chips: string[]; captions: string[]; sub: string; placeholder: string }) {
+  const { idx, phase, n, setVisible } = useStack();
+  const root = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
-    // the first chat is whole in the server markup; once the script runs, it starts again from the first bubble
-    const id = window.setTimeout(() => {
-      setShown(0);
-      setLive(true);
-    }, 0);
-    return () => window.clearTimeout(id);
-  }, []);
-  React.useEffect(() => {
-    if (!live) return;
-    const n = chats[idx].lines.length;
-    let wait: number;
-    let next: () => void;
-    if (out) {
-      wait = FADE;
-      next = () => {
-        setIdx((i) => (i + 1) % chats.length);
-        setShown(0);
-        setOut(false);
-      };
-    } else if (shown < n) {
-      wait = shown === 0 ? 500 : STEP;
-      next = () => setShown((s) => s + 1);
-    } else {
-      wait = HOLD;
-      next = () => setOut(true);
-    }
-    const id = window.setTimeout(next, wait);
-    return () => window.clearTimeout(id);
-  }, [live, idx, shown, out, chats]);
+    const el = root.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver((es) => setVisible(es.some((e) => e.isIntersecting)));
+    io.observe(el);
+    return () => io.disconnect();
+  }, [setVisible]);
   const chat = chats[idx];
+  const callShown = phase === "call" ? n : chat.call.lines.length;
+  const chip = (
+    <span className="h3-stack-chip" lang={chat.code} data-part="stack-lang">
+      {chips[idx]}
+    </span>
+  );
   return (
-    <div className="h3-stack" data-out={out ? "" : undefined} data-part="chat-stack" data-lang={chat.code}>
-      <PhoneChat name={chat.name} sub={sub} placeholder={placeholder} theme="auto" keepFrame>
-        <span className="h3-stack-chip" lang={chat.code} data-part="stack-lang">
-          {chips[idx]}
-        </span>
-        <PpDay>{chat.day}</PpDay>
-        {chat.lines.slice(0, shown).map((l, i) => (
-          <PpBubble key={`${idx}-${i}`} from={l.from} tail={i === 0 || chat.lines[i - 1].from !== l.from} time={l.time} ticks={l.from === "me" ? "read" : undefined}>
-            <span lang={chat.code}>{l.text}</span>
-          </PpBubble>
-        ))}
-      </PhoneChat>
+    <div ref={root} className="h3-stack" data-phase={phase} data-out={phase === "out" ? "" : undefined} data-part="chat-stack" data-lang={chat.code}>
+      <div className="h3-duo">
+        <div className="h3-duo-call" data-part="stack-call">
+          {chip}
+          <PhoneCall name={chat.name} sub={`${pad(0)}:${pad(callShown * 7)}`} captions={phase === "call" ? chat.call.live : chat.call.ended} theme="auto" keepFrame>
+            {chat.call.lines.slice(0, callShown).map((l, i) => (
+              <PpLine key={`${idx}-c${i}`} from={l.from} who={l.from === "them" ? AI_LABEL : chat.call.you}>
+                <span lang={chat.code}>{l.text}</span>
+              </PpLine>
+            ))}
+          </PhoneCall>
+        </div>
+        <div className="h3-duo-chat" data-part="stack-chat">
+          {chip}
+          <PhoneChat name={chat.name} sub={sub} placeholder={placeholder} theme="auto" keepFrame>
+            <PpDay>{chat.day}</PpDay>
+            {chat.lines.slice(0, phase === "chat" ? n : chat.lines.length).map((l, i) => (
+              <PpBubble key={`${idx}-${i}`} from={l.from} tail={i === 0 || chat.lines[i - 1].from !== l.from} time={l.time} ticks={l.from === "me" ? "read" : undefined}>
+                <span lang={chat.code}>{l.text}</span>
+              </PpBubble>
+            ))}
+          </PhoneChat>
+        </div>
+      </div>
       <p className="h3-stack-cap" aria-live="polite" data-part="stack-caption">
         {captions[idx]}
       </p>

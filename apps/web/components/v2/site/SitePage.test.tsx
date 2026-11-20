@@ -86,8 +86,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     const foot = home.match(/<footer[\s\S]*?<\/footer>/)![0];
     expect(home.indexOf("<footer")).toBeGreaterThan(at[7]);
     expect(foot).toContain('data-part="home-footer"');
-    expect(foot).not.toMatch(/<canvas/); // no particle wordmark: a clean footer
-    expect(foot).toMatch(/data-part="brand-word" aria-label="Stack19"[\s\S]*data-mark[\s\S]*Stack19/); // the big wordmark: the logo and the name across the foot of the page
+    expect(foot).toMatch(/<canvas[^>]*role="img"[^>]*aria-label="Stack19"/); // the dot-matrix wordmark: one image to a screen reader, its name once
     for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "Back to the top", "WhatsApp +91 95023 80998"]) expect(text(foot), l).toContain(l);
     expect(foot).toContain('href="https://wa.me/919502380998?text=Hi%20Stack19%2C%20I&#x27;d%20like%20early%20access."');
     for (const gone of ["greetings", "call", "team", "after", "number", "faq", "voices", "sources", "day", "industries", "trust", "start"]) expect(home, gone).not.toContain(`id="${gone}"`);
@@ -138,26 +137,30 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(ask).toMatch(/data-part="ask-go"/);
     expect(ask).toContain('href="/signup"');
   });
-  it("the demo: ONE phone (the chat stack, in the approved frame, a fifth smaller) that shows one chat whole in the server markup (reduced motion = this one still chat), the language chip, a caption, and three steps, the third with what it found out", () => {
+  it("the demo: one phone box with the call and the chat of ONE conversation (the approved frame, a fifth smaller), the language chip, a caption, the card, and three steps; the markup is the still state (the chat whole, its card first)", () => {
     const how = home.match(/<section id="how"[\s\S]*?<\/section>/)![0];
-    expect(how.match(/data-part="phone-preview"/g)).toHaveLength(1);
+    expect(how.match(/data-part="phone-preview"/g)).toHaveLength(2); // the call screen and the chat screen, in the same box
     expect(how).toContain("data-pp-keep");
     expect(how.match(/data-step="\d"/g)).toHaveLength(3);
-    for (const x of ["One call. One WhatsApp. One clear summary.", "It answers in your customer's language", "Then it follows up on WhatsApp", "You see what it found out", "EAMCET weekend batch", "Demo class, Saturday 10 am", "A coaching centre answers an enquiry in Telugu."]) expect(text(how), x).toContain(x);
+    for (const x of ["One call. One WhatsApp. One clear summary.", "It answers in your customer's language", "Then it follows up on WhatsApp", "You see what it found out", "EAMCET weekend batch", "Demo class, Saturday 10 am", "A coaching centre answers an enquiry in Telugu.", "AI assistant", "Call ముగిసింది"]) expect(text(how), x).toContain(x);
     expect(how).toContain('data-part="chat-stack"');
-    expect(how).toContain("Bright Path Academy AI assistant ని"); // the first chat, whole, with the AI disclosure
-    expect(how.match(/class="pp-b"/g)).toHaveLength(5);
+    expect(how).toContain("Bright Path Academy AI assistant ని"); // the call's first line, with the AI disclosure
+    expect(how.match(/class="pp-b"/g)).toHaveLength(4);
+    expect(how.match(/class="pp-line"/g)).toHaveLength(4);
     expect(how).toMatch(/data-part="stack-lang"[^>]*>తెలుగు</);
+    expect(how).toContain('data-phase="chat"');
   });
-  it("the chat stack: four conversations in the product's four languages (each says it is the AI assistant of the business), the assistant speaks no Tamil; the phone is scaled by a variable, not by a second markup", () => {
+  it("the phone demo: four conversations in the product's four languages, each with a call (4 captions, the first says it is the AI assistant of the business), a chat (4 bubbles) and a card, all of the SAME business; no Tamil assistant text; the phone is scaled by a variable", () => {
     expect(STACK.map((c) => c.code)).toEqual(["te", "hi", "kn", "en"]);
-    expect(STACK[0].lines[0].text).toContain("AI assistant");
-    expect(STACK[1].lines[0].text).toContain("AI assistant");
-    expect(STACK[2].lines[0].text).toContain("AI assistant");
-    expect(STACK[3].lines[0].text).toContain("AI assistant of Green Leaf Store");
+    expect(new Set(STACK.map((c) => c.name)).size).toBe(4);
     for (const c of STACK) {
-      expect(c.lines).toHaveLength(5);
-      expect(c.lines.map((l) => l.text).join(" ")).not.toMatch(/[\u0B80-\u0BFF]/); // no Tamil letter in any conversation
+      expect(c.call.lines, c.name).toHaveLength(4);
+      expect(c.lines, c.name).toHaveLength(4);
+      expect(c.call.lines[0].from).toBe("them");
+      expect(c.call.lines[0].text, c.name).toContain("AI assistant");
+      expect(c.call.lines[0].text, c.name).toContain(c.name); // the call and the chat are the same conversation of the same business
+      const all = [...c.call.lines.map((l) => l.text), ...c.lines.map((l) => l.text), c.call.you, c.call.live, c.call.ended].join(" ");
+      expect(all, c.name).not.toMatch(/[\u0B80-\u0BFF]/); // no Tamil letter in any conversation
     }
     const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8");
     expect(css).toMatch(/\.h3-how-phone \.pp \{ --pp-zoom: 0\.78; \}/);
