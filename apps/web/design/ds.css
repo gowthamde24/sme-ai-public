@@ -65,7 +65,7 @@
   --v2-on-brand: #ffffff;
   --v2-brand-edge: #c2410c;
   --v2-brand-text: #ff9d6e;
-  --v2-brand-bg: #2a1810;
+  --v2-brand-bg: #2a2930;
   --v2-ring: #ff9d6e;
 
   --v2-dot: rgba(244, 244, 245, 0.09);
@@ -109,7 +109,7 @@
     --v2-on-brand: #ffffff;
     --v2-brand-edge: #c2410c;
     --v2-brand-text: #ff9d6e;
-    --v2-brand-bg: #2a1810;
+    --v2-brand-bg: #2a2930;
     --v2-ring: #ff9d6e;
 
     --v2-dot: rgba(244, 244, 245, 0.09);
@@ -317,7 +317,7 @@
   --v2-border: rgba(255, 255, 255, 0.12);
   --v2-border-strong: rgba(255, 255, 255, 0.22);
   --v2-brand-text: #ff9d6e;
-  --v2-brand-bg: rgba(255, 157, 110, 0.14);
+  --v2-brand-bg: rgba(255, 255, 255, 0.1);
   --v2-red-text: #fb7185;
   --v2-green-text: #4ade80;
   --v2-green-bg: rgba(74, 222, 128, 0.14);

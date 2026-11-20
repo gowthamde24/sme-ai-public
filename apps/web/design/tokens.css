@@ -24,6 +24,7 @@
   --v2-brand-edge: #c2410c;
   --v2-brand-text: #c2410c;      /* orange used as text, links, meter fill */
   --v2-brand-bg: #fff0e8;
+  --v2-pill-edge: transparent;            /* the 1px edge of an inline field pill: none in light */
   --v2-ring: #c2410c;
 
   --v2-charcoal: #2d3036;
@@ -85,7 +86,8 @@
   --v2-on-brand: #ffffff;
   --v2-brand-edge: #c2410c;
   --v2-brand-text: #ff9d6e;
-  --v2-brand-bg: #2a1810;
+  --v2-brand-bg: #2a2930;
+  --v2-pill-edge: rgba(194, 65, 12, 0.5);   /* dark: the pill is a neutral fill, so a thin orange edge says it can be edited */
   --v2-ring: #ff9d6e;
 
   --v2-charcoal: #312f2f;
@@ -139,7 +141,8 @@
     --v2-on-brand: #ffffff;
     --v2-brand-edge: #c2410c;
     --v2-brand-text: #ff9d6e;
-    --v2-brand-bg: #2a1810;
+    --v2-brand-bg: #2a2930;
+    --v2-pill-edge: rgba(194, 65, 12, 0.5);
     --v2-ring: #ff9d6e;
 
     --v2-charcoal: #312f2f;

@@ -20,7 +20,7 @@ export function optionLabel(t: Say, key: string, value: string): string {
 export function PillSelect({ label, value, options, optionText, disabled, invalid = false, onChange }: { label: string; value: string; options: readonly string[]; optionText: (v: string) => string; disabled: boolean; /** the API refused this choice (`setting_invalid`): it is marked */ invalid?: boolean; onChange: (v: string) => void }) {
   return (
     <span className="relative my-0.5 inline-block max-w-full align-middle">
-      <select aria-label={label} value={value} disabled={disabled} aria-invalid={invalid ? true : undefined} data-invalid={invalid ? "" : undefined} onChange={(e) => onChange(e.target.value)} className={`jb-press write-ctl min-h-10 max-w-full cursor-pointer text-ellipsis appearance-none rounded-full border ${invalid ? "border-red-text" : "border-transparent"} bg-brand-bg py-1 pl-3.5 pr-8 text-[16px] font-semibold text-brand-text disabled:cursor-default disabled:opacity-80`}>
+      <select aria-label={label} value={value} disabled={disabled} aria-invalid={invalid ? true : undefined} data-invalid={invalid ? "" : undefined} onChange={(e) => onChange(e.target.value)} className={`jb-press write-ctl min-h-10 max-w-full cursor-pointer text-ellipsis appearance-none rounded-full border ${invalid ? "border-red-text" : "border-[color:var(--v2-pill-edge)]"} bg-brand-bg py-1 pl-3.5 pr-8 text-[16px] font-semibold text-brand-text disabled:cursor-default disabled:opacity-80`}>
         {options.map((o) => (
           <option key={o} value={o}>
             {optionText(o)}
