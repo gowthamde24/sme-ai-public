@@ -13,18 +13,42 @@ export type StageState = {
   /** A blip has been pulled into the orb: the "new businesses found" counter goes up. */
   onFound: () => void;
 };
-type Blip = { a: number; r: number; born: number; done?: boolean };
 
-export function stageDrawer(get: () => StageState) {
-  const blips: Blip[] = [];
-  let lastSpawn = 0;
+type Path = [Pt, Pt, Pt, Pt];
+type Layout = { w: number; cx: number; cy: number; R: number; paths: Path[]; outs: Path[] };
+/** Wide (the design's 1240 x 540, from 900 px of page): six sources on the left, the orb, three outcomes on the right. */
+const WIDE: Layout = (() => {
   const cx = 620;
   const cy = 270;
-  const R = 210;
-  const paths: [Pt, Pt, Pt, Pt][] = SRC_Y.map((y, i) => [[262 + (i === 0 || i === 5 ? -38 : i === 1 || i === 4 ? 0 : 30), y], [400, y], [430, cy], [cx - 140, cy]]);
-  const outs: [Pt, Pt, Pt, Pt][] = OUT_Y.map((y) => [[cx + 140, cy], [820, cy], [850, y + 22], [990, y + 22]]);
+  return {
+    w: STAGE_W,
+    cx,
+    cy,
+    R: 210,
+    paths: SRC_Y.map((y, i): Path => [[262 + (i === 0 || i === 5 ? -38 : i === 1 || i === 4 ? 0 : 30), y], [400, y], [430, cy], [cx - 140, cy]]),
+    outs: OUT_Y.map((y): Path => [[cx + 140, cy], [820, cy], [850, y + 22], [990, y + 22]]),
+  };
+})();
+/** Tall (a narrow page, 360 x 640): the same drawing turned upright: four sources on top (Meta ads, Website form, WhatsApp, Missed call), the orb in the middle, two outcomes below, all at real size so every word is readable. */
+const TALL: Layout = (() => {
+  const cx = 180;
+  const cy = 300;
+  return {
+    w: 360,
+    cx,
+    cy,
+    R: 118,
+    paths: [52, 140, 220, 308].map((x): Path => [[x, 124], [x, 168], [cx, 176], [cx, cy - 80]]),
+    outs: [92, 268].map((x): Path => [[cx, cy + 80], [cx, 412], [x, 424], [x, 466]]),
+  };
+})();
+
+export function stageDrawer(get: () => StageState) {
   return (ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look) => {
-    const k = W / STAGE_W;
+    // one canvas at every width: wide, it draws the design's stage; in a narrow (tall) box it draws the same stage upright
+    const L = W / H >= 1.2 ? WIDE : TALL;
+    const { cx, cy, R, paths, outs } = L;
+    const k = W / L.w;
     const s = get();
     const ink = inkOf(look);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -49,65 +73,13 @@ export function stageDrawer(get: () => StageState) {
       ctx.lineTo(cx + Math.cos(ang) * r1, cy + Math.sin(ang) * r1);
       ctx.stroke();
     }
-    spectrum(ctx, cx, cy, 150, s.motion === "speaking" ? 24 : s.motion === "listening" ? 10 : 4, t, 120, bootE);
+    spectrum(ctx, cx, cy, R * 0.714, (s.motion === "speaking" ? 24 : s.motion === "listening" ? 10 : 4) * (R / 210), t, 120, bootE);
     ctx.setLineDash([2, 7]);
     ctx.strokeStyle = "rgba(194,65,12,.25)";
     ctx.beginPath();
-    ctx.arc(cx, cy, R - 46, 0, 6.2832);
+    ctx.arc(cx, cy, R * 0.78, 0, 6.2832);
     ctx.stroke();
     ctx.setLineDash([]);
-    // the Lead Finder's sweep
-    const a = t * 1.25;
-    if ("createConicGradient" in ctx) {
-      const g = ctx.createConicGradient(a - 1.1, cx, cy);
-      g.addColorStop(0, "rgba(255,119,60,0)");
-      g.addColorStop(0.17, "rgba(255,119,60,.20)");
-      g.addColorStop(0.175, "rgba(255,119,60,0)");
-      g.addColorStop(1, "rgba(255,119,60,0)");
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, 6.2832);
-      ctx.fill();
-    }
-    ctx.strokeStyle = "rgba(255,119,60,.55)";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(cx + Math.cos(a) * 140, cy + Math.sin(a) * 140);
-    ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
-    ctx.stroke();
-    // blips: found on the sweep, pulse, then travel into the orb
-    if (!look.calm && t - lastSpawn > 1.6) {
-      lastSpawn = t;
-      blips.push({ a: a - 0.05, r: 165 + Math.random() * 38, born: t });
-    }
-    for (let i = blips.length - 1; i >= 0; i--) {
-      const b = blips[i];
-      const age = t - b.born;
-      if (age < 1.1) {
-        const x = cx + Math.cos(b.a) * b.r;
-        const y = cy + Math.sin(b.a) * b.r;
-        ctx.strokeStyle = `rgba(255,119,60,${0.7 * (1 - age / 1.1)})`;
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.arc(x, y, 4 + age * 14, 0, 6.2832);
-        ctx.stroke();
-        ctx.fillStyle = "#ff773c";
-        ctx.beginPath();
-        ctx.arc(x, y, 4, 0, 6.2832);
-        ctx.fill();
-      } else if (age < 2.0) {
-        const u = (age - 1.1) / 0.9;
-        const e = u * u * (3 - 2 * u);
-        const rr = b.r + (140 - b.r) * e;
-        ctx.fillStyle = `rgba(236,72,110,${1 - u * 0.6})`;
-        ctx.beginPath();
-        ctx.arc(cx + Math.cos(b.a) * rr, cy + Math.sin(b.a) * rr, 4 - u * 2, 0, 6.2832);
-        ctx.fill();
-      } else {
-        if (!b.done) s.onFound();
-        blips.splice(i, 1);
-      }
-    }
     // guide lines
     ctx.setLineDash([2, 6]);
     ctx.lineWidth = 1.2;
@@ -154,17 +126,17 @@ export function stageDrawer(get: () => StageState) {
     paths.forEach((p, i) => {
       for (let q = 0; q < 2; q++) {
         const u0 = (((t * 0.3 + i * 0.23 + q * 0.5) % 1) + 1) % 1;
-        if (u0 < 0.12) flare(p[0][0], p[0][1], 1 - u0 / 0.12, "255,119,60");
+        if (u0 < 0.12) flare(p[0][0], p[0][1], 1 - u0 / 0.12, "194,65,12");
       }
     });
     outs.forEach((p, i) => {
       for (let q = 0; q < 2; q++) {
         const u0 = (((t * 0.26 + i * 0.23 + q * 0.5) % 1) + 1) % 1;
-        if (u0 > 0.86) flare(p[3][0], p[3][1], (u0 - 0.86) / 0.14, "236,72,110");
+        if (u0 > 0.86) flare(p[3][0], p[3][1], (u0 - 0.86) / 0.14, "194,65,12");
       }
     });
-    run(paths, 0.3, "255,119,60");
-    run(outs, 0.26, "236,72,110");
+    run(paths, 0.3, "194,65,12");
+    run(outs, 0.26, "194,65,12");
     ctx.globalAlpha = 1;
     // the visitor's own enquiry: a big spark in from its source, then out to its outcome
     const c = s.custom;
@@ -187,12 +159,12 @@ export function stageDrawer(get: () => StageState) {
     const ease = (u: number) => 1 - (1 - u) ** 3;
     if (age < 1.1) {
       const u = ease(Math.min(1, age / 1.1));
-      big(paths[c.src], u, "255,119,60");
-      flare(paths[c.src][0][0], paths[c.src][0][1], 1 - u, "255,119,60");
+      big(paths[c.src], u, "194,65,12");
+      flare(paths[c.src][0][0], paths[c.src][0][1], 1 - u, "194,65,12");
     }
     const outAt = 1.1 + c.replySecs + 0.4;
-    if (age > outAt && age < outAt + 1.1) big(outs[c.out], ease((age - outAt) / 1.1), "236,72,110");
-    if (age >= outAt + 1.0 && age < outAt + 4) flare(outs[c.out][3][0], outs[c.out][3][1], 1 - (age - outAt - 1) / 3, "236,72,110");
+    if (age > outAt && age < outAt + 1.1) big(outs[c.out], ease((age - outAt) / 1.1), "194,65,12");
+    if (age >= outAt + 1.0 && age < outAt + 4) flare(outs[c.out][3][0], outs[c.out][3][1], 1 - (age - outAt - 1) / 3, "194,65,12");
   };
 }
 

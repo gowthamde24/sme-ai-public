@@ -18,7 +18,7 @@ const link = "inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-
 
 /**
  * The header of every public page (jobs CM, CX, DM; the three-bar logo and five links in night 5): the logo and the name, five links (How it works, Lead Desk, Industries, Pricing, Questions: the sections of the home page, so from another page they lead back to it; Pricing leads
- * to the plans page there), Sign in, the language (this page in the other languages), the theme, and the one button of the site, "Start trial". From 1024 px the links sit in the bar; below that they are a native
+ * to the plans page there), Sign in, the language (this page in the other languages), the theme, and the one button of the site, "Start trial". From 900 px (the width of a phone with "Desktop site" switched on is about 980) the links sit in the bar; below that they are a native
  * disclosure (`<details>`, no script); the button stays in the bar, and the language and theme stay there from 640 px (below that they are in the menu).
  */
 export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; theme?: Theme; target: SiteTarget }) {
@@ -32,10 +32,9 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   const start = startEntry(t, lang, t("nav.start"), { hasForm: waitlistMode() !== "off" && (target.kind !== "page" || target.page === "contact") });
   // landing v2: four parts of the home page (owner, 6 Nov 2026: fewer links in the bar; the Lead Finder and the business number are in the footer); from another page they lead back to it
   const nav = [
-    { href: `${base}#call`, label: t("h2.nav.call"), here: false },
-    { href: `${base}#team`, label: t("h2.nav.team"), here: false },
+    { href: `${base}#how`, label: t("nav.how"), here: false },
+    { href: `${base}#finder`, label: t("h2.nav.finder"), here: false },
     { href: onHome ? "#plans" : pricingPage, label: t("h2.nav.plans"), here: target.kind === "page" && target.page === "pricing" },
-    { href: `${base}#faq`, label: t("h2.nav.faq"), here: false },
   ];
   // "Get early access": the home page's closing form; on a page without the form, where "start" leads today
   // (website mode and the app-open home page both say "Join early access": one call to action, owner 11 Nov 2026)
@@ -46,10 +45,10 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
       <span aria-hidden="true" className="h2-prog" />
       <div className={`${container} flex min-h-16 items-center gap-2 py-2 sm:gap-3`}>
         {/* under 360 px the name is a size smaller, so the bar still fits with large text (Android 115%) */}
-        <Link href={home} className="shrink-0 whitespace-nowrap rounded-md max-[359px]:[&_.font-display]:text-xl" aria-label={BRAND_NAME}>
+        <Link href={home} className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-md max-[359px]:[&_.font-display]:text-xl" aria-label={BRAND_NAME}>
           <Wordmark />
         </Link>
-        <nav aria-label={t("nav.sections")} className="ml-4 hidden items-center gap-1 lg:flex">
+        <nav aria-label={t("nav.sections")} className="ml-4 hidden items-center gap-1 min-[900px]:flex">
           {nav.map((n) => (
             <Link key={n.href} href={n.href} aria-current={n.here ? "page" : undefined} className={`${link} ${n.here ? "bg-surface-2 font-semibold" : ""}`}>
               {n.label}
@@ -71,7 +70,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
             <span className="xl:hidden">{early.short}</span>
             <span className="max-xl:hidden">{early.label}</span>
           </Link>
-          <details className="group relative lg:hidden">
+          <details className="group relative min-[900px]:hidden">
             <summary className="inline-flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-lg border border-edge bg-surface text-ink hover:bg-surface-2 [&::-webkit-details-marker]:hidden">
               <Menu className="size-5" aria-hidden="true" />
               <span className="sr-only">{t("nav.menu")}</span>

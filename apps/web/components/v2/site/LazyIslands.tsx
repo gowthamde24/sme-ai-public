@@ -13,9 +13,6 @@ export const ContactForm = dynamic(() => import("./ContactForm").then((m) => m.C
 export const WaitlistForm = dynamic(() => import("./WaitlistForm").then((m) => m.WaitlistForm));
 // landing v2 (job landing-v2): each moving scene of the home page is a chunk of its own, rendered on the server too, so its words are in the page before the chunk arrives
 export const HeroStage = dynamic(() => import("./home2/HeroStage").then((m) => m.HeroStage));
-export const CallDemo = dynamic(() => import("./home2/CallDemo").then((m) => m.CallDemo));
 export const RadarFinder = dynamic(() => import("./home2/RadarFinder").then((m) => m.RadarFinder));
-export const StandupTable = dynamic(() => import("./home2/StandupTable").then((m) => m.StandupTable));
-export const Journey = dynamic(() => import("./home2/Journey").then((m) => m.Journey));
 export const LeakCalc = dynamic(() => import("./home2/LeakCalc").then((m) => m.LeakCalc));
 export const BrandDots = dynamic(() => import("./home2/BrandDots").then((m) => m.BrandDots));

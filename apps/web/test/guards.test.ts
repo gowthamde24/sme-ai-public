@@ -535,15 +535,8 @@ describe("sign-up is open only through the one signUp action, and the page stays
   it("no component injects raw HTML or an inline script (the one exception: schema.org data, a JSON script that is data and never runs)", () => {
     // Job CM: components/v2/site/JsonLd.tsx writes `<script type="application/ld+json">` for search engines. React would HTML-escape JSON given as a child, so it is set as text with `<` escaped.
     const jsonLd = path.join("components", "v2", "site", "JsonLd.tsx");
-    // 19 Nov 2026 (C2): the DRAFT landing page (route handler app/landing-draft/route.ts, staging only) is one generated HTML document with its own two inline scripts and one style element; every one of them must carry the
-    // request's nonce (the placeholder __NONCE__ the route fills), so nothing runs without the CSP's permission. No component imports it; only that route does.
-    const draftHtml = path.join("lib", "site", "landing-draft-html.ts");
-    const draft = read(path.join(WEB_ROOT, draftHtml));
-    const bare = (draft.match(/<(script|style)\b(?![^>]*nonce=\\?"__NONCE__)/gi) ?? []).length;
-    expect(bare, "a script or style of the draft landing page without the nonce placeholder").toBe(0);
-    expect((draft.match(/<script\b/gi) ?? []).length).toBe(2);
     for (const file of code) {
-      if (rel(file) === jsonLd || rel(file) === draftHtml) continue;
+      if (rel(file) === jsonLd) continue;
       expect(read(file), rel(file)).not.toMatch(/dangerouslySetInnerHTML/);
       expect(read(file), rel(file)).not.toMatch(/<script\b/i);
     }

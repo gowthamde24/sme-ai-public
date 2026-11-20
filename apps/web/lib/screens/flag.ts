@@ -152,12 +152,6 @@ export const outboxWhatsappScreens = (value: string | undefined = process.env.OU
 export const legalDraftPages = (value: string | undefined = process.env.LEGAL_DRAFT_PAGES): boolean => value === "1";
 
 /**
- * The new animated landing page with the plans and the questions, a DRAFT for the owner (19 Nov 2026; route /landing-draft, app/landing-draft/route.ts). `1` serves it (staging, under a "Draft: not live" bar, never indexed);
- * anything else = a plain 404, so it is never public. The live home page is not touched by it.
- */
-export const landingDraft = (value: string | undefined = process.env.LANDING_DRAFT): boolean => value === "1";
-
-/**
  * Billing v2 (owner's final pricing, 19 Nov 2026): the Billing page as ONE ₹ wallet with a usage line per feature, optional spending limits, top-up, warnings at 80% and 100%, the upgrade hint and numbers on demand. The paid-plan parts come from Feb 2027, so `mock` shows them as a clear "Preview" with made-up usage (nothing is charged or sent;
  * the state of a scenario is chosen with ?demo=low80|full100|over|upgrade|numbers), `1` = C1's balance route where it exists (lib/api/wallet.ts says which parts are real); anything else = off and the Billing page is exactly what it was. Needs DESIGN_V6.
  */

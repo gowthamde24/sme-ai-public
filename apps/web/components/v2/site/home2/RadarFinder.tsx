@@ -139,11 +139,11 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
   // the sweep: a fading wedge behind a bright edge
   if ("createConicGradient" in ctx) {
     const g = ctx.createConicGradient(a - 1.3, cx, cy);
-    g.addColorStop(0, "rgba(255,119,60,0)");
-    g.addColorStop((1.3 / TAU) * 0.6, "rgba(255,119,60,.08)");
-    g.addColorStop(1.3 / TAU, "rgba(255,119,60,.32)");
-    g.addColorStop(1.3 / TAU + 0.002, "rgba(255,119,60,0)");
-    g.addColorStop(1, "rgba(255,119,60,0)");
+    g.addColorStop(0, "rgba(194,65,12,0)");
+    g.addColorStop((1.3 / TAU) * 0.6, "rgba(194,65,12,.08)");
+    g.addColorStop(1.3 / TAU, "rgba(194,65,12,.32)");
+    g.addColorStop(1.3 / TAU + 0.002, "rgba(194,65,12,0)");
+    g.addColorStop(1, "rgba(194,65,12,0)");
     ctx.fillStyle = g;
     ctx.beginPath();
     ctx.arc(cx, cy, R, 0, TAU);
@@ -152,16 +152,16 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
   const ex = cx + Math.cos(a) * R;
   const ey = cy + Math.sin(a) * R;
   const lg = ctx.createLinearGradient(cx, cy, ex, ey);
-  lg.addColorStop(0, "rgba(255,119,60,.1)");
-  lg.addColorStop(1, "rgba(255,119,60,.95)");
+  lg.addColorStop(0, "rgba(194,65,12,.1)");
+  lg.addColorStop(1, "rgba(194,65,12,.95)");
   ctx.strokeStyle = lg;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(cx, cy);
   ctx.lineTo(ex, ey);
   ctx.stroke();
-  ctx.fillStyle = "#ff773c";
-  ctx.shadowColor = "rgba(255,119,60,.9)";
+  ctx.fillStyle = "#c2410c";
+  ctx.shadowColor = "rgba(194,65,12,.9)";
   ctx.shadowBlur = 16;
   ctx.beginPath();
   ctx.arc(ex, ey, 4, 0, TAU);
@@ -171,7 +171,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
   for (const c of CANDS) {
     const behind = (((a - c.ang) % TAU) + TAU) % TAU;
     const b = look.calm ? 0 : Math.max(0, 1 - behind / 1.4);
-    ctx.fillStyle = b > 0 ? `rgba(255,119,60,${0.25 + b * 0.7})` : `rgba(${ink},.18)`;
+    ctx.fillStyle = b > 0 ? `rgba(194,65,12,${0.25 + b * 0.7})` : `rgba(${ink},.18)`;
     ctx.beginPath();
     ctx.arc(c.x, c.y, 2 + b * 1.5, 0, TAU);
     ctx.fill();
@@ -181,7 +181,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
   for (const p of PINS) {
     if (st.fresh && a < p.ang) continue;
     const age = ((((a - p.ang) % TAU) + TAU) % TAU) / 1.1;
-    const col = p.d === "call" ? "255,119,60" : p.d === "ask" ? ink : "169,165,160";
+    const col = p.d === "call" ? "194,65,12" : p.d === "ask" ? ink : "169,165,160";
     if (age < 1.6 && !look.calm) {
       ctx.strokeStyle = `rgba(${col},${0.7 * (1 - age / 1.6)})`;
       ctx.lineWidth = 2;
@@ -246,11 +246,11 @@ export function RadarFinder({ w }: { w: W }) {
     live.current = { city, since };
   });
   const desk = React.useRef<HTMLCanvasElement>(null);
-  const phone = React.useRef<HTMLCanvasElement>(null);
   React.useEffect(() => {
     const sans = desk.current ? fontOf(desk.current, "sans") : '"Plus Jakarta Sans", system-ui, sans-serif';
-    const offs = [desk.current && addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, false, sans)), phone.current && addScene(phone.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, true, sans))];
-    return () => offs.forEach((o) => o?.());
+    // one canvas at every width: wide, it draws the whole 780 x 520 map; in a narrow box (a phone) it crops to the rings, with its words and pins drawn larger, so they stay readable
+    const off = desk.current ? addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, W / H < 1.2, sans)) : undefined;
+    return () => off?.();
   }, []);
   // the found list follows the sweep: read its angle a few times a second
   React.useEffect(() => {
@@ -262,34 +262,24 @@ export function RadarFinder({ w }: { w: W }) {
   const seen = PINS.filter((p) => !st.fresh || st.a >= p.ang);
   const checked = st.fresh ? Math.floor((CANDS.length * st.a) / TAU) : CANDS.length;
   const worth = seen.filter((p) => p.d === "call").length;
-  const chip = (d: Pin["d"]) => (d === "call" ? "bg-[#ff773c] text-[#1e1e24]" : d === "ask" ? "bg-surface text-ink shadow-[inset_0_0_0_1.5px_var(--v2-ink)]" : "bg-surface-2 text-muted");
+  const chip = (d: Pin["d"]) => (d === "call" ? "bg-[#c2410c] text-white" : d === "ask" ? "bg-surface text-ink shadow-[inset_0_0_0_1.5px_var(--v2-ink)]" : "bg-surface-2 text-muted");
   const pick = (c: City) => {
     setCity(c);
     setSince(sceneTime());
   };
   const cities = (
-    <div role="radiogroup" aria-label={w["h2.finder.city"]} className="flex flex-wrap gap-0.5">
+    <div role="radiogroup" aria-label={w["h2.finder.city"]} className="h2-glass flex flex-wrap gap-0.5 rounded-[14px] p-1">
       {CITIES.map((c) => (
-        <button key={c} type="button" role="radio" aria-checked={city === c} onClick={() => pick(c)} data-city={c} className={`min-h-11 rounded-full px-3 text-[13px] font-extrabold ${city === c ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}>
-          {c}
-        </button>
-      ))}
-    </div>
-  );
-  // the phone's city tabs: one row that scrolls sideways above the radar, never wider than the screen
-  const cityTabs = (
-    <div role="radiogroup" aria-label={w["h2.finder.city"]} className="flex min-w-0 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-part="city-tabs">
-      {CITIES.map((c) => (
-        <button key={c} type="button" role="radio" aria-checked={city === c} onClick={() => pick(c)} data-city={c} className={`min-h-11 shrink-0 whitespace-nowrap rounded-full px-3.5 text-[13px] font-extrabold ${city === c ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}>
+        <button key={c} type="button" role="radio" aria-checked={city === c} onClick={() => pick(c)} data-city={c} className={`min-h-11 rounded-full px-3 text-sm font-extrabold ${city === c ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}>
           {c}
         </button>
       ))}
     </div>
   );
   const legend = (
-    <div className="flex gap-3.5 text-xs font-bold">
+    <div className="flex gap-3.5 text-sm font-bold">
       <span className="inline-flex items-center gap-1.5">
-        <span className="size-[9px] rounded-full bg-[#ff773c]" />
+        <span className="size-[9px] rounded-full bg-[#c2410c]" />
         {w["h2.finder.call"]}
       </span>
       <span className="inline-flex items-center gap-1.5">
@@ -303,47 +293,32 @@ export function RadarFinder({ w }: { w: W }) {
     </div>
   );
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-[28px] border border-line bg-surface shadow-[0_60px_120px_-70px_rgba(30,30,36,.5)] lg:grid-cols-[minmax(0,780px)_minmax(0,1fr)]" data-part="radar" data-city={city}>
-      <div className="min-w-0 bg-[radial-gradient(circle_at_50%_50%,var(--v2-surface),var(--v2-surface-2)_70%)] lg:flex lg:items-center">
-        {/* desktop: the full map */}
-        <div className="relative hidden aspect-[780/520] w-full overflow-hidden lg:block">
-          <canvas ref={desk} aria-hidden="true" className="absolute inset-0 block size-full" />
-          <span className="absolute left-1/2 top-1/2 block size-[52px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_0_0_6px_rgba(255,255,255,.8),0_14px_30px_-10px_rgba(194,65,12,.7)]">
-            <AssistantOrb state="thinking" />
-          </span>
-          <div className="h2-glass absolute left-[18px] top-[18px] flex items-center gap-2.5 rounded-[14px] px-3.5 py-2.5 text-sm font-bold">
+    <div className="h3-radar" data-part="radar" data-city={city}>
+      <div className="h3-radar-map-col">
+        <div className="h3-radar-bar">
+          <div className="h2-glass flex items-center gap-2.5 rounded-[14px] px-3.5 py-2 text-sm font-bold">
             <span className="h2-blink" />
             {fill(w["h2.finder.near"], { city })}
           </div>
-          <div className="h2-glass absolute right-[18px] top-[18px] rounded-[14px] p-1">{cities}</div>
-          <div className="h2-glass absolute bottom-[18px] left-[18px] rounded-[14px] px-3.5 py-2.5 text-sm font-semibold tabular-nums" data-part="checked">
+          {cities}
+        </div>
+        <div className="h3-radar-map">
+          <canvas ref={desk} aria-hidden="true" className="absolute inset-0 block size-full" />
+          <span className="absolute left-1/2 top-1/2 block size-11 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_0_0_5px_rgba(255,255,255,.8),0_14px_30px_-10px_rgba(194,65,12,.7)]">
+            <AssistantOrb state="thinking" />
+          </span>
+        </div>
+        <div className="h3-radar-bar">
+          <div className="h2-glass rounded-[14px] px-3.5 py-2 text-sm font-semibold tabular-nums" data-part="checked">
             {fill(w["h2.finder.checked"], { n: String(checked), worth: String(worth) })}
           </div>
-          <div className="h2-glass absolute bottom-[18px] right-[18px] rounded-[14px] px-3.5 py-2.5">{legend}</div>
-        </div>
-        {/* phone: the desktop's radar, square, the card's full width (owner, 6 Nov 2026): the city tabs scroll above it; "Saree retailers near" and "Checked" sit on the map as on the desktop; the legend is under it */}
-        <div className="lg:hidden">
-          <div className="border-b border-line p-2">{cityTabs}</div>
-          <div className="relative aspect-square w-full overflow-hidden bg-[radial-gradient(circle_at_50%_50%,var(--v2-surface),var(--v2-surface-2)_70%)]">
-            <canvas ref={phone} aria-hidden="true" className="absolute inset-0 block size-full" />
-            <span className="absolute left-1/2 top-1/2 block size-10 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_0_0_5px_rgba(255,255,255,.8),0_10px_24px_-8px_rgba(194,65,12,.7)]">
-              <AssistantOrb state="thinking" />
-            </span>
-            <div className="h2-glass absolute left-2.5 top-2.5 flex max-w-[calc(100%-20px)] items-center gap-2 rounded-xl px-3 py-1.5 text-[13px] font-bold">
-              <span className="h2-blink shrink-0" />
-              {fill(w["h2.finder.near"], { city })}
-            </div>
-            <div className="h2-glass absolute bottom-2.5 left-2.5 max-w-[calc(100%-20px)] rounded-xl px-3 py-1.5 text-[13px] font-semibold tabular-nums" data-part="checked-phone">
-              {fill(w["h2.finder.checked"], { n: String(checked), worth: String(worth) })}
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 border-t border-line p-3">{legend}</div>
+          {legend}
         </div>
       </div>
-      <div className="flex min-w-0 flex-col gap-2.5 border-line bg-surface-2/50 p-4 max-lg:border-t sm:p-[22px] lg:border-l" aria-live="polite">
+      <div className="h3-radar-list" aria-live="polite">
         <div className="mb-1 flex items-center justify-between">
           <p className="m-0 font-extrabold">{w["h2.finder.list"]}</p>
-          <span className="text-[13px] tabular-nums text-muted">{fill(w["h2.finder.of"], { n: String(seen.length) })}</span>
+          <span className="text-sm tabular-nums text-muted">{fill(w["h2.finder.of"], { n: String(seen.length) })}</span>
         </div>
         {[...seen]
           .sort((a, b) => a.id - b.id)
@@ -353,10 +328,10 @@ export function RadarFinder({ w }: { w: W }) {
                 <p className="m-0 min-w-0 text-[15px] font-extrabold">
                   {w[`h2.finder.pin.${p.id + 1}.what`]}, {AREAS[city][p.id]}
                 </p>
-                <span className="whitespace-nowrap text-xs tabular-nums text-muted">{p.km}</span>
+                <span className="whitespace-nowrap text-sm tabular-nums text-muted">{p.km}</span>
               </div>
-              <p className="m-0 text-[13px] leading-snug text-muted">{w[`h2.finder.pin.${p.id + 1}.why`]}</p>
-              <span className={`self-start rounded-full px-2.5 py-1 text-xs font-extrabold ${chip(p.d)}`}>{w[`h2.finder.${p.d}`]}</span>
+              <p className="m-0 text-sm leading-snug text-muted">{w[`h2.finder.pin.${p.id + 1}.why`]}</p>
+              <span className={`self-start rounded-full px-2.5 py-1 text-sm font-extrabold ${chip(p.d)}`}>{w[`h2.finder.${p.d}`]}</span>
             </div>
           ))}
         {seen.length === 0 ? <p className="m-0 text-sm text-muted">{w["h2.finder.empty"]}</p> : null}

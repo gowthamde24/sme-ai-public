@@ -1,0 +1,554 @@
+/* ---------------------------------------------------------------------------------------------------------------------------------
+   PhonePreview (owner, 19 Nov 2026): wherever we SHOW a chat or a call as an example or a preview, it is drawn as a real phone screen of a modern flagship phone:
+   our own drawing (no logo, no copied shape): a tall 19.5:9 screen, thin even bezels, large rounded corners, a small punch-hole camera, a thin metal edge, a soft shadow, a status bar (time, signal, Wi-Fi, battery), a home indicator;
+   inside, native sizes (390 px logical width, 16 px body), a WhatsApp-style header, bubbles with time and ticks, the input bar. Light and dark. Crisp CSS/SVG only; the only motion is transform/opacity, inside prefers-reduced-motion: no-preference.
+   Variants: "full" (the whole phone; the landing's demos), "peek" (the top of a phone, open at the bottom: cards, the builder's preview, the plan card's words). On a PHONE (viewport up to 520 px) the frame goes away: the screen's own content is shown, never a phone inside a phone.
+   Palettes: --pp-* below; "auto" follows the page's theme.
+   --------------------------------------------------------------------------------------------------------------------------------- */
+.pp {
+  --pp-bezel: 9px;
+  --pp-edge: 2px;
+  --pp-radius: 56px;
+  --pp-w: 390px;
+  --pp-bg: #efeae2;
+  --pp-wall: #efeae2;
+  --pp-wall-dot: rgba(0, 0, 0, 0.035);
+  --pp-head: #f7f7f7;
+  --pp-head-line: rgba(0, 0, 0, 0.08);
+  --pp-ink: #111b21;
+  --pp-muted: #667781;
+  --pp-in: #ffffff;
+  --pp-in-ink: #111b21;
+  --pp-out: #d9fdd3;
+  --pp-out-ink: #111b21;
+  --pp-meta: #667781;
+  --pp-tick: #53bdeb;
+  --pp-chip: #ffffff;
+  --pp-input-bar: #f0f2f5;
+  --pp-input: #ffffff;
+  --pp-status-ink: #111b21;
+  --pp-home: rgba(17, 27, 33, 0.85);
+  --pp-bezel-color: #101113;
+  --pp-avatar: #c2410c;
+  --pp-avatar-ink: #ffffff;
+  --pp-cap-me: #ece7df;
+  position: relative;
+  width: 100%;
+  max-width: calc(var(--pp-w) + 2 * (var(--pp-bezel) + var(--pp-edge)));
+  margin-inline: auto;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Noto Sans", var(--v2-font-telugu, "Noto Sans Telugu"), var(--v2-font-devanagari, "Noto Sans Devanagari"), var(--v2-font-kannada, "Noto Sans Kannada"), "Noto Sans Devanagari", "Noto Sans Kannada", system-ui, sans-serif;
+  color: var(--pp-ink);
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+}
+.pp[data-pp-theme="dark"] {
+  --pp-bg: #0b141a;
+  --pp-wall: #0b141a;
+  --pp-wall-dot: rgba(255, 255, 255, 0.03);
+  --pp-head: #1f2c34;
+  --pp-head-line: rgba(255, 255, 255, 0.07);
+  --pp-ink: #e9edef;
+  --pp-muted: #8696a0;
+  --pp-in: #202c33;
+  --pp-in-ink: #e9edef;
+  --pp-out: #005c4b;
+  --pp-out-ink: #e9edef;
+  --pp-meta: #8696a0;
+  --pp-chip: #182229;
+  --pp-input-bar: #1f2c34;
+  --pp-input: #2a3942;
+  --pp-status-ink: #e9edef;
+  --pp-home: rgba(233, 237, 239, 0.85);
+  --pp-avatar: #c2410c;
+  --pp-cap-me: #26343c;
+}
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"]:not([data-theme="light"]) .pp[data-pp-theme="auto"] {
+    --pp-bg: #0b141a;
+    --pp-wall: #0b141a;
+    --pp-wall-dot: rgba(255, 255, 255, 0.03);
+    --pp-head: #1f2c34;
+    --pp-head-line: rgba(255, 255, 255, 0.07);
+    --pp-ink: #e9edef;
+    --pp-muted: #8696a0;
+    --pp-in: #202c33;
+    --pp-in-ink: #e9edef;
+    --pp-out: #005c4b;
+    --pp-out-ink: #e9edef;
+    --pp-meta: #8696a0;
+    --pp-chip: #182229;
+    --pp-input-bar: #1f2c34;
+    --pp-input: #2a3942;
+    --pp-status-ink: #e9edef;
+    --pp-home: rgba(233, 237, 239, 0.85);
+    --pp-avatar: #c2410c;
+    --pp-cap-me: #26343c;
+  }
+}
+[data-ui="v2"][data-theme="dark"] .pp[data-pp-theme="auto"] {
+  --pp-bg: #0b141a;
+  --pp-wall: #0b141a;
+  --pp-wall-dot: rgba(255, 255, 255, 0.03);
+  --pp-head: #1f2c34;
+  --pp-head-line: rgba(255, 255, 255, 0.07);
+  --pp-ink: #e9edef;
+  --pp-muted: #8696a0;
+  --pp-in: #202c33;
+  --pp-in-ink: #e9edef;
+  --pp-out: #005c4b;
+  --pp-out-ink: #e9edef;
+  --pp-meta: #8696a0;
+  --pp-chip: #182229;
+  --pp-input-bar: #1f2c34;
+  --pp-input: #2a3942;
+  --pp-status-ink: #e9edef;
+  --pp-home: rgba(233, 237, 239, 0.85);
+  --pp-avatar: #c2410c;
+  --pp-cap-me: #26343c;
+}
+
+/* the metal edge and the black bezel */
+.pp-frame {
+  box-sizing: border-box;
+  padding: var(--pp-bezel);
+  border: var(--pp-edge) solid transparent;
+  border-radius: var(--pp-radius);
+  background: linear-gradient(var(--pp-bezel-color), var(--pp-bezel-color)) padding-box, linear-gradient(150deg, #dfe2e7 0%, #8b9099 28%, #c9ccd2 52%, #6f737b 78%, #b4b8bf 100%) border-box;
+  box-shadow: 0 34px 60px -26px rgba(0, 0, 0, 0.5), 0 14px 26px -14px rgba(0, 0, 0, 0.35), 0 2px 5px rgba(0, 0, 0, 0.25);
+}
+.pp-screen {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  aspect-ratio: 390 / 844;
+  overflow: hidden;
+  border-radius: calc(var(--pp-radius) - var(--pp-bezel) - var(--pp-edge));
+  background: var(--pp-bg);
+  font-size: 16px;
+  line-height: 1.35;
+}
+/* the top of a phone, open at the bottom: no fixed height, no home bar */
+.pp[data-pp-variant="peek"] .pp-frame {
+  padding-bottom: 0;
+  border-bottom-width: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.12), 0 14px 22px -16px rgba(0, 0, 0, 0.35);
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+}
+.pp[data-pp-variant="peek"] .pp-screen {
+  aspect-ratio: auto;
+  min-height: 300px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.pp[data-pp-variant="peek"] .pp-home,
+.pp[data-pp-variant="peek"] .pp-input {
+  display: none;
+}
+
+/* the punch-hole camera, the status bar */
+.pp-cam {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  z-index: 3;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #2a2d36 0 18%, #05060a 45%);
+  box-shadow: 0 0 0 2px #14151a;
+}
+.pp-status {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: 42px;
+  padding: 12px 30px 0 32px;
+  background: var(--pp-head);
+  color: var(--pp-status-ink);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.pp-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.pp-status-icons svg {
+  display: block;
+  width: auto;
+  height: 13px;
+}
+
+/* the header (WhatsApp-style) */
+.pp-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 9px;
+  box-sizing: border-box;
+  min-height: 58px;
+  padding: 6px 12px 8px 8px;
+  border-bottom: 1px solid var(--pp-head-line);
+  background: var(--pp-head);
+}
+.pp-head svg {
+  flex: none;
+  color: var(--pp-ink);
+}
+.pp-avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--pp-avatar);
+  color: var(--pp-avatar-ink);
+  font-size: 17px;
+  font-weight: 700;
+}
+.pp-who {
+  min-width: 0;
+  flex: 1;
+}
+.pp-name {
+  overflow: hidden;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pp-sub {
+  margin: 1px 0 0;
+  color: var(--pp-muted);
+  font-size: 13px;
+  line-height: 1.2;
+}
+.pp-head-icons {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* the wall and the bubbles */
+.pp-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 5px;
+  box-sizing: border-box;
+  min-height: 0;
+  padding: 12px 10px 12px;
+  overflow: hidden;
+  background-color: var(--pp-wall);
+  background-image: radial-gradient(var(--pp-wall-dot) 1.2px, transparent 1.4px);
+  background-size: 18px 18px;
+}
+.pp[data-pp-variant="peek"] .pp-body {
+  justify-content: flex-start;
+}
+.pp-day {
+  align-self: center;
+  margin: 2px 0 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--pp-chip);
+  color: var(--pp-muted);
+  font-size: 12.5px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+}
+.pp-b {
+  position: relative;
+  max-width: 84%;
+  box-sizing: border-box;
+  padding: 7px 10px 5px;
+  border-radius: 10px;
+  font-size: 16px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+.pp-b[data-from="them"] {
+  align-self: flex-start;
+  border-top-left-radius: 2px;
+  background: var(--pp-in);
+  color: var(--pp-in-ink);
+}
+.pp-b[data-from="me"] {
+  align-self: flex-end;
+  border-top-right-radius: 2px;
+  background: var(--pp-out);
+  color: var(--pp-out-ink);
+}
+.pp-b p {
+  margin: 0;
+}
+/* the small tail of the first bubble of a run, like the real app: drawn with clip-path, the colour of the bubble */
+.pp-b[data-tail]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 9px;
+  height: 13px;
+  background: inherit;
+}
+.pp-b[data-tail][data-from="them"]::before {
+  left: -8px;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+.pp-b[data-tail][data-from="me"]::before {
+  right: -8px;
+  clip-path: polygon(0 0, 0 100%, 100% 0);
+}
+.pp-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  margin-top: 1px;
+  color: var(--pp-meta);
+  font-size: 11.5px;
+  line-height: 1.2;
+}
+.pp-meta svg {
+  display: block;
+  width: 16px;
+  height: 11px;
+  color: var(--pp-tick);
+}
+.pp-b[data-sent] .pp-meta svg {
+  color: var(--pp-meta);
+}
+
+/* a call, as the phone shows it */
+.pp-call {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+  padding: 26px 18px 18px;
+  background: linear-gradient(180deg, var(--pp-head), var(--pp-bg));
+  text-align: center;
+}
+.pp-call .pp-avatar {
+  width: 84px;
+  height: 84px;
+  font-size: 34px;
+}
+.pp-call-name {
+  margin: 10px 0 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+.pp-call-sub {
+  margin: 0;
+  color: var(--pp-muted);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.pp-lines {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+  margin-top: 14px;
+}
+.pp-captions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 4px 11px 4px 9px;
+  border-radius: 999px;
+  background: var(--pp-chip);
+  color: var(--pp-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+}
+.pp-captions::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22a55b;
+}
+/* live captions: the assistant is the OTHER side (left, a neutral bubble), the person is on the right; each line says who is speaking */
+.pp-line {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-sizing: border-box;
+  max-width: 88%;
+  padding: 8px 12px 9px;
+  border-radius: 16px;
+  font-size: 15.5px;
+  text-align: left;
+}
+.pp-line[data-from="them"] {
+  align-self: flex-start;
+  border-bottom-left-radius: 5px;
+  background: var(--pp-in);
+  color: var(--pp-in-ink);
+}
+.pp-line[data-from="me"] {
+  align-self: flex-end;
+  border-bottom-right-radius: 5px;
+  background: var(--pp-cap-me);
+  color: var(--pp-ink);
+}
+.pp-line-who {
+  color: var(--pp-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.pp-call-end {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  margin-top: 14px;
+  border-radius: 50%;
+  background: #e5484d;
+  color: #fff;
+}
+
+/* the input bar and the home indicator */
+.pp-input {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  padding: 8px 10px 10px;
+  background: var(--pp-input-bar);
+}
+.pp-input-box {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 21px;
+  background: var(--pp-input);
+  color: var(--pp-muted);
+  font-size: 16px;
+}
+.pp-mic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--pp-avatar);
+  color: #fff;
+}
+.pp-home {
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  width: 134px;
+  height: 5px;
+  margin-left: -67px;
+  border-radius: 3px;
+  background: var(--pp-home);
+}
+
+/* a PHONE shows the screen's own content: no frame, no camera, no status bar, no home bar (never a phone inside a phone) */
+@media (max-width: 520px) {
+  /* data-pp-keep (the landing page): the frame stays at every width, so the demo is the same phone on every screen (owner, 19 Nov 2026: the same page in all layouts) */
+  .pp:not([data-pp-keep])[data-pp-variant="full"],
+  .pp:not([data-pp-keep])[data-pp-variant="peek"] {
+    max-width: 420px;
+  }
+  .pp:not([data-pp-keep]) .pp-frame {
+    padding: 0;
+    border: 0;
+    border-radius: 18px;
+    background: none;
+    box-shadow: 0 6px 18px -10px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--pp-head-line);
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .pp:not([data-pp-keep]) .pp-screen,
+  .pp:not([data-pp-keep])[data-pp-variant="peek"] .pp-screen {
+    aspect-ratio: auto;
+    min-height: 0;
+    border-radius: 18px;
+  }
+  .pp:not([data-pp-keep]) .pp-cam,
+  .pp:not([data-pp-keep]) .pp-status,
+  .pp:not([data-pp-keep]) .pp-home {
+    display: none;
+  }
+  .pp:not([data-pp-keep])[data-pp-variant="full"] .pp-body {
+    min-height: 360px;
+  }
+  .pp:not([data-pp-keep])[data-pp-variant="peek"] .pp-body {
+    min-height: 0;
+  }
+}
+
+/* the bubbles come up one after another: transform and opacity only */
+@media (prefers-reduced-motion: no-preference) {
+  .pp[data-pp-animate] .pp-b,
+  .pp[data-pp-animate] .pp-line,
+  .pp[data-pp-animate] .pp-day {
+    animation: pp-rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .pp[data-pp-animate] .pp-body > :nth-child(2),
+  .pp[data-pp-animate] .pp-lines > :nth-child(2) {
+    animation-delay: 0.35s;
+  }
+  .pp[data-pp-animate] .pp-body > :nth-child(3),
+  .pp[data-pp-animate] .pp-lines > :nth-child(3) {
+    animation-delay: 0.7s;
+  }
+  .pp[data-pp-animate] .pp-body > :nth-child(4),
+  .pp[data-pp-animate] .pp-lines > :nth-child(4) {
+    animation-delay: 1.05s;
+  }
+  .pp[data-pp-animate] .pp-body > :nth-child(5),
+  .pp[data-pp-animate] .pp-lines > :nth-child(5) {
+    animation-delay: 1.4s;
+  }
+  .pp[data-pp-animate] .pp-body > :nth-child(n + 6),
+  .pp[data-pp-animate] .pp-lines > :nth-child(n + 6) {
+    animation-delay: 1.75s;
+  }
+}
+@keyframes pp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* the dark phone: the time under a bubble and the input's word keep 4.5:1 on their dark backgrounds (the public page's contrast audit) */
+.pp[data-pp-theme="dark"] .pp-b[data-from="me"] .pp-meta { color: rgba(233, 237, 239, 0.82); }
+.pp[data-pp-theme="dark"] .pp-input-box { color: #b4bfc6; }

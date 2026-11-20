@@ -19,7 +19,9 @@
 @import "./base.css";
 @import "./orb.css";
 @import "./home2.css";
+@import "./home3.css";
 @import "./live.css";
+@import "./phone-preview.css";
 
 @theme {
   /* the hero headline: tight in Latin, Telugu and Hindi; base.css raises it for Kannada */

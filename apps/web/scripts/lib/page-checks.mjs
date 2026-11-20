@@ -114,7 +114,8 @@ export const TEXT_AND_TARGETS = (phone) => `(() => { ${HELPERS}
     texts++;
     const cs = getComputedStyle(el), fs = parseFloat(cs.fontSize), bold = parseInt(cs.fontWeight, 10) >= 700;
     minFont = Math.min(minFont, fs);
-    if (fs < 14) small.push(label(el) + ' ' + fs + 'px');
+    // text drawn INSIDE an illustration (data-illustration: a phone screen at its native phone sizes, the animated stage's chips) is part of a picture, not page copy: it keeps its own sizes; it still has to pass the contrast rule below
+    if (fs < 14 && !el.closest('[data-illustration]')) small.push(label(el) + ' ' + fs + 'px');
     if (el.closest(':disabled')) continue; // inactive controls are exempt from the contrast rule
     const bg = backdrop(el);
     const c = rgba(cs.color); c[3] *= opacityOf(el);

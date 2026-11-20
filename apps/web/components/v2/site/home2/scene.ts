@@ -85,7 +85,7 @@ export function spectrum(ctx: CanvasRenderingContext2D, cx: number, cy: number, 
     const nz = 0.5 + 0.5 * Math.sin(i * 0.73 + t * 7.1) * Math.sin(i * 0.29 - t * 4.3) + 0.25 * Math.sin(i * 1.9 + t * 11);
     const len = (2 + amp * Math.max(0.08, nz)) * boot;
     const al = 0.25 + 0.6 * Math.max(0, nz);
-    ctx.strokeStyle = `rgba(${i % 2 ? "255,119,60" : "236,72,110"},${al})`;
+    ctx.strokeStyle = `rgba(${i % 2 ? "194,65,12" : "194,65,12"},${al})`;
     ctx.beginPath();
     ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0);
     ctx.lineTo(cx + Math.cos(a) * (r0 + len), cy + Math.sin(a) * (r0 + len));

@@ -1,22 +1,25 @@
 import { JsonLd } from "@/components/v2/site/JsonLd";
-import { HomeV2 } from "@/components/v2/site/home2/HomeV2";
+import { homeEarly } from "@/components/v2/site/home2/early";
+import { HomeMain } from "@/components/v2/site/home/HomeMain";
 import { hasWaitlist, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { BRAND_NAME } from "@/design/brand";
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { PUBLIC_URL } from "@/lib/seo/site";
+import { startEntry } from "@/lib/site/entry";
+import { siteTrialCopy } from "@/lib/screens/flag";
 import { sitePath } from "@/lib/site/paths";
 
 /**
- * The home page: landing v2 (job landing-v2; the owner approved the design on 6 Nov 2026), in components/v2/site/home2/HomeV2.tsx: the hero with its stage and Try it, the seven greetings, Hear a call, the Lead Finder radar,
- * the evening stand-up, the journey after the call, the business number, the leak, the plans, the questions and the closing form, then the footer with the dot wordmark (SiteFooter on the home page). Each moving scene is a lazy
- * island rendered on the server, so the page reads fully without script. Every word is a string of i18n/strings/site.json (`h2.*`).
+ * The home page (19 Nov 2026, owner: "we don't need to mention each and every business"; one page for every width): components/v2/site/home/HomeMain.tsx, then the home footer. Every word is a string of i18n/strings/site.json (`h3.*`, `pp.*`, `h2.plans.*`, `h2.join.*`).
  */
 export function HomePage({ t, lang, waitlist }: { t: SiteT; lang: Lang; waitlist?: WaitlistAction }) {
+  // where the page's buttons lead: the closing early-access form (`#demo`), or sign-up (website mode and the trial copy say so in lib/site/entry.ts)
+  const start = siteTrialCopy() ? startEntry(t, lang, t("h2.later.start"), { hasForm: hasWaitlist(waitlist) }) : homeEarly(t, lang);
   return (
     <>
-      <HomeV2 t={t} lang={lang} hasForm={hasWaitlist(waitlist)} waitlist={waitlist} />
+      <HomeMain t={t} lang={lang} start={start} hasForm={hasWaitlist(waitlist)} waitlist={waitlist} />
       <JsonLd
         data={{
           "@context": "https://schema.org",

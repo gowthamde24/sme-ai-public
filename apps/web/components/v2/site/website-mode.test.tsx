@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { htmlText } from "@/test/html-text";
 
-vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
+vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars", teluguFontVariable: "te-font" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
-vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, HeroStage: (await import("./home2/HeroStage")).HeroStage, CallDemo: (await import("./home2/CallDemo")).CallDemo, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, StandupTable: (await import("./home2/StandupTable")).StandupTable, Journey: (await import("./home2/Journey")).Journey, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc, BrandDots: (await import("./home2/BrandDots")).BrandDots }));
+vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, HeroStage: (await import("./home2/HeroStage")).HeroStage, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc, BrandDots: (await import("./home2/BrandDots")).BrandDots }));
 
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -55,7 +55,7 @@ describe("website mode: the public pages (job DQ)", () => {
     expect(html).toContain('data-part="waitlist"');
     expect(hrefs(html)).toContain("#demo");
     // the home page's closing form has its own heading (landing v2); the other pages keep "Join early access"
-    expect(text(html)).toContain(siteDict(lang)[target.kind === "home" ? "h2.join.title" : "demo.title"]);
+    expect(text(html)).toContain(siteDict(lang)[target.kind === "home" ? "h3.final.t" : "demo.title"]);
   });
 
   it("the plans page has no form of its own: its buttons go to the contact page's", () => {
