@@ -69,6 +69,12 @@ FLAGS_BEFORE=""
 API_SETTINGS_DIR="deploy/settings/staging"
 . deploy/api_guard.sh
 if [ "$what" = "api" ] || [ "$what" = "all" ]; then guard_before "$PROJECT_ID" "$REGION"; fi   # (read-only, so a dry run prints the command the real run will use)
+# the WEB and the WORKER are declared too (deploy/settings/staging/web.env, worker.env; deploy/drift.py, 20 Nov 2026): a hand edit or a lost switch is found BEFORE the deploy, a change meant for this deploy is named in ALLOW_FLAG_CHANGE
+for resource in web worker; do
+  if [ "$what" = "$resource" ] || [ "$what" = "all" ]; then
+    python3 deploy/drift.py check staging "$resource" "$PROJECT_ID" "$REGION" --allow "${ALLOW_FLAG_CHANGE:-}" || { echo "STOP: the declared settings in deploy/settings/staging/$resource.env and the live $resource differ. A hand edit: take it into the file (python3 deploy/drift.py snapshot staging $resource ...) or change it back; a change meant for this deploy: name it in ALLOW_FLAG_CHANGE." >&2; exit 3; }
+  fi
+done
 
 # public values only
 export API_URL="https://sme-api-$PROJECT_NUMBER.$REGION.run.app"
