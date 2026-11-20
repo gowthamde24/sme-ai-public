@@ -35,7 +35,7 @@ const HERO_KEYS = [
   "h2.hear.on",
 ];
 const FINDER_KEYS = [...["city", "near", "checked", "call", "ask", "skip", "list", "of", "empty"].map((x) => `h2.finder.${x}`), ...[1, 2, 3, 4].flatMap((i) => [`h2.finder.pin.${i}.what`, `h2.finder.pin.${i}.why`])];
-const LEAK_KEYS = [...["enq", "miss", "buy", "avg"].map((x) => `h2.leak.${x}`), ...["q", "sub", "s1", "s2", "s3", "s4", "warm", "cold", "with", "of", "note"].map((x) => `h3.leak.${x}`)];
+const LEAK_KEYS = [...["enq", "miss", "buy", "avg", "in"].map((x) => `h2.leak.${x}`), ...["q", "sub", "s1", "s2", "s3", "s4", "warm", "cold", "with", "of", "note"].map((x) => `h3.leak.${x}`)];
 
 /** The English (or Hindi, Kannada) meaning under a Telugu line of the sample phones; none on the Telugu page, where the line is already in the reader's language. */
 const Gloss = ({ lang, text }: { lang: Lang; text: string }) => (lang === "te" ? null : <span className="h3-gloss">{text}</span>);

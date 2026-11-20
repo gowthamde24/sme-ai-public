@@ -50,7 +50,7 @@ const ROADS: [number, number][][] = [
 ];
 /** Where the sweep is: its angle, and whether this is a fresh sweep (every third), when the found list fills again from empty. */
 export function sweepAt(t: number, since: number): { a: number; fresh: boolean } {
-  const A = Math.max(0, t - since) * 0.55;
+  const A = Math.max(0, t - since) * 1.1;
   const cyc = Math.floor(A / TAU);
   return { a: A - cyc * TAU, fresh: cyc % 3 === 0 };
 }
@@ -180,7 +180,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
   const names = AREAS[state.city];
   for (const p of PINS) {
     if (st.fresh && a < p.ang) continue;
-    const age = ((((a - p.ang) % TAU) + TAU) % TAU) / 0.55;
+    const age = ((((a - p.ang) % TAU) + TAU) % TAU) / 1.1;
     const col = p.d === "call" ? "194,65,12" : p.d === "ask" ? ink : "169,165,160";
     if (age < 1.6 && !look.calm) {
       ctx.strokeStyle = `rgba(${col},${0.7 * (1 - age / 1.6)})`;

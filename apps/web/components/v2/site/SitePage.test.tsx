@@ -142,7 +142,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     for (const x of ["One call. One WhatsApp. One clear summary.", "It answers in your customer's language", "Then it follows up on WhatsApp", "You see what it found out", "Phone call, 1 min 20 s", "EAMCET weekend batch", "Demo class, Saturday 10 am"]) expect(text(how), x).toContain(x);
     expect(how).toContain("EAMCET weekend batch details ఇవిగో");
   });
-  it("the late call-backs section: a question, four labelled sliders (average sale too), two labelled groups with counts, the maths as four steps, the contrast with a bar; the Lead Finder: built, the owner contacts them, no 'we call them'", () => {
+  it("the late call-backs section: a question, four labelled sliders (average sale too), today's pipe with its three labelled counts (start, end, drain), the maths as four steps with arrows, the contrast with a bar; the Lead Finder: built, the owner contacts them, no 'we call them'", () => {
     const calc = home.match(/<section id="calc"[\s\S]*?<\/section>/)![0];
     expect(text(calc)).toContain("How much are late call-backs costing you?");
     expect(text(calc)).toContain("Move the sliders to your own numbers.");
@@ -150,7 +150,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     for (const id of ["h2-enq", "h2-miss", "h2-buy", "h2-avg"]) expect(calc).toContain(`for="${id}"`);
     expect(calc).toMatch(/id="h2-avg"[^>]*min="500"[^>]*max="50000"/);
     expect(calc.match(/data-leak-step="\d"/g)).toHaveLength(4);
-    for (const x of ["150", "enquiries a month", "60", "not called back in 5 minutes", "6", "of them might have bought", "\u20b948,000", "a month walking away", "90", "called back in time", "went cold", "every enquiry gets an answer in seconds: 150 of 150", "Your estimate, not a promise."]) expect(text(calc), x).toContain(x);
+    for (const x of ["150", "enquiries a month", "60", "not called back in 5 minutes", "6", "of them might have bought", "\u20b948,000", "a month walking away", "Enquiries coming in", "90", "called back in time", "went cold", "every enquiry gets an answer in seconds: 150 of 150", "Your estimate, not a promise."]) expect(text(calc), x).toContain(x);
     expect(calc).toContain('class="h3-leak-bar"');
     expect(calc.match(/<canvas/g)).toHaveLength(1);
     const finder = home.match(/<section id="finder"[\s\S]*?<\/section>/)![0];
