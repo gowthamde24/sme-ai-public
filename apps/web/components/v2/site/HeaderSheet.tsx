@@ -1,20 +1,18 @@
 "use client";
 
-import { CircleHelp, CreditCard, LogIn, Menu, MessageSquare, Radar, X } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import { createPortal } from "react-dom";
 
-export type SheetItem = { href: string; label: string; icon: "how" | "finder" | "plans" | "help"; here?: boolean };
-
-const ICONS = { how: MessageSquare, finder: Radar, plans: CreditCard, help: CircleHelp } as const;
+/** The icons are drawn by the server (SiteHeader) and passed in, so the page's script carries no icon code for the menu. */
+export type SheetItem = { href: string; label: string; icon: React.ReactNode; here?: boolean };
 
 /**
  * The menu of a phone (under 900 px): a button in the bar that opens a SHEET with the sections and small icons, the sign-in link, the language and theme controls (passed in as children, already drawn on the server) and a full-width
  * call to action at the bottom. A dialog: the focus goes to the close button and stays inside (Tab and Shift+Tab loop), Escape closes it and returns the focus to the menu button, the page behind does not scroll, a tap on a link or
  * on the dark backdrop closes it. Light and dark follow the page's tokens.
  */
-export function HeaderSheet({ label, closeLabel, items, login, cta, children }: { label: string; closeLabel: string; items: SheetItem[]; login?: { href: string; label: string }; cta: { href: string; label: string }; children?: React.ReactNode }) {
+export function HeaderSheet({ label, closeLabel, items, login, cta, icons, children }: { label: string; closeLabel: string; items: SheetItem[]; icons: { menu: React.ReactNode; close: React.ReactNode; login: React.ReactNode }; login?: { href: string; label: string }; cta: { href: string; label: string }; children?: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
   // the sheet is drawn into the v2 root (not inside the header: a header with a blurred background would clip a fixed panel to its own box)
   const [root, setRoot] = React.useState<Element | null>(null);
@@ -62,7 +60,7 @@ export function HeaderSheet({ label, closeLabel, items, login, cta, children }: 
   return (
     <>
       <button ref={button} type="button" aria-expanded={open} aria-haspopup="dialog" aria-controls={open ? "site-menu" : undefined} onClick={() => setOpen(true)} className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg border border-edge bg-surface text-ink hover:bg-surface-2 min-[900px]:hidden" data-part="menu-button">
-        <Menu className="size-5" aria-hidden="true" />
+        {icons.menu}
         <span className="sr-only">{label}</span>
       </button>
       {open && root
@@ -73,18 +71,17 @@ export function HeaderSheet({ label, closeLabel, items, login, cta, children }: 
             <div className="h3-sheet-top">
               <span className="h3-sheet-title">{label}</span>
               <button type="button" onClick={close} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-edge bg-surface text-ink" data-part="menu-close">
-                <X className="size-5" aria-hidden="true" />
+                {icons.close}
                 <span className="sr-only">{closeLabel}</span>
               </button>
             </div>
             <nav aria-label={label}>
               <ul className="h3-sheet-list">
                 {items.map((n) => {
-                  const Icon = ICONS[n.icon];
                   return (
                     <li key={n.href}>
                       <Link href={n.href} onClick={() => setOpen(false)} aria-current={n.here ? "page" : undefined} className="h3-sheet-link">
-                        <Icon size={20} strokeWidth={2.1} aria-hidden="true" />
+                        {n.icon}
                         {n.label}
                       </Link>
                     </li>
@@ -93,7 +90,7 @@ export function HeaderSheet({ label, closeLabel, items, login, cta, children }: 
                 {login ? (
                   <li>
                     <Link href={login.href} onClick={() => setOpen(false)} className="h3-sheet-link">
-                      <LogIn size={20} strokeWidth={2.1} aria-hidden="true" />
+                      {icons.login}
                       {login.label}
                     </Link>
                   </li>

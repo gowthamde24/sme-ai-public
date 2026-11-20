@@ -1,3 +1,4 @@
+import { CircleHelp, CreditCard, LogIn, Menu, MessageSquare, Radar, X } from "lucide-react";
 import Link from "next/link";
 
 import { SiteLangSelect } from "@/components/v2/controls/SiteLangSelect";
@@ -14,6 +15,9 @@ import { startEntry } from "@/lib/site/entry";
 import { websiteOnly } from "@/lib/site/mode";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
 import { waitlistMode } from "@/lib/waitlist/mode";
+
+/** The menu sheet's icons, drawn here on the server (How it works, Lead Finder, Pricing, FAQ). */
+const NAV_ICONS = [MessageSquare, Radar, CreditCard, CircleHelp].map((I, i) => <I key={i} size={20} strokeWidth={2.1} aria-hidden="true" />);
 
 const link = "inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 text-[15px] font-semibold text-ink hover:bg-surface-2";
 
@@ -75,9 +79,10 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
           <HeaderSheet
             label={t("nav.menu")}
             closeLabel={t("h3.menu.close")}
-            items={nav.map((n, i) => ({ href: n.href, label: n.label, here: n.here, icon: (["how", "finder", "plans", "help"] as const)[i] ?? "help" }))}
+            items={nav.map((n, i) => ({ href: n.href, label: n.label, here: n.here, icon: NAV_ICONS[i] ?? NAV_ICONS[3] }))}
             login={web ? undefined : { href: "/login", label: t("h2.nav.login") }}
             cta={{ href: early.href, label: t("h3.menu.cta") }}
+            icons={{ menu: <Menu className="size-5" aria-hidden="true" />, close: <X className="size-5" aria-hidden="true" />, login: <LogIn size={20} strokeWidth={2.1} aria-hidden="true" /> }}
           >
             <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
             <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />

@@ -4,15 +4,15 @@ import { afterEach, describe, expect, it } from "vitest";
 import { HeaderSheet } from "./HeaderSheet";
 
 const items = [
-  { href: "#how", label: "How it works", icon: "how" as const },
-  { href: "#finder", label: "Lead Finder", icon: "finder" as const },
-  { href: "#plans", label: "Plans", icon: "plans" as const },
+  { href: "#how", label: "How it works", icon: <i data-i="how" /> },
+  { href: "#finder", label: "Lead Finder", icon: <i data-i="finder" /> },
+  { href: "#plans", label: "Plans", icon: <i data-i="plans" /> },
 ];
 const mount = () =>
   render(
     <div data-ui="v2">
       <header>
-        <HeaderSheet label="Menu" closeLabel="Close the menu" items={items} login={{ href: "/login", label: "Log in" }} cta={{ href: "#demo", label: "Get free early access" }}>
+        <HeaderSheet label="Menu" closeLabel="Close the menu" items={items} login={{ href: "/login", label: "Log in" }} cta={{ href: "#demo", label: "Get free early access" }} icons={{ menu: <i />, close: <i />, login: <i /> }}>
           <button type="button">Language</button>
         </HeaderSheet>
       </header>
@@ -30,7 +30,7 @@ describe("the phone menu sheet", () => {
     const dialog = await screen.findByRole("dialog");
     expect(dialog.getAttribute("aria-modal")).toBe("true");
     for (const x of ["How it works", "Lead Finder", "Plans", "Log in", "Language", "Get free early access"]) expect(dialog.textContent, x).toContain(x);
-    expect(dialog.querySelectorAll("li svg").length).toBe(4); // an icon on every line
+    expect(dialog.querySelectorAll("li i").length).toBe(4); // an icon on every line (3 sections + the sign-in; drawn by the server and passed in)
     expect(dialog.querySelector(".h3-btn-block")).not.toBeNull();
   });
   it("moves the focus into the sheet, keeps it there (Tab and Shift+Tab loop), closes on Escape and gives the focus back to the menu button", async () => {
