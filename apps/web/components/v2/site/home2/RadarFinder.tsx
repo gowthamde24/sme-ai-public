@@ -266,13 +266,13 @@ export function RadarFinder({ w }: { w: W }) {
           {rows.map((p) => (
             <li key={`${city}-${p.id}`} className="h4-fc" data-found={p.id}>
               <p className="h4-fc-top">
-                <b>
-                  {w[`h2.finder.pin.${p.id + 1}.what`]}, {AREAS[city][p.id]}
-                </b>
+                <span>
+                  <b>
+                    {w[`h2.finder.pin.${p.id + 1}.what`]}, {AREAS[city][p.id]}
+                  </b>{" "}
+                  <span className="h4-fc-km">{p.km}</span>
+                </span>
                 <span className={`h4-chip ${p.d === "call" ? "h4-chip-call" : "h4-chip-ask"}`}>{w[`h2.finder.${p.d}`]}</span>
-              </p>
-              <p className="h4-fc-why">
-                <span className="h4-fc-km">{p.km}</span>
               </p>
             </li>
           ))}
