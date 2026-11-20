@@ -63,12 +63,16 @@ def test_a_v4_persona_is_used_as_it_is() -> None:
     assert sent["model"] == V4 and sent["speaker"] == "aditya_hi_conversational"
 
 
-@pytest.mark.parametrize(("language", "speaker"), [("ml", "ritu"), ("ml", None), ("ta", "priya"), ("ta", None), ("ml", "aditya")])
-def test_a_language_with_no_listed_sarvam_v4_voice_keeps_v3_for_that_call(language: str, speaker: str | None) -> None:
+@pytest.mark.parametrize(("language", "speaker", "gender"), [("ml", "ritu", "female"), ("ml", None, "female"), ("ta", "priya", "female"), ("ta", None, "female"), ("ml", "aditya", "male")])
+def test_a_language_and_gender_with_no_listed_sarvam_v4_voice_keeps_v3_for_that_call(language: str, speaker: str | None, gender: str) -> None:
     sent = say(V4, language, speaker=speaker)
     assert sent["model"] == "bulbul:v3", language
     assert sent.get("speaker") == speaker, "the v3 speaker it was given (or none: v3's own default)"
-    assert not any(v.provider == "sarvam" and v.listed and v.language == language for v in default_config().catalogue.values())
+    assert not any(v.provider == "sarvam" and v.listed and v.language == language and v.gender == gender for v in default_config().catalogue.values())
+
+
+def test_tamil_men_have_listed_sarvam_v4_voices_so_a_v3_man_maps_to_the_recommended_one() -> None:
+    assert say(V4, "ta", speaker="aditya")["speaker"] == "gokul_ta_narration" and say(V4, "ta", speaker="aditya")["model"] == V4
 
 
 def test_a_v3_name_we_cannot_place_on_v4_is_spoken_by_v3_not_refused() -> None:

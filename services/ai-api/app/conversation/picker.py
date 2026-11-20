@@ -88,7 +88,8 @@ class LanguageOut(_Strict):
     default_id: str   # the default voice of the workspace's gender
     chosen_id: str | None
     active_id: str
-    voices: list[VoiceOut]   # the SHORT LIST (two voices of each gender); the screen shows the workspace's
+    voices: list[VoiceOut]   # the voices of this language that match the filters (all of them without any): women first, the default first; the screen shows the workspace's gender
+    total: int = 0           # how many voices the language has before the filters (so the screen can say "12 of 80")
 
 
 class VoicesOut(_Strict):
@@ -103,10 +104,22 @@ def _repo(runtime: Runtime) -> WorkspaceRepository:
 
 
 def _voice(c: CatalogueVoice, chosen: str | None) -> VoiceOut:
-    return VoiceOut(id=c.id, name=c.name, label=c.label, gender=c.gender, tags=list(c.tags), recommended=c.recommended, default=c.default, chosen=c.id == chosen, sample_url=SAMPLE_URL.format(id=c.id), sample_text=sample_text(c.language), provider=c.provider, sample_ready=c.sample_file.is_file(), to_confirm=c.to_confirm)  # type: ignore[arg-type]
+    return VoiceOut(id=c.id, name=c.name, label=c.label, gender=c.gender, tags=list(c.tags), recommended=c.recommended, default=c.default, chosen=c.id == chosen, sample_url=SAMPLE_URL.format(id=c.id), sample_text=sample_text(c.language), provider=c.provider, sample_ready=c.sample_ready, to_confirm=c.to_confirm)  # type: ignore[arg-type]
 
 
-def out(config: VoiceConfig, choices: dict[str, str], gender: str = "female") -> VoicesOut:
+def matches(c: CatalogueVoice, gender: str | None, provider: str | None, q: str | None) -> bool:
+    """The list filters of GET /voices: the voice's gender, its provider, and a case-insensitive search over its id, name, label and tags."""
+    if gender is not None and c.gender != gender:
+        return False
+    if provider is not None and c.provider != provider:
+        return False
+    if q:
+        needle = q.strip().lower()
+        return needle in f"{c.id} {c.name} {c.label} {' '.join(c.tags)}".lower()
+    return True
+
+
+def out(config: VoiceConfig, choices: dict[str, str], gender: str = "female", *, only_gender: str | None = None, provider: str | None = None, q: str | None = None) -> VoicesOut:
     """The catalogue with this workspace's choices. A stored choice that is not (any longer) a catalogue voice of its language AND of the workspace's gender is reported as no choice."""
     rows: list[LanguageOut] = []
     for lang in CALL_LANGUAGES:
@@ -116,7 +129,8 @@ def out(config: VoiceConfig, choices: dict[str, str], gender: str = "female") ->
         picked = config.catalogue.get(choices.get(lang, ""))
         chosen = picked.id if picked is not None and picked.language == lang and picked.gender == gender and picked.listed else None
         active = config.resolve(lang, chosen, gender).id
-        rows.append(LanguageOut(language=lang, default_id=default.id, chosen_id=chosen, active_id=active, voices=[_voice(c, chosen) for c in config.voices_of(lang, listed_only=True)]))  # type: ignore[arg-type]
+        listed = config.voices_of(lang, listed_only=True)
+        rows.append(LanguageOut(language=lang, default_id=default.id, chosen_id=chosen, active_id=active, voices=[_voice(c, chosen) for c in listed if matches(c, only_gender, provider, q)], total=len(listed)))  # type: ignore[arg-type]
     return VoicesOut(gender=gender, languages=rows)  # type: ignore[arg-type]
 
 
@@ -137,9 +151,16 @@ def gender_of(runtime: Runtime, ctx: TenantContext) -> str:
 
 
 @router.get("/voices", response_model=VoicesOut)
-def get_voices(ctx: AnyMember, runtime: RuntimeDep) -> VoicesOut:
+def get_voices(
+    ctx: AnyMember,
+    runtime: RuntimeDep,
+    voice_gender: Annotated[Gender | None, Query(alias="gender")] = None,
+    provider: Annotated[Literal["cartesia", "sarvam"] | None, Query()] = None,
+    q: Annotated[str | None, Query(max_length=40)] = None,
+) -> VoicesOut:
+    """`?gender=female|male&provider=cartesia|sarvam&q=text` filter the voices of every language (a long list: 200+ voices); no filter returns them all. `gender` here is the voice filter, not the workspace's voice type."""
     choices, gender = voice_state(runtime, ctx)
-    return out(default_config(), choices, gender)
+    return out(default_config(), choices, gender, only_gender=voice_gender, provider=provider, q=q)
 
 
 @router.put("/voices", response_model=VoicesOut)

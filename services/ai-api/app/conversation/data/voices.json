@@ -1,5 +1,5 @@
 {
- "$comment": "The voices a workspace owner can choose from for their assistant on calls and in previews (job voice-picker, owner decision 28 Oct; Bulbul v3 is dropped). Data, not code: the CATALOGUE is the list of allowed voices, one entry marked default per language (the default is what speaks until the owner chooses). Each entry names its Cartesia voice and a Bulbul v4 Flash FALLBACK voice of the SAME gender (checked on load). Ids are '<language>-<name>'. Add or remove a voice here and render its sample with scripts/voice_catalogue_samples.py. Labels are plain words for the screen. Voice system v2 (29 Oct 2026): native Cartesia voices of both genders in te, en, hi, kn, ta, ml, built by scripts/voice_catalogue_build.py; tags in plain words; recommended = the best three by a speech-to-text round trip. Voice list of 20 Nov 2026: `listed` marks the SHORT LIST the owner sees (two women and two men per language where the catalogue has them); `provider` is cartesia | sarvam (the engine that speaks the voice first; the other one is its fallback of the same language and gender); every listed voice is `to_confirm_by_native_listener` (chosen by documented gender and style, nobody has listened yet). Unlisted entries stay so a stored choice never breaks, but they are ignored (the default speaks).",
+ "$comment": "The voices a workspace owner can choose from for their assistant on calls and in previews (job voice-picker, owner decision 28 Oct; Bulbul v3 is dropped). Data, not code: the CATALOGUE is the list of allowed voices, one entry marked default per language (the default is what speaks until the owner chooses). Each entry names its Cartesia voice and a Bulbul v4 Flash FALLBACK voice of the SAME gender (checked on load). Ids are '<language>-<name>'. Add or remove a voice here and render its sample with scripts/voice_catalogue_samples.py. Labels are plain words for the screen. Voice system v2 (29 Oct 2026): native Cartesia voices of both genders in te, en, hi, kn, ta, ml, built by scripts/voice_catalogue_build.py; tags in plain words; recommended = the best three by a speech-to-text round trip. Voice list of 20 Nov 2026: `listed` marks the SHORT LIST the owner sees (two women and two men per language where the catalogue has them); `provider` is cartesia | sarvam (the engine that speaks the voice first; the other one is its fallback of the same language and gender); every listed voice is `to_confirm_by_native_listener` (chosen by documented gender and style, nobody has listened yet). Unlisted entries stay so a stored choice never breaks, but they are ignored (the default speaks). 21 Nov 2026 (owner: \"we also need all those from Sarvam and Cartesia\"): EVERY voice is listed, the 45 Cartesia voices of scripts/voice_catalogue_build.py and every Bulbul v4 Flash speaker documented for te, hi, kn, en and ta (docs.sarvam.ai/api/api-guides-tutorials/text-to-speech/voices): `gender_source: name` = the docs state no gender, it is read from the speaker's first name and must be confirmed by a listener. Each Sarvam voice has the Cartesia default of its language and gender behind it. Marathi has Sarvam speakers but no Cartesia voice to back them, so none is added; Malayalam has no Bulbul v4 Flash speaker.",
  "first_audio_timeout_ms": 800,
  "cooldown_s": 30,
  "catalogue": [
@@ -29,7 +29,7 @@
     "label": "kavitha"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "te-deepthi",
@@ -56,7 +56,7 @@
     "label": "kavitha"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "te-bhavani",
@@ -83,7 +83,7 @@
     "label": "kavitha"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "te-divya",
@@ -110,7 +110,7 @@
     "label": "kavitha"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "te-ramya",
@@ -166,7 +166,7 @@
     "label": "kavitha"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "te-shanti",
@@ -194,7 +194,7 @@
     "label": "kavitha"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "te-charan",
@@ -251,7 +251,7 @@
     "label": "tarun"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "te-vikram",
@@ -279,7 +279,7 @@
     "label": "tarun"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "en-skylar",
@@ -306,7 +306,7 @@
     "label": "shalini"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "en-gemma",
@@ -333,7 +333,7 @@
     "label": "shalini"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "en-jacqueline",
@@ -361,7 +361,7 @@
     "label": "shalini"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "en-katie",
@@ -389,7 +389,7 @@
     "label": "shalini"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "en-janvi",
@@ -473,7 +473,7 @@
     "label": "shubh"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "en-archie",
@@ -501,7 +501,7 @@
     "label": "shubh"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "en-jameson",
@@ -528,7 +528,7 @@
     "label": "shubh"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "en-carson",
@@ -556,7 +556,7 @@
     "label": "shubh"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "hi-riva",
@@ -583,7 +583,7 @@
     "label": "kavya"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "hi-siya",
@@ -612,7 +612,7 @@
     "label": "kavya"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "hi-sana",
@@ -639,7 +639,7 @@
     "label": "kavya"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "hi-meera",
@@ -667,7 +667,7 @@
     "label": "kavya"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "hi-esha",
@@ -695,7 +695,7 @@
     "label": "kavya"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "hi-sanya",
@@ -780,7 +780,7 @@
     "label": "kabir"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "hi-sagar",
@@ -807,7 +807,7 @@
     "label": "kabir"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "hi-atharv",
@@ -836,7 +836,7 @@
     "label": "kabir"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "hi-dev",
@@ -863,7 +863,7 @@
     "label": "kabir"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "hi-rehan",
@@ -890,7 +890,7 @@
     "label": "kabir"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "kn-disha",
@@ -947,7 +947,7 @@
     "label": "chaitra"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "kn-prakash",
@@ -1060,7 +1060,7 @@
     "label": "roopa"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "ta-meena",
@@ -1088,7 +1088,7 @@
     "label": "roopa"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "ta-kavya",
@@ -1115,7 +1115,7 @@
     "label": "roopa"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "ta-karthik",
@@ -1172,7 +1172,7 @@
     "label": "gokul"
    },
    "provider": "cartesia",
-   "listed": false
+   "listed": true
   },
   {
    "id": "ta-arun",
@@ -1325,7 +1325,7 @@
    "tags": [
     "bright"
    ],
-   "recommended": false,
+   "recommended": true,
    "default": false,
    "provider": "sarvam",
    "primary": {
@@ -1353,7 +1353,7 @@
    "tags": [
     "bright"
    ],
-   "recommended": false,
+   "recommended": true,
    "default": false,
    "provider": "sarvam",
    "primary": {
@@ -1483,6 +1483,5328 @@
    },
    "listed": true,
    "to_confirm_by_native_listener": true
+  },
+  {
+   "id": "te-kavitha_narration",
+   "language": "te",
+   "name": "Kavitha",
+   "label": "Narration",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "kavitha_te_narration",
+    "label": "Kavitha"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "cf061d8b-a752-4865-81a2-57570a6e0565",
+    "gender": "female",
+    "label": "Ramya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "te-pooja_conversation",
+   "language": "te",
+   "name": "Pooja",
+   "label": "Conversation",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "pooja_te_conversation",
+    "label": "Pooja"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "cf061d8b-a752-4865-81a2-57570a6e0565",
+    "gender": "female",
+    "label": "Ramya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "kn-chaitra_narration",
+   "language": "kn",
+   "name": "Chaitra",
+   "label": "Narration",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "chaitra_kn_narration",
+    "label": "Chaitra"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4c00ff98-199c-4967-99ae-7b69125edcff",
+    "gender": "female",
+    "label": "Disha"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "kn-suchitra_narration",
+   "language": "kn",
+   "name": "Suchitra",
+   "label": "Narration",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "suchitra_kn_narration",
+    "label": "Suchitra"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4c00ff98-199c-4967-99ae-7b69125edcff",
+    "gender": "female",
+    "label": "Disha"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "ta-aravind_ads",
+   "language": "ta",
+   "name": "Aravind",
+   "label": "Ads",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aravind_ta_ads",
+    "label": "Aravind"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "19f28c21-ae34-499f-b64a-f7b09cd9b516",
+    "gender": "male",
+    "label": "Karthik"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "ta-aravind_suspense",
+   "language": "ta",
+   "name": "Aravind",
+   "label": "Suspense",
+   "gender": "male",
+   "tags": [
+    "deep"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aravind_ta_suspense",
+    "label": "Aravind"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "19f28c21-ae34-499f-b64a-f7b09cd9b516",
+    "gender": "male",
+    "label": "Karthik"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "ta-gokul_narration",
+   "language": "ta",
+   "name": "Gokul",
+   "label": "Narration",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": true,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "gokul_ta_narration",
+    "label": "Gokul"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "19f28c21-ae34-499f-b64a-f7b09cd9b516",
+    "gender": "male",
+    "label": "Karthik"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "ta-vijay_narration",
+   "language": "ta",
+   "name": "Vijay",
+   "label": "Narration",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "vijay_ta_narration",
+    "label": "Vijay"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "19f28c21-ae34-499f-b64a-f7b09cd9b516",
+    "gender": "male",
+    "label": "Karthik"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-aayan_conversational",
+   "language": "hi",
+   "name": "Aayan",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aayan_hi_conversational",
+    "label": "Aayan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-amit_conversational",
+   "language": "hi",
+   "name": "Amit",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "amit_hi_conversational",
+    "label": "Amit"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ashutosh_conversational",
+   "language": "hi",
+   "name": "Ashutosh",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ashutosh_hi_conversational",
+    "label": "Ashutosh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-manan_conversational",
+   "language": "hi",
+   "name": "Manan",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "manan_hi_conversational",
+    "label": "Manan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-rahul_conversational",
+   "language": "hi",
+   "name": "Rahul",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "rahul_hi_conversational",
+    "label": "Rahul"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sumit_conversational",
+   "language": "hi",
+   "name": "Sumit",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sumit_hi_conversational",
+    "label": "Sumit"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-aditya_conversational",
+   "language": "hi",
+   "name": "Aditya",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aditya_hi_conversational",
+    "label": "Aditya"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-aditya_sales",
+   "language": "hi",
+   "name": "Aditya",
+   "label": "Sales",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aditya_hi_sales",
+    "label": "Aditya"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-anand_documentary",
+   "language": "hi",
+   "name": "Anand",
+   "label": "Documentary",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "anand_hi_documentary",
+    "label": "Anand"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-anand_news",
+   "language": "hi",
+   "name": "Anand",
+   "label": "News",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "anand_hi_news",
+    "label": "Anand"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-aparna_customer",
+   "language": "hi",
+   "name": "Aparna",
+   "label": "Customer",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aparna_hi_customer",
+    "label": "Aparna"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-aparna_kyc",
+   "language": "hi",
+   "name": "Aparna",
+   "label": "Kyc",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aparna_hi_kyc",
+    "label": "Aparna"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ashok_character",
+   "language": "hi",
+   "name": "Ashok",
+   "label": "Character",
+   "gender": "male",
+   "tags": [
+    "mature"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ashok_hi_character",
+    "label": "Ashok"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ashok_news",
+   "language": "hi",
+   "name": "Ashok",
+   "label": "News",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ashok_hi_news",
+    "label": "Ashok"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-chhavi_kids",
+   "language": "hi",
+   "name": "Chhavi",
+   "label": "Kids",
+   "gender": "female",
+   "tags": [
+    "young"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "chhavi_hi_kids",
+    "label": "Chhavi"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ishita_ads",
+   "language": "hi",
+   "name": "Ishita",
+   "label": "Ads",
+   "gender": "female",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_hi_ads",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ishita_edtech",
+   "language": "hi",
+   "name": "Ishita",
+   "label": "Edtech",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_hi_edtech",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ishita_banking",
+   "language": "hi",
+   "name": "Ishita",
+   "label": "Banking",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_hi_banking",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ishita_ads_informal",
+   "language": "hi",
+   "name": "Ishita",
+   "label": "Ads Informal",
+   "gender": "female",
+   "tags": [
+    "energetic",
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_hi_ads_informal",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ishita_devotional",
+   "language": "hi",
+   "name": "Ishita",
+   "label": "Devotional",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_hi_devotional",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ishita_numbers",
+   "language": "hi",
+   "name": "Ishita",
+   "label": "Numbers",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_hi_numbers",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ishita_social",
+   "language": "hi",
+   "name": "Ishita",
+   "label": "Social",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_hi_social",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-kunal_kids",
+   "language": "hi",
+   "name": "Kunal",
+   "label": "Kids",
+   "gender": "male",
+   "tags": [
+    "young"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "kunal_hi_kids",
+    "label": "Kunal"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-mahesh_documentary",
+   "language": "hi",
+   "name": "Mahesh",
+   "label": "Documentary",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "mahesh_hi_documentary",
+    "label": "Mahesh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-mani_devotional",
+   "language": "hi",
+   "name": "Mani",
+   "label": "Devotional",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "mani_hi_devotional",
+    "label": "Mani"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-mani_conversational",
+   "language": "hi",
+   "name": "Mani",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "mani_hi_conversational",
+    "label": "Mani"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-mohit_conversational",
+   "language": "hi",
+   "name": "Mohit",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "mohit_hi_conversational",
+    "label": "Mohit"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-nachiket_devotional",
+   "language": "hi",
+   "name": "Nachiket",
+   "label": "Devotional",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "nachiket_hi_devotional",
+    "label": "Nachiket"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-priya_recovery",
+   "language": "hi",
+   "name": "Priya",
+   "label": "Recovery",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "priya_hi_recovery",
+    "label": "Priya"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ratan_latenight",
+   "language": "hi",
+   "name": "Ratan",
+   "label": "Latenight",
+   "gender": "male",
+   "tags": [
+    "deep"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ratan_hi_latenight",
+    "label": "Ratan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ratan_customer_expressive",
+   "language": "hi",
+   "name": "Ratan",
+   "label": "Customer Expressive",
+   "gender": "male",
+   "tags": [
+    "warm",
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ratan_hi_customer_expressive",
+    "label": "Ratan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ratan_documentary",
+   "language": "hi",
+   "name": "Ratan",
+   "label": "Documentary",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ratan_hi_documentary",
+    "label": "Ratan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ratan_devotional",
+   "language": "hi",
+   "name": "Ratan",
+   "label": "Devotional",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ratan_hi_devotional",
+    "label": "Ratan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ratan_recovery",
+   "language": "hi",
+   "name": "Ratan",
+   "label": "Recovery",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ratan_hi_recovery",
+    "label": "Ratan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ratan_social",
+   "language": "hi",
+   "name": "Ratan",
+   "label": "Social",
+   "gender": "male",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ratan_hi_social",
+    "label": "Ratan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ratan_sports",
+   "language": "hi",
+   "name": "Ratan",
+   "label": "Sports",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ratan_hi_sports",
+    "label": "Ratan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ratan_latenight_warm",
+   "language": "hi",
+   "name": "Ratan",
+   "label": "Latenight Warm",
+   "gender": "male",
+   "tags": [
+    "deep",
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ratan_hi_latenight_warm",
+    "label": "Ratan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-rehan_social",
+   "language": "hi",
+   "name": "Rehan",
+   "label": "Social",
+   "gender": "male",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "rehan_hi_social",
+    "label": "Rehan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_customer_utility",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Customer Utility",
+   "gender": "female",
+   "tags": [
+    "warm",
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_customer_utility",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_kids",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Kids",
+   "gender": "female",
+   "tags": [
+    "young"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_kids",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_conversation",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Conversation",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_conversation",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_customer",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Customer",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_customer",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_edtech",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Edtech",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_edtech",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_ads_formal",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Ads Formal",
+   "gender": "female",
+   "tags": [
+    "energetic",
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_ads_formal",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_banking",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Banking",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_banking",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_ads_informal",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Ads Informal",
+   "gender": "female",
+   "tags": [
+    "energetic",
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_ads_informal",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_insurance",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Insurance",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_insurance",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_edtech_bot",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Edtech Bot",
+   "gender": "female",
+   "tags": [
+    "bright",
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_edtech_bot",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_medical",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Medical",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_medical",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_sales",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Sales",
+   "gender": "female",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_sales",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_reels",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Reels",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_reels",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_social",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Social",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_social",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_customer_warm",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Customer Warm",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_customer_warm",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-ritu_social_lively",
+   "language": "hi",
+   "name": "Ritu",
+   "label": "Social Lively",
+   "gender": "female",
+   "tags": [
+    "bright",
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_hi_social_lively",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-roopa_companion",
+   "language": "hi",
+   "name": "Roopa",
+   "label": "Companion",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_companion",
+    "label": "Roopa"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-roopa_narration",
+   "language": "hi",
+   "name": "Roopa",
+   "label": "Narration",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_narration",
+    "label": "Roopa"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-roopa_recovery",
+   "language": "hi",
+   "name": "Roopa",
+   "label": "Recovery",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_recovery",
+    "label": "Roopa"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-roopa_market",
+   "language": "hi",
+   "name": "Roopa",
+   "label": "Market",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_market",
+    "label": "Roopa"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-roopa_conversational",
+   "language": "hi",
+   "name": "Roopa",
+   "label": "Conversational",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_conversational",
+    "label": "Roopa"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_assistant",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Assistant",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_assistant",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_edtech",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Edtech",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_edtech",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_banking",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Banking",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_banking",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_feedback",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Feedback",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_feedback",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_ads_formal",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Ads Formal",
+   "gender": "female",
+   "tags": [
+    "energetic",
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_ads_formal",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_ads_informal",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Ads Informal",
+   "gender": "female",
+   "tags": [
+    "energetic",
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_ads_informal",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_interview",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Interview",
+   "gender": "female",
+   "tags": [
+    "mature"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_interview",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_romantic",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Romantic",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_romantic",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_market",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Market",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_market",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_social",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Social",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_social",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sanchita_kyc",
+   "language": "hi",
+   "name": "Sanchita",
+   "label": "Kyc",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_hi_kyc",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sarika_conversation",
+   "language": "hi",
+   "name": "Sarika",
+   "label": "Conversation",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sarika_hi_conversation",
+    "label": "Sarika"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shalini_companion",
+   "language": "hi",
+   "name": "Shalini",
+   "label": "Companion",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shalini_hi_companion",
+    "label": "Shalini"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shalini_social",
+   "language": "hi",
+   "name": "Shalini",
+   "label": "Social",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shalini_hi_social",
+    "label": "Shalini"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shreya_conversational",
+   "language": "hi",
+   "name": "Shreya",
+   "label": "Conversational",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shreya_hi_conversational",
+    "label": "Shreya"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shreya_news",
+   "language": "hi",
+   "name": "Shreya",
+   "label": "News",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shreya_hi_news",
+    "label": "Shreya"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shruti_edtech",
+   "language": "hi",
+   "name": "Shruti",
+   "label": "Edtech",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shruti_hi_edtech",
+    "label": "Shruti"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shubh_customer",
+   "language": "hi",
+   "name": "Shubh",
+   "label": "Customer",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_hi_customer",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shubh_ecomm",
+   "language": "hi",
+   "name": "Shubh",
+   "label": "Ecomm",
+   "gender": "male",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_hi_ecomm",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shubh_stories_mixed",
+   "language": "hi",
+   "name": "Shubh",
+   "label": "Stories Mixed",
+   "gender": "male",
+   "tags": [
+    "calm",
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_hi_stories_mixed",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shubh_devotional",
+   "language": "hi",
+   "name": "Shubh",
+   "label": "Devotional",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_hi_devotional",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shubh_ads",
+   "language": "hi",
+   "name": "Shubh",
+   "label": "Ads",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_hi_ads",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shubh_recovery",
+   "language": "hi",
+   "name": "Shubh",
+   "label": "Recovery",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_hi_recovery",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shubh_stories_dramatic",
+   "language": "hi",
+   "name": "Shubh",
+   "label": "Stories Dramatic",
+   "gender": "male",
+   "tags": [
+    "calm",
+    "deep"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_hi_stories_dramatic",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_assistant",
+   "language": "hi",
+   "name": "Simran",
+   "label": "Assistant",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_assistant",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_narration",
+   "language": "hi",
+   "name": "Simran",
+   "label": "Narration",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_narration",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_automobile",
+   "language": "hi",
+   "name": "Simran",
+   "label": "Automobile",
+   "gender": "female",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_automobile",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_conversation",
+   "language": "hi",
+   "name": "Simran",
+   "label": "Conversation",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_conversation",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_news_breaking",
+   "language": "hi",
+   "name": "Simran",
+   "label": "News Breaking",
+   "gender": "female",
+   "tags": [
+    "calm",
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_news_breaking",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_social_energetic",
+   "language": "hi",
+   "name": "Simran",
+   "label": "Social Energetic",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_social_energetic",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_social_excited",
+   "language": "hi",
+   "name": "Simran",
+   "label": "Social Excited",
+   "gender": "female",
+   "tags": [
+    "bright",
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_social_excited",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_latenight",
+   "language": "hi",
+   "name": "Simran",
+   "label": "Latenight",
+   "gender": "female",
+   "tags": [
+    "deep"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_latenight",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_news",
+   "language": "hi",
+   "name": "Simran",
+   "label": "News",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_news",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_recovery",
+   "language": "hi",
+   "name": "Simran",
+   "label": "Recovery",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_recovery",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-simran_sales",
+   "language": "hi",
+   "name": "Simran",
+   "label": "Sales",
+   "gender": "female",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_hi_sales",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-suchitra_ecomm",
+   "language": "hi",
+   "name": "Suchitra",
+   "label": "Ecomm",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "suchitra_hi_ecomm",
+    "label": "Suchitra"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-suhani_social",
+   "language": "hi",
+   "name": "Suhani",
+   "label": "Social",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "suhani_hi_social",
+    "label": "Suhani"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sunny_ads",
+   "language": "hi",
+   "name": "Sunny",
+   "label": "Ads",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sunny_hi_ads",
+    "label": "Sunny"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-sunny_reels",
+   "language": "hi",
+   "name": "Sunny",
+   "label": "Reels",
+   "gender": "male",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sunny_hi_reels",
+    "label": "Sunny"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-tarun_conversational",
+   "language": "hi",
+   "name": "Tarun",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "tarun_hi_conversational",
+    "label": "Tarun"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-tarun_sales",
+   "language": "hi",
+   "name": "Tarun",
+   "label": "Sales",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "tarun_hi_sales",
+    "label": "Tarun"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-chaitra_customer",
+   "language": "hi",
+   "name": "Chaitra",
+   "label": "Customer",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "chaitra_hi_customer",
+    "label": "Chaitra"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-shilpa_narration",
+   "language": "hi",
+   "name": "Shilpa",
+   "label": "Narration",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shilpa_hi_narration",
+    "label": "Shilpa"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-tanya_narration",
+   "language": "hi",
+   "name": "Tanya",
+   "label": "Narration",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "tanya_hi_narration",
+    "label": "Tanya"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-aarti_customer",
+   "language": "hi",
+   "name": "Aarti",
+   "label": "Customer",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aarti_hi_customer",
+    "label": "Aarti"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-advait_character",
+   "language": "hi",
+   "name": "Advait",
+   "label": "Character",
+   "gender": "male",
+   "tags": [
+    "mature"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "advait_hi_character",
+    "label": "Advait"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-aryaman_ads",
+   "language": "hi",
+   "name": "Aryaman",
+   "label": "Ads",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aryaman_hi_ads",
+    "label": "Aryaman"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-chirag_social",
+   "language": "hi",
+   "name": "Chirag",
+   "label": "Social",
+   "gender": "male",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "chirag_hi_social",
+    "label": "Chirag"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-girish_devotional",
+   "language": "hi",
+   "name": "Girish",
+   "label": "Devotional",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "girish_hi_devotional",
+    "label": "Girish"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-mukul_ads",
+   "language": "hi",
+   "name": "Mukul",
+   "label": "Ads",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "mukul_hi_ads",
+    "label": "Mukul"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-mukul_suspense",
+   "language": "hi",
+   "name": "Mukul",
+   "label": "Suspense",
+   "gender": "male",
+   "tags": [
+    "deep"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "mukul_hi_suspense",
+    "label": "Mukul"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-suman_companion",
+   "language": "hi",
+   "name": "Suman",
+   "label": "Companion",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "suman_hi_companion",
+    "label": "Suman"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-vaibhav_social",
+   "language": "hi",
+   "name": "Vaibhav",
+   "label": "Social",
+   "gender": "male",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "vaibhav_hi_social",
+    "label": "Vaibhav"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-vandana_ecomm",
+   "language": "hi",
+   "name": "Vandana",
+   "label": "Ecomm",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "vandana_hi_ecomm",
+    "label": "Vandana"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "gender": "female",
+    "label": "Sanya"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "hi-vipul_social",
+   "language": "hi",
+   "name": "Vipul",
+   "label": "Social",
+   "gender": "male",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "vipul_hi_social",
+    "label": "Vipul"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "gender": "male",
+    "label": "Rohan"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-aditi_stories",
+   "language": "en",
+   "name": "Aditi",
+   "label": "Stories",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aditi_en_stories",
+    "label": "Aditi"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-aparna_companion",
+   "language": "en",
+   "name": "Aparna",
+   "label": "Companion",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aparna_en_companion",
+    "label": "Aparna"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-aparna_edtech",
+   "language": "en",
+   "name": "Aparna",
+   "label": "Edtech",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "aparna_en_edtech",
+    "label": "Aparna"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ashwin_sports",
+   "language": "en",
+   "name": "Ashwin",
+   "label": "Sports",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ashwin_en_sports",
+    "label": "Ashwin"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ashwin_sports_energetic",
+   "language": "en",
+   "name": "Ashwin",
+   "label": "Sports Energetic",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ashwin_en_sports_energetic",
+    "label": "Ashwin"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-chandrika_stories",
+   "language": "en",
+   "name": "Chandrika",
+   "label": "Stories",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "chandrika_en_stories",
+    "label": "Chandrika"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-dev_recovery",
+   "language": "en",
+   "name": "Dev",
+   "label": "Recovery",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "dev_en_recovery",
+    "label": "Dev"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-dev_conversational",
+   "language": "en",
+   "name": "Dev",
+   "label": "Conversational",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "dev_en_conversational",
+    "label": "Dev"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-deven_conversation",
+   "language": "en",
+   "name": "Deven",
+   "label": "Conversation",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "deven_en_conversation",
+    "label": "Deven"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ishita_customer",
+   "language": "en",
+   "name": "Ishita",
+   "label": "Customer",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_en_customer",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ishita_medical",
+   "language": "en",
+   "name": "Ishita",
+   "label": "Medical",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_en_medical",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ishita_numbers",
+   "language": "en",
+   "name": "Ishita",
+   "label": "Numbers",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_en_numbers",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ishita_social",
+   "language": "en",
+   "name": "Ishita",
+   "label": "Social",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_en_social",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ishita_stories",
+   "language": "en",
+   "name": "Ishita",
+   "label": "Stories",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_en_stories",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-kalpit_edtech",
+   "language": "en",
+   "name": "Kalpit",
+   "label": "Edtech",
+   "gender": "male",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "kalpit_en_edtech",
+    "label": "Kalpit"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-nachiket_ads",
+   "language": "en",
+   "name": "Nachiket",
+   "label": "Ads",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "nachiket_en_ads",
+    "label": "Nachiket"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-neha_customer",
+   "language": "en",
+   "name": "Neha",
+   "label": "Customer",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "neha_en_customer",
+    "label": "Neha"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-neha_latenight",
+   "language": "en",
+   "name": "Neha",
+   "label": "Latenight",
+   "gender": "female",
+   "tags": [
+    "deep"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "neha_en_latenight",
+    "label": "Neha"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-nupur_kids",
+   "language": "en",
+   "name": "Nupur",
+   "label": "Kids",
+   "gender": "female",
+   "tags": [
+    "young"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "nupur_en_kids",
+    "label": "Nupur"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ojas_social",
+   "language": "en",
+   "name": "Ojas",
+   "label": "Social",
+   "gender": "male",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ojas_en_social",
+    "label": "Ojas"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ritu_edtech",
+   "language": "en",
+   "name": "Ritu",
+   "label": "Edtech",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_en_edtech",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ritu_latenight",
+   "language": "en",
+   "name": "Ritu",
+   "label": "Latenight",
+   "gender": "female",
+   "tags": [
+    "deep"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_en_latenight",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ritu_medical",
+   "language": "en",
+   "name": "Ritu",
+   "label": "Medical",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_en_medical",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-ritu_reels",
+   "language": "en",
+   "name": "Ritu",
+   "label": "Reels",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ritu_en_reels",
+    "label": "Ritu"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-rohan_recovery",
+   "language": "en",
+   "name": "Rohan",
+   "label": "Recovery",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "rohan_en_recovery",
+    "label": "Rohan"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-roopa_conversational",
+   "language": "en",
+   "name": "Roopa",
+   "label": "Conversational",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_en_conversational",
+    "label": "Roopa"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-rustom_suspense",
+   "language": "en",
+   "name": "Rustom",
+   "label": "Suspense",
+   "gender": "male",
+   "tags": [
+    "deep"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "rustom_en_suspense",
+    "label": "Rustom"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-sanchita_companion",
+   "language": "en",
+   "name": "Sanchita",
+   "label": "Companion",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_en_companion",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-sanchita_insurance",
+   "language": "en",
+   "name": "Sanchita",
+   "label": "Insurance",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_en_insurance",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-sanchita_recovery",
+   "language": "en",
+   "name": "Sanchita",
+   "label": "Recovery",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_en_recovery",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-sanchita_market",
+   "language": "en",
+   "name": "Sanchita",
+   "label": "Market",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_en_market",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-sanchita_social",
+   "language": "en",
+   "name": "Sanchita",
+   "label": "Social",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sanchita_en_social",
+    "label": "Sanchita"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-shabana_edtech",
+   "language": "en",
+   "name": "Shabana",
+   "label": "Edtech",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shabana_en_edtech",
+    "label": "Shabana"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-shalini_companion",
+   "language": "en",
+   "name": "Shalini",
+   "label": "Companion",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shalini_en_companion",
+    "label": "Shalini"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-shubh_narration",
+   "language": "en",
+   "name": "Shubh",
+   "label": "Narration",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_en_narration",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-shubh_numbers",
+   "language": "en",
+   "name": "Shubh",
+   "label": "Numbers",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_en_numbers",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-shubh_ads",
+   "language": "en",
+   "name": "Shubh",
+   "label": "Ads",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_en_ads",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-shubh_recovery",
+   "language": "en",
+   "name": "Shubh",
+   "label": "Recovery",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_en_recovery",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-shubh_audiobook",
+   "language": "en",
+   "name": "Shubh",
+   "label": "Audiobook",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_en_audiobook",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-shubh_narration_gentle",
+   "language": "en",
+   "name": "Shubh",
+   "label": "Narration Gentle",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_en_narration_gentle",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-shubh_sports",
+   "language": "en",
+   "name": "Shubh",
+   "label": "Sports",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_en_sports",
+    "label": "Shubh"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-simran_narration",
+   "language": "en",
+   "name": "Simran",
+   "label": "Narration",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_en_narration",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-simran_automobile",
+   "language": "en",
+   "name": "Simran",
+   "label": "Automobile",
+   "gender": "female",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_en_automobile",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-simran_conversation",
+   "language": "en",
+   "name": "Simran",
+   "label": "Conversation",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_en_conversation",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-simran_customer",
+   "language": "en",
+   "name": "Simran",
+   "label": "Customer",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_en_customer",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-simran_edtech",
+   "language": "en",
+   "name": "Simran",
+   "label": "Edtech",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_en_edtech",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-simran_edtech_bot",
+   "language": "en",
+   "name": "Simran",
+   "label": "Edtech Bot",
+   "gender": "female",
+   "tags": [
+    "bright",
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_en_edtech_bot",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-simran_sales",
+   "language": "en",
+   "name": "Simran",
+   "label": "Sales",
+   "gender": "female",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_en_sales",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-simran_recovery",
+   "language": "en",
+   "name": "Simran",
+   "label": "Recovery",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_en_recovery",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-simran_ads",
+   "language": "en",
+   "name": "Simran",
+   "label": "Ads",
+   "gender": "female",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_en_ads",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-simran_therapist",
+   "language": "en",
+   "name": "Simran",
+   "label": "Therapist",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "simran_en_therapist",
+    "label": "Simran"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-sunny_social",
+   "language": "en",
+   "name": "Sunny",
+   "label": "Social",
+   "gender": "male",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sunny_en_social",
+    "label": "Sunny"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-varun_ads",
+   "language": "en",
+   "name": "Varun",
+   "label": "Ads",
+   "gender": "male",
+   "tags": [
+    "energetic"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "varun_en_ads",
+    "label": "Varun"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-varun_suspense",
+   "language": "en",
+   "name": "Varun",
+   "label": "Suspense",
+   "gender": "male",
+   "tags": [
+    "deep"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "varun_en_suspense",
+    "label": "Varun"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-zarina_conversation",
+   "language": "en",
+   "name": "Zarina",
+   "label": "Conversation",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "zarina_en_conversation",
+    "label": "Zarina"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-amelia_conversational",
+   "language": "en",
+   "name": "Amelia",
+   "label": "Conversational",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "amelia_en_conversational",
+    "label": "Amelia"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-sophia_conversational",
+   "language": "en",
+   "name": "Sophia",
+   "label": "Conversational",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sophia_en_conversational",
+    "label": "Sophia"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-girish_documentary",
+   "language": "en",
+   "name": "Girish",
+   "label": "Documentary",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "girish_en_documentary",
+    "label": "Girish"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-girish_devotional",
+   "language": "en",
+   "name": "Girish",
+   "label": "Devotional",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "girish_en_devotional",
+    "label": "Girish"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-payal_edtech",
+   "language": "en",
+   "name": "Payal",
+   "label": "Edtech",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "payal_en_edtech",
+    "label": "Payal"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "gender": "female",
+    "label": "Janvi"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
+  },
+  {
+   "id": "en-sarang_narration",
+   "language": "en",
+   "name": "Sarang",
+   "label": "Narration",
+   "gender": "male",
+   "tags": [
+    "calm"
+   ],
+   "recommended": false,
+   "default": false,
+   "provider": "sarvam",
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "sarang_en_narration",
+    "label": "Sarang"
+   },
+   "fallback": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
+    "gender": "male",
+    "label": "Daniel"
+   },
+   "listed": true,
+   "to_confirm_by_native_listener": true,
+   "gender_source": "name"
   }
  ]
 }

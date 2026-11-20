@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import cache, lru_cache
 from pathlib import Path
 
 from app.voice.interface import VoiceError
@@ -47,9 +47,13 @@ SAMPLE_LINES: dict[str, str] = {
 def sample_text(language: str) -> str:
     """The exact words of the pre-rendered sample of a voice of this language."""
     return SAMPLE_LINES[language].replace("{b}", SAMPLE_BUSINESS)
-MAX_LISTED = 2   # per language and gender: the owner chooses between two clearly different voices of each kind
 LOWEST_TIMEOUT_MS, HIGHEST_TIMEOUT_MS = 200, 3000
 ID_FORMAT = re.compile(r"^[a-z]{2}-[a-z0-9_]{2,40}$")  # the same pattern the database holds
+
+
+@cache
+def _sample_ready(voice_id: str) -> bool:
+    return (SAMPLES / f"{voice_id}.mp3").is_file()
 
 
 @dataclass(frozen=True)
@@ -79,12 +83,17 @@ class CatalogueVoice:
     tags: tuple[str, ...] = ()  # plain style words for the screen (TAGS)
     recommended: bool = False
     provider: str = "cartesia"  # cartesia | sarvam: who speaks it first (always the engine of `voices.primary`)
-    listed: bool = False        # on the short list the owner sees and picks from; an unlisted voice is only kept so an old stored choice does not break
+    listed: bool = False        # offered to the owner (since 21 Nov 2026 every voice is); an unlisted voice is only kept so an old stored choice does not break
     to_confirm: bool = False    # chosen by documented gender and style: no native listener has confirmed it yet
 
     @property
     def sample_file(self) -> Path:
         return SAMPLES / f"{self.id}.mp3"
+
+    @property
+    def sample_ready(self) -> bool:
+        """Is there a pre-rendered sample file? Looked up once per voice for the life of the process (the files ship with the image), so a list of hundreds of voices costs no disk reads."""
+        return _sample_ready(self.id)
 
 
 @dataclass(frozen=True)
@@ -177,8 +186,6 @@ def parse_config(data: object) -> VoiceConfig:
                 raise ValueError(f"voices: language {lang} needs exactly one {gender} default (has {len(defaults)})")
             if not defaults[0].listed:
                 raise ValueError(f"voices: the {gender} default of {lang} must be on the short list")
-            if not every_voice_listed and sum(1 for c in catalogue.values() if c.language == lang and c.gender == gender and c.listed) > MAX_LISTED:
-                raise ValueError(f"voices: language {lang} lists at most {MAX_LISTED} {gender} voices")
     return VoiceConfig(catalogue, timeout, float(data.get("cooldown_s", 30.0)))
 
 

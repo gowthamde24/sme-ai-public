@@ -212,7 +212,7 @@ def test_a_voice_that_is_not_listed_for_the_language_is_refused_in_plain_words()
     client, _, texts = world()
     line = "నమస్కారం, {business} నుంచి మాట్లాడుతున్నాను. ఒక్క నిమిషం మాట్లాడొచ్చా?"
     before = len(texts)
-    for bad in ("en-janvi", "te-sindhu", "../etc", "te-nobody", "x" * 41):   # another language, an unlisted voice, nonsense, unknown, too long
+    for bad in ("en-janvi", "te-kavitha_old", "../etc", "te-nobody", "x" * 41):   # another language, a voice that does not exist, nonsense, unknown, too long
         r = post(client, {"language": "te", "text": line, "voice_id": bad})
         assert r.status_code == 422, (bad, r.status_code)
     assert len(texts) == before, "nothing was spoken"

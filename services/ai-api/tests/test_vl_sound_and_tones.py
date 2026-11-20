@@ -207,13 +207,14 @@ def test_a_sarvam_voice_is_not_counted_against_the_cartesia_cap() -> None:
     assert built == [("sarvam_v4", "kavitha_te_conversation")] and tts.served_engine == "sarvam_v4" and tts.fallback_reason == "" and tts.primary_chars == 0
 
 
-def test_the_short_list_is_two_voices_of_each_gender_and_each_voice_says_who_speaks_it() -> None:
+def test_every_voice_is_listed_with_at_least_two_of_each_gender_and_one_default_and_each_says_who_speaks_it() -> None:
     for language in ("te", "en", "hi", "kn"):
         for gender in ("female", "male"):
             listed = CFG.voices_of(language, gender, listed_only=True)
-            assert len(listed) == 2 and sum(v.default for v in listed) == 1, (language, gender)
-            assert {v.provider for v in listed} == {"cartesia", "sarvam"}, "one voice of each provider: they sound clearly different"
-    assert all(v.to_confirm for v in CFG.catalogue.values() if v.listed), "no native listener has confirmed the list yet"
+            assert len(listed) >= 2 and sum(v.default for v in listed) == 1, (language, gender)
+            assert {v.provider for v in listed} == {"cartesia", "sarvam"}, "voices of both providers"
+    assert all(v.listed for v in CFG.catalogue.values()), "owner, 21 Nov 2026: all the voices of Sarvam and Cartesia"
+    assert all(v.to_confirm for v in CFG.catalogue.values() if v.provider == "sarvam" and v.listed) and all(v.to_confirm for v in CFG.voices_of("te", listed_only=True) if v.id in ("te-ramya", "te-kavitha")), "no native listener has confirmed the list yet (a Cartesia voice of the old list too)"
     assert [v.id for v in CFG.voices_of("ml", listed_only=True)] == ["ml-latha", "ml-vijay"]
 
 
