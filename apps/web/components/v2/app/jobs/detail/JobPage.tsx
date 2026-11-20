@@ -262,7 +262,7 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
       <div className="flex min-w-0 flex-col gap-4 lg:sticky lg:top-4">
         <ResultsCard results={detail.results} t={t} lang={lang} />
         <p data-part="job-cost" className="m-0 px-1 text-[13.5px] leading-snug text-muted">
-          {detail.cost.rupees !== null ? t("jobs.job.cost.rupees", { rupees: groupIndian(detail.cost.rupees) }) : t("jobs.job.cost.minutes", { used: detail.cost.minutesUsed, included: detail.cost.minutesIncluded })}
+          {detail.cost.rupees !== null ? t("jobs.job.cost.rupees", { rupees: groupIndian(detail.cost.rupees) }) : detail.cost.minutesIncluded === null ? t("jobs.job.cost.minutes_only", { used: detail.cost.minutesUsed }) : t("jobs.job.cost.minutes", { used: detail.cost.minutesUsed, included: detail.cost.minutesIncluded })}
         </p>
         {detail.test && detail.says.length > 0 && canChange ? <TryCard channel={detail.test} t={t} onTest={test} /> : null}
         {canChange ? null : <p className="m-0 text-sm text-muted">{t("jobs.job.readonly")}</p>}

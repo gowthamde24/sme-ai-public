@@ -12,7 +12,7 @@ export type JobSetting = { key: string; type: SettingType; value: string; option
 /** What the customer hears or reads; the API composes it with the real business name and the job's name + the AI disclosure ("Priya, the AI assistant of {business}"). The web only shows it. */
 export type JobSays = { language: string; channel: "call" | "whatsapp"; text: string };
 /** The month so far (`JobDetail.cost`): the free minutes used of those included, or the rupees on a paid plan (`rupees` not null). */
-export type JobCost = { minutesUsed: number; minutesIncluded: number; rupees: number | null };
+export type JobCost = { minutesUsed: number; /** null = the plan includes no minutes (Pay as you go). */ minutesIncluded: number | null; rupees: number | null };
 export type JobFindsOut = { key: string; enabled: boolean };
 export type JobFaq = { id: string; question: string; answer: string };
 
