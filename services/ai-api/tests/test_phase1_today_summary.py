@@ -167,8 +167,8 @@ def test_one_failed_section_says_its_code_and_status_and_never_fails_the_others(
 
 @pytest.mark.serial   # real time: runs alone, after the parallel tests
 def test_a_slow_section_says_slow_keeps_running_and_the_retry_joins_the_same_read(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(today_summary, "SOFT_DEADLINE_S", 0.1)
-    DELAYS["/prospects"] = 0.4
+    monkeypatch.setattr(today_summary, "SOFT_DEADLINE_S", 0.3)
+    DELAYS["/prospects"] = 0.8
     with TestClient(build()) as client:
         first = get(client)["sections"]
         assert first["lead_finder_prospects"] == {"state": "slow", "data": None, "error": None, "retry": "/today/summary?only=lead_finder_prospects"}
