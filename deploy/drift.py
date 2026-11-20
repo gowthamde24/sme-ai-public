@@ -39,7 +39,10 @@ def live_flags(kind: str, name: str, project: str, region: str) -> dict[str, str
         if "not found" in done.stderr.lower() or "cannot find" in done.stderr.lower():
             return None
         raise SystemExit(f"could not read {name}: {done.stderr.strip()[:200]}")
-    described = json.loads(done.stdout)
+    try:
+        described = json.loads(done.stdout)
+    except ValueError:
+        raise SystemExit(f"drift: gcloud did not answer JSON for {name}") from None
     if kind == "service":
         return flag_guard.flags_of(flag_guard.describe_revision(project, region, flag_guard.serving_revision(described)))
     return job_flags(described)

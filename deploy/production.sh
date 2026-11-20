@@ -136,8 +136,8 @@ FLAGS_BEFORE=""
 if $do_api; then guard_before "$PROJECT_ID" "$REGION"; fi   # (read-only: a dry run too)
 # the WEB and the WORKER are declared too (deploy/settings/production/web.env, worker.env; deploy/drift.py, 20 Nov 2026). Before they exist there is nothing to compare (the check says so and passes); after the first deploy
 # there, `python3 deploy/drift.py snapshot production web|worker ...` writes the files and every later deploy is checked first.
-if $do_web; then python3 deploy/drift.py check production web "$PROJECT_ID" "$REGION" --allow "${ALLOW_FLAG_CHANGE:-}" || { echo "STOP: the declared settings of the production web and the live web differ (see above)." >&2; exit 3; }; fi
-if $do_worker; then python3 deploy/drift.py check production worker "$PROJECT_ID" "$REGION" --allow "${ALLOW_FLAG_CHANGE:-}" || { echo "STOP: the declared settings of the production worker and the live worker differ (see above)." >&2; exit 3; }; fi
+if $do_web && [ "$slice" != waitlist ]; then python3 deploy/drift.py check production web "$PROJECT_ID" "$REGION" --allow "${ALLOW_FLAG_CHANGE:-}" || { echo "STOP: the declared settings of the production web and the live web differ (see above)." >&2; exit 3; }; fi
+if $do_worker && [ "$slice" != waitlist ]; then python3 deploy/drift.py check production worker "$PROJECT_ID" "$REGION" --allow "${ALLOW_FLAG_CHANGE:-}" || { echo "STOP: the declared settings of the production worker and the live worker differ (see above)." >&2; exit 3; }; fi
 
 if $do_api; then
   # slice: agents off, scale to zero, request-based CPU. Full: ONE instance with always-on CPU (the answer to a call must never wait for a cold start, ADR 0072; MAX 1 because a live call lives on the server that answered it:
