@@ -30,8 +30,8 @@ export function callingTime(totalMinutes: number): string {
 }
 
 export type MockTerms = { /** Minutes of the plan not used yet this month. */ includedLeft: number; /** Paise a minute after the included ones. */ ratePaisePerMinute: number; /** The wallet, in paise. */ balancePaise: number };
-/** The test plan: Sales assistant, 500 minutes included, then ₹4.50 a minute, a wallet of ₹1,550 (the figures of the owner's final pricing). */
-export const MOCK_TERMS: MockTerms = { includedLeft: 500, ratePaisePerMinute: 450, balancePaise: 155_000 };
+/** The test plan: Sales assistant, 500 minutes included, then ₹5 a minute (owner's final pricing, 19 Nov; same as lib/site/plans.ts), a wallet of ₹1,550. */
+export const MOCK_TERMS: MockTerms = { includedLeft: 500, ratePaisePerMinute: 500, balancePaise: 155_000 };
 
 export function mockEstimate(calls: number, avgMinutes: number, terms: MockTerms = MOCK_TERMS): Estimate {
   const total = Math.ceil(Math.max(0, calls) * Math.max(0, avgMinutes));
