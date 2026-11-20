@@ -18,13 +18,13 @@ export { ownWords, rowWord };
 
 export const itemBase = "relative flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors duration-150 ease-out";
 export const itemIdle = "text-ink hover:bg-surface-2 active:bg-line";
-export const itemCurrent = "bg-brand-bg text-brand-text";
+export const itemCurrent = "bg-surface-2 text-brand-text";
 
 const TONE: Record<Badge["tone"], string> = {
   brand: "min-w-6 justify-center bg-brand text-on-brand",
   green: "bg-green-bg text-green-text",
   quiet: "bg-surface-2 text-muted",
-  soft: "bg-brand-bg text-brand-text",
+  soft: "bg-surface-2 text-brand-text",
 };
 
 /** One menu row: icon, word (it wraps, it is never cut), the orange mark when it is the current page, and its badge. `collapsed` = the narrow rail: the icon only (the word stays for a screen reader), a badge becomes a dot. */

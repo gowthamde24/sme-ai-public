@@ -7,7 +7,7 @@ type LocalOptions = { src: Array<{ path: string; weight: string }>; variable: st
 const localCalls = vi.hoisted((): LocalOptions[] => []);
 vi.mock("next/font/google", () => {
   const font = (name: string) => () => ({ variable: `var-${name}` });
-  return { Plus_Jakarta_Sans: font("sans"), Bricolage_Grotesque: font("display") };
+  return { Plus_Jakarta_Sans: font("sans") };
 });
 vi.mock("next/font/local", () => ({
   default: (options: LocalOptions) => {
@@ -19,21 +19,18 @@ vi.mock("next/font/local", () => ({
 import { v2FontClassName } from "@/design/fonts";
 
 describe("v2FontClassName: a page downloads only the Indic font of its own language", () => {
-  it("English gets the two Latin fonts and no Indic font", () => {
-    expect(v2FontClassName("en")).toBe("var-sans var-display");
+  it("English gets the one Latin font and no Indic font (no display face any more)", () => {
+    expect(v2FontClassName("en")).toBe("var-sans");
   });
   it("each Indic language adds exactly its own font", () => {
-    expect(v2FontClassName("te")).toBe("var-sans var-display var-telugu");
-    expect(v2FontClassName("hi")).toBe("var-sans var-display var-devanagari");
-    expect(v2FontClassName("kn")).toBe("var-sans var-display var-kannada");
-    expect(v2FontClassName("ta")).toBe("var-sans var-display var-tamil");
+    expect(v2FontClassName("te")).toBe("var-sans var-telugu");
+    expect(v2FontClassName("hi")).toBe("var-sans var-devanagari");
+    expect(v2FontClassName("kn")).toBe("var-sans var-kannada");
+    expect(v2FontClassName("ta")).toBe("var-sans var-tamil");
   });
   it("an unknown language gets none, and no language at all gets all four", () => {
-    expect(v2FontClassName("fr")).toBe("var-sans var-display");
-    // the public site names no display face: one sans face for everything, plus the script font of the page's language
-    expect(v2FontClassName("en", true)).toBe("var-sans");
-    expect(v2FontClassName("te", true)).toBe("var-sans var-telugu");
-    expect(v2FontClassName()).toBe("var-sans var-display var-telugu var-devanagari var-kannada var-tamil");
+    expect(v2FontClassName("fr")).toBe("var-sans");
+    expect(v2FontClassName()).toBe("var-sans var-telugu var-devanagari var-kannada var-tamil");
   });
 });
 

@@ -76,9 +76,9 @@ def test_the_catalogue_has_native_voices_of_both_genders_in_all_six_languages_wi
             group = cfg.voices_of(lang, gender)
             assert group, (lang, gender)
             assert [c.default for c in group].count(True) == 1 and group[0].default, "the default comes first"
-            assert 1 <= sum(c.recommended for c in group) <= 3, (lang, gender)
+            assert 1 <= sum(c.recommended for c in group if c.listed) <= 4, (lang, gender)   # (the best three by a round trip, plus the Bulbul default of te and hi)
             assert cfg.default_for(lang, gender).id == group[0].id
-    assert {lang: cfg.default_for(lang).name for lang in CALL_LANGUAGES[:4]} == {"te": "Ramya", "en": "Janvi", "hi": "Sanya", "kn": "Disha"}, "the voices that have always spoken stay the defaults"
+    assert {lang: cfg.default_for(lang).name for lang in CALL_LANGUAGES[:4]} == {"te": "Kavitha", "en": "Janvi", "hi": "Kavya", "kn": "Chaitra"}, "owner, 21 Nov 2026: Bulbul v4 is the default for te, hi and kn; English stays Cartesia"
     assert cfg.catalogue["kn-prakash"].gender == "male"
     for c in cfg.catalogue.values():
         assert c.id.startswith(f"{c.language}-") and {c.voices.primary.engine, c.voices.fallback.engine} == {"cartesia", "sarvam_v4"} and 0 < len(c.label) <= 20, "one engine first, the OTHER one behind it (either direction)"
@@ -129,14 +129,14 @@ def test_every_catalogue_voice_has_a_pre_rendered_sample_file_of_sane_size() -> 
 
 def test_the_default_speaks_when_nothing_is_chosen_the_choice_when_it_is_valid_and_the_default_again_when_it_is_stale() -> None:
     cfg = default_config()
-    assert cfg.resolve("te").id == "te-ramya"
-    assert cfg.resolve("te", "te-kavitha").id == "te-kavitha"
-    assert cfg.resolve("te", "te-sindhu").id == "te-ramya", "a voice that is not on the short list is ignored: the default speaks (an old stored choice breaks nothing)"
-    assert cfg.resolve("te", "hi-kavya").id == "te-ramya", "a voice of another language is ignored"
-    assert cfg.resolve("te", "te-removed-voice").id == "te-ramya", "a voice no longer in the catalogue is ignored"
-    assert cfg.resolve("te", "te-charan").id == "te-ramya", "a male voice is ignored in a female workspace"
-    assert cfg.resolve("te", "te-charan", "male").id == "te-charan" and cfg.resolve("te", None, "male").id == "te-charan" and cfg.resolve("te", "te-kavitha", "male").id == "te-charan"
-    assert cfg.for_language("kn", "kn-prakash", "male").fallback.voice == "chetan_kn_conversation" and cfg.for_language("kn").fallback.voice == "chaitra_kn_conversation"
+    assert cfg.resolve("te").id == "te-kavitha", "the Bulbul v4 voice is the default (owner, 21 Nov 2026)"
+    assert cfg.resolve("te", "te-ramya").id == "te-ramya", "a saved Cartesia choice keeps speaking"
+    assert cfg.resolve("te", "te-sindhu").id == "te-sindhu", "since 21 Nov 2026 every voice is listed: a saved Cartesia choice of the long list keeps speaking"
+    assert cfg.resolve("te", "hi-kavya").id == "te-kavitha", "a voice of another language is ignored"
+    assert cfg.resolve("te", "te-removed-voice").id == "te-kavitha", "a voice no longer in the catalogue is ignored"
+    assert cfg.resolve("te", "te-charan").id == "te-kavitha", "a male voice is ignored in a female workspace"
+    assert cfg.resolve("te", "te-charan", "male").id == "te-charan" and cfg.resolve("te", None, "male").id == "te-tarun" and cfg.resolve("te", "te-kavitha", "male").id == "te-tarun"
+    assert cfg.for_language("kn", "kn-prakash", "male").fallback.voice == "chetan_kn_conversation" and cfg.for_language("kn").fallback.voice == cfg.catalogue["kn-disha"].voices.primary.voice, "the Bulbul default has a Cartesia woman behind it"
 
 
 # ---- the API ------------------------------------------------------------------------------------------------------------------------------------------
@@ -154,11 +154,12 @@ def test_any_member_reads_the_catalogue_with_sample_urls_and_the_default_active(
     body = r.json()
     assert r.status_code == 200 and body["gender"] == "female" and [x["language"] for x in body["languages"]] == ["te", "en", "hi", "kn", "ta", "ml"]
     te = body["languages"][0]
-    assert te["default_id"] == "te-ramya" and te["chosen_id"] is None and te["active_id"] == "te-ramya"
-    assert {v["gender"] for v in te["voices"]} == {"female", "male"} and len(te["voices"]) == 4, "the short list: two women and two men; the screen filters"
-    assert {v["id"]: v["provider"] for v in te["voices"]} == {"te-ramya": "cartesia", "te-kavitha": "sarvam", "te-charan": "cartesia", "te-tarun": "sarvam"}
+    assert te["default_id"] == "te-kavitha" and te["chosen_id"] is None and te["active_id"] == "te-kavitha"
+    assert {v["gender"] for v in te["voices"]} == {"female", "male"} and len(te["voices"]) == te["total"] >= 14, "every voice of the language: the screen filters"
+    by_provider = {v["id"]: v["provider"] for v in te["voices"]}
+    assert by_provider["te-ramya"] == "cartesia" and by_provider["te-kavitha"] == "sarvam" and by_provider["te-charan"] == "cartesia" and by_provider["te-tarun"] == "sarvam" and {"cartesia", "sarvam"} == set(by_provider.values())
     first = te["voices"][0]
-    assert (first["id"], first["default"], first["chosen"]) == ("te-ramya", True, False) and first["sample_url"] == "/v1/voice-samples/te-ramya.mp3"
+    assert (first["id"], first["default"], first["chosen"]) == ("te-kavitha", True, False) and first["sample_url"] == "/v1/voice-samples/te-kavitha.mp3"
     assert set(first) == {"id", "name", "label", "gender", "tags", "recommended", "default", "chosen", "sample_url", "sample_text", "provider", "sample_ready", "to_confirm"} and first["tags"] and first["recommended"] is True
     assert len({v["sample_text"] for v in te["voices"]}) == 1, "the SAME line for every voice of a language"
     assert client.get(f"{BASE}/voices", headers=auth("b_owner")).status_code == 404, "another business reads nothing of ours"
@@ -166,16 +167,16 @@ def test_any_member_reads_the_catalogue_with_sample_urls_and_the_default_active(
 
 def test_owner_and_admin_choose_others_are_refused_and_the_choice_is_ticked_and_active() -> None:
     client, repo = world()
-    put = {"language": "te", "voice_id": "te-kavitha"}
+    put = {"language": "te", "voice_id": "te-ramya"}
     for user in ("a_sales", "a_viewer"):
         assert client.put(f"{BASE}/voices", json=put, headers=auth(user)).status_code == 403, user
     assert not repo.calls
     for user in ("a_owner", "a_admin"):
         r = client.put(f"{BASE}/voices", json=put, headers=auth(user))
         te = r.json()["languages"][0]
-        assert r.status_code == 200 and te["chosen_id"] == "te-kavitha" and te["active_id"] == "te-kavitha" and [v["id"] for v in te["voices"] if v["chosen"]] == ["te-kavitha"], user
+        assert r.status_code == 200 and te["chosen_id"] == "te-ramya" and te["active_id"] == "te-ramya" and [v["id"] for v in te["voices"] if v["chosen"]] == ["te-ramya"], user
     again = client.get(f"{BASE}/voices", headers=auth("a_viewer")).json()["languages"][0]
-    assert again["chosen_id"] == "te-kavitha" and again["default_id"] == "te-ramya"
+    assert again["chosen_id"] == "te-ramya" and again["default_id"] == "te-kavitha"
 
 
 @pytest.mark.parametrize(
@@ -203,24 +204,24 @@ def test_an_id_that_is_not_a_catalogue_voice_of_that_language_is_refused_and_not
 def test_null_goes_back_to_the_default() -> None:
     client, repo = world()
     h = auth("a_owner")
-    client.put(f"{BASE}/voices", json={"language": "hi", "voice_id": "hi-kavya"}, headers=h)
+    client.put(f"{BASE}/voices", json={"language": "hi", "voice_id": "hi-sanya"}, headers=h)
     r = client.put(f"{BASE}/voices", json={"language": "hi", "voice_id": None}, headers=h)
     hi = r.json()["languages"][2]
-    assert hi["chosen_id"] is None and hi["active_id"] == "hi-sanya" and repo.calls[-1] == ("hi", None)
+    assert hi["chosen_id"] is None and hi["active_id"] == "hi-kavya" and repo.calls[-1] == ("hi", None)
 
 
 def test_the_gender_flips_the_workspace_clears_the_choices_and_a_voice_of_the_other_gender_is_refused() -> None:
     client, repo = world()
     h = auth("a_owner")
-    assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-kavitha"}, headers=h).status_code == 200
+    assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-ramya"}, headers=h).status_code == 200
     r = client.put(f"{BASE}/voices", json={"gender": "male"}, headers=h)
     body = r.json()
     te = body["languages"][0]
-    assert r.status_code == 200 and body["gender"] == "male" and te["chosen_id"] is None and te["default_id"] == "te-charan" and te["active_id"] == "te-charan"
+    assert r.status_code == 200 and body["gender"] == "male" and te["chosen_id"] is None and te["default_id"] == "te-tarun" and te["active_id"] == "te-tarun"
     assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-nobody"}, headers=h).status_code == 422, "an unknown voice"
     assert client.put(f"{BASE}/voices", json={"language": "hi", "voice_id": "te-tarun"}, headers=h).status_code == 422, "a voice of another language"
-    assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-tarun"}, headers=h).json()["languages"][0]["chosen_id"] == "te-tarun"
-    assert client.put(f"{BASE}/voices", json={"gender": "male"}, headers=h).json()["languages"][0]["chosen_id"] == "te-tarun", "the same gender again keeps the choices"
+    assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-charan"}, headers=h).json()["languages"][0]["chosen_id"] == "te-charan"
+    assert client.put(f"{BASE}/voices", json={"gender": "male"}, headers=h).json()["languages"][0]["chosen_id"] == "te-charan", "the same gender again keeps the choices"
     for user in ("a_sales", "a_viewer"):
         assert client.put(f"{BASE}/voices", json={"gender": "female"}, headers=auth(user)).status_code == 403
     assert repo.gender == "male"
@@ -238,7 +239,7 @@ def test_a_stored_choice_that_left_the_catalogue_reads_as_no_choice() -> None:
     cfg = default_config()
     body = out(cfg, {"te": "te-gone", "hi": "kn-disha", "kn": "kn-prakash"}).model_dump()
     by = {x["language"]: x for x in body["languages"]}
-    assert by["te"]["chosen_id"] is None and by["te"]["active_id"] == "te-ramya"
+    assert by["te"]["chosen_id"] is None and by["te"]["active_id"] == "te-kavitha"
     assert by["hi"]["chosen_id"] is None, "a voice of another language is not a choice"
     assert by["kn"]["chosen_id"] is None, "a male voice is not a choice in a female workspace"
     assert out(cfg, {"kn": "kn-prakash"}, "male").model_dump()["languages"][3]["chosen_id"] == "kn-prakash"
@@ -292,7 +293,7 @@ def test_the_preview_speaks_the_chosen_voice_the_default_when_unset_and_the_same
     assert wav[:4] == b"RIFF" and engine == "cartesia" and voice_id == "kn-prakash" and built[0] == ("cartesia", default_config().catalogue["kn-prakash"].voices.primary.voice)
     svc2, built2 = preview()
     asyncio.run(svc2.speak(tid, "kn", None, "ನಮಸ್ಕಾರ ಸರ್"))
-    assert built2[0] == ("cartesia", default_config().catalogue["kn-disha"].voices.primary.voice)
+    assert built2[0] == ("sarvam_v4", default_config().catalogue["kn-chaitra"].voices.primary.voice), "unset: the default is the Bulbul v4 voice (21 Nov 2026)"
     svc3, built3 = preview(primary_fails=True)
     _, engine3, _ = asyncio.run(svc3.speak(tid, "kn", "kn-prakash", "ನಮಸ್ಕಾರ ಸರ್", "male"))
     assert engine3 == "sarvam_v4" and ("sarvam_v4", "chetan_kn_conversation") in built3, "the male voice falls back to the male voice"

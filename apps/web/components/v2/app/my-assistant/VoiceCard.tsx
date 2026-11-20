@@ -243,7 +243,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
                   const waiting = loading === v.id;
                   const later = !(v.sampleReady && v.sampleUrl) && !hear; // (no recording and no live preview here: nothing to play)
                   return (
-                    <div key={v.id} data-voice={v.id} data-selected={on ? "true" : "false"} className={`flex min-h-16 items-center gap-2 rounded-xl border p-2 pl-3 ${on ? "border-brand-edge bg-brand-bg" : "border-line bg-surface-2/40"}`}>
+                    <div key={v.id} data-voice={v.id} data-selected={on ? "true" : "false"} className={`flex min-h-16 items-center gap-2 rounded-xl border p-2 pl-3 ${on ? "border-brand-edge bg-surface-2" : "border-line bg-surface"}`}>
                       <label className={`flex min-h-11 min-w-0 flex-1 items-start gap-3 py-1 ${edit ? "cursor-pointer" : "opacity-80"}`}>
                         <input type="radio" name="vc-voice" value={v.id} checked={on} disabled={!edit} onChange={() => !on && use(v)} className={`${radio} mt-1`} />
                         <span className="min-w-0">

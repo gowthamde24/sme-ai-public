@@ -1,9 +1,9 @@
-import { Bricolage_Grotesque, Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 
 /**
- * Design v2 fonts. The two Latin fonts come through next/font/google like the root layout's Geist (self-hosted at run time; the build fetches
- * them, as it already does for Geist). Loaded only where V2Root is used. The four Indic fonts (Telugu, Devanagari, Kannada, Tamil) are not preloaded and are
+ * Design v2 fonts. ONE Latin font, Plus Jakarta Sans, for the whole product (owner, 21 Nov 2026: the app and the site draw headings, numbers and text in the same face; the old display face is gone), through next/font/google like the root layout's Geist (self-hosted at run time; the build fetches
+ * it, as it already does for Geist). Loaded only where V2Root is used. The four Indic fonts (Telugu, Devanagari, Kannada, Tamil) are not preloaded and are
  * declared per script, so a visitor who never sees that script does not download it. The CSS variables are consumed
  * by tokens.css (--v2-font-*-stack).
  *
@@ -12,8 +12,6 @@ import localFont from "next/font/local";
  * Every letter and shaping rule of the script is kept, so joined letters still form; the `unicode-range` is Google's own for that script, so the browser asks for the file only when a page shows a letter of it.
  */
 const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--v2-font-sans", display: "swap" });
-// the public site does not use this face any more (owner, 21 Nov 2026: one normal font, Plus Jakarta Sans); the app still does, so it stays, but it is no longer preloaded (a page that never draws with it never fetches it)
-const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--v2-font-display", display: "swap", preload: false });
 // next/font reads each call at build time, so every loader is called, with plain values, and assigned to a const in this file (a helper function around localFont is refused by the build)
 const telugu = localFont({
   src: [{ path: "./indic-fonts/NotoSansTelugu-400-700.woff2", weight: "400 700", style: "normal" }],
@@ -61,13 +59,12 @@ export const teluguDemoFontVariable: string = teluguDemo.variable;
 const INDIC = { te: telugu, hi: devanagari, kn: kannada, ta: tamil } as const;
 
 /**
- * The font variables a page puts on its wrapper. Latin sans and display always; of the four Indic fonts only the one
+ * The font variables a page puts on its wrapper. Latin sans always (headings and numbers use it too: `--v2-font-display-stack` is the sans stack); of the four Indic fonts only the one
  * for the page's language (a Telugu page downloads Telugu, an English page none: the other scripts' names, shown in the
  * language list, use the system's own font for that script). Without a language, all four. A font whose variable is
  * not on the page is never requested (an unset variable falls back to system-ui in tokens.css).
  */
-export function v2FontClassName(lang?: string, site = false): string {
+export function v2FontClassName(lang?: string): string {
   const indic = lang === undefined ? [telugu, devanagari, kannada, tamil] : lang in INDIC ? [INDIC[lang as keyof typeof INDIC]] : [];
-  // the public site draws everything in the one sans face (design/site-type.css), so it does not even name the display face
-  return [sans, ...(site ? [] : [display]), ...indic].map((f) => f.variable).join(" ");
+  return [sans, ...indic].map((f) => f.variable).join(" ");
 }

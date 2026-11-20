@@ -80,7 +80,7 @@ def test_the_words_of_the_preview_change_with_the_tone_and_the_voice_does_not() 
     for style in ("warm", "respectful", "quick"):
         body = client.get(f"{PREVIEW}/text?language=te&style={style}&name=Vani", headers=auth("a_owner")).json()
         said[style] = body["text"]
-        assert body["sound"]["voice_id"] == "te-ramya" and "AI assistant" not in body["text"] and body["style"] == style
+        assert body["sound"]["voice_id"] == "te-kavitha" and "AI assistant" not in body["text"] and body["style"] == style
     assert len(set(said.values())) == 3, "Friendly, Respectful and Short-and-quick are three different sets of words"
 
 
@@ -117,6 +117,6 @@ def test_any_listed_voice_of_the_language_can_be_heard_before_it_is_chosen_and_n
         for voice_id in ("te-tarun", "te-kavitha", "te-charan"):
             r = client.get(f"{route}?{Q}&voice_id={voice_id}", headers=auth("a_owner"))
             assert r.status_code == 200 and r.headers["x-voice-id"] == voice_id, (route, voice_id, r.text[:120])
-        for bad in ("en-janvi", "te-sindhu", "nobody", "x" * 41):
+        for bad in ("en-janvi", "te-nobody", "nobody", "x" * 41):
             assert client.get(f"{route}?{Q}&voice_id={bad}", headers=auth("a_owner")).status_code in (422, 404), (route, bad)
         assert client.get(f"{route}?{Q}&voice_id=en-janvi", headers=auth("a_owner")).status_code == 422

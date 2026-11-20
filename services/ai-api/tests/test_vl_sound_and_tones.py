@@ -115,12 +115,12 @@ def test_the_phone_call_speaks_the_workspaces_voice_tone_and_speed_not_the_defau
     stored = Stored.from_call_row({"choices": {"te": "te-tarun"}, "gender": "male", "speed": 0.9, "style": "respectful"}, None)
     parts, _ = phone_parts(bv, "Sample Stores", "te", "anthropic", None, (), stored=stored)  # type: ignore[arg-type]
     assert parts.voice_for("te") == "te-tarun" and parts.voice_name("te") == "Tarun"
-    assert parts.voice_for("hi") == "hi-rohan", "no choice for Hindi: the male default of Hindi"
+    assert parts.voice_for("hi") == "hi-kabir", "no choice for Hindi: the male default of Hindi (Bulbul v4, 21 Nov 2026)"
     inner = parts.tts._inner if hasattr(parts.tts, "_inner") else parts.tts
     assert getattr(inner, "gender", "male") == "male" and getattr(inner, "pace", 0.9) == 0.9
     assert "respectful" in parts.system_for("te").lower()
     default_parts, _ = phone_parts(bv, "Sample Stores", "te", "anthropic", None, ())  # type: ignore[arg-type]
-    assert default_parts.voice_for("te") == "te-ramya", "nothing saved: the same default as before"
+    assert default_parts.voice_for("te") == "te-kavitha", "nothing saved: the default woman (Bulbul v4 since 21 Nov 2026)"
 
 
 def test_a_speed_is_clamped_to_the_settings_range() -> None:
@@ -207,13 +207,14 @@ def test_a_sarvam_voice_is_not_counted_against_the_cartesia_cap() -> None:
     assert built == [("sarvam_v4", "kavitha_te_conversation")] and tts.served_engine == "sarvam_v4" and tts.fallback_reason == "" and tts.primary_chars == 0
 
 
-def test_the_short_list_is_two_voices_of_each_gender_and_each_voice_says_who_speaks_it() -> None:
+def test_every_voice_is_listed_with_at_least_two_of_each_gender_and_one_default_and_each_says_who_speaks_it() -> None:
     for language in ("te", "en", "hi", "kn"):
         for gender in ("female", "male"):
             listed = CFG.voices_of(language, gender, listed_only=True)
-            assert len(listed) == 2 and sum(v.default for v in listed) == 1, (language, gender)
-            assert {v.provider for v in listed} == {"cartesia", "sarvam"}, "one voice of each provider: they sound clearly different"
-    assert all(v.to_confirm for v in CFG.catalogue.values() if v.listed), "no native listener has confirmed the list yet"
+            assert len(listed) >= 2 and sum(v.default for v in listed) == 1, (language, gender)
+            assert {v.provider for v in listed} == {"cartesia", "sarvam"}, "voices of both providers"
+    assert all(v.listed for v in CFG.catalogue.values()), "owner, 21 Nov 2026: all the voices of Sarvam and Cartesia"
+    assert all(v.to_confirm for v in CFG.catalogue.values() if v.provider == "sarvam" and v.listed) and all(v.to_confirm for v in CFG.voices_of("te", listed_only=True) if v.id in ("te-ramya", "te-kavitha")), "no native listener has confirmed the list yet (a Cartesia voice of the old list too)"
     assert [v.id for v in CFG.voices_of("ml", listed_only=True)] == ["ml-latha", "ml-vijay"]
 
 

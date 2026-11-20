@@ -1,7 +1,6 @@
-/* THE SITE'S ONE TYPE (owner, 21 Nov 2026: "a normal font everywhere"): Plus Jakarta Sans for all Latin text, headings included, with the script fonts (Telugu, Devanagari, Kannada) behind it; no display face, no mono. Scoped to the public site
-   ([data-screen="landing"] is on every public page); the app keeps its own tokens. Headings keep their weight (600 to 700) and a normal letter spacing. */
-[data-ui="v2"] [data-screen="landing"] { --v2-font-display-stack: var(--v2-font-sans-stack); }
+/* THE ONE TYPE OF THE PRODUCT (owner, 21 Nov 2026: "a normal font everywhere"): Plus Jakarta Sans for all Latin text, headings and numbers included, with the script fonts (Telugu, Devanagari, Kannada, Tamil) behind it; no display face, no mono in headings. The sans stack IS the display stack
+   (design/tokens.css), so nothing here changes the face; this keeps the HEADINGS plain on every screen, the public site and the signed-in app alike: a normal letter spacing and a weight of 600 to 700 (an old tight `tracking-*` or extra-bold utility does not win). */
 @layer utilities {
-  [data-ui="v2"] [data-screen="landing"] :is(h1, h2, h3, h4, .font-display) { letter-spacing: 0 !important; }
-  [data-ui="v2"] [data-screen="landing"] .font-extrabold { font-weight: 700 !important; }
+  [data-ui="v2"] :is(h1, h2, h3, h4, .font-display) { letter-spacing: 0 !important; }
+  [data-ui="v2"] .font-extrabold { font-weight: 700 !important; }
 }

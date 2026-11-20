@@ -38,7 +38,7 @@ export function CallsTable({ words, base, query, items, selectedId, when }: Call
             const status = callStatus(c);
             const open = selectedId === c.id;
             const secs = c.live ? c.elapsedS : (c.durationS ?? c.elapsedS);
-            const cell = `${open ? "md:bg-brand-bg" : ""} md:table-cell md:border-b md:border-line md:px-3 md:py-3 md:tabular-nums`;
+            const cell = `${open ? "md:bg-surface-2" : ""} md:table-cell md:border-b md:border-line md:px-3 md:py-3 md:tabular-nums`;
             return (
               <tr key={c.id} data-call={c.id} data-status-of={status} aria-selected={open ? "true" : undefined} className={`relative grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1.5 border-b border-line p-3 last:border-b-0 md:table-row md:border-0 md:p-0 md:last:[&>td]:border-b-0 ${open ? "bg-brand-bg" : "hover:bg-surface-2"}`}>
                 <td className={`col-start-1 row-start-1 min-w-0 md:max-w-44 ${cell}`}>

@@ -135,6 +135,8 @@ if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
   if [ "${WORKER_TOKEN_EXPIRY:-0}" = 1 ]; then WORKER_AR_ENV="$WORKER_AR_ENV,TOKEN_EXPIRY_CHECK=true"; fi
   # WhatsApp's decision on our templates read every few minutes (planner, 20 Nov 2026; TEMPLATE_SYNC in docs/runbooks/hosting-env-and-secrets.md): off unless WORKER_TEMPLATE_SYNC=1
   if [ "${WORKER_TEMPLATE_SYNC:-0}" = 1 ]; then WORKER_AR_ENV="$WORKER_AR_ENV,TEMPLATE_SYNC=true"; fi
+  # the worker's voice notes (WhatsApp voice replies) and its other Sarvam REST speech use Bulbul v4 Flash (owner, 20 Nov 2026: "we move to Bulbul v4"; Malayalam and any speaker v4 cannot place stay on v3 inside SarvamTts): off unless WORKER_SARVAM_V4=1
+  if [ "${WORKER_SARVAM_V4:-0}" = 1 ]; then WORKER_AR_ENV="$WORKER_AR_ENV,SARVAM_TTS_MODEL=bulbul:v4-flash"; fi
   if [ "${WORKER_GOOGLE_CALENDAR:-0}" = 1 ]; then
     WORKER_AR_ENV="$WORKER_AR_ENV,WORKSPACE_SECRETS=gcp,WORKSPACE_SECRETS_PROJECT=$PROJECT_ID,PUBLIC_BASE_URL=$API_URL"
     WORKER_AR_SECRETS="$WORKER_AR_SECRETS,GOOGLE_OAUTH_CLIENT_ID=sme-google-oauth-client-id:latest,GOOGLE_OAUTH_CLIENT_SECRET=sme-google-oauth-client-secret:latest"

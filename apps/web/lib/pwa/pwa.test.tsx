@@ -84,8 +84,8 @@ describe("the offline pages", () => {
 describe("the page head", () => {
   it("links the colour of the phone's address bar, light and dark, and the circle icons", () => {
     const layout = readFileSync(path.join(WEB, "app/layout.tsx"), "utf8");
-    expect(layout).toContain('"(prefers-color-scheme: light)", color: "#fafafa"');
-    expect(layout).toContain('"(prefers-color-scheme: dark)", color: "#17161a"');
+    expect(layout).toContain('"(prefers-color-scheme: light)", color: "#ffffff"');
+    expect(layout).toContain('"(prefers-color-scheme: dark)", color: "#131216"');
     expect(layout).toContain("/icons/apple-touch-icon.png");
     expect(layout).toContain("<ServiceWorker");
   });

@@ -19,7 +19,7 @@ export function TrainSections({ words, base, current, usingDefaults }: { words?:
         <ul className="m-0 flex list-none flex-col gap-1 border-b border-line p-0 lg:border-b-0 lg:border-r lg:pr-3">
           {items.map((i) => (
             <li key={i.key}>
-              <Link href={i.href} aria-current={i.key === current ? "page" : undefined} data-section={i.key} className={`flex min-h-11 flex-col justify-center rounded-lg px-3 py-1.5 text-base font-semibold ${i.key === current ? "bg-brand-bg text-brand-text" : "text-muted hover:bg-surface-2 hover:text-ink"}`}>
+              <Link href={i.href} aria-current={i.key === current ? "page" : undefined} data-section={i.key} className={`flex min-h-11 flex-col justify-center rounded-lg px-3 py-1.5 text-base font-semibold ${i.key === current ? "bg-surface-2 text-brand-text" : "text-muted hover:bg-surface-2 hover:text-ink"}`}>
                 {i.label}
                 {i.defaults && i.key === current ? (
                   <span data-part="mya-defaults" className="text-xs font-medium text-muted">
