@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 STAGING_REF = "uiallwgywitryxatcqxf"
-DEMO_OWNERS = ("demo-textiles@demo.example.test", "demo-construction-materials@demo.example.test", "demo-education@demo.example.test", "demo-real-estate@demo.example.test", "demo-coaching@demo.example.test")
+DEMO_OWNERS = ("demo-textiles@demo.example.test", "demo-construction-materials@demo.example.test", "demo-education@demo.example.test", "demo-real-estate@demo.example.test", "demo-coaching@demo.example.test", "demo-auto-dealer@demo.example.test")
 
 
 def query(sql: str) -> list[dict[str, object]]:
