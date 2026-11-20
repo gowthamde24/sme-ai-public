@@ -1,12 +1,13 @@
-import { ArrowRight, Moon } from "lucide-react";
+import { ArrowRight, Check, Moon } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { LeakCalc, RadarFinder } from "@/components/v2/site/LazyIslands";
+import { publicPlanLines } from "@/components/v2/site/PublicPlans";
 import type { SiteKey, SiteT } from "@/i18n/site";
-import { PUBLIC_PLANS, PLAN_FACTS, rupees, type PublicPlan } from "@/lib/site/plans";
+import { PUBLIC_PLANS, PLAN_FACTS, planVars, rupees, type PublicPlan } from "@/lib/site/plans";
 
-import { Swipe } from "./Swipe";
+import { PlanGrid } from "./PlanGrid";
 import { TrustRow } from "./TrustRow";
 
 type Start = { href: string; label: string };
@@ -36,31 +37,48 @@ function Section({ id, labelledBy, children }: { id: string; labelledBy: string;
   );
 }
 
-/** A plan on the home page: its name, its price a month, and ONE line (its minutes; for Pay as you go, the price of a minute). Every number is the plan's own (lib/site/plans.ts); the pricing page has the rest. */
+/**
+ * What comes under a plan: the same lines the pricing page words (its minutes, the extra-minute price, the Lead Finder searches, the set-up; lib/site/plans.ts and the pp.* strings, no number typed here) with "1 business number" after the minutes.
+ */
+function planLines(plan: PublicPlan, t: SiteT): string[] {
+  const lines = publicPlanLines(plan, t);
+  lines.splice(plan.minutes === null ? 1 : 2, 0, t("h4.pl.num"));
+  return lines;
+}
+
+/** A plan on the home page: its name, its price a month and the ticked lines of what it includes (the pricing page has the rest); Pro, the recommended one, is outlined and its minutes bar fills once. */
 function PlanCard({ plan, t }: { plan: PublicPlan; t: SiteT }) {
-  const line = plan.minutes === null ? t("h4.pl.payg", { p: rupees(PLAN_FACTS.extraMinute) }) : t("h4.pl.min", { n: new Intl.NumberFormat("en-IN").format(plan.minutes) });
   return (
-    <div className={`h4-card h4-plan ${plan.recommended ? "h4-plan-rec" : ""}`} data-plan={plan.id}>
-      <div className="h4-plan-top">
-        <h3 className="h4-h3">{plan.name}</h3>
-        {plan.recommended ? <span className="h4-rec">{t("pp.pop")}</span> : null}
+    <li className="h4-slide">
+      <div className={`h4-card h4-plan ${plan.recommended ? "h4-plan-rec" : ""}`} data-plan={plan.id}>
+        <div className="h4-plan-top">
+          <h3 className="h4-h3">{plan.name}</h3>
+          {plan.recommended ? <span className="h4-rec">{t("pp.pop")}</span> : null}
+        </div>
+        <p className="h4-price" data-part="plan-cost">
+          {rupees(plan.monthly)} <span>{t("pp.mo")}</span>
+        </p>
+        {plan.recommended ? (
+          <span className="h4-minbar" aria-hidden="true">
+            <span />
+          </span>
+        ) : null}
+        <ul className="h4-plan-lines">
+          {planLines(plan, t).map((line) => (
+            <li key={line}>
+              <Check size={16} strokeWidth={2.6} aria-hidden="true" />
+              {line}
+            </li>
+          ))}
+        </ul>
       </div>
-      <p className="h4-price" data-part="plan-cost">
-        {rupees(plan.monthly)} <span>{t("pp.mo")}</span>
-      </p>
-      <p className="h4-card-d">{line}</p>
-      {plan.recommended ? (
-        <span className="h4-minbar" aria-hidden="true">
-          <span />
-        </span>
-      ) : null}
-    </div>
+    </li>
   );
 }
 
 /**
  * The sections of the home page between the try-it box and the FAQ (website-spec-v4): what late call-backs cost, the Lead Finder, and the plans with ONE trust row under them (the voices and the built-in section are gone: the length rule). Designed at 390 px first
- * (design/home4.css). Each is a title of at most six words, one grey line and one visual. Every word comes from the string store; the page reads fully with JavaScript off (the swipe rows are plain scrolling lists, the transcripts and the plans are server markup).
+ * (design/home4.css). Each is a title of at most six words, one grey line and one visual. Every word comes from the string store; the page reads fully with JavaScript off (the plans are server markup).
  */
 export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
   return (
@@ -75,11 +93,14 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
       </Section>
       <Section id="pricing" labelledBy="plans-title">
         <Head id="plans-title" title={t("h4.pl.title")} />
-        <Swipe label={t("h4.pl.title")} dotWord={t("h4.dot")} className="h4-plans">
+        <PlanGrid>
           {PUBLIC_PLANS.map((p) => (
             <PlanCard key={p.id} plan={p} t={t} />
           ))}
-        </Swipe>
+        </PlanGrid>
+        <p className="h4-every" data-part="every-plan">
+          <b>{t("h4.pl.every")}</b> {[t("h4.pl.e1"), t("pp.sh.1"), t("h4.pl.e2"), t("pp.sh.2", planVars()), t("pp.sh.5"), t("pp.sh.3"), t("pp.sh.4")].join(" · ")}
+        </p>
         <div className="h4-plans-note">
           <p data-part="plans-free">
             {t("h4.pl.line", { gst: `${PLAN_FACTS.gstPercent}%` })}{" "}

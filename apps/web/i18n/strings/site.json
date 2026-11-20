@@ -11354,19 +11354,6 @@
    "ta": "draft"
   }
  },
- "h4.pl.payg": {
-  "en": "{p}/min · 1 number",
-  "te": "{p}/నిమిషం · 1 number",
-  "hi": "{p}/मिनट · 1 number",
-  "kn": "{p}/ನಿಮಿಷ · 1 number",
-  "ta": "{p}/நிமிடம் · 1 number",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h4.m.yes": {
   "en": "Yes, contact me",
   "te": "అవును, contact చేయండి",
@@ -11458,19 +11445,6 @@
    "ta": "draft"
   }
  },
- "h4.pl.min": {
-  "en": "{n} minutes · 1 number",
-  "te": "{n} నిమిషాలు · 1 number",
-  "hi": "{n} मिनट · 1 number",
-  "kn": "{n} ನಿಮಿಷ · 1 number",
-  "ta": "{n} நிமிடம் · 1 number",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h4.pl.title": {
   "en": "Simple plans in rupees",
   "te": "Rupees లో simple plans",
@@ -11516,19 +11490,6 @@
   "hi": "late call-back से आपका कितना नुकसान",
   "kn": "late call-back ನಿಂದ ನಿಮಗೆ ಎಷ್ಟು ನಷ್ಟ",
   "ta": "late call-back-ஆல் உங்களுக்கு எவ்வளவு இழப்பு",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.dot": {
-  "en": "Show item {n} of {total}",
-  "te": "{total} లో {n} వది చూపించు",
-  "hi": "{total} में से {n} दिखाएँ",
-  "kn": "{total} ರಲ್ಲಿ {n} ತೋರಿಸಿ",
-  "ta": "{total}-இல் {n} காட்டு",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11633,6 +11594,58 @@
   "hi": "KYC हो गया",
   "kn": "KYC ಆಯಿತು",
   "ta": "KYC முடிந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.num": {
+  "en": "1 business number",
+  "te": "ఒక business number",
+  "hi": "एक business number",
+  "kn": "ಒಂದು business number",
+  "ta": "ஒரு business number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.every": {
+  "en": "Every plan has",
+  "te": "ప్రతి plan లో ఉండేవి",
+  "hi": "हर plan में",
+  "kn": "ಪ್ರತಿ plan ನಲ್ಲಿ ಇರುವುದು",
+  "ta": "ஒவ்வொரு plan-இலும் உள்ளவை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.e1": {
+  "en": "AI calls and WhatsApp replies",
+  "te": "AI calls, WhatsApp కి replies",
+  "hi": "AI calls और WhatsApp replies",
+  "kn": "AI calls, WhatsApp ಗೆ replies",
+  "ta": "AI calls மற்றும் WhatsApp replies",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.e2": {
+  "en": "Telugu, Hindi, Kannada, English",
+  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్",
+  "hi": "तेलुगु, हिन्दी, कन्नड़, अंग्रेज़ी",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್",
+  "ta": "தெலுங்கு, இந்தி, கன்னடம், ஆங்கிலம்",
   "status": {
    "te": "draft",
    "hi": "draft",

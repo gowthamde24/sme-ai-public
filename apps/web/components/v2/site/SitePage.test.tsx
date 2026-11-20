@@ -201,18 +201,23 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(text(finder)).not.toMatch(/Checked \d+ places|Found on this sweep/); // no count line, no note
     expect(finder.match(/<canvas/g)).toHaveLength(1); // one map at every width
   });
-  it("the plans (spec: Pay as you go + ₹5 a minute, Pro with 500 minutes recommended, Business with 1,500): rupees, two facts under each price, ONE line for GST, the number and free early access, a link to /pricing; the Pro minutes bar", () => {
+  it("the plans (spec 8): three cards stacked on a phone (no carousel, no dots), what comes under each plan in tick lines from the plan data, one 'Every plan has' line, ONE line for GST, the number and free early access, a link to /pricing; the Pro minutes bar", () => {
     const plans = home.match(/<section id="pricing"[\s\S]*?<\/section>/)![0];
-    expect([...plans.matchAll(/data-plan="(\w+)"/g)].map((m) => m[1])).toEqual(["payg", "pro", "business"]);
-    for (const x of ["Simple plans in rupees", "Pay as you go", "₹499", "₹5/min · 1 number", "Pro", "₹1,999", "500 minutes · 1 number", "Recommended", "Business", "₹5,999", "1,500 minutes · 1 number", "+18% GST · 1 business number included · Free early access until paid plans start.", "See full pricing"]) expect(text(plans), x).toContain(x);
+    expect([...plans.matchAll(/data-plan="(\w+)"/g)].map((m) => m[1])).toEqual(["payg", "pro", "business"]); // the spec's order
+    for (const x of ["Simple plans in rupees", "Pay as you go", "₹499", "Calls: ₹5 a minute", "Find customers: 2 searches free a month, then ₹49 each", "Set up on your own, with your assistant", "Pro", "₹1,999", "Recommended", "500 minutes included", "Extra minutes: ₹5 each", "Find customers: 10 searches a month, then ₹39 each", "Business", "₹5,999", "1,500 minutes included", "Find customers: 100 searches a month, then ₹29 each", "Priority set-up"]) expect(text(plans), x).toContain(x);
+    expect([...plans.matchAll(/<ul class="h4-plan-lines">[\s\S]*?<\/ul>/g)].map((m) => m[0].match(/<li/g)!.length)).toEqual([4, 5, 5]); // 4 or 5 tick lines each, "1 business number" among them
+    expect(plans.match(/1 business number<\/li>/g)).toHaveLength(3);
+    const every = text(plans.match(/<p class="h4-every"[\s\S]*?<\/p>/)![0]);
+    for (const x of ["Every plan has", "AI calls and WhatsApp replies", "Every feature, on every plan", "Telugu, Hindi, Kannada, English", "1 phone number included. More numbers: ₹299 a month each", "WhatsApp at Meta's own price, no markup from us", "Calls are billed every 30 seconds", "Calls nobody answers are free"]) expect(every, x).toContain(x);
+    for (const x of ["+18% GST · 1 business number included · Free early access until paid plans start.", "See full pricing"]) expect(text(plans), x).toContain(x);
     expect(text(plans)).not.toMatch(/most popular|best value|unlimited|Lead Desk|AI Workforce|Price at launch|voice|yearly|annual|2 months free|locked/i); // nothing about voice pricing, nothing yearly
     expect(plans).toContain('href="/pricing"');
-    expect(plans.match(/class="h4-slide"/g)).toHaveLength(3);
-    expect(plans.match(/class="h4-dot"/g)).toHaveLength(3);
+    expect(plans).not.toMatch(/h4-dot|h4-track|h4-swipe/); // stacked, not a carousel
     expect(plans.match(/class="h4-minbar"/g)).toHaveLength(1); // only Pro's bar fills
+    expect(plans).toContain('class="h4-plans" data-phase="final"');
     const css = fs.readFileSync(path.join(__dirname, "../../../design/home4.css"), "utf8");
-    expect(css).toMatch(/\.h4-plans \.h4-slide:nth-child\(2\) \{ order: -1; \}/); // Pro first in view on a phone
-    expect(css).toMatch(/@media \(min-width: 768px\) \{[\s\S]*\.h4-plans \.h4-track \{ grid-template-columns: repeat\(3/);
+    expect(css).toMatch(/\.h4-plans \{ display: grid; grid-template-columns: minmax\(0, 1fr\)/); // one column on a phone
+    expect(css).toMatch(/@media \(min-width: 768px\) \{ \[data-ui="v2"\] \.h4-plans \{ grid-template-columns: repeat\(3/); // three side by side from 768 px
   });
   it("the trust row under the plans: four mini cards with a tiny live moment each (a picture, hidden from assistive technology) and the title as real text; the server draws every moment finished; no Voices or Built-in section", () => {
     const plans = home.match(/<section id="pricing"[\s\S]*?<\/section>/)![0];
