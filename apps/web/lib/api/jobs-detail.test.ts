@@ -57,6 +57,10 @@ describe("one job's page: what the API sends (the adapter)", () => {
   });
   it("cost is the month so far {minutes_used, minutes_included, rupees|null}: rupees on a paid plan; it is required, and a plan's per-estimate shape is not it", () => {
     expect(parseJobDetail(wire).cost).toEqual({ minutesUsed: 8, minutesIncluded: 60, rupees: null });
+    // a setting the owner has not chosen sends value null: the default shows, the page still draws (staging 20 Nov: "Unexpected setting.value" crashed a job page)
+    const withNulls = parseJobDetail({ ...wire, settings: { main: [{ key: "say_ai_when_greeting", type: "choice", value: null, options: ["business", "on", "off"] }, { key: "quiet", type: "toggle", value: null }], more: [] } });
+    expect(withNulls.settings.find((x) => x.key === "say_ai_when_greeting")).toMatchObject({ value: "business", options: ["business", "on", "off"] });
+    expect(withNulls.settings.find((x) => x.key === "quiet")).toMatchObject({ value: "off" });
     // a plan with no included minutes (Pay as you go) sends null: the page must still draw (staging 20 Nov: "Unexpected cost.minutes_included" crashed it)
     expect(parseJobDetail({ ...wire, cost: { minutes_used: 12, minutes_included: null, rupees: null } }).cost).toEqual({ minutesUsed: 12, minutesIncluded: null, rupees: null });
     expect(parseJobDetail({ ...wire, cost: { minutes_used: 0, minutes_included: 0, rupees: 190 } }).cost).toEqual({ minutesUsed: 0, minutesIncluded: 0, rupees: 190 });

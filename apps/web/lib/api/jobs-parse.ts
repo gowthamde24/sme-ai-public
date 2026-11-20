@@ -95,12 +95,13 @@ function parseSetting(row: unknown, more: boolean): JobSetting {
   const x = rec(row, "setting");
   const type = oneOf(x.type ?? "choice", ["choice", "toggle"] as const, "setting.type");
   const key = word(x.key, "setting.key");
+  // contract jobs-detail.md: `value` is `string|null` (choice) and `boolean|null` (toggle): null = the owner has not chosen, so the DEFAULT shows (a toggle: off; a choice: its first option, which C1 lists as the default). Staging 20 Nov: a null crashed the whole job page ("Unexpected setting.value").
   if (type === "toggle") {
-    const value = bool(x.value, "setting.value") ? "on" : "off";
+    const value = x.value === null || x.value === undefined ? "off" : bool(x.value, "setting.value") ? "on" : "off";
     return { key, type, value, options: ["on", "off"], more };
   }
   const options = list(x.options, "setting.options", 40).map((o) => word(o, "option", 40));
-  const value = word(x.value, "setting.value", 40);
+  const value = x.value === null || x.value === undefined ? (options[0] ?? bad("setting.options")) : word(x.value, "setting.value", 40);
   if (!options.includes(value)) bad("setting.value");
   return { key, type, value, options, more };
 }
