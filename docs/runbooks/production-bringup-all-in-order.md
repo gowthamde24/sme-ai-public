@@ -20,14 +20,14 @@ Older, narrower plans (kept as reference, this file supersedes their ORDER): `do
 ```
 cp deploy/production.env.example deploy/.env.production     # git ignores it
 # fill: PROD_PROJECT_ID=stack19-production  PROD_PROJECT_NUMBER=488341211094 (created by the owner, 21 Nov 2026, billing enabled; the API will be https://sme-api-488341211094.asia-south1.run.app)
-#       PROD_SUPABASE_REF=<the 20 letters of the production Supabase project: still to be created by the owner>  PROD_SCHEDULER_EMAIL
+#       PROD_SUPABASE_REF=ijmsusgyilwskpjxfauu (created by the owner, 21 Nov 2026, org stack19, Pro, Mumbai)  PROD_SCHEDULER_EMAIL
 #       PROD_WEB_ORIGIN=https://app.stack19.com  PROD_MAIL_DOMAIN=stack19.com  (PROD_SITE_ORIGIN=https://stack19.com optional)
 ```
 **[C1 ON GO]** `deploy/production.sh preflight` (read-only): ids differ from staging, git clean on main == origin/main, required secrets exist, prints `PROD_CONFIRM=<commit>`.
 
 ## 2. Database [OWNER types the DB password; C1 reads the output]
 ```
-supabase link --project-ref <PROD_SUPABASE_REF>            # asks the database password, typed by the owner
+supabase link --project-ref ijmsusgyilwskpjxfauu            # asks the database password, typed by the owner
 supabase db push --dry-run                                  # C1 reads the list: every migration up to the newest on main
 supabase db push --yes
 psql / SQL editor: run supabase/hosted/verify.sql           # every row ok = true
@@ -71,7 +71,7 @@ Check (C1 ON GO): `gcloud secrets list --project stack19-production --format='va
 
 ## 4b. Sign-in: Continue with Google only (owner, 21 Nov) [OWNER, start FIRST: Google's review takes days]
 Already built (ADR 0115, `social-sign-up.md`): the second factor is OPTIONAL for everybody (never asked at sign-up or login; only a person who turned the authenticator on is asked once per session, only for sensitive actions); the Stack19 staff console keeps its own mandatory 2FA. Production steps, all by hand and never `supabase config push`:
-1. Google Cloud console (the PRODUCTION project): OAuth consent screen (app name, support e-mail, authorised domain `stack19.com`, privacy page and terms links = the owner-approved drafts), then an OAuth client of type Web with the authorised redirect URI `https://<PROD_SUPABASE_REF>.supabase.co/auth/v1/callback`. **Publishing the consent screen to "In production" needs Google's brand verification (days): submit it as soon as the privacy page exists; until then only listed test users can sign in (the owner and the first business owner can be added as test users, up to 100).**
+1. Google Cloud console (the PRODUCTION project): OAuth consent screen (app name, support e-mail, authorised domain `stack19.com`, privacy page and terms links = the owner-approved drafts), then an OAuth client of type Web with the authorised redirect URI `https://ijmsusgyilwskpjxfauu.supabase.co/auth/v1/callback`. **Publishing the consent screen to "In production" needs Google's brand verification (days): submit it as soon as the privacy page exists; until then only listed test users can sign in (the owner and the first business owner can be added as test users, up to 100).**
 2. Supabase dashboard > Authentication > Providers > Google: client id + secret (the secret by the console's own field, never in chat), enable; "Allow manual linking" OFF, "Confirm e-mail" ON, "Allow new users to sign up" OFF (early access = we approve each business).
 3. URL configuration: Site URL `https://app.stack19.com`, redirect `https://app.stack19.com/**`.
 4. API: `AUTH_GOOGLE_CLIENT_ID=<the public client id>` in `deploy/settings/production/api.env` (reviewed PR) and redeploy; `GET /v1/auth/providers` then says `google: true`.
