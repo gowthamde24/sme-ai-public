@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { EffectLine } from "@/components/v2/app/jobs/pages/parts";
+import { SampleChip } from "@/components/v2/app/jobs/SampleChip";
 import { PageTop } from "@/components/v2/app/parts";
 import { SellSection } from "@/components/v2/app/sell/LazySection";
 import { pageMain } from "@/components/v2/app/ui";
@@ -12,8 +13,10 @@ import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { readWhatYouSell } from "@/lib/api/what-you-sell";
 import { requireUser } from "@/lib/auth/session";
+import { personaOf } from "@/lib/jobs/sample-fixtures";
 import { readPackCached } from "@/lib/packs/read";
 import { jobsScreens } from "@/lib/screens/flag";
+import { previewSample } from "@/lib/screens/preview";
 import { ENTRY_PATH, oldPagesOf, styleOfPack } from "@/lib/sell/style";
 import { SELL_STYLES } from "@/lib/sell/types";
 
@@ -41,10 +44,12 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
     notFound();
   }
   const lang = await getLang();
-  const words = wordsFor(lang, ["jobs.sell.", "catalogue.colour."], ["jobs.tb.s5.security"]);
+  const words = wordsFor(lang, ["jobs.sell.", "catalogue.colour."], ["jobs.tb.s5.security", "jobs.sample", "jobs.sample.note"]);
   const pack = await readPackCached(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null));
   const pick = typeof asked === "string" && jobsScreens() === "mock" ? SELL_STYLES.find((s) => s === asked) : undefined;
-  const style = pick ?? styleOfPack(pack?.packId, pack?.sellStyle);
+  // a SAMPLE business of the staging preview (lib/screens/preview.ts) sells in its own style; "my business" and everyone else follow the pack
+  const sampleType = previewSample();
+  const style = pick ?? (sampleType ? personaOf(sampleType).sell : styleOfPack(pack?.packId, pack?.sellStyle));
   const modules = pack?.modules ?? null;
   const base = `/app/tenants/${tenantId}`;
   const owns = role === "owner" || role === "admin";
@@ -55,7 +60,15 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
       <PageTop title={words["jobs.sell.page.title"] ?? "What you sell"} sub={words["jobs.sell.page.sub"]} />
       {read.state === "ready" ? (
         <>
-          {read.data.live ? null : <div className="mt-4"><EffectLine part="test-mode" text={words["jobs.sell.mock"] ?? ""} /></div>}
+          {read.data.sample ? (
+            <p data-part="sample-sell" className="m-0 mt-4">
+              <SampleChip words={words} note />
+            </p>
+          ) : read.data.live ? null : (
+            <div className="mt-4">
+              <EffectLine part="test-mode" text={words["jobs.sell.mock"] ?? ""} />
+            </div>
+          )}
           <SellSection
             style={style}
             entries={read.data.entries}

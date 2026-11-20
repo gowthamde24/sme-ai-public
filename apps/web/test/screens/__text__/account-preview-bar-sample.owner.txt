@@ -1,0 +1,4 @@
+{role=status} Preview: sample data of Sai Auto Motors. Nothing here is real, sent or saved.
+form:
+<hidden name=on value=0>
+[button type=submit: Turn off]

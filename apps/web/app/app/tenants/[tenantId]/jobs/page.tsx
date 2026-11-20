@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { JobsList, type JobsSheet } from "@/components/v2/app/jobs/JobsList";
+import { SampleChip } from "@/components/v2/app/jobs/SampleChip";
 import { PageTop } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
@@ -55,6 +56,11 @@ export default async function JobsRoute({ params, searchParams }: PageProps<"/ap
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={words["jobs.page.title"] ?? "Jobs"} sub={words["jobs.page.sub"]} />
+      {jobs?.some((j) => j.sample) ? (
+        <p data-part="sample-jobs" className="m-0 mb-3">
+          <SampleChip words={words} note />
+        </p>
+      ) : null}
       {jobs ? (
         <JobsList jobs={jobs} filter={f} words={words} base={base} actions={owns ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} suggestions={suggestions} suggestionActions={owns ? { start: startSuggestionAction.bind(null, tenantId) } : null} sheet={sheet ?? { actions: null, load: null, open: false }} />
       ) : (

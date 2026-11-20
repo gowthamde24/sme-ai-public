@@ -8,7 +8,7 @@ import { lettersOf } from "@/components/v2/app/letters";
 import { FRAME_LOADING, type FrameData } from "@/components/v2/app/contract";
 import { appV4, designV6, jobsScreens } from "@/lib/screens/flag";
 import { wordsFor } from "@/i18n/app-words";
-import { previewOn } from "@/lib/screens/preview";
+import { previewChoice } from "@/lib/screens/preview";
 import { PreviewBar } from "@/components/v2/app/PreviewBar";
 import { workspaceOf } from "@/components/v2/app/nav";
 import type { Membership } from "@/components/v2/app/use-workspace";
@@ -54,6 +54,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     // the API is down, or the session was rejected (the page then redirects to sign in): the account part only
   }
   // app v4 is an environment switch, so the first paint knows it (without it the phone's header and section tabs were drawn the old way and re-drawn when the workspace's layout handed the data over: a 68 px jump)
+  const preview = previewChoice();
   let frame: FrameData = { ...FRAME_LOADING, v4: appV4(), ds: designV6(), jobs: jobsScreens() !== "off" };
   let me: { url: string | null; letters: string } | null = null;
   try {
@@ -77,7 +78,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   mark("app_shell"); // (SERVER_TIMING=1 only) everything above the first Suspense is read: this is where the first bytes of the page can go
   return (
     <>
-      {previewOn() ? <PreviewBar words={wordsFor(lang, ["preview."])} /> : null}
+      {preview ? <PreviewBar words={wordsFor(lang, ["preview."])} choice={preview} /> : null}
       <AppFrame lang={lang} theme={theme} email={video ? null : user.email} memberships={memberships} signOut={signOut} frame={frame} mark={avatar} markLarge={avatarLarge} still={video !== null}>
         {children}
       </AppFrame>

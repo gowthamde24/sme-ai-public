@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { FestivalHint } from "@/lib/jobs/festival";
 
 import { makeT, type Words } from "../../words";
+import { SampleChip } from "../SampleChip";
 import { LazySheet } from "./LazySheet";
 import { useSheet } from "./NewJobButton";
 import type { SheetActions } from "./types";
@@ -72,6 +73,7 @@ export function FestivalSuggestion({ festival, words, base, actions }: { festiva
           <p className="m-0 flex items-center gap-2 text-[12px] font-bold uppercase tracking-wider text-brand-text">
             <Sparkles aria-hidden="true" className="size-4" />
             {t("jobs.tpl.fest.eyebrow")}
+            {festival.sample ? <SampleChip words={words} /> : null}
           </p>
           <p className="m-0 text-[17px] font-semibold leading-snug text-ink">{t(festival.days === 0 ? "jobs.tpl.fest.msg_today" : "jobs.tpl.fest.msg", { festival: festival.name, n: festival.days })}</p>
           <div className="flex flex-wrap gap-2.5">
