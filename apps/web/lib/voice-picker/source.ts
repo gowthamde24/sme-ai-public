@@ -106,20 +106,23 @@ export async function saveVoiceGender(ctx: Ctx, gender: unknown): Promise<Saved<
 }
 
 /**
- * The live "Hear it" of the voice card: the workspace's SAVED opening line spoken in the voice in force for `language` (`POST /voices/preview {language}`, text null = the saved line). The API has no way to ask for another voice: it speaks the one that is chosen, so the card offers it for the voice in use only. The test mode has no sound ({audio: null, fake: true}).
- * 404 `no_preview` = no voice service here (audio null); 429 passes on as "rate". The answer carries `voiceId`, the voice that really spoke.
+ * The live "Hear it" of the voice card: the workspace's SAVED opening line spoken by `voiceId` (a listed voice of the language; C1 #996: `POST /voices/preview {language, voice_id, tone}`), in the tone on the screen. With no `voiceId` it is the voice in force. Spends characters, so only on a press.
+ * The test mode has no sound ({audio: null, fake: true}). 404 `no_preview` = no voice service here (audio null); 429 passes on as "rate"; 422 (`unknown_voice`, or an older API that does not take the field) as "unknown_voice". The answer carries `voiceId`, the voice that really spoke.
  */
-export async function hearActive(ctx: Ctx, language: unknown): Promise<Saved<Preview> | { ok: false; error: "rate" }> {
+export async function hearActive(ctx: Ctx, language: unknown, voiceId: unknown = null, tone: unknown = null): Promise<Saved<Preview> | { ok: false; error: "rate" | "unknown_voice" }> {
   const mode = voicePickerScreens();
   if (mode === "off") return { ok: false, error: "not_available" };
   if (typeof language !== "string" || !(PICKER_LANGS as readonly string[]).includes(language)) return { ok: false, error: "invalid" };
+  if (voiceId !== null && voiceId !== undefined && (typeof voiceId !== "string" || !VOICE_ID.test(voiceId))) return { ok: false, error: "invalid" };
+  if (tone !== null && tone !== undefined && tone !== "friendly" && tone !== "respectful" && tone !== "quick") return { ok: false, error: "invalid" };
   if (mode === "mock") return { ok: true, data: { audio: null, fake: true } };
   try {
-    return { ok: true, data: await previewSpoken(ctx.token, ctx.tenantId, { language: language as CallLang, text: null, mentionAi: null }) };
+    return { ok: true, data: await previewSpoken(ctx.token, ctx.tenantId, { language: language as CallLang, text: null, mentionAi: null, voiceId: (voiceId as string | null | undefined) ?? null, tone: (tone as "friendly" | "respectful" | "quick" | null | undefined) ?? null }) };
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     if (error instanceof PreviewUnsupported) return { ok: false, error: "not_available" };
     if (error instanceof ApiRequestError && error.status === 429) return { ok: false, error: "rate" };
+    if (error instanceof ApiRequestError && error.status === 422) return { ok: false, error: "unknown_voice" };
     return { ok: false, error: refusal(error) };
   }
 }

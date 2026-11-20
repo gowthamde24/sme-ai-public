@@ -34,11 +34,11 @@ const card = () => document.querySelector('[data-part="who-talks"]') as HTMLElem
 const pill = (n: number) => within(card()).getByRole("combobox", { name: `This job speaks … in a … voice from …. (${n})` }) as HTMLSelectElement;
 // the voice card's own list (voices-tones.md section 9): catalogue ids, first names, per language; one recorded, one only heard live
 const VOICES = [
-  { id: "te-ramya", name: "Ramya", language: "te", recommended: true, ready: true },
-  { id: "te-kavitha", name: "Kavitha", language: "te", recommended: false, ready: false },
-  { id: "hi-sanya", name: "Sanya", language: "hi", recommended: true, ready: true },
-  { id: "hi-pooja", name: "Pooja", language: "hi", recommended: false, ready: false },
-  { id: "en-janvi", name: "Janvi", language: "en", recommended: true, ready: true },
+  { id: "te-ramya", name: "Ramya", language: "te", recommended: true },
+  { id: "te-kavitha", name: "Kavitha", language: "te", recommended: false },
+  { id: "hi-sanya", name: "Sanya", language: "hi", recommended: true },
+  { id: "hi-pooja", name: "Pooja", language: "hi", recommended: false },
+  { id: "en-janvi", name: "Janvi", language: "en", recommended: true },
 ];
 
 describe("Who talks: the card", () => {
@@ -169,11 +169,11 @@ describe("Who talks: the voices play through the voice-pick route (the recorded 
     vi.stubGlobal("Audio", class { src: string; onended: (() => void) | null = null; onerror: (() => void) | null = null; constructor(src: string) { this.src = src; created.push(src); } pause() {} play() { return Promise.resolve(); } });
   });
   afterEach(() => vi.unstubAllGlobals());
-  it("a voice with a recording has a Play button that asks the route for that voice's id; one with no recording has none; again stops it", () => {
+  it("every voice has a Play button that asks the route for that voice's id and the job's tone (a voice with no recording is spoken live there); again stops it", () => {
     view();
-    expect([...card().querySelectorAll("[data-play]")].map((b) => b.getAttribute("data-play"))).toEqual(["te-ramya"]);
+    expect([...card().querySelectorAll("[data-play]")].map((b) => b.getAttribute("data-play"))).toEqual(["te-ramya", "te-kavitha"]);
     fireEvent.click(card().querySelector('[data-play="te-ramya"]') as HTMLElement);
-    expect(created).toEqual(["/app/tenants/t/voice-pick?id=te-ramya"]);
+    expect(created).toEqual(["/app/tenants/t/voice-pick?id=te-ramya&tone=friendly"]);
     expect(card().querySelector('[data-play="te-ramya"]')).toHaveAttribute("aria-pressed", "true");
     expect(card().querySelector('[data-play="te-ramya"]')).toHaveAttribute("aria-label", "Stop: Ramya");
     fireEvent.click(card().querySelector('[data-play="te-ramya"]') as HTMLElement);

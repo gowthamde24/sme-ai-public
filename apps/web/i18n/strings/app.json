@@ -125994,5 +125994,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "vc.err.unknown": {
+  "en": "That voice is not available.",
+  "te": "ఆ వాయిస్ ఇప్పుడు అందుబాటులో లేదు.",
+  "hi": "वह आवाज़ अभी उपलब्ध नहीं है।",
+  "kn": "ಆ ಧ್ವನಿ ಈಗ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

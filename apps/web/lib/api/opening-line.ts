@@ -139,10 +139,10 @@ export class PreviewUnsupported extends Error {}
  * speaks it in the voice in force and answers {spoken_text, audio: {mime, base64}}: `spoken_text` is the exact string it sent to the voice engine, shown under the button so that what is read is what was heard. Nothing is saved. 404 `no_preview` = no voice service (no sound);
  * a 404 / 405 of any other kind = the route is not there yet (PreviewUnsupported).
  */
-export async function previewSpoken(token: string, tenantId: string, input: { language: CallLang; text: string | null; mentionAi: boolean | null; assistantName?: string | null }): Promise<Preview> {
+export async function previewSpoken(token: string, tenantId: string, input: { language: CallLang; text: string | null; mentionAi: boolean | null; assistantName?: string | null; /** a listed voice of that language to speak it (C1 #996; an older API refuses the field) */ voiceId?: string | null; tone?: "friendly" | "respectful" | "quick" | null }): Promise<Preview> {
   let json: unknown;
   try {
-    json = await apiRequest(`${aiBase(tenantId)}/voices/preview`, token, { method: "POST", body: JSON.stringify({ language: input.language, text: input.text, mention_ai: input.mentionAi, assistant_name: input.assistantName ?? null }) });
+    json = await apiRequest(`${aiBase(tenantId)}/voices/preview`, token, { method: "POST", body: JSON.stringify({ language: input.language, text: input.text, mention_ai: input.mentionAi, assistant_name: input.assistantName ?? null, ...(input.voiceId ? { voice_id: input.voiceId } : {}), ...(input.tone ? { tone: input.tone } : {}) }) });
   } catch (error) {
     if (error instanceof ApiRequestError) {
       if (error.code === "no_preview") return { audio: null, fake: false, spokenText: null };

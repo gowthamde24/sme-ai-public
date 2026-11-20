@@ -16,7 +16,7 @@ export type { WhoTarget, WhoVoiceName };
  */
 export function whoVoicesOf(picker: Picker | null): WhoVoiceName[] | null {
   if (!picker) return null;
-  const out = picker.voices.filter((v) => v.gender === picker.gender).map((v): WhoVoiceName => ({ id: v.id, name: v.name, language: v.language, recommended: v.recommended, ready: v.sampleReady }));
+  const out = picker.voices.filter((v) => v.gender === picker.gender).map((v): WhoVoiceName => ({ id: v.id, name: v.name, language: v.language, recommended: v.recommended }));
   return out.length > 0 ? out : null;
 }
 

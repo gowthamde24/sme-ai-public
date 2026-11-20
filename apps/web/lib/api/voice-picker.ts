@@ -50,3 +50,19 @@ export async function getVoicesPreviewFile(token: string, tenantId: string, lang
     throw error;
   }
 }
+
+/**
+ * A LIVE sample of ONE listed voice (C1 #996: `GET /ai-assistant/voice-preview?language=&voice_id=&style=`, Owner, Admin): the opening line and a reply in that voice and tone, for a voice with no recording (`sample_ready: false`). The answer names the voice that spoke (`X-Voice-Id`); the caller
+ * checks it is the one asked for (an older API ignores `voice_id` and speaks the voice in force). null = no sound here (404). 429 and 422 are passed on.
+ */
+export async function getVoiceLiveFile(token: string, tenantId: string, language: string, voiceId: string, tone: "friendly" | "respectful" | "quick" | null): Promise<{ bytes: ArrayBuffer; contentType: string; voiceId?: string | null } | null> {
+  if (!/^[a-z]{2}$/.test(language) || !VOICE_ID.test(voiceId)) return null;
+  const q = new URLSearchParams({ language, voice_id: voiceId, ...(tone ? { style: tone === "friendly" ? "warm" : tone } : {}) });
+  try {
+    const got = await apiBinaryRequest(`${base(tenantId)}/voice-preview?${q.toString()}`, token, 2_000_000);
+    return /^audio\/(wav|x-wav|mpeg|ogg|mp4|webm)(;|$)/.test(got.contentType) ? got : null;
+  } catch (error) {
+    if (error instanceof ApiRequestError && error.status === 404) return null;
+    throw error;
+  }
+}

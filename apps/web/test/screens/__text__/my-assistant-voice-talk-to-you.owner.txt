@@ -23,9 +23,9 @@ legend: Voice
 <radio name=vc-voice label="RamyaWomanRecommendedIn use" value=te-ramya checked>
 Ramya Woman Recommended In use
 [button type=button: Hear Ramya]
-<radio name=vc-voice label="KavithaWomanChoose it, then you can hear it." value=te-kavitha>
-Kavitha Woman Choose it, then you can hear it.
-[button type=button disabled: Hear Kavitha]
+<radio name=vc-voice label="KavithaWoman" value=te-kavitha>
+Kavitha Woman
+[button type=button: Hear Kavitha]
 {label="How it talks to you"}
 ## How it talks to you
 Only yours. Your team chooses their own, and customers are not affected. Test version: your choices are kept in this browser only, and a sample shows its words, not a voice. Talk to me in

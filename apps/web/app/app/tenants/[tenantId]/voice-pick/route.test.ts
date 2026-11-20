@@ -1,11 +1,11 @@
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), read: vi.fn(), file: vi.fn() }));
+const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), read: vi.fn(), file: vi.fn(), live: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
 vi.mock("@/lib/voice-picker/source", () => ({ readVoicePicker: (...a: unknown[]) => h.read(...a) }));
-vi.mock("@/lib/api/voice-picker", () => ({ getVoiceSampleFile: (...a: unknown[]) => h.file(...a) }));
+vi.mock("@/lib/api/voice-picker", () => ({ getVoiceSampleFile: (...a: unknown[]) => h.file(...a), getVoiceLiveFile: (...a: unknown[]) => h.live(...a) }));
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
@@ -13,7 +13,7 @@ import { GET } from "./route";
 
 const T = "22222222-2222-2222-2222-222222222222";
 const get = (qs = "id=hi-sanya", id = T) => GET(new NextRequest(`http://x/app/tenants/${id}/voice-pick?${qs}`), { params: Promise.resolve({ tenantId: id }) });
-const picker = (fake: boolean, sampleUrl: string | null = "/static/hi.mp3") => ({ mode: "ok", data: { fake, choices: {}, voices: [{ id: "hi-sanya", sampleUrl, sampleReady: true }, { id: "hi-esha", sampleUrl: null, sampleReady: false }, { id: "hi-pooja", sampleUrl: "/static/pooja.mp3", sampleReady: false }] } });
+const picker = (fake: boolean, sampleUrl: string | null = "/static/hi.mp3") => ({ mode: "ok", data: { fake, choices: {}, voices: [{ id: "hi-sanya", language: "hi", sampleUrl, sampleReady: true }, { id: "hi-esha", language: "hi", sampleUrl: null, sampleReady: false }, { id: "hi-pooja", language: "hi", sampleUrl: "/static/pooja.mp3", sampleReady: false }] } });
 
 beforeEach(() => {
   vi.unstubAllEnvs();
@@ -21,6 +21,7 @@ beforeEach(() => {
   h.tenant.mockReset().mockResolvedValue({ role: "owner" });
   h.read.mockReset();
   h.file.mockReset();
+  h.live.mockReset();
 });
 
 describe("GET voice-pick (the recorded sample of one voice)", () => {
@@ -39,8 +40,6 @@ describe("GET voice-pick (the recorded sample of one voice)", () => {
     expect(r.headers.get("Content-Type")).toBe("audio/wav");
     expect(r.headers.get("Cache-Control")).toBe("private, max-age=86400");
     expect(r.headers.get("X-Content-Type-Options")).toBe("nosniff");
-    expect((await get("id=hi-esha")).status).toBe(404);
-    expect((await get("id=hi-pooja")).status).toBe(404); // a file is named but not made yet (C1 `sample_ready: false`): the card plays that voice live
     expect((await get("id=nobody")).status).toBe(404);
   });
   it("only the Owner and an Admin may hear it; signed out is 401, an expired token 401", async () => {
@@ -69,5 +68,33 @@ describe("GET voice-pick (the recorded sample of one voice)", () => {
     expect((await get()).status).toBe(502);
     h.file.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x"));
     expect((await get()).status).toBe(404);
+  });
+  it("1: a voice with no recording (sample_ready false) is spoken LIVE in its own voice and the tone asked for; the sound must name that voice, else 404; 429 is passed on, 422 and no sound are 404", async () => {
+    vi.stubEnv("VOICE_PICKER_SCREENS", "1");
+    h.read.mockResolvedValue(picker(false));
+    h.live.mockResolvedValueOnce({ bytes: new Uint8Array([1, 2]).buffer, contentType: "audio/wav", voiceId: "hi-pooja" });
+    const r = await get("id=hi-pooja&tone=quick");
+    expect(r.status).toBe(200);
+    expect(r.headers.get("Content-Type")).toBe("audio/wav");
+    expect(r.headers.get("Cache-Control")).toBe("private, max-age=600");
+    expect(h.live).toHaveBeenCalledWith("tok", T, "hi", "hi-pooja", "quick");
+    expect(h.file).not.toHaveBeenCalled();
+    h.live.mockResolvedValueOnce({ bytes: new ArrayBuffer(2), contentType: "audio/wav", voiceId: "hi-sanya" }); // an older API speaks the voice in force
+    expect((await get("id=hi-pooja")).status).toBe(404);
+    expect(h.live).toHaveBeenLastCalledWith("tok", T, "hi", "hi-pooja", null);
+    h.live.mockResolvedValueOnce({ bytes: new ArrayBuffer(2), contentType: "audio/wav", voiceId: null });
+    expect((await get("id=hi-pooja&tone=casual")).status).toBe(404);
+    h.live.mockResolvedValueOnce(null);
+    expect((await get("id=hi-esha")).status).toBe(404);
+    h.live.mockRejectedValueOnce(new ApiRequestError(429, "rate_limited", "x"));
+    expect((await get("id=hi-pooja")).status).toBe(429);
+    h.live.mockRejectedValueOnce(new ApiRequestError(422, "unknown_voice", "x"));
+    expect((await get("id=hi-pooja")).status).toBe(404);
+  });
+  it("mock: every voice of the catalogue plays (a tone), recorded or not", async () => {
+    vi.stubEnv("VOICE_PICKER_SCREENS", "mock");
+    h.read.mockResolvedValue(picker(true));
+    expect((await get("id=hi-pooja")).status).toBe(200);
+    expect(h.live).not.toHaveBeenCalled();
   });
 });

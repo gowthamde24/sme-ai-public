@@ -63,7 +63,7 @@ afterEach(() => {
 const WAV = btoa("RIFF....WAVEfmt ");
 function setup(over: Partial<VoiceCardProps> = {}, voiceOver: { choices?: Partial<Record<PickerLang, string | null>>; gender?: "female" | "male" } = {}) {
   const choose = vi.fn(async () => ({ ok: true as const }));
-  const hear = vi.fn(async (language: PickerLang) => ({ ok: true as const, preview: { audio: { base64: WAV, mime: "audio/wav", seconds: 2 }, fake: false, voiceId: language === "te" ? "te-kavitha" : null } }));
+  const hear = vi.fn(async (_language: PickerLang, voiceId: string) => ({ ok: true as const, preview: { audio: { base64: WAV, mime: "audio/wav", seconds: 2 }, fake: false, voiceId } }));
   const save = vi.fn(async (c: Record<string, unknown>) => ({ ok: true as const, data: H({ ...(c.tone ? { tone: { value: c.tone, source: "saved", pack_default: "friendly", options: [] } } : {}), ...(c.background ? { background: { ...BG, value: c.background, saved: true } } : {}), ...(c.sayAi !== undefined ? { say_ai_when_greeting: { value: c.sayAi, saved: true } } : {}) }) }));
   const toneExample = vi.fn(async () => null as string | null);
   const props: VoiceCardProps = {
@@ -160,43 +160,54 @@ describe("the voice card, \"Your assistant's voice\" (owner, 20 Nov 2026)", () =
     expect(screen.getByRole("alert")).toHaveTextContent("The sample could not be played now.");
   });
 
-  it("a voice with no recording yet cannot be heard until it is the one in use: its play button is off and says why", () => {
+  it("a voice with no recording is heard live in ITS OWN voice and the tone on the screen, without choosing it first: the call carries the language, the voice id and the tone; the sound plays as a blob, never from a file", async () => {
     const { hear } = setup();
     const kavitha = voice("te-kavitha");
-    expect(within(kavitha).getByRole("button", { name: "Hear Kavitha" })).toBeDisabled();
-    expect(kavitha).toHaveTextContent("Choose it, then you can hear it.");
-    expect(hear).not.toHaveBeenCalled();
-    expect(made).toHaveLength(0);
-  });
-
-  it("a voice with no recording that IS in use is heard live (the saved greeting in that voice), as a blob, never from a file", async () => {
-    const { hear } = setup({}, { choices: { te: "te-kavitha" } });
-    const kavitha = voice("te-kavitha");
-    expect(kavitha).toHaveAttribute("data-selected", "true");
+    expect(kavitha).toHaveAttribute("data-selected", "false"); // not chosen
+    expect(within(kavitha).getByRole("button", { name: "Hear Kavitha" })).toBeEnabled();
+    expect(kavitha).not.toHaveTextContent("Choose it, then you can hear it.");
     await act(async () => void fireEvent.click(within(kavitha).getByRole("button", { name: "Hear Kavitha" })));
-    expect(hear).toHaveBeenCalledWith("te");
+    expect(hear).toHaveBeenCalledWith("te", "te-kavitha", "friendly");
     await waitFor(() => expect(made).toHaveLength(1));
     expect(made[0].src).toBe("blob:live");
     expect(made[0].play).toHaveBeenCalled();
+    expect(voice("te-kavitha")).toHaveAttribute("data-selected", "false"); // listening never chooses
+    fireEvent.click(within(voice("te-kavitha")).getByRole("button", { name: "Stop Kavitha" }));
+    // the tone on the screen goes with the call
+    fireEvent.click(within(document.querySelector('[data-part="vc-tone"]') as HTMLElement).getByRole("radio", { name: /Short and quick/ }));
+    await waitFor(() => expect(within(document.querySelector('[data-part="vc-tone"]') as HTMLElement).getByRole("radio", { name: /Short and quick/ })).toBeChecked());
+    await act(async () => void fireEvent.click(within(voice("te-kavitha")).getByRole("button", { name: "Hear Kavitha" })));
+    await waitFor(() => expect(hear).toHaveBeenLastCalledWith("te", "te-kavitha", "quick"));
   });
 
-  it("the live sound is never presented as a voice that did not speak it, and a busy day, no sound and a failure are said in words", async () => {
-    setup({ hear: vi.fn(async () => ({ ok: true as const, preview: { audio: { base64: WAV, mime: "audio/wav", seconds: 2 }, fake: false, voiceId: "te-ramya" } })) }, { choices: { te: "te-kavitha" } });
+  it("the live sound is never presented as a voice that did not speak it (an API that ignores voice_id speaks the voice in use); a busy day, an unknown voice, no sound and a failure are said in words", async () => {
+    setup({ hear: vi.fn(async () => ({ ok: true as const, preview: { audio: { base64: WAV, mime: "audio/wav", seconds: 2 }, fake: false, voiceId: "te-ramya" } })) });
     await act(async () => void fireEvent.click(within(voice("te-kavitha")).getByRole("button", { name: "Hear Kavitha" })));
     expect(made).toHaveLength(0);
     expect(await screen.findByRole("alert")).toHaveTextContent("Choose it first, then press play.");
     cleanup();
-    setup({ hear: vi.fn(async () => ({ ok: false as const, error: "rate" })) }, { choices: { te: "te-kavitha" } });
+    setup({ hear: vi.fn(async () => ({ ok: false as const, error: "unknown_voice" })) });
+    await act(async () => void fireEvent.click(within(voice("te-kavitha")).getByRole("button", { name: "Hear Kavitha" })));
+    expect(await screen.findByRole("alert")).toHaveTextContent("That voice is not available.");
+    cleanup();
+    setup({ hear: vi.fn(async () => ({ ok: false as const, error: "rate" })) });
     await act(async () => void fireEvent.click(within(voice("te-kavitha")).getByRole("button", { name: "Hear Kavitha" })));
     expect(await screen.findByRole("alert")).toHaveTextContent("Too many tries.");
     cleanup();
-    setup({ hear: vi.fn(async () => ({ ok: true as const, preview: { audio: null, fake: true } })) }, { choices: { te: "te-kavitha" } });
+    setup({ hear: vi.fn(async () => ({ ok: true as const, preview: { audio: null, fake: true } })) });
     await act(async () => void fireEvent.click(within(voice("te-kavitha")).getByRole("button", { name: "Hear Kavitha" })));
     expect(await screen.findByRole("alert")).toHaveTextContent("There is no sound to play here yet.");
     cleanup();
-    setup({ hear: vi.fn(async () => { throw new Error("x"); }) }, { choices: { te: "te-kavitha" } });
+    setup({ hear: vi.fn(async () => { throw new Error("x"); }) });
     await act(async () => void fireEvent.click(within(voice("te-kavitha")).getByRole("button", { name: "Hear Kavitha" })));
     expect(await screen.findByRole("alert")).toHaveTextContent("Could not make the sound now.");
+  });
+
+  it("with no live preview on this system a voice with no recording is the only one that cannot be played, and says why", () => {
+    setup({ hear: null });
+    expect(within(voice("te-kavitha")).getByRole("button", { name: "Hear Kavitha" })).toBeDisabled();
+    expect(voice("te-kavitha")).toHaveTextContent("Choose it, then you can hear it.");
+    expect(within(voice("te-ramya")).getByRole("button", { name: "Hear Ramya" })).toBeEnabled();
   });
 
   it("choosing a voice saves it at once with the voice's own id, says so and redraws; a refused save goes back and says so", async () => {

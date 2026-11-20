@@ -44,13 +44,13 @@ export async function chooseVoiceGenderAction(tenantId: string, gender: unknown)
 }
 
 /**
- * The voice card's live "Hear it" (the voice in force speaks the saved greeting; spends characters, so only on a press): the Owner or an Admin. `rate` = too many in a minute or the day's allowance is used.
+ * The voice card's live "Hear it" (a listed voice speaks the saved greeting, in the tone on the screen; spends characters, so only on a press): the Owner or an Admin. `rate` = too many in a minute or the day's allowance is used.
  */
-export type HearResult = { ok: true; preview: Preview } | { ok: false; error: SaveError | "rate" };
-export async function hearVoiceAction(tenantId: string, language: unknown): Promise<HearResult> {
+export type HearResult = { ok: true; preview: Preview } | { ok: false; error: SaveError | "rate" | "unknown_voice" };
+export async function hearVoiceAction(tenantId: string, language: unknown, voiceId?: unknown, tone?: unknown): Promise<HearResult> {
   const g = await gate(tenantId);
   if (!g.ok) return g;
-  const out = await hearActive({ token: g.token, tenantId }, language);
+  const out = await hearActive({ token: g.token, tenantId }, language, voiceId ?? null, tone ?? null);
   return out.ok ? { ok: true, preview: out.data } : out;
 }
 

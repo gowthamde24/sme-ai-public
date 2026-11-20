@@ -47,10 +47,12 @@ describe("the voice picker's move", () => {
 });
 
 describe("the voice card's live Hear it and its tone example", () => {
-  it("Hear it is for the Owner and an Admin only, asks the source for the voice in force of the language and passes its answer on", async () => {
+  it("Hear it is for the Owner and an Admin only, asks the source for the voice (and tone) named, or the voice in force and passes its answer on", async () => {
     hear.mockResolvedValue({ ok: true, data: { audio: null, fake: true } });
     expect(await hearVoiceAction(T, "te")).toEqual({ ok: true, preview: { audio: null, fake: true } });
-    expect(hear).toHaveBeenCalledWith({ token: "tok", tenantId: T }, "te");
+    expect(hear).toHaveBeenCalledWith({ token: "tok", tenantId: T }, "te", null, null);
+    await hearVoiceAction(T, "te", "te-kavitha", "quick");
+    expect(hear).toHaveBeenLastCalledWith({ token: "tok", tenantId: T }, "te", "te-kavitha", "quick");
     hear.mockResolvedValue({ ok: false, error: "rate" });
     expect(await hearVoiceAction(T, "te")).toEqual({ ok: false, error: "rate" });
     fetchTenant.mockResolvedValue({ role: "sales" });

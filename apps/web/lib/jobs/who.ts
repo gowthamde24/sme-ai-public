@@ -13,8 +13,8 @@ export type WhoTone = (typeof WHO_TONES)[number];
 /** A voice is a catalogue id (`te-ramya`, `hi-kabir`): THE SAME list as the voice card (`GET /ai-assistant/voices`, voices-tones.md section 9). The three ids of the Jobs 1.1 draft (female_warm, female_clear, male_calm) are retired. */
 export type WhoVoice = string;
 export const isWhoVoice = (v: unknown): v is WhoVoice => typeof v === "string" && /^[a-z]{2}-[a-z0-9][a-z0-9_.-]{1,50}$/.test(v); // language, a hyphen, the first name: the retired ids (female_warm ...) have no hyphen
-/** A voice of the catalogue as the card shows it: its first name ("Ramya"), its language, whether it is the recommended one, and whether it has a recording to play. */
-export type WhoVoiceName = { id: WhoVoice; name: string; language: string; recommended: boolean; ready: boolean };
+/** A voice of the catalogue as the card shows it: its first name ("Ramya"), its language and whether it is the recommended one. Every voice can be played (a recording, or live when it has none). */
+export type WhoVoiceName = { id: WhoVoice; name: string; language: string; recommended: boolean };
 /**
  * Which number the job calls and writes from: the SHOP's own, and only that (C1 contract 1.1 part 1, section 4 C4: the second number is NOT a product yet; `numbers` lists only `shop`, `number: "second"` is never sent and a PATCH to it is `422 setting_invalid`).
  * So the card shows the shop's number in the sentence as a plain word (no choice), and the web never sends a change of number.

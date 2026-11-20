@@ -53,7 +53,7 @@ describe("Who talks: what the API sends", () => {
   });
   it("the voices of a job's card are the voice card's own list (the workspace's gender, by first name and language); the three retired ids are no voices", () => {
     const picker = parsePicker({ gender: "female", languages: [{ language: "te", default_id: "te-ramya", chosen_id: null, active_id: "te-ramya", voices: [{ id: "te-ramya", name: "Ramya", label: "Warm", gender: "female", default: true, recommended: true, sample_url: "/v1/voice-samples/te-ramya.mp3", sample_ready: true }, { id: "te-kavitha", name: "Kavitha", label: "Calm", gender: "female", default: false, sample_url: "/v1/voice-samples/te-kavitha.mp3", sample_ready: false }, { id: "te-karthik", name: "Karthik", label: "Calm", gender: "male", default: true, sample_url: null }] }] });
-    expect(whoVoicesOf(picker)).toEqual([{ id: "te-ramya", name: "Ramya", language: "te", recommended: true, ready: true }, { id: "te-kavitha", name: "Kavitha", language: "te", recommended: false, ready: false }]);
+    expect(whoVoicesOf(picker)).toEqual([{ id: "te-ramya", name: "Ramya", language: "te", recommended: true }, { id: "te-kavitha", name: "Kavitha", language: "te", recommended: false }]);
     expect(whoVoicesOf(null)).toBeNull();
     expect(whoVoicesOf({ gender: "male", voices: [], choices: {}, active: {}, fake: false })).toBeNull();
     for (const ok of ["te-ramya", "hi-kabir", "en-janvi"]) expect(isWhoVoice(ok)).toBe(true);

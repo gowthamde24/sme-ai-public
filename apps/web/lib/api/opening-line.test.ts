@@ -96,6 +96,14 @@ describe("hearing the line as it is on the screen", () => {
     expect(got.audio?.mime).toBe("audio/wav");
     expect(got.audio?.seconds).toBeCloseTo(2, 1);
   });
+  it("a listed voice and a tone go with the call only when they are given (C1 #996: voice_id, tone); the answer names the voice that spoke", async () => {
+    apiRequest.mockResolvedValue({ spoken_text: "x y", audio: { mime: "audio/wav", base64: Buffer.from(wav(1)).toString("base64") }, engine: "sarvam", voice_id: "te-kavitha" });
+    const got = await previewSpoken("tok", T, { language: "te", text: null, mentionAi: null, voiceId: "te-kavitha", tone: "quick" });
+    expect(JSON.parse(String((apiRequest.mock.calls.at(-1) as unknown as [string, string, { body: string }])[2].body))).toEqual({ language: "te", text: null, mention_ai: null, assistant_name: null, voice_id: "te-kavitha", tone: "quick" });
+    expect(got.voiceId).toBe("te-kavitha");
+    await previewSpoken("tok", T, { language: "te", text: null, mentionAi: null });
+    expect(Object.keys(JSON.parse(String((apiRequest.mock.calls.at(-1) as unknown as [string, string, { body: string }])[2].body)))).toEqual(["language", "text", "mention_ai", "assistant_name"]);
+  });
   it("no voice service (404 no_preview) is no sound and no claimed words; a route that is not there yet is PreviewUnsupported; other refusals are passed on; an answer without the words is refused", async () => {
     apiRequest.mockRejectedValueOnce(new ApiRequestError(404, "no_preview", "x"));
     expect(await previewSpoken("tok", T, { language: "en", text: null, mentionAi: null })).toEqual({ audio: null, fake: false, spokenText: null });

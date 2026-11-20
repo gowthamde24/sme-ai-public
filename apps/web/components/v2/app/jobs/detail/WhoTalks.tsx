@@ -116,7 +116,7 @@ export function WhoTalks(p: WhoTalksProps) {
     if (playing === voice) return setPlaying(null);
     if (!sampleUrl) return;
     setSampleError(false);
-    const a = new Audio(`${sampleUrl}?id=${encodeURIComponent(voice)}`);
+    const a = new Audio(`${sampleUrl}?id=${encodeURIComponent(voice)}&tone=${now.tone}`); // (a voice with no recording is spoken live in this tone)
     audio.current = a;
     a.onended = () => setPlaying((cur) => (cur === voice ? null : cur));
     a.onerror = () => (setPlaying(null), setSampleError(true));
@@ -231,7 +231,7 @@ export function WhoTalks(p: WhoTalksProps) {
             {voices.map((v) => (
               <div key={v.id} data-voice={v.id} className="flex items-center gap-2">
                 <Radio className="min-w-0 flex-1" name={`who-voice-${jobId}`} value={v.id} checked={now.voice === v.id} disabled={off} onChange={() => void choose("voice", v.id)} label={<span className="text-[16px] font-semibold text-ink">{v.name}</span>} sub={v.recommended ? t("jobs.who.voice.recommended") : undefined} />
-                {sampleUrl && v.ready ? (
+                {sampleUrl ? (
                   <button type="button" data-play={v.id} aria-pressed={playing === v.id} aria-label={`${t(playing === v.id ? "jobs.who.stop" : "jobs.who.play")}: ${v.name}`} onClick={() => play(v.id)} className={`${jobBtnQuiet} shrink-0`}>
                     {playing === v.id ? <Pause aria-hidden="true" className="size-4" /> : <Play aria-hidden="true" className="size-4" />}
                     {t(playing === v.id ? "jobs.who.stop" : "jobs.who.play")}

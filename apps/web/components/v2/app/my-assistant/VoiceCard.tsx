@@ -15,8 +15,8 @@ import { alertBox, btnQuiet, fieldHelp, okBox } from "../ui";
 import { makeT, type Words } from "../words";
 
 export type ChooseVoice = (language: PickerLang, voiceId: string | null) => Promise<{ ok: true } | { ok: false; error: string }>;
-/** The live "Hear it": the voice in force speaks the saved greeting (C1: `POST /voices/preview`). */
-export type HearVoice = (language: PickerLang) => Promise<{ ok: true; preview: Preview } | { ok: false; error: string }>;
+/** The live "Hear it": a listed voice speaks the saved greeting, in the tone on the screen (C1: `POST /voices/preview {language, voice_id, tone}`). */
+export type HearVoice = (language: PickerLang, voiceId: string, tone: SpeakTone) => Promise<{ ok: true; preview: Preview } | { ok: false; error: string }>;
 /** The words of the preview in one tone and language (C1: `GET /voice-preview/text`), or null = keep our own sentence. */
 export type ToneExample = (language: PickerLang, tone: SpeakTone) => Promise<string | null>;
 
@@ -52,12 +52,12 @@ const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-se
 const h3 = "m-0 text-[16px] font-semibold text-ink";
 const radio = "size-5 shrink-0 accent-brand-text";
 const playBtn = "inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border border-edge bg-surface px-4 text-sm font-semibold hover:bg-surface-2 disabled:opacity-50";
-type Note = "saved" | "error" | "sample" | "live" | "rate" | "silent" | "other" | null;
+type Note = "saved" | "error" | "sample" | "live" | "rate" | "silent" | "unknown" | "other" | null;
 
 /**
  * THE VOICE CARD, "Your assistant's voice" (owner, 20 Nov 2026: one simple card): for each language a row of NAMED voices (Ramya, Kavitha ...) with a play button and a round radio; how it talks as three plain choices (Friendly, Respectful, Short and quick) with ONE example sentence
  * that follows the tone and the language; the background sound; the small switch "Say 'AI assistant' when greeting"; and the test call to the owner's phone. Every choice is saved the moment it is made (the voice with `PUT /voices`, the rest with `PUT /how-assistant-speaks`) and put back, with
- * the reason, if the API says no. One sound at a time: starting one stops the other. Nothing plays by itself. A recorded sample plays through our own route; a voice with no recording (`sample_ready: false`) is heard live, and only once it is the voice in use (the API speaks the voice in force).
+ * the reason, if the API says no. One sound at a time: starting one stops the other. Nothing plays by itself. A recorded sample plays through our own route; a voice with no recording (`sample_ready: false`) is heard live in its own voice and the tone on the screen (`voice_id` and `tone` go with the preview; the sound must name that voice, else it is not played as this one).
  * No Warm/Calm/Bright, no Region, no speed.
  */
 export function VoiceCard({ words, uiLang, picker, languages, first, langNames, endpoint, choose, hear, speaks, examples, draftLangs, toneExample, canEdit, securityHref, testCallHref }: VoiceCardProps) {
@@ -117,13 +117,13 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
       a.play().catch(() => (done?.(), fail("sample")));
     };
     if (v.sampleReady && v.sampleUrl) return start(`${endpoint}?id=${encodeURIComponent(v.id)}`);
-    if (!hear || v.id !== inUse) return fail("live");
+    if (!hear) return fail("live");
     setLoading(v.id);
-    void hear(lang)
+    void hear(lang, v.id, tone)
       .catch(() => ({ ok: false as const, error: "down" }))
       .then((out) => {
         if (turn.current !== mark) return;
-        if (!out.ok) return fail(out.error === "rate" ? "rate" : "other");
+        if (!out.ok) return fail(out.error === "rate" ? "rate" : out.error === "unknown_voice" ? "unknown" : "other");
         const sound = out.preview.audio;
         if (!sound) return fail("silent");
         if (out.preview.voiceId && out.preview.voiceId !== v.id) return fail("live"); // the API spoke another voice: never present it as this one
@@ -187,7 +187,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
   const sayAi = state?.sayAi ?? null;
   const optionName = (id: string): string => bg?.options.find((o) => o.id === id)?.label[uiLang] ?? bg?.options.find((o) => o.id === id)?.label.en ?? id;
   const speaksErr = speaksNote && !speaksNote.ok ? (t(`sp.err.${speaksNote.error}`) !== `sp.err.${speaksNote.error}` ? t(`sp.err.${speaksNote.error}`) : t("sp.err.rejected")) : null;
-  const noteText: Record<Exclude<Note, null | "saved">, string> = { error: t("vc.err.save"), sample: t("vp.err.sample"), live: t("vc.err.live"), rate: t("vc.err.rate"), silent: t("vt.hear.none"), other: t("vc.err.other") };
+  const noteText: Record<Exclude<Note, null | "saved">, string> = { error: t("vc.err.save"), sample: t("vp.err.sample"), live: t("vc.err.live"), rate: t("vc.err.rate"), silent: t("vt.hear.none"), unknown: t("vc.err.unknown"), other: t("vc.err.other") };
   if (!picker && !speaks) return null;
 
   return (
@@ -229,7 +229,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
                   const on = v.id === inUse;
                   const here = playing === v.id;
                   const waiting = loading === v.id;
-                  const later = !(v.sampleReady && v.sampleUrl) && !(hear && on);
+                  const later = !(v.sampleReady && v.sampleUrl) && !hear; // (no recording and no live preview here: nothing to play)
                   return (
                     <div key={v.id} data-voice={v.id} data-selected={on ? "true" : "false"} className={`flex min-h-16 items-center gap-2 rounded-xl border p-2 pl-3 ${on ? "border-brand-edge bg-brand-bg" : "border-line bg-surface-2/40"}`}>
                       <label className={`flex min-h-11 min-w-0 flex-1 items-start gap-3 py-1 ${edit ? "cursor-pointer" : "opacity-80"}`}>

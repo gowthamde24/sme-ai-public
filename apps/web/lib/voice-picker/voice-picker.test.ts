@@ -127,7 +127,17 @@ describe("the voice picker source", () => {
     expect(await hearActive(CTX, "xx")).toEqual({ ok: false, error: "invalid" });
     h.spoken.mockResolvedValueOnce({ audio: { base64: "AAAA", mime: "audio/wav", seconds: 2 }, fake: false, voiceId: "te-kavitha" });
     expect(await hearActive(CTX, "te")).toMatchObject({ ok: true, data: { voiceId: "te-kavitha" } });
-    expect(h.spoken).toHaveBeenCalledWith("tok", CTX.tenantId, { language: "te", text: null, mentionAi: null });
+    expect(h.spoken).toHaveBeenCalledWith("tok", CTX.tenantId, { language: "te", text: null, mentionAi: null, voiceId: null, tone: null });
+    // any listed voice, in the tone on the screen (C1 #996); a bad id or tone never reaches the API; a 422 is "unknown_voice"
+    h.spoken.mockResolvedValueOnce({ audio: null, fake: false, voiceId: "te-kavitha" });
+    await hearActive(CTX, "te", "te-kavitha", "quick");
+    expect(h.spoken).toHaveBeenLastCalledWith("tok", CTX.tenantId, { language: "te", text: null, mentionAi: null, voiceId: "te-kavitha", tone: "quick" });
+    h.spoken.mockClear();
+    expect(await hearActive(CTX, "te", "../x", "quick")).toEqual({ ok: false, error: "invalid" });
+    expect(await hearActive(CTX, "te", "te-kavitha", "casual")).toEqual({ ok: false, error: "invalid" });
+    expect(h.spoken).not.toHaveBeenCalled();
+    h.spoken.mockRejectedValueOnce(new ApiRequestError(422, "unknown_voice", "x"));
+    expect(await hearActive(CTX, "te", "te-nobody", "friendly")).toEqual({ ok: false, error: "unknown_voice" });
     h.spoken.mockRejectedValueOnce(new ApiRequestError(429, "rate_limited", "x"));
     expect(await hearActive(CTX, "te")).toEqual({ ok: false, error: "rate" });
     h.spoken.mockRejectedValueOnce(new ApiRequestError(500, "boom", "x"));
