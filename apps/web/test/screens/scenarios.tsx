@@ -133,10 +133,10 @@ add({
   handlers: () => ({}),
 });
 // the picker of the staging preview in each state (the choice is a cookie a test cannot send, so the form is drawn with the choice it is given): off, my business, a sample business
-const previewPicker = (choice: PreviewChoice | null) => async () => {
+const previewPicker = (choice: PreviewChoice | null) => async (): Promise<ReactElement> => {
   const { PreviewPicker } = await import("@/components/v2/app/PreviewPicker");
   const { wordsFor } = await import("@/i18n/app-words");
-  return <PreviewPicker choice={choice} words={wordsFor("en", ["preview."])} />;
+  return PreviewPicker({ choice, words: wordsFor("en", ["preview."]) });
 };
 add({ id: "account-preview-picker-off", roles: ["owner"], env: { PREVIEW_JOBS: "1" }, render: previewPicker(null), handlers: () => ({}) });
 add({ id: "account-preview-picker-mine", roles: ["owner"], env: { PREVIEW_JOBS: "1" }, render: previewPicker({ kind: "mine" }), handlers: () => ({}) });

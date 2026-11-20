@@ -27,7 +27,7 @@ const acts = (): SheetActions => ({
   plan: vi.fn(async (input: PlanInput) => ({ ok: true as const, data: mockPlan(input) })),
   start: vi.fn(async (planId: string) => ({ ok: true as const, data: mockStartPlan(planId) })),
   test: vi.fn(async (_id: string, channel) => ({ ok: true as const, data: { channel, mock: true, minutesUsed: 0 } })),
-  load: vi.fn(async () => ({ ok: false as const, error: "x" })),
+  load: vi.fn(async () => ({ ok: true as const, data: null })),
 });
 
 describe("the small Sample chip on a part drawn from the sample data (staging preview, my business)", () => {
