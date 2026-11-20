@@ -1,6 +1,6 @@
 /* The offline page (job BL): plain, no script, no font file; the colours are the v2 tokens (design/tokens.css), light and dark. Cached by the service worker (public/sw.js). */
-:root { --bg: #fafafa; --surface: #ffffff; --ink: #16181d; --muted: #5f6672; --brand: #c2410c; --on-brand: #ffffff; --edge: #c2410c; --line: #d9d5ce; }
-@media (prefers-color-scheme: dark) { :root { --bg: #17161a; --surface: #1f1e23; --ink: #f1efec; --muted: #b3afaa; --edge: #ff9a6b; --line: #3a383f; } }
+:root { --bg: #ffffff; --surface: #ffffff; --ink: #16181d; --muted: #5f6672; --brand: #c2410c; --on-brand: #ffffff; --edge: #c2410c; --line: #d9dbe0; }
+@media (prefers-color-scheme: dark) { :root { --bg: #131216; --surface: #1c1b20; --ink: #f4f4f5; --muted: #a5a3ac; --edge: #ff9d6e; --line: #2f2e35; } }
 * { box-sizing: border-box; }
 html { color-scheme: light dark; }
 body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px 16px; background: var(--bg); color: var(--ink); font: 400 1rem/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Telugu", "Noto Sans Devanagari", "Noto Sans Kannada", sans-serif; }
