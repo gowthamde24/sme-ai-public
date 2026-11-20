@@ -328,6 +328,9 @@ class Settings(BaseSettings):
     whatsapp_embedded_version: str = "v5"
     # After "Connect WhatsApp" worked: our templates go to that account for review. False: off.
     whatsapp_auto_templates: bool = True
+    # CONFIRM_WITHOUT_AUTHENTICATOR (owner, 21 Nov 2026: no 2FA by default): a person without the
+    # authenticator sends templates to WhatsApp only with confirm=true; off until the web sends it
+    confirm_without_authenticator: bool = False
     whatsapp_waba_id: str | None = None
     # the account the API signs in as to hand a webhook to the database (registered by the
     # operator; belongs to no workspace)

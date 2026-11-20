@@ -54,6 +54,7 @@ export const API_ERROR_CODES = [
   "catalogue_unavailable",
   "company_has_no_website",
   "confirm_needed",
+  "confirm_required",
   "confirmation_mismatch",
   "conflict",
   "connector_not_available",
