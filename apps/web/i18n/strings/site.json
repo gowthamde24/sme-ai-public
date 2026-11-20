@@ -2001,11 +2001,11 @@
   }
  },
  "meta.description": {
-  "en": "An AI assistant that answers, calls and follows up every enquiry for Indian shops and businesses: saree shops, clinics, coaching, real estate and more. Telugu and English.",
-  "te": "భారతదేశంలోని shops, businesses కోసం ప్రతి enquiry కి జవాబు ఇచ్చి, call చేసి, follow up చేసే AI assistant: చీరల shops, clinics, coaching, real estate ఇంకా మరెన్నో. తెలుగులో, English లో.",
-  "hi": "भारत के shops और businesses के लिए एक AI assistant जो हर enquiry का जवाब देता है, call करता है और follow up करता है: साड़ी की दुकानें, clinics, coaching, real estate और बहुत कुछ। तेलुगु और English में।",
-  "kn": "ಭಾರತದ shops, businesses ಗಾಗಿ ಪ್ರತಿ enquiry ಗೆ ಉತ್ತರ ನೀಡಿ, call ಮಾಡಿ, follow up ಮಾಡುವ AI assistant: ಸೀರೆ shops, clinics, coaching, real estate ಮತ್ತು ಇನ್ನಷ್ಟು. ತೆಲುಗು ಮತ್ತು English ನಲ್ಲಿ.",
-  "ta": "இந்திய shops, businesses-க்கான AI assistant: ஒவ்வொரு enquiry-க்கும் பதில் சொல்லும், call செய்யும், follow up செய்யும். Saree shops, clinics, coaching, real estate இன்னும் பல. தெலுங்கு, ஆங்கிலத்தில்.",
+  "en": "An AI assistant that answers, calls and follows up every enquiry for Indian shops and businesses: saree shops, clinics, coaching, real estate and more. Telugu, English, Hindi and Kannada.",
+  "te": "భారతదేశంలోని shops, businesses కోసం ప్రతి enquiry కి జవాబు ఇచ్చి, call చేసి, follow up చేసే AI assistant: చీరల shops, clinics, coaching, real estate ఇంకా మరెన్నో. Telugu, English, Hindi, Kannada లో.",
+  "hi": "भारत के shops और businesses के लिए एक AI assistant जो हर enquiry का जवाब देता है, call करता है और follow up करता है: साड़ी की दुकानें, clinics, coaching, real estate और बहुत कुछ। Telugu, English, Hindi और Kannada में।",
+  "kn": "ಭಾರತದ shops, businesses ಗಾಗಿ ಪ್ರತಿ enquiry ಗೆ ಉತ್ತರ ನೀಡಿ, call ಮಾಡಿ, follow up ಮಾಡುವ AI assistant: ಸೀರೆ shops, clinics, coaching, real estate ಮತ್ತು ಇನ್ನಷ್ಟು. Telugu, English, Hindi ಮತ್ತು Kannada ನಲ್ಲಿ.",
+  "ta": "இந்திய shops, businesses-க்கான AI assistant: ஒவ்வொரு enquiry-க்கும் பதில் சொல்லும், call செய்யும், follow up செய்யும். Saree shops, clinics, coaching, real estate இன்னும் பல. தெலுங்கு, ஆங்கிலம், இந்தி, கன்னடம் ஆகிய மொழிகளில்.",
   "status": {
    "te": "draft",
    "hi": "draft",

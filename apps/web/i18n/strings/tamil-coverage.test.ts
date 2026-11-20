@@ -5,10 +5,11 @@ import { describe, expect, it } from "vitest";
 
 import legal from "@/i18n/strings/legal.json";
 import site from "@/i18n/strings/site.json";
+import { LEGAL_ENGLISH_ONLY_TA } from "@/lib/legal/documents";
 
 /**
  * Tamil on the public website (owner, 20 Nov 2026). A site string that some page reads has a Tamil text (a draft for a native reader: TAMIL-DRAFT.md); a string that no source file reads any more (the words of older versions of the home
- * page) has none and would show its English if it ever came back, so this test names which is which: add the Tamil text of a key the day a page starts reading it. The legal words (the notice, the cookie panel, the legal pages' headings) all have one.
+ * page) has none and would show its English if it ever came back, so this test names which is which: add the Tamil text of a key the day a page starts reading it. The legal words have none (owner-gated: no Tamil legal text ships).
  * The product speaks Telugu, English, Hindi and Kannada: no Tamil string says otherwise (SitePage.test.tsx).
  */
 const entries = site as Record<string, { en: string; ta?: string; status: Record<string, string> }>;
@@ -36,7 +37,15 @@ describe("Tamil words of the public site", () => {
     expect(orphan.length).toBeGreaterThan(300); // (the older versions of the home page)
     expect(orphan.filter(isRead)).toEqual([]);
   });
-  it("every legal word has one", () => {
-    expect(Object.entries(legal as Record<string, { ta?: string }>).filter(([, e]) => e.ta === undefined).map(([k]) => k)).toEqual([]);
+  it("no legal word has one (owner-gated: no Tamil legal text ships; a Tamil visitor reads the legal words in English, plus the one Tamil line of LEGAL_ENGLISH_ONLY_TA)", () => {
+    expect(Object.entries(legal as Record<string, { ta?: string; status: Record<string, string> }>).filter(([, e]) => e.ta !== undefined || "ta" in e.status).map(([k]) => k)).toEqual([]);
+    expect(LEGAL_ENGLISH_ONLY_TA).toBe("இந்தப் பக்கம் ஆங்கிலத்தில் உள்ளது");
+  });
+  it("the home page's description names the product's four languages in every site language (and Tamil is not one of them)", () => {
+    const d = (site as unknown as Record<string, Record<string, string>>)["meta.description"];
+    expect(d.en).toMatch(/Telugu, English, Hindi and Kannada/);
+    for (const l of ["te", "hi", "kn"]) expect(d[l], l).toMatch(/Telugu, English, Hindi.*Kannada/);
+    expect(d.ta).toMatch(/தெலுங்கு, ஆங்கிலம், இந்தி, கன்னடம்/);
+    for (const l of ["en", "te", "hi", "kn", "ta"]) expect(d[l], l).not.toMatch(/Tamil|தமிழ்/);
   });
 });

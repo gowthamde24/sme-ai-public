@@ -2,7 +2,7 @@ import { Fragment, type ReactNode } from "react";
 
 import type { SiteLang } from "@/i18n/lang";
 import { legalT } from "@/i18n/legal";
-import { fillLegal, legalDocument, type DocId } from "@/lib/legal/documents";
+import { fillLegal, legalDocument, legalLang, LEGAL_ENGLISH_ONLY_TA, type DocId } from "@/lib/legal/documents";
 import { DRAFT_DOC_IDS, LEGAL_IS_DRAFT, LEGAL_UPDATED, LEGAL_VERSION } from "@/lib/legal/version";
 import { PLACEHOLDER, type Block } from "@/lib/legal/types";
 
@@ -83,7 +83,9 @@ type SummaryKey = "legal.sum.privacy.1" | "legal.sum.privacy.2" | "legal.sum.pri
  * The full text is in the visitor's language where one exists (the Privacy Policy and the data-deletion page; a machine-written draft, said so in a note, the English text counts) and in English otherwise (the Terms; then the
  * summary note says the English text is the one that counts). Every block of text carries the `lang` of the text it holds.
  */
-export function LegalDoc({ id, summaryKeys, lang, extras }: { id: DocId; summaryKeys?: readonly SummaryKey[]; lang: SiteLang; /** Something drawn from live data, inserted after the FIRST block of a section by its id (the Privacy notice's list of processors comes from the API). */ extras?: Readonly<Record<string, ReactNode>> }) {
+export function LegalDoc({ id, summaryKeys, lang: asked, extras }: { id: DocId; summaryKeys?: readonly SummaryKey[]; lang: SiteLang; /** Something drawn from live data, inserted after the FIRST block of a section by its id (the Privacy notice's list of processors comes from the API). */ extras?: Readonly<Record<string, ReactNode>> }) {
+  const tamil = asked === "ta"; // no Tamil legal words are shipped: English everywhere, plus one Tamil line
+  const lang = legalLang(asked);
   const t = legalT(lang);
   const { doc, lang: docLang } = legalDocument(id, lang);
   const translated = docLang !== "en";
@@ -106,7 +108,11 @@ export function LegalDoc({ id, summaryKeys, lang, extras }: { id: DocId; summary
         </p>
       ) : null}
 
-      {summaryKeys ? (
+      {tamil ? (
+        <p data-legal="english-only" lang="ta" className="mt-6 rounded-xl border border-line bg-surface p-5 text-base">
+          {LEGAL_ENGLISH_ONLY_TA}
+        </p>
+      ) : summaryKeys ? (
         <section aria-labelledby="summary-h" lang={lang} className="mt-6 rounded-xl border border-line bg-surface p-5">
           <h2 id="summary-h" className="text-xl font-semibold">
             {t("legal.summary.title")}

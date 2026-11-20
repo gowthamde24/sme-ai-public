@@ -25,6 +25,13 @@ const DOCS: Record<DocId, { en: LegalText } & Partial<Record<Exclude<SiteLang, "
   "data-deletion": { en: DATA_DELETION, te: DATA_DELETION_TE, hi: DATA_DELETION_HI, kn: DATA_DELETION_KN },
 };
 
+/**
+ * Tamil (a language of the public website only) has NO legal words: the legal pages stay English and carry ONE plain Tamil line, "this page is in English" (owner-gated: no Tamil legal text ships until the owner approves it; a draft like the rest of the Tamil).
+ * Every other word of a legal page, for a Tamil visitor, is English (`legalLang`).
+ */
+export const LEGAL_ENGLISH_ONLY_TA = "இந்தப் பக்கம் ஆங்கிலத்தில் உள்ளது";
+export const legalLang = (lang: SiteLang): SiteLang => (lang === "ta" ? "en" : lang);
+
 /** The text in the visitor's language, or English where there is none; `lang` is the language the returned text is really in. */
 export function legalDocument(id: DocId, lang: SiteLang): { doc: LegalText; lang: SiteLang } {
   const doc = lang === "en" ? undefined : DOCS[id][lang];

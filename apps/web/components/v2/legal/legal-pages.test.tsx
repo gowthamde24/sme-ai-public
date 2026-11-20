@@ -163,19 +163,19 @@ describe("in the visitor's language (job DB)", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Terms of Use");
     expect(document.getElementById("what")!.closest("div")).toHaveAttribute("lang", "en");
   });
-  it("ta: Tamil is a language of the website only: the Privacy notice and the Terms stay English with the summary in Tamil and the note that the English text counts; the data-deletion page has no Tamil text and is English", async () => {
+  it.each(["privacy", "terms", "data-deletion"] as const)("ta: no Tamil legal text is shipped (owner-gated): the %s page is English with ONE plain Tamil line, \"this page is in English\", and no Tamil summary or note", async (which) => {
     jarValues.sme_lang = "ta";
-    render(await PrivacyPage());
-    const d = legalDict("ta");
-    const box = screen.getByRole("heading", { name: d["legal.summary.title"] }).closest("section")!;
-    expect(box).toHaveAttribute("lang", "ta");
-    expect(box.textContent).toContain(d["legal.sum.privacy.1"]);
-    expect(box.textContent).toContain(d["legal.summary.note"]);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Privacy notice");
-    cleanup();
-    render(await DataDeletionPage());
-    expect(document.body.textContent).toContain("privacy@stack19.com");
-    expect(document.getElementById("app")!.closest("div")).toHaveAttribute("lang", "en");
+    render(await (which === "privacy" ? PrivacyPage() : which === "terms" ? TermsPage() : DataDeletionPage()));
+    const line = document.querySelector('[data-legal="english-only"]')!;
+    expect(line).toHaveAttribute("lang", "ta");
+    expect(line.textContent).toBe("இந்தப் பக்கம் ஆங்கிலத்தில் உள்ளது");
+    expect(document.querySelectorAll('[data-legal="english-only"]')).toHaveLength(1);
+    expect(document.querySelector('[data-legal="translated"]')).toBeNull();
+    expect(document.getElementById("summary-h")).toBeNull();
+    // the one Tamil line is the only Tamil on the page
+    const rest = document.body.textContent!.replace("இந்தப் பக்கம் ஆங்கிலத்தில் உள்ளது", "");
+    expect(rest).not.toMatch(/[\u0B80-\u0BFF]/);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveAttribute("lang", "en");
   });
   it("English has no 'machine translation' note", async () => {
     render(await TermsPage());
@@ -252,9 +252,11 @@ describe("the root layout carries the notice (job BH)", () => {
     jarValues.sme_lang = "kn";
     expect(await html()).toContain(legalT("kn")("cookie.notice.ok"));
   });
-  it("the words follow a Tamil cookie too (the notice speaks Tamil; the language switch of the legal pages offers it)", async () => {
+  it("a Tamil cookie leaves the cookie notice in English (no Tamil legal words ship)", async () => {
     jarValues.sme_lang = "ta";
-    expect(await html()).toContain(legalT("ta")("cookie.notice.ok"));
+    const out = await html();
+    expect(out).toContain(legalT("en")("cookie.notice.ok"));
+    expect(out).not.toMatch(/[\u0B80-\u0BFF]/);
   });
   it("loads no outside script and no analytics tag", async () => {
     const out = await html();

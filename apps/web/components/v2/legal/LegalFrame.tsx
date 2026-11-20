@@ -24,10 +24,11 @@ export async function LegalFrame({ children }: { children: ReactNode }) {
   const lang = readSiteLangCookie(jar.get(LANG_COOKIE)?.value);
   const theme = readTheme(jar.get(THEME_COOKIE)?.value);
   const t = legalT(lang);
+  const text = lang === "ta" ? "en" : lang; // the words of the frame are English for a Tamil visitor (no Tamil legal words)
   return (
     <V2Root theme={theme} lang={lang} className="min-h-dvh">
       <div data-screen="legal" className="flex min-h-dvh flex-col">
-        <a href="#main" lang={lang} className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-charcoal focus:px-4 focus:py-3 focus:text-on-charcoal">
+        <a href="#main" lang={text} className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-charcoal focus:px-4 focus:py-3 focus:text-on-charcoal">
           {t("legal.skip")}
         </a>
         <header className="border-b border-line bg-bg/90">
@@ -44,7 +45,7 @@ export async function LegalFrame({ children }: { children: ReactNode }) {
         <main id="main" tabIndex={-1} className={`${container} w-full max-w-[860px] flex-1 py-8 outline-none sm:py-12`}>
           {children}
           <p className="mt-10">
-            <Link href="/" lang={lang} className="inline-flex min-h-11 items-center gap-2 text-base font-semibold text-brand-text hover:underline">
+            <Link href="/" lang={text} className="inline-flex min-h-11 items-center gap-2 text-base font-semibold text-brand-text hover:underline">
               <ArrowLeft className="size-4" aria-hidden="true" />
               {t("legal.back")}
             </Link>
