@@ -69,6 +69,7 @@ class PendingGoals:
         self._items: dict[uuid.UUID, tuple[float, str]] = {}
         self._questions: dict[uuid.UUID, tuple[float, tuple[dict[str, str], ...]]] = {}
         self._extras: dict[uuid.UUID, tuple[str, bool, tuple[str, str | None] | None]] = {}
+        self._jobs: dict[uuid.UUID, tuple[float, str]] = {}   # the job that placed the call (app/opening/greeting.JOB_KINDS): its own "say AI when greeting" applies when the callee picks up
         self._people: dict[uuid.UUID, tuple[str | None, str | None]] = {}   # (the called person's name, their gender when KNOWN): the Respectful tone addresses a named person as "Name గారు"
 
     def put(self, call_id: uuid.UUID, goal: str, tone: str = tone_mod.DEFAULT_TONE, *, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, questions: tuple[dict[str, str], ...] = ()) -> None:
@@ -77,6 +78,7 @@ class PendingGoals:
             del self._items[key]
             self._extras.pop(key, None)
             self._people.pop(key, None)
+            self._jobs.pop(key, None)
         for key in [k for k, (at, _) in self._questions.items() if now - at > self._ttl]:
             del self._questions[key]
         self._items[call_id] = (now, goal)
@@ -97,6 +99,17 @@ class PendingGoals:
         if name or gender:
             self._people[call_id] = (name, gender)
 
+    def keep_job(self, call_id: uuid.UUID, job: str | None) -> None:
+        now = self._clock()
+        for key in [k for k, (at, _) in self._jobs.items() if now - at > self._ttl]:   # a call nobody answered is never taken: forgotten here
+            del self._jobs[key]
+        if job:
+            self._jobs[call_id] = (now, job)
+
+    def take_job(self, call_id: uuid.UUID) -> str | None:
+        item = self._jobs.pop(call_id, None)
+        return item[1] if item is not None and self._clock() - item[0] <= self._ttl else None
+
     def take_person(self, call_id: uuid.UUID) -> tuple[str | None, str | None]:
         return self._people.pop(call_id, (None, None))
 
@@ -112,6 +125,7 @@ class PendingGoals:
         self._questions.pop(call_id, None)
         self._extras.pop(call_id, None)
         self._people.pop(call_id, None)
+        self._jobs.pop(call_id, None)
 
 
 PENDING = PendingGoals()
@@ -233,7 +247,7 @@ class PlivoOutbound:
                 return number
         return None
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, approval_kind: gate.Approval | None = None, approval_ref: uuid.UUID | None = None, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, person_name: str | None = None, person_gender: str | None = None, questions: tuple[dict[str, str], ...] = (), say_ai: bool = True) -> PlacedCall:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, approval_kind: gate.Approval | None = None, approval_ref: uuid.UUID | None = None, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, person_name: str | None = None, person_gender: str | None = None, questions: tuple[dict[str, str], ...] = (), say_ai: bool = True, job: str | None = None) -> PlacedCall:
         language = language if language in LANGUAGES else "en"
         if goal and kind == "test":
             kind = "goal"   # the owner typed what the call is for: not the plain line-check
@@ -282,6 +296,7 @@ class PlivoOutbound:
         if goal:
             PENDING.put(call_id, goal, use_tone, owner_test=owner_test, introduce=introduce, questions=questions)
             PENDING.keep_person(call_id, person_name, person_gender)
+        PENDING.keep_job(call_id, job)   # (also a call with no typed goal: a standing rule's call)
         query = answer_query(call_id, tenant_id, language, purpose, kind)
         try:
             api = (self._api_for(line) if self._api_for is not None else None) or self._api
@@ -363,8 +378,9 @@ class PlivoDialer:
     owner decides (OUTREACH_DIALER stays `fake`); real calls only to numbers on the sandbox list."""
 
     def __init__(self, outbound: PlivoOutbound, repo: OutboundRepo, token: Callable[[], str], *, max_wait_s: float = 100.0, poll_s: float = 2.0, sleep: Callable[[float], None] = time.sleep,
-                 clock: Callable[[], float] = time.monotonic) -> None:
+                 clock: Callable[[], float] = time.monotonic, say_ai_for: Callable[[str, uuid.UUID, str | None], bool] | None = None) -> None:
         self._outbound, self._repo, self._token, self._max_wait, self._poll, self._sleep, self._clock = outbound, repo, token, max_wait_s, poll_s, sleep, clock
+        self._say_ai_for = say_ai_for   # the resolved "Say 'AI assistant' when greeting" for the job; without it the call says it (the strict side)
 
     def dial(self, call: dict[str, Any]) -> Any:
         from app.outreach.runner import DialResult
@@ -372,8 +388,16 @@ class PlivoDialer:
         tenant = uuid.UUID(str(call["tenant_id"]))
         language = str(call.get("language") or "en")
         token = self._token()
+        job = "speed_to_lead" if call.get("owner_kind") == "rule" else None   # a standing rule is the speed-to-lead job; a batch is no job's
+        say_ai = True
+        if self._say_ai_for is not None:
+            try:
+                say_ai = bool(self._say_ai_for(token, tenant, job))
+            except Exception as exc:  # noqa: BLE001 - only the class is logged; an unreadable setting is OFF, as everywhere
+                log.warning("plivo_dialer greeting setting lookup failed %s", exc.__class__.__name__)
+                say_ai = False
         try:
-            placed = self._outbound.place(token, tenant, str(call.get("phone") or ""), lead_id=_uuid_or_none(call.get("lead_id")), approval_kind=_APPROVAL_OF.get(str(call.get("owner_kind"))), approval_ref=_uuid_or_none(call.get("item_id")), language=language, purpose="sales_followup", kind="task")
+            placed = self._outbound.place(token, tenant, str(call.get("phone") or ""), lead_id=_uuid_or_none(call.get("lead_id")), approval_kind=_APPROVAL_OF.get(str(call.get("owner_kind"))), approval_ref=_uuid_or_none(call.get("item_id")), language=language, purpose="sales_followup", kind="task", say_ai=say_ai, job=job)
         except (OutboundRefused, PlivoError):
             return DialResult("failed")
         deadline = self._clock() + self._max_wait

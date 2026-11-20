@@ -324,7 +324,7 @@ class FakeOutbound:
     def __init__(self, repo: FakeRepo, refuse: str | None = None, fail: bool = False) -> None:
         self.repo, self.refuse, self.fail = repo, refuse, fail
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, approval_kind: str = "owner_test", approval_ref: uuid.UUID | None = None, language: str = "en", purpose: str = "x", kind: str = "task", business: str = "b") -> Any:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, approval_kind: str = "owner_test", approval_ref: uuid.UUID | None = None, language: str = "en", purpose: str = "x", kind: str = "task", business: str = "b", say_ai: bool = True, job: str | None = None) -> Any:
         if self.refuse:
             raise OutboundRefused(self.refuse)
         if self.fail:

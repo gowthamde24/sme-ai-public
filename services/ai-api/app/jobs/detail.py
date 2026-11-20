@@ -6,7 +6,7 @@
   when       the days and hours the job works in, read from the same place the old screen reads them (null where the job has none)
   finds_out  what the helper asks (the closed keys per kind, each on or off; a key never set is off)
   faqs       the owner's answers the helper may use
-  results    the last seven days where it is cheap (speed to lead's calls); the other kinds send empty numbers and items until their results are built
+  results    the last seven days from what the subsystems hold (app/jobs/results.py)
   cost       the month's call minutes so far and what the plan includes
 
 Every part is read defensively: a part that cannot be read (the caller's role, a subsystem not built here) is empty or null, never a failed page."""
@@ -17,14 +17,12 @@ from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from app.jobs import catalogue, listing
+from app.jobs import catalogue, listing, results
 from app.jobs import needs as needs_mod
 
 logger = logging.getLogger("app.jobs")
-IST = timezone(timedelta(hours=5, minutes=30))
 DAYS = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
 # what each helper speaks (the page shows a line per language and channel); the researcher never calls or writes to a prospect
 SAYS_CHANNELS: dict[str, tuple[str, ...]] = {"speed_to_lead": ("call", "whatsapp"), "answer_calls": ("call",), "followups": ("whatsapp",), "store_visits": ("whatsapp",), "offers": ("whatsapp",), "researcher": ()}
@@ -47,20 +45,38 @@ def _languages(env: catalogue.Env) -> list[str]:
 
 
 def says_of(env: catalogue.Env, kind: str, helper_name: str | None) -> list[dict[str, str]]:
+    """The line a call or message of this job starts with. A CALL line comes from the same function the live call uses (app/telephony/call_opening.py, with the same resolved greeting setting of the job), so the page and the
+    phone say the same words; a WhatsApp line is the opening line of app/opening/resolve.py."""
     channels = SAYS_CHANNELS[kind]
     if not channels:
         return []
+    from types import SimpleNamespace
+
     from app.opening import greeting
     from app.opening import resolve as opening
+    from app.telephony import plivo_outbound
+    from app.telephony import tone as tone_mod
+    from app.telephony.call_opening import call_opening
 
     def make() -> list[dict[str, str]]:
         doc = opening.talk_training_doc(env.runtime, env.ctx)
-        mention = greeting.resolved_from(doc, catalogue.say_ai_override(doc, kind))
-        state = opening._repo(env.runtime).opening(env.token, env.tenant_id)   # one read for every language
+        say_ai = greeting.resolved_for_job(doc, kind)
+        state = _safe("opening", lambda: opening._repo(env.runtime).opening(env.token, env.tenant_id), None) if "whatsapp" in channels else None   # one read for every language; without it the WhatsApp lines are left out, the call lines stay
+        assistant = helper_name or opening.saved_assistant_name(env.runtime, env.ctx)
+        from app.how_speaks.routes import _pack_default_tone
+
+        tone = tone_mod.for_task_call(tone_mod.effective_tone(doc, _pack_default_tone(env.runtime, env.ctx))[0])
         out: list[dict[str, str]] = []
         for language in _languages(env):
-            text = opening.resolve(env.runtime, env.ctx, language, mention_ai=mention, row=state, helper_name=helper_name).text
-            out.extend({"language": language, "channel": channel, "text": text} for channel in channels)
+            for channel in channels:
+                if channel == "call":
+                    placed = None if kind == "answer_calls" else SimpleNamespace(goal=None, owner_test=False, kind="task", tone=tone, opening_line=plivo_outbound.opening_for("task", language, tone))
+                    text = call_opening(language, business=env.ctx.tenant.name, assistant=assistant, training=doc, say_ai=say_ai, outbound=placed)
+                elif state is not None:
+                    text = opening.resolve(env.runtime, env.ctx, language, mention_ai=say_ai, row=state, helper_name=helper_name).text
+                else:
+                    continue
+                out.append({"language": language, "channel": channel, "text": text})
         return out
 
     return _safe("says", make, [])  # type: ignore[no-any-return]
@@ -90,16 +106,6 @@ def when_of(env: catalogue.Env, kind: str) -> dict[str, Any]:
 
 
 # ------------------------------------------------------------------------------------------------------------------ results and cost
-def results_of(env: catalogue.Env, kind: str) -> dict[str, Any]:
-    out: dict[str, Any] = {"days": 7, "numbers": {}, "items": []}
-    if kind == "speed_to_lead" and env.runtime.outreach is not None:
-        today = datetime.now(IST).date()
-        total = _safe("results", lambda: env.runtime.outreach.report(env.token, env.tenant_id, today - timedelta(days=6), today).total, None)
-        if total is not None:
-            out["numbers"] = {"called": int(total.calls), "picked_up": round(total.calls * total.connected_rate), "visits": int(total.bookings)}
-    return out
-
-
 def cost_of(env: catalogue.Env) -> dict[str, Any]:
     """The month's call minutes so far and what the plan includes; `rupees` is null until a paid plan's rate is read here (early access: always null)."""
     out: dict[str, Any] = {"minutes_used": 0, "minutes_included": None, "rupees": None}
@@ -139,7 +145,7 @@ def build(runtime: Any, ctx: Any, kind: str) -> dict[str, Any] | None:
     meta = meta_of(runtime, token, tenant_id, kind)
     name = str(meta["custom_name"]) if meta and meta.get("custom_name") else None
     items = needs_mod.items_of(runtime, token, tenant_id)
-    listing.overlay(job, {kind: name} if name else {}, needs_mod.count_by_job(items))
+    listing.overlay(job, {kind: meta} if meta else {}, needs_mod.count_by_job(items))
     env = catalogue.Env(runtime=runtime, ctx=ctx)
     trust = getattr(getattr(runtime, "jobs", None), "trust", None)
     faqs = _safe("faqs", lambda: trust.faq_list(token, tenant_id, uuid.UUID(str(meta["id"]))), []) if trust is not None and meta else []
@@ -154,7 +160,7 @@ def build(runtime: Any, ctx: Any, kind: str) -> dict[str, Any] | None:
         "effect": {"inputs": {"who": None, "event_at": None, "booked_at": None}},
         "finds_out": finds_out_of(kind, meta),
         "faqs": [{"id": f["id"], "question": f["question"], "answer": f["answer"]} for f in faqs],
-        "results": results_of(env, kind),
+        "results": results.results_of(env, kind),
         "failure": {"code": fix["code"], "params": {"count": fix.get("count", 0)}, "items": []} if isinstance(fix, dict) else None,
         "test_channel": TEST_CHANNEL[kind],
         "cost": cost_of(env),

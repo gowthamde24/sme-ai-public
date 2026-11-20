@@ -98,9 +98,9 @@ def _talk_row(env: Env) -> Any:
 
 def say_ai_override(doc: Any, kind: str) -> str:
     """`business` (follow the business setting), `on` or `off`: what the job's own override says (docs/contracts/greeting-disclosure.md)."""
-    by_job = doc.get("say_ai_by_job") if isinstance(doc, dict) else None
-    word = by_job.get(kind) if isinstance(by_job, dict) else None
-    return word if word in ("on", "off") else "business"
+    from app.opening import greeting
+
+    return greeting.job_word(doc if isinstance(doc, dict) else None, kind) or "business"
 
 
 def _say_ai_read(kind: str) -> Callable[[Env], Any]:

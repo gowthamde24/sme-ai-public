@@ -128,6 +128,11 @@ class Visits:
     def settings_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return dict(self.raw)
 
+    visits: list[dict[str, Any]] = []   # replaced per test
+
+    def list_visits(self, token: str, tenant_id: uuid.UUID, *, date_from: Any, date_to: Any, open_only: bool, status: Any, lead_id: Any, visit_id: Any) -> dict[str, Any]:
+        return {"from": date_from, "to": date_to, "items": list(self.visits)}
+
     def settings_set(self, token: str, tenant_id: uuid.UUID, args: dict[str, Any]) -> dict[str, Any]:
         self.saved.append(args)
         self.raw = {**self.raw, "weekly_hours": args["p_weekly_hours"], "closed_dates": args["p_closed_dates"], "slot_minutes": args["p_slot_minutes"], "max_parallel": args["p_max_parallel"], "buffer_minutes": args["p_buffer_minutes"], "is_default": False}
@@ -143,6 +148,11 @@ class Followups:
 
     def list_policies(self, token: str, tenant_id: uuid.UUID, *, limit: int) -> list[dict[str, Any]]:
         return self.versions[:limit]
+
+    drafts: list[dict[str, Any]] = []   # replaced per test
+
+    def list_drafts(self, token: str, tenant_id: uuid.UUID, *, lead_id: Any, status: Any, limit: int) -> list[dict[str, Any]]:
+        return list(self.drafts)
 
     def create_policy(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
         self.saved.append(args)
@@ -166,6 +176,9 @@ class Campaigns:
         row["status"] = "paused" if action == "pause" else "running"
         return row
 
+    def results(self, token: str, tenant_id: uuid.UUID, campaign_id: uuid.UUID) -> dict[str, Any]:
+        return {"by_state": {"sent": 3, "delivered": 5, "read": 2, "failed": 1}, "replied": 4}
+
     def offer_set(self, token: str, tenant_id: uuid.UUID, campaign_id: uuid.UUID, label: str, weekly_cap: int) -> dict[str, Any]:
         self.calls.append(("offer_set", (str(campaign_id), label, weekly_cap)))
         row = next(r for r in self.rows if r["id"] == str(campaign_id))
@@ -187,6 +200,11 @@ class Finder:
 
     def settings(self, token: str, tenant_id: uuid.UUID) -> Any:
         return self.s
+
+    found: list[Any] = []   # replaced per test
+
+    def searches(self, token: str, tenant_id: uuid.UUID, limit: int) -> Any:
+        return SimpleNamespace(items=list(self.found))
 
     def set_settings(self, token: str, tenant_id: uuid.UUID, body: Any) -> Any:
         changes = body.model_dump(exclude_none=True)
@@ -230,7 +248,7 @@ class Trust:
 
     def meta_ensure(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
         self.calls.append(("ensure", kind))
-        return self.rows.setdefault(kind, {"id": str(uuid.UUID(int=0x900 + len(self.rows))), "kind": kind, "custom_name": None, "finds_out": {}})
+        return self.rows.setdefault(kind, {"id": str(uuid.UUID(int=0x900 + len(self.rows))), "kind": kind, "custom_name": None, "finds_out": {}, "enabled": True})
 
     def _row(self, meta_id: uuid.UUID) -> dict[str, Any]:
         return next(r for r in self.rows.values() if r["id"] == str(meta_id))
@@ -240,6 +258,11 @@ class Trust:
         if "name" in self.refuse:
             raise self.refuse["name"]
         self._row(meta_id)["custom_name"] = name
+        return self._row(meta_id)
+
+    def meta_set_enabled(self, token: str, tenant_id: uuid.UUID, meta_id: uuid.UUID, enabled: bool) -> dict[str, Any]:
+        self.calls.append(("enabled", enabled))
+        self._row(meta_id)["enabled"] = enabled
         return self._row(meta_id)
 
     def meta_set_finds_out(self, token: str, tenant_id: uuid.UUID, meta_id: uuid.UUID, finds_out: dict[str, bool]) -> dict[str, Any]:
@@ -279,12 +302,12 @@ class World:
     """Every subsystem the jobs read and write through, as fakes that keep what they are told."""
 
     def __init__(self, *, on: bool = True, outreach: Outreach | None = None, offers: tuple[dict[str, Any], ...] = (), today: Today | None = None, followups_none: bool = False, visits_default: bool = False, assistant_saved: bool = True,
-                 live: bool = True, doc: dict[str, Any] | None = None, billing: bool = True) -> None:
+                 live: bool = True, doc: dict[str, Any] | None = None, billing: bool = True, crm: Any = None) -> None:
         self.outreach = outreach or Outreach(rule(1), rule(2))
         self.status, self.assistant, self.visits, self.followups, self.campaigns = Status(live), AssistantSettings_(assistant_saved), Visits(visits_default), Followups(followups_none), Campaigns(*offers)
         self.finder, self.training, self.trust, self.today = Finder(), Training(doc), Trust(), today
         self.client, _ = make_client(jobs=JobsRuntime(directory=PACKS, trust=self.trust) if on else None, outreach=self.outreach, assistant_status=self.status, phone_numbers=Numbers(), assistant_settings=self.assistant, visits=self.visits,  # type: ignore[arg-type]
-                                     followups=self.followups, campaigns=self.campaigns, lead_finder=self.finder, talk_training=self.training, workspace=Workspace(), today=self.today, billing=Billing() if billing else None)  # type: ignore[arg-type]
+                                     followups=self.followups, campaigns=self.campaigns, lead_finder=self.finder, talk_training=self.training, workspace=Workspace(), today=self.today, billing=Billing() if billing else None, **({"crm": crm} if crm is not None else {}))  # type: ignore[arg-type]
 
     def get(self, kind: str, user: str | None = "a_owner") -> Any:
         return self.client.get(url(kind), headers=auth(user) if user else {})
@@ -297,7 +320,7 @@ class World:
 
 
 def writes(w: World) -> list[tuple[str, Any]]:
-    return [c for c in w.trust.calls if c[0] in ("ensure", "name", "finds_out")]
+    return [c for c in w.trust.calls if c[0] in ("ensure", "name", "finds_out", "enabled")]
 
 
 def setting(body: dict[str, Any], key: str) -> dict[str, Any]:
@@ -378,7 +401,7 @@ def test_a_kind_with_no_subsystem_still_has_a_page() -> None:
         r = client.get(url(kind), headers=auth("a_owner"))
         assert r.status_code == 200, (kind, r.text)
         assert all(s["value"] is None for s in r.json()["settings"]["main"] + r.json()["settings"]["more"] if s["type"] == "choice"), kind
-        assert r.json()["says"] == [] and r.json()["cost"] == {"minutes_used": 0, "minutes_included": None, "rupees": None}
+        assert all(line["channel"] == "call" for line in r.json()["says"]) and r.json()["cost"] == {"minutes_used": 0, "minutes_included": None, "rupees": None}
 
 
 def test_the_page_has_an_etag_and_a_304_on_a_repeat() -> None:
@@ -657,13 +680,37 @@ def test_offers_pause_and_resume_the_offers_that_run() -> None:
 
 
 @pytest.mark.parametrize("kind", ["followups", "store_visits", "researcher"])
-def test_a_job_with_no_switch_says_so_when_the_word_would_change_it(kind: str) -> None:
+def test_the_three_jobs_with_no_switch_of_their_own_are_switched_in_the_job_row(kind: str) -> None:
     w = World()
-    current = w.get(kind).json()["enabled"]
-    r = w.patch(kind, {"enabled": not current, "name": "Priya"})
-    assert r.status_code == 409 and r.json()["error"]["code"] == "job_not_switchable" and writes(w) == []
-    assert w.patch(kind, {"enabled": current}).status_code == 200   # the same word is a no-op, never an error
-    assert w.post(kind, "pause" if current else "resume").status_code == 409
+    assert w.get(kind).json()["enabled"] is True
+    r = w.post(kind, "pause")
+    assert r.status_code == 200 and r.json()["enabled"] is False and r.json()["status"] == "paused" and r.json()["result"] == {"code": "paused_by_owner", "params": {}}
+    assert writes(w) == [("ensure", kind), ("enabled", False)]   # the row is made on the first switch; the database's work (due list, reminders, searches) reads it
+    page = w.get(kind).json()
+    assert page["enabled"] is False and page["status"] == "paused"
+    assert w.client.get(JOBS, headers=auth("a_sales")).json()["items"][["speed_to_lead", "answer_calls", "followups", "store_visits", "offers", "researcher"].index(kind)]["enabled"] is False
+    r = w.patch(kind, {"enabled": True})
+    assert r.status_code == 200 and r.json()["enabled"] is True and r.json()["status"] == "running" and writes(w)[-1] == ("enabled", True)
+
+
+def test_a_switch_the_database_refuses_is_the_databases_answer() -> None:
+    w = World()
+
+    class Refusing(Trust):
+        def meta_set_enabled(self, token: str, tenant_id: uuid.UUID, meta_id: uuid.UUID, enabled: bool) -> dict[str, Any]:
+            raise JobsRefused("SM986")
+
+    client, _ = make_client(jobs=JobsRuntime(directory=PACKS, trust=Refusing()), followups=w.followups, outreach=w.outreach)  # type: ignore[arg-type]
+    r = client.post(f"{url('followups')}/pause", headers=auth("a_owner"))
+    assert r.status_code == 409 and r.json()["error"]["code"] == "not_removable"
+    no_trust, _ = make_client(jobs=JobsRuntime(directory=PACKS), followups=w.followups)  # type: ignore[arg-type]
+    assert no_trust.post(f"{url('followups')}/pause", headers=auth("a_owner")).json()["error"]["code"] == "jobs_unavailable"
+
+
+def test_a_job_that_is_off_because_it_is_not_set_up_is_still_not_made_running_by_a_resume() -> None:
+    w = World(followups_none=True)
+    r = w.patch("followups", {"enabled": True})
+    assert r.status_code == 200 and r.json()["enabled"] is False and r.json()["result"]["code"] == "not_set_up"   # the switch is on, there is no policy: it stays off and says so
 
 
 # ------------------------------------------------------------------------------------------------------------------ the name and what the helper asks
@@ -672,13 +719,14 @@ def test_the_name_is_set_through_the_database_and_comes_back_in_the_list_and_in_
     r = w.patch("speed_to_lead", {"name": "  Priya Sales  "})
     assert r.status_code == 200 and r.json()["custom_name"] == "Priya Sales"
     assert writes(w) == [("ensure", "speed_to_lead"), ("name", "Priya Sales")]
-    assert r.json()["says"] and all("Priya Sales" in s["text"] for s in r.json()["says"])   # the real opening line, with the job's own name
+    english = [s["text"] for s in r.json()["says"] if s["language"] == "en" and s["channel"] == "whatsapp"]
+    assert english and all("Priya Sales" in t for t in english)   # the real opening line, with the job's own name (a call we place names the business only: that is what the call line says)
     assert {j["kind"]: j["custom_name"] for j in w.client.get(JOBS, headers=auth("a_sales")).json()["items"]}["speed_to_lead"] == "Priya Sales"
     assert {j["kind"]: j["custom_name"] for j in w.client.get(f"{JOBS}/today", headers=auth("a_viewer")).json()["jobs"]}["speed_to_lead"] == "Priya Sales"
     assert w.get("followups").json()["custom_name"] is None
     long_name = "A" * 40
     assert w.patch("speed_to_lead", {"name": long_name}).json()["custom_name"] == long_name   # longer than the assistant's own 24: the job's name is up to 40
-    assert long_name in w.get("speed_to_lead").json()["says"][0]["text"]
+    assert any(long_name in s["text"] for s in w.get("speed_to_lead").json()["says"] if s["language"] == "en" and s["channel"] == "whatsapp")
 
 
 @pytest.mark.parametrize("empty", ["", "   ", None])

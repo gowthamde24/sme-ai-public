@@ -18,6 +18,12 @@ from app.opening.render import _OPENERS
 
 JOB_OVERRIDES = ("business", "on", "off")
 DEFAULT = False
+# the jobs that speak to a customer (docs/contracts/jobs-detail.md): each may override the business setting; their words are the Talk training document's `say_ai_by_job`
+JOB_KINDS = ("speed_to_lead", "answer_calls", "followups", "store_visits", "offers")
+# which job a Lead Desk task call belongs to, by the task's template (a template not listed is no job's: the business setting applies)
+JOB_OF_TASK_TEMPLATE = {"call_new_leads": "speed_to_lead", "reengage_old_leads": "followups", "confirm_appointments": "store_visits", "offer_invite": "offers"}
+# which job an outbox message belongs to, by its category (the database function app.outbox_mention_ai(tenant, category) says the same)
+JOB_OF_OUTBOX_CATEGORY = {"followup": "followups", "visit": "store_visits"}
 
 # the question that follows a plain greeting on a call WE place, per language (the words of the call openings of app/tasks/dialer.py)
 ASK = {
@@ -45,8 +51,20 @@ def setting_of(doc: Mapping[str, object] | None) -> bool | None:
     return value if isinstance(value, bool) else None
 
 
+def job_word(doc: Mapping[str, object] | None, job: str | None) -> str | None:
+    """The job's own word, `on` or `off`, from the Talk training document (`say_ai_by_job`); None when the job has none, is no job, or the document says anything else."""
+    by_job = doc.get("say_ai_by_job") if isinstance(doc, Mapping) else None
+    word = by_job.get(job) if isinstance(by_job, Mapping) and job in JOB_KINDS else None
+    return word if word in ("on", "off") else None
+
+
 def resolved_from(doc: Mapping[str, object] | None, job_override: str | None = None) -> bool:
     return resolve_greeting_disclosure(setting_of(doc), job_override)
+
+
+def resolved_for_job(doc: Mapping[str, object] | None, job: str | None) -> bool:
+    """THE value a call, a message and the job page's preview use for one job: the job's override, else the business setting, else the default (OFF). `job` None (a call that belongs to no job) is the business setting."""
+    return resolve_greeting_disclosure(setting_of(doc), job_word(doc, job))
 
 
 def plain_outbound(language: str) -> str:
@@ -55,7 +73,7 @@ def plain_outbound(language: str) -> str:
     return f"{_OPENERS[lang]['plain']} {ASK[lang]}"
 
 
-def from_repo(repo: object, token: str, tenant_id: object, job_override: str | None = None) -> bool:
+def from_repo(repo: object, token: str, tenant_id: object, job_override: str | None = None, job: str | None = None) -> bool:
     """The resolved value read from a Talk training repository (`get(token, tenant_id)` -> {"doc": ...}); the default (OFF) when there is no repository or the read fails."""
     getter = getattr(repo, "get", None)
     if getter is None:
@@ -65,4 +83,5 @@ def from_repo(repo: object, token: str, tenant_id: object, job_override: str | N
     except Exception:   # noqa: BLE001 - an unreadable setting is the default: the name only
         return resolve_greeting_disclosure(None, job_override)
     doc = row.get("doc") if isinstance(row, dict) else None
-    return resolved_from(doc if isinstance(doc, dict) else None, job_override)
+    doc = doc if isinstance(doc, dict) else None
+    return resolve_greeting_disclosure(setting_of(doc), job_override or job_word(doc, job))

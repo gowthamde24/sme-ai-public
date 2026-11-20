@@ -150,7 +150,7 @@ def _switch(job_id: str, ctx: Any, runtime: Runtime, enabled: bool) -> Response:
     if job is None:
         raise not_found()
     items = needs_mod.items_of(runtime, token, tenant_id)
-    return _json(listing.overlay(job, listing.names_of(runtime, token, tenant_id), needs_mod.count_by_job(items)))
+    return _json(listing.overlay(job, listing.metas_of(runtime, token, tenant_id), needs_mod.count_by_job(items)))
 
 
 @router.post("/{job_id}/pause")
