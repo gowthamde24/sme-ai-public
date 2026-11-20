@@ -1,6 +1,8 @@
 """Customer Zero code list item 5 (20 Nov 2026): the declared production API says LEAD_FINDER explicitly (the default would be the synthetic fixture, shown to a real shop); `places` only with the Google key declared;
 the free-cap guards stay on both Google calls."""
 
+# ruff: noqa: E501
+
 from __future__ import annotations
 
 from pathlib import Path
