@@ -1,4 +1,3 @@
-# ruff: noqa: E501
 """The off-topic eval of the automatic WhatsApp reply (Customer Zero code list item 2; WhatsApp's rule: a business assistant, never a general one).
 
 The cases of tests/evals/whatsapp_offtopic/cases.jsonl (English, Telugu, Hindi, Kannada: a poem, homework, news, medical advice, another business, code, a prompt injection, a role-play) go through the SAME prompt and
