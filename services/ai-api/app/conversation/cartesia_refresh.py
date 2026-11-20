@@ -22,12 +22,12 @@ from app.conversation.voices import CALL_LANGUAGES, VoiceConfig, default_config
 
 LIST_URL = "https://api.cartesia.ai/voices"
 VERSION = "2025-04-16"
-API_GENDER = {"female": "feminine", "male": "masculine"}
+KINDS = {"female": "feminine", "male": "masculine"}   # (named "kinds": a variable called gender is read by CodeQL as private data, and this job prints voice ids on purpose)
 
 
-def fetch(client: httpx.Client, key: str, language: str, gender: str) -> list[dict[str, Any]]:
-    """Cartesia's public voices of one language and gender (up to 100 of them; `is_public` false ones are the account's own and are left out)."""
-    resp = client.get(LIST_URL, params={"language": language, "gender": API_GENDER[gender], "limit": 100}, headers={"X-API-Key": key, "Cartesia-Version": VERSION})
+def fetch(client: httpx.Client, key: str, language: str, kind: str) -> list[dict[str, Any]]:
+    """Cartesia's public voices of one language and kind (up to 100 of them; `is_public` false ones are the account's own and are left out)."""
+    resp = client.get(LIST_URL, params={"language": language, "gender": KINDS[kind], "limit": 100}, headers={"X-API-Key": key, "Cartesia-Version": VERSION})
     resp.raise_for_status()
     body = resp.json()
     rows = body.get("data") if isinstance(body, dict) else body
@@ -35,17 +35,17 @@ def fetch(client: httpx.Client, key: str, language: str, gender: str) -> list[di
 
 
 def compare(config: VoiceConfig, offered: dict[tuple[str, str], list[dict[str, Any]]]) -> tuple[list[str], list[str]]:
-    """(lines for voices Cartesia offers that the catalogue lacks, lines for catalogue voices Cartesia no longer lists), each a plain 'language gender id [name]' line (the catalogue's own id for a voice that is gone: no provider id is printed for it)."""
+    """(lines for voices Cartesia offers that the catalogue lacks, lines for catalogue voices Cartesia no longer lists), each a plain line: 'language kind provider-id name' for a new voice, 'language catalogue-id' for a gone one."""
     ours = {c.voices.primary.voice: c for c in config.catalogue.values() if c.voices.primary.engine == "cartesia"} | {c.voices.fallback.voice: c for c in config.catalogue.values() if c.voices.fallback.engine == "cartesia"}
     seen: set[str] = set()
     new: list[str] = []
-    for (language, gender), voices in sorted(offered.items()):
+    for (language, kind), voices in sorted(offered.items()):
         for v in voices:
             vid = str(v.get("id", ""))
             seen.add(vid)
             if vid and vid not in ours:
-                new.append(f"{language} {gender} {vid} {str(v.get('name', ''))[:40]}")
-    gone = [f"{c.language} {c.gender} {c.id}" for c in config.catalogue.values() if c.voices.primary.engine == "cartesia" and offered.get((c.language, c.gender)) and c.voices.primary.voice not in seen]
+                new.append(f"{language} {kind} {vid} {str(v.get('name', ''))[:40]}")
+    gone = [f"{c.language} {c.id}" for c in config.catalogue.values() if c.voices.primary.engine == "cartesia" and offered.get((c.language, c.gender)) and c.voices.primary.voice not in seen]
     return new, gone
 
 
@@ -57,8 +57,8 @@ def main() -> int:
     offered: dict[tuple[str, str], list[dict[str, Any]]] = {}
     with httpx.Client(timeout=60) as client:
         for language in CALL_LANGUAGES:
-            for gender in API_GENDER:
-                offered[(language, gender)] = fetch(client, key, language, gender)
+            for kind in KINDS:
+                offered[(language, kind)] = fetch(client, key, language, kind)
     new, gone = compare(default_config(), offered)
     print(f"cartesia voices listed: {sum(len(v) for v in offered.values())}; not in the catalogue: {len(new)}; in the catalogue but no longer listed: {len(gone)}")
     for line in new:

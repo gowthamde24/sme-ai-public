@@ -23,7 +23,7 @@ def test_it_lists_the_voices_cartesia_has_and_the_catalogue_lacks_and_those_that
     }
     new, gone = cr.compare(CFG, offered)
     assert new == ["te female brand-new-id Fresh"]
-    assert "te female te-sindhu" in gone and not any(line.startswith("te male") for line in gone)
+    assert "te te-sindhu" in gone and "te te-charan" not in gone, "the men: nothing came back, so no man is reported gone"
     assert not any(ramya in line for line in new + gone)
 
 
