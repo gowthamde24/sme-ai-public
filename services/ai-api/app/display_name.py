@@ -17,13 +17,23 @@ _PLACEHOLDER = re.compile(
 )
 
 
+# The demo and test data carry a marker after the name ("Anitha R (demo)", "Ravi (synthetic)"): it is data for us, never part of the name a person sees (planner, 20 Nov 2026: "Anitha (." must not appear)
+_MARKER = re.compile(r"\s*\((?:demo|synthetic|test|sample)\)\s*$", re.IGNORECASE)
+
+
+def without_marker(name: str) -> str:
+    """The name without a trailing demo marker; a name that is only a marker stays as it is."""
+    cleaned = _MARKER.sub("", name)
+    return cleaned if cleaned.strip() else name
+
+
 def real_name(value: object) -> str | None:
-    """The name when it is one, unchanged; None for nothing, a blank, or a placeholder made from an id."""
+    """The name when it is one, unchanged (but for a trailing demo marker); None for nothing, a blank, or a placeholder made from an id."""
     if not isinstance(value, str):
         return None
     if not value.strip() or _PLACEHOLDER.fullmatch(" ".join(value.split())):
         return None
-    return value.strip()   # as written: a name with a line break in it stays one (the quote renderer refuses it; this must not tidy it away)
+    return without_marker(value.strip())   # as written: a name with a line break in it stays one (the quote renderer refuses it; this must not tidy it away)
 
 
 def lead_title(name: object, phone: object = None, last4: object = None) -> str:

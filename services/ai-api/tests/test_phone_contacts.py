@@ -199,7 +199,7 @@ class PeopleDb:
 @pytest.mark.parametrize("query", ["Naveen E", "Naveen", "naveen e (demo)", "Naveen  E", "నవీన్ E", "నవీన్"])
 def test_a_customer_who_is_a_contact_with_no_company_is_found_by_name_in_any_spelling_or_script(query: str) -> None:
     out = find_customers(ctx_with(PeopleDb(), HolderLookup()), FindCustomersArgs(query=query))  # type: ignore[arg-type]
-    assert [i.type for i in out.items] == ["lead"] and out.items[0].label == "Naveen E (demo) (lead)" and str(out.items[0].id) == PeopleDb.LEAD, query
+    assert [i.type for i in out.items] == ["lead"] and out.items[0].label == "Naveen E (lead)" and str(out.items[0].id) == PeopleDb.LEAD, query
     assert "9422" not in repr(out.items), "no number is shown to the model"
 
 
@@ -208,3 +208,12 @@ def test_a_name_nobody_has_finds_nothing_and_a_number_never_searches_contacts_by
     db = PeopleDb()
     find_customers(ctx_with(db, HolderLookup()), FindCustomersArgs(query="98765 00000"))  # type: ignore[arg-type]
     assert not any(p.get("full_name") for _, p in db.asked), "a phone number is never turned into a name search"
+
+
+def test_a_demo_marker_is_never_part_of_the_name_on_screen() -> None:
+    from app.display_name import real_name, without_marker
+    from app.visits.service import short_name
+
+    assert real_name("Anitha R (demo)") == "Anitha R" and real_name("Ravi (Synthetic)") == "Ravi" and real_name("Anitha Hegde") == "Anitha Hegde"
+    assert without_marker("(demo)") == "(demo)" and without_marker("Kumar (demo) Silks") == "Kumar (demo) Silks"
+    assert short_name("Anitha R (demo)") == "Anitha R." and short_name("Anitha (demo)") == "Anitha"

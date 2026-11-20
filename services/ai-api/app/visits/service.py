@@ -10,7 +10,7 @@ import uuid
 from datetime import date, datetime
 from typing import Any, Literal
 
-from app.display_name import real_name
+from app.display_name import real_name, without_marker
 from app.errors import not_found
 from app.tenancy.repository import UpstreamError
 from app.visits.models import (
@@ -38,7 +38,7 @@ def short_name(full_name: Any) -> str | None:
     """ "Priya Sharma" -> "Priya S."; one word stays as it is; an erased record (the tombstone "erased:...") or an empty name is None."""
     if not isinstance(full_name, str):
         return None
-    name = " ".join(full_name.split())
+    name = " ".join(without_marker(full_name).split())
     if not name or name.startswith("erased:"):
         return None
     parts = name.split(" ")
