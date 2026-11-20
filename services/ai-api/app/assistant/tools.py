@@ -392,7 +392,28 @@ def find_customers(ctx: Ctx, args: FindCustomersArgs) -> Output:
                         ("lead", lid),
                     )
                 )
+    if not _PHONE_QUERY.fullmatch(args.query):
+        items.extend(_people_by_name(ctx, args.query, {i.id for i in items}))
     return Output(items=tuple(items))
+
+
+def _people_by_name(ctx: Ctx, query: str, seen: set[uuid.UUID]) -> list[Item]:
+    """A business of PEOPLE (a builder, a coaching centre, a car dealer, a clinic) keeps its customers as contacts with a lead, not as company names: look the name up there too (20 Nov 2026, found by the per-pack eval: the
+    assistant said "not found" for contacts that existed). The task planner's lookup is used as it is: the name as written, then the sounds of the name (another spelling, or another script: "నవీన్" finds "Naveen"),
+    and a suffix such as "(demo)" or a different spacing does not matter."""
+    from app.tasks.resolver import DbContactSource
+
+    try:
+        people = DbContactSource(ctx.db).by_name(query, 5)
+    except Exception:  # a lookup that cannot be made is just no answer (the company search above stands)
+        return []
+    out: list[Item] = []
+    for person in people:
+        if person.lead_id in seen or person.erased or person.archived:
+            continue
+        label = str(person.name or "Customer")[:100]
+        out.append(ctx.state.add("lead", person.lead_id, f"{label} (lead)", {"company": label, "status": person.status}, ("lead", person.lead_id)))
+    return out
 
 
 class ListEnquiriesArgs(_Args):

@@ -101,4 +101,4 @@ def test_the_kinds_are_the_four_of_the_contract() -> None:
 def test_who_are_you_and_what_is_stack19_go_to_the_chat_path_in_every_language(text: str) -> None:
     """Owner, 19 Nov 2026: "స్టాక్19" holds the business word "stock", and "who are you" in Telugu fell to the records ("nothing to show")."""
     got = classify(text)
-    assert got.kind == "general" and got.reason in ("about_assistant", "general_help"), (text, got)
+    assert got.kind == "general" and got.reason == "about_assistant", (text, got)
