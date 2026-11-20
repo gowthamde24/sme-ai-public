@@ -32,7 +32,7 @@ afterEach(() => {
 describe("try-it: a live moment played once when seen (no AI, nothing sent)", () => {
   it("is empty before it is seen; then types the first example in about 1.2 s and brings the four lines in one by one", () => {
     vi.stubGlobal("matchMedia", () => ({ matches: false }));
-    const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" />);
+    const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" arrow={null} />);
     const box = screen.getByRole("textbox") as HTMLTextAreaElement;
     act(() => void vi.advanceTimersByTime(5)); // the browser took over: the block waits empty below the fold (the server drew the final state)
     expect(box.value).toBe("");
@@ -51,7 +51,7 @@ describe("try-it: a live moment played once when seen (no AI, nothing sent)", ()
   });
   it("tapping a chip afterwards replays it for that chip", () => {
     vi.stubGlobal("matchMedia", () => ({ matches: false }));
-    const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" />);
+    const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" arrow={null} />);
     act(() => void vi.advanceTimersByTime(5));
     act(() => seeIt());
     act(() => void vi.advanceTimersByTime(4000));
@@ -62,7 +62,7 @@ describe("try-it: a live moment played once when seen (no AI, nothing sent)", ()
   });
   it("reduced motion (and no script): the final state at once, as the server draws it", () => {
     vi.stubGlobal("matchMedia", () => ({ matches: true }));
-    const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" />);
+    const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" arrow={null} />);
     act(() => void vi.advanceTimersByTime(10));
     expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("Book site visits");
     expect(container.querySelectorAll(".h3-plan-row[data-in]")).toHaveLength(4);
@@ -71,7 +71,7 @@ describe("try-it: a live moment played once when seen (no AI, nothing sent)", ()
     vi.stubGlobal("matchMedia", () => ({ matches: false }));
     const fetchSpy = vi.fn();
     vi.stubGlobal("fetch", fetchSpy);
-    const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" />);
+    const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" arrow={null} />);
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "tell people the order is ready" } });
     expect(container.querySelectorAll(".h3-plan-row[data-in]")).toHaveLength(4);
     expect(fetchSpy).not.toHaveBeenCalled();

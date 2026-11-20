@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -8,7 +7,7 @@ import * as React from "react";
  * The sticky bottom bar of the home page on a phone (under 900 px; hidden by the style sheet above that): "Get free early access", 48 px tall, safe-area padding. It is out of the way while the hero's own button, the final call to action or
  * the footer is on screen (an IntersectionObserver), so it never covers or doubles a button; it slides in with a transform only (no layout shift) and is `inert` while hidden.
  */
-export function StickyCta({ href, label }: { href: string; label: string }) {
+export function StickyCta({ href, label, arrow }: { href: string; label: string; /** The arrow, drawn on the server (no icon code in the page's script). */ arrow: React.ReactNode }) {
   const [seen, setSeen] = React.useState<Set<string>>(() => new Set(["hero"]));
   React.useEffect(() => {
     if (typeof IntersectionObserver === "undefined") return;
@@ -37,7 +36,7 @@ export function StickyCta({ href, label }: { href: string; label: string }) {
     <div className="h3-sticky" data-show={show ? "" : undefined} inert={!show} data-part="sticky-cta">
       <Link href={href} className="h3-btn h3-btn-main h3-btn-block">
         {label}
-        <ArrowRight size={18} strokeWidth={2.2} aria-hidden="true" />
+        {arrow}
       </Link>
     </div>
   );

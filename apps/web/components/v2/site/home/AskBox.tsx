@@ -1,8 +1,7 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 
 import { useOnViewOnce } from "./use-on-view-once";
 
@@ -17,7 +16,7 @@ const ROW_MS = 380; // then the plan card's four lines come in one by one
  * five example jobs. A live moment, played once when the block scrolls into view: the first example is TYPED into the box (about 1.2 s) and the card's four lines appear one by one; tapping a chip replays it for that chip (reduced
  * motion and no script: the final state at once, as the server draws it: the first example in the box and the card whole). It calls NO AI and sends NOTHING; the cost line is the same for every job (it names no price). "Set this up" leads to early access. The words come from the server (in the visitor's language).
  */
-export function AskBox({ words, jobs, href }: { words: { label: string; placeholder: string; go: string; who: string; says: string; when: string; cost: string; costValue: string; plan: string }; jobs: AskJob[]; href: string }) {
+export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: { label: string; placeholder: string; go: string; who: string; says: string; when: string; cost: string; costValue: string; plan: string }; jobs: AskJob[]; href: string }) {
   // the server draws the FINAL state (the first example typed, its card whole); a browser that can play the moment starts it from empty
   const [text, setText] = useState(jobs[0].chip);
   const [picked, setPicked] = useState<number | null>(0);
@@ -136,7 +135,7 @@ export function AskBox({ words, jobs, href }: { words: { label: string; placehol
       </div>
       <Link href={href} className="h3-btn h3-btn-main h3-btn-block" data-part="ask-go">
         {words.go}
-        <ArrowRight size={18} strokeWidth={2.4} aria-hidden="true" />
+        {arrow}
       </Link>
     </div>
   );

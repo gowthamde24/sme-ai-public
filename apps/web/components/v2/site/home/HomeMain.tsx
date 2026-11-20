@@ -89,7 +89,7 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
       <LowerSections t={t} />
       <Faq t={t} />
       <Final t={t} lang={lang} cta={cta} hasForm={hasForm} waitlist={waitlist} />
-      <StickyCta href={cta.href} label={cta.label} />
+      <StickyCta href={cta.href} label={cta.label} arrow={<ArrowRight size={18} strokeWidth={2.2} aria-hidden="true" />} />
     </div>
   );
 }
@@ -147,6 +147,7 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
         </header>
         <AskBox
           href={cta.href}
+          arrow={<ArrowRight size={18} strokeWidth={2.4} aria-hidden="true" />}
           words={{ label: t("h3.ask.label"), placeholder: t("h3.ask.ph"), go: t("h3.ask.go"), who: t("h3.plan.l.who"), says: t("h3.plan.l.says"), when: t("h3.plan.l.when"), cost: t("h3.plan.l.cost"), costValue: t("h3.plan.cost"), plan: t("h3.plan.t") }}
           jobs={[1, 2, 3, 4, 5].map((i) => ({ chip: t(k(`h3.ask.chip.${i}`)), who: t(k(`h3.job.${i}.who`)), says: t(k(`h3.job.${i}.says`)), when: t(k(`h3.job.${i}.when`)), keys: JOB_KEYS[i - 1] }))}
         />
