@@ -1,4 +1,4 @@
-"""The job page and its switch, slice S2 (jobs contract 1.0 sections 1 to 3, 14, 15; docs/contracts/jobs-detail.md). All under /v1/tenants/{t}/jobs; 404 while JOBS is off (before anything else).
+"""The job page and its switch, slice S2 (jobs contract 1.0 sections 1 to 3, 14, 15; docs/contracts/jobs-detail.md). All under /v1/tenants/{t}/jobs; 404 while JOBS is off (after the workspace door: sign-in, membership, role and the read-only gate).
 
   GET   /jobs/{id}          every member: the JobDetail (an ETag on the answer, 304 on If-None-Match)
   PATCH /jobs/{id}          Owner, Admin: {enabled?, name?, settings?, finds_out?} -> the fresh JobDetail. `enabled` is the underlying switch (pause and resume, never an approval); `name` is the owner's own name for the
@@ -29,7 +29,8 @@ from app.jobs.routes import _answer, _etag, jobs_on
 from app.jobs.trust import REFUSALS, JobsRefused
 from app.jobs.wiring import JobsRuntime
 
-router = APIRouter(prefix="/v1/tenants/{tenant_id}/jobs", tags=["jobs"], dependencies=[Depends(jobs_on)])
+# JOBS is checked INSIDE each handler (the `jobs: JobsDep` parameter, after the caller's role): the workspace door (sign-in, membership, role, read-only) comes first, as in the trust routes
+router = APIRouter(prefix="/v1/tenants/{tenant_id}/jobs", tags=["jobs"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 JobsDep = Annotated[JobsRuntime, Depends(jobs_on)]
 MAX_NAME = 40
@@ -89,7 +90,7 @@ def _json(body: dict[str, Any]) -> JSONResponse:
 
 
 @router.get("/{job_id}")
-def get_job(job_id: str, request: Request, ctx: AnyMember, runtime: RuntimeDep) -> Response:
+def get_job(job_id: str, request: Request, ctx: AnyMember, runtime: RuntimeDep, jobs: JobsDep) -> Response:
     """GET /jobs/{id}: the job page in one call (JobDetail)."""
     kind = _kind_of(job_id, ctx.tenant.id)
     found = detail.build(runtime, ctx, kind)
@@ -153,13 +154,13 @@ def _switch(job_id: str, ctx: Any, runtime: Runtime, enabled: bool) -> Response:
 
 
 @router.post("/{job_id}/pause")
-def pause_job(job_id: str, ctx: OwnerOrAdmin, runtime: RuntimeDep) -> Response:
+def pause_job(job_id: str, ctx: OwnerOrAdmin, runtime: RuntimeDep, jobs: JobsDep) -> Response:
     """POST /jobs/{id}/pause: the same as PATCH {enabled: false}; answers the Job. Never needs the second factor."""
     return _switch(job_id, ctx, runtime, False)
 
 
 @router.post("/{job_id}/resume")
-def resume_job(job_id: str, ctx: OwnerOrAdmin, runtime: RuntimeDep) -> Response:
+def resume_job(job_id: str, ctx: OwnerOrAdmin, runtime: RuntimeDep, jobs: JobsDep) -> Response:
     """POST /jobs/{id}/resume: the same as PATCH {enabled: true}; turns on what the owner approved before, never creates an approval; answers the Job."""
     return _switch(job_id, ctx, runtime, True)
 

@@ -1,6 +1,6 @@
 # Jobs, slice S2: the job page (C1 -> C2), 20 Nov 2026
 
-Behind the API flag `JOBS` (404 `not_found` on every route below while it is off, before sign-in is even looked at). Everything is under `/v1/tenants/{t}`. Contract: `jobs-contract-DRAFT.md` FINAL 1.0 sections 0 to 3, 14 to 16 and `jobs-contract-1.1-part1.md`. A job owns no rows: every value below is read from, and written to, the SAME subsystem the old screens use, so the old screens, the old routes and the assistant always agree with the job page.
+Behind the API flag `JOBS` (404 `not_found` on every route below while it is off; the workspace door comes first: sign-in, membership, role and the read-only gate). Everything is under `/v1/tenants/{t}`. Contract: `jobs-contract-DRAFT.md` FINAL 1.0 sections 0 to 3, 14 to 16 and `jobs-contract-1.1-part1.md`. A job owns no rows: every value below is read from, and written to, the SAME subsystem the old screens use, so the old screens, the old routes and the assistant always agree with the job page.
 
 The job id is `uuid5(workspace, kind)`: the same on every call, never stored, different in every workspace. An id that is not one of THIS workspace's jobs (another workspace's, invented, not a uuid) is `404 not_found`. A `researcher` for a business type that never has the Lead Finder (a school) is 404 as well.
 
