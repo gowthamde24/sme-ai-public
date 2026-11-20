@@ -42,8 +42,8 @@ from app.errors import ApiError
 from app.logging_safety import one_line
 from app.opening import greeting
 from app.talk_training import introduce as introduce_mod
-from app.telephony import ambience, caller_guard, exotel, gate, inbound, persona, plivo_outbound
-from app.telephony import tone as tone_mod
+from app.telephony import ambience, caller_guard, exotel, gate, inbound, persona
+from app.telephony.call_opening import call_opening
 from app.telephony.call_session import CallPlan, run_call
 from app.telephony.greeting_audio import GREETINGS
 from app.telephony.inbound_store import InboundStore
@@ -100,6 +100,7 @@ class OutboundCall:
     introduce: tuple[str, str | None] | None = None   # the Owner's per-call "Introduce as" (kind, text) on a test call; None: the workspace's saved setting
     person_name: str | None = None   # the called person's name when the contact record has one (Lead Desk): the Respectful tone says "Name గారు"
     person_gender: str | None = None # "male" | "female" only when the contact or the goal says so: it decides whether a title may be used
+    job: str | None = None          # the job that placed the call (speed_to_lead, followups, store_visits, offers) or None: its own "say AI when greeting" override applies (app/opening/greeting.py)
     kind: str = "goal"              # test | goal | task: which opening the call has (plivo_outbound.opening_for), so the answer can rebuild it with or without the AI words
     tone: str = "friendly"           # respectful | friendly | casual (app/telephony/tone.py): the register of a goal call; casual only on the Owner's own test call
 
@@ -208,7 +209,6 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     else:
         llm, model = AnthropicStream(bv.anthropic_key or "", max_tokens=REPLY_MAX_TOKENS, client=bv.client), bv.fast_model
     from app.talk_training.guard import GuardedTts
-    from app.talk_training.prompt import greeting as trained_greeting
 
     def introduction() -> introduce_mod.Introduce | None:
         """"Introduce as" for this call: only the Owner's OWN test call reads it (their per-call choice, else the workspace setting); a Lead Desk call to a customer keeps the business name."""
@@ -218,15 +218,13 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
             return introduce_mod.from_doc({"kind": outbound.introduce[0], "text": outbound.introduce[1]})
         return introduce_mod.from_doc((training or {}).get("introduce_as"))
 
-    say_ai = mention_ai if mention_ai is not None else greeting.resolved_from(training if isinstance(training, dict) else None)   # the RESOLVED setting "Say 'AI assistant' when greeting" (default OFF; app/opening/greeting.py); `mention_ai` False only when a caller forces it
+    # the RESOLVED setting "Say 'AI assistant' when greeting" for the job this call belongs to (default OFF; app/opening/greeting.py): an inbound call is the answer-my-calls job, a call we placed is the job that placed it (None: no job, the business
+    # setting); `mention_ai` False only when a caller forces it
+    job = outbound.job if outbound is not None else "answer_calls"
+    say_ai = mention_ai if mention_ai is not None else greeting.resolved_for_job(training if isinstance(training, dict) else None, job)
 
     def opening_for(lang: str) -> str:
-        if outbound is not None:   # we rang them: no \"you rang us\" greeting; the owner's opening (or the standard one), with or without the AI words as the setting says
-            owner_line = tone_mod.opener(lang, outbound.tone, introduction(), say_ai) if outbound.goal and outbound.owner_test else None
-            # ONE greeting (owner decision 13 Nov 2026, decided by C1): a call to a customer opens with the Owner's Talk training greeting when there is one
-            standard = outbound.opening_line if say_ai else plivo_outbound.opening_for(outbound.kind, lang, outbound.tone, None, False)
-            return persona.opening_line(lang, business=business, assistant=assistant, customer=None, owner_line=owner_line or trained_greeting(training, lang) or standard, inbound=False, mention_ai=say_ai)
-        return persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang), mention_ai=say_ai)
+        return call_opening(lang, business=business, assistant=assistant, training=training, say_ai=say_ai, outbound=outbound, introduction=introduction())
 
     def goal_prompt(lang: str) -> str:
         """An outbound GOAL call is not an enquiry call (11 Nov 2026): its own prompt, the goal first and the hard rules above everything."""

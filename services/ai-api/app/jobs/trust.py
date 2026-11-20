@@ -58,6 +58,9 @@ class TrustStore:
     def meta_set_name(self, token: str, tenant_id: uuid.UUID, meta_id: uuid.UUID, name: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "job_meta_set_name", {"p_tenant_id": str(tenant_id), "p_id": str(meta_id), "p_name": name})
 
+    def meta_set_enabled(self, token: str, tenant_id: uuid.UUID, meta_id: uuid.UUID, enabled: bool) -> dict[str, Any]:
+        return self._rpc.object(token, "job_meta_set_enabled", {"p_tenant_id": str(tenant_id), "p_id": str(meta_id), "p_enabled": enabled})
+
     def meta_set_finds_out(self, token: str, tenant_id: uuid.UUID, meta_id: uuid.UUID, finds_out: dict[str, bool]) -> dict[str, Any]:
         return self._rpc.object(token, "job_meta_set_finds_out", {"p_tenant_id": str(tenant_id), "p_id": str(meta_id), "p_finds_out": finds_out})
 

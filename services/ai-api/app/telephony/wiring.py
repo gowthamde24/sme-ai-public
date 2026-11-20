@@ -153,13 +153,13 @@ def call_tone_lookup(rest_url: str, anon_key: str, packs_dir: str | None) -> Any
 
 
 def call_greeting_lookup(rest_url: str, anon_key: str) -> Any:
-    """For a Lead Desk call: does the greeting say "AI assistant"? The workspace's saved setting `say_ai_when_greeting` (default OFF: the name only), read as the member, else as the phone server's own account. An unreadable setting is OFF."""
+    """For a Lead Desk call: does the greeting say "AI assistant"? The workspace's saved setting `say_ai_when_greeting` (default OFF: the name only) with the override of the JOB the call belongs to (`say_ai_by_job`), read as the member, else as the phone server's own account. An unreadable setting is OFF."""
     from app.opening import greeting
     from app.talk_training.repository import PostgrestTalkTraining
 
     trainings = PostgrestTalkTraining(rest_url, anon_key)
 
-    def lookup(token: str, tenant_id: uuid.UUID) -> bool:
+    def lookup(token: str, tenant_id: uuid.UUID, job: str | None = None) -> bool:
         try:
             row = trainings.get(token, tenant_id)
             doc = row.get("doc") if isinstance(row, dict) and isinstance(row.get("doc"), dict) else None
@@ -168,6 +168,6 @@ def call_greeting_lookup(rest_url: str, anon_key: str) -> Any:
                 doc = trainings.for_call(token, tenant_id)
             except Exception:   # noqa: BLE001 - an unreadable setting is the default
                 doc = None
-        return greeting.resolved_from(doc)
+        return greeting.resolved_for_job(doc, job)
 
     return lookup

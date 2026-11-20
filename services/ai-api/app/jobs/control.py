@@ -4,7 +4,7 @@
                   that stopped for the plan (billing) or for a limit (the day's calls, the minutes) is not restarted by a tap: the plan or the limit lifts it.
   answer_calls    the Owner's assistant: Pause and Go live (the same two doors "My assistant" has). Going live is refused while support holds the assistant or a name or a number is missing.
   offers          the offers that are approved or running pause; the ones that are paused resume.
-  followups, store_visits, researcher   have no switch in the code base (a policy, the visit hours and the monthly search have no off): `409 job_not_switchable`.
+  followups, store_visits, researcher   the job's own row (`jobs_meta.enabled`, made on the first switch): the database's follow-up due list and drafts, visit reminders and slots, and Lead Finder search plans read it.
 
 Nothing here decides who may: the database does, with the caller's own token (Owner and Admin for the rules and the offers, Owner for the assistant)."""
 
@@ -16,8 +16,10 @@ import uuid
 from typing import Any
 
 from app.errors import ApiError
+from app.jobs.trust import REFUSALS, JobsRefused
 
-SWITCHABLE = ("speed_to_lead", "answer_calls", "offers")
+# every job has a switch now: three in their own subsystem, three in the job's own row (jobs_meta.enabled, read by the work: migration 20261231987700)
+SWITCHABLE = ("speed_to_lead", "answer_calls", "offers", "followups", "store_visits", "researcher")
 
 
 def not_switchable() -> ApiError:
@@ -65,10 +67,27 @@ def _offers(runtime: Any, token: str, tenant_id: uuid.UUID, enabled: bool) -> No
             repo.set_state(token, tenant_id, uuid.UUID(str(row["id"])), "resume")
 
 
+def _own_row(runtime: Any, token: str, tenant_id: uuid.UUID, kind: str, enabled: bool) -> None:
+    """followups, store_visits, researcher: the switch is the job's own row; the follow-up due list and drafts, the visit reminders and slots and the Lead Finder's searches read it (the database, not this API, so a paused job
+    stops whichever door the work comes through)."""
+    trust = getattr(getattr(runtime, "jobs", None), "trust", None)
+    if trust is None:
+        raise ApiError(503, "jobs_unavailable", "Jobs are not available on this system.")
+    try:
+        row = trust.meta_ensure(token, tenant_id, kind)
+        trust.meta_set_enabled(token, tenant_id, uuid.UUID(str(row["id"])), enabled)
+    except JobsRefused as refused:
+        status, code, message = REFUSALS[refused.code]
+        raise ApiError(status, code, message) from None
+
+
 _BY_KIND = {"speed_to_lead": _speed_to_lead, "answer_calls": _answer_calls, "offers": _offers}
 
 
 def set_enabled(runtime: Any, token: str, tenant_id: uuid.UUID, kind: str, enabled: bool) -> None:
-    if kind not in _BY_KIND:
+    if kind in _BY_KIND:
+        _BY_KIND[kind](runtime, token, tenant_id, enabled)
+    elif kind in SWITCHABLE:
+        _own_row(runtime, token, tenant_id, kind, enabled)
+    else:
         raise not_switchable()
-    _BY_KIND[kind](runtime, token, tenant_id, enabled)

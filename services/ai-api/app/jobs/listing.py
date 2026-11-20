@@ -140,36 +140,43 @@ def read_one(runtime: Any, token: str, tenant_id: uuid.UUID, kind: str) -> dict[
         return _job(tenant_id, kind, enabled=False, status="paused", code="not_readable")
 
 
-def names_of(runtime: Any, token: str, tenant_id: uuid.UUID) -> dict[str, str]:
-    """The owner's own name for each helper that has one (jobs_meta; every member reads); {} when there are none or they cannot be read."""
+# the jobs that have no switch in their own subsystem: their on/off is the `enabled` of their jobs_meta row (migration 20261231987700), read by the work itself
+META_SWITCH = ("followups", "store_visits", "researcher")
+
+
+def metas_of(runtime: Any, token: str, tenant_id: uuid.UUID) -> dict[str, dict[str, Any]]:
+    """The jobs_meta row of each kind that has one (the owner's own name, the switch of the three jobs that have none of their own; every member reads); {} when there are none or they cannot be read."""
     trust = getattr(getattr(runtime, "jobs", None), "trust", None)
     if trust is None:
         return {}
     try:
-        return {str(m["kind"]): str(m["custom_name"]) for m in trust.meta_list(token, tenant_id) if m.get("custom_name")}
+        return {str(m["kind"]): m for m in trust.meta_list(token, tenant_id)}
     except Exception as err:   # noqa: BLE001
         logger.warning("jobs list: names not readable (%s)", type(err).__name__)
         return {}
 
 
-def overlay(job: dict[str, Any], names: dict[str, str], counts: dict[str, int]) -> dict[str, Any]:
-    """Name and what waits on top of the reader's answer. A job that is running and has something waiting for the owner is `waiting` (contract section 1)."""
+def overlay(job: dict[str, Any], metas: dict[str, dict[str, Any]], counts: dict[str, int]) -> dict[str, Any]:
+    """The owner's name, the owner's switch and what waits, on top of the reader's answer. A job the owner switched off is `paused`. A job that is running and has something waiting for the owner is `waiting` (contract section 1)."""
     kind = job["kind"]
+    meta = metas.get(kind) or {}
     waiting = counts.get(kind, 0)
-    job["custom_name"] = names.get(kind)
+    job["custom_name"] = str(meta["custom_name"]) if meta.get("custom_name") else None
     job["needs_you"] = waiting
-    if waiting and job["status"] == "running":
+    if kind in META_SWITCH and meta.get("enabled") is False:
+        job.update(enabled=False, status="paused", result={"code": "paused_by_owner", "params": {}})
+    elif waiting and job["status"] == "running":
         job["status"] = "waiting"
     return job
 
 
 def jobs_of(runtime: Any, token: str, tenant_id: uuid.UUID, needs: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
     """Every job of the workspace, in the contract's order. One that cannot be read is listed as off (and logged), so one broken subsystem never blanks the page. `needs` are the waiting items when the caller has them already."""
-    names = names_of(runtime, token, tenant_id)
+    metas = metas_of(runtime, token, tenant_id)
     counts = needs_mod.count_by_job(needs if needs is not None else needs_mod.items_of(runtime, token, tenant_id))
     out: list[dict[str, Any]] = []
     for kind, _ in _READERS:
         job = read_one(runtime, token, tenant_id, kind)
         if job is not None:
-            out.append(overlay(job, names, counts))
+            out.append(overlay(job, metas, counts))
     return out

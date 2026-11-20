@@ -23,3 +23,7 @@ In `GET /jobs/{id}` (full S2) `settings.more` has one setting:
 
 ## Text we append ourselves (21 Nov 2026, migration 20261231987500)
 The AI sentence ("This message is from the business's AI assistant.") that we add to a person's first message follows the same resolved setting: campaign messages, trip updates, the assistant's first reply and the campaign preview (`preview.disclosure` is `""` when it is OFF, so the approval screen's quote matches what is sent). The STOP wording is never touched: it is part of the approved template or the consent ask ("Reply STOP any time to stop."). A template already approved by Meta keeps its approved text.
+
+## S3a: calls and messages read the job's word (21 Nov 2026)
+`say_ai_by_job` of the Talk training document (`{speed_to_lead|answer_calls|followups|store_visits|offers: "on"|"off"}`; absent = `business`) is read by every path that speaks: the inbound call (answer_calls), a call we place (the job that placed it: a standing rule, or a task by its template), the messages of a task, and the assistant's first WhatsApp message in the outbox (by its category: `followup`, `visit`). One resolver: `greeting.resolved_for_job(doc, job)`. The job page's call lines are built by the same function as the live call (`app/telephony/call_opening.py`). Details: docs/contracts/jobs-detail.md.
+Not yet per job: the sentence we append to campaign messages (offers), trip updates and the speed-to-lead rule's template messages (above) follows the business setting only.
