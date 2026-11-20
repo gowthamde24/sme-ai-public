@@ -327,3 +327,13 @@ def test_the_router_is_asked_about_booking_a_visit_in_every_business_and_languag
     from app.assistant_work.router import touches
 
     assert touches(text), text
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["Book Sunitha K for a demo class on Saturday at 5 pm", "Cancel the test drive of Ravi", "Sunitha K కి శనివారం సాయంత్రం 5 కి demo class బుక్ చెయ్యి", "अनीता को शनिवार को विज़िट बुक करो", "ಅನಿತಾ ಅವರಿಗೆ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿ"],
+)
+def test_a_booking_in_any_business_or_language_is_a_record_action_the_router_may_not_call_not_mine(text: str) -> None:
+    from app.assistant_work.router import _RECORDY
+
+    assert _RECORDY.search(text), text
