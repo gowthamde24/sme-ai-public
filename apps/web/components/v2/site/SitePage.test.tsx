@@ -90,7 +90,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(foot).toMatch(/data-part="brand-word" aria-label="Stack19"[\s\S]*data-mark[\s\S]*Stack19/); // the big wordmark: the logo and the name across the foot of the page
     for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "Back to the top", "WhatsApp +91 95023 80998"]) expect(text(foot), l).toContain(l);
     expect(foot).toContain('href="https://wa.me/919502380998?text=Hi%20Stack19%2C%20I&#x27;d%20like%20early%20access."');
-    for (const gone of ["greetings", "call", "team", "after", "number", "faq", "voices", "sources", "day", "industries", "trust", "start"]) expect(home, gone).not.toContain(`id="${gone}"`);
+    for (const gone of ["greetings", "call", "team", "after", "number", "faq", "sources", "day", "industries", "start"]) expect(home, gone).not.toContain(`id="${gone}"`);
     expect(home).not.toContain('data-part="greetings"');
     expect(home.match(/id="top"/g)).toHaveLength(1);
   });
@@ -172,15 +172,56 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(calc).toMatch(/id="h2-avg"[^>]*min="500"[^>]*max="50000"/);
     expect(calc.match(/data-leak-step="\d"/g)).toHaveLength(4);
     for (const x of ["150", "enquiries a month", "60", "not called back in 5 minutes", "6", "of them might have bought", "\u20b948,000", "a month walking away", "Enquiries coming in", "90", "called back in time", "went cold", "every enquiry gets an answer in seconds: 150 of 150", "Your estimate, not a promise."]) expect(text(calc), x).toContain(x);
-    expect(calc).toContain('class="h3-leak-bar"');
+    expect(calc).toContain('class="h4-bar"');
+    expect(calc.match(/<details/g)).toHaveLength(1); // two sliders in view, the other two behind "More settings"
+    expect(text(calc)).toContain("More settings");
+    expect(calc.match(/class="h4-step"/g)).toHaveLength(4); // the maths: one compact 2 x 2
     expect(calc.match(/<canvas/g)).toHaveLength(1);
     const finder = home.match(/<section id="finder"[\s\S]*?<\/section>/)![0];
-    expect(text(finder)).toContain("Lead Finder: new customers near you");
+    expect(text(finder)).toContain("Lead Finder"); // (the small label above the title)
+    expect(text(finder)).toContain("New customers, near you");
     expect(text(finder)).toContain("You contact them yourself.");
     expect(text(finder)).not.toMatch(/Coming soon|early access|we call|calls them/i);
     expect(finder.match(/role="radio"[^>]*data-city="(Hyderabad|Bengaluru|Chennai|Vijayawada)"/g)).toHaveLength(4);
     for (const x of ["Schools near Hyderabad", "Contact", "Check first", "Skip", "Found on this sweep"]) expect(text(finder), x).toContain(x);
     expect(finder.match(/<canvas/g)).toHaveLength(1); // one map at every width
+  });
+  it("every lower section opens the same way: a small orange label, a title, one grey line (no uppercase, no mono, no display font)", () => {
+    for (const [id, eyebrow] of [["calc", "The cost"], ["finder", "Lead Finder"], ["voices", "Voices"], ["trust", "Trust"], ["built", "Built in"], ["plans", "Plans"]] as const) {
+      const sec = home.match(new RegExp(`<section id="${id}"[\\s\\S]*?</section>`))![0];
+      expect(sec, id).toMatch(new RegExp(`<header class="h4-head"><p class="h4-eyebrow">${eyebrow}</p><h2 id="${id}-title" class="h4-h2">`));
+      expect(sec, id).not.toMatch(/font-mono|uppercase|tracking-|font-display/);
+    }
+  });
+  it("hear our voices: four cards, Telugu then Hindi, Kannada, English, each with a play button that names it, the business, the language and the clip's own words; no autoplay, one audio element", () => {
+    const v = home.match(/<section id="voices"[\s\S]*?<\/section>/)![0];
+    expect(text(v)).toContain("These are examples of what the assistant sounds like.");
+    const langs = [...v.matchAll(/class="h4-voice-lang">([^<]+)</g)].map((m) => m[1]);
+    expect(langs).toEqual(["Telugu", "Hindi", "Kannada", "English"]);
+    expect(v.match(/class="h4-play"/g)).toHaveLength(4);
+    expect(v).toMatch(/aria-label="Play the sample: Saree shop, Telugu, Calls back about a silk saree enquiry"/);
+    expect(v.match(/data-part="transcript"/g)).toHaveLength(4);
+    expect(v).toMatch(/lang="te" data-part="transcript">[\u0C00-\u0C7F]/);
+    expect(v.match(/<audio[^>]*preload="none"[^>]*class="h4-audio-off"|<audio[^>]*class="h4-audio-off"[^>]*preload="none"/g)).toHaveLength(1); // the one element the buttons share
+    expect(v).not.toMatch(/autoplay|autoPlay/);
+    expect(v.match(/<noscript><audio controls="" preload="none" src="\/audio\/site\/[a-z0-9-]+\.(m4a|webm)"/g)).toHaveLength(4); // without JavaScript each card has a plain player
+    expect(v.match(/class="h4-dot"/g)).toHaveLength(4); // the dots of the swipe row
+    for (const m of v.matchAll(/\/audio\/site\/([a-z0-9-]+)\.(?:m4a|webm)/g)) expect(fs.existsSync(path.join(__dirname, `../../../public/audio/site/${m[1]}.${m[0].split(".").pop()}`)), m[0]).toBe(true);
+  });
+  it("the plain rules: four lines, only what is true", () => {
+    const trust = home.match(/<section id="trust"[\s\S]*?<\/section>/)![0];
+    expect(trust.match(/data-trust="\d"/g)).toHaveLength(4);
+    for (const x of ["It always says it is an AI assistant.", "STOP works at once.", "Quiet hours: no calls at night.", "It never calls people who did not ask."]) expect(text(trust), x).toContain(x);
+    expect(trust).not.toMatch(/<img|<svg[^>]*logo|data-badge/); // no badges, no logos
+  });
+  it("the plans swipe on a phone (the recommended one first in view, dots) and lie side by side from 768 px", () => {
+    const plans = home.match(/<section id="plans"[\s\S]*?<\/section>/)![0];
+    expect(plans.match(/class="h4-slide"/g)).toHaveLength(3);
+    expect(plans.match(/class="h4-dot"/g)).toHaveLength(3);
+    expect([...plans.matchAll(/data-plan="(\w+)"/g)].map((m) => m[1])).toEqual(["payg", "pro", "business"]);
+    const css = fs.readFileSync(path.join(__dirname, "../../../design/home4.css"), "utf8");
+    expect(css).toMatch(/\.h4-plans \.h4-slide:nth-child\(2\) \{ order: -1; \}/); // Pro first in view
+    expect(css).toMatch(/@media \(min-width: 768px\) \{[\s\S]*\.h4-plans \.h4-track \{ grid-template-columns: repeat\(3/);
   });
   it("built in: the business number, consent and STOP, quiet hours and the four languages", () => {
     const built = home.match(/<section id="built"[\s\S]*?<\/section>/)![0];
@@ -207,6 +248,18 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(css).not.toMatch(/#ff773c|#ec486e|#ff9a6b|#ea580c|#f97316|gradient/i);
     expect(css).toMatch(/background-attachment: fixed/); // the white dotted page stays with the window
     expect(css.match(/font-weight:\s*(\d+)/g)!.map((m) => m.replace(/\D/g, "")).filter((v, i, a) => a.indexOf(v) === i).sort()).toEqual(["400", "700"]);
+  });
+  it("the lower sections' css (home4.css): designed for a phone, one orange, the site's one font, no uppercase or spacing, the owner's final type scale (22 px titles at 390, 15 px body, 16 px gutter), no font size from the viewport width, the 14 px floor", () => {
+    const css = fs.readFileSync(path.join(__dirname, "../../../design/home4.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+    expect(css).not.toMatch(/#ff773c|#ec486e|#ff9a6b|#ea580c|#f97316/i);
+    expect(css).not.toMatch(/text-transform|font-family:\s*var\(--v2-font-(display|mono)|monospace|justify\b(?!-)|text-align:\s*justify|background-image|letter-spacing:\s*[-0-9.]/);
+    expect(css.match(/font-weight:\s*(\d+)/g)!.map((m) => m.replace(/\D/g, "")).filter((v, i, a) => a.indexOf(v) === i).sort()).toEqual(["400", "500", "700"]);
+    // no text under 14 px (the canvases draw their own words)
+    expect([...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/g)].map((m) => Number(m[1])).filter((n) => n < 14)).toEqual([]);
+    expect(css).toMatch(/\.h4-h2 \{[^}]*font-size: 22px/);
+    expect(css).toMatch(/\.h4-lead \{[^}]*font-size: 15px/);
+    expect(css).toMatch(/--h4-gutter: 16px;/);
+    expect(css).not.toMatch(/font-size:[^;}]*\bvw\b/); // sizes step at widths; none follows the viewport
   });
   it("with SITE_TRIAL_COPY=1 the trial button still leads to sign-up (the later words stay off the page body)", () => {
     vi.stubEnv("SITE_TRIAL_COPY", "1");
@@ -294,7 +347,7 @@ describe("The assistant's flow on the business pages and the other pages (night 
   it.each(["te", "hi", "kn", "ta"] as const)("%s: the new home sections read in the language (no English headline, no raw key)", (lang) => {
     const html = render(lang, { kind: "home" });
     const d = siteDict(lang);
-    for (const k of ["h3.hero.t", "h3.ask.title", "h3.how.title", "h3.radar.t", "h3.built.title", "h2.plans.title", "h3.final.t"] as const) expect(text(html), k).toContain(d[k].replace(/&/g, "&amp;").replace(/&amp;/g, "&").replaceAll("\u00a0", " ")); // (a no-break space keeps "pick up" together in hi and kn)
+    for (const k of ["h3.hero.t", "h3.ask.title", "h3.how.title", "h4.finder.t", "h3.built.title", "h2.plans.title", "h3.final.t"] as const) expect(text(html), k).toContain(d[k].replace(/&/g, "&amp;").replace(/&amp;/g, "&").replaceAll("\u00a0", " ")); // (a no-break space keeps "pick up" together in hi and kn)
     expect(text(html)).not.toContain("Every enquiry answered.");
     expect(text(html)).not.toContain("One call. One WhatsApp.");
     expect(text(html)).not.toMatch(/\b(ld|v3)\.[a-z0-9_.]+\b/);

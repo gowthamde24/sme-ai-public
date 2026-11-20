@@ -2,8 +2,6 @@
 
 import * as React from "react";
 
-import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
-
 import { addScene, fontOf, isCalm, sceneTime, type Look } from "./scene";
 
 type W = Readonly<Record<string, string>>;
@@ -101,7 +99,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     ctx.lineWidth = 3;
     ctx.stroke();
   }
-  ctx.font = `600 ${11 * f}px ${sans}`;
+  ctx.font = `600 ${12 * f}px ${sans}`;
   ctx.textAlign = "left";
   (
     [
@@ -118,7 +116,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = "rgba(194,65,12,.75)";
-    ctx.fillText(label, cx + 6 * f, cy - rr - 6 * f);
+    ctx.fillText(label, cx + 6 * f, cy - rr + 16 * f);
   });
   ctx.strokeStyle = "rgba(194,65,12,.12)";
   ctx.lineWidth = 1;
@@ -161,12 +159,21 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
   ctx.lineTo(ex, ey);
   ctx.stroke();
   ctx.fillStyle = "#c2410c";
-  ctx.shadowColor = "rgba(194,65,12,.9)";
-  ctx.shadowBlur = 16;
   ctx.beginPath();
-  ctx.arc(ex, ey, 4, 0, TAU);
+  ctx.arc(ex, ey, 4 * u, 0, TAU);
   ctx.fill();
-  ctx.shadowBlur = 0;
+  // the sample shop at the centre: a white disc with an orange ring and dot (a plain marker; the orb is not drawn here)
+  ctx.fillStyle = look.dark ? "#1f1e23" : "#fff";
+  ctx.beginPath();
+  ctx.arc(cx, cy, 13 * u, 0, TAU);
+  ctx.fill();
+  ctx.strokeStyle = "#c2410c";
+  ctx.lineWidth = 2.5 * u;
+  ctx.stroke();
+  ctx.fillStyle = "#c2410c";
+  ctx.beginPath();
+  ctx.arc(cx, cy, 5 * u, 0, TAU);
+  ctx.fill();
   // every business the sweep checks lights up for a moment
   for (const c of CANDS) {
     const behind = (((a - c.ang) % TAU) + TAU) % TAU;
@@ -180,15 +187,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
   const names = AREAS[state.city];
   for (const p of PINS) {
     if (st.fresh && a < p.ang) continue;
-    const age = ((((a - p.ang) % TAU) + TAU) % TAU) / 1.1;
     const col = p.d === "call" ? "194,65,12" : p.d === "ask" ? ink : "169,165,160";
-    if (age < 1.6 && !look.calm) {
-      ctx.strokeStyle = `rgba(${col},${0.7 * (1 - age / 1.6)})`;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 7 + age * 22, 0, TAU);
-      ctx.stroke();
-    }
     ctx.fillStyle = look.dark ? "#1f1e23" : "#fff";
     ctx.beginPath();
     ctx.arc(p.x, p.y, 9 * u, 0, TAU);
@@ -205,7 +204,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
       ctx.arc(p.x, p.y, 6.5 * u, 0, TAU);
       ctx.fill();
     }
-    ctx.font = `700 ${12 * f}px ${sans}`;
+    ctx.font = `700 ${13 * f}px ${sans}`;
     const label = names[p.id];
     const tw = ctx.measureText(label).width;
     const bw = tw + 16 * f;
@@ -215,126 +214,140 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     const bx = flip ? p.x - 14 * u - bw : p.x + 14 * u;
     const by = flip ? p.y - 11 * f : p.y - 26 * f;
     ctx.fillStyle = look.dark ? "rgba(39,38,44,.95)" : "rgba(255,255,255,.95)";
-    ctx.shadowColor = "rgba(30,30,36,.18)";
-    ctx.shadowBlur = 10;
     ctx.beginPath();
     if (ctx.roundRect) ctx.roundRect(bx, by, bw, 22 * f, 8 * f);
     else ctx.rect(bx, by, bw, 22 * f);
     ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.strokeStyle = look.dark ? "rgba(244,242,238,.2)" : "rgba(30,30,36,.14)";
+    ctx.lineWidth = 1 * f;
+    ctx.stroke();
     ctx.fillStyle = look.dark ? "#f4f2ee" : "#1e1e24";
     ctx.fillText(label, bx + 8 * f, by + 15 * f);
   }
 }
 
 /**
- * The Lead Finder radar (landing v2 part B.5): a map around the sample shop (dots, a lake, roads, rings at 3, 6 and 10 km with ticks), the sweep with its trail, every business it checks lighting up for a moment, four found businesses
- * with a ping, a colour and a name tag, and "Found on this sweep" filling in as the sweep passes each one, with its decision ("Call now", "Ask you first", "Skip"). The city picker changes the map's area names. On a phone the map is
- * square and cropped to the rings. Reduced motion: the whole sweep done, still. Every name is a real area of the city; the businesses are examples.
+ * The Lead Finder radar (landing v2 part B.5, calmed 21 Nov for the phone): a map around the sample shop (dots, a lake, roads, rings at 3, 6 and 10 km with ticks), the sweep with its trail, every business it checks lighting up for a moment, four found
+ * businesses with a colour and a name tag, and "Found on this sweep" filling in as the sweep passes each one, with its decision ("Contact", "Check first", "Skip"). The city picker (one swipe row, never wrapping) changes the map's area names. The map is the
+ * full width of its card; on a phone it is square and cropped to the rings. One steady speed, no glow, paused off screen (scene.ts); reduced motion: the whole sweep done, still. All four found cards are always in the page (the ones not yet swept are
+ * faded), so the list never changes height. Every name is a real area of the city; the businesses are examples.
  */
 export function RadarFinder({ w }: { w: W }) {
   const [city, setCity] = React.useState<City>("Hyderabad");
   const [since, setSince] = React.useState(0);
   const [tick, setTick] = React.useState(0);
+  // before the browser takes over (and with JavaScript off) the list shows all four found; then it follows the sweep
+  const live = React.useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
   const calm = React.useSyncExternalStore(
     () => () => undefined,
     isCalm,
     () => false,
   );
-  const live = React.useRef({ city, since });
+  const liveRef = React.useRef({ city, since });
   React.useEffect(() => {
-    live.current = { city, since };
+    liveRef.current = { city, since };
   });
   const desk = React.useRef<HTMLCanvasElement>(null);
   React.useEffect(() => {
     const sans = desk.current ? fontOf(desk.current, "sans") : '"Plus Jakarta Sans", system-ui, sans-serif';
     // one canvas at every width: wide, it draws the whole 780 x 520 map; in a narrow box (a phone) it crops to the rings, with its words and pins drawn larger, so they stay readable
-    const off = desk.current ? addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, W / H < 1.2, sans)) : undefined;
+    const off = desk.current ? addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, liveRef.current, W / H < 1.2, sans)) : undefined;
     return () => off?.();
   }, []);
-  // the found list follows the sweep: read its angle a few times a second
+  // the found list follows the sweep: read its angle a few times a second (the scene is paused off screen, and so is this)
+  const box = React.useRef<HTMLDivElement>(null);
+  const [onScreen, setOnScreen] = React.useState(true);
   React.useEffect(() => {
-    if (calm) return;
+    const el = box.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver((es) => setOnScreen(es.some((e) => e.isIntersecting)));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  React.useEffect(() => {
+    if (calm || !live || !onScreen) return;
     const id = window.setInterval(() => setTick(sceneTime()), 250);
     return () => window.clearInterval(id);
-  }, [calm]);
-  const st = calm ? { a: TAU, fresh: false } : sweepAt(tick, since);
-  const seen = PINS.filter((p) => !st.fresh || st.a >= p.ang);
+  }, [calm, live, onScreen]);
+  const still = calm || !live;
+  const st = still ? { a: TAU, fresh: false } : sweepAt(tick, since);
+  const found = (p: Pin) => !st.fresh || st.a >= p.ang;
   const checked = st.fresh ? Math.floor((CANDS.length * st.a) / TAU) : CANDS.length;
-  const worth = seen.filter((p) => p.d === "call").length;
-  const chip = (d: Pin["d"]) => (d === "call" ? "bg-[#c2410c] text-white" : d === "ask" ? "bg-surface text-ink shadow-[inset_0_0_0_1.5px_var(--v2-ink)]" : "bg-surface-2 text-muted");
-  const pick = (c: City) => {
+  const worth = PINS.filter((p) => found(p) && p.d === "call").length;
+  const count = PINS.filter(found).length;
+  const chip = (d: Pin["d"]) => (d === "call" ? "h4-chip-call" : d === "ask" ? "h4-chip-ask" : "h4-chip-skip");
+  const row = React.useRef<HTMLDivElement>(null);
+  const pick = (c: City, el: HTMLElement) => {
     setCity(c);
     setSince(sceneTime());
+    // the picked city comes fully into view in the swipe row
+    el.scrollIntoView({ inline: "nearest", block: "nearest", behavior: isCalm() ? "auto" : "smooth" });
   };
-  const cities = (
-    <div role="radiogroup" aria-label={w["h2.finder.city"]} className="h2-glass flex flex-wrap gap-0.5 rounded-[14px] p-1">
-      {CITIES.map((c) => (
-        <button key={c} type="button" role="radio" aria-checked={city === c} onClick={() => pick(c)} data-city={c} className={`min-h-11 rounded-full px-3 text-sm font-extrabold ${city === c ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}>
-          {c}
-        </button>
-      ))}
-    </div>
-  );
-  const legend = (
-    <div className="flex gap-3.5 text-sm font-bold">
-      <span className="inline-flex items-center gap-1.5">
-        <span className="size-[9px] rounded-full bg-[#c2410c]" />
-        {w["h2.finder.call"]}
-      </span>
-      <span className="inline-flex items-center gap-1.5">
-        <span className="size-[9px] rounded-full shadow-[inset_0_0_0_2px_var(--v2-ink)]" />
-        {w["h2.finder.ask"]}
-      </span>
-      <span className="inline-flex items-center gap-1.5">
-        <span className="size-[9px] rounded-full bg-[#a9a5a0]" />
-        {w["h2.finder.skip"]}
-      </span>
-    </div>
-  );
   return (
-    <div className="h3-radar" data-part="radar" data-city={city}>
-      <div className="h3-radar-map-col">
-        <div className="h3-radar-bar">
-          <div className="h2-glass flex items-center gap-2.5 rounded-[14px] px-3.5 py-2 text-sm font-bold">
-            <span className="h2-blink" />
-            {fill(w["h2.finder.near"], { city })}
+    <div className="h4-radar" data-part="radar" data-city={city} ref={box}>
+      <div className="h4-panel h4-radar-card">
+        <p className="h4-near">
+          <span className="h4-dot-live" aria-hidden="true" />
+          {fill(w["h2.finder.near"], { city })}
+        </p>
+        <div className="h4-cities-wrap">
+          <div role="radiogroup" aria-label={w["h2.finder.city"]} className="h4-cities" ref={row}>
+            {CITIES.map((c) => (
+              <button key={c} type="button" role="radio" aria-checked={city === c} onClick={(e) => pick(c, e.currentTarget)} data-city={c} className="h4-city">
+                {c}
+              </button>
+            ))}
           </div>
-          {cities}
         </div>
-        <div className="h3-radar-map">
+        <div className="h4-radar-map">
           <canvas ref={desk} aria-hidden="true" className="absolute inset-0 block size-full" />
-          <span className="absolute left-1/2 top-1/2 block size-11 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_0_0_5px_rgba(255,255,255,.8),0_14px_30px_-10px_rgba(194,65,12,.7)]">
-            <AssistantOrb state="thinking" />
-          </span>
         </div>
-        <div className="h3-radar-bar">
-          <div className="h2-glass rounded-[14px] px-3.5 py-2 text-sm font-semibold tabular-nums" data-part="checked">
+        <div className="h4-radar-foot">
+          <p className="h4-checked" data-part="checked">
             {fill(w["h2.finder.checked"], { n: String(checked), worth: String(worth) })}
-          </div>
-          {legend}
+          </p>
+          <p className="h4-legend">
+            <span>
+              <i className="h4-key-call" aria-hidden="true" />
+              {w["h2.finder.call"]}
+            </span>
+            <span>
+              <i className="h4-key-ask" aria-hidden="true" />
+              {w["h2.finder.ask"]}
+            </span>
+            <span>
+              <i className="h4-key-skip" aria-hidden="true" />
+              {w["h2.finder.skip"]}
+            </span>
+          </p>
         </div>
       </div>
-      <div className="h3-radar-list" aria-live="polite">
-        <div className="mb-1 flex items-center justify-between">
-          <p className="m-0 font-extrabold">{w["h2.finder.list"]}</p>
-          <span className="text-sm tabular-nums text-muted">{fill(w["h2.finder.of"], { n: String(seen.length) })}</span>
-        </div>
-        {[...seen]
-          .sort((a, b) => a.id - b.id)
-          .map((p) => (
-            <div key={`${city}-${p.id}`} className="h2-pop flex min-w-0 flex-col gap-2 rounded-2xl border border-line bg-surface px-4 py-3.5" data-found={p.id}>
-              <div className="flex items-start justify-between gap-2">
-                <p className="m-0 min-w-0 text-[15px] font-extrabold">
-                  {w[`h2.finder.pin.${p.id + 1}.what`]}, {AREAS[city][p.id]}
+      <div className="h4-found" aria-live="polite">
+        <p className="h4-found-head">
+          <b>{w["h2.finder.list"]}</b>
+          <span>{fill(w["h2.finder.of"], { n: String(count) })}</span>
+        </p>
+        <ul className="h4-found-list">
+          {PINS.slice()
+            .sort((a, b) => a.id - b.id)
+            .map((p) => (
+              <li key={`${city}-${p.id}`} className="h4-fc" data-found={p.id} data-pending={found(p) ? undefined : ""} aria-hidden={found(p) ? undefined : true}>
+                <p className="h4-fc-top">
+                  <b>
+                    {w[`h2.finder.pin.${p.id + 1}.what`]}, {AREAS[city][p.id]}
+                  </b>
+                  <span className={`h4-chip ${chip(p.d)}`}>{w[`h2.finder.${p.d}`]}</span>
                 </p>
-                <span className="whitespace-nowrap text-sm tabular-nums text-muted">{p.km}</span>
-              </div>
-              <p className="m-0 text-sm leading-snug text-muted">{w[`h2.finder.pin.${p.id + 1}.why`]}</p>
-              <span className={`self-start rounded-full px-2.5 py-1 text-sm font-extrabold ${chip(p.d)}`}>{w[`h2.finder.${p.d}`]}</span>
-            </div>
-          ))}
-        {seen.length === 0 ? <p className="m-0 text-sm text-muted">{w["h2.finder.empty"]}</p> : null}
+                <p className="h4-fc-why">
+                  <span className="h4-fc-km">{p.km}</span> {w[`h2.finder.pin.${p.id + 1}.why`]}
+                </p>
+              </li>
+            ))}
+        </ul>
       </div>
     </div>
   );

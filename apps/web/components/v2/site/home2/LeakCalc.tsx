@@ -22,9 +22,9 @@ const warmPath = (yo: number): Pt[] => [[0, 230 + yo], [260, 230 + yo], [470, 13
 const coldPath = (yo: number): Pt[] => [[0, 230 + yo], [260, 230 + yo], [320, 360 + yo], [300, 470 + yo * 0.4]];
 
 /**
- * Today's pipe, kept (owner, 20 Nov 2026: "the previous animation style was good"): a month's enquiries flow in from the left; the ones called back in time run on to the end of the pipe, the missed share peels off into the drain and
- * turns grey. Drawn in the design's 764 x 520 space and scaled to the canvas (the box keeps that shape at every width); its three labels (the start, the end, the drain, with their live counts) are DOM over the drawing. More dots as the
- * month gets busier. Colours: green is called back, grey is gone cold. With "reduce motion" the dots stand still.
+ * Today's pipe, kept (owner, 20 Nov 2026: "the previous animation style was good"), simplified (21 Nov): a month's enquiries flow in from the left at ONE steady speed; the ones called back in time run on to the end of the pipe, the missed share peels off
+ * into the drain and turns grey. Few moving dots, no glow, a short tail. Drawn in the design's 764 x 520 space and scaled to the canvas (the box keeps that shape at every width); the dots are drawn larger on a narrow canvas so they read on a phone.
+ * Its three labels (the start, the end, the drain, with their live counts) are DOM over the drawing. Colours: green is called back, grey is gone cold. The scene is paused off screen (scene.ts); with "reduce motion" the dots stand still.
  */
 function drawLeak(ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look, s: { enq: number; miss: number }): void {
   const k = W / 764;
@@ -33,8 +33,10 @@ function drawLeak(ctx: CanvasRenderingContext2D, W: number, H: number, t: number
   ctx.setTransform(k, 0, 0, k, 0, 0);
   const ink = inkOf(look);
   const green = look.dark ? "74,222,128" : "22,128,61";
+  // a narrow canvas draws its dots bigger (a dot about 3 px across on screen)
+  const ds = Math.max(1, 0.9 / (k / look.dpr));
   ctx.lineCap = "round";
-  ctx.strokeStyle = `rgba(${ink},.06)`;
+  ctx.strokeStyle = `rgba(${ink},.07)`;
   ctx.lineWidth = 64;
   const w0 = warmPath(0);
   ctx.beginPath();
@@ -49,36 +51,38 @@ function drawLeak(ctx: CanvasRenderingContext2D, W: number, H: number, t: number
   ctx.stroke();
   ctx.fillStyle = `rgb(${green})`;
   ctx.beginPath();
-  ctx.arc(712, 120, 8, 0, TAU);
+  ctx.arc(712, 120, 8 * Math.min(ds, 1.6), 0, TAU);
   ctx.fill();
-  // enquiries: more of them as the month gets busier; the missed share peels off and turns grey
-  const n = Math.round(16 + (s.enq / 1000) * 70);
+  // enquiries: a few more as the month gets busier; one speed for all; the missed share peels off and turns grey
+  const n = Math.round(10 + (s.enq / 1000) * 14);
   for (let i = 0; i < n; i++) {
     const yo = (hsh(i, 1) - 0.5) * 46;
     const isCold = hsh(i, 2) * 100 < s.miss;
     const path = isCold ? coldPath(yo) : warmPath(yo);
-    const u0 = (t * (0.09 + hsh(i, 3) * 0.05) + hsh(i, 4)) % 1;
-    for (let j = 5; j >= 0; j--) {
-      const u = u0 - j * 0.012;
+    const u0 = (t * 0.1 + hsh(i, 4)) % 1;
+    for (let j = 3; j >= 0; j--) {
+      const u = u0 - j * 0.014;
       if (u < 0) continue;
       const p = B(path, u);
-      let al = 1 - j / 6;
+      let al = 1 - j / 4;
       if (isCold) {
         const fade = Math.max(0, (u - 0.35) / 0.65);
         al *= 1 - fade * 0.85;
         ctx.fillStyle = fade > 0 ? `rgba(140,135,130,${al})` : `rgba(${green},${al})`;
       } else ctx.fillStyle = `rgba(${green},${al})`;
       ctx.beginPath();
-      ctx.arc(p[0], p[1], j === 0 ? 3.4 : 3 - j * 0.3, 0, TAU);
+      ctx.arc(p[0], p[1], (j === 0 ? 3.4 : 3 - j * 0.45) * ds, 0, TAU);
       ctx.fill();
     }
   }
 }
 
+type Slider = { id: string; label: string; value: number; show: string; set: (v: number) => void; min: number; max: number; step: number };
+
 /**
- * "How much are late call-backs costing you?" (home page, owner 20 Nov 2026: "make it easier to understand"): the visitor's four sliders (enquiries a month, the share not called back in 5 minutes, how many of those might have bought,
- * the average sale), today's pipe with its three labelled counts, the maths as four plain steps in one row that update live (150 enquiries a month, 60 not called back in 5 minutes, 6 of them might have bought, 48,000 rupees a month
- * walking away), and the contrast: with the product every enquiry gets an answer in seconds. The estimate is the visitor's own, never a promise, and the page says so. Real range inputs with labels.
+ * "How much are late call-backs costing you?" (the page's own words: h3.leak.*; the section's heading is drawn by the page, the island below it). On a phone: two sliders (enquiries a month, the average sale) and a "More settings" disclosure
+ * with the other two (the share not called back in 5 minutes, how many of those might have bought), today's pipe at the full width, the maths as ONE compact 2 x 2 (150 enquiries a month, 60 not called back in 5 minutes, 6 of them might
+ * have bought, 48,000 rupees a month walking away) that updates live, and the contrast: with the product every enquiry gets an answer in seconds. The estimate is the visitor's own, never a promise, and the page says so. Real range inputs with labels.
  */
 export function LeakCalc({ w }: { w: W }) {
   const [enq, setEnq] = React.useState(150);
@@ -112,17 +116,15 @@ export function LeakCalc({ w }: { w: W }) {
   const warm = enq - cold;
   const buyers = Math.round((cold * buy) / 100);
   const lost = buyers * avg;
-  const slider = (id: string, label: string, value: number, show: string, set: (v: number) => void, min: number, max: number, step: number) => (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex justify-between gap-3">
-        <label htmlFor={id} className="font-bold">
-          {label}
-        </label>
-        <span className="font-display text-xl font-extrabold tabular-nums">{show}</span>
+  const slider = (x: Slider) => (
+    <div className="h4-slider" key={x.id}>
+      <div className="h4-slider-row">
+        <label htmlFor={x.id}>{x.label}</label>
+        <output htmlFor={x.id}>{x.show}</output>
       </div>
       {/* the filled part is the ink up to the value, the rest the light track (home2.css .h2-range); the share filled comes in as --p on this wrapper */}
-      <div style={{ "--p": `${((value - min) / (max - min)) * 100}%` } as React.CSSProperties}>
-        <input id={id} type="range" min={min} max={max} step={step} value={value} onChange={(e) => set(Number(e.target.value))} className="h2-range block h-11 w-full" />
+      <div style={{ "--p": `${((x.value - x.min) / (x.max - x.min)) * 100}%` } as React.CSSProperties}>
+        <input id={x.id} type="range" min={x.min} max={x.max} step={x.step} value={x.value} onChange={(e) => x.set(Number(e.target.value))} className="h2-range block h-11 w-full" />
       </div>
     </div>
   );
@@ -133,53 +135,52 @@ export function LeakCalc({ w }: { w: W }) {
     { n: inr(lost), label: w["h3.leak.s4"], hot: true },
   ];
   return (
-    <div className="h3-leak" data-part="leak" ref={box}>
-      <header className="h3-head">
-        <h2 id="calc-title" className="h3-h2">
-          {w["h3.leak.q"].split(/(\S+-\S+)/).map((part, i) => (i % 2 ? <span key={i} className="whitespace-nowrap">{part}</span> : part))}
-        </h2>
-        <p className="h3-lead">{w["h3.leak.sub"]}</p>
-      </header>
-      <div className="h3-leak-sliders">
-        {slider("h2-enq", w["h2.leak.enq"], enq, num(enq), setEnq, 20, 1000, 10)}
-        {slider("h2-miss", w["h2.leak.miss"], miss, `${miss}%`, setMiss, 0, 90, 5)}
-        {slider("h2-buy", w["h2.leak.buy"], buy, `${buy}%`, setBuy, 1, 50, 1)}
-        {slider("h2-avg", w["h2.leak.avg"], avg, inr(avg), setAvg, 500, 50000, 500)}
+    <div className="h4-leak" data-part="leak" ref={box}>
+      <div className="h4-panel h4-sliders">
+        {slider({ id: "h2-enq", label: w["h2.leak.enq"], value: enq, show: num(enq), set: setEnq, min: 20, max: 1000, step: 10 })}
+        {slider({ id: "h2-avg", label: w["h2.leak.avg"], value: avg, show: inr(avg), set: setAvg, min: 500, max: 50000, step: 500 })}
+        <details className="h4-more" data-part="more-settings">
+          <summary>{w["h4.leak.more"]}</summary>
+          <div className="h4-more-in">
+            {slider({ id: "h2-miss", label: w["h2.leak.miss"], value: miss, show: `${miss}%`, set: setMiss, min: 0, max: 90, step: 5 })}
+            {slider({ id: "h2-buy", label: w["h2.leak.buy"], value: buy, show: `${buy}%`, set: setBuy, min: 1, max: 50, step: 1 })}
+          </div>
+        </details>
       </div>
-      <div className="h3-leak-flow" data-part="leak-flow">
+      <div className="h4-flow" data-part="leak-flow">
         <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 block size-full" />
-        <p className="h3-leak-lab h3-leak-lab-in" aria-live="polite" data-part="enq-in">
+        <p className="h4-flow-lab h4-flow-in" aria-live="polite" data-part="enq-in">
           <span>{w["h2.leak.in"]}</span>
-          <span className="h3-leak-n">{num(enq)}</span>
+          <span className="h4-flow-n">{num(enq)}</span>
         </p>
-        <p className="h3-leak-lab h3-leak-lab-warm" aria-live="polite" data-part="warm">
+        <p className="h4-flow-lab h4-flow-warm" aria-live="polite" data-part="warm">
           <span>{w["h3.leak.warm"]}</span>
-          <span className="h3-leak-n">{num(warm)}</span>
+          <span className="h4-flow-n">{num(warm)}</span>
         </p>
-        <p className="h3-leak-lab h3-leak-lab-cold" aria-live="polite" data-part="cold">
+        <p className="h4-flow-lab h4-flow-cold" aria-live="polite" data-part="cold">
           <span>{w["h3.leak.cold"]}</span>
-          <span className="h3-leak-n">{num(cold)}</span>
+          <span className="h4-flow-n">{num(cold)}</span>
         </p>
       </div>
-      <ol className="h3-leak-steps" aria-live="polite" data-part="steps">
+      <ol className="h4-steps" aria-live="polite" data-part="steps">
         {steps.map((s, i) => (
-          <li key={i} className="h3-leak-step" data-leak-step={i + 1}>
-            <span className={`h3-leak-big ${s.hot ? "h3-leak-hot" : ""}`} data-part={s.hot ? "at-stake" : undefined}>
+          <li key={i} className="h4-step" data-leak-step={i + 1}>
+            <span className={`h4-step-n ${s.hot ? "h4-hot" : ""}`} data-part={s.hot ? "at-stake" : undefined}>
               {s.n}
             </span>
-            <span className="h3-leak-cap">{s.label}</span>
+            <span className="h4-step-d">{s.label}</span>
           </li>
         ))}
       </ol>
-      <div className="h3-leak-with" data-part="leak-with">
-        <p className="h3-leak-with-t">
+      <div className="h4-with" data-part="leak-with">
+        <p>
           {w["h3.leak.with"]} <b>{w["h3.leak.of"].replace(/\{n\}/g, num(enq))}</b>
         </p>
-        <div className="h3-leak-bar" aria-hidden="true">
-          <span className="h3-leak-bar-in" data-on={seen ? "" : undefined} />
+        <div className="h4-bar" aria-hidden="true">
+          <span data-on={seen ? "" : undefined} />
         </div>
       </div>
-      <p className="h3-small">{w["h3.leak.note"]}</p>
+      <p className="h4-small">{w["h3.leak.note"]}</p>
     </div>
   );
 }
