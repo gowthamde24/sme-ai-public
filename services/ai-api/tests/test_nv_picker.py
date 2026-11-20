@@ -76,7 +76,7 @@ def test_the_catalogue_has_native_voices_of_both_genders_in_all_six_languages_wi
             group = cfg.voices_of(lang, gender)
             assert group, (lang, gender)
             assert [c.default for c in group].count(True) == 1 and group[0].default, "the default comes first"
-            assert 1 <= sum(c.recommended for c in group if c.listed) <= 3, (lang, gender)   # (of the voices the owner is offered)
+            assert 1 <= sum(c.recommended for c in group if c.listed) <= 4, (lang, gender)   # (the best three by a round trip, plus the Bulbul default of te and hi)
             assert cfg.default_for(lang, gender).id == group[0].id
     assert {lang: cfg.default_for(lang).name for lang in CALL_LANGUAGES[:4]} == {"te": "Kavitha", "en": "Janvi", "hi": "Kavya", "kn": "Chaitra"}, "owner, 21 Nov 2026: Bulbul v4 is the default for te, hi and kn; English stays Cartesia"
     assert cfg.catalogue["kn-prakash"].gender == "male"
@@ -131,7 +131,7 @@ def test_the_default_speaks_when_nothing_is_chosen_the_choice_when_it_is_valid_a
     cfg = default_config()
     assert cfg.resolve("te").id == "te-kavitha", "the Bulbul v4 voice is the default (owner, 21 Nov 2026)"
     assert cfg.resolve("te", "te-ramya").id == "te-ramya", "a saved Cartesia choice keeps speaking"
-    assert cfg.resolve("te", "te-sindhu").id == "te-kavitha", "a voice that is not on the short list is ignored: the default speaks (an old stored choice breaks nothing)"
+    assert cfg.resolve("te", "te-sindhu").id == "te-sindhu", "since 21 Nov 2026 every voice is listed: a saved Cartesia choice of the long list keeps speaking"
     assert cfg.resolve("te", "hi-kavya").id == "te-kavitha", "a voice of another language is ignored"
     assert cfg.resolve("te", "te-removed-voice").id == "te-kavitha", "a voice no longer in the catalogue is ignored"
     assert cfg.resolve("te", "te-charan").id == "te-kavitha", "a male voice is ignored in a female workspace"
@@ -155,8 +155,9 @@ def test_any_member_reads_the_catalogue_with_sample_urls_and_the_default_active(
     assert r.status_code == 200 and body["gender"] == "female" and [x["language"] for x in body["languages"]] == ["te", "en", "hi", "kn", "ta", "ml"]
     te = body["languages"][0]
     assert te["default_id"] == "te-kavitha" and te["chosen_id"] is None and te["active_id"] == "te-kavitha"
-    assert {v["gender"] for v in te["voices"]} == {"female", "male"} and len(te["voices"]) == 4, "the short list: two women and two men; the screen filters"
-    assert {v["id"]: v["provider"] for v in te["voices"]} == {"te-ramya": "cartesia", "te-kavitha": "sarvam", "te-charan": "cartesia", "te-tarun": "sarvam"}
+    assert {v["gender"] for v in te["voices"]} == {"female", "male"} and len(te["voices"]) == te["total"] >= 14, "every voice of the language: the screen filters"
+    by_provider = {v["id"]: v["provider"] for v in te["voices"]}
+    assert by_provider["te-ramya"] == "cartesia" and by_provider["te-kavitha"] == "sarvam" and by_provider["te-charan"] == "cartesia" and by_provider["te-tarun"] == "sarvam" and {"cartesia", "sarvam"} == set(by_provider.values())
     first = te["voices"][0]
     assert (first["id"], first["default"], first["chosen"]) == ("te-kavitha", True, False) and first["sample_url"] == "/v1/voice-samples/te-kavitha.mp3"
     assert set(first) == {"id", "name", "label", "gender", "tags", "recommended", "default", "chosen", "sample_url", "sample_text", "provider", "sample_ready", "to_confirm"} and first["tags"] and first["recommended"] is True
