@@ -2,7 +2,6 @@
 
 import * as React from "react";
 
-import { useOnViewOnce } from "../home/use-on-view-once";
 import { addScene, fontOf, isCalm, sceneTime, type Look } from "./scene";
 
 type W = Readonly<Record<string, string>>;
@@ -45,11 +44,11 @@ const ROADS: [number, number][][] = [
   [[600, 0], [560, 160], [520, 300], [640, 520]],
   [[0, 460], [200, 400], [330, 380], [520, 480]],
 ];
-/** Where the sweep is: its angle, and whether this is a fresh sweep (every third), when the found list fills again from empty. */
+/** Where the sweep is: its angle (a slow, steady half a radian a second: one turn in about 12 seconds), and whether this is the FIRST turn of the map (the found businesses appear as the sweep passes them; after that they stay). */
 export function sweepAt(t: number, since: number): { a: number; fresh: boolean } {
-  const A = Math.max(0, t - since) * 1.1;
+  const A = Math.max(0, t - since) * 0.5;
   const cyc = Math.floor(A / TAU);
-  return { a: A - cyc * TAU, fresh: cyc % 3 === 0 };
+  return { a: A - cyc * TAU, fresh: cyc === 0 };
 }
 
 function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look, state: { city: City; since: number }, crop: boolean, sans: string): void {
@@ -235,7 +234,6 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
  */
 export function RadarFinder({ w }: { w: W }) {
   const [city, setCity] = React.useState<City>("Hyderabad");
-  const [viewRef, phase] = useOnViewOnce<HTMLDivElement>();
   const live = React.useRef({ city, since: 0 });
   const desk = React.useRef<HTMLCanvasElement>(null);
   const off = React.useRef<(() => void) | undefined>(undefined);
@@ -261,7 +259,7 @@ export function RadarFinder({ w }: { w: W }) {
   };
   const rows = [PINS.find((p) => p.d === "call"), PINS.find((p) => p.d === "ask")].filter((p): p is Pin => p !== undefined);
   return (
-    <div className="h4-radar" data-part="radar" data-city={city} ref={viewRef} data-phase={phase}>
+    <div className="h4-radar" data-part="radar" data-city={city}>
       <div className="h4-panel h4-radar-card">
         <div className="h4-cities-wrap">
           <div role="radiogroup" aria-label={w["h2.finder.city"]} className="h4-cities">
@@ -277,8 +275,8 @@ export function RadarFinder({ w }: { w: W }) {
           <span className="h4-eg">{w["h4.eg"]}</span>
         </div>
         <ul className="h4-found-list">
-          {rows.map((p, i) => (
-            <li key={`${city}-${p.id}`} className={`h4-fc h4-d${i}`} data-found={p.id}>
+          {rows.map((p) => (
+            <li key={`${city}-${p.id}`} className="h4-fc" data-found={p.id}>
               <p className="h4-fc-top">
                 <span>
                   <b>{w[`h2.finder.pin.${p.id + 1}.what`]}</b> <span className="h4-fc-km">{p.km}</span>

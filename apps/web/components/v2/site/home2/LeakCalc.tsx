@@ -2,8 +2,7 @@
 
 import * as React from "react";
 
-import { useOnViewOnce } from "../home/use-on-view-once";
-import { addScene, inkOf, type Look } from "./scene";
+import { inkOf, isDark, type Look } from "./scene";
 
 type W = Readonly<Record<string, string>>;
 const TAU = 6.2832;
@@ -23,9 +22,9 @@ const warmPath = (yo: number): Pt[] => [[0, 230 + yo], [260, 230 + yo], [470, 13
 const coldPath = (yo: number): Pt[] => [[0, 230 + yo], [260, 230 + yo], [320, 300 + yo], [300, 352 + yo * 0.4]];
 
 /**
- * Today's pipe, kept (owner, 20 Nov 2026: "the previous animation style was good"), simplified (21 Nov): a month's enquiries flow in from the left at ONE steady speed; the ones called back in time run on to the end of the pipe, the missed share peels off
+ * Today's pipe, kept (owner, 20 Nov 2026: "the previous animation style was good"), simplified (21 Nov): a month's enquiries sit in the pipe from the left; the ones called back in time run on to the end of the pipe, the missed share peels off
  * into the drain and turns grey. Few moving dots, no glow, a short tail. Drawn in the design's 764 x 400 space and scaled to the canvas (the box keeps that shape at every width); the dots are drawn larger on a narrow canvas so they read on a phone.
- * Its three labels (the start, the end, the drain, with their live counts) are DOM over the drawing. Colours: green is called back, grey is gone cold. The scene is paused off screen (scene.ts); with "reduce motion" the dots stand still.
+ * STILL (owner, 21 Nov: only the phone demo and the radar's slow sweep move on this page): one frame, drawn again when a slider or the size changes. Its three labels (the start, the end, the drain, with their live counts) are DOM over the drawing. Colours: green is called back, grey is gone cold. The dots never move.
  */
 function drawLeak(ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look, s: { enq: number; miss: number }): void {
   const k = W / 764;
@@ -89,52 +88,40 @@ export function LeakCalc({ w }: { w: W }) {
   const [miss, setMiss] = React.useState(40);
   const [buy, setBuy] = React.useState(10);
   const [avg, setAvg] = React.useState(8000);
-  const [seen, setSeen] = React.useState(false);
-  const live = React.useRef({ enq, miss });
-  React.useEffect(() => {
-    live.current = { enq, miss };
-  });
   const canvas = React.useRef<HTMLCanvasElement>(null);
-  React.useEffect(() => (canvas.current ? addScene(canvas.current, (c, W2, H, t, look) => drawLeak(c, W2, H, t, look, live.current)) : undefined), []);
-  const box = React.useRef<HTMLDivElement>(null);
+  // ONE still frame (no loop): drawn again when the sliders, the size or the theme change
   React.useEffect(() => {
-    const el = box.current;
-    if (!el || typeof IntersectionObserver === "undefined") {
-      setSeen(true);
-      return;
-    }
-    const io = new IntersectionObserver((es) => {
-      if (es.some((e) => e.isIntersecting)) {
-        setSeen(true);
-        io.disconnect();
+    const el = canvas.current;
+    const ctx = el?.getContext("2d");
+    if (!el || !ctx) return;
+    const paint = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.round((el.clientWidth || 1) * dpr);
+      const h = Math.round((el.clientHeight || 1) * dpr);
+      if (el.width !== w || el.height !== h) {
+        el.width = w;
+        el.height = h;
       }
-    });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  // the rupee figure counts up ONCE when it scrolls into view (the final figure is in the page from the start, so nothing flashes or shifts: a sizer holds the final width)
-  const [viewRef, phase] = useOnViewOnce<HTMLDivElement>();
-  const [count, setCount] = React.useState<number | null>(null);
-  const finalLost = React.useRef(0);
+      drawLeak(ctx, w, h, 1.3, { dark: isDark(el), calm: true, dpr }, { enq, miss });
+    };
+    paint();
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(paint) : undefined;
+    ro?.observe(el);
+    const root = el.closest('[data-ui="v2"]');
+    const mo = typeof MutationObserver !== "undefined" && root ? new MutationObserver(paint) : undefined;
+    if (root) mo?.observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+    const mq = window.matchMedia?.("(prefers-color-scheme: dark)");
+    mq?.addEventListener("change", paint);
+    return () => {
+      ro?.disconnect();
+      mo?.disconnect();
+      mq?.removeEventListener("change", paint);
+    };
+  }, [enq, miss]);
   const cold = Math.round((enq * miss) / 100);
   const warm = enq - cold;
   const buyers = Math.round((cold * buy) / 100);
   const lost = buyers * avg;
-  React.useEffect(() => {
-    finalLost.current = lost;
-  });
-  React.useEffect(() => {
-    if (phase !== "played") return;
-    let raf = 0;
-    const t0 = performance.now();
-    const step = (now: number) => {
-      const u = Math.min(1, (now - t0) / 1400);
-      setCount(u >= 1 ? null : Math.round(finalLost.current * (1 - (1 - u) ** 3)));
-      if (u < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [phase]);
   const slider = (x: Slider) => (
     <div className="h4-slider" key={x.id}>
       <div className="h4-slider-row">
@@ -148,7 +135,7 @@ export function LeakCalc({ w }: { w: W }) {
     </div>
   );
   return (
-    <div className="h4-leak" data-part="leak" ref={box}>
+    <div className="h4-leak" data-part="leak">
       <div className="h4-panel h4-sliders">
         {slider({ id: "h2-enq", label: w["h2.leak.enq"], value: enq, show: num(enq), set: setEnq, min: 20, max: 1000, step: 10 })}
         {slider({ id: "h2-avg", label: w["h2.leak.avg"], value: avg, show: inr(avg), set: setAvg, min: 500, max: 50000, step: 500 })}
@@ -176,21 +163,16 @@ export function LeakCalc({ w }: { w: W }) {
             <span className="h4-flow-n">{num(cold)}</span>
           </p>
         </div>
-        <div className="h4-result" aria-live={count === null ? "polite" : "off"} data-part="steps" ref={viewRef} data-phase={phase}>
-          <p className="h4-result-n h4-hot">
-            <span className="h4-count-sizer" aria-hidden="true">
-              {inr(lost)}
-            </span>
-            <span className="h4-count" data-part="at-stake">
-              {inr(count ?? lost)}
-            </span>
+        <div className="h4-result" aria-live="polite" data-part="steps">
+          <p className="h4-result-n h4-hot" data-part="at-stake">
+            {inr(lost)}
           </p>
           <p className="h4-result-d">{w["h4.leak.slip"]}</p>
         </div>
         <div className="h4-with" data-part="leak-with">
           <p>{w["h4.leak.with"].replace(/\{n\}/g, num(enq))}</p>
           <div className="h4-bar" aria-hidden="true">
-            <span data-on={seen ? "" : undefined} />
+            <span />
           </div>
         </div>
         <p className="h4-small">{w["h3.leak.note"]}</p>

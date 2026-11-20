@@ -11652,5 +11652,83 @@
    "kn": "draft",
    "ta": "draft"
   }
+ },
+ "h4.m.extra": {
+  "en": "Extra number",
+  "te": "ఎక్స్‌ట్రా number",
+  "hi": "एक्स्ट्रा number",
+  "kn": "ಹೆಚ್ಚುವರಿ number",
+  "ta": "கூடுதல் number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.t": {
+  "en": "Calls again if busy",
+  "te": "Busy అయితే మళ్ళీ call చేస్తుంది",
+  "hi": "Busy हो तो दोबारा call करता है",
+  "kn": "Busy ಆದರೆ ಮತ್ತೆ call ಮಾಡುತ್ತದೆ",
+  "ta": "Busy என்றால் மீண்டும் call செய்யும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.1": {
+  "en": "Busy",
+  "te": "Busy అయింది",
+  "hi": "Busy था",
+  "kn": "Busy ಆಗಿತ್ತು",
+  "ta": "Busy-ஆக இருந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.2": {
+  "en": "Tries again later",
+  "te": "తర్వాత మళ్ళీ ప్రయత్నిస్తుంది",
+  "hi": "बाद में फिर कोशिश करता है",
+  "kn": "ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ",
+  "ta": "பிறகு மீண்டும் முயற்சிக்கும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.3": {
+  "en": "Connected, visit booked",
+  "te": "Connect అయింది, visit book అయింది",
+  "hi": "बात हुई, visit book हुई",
+  "kn": "Connect ಆಯಿತು, visit book ಆಯಿತು",
+  "ta": "Connect ஆனது, visit book ஆனது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.built.t": {
+  "en": "Built in from day one",
+  "te": "మొదటి రోజు నుంచే ఉన్నవి",
+  "hi": "पहले दिन से शामिल",
+  "kn": "ಮೊದಲ ದಿನದಿಂದಲೇ ಇರುವುದು",
+  "ta": "முதல் நாளிலிருந்தே உள்ளவை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
  }
 }

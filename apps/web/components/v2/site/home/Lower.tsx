@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Moon } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -7,8 +7,7 @@ import { publicPlanLines } from "@/components/v2/site/PublicPlans";
 import type { SiteKey, SiteT } from "@/i18n/site";
 import { PUBLIC_PLANS, PLAN_FACTS, planVars, rupees, type PublicPlan } from "@/lib/site/plans";
 
-import { PlanGrid } from "./PlanGrid";
-import { TrustRow } from "./TrustRow";
+import { Bento } from "./Bento";
 
 type Start = { href: string; label: string };
 const k = (s: string) => s as SiteKey;
@@ -46,7 +45,7 @@ function planLines(plan: PublicPlan, t: SiteT): string[] {
   return lines;
 }
 
-/** A plan on the home page: its name, its price a month and the ticked lines of what it includes (the pricing page has the rest); Pro, the recommended one, is outlined and its minutes bar fills once. */
+/** A plan on the home page: its name, its price a month and the ticked lines of what it includes (the pricing page has the rest); Pro, the recommended one, is outlined and carries its minutes bar (still). */
 function PlanCard({ plan, t }: { plan: PublicPlan; t: SiteT }) {
   return (
     <li className="h4-slide">
@@ -77,8 +76,8 @@ function PlanCard({ plan, t }: { plan: PublicPlan; t: SiteT }) {
 }
 
 /**
- * The sections of the home page between the try-it box and the FAQ (website-spec-v4): what late call-backs cost, the Lead Finder, and the plans with ONE trust row under them (the voices and the built-in section are gone: the length rule). Designed at 390 px first
- * (design/home4.css). Each is a title of at most six words, one grey line and one visual. Every word comes from the string store; the page reads fully with JavaScript off (the plans are server markup).
+ * The sections of the home page between the try-it box and the FAQ (website-spec-v4): what late call-backs cost, the Lead Finder, the plans, and "Built in from day one" as a still bento (the voices are gone: the length rule). Designed at 390 px first
+ * (design/home4.css). Each is a title of at most six words, one grey line and one visual. Every word comes from the string store; the page reads fully with JavaScript off (everything is server markup; only the radar's slow sweep moves).
  */
 export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
   return (
@@ -93,11 +92,11 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
       </Section>
       <Section id="pricing" labelledBy="plans-title">
         <Head id="plans-title" title={t("h4.pl.title")} />
-        <PlanGrid>
+        <ul className="h4-plans" data-part="plans">
           {PUBLIC_PLANS.map((p) => (
             <PlanCard key={p.id} plan={p} t={t} />
           ))}
-        </PlanGrid>
+        </ul>
         <p className="h4-every" data-part="every-plan">
           <b>{t("h4.pl.every")}</b> {[t("h4.pl.e1"), t("pp.sh.1"), t("h4.pl.e2"), t("pp.sh.2", planVars()), t("pp.sh.5"), t("pp.sh.3"), t("pp.sh.4")].join(" · ")}
         </p>
@@ -110,7 +109,10 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
             </Link>
           </p>
         </div>
-        <TrustRow moon={<Moon size={13} strokeWidth={2.4} />} w={{ t1: t("h4.tr.1"), t2: t("h4.tr.2"), t3: t("h4.tr.3"), t4: t("h4.tr.4"), kyc: t("h4.m.kyc"), yes: t("h4.m.yes"), added: t("h4.m.added"), done: t("h4.m.done"), wait: t("h4.m.wait") }} />
+      </Section>
+      <Section id="built" labelledBy="built-title">
+        <Head id="built-title" title={t("h4.built.t")} />
+        <Bento t={t} />
       </Section>
     </>
   );
