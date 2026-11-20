@@ -924,11 +924,11 @@
   }
  },
  "how.habits.4": {
-  "en": "Every message says it was written by an AI assistant.",
-  "te": "ప్రతి మెసేజ్‌లో AI అసిస్టెంట్ రాసిందని ఉంటుంది.",
-  "hi": "हर message बताता है कि उसे AI assistant ने लिखा है।",
-  "kn": "ಪ್ರತಿ message ನಲ್ಲಿ AI assistant ಬರೆದಿದೆ ಎಂದು ಇರುತ್ತದೆ.",
-  "ta": "ஒவ்வொரு message-இலும் அதை AI assistant எழுதியது என்று இருக்கும்.",
+  "en": "If someone asks, it always says it's the business's AI assistant.",
+  "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "ta": "யாராவது கேட்டால், இது எப்போதும் தான் அந்த வணிகத்தின் AI assistant என்று சொல்லும்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1067,11 +1067,11 @@
   }
  },
  "sec.ai.t": {
-  "en": "AI is always labelled",
-  "te": "AI అని ఎప్పుడూ చెబుతుంది",
-  "hi": "AI हमेशा बताया जाता है",
-  "kn": "AI ಎಂದು ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ",
-  "ta": "AI எப்போதும் குறிக்கப்படும்",
+  "en": "Honest about being an AI",
+  "te": "AI అని నిజాయితీగా చెప్తుంది",
+  "hi": "AI होने के बारे में ईमानदार",
+  "kn": "AI ಎಂದು ಪ್ರಾಮಾಣಿಕವಾಗಿ ಹೇಳುತ್ತದೆ",
+  "ta": "AI என்பதில் நேர்மை",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1080,11 +1080,11 @@
   }
  },
  "sec.ai.d": {
-  "en": "Messages the AI writes say they were written by an AI assistant. Web pages and incoming messages are treated as untrusted text and cannot give the AI orders.",
-  "te": "AI రాసే మెసేజ్‌లలో AI అసిస్టెంట్ రాసిందని ఉంటుంది. వెబ్ పేజీలు, వచ్చే మెసేజ్‌లను నమ్మదగని టెక్స్ట్‌గా చూస్తాం, అవి AIకి ఆదేశాలు ఇవ్వలేవు.",
-  "hi": "AI के लिखे messages में बताया जाता है कि उन्हें AI assistant ने लिखा है। वेब पेज और आने वाले messages को भरोसे के लायक नहीं माना जाता, वे AI को आदेश नहीं दे सकते।",
-  "kn": "AI ಬರೆದ messages ನಲ್ಲಿ AI assistant ಬರೆದಿದೆ ಎಂದು ಇರುತ್ತದೆ. ವೆಬ್ ಪುಟ, ಬರುವ messages ಅನ್ನು ನಂಬಲಾಗದ ಪಠ್ಯವೆಂದು ನೋಡುತ್ತೇವೆ, ಅವು AIಗೆ ಆದೇಶ ಕೊಡಲಾರವು.",
-  "ta": "AI எழுதும் messages-இல் அவை AI assistant எழுதியவை என்று இருக்கும். Web pages, வரும் messages நம்பத்தகாத text-ஆகவே கருதப்படும், அவை AI-க்கு உத்தரவு கொடுக்க முடியாது.",
+  "en": "If someone asks, it always says it's the business's AI assistant. Web pages and incoming messages are treated as untrusted text and cannot give the AI orders.",
+  "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది. వెబ్ పేజీలు, వచ్చే మెసేజ్‌లను నమ్మదగని టెక్స్ట్‌గా చూస్తాం, అవి AIకి ఆదేశాలు ఇవ్వలేవు.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है। वेब पेज और आने वाले messages को भरोसे के लायक नहीं माना जाता, वे AI को आदेश नहीं दे सकते।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ. ವೆಬ್ ಪುಟ, ಬರುವ messages ಅನ್ನು ನಂಬಲಾಗದ ಪಠ್ಯವೆಂದು ನೋಡುತ್ತೇವೆ, ಅವು AIಗೆ ಆದೇಶ ಕೊಡಲಾರವು.",
+  "ta": "யாராவது கேட்டால், இது எப்போதும் தான் அந்த வணிகத்தின் AI assistant என்று சொல்லும். Web pages, வரும் messages நம்பத்தகாத text-ஆகவே கருதப்படும், அவை AI-க்கு உத்தரவு கொடுக்க முடியாது.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -2079,11 +2079,11 @@
   }
  },
  "meta.security.description": {
-  "en": "How each business is kept apart, who sees what, how AI is labelled, children's data, and what we have not done yet.",
-  "te": "ప్రతి వ్యాపారం ఎలా వేరుగా ఉంటుంది, ఎవరికి ఏం కనిపిస్తుంది, AI ఎలా లేబుల్ అవుతుంది, పిల్లల డేటా, ఇంకా మేము చేయనివి.",
-  "hi": "हर business कैसे अलग रहता है, किसे क्या दिखता है, AI कैसे लेबल होता है, बच्चों का डेटा, और हमने क्या नहीं किया।",
-  "kn": "ಪ್ರತಿ business ಹೇಗೆ ಪ್ರತ್ಯೇಕ, ಯಾರಿಗೆ ಏನು ಕಾಣುತ್ತದೆ, AI ಹೇಗೆ ಲೇಬಲ್ ಆಗುತ್ತದೆ, ಮಕ್ಕಳ ಡೇಟಾ, ನಾವು ಇನ್ನೂ ಮಾಡದ್ದು.",
-  "ta": "ஒவ்வொரு business-ம் எப்படித் தனியாக வைக்கப்படுகிறது, யாருக்கு எது தெரியும், AI எப்படிக் குறிக்கப்படுகிறது, குழந்தைகளின் data, நாங்கள் இன்னும் செய்யாதவை.",
+  "en": "How each business is kept apart, who sees what, how it is honest about being an AI, children's data, and what we have not done yet.",
+  "te": "ప్రతి వ్యాపారం ఎలా వేరుగా ఉంటుంది, ఎవరికి ఏం కనిపిస్తుంది, AI అని ఎలా నిజాయితీగా చెప్తుంది, పిల్లల డేటా, ఇంకా మేము చేయనివి.",
+  "hi": "हर business कैसे अलग रहता है, किसे क्या दिखता है, AI होने के बारे में यह कैसे ईमानदार रहता है, बच्चों का डेटा, और हमने क्या नहीं किया।",
+  "kn": "ಪ್ರತಿ business ಹೇಗೆ ಪ್ರತ್ಯೇಕ, ಯಾರಿಗೆ ಏನು ಕಾಣುತ್ತದೆ, AI ಎಂದು ಹೇಗೆ ಪ್ರಾಮಾಣಿಕವಾಗಿ ಹೇಳುತ್ತದೆ, ಮಕ್ಕಳ ಡೇಟಾ, ನಾವು ಇನ್ನೂ ಮಾಡದ್ದು.",
+  "ta": "ஒவ்வொரு business-ம் எப்படித் தனியாக வைக்கப்படுகிறது, யாருக்கு எது தெரியும், AI என்பதில் எப்படி நேர்மையாக இருக்கிறது, குழந்தைகளின் data, நாங்கள் இன்னும் செய்யாதவை.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -2188,10 +2188,10 @@
   }
  },
  "home.trust.3": {
-  "en": "AI always labelled",
-  "te": "AI అని ఎప్పుడూ చెబుతుంది",
-  "hi": "AI हमेशा बताया जाता है",
-  "kn": "AI ಎಂದು ಯಾವಾಗಲೂ ಹೇಳಲಾಗುತ್ತದೆ",
+  "en": "Honest about being an AI",
+  "te": "AI అని నిజాయితీగా చెప్తుంది",
+  "hi": "AI होने के बारे में ईमानदार",
+  "kn": "AI ಎಂದು ಪ್ರಾಮಾಣಿಕವಾಗಿ ಹೇಳುತ್ತದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3402,10 +3402,10 @@
   }
  },
  "hm.trust.3.d": {
-  "en": "If a customer asks, it always says it is your business's AI assistant.",
-  "te": "కస్టమర్ అడిగితే, ఇది ఎప్పుడూ మీ వ్యాపారం యొక్క AI అసిస్టెంట్ అనే చెప్తుంది.",
-  "hi": "ग्राहक पूछे तो यह हमेशा बताता है कि यह आपके कारोबार का AI असिस्टेंट है।",
-  "kn": "ಗ್ರಾಹಕರು ಕೇಳಿದರೆ ಇದು ಯಾವಾಗಲೂ ನಿಮ್ಮ ವ್ಯಾಪಾರದ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "en": "If someone asks, it always says it's the business's AI assistant.",
+  "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11264,11 +11264,11 @@
   }
  },
  "h4.faq.2.a": {
-  "en": "Yes. If someone asks, it always says it is an AI assistant, and you can have it say so when it greets too.",
-  "te": "అవును. ఎవరైనా అడిగితే, తాను AI assistant అని ఎప్పుడూ చెప్తుంది; greet చేసేటప్పుడే చెప్పాలంటే అదీ మీరు ఆన్ చేయవచ్చు.",
-  "hi": "हाँ। कोई पूछे तो यह हमेशा बताता है कि यह AI assistant है, और चाहें तो greet करते समय भी बताने को चालू कर सकते हैं।",
-  "kn": "ಹೌದು. ಯಾರಾದರೂ ಕೇಳಿದರೆ ತಾನು AI assistant ಎಂದು ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ, ಮತ್ತು greet ಮಾಡುವಾಗಲೂ ಹೇಳುವಂತೆ ನೀವು ಆನ್ ಮಾಡಬಹುದು.",
-  "ta": "ஆம். யாராவது கேட்டால் எப்போதும் தான் AI assistant என்று சொல்லும்; வாழ்த்தும்போதும் சொல்லும்படி நீங்கள் இயக்கலாம்.",
+  "en": "If someone asks, it always says it's the business's AI assistant.",
+  "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "ta": "யாராவது கேட்டால், இது எப்போதும் தான் அந்த வணிகத்தின் AI assistant என்று சொல்லும்.",
   "status": {
    "te": "draft",
    "hi": "draft",

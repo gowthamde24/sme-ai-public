@@ -49150,10 +49150,10 @@
   }
  },
  "camp.ap.disclosure": {
-  "en": "Every message tells the person it comes from the business's AI assistant and how to stop. It reads:",
-  "te": "Every message tells the person it comes from the business's AI assistant and how to stop. It reads:",
-  "hi": "Every message tells the person it comes from the business's AI assistant and how to stop. It reads:",
-  "kn": "Every message tells the person it comes from the business's AI assistant and how to stop. It reads:",
+  "en": "If someone asks, it always says it's your AI assistant. Every message also says how to stop. It reads:",
+  "te": "If someone asks, it always says it's your AI assistant. Every message also says how to stop. It reads:",
+  "hi": "If someone asks, it always says it's your AI assistant. Every message also says how to stop. It reads:",
+  "kn": "If someone asks, it always says it's your AI assistant. Every message also says how to stop. It reads:",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -72212,17 +72212,6 @@
   "te": "డిఫాల్ట్‌గా ఆన్. ఆఫ్ చేస్తే గ్రీటింగ్ ఖచ్చితంగా మీ మాటలే.",
   "hi": "डिफ़ॉल्ट रूप से चालू। बंद करने पर अभिवादन ठीक आपके शब्द होते हैं।",
   "kn": "ಡೀಫಾಲ್ಟ್ ಆಗಿ ಆನ್. ಆಫ್ ಮಾಡಿದರೆ ಶುಭಾಶಯ ನಿಮ್ಮ ಮಾತುಗಳೇ ಆಗಿರುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ope.ai.warn": {
-  "en": "{assistant} will still answer honestly if someone asks whether it is an AI. Some regulators expect AI calls to be disclosed; check with your advisor.",
-  "te": "ఎవరైనా AI నా అని అడిగితే {assistant} నిజాయితీగా జవాబు ఇస్తుంది. కొన్ని నియంత్రణ సంస్థలు AI కాల్స్ చెప్పాలని ఆశిస్తాయి; మీ సలహాదారుని అడగండి.",
-  "hi": "अगर कोई पूछे कि क्या यह AI है, तो {assistant} ईमानदारी से जवाब देगी। कुछ नियामक AI कॉल बताने की उम्मीद करते हैं; अपने सलाहकार से पूछ लें।",
-  "kn": "ಯಾರಾದರೂ AI ಹೌದೇ ಎಂದು ಕೇಳಿದರೆ {assistant} ಪ್ರಾಮಾಣಿಕವಾಗಿ ಉತ್ತರಿಸುತ್ತದೆ. ಕೆಲವು ನಿಯಂತ್ರಕರು AI ಕರೆಗಳನ್ನು ತಿಳಿಸಬೇಕೆಂದು ನಿರೀಕ್ಷಿಸುತ್ತಾರೆ; ನಿಮ್ಮ ಸಲಹೆಗಾರರನ್ನು ಕೇಳಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
