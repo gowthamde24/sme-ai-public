@@ -313,3 +313,17 @@ def test_visit_cancel_keeps_the_day_and_time_only_to_pick_one_of_several_visits(
     assert plain == {"target": "Anitha Hegde"}
     odd = ra.check("visit_cancel", {"target": "Anitha Hegde", "date": "someday", "time": "late"}, "Cancel Anitha Hegde's visit someday", today)
     assert odd == {"target": "Anitha Hegde"}   # a badly formed day or time is dropped, never an error
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Book Anitha R for a test drive on Sunday at 11 am", "Book Sunitha K for a demo class on Saturday", "Cancel the appointment of Ravi", "Reschedule Ravi's consultation to Monday",
+        "Anitha R కి శనివారం సాయంత్రం 4:30 కి site visit బుక్ చెయ్యి", "Ramakrishna P కి ఆదివారం ఉదయం 11 కి test drive బుక్ చెయ్యి", "Sunitha K కి శనివారం demo class బుక్ చేయండి",
+        "अनीता को शनिवार शाम 4:30 बजे विज़िट बुक करो", "ಅನಿತಾ ಅವರಿಗೆ ಶನಿವಾರ ಸಂಜೆ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿ",
+    ],
+)
+def test_the_router_is_asked_about_booking_a_visit_in_every_business_and_language(text: str) -> None:
+    from app.assistant_work.router import touches
+
+    assert touches(text), text
