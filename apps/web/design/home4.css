@@ -100,7 +100,7 @@
 /* wide: the sliders on the left, the pipe card beside them (it would be 800 px tall at 1440 otherwise) */
 @media (min-width: 1024px) {
   [data-ui="v2"] .h4-leak { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; gap: 20px 40px; }
-  [data-ui="v2"] .h4-sliders { grid-column: 1; grid-template-columns: minmax(0, 1fr); align-self: center; }
+  [data-ui="v2"] .h4-sliders { grid-column: 1; grid-template-columns: minmax(0, 1fr); align-self: start; }
   [data-ui="v2"] .h4-more-in { grid-template-columns: minmax(0, 1fr); }
   [data-ui="v2"] .h4-leak-card { grid-column: 2; grid-row: 1; }
 }
@@ -130,10 +130,10 @@
 [data-ui="v2"] .h4-fc-why { margin: 2px 0 0; font-size: 14px; line-height: 1.4; color: var(--v2-muted); }
 [data-ui="v2"] .h4-fc-km { display: inline-block; color: var(--v2-muted); font-size: 14px; font-variant-numeric: tabular-nums; }
 @media (min-width: 900px) {
-  [data-ui="v2"] .h4-radar-card { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); grid-template-rows: auto 1fr; }
+  [data-ui="v2"] .h4-radar-card { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); grid-template-rows: auto 1fr; }
   [data-ui="v2"] .h4-cities-wrap { grid-column: 1 / -1; }
   [data-ui="v2"] .h4-radar-map { grid-column: 1; border-right: 1px solid var(--v2-border); }
-  [data-ui="v2"] .h4-found-list { grid-column: 2; align-self: center; gap: 12px; padding: 24px; }
+  [data-ui="v2"] .h4-found-list { grid-column: 2; align-self: start; gap: 12px; padding: 24px; }
   [data-ui="v2"] .h4-fc { padding: 14px 16px; }
 }
 

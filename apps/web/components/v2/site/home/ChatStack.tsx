@@ -77,7 +77,7 @@ export function ChatStack({ chats, captions, sub, placeholder, icons }: { chats:
                   </div>
                 </DarkPhone>
               </div>
-              <div className="h3-duo-chat" data-part="stack-chat" data-shown={phase === "chat" ? n : c.lines.length} data-on={chatOn ? "" : undefined} data-cur="">
+              <div className="h3-duo-chat" data-part="stack-chat" data-shown={phase === "chat" ? n : phase === "call" || phase === "ended" ? 0 : c.lines.length} data-on={chatOn ? "" : undefined} data-cur="">
                 <DarkPhone part="dark-phone">
                   <div className="pp h3-dp-chat" data-pp-theme="dark" data-pp-variant="peek">
                     <div className="pp-head">

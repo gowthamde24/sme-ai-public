@@ -236,6 +236,13 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     const dark = home.match(/data-part="dark-phone"[\s\S]*?<\/div><\/div><\/div>/)![0];
     expect(dark).not.toMatch(/h3-dp-key|data-key/); // the keys are CSS only: nothing in the markup
   });
+  it("the demo from 768 px: the call phone and the WhatsApp phone side by side (320 px each), the found-out card under them, no cross-fade (both shown); a phone keeps one", () => {
+    const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+    const block = css.match(/@media \(min-width: 768px\) \{\s*\[data-ui="v2"\] \.h3-how-grid \{[\s\S]*?\n\}/)![0];
+    expect(block).toMatch(/\.h3-duo \{ grid-template-columns: repeat\(2, minmax\(0, 320px\)\)/);
+    expect(block).toMatch(/\.h3-duo-call, \[data-ui="v2"\] \.h3-duo-chat \{ grid-area: auto; opacity: 1; visibility: visible/);
+    expect(block).toMatch(/\.h3-how-grid \{ grid-template-columns: minmax\(0, 1fr\)/); // the card is under the phones, not far to the right
+  });
   it("one orange: the page's own css names no other orange and no gradient (the owner's colour rule, 20 Nov 2026)", () => {
     const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace("radial-gradient(circle, var(--h3-dot) 1px, transparent 1.3px)", "").replace(/radial-gradient\(120% 55% at 50% 0%.*?70%\)/, "").replace(/linear-gradient\(90deg, transparent 0, #000 var\(--h3-gutter\)[^;]*?transparent 100%\)/g, ""); // (the gradients allowed: the page's dot grid, and the dark call screen's very faint warm light drawn inside the phone)
     expect(css).not.toMatch(/#ff773c|#ec486e|#ff9a6b|#ea580c|#f97316|gradient/i);

@@ -56,6 +56,11 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
       </StackProvider>,
     );
   };
+  const scroll = async () => {
+    await act(async () => {
+      window.dispatchEvent(new Event("scroll"));
+    });
+  };
   const q = (c: HTMLElement, sel: string) => c.querySelector(sel);
   const state = (c: HTMLElement) => {
     const st = q(c, '[data-part="chat-stack"]')!;
@@ -69,6 +74,7 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
   });
   it("each language runs call -> call ended -> chat -> fade, then the next; the card follows the same conversation (fields listening, then filled in time with the call), and fades with it; a full cycle takes 12 to 16 s each", async () => {
     const { container } = mount();
+    await scroll();
     const seen: string[] = [];
     const starts: Record<string, number> = {};
     for (let t = 0; t < 70000; t += 100) {
@@ -88,7 +94,7 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
       if (s.phase === "call") expect(s.rows).toBeLessThanOrEqual(3);
       if (s.phase === "ended" || s.phase === "chat") expect(s.rows).toBe(3);
     }
-    expect(seen.slice(0, 10)).toEqual(["te:chat", "te:call", "te:ended", "te:chat", "te:out", "hi:call", "hi:ended", "hi:chat", "hi:out", "kn:call"]); // (the first "te:chat" is the still state until the phone is seen)
+    expect(seen.slice(0, 9)).toEqual(["te:call", "te:ended", "te:chat", "te:out", "hi:call", "hi:ended", "hi:chat", "hi:out", "kn:call"]);
     const t0 = Object.values(starts);
     expect(t0[1] - t0[0]).toBeGreaterThanOrEqual(12000);
     expect(t0[1] - t0[0]).toBeLessThanOrEqual(16000);
@@ -97,6 +103,7 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
     let cb: (es: { isIntersecting: boolean }[]) => void = () => undefined;
     vi.stubGlobal("IntersectionObserver", class { constructor(f: typeof cb) { cb = f; } observe() {} disconnect() {} unobserve() {} });
     const { container } = mount();
+    await scroll();
     await act(async () => { vi.advanceTimersByTime(3000); });
     const before = JSON.stringify(state(container)) + container.querySelector(".h3-duo-call[data-cur]")!.getAttribute("data-shown");
     await act(async () => { cb([{ isIntersecting: false }]); });
@@ -127,7 +134,8 @@ describe("the language chips", () => {
         <FoundCard heading="What it found out" listening="Listening…" summary="Summary is written the moment the call ends." sets={sets} />
       </StackProvider>,
     );
-    await act(async () => { vi.advanceTimersByTime(200); }); // (the phone is "seen", then the clock starts)
+    await act(async () => { vi.advanceTimersByTime(200); }); // (the phone is "seen")
+    await act(async () => { window.dispatchEvent(new Event("scroll")); }); // (and the visitor has scrolled: then the clock starts)
     await act(async () => { vi.advanceTimersByTime(200); });
     const tab = (c: string) => container.querySelector(`[data-tab="${c}"]`) as HTMLElement;
     await act(async () => { tab("kn").click(); });

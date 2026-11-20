@@ -290,7 +290,7 @@
 }
 
 /* the home footer's columns (1 / 2 / 4) */
-[data-ui="v2"] .h3-foot-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px) 16px; }
+[data-ui="v2"] .h3-foot-grid { display: grid; align-items: start; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px) 16px; }
 [data-ui="v2"] .h3-foot-wide { grid-column: 1 / -1; }
 /* the Product links: two to a row on a phone, a column from 560 px */
 [data-ui="v2"] .h3-foot-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -360,12 +360,13 @@
   [data-ui="v2"] .h3-leak-step:not(:last-child)::after { content: "\2192"; left: auto; bottom: auto; right: -32px; width: 32px; top: 50%; transform: translateY(-50%); }
 }
 
-/* the demo: the card directly below the phone on a phone; side by side from 768 px (the phone on the left, the card on the right) */
+/* the demo from 768 px: the CALL phone and the WHATSAPP phone side by side (320 px each, 36 px apart), the "What it found out" card directly under them; on a phone one phone and the card below it */
 @media (min-width: 768px) {
-  [data-ui="v2"] .h3-how-grid { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); column-gap: clamp(24px, 4vw, 56px); }
-  [data-ui="v2"] .h3-how-phone { margin-inline: 0 auto; }
-  [data-ui="v2"] .h3-how-grid { align-items: center; }
-  [data-ui="v2"] .h3-how-grid > .h3-found { max-width: 420px; }
+  [data-ui="v2"] .h3-how-grid { grid-template-columns: minmax(0, 1fr); justify-items: center; row-gap: 28px; }
+  [data-ui="v2"] .h3-how-phone { width: 100%; max-width: 700px; margin-inline: auto; }
+  [data-ui="v2"] .h3-duo { grid-template-columns: repeat(2, minmax(0, 320px)); justify-content: center; gap: 36px; }
+  [data-ui="v2"] .h3-duo-call, [data-ui="v2"] .h3-duo-chat { grid-area: auto; opacity: 1; visibility: visible; pointer-events: auto; }
+  [data-ui="v2"] .h3-how-grid > .h3-found { width: 100%; max-width: 700px; }
 }
 /* the sticky bottom bar of a phone: out of the way while the hero button, the final call or the footer is on screen (StickyCta); a transform only; not on a tablet or a desktop */
 [data-ui="v2"] .h3-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: flex; justify-content: center; padding: 10px var(--h3-gutter) calc(10px + env(safe-area-inset-bottom)); background: var(--v2-bg); border-top: 1px solid var(--v2-border); transform: translateY(110%); transition: transform 250ms ease-out; }
@@ -387,13 +388,6 @@
 @media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h3-sheet-panel { animation: none; } }
 
 [data-ui="v2"] .h3-hero-plain { margin: 0; font-size: 14px; color: var(--v2-muted); }
-/* still state from 768 px: the two phones need the whole width (the card goes below them) */
-@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
-  [data-ui="v2"] .h3-how-grid { grid-template-columns: minmax(0, 1fr); justify-items: center; }
-  [data-ui="v2"] .h3-how-phone { width: 100%; max-width: 700px; margin-inline: auto; }
-  [data-ui="v2"] .h3-how-grid > .h3-found { width: 100%; }
-}
-
 /* (no content-visibility on the sections below the first screen: a picture of the whole page, find-in-page and the audits must all see them drawn; the page's speed comes from the lighter DOM, the scenes drawn only when near, and the fonts) */
 /* the cookie bar and the sticky "Get free early access" bar stack: the bar goes above the notice while it is open */
 html:has([data-cookie="notice"]) [data-ui="v2"] .h3-sticky { bottom: 56px; }

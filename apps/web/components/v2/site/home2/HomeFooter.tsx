@@ -47,7 +47,7 @@ export function HomeFooter({ t, lang }: { t: SiteT; lang: SiteLang; early?: { hr
             <LegalLinks lang={lang} direction="row" contact={false} linkClass={link} />
           </div>
         </div>
-        <div className="h3-foot-wide flex flex-wrap items-center gap-x-3">
+        <div className="h3-foot-wide flex flex-wrap items-center gap-x-3 min-[560px]:flex-col min-[560px]:items-start min-[560px]:gap-x-0">
           <span className="text-sm font-extrabold text-muted">{t("h2.foot.talk")}</span>
           <p className="m-0 text-[15px] font-semibold">
             <WithWhatsapp text={t("h2.foot.whatsapp")} />

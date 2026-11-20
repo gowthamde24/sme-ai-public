@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { BRAND_NAME } from "@/design/brand";
 
+import { afterFirstScroll } from "../home/use-on-view-once";
 import { addScene, fontOf, isCalm, type Look } from "./scene";
 
 const TAU = 6.2832;
@@ -55,7 +56,7 @@ function brandDots(family: string, step: number): Dot[] {
       const orange = d[i] > 180 && d[i + 2] < 140;
       const ang = rnd() * TAU;
       const r = 160 + rnd() * 420;
-      pts.push({ x: xx, y: yy, sx: xx + Math.cos(ang) * r, sy: yy + Math.sin(ang) * r * 0.6 + 120, dl: (xx / W) * 0.7 + rnd() * 0.35, o: orange, light: orange && d[i + 1] > 140 });
+      pts.push({ x: xx, y: yy, sx: xx + Math.cos(ang) * r, sy: yy + Math.sin(ang) * r * 0.6 + 120, dl: (xx / W) * 0.25 + rnd() * 0.1, o: orange, light: orange && d[i + 1] > 140 });
     }
   return pts;
 }
@@ -67,9 +68,8 @@ function brandDots(family: string, step: number): Dot[] {
 export function BrandDots({ label, rebuild }: { label: string; rebuild: string }) {
   const canvas = React.useRef<HTMLCanvasElement>(null);
   const state = React.useRef<{ pts: Dot[] | null; font: boolean; step: number; start: number | null; mx: number; my: number; seen: boolean }>({ pts: null, font: false, step: 7, start: null, mx: -9999, my: -9999, seen: false });
-  React.useEffect(() => {
-    const el = canvas.current;
-    if (!el) return;
+  // the canvas wakes after the visitor's first scroll; until then (and in a picture of the page taken at load) the CSS wordmark stands there
+  const setup = (el: HTMLCanvasElement): (() => void) => {
     const s = state.current;
     const io = typeof IntersectionObserver === "undefined" ? null : new IntersectionObserver((es) => void (s.seen = s.seen || es[0].isIntersecting));
     io?.observe(el);
@@ -108,7 +108,7 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
       const age = look.calm ? 99 : t - s.start;
       const ink = look.dark ? "244,242,238" : "30,30,36";
       for (const p of s.pts) {
-        const u = Math.max(0, Math.min(1, (age - p.dl) / 1.3));
+        const u = Math.max(0, Math.min(1, (age - p.dl) / 0.65));
         const e = 1 - (1 - u) ** 4;
         let x = p.sx + (p.x - p.sx) * e;
         let y = p.sy + (p.y - p.sy) * e;
@@ -146,6 +146,17 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
       el.removeEventListener("pointermove", move);
       el.removeEventListener("pointerleave", leave);
     };
+  };
+  React.useEffect(() => {
+    const el = canvas.current;
+    if (!el) return;
+    let stop: (() => void) | undefined;
+    const cancel = afterFirstScroll(() => void (stop = setup(el)));
+    return () => {
+      cancel();
+      stop?.();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- setup only reads refs
   }, []);
   const again = () => {
     if (isCalm()) return;

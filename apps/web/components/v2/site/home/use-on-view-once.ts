@@ -13,6 +13,15 @@ export type Phase = "final" | "ready" | "played";
 // a visitor who has not scrolled yet (and a capture of the whole page that never scrolls) sees every moment FINISHED: the scenes start only after the first scroll, so a picture of the page taken at load is never a half-played frame or an empty start state
 let moved = false;
 if (typeof window !== "undefined") window.addEventListener("scroll", () => void (moved = true), { once: true, passive: true });
+/** Runs `fn` after the visitor's first scroll (at once if they have scrolled already); returns the way to cancel. The demo's clock and the footer wordmark start with it, so a picture taken at load shows them whole. */
+export function afterFirstScroll(fn: () => void): () => void {
+  if (moved) {
+    fn();
+    return () => undefined;
+  }
+  window.addEventListener("scroll", fn, { once: true, passive: true });
+  return () => window.removeEventListener("scroll", fn);
+}
 const subscribe = (cb: () => void) => {
   window.addEventListener("scroll", cb, { once: true, passive: true });
   return () => window.removeEventListener("scroll", cb);
