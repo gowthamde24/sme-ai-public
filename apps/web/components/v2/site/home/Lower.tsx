@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Moon } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -89,7 +89,7 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
             </Link>
           </p>
         </div>
-        <TrustRow w={{ t1: t("h4.tr.1"), t2: t("h4.tr.2"), t3: t("h4.tr.3"), t4: t("h4.tr.4"), kyc: t("h4.m.kyc"), yes: t("h4.m.yes"), added: t("h4.m.added"), done: t("h4.m.done"), wait: t("h4.m.wait") }} />
+        <TrustRow moon={<Moon size={13} strokeWidth={2.4} />} w={{ t1: t("h4.tr.1"), t2: t("h4.tr.2"), t3: t("h4.tr.3"), t4: t("h4.tr.4"), kyc: t("h4.m.kyc"), yes: t("h4.m.yes"), added: t("h4.m.added"), done: t("h4.m.done"), wait: t("h4.m.wait") }} />
       </Section>
     </>
   );
