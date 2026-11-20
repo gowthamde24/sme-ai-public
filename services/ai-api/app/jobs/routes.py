@@ -147,7 +147,7 @@ def get_sample(pack: str, file: str, principal: PrincipalDep, jobs: JobsDep) -> 
 class GenerateIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    languages: list[Literal["te", "en", "hi", "kn"]] = Field(default=["te", "en"], min_length=1, max_length=4)
+    languages: list[Literal["en", "te", "hi", "kn"]] = Field(default=["en", "te"], min_length=1, max_length=4)
     limit: int = Field(default=10, ge=1, le=samples.MAX_PER_RUN)
     dry_run: bool = False
 

@@ -31,7 +31,7 @@ CAP_CHARS = 100_000   # Rs 300 at Rs 3 per 1,000 characters
 MAX_PER_RUN = 60
 PERSONA_SPEAKER = "ritu"   # the default voice ("female_warm", app/voicesample/service.py SPEAKERS)
 PACE, TEMPERATURE = 1.0, 0.7
-LANGUAGES = ("te", "en", "hi", "kn")
+LANGUAGES = ("en", "te", "hi", "kn")
 # invented words for the placeholders: no real business, no real person
 FILL: dict[str, dict[str, str]] = {
     "assistant": {"en": "Priya", "te": "ప్రియ", "hi": "प्रिया", "kn": "ಪ್ರಿಯಾ"},
