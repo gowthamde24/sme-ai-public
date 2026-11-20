@@ -1,8 +1,8 @@
-"""Job AI (owner, 10-11 Nov 2026): the "mention that I'm an AI assistant in the greeting" switch reaches the PHONE path of an INBOUND call.
+"""Job AI, rewritten 21 Nov 2026 (owner decision of 20 Nov): "Say 'AI assistant' when greeting" is a SETTING of the Talk training document (`say_ai_when_greeting`), DEFAULT OFF = the name only; the old per-workspace switch of ADR 0116 (read here
+as `store.mention_ai`) is no longer read by a call.
 
-Pinned: the switch is ON by default and whenever it cannot be read; OFF changes the opening only in a language whose plain opening a native speaker has reviewed (English first), every other language is LOCKED ON;
-the honest-answer rule is in the prompt whatever the switch says, and a plain opening adds a second, explicit rule; the call row stores whether the opening really said it was an AI; a call WE place
-always says it (the switch does not touch it, and the gate still refuses an opening without it)."""
+Pinned: OFF gives the name-only opening in every language, ON the standard opening with the AI words; the honest-answer rule is in the prompt whatever the setting says (and when the opening did not say it, an explicit second rule); the call row stores
+whether the opening really said it was an AI; a call WE place follows the setting too, and the gate asks for the words only when the setting is ON."""
 
 # ruff: noqa: E501
 
@@ -38,31 +38,31 @@ def opening(language: str, mention: bool, greeting: str | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the opening
-def test_the_assistant_always_says_it_is_an_ai_whatever_the_saved_switch_says() -> None:
-    """Owner, 18 Nov 2026: the switch is read and ignored. OFF gives the same standard opening as ON, which says it is an AI in the first sentence."""
+def test_off_is_the_name_only_and_on_is_the_standard_opening_in_english() -> None:
     standard = persona.INBOUND_OPENING["en"].replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT)
     assert opening("en", True) == standard and gate.has_ai_disclosure(standard)
-    assert opening("en", False) == standard and gate.has_ai_disclosure(opening("en", False))
+    assert opening("en", False) == "Hello, this is Priya from Padma Silks. How can I help you?" and not gate.has_ai_disclosure(opening("en", False))
 
 
-def test_a_trained_greeting_without_the_ai_mention_gets_it_first_even_when_the_switch_says_off() -> None:
+def test_a_trained_greeting_is_used_as_the_owner_wrote_it_when_off_and_gets_the_ai_words_first_when_on() -> None:
     filled = TRAINED.replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT)
     standard_first = persona.first_sentence(persona.INBOUND_OPENING["en"].replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT))
-    for mention in (True, False):
-        said = opening("en", mention, TRAINED)
-        assert said.startswith(standard_first) and said.endswith(filled)
+    assert opening("en", False, TRAINED) == filled
+    on = opening("en", True, TRAINED)
+    assert on.startswith(standard_first) and on.endswith(filled)
 
 
 @pytest.mark.parametrize("language", ["te", "hi", "kn", "ta", "ml", "mr"])
-def test_a_language_without_a_reviewed_plain_opening_stays_on_whatever_the_switch_says(language: str) -> None:
-    assert persona.mention_ai_applies(language, False) is True
-    assert opening(language, False) == opening(language, True) and gate.has_ai_disclosure(opening(language, False))
-    assert gate.has_ai_disclosure(persona.first_sentence(opening(language, False, "నమస్కారం, చెప్పండి.")))
+def test_every_language_has_a_name_only_opening_and_the_setting_decides(language: str) -> None:
+    assert persona.mention_ai_applies(language, False) is False and persona.mention_ai_applies(language, True) is True
+    assert opening(language, False) != opening(language, True) and not gate.has_ai_disclosure(opening(language, False)) and gate.has_ai_disclosure(opening(language, True))
+    assert "Padma Silks" in opening(language, False) and persona.DEFAULT_ASSISTANT in opening(language, False)
 
 
-def test_the_switch_never_touches_a_call_we_place() -> None:
-    placed = persona.opening_line("en", business="Padma Silks", assistant=None, customer=None, owner_line=None, inbound=False, mention_ai=False)
-    assert gate.has_ai_disclosure(placed), "a call WE place always says it is an AI"
+def test_a_call_we_place_follows_the_setting_too() -> None:
+    off = persona.opening_line("en", business="Padma Silks", assistant=None, customer=None, owner_line=None, inbound=False, mention_ai=False)
+    on = persona.opening_line("en", business="Padma Silks", assistant=None, customer=None, owner_line=None, inbound=False, mention_ai=True)
+    assert not gate.has_ai_disclosure(off) and gate.has_ai_disclosure(on)
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the model's rules
@@ -72,16 +72,16 @@ def prompt(mention: bool, language: str = "en") -> str:
 
 
 @pytest.mark.parametrize("mention", [True, False])
-def test_the_honest_answer_rule_is_in_the_prompt_whatever_the_switch_says(mention: bool) -> None:
+def test_the_honest_answer_rule_is_in_the_prompt_whatever_the_setting_says(mention: bool) -> None:
     system = prompt(mention)
     assert "you say so at once if asked; never claim to be a person, never deny being an AI" in system
     assert persona.HONEST_AI["en"] in system
 
 
-def test_the_prompt_never_tells_the_model_to_keep_quiet_about_being_an_ai() -> None:
-    for mention in (True, False):
-        for language in ("en", "te"):
-            assert "did NOT say that you are an AI" not in prompt(mention, language)
+def test_when_the_opening_did_not_say_it_the_prompt_says_to_answer_plainly_the_moment_the_customer_asks() -> None:
+    for language in ("en", "te"):
+        assert "did NOT say that you are an AI" in prompt(False, language) and "the moment the customer asks" in prompt(False, language)
+        assert "did NOT say that you are an AI" not in prompt(True, language)
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- from the store, the way the phone server prepares a call
@@ -105,43 +105,54 @@ def service(store: SwitchStore, language: str = "en") -> InboundService:
 
 
 @arun
-async def test_the_call_is_prepared_saying_it_is_an_ai_whatever_the_workspace_switch_is() -> None:
-    for switch in (True, False):
+async def test_the_call_is_prepared_with_the_name_only_by_default_and_the_old_switch_is_ignored() -> None:
+    for switch in (True, False, None, "maybe"):
         prepared = await _prepare_for(service(SwitchStore(switch)), voice(), TENANT, business="Padma Silks")
-        assert prepared.ai_disclosed is True and gate.has_ai_disclosure(prepared.text or "")
+        assert prepared.ai_disclosed is False and not gate.has_ai_disclosure(prepared.text or "") and "Padma Silks" in (prepared.text or ""), switch
 
 
 @arun
-async def test_off_on_a_locked_language_still_says_it_and_is_stored_as_disclosed() -> None:
-    prepared = await _prepare_for(service(SwitchStore(False), "te"), voice(), TENANT, business="Padma Silks")
-    assert prepared.ai_disclosed is True and gate.has_ai_disclosure(prepared.text or "")
+async def test_with_the_setting_on_the_call_says_it_and_is_stored_as_disclosed_in_every_language() -> None:
+    for language in ("en", "te", "hi", "kn"):
+        prepared = await _prepare_for(service(SwitchStore(False, {"say_ai_when_greeting": True}), language), voice(), TENANT, business="Padma Silks")
+        assert prepared.ai_disclosed is True and gate.has_ai_disclosure(prepared.text or ""), language
 
 
 @arun
-async def test_an_unreadable_or_unclear_switch_is_on() -> None:
-    for store in (SwitchStore(raises=True), SwitchStore(None), SwitchStore("maybe")):
-        prepared = await _prepare_for(service(store), voice(), TENANT, business="Padma Silks")
-        assert prepared.ai_disclosed is True and gate.has_ai_disclosure(prepared.text or "")
+async def test_off_is_the_name_only_in_a_language_other_than_english_and_is_stored_as_not_disclosed() -> None:
+    prepared = await _prepare_for(service(SwitchStore(True, {"say_ai_when_greeting": False}), "te"), voice(), TENANT, business="Padma Silks")
+    assert prepared.ai_disclosed is False and not gate.has_ai_disclosure(prepared.text or "")
 
 
 @arun
-async def test_a_trained_greeting_without_the_mention_still_says_it_when_the_switch_is_off() -> None:
-    for switch in (True, False):
-        prepared = await _prepare_for(service(SwitchStore(switch, {"greeting": {"en": TRAINED}})), voice(), TENANT, business="Padma Silks")
-        assert prepared.ai_disclosed is True and gate.has_ai_disclosure(persona.first_sentence(prepared.text or ""))
+async def test_an_unreadable_training_document_is_the_default_off() -> None:
+    prepared = await _prepare_for(service(SwitchStore(raises=True)), voice(), TENANT, business="Padma Silks")
+    assert prepared.ai_disclosed is False
 
 
-# ---------------------------------------------------------------------------------------------------------------------------------- outbound is untouched; the store reads the database door
 @arun
-async def test_a_call_we_placed_ignores_the_switch_and_the_gate_still_requires_the_mention() -> None:
+async def test_a_trained_greeting_is_spoken_as_written_when_off_and_gets_the_words_first_when_on() -> None:
+    off = await _prepare_for(service(SwitchStore(True, {"greeting": {"en": TRAINED}})), voice(), TENANT, business="Padma Silks")
+    assert off.ai_disclosed is False and "Namaste" in (off.text or "")
+    on = await _prepare_for(service(SwitchStore(False, {"greeting": {"en": TRAINED}, "say_ai_when_greeting": True})), voice(), TENANT, business="Padma Silks")
+    assert on.ai_disclosed is True and gate.has_ai_disclosure(persona.first_sentence(on.text or ""))
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------- a call we place follows the setting; the gate asks for the words only when it is ON
+@arun
+async def test_a_call_we_placed_follows_the_setting_and_the_gate_asks_only_when_it_is_on() -> None:
     out = OutboundCall(row_id=uuid.uuid4(), language="en", purpose="visit_reminder", goal=None, opening_line=None)
-    prepared = await _prepare_for(service(SwitchStore(False)), voice(), TENANT, business="Padma Silks", outbound=out)
-    assert prepared.ai_disclosed is True and gate.has_ai_disclosure(prepared.text or "")
-    no_mention = gate.OutboundFacts(number="+919876543210", purpose="visit_reminder", now=__import__("datetime").datetime(2026, 11, 10, 4, 30, tzinfo=__import__("datetime").timezone.utc),
-                                    hours=gate.Hours(days=frozenset(range(7)), from_minute=gate.WINDOW_FROM_MINUTE, to_minute=gate.WINDOW_TO_MINUTE), approval="task", approval_valid=True,
-                                    can_contact=True, dnd="no", opening_line="Hello, this is Priya from Padma Silks.", active_calls_total=0)
-    refused = gate.check_outbound(gate.Settings(mode="sandbox", sandbox_numbers=frozenset({"+919876543210"}), max_concurrent=1, outbound=True), no_mention)
+    off = await _prepare_for(service(SwitchStore(True)), voice(), TENANT, business="Padma Silks", outbound=out)
+    assert off.ai_disclosed is False and not gate.has_ai_disclosure(off.text or "")
+    on = await _prepare_for(service(SwitchStore(False, {"say_ai_when_greeting": True})), voice(), TENANT, business="Padma Silks", outbound=out)
+    assert on.ai_disclosed is True and gate.has_ai_disclosure(on.text or "")
+    facts = dict(number="+919876543210", purpose="visit_reminder", now=__import__("datetime").datetime(2026, 11, 10, 4, 30, tzinfo=__import__("datetime").timezone.utc),
+                 hours=gate.Hours(days=frozenset(range(7)), from_minute=gate.WINDOW_FROM_MINUTE, to_minute=gate.WINDOW_TO_MINUTE), approval="task", approval_valid=True, can_contact=True, dnd="no",
+                 opening_line="Hello, this is Priya from Padma Silks.", active_calls_total=0)
+    settings = gate.Settings(mode="sandbox", sandbox_numbers=frozenset({"+919876543210"}), max_concurrent=1, outbound=True)
+    refused = gate.check_outbound(settings, gate.OutboundFacts(**facts, say_ai=True))
     assert isinstance(refused, gate.Refused) and refused.reason == "no_ai_disclosure"
+    assert isinstance(gate.check_outbound(settings, gate.OutboundFacts(**facts, say_ai=False)), gate.Allowed)
 
 
 class Rpc:

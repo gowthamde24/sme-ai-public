@@ -37,6 +37,7 @@ TEST_PURPOSE = "visit_reminder"   # a transactional purpose: the test call is no
 TEST_GOAL = ("This is a TEST call placed by the owner of the business to check the phone line and the voice. Greet them, ask whether the voice is clear, answer briefly if they say something, and say a short goodbye "
              "when they are done. Do not offer anything, do not ask for anything.")
 TEST_OPENING = {"en": "Hello, this is {assistant}, the AI assistant of {business}. This is a test call to check the phone line. Can you hear me clearly?"}
+TEST_OPENING_PLAIN = {"en": "Hello, this is {assistant} from {business}. This is a test call to check the phone line. Can you hear me clearly?"}
 GOAL_FRAME = ("This call was set up by the owner of the business to a person the owner named, as a rehearsal of a real call. The goal, in the owner's own words: {goal} "
               "You cannot send, book, note, pass on or arrange anything on this call, nobody will call the person afterwards and no number or detail is shared with anyone; never promise otherwise. Never state a price. Say a short goodbye when you are done.")
 MAX_GOAL = 400
@@ -47,12 +48,16 @@ def frame_goal(goal: str) -> str:
     return GOAL_FRAME.format(goal=" ".join(goal.split())[:MAX_GOAL])
 
 
-def opening_for(kind: str, language: str, tone: str = tone_mod.DEFAULT_TONE, introduce: object | None = None) -> str | None:
-    """The words the call opens with (placeholders {assistant} {business}); every one says it is an AI. A TEST call is English; a goal or task call opens in its language, in its tone, with the plain 'is this a good time' line."""
+def opening_for(kind: str, language: str, tone: str = tone_mod.DEFAULT_TONE, introduce: object | None = None, say_ai: bool = True) -> str | None:
+    """The words the call opens with (placeholders {assistant} {business}). `say_ai` is the RESOLVED setting "Say 'AI assistant' when greeting" (app/opening/greeting.py): true = "the AI assistant of {business}", false = the name only. A TEST call
+    is English; a goal or task call opens in its language, in its tone, with the plain 'is this a good time' line."""
+    from app.opening import greeting
     from app.tasks.dialer import OPENERS
 
     if kind == "test":
-        return TEST_OPENING["en"]
+        return (TEST_OPENING if say_ai else TEST_OPENING_PLAIN)["en"]
+    if not say_ai:
+        return tone_mod.opener(language, tone, introduce, say_ai=False) or greeting.plain_outbound(language)
     return tone_mod.opener(language, tone, introduce) or OPENERS.get(language, OPENERS["en"])
 
 
@@ -228,7 +233,7 @@ class PlivoOutbound:
                 return number
         return None
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, approval_kind: gate.Approval | None = None, approval_ref: uuid.UUID | None = None, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, person_name: str | None = None, person_gender: str | None = None, questions: tuple[dict[str, str], ...] = ()) -> PlacedCall:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, approval_kind: gate.Approval | None = None, approval_ref: uuid.UUID | None = None, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, person_name: str | None = None, person_gender: str | None = None, questions: tuple[dict[str, str], ...] = (), say_ai: bool = True) -> PlacedCall:
         language = language if language in LANGUAGES else "en"
         if goal and kind == "test":
             kind = "goal"   # the owner typed what the call is for: not the plain line-check
@@ -265,7 +270,7 @@ class PlivoOutbound:
                 approved = self._repo.approved(token, tenant_id, approval_kind, approval_ref, number)
             except Exception as exc:  # noqa: BLE001 - an answer we could not get is a refusal (a refused row with its closed word), never an escape into the caller
                 log.warning("plivo_outbound approval not read: %s", exc.__class__.__name__)
-        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"), proof=proof, prospect=prospect, approval=approval_kind if approved else None, facts=facts, facts_unread=facts_unread)
+        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"), proof=proof, prospect=prospect, approval=approval_kind if approved else None, facts=facts, facts_unread=facts_unread, say_ai=say_ai)
         if reason is not None:
             self._repo.begin(token, tenant_id, purpose, language, refuse_reason=reason)   # the refusal is recorded, with its closed word
             free = (line or {}).get("free_minutes")
@@ -307,13 +312,13 @@ class PlivoOutbound:
         log.info("plivo_outbound cancelled call_fp=%s", str(call_id)[:8])
         return "cancelled"
 
-    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE, approval: gate.Approval | None = None, billing_ok: bool = True, proof: bool | None = None, prospect: bool = False, facts: dict[str, Any] | None = None, facts_unread: bool = False) -> str | None:
+    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE, approval: gate.Approval | None = None, billing_ok: bool = True, proof: bool | None = None, prospect: bool = False, facts: dict[str, Any] | None = None, facts_unread: bool = False, say_ai: bool = True) -> str | None:
         if number is None:
             return "bad_number"
         if not have_line:
             return "no_such_line"
         own = self._gate.mode == "sandbox" and number in self._gate.sandbox_numbers   # an owner's own phone: the only consent a SANDBOX call has (a test call to oneself). `live` has no consent path yet: it refuses (no_consent)
-        opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for(kind, language, tone), inbound=False)
+        opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for(kind, language, tone, None, say_ai), inbound=False, mention_ai=say_ai)
         hours = gate.Hours(days=ALL_DAYS, from_minute=gate.WINDOW_FROM_MINUTE, to_minute=gate.WINDOW_TO_MINUTE)
         extra: dict[str, Any] = {}
         if facts is not None and not own:
@@ -324,7 +329,7 @@ class PlivoOutbound:
                      "calls_to_contact_this_week": int(facts.get("weekly_calls") or 0), "weekly_limit": max(1, int(facts.get("weekly_limit") or 1)), "calls_today": int(facts.get("calls_today") or 0),
                      "minutes_today": float(facts.get("minutes_today") or 0), "holidays": tuple(str(h) for h in (facts.get("holidays") or [])), "active_calls_to_number": int(facts.get("active_to_number") or 0)}
         out_facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=hours,
-                                       approval=approval, approval_valid=True, **{"can_contact": own, "dnd": "no" if own else "unknown", **extra}, opening_line=opening, active_calls_total=self._active(),
+                                       approval=approval, approval_valid=True, **{"can_contact": own, "dnd": "no" if own else "unknown", **extra}, opening_line=opening, say_ai=say_ai, active_calls_total=self._active(),
                                        billing_ok=billing_ok, proof_of_request=proof, prospect=prospect)
         decision = gate.check_outbound(self._gate, out_facts)
         return decision.reason if isinstance(decision, gate.Refused) else None

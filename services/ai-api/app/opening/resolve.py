@@ -14,7 +14,7 @@ from typing import Literal
 
 from app.auth.deps import Runtime, TenantContext
 from app.errors import ApiError
-from app.opening import render
+from app.opening import greeting, render
 from app.workspace.repository import WorkspaceRepository
 
 NAME_OK = re.compile(r"^[^<>{}@/\\|\x00-\x1f\x7f]{1,24}$")
@@ -73,6 +73,24 @@ def trained_greeting(runtime: Runtime, ctx: TenantContext, language: str) -> str
     return text.strip() if isinstance(text, str) and render.braces_ok(text) else None
 
 
+def talk_training_doc(runtime: Runtime, ctx: TenantContext) -> dict[str, object] | None:
+    """The saved Talk training document (the member's own read), or None: nothing saved, no service, or any failure."""
+    repo = getattr(runtime, "talk_training", None)
+    if repo is None:
+        return None
+    try:
+        row = repo.get(ctx.principal.token, ctx.tenant.id)
+    except Exception:   # noqa: BLE001 - an unreadable setting is the default (name only)
+        return None
+    doc = row.get("doc") if isinstance(row, dict) else None
+    return doc if isinstance(doc, dict) else None
+
+
+def say_ai_setting(runtime: Runtime, ctx: TenantContext, job_override: str | None = None) -> bool:
+    """Does the greeting say "I'm an AI assistant"? The business setting (default OFF) with the job's override: app/opening/greeting.py. Previews, the test call and "Hear it" read it here; a call reads the same document."""
+    return greeting.resolved_from(talk_training_doc(runtime, ctx), job_override)
+
+
 def resolve(
     runtime: Runtime,
     ctx: TenantContext,
@@ -89,8 +107,7 @@ def resolve(
     """`row` is the already-read opening state of the workspace (to resolve several languages with one read)."""
     state = row if row is not None else _repo(runtime).opening(ctx.principal.token, ctx.tenant.id)
     lines = state.get("lines", [])
-    overrides = state.get("campaign_overrides", [])
-    mention = True if mention_ai is not None else render.pick_mention(bool(state.get("mention_ai", True)), overrides if isinstance(overrides, list) else [], campaign_id)
+    mention = mention_ai if mention_ai is not None else say_ai_setting(runtime, ctx)   # 20 Nov 2026: the Talk training setting `say_ai_when_greeting` (default OFF), the same value a call reads
     rows = lines if isinstance(lines, list) else []
     stored = render.pick_line(rows, language, campaign_id)
     campaign = render.campaign_line(rows, language, campaign_id)

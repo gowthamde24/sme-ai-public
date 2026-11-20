@@ -73,6 +73,18 @@ def guard_reply(customer_turn: str, planned_reply: str, language: str, business:
     return planned_reply
 
 
+def ensure_honest(customer_turn: str, text: str, gloss_en: str, language: str, business: str) -> tuple[str, str]:
+    """For a written reply (WhatsApp): when the customer's turn asks whether this is a person, a robot or an AI, the reply WE send says the truth, whatever the model planned and whatever the greeting setting is.
+    A planned reply that claims to be human is replaced by the honest answer; one that does not say it is an AI gets the honest answer in front of it; one that already says so is left as it is. (text, gloss_en)."""
+    if not is_identity_question(customer_turn):
+        return text, gloss_en
+    honest, honest_en = honest_answer(language, business), honest_answer("en", business)
+    if claims_to_be_human(gloss_en) or claims_to_be_human(text):
+        return honest, honest_en
+    says = bool(re.search(r"\bAI\b|artificial|ఏఐ|एआई|ಎಐ|ஏஐ|എഐ", text))
+    return (text if says else f"{honest} {text}".strip()), (gloss_en if re.search(r"\bAI\b", gloss_en) else f"{honest_en} {gloss_en}".strip())
+
+
 _CLAIMS_HUMAN = re.compile(r"\b(i\s*(am|'m)\s+(a\s+)?(real|human|person|not\s+a\s+(robot|bot|machine|ai))|i'?m\s+not\s+(an?\s+)?(ai|robot|bot|machine)|no,?\s+i\s*(am|'m)\s+(a\s+)?(human|real))\b", re.IGNORECASE)
 
 

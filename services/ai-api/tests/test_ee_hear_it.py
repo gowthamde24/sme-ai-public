@@ -73,25 +73,23 @@ def test_a_line_with_no_placeholders_is_spoken_word_for_word() -> None:
     client, _, texts = world()
     line = "Welcome to our shop. We are open until seven every evening."
     r = post(client, {"language": "en", "text": line})
-    spoken = line + " I'm an AI assistant."   # the assistant ALWAYS says it is an AI (owner, 18 Nov 2026)
+    spoken = line   # the default setting is OFF: the Owner's words as they are (owner, 20 Nov 2026)
     assert r.json()["spoken_text"] == spoken and [t for _, t in texts] == [spoken]
 
 
-def test_the_ai_sentence_is_always_there_whatever_the_switch_says_exactly_as_a_call_hears_it() -> None:
-    client, _, texts = world(mention_ai=False)
+def test_the_ai_sentence_follows_the_setting_exactly_as_a_call_hears_it() -> None:
+    client, _, texts = world(mention_ai=True)
     line = "Hello {customer}, this is {assistant} from {business}. Do you have a minute?"
     off = post(client, {"language": "en", "text": line}).json()["spoken_text"]
     on = post(client, {"language": "en", "text": line, "mention_ai": True}).json()["spoken_text"]
-    assert "AI" in off and "AI" in on and on == off, "the switch is read and ignored: a call always says it is an AI (owner, 18 Nov 2026)"
-    assert [t for _, t in texts] == [off], "the same words are made once (the second answer is the cached sound)"
-    saved_on_client, _, _ = world(mention_ai=True)
-    assert "AI" in post(saved_on_client, {"language": "en", "text": line}).json()["spoken_text"], "null = the workspace's saved switch"
+    assert "AI" not in off and "AI assistant" in on and off != on, "null = the saved setting, which is OFF until the owner turns it on (owner, 20 Nov 2026); the screen can try ON before saving"
+    assert [t for _, t in texts] == [off, on]
 
 
 def test_without_a_text_the_saved_line_is_spoken_and_the_get_reports_the_words_in_a_header() -> None:
     client, _, texts = world(saved_line="Saved line for this shop, in one go.")
     r = post(client, {"language": "en"})
-    said = "Saved line for this shop, in one go. I'm an AI assistant."   # the AI sentence is always added (owner, 18 Nov 2026)
+    said = "Saved line for this shop, in one go."   # the default setting is OFF: no AI sentence added (owner, 20 Nov 2026)
     assert r.json()["spoken_text"] == said
     g = client.get(f"{URL}?language=en", headers=auth("a_owner"))
     assert g.status_code == 200 and g.content[:4] == b"RIFF" and unquote(g.headers["x-spoken-text"]) == said
@@ -185,7 +183,7 @@ def test_a_name_is_spoken_only_when_the_owner_set_one_and_the_default_line_never
     saved = client.put(f"{BASE}", json={**settings_data.defaults_for("textiles"), "name": "Priya"}, headers=auth("a_owner"))
     assert saved.status_code == 200, saved.text
     after = post(client, {"language": "en"}).json()["spoken_text"]
-    assert after == f"Hello, this is Priya, the AI assistant of {TENANT_A.name}. I'm calling about your enquiry. Is this a good time to talk?"   # (this fake workspace has the AI switch off: ignored, always said)
+    assert after == f"Hello, this is Priya from {TENANT_A.name}. I'm calling about your enquiry. Is this a good time to talk?"   # (the default setting is OFF: the name only)
     assert post(client, {"language": "te"}).json()["spoken_text"].startswith("నమస్కారం అండీ, నేను Priya,")
 
 
@@ -195,4 +193,4 @@ def test_an_edited_line_that_says_assistant_in_an_unnamed_workspace_speaks_a_phr
     for lang, text, phrase in (("en", shown, "your assistant"), ("te", "నమస్కారం, నేను {assistant}, {business} నుంచి మాట్లాడుతున్నాను.", "మీ అసిస్టెంట్")):
         spoken = post(client, {"language": lang, "text": text}).json()["spoken_text"]
         assert phrase in spoken and TENANT_A.name in spoken and "  " not in spoken and "{" not in spoken, lang
-    assert texts[0][1] == f"Hello, this is your assistant of {TENANT_A.name}. Is this a good time? I'm an AI assistant."
+    assert texts[0][1] == f"Hello, this is your assistant of {TENANT_A.name}. Is this a good time?"

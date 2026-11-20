@@ -16,8 +16,8 @@ def test_the_owner_line_is_filled_and_the_ai_words_are_always_added_whatever_the
     line = "Hi {customer}, {assistant} here from {business}. Got a minute?"
     on = render.compose_opening("en", owner_line=line, mention_ai=True, assistant="Vijaya", business="Sri Sai Homes", customer="Ravi")
     off = render.compose_opening("en", owner_line=line, mention_ai=False, assistant="Vijaya", business="Sri Sai Homes", customer="Ravi")
-    assert off == on == "Hi Ravi, Vijaya here from Sri Sai Homes. Got a minute? I'm an AI assistant.", "OFF is ignored (owner, 18 Nov 2026): the assistant always says it is an AI"
-    assert render.says_ai(on) and render.says_ai(off)
+    assert on == "Hi Ravi, Vijaya here from Sri Sai Homes. Got a minute? I'm an AI assistant." and off == "Hi Ravi, Vijaya here from Sri Sai Homes. Got a minute?", "the Owner's own words as they are when the setting is OFF (owner, 20 Nov 2026)"
+    assert render.says_ai(on) and not render.says_ai(off)
     already = render.compose_opening("en", owner_line="Hello {customer}, I'm {assistant}, the AI assistant of {business}.", mention_ai=True, assistant="Vijaya", business="X Ltd", customer="Ravi")
     assert already.count("AI assistant") == 1, "a line that already says it is not told twice"
 
@@ -31,16 +31,17 @@ def test_the_defaults_in_every_language_with_and_without_the_disclosure_name_nob
     for lang in render.LANGUAGES:
         plain = render.compose_opening(lang, owner_line=None, mention_ai=False, assistant=None, business="Sri Sai Homes", customer="Ravi")
         said = render.compose_opening(lang, owner_line=None, mention_ai=True, assistant=None, business="Sri Sai Homes", customer="Ravi")
-        assert "Sri Sai Homes" in plain and "{" not in plain and render.says_ai(plain) and "  " not in plain and " ," not in plain, lang
+        assert "Sri Sai Homes" in plain and "{" not in plain and not render.says_ai(plain) and "  " not in plain and " ," not in plain, lang
         assert render.says_ai(said) and "Sri Sai Homes" in said and "{" not in said, lang
         for fixed in ("Vani", "Vijaya", "Vijay", "Ravi"):
             assert fixed not in plain and fixed not in said, (lang, fixed)
-        assert plain == said and plain == render.default_line(lang, True).replace("{business}", "Sri Sai Homes"), "the call speaks exactly the default template, with the AI words: the switch is ignored"
+        assert plain == render.default_line(lang, False).replace("{business}", "Sri Sai Homes") and said == render.default_line(lang, True).replace("{business}", "Sri Sai Homes"), "the call speaks exactly the default template, with or without the AI words as the setting says"
 
 
 def test_the_four_main_languages_follow_the_owners_wording_and_a_name_appears_only_when_set() -> None:
     te = render.compose_opening("te", owner_line=None, mention_ai=False, assistant=None, business="X Silks")
-    assert te == "నమస్కారం అండీ, నేను X Silks నుంచి AI assistant ని మాట్లాడుతున్నాను. మీ ఎంక్వైరీ గురించి కాల్ చేశాను, ఇప్పుడు మాట్లాడొచ్చా?", "the switch's OFF is ignored: the AI mention is always there"
+    assert te == "నమస్కారం అండీ, X Silks నుంచి మాట్లాడుతున్నాను. మీ ఎంక్వైరీ గురించి కాల్ చేశాను, ఇప్పుడు మాట్లాడొచ్చా?", "OFF: the name only"
+    assert render.compose_opening("te", owner_line=None, mention_ai=True, assistant=None, business="X Silks") == "నమస్కారం అండీ, నేను X Silks నుంచి AI assistant ని మాట్లాడుతున్నాను. మీ ఎంక్వైరీ గురించి కాల్ చేశాను, ఇప్పుడు మాట్లాడొచ్చా?"
     for lang in ("en", "te", "hi", "kn"):
         named = render.compose_opening(lang, owner_line=None, mention_ai=True, assistant="Meena", business="X Silks")
         unnamed = render.compose_opening(lang, owner_line=None, mention_ai=True, assistant=None, business="X Silks")
@@ -53,7 +54,7 @@ def test_the_screens_defaults_are_the_very_words_a_call_speaks() -> None:
     defaults = client.get(f"{BASE}/opening-line", headers=h).json()["defaults"]
     for lang in ("en", "te", "hi", "kn"):
         spoken = client.get(f"{BASE}/opening-line/preview?language={lang}", headers=h).json()
-        assert spoken["text"] == defaults[lang]["with_ai"].replace("{business}", TENANT_A.name), lang
+        assert spoken["text"] == defaults[lang]["without_ai"].replace("{business}", TENANT_A.name), lang   # (the default setting is OFF: the name only)
         assert "{assistant}" not in defaults[lang]["with_ai"] and "{customer}" not in defaults[lang]["without_ai"], "no name and no customer are needed for the default"
 
 
@@ -63,7 +64,7 @@ def test_validity_and_picking_the_line_and_the_switch_for_a_campaign() -> None:
     lines: list[dict[str, Any]] = [{"language": "en", "campaign_id": None, "text": "WORKSPACE line one"}, {"language": "en", "campaign_id": camp, "text": "CAMPAIGN line one"}]
     assert render.pick_line(lines, "en", None) == "WORKSPACE line one" and render.pick_line(lines, "en", camp) == "CAMPAIGN line one"
     assert render.pick_line(lines, "en", str(uuid.uuid4())) == "WORKSPACE line one" and render.pick_line(lines, "te", None) is None
-    assert render.pick_mention(True, [{"campaign_id": camp, "mention_ai": False}], camp) is True and render.pick_mention(False, [], None) is True and render.pick_mention(True, [], camp) is True
+    assert render.pick_mention(True, [{"campaign_id": camp, "mention_ai": False}], camp) is True and render.pick_mention(False, [], None) is False and render.pick_mention(True, [], camp) is True
 
 
 # ------------------------------------------------------------------------------------------------ honesty
@@ -155,15 +156,15 @@ def test_the_preview_is_the_greeting_a_customer_hears_with_the_live_business_nam
     h = auth("a_owner")
     q = f"{BASE}/opening-line/preview?language=en&customer=Ravi"
     first = client.get(q, headers=h).json()
-    assert first["says_ai"] is True and first["mention_ai"] is True and TENANT_A.name in first["text"]
+    assert first["says_ai"] is False and first["mention_ai"] is False and TENANT_A.name in first["text"], "the default setting is OFF: the name only"
     client.put(f"{BASE}/opening-line", json={"language": "en", "text": "Hi {customer}, {assistant} from {business} here."}, headers=h)
     client.put(f"{BASE}/mention-ai", json={"mention_ai": False}, headers=h)
     off = client.get(q, headers=auth("a_sales")).json()
-    assert off["text"] == f"Hi Ravi, your assistant from {TENANT_A.name} here. I'm an AI assistant." and off["says_ai"] is True and off["mention_ai"] is True, "the switch is ignored (always on); no name was set: the phrase stands where the name would, no name is made up and no hole is spoken"
+    assert off["text"] == f"Hi Ravi, your assistant from {TENANT_A.name} here." and off["says_ai"] is False and off["mention_ai"] is False, "the old switch is not read any more; no name was set: the phrase stands where the name would, no name is made up and no hole is spoken"
     camp = str(uuid.uuid4())
     assert client.put(f"{BASE}/mention-ai", json={"mention_ai": True, "campaign_id": camp}, headers=h).status_code == 200
     on = client.get(q + f"&campaign_id={camp}", headers=h).json()
-    assert on["says_ai"] is True and on["text"].startswith("Hi Ravi, your assistant from") and on["text"].endswith("I'm an AI assistant.")
+    assert on["says_ai"] is False and on["text"].startswith("Hi Ravi, your assistant from"), "a campaign's old switch is not read either"
     assert client.put(f"{BASE}/mention-ai", json={"mention_ai": None}, headers=h).status_code == 422 and repo.row["mention_ai"] is False
 
 
