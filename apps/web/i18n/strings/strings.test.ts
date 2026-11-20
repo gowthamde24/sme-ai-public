@@ -28,7 +28,7 @@ describe("string store: four languages", () => {
     });
     it(`${name}: the other languages use their own script`, () => {
       const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$|v3\.(day\.\d\.time)$|h2\.plans\.ld$|pp\.(gst|pop|included|setup\.prio)$|h3\.(phone\.(biz|calllog|msg)|how\.f\.(1\.v|[23])|built\.[234]\.t|src\.\d\.[td])$|h2\.finder\.(call|pin\.\d\.what)$)/; // (Latin on purpose: plan names, source names, kinds of school, the phone's own labels) // intentionally Latin or numeric (role.main.t is the product name "Your assistant"; IndiaMART and JustDial are other companies' names)
+      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$|v3\.(day\.\d\.time)$|h2\.plans\.ld$|pp\.(gst|pop|included|setup\.prio)$|h3\.(phone\.(biz|calllog|msg)|how\.f\.(1\.v|[23])|built\.[234]\.t|src\.\d\.[td])$|h2\.out\.2\.t|h2\.finder\.(call|pin\.\d\.what)$)/; // (Latin on purpose: plan names, source names, kinds of school, the phone's own labels) // intentionally Latin or numeric (role.main.t is the product name "Your assistant"; IndiaMART and JustDial are other companies' names)
       for (const lang of ["te", "hi", "kn"] as const) {
         const missing = keys.filter((k) => !exempt.test(k) && !script[lang].test(dicts[lang][k]));
         expect(missing, `${name}:${lang}`).toEqual([]);

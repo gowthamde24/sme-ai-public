@@ -559,7 +559,7 @@
  },
  "price.fair.1": {
   "en": "A usage meter shows today's and this month's use.",
-  "te": "యూసేజ్ మీటర్ ఈ రోజు, ఈ నెల వాడకాన్ని చూపిస్తుంది.",
+  "te": "యూసేజ్ మీటర్ ఈరోజు, ఈ నెల వాడకాన్ని చూపిస్తుంది.",
   "hi": "यूसेज मीटर आज और इस महीने का इस्तेमाल दिखाता है।",
   "kn": "ಯೂಸೇಜ್ ಮೀಟರ್ ಇಂದು, ಈ ತಿಂಗಳ ಬಳಕೆ ತೋರಿಸುತ್ತದೆ.",
   "status": {
@@ -6355,7 +6355,7 @@
  },
  "h2.out.2.t": {
   "en": "Quote ready",
-  "te": "కోట్ సిద్ధం",
+  "te": "Quote ready",
   "hi": "कोटेशन तैयार",
   "kn": "ಕೋಟ್ ಸಿದ್ಧ",
   "status": {
@@ -7323,7 +7323,7 @@
  },
  "h2.finder.title": {
   "en": "Coming soon: it also goes looking for your next customers.",
-  "te": "త్వరలో: మీ తర్వాతి కస్టమర్ల కోసం అది వెతుకుతుంది కూడా.",
+  "te": "త్వరలో: మీ తర్వాతి customers కోసం అది వెతుకుతుంది కూడా.",
   "hi": "जल्द आ रहा है: यह आपके अगले ग्राहक भी ढूँढने निकलेगी।",
   "kn": "ಶೀಘ್ರದಲ್ಲೇ: ಇದು ನಿಮ್ಮ ಮುಂದಿನ ಗ್ರಾಹಕರನ್ನೂ ಹುಡುಕುತ್ತದೆ.",
   "status": {
@@ -7334,7 +7334,7 @@
  },
  "h2.finder.sub": {
   "en": "In early access. Tell the Lead Finder who buys from you. It will scan Google Maps around you, check every business it finds, and decide who is worth a call and who needs your say first. Businesses only, never families.",
-  "te": "ఎర్లీ యాక్సెస్‌లో ఉంది. మీ దగ్గర ఎవరు కొంటారో లీడ్ ఫైండర్‌కి చెప్పండి. అది మీ చుట్టూ గూగుల్ మ్యాప్స్‌లో వెతుకుతుంది, దొరికిన ప్రతి వ్యాపారాన్ని చూస్తుంది, ఎవరికి కాల్ చేయాలో, ఎవరి గురించి ముందు మిమ్మల్ని అడగాలో నిర్ణయిస్తుంది. వ్యాపారాలు మాత్రమే, కుటుంబాలు ఎప్పుడూ కాదు.",
+  "te": "Early access లో ఉంది. మీ దగ్గర ఎవరు కొంటారో Lead Finder కి చెప్పండి. అది మీ చుట్టూ Google Maps లో వెతుకుతుంది, దొరికిన ప్రతి business ని చూస్తుంది, ఎవరికి call చేయాలో, ఎవరి గురించి ముందు మిమ్మల్ని అడగాలో నిర్ణయిస్తుంది. Businesses మాత్రమే, families ఎప్పుడూ కాదు.",
   "hi": "अर्ली ऐक्सेस में। लीड फ़ाइंडर को बताइए कि आपसे कौन खरीदता है। यह आपके आसपास गूगल मैप्स में खोजेगी, मिले हर कारोबार को जाँचेगी, और तय करेगी कि किसे कॉल करना है और किसके लिए पहले आपसे पूछना है। सिर्फ़ कारोबार, परिवार कभी नहीं।",
   "kn": "ಅರ್ಲಿ ಆಕ್ಸೆಸ್‌ನಲ್ಲಿದೆ. ನಿಮ್ಮಿಂದ ಯಾರು ಕೊಳ್ಳುತ್ತಾರೆ ಎಂದು ಲೀಡ್ ಫೈಂಡರ್‌ಗೆ ಹೇಳಿ. ಅದು ನಿಮ್ಮ ಸುತ್ತ ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್‌ನಲ್ಲಿ ಹುಡುಕುತ್ತದೆ, ಸಿಕ್ಕ ಪ್ರತಿ ವ್ಯಾಪಾರವನ್ನು ನೋಡುತ್ತದೆ, ಯಾರಿಗೆ ಕರೆ ಮಾಡಬೇಕು, ಯಾರ ಬಗ್ಗೆ ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳಬೇಕು ಎಂದು ತೀರ್ಮಾನಿಸುತ್ತದೆ. ವ್ಯಾಪಾರಗಳು ಮಾತ್ರ, ಕುಟುಂಬಗಳು ಎಂದಿಗೂ ಇಲ್ಲ.",
   "status": {
@@ -7367,7 +7367,7 @@
  },
  "h2.finder.checked": {
   "en": "Checked {n} places. {worth} worth contacting.",
-  "te": "{n} places చూసింది. {worth} ని contact చేయొచ్చు.",
+  "te": "{n} places చూసింది. {worth} places contact చేయొచ్చు.",
   "hi": "{n} places देखे। {worth} को contact करना ठीक है।",
   "kn": "{n} places ನೋಡಿದೆ. {worth} ಅನ್ನು contact ಮಾಡಬಹುದು.",
   "status": {
@@ -7477,7 +7477,7 @@
  },
  "h2.finder.pin.2.why": {
   "en": "Large intake, open today, well reviewed.",
-  "te": "పెద్ద intake, ఈ రోజు తెరిచి ఉంది, మంచి reviews.",
+  "te": "పెద్ద intake, ఈరోజు తెరిచి ఉంది, మంచి reviews.",
   "hi": "बड़ा intake, आज खुला है, अच्छे reviews।",
   "kn": "ದೊಡ್ಡ intake, ಇಂದು ತೆರೆದಿದೆ, ಒಳ್ಳೆಯ reviews.",
   "status": {
@@ -7576,7 +7576,7 @@
  },
  "h2.meet.live": {
   "en": "Today at 7:00 pm, the stand-up is live",
-  "te": "ఈ రోజు సాయంత్రం 7:00కి, స్టాండ్-అప్ లైవ్",
+  "te": "ఈరోజు సాయంత్రం 7:00కి, స్టాండ్-అప్ లైవ్",
   "hi": "आज शाम 7:00 बजे, स्टैंड-अप लाइव",
   "kn": "ಇಂದು ಸಂಜೆ 7:00ಕ್ಕೆ, ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ಲೈವ್",
   "status": {
@@ -8533,7 +8533,7 @@
  },
  "h2.faq.2.a": {
   "en": "Anywhere you get them today: ads, marketplaces like IndiaMART and JustDial, your website, WhatsApp, missed calls, emails, sheets, or ones you type in yourself.",
-  "te": "ఈ రోజు మీకు ఎక్కడి నుంచి వస్తున్నాయో అక్కడి నుంచే: యాడ్స్, ఇండియామార్ట్, జస్ట్‌డయల్ లాంటి మార్కెట్‌ప్లేస్‌లు, మీ వెబ్‌సైట్, వాట్సాప్, మిస్డ్ కాల్స్, ఈమెయిల్స్, షీట్లు, లేదా మీరే టైప్ చేసేవి.",
+  "te": "ఈరోజు మీకు ఎక్కడి నుంచి వస్తున్నాయో అక్కడి నుంచే: యాడ్స్, ఇండియామార్ట్, జస్ట్‌డయల్ లాంటి మార్కెట్‌ప్లేస్‌లు, మీ వెబ్‌సైట్, వాట్సాప్, మిస్డ్ కాల్స్, ఈమెయిల్స్, షీట్లు, లేదా మీరే టైప్ చేసేవి.",
   "hi": "जहाँ से आज आती हैं, वहीं से: विज्ञापन, इंडियामार्ट और जस्टडायल जैसे मार्केटप्लेस, आपकी वेबसाइट, वॉट्सऐप, मिस्ड कॉल, ईमेल, शीट, या जो आप खुद टाइप करें।",
   "kn": "ಇಂದು ನಿಮಗೆ ಎಲ್ಲಿಂದ ಬರುತ್ತವೋ ಅಲ್ಲಿಂದಲೇ: ಜಾಹೀರಾತು, ಇಂಡಿಯಾಮಾರ್ಟ್, ಜಸ್ಟ್‌ಡಯಲ್‌ನಂಥ ಮಾರುಕಟ್ಟೆಗಳು, ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್, ವಾಟ್ಸಾಪ್, ಮಿಸ್ಡ್ ಕಾಲ್, ಇಮೇಲ್, ಶೀಟ್, ಅಥವಾ ನೀವೇ ಟೈಪ್ ಮಾಡುವವು.",
   "status": {
@@ -8797,7 +8797,7 @@
  },
  "h2.foot.line": {
   "en": "An AI assistant for Indian small businesses, in Telugu, English, Hindi and Kannada.",
-  "te": "భారత చిన్న businesses కి AI assistant: Telugu, English, Hindi, Kannada లో.",
+  "te": "చిన్న businesses కోసం AI assistant: Telugu, English, Hindi, Kannada లో.",
   "hi": "भारत के छोटे businesses के लिए AI assistant: Telugu, English, Hindi और Kannada में।",
   "kn": "ಭಾರತದ ಸಣ್ಣ businesses ಗೆ AI assistant: Telugu, English, Hindi ಮತ್ತು Kannada ನಲ್ಲಿ.",
   "status": {
@@ -9402,7 +9402,7 @@
  },
  "h3.hero.t": {
   "en": "Every enquiry answered. Every call picked up.",
-  "te": "ప్రతి enquiry కి జవాబు. ప్రతి call కి ఆన్సర్.",
+  "te": "ప్రతి enquiry కి జవాబు. ప్రతి call lift అవుతుంది.",
   "hi": "हर enquiry का जवाब। हर call का जवाब।",
   "kn": "ಪ್ರತಿ enquiry ಗೆ ಉತ್ತರ. ಪ್ರತಿ call ಗೆ ಉತ್ತರ.",
   "status": {
@@ -9468,7 +9468,7 @@
  },
  "h3.phone.today": {
   "en": "Today",
-  "te": "ఈ రోజు",
+  "te": "ఈరోజు",
   "hi": "आज",
   "kn": "ಇಂದು",
   "status": {
@@ -9655,7 +9655,7 @@
  },
  "h3.how.title": {
   "en": "One call. One WhatsApp. One clear summary.",
-  "te": "ఒక call. ఒక WhatsApp. ఒక్క summary.",
+  "te": "ఒక call. ఒక WhatsApp. ఒక clear summary.",
   "hi": "एक call। एक WhatsApp। एक साफ़ summary।",
   "kn": "ಒಂದು call. ಒಂದು WhatsApp. ಒಂದು ಸ್ಪಷ್ಟ summary.",
   "status": {
@@ -9666,7 +9666,7 @@
  },
  "h3.how.sub": {
   "en": "An example call, so you can see how it works. The names are made up.",
-  "te": "ఒక example call, ఇది ఎలా పనిచేస్తుందో చూడండి. పేర్లు example కి మాత్రమే.",
+  "te": "ఒక example call: ఇది ఎలా పనిచేస్తుందో చూడండి. పేర్లు example కోసం మాత్రమే.",
   "hi": "एक example call, ताकि आप देख सकें कैसे काम करता है। नाम बस example के लिए हैं।",
   "kn": "ಒಂದು example call, ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ನೋಡಿ. ಹೆಸರುಗಳು example ಗಾಗಿ ಮಾತ್ರ.",
   "status": {
@@ -9820,7 +9820,7 @@
  },
  "h3.built.title": {
   "en": "Built in from day one",
-  "te": "మొదటి రోజు నుంచే built in",
+  "te": "మొదటి రోజు నుంచే అన్నీ ఉంటాయి",
   "hi": "पहले दिन से built in",
   "kn": "ಮೊದಲ ದಿನದಿಂದಲೇ built in",
   "status": {
@@ -9831,7 +9831,7 @@
  },
  "h3.built.1.t": {
   "en": "Your own business number",
-  "te": "మీ own business number",
+  "te": "మీ సొంత business number",
   "hi": "आपका अपना business number",
   "kn": "ನಿಮ್ಮದೇ business number",
   "status": {
@@ -10106,7 +10106,7 @@
  },
  "h3.radar.sub": {
   "en": "It scans the map around you, checks every business it finds and shows who is worth contacting. You contact them yourself.",
-  "te": "ఇది మీ చుట్టూ map చూస్తుంది, దొరికిన ప్రతి business ని చెక్ చేసి, ఎవరిని contact చేయొచ్చో చూపిస్తుంది. Contact చేసేది మీరే.",
+  "te": "ఇది మీ చుట్టూ map చూస్తుంది, దొరికిన ప్రతి business ని check చేసి, ఎవరిని contact చేయొచ్చో చూపిస్తుంది. Contact చేసేది మీరే.",
   "hi": "यह आपके आसपास का map देखता है, मिले हर business को check करता है और दिखाता है किसे contact करना ठीक है। Contact आप खुद करते हैं।",
   "kn": "ಇದು ನಿಮ್ಮ ಸುತ್ತಲಿನ map ನೋಡಿ, ಸಿಕ್ಕ ಪ್ರತಿ business ಅನ್ನು check ಮಾಡಿ, ಯಾರನ್ನು contact ಮಾಡಬಹುದು ಅಂತ ತೋರಿಸುತ್ತದೆ. Contact ಮಾಡುವುದು ನೀವೇ.",
   "status": {
@@ -10139,7 +10139,7 @@
  },
  "h3.leak.s1": {
   "en": "enquiries a month",
-  "te": "enquiries ప్రతి నెల",
+  "te": "నెలకు enquiries",
   "hi": "enquiries हर महीने",
   "kn": "enquiries ತಿಂಗಳಿಗೆ",
   "status": {
@@ -10172,7 +10172,7 @@
  },
  "h3.leak.s4": {
   "en": "a month walking away",
-  "te": "నెలకు చేజారిపోతోంది",
+  "te": "నెలకు ఇంత నష్టం",
   "hi": "हर महीने हाथ से जा रहा है",
   "kn": "ತಿಂಗಳಿಗೆ ಕೈ ತಪ್ಪುತ್ತಿದೆ",
   "status": {
@@ -10183,7 +10183,7 @@
  },
  "h3.leak.warm": {
   "en": "called back in time",
-  "te": "టైమ్ కి call back అయ్యాయి",
+  "te": "time కి call back అయ్యాయి",
   "hi": "time पर call back हुईं",
   "kn": "time ಗೆ call back ಆಯಿತು",
   "status": {
@@ -10194,7 +10194,7 @@
  },
  "h3.leak.cold": {
   "en": "went cold",
-  "te": "చల్లారిపోయాయి",
+  "te": "చేజారిపోయాయి",
   "hi": "ठंडी पड़ गईं",
   "kn": "ತಣ್ಣಗಾದವು",
   "status": {
