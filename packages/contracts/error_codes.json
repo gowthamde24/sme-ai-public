@@ -670,6 +670,18 @@
       "extras": []
     },
     {
+      "code": "confirm_required",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "whatsapp"
+      ],
+      "default_message": "Press Confirm to send this to WhatsApp for review.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "confirmation_mismatch",
       "statuses": [
         422

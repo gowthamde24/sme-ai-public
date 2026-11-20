@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (432)
+## Codes (433)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -70,6 +70,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `catalogue_unavailable` | 503 | catalogue, materials |  |  | The catalogue is not available right now. |
 | `company_has_no_website` | 409 | agent_runs |  |  | This company has no website to research. |
 | `confirm_needed` | 409 | assistant_work |  |  | Confirm this on the card first. |
+| `confirm_required` | 422 | whatsapp |  |  | Press Confirm to send this to WhatsApp for review. |
 | `confirmation_mismatch` | 422 | main, privacy |  |  | What you typed does not match. Check it and try again. |
 | `conflict` | 409 | main |  |  | The request conflicts with an existing record. |
 | `connector_not_available` | 503 | connectors |  |  | This is not switched on. |
