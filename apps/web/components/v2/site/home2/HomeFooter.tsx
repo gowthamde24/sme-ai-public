@@ -24,7 +24,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
   return (
     <footer id="end" className="relative overflow-hidden px-[var(--h3-gutter,clamp(16px,3vw,32px))] pb-0 pt-[clamp(32px,6vw,80px)]" data-part="home-footer">
       <div className="h3-foot-grid relative mx-auto max-w-[1240px] border-b border-line pb-9">
-        <div className="flex flex-col gap-3.5">
+        <div className="h3-foot-wide flex flex-col gap-3.5">
           <p className="m-0 max-w-[380px] font-display text-[clamp(22px,calc(1vw+16px),28px)] font-extrabold leading-[1.15] tracking-[-0.02em]">
             {t("h3.hero.t")}
           </p>
@@ -40,7 +40,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
         <div className="flex flex-col">
           <span className={head}>{t("h2.foot.company")}</span>
           <nav aria-label={t("foot.pages")} className="flex flex-col">
-            {SITE_PAGES.filter((page) => isServed({ kind: "page", page })).map((page) => (
+            {SITE_PAGES.filter((page) => isServed({ kind: "page", page }) && page !== "pricing" && page !== "how-it-works").map((page) => ( // (Pricing and How it works are in the Product column on this page)
               <Link key={page} className={link} href={sitePath(lang, { kind: "page", page })}>
                 {t(LABEL[page])}
               </Link>
@@ -48,7 +48,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
           </nav>
           <LegalLinks lang={lang} direction="column" contact={false} linkClass={link} />
         </div>
-        <div className="flex flex-col gap-2.5">
+        <div className="h3-foot-wide flex flex-col gap-2.5">
           <span className={head}>{t("h2.foot.talk")}</span>
           <p className="m-0 text-[15px] font-semibold">
             <WithWhatsapp text={t("h2.foot.whatsapp")} />

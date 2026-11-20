@@ -216,7 +216,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     for (const x of ["080 4••• •• 12".replace(" •• 12", ""), "KYC done", "Yes, contact me", "Added to your list", "STOP", "Done, no more messages", "9:40 pm", "Waits till morning"]) expect(text(row), x).toContain(x);
     expect(text(row)).not.toMatch(/\b\d{10}\b|9:40 pm.*till \d/); // masked digits only; "till morning", never a fixed hour of ours
     for (const gone of ["voices", "trust"]) expect(home, gone).not.toContain(`id="${gone}"`);
-    expect(home).not.toContain('<section id="built"'); // (#built, #finder and #plans stay as empty anchors until the header and the footer link to #lead-finder and #pricing)
+    expect(home).not.toContain('<section id="built"');
   });
   it("the final call to action: the line, the WhatsApp number and the closing form on joinWaitlist", () => {
     const join = home.match(/<section id="(demo|join)"[\s\S]*?<\/section>/)![0];
