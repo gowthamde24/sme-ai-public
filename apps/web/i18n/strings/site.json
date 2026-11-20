@@ -7937,32 +7937,6 @@
    "ta": "draft"
   }
  },
- "h2.finder.near": {
-  "en": "Schools near {city}",
-  "te": "{city} దగ్గర schools",
-  "hi": "{city} के पास schools",
-  "kn": "{city} ಹತ್ತಿರ schools",
-  "ta": "{city} அருகில் schools",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.finder.checked": {
-  "en": "Checked {n} places. {worth} worth contacting.",
-  "te": "{n} places చూసింది. {worth} places contact చేయొచ్చు.",
-  "hi": "{n} places देखे। {worth} को contact करना ठीक है।",
-  "kn": "{n} places ನೋಡಿದೆ. {worth} ಅನ್ನು contact ಮಾಡಬಹುದು.",
-  "ta": "{n} places பார்த்தது. {worth} places-ஐ contact செய்யலாம்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h2.finder.call": {
   "en": "Contact",
   "te": "Contact",
@@ -7989,58 +7963,6 @@
    "ta": "draft"
   }
  },
- "h2.finder.skip": {
-  "en": "Skip",
-  "te": "వదిలేయండి",
-  "hi": "छोड़ दें",
-  "kn": "ಬಿಟ್ಟುಬಿಡಿ",
-  "ta": "Skip",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.finder.list": {
-  "en": "Found on this sweep",
-  "te": "ఈ రౌండ్‌లో దొరికినవి",
-  "hi": "इस round में मिले",
-  "kn": "ಈ round ನಲ್ಲಿ ಸಿಕ್ಕಿದ್ದು",
-  "ta": "இந்த sweep-இல் கிடைத்தவை",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.finder.of": {
-  "en": "{n} of 3",
-  "te": "3లో {n}",
-  "hi": "3 में से {n}",
-  "kn": "3ರಲ್ಲಿ {n}",
-  "ta": "3-இல் {n}",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.finder.empty": {
-  "en": "Places appear here as the sweep finds them.",
-  "te": "Round లో దొరికిన places ఇక్కడ కనిపిస్తాయి.",
-  "hi": "Round में मिले places यहाँ दिखेंगे।",
-  "kn": "Round ನಲ್ಲಿ ಸಿಕ್ಕ places ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
-  "ta": "Sweep கண்டுபிடிக்கும் places இங்கே தோன்றும்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h2.finder.pin.1.what": {
   "en": "CBSE school",
   "te": "CBSE school",
@@ -8054,38 +7976,12 @@
    "ta": "draft"
   }
  },
- "h2.finder.pin.3.what": {
-  "en": "Tuition centre",
-  "te": "Tuition centre",
-  "hi": "Tuition centre",
-  "kn": "Tuition centre",
-  "ta": "Tuition centre",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h2.finder.pin.4.what": {
   "en": "International school",
   "te": "International school",
   "hi": "International school",
   "kn": "International school",
   "ta": "International school",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.finder.note": {
-  "en": "An example for a sample coaching centre. The areas are real; the schools are examples.",
-  "te": "ఒక sample coaching centre కి example. Areas నిజం; schools example కి మాత్రమే.",
-  "hi": "एक sample coaching centre का example। Areas असली हैं; schools example के लिए हैं।",
-  "kn": "ಒಂದು sample coaching centre ಗೆ example. Areas ನಿಜ; schools example ಗಾಗಿ ಮಾತ್ರ.",
-  "ta": "ஒரு sample coaching centre-க்கான example. இடங்கள் உண்மையானவை, schools example மட்டுமே.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10976,11 +10872,11 @@
   }
  },
  "h4.pl.min": {
-  "en": "{n} minutes",
-  "te": "{n} నిమిషాలు",
-  "hi": "{n} मिनट",
-  "kn": "{n} ನಿಮಿಷ",
-  "ta": "{n} நிமிடம்",
+  "en": "{n} minutes · 1 number",
+  "te": "{n} నిమిషాలు · 1 number",
+  "hi": "{n} मिनट · 1 number",
+  "kn": "{n} ನಿಮಿಷ · 1 number",
+  "ta": "{n} நிமிடம் · 1 number",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10989,11 +10885,11 @@
   }
  },
  "h4.pl.payg": {
-  "en": "+ {p}/min",
-  "te": "+ {p}/నిమిషం",
-  "hi": "+ {p}/मिनट",
-  "kn": "+ {p}/ನಿಮಿಷ",
-  "ta": "+ {p}/நிமிடம்",
+  "en": "{p}/min · 1 number",
+  "te": "{p}/నిమిషం · 1 number",
+  "hi": "{p}/मिनट · 1 number",
+  "kn": "{p}/ನಿಮಿಷ · 1 number",
+  "ta": "{p}/நிமிடம் · 1 number",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11150,6 +11046,19 @@
   "hi": "पूरा pricing देखिए",
   "kn": "ಪೂರ್ತಿ pricing ನೋಡಿ",
   "ta": "முழு pricing-ஐப் பாருங்கள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.eg": {
+  "en": "Example",
+  "te": "ఉదాహరణ",
+  "hi": "उदाहरण",
+  "kn": "ಉದಾಹರಣೆ",
+  "ta": "எடுத்துக்காட்டு",
   "status": {
    "te": "draft",
    "hi": "draft",

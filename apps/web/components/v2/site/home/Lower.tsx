@@ -1,4 +1,4 @@
-import { ArrowRight, Bot, Hand, Phone, ShieldCheck } from "lucide-react";
+import { ArrowRight, Hand, Phone, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -15,7 +15,7 @@ type Start = { href: string; label: string };
 const k = (s: string) => s as SiteKey;
 /** The words a client island needs, filled on the server (the site's dictionaries never reach the browser whole). */
 const words = (t: SiteT, keys: readonly string[]): Record<string, string> => Object.fromEntries(keys.map((key) => [key, t(k(key))]));
-const FINDER_KEYS = [...["city", "near", "checked", "call", "ask", "skip", "list", "of", "empty"].map((x) => `h2.finder.${x}`), ...[1, 3, 4].map((i) => `h2.finder.pin.${i}.what`)];
+const FINDER_KEYS = [...["city", "call", "ask"].map((x) => `h2.finder.${x}`), "h4.eg", ...[1, 4].map((i) => `h2.finder.pin.${i}.what`)];
 const LEAK_KEYS = [...["enq", "miss", "buy", "avg", "in"].map((x) => `h2.leak.${x}`), ...["warm", "cold", "note"].map((x) => `h3.leak.${x}`), "h4.leak.slip", "h4.leak.with", "h4.leak.more"];
 
 /**
@@ -77,7 +77,7 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
     if (!clip || !playable(manifest, v.clip)) return [];
     return [{ id: v.clip, biz: t(k(`h4.v.${v.n}.biz`)), langName: t(k(`h2.lang.${v.lang}`)), lang: v.lang, text: clip.text, seconds: clip.duration, sources: clip.sources }];
   });
-  const icons = [<Phone key="1" size={20} strokeWidth={2.2} />, <ShieldCheck key="2" size={20} strokeWidth={2.2} />, <Hand key="3" size={20} strokeWidth={2.2} />, <Bot key="4" size={20} strokeWidth={2.2} />];
+  const icons = [<Phone key="1" size={20} strokeWidth={2.2} />, <ShieldCheck key="2" size={20} strokeWidth={2.2} />, <Hand key="3" size={20} strokeWidth={2.2} />, <Sparkles key="4" size={20} strokeWidth={2.2} />];
   return (
     <>
       <Section id="calc" labelledBy="calc-title">
@@ -87,9 +87,6 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
       <Section id="finder" labelledBy="finder-title">
         <Head id="finder-title" title={t("h4.finder.t")} sub={t("h4.finder.sub")} />
         <RadarFinder w={words(t, FINDER_KEYS)} />
-        <p className="h4-small" style={{ marginTop: 12 }}>
-          {t("h2.finder.note")}
-        </p>
       </Section>
       {voices.length > 0 ? (
         <Section id="voices" labelledBy="voices-title">

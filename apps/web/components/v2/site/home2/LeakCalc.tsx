@@ -140,34 +140,36 @@ export function LeakCalc({ w }: { w: W }) {
           </div>
         </details>
       </div>
-      <div className="h4-flow" data-part="leak-flow">
-        <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 block size-full" />
-        <p className="h4-flow-lab h4-flow-in" aria-live="polite" data-part="enq-in">
-          <span>{w["h2.leak.in"]}</span>
-          <span className="h4-flow-n">{num(enq)}</span>
-        </p>
-        <p className="h4-flow-lab h4-flow-warm" aria-live="polite" data-part="warm">
-          <span>{w["h3.leak.warm"]}</span>
-          <span className="h4-flow-n">{num(warm)}</span>
-        </p>
-        <p className="h4-flow-lab h4-flow-cold" aria-live="polite" data-part="cold">
-          <span>{w["h3.leak.cold"]}</span>
-          <span className="h4-flow-n">{num(cold)}</span>
-        </p>
-      </div>
-      <div className="h4-result" aria-live="polite" data-part="steps">
-        <p className="h4-result-n h4-hot" data-part="at-stake">
-          {inr(lost)}
-        </p>
-        <p className="h4-result-d">{w["h4.leak.slip"]}</p>
-      </div>
-      <div className="h4-with" data-part="leak-with">
-        <p>{w["h4.leak.with"].replace(/\{n\}/g, num(enq))}</p>
-        <div className="h4-bar" aria-hidden="true">
-          <span data-on={seen ? "" : undefined} />
+      <div className="h4-card h4-leak-card">
+        <div className="h4-flow" data-part="leak-flow">
+          <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 block size-full" />
+          <p className="h4-flow-lab h4-flow-in" aria-live="polite" data-part="enq-in">
+            <span>{w["h2.leak.in"]}</span>
+            <span className="h4-flow-n">{num(enq)}</span>
+          </p>
+          <p className="h4-flow-lab h4-flow-warm" aria-live="polite" data-part="warm">
+            <span>{w["h3.leak.warm"]}</span>
+            <span className="h4-flow-n">{num(warm)}</span>
+          </p>
+          <p className="h4-flow-lab h4-flow-cold" aria-live="polite" data-part="cold">
+            <span>{w["h3.leak.cold"]}</span>
+            <span className="h4-flow-n">{num(cold)}</span>
+          </p>
         </div>
+        <div className="h4-result" aria-live="polite" data-part="steps">
+          <p className="h4-result-n h4-hot" data-part="at-stake">
+            {inr(lost)}
+          </p>
+          <p className="h4-result-d">{w["h4.leak.slip"]}</p>
+        </div>
+        <div className="h4-with" data-part="leak-with">
+          <p>{w["h4.leak.with"].replace(/\{n\}/g, num(enq))}</p>
+          <div className="h4-bar" aria-hidden="true">
+            <span data-on={seen ? "" : undefined} />
+          </div>
+        </div>
+        <p className="h4-small">{w["h3.leak.note"]}</p>
       </div>
-      <p className="h4-small">{w["h3.leak.note"]}</p>
     </div>
   );
 }

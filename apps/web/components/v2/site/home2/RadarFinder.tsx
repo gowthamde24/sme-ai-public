@@ -5,7 +5,6 @@ import * as React from "react";
 import { addScene, fontOf, isCalm, sceneTime, type Look } from "./scene";
 
 type W = Readonly<Record<string, string>>;
-const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (m, k: string) => v[k] ?? m);
 const TAU = 6.2832;
 export const CITIES = ["Hyderabad", "Bengaluru", "Chennai", "Vijayawada"] as const;
 export type City = (typeof CITIES)[number];
@@ -226,75 +225,32 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
 }
 
 /**
- * The Lead Finder radar (landing v2 part B.5, calmed 21 Nov for the phone): a map around the sample shop (dots, a lake, roads, rings at 3, 6 and 10 km with ticks), the sweep with its trail, every business it checks lighting up for a moment, four found
- * businesses with a colour and a name tag, and "Found on this sweep" filling in as the sweep passes each one, with its decision ("Contact", "Check first", "Skip"). The city picker (one swipe row, never wrapping) changes the map's area names. The map is the
- * full width of its card; on a phone it is square and cropped to the rings. One steady speed, no glow, paused off screen (scene.ts); reduced motion: the whole sweep done, still. All four found cards are always in the page (the ones not yet swept are
- * faded), so the list never changes height. Every name is a real area of the city; the businesses are examples.
+ * The Lead Finder radar (landing v2 part B.5, calmed for the phone, 21 Nov): a map around the sample shop (dots, a lake, roads, rings at 3, 6 and 10 km), the sweep with its trail, every business it checks lighting up for a moment, three found businesses with a
+ * colour and a name tag, and two result rows under the map (one "Contact", one "Check first"). The city picker (one swipe row, never wrapping) changes the map's area names. The map is the full width of its card; on a phone it is square and cropped to the rings.
+ * One steady speed, no glow, paused off screen (scene.ts); reduced motion: the whole sweep done, still. A small "Example" tag says the businesses are samples. Every name is a real area of the city.
  */
 export function RadarFinder({ w }: { w: W }) {
   const [city, setCity] = React.useState<City>("Hyderabad");
-  const [since, setSince] = React.useState(0);
-  const [tick, setTick] = React.useState(0);
-  // before the browser takes over (and with JavaScript off) the list shows all four found; then it follows the sweep
-  const live = React.useSyncExternalStore(
-    () => () => undefined,
-    () => true,
-    () => false,
-  );
-  const calm = React.useSyncExternalStore(
-    () => () => undefined,
-    isCalm,
-    () => false,
-  );
-  const liveRef = React.useRef({ city, since });
-  React.useEffect(() => {
-    liveRef.current = { city, since };
-  });
+  const live = React.useRef({ city, since: 0 });
   const desk = React.useRef<HTMLCanvasElement>(null);
   React.useEffect(() => {
     const sans = desk.current ? fontOf(desk.current, "sans") : '"Plus Jakarta Sans", system-ui, sans-serif';
     // one canvas at every width: wide, it draws the whole 780 x 520 map; in a narrow box (a phone) it crops to the rings, with its words and pins drawn larger, so they stay readable
-    const off = desk.current ? addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, liveRef.current, W / H < 1.2, sans)) : undefined;
+    const off = desk.current ? addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, W / H < 1.2, sans)) : undefined;
     return () => off?.();
   }, []);
-  // the found list follows the sweep: read its angle a few times a second (the scene is paused off screen, and so is this)
-  const box = React.useRef<HTMLDivElement>(null);
-  const [onScreen, setOnScreen] = React.useState(true);
-  React.useEffect(() => {
-    const el = box.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver((es) => setOnScreen(es.some((e) => e.isIntersecting)));
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  React.useEffect(() => {
-    if (calm || !live || !onScreen) return;
-    const id = window.setInterval(() => setTick(sceneTime()), 250);
-    return () => window.clearInterval(id);
-  }, [calm, live, onScreen]);
-  const still = calm || !live;
-  const st = still ? { a: TAU, fresh: false } : sweepAt(tick, since);
-  const found = (p: Pin) => !st.fresh || st.a >= p.ang;
-  const checked = st.fresh ? Math.floor((CANDS.length * st.a) / TAU) : CANDS.length;
-  const worth = PINS.filter((p) => found(p) && p.d === "call").length;
-  const count = PINS.filter(found).length;
-  const chip = (d: Pin["d"]) => (d === "call" ? "h4-chip-call" : d === "ask" ? "h4-chip-ask" : "h4-chip-skip");
-  const row = React.useRef<HTMLDivElement>(null);
   const pick = (c: City, el: HTMLElement) => {
     setCity(c);
-    setSince(sceneTime());
+    live.current = { city: c, since: sceneTime() }; // a new city starts a fresh sweep
     // the picked city comes fully into view in the swipe row
     el.scrollIntoView({ inline: "nearest", block: "nearest", behavior: isCalm() ? "auto" : "smooth" });
   };
+  const rows = [PINS.find((p) => p.d === "call"), PINS.find((p) => p.d === "ask")].filter((p): p is Pin => p !== undefined);
   return (
-    <div className="h4-radar" data-part="radar" data-city={city} ref={box}>
+    <div className="h4-radar" data-part="radar" data-city={city}>
       <div className="h4-panel h4-radar-card">
-        <p className="h4-near">
-          <span className="h4-dot-live" aria-hidden="true" />
-          {fill(w["h2.finder.near"], { city })}
-        </p>
         <div className="h4-cities-wrap">
-          <div role="radiogroup" aria-label={w["h2.finder.city"]} className="h4-cities" ref={row}>
+          <div role="radiogroup" aria-label={w["h2.finder.city"]} className="h4-cities">
             {CITIES.map((c) => (
               <button key={c} type="button" role="radio" aria-checked={city === c} onClick={(e) => pick(c, e.currentTarget)} data-city={c} className="h4-city">
                 {c}
@@ -304,48 +260,22 @@ export function RadarFinder({ w }: { w: W }) {
         </div>
         <div className="h4-radar-map">
           <canvas ref={desk} aria-hidden="true" className="absolute inset-0 block size-full" />
+          <span className="h4-eg">{w["h4.eg"]}</span>
         </div>
-        <div className="h4-radar-foot">
-          <p className="h4-checked" data-part="checked">
-            {fill(w["h2.finder.checked"], { n: String(checked), worth: String(worth) })}
-          </p>
-          <p className="h4-legend">
-            <span>
-              <i className="h4-key-call" aria-hidden="true" />
-              {w["h2.finder.call"]}
-            </span>
-            <span>
-              <i className="h4-key-ask" aria-hidden="true" />
-              {w["h2.finder.ask"]}
-            </span>
-            <span>
-              <i className="h4-key-skip" aria-hidden="true" />
-              {w["h2.finder.skip"]}
-            </span>
-          </p>
-        </div>
-      </div>
-      <div className="h4-found" aria-live="polite">
-        <p className="h4-found-head">
-          <b>{w["h2.finder.list"]}</b>
-          <span>{fill(w["h2.finder.of"], { n: String(count) })}</span>
-        </p>
         <ul className="h4-found-list">
-          {PINS.slice()
-            .sort((a, b) => a.id - b.id)
-            .map((p) => (
-              <li key={`${city}-${p.id}`} className="h4-fc" data-found={p.id} data-pending={found(p) ? undefined : ""} aria-hidden={found(p) ? undefined : true}>
-                <p className="h4-fc-top">
-                  <b>
-                    {w[`h2.finder.pin.${p.id + 1}.what`]}, {AREAS[city][p.id]}
-                  </b>
-                  <span className={`h4-chip ${chip(p.d)}`}>{w[`h2.finder.${p.d}`]}</span>
-                </p>
-                <p className="h4-fc-why">
-                  <span className="h4-fc-km">{p.km}</span>
-                </p>
-              </li>
-            ))}
+          {rows.map((p) => (
+            <li key={`${city}-${p.id}`} className="h4-fc" data-found={p.id}>
+              <p className="h4-fc-top">
+                <b>
+                  {w[`h2.finder.pin.${p.id + 1}.what`]}, {AREAS[city][p.id]}
+                </b>
+                <span className={`h4-chip ${p.d === "call" ? "h4-chip-call" : "h4-chip-ask"}`}>{w[`h2.finder.${p.d}`]}</span>
+              </p>
+              <p className="h4-fc-why">
+                <span className="h4-fc-km">{p.km}</span>
+              </p>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

@@ -207,8 +207,9 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(text(finder)).toContain("It finds businesses that could buy from you. You call them.");
     expect(text(finder)).not.toMatch(/Coming soon|early access|we call|calls them/i);
     expect(finder.match(/role="radio"[^>]*data-city="(Hyderabad|Bengaluru|Chennai|Vijayawada)"/g)).toHaveLength(4);
-    for (const x of ["Schools near Hyderabad", "Contact", "Check first", "Skip", "Found on this sweep"]) expect(text(finder), x).toContain(x);
-    expect(finder.match(/data-found="\d"/g)).toHaveLength(3); // three compact result rows
+    for (const x of ["Example", "Contact", "Check first", "CBSE school, Ameerpet", "International school, Kukatpally"]) expect(text(finder), x).toContain(x);
+    expect(finder.match(/data-found="\d"/g)).toHaveLength(2); // two result rows: one Contact, one Check first
+    expect(text(finder)).not.toMatch(/Checked \d+ places|Found on this sweep/); // no count line, no note
     expect(finder.match(/<canvas/g)).toHaveLength(1); // one map at every width
   });
   it("built in (spec section 7): four small cards, the quiet hours as the line under STOP, no separate trust section", () => {
@@ -220,7 +221,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
   it("the three plans (spec section 8: Pay as you go + ₹5 a minute, Pro with 500 minutes recommended, Business with 1,500): rupees, ONE line for GST, the number and free early access, a link to /pricing", () => {
     const plans = home.match(/<section id="plans"[\s\S]*?<\/section>/)![0];
     expect([...plans.matchAll(/data-plan="(\w+)"/g)].map((m) => m[1])).toEqual(["payg", "pro", "business"]);
-    for (const x of ["Simple plans in rupees", "Pay as you go", "₹499", "+ ₹5/min", "Pro", "₹1,999", "500 minutes", "Recommended", "Business", "₹5,999", "1,500 minutes", "+18% GST · 1 business number included · Free early access until paid plans start.", "See full pricing"]) expect(text(plans), x).toContain(x);
+    for (const x of ["Simple plans in rupees", "Pay as you go", "₹499", "₹5/min · 1 number", "Pro", "₹1,999", "500 minutes · 1 number", "Recommended", "Business", "₹5,999", "1,500 minutes · 1 number", "+18% GST · 1 business number included · Free early access until paid plans start.", "See full pricing"]) expect(text(plans), x).toContain(x);
     expect(text(plans)).not.toMatch(/most popular|best value|unlimited|Lead Desk|AI Workforce|Price at launch|voice/i); // nothing about voice pricing until the owner sets it
     expect(plans).toContain('href="/pricing"');
     expect(plans.match(/class="h4-slide"/g)).toHaveLength(3);
