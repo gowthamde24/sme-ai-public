@@ -1,7 +1,7 @@
 import { Menu } from "lucide-react";
 import Link from "next/link";
 
-import { LangSelect } from "@/components/v2/controls/LangSelect";
+import { SiteLangSelect } from "@/components/v2/controls/SiteLangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
 import { container } from "@/components/v2/site/ui";
 import { Wordmark } from "@/components/v2/Wordmark";
@@ -63,7 +63,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
           )}
           {/* a phone keeps the one button in the bar (the landing v2 phone design) and finds the language and the theme in the menu */}
           <span className="hidden items-center gap-2 sm:flex">
-            <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
+            <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
             <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
           </span>
           <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-ink px-3.5 text-sm font-bold text-bg sm:px-[18px] sm:text-[15px]">
@@ -92,7 +92,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
                   </li>
                 )}
                 <li className="mt-1 flex items-center gap-2 border-t border-line px-1 pt-2 sm:hidden">
-                  <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
+                  <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
                   <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
                 </li>
               </ul>

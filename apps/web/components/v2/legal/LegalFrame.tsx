@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import type { ReactNode } from "react";
 
-import { LangSelect } from "@/components/v2/controls/LangSelect";
+import { SiteLangSelect } from "@/components/v2/controls/SiteLangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
 import { container } from "@/components/v2/landing/ui";
 import { V2Root } from "@/components/v2/V2Root";
@@ -37,7 +37,7 @@ export async function LegalFrame({ children }: { children: ReactNode }) {
               <Wordmark />
             </Link>
             <div className="ml-auto flex items-center gap-1 sm:gap-2">
-              <LangSelect lang={lang} label={t("legal.lang.label")} langs={SITE_LANGS} />
+              <SiteLangSelect lang={lang} label={t("legal.lang.label")} langs={SITE_LANGS} />
               <ThemeButton initial={theme} toDark={t("legal.theme.toDark")} toLight={t("legal.theme.toLight")} />
             </div>
           </div>

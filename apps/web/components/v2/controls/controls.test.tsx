@@ -6,6 +6,7 @@ const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push }) }));
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
+import { SiteLangSelect } from "@/components/v2/controls/SiteLangSelect";
 import { SITE_LANGS } from "@/i18n/lang";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
 
@@ -46,7 +47,7 @@ describe("LangSelect", () => {
   });
   it("the public site's switch also offers Tamil (the app's does not), and Tamil goes to its own address", async () => {
     const hrefs = { en: "/pricing", te: "/te/pricing", hi: "/hi/pricing", kn: "/kn/pricing", ta: "/ta/pricing" } as const;
-    render(<LangSelect lang="en" label="Language" hrefs={hrefs} langs={SITE_LANGS} />);
+    render(<SiteLangSelect lang="en" label="Language" hrefs={hrefs} langs={SITE_LANGS} />);
     const select = screen.getByLabelText("Language") as HTMLSelectElement;
     expect([...select.options].map((o) => o.textContent)).toEqual(["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "தமிழ்"]);
     fireEvent.change(select, { target: { value: "ta" } });
