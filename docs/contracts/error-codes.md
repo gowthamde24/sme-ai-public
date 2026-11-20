@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (433)
+## Codes (438)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -75,7 +75,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `conflict` | 409 | main |  |  | The request conflicts with an existing record. |
 | `connector_not_available` | 503 | connectors |  |  | This is not switched on. |
 | `consent_ask_not_needed` | 422 | outbox |  |  | There is no one to ask: they already agreed, stopped, or have no WhatsApp number. |
-| `consent_required` | 409, 422 | developer_api, outbox |  |  | This customer has not agreed to WhatsApp messages yet. |
+| `consent_required` | 409, 422 | developer_api, lead_sources, outbox |  | fields | This customer has not agreed to WhatsApp messages yet. |
 | `consent_sentence_mismatch` | 422 | main |  |  | The sentence does not match the one to read. Ask for it again. |
 | `consent_source_required` | 422 | assistant_work |  |  | Say how these people agreed to be contacted (they walked in, they asked us, or they are existing customers). |
 | `contact_suppressed` | 409 | main |  |  | The contact is suppressed; lift the suppression first. |
@@ -118,6 +118,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `example_data_loaded` | 409 | main |  |  | The example data is already loaded. |
 | `export_too_large` | 422 | main |  |  | That window holds too much to export at once. Choose fewer days. |
 | `facts_failed` | 502 | knowledge |  |  | The assistant found no facts in that text. Check the text, or write the facts yourself. |
+| `faq_not_allowed` | 422 | jobs |  |  | A job answer may not state a price, a discount or a promise. |
 | `fee_plan_exists` | 409 | main |  |  | The student already has a fee plan for that year. |
 | `fee_plan_in_use` | 409 | main |  |  | A student has this fee plan, so it cannot change. Make a new plan. |
 | `file_empty` | 422 | assistant_work |  |  | That file is empty. |
@@ -167,6 +168,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `invitation_locked` | 429 | team | yes |  | Too many tries. Wait a little and try again. |
 | `invitation_not_pending` | 409 | main |  |  | That invitation was already used. |
 | `invoice_number_used` | 409 | main |  |  | That invoice number is already used. |
+| `jobs_unavailable` | 503 | jobs |  |  | Jobs are not available on this system. |
 | `keep_owner` | 409 | main |  |  | The workspace must keep an Owner. Add another Owner first. |
 | `key_rejected` | 422 | lead_sources |  |  | IndiaMART did not accept this key. Check it in Lead Manager > Import/Export Leads. |
 | `knowledge_unavailable` | 503 | knowledge |  |  | This is not available right now. |
@@ -212,6 +214,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `model_not_configured` | 503 | assistant |  |  | (the sentence varies: show `message`) |
 | `model_unavailable` | 502, 503 | assistant_context |  |  | I could not hear that recording. Try again. |
 | `module_off` | 403 | main |  |  | That is not part of this kind of business, so it is switched off. |
+| `name_invalid` | 422 | jobs |  |  | A helper's name cannot be only digits, a web address, an e-mail address or a phone number, and has at most 40 characters. |
 | `needs_photo` | 409 | main |  |  | An active item needs a photo. Add one, or make the item inactive first. |
 | `no_approved_quote` | 409 | main |  |  | This customer has no approved quote without an order yet, so no order can be made. |
 | `no_consent_template` | 409 | outbox |  |  | WhatsApp only allows an approved template after 24 hours of silence from the customer, and the consent_ask template is not approved yet. |
@@ -242,6 +245,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_lapsed` | 409 | main |  |  | Your plan has not ended, so there is nothing to start again. |
 | `not_on_sandbox_list` | 403 | telephony |  |  | This number is not answered here. |
 | `not_qualified` | 409 | lead_finder |  |  | Only a qualified call has a quote suggestion. Run the call first. |
+| `not_removable` | 409 | jobs |  |  | This number stays on the list: only a number you added yourself can be removed. |
 | `not_staff` | 403 | admin |  |  | This is for Stack19 staff only. |
 | `not_switchable` | 409 | today |  |  | This helper has no switch of its own yet. |
 | `not_waiting` | 409 | outbox |  |  | That message is no longer waiting. |
@@ -286,6 +290,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `payment_not_verified` | 402 | pricing |  |  | The payment could not be verified. Nothing was added. |
 | `payment_provider_failed` | 502 | connectors |  |  | The payment service could not make the link. Nothing was sent to the customer. |
 | `payment_required` | 422 | pricing |  |  | This change has an amount to pay. Pay it first. |
+| `phone_invalid` | 422 | jobs |  |  | That is not a phone number we can use. Check the digits. |
 | `phone_kyc_required` | 409 | phone_numbers |  |  | The phone provider has not accepted your business registration. A number can be taken once it has. |
 | `photo_animated` | 422 | catalogue |  |  | Use a still photo, not an animation. |
 | `photo_files_missing` | 409 | main |  |  | The photo did not finish uploading. Try again. |
@@ -387,11 +392,11 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `speaking_style_unavailable` | 503 | how_speaks, speaking |  |  | This is not available right now. |
 | `speech_unavailable` | 422 | voice |  |  | Spoken answers are not switched on for this system. |
 | `standup_limit` | 429 | ai_team | yes |  | You can make the stand-up again 3 times a day. Try again tomorrow morning. |
-| `stopped_by_customer` | 409 | outbox |  |  | This customer asked us to stop. Nothing can be sent until they write again. |
+| `stopped_by_customer` | 409 | jobs, outbox |  |  | This customer asked us to stop. Nothing can be sent until they write again. |
 | `storage_unavailable` | 503 | privacy |  |  | Files cannot be made on this system. |
 | `student_not_active` | 409 | main |  |  | The student left or was erased, so this cannot be done. |
 | `suggestion_changed` | 422 | quotes |  |  | The suggestion is no longer available. |
-| `suppression_key_not_configured` | 503 | suppression |  |  | The suppression key is not configured, so contacts cannot be keyed. |
+| `suppression_key_not_configured` | 503 | jobs, suppression |  |  | The suppression key is not configured, so numbers cannot be added. |
 | `suppression_unavailable` | 503 | erasure, suppression |  |  | Suppression keys are not available. |
 | `takeover_unavailable` | 409 | telephony |  |  | Listening in on a live call is not available yet. |
 | `talk_training_invalid` | 422 | talk_training |  | reason | Something in the training can't be saved. |
