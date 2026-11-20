@@ -1,7 +1,7 @@
 /**
  * The four conversations of the home page's phone (owner, 21 Nov 2026: "a dynamic stack of chat in different languages", then "calls in the phone demo"): each is ONE conversation of a made-up business: first the CALL (the assistant's lines on the
  * left, labelled "AI assistant", the customer's on the right, with live captions), then the WhatsApp that follows up on what the call asked, then the card of what it found out (FOUND_KEYS). The assistant speaks only the product's four languages
- * (Telugu, Hindi, Kannada, English); the page claims no other. The first line of the call says who is speaking ("the AI assistant of <business>"). Spoken style, English business words in Latin. The business names are made up.
+ * (Telugu, Hindi, Kannada, English); the page claims no other. The first line of the call says who is speaking: the name only ("Priya from <business>"); with the greeting switch on it is "the AI assistant of <business>" (GREETING_MENTIONS_AI). Spoken style, English business words in Latin. The business names are made up.
  * DRAFT (owner to read): the Telugu, Hindi and Kannada lines are drafts, listed in TELUGU-DRAFT.md and TRANSLATION-REVIEW.md.
  */
 import { AI_LABEL, type CallLine, type StackChat, type StackCode, type StackLine } from "./chat-types";
@@ -10,16 +10,16 @@ export { AI_LABEL };
 export type { CallLine, StackChat, StackCode, StackLine };
 
 /**
- * TODAY'S product announces itself as an AI when it greets, so the demo's first call line says "the AI assistant of <business>" and the FAQ says so (owner, informed, 21 Nov 2026). The product is getting a per-business, per-job
- * setting "Say 'AI assistant' when greeting" (default OFF; the assistant ALWAYS answers honestly if asked): it is NOT live yet (C1's field, about 25 Nov). THE ONE SWITCH: set this to false the day the setting is on staging and the demo
- * greetings (NAME_ONLY_GREETING) and the FAQ answer (h4.faq.2.*.quiet) change together. The small "AI assistant" label on the caption bubbles stays in both modes.
+ * THE ONE SWITCH of the demo. The product's setting "Say 'AI assistant' when greeting" is live and its default is OFF (owner, 20 Nov 2026; C1's docs/contracts/greeting-disclosure.md): a greeting is the name only ("Hello, this is Priya from Green Leaf Store"), and a customer who ASKS
+ * always gets the honest answer that it is the business's AI assistant. So the demo's first call line is name-only (NAME_ONLY_GREETING) and the FAQ answer is the prepared "If they ask, it always says so honestly. You choose whether it mentions it in the greeting." (h4.faq.2.*.quiet).
+ * Set this to true to show the other greeting ("I am the AI assistant of <business>"): both are tested. The small "AI assistant" speaker LABEL on the caption bubbles stays in both modes.
  */
-export const GREETING_MENTIONS_AI = true;
+export const GREETING_MENTIONS_AI = false;
 
 /** The name-only first line of each call (the alternative to "I am the AI assistant of <business>"), same order as STACK: spoken style, drafts for the owner's read. */
 const NAME_ONLY_GREETING: Record<StackCode, string> = {
   te: "నమస్తే అండీ, నేను Bright Path Academy నుంచి Priya. ఏ course, ఎవరికి కావాలి?",
-  hi: "नमस्ते! मैं Shree Homes से Priya बोल रही हूँ। आपको कौन सा flat चाहिए?",
+  hi: "नमस्ते! मैं Shree Homes से Priya बोल रही हूँ। कौन सा flat चाहिए?",
   kn: "ನಮಸ್ಕಾರ! ನಾನು Sunrise Clinic ನಿಂದ Priya. ನಿಮಗೆ ಏನು ಬೇಕು?",
   en: "Hi! This is Priya from Green Leaf Store. How can I help?",
 };

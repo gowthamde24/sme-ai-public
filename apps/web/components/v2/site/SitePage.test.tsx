@@ -144,14 +144,15 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(how).toMatch(/data-part="stack-lang"[\s\S]*?aria-pressed="true"[^>]*>తెలుగు</); // the language chips (a tap switches the demo language)
     expect(how).toContain('data-phase="chat"');
   });
-  it("the phone demo: four conversations in the product's four languages, each with a call (4 captions, the first says it is the AI assistant of the business), a chat (4 bubbles) and a card, all of the SAME business; no Tamil assistant text; the phone is scaled by a variable", () => {
+  it("the phone demo: four conversations in the product's four languages, each with a call (4 captions, the first is the name of the business and Priya: the greeting default is OFF), a chat (4 bubbles) and a card, all of the SAME business; no Tamil assistant text; the phone is scaled by a variable", () => {
     expect(STACK.map((c) => c.code)).toEqual(["te", "hi", "kn", "en"]);
     expect(new Set(STACK.map((c) => c.name)).size).toBe(4);
     for (const c of STACK) {
       expect(c.call.lines, c.name).toHaveLength(4);
       expect(c.lines, c.name).toHaveLength(4);
       expect(c.call.lines[0].from).toBe("them");
-      expect(c.call.lines[0].text, c.name).toContain("AI assistant");
+      expect(c.call.lines[0].text, c.name).not.toContain("AI assistant"); // name-only: the setting "Say AI assistant when greeting" is OFF by default
+      expect(c.call.lines[0].text, c.name).toContain("Priya");
       expect(c.call.lines[0].text, c.name).toContain(c.name); // the call and the chat are the same conversation of the same business
       const all = [...c.call.lines.map((l) => l.text), ...c.lines.map((l) => l.text), c.call.you, c.call.live, c.call.ended].join(" ");
       expect(all, c.name).not.toMatch(/[\u0B80-\u0BFF]/); // no Tamil letter in any conversation
@@ -159,6 +160,13 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8");
     expect(css).toMatch(/\.h3-dp \{[^}]*aspect-ratio: 1 \/ 2\.05[^}]*border-radius: 13%/); // the dark phone has real 6.1 inch proportions (outer body 1 : 2.05, corner radius 13% of the width)
     
+  });
+  it("the home FAQ tells the truth about the greeting (the setting is OFF by default): the prepared honest answer, with no claim that it always says it is an AI when it greets", () => {
+    const faq = home.match(/<section[^>]*id="faq"[\s\S]*?<\/section>/)![0];
+    expect(text(faq)).toContain("Can customers tell it's an AI?");
+    expect(text(faq)).toContain("If they ask, it always says so honestly. You choose whether it mentions it in the greeting.");
+    expect(text(faq)).not.toMatch(/when it greets\./);
+    expect(text(home)).not.toMatch(/AI always labelled|always labelled|written by an AI/);
   });
   it("not too much information (owner, 21 Nov 2026): every lower section is a title of at most 6 words and (where it has one) ONE grey line of at most 12, in English, with no paragraph", () => {
     for (const id of ["calc", "lead-finder", "pricing"]) {
