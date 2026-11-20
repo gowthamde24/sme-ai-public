@@ -408,6 +408,7 @@ export const API_ERROR_CODES = [
   "type_change_refused",
   "unauthorized",
   "unavailable",
+  "unknown_voice",
   "unreadable_file",
   "unsupported_type",
   "upstream_error",
