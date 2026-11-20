@@ -186,7 +186,6 @@ def test_owner_and_admin_choose_others_are_refused_and_the_choice_is_ticked_and_
         {"language": "te", "voice_id": "TE-Ramya"},  # badly formed
         {"language": "bn", "voice_id": "bn-x"},  # a language outside the call set
         {"language": "mr", "voice_id": "mr-x"},  # a call language with no voice in the catalogue yet (job M1)
-        {"language": "te", "voice_id": "te-charan"},  # a male voice in a female workspace
         {"gender": "male", "language": "te", "voice_id": "te-charan"},  # both forms at once
         {"gender": "other"},
         {},
@@ -218,7 +217,8 @@ def test_the_gender_flips_the_workspace_clears_the_choices_and_a_voice_of_the_ot
     body = r.json()
     te = body["languages"][0]
     assert r.status_code == 200 and body["gender"] == "male" and te["chosen_id"] is None and te["default_id"] == "te-charan" and te["active_id"] == "te-charan"
-    assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-kavitha"}, headers=h).status_code == 422, "a female voice in a male workspace"
+    assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-nobody"}, headers=h).status_code == 422, "an unknown voice"
+    assert client.put(f"{BASE}/voices", json={"language": "hi", "voice_id": "te-tarun"}, headers=h).status_code == 422, "a voice of another language"
     assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-tarun"}, headers=h).json()["languages"][0]["chosen_id"] == "te-tarun"
     assert client.put(f"{BASE}/voices", json={"gender": "male"}, headers=h).json()["languages"][0]["chosen_id"] == "te-tarun", "the same gender again keeps the choices"
     for user in ("a_sales", "a_viewer"):
@@ -325,3 +325,22 @@ def test_the_preview_route_needs_owner_or_admin_speaks_the_opening_line_and_is_4
     assert client.get(f"{BASE}/voices/preview?language=mr", headers=auth("a_owner")).status_code == 404, "job M1: a call language with no voice yet has no preview"
     off, _ = make_client(workspace=FakeChoices())
     assert off.get(q, headers=auth("a_owner")).status_code == 404
+
+
+def test_picking_a_voice_of_the_other_gender_sets_the_assistants_gender_in_the_same_call() -> None:
+    """Planner, 21 Nov 2026: the owner picks the voice they like; pronouns and wording follow the voice's gender."""
+    client, repo = world()
+    h = auth("a_owner")
+    assert repo.gender == "female"
+    r = client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-tarun"}, headers=h)   # a man's voice in a woman's workspace
+    body = r.json()
+    assert r.status_code == 200 and body["gender"] == "male" and repo.gender == "male"
+    assert body["languages"][0]["chosen_id"] == "te-tarun" and body["languages"][0]["active_id"] == "te-tarun"
+    assert ("gender", "male") in repo.calls and ("te", "te-tarun") in repo.calls
+    other = next(x for x in body["languages"] if x["language"] == "hi")
+    assert other["chosen_id"] is None and other["default_id"].startswith("hi-"), "the other languages went back to the new gender's defaults"
+    r = client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-kavitha"}, headers=h)   # and back
+    assert r.status_code == 200 and r.json()["gender"] == "female" and repo.gender == "female"
+    before = len(repo.calls)
+    assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-ramya"}, headers=h).status_code == 200
+    assert ("gender", "female") not in repo.calls[before:], "the same gender does not flip anything"

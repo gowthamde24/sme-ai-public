@@ -1,7 +1,7 @@
 """The voice picker (job voice-picker, owner decision of 28 Oct 2026): which voice a workspace's assistant uses on calls and in previews, per language (te, hi, kn, en).
 
   GET  /v1/tenants/{t}/ai-assistant/voices            any member: the catalogue per language with sample URLs, the language's default, the workspace's choice (null = the default) and which voice is active
-  PUT  /v1/tenants/{t}/ai-assistant/voices            OWNER or ADMIN: {language, voice_id}  `voice_id` null clears the choice (back to the default). Only a catalogue voice OF THAT LANGUAGE is accepted (422 otherwise). Audited, old and new id.
+  PUT  /v1/tenants/{t}/ai-assistant/voices            OWNER or ADMIN: {language, voice_id}  `voice_id` null clears the choice (back to the default). Only a LISTED voice OF THAT LANGUAGE, of EITHER gender, is accepted (422 otherwise); a voice of the other gender also sets the assistant's gender to the voice's (21 Nov 2026). Audited, old and new id.
   GET  /v1/tenants/{t}/ai-assistant/voices/preview?language=   OWNER or ADMIN: the SAVED opening line as a customer hears it, in the ACTIVE voice (audio/wav; the words spoken are in the header X-Spoken-Text, percent-encoded).
   POST /v1/tenants/{t}/ai-assistant/voices/preview {language, text|null, mention_ai|null, campaign_id|null, assistant_name|null}   "Hear it": the line AS ON THE SCREEN (unsaved edits included), placeholders filled and the AI sentence added as a call does; JSON {spoken_text (= resolved_opening_line), audio{mime, base64}, engine, voice_id}. 404 `no_preview` when the voice service is not configured on this system.
   GET  /v1/voice-samples/{voice_id}.mp3               NO sign-in (an <audio> tag cannot send one): the PRE-RENDERED sample of one catalogue voice, a static file. The provider is never called when someone clicks play.
@@ -151,8 +151,11 @@ def put_voices(body: VoiceIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> VoicesOut
         current = gender_of(runtime, ctx)
         if body.voice_id is not None:
             picked = config.catalogue.get(body.voice_id) if ID_FORMAT.match(body.voice_id) else None
-            if picked is None or picked.language != body.language or picked.gender != current or not picked.listed:
-                raise ApiError(422, "validation_error", "Choose one of the voices on the list for this language and voice type.", extra={"fields": ["voice_id"]})
+            if picked is None or picked.language != body.language or not picked.listed:
+                raise ApiError(422, "validation_error", "Choose one of the voices on the list for this language.", extra={"fields": ["voice_id"]})
+            if picked.gender != current:
+                # the owner picks the voice they like (planner, 21 Nov 2026): the assistant's gender becomes the voice's, in the same call (pronouns and wording follow it); the other languages go back to the new gender's defaults, as a gender switch always does
+                _repo(runtime).set_voice_gender(ctx.principal.token, ctx.tenant.id, picked.gender)
         row = _repo(runtime).set_voice_choice(ctx.principal.token, ctx.tenant.id, str(body.language), body.voice_id)
     raw = row.get("choices", {})
     after = "male" if row.get("gender") == "male" else "female"
