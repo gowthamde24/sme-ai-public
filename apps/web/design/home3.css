@@ -71,8 +71,7 @@
 [data-ui="v2"] .h3-ask-input { display: block; width: 100%; resize: none; border: 0; background: transparent; padding: 4px 6px; font: inherit; font-size: clamp(16px, calc(0.4vw + 14px), 19px); line-height: 1.5; color: var(--v2-ink); outline: none; }
 [data-ui="v2"] .h3-ask-input::placeholder { color: var(--v2-muted); opacity: 1; }
 [data-ui="v2"] .h3-ask-field:focus-within { box-shadow: inset 0 0 0 2px var(--v2-ring), var(--v2-shadow); }
-[data-ui="v2"] .h3-ask-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
-[data-ui="v2"] .h3-ask-mic { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; border-radius: 999px; padding: 0 16px; border: 1px dashed var(--v2-border-strong); background: transparent; font-size: 14px; color: var(--v2-muted); cursor: not-allowed; }
+[data-ui="v2"] .h3-ask-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 8px; }
 [data-ui="v2"] .h3-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0; padding: 0; list-style: none; }
 [data-ui="v2"] .h3-chip { min-height: 44px; border-radius: 999px; background: var(--v2-surface-2); padding: 8px 16px; font-size: 15px; line-height: 1.35; color: var(--v2-ink); text-align: left; transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1), background-color 150ms ease; cursor: pointer; }
 [data-ui="v2"] .h3-chip:hover { background: var(--v2-border); }
@@ -96,6 +95,8 @@
 [data-ui="v2"] .h3-found dd { flex: 1 1 140px; margin: 0; font-size: 15px; font-weight: 700; }
 
 /* 4 and 5: the counter and the radar (the scenes' own markup; the cards here are the soft warm grey) */
+[data-ui="v2"] .h3-leak { display: flex; flex-direction: column; gap: clamp(20px, 3vw, 36px); }
+[data-ui="v2"] .h3-leak .h3-head { margin-bottom: 0; }
 [data-ui="v2"] .h3-two { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: var(--h3-gap); }
 [data-ui="v2"] .h3-radar { display: grid; grid-template-columns: minmax(0, 1fr); overflow: hidden; border-radius: clamp(20px, 2.4vw, 28px); background: var(--v2-surface); box-shadow: inset 0 0 0 1px var(--v2-border), var(--v2-shadow); }
 [data-ui="v2"] .h3-radar-map-col { min-width: 0; background: var(--v2-surface-2); }
@@ -132,12 +133,37 @@
 [data-ui="v2"] .h3-fit { position: relative; width: 100%; overflow: hidden; visibility: hidden; }
 [data-ui="v2"] .h3-fit[data-ready] { visibility: visible; }
 [data-ui="v2"] .h3-fit-in { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: scale(var(--fit, 1)); }
-[data-ui="v2"] .h3-fit-stage { aspect-ratio: 1240 / 540; max-width: 1240px; margin-inline: auto; }
-[data-ui="v2"] .h3-fit-stage .h3-fit-in, [data-ui="v2"] .h3-stage { width: 1240px; height: 540px; }
+/* the hero stage: upright (360 x 640, real size) below 900 px, the design's 1240 x 540 (scaled whole) from 900 px; one markup, one canvas: positions are classes, in percentages of the box */
+[data-ui="v2"] .h3-fit-stage { aspect-ratio: 360 / 690; max-width: 440px; margin-inline: auto; }
+[data-ui="v2"] .h3-fit-stage .h3-fit-in, [data-ui="v2"] .h3-stage { width: 100%; height: 100%; }
 [data-ui="v2"] .h3-stage { position: relative; }
-[data-ui="v2"] .h3-fit-leak { aspect-ratio: 764 / 520; }
-[data-ui="v2"] .h3-fit-leak .h3-fit-in, [data-ui="v2"] .h3-leakviz { width: 764px; height: 520px; }
-[data-ui="v2"] .h3-leakviz { position: relative; }
+[data-ui="v2"] .h3-pos { position: absolute; }
+[data-ui="v2"] .h3-src, [data-ui="v2"] .h3-out { width: 46.7%; }
+[data-ui="v2"] .h3-src-0 { left: 2.2%; top: 0; } [data-ui="v2"] .h3-src-2 { left: 51.1%; top: 0; } [data-ui="v2"] .h3-src-3 { left: 2.2%; top: 8.7%; } [data-ui="v2"] .h3-src-4 { left: 51.1%; top: 8.7%; }
+[data-ui="v2"] .h3-src-1, [data-ui="v2"] .h3-src-5, [data-ui="v2"] .h3-out-1 { display: none; }
+[data-ui="v2"] .h3-out-0 { left: 2.2%; top: 67.5%; } [data-ui="v2"] .h3-out-2 { left: 51.1%; top: 67.5%; }
+[data-ui="v2"] .h3-orbp { left: 50%; top: 31.5%; width: 43.7%; aspect-ratio: 1; transform: translateX(-50%); }
+[data-ui="v2"] .h3-cap { left: 2%; top: 84%; width: 96%; }
+[data-ui="v2"] .h3-stage .h2-node { white-space: normal; gap: 8px; padding: 8px 10px; font-size: 13px; }
+[data-ui="v2"] .h3-stage .h2-ico { display: none; }
+[data-ui="v2"] .h3-stage .h3-cap .font-display { font-size: 15px; }
+[data-ui="v2"] .h3-stage .h3-cap .h2-glass { flex-wrap: wrap; }
+@media (min-width: 900px) {
+  [data-ui="v2"] .h3-fit-stage { aspect-ratio: 1240 / 540; max-width: 1240px; }
+  [data-ui="v2"] .h3-fit-stage .h3-fit-in, [data-ui="v2"] .h3-stage { width: 1240px; height: 540px; }
+  [data-ui="v2"] .h3-src, [data-ui="v2"] .h3-out { width: auto; }
+  [data-ui="v2"] .h3-src-1, [data-ui="v2"] .h3-src-5, [data-ui="v2"] .h3-out-1 { display: block; }
+  [data-ui="v2"] .h3-src-0 { left: 1.935%; top: 4.815%; } [data-ui="v2"] .h3-src-1 { left: 5%; top: 20.37%; } [data-ui="v2"] .h3-src-2 { left: 7.419%; top: 35.93%; }
+  [data-ui="v2"] .h3-src-3 { left: 7.419%; top: 51.48%; } [data-ui="v2"] .h3-src-4 { left: 5%; top: 67.04%; } [data-ui="v2"] .h3-src-5 { left: 1.935%; top: 82.59%; }
+  [data-ui="v2"] .h3-out-0, [data-ui="v2"] .h3-out-1, [data-ui="v2"] .h3-out-2 { left: auto; right: 1.935%; }
+  [data-ui="v2"] .h3-out-0 { top: 20%; } [data-ui="v2"] .h3-out-1 { top: 44.07%; } [data-ui="v2"] .h3-out-2 { top: 68.15%; }
+  [data-ui="v2"] .h3-orbp { top: 24.07%; width: 22.58%; }
+  [data-ui="v2"] .h3-cap { left: 50%; top: 85.56%; width: max-content; max-width: 660px; transform: translateX(-50%); }
+  [data-ui="v2"] .h3-stage .h2-node { white-space: nowrap; gap: 10px; padding: 9px 14px 9px 10px; font-size: 14px; }
+  [data-ui="v2"] .h3-stage .h2-ico { display: flex; }
+  [data-ui="v2"] .h3-stage .h3-cap .font-display { font-size: 18px; }
+  [data-ui="v2"] .h3-stage .h3-cap .h2-glass { flex-wrap: nowrap; }
+}
 
 /* the home footer's columns (1 / 2 / 4) */
 [data-ui="v2"] .h3-foot-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(24px, 3vw, 40px); }
@@ -169,3 +195,31 @@
 /* the scenes' small icon tiles are neutral (orange is for the button, one highlight and the orb); a done mark is green */
 [data-ui="v2"] .h3 .h2-ico { background: var(--v2-surface-2); color: var(--v2-muted); }
 [data-ui="v2"] .h3 .h2-glass { background: var(--v2-surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 0 0 1px var(--v2-border), var(--v2-shadow); }
+
+/* "How much are late call-backs costing you?": sliders, the flow with its two labelled groups, the maths as four steps, the contrast. Green is done (called back), grey is gone cold; the rupee figure is the section's one orange. */
+[data-ui="v2"] .h3-leak-sliders { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px clamp(20px, 3vw, 40px); }
+[data-ui="v2"] .h3-leak-flow { position: relative; width: 100%; aspect-ratio: 6 / 5; border-radius: clamp(20px, 2vw, 28px); background: var(--v2-surface-2); overflow: hidden; }
+[data-ui="v2"] .h3-leak-lab { position: absolute; left: 56%; margin: 0; display: flex; flex-direction: column; gap: 0; font-size: 14px; line-height: 1.3; transform: translateY(-50%); }
+[data-ui="v2"] .h3-leak-lab-warm { top: 22%; color: var(--v2-green-text); }
+[data-ui="v2"] .h3-leak-lab-cold { top: 78%; color: var(--v2-muted); }
+[data-ui="v2"] .h3-leak-n { font-family: var(--v2-font-display-stack); font-size: clamp(28px, calc(2vw + 18px), 44px); font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+[data-ui="v2"] .h3-leak-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+[data-ui="v2"] .h3-leak-step { display: flex; flex-direction: column; gap: 6px; border-radius: clamp(16px, 1.6vw, 22px); background: var(--v2-surface-2); padding: clamp(14px, 1.6vw, 22px); }
+[data-ui="v2"] .h3-leak-big { font-family: var(--v2-font-display-stack); font-size: clamp(26px, calc(1.8vw + 16px), 44px); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+[data-ui="v2"] .h3-leak-hot { color: var(--h3-ot); }
+[data-ui="v2"] .h3-leak-cap { font-size: 15px; line-height: 1.4; color: var(--v2-muted); }
+[data-ui="v2"] .h3-leak-with { display: flex; flex-direction: column; gap: 10px; }
+[data-ui="v2"] .h3-leak-with-t { margin: 0; font-size: clamp(16px, calc(0.4vw + 14px), 19px); line-height: 1.5; }
+[data-ui="v2"] .h3-leak-with-t b { color: var(--v2-green-text); font-weight: 700; white-space: nowrap; }
+[data-ui="v2"] .h3-leak-bar { height: 12px; border-radius: 999px; background: var(--v2-surface-2); overflow: hidden; }
+[data-ui="v2"] .h3-leak-bar-in { display: block; width: 100%; height: 100%; border-radius: 999px; background: var(--v2-green-text); transform-origin: left; transform: scaleX(1); }
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"] .h3-leak-bar-in { transform: scaleX(0); transition: transform 1800ms cubic-bezier(0.23, 1, 0.32, 1); }
+  [data-ui="v2"] .h3-leak-bar-in[data-on] { transform: scaleX(1); }
+}
+@media (min-width: 560px) { [data-ui="v2"] .h3-leak-sliders { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 900px) {
+  [data-ui="v2"] .h3-leak-flow { aspect-ratio: 1240 / 280; }
+  [data-ui="v2"] .h3-leak-lab { left: 62%; flex-direction: row; align-items: center; gap: 12px; font-size: 16px; }
+  [data-ui="v2"] .h3-leak-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+}

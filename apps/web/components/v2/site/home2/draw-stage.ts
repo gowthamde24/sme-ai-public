@@ -14,14 +14,41 @@ export type StageState = {
   onFound: () => void;
 };
 
-export function stageDrawer(get: () => StageState) {
-    const cx = 620;
+type Path = [Pt, Pt, Pt, Pt];
+type Layout = { w: number; cx: number; cy: number; R: number; paths: Path[]; outs: Path[] };
+/** Wide (the design's 1240 x 540, from 900 px of page): six sources on the left, the orb, three outcomes on the right. */
+const WIDE: Layout = (() => {
+  const cx = 620;
   const cy = 270;
-  const R = 210;
-  const paths: [Pt, Pt, Pt, Pt][] = SRC_Y.map((y, i) => [[262 + (i === 0 || i === 5 ? -38 : i === 1 || i === 4 ? 0 : 30), y], [400, y], [430, cy], [cx - 140, cy]]);
-  const outs: [Pt, Pt, Pt, Pt][] = OUT_Y.map((y) => [[cx + 140, cy], [820, cy], [850, y + 22], [990, y + 22]]);
+  return {
+    w: STAGE_W,
+    cx,
+    cy,
+    R: 210,
+    paths: SRC_Y.map((y, i): Path => [[262 + (i === 0 || i === 5 ? -38 : i === 1 || i === 4 ? 0 : 30), y], [400, y], [430, cy], [cx - 140, cy]]),
+    outs: OUT_Y.map((y): Path => [[cx + 140, cy], [820, cy], [850, y + 22], [990, y + 22]]),
+  };
+})();
+/** Tall (a narrow page, 360 x 640): the same drawing turned upright: four sources on top (Meta ads, Website form, WhatsApp, Missed call), the orb in the middle, two outcomes below, all at real size so every word is readable. */
+const TALL: Layout = (() => {
+  const cx = 180;
+  const cy = 300;
+  return {
+    w: 360,
+    cx,
+    cy,
+    R: 118,
+    paths: [52, 140, 220, 308].map((x): Path => [[x, 124], [x, 168], [cx, 176], [cx, cy - 80]]),
+    outs: [92, 268].map((x): Path => [[cx, cy + 80], [cx, 412], [x, 424], [x, 466]]),
+  };
+})();
+
+export function stageDrawer(get: () => StageState) {
   return (ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look) => {
-    const k = W / STAGE_W;
+    // one canvas at every width: wide, it draws the design's stage; in a narrow (tall) box it draws the same stage upright
+    const L = W / H >= 1.2 ? WIDE : TALL;
+    const { cx, cy, R, paths, outs } = L;
+    const k = W / L.w;
     const s = get();
     const ink = inkOf(look);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -46,11 +73,11 @@ export function stageDrawer(get: () => StageState) {
       ctx.lineTo(cx + Math.cos(ang) * r1, cy + Math.sin(ang) * r1);
       ctx.stroke();
     }
-    spectrum(ctx, cx, cy, 150, s.motion === "speaking" ? 24 : s.motion === "listening" ? 10 : 4, t, 120, bootE);
+    spectrum(ctx, cx, cy, R * 0.714, (s.motion === "speaking" ? 24 : s.motion === "listening" ? 10 : 4) * (R / 210), t, 120, bootE);
     ctx.setLineDash([2, 7]);
     ctx.strokeStyle = "rgba(194,65,12,.25)";
     ctx.beginPath();
-    ctx.arc(cx, cy, R - 46, 0, 6.2832);
+    ctx.arc(cx, cy, R * 0.78, 0, 6.2832);
     ctx.stroke();
     ctx.setLineDash([]);
     // guide lines

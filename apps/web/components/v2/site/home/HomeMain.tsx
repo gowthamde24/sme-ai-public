@@ -28,14 +28,14 @@ const HERO_KEYS = [
   "h2.mode.picked",
   "h2.mode.listening",
   "h2.mode.wait",
-  ...["te", "ta", "kn", "ml", "hi", "mr", "en"].map((c) => `h2.lang.${c}`),
+  ...["te", "kn", "hi", "en"].map((c) => `h2.lang.${c}`),
   ...[1, 2, 3].flatMap((i) => [`h2.out.${i}.t`, `h2.out.${i}.d`]),
   ...[1, 2, 3, 4, 5, 6].flatMap((i) => [`h3.src.${i}.t`, `h3.src.${i}.d`]),
   "h2.hear",
   "h2.hear.on",
 ];
 const FINDER_KEYS = [...["city", "near", "checked", "call", "ask", "skip", "list", "of", "empty"].map((x) => `h2.finder.${x}`), ...[1, 2, 3, 4].flatMap((i) => [`h2.finder.pin.${i}.what`, `h2.finder.pin.${i}.why`])];
-const LEAK_KEYS = ["title", "sub", "enq", "miss", "buy", "avg", "warm", "cold", "note", "in"].map((x) => `h2.leak.${x}`);
+const LEAK_KEYS = [...["enq", "miss", "buy", "avg"].map((x) => `h2.leak.${x}`), ...["q", "sub", "s1", "s2", "s3", "s4", "warm", "cold", "with", "of", "note"].map((x) => `h3.leak.${x}`)];
 
 /** The English (or Hindi, Kannada) meaning under a Telugu line of the sample phones; none on the Telugu page, where the line is already in the reader's language. */
 const Gloss = ({ lang, text }: { lang: Lang; text: string }) => (lang === "te" ? null : <span className="h3-gloss">{text}</span>);
@@ -141,7 +141,7 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
         </header>
         <AskBox
           href={cta.href}
-          words={{ label: t("h3.ask.label"), placeholder: t("h3.ask.ph"), mic: t("h3.ask.mic"), go: t("h3.ask.go"), note: t("h3.ask.note") }}
+          words={{ label: t("h3.ask.label"), placeholder: t("h3.ask.ph"), go: t("h3.ask.go"), note: t("h3.ask.note") }}
           chips={[1, 2, 3, 4, 5].map((i) => t(k(`h3.ask.chip.${i}`)))}
         />
       </div>

@@ -5,19 +5,15 @@ import * as React from "react";
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
 
 import { stageDrawer, type StageState } from "./draw-stage";
-import { DEMO_LANGS, OUT_Y, SRC_LEFT, SRC_Y, STAGE_H, STAGE_W, wordsOf } from "./lines";
+import { DEMO_LANGS as ALL_LANGS, SRC_Y, wordsOf } from "./lines";
 import { addScene, isCalm } from "./scene";
 import { Fit } from "./Fit";
 import { HearIt, useVoice } from "./use-voice";
 
 type W = Readonly<Record<string, string>>;
 const TICK = 220;
-const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(3)}%`;
-
-/** Placed by plain style only (the leak audit: no element has both style and className); the box inside carries the classes. */
-function Place({ s, children }: { s: React.CSSProperties; children: React.ReactNode }) {
-  return <div style={{ position: "absolute", ...s }}>{children}</div>;
-}
+/** The greetings of the caption: Telugu, English, Hindi and Kannada only (owner, 20 Nov 2026), the site's four languages. */
+const DEMO_LANGS = (["te", "en", "hi", "kn"] as const).map((c) => ALL_LANGS.find((l) => l.code === c)!);
 
 const ICONS = [
   <path key="a" d="m3 11 18-5v12L3 14v-3zM11.6 16.8a3 3 0 1 1-5.8-1.6" />,
@@ -125,11 +121,9 @@ export function HeroStage({ w }: { w: W }) {
       {/* ONE stage at every width (owner, 20 Nov 2026): the design's 1240 x 540 drawing, scaled to the width of the page (Fit); nothing is swapped for a phone */}
       <Fit className="h3-fit-stage">
         <div className="h3-stage">
-          <Place s={{ inset: 0 }}>
-            <canvas ref={stageEl} aria-hidden="true" className="block size-full" />
-          </Place>
-          {SRC_Y.map((y, i) => (
-            <Place key={i} s={{ left: pct(SRC_LEFT[i], STAGE_W), top: pct(y - 24, STAGE_H) }}>
+          <canvas ref={stageEl} aria-hidden="true" className="absolute inset-0 block size-full" />
+          {SRC_Y.map((_, i) => (
+            <div key={i} className={`h3-pos h3-src h3-src-${i}`}>
               <div className="h2-glass h2-node" data-source={i}>
                 <Ico>{ICONS[i]}</Ico>
                 <span>
@@ -137,23 +131,23 @@ export function HeroStage({ w }: { w: W }) {
                   <span className="block text-xs font-semibold text-muted">{w[`h3.src.${i + 1}.d`]}</span>
                 </span>
               </div>
-            </Place>
+            </div>
           ))}
-          <Place s={{ left: "50%", top: pct(130, STAGE_H), width: pct(280, STAGE_W), aspectRatio: "1", transform: "translateX(-50%)" }}>
+          <div className="h3-pos h3-orbp">
             <div className="h2-orbwrap size-full overflow-hidden">
               <AssistantOrb state={motion} />
             </div>
-          </Place>
-          <Place s={{ left: "50%", top: pct(462, STAGE_H), transform: "translateX(-50%)" }}>
-            <div className="h2-glass flex w-max max-w-[660px] items-center gap-3 rounded-[18px] px-[18px] py-2.5" aria-live="polite" data-part="caption">
+          </div>
+          <div className="h3-pos h3-cap">
+            <div className="h2-glass flex items-center gap-3 rounded-[18px] px-[18px] py-2.5" aria-live="polite" data-part="caption">
               <span className="h2-blink" />
               <span className="shrink-0 whitespace-nowrap text-[13px] font-bold text-brand-text">{mode}</span>
               <span className="min-w-0 font-display text-lg font-semibold leading-snug">{words}</span>
               {hear}
             </div>
-          </Place>
-          {OUT_Y.map((y, i) => (
-            <Place key={i} s={{ right: pct(24, STAGE_W), top: pct(y, STAGE_H) }}>
+          </div>
+          {[0, 1, 2].map((i) => (
+            <div key={i} className={`h3-pos h3-out h3-out-${i}`}>
               <div className="h2-glass h2-node h2-out" data-out={i} data-lit={i === litOut ? "" : undefined}>
                 <Check />
                 <span>
@@ -161,7 +155,7 @@ export function HeroStage({ w }: { w: W }) {
                   <span className="block text-xs font-semibold text-muted">{outs[i].d}</span>
                 </span>
               </div>
-            </Place>
+            </div>
           ))}
         </div>
       </Fit>

@@ -9576,17 +9576,6 @@
    "kn": "draft"
   }
  },
- "h3.ask.mic": {
-  "en": "Speaking: soon",
-  "te": "మాట్లాడటం: త్వరలో",
-  "hi": "बोलना: जल्द ही",
-  "kn": "ಮಾತನಾಡುವುದು: ಶೀಘ್ರದಲ್ಲಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "h3.ask.go": {
   "en": "Set this up",
   "te": "ఇది set up చేయండి",
@@ -10104,17 +10093,6 @@
    "kn": "draft"
   }
  },
- "h3.leak.t": {
-  "en": "How many enquiries are reached in time?",
-  "te": "ఎన్ని enquiries కి టైమ్ కి జవాబు వెళ్తోంది?",
-  "hi": "कितनी enquiries को time पर जवाब मिलता है?",
-  "kn": "ಎಷ್ಟು enquiries ಗೆ time ಗೆ ಉತ್ತರ ಹೋಗುತ್ತದೆ?",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "h3.radar.t": {
   "en": "Lead Finder: new customers near you",
   "te": "Lead Finder: మీ దగ్గర కొత్త customers",
@@ -10131,6 +10109,127 @@
   "te": "ఇది మీ చుట్టూ map చూస్తుంది, దొరికిన ప్రతి business ని చెక్ చేసి, ఎవరిని contact చేయొచ్చో చూపిస్తుంది. Contact చేసేది మీరే.",
   "hi": "यह आपके आसपास का map देखता है, मिले हर business को check करता है और दिखाता है किसे contact करना ठीक है। Contact आप खुद करते हैं।",
   "kn": "ಇದು ನಿಮ್ಮ ಸುತ್ತಲಿನ map ನೋಡಿ, ಸಿಕ್ಕ ಪ್ರತಿ business ಅನ್ನು check ಮಾಡಿ, ಯಾರನ್ನು contact ಮಾಡಬಹುದು ಅಂತ ತೋರಿಸುತ್ತದೆ. Contact ಮಾಡುವುದು ನೀವೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.q": {
+  "en": "How much are late call-backs costing you?",
+  "te": "ఆలస్యంగా call back చేయడం వల్ల మీకు ఎంత నష్టం?",
+  "hi": "late call-back से आपको कितना नुकसान हो रहा है?",
+  "kn": "late call-back ನಿಂದ ನಿಮಗೆ ಎಷ್ಟು ನಷ್ಟ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.sub": {
+  "en": "Move the sliders to your own numbers.",
+  "te": "Sliders ని మీ సొంత numbers కి జరపండి.",
+  "hi": "sliders को अपने numbers पर ले जाइए।",
+  "kn": "sliders ಅನ್ನು ನಿಮ್ಮ ಸ್ವಂತ numbers ಗೆ ಸರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.s1": {
+  "en": "enquiries a month",
+  "te": "enquiries ప్రతి నెల",
+  "hi": "enquiries हर महीने",
+  "kn": "enquiries ತಿಂಗಳಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.s2": {
+  "en": "not called back in 5 minutes",
+  "te": "5 నిమిషాల్లో call back కాలేదు",
+  "hi": "5 मिनट में call back नहीं हुआ",
+  "kn": "5 ನಿಮಿಷದಲ್ಲಿ call back ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.s3": {
+  "en": "of them might have bought",
+  "te": "వీళ్ళలో కొనేవాళ్ళు ఉండొచ్చు",
+  "hi": "इनमें से खरीद सकते थे",
+  "kn": "ಇವರಲ್ಲಿ ಕೊಳ್ಳುತ್ತಿದ್ದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.s4": {
+  "en": "a month walking away",
+  "te": "నెలకు చేజారిపోతోంది",
+  "hi": "हर महीने हाथ से जा रहा है",
+  "kn": "ತಿಂಗಳಿಗೆ ಕೈ ತಪ್ಪುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.warm": {
+  "en": "called back in time",
+  "te": "టైమ్ కి call back అయ్యాయి",
+  "hi": "time पर call back हुईं",
+  "kn": "time ಗೆ call back ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.cold": {
+  "en": "went cold",
+  "te": "చల్లారిపోయాయి",
+  "hi": "ठंडी पड़ गईं",
+  "kn": "ತಣ್ಣಗಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.with": {
+  "en": "With {brand}, every enquiry gets an answer in seconds:",
+  "te": "{brand} తో ప్రతి enquiry కి seconds లో జవాబు:",
+  "hi": "{brand} के साथ हर enquiry को seconds में जवाब:",
+  "kn": "{brand} ನೊಂದಿಗೆ ಪ್ರತಿ enquiry ಗೆ seconds ನಲ್ಲಿ ಉತ್ತರ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.of": {
+  "en": "{n} of {n}",
+  "te": "{n} లో {n}",
+  "hi": "{n} में से {n}",
+  "kn": "{n} ರಲ್ಲಿ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.leak.note": {
+  "en": "Your estimate, not a promise.",
+  "te": "ఇది మీ అంచనా, హామీ కాదు.",
+  "hi": "यह आपका अंदाज़ा है, वादा नहीं।",
+  "kn": "ಇದು ನಿಮ್ಮ ಅಂದಾಜು, ಭರವಸೆ ಅಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",

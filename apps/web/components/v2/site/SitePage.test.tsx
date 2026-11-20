@@ -43,9 +43,11 @@ describe("every page of the public site, in every language", () => {
     expect(html).not.toMatch(/machine-written|machine written|not yet (read|checked|reviewed)|యంత్రం రాసిన|मशीन से लिखा|ಯಂತ್ರ ಬರೆದ/i);
   });
 
-  it("the header and footer link to every page in the same language, and to the other languages of this page", () => {
+  it("the header and footer link to every page in the same language, and to the other languages of this page, and to no business page", () => {
     const html = render("te", { kind: "page", page: "pricing" });
-    for (const href of ["/te", "/te/pricing", "/te/how-it-works", "/te/security", "/te/contact", "/te/help", ...SITE_PACKS.map((p) => `/te/${p.slug}`)]) expect(html, href).toContain(`href="${href}"`);
+    for (const href of ["/te", "/te/pricing", "/te/how-it-works", "/te/security", "/te/contact", "/te/help"]) expect(html, href).toContain(`href="${href}"`);
+    // no business list anywhere (owner, 20 Nov 2026): no footer, header or page except the business pages themselves links to a business page
+    for (const p of SITE_PACKS) expect(html, p.slug).not.toContain(`href="/te/${p.slug}"`);
     expect(sitePath("en", { kind: "page", page: "pricing" })).toBe("/pricing");
   });
 });
@@ -106,6 +108,9 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     for (const x of ["Meta ads", "2BHK in Kondapur", "JustDial, IndiaMART", "B.Tech admission", "Website form", "WhatsApp", "Saree for a wedding", "Missed call", "Test drive: SUV", "Google", "Demo class timings", "Answered in seconds", "Quote ready", "Visit booked"]) expect(text(stage), x).toContain(x);
     expect(stage.match(/data-out="\d"/g)).toHaveLength(3);
     expect(stage).toContain('aria-live="polite"');
+    expect(stage).toMatch(/lang="te" data-part="caption-words"/); // the greetings: Telugu first, then English, Hindi and Kannada only
+    expect(stage).not.toMatch(/வணக்கம்|നമസ്കാരം|नमस्कार!/);
+    expect(stage).toContain("h3-src-5"); // all six sources are in the markup; a narrow page shows four of them (css), nothing is swapped
     expect(stage).not.toMatch(/data-part="try|data-try-/); // no "Try it": the box below is the one place to type
     expect(home.match(/<h1[\s>]/g)).toHaveLength(1);
     expect(text(home)).not.toMatch(/working name|Sme-?AI/i);
@@ -113,19 +118,19 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
   it("one markup at every width: no section or part is hidden or swapped at a width (no lg:hidden, hidden md:block or max-lg:hidden pair) and the drawings are scaled whole, never replaced", () => {
     const main = home.match(/<div class="h3 [\s\S]*?<footer/)![0];
     expect(main).not.toMatch(/\b(max-)?(sm|md|lg|xl|min-\[\d+px\]):(hidden|block|flex)\b|\bhidden\b[^"]*\b(sm|md|lg|xl):|\blg:hidden\b/);
-    expect(main.match(/class="h3-fit h3-fit-(stage|leak)/g)).toHaveLength(2);
+    expect(main.match(/class="h3-fit h3-fit-stage/g)).toHaveLength(1); // the stage is the one scaled drawing; the map and the flow reflow in their own canvases
     expect(main).not.toMatch(/data-part="(sources|caption|found|try|checked)-phone"|data-(source|out)-phone=/);
     const dir = path.join(__dirname, "home");
     const src = [...fs.readdirSync(dir).filter((f) => /\.tsx$/.test(f)).map((f) => fs.readFileSync(path.join(dir, f), "utf8")), ...["HeroStage", "RadarFinder", "LeakCalc"].map((f) => fs.readFileSync(path.join(__dirname, `home2/${f}.tsx`), "utf8"))].join("\n");
     expect(src).not.toMatch(/innerWidth|useMedia|:hidden|hidden (sm|md|lg|xl):|max-(sm|md|lg|xl):|\blg:/);
   });
-  it("what should your assistant do: a labelled box, five example chips across kinds of business, a disabled microphone that says soon, and a button to sign-up; it calls no AI", () => {
+  it("what should your assistant do: a labelled box (type only, no microphone), five example chips across kinds of business and a button to sign-up; it calls no AI", () => {
     const ask = home.match(/<section id="ask"[\s\S]*?<\/section>/)![0];
     expect(text(ask)).toContain("What should your assistant do?");
+    expect(ask).not.toMatch(/<svg[^>]*lucide-mic|data-part="ask-mic"|Speaking: soon/); // typing only
     expect(ask).toMatch(/<label[^>]*class="sr-only"/);
     expect(ask.match(/data-chip="\d"/g)).toHaveLength(5);
-    for (const x of ["Book site visits for new property leads", "Call every admission enquiry right away", "Remind students about the demo class", "Book test drives for new enquiries", "Tell customers their order is ready", "Speaking: soon", "Set this up"]) expect(text(ask), x).toContain(x);
-    expect(ask).toMatch(/data-part="ask-mic"[^>]*disabled|disabled[^>]*data-part="ask-mic"/);
+    for (const x of ["Book site visits for new property leads", "Call every admission enquiry right away", "Remind students about the demo class", "Book test drives for new enquiries", "Tell customers their order is ready", "Set this up"]) expect(text(ask), x).toContain(x);
     expect(ask).toMatch(/data-part="ask-go"/);
     expect(ask).toContain('href="/signup"');
   });
@@ -137,11 +142,17 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     for (const x of ["One call. One WhatsApp. One clear summary.", "It answers in your customer's language", "Then it follows up on WhatsApp", "You see what it found out", "Phone call, 1 min 20 s", "EAMCET weekend batch", "Demo class, Saturday 10 am"]) expect(text(how), x).toContain(x);
     expect(how).toContain("EAMCET weekend batch details ఇవిగో");
   });
-  it("calls in time: the counter with its real labelled sliders (the visitor's own estimate); the Lead Finder: built, the owner contacts them, no 'we call them'", () => {
+  it("the late call-backs section: a question, four labelled sliders (average sale too), two labelled groups with counts, the maths as four steps, the contrast with a bar; the Lead Finder: built, the owner contacts them, no 'we call them'", () => {
     const calc = home.match(/<section id="calc"[\s\S]*?<\/section>/)![0];
-    expect(calc.match(/type="range"/g)).toHaveLength(3);
+    expect(text(calc)).toContain("How much are late call-backs costing you?");
+    expect(text(calc)).toContain("Move the sliders to your own numbers.");
+    expect(calc.match(/type="range"/g)).toHaveLength(4);
     for (const id of ["h2-enq", "h2-miss", "h2-buy", "h2-avg"]) expect(calc).toContain(`for="${id}"`);
-    expect(text(calc)).toContain("Not a promise, your own estimate.");
+    expect(calc).toMatch(/id="h2-avg"[^>]*min="500"[^>]*max="50000"/);
+    expect(calc.match(/data-leak-step="\d"/g)).toHaveLength(4);
+    for (const x of ["150", "enquiries a month", "60", "not called back in 5 minutes", "6", "of them might have bought", "\u20b948,000", "a month walking away", "90", "called back in time", "went cold", "every enquiry gets an answer in seconds: 150 of 150", "Your estimate, not a promise."]) expect(text(calc), x).toContain(x);
+    expect(calc).toContain('class="h3-leak-bar"');
+    expect(calc.match(/<canvas/g)).toHaveLength(1);
     const finder = home.match(/<section id="finder"[\s\S]*?<\/section>/)![0];
     expect(text(finder)).toContain("Lead Finder: new customers near you");
     expect(text(finder)).toContain("You contact them yourself.");

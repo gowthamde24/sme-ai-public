@@ -9,7 +9,6 @@ import { SupportedBy } from "@/components/v2/site/SupportedBy";
 import { Wordmark } from "@/components/v2/Wordmark";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
-import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { LANGS } from "@/i18n/lang";
 import { ADDRESSES } from "@/lib/site/business";
 import { isServed } from "@/lib/site/mode";
@@ -25,25 +24,13 @@ export function SiteFooter({ t, lang, target = { kind: "home" }, early }: { t: S
   if (target.kind === "home" && early) return <HomeFooter t={t} lang={lang} early={early} />;
   return (
     <footer className="border-t border-line bg-surface">
-      <div className={`${container} grid gap-8 py-10 md:grid-cols-4`}>
+      <div className={`${container} grid gap-8 py-10 md:grid-cols-3`}>
         <div>
           <Wordmark />
           <p className="mt-3 text-sm text-muted">{t("foot.note")}</p>
           <p className="mt-4 text-sm font-semibold text-muted">{t("contact.addr.title")}</p>
           <EmailAddress address={ADDRESSES.hello} words={emailWords(t)} />
         </div>
-        <nav aria-label={t("foot.businesses")}>
-          <p className="text-sm font-semibold text-muted">{t("foot.businesses")}</p>
-          <ul className="mt-1 flex flex-col">
-            {SITE_PACKS.map((p) => (
-              <li key={p.slug}>
-                <Link href={sitePath(lang, { kind: "pack", slug: p.slug })} className={row}>
-                  {textIn(p.names, lang)}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
         <nav aria-label={t("foot.pages")}>
           <p className="text-sm font-semibold text-muted">{t("foot.pages")}</p>
           <ul className="mt-1 flex flex-col">
