@@ -861,19 +861,19 @@
   "pack": "coaching",
   "note": "Telugu script finds a contact written in Latin letters",
   "contains": [
-   "demo"
+   "నవీన్"
   ]
  },
 {
   "id": 104,
   "area": "records",
   "lang": "en",
-  "say": "Is Naveen E in my contacts?",
+  "say": "Is Ramakrishna P in my contacts?",
   "expect": "answer",
   "pack": "auto_dealer",
-  "note": "same lookup in the car dealer workspace",
+  "note": "same lookup in the car dealer workspace (a person from its own lead list)",
   "contains": [
-   "demo"
+   "Ramakrishna"
   ]
  }
 ]
