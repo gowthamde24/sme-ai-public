@@ -1,14 +1,14 @@
 /* ==========================================================================
-   The lower sections of the home page, DESIGNED AT 390 PX FIRST (owner, 21 Nov 2026: "our mobile version is not good", then "it is zoomed"): the cost of late call-backs, the Lead Finder, the voices, the plain rules, what is built in, the plans.
+   The lower sections of the home page (website-spec-v4, sections 4 to 8), DESIGNED AT 390 PX FIRST (owner, 21 Nov 2026: "our mobile version is not good", then "it is zoomed", then "not too much information"): what late call-backs cost, the Lead Finder, the voices, what is built in, the plans. Each is a title, one grey line and one visual.
    The same density as the app, the owner's FINAL type scale (21 Nov 2026: "zoomed is not good, it should be normal"): on a phone (up to 520 px) a section title is 22 px (24 from 520), a card title 17 px, body text 15 px on a 1.5 line, labels and small text 14 px (the audit's floor), buttons 15 px text at 44 px, the side padding 16 px, a card has 16 px padding, an icon 18-20 px; from 768 px titles 30 px, 36 px from 1024 and 40 px from 1280, body 16-17 px. Sizes step at these widths; no font size follows the viewport width. Nothing is a scaled desktop:
    the phone has its own layout (swipe rows with dots, a 2 x 2, a list) and from 768 px the cards lie side by side; 1440 px only widens the same layout.
-   Type: the site's one font (the sans stack), two weights here, 400 and 700 (the small orange label above each title is 500); no uppercase, no letter-spacing, no monospace. Colour: ONE orange, #c2410c (text on light #b23a08, on dark #ff9d6e): the label, one highlight per section,
+   Type: the site's one font (the sans stack), two weights here, 400 and 700; no uppercase, no letter-spacing, no monospace. Colour: ONE orange, #c2410c (text on light #b23a08, on dark #ff9d6e): the money figure, one highlight per section,
    the primary button and the play button; green is "done"; everything else white or warm grey. Cards: white, 1 px soft border, a large radius, a soft shadow. Motion: transform and opacity only, inside prefers-reduced-motion: no-preference.
    Every selector starts with [data-ui="v2"] (audit:leaks); every class has the h4- prefix. The page's white dotted background and the footer are not touched here.
    ========================================================================== */
 [data-ui="v2"] .h4 {
   --h4-gutter: 16px;
-  --h4-sec: clamp(48px, calc(5vw + 29px), 96px);
+  --h4-sec: 48px;
   --h4-pad: 16px;
   --h4-r: 16px;
   position: relative;
@@ -17,11 +17,11 @@
 }
 [data-ui="v2"] .h4-wrap { position: relative; max-width: 1240px; margin-inline: auto; }
 @media (min-width: 640px) { [data-ui="v2"] .h4 { --h4-gutter: 24px; --h4-pad: 20px; --h4-r: 20px; } }
-@media (min-width: 1024px) { [data-ui="v2"] .h4 { --h4-gutter: 32px; --h4-pad: 24px; --h4-r: 24px; } }
+@media (min-width: 768px) { [data-ui="v2"] .h4 { --h4-sec: 72px; } }
+@media (min-width: 1024px) { [data-ui="v2"] .h4 { --h4-gutter: 32px; --h4-pad: 24px; --h4-r: 24px; --h4-sec: 88px; } }
 
-/* the title block: a small orange label, a big bold title, one grey line */
+/* the title block: a big bold title, one grey line */
 [data-ui="v2"] .h4-head { display: flex; flex-direction: column; gap: 8px; max-width: 680px; margin-bottom: clamp(20px, 3vw, 40px); }
-[data-ui="v2"] .h4-eyebrow { margin: 0; font-size: 14px; font-weight: 500; line-height: 1.3; color: var(--h3-ot); }
 [data-ui="v2"] .h4-h2 { margin: 0; font-size: 22px; font-weight: 700; line-height: 1.2; letter-spacing: normal; text-wrap: balance; }
 [data-ui="v2"] .h4-lead { margin: 0; font-size: 15px; line-height: 1.5; color: var(--v2-muted); text-wrap: pretty; }
 [data-ui="v2"] .h4-h3 { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.3; }
@@ -74,10 +74,9 @@
 [data-ui="v2"] .h4-flow-cold { left: 46%; bottom: 5%; color: var(--v2-muted); }
 [data-ui="v2"] .h4-flow-n { font-size: 22px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
 [data-ui="v2"] .h4-flow-in .h4-flow-n { color: var(--v2-ink); }
-[data-ui="v2"] .h4-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
-[data-ui="v2"] .h4-step { display: flex; flex-direction: column; gap: 2px; border: 1px solid var(--v2-border); border-radius: 14px; background: var(--v2-surface); box-shadow: var(--v2-shadow); padding: 16px; }
-[data-ui="v2"] .h4-step-n { font-size: 22px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-[data-ui="v2"] .h4-step-d { font-size: 14px; line-height: 1.35; color: var(--v2-muted); }
+[data-ui="v2"] .h4-result { display: flex; flex-direction: column; gap: 2px; border: 1px solid var(--v2-border); border-radius: var(--h4-r); background: var(--v2-surface); box-shadow: var(--v2-shadow); padding: var(--h4-pad); }
+[data-ui="v2"] .h4-result-n { margin: 0; font-size: 32px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+[data-ui="v2"] .h4-result-d { margin: 0; font-size: 15px; line-height: 1.4; color: var(--v2-muted); }
 [data-ui="v2"] .h4-with { display: flex; flex-direction: column; gap: 8px; }
 [data-ui="v2"] .h4-with p { margin: 0; font-size: 15px; line-height: 1.5; }
 [data-ui="v2"] .h4-with b { color: var(--v2-green-text); font-weight: 700; white-space: nowrap; }
@@ -90,18 +89,16 @@
 @media (min-width: 768px) {
   [data-ui="v2"] .h4-sliders { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   [data-ui="v2"] .h4-more-in { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  [data-ui="v2"] .h4-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-  [data-ui="v2"] .h4-step { padding: 18px; }
   [data-ui="v2"] .h4-leak { gap: 20px; }
 }
 
 /* wide: the sliders and the maths on the left, the pipe beside them (it would be 800 px tall at 1440 otherwise) */
 @media (min-width: 1024px) {
-  [data-ui="v2"] .h4-leak { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-areas: "sl flow" "st flow" "wi flow" "no flow"; align-content: start; gap: 20px 40px; }
+  [data-ui="v2"] .h4-leak { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-areas: "sl flow" "re flow" "wi flow" "no flow"; align-content: start; gap: 20px 40px; }
   [data-ui="v2"] .h4-sliders { grid-area: sl; grid-template-columns: minmax(0, 1fr); }
   [data-ui="v2"] .h4-more-in { grid-template-columns: minmax(0, 1fr); }
   [data-ui="v2"] .h4-flow { grid-area: flow; align-self: start; }
-  [data-ui="v2"] .h4-steps { grid-area: st; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  [data-ui="v2"] .h4-result { grid-area: re; }
   [data-ui="v2"] .h4-with { grid-area: wi; }
   [data-ui="v2"] .h4-leak > .h4-small { grid-area: no; }
 }
@@ -150,52 +147,38 @@
 
 /* ---- 3. the voices ---- */
 [data-ui="v2"] .h4-audio-off { display: none; }
-[data-ui="v2"] .h4-voice { display: flex; flex-direction: column; gap: 8px; }
+[data-ui="v2"] .h4-voice { display: flex; flex-direction: column; gap: 12px; }
 [data-ui="v2"] .h4-voice-top { display: flex; align-items: center; gap: 12px; }
 [data-ui="v2"] .h4-play { display: inline-flex; flex: none; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 50%; background: var(--h3-or); color: #fff; cursor: pointer; transition: transform 100ms ease; }
 [data-ui="v2"] .h4-play:active { transform: scale(0.94); }
 [data-ui="v2"] .h4-play:focus-visible { outline: 2px solid var(--v2-ring); outline-offset: 3px; }
 [data-ui="v2"] .h4-play-ico { margin-left: 2px; }
-[data-ui="v2"] .h4-voice-meta { display: flex; flex-direction: column; margin: 0; }
+[data-ui="v2"] .h4-voice-meta { display: flex; min-width: 0; flex-direction: column; margin: 0; }
 [data-ui="v2"] .h4-voice-lang { font-size: 15px; font-weight: 700; line-height: 1.3; }
-[data-ui="v2"] .h4-voice-state { font-size: 14px; line-height: 1.3; color: var(--v2-muted); font-variant-numeric: tabular-nums; }
+[data-ui="v2"] .h4-voice-state { font-size: 14px; line-height: 1.3; color: var(--v2-muted); }
 [data-ui="v2"] .h4-voice[data-playing] { border-color: var(--h3-or); box-shadow: inset 0 0 0 1px var(--h3-or), var(--v2-shadow); }
 [data-ui="v2"] .h4-voice[data-playing] .h4-voice-state { font-weight: 700; color: var(--h3-ot); }
 [data-ui="v2"] .h4-voice-bar { display: block; height: 3px; overflow: hidden; border-radius: 999px; background: var(--v2-border); }
 [data-ui="v2"] .h4-voice-bar span { display: block; width: 100%; height: 100%; background: var(--h3-or); transform-origin: left; transform: scaleX(0); transition: transform 250ms linear; }
-[data-ui="v2"] .h4-voice-says { margin: 0; font-size: 15px; line-height: 1.5; color: var(--v2-ink); }
+[data-ui="v2"] .h4-voice-says { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin: 0; font-size: 15px; line-height: 1.5; color: var(--v2-ink); }
 [data-ui="v2"] .h4-voice-says::before { content: "\201C"; }
 [data-ui="v2"] .h4-voice-says::after { content: "\201D"; }
 [data-ui="v2"] .h4-voice audio { width: 100%; margin-top: 4px; }
 
-/* ---- 4. the plain rules: ONE row of four short items with a small icon (two by two on a phone) ---- */
-[data-ui="v2"] .h4-rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; margin: 0; list-style: none; }
-[data-ui="v2"] .h4-rules li { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 15px; line-height: 1.4; }
-@media (min-width: 768px) { [data-ui="v2"] .h4-rules { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; } [data-ui="v2"] .h4-rules li { font-size: 16px; } }
-
-/* ---- 5. built in: a list on a phone, cards from 640 px ---- */
-[data-ui="v2"] .h4-built { overflow: hidden; margin: 0; padding: 0; border: 1px solid var(--v2-border); border-radius: var(--h4-r); background: var(--v2-surface); box-shadow: var(--v2-shadow); list-style: none; }
-[data-ui="v2"] .h4-built-row { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 2px 12px; padding: var(--h4-pad); border-top: 1px solid var(--v2-border); }
-[data-ui="v2"] .h4-built-row:first-child { border-top: 0; }
-[data-ui="v2"] .h4-ico { display: inline-flex; flex: none; grid-row: span 2; width: 36px; height: 36px; align-items: center; justify-content: center; border-radius: 10px; background: var(--v2-surface-2); color: var(--v2-ink); }
-@media (min-width: 640px) {
-  [data-ui="v2"] .h4-built { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; overflow: visible; border: 0; border-radius: 0; background: none; box-shadow: none; }
-  [data-ui="v2"] .h4-built-row { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; border: 1px solid var(--v2-border); border-radius: var(--h4-r); background: var(--v2-surface); box-shadow: var(--v2-shadow); }
-  [data-ui="v2"] .h4-built-row:first-child { border-top: 1px solid var(--v2-border); }
-}
+/* ---- 4. built in: four small cards, two by two on a phone ---- */
+[data-ui="v2"] .h4-built { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+[data-ui="v2"] .h4-built-card { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+[data-ui="v2"] .h4-ico { display: inline-flex; flex: none; width: 36px; height: 36px; align-items: center; justify-content: center; border-radius: 10px; background: var(--v2-surface-2); color: var(--v2-ink); }
+@media (min-width: 768px) { [data-ui="v2"] .h4-built { gap: 16px; } }
 @media (min-width: 1024px) { [data-ui="v2"] .h4-built { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
-/* ---- 6. the plans ---- */
+/* ---- 5. the plans ---- */
 [data-ui="v2"] .h4-plan { display: flex; flex-direction: column; gap: 6px; }
 [data-ui="v2"] .h4-plan-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 [data-ui="v2"] .h4-plan-rec { border-color: var(--h3-or); box-shadow: inset 0 0 0 1px var(--h3-or), var(--v2-shadow); }
 [data-ui="v2"] .h4-rec { border-radius: 999px; background: var(--v2-brand-bg); padding: 2px 10px; font-size: 14px; font-weight: 700; line-height: 1.45; color: var(--h3-ot); }
 [data-ui="v2"] .h4-price { margin: 6px 0 0; font-size: 26px; font-weight: 700; line-height: 1.05; font-variant-numeric: tabular-nums; }
 [data-ui="v2"] .h4-price span { font-size: 15px; font-weight: 400; color: var(--v2-muted); }
-[data-ui="v2"] .h4-plan-lines { display: flex; flex: 1; flex-direction: column; gap: 8px; margin: 8px 0 12px; padding: 0; list-style: none; font-size: 15px; line-height: 1.45; }
-[data-ui="v2"] .h4-plan-lines li { display: flex; align-items: flex-start; gap: 8px; }
-[data-ui="v2"] .h4-plan-lines svg { flex: none; margin-top: 3px; color: var(--v2-green-text); }
-[data-ui="v2"] .h4-plan .h3-btn { align-self: stretch; }
 [data-ui="v2"] .h4-plans-note { display: flex; flex-direction: column; gap: 0; margin-top: 4px; }
 [data-ui="v2"] .h4-plans-note p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--v2-muted); }
 [data-ui="v2"] .h4-plans-note a { display: inline-flex; min-height: 44px; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: var(--h3-ot); }
@@ -207,13 +190,12 @@
 @media (min-width: 768px) {
   [data-ui="v2"] .h4-h2 { font-size: 30px; }
   [data-ui="v2"] .h4-lead { font-size: 16px; }
-  [data-ui="v2"] .h4-flow-n, [data-ui="v2"] .h4-step-n { font-size: 28px; }
+  [data-ui="v2"] .h4-flow-n { font-size: 28px; }
+  [data-ui="v2"] .h4-result-n { font-size: 40px; }
   [data-ui="v2"] .h4-price { font-size: 32px; }
 }
 @media (min-width: 1024px) { [data-ui="v2"] .h4-h2 { font-size: 36px; } [data-ui="v2"] .h4-lead { font-size: 17px; } [data-ui="v2"] .h4-h3 { font-size: 18px; } }
 @media (min-width: 1280px) { [data-ui="v2"] .h4-h2 { font-size: 40px; } }
-/* buttons in these sections: 15 px text at 44 px */
-[data-ui="v2"] .h4 .h3-btn { min-height: 44px; font-size: 15px; }
 
 /* a section fades in once as it comes into view (browsers with scroll-driven animations only; elsewhere it is simply there; never with "reduce motion") */
 @media (prefers-reduced-motion: no-preference) {

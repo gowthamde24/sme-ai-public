@@ -7,23 +7,21 @@ import { Swipe } from "./Swipe";
 
 export type VoiceCard = {
   id: string;
-  /** the business and what the sample does, in the page's language */
+  /** the business, in the page's language */
   biz: string;
-  what: string;
   /** the sample's language: its name in the page's language, and its code (the transcript is in this language) */
   langName: string;
   lang: string;
-  /** the words the voice says (the clip's own text) and its length in seconds */
+  /** the words the voice says (the clip's own text; the card shows its first two lines) and its length in seconds */
   text: string;
   seconds: number;
   sources: { src: string; type: string }[];
 };
+const clock = (s: number) => `0:${String(Math.max(1, Math.round(s))).padStart(2, "0")}`;
 type Words = { play: string; stop: string; playing: string; dot: string; region: string };
 
-const clock = (s: number) => `0:${String(Math.max(1, Math.round(s))).padStart(2, "0")}`;
-
 /**
- * "Hear our voices": four sample voices in a row, each a round play button, the business, the language, what the sample does and its words underneath. ONE audio element for the whole row: starting a sample stops the one before; nothing plays by itself;
+ * "Hear our voices": four sample voices in a row, each a round play button with its length, the language and the business, and two lines of its words underneath. ONE audio element for the whole row: starting a sample stops the one before; nothing plays by itself;
  * the files are the site's own (public/audio/site), so no outside address is ever asked. Without JavaScript the transcript still reads, and a plain audio player is drawn in its place (the noscript).
  */
 export function VoiceCards({ items, w }: { items: VoiceCard[]; w: Words }) {
@@ -79,7 +77,7 @@ export function VoiceCards({ items, w }: { items: VoiceCard[]; w: Words }) {
       <Swipe label={w.region} dotWord={w.dot}>
         {items.map((c) => {
           const on = playing === c.id;
-          const name = `${c.biz}, ${c.langName}, ${c.what}`;
+          const name = `${c.langName}, ${c.biz}`;
           return (
             <article key={c.id} className="h4-card h4-voice" data-voice={c.id} data-playing={on ? "" : undefined}>
               <div className="h4-voice-top">
@@ -87,14 +85,14 @@ export function VoiceCards({ items, w }: { items: VoiceCard[]; w: Words }) {
                   {on ? <Pause size={20} strokeWidth={2.4} aria-hidden="true" /> : <Play size={20} strokeWidth={2.4} aria-hidden="true" className="h4-play-ico" />}
                 </button>
                 <p className="h4-voice-meta">
-                  <span className="h4-voice-lang">{c.langName}</span>
+                  <b className="h4-voice-lang">
+                    {c.langName} · {c.biz}
+                  </b>
                   <span className="h4-voice-state" aria-live="polite">
                     {on ? w.playing : clock(c.seconds)}
                   </span>
                 </p>
               </div>
-              <h3 className="h4-h3">{c.biz}</h3>
-              <p className="h4-card-d">{c.what}</p>
               <span className="h4-voice-bar" aria-hidden="true">
                 <span style={{ transform: `scaleX(${on ? done : 0})` }} />
               </span>

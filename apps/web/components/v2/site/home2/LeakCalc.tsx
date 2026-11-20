@@ -81,8 +81,7 @@ type Slider = { id: string; label: string; value: number; show: string; set: (v:
 
 /**
  * "How much are late call-backs costing you?" (the page's own words: h3.leak.*; the section's heading is drawn by the page, the island below it). On a phone: two sliders (enquiries a month, the average sale) and a "More settings" disclosure
- * with the other two (the share not called back in 5 minutes, how many of those might have bought), today's pipe at the full width, the maths as ONE compact 2 x 2 (150 enquiries a month, 60 not called back in 5 minutes, 6 of them might
- * have bought, 48,000 rupees a month walking away) that updates live, and the contrast: with the product every enquiry gets an answer in seconds. The estimate is the visitor's own, never a promise, and the page says so. Real range inputs with labels.
+ * with the other two (the share not called back in 5 minutes, how many of those might have bought), today's pipe at the full width, ONE big rupee result ("48,000 rupees a month slipping away") that updates live, and the contrast: with the product every enquiry gets an answer in seconds. The estimate is the visitor's own, never a promise, and the page says so. Real range inputs with labels.
  */
 export function LeakCalc({ w }: { w: W }) {
   const [enq, setEnq] = React.useState(150);
@@ -128,12 +127,6 @@ export function LeakCalc({ w }: { w: W }) {
       </div>
     </div>
   );
-  const steps: { n: string; label: string; hot?: boolean }[] = [
-    { n: num(enq), label: w["h3.leak.s1"] },
-    { n: num(cold), label: w["h3.leak.s2"] },
-    { n: num(buyers), label: w["h3.leak.s3"] },
-    { n: inr(lost), label: w["h3.leak.s4"], hot: true },
-  ];
   return (
     <div className="h4-leak" data-part="leak" ref={box}>
       <div className="h4-panel h4-sliders">
@@ -162,20 +155,14 @@ export function LeakCalc({ w }: { w: W }) {
           <span className="h4-flow-n">{num(cold)}</span>
         </p>
       </div>
-      <ol className="h4-steps" aria-live="polite" data-part="steps">
-        {steps.map((s, i) => (
-          <li key={i} className="h4-step" data-leak-step={i + 1}>
-            <span className={`h4-step-n ${s.hot ? "h4-hot" : ""}`} data-part={s.hot ? "at-stake" : undefined}>
-              {s.n}
-            </span>
-            <span className="h4-step-d">{s.label}</span>
-          </li>
-        ))}
-      </ol>
-      <div className="h4-with" data-part="leak-with">
-        <p>
-          {w["h3.leak.with"]} <b>{w["h3.leak.of"].replace(/\{n\}/g, num(enq))}</b>
+      <div className="h4-result" aria-live="polite" data-part="steps">
+        <p className="h4-result-n h4-hot" data-part="at-stake">
+          {inr(lost)}
         </p>
+        <p className="h4-result-d">{w["h4.leak.slip"]}</p>
+      </div>
+      <div className="h4-with" data-part="leak-with">
+        <p>{w["h4.leak.with"].replace(/\{n\}/g, num(enq))}</p>
         <div className="h4-bar" aria-hidden="true">
           <span data-on={seen ? "" : undefined} />
         </div>

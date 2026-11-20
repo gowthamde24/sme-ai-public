@@ -49,7 +49,7 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
       <Hero t={t} cta={cta} />
       <Ask t={t} cta={cta} />
       <How t={t} />
-      <LowerSections t={t} cta={cta} />
+      <LowerSections t={t} />
       <Final t={t} lang={lang} cta={cta} hasForm={hasForm} waitlist={waitlist} />
     </div>
   );

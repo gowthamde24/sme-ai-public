@@ -17,10 +17,9 @@ export const AREAS: Record<City, readonly [string, string, string, string]> = {
   Vijayawada: ["Governorpet", "Benz Circle", "One Town", "Gunadala"],
 };
 type Pin = { id: number; x: number; y: number; km: string; d: "call" | "ask" | "skip"; ang: number };
-// the four found on this sweep (the design's): where they sit on the 780 × 520 map, how far, and the decision
+// the three found on this sweep (the design's four, one fewer, 21 Nov): where they sit on the 780 × 520 map, how far, and the decision
 const PINS: Pin[] = [
   { id: 0, x: 505, y: 165, km: "3.2 km", d: "call" as const },
-  { id: 1, x: 545, y: 365, km: "9.1 km", d: "call" as const },
   { id: 2, x: 318, y: 338, km: "4.5 km", d: "skip" as const },
   { id: 3, x: 205, y: 132, km: "6.8 km", d: "ask" as const },
 ]
@@ -343,7 +342,7 @@ export function RadarFinder({ w }: { w: W }) {
                   <span className={`h4-chip ${chip(p.d)}`}>{w[`h2.finder.${p.d}`]}</span>
                 </p>
                 <p className="h4-fc-why">
-                  <span className="h4-fc-km">{p.km}</span> {w[`h2.finder.pin.${p.id + 1}.why`]}
+                  <span className="h4-fc-km">{p.km}</span>
                 </p>
               </li>
             ))}
