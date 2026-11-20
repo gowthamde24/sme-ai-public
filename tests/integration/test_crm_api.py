@@ -742,7 +742,7 @@ def test_consent_flows_including_the_optout_withdrawal(world: World) -> None:
         w.a,
         "contacts",
         f"/{cid}/suppress",
-        json={"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": "call:7"},
+        json={"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": "note:7"},
     )
     assert opted.status_code == 200
     c = opted.json()["contact"]

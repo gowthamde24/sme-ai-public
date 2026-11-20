@@ -264,7 +264,7 @@ def test_an_opt_out_suppresses_the_keys_and_only_the_owner_with_aal2_lifts_them(
     sales, admin, owner = (bearer(w.a.users[r]) for r in ("sales", "admin", "owner"))
     r = client.post(
         url(w.a, f"/contacts/{cid}/suppress"),
-        json={"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": "call:1"},
+        json={"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": "note:1"},
         headers=sales,
     )
     assert r.status_code == 200
@@ -690,7 +690,7 @@ def test_suppressing_one_contact_from_many_requests_writes_each_key_event_once(
         6,
         lambda i: client.post(
             url(w.a, f"/contacts/{cid}/suppress"),
-            json={"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": f"call:{i}"},
+            json={"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": f"note:{i}"},
             headers=bearer(w.a.users["sales"]),
         ),
     )
