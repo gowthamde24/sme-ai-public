@@ -152,13 +152,13 @@ def test_the_fake_provider_has_its_own_test_checkout() -> None:
 # ------------------------------------------------------------------------------------------------ subscribe, change, cancel, invoices
 def test_subscribing_goes_through_the_providers_checkout_and_the_signature() -> None:
     client, repo = world(razorpay())
-    c = client.post(f"{URL}/subscription-checkout", json={"plan_id": "sales_assistant", "interval": "yearly"}, headers=auth("a_owner")).json()
-    assert c == {"provider": "razorpay", "key_id": KEY, "subscription_id": "sub_XYZ789", "plan_id": "sales_assistant", "interval": "yearly", "amount_text": "₹19,990", "gst_text": "₹3,598.20", "total_text": "₹23,588.20"}
+    c = client.post(f"{URL}/subscription-checkout", json={"plan_id": "sales_assistant", "interval": "monthly"}, headers=auth("a_owner")).json()
+    assert c == {"provider": "razorpay", "key_id": KEY, "subscription_id": "sub_XYZ789", "plan_id": "sales_assistant", "interval": "monthly", "amount_text": "₹1,999", "gst_text": "₹359.82", "total_text": "₹2,358.82"}
     sig = hmac.new(SECRET.encode(), b"pay_ABC123|sub_XYZ789", hashlib.sha256).hexdigest()
-    ok = client.post(f"{URL}/subscribe", json={"plan_id": "sales_assistant", "interval": "yearly", "checkout_ref": f"sub_XYZ789.pay_ABC123.{sig}"}, headers=auth("a_owner"))
+    ok = client.post(f"{URL}/subscribe", json={"plan_id": "sales_assistant", "interval": "monthly", "checkout_ref": f"sub_XYZ789.pay_ABC123.{sig}"}, headers=auth("a_owner"))
     assert ok.status_code == 200, ok.text
-    assert ("subscribe", ("sales_assistant", "yearly", "razorpay", "sub_XYZ789", "pay_ABC123")) in repo.calls
-    wrong = client.post(f"{URL}/subscribe", json={"plan_id": "sales_assistant", "interval": "yearly", "checkout_ref": "sub_XYZ789.pay_ABC123." + "0" * 64}, headers=auth("a_owner"))
+    assert ("subscribe", ("sales_assistant", "monthly", "razorpay", "sub_XYZ789", "pay_ABC123")) in repo.calls
+    wrong = client.post(f"{URL}/subscribe", json={"plan_id": "sales_assistant", "interval": "monthly", "checkout_ref": "sub_XYZ789.pay_ABC123." + "0" * 64}, headers=auth("a_owner"))
     assert wrong.status_code == 402 and wrong.json()["error"]["code"] == "payment_method_declined"
     assert client.post(f"{URL}/subscribe", json={"plan_id": "no_such", "interval": "monthly", "checkout_ref": "pm_fake_ok"}, headers=auth("a_owner")).json()["error"]["code"] == "plan_unknown"
 
@@ -266,3 +266,11 @@ def test_the_webhook_refuses_without_its_own_account_and_never_falls_back_to_the
         r = client.post("/v1/webhooks/razorpay-billing", content=raw, headers=headers)
         assert r.status_code == 503 and r.json()["error"]["code"] == "webhooks_unavailable"
     assert repo.tokens == [] and repo.b["balance_paise"] == 155000, "nothing was settled, and the scheduler's account was never used"
+
+
+def test_a_yearly_plan_is_refused_everywhere_monthly_plans_only() -> None:
+    """Owner, 20 Nov 2026: no yearly packages. The interval is the one word `monthly`; anything else is a 422 on every route that takes it."""
+    client, _ = world(razorpay())
+    for path in ("subscription-checkout", "subscribe", "change-quote", "change"):
+        r = client.post(f"{URL}/{path}", json={"plan_id": "sales_assistant", "interval": "yearly", "checkout_ref": "x"}, headers=auth("a_owner"))
+        assert r.status_code == 422, (path, r.status_code)

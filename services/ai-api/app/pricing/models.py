@@ -17,10 +17,7 @@ class PlanOut(_Out):
     id: str
     name: str
     monthly_paise: int
-    yearly_paise: int
     monthly_text: str            # "₹1,999 a month"
-    yearly_text: str             # "₹19,990 a year"
-    yearly_saving_text: str      # "2 months free"
     included_minutes: int
     rate_paise_per_minute: int
     rate_text: str               # "₹4.50 a minute"
@@ -36,11 +33,13 @@ class CatalogueOut(_Out):
     gst_text: str                # "+18% GST on invoices"
     free_start_paise: int
     free_start_text: str         # "₹50 free to start, no card"
+    extra_number_paise: int      # 29900: every extra business number, a month (the first one is in every plan)
+    extra_number_text: str       # "₹299 a month for each extra number"
     plans: list[PlanOut]
 
 
 class SubscriptionOut(_Out):
-    interval: Literal["monthly", "yearly"]
+    interval: Literal["monthly"]
     status: Literal["active", "past_due", "cancelled"]
     period_end: datetime
     cancel_at_period_end: bool
@@ -93,7 +92,7 @@ class EstimateOut(_Out):
 
 class ChangeQuoteIn(_Out):
     plan_id: Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")]
-    interval: Literal["monthly", "yearly"]
+    interval: Literal["monthly"]
 
 
 class ChangeQuoteOut(_Out):
@@ -122,7 +121,7 @@ class SubscriptionCheckoutOut(_Out):
     key_id: str | None
     subscription_id: str | None
     plan_id: str
-    interval: Literal["monthly", "yearly"]
+    interval: Literal["monthly"]
     amount_text: str
     gst_text: str
     total_text: str
@@ -137,7 +136,7 @@ class OrderIn(_Out):
     purpose: Literal["topup", "payg_fee", "plan_change"]
     amount_paise: Annotated[int, Field(ge=10000, le=10000000)] | None = None   # a top-up: what the customer gets (Rs 100 to Rs 1,00,000), before GST
     plan_id: Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")] | None = None
-    interval: Literal["monthly", "yearly"] | None = None
+    interval: Literal["monthly"] | None = None
 
 
 class OrderOut(_Out):

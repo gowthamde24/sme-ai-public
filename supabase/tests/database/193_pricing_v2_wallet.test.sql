@@ -23,10 +23,13 @@ end $$;
 
 -- A. the catalogue: the owner's numbers
 select is((select monthly_paise::text || '/' || rate_paise_per_minute || '/' || included_minutes || '/' || numbers_included from pricing.plans where id = 'payg'), '49900/500/0/1', 'A1: pay as you go: Rs 499 a month, Rs 5 a minute');
-select is((select monthly_paise::text || '/' || rate_paise_per_minute || '/' || included_minutes || '/' || numbers_included from pricing.plans where id = 'sales_assistant'), '199900/450/500/1', 'A2: Sales Assistant: Rs 1,999, 500 minutes, then Rs 4.50, number included');
-select is((select monthly_paise::text || '/' || rate_paise_per_minute || '/' || included_minutes || '/' || numbers_included || '/' || lead_finder from pricing.plans where id = 'sales_lead_finder'), '599900/400/1500/3/true', 'A3: Sales Assistant + Lead Finder: Rs 5,999, 1,500 minutes, then Rs 4, up to 3 numbers');
+select is((select monthly_paise::text || '/' || rate_paise_per_minute || '/' || included_minutes || '/' || numbers_included from pricing.plans where id = 'sales_assistant'), '199900/500/500/1', 'A2: Pro: Rs 1,999, 500 minutes, then Rs 5, one number included');
+select is((select monthly_paise::text || '/' || rate_paise_per_minute || '/' || included_minutes || '/' || numbers_included || '/' || lead_finder from pricing.plans where id = 'sales_lead_finder'), '599900/500/1500/1/false', 'A3: Business: Rs 5,999, 1,500 minutes, then Rs 5, one number included');
 select is((select count(*) from pricing.plans where yearly_paise = monthly_paise * 10), 3::bigint, 'A4: yearly is ten months'' price (two months free) on every plan');
 select is(pg_temp.j(public.pricing_catalogue()::text, 'gst_percent'), '18.00', 'A5: GST is 18 percent');
+select is((select string_agg(name || '/' || free_searches_month || '/' || extra_search_paise, ' ' order by sort) from pricing.plans), 'Pay as you go/2/4900 Pro/10/3900 Business/100/2900', 'A5b: the owner''s names and Lead Finder allowances on every plan (2 / 10 / 100, then Rs 49 / 39 / 29)');
+select is(pg_temp.j(public.pricing_catalogue()::text, 'extra_number_paise'), '29900', 'A5c: every extra number is Rs 299 a month');
+select is((public.pricing_catalogue() -> 'plans' -> 0) ? 'yearly_paise', false, 'A5d: the catalogue shows no yearly price (monthly plans only)');
 select is((select free_start_paise from pricing.settings), 5000::bigint, 'A6: the free start is Rs 50');
 select is(pg_temp.sc('a_viewer', $q$select public.pricing_catalogue()::text$q$) like '{%', true, 'A7: any signed-in user reads the catalogue');
 select is(pg_temp.sc('anon', $q$select public.pricing_catalogue()::text$q$), 'ERR:42501', 'A7b: nobody signed out does');
@@ -75,14 +78,14 @@ select is(pg_temp.sc('outsider', format($q$select public.pricing_can_start_call(
 
 -- F. included minutes first, then the plan''s rate
 insert into pricing.subscriptions (tenant_id, plan_id, interval, status, provider, provider_ref, period_start, period_end) values (tests.tid('a'), 'sales_assistant', 'monthly', 'active', 'fake', 'sub_fake_1', now() - interval '2 days', now() + interval '28 days');
-select is(pg_temp.j(pg_temp.chg('a', 'c10', 600, true), 'charged_paise'), '0', 'F1: Sales Assistant: 10 minutes are inside the 500 included, Rs 0');
+select is(pg_temp.j(pg_temp.chg('a', 'c10', 600, true), 'charged_paise'), '0', 'F1: Pro: 10 minutes are inside the 500 included, Rs 0');
 select is(pg_temp.j(pg_temp.chg('a', 'c10', 600, true), 'included_half'), '20', 'F2: and they are counted as 20 half-minutes of the included');
 insert into pricing.usage (tenant_id, kind, ref, half_minutes, included_half, charged_paise) values (tests.tid('a'), 'call', tests.rid('filler'), 979, 979, 0);   -- 999 of 1,000 half-minutes used
 select is(pg_temp.j(pg_temp.chg('a', 'c11', 90, true), 'included_half'), '1', 'F3: 3 units with 1 half-minute of the included left: 1 included');
-select is(pg_temp.j(pg_temp.chg('a', 'c12', 90, true), 'charged_paise'), '675', 'F4: then 3 units at half of Rs 4.50 = Rs 2.25 each = Rs 6.75');
-select is(pg_temp.bal('a'), (103250 - 450 - 675)::text, 'F5: only the paid units left the balance (c11: 2 paid units = Rs 4.50, c12: 3 = Rs 6.75)');
+select is(pg_temp.j(pg_temp.chg('a', 'c12', 90, true), 'charged_paise'), '750', 'F4: then 3 units at half of Rs 5 = Rs 2.50 each = Rs 7.50');
+select is(pg_temp.bal('a'), (103250 - 500 - 750)::text, 'F5: only the paid units left the balance (c11: 2 paid units = Rs 5, c12: 3 = Rs 7.50)');
 update pricing.subscriptions set plan_id = 'sales_lead_finder' where tenant_id = tests.tid('a');
-select is(pg_temp.j(pg_temp.chg('a', 'c13', 3000, true), 'charged_paise'), '0', 'F6: Sales Assistant + Lead Finder: 1,500 included minutes cover a 50-minute call');
+select is(pg_temp.j(pg_temp.chg('a', 'c13', 3000, true), 'charged_paise'), '0', 'F6: Business: 1,500 included minutes cover a 50-minute call');
 update pricing.subscriptions set plan_id = 'payg' where tenant_id = tests.tid('a');
 
 -- G. shortfall and the order credits are spent in
@@ -100,12 +103,13 @@ select is(pg_temp.sc('outsider', format($q$select public.pricing_can_start_call(
 
 -- H. Lead Finder searches
 select is(pg_temp.j(pg_temp.sc('outsider', format($q$select public.pricing_charge_search(%L, %L)::text$q$, tests.tid('a'), tests.rid('s1'))), 'free'), 'true', 'H1: the first search of the month is free');
-select is(pg_temp.j(pg_temp.sc('outsider', format($q$select public.pricing_charge_search(%L, %L)::text$q$, tests.tid('a'), tests.rid('s2'))), 'charged_paise'), '4900', 'H2: the second costs Rs 49 on pay as you go');
+select is(pg_temp.j(pg_temp.sc('outsider', format($q$select public.pricing_charge_search(%L, %L)::text$q$, tests.tid('a'), tests.rid('s1b'))), 'free'), 'true', 'H1b: pay as you go has 2 free searches a month: the second is free too');
+select is(pg_temp.j(pg_temp.sc('outsider', format($q$select public.pricing_charge_search(%L, %L)::text$q$, tests.tid('a'), tests.rid('s2'))), 'charged_paise'), '4900', 'H2: the third costs Rs 49 on pay as you go');
 select is(pg_temp.j(pg_temp.sc('outsider', format($q$select public.pricing_charge_search(%L, %L)::text$q$, tests.tid('a'), tests.rid('s2'))), 'replayed'), 'true', 'H3: the same search twice is charged once');
 update pricing.subscriptions set plan_id = 'sales_lead_finder' where tenant_id = tests.tid('a');
-select is(pg_temp.j(pg_temp.sc('outsider', format($q$select public.pricing_charge_search(%L, %L)::text$q$, tests.tid('a'), tests.rid('s3'))), 'charged_paise'), '0', 'H4: with Lead Finder searches are unlimited (fair use)');
+select is(pg_temp.j(pg_temp.sc('outsider', format($q$select public.pricing_charge_search(%L, %L)::text$q$, tests.tid('a'), tests.rid('s3'))), 'charged_paise'), '0', 'H4: Business has 100 free searches a month: the fourth is free');
 insert into pricing.usage (tenant_id, kind, ref, half_minutes, included_half, charged_paise) select tests.tid('a'), 'search', gen_random_uuid(), 0, 0, 0 from generate_series(1, 300);
-select is(pg_temp.sc('outsider', format($q$select public.pricing_charge_search(%L, %L)::text$q$, tests.tid('a'), tests.rid('s4'))), 'ERR:SM992', 'H5: beyond the fair-use number it stops (SM992), it does not silently charge');
+select is(pg_temp.j(pg_temp.sc('outsider', format($q$select public.pricing_charge_search(%L, %L)::text$q$, tests.tid('a'), tests.rid('s4'))), 'charged_paise'), '2900', 'H5: beyond the 100 free searches a Business search costs Rs 29 (no plan is unlimited any more)');
 
 -- I. who may read
 select is(pg_temp.j(pg_temp.sc('a_viewer', format($q$select public.pricing_balance(%L)::text$q$, tests.tid('a'))), 'plan_id'), 'sales_lead_finder', 'I1: any member reads the balance and plan');

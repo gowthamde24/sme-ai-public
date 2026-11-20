@@ -98,27 +98,27 @@ class PostgrestPricingRepository:
         return list(self._rpc.array(token, "pricing_invoices", {"p_tenant_id": str(tenant_id)}))
 
 
-def _plan_lines(p: dict[str, Any]) -> list[str]:
+def _plan_lines(p: dict[str, Any], extra_number_paise: int = 29900) -> list[str]:
     lines = [f"{inr(p['monthly_paise'])} a month" + (" for your business number and the app" if p["included_minutes"] == 0 else "")]
     lines.append(f"{p['included_minutes']:,} call minutes included, then {inr(p['rate_paise_per_minute'])} a minute" if p["included_minutes"] else f"{inr(p['rate_paise_per_minute'])} a minute for calls")
-    lines.append("Your business number is included" if p["numbers_included"] == 1 and p["included_minutes"] else f"Up to {p['numbers_included']} business number" + ("s" if p["numbers_included"] != 1 else ""))
-    lines.append("Lead Finder: unlimited searches (fair use)" if p["lead_finder"] else f"Lead Finder: 1 free search a month, then {inr(p['extra_search_paise'])} each")
+    lines.append(f"{p['numbers_included']} business number included, {inr(extra_number_paise)} a month for each extra one")
+    lines.append("Lead Finder: unlimited searches (fair use)" if p["lead_finder"] else f"Lead Finder: {p['free_searches_month']} free searches a month, then {inr(p['extra_search_paise'])} each")
     lines.append("Billed per 30 seconds. Calls nobody answers are free.")
     return lines
 
 
-def plan_out(p: dict[str, Any]) -> PlanOut:
+def plan_out(p: dict[str, Any], extra_number_paise: int = 29900) -> PlanOut:
     return PlanOut(
-        id=p["id"], name=p["name"], monthly_paise=p["monthly_paise"], yearly_paise=p["yearly_paise"], monthly_text=f"{inr(p['monthly_paise'])} a month", yearly_text=f"{inr(p['yearly_paise'])} a year",
-        yearly_saving_text="2 months free", included_minutes=p["included_minutes"], rate_paise_per_minute=p["rate_paise_per_minute"], rate_text=f"{inr(p['rate_paise_per_minute'])} a minute",
-        numbers_included=p["numbers_included"], lead_finder=bool(p["lead_finder"]), free_searches_month=p["free_searches_month"], extra_search_paise=p["extra_search_paise"], lines=_plan_lines(p),
+        id=p["id"], name=p["name"], monthly_paise=p["monthly_paise"], monthly_text=f"{inr(p['monthly_paise'])} a month", included_minutes=p["included_minutes"], rate_paise_per_minute=p["rate_paise_per_minute"], rate_text=f"{inr(p['rate_paise_per_minute'])} a minute",
+        numbers_included=p["numbers_included"], lead_finder=bool(p["lead_finder"]), free_searches_month=p["free_searches_month"], extra_search_paise=p["extra_search_paise"], lines=_plan_lines(p, extra_number_paise),
     )
 
 
 def catalogue_out(doc: dict[str, Any]) -> CatalogueOut:
     gst = float(doc["gst_percent"])
+    extra = int(doc.get("extra_number_paise") or 29900)
     return CatalogueOut(gst_percent=gst, gst_text=f"+{gst:g}% GST on invoices", free_start_paise=int(doc["free_start_paise"]), free_start_text=f"{inr(int(doc['free_start_paise']))} free to start, no card",
-                        plans=[plan_out(p) for p in doc["plans"]])
+                        extra_number_paise=extra, extra_number_text=f"{inr(extra)} a month for each extra number", plans=[plan_out(p, extra) for p in doc["plans"]])
 
 
 def balance_out(doc: dict[str, Any], rate: int | None = None) -> BalanceOut:
@@ -183,7 +183,7 @@ class PricingService:
 
     def _base(self, token: str, plan_id: str, interval: str) -> int:
         plan = self._plan(token, plan_id)
-        return int(plan["yearly_paise"] if interval == "yearly" else plan["monthly_paise"])
+        return int(plan["monthly_paise"])   # monthly plans only (owner, 20 Nov 2026)
 
     def subscription_checkout(self, token: str, tenant_id: uuid.UUID, plan_id: str, interval: str) -> SubscriptionCheckoutOut:
         """Step 1 of subscribing: the subscription the provider's checkout will authorise (nothing is charged yet). The fake provider has no such step."""

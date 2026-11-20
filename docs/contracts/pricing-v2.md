@@ -23,3 +23,10 @@ Payments (Razorpay TEST on staging, the fake provider elsewhere; all amounts sho
 | `GET …/billing/gst-invoices` | Owner, Admin | `{items:[{number:"S19-2026-000001", kind, subtotal_text, gst_text, total_text, total_paise, issued_at}]}` (the older `/billing/invoices` stays for the v1 trial screens). |
 
 The webhook `POST /v1/webhooks/razorpay-billing` (signed with the webhook secret, idempotent per event id) applies `order.paid`, `subscription.charged/pending/halted/cancelled` to the same functions.
+
+## FINAL PRICING, 21 Nov 2026 (migration 20261231987800; owner's table of 19-20 Nov): field changes for C2
+* **Monthly plans only.** `PlanOut` no longer has `yearly_paise`, `yearly_text` or `yearly_saving_text`. `interval` (on `SubscriptionOut`, the subscribe / checkout / change / change-quote / order bodies) is the single word `"monthly"`; `"yearly"` is a 422. Remove every "2 months free" and yearly toggle from the web.
+* **`CatalogueOut` gains** `extra_number_paise: 29900` and `extra_number_text: "₹299 a month for each extra number"`.
+* **The three plans (ids unchanged; names are the owner-facing ones):** `payg` "Pay as you go" ₹499 a month, ₹5 a minute, no included minutes; `sales_assistant` "Pro" ₹1,999, 500 minutes included, then ₹5; `sales_lead_finder` "Business" ₹5,999, 1,500 minutes included, then ₹5. `numbers_included` is 1 on every plan. `lead_finder` is `false` on every plan now (nothing is unlimited): every plan has Lead Finder with `free_searches_month` 2 / 10 / 100 and then `extra_search_paise` 4900 / 3900 / 2900. `rate_paise_per_minute` is 500 on every plan; billing per 30 seconds; unanswered calls free.
+* `lines` (the plan card's plain English lines, drafts) now read: "N call minutes included, then ₹5 a minute", "1 business number included, ₹299 a month for each extra one", "Lead Finder: 10 free searches a month, then ₹39 each".
+* Source of truth: the `pricing.plans` and `pricing.settings` tables (one migration, tested by pgTAP 193 A1-A5d and tests/test_pricing_v2_api.py against the owner's table). The yearly column stays in the database, unused and not shown.
