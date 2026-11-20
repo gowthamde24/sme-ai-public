@@ -177,7 +177,7 @@ def parse_config(data: object) -> VoiceConfig:
                 raise ValueError(f"voices: language {lang} needs exactly one {gender} default (has {len(defaults)})")
             if not defaults[0].listed:
                 raise ValueError(f"voices: the {gender} default of {lang} must be on the short list")
-            if sum(1 for c in catalogue.values() if c.language == lang and c.gender == gender and c.listed) > MAX_LISTED:
+            if not every_voice_listed and sum(1 for c in catalogue.values() if c.language == lang and c.gender == gender and c.listed) > MAX_LISTED:
                 raise ValueError(f"voices: language {lang} lists at most {MAX_LISTED} {gender} voices")
     return VoiceConfig(catalogue, timeout, float(data.get("cooldown_s", 30.0)))
 
