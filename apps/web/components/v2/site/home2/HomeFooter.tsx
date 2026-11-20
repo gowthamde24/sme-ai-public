@@ -12,7 +12,7 @@ import { sitePath, SITE_PAGES, type SitePage } from "@/lib/site/paths";
 
 import { WithWhatsapp } from "./WithWhatsapp";
 
-const link = "inline-flex min-h-11 items-center text-[15px] font-semibold text-muted hover:text-ink";
+const link = "inline-flex min-h-11 min-w-11 items-center text-[15px] font-semibold text-muted hover:text-ink";
 const head = "mb-1.5 text-sm font-extrabold text-muted";
 const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help" };
 

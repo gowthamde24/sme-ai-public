@@ -59,9 +59,8 @@ export function addScene(el: HTMLCanvasElement, draw: SceneDraw): () => void {
         for (const e of es)
           for (const sc of scenes)
             if (sc.el === e.target) {
-              const was = sc.visible;
               sc.visible = e.isIntersecting;
-              if (sc.visible && !was) paint(sc, performance.now()); // the first frame (and the only one with "reduce motion")
+              if (sc.visible) paint(sc, performance.now()); // the first frame when it comes near (and the only one with "reduce motion")
             }
       },
       { rootMargin: "200px 0px" },
