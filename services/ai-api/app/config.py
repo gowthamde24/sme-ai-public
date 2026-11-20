@@ -326,6 +326,8 @@ class Settings(BaseSettings):
     whatsapp_embedded_config_id: str | None = None
     # WHATSAPP_EMBEDDED_VERSION: the Embedded Signup version of the owner's configuration (v4 or v5)
     whatsapp_embedded_version: str = "v5"
+    # After "Connect WhatsApp" worked: our templates go to that account for review. False: off.
+    whatsapp_auto_templates: bool = True
     whatsapp_waba_id: str | None = None
     # the account the API signs in as to hand a webhook to the database (registered by the
     # operator; belongs to no workspace)

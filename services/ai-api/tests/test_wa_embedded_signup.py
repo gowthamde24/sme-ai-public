@@ -182,3 +182,34 @@ def test_the_launch_extras_follow_the_version_of_the_configuration(w: World) -> 
 
     assert _launch_extras("v5") == {"setup": {}, "version": "v5"}
     assert _launch_extras("v4") == {"setup": {}, "featureType": "whatsapp_business_app_onboarding", "sessionInfoVersion": "3"}
+
+
+# ---- 19-20 Nov 2026 (owner's standing OK): our templates go to the connected account for review as soon as Connect worked
+def test_after_connect_the_catalogue_is_made_and_every_draft_goes_to_the_connected_account_for_review(w: World) -> None:
+    assert w.call("POST", T + "/whatsapp/connect", "a_owner", BODY).status_code == 200
+    templates = w.call("GET", T + "/whatsapp/templates", "a_owner").json()["templates"]
+    assert len(templates) == 42 and {t["status"] for t in templates} == {"submitted"}, "every English and Telugu catalogue message (24 new + the first set) was sent for review, nothing of theirs stays a draft"
+    assert len(w.graph.templates_created) == 42
+    assert {t["language"] for t in templates} == {"en", "te"}, "only the languages a native reader has checked"
+    assert not any(t["name"] in ("payment_reminder", "consent_ask", "platform_alert") for t in templates), "the hidden and the owner-gated ones are never sent automatically"
+
+
+def test_connecting_again_sends_nothing_twice(w: World) -> None:
+    w.call("POST", T + "/whatsapp/connect", "a_owner", BODY)
+    before = len(w.graph.templates_created)
+    w.call("POST", T + "/whatsapp/connect", "a_owner", BODY)
+    assert len(w.graph.templates_created) == before
+
+
+def test_the_switch_off_sends_nothing_and_a_stop_in_meta_never_fails_the_connect(w: World) -> None:
+    object.__setattr__(w.runtime, "auto_templates", False)
+    assert w.call("POST", T + "/whatsapp/connect", "a_owner", BODY).status_code == 200
+    assert w.graph.templates_created == [] and w.call("GET", T + "/whatsapp/templates", "a_owner").json()["templates"] == []
+    object.__setattr__(w.runtime, "auto_templates", True)
+    w.repo.account = None
+
+    def boom(*a: object, **k: object) -> object:
+        raise RuntimeError("meta exploded")
+
+    object.__setattr__(w.graph, "create_template", boom)
+    assert w.call("POST", T + "/whatsapp/connect", "a_owner", BODY).status_code == 200, "the connect stands: the owner can press 'Send drafts to WhatsApp for review'"
