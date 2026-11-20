@@ -8,7 +8,7 @@ When a customer books a visit, your assistant reminds them on WhatsApp so they c
 ## Who talks
 Says it is an AI if asked P Priya
 [button type=button: Rename]
-Customers hear: “Priya, the AI assistant of Neelambari Silks”
+Customers hear: “Priya from Neelambari Silks”
 {label="This job speaks … in a … voice from …."} This job speaks
 <select label="This job speaks … in a … voice from …. (1)">
   options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn

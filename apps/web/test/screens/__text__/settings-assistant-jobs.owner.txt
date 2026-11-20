@@ -14,7 +14,7 @@ Your assistant is called
   options: English=en* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn
 .
 <checkbox label="Switch to the customer's language automatically" checked>
-Switch to the customer's language automatically What it will do: Customers hear “Priya, the AI assistant of Demo Silks (synthetic)” and the call starts in English. If a customer answers in another language, it switches to theirs.
+Switch to the customer's language automatically What it will do: Customers hear “Priya from Demo Silks (synthetic)” and the call starts in English. If a customer answers in another language, it switches to theirs.
 summary: More choices Mixing English words
 <checkbox label="Allow mixing English words (Telugu-English, Hindi-English)" checked>
 Allow mixing English words (Telugu-English, Hindi-English)

@@ -4,7 +4,7 @@ When a customer asked a price or you promised to get back, your assistant follow
 [button type=button disabled: Follow up on price questions and promises]
 {label="Who talks"}
 ## Who talks
-Says it is an AI if asked F Follow up on price questions and promises Customers hear: “the AI assistant of Neelambari Silks”
+Says it is an AI if asked F Follow up on price questions and promises Customers hear: “the assistant of Neelambari Silks”
 {label="This job speaks … in a … voice from …."} This job speaks
 <select label="This job speaks … in a … voice from …. (1)" disabled>
   options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn

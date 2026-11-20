@@ -35,7 +35,7 @@ describe("Settings > Your assistant under JOBS: sentences with the choice inside
     expect(card).toHaveTextContent("Your assistant is called");
     expect(screen.getByLabelText("Assistant name")).toHaveValue("Priya");
     expect(screen.getByRole("combobox", { name: "It starts every call in …." })).toHaveValue("te");
-    expect(within(card).getByText("What it will do:").parentElement).toHaveTextContent("Customers hear “Priya, the AI assistant of Acme Silks” and the call starts in తెలుగు. If a customer answers in another language, it switches to theirs.");
+    expect(within(card).getByText("What it will do:").parentElement).toHaveTextContent("Customers hear “Priya from Acme Silks” and the call starts in తెలుగు. If a customer answers in another language, it switches to theirs.");
     // one tick in view (switch language), the other under More choices
     const more = card.querySelector('[data-part="more-choices"]') as HTMLElement;
     expect(more).not.toHaveAttribute("open");
@@ -59,7 +59,7 @@ describe("Settings > Your assistant under JOBS: sentences with the choice inside
   });
   it("Basics: an unnamed assistant says it is the AI assistant of the business; a bad name cannot be saved", async () => {
     const { save } = draw({ name: "your assistant" });
-    expect(document.querySelector('[data-part="asst-simple-basics"]')).toHaveTextContent("Customers hear that it is the AI assistant of Acme Silks");
+    expect(document.querySelector('[data-part="asst-simple-basics"]')).toHaveTextContent("Customers hear that it is the assistant of Acme Silks");
     fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Ravi!" } });
     expect(screen.getByRole("alert")).toHaveTextContent("Use letters and numbers, up to 24 characters.");
     expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();

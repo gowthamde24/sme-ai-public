@@ -130,21 +130,21 @@ describe("Who talks: it saves exactly the adapter's payload", () => {
 });
 
 describe("Who talks: the job's own name", () => {
-  it("no name: the plain job name, and customers hear only the AI assistant of the shop", () => {
+  it("no name: the plain job name, and customers hear only the assistant of the shop", () => {
     view();
     expect(card().querySelector('[data-part="who-name"]')).toHaveTextContent("Call every new enquiry right away");
-    expect(card().querySelector('[data-part="who-hear"]')).toHaveTextContent("Customers hear: “the AI assistant of Neelambari Silks”");
+    expect(card().querySelector('[data-part="who-hear"]')).toHaveTextContent("Customers hear: “the assistant of Neelambari Silks”");
   });
-  it("a set name shows “Priya, the AI assistant of Neelambari Silks”; clearing it goes back to the plain name", async () => {
+  it("a set name shows “Priya from Neelambari Silks”; clearing it goes back to the plain name", async () => {
     const a = acts();
     view("speed_to_lead", a);
     fireEvent.click(within(card()).getByRole("button", { name: "Rename" }));
     const box = within(card()).getByRole("textbox") as HTMLInputElement;
     fireEvent.change(box, { target: { value: "Priya" } });
-    expect(card().querySelector("form")).toHaveTextContent("Customers hear: “Priya, the AI assistant of Neelambari Silks”");
+    expect(card().querySelector("form")).toHaveTextContent("Customers hear: “Priya from Neelambari Silks”");
     fireEvent.click(within(card()).getByRole("button", { name: "Save" }));
     await waitFor(() => expect(a.rename).toHaveBeenCalledWith("Priya"));
-    expect(await screen.findByText("Customers hear: “Priya, the AI assistant of Neelambari Silks”")).toBeInTheDocument();
+    expect(await screen.findByText("Customers hear: “Priya from Neelambari Silks”")).toBeInTheDocument();
     expect(card().querySelector('[data-part="who-name"]')).toHaveTextContent("Priya");
     fireEvent.click(within(card()).getByRole("button", { name: "Rename" }));
     expect(card().querySelector("form")).toHaveTextContent("Clear it, and it goes back to “Call every new enquiry right away”.");

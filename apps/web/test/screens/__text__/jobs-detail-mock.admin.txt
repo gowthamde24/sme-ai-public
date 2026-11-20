@@ -8,7 +8,7 @@ When someone enquires, your assistant calls them within minutes, answers their q
 ## Who talks
 Says it is an AI if asked C Call every new enquiry right away
 [button type=button: Rename]
-Customers hear: “the AI assistant of Neelambari Silks”
+Customers hear: “the assistant of Neelambari Silks”
 {label="This job speaks … in a … voice from …."} This job speaks
 <select label="This job speaks … in a … voice from …. (1)">
   options: the customer’s language=customer | English=en | Telugu=te* | Hindi=hi | Kannada=kn
