@@ -17,9 +17,19 @@
   --v2-brand-text: var(--h3-ot);
   position: relative;
   overflow-x: clip;
-  background: var(--v2-bg);
   color: var(--v2-ink);
 }
+/* the whole home page sits on WHITE with a subtle dot grid that stays with the window (CSS only: one radial gradient, ~22 px apart, low contrast); the cards stay solid so no text sits on a dot inside a card. Dark mode: near-black with faint dots */
+[data-ui="v2"] [data-page="home"] {
+  --h3-bg: #ffffff;
+  --h3-dot: rgba(22, 24, 29, 0.14);
+  background-color: var(--h3-bg);
+  background-image: radial-gradient(circle, var(--h3-dot) 1px, transparent 1.3px);
+  background-size: 22px 22px;
+  background-attachment: fixed;
+}
+[data-ui="v2"][data-theme="dark"] [data-page="home"] { --h3-bg: #131216; --h3-dot: rgba(244, 242, 238, 0.09); }
+@media (prefers-color-scheme: dark) { [data-ui="v2"]:not([data-theme="light"]) [data-page="home"] { --h3-bg: #131216; --h3-dot: rgba(244, 242, 238, 0.09); } }
 [data-ui="v2"][data-theme="dark"] .h3 { --h3-ot: #ff9d6e; --h3-or: #c2410c; }
 @media (prefers-color-scheme: dark) { [data-ui="v2"]:not([data-theme="light"]) .h3 { --h3-ot: #ff9d6e; --h3-or: #c2410c; } }
 [data-ui="v2"] .h3-sec { position: relative; padding: var(--h3-sec) var(--h3-gutter) 0; }
@@ -63,7 +73,6 @@
 [data-ui="v2"] .h3-pill-ico { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 50%; background: var(--v2-surface); color: var(--v2-muted); }
 [data-ui="v2"] .h3-cta-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 4px; }
 [data-ui="v2"] .h3-stage-wrap { margin-top: clamp(28px, 4vw, 56px); }
-[data-ui="v2"] .h3-gloss { display: block; margin-top: 4px; font-size: 14px; line-height: 1.4; opacity: 0.86; }
 
 /* 2. what should your assistant do */
 [data-ui="v2"] .h3-ask { display: flex; flex-direction: column; align-items: center; gap: 18px; }
@@ -78,20 +87,35 @@
 [data-ui="v2"] .h3-chip:active { transform: scale(0.97); }
 [data-ui="v2"] .h3-ask-note { margin: 0; font-size: 14px; color: var(--v2-muted); text-align: center; }
 
-/* 3. the demo: the dark band (deep charcoal, not black) */
-[data-ui="v2"] .h3-band { margin-top: var(--h3-sec); padding-bottom: var(--h3-sec); background: var(--v2-charcoal); color: var(--v2-on-charcoal); }
-[data-ui="v2"] .h3-band .h3-lead { color: var(--v2-night-muted); }
+/* 3. the demo: the same white dotted page as everywhere (the phone keeps its dark bezel, so it stands out) */
 [data-ui="v2"] .h3-how-grid { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: var(--h3-gap); }
-[data-ui="v2"] .h3-how-phone { width: 100%; max-width: 420px; margin-inline: auto; }
+/* the demo phone: about a fifth smaller than the frame's own size (max about 320 px wide), the whole frame scaled; the small texts inside are enlarged so they stay near 12 px as drawn */
+[data-ui="v2"] .h3-how-phone { width: 100%; max-width: 340px; margin-inline: auto; }
+[data-ui="v2"] .h3-how-phone .pp { --pp-zoom: 0.78; }
+/* the small greys inside the phone keep 4.5:1 (the page's contrast audit), light and dark; the frame's other colours are untouched */
+[data-ui="v2"] .h3-how-phone .pp[data-pp-variant] { --pp-muted: #55646d; --pp-meta: #55646d; }
+[data-ui="v2"][data-theme="dark"] .h3-how-phone .pp[data-pp-variant] { --pp-muted: #aebac1; --pp-meta: #c9d2d7; }
+@media (prefers-color-scheme: dark) { [data-ui="v2"]:not([data-theme="light"]) .h3-how-phone .pp[data-pp-variant] { --pp-muted: #aebac1; --pp-meta: #c9d2d7; } }
+[data-ui="v2"] .h3-how-phone .pp-meta, [data-ui="v2"] .h3-how-phone .pp-sub, [data-ui="v2"] .h3-how-phone .pp-day { font-size: 15.5px; }
+[data-ui="v2"] .h3-stack { position: relative; }
+[data-ui="v2"] .h3-stack .pp-body { position: relative; }
+[data-ui="v2"] .h3-stack-chip { position: absolute; top: 10px; left: 50%; z-index: 1; transform: translateX(-50%); border-radius: 999px; background: var(--pp-chip); padding: 4px 14px; font-size: 16px; font-weight: 700; color: var(--pp-ink); box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12); white-space: nowrap; }
+[data-ui="v2"] .h3-stack-cap { margin: 14px 0 0; min-height: 3em; text-align: center; font-size: 15px; line-height: 1.5; color: var(--v2-muted); }
+[data-ui="v2"] .h3-stack .pp-b, [data-ui="v2"] .h3-stack .pp-day { transition: opacity 600ms ease; }
+[data-ui="v2"] .h3-stack[data-out] .pp-b, [data-ui="v2"] .h3-stack[data-out] .pp-day { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"] .h3-stack .pp-b { animation: h3-bubble-in 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+}
+@keyframes h3-bubble-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 [data-ui="v2"] .h3-steps { display: flex; flex-direction: column; gap: clamp(22px, 3vw, 36px); margin: 0; padding: 0; list-style: none; }
 [data-ui="v2"] .h3-step { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(14px, 1.6vw, 20px); align-items: start; }
-[data-ui="v2"] .h3-step-n { display: inline-flex; width: 40px; aspect-ratio: 1; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255, 255, 255, 0.1); color: var(--v2-on-charcoal); font-family: var(--v2-font-display-stack); font-size: 18px; font-weight: 700; }
-[data-ui="v2"] .h3-step-d { margin: 8px 0 0; font-size: clamp(15px, calc(0.3vw + 14px), 17px); line-height: 1.6; color: var(--v2-night-muted); }
-[data-ui="v2"] .h3-found { margin-top: 14px; border-radius: 18px; background: rgba(255, 255, 255, 0.06); padding: 14px 18px; }
-[data-ui="v2"] .h3-found-h { margin: 0 0 8px; font-size: 14px; font-weight: 700; color: #ff9d6e; }
+[data-ui="v2"] .h3-step-n { display: inline-flex; width: 40px; aspect-ratio: 1; align-items: center; justify-content: center; border-radius: 50%; background: var(--v2-surface-2); color: var(--v2-ink); font-family: var(--v2-font-display-stack); font-size: 18px; font-weight: 700; }
+[data-ui="v2"] .h3-step-d { margin: 8px 0 0; font-size: clamp(15px, calc(0.3vw + 14px), 17px); line-height: 1.6; color: var(--v2-muted); }
+[data-ui="v2"] .h3-found { margin-top: 14px; border-radius: 18px; background: var(--v2-surface-2); padding: 14px 18px; }
+[data-ui="v2"] .h3-found-h { margin: 0 0 8px; font-size: 14px; font-weight: 700; color: var(--h3-ot); }
 [data-ui="v2"] .h3-found dl { display: flex; flex-direction: column; gap: 8px; margin: 0; }
 [data-ui="v2"] .h3-found dl > div { display: flex; flex-wrap: wrap; gap: 2px 14px; }
-[data-ui="v2"] .h3-found dt { flex: 0 0 72px; font-size: 14px; color: var(--v2-night-muted); }
+[data-ui="v2"] .h3-found dt { flex: 0 0 72px; font-size: 14px; color: var(--v2-muted); }
 [data-ui="v2"] .h3-found dd { flex: 1 1 140px; margin: 0; font-size: 15px; font-weight: 700; }
 
 /* 4 and 5: the counter and the radar (the scenes' own markup; the cards here are the soft warm grey) */
@@ -228,3 +252,7 @@
   [data-ui="v2"] .h3-leak-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
   [data-ui="v2"] .h3-leak-step:not(:last-child)::after { content: "\2192"; left: auto; bottom: auto; right: -32px; width: 32px; top: 50%; transform: translateY(-50%); }
 }
+
+/* the big wordmark at the bottom of the home page (owner, 21 Nov 2026: "the name and logo like before"): the mark and the name across the footer, near-black, scaled with clamp(); no glow, no particles */
+[data-ui="v2"] .h3-brandword { --h3-bw-gutter: clamp(16px, 3vw, 32px); display: flex; align-items: flex-end; justify-content: center; gap: 0.12em; margin: clamp(28px, 5vw, 64px) auto 0; max-width: 1240px; font-family: var(--v2-font-display-stack); font-weight: 700; font-size: clamp(44px, calc((100vw - 2 * var(--h3-bw-gutter)) / 4.45), 280px); line-height: 0.9; letter-spacing: -0.045em; color: var(--v2-ink); }
+[data-ui="v2"] .h3-brandword svg { width: 0.82em; height: 0.82em; margin-bottom: 0.06em; }

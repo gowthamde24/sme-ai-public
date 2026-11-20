@@ -3,13 +3,13 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
-import { PhoneChat, PpBubble, PpDay } from "@/components/v2/PhonePreview";
 import { HeroStage, LeakCalc, RadarFinder, WaitlistForm } from "@/components/v2/site/LazyIslands";
 import { publicPlanLines } from "@/components/v2/site/PublicPlans";
 import { hasWaitlist, waitlistWords, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { teluguFontVariable } from "@/design/fonts";
 import type { SiteLang } from "@/i18n/lang";
 import type { SiteKey, SiteT } from "@/i18n/site";
+import { SITE_LANGUAGE_NAMES } from "@/i18n/site-lang";
 import { websiteOnly } from "@/lib/site/mode";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { PUBLIC_PLANS, planVars, rupees, type PublicPlan } from "@/lib/site/plans";
@@ -17,7 +17,8 @@ import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 
 import { AskBox } from "./AskBox";
-import { WA_TE } from "./demo-lines";
+import { ChatStack } from "./ChatStack";
+import { STACK } from "./chat-stack";
 import { WithWhatsapp } from "../home2/WithWhatsapp";
 
 type Start = { href: string; label: string };
@@ -37,8 +38,6 @@ const HERO_KEYS = [
 const FINDER_KEYS = [...["city", "near", "checked", "call", "ask", "skip", "list", "of", "empty"].map((x) => `h2.finder.${x}`), ...[1, 2, 3, 4].flatMap((i) => [`h2.finder.pin.${i}.what`, `h2.finder.pin.${i}.why`])];
 const LEAK_KEYS = [...["enq", "miss", "buy", "avg", "in"].map((x) => `h2.leak.${x}`), ...["q", "sub", "s1", "s2", "s3", "s4", "warm", "cold", "with", "of", "note"].map((x) => `h3.leak.${x}`)];
 
-/** The English (or Hindi, Kannada) meaning under a Telugu line of the sample phones; none on the Telugu page, where the line is already in the reader's language. */
-const Gloss = ({ lang, text }: { lang: SiteLang; text: string }) => (lang === "te" ? null : <span className="h3-gloss">{text}</span>);
 
 /**
  * THE HOME PAGE (owner, 19 and 20 Nov 2026: "we don't need to mention each and every business"; "all the same in all layouts"; "keep the three animations"; "clean"). One page, one markup that reflows: every section is the same at 390, 430, 768,
@@ -52,7 +51,7 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
     <div className={`h3 ${teluguFontVariable}`} data-part="home3">
       <Hero t={t} cta={cta} />
       <Ask t={t} cta={cta} />
-      <How t={t} lang={lang} />
+      <How t={t} />
       <section id="calc" aria-labelledby="calc-title" className="h3-sec">
         <div className="h3-wrap">
           <LeakCalc w={words(t, LEAK_KEYS)} />
@@ -149,10 +148,10 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
   );
 }
 
-function How({ t, lang }: { t: SiteT; lang: SiteLang }) {
+function How({ t }: { t: SiteT }) {
   const found = [1, 2, 3] as const;
   return (
-    <section id="how" aria-labelledby="how-title" className="h3-sec h3-band">
+    <section id="how" aria-labelledby="how-title" className="h3-sec">
       <div className="h3-wrap">
         <header className="h3-head">
           <h2 id="how-title" className="h3-h2">
@@ -162,16 +161,7 @@ function How({ t, lang }: { t: SiteT; lang: SiteLang }) {
         </header>
         <div className="h3-how-grid">
           <div className="h3-how-phone" data-part="how-phone">
-            <PhoneChat name="Bright Path Academy" sub={t("h3.phone.biz")} placeholder={t("h3.phone.msg")} theme="dark" keepFrame>
-              <PpDay>{t("h3.phone.today")}</PpDay>
-              <PpDay>{t("h3.phone.calllog")}</PpDay>
-              {WA_TE.map((line, i) => (
-                <PpBubble key={i} from={i === 1 ? "me" : "them"} tail time={["9:41 am", "9:42 am", "9:42 am"][i]} ticks={i === 1 ? "read" : undefined}>
-                  {line}
-                  <Gloss lang={lang} text={t(k(`h3.wa.${i + 1}.g`))} />
-                </PpBubble>
-              ))}
-            </PhoneChat>
+            <ChatStack chats={[...STACK]} chips={STACK.map((c) => SITE_LANGUAGE_NAMES[c.code].native)} captions={[1, 2, 3, 4].map((i) => t(k(`h3.stack.${i}`)))} sub={t("h3.phone.biz")} placeholder={t("h3.phone.msg")} />
           </div>
           <ol className="h3-steps" data-part="steps">
             {found.map((n) => (
