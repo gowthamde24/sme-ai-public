@@ -17,10 +17,21 @@ import os
 from pathlib import Path
 from typing import Any
 
+from app.autoreply import drafter as drafter_module
 from app.autoreply.drafter import AnthropicDrafter
 
 CASES = Path(__file__).resolve().parent / "data" / "offtopic_cases.jsonl"
 CONTEXT = {"business": "Sri Lakshmi Silks", "assistant_name": "Priya", "customer_name": "Ravi", "facts": [{"kind": "hours", "text": "The shop is open every day from 10 am to 8 pm."}], "history": []}
+
+
+LAST_RAW: list[str] = [""]
+_parse = drafter_module.parse
+
+
+def _spy(raw: str, language: Any) -> Any:
+    """Keeps the model's last raw answer, so a reply the parser refused can be read in the log (the cases are made-up customers; nothing real goes through here)."""
+    LAST_RAW[0] = raw
+    return _parse(raw, language)
 
 
 def load_cases() -> list[dict[str, Any]]:
@@ -48,6 +59,7 @@ def main(argv: list[str] | None = None) -> int:
     if not key:
         print("ANTHROPIC_API_KEY is not set: this eval spends model tokens and takes the key from the environment only (the Cloud Run job binds it from Secret Manager).")
         return 2
+    drafter_module.parse = _spy
     drafter = AnthropicDrafter(key, args.model)
     wanted = {x for x in args.only.split(",") if x}
     failed = ran = 0
@@ -57,6 +69,8 @@ def main(argv: list[str] | None = None) -> int:
         draft = drafter.draft({**CONTEXT, "text": case["text"]})
         problem = "no usable reply (the parser refused it or the model failed)" if draft is None else judge(case, draft.text)
         print(f"{'PASS' if problem is None else 'FAIL'}  {case['id']!s:<16} {problem or ''}", flush=True)
+        if draft is None:
+            print("      raw:", " ".join(LAST_RAW[0].split())[:400], flush=True)
         if args.verbose and draft is not None:
             print("      ", draft.text.replace("\n", " ")[:200], flush=True)
         failed += problem is not None
