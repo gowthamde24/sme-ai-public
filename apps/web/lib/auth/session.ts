@@ -105,6 +105,14 @@ export const requireUserBeforeSecondFactor = cache(() => load(false));
  * A fresh second-factor check for one action (the own WhatsApp messages, JOBS): the person's own authenticator code, the same challengeAndVerify as the sign-in step.
  * Returns the access token that carries the fresh level, so the API sees it. No authenticator is `no_factor` (never let through); a wrong code is `bad_code`.
  */
+/**
+ * Does this person have an authenticator at all (a verified TOTP factor)? Nobody is asked for a code without one (owner, 20 Nov: "remove 2FA by default; if they need they will set up by going to settings"): a sensitive action then asks for a plain Confirm step and the web sends `confirm: true` (C1 #975).
+ */
+export async function hasAuthenticator(): Promise<boolean> {
+  const supabase = await createSupabaseServerClient();
+  const { data: factors } = await supabase.auth.mfa.listFactors();
+  return (factors?.totp?.length ?? 0) > 0;
+}
 export type SecondStep = { ok: true; token: string } | { ok: false; reason: "no_factor" | "bad_code" };
 export async function freshSecondStep(code: string): Promise<SecondStep> {
   const supabase = await createSupabaseServerClient();

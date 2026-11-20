@@ -4,7 +4,8 @@ vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 const requireUser = vi.fn();
 const second = vi.fn();
-vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser(), freshSecondStep: (c: string) => second(c) }));
+const hasAuth = vi.fn();
+vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser(), freshSecondStep: (c: string) => second(c), hasAuthenticator: () => hasAuth() }));
 vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
 const fetchTenant = vi.fn();
 import { ApiRequestError } from "@/lib/api/client";
@@ -32,6 +33,7 @@ beforeEach(() => {
   api.submitOwnMessage.mockResolvedValue(sent);
   api.writeOwnMessage.mockResolvedValue({ kind: "unclear" });
   second.mockResolvedValue({ ok: true, token: "fresh" });
+  hasAuth.mockResolvedValue(true);
 });
 
 describe("writing a draft (Owner and Admin; nothing is sent anywhere)", () => {
@@ -57,17 +59,23 @@ describe("sending to WhatsApp needs the second step", () => {
     const r = await submitOwnMessageAction(T, input(), " 482 913 ");
     expect(r).toEqual({ ok: true, data: sent });
     expect(second).toHaveBeenCalledWith("482913");
-    expect(api.submitOwnMessage).toHaveBeenCalledWith("fresh", T, { title: { en: "Order update", te: null }, message: GOOD });
+    expect(api.submitOwnMessage).toHaveBeenCalledWith("fresh", T, { title: { en: "Order update", te: null }, message: GOOD }, undefined, false);
   });
   it("a wrong code is refused in plain words and nothing is sent", async () => {
     second.mockResolvedValue({ ok: false, reason: "bad_code" });
     expect(await submitOwnMessageAction(T, input(), "111111")).toMatchObject({ ok: false, kind: "invalid", code: "bad_code", error: expect.stringContaining("That code did not work") });
     expect(api.submitOwnMessage).not.toHaveBeenCalled();
   });
-  it("no authenticator: told to set one up (kind mfa), never let through", async () => {
-    second.mockResolvedValue({ ok: false, reason: "no_factor" });
-    expect(await submitOwnMessageAction(T, input(), "482913")).toMatchObject({ ok: false, kind: "mfa", mfa: true });
-    expect(api.submitOwnMessage).not.toHaveBeenCalled();
+  it("no authenticator (owner 20 Nov): no code is asked or checked; the Confirm button sends with the normal token and `confirm: true`", async () => {
+    hasAuth.mockResolvedValue(false);
+    expect(await submitOwnMessageAction(T, input(), "")).toEqual({ ok: true, data: sent });
+    expect(second).not.toHaveBeenCalled();
+    expect(api.submitOwnMessage).toHaveBeenCalledWith("tok", T, { title: { en: "Order update", te: null }, message: GOOD }, undefined, true);
+  });
+  it("no authenticator but a message that fails the checks: still refused before anything", async () => {
+    hasAuth.mockResolvedValue(false);
+    const shouted = { ...GOOD, drafts: { ...GOOD.drafts, en: { ...GOOD.drafts.en, body: "Hello {name}, READY NOW" } } };
+    expect(await submitOwnMessageAction(T, input(shouted), "")).toMatchObject({ ok: false, kind: "invalid" });
     expect(api.submitOwnMessage).not.toHaveBeenCalled();
   });
   it("the API's own mfa_required refusal reads the same way", async () => {
@@ -92,7 +100,7 @@ describe("sending to WhatsApp needs the second step", () => {
     h.mode.v = "mock";
     expect(await submitOwnMessageAction(T, input(), "482913")).toMatchObject({ ok: true });
     expect(second).not.toHaveBeenCalled();
-    expect(api.submitOwnMessage).toHaveBeenCalledWith("tok", T, expect.anything());
+    expect(api.submitOwnMessage).toHaveBeenCalledWith("tok", T, expect.anything(), undefined, false);
     expect(await submitOwnMessageAction(T, input(), "1234")).toMatchObject({ ok: false, kind: "invalid" });
   });
 });
