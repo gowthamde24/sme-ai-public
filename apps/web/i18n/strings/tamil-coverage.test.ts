@@ -24,7 +24,10 @@ function sources(dir: string): string[] {
 }
 const code = ROOTS.flatMap((r) => sources(path.join(process.cwd(), r))).map((f) => fs.readFileSync(f, "utf8")).join("\n");
 const families = new Set([...code.matchAll(/[`"']([a-z0-9]+(?:\.[a-z0-9_]+)*\.)\$\{/g)].map((m) => m[1]));
-const isRead = (key: string): boolean => code.includes(`"${key}"`) || code.includes(`'${key}'`) || code.includes(`\`${key}\``) || [...families].some((f) => key.startsWith(f));
+// (every quoted key-shaped word of the source, collected ONCE: a lookup per key instead of three searches through the whole source for each of the thousand keys, which took 6 s)
+const literals = new Set([...code.matchAll(/[`"']([A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)+)[`"']/g)].map((m) => m[1]));
+const familyList = [...families];
+const isRead = (key: string): boolean => literals.has(key) || familyList.some((f) => key.startsWith(f));
 
 describe("Tamil words of the public site", () => {
   it("every site string a page reads has a Tamil text, marked draft", () => {
