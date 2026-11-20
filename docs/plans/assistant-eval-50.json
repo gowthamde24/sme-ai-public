@@ -839,5 +839,32 @@
   "expect": "answer",
   "pack": "auto_dealer",
   "note": "Telugu records question, car dealer"
+ },
+{
+  "id": 102,
+  "area": "records",
+  "lang": "en",
+  "say": "Is Naveen E in my contacts?",
+  "expect": "answer",
+  "pack": "real_estate",
+  "note": "a contact with no company is found by name (20 Nov 2026): the answer names the person"
+ },
+{
+  "id": 103,
+  "area": "records",
+  "lang": "te",
+  "say": "నవీన్ ని contacts లో చూడు",
+  "expect": "answer",
+  "pack": "coaching",
+  "note": "Telugu script finds a contact written in Latin letters"
+ },
+{
+  "id": 104,
+  "area": "records",
+  "lang": "en",
+  "say": "Is Naveen E in my contacts?",
+  "expect": "answer",
+  "pack": "auto_dealer",
+  "note": "same lookup in the car dealer workspace"
  }
 ]
