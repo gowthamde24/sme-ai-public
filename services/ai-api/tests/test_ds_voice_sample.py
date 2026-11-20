@@ -102,3 +102,9 @@ def test_the_preview_speaks_the_real_business_name_and_says_it_is_an_ai_assistan
     body = client.get(f"{PREVIEW}/text?language=en&style=warm&name=Vani", headers=auth("a_owner")).json()
     assert "Vani" in body["text"] and "AI assistant" in body["text"] and body["business_name"] == TENANT_A.name and body["assistant_name"] == "Vani"
     assert client.get(f"{PREVIEW}/text?language=en&style=warm&name=Vani", headers=auth("a_viewer")).status_code in (403, 404)
+
+
+def test_marathi_has_no_voice_yet_so_no_sample_and_never_a_crash() -> None:
+    client, _, built = world()
+    r = client.get(f"{URL}?language=mr&style=warm", headers=auth("a_owner"))
+    assert r.status_code == 404 and r.json()["error"]["code"] == "no_sample" and built == []

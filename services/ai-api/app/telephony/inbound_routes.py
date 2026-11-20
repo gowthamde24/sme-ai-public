@@ -37,7 +37,7 @@ from app.conversation.providers import (
     SarvamChatStream,
     SarvamRealtimeStt,
 )
-from app.conversation.sound import Stored, resolve_sound
+from app.conversation.sound import Stored, clamp_speed, resolve_sound, tone_of
 from app.errors import ApiError
 from app.logging_safety import one_line
 from app.talk_training import introduce as introduce_mod
@@ -232,7 +232,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it; on an outbound goal call a sentence that PROMISES an action is replaced by a true line, and the tone's particles are taken out
     stored = stored or Stored(training=training)
     base_tts = FallbackTts(bv.config, bv.factory, chosen=dict(stored.choices), gender=stored.gender, pronunciations=default_pronunciations())   # the workspace's chosen voice and gender (before 21 Nov 2026 a call always spoke the default woman's voice)
-    base_tts.pace = resolve_sound(bv.config, stored, language).pace
+    base_tts.pace = clamp_speed(stored.speed)
     tts: Any = GuardedTts(base_tts, (training or {}).get("never_say") or [],
                           goal_tone=outbound.tone if outbound is not None and outbound.goal else None,
                           addressed_name=outbound.person_name if outbound is not None else None, titles_gender=outbound.person_gender if outbound is not None and not outbound.person_name else None)
@@ -241,7 +241,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         tts=tts,
         llm=llm,
         system_for=lambda lang: goal_prompt(lang) if outbound is not None and outbound.goal else persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose=outbound.purpose if outbound else "inbound", goal=outbound.goal if outbound else None, facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
-                                                      corrections=corrections, opening=opening_for(lang), opening_says_ai=outbound is not None or persona.mention_ai_applies(lang, mention_ai), tone=resolve_sound(bv.config, stored, lang).tone),
+                                                      corrections=corrections, opening=opening_for(lang), opening_says_ai=outbound is not None or persona.mention_ai_applies(lang, mention_ai), tone=tone_of(stored)[0]),
         greeting_for=opening_for,
         models={"fast": model, "strong": model},
         voice_for=lambda lang: resolve_sound(bv.config, stored, lang).voice.id,

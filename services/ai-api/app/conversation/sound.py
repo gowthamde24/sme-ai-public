@@ -70,11 +70,15 @@ def clamp_speed(speed: float | None) -> float:
     return 1.0 if speed is None else round(max(SPEED_MIN, min(SPEED_MAX, float(speed))), 2)
 
 
+def tone_of(stored: Stored, tone: str | None = None) -> tuple[str, str]:
+    """(the tone in force, where it came from): needs no voice, so a language with no voice yet (Marathi) still has a tone."""
+    if tone is not None and tone in tone_mod.CHOICES:
+        return tone, "preview"
+    return tone_mod.effective_tone(dict(stored.training) if stored.training is not None else None, stored.pack_tone, stored.style)
+
+
 def resolve_sound(config: VoiceConfig, stored: Stored, language: str, *, voice_id: str | None = None, tone: str | None = None, speed: float | None = None) -> Sound:
     """The sound of `language` for a workspace. `voice_id`, `tone`, `speed` are what a screen wants to HEAR before it saves (a preview of an unsaved choice): they replace the stored value of that one part and go through the same checks."""
     voice = config.resolve(language, voice_id if voice_id is not None else stored.choices.get(language), stored.gender)
-    if tone is not None and tone in tone_mod.CHOICES:
-        chosen, source = tone, "preview"
-    else:
-        chosen, source = tone_mod.effective_tone(dict(stored.training) if stored.training is not None else None, stored.pack_tone, stored.style)
+    chosen, source = tone_of(stored, tone)
     return Sound(language=language, voice=voice, tone=chosen, tone_source=source, pace=clamp_speed(speed if speed is not None else stored.speed))

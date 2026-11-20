@@ -28,6 +28,7 @@ from app.assistant_settings.service import AssistantSettingsService
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError
 from app.tenancy.models import Role
+from app.voice.interface import VoiceError
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/ai-assistant", tags=["ai-assistant"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
@@ -90,9 +91,12 @@ def test_call(ctx: OwnerStrong, runtime: RuntimeDep) -> TestCallOut:
     return out.model_copy(update={"transcript": [first, *out.transcript[1:]], "sound": _sound(runtime, ctx, language, None)})
 
 
-def _sound(runtime: Runtime, ctx: TenantContext, language: str, style: str | None) -> SoundOut:
+def _sound(runtime: Runtime, ctx: TenantContext, language: str, style: str | None) -> SoundOut | None:
     """The voice, tone and speed a real call speaks with: the SAME function (app/conversation/sound.py) on what this workspace saved; `style` is a tone the screen wants to hear before it saves."""
     from app.conversation.sound_read import sound_of
     from app.telephony.tone import STYLE_TONE
 
-    return SoundOut.model_validate(sound_of(runtime, ctx, language, tone=STYLE_TONE.get(style) if style else None).public())
+    try:
+        return SoundOut.model_validate(sound_of(runtime, ctx, language, tone=STYLE_TONE.get(style) if style else None).public())
+    except VoiceError:
+        return None   # a language with no voice yet (Marathi): the words are shown, there is no voice to describe

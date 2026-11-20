@@ -209,8 +209,8 @@ async def _speak_opening(runtime: Runtime, ctx: TenantContext, body: PreviewIn) 
     found = detect_language(spoken)
     if found != "en" and found != body.language and {found, body.language} != {"hi", "mr"}:   # Hindi and Marathi share a script: a short line cannot always tell them apart
         raise ApiError(422, "language_mismatch", "This line is written in a different language from the one chosen.", extra={"fields": ["language"]})
-    sound = sound_of(runtime, ctx, body.language)   # THE resolution a call uses (app/conversation/sound.py): the voice, and the speed
     try:
+        sound = sound_of(runtime, ctx, body.language)   # THE resolution a call uses (app/conversation/sound.py): the voice, and the speed
         wav, engine, voice_id = await service.speak(ctx.tenant.id, body.language, sound.voice.id, spoken, sound.gender, sound.pace)
     except VoiceError as err:
         if err.code == "rate_limited":

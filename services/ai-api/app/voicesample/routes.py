@@ -36,8 +36,11 @@ Name = Annotated[str | None, Query(max_length=24)]
 
 
 def _sound(runtime: Runtime, ctx: TenantContext, language: str, style: str | None) -> Sound:
-    """The one resolution a call uses; `style` is a tone the screen wants to hear before it saves."""
-    return sound_of(runtime, ctx, language, tone=STYLE_TONE.get(style) if style else None)
+    """The one resolution a call uses; `style` is a tone the screen wants to hear before it saves. A language with no voice yet (Marathi) has no sample."""
+    try:
+        return sound_of(runtime, ctx, language, tone=STYLE_TONE.get(style) if style else None)
+    except VoiceError:
+        raise ApiError(404, "no_sample", "There is no sample for this language yet.") from None
 
 
 async def _speak(runtime: Runtime, ctx: TenantContext, sound: Sound, text: str, what: str) -> Response:
