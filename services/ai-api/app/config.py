@@ -474,6 +474,8 @@ class Settings(BaseSettings):
     # The WhatsApp platform token's expiry, read once a day (app/ops/token_expiry.py).
     # Off by default; the worker's own WHATSAPP_ACCESS_TOKEN is the token asked about.
     token_expiry_check: bool = False
+    # WhatsApp's decision on our templates, read every few minutes (status_sync.py). Off by default.
+    template_sync: bool = False
     plivo_balance_min_inr: int = 300
     plivo_balance_currency: str = "USD"
     plivo_balance_inr_per_unit: float = 0.0
