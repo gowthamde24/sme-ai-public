@@ -25,7 +25,7 @@ export class ApiRequestError extends Error {
   }
 }
 
-export type RefusalExtra = { approval?: { id: string; kind: string }; fields?: string[] };
+export type RefusalExtra = { approval?: { id: string; kind: string }; fields?: string[]; /** `409 free_minutes_used_up` (read by ./free-minutes, server only): the free minutes of the month and the day they restart (YYYY-MM-DD). */ free?: { minutes: number; restartsOn: string } };
 const CLOSED = /^[A-Za-z0-9_.:-]{1,80}$/;
 /** The closed extras of a refusal body: `approval` (top level of the body, or inside `error`) and `fields` (the same); anything that is not a short closed word is dropped. */
 function extraOf(body: unknown, err: ApiError["error"] | null): RefusalExtra | undefined {
@@ -227,7 +227,12 @@ async function askApi(
 
   if (response.status === 401)
     throw new ApiAuthError("The API rejected the session.");
-  if (!response.ok) throw refusal(response.status, body, response.headers.get("Retry-After"));
+  if (!response.ok) {
+    const refused = refusal(response.status, body, response.headers.get("Retry-After"));
+    // server only (the test is false in the browser's build, so none of this is part of a page's script)
+    if (typeof window === "undefined") (await import("./free-minutes")).keepFreeMinutes(refused, body);
+    throw refused;
+  }
   return body;
 }
 
