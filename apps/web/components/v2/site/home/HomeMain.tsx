@@ -74,7 +74,7 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
   return (
     <div className={`h3 ${lang === "te" ? teluguFontVariable : teluguDemoFontVariable}`} data-part="home3">
       <Hero t={t} cta={cta} />
-      <How t={t} />
+      <PhoneDemo t={t} />
       <section id="languages" aria-label={t("h5.greet.aria")} className="h3-sec">
         <GreetBand words={["నమస్కారం", "नमस्ते", "ನಮಸ್ಕಾರ", "Hello"]} line={t("h2.greet.line")} label={t("h5.greet.aria")} />
       </section>
@@ -82,7 +82,7 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
       <Ask t={t} cta={cta} />
       <LowerSections t={t} />
       <Faq t={t} />
-      <Final t={t} lang={lang} cta={cta} hasForm={hasForm} waitlist={waitlist} />
+      <HomeFinal t={t} lang={lang} cta={cta} hasForm={hasForm} waitlist={waitlist} />
       <StickyCta href={cta.href} label={cta.label} arrow={<ArrowRight size={18} strokeWidth={2.2} aria-hidden="true" />} />
     </div>
   );
@@ -190,7 +190,7 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
   );
 }
 
-function How({ t }: { t: SiteT }) {
+export function PhoneDemo({ t }: { t: SiteT }) {
   return (
     <section id="how-it-works" aria-labelledby="how-title" className="h3-sec">
       <div className="h3-wrap">
@@ -240,7 +240,7 @@ function Faq({ t }: { t: SiteT }) {
   );
 }
 
-function Final({ t, lang, cta, hasForm, waitlist }: { t: SiteT; lang: SiteLang; cta: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
+export function HomeFinal({ t, lang, cta, hasForm, waitlist }: { t: SiteT; lang: SiteLang; cta: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
   const form = hasForm && hasWaitlist(waitlist);
   const formWords = { ...waitlistWords(t), name: t("h2.join.name"), contact: t("h2.join.phone"), type: t("h2.join.biz"), city: t("h2.join.city"), submit: t("demo.submit"), thanksTitle: t("h2.join.thanks"), thanksBody: t("h2.join.once") };
   return (
