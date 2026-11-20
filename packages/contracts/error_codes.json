@@ -5055,6 +5055,21 @@
       "extras": []
     },
     {
+      "code": "unknown_voice",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "conversation",
+        "voicesample"
+      ],
+      "default_message": "That voice is not one of the voices on the list for this language.",
+      "wait": false,
+      "extras": [
+        "fields"
+      ]
+    },
+    {
       "code": "unreadable_file",
       "statuses": [
         422

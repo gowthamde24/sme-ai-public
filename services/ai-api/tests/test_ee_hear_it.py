@@ -194,3 +194,27 @@ def test_an_edited_line_that_says_assistant_in_an_unnamed_workspace_speaks_a_phr
         spoken = post(client, {"language": lang, "text": text}).json()["spoken_text"]
         assert phrase in spoken and TENANT_A.name in spoken and "  " not in spoken and "{" not in spoken, lang
     assert texts[0][1] == f"Hello, this is your assistant of {TENANT_A.name}. Is this a good time?"
+
+
+def test_any_listed_voice_can_be_heard_live_before_it_is_chosen() -> None:
+    """21 Nov 2026: the owner picks from the voice card; the preview speaks the voice asked for (saved or not), as itself, even one of the other gender."""
+    client, repo, texts = world()
+    repo.choices["te"] = "te-ramya"   # the saved choice is a woman's Cartesia voice
+    line = "నమస్కారం, {business} నుంచి మాట్లాడుతున్నాను. ఒక్క నిమిషం మాట్లాడొచ్చా?"
+    catalogue = default_config().catalogue
+    for voice_id in ("te-tarun", "te-kavitha", "te-charan"):   # a Sarvam man, a Sarvam woman, a Cartesia man
+        r = post(client, {"language": "te", "text": line, "voice_id": voice_id})
+        assert r.status_code == 200 and r.json()["voice_id"] == voice_id, (voice_id, r.text)
+        assert texts[-1][0] == catalogue[voice_id].voices.primary.voice
+
+
+def test_a_voice_that_is_not_listed_for_the_language_is_refused_in_plain_words() -> None:
+    client, _, texts = world()
+    line = "నమస్కారం, {business} నుంచి మాట్లాడుతున్నాను. ఒక్క నిమిషం మాట్లాడొచ్చా?"
+    before = len(texts)
+    for bad in ("en-janvi", "te-sindhu", "../etc", "te-nobody", "x" * 41):   # another language, an unlisted voice, nonsense, unknown, too long
+        r = post(client, {"language": "te", "text": line, "voice_id": bad})
+        assert r.status_code == 422, (bad, r.status_code)
+    assert len(texts) == before, "nothing was spoken"
+    assert post(client, {"language": "te", "text": line, "voice_id": "te-ramya", "tone": "shouting"}).status_code == 422
+    assert post(client, {"language": "te", "text": line, "voice_id": "te-ramya", "tone": "respectful"}).status_code == 200
