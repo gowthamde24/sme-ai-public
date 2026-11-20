@@ -106,7 +106,7 @@ ROUTES = [
 
 
 @pytest.mark.parametrize(("method", "path", "body"), ROUTES)
-@pytest.mark.parametrize("user", ["a_owner", "a_viewer", "outsider", None])
+@pytest.mark.parametrize("user", ["a_owner", "outsider"])   # signed-in members only: the workspace door (sign-in, membership, role, read-only) comes before the JOBS check
 def test_with_jobs_off_every_trust_route_is_a_404_as_if_it_did_not_exist(method: str, path: str, body: Any, user: str | None) -> None:
     client, trust = world(on=False)
     r = call(client, method, path, user, body)

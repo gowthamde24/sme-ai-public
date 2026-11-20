@@ -32,8 +32,9 @@ from app.jobs.wiring import JobsRuntime
 from app.suppression import keys as suppression_keys
 from app.tenancy.models import Role
 
-dnc_router = APIRouter(prefix="/v1/tenants/{tenant_id}/do-not-call", tags=["jobs"], dependencies=[Depends(jobs_on)])
-faq_router = APIRouter(prefix="/v1/tenants/{tenant_id}/jobs/{job_id}/faqs", tags=["jobs"], dependencies=[Depends(jobs_on)])
+# JOBS is checked INSIDE each handler (after the sign-in, the membership and the read-only gate: the workspace door comes first), not by a router dependency
+dnc_router = APIRouter(prefix="/v1/tenants/{tenant_id}/do-not-call", tags=["jobs"])
+faq_router = APIRouter(prefix="/v1/tenants/{tenant_id}/jobs/{job_id}/faqs", tags=["jobs"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 JobsDep = Annotated[JobsRuntime, Depends(jobs_on)]
 OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
