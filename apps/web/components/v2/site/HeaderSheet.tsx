@@ -1,13 +1,13 @@
 "use client";
 
-import { CreditCard, LogIn, Menu, MessageSquare, Radar, X } from "lucide-react";
+import { CircleHelp, CreditCard, LogIn, Menu, MessageSquare, Radar, X } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import { createPortal } from "react-dom";
 
 export type SheetItem = { href: string; label: string; icon: "how" | "finder" | "plans" | "help"; here?: boolean };
 
-const ICONS = { how: MessageSquare, finder: Radar, plans: CreditCard, help: MessageSquare } as const;
+const ICONS = { how: MessageSquare, finder: Radar, plans: CreditCard, help: CircleHelp } as const;
 
 /**
  * The menu of a phone (under 900 px): a button in the bar that opens a SHEET with the sections and small icons, the sign-in link, the language and theme controls (passed in as children, already drawn on the server) and a full-width

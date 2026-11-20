@@ -33,9 +33,10 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
   const start = startEntry(t, lang, t("nav.start"), { hasForm: waitlistMode() !== "off" && (target.kind !== "page" || target.page === "contact") });
   // landing v2: four parts of the home page (owner, 6 Nov 2026: fewer links in the bar; the Lead Finder and the business number are in the footer); from another page they lead back to it
   const nav = [
-    { href: `${base}#how`, label: t("nav.how"), here: false },
-    { href: `${base}#finder`, label: t("h2.nav.finder"), here: false },
-    { href: onHome ? "#plans" : pricingPage, label: t("h2.nav.plans"), here: target.kind === "page" && target.page === "pricing" },
+    { href: `${base}#how-it-works`, label: t("nav.how"), here: false },
+    { href: `${base}#lead-finder`, label: t("h2.nav.finder"), here: false },
+    { href: onHome ? "#pricing" : pricingPage, label: t("nav.pricing"), here: target.kind === "page" && target.page === "pricing" },
+    { href: `${base}#faq`, label: t("h4.nav.faq"), here: false },
   ];
   // "Get early access": the home page's closing form; on a page without the form, where "start" leads today
   // (website mode and the app-open home page both say "Join early access": one call to action, owner 11 Nov 2026)
@@ -74,7 +75,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
           <HeaderSheet
             label={t("nav.menu")}
             closeLabel={t("h3.menu.close")}
-            items={nav.map((n, i) => ({ href: n.href, label: n.label, here: n.here, icon: (["how", "finder", "plans"] as const)[i] ?? "help" }))}
+            items={nav.map((n, i) => ({ href: n.href, label: n.label, here: n.here, icon: (["how", "finder", "plans", "help"] as const)[i] ?? "help" }))}
             login={web ? undefined : { href: "/login", label: t("h2.nav.login") }}
             cta={{ href: early.href, label: t("h3.menu.cta") }}
           >

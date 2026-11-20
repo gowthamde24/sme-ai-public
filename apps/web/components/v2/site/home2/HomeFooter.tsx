@@ -32,10 +32,10 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
         </div>
         <nav aria-label={t("h2.foot.product")} className="flex flex-col">
           <span className={head}>{t("h2.foot.product")}</span>
-          <a className={link} href="#how">{t("nav.how")}</a>
-          <a className={link} href="#finder">{t("h2.nav.finder")}</a>
-          <a className={link} href="#built">{t("h3.built.title")}</a>
-          <a className={link} href="#plans">{t("h2.nav.plans")}</a>
+          <a className={link} href="#how-it-works">{t("nav.how")}</a>
+          <a className={link} href="#lead-finder">{t("h2.nav.finder")}</a>
+          <a className={link} href="#pricing">{t("nav.pricing")}</a>
+          <a className={link} href="#faq">{t("h4.nav.faq")}</a>
         </nav>
         <div className="flex flex-col">
           <span className={head}>{t("h2.foot.company")}</span>

@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Languages, Moon, Phone, PhoneCall as PhoneCallIcon, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Languages, Moon, Phone, PhoneCall as PhoneCallIcon, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
@@ -27,6 +27,14 @@ type Start = { href: string; label: string };
 const k = (s: string) => s as SiteKey;
 /** The words a client island needs, filled on the server (the site's dictionaries never reach the browser whole). */
 const words = (t: SiteT, keys: readonly string[]): Record<string, string> => Object.fromEntries(keys.map((key) => [key, t(k(key))]));
+/** The words that pick a sample plan card when a visitor types (lower case; English and the three scripts' own words). */
+const JOB_KEYS = [
+  ["site visit", "property", "flat", "plot", "house", "సైట్", "साइट", "ಸೈಟ್"],
+  ["admission", "enquir", "అడ్మిషన్", "एडमिशन", "ಅಡ್ಮಿಷನ್"],
+  ["demo", "remind", "class", "డెమో", "डेमो", "ಡೆಮೊ"],
+  ["test drive", "car", "bike", "టెస్ట్", "टेस्ट", "ಟೆಸ್ಟ್"],
+  ["order", "ready", "pickup", "ఆర్డర్", "ऑर्डर", "ಆರ್ಡರ್"],
+];
 const HERO_KEYS = [
   "h2.mode.picked",
   "h2.mode.listening",
@@ -59,7 +67,7 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
           <LeakCalc w={words(t, LEAK_KEYS)} />
         </div>
       </section>
-      <section id="finder" aria-labelledby="finder-title" className="h3-sec">
+      <section id="lead-finder" aria-labelledby="finder-title" className="h3-sec">
         <div className="h3-wrap">
           <header className="h3-head">
             <h2 id="finder-title" className="h3-h2">
@@ -73,6 +81,7 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
       </section>
       <Built t={t} />
       <Plans t={t} cta={cta} />
+      <Faq t={t} />
       <Final t={t} lang={lang} cta={cta} hasForm={hasForm} waitlist={waitlist} />
       <StickyCta href={cta.href} label={cta.label} />
     </div>
@@ -97,12 +106,12 @@ function Hero({ t, cta }: { t: SiteT; cta: Start }) {
             {cta.label}
             <ArrowRight size={18} strokeWidth={2.2} aria-hidden="true" />
           </Link>
-          <Link href="#how" className="h3-textlink" data-part="hear-call">
+          <Link href="#how-it-works" className="h3-textlink" data-part="hear-call">
             <PhoneCallIcon size={17} strokeWidth={2.2} aria-hidden="true" />
             {t("h2.hero.hear")}
           </Link>
         </div>
-        <p className="h3-hero-plain">{t("h3.plans.free")}</p>
+        <p className="h3-hero-plain">{t("h3.hero.langs")}</p>
         {websiteOnly() ? (
           <p className="h3-small" data-part="trial-note">
             {t("demo.note")}
@@ -132,8 +141,8 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
         </header>
         <AskBox
           href={cta.href}
-          words={{ label: t("h3.ask.label"), placeholder: t("h3.ask.ph"), go: t("h3.ask.go") }}
-          chips={[1, 2, 3, 4, 5].map((i) => t(k(`h3.ask.chip.${i}`)))}
+          words={{ label: t("h3.ask.label"), placeholder: t("h3.ask.ph"), go: t("h3.ask.go"), who: t("h3.plan.l.who"), says: t("h3.plan.l.says"), when: t("h3.plan.l.when"), cost: t("h3.plan.l.cost"), costValue: t("h3.plan.cost"), plan: t("h3.plan.t") }}
+          jobs={[1, 2, 3, 4, 5].map((i) => ({ chip: t(k(`h3.ask.chip.${i}`)), who: t(k(`h3.job.${i}.who`)), says: t(k(`h3.job.${i}.says`)), when: t(k(`h3.job.${i}.when`)), keys: JOB_KEYS[i - 1] }))}
         />
       </div>
     </section>
@@ -142,14 +151,13 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
 
 function How({ t }: { t: SiteT }) {
   return (
-    <section id="how" aria-labelledby="how-title" className="h3-sec">
+    <section id="how-it-works" aria-labelledby="how-title" className="h3-sec">
       <div className="h3-wrap">
         <header className="h3-head">
           <p className="h3-eyebrow">{t("h3.eb.how")}</p>
           <h2 id="how-title" className="h3-h2">
             {t("h3.how.title")}
           </h2>
-          <p className="h3-lead">{t("h3.how.sub")}</p>
         </header>
         <StackProvider chats={STACK}>
           <div className="h3-how-grid">
@@ -219,7 +227,7 @@ function PlanCard({ plan, t, cta }: { plan: PublicPlan; t: SiteT; cta: Start }) 
 
 function Plans({ t, cta }: { t: SiteT; cta: Start }) {
   return (
-    <section id="plans" aria-labelledby="plans-title" className="h3-sec">
+    <section id="pricing" aria-labelledby="plans-title" className="h3-sec">
       <div className="h3-wrap">
         <header className="h3-head">
           <h2 id="plans-title" className="h3-h2">
@@ -248,23 +256,41 @@ function Plans({ t, cta }: { t: SiteT; cta: Start }) {
 }
 
 /** The final call to action: the orb with its rings, the line, and the early-access bar (name, phone, type of business, city) on the existing joinWaitlist action; without the waitlist, the button stands in. The section is `#demo`, where every "early access" leads. */
+function Faq({ t }: { t: SiteT }) {
+  return (
+    <section id="faq" aria-labelledby="faq-title" className="h3-sec">
+      <div className="h3-wrap h3-narrow">
+        <header className="h3-head h3-head-center">
+          <p className="h3-eyebrow">{t("h4.eb.faq")}</p>
+          <h2 id="faq-title" className="h3-h2">
+            {t("h4.faq.t")}
+          </h2>
+        </header>
+        <div className="h3-faq" data-part="faq">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <details key={i} className="h3-faq-item">
+              <summary>
+                {t(k(`h4.faq.${i}.q`))}
+                <ChevronDown aria-hidden="true" size={20} strokeWidth={2.2} />
+              </summary>
+              <p>{t(k(`h4.faq.${i}.a`))}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Final({ t, lang, cta, hasForm, waitlist }: { t: SiteT; lang: SiteLang; cta: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
   const form = hasForm && hasWaitlist(waitlist);
   const formWords = { ...waitlistWords(t), name: t("h2.join.name"), contact: t("h2.join.phone"), type: t("h2.join.biz"), city: t("h2.join.city"), submit: t("demo.submit"), thanksTitle: t("h2.join.thanks"), thanksBody: t("h2.join.once") };
   return (
     <section id={form ? "demo" : "join"} aria-labelledby="join-title" className="h3-sec h3-final">
       <div className="h3-wrap h3-narrow h3-final-in">
-        <div className="h3-orb">
-          <span className="h2-orbwrap relative block size-full overflow-hidden">
-            <AssistantOrb state="idle" />
-          </span>
-        </div>
         <h2 id="join-title" className="h3-h2 h3-center">
           {t("h3.final.t")}
         </h2>
-        <p className="h3-lead h3-center">
-          <WithWhatsapp text={t("h2.join.sub")} />
-        </p>
         {form ? (
           <WaitlistForm
             variant="bar"
@@ -282,7 +308,9 @@ function Final({ t, lang, cta, hasForm, waitlist }: { t: SiteT; lang: SiteLang; 
             {cta.label}
           </Link>
         )}
-        {form ? null : <p className="h3-small h3-center">{t("h2.join.once")}</p>}
+        <p className="h3-small h3-center">
+          <WithWhatsapp text={t("h4.final.line")} />
+        </p>
       </div>
     </section>
   );

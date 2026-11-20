@@ -66,7 +66,7 @@
 [data-ui="v2"] .h3-btn:active { transform: scale(0.97); }
 [data-ui="v2"] .h3-btn-main { background: var(--h3-or, #c2410c); color: #fff; }
 [data-ui="v2"] .h3-btn-line { background: transparent; color: var(--v2-ink); box-shadow: inset 0 0 0 1.5px var(--v2-border-strong); }
-[data-ui="v2"] .h3-btn-big { min-height: 60px; font-size: 17px; padding: 0 30px; }
+[data-ui="v2"] .h3-btn-big { min-height: 48px; font-size: 15px; padding: 0 28px; }
 [data-ui="v2"] .h3-link { display: inline-flex; min-height: 44px; align-items: center; gap: 6px; font-weight: 700; color: var(--h3-ot); }
 [data-ui="v2"] .h3-link:hover { text-decoration: underline; }
 
@@ -86,13 +86,30 @@
 @media (min-width: 900px) { [data-ui="v2"] .h3-stage-slot { aspect-ratio: 1240 / 540; max-width: 1240px; } }
 
 /* 2. what should your assistant do */
-[data-ui="v2"] .h3-ask { display: flex; flex-direction: column; align-items: center; gap: 18px; }
-[data-ui="v2"] .h3-ask-field { width: 100%; border-radius: clamp(20px, 2.4vw, 28px); background: var(--v2-surface); padding: clamp(14px, 1.8vw, 20px); box-shadow: inset 0 0 0 1px var(--v2-border), var(--v2-shadow); }
-[data-ui="v2"] .h3-ask-input { display: block; width: 100%; resize: none; border: 0; background: transparent; padding: 4px 6px; font: inherit; font-size: 16px; line-height: 1.5; color: var(--v2-ink); }
+[data-ui="v2"] .h3-ask { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 640px; margin-inline: auto; }
+[data-ui="v2"] .h3-ask-input { display: block; width: 100%; resize: none; border: 0; border-radius: 16px; background: var(--v2-surface); padding: 14px 16px; font: inherit; font-size: 16px; line-height: 1.5; color: var(--v2-ink); box-shadow: inset 0 0 0 1px var(--v2-border-strong); }
+/* the chips: ONE row you swipe (snaps, a soft fade at the edges, no sideways scroll of the page) */
+[data-ui="v2"] .h3-chips { display: flex; gap: 8px; margin: 0 calc(var(--h3-gutter) * -1); padding: 2px var(--h3-gutter); list-style: none; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--h3-gutter), #000 calc(100% - var(--h3-gutter)), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 var(--h3-gutter), #000 calc(100% - var(--h3-gutter)), transparent 100%); }
+[data-ui="v2"] .h3-chips::-webkit-scrollbar { display: none; }
+[data-ui="v2"] .h3-chips li { flex: 0 0 auto; scroll-snap-align: start; }
+@media (min-width: 768px) { [data-ui="v2"] .h3-chips { flex-wrap: wrap; justify-content: center; margin-inline: 0; padding-inline: 0; overflow: visible; -webkit-mask-image: none; mask-image: none; } }
+[data-ui="v2"] .h3-chip[aria-pressed="true"] { background: var(--v2-ink); color: var(--v2-bg); }
+/* the plan card of the chosen job (static words): white, four rows */
+[data-ui="v2"] .h3-plan:not([data-on]) { display: none; }
+[data-ui="v2"] .h3-plan-card { margin: 0; display: flex; flex-direction: column; gap: 10px; border-radius: 18px; background: var(--v2-surface); padding: 16px; box-shadow: inset 0 0 0 1px var(--v2-border), var(--v2-shadow); animation: h3-bubble-in 250ms ease-out both; }
+[data-ui="v2"] .h3-plan-card > div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 2px 12px; }
+[data-ui="v2"] .h3-plan-card dt { font-size: 14px; color: var(--v2-muted); }
+[data-ui="v2"] .h3-plan-card dd { margin: 0; font-size: 15px; font-weight: 600; }
+/* the questions: plain rows that open (no script) */
+[data-ui="v2"] .h3-faq { display: flex; flex-direction: column; border-top: 1px solid var(--v2-border); margin-top: 8px; }
+[data-ui="v2"] .h3-faq-item { border-bottom: 1px solid var(--v2-border); }
+[data-ui="v2"] .h3-faq-item summary { display: flex; min-height: 56px; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 16px; font-weight: 600; list-style: none; cursor: pointer; }
+[data-ui="v2"] .h3-faq-item summary::-webkit-details-marker { display: none; }
+[data-ui="v2"] .h3-faq-item summary svg { flex: none; color: var(--v2-muted); transition: transform 200ms ease-out; }
+[data-ui="v2"] .h3-faq-item[open] summary svg { transform: rotate(180deg); }
+[data-ui="v2"] .h3-faq-item p { margin: 0 0 16px; font-size: 15px; line-height: 1.5; color: var(--v2-muted); }
 [data-ui="v2"] .h3-ask-input:focus-visible { outline: 2px solid var(--v2-ring); outline-offset: 6px; border-radius: 6px; }
 [data-ui="v2"] .h3-ask-input::placeholder { color: var(--v2-muted); opacity: 1; }
-[data-ui="v2"] .h3-ask-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 8px; }
-[data-ui="v2"] .h3-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0; padding: 0; list-style: none; }
 [data-ui="v2"] .h3-chip { min-height: 44px; border-radius: 999px; background: var(--v2-surface-2); padding: 8px 14px; font-size: 14px; line-height: 1.35; color: var(--v2-ink); text-align: left; transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1), background-color 150ms ease; cursor: pointer; }
 [data-ui="v2"] .h3-chip:hover { background: var(--v2-border); }
 [data-ui="v2"] .h3-chip:active { transform: scale(0.97); }
@@ -216,7 +233,6 @@
 /* 9. the final call to action */
 [data-ui="v2"] .h3-final { padding-bottom: clamp(56px, 7vw, 96px); }
 [data-ui="v2"] .h3-final-in { display: flex; flex-direction: column; align-items: center; gap: clamp(18px, 2.2vw, 28px); }
-[data-ui="v2"] .h3-orb { position: relative; width: clamp(120px, 14vw, 168px); aspect-ratio: 1; }
 [data-ui="v2"] .h3-final .h3-lead { max-width: 620px; }
 
 /* Fit: a drawing laid out at its design size and scaled to the width of its box (components/v2/site/home2/Fit.tsx); the box keeps the drawing's proportions at every width */
