@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { AskBox, type AskJob } from "./AskBox";
+import type { AskJob } from "./AskBox";
 
 const jobs: AskJob[] = [
   { chip: "Book site visits", who: "New property enquiries", says: "Can you visit this Saturday?", when: "Right away", keys: ["site visit"] },
@@ -10,7 +10,11 @@ const jobs: AskJob[] = [
 const words = { label: "Tell it", placeholder: "e.g.", go: "Set this up", who: "Who", says: "What it says", when: "When", cost: "Cost", costValue: "Calls are charged at your plan's rate", plan: "Plan" };
 let seeIt: () => void;
 
-beforeEach(() => {
+// the page's scenes start after the first scroll (use-on-view-once.ts keeps that in the module): a fresh module for each test
+let AskBox: typeof import("./AskBox").AskBox;
+beforeEach(async () => {
+  vi.resetModules();
+  ({ AskBox } = await import("./AskBox"));
   vi.useFakeTimers();
   vi.stubGlobal(
     "IntersectionObserver",
@@ -34,7 +38,9 @@ describe("try-it: a live moment played once when seen (no AI, nothing sent)", ()
     vi.stubGlobal("matchMedia", () => ({ matches: false }));
     const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" arrow={null} />);
     const box = screen.getByRole("textbox") as HTMLTextAreaElement;
-    act(() => void vi.advanceTimersByTime(5)); // the browser took over: the block waits empty below the fold (the server drew the final state)
+    expect(box.value).toBe("Book site visits"); // before the first scroll: the final state, as the server drew it
+    act(() => void window.dispatchEvent(new Event("scroll")));
+    act(() => void vi.advanceTimersByTime(5)); // the visitor scrolled: the block waits empty below the fold
     expect(box.value).toBe("");
     expect(container.querySelectorAll(".h3-plan-row[data-in]")).toHaveLength(0);
     act(() => seeIt());
@@ -52,6 +58,7 @@ describe("try-it: a live moment played once when seen (no AI, nothing sent)", ()
   it("tapping a chip afterwards replays it for that chip", () => {
     vi.stubGlobal("matchMedia", () => ({ matches: false }));
     const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" arrow={null} />);
+    act(() => void window.dispatchEvent(new Event("scroll")));
     act(() => void vi.advanceTimersByTime(5));
     act(() => seeIt());
     act(() => void vi.advanceTimersByTime(4000));

@@ -128,7 +128,7 @@ export function LeakCalc({ w }: { w: W }) {
     let raf = 0;
     const t0 = performance.now();
     const step = (now: number) => {
-      const u = Math.min(1, (now - t0) / 1400);
+      const u = Math.min(1, (now - t0) / 900);
       setCount(u >= 1 ? null : Math.round(finalLost.current * (1 - (1 - u) ** 3)));
       if (u < 1) raf = requestAnimationFrame(step);
     };

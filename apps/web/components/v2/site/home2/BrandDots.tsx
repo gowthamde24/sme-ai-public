@@ -136,6 +136,8 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
         ctx.arc(x, y, rad + heat * 1.6, 0, TAU);
         ctx.fill();
       }
+      // the canvas has painted the dots: the CSS version underneath steps aside
+      if (!el.parentElement?.hasAttribute("data-drawn")) el.parentElement?.setAttribute("data-drawn", "");
       // (no floor line, no glow: the clean footer)
     });
     return () => {
@@ -151,7 +153,14 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
     state.current.seen = true;
   };
   return (
-    <div className="relative mx-auto mt-[clamp(12px,3vw,40px)] aspect-[1240/266] w-full max-w-[1240px]">
+    <div className="h3-wm-box relative mx-auto mt-[clamp(12px,3vw,40px)] aspect-[1240/266] w-full max-w-[1240px]">
+      {/* the wordmark as the server draws it (dots in CSS): shown until the canvas has painted its own */}
+      <div className="h3-wm" aria-hidden="true" data-illustration="">
+        <span className="h3-wm-bar h3-wm-b1" />
+        <span className="h3-wm-bar h3-wm-b2" />
+        <span className="h3-wm-bar h3-wm-b3" />
+        <span className="h3-wm-t">{BRAND_NAME}</span>
+      </div>
       {/* as tall as the drawing down to the letters' foot (266 of 300 units): the letters stand on the page's bottom edge, with the floor line just under them */}
       <canvas ref={canvas} role="img" aria-label={label} onClick={again} className="absolute inset-0 block size-full cursor-pointer" data-part="brand-dots" />
       <button type="button" onClick={again} className="sr-only focus:not-sr-only focus:absolute focus:right-0 focus:top-0 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2">

@@ -10,15 +10,31 @@ import * as React from "react";
 export type Phase = "final" | "ready" | "played";
 
 const none = () => () => undefined;
+
+// a visitor who has not scrolled yet (and a capture of the whole page that never scrolls) sees every moment FINISHED: the scenes start only after the first scroll, so a picture of the page taken at load is never a half-played frame or an empty start state
+let moved = false;
+const waiting = new Set<() => void>();
+const onScroll = () => {
+  moved = true;
+  window.removeEventListener("scroll", onScroll);
+  waiting.forEach((f) => f());
+};
+const subscribeMoved = (cb: () => void) => {
+  if (!moved && waiting.size === 0) window.addEventListener("scroll", onScroll, { passive: true });
+  waiting.add(cb);
+  return () => void waiting.delete(cb);
+};
 const motionOk = (): boolean => typeof IntersectionObserver !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches !== true;
 
 /**
  * The home page's ONE hook for "play this tiny live moment once when it scrolls into view" (job home v4). Returns `[ref, phase]`: put `ref` on the block and `data-phase={phase}` on the same element; the CSS of the moment reads `[data-phase="ready"]` (start) and
- * `[data-phase="played"]` (run to the end). The server renders "final", so a visitor without JavaScript, or with "reduce motion", sees every moment finished at once.
+ * `[data-phase="played"]` (run to the end). The server renders "final", so a visitor without JavaScript, or with "reduce motion", sees every moment finished at once; so does a visitor who has not scrolled yet (the scenes start after the first scroll).
  */
 export function useOnViewOnce<T extends Element>(threshold = 0.4): readonly [React.RefObject<T | null>, Phase] {
   const ref = React.useRef<T>(null);
-  const can = React.useSyncExternalStore(none, motionOk, () => false);
+  const motion = React.useSyncExternalStore(none, motionOk, () => false);
+  const scrolled = React.useSyncExternalStore(subscribeMoved, () => moved, () => false);
+  const can = motion && scrolled;
   const [seen, setSeen] = React.useState(false);
   React.useEffect(() => {
     const el = ref.current;

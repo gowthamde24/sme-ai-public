@@ -1,0 +1,13 @@
+/* the footer wordmark as the server draws it: the three bars and the name as dots (the page's own dot look) in CSS, no script, so a picture of the whole page, a visitor without JavaScript and the moment before the canvas has drawn all show it. The canvas (BrandDots) builds the animated version on top of the same box and then takes over (`data-drawn`). Geometry in units of 1240 px of the box's width, like the canvas. */
+[data-ui="v2"] .h3-wm-box { container-type: inline-size; }
+[data-ui="v2"] .h3-wm { --u: calc(100cqw / 1240); --wm-step: calc(7 * var(--u)); position: absolute; inset: 0; pointer-events: none; }
+@container (max-width: 639px) { [data-ui="v2"] .h3-wm { --wm-step: calc(14 * var(--u)); } }
+[data-ui="v2"] .h3-wm-box[data-drawn] .h3-wm { visibility: hidden; }
+[data-ui="v2"] .h3-wm > * { position: absolute; display: block; opacity: 0.8; background-size: var(--wm-step) var(--wm-step); }
+[data-ui="v2"] .h3-wm-bar { height: calc(46 * var(--u)); border-radius: calc(23 * var(--u)); background-image: radial-gradient(circle at center, var(--wm-c) 0 calc(var(--wm-step) * 0.37), transparent calc(var(--wm-step) * 0.42)); }
+[data-ui="v2"] .h3-wm-b1 { --wm-c: #c2410c; left: calc(17 * var(--u)); top: calc(47 * var(--u)); width: calc(118 * var(--u)); }
+[data-ui="v2"] .h3-wm-b2 { --wm-c: var(--v2-ink); left: calc(17 * var(--u)); top: calc(127 * var(--u)); width: calc(174 * var(--u)); }
+[data-ui="v2"] .h3-wm-b3 { --wm-c: #e29a7a; left: calc(73 * var(--u)); top: calc(207 * var(--u)); width: calc(174 * var(--u)); }
+[data-ui="v2"][data-theme="dark"] .h3-wm-b1 { --wm-c: #ff9d6e; }
+@media (prefers-color-scheme: dark) { [data-ui="v2"]:not([data-theme="light"]) .h3-wm-b1 { --wm-c: #ff9d6e; } }
+[data-ui="v2"] .h3-wm-t { left: calc(236 * var(--u)); top: calc(18 * var(--u)); padding-bottom: calc(60 * var(--u)); font-size: calc(268 * var(--u)); line-height: 1; font-weight: 700; letter-spacing: calc(-14 * var(--u)); white-space: nowrap; color: transparent; -webkit-background-clip: text; background-clip: text; background-image: radial-gradient(circle at center, var(--v2-ink) 0 calc(var(--wm-step) * 0.37), transparent calc(var(--wm-step) * 0.42)); }

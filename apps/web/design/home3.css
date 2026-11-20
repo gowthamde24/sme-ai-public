@@ -317,7 +317,8 @@
   [data-ui="v2"] .h3-hero-text > :nth-child(3) { animation-delay: 160ms; }
   [data-ui="v2"] .h3-hero-text > :nth-child(4) { animation-delay: 240ms; }
 }
-@keyframes h3-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+/* (transform only: the hero text is the page's largest paint, and a start at opacity 0 held it back until the main thread was free) */
+@keyframes h3-rise { from { transform: translateY(12px); } to { transform: none; } }
 
 /* a jump to a part of the home page lands below the sticky header */
 [data-ui="v2"] [data-page="home"] section[id], [data-ui="v2"] [data-page="home"] footer[id] { scroll-margin-top: 88px; }
@@ -394,14 +395,13 @@
 }
 
 /* speed: everything below the first screen skips its style and layout work until it is near the window (content-visibility), with the section's known CONTENT height reserved (its padding is outside it) so nothing moves when it is drawn; the numbers are the measured content heights at 390, 768 and 1440 px, and "auto" then remembers the real one. Anchors, find-in-page and the sticky bar's observer still work: the box is there, only its insides wait. */
-[data-ui="v2"] [data-page="home"] :is(#ask, #calc, #lead-finder, #pricing, #faq, #join, #demo, #end) { content-visibility: auto; }
+[data-ui="v2"] [data-page="home"] :is(#ask, #calc, #lead-finder, #pricing, #faq, #join, #demo) { content-visibility: auto; } /* (not the footer: its wordmark must be there in a picture of the whole page) */
 [data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 481px; }
 [data-ui="v2"] [data-page="home"] #calc { contain-intrinsic-size: auto 604px; }
 [data-ui="v2"] [data-page="home"] #lead-finder { contain-intrinsic-size: auto 600px; }
 [data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 553px; }
 [data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 258px; }
 [data-ui="v2"] [data-page="home"] :is(#join, #demo) { contain-intrinsic-size: auto 183px; }
-[data-ui="v2"] [data-page="home"] #end { contain-intrinsic-size: auto 720px; }
 @media (min-width: 768px) {
   [data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 511px; }
   [data-ui="v2"] [data-page="home"] #calc { contain-intrinsic-size: auto 748px; }
@@ -409,7 +409,6 @@
   [data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 392px; }
   [data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 269px; }
   [data-ui="v2"] [data-page="home"] :is(#join, #demo) { contain-intrinsic-size: auto 139px; }
-  [data-ui="v2"] [data-page="home"] #end { contain-intrinsic-size: auto 740px; }
 }
 @media (min-width: 1200px) {
   [data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 549px; }
@@ -418,7 +417,9 @@
   [data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 393px; }
   [data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 307px; }
   [data-ui="v2"] [data-page="home"] :is(#join, #demo) { contain-intrinsic-size: auto 171px; }
-  [data-ui="v2"] [data-page="home"] #end { contain-intrinsic-size: auto 737px; }
 }
 /* the cookie bar and the sticky "Get free early access" bar stack: the bar goes above the notice while it is open */
 html:has([data-cookie="notice"]) [data-ui="v2"] .h3-sticky { bottom: 56px; }
+
+/* a jump or an element scrolled into view on a phone stops above the sticky bottom bar (so no link ends up under it) */
+@media (max-width: 899px) { html:has([data-page="home"]) { scroll-padding-bottom: 88px; } }
