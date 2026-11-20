@@ -9,6 +9,7 @@ the same loudness, and the voice, tone and speed come from the same function a r
 
 NOTE: no `from __future__ import annotations` here (query models are attached to the endpoint signatures at registration time)."""
 
+import dataclasses
 import logging
 from typing import Annotated, Any, Literal
 
@@ -17,6 +18,7 @@ from fastapi import APIRouter, Depends, Query, Response
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.conversation.sound import Sound
 from app.conversation.sound_read import sound_of
+from app.conversation.voices import ID_FORMAT, default_config
 from app.errors import ApiError
 from app.telephony.tone import STYLE_TONE
 from app.tenancy.models import Role
@@ -33,14 +35,21 @@ PreviewLanguage = Annotated[Literal["en", "te", "hi", "kn", "ta", "ml", "mr"], Q
 PreviewStyle = Annotated[Literal["warm", "respectful", "quick"] | None, Query()]
 LegacyVoice = Annotated[Literal["female_warm", "female_clear", "male_calm", "male_lively"] | None, Query()]   # accepted and ignored: the voice is the workspace's chosen voice
 Name = Annotated[str | None, Query(max_length=24)]
+VoiceId = Annotated[str | None, Query(max_length=40)]   # 21 Nov 2026: speak THIS listed voice of the language live (the voice card), saved or not; null = the voice in use
 
 
-def _sound(runtime: Runtime, ctx: TenantContext, language: str, style: str | None) -> Sound:
-    """The one resolution a call uses; `style` is a tone the screen wants to hear before it saves. A language with no voice yet (Marathi) has no sample."""
+def _sound(runtime: Runtime, ctx: TenantContext, language: str, style: str | None, voice_id: str | None = None) -> Sound:
+    """The one resolution a call uses; `style` is a tone the screen wants to hear before it saves, `voice_id` a listed voice of the language. A language with no voice yet (Marathi) has no sample."""
+    picked = None
+    if voice_id is not None:
+        picked = default_config().catalogue.get(voice_id) if ID_FORMAT.match(voice_id) else None
+        if picked is None or picked.language != language or not picked.listed:
+            raise ApiError(422, "unknown_voice", "That voice is not one of the voices on the list for this language.", extra={"fields": ["voice_id"]})
     try:
-        return sound_of(runtime, ctx, language, tone=STYLE_TONE.get(style) if style else None)
+        sound = sound_of(runtime, ctx, language, tone=STYLE_TONE.get(style) if style else None)
     except VoiceError:
         raise ApiError(404, "no_sample", "There is no sample for this language yet.") from None
+    return dataclasses.replace(sound, voice=picked) if picked is not None else sound
 
 
 async def _speak(runtime: Runtime, ctx: TenantContext, sound: Sound, text: str, what: str) -> Response:
@@ -57,20 +66,20 @@ async def _speak(runtime: Runtime, ctx: TenantContext, sound: Sound, text: str, 
 
 
 @router.get("/voice-sample")
-async def voice_sample(ctx: OwnerAdmin, runtime: RuntimeDep, language: PreviewLanguage, voice: LegacyVoice = None, style: PreviewStyle = None, name: Name = None) -> Response:
+async def voice_sample(ctx: OwnerAdmin, runtime: RuntimeDep, language: PreviewLanguage, voice: LegacyVoice = None, style: PreviewStyle = None, name: Name = None, voice_id: VoiceId = None) -> Response:
     if name is not None and not NAME_OK.match(name):
         raise ApiError(422, "validation_error", "Invalid input.")
-    sound = _sound(runtime, ctx, language, style)
+    sound = _sound(runtime, ctx, language, style, voice_id)
     # the opening line as a call speaks it (the name only, or with the AI words as the setting says: app/opening/greeting.py); the fixed sample line of the tone only where the workspace's own line cannot be read
     text = _owner_opening(runtime, ctx, language, name) or line_for(language, TONE_STYLE[sound.tone], (name or DEFAULT_NAME).strip(), ctx.tenant.name)
     return await _speak(runtime, ctx, sound, text, "sample")
 
 
 @router.get("/voice-preview")
-async def voice_preview(ctx: OwnerAdmin, runtime: RuntimeDep, language: PreviewLanguage, voice: LegacyVoice = None, style: PreviewStyle = None, name: Name = None) -> Response:
+async def voice_preview(ctx: OwnerAdmin, runtime: RuntimeDep, language: PreviewLanguage, voice: LegacyVoice = None, style: PreviewStyle = None, name: Name = None, voice_id: VoiceId = None) -> Response:
     if name is not None and not NAME_OK.match(name):
         raise ApiError(422, "validation_error", "Invalid input.")
-    sound = _sound(runtime, ctx, language, style)
+    sound = _sound(runtime, ctx, language, style, voice_id)
     text = preview_text(language, TONE_STYLE[sound.tone], (name or DEFAULT_NAME).strip(), ctx.tenant.name, _owner_opening(runtime, ctx, language, name))
     return await _speak(runtime, ctx, sound, text, "preview")
 

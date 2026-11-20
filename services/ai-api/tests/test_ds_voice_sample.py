@@ -108,3 +108,15 @@ def test_marathi_has_no_voice_yet_so_no_sample_and_never_a_crash() -> None:
     client, _, built = world()
     r = client.get(f"{URL}?language=mr&style=warm", headers=auth("a_owner"))
     assert r.status_code == 404 and r.json()["error"]["code"] == "no_sample" and built == []
+
+
+def test_any_listed_voice_of_the_language_can_be_heard_before_it_is_chosen_and_nothing_else() -> None:
+    """21 Nov 2026: the job card's sample and preview take ?voice_id= like Hear it does: a LISTED voice of that language (even of the other gender), else 422 unknown_voice."""
+    client, _, _ = world(choices={"te": "te-ramya"}, gender="female")
+    for route in (URL, PREVIEW):
+        for voice_id in ("te-tarun", "te-kavitha", "te-charan"):
+            r = client.get(f"{route}?{Q}&voice_id={voice_id}", headers=auth("a_owner"))
+            assert r.status_code == 200 and r.headers["x-voice-id"] == voice_id, (route, voice_id, r.text[:120])
+        for bad in ("en-janvi", "te-sindhu", "nobody", "x" * 41):
+            assert client.get(f"{route}?{Q}&voice_id={bad}", headers=auth("a_owner")).status_code in (422, 404), (route, bad)
+        assert client.get(f"{route}?{Q}&voice_id=en-janvi", headers=auth("a_owner")).status_code == 422

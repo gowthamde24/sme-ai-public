@@ -62,3 +62,9 @@ The per-job voice (`speaks.voice`, `voice_name`) uses THE SAME list: a catalogue
 
 ## 12. Picking a voice of either gender (21 Nov 2026, planner decision)
 `PUT /v1/tenants/{t}/ai-assistant/voices {language, voice_id}` accepts any LISTED voice of that language, of EITHER gender. When the voice's gender differs from the assistant's, the assistant's gender becomes the voice's in the same call (pronouns and wording follow it); the other languages' choices go back to the new gender's defaults, exactly as `{gender}` does. The answer is the usual `VoicesOut` (`gender` is the new one). The same gender changes nothing else. 422 `validation_error` (fields ["voice_id"]) for an unknown, unlisted or other-language voice.
+
+## 11. Hear any listed voice before choosing it (21 Nov 2026)
+* `POST /v1/tenants/{t}/ai-assistant/voices/preview` takes two more optional fields: `voice_id` (a LISTED voice of `language`, e.g. `te-tarun`; null = the voice in use) and `tone` (`friendly | respectful | quick`; null = the saved tone). The answer is unchanged (`voice_id` says which voice spoke). 422 `unknown_voice` for an id that is not a listed voice of that language (fields: ["voice_id"]); 422 for a tone outside the three. A picked voice speaks as itself even when it is of the other gender from the saved one.
+* The job card's `GET .../ai-assistant/voice-sample` and `GET .../ai-assistant/voice-preview` take `?voice_id=` the same way.
+* Cost: the same account and daily-character caps as before; Cartesia voices are covered by the subscription, a Sarvam voice is about ₹0.2 a play (results are cached by voice and text, so a repeat is free).
+* `GET /how-assistant-speaks` returns `tone`, `background {value, saved, options[]}` and `say_ai_when_greeting {value, saved}` (default `{false, false}`).

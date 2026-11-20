@@ -175,6 +175,10 @@ class PreviewIn(BaseModel):
     mention_ai: bool | None = None
     campaign_id: uuid.UUID | None = None
     assistant_name: Annotated[str, StringConstraints(strip_whitespace=True, max_length=24)] | None = None   # a name typed on the screen and not yet saved; null = the saved name (none: no name is made up)
+    # 21 Nov 2026 (owner picks voices on the voice card): speak THIS listed voice live, saved or not; null = the voice in use. 422 unknown_voice for an id that is not a listed voice of `language`.
+    voice_id: Annotated[str, StringConstraints(max_length=40)] | None = None
+    # the tone to resolve (friendly | respectful | quick); null = the saved tone. It changes the words a call says after its opening and the pace; the opening line itself is the owner's.
+    tone: Literal["friendly", "respectful", "quick"] | None = None
 
 
 class PreviewAudio(BaseModel):
@@ -212,9 +216,15 @@ async def _speak_opening(runtime: Runtime, ctx: TenantContext, body: PreviewIn) 
     found = detect_language(spoken)
     if found != "en" and found != body.language and {found, body.language} != {"hi", "mr"}:   # Hindi and Marathi share a script: a short line cannot always tell them apart
         raise ApiError(422, "language_mismatch", "This line is written in a different language from the one chosen.", extra={"fields": ["language"]})
+    picked = None
+    if body.voice_id is not None:
+        picked = default_config().catalogue.get(body.voice_id) if ID_FORMAT.match(body.voice_id) else None
+        if picked is None or picked.language != body.language or not picked.listed:
+            raise ApiError(422, "unknown_voice", "That voice is not one of the voices on the list for this language.", extra={"fields": ["voice_id"]})
     try:
-        sound = sound_of(runtime, ctx, body.language)   # THE resolution a call uses (app/conversation/sound.py): the voice, and the speed
-        wav, engine, voice_id = await service.speak(ctx.tenant.id, body.language, sound.voice.id, spoken, sound.gender, sound.pace)
+        sound = sound_of(runtime, ctx, body.language, voice_id=body.voice_id, tone=body.tone)   # THE resolution a call uses (app/conversation/sound.py): the voice, and the speed
+        # a picked voice speaks as itself, even when it is of the other gender from the one saved (the owner is listening to choose)
+        wav, engine, voice_id = await service.speak(ctx.tenant.id, body.language, picked.id if picked else sound.voice.id, spoken, picked.gender if picked else sound.gender, sound.pace)
     except VoiceError as err:
         if err.code == "rate_limited":
             raise ApiError(429, "rate_limited", "Too many previews today. Please try again tomorrow.", retry_after=3600) from None
