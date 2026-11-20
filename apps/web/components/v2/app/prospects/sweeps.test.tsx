@@ -179,7 +179,9 @@ describe("the buttons of one weekly search", () => {
     fireEvent.click(screen.getByRole("button", { name: "Yes, run it now" }));
     await waitFor(() => expect(a.run).toHaveBeenCalledWith(ID));
     expect(await screen.findByRole("status")).toHaveTextContent("It ran. The new businesses are in Prospects.");
-    fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+    const removeBtn = await screen.findByRole("button", { name: "Remove" });
+    await waitFor(() => expect(removeBtn).toBeEnabled()); // disabled while useTransition busy is still true
+    fireEvent.click(removeBtn);
     expect(screen.queryByText("It ran. The new businesses are in Prospects.")).toBeNull(); // the old message is not left standing
     expect(screen.getByText("Remove this weekly search? What it already found stays in Prospects.")).toBeInTheDocument();
     expect(a.remove).not.toHaveBeenCalled();
