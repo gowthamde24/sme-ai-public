@@ -19,7 +19,29 @@ export type StackChat = {
 };
 export const AI_LABEL = "AI assistant";
 
-export const STACK: readonly StackChat[] = [
+/**
+ * TODAY'S product announces itself as an AI when it greets, so the demo's first call line says "the AI assistant of <business>" and the FAQ says so (owner, informed, 21 Nov 2026). The product is getting a per-business, per-job
+ * setting "Say 'AI assistant' when greeting" (default OFF; the assistant ALWAYS answers honestly if asked): it is NOT live yet (C1's field, about 25 Nov). THE ONE SWITCH: set this to false the day the setting is on staging and the demo
+ * greetings (NAME_ONLY_GREETING) and the FAQ answer (h4.faq.2.*.quiet) change together. The small "AI assistant" label on the caption bubbles stays in both modes.
+ */
+export const GREETING_MENTIONS_AI = true;
+
+/** The name-only first line of each call (the alternative to "I am the AI assistant of <business>"), same order as STACK: spoken style, drafts for the owner's read. */
+const NAME_ONLY_GREETING: Record<StackCode, string> = {
+  te: "నమస్తే అండీ, నేను Bright Path Academy నుంచి Priya. ఏ course, ఎవరికి కావాలి?",
+  hi: "नमस्ते! मैं Shree Homes से Priya बोल रही हूँ। आपको कौन सा flat चाहिए?",
+  kn: "ನಮಸ್ಕಾರ! ನಾನು Sunrise Clinic ನಿಂದ Priya. ನಿಮಗೆ ಏನು ಬೇಕು?",
+  en: "Hi! This is Priya from Green Leaf Store. How can I help?",
+};
+
+/** The conversations with the first call line in the chosen style (a pure function so a test can show both). */
+export function stackWith(mentionsAi: boolean): readonly StackChat[] {
+  if (mentionsAi) return STACK_TODAY;
+  return STACK_TODAY.map((c) => ({ ...c, call: { ...c.call, lines: c.call.lines.map((l, i) => (i === 0 ? { ...l, text: NAME_ONLY_GREETING[c.code] } : l)) } }));
+}
+
+
+const STACK_TODAY: readonly StackChat[] = [
   {
     code: "te",
     name: "Bright Path Academy",
@@ -113,6 +135,8 @@ export const STACK: readonly StackChat[] = [
     ],
   },
 ];
+
+export const STACK: readonly StackChat[] = stackWith(GREETING_MENTIONS_AI);
 
 /**
  * What the assistant found out in each conversation, in the same order as STACK: three rows each (a label and a value), words of the page's own language from the string store. The first set is the older `h3.how.f.*` rows

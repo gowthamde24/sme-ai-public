@@ -11719,11 +11719,11 @@
   }
  },
  "h4.faq.2.a": {
-  "en": "Yes. It says it is an AI assistant at the start of every call.",
-  "te": "అవును. ప్రతి call మొదట్లో తాను AI assistant అని చెప్తుంది.",
-  "hi": "हाँ। हर call की शुरुआत में यह बताता है कि यह AI assistant है।",
-  "kn": "ಹೌದು. ಪ್ರತಿ call ಆರಂಭದಲ್ಲಿ ತಾನು AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
-  "ta": "ஆம். ஒவ்வொரு call-இன் தொடக்கத்திலும் தான் AI assistant என்று சொல்லும்.",
+  "en": "Yes. It always says it is an AI assistant when it greets.",
+  "te": "అవును. Greet చేసేటప్పుడు ఎప్పుడూ తాను AI assistant అని చెప్తుంది.",
+  "hi": "हाँ। Greet करते समय यह हमेशा बताता है कि यह AI assistant है।",
+  "kn": "ಹೌದು. Greet ಮಾಡುವಾಗ ಯಾವಾಗಲೂ ತಾನು AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "ta": "ஆம். வாழ்த்தும்போது எப்போதும் தான் AI assistant என்று சொல்லும்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11757,64 +11757,38 @@
    "ta": "draft"
   }
  },
- "h4.faq.4.q": {
-  "en": "Can I keep my WhatsApp number?",
-  "te": "నా WhatsApp number నే వాడుకోవచ్చా?",
-  "hi": "क्या मैं अपना WhatsApp number रख सकता हूँ?",
-  "kn": "ನನ್ನ WhatsApp number ಅನ್ನೇ ಬಳಸಬಹುದೇ?",
-  "ta": "என் WhatsApp number-ஐயே வைத்துக்கொள்ளலாமா?",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.faq.4.a": {
-  "en": "You connect your own business number. No tool can promise how WhatsApp treats a number, so we share habits that keep it in good standing.",
-  "te": "మీ సొంత business number ని connect చేస్తారు. WhatsApp ఒక number ని ఎలా చూస్తుందో ఏ tool హామీ ఇవ్వలేదు, అందుకే దాన్ని సురక్షితంగా ఉంచే అలవాట్లు చెప్తాం.",
-  "hi": "आप अपना business number connect करते हैं। WhatsApp किसी number के साथ कैसा बर्ताव करेगा, यह कोई tool पक्का नहीं कह सकता, इसलिए हम उसे सुरक्षित रखने की आदतें बताते हैं।",
-  "kn": "ನೀವು ನಿಮ್ಮದೇ business number ಅನ್ನು connect ಮಾಡುತ್ತೀರಿ. WhatsApp ಒಂದು number ಅನ್ನು ಹೇಗೆ ನೋಡುತ್ತದೆ ಎಂದು ಯಾವ tool ಕೂಡ ಭರವಸೆ ನೀಡಲಾಗದು, ಹಾಗಾಗಿ ಅದನ್ನು ಸುರಕ್ಷಿತವಾಗಿಡುವ ಅಭ್ಯಾಸಗಳನ್ನು ಹೇಳುತ್ತೇವೆ.",
-  "ta": "நீங்கள் உங்கள் சொந்த business number-ஐ connect செய்கிறீர்கள். WhatsApp ஒரு number-ஐ எப்படி நடத்தும் என்று எந்த tool-ம் உறுதி சொல்ல முடியாது, அதனால் அதைப் பாதுகாப்பாக வைக்கும் பழக்கங்களைச் சொல்கிறோம்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.faq.5.q": {
-  "en": "What happens after early access?",
-  "te": "Early access తర్వాత ఏమవుతుంది?",
-  "hi": "Early access के बाद क्या होगा?",
-  "kn": "Early access ನಂತರ ಏನಾಗುತ್ತದೆ?",
-  "ta": "Early access முடிந்த பிறகு என்ன ஆகும்?",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.faq.5.a": {
-  "en": "Paid plans start later. Until then early access is free.",
-  "te": "Paid plans తర్వాత మొదలవుతాయి. అప్పటివరకు early access free.",
-  "hi": "Paid plans बाद में शुरू होंगे। तब तक early access free है।",
-  "kn": "Paid plans ನಂತರ ಶುರುವಾಗುತ್ತವೆ. ಅಲ್ಲಿಯವರೆಗೆ early access free.",
-  "ta": "Paid plans பின்னர் தொடங்கும். அதுவரை early access free.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h4.final.line": {
   "en": "Or WhatsApp us on {whatsapp}",
   "te": "లేదా WhatsApp లో మాకు చెప్పండి: {whatsapp}",
   "hi": "या WhatsApp पर हमसे बात करें: {whatsapp}",
   "kn": "ಅಥವಾ WhatsApp ನಲ್ಲಿ ಹೇಳಿ: {whatsapp}",
   "ta": "அல்லது WhatsApp-இல் சொல்லுங்கள்: {whatsapp}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.2.q.quiet": {
+  "en": "Can customers tell it's an AI?",
+  "te": "ఇది AI అని customers కి తెలుస్తుందా?",
+  "hi": "क्या customers पहचान सकते हैं कि यह AI है?",
+  "kn": "ಇದು AI ಎಂದು customers ಗೆ ತಿಳಿಯುತ್ತದೆಯೇ?",
+  "ta": "இது AI என்று customers கண்டுபிடிக்க முடியுமா?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.2.a.quiet": {
+  "en": "If they ask, it always says so honestly. You choose whether it mentions it in the greeting.",
+  "te": "వాళ్ళు అడిగితే, ఎప్పుడూ నిజాయితీగా చెప్తుంది. Greeting లో చెప్పాలో లేదో మీరే ఎంచుకోండి.",
+  "hi": "अगर वे पूछें, तो यह हमेशा ईमानदारी से बताता है। Greeting में बताना है या नहीं, यह आप चुनिए।",
+  "kn": "ಅವರು ಕೇಳಿದರೆ, ಯಾವಾಗಲೂ ಪ್ರಾಮಾಣಿಕವಾಗಿ ಹೇಳುತ್ತದೆ. Greeting ನಲ್ಲಿ ಹೇಳಬೇಕೇ ಬೇಡವೇ ಎಂದು ನೀವೇ ಆರಿಸಿ.",
+  "ta": "அவர்கள் கேட்டால், எப்போதும் நேர்மையாகச் சொல்லும். Greeting-இல் சொல்ல வேண்டுமா என்பதை நீங்களே தேர்ந்தெடுங்கள்.",
   "status": {
    "te": "draft",
    "hi": "draft",

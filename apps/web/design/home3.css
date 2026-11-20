@@ -95,9 +95,13 @@
 @media (min-width: 768px) { [data-ui="v2"] .h3-chips { flex-wrap: wrap; justify-content: center; margin-inline: 0; padding-inline: 0; overflow: visible; -webkit-mask-image: none; mask-image: none; } }
 [data-ui="v2"] .h3-chip[aria-pressed="true"] { background: var(--v2-ink); color: var(--v2-bg); }
 /* the plan card of the chosen job (static words): white, four rows */
-[data-ui="v2"] .h3-plan:not([data-on]) { display: none; }
-[data-ui="v2"] .h3-plan-card { margin: 0; display: flex; flex-direction: column; gap: 10px; border-radius: 18px; background: var(--v2-surface); padding: 16px; box-shadow: inset 0 0 0 1px var(--v2-border), var(--v2-shadow); animation: h3-bubble-in 250ms ease-out both; }
-[data-ui="v2"] .h3-plan-card > div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 2px 12px; }
+[data-ui="v2"] .h3-plan { min-height: 188px; }
+[data-ui="v2"] .h3-plan:not([data-on]) { visibility: hidden; }
+[data-ui="v2"] .h3-plan-row { opacity: 0; transform: translateY(10px); transition: opacity 250ms ease-out, transform 250ms ease-out; }
+[data-ui="v2"] .h3-plan-row[data-in] { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h3-plan-row { opacity: 1; transform: none; transition: none; } }
+[data-ui="v2"] .h3-plan-card { margin: 0; display: flex; flex-direction: column; gap: 10px; border-radius: 18px; background: var(--v2-surface); padding: 16px; box-shadow: inset 0 0 0 1px var(--v2-border), var(--v2-shadow); }
+[data-ui="v2"] .h3-plan-row { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 2px 12px; }
 [data-ui="v2"] .h3-plan-card dt { font-size: 14px; color: var(--v2-muted); }
 [data-ui="v2"] .h3-plan-card dd { margin: 0; font-size: 15px; font-weight: 600; }
 /* the questions: plain rows that open (no script) */
@@ -158,6 +162,8 @@
 [data-ui="v2"] .h3-dp-chat { display: flex; flex: 1; flex-direction: column; padding-top: 46px; }
 [data-ui="v2"] .h3-dp-chat.pp { max-width: none; zoom: 1; }
 [data-ui="v2"] .h3-dp-chat .pp-head { padding-block: 8px; }
+[data-ui="v2"] .h3-dp-back { display: block; width: 11px; height: 11px; margin: 0 6px 0 8px; border-left: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; transform: rotate(45deg); }
+[data-ui="v2"] .h3-dp-dots { display: block; width: 4px; height: 4px; margin: 7px 8px; border-radius: 50%; background: currentColor; box-shadow: 0 -7px 0 currentColor, 0 7px 0 currentColor; }
 [data-ui="v2"] .h3-dp-chat .pp-name, [data-ui="v2"] .h3-dp-chat .pp-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 [data-ui="v2"] .h3-dp-chat .pp-body { flex: 1; justify-content: flex-start; min-height: 0; overflow: hidden; }
 [data-ui="v2"] .h3-dp-chat .pp-b p { font-size: 15px; }
@@ -184,7 +190,13 @@
   [data-ui="v2"] .h3-duo-call, [data-ui="v2"] .h3-duo-chat { grid-area: auto; opacity: 1 !important; visibility: visible !important; }
   [data-ui="v2"] .h3-duo-call:not([data-cur]), [data-ui="v2"] .h3-duo-chat:not([data-cur]) { display: none; }
 }
-@media (prefers-reduced-motion: reduce) and (max-width: 520px) { [data-ui="v2"] .h3-duo { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) and (max-width: 700px) { [data-ui="v2"] .h3-duo { grid-template-columns: minmax(0, 1fr); } }
+/* still state from 768 px: the two phones need the whole width (the card goes below them) */
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+  [data-ui="v2"] .h3-how-grid { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  [data-ui="v2"] .h3-how-phone { width: 100%; max-width: 700px; margin-inline: auto; }
+  [data-ui="v2"] .h3-how-grid > .h3-found { width: 100%; }
+}
 [data-ui="v2"] .h3-found { margin-top: 0; border-radius: 18px; background: var(--v2-surface); padding: 16px; box-shadow: inset 0 0 0 1px var(--v2-border), var(--v2-shadow); }
 [data-ui="v2"] .h3-found-sum { margin: 12px 0 0; font-size: 14px; color: var(--v2-muted); }
 [data-ui="v2"] .h3-found-h { margin: 0 0 8px; font-size: 14px; font-weight: 700; color: var(--h3-ot); }

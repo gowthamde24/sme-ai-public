@@ -2,28 +2,78 @@
 
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+
+import { useOnViewOnce } from "../home2/use-on-view-once";
 
 /** One of the example jobs: the words of its plan card, already in the visitor's language (static; nothing is asked of an AI). */
 export type AskJob = { chip: string; who: string; says: string; when: string; keys: string[] };
 
+const TYPE_MS = 1200; // the example is typed in about this long, at a steady pace
+const ROW_MS = 380; // then the plan card's four lines come in one by one
+
 /**
- * "Tell it what to do" (home page, section 3): a box to type in (the owner's own words), ONE row of example chips (swipe), and the PLAN CARD of the job: Who it is for, what it says, when, what it costs, shown in the page from
- * the static words of the five example jobs. It calls NO AI and sends NOTHING: a chip (or a keyword typed in the box) only picks which of the five sample cards to show; the cost line is the same for every job (it names no
- * price). "Set this up" leads to early access. The words come from the server (already in the visitor's language).
+ * "Tell it what to do" (home page, section 3): a box to type in (the owner's own words), ONE row of example chips (swipe), and the PLAN CARD of the job: Who it is for, what it says, when, what it costs, from the static words of the
+ * five example jobs. A live moment, played once when the block scrolls into view: the first example is TYPED into the box (about 1.2 s) and the card's four lines appear one by one; tapping a chip replays it for that chip (reduced
+ * motion: the final state at once). It calls NO AI and sends NOTHING; the cost line is the same for every job (it names no price). "Set this up" leads to early access. The words come from the server (in the visitor's language).
  */
 export function AskBox({ words, jobs, href }: { words: { label: string; placeholder: string; go: string; who: string; says: string; when: string; cost: string; costValue: string; plan: string }; jobs: AskJob[]; href: string }) {
   const [text, setText] = useState("");
   const [picked, setPicked] = useState<number | null>(null);
+  const [rows, setRows] = useState(0); // how many of the card's four lines are in
   const id = useId();
+  const [box, seen] = useOnViewOnce<HTMLDivElement>();
+  const timers = useRef<number[]>([]);
+  const stop = useCallback(() => {
+    timers.current.forEach((t) => window.clearTimeout(t));
+    timers.current = [];
+  }, []);
+  const later = useCallback((fn: () => void, ms: number) => {
+    timers.current.push(window.setTimeout(fn, ms));
+  }, []);
+  // type the chip's words in (steady), then bring the four lines in one by one
+  const play = useCallback(
+    (i: number, still: boolean) => {
+      stop();
+      const full = jobs[i].chip;
+      if (still) {
+        later(() => {
+          setText(full);
+          setPicked(i);
+          setRows(4);
+        }, 0);
+        return;
+      }
+      const chars = [...full];
+      const step = TYPE_MS / chars.length;
+      later(() => {
+        setPicked(null);
+        setRows(0);
+        setText("");
+      }, 0);
+      chars.forEach((_, n) => later(() => setText(chars.slice(0, n + 1).join("")), step * (n + 1)));
+      later(() => setPicked(i), TYPE_MS + 120);
+      for (let r = 1; r <= 4; r++) later(() => setRows(r), TYPE_MS + 120 + ROW_MS * r);
+    },
+    [jobs, later, stop],
+  );
+  const started = useRef(false);
+  useEffect(() => {
+    if (!seen || started.current) return;
+    started.current = true;
+    const still = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    play(0, still);
+  }, [seen, play]);
+  useEffect(() => stop, [stop]);
   const fromText = (v: string) => {
-    const s = v.toLowerCase();
-    const i = jobs.findIndex((j) => j.keys.some((x) => s.includes(x)));
+    const q = v.toLowerCase();
+    const i = jobs.findIndex((j) => j.keys.some((x) => q.includes(x)));
     return i < 0 ? null : i;
   };
   const job = picked === null ? null : jobs[picked];
+  const rowsData = job ? [[words.who, job.who], [words.says, job.says], [words.when, job.when], [words.cost, words.costValue]] : [];
   return (
-    <div className="h3-ask" data-part="ask-box">
+    <div className="h3-ask" data-part="ask-box" ref={box}>
       <label htmlFor={id} className="sr-only">
         {words.label}
       </label>
@@ -31,8 +81,12 @@ export function AskBox({ words, jobs, href }: { words: { label: string; placehol
         id={id}
         value={text}
         onChange={(e) => {
+          stop();
+          started.current = true;
           setText(e.target.value);
-          setPicked(fromText(e.target.value));
+          const p = fromText(e.target.value);
+          setPicked(p);
+          setRows(p === null ? 0 : 4);
         }}
         placeholder={words.placeholder}
         rows={2}
@@ -47,8 +101,8 @@ export function AskBox({ words, jobs, href }: { words: { label: string; placehol
               className="h3-chip"
               aria-pressed={picked === i}
               onClick={() => {
-                setText(j.chip);
-                setPicked(i);
+                started.current = true;
+                play(i, typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
               }}
               data-chip={i + 1}
             >
@@ -60,22 +114,12 @@ export function AskBox({ words, jobs, href }: { words: { label: string; placehol
       <div className="h3-plan" data-part="plan-card" data-on={job ? "" : undefined} aria-live="polite">
         {job ? (
           <dl className="h3-plan-card">
-            <div>
-              <dt>{words.who}</dt>
-              <dd>{job.who}</dd>
-            </div>
-            <div>
-              <dt>{words.says}</dt>
-              <dd>{job.says}</dd>
-            </div>
-            <div>
-              <dt>{words.when}</dt>
-              <dd>{job.when}</dd>
-            </div>
-            <div>
-              <dt>{words.cost}</dt>
-              <dd>{words.costValue}</dd>
-            </div>
+            {rowsData.map(([dt, dd], n) => (
+              <div key={n} className="h3-plan-row" data-in={n < rows ? "" : undefined}>
+                <dt>{dt}</dt>
+                <dd>{dd}</dd>
+              </div>
+            ))}
           </dl>
         ) : null}
       </div>

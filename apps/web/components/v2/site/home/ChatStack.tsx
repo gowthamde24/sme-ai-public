@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, Grip, Mic, MoreVertical, Phone, PhoneOff, Volume2 } from "lucide-react";
+import { Grip, Mic, Phone, PhoneOff, Volume2 } from "lucide-react";
 import * as React from "react";
 
 import { PpBubble, PpDay } from "@/components/v2/PhonePreview";
@@ -88,7 +88,7 @@ export function ChatStack({ chats, captions, sub, placeholder }: { chats: readon
                 <DarkPhone part="dark-phone">
                   <div className="pp h3-dp-chat" data-pp-theme="dark" data-pp-variant="peek">
                     <div className="pp-head">
-                      <ChevronLeft aria-hidden="true" size={24} strokeWidth={2.2} />
+                      <span className="h3-dp-back" aria-hidden="true" />
                       <span className="pp-avatar" aria-hidden="true">
                         {[...c.name][0]}
                       </span>
@@ -98,7 +98,7 @@ export function ChatStack({ chats, captions, sub, placeholder }: { chats: readon
                       </div>
                       <span className="pp-head-icons">
                         <Phone aria-hidden="true" size={20} strokeWidth={2} />
-                        <MoreVertical aria-hidden="true" size={22} strokeWidth={2} />
+                        <span className="h3-dp-dots" aria-hidden="true" />
                       </span>
                     </div>
                     <div className="pp-body">

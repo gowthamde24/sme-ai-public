@@ -17,7 +17,7 @@ import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 
 import { AskBox } from "./AskBox";
 import { ChatStack } from "./ChatStack";
-import { FOUND_KEYS, STACK } from "./chat-stack";
+import { FOUND_KEYS, GREETING_MENTIONS_AI, STACK } from "./chat-stack";
 import { OrbGate } from "./OrbGate";
 import { StickyCta } from "./StickyCta";
 import { FoundCard, LangTabs, StackProvider } from "./StackState";
@@ -267,13 +267,13 @@ function Faq({ t }: { t: SiteT }) {
           </h2>
         </header>
         <div className="h3-faq" data-part="faq">
-          {[1, 2, 3, 4, 5].map((i) => (
+          {[1, 2, 3].map((i) => (
             <details key={i} className="h3-faq-item">
               <summary>
-                {t(k(`h4.faq.${i}.q`))}
+                {t(k(i === 2 && !GREETING_MENTIONS_AI ? "h4.faq.2.q.quiet" : `h4.faq.${i}.q`))}
                 <ChevronDown aria-hidden="true" size={20} strokeWidth={2.2} />
               </summary>
-              <p>{t(k(`h4.faq.${i}.a`))}</p>
+              <p>{t(k(i === 2 && !GREETING_MENTIONS_AI ? "h4.faq.2.a.quiet" : `h4.faq.${i}.a`))}</p>
             </details>
           ))}
         </div>
