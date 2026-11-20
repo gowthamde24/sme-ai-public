@@ -296,7 +296,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
           <div className="flex flex-col gap-1 text-center">
             <strong className="text-lg">{t("asst.preview.who", { name: shownName })}</strong>
             {voiceInUse ? (
-              <span data-part="speaking-in" className="text-[13px] opacity-80">
+              <span data-part="speaking-in" className="text-sm opacity-80">
                 {t("bv.speaking.in", { language: langs[s.lang], voice: voiceInUse.name })}
               </span>
             ) : null}

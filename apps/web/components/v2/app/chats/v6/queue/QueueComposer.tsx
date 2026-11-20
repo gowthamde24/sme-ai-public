@@ -240,7 +240,7 @@ export function QueueComposer(p: QueueComposerProps) {
             <div>
               <Chip tone="done">{t("chats6.q.sent")}</Chip>
             </div>
-            <p className="m-0 text-[13px] leading-snug text-muted">{t("chats6.q.sent.line")}</p>
+            <p className="m-0 text-sm leading-snug text-muted">{t("chats6.q.sent.line")}</p>
           </>
         );
       case "failed":
@@ -307,7 +307,7 @@ export function QueueComposer(p: QueueComposerProps) {
                 {t(`chats6.q.err.${err}`)}
               </p>
             ) : (
-              <p className="m-0 text-[13px] leading-snug text-muted" data-part="queue-help">
+              <p className="m-0 text-sm leading-snug text-muted" data-part="queue-help">
                 {t("chats6.q.help")}
               </p>
             )}
@@ -331,10 +331,10 @@ export function QueueComposer(p: QueueComposerProps) {
     >
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-          <label htmlFor={`${id}-text`} className="text-[13px] font-bold text-ink" data-part="composer-to">
+          <label htmlFor={`${id}-text`} className="text-sm font-bold text-ink" data-part="composer-to">
             {t("chats6.composer.to", { name: p.first })}
           </label>
-          <button type="button" onClick={() => window.dispatchEvent(new Event(ASK_EVENT))} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-brand-text underline underline-offset-4" data-part="ask-assistant">
+          <button type="button" onClick={() => window.dispatchEvent(new Event(ASK_EVENT))} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text underline underline-offset-4" data-part="ask-assistant">
             {t("chats6.composer.ask")}
           </button>
         </div>
@@ -352,7 +352,7 @@ export function QueueComposer(p: QueueComposerProps) {
             <VoiceMic target={boxRef} focused />
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <select aria-label={t("wa.reply.language")} value={language} onChange={(e) => setLanguage(e.target.value)} className="min-h-11 shrink-0 rounded-full border border-line bg-surface px-3 text-[13px] text-ink">
+            <select aria-label={t("wa.reply.language")} value={language} onChange={(e) => setLanguage(e.target.value)} className="min-h-11 shrink-0 rounded-full border border-line bg-surface px-3 text-sm text-ink">
               {LANGS.map((l) => (
                 <option key={l} value={l}>
                   {t(`today.lang.${l}`)}

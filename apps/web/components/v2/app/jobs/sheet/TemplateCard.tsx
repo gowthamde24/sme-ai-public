@@ -54,10 +54,10 @@ export function TemplateCard({ template: tpl, ctx, words, onUse, onSay, busy = f
         </span>
         <div className="min-w-0 flex-1">
           <h3 className="m-0 font-display text-[16px] font-bold leading-snug text-ink">{title}</h3>
-          <p className="m-0 mt-0.5 flex items-center gap-1.5 text-[12.5px] font-semibold text-muted">
+          <p className="m-0 mt-0.5 flex items-center gap-1.5 text-sm font-semibold text-muted">
             <Chan aria-hidden="true" className="size-3.5" />
             {t(chanKey)}
-            {tpl.season !== "none" ? <span className="ml-1 rounded-full bg-surface-2 px-2 py-px text-[11.5px] text-ink">{t(`jobs.tpl.season.${tpl.season}`)}</span> : null}
+            {tpl.season !== "none" ? <span className="ml-1 rounded-full bg-surface-2 px-2 py-px text-sm text-ink">{t(`jobs.tpl.season.${tpl.season}`)}</span> : null}
           </p>
         </div>
       </div>
@@ -67,12 +67,12 @@ export function TemplateCard({ template: tpl, ctx, words, onUse, onSay, busy = f
       {tpl.examples.length > 0 ? (
         <>
           <ExampleProspects examples={tpl.examples} real={tpl.examplesReal} why={(e) => whyText(t, words, e.why, ctx.lang, v)} t={t} />
-          <p className="m-0 text-[12.5px] leading-snug text-muted">{t(tpl.examplesReal ? "jobs.tpl.real.note" : "jobs.tpl.example.note")}</p>
+          <p className="m-0 text-sm leading-snug text-muted">{t(tpl.examplesReal ? "jobs.tpl.real.note" : "jobs.tpl.example.note")}</p>
         </>
       ) : null}
       <p className="m-0 text-[14.5px] font-medium leading-snug text-ink">{textIn(tpl.benefit, ctx.lang)}</p>
       {!compact && needs.length > 0 ? (
-        <p data-part="needs" className="m-0 text-[12.5px] leading-snug text-muted">
+        <p data-part="needs" className="m-0 text-sm leading-snug text-muted">
           {t("jobs.tpl.needs", { list: needs.join(" · ") })}
         </p>
       ) : null}

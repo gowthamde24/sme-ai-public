@@ -64,7 +64,7 @@ export function SellSection({ style, entries: first, words, base, actions, live,
                   </span>
                   <span className="min-w-0">
                     <span className="block text-[15px] font-bold leading-snug text-ink md:text-[16px]">{t(`jobs.sell.${w.id}.title`)}</span>
-                    <span className="hidden text-[13.5px] leading-snug text-muted md:block">{w.id === "say" ? t("jobs.sell.say.sub", { example: SAY_EXAMPLE[style] }) : t(`jobs.sell.${w.id}.sub`)}</span>
+                    <span className="hidden text-sm leading-snug text-muted md:block">{w.id === "say" ? t("jobs.sell.say.sub", { example: SAY_EXAMPLE[style] }) : t(`jobs.sell.${w.id}.sub`)}</span>
                   </span>
                 </>
               );
@@ -86,7 +86,7 @@ export function SellSection({ style, entries: first, words, base, actions, live,
         <div className="flex items-center justify-between gap-3">
           <h2 id="sell-list" className="m-0 flex items-center gap-2 font-display text-[20px] font-bold leading-tight text-ink">
             {t(`jobs.sell.style.${style}.title`)}
-            <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[13px] font-semibold text-muted">{entries.length}</span>
+            <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-sm font-semibold text-muted">{entries.length}</span>
           </h2>
           {actions ? (
             <button type="button" data-action="add" aria-haspopup="dialog" onPointerEnter={() => void loadWork()} onFocus={() => void loadWork()} onTouchStart={() => void loadWork()} onClick={(e) => open({ kind: "add" }, e.currentTarget)} className="jb-press inline-flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-brand-edge bg-brand px-4 text-[15px] font-bold text-on-brand">

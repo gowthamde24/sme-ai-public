@@ -76,7 +76,7 @@ export function CallsV6(p: CallsV6Props) {
         emptyPage ? null : (
           <>
             {p.testHref ? (
-              <Link href={p.testHref} className="inline-flex min-h-11 items-center rounded-[10px] bg-brand px-4 text-[13px] font-bold text-on-brand" data-part="test-call-entry">
+              <Link href={p.testHref} className="inline-flex min-h-11 items-center rounded-[10px] bg-brand px-4 text-sm font-bold text-on-brand" data-part="test-call-entry">
                 {t("calls6.test")}
               </Link>
             ) : null}

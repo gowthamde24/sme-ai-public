@@ -62,17 +62,17 @@ export function ChatList({ words, base, filter, q, chats, waiting, selectedId, n
                         {c.unread ? <span className="size-2 shrink-0 rounded-full bg-brand" role="img" aria-label={t("wa.chats.new")} /> : null}
                         <span className="truncate text-sm font-bold text-ink">{name}</span>
                       </span>
-                      <span className="shrink-0 text-[11.5px] text-muted">{chatTime(c.last_at, now, t("chats6.yesterday"))}</span>
+                      <span className="shrink-0 text-sm text-muted">{chatTime(c.last_at, now, t("chats6.yesterday"))}</span>
                     </span>
-                    <span className="mt-[3px] block truncate text-[12.5px] text-muted max-md:mt-0">
+                    <span className="mt-[3px] block truncate text-sm text-muted max-md:mt-0">
                       {c.last_direction === "out" ? `${t("wa.chats.you")} ` : ""}
                       {c.preview}
                     </span>
                     <span className="mt-1 flex flex-wrap gap-x-2 max-md:mt-0">
-                      <span className={`text-[11px] font-bold ${TONE[h.state]}`} data-part="handled-by">
+                      <span className={`text-sm font-bold ${TONE[h.state]}`} data-part="handled-by">
                         {label}
                       </span>
-                      {c.stopped ? <span className="text-[11px] font-bold text-red-text">{t("wa.chats.stopped")}</span> : null}
+                      {c.stopped ? <span className="text-sm font-bold text-red-text">{t("wa.chats.stopped")}</span> : null}
                     </span>
                   </span>
                 </Link>

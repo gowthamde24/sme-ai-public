@@ -186,7 +186,7 @@ export function WhoTalks(p: WhoTalksProps) {
           <p aria-live="polite" className="m-0 text-[15px] text-muted">
             {typed ? t("jobs.job.name.hear", { name: typed, business: business }) : t("jobs.job.name.hear_plain", { business: business })}
           </p>
-          <p className="m-0 text-[13.5px] text-muted">{t("jobs.who.name.help", { plain: plainName })}</p>
+          <p className="m-0 text-sm text-muted">{t("jobs.who.name.help", { plain: plainName })}</p>
           {nameError ? (
             <p role="alert" className="m-0 text-sm text-red-text">
               {nameError}
@@ -226,7 +226,7 @@ export function WhoTalks(p: WhoTalksProps) {
 
       {voices.length > 0 ? (
         <fieldset data-part="who-voices" className="m-0 mt-3 min-w-0 border-0 p-0">
-          <legend className="mb-1 p-0 text-[12px] font-bold uppercase tracking-wider text-muted">{t("jobs.who.voice")}</legend>
+          <legend className="mb-1 p-0 text-sm font-bold uppercase tracking-wider text-muted">{t("jobs.who.voice")}</legend>
           <div className="flex flex-col">
             {voices.map((v) => (
               <div key={v.id} data-voice={v.id} className="flex items-center gap-2">

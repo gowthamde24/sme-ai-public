@@ -208,7 +208,7 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
                 {effect.steps.map((s, i) => (
                   <li key={s.code} className="contents">
                     {i > 0 ? <span aria-hidden="true" className="mt-[5px] h-0.5 min-w-4 flex-[0.7] bg-edge" /> : null}
-                    <span className="flex flex-1 flex-col items-center gap-1 text-center text-[13px]">
+                    <span className="flex flex-1 flex-col items-center gap-1 text-center text-sm">
                       <span aria-hidden="true" className="size-3 rounded-full bg-brand ring-4 ring-brand-bg" />
                       <span className="font-semibold">{fmtMinutes(s.at)}</span>
                       <span className="text-muted">{t(`jobs.step.${s.code}`)}</span>
@@ -274,7 +274,7 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
 
       <div className="flex min-w-0 flex-col gap-4 lg:sticky lg:top-4">
         <ResultsCard results={detail.results} t={t} lang={lang} />
-        <p data-part="job-cost" className="m-0 px-1 text-[13.5px] leading-snug text-muted">
+        <p data-part="job-cost" className="m-0 px-1 text-sm leading-snug text-muted">
           {detail.cost.rupees !== null ? t("jobs.job.cost.rupees", { rupees: groupIndian(detail.cost.rupees) }) : detail.cost.minutesIncluded === null ? t("jobs.job.cost.minutes_only", { used: detail.cost.minutesUsed }) : t("jobs.job.cost.minutes", { used: detail.cost.minutesUsed, included: detail.cost.minutesIncluded })}
         </p>
         {detail.test && detail.says.length > 0 && canChange ? <TryCard channel={detail.test} t={t} onTest={test} /> : null}

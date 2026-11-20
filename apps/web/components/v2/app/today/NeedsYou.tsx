@@ -119,7 +119,7 @@ function CompactRow({ cardKey, tone, label, title, reason, tag = null, late = nu
             <span className="sr-only">{label}: </span>
             {title}
           </h3>
-          <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-[12.5px] text-muted">
+          <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-muted">
             {late ? (
               <span data-needs-late="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-red-bg text-red-text`}>
                 {late}

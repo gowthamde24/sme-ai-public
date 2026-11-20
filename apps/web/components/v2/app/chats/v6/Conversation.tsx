@@ -71,8 +71,8 @@ export type ConversationProps = {
 };
 
 const REFRESH_MS = 20_000;
-const b1 = "inline-flex min-h-11 items-center justify-center rounded-[9px] bg-brand px-3.5 text-[13px] font-bold text-on-brand disabled:opacity-60";
-const b2 = "inline-flex min-h-11 items-center justify-center rounded-[9px] border border-line bg-surface px-3.5 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
+const b1 = "inline-flex min-h-11 items-center justify-center rounded-[9px] bg-brand px-3.5 text-sm font-bold text-on-brand disabled:opacity-60";
+const b2 = "inline-flex min-h-11 items-center justify-center rounded-[9px] border border-line bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
 
 /**
  * The middle column of the Chats page (design system v6): the chat's bubbles (the assistant's marked "sent by assistant", "Teach this" under each of them), the next reply in a glowing "REPLY READY · WAITING FOR YOUR OK" card with its words and catalogue photos and
@@ -243,18 +243,18 @@ export function Conversation(p: ConversationProps) {
         </span>
         <div className="min-w-[7.5rem] flex-1 basis-0">
           <h2 className="m-0 truncate text-[15px] font-bold">{p.name}</h2>
-          <p data-chat-sub="" className="m-0 truncate text-[12.5px] text-muted">{[t("chats6.channel"), p.source ? t("chats6.came_from", { source: p.source }) : null].filter(Boolean).join(" · ")}</p>
+          <p data-chat-sub="" className="m-0 truncate text-sm text-muted">{[t("chats6.channel"), p.source ? t("chats6.came_from", { source: p.source }) : null].filter(Boolean).join(" · ")}</p>
         </div>
         <Link href={p.cardHref} className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand-text lg:hidden" data-part="chat-card-link">
           <UserRound aria-hidden="true" className="size-4" />
           {t("chats6.customer")}
         </Link>
-        <Link href={p.customerHref} className="hidden min-h-11 items-center gap-1.5 rounded-[9px] border border-line bg-surface px-2.5 text-[13px] font-semibold text-ink hover:bg-surface-2 sm:inline-flex" data-part="chat-call" aria-label={t("chats6.call")}>
+        <Link href={p.customerHref} className="hidden min-h-11 items-center gap-1.5 rounded-[9px] border border-line bg-surface px-2.5 text-sm font-semibold text-ink hover:bg-surface-2 sm:inline-flex" data-part="chat-call" aria-label={t("chats6.call")}>
           <Phone aria-hidden="true" className="size-4" />
           <span className="max-2xl:sr-only">{t("chats6.call")}</span>
         </Link>
         {p.switchState !== "hidden" ? (
-          <button type="button" role="switch" aria-checked={on} disabled={p.switchState === "locked"} onClick={() => void flip()} className="inline-flex min-h-11 items-center gap-1.5 rounded-[9px] border border-line bg-surface px-2.5 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-70" data-part="assistant-switch">
+          <button type="button" role="switch" aria-checked={on} disabled={p.switchState === "locked"} onClick={() => void flip()} className="inline-flex min-h-11 items-center gap-1.5 rounded-[9px] border border-line bg-surface px-2.5 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-70" data-part="assistant-switch">
             <span aria-hidden="true" className={`relative inline-block h-5 w-9 rounded-full transition-colors ${on ? "bg-brand" : "bg-surface-2 shadow-[inset_0_0_0_1.5px_var(--v2-border)]"}`}>
               <span className={`absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left] ${on ? "left-[18px]" : "left-0.5"}`} />
             </span>
@@ -288,7 +288,7 @@ export function Conversation(p: ConversationProps) {
           {items.map((m, i) => (
             <React.Fragment key={`${m.direction}-${m.id}`}>
               {i === 0 || day(items[i - 1].at) !== day(m.at) ? (
-                <li className="self-center rounded-full border border-line bg-surface px-2.5 py-[3px] text-[11.5px] text-muted" data-part="day">
+                <li className="self-center rounded-full border border-line bg-surface px-2.5 py-[3px] text-sm text-muted" data-part="day">
                   {day(m.at) === today ? t("chats6.today") : chatTime(m.at, p.now, t("chats6.yesterday"))}
                 </li>
               ) : null}
@@ -301,7 +301,7 @@ export function Conversation(p: ConversationProps) {
 
         {p.waiting ? (
           <article className="ds-glow mx-[18px] mb-3 flex flex-col gap-2.5 rounded-[18px] p-3.5" data-part="reply-ready" aria-labelledby={`${id}-ready`}>
-            <h3 id={`${id}-ready`} className="m-0 flex items-center gap-2 text-[11.5px] font-extrabold uppercase tracking-[0.08em] text-brand-text">
+            <h3 id={`${id}-ready`} className="m-0 flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.08em] text-brand-text">
               <Orb px={22} state="ambient" />
               {t("chats6.ready.label")}
             </h3>
@@ -379,9 +379,9 @@ export function Conversation(p: ConversationProps) {
             }}
           >
             <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-              <h3 className="m-0 text-[13px] font-bold text-ink">{t("chats6.tpl.title")}</h3>
+              <h3 className="m-0 text-sm font-bold text-ink">{t("chats6.tpl.title")}</h3>
               {p.canDecide ? (
-                <Link href={`${p.backHref.replace(/\/chats.*$/, "")}/chats/templates`} className="text-[13px] font-semibold text-brand-text underline underline-offset-4" data-part="see-templates">
+                <Link href={`${p.backHref.replace(/\/chats.*$/, "")}/chats/templates`} className="text-sm font-semibold text-brand-text underline underline-offset-4" data-part="see-templates">
                   {t("chats6.tpl.see")}
                 </Link>
               ) : null}
@@ -442,10 +442,10 @@ export function Conversation(p: ConversationProps) {
           >
             <div ref={composer} className="flex flex-col gap-2">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-                <label htmlFor={`${id}-text`} className="text-[13px] font-bold text-ink" data-part="composer-to">
+                <label htmlFor={`${id}-text`} className="text-sm font-bold text-ink" data-part="composer-to">
                   {t("chats6.composer.to", { name: first })}
                 </label>
-                <button type="button" onClick={() => window.dispatchEvent(new Event(ASK_EVENT))} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-brand-text underline underline-offset-4" data-part="ask-assistant">
+                <button type="button" onClick={() => window.dispatchEvent(new Event(ASK_EVENT))} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text underline underline-offset-4" data-part="ask-assistant">
                   {t("chats6.composer.ask")}
                 </button>
               </div>
@@ -459,7 +459,7 @@ export function Conversation(p: ConversationProps) {
                   <VoiceMic target={boxRef} focused />
                 </div>
                 <div className="ml-auto flex items-center gap-2">
-                  <select aria-label={t("wa.reply.language")} value={language} onChange={(e) => setLanguage(e.target.value)} className="min-h-11 shrink-0 rounded-xl border border-line bg-surface px-2 text-[13px] text-ink">
+                  <select aria-label={t("wa.reply.language")} value={language} onChange={(e) => setLanguage(e.target.value)} className="min-h-11 shrink-0 rounded-xl border border-line bg-surface px-2 text-sm text-ink">
                     {LANGS.map((l) => (
                       <option key={l} value={l}>
                         {t(`today.lang.${l}`)}
@@ -521,7 +521,7 @@ function Bubble({ m, index, t, words, teach, next }: { m: ThreadItem; index: num
       <div className={`max-w-[68%] px-[13px] py-2.5 text-ink shadow-[0_1px_0_rgba(0,0,0,0.04)] ${mine ? "rounded-[14px_14px_4px_14px] bg-brand-bg" : "rounded-[14px_14px_14px_4px] border border-line bg-surface"}`}>
         <p className="m-0 whitespace-pre-wrap [overflow-wrap:anywhere]">{m.text}</p>
         {m.photos > 0 ? <p className="m-0 mt-1 text-sm text-muted">{t("wa.thread.photos", { n: m.photos })}</p> : null}
-        <p className="m-0 mt-1 text-right text-[11px] text-muted">
+        <p className="m-0 mt-1 text-right text-sm text-muted">
           {indiaClock(m.at)}
           {assistant ? (
             <>

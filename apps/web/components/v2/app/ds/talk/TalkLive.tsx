@@ -333,11 +333,11 @@ function BarBody({ live, t, language, onType, onAttach, mock, appLang }: { live:
     <div data-part="talk-live" data-variant="bar" data-talk-state={live.state}>
       <div className="px-[22px] pb-3 pt-5">
         <div className="flex items-center justify-between gap-3">
-          <p data-part="talk-label" className="text-[11.5px] font-bold uppercase tracking-[0.1em] text-red-text">
+          <p data-part="talk-label" className="text-sm font-bold uppercase tracking-[0.1em] text-red-text">
             <span aria-hidden="true" className="mr-2 inline-block size-2 rounded-full bg-red-text align-[1px] shadow-[0_0_0_4px_rgba(251,113,133,0.2)]" />
             {t("dst.live_with")} · {stateWord}
           </p>
-          <span data-part="talk-timer" className="inline-flex items-center gap-1 rounded-full bg-red-text px-2.5 py-0.5 font-mono text-[11.5px] font-extrabold tabular-nums text-bg">
+          <span data-part="talk-timer" className="inline-flex items-center gap-1 rounded-full bg-red-text px-2.5 py-0.5 font-mono text-sm font-extrabold tabular-nums text-bg">
             <span aria-hidden="true">●</span>
             {clock(live.seconds)}
           </span>
@@ -346,7 +346,7 @@ function BarBody({ live, t, language, onType, onAttach, mock, appLang }: { live:
           <ScrollBox live={live} t={t} className="mt-2 flex max-h-72 flex-col gap-2 overflow-y-auto">
             {live.lines.map((l, i) => (
               <div key={i} data-who={l.who}>
-                {live.lines[i - 1]?.who !== l.who ? <small className="mb-0.5 block text-[11px] font-medium uppercase tracking-[0.06em] text-muted">{t(l.who === "owner" ? "tv6.talk.you" : "tv6.talk.assistant")}</small> : null}
+                {live.lines[i - 1]?.who !== l.who ? <small className="mb-0.5 block text-sm font-medium uppercase tracking-[0.06em] text-muted">{t(l.who === "owner" ? "tv6.talk.you" : "tv6.talk.assistant")}</small> : null}
                 <p className={l.who === "owner" ? "text-base leading-[1.45] text-muted" : "text-[19px] font-medium leading-[1.45] text-ink"}>
                   <Line text={l.text} />
                   {l.cut ? <em className="ml-2 text-xs font-medium not-italic text-muted">{t("bv.live.interrupted")}</em> : null}
@@ -363,26 +363,26 @@ function BarBody({ live, t, language, onType, onAttach, mock, appLang }: { live:
                 <p className="text-sm font-bold">{live.plan.what}</p>
                 {isReal(live.plan) ? (
                   <>
-                    {live.plan.summary ? <p className="text-[12.5px] text-muted">{live.plan.summary}</p> : null}
+                    {live.plan.summary ? <p className="text-sm text-muted">{live.plan.summary}</p> : null}
                     {step.big ? <BigFigures plan={live.plan} t={t} /> : null}
-                    <p className="text-[12.5px] text-muted">{planFacts(live.plan, t).filter((f) => !step.big || f !== live.plan?.cost).join(" · ")}</p>
+                    <p className="text-sm text-muted">{planFacts(live.plan, t).filter((f) => !step.big || f !== live.plan?.cost).join(" · ")}</p>
                     <PlanWhenLine plan={live.plan} appLang={appLang} />
                     <PlanExtraLines plan={live.plan} t={t} {...(live.askConsent ? { onAskConsent: live.askConsent } : {})} />
                   </>
                 ) : (
-                  <p className="text-[12.5px] text-muted">
+                  <p className="text-sm text-muted">
                     <Line text={live.plan.time} /> · <Line text={live.plan.cost} /> · {t("dst.plan.hours").toLowerCase()} <Line text={live.plan.hours} />
                   </p>
                 )}
               </div>
               {waiting(live) && step.confirming ? (
-                <SecondStep plan={live.plan} t={t} step={step} busy={!!live.planBusy} mainClass="inline-flex min-h-11 items-center rounded-[9px] border border-brand-edge bg-brand px-3.5 text-[13.5px] font-bold text-on-brand hover:brightness-95 disabled:opacity-60" quietClass="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60" />
+                <SecondStep plan={live.plan} t={t} step={step} busy={!!live.planBusy} mainClass="inline-flex min-h-11 items-center rounded-[9px] border border-brand-edge bg-brand px-3.5 text-sm font-bold text-on-brand hover:brightness-95 disabled:opacity-60" quietClass="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-sm font-bold text-ink hover:bg-surface-2 disabled:opacity-60" />
               ) : waiting(live) ? (
                 <>
-                  <button type="button" disabled={live.planBusy} onClick={step.onYes} className="inline-flex min-h-11 items-center rounded-[9px] border border-brand-edge bg-brand px-3.5 text-[13.5px] font-bold text-on-brand hover:brightness-95 disabled:opacity-60">
+                  <button type="button" disabled={live.planBusy} onClick={step.onYes} className="inline-flex min-h-11 items-center rounded-[9px] border border-brand-edge bg-brand px-3.5 text-sm font-bold text-on-brand hover:brightness-95 disabled:opacity-60">
                     {t(yesKeyOf(live.plan))}
                   </button>
-                  <button type="button" disabled={live.planBusy} onClick={() => live.decide("change")} className="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60">
+                  <button type="button" disabled={live.planBusy} onClick={() => live.decide("change")} className="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-sm font-bold text-ink hover:bg-surface-2 disabled:opacity-60">
                     {t("dst.change")}
                   </button>
                 </>

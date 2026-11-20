@@ -104,7 +104,7 @@ function Eyebrow({ p }: { p: BandProps }) {
   const call = useLiveCall(p.tenantId, p.mockLive, p.liveCalls ?? []);
   return (
     <div className="flex min-w-0 flex-col items-start gap-2">
-    <div data-part="eyebrow" className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 text-[11.5px] uppercase tracking-[0.12em] text-muted">
+    <div data-part="eyebrow" className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 text-sm uppercase tracking-[0.12em] text-muted">
       <span className="min-w-0 truncate">
         {p.dateLine}
         <span className="max-md:hidden"> · {p.shop}</span>

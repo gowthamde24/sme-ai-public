@@ -72,9 +72,9 @@ export function JobsList({ jobs, filter, words, base, actions, suggestions = [],
           {grouped.map(({ g, rows }) => (
             <section key={g ?? "rows"} data-group={g ?? undefined} aria-label={g ? t(`jobs.page.group.${g}`) : undefined} className="flex flex-col gap-1.5">
               {g ? (
-                <h2 className="m-0 flex items-center gap-2 px-1 text-[12px] font-bold uppercase tracking-wider text-muted">
+                <h2 className="m-0 flex items-center gap-2 px-1 text-sm font-bold uppercase tracking-wider text-muted">
                   {t(`jobs.page.group.${g}`)}
-                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-surface-2 px-1.5 text-[12px] font-bold normal-case tracking-normal text-ink">{rows.length}</span>
+                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-surface-2 px-1.5 text-sm font-bold normal-case tracking-normal text-ink">{rows.length}</span>
                 </h2>
               ) : null}
               <div className="grid grid-cols-1 gap-x-4 gap-y-0 overflow-hidden rounded-2xl border border-line bg-surface md:grid-cols-2 [&>div]:min-w-0 [&>div]:border-b [&>div]:border-line">{rows.map(rowOf)}</div>
@@ -88,7 +88,7 @@ export function JobsList({ jobs, filter, words, base, actions, suggestions = [],
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-[15px] font-semibold leading-snug text-ink">{t("jobs.page.dnc.title")}</span>
-          <span className="block text-[13px] leading-snug text-muted">{t("jobs.page.dnc.sub")}</span>
+          <span className="block text-sm leading-snug text-muted">{t("jobs.page.dnc.sub")}</span>
         </span>
       </Link>
     </div>

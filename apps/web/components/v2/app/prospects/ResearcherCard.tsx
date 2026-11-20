@@ -28,7 +28,7 @@ export function FitRing({ score, words }: { score: number; words: Words }) {
       </svg>
       <span aria-hidden="true" className="absolute inset-0 flex flex-col items-center justify-center leading-none">
         <span className="text-[19px] font-bold tabular-nums">{score}</span>
-        <span className="mt-0.5 text-[11px] font-semibold text-muted">{t("jobs.trust.fit")}</span>
+        <span className="mt-0.5 text-sm font-semibold text-muted">{t("jobs.trust.fit")}</span>
       </span>
     </span>
   );

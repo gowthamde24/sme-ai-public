@@ -13,10 +13,10 @@ import { makeT, type Words } from "../../words";
  */
 export type CallsFiltersProps = { words: Words; base: string; query: CallsQuery; counts: Record<CallStatusWord | "all", number>; lines: readonly { id: string; label: string }[] };
 
-const chip = "inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 text-[13px] whitespace-nowrap";
+const chip = "inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 text-sm whitespace-nowrap";
 const chipOff = `${chip} border-line bg-surface text-ink hover:bg-surface-2`;
 const chipOn = `${chip} border-ink bg-ink text-bg`;
-const dropBtn = "inline-flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-xl border border-line bg-surface px-3 text-[13px] text-ink hover:bg-surface-2 [&::-webkit-details-marker]:hidden";
+const dropBtn = "inline-flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-xl border border-line bg-surface px-3 text-sm text-ink hover:bg-surface-2 [&::-webkit-details-marker]:hidden";
 
 export function CallsFilters({ words, base, query, counts, lines }: CallsFiltersProps) {
   const t = makeT(words);

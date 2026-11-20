@@ -48,7 +48,7 @@ export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, 
   const to = hourText(t, plan.when.toMin);
   return (
     <article data-part="plan" data-channel={channel} aria-labelledby="plan-title" className="jb-enter rounded-[20px] border border-line bg-surface p-3.5 shadow-[var(--v2-shadow)] md:p-5">
-      <p className="m-0 mb-2 flex items-center gap-2 text-[11.5px] font-bold uppercase leading-tight tracking-wider text-muted">
+      <p className="m-0 mb-2 flex items-center gap-2 text-sm font-bold uppercase leading-tight tracking-wider text-muted">
         <span className="min-w-0 flex-1">{t("jobs.new.plan.eyebrow")}</span>
         <JobChip tone="info" className="shrink-0">
           {t("jobs.new.plan.draft")}
@@ -131,7 +131,7 @@ export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, 
               </button>
             </div>
             {channel === "call" && !state.quiet && plan.cost.rupees === null ? (
-              <p data-part="test-cost" className="m-0 text-[13px] leading-snug text-muted">
+              <p data-part="test-cost" className="m-0 text-sm leading-snug text-muted">
                 {t("jobs.new.test.cost")}
               </p>
             ) : null}
@@ -140,7 +140,7 @@ export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, 
                 {state.note}
               </p>
             ) : null}
-            <p className="m-0 text-[13px] leading-snug text-muted">
+            <p className="m-0 text-sm leading-snug text-muted">
               {t(channel === "call" ? "jobs.new.safe.call" : "jobs.new.safe.whatsapp", { from, to })}
               {plan.expiresInMinutes ? ` ${t("jobs.new.expires", { n: plan.expiresInMinutes })}` : ""}
             </p>

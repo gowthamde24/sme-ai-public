@@ -25,7 +25,7 @@ function JobSwitch({ label, on, busy, onChange }: { label: string; on: boolean; 
   );
 }
 
-const pc = "inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface px-2.5 text-[12.5px] font-semibold text-ink";
+const pc = "inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface px-2.5 text-sm font-semibold text-ink";
 /** How a named job sounds: its language, its voice and the number it speaks from, as small outline chips (a word we do not know is left out, never shown as a code). */
 function SpeaksChips({ speaks, t, words }: { speaks: JobSpeaks; t: Say; words: Words }) {
   const lang = speaks.language ? (words[`jobs.page.lang.${speaks.language}`] ? t(`jobs.page.lang.${speaks.language}`) : null) : null;
@@ -95,7 +95,7 @@ export function JobRow({ job, words, base, actions, chips = false }: { job: Job;
       {/* the shared tap-target rule (`main a` = inline-flex, a row) would put the name, the result line and the chips side by side: this link stacks them (staging, 20 Nov: rows were squeezed into columns on a phone) */}
       <Link href={href} prefetch={false} className="flex min-w-0 flex-1 flex-col items-start justify-center no-underline">
         <span className="block text-[15px] font-semibold leading-snug text-ink max-md:line-clamp-2">{name}</span>
-        <span className="block text-[12.5px] leading-snug text-muted">{resultSentence(t, job.result)}</span>
+        <span className="block text-sm leading-snug text-muted">{resultSentence(t, job.result)}</span>
         {chips && job.speaks ? <SpeaksChips speaks={job.speaks} t={t} words={words} /> : null}
         {job.planGate ? <GateNote gate={job.planGate} t={t} className="mt-1" /> : null}
         {showChip || job.fix ? (

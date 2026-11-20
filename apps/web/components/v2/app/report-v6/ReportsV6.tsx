@@ -44,7 +44,7 @@ export type ReportsV6Props = {
 
 const card = "rounded-[18px] border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:px-[18px]";
 const h3 = "m-0 font-display text-base font-extrabold";
-const sub = "m-0 mb-3 mt-1 text-[12.5px] text-muted";
+const sub = "m-0 mb-3 mt-1 text-sm text-muted";
 const SRC_COLOURS = ["var(--ds-ch-don-1)", "var(--ds-ch-don-2)", "var(--ds-ch-don-3)", "var(--ds-ch-don-4)", "var(--ds-ch-don-5)"];
 const hourWord = (h: number): string => `${h % 12 === 0 ? 12 : h % 12} ${h >= 12 ? "pm" : "am"}`;
 
@@ -75,7 +75,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
   const vs = t(period.key === "14" ? "rv6.vs.14" : period.key === "today" ? "rv6.vs.today" : "rv6.vs.other");
   const arrow = (c: Change) => (c.dir === "up" ? "▲" : c.dir === "down" ? "▼" : "•");
   const delta = (c: Change, text: string, extra = true) => (
-    <em className={`m-0 text-[12.5px] font-bold not-italic ${c.dir === "down" ? "text-red-text" : c.dir === "up" ? "text-green-text" : "text-muted"}`}>
+    <em className={`m-0 text-sm font-bold not-italic ${c.dir === "down" ? "text-red-text" : c.dir === "up" ? "text-green-text" : "text-muted"}`}>
       {arrow(c)} {text}
       {extra ? ` ${vs}` : ""}
     </em>
@@ -84,10 +84,10 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
   const v = series.visits;
   const s = series.sales;
   const cost = series.callCostPaise;
-  const na = <em className="text-[12.5px] not-italic text-muted">{t("rv6.na")}</em>;
+  const na = <em className="text-sm not-italic text-muted">{t("rv6.na")}</em>;
   const kpi = (id: string, label: string, value: string | null, note: ReactNode) => (
     <li key={id} data-kpi={id} className="rounded-[18px] border border-line bg-surface px-4 py-3.5 shadow-[var(--v2-shadow)]">
-      <p className="m-0 text-[12.5px] text-muted">{label}</p>
+      <p className="m-0 text-sm text-muted">{label}</p>
       <p className="m-0 mb-0.5 mt-1 font-display text-[28px] font-extrabold leading-tight tracking-tight tabular-nums sm:text-[30px]">{value ?? "–"}</p>
       {value === null ? na : note}
     </li>
@@ -106,14 +106,14 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
           <ul className="m-0 flex list-none gap-0 rounded-xl border border-line bg-surface p-[3px]">
             {periodTabs.map((p) => (
               <li key={p.key}>
-                <Link href={p.href} aria-current={period.key === p.key ? "page" : undefined} data-period={p.key} className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-[9px] px-3 text-[13px] ${period.key === p.key ? "bg-ink font-bold text-bg" : "text-muted hover:bg-surface-2"}`}>
+                <Link href={p.href} aria-current={period.key === p.key ? "page" : undefined} data-period={p.key} className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-[9px] px-3 text-sm ${period.key === p.key ? "bg-ink font-bold text-bg" : "text-muted hover:bg-surface-2"}`}>
                   {p.label}
                 </Link>
               </li>
             ))}
             <li>
               <details key={`${period.key}-${period.from}-${period.to}`} className="relative" data-period="custom">
-                <summary className={`inline-flex min-h-11 cursor-pointer list-none items-center whitespace-nowrap rounded-[9px] px-3 text-[13px] [&::-webkit-details-marker]:hidden ${period.key === "custom" ? "bg-ink font-bold text-bg" : "text-muted hover:bg-surface-2"}`}>{t("rv6.per.custom")}</summary>
+                <summary className={`inline-flex min-h-11 cursor-pointer list-none items-center whitespace-nowrap rounded-[9px] px-3 text-sm [&::-webkit-details-marker]:hidden ${period.key === "custom" ? "bg-ink font-bold text-bg" : "text-muted hover:bg-surface-2"}`}>{t("rv6.per.custom")}</summary>
                 <form action={`${base}/report`} method="get" className="absolute right-0 z-20 mt-2 flex w-64 flex-col gap-2 rounded-2xl border border-line bg-surface p-3 shadow-[var(--v2-shadow-pop)]">
                   <input type="hidden" name="range" value="custom" />
                   <label className="flex flex-col gap-1 text-sm font-semibold">
@@ -124,7 +124,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
                     {t("rv6.per.to")}
                     <input type="date" name="to" defaultValue={period.to} className="min-h-11 rounded-lg border border-edge bg-surface px-2 text-base font-normal" />
                   </label>
-                  <button type="submit" className="min-h-11 rounded-[9px] bg-brand px-3 text-[13px] font-bold text-on-brand">
+                  <button type="submit" className="min-h-11 rounded-[9px] bg-brand px-3 text-sm font-bold text-on-brand">
                     {t("rv6.per.apply")}
                   </button>
                 </form>
@@ -132,7 +132,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
             </li>
           </ul>
         </nav>
-        <PrintButton label={t("rv6.pdf")} className="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2" />
+        <PrintButton label={t("rv6.pdf")} className="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface px-3 text-sm font-semibold text-ink hover:bg-surface-2" />
       </div>
     </>
   );
@@ -181,7 +181,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
         {kpi("enquiries", t("rv6.kpi.enquiries"), e ? total(e.total) : null, eChange ? delta(eChange, eChange.percent !== null ? `${eChange.percent}%` : String(eChange.diff)) : null)}
         {kpi("visits", t("rv6.kpi.visits"), v ? total(v.total) : null, vChange ? delta(vChange, String(vChange.diff), false) : null)}
         {kpi("sales", t("rv6.kpi.sales"), s ? formatRupeesShort(s.total) : null, sChange ? delta(sChange, formatRupeesShort(sChange.diff), false) : null)}
-        {kpi("cost", t("rv6.kpi.cost"), cost !== null ? formatRupeesShort(cost) : null, <em className="text-[12.5px] not-italic text-muted">{v && v.total > 0 && cost !== null ? t("rv6.kpi.perVisit", { amount: formatRupeesShort(Math.round(cost / 100 / v.total) * 100) }) : t("rv6.kpi.costNote")}</em>)}
+        {kpi("cost", t("rv6.kpi.cost"), cost !== null ? formatRupeesShort(cost) : null, <em className="text-sm not-italic text-muted">{v && v.total > 0 && cost !== null ? t("rv6.kpi.perVisit", { amount: formatRupeesShort(Math.round(cost / 100 / v.total) * 100) }) : t("rv6.kpi.costNote")}</em>)}
       </ul>
 
       <div className="mt-4 grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[1.6fr_1fr]">
@@ -256,7 +256,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
                   {t("rv6.src.center")}
                 </text>
               </svg>
-              <ul className="m-0 flex min-w-40 flex-1 list-none flex-col gap-2 p-0 text-[13px]">
+              <ul className="m-0 flex min-w-40 flex-1 list-none flex-col gap-2 p-0 text-sm">
                 {donut.map((x, i) => (
                   <li key={x.label} data-source={x.label} className="grid grid-cols-[12px_minmax(0,1fr)_auto] items-center gap-2.5">
                     <i aria-hidden="true" className="ds-sw inline-block size-2.5 rounded-[3px]" data-sw={i} />
@@ -268,7 +268,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
             </div>
           )}
           {costs.length > 0 ? (
-            <ul className="m-0 mt-3 flex list-none flex-col gap-1.5 border-t border-line p-0 pt-3 text-[12.5px]" data-part="cost-per-visit">
+            <ul className="m-0 mt-3 flex list-none flex-col gap-1.5 border-t border-line p-0 pt-3 text-sm" data-part="cost-per-visit">
               {costs.map((c) => (
                 <li key={c.source} className="flex justify-between gap-3">
                   <span className="text-muted">{name(c.source)}</span>
@@ -278,7 +278,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
             </ul>
           ) : null}
           {missingCosts(sources) ? (
-            <p className="m-0 mt-3 text-[12.5px] text-muted" data-part="cost-missing">
+            <p className="m-0 mt-3 text-sm text-muted" data-part="cost-missing">
               {t("rv6.src.addCost")} <a href={`${base}/lead-sources`} className="font-semibold text-brand-text underline underline-offset-2">{t("rv6.src.addCostLink")}</a>
             </p>
           ) : null}
@@ -306,19 +306,19 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
           <ol className="m-0 flex list-none flex-col gap-0.5 p-0">
             {funnel.map((f, i) =>
               f.value === null ? (
-                <li key={f.id} data-stage={f.id} className="grid grid-cols-[96px_minmax(0,1fr)] items-center gap-2.5 py-[7px] text-[13px] text-muted">
+                <li key={f.id} data-stage={f.id} className="grid grid-cols-[96px_minmax(0,1fr)] items-center gap-2.5 py-[7px] text-sm text-muted">
                   <span>{t(`rv6.stage.${f.id}`)}</span>
                   <span>{t("rv6.stage.unknown")}</span>
                 </li>
               ) : (
-                <li key={f.id} data-stage={f.id} data-bar={widths[i]} className="grid grid-cols-[96px_minmax(0,1fr)_34px_40px] items-center gap-2.5 py-[7px] text-[13px]">
+                <li key={f.id} data-stage={f.id} data-bar={widths[i]} className="grid grid-cols-[96px_minmax(0,1fr)_34px_40px] items-center gap-2.5 py-[7px] text-sm">
                   <span className="text-muted">{t(`rv6.stage.${f.id}`)}</span>
                   <svg viewBox="0 0 100 22" preserveAspectRatio="none" aria-hidden="true" focusable="false" className="h-[22px] w-full">
                     <rect width="100" height="22" rx="4" fill="var(--v2-bg)" />
                     {widths[i] > 0 ? <rect width={widths[i]} height="22" rx="4" fill={f.id === "won" ? "url(#rv6-fw)" : "url(#rv6-fg)"} /> : null}
                   </svg>
                   <b className="text-right tabular-nums">{f.value}</b>
-                  <em className="text-right text-[11.5px] not-italic text-muted">{f.previous !== null && f.previous > 0 ? `${Math.round((f.value / f.previous) * 100)}%` : ""}</em>
+                  <em className="text-right text-sm not-italic text-muted">{f.previous !== null && f.previous > 0 ? `${Math.round((f.value / f.previous) * 100)}%` : ""}</em>
                 </li>
               ),
             )}
@@ -335,7 +335,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
               <div role="img" aria-label={t("rv6.heat.title")} className="flex flex-col gap-1">
                 {heat.grid.map((row, wd) => (
                   <div key={wd} className="grid grid-cols-[34px_repeat(12,minmax(0,1fr))] items-center gap-1">
-                    <span className="text-[11.5px] text-muted">{weekdayWord(lang, wd, "short")}</span>
+                    <span className="text-sm text-muted">{weekdayWord(lang, wd, "short")}</span>
                     {row.map((c, h) => (
                       <i key={h} data-l={heatLevel(c, heat.max)} title={`${weekdayWord(lang, wd)} ${hourWord(HEAT_FIRST_HOUR + h)}: ${c}`} className="ds-heat block h-5 rounded-[5px]" />
                     ))}
@@ -344,7 +344,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
                 <div className="grid grid-cols-[34px_repeat(12,minmax(0,1fr))] gap-1" aria-hidden="true">
                   <span />
                   {Array.from({ length: HEAT_HOURS }, (_, h) => (
-                    <em key={h} className="text-center text-[10.5px] not-italic text-muted">
+                    <em key={h} className="text-center text-sm not-italic text-muted">
                       {(HEAT_FIRST_HOUR + h) % 12 || 12}
                     </em>
                   ))}
@@ -352,7 +352,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
               </div>
               <p className="m-0 mt-2 text-xs text-muted">{t("rv6.heat.from", { n: heat.total })}</p>
               {tip ? (
-                <p className="m-0 mt-2.5 flex items-start gap-2.5 rounded-xl bg-brand-bg px-3 py-2.5 text-[13px] leading-[1.45]" data-part="heat-tip">
+                <p className="m-0 mt-2.5 flex items-start gap-2.5 rounded-xl bg-brand-bg px-3 py-2.5 text-sm leading-[1.45]" data-part="heat-tip">
                   <Lightbulb aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand-text" />
                   <span>{tip}</span>
                 </p>

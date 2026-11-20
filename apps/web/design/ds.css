@@ -295,7 +295,7 @@
   [data-ui="v2"][data-ds="6"] main h1 { font-size: 24px; line-height: 1.15; }
   [data-ui="v2"][data-ds="6"] main h2 { font-size: 17px; line-height: 1.25; }
   [data-ui="v2"][data-ds="6"] main h3 { font-size: 15px; }
-  [data-ui="v2"][data-ds="6"] main [class*="rounded-full"][class*="border"][class*="px-"] { font-size: 13px; padding: 6px 12px; min-height: 0; }
+  [data-ui="v2"][data-ds="6"] main [class*="rounded-full"][class*="border"][class*="px-"] { font-size: 14px; padding: 6px 12px; min-height: 0; }
   [data-ui="v2"][data-ds="6"] main [class*="rounded-xl"][class*="border"], [data-ui="v2"][data-ds="6"] main [class*="rounded-2xl"][class*="border"] { padding: 12px 14px; }
   [data-ui="v2"][data-ds="6"] main .text-base { font-size: 14px; }
   /* nothing runs out of its card: names and lines shrink and cut with an ellipsis */
@@ -348,21 +348,21 @@
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz { position: relative; display: flex; width: 132px; height: 150px; flex: none; flex-direction: column; align-items: center; cursor: pointer; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz-halo { position: absolute; left: 50%; top: 62px; width: 230px; height: 230px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(249, 115, 22, 0.42), rgba(249, 115, 22, 0.12) 40%, transparent 66%); filter: blur(6px); pointer-events: none; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz-in { position: relative; height: 132px; transform-origin: top center; }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-tap { position: relative; margin-top: 2px; display: flex; align-items: center; gap: 7px; white-space: nowrap; border-radius: 99px; border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.07); padding: 5px 12px; font-size: 12px; font-weight: 700; color: #f1f1f3; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12); }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-tap { position: relative; margin-top: 2px; display: flex; align-items: center; gap: 7px; white-space: nowrap; border-radius: 99px; border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.07); padding: 5px 12px; font-size: 14px; font-weight: 700; color: #f1f1f3; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12); }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-tap i { width: 7px; height: 7px; border-radius: 50%; background: #fb923c; box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.3); }
 /* the composer: a glowing conic edge around a glass box */
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-comp { min-width: 0; flex: 1; border-radius: 26px; padding: 1.5px; background: conic-gradient(from 200deg at 12% 50%, #fdba74, #ea580c 22%, #e11d48 40%, rgba(251, 146, 60, 0.25) 60%, #fb923c 85%, #fdba74); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 0 6px rgba(251, 146, 60, 0.06); }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-compin { border-radius: 24.5px; padding: 20px 18px 12px 22px; background: linear-gradient(180deg, rgba(38, 37, 44, 0.96), rgba(14, 13, 17, 0.98)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 0 rgba(0, 0, 0, 0.5); }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-ln { font-size: 22px; line-height: 1.35; letter-spacing: 0; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-ghost { color: #8b8a93; }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-glass { display: inline-flex; height: 40px; align-items: center; gap: 6px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.09); background: rgba(255, 255, 255, 0.05); padding: 0 11px; font-size: 13px; color: #e4e4e7; white-space: nowrap; }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-chip { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; border-radius: 99px; border: 1px solid rgba(255, 255, 255, 0.09); background: rgba(255, 255, 255, 0.04); padding: 7px 11px; font-size: 12.5px; color: #e3d3c8; }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-glass { display: inline-flex; height: 40px; align-items: center; gap: 6px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.09); background: rgba(255, 255, 255, 0.05); padding: 0 11px; font-size: 14px; color: #e4e4e7; white-space: nowrap; }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-chip { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; border-radius: 99px; border: 1px solid rgba(255, 255, 255, 0.09); background: rgba(255, 255, 255, 0.04); padding: 7px 11px; font-size: 14px; color: #e3d3c8; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-do { min-height: 44px; border-radius: 14px; padding: 0 18px 0 20px; gap: 10px; font-size: 15px; box-shadow: 0 10px 26px rgba(234, 88, 12, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.15); }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-do kbd { font-family: inherit; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 6px; background: rgba(0, 0, 0, 0.2); }
 [data-ui="v2"][data-ds="6"] .ds-hero kbd.ds-key { font-family: inherit; font-size: 11px; color: #e4e4e7; border: 1px solid rgba(255, 255, 255, 0.18); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; margin-right: 4px; background: rgba(255, 255, 255, 0.05); }
 /* laptops: the mock's own rules */
 @media (max-width: 1400px) {
-  [data-ui="v2"][data-ds="6"] .ds-hero .ds-chip { padding: 6px 9px; font-size: 12px; gap: 5px; }
+  [data-ui="v2"][data-ds="6"] .ds-hero .ds-chip { padding: 6px 9px; font-size: 14px; gap: 5px; }
 }
 @media (max-width: 1300px) {
   [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz { width: 110px; }
@@ -394,7 +394,7 @@
 /* the content of Today is at most 1560px wide and centred */
 [data-ui="v2"][data-ds="6"] [data-screen="today"][data-v6] { width: 100%; max-width: 1560px; margin-inline: auto; }
 /* "Your day": a visit pin (green, with the name and its time) and its stem */
-[data-ui="v2"][data-ds="6"] .ds-pin { border-radius: 8px; background: #16a34a; padding: 2px 8px; font-size: 11.5px; font-weight: 700; color: #fff; }
+[data-ui="v2"][data-ds="6"] .ds-pin { border-radius: 8px; background: #16a34a; padding: 2px 8px; font-size: 14px; font-weight: 700; color: #fff; }
 [data-ui="v2"][data-ds="6"] .ds-pin-stem { display: block; width: 2px; height: 8px; margin-top: 1px; background: #22c55e; }
 /* ==========================================================================
    PHONE PASS SLICE (design system v6, c2/ds-settings-phone): only the phone's own rules. Nothing above is changed.
@@ -408,7 +408,7 @@
     [data-ui="v2"][data-ds="6"] main h1:not(.ds-greet) { font-size: 24px !important; line-height: 1.15 !important; }
     [data-ui="v2"][data-ds="6"] main h2 { font-size: 17px !important; line-height: 1.25 !important; }
     [data-ui="v2"][data-ds="6"] main .text-base:not(input):not(textarea):not(select) { font-size: 14px !important; line-height: 1.45 !important; }
-    [data-ui="v2"][data-ds="6"] main [data-chip] { font-size: 13px !important; padding-inline: 12px !important; }
+    [data-ui="v2"][data-ds="6"] main [data-chip] { font-size: 14px !important; padding-inline: 12px !important; }
     [data-ui="v2"][data-ds="6"] main [class~="p-4"][class*="rounded-2xl"] { padding: 12px 14px !important; }
   }
 }
@@ -446,7 +446,7 @@
     /* Today's band: the status sits on the date's line, the round mark is a smaller corner mark (transform only), and the greeting no longer leaves room for the big one */
     [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] { margin-bottom: 0.5rem !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] :is(button, a, span, div) { min-height: 0 !important; }
-    [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] :is(button, a)[class] { height: 1.75rem !important; padding-block: 0 !important; font-size: 12px !important; line-height: 1 !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] :is(button, a)[class] { height: 1.75rem !important; padding-block: 0 !important; font-size: 14px !important; line-height: 1 !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { margin-top: 0 !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     /* the top bar: 40px round buttons with 20px icons (was 44px), a 48px bar (was 64px) */
@@ -470,8 +470,8 @@
   @media (min-width: 1024px) {
     [data-ui="v2"][data-ds="6"] {
       --dk-body: 14px;
-      --dk-help: 13px;
-      --dk-label: 11px;
+      --dk-help: 14px;
+      --dk-label: 14px;
       --dk-title: 24px;
       --dk-card-title: 16px;
       --dk-stat: 22px;
@@ -493,7 +493,7 @@
     [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-sm"]):not(h1, h2, h3, h4, [class*="leading-"]) { line-height: 1.45 !important; }
     /* help text (the grey lines under a title or a field): 13px */
     [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-muted"]):where([class*="text-sm"], [class*="text-xs"]):not(h1, h2, h3, h4) { font-size: var(--dk-help) !important; }
-    [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-xs"]):not(h1, h2, h3, h4) { font-size: calc(var(--dk-help) - 1px) !important; }
+    [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-xs"]):not(h1, h2, h3, h4) { font-size: var(--dk-help) !important; }
     [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-lg"], [class*="text-xl"]):not(h1, h2, h3, h4) { font-size: var(--dk-card-title) !important; line-height: 1.35 !important; }
     /* numbers in stat tiles */
     [data-ui="v2"][data-ds="6"] :is(main, [data-frame="group-tabs"], [data-frame="usage-banner"]) :where([class*="text-2xl"], [class*="text-3xl"], [class*="text-4xl"], [class*="text-[26px]"], [class*="text-[28px]"]):not(h1, h2, h3, h4) { font-size: var(--dk-stat) !important; line-height: 1.2 !important; }
@@ -539,9 +539,9 @@
     [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside :where([class*="text-muted"]):where([class*="text-sm"]) { font-size: var(--dk-help) !important; }
     [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-row] { min-height: var(--dk-side-row) !important; font-size: var(--dk-body) !important; }
     [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-label] { padding-block: 0 !important; line-height: 1.3 !important; }
-    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-badge] { height: 1.25rem !important; font-size: 11.5px !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-badge] { height: 1.25rem !important; font-size: 14px !important; }
     [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-group] > p:not(:lang(te)):not(:lang(hi)):not(:lang(kn)) { font-size: var(--dk-label) !important; font-weight: 600 !important; text-transform: uppercase !important; letter-spacing: 0.06em !important; padding-top: 0.75rem !important; }
-    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-group] > p:is(:lang(te), :lang(hi), :lang(kn)) { font-size: 12px !important; }
+    [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-nav-group] > p:is(:lang(te), :lang(hi), :lang(kn)) { font-size: 14px !important; }
     [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside nav { padding-block: 0.25rem !important; }
     [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside a[class*="min-h-16"] { min-height: 3.25rem !important; padding: 0.5rem 0.75rem !important; gap: 0.625rem !important; }
     [data-ui="v2"][data-ds="6"] [data-frame="app"] > aside [data-business-logo] { width: 2rem !important; height: 2rem !important; font-size: var(--dk-help) !important; }
@@ -566,7 +566,7 @@
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-compin { padding: 12px 14px 10px 16px !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-ln { font-size: var(--dk-card-title) !important; line-height: 1.4 !important; }
     [data-ui="v2"][data-ds="6"] .ds-hero .ds-glass { height: var(--dk-ctl-h) !important; font-size: var(--dk-help) !important; }
-    [data-ui="v2"][data-ds="6"] .ds-hero .ds-chip { padding: 5px 10px !important; font-size: 12px !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-chip { padding: 5px 10px !important; font-size: 14px !important; }
     [data-ui="v2"][data-ds="6"] .ds-do { min-height: var(--dk-ctl-h) !important; border-radius: 10px !important; padding-inline: 14px !important; font-size: var(--dk-body) !important; }
   }
 }
