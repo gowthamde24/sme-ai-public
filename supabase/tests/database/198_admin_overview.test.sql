@@ -102,7 +102,7 @@ select is(jsonb_array_length(pg_temp.ov('s_owner') #> '{health,components}'), 6,
 
 -- G. the businesses table and the sidebar
 select is(pg_temp.ov('s_owner') #>> '{businesses,0,name}', 'Tenant A', 'G1: the most recently active business first');
-select is(pg_temp.ov('s_owner') #>> '{businesses,0,plan_name}', 'Sales Assistant', 'G2: its plan');
+select is(pg_temp.ov('s_owner') #>> '{businesses,0,plan_name}', 'Pro', 'G2: its plan');
 select is(pg_temp.ov('s_owner') #>> '{businesses,0,town}', 'Dharmavaram', 'G3: its town');
 select is(pg_temp.ov('s_owner') #>> '{businesses,0,status}', 'not_live', 'G4: its status');
 select is(pg_temp.ov('s_owner') #>> '{businesses,1,plan_name}', 'No plan', 'G5: a business without a plan');
