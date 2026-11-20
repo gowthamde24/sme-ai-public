@@ -128,7 +128,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `followup_cadence_failed` | 502 | followups |  |  | The follow-up rules could not be run. Nothing was recorded. |
 | `followup_cadence_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
 | `followups_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
-| `forbidden` | 403 | assistant_work, browser_voice, connectors, errors, hardening, lead_sources, main, whatsapp |  |  | Not allowed. |
+| `forbidden` | 403 | assistant_work, browser_voice, connectors, errors, hardening, jobs, lead_sources, main, whatsapp |  |  | Not allowed. |
 | `free_minutes_used_up` | 409 | telephony |  | minutes, restarts_on | (the sentence varies: show `message`) |
 | `free_search_used` | 403 | lead_finder, main |  | feature, upgrade_to | Your free search for this month is used. More searches are part of AI Workforce. |
 | `glance_unavailable` | 503 | glance |  |  | This is not available right now. |
@@ -433,7 +433,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `voice_provider_unreachable` | 502 | ownvoice |  |  | The voice could not be removed right now. Nothing changed. Press delete again in a moment. |
 | `voice_timeout` | 504 | voice |  |  | The speech service took too long. Try again. |
 | `voice_too_long` | 422 | voice_notes |  |  | The sample is too long. |
-| `voice_unavailable` | 503 | assistant_context, voice, voice_notes |  |  | Voice is not available right now. |
+| `voice_unavailable` | 503 | assistant_context, jobs, voice, voice_notes |  |  | Voice is not available right now. |
 | `waiting_for_whatsapp` | 403 | main |  |  | Connect your WhatsApp to start. Until then you can set everything up, but messages, AI calls and campaigns stay off. |
 | `webhooks_unavailable` | 503 | billing, connectors |  |  | Not available right now. |
 | `whatsapp_connect_refused` | 502 | whatsapp |  |  | WhatsApp did not accept the connection. Try again in a minute. |

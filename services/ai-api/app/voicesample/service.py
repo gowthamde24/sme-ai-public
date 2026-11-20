@@ -81,6 +81,10 @@ class VoiceSampleService:
     def available(self) -> bool:
         return self._tts is not None and self._tts.name != "fake"
 
+    @property
+    def tts(self) -> TextToSpeech | None:
+        return self._tts
+
     def sample(self, tenant_id: uuid.UUID, business: str, voice: str, language: str, style: str, name: str | None) -> Speech:
         if not self.available() or self._tts is None or voice not in PERSONAS or language not in LANGUAGES or style not in STYLES:
             raise NoSample

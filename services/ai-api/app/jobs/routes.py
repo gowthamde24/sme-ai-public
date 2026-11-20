@@ -9,19 +9,24 @@ NOTE: no `from __future__ import annotations` here (request models are attached 
 
 # ruff: noqa: E501
 
+import base64
+import binascii
 import hashlib
 import json
-from typing import Annotated, Any
+import re
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, ConfigDict, Field
 
 from app import gstin as gstin_module
-from app.auth.deps import AnyMember, OwnerOrAdmin, Runtime, get_runtime
+from app.auth.deps import AnyMember, OwnerOrAdmin, PrincipalDep, Runtime, get_runtime
 from app.errors import ApiError, not_found
-from app.jobs import festivals, templates
+from app.jobs import festivals, samples, templates
 from app.jobs.models import FestivalOut, FestivalsOut
 from app.jobs.wiring import JobsRuntime
+from app.tenancy.repository import RepositoryError
 
 
 def jobs_on(request: Request) -> JobsRuntime:
@@ -73,7 +78,9 @@ def get_templates(request: Request, ctx: OwnerOrAdmin, runtime: RuntimeDep, jobs
         item_name=templates.first_item_name(runtime.catalogue, token, tenant_id),
         real=templates.real_prospects(runtime.lead_finder, token, tenant_id),
     )
-    return _answer(request, out.model_dump(mode="json", exclude_unset=True))
+    body = out.model_dump(mode="json", exclude_unset=True)
+    _attach_samples(body, jobs, token)
+    return _answer(request, body)
 
 
 def _region(runtime: Runtime, token: str, tenant_id: Any) -> str:
@@ -95,4 +102,66 @@ def get_festivals(ctx: AnyMember, runtime: RuntimeDep, jobs: JobsDep) -> Festiva
     return FestivalsOut(region=region, items=[FestivalOut(season=r.season, name=r.name, date=r.date.isoformat(), region=r.region) for r in rows])  # type: ignore[arg-type]
 
 
-__all__ = ["router"]
+def _attach_samples(body: dict[str, Any], jobs: JobsRuntime, token: str) -> None:
+    """`preview.sample_audio` becomes {language: link} for the samples that exist (jobs contract 1.1 part 1 T6); a template with none keeps null and the web shows no player. A failure here never fails the list."""
+    if jobs.samples is None:
+        return
+    try:
+        have = {(r["pack"], r["template_id"], r["language"]): str(r["sha8"]) for r in jobs.samples.listing(token)}
+    except Exception:  # noqa: BLE001 - samples are a nicety
+        return
+    if not have:
+        return
+    blocks = [(body.get("own") or {})] + [(o.get("jobs") or {}) for o in body.get("others") or []]
+    for block in blocks:
+        pack_id = block.get("pack")
+        for t in block.get("templates") or []:
+            links = {lang: f"/v1/job-samples/{pack_id}/{t['id']}_{sha8}.{lang}.mp3" for (p, tid, lang), sha8 in have.items() if p == pack_id and tid == t["id"]}
+            if links and isinstance(t.get("preview"), dict):
+                t["preview"]["sample_audio"] = links
+
+
+# --- the spoken samples themselves (platform data, not tenant data): one file per template and language, played by the New job sheet through the web's same-origin proxy
+samples_router = APIRouter(prefix="/v1/job-samples", tags=["jobs"], dependencies=[Depends(jobs_on)])
+ops_router = APIRouter(prefix="/v1/ops/job-samples", tags=["jobs"], dependencies=[Depends(jobs_on)])
+_PACK_ID = re.compile(r"^[a-z][a-z0-9_]{1,30}$")
+
+
+@samples_router.get("/{pack}/{file}")
+def get_sample(pack: str, file: str, principal: PrincipalDep, jobs: JobsDep) -> Response:
+    """The sound of one sample. Any signed-in person (it is invented example words, nothing about a customer); immutable: the link carries the first 8 characters of the hash of the words."""
+    parsed = samples.parse_file(file)
+    if jobs.samples is None or parsed is None or not _PACK_ID.fullmatch(pack):
+        raise not_found()
+    template_id, sha8, language = parsed
+    try:
+        found = jobs.samples.get(principal.token, pack, template_id, language)
+        audio = base64.b64decode(str((found or {}).get("audio_b64") or ""), validate=True) if found else b""
+    except (RepositoryError, binascii.Error):
+        raise not_found() from None
+    if not found or not audio or found.get("sha8") != sha8:
+        raise not_found()
+    return Response(content=audio, media_type=str(found.get("content_type") or "audio/wav"), headers={"Cache-Control": "private, max-age=31536000, immutable", "Accept-Ranges": "none"})
+
+
+class GenerateIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    languages: list[Literal["en", "te", "hi", "kn"]] = Field(default=["en", "te"], min_length=1, max_length=4)
+    limit: int = Field(default=10, ge=1, le=samples.MAX_PER_RUN)
+    dry_run: bool = False
+
+
+@ops_router.post("/generate")
+def generate_samples(body: GenerateIn, principal: PrincipalDep, runtime: RuntimeDep, jobs: JobsDep) -> dict[str, Any]:
+    """Make the missing samples (the system account only: the database checks it; a workspace owner is refused). Spends voice credits: at most `limit` samples, never past the cap in samples.CAP_CHARS (Rs 300), and never for words already recorded."""
+    service = runtime.voice_sample
+    if jobs.samples is None or service is None or not service.available() or service.tts is None:
+        raise ApiError(503, "voice_unavailable", "The voice service is not available on this system.")
+    try:
+        return samples.run(jobs.samples, service.tts, principal.token, jobs.directory, body.languages, body.limit, dry_run=body.dry_run, get_paid=False)
+    except RepositoryError:
+        raise ApiError(403, "forbidden", "Your role does not allow this action.") from None
+
+
+__all__ = ["ops_router", "router", "samples_router"]
