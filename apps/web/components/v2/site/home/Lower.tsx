@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Moon } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -28,13 +28,9 @@ function Head({ id, title, sub }: { id: string; title: string; sub?: string }) {
   );
 }
 
-/** `aliases`: the old anchors of the header and the footer (#finder, #plans, #built) until they link to the new ids (#lead-finder, #pricing): an empty mark, so no link of the page points at nothing meanwhile. */
-function Section({ id, labelledBy, aliases = [], children }: { id: string; labelledBy: string; aliases?: string[]; children: ReactNode }) {
+function Section({ id, labelledBy, children }: { id: string; labelledBy: string; children: ReactNode }) {
   return (
     <section id={id} aria-labelledby={labelledBy} className="h4" data-part={`h4-${id}`}>
-      {aliases.map((a) => (
-        <span key={a} id={a} />
-      ))}
       <div className="h4-wrap">{children}</div>
     </section>
   );
@@ -73,11 +69,11 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
         <Head id="calc-title" title={t("h4.leak.t")} sub={t("h4.leak.sub")} />
         <LeakCalc w={words(t, LEAK_KEYS)} />
       </Section>
-      <Section id="lead-finder" labelledBy="finder-title" aliases={["finder"]}>
+      <Section id="lead-finder" labelledBy="finder-title">
         <Head id="finder-title" title={t("h4.finder.t")} sub={t("h4.finder.sub")} />
         <RadarFinder w={words(t, FINDER_KEYS)} />
       </Section>
-      <Section id="pricing" labelledBy="plans-title" aliases={["plans", "built"]}>
+      <Section id="pricing" labelledBy="plans-title">
         <Head id="plans-title" title={t("h4.pl.title")} />
         <Swipe label={t("h4.pl.title")} dotWord={t("h4.dot")} className="h4-plans">
           {PUBLIC_PLANS.map((p) => (
@@ -93,7 +89,7 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
             </Link>
           </p>
         </div>
-        <TrustRow w={{ t1: t("h4.tr.1"), t2: t("h4.tr.2"), t3: t("h4.tr.3"), t4: t("h4.tr.4"), kyc: t("h4.m.kyc"), yes: t("h4.m.yes"), added: t("h4.m.added"), done: t("h4.m.done"), wait: t("h4.m.wait") }} />
+        <TrustRow moon={<Moon size={13} strokeWidth={2.4} />} w={{ t1: t("h4.tr.1"), t2: t("h4.tr.2"), t3: t("h4.tr.3"), t4: t("h4.tr.4"), kyc: t("h4.m.kyc"), yes: t("h4.m.yes"), added: t("h4.m.added"), done: t("h4.m.done"), wait: t("h4.m.wait") }} />
       </Section>
     </>
   );

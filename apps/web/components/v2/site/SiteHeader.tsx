@@ -1,8 +1,9 @@
-import { Menu } from "lucide-react";
+import { CircleHelp, CreditCard, LogIn, Menu, MessageSquare, Radar, X } from "lucide-react";
 import Link from "next/link";
 
 import { SiteLangSelect } from "@/components/v2/controls/SiteLangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
+import { HeaderSheet } from "@/components/v2/site/HeaderSheet";
 import { container } from "@/components/v2/site/ui";
 import { Wordmark } from "@/components/v2/Wordmark";
 import { BRAND_NAME } from "@/design/brand";
@@ -14,6 +15,9 @@ import { startEntry } from "@/lib/site/entry";
 import { websiteOnly } from "@/lib/site/mode";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
 import { waitlistMode } from "@/lib/waitlist/mode";
+
+/** The menu sheet's icons, drawn here on the server (How it works, Lead Finder, Pricing, FAQ). */
+const NAV_ICONS = [MessageSquare, Radar, CreditCard, CircleHelp].map((I, i) => <I key={i} size={20} strokeWidth={2.1} aria-hidden="true" />);
 
 const link = "inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 text-[15px] font-semibold text-ink hover:bg-surface-2";
 
@@ -33,9 +37,10 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
   const start = startEntry(t, lang, t("nav.start"), { hasForm: waitlistMode() !== "off" && (target.kind !== "page" || target.page === "contact") });
   // landing v2: four parts of the home page (owner, 6 Nov 2026: fewer links in the bar; the Lead Finder and the business number are in the footer); from another page they lead back to it
   const nav = [
-    { href: `${base}#how`, label: t("nav.how"), here: false },
-    { href: `${base}#finder`, label: t("h2.nav.finder"), here: false },
-    { href: onHome ? "#plans" : pricingPage, label: t("h2.nav.plans"), here: target.kind === "page" && target.page === "pricing" },
+    { href: `${base}#how-it-works`, label: t("nav.how"), here: false },
+    { href: `${base}#lead-finder`, label: t("h2.nav.finder"), here: false },
+    { href: onHome ? "#pricing" : pricingPage, label: t("nav.pricing"), here: target.kind === "page" && target.page === "pricing" },
+    { href: `${base}#faq`, label: t("h4.nav.faq"), here: false },
   ];
   // "Get early access": the home page's closing form; on a page without the form, where "start" leads today
   // (website mode and the app-open home page both say "Join early access": one call to action, owner 11 Nov 2026)
@@ -46,7 +51,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
       <span aria-hidden="true" className="h2-prog" />
       <div className={`${container} flex min-h-16 items-center gap-2 py-2 sm:gap-3`}>
         {/* under 360 px the name is a size smaller, so the bar still fits with large text (Android 115%) */}
-        <Link href={home} className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-md max-[359px]:[&_.font-display]:text-xl" aria-label={BRAND_NAME}>
+        <Link href={home} className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-md [&_.font-display]:text-[19px] min-[900px]:[&_.font-display]:text-2xl" aria-label={BRAND_NAME}>
           <Wordmark />
         </Link>
         <nav aria-label={t("nav.sections")} className="ml-4 hidden items-center gap-1 min-[900px]:flex">
@@ -67,38 +72,21 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
             <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
             <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
           </span>
-          <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-ink px-3.5 text-sm font-bold text-bg sm:px-[18px] sm:text-[15px]">
+          <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-[#c2410c] px-4 text-[15px] font-bold text-white sm:px-[18px]">
             <span className="xl:hidden">{early.short}</span>
             <span className="max-xl:hidden">{early.label}</span>
           </Link>
-          <details className="group relative min-[900px]:hidden">
-            <summary className="inline-flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-lg border border-edge bg-surface text-ink hover:bg-surface-2 [&::-webkit-details-marker]:hidden">
-              <Menu className="size-5" aria-hidden="true" />
-              <span className="sr-only">{t("nav.menu")}</span>
-            </summary>
-            <nav aria-label={t("nav.sections")} className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)]">
-              <ul className="flex flex-col">
-                {nav.map((n) => (
-                  <li key={n.href}>
-                    <Link href={n.href} aria-current={n.here ? "page" : undefined} className={`${link} w-full ${n.here ? "bg-surface-2 font-semibold" : ""}`}>
-                      {n.label}
-                    </Link>
-                  </li>
-                ))}
-                {web ? null : (
-                  <li>
-                    <Link href="/login" className={`${link} w-full text-brand-text`}>
-                      {t("h2.nav.login")}
-                    </Link>
-                  </li>
-                )}
-                <li className="mt-1 flex items-center gap-2 border-t border-line px-1 pt-2 sm:hidden">
-                  <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
-                  <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
-                </li>
-              </ul>
-            </nav>
-          </details>
+          <HeaderSheet
+            label={t("nav.menu")}
+            closeLabel={t("h3.menu.close")}
+            items={nav.map((n, i) => ({ href: n.href, label: n.label, here: n.here, icon: NAV_ICONS[i] ?? NAV_ICONS[3] }))}
+            login={web ? undefined : { href: "/login", label: t("h2.nav.login") }}
+            cta={{ href: early.href, label: t("h3.menu.cta") }}
+            icons={{ menu: <Menu className="size-5" aria-hidden="true" />, close: <X className="size-5" aria-hidden="true" />, login: <LogIn size={20} strokeWidth={2.1} aria-hidden="true" /> }}
+          >
+            <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
+            <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
+          </HeaderSheet>
         </div>
       </div>
     </header>

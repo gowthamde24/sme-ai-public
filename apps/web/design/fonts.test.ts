@@ -30,6 +30,9 @@ describe("v2FontClassName: a page downloads only the Indic font of its own langu
   });
   it("an unknown language gets none, and no language at all gets all four", () => {
     expect(v2FontClassName("fr")).toBe("var-sans var-display");
+    // the public site names no display face: one sans face for everything, plus the script font of the page's language
+    expect(v2FontClassName("en", true)).toBe("var-sans");
+    expect(v2FontClassName("te", true)).toBe("var-sans var-telugu");
     expect(v2FontClassName()).toBe("var-sans var-display var-telugu var-devanagari var-kannada var-tamil");
   });
 });

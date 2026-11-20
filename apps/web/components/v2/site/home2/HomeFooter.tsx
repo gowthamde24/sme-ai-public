@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
-import { Mark } from "@/components/v2/Mark";
+import { BrandDots } from "@/components/v2/site/LazyIslands";
 import { SupportedBy } from "@/components/v2/site/SupportedBy";
 import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
@@ -24,7 +24,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
   return (
     <footer id="end" className="relative overflow-hidden px-[var(--h3-gutter,clamp(16px,3vw,32px))] pb-0 pt-[clamp(32px,6vw,80px)]" data-part="home-footer">
       <div className="h3-foot-grid relative mx-auto max-w-[1240px] border-b border-line pb-9">
-        <div className="flex flex-col gap-3.5">
+        <div className="h3-foot-wide flex flex-col gap-3.5">
           <p className="m-0 max-w-[380px] font-display text-[clamp(22px,calc(1vw+16px),28px)] font-extrabold leading-[1.15] tracking-[-0.02em]">
             {t("h3.hero.t")}
           </p>
@@ -32,15 +32,15 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
         </div>
         <nav aria-label={t("h2.foot.product")} className="flex flex-col">
           <span className={head}>{t("h2.foot.product")}</span>
-          <a className={link} href="#how">{t("nav.how")}</a>
-          <a className={link} href="#finder">{t("h2.nav.finder")}</a>
-          <a className={link} href="#built">{t("h3.built.title")}</a>
-          <a className={link} href="#plans">{t("h2.nav.plans")}</a>
+          <a className={link} href="#how-it-works">{t("nav.how")}</a>
+          <a className={link} href="#lead-finder">{t("h2.nav.finder")}</a>
+          <a className={link} href="#pricing">{t("nav.pricing")}</a>
+          <a className={link} href="#faq">{t("h4.nav.faq")}</a>
         </nav>
         <div className="flex flex-col">
           <span className={head}>{t("h2.foot.company")}</span>
           <nav aria-label={t("foot.pages")} className="flex flex-col">
-            {SITE_PAGES.filter((page) => isServed({ kind: "page", page })).map((page) => (
+            {SITE_PAGES.filter((page) => isServed({ kind: "page", page }) && page !== "pricing" && page !== "how-it-works").map((page) => ( // (Pricing and How it works are in the Product column on this page)
               <Link key={page} className={link} href={sitePath(lang, { kind: "page", page })}>
                 {t(LABEL[page])}
               </Link>
@@ -48,7 +48,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
           </nav>
           <LegalLinks lang={lang} direction="column" contact={false} linkClass={link} />
         </div>
-        <div className="flex flex-col gap-2.5">
+        <div className="h3-foot-wide flex flex-col gap-2.5">
           <span className={head}>{t("h2.foot.talk")}</span>
           <p className="m-0 text-[15px] font-semibold">
             <WithWhatsapp text={t("h2.foot.whatsapp")} />
@@ -79,11 +79,8 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: SiteLang; early
         </a>
         <SupportedBy t={t} />
       </div>
-      {/* the big wordmark: the logo and the name across the foot of the page, the letters on its bottom edge */}
-      <p className="h3-brandword" data-part="brand-word" aria-label={BRAND_NAME}>
-        <Mark px={100} />
-        <span aria-hidden="true">{BRAND_NAME}</span>
-      </p>
+      {/* the dot-matrix wordmark: the logo and the name built from the page's own dots, the letters standing on the page's bottom edge (a lazy island; one image to a screen reader) */}
+      <BrandDots label={BRAND_NAME} rebuild={t("h2.foot.rebuild")} />
     </footer>
   );
 }

@@ -2,69 +2,114 @@
 
 import * as React from "react";
 
-import { PhoneChat, PpBubble, PpDay } from "@/components/v2/PhonePreview";
+import { PpBubble, PpDay } from "@/components/v2/PhonePreview";
 
-import type { StackChat } from "./chat-stack";
+import { AI_LABEL, type StackChat } from "./chat-types";
+import { DarkPhone } from "./DarkPhone";
+import { useStack } from "./StackState";
 
-const STEP = 1100; // one bubble every 1.1 s
-const HOLD = 3000; // the whole chat stays for about 3 s
-const FADE = 600; // then it fades out, and the next language starts
+const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
- * The home page's chat stack: one phone (the approved frame, at a fixed size, so nothing moves when the language changes) that cycles through the conversations in turn: the bubbles rise in one by one and stack, the chat holds for about 3 s,
- * fades out, and the next language starts. A small chip at the top of the screen names the language. The words come from the server (`chats`, already in each conversation's own language); `captions` say in the page's language what
- * each conversation is. Transform and opacity only. With "reduce motion" (and before the script runs) it is ONE still chat: the first, whole.
+ * The home page's phone demo: a real dark phone (our own drawing, DarkPhone) showing ONE conversation of a made-up business at a time, in a box of a fixed size. The shared clock (StackState) says where it is: the CALL first (a dark
+ * screen: the avatar with its ring, the business name, the timer and the city, a small voice wave, "Live captions", ONE caption at a time (the assistant's with its "AI assistant" label on the left, the customer's on the right), the round
+ * buttons and the red end button), then "Call ended" (the timer stops), then the WhatsApp that follows up (the same business, the same facts) in its own dark mode, stacking bubble by bubble, holds, fades, and the next language starts. The
+ * call and the chat are two phones in the SAME box (they cross-fade, nothing moves). The words come from the server; `captions` say in the page's language what each conversation is. Transform and opacity only; the wave pauses while the
+ * demo is off screen. With "reduce motion" (and before the script runs) it is ONE still state: the chat, whole, and the style sheet shows the call (its last caption) beside it (stacked on a narrow screen).
  */
-export function ChatStack({ chats, chips, captions, sub, placeholder }: { chats: StackChat[]; chips: string[]; captions: string[]; sub: string; placeholder: string }) {
-  const [idx, setIdx] = React.useState(0);
-  const [shown, setShown] = React.useState(chats[0].lines.length);
-  const [out, setOut] = React.useState(false);
-  const [live, setLive] = React.useState(false);
+export function ChatStack({ chats, captions, sub, placeholder, icons }: { chats: readonly StackChat[]; captions: string[]; sub: string; placeholder: string; /** The icons are drawn on the server (no icon code in the page's script): the call's round buttons, the chat header's icons, the input's mic. */ icons: { callButtons: React.ReactNode; headIcons: React.ReactNode; mic: React.ReactNode } }) {
+  const { idx, phase, n, visible, setVisible } = useStack();
+  const root = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
-    // the first chat is whole in the server markup; once the script runs, it starts again from the first bubble
-    const id = window.setTimeout(() => {
-      setShown(0);
-      setLive(true);
-    }, 0);
-    return () => window.clearTimeout(id);
-  }, []);
-  React.useEffect(() => {
-    if (!live) return;
-    const n = chats[idx].lines.length;
-    let wait: number;
-    let next: () => void;
-    if (out) {
-      wait = FADE;
-      next = () => {
-        setIdx((i) => (i + 1) % chats.length);
-        setShown(0);
-        setOut(false);
-      };
-    } else if (shown < n) {
-      wait = shown === 0 ? 500 : STEP;
-      next = () => setShown((s) => s + 1);
-    } else {
-      wait = HOLD;
-      next = () => setOut(true);
+    const el = root.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      // no way to tell: run (the clock only starts once the phone is "seen")
+      const id = window.setTimeout(() => setVisible(true), 0);
+      return () => window.clearTimeout(id);
     }
-    const id = window.setTimeout(next, wait);
-    return () => window.clearTimeout(id);
-  }, [live, idx, shown, out, chats]);
+    const io = new IntersectionObserver((es) => setVisible(es.some((e) => e.isIntersecting)));
+    io.observe(el);
+    return () => io.disconnect();
+  }, [setVisible]);
   const chat = chats[idx];
   return (
-    <div className="h3-stack" data-out={out ? "" : undefined} data-part="chat-stack" data-lang={chat.code}>
-      <PhoneChat name={chat.name} sub={sub} placeholder={placeholder} theme="auto" keepFrame>
-        <span className="h3-stack-chip" lang={chat.code} data-part="stack-lang">
-          {chips[idx]}
-        </span>
-        <PpDay>{chat.day}</PpDay>
-        {chat.lines.slice(0, shown).map((l, i) => (
-          <PpBubble key={`${idx}-${i}`} from={l.from} tail={i === 0 || chat.lines[i - 1].from !== l.from} time={l.time} ticks={l.from === "me" ? "read" : undefined}>
-            <span lang={chat.code}>{l.text}</span>
-          </PpBubble>
-        ))}
-      </PhoneChat>
+    <div ref={root} className="h3-stack" data-phase={phase} data-out={phase === "out" ? "" : undefined} data-paused={!visible || phase !== "call" ? "" : undefined} data-part="chat-stack" data-lang={chat.code}>
+      {/* every conversation's two screens sit in the same grid cell (only the current one shows): the box is as tall as the tallest of them, so there is no empty band under a short chat and nothing moves when the language changes */}
+      <div className="h3-duo">
+        {chats.map((c, i) => {
+          const cur = i === idx;
+          const callShown = cur && phase === "call" ? n : c.call.lines.length;
+          const line = c.call.lines[Math.max(0, callShown - 1)];
+          const callOn = cur && (phase === "call" || phase === "ended");
+          const chatOn = cur && (phase === "chat" || phase === "out");
+          return (
+            <React.Fragment key={c.code}>
+              <div className="h3-duo-call" data-part="stack-call" data-shown={callShown} data-on={callOn ? "" : undefined} data-cur={cur ? "" : undefined} aria-hidden={cur ? undefined : true} inert={!cur}>
+                <DarkPhone part="dark-phone">
+                  <div className="h3-dp-call">
+                    <span className="h3-dp-av" aria-hidden="true">
+                      {[...c.name][0]}
+                    </span>
+                    <p className="h3-dp-name">{c.name}</p>
+                    <p className="h3-dp-sub">
+                      {pad(0)}:{pad(callShown * 7)} · {c.place}
+                    </p>
+                    <div className="h3-dp-wave" aria-hidden="true">
+                      {[0, 1, 2, 3, 4, 5, 6].map((k) => (
+                        <i key={k} />
+                      ))}
+                    </div>
+                    <p className="h3-dp-live">{cur && phase === "call" ? c.call.live : c.call.ended}</p>
+                    <div className="h3-dp-capbox">
+                      {line ? (
+                        <p key={`${i}-${callShown}`} className="h3-dp-cap" data-from={line.from} lang={c.code}>
+                          <span className="h3-dp-who" lang="en">
+                            {line.from === "them" ? AI_LABEL : c.call.you}
+                          </span>
+                          {line.text}
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className="h3-dp-btns" aria-hidden="true">
+                      {icons.callButtons}
+                    </div>
+                  </div>
+                </DarkPhone>
+              </div>
+              <div className="h3-duo-chat" data-part="stack-chat" data-shown={cur && phase === "chat" ? n : c.lines.length} data-on={chatOn ? "" : undefined} data-cur={cur ? "" : undefined} aria-hidden={cur ? undefined : true} inert={!cur}>
+                <DarkPhone part="dark-phone">
+                  <div className="pp h3-dp-chat" data-pp-theme="dark" data-pp-variant="peek">
+                    <div className="pp-head">
+                      <span className="h3-dp-back" aria-hidden="true" />
+                      <span className="pp-avatar" aria-hidden="true">
+                        {[...c.name][0]}
+                      </span>
+                      <div className="pp-who">
+                        <p className="pp-name">{c.name}</p>
+                        <p className="pp-sub">{sub}</p>
+                      </div>
+                      <span className="pp-head-icons">{icons.headIcons}</span>
+                    </div>
+                    <div className="pp-body">
+                      <PpDay>{c.day}</PpDay>
+                      {c.lines.map((l, j) => (
+                        <PpBubble key={`${i}-${j}`} from={l.from} tail={j === 0 || c.lines[j - 1].from !== l.from} time={l.time} ticks={l.from === "me" ? "read" : undefined}>
+                          <span lang={c.code}>{l.text}</span>
+                        </PpBubble>
+                      ))}
+                    </div>
+                    <div className="pp-input" aria-hidden="true">
+                      <span className="pp-input-box">{placeholder}</span>
+                      <span className="pp-mic">{icons.mic}</span>
+                    </div>
+                  </div>
+                </DarkPhone>
+              </div>
+            </React.Fragment>
+          );
+        })}
+      </div>
       <p className="h3-stack-cap" aria-live="polite" data-part="stack-caption">
         {captions[idx]}
       </p>
