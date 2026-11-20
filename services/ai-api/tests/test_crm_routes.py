@@ -734,3 +734,20 @@ def test_a_closed_real_data_gate_is_a_stable_409_with_a_fixed_message(
     assert response.json()["error"]["code"] == "real_data_gate_closed"
     assert "CANARY" not in response.text and "gmail" not in response.text
     assert "+00" in response.json()["error"]["message"]
+
+
+def test_lifting_a_stop_the_customer_asked_for_is_a_409_stopped_by_customer(
+    env: tuple[TestClient, FakeCrmRepository],
+) -> None:
+    """21 Nov 2026: a STOP the customer asked for can never be lifted, even by the Owner (SM985)."""
+    from app.crm.repository import StoppedByCustomerError
+
+    client, crm = env
+    cid = seed(crm, "contacts")
+    crm.rpc_error = StoppedByCustomerError("SM985")
+    r = client.post(
+        url("contacts", suffix=f"/{cid}/lift-suppression"),
+        headers=auth("a_owner"),
+        json={"evidence_type": "written", "evidence_ref": "letter:1"},
+    )
+    assert r.status_code == 409 and r.json()["error"]["code"] == "stopped_by_customer"

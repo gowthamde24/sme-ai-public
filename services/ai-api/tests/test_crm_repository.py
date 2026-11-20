@@ -341,6 +341,11 @@ def test_an_id_that_exists_only_in_another_tenant_is_the_same_conflict() -> None
         ),
         (
             400,
+            {"code": "SM985", "message": "stopped by the customer"},
+            r.StoppedByCustomerError,
+        ),
+        (
+            400,
             {"code": "SM401", "message": "real data is not accepted in this workspace yet"},
             r.RealDataGateError,
         ),

@@ -4653,6 +4653,7 @@
       ],
       "areas": [
         "jobs",
+        "main",
         "outbox"
       ],
       "default_message": "This customer asked us to stop. Nothing can be sent until they write again.",
