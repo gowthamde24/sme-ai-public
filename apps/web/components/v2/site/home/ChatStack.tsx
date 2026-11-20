@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { PpBubble, PpDay } from "@/components/v2/PhonePreview";
 
-import { AI_LABEL, type StackChat } from "./chat-stack";
+import { AI_LABEL, type StackChat } from "./chat-types";
 import { DarkPhone } from "./DarkPhone";
 import { useStack } from "./StackState";
 

@@ -4,20 +4,10 @@
  * (Telugu, Hindi, Kannada, English); the page claims no other. The first line of the call says who is speaking ("the AI assistant of <business>"). Spoken style, English business words in Latin. The business names are made up.
  * DRAFT (owner to read): the Telugu, Hindi and Kannada lines are drafts, listed in TELUGU-DRAFT.md and TRANSLATION-REVIEW.md.
  */
-export type StackCode = "te" | "hi" | "kn" | "en";
-export type StackLine = { from: "me" | "them"; time: string; text: string };
-export type CallLine = { from: "me" | "them"; text: string };
-export type StackChat = {
-  code: StackCode;
-  name: string;
-  /** The city shown with the call's timer. */
-  place: string;
-  day: string;
-  /** The call screen's own words, in the conversation's language: the customer's label, the live chip and the ended chip. */
-  call: { you: string; live: string; ended: string; lines: CallLine[] };
-  lines: StackLine[];
-};
-export const AI_LABEL = "AI assistant";
+import { AI_LABEL, type CallLine, type StackChat, type StackCode, type StackLine } from "./chat-types";
+
+export { AI_LABEL };
+export type { CallLine, StackChat, StackCode, StackLine };
 
 /**
  * TODAY'S product announces itself as an AI when it greets, so the demo's first call line says "the AI assistant of <business>" and the FAQ says so (owner, informed, 21 Nov 2026). The product is getting a per-business, per-job
