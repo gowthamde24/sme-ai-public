@@ -10,4 +10,5 @@
 [data-ui="v2"] .h3-wm-b3 { --wm-c: #e29a7a; left: calc(73 * var(--u)); top: calc(207 * var(--u)); width: calc(174 * var(--u)); }
 [data-ui="v2"][data-theme="dark"] .h3-wm-b1 { --wm-c: #ff9d6e; }
 @media (prefers-color-scheme: dark) { [data-ui="v2"]:not([data-theme="light"]) .h3-wm-b1 { --wm-c: #ff9d6e; } }
+[data-ui="v2"] .h3-wm-t::before { content: attr(data-name); }
 [data-ui="v2"] .h3-wm-t { left: calc(236 * var(--u)); top: calc(18 * var(--u)); padding-bottom: calc(60 * var(--u)); font-size: calc(268 * var(--u)); line-height: 1; font-weight: 700; letter-spacing: calc(-14 * var(--u)); white-space: nowrap; color: transparent; -webkit-background-clip: text; background-clip: text; background-image: radial-gradient(circle at center, var(--v2-ink) 0 calc(var(--wm-step) * 0.37), transparent calc(var(--wm-step) * 0.42)); }

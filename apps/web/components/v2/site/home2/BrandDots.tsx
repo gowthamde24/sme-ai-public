@@ -159,7 +159,7 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
         <span className="h3-wm-bar h3-wm-b1" />
         <span className="h3-wm-bar h3-wm-b2" />
         <span className="h3-wm-bar h3-wm-b3" />
-        <span className="h3-wm-t">{BRAND_NAME}</span>
+        <span className="h3-wm-t" data-name={BRAND_NAME} />
       </div>
       {/* as tall as the drawing down to the letters' foot (266 of 300 units): the letters stand on the page's bottom edge, with the floor line just under them */}
       <canvas ref={canvas} role="img" aria-label={label} onClick={again} className="absolute inset-0 block size-full cursor-pointer" data-part="brand-dots" />

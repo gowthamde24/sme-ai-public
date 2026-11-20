@@ -394,30 +394,7 @@
   [data-ui="v2"] .h3-how-grid > .h3-found { width: 100%; }
 }
 
-/* speed: everything below the first screen skips its style and layout work until it is near the window (content-visibility), with the section's known CONTENT height reserved (its padding is outside it) so nothing moves when it is drawn; the numbers are the measured content heights at 390, 768 and 1440 px, and "auto" then remembers the real one. Anchors, find-in-page and the sticky bar's observer still work: the box is there, only its insides wait. */
-[data-ui="v2"] [data-page="home"] :is(#ask, #calc, #lead-finder, #pricing, #faq, #join, #demo) { content-visibility: auto; } /* (not the footer: its wordmark must be there in a picture of the whole page) */
-[data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 481px; }
-[data-ui="v2"] [data-page="home"] #calc { contain-intrinsic-size: auto 604px; }
-[data-ui="v2"] [data-page="home"] #lead-finder { contain-intrinsic-size: auto 600px; }
-[data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 553px; }
-[data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 258px; }
-[data-ui="v2"] [data-page="home"] :is(#join, #demo) { contain-intrinsic-size: auto 183px; }
-@media (min-width: 768px) {
-  [data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 511px; }
-  [data-ui="v2"] [data-page="home"] #calc { contain-intrinsic-size: auto 748px; }
-  [data-ui="v2"] [data-page="home"] #lead-finder { contain-intrinsic-size: auto 741px; }
-  [data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 392px; }
-  [data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 269px; }
-  [data-ui="v2"] [data-page="home"] :is(#join, #demo) { contain-intrinsic-size: auto 139px; }
-}
-@media (min-width: 1200px) {
-  [data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 549px; }
-  [data-ui="v2"] [data-page="home"] #calc { contain-intrinsic-size: auto 576px; }
-  [data-ui="v2"] [data-page="home"] #lead-finder { contain-intrinsic-size: auto 651px; }
-  [data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 393px; }
-  [data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 307px; }
-  [data-ui="v2"] [data-page="home"] :is(#join, #demo) { contain-intrinsic-size: auto 171px; }
-}
+/* (no content-visibility on the sections below the first screen: a picture of the whole page, find-in-page and the audits must all see them drawn; the page's speed comes from the lighter DOM, the scenes drawn only when near, and the fonts) */
 /* the cookie bar and the sticky "Get free early access" bar stack: the bar goes above the notice while it is open */
 html:has([data-cookie="notice"]) [data-ui="v2"] .h3-sticky { bottom: 56px; }
 
