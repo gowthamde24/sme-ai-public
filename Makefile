@@ -1,4 +1,4 @@
-.PHONY: ci-local ci-hooks hooks test-integration-run eval-run e2e-new-owner seed-demo-school docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-whatsapp staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: ci-local ci-hooks hooks test-integration-run eval-run e2e-new-owner seed-demo-school docker-up deploy-staging drift-staging staging-status rollback-staging staging-latest staging-smoke staging-whatsapp staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -434,6 +434,9 @@ docker-up:
 STAGING_API = https://sme-api-620338396268.asia-south1.run.app
 STAGING_WEB = https://staging.stack19.com
 STAGING_REF = uiallwgywitryxatcqxf
+# the declared settings of the web service and the worker job against what is live (deploy/drift.py; read-only)
+drift-staging:
+	python3 deploy/drift.py check staging web project-2757c07e-37d2-4167-88f asia-south1 && python3 deploy/drift.py check staging worker project-2757c07e-37d2-4167-88f asia-south1
 deploy-staging:
 	./deploy/staging.sh deploy $(or $(WHAT),all) $(if $(DRY),--dry-run,)
 staging-status:
