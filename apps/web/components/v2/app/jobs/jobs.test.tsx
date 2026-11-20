@@ -19,6 +19,11 @@ const job = (kind: string) => MOCK_JOBS.find((j) => j.kind === kind)!;
 const acts = (over = {}) => ({ setEnabled: vi.fn(async (id: string, enabled: boolean) => ({ ok: true as const, data: { id, enabled, status: enabled ? ("running" as const) : ("paused" as const) } })), ...over });
 
 describe("a job row", () => {
+  it("its link stacks the name, the result line and the chips in a column (the shared `main a` tap-target rule would make them a row: staging 20 Nov)", () => {
+    render(<JobRow job={job("speed_to_lead")} words={words} base={BASE} actions={acts()} />);
+    const link = document.querySelector('[data-job-kind="speed_to_lead"] a') as HTMLElement;
+    expect(link.className).toMatch(/\bflex-col\b/);
+  });
   it("shows the plain name, the ONE result line from its code and numbers, and no chip for a job that is simply running", () => {
     render(<JobRow job={job("speed_to_lead")} words={words} base={BASE} actions={acts()} />);
     const row = document.querySelector('[data-job-kind="speed_to_lead"]') as HTMLElement;
