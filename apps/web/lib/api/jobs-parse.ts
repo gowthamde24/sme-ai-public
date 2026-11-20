@@ -1,7 +1,8 @@
 import { bad, bool, int, iso, list, oneOf, optInt, optIso, optStr, rec, str, uuid, word } from "./shape";
 import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobMessage, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
 import type { ExcludedCode, JobPlan, PlanBasisCode, PlanCost, PlanSearch, Suggestion } from "@/lib/jobs/plan";
-import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, SEARCH_AREA_MAX, WHEN_STARTS } from "@/lib/jobs/plan";
+import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "@/lib/jobs/plan";
+import { SEARCH_AREA_MAX } from "@/lib/jobs/plan-const";
 import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES, type JobWho, type WhoNumberInfo } from "@/lib/jobs/who";
 import { JOB_KINDS, JOB_STATUSES, NEEDS_TARGETS, PLAN_GATES, type Job, type JobParams, type JobSpeaks, type NeedsYouItem, type TodayJobs } from "@/lib/jobs/types";
 

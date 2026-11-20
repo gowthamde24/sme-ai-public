@@ -1,3 +1,4 @@
+import type { SEARCH_FIT_BARS, SEARCH_RESULTS } from "./plan-const";
 import type { JobKind } from "./types";
 
 /**
@@ -33,9 +34,6 @@ export type PlanCost = {
 export type PlanMessagesCost = { count: number; rupees: number | null; included: boolean };
 
 /** What a Lead Finder (researcher) plan will look for (`Plan.search`): the area in the owner's words (default: the shop's town), how many results (5, 10 or 20) and the fit bar (the lowest fit, 0 to 100, a prospect needs to be shown; 60, 70, 80 or 90 are offered). */
-export const SEARCH_RESULTS = [5, 10, 20] as const;
-export const SEARCH_FIT_BARS = [60, 70, 80, 90] as const;
-export const SEARCH_AREA_MAX = 60;
 export type PlanSearch = { area: string; results: number; fitBar: number };
 /** What may be changed on a search plan (`PATCH /jobs/plan/{id} {search: {...only what changed}}`). */
 export type SearchPatch = { area?: string; results?: (typeof SEARCH_RESULTS)[number]; fitBar?: (typeof SEARCH_FIT_BARS)[number] };
@@ -44,7 +42,6 @@ export type SearchPatch = { area?: string; results?: (typeof SEARCH_RESULTS)[num
 export const PLAN_BASES = ["enquired_calls", "bought_calls", "consented_messages", "named_list", "said_yes_offer", "none"] as const;
 export type PlanBasisCode = (typeof PLAN_BASES)[number];
 /** What may block a plan (a 200 with `blockers`, never a 422): the codes the web has a sentence for (any other code gets the plain one). */
-export const PLAN_BLOCKERS = ["unclear_who", "no_number", "no_whatsapp", "minutes_used", "search_limit", "area_needed"] as const;
 
 export type PlanFinds = { key: string; text: string | null };
 
@@ -80,7 +77,6 @@ export const planBlocked = (p: JobPlan): boolean => p.blockers.length > 0;
  */
 export type PlanInput = { text: string } | { kind: JobKind } | { as: "whatsapp"; planId: string } | { templateId: string; ask: string };
 /** The id of a job template in jobs.json (snake_case, as every pack writes it). */
-export const TEMPLATE_ID = /^[a-z][a-z0-9_]{0,79}$/;
 export const PLAN_TEXT_MIN = 3;
 export const PLAN_TEXT_MAX = 500;
 

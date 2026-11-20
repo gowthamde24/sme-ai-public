@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-import { SEARCH_AREA_MAX, SEARCH_FIT_BARS, SEARCH_RESULTS, type PlanSearch as Search, type SearchPatch } from "@/lib/jobs/plan";
+import type { PlanSearch as Search, SearchPatch } from "@/lib/jobs/plan";
+import { SEARCH_AREA_MAX, SEARCH_FIT_BARS, SEARCH_RESULTS } from "@/lib/jobs/plan-const";
 
 import type { Say } from "../words";
 import { Choose, Sentence, Val } from "./rules/parts";
