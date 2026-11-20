@@ -21,7 +21,7 @@ Allow mixing English words (Telugu-English, Hindi-English)
 [button type=submit: Save]
 {label="Preview"}
 ### Preview
-Priya · AI assistant “ Hello! I'm Priya, the AI assistant at Demo Silks (synthetic). I'm calling about your enquiry. Shall I send the details on WhatsApp? ” Unless you turn it off in the opening line, every call opens by saying it is an AI assistant, and whose it is. Either way the assistant never says it is a person, and answers honestly if asked.
+Priya · AI assistant “ Hello! I'm Priya, the AI assistant at Demo Silks (synthetic). I'm calling about your enquiry. Shall I send the details on WhatsApp? ” A call opens by saying it is an AI assistant only if you turned on 'Say AI assistant when greeting'. Either way the assistant never says it is a person, and answers honestly if asked.
 [button type=button disabled: ▶ Hear it]
 Voice samples come with early access.
 [button type=button: Try a test call (a simulation)]

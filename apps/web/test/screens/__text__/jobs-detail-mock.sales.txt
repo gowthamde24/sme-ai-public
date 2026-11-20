@@ -4,7 +4,7 @@ When someone enquires, your assistant calls them within minutes, answers their q
 [button type=button disabled: Call every new enquiry right away]
 {label="Who talks"}
 ## Who talks
-Always says it is an AI C Call every new enquiry right away Customers hear: “the AI assistant of Neelambari Silks”
+Says it is an AI if asked C Call every new enquiry right away Customers hear: “the AI assistant of Neelambari Silks”
 {label="This job speaks … in a … voice from …."} This job speaks
 <select label="This job speaks … in a … voice from …. (1)" disabled>
   options: the customer’s language=customer | English=en | Telugu=te* | Hindi=hi | Kannada=kn
@@ -12,7 +12,7 @@ in a
 <select label="This job speaks … in a … voice from …. (2)" disabled>
   options: friendly* | respectful | short and quick=quick
 voice from the shop number .
-friendly “Hi Suresh, …” · +91 98480 xxx10 What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am → call at 9:30 am. Call every new enquiry right away talks in Telugu from the shop number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.
+friendly “Hi Suresh, …” · +91 98480 xxx10 What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am → call at 9:30 am. Call every new enquiry right away talks in Telugu from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.
 ## When
 Call new enquiries
 <select label="Call new enquiries …" disabled>
@@ -58,7 +58,7 @@ Call from
 <checkbox label="Tell me on WhatsApp when a store visit is booked" disabled checked>
 Tell me on WhatsApp when a store visit is booked
 <checkbox label="Stop a customer's job after 3 tries" disabled checked>
-Stop a customer's job after 3 tries These always stay on: STOP, quiet hours and the AI line. They never change here. [All settings for this job](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/rules?all=1)
+Stop a customer's job after 3 tries These always stay on: STOP and quiet hours. They never change here. [All settings for this job](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/rules?all=1)
 ## Results
 Last 7 days
 38

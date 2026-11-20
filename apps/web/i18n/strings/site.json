@@ -3402,10 +3402,10 @@
   }
  },
  "hm.trust.3.d": {
-  "en": "It always says it is your business's AI assistant.",
-  "te": "ఇది ఎప్పుడూ మీ వ్యాపారం యొక్క AI అసిస్టెంట్ అని చెప్తుంది.",
-  "hi": "यह हमेशा बताता है कि यह आपके कारोबार का AI असिस्टेंट है।",
-  "kn": "ಇದು ಯಾವಾಗಲೂ ನಿಮ್ಮ ವ್ಯಾಪಾರದ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "en": "If a customer asks, it always says it is your business's AI assistant.",
+  "te": "కస్టమర్ అడిగితే, ఇది ఎప్పుడూ మీ వ్యాపారం యొక్క AI అసిస్టెంట్ అనే చెప్తుంది.",
+  "hi": "ग्राहक पूछे तो यह हमेशा बताता है कि यह आपके कारोबार का AI असिस्टेंट है।",
+  "kn": "ಗ್ರಾಹಕರು ಕೇಳಿದರೆ ಇದು ಯಾವಾಗಲೂ ನಿಮ್ಮ ವ್ಯಾಪಾರದ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11264,16 +11264,15 @@
   }
  },
  "h4.faq.2.a": {
-  "en": "Yes. It always says it is an AI assistant when it greets.",
-  "te": "అవును. Greet చేసేటప్పుడు ఎప్పుడూ తాను AI assistant అని చెప్తుంది.",
-  "hi": "हाँ। Greet करते समय यह हमेशा बताता है कि यह AI assistant है।",
-  "kn": "ಹೌದು. Greet ಮಾಡುವಾಗ ಯಾವಾಗಲೂ ತಾನು AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "en": "Yes. If someone asks, it always says it is an AI assistant, and you can have it say so when it greets too.",
+  "te": "అవును. ఎవరైనా అడిగితే, తాను AI assistant అని ఎప్పుడూ చెప్తుంది; greet చేసేటప్పుడే చెప్పాలంటే అదీ మీరు ఆన్ చేయవచ్చు.",
+  "hi": "हाँ। कोई पूछे तो यह हमेशा बताता है कि यह AI assistant है, और चाहें तो greet करते समय भी बताने को चालू कर सकते हैं।",
+  "kn": "ಹೌದು. ಯಾರಾದರೂ ಕೇಳಿದರೆ ತಾನು AI assistant ಎಂದು ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ, ಮತ್ತು greet ಮಾಡುವಾಗಲೂ ಹೇಳುವಂತೆ ನೀವು ಆನ್ ಮಾಡಬಹುದು.",
   "ta": "ஆம். வாழ்த்தும்போது எப்போதும் தான் AI assistant என்று சொல்லும்.",
   "status": {
    "te": "draft",
    "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
+   "kn": "draft"
   }
  },
  "h4.faq.3.q": {

@@ -18,13 +18,20 @@ Pick a voice for each language. Customers hear it on calls. Test mode: your choi
 [button type=button: हिन्दी]
 [button type=button: ಕನ್ನಡ]
 legend: Voice
-{role=radiogroup label="Voice"}
+{role=radiogroup label="Voice"} Women
 <radio name=vc-voice label="RamyaWomanRecommendedIn use" value=te-ramya checked>
 Ramya Woman Recommended In use
 [button type=button: Hear Ramya]
 <radio name=vc-voice label="KavithaWoman" value=te-kavitha>
 Kavitha Woman
 [button type=button: Hear Kavitha]
+Men
+<radio name=vc-voice label="KarthikManRecommended" value=te-karthik>
+Karthik Man Recommended
+[button type=button: Hear Karthik]
+<radio name=vc-voice label="NaveenMan" value=te-naveen>
+Naveen Man
+[button type=button: Hear Naveen]
 {label="Practice"}
 ## Practice
 Try your assistant the way a customer would.

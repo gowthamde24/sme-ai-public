@@ -1,7 +1,8 @@
 import { CALL_LANGS, DRAFT_LANGS, type CallLang } from "@/lib/assistant/types";
+import { parseSayAi } from "@/lib/talk-training/speaks";
 import { validLine, type CampaignOpeningLine, type Lines, type OpeningLine, type Preview } from "@/lib/opening-line/types";
 
-import { ApiContractError, ApiRequestError, apiBinaryRequest, apiRequest } from "./client";
+import { ApiAuthError, ApiContractError, ApiRequestError, apiBinaryRequest, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 
 /**
@@ -64,15 +65,29 @@ const linesOf = (raw: Raw, campaignId: string | null): Lines => {
   return out;
 };
 
-/** The workspace's own: its texts, the default of each language (with or without the mention, as the switch now stands) and the switch. */
-export const workspaceOf = (raw: Raw): OpeningLine => ({ lines: linesOf(raw, null), defaults: defaultsFor(raw, raw.mentionAi), mentionAi: raw.mentionAi, fake: false });
+/**
+ * The workspace's own: its texts, the default of each language and `mentionAi`. Since 21 Nov 2026 the greeting follows the business setting "Say 'AI assistant' when greeting" (`say_ai_when_greeting` of `GET /how-assistant-speaks`, default OFF: docs/contracts/greeting-disclosure.md), NOT the old
+ * `mention_ai` of this endpoint, which no call or preview reads any more (voices-tones.md section 10). So the default of each language is the one with or without the AI sentence as THAT switch stands, and `mentionAi` says what that switch says.
+ */
+export const workspaceOf = (raw: Raw, sayAi: boolean): OpeningLine => ({ lines: linesOf(raw, null), defaults: defaultsFor(raw, sayAi), mentionAi: sayAi, fake: false });
+
+/** The business's switch "Say 'AI assistant' when greeting" (GET /how-assistant-speaks): false when it is off, not saved, or the API does not have it (nothing is guessed to be on). */
+export async function readSayAi(token: string, tenantId: string): Promise<boolean> {
+  try {
+    const json = await apiRequest(`/v1/tenants/${tenantId}/how-assistant-speaks`, token);
+    return parseSayAi(isRecord(json) ? json.say_ai_when_greeting : null)?.value === true;
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    return false;
+  }
+}
 
 /** A campaign's own texts and switch (null = follows the business) and what the dialer will use. */
-export function campaignOf(raw: Raw, campaignId: string): CampaignOpeningLine {
+export function campaignOf(raw: Raw, campaignId: string, sayAi: boolean): CampaignOpeningLine {
   const own = linesOf(raw, campaignId);
   const ws = linesOf(raw, null);
   const override = raw.overrides.has(campaignId) ? (raw.overrides.get(campaignId) as boolean) : null;
-  const mention = override ?? raw.mentionAi;
+  const mention = sayAi; // the business's switch: a campaign's old override is passed through but no call reads it (a per-job choice comes with the full S2)
   const defaults = defaultsFor(raw, mention);
   const lines = Object.fromEntries(CALL_LANGS.map((l) => [l, own[l] ?? ws[l] ?? defaults[l]])) as Record<CallLang, string>;
   return { lines: own, mentionAi: override, effective: { lines, mentionAi: mention } };
@@ -84,23 +99,27 @@ const putLine = async (token: string, tenantId: string, language: string, campai
 const putMention = async (token: string, tenantId: string, campaignId: string | null, mentionAi: boolean | null): Promise<Raw> =>
   parseRaw(await apiRequest(`${aiBase(tenantId)}/mention-ai`, token, { method: "PUT", body: JSON.stringify({ mention_ai: mentionAi, ...(campaignId ? { campaign_id: campaignId } : {}) }) }));
 
-export const getOpeningLine = async (token: string, tenantId: string): Promise<OpeningLine> => workspaceOf(await readRaw(token, tenantId));
+export const getOpeningLine = async (token: string, tenantId: string): Promise<OpeningLine> => {
+  const raw = await readRaw(token, tenantId);
+  return workspaceOf(raw, await readSayAi(token, tenantId));
+};
 
 /** One request per language that changed, then the switch; the answer of the last is the whole picture. `lines`: a text, or null = back to the default. */
 export async function putOpeningLine(token: string, tenantId: string, lines: Partial<Record<CallLang, string | null>>, mentionAi: boolean): Promise<OpeningLine> {
   for (const [language, text] of Object.entries(lines)) if (text !== undefined) await putLine(token, tenantId, language, null, text);
-  return workspaceOf(await putMention(token, tenantId, null, mentionAi));
+  return workspaceOf(await putMention(token, tenantId, null, mentionAi), await readSayAi(token, tenantId));
 }
 
 export async function getCampaignOpeningLine(token: string, tenantId: string, campaignId: string): Promise<CampaignOpeningLine> {
   checkCampaign(campaignId);
-  return campaignOf(await readRaw(token, tenantId), campaignId);
+  const raw = await readRaw(token, tenantId);
+  return campaignOf(raw, campaignId, await readSayAi(token, tenantId));
 }
 
 export async function putCampaignOpeningLine(token: string, tenantId: string, campaignId: string, lines: Partial<Record<CallLang, string | null>>, mentionAi: boolean | null): Promise<CampaignOpeningLine> {
   checkCampaign(campaignId);
   for (const [language, text] of Object.entries(lines)) if (text !== undefined) await putLine(token, tenantId, language, campaignId, text);
-  return campaignOf(await putMention(token, tenantId, campaignId, mentionAi), campaignId);
+  return campaignOf(await putMention(token, tenantId, campaignId, mentionAi), campaignId, await readSayAi(token, tenantId));
 }
 
 /** The seconds a WAV lasts, from its header (the byte rate and the size); 4 when the header is not the plain kind. */

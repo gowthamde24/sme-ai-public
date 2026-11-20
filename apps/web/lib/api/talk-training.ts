@@ -23,7 +23,8 @@ export function parseTalkTraining(json: unknown): TalkTrainingState {
   if (!isRecord(json) || typeof json.saved !== "boolean" || !Array.isArray(json.rules)) throw new ApiContractError("Unexpected talk-training body.");
   const training = fromApi(json.training);
   const defaults = fromApi(json.defaults);
-  const rules = json.rules.filter((r): r is string => typeof r === "string" && r.trim() !== "" && r.length <= 400).slice(0, 20);
+  // (a rule that says the assistant ALWAYS announces itself as an AI is left out: it is true only when asked, and the greeting follows "Say 'AI assistant' when greeting"; docs/contracts/greeting-disclosure.md)
+  const rules = json.rules.filter((r): r is string => typeof r === "string" && r.trim() !== "" && r.length <= 400 && !/always (says|tells|states)[^.]*\b(AI|robot|bot)\b/i.test(r)).slice(0, 20);
   if (!training || !defaults) throw new ApiContractError("Unexpected talk-training document.");
   return { training, defaults, saved: json.saved, rules, updatedAt: typeof json.updated_at === "string" ? json.updated_at : null };
 }

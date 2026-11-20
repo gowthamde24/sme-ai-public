@@ -53,8 +53,8 @@ function setup(over: Partial<VoiceToneProps> = {}) {
     hearIt,
     ...over,
   };
-  render(<VoiceTone {...props} />);
-  return { actions, speaks, hearIt };
+  const view = render(<VoiceTone {...props} />);
+  return { actions, speaks, hearIt, view, props };
 }
 const root = () => document.querySelector('[data-part="mya-voice-tone"]') as HTMLElement;
 const box = () => document.querySelector('[data-part="vt-greeting-box"]') as HTMLElement;
@@ -82,7 +82,30 @@ describe("Voice & tone, the second card: the greeting and More choices (owner, 1
     expect(screen.getByRole("button", { name: /Hear it/ })).toBeInTheDocument();
     expect(root()).toHaveTextContent("What the customer hears, with made-up names");
     expect(root()).toHaveTextContent("Hello Ravi, this is Priya, the AI assistant of Lakshmi Silks.");
-    expect(root()).toHaveTextContent("Your assistant always says it is an AI assistant.");
+    expect(root()).not.toHaveTextContent("always says it is an AI");
+  });
+
+  it("the suggested greeting FOLLOWS 'Say AI assistant when greeting': the one without the AI sentence when it is off, the one with it when it is on, redrawn when the page is read again (no reload); an own text is never replaced", async () => {
+    const OFF = { en: "Hello {customer}, this is {assistant} from {business}. Do you have a minute?" };
+    const ON = { en: "Hello {customer}, this is {assistant}, the {agent_role} of {business}. Do you have a minute?" };
+    const { view, props } = setup({ suggested: OFF, sayAi: false });
+    expect(box()).toHaveTextContent("this is your assistant's name from your shop name.");
+    expect(box()).not.toHaveTextContent("AI assistant");
+    view.rerender(<VoiceTone {...props} suggested={ON} sayAi />);
+    expect(box()).toHaveTextContent("this is your assistant's name, the AI assistant of your shop name.");
+    expect(root().textContent).not.toMatch(/[{}]/);
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled(); // a new suggestion is not a change of the owner's
+    // the owner's own words stay
+    cleanup();
+    setup({ training: { ...STATE, training: { ...DOC, greeting: { en: "My own words for {customer}, from {business}." } } }, suggested: OFF, sayAi: false });
+    expect(box()).toHaveTextContent("My own words for the customer's name, from your shop name.");
+  });
+
+  it("Hear it sends the business's switch as the AI flag", async () => {
+    stubAudio();
+    const { hearIt } = setup({ suggested: { en: "Hello {customer}, this is {assistant} from {business}. A minute?" }, sayAi: false });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Hear it/ })));
+    expect(hearIt.mock.calls[0][2]).toBe(false);
   });
 
   it("the Telugu greeting shows no braces either", () => {

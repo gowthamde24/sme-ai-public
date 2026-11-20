@@ -3,7 +3,7 @@ Your AI assistant rings one phone from your business line: a short line check, o
 {label="Introduce as, on your test calls"}
 ## Introduce as, on your test calls
 legend: Introduce as
-How the assistant introduces itself on your own test call. It always says it is an AI assistant. Your first name is not in your profile yet, so "My name" cannot be used.
+How the assistant introduces itself on your own test call. Your first name is not in your profile yet, so "My name" cannot be used.
 <radio name=tt-introduce label="The business name (the default)" value=business checked>
 The business name (the default)
 <radio name=tt-introduce label="My name" disabled value=owner>

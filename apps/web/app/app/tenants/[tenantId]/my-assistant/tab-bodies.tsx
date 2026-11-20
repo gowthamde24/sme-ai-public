@@ -130,6 +130,8 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
         business={business}
         assistantName={currentAssistantName()}
         hearIt={openingLineScreens() !== "off" ? previewOpeningLineAction.bind(null, tenantId) : null}
+        sayAi={data.opening ? data.opening.mentionAi : (speaks?.initial.sayAi?.value ?? null)}
+        suggested={data.opening?.defaults ?? null}
         v4={appV4()}
       />
       {you}

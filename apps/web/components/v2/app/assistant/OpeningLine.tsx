@@ -28,7 +28,7 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
   const [lang, setLang] = React.useState<CallLang>(CALL_LANGS.find((l) => lines[l] !== undefined) ?? "te");
   const [own, setOwn] = React.useState<Lines>(lines);
   const [touched, setTouched] = React.useState<CallLang[]>([]);
-  const ai: boolean | null = campaign ? mentionAi : (mentionAi ?? true); // the greeting always says it is an AI assistant (owner, 18 Nov): there is no switch any more, the value is only passed through
+  const ai: boolean | null = campaign ? mentionAi : (mentionAi ?? effectiveAi); // (the old per-campaign switch is passed through untouched; no call or preview reads it any more: voices-tones.md section 10)
   const [busy, startSave] = React.useTransition();
   const [heard, setHeard] = React.useState<"idle" | "busy" | "none" | "error" | "unsupported" | "language">("idle");
   const [said, setSaid] = React.useState<{ lang: CallLang; text: string } | null>(null); // the exact words the sound said
@@ -37,7 +37,7 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
   const player = React.useRef<HTMLAudioElement | null>(null);
 
   const value = own[lang] ?? fallback[lang];
-  const effective = true; // the greeting always says it is an AI assistant (owner, 18 Nov); `ai` and `effectiveAi` are only passed through
+  const effective = effectiveAi; // FOLLOWS THE SWITCH "Say 'AI assistant' when greeting" (Voice & tone): the business setting, default OFF. The suggested texts (`fallback`) are the ones for it.
   const values = { customer: SAMPLE_CUSTOMER[lang], assistant: names.assistant, business: names.business, agent_role: SAMPLE_ROLE[lang] };
   const preview = fillOpening(value, values);
   const unknown = unknownPlaceholders(value);
@@ -176,10 +176,6 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
         {heard === "none" ? <p role="status" className={fieldHelp}>{t("ope.hear.none")}</p> : null}
         {heard === "error" ? <p role="alert" className="mt-1.5 text-sm font-medium text-red-text">{t("ope.hear.err")}</p> : null}
       </div>
-
-      <p className={`${fieldHelp} mt-5`} data-part="ai-always">
-        {t("ope.ai.always")}
-      </p>
 
       {canEdit ? (
         <div className="mt-5 flex flex-wrap items-center gap-3">

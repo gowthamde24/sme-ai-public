@@ -45,14 +45,15 @@ describe("Who talks: the card", () => {
   it("is a plain sentence with the choice inside: Telugu, friendly, the shop number; with the AI line that cannot be switched off", () => {
     view();
     expect(card()).toHaveTextContent("Who talks");
-    expect(card()).toHaveTextContent("Always says it is an AI");
+    expect(card()).toHaveTextContent("Says it is an AI if asked");
+    expect(card()).not.toHaveTextContent("Always says it is an AI");
     expect([pill(1).value, pill(2).value]).toEqual(["te", "friendly"]);
     // the number is the shop's, and only that: a plain word in the sentence, never a choice (the second number is not a product)
     expect(card().querySelector('[data-part="who-number-word"]')).toHaveTextContent("the shop number");
     expect(within(card()).queryByRole("combobox", { name: /\(3\)/ })).toBeNull();
     expect(card().textContent).not.toMatch(/second number/i);
     expect(within(card()).getByText(/This job speaks/)).toBeInTheDocument();
-    expect(card().querySelector('[data-part="who-ai-line"]')).toHaveTextContent("Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.");
+    expect(card().querySelector('[data-part="who-ai-line"]')).toHaveTextContent("If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.");
     // no switch for the AI line anywhere
     expect(card().querySelectorAll('[role="switch"]')).toHaveLength(0);
     expect(card().querySelector('[data-part="who-tone-example"]')).toHaveTextContent("friendly “Hi Suresh, …”");

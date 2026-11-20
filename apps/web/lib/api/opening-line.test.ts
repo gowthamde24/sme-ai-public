@@ -22,43 +22,63 @@ beforeEach(() => {
   getAiAssistant.mockReset();
 });
 
+/** The API as it answers: the opening-line paths with `opening`, the business's "Say AI assistant when greeting" (GET /how-assistant-speaks) with `sayAi` (undefined = the API has no such field). */
+const api = (opening: unknown, sayAi?: boolean) =>
+  apiRequest.mockImplementation(async (path: string) => (String(path).endsWith("/how-assistant-speaks") ? (sayAi === undefined ? { tone: { value: "friendly" } } : { say_ai_when_greeting: { value: sayAi, saved: true } }) : opening));
+const openingCalls = () => apiRequest.mock.calls.filter((c) => !String(c[0]).endsWith("/how-assistant-speaks"));
+
 describe("the opening-line client (C1's API: job DT)", () => {
   it("a draft language the API has no default for yet (Marathi before C1 #355) takes the English default: the editor is never refused for it", async () => {
     const DEF = Object.fromEntries(["en", "te", "hi", "kn", "ta", "ml"].map((l) => [l, { with_ai: `${l}: hello {customer}. I'm an AI assistant.`, without_ai: `${l}: hello {customer}.` }]));
-    apiRequest.mockResolvedValue(body({ defaults: DEF }));
+    api(body({ defaults: DEF }), true);
     expect((await getOpeningLine("tok", T)).defaults.mr).toBe("en: hello {customer}. I'm an AI assistant.");
   });
-  it("reads the workspace's own lines (not a campaign's), the default of each language as the switch stands; Marathi is read (a draft, C1 #355), bn is still left out", async () => {
-    apiRequest.mockResolvedValue(body({ lines: [{ language: "en", campaign_id: null, text: EN }, { language: "en", campaign_id: C, text: CAMP }, { language: "mr", campaign_id: null, text: "नमस्कार {customer}, मी {assistant}." }] }));
+  it("reads the workspace's own lines (not a campaign's); the default of each language FOLLOWS 'Say AI assistant when greeting' (default OFF), never the old mention_ai; Marathi is read (a draft, C1 #355), bn is still left out", async () => {
+    api(body({ mention_ai: true, lines: [{ language: "en", campaign_id: null, text: EN }, { language: "en", campaign_id: C, text: CAMP }, { language: "mr", campaign_id: null, text: "नमस्कार {customer}, मी {assistant}." }] }), false);
     const got = await getOpeningLine("tok", T);
     expect(apiRequest).toHaveBeenCalledWith(`${AI}/opening-line`, "tok");
+    expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/how-assistant-speaks`, "tok");
     expect(got.lines).toEqual({ en: EN, mr: "नमस्कार {customer}, मी {assistant}." });
-    expect(got.mentionAi).toBe(true);
-    expect(got.defaults.te).toBe("te: hello {customer}. I'm an AI assistant.");
-    apiRequest.mockResolvedValue(body({ mention_ai: false }));
-    expect((await getOpeningLine("tok", T)).defaults.te).toBe("te: hello {customer}.");
+    expect(got.mentionAi).toBe(false); // the old mention_ai was true: it is not read
+    expect(got.defaults.te).toBe("te: hello {customer}.");
+    api(body({ mention_ai: false }), true);
+    const on = await getOpeningLine("tok", T);
+    expect(on.defaults.te).toBe("te: hello {customer}. I'm an AI assistant.");
+    expect(on.mentionAi).toBe(true);
+    api(body({ mention_ai: true }));
+    expect((await getOpeningLine("tok", T)).defaults.te).toBe("te: hello {customer}."); // an API without the field: OFF, never a guess
+    apiRequest.mockImplementation(async (path: string) => {
+      if (String(path).endsWith("/how-assistant-speaks")) throw new Error("down");
+      return body({ mention_ai: true });
+    });
+    expect((await getOpeningLine("tok", T)).mentionAi).toBe(false); // a failed read of the switch: OFF
   });
-  it("saves one request per language that changed (null = back to the default), then the switch", async () => {
-    apiRequest.mockResolvedValue(body({ mention_ai: false }));
+  it("saves one request per language that changed (null = back to the default), then the switch; the answer is drawn with the business's switch", async () => {
+    api(body({ mention_ai: false }), false);
     const got = await putOpeningLine("tok", T, { en: EN, te: null }, false);
-    expect(apiRequest.mock.calls.map((c) => [c[0], c[2].method, c[2].body])).toEqual([
+    expect(openingCalls().map((c) => [c[0], c[2].method, c[2].body])).toEqual([
       [`${AI}/opening-line`, "PUT", JSON.stringify({ language: "en", text: EN })],
       [`${AI}/opening-line`, "PUT", JSON.stringify({ language: "te", text: null })],
       [`${AI}/mention-ai`, "PUT", JSON.stringify({ mention_ai: false })],
     ]);
     expect(got.mentionAi).toBe(false);
   });
-  it("a campaign has its own lines and switch (null follows the business); what the dialer uses falls back campaign, business, default", async () => {
-    apiRequest.mockResolvedValue(body({ lines: [{ language: "en", campaign_id: null, text: EN }, { language: "te", campaign_id: C, text: "నమస్కారం {customer} గారు, ఈ ఆఫర్ గురించి {business} నుంచి." }], campaign_overrides: [{ campaign_id: C, mention_ai: false }] }));
+  it("a campaign has its own lines; what the dialer uses falls back campaign, business, default (with or without the AI sentence as the BUSINESS switch stands; the old override is passed through, not read)", async () => {
+    api(body({ lines: [{ language: "en", campaign_id: null, text: EN }, { language: "te", campaign_id: C, text: "నమస్కారం {customer} గారు, ఈ ఆఫర్ గురించి {business} నుంచి." }], campaign_overrides: [{ campaign_id: C, mention_ai: false }] }), false);
     const got = await getCampaignOpeningLine("tok", T, C);
     expect(got.mentionAi).toBe(false);
     expect(got.lines).toEqual({ te: "నమస్కారం {customer} గారు, ఈ ఆఫర్ గురించి {business} నుంచి." });
     expect(got.effective.mentionAi).toBe(false);
     expect(got.effective.lines.en).toBe(EN); // the business's
     expect(got.effective.lines.hi).toBe("hi: hello {customer}."); // the default without the mention
-    apiRequest.mockReset().mockResolvedValue(body());
+    api(body({ lines: [], campaign_overrides: [{ campaign_id: C, mention_ai: false }] }), true);
+    const on = await getCampaignOpeningLine("tok", T, C);
+    expect(on.effective.mentionAi).toBe(true); // the override says false; the business switch is what counts
+    expect(on.effective.lines.hi).toBe("hi: hello {customer}. I'm an AI assistant.");
+    api(body(), false);
+    apiRequest.mockClear();
     const followed = await putCampaignOpeningLine("tok", T, C, { en: CAMP }, null);
-    expect(apiRequest.mock.calls.map((c) => c[2].body)).toEqual([JSON.stringify({ language: "en", campaign_id: C, text: CAMP }), JSON.stringify({ mention_ai: null, campaign_id: C })]);
+    expect(openingCalls().map((c) => c[2].body)).toEqual([JSON.stringify({ language: "en", campaign_id: C, text: CAMP }), JSON.stringify({ mention_ai: null, campaign_id: C })]);
     expect(followed.mentionAi).toBeNull();
   });
   it("refuses an answer that is not the contract, or holds a text the screens would not accept", async () => {

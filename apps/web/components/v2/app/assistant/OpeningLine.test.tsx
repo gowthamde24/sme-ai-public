@@ -74,17 +74,24 @@ describe("Settings > AI assistant > Opening line", () => {
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Save" })));
     expect(screen.getByRole("alert")).toHaveTextContent("Only the Owner can change this.");
   });
-  it("there is no switch: one line says the assistant always says it is an AI assistant (owner, 18 Nov)", () => {
+  it("there is no switch here and no line claiming the assistant ALWAYS announces itself: the greeting follows 'Say AI assistant when greeting' (Voice & tone), default off", () => {
     draw();
     expect(screen.queryByRole("switch")).toBeNull();
     expect(screen.queryByRole("note")).toBeNull();
-    expect(document.querySelector('[data-part="ai-always"]')).toHaveTextContent("Your assistant always says it is an AI assistant.");
+    expect(document.querySelector('[data-part="ai-always"]')).toBeNull();
+    expect(document.body.textContent ?? "").not.toMatch(/always says it is an AI/i);
   });
-  it("'Hear it' asks for the sound of the FILLED text in the chosen language, always with the AI mention; without sound it says so", async () => {
+  it("'Hear it' asks for the sound of the FILLED text in the chosen language, with the business's switch as the AI flag (off: false; on: true); without sound it says so", async () => {
     draw({ mentionAi: false, effectiveAi: false });
     pick("English");
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Hear it" })));
-    expect(hear).toHaveBeenCalledWith("en", MOCK_DEFAULTS.en, true, false); // the line as it is in the box (placeholders and all): the API fills the real names
+    expect(hear).toHaveBeenCalledWith("en", MOCK_DEFAULTS.en, false, false); // the line as it is in the box (placeholders and all): the API fills the real names
+    cleanup();
+    hear.mockClear();
+    draw({ mentionAi: null, effectiveAi: true });
+    pick("English");
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Hear it" })));
+    expect(hear).toHaveBeenCalledWith("en", MOCK_DEFAULTS.en, true, false);
     expect(screen.getByRole("status")).toHaveTextContent("There is no sound in this mode.");
     expect(screen.getByText(/Plays the line exactly as it is in the box, with your real names\. Nothing is saved\./)).toBeInTheDocument();
   });
