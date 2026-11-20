@@ -39,6 +39,8 @@ export function SellSection({ style, entries: first, words, base, actions, live,
       return list.map((x, k) => (k === i ? (e.style === "products" && x.style === "products" ? { ...e, photo: x.photo, keep: x.keep } : e) : x));
     });
 
+  const removed = (id: string) => setEntries((list) => list.filter((x) => x.id !== id));
+
   const ways: Way[] = [
     { id: "say", icon: <Mic aria-hidden="true" className="size-5" />, href: null },
     { id: "photos", icon: <Camera aria-hidden="true" className="size-5" />, href: live && paths.photos ? `${base}${paths.photos}` : null },
@@ -124,7 +126,7 @@ export function SellSection({ style, entries: first, words, base, actions, live,
         ))}
       </section>
 
-      {work && actions ? <LazyWork style={style} work={work} words={words} base={base} actions={actions} live={live} ownerPrice={ownerPrice} paths={paths} onClose={close} onSaved={saved} /> : null}
+      {work && actions ? <LazyWork style={style} work={work} words={words} base={base} actions={actions} live={live} ownerPrice={ownerPrice} paths={paths} onClose={close} onSaved={saved} onRemoved={removed} /> : null}
     </div>
   );
 }

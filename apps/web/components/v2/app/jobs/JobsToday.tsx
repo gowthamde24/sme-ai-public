@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import type { Job } from "@/lib/jobs/types";
 
+import { MessageSquareWarning } from "lucide-react";
+
 import { makeT, type Words } from "../words";
 import type { JobActions } from "./JobRow";
 import { JobRow } from "./LazyJobRow";
@@ -14,7 +16,7 @@ import type { SheetActions } from "./sheet/types";
 export type TodaySheet = { actions: SheetActions | null; festival: FestivalHint | null };
 
 /** "Running now" on Today (JOBS): what the assistant is doing for the shop, one compact row per job in ONE card: icon, name, the result line, a chip when it needs a look, and its switch. "See all jobs" opens the Jobs page. */
-export function JobsToday({ jobs, words, base, actions, sheet = null }: { jobs: readonly Job[]; words: Words; base: string; actions: JobActions | null; sheet?: TodaySheet | null }) {
+export function JobsToday({ jobs, words, base, actions, sheet = null, messagesToChange = 0 }: { jobs: readonly Job[]; words: Words; base: string; actions: JobActions | null; sheet?: TodaySheet | null; /** How many of the shop's own messages WhatsApp sent back (the Needs-you code `message_needs_change`): one row that opens Chats > Templates. */ messagesToChange?: number }) {
   const t = makeT(words);
   if (jobs.length === 0) return null;
   return (
@@ -33,6 +35,18 @@ export function JobsToday({ jobs, words, base, actions, sheet = null }: { jobs: 
           </Link>
         </span>
       </div>
+      {messagesToChange > 0 ? (
+        <Link href={`${base}/chats/templates`} prefetch={false} data-part="need-message" data-count={messagesToChange} className="jb-press flex min-h-14 items-center gap-3 rounded-2xl border border-[var(--jb-fail-bg)] bg-surface px-4 py-3 no-underline">
+          <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--jb-fail-soft)] text-ink">
+            <MessageSquareWarning className="size-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[16px] font-semibold leading-snug text-ink">{messagesToChange === 1 ? t("jobs.tb.need.one") : t("jobs.tb.need.n", { n: messagesToChange })}</span>
+            <span className="block text-[14px] leading-snug text-muted">{t("jobs.tb.need.sub")}</span>
+          </span>
+          <span className="shrink-0 text-sm font-semibold text-brand-text">{t("jobs.tb.need.open")}</span>
+        </Link>
+      ) : null}
       {sheet?.actions && sheet.festival ? <FestivalSuggestion festival={sheet.festival} words={words} base={base} actions={sheet.actions} /> : null}
       <div className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
         {jobs.map((j) => (

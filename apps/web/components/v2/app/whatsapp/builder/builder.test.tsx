@@ -10,7 +10,7 @@ import type { BuilderActions } from "./builder-types";
 import { OwnMessages } from "./OwnMessages";
 
 afterEach(cleanup);
-const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("jobs.tb.") || k === "today.err.generic"));
+const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("jobs.tb.") || k.startsWith("jobs.kind.") || k === "today.err.generic"));
 const ITEMS = parseOwnMessages(WIRE_OWN_MESSAGES);
 const part = (n: string) => document.querySelector(`[data-part="${n}"]`) as HTMLElement;
 
@@ -211,5 +211,46 @@ describe("sending needs the second step", () => {
     view();
     fireEvent.click(screen.getByRole("button", { name: "Make a new message" }));
     expect(await screen.findByText("Test mode: nothing is sent to WhatsApp and nothing is saved.")).toBeInTheDocument();
+  });
+});
+
+describe("Use it in a job: a plain sentence with the choice inside", () => {
+  const JOBS = [{ id: "66666666-6666-4666-8666-666666666606", kind: "offers", customName: null }, { id: "66666666-6666-4666-8666-666666666605", kind: "store_visits", customName: "Priya" }];
+  const approved = () => document.querySelector('[data-own="approved"]') as HTMLElement;
+  const withJobs = (a: BuilderActions | null, jobs = JOBS) => render(<OwnMessages words={WORDS} items={ITEMS} actions={a} jobs={jobs} secondFactor mock securityHref="/app/security" jobsHref="/app/tenants/t/jobs" lang="en" business="Neelambari Silks" />);
+  it("an approved message offers the jobs that send offers, follow-ups or visits; the sentence has the choice inside", async () => {
+    const use = vi.fn(async (jobId: string, messageId: string | null) => ({ ok: true as const, data: { jobId, messageId } }));
+    withJobs(acts({ use }));
+    expect(within(approved()).queryByRole("link", { name: "Use it in a job" })).toBeNull();
+    fireEvent.click(within(approved()).getByRole("button", { name: "Use it in a job" }));
+    const choice = within(approved()).getByRole("combobox", { name: "Which job" }) as HTMLSelectElement;
+    expect([...choice.options].map((o) => o.textContent)).toEqual(["Send the festival offer to customers who said yes", "Priya"]);
+    expect(approved().querySelector('[data-part="use-in-job"]')?.textContent).toMatch(/^Let .* send this message\.Use it$/);
+    fireEvent.change(choice, { target: { value: JOBS[1].id } });
+    fireEvent.click(within(approved()).getByRole("button", { name: "Use it" }));
+    await waitFor(() => expect(use).toHaveBeenCalledWith(JOBS[1].id, "own-visit-reminder"));
+    expect(await within(approved()).findByText("Priya now sends this message.")).toBeInTheDocument();
+    fireEvent.click(within(approved()).getByRole("button", { name: "Back to the standard message" }));
+    await waitFor(() => expect(use).toHaveBeenLastCalledWith(JOBS[1].id, null));
+    await waitFor(() => expect(within(approved()).getByRole("button", { name: "Use it in a job" })).toBeInTheDocument());
+  });
+  it("only approved messages have it: not one waiting or sent back", () => {
+    withJobs(acts({ use: vi.fn() }));
+    expect(document.querySelectorAll('[data-action="use-in-job"]')).toHaveLength(1);
+  });
+  it("a no from the API (setting_invalid on message_id) is said in plain words and nothing changes on the screen", async () => {
+    const use = vi.fn(async () => ({ ok: false as const, kind: "invalid" as const, error: "That choice was not accepted. Pick another one.", fields: ["message_id"] }));
+    withJobs(acts({ use }));
+    fireEvent.click(within(approved()).getByRole("button", { name: "Use it in a job" }));
+    fireEvent.click(within(approved()).getByRole("button", { name: "Use it" }));
+    expect(await within(approved()).findByText("That choice was not accepted. Pick another one.")).toBeInTheDocument();
+    expect(within(approved()).queryByText(/now sends this message/)).toBeNull();
+  });
+  it("no job that sends it, or a person who only reads: the plain link to the Jobs page it always was", () => {
+    withJobs(acts({ use: vi.fn() }), []);
+    expect(within(approved()).getByRole("link", { name: "Use it in a job" })).toHaveAttribute("href", "/app/tenants/t/jobs");
+    cleanup();
+    withJobs(null);
+    expect(within(approved()).getByRole("link", { name: "Use it in a job" })).toHaveAttribute("href", "/app/tenants/t/jobs");
   });
 });

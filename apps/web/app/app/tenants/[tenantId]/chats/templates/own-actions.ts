@@ -3,8 +3,11 @@
 import { revalidatePath } from "next/cache";
 
 import type { Reply } from "@/components/v2/app/cc/kit";
+import { getLang } from "@/i18n/get-lang";
 import { ApiRequestError } from "@/lib/api/client";
+import { isCanonicalUuid } from "@/lib/api/crm";
 import { failureOf } from "@/lib/api/failure";
+import { patchJob } from "@/lib/api/jobs";
 import { submitOwnMessage, writeOwnMessage } from "@/lib/api/template-builder";
 import { parseTotpCode } from "@/lib/auth/otp";
 import { freshSecondStep } from "@/lib/auth/session";
@@ -14,6 +17,7 @@ import { DRAFT_TEXT_MAX, DRAFT_TEXT_MIN, readMessage, readSubmit, type DraftAnsw
 
 import { DECIDERS, invalid } from "../../retailers/finder-guard";
 import { jobsWho } from "../../jobs/guard";
+import { jobsRefusal } from "../../jobs/refusal";
 
 /**
  * The own WhatsApp messages (JOBS, owner 19 Nov): Owner and Admin only. Writing a draft sends nothing anywhere. Sending to WhatsApp needs the person's two-step code, typed fresh and checked first (the same way Security checks a code before removing an authenticator:
@@ -52,6 +56,28 @@ export async function submitOwnMessageAction(tenantId: string, input: unknown, c
   } catch (error) {
     // the API asks the second factor itself: a refusal says so in our words and links to Security
     if (error instanceof ApiRequestError && error.code === "mfa_required") return { ok: false, kind: "mfa", mfa: true, error: ctx.t("jobs.tb.s5.no_factor") };
+    // `422 checks_failed`: the API ran the same rules and disagrees with ours. The owner changes the message and tries again; we log it (the code only, never the owner's words) so the two sets of rules can be brought together.
+    if (error instanceof ApiRequestError && error.code === "checks_failed") {
+      console.error("own message: our checks and the API's checks disagree (checks_failed); the owner was asked to change the message");
+      return { ok: false, kind: "invalid", code: "checks_failed", error: ctx.t("jobs.tb.s5.checks_failed") };
+    }
     return failureOf(error, ctx.t);
+  }
+}
+
+/**
+ * "Use it in a job": `PATCH /jobs/{id} {message_id: uuid | null}` (contract 1.1 part 1, A8). Only an APPROVED own message of a kind the job sends (offers, followups, store visits) is accepted; the API says no with `422 setting_invalid` (`fields: ["message_id"]`),
+ * which is a plain "That did not work. Nothing was changed". `null` = back to the job's default approved message. Owner and Admin; with JOBS=mock nothing is stored.
+ */
+export async function useOwnMessageAction(tenantId: string, jobId: string, messageId: string | null): Promise<Reply<{ jobId: string; messageId: string | null }>> {
+  const ctx = await jobsWho(tenantId, DECIDERS);
+  if ("ok" in ctx) return ctx;
+  if (typeof jobId !== "string" || !isCanonicalUuid(jobId) || (messageId !== null && !(typeof messageId === "string" && /^[A-Za-z0-9_.:-]{1,80}$/.test(messageId)))) return invalid(ctx.t);
+  try {
+    await patchJob(ctx.token, tenantId, jobId, { messageId });
+    revalidatePath(`/app/tenants/${tenantId}/jobs/${jobId}`);
+    return { ok: true, data: { jobId, messageId } };
+  } catch (error) {
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }

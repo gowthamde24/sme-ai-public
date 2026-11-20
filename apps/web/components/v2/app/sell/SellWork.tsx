@@ -1,21 +1,24 @@
 "use client";
 
-import { ArrowRight, Check, Trash2, X } from "lucide-react";
+import { ArrowRight, Check, Trash2, Upload, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 
 import { COLOURS, MAX_COLOURS } from "@/lib/api/catalogue";
+import { fileKindOf, MAX_FILE_BYTES } from "@/lib/assistant-work/files";
 import { buildEntry, EMPTY, formOf, type Refusal } from "@/lib/sell/forms";
+import { newEntryId } from "@/lib/sell/ids";
 import { BATCH_EXAMPLE, NAME_EXAMPLE, NOTE_EXAMPLE, PLACE_EXAMPLE, SAY_EXAMPLE, SIZE_SHORT } from "@/lib/sell/text";
-import { BOOKING_WORDS, PLACE_WORDS, PROPERTY_STATUSES, QTY_UNITS, SIZE_UNITS, type PriceForm, type SellEntry, type SellForm, type SellStyle } from "@/lib/sell/types";
+import { BOOKING_WORDS, PLACE_WORDS, PROPERTY_STATUSES, QTY_UNITS, SIZE_UNITS, type PriceForm, type SellEntry, type SellForm, type SellNote, type SellStyle } from "@/lib/sell/types";
 
 import { JobChip } from "../ds/JobChip";
 import { MoreBox } from "../jobs/pages/parts";
 import { VoiceMic } from "../voice-input/VoiceMic";
 import { makeT, type Say, type Words } from "../words";
 import { SellRowBody } from "./SellRow";
+import { postSellFile } from "./upload-post";
 import { shortUnit } from "./sell-text";
-import type { SellActions, Work } from "./types";
+import type { SaveExtra, SellActions, Work } from "./types";
 
 const FOCUSABLE = 'a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
 const pill = "min-h-11 rounded-full border border-edge bg-surface-2 px-3.5 text-[16px] font-semibold text-ink outline-none focus:border-brand-edge aria-[invalid=true]:border-red-text";
@@ -25,8 +28,10 @@ const btnQuiet = "jb-press inline-flex min-h-12 items-center justify-center roun
 
 type View =
   | { v: "say" }
-  | { v: "form"; id: string | null; form: SellForm[SellStyle]; prior: SellEntry | null; hint: string | null }
-  | { v: "understood"; entries: SellEntry[]; text: string | null }
+  /** `fresh` = the id of a NEW entry (minted once per opening, or the draft's own): the same one again is a retry, never a second row. */
+  | { v: "form"; id: string | null; fresh: string | null; form: SellForm[SellStyle]; prior: SellEntry | null; hint: string | null; /** the drafts still waiting on the "I understood" card: after this one is saved the card comes back */ back?: SellEntry[] }
+  | { v: "pick"; from: "photos" | "sheet" }
+  | { v: "understood"; entries: SellEntry[]; text: string | null; notes: SellNote[] }
   | { v: "done"; entry: SellEntry; photosPath: string | null; note: boolean }
   | { v: "message"; text: string; href: string | null };
 
@@ -250,7 +255,13 @@ function MoreFields({ style, form, set, t, base, entry, live }: { style: SellSty
       {style === "properties" ? (
         <label className="flex flex-col gap-1.5 text-[15px] text-ink">
           {t("jobs.sell.r.note")}
-          <input type="text" maxLength={120} data-voice="allow" value={(form as SellForm["properties"]).note} onChange={(e) => u("note", e.target.value)} placeholder={NOTE_EXAMPLE} className={nameBox} />
+          <input type="text" maxLength={200} data-voice="allow" value={(form as SellForm["properties"]).note} onChange={(e) => u("note", e.target.value)} placeholder={NOTE_EXAMPLE} className={nameBox} />
+        </label>
+      ) : null}
+      {style === "courses" ? (
+        <label className="flex flex-col gap-1.5 text-[15px] text-ink">
+          {t("jobs.sell.c.description")}
+          <input type="text" maxLength={200} data-voice="allow" value={(form as SellForm["courses"]).description} onChange={(e) => u("description", e.target.value)} className={nameBox} />
         </label>
       ) : null}
       {style === "courses" || style === "pricelist" ? <p className="m-0 text-[14px] leading-snug text-muted">{t(`jobs.sell.more.${style}.help`)}</p> : null}
@@ -262,16 +273,22 @@ function MoreFields({ style, form, set, t, base, entry, live }: { style: SellSty
  * THE WORK SHEET (one lazy chunk; a bottom sheet on the phone, a side panel from 768 px): Say it (a box and the app's own microphone), the add/change form in plain sentences with the choices inside (max 4 choices, the rest under More choices), the "I understood" card
  * (nothing is saved until Save) and the answer to Photos / Sheet in test mode. Every save goes through `actions.save`, which for a product of a real workspace is the OLD catalogue form's save.
  */
-export default function SellWork({ style, work, words, base, actions, live, ownerPrice, paths, onClose, onSaved }: { style: SellStyle; work: Work; words: Words; base: string; actions: SellActions; live: boolean; ownerPrice: boolean; paths: { photos: string | null; sheet: string | null }; onClose: () => void; onSaved: (e: SellEntry) => void }) {
+export default function SellWork({ style, work, words, base, actions, live, ownerPrice, paths, onClose, onSaved, onRemoved }: { style: SellStyle; work: Work; words: Words; base: string; actions: SellActions; live: boolean; ownerPrice: boolean; paths: { photos: string | null; sheet: string | null }; onClose: () => void; onSaved: (e: SellEntry) => void; onRemoved?: (id: string) => void }) {
   const t = makeT(words);
   void paths;
   const dialogRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLTextAreaElement>(null);
-  const [view, setView] = useState<View>(() => (work.kind === "say" ? { v: "say" } : work.kind === "edit" ? { v: "form", id: work.entry.id, form: formOf(work.entry), prior: work.entry, hint: null } : work.kind === "add" ? { v: "form", id: null, form: structuredClone(EMPTY[style]), prior: null, hint: null } : { v: "message", text: "", href: null }));
+  /** A real workspace (not the test mode) reads talk, photos and sheets with the assistant's reading call, for every style but products (the catalogue has its own photo page and its closed-word Say it). */
+  const reading = live && style !== "products";
+  // the id of a NEW entry is minted ONCE per opening of the sheet: a retry after a failure sends the same id (the API never makes a second row)
+  const [freshId] = useState(() => newEntryId());
+  const [view, setView] = useState<View>(() => (work.kind === "say" ? { v: "say" } : work.kind === "edit" ? { v: "form", id: work.entry.id, fresh: null, form: formOf(work.entry), prior: work.entry, hint: null } : work.kind === "add" ? { v: "form", id: null, fresh: freshId, form: structuredClone(EMPTY[style]), prior: null, hint: null } : work.kind === "read" && reading ? { v: "pick", from: work.from } : { v: "message", text: "", href: null }));
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mfa, setMfa] = useState(false);
   const [bad, setBad] = useState<Refusal | null>(null);
+  const [removing, setRemoving] = useState(false);
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -284,16 +301,16 @@ export default function SellWork({ style, work, words, base, actions, live, owne
 
   // "Take photos" / "Import a sheet" in test mode: the made-up reading comes back as the same "I understood" card
   useEffect(() => {
-    if (work.kind !== "read") return;
+    if (work.kind !== "read" || reading) return;
     let live_ = true;
     void actions.readSheet(style, work.from).then((r) => {
       if (!live_) return;
-      setView(r.ok ? { v: "understood", entries: r.data.entries, text: null } : { v: "message", text: r.error, href: null });
+      setView(r.ok ? { v: "understood", entries: r.data.entries, text: null, notes: [] } : { v: "message", text: r.error, href: null });
     });
     return () => {
       live_ = false;
     };
-  }, [actions, style, work]);
+  }, [actions, style, work, reading]);
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
     if (e.key === "Escape") {
@@ -315,6 +332,12 @@ export default function SellWork({ style, work, words, base, actions, live, owne
     }
   }
 
+  /** A refusal of the server as the sheet shows it: the sentence, and (a price change needs the second step) the way to Security. */
+  function refused(r: { error: string; mfa?: boolean }) {
+    setError(r.error);
+    setMfa(r.mfa === true);
+  }
+
   async function say(e?: React.FormEvent) {
     e?.preventDefault();
     if (text.trim().length < 3) {
@@ -323,6 +346,16 @@ export default function SellWork({ style, work, words, base, actions, live, owne
     }
     setBusy(true);
     setError(null);
+    setMfa(false);
+    if (reading) {
+      // a real workspace: the assistant reads the owner's own words (any language), up to 20 drafts and plain notes; nothing is saved
+      const r = await actions.read(style, { kind: "talk", text });
+      setBusy(false);
+      if (!r.ok) return refused(r);
+      if (r.data.entries.length === 0) return setError(t(r.data.unclear ? "jobs.sell.u.unclear" : "jobs.sell.u.none"));
+      setView({ v: "understood", entries: r.data.entries, text, notes: r.data.notes });
+      return;
+    }
     const r = await actions.understand(style, text);
     setBusy(false);
     if (!r.ok) {
@@ -334,17 +367,43 @@ export default function SellWork({ style, work, words, base, actions, live, owne
       setError(t("jobs.sell.u.none"));
       return;
     }
-    const built = buildEntry(style, "draft", r.data.form, null, ownerPrice);
-    if (built.ok) setView({ v: "understood", entries: [built.entry], text });
+    const built = buildEntry(style, freshId, r.data.form, null, ownerPrice);
+    if (built.ok) setView({ v: "understood", entries: [built.entry], text, notes: [] });
     else {
       setBad(built);
-      setView({ v: "form", id: null, form: r.data.form, prior: null, hint: t("jobs.sell.u.more") });
+      setView({ v: "form", id: null, fresh: freshId, form: r.data.form, prior: null, hint: t("jobs.sell.u.more") });
     }
   }
 
+  /** A photo or a sheet of the owner's: it goes up through the assistant's file route (kept 24 hours), then the reading call asks for the drafts. */
+  async function pick(file: File | undefined, from: "photos" | "sheet") {
+    if (!file) return;
+    const kind = fileKindOf(file.name, file.type);
+    if (kind === null || (kind !== "image" && kind !== "pdf" && kind !== "sheet")) return setError(t("jobs.sell.file.type"));
+    if (file.size <= 0) return setError(t("jobs.sell.file.empty"));
+    if (file.size > MAX_FILE_BYTES) return setError(t("jobs.sell.file.size"));
+    setBusy(true);
+    setError(null);
+    setMfa(false);
+    const up = await postSellFile(base, file);
+    if (!up.ok) {
+      setError(t(`jobs.sell.file.${up.error}`));
+      return setBusy(false);
+    }
+    const fileId = up.fileId;
+    const r = await actions.read(style, { kind: from === "photos" ? "photo" : "sheet", fileId });
+    setBusy(false);
+    if (!r.ok) return refused(r);
+    if (r.data.entries.length === 0) return setError(t(r.data.unclear ? "jobs.sell.u.unclear" : "jobs.sell.u.none"));
+    setView({ v: "understood", entries: r.data.entries, text: null, notes: r.data.notes });
+  }
+
+  /** What the form cannot say of the entry being changed: a course's seats are the owner's own count (kept unless the total changed). */
+  const extraOf = (v: Extract<View, { v: "form" }>): SaveExtra => ({ ...(v.fresh ? { freshId: v.fresh } : {}), ...(v.prior?.style === "courses" ? { course: { seats: v.prior.seats, total: v.prior.total } } : {}) });
+
   async function saveForm() {
     if (view.v !== "form") return;
-    const built = buildEntry(style, view.id ?? "draft", view.form, view.prior, ownerPrice);
+    const built = buildEntry(style, view.id ?? view.fresh ?? "draft", view.form, view.prior, ownerPrice);
     if (!built.ok) {
       setBad(built);
       setError(t(`jobs.sell.err.${built.code}`));
@@ -353,34 +412,53 @@ export default function SellWork({ style, work, words, base, actions, live, owne
     setBad(null);
     setBusy(true);
     setError(null);
-    const r = await actions.save(style, view.id, view.form);
+    setMfa(false);
+    const r = await actions.save(style, view.id, view.form, extraOf(view));
     setBusy(false);
-    if (!r.ok) {
-      setError(r.error);
-      return;
-    }
+    if (!r.ok) return refused(r);
     onSaved(r.data.entry);
     if (r.data.photosPath) setView({ v: "done", entry: r.data.entry, photosPath: r.data.photosPath, note: r.data.note === "count" });
+    else if (view.back && view.back.length > 0) setView({ v: "understood", entries: view.back, text: null, notes: [] });
     else onClose();
   }
 
-  async function saveAll(entries: SellEntry[]) {
+  /** Save the drafts one by one with the id each already has (a retry sends the same ids). A draft that is not complete yet (no price: it is never guessed) stays on the card for the owner to finish with Change. */
+  async function saveAll(entries: SellEntry[], notes: SellNote[]) {
     setBusy(true);
     setError(null);
+    setMfa(false);
+    let left = entries;
     for (const entry of entries) {
-      const r = await actions.save(style, null, formOf(entry));
+      if (!buildEntry(style, entry.id, formOf(entry), null, ownerPrice).ok) continue;
+      const r = await actions.save(style, null, formOf(entry), { freshId: entry.id });
       if (!r.ok) {
         setBusy(false);
-        setError(r.error);
-        return;
+        setView((v) => (v.v === "understood" ? { ...v, entries: left, notes } : v));
+        return refused(r);
       }
       onSaved(r.data.entry);
+      left = left.filter((x) => x.id !== entry.id);
     }
     setBusy(false);
+    if (left.length === 0) return onClose();
+    setView((v) => (v.v === "understood" ? { ...v, entries: left, notes: [] } : v));
+    setError(t("jobs.sell.u.left"));
+  }
+
+  async function remove() {
+    if (view.v !== "form" || !view.id) return;
+    if (!removing) return setRemoving(true);
+    setBusy(true);
+    setError(null);
+    setMfa(false);
+    const r = await actions.remove(style, view.id);
+    setBusy(false);
+    if (!r.ok) return refused(r);
+    onRemoved?.(r.data.id);
     onClose();
   }
 
-  const title = view.v === "say" ? t("jobs.sell.say.title") : view.v === "understood" ? t("jobs.sell.u.title") : view.v === "form" ? t(`jobs.sell.style.${style}.${view.id && view.prior ? "edit" : "add"}`) : view.v === "done" ? t("jobs.sell.done") : t("jobs.sell.fill.title");
+  const title = view.v === "say" ? t("jobs.sell.say.title") : view.v === "understood" ? t("jobs.sell.u.title") : view.v === "form" ? t(`jobs.sell.style.${style}.${view.id && view.prior ? "edit" : "add"}`) : view.v === "done" ? t("jobs.sell.done") : view.v === "pick" ? t(`jobs.sell.${view.from}.title`) : t("jobs.sell.fill.title");
 
   return (
     <div data-part="sell-work" className="fixed inset-0 z-[85] flex items-end justify-center md:items-stretch md:justify-end">
@@ -429,7 +507,25 @@ export default function SellWork({ style, work, words, base, actions, live, owne
               <button type="submit" disabled={busy} className={btnMain}>
                 {busy ? t("jobs.sell.saving") : t(`jobs.sell.style.${style}.save`)}
               </button>
+              {view.id && view.prior && style !== "products" ? (
+                <button type="button" data-action="remove" disabled={busy} onClick={() => void remove()} className={btnQuiet}>
+                  <Trash2 aria-hidden="true" className="mr-2 size-4" />
+                  {removing ? t("jobs.sell.remove.sure") : t("jobs.sell.remove")}
+                </button>
+              ) : null}
             </form>
+          ) : null}
+
+          {view.v === "pick" ? (
+            <div data-part="pick" className="flex flex-col gap-3">
+              <p className="m-0 text-[15px] leading-snug text-ink">{t(`jobs.sell.pick.${view.from}`)}</p>
+              <label className={`${btnMain} cursor-pointer ${busy ? "pointer-events-none opacity-60" : ""}`}>
+                <Upload aria-hidden="true" className="size-4" />
+                {busy ? t("jobs.sell.pick.reading") : t(`jobs.sell.pick.${view.from}.go`)}
+                <input type="file" data-part="pick-file" accept={view.from === "photos" ? "image/*,.pdf,.heic,.heif" : ".csv,.tsv,.xls,.xlsx,.pdf"} disabled={busy} onChange={(e) => void pick(e.target.files?.[0], (view as Extract<View, { v: "pick" }>).from)} className="sr-only" />
+              </label>
+              <p className="m-0 text-[13.5px] leading-snug text-muted">{t("jobs.sell.u.note")}</p>
+            </div>
           ) : null}
 
           {view.v === "understood" ? (
@@ -442,19 +538,34 @@ export default function SellWork({ style, work, words, base, actions, live, owne
               ) : null}
               <ul className="m-0 flex list-none flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface p-0">
                 {view.entries.map((e, i) => (
-                  <li key={i} className="flex min-h-14 items-center gap-3 px-4 py-2.5">
+                  <li key={e.id} className="flex min-h-14 items-center gap-3 px-4 py-2.5">
                     <SellRowBody entry={e} t={t} />
+                    {view.entries.length > 1 ? (
+                      <button type="button" data-action="change-one" aria-label={`${t("jobs.sell.u.change")}: ${i + 1}`} onClick={() => setView({ v: "form", id: null, fresh: e.id, form: formOf(e), prior: null, hint: null, back: view.entries.filter((x) => x.id !== e.id) })} className="jb-press min-h-11 shrink-0 rounded-full border border-edge bg-surface px-3.5 text-[14px] font-semibold text-ink">
+                        {t("jobs.sell.u.change")}
+                      </button>
+                    ) : null}
                   </li>
                 ))}
               </ul>
+              {view.notes.length > 0 ? (
+                <ul data-part="notes" className="m-0 flex list-none flex-col gap-1.5 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink">
+                  {view.notes.map((n, i) => (
+                    <li key={i} data-note={n.code}>
+                      {n.row !== null ? `${t("jobs.sell.note.row", { n: n.row })} ` : ""}
+                      {t(`jobs.sell.note.${n.code}`)}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
               <p className="m-0 text-[13.5px] leading-snug text-muted">{t("jobs.sell.u.note")}</p>
               <div className="flex flex-wrap gap-2.5">
-                <button type="button" data-action="save-all" disabled={busy} onClick={() => void saveAll((view as Extract<View, { v: "understood" }>).entries)} className={btnMain}>
+                <button type="button" data-action="save-all" disabled={busy} onClick={() => void saveAll((view as Extract<View, { v: "understood" }>).entries, (view as Extract<View, { v: "understood" }>).notes)} className={btnMain}>
                   <Check aria-hidden="true" className="size-4" />
                   {view.entries.length > 1 ? t("jobs.sell.u.save_all") : t("jobs.sell.u.save")}
                 </button>
                 {view.entries.length === 1 ? (
-                  <button type="button" data-action="change" onClick={() => setView({ v: "form", id: null, form: formOf(view.entries[0]), prior: null, hint: null })} className={btnQuiet}>
+                  <button type="button" data-action="change" onClick={() => setView({ v: "form", id: null, fresh: (view as Extract<View, { v: "understood" }>).entries[0].id, form: formOf(view.entries[0]), prior: null, hint: null })} className={btnQuiet}>
                     {t("jobs.sell.u.change")}
                   </button>
                 ) : (
@@ -498,6 +609,11 @@ export default function SellWork({ style, work, words, base, actions, live, owne
             <p role="alert" data-part="error" className="m-0 text-[14px] font-semibold text-red-text">
               {error}
             </p>
+          ) : null}
+          {mfa ? (
+            <Link href="/app/security" prefetch={false} data-part="security" className={`${btnQuiet} self-start no-underline`}>
+              {t("jobs.tb.s5.security")}
+            </Link>
           ) : null}
         </div>
       </div>

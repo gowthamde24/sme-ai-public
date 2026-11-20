@@ -347,6 +347,21 @@ class LeadFinderService:
         nxt = f"{items[-1].fit_score if items[-1].fit_score is not None else -1}_{items[-1].id}" if len(items) == limit else None
         return ProspectListOut(items=items, next_cursor=nxt)
 
+    def best_prospects(self, token: str, tenant_id: uuid.UUID, count: int) -> list[ProspectOut]:
+        """The workspace's best real prospects, highest fit first, for the example cards of a "find new customers" job template (jobs contract 1.1 T7). Not suppressed, not skipped, not "not interested", with a name,
+        an area and a fit score. Only these few rows are completed from Google (route 1), never the whole list. Raises like `prospects` (module off, Lead Finder off): the caller then shows made-up examples."""
+        self.data_for(token, tenant_id)
+        rows = self.repo.prospects(token, tenant_id, None, None, 30, None)
+        keep = [r for r in rows if not r.get("suppressed") and r.get("status") not in ("skipped", "not_interested") and isinstance(r.get("fit_score"), int)]
+        out: list[ProspectOut] = []
+        for row in self.live(token, tenant_id, keep[:count]):
+            if row.get("details_available") is False or not (row.get("name") and row.get("area")):
+                continue
+            out.append(prospect_out(row))
+            if len(out) == count:
+                break
+        return out
+
     def prospect(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID) -> ProspectOut:
         self.data_for(token, tenant_id)
         return prospect_out(self.live(token, tenant_id, [self.repo.prospect_get(token, tenant_id, prospect_id)])[0])

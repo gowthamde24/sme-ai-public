@@ -64,8 +64,10 @@ BUSINESSES = [
     # night 4 (job DR part B2): two "Leads & calls" businesses with a working Lead Desk (leads from four sources, outcomes, a standing rule, a batch approved once, tasks)
     ("real_estate", "DEMO Sri Sai Homes (synthetic)", "en"),
     ("coaching", "DEMO Vidya Coaching Centre (synthetic)", "en"),
+    # 20 Nov 2026 (owner: not only saree shops): a car dealer, the same Lead Desk depth
+    ("auto_dealer", "DEMO Sri Venkateswara Motors (synthetic)", "en"),
 ]
-LEAD_DESK_PACKS = ("real_estate", "coaching")
+LEAD_DESK_PACKS = ("real_estate", "coaching", "auto_dealer")
 # One demo owner looks like a Google sign-in with a photo (C2, 5 Nov 2026: My profile once failed for every such account, and no account we can sign in as had one). A synthetic address: nothing is fetched.
 GOOGLE_PHOTO_PACK = "textiles"
 GOOGLE_PHOTO = "https://lh3.googleusercontent.com/a/synthetic-demo=s96-c"
@@ -261,7 +263,7 @@ class Seeder:
                 extra = demo_data.education(call, datetime.now(timezone(timedelta(hours=5, minutes=30))).date())
             elif pack in LEAD_DESK_PACKS:
                 today = datetime.now(timezone(timedelta(hours=5, minutes=30))).date()
-                extra = (demo_data.real_estate if pack == "real_estate" else demo_data.coaching)(call, today)
+                extra = {"real_estate": demo_data.real_estate, "coaching": demo_data.coaching, "auto_dealer": demo_data.auto_dealer}[pack](call, today)
         except demo_data.DemoError as e:
             raise SeedError(f"the demo data of {pack} failed: {e}") from None
         return {"pack": pack, "email": email, "account_created": created, "workspace_created": bool(setup.get("created")), "tenant_id": tenant, "example_data": counts, "demo_data": extra}

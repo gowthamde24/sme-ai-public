@@ -39,14 +39,14 @@ export const WIRE_JOBS: readonly Wire[] = [
   wireJob({ n: 2, kind: "answer_calls", status: "running", result: { code: "answered_today", params: { answered: 3, missed: 1, messages: 2 } }, last: "2026-11-19T04:02:00Z" }),
   wireJob({ n: 3, kind: "followups", status: "failed", result: { code: "template_needed", params: { count: 2 } }, needs: 2, last: "2026-11-19T03:42:00Z", fix: { code: "template_needed", count: 2 } }),
   wireJob({ n: 4, kind: "offers", status: "waiting", result: { code: "offer_ready", params: { customers: 38 } }, needs: 1 }),
-  wireJob({ n: 5, kind: "store_visits", name: "Priya", status: "done", result: { code: "reminders_today", params: { sent: 3, confirmed: 2 } }, last: "2026-11-19T03:30:00Z", speaks: { language: "te", voice: "Janvi", number: "shop" } }),
+  wireJob({ n: 5, kind: "store_visits", name: "Priya", status: "done", result: { code: "reminders_today", params: { sent: 3, confirmed: 2 } }, last: "2026-11-19T03:30:00Z", speaks: { language: "te", voice: "female_warm", voice_name: "Soft woman", number: "shop" } }),
   wireJob({ n: 6, kind: "researcher", status: "running", result: { code: "search_left", params: { left: 1, per_month: 1, last_search_at: "2026-11-12T08:00:00Z" } }, last: "2026-11-12T08:00:00Z" }),
 ];
 
 /** More made-up jobs for the JOBS PAGE only (Today keeps the six above): two named jobs of kind `custom` with their own voice and number (the Jobs page has no fixed number of jobs), one of them Off. `speaks` is C1's contract 1.1 (assumed). */
 export const WIRE_JOBS_EXTRA: readonly Wire[] = [
-  wireJob({ n: 9, kind: "custom", name: "Ravi", status: "running", result: { code: "answered_today", params: { answered: 2, missed: 0, messages: 1 } }, last: "2026-11-19T04:10:00Z", speaks: { language: "en", voice: "Arjun", number: "second" } }),
-  wireJob({ n: 10, kind: "custom", name: "Diwali calls", enabled: false, status: "paused", result: { code: "paused_on", params: { since: "2026-11-14T05:00:00Z" } }, speaks: { language: "te", voice: "Janvi", number: "shop" } }),
+  wireJob({ n: 9, kind: "custom", name: "Ravi", status: "running", result: { code: "answered_today", params: { answered: 2, missed: 0, messages: 1 } }, last: "2026-11-19T04:10:00Z", speaks: { language: "en", voice: "male_calm", voice_name: "Calm man", number: "shop" } }),
+  wireJob({ n: 10, kind: "custom", name: "Diwali calls", enabled: false, status: "paused", result: { code: "paused_on", params: { since: "2026-11-14T05:00:00Z" } }, speaks: { language: "te", voice: "female_warm", voice_name: "Soft woman", number: "shop" } }),
 ];
 
 /** Jobs the demo does not show but the contract allows: every other result code, and every plan gate. (Not `payment_reminders`: it is v1.1; its word is tested to be tolerated, lib/api/jobs.test.ts.) They are here so the parser test covers them. */
@@ -69,6 +69,8 @@ export const wireToday = (): Wire => ({
   needs_you: [
     { id: "approval-offer-1", code: "needs_approval", kind: "offer", at: "2026-11-19T03:10:00Z", target: { type: "approval", id: "approval-offer-1" } },
     { id: "template-1", code: "template_needed", kind: "template", at: "2026-11-19T03:42:00Z", target: { type: "message", id: "message-1" } },
+    // an own message WhatsApp sent back (contract 1.1 part 1, A7): Today draws it as a row that opens Chats > Templates
+    { id: "message-change-1", code: "message_needs_change", kind: "message", at: "2026-11-18T07:40:00Z", target: { type: "message", id: "own-festival-offer" } },
   ],
   assistant: { name: MOCK_ASSISTANT },
 });
@@ -224,21 +226,22 @@ export function wireJobDetail(id: string, now: number = Date.now()): Wire | null
     cost: { minutes_used: 8, minutes_included: 60, rupees: null },
     // how the job sounds (the Who talks card): a job that talks to nobody (the researcher) has none
     ...(WHO_SPEAKS[kind] ? { speaks: WHO_SPEAKS[kind], numbers: WHO_NUMBERS } : {}),
+    // the own message the job sends instead of its default (contract 1.1 part 1, A8): the visits job uses the shop's approved visit reminder; the others use their default (`message: null`)
+    message: kind === "store_visits" ? { id: "own-visit-reminder", title: { en: "Visit reminder", te: "Visit రిమైండర్" } } : null,
   };
 }
 
-/** How each made-up job sounds, in the proposed wire shape (`speaks`), and the two numbers the demo shop has (the middle digits hidden). */
+/** How each made-up job sounds, in the contract's wire shape (`speaks`: the catalogue voice id and its name), and the ONE number the demo shop has (the middle digits hidden): the second number is not a product. */
 const WHO_SPEAKS: Record<string, Wire> = {
-  speed_to_lead: { language: "te", tone: "friendly", voice: "female_warm", number: "shop" },
-  answer_calls: { language: "customer", tone: "respectful", voice: "female_clear", number: "shop" },
-  followups: { language: "en", tone: "respectful", voice: "male_calm", number: "second" },
-  offers: { language: "te", tone: "friendly", voice: "female_warm", number: "shop" },
-  store_visits: { language: "en", tone: "friendly", voice: "female_clear", number: "shop" },
+  speed_to_lead: { language: "te", tone: "friendly", voice: "female_warm", voice_name: "Soft woman", number: "shop" },
+  answer_calls: { language: "customer", tone: "respectful", voice: "female_clear", voice_name: "Bright woman", number: "shop" },
+  followups: { language: "en", tone: "respectful", voice: "male_calm", voice_name: "Calm man", number: "shop" },
+  offers: { language: "te", tone: "friendly", voice: "female_warm", voice_name: "Soft woman", number: "shop" },
+  store_visits: { language: "en", tone: "friendly", voice: "female_clear", voice_name: "Bright woman", number: "shop" },
 };
-const WHO_NUMBERS: Wire[] = [
-  { key: "shop", masked: "+91 98480 xxx10" },
-  { key: "second", masked: "+91 90000 xxx45" },
-];
+const WHO_NUMBERS: Wire[] = [{ key: "shop", masked: "+91 98480 xxx10" }];
+/** The three catalogue voices (`GET /ai-assistant/voices`: id, name) of the demo shop, for the Who talks card's Play list. */
+export const WIRE_WHO_VOICES: Wire = { voices: [{ id: "female_warm", name: "Soft woman" }, { id: "female_clear", name: "Bright woman" }, { id: "male_calm", name: "Calm man" }] };
 
 /* ---- the test buttons (section 3): `{placed: true, minutes_used: n}` ---- */
 export const WIRE_TEST_CALL: Wire = { placed: true, minutes_used: 1 };

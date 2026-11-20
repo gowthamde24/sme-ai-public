@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "education",
+  "status": "draft",
+  "sell_style": "courses",
+  "plural_names": {
+    "en": "schools and colleges",
+    "te": "స్కూళ్ళు, కాలేజీలు"
+  }
+}

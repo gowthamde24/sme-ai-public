@@ -27,7 +27,7 @@ def main() -> int:
         ss.guard(args)
         seeder = ss.Seeder(args.api_url)
         today = datetime.now(timezone(timedelta(hours=5, minutes=30))).date()
-        for pack, spec in (("real_estate", demo_data.REAL_ESTATE), ("coaching", demo_data.COACHING)):
+        for pack, spec in (("real_estate", demo_data.REAL_ESTATE), ("coaching", demo_data.COACHING), ("auto_dealer", demo_data.AUTO_DEALER)):
             email = f"demo-{pack.replace('_', '-')}@{ss.DEMO_DOMAIN}"
             password = ss.secret_get(f"sme-demo-{pack}-password")
             if password is None:

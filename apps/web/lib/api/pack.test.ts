@@ -88,6 +88,11 @@ describe("the business type of a workspace (GET .../pack and .../modules)", () =
     const without = selectableIds().find((i) => !workspacePackHas(i));
     expect(parseWorkspacePack(packWire(withData!, "signup")).hasExampleData).toBe(true);
     expect(parseWorkspacePack(packWire(without!, "signup")).hasExampleData).toBe(false);
+    // `sell_style` (C1 contract 1.1 part 1, W1): one of the five words, kept; an unknown word or none is left out (the web's own map decides then)
+    const id = defaultPackId();
+    expect(parseWorkspacePack({ ...packWire(id, "signup"), sell_style: "services" }).sellStyle).toBe("services");
+    expect(parseWorkspacePack({ ...packWire(id, "signup"), sell_style: "rentals" })).not.toHaveProperty("sellStyle");
+    expect(parseWorkspacePack(packWire(id, "signup"))).not.toHaveProperty("sellStyle");
     const old = Object.fromEntries(Object.entries(packWire(without!, "signup")).filter(([k]) => k !== "has_example_data"));
     expect(parseWorkspacePack(old).hasExampleData).toBe(true);
   });

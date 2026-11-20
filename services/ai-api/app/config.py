@@ -424,6 +424,10 @@ class Settings(BaseSettings):
     # The developer API (ADR 0121; docs/contracts/developer-api.md): off (default) |
     # test (test-mode keys and the sandbox; no live keys exist)
     developer_api: Literal["off", "test"] = "off"
+    # Jobs (jobs contract 1.0, 1.1): off (default) | on. Off: every /jobs route is a 404.
+    # JOBS_GET_PAID: off (default) hides the "get paid" job templates (Get paid ships in v1.1).
+    jobs: Literal["off", "on"] = "off"
+    jobs_get_paid: Literal["off", "on"] = "off"
     # Who speaks on a call: haiku (default, steady) | sarvam (Sarvam 105B first, ~320 ms faster
     # to the first word, behind a first-token deadline that falls back to Haiku).
     # Measured 31 Oct 2026: docs/runbooks/phone-model.md.
@@ -456,6 +460,21 @@ class Settings(BaseSettings):
     # in-app KYC of a business's phone number (owner, 14 Nov 2026). OFF until the owner says so:
     # the form is checked and nothing is sent to Plivo. ON files the application with Plivo.
     plivo_kyc_live: bool = False
+    # The daily Plivo balance check (owner, 19 Nov 2026; app/ops/plivo_balance.py), run by the
+    # scheduler worker. OFF until the owner switches it on. Plivo's Account API reports
+    # `cash_credits` in USD (its documentation), the limit is in rupees: the credits are converted
+    # at PLIVO_BALANCE_INR_PER_UNIT (rupees for one unit of PLIVO_BALANCE_CURRENCY; required unless
+    # that is INR). Below PLIVO_BALANCE_MIN_INR a "Needs you" item is raised for the platform owner
+    # and ONE WhatsApp message goes to PLIVO_BALANCE_ALERT_TO (the owner's own number): an approved
+    # utility template PLIVO_BALANCE_TEMPLATE with one variable, from the platform's own WhatsApp
+    # number (WHATSAPP_PHONE_NUMBER_ID).
+    plivo_balance_check: bool = False
+    plivo_balance_min_inr: int = 300
+    plivo_balance_currency: str = "USD"
+    plivo_balance_inr_per_unit: float = 0.0
+    plivo_balance_alert_to: str | None = None
+    plivo_balance_template: str = "platform_alert"
+    plivo_balance_template_language: str = "en"
     phone_numbers_provider: str = "off"   # off | fake | plivo (app/phone_numbers)
     telephony_inbound_language: str = "en"
     telephony_inbound_business: str = "the business"

@@ -283,6 +283,7 @@ def make_client(
     timeline: Any = None,
     glance: Any = None,
     developer_api: Any = None,
+    jobs: Any = None,
     phone_inbound: Any = None,
     rate_limit: bool = False,
 ) -> tuple[TestClient, FakeRepository]:
@@ -364,6 +365,7 @@ def make_client(
             timeline=timeline,
             glance=glance,
             developer_api=developer_api,
+            jobs=jobs,
             phone_inbound=phone_inbound,
             tasks=tasks,
             calls=calls,

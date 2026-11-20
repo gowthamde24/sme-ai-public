@@ -236,7 +236,7 @@ export function streamedToday(i: StreamIn): ReactElement {
           band={
             <Part
               of={bandNode}
-              fallback={<BandPlaceholder />}
+              fallback={<BandPlaceholder tall={(campusMay ? 0 : (fastEarly?.quotesWaiting ?? 1)) > 0} />}
               quiet={<PartUnavailable>{t("frame.notyet")}</PartUnavailable>}
             />
           }
