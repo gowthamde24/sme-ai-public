@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { buildCsp, newNonce, storageOrigin, voiceSocketOrigin } from "@/lib/security/csp";
 import { isJobsOnlyPath, notFoundPathOf } from "@/lib/jobs/closed";
 import { appV4, browserVoice, jobsScreens, staffConsole } from "@/lib/screens/flag";
-import { PREVIEW_COOKIE, PREVIEW_VALUE, previewAllowed } from "@/lib/screens/preview";
+import { PREVIEW_COOKIE, parsePreview, previewAllowed } from "@/lib/screens/preview";
 import { razorpayCheckout } from "@/lib/plan/flag";
 import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { isClosedPath, websiteOnly } from "@/lib/site/mode";
@@ -89,7 +89,7 @@ export async function proxy(request: NextRequest) {
   }
   response.headers.set("Content-Security-Policy", csp);
   // JOBS off: the Jobs pages and What you sell answer a TRUE 404 here, before any page renders (they have a loading screen, so a notFound() inside them would already be sent as 200). One browser that is previewing (staging, lib/screens/preview.ts) is let through.
-  const previewing = previewAllowed() && request.cookies.get(PREVIEW_COOKIE)?.value === PREVIEW_VALUE;
+  const previewing = previewAllowed() && parsePreview(request.cookies.get(PREVIEW_COOKIE)?.value) !== null;
   if (user && isJobsOnlyPath(pathname) && jobsScreens() === "off" && !previewing) {
     const gone = NextResponse.rewrite(new URL(notFoundPathOf(pathname), request.url), { request, status: 404 });
     for (const cookie of response.cookies.getAll()) gone.cookies.set(cookie);
