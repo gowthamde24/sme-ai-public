@@ -60,6 +60,14 @@ describe("Today", () => {
       expect(() => parseRecentStep({ ...STEP, target })).toThrow(ApiContractError);
     },
   );
+  it("a known kind whose target is of a TYPE this screen does not know is a generic row, never a failed Today; `calls` (calls paused by complaints) is known", () => {
+    const strange = { ...ITEM, target: { type: "something_new", id: ID } };
+    const today = parseToday({ ...TODAY, needs_you: [strange, ITEM] });
+    expect(today.needs_you.map((i) => i.kind)).toEqual(["unknown_item", "quote_approval"]);
+    const paused = { ...ITEM, kind: "outreach_paused", customer: "Calls", agent: "followup_desk", summary: "Calls are paused: 2 people asked us to stop this week.", amount_paise: null, target: { type: "calls", id: ID } };
+    expect(parseNeedsYouItem(paused)).toMatchObject({ kind: "outreach_paused", target: { type: "calls", id: ID } });
+    expect(parseToday({ ...TODAY, needs_you: [paused] }).needs_you[0]).toMatchObject({ kind: "outreach_paused" });
+  });
   it("an item or a step with no target at all is a contract error", () => {
     const item: Record<string, unknown> = { ...ITEM };
     const step: Record<string, unknown> = { ...STEP };

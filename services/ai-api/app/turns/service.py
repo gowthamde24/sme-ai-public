@@ -880,6 +880,7 @@ def _left_out(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, only: li
 def ask_consent(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, body: AskConsentIn) -> AskConsentOut:
     """"Ask first" (owner, 14 Nov 2026): a plan reaches only people who gave consent; the people with unknown consent are listed and can be asked here. Raises ApiError: 404, 409 `action_state`
     (the plan is not waiting for a yes any more), 422 `nobody_to_ask`."""
+    from app.opening.resolve import say_ai_setting
     from app.tasks import compose
     from app.tasks.models import PlanIn
     from app.tenancy.repository import RepositoryError
@@ -919,7 +920,7 @@ def ask_consent(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, body: 
         raise ApiError(503, "outbox_unavailable", "Messages are not available right now.")
     queued, blocked = 0, 0
     reasons: dict[str, int] = {}
-    text = compose.consent_ask_text(task.language, ctx.tenant.name)
+    text = compose.consent_ask_text(task.language, ctx.tenant.name, say_ai_setting(runtime, ctx))
     for c in targets:
         if c.lead_id is None:
             continue

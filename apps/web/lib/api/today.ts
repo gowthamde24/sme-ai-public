@@ -18,7 +18,8 @@ export type NeedsYouAgent = "quote_writer" | "followup_desk" | "order_desk";
  * `outreach_batch` (Lead Desk) is a calling plan: a hot lead's hand-off names the lead, a plan paused by a limit names the batch.
  * `phone_call` (C1 #347, 5 Nov): a call in which the caller asked to talk to a person; Today decides it in place (Call back, Done).
  */
-export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "material_quote", "campaign", "fees", "phone_call", "billing"] as const;
+// 20 Nov (C1 #6xx): `calls` (outreach_paused: calls paused because 2+ people asked to stop; the id is the workspace's own: opens the Do-Not-Call list) and `message` (message_needs_change: a template WhatsApp sent back: opens Chats > Templates). An item whose target type is a word this screen does not know is a generic row, never an error.
+export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "material_quote", "campaign", "fees", "phone_call", "billing", "calls", "message"] as const;
 export type TargetType = (typeof TARGET_TYPES)[number];
 export interface Target {
   type: TargetType;
@@ -147,8 +148,13 @@ export function parseRecentStep(json: unknown): RecentStep {
  * still a contract error (the screen never shows a guess). `parseNeedsYouItem` itself stays strict.
  */
 function isUnknownKind(item: unknown): boolean {
-  return isRecord(item) && typeof item.kind === "string" && !KINDS.includes(item.kind as NeedsYouKind);
+  if (!isRecord(item) || typeof item.kind !== "string") return false;
+  if (!KINDS.includes(item.kind as NeedsYouKind)) return true;
+  // a LINK-ONLY kind whose target is of a TYPE this screen does not know (a newer API): the same generic row, never a failed Today (the whole read must not break for one row's address).
+  // The kinds decided IN PLACE on Today with their target's id (a held message, a call request, a person's or a visit request, an enquiry again) stay strict: a wrong target there is a contract error.
+  return LINK_ONLY.includes(item.kind as NeedsYouKind) && isRecord(item.target) && typeof item.target.type === "string" && !TARGET_TYPES.includes(item.target.type as TargetType);
 }
+const LINK_ONLY: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "hot_lead_waiting", "outreach_paused", "material_quote_approval", "campaign_approval", "fees_overdue", "voice_credits"];
 
 /**
  * An item of a kind this screen does not know is shown as a generic row ("Needs a look", the customer, Open), never dropped silently and never a broken page (owner, 17 Nov: the owner must never miss an item). It is logged so somebody builds

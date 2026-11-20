@@ -262,6 +262,7 @@ from app.telephony.wiring import (
     build_named_dialer,
     build_phone_inbound,
     build_tasks_dialer,
+    call_greeting_lookup,
     call_tone_lookup,
 )
 from app.tenancy import repository as repo
@@ -1209,8 +1210,11 @@ def _tasks_service(settings: Settings, config: AuthConfig, phone_inbound: Any) -
     """The Lead Desk tasks: the ordinary dialer (simulated while TASKS_DIALER is empty) and, for ONE
     person the Owner named, the real Plivo dialer on a sandbox-list number."""
     tone_for = call_tone_lookup(config.rest_url, config.anon_key, settings.packs_dir)
-    dialer = build_tasks_dialer(settings, phone_inbound, tone_for=tone_for)
-    named = build_named_dialer(settings, phone_inbound, dialer, tone_for=tone_for)
+    say_ai_for = call_greeting_lookup(config.rest_url, config.anon_key)
+    dialer = build_tasks_dialer(settings, phone_inbound, tone_for=tone_for, say_ai_for=say_ai_for)
+    named = build_named_dialer(
+        settings, phone_inbound, dialer, tone_for=tone_for, say_ai_for=say_ai_for
+    )
     repository = PostgrestTasksRepository(config.rest_url, config.anon_key)
     return TasksService(repository, dialer, named_dialer=named)
 

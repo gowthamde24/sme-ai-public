@@ -125950,5 +125950,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.kind.callspaused": {
+  "en": "Calls paused",
+  "te": "Calls ఆగాయి",
+  "hi": "Calls रुके हैं",
+  "kn": "Calls ನಿಂತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.callspaused.row": {
+  "en": "Calls paused",
+  "te": "Calls ఆగాయి",
+  "hi": "Calls रुके हैं",
+  "kn": "Calls ನಿಂತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.callspaused": {
+  "en": "See who",
+  "te": "ఎవరో చూడండి",
+  "hi": "देखें कौन",
+  "kn": "ಯಾರು ಅಂತ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.callspaused.row": {
+  "en": "See who",
+  "te": "ఎవరో చూడండి",
+  "hi": "देखें कौन",
+  "kn": "ಯಾರು ಅಂತ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -9278,11 +9278,11 @@
   }
  },
  "h2.foot.line": {
-  "en": "An AI assistant for Indian small businesses, in Telugu, English, Hindi and Kannada.",
-  "te": "చిన్న businesses కోసం AI assistant: Telugu, English, Hindi, Kannada లో.",
-  "hi": "भारत के छोटे businesses के लिए AI assistant: Telugu, English, Hindi और Kannada में।",
-  "kn": "ಭಾರತದ ಸಣ್ಣ businesses ಗೆ AI assistant: Telugu, English, Hindi ಮತ್ತು Kannada ನಲ್ಲಿ.",
-  "ta": "இந்திய சிறு businesses-க்கான AI assistant: தெலுங்கு, ஆங்கிலம், இந்தி, கன்னடம் ஆகிய மொழிகளில்.",
+  "en": "An AI assistant for small businesses, in four languages.",
+  "te": "చిన్న businesses కోసం AI assistant, నాలుగు భాషల్లో.",
+  "hi": "छोटे businesses के लिए AI assistant, चार भाषाओं में।",
+  "kn": "ಸಣ್ಣ businesses ಗೆ AI assistant, ನಾಲ್ಕು ಭಾಷೆಗಳಲ್ಲಿ.",
+  "ta": "சிறு businesses-க்கான AI assistant, நான்கு மொழிகளில்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9387,8 +9387,10 @@
   "status": {
    "te": "draft",
    "hi": "draft",
-   "kn": "draft"
-  }
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "பெயரை மீண்டும் உருவாக்கு"
  },
  "h2.later.start": {
   "en": "Start {trial_days}-day trial",
@@ -9938,11 +9940,11 @@
   }
  },
  "h3.hero.p": {
-  "en": "{brand} is an AI assistant for your business. It answers every enquiry and call, in your customer's own language.",
-  "te": "{brand} మీ business కి AI assistant. ప్రతి enquiry కి, ప్రతి call కి, మీ customer మాట్లాడే భాషలోనే జవాబు ఇస్తుంది.",
-  "hi": "{brand} आपके business का AI assistant है। हर enquiry और call का जवाब देता है, आपके customer की अपनी भाषा में।",
-  "kn": "{brand} ನಿಮ್ಮ business ಗೆ AI assistant. ಪ್ರತಿ enquiry ಮತ್ತು call ಗೆ, ನಿಮ್ಮ customer ಮಾತನಾಡುವ ಭಾಷೆಯಲ್ಲೇ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
-  "ta": "{brand} உங்கள் business-க்கான AI assistant. ஒவ்வொரு enquiry, call-க்கும் உங்கள் customer பேசும் மொழியிலேயே பதில் சொல்லும்.",
+  "en": "Your AI assistant answers calls and WhatsApp in your customer's language.",
+  "te": "మీ AI assistant, మీ customer భాషలో calls కి, WhatsApp కి జవాబిస్తుంది.",
+  "hi": "आपका AI assistant आपके customer की भाषा में calls और WhatsApp का जवाब देता है।",
+  "kn": "ನಿಮ್ಮ AI assistant ನಿಮ್ಮ customer ಭಾಷೆಯಲ್ಲಿ calls ಮತ್ತು WhatsApp ಗೆ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "ta": "உங்கள் AI assistant, உங்கள் customer மொழியில் calls-க்கும் WhatsApp-க்கும் பதில் சொல்கிறது.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10042,24 +10044,11 @@
   }
  },
  "h3.ask.title": {
-  "en": "What should {assistant} do?",
-  "te": "{assistant} ఏం చేయాలి?",
-  "hi": "{assistant} क्या करे?",
-  "kn": "{assistant} ಏನು ಮಾಡಬೇಕು?",
-  "ta": "{assistant} என்ன செய்ய வேண்டும்?",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.ask.sub": {
-  "en": "Say it in your own words. Or pick an example.",
-  "te": "మీ మాటల్లో చెప్పండి. లేదా ఒక example తీసుకోండి.",
-  "hi": "अपने शब्दों में लिखिए। या कोई example चुनिए।",
-  "kn": "ನಿಮ್ಮ ಮಾತಿನಲ್ಲಿ ಹೇಳಿ. ಅಥವಾ ಒಂದು example ಆರಿಸಿ.",
-  "ta": "உங்கள் வார்த்தைகளிலேயே சொல்லுங்கள். அல்லது ஒரு example தேர்ந்தெடுங்கள்.",
+  "en": "Tell it what to do",
+  "te": "ఏం చేయాలో చెప్పండి",
+  "hi": "बताइए, क्या करना है",
+  "kn": "ಏನು ಮಾಡಬೇಕೆಂದು ಹೇಳಿ",
+  "ta": "என்ன செய்ய வேண்டும் என்று சொல்லுங்கள்",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10081,11 +10070,11 @@
   }
  },
  "h3.ask.ph": {
-  "en": "Type what you want done…",
-  "te": "ఏం చేయాలో ఇక్కడ రాయండి…",
-  "hi": "यहाँ लिखिए, क्या करना है…",
-  "kn": "ಏನು ಮಾಡಬೇಕು ಅಂತ ಇಲ್ಲಿ ಬರೆಯಿರಿ…",
-  "ta": "என்ன செய்ய வேண்டும் என்று இங்கே எழுதுங்கள்…",
+  "en": "e.g. Call every new enquiry right away",
+  "te": "ఉదా. ప్రతి కొత్త enquiry కి వెంటనే call చేయండి",
+  "hi": "जैसे: हर नई enquiry को तुरंत call करें",
+  "kn": "ಉದಾ. ಪ್ರತಿ ಹೊಸ enquiry ಗೆ ತಕ್ಷಣ call ಮಾಡಿ",
+  "ta": "எ.கா. ஒவ்வொரு புதிய enquiry-க்கும் உடனே call செய்யுங்கள்",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10106,25 +10095,12 @@
    "ta": "draft"
   }
  },
- "h3.ask.note": {
-  "en": "Free early access. We set it up with you.",
-  "te": "Free early access. మేమే మీతో కలిసి set up చేస్తాం.",
-  "hi": "Free early access। हम आपके साथ set up करते हैं।",
-  "kn": "Free early access. ನಾವು ನಿಮ್ಮೊಂದಿಗೆ set up ಮಾಡುತ್ತೇವೆ.",
-  "ta": "இலவச early access. உங்களுடன் சேர்ந்து நாங்களே set up செய்வோம்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h3.ask.chip.1": {
-  "en": "Book site visits for new property leads",
-  "te": "కొత్త property leads కి site visits book చేయండి",
-  "hi": "नए property leads की site visit book करो",
-  "kn": "ಹೊಸ property leads ಗೆ site visit book ಮಾಡಿ",
-  "ta": "புதிய property leads-க்கு site visit book செய்",
+  "en": "Book site visits",
+  "te": "Site visits book చేయండి",
+  "hi": "Site visit book करें",
+  "kn": "Site visit book ಮಾಡಿ",
+  "ta": "Site visit book செய்யுங்கள்",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10133,11 +10109,11 @@
   }
  },
  "h3.ask.chip.2": {
-  "en": "Call every admission enquiry right away",
-  "te": "ప్రతి admission enquiry కి వెంటనే call చేయండి",
-  "hi": "हर admission enquiry को तुरंत call करो",
-  "kn": "ಪ್ರತಿ admission enquiry ಗೆ ತಕ್ಷಣ call ಮಾಡಿ",
-  "ta": "ஒவ்வொரு admission enquiry-க்கும் உடனே call செய்",
+  "en": "Call admission enquiries",
+  "te": "Admission enquiries కి call చేయండి",
+  "hi": "Admission enquiry पर call करें",
+  "kn": "Admission enquiry ಗೆ call ಮಾಡಿ",
+  "ta": "Admission enquiry-க்கு call செய்யுங்கள்",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10146,11 +10122,11 @@
   }
  },
  "h3.ask.chip.3": {
-  "en": "Remind students about the demo class",
-  "te": "Demo class గురించి students కి గుర్తు చేయండి",
-  "hi": "Students को demo class की याद दिलाओ",
-  "kn": "Demo class ಬಗ್ಗೆ students ಗೆ ನೆನಪಿಸಿ",
-  "ta": "demo class பற்றி students-க்கு நினைவூட்டு",
+  "en": "Remind about demo class",
+  "te": "Demo class గుర్తు చేయండి",
+  "hi": "Demo class की याद दिलाएं",
+  "kn": "Demo class ನೆನಪಿಸಿ",
+  "ta": "Demo class நினைவூட்டுங்கள்",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10159,11 +10135,11 @@
   }
  },
  "h3.ask.chip.4": {
-  "en": "Book test drives for new enquiries",
-  "te": "కొత్త enquiries కి test drives book చేయండి",
-  "hi": "नई enquiries के लिए test drive book करो",
-  "kn": "ಹೊಸ enquiries ಗೆ test drive book ಮಾಡಿ",
-  "ta": "புதிய enquiries-க்கு test drive book செய்",
+  "en": "Book test drives",
+  "te": "Test drives book చేయండి",
+  "hi": "Test drive book करें",
+  "kn": "Test drive book ಮಾಡಿ",
+  "ta": "Test drive book செய்யுங்கள்",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10172,11 +10148,11 @@
   }
  },
  "h3.ask.chip.5": {
-  "en": "Tell customers their order is ready",
-  "te": "Order ready అని customers కి చెప్పండి",
-  "hi": "Customers को बताओ कि order ready है",
-  "kn": "Order ready ಅಂತ customers ಗೆ ಹೇಳಿ",
-  "ta": "order ready என்று customers-க்குச் சொல்",
+  "en": "Order ready",
+  "te": "Order ready అయింది",
+  "hi": "Order ready",
+  "kn": "Order ready",
+  "ta": "Order ready",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10185,102 +10161,11 @@
   }
  },
  "h3.how.title": {
-  "en": "One call. One WhatsApp. One clear summary.",
-  "te": "ఒక call. ఒక WhatsApp. ఒక clear summary.",
-  "hi": "एक call। एक WhatsApp। एक साफ़ summary।",
-  "kn": "ಒಂದು call. ಒಂದು WhatsApp. ಒಂದು ಸ್ಪಷ್ಟ summary.",
-  "ta": "ஒரு call. ஒரு WhatsApp. ஒரு தெளிவான summary.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.sub": {
-  "en": "An example call, so you can see how it works. The names are made up.",
-  "te": "ఒక example call: ఇది ఎలా పనిచేస్తుందో చూడండి. పేర్లు example కోసం మాత్రమే.",
-  "hi": "एक example call, ताकि आप देख सकें कैसे काम करता है। नाम बस example के लिए हैं।",
-  "kn": "ಒಂದು example call, ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ನೋಡಿ. ಹೆಸರುಗಳು example ಗಾಗಿ ಮಾತ್ರ.",
-  "ta": "ஒரு example call: இது எப்படி வேலை செய்கிறது என்று பாருங்கள். பெயர்கள் example-க்காக மட்டும்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.1.t": {
-  "en": "It answers in your customer's language",
-  "te": "మీ customer భాషలోనే జవాబు",
-  "hi": "Customer की अपनी भाषा में जवाब",
-  "kn": "Customer ಭಾಷೆಯಲ್ಲೇ ಉತ್ತರ",
-  "ta": "உங்கள் customer-இன் மொழியிலேயே பதில்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.1.d": {
-  "en": "A customer calls or writes. Your assistant answers at once, in Telugu, English, Hindi or Kannada.",
-  "te": "Customer call చేసినా, రాసినా వెంటనే జవాబు వస్తుంది: Telugu, English, Hindi, Kannada లో.",
-  "hi": "Customer call करे या लिखे, तुरंत जवाब मिलता है: Telugu, English, Hindi या Kannada में।",
-  "kn": "Customer call ಮಾಡಿದರೂ ಬರೆದರೂ ತಕ್ಷಣ ಉತ್ತರ: Telugu, English, Hindi, Kannada ನಲ್ಲಿ.",
-  "ta": "Customer call செய்தாலும் எழுதினாலும் உடனே பதில் வரும்: தெலுங்கு, ஆங்கிலம், இந்தி அல்லது கன்னடத்தில்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.2.t": {
-  "en": "Then it follows up on WhatsApp",
-  "te": "తర్వాత WhatsApp లో follow-up",
-  "hi": "फिर WhatsApp पर follow-up",
-  "kn": "ನಂತರ WhatsApp ನಲ್ಲಿ follow-up",
-  "ta": "பிறகு WhatsApp-இல் follow-up",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.2.d": {
-  "en": "Photos, prices and a visit time go to the customer on WhatsApp, from your business number.",
-  "te": "Photos, prices, visit time customer కి WhatsApp లో వెళ్తాయి, మీ business number నుంచి.",
-  "hi": "Photos, prices और visit का time customer को WhatsApp पर जाता है, आपके business number से।",
-  "kn": "Photos, prices, visit time customer ಗೆ WhatsApp ನಲ್ಲಿ ಹೋಗುತ್ತವೆ, ನಿಮ್ಮ business number ನಿಂದ.",
-  "ta": "Photos, prices, visit time எல்லாம் உங்கள் business number-இல் இருந்து customer-க்கு WhatsApp-இல் போகும்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.3.t": {
-  "en": "You see what it found out",
-  "te": "ఏం తెలిసిందో మీకు కనిపిస్తుంది",
-  "hi": "क्या पता चला, आपको दिखता है",
-  "kn": "ಏನು ತಿಳಿಯಿತು ಅಂತ ನಿಮಗೆ ಕಾಣುತ್ತದೆ",
-  "ta": "என்ன தெரிந்தது என்று நீங்கள் பார்க்கலாம்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.3.d": {
-  "en": "What the customer wants, who it is for and the day they will come, written up for you to act on.",
-  "te": "Customer కి ఏం కావాలి, ఎవరికి, ఏ రోజు వస్తారు: అన్నీ రాసి ఉంటాయి.",
-  "hi": "Customer को क्या चाहिए, किसके लिए, किस दिन आएँगे: सब लिखा मिलता है।",
-  "kn": "Customer ಗೆ ಏನು ಬೇಕು, ಯಾರಿಗೆ, ಯಾವ ದಿನ ಬರುತ್ತಾರೆ: ಎಲ್ಲಾ ಬರೆದಿರುತ್ತದೆ.",
-  "ta": "Customer-க்கு என்ன வேண்டும், யாருக்கு, எந்த நாள் வருவார்கள் என்பது எல்லாம் எழுதி வைக்கப்பட்டிருக்கும்.",
+  "en": "Watch it handle an enquiry",
+  "te": "ఒక enquiry ని ఎలా handle చేస్తుందో చూడండి",
+  "hi": "देखिए, यह एक enquiry कैसे संभालता है",
+  "kn": "ಒಂದು enquiry ಹೇಗೆ handle ಮಾಡುತ್ತದೆ ನೋಡಿ",
+  "ta": "ஒரு enquiry-ஐ எப்படி handle செய்கிறது என்று பாருங்கள்",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10393,11 +10278,11 @@
   }
  },
  "h3.final.t": {
-  "en": "Your next enquiry could be answered in seconds.",
-  "te": "మీ next enquiry కి seconds లో జవాబు వెళ్ళొచ్చు.",
-  "hi": "आपकी अगली enquiry का जवाब seconds में जा सकता है।",
-  "kn": "ನಿಮ್ಮ ಮುಂದಿನ enquiry ಗೆ seconds ನಲ್ಲಿ ಉತ್ತರ ಹೋಗಬಹುದು.",
-  "ta": "உங்கள் அடுத்த enquiry-க்கு seconds-இல் பதில் போகலாம்.",
+  "en": "Your next enquiry, answered in seconds.",
+  "te": "మీ తర్వాతి enquiry కి, సెకన్లలో జవాబు.",
+  "hi": "आपकी अगली enquiry का जवाब, कुछ ही seconds में।",
+  "kn": "ನಿಮ್ಮ ಮುಂದಿನ enquiry ಗೆ, ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಉತ್ತರ.",
+  "ta": "உங்கள் அடுத்த enquiry-க்கு, சில விநாடிகளில் பதில்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10638,63 +10523,11 @@
   }
  },
  "h3.stack.1": {
-  "en": "A coaching centre answers an enquiry in Telugu.",
-  "te": "ఒక coaching centre ఒక enquiry కి తెలుగులో జవాబు ఇస్తోంది.",
-  "hi": "एक coaching centre एक enquiry का जवाब तेलुगु में दे रहा है।",
-  "kn": "ಒಂದು coaching centre ಒಂದು enquiry ಗೆ ತೆಲುಗಿನಲ್ಲಿ ಉತ್ತರ ಕೊಡುತ್ತಿದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "ஒரு coaching centre ஒரு enquiry-க்கு தெலுங்கில் பதில் சொல்கிறது."
- },
- "h3.stack.2": {
-  "en": "A real-estate office books a site visit in Hindi.",
-  "te": "ఒక real estate office హిందీలో site visit book చేస్తోంది.",
-  "hi": "एक real estate office हिंदी में site visit book कर रहा है।",
-  "kn": "ಒಂದು real estate office ಹಿಂದಿಯಲ್ಲಿ site visit book ಮಾಡುತ್ತಿದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "ஒரு real estate office இந்தியில் site visit book செய்கிறது."
- },
- "h3.stack.3": {
-  "en": "A clinic books an appointment in Kannada.",
-  "te": "ఒక clinic కన్నడలో appointment book చేస్తోంది.",
-  "hi": "एक clinic कन्नड़ में appointment book कर रहा है।",
-  "kn": "ಒಂದು clinic ಕನ್ನಡದಲ್ಲಿ appointment book ಮಾಡುತ್ತಿದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "ஒரு clinic கன்னடத்தில் appointment book செய்கிறது."
- },
- "h3.stack.4": {
-  "en": "A shop says the order is ready, in English.",
-  "te": "ఒక shop ఇంగ్లీష్‌లో order ready అని చెబుతోంది.",
-  "hi": "एक shop अंग्रेज़ी में बता रहा है कि order ready है।",
-  "kn": "ಒಂದು shop ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ order ready ಅಂತ ಹೇಳುತ್ತಿದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "ஒரு shop ஆங்கிலத்தில் order ready என்று சொல்கிறது."
- },
- "h4.leak.more": {
-  "en": "More settings",
-  "te": "మరిన్ని settings",
-  "hi": "और settings",
-  "kn": "ಇನ್ನಷ್ಟು settings",
-  "ta": "மேலும் settings",
+  "en": "A coaching centre, in Telugu.",
+  "te": "ఒక coaching centre, తెలుగులో.",
+  "hi": "एक coaching centre, तेलुगु में।",
+  "kn": "ಒಂದು coaching centre, ತೆಲುಗಿನಲ್ಲಿ.",
+  "ta": "ஒரு coaching centre, தெலுங்கில்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10702,12 +10535,805 @@
    "ta": "draft"
   }
  },
- "h4.finder.t": {
-  "en": "Find new customers near you",
-  "te": "మీ దగ్గర కొత్త customers ని కనుక్కోండి",
-  "hi": "अपने पास नए customers ढूँढिए",
-  "kn": "ನಿಮ್ಮ ಹತ್ತಿರ ಹೊಸ customers ಹುಡುಕಿ",
-  "ta": "உங்கள் அருகில் புதிய customers-ஐக் கண்டுபிடியுங்கள்",
+ "h3.stack.2": {
+  "en": "A property office, in Hindi.",
+  "te": "ఒక property office, హిందీలో.",
+  "hi": "एक property office, हिंदी में।",
+  "kn": "ಒಂದು property office, ಹಿಂದಿಯಲ್ಲಿ.",
+  "ta": "ஒரு property office, இந்தியில்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.stack.3": {
+  "en": "A clinic, in Kannada.",
+  "te": "ఒక clinic, కన్నడలో.",
+  "hi": "एक clinic, कन्नड़ में।",
+  "kn": "ಒಂದು clinic, ಕನ್ನಡದಲ್ಲಿ.",
+  "ta": "ஒரு clinic, கன்னடத்தில்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.stack.4": {
+  "en": "A shop, in English.",
+  "te": "ఒక shop, ఇంగ్లీష్‌లో.",
+  "hi": "एक shop, अंग्रेज़ी में।",
+  "kn": "ಒಂದು shop, ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ.",
+  "ta": "ஒரு shop, ஆங்கிலத்தில்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.l.1": {
+  "en": "Looking for",
+  "te": "కావాలి",
+  "hi": "चाहिए",
+  "kn": "ಬೇಕು",
+  "ta": "தேவை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.v.1": {
+  "en": "2BHK in Kondapur",
+  "te": "Kondapur లో 2BHK",
+  "hi": "Kondapur में 2BHK",
+  "kn": "Kondapur ನಲ್ಲಿ 2BHK",
+  "ta": "Kondapur-இல் 2BHK",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.l.2": {
+  "en": "Budget",
+  "te": "Budget",
+  "hi": "Budget",
+  "kn": "Budget",
+  "ta": "Budget",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.v.2": {
+  "en": "Up to 80 lakh",
+  "te": "80 లక్షల లోపు",
+  "hi": "80 लाख तक",
+  "kn": "80 ಲಕ್ಷದ ಒಳಗೆ",
+  "ta": "80 லட்சத்துக்குள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.l.3": {
+  "en": "Visit",
+  "te": "Visit",
+  "hi": "Visit",
+  "kn": "Visit",
+  "ta": "Visit",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.2.v.3": {
+  "en": "Site visit, Saturday 11 am",
+  "te": "Site visit, శనివారం 11 am",
+  "hi": "Site visit, शनिवार 11 am",
+  "kn": "Site visit, ಶನಿವಾರ 11 am",
+  "ta": "Site visit, சனிக்கிழமை 11 am",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.l.1": {
+  "en": "Wants",
+  "te": "కావాలి",
+  "hi": "चाहिए",
+  "kn": "ಬೇಕು",
+  "ta": "தேவை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.v.1": {
+  "en": "A doctor's appointment",
+  "te": "Doctor appointment",
+  "hi": "Doctor की appointment",
+  "kn": "Doctor appointment",
+  "ta": "Doctor appointment",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.l.2": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "ta": "எப்போது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.v.2": {
+  "en": "Tomorrow morning",
+  "te": "రేపు ఉదయం",
+  "hi": "कल सुबह",
+  "kn": "ನಾಳೆ ಬೆಳಿಗ್ಗೆ",
+  "ta": "நாளை காலை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.l.3": {
+  "en": "Booked",
+  "te": "Book అయింది",
+  "hi": "Book हुआ",
+  "kn": "Book ಆಗಿದೆ",
+  "ta": "Book ஆனது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.3.v.3": {
+  "en": "Tomorrow, 10:30 am",
+  "te": "రేపు, 10:30 am",
+  "hi": "कल, 10:30 am",
+  "kn": "ನಾಳೆ, 10:30 am",
+  "ta": "நாளை, 10:30 am",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.l.1": {
+  "en": "Order",
+  "te": "Order",
+  "hi": "Order",
+  "kn": "Order",
+  "ta": "Order",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.v.1": {
+  "en": "Ready for pickup",
+  "te": "Pickup కి ready",
+  "hi": "Pickup के लिए ready",
+  "kn": "Pickup ಗೆ ready",
+  "ta": "Pickup-க்கு ready",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.l.2": {
+  "en": "Pickup",
+  "te": "Pickup",
+  "hi": "Pickup",
+  "kn": "Pickup",
+  "ta": "Pickup",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.v.2": {
+  "en": "At the counter",
+  "te": "Counter దగ్గర",
+  "hi": "Counter पर",
+  "kn": "Counter ಹತ್ತಿರ",
+  "ta": "Counter-இல்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.l.3": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "ta": "எப்போது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.4.v.3": {
+  "en": "Today, after 6 pm",
+  "te": "ఈరోజు, 6 pm తర్వాత",
+  "hi": "आज, 6 pm के बाद",
+  "kn": "ಇಂದು, 6 pm ನಂತರ",
+  "ta": "இன்று, 6 pm-க்குப் பிறகு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.listen": {
+  "en": "Listening…",
+  "te": "వింటోంది…",
+  "hi": "सुन रहा है…",
+  "kn": "ಕೇಳುತ್ತಿದೆ…",
+  "ta": "கேட்கிறது…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.tabs.label": {
+  "en": "Demo language",
+  "te": "Demo భాష",
+  "hi": "Demo की भाषा",
+  "kn": "Demo ಭಾಷೆ",
+  "ta": "Demo மொழி",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.eb.ask": {
+  "en": "Try it",
+  "te": "ప్రయత్నించండి",
+  "hi": "आज़माइए",
+  "kn": "ಪ್ರಯತ್ನಿಸಿ",
+  "ta": "முயற்சி செய்யுங்கள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.eb.how": {
+  "en": "How it works",
+  "te": "ఇది ఎలా పనిచేస్తుంది",
+  "hi": "यह कैसे काम करता है",
+  "kn": "ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "ta": "இது எப்படி வேலை செய்கிறது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.menu.cta": {
+  "en": "Get free early access",
+  "te": "Free early access తీసుకోండి",
+  "hi": "Free early access लीजिए",
+  "kn": "Free early access ಪಡೆಯಿರಿ",
+  "ta": "இலவச early access பெறுங்கள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.menu.close": {
+  "en": "Close the menu",
+  "te": "Menu మూసివేయండి",
+  "hi": "Menu बंद करें",
+  "kn": "Menu ಮುಚ್ಚಿ",
+  "ta": "Menu-வை மூடு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.sum": {
+  "en": "Written the moment the call ends.",
+  "te": "Call ముగియగానే రాసి ఉంటుంది.",
+  "hi": "Call खत्म होते ही लिख दिया जाता है।",
+  "kn": "Call ಮುಗಿದ ತಕ್ಷಣ ಬರೆದಿರುತ್ತದೆ.",
+  "ta": "Call முடிந்தவுடன் எழுதப்படும்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.hero.langs": {
+  "en": "Telugu · Hindi · Kannada · English",
+  "te": "తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "hi": "తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "kn": "తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "ta": "தெலுங்கு · இந்தி · கன்னடம் · ஆங்கிலம்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.plan.l.who": {
+  "en": "Who",
+  "te": "ఎవరికి",
+  "hi": "किसे",
+  "kn": "ಯಾರಿಗೆ",
+  "ta": "யாருக்கு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.plan.l.says": {
+  "en": "What it says",
+  "te": "ఏం చెప్తుంది",
+  "hi": "क्या कहेगा",
+  "kn": "ಏನು ಹೇಳುತ್ತದೆ",
+  "ta": "என்ன சொல்லும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.plan.l.when": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "ta": "எப்போது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.plan.l.cost": {
+  "en": "Cost",
+  "te": "ఖర్చు",
+  "hi": "खर्च",
+  "kn": "ಖರ್ಚು",
+  "ta": "செலவு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.plan.cost": {
+  "en": "Calls are charged at your plan's rate",
+  "te": "Calls మీ plan రేటు ప్రకారం charge అవుతాయి",
+  "hi": "Calls आपके plan के rate से charge होती हैं",
+  "kn": "Calls ನಿಮ್ಮ plan rate ಪ್ರಕಾರ charge ಆಗುತ್ತವೆ",
+  "ta": "Calls உங்கள் plan rate படி charge ஆகும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.plan.t": {
+  "en": "Your plan for this job",
+  "te": "ఈ పనికి మీ plan",
+  "hi": "इस काम के लिए आपका plan",
+  "kn": "ಈ ಕೆಲಸಕ್ಕೆ ನಿಮ್ಮ plan",
+  "ta": "இந்த வேலைக்கான உங்கள் plan",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.1.who": {
+  "en": "New property enquiries",
+  "te": "కొత్త property enquiries",
+  "hi": "नई property enquiries",
+  "kn": "ಹೊಸ property enquiries",
+  "ta": "புதிய property enquiries",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.1.says": {
+  "en": "Hi, you asked about a flat. Can you visit this Saturday?",
+  "te": "నమస్తే, మీరు flat గురించి అడిగారు. ఈ శనివారం visit చేయగలరా?",
+  "hi": "नमस्ते, आपने flat के बारे में पूछा था। क्या आप इस शनिवार visit कर सकते हैं?",
+  "kn": "ನಮಸ್ಕಾರ, ನೀವು flat ಬಗ್ಗೆ ಕೇಳಿದ್ದಿರಿ. ಈ ಶನಿವಾರ visit ಮಾಡಬಹುದೇ?",
+  "ta": "வணக்கம், நீங்கள் flat பற்றி கேட்டீர்கள். இந்த சனிக்கிழமை visit செய்ய முடியுமா?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.1.when": {
+  "en": "Right away, in calling hours",
+  "te": "వెంటనే, calling hours లో",
+  "hi": "तुरंत, calling hours में",
+  "kn": "ತಕ್ಷಣ, calling hours ನಲ್ಲಿ",
+  "ta": "உடனே, calling hours-இல்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.2.who": {
+  "en": "New admission enquiries",
+  "te": "కొత్త admission enquiries",
+  "hi": "नई admission enquiries",
+  "kn": "ಹೊಸ admission enquiries",
+  "ta": "புதிய admission enquiries",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.2.says": {
+  "en": "Thanks for asking about admissions. Shall I book a demo class?",
+  "te": "Admissions గురించి అడిగినందుకు thanks. Demo class book చేయనా?",
+  "hi": "Admission के बारे में पूछने के लिए धन्यवाद। Demo class book कर दूँ?",
+  "kn": "Admission ಬಗ್ಗೆ ಕೇಳಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದ. Demo class book ಮಾಡಲಾ?",
+  "ta": "Admission பற்றி கேட்டதற்கு நன்றி. Demo class book செய்யவா?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.2.when": {
+  "en": "Right away, in calling hours",
+  "te": "వెంటనే, calling hours లో",
+  "hi": "तुरंत, calling hours में",
+  "kn": "ತಕ್ಷಣ, calling hours ನಲ್ಲಿ",
+  "ta": "உடனே, calling hours-இல்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.3.who": {
+  "en": "Students who booked a demo class",
+  "te": "Demo class book చేసిన students",
+  "hi": "जिन students ने demo class book की",
+  "kn": "Demo class book ಮಾಡಿದ students",
+  "ta": "Demo class book செய்த students",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.3.says": {
+  "en": "Reminder: your demo class is tomorrow. Reply YES to confirm.",
+  "te": "Reminder: మీ demo class రేపు. Confirm కోసం YES అని reply చేయండి.",
+  "hi": "Reminder: आपकी demo class कल है। Confirm के लिए YES भेजें।",
+  "kn": "Reminder: ನಿಮ್ಮ demo class ನಾಳೆ. Confirm ಮಾಡಲು YES ಎಂದು reply ಮಾಡಿ.",
+  "ta": "Reminder: உங்கள் demo class நாளை. Confirm செய்ய YES என்று reply செய்யுங்கள்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.3.when": {
+  "en": "The evening before",
+  "te": "ముందు రోజు సాయంత్రం",
+  "hi": "एक दिन पहले शाम को",
+  "kn": "ಹಿಂದಿನ ದಿನ ಸಂಜೆ",
+  "ta": "முந்தைய நாள் மாலை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.4.who": {
+  "en": "New car enquiries",
+  "te": "కొత్త car enquiries",
+  "hi": "नई car enquiries",
+  "kn": "ಹೊಸ car enquiries",
+  "ta": "புதிய car enquiries",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.4.says": {
+  "en": "Thanks for your interest. Which day suits you for a test drive?",
+  "te": "Interest చూపినందుకు thanks. Test drive కి ఏ రోజు వీలవుతుంది?",
+  "hi": "Interest दिखाने के लिए धन्यवाद। Test drive के लिए कौन सा दिन ठीक रहेगा?",
+  "kn": "Interest ತೋರಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದ. Test drive ಗೆ ಯಾವ ದಿನ ಅನುಕೂಲ?",
+  "ta": "Interest காட்டியதற்கு நன்றி. Test drive-க்கு எந்த நாள் வசதி?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.4.when": {
+  "en": "Right away, in calling hours",
+  "te": "వెంటనే, calling hours లో",
+  "hi": "तुरंत, calling hours में",
+  "kn": "ತಕ್ಷಣ, calling hours ನಲ್ಲಿ",
+  "ta": "உடனே, calling hours-இல்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.5.who": {
+  "en": "Customers whose order is ready",
+  "te": "Order ready అయిన customers",
+  "hi": "जिन customers का order ready है",
+  "kn": "Order ready ಆದ customers",
+  "ta": "Order ready ஆன customers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.5.says": {
+  "en": "Your order is ready. Can you pick it up today?",
+  "te": "మీ order ready. ఈరోజు pickup చేసుకోగలరా?",
+  "hi": "आपका order ready है। क्या आज pickup कर सकते हैं?",
+  "kn": "ನಿಮ್ಮ order ready. ಇಂದು pickup ಮಾಡಬಹುದೇ?",
+  "ta": "உங்கள் order ready. இன்று pickup செய்ய முடியுமா?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.job.5.when": {
+  "en": "As soon as it is ready",
+  "te": "Ready అయిన వెంటనే",
+  "hi": "ready होते ही",
+  "kn": "Ready ಆದ ತಕ್ಷಣ",
+  "ta": "Ready ஆனவுடன்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.t": {
+  "en": "Quick questions",
+  "te": "త్వరిత ప్రశ్నలు",
+  "hi": "छोटे सवाल",
+  "kn": "ಸಣ್ಣ ಪ್ರಶ್ನೆಗಳು",
+  "ta": "சிறு கேள்விகள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.eb.faq": {
+  "en": "FAQ",
+  "te": "ప్రశ్నలు",
+  "hi": "FAQ",
+  "kn": "FAQ",
+  "ta": "FAQ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.nav.faq": {
+  "en": "FAQ",
+  "te": "ప్రశ్నలు",
+  "hi": "FAQ",
+  "kn": "FAQ",
+  "ta": "FAQ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.1.q": {
+  "en": "Does it speak Telugu?",
+  "te": "Telugu మాట్లాడుతుందా?",
+  "hi": "क्या यह Telugu बोलता है?",
+  "kn": "Telugu ಮಾತಾಡುತ್ತದೆಯೇ?",
+  "ta": "தெலுங்கு பேசுமா?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.1.a": {
+  "en": "Yes. Telugu, Hindi, Kannada and English, and it answers in your customer's language.",
+  "te": "అవును. Telugu, Hindi, Kannada, English లో, మీ customer భాషలో జవాబిస్తుంది.",
+  "hi": "हाँ। Telugu, Hindi, Kannada और English में, आपके customer की भाषा में जवाब देता है।",
+  "kn": "ಹೌದು. Telugu, Hindi, Kannada ಮತ್ತು English ನಲ್ಲಿ, ನಿಮ್ಮ customer ಭಾಷೆಯಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "ta": "ஆம். Telugu, Hindi, Kannada, English-இல், உங்கள் customer மொழியில் பதில் சொல்லும்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.2.q": {
+  "en": "Will customers know it's an AI?",
+  "te": "Customers కి ఇది AI అని తెలుస్తుందా?",
+  "hi": "क्या customers को पता चलेगा कि यह AI है?",
+  "kn": "Customers ಗೆ ಇದು AI ಎಂದು ತಿಳಿಯುತ್ತದೆಯೇ?",
+  "ta": "இது AI என்று customers-க்குத் தெரியுமா?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.2.a": {
+  "en": "Yes. It always says it is an AI assistant when it greets.",
+  "te": "అవును. Greet చేసేటప్పుడు ఎప్పుడూ తాను AI assistant అని చెప్తుంది.",
+  "hi": "हाँ। Greet करते समय यह हमेशा बताता है कि यह AI assistant है।",
+  "kn": "ಹೌದು. Greet ಮಾಡುವಾಗ ಯಾವಾಗಲೂ ತಾನು AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "ta": "ஆம். வாழ்த்தும்போது எப்போதும் தான் AI assistant என்று சொல்லும்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.3.q": {
+  "en": "Which number does it call from?",
+  "te": "ఏ number నుంచి call చేస్తుంది?",
+  "hi": "यह किस number से call करता है?",
+  "kn": "ಯಾವ number ನಿಂದ call ಮಾಡುತ್ತದೆ?",
+  "ta": "எந்த number-இலிருந்து call செய்யும்?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.3.a": {
+  "en": "Your own business number. One is included in every plan.",
+  "te": "మీ సొంత business number నుంచే. ప్రతి plan లో ఒకటి ఉంటుంది.",
+  "hi": "आपके अपने business number से। हर plan में एक शामिल है।",
+  "kn": "ನಿಮ್ಮದೇ business number ನಿಂದ. ಪ್ರತಿ plan ನಲ್ಲಿ ಒಂದು ಸೇರಿದೆ.",
+  "ta": "உங்கள் சொந்த business number-இலிருந்து. ஒவ்வொரு plan-இலும் ஒன்று உண்டு.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.final.line": {
+  "en": "Or WhatsApp us on {whatsapp}",
+  "te": "లేదా WhatsApp లో మాకు చెప్పండి: {whatsapp}",
+  "hi": "या WhatsApp पर हमसे बात करें: {whatsapp}",
+  "kn": "ಅಥವಾ WhatsApp ನಲ್ಲಿ ಹೇಳಿ: {whatsapp}",
+  "ta": "அல்லது WhatsApp-இல் சொல்லுங்கள்: {whatsapp}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.2.q.quiet": {
+  "en": "Can customers tell it's an AI?",
+  "te": "ఇది AI అని customers కి తెలుస్తుందా?",
+  "hi": "क्या customers पहचान सकते हैं कि यह AI है?",
+  "kn": "ಇದು AI ಎಂದು customers ಗೆ ತಿಳಿಯುತ್ತದೆಯೇ?",
+  "ta": "இது AI என்று customers கண்டுபிடிக்க முடியுமா?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.faq.2.a.quiet": {
+  "en": "If they ask, it always says so honestly. You choose whether it mentions it in the greeting.",
+  "te": "వాళ్ళు అడిగితే, ఎప్పుడూ నిజాయితీగా చెప్తుంది. Greeting లో చెప్పాలో లేదో మీరే ఎంచుకోండి.",
+  "hi": "अगर वे पूछें, तो यह हमेशा ईमानदारी से बताता है। Greeting में बताना है या नहीं, यह आप चुनिए।",
+  "kn": "ಅವರು ಕೇಳಿದರೆ, ಯಾವಾಗಲೂ ಪ್ರಾಮಾಣಿಕವಾಗಿ ಹೇಳುತ್ತದೆ. Greeting ನಲ್ಲಿ ಹೇಳಬೇಕೇ ಬೇಡವೇ ಎಂದು ನೀವೇ ಆರಿಸಿ.",
+  "ta": "அவர்கள் கேட்டால், எப்போதும் நேர்மையாகச் சொல்லும். Greeting-இல் சொல்ல வேண்டுமா என்பதை நீங்களே தேர்ந்தெடுங்கள்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10728,207 +11354,12 @@
    "ta": "draft"
   }
  },
- "h4.dot": {
-  "en": "Show item {n} of {total}",
-  "te": "{total} లో {n} వది చూపించు",
-  "hi": "{total} में से {n} दिखाएँ",
-  "kn": "{total} ರಲ್ಲಿ {n} ತೋರಿಸಿ",
-  "ta": "{total}-இல் {n} காட்டு",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.pl.min": {
-  "en": "{n} minutes · 1 number",
-  "te": "{n} నిమిషాలు · 1 number",
-  "hi": "{n} मिनट · 1 number",
-  "kn": "{n} ನಿಮಿಷ · 1 number",
-  "ta": "{n} நிமிடம் · 1 number",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h4.pl.payg": {
   "en": "{p}/min · 1 number",
   "te": "{p}/నిమిషం · 1 number",
   "hi": "{p}/मिनट · 1 number",
   "kn": "{p}/ನಿಮಿಷ · 1 number",
   "ta": "{p}/நிமிடம் · 1 number",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.leak.t": {
-  "en": "What late call-backs cost you",
-  "te": "ఆలస్యంగా call back చేస్తే మీకు ఎంత నష్టం",
-  "hi": "late call-back से आपका कितना नुकसान",
-  "kn": "late call-back ನಿಂದ ನಿಮಗೆ ಎಷ್ಟು ನಷ್ಟ",
-  "ta": "late call-back-ஆல் உங்களுக்கு எவ்வளவு இழப்பு",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.leak.sub": {
-  "en": "Move the sliders to your numbers.",
-  "te": "Sliders ని మీ numbers కి జరపండి.",
-  "hi": "Sliders को अपने numbers पर ले जाइए।",
-  "kn": "Sliders ಅನ್ನು ನಿಮ್ಮ numbers ಗೆ ಜರುಗಿಸಿ.",
-  "ta": "Sliders-ஐ உங்கள் numbers-க்கு நகர்த்துங்கள்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.leak.slip": {
-  "en": "a month slipping away",
-  "te": "నెలకు చేజారిపోతోంది",
-  "hi": "हर महीने हाथ से जा रहा है",
-  "kn": "ತಿಂಗಳಿಗೆ ಕೈ ತಪ್ಪುತ್ತಿದೆ",
-  "ta": "மாதம் கைநழுவுகிறது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.leak.with": {
-  "en": "With {brand}: {n} of {n} answered in seconds",
-  "te": "{brand} తో: {n} లో {n} కి seconds లో జవాబు",
-  "hi": "{brand} के साथ: {n} में से {n} का जवाब seconds में",
-  "kn": "{brand} ಜೊತೆ: {n} ರಲ್ಲಿ {n} ಕ್ಕೆ seconds ನಲ್ಲಿ ಉತ್ತರ",
-  "ta": "{brand}-உடன்: {n}-இல் {n}-க்கும் seconds-இல் பதில்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.pl.title": {
-  "en": "Simple plans in rupees",
-  "te": "Rupees లో simple plans",
-  "hi": "रुपये में सीधे plans",
-  "kn": "ರೂಪಾಯಿಗಳಲ್ಲಿ ಸರಳ plans",
-  "ta": "ரூபாயில் எளிய plans",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.pl.line": {
-  "en": "+{gst} GST · 1 business number included · Free early access until paid plans start.",
-  "te": "+{gst} GST · 1 business number ఉంటుంది · Paid plans మొదలయ్యే వరకు early access free.",
-  "hi": "+{gst} GST · 1 business number शामिल · Paid plans शुरू होने तक early access free।",
-  "kn": "+{gst} GST · 1 business number ಸೇರಿದೆ · Paid plans ಶುರುವಾಗುವವರೆಗೆ early access free.",
-  "ta": "+{gst} GST · 1 business number உள்ளடக்கம் · Paid plans தொடங்கும் வரை early access இலவசம்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.pl.more": {
-  "en": "See full pricing",
-  "te": "పూర్తి pricing చూడండి",
-  "hi": "पूरा pricing देखिए",
-  "kn": "ಪೂರ್ತಿ pricing ನೋಡಿ",
-  "ta": "முழு pricing-ஐப் பாருங்கள்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.eg": {
-  "en": "Example",
-  "te": "ఉదాహరణ",
-  "hi": "उदाहरण",
-  "kn": "ಉದಾಹರಣೆ",
-  "ta": "எடுத்துக்காட்டு",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.tr.1": {
-  "en": "Your own number",
-  "te": "మీ సొంత number",
-  "hi": "आपका अपना number",
-  "kn": "ನಿಮ್ಮದೇ number",
-  "ta": "உங்கள் சொந்த number",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.tr.2": {
-  "en": "Only people who said yes",
-  "te": "అనుమతి ఇచ్చినవాళ్ళకే",
-  "hi": "सिर्फ़ उन्हें जिन्होंने हाँ कहा",
-  "kn": "ಹೌದು ಅಂದವರಿಗೆ ಮಾತ್ರ",
-  "ta": "சரி என்றவர்களுக்கு மட்டும்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.tr.3": {
-  "en": "STOP works at once",
-  "te": "STOP అంటే వెంటనే ఆగుతుంది",
-  "hi": "STOP लिखते ही तुरंत रुक जाता है",
-  "kn": "STOP ಅಂದ ತಕ್ಷಣ ನಿಲ್ಲುತ್ತದೆ",
-  "ta": "STOP என்றால் உடனே நிற்கும்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.tr.4": {
-  "en": "Quiet hours",
-  "te": "రాత్రి quiet hours",
-  "hi": "रात के quiet hours",
-  "kn": "ರಾತ್ರಿ quiet hours",
-  "ta": "இரவு quiet hours",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.m.kyc": {
-  "en": "KYC done",
-  "te": "KYC అయింది",
-  "hi": "KYC हो गया",
-  "kn": "KYC ಆಯಿತು",
-  "ta": "KYC முடிந்தது",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10949,12 +11380,51 @@
    "ta": "draft"
   }
  },
- "h4.m.added": {
-  "en": "Added to your list",
-  "te": "మీ list లో చేరింది",
-  "hi": "आपकी list में जुड़ गया",
-  "kn": "ನಿಮ್ಮ list ಗೆ ಸೇರಿದೆ",
-  "ta": "உங்கள் list-இல் சேர்ந்தது",
+ "h4.tr.3": {
+  "en": "STOP works at once",
+  "te": "STOP అంటే వెంటనే ఆగుతుంది",
+  "hi": "STOP लिखते ही तुरंत रुक जाता है",
+  "kn": "STOP ಅಂದ ತಕ್ಷಣ ನಿಲ್ಲುತ್ತದೆ",
+  "ta": "STOP என்றால் உடனே நிற்கும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.eg": {
+  "en": "Example",
+  "te": "ఉదాహరణ",
+  "hi": "उदाहरण",
+  "kn": "ಉದಾಹರಣೆ",
+  "ta": "எடுத்துக்காட்டு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.more": {
+  "en": "See full pricing",
+  "te": "పూర్తి pricing చూడండి",
+  "hi": "पूरा pricing देखिए",
+  "kn": "ಪೂರ್ತಿ pricing ನೋಡಿ",
+  "ta": "முழு pricing-ஐப் பாருங்கள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.leak.slip": {
+  "en": "a month slipping away",
+  "te": "నెలకు చేజారిపోతోంది",
+  "hi": "हर महीने हाथ से जा रहा है",
+  "kn": "ತಿಂಗಳಿಗೆ ಕೈ ತಪ್ಪುತ್ತಿದೆ",
+  "ta": "மாதம் கைநழுவுகிறது",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10975,6 +11445,136 @@
    "ta": "draft"
   }
  },
+ "h4.tr.2": {
+  "en": "Only people who said yes",
+  "te": "అనుమతి ఇచ్చినవాళ్ళకే",
+  "hi": "सिर्फ़ उन्हें जिन्होंने हाँ कहा",
+  "kn": "ಹೌದು ಅಂದವರಿಗೆ ಮಾತ್ರ",
+  "ta": "சரி என்றவர்களுக்கு மட்டும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.min": {
+  "en": "{n} minutes · 1 number",
+  "te": "{n} నిమిషాలు · 1 number",
+  "hi": "{n} मिनट · 1 number",
+  "kn": "{n} ನಿಮಿಷ · 1 number",
+  "ta": "{n} நிமிடம் · 1 number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.title": {
+  "en": "Simple plans in rupees",
+  "te": "Rupees లో simple plans",
+  "hi": "रुपये में सीधे plans",
+  "kn": "ರೂಪಾಯಿಗಳಲ್ಲಿ ಸರಳ plans",
+  "ta": "ரூபாயில் எளிய plans",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.tr.1": {
+  "en": "Your own number",
+  "te": "మీ సొంత number",
+  "hi": "आपका अपना number",
+  "kn": "ನಿಮ್ಮದೇ number",
+  "ta": "உங்கள் சொந்த number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.leak.sub": {
+  "en": "Move the sliders to your numbers.",
+  "te": "Sliders ని మీ numbers కి జరపండి.",
+  "hi": "Sliders को अपने numbers पर ले जाइए।",
+  "kn": "Sliders ಅನ್ನು ನಿಮ್ಮ numbers ಗೆ ಜರುಗಿಸಿ.",
+  "ta": "Sliders-ஐ உங்கள் numbers-க்கு நகர்த்துங்கள்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.leak.t": {
+  "en": "What late call-backs cost you",
+  "te": "ఆలస్యంగా call back చేస్తే మీకు ఎంత నష్టం",
+  "hi": "late call-back से आपका कितना नुकसान",
+  "kn": "late call-back ನಿಂದ ನಿಮಗೆ ಎಷ್ಟು ನಷ್ಟ",
+  "ta": "late call-back-ஆல் உங்களுக்கு எவ்வளவு இழப்பு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.dot": {
+  "en": "Show item {n} of {total}",
+  "te": "{total} లో {n} వది చూపించు",
+  "hi": "{total} में से {n} दिखाएँ",
+  "kn": "{total} ರಲ್ಲಿ {n} ತೋರಿಸಿ",
+  "ta": "{total}-இல் {n} காட்டு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.finder.t": {
+  "en": "Find new customers near you",
+  "te": "మీ దగ్గర కొత్త customers ని కనుక్కోండి",
+  "hi": "अपने पास नए customers ढूँढिए",
+  "kn": "ನಿಮ್ಮ ಹತ್ತಿರ ಹೊಸ customers ಹುಡುಕಿ",
+  "ta": "உங்கள் அருகில் புதிய customers-ஐக் கண்டுபிடியுங்கள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.leak.with": {
+  "en": "With {brand}: {n} of {n} answered in seconds",
+  "te": "{brand} తో: {n} లో {n} కి seconds లో జవాబు",
+  "hi": "{brand} के साथ: {n} में से {n} का जवाब seconds में",
+  "kn": "{brand} ಜೊತೆ: {n} ರಲ್ಲಿ {n} ಕ್ಕೆ seconds ನಲ್ಲಿ ಉತ್ತರ",
+  "ta": "{brand}-உடன்: {n}-இல் {n}-க்கும் seconds-இல் பதில்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.tr.4": {
+  "en": "Quiet hours",
+  "te": "రాత్రి quiet hours",
+  "hi": "रात के quiet hours",
+  "kn": "ರಾತ್ರಿ quiet hours",
+  "ta": "இரவு quiet hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
  "h4.m.wait": {
   "en": "Waits till morning",
   "te": "ఉదయం వరకు ఆగుతుంది",
@@ -10988,12 +11588,51 @@
    "ta": "draft"
   }
  },
- "h3.built.title": {
-  "en": "Built in from day one",
-  "te": "మొదటి రోజు నుంచే అన్నీ ఉంటాయి",
-  "hi": "पहले दिन से सब कुछ साथ",
-  "kn": "ಮೊದಲ ದಿನದಿಂದಲೇ ಎಲ್ಲಾ ಜೊತೆಗಿದೆ",
-  "ta": "முதல் நாளிலிருந்தே எல்லாம் இருக்கும்",
+ "h4.pl.line": {
+  "en": "+{gst} GST · 1 business number included · Free early access until paid plans start.",
+  "te": "+{gst} GST · 1 business number ఉంటుంది · Paid plans మొదలయ్యే వరకు early access free.",
+  "hi": "+{gst} GST · 1 business number शामिल · Paid plans शुरू होने तक early access free।",
+  "kn": "+{gst} GST · 1 business number ಸೇರಿದೆ · Paid plans ಶುರುವಾಗುವವರೆಗೆ early access free.",
+  "ta": "+{gst} GST · 1 business number உள்ளடக்கம் · Paid plans தொடங்கும் வரை early access இலவசம்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.leak.more": {
+  "en": "More settings",
+  "te": "మరిన్ని settings",
+  "hi": "और settings",
+  "kn": "ಇನ್ನಷ್ಟು settings",
+  "ta": "மேலும் settings",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.m.added": {
+  "en": "Added to your list",
+  "te": "మీ list లో చేరింది",
+  "hi": "आपकी list में जुड़ गया",
+  "kn": "ನಿಮ್ಮ list ಗೆ ಸೇರಿದೆ",
+  "ta": "உங்கள் list-இல் சேர்ந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.m.kyc": {
+  "en": "KYC done",
+  "te": "KYC అయింది",
+  "hi": "KYC हो गया",
+  "kn": "KYC ಆಯಿತು",
+  "ta": "KYC முடிந்தது",
   "status": {
    "te": "draft",
    "hi": "draft",

@@ -168,12 +168,18 @@ GREET_EN = {"respectful": "Good day,", "friendly": "Hello,", "casual": "Hey!", Q
 ASK_EN = {"respectful": "Would this be a good time to speak?", "friendly": "Is this a good time to talk?", "casual": "Got a minute to chat?", QUICK: "A quick minute?"}
 
 
-def opener(language: str, tone: str, introduce: object | None = None) -> str | None:
+PLAIN_BUSINESS = {"te": "నేను {business} నుంచి మాట్లాడుతున్నాను.", "en": "this is {business}."}   # the name only: no "AI assistant" (owner, 20 Nov 2026: the greeting says it only when the setting is ON)
+
+
+def opener(language: str, tone: str, introduce: object | None = None, say_ai: bool = True) -> str | None:
     """The tone's own opening (with {business} left in for the business form), or None: the language keeps its standard opening. `introduce` (an app.talk_training.introduce.Introduce) replaces "of {business}" by the owner's name or the
     Owner's own words; the AI-assistant words are in every form (the Introduce rules insist on them)."""
     from app.talk_training import introduce as intro_mod
 
     tone = usable(tone, language)
+    plain = {"te": f"{GREET_TE[tone]} {PLAIN_BUSINESS['te']} {ASK_TE[tone]}", "en": f"{GREET_EN[tone]} {PLAIN_BUSINESS['en']} {ASK_EN[tone]}"}.get(language)
+    if not say_ai and introduce is None:
+        return plain   # the name only; None for a language with no tone words here (the caller keeps its own plain opening)
     if introduce is not None and isinstance(introduce, intro_mod.Introduce):
         said = intro_mod.phrase(language, introduce)
         if said is not None and language == "te":

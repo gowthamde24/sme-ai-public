@@ -67,6 +67,11 @@ class Box:
         self.adapter: LocalFakeAdapter = runtime.outbox_adapter
         assert isinstance(self.adapter, LocalFakeAdapter)
         self.pin_name = "day"
+        # 21 Nov 2026: the AI line follows the business's setting (default OFF); these tests are about the line, so this business turned it on
+        operator_sql.sql(
+            f"insert into public.talk_training (tenant_id, doc, updated_by) values ('{self.tenant}', '{{\"say_ai_when_greeting\": true}}', '{uuid.uuid4()}') "
+            f"on conflict (tenant_id) do update set doc = public.talk_training.doc || excluded.doc"
+        )
 
     def url(self, path: str, tenant: str | None = None) -> str:
         return f"/v1/tenants/{tenant or self.tenant}{path}"

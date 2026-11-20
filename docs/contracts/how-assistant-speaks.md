@@ -1,4 +1,4 @@
-> **Update 21 Nov 2026** (see docs/contracts/voices-tones.md): `tone` has three options (`friendly`, `respectful`, `quick`); a new `background` object (`quiet_office` | `shop` | `off`); **Region is removed** from GET (`words.languages.*.region`, `words.options.regions`, `pack_defaults.region` are gone); PUT still accepts `words.*.region` and ignores it.
+> **Update 21 Nov 2026** (see docs/contracts/voices-tones.md): `tone` has three options (`friendly`, `respectful`, `quick`); a new `background` object (`quiet_office` | `shop` | `off`); **`say_ai_when_greeting: {value, saved}`** (default `{false,false}`; docs/contracts/greeting-disclosure.md); **Region is removed** from GET (`words.languages.*.region`, `words.options.regions`, `pack_defaults.region` are gone); PUT still accepts `words.*.region` and ignores it.
 
 # Contract: "How your assistant speaks" (one panel for every business). C1 -> C2, 11 Nov 2026
 

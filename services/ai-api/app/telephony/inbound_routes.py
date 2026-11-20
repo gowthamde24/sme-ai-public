@@ -17,7 +17,7 @@ from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import timedelta, timezone
 from functools import partial
-from typing import Any
+from typing import Any, cast
 
 from fastapi import APIRouter, Request, WebSocket
 from fastapi.responses import JSONResponse, PlainTextResponse, Response
@@ -40,8 +40,9 @@ from app.conversation.providers import (
 from app.conversation.sound import Stored, clamp_speed, resolve_sound, tone_of
 from app.errors import ApiError
 from app.logging_safety import one_line
+from app.opening import greeting
 from app.talk_training import introduce as introduce_mod
-from app.telephony import ambience, caller_guard, exotel, gate, inbound, persona
+from app.telephony import ambience, caller_guard, exotel, gate, inbound, persona, plivo_outbound
 from app.telephony import tone as tone_mod
 from app.telephony.call_session import CallPlan, run_call
 from app.telephony.greeting_audio import GREETINGS
@@ -99,6 +100,7 @@ class OutboundCall:
     introduce: tuple[str, str | None] | None = None   # the Owner's per-call "Introduce as" (kind, text) on a test call; None: the workspace's saved setting
     person_name: str | None = None   # the called person's name when the contact record has one (Lead Desk): the Respectful tone says "Name గారు"
     person_gender: str | None = None # "male" | "female" only when the contact or the goal says so: it decides whether a title may be used
+    kind: str = "goal"              # test | goal | task: which opening the call has (plivo_outbound.opening_for), so the answer can rebuild it with or without the AI words
     tone: str = "friendly"           # respectful | friendly | casual (app/telephony/tone.py): the register of a goal call; casual only on the Owner's own test call
 
 class StarletteWire:
@@ -196,7 +198,7 @@ def visit_label(slot: dict[str, Any]) -> str:
 
 
 def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = (), assistant: str | None = None,
-                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool = True, stored: Stored | None = None) -> tuple[Parts, str]:
+                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool | None = None, stored: Stored | None = None) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in the CALL's language (te-IN on a Telugu line; owner, 6 Nov 2026: "auto" let a caller's "hello" turn a Telugu call English),
     following the call when it switches (app/telephony/language_rule.py), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
@@ -216,12 +218,15 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
             return introduce_mod.from_doc({"kind": outbound.introduce[0], "text": outbound.introduce[1]})
         return introduce_mod.from_doc((training or {}).get("introduce_as"))
 
+    say_ai = mention_ai if mention_ai is not None else greeting.resolved_from(training if isinstance(training, dict) else None)   # the RESOLVED setting "Say 'AI assistant' when greeting" (default OFF; app/opening/greeting.py); `mention_ai` False only when a caller forces it
+
     def opening_for(lang: str) -> str:
-        if outbound is not None:   # we rang them: no \"you rang us\" greeting; the owner's opening (or the standard one) that still says it is an AI
-            owner_line = tone_mod.opener(lang, outbound.tone, introduction()) if outbound.goal and outbound.owner_test else None
-            # ONE greeting (owner decision 13 Nov 2026, decided by C1): a call to a customer opens with the Owner's Talk training greeting when there is one (it still says it is an AI)
-            return persona.opening_line(lang, business=business, assistant=assistant, customer=None, owner_line=owner_line or trained_greeting(training, lang) or outbound.opening_line, inbound=False)
-        return persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang), mention_ai=mention_ai)
+        if outbound is not None:   # we rang them: no \"you rang us\" greeting; the owner's opening (or the standard one), with or without the AI words as the setting says
+            owner_line = tone_mod.opener(lang, outbound.tone, introduction(), say_ai) if outbound.goal and outbound.owner_test else None
+            # ONE greeting (owner decision 13 Nov 2026, decided by C1): a call to a customer opens with the Owner's Talk training greeting when there is one
+            standard = outbound.opening_line if say_ai else plivo_outbound.opening_for(outbound.kind, lang, outbound.tone, None, False)
+            return persona.opening_line(lang, business=business, assistant=assistant, customer=None, owner_line=owner_line or trained_greeting(training, lang) or standard, inbound=False, mention_ai=say_ai)
+        return persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang), mention_ai=say_ai)
 
     def goal_prompt(lang: str) -> str:
         """An outbound GOAL call is not an enquiry call (11 Nov 2026): its own prompt, the goal first and the hard rules above everything."""
@@ -241,7 +246,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         tts=tts,
         llm=llm,
         system_for=lambda lang: goal_prompt(lang) if outbound is not None and outbound.goal else persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose=outbound.purpose if outbound else "inbound", goal=outbound.goal if outbound else None, facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
-                                                      corrections=corrections, opening=opening_for(lang), opening_says_ai=outbound is not None or persona.mention_ai_applies(lang, mention_ai), tone=tone_of(stored)[0]),
+                                                      corrections=corrections, opening=opening_for(lang), opening_says_ai=gate.has_ai_disclosure(opening_for(lang)), tone=tone_of(stored)[0]),
         greeting_for=opening_for,
         models={"fast": model, "strong": model},
         voice_for=lambda lang: resolve_sound(bv.config, stored, lang).voice.id,
@@ -289,13 +294,12 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             log.warning("exotel_inbound %s_unreadable %s", name, exc.__class__.__name__)
             return default
 
-    training, slots, corrections, switch, sound_row = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("mention_ai", True), read("call_sound", None))
+    training, slots, corrections, sound_row = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("call_sound", None))
     stored = Stored.from_call_row(sound_row if isinstance(sound_row, dict) else None, training if isinstance(training, dict) else None)   # the workspace's voice, tone and speed: the SAME values and the same function as the previews (app/conversation/sound.py)
-    mention_ai = switch is not False   # unreadable or unclear: ON
     slots = list(slots or [])
     labels = tuple(visit_label(sl) for sl in slots)
     if service.parts_for is None:
-        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, assistant=assistant, corrections=tuple(corrections or ()), mention_ai=mention_ai, stored=stored, **({"outbound": outbound} if outbound is not None else {}))
+        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, assistant=assistant, corrections=tuple(corrections or ()), stored=stored, **cast(Any, {"outbound": outbound} if outbound is not None else {}))
     else:
         parts, model = service.parts_for(bv, business, language, service.llm_choice)
     text = parts.greeting_for(language)

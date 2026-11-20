@@ -61,7 +61,8 @@ async def voice_sample(ctx: OwnerAdmin, runtime: RuntimeDep, language: PreviewLa
     if name is not None and not NAME_OK.match(name):
         raise ApiError(422, "validation_error", "Invalid input.")
     sound = _sound(runtime, ctx, language, style)
-    text = line_for(language, TONE_STYLE[sound.tone], (name or DEFAULT_NAME).strip(), ctx.tenant.name)
+    # the opening line as a call speaks it (the name only, or with the AI words as the setting says: app/opening/greeting.py); the fixed sample line of the tone only where the workspace's own line cannot be read
+    text = _owner_opening(runtime, ctx, language, name) or line_for(language, TONE_STYLE[sound.tone], (name or DEFAULT_NAME).strip(), ctx.tenant.name)
     return await _speak(runtime, ctx, sound, text, "sample")
 
 

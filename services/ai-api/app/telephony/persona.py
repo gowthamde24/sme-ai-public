@@ -59,10 +59,16 @@ INBOUND_OPENING = {
     "ml": "ഹലോ, ഞാൻ {business} ൽ നിന്ന് {assistant}, AI അസിസ്റ്റന്റ് ആണ്. ഇപ്പോൾ ഒരു മിനിറ്റ് സംസാരിക്കാമോ?",
     "mr": "नमस्कार, मी {business} कडून {assistant}, AI असिस्टंट बोलतेय. आत्ता एक मिनिट बोलू शकतो का?",
 }
-# The plain opening (no AI mention) for the owner who switched the mention off (job AI, 10-11 Nov 2026). Only languages whose plain opener a native speaker has reviewed are here: English first; Telugu etc.
-# follow after the owner confirms the wording. For any other language the switch is LOCKED ON (the call keeps saying it is an AI).
+# The plain opening (the name only, no AI mention): the DEFAULT since 20 Nov 2026 (the setting "Say 'AI assistant' when greeting" is OFF until the owner turns it on; app/opening/greeting.py). English is the owner's own wording;
+# the others are the standard opening without its AI words, drafts for a native reader. A customer who asks whether this is a person or a robot always gets the honest answer (app/opening/honesty.py), whatever this says.
 PLAIN_INBOUND_OPENING = {
     "en": "Hello, this is {assistant} from {business}. How can I help you?",
+    "te": "హలో, నేను {business} నుంచి {assistant}. ఇప్పుడు ఒక నిమిషం మాట్లాడొచ్చా?",
+    "hi": "नमस्ते जी, मैं {business} से {assistant} बोल रही हूँ। क्या अभी एक मिनट बात कर सकते हैं?",
+    "kn": "ಹಲೋ, ನಾನು {business} ಇಂದ {assistant}. ಈಗ ಒಂದು ನಿಮಿಷ ಮಾತಾಡಬಹುದಾ?",
+    "ta": "ஹலோ, நான் {business} லிருந்து {assistant}. இப்போ ஒரு நிமிஷம் பேசலாமா?",
+    "ml": "ഹലോ, ഞാൻ {business} ൽ നിന്ന് {assistant} ആണ്. ഇപ്പോൾ ഒരു മിനിറ്റ് സംസാരിക്കാമോ?",
+    "mr": "नमस्कार, मी {business} कडून {assistant} बोलतेय. आत्ता एक मिनिट बोलू शकतो का?",
 }
 PLAIN_REVIEWED = frozenset(PLAIN_INBOUND_OPENING)
 DEFAULT_ASSISTANT = "Priya"
@@ -127,8 +133,8 @@ def first_sentence(text: str) -> str:
 
 
 def mention_ai_applies(language: str, switch: bool) -> bool:
-    """Does the opening of a call in `language` say it is an AI? ALWAYS (owner, 18 Nov 2026): the saved switch is read and ignored, in every language."""
-    return True
+    """Does the opening of a call in `language` say it is an AI? As the resolved setting says (owner, 20 Nov 2026: default OFF, the name only), in every language: `switch` is that resolved value."""
+    return switch
 
 
 def _fill_greeting(greeting: str | None, business: str, assistant: str, customer: str | None) -> str:
@@ -138,11 +144,12 @@ def _fill_greeting(greeting: str | None, business: str, assistant: str, customer
 
 def opening_line(language: str, *, business: str, assistant: str | None, customer: str | None, owner_line: str | None = None, inbound: bool = False, greeting: str | None = None,
                  mention_ai: bool = True) -> str:
-    """What the person hears first. ALWAYS says it is an AI, in the FIRST sentence (owner, 6 Nov 2026). On an inbound call: the standard opening (the assistant's name, the business, "AI assistant", one
-    question). The Owner's trained greeting (talk training) is used when its first sentence says "AI"; otherwise the standard opening's first sentence goes BEFORE it."""
+    """What the person hears first. `mention_ai` is the RESOLVED setting "Say 'AI assistant' when greeting" (default OFF, owner 20 Nov 2026; app/opening/greeting.py). ON: "AI assistant" in the FIRST sentence. On an inbound call: the
+    standard opening (the assistant's name, the business, "AI assistant", one question); the Owner's trained greeting (talk training) is used when its first sentence says "AI"; otherwise the standard opening's first sentence goes
+    BEFORE it. OFF: the name only ("Hello, this is Priya from Sri Sai Homes"): the trained greeting as the Owner wrote it, else the plain opening."""
     name = assistant or DEFAULT_ASSISTANT
-    if inbound and not mention_ai_applies(language, mention_ai):   # the owner switched the mention off (a reviewed plain opening exists): the trained greeting as it is, else the plain opening. Only INBOUND: a call WE place always says it.
-        plain = PLAIN_INBOUND_OPENING[language].replace("{business}", business).replace("{assistant}", name)
+    if inbound and not mention_ai_applies(language, mention_ai):   # the name only: the trained greeting as it is, else the plain opening
+        plain = PLAIN_INBOUND_OPENING.get(language, PLAIN_INBOUND_OPENING["en"]).replace("{business}", business).replace("{assistant}", name)
         said_plain = _fill_greeting(greeting, business, name, customer)
         return said_plain or plain
     standard = INBOUND_OPENING.get(language, INBOUND_OPENING["en"]).replace("{business}", business).replace("{assistant}", name)
@@ -151,7 +158,7 @@ def opening_line(language: str, *, business: str, assistant: str | None, custome
         return said if "AI" in first_sentence(said) else f"{first_sentence(standard)} {said}"
     if inbound and not owner_line:
         return standard
-    return compose_opening(language, owner_line=owner_line, mention_ai=True, assistant=assistant, business=business, customer=customer, agent_role=None)
+    return compose_opening(language, owner_line=owner_line, mention_ai=mention_ai, assistant=assistant, business=business, customer=customer, agent_role=None)
 
 
 def conversation_rules(language: str, business: str, tone: str | None = None) -> list[str]:

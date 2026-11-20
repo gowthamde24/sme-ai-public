@@ -109,7 +109,7 @@ def compose_opening(
     """What the customer hears first: the Owner's line (given the short disclosure when the switch is ON and it does not say so), or the default line of default_line(). `assistant` is the name the Owner
     set, or None: no name is ever made up."""
     lang = language if language in DISCLOSURE else "en"
-    mention_ai = True   # the assistant ALWAYS says it is an AI (owner, 18 Nov 2026): a False that reaches here from anywhere is ignored
+    # `mention_ai` is the RESOLVED "say AI assistant when greeting" setting (owner, 20 Nov 2026; app/opening/greeting.py): false = the name only. (From 18 to 20 Nov it was always true.)
     if owner_line:
         text = fill(owner_line, customer=customer, assistant=assistant or no_name_phrase(lang), business=business, agent_role=agent_role)
         if mention_ai and not says_ai(text):
@@ -142,6 +142,6 @@ def pick_line(lines: list[dict[str, object]], language: str, campaign_id: str | 
 
 
 def pick_mention(mention_ai: bool, overrides: list[dict[str, object]], campaign_id: str | None) -> bool:
-    """The assistant ALWAYS says it is an AI (owner, 18 Nov 2026). A saved switch, a campaign's own switch or a draft that asks for "off" is read and ignored: the answer is yes.
-    (The arguments stay so the saved settings still read; nothing a business saves can make a call or a message start without saying so.)"""
-    return True
+    """The old per-workspace and per-campaign switch of ADR 0116 is no longer read (owner, 20 Nov 2026): the greeting follows `say_ai_when_greeting` of the Talk training document (app/opening/greeting.py).
+    The arguments stay so the old rows still read; `mention_ai` is what the caller resolved."""
+    return mention_ai

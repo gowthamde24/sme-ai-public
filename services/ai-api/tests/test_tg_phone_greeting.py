@@ -19,9 +19,16 @@ from app.browser_voice.runtime import BrowserVoice
 from app.conversation.fakes import FakeTts
 from app.conversation.voices import default_config
 from app.telephony import gate, persona
-from app.telephony.inbound_routes import InboundService, _prepare_for, phone_parts
+from app.telephony.inbound_routes import InboundService, _prepare_for
+from app.telephony.inbound_routes import phone_parts as _phone_parts
 from tests.test_dv_browser_voice import arun
 from tests.test_ph_inbound import FakeStore
+
+
+def phone_parts(*args: Any, **kw: Any) -> Any:
+    """These tests are about the greeting WITH the AI words (the setting \"Say 'AI assistant' when greeting\" is ON, owner 20 Nov 2026; OFF is the default and is pinned in test_vl_greeting.py and test_ai_phone_mention.py)."""
+    kw.setdefault("mention_ai", True)
+    return _phone_parts(*args, **kw)
 
 TENANT = uuid.UUID(int=0x0B0E)
 GREETINGS = {   # each says it is an AI in its FIRST sentence (a salutation such as "Namaste!" belongs to the sentence after it), so each is spoken exactly as written
@@ -124,4 +131,4 @@ async def test_an_english_line_uses_the_english_greeting() -> None:
 async def test_nothing_saved_or_an_unreadable_training_still_opens_the_call_with_the_standard_line() -> None:
     for store in (TrainingStore(None), TrainingStore(raises=True)):
         prepared = await _prepare_for(service(store), voice(), TENANT, business="Padma Silks")
-        assert prepared.text == standard("te"), "a call without the training still follows every platform rule"
+        assert prepared.text == persona.PLAIN_INBOUND_OPENING["te"].replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT), "a call without the training opens with the name only (the default setting is OFF)"

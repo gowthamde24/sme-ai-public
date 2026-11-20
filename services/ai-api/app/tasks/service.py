@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 from app.crm.repository import RealDataGateError
 from app.errors import ApiError
+from app.opening import greeting
 from app.tasks import report as report_module
 from app.tasks import templates
 from app.tasks.dialer import Dialer, FakeDialer
@@ -271,7 +272,7 @@ class TasksService:
                     dialer = self._named_dialer
             except Exception as exc:   # an unreadable task runs on the ordinary dialer, as before
                 logger.warning("task dialer choice failed: %s", exc.__class__.__name__)
-        TaskRunner(self._repo, dialer, runtime.outbox).run(token, tenant_id, tenant_name, task_id)
+        TaskRunner(self._repo, dialer, runtime.outbox, say_ai_for=lambda tok, tid: greeting.from_repo(getattr(runtime, "talk_training", None), tok, tid)).run(token, tenant_id, tenant_name, task_id)
 
     def report(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> ReportOut:
         raw = self._repo.report(token, tenant_id, task_id)

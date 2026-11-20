@@ -186,14 +186,14 @@ def test_a_call_whose_record_is_lost_or_where_nobody_spoke_ends_unclear_with_no_
     for learned in (None, oc.CallOutcome("completed", "silence", "unclear", None, transcript=[{"who": "assistant", "text": "Hello, I am an AI assistant."}])):
         dialer, _ = dialer_that_learns(learned)
         result = ask(dialer, questions=QUESTIONS)
-        assert result.outcome == "unclear" and result.captured == {} and result.summary is None and result.simulated is False and has_ai_disclosure(result.transcript[0]["text"])
+        assert result.outcome == "unclear" and result.captured == {} and result.summary is None and result.simulated is False and "Padma Silks" in result.transcript[0]["text"]
 
 
 def test_a_transcript_that_does_not_start_with_the_assistant_gets_the_opening_put_first() -> None:
     got = learned_call()
     got.transcript = TRANSCRIPT[1:]
     result = ask(dialer_that_learns(got)[0], questions=QUESTIONS)
-    assert result.transcript[0]["who"] == "assistant" and has_ai_disclosure(result.transcript[0]["text"]), "the first line of a task call's record always says it is an AI"
+    assert result.transcript[0]["who"] == "assistant" and "Padma Silks" in result.transcript[0]["text"], "the first line of a task call's record is the opening (the name only when the setting is OFF)"
 
 
 def test_the_hand_over_is_taken_once_and_expires() -> None:

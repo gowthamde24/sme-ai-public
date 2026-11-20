@@ -6,6 +6,9 @@ const summaryEnquiry = vi.fn();
 vi.mock("@/lib/api/quotes", () => ({ fetchQuotes: (...a: unknown[]) => fetchQuotes(...a), fetchQuote: (...a: unknown[]) => fetchQuote(...a) }));
 vi.mock("@/lib/api/today-summary", () => ({ summaryEnquiry: (...a: unknown[]) => summaryEnquiry(...a) }));
 
+const flag = vi.hoisted(() => ({ v: "on" as "off" | "mock" | "on" }));
+vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => flag.v }));
+
 import { targetPaths } from "./target-path";
 
 const T = "22222222-2222-4222-8222-222222222222";
@@ -17,6 +20,20 @@ beforeEach(() => {
   vi.clearAllMocks();
   fetchQuotes.mockResolvedValue([{ id: Q_LISTED, enquiry_id: E_LISTED }]);
   fetchQuote.mockImplementation(async (_t: string, _w: string, id: string) => ({ enquiry_id: id === Q_OLD ? E_OLD : "never" }));
+});
+
+describe("targetPaths: calls paused and a message sent back", () => {
+  it("`calls` opens the Do-Not-Call list (the chats while JOBS is off); `message` opens Chats > Templates", async () => {
+    const calls = { type: "calls" as const, id: T };
+    const message = { type: "message" as const, id: T };
+    flag.v = "on";
+    const where = await targetPaths("tok", T, [calls, message]);
+    expect(where(calls)).toBe(`/app/tenants/${T}/do-not-call`);
+    expect(where(message)).toBe(`/app/tenants/${T}/chats/templates`);
+    flag.v = "off";
+    expect((await targetPaths("tok", T, [calls]))(calls)).toBe(`/app/tenants/${T}/chats`);
+    flag.v = "on";
+  });
 });
 
 describe("targetPaths: a quote opens its enquiry", () => {

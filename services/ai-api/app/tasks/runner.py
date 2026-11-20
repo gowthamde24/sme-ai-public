@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 import uuid
+from collections.abc import Callable
 from typing import Any
 
 from app.display_name import real_name
@@ -31,8 +32,9 @@ def _goal_with_notes(plan: dict[str, Any]) -> str:
 
 
 class TaskRunner:
-    def __init__(self, repository: TasksRepository, dialer: Dialer, outbox: OutboxRepository | None = None) -> None:
+    def __init__(self, repository: TasksRepository, dialer: Dialer, outbox: OutboxRepository | None = None, say_ai_for: Callable[[str, uuid.UUID], bool] | None = None) -> None:
         self._repo, self._dialer, self._outbox = repository, dialer, outbox
+        self._say_ai_for = say_ai_for   # the workspace's setting "Say 'AI assistant' when greeting" (default OFF: the name only)
 
     def run(self, token: str, tenant_id: uuid.UUID, tenant_name: str, task_id: uuid.UUID) -> dict[str, Any]:
         """Process until nothing is left to do, the task pauses (cap, owner) or ends. Returns the last state of the task."""
@@ -79,7 +81,7 @@ class TaskRunner:
                 phone=str(row.get("phone") or ""), token=token, tenant_id=tenant_id, goal=_goal_with_notes(plan), person_name=real_name(row.get("name")) or "", task_id=uuid.UUID(str(task["id"])),
             )
             result["simulated"] = called.simulated   # a real call is never labelled simulated
-            if called.transcript and not has_ai_disclosure(called.transcript[0]["text"]):
+            if self._say_ai(token, tenant_id) and called.transcript and not has_ai_disclosure(called.transcript[0]["text"]):   # (a check only when the greeting is set to say it, owner 20 Nov 2026)
                 return {"status": "failed", "simulated": called.simulated, "cost_paise": called.minutes * cost.CALL_PAISE_PER_MINUTE, "outcome": "failed", "transcript": called.transcript}
             spent += called.minutes * cost.CALL_PAISE_PER_MINUTE
             if called.outcome == "failed":   # not placed (the gate or the phone service said no) or lost: the person is not marked done
@@ -99,11 +101,21 @@ class TaskRunner:
         result["cost_paise"] = spent
         return result
 
+    def _say_ai(self, token: str, tenant_id: uuid.UUID) -> bool:
+        """The resolved setting "Say 'AI assistant' when greeting" (default OFF; an unreadable one is OFF)."""
+        if self._say_ai_for is None:
+            return False
+        try:
+            return bool(self._say_ai_for(token, tenant_id))
+        except Exception:   # noqa: BLE001 - the default
+            return False
+
     def _message(self, token: str, tenant_id: uuid.UUID, tenant_name: str, task: dict[str, Any], row: dict[str, Any], language: str, *, summary: bool) -> str:
         if self._outbox is None:
             return "failed"
         plan = task.get("plan") or {}
-        body = compose.summary_text(language, tenant_name) if summary else (plan.get("message_text") or compose.ask_text(language, tenant_name))
+        say_ai = self._say_ai(token, tenant_id)
+        body = compose.summary_text(language, tenant_name, say_ai) if summary else (plan.get("message_text") or compose.ask_text(language, tenant_name, say_ai))
         args = {
             "p_message_id": str(compose.message_id(uuid.UUID(str(task["id"])), uuid.UUID(str(row["contact_id"])), "summary" if summary else "task")),
             "p_tenant_id": str(tenant_id), "p_lead_id": str(row["lead_id"]), "p_channel": "whatsapp", "p_body": body, "p_language": language,

@@ -4,6 +4,7 @@
 begin;
 select no_plan();
 select tests.seed_two_tenants();
+insert into public.talk_training (tenant_id, doc, updated_by) values (tests.tid('a'), '{"say_ai_when_greeting": true}', gen_random_uuid());   -- 21 Nov 2026: the AI line follows the business's setting (default OFF); this business turned it on
 select tests.seed_crm();
 select tests.seed_t008();
 select tests.seed_t009();

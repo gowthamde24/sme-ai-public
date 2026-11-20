@@ -12,7 +12,8 @@ import localFont from "next/font/local";
  * Every letter and shaping rule of the script is kept, so joined letters still form; the `unicode-range` is Google's own for that script, so the browser asks for the file only when a page shows a letter of it.
  */
 const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--v2-font-sans", display: "swap" });
-const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--v2-font-display", display: "swap" });
+// the public site does not use this face any more (owner, 21 Nov 2026: one normal font, Plus Jakarta Sans); the app still does, so it stays, but it is no longer preloaded (a page that never draws with it never fetches it)
+const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--v2-font-display", display: "swap", preload: false });
 // next/font reads each call at build time, so every loader is called, with plain values, and assigned to a const in this file (a helper function around localFont is refused by the build)
 const telugu = localFont({
   src: [{ path: "./indic-fonts/NotoSansTelugu-400-700.woff2", weight: "400 700", style: "normal" }],
@@ -55,7 +56,8 @@ const INDIC = { te: telugu, hi: devanagari, kn: kannada, ta: tamil } as const;
  * language list, use the system's own font for that script). Without a language, all four. A font whose variable is
  * not on the page is never requested (an unset variable falls back to system-ui in tokens.css).
  */
-export function v2FontClassName(lang?: string): string {
+export function v2FontClassName(lang?: string, site = false): string {
   const indic = lang === undefined ? [telugu, devanagari, kannada, tamil] : lang in INDIC ? [INDIC[lang as keyof typeof INDIC]] : [];
-  return [sans, display, ...indic].map((f) => f.variable).join(" ");
+  // the public site draws everything in the one sans face (design/site-type.css), so it does not even name the display face
+  return [sans, ...(site ? [] : [display]), ...indic].map((f) => f.variable).join(" ");
 }
