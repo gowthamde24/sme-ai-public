@@ -34,7 +34,9 @@ describe("try-it: a live moment played once when seen (no AI, nothing sent)", ()
     vi.stubGlobal("matchMedia", () => ({ matches: false }));
     const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" />);
     const box = screen.getByRole("textbox") as HTMLTextAreaElement;
+    act(() => void vi.advanceTimersByTime(5)); // the browser took over: the block waits empty below the fold (the server drew the final state)
     expect(box.value).toBe("");
+    expect(container.querySelectorAll(".h3-plan-row[data-in]")).toHaveLength(0);
     act(() => seeIt());
     act(() => void vi.advanceTimersByTime(600));
     expect(box.value.length).toBeGreaterThan(0);
@@ -50,6 +52,7 @@ describe("try-it: a live moment played once when seen (no AI, nothing sent)", ()
   it("tapping a chip afterwards replays it for that chip", () => {
     vi.stubGlobal("matchMedia", () => ({ matches: false }));
     const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" />);
+    act(() => void vi.advanceTimersByTime(5));
     act(() => seeIt());
     act(() => void vi.advanceTimersByTime(4000));
     fireEvent.click(container.querySelector('[data-chip="2"]')!);
@@ -57,10 +60,9 @@ describe("try-it: a live moment played once when seen (no AI, nothing sent)", ()
     expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("Order ready");
     expect(container.textContent).toContain("Customers whose order is ready");
   });
-  it("reduced motion: the final state at once", () => {
+  it("reduced motion (and no script): the final state at once, as the server draws it", () => {
     vi.stubGlobal("matchMedia", () => ({ matches: true }));
     const { container } = render(<AskBox words={words} jobs={jobs} href="/signup" />);
-    act(() => seeIt());
     act(() => void vi.advanceTimersByTime(10));
     expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("Book site visits");
     expect(container.querySelectorAll(".h3-plan-row[data-in]")).toHaveLength(4);

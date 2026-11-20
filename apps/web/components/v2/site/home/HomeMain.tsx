@@ -1,9 +1,8 @@
-import { ArrowRight, Check, ChevronDown, Grip, Languages, Mic, Moon, Phone, PhoneCall as PhoneCallIcon, PhoneOff, ShieldCheck, Volume2 } from "lucide-react";
+import { ArrowRight, ChevronDown, Grip, Mic, Phone, PhoneCall as PhoneCallIcon, PhoneOff, Volume2 } from "lucide-react";
 import Link from "next/link";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
-import { HeroStage, LeakCalc, RadarFinder, WaitlistForm } from "@/components/v2/site/LazyIslands";
-import { publicPlanLines } from "@/components/v2/site/PublicPlans";
+import { HeroStage, WaitlistForm } from "@/components/v2/site/LazyIslands";
 import { hasWaitlist, waitlistWords, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { teluguFontVariable } from "@/design/fonts";
 import type { SiteLang } from "@/i18n/lang";
@@ -11,13 +10,13 @@ import type { SiteKey, SiteT } from "@/i18n/site";
 import { SITE_LANGUAGE_NAMES } from "@/i18n/site-lang";
 import { websiteOnly } from "@/lib/site/mode";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
-import { PUBLIC_PLANS, planVars, rupees, type PublicPlan } from "@/lib/site/plans";
 import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 
 import { AskBox } from "./AskBox";
 import { ChatStack } from "./ChatStack";
 import { FOUND_KEYS, GREETING_MENTIONS_AI, STACK } from "./chat-stack";
+import { LowerSections } from "./Lower";
 import { OrbGate } from "./OrbGate";
 import { StickyCta } from "./StickyCta";
 import { FoundCard, LangTabs, StackProvider } from "./StackState";
@@ -72,15 +71,13 @@ const HERO_KEYS = [
   "h2.hear",
   "h2.hear.on",
 ];
-const FINDER_KEYS = [...["city", "near", "checked", "call", "ask", "skip", "list", "of", "empty"].map((x) => `h2.finder.${x}`), ...[1, 2, 3, 4].flatMap((i) => [`h2.finder.pin.${i}.what`, `h2.finder.pin.${i}.why`])];
-const LEAK_KEYS = [...["enq", "miss", "buy", "avg", "in"].map((x) => `h2.leak.${x}`), ...["q", "sub", "s1", "s2", "s3", "s4", "warm", "cold", "with", "of", "note"].map((x) => `h3.leak.${x}`)];
 
 
 /**
  * THE HOME PAGE (owner, 19 and 20 Nov 2026: "we don't need to mention each and every business"; "all the same in all layouts"; "keep the three animations"; "clean"). One page, one markup that reflows: every section is the same at 390, 430, 768,
  * 980, 1280 and 1440 px (columns stack, sizes follow clamp(), the spacing rhythm scales; the drawings are scaled whole, never swapped for a phone version; design/home3.css). Top to bottom: the hero (what the product is, three pills, the call
  * to action, and the stage: enquiries flying in from the platforms into the orb), "What should your assistant do?", the demo (one phone: the Telugu call's WhatsApp, three steps, what it found out), how many enquiries are reached in time
- * (the counter), the Lead Finder radar, what is built in, the plans, the final call to action. No business type is named or linked: the variety is in the examples.
+ * (the counter), the Lead Finder radar, what is built in, the plans with the trust row, three questions, the final call to action. No business type is named or linked: the variety is in the examples.
  */
 export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang: SiteLang; start: Start; hasForm: boolean; waitlist?: WaitlistAction }) {
   const cta: Start = { href: start.href, label: t("h3.cta") };
@@ -89,25 +86,7 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
       <Hero t={t} cta={cta} />
       <How t={t} />
       <Ask t={t} cta={cta} />
-      <section id="calc" aria-labelledby="calc-title" className="h3-sec">
-        <div className="h3-wrap">
-          <LeakCalc w={words(t, LEAK_KEYS)} />
-        </div>
-      </section>
-      <section id="lead-finder" aria-labelledby="finder-title" className="h3-sec">
-        <div className="h3-wrap">
-          <header className="h3-head">
-            <h2 id="finder-title" className="h3-h2">
-              {t("h3.radar.t")}
-            </h2>
-            <p className="h3-lead">{t("h3.radar.sub")}</p>
-          </header>
-          <RadarFinder w={words(t, FINDER_KEYS)} />
-          <p className="h3-small h3-note">{t("h2.finder.note")}</p>
-        </div>
-      </section>
-      <Built t={t} />
-      <Plans t={t} cta={cta} />
+      <LowerSections t={t} />
       <Faq t={t} />
       <Final t={t} lang={lang} cta={cta} hasForm={hasForm} waitlist={waitlist} />
       <StickyCta href={cta.href} label={cta.label} />
@@ -200,89 +179,6 @@ function How({ t }: { t: SiteT }) {
   );
 }
 
-function Built({ t }: { t: SiteT }) {
-  const icons = [<Phone key="1" size={22} strokeWidth={2.2} />, <ShieldCheck key="2" size={22} strokeWidth={2.2} />, <Moon key="3" size={22} strokeWidth={2.2} />, <Languages key="4" size={22} strokeWidth={2.2} />];
-  return (
-    <section id="built" aria-labelledby="built-title" className="h3-sec">
-      <div className="h3-wrap">
-        <header className="h3-head">
-          <h2 id="built-title" className="h3-h2">
-            {t("h3.built.title")}
-          </h2>
-        </header>
-        <ul className="h3-grid h3-grid-4" data-part="built-in">
-          {icons.map((ico, i) => (
-            <li key={i} className="h3-card" data-built={i + 1}>
-              <span className="h3-ico" aria-hidden="true">
-                {ico}
-              </span>
-              <h3 className="h3-h3">{t(k(`h3.built.${i + 1}.t`))}</h3>
-              <p className="h3-card-d">{t(k(`h3.built.${i + 1}.d`))}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-function PlanCard({ plan, t, cta }: { plan: PublicPlan; t: SiteT; cta: Start }) {
-  return (
-    <li className={`h3-card h3-plan ${plan.recommended ? "h3-plan-rec" : ""}`} data-plan={plan.id}>
-      <div className="h3-plan-top">
-        <h3 className="h3-h3">{plan.name}</h3>
-        {plan.recommended ? <span className="h3-rec">{t("pp.pop")}</span> : null}
-      </div>
-      <p className="h3-price" data-part="plan-cost">
-        {rupees(plan.monthly)} <span>{t("pp.mo")}</span>
-      </p>
-      <p className="h3-small">{t("pp.gst")}</p>
-      <ul className="h3-plan-lines">
-        {publicPlanLines(plan, t).map((line) => (
-          <li key={line}>
-            <Check size={16} strokeWidth={2.6} aria-hidden="true" />
-            {line}
-          </li>
-        ))}
-      </ul>
-      <Link href={cta.href} className={`h3-btn ${plan.recommended ? "h3-btn-main" : "h3-btn-line"}`}>
-        {cta.label}
-      </Link>
-    </li>
-  );
-}
-
-function Plans({ t, cta }: { t: SiteT; cta: Start }) {
-  return (
-    <section id="pricing" aria-labelledby="plans-title" className="h3-sec">
-      <div className="h3-wrap">
-        <header className="h3-head">
-          <h2 id="plans-title" className="h3-h2">
-            {t("h2.plans.title")}
-          </h2>
-          <p className="h3-lead">{t("h2.plans.sub")}</p>
-        </header>
-        <ul className="h3-grid h3-grid-3" data-part="plans">
-          {PUBLIC_PLANS.map((p) => (
-            <PlanCard key={p.id} plan={p} t={t} cta={cta} />
-          ))}
-        </ul>
-        <p className="h3-plans-free" data-part="plans-free">
-          {t("h3.plans.free")}
-        </p>
-        <p className="h3-plans-foot">
-          <span>{t("pp.sh.2", planVars())}</span>
-          <Link href="/pricing" className="h3-link" data-part="plans-more">
-            {t("h3.plans.more")}
-            <ArrowRight size={16} strokeWidth={2.4} aria-hidden="true" />
-          </Link>
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/** The final call to action: the orb with its rings, the line, and the early-access bar (name, phone, type of business, city) on the existing joinWaitlist action; without the waitlist, the button stands in. The section is `#demo`, where every "early access" leads. */
 function Faq({ t }: { t: SiteT }) {
   return (
     <section id="faq" aria-labelledby="faq-title" className="h3-sec">

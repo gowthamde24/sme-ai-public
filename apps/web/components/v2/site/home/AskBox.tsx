@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
-import { useOnViewOnce } from "../home2/use-on-view-once";
+import { useOnViewOnce } from "./use-on-view-once";
 
 /** One of the example jobs: the words of its plan card, already in the visitor's language (static; nothing is asked of an AI). */
 export type AskJob = { chip: string; who: string; says: string; when: string; keys: string[] };
@@ -15,14 +15,15 @@ const ROW_MS = 380; // then the plan card's four lines come in one by one
 /**
  * "Tell it what to do" (home page, section 3): a box to type in (the owner's own words), ONE row of example chips (swipe), and the PLAN CARD of the job: Who it is for, what it says, when, what it costs, from the static words of the
  * five example jobs. A live moment, played once when the block scrolls into view: the first example is TYPED into the box (about 1.2 s) and the card's four lines appear one by one; tapping a chip replays it for that chip (reduced
- * motion: the final state at once). It calls NO AI and sends NOTHING; the cost line is the same for every job (it names no price). "Set this up" leads to early access. The words come from the server (in the visitor's language).
+ * motion and no script: the final state at once, as the server draws it: the first example in the box and the card whole). It calls NO AI and sends NOTHING; the cost line is the same for every job (it names no price). "Set this up" leads to early access. The words come from the server (in the visitor's language).
  */
 export function AskBox({ words, jobs, href }: { words: { label: string; placeholder: string; go: string; who: string; says: string; when: string; cost: string; costValue: string; plan: string }; jobs: AskJob[]; href: string }) {
-  const [text, setText] = useState("");
-  const [picked, setPicked] = useState<number | null>(null);
-  const [rows, setRows] = useState(0); // how many of the card's four lines are in
+  // the server draws the FINAL state (the first example typed, its card whole); a browser that can play the moment starts it from empty
+  const [text, setText] = useState(jobs[0].chip);
+  const [picked, setPicked] = useState<number | null>(0);
+  const [rows, setRows] = useState(4); // how many of the card's four lines are in
   const id = useId();
-  const [box, seen] = useOnViewOnce<HTMLDivElement>();
+  const [box, phase] = useOnViewOnce<HTMLDivElement>();
   const timers = useRef<number[]>([]);
   const stop = useCallback(() => {
     timers.current.forEach((t) => window.clearTimeout(t));
@@ -58,12 +59,22 @@ export function AskBox({ words, jobs, href }: { words: { label: string; placehol
     [jobs, later, stop],
   );
   const started = useRef(false);
+  // "ready": the block waits below the fold, empty (the start state); "played": it was seen once, the example is typed in; "final": reduced motion or no script: it stays whole
   useEffect(() => {
-    if (!seen || started.current) return;
-    started.current = true;
-    const still = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    play(0, still);
-  }, [seen, play]);
+    if (started.current) return;
+    if (phase === "ready") {
+      const id = window.setTimeout(() => {
+        setText("");
+        setPicked(null);
+        setRows(0);
+      }, 0);
+      return () => window.clearTimeout(id);
+    }
+    if (phase === "played") {
+      started.current = true;
+      play(0, false);
+    }
+  }, [phase, play]);
   useEffect(() => stop, [stop]);
   const fromText = (v: string) => {
     const q = v.toLowerCase();
@@ -102,7 +113,7 @@ export function AskBox({ words, jobs, href }: { words: { label: string; placehol
               aria-pressed={picked === i}
               onClick={() => {
                 started.current = true;
-                play(i, typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+                play(i, typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches === true);
               }}
               data-chip={i + 1}
             >
