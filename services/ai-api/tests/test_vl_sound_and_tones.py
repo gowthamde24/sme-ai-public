@@ -115,12 +115,12 @@ def test_the_phone_call_speaks_the_workspaces_voice_tone_and_speed_not_the_defau
     stored = Stored.from_call_row({"choices": {"te": "te-tarun"}, "gender": "male", "speed": 0.9, "style": "respectful"}, None)
     parts, _ = phone_parts(bv, "Sample Stores", "te", "anthropic", None, (), stored=stored)  # type: ignore[arg-type]
     assert parts.voice_for("te") == "te-tarun" and parts.voice_name("te") == "Tarun"
-    assert parts.voice_for("hi") == "hi-rohan", "no choice for Hindi: the male default of Hindi"
+    assert parts.voice_for("hi") == "hi-kabir", "no choice for Hindi: the male default of Hindi (Bulbul v4, 21 Nov 2026)"
     inner = parts.tts._inner if hasattr(parts.tts, "_inner") else parts.tts
     assert getattr(inner, "gender", "male") == "male" and getattr(inner, "pace", 0.9) == 0.9
     assert "respectful" in parts.system_for("te").lower()
     default_parts, _ = phone_parts(bv, "Sample Stores", "te", "anthropic", None, ())  # type: ignore[arg-type]
-    assert default_parts.voice_for("te") == "te-ramya", "nothing saved: the same default as before"
+    assert default_parts.voice_for("te") == "te-kavitha", "nothing saved: the default woman (Bulbul v4 since 21 Nov 2026)"
 
 
 def test_a_speed_is_clamped_to_the_settings_range() -> None:

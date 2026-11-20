@@ -122,7 +122,7 @@
     "warm"
    ],
    "recommended": true,
-   "default": true,
+   "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
@@ -207,7 +207,7 @@
     "bright"
    ],
    "recommended": true,
-   "default": true,
+   "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
@@ -707,7 +707,7 @@
     "bright"
    ],
    "recommended": true,
-   "default": true,
+   "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
@@ -736,7 +736,7 @@
     "bright"
    ],
    "recommended": true,
-   "default": true,
+   "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
@@ -902,7 +902,7 @@
     "warm"
    ],
    "recommended": true,
-   "default": true,
+   "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
@@ -959,7 +959,7 @@
     "calm"
    ],
    "recommended": true,
-   "default": true,
+   "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
@@ -1269,8 +1269,8 @@
    "tags": [
     "warm"
    ],
-   "recommended": false,
-   "default": false,
+   "recommended": true,
+   "default": true,
    "provider": "sarvam",
    "primary": {
     "engine": "sarvam_v4",
@@ -1297,8 +1297,8 @@
    "tags": [
     "calm"
    ],
-   "recommended": false,
-   "default": false,
+   "recommended": true,
+   "default": true,
    "provider": "sarvam",
    "primary": {
     "engine": "sarvam_v4",
@@ -1381,8 +1381,8 @@
    "tags": [
     "warm"
    ],
-   "recommended": false,
-   "default": false,
+   "recommended": true,
+   "default": true,
    "provider": "sarvam",
    "primary": {
     "engine": "sarvam_v4",
@@ -1409,8 +1409,8 @@
    "tags": [
     "calm"
    ],
-   "recommended": false,
-   "default": false,
+   "recommended": true,
+   "default": true,
    "provider": "sarvam",
    "primary": {
     "engine": "sarvam_v4",
@@ -1437,8 +1437,8 @@
    "tags": [
     "warm"
    ],
-   "recommended": false,
-   "default": false,
+   "recommended": true,
+   "default": true,
    "provider": "sarvam",
    "primary": {
     "engine": "sarvam_v4",
@@ -1465,8 +1465,8 @@
    "tags": [
     "calm"
    ],
-   "recommended": false,
-   "default": false,
+   "recommended": true,
+   "default": true,
    "provider": "sarvam",
    "primary": {
     "engine": "sarvam_v4",
