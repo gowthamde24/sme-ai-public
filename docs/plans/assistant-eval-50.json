@@ -847,7 +847,10 @@
   "say": "Is Naveen E in my contacts?",
   "expect": "answer",
   "pack": "real_estate",
-  "note": "a contact with no company is found by name (20 Nov 2026): the answer names the person"
+  "note": "a contact with no company is found by name (20 Nov 2026): the answer names the person",
+  "contains": [
+   "demo"
+  ]
  },
 {
   "id": 103,
@@ -856,7 +859,10 @@
   "say": "నవీన్ ని contacts లో చూడు",
   "expect": "answer",
   "pack": "coaching",
-  "note": "Telugu script finds a contact written in Latin letters"
+  "note": "Telugu script finds a contact written in Latin letters",
+  "contains": [
+   "demo"
+  ]
  },
 {
   "id": 104,
@@ -865,6 +871,9 @@
   "say": "Is Naveen E in my contacts?",
   "expect": "answer",
   "pack": "auto_dealer",
-  "note": "same lookup in the car dealer workspace"
+  "note": "same lookup in the car dealer workspace",
+  "contains": [
+   "demo"
+  ]
  }
 ]
