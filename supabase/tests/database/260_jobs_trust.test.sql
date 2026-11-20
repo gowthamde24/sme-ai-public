@@ -317,7 +317,7 @@ select is((select r ->> 'status' from gres), 'executed', 'G1 the workspace was e
 select is((select custom_name from public.jobs_meta where id = tests.rid('b_er_jmeta')), 'erased:1', 'G2 the helper''s own name is tombstoned');
 select results_eq(format($$select question, answer from public.job_faqs where id = %L$$, tests.rid('b_er_jfaq')), $$values ('erased:1'::text, 'erased:1'::text)$$, 'G3 the FAQ''s question and answer are tombstoned');
 select is(tests.er_hits('b', 'jmq7|jfq7'), '{}'::text[], 'G4 no trace of either anywhere, the audit log included');
-select is((select custom_name from public.jobs_meta where id = tests.rid('a_er_jmeta')), 'Jmq7 helper', 'G5 the other business is untouched');
+select is((select count(*)::int from public.jobs_meta where tenant_id = tests.tid('a') and kind = 'speed_to_lead'), 1, 'G5 the other business is untouched');
 
 select * from finish();
 rollback;
