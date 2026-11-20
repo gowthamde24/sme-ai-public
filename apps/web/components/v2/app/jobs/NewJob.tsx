@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 
-import { PLAN_TEXT_MAX, PLAN_TEXT_MIN, type JobPlan, type JobStarted, type JobTested, type PlanChannel, type PlanInput, type Suggestion } from "@/lib/jobs/plan";
+import { PLAN_TEXT_MAX, PLAN_TEXT_MIN, type JobPlan, type JobStarted, type JobTested, type PlanChannel, type PlanInput, type SearchPatch, type Suggestion } from "@/lib/jobs/plan";
 import type { JobKind } from "@/lib/jobs/types";
 
 import type { Reply } from "../cc/kit";
@@ -20,10 +20,12 @@ export type NewJobActions = {
   start: (planId: string) => Promise<Reply<JobStarted>>;
   startSuggestion: (kind: JobKind) => Promise<Reply<JobStarted>>;
   test: (planId: string, channel: PlanChannel) => Promise<Reply<JobTested>>;
+  /** A Lead Finder plan's three choices (`PATCH /jobs/plan/{id}`): only what changed; the whole plan answers. Absent = the choices are shown but not changeable. */
+  search?: (planId: string, patch: SearchPatch) => Promise<Reply<JobPlan>>;
 };
 
 const EXAMPLES = ["jobs.new.example.silk", "jobs.new.example.missed"] as const;
-const IDLE: PlanCardState = { starting: false, testing: false, swapping: false, note: null, error: null, waiting: null, quiet: false };
+const IDLE: PlanCardState = { starting: false, testing: false, swapping: false, searching: false, note: null, error: null, waiting: null, quiet: false };
 
 /**
  * "Start a job" (JOBS; mock sheets 02 and 03): a box to say or type what the assistant should do, two examples, then the PLAN card; and below, the suggested jobs for this kind of business. Nothing starts until Start (on the plan card or on a suggested job) is pressed;
@@ -114,6 +116,18 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
     boxRef.current?.focus();
     boxRef.current?.scrollIntoView?.({ block: "center" });
   }
+  /** A Lead Finder plan's choice: only what changed goes to `PATCH /jobs/plan/{id}`; the whole plan comes back (the same id). */
+  async function search(patch: SearchPatch) {
+    if (!plan || !actions.search) return;
+    setCard((c) => ({ ...c, searching: true, error: null }));
+    const r = await actions.search(plan.planId, patch);
+    if (!r.ok) {
+      setCard((c) => ({ ...c, searching: false, error: r.error }));
+      return;
+    }
+    setPlan(r.data);
+    setCard((c) => ({ ...c, searching: false }));
+  }
   function swap() {
     const alt = plan?.alternatives.find((a) => a.kind === "whatsapp");
     if (!alt) return;
@@ -177,7 +191,7 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
       </div>
       {plan && !unclear ? (
         <div className="min-w-0 md:sticky md:top-4 md:col-start-2 md:row-span-2 md:row-start-1">
-          <PlanCard plan={plan} words={words} base={base} state={card} onStart={() => void start()} onSwap={swap} onChange={change} onTest={() => void test()} headingRef={planRef} />
+          <PlanCard plan={plan} words={words} base={base} state={card} onStart={() => void start()} onSwap={swap} onChange={change} onTest={() => void test()} onSearch={actions.search ? (patch) => void search(patch) : undefined} headingRef={planRef} />
         </div>
       ) : null}
       <div className="min-w-0 md:col-start-1">

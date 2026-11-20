@@ -39,6 +39,7 @@ vi.mock("@/lib/api/today-briefing", async (orig) => ({ ...(await orig<typeof imp
 vi.mock("@/components/v2/app/jobs/sheet/LazySheet", async () => ({ loadSheet: async () => undefined, SheetVeil: () => null, LazySheet: (await import("@/components/v2/app/jobs/sheet/NewJobSheet")).default }));
 vi.mock("@/components/v2/app/jobs/sheet/LazyJobsEmpty", async () => ({ JobsEmpty: (await import("@/components/v2/app/jobs/sheet/JobsEmpty")).JobsEmpty }));
 vi.mock("@/components/v2/app/jobs/sheet/LazyFestival", async () => ({ FestivalSuggestion: (await import("@/components/v2/app/jobs/sheet/FestivalSuggestion")).FestivalSuggestion }));
+vi.mock("@/components/v2/app/jobs/LazySearchPlan", async () => ({ SearchPlan: (await import("@/components/v2/app/jobs/SearchPlan")).SearchPlan }));
 vi.mock("@/components/v2/app/jobs/LazyPlanCard", async () => ({ PlanCard: (await import("@/components/v2/app/jobs/PlanCard")).PlanCard }));
 vi.mock("@/components/v2/app/prospects/LazyResearcherCard", async () => ({ ResearcherCard: (await import("@/components/v2/app/prospects/ResearcherCard")).ResearcherCard }));
 vi.mock("@/components/v2/app/prospects/LazyMarkContacted", async () => ({ MarkContacted: (await import("@/components/v2/app/prospects/MarkContacted")).MarkContacted }));

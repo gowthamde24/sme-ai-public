@@ -1,7 +1,10 @@
 import { daysUntil, textIn, type Festival } from "./templates";
 
-/** What Today needs of the festival calendar: the NEXT festival within a month (today counts), its name in the person's language and the days to go; null when there is no calendar or none ahead (then the suggestion row is not drawn). */
-export const FESTIVAL_WINDOW_DAYS = 30;
+/**
+ * What Today needs of the festival calendar: the NEAREST festival only (today counts), its name in the person's language and the days to go; null when there is no calendar or none ahead (then the suggestion row is not drawn).
+ * The API sends the next 60 days, nearest first, one row per season (contract 1.1 part 1, section 1 item 7), and the web keeps the same window; the days are counted on the INDIA calendar day (daysUntil), whatever the server's zone.
+ */
+export const FESTIVAL_WINDOW_DAYS = 60;
 export type FestivalHint = { season: Festival["season"]; name: string; days: number; date: string };
 export function festivalHint(festivals: readonly Festival[] | null, lang: string, now: Date): FestivalHint | null {
   if (!festivals) return null;

@@ -1,7 +1,8 @@
 import { bad, bool, int, iso, list, oneOf, optInt, optIso, optStr, rec, str, uuid, word } from "./shape";
 import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobMessage, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
-import type { ExcludedCode, JobPlan, PlanBasisCode, Suggestion } from "@/lib/jobs/plan";
+import type { ExcludedCode, JobPlan, PlanBasisCode, PlanCost, PlanSearch, Suggestion } from "@/lib/jobs/plan";
 import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "@/lib/jobs/plan";
+import { SEARCH_AREA_MAX } from "@/lib/jobs/plan-const";
 import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES, type JobWho, type WhoNumberInfo } from "@/lib/jobs/who";
 import { JOB_KINDS, JOB_STATUSES, NEEDS_TARGETS, PLAN_GATES, type Job, type JobParams, type JobSpeaks, type NeedsYouItem, type TodayJobs } from "@/lib/jobs/types";
 
@@ -216,11 +217,36 @@ function parseWhen(v: unknown): JobPlan["when"] {
     pacePerHour: int(when.pace_per_hour ?? 0, "when.pace_per_hour", 0, 10_000),
   };
 }
+/**
+ * `Plan.cost` (contract 1.1 part 1, T9 and T12): `{minutes, minutes_included, minutes_used?, rupees|null}`, plus `messages {count, rupees|null, included}|null` for the WhatsApp part, and `searches {left, per_month}` on a Lead Finder plan (which has no call minutes: they read 0).
+ * A plan with neither the minutes nor `searches` is not the contract's shape.
+ */
+function parsePlanCost(v: unknown): PlanCost {
+  const cost = rec(v, "cost");
+  const searches = cost.searches === undefined || cost.searches === null ? null : rec(cost.searches, "cost.searches");
+  const messages = cost.messages === undefined || cost.messages === null ? null : rec(cost.messages, "cost.messages");
+  const minutes = (key: string): number => (searches && (cost[key] === undefined || cost[key] === null) ? 0 : int(cost[key], `cost.${key}`, 0, 1_000_000));
+  return {
+    minutes: minutes("minutes"),
+    minutesIncluded: minutes("minutes_included"),
+    minutesUsed: int(cost.minutes_used ?? 0, "cost.minutes_used", 0, 1_000_000),
+    rupees: optInt(cost.rupees, "cost.rupees", 0, 100_000_000),
+    // present only when the API sent them (a plan with neither is exactly the plan of 1.0)
+    ...(messages ? { messages: { count: int(messages.count, "cost.messages.count", 0, 1_000_000), rupees: optInt(messages.rupees, "cost.messages.rupees", 0, 100_000_000), included: bool(messages.included, "cost.messages.included") } } : {}),
+    ...(searches ? { searches: { left: int(searches.left, "cost.searches.left", 0, 100_000), perMonth: int(searches.per_month, "cost.searches.per_month", 0, 100_000) } } : {}),
+  };
+}
+/** `Plan.search {area, results, fit_bar}` of a Lead Finder plan: the area is the owner's own words (at most 60 characters), `results` is 5, 10 or 20 and `fit_bar` 50 to 100. null = not a search plan. */
+function parsePlanSearch(v: unknown): PlanSearch | null {
+  if (v === undefined || v === null) return null;
+  const s = rec(v, "search");
+  if (s.results !== 5 && s.results !== 10 && s.results !== 20) bad("search.results");
+  return { area: str(s.area, "search.area", SEARCH_AREA_MAX), results: s.results, fitBar: int(s.fit_bar, "search.fit_bar", 50, 100) };
+}
 export function parsePlan(json: unknown): JobPlan {
   const x = rec(json, "plan");
   const who = rec(x.who, "who");
   const basis = rec(who.basis, "who.basis");
-  const cost = rec(x.cost, "cost");
   const primary = x.primary === undefined ? "start" : oneOf(x.primary, ["start", "send_whatsapp"] as const, "primary");
   return {
     planId: word(x.plan_id, "plan_id", 80),
@@ -244,7 +270,8 @@ export function parsePlan(json: unknown): JobPlan {
       .map((f) => rec(f, "finds_out"))
       .filter((f) => f.enabled !== false)
       .map((f) => ({ key: word(f.key, "finds_out.key"), text: optStr(f.text, "finds_out.text", 160) })),
-    cost: { minutes: int(cost.minutes, "cost.minutes", 0, 1_000_000), minutesIncluded: int(cost.minutes_included, "cost.minutes_included", 0, 1_000_000), minutesUsed: int(cost.minutes_used ?? 0, "cost.minutes_used", 0, 1_000_000), rupees: optInt(cost.rupees, "cost.rupees", 0, 100_000_000) },
+    cost: parsePlanCost(x.cost),
+    ...(x.search === undefined || x.search === null ? {} : { search: parsePlanSearch(x.search) }),
     primary,
     alternatives: list(x.alternatives ?? [], "alternatives", 4).map((a) => {
       const r = rec(a, "alternative");

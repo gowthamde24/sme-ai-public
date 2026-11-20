@@ -2,7 +2,7 @@ import { parsePlan, parseSuggestionHeading, parseSuggestions } from "@/lib/api/j
 
 import { MOCK_APPROVAL, MOCK_CUSTOM_JOB, WIRE_PLANS, WIRE_SUGGESTIONS_GENERIC, WIRE_SUGGESTIONS_TEXTILES } from "./fixtures";
 import { MOCK_JOBS } from "./mock";
-import type { JobPlan, JobStarted, JobTested, PlanInput, Suggestion, SuggestionList } from "./plan";
+import type { JobPlan, JobStarted, JobTested, PlanInput, SearchPatch, Suggestion, SuggestionList } from "./plan";
 import type { JobKind } from "./types";
 
 /**
@@ -34,7 +34,7 @@ function byTemplateAsk(said: string): JobPlan | null {
 export function mockPlan(input: PlanInput): JobPlan {
   if ("kind" in input) return BY_KIND[input.kind] ?? UNCLEAR;
   if ("as" in input) return input.planId === SILK_CALL.planId ? SILK_WHATSAPP : UNCLEAR;
-  const said = input.text.toLowerCase();
+  const said = ("templateId" in input ? input.ask : input.text).toLowerCase(); // a template card is planned from its own sentence, exactly as if it had been typed
   if (/(missed|మిస్డ్|मिस्ड|ಮಿಸ್ಡ್)/.test(said)) return MISSED;
   if (/(silk|saree|sari|సిల్క్|చీర|सिल्क|साड़ी|ಸಿಲ್ಕ್|ಸೀರೆ)/.test(said) && /(bought|buyers|purchase|purchased|buy|కొన్న|खरीद|ಕೊಂಡ)/.test(said)) return SILK_CALL;
   return byTemplateAsk(said) ?? UNCLEAR;
@@ -68,3 +68,26 @@ export const mockTest = (planId: string): JobTested => {
   const whatsapp = [SILK_WHATSAPP, ...Object.values(BY_KIND)].some((p) => p.planId === planId && p.says[0]?.channel === "whatsapp");
   return { channel: whatsapp ? "whatsapp" : "call", mock: true, minutesUsed: 0 };
 };
+
+/**
+ * A Lead Finder (researcher) plan in the contract's wire shape (1.1 part 1, T9): no `says`, no call cost, `search {area, results, fit_bar}`, `cost.searches {left, per_month}`, who.basis `none`. Mock only, and NO mock planner returns it (a Lead Finder card still answers
+ * "could not tell who you mean" in JOBS=mock, as before); it is here so the real parser, the plan card and `PATCH /jobs/plan/{id}` have one fixture to be tested with. `left: 0` adds the `search_limit` blocker.
+ */
+export const WIRE_RESEARCHER_PLAN = (over: { area?: string; results?: number; fit_bar?: number; left?: number } = {}): Record<string, unknown> => ({
+  plan_id: "plan-researcher",
+  expires_in_minutes: 30,
+  title: "Find new customers: saree shops and boutiques",
+  who: { total: 0, eligible: 0, excluded: [], basis: { code: "none", params: {} } },
+  says: [],
+  when: { start: "after_ok", from: "10:00", to: "18:00", days: ["mon", "tue", "wed", "thu", "fri", "sat"], pace_per_hour: 0 },
+  finds_out: [],
+  cost: { searches: { left: over.left ?? 2, per_month: 3 } },
+  primary: "start",
+  alternatives: [],
+  search: { area: over.area ?? "Vijayawada", results: over.results ?? 10, fit_bar: over.fit_bar ?? 70 },
+  blockers: (over.left ?? 2) === 0 ? [{ code: "search_limit" }] : [],
+});
+
+/** `PATCH /jobs/plan/{id} {search}` in the mock: the Lead Finder plan above with the change applied (the same plan id). */
+export const mockSearchPlan = (planId: string, patch: SearchPatch): JobPlan =>
+  parsePlan({ ...WIRE_RESEARCHER_PLAN({ area: patch.area, results: patch.results, fit_bar: patch.fitBar }), plan_id: planId });

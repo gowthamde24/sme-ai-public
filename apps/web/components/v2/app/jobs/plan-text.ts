@@ -65,3 +65,23 @@ export function costText(t: Say, p: JobPlan): { lead: string; more: string } {
 }
 
 export const excludedTotal = (p: JobPlan): number => p.who.excluded.reduce((n, e) => n + e.count, 0);
+
+/**
+ * The WhatsApp part of the cost (`Cost.messages {count, rupees|null, included}`, contract 1.1 part 1, T12): "Included in your plan" only when there ARE messages (`count > 0`) and they are `included`; a whole-rupee amount, when the API gives one, with the rupee formatter and "(GST extra)";
+ * a plan with no messages (count 0) or no `messages` says nothing. null = no line.
+ */
+export function messagesCostText(t: Say, p: JobPlan): string | null {
+  const m = p.cost.messages;
+  if (!m || m.count <= 0) return null;
+  const parts: string[] = [];
+  if (m.included) parts.push(t("jobs.new.cost.msg_included"));
+  if (m.rupees !== null) parts.push(t("jobs.new.cost.msg_rupees", { rupees: groupIndian(m.rupees) }));
+  return parts.length > 0 ? parts.join(" ") : null;
+}
+
+/** The free searches a Lead Finder plan has left this month, and whether the plan can still start (`blockers` has no `search_limit`). */
+export const searchLimitReached = (p: JobPlan): boolean => p.blockers.includes("search_limit");
+/** A Lead Finder plan: the card shows its three choices (and no "who", "what it says" or "when"). A search plan that is blocked for any other reason is the plain blocked card. */
+export const isSearchPlan = (p: JobPlan): boolean => p.search != null && p.blockers.every((b) => b === "search_limit" || b === "area_needed");
+/** A search plan whose area is empty: C1 blocks Start (`area_needed`) until the owner types one (at most 60 characters). */
+export const areaNeeded = (p: JobPlan): boolean => p.blockers.includes("area_needed");

@@ -11,6 +11,8 @@ export const JOBS_CODE_WORDS = {
   setting_invalid: "jobs.err.setting_invalid",
   job_off_by_plan: "jobs.err.job_off_by_plan",
   job_unknown_kind: "jobs.err.job_unknown_kind",
+  job_unknown_template: "jobs.err.job_unknown_template",
+  jobs_limit: "jobs.err.jobs_limit",
   faq_not_allowed: "jobs.err.faq_not_allowed",
   consent_required: "jobs.err.consent_required",
   quiet_hours: "jobs.job.test.quiet",

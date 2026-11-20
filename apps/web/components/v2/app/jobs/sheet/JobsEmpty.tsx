@@ -25,6 +25,7 @@ export function JobsEmpty({ words, base, actions, load }: { words: Words; base: 
     assistant: load.assistant ?? t("jobs.tpl.sample.assistant"),
     item: (load.data.sampleItem ? textIn(load.data.sampleItem, lang) : null) ?? t("jobs.tpl.sample.item"),
     customer: t("jobs.tpl.sample.customer"),
+    businessLang: load.businessLang ?? null,
   };
   const cards = popularOf(load.data.own).slice(0, 3);
   return (
@@ -35,14 +36,14 @@ export function JobsEmpty({ words, base, actions, load }: { words: Words; base: 
       </div>
       <div className="grid gap-3 md:grid-cols-3">
         {cards.map((tpl, i) => (
-          <TemplateCard key={tpl.id} template={tpl} ctx={ctx} words={words} index={i} compact onUse={(x) => sheet.show(null, { ask: textIn(x.ask, lang) })} />
+          <TemplateCard key={tpl.id} template={tpl} ctx={ctx} words={words} index={i} compact onUse={(x) => sheet.show(null, { ask: textIn(x.ask, lang), template: x.id })} />
         ))}
       </div>
       <button ref={say} type="button" data-part="say-instead" onClick={() => sheet.show(say.current)} className="flex min-h-12 items-center gap-2.5 rounded-full border border-edge bg-surface px-5 text-[15px] text-muted">
         <MessageSquare aria-hidden="true" className="size-[18px]" />
         {t("jobs.new.empty.say")}
       </button>
-      {sheet.open ? <LazySheet words={words} base={base} actions={actions} onClose={sheet.close} initial={load} initialAsk={sheet.ask} /> : null}
+      {sheet.open ? <LazySheet words={words} base={base} actions={actions} onClose={sheet.close} initial={load} initialAsk={sheet.ask} initialTemplate={sheet.template} /> : null}
     </section>
   );
 }
