@@ -150,6 +150,9 @@ invitation_invalid
 invitation_locked
 invitation_not_pending
 invoice_number_used
+job_locked
+job_not_set_up
+job_not_switchable
 jobs_unavailable
 keep_owner
 key_rejected
@@ -357,6 +360,7 @@ secret_request_expired
 secret_request_used
 secrets_unavailable
 session_ended
+setting_invalid
 sheet_link_invalid
 sheet_not_public
 sheet_refused

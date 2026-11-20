@@ -228,7 +228,8 @@
         409
       ],
       "areas": [
-        "assistant_status"
+        "assistant_status",
+        "jobs"
       ],
       "default_message": "The assistant needs a business name and a connected phone number before it can go live.",
       "wait": false,
@@ -1542,7 +1543,8 @@
         409
       ],
       "areas": [
-        "assistant_status"
+        "assistant_status",
+        "jobs"
       ],
       "default_message": "Stack19 support paused your assistant. Ask support to resume it.",
       "wait": false,
@@ -1884,6 +1886,42 @@
         "main"
       ],
       "default_message": "That invoice number is already used.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "job_locked",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "This was approved or set up in another way, so it cannot be changed here.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "job_not_set_up",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "There is nothing to change here yet. Set the job up first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "job_not_switchable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "This job has no switch: it works as long as it is set up. Change its settings instead.",
       "wait": false,
       "extras": []
     },
@@ -4437,6 +4475,20 @@
       "default_message": "Your session ended after 30 minutes without activity. Sign in again.",
       "wait": false,
       "extras": []
+    },
+    {
+      "code": "setting_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "That choice is not one of the options.",
+      "wait": false,
+      "extras": [
+        "fields"
+      ]
     },
     {
       "code": "sheet_link_invalid",

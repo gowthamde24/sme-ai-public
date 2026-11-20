@@ -1,6 +1,6 @@
 """The Jobs list, thin version (planner, 21 Nov 2026): what already runs, read from the subsystems that own it, in the shape of jobs contract 1.0 section 1.
 
-A job owns no rows: `enabled` IS the underlying switch (outreach rules, the business line, follow-up policy, visit settings, offer campaigns, the Lead Finder). Each reader is defensive: a subsystem that is not built in this process or that refuses the caller's role gives a job that is simply off, never a 500. Not here yet (full S2): detail, PATCH, results, custom names, needs_you items."""
+A job owns no rows: `enabled` IS the underlying switch (outreach rules, the business line, follow-up policy, visit settings, offer campaigns, the Lead Finder). Each reader is defensive: a subsystem that is not built in this process or that refuses the caller's role gives a job that is simply off, never a 500. S2 adds the owner's own names (jobs_meta) and the count of what waits for the owner (the items Today shows) on top of what the readers say; the detail, the settings and the switch are app/jobs/detail.py, catalogue.py and control.py."""
 
 # ruff: noqa: E501
 
@@ -8,8 +8,11 @@ from __future__ import annotations
 
 import logging
 import uuid
+from collections.abc import Callable
 from datetime import datetime
 from typing import Any
+
+from app.jobs import needs as needs_mod
 
 logger = logging.getLogger("app.jobs")
 KINDS = ("speed_to_lead", "answer_calls", "followups", "store_visits", "offers", "researcher")
@@ -60,8 +63,22 @@ def _answer_calls(runtime: Any, token: str, tenant_id: uuid.UUID) -> dict[str, A
     if not number:
         return _job(tenant_id, kind, enabled=False, status="waiting", code="no_number", plan_gate="no_number")
     if getattr(line, "inbound_on", False):
+        live = _assistant_state(runtime, token, tenant_id)
+        if live is not None and live.state != "live":   # the owner's Pause (or support's) is what stops the line answering: the same switch "My assistant" shows
+            return _job(tenant_id, kind, enabled=False, status="paused", code="paused_by_support" if getattr(live, "held_by_support", False) else "paused_by_owner")
         return _job(tenant_id, kind, enabled=True, status="running", code="answering")
     return _job(tenant_id, kind, enabled=False, status="paused", code="line_not_switched_on")
+
+
+def _assistant_state(runtime: Any, token: str, tenant_id: uuid.UUID) -> Any:
+    """The status of the Owner's assistant (live or not), or None when it cannot be read: then the line's own switch alone decides."""
+    service = getattr(runtime, "assistant_status", None)
+    if service is None:
+        return None
+    try:
+        return service.status(token, tenant_id)
+    except Exception:   # noqa: BLE001 - an unreadable status never hides the job
+        return None
 
 
 def _followups(runtime: Any, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
@@ -109,18 +126,50 @@ def _researcher(runtime: Any, token: str, tenant_id: uuid.UUID) -> dict[str, Any
     return _job(tenant_id, kind, enabled=False, status="paused", code="switched_off")
 
 
-_READERS = (("speed_to_lead", _speed_to_lead), ("answer_calls", _answer_calls), ("followups", _followups), ("store_visits", _store_visits), ("offers", _offers), ("researcher", _researcher))
+Reader = Callable[[Any, str, uuid.UUID], dict[str, Any] | None]
+_READERS: tuple[tuple[str, Reader], ...] = (("speed_to_lead", _speed_to_lead), ("answer_calls", _answer_calls), ("followups", _followups), ("store_visits", _store_visits), ("offers", _offers), ("researcher", _researcher))
+READERS: dict[str, Reader] = dict(_READERS)
 
 
-def jobs_of(runtime: Any, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
-    """Every job of the workspace, in the contract's order. One that cannot be read is listed as off (and logged), so one broken subsystem never blanks the page."""
+def read_one(runtime: Any, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any] | None:
+    """One job as its subsystem says it. A subsystem that cannot be read gives an off job (logged); None only for a kind this business never has."""
+    try:
+        return READERS[kind](runtime, token, tenant_id)
+    except Exception as err:   # noqa: BLE001  (a subsystem may refuse this role or not be built here)
+        logger.warning("jobs list: %s not readable (%s)", kind, type(err).__name__)
+        return _job(tenant_id, kind, enabled=False, status="paused", code="not_readable")
+
+
+def names_of(runtime: Any, token: str, tenant_id: uuid.UUID) -> dict[str, str]:
+    """The owner's own name for each helper that has one (jobs_meta; every member reads); {} when there are none or they cannot be read."""
+    trust = getattr(getattr(runtime, "jobs", None), "trust", None)
+    if trust is None:
+        return {}
+    try:
+        return {str(m["kind"]): str(m["custom_name"]) for m in trust.meta_list(token, tenant_id) if m.get("custom_name")}
+    except Exception as err:   # noqa: BLE001
+        logger.warning("jobs list: names not readable (%s)", type(err).__name__)
+        return {}
+
+
+def overlay(job: dict[str, Any], names: dict[str, str], counts: dict[str, int]) -> dict[str, Any]:
+    """Name and what waits on top of the reader's answer. A job that is running and has something waiting for the owner is `waiting` (contract section 1)."""
+    kind = job["kind"]
+    waiting = counts.get(kind, 0)
+    job["custom_name"] = names.get(kind)
+    job["needs_you"] = waiting
+    if waiting and job["status"] == "running":
+        job["status"] = "waiting"
+    return job
+
+
+def jobs_of(runtime: Any, token: str, tenant_id: uuid.UUID, needs: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    """Every job of the workspace, in the contract's order. One that cannot be read is listed as off (and logged), so one broken subsystem never blanks the page. `needs` are the waiting items when the caller has them already."""
+    names = names_of(runtime, token, tenant_id)
+    counts = needs_mod.count_by_job(needs if needs is not None else needs_mod.items_of(runtime, token, tenant_id))
     out: list[dict[str, Any]] = []
-    for kind, reader in _READERS:
-        try:
-            job = reader(runtime, token, tenant_id)
-        except Exception as err:   # noqa: BLE001  (a subsystem may refuse this role or not be built here)
-            logger.warning("jobs list: %s not readable (%s)", kind, type(err).__name__)
-            job = _job(tenant_id, kind, enabled=False, status="paused", code="not_readable")
+    for kind, _ in _READERS:
+        job = read_one(runtime, token, tenant_id, kind)
         if job is not None:
-            out.append(job)
+            out.append(overlay(job, names, counts))
     return out
