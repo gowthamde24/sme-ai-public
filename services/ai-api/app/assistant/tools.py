@@ -30,6 +30,7 @@ from app.catalogue.vocab import (
     Occasion,
     PriceBand,
 )
+from app.display_name import without_marker
 from app.requirements.capture_text import prepare_body, prepare_subject
 from app.suppression.keys import normalise_phone
 from app.tenancy.repository import RepositoryError
@@ -411,7 +412,7 @@ def _people_by_name(ctx: Ctx, query: str, seen: set[uuid.UUID]) -> list[Item]:
     for person in people:
         if person.lead_id in seen or person.erased or person.archived:
             continue
-        label = str(person.name or "Customer")[:100]
+        label = without_marker(str(person.name or "Customer"))[:100]
         out.append(ctx.state.add("lead", person.lead_id, f"{label} (lead)", {"company": label, "status": person.status}, ("lead", person.lead_id)))
     return out
 
