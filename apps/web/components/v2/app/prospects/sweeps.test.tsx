@@ -129,19 +129,25 @@ describe("Add a weekly search", () => {
     expect(await screen.findByText("You have the most weekly searches allowed. Remove one to add another.")).toBeInTheDocument();
     expect(screen.queryByText("This search will run by itself every week.")).toBeNull();
   });
-  it("Go back keeps what was typed; a refusal comes back in plain words on the form", async () => {
+  it("Go back keeps what was typed", async () => {
     const a = actions();
-    a.add.mockResolvedValueOnce({ ok: false as never, error: "You have the most weekly searches allowed. Remove one to add another." } as never);
     render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/app/tenants/T/settings?section=leadfinder" />);
     fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
     fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
     fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
     fireEvent.click(await screen.findByRole("button", { name: "Go back" }));
     expect(((await screen.findByLabelText("What to look for, and where")) as HTMLTextAreaElement).value).toBe("find shops in Eluru");
+  });
+  it("a refusal on the last step comes back in plain words on the form, not stuck on the second step", async () => {
+    const a = actions();
+    a.add.mockResolvedValueOnce({ ok: false as never, error: "You have the most weekly searches allowed. Remove one to add another." } as never);
+    render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/app/tenants/T/settings?section=leadfinder" />);
+    fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
+    fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
     fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
     fireEvent.click(await screen.findByRole("button", { name: "Yes, run it every week" }));
     expect(await screen.findByText("You have the most weekly searches allowed. Remove one to add another.")).toBeInTheDocument();
-    expect(screen.queryByText("This search will run by itself every week.")).toBeNull(); // back on the form, not stuck on the second step
+    expect(screen.queryByText("This search will run by itself every week.")).toBeNull(); // back on the form
     expect(nav.refresh).not.toHaveBeenCalled();
   });
 });
