@@ -37,7 +37,4 @@ export const TOPUP_CARRY_DAYS = 90;
 export const BILLING_STEP_SECONDS = 30;
 /** After an unpaid end the account is read-only and the data is kept this many days. */
 export const DATA_KEPT_DAYS = 90;
-/** Launch prices stay for this many months. */
-export const PRICE_LOCK_MONTHS = 12;
 /** Paying a year at once is this many months free. */
-export const YEARLY_MONTHS_FREE = 2;

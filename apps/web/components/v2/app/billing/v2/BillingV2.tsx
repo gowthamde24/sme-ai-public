@@ -263,7 +263,6 @@ export function BillingV2({ words, lang, base, help, wallet, owner, topupAmounts
               })}
             </ul>
             <p className="mt-3 text-sm text-muted">{t("bill.plans.gst")}</p>
-            <p className="m-0 text-sm text-muted">{t("bill.plan.yearly")}</p>
             {owner ? (
               <p className="mt-3">
                 <Link href={`${base}/plans`} className={btnQuiet} data-part="plan-edit">

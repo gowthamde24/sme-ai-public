@@ -131,7 +131,6 @@ export function BillingV6({ words, lang, base, help, balance, pricing, invoices,
                 <li key={p.id} data-plan={p.id} data-current={on ? "true" : undefined} className={`${card} ${on ? "!border-brand-edge" : ""}`}>
                   <p className="font-display text-lg font-semibold">{p.name}</p>
                   <p className="text-base font-semibold">{p.monthlyText}</p>
-                  {p.yearlyText ? <p className="text-sm text-muted">{t("bv6.plan.yearly", { price: p.yearlyText, saving: p.yearlySavingText ?? "" }).replace(/,\s*$/, "")}</p> : null}
                   <ul className="mt-2 flex flex-col gap-1 text-sm text-muted">
                     {p.includedMinutes ? <li>{t("bv6.plan.included", { n: p.includedMinutes.toLocaleString(lang) })}</li> : null}
                     {p.rateText ? <li>{t("bv6.plan.rate", { rate: p.rateText })}</li> : null}
