@@ -3,13 +3,14 @@
 import { Gift, MessageCircle, Pencil, Phone, Search, Sparkles, Store, Wallet, Zap } from "lucide-react";
 import { useState } from "react";
 
-import { JOB_NAME_MAX, checkJobName, type Ago } from "@/lib/jobs/detail";
+import type { Ago } from "@/lib/jobs/detail";
 import { CHIP_TONE, jobStatusKey, type JobKind, type JobStatus, type PlanGate } from "@/lib/jobs/types";
 
 import { JobChip } from "../../ds/JobChip";
 import type { Say } from "../../words";
 import { GateNote } from "../GateNote";
-import { jobBtnMain, jobBtnQuiet, jobCard } from "./types";
+import { JobRenameForm } from "./LazyJobLists";
+import { jobCard } from "./types";
 
 const ICON: Record<JobKind, typeof Zap> = { speed_to_lead: Zap, answer_calls: Phone, followups: MessageCircle, store_visits: Store, offers: Gift, researcher: Search, payment_reminders: Wallet, custom: Sparkles };
 
@@ -52,28 +53,9 @@ export function JobHeader(p: HeaderProps) {
   const Icon = ICON[p.kind];
   const shown = p.customName ?? p.plainName;
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState("");
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const checked = checkJobName(draft);
-  const typed = checked.ok ? checked.name : draft.trim();
 
   function open() {
-    if (!p.canChange) return;
-    setDraft(p.customName ?? "");
-    setNameError(null);
-    setEditing(true);
-  }
-  async function save(raw: string) {
-    const c = checkJobName(raw);
-    if (!c.ok) {
-      setNameError(t(c.why === "long" ? "jobs.job.name.long" : "jobs.job.name.chars"));
-      return;
-    }
-    setSaving(true);
-    const ok = await p.onRename(c.name ?? "");
-    setSaving(false);
-    if (ok) setEditing(false);
+    if (p.canChange) setEditing(true);
   }
 
   return (
@@ -105,52 +87,7 @@ export function JobHeader(p: HeaderProps) {
         </div>
       </div>
 
-      {editing ? (
-        <form
-          data-part="rename"
-          className="mt-3 flex flex-col gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            void save(draft);
-          }}
-        >
-          <h1 className="m-0 font-display text-[22px] font-bold leading-tight text-ink">{p.plainName}</h1>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[15px] text-muted">{t("jobs.job.name.label")}</span>
-            <input
-              autoFocus
-              value={draft}
-              maxLength={JOB_NAME_MAX}
-              onChange={(e) => {
-                setDraft(e.target.value);
-                setNameError(null);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") setEditing(false);
-              }}
-              className="min-h-12 w-full rounded-xl border-2 border-brand-edge bg-surface px-3 text-[17px] text-ink"
-            />
-          </label>
-          {p.talks ? (
-            <p data-part="hear" aria-live="polite" className="m-0 text-[15px] text-muted">
-              {typed ? t("jobs.job.name.hear", { name: typed, business: p.business }) : t("jobs.job.name.hear_plain", { business: p.business })}
-            </p>
-          ) : null}
-          {nameError ? (
-            <p role="alert" className="m-0 text-sm text-red-text">
-              {nameError}
-            </p>
-          ) : null}
-          <div className="mt-1 flex flex-wrap gap-2">
-            <button type="submit" disabled={saving} className={jobBtnMain}>
-              {t("jobs.job.name.save")}
-            </button>
-            <button type="button" disabled={saving} onClick={() => void save("")} className={jobBtnQuiet}>
-              {t("jobs.job.name.plain")}
-            </button>
-          </div>
-        </form>
-      ) : null}
+      {editing ? <JobRenameForm plainName={p.plainName} customName={p.customName} business={p.business} talks={p.talks} t={t} onRename={p.onRename} onClose={() => setEditing(false)} /> : null}
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5">
