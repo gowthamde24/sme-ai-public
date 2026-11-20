@@ -94,3 +94,19 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 86 | about | te | నువ్వు ఎవరు? ఈ యాప్ ఏం చేస్తుంది? | `answer` · 19 Nov 2026: who the assistant is / what Stack19 is: a fixed identity answer in the first person that says Stack19 and AI assistant (unit test test_general_questions) |  |
 | 87 | about | hi | स्टैक19 क्या है? | `answer` · 19 Nov 2026: who the assistant is / what Stack19 is: a fixed identity answer in the first person that says Stack19 and AI assistant (unit test test_general_questions) |  |
 | 88 | about | kn | ಸ್ಟ್ಯಾಕ್19 ಅಂದರೆ ಏನು? | `answer` · 19 Nov 2026: who the assistant is / what Stack19 is: a fixed identity answer in the first person that says Stack19 and AI assistant (unit test test_general_questions) |  |
+| 89 | about | te | నువ్వు ఎవరు? ఈ యాప్ ఏం చేస్తుంది? | `answer` · 20 Nov 2026 (owner: not only saree shops): the identity answer in a real estate workspace |  |
+| 90 | about | te | Stack19 అంటే ఏమిటి? | `answer` · the identity answer in a coaching workspace |  |
+| 91 | about | te | స్టాక్19 అంటే ఏమిటి? మీరు ఎవరు? | `answer` · the identity answer in a car dealer workspace |  |
+| 92 | about | hi | आप कौन हैं? | `answer` · the identity answer in a school workspace |  |
+| 93 | visits | te | Anitha R కి శనివారం సాయంత్రం 4:30 కి site visit బుక్ చెయ్యి | `done_undo` · Telugu visit booking, real estate (the demo lead Anitha R) |  |
+| 94 | visits | te | Sunitha K కి శనివారం సాయంత్రం 5 కి demo class బుక్ చెయ్యి | `done_undo` · Telugu demo class booking, coaching (the demo lead Sunitha K) |  |
+| 95 | visits | te | Ramakrishna P కి ఆదివారం ఉదయం 11 కి test drive బుక్ చెయ్యి | `done_undo` · Telugu test drive booking, car dealer (the demo lead Ramakrishna P) |  |
+| 96 | followups | te | ఈ వారం site visit అడిగిన వాళ్ళందరికీ follow up పంపు | `plan_card` · Telugu group follow-up, real estate |  |
+| 97 | followups | te | demo class అడిగిన పేరెంట్స్ అందరికీ follow up పంపు | `plan_card` · Telugu group follow-up, coaching |  |
+| 98 | followups | te | test drive అడిగిన వాళ్ళందరికీ follow up పంపు | `plan_card` · Telugu group follow-up, car dealer |  |
+| 99 | records | te | ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి? | `answer` · Telugu records question, real estate |  |
+| 100 | records | te | ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి? | `answer` · Telugu records question, coaching |  |
+| 101 | records | te | ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి? | `answer` · Telugu records question, car dealer |  |
+| 102 | records | en | Is Naveen E in my contacts? | `answer` · a contact with no company is found by name (20 Nov 2026): the answer names the person |  |
+| 103 | records | te | నవీన్ ని contacts లో చూడు | `answer` · Telugu script finds a contact written in Latin letters |  |
+| 104 | records | en | Is Naveen E in my contacts? | `answer` · same lookup in the car dealer workspace |  |

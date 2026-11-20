@@ -41,6 +41,7 @@ from app.evidence.repository import EvidenceRepository
 from app.followups.repository import FollowupsRepository
 from app.integrations.policy import PolicyVersions
 from app.integrations.repository import IntegrationsRepository
+from app.jobs.wiring import JobsRuntime
 from app.knowledge.service import KnowledgeService
 from app.lead_finder.service import LeadFinderService
 from app.lead_profile.service import LeadProfileService
@@ -222,6 +223,8 @@ class Runtime:
     # the developer API (app/developer_api.DeveloperApi)
     # None: DEVELOPER_API=off, every route answers 404
     developer_api: Any = None
+    # Jobs (app/jobs): the flags and the pack files; None: JOBS=off, every /jobs route answers 404
+    jobs: JobsRuntime | None = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)

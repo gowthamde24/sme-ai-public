@@ -706,5 +706,174 @@
   "expect": "answer",
   "contains": ["Stack19", "AI assistant"],
   "note": "19 Nov 2026: who the assistant is / what Stack19 is: a fixed identity answer in the first person that says Stack19 and AI assistant (unit test test_general_questions)"
+ },
+{
+  "id": 89,
+  "area": "about",
+  "lang": "te",
+  "say": "నువ్వు ఎవరు? ఈ యాప్ ఏం చేస్తుంది?",
+  "expect": "answer",
+  "pack": "real_estate",
+  "contains": [
+   "Stack19",
+   "AI assistant"
+  ],
+  "note": "20 Nov 2026 (owner: not only saree shops): the identity answer in a real estate workspace"
+ },
+{
+  "id": 90,
+  "area": "about",
+  "lang": "te",
+  "say": "Stack19 అంటే ఏమిటి?",
+  "expect": "answer",
+  "pack": "coaching",
+  "contains": [
+   "Stack19",
+   "AI assistant"
+  ],
+  "note": "the identity answer in a coaching workspace"
+ },
+{
+  "id": 91,
+  "area": "about",
+  "lang": "te",
+  "say": "స్టాక్19 అంటే ఏమిటి? మీరు ఎవరు?",
+  "expect": "answer",
+  "pack": "auto_dealer",
+  "contains": [
+   "Stack19",
+   "AI assistant"
+  ],
+  "note": "the identity answer in a car dealer workspace"
+ },
+{
+  "id": 92,
+  "area": "about",
+  "lang": "hi",
+  "say": "आप कौन हैं?",
+  "expect": "answer",
+  "pack": "education",
+  "contains": [
+   "Stack19",
+   "AI assistant"
+  ],
+  "note": "the identity answer in a school workspace"
+ },
+{
+  "id": 93,
+  "area": "visits",
+  "lang": "te",
+  "say": "Anitha R కి శనివారం సాయంత్రం 4:30 కి site visit బుక్ చెయ్యి",
+  "expect": "done_undo",
+  "pack": "real_estate",
+  "note": "Telugu visit booking, real estate (the demo lead Anitha R)"
+ },
+{
+  "id": 94,
+  "area": "visits",
+  "lang": "te",
+  "say": "Sunitha K కి శనివారం సాయంత్రం 5 కి demo class బుక్ చెయ్యి",
+  "expect": "done_undo",
+  "pack": "coaching",
+  "note": "Telugu demo class booking, coaching (the demo lead Sunitha K)"
+ },
+{
+  "id": 95,
+  "area": "visits",
+  "lang": "te",
+  "say": "Ramakrishna P కి ఆదివారం ఉదయం 11 కి test drive బుక్ చెయ్యి",
+  "expect": "done_undo",
+  "pack": "auto_dealer",
+  "note": "Telugu test drive booking, car dealer (the demo lead Ramakrishna P)"
+ },
+{
+  "id": 96,
+  "area": "followups",
+  "lang": "te",
+  "say": "ఈ వారం site visit అడిగిన వాళ్ళందరికీ follow up పంపు",
+  "expect": "plan_card",
+  "pack": "real_estate",
+  "note": "Telugu group follow-up, real estate"
+ },
+{
+  "id": 97,
+  "area": "followups",
+  "lang": "te",
+  "say": "demo class అడిగిన పేరెంట్స్ అందరికీ follow up పంపు",
+  "expect": "plan_card",
+  "pack": "coaching",
+  "note": "Telugu group follow-up, coaching"
+ },
+{
+  "id": 98,
+  "area": "followups",
+  "lang": "te",
+  "say": "test drive అడిగిన వాళ్ళందరికీ follow up పంపు",
+  "expect": "plan_card",
+  "pack": "auto_dealer",
+  "note": "Telugu group follow-up, car dealer"
+ },
+{
+  "id": 99,
+  "area": "records",
+  "lang": "te",
+  "say": "ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి?",
+  "expect": "answer",
+  "pack": "real_estate",
+  "note": "Telugu records question, real estate"
+ },
+{
+  "id": 100,
+  "area": "records",
+  "lang": "te",
+  "say": "ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి?",
+  "expect": "answer",
+  "pack": "coaching",
+  "note": "Telugu records question, coaching"
+ },
+{
+  "id": 101,
+  "area": "records",
+  "lang": "te",
+  "say": "ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి?",
+  "expect": "answer",
+  "pack": "auto_dealer",
+  "note": "Telugu records question, car dealer"
+ },
+{
+  "id": 102,
+  "area": "records",
+  "lang": "en",
+  "say": "Is Naveen E in my contacts?",
+  "expect": "answer",
+  "pack": "real_estate",
+  "note": "a contact with no company is found by name (20 Nov 2026): the answer names the person",
+  "contains": [
+   "demo"
+  ]
+ },
+{
+  "id": 103,
+  "area": "records",
+  "lang": "te",
+  "say": "నవీన్ ని contacts లో చూడు",
+  "expect": "answer",
+  "pack": "coaching",
+  "note": "Telugu script finds a contact written in Latin letters",
+  "contains": [
+   "demo"
+  ]
+ },
+{
+  "id": 104,
+  "area": "records",
+  "lang": "en",
+  "say": "Is Naveen E in my contacts?",
+  "expect": "answer",
+  "pack": "auto_dealer",
+  "note": "same lookup in the car dealer workspace",
+  "contains": [
+   "demo"
+  ]
  }
 ]

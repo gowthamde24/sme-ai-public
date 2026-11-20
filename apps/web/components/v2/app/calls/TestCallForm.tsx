@@ -13,7 +13,7 @@ const facts = "mt-3 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1.5 text-base
 
 type W = Readonly<Record<string, string>>;
 export type PlaceFn = (input: { toId: string; language: TestLanguage; goal: string | null; introduceAs?: IntroduceAs; tone?: TestTone }) => Promise<
-  { ok: true; callId: string } | { ok: false; error: string; reason?: string | null; problem?: string | null }
+  { ok: true; callId: string } | { ok: false; error: string; reason?: string | null; problem?: string | null; minutes?: number | null; restartsOn?: string | null }
 >;
 
 export type TestNumberOption = { id: string; masked: string; label: string | null };
@@ -68,6 +68,7 @@ export function TestCallForm({ w, base, numbers, languages, place, introduce = n
         const known = res.reason !== null && res.reason !== undefined && (REFUSED_REASONS as readonly string[]).includes(res.reason);
         setFailed({ title: w["tc.no.title"], text: w[refusedKey(res.reason)] ?? w["tc.no.other"], word: !known && res.reason ? w["tc.no.code"].replace("{word}", res.reason) : null });
       }
+      else if (res.error === "minutes_used") setFailed({ title: w["tc.no.title"], text: (res.minutes !== null && res.restartsOn ? w["tc.err.free_minutes_used_up"].replace("{minutes}", String(res.minutes)).replace("{date}", res.restartsOn) : w["tc.no.other"]), word: null });
       else if (res.error === "introduce") setFailed({ title: null, text: (res.problem ? w[`tt.intro.no.${res.problem}`]?.replace("{min}", String(INTRODUCE_LIMITS.custom.min)).replace("{max}", String(INTRODUCE_LIMITS.custom.max)) : null) ?? w["tc.err.introduce"], word: null });
       else if (res.error === "provider") setFailed({ title: null, text: w["tc.err.provider"], word: null });
       else if (res.error === "forbidden") setFailed({ title: null, text: w["tc.err.forbidden"], word: null });

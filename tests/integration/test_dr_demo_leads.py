@@ -63,6 +63,15 @@ def test_the_coaching_demo_is_written_in_its_own_workspace(client: Any, eval_wor
     assert report["total"]["leads"] >= 27 and report["total"]["bookings"] >= 1
 
 
+def test_the_car_dealer_demo_is_written_in_its_own_workspace(client: Any, eval_world: Any) -> None:
+    b = eval_world.b
+    call = caller(client, b, b.users["owner"])
+    out = demo_data.auto_dealer(call, TODAY, tasks=False)
+    assert out["facts"] == "5 approved" and "10 from excel_upload" in out["leads"]
+    report = call("GET", "/outreach/reports")[1]
+    assert report["total"]["leads"] >= 27 and report["total"]["bookings"] >= 1
+
+
 def test_the_daily_fresh_leads_are_three_a_day_and_a_second_call_the_same_day_adds_none(client: Any, eval_world: Any) -> None:
     a = eval_world.a
     call = caller(client, a, a.users["owner"])

@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "insurance_loans",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "insurance and loan agents",
+    "te": "ఇన్సూరెన్స్, లోన్ ఏజెంట్లు"
+  }
+}

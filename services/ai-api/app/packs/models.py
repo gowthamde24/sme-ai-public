@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 PackStatus = Literal["draft", "preview", "published"]
 PackSource = Literal["signup", "default", "legacy", "operator", "owner"]
 LanguageReview = Literal["draft", "web_dictionary", "native_reviewed"]
+SellStyle = Literal["products", "services", "courses", "properties", "pricelist"]
 PackCode = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,30}$")]
 
 
@@ -72,6 +73,8 @@ class WorkspacePackOut(_Out):
     language_review: dict[str, LanguageReview]
     # does the pack ship example data? A pack with none loads an empty batch, so the web does not offer the button (it is still shown while a sample is loaded, to remove it)
     has_example_data: bool
+    # which of the five lists "What you sell" draws for this business type (packages/packs/<id>/identity.json; jobs contract 1.1 W1)
+    sell_style: SellStyle
 
 
 class ExampleCountsOut(_Out):

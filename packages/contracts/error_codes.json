@@ -3239,6 +3239,7 @@
         503
       ],
       "areas": [
+        "jobs",
         "packs"
       ],
       "default_message": "Business types are not available on this system.",
