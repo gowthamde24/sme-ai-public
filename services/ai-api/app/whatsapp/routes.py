@@ -26,7 +26,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse, PlainTextResponse
 
@@ -177,7 +177,7 @@ def connect_config(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
 
 
 @router.post("/whatsapp/connect")
-def connect_whatsapp(body: ConnectIn, ctx: OwnerStrong, runtime: RuntimeDep) -> dict[str, Any]:
+def connect_whatsapp(body: ConnectIn, ctx: OwnerStrong, runtime: RuntimeDep, background: BackgroundTasks) -> dict[str, Any]:
     """"Connect WhatsApp": the shop finished Meta's Embedded Signup and the browser sends us the account and the number. We (1) check that the signup (the `code`, required) was made in OUR app and shared THIS account, (2) check that our
     token can reach the number, (3) subscribe our app to the account's webhooks, (4) record the account for THIS business only and activate it. Nothing is recorded unless every step worked. Owner, second factor."""
     wa = _wa(runtime)
@@ -229,8 +229,24 @@ def connect_whatsapp(body: ConnectIn, ctx: OwnerStrong, runtime: RuntimeDep) -> 
             wa.graph.unsubscribe_app(waba, token)   # subscribed but not recorded: take the subscription back (nothing stays half done)
         raise
     active = wa.repository.account_set_status(ctx.principal.token, ctx.tenant.id, "active")
+    if wa.auto_templates:   # the owner's standing OK (19 Nov 2026): our templates go to THIS account for review as soon as it is connected, after the answer (a slow Meta never slows the connect)
+        background.add_task(_templates_after_connect, wa, ctx)
     verified = phone.body.get("verified_name")
     return {"connected": True, "display_phone": saved.get("display_phone"), "verified_name": verified[:100] if isinstance(verified, str) else None, "status": active.get("status")}
+
+
+AUTO_LANGUAGES = ("en", "te")   # only the languages a native reader has checked go to Meta by themselves; Hindi and Kannada wait for their review and the owner's own press
+
+
+def _templates_after_connect(wa: Any, ctx: TenantContext) -> None:
+    """After "Connect WhatsApp" worked: make the catalogue's drafts this workspace does not have yet and send EVERY draft of it to the connected account for review (the owner's standing OK, 19 Nov 2026: who pressed
+    Connect and when is in the log line and in each template's own audit record). Nothing here can fail the connect: a stop is logged by its class only and the owner can press "Send drafts to WhatsApp for review"."""
+    try:
+        made = _seed_drafts(wa, ctx, AUTO_LANGUAGES)
+        out = _submit_all_drafts(wa, ctx, AUTO_LANGUAGES)
+        logger.info("whatsapp: after Connect, %d drafts made, %d templates sent for review, %d refused, %d renamed (by user %s, workspace %s)", made, out["submitted"], out["refused"], len(out["renamed"]), ctx.principal.user_id, ctx.tenant.id)
+    except Exception as exc:  # noqa: BLE001 - only the class is logged; the owner presses the button himself
+        logger.error("whatsapp: sending the templates after Connect stopped: %s", exc.__class__.__name__)
 
 
 @router.post("/whatsapp/disconnect")
@@ -345,12 +361,8 @@ def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, t
     return {**(last or {"code": "name_exists", "reason": "", "meta_code": None, "meta_subcode": None, "meta_message": None}), "reason": (last or {}).get("reason", "") + f" Tried {candidates[0]} to {candidates[-1]}."}, None
 
 
-@router.post("/whatsapp/templates/first")
-def seed_first_templates(ctx: OwnerAdmin, runtime: RuntimeDep, languages: Annotated[str, Query(pattern=r"^[a-z]{2}(,[a-z]{2}){0,3}$")] = "en,te,hi,kn") -> dict[str, Any]:
-    """Create the first templates (visit reminder, visit confirmation, follow-up nudge, catalogue share, "we tried to call you") as DRAFTS in te / hi / kn / en for this workspace. Drafts only, nothing goes to Meta.
-    Safe to repeat: a template that already exists (any status) is left as it is. The words are drafts for native review; the Owner can edit each before it is submitted."""
-    wa = _wa(runtime)
-    wanted = tuple(x for x in languages.split(",") if x in first_templates.LANGUAGES)
+def _seed_drafts(wa: Any, ctx: TenantContext, wanted: tuple[str, ...]) -> int:
+    """Create the catalogue's drafts that this workspace does not have yet (any status counts as "has"); returns how many were made."""
     have = {(t["name"], t["language"]) for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
     created = 0
     for d in first_templates.drafts(wanted):
@@ -362,19 +374,27 @@ def seed_first_templates(ctx: OwnerAdmin, runtime: RuntimeDep, languages: Annota
              "p_category": d["category"], "p_purpose": d["purpose"], "p_body": d["body"], **({"p_opt_out_label": d["opt_out_label"]} if d["opt_out_label"] else {}), **({"p_meta_name": d["meta_name"]} if d["meta_name"] else {})},
         )
         created += 1
+    return created
+
+
+@router.post("/whatsapp/templates/first")
+def seed_first_templates(ctx: OwnerAdmin, runtime: RuntimeDep, languages: Annotated[str, Query(pattern=r"^[a-z]{2}(,[a-z]{2}){0,3}$")] = "en,te,hi,kn") -> dict[str, Any]:
+    """Create the first templates (visit reminder, visit confirmation, follow-up nudge, catalogue share, "we tried to call you") as DRAFTS in te / hi / kn / en for this workspace. Drafts only, nothing goes to Meta.
+    Safe to repeat: a template that already exists (any status) is left as it is. The words are drafts for native review; the Owner can edit each before it is submitted."""
+    wa = _wa(runtime)
+    wanted = tuple(x for x in languages.split(",") if x in first_templates.LANGUAGES)
+    created = _seed_drafts(wa, ctx, wanted)
     return {"created": created, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
 
 
-@router.post("/whatsapp/templates/submit-drafts")
-def submit_drafts(ctx: OwnerAdminStrong, runtime: RuntimeDep) -> dict[str, Any]:
-    """Send every DRAFT template of this workspace to Meta for review (one call each). Answers how many Meta took and how many it refused."""
-    wa = _wa(runtime)
+def _submit_all_drafts(wa: Any, ctx: TenantContext, languages: tuple[str, ...] | None = None) -> dict[str, Any]:
+    """Send every DRAFT template of this workspace (of these languages, when given) to Meta, one call each: how many Meta took, how many it refused, which were taken under a new name."""
     account, token = _meta_account(wa, ctx)
     sent = 0
     failed: list[dict[str, Any]] = []
     renamed: list[dict[str, Any]] = []   # templates Meta took under a new name because the name was taken
     for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id):
-        if t.get("status") != "draft":
+        if t.get("status") != "draft" or (languages is not None and t.get("language") not in languages):
             continue
         why, renamed_to = _to_meta(wa, ctx, account, token, t)
         if why is None:
@@ -384,6 +404,13 @@ def submit_drafts(ctx: OwnerAdminStrong, runtime: RuntimeDep) -> dict[str, Any]:
         else:
             failed.append({"id": t["id"], "name": t["name"], "language": t["language"], **why})
     return {"submitted": sent, "refused": len(failed), "failed": failed, "renamed": renamed, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
+
+
+@router.post("/whatsapp/templates/submit-drafts")
+def submit_drafts(ctx: OwnerAdminStrong, runtime: RuntimeDep) -> dict[str, Any]:
+    """Send every DRAFT template of this workspace to Meta for review (one call each). Answers how many Meta took and how many it refused."""
+    wa = _wa(runtime)
+    return _submit_all_drafts(wa, ctx)
 
 
 @router.post("/whatsapp/templates/sync")

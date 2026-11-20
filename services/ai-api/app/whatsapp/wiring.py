@@ -42,5 +42,6 @@ def build_whatsapp(settings: Settings, config: Any, key_ring: KeyRing | None = N
         app_id=settings.whatsapp_app_id,
         config_id=settings.whatsapp_embedded_config_id,
         embedded_version="v4" if settings.whatsapp_embedded_version == "v4" else "v5",
+        auto_templates=settings.whatsapp_auto_templates,
         graph_version=settings.whatsapp_graph_version,
     )

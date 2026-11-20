@@ -25,3 +25,4 @@ class WhatsAppRuntime:
     config_id: str | None = None
     embedded_version: str = "v5"   # the Embedded Signup version of the configuration (v4: featureType opt-in; v5: coexistence on by default)
     graph_version: str = "v25.0"
+    auto_templates: bool = True   # after "Connect WhatsApp" worked, our templates go to that account for review (the owner's standing OK, 19 Nov 2026); WHATSAPP_AUTO_TEMPLATES=false is the kill switch
