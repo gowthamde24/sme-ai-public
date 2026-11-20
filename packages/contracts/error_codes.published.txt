@@ -100,6 +100,7 @@ erasure_window_open
 example_data_loaded
 export_too_large
 facts_failed
+faq_not_allowed
 fee_plan_exists
 fee_plan_in_use
 file_empty
@@ -149,6 +150,7 @@ invitation_invalid
 invitation_locked
 invitation_not_pending
 invoice_number_used
+jobs_unavailable
 keep_owner
 key_rejected
 knowledge_unavailable
@@ -194,6 +196,7 @@ model_failed
 model_not_configured
 model_unavailable
 module_off
+name_invalid
 needs_photo
 no_approved_quote
 no_consent_template
@@ -224,6 +227,7 @@ not_in_plan
 not_lapsed
 not_on_sandbox_list
 not_qualified
+not_removable
 not_staff
 not_switchable
 not_waiting
@@ -268,6 +272,7 @@ payment_method_declined
 payment_not_verified
 payment_provider_failed
 payment_required
+phone_invalid
 phone_kyc_required
 photo_animated
 photo_files_missing

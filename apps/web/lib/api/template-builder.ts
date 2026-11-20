@@ -55,11 +55,11 @@ export async function writeOwnMessage(token: string, tenantId: string, input: Dr
  * `POST .../own-templates {title, category, drafts[]}`: sends the message to WhatsApp for its one check. The API needs the second step (403 `mfa_required` at the first level) and checks the text again (`422 checks_failed`). The web refuses to ask for a message
  * that fails its own checks. The answer is the message as Waiting. With JOBS=mock nothing is sent: the same Waiting answer is made up.
  */
-export async function submitOwnMessage(token: string, tenantId: string, input: SubmitInput, nowIso: string = new Date().toISOString()): Promise<OwnMessage> {
+export async function submitOwnMessage(token: string, tenantId: string, input: SubmitInput, nowIso: string = new Date().toISOString(), confirm = false): Promise<OwnMessage> {
   if (!canSend(input.message)) bad("message fails its checks");
   if (input.title.en.trim() === "" || input.title.en.length > 60) bad("title");
   if (jobsScreens() === "mock") return parseOwnMessage(wireSubmitted(`own-mock-${Date.parse(nowIso).toString(36)}`, input.title, input.message.category, nowIso));
-  const body = { title: { en: input.title.en, ...(input.title.te ? { te: input.title.te } : {}) }, ...wireMessage(input.message) };
+  const body = { title: { en: input.title.en, ...(input.title.te ? { te: input.title.te } : {}) }, ...wireMessage(input.message), ...(confirm ? { confirm: true } : {}) };
   const x = rec(await apiRequest(base(tenantId), token, { method: "POST", body: JSON.stringify(body) }), "submitted");
   return parseOwnMessage(x.template ?? x);
 }

@@ -139,6 +139,17 @@ describe("sending the templates for review (Owner and Admin)", () => {
     expect(init.method).toBe("POST");
     expect(init.body).toBeUndefined();
   });
+  it("a person with no authenticator confirms with a button: send-all and send-one then carry `confirm: true` (owner 20 Nov, C1 #975); with one, still no body", async () => {
+    apiRequest.mockResolvedValueOnce({ submitted: 1, refused: 0, templates: [ROW] });
+    await submitTemplateDrafts("tok", T, true);
+    expect((apiRequest.mock.calls[0] as [string, string, { body?: string }])[2].body).toBe('{"confirm":true}');
+    apiRequest.mockResolvedValueOnce({ template: ROW });
+    await submitTemplate("tok", T, TID, true);
+    expect((apiRequest.mock.calls[1] as [string, string, { body?: string }])[2].body).toBe('{"confirm":true}');
+    apiRequest.mockResolvedValueOnce({ template: ROW });
+    await submitTemplate("tok", T, TID);
+    expect((apiRequest.mock.calls[2] as [string, string, { body?: string }])[2].body).toBeUndefined();
+  });
   it("send-all reads the drafts WhatsApp did not take, each with its code, its reason and what WhatsApp said; one bad row is left out; meta_name rides on the template", async () => {
     apiRequest.mockResolvedValueOnce({
       submitted: 1,
