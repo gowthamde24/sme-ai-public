@@ -38,7 +38,7 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   const { tenantId } = await params;
   const query = await searchParams;
   if (!isCanonicalUuid(tenantId)) notFound();
-  officeToJobs(tenantId); // JOBS on: My AI team is the Jobs page (lib/jobs/redirect.ts); off: nothing changes
+  await officeToJobs(user.accessToken, tenantId); // JOBS on: My AI team is the Jobs page (lib/jobs/redirect.ts); off: nothing changes
   let role: string;
   try {
     role = (await fetchTenant(user.accessToken, tenantId)).role;
