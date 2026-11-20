@@ -103,7 +103,7 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
   it("the hero: a headline, ONE plain line, ONE call to action and a small Hear a call link; no pills; the orb stage is only a slot in the server markup (it mounts from 768 px, see OrbGate)", () => {
     const hero = home.match(/<section[^>]*aria-labelledby="h1"[\s\S]*?<\/section>/)![0];
     expect(text(hero.match(/<h1[\s\S]*?<\/h1>/)![0]).trim()).toBe("Every enquiry answered. Every call picked up.");
-    for (const x of ["Stack19 is an AI assistant for your business. It answers every enquiry and call, in your customer's own language.", "Get free early access", "Hear a call"]) expect(text(hero), x).toContain(x);
+    for (const x of ["Stack19 answers every enquiry and call, in your customer's language.", "Get free early access", "Hear a call"]) expect(text(hero), x).toContain(x);
     expect(hero).not.toMatch(/h3-pill|data-part="hero-stage"/);
     expect(hero).toContain('href="#how"');
     expect(hero).toMatch(/class="h3-btn h3-btn-main h3-btn-block"[^>]*data-part="hero-cta"|data-part="hero-cta"/);
@@ -131,16 +131,16 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(ask).toMatch(/data-part="ask-go"/);
     expect(ask).toContain('href="/signup"');
   });
-  it("the demo: one phone box with the call and the chat of ONE conversation (the approved frame, a fifth smaller), the language chip, a caption, the card, and three steps; the markup is the still state (the chat whole, its card first)", () => {
+  it("the demo: one phone box with the call and the chat of ONE conversation (the approved frame, a fifth smaller), the language chip, a caption, and the card; the markup is the still state (the chat whole, its card first)", () => {
     const how = home.match(/<section id="how"[\s\S]*?<\/section>/)![0];
-    expect(how.match(/data-part="phone-preview"/g)).toHaveLength(2); // the call screen and the chat screen, in the same box
+    expect(how.match(/data-part="dark-phone"/g)).toHaveLength(8); // the call screen and the chat screen of each of the four conversations, all in one cell (the box is as tall as the tallest)
+    expect(how.match(/data-part="stack-call"[^>]*data-on/g) ?? []).toHaveLength(0); // the still markup shows the chat of the first conversation
     expect(how).not.toContain("data-pp-keep"); // on a phone the frame is its slim form, edge to edge (no phone inside the phone)
-    expect(how.match(/data-step="\d"/g)).toHaveLength(3);
-    for (const x of ["One call. One WhatsApp. One clear summary.", "It answers in your customer's language", "Then it follows up on WhatsApp", "You see what it found out", "EAMCET weekend batch", "Demo class, Saturday 10 am", "A coaching centre answers an enquiry in Telugu.", "AI assistant", "Call ముగిసింది"]) expect(text(how), x).toContain(x);
+    expect(how).not.toContain("data-step="); // no numbered steps: the demo itself shows call, WhatsApp, found out
+    for (const x of ["One call. One WhatsApp. One clear summary.", "EAMCET weekend batch", "Demo class, Saturday 10 am", "Coaching, in Telugu", "Call ముగిసింది"]) expect(text(how), x).toContain(x);
     expect(how).toContain('data-part="chat-stack"');
-    expect(how).toContain("Bright Path Academy AI assistant ని"); // the call's first line, with the AI disclosure
-    expect(how.match(/class="pp-b"/g)).toHaveLength(4);
-    expect(how.match(/class="pp-line"/g)).toHaveLength(4);
+    expect(how.match(/class="pp-b"/g)).toHaveLength(16);
+    expect(how.match(/class="h3-dp-cap"/g)).toHaveLength(4); // one caption on each call screen (ONE caption at a time)
     expect(how).toMatch(/data-part="stack-lang"[\s\S]*?aria-pressed="true"[^>]*>తెలుగు</); // the language chips (a tap switches the demo language)
     expect(how).toContain('data-phase="chat"');
   });
@@ -157,8 +157,8 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
       expect(all, c.name).not.toMatch(/[\u0B80-\u0BFF]/); // no Tamil letter in any conversation
     }
     const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8");
-    expect(css).toMatch(/\.h3-how-phone \.pp \{ --pp-zoom: 0\.78; \}/);
-    expect(fs.readFileSync(path.join(__dirname, "../../../design/phone-preview.css"), "utf8")).toMatch(/zoom: var\(--pp-zoom, 1\)/);
+    expect(css).toMatch(/\.h3-dp \{[^}]*aspect-ratio: 1 \/ 2\.05[^}]*border-radius: 13%/); // the dark phone has real 6.1 inch proportions (outer body 1 : 2.05, corner radius 13% of the width)
+    
   });
   it("the late call-backs section: a question, four labelled sliders (average sale too), today's pipe with its three labelled counts (start, end, drain), the maths as four steps with arrows, the contrast with a bar; the Lead Finder: built, the owner contacts them, no 'we call them'", () => {
     const calc = home.match(/<section id="calc"[\s\S]*?<\/section>/)![0];
@@ -200,10 +200,10 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(text(join)).toContain("We use your details only to contact you about early access.");
   });
   it("one orange: the page's own css names no other orange and no gradient (the owner's colour rule, 20 Nov 2026)", () => {
-    const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace("radial-gradient(circle, var(--h3-dot) 1px, transparent 1.3px)", ""); // (the one gradient is the page's dot grid)
+    const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace("radial-gradient(circle, var(--h3-dot) 1px, transparent 1.3px)", "").replace(/radial-gradient\(120% 55% at 50% 0%.*?70%\)/, ""); // (the gradients allowed: the page's dot grid, and the dark call screen's very faint warm light drawn inside the phone)
     expect(css).not.toMatch(/#ff773c|#ec486e|#ff9a6b|#ea580c|#f97316|gradient/i);
     expect(css).toMatch(/background-attachment: fixed/); // the white dotted page stays with the window
-    expect(css.match(/font-weight:\s*(\d+)/g)!.map((m) => m.replace(/\D/g, "")).filter((v, i, a) => a.indexOf(v) === i).sort()).toEqual(["400", "700"]);
+    expect(css.match(/font-weight:\s*(\d+)/g)!.map((m) => m.replace(/\D/g, "")).filter((v, i, a) => a.indexOf(v) === i).sort()).toEqual(["400", "500", "600", "700"]); // Plus Jakarta Sans at 400, 500, 600 and 700 only
   });
   it("with SITE_TRIAL_COPY=1 the trial button still leads to sign-up (the later words stay off the page body)", () => {
     vi.stubEnv("SITE_TRIAL_COPY", "1");

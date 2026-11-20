@@ -90,7 +90,7 @@ export function StackProvider({ chats, children }: { chats: readonly StackChat[]
 /** The call caption after which each field of the card is known (1-based: the second line is the customer saying what they want); until then the field says it is listening. */
 export const REVEAL_AT = [2, 2, 3] as const;
 
-export function FoundCard({ heading, listening, sets }: { heading: string; listening: string; sets: { l: string; v: string }[][] }) {
+export function FoundCard({ heading, listening, summary, sets }: { heading: string; listening: string; summary: string; sets: { l: string; v: string }[][] }) {
   const { idx, phase, n } = useStack();
   // each field fills in time with the call's captions (Listening... -> the value with a green tick); once the call has ended every field is known
   const known = (j: number) => phase !== "call" || n >= REVEAL_AT[j];
@@ -121,6 +121,7 @@ export function FoundCard({ heading, listening, sets }: { heading: string; liste
           </dl>
         ))}
       </div>
+      <p className="h3-found-sum">{summary}</p>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { useId, useState } from "react";
  * "What should your assistant do?" (home page, section 2): one box to type in (the owner's own words, or an example chip that fills it) and one button that leads to sign-up (the early-access form). It calls NO AI: nothing typed here
  * leaves the browser, the page promises no answer. Typing only (no microphone until speaking exists). The words come from the server (already in the visitor's language).
  */
-export function AskBox({ words, chips, href }: { words: { label: string; placeholder: string; go: string; note: string }; chips: string[]; href: string }) {
+export function AskBox({ words, chips, href }: { words: { label: string; placeholder: string; go: string }; chips: string[]; href: string }) {
   const [text, setText] = useState("");
   const id = useId();
   return (
@@ -34,7 +34,6 @@ export function AskBox({ words, chips, href }: { words: { label: string; placeho
           </li>
         ))}
       </ul>
-      <p className="h3-ask-note">{words.note}</p>
     </div>
   );
 }

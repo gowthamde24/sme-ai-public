@@ -61,7 +61,7 @@ export function HeaderSheet({ label, closeLabel, items, login, cta, children }: 
   }, [open, root, close]);
   return (
     <>
-      <button ref={button} type="button" aria-expanded={open} aria-haspopup="dialog" aria-controls="site-menu" onClick={() => setOpen(true)} className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg border border-edge bg-surface text-ink hover:bg-surface-2 min-[900px]:hidden" data-part="menu-button">
+      <button ref={button} type="button" aria-expanded={open} aria-haspopup="dialog" aria-controls={open ? "site-menu" : undefined} onClick={() => setOpen(true)} className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg border border-edge bg-surface text-ink hover:bg-surface-2 min-[900px]:hidden" data-part="menu-button">
         <Menu className="size-5" aria-hidden="true" />
         <span className="sr-only">{label}</span>
       </button>

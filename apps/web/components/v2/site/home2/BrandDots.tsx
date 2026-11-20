@@ -33,7 +33,7 @@ function brandDots(family: string, step: number): Dot[] {
     x.stroke();
   }
   x.fillStyle = "#1e1e24";
-  x.font = `800 268px ${family}`;
+  x.font = `700 268px ${family}`;
   try {
     (x as unknown as { letterSpacing: string }).letterSpacing = "-14px";
   } catch {
@@ -87,8 +87,8 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
       el.addEventListener("pointerleave", leave);
     }
     const off = addScene(el, (ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look) => {
-      const family = fontOf(el, "display");
-      const fontReady = document.fonts?.check?.(`800 40px ${family}`) === true;
+      const family = fontOf(el, "sans");
+      const fontReady = document.fonts?.check?.(`700 40px ${family}`) === true;
       // fewer, larger dots on a phone (under 640 px wide), so the wordmark still reads at a third of its size
       const step = el.clientWidth < 640 ? 14 : 7;
       if (!s.pts || (!s.font && fontReady) || s.step !== step) {

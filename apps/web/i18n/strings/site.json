@@ -9447,11 +9447,11 @@
   }
  },
  "h2.foot.line": {
-  "en": "An AI assistant for Indian small businesses, in Telugu, English, Hindi and Kannada.",
-  "te": "చిన్న businesses కోసం AI assistant: Telugu, English, Hindi, Kannada లో.",
-  "hi": "भारत के छोटे businesses के लिए AI assistant: Telugu, English, Hindi और Kannada में।",
-  "kn": "ಭಾರತದ ಸಣ್ಣ businesses ಗೆ AI assistant: Telugu, English, Hindi ಮತ್ತು Kannada ನಲ್ಲಿ.",
-  "ta": "இந்திய சிறு businesses-க்கான AI assistant: தெலுங்கு, ஆங்கிலம், இந்தி, கன்னடம் ஆகிய மொழிகளில்.",
+  "en": "An AI assistant for small businesses, in four languages.",
+  "te": "చిన్న businesses కోసం AI assistant, నాలుగు భాషల్లో.",
+  "hi": "छोटे businesses के लिए AI assistant, चार भाषाओं में।",
+  "kn": "ಸಣ್ಣ businesses ಗೆ AI assistant, ನಾಲ್ಕು ಭಾಷೆಗಳಲ್ಲಿ.",
+  "ta": "சிறு businesses-க்கான AI assistant, நான்கு மொழிகளில்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10161,11 +10161,11 @@
   }
  },
  "h3.hero.p": {
-  "en": "{brand} is an AI assistant for your business. It answers every enquiry and call, in your customer's own language.",
-  "te": "{brand} మీ business కి AI assistant. ప్రతి enquiry కి, ప్రతి call కి, మీ customer మాట్లాడే భాషలోనే జవాబు ఇస్తుంది.",
-  "hi": "{brand} आपके business का AI assistant है। हर enquiry और call का जवाब देता है, आपके customer की अपनी भाषा में।",
-  "kn": "{brand} ನಿಮ್ಮ business ಗೆ AI assistant. ಪ್ರತಿ enquiry ಮತ್ತು call ಗೆ, ನಿಮ್ಮ customer ಮಾತನಾಡುವ ಭಾಷೆಯಲ್ಲೇ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
-  "ta": "{brand} உங்கள் business-க்கான AI assistant. ஒவ்வொரு enquiry, call-க்கும் உங்கள் customer பேசும் மொழியிலேயே பதில் சொல்லும்.",
+  "en": "{brand} answers every enquiry and call, in your customer's language.",
+  "te": "{brand} ప్రతి enquiry కి, ప్రతి call కి మీ customer భాషలో జవాబిస్తుంది.",
+  "hi": "{brand} हर enquiry और call का जवाब देता है, आपके customer की भाषा में।",
+  "kn": "{brand} ಪ್ರತಿ enquiry ಮತ್ತು call ಗೆ ನಿಮ್ಮ customer ಭಾಷೆಯಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "ta": "{brand} ஒவ்வொரு enquiry-க்கும் call-க்கும் உங்கள் customer மொழியில் பதில் சொல்கிறது.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10277,19 +10277,6 @@
    "ta": "draft"
   }
  },
- "h3.ask.sub": {
-  "en": "Say it in your own words. Or pick an example.",
-  "te": "మీ మాటల్లో చెప్పండి. లేదా ఒక example తీసుకోండి.",
-  "hi": "अपने शब्दों में लिखिए। या कोई example चुनिए।",
-  "kn": "ನಿಮ್ಮ ಮಾತಿನಲ್ಲಿ ಹೇಳಿ. ಅಥವಾ ಒಂದು example ಆರಿಸಿ.",
-  "ta": "உங்கள் வார்த்தைகளிலேயே சொல்லுங்கள். அல்லது ஒரு example தேர்ந்தெடுங்கள்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h3.ask.label": {
   "en": "What should it do?",
   "te": "ఏం చేయాలి?",
@@ -10322,19 +10309,6 @@
   "hi": "यह set up करें",
   "kn": "ಇದನ್ನು set up ಮಾಡಿ",
   "ta": "இதை set up செய்யுங்கள்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.ask.note": {
-  "en": "Free early access. We set it up with you.",
-  "te": "Free early access. మేమే మీతో కలిసి set up చేస్తాం.",
-  "hi": "Free early access। हम आपके साथ set up करते हैं।",
-  "kn": "Free early access. ನಾವು ನಿಮ್ಮೊಂದಿಗೆ set up ಮಾಡುತ್ತೇವೆ.",
-  "ta": "இலவச early access. உங்களுடன் சேர்ந்து நாங்களே set up செய்வோம்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10421,89 +10395,11 @@
   }
  },
  "h3.how.sub": {
-  "en": "An example call, so you can see how it works. The names are made up.",
-  "te": "ఒక example call: ఇది ఎలా పనిచేస్తుందో చూడండి. పేర్లు example కోసం మాత్రమే.",
-  "hi": "एक example call, ताकि आप देख सकें कैसे काम करता है। नाम बस example के लिए हैं।",
-  "kn": "ಒಂದು example call, ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ನೋಡಿ. ಹೆಸರುಗಳು example ಗಾಗಿ ಮಾತ್ರ.",
-  "ta": "ஒரு example call: இது எப்படி வேலை செய்கிறது என்று பாருங்கள். பெயர்கள் example-க்காக மட்டும்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.1.t": {
-  "en": "It answers in your customer's language",
-  "te": "మీ customer భాషలోనే జవాబు",
-  "hi": "Customer की अपनी भाषा में जवाब",
-  "kn": "Customer ಭಾಷೆಯಲ್ಲೇ ಉತ್ತರ",
-  "ta": "உங்கள் customer-இன் மொழியிலேயே பதில்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.1.d": {
-  "en": "A customer calls or writes. Your assistant answers at once, in Telugu, English, Hindi or Kannada.",
-  "te": "Customer call చేసినా, రాసినా వెంటనే జవాబు వస్తుంది: Telugu, English, Hindi, Kannada లో.",
-  "hi": "Customer call करे या लिखे, तुरंत जवाब मिलता है: Telugu, English, Hindi या Kannada में।",
-  "kn": "Customer call ಮಾಡಿದರೂ ಬರೆದರೂ ತಕ್ಷಣ ಉತ್ತರ: Telugu, English, Hindi, Kannada ನಲ್ಲಿ.",
-  "ta": "Customer call செய்தாலும் எழுதினாலும் உடனே பதில் வரும்: தெலுங்கு, ஆங்கிலம், இந்தி அல்லது கன்னடத்தில்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.2.t": {
-  "en": "Then it follows up on WhatsApp",
-  "te": "తర్వాత WhatsApp లో follow-up",
-  "hi": "फिर WhatsApp पर follow-up",
-  "kn": "ನಂತರ WhatsApp ನಲ್ಲಿ follow-up",
-  "ta": "பிறகு WhatsApp-இல் follow-up",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.2.d": {
-  "en": "Photos, prices and a visit time go to the customer on WhatsApp, from your business number.",
-  "te": "Photos, prices, visit time customer కి WhatsApp లో వెళ్తాయి, మీ business number నుంచి.",
-  "hi": "Photos, prices और visit का time customer को WhatsApp पर जाता है, आपके business number से।",
-  "kn": "Photos, prices, visit time customer ಗೆ WhatsApp ನಲ್ಲಿ ಹೋಗುತ್ತವೆ, ನಿಮ್ಮ business number ನಿಂದ.",
-  "ta": "Photos, prices, visit time எல்லாம் உங்கள் business number-இல் இருந்து customer-க்கு WhatsApp-இல் போகும்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.3.t": {
-  "en": "You see what it found out",
-  "te": "ఏం తెలిసిందో మీకు కనిపిస్తుంది",
-  "hi": "क्या पता चला, आपको दिखता है",
-  "kn": "ಏನು ತಿಳಿಯಿತು ಅಂತ ನಿಮಗೆ ಕಾಣುತ್ತದೆ",
-  "ta": "என்ன தெரிந்தது என்று நீங்கள் பார்க்கலாம்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.how.3.d": {
-  "en": "What the customer wants, who it is for and the day they will come, written up for you to act on.",
-  "te": "Customer కి ఏం కావాలి, ఎవరికి, ఏ రోజు వస్తారు: అన్నీ రాసి ఉంటాయి.",
-  "hi": "Customer को क्या चाहिए, किसके लिए, किस दिन आएँगे: सब लिखा मिलता है।",
-  "kn": "Customer ಗೆ ಏನು ಬೇಕು, ಯಾರಿಗೆ, ಯಾವ ದಿನ ಬರುತ್ತಾರೆ: ಎಲ್ಲಾ ಬರೆದಿರುತ್ತದೆ.",
-  "ta": "Customer-க்கு என்ன வேண்டும், யாருக்கு, எந்த நாள் வருவார்கள் என்பது எல்லாம் எழுதி வைக்கப்பட்டிருக்கும்.",
+  "en": "An example call. The names are made up.",
+  "te": "ఒక example call. పేర్లు example కోసం మాత్రమే.",
+  "hi": "एक example call। नाम बस example के लिए हैं।",
+  "kn": "ಒಂದು example call. ಹೆಸರುಗಳು example ಗಾಗಿ ಮಾತ್ರ.",
+  "ta": "ஒரு example call. பெயர்கள் example-க்காக மட்டும்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11095,56 +10991,56 @@
   }
  },
  "h3.stack.1": {
-  "en": "A coaching centre answers an enquiry in Telugu.",
-  "te": "ఒక coaching centre ఒక enquiry కి తెలుగులో జవాబు ఇస్తోంది.",
-  "hi": "एक coaching centre एक enquiry का जवाब तेलुगु में दे रहा है।",
-  "kn": "ಒಂದು coaching centre ಒಂದು enquiry ಗೆ ತೆಲುಗಿನಲ್ಲಿ ಉತ್ತರ ಕೊಡುತ್ತಿದೆ.",
+  "en": "Coaching, in Telugu",
+  "te": "Coaching, తెలుగులో",
+  "hi": "Coaching, तेलुगु में",
+  "kn": "Coaching, ತೆಲುಗಿನಲ್ಲಿ",
+  "ta": "Coaching, தெலுங்கில்",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
-  },
-  "ta": "ஒரு coaching centre ஒரு enquiry-க்கு தெலுங்கில் பதில் சொல்கிறது."
+  }
  },
  "h3.stack.2": {
-  "en": "A real-estate office books a site visit in Hindi.",
-  "te": "ఒక real estate office హిందీలో site visit book చేస్తోంది.",
-  "hi": "एक real estate office हिंदी में site visit book कर रहा है।",
-  "kn": "ಒಂದು real estate office ಹಿಂದಿಯಲ್ಲಿ site visit book ಮಾಡುತ್ತಿದೆ.",
+  "en": "Property, in Hindi",
+  "te": "Property, హిందీలో",
+  "hi": "Property, हिंदी में",
+  "kn": "Property, ಹಿಂದಿಯಲ್ಲಿ",
+  "ta": "Property, இந்தியில்",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
-  },
-  "ta": "ஒரு real estate office இந்தியில் site visit book செய்கிறது."
+  }
  },
  "h3.stack.3": {
-  "en": "A clinic books an appointment in Kannada.",
-  "te": "ఒక clinic కన్నడలో appointment book చేస్తోంది.",
-  "hi": "एक clinic कन्नड़ में appointment book कर रहा है।",
-  "kn": "ಒಂದು clinic ಕನ್ನಡದಲ್ಲಿ appointment book ಮಾಡುತ್ತಿದೆ.",
+  "en": "Clinic, in Kannada",
+  "te": "Clinic, కన్నడలో",
+  "hi": "Clinic, कन्नड़ में",
+  "kn": "Clinic, ಕನ್ನಡದಲ್ಲಿ",
+  "ta": "Clinic, கன்னடத்தில்",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
-  },
-  "ta": "ஒரு clinic கன்னடத்தில் appointment book செய்கிறது."
+  }
  },
  "h3.stack.4": {
-  "en": "A shop says the order is ready, in English.",
-  "te": "ఒక shop ఇంగ్లీష్‌లో order ready అని చెబుతోంది.",
-  "hi": "एक shop अंग्रेज़ी में बता रहा है कि order ready है।",
-  "kn": "ಒಂದು shop ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ order ready ಅಂತ ಹೇಳುತ್ತಿದೆ.",
+  "en": "Shop, in English",
+  "te": "Shop, ఇంగ్లీష్‌లో",
+  "hi": "Shop, अंग्रेज़ी में",
+  "kn": "Shop, ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ",
+  "ta": "Shop, ஆங்கிலத்தில்",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
-  },
-  "ta": "ஒரு shop ஆங்கிலத்தில் order ready என்று சொல்கிறது."
+  }
  },
  "h3.found.2.l.1": {
   "en": "Looking for",
@@ -11451,6 +11347,19 @@
   "hi": "Menu बंद करें",
   "kn": "Menu ಮುಚ್ಚಿ",
   "ta": "Menu-வை மூடு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.found.sum": {
+  "en": "Summary is written the moment the call ends.",
+  "te": "Call ముగియగానే summary రాసి ఉంటుంది.",
+  "hi": "Call खत्म होते ही summary लिखी मिलती है।",
+  "kn": "Call ಮುಗಿದ ತಕ್ಷಣ summary ಬರೆದಿರುತ್ತದೆ.",
+  "ta": "Call முடிந்தவுடன் summary எழுதப்பட்டிருக்கும்.",
   "status": {
    "te": "draft",
    "hi": "draft",

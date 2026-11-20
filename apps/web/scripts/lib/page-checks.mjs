@@ -30,7 +30,7 @@ const backdrop = (el) => {
   let base = dark ? [0, 0, 0, 1] : [255, 255, 255, 1];
   for (let n = el; n; n = n.parentElement) {
     const cs = getComputedStyle(n);
-    if (cs.backgroundImage !== 'none' && n !== root && !n.hasAttribute('data-dots')) images = true; // data-dots: the page's own faint dot grid (the home page's white dotted background), like the root's; its colour behind the text is the plain background-color
+    if (cs.backgroundImage !== 'none' && n !== root && !n.hasAttribute('data-dots') && !n.closest('[data-illustration]')) images = true; // inside an illustration (the dark phone's very faint warm light) the plain background-colour is what counts // data-dots: the page's own faint dot grid (the home page's white dotted background), like the root's; its colour behind the text is the plain background-color
     const c = rgba(cs.backgroundColor);
     if (c[3] > 0) layers.push(c);
     if (c[3] >= 0.999) break;

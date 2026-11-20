@@ -102,6 +102,7 @@ function Hero({ t, cta }: { t: SiteT; cta: Start }) {
             {t("h2.hero.hear")}
           </Link>
         </div>
+        <p className="h3-hero-plain">{t("h3.plans.free")}</p>
         {websiteOnly() ? (
           <p className="h3-small" data-part="trial-note">
             {t("demo.note")}
@@ -128,11 +129,10 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
           <h2 id="ask-title" className="h3-h2">
             {t("h3.ask.title")}
           </h2>
-          <p className="h3-lead">{t("h3.ask.sub")}</p>
         </header>
         <AskBox
           href={cta.href}
-          words={{ label: t("h3.ask.label"), placeholder: t("h3.ask.ph"), go: t("h3.ask.go"), note: t("h3.ask.note") }}
+          words={{ label: t("h3.ask.label"), placeholder: t("h3.ask.ph"), go: t("h3.ask.go") }}
           chips={[1, 2, 3, 4, 5].map((i) => t(k(`h3.ask.chip.${i}`)))}
         />
       </div>
@@ -141,7 +141,6 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
 }
 
 function How({ t }: { t: SiteT }) {
-  const found = [1, 2, 3] as const;
   return (
     <section id="how" aria-labelledby="how-title" className="h3-sec">
       <div className="h3-wrap">
@@ -158,20 +157,7 @@ function How({ t }: { t: SiteT }) {
               <LangTabs chips={STACK.map((c) => SITE_LANGUAGE_NAMES[c.code].native)} codes={STACK.map((c) => c.code)} label={t("h3.tabs.label")} />
               <ChatStack chats={STACK} captions={[1, 2, 3, 4].map((i) => t(k(`h3.stack.${i}`)))} sub={t("h3.phone.biz")} placeholder={t("h3.phone.msg")} />
             </div>
-            <FoundCard heading={t("h3.how.f.h")} listening={t("h3.found.listen")} sets={FOUND_KEYS.map((rows) => rows.map(([l, v]) => ({ l: t(k(l)), v: t(k(v)) })))} />
-            <ol className="h3-steps" data-part="steps">
-              {found.map((n) => (
-                <li key={n} className="h3-step" data-step={n}>
-                  <span className="h3-step-n" aria-hidden="true">
-                    {n}
-                  </span>
-                  <div>
-                    <h3 className="h3-h3">{t(k(`h3.how.${n}.t`))}</h3>
-                    <p className="h3-step-d">{t(k(`h3.how.${n}.d`))}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
+            <FoundCard heading={t("h3.how.f.h")} listening={t("h3.found.listen")} summary={t("h3.found.sum")} sets={FOUND_KEYS.map((rows) => rows.map(([l, v]) => ({ l: t(k(l)), v: t(k(v)) })))} />
           </div>
         </StackProvider>
       </div>
