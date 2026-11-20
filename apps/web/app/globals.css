@@ -10,7 +10,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0b0f17;
+    --bg: #131216;
     --fg: #f3f4f6;
     --muted: #9ca3af;
     --link: #93c5fd;
@@ -642,7 +642,7 @@ fieldset.form-plain {
    on a dark phone. With no choice there is no attribute and nothing here applies. Deleted with the last legacy screen (Batch 6). */
 html[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0b0f17;
+  --bg: #131216;
   --fg: #f3f4f6;
   --muted: #9ca3af;
   --link: #93c5fd;

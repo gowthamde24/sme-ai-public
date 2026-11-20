@@ -41,7 +41,7 @@ export function SearchChoices({ search, t, busy, onSearch }: { search: Search; t
             commit();
           }
         }}
-        className="write-ctl mx-0.5 my-0.5 min-h-10 w-44 max-w-full rounded-full border border-transparent bg-brand-bg px-3.5 align-middle text-[16px] font-semibold text-brand-text disabled:opacity-80"
+        className="write-ctl mx-0.5 my-0.5 min-h-10 w-44 max-w-full rounded-full border border-[color:var(--v2-pill-edge)] bg-brand-bg px-3.5 align-middle text-[16px] font-semibold text-brand-text disabled:opacity-80"
       />
     ) : (
       <Val>{search.area}</Val>
