@@ -6,7 +6,7 @@ import { SITE_LANGS } from "@/i18n/site-lang";
 
 import { ChatStack } from "./ChatStack";
 import { FOUND_KEYS, STACK } from "./chat-stack";
-import { FoundCard, StackProvider } from "./StackState";
+import { FoundCard, LangTabs, StackProvider } from "./StackState";
 
 const setsFor = (lang: (typeof SITE_LANGS)[number]) => {
   const d = siteDict(lang) as Record<string, string>;
@@ -50,15 +50,16 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
     const sets = setsFor("en");
     return render(
       <StackProvider chats={STACK}>
-        <ChatStack chats={STACK} chips={["te", "hi", "kn", "en"]} captions={["1", "2", "3", "4"]} sub="Business account" placeholder="Message" />
-        <FoundCard heading="What it found out" sets={sets} />
+        <ChatStack chats={STACK} captions={["1", "2", "3", "4"]} sub="Business account" placeholder="Message" />
+        <LangTabs chips={["te", "hi", "kn", "en"]} codes={["te", "hi", "kn", "en"]} label="Demo language" />
+        <FoundCard heading="What it found out" listening="Listening…" sets={sets} />
       </StackProvider>,
     );
   };
   const q = (c: HTMLElement, sel: string) => c.querySelector(sel);
   const state = (c: HTMLElement) => {
     const st = q(c, '[data-part="chat-stack"]')!;
-    return { lang: st.getAttribute("data-lang"), phase: st.getAttribute("data-phase"), set: q(c, ".h3-found-set[data-on]")?.getAttribute("data-set"), rows: c.querySelectorAll(".h3-found-row[data-row]").length, out: st.hasAttribute("data-out"), cardOut: q(c, '[data-part="found-out"]')!.hasAttribute("data-out") };
+    return { lang: st.getAttribute("data-lang"), phase: st.getAttribute("data-phase"), set: q(c, ".h3-found-set[data-on]")?.getAttribute("data-set"), rows: c.querySelectorAll(".h3-found-set[data-on] .h3-found-row[data-known]").length, out: st.hasAttribute("data-out"), cardOut: q(c, '[data-part="found-out"]')!.hasAttribute("data-out") };
   };
 
   it("starts with the first conversation's chat whole and its card (the still state: Telugu coaching)", () => {
@@ -66,7 +67,7 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
     expect(state(container)).toMatchObject({ lang: "te", phase: "chat", set: "0", rows: 3 });
     expect(container.querySelectorAll(".pp-b")).toHaveLength(4);
   });
-  it("each language runs call -> call ended -> chat -> fade, then the next; the card follows the same conversation (empty during the call, filling with the chat), and fades with it; a full cycle takes 12 to 16 s each", async () => {
+  it("each language runs call -> call ended -> chat -> fade, then the next; the card follows the same conversation (fields listening, then filled in time with the call), and fades with it; a full cycle takes 12 to 16 s each", async () => {
     const { container } = mount();
     const seen: string[] = [];
     const starts: Record<string, number> = {};
@@ -83,8 +84,9 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
       // at every moment the card's set is the one of the conversation on the phone, and it fades exactly when the phone does
       expect(["te:0", "hi:1", "kn:2", "en:3"]).toContain(`${s.lang}:${s.set}`);
       expect(s.cardOut).toBe(s.out);
-      if (s.phase === "call" || s.phase === "ended") expect(s.rows).toBe(0);
-      if (s.phase === "chat") expect(s.rows).toBeLessThanOrEqual(3);
+      // the fields fill in time with the call's captions (listening until the customer has said it) and are all known once the call has ended
+      if (s.phase === "call") expect(s.rows).toBeLessThanOrEqual(3);
+      if (s.phase === "ended" || s.phase === "chat") expect(s.rows).toBe(3);
     }
     expect(seen.slice(0, 9)).toEqual(["te:call", "te:ended", "te:chat", "te:out", "hi:call", "hi:ended", "hi:chat", "hi:out", "kn:call"]);
     const t0 = Object.values(starts);
@@ -96,12 +98,47 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
     vi.stubGlobal("IntersectionObserver", class { constructor(f: typeof cb) { cb = f; } observe() {} disconnect() {} unobserve() {} });
     const { container } = mount();
     await act(async () => { vi.advanceTimersByTime(3000); });
-    const before = JSON.stringify(state(container)) + container.querySelectorAll(".pp-line").length;
+    const before = JSON.stringify(state(container)) + container.querySelector(".h3-duo-call")!.getAttribute("data-shown");
     await act(async () => { cb([{ isIntersecting: false }]); });
     await act(async () => { vi.advanceTimersByTime(20000); });
-    expect(JSON.stringify(state(container)) + container.querySelectorAll(".pp-line").length).toBe(before);
+    expect(JSON.stringify(state(container)) + container.querySelector(".h3-duo-call")!.getAttribute("data-shown")).toBe(before);
     await act(async () => { cb([{ isIntersecting: true }]); });
     await act(async () => { vi.advanceTimersByTime(20000); });
-    expect(JSON.stringify(state(container)) + container.querySelectorAll(".pp-line").length).not.toBe(before);
+    expect(JSON.stringify(state(container)) + container.querySelector(".h3-duo-call")!.getAttribute("data-shown")).not.toBe(before);
+  });
+});
+
+describe("the language chips", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.stubGlobal("matchMedia", (q: string) => ({ matches: false, media: q, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, onchange: null, dispatchEvent: () => false }));
+  });
+  afterEach(() => {
+    cleanup();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+  it("a tap shows that conversation from its call and keeps the demo on it for 30 s, then the cycle goes on", async () => {
+    const sets = setsFor("en");
+    const { container } = render(
+      <StackProvider chats={STACK}>
+        <LangTabs chips={["te", "hi", "kn", "en"]} codes={["te", "hi", "kn", "en"]} label="Demo language" />
+        <ChatStack chats={STACK} captions={["1", "2", "3", "4"]} sub="Business account" placeholder="Message" />
+        <FoundCard heading="What it found out" listening="Listening…" sets={sets} />
+      </StackProvider>,
+    );
+    await act(async () => { vi.advanceTimersByTime(200); });
+    const tab = (c: string) => container.querySelector(`[data-tab="${c}"]`) as HTMLElement;
+    await act(async () => { tab("kn").click(); });
+    const lang = () => container.querySelector('[data-part="chat-stack"]')!.getAttribute("data-lang");
+    expect(lang()).toBe("kn");
+    expect(tab("kn").getAttribute("aria-pressed")).toBe("true");
+    const run = async (ms: number) => {
+      for (let t = 0; t < ms; t += 100) await act(async () => { vi.advanceTimersByTime(100); });
+    };
+    await run(25000);
+    expect(lang()).toBe("kn"); // the same language for the 30 s after the tap
+    await run(30000);
+    expect(lang()).not.toBe("kn");
   });
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import * as React from "react";
 
 import type { StackChat } from "./chat-stack";
@@ -16,7 +17,7 @@ const FADE = 600;
 
 export type Phase = "call" | "ended" | "chat" | "out";
 type StackState = { idx: number; phase: Phase; n: number };
-type Value = StackState & { setVisible: (v: boolean) => void };
+type Value = StackState & { setVisible: (v: boolean) => void; select: (i: number) => void };
 const Ctx = React.createContext<Value | null>(null);
 export const useStack = (): Value => {
   const s = React.useContext(Ctx);
@@ -33,8 +34,13 @@ export function StackProvider({ chats, children }: { chats: readonly StackChat[]
   const [st, setSt] = React.useState<StackState>({ idx: 0, phase: "chat", n: chats[0].lines.length });
   const [live, setLive] = React.useState(false);
   const [visible, setVisible] = React.useState(true); // the clock stands still while the phone is off screen
+  const holdUntil = React.useRef(0); // after a tap on a language the demo stays on it for 30 s
+  const still = React.useRef(false); // reduced motion: no clock at all
   React.useEffect(() => {
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      still.current = true;
+      return;
+    }
     // the first chat is whole in the server markup; once the script runs, the conversation starts from its call
     const id = window.setTimeout(() => {
       setSt({ idx: 0, phase: "call", n: 0 });
@@ -60,12 +66,20 @@ export function StackProvider({ chats, children }: { chats: readonly StackChat[]
       next = n < lines ? { idx, phase, n: n + 1 } : { idx, phase: "out", n };
     } else {
       wait = FADE;
-      next = { idx: (idx + 1) % chats.length, phase: "call", n: 0 };
+      next = { idx: Date.now() < holdUntil.current ? idx : (idx + 1) % chats.length, phase: "call", n: 0 };
     }
     const id = window.setTimeout(() => setSt(next), wait);
     return () => window.clearTimeout(id);
   }, [live, visible, st, chats]);
-  const value = React.useMemo(() => ({ ...st, setVisible }), [st]);
+  // a tap on a language chip: that conversation starts from its call (still: shows its chat whole), and the cycle waits 30 s before it goes on
+  const select = React.useCallback(
+    (i: number) => {
+      holdUntil.current = Date.now() + 30000;
+      setSt(still.current ? { idx: i, phase: "chat", n: chats[i].lines.length } : { idx: i, phase: "call", n: 0 });
+    },
+    [chats],
+  );
+  const value = React.useMemo(() => ({ ...st, setVisible, select }), [st, select]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
@@ -73,25 +87,56 @@ export function StackProvider({ chats, children }: { chats: readonly StackChat[]
  * "What it found out": the card beside the phone. It holds the rows of EVERY conversation in one grid cell (so its height is the tallest set's and nothing jumps) and shows the set of the chat that is on the phone; it fades with the chat.
  * The server markup shows the first set (the static first chat's own card).
  */
-export function FoundCard({ heading, sets }: { heading: string; sets: { l: string; v: string }[][] }) {
+/** The call caption after which each field of the card is known (1-based: the second line is the customer saying what they want); until then the field says it is listening. */
+export const REVEAL_AT = [2, 2, 3] as const;
+
+export function FoundCard({ heading, listening, sets }: { heading: string; listening: string; sets: { l: string; v: string }[][] }) {
   const { idx, phase, n } = useStack();
-  // the card fills for the conversation on the phone as the WhatsApp stacks in (one row for each bubble that has come), and fades with it
-  const rowOn = (j: number) => phase === "out" || (phase === "chat" && n > j);
+  // each field fills in time with the call's captions (Listening... -> the value with a green tick); once the call has ended every field is known
+  const known = (j: number) => phase !== "call" || n >= REVEAL_AT[j];
   return (
     <div className="h3-found" data-part="found-out" data-out={phase === "out" ? "" : undefined} data-set={idx}>
       <p className="h3-found-h">{heading}</p>
       <div className="h3-found-sets">
         {sets.map((rows, i) => (
           <dl key={i} className="h3-found-set" data-set={i} data-on={i === idx ? "" : undefined} aria-hidden={i === idx ? undefined : true}>
-            {rows.map((r, j) => (
-              <div key={j} className="h3-found-row" data-row={i === idx && rowOn(j) ? "" : undefined}>
-                <dt>{r.l}</dt>
-                <dd>{r.v}</dd>
-              </div>
-            ))}
+            {rows.map((r, j) => {
+              const on = i !== idx || known(j);
+              return (
+                <div key={j} className="h3-found-row" data-known={on ? "" : undefined}>
+                  <dt>{r.l}</dt>
+                  <dd>
+                    {on ? (
+                      <>
+                        <span className="h3-found-v">{r.v}</span>
+                        <Check className="h3-found-tick" size={16} strokeWidth={2.6} aria-hidden="true" />
+                      </>
+                    ) : (
+                      <span className="h3-found-wait">{listening}</span>
+                    )}
+                  </dd>
+                </div>
+              );
+            })}
           </dl>
         ))}
       </div>
+    </div>
+  );
+}
+
+/**
+ * The language chips above the phone (sticky): the four languages of the demo, the active one marked; a tap shows that conversation from its call and keeps the demo on it for 30 s (the cycle then goes on). Real buttons, 44 px tall.
+ */
+export function LangTabs({ chips, codes, label }: { chips: string[]; codes: string[]; label: string }) {
+  const { idx, select } = useStack();
+  return (
+    <div className="h3-tabs" role="group" aria-label={label} data-part="stack-lang">
+      {chips.map((c, i) => (
+        <button key={codes[i]} type="button" className="h3-tab" lang={codes[i]} aria-pressed={i === idx} onClick={() => select(i)} data-tab={codes[i]}>
+          {c}
+        </button>
+      ))}
     </div>
   );
 }

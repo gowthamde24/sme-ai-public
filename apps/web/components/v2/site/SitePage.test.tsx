@@ -79,8 +79,8 @@ describe("the business type pages come from the pack data", () => {
 describe("the home page (20 Nov 2026: one page for every width, the three animations kept, no business named or linked)", () => {
   const home = render("en", { kind: "home" });
   const text = (html: string) => htmlText(html).replace(/\s+/g, " ");
-  it("the sections in order: hero, what should your assistant do, the demo, calls in time, the Lead Finder, built in, plans, the final call to action, then the footer", () => {
-    const at = ["h1", "ask", "how", "calc", "finder", "built", "plans", "join"].map((id) => home.indexOf(`id="${id}"`)); // (without the waitlist the closing section is #join; with it, #demo)
+  it("the sections in order: hero, the phone demo, what should your assistant do, calls in time, the Lead Finder, built in, plans, the final call to action, then the footer", () => {
+    const at = ["h1", "how", "ask", "calc", "finder", "built", "plans", "join"].map((id) => home.indexOf(`id="${id}"`)); // (without the waitlist the closing section is #join; with it, #demo)
     expect(at.every((i) => i > 0), JSON.stringify(at)).toBe(true);
     expect([...at].sort((x, y) => x - y)).toEqual(at);
     const foot = home.match(/<footer[\s\S]*?<\/footer>/)![0];
@@ -100,28 +100,22 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     }
     expect(home).not.toMatch(/data-pack=|data-business=/);
   });
-  it("the hero: one plain line, three pills, the call to action and Hear a call, then the stage (six sources with mixed enquiries, the orb's caption, three outcomes)", () => {
+  it("the hero: a headline, ONE plain line, ONE call to action and a small Hear a call link; no pills; the orb stage is only a slot in the server markup (it mounts from 768 px, see OrbGate)", () => {
     const hero = home.match(/<section[^>]*aria-labelledby="h1"[\s\S]*?<\/section>/)![0];
     expect(text(hero.match(/<h1[\s\S]*?<\/h1>/)![0]).trim()).toBe("Every enquiry answered. Every call picked up.");
-    for (const x of ["Stack19 is an AI assistant for your business. It answers every enquiry and call, in your customer's own language.", "Answers every enquiry in seconds", "Answers your calls day and night", "Follows up on WhatsApp", "Get free early access", "Hear a call"]) expect(text(hero), x).toContain(x);
-    expect(hero.match(/<li class="h3-pill/g)).toHaveLength(3);
+    for (const x of ["Stack19 is an AI assistant for your business. It answers every enquiry and call, in your customer's own language.", "Get free early access", "Hear a call"]) expect(text(hero), x).toContain(x);
+    expect(hero).not.toMatch(/h3-pill|data-part="hero-stage"/);
     expect(hero).toContain('href="#how"');
-    const stage = hero.match(/data-part="hero-stage"[\s\S]*$/)![0];
-    expect(stage.match(/data-source="\d"/g)).toHaveLength(6);
-    for (const x of ["Meta ads", "2BHK in Kondapur", "JustDial, IndiaMART", "B.Tech admission", "Website form", "WhatsApp", "Saree for a wedding", "Missed call", "Test drive: SUV", "Google", "Demo class timings", "Answered in seconds", "Quote ready", "Visit booked"]) expect(text(stage), x).toContain(x);
-    expect(stage.match(/data-out="\d"/g)).toHaveLength(3);
-    expect(stage).toContain('aria-live="polite"');
-    expect(stage).toMatch(/lang="te" data-part="caption-words"/); // the greetings: Telugu first, then English, Hindi and Kannada only
-    expect(stage).not.toMatch(/வணக்கம்|നമസ്കാരം|नमस्कार!/);
-    expect(stage).toContain("h3-src-5"); // all six sources are in the markup; a narrow page shows four of them (css), nothing is swapped
-    expect(stage).not.toMatch(/data-part="try|data-try-/); // no "Try it": the box below is the one place to type
+    expect(hero).toMatch(/class="h3-btn h3-btn-main h3-btn-block"[^>]*data-part="hero-cta"|data-part="hero-cta"/);
+    expect(hero).toContain('data-part="hero-stage-slot"');
+    expect(hero).not.toContain("data-source="); // no orb markup for a phone
     expect(home.match(/<h1[\s>]/g)).toHaveLength(1);
     expect(text(home)).not.toMatch(/working name|Sme-?AI/i);
   });
   it("one markup at every width: no section or part is hidden or swapped at a width (no lg:hidden, hidden md:block or max-lg:hidden pair) and the drawings are scaled whole, never replaced", () => {
     const main = home.match(/<div class="h3 [\s\S]*?<footer/)![0];
     expect(main).not.toMatch(/\b(max-)?(sm|md|lg|xl|min-\[\d+px\]):(hidden|block|flex)\b|\bhidden\b[^"]*\b(sm|md|lg|xl):|\blg:hidden\b/);
-    expect(main.match(/class="h3-fit h3-fit-stage/g)).toHaveLength(1); // the stage is the one scaled drawing; the map and the flow reflow in their own canvases
+    expect(main.match(/class="h3-fit h3-fit-stage/g) ?? []).toHaveLength(0); // the stage (the one scaled drawing) mounts from 768 px; the map and the pipe reflow in their own canvases
     expect(main).not.toMatch(/data-part="(sources|caption|found|try|checked)-phone"|data-(source|out)-phone=/);
     const dir = path.join(__dirname, "home");
     const src = [...fs.readdirSync(dir).filter((f) => /\.tsx$/.test(f)).map((f) => fs.readFileSync(path.join(dir, f), "utf8")), ...["HeroStage", "RadarFinder", "LeakCalc"].map((f) => fs.readFileSync(path.join(__dirname, `home2/${f}.tsx`), "utf8"))].join("\n");
@@ -140,14 +134,14 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
   it("the demo: one phone box with the call and the chat of ONE conversation (the approved frame, a fifth smaller), the language chip, a caption, the card, and three steps; the markup is the still state (the chat whole, its card first)", () => {
     const how = home.match(/<section id="how"[\s\S]*?<\/section>/)![0];
     expect(how.match(/data-part="phone-preview"/g)).toHaveLength(2); // the call screen and the chat screen, in the same box
-    expect(how).toContain("data-pp-keep");
+    expect(how).not.toContain("data-pp-keep"); // on a phone the frame is its slim form, edge to edge (no phone inside the phone)
     expect(how.match(/data-step="\d"/g)).toHaveLength(3);
     for (const x of ["One call. One WhatsApp. One clear summary.", "It answers in your customer's language", "Then it follows up on WhatsApp", "You see what it found out", "EAMCET weekend batch", "Demo class, Saturday 10 am", "A coaching centre answers an enquiry in Telugu.", "AI assistant", "Call ముగిసింది"]) expect(text(how), x).toContain(x);
     expect(how).toContain('data-part="chat-stack"');
     expect(how).toContain("Bright Path Academy AI assistant ని"); // the call's first line, with the AI disclosure
     expect(how.match(/class="pp-b"/g)).toHaveLength(4);
     expect(how.match(/class="pp-line"/g)).toHaveLength(4);
-    expect(how).toMatch(/data-part="stack-lang"[^>]*>తెలుగు</);
+    expect(how).toMatch(/data-part="stack-lang"[\s\S]*?aria-pressed="true"[^>]*>తెలుగు</); // the language chips (a tap switches the demo language)
     expect(how).toContain('data-phase="chat"');
   });
   it("the phone demo: four conversations in the product's four languages, each with a call (4 captions, the first says it is the AI assistant of the business), a chat (4 bubbles) and a card, all of the SAME business; no Tamil assistant text; the phone is scaled by a variable", () => {
@@ -374,8 +368,8 @@ describe("Tamil, a language of the public website only", () => {
     const html = render("ta", { kind: "page", page: "pricing" });
     for (const href of ["/ta", "/ta/pricing", "/ta/contact", "/", "/te/pricing", "/hi/pricing", "/kn/pricing"]) expect(html, href).toContain(`href="${href === "/" ? "/pricing" : href}"`);
     const names = [...html.matchAll(/<option[^>]*>([^<]+)<\/option>/g)].map((m) => m[1]);
-    expect(names.slice(0, 5)).toEqual(["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "தமிழ்"]); // (the header's switch; the phone menu has a second copy)
-    expect(names).toHaveLength(10);
+    expect(names.slice(0, 5)).toEqual(["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "தமிழ்"]); // (the header's switch; the phone menu's copy is drawn when its sheet opens)
+    expect(names).toHaveLength(5);
     expect(html).toContain('lang="ta"');
     expect(html).toContain("font-vars");
   });

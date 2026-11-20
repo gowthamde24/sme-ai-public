@@ -1,6 +1,5 @@
-import { ArrowRight, Check, Clock, Languages, MessageCircle, Moon, Phone, PhoneCall as PhoneCallIcon, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Check, Languages, Moon, Phone, PhoneCall as PhoneCallIcon, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
 import { HeroStage, LeakCalc, RadarFinder, WaitlistForm } from "@/components/v2/site/LazyIslands";
@@ -19,7 +18,9 @@ import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 import { AskBox } from "./AskBox";
 import { ChatStack } from "./ChatStack";
 import { FOUND_KEYS, STACK } from "./chat-stack";
-import { FoundCard, StackProvider } from "./StackState";
+import { OrbGate } from "./OrbGate";
+import { StickyCta } from "./StickyCta";
+import { FoundCard, LangTabs, StackProvider } from "./StackState";
 import { WithWhatsapp } from "../home2/WithWhatsapp";
 
 type Start = { href: string; label: string };
@@ -51,8 +52,8 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
   return (
     <div className={`h3 ${teluguFontVariable}`} data-part="home3">
       <Hero t={t} cta={cta} />
-      <Ask t={t} cta={cta} />
       <How t={t} />
+      <Ask t={t} cta={cta} />
       <section id="calc" aria-labelledby="calc-title" className="h3-sec">
         <div className="h3-wrap">
           <LeakCalc w={words(t, LEAK_KEYS)} />
@@ -73,18 +74,8 @@ export function HomeMain({ t, lang, start, hasForm, waitlist }: { t: SiteT; lang
       <Built t={t} />
       <Plans t={t} cta={cta} />
       <Final t={t} lang={lang} cta={cta} hasForm={hasForm} waitlist={waitlist} />
+      <StickyCta href={cta.href} label={cta.label} />
     </div>
-  );
-}
-
-function Pill({ icon, children }: { icon: ReactNode; children: ReactNode }) {
-  return (
-    <li className="h3-pill">
-      <span className="h3-pill-ico" aria-hidden="true">
-        {icon}
-      </span>
-      {children}
-    </li>
   );
 }
 
@@ -101,17 +92,12 @@ function Hero({ t, cta }: { t: SiteT; cta: Start }) {
           ))}
         </h1>
         <p className="h3-lead h3-hero-p">{t("h3.hero.p")}</p>
-        <ul className="h3-pills" aria-label={t("h3.hero.t")}>
-          <Pill icon={<Zap size={16} strokeWidth={2.2} />}>{t("h3.pill.1")}</Pill>
-          <Pill icon={<Clock size={16} strokeWidth={2.2} />}>{t("h3.pill.2")}</Pill>
-          <Pill icon={<MessageCircle size={16} strokeWidth={2.2} />}>{t("h3.pill.3")}</Pill>
-        </ul>
         <div className="h3-cta-row">
-          <Link href={cta.href} className="h3-btn h3-btn-main" data-part="hero-cta">
+          <Link href={cta.href} className="h3-btn h3-btn-main h3-btn-block" data-part="hero-cta">
             {cta.label}
             <ArrowRight size={18} strokeWidth={2.2} aria-hidden="true" />
           </Link>
-          <Link href="#how" className="h3-btn h3-btn-line" data-part="hear-call">
+          <Link href="#how" className="h3-textlink" data-part="hear-call">
             <PhoneCallIcon size={17} strokeWidth={2.2} aria-hidden="true" />
             {t("h2.hero.hear")}
           </Link>
@@ -123,7 +109,11 @@ function Hero({ t, cta }: { t: SiteT; cta: Start }) {
         ) : null}
       </div>
       <div className="h3-wrap h3-stage-wrap">
-        <HeroStage w={words(t, HERO_KEYS)} />
+        <div className="h3-stage-slot" data-part="hero-stage-slot">
+          <OrbGate>
+            <HeroStage w={words(t, HERO_KEYS)} />
+          </OrbGate>
+        </div>
       </div>
     </section>
   );
@@ -134,6 +124,7 @@ function Ask({ t, cta }: { t: SiteT; cta: Start }) {
     <section id="ask" aria-labelledby="ask-title" className="h3-sec">
       <div className="h3-wrap h3-narrow">
         <header className="h3-head h3-head-center">
+          <p className="h3-eyebrow">{t("h3.eb.ask")}</p>
           <h2 id="ask-title" className="h3-h2">
             {t("h3.ask.title")}
           </h2>
@@ -155,33 +146,33 @@ function How({ t }: { t: SiteT }) {
     <section id="how" aria-labelledby="how-title" className="h3-sec">
       <div className="h3-wrap">
         <header className="h3-head">
+          <p className="h3-eyebrow">{t("h3.eb.how")}</p>
           <h2 id="how-title" className="h3-h2">
             {t("h3.how.title")}
           </h2>
           <p className="h3-lead">{t("h3.how.sub")}</p>
         </header>
         <StackProvider chats={STACK}>
-        <div className="h3-how-grid">
-          <div className="h3-how-phone" data-part="how-phone">
-            <ChatStack chats={[...STACK]} chips={STACK.map((c) => SITE_LANGUAGE_NAMES[c.code].native)} captions={[1, 2, 3, 4].map((i) => t(k(`h3.stack.${i}`)))} sub={t("h3.phone.biz")} placeholder={t("h3.phone.msg")} />
+          <div className="h3-how-grid">
+            <div className="h3-how-phone" data-part="how-phone">
+              <LangTabs chips={STACK.map((c) => SITE_LANGUAGE_NAMES[c.code].native)} codes={STACK.map((c) => c.code)} label={t("h3.tabs.label")} />
+              <ChatStack chats={STACK} captions={[1, 2, 3, 4].map((i) => t(k(`h3.stack.${i}`)))} sub={t("h3.phone.biz")} placeholder={t("h3.phone.msg")} />
+            </div>
+            <FoundCard heading={t("h3.how.f.h")} listening={t("h3.found.listen")} sets={FOUND_KEYS.map((rows) => rows.map(([l, v]) => ({ l: t(k(l)), v: t(k(v)) })))} />
+            <ol className="h3-steps" data-part="steps">
+              {found.map((n) => (
+                <li key={n} className="h3-step" data-step={n}>
+                  <span className="h3-step-n" aria-hidden="true">
+                    {n}
+                  </span>
+                  <div>
+                    <h3 className="h3-h3">{t(k(`h3.how.${n}.t`))}</h3>
+                    <p className="h3-step-d">{t(k(`h3.how.${n}.d`))}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
-          <ol className="h3-steps" data-part="steps">
-            {found.map((n) => (
-              <li key={n} className="h3-step" data-step={n}>
-                <span className="h3-step-n" aria-hidden="true">
-                  {n}
-                </span>
-                <div>
-                  <h3 className="h3-h3">{t(k(`h3.how.${n}.t`))}</h3>
-                  <p className="h3-step-d">{t(k(`h3.how.${n}.d`))}</p>
-                  {n === 3 ? (
-                    <FoundCard heading={t("h3.how.f.h")} sets={FOUND_KEYS.map((rows) => rows.map(([l, v]) => ({ l: t(k(l)), v: t(k(v)) })))} />
-                  ) : null}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
         </StackProvider>
       </div>
     </section>

@@ -1,8 +1,8 @@
-import { Menu } from "lucide-react";
 import Link from "next/link";
 
 import { SiteLangSelect } from "@/components/v2/controls/SiteLangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
+import { HeaderSheet } from "@/components/v2/site/HeaderSheet";
 import { container } from "@/components/v2/site/ui";
 import { Wordmark } from "@/components/v2/Wordmark";
 import { BRAND_NAME } from "@/design/brand";
@@ -67,38 +67,20 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
             <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
             <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
           </span>
-          <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-ink px-3.5 text-sm font-bold text-bg sm:px-[18px] sm:text-[15px]">
+          <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-[#c2410c] px-4 text-[15px] font-bold text-white sm:px-[18px]">
             <span className="xl:hidden">{early.short}</span>
             <span className="max-xl:hidden">{early.label}</span>
           </Link>
-          <details className="group relative min-[900px]:hidden">
-            <summary className="inline-flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-lg border border-edge bg-surface text-ink hover:bg-surface-2 [&::-webkit-details-marker]:hidden">
-              <Menu className="size-5" aria-hidden="true" />
-              <span className="sr-only">{t("nav.menu")}</span>
-            </summary>
-            <nav aria-label={t("nav.sections")} className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)]">
-              <ul className="flex flex-col">
-                {nav.map((n) => (
-                  <li key={n.href}>
-                    <Link href={n.href} aria-current={n.here ? "page" : undefined} className={`${link} w-full ${n.here ? "bg-surface-2 font-semibold" : ""}`}>
-                      {n.label}
-                    </Link>
-                  </li>
-                ))}
-                {web ? null : (
-                  <li>
-                    <Link href="/login" className={`${link} w-full text-brand-text`}>
-                      {t("h2.nav.login")}
-                    </Link>
-                  </li>
-                )}
-                <li className="mt-1 flex items-center gap-2 border-t border-line px-1 pt-2 sm:hidden">
-                  <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
-                  <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
-                </li>
-              </ul>
-            </nav>
-          </details>
+          <HeaderSheet
+            label={t("nav.menu")}
+            closeLabel={t("h3.menu.close")}
+            items={nav.map((n, i) => ({ href: n.href, label: n.label, here: n.here, icon: (["how", "finder", "plans"] as const)[i] ?? "help" }))}
+            login={web ? undefined : { href: "/login", label: t("h2.nav.login") }}
+            cta={{ href: early.href, label: t("h3.menu.cta") }}
+          >
+            <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
+            <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
+          </HeaderSheet>
         </div>
       </div>
     </header>

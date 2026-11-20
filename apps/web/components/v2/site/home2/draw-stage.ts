@@ -29,17 +29,17 @@ const WIDE: Layout = (() => {
     outs: OUT_Y.map((y): Path => [[cx + 140, cy], [820, cy], [850, y + 22], [990, y + 22]]),
   };
 })();
-/** Tall (a narrow page, 360 x 640): the same drawing turned upright: four sources on top (Meta ads, Website form, WhatsApp, Missed call), the orb in the middle, two outcomes below, all at real size so every word is readable. */
+/** Tall (a narrow page, 360 x 390, mobile first): the same drawing turned upright and kept small: four sources on top (Meta ads, Website form, WhatsApp, Missed call) and the orb below, all at real size so every word is readable. No outcomes and no caption here (the wide stage has them). */
 const TALL: Layout = (() => {
   const cx = 180;
-  const cy = 300;
+  const cy = 280;
   return {
     w: 360,
     cx,
     cy,
-    R: 118,
-    paths: [52, 140, 220, 308].map((x): Path => [[x, 124], [x, 168], [cx, 176], [cx, cy - 80]]),
-    outs: [92, 268].map((x): Path => [[cx, cy + 80], [cx, 412], [x, 424], [x, 466]]),
+    R: 96,
+    paths: [52, 140, 220, 308].map((x): Path => [[x, 122], [x, 160], [cx, 170], [cx, cy - 64]]),
+    outs: [],
   };
 })();
 
@@ -109,6 +109,8 @@ export function stageDrawer(get: () => StageState) {
       });
       ctx.shadowBlur = 0;
     };
+    // no flying sparks on a phone (under 560 px wide): the guide lines and the ring only; from a tablet up the leads flow into the orb, one spark to a stream at a steady speed
+    if (L === TALL && W / look.dpr < 560) return;
     ctx.globalAlpha = look.calm ? 1 : Math.min(1, (t - 0.9) / 0.8);
     run(paths, 0.3, "194,65,12");
     run(outs, 0.26, "194,65,12");

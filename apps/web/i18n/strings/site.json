@@ -11379,5 +11379,83 @@
    "kn": "draft",
    "ta": "draft"
   }
+ },
+ "h3.found.listen": {
+  "en": "Listening…",
+  "te": "వింటోంది…",
+  "hi": "सुन रहा है…",
+  "kn": "ಕೇಳುತ್ತಿದೆ…",
+  "ta": "கேட்கிறது…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.tabs.label": {
+  "en": "Demo language",
+  "te": "Demo భాష",
+  "hi": "Demo की भाषा",
+  "kn": "Demo ಭಾಷೆ",
+  "ta": "Demo மொழி",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.eb.ask": {
+  "en": "Try it",
+  "te": "ప్రయత్నించండి",
+  "hi": "आज़माइए",
+  "kn": "ಪ್ರಯತ್ನಿಸಿ",
+  "ta": "முயற்சி செய்யுங்கள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.eb.how": {
+  "en": "How it works",
+  "te": "ఇది ఎలా పనిచేస్తుంది",
+  "hi": "यह कैसे काम करता है",
+  "kn": "ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "ta": "இது எப்படி வேலை செய்கிறது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.menu.cta": {
+  "en": "Get free early access",
+  "te": "Free early access తీసుకోండి",
+  "hi": "Free early access लीजिए",
+  "kn": "Free early access ಪಡೆಯಿರಿ",
+  "ta": "இலவச early access பெறுங்கள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.menu.close": {
+  "en": "Close the menu",
+  "te": "Menu మూసివేయండి",
+  "hi": "Menu बंद करें",
+  "kn": "Menu ಮುಚ್ಚಿ",
+  "ta": "Menu-வை மூடு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
  }
 }
