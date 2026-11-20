@@ -37,16 +37,21 @@ describe("old pages with JOBS on", () => {
   });
 });
 
-describe("Office and My AI team with JOBS on (forever: no end date)", () => {
-  it("JOBS OFF: nothing changes, the old address keeps its page", () => {
+describe("Office and My AI team with JOBS on (forever: no end date, but never behind an empty page)", () => {
+  it("JOBS OFF: nothing changes, the old address keeps its page (and the jobs are not asked for)", async () => {
     h.mode.v = "off";
-    expect(() => officeToJobs(T)).not.toThrow();
+    await expect(officeToJobs("tok", T)).resolves.toBeUndefined();
+    expect(h.read).not.toHaveBeenCalled();
   });
-  it("JOBS ON (mock or 1): the old Office / AI team address leads to the Jobs page of that workspace, every time", () => {
+  it("JOBS ON (mock or 1) and the API has a jobs list: the old Office / AI team address leads to the Jobs page of that workspace, every time", async () => {
     for (const mode of ["mock", "on"] as const) {
       h.mode.v = mode;
-      expect(() => officeToJobs(T)).toThrow(`NEXT_REDIRECT:/app/tenants/${T}/jobs`);
+      await expect(officeToJobs("tok", T)).rejects.toThrow(`NEXT_REDIRECT:/app/tenants/${T}/jobs`);
     }
+  });
+  it("JOBS ON but the API has no jobs list yet (GET /jobs 404 on staging, 20 Nov): the old page STAYS, nothing is hidden behind an empty Jobs page", async () => {
+    h.read.mockResolvedValue(null);
+    await expect(officeToJobs("tok", T)).resolves.toBeUndefined();
   });
   it("the two old landing pages call it before anything else is read (a redirect, not a page)", async () => {
     const { readFileSync } = await import("node:fs");
@@ -54,8 +59,8 @@ describe("Office and My AI team with JOBS on (forever: no end date)", () => {
     const dir = path.resolve(import.meta.dirname, "../../app/app/tenants/[tenantId]");
     for (const page of ["office/page.tsx", "ai-team/page.tsx"]) {
       const src = readFileSync(path.join(dir, page), "utf8");
-      expect(src, page).toMatch(/officeToJobs\(tenantId\)/);
-      expect(src.indexOf("officeToJobs(tenantId)"), page).toBeLessThan(src.indexOf("fetchTenant(user") === -1 ? Infinity : src.indexOf("fetchTenant(user"));
+      expect(src, page).toMatch(/await officeToJobs\(/);
+      expect(src.indexOf("await officeToJobs("), page).toBeLessThan(src.indexOf("fetchTenant(user") === -1 ? Infinity : src.indexOf("fetchTenant(user"));
     }
   });
 });

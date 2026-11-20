@@ -23,14 +23,14 @@ const over = (f, b) => [0, 1, 2].map((i) => f[i] * f[3] + b[i] * (1 - f[3])).con
 const lum = (c) => { const k = c.slice(0, 3).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * k[0] + 0.7152 * k[1] + 0.0722 * k[2]; };
 const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
 const root = document.querySelector('[data-ui="v2"]');
-/** The colour behind an element: its ancestors' backgrounds composited. images:true if a gradient or image sits behind it (not counting the page's own dot pattern on the root). */
+/** The colour behind an element: its ancestors' backgrounds composited. images:true if a gradient or image sits behind it (not counting the page's own dot pattern: on the root, or on an element marked data-dots). */
 const backdrop = (el) => {
   const layers = []; let images = false;
   const dark = matchMedia('(prefers-color-scheme: dark)').matches;
   let base = dark ? [0, 0, 0, 1] : [255, 255, 255, 1];
   for (let n = el; n; n = n.parentElement) {
     const cs = getComputedStyle(n);
-    if (cs.backgroundImage !== 'none' && n !== root) images = true;
+    if (cs.backgroundImage !== 'none' && n !== root && !n.hasAttribute('data-dots')) images = true; // data-dots: the page's own faint dot grid (the home page's white dotted background), like the root's; its colour behind the text is the plain background-color
     const c = rgba(cs.backgroundColor);
     if (c[3] > 0) layers.push(c);
     if (c[3] >= 0.999) break;

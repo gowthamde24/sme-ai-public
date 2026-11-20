@@ -110843,10 +110843,10 @@
   }
  },
  "jobs.page.na": {
-  "en": "Jobs are not available yet. Try again in a minute.",
-  "te": "జాబ్స్ ఇంకా అందుబాటులో లేవు. ఒక నిమిషం తర్వాత మళ్ళీ try చేయండి.",
-  "hi": "जॉब्स अभी उपलब्ध नहीं हैं। एक मिनट बाद फिर कोशिश करें।",
-  "kn": "ಜಾಬ್ಸ್ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "Jobs are not ready for your workspace yet. Your assistant keeps working as before.",
+  "te": "మీ workspace కి Jobs ఇంకా సిద్ధంగా లేవు. మీ assistant ఎప్పటిలాగే పని చేస్తూనే ఉంటుంది.",
+  "hi": "आपके workspace के लिए Jobs अभी तैयार नहीं हैं। आपका assistant पहले की तरह काम करता रहेगा।",
+  "kn": "ನಿಮ್ಮ workspace ಗೆ Jobs ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ. ನಿಮ್ಮ assistant ಮೊದಲಿನಂತೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತಿರುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -125991,6 +125991,17 @@
   "te": "నమూనా డేటా: ఈ భాగం మీ business కి ఇంకా సిద్ధంగా లేదు.",
   "hi": "नमूना डेटा: यह हिस्सा आपके business के लिए अभी तैयार नहीं है।",
   "kn": "ಮಾದರಿ ಡೇಟಾ: ಈ ಭಾಗ ನಿಮ್ಮ business ಗೆ ಇನ್ನೂ ಸಿದ್ಧವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.page.na_team": {
+  "en": "Open My AI team",
+  "te": "My AI team తెరవండి",
+  "hi": "My AI team खोलें",
+  "kn": "My AI team ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

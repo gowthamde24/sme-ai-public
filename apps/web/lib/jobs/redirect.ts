@@ -25,7 +25,9 @@ export const ALL_SETTINGS: Partial<Record<JobKind, string>> = { speed_to_lead: "
  * is dropped (the Jobs page has its own). With JOBS OFF nothing changes. Only the two landing addresses go (`/office`, `/ai-team`): "Train how it talks" (`/ai-team/training`) and the live-calls page keep their own addresses. This is a temporary (307) redirect on purpose while JOBS is
  * switched on page by page on staging, so a browser never keeps a permanent one to a page that is switched off again; the day JOBS is on for everybody, `redirect` becomes `permanentRedirect` here (one word).
  */
-export function officeToJobs(tenantId: string): void {
+export async function officeToJobs(token: string, tenantId: string): Promise<void> {
   if (jobsScreens() === "off") return;
+  // while the API has no jobs list at all for this workspace (not there yet: readJobs null) the Jobs page is empty, so the old Office / My AI team page stays: nothing is hidden behind an empty page (staging, 20 Nov: GET /jobs answered 404)
+  if ((await readJobs(token, tenantId)) === null) return;
   redirect(`/app/tenants/${tenantId}/jobs`);
 }

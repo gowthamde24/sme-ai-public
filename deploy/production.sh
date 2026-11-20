@@ -155,8 +155,19 @@ if $do_worker; then
   # the slice's worker sends the "new entry" e-mail and does the 12-month purge: the resend key only (no speech key, no dialer)
   if [ "$slice" = waitlist ]; then W_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${PROD_MAIL_DOMAIN},MAIL_REPLY_TO=support@${PROD_MAIL_DOMAIN},OUTREACH_DIALER=fake"; W_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest"
   else W_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${PROD_MAIL_DOMAIN},MAIL_REPLY_TO=support@${PROD_MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-300}"; W_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest"; fi
+  # WhatsApp in production (prod-bringup-runbook.md, section 5): OFF unless PROD_WHATSAPP=1 (the owner's production Meta app and the three WhatsApp secrets exist). Then the worker sends through the WhatsApp adapter, FENCED by WHATSAPP_ALLOWED_RECIPIENTS (unset = an empty fence: nothing is sent).
+  # The three worker features below are separate explicit switches, as on staging: PROD_WORKER_AUTO_REPLY, PROD_WORKER_TOKEN_EXPIRY, PROD_WORKER_TEMPLATE_SYNC (each =1).
+  OUTBOX_FOR_WORKER=fake
+  if [ "$slice" != waitlist ] && [ "${PROD_WHATSAPP:-0}" = 1 ]; then
+    OUTBOX_FOR_WORKER=whatsapp
+    W_ENV="$W_ENV,WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=${WHATSAPP_ALLOWED_RECIPIENTS-}"
+    W_SECRETS="$W_SECRETS,WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest"
+    [ "${PROD_WORKER_AUTO_REPLY:-0}" != 1 ] || { W_ENV="$W_ENV,AUTO_REPLY_ENABLED=true,AUTO_REPLY_MODEL=claude-haiku-5-5"; W_SECRETS="$W_SECRETS,ANTHROPIC_API_KEY=sme-anthropic-api-key:latest"; }
+    [ "${PROD_WORKER_TOKEN_EXPIRY:-0}" != 1 ] || W_ENV="$W_ENV,TOKEN_EXPIRY_CHECK=true"
+    [ "${PROD_WORKER_TEMPLATE_SYNC:-0}" != 1 ] || W_ENV="$W_ENV,TEMPLATE_SYNC=true"
+  fi
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="${PROD_SCHEDULER_EMAIL:?set PROD_SCHEDULER_EMAIL}" \
-    WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER=fake \
+    WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER="$OUTBOX_FOR_WORKER" \
     WORKER_EXTRA_ENV="$W_ENV" \
     WORKER_EXTRA_SECRETS="$W_SECRETS" \
     ./deploy/cloudrun.sh worker $execute

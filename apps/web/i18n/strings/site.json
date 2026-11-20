@@ -10262,45 +10262,6 @@
    "ta": "draft"
   }
  },
- "h3.wa.1.g": {
-  "en": "Hello! We just spoke on the call. Here are the EAMCET weekend batch details: Saturday and Sunday, 9 to 1. There is a demo class on Saturday at 10.",
-  "te": "నమస్తే అండీ! ఇప్పుడే call లో మాట్లాడాం కదా. EAMCET weekend batch details ఇవిగో: శని, ఆది 9 నుంచి 1 వరకు. శనివారం 10 కి demo class ఉంది.",
-  "hi": "नमस्ते! अभी call पर बात हुई थी। ये EAMCET weekend batch की details हैं: शनिवार-रविवार, 9 से 1। शनिवार 10 बजे demo class है।",
-  "kn": "ನಮಸ್ಕಾರ! ಈಗಷ್ಟೇ call ನಲ್ಲಿ ಮಾತನಾಡಿದೆವು. ಇವು EAMCET weekend batch details: ಶನಿವಾರ-ಭಾನುವಾರ, 9 ರಿಂದ 1. ಶನಿವಾರ 10 ಕ್ಕೆ demo class ಇದೆ.",
-  "ta": "வணக்கம்! இப்போதுதான் call-இல் பேசினோம். இதோ EAMCET weekend batch details: சனி, ஞாயிறு, 9 முதல் 1 வரை. சனிக்கிழமை 10 மணிக்கு demo class இருக்கிறது.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.wa.2.g": {
-  "en": "Okay, I will come on Saturday.",
-  "te": "సరే అండీ, శనివారం వస్తాను.",
-  "hi": "ठीक है, शनिवार को आऊँगा।",
-  "kn": "ಸರಿ, ಶನಿವಾರ ಬರುತ್ತೇನೆ.",
-  "ta": "சரி, சனிக்கிழமை வருகிறேன்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.wa.3.g": {
-  "en": "Done. Your demo class is booked for Saturday at 10.",
-  "te": "సరే అండీ, శనివారం 10 కి మీ demo class book చేశాను.",
-  "hi": "ठीक है, शनिवार 10 बजे की आपकी demo class book कर दी।",
-  "kn": "ಸರಿ, ಶನಿವಾರ 10 ಕ್ಕೆ ನಿಮ್ಮ demo class book ಮಾಡಿದ್ದೇನೆ.",
-  "ta": "சரி, சனிக்கிழமை 10 மணிக்கு உங்கள் demo class-ஐ book செய்துவிட்டேன்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h3.ask.title": {
   "en": "What should {assistant} do?",
   "te": "{assistant} ఏం చేయాలి?",
@@ -11130,5 +11091,57 @@
    "kn": "draft",
    "ta": "draft"
   }
+ },
+ "h3.stack.1": {
+  "en": "A coaching centre answers an enquiry in Telugu.",
+  "te": "ఒక coaching centre ఒక enquiry కి తెలుగులో జవాబు ఇస్తోంది.",
+  "hi": "एक coaching centre एक enquiry का जवाब तेलुगु में दे रहा है।",
+  "kn": "ಒಂದು coaching centre ಒಂದು enquiry ಗೆ ತೆಲುಗಿನಲ್ಲಿ ಉತ್ತರ ಕೊಡುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "ஒரு coaching centre ஒரு enquiry-க்கு தெலுங்கில் பதில் சொல்கிறது."
+ },
+ "h3.stack.2": {
+  "en": "A real-estate office books a site visit in Hindi.",
+  "te": "ఒక real estate office హిందీలో site visit book చేస్తోంది.",
+  "hi": "एक real estate office हिंदी में site visit book कर रहा है।",
+  "kn": "ಒಂದು real estate office ಹಿಂದಿಯಲ್ಲಿ site visit book ಮಾಡುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "ஒரு real estate office இந்தியில் site visit book செய்கிறது."
+ },
+ "h3.stack.3": {
+  "en": "A clinic books an appointment in Kannada.",
+  "te": "ఒక clinic కన్నడలో appointment book చేస్తోంది.",
+  "hi": "एक clinic कन्नड़ में appointment book कर रहा है।",
+  "kn": "ಒಂದು clinic ಕನ್ನಡದಲ್ಲಿ appointment book ಮಾಡುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "ஒரு clinic கன்னடத்தில் appointment book செய்கிறது."
+ },
+ "h3.stack.4": {
+  "en": "A shop says the order is ready, in English.",
+  "te": "ఒక shop ఇంగ్లీష్‌లో order ready అని చెబుతోంది.",
+  "hi": "एक shop अंग्रेज़ी में बता रहा है कि order ready है।",
+  "kn": "ಒಂದು shop ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ order ready ಅಂತ ಹೇಳುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "ஒரு shop ஆங்கிலத்தில் order ready என்று சொல்கிறது."
  }
 }
