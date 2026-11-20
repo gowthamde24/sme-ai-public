@@ -70,7 +70,7 @@ export function FestivalSuggestion({ festival, words, base, actions }: { festiva
     <>
       {!hidden ? (
         <section data-part="festival-suggestion" aria-label={t("jobs.tpl.fest.eyebrow")} className="jb-enter flex flex-col gap-3 rounded-2xl bg-brand-bg p-3.5">
-          <p className="m-0 flex items-center gap-2 text-[12px] font-bold uppercase tracking-wider text-brand-text">
+          <p className="m-0 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-brand-text">
             <Sparkles aria-hidden="true" className="size-4" />
             {t("jobs.tpl.fest.eyebrow")}
             {festival.sample ? <SampleChip words={words} /> : null}

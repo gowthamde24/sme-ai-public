@@ -67,7 +67,7 @@ const WAVE = (
   </span>
 );
 
-const BTN = "inline-flex min-h-8 shrink-0 items-center rounded-full border px-3 text-[13px] font-extrabold no-underline";
+const BTN = "inline-flex min-h-8 shrink-0 items-center rounded-full border px-3 text-sm font-extrabold no-underline";
 
 /** The desktop bar (768 px and up), in the top bar. */
 export function LiveBar({ tenantId, labels, enabled }: { tenantId: string; labels?: Labels; enabled: boolean }) {
@@ -81,7 +81,7 @@ export function LiveBar({ tenantId, labels, enabled }: { tenantId: string; label
   const ringing = one !== null && !one.answered; // not answered yet: "Calling ...", no clock, nothing to read or take over
   const text = one ? (ringing ? SHOWN(labels, "frame.live.calling", "Calling {name}", { name: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : (ds ? SHOWN(labels, "frame.live.bar.one.v6", "Your assistant is on a call with {who}", { who: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : SHOWN(labels, "frame.live.bar.one", "{assistant} is on a call with {who}", { who: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }))) : SHOWN(labels, "frame.live.bar.many", "{n} calls live", { n: calls.length });
   return (
-    <div data-live-bar="" role="status" aria-live="polite" className="hidden min-w-0 max-w-full items-center gap-2.5 rounded-full bg-[#1e1e24] py-[5px] pl-3.5 pr-[5px] text-[13px] text-[#f9f8f6] shadow-[0_14px_34px_-14px_rgba(194,65,12,.6),0_0_0_1px_rgba(255,119,60,.35)] md:flex">
+    <div data-live-bar="" role="status" aria-live="polite" className="hidden min-w-0 max-w-full items-center gap-2.5 rounded-full bg-[#1e1e24] py-[5px] pl-3.5 pr-[5px] text-sm text-[#f9f8f6] shadow-[0_14px_34px_-14px_rgba(194,65,12,.6),0_0_0_1px_rgba(255,119,60,.35)] md:flex">
       <span aria-hidden="true" className="lv-dot" />
       <span className="max-lg:hidden">{WAVE}</span>
       <Link href={hrefOf(base, calls)} className="min-w-0 truncate text-[#d9d6d2] no-underline hover:underline">

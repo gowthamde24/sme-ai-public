@@ -59,7 +59,7 @@ export function CallPanel({ words, base, query, call, timeline, when, language, 
         {call.live ? <Orb px={44} state="listen" /> : null}
         <div className="min-w-0 flex-1">
           <h2 className="m-0 text-[17px] font-bold leading-tight [overflow-wrap:anywhere]">{name}</h2>
-          <p className="m-0 mt-0.5 text-[12.5px] text-muted">{meta}</p>
+          <p className="m-0 mt-0.5 text-sm text-muted">{meta}</p>
         </div>
         <StatusPill status={status}>{t(`calls6.st.${status}`)}</StatusPill>
       </header>
@@ -68,7 +68,7 @@ export function CallPanel({ words, base, query, call, timeline, when, language, 
           {call.answeredAt ? clockShort(call.elapsedS) : t(`ph.state.${call.state}`)}
         </p>
       ) : (
-        <section aria-label={t("calls6.panel.summary")} className="flex flex-col gap-1.5 border-b border-line px-[18px] py-3.5 text-[13.5px] leading-[1.55]" data-part="call-summary">
+        <section aria-label={t("calls6.panel.summary")} className="flex flex-col gap-1.5 border-b border-line px-[18px] py-3.5 text-sm leading-[1.55]" data-part="call-summary">
           {summary || sentence ? (
             <p className="m-0 text-ink [overflow-wrap:anywhere]">
               <b>{t("calls6.panel.summary_label")}:</b> {summary ?? sentence}

@@ -25,7 +25,7 @@ export type CustomerCardProps = {
 };
 
 const row = (label: string, value: string | null) => (value ? { label, value } : null);
-const h4 = "m-0 mb-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-muted";
+const h4 = "m-0 mb-1.5 text-sm font-bold uppercase tracking-[0.08em] text-muted";
 
 /**
  * The right column of the Chats page (approved mock): CUSTOMER (name, where from, interested in, how many, budget, event: the profile the API already keeps, one line each with the value at the right), OPEN QUOTE (the amount with Approve) and HISTORY (the calls, messages, quotes and visits, newest
@@ -39,7 +39,7 @@ export function CustomerCard({ words, base, leadId, name, head, timeline, source
   const total = quote?.detail.total_paise;
   const history = (timeline ?? []).slice(0, 8);
   return (
-    <aside className="flex min-w-0 flex-col gap-[18px] p-4 text-[13px]" data-chat="customer" aria-label={t("chats6.card.title")}>
+    <aside className="flex min-w-0 flex-col gap-[18px] p-4 text-sm" data-chat="customer" aria-label={t("chats6.card.title")}>
       <Link href={backHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text lg:hidden">
         {t("chats6.card.back")}
       </Link>

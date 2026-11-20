@@ -10,7 +10,7 @@ export function Part({ icon: Icon, label, children, part }: { icon: typeof Users
     <section data-part={part} className="grid grid-cols-[20px_minmax(0,1fr)] gap-x-3 border-t border-line py-3">
       <Icon aria-hidden="true" className="mt-0.5 size-5 text-muted" />
       <div className="min-w-0">
-        <h3 className="m-0 text-[12px] font-bold uppercase tracking-wider text-muted">{label}</h3>
+        <h3 className="m-0 text-sm font-bold uppercase tracking-wider text-muted">{label}</h3>
         <div className="mt-1 text-[15px] leading-snug text-ink">{children}</div>
       </div>
     </section>

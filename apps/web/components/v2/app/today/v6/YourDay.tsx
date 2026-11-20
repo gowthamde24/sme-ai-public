@@ -23,12 +23,12 @@ export default function YourDay({ view, words, tenantId, mockLive, liveCalls = [
   const newest = view.calls.length - 1;
   return (
     <section data-part="your-day" aria-labelledby="your-day-h" className="min-w-0 rounded-[20px] border border-line bg-surface px-5 pb-2.5 pt-4 shadow-[var(--v2-shadow)]">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-[12.5px] text-muted">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm text-muted">
         <h2 id="your-day-h" className="min-w-0">
           <b className="mr-2.5 font-display text-[15px] text-ink">{t("tv6.day.title")}</b>
           {summary.length > 0 ? <span data-part="day-summary">{summary.join(" · ")}</span> : null}
         </h2>
-        <p className="flex gap-3.5 text-[11.5px]" aria-hidden="true">
+        <p className="flex gap-3.5 text-sm" aria-hidden="true">
           <span>
             <i className="mr-1.5 inline-block size-[7px] rounded-full bg-brand align-[1px]" />
             {t("tv6.day.calls")}
@@ -76,7 +76,7 @@ export default function YourDay({ view, words, tenantId, mockLive, liveCalls = [
               <At key={i} s={{ left: `${v.pct}%`, bottom: 20 }}>
                 <span data-pin="visit" className="flex -translate-x-1/2 flex-col items-center whitespace-nowrap">
                   <b className="ds-pin">{v.name}</b>
-                  <em className="mt-0.5 text-[10.5px] not-italic text-green-text">{v.time}</em>
+                  <em className="mt-0.5 text-sm not-italic text-green-text">{v.time}</em>
                   <i className="ds-pin-stem" />
                 </span>
               </At>
@@ -84,7 +84,7 @@ export default function YourDay({ view, words, tenantId, mockLive, liveCalls = [
             {view.now ? (
               <At s={{ left: `${view.now.pct}%`, top: -4, bottom: 0 }}>
                 <span data-part="now-line" className="relative block h-full w-0.5 -translate-x-1/2 bg-ink">
-                  <span className="absolute right-1.5 top-0.5 whitespace-nowrap rounded-md bg-ink px-1.5 text-[10.5px] font-extrabold text-bg">{t("tv6.day.now", { time: view.now.time })}</span>
+                  <span className="absolute right-1.5 top-0.5 whitespace-nowrap rounded-md bg-ink px-1.5 text-sm font-extrabold text-bg">{t("tv6.day.now", { time: view.now.time })}</span>
                 </span>
               </At>
             ) : null}
@@ -92,7 +92,7 @@ export default function YourDay({ view, words, tenantId, mockLive, liveCalls = [
           <div className="absolute inset-x-0 bottom-[-4px] h-3.5" aria-hidden="true">
             {view.hours.map((h) => (
               <At key={h.label} s={{ left: `${h.pct}%` }}>
-                <span className="block -translate-x-1/2 text-[11px] text-muted">{h.label}</span>
+                <span className="block -translate-x-1/2 text-sm text-muted">{h.label}</span>
               </At>
             ))}
           </div>

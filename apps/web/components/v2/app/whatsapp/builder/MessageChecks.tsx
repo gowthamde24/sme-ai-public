@@ -64,7 +64,7 @@ export function MessageChecks({ results, t, canFix, onFix, onFixAll }: { results
           );
         })}
       </ul>
-      <p className="m-0 text-[13px] leading-snug text-muted">{t("jobs.tb.s4.legend")}</p>
+      <p className="m-0 text-sm leading-snug text-muted">{t("jobs.tb.s4.legend")}</p>
     </div>
   );
 }

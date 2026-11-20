@@ -35,7 +35,7 @@ export function LiveStrip({ words, calls }: { words: Words; calls: readonly Live
         <p className="m-0 text-[15px] font-bold" role="status">
           {t("calls6.live.title", { n: calls.length })}
         </p>
-        <ul className="m-0 flex list-none flex-wrap gap-x-3 gap-y-0.5 p-0 text-[13px] text-muted">
+        <ul className="m-0 flex list-none flex-wrap gap-x-3 gap-y-0.5 p-0 text-sm text-muted">
           {calls.map((c) => (
             <li key={c.id} data-live-call={c.id}>
               <Link href={c.href} scroll={false} className="hover:underline">
@@ -49,11 +49,11 @@ export function LiveStrip({ words, calls }: { words: Words; calls: readonly Live
           ))}
         </ul>
       </div>
-      <button type="button" aria-pressed={listening} onClick={() => setListening((l) => !l)} className="inline-flex min-h-11 items-center gap-1.5 rounded-[10px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 aria-pressed:border-brand-edge aria-pressed:bg-brand-bg aria-pressed:text-brand-text">
+      <button type="button" aria-pressed={listening} onClick={() => setListening((l) => !l)} className="inline-flex min-h-11 items-center gap-1.5 rounded-[10px] border border-line bg-surface px-3 text-sm font-semibold text-ink hover:bg-surface-2 aria-pressed:border-brand-edge aria-pressed:bg-brand-bg aria-pressed:text-brand-text">
         <Headphones aria-hidden="true" className="size-4" />
         {listening ? t("calls6.live.listening") : t("calls6.live.listen")}
       </button>
-      <Link href={first.href} scroll={false} className="inline-flex min-h-11 items-center rounded-[10px] bg-brand px-3.5 text-[13px] font-bold text-on-brand">
+      <Link href={first.href} scroll={false} className="inline-flex min-h-11 items-center rounded-[10px] bg-brand px-3.5 text-sm font-bold text-on-brand">
         {t("calls6.live.open_name", { name: first.who })}
       </Link>
       {listening ? (

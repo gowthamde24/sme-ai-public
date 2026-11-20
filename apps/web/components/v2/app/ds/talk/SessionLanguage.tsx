@@ -15,7 +15,7 @@ import type { TalkLive } from "./use-talk-live";
  */
 export function SessionLanguage({ live, t, label, bar = false }: { live: Pick<TalkLive, "real" | "language" | "setLanguage">; t: Say; /** What the plain label says (the language the page started the conversation in). */ label: string; bar?: boolean }) {
   const [choice, setChoice] = React.useState<VoiceLang | "auto" | null>(null);
-  const look = bar ? "rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-[13px] text-ink" : "rounded-lg border border-edge bg-surface px-2.5 py-1.5 text-sm font-semibold";
+  const look = bar ? "rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-sm text-ink" : "rounded-lg border border-edge bg-surface px-2.5 py-1.5 text-sm font-semibold";
   const set = live.setLanguage;
   if (!live.real || !set) {
     return (

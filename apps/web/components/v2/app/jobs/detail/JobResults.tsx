@@ -36,7 +36,7 @@ export function ResultsCard({ results, t, lang }: { results: JobResults; t: Say;
           {results.numbers.filter((n) => t(`jobs.rnum.${n.key}`) !== `jobs.rnum.${n.key}`).map((n) => (
             <div key={n.key} data-number={n.key}>
               <dd className="m-0 font-display text-[28px] font-bold leading-none text-ink">{n.value}</dd>
-              <dt className="mt-1 text-[13.5px] leading-snug text-muted">{t(`jobs.rnum.${n.key}`)}</dt>
+              <dt className="mt-1 text-sm leading-snug text-muted">{t(`jobs.rnum.${n.key}`)}</dt>
             </div>
           ))}
         </dl>

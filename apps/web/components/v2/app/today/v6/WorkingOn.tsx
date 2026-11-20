@@ -25,7 +25,7 @@ export default function WorkingOn({ working, words }: { working: Working | null;
       setBusy(false);
     }
   };
-  const btn = "inline-flex min-h-11 items-center rounded-[10px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
+  const btn = "inline-flex min-h-11 items-center rounded-[10px] border border-line bg-surface px-3 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
   return (
     <section data-part="working-on" aria-labelledby="working-on-h" className="min-w-0">
       <h2 id="working-on-h" className="mb-2.5 font-display text-[17px] font-extrabold">
@@ -40,7 +40,7 @@ export default function WorkingOn({ working, words }: { working: Working | null;
                 <i className="block h-full rounded-full bg-gradient-to-r from-brand/60 to-brand" />
               </span>
             </div>
-            <p data-part="work-line" className="text-[12.5px] text-muted">
+            <p data-part="work-line" className="text-sm text-muted">
               {now === "paused" ? `${t("tv6.wk.paused")} · ` : ""}
               {t("tv6.wk.line", { done: working.done, total: working.total })}
               {working.positive > 0 ? ` · ${t("tv6.wk.interested", { n: working.positive })}` : ""}

@@ -37,7 +37,7 @@ export type IslandsProps = {
 };
 
 const pad = "px-[18px]";
-const b2 = "inline-flex min-h-11 grow items-center whitespace-nowrap justify-center gap-1.5 rounded-[9px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
+const b2 = "inline-flex min-h-11 grow items-center whitespace-nowrap justify-center gap-1.5 rounded-[9px] border border-line bg-surface px-3 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
 
 /**
  * Everything under a call's summary in the right panel (approved mock), as one chunk of its own: the outcome card (a quote with Change / Approve, a booked visit, a call back), the recording player, the transcript as bubbles (the assistant's peach on the left, the caller's grey
@@ -62,7 +62,7 @@ export function PanelIslands(p: IslandsProps) {
         ) : p.lines === null || p.lines.length === 0 ? (
           <p className="m-0 text-sm text-muted">{t("ph.captions.none")}</p>
         ) : (
-          <ol className="m-0 flex list-none flex-col gap-2 p-0 text-[13px] leading-[1.45]" aria-live={p.live ? "polite" : undefined}>
+          <ol className="m-0 flex list-none flex-col gap-2 p-0 text-sm leading-[1.45]" aria-live={p.live ? "polite" : undefined}>
             {p.lines.map((l, i) => (
               <li key={i} data-who={l.who} className={`flex flex-col ${l.who === "caller" ? "items-end" : "items-start"}`}>
                 <span className="sr-only">{l.who === "assistant" ? t("calls6.tr.assistant") : p.speaker}</span>

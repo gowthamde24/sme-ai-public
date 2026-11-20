@@ -34,7 +34,7 @@ export function LiveCall({ words, call, backHref, testMode }: { words: Words; ca
         <Link href={backHref} aria-label={t("call.back")} className="inline-flex size-11 items-center justify-center rounded-lg text-ink hover:bg-surface-2">
           <ChevronLeft className="size-6" aria-hidden="true" />
         </Link>
-        <span className="text-[13px] font-semibold text-brand-text" aria-live="off">
+        <span className="text-sm font-semibold text-brand-text" aria-live="off">
           {status === "ended" ? t("call.ended.short", { time: clock(seconds) }) : `● ${t("call.live")} · ${clock(seconds)}`}
         </span>
         <span className="w-11" />

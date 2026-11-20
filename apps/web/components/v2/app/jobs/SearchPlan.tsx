@@ -52,7 +52,7 @@ export function SearchPlan({ plan, words, state, waitingBox, busy, onSearch, onS
           <Mic aria-hidden="true" className="size-[18px]" />
           {t("jobs.new.change")}
         </button>
-        <p className="m-0 text-[13px] leading-snug text-muted">
+        <p className="m-0 text-sm leading-snug text-muted">
           {t("jobs.new.search.safe")}
           {plan.expiresInMinutes ? ` ${t("jobs.new.expires", { n: plan.expiresInMinutes })}` : ""}
         </p>

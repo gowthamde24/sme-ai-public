@@ -69,7 +69,7 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
                 </span>
                 <div className="min-w-0 flex-1">
                   <h3 className="m-0 font-display text-[16px] font-bold leading-snug text-ink">{title}</h3>
-                  <p className="m-0 mt-0.5 text-[13.5px] leading-snug text-muted">{t(`jobs.new.why.${s.why.code}`, s.why.params as Record<string, string | number>)}</p>
+                  <p className="m-0 mt-0.5 text-sm leading-snug text-muted">{t(`jobs.new.why.${s.why.code}`, s.why.params as Record<string, string | number>)}</p>
                   {compact ? (
                     <Link href={`${base}/jobs/new?look=${s.kind}`} prefetch={false} data-action="look" className="-mb-2 mt-0.5 inline-flex min-h-11 items-center text-[14px] font-semibold text-brand-text underline underline-offset-4">
                       {t("jobs.new.sug.look")}

@@ -169,7 +169,7 @@ export default function DayOne({ name, steps, canGoLive, missing, actions, words
                 </button>
                 <div className="min-w-0">
                   <p className="text-base font-bold">{t("tv6.d1.talk.title")}</p>
-                  <p className="text-[13px] text-muted">{t("tv6.d1.talk.text")}</p>
+                  <p className="text-sm text-muted">{t("tv6.d1.talk.text")}</p>
                 </div>
               </div>
             )}
@@ -178,7 +178,7 @@ export default function DayOne({ name, steps, canGoLive, missing, actions, words
             <MessageCircle className="size-8 shrink-0 text-ink" aria-hidden="true" />
             <div className="min-w-0">
               <p className="text-base font-bold">{t("tv6.d1.help")}</p>
-              <Link href={helpHref} className="text-[13px] text-muted hover:underline">
+              <Link href={helpHref} className="text-sm text-muted hover:underline">
                 {t("tv6.d1.help.link")}
               </Link>
             </div>

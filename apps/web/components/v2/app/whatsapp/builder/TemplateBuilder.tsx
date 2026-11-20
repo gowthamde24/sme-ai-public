@@ -112,8 +112,8 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
       </div>
       <ol aria-label={t("jobs.tb.steps")} className="m-0 flex list-none items-start justify-between gap-1 p-0">
         {STEPS.map((s, i) => (
-          <li key={s} data-step={s} aria-current={i + 1 === current ? "step" : undefined} className="flex min-w-0 flex-1 flex-col items-center gap-1 text-center text-[12px] text-muted">
-            <span aria-hidden="true" className={`grid size-7 place-items-center rounded-full text-[13px] font-bold ${i + 1 <= current ? "bg-brand text-on-brand" : "bg-surface-2 text-muted"}`}>
+          <li key={s} data-step={s} aria-current={i + 1 === current ? "step" : undefined} className="flex min-w-0 flex-1 flex-col items-center gap-1 text-center text-sm text-muted">
+            <span aria-hidden="true" className={`grid size-7 place-items-center rounded-full text-sm font-bold ${i + 1 <= current ? "bg-brand text-on-brand" : "bg-surface-2 text-muted"}`}>
               {i + 1}
             </span>
             <span className="max-w-full truncate">{t(`jobs.tb.step.${s}`)}</span>
@@ -159,7 +159,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
                 {sayError}
               </p>
             ) : null}
-            <p className="m-0 text-[13.5px] leading-snug text-muted">{t("jobs.tb.s1.hint")}</p>
+            <p className="m-0 text-sm leading-snug text-muted">{t("jobs.tb.s1.hint")}</p>
           </form>
         </Step>
 
@@ -180,19 +180,19 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
                     </div>
                     {open ? (
                       <div className="flex flex-col gap-2">
-                        <label className="flex flex-col gap-1 text-[13px] text-muted">
+                        <label className="flex flex-col gap-1 text-sm text-muted">
                           {t("jobs.tb.part.header")}
                           <input lang={lang} value={toEditable(d.header ?? "")} onChange={(e) => patchDraft(lang, { header: fromEditable(e.target.value) || null })} className={field} />
                         </label>
-                        <label className="flex flex-col gap-1 text-[13px] text-muted">
+                        <label className="flex flex-col gap-1 text-sm text-muted">
                           {t("jobs.tb.part.body")}
                           <textarea lang={lang} rows={5} value={toEditable(d.body)} onChange={(e) => patchDraft(lang, { body: fromEditable(e.target.value) })} className={field} />
                         </label>
-                        <label className="flex flex-col gap-1 text-[13px] text-muted">
+                        <label className="flex flex-col gap-1 text-sm text-muted">
                           {t("jobs.tb.part.footer")}
                           <input lang={lang} value={toEditable(d.footer ?? "")} onChange={(e) => patchDraft(lang, { footer: fromEditable(e.target.value) || null })} className={field} />
                         </label>
-                        <p className="m-0 text-[13px] text-muted">{t("jobs.tb.edit.hint")}</p>
+                        <p className="m-0 text-sm text-muted">{t("jobs.tb.edit.hint")}</p>
                       </div>
                     ) : (
                       <div lang={lang} className="rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-[15px] leading-relaxed text-ink">
@@ -213,7 +213,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
                 <MessageCircle aria-hidden="true" className="size-4" />
                 {t("jobs.tb.change.go")}
               </button>
-              <span className="text-[13.5px] text-muted">{t("jobs.tb.name.note")}</span>
+              <span className="text-sm text-muted">{t("jobs.tb.name.note")}</span>
             </div>
             {changing ? <ChangeBox t={t} text={changeText} setText={setChangeText} busy={writing} onGo={() => void write(changeText, message)} /> : null}
           </Step>
@@ -231,7 +231,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
               ))}
             </div>
             <WhatsAppPreview message={message} lang={previewLang} business={business} sample={sample} t={t} />
-            <p className="m-0 mt-3 text-center text-[13.5px] text-muted">{t("jobs.tb.s3.note")}</p>
+            <p className="m-0 mt-3 text-center text-sm text-muted">{t("jobs.tb.s3.note")}</p>
           </Step>
           <Step n={4} part="step-checks" title={t("jobs.tb.s4.title")} sub={t("jobs.tb.s4.sub")}>
             <MessageChecks results={results} t={t} canFix onFix={fix} onFixAll={() => setMessage((m) => (m ? fixAll(m) : m))} />
@@ -241,7 +241,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
               <MessageCircle aria-hidden="true" className="size-5 shrink-0 text-muted" />
               <div className="min-w-0">
                 <p className="m-0 truncate text-[15px] font-semibold text-ink">{title.en}</p>
-                <p className="m-0 text-[13.5px] text-muted">{t("jobs.tb.s5.summary", { group })}</p>
+                <p className="m-0 text-sm text-muted">{t("jobs.tb.s5.summary", { group })}</p>
               </div>
             </div>
             {!ready ? (
@@ -281,7 +281,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
                   </p>
                 </div>
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-[12px] font-bold uppercase tracking-wider text-muted">{t("jobs.tb.s5.code")}</span>
+                  <span className="text-sm font-bold uppercase tracking-wider text-muted">{t("jobs.tb.s5.code")}</span>
                   <input
                     name="code"
                     value={code}
@@ -306,7 +306,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
                 {sendError}
               </p>
             ) : null}
-            <p className="m-0 mt-3 text-[13.5px] leading-snug text-muted">{t("jobs.tb.s5.foot")}</p>
+            <p className="m-0 mt-3 text-sm leading-snug text-muted">{t("jobs.tb.s5.foot")}</p>
           </Step>
         </div>
       ) : null}

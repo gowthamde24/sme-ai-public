@@ -31,8 +31,8 @@ const tokenBlock = braces(media, media.indexOf(`${ROOT} {`) + `${ROOT} `.length)
 
 const TOKENS: Record<string, string> = {
   "--dk-body": "14px",
-  "--dk-help": "13px",
-  "--dk-label": "11px",
+  "--dk-help": "14px",
+  "--dk-label": "14px",
   "--dk-title": "24px",
   "--dk-card-title": "16px",
   "--dk-stat": "22px",
@@ -59,9 +59,8 @@ describe("the desktop tokens", () => {
   });
   it("stay inside the owner's ranges", () => {
     expect(px("--dk-body")).toBe(14);
-    expect(px("--dk-help")).toBeGreaterThanOrEqual(12);
-    expect(px("--dk-help")).toBeLessThanOrEqual(13);
-    expect(px("--dk-label")).toBe(11);
+    expect(px("--dk-help")).toBe(14);
+    expect(px("--dk-label")).toBe(14);
     expect(px("--dk-title")).toBeGreaterThanOrEqual(22);
     expect(px("--dk-title")).toBeLessThanOrEqual(24);
     expect(px("--dk-card-title")).toBeGreaterThanOrEqual(15);

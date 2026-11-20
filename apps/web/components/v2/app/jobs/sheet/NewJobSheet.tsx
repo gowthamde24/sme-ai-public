@@ -313,7 +313,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
                     <h3 id="njs-popular" className="m-0 font-display text-[18px] font-bold leading-tight text-ink">
                       {typeName ? t("jobs.tpl.popular", { type: typeName }) : t("jobs.tpl.popular.plain")}
                     </h3>
-                    <p className="m-0 mt-1 text-[13.5px] leading-snug text-muted">{t("jobs.tpl.popular.sub")}</p>
+                    <p className="m-0 mt-1 text-sm leading-snug text-muted">{t("jobs.tpl.popular.sub")}</p>
                   </div>
                   <div className="flex flex-col gap-3">
                     {popular.map((tpl, i) => (
@@ -329,7 +329,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
                     {t("jobs.tpl.more")}
                   </h3>
                   {otherSet ? (
-                    <p data-part="other-note" className="m-0 rounded-xl bg-surface-2 px-3 py-2.5 text-[13px] leading-snug text-ink">
+                    <p data-part="other-note" className="m-0 rounded-xl bg-surface-2 px-3 py-2.5 text-sm leading-snug text-ink">
                       {t("jobs.tpl.others.note", { type: otherSet.name, shop: ctx.business })}
                     </p>
                   ) : null}
@@ -340,7 +340,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
                         <li key={g.goal} data-goal={g.goal} className="overflow-hidden rounded-2xl border border-line bg-surface">
                           <button type="button" aria-expanded={open} onClick={() => setOpenGoal(open ? null : g.goal)} className="flex min-h-[52px] w-full items-center gap-3 px-3.5 py-2 text-left">
                             <span className="min-w-0 flex-1 text-[15px] font-bold text-ink">{t(`jobs.tpl.goal.${g.goal}`)}</span>
-                            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-surface-2 px-2 text-[13px] font-bold text-ink">{g.templates.length}</span>
+                            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-surface-2 px-2 text-sm font-bold text-ink">{g.templates.length}</span>
                             <ChevronDown aria-hidden="true" className={`size-[18px] text-muted transition-transform ${open ? "rotate-180" : ""}`} />
                           </button>
                           {open ? (
@@ -356,7 +356,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
                                       </span>
                                       <span className="min-w-0 flex-1">
                                         <span className="block text-[15px] font-semibold leading-snug text-ink">{textIn(tpl.title, lang)}</span>
-                                        <span className="line-clamp-2 block text-[13px] leading-snug text-muted">{textIn(tpl.benefit, lang)}</span>
+                                        <span className="line-clamp-2 block text-sm leading-snug text-muted">{textIn(tpl.benefit, lang)}</span>
                                       </span>
                                       <ChevronRight aria-hidden="true" className={`size-[18px] shrink-0 text-muted transition-transform ${idea ? "rotate-90" : ""}`} />
                                     </button>
@@ -379,7 +379,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
 
               {load.data.others.length > 0 ? (
                 <section data-part="other-businesses" aria-labelledby="njs-others" className="flex flex-col gap-2">
-                  <h3 id="njs-others" className="m-0 text-[12px] font-bold uppercase tracking-wider text-muted">
+                  <h3 id="njs-others" className="m-0 text-sm font-bold uppercase tracking-wider text-muted">
                     {t("jobs.tpl.others")}
                   </h3>
                   <div role="group" aria-labelledby="njs-others" className="-mx-1 flex gap-2 overflow-x-auto px-1 py-0.5">

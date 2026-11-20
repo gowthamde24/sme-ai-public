@@ -23,7 +23,7 @@ export function VisitsCard({ rows, t }: { rows: readonly VisitRow[]; t: Say }) {
               <span className="w-12 shrink-0 font-display text-[15px] font-extrabold">{r.time}</span>
               <div className="min-w-0">
                 <p className="truncate font-bold">{r.who}</p>
-                {r.line ? <p className="truncate text-[12.5px] text-muted">{r.line}</p> : null}
+                {r.line ? <p className="truncate text-sm text-muted">{r.line}</p> : null}
               </div>
             </li>
           ))}
@@ -49,7 +49,7 @@ export function ResultsCard({ stages, costs, t }: { stages: readonly ResultsStag
         ) : (
           <ul data-part="funnel" className="flex flex-col gap-[7px]">
             {stages.map((s) => (
-              <li key={s.id} className="grid grid-cols-[92px_minmax(0,1fr)_40px] items-center gap-2 text-[12.5px]">
+              <li key={s.id} className="grid grid-cols-[92px_minmax(0,1fr)_40px] items-center gap-2 text-sm">
                 <span className="truncate text-muted">{t(`tv6.res.${s.id}`)}</span>
                 <span className="block h-5 overflow-hidden rounded-md bg-surface-2">
                   <span style={{ display: "block", height: "100%", width: `${s.width}%` }}>
@@ -64,7 +64,7 @@ export function ResultsCard({ stages, costs, t }: { stages: readonly ResultsStag
         {costs.length > 0 ? (
           <ul data-part="cost-per-visit" className="mt-3.5 flex flex-col gap-2 border-t border-line pt-3">
             {costs.map((c) => (
-              <li key={c.name} className="grid grid-cols-[92px_minmax(0,1fr)_auto] items-center gap-2 text-[12.5px]">
+              <li key={c.name} className="grid grid-cols-[92px_minmax(0,1fr)_auto] items-center gap-2 text-sm">
                 <span className="truncate text-muted">{c.name}</span>
                 <span className="block h-1.5 overflow-hidden rounded-full bg-surface-2">
                   <span style={{ display: "block", height: "100%", width: `${c.width}%` }}>

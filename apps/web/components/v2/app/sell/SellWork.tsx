@@ -103,7 +103,7 @@ function ColourPanel({ chosen, onChange, t }: { chosen: readonly string[]; onCha
           </button>
         );
       })}
-      <span className="basis-full text-[13px] text-muted">{t("jobs.sell.p.colours.max", { n: MAX_COLOURS })}</span>
+      <span className="basis-full text-sm text-muted">{t("jobs.sell.p.colours.max", { n: MAX_COLOURS })}</span>
     </span>
   );
 }
@@ -130,7 +130,7 @@ function Fields({ style, form, set, t, bad, owner }: { style: SellStyle; form: S
           colours: <ColourButton chosen={f.colours} open={coloursOpen} onToggle={() => setColoursOpen((o) => !o)} t={t} invalid={inv("colours")} />,
         })}
         {coloursOpen ? <ColourPanel chosen={f.colours} onChange={(c) => u("colours", c)} t={t} /> : null}
-        {!owner ? <p className="m-0 text-[13.5px] text-muted">{t("jobs.sell.p.admin")}</p> : null}
+        {!owner ? <p className="m-0 text-sm text-muted">{t("jobs.sell.p.admin")}</p> : null}
         {sentence("jobs.sell.p.s2", {
           stock: <Pick value={f.stock} onChange={(v) => u("stock", v)} options={options(["in_stock", "few_left", "made_to_order"] as const, "jobs.sell.stock")} label={t("jobs.sell.f.stock")} />,
           count: <Num value={f.count} onChange={(v) => u("count", v)} label={t("jobs.sell.f.count")} width="w-20" invalid={inv("count")} />,
@@ -181,7 +181,7 @@ function Fields({ style, form, set, t, bad, owner }: { style: SellStyle; form: S
           price: <Num value={f.price} onChange={(v) => u("price", v)} label={t("jobs.sell.f.price")} width="w-32" invalid={inv("price")} />,
           status: <Pick value={f.status} onChange={(v) => u("status", v)} options={options(PROPERTY_STATUSES, "jobs.sell.status")} label={t("jobs.sell.f.status")} />,
         })}
-        <p className="m-0 text-[13.5px] text-muted">{t("jobs.sell.r.price.help")}</p>
+        <p className="m-0 text-sm text-muted">{t("jobs.sell.r.price.help")}</p>
       </>
     );
   }
@@ -488,7 +488,7 @@ export default function SellWork({ style, work, words, base, actions, live, owne
                   </button>
                 </div>
               </div>
-              <p className="m-0 text-[13.5px] leading-snug text-muted">{t("jobs.sell.u.note")}</p>
+              <p className="m-0 text-sm leading-snug text-muted">{t("jobs.sell.u.note")}</p>
             </form>
           ) : null}
 
@@ -524,7 +524,7 @@ export default function SellWork({ style, work, words, base, actions, live, owne
                 {busy ? t("jobs.sell.pick.reading") : t(`jobs.sell.pick.${view.from}.go`)}
                 <input type="file" data-part="pick-file" accept={view.from === "photos" ? "image/*,.pdf,.heic,.heif" : ".csv,.tsv,.xls,.xlsx,.pdf"} disabled={busy} onChange={(e) => void pick(e.target.files?.[0], (view as Extract<View, { v: "pick" }>).from)} className="sr-only" />
               </label>
-              <p className="m-0 text-[13.5px] leading-snug text-muted">{t("jobs.sell.u.note")}</p>
+              <p className="m-0 text-sm leading-snug text-muted">{t("jobs.sell.u.note")}</p>
             </div>
           ) : null}
 
@@ -532,7 +532,7 @@ export default function SellWork({ style, work, words, base, actions, live, owne
             <div data-part="understood" className="flex flex-col gap-3">
               {view.text ? (
                 <div className="flex flex-col gap-1">
-                  <span className="text-[13px] font-bold uppercase tracking-wide text-muted">{t("jobs.sell.u.after")}</span>
+                  <span className="text-sm font-bold uppercase tracking-wide text-muted">{t("jobs.sell.u.after")}</span>
                   <q className="text-[15px] leading-snug text-ink">{view.text}</q>
                 </div>
               ) : null}
@@ -558,7 +558,7 @@ export default function SellWork({ style, work, words, base, actions, live, owne
                   ))}
                 </ul>
               ) : null}
-              <p className="m-0 text-[13.5px] leading-snug text-muted">{t("jobs.sell.u.note")}</p>
+              <p className="m-0 text-sm leading-snug text-muted">{t("jobs.sell.u.note")}</p>
               <div className="flex flex-wrap gap-2.5">
                 <button type="button" data-action="save-all" disabled={busy} onClick={() => void saveAll((view as Extract<View, { v: "understood" }>).entries, (view as Extract<View, { v: "understood" }>).notes)} className={btnMain}>
                   <Check aria-hidden="true" className="size-4" />

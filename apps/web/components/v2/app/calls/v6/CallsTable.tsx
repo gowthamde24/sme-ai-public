@@ -21,7 +21,7 @@ export function CallsTable({ words, base, query, items, selectedId, when }: Call
   const head = "whitespace-nowrap px-3 py-[11px] text-left text-xs font-semibold text-muted";
   return (
     <div className="overflow-hidden rounded-[14px] border border-line bg-surface shadow-[var(--v2-shadow)]" data-part="calls-table">
-      <table className="block w-full border-collapse text-[13.5px] md:table">
+      <table className="block w-full border-collapse text-sm md:table">
         <caption className="sr-only">{t("calls6.table.caption")}</caption>
         <thead className="hidden border-b border-line md:table-header-group">
           <tr>
@@ -58,12 +58,12 @@ export function CallsTable({ words, base, query, items, selectedId, when }: Call
                     {t(`calls6.st.${status}`)}
                   </StatusPill>
                 </td>
-                <td className={`col-start-2 row-start-3 text-right text-sm text-muted md:whitespace-nowrap md:text-left md:text-[13.5px] md:text-ink ${cell}`}>
+                <td className={`col-start-2 row-start-3 text-right text-sm text-muted md:whitespace-nowrap md:text-left md:text-sm md:text-ink ${cell}`}>
                   {c.live ? <span className="font-semibold text-brand-text">{clockShort(secs)}</span> : clockShort(secs)}
                   <span className="md:hidden">{c.costPaise !== null && !c.live ? ` · ${rupeeCost(c.costPaise)}` : ""}</span>
                 </td>
                 <td className={`hidden md:whitespace-nowrap ${cell}`}>{c.costPaise !== null && !c.live ? rupeeCost(c.costPaise) : "—"}</td>
-                <td className={`col-start-2 row-start-1 text-right text-sm text-muted md:whitespace-nowrap md:text-left md:text-[13.5px] md:text-ink ${cell}`}>
+                <td className={`col-start-2 row-start-1 text-right text-sm text-muted md:whitespace-nowrap md:text-left md:text-sm md:text-ink ${cell}`}>
                   <time dateTime={c.createdAt} className="whitespace-nowrap">{when(c.createdAt)}</time>
                 </td>
               </tr>

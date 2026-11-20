@@ -46,7 +46,7 @@ export function WhoCommand(p: WhoCommandProps & { t: Say }) {
 
   return (
     <div data-part="who-command" className="mt-4 border-t border-line pt-4">
-      <p className="m-0 text-[12px] font-bold uppercase tracking-wider text-muted">{t("jobs.who.ask.title")}</p>
+      <p className="m-0 text-sm font-bold uppercase tracking-wider text-muted">{t("jobs.who.ask.title")}</p>
       {stage === "idle" ? (
         <button type="button" data-action="who-command" onClick={() => (setError(null), setStage("plan"))} className="jb-press mt-2 flex min-h-11 w-full items-center gap-2.5 rounded-2xl border border-brand-edge bg-surface px-3.5 py-2 text-left text-[16px] text-ink">
           <Mic aria-hidden="true" className="size-[18px] shrink-0 text-brand-text" />
@@ -55,7 +55,7 @@ export function WhoCommand(p: WhoCommandProps & { t: Say }) {
       ) : null}
       {stage === "plan" ? (
         <article data-part="who-plan" aria-label={t("jobs.who.plan.title", { job: p.jobName })} className="jb-enter mt-2 rounded-[20px] border border-line bg-surface p-3.5 shadow-[var(--v2-shadow)]">
-          <p className="m-0 mb-2 flex items-center gap-2 text-[11.5px] font-bold uppercase leading-tight tracking-wider text-muted">
+          <p className="m-0 mb-2 flex items-center gap-2 text-sm font-bold uppercase leading-tight tracking-wider text-muted">
             <span className="min-w-0 flex-1">{t("jobs.who.plan.eyebrow")}</span>
             <JobChip tone="info" className="shrink-0">
               {t("jobs.new.plan.draft")}

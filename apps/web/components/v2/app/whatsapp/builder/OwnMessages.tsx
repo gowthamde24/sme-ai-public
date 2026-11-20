@@ -19,7 +19,7 @@ const TONE = { waiting: "wait", approved: "done", needs_change: "fail" } as cons
 /** WhatsApp's answer for a message waiting: sent, checking, answer (the middle one is where it is). */
 function Track({ t }: { t: ReturnType<typeof makeT> }) {
   return (
-    <ol data-part="track" className="m-0 mt-3 flex list-none items-start p-0 text-[12.5px] text-muted">
+    <ol data-part="track" className="m-0 mt-3 flex list-none items-start p-0 text-sm text-muted">
       {(["sent", "checking", "answer"] as const).map((k, i) => (
         <li key={k} className="contents">
           {i > 0 ? <span aria-hidden="true" className="mt-[5px] h-0.5 min-w-4 flex-1 bg-edge" /> : null}
@@ -170,7 +170,7 @@ export function OwnMessages({ words, items: initial, actions, secondFactor, mock
               <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
                 <div className="min-w-0">
                   <p className="m-0 text-[16px] font-bold leading-snug text-ink">{name(m)}</p>
-                  <p className="m-0 text-[13px] text-muted">{t(`jobs.tb.cat.${m.category}`)}</p>
+                  <p className="m-0 text-sm text-muted">{t(`jobs.tb.cat.${m.category}`)}</p>
                 </div>
                 <JobChip tone={TONE[m.status]}>{t(`jobs.tb.status.${m.status}`)}</JobChip>
               </div>
