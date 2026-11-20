@@ -111,6 +111,7 @@ Then a SYNTHETIC workspace (never the demo, never real data): sign up, business 
 
 ## 9. The new business, day one on production (after step 8) [OWNER + C1]
 1. The owner creates their workspace by invitation (sign-up is closed): the owner invites the business owner's e-mail.
+1b. **[OWNER/operator, one statement per workspace]** the assistant is OFF for a new workspace by design (agent allow-list): `select app.operator_enable_assistant('<workspace slug>');` (also switches the platform flags `agents_enabled`/`assistant_enabled` on the first time). Without it chat, auto-reply drafting and plan cards answer "not available". `ASSISTANT_WORK_TENANTS` stays UNSET in production (unset = every workspace).
 2. Business type chosen in the app; assistant name and languages; hours.
 3. Number: the business's own mobile as the business phone; Plivo number forwarding only on no-answer (`customer-zero-go-live-checklist.md` section C) after the three-phone test.
 4. Connect WhatsApp (Embedded Signup); templates auto-submit; the business sees "waiting"/"approved" per message; a rejected one appears on Today.
