@@ -12,6 +12,7 @@ import {
   type CourseEntry, type PriceEntry, type ProductEntry, type PropertyEntry, type SellData, type SellEntry, type SellNote, type SellStyle, type ServiceEntry, type StockState,
 } from "@/lib/sell/types";
 import { jobsScreens } from "@/lib/screens/flag";
+import { previewMine, previewSample } from "@/lib/screens/preview";
 
 /**
  * THE ADAPTER of "What you sell" (C2; JOBS; C1's FINAL contract 1.1 part 1, sections 3 and 8). ONE file: every parser of a wire shape is here, so a contract change is an edit here. SERVER ONLY, with the signed-in person's own token. What each style is read from:
@@ -252,13 +253,20 @@ export async function readWhatYouSell(token: string, tenantId: string, style: Se
   if (mode === "off") return { state: "off" };
   if (mode === "mock") {
     const fx = await import("@/lib/sell/fixtures");
-    const entries = parseSellList(fx.wireSell(style), style).map((e) => (e.style === "products" && e.photo !== null ? { ...e, photo: fx.mockPhoto(e.colours[0] ?? "multi") } : e));
+    const entries = parseSellList(fx.wireSell(style, previewSample()), style).map((e) => (e.style === "products" && e.photo !== null ? { ...e, photo: fx.mockPhoto(e.colours[0] ?? "multi") } : e));
     return { state: "ready", data: { style, entries, live: false } };
   }
   const t = base(tenantId);
+  // the staging preview, "my business" (lib/screens/preview.ts): where the route is not there yet and no old route stands in, the sample list of this style (the saree shop's), marked as such, instead of "not ready"
+  const unready = async (): Promise<SellRead> => {
+    if (!previewMine()) return { state: "unready" };
+    const fx = await import("@/lib/sell/fixtures");
+    const entries = parseSellList(fx.wireSell(style), style).map((e) => (e.style === "products" && e.photo !== null ? { ...e, photo: fx.mockPhoto(e.colours[0] ?? "multi") } : e));
+    return { state: "ready", data: { style, entries, live: false, sample: true } };
+  };
   try {
     if (style === "products") {
-      if (liveSource(style, modules) !== "catalogue") return { state: "unready" };
+      if (liveSource(style, modules) !== "catalogue") return unready();
       const entries: SellEntry[] = [];
       let after: string | null = null;
       let cut = false;
@@ -317,7 +325,7 @@ export async function readWhatYouSell(token: string, tenantId: string, style: Se
       }));
       return { state: "ready", data: { style, entries, live: true } };
     }
-    return { state: "unready" };
+    return unready();
   } catch {
     return { state: "unread" };
   }
@@ -326,5 +334,5 @@ export async function readWhatYouSell(token: string, tenantId: string, style: Se
 /** What the assistant "understood" from photos or a sheet. JOBS=mock only (two made-up entries, nothing read from the picture); a real shop uses the reading call (`readSellDrafts`). */
 export async function readUnderstood(style: SellStyle, from: "photos" | "sheet"): Promise<SellEntry[] | null> {
   if (jobsScreens() !== "mock") return null;
-  return parseSellList((await import("@/lib/sell/fixtures")).wireUnderstood(style, from), style);
+  return parseSellList((await import("@/lib/sell/fixtures")).wireUnderstood(style, from, previewSample()), style);
 }

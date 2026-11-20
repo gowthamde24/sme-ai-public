@@ -125150,10 +125150,10 @@
   }
  },
  "preview.title": {
-  "en": "Preview Jobs (sample data)",
-  "te": "Jobs ప్రివ్యూ (నమూనా డేటా)",
-  "hi": "Jobs प्रीव्यू (नमूना डेटा)",
-  "kn": "Jobs ಪ್ರಿವ್ಯೂ (ಮಾದರಿ ಡೇಟಾ)",
+  "en": "Preview Jobs",
+  "te": "Jobs ప్రివ్యూ",
+  "hi": "Jobs प्रीव्यू",
+  "kn": "Jobs ಪ್ರಿವ್ಯೂ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -125161,10 +125161,10 @@
   }
  },
  "preview.intro": {
-  "en": "Shows the new Jobs screens and the new billing screens in this browser only, with made-up data. Nothing is sent, charged or saved, and nobody else sees any change. Turn it off here or from the bar at the top.",
-  "te": "కొత్త Jobs స్క్రీన్లు, కొత్త billing స్క్రీన్లు ఈ browser లో మాత్రమే, నమూనా డేటాతో కనిపిస్తాయి. ఏదీ పంపబడదు, charge కాదు, save కాదు; ఇంకెవరికీ మార్పు కనిపించదు. ఇక్కడ లేదా పైన ఉన్న bar నుంచి ఆఫ్ చేయవచ్చు.",
-  "hi": "नए Jobs स्क्रीन और नए billing स्क्रीन सिर्फ़ इसी browser में, नमूना डेटा के साथ दिखते हैं। कुछ भेजा, charge या save नहीं होता और किसी और को कोई बदलाव नहीं दिखता। यहाँ से या ऊपर की bar से बंद करें।",
-  "kn": "ಹೊಸ Jobs ಸ್ಕ್ರೀನ್‌ಗಳು ಮತ್ತು ಹೊಸ billing ಸ್ಕ್ರೀನ್‌ಗಳು ಈ browser ನಲ್ಲಿ ಮಾತ್ರ, ಮಾದರಿ ಡೇಟಾದೊಂದಿಗೆ ಕಾಣಿಸುತ್ತವೆ. ಏನೂ ಕಳುಹಿಸಲ್ಪಡುವುದಿಲ್ಲ, charge ಆಗುವುದಿಲ್ಲ, save ಆಗುವುದಿಲ್ಲ; ಬೇರೆ ಯಾರಿಗೂ ಬದಲಾವಣೆ ಕಾಣಿಸುವುದಿಲ್ಲ. ಇಲ್ಲಿಂದ ಅಥವಾ ಮೇಲಿನ bar ನಿಂದ ಆಫ್ ಮಾಡಿ.",
+  "en": "Shows the new Jobs screens and the new billing screens in this browser only. Nobody else sees any change. Choose below what they show. Turn it off here or from the bar at the top.",
+  "te": "కొత్త Jobs స్క్రీన్లు, కొత్త billing స్క్రీన్లు ఈ browser లో మాత్రమే కనిపిస్తాయి. ఇంకెవరికీ మార్పు కనిపించదు. అవి ఏం చూపించాలో కింద ఎంచుకోండి. ఇక్కడ లేదా పైన ఉన్న bar నుంచి ఆఫ్ చేయవచ్చు.",
+  "hi": "नए Jobs स्क्रीन और नए billing स्क्रीन सिर्फ़ इसी browser में दिखते हैं। किसी और को कोई बदलाव नहीं दिखता। नीचे चुनें कि वे क्या दिखाएँ। इसे यहाँ से या ऊपर की bar से बंद करें।",
+  "kn": "ಹೊಸ Jobs ಸ್ಕ್ರೀನ್‌ಗಳು ಮತ್ತು ಹೊಸ billing ಸ್ಕ್ರೀನ್‌ಗಳು ಈ browser ನಲ್ಲಿ ಮಾತ್ರ ಕಾಣುತ್ತವೆ. ಬೇರೆ ಯಾರಿಗೂ ಬದಲಾವಣೆ ಕಾಣುವುದಿಲ್ಲ. ಅವು ಏನು ತೋರಿಸಬೇಕೆಂದು ಕೆಳಗೆ ಆರಿಸಿ. ಇಲ್ಲಿಂದ ಅಥವಾ ಮೇಲಿನ bar ನಿಂದ ಆಫ್ ಮಾಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -125227,10 +125227,10 @@
   }
  },
  "preview.bar": {
-  "en": "Preview, sample data. Nothing here is real, sent or saved.",
-  "te": "ప్రివ్యూ, నమూనా డేటా. ఇక్కడ ఏదీ నిజం కాదు, పంపబడదు, save కాదు.",
-  "hi": "प्रीव्यू, नमूना डेटा। यहाँ कुछ भी असली नहीं है, भेजा या save नहीं होता।",
-  "kn": "ಪ್ರಿವ್ಯೂ, ಮಾದರಿ ಡೇಟಾ. ಇಲ್ಲಿ ಯಾವುದೂ ನಿಜವಲ್ಲ, ಕಳುಹಿಸಲ್ಪಡುವುದಿಲ್ಲ, save ಆಗುವುದಿಲ್ಲ.",
+  "en": "Preview: your real data where it exists, sample data where it does not yet.",
+  "te": "ప్రివ్యూ: మీ నిజమైన డేటా ఉన్న చోట అదే, ఇంకా లేని చోట నమూనా డేటా.",
+  "hi": "प्रीव्यू: जहाँ आपका असली डेटा है वहाँ वही, जहाँ अभी नहीं है वहाँ नमूना डेटा।",
+  "kn": "ಪ್ರಿವ್ಯೂ: ನಿಮ್ಮ ನಿಜವಾದ ಡೇಟಾ ಇರುವಲ್ಲಿ ಅದೇ, ಇನ್ನೂ ಇಲ್ಲದಲ್ಲಿ ಮಾದರಿ ಡೇಟಾ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -125848,6 +125848,149 @@
   "te": "ముందు ఎక్కడ వెతకాలో రాయండి (ఊరు లేదా ఏరియా).",
   "hi": "पहले लिखें कि कहाँ खोजना है (शहर या इलाका)।",
   "kn": "ಮೊದಲು ಎಲ್ಲಿ ಹುಡುಕಬೇಕು ಎಂದು ಬರೆಯಿರಿ (ಊರು ಅಥವಾ ಪ್ರದೇಶ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.bar_sample": {
+  "en": "Preview: sample data of {business}. Nothing here is real, sent or saved.",
+  "te": "ప్రివ్యూ: {business} నమూనా డేటా. ఇక్కడ ఏదీ నిజం కాదు, పంపబడదు, save కాదు.",
+  "hi": "प्रीव्यू: {business} का नमूना डेटा। यहाँ कुछ भी असली नहीं है, भेजा या save नहीं होता।",
+  "kn": "ಪ್ರಿವ್ಯೂ: {business} ಮಾದರಿ ಡೇಟಾ. ಇಲ್ಲಿ ಯಾವುದೂ ನಿಜವಲ್ಲ, ಕಳುಹಿಸಲ್ಪಡುವುದಿಲ್ಲ, save ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.show": {
+  "en": "Show the screens with {choice}.",
+  "te": "స్క్రీన్లలో {choice} చూపించు.",
+  "hi": "स्क्रीन में {choice} दिखाएँ।",
+  "kn": "ಸ್ಕ್ರೀನ್‌ಗಳಲ್ಲಿ {choice} ತೋರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.pick": {
+  "en": "What the screens show",
+  "te": "స్క్రీన్లు ఏం చూపించాలి",
+  "hi": "स्क्रीन क्या दिखाएँ",
+  "kn": "ಸ್ಕ್ರೀನ್‌ಗಳು ಏನು ತೋರಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.pick.mine": {
+  "en": "My business (real data where it exists)",
+  "te": "నా business (ఉన్న చోట నిజమైన డేటా)",
+  "hi": "मेरा business (जहाँ है वहाँ असली डेटा)",
+  "kn": "ನನ್ನ business (ಇರುವಲ್ಲಿ ನಿಜವಾದ ಡೇಟಾ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.pick.saree": {
+  "en": "Saree shop",
+  "te": "చీరల షాపు",
+  "hi": "साड़ी की दुकान",
+  "kn": "ಸೀರೆ ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.pick.realestate": {
+  "en": "Real estate",
+  "te": "రియల్ ఎస్టేట్",
+  "hi": "रियल एस्टेट",
+  "kn": "ರಿಯಲ್ ಎಸ್ಟೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.pick.school": {
+  "en": "School",
+  "te": "స్కూల్",
+  "hi": "स्कूल",
+  "kn": "ಶಾಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.pick.cars": {
+  "en": "Car dealer",
+  "te": "కార్ డీలర్",
+  "hi": "कार डीलर",
+  "kn": "ಕಾರ್ ಡೀಲರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.state_mine": {
+  "en": "Showing your own business. Where the API has the data you see the real thing, and what you change there is saved. Where it does not yet, you see sample data marked Sample.",
+  "te": "మీ సొంత business చూపిస్తోంది. API లో డేటా ఉన్న చోట నిజమైనది కనిపిస్తుంది, అక్కడ మీరు మార్చినది save అవుతుంది. ఇంకా లేని చోట Sample అని గుర్తు ఉన్న నమూనా డేటా కనిపిస్తుంది.",
+  "hi": "आपका अपना business दिख रहा है। जहाँ API में डेटा है वहाँ असली दिखता है और वहाँ किया बदलाव save होता है। जहाँ अभी नहीं है वहाँ Sample लिखा नमूना डेटा दिखता है।",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ business ತೋರಿಸುತ್ತಿದೆ. API ನಲ್ಲಿ ಡೇಟಾ ಇರುವಲ್ಲಿ ನಿಜವಾದದ್ದು ಕಾಣುತ್ತದೆ, ಅಲ್ಲಿ ನೀವು ಮಾಡಿದ ಬದಲಾವಣೆ save ಆಗುತ್ತದೆ. ಇನ್ನೂ ಇಲ್ಲದಲ್ಲಿ Sample ಎಂದು ಗುರುತಿಸಿದ ಮಾದರಿ ಡೇಟಾ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.state_sample": {
+  "en": "Showing a sample business, {business}. Everything is made up: nothing is real, sent, charged or saved.",
+  "te": "నమూనా business {business} చూపిస్తోంది. అంతా కల్పితం: ఏదీ నిజం కాదు, పంపబడదు, charge కాదు, save కాదు.",
+  "hi": "नमूना business {business} दिख रहा है। सब कुछ बनावटी है: कुछ भी असली नहीं, भेजा, charge या save नहीं होता।",
+  "kn": "ಮಾದರಿ business {business} ತೋರಿಸುತ್ತಿದೆ. ಎಲ್ಲವೂ ಕಲ್ಪಿತ: ಯಾವುದೂ ನಿಜವಲ್ಲ, ಕಳುಹಿಸಲ್ಪಡುವುದಿಲ್ಲ, charge ಅಥವಾ save ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.change": {
+  "en": "Show this",
+  "te": "ఇది చూపించు",
+  "hi": "यह दिखाएँ",
+  "kn": "ಇದನ್ನು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sample": {
+  "en": "Sample",
+  "te": "నమూనా",
+  "hi": "नमूना",
+  "kn": "ಮಾದರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sample.note": {
+  "en": "Sample data: this part is not ready for your business yet.",
+  "te": "నమూనా డేటా: ఈ భాగం మీ business కి ఇంకా సిద్ధంగా లేదు.",
+  "hi": "नमूना डेटा: यह हिस्सा आपके business के लिए अभी तैयार नहीं है।",
+  "kn": "ಮಾದರಿ ಡೇಟಾ: ಈ ಭಾಗ ನಿಮ್ಮ business ಗೆ ಇನ್ನೂ ಸಿದ್ಧವಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",

@@ -1,0 +1,11 @@
+The preview is ON in this browser. Showing a sample business, Sri Sai Homes. Everything is made up: nothing is real, sent, charged or saved.
+form:
+<hidden name=on value=1>
+Show the screens with
+<select name=choice label="What the screens show">
+  options: My business (real data where it exists)=mine | Saree shop=saree | Real estate=realestate* | School=school | Car dealer=cars
+.
+[button type=submit: Show this]
+form:
+<hidden name=on value=0>
+[button type=submit: Turn the preview off]

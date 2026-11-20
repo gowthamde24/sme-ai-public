@@ -4,7 +4,9 @@ import { readNewJobSheet } from "@/lib/api/job-templates";
 import { readJobsToday } from "@/lib/api/jobs";
 import { getProfile } from "@/lib/api/profile";
 import { businessLanguage } from "@/lib/assistant/business-language";
+import { personaOf } from "@/lib/jobs/sample-fixtures";
 import type { NewJobSheetData, SheetLoad } from "@/lib/jobs/templates";
+import { previewSample } from "@/lib/screens/preview";
 
 /** Does any template of the answer have a recorded sample voice? (Only then is the business's language needed: the player picks the person's language, then the business's, then Telugu, then English.) */
 const hasSample = (data: NewJobSheetData): boolean => [data.own, ...data.others.map((o) => o.jobs)].some((p) => p.templates.some((t) => t.sampleAudio !== null));
@@ -17,5 +19,7 @@ export async function readSheetLoad(token: string, tenantId: string): Promise<Sh
   const [data, tenant, today, lang] = await Promise.all([readNewJobSheet(token, tenantId), fetchTenant(token, tenantId), readJobsToday(token, tenantId).catch(() => null), getLang()]);
   if (!data) return null;
   const businessLang = hasSample(data) ? businessLanguage((await getProfile(token, tenantId).catch(() => null))?.languages ?? []) : null;
-  return { data, lang, business: tenant.name, assistant: today?.assistantName ?? null, businessLang };
+  // a SAMPLE business of the staging preview (lib/screens/preview.ts) fills the previews with its own name
+  const sample = previewSample();
+  return { data, lang, business: sample ? personaOf(sample).business : tenant.name, assistant: today?.assistantName ?? null, businessLang };
 }

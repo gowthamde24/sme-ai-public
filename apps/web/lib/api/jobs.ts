@@ -5,12 +5,14 @@ import { bad, oneOf, rec, uuid, word } from "./shape";
 import { FAQ_A_MAX, FAQ_Q_MAX, type JobDetail, type JobFaq, type JobSays, type TestChannel } from "@/lib/jobs/detail";
 import { mockJobDetail, mockSays } from "@/lib/jobs/detail-mock";
 import { JOB_KINDS, type Job, type JobKind, type JobStatus, type JobSwitched, type TodayJobs } from "@/lib/jobs/types";
-import { MOCK_PAGE_JOBS, mockToday } from "@/lib/jobs/mock";
+import { MOCK_PAGE_JOBS, mockPageJobs, mockToday } from "@/lib/jobs/mock";
 import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput, SuggestionList } from "@/lib/jobs/plan";
 import { APPROVAL_KINDS, PLAN_TEXT_MAX, PLAN_TEXT_MIN, type SearchPatch } from "@/lib/jobs/plan";
 import { SEARCH_AREA_MAX, SEARCH_FIT_BARS, SEARCH_RESULTS, TEMPLATE_ID } from "@/lib/jobs/plan-const";
 import { mockPlan, mockSearchPlan, mockStartPlan, mockStartedFor, mockSuggestions, mockTest } from "@/lib/jobs/plan-mock";
 import { jobsScreens } from "@/lib/screens/flag";
+import { previewMine } from "@/lib/screens/preview";
+import { WIRE_PLAN_VARIANTS, WIRE_PLANS } from "@/lib/jobs/fixtures";
 import type { SpeaksPatch } from "@/lib/jobs/who";
 
 /**
@@ -24,15 +26,28 @@ const base = (tenantId: string): string => {
   return `/v1/tenants/${tenantId}`;
 };
 
+/**
+ * THE STAGING PREVIEW, "my business" (lib/screens/preview.ts): the real routes answer, and ONLY a 404 ("not there yet", contract 1.1 part 1, section 8 item 10) is filled from the sample data, every such part marked `sample: true` so the screen can say so.
+ * A refusal or a failure is never replaced by a sample (the part says it could not be read). Anywhere else (production, JOBS=1, JOBS=mock) none of this runs.
+ */
+const notThere = (error: unknown): boolean => error instanceof ApiRequestError && error.status === 404;
+const sampleFallback = (error: unknown): boolean => previewMine() && notThere(error);
+const asSample = <T extends object>(v: T): T & { sample: true } => ({ ...v, sample: true });
+/** The ids of the made-up jobs and plans: while the preview shows a part from the sample data, a change to one of them stays made-up too (never a call to the real API for an id it never gave). */
+const isMockJob = (id: string): boolean => previewMine() && MOCK_PAGE_JOBS.some((m) => m.id === id);
+const MOCK_PLAN_IDS = new Set<string>([...Object.values(WIRE_PLANS), ...Object.values(WIRE_PLAN_VARIANTS)].map((w) => String(w.plan_id)).concat("plan-researcher"));
+const isMockPlan = (planId: string): boolean => previewMine() && MOCK_PLAN_IDS.has(planId);
+const mockJobs = (): Job[] => mockPageJobs().map(asSample);
+
 /** `GET /jobs`; null when the screens are off or the API does not have jobs yet (the part is then simply not drawn). */
 export async function readJobs(token: string, tenantId: string): Promise<Job[] | null> {
   const mode = jobsScreens();
   if (mode === "off") return null;
-  if (mode === "mock") return [...MOCK_PAGE_JOBS];
+  if (mode === "mock") return [...mockPageJobs()];
   try {
     return parseJobs(await apiRequest(`${base(tenantId)}/jobs`, token));
-  } catch {
-    return null;
+  } catch (error) {
+    return sampleFallback(error) ? mockJobs() : null;
   }
 }
 
@@ -46,18 +61,20 @@ export async function readJobsToday(token: string, tenantId: string): Promise<To
   if (mode === "mock") return mockToday();
   try {
     return parseJobsToday(await apiRequest(`${base(tenantId)}/jobs/today`, token));
-  } catch {
-    return null;
+  } catch (error) {
+    if (!sampleFallback(error)) return null;
+    const today = mockToday(null);
+    return { ...today, jobs: today.jobs.map(asSample) };
   }
 }
 
-/** A mock job by id: the Jobs page lists MOCK_PAGE_JOBS (the demo's eight, "Ravi" and "Diwali calls" included), so a switch or a change finds any of them. */
-const mockJobById = (id: string) => MOCK_PAGE_JOBS.find((m) => m.id === id);
+/** A mock job by id: the Jobs page lists the demo's eight ("Ravi" and "Diwali calls" included; the ids are the same for every sample business), so a switch or a change finds any of them. */
+const mockJobById = (id: string) => mockPageJobs().find((m) => m.id === id);
 
 /** `PATCH /jobs/{id}` `{enabled}`: the switch. With JOBS=mock the answer is made up from the job's own state. */
 export async function setJobEnabled(token: string, tenantId: string, jobId: string, enabled: boolean): Promise<JobSwitched> {
   if (!isCanonicalUuid(jobId)) bad("job id");
-  if (jobsScreens() === "mock") {
+  if (jobsScreens() === "mock" || isMockJob(jobId)) {
     const j = mockJobById(jobId);
     return { id: jobId, enabled, status: enabled ? (j && j.status !== "paused" ? j.status : "running") : "paused" };
   }
@@ -107,8 +124,15 @@ export function checkPlanInput(input: PlanInput): PlanInput {
 export async function planJob(token: string, tenantId: string, input: PlanInput, language: string): Promise<JobPlan> {
   const body = checkPlanInput(input);
   if (jobsScreens() === "mock") return mockPlan(body);
+  // a WhatsApp version of a made-up plan is asked of the made-up planner (the real one never gave that plan id)
+  if ("as" in body && isMockPlan(body.planId)) return asSample(mockPlan(body, null));
   const wire = "as" in body ? { as: body.as, plan_id: body.planId } : "templateId" in body ? { template_id: body.templateId } : body;
-  return parsePlan(await apiRequest(`${base(tenantId)}/jobs/plan`, token, { method: "POST", body: JSON.stringify({ ...wire, language }) }));
+  try {
+    return parsePlan(await apiRequest(`${base(tenantId)}/jobs/plan`, token, { method: "POST", body: JSON.stringify({ ...wire, language }) }));
+  } catch (error) {
+    if (sampleFallback(error)) return asSample(mockPlan(body, null));
+    throw error;
+  }
 }
 /** What may change on a search plan: the area (the owner's words, 1 to 60 characters), the number of results (5, 10 or 20) and the fit bar (60, 70, 80 or 90); at least one, nothing else. */
 export function checkSearchPatch(patch: SearchPatch): SearchPatch {
@@ -129,7 +153,7 @@ export function checkSearchPatch(patch: SearchPatch): SearchPatch {
  */
 export async function changeSearch(token: string, tenantId: string, planId: string, patch: SearchPatch): Promise<JobPlan> {
   const changed = checkSearchPatch(patch);
-  if (jobsScreens() === "mock") return mockSearchPlan(word(planId, "plan id", 80), changed);
+  if (jobsScreens() === "mock" || isMockPlan(planId)) return mockSearchPlan(word(planId, "plan id", 80), changed);
   const search: Record<string, string | number> = {};
   if (changed.area !== undefined) search.area = changed.area;
   if (changed.results !== undefined) search.results = changed.results;
@@ -138,19 +162,24 @@ export async function changeSearch(token: string, tenantId: string, planId: stri
 }
 /** `POST /jobs/plan/{id}/start`: the only call that begins anything. A `409 approval_needed` answers `{approval}` (waiting for the Owner's OK), not an error. */
 export async function startPlan(token: string, tenantId: string, planId: string): Promise<JobStarted> {
-  if (jobsScreens() === "mock") return mockStartPlan(word(planId, "plan id", 80));
+  if (jobsScreens() === "mock" || isMockPlan(planId)) return mockStartPlan(word(planId, "plan id", 80));
   return startCall(planPath(tenantId, planId, "start"), token, {});
 }
 /** `POST /jobs {kind}`: one-tap start of a suggested job (the same `409 approval_needed` rule). */
 export async function startSuggestion(token: string, tenantId: string, kind: JobKind): Promise<JobStarted> {
   oneOf(kind, JOB_KINDS, "kind");
   if (jobsScreens() === "mock") return mockStartedFor(kind);
-  return startCall(`${base(tenantId)}/jobs`, token, { kind });
+  try {
+    return await startCall(`${base(tenantId)}/jobs`, token, { kind });
+  } catch (error) {
+    if (sampleFallback(error)) return mockStartedFor(kind);
+    throw error;
+  }
 }
 /** `POST /jobs/plan/{id}/test-call` or `/test-message`: to the owner's OWN phone only; `{placed: true, minutes_used}`. A `409 quiet_hours` (outside 9 am to 9 pm) is a refusal the screen disables the button for. With JOBS=mock nothing is called. */
 export async function testPlan(token: string, tenantId: string, planId: string, channel: PlanChannel): Promise<JobTested> {
   oneOf(channel, CHANNELS, "channel");
-  if (jobsScreens() === "mock") return { ...mockTest(word(planId, "plan id", 80)), channel };
+  if (jobsScreens() === "mock" || isMockPlan(planId)) return { ...mockTest(word(planId, "plan id", 80)), channel };
   const answer = parseTested(await apiRequest(planPath(tenantId, planId, channel === "call" ? "test-call" : "test-message"), token, { method: "POST", body: "{}" }));
   return { channel, mock: false, minutesUsed: answer.minutesUsed };
 }
@@ -162,8 +191,8 @@ export async function listSuggestions(token: string, tenantId: string, modules: 
   try {
     const json = await apiRequest(`${base(tenantId)}/jobs/suggestions`, token);
     return { items: parseSuggestions(json), heading: parseSuggestionHeading(json) };
-  } catch {
-    return null;
+  } catch (error) {
+    return sampleFallback(error) ? asSample(mockSuggestions(modules, null)) : null;
   }
 }
 
@@ -179,7 +208,9 @@ export async function getJob(token: string, tenantId: string, id: string): Promi
     return parseJobDetail(await apiRequest(`${base(tenantId)}/jobs/${id}`, token));
   } catch (error) {
     if (error instanceof ApiContractError) throw error;
-    return null;
+    // "my business" preview: the list came from the sample data (a 404), so a made-up job's page does too
+    const sample = sampleFallback(error) ? mockJobDetail(id, Date.now(), null) : null;
+    return sample ? { ...sample, job: asSample(sample.job) } : null;
   }
 }
 
@@ -190,7 +221,7 @@ export type JobPatched = { customName: string | null; enabled: boolean; status: 
 /** `PATCH /jobs/{id}` `{enabled?, name?, settings?: {key: value}, finds_out?, speaks?: {language?, tone?, voice?, number?}}` (a choice is sent as its word, a toggle as true/false; an empty name clears it; the hours are the settings `from_hour` and `to_hour`). With JOBS=mock the answer is made up from the mock job and the change; nothing is stored. */
 export async function patchJob(token: string, tenantId: string, id: string, patch: JobPatch): Promise<JobPatched> {
   jobId(id);
-  if (jobsScreens() === "mock") {
+  if (jobsScreens() === "mock" || isMockJob(id)) {
     const j = mockJobById(id);
     if (!j) bad("job id");
     const customName = patch.name !== undefined ? patch.name : j.customName;
@@ -214,13 +245,13 @@ export async function patchJob(token: string, tenantId: string, id: string, patc
 export async function addJobFaq(token: string, tenantId: string, id: string, question: string, answer: string): Promise<JobFaq> {
   jobId(id);
   if (question.length > FAQ_Q_MAX || answer.length > FAQ_A_MAX) bad("faq");
-  if (jobsScreens() === "mock") return { id: `faq-new-${Date.now().toString(36)}`, question, answer };
+  if (jobsScreens() === "mock" || isMockJob(id)) return { id: `faq-new-${Date.now().toString(36)}`, question, answer };
   return parseFaq(await apiRequest(`${base(tenantId)}/jobs/${id}/faqs`, token, { method: "POST", body: JSON.stringify({ question, answer }) }));
 }
 /** `POST /jobs/{id}/faqs/{faqId}/remove` (the API has no HTTP DELETE). */
 export async function removeJobFaq(token: string, tenantId: string, id: string, faqId: string): Promise<void> {
   jobId(id);
-  if (jobsScreens() === "mock") return;
+  if (jobsScreens() === "mock" || isMockJob(id)) return;
   await apiRequest(`${base(tenantId)}/jobs/${id}/faqs/${encodeURIComponent(word(faqId, "faq id", 80))}/remove`, token, { method: "POST", body: "{}" });
 }
 
@@ -232,7 +263,7 @@ export type JobDetailTested = { channel: TestChannel; sent: boolean; minutesUsed
 export async function testJob(token: string, tenantId: string, id: string, channel: TestChannel): Promise<JobDetailTested> {
   jobId(id);
   oneOf(channel, ["call", "whatsapp"] as const, "channel");
-  if (jobsScreens() === "mock") return { channel, sent: false, minutesUsed: 0 };
+  if (jobsScreens() === "mock" || isMockJob(id)) return { channel, sent: false, minutesUsed: 0 };
   const answer = parseTested(await apiRequest(`${base(tenantId)}/jobs/${id}/${channel === "call" ? "test-call" : "test-message"}`, token, { method: "POST", body: "{}" }));
   return { channel, sent: true, minutesUsed: answer.minutesUsed };
 }

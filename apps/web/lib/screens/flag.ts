@@ -36,7 +36,7 @@ export const outreachScreens = (value: string | undefined = process.env.OUTREACH
 /** Offer campaigns and marketing consent (campaigns S3 and S4, 17 Nov): "Who wants offers", the offer form and its approval screen. OFFER_SCREENS=1 shows them (staging); unset = off (production). Nothing here sends anything. */
 export const offerScreens = (value: string | undefined = process.env.OFFER_SCREENS): ScreenMode => screenMode(value);
 /** JOBS (owner decision 19 Nov 2026, docs: decision-ai-team): jobs on Today, the job pages, and the one design system (round ticks, solid status chips, v2 density, the branded loading). `1` = on (staging first); unset = off (production, and Customer Zero's first weeks). */
-export const jobsScreens = (value?: string): ScreenMode => screenMode(value ?? previewMode() ?? process.env.JOBS); // PREVIEW_JOBS (staging only): one browser can see the screens with sample data (lib/screens/preview.ts)
+export const jobsScreens = (value?: string): ScreenMode => screenMode(value ?? previewMode() ?? process.env.JOBS); // PREVIEW_JOBS (staging only): one browser previews the screens: "1" (the real routes, sample only where a route is 404) for its own business, "mock" for a sample business (lib/screens/preview.ts)
 export const taskScreens = (value: string | undefined = process.env.TASK_SCREENS): ScreenMode => screenMode(value);
 export const topupScreens = (value: string | undefined = process.env.TOPUP_SCREENS): ScreenMode => (earlyAccess() ? "off" : screenMode(value));
 
