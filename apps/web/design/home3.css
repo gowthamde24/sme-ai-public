@@ -95,7 +95,7 @@
 @media (min-width: 768px) { [data-ui="v2"] .h3-chips { flex-wrap: wrap; justify-content: center; margin-inline: 0; padding-inline: 0; overflow: visible; -webkit-mask-image: none; mask-image: none; } }
 [data-ui="v2"] .h3-chip[aria-pressed="true"] { background: var(--v2-ink); color: var(--v2-bg); }
 /* the plan card of the chosen job (static words): white, four rows */
-[data-ui="v2"] .h3-plan { min-height: 168px; }
+[data-ui="v2"] .h3-plan { min-height: 158px; }
 [data-ui="v2"] .h3-plan:not([data-on]) { visibility: hidden; }
 [data-ui="v2"] .h3-plan-row { opacity: 0; transform: translateY(10px); transition: opacity 250ms ease-out, transform 250ms ease-out; }
 [data-ui="v2"] .h3-plan-row[data-in] { opacity: 1; transform: none; }
