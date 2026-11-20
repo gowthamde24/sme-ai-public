@@ -10,7 +10,7 @@ import { failureOf } from "@/lib/api/failure";
 import { patchJob } from "@/lib/api/jobs";
 import { submitOwnMessage, writeOwnMessage } from "@/lib/api/template-builder";
 import { parseTotpCode } from "@/lib/auth/otp";
-import { freshSecondStep } from "@/lib/auth/session";
+import { freshSecondStep, hasAuthenticator } from "@/lib/auth/session";
 import { jobsScreens } from "@/lib/screens/flag";
 import { canSend } from "@/lib/templates/meta-checks";
 import { DRAFT_TEXT_MAX, DRAFT_TEXT_MIN, readMessage, readSubmit, type DraftAnswer, type OwnMessage } from "@/lib/templates/types";
@@ -41,16 +41,18 @@ export async function submitOwnMessageAction(tenantId: string, input: unknown, c
   const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
   const submit = readSubmit(input);
-  const digits = parseTotpCode(typeof code === "string" ? code.replace(/\s/g, "") : "");
+  // no authenticator = no code: the person confirmed with a button and the API gets `confirm: true` (owner 20 Nov; C1 #975). With one, the code is asked as before.
+  const confirmOnly = !(await hasAuthenticator());
+  const digits = confirmOnly ? "confirm" : parseTotpCode(typeof code === "string" ? code.replace(/\s/g, "") : "");
   if (!submit || !canSend(submit.message) || !digits) return invalid(ctx.t);
   let token = ctx.token;
-  if (jobsScreens() !== "mock") {
+  if (jobsScreens() !== "mock" && !confirmOnly) {
     const step = await freshSecondStep(digits);
     if (!step.ok) return step.reason === "no_factor" ? { ok: false, kind: "mfa", mfa: true, error: ctx.t("jobs.tb.s5.no_factor") } : { ok: false, kind: "invalid", code: "bad_code", error: ctx.t("jobs.tb.s5.bad_code") };
     token = step.token; // the session now holds the fresh level: the API gets the token that carries it
   }
   try {
-    const data = await submitOwnMessage(token, tenantId, submit);
+    const data = await submitOwnMessage(token, tenantId, submit, undefined, confirmOnly);
     revalidatePath(`/app/tenants/${tenantId}/chats/templates`);
     return { ok: true, data };
   } catch (error) {

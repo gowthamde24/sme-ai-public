@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { NewJob } from "@/components/v2/app/jobs/NewJob";
+import { SampleChip } from "@/components/v2/app/jobs/SampleChip";
 import { PageTop } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
@@ -65,6 +66,11 @@ export default async function NewJobRoute({ params, searchParams }: PageProps<"/
   return (
     <main className={pageMain} lang={lang}>
       {top}
+      {suggested?.sample ? (
+        <p data-part="sample-suggestions" className="m-0 mt-3">
+          <SampleChip words={words} note />
+        </p>
+      ) : null}
       <div className="mt-5">
         <NewJob
           words={words}

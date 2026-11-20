@@ -23,14 +23,12 @@ class SpeakingService:
         languages: dict[Any, LanguageStyleOut] = {
             lang: LanguageStyleOut(
                 style=(saved.get(lang) or {}).get("style", register.DEFAULT_STYLE),
-                region=(saved.get(lang) or {}).get("region", "neutral"),
                 saved=bool((saved.get(lang) or {}).get("saved", False)),
                 examples=register.status(lang),  # type: ignore[arg-type]
             )
             for lang in register.LANGUAGES
         }
-        regions: dict[Any, list[Any]] = {lang: list(r) for lang, r in register.REGIONS.items()}
-        options = OptionsOut(styles=list(register.STYLES), default_style=register.DEFAULT_STYLE, regions=regions)  # type: ignore[arg-type]
+        options = OptionsOut(styles=list(register.STYLES), default_style=register.DEFAULT_STYLE)  # type: ignore[arg-type]
         return SpeakingStyleOut(languages=languages, options=options)
 
     def get(self, token: str, tenant_id: uuid.UUID) -> SpeakingStyleOut:
@@ -49,4 +47,4 @@ class SpeakingService:
         except Exception as exc:
             logger.warning("speaking style unreadable (%s); the default is used", exc.__class__.__name__)
             chosen = {}
-        return str(chosen.get("style") or register.DEFAULT_STYLE), str(chosen.get("region") or "neutral")
+        return str(chosen.get("style") or register.DEFAULT_STYLE), "neutral"   # a stored region is kept in the database but never used (21 Nov 2026: it never changed a word)

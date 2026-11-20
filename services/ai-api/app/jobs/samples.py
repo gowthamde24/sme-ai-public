@@ -128,6 +128,10 @@ class SampleStore:
     def index(self, token: str) -> dict[str, Any]:
         return self._rpc.object(token, "ops_job_sample_index", {})
 
+    def recode(self, token: str, pack: str, template_id: str, language: str, text_sha256: str, content_type: str, audio_b64: str) -> dict[str, Any]:
+        return self._rpc.object(token, "ops_job_sample_recode", {"p_pack": pack, "p_template_id": template_id, "p_language": language, "p_text_sha256": text_sha256,
+                                                                  "p_content_type": content_type, "p_audio_b64": audio_b64})
+
     def put(self, token: str, item: Item, content_type: str, audio_b64: str) -> dict[str, Any]:
         return self._rpc.object(token, "ops_job_sample_put", {"p_pack": item.pack, "p_template_id": item.template_id, "p_language": item.language, "p_text_sha256": item.sha, "p_chars": item.chars,
                                                                "p_content_type": content_type, "p_audio_b64": audio_b64, "p_cap_chars": CAP_CHARS})

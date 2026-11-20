@@ -8,7 +8,6 @@ export interface LanguageStyle {
 
 export interface LanguageStyleOut {
   style: "everyday_mixed" | "everyday_pure" | "formal";
-  region: "neutral" | "coastal" | "telangana" | "rayalaseema" | "chennai" | "kongu" | "bengaluru" | "north_karnataka";
   saved: boolean;
   examples: "approved" | "draft";
 }
@@ -16,7 +15,6 @@ export interface LanguageStyleOut {
 export interface OptionsOut {
   styles: ("everyday_mixed" | "everyday_pure" | "formal")[];
   default_style: "everyday_mixed" | "everyday_pure" | "formal";
-  regions: Record<string, ("neutral" | "coastal" | "telangana" | "rayalaseema" | "chennai" | "kongu" | "bengaluru" | "north_karnataka")[]>;
 }
 
 export interface SpeakingStyleIn {

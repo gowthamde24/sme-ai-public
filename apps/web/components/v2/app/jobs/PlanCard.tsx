@@ -7,6 +7,7 @@ import { planChannel, type ApprovalKind, type JobPlan, type SearchPatch } from "
 import { JobChip } from "../ds/JobChip";
 import { makeT, type Words } from "../words";
 import { SearchPlan } from "./LazySearchPlan";
+import { SampleChip } from "./SampleChip";
 import { Part, primary, secondary } from "./PlanPart";
 import { costText, excludedTotal, findsText, hasWord, hourText, isSearchPlan, messagesCostText, waitingText, whenText, whoText } from "./plan-text";
 
@@ -52,6 +53,7 @@ export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, 
         <JobChip tone="info" className="shrink-0">
           {t("jobs.new.plan.draft")}
         </JobChip>
+        {plan.sample ? <SampleChip words={words} /> : null}
       </p>
       <h2 id="plan-title" ref={headingRef} tabIndex={-1} className="m-0 mb-3 font-display text-[17px] font-bold leading-snug text-ink outline-none md:text-xl">
         {plan.title}

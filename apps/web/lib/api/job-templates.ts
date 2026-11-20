@@ -4,6 +4,7 @@ import { bad, bool, int, isRec, list, nstr, oneOf, optInt, readRows, rec, str, w
 import { TEMPLATE_FINDS, TEMPLATE_GOALS, TEMPLATE_KINDS, TEMPLATE_LANGS, TEMPLATE_NEEDS, TEMPLATE_SEASONS, type Festival, type JobTemplate, type NewJobSheetData, type PackJobs, type TemplateExample, type TemplateSeason, type Texts, type WhyCode, type WhyParams } from "@/lib/jobs/templates";
 import { readSamplePath, SAMPLE_LANGS, type SampleAudio } from "@/lib/jobs/sample-audio";
 import { jobsScreens } from "@/lib/screens/flag";
+import { previewMine, previewSample } from "@/lib/screens/preview";
 
 /**
  * THE ADAPTER of the job templates and the New job sheet (C2, 19 Nov; contract 1.1 lands from C1 on Sun 22 Nov). ONE file: every parser of the wire shape is here, typed to C1's job template files (`jobs.json` in each pack folder)
@@ -161,10 +162,12 @@ const notThereYet = (error: unknown): boolean => error instanceof ApiRequestErro
 export async function readNewJobSheet(token: string, tenantId: string): Promise<NewJobSheetData | null> {
   const mode = jobsScreens();
   if (mode === "off") return null;
-  if (mode === "mock") return parseNewJobSheet((await import("@/lib/jobs/template-fixtures")).wireNewJobSheet());
+  if (mode === "mock") return parseNewJobSheet((await import("@/lib/jobs/template-fixtures")).wireNewJobSheet(undefined, previewSample()));
   try {
     return parseNewJobSheet(await apiRequest(`${base(tenantId)}/jobs/templates`, token), true);
   } catch (error) {
+    // the staging preview, "my business" (lib/screens/preview.ts): ONLY a 404 is filled from the sample data (the saree shop's ideas), marked as such; a failure is never replaced
+    if (notThereYet(error) && previewMine()) return { ...parseNewJobSheet((await import("@/lib/jobs/template-fixtures")).wireNewJobSheet()), sample: true };
     if (notThereYet(error)) return null;
     if (error instanceof ApiContractError) {
       console.error("API jobs/templates: the answer is not the contract's shape:", error.message);
@@ -181,11 +184,12 @@ export async function readNewJobSheet(token: string, tenantId: string): Promise<
 export async function readFestivals(token: string, tenantId: string, now: Date = new Date()): Promise<Festival[] | null> {
   const mode = jobsScreens();
   if (mode === "off") return null;
-  if (mode === "mock") return parseFestivals((await import("@/lib/jobs/template-fixtures")).wireFestivals(now));
+  if (mode === "mock") return parseFestivals((await import("@/lib/jobs/template-fixtures")).wireFestivals(now, previewSample()));
   try {
     const rows = parseFestivals(await apiRequest(`${base(tenantId)}/jobs/festivals`, token));
     return rows.length > 0 ? rows : null;
   } catch (error) {
+    if (notThereYet(error) && previewMine()) return parseFestivals((await import("@/lib/jobs/template-fixtures")).wireFestivals(now)).map((f) => ({ ...f, sample: true as const }));
     if (notThereYet(error)) return null;
     if (error instanceof ApiContractError) {
       console.error("API jobs/festivals: the answer is not the contract's shape:", error.message);

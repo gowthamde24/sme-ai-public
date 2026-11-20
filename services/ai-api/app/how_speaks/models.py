@@ -9,7 +9,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-Tone = Literal["respectful", "friendly"]
+Tone = Literal["friendly", "respectful", "quick"]
+Background = Literal["quiet_office", "shop", "off"]
 Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Style = Literal["everyday_mixed", "everyday_pure"]
 Region = Literal["neutral", "coastal", "telangana", "rayalaseema", "chennai", "kongu", "bengaluru", "north_karnataka"]
@@ -29,14 +30,12 @@ class ToneOut(_Strict):
 
 class WordsLanguageOut(_Strict):
     style: Style
-    region: Region
     saved: bool
     examples: Literal["approved", "draft"]
 
 
 class WordsOptionsOut(_Strict):
     styles: list[Style]
-    regions: dict[Language, list[Region]]
 
 
 class WordsOut(_Strict):
@@ -60,13 +59,24 @@ class IntroduceOut(_Strict):
 class PackDefaultsOut(_Strict):
     tone: Tone
     words: Style
-    region: Region
+
+
+class BackgroundOption(_Strict):
+    id: Background
+    label: dict[Language, str]   # the words on the screen in all seven languages (drafts for a native reader)
+
+
+class BackgroundOut(_Strict):
+    value: Background
+    saved: bool
+    options: list[BackgroundOption]
 
 
 class HowAssistantSpeaksOut(_Strict):
     tone: ToneOut
     words: WordsOut
     introduce_as: IntroduceOut
+    background: BackgroundOut
     pack_defaults: PackDefaultsOut
     legacy_address: Literal["plain", "sir_madam", "garu", "ji"] | None
     updated_at: datetime | None
@@ -74,7 +84,7 @@ class HowAssistantSpeaksOut(_Strict):
 
 class WordsIn(_Strict):
     style: Style
-    region: Region = "neutral"
+    region: Region | None = None   # DEPRECATED (21 Nov 2026): accepted so an older screen still saves, then ignored: a region never changed a word a customer hears. Never returned.
 
 
 class IntroduceIn(_Strict):
@@ -86,5 +96,6 @@ class HowAssistantSpeaksIn(_Strict):
     """Any subset; a key left out is not changed, `null` resets that part to the default. `tone: "casual"` is a 422 (`fields: ["tone"]`)."""
 
     tone: Tone | None = None
+    background: Background | None = None   # the quiet bed under the assistant's voice on calls; `null` = back to the default (quiet_office)
     words: dict[Language, WordsIn | None] | None = None
     introduce_as: IntroduceIn | None = None

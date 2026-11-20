@@ -1,0 +1,4 @@
+{role=status} Preview: your real data where it exists, sample data where it does not yet.
+form:
+<hidden name=on value=0>
+[button type=submit: Turn off]

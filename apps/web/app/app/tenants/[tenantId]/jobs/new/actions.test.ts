@@ -66,6 +66,14 @@ describe("start a job: the server actions", () => {
     expect(h.tenant).not.toHaveBeenCalled();
     for (const bad of [null, undefined, 7, "text", { text: 5 }, { kind: "magic" }] as never[]) expect(await planJobAction(T, bad)).toMatchObject({ ok: false, kind: "invalid" });
   });
+  it("the plan route answering 404 (not built yet) says so in plain words and starts nothing", async () => {
+    h.mode.v = "on";
+    h.req.mockRejectedValue(new ApiRequestError(404, "not_found", "x"));
+    const r = await planJobAction(T, { text: SILK });
+    expect(r).toMatchObject({ ok: false, error: expect.stringContaining("not ready yet") });
+    expect((r as { error: string }).error).not.toMatch(/not found|removed/i);
+    expect(h.revalidate).not.toHaveBeenCalled();
+  });
   it("Sales and Viewer change nothing: plan, start, suggestion start and the test are all refused", async () => {
     for (const role of ["sales", "viewer"]) {
       h.tenant.mockResolvedValue({ role });

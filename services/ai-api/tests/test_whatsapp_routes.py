@@ -256,3 +256,46 @@ def test_the_assistant_switch_and_done_of_a_chat(w: World) -> None:
     assert w.call("POST", T + "/conversations/not-a-uuid/assistant", "a_owner", {"enabled": True}).status_code == 404
     assert w.call("POST", T + f"/conversations/{LEAD}/assistant", "a_owner", {"enabled": "maybe"}).status_code == 422
     assert w.call("POST", T + f"/conversations/{LEAD}/assistant", "a_owner", {"enabled": True, "x": 1}).status_code == 422
+
+
+# ------------------------------------------------------------------------------------------------------------------ the confirm step (CONFIRM_WITHOUT_AUTHENTICATOR, 21 Nov 2026)
+class NoAuthenticator:
+    """account_security for a person who never turned the authenticator on."""
+
+    def account_security(self, token: str) -> dict[str, Any]:
+        return {"second_factor_on": False, "provider": "google"}
+
+
+def confirm_world(*, confirm_step: bool) -> World:
+    import dataclasses
+
+    w = World()
+    w.runtime = dataclasses.replace(w.runtime, confirm_step=confirm_step)
+    w.client, _ = make_client(whatsapp=w.runtime, workspace=NoAuthenticator())
+    w.call("PUT", T + "/whatsapp/account", "a_owner", ACCOUNT, aal="aal1")
+    w.call("PUT", T + f"/whatsapp/templates/{TPL}", "a_admin", TEMPLATE, aal="aal1")
+    return w
+
+
+def test_without_the_authenticator_a_submit_needs_confirm_true_when_the_step_is_on() -> None:
+    w = confirm_world(confirm_step=True)
+    refused = w.call("POST", T + f"/whatsapp/templates/{TPL}/submit", "a_admin", aal="aal1")
+    assert refused.status_code == 422 and refused.json()["error"]["code"] == "confirm_required"
+    assert not w.graph.templates_created, "nothing went to Meta"
+    assert w.call("POST", T + f"/whatsapp/templates/{TPL}/submit", "a_admin", {"confirm": False}, aal="aal1").status_code == 422
+    ok = w.call("POST", T + f"/whatsapp/templates/{TPL}/submit", "a_admin", {"confirm": True}, aal="aal1")
+    assert ok.status_code == 200 and ok.json()["template"]["status"] == "submitted"
+
+
+def test_the_step_is_off_by_default_and_never_asked_of_someone_who_entered_the_code() -> None:
+    w = confirm_world(confirm_step=False)
+    assert w.call("POST", T + f"/whatsapp/templates/{TPL}/submit", "a_admin", aal="aal1").status_code == 200
+    w = confirm_world(confirm_step=True)
+    assert w.call("POST", T + f"/whatsapp/templates/{TPL}/submit", "a_admin", aal="aal2").status_code == 200
+
+
+def test_submit_drafts_has_the_same_step_and_refuses_an_unknown_field() -> None:
+    w = confirm_world(confirm_step=True)
+    assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_admin", aal="aal1").status_code == 422
+    assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_admin", {"confirm": True, "x": 1}, aal="aal1").status_code == 422
+    assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_admin", {"confirm": True}, aal="aal1").status_code == 200

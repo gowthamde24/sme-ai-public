@@ -48,6 +48,13 @@ class FakeStore:
         self.spent += item.chars
         return {"stored": True}
 
+    def recode(self, token: str, pack: str, template_id: str, language: str, text_sha256: str, content_type: str, audio_b64: str) -> dict[str, Any]:
+        r = self.rows.get((pack, template_id, language))
+        if r is None or r["sha"] != text_sha256:
+            return {"recoded": False, "reason": "unknown_sample"}
+        r["type"], r["audio"] = content_type, audio_b64
+        return {"recoded": True}
+
     def listing(self, token: str) -> list[dict[str, Any]]:
         return [{"pack": p, "template_id": t, "language": language, "sha8": r["sha"][:8]} for (p, t, language), r in self.rows.items()]
 
@@ -182,3 +189,33 @@ def test_generating_needs_the_voice_the_flag_and_lets_the_database_decide_who() 
     assert c.post("/v1/ops/job-samples/generate", json={"languages": ["xx"]}, headers=auth("a_owner")).status_code == 422
     assert client_with(store, None).post("/v1/ops/job-samples/generate", json={}, headers=auth("a_owner")).status_code == 503
     assert client_with(store, tts, jobs=False).post("/v1/ops/job-samples/generate", json={}, headers=auth("a_owner")).status_code == 404
+
+
+def test_audio_that_postgres_wrapped_in_76_character_lines_still_plays() -> None:
+    """Staging, 21 Nov: encode(audio, 'base64') puts a newline every 76 characters; the strict decoder refused it and every sample was a 404."""
+    store, tts = FakeStore(), FakeTts()
+    run(store, tts, ["te"], 1)
+    (pack, tid, lang), row = next(iter(store.rows.items()))
+    raw = base64.b64decode(row["audio"])
+    flat = base64.b64encode(raw).decode()
+    row["audio"] = "\n".join(flat[i : i + 76] for i in range(0, len(flat), 76)) + "\n"
+    ok = get(client_with(store), f"/v1/job-samples/{pack}/{tid}_{row['sha'][:8]}.{lang}.mp3", "a_viewer")
+    assert ok.status_code == 200 and ok.content == raw
+
+def test_the_system_account_lists_and_recodes_a_sample_and_nobody_else_does() -> None:
+    store, tts = FakeStore(), FakeTts()
+    run(store, tts, ["te"], 1)
+    (pack, tid, lang), row = next(iter(store.rows.items()))
+    c = client_with(store, tts)
+    index = c.get("/v1/ops/job-samples/index", headers=auth("a_owner"))
+    assert index.status_code == 200 and index.json()["items"][0]["sha256"] == row["sha"]
+    body = {"pack": pack, "template_id": tid, "language": lang, "sha256": row["sha"], "content_type": "audio/mpeg", "audio_b64": base64.b64encode(b"ID3mp3").decode()}
+    ok = c.post("/v1/ops/job-samples/recode", json=body, headers=auth("a_owner"))
+    assert ok.status_code == 200 and ok.json() == {"recoded": True}
+    played = get(client_with(store), f"/v1/job-samples/{pack}/{tid}_{row['sha'][:8]}.{lang}.mp3", "a_viewer")
+    assert played.status_code == 200 and played.content == b"ID3mp3" and played.headers["content-type"] == "audio/mpeg"
+    assert c.post("/v1/ops/job-samples/recode", json={**body, "sha256": "0" * 64}, headers=auth("a_owner")).json()["recoded"] is False, "other words: not recoded"
+    assert c.post("/v1/ops/job-samples/recode", json={**body, "content_type": "text/html"}, headers=auth("a_owner")).status_code == 422
+    assert c.post("/v1/ops/job-samples/recode", json={**body, "extra": 1}, headers=auth("a_owner")).status_code == 422
+    assert c.post("/v1/ops/job-samples/recode", json=body, headers={}).status_code == 401
+    assert client_with(store, tts, jobs=False).post("/v1/ops/job-samples/recode", json=body, headers=auth("a_owner")).status_code == 404

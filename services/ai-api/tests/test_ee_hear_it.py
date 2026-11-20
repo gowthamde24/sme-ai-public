@@ -100,11 +100,11 @@ def test_without_a_text_the_saved_line_is_spoken_and_the_get_reports_the_words_i
 
 def test_the_chosen_voice_of_the_lines_language_speaks_it() -> None:
     client, repo, texts = world()
-    repo.choices["te"] = "te-sindhu"
+    repo.choices["te"] = "te-kavitha"
     line = "నమస్కారం, {business} నుంచి మాట్లాడుతున్నాను. ఒక్క నిమిషం మాట్లాడొచ్చా?"
     r = post(client, {"language": "te", "text": line})
     assert r.status_code == 200 and TENANT_A.name in r.json()["spoken_text"]
-    assert texts[-1][0] == default_config().catalogue["te-sindhu"].voices.primary.voice
+    assert texts[-1][0] == default_config().catalogue["te-kavitha"].voices.primary.voice
 
 
 def test_a_bad_line_or_a_wrong_language_is_refused_in_plain_words() -> None:
@@ -156,7 +156,7 @@ def test_each_catalogue_voice_reports_the_exact_words_of_its_sample_and_they_nam
         for v in lang.voices:
             assert v.sample_text == sample_text(lang.language) and "Sample Stores" in v.sample_text
             seen += 1
-    assert seen == len(cfg.catalogue) and seen >= 9
+    assert seen == len([c for c in cfg.catalogue.values() if c.listed]) and seen >= 9, "the short list"
     for text in SAMPLE_LINES.values():
         for old in ("Vijaya", "Vijay", "{name}"):
             assert old not in text, "no old persona name in any sample"

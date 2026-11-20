@@ -9,6 +9,7 @@ import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { listCalls } from "@/lib/api/calls";
 import { readFestivals } from "@/lib/api/job-templates";
+import { SampleChip } from "@/components/v2/app/jobs/SampleChip";
 import { readJobsToday } from "@/lib/api/jobs";
 import { festivalHint } from "@/lib/jobs/festival";
 import { getProfile } from "@/lib/api/profile";
@@ -164,7 +165,20 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
         const sheet = manages ? { actions: { plan: planJobAction.bind(null, tenantId), start: startPlanAction.bind(null, tenantId), test: testPlanAction.bind(null, tenantId), search: changeSearchAction.bind(null, tenantId), load: loadNewJobSheetAction.bind(null, tenantId) }, festival: festivalHint(festivals, lang, new Date()) } : null;
         // an own message WhatsApp sent back is one row that opens Chats > Templates (Owner and Admin: only they can change it)
         const messagesToChange = manages ? (r?.needsYou ?? []).filter((n) => n.code === "message_needs_change" && n.target.type === "message").length : 0;
-        return list && list.length > 0 ? <JobsToday jobs={list} words={wordsFor(lang, ["jobs."])} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} sheet={sheet} messagesToChange={messagesToChange} /> : null;
+        if (!list || list.length === 0) return null;
+        const words = wordsFor(lang, ["jobs."]);
+        const section = <JobsToday jobs={list} words={words} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} sheet={sheet} messagesToChange={messagesToChange} />;
+        // the staging preview, "my business" (lib/screens/preview.ts): jobs drawn from the sample data (the route is not there yet) say so
+        return list.some((j) => j.sample) ? (
+          <>
+            <p data-part="sample-today" className="m-0 mb-2">
+              <SampleChip words={words} note />
+            </p>
+            {section}
+          </>
+        ) : (
+          section
+        );
       })
       .catch((e): ReactNode => (e instanceof ApiAuthError ? Promise.reject(e) : null)),
   );

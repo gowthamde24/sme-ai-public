@@ -9,7 +9,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { ApiRequestError } from "@/lib/api/client";
 import { failureOf } from "@/lib/api/failure";
 import { submitTemplate, submitTemplateDrafts, syncTemplates } from "@/lib/api/whatsapp";
-import { requireUser } from "@/lib/auth/session";
+import { hasAuthenticator, requireUser } from "@/lib/auth/session";
 
 /**
  * The message templates, what the Owner or an Admin does (C1, 16 Nov): send the drafts to WhatsApp for review (all, or one), and ask what WhatsApp answered. Sending needs the second factor (the API asks: a closed `mfa` word with the way to Security); checking does not. Each answer is the templates as they stand now.
@@ -30,10 +30,10 @@ async function runTemplates(tenantId: string, ids: string[], work: (token: strin
   }
 }
 export async function submitDraftsAction(tenantId: string): Promise<Out<TemplatesOut>> {
-  return runTemplates(tenantId, [], (token) => submitTemplateDrafts(token, tenantId));
+  return runTemplates(tenantId, [], async (token) => submitTemplateDrafts(token, tenantId, !(await hasAuthenticator())));
 }
 export async function submitTemplateAction(tenantId: string, templateId: string): Promise<Out<TemplatesOut>> {
-  return runTemplates(tenantId, [templateId], async (token) => ({ templates: [await submitTemplate(token, tenantId, templateId)] }));
+  return runTemplates(tenantId, [templateId], async (token) => ({ templates: [await submitTemplate(token, tenantId, templateId, !(await hasAuthenticator()))] }));
 }
 export async function syncTemplatesAction(tenantId: string): Promise<Out<TemplatesOut>> {
   return runTemplates(tenantId, [], (token) => syncTemplates(token, tenantId));

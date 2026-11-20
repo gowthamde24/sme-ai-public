@@ -97,8 +97,13 @@ class SarvamStreamTts:
 
     def __init__(self, key: str, *, speaker: str, language: str = "te", model: str = "bulbul:v4-flash", pace: float = 1.05, min_buffer: int = 30) -> None:
         self._key, self._model, self._speaker, self._pace, self._min_buffer, self._language = key, model, speaker, pace, min_buffer, language
+        self._base_pace = pace
         self._warm: websockets.ClientConnection | None = None
         self._warm_language = ""
+
+    def set_pace(self, speed: float) -> None:
+        """The workspace's speaking speed (1.0 = normal) on top of this engine's own base pace; Bulbul takes 0.5 to 2.0. A connection that is already open keeps its pace until it is opened again."""
+        self._pace = round(max(0.5, min(2.0, self._base_pace * speed)), 2)
 
     def __repr__(self) -> str:
         return f"SarvamStreamTts(model={self._model})"
@@ -145,7 +150,12 @@ class CartesiaStreamTts:
 
     def __init__(self, key: str, *, voice_id: str, model: str = "sonic-3.6", client: httpx.AsyncClient | None = None) -> None:
         self._key, self._voice_id, self._model = key, voice_id, model
+        self._speed = 1.0
         self._client = client or httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0))
+
+    def set_pace(self, speed: float) -> None:
+        """The workspace's speaking speed (1.0 = the voice's own). Only a speed other than 1.0 is sent (`generation_config.speed`), so a workspace that never changed it speaks exactly as before."""
+        self._speed = max(0.6, min(1.5, speed))
 
     def __repr__(self) -> str:
         return f"CartesiaStreamTts(model={self._model})"
@@ -168,6 +178,8 @@ class CartesiaStreamTts:
 
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
         body = {"model_id": self._model, "transcript": text, "voice": {"mode": "id", "id": self._voice_id}, "language": language, "output_format": {"container": "raw", "encoding": "pcm_s16le", "sample_rate": self.sample_rate}}
+        if abs(self._speed - 1.0) > 0.001:
+            body["generation_config"] = {"speed": round(self._speed, 2)}
         try:
             async with self._client.stream("POST", f"{CARTESIA}/tts/bytes", headers={"X-API-Key": self._key, "Cartesia-Version": "2025-04-16"}, json=body) as resp:
                 if resp.status_code != 200:

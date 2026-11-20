@@ -192,13 +192,15 @@ describe("sending needs the second step", () => {
     expect(await screen.findByText(/That code did not work/)).toBeInTheDocument();
     expect(part("builder")).toBeTruthy();
   });
-  it("a person with no two-step code set up is sent to Security, there is no code box and nothing can be sent", async () => {
+  it("a person with no authenticator gets a plain Confirm step: no code box, one button that sends with an empty code (owner 20 Nov)", async () => {
     const a = acts();
     await ready(a, false);
-    expect(part("no-factor")).toHaveTextContent("You have not set up your two-step code yet");
-    expect(within(part("no-factor")).getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security");
+    expect(part("confirm-step")).toHaveTextContent("Send to WhatsApp?");
     expect(document.querySelector('input[name="code"]')).toBeNull();
-    expect(screen.queryByRole("button", { name: "Send to WhatsApp" })).toBeNull();
+    expect(part("no-factor")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Yes, send it" }));
+    await waitFor(() => expect(a.submit).toHaveBeenCalledTimes(1));
+    expect((a.submit as ReturnType<typeof vi.fn>).mock.calls[0]![1]).toBe("");
   });
   it("an `mfa` refusal from the server turns the code box into the Security link", async () => {
     const a = acts({ submit: vi.fn(async () => ({ ok: false as const, kind: "mfa" as const, mfa: true, error: "You have not set up your two-step code yet. Set it up in Security, then come back here." })) });

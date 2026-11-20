@@ -1,18 +1,45 @@
 {
-  "$comment": "How words are WRITTEN to the voice so every engine says them right (job natural-voice, owner 28 Oct: 'Kannada' came out as 'Canada' for every voice). The text is respelled before it reaches an engine; subtitles and the chat keep the real spelling. Whole Latin-script words only, any case, longest first. `words` apply to every engine; `engines.<engine>` entries win for that engine only (Cartesia reads its own phoneme syntax <<ˈ|k|ʌ|...>>, which Bulbul would read aloud). An entry is listed only when the speech recogniser (scripts/pronunciation_check.py) agrees with it on a real voice; the recogniser is a proxy for a listener, not a replacement. Each workspace can add its own business and area names on top (Pronunciations.with_extra), and those win over everything here.",
-  "words": {
-    "Kannada": "Kun-nuh-dah",
-    "Telugu": "Tel-uh-goo",
-    "Dharmavaram": "Dhar-muh-vuh-rum",
-    "Anantapur": "Anantha-poor",
-    "Bengaluru": "Ben-guh-loo-roo",
-    "Gowtham": "Gow-tum",
-    "sarees": "sah-rees",
-    "saree": "sah-ree"
-  },
-  "engines": {
-    "cartesia": {
-      "Kannada": "<<ˈ|k|ʌ|n|ə|d|ə>>"
-    }
+ "$comment": "How words are WRITTEN to the voice so every engine says them right (job natural-voice, owner 28 Oct: 'Kannada' came out as 'Canada' for every voice). The text is respelled before it reaches an engine; subtitles and the chat keep the real spelling. Whole Latin-script words only, any case, longest first. `words` apply to every engine; `engines.<engine>` entries win for that engine only (Cartesia reads its own phoneme syntax <<ˈ|k|ʌ|...>>, which Bulbul would read aloud). An entry is listed only when the speech recogniser (scripts/pronunciation_check.py) agrees with it on a real voice; the recogniser is a proxy for a listener, not a replacement. Each workspace can add its own business and area names on top (Pronunciations.with_extra), and those win over everything here. Places and common business words added 21 Nov 2026 for Bulbul v4 (and Cartesia): DRAFT respellings that scripts/pronunciation_check.py has NOT yet confirmed on a real voice (it spends voice credits: run it on the owner's go-ahead) and that a native listener must confirm; a workspace's own words (Settings > Pronunciation) still win.",
+ "words": {
+  "Kannada": "Kun-nuh-dah",
+  "Telugu": "Tel-uh-goo",
+  "Dharmavaram": "Dhar-muh-vuh-rum",
+  "Anantapur": "Anantha-poor",
+  "Bengaluru": "Ben-guh-loo-roo",
+  "Gowtham": "Gow-tum",
+  "sarees": "sah-rees",
+  "saree": "sah-ree",
+  "Hyderabad": "Hy-duh-ruh-bad",
+  "Secunderabad": "Sek-un-duh-ruh-bad",
+  "Visakhapatnam": "Vi-sah-kuh-put-num",
+  "Vijayawada": "Vi-juh-yuh-wah-dah",
+  "Tirupati": "Ti-roo-puh-ti",
+  "Warangal": "Wuh-run-gul",
+  "Guntur": "Gun-toor",
+  "Nellore": "Nel-lor",
+  "Kurnool": "Kur-nool",
+  "Karimnagar": "Kuh-rim-nuh-gur",
+  "Nizamabad": "Ni-zah-muh-bad",
+  "Khammam": "Khum-mum",
+  "Rajahmundry": "Rah-juh-mun-dree",
+  "Kakinada": "Kah-ki-nah-dah",
+  "Eluru": "Eh-loo-roo",
+  "Chennai": "Chen-nigh",
+  "Coimbatore": "Koy-um-buh-tor",
+  "Madurai": "Muh-doo-righ",
+  "Mysuru": "My-soo-roo",
+  "Mangaluru": "Mun-guh-loo-roo",
+  "Hubballi": "Hub-buh-lli",
+  "Kochi": "Ko-chi",
+  "Thiruvananthapuram": "Ti-ru-vuh-nun-tuh-poo-rum",
+  "Venkateswara": "Ven-kuh-tesh-wuh-ruh",
+  "Lakshmi": "Luck-shmee",
+  "Balaji": "Bah-lah-jee",
+  "Sri": "Shree"
+ },
+ "engines": {
+  "cartesia": {
+   "Kannada": "<<ˈ|k|ʌ|n|ə|d|ə>>"
   }
+ }
 }

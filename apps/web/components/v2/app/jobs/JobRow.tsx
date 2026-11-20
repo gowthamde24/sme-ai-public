@@ -92,7 +92,8 @@ export function JobRow({ job, words, base, actions, chips = false }: { job: Job;
       <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-brand-bg text-brand-text">
         <Icon className="size-[18px]" />
       </span>
-      <Link href={href} prefetch={false} className="min-w-0 flex-1 no-underline">
+      {/* the shared tap-target rule (`main a` = inline-flex, a row) would put the name, the result line and the chips side by side: this link stacks them (staging, 20 Nov: rows were squeezed into columns on a phone) */}
+      <Link href={href} prefetch={false} className="flex min-w-0 flex-1 flex-col items-start justify-center no-underline">
         <span className="block text-[15px] font-semibold leading-snug text-ink max-md:line-clamp-2">{name}</span>
         <span className="block text-[12.5px] leading-snug text-muted">{resultSentence(t, job.result)}</span>
         {chips && job.speaks ? <SpeaksChips speaks={job.speaks} t={t} words={words} /> : null}

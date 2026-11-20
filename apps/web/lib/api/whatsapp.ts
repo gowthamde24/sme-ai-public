@@ -189,13 +189,13 @@ export const parseFailedTemplate = (json: unknown): FailedTemplate => {
   const x = rec(json, "failed template");
   return { id: uuid(x.id, "id"), name: word(x.name, "name", 80), language: word(x.language, "language", 10), code: word(x.code, "code", 40), reason: str(x.reason, "reason", 400), metaMessage: typeof x.meta_message === "string" && x.meta_message.trim() !== "" ? x.meta_message.trim().slice(0, 300) : null };
 };
-export async function submitTemplateDrafts(token: string, tenantId: string): Promise<{ submitted: number; refused: number; failed: FailedTemplate[]; renamed: RenamedTemplate[]; templates: Template[] }> {
-  const x = rec(await post(`${base(tenantId)}/whatsapp/templates/submit-drafts`, token), "submit drafts");
+export async function submitTemplateDrafts(token: string, tenantId: string, confirm = false): Promise<{ submitted: number; refused: number; failed: FailedTemplate[]; renamed: RenamedTemplate[]; templates: Template[] }> {
+  const x = rec(await post(`${base(tenantId)}/whatsapp/templates/submit-drafts`, token, confirm ? { confirm: true } : undefined), "submit drafts");
   return { submitted: int(x.submitted, "submitted", 0, 1000), refused: int(x.refused, "refused", 0, 1000), failed: x.failed === undefined ? [] : readRows(x.failed, "failed templates", parseFailedTemplate, 100), renamed: x.renamed === undefined ? [] : readRows(x.renamed, "renamed templates", parseRenamedTemplate, 100), templates: parseTemplates({ templates: x.templates }) };
 }
-export async function submitTemplate(token: string, tenantId: string, templateId: string): Promise<Template> {
+export async function submitTemplate(token: string, tenantId: string, templateId: string, confirm = false): Promise<Template> {
   if (!isCanonicalUuid(templateId)) bad("template id");
-  const x = rec(await post(`${base(tenantId)}/whatsapp/templates/${templateId}/submit`, token), "submit template");
+  const x = rec(await post(`${base(tenantId)}/whatsapp/templates/${templateId}/submit`, token, confirm ? { confirm: true } : undefined), "submit template");
   return parseTemplates({ templates: [x.template] })[0] ?? bad("template");
 }
 /** "Check WhatsApp's answer": asks WhatsApp what became of the templates under review. No second factor. */

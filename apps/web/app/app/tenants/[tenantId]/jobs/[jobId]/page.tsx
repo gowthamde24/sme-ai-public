@@ -6,6 +6,7 @@ import { ChevronRight } from "lucide-react";
 import { cache } from "react";
 
 import { JobPage } from "@/components/v2/app/jobs/detail/JobPage";
+import { SampleChip } from "@/components/v2/app/jobs/SampleChip";
 import type { JobPageActions, WhoExtra } from "@/components/v2/app/jobs/detail/types";
 import { pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
@@ -89,6 +90,7 @@ export default async function JobRoute({ params }: PageProps<"/app/tenants/[tena
         <span aria-current="page" className="font-semibold text-ink">
           {name}
         </span>
+        {detail.job.sample ? <SampleChip words={words} note className="ml-2" /> : null}
       </nav>
       <JobPage detail={detail} words={words} base={base} lang={lang} ago={agoOf(detail.job.lastRunAt, clock())} actions={actions} allSettingsHref={ALL_SETTINGS[detail.job.kind] ? `${base}${ALL_SETTINGS[detail.job.kind]}` : null} whoExtra={whoExtra} />
     </main>

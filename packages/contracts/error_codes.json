@@ -670,6 +670,18 @@
       "extras": []
     },
     {
+      "code": "confirm_required",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "whatsapp"
+      ],
+      "default_message": "Press Confirm to send this to WhatsApp for review.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "confirmation_mismatch",
       "statuses": [
         422
@@ -726,11 +738,14 @@
       ],
       "areas": [
         "developer_api",
+        "lead_sources",
         "outbox"
       ],
       "default_message": "This customer has not agreed to WhatsApp messages yet.",
       "wait": false,
-      "extras": []
+      "extras": [
+        "fields"
+      ]
     },
     {
       "code": "consent_sentence_mismatch",
@@ -1237,6 +1252,18 @@
         "knowledge"
       ],
       "default_message": "The assistant found no facts in that text. Check the text, or write the facts yourself.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "faq_not_allowed",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "A job answer may not state a price, a discount or a promise.",
       "wait": false,
       "extras": []
     },
@@ -1861,6 +1888,18 @@
       "extras": []
     },
     {
+      "code": "jobs_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "Jobs are not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "keep_owner",
       "statuses": [
         409
@@ -2413,6 +2452,18 @@
       "extras": []
     },
     {
+      "code": "name_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "A helper's name cannot be only digits, a web address, an e-mail address or a phone number, and has at most 40 characters.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "needs_photo",
       "statuses": [
         409
@@ -2785,6 +2836,18 @@
         "lead_finder"
       ],
       "default_message": "Only a qualified call has a quote suggestion. Run the call first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_removable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "This number stays on the list: only a number you added yourself can be removed.",
       "wait": false,
       "extras": []
     },
@@ -3318,6 +3381,18 @@
         "pricing"
       ],
       "default_message": "This change has an amount to pay. Pay it first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "phone_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "That is not a phone number we can use. Check the digits.",
       "wait": false,
       "extras": []
     },
@@ -4577,6 +4652,7 @@
         409
       ],
       "areas": [
+        "jobs",
         "outbox"
       ],
       "default_message": "This customer asked us to stop. Nothing can be sent until they write again.",
@@ -4625,9 +4701,10 @@
         503
       ],
       "areas": [
+        "jobs",
         "suppression"
       ],
-      "default_message": "The suppression key is not configured, so contacts cannot be keyed.",
+      "default_message": "The suppression key is not configured, so numbers cannot be added.",
       "wait": false,
       "extras": []
     },

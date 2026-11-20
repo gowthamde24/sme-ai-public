@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import type { Reply } from "@/components/v2/app/cc/kit";
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
+import { ApiRequestError } from "@/lib/api/client";
 import { changeSearch, checkPlanInput, checkSearchPatch, planJob, startPlan, startSuggestion, testPlan } from "@/lib/api/jobs";
 import { JOB_KINDS, type JobKind } from "@/lib/jobs/types";
 import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput, SearchPatch } from "@/lib/jobs/plan";
@@ -34,6 +35,8 @@ export async function planJobAction(tenantId: string, input: PlanInput): Promise
   try {
     return { ok: true, data: await planJob(ctx.token, tenantId, body, lang) };
   } catch (error) {
+    // only a 404 means "not there yet" (contract 1.1): said in plain words, never "not found, it may have been removed" (staging 20 Nov: POST /jobs/plan answered 404)
+    if (error instanceof ApiRequestError && error.status === 404) return { ...jobsRefusal(error, ctx.t, lang), error: ctx.t("jobs.err.plan_not_ready") };
     return jobsRefusal(error, ctx.t, lang);
   }
 }

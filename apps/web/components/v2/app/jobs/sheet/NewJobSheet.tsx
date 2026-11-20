@@ -11,6 +11,7 @@ import { Skeleton } from "../../ds/Skeleton";
 import { VoiceMic } from "../../voice-input/VoiceMic";
 import { makeT, type Words } from "../../words";
 import { PlanCard } from "../LazyPlanCard";
+import { SampleChip } from "../SampleChip";
 import type { PlanCardState } from "../PlanCard";
 import { StartedToast } from "../StartedToast";
 import { KIND_ICON, TemplateCard, type CardContext } from "./TemplateCard";
@@ -301,6 +302,11 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
 
           {!folded && load ? (
             <>
+              {load.data.sample ? (
+                <p data-part="sample-ideas" className="m-0">
+                  <SampleChip words={words} note />
+                </p>
+              ) : null}
               {popular.length > 0 ? (
                 <section data-part="popular" aria-labelledby="njs-popular" className="flex flex-col gap-3">
                   <div>

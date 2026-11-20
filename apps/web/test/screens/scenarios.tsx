@@ -5,6 +5,8 @@
 import { parseBatchAnswer, parseHandoffs as parseOutreachHandoffs, parseItems as parseOutreachItems, parsePolicy as parseOutreachPolicy, parseReport as parseOutreachReport, parseRule as parseOutreachRule } from "@/lib/api/outreach";
 import type { ReactElement } from "react";
 
+import type { PreviewChoice } from "@/lib/screens/preview";
+
 import { ApiRequestError, parseMe } from "@/lib/api/client";
 import { parseItemTypes } from "@/lib/api/item-types";
 import { parseQuotePolicyVersions } from "@/lib/api/quote-policies";
@@ -128,6 +130,37 @@ add({
   roles: ["owner"],
   env: { PREVIEW_JOBS: "1" },
   render: async () => (await import("@/app/app/preview/page")).default(),
+  handlers: () => ({}),
+});
+// the picker of the staging preview in each state (the choice is a cookie a test cannot send, so the form is drawn with the choice it is given): off, my business, a sample business
+const previewPicker = (choice: PreviewChoice | null) => async (): Promise<ReactElement> => {
+  const { PreviewPicker } = await import("@/components/v2/app/PreviewPicker");
+  const { wordsFor } = await import("@/i18n/app-words");
+  return PreviewPicker({ choice, words: wordsFor("en", ["preview."]) });
+};
+add({ id: "account-preview-picker-off", roles: ["owner"], env: { PREVIEW_JOBS: "1" }, render: previewPicker(null), handlers: () => ({}) });
+add({ id: "account-preview-picker-mine", roles: ["owner"], env: { PREVIEW_JOBS: "1" }, render: previewPicker({ kind: "mine" }), handlers: () => ({}) });
+add({ id: "account-preview-picker-realestate", roles: ["owner"], env: { PREVIEW_JOBS: "1" }, render: previewPicker({ kind: "sample", type: "realestate" }), handlers: () => ({}) });
+add({
+  id: "account-preview-bar-sample",
+  roles: ["owner"],
+  env: { PREVIEW_JOBS: "1" },
+  render: async () => {
+    const { PreviewBar } = await import("@/components/v2/app/PreviewBar");
+    const { wordsFor } = await import("@/i18n/app-words");
+    return <PreviewBar words={wordsFor("en", ["preview."])} choice={{ kind: "sample", type: "cars" }} />;
+  },
+  handlers: () => ({}),
+});
+add({
+  id: "account-preview-bar-mine",
+  roles: ["owner"],
+  env: { PREVIEW_JOBS: "1" },
+  render: async () => {
+    const { PreviewBar } = await import("@/components/v2/app/PreviewBar");
+    const { wordsFor } = await import("@/i18n/app-words");
+    return <PreviewBar words={wordsFor("en", ["preview."])} choice={{ kind: "mine" }} />;
+  },
   handlers: () => ({}),
 });
 add({

@@ -29,6 +29,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse, PlainTextResponse
+from pydantic import BaseModel, ConfigDict
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
@@ -406,10 +407,26 @@ def _submit_all_drafts(wa: Any, ctx: TenantContext, languages: tuple[str, ...] |
     return {"submitted": sent, "refused": len(failed), "failed": failed, "renamed": renamed, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
 
 
+class ConfirmIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    confirm: bool = False
+
+
+def _confirmed(wa: Any, ctx: TenantContext, body: ConfirmIn | None) -> None:
+    """The step that stands in for the second factor (owner, 21 Nov 2026: the authenticator is optional). A person WHO HAS it already entered the code (the strong gate refused otherwise: this session is aal2);
+    a person WITHOUT it must say `confirm: true` (the web's Confirm button) before words go to Meta. Off (CONFIRM_WITHOUT_AUTHENTICATOR) until the web sends it. The confirmed call is in the request log with the member's id (no content)."""
+    if not getattr(wa, "confirm_step", False) or ctx.principal.aal == "aal2":
+        return
+    if body is None or not body.confirm:
+        raise ApiError(422, "confirm_required", "Press Confirm to send this to WhatsApp for review.")
+    logging.getLogger("app.whatsapp").info("template submit confirmed without authenticator tenant=%s member=%s", ctx.tenant.id, ctx.principal.user_id)
+
+
 @router.post("/whatsapp/templates/submit-drafts")
-def submit_drafts(ctx: OwnerAdminStrong, runtime: RuntimeDep) -> dict[str, Any]:
-    """Send every DRAFT template of this workspace to Meta for review (one call each). Answers how many Meta took and how many it refused."""
+def submit_drafts(ctx: OwnerAdminStrong, runtime: RuntimeDep, body: ConfirmIn | None = None) -> dict[str, Any]:
+    """Send every DRAFT template of this workspace to Meta for review (one call each). Answers how many Meta took and how many it refused. Without the authenticator: `{"confirm": true}` (422 confirm_required)."""
     wa = _wa(runtime)
+    _confirmed(wa, ctx, body)
     return _submit_all_drafts(wa, ctx)
 
 
@@ -432,9 +449,10 @@ def sync_template_status(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]
 
 
 @router.post("/whatsapp/templates/{template_id}/submit")
-def submit_template(template_id: str, ctx: OwnerAdminStrong, runtime: RuntimeDep) -> dict[str, Any]:
-    """Ask Meta to review a draft template. On Meta's yes the template becomes `submitted`; Meta's decision is then set with /status (or read in WhatsApp Manager)."""
+def submit_template(template_id: str, ctx: OwnerAdminStrong, runtime: RuntimeDep, body: ConfirmIn | None = None) -> dict[str, Any]:
+    """Ask Meta to review a draft template. On Meta's yes the template becomes `submitted`; Meta's decision is then set with /status (or read in WhatsApp Manager). Without the authenticator: `{"confirm": true}` (422 confirm_required)."""
     wa = _wa(runtime)
+    _confirmed(wa, ctx, body)
     parsed = _id(template_id)
     templates = wa.repository.template_list(ctx.principal.token, ctx.tenant.id)
     template = next((t for t in templates if t.get("id") == str(parsed)), None)

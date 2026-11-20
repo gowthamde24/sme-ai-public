@@ -34,6 +34,7 @@ class FakeLeadSourcesRepository:
         self.stats: dict[str, Any] = {}       # job EB: what lead_source_cards_stats would return
         self.inbound: dict[str, Any] = {}     # job EB: the forwarding address token of the workspace
         self.website: dict[str, Any] = {}     # job EK: the website form token of the workspace
+        self.ticks: list[dict[str, Any]] = []  # JOBS S1: every consent tick the API stored (kinds, wording version)
 
     # the core, simplified
     def _core(self, tag: str, consent: str | None, rows: list[dict[str, Any]], live: bool, dry: bool) -> dict[str, Any]:
@@ -125,6 +126,14 @@ class FakeLeadSourcesRepository:
         if args["p_consent"]:
             self.consents[args["p_consent_id"]] = args["p_consent"]
         return {"created": True, "source": self._src(sid)}
+
+    def consent_tick(self, token: str, tenant_id: uuid.UUID, kinds: list[str], text_version: str) -> dict[str, Any]:
+        self.calls.append("consent_tick")
+        self.ticks.append({"kinds": list(kinds), "version": text_version})
+        hit = [s for s in self.sources_.values() if s["kind"] in kinds]
+        for s in hit:
+            s["consent_text_version"] = text_version
+        return {"updated": len(hit)}
 
     def _src(self, sid: str) -> dict[str, Any]:
         s = self.sources_[sid]

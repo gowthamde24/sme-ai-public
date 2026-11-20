@@ -24,7 +24,7 @@ ROUTE_WORDS = frozenset(
         "marketing-consent", "consented",   # campaigns S3, 17 Nov
         "briefing",   # GET /today/briefing (the briefing numbers, 19 Nov)
         "festivals",   # GET /jobs/festivals (festival calendar, 20 Nov)
-        "job-samples", "generate", "ops",   # the spoken samples of the job cards, 20 Nov
+        "job-samples", "generate", "ops", "index", "recode",   # job-card samples, 20-21 Nov
         "contacted",   # POST /prospects/{id}/contacted (Lead Finder "Mark as contacted", 19 Nov)
         "rule-templates",   # GET /outreach/rule-templates (rules v2, 16 Nov)
         "staff",   # GET /visits/staff, PUT /visits/staff/{id} (14 Nov)
@@ -163,6 +163,8 @@ ROUTE_WORDS = frozenset(
         "notifications", "seen", "enquiry-done", "consent-ask", "push",
         # the Chats composer queue (19 Nov 2026)
         "queued-message", "queued-messages", "attention",
+        # JOBS S1 (20 Nov 2026): the do-not-call list and the FAQs of a job
+        "do-not-call", "faqs",
         "push-subscriptions", "public-key",
         "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",

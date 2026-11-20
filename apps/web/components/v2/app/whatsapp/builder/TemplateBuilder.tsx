@@ -57,7 +57,8 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
   const [code, setCode] = useState("");
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
-  const [needsFactor, setNeedsFactor] = useState(!secondFactor);
+  const [needsFactor, setNeedsFactor] = useState(false); // the API still asked for a code (a refusal with `mfa`): then the way to Security is shown
+  const confirmOnly = !secondFactor; // no authenticator: no code box, a plain Confirm step (owner 20 Nov)
   const results = useMemo(() => (message ? runChecks(message) : []), [message]);
   const ready = message !== null && canSend(message);
   const group = message ? t(`jobs.tb.cat.${message.category}`) : "";
@@ -253,6 +254,16 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
                 <Link href={securityHref} prefetch={false} className={`${jobBtnQuiet} self-start no-underline`}>
                   {t("jobs.tb.s5.security")}
                 </Link>
+              </div>
+            ) : confirmOnly ? (
+              <div data-part="confirm-step" className="flex flex-col gap-3">
+                <p className="m-0 rounded-xl bg-[var(--jb-wait-soft)] px-3 py-3 text-[14.5px] leading-snug text-ink">
+                  <b>{t("jobs.tb.s5.confirm.title")}</b> {t("jobs.tb.s5.confirm.body")}
+                </p>
+                <button type="button" data-action="send" disabled={sending} onClick={() => void send()} className={`${jobBtnMain} w-full`}>
+                  <ArrowRight aria-hidden="true" className="size-4" />
+                  {sending ? t("jobs.tb.s5.sending") : t("jobs.tb.s5.confirm.btn")}
+                </button>
               </div>
             ) : (
               <form

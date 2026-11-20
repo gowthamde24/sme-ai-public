@@ -6,7 +6,7 @@ import type { SiteKey, SiteT } from "@/i18n/site";
 import { PUBLIC_PLANS, planVars, rupees, type PublicPlan } from "@/lib/site/plans";
 
 const TAG: Record<PublicPlan["id"], SiteKey> = { payg: "pp.payg.t", pro: "pp.pro.t", business: "pp.biz.t" };
-const SHARED = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
+const SHARED = [1, 2, 3, 4, 5, 6, 9] as const;
 
 /**
  * The lines of one paid plan (what it includes that the others do not share): its minutes, the extra-minute price, Find customers searches and the set-up. Every number is the plan's own (lib/site/plans.ts), never typed in a

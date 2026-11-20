@@ -152,6 +152,8 @@ insert into exempt (tbl, why) values
   ('public.tenant_agent_switches', 'a switch per helper: core, every business type (no module)'),
   ('public.ai_team_standups', 'the morning stand-up text: core, every business type (no module)'),
   ('public.queued_replies', 'the chat composer queue: core, every business type (no module)'),
+  ('public.jobs_meta', 'a job''s own name and what it asks: core, every business type (no module)'),
+  ('public.job_faqs', 'what a job may answer when asked: core, every business type (no module)'),
   ('public.price_asks', 'what customers asked the price of: core, every business type (no module)'),
   ('public.assistant_files', 'the assistant does the work: core, every business type (no module)'), ('public.assistant_work_plans', 'the assistant does the work: core, every business type (no module)'),
   ('public.workspace_secrets', 'a workspace''s own keys: where the key is (core, every business type, no module)'), ('public.secret_requests', 'the secure card''s requests (core, every business type, no module)'),

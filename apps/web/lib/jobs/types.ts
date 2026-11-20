@@ -35,6 +35,8 @@ export type Job = {
   planGate: PlanGate | null;
   /** How this job sounds to customers: the language, the voice (its first name) and the number it calls or writes from. Each may be missing (the shop's own); null = the API says nothing (older answer). A named job shows them as chips. */
   speaks?: JobSpeaks | null;
+  /** The staging preview ("my business") drew this from the sample data because the API route is not there yet (lib/screens/preview.ts); never set otherwise. */
+  sample?: true;
 };
 /** `voice` is the catalogue id, `voiceName` the owner's word for it ("Soft woman"; the chip shows the name). The number is only ever the shop's. */
 export type JobSpeaks = { language: string | null; voice: string | null; voiceName: string | null; number: string | null };
