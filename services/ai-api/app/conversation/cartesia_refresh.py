@@ -35,7 +35,7 @@ def fetch(client: httpx.Client, key: str, language: str, gender: str) -> list[di
 
 
 def compare(config: VoiceConfig, offered: dict[tuple[str, str], list[dict[str, Any]]]) -> tuple[list[str], list[str]]:
-    """(lines for voices Cartesia offers that the catalogue lacks, lines for catalogue voices Cartesia no longer lists), each a plain 'language gender id name' line."""
+    """(lines for voices Cartesia offers that the catalogue lacks, lines for catalogue voices Cartesia no longer lists), each a plain 'language gender id [name]' line (the catalogue's own id for a voice that is gone: no provider id is printed for it)."""
     ours = {c.voices.primary.voice: c for c in config.catalogue.values() if c.voices.primary.engine == "cartesia"} | {c.voices.fallback.voice: c for c in config.catalogue.values() if c.voices.fallback.engine == "cartesia"}
     seen: set[str] = set()
     new: list[str] = []
@@ -45,7 +45,7 @@ def compare(config: VoiceConfig, offered: dict[tuple[str, str], list[dict[str, A
             seen.add(vid)
             if vid and vid not in ours:
                 new.append(f"{language} {gender} {vid} {str(v.get('name', ''))[:40]}")
-    gone = [f"{c.language} {c.gender} {c.id} {c.voices.primary.voice}" for c in config.catalogue.values() if c.voices.primary.engine == "cartesia" and offered.get((c.language, c.gender)) and c.voices.primary.voice not in seen]
+    gone = [f"{c.language} {c.gender} {c.id}" for c in config.catalogue.values() if c.voices.primary.engine == "cartesia" and offered.get((c.language, c.gender)) and c.voices.primary.voice not in seen]
     return new, gone
 
 
