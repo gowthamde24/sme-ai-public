@@ -93,14 +93,14 @@ describe("Add a weekly search", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
     await waitFor(() => expect(screen.getByText("This search will run by itself every week.")).toBeInTheDocument());
     expect(a.preview).toHaveBeenCalledWith({ text: "find new retailers in Jayanagar", weekday: 3, hour: 18, maxResults: 10 });
-    expect(screen.getByText("Runs every Wednesday at 18:00 · retailers, Jayanagar · up to 10 businesses")).toBeInTheDocument(); // the card is what the API understood
+    expect(await screen.findByText("Runs every Wednesday at 18:00 · retailers, Jayanagar · up to 10 businesses")).toBeInTheDocument(); // the card is what the API understood
     const prev = document.querySelector("[data-part=sweep-preview]") as HTMLElement;
     expect(prev).toHaveTextContent("Made-up businesses: no cost.");
     expect(prev).toHaveTextContent("First run:");
     expect(prev).toHaveTextContent("That makes 3 of 5 weekly searches.");
     expect(a.add).not.toHaveBeenCalled(); // the preview stores nothing
-    expect(screen.getByText(/Every Wednesday at 18:00 it looks for up to 10 businesses/)).toBeInTheDocument();
-    expect(screen.getByText(/Nobody is called\./)).toBeInTheDocument();
+    expect(await screen.findByText(/Every Wednesday at 18:00 it looks for up to 10 businesses/)).toBeInTheDocument();
+    expect(await screen.findByText(/Nobody is called\./)).toBeInTheDocument();
     fireEvent.click(await screen.findByRole("button", { name: "Yes, run it every week" }));
     await waitFor(() => expect(a.add).toHaveBeenCalledWith({ text: "find new retailers in Jayanagar", weekday: 3, hour: 18, maxResults: 10 }));
     await waitFor(() => expect(nav.refresh).toHaveBeenCalled());
@@ -116,8 +116,8 @@ describe("Add a weekly search", () => {
     const prev = document.querySelector("[data-part=sweep-preview]") as HTMLElement;
     expect(prev).toHaveTextContent("About ₹450 a week (an estimate). · Google Maps");
     expect(prev).toHaveTextContent("This does not fit this week's budget (₹0 left). It will be skipped until the budget allows it.");
-    expect(within(prev).getByRole("link", { name: "Set a weekly budget first (Settings > Lead Finder)" })).toHaveAttribute("href", "/app/tenants/T/settings?section=leadfinder");
-    expect(screen.getByRole("button", { name: "Yes, run it every week" })).toBeEnabled();
+    expect(await within(prev).findByRole("link", { name: "Set a weekly budget first (Settings > Lead Finder)" })).toHaveAttribute("href", "/app/tenants/T/settings?section=leadfinder");
+    expect(await screen.findByRole("button", { name: "Yes, run it every week" })).toBeEnabled(); // (found, not queried at once: the second step draws a moment after its heading)
   });
   it("a refused preview (the most weekly searches) is said on the form and the second step never shows", async () => {
     const a = actions();
