@@ -8,7 +8,7 @@ export const LANGUAGE_NAMES: Record<Lang, { english: string; native: string }> =
 };
 
 /**
- * The languages of the PUBLIC SITE (stack19.com): the four product languages and Tamil (owner, 20 Nov 2026: Tamil on the public site). The product itself (the app, the assistant, the calls) speaks `Lang` only; Tamil exists in the site's words, its
+ * The languages of the PUBLIC SITE (the website): the four product languages and Tamil (owner, 20 Nov 2026: Tamil on the public site). The product itself (the app, the assistant, the calls) speaks `Lang` only; Tamil exists in the site's words, its
  * addresses ("/ta"), its fonts and the legal page labels. A site string without a Tamil text shows its English.
  */
 export type SiteLang = Lang | "ta";
