@@ -205,7 +205,8 @@
 [data-ui="v2"] .h3-found[data-out] .h3-found-row { opacity: 0; }
 [data-ui="v2"] .h3-found-wait { color: var(--v2-muted); font-style: italic; font-weight: 400; }
 [data-ui="v2"] .h3-found-v { animation: h3-bubble-in 250ms ease-out both; }
-[data-ui="v2"] .h3-found-tick { display: inline-block; margin-left: 8px; vertical-align: -2px; color: var(--v2-green-text); }
+/* the green tick, drawn with borders (no icon code in the script) */
+[data-ui="v2"] .h3-found-tick { display: inline-block; width: 6px; height: 11px; margin-left: 10px; vertical-align: 1px; border-right: 2.5px solid var(--v2-green-text); border-bottom: 2.5px solid var(--v2-green-text); transform: rotate(45deg); }
 [data-ui="v2"] .h3-found dl { display: flex; flex-direction: column; gap: 8px; margin: 0; }
 [data-ui="v2"] .h3-found dl > div { display: flex; flex-wrap: wrap; gap: 2px 14px; }
 [data-ui="v2"] .h3-found dt { flex: 0 0 72px; font-size: 14px; color: var(--v2-muted); }

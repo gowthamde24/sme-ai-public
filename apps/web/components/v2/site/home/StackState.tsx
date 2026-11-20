@@ -1,6 +1,5 @@
 "use client";
 
-import { Check } from "lucide-react";
 import * as React from "react";
 
 import type { StackChat } from "./chat-stack";
@@ -112,7 +111,7 @@ export function FoundCard({ heading, listening, summary, sets }: { heading: stri
                     {on ? (
                       <>
                         <span className="h3-found-v">{r.v}</span>
-                        <Check className="h3-found-tick" size={16} strokeWidth={2.6} aria-hidden="true" />
+                        <span className="h3-found-tick" aria-hidden="true" />
                       </>
                     ) : (
                       <span className="h3-found-wait">{listening}</span>
