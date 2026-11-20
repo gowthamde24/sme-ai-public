@@ -32,7 +32,7 @@ exception when others then return 'ERR:' || sqlstate; end $$;
 
 -- A. who asks, what is due
 select is(pg_temp.due('a_owner'), 'ERR:42501', 'A1 a workspace owner cannot ask');
-select is((pg_temp.due()::jsonb -> 0 ->> 'waba_id'), '100000000000001', 'A2 the system sees the account with submitted templates');
+select is((pg_temp.due()::jsonb -> 0 ->> 'waba_id'), '200000000000001', 'A2 the system sees the account with submitted templates');
 select is(jsonb_array_length(pg_temp.due()::jsonb -> 0 -> 'templates'), 3, 'A3 its three SUBMITTED templates (the draft is not asked about)');
 
 -- B. what WhatsApp said
