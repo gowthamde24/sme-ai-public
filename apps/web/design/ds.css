@@ -327,11 +327,7 @@
   border-radius: 28px;
   padding: 22px 26px 22px;
   color: #fafafa;
-  background:
-    radial-gradient(640px 320px at 88% -20%, rgba(234, 88, 12, 0.22), transparent 65%),
-    radial-gradient(520px 300px at -5% 120%, rgba(194, 65, 12, 0.12), transparent 60%),
-    radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1.3px) 0 0 / 18px 18px,
-    linear-gradient(160deg, #1f1e24, #0f0e12 55%, #17161b);
+  background: linear-gradient(160deg, #1c1b20, #131216);
   box-shadow: 0 30px 70px rgba(8, 8, 12, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.6);
 }
 [data-ui="v2"][data-ds="6"] .ds-hero::before {
@@ -346,7 +342,7 @@
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { font-size: 38px; line-height: 1.1; letter-spacing: 0; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { margin-top: 8px; max-width: 1000px; font-size: 17px; line-height: 1.5; font-weight: 500; color: #c7b3a5; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief b { font-weight: 700; color: #fafafa; }
-[data-ui="v2"][data-ds="6"] .ds-hero .ds-brief b.ds-hl { background: linear-gradient(90deg, #fdba74, #fb923c 45%, #f43f5e); -webkit-background-clip: text; background-clip: text; color: transparent; }
+[data-ui="v2"][data-ds="6"] .ds-hero .ds-brief b.ds-hl { background: linear-gradient(90deg, #fdba74, #fb923c 45%, #ea580c); -webkit-background-clip: text; background-clip: text; color: transparent; }
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief a { color: #fafafa; font-weight: 700; text-decoration: underline; text-decoration-color: rgba(251, 146, 60, 0.8); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
 /* the orb with its halo; sized by a scale so the real orb (a fixed px size) follows the breakpoints */
 [data-ui="v2"][data-ds="6"] .ds-hero .ds-orbz { position: relative; display: flex; width: 132px; height: 150px; flex: none; flex-direction: column; align-items: center; cursor: pointer; }

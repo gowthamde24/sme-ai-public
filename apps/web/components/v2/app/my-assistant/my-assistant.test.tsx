@@ -168,7 +168,8 @@ describe("the Practice panel", () => {
   it("starts with the real orb, Talk now, and Call my phone as a link to the sandbox test call", () => {
     draw();
     const panel = document.querySelector('[data-part="practice-panel"]') as HTMLElement;
-    expect(panel).toHaveClass("ds-glow");
+    expect(panel).not.toHaveClass("ds-glow"); // a quiet card with the normal border (the glowing edge is for what waits for the owner's OK)
+    expect(panel).toHaveClass("border-line");
     expect(panel.querySelector("[data-orb]")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Talk now" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Call my phone" })).toHaveAttribute("href", `${BASE}/calls?test=1`);
