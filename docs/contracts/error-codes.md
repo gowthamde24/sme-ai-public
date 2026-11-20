@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (438)
+## Codes (442)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -34,7 +34,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `archived` | 409 | agent_runs, crm, enquiries, evidence |  |  | This record is archived; an admin must restore it first. |
 | `asked_too_soon` | 429 | connectors | yes |  | Please wait a few minutes before asking again. |
 | `assistant_context_unavailable` | 503 | assistant_context |  |  | The assistant's notes are not available right now. |
-| `assistant_not_ready` | 409 | assistant_status |  | missing | The assistant needs a business name and a connected phone number before it can go live. |
+| `assistant_not_ready` | 409 | assistant_status, jobs |  | missing | The assistant needs a business name and a connected phone number before it can go live. |
 | `assistant_not_set_up` | 409 | assistant_settings |  |  | Set up your AI assistant first (Settings, AI assistant); then its name can be changed here. |
 | `assistant_settings_unavailable` | 503 | assistant_settings |  |  | The assistant settings are not available right now. |
 | `assistant_status_unavailable` | 503 | assistant_status |  |  | This is not available right now. |
@@ -140,7 +140,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `google_calendar_secret_unavailable` | 503 | google_calendar |  |  | The connection's key store did not answer. Try again in a moment. |
 | `google_calendar_try_later` | 429 | google_calendar | yes |  | Too many connection attempts. Try again in a few minutes. |
 | `google_calendar_unavailable` | 502 | google_calendar |  |  | Google did not answer. Try again in a moment. |
-| `held_by_support` | 409 | assistant_status |  |  | Stack19 support paused your assistant. Ask support to resume it. |
+| `held_by_support` | 409 | assistant_status, jobs |  |  | Stack19 support paused your assistant. Ask support to resume it. |
 | `hello_not_approved` | 409 | outbox |  |  | The hello message is not approved by WhatsApp yet, so your message cannot wait. Call instead. |
 | `http_error` | 400 | errors |  |  | Request failed. |
 | `image_too_large` | 413 | workspace |  |  | That picture is bigger than 5 MB. |
@@ -168,6 +168,9 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `invitation_locked` | 429 | team | yes |  | Too many tries. Wait a little and try again. |
 | `invitation_not_pending` | 409 | main |  |  | That invitation was already used. |
 | `invoice_number_used` | 409 | main |  |  | That invoice number is already used. |
+| `job_locked` | 409 | jobs |  |  | This was approved or set up in another way, so it cannot be changed here. |
+| `job_not_set_up` | 409 | jobs |  |  | There is nothing to change here yet. Set the job up first. |
+| `job_not_switchable` | 409 | jobs |  |  | This job has no switch: it works as long as it is set up. Change its settings instead. |
 | `jobs_unavailable` | 503 | jobs |  |  | Jobs are not available on this system. |
 | `keep_owner` | 409 | main |  |  | The workspace must keep an Owner. Add another Owner first. |
 | `key_rejected` | 422 | lead_sources |  |  | IndiaMART did not accept this key. Check it in Lead Manager > Import/Export Leads. |
@@ -375,6 +378,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `secret_request_used` | 409 | assistant_work |  |  | This card was already used. Ask me again for a new one. |
 | `secrets_unavailable` | 503 | assistant_work |  |  | Keys can't be saved here yet. |
 | `session_ended` | 401 | admin |  |  | Your session ended after 30 minutes without activity. Sign in again. |
+| `setting_invalid` | 422 | jobs |  | fields | That choice is not one of the options. |
 | `sheet_link_invalid` | 422 | lead_sources |  |  | That is not a Google Sheets link. |
 | `sheet_not_public` | 422 | lead_sources |  |  | Share the sheet as 'Anyone with the link can view', or publish it to the web, and try again. |
 | `sheet_refused` | 422 | assistant_context, lead_sources |  | reason | That file is too big. |

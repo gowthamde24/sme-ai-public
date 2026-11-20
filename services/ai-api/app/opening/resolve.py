@@ -103,8 +103,10 @@ def resolve(
     mention_ai: bool | None = None,
     name: str | None = None,
     row: dict[str, object] | None = None,
+    helper_name: str | None = None,
 ) -> Resolved:
-    """`row` is the already-read opening state of the workspace (to resolve several languages with one read)."""
+    """`row` is the already-read opening state of the workspace (to resolve several languages with one read). `helper_name` is the owner's own name for ONE job's helper (jobs_meta.custom_name, up to 40 characters, already checked by the
+    database): a job's preview says it where the assistant's own name would be said."""
     state = row if row is not None else _repo(runtime).opening(ctx.principal.token, ctx.tenant.id)
     lines = state.get("lines", [])
     mention = mention_ai if mention_ai is not None else say_ai_setting(runtime, ctx)   # 20 Nov 2026: the Talk training setting `say_ai_when_greeting` (default OFF), the same value a call reads
@@ -114,7 +116,7 @@ def resolve(
     # ONE greeting (owner decision 13 Nov 2026, decided by C1): the campaign's own line, else the greeting of Talk training, else the old workspace line (kept read-only as a fallback), else the default
     trained = None if line is not None or campaign is not None else trained_greeting(runtime, ctx, language)
     owner_line = line if line is not None else (campaign or trained or stored)
-    assistant = clean_name(name) or saved_assistant_name(runtime, ctx)
+    assistant = helper_name or clean_name(name) or saved_assistant_name(runtime, ctx)
     text = render.compose_opening(language, owner_line=owner_line, mention_ai=mention, assistant=assistant, business=ctx.tenant.name, customer=customer, agent_role=agent_role)
     source: Source = "draft" if line is not None else ("stored" if (campaign or trained or stored) else "default")
     return Resolved(language=language, text=text, source=source, mention_ai=mention, says_ai=render.says_ai(text), assistant_name=assistant, business_name=ctx.tenant.name)

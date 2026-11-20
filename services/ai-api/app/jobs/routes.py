@@ -2,6 +2,7 @@
 
   GET /jobs/templates   Owner, Admin: the job templates of the workspace's business type and the other types' (an ETag on the answer, 304 on If-None-Match)
   GET /jobs/festivals   every member: the festivals of the workspace's region in the next 60 days, nearest first, one row per season
+  (GET /jobs, GET /jobs/today and the job page `/jobs/{id}` with its settings, its switch and its name: this file and app/jobs/detail_routes.py)
 
 With JOBS off (the default) every route answers 404 `not_found` as if it did not exist, before anything else is checked (sign-in included).
 
@@ -24,6 +25,7 @@ from app import gstin as gstin_module
 from app.auth.deps import AnyMember, OwnerOrAdmin, PrincipalDep, Runtime, get_runtime
 from app.errors import ApiError, not_found
 from app.jobs import festivals, listing, samples, templates
+from app.jobs import needs as needs_mod
 from app.jobs.models import FestivalOut, FestivalsOut
 from app.jobs.wiring import JobsRuntime
 from app.tenancy.repository import RepositoryError
@@ -70,9 +72,11 @@ def list_jobs(request: Request, ctx: AnyMember, runtime: RuntimeDep) -> Response
 
 @router.get("/today")
 def jobs_today(request: Request, ctx: AnyMember, runtime: RuntimeDep) -> Response:
-    """GET /jobs/today: the Today first paint in one call. Thin version: the jobs and the assistant's name; `needs_you` is [] until the full S2 (Today keeps its own list meanwhile)."""
-    assistant = runtime.repository.get_assistant_name(ctx.principal.token, ctx.tenant.id)
-    return _answer(request, {"jobs": listing.jobs_of(runtime, ctx.principal.token, ctx.tenant.id), "needs_you": [], "assistant": {"name": assistant}})
+    """GET /jobs/today: the Today first paint in one call: the jobs, what waits for the owner (the items Today shows, read once: `{id, code, kind, at, target {type, id}}`) and the assistant's name."""
+    token, tenant_id = ctx.principal.token, ctx.tenant.id
+    items = needs_mod.items_of(runtime, token, tenant_id)
+    assistant = runtime.repository.get_assistant_name(token, tenant_id)
+    return _answer(request, {"jobs": listing.jobs_of(runtime, token, tenant_id, items), "needs_you": items, "assistant": {"name": assistant}})
 
 
 @router.get("/templates")
