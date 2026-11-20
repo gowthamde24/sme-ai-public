@@ -117,7 +117,8 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = "rgba(194,65,12,.75)";
-    ctx.fillText(label, cx + rr * 0.7 + 4 * f, cy + rr * 0.7 + 14 * f);
+    // the ring labels sit on the left of the horizontal axis, where no pin or name tag ever is (the tags are above and below it, in every city)
+    ctx.fillText(label, cx - rr + 6 * f, cy - 5 * f);
   });
   ctx.strokeStyle = "rgba(194,65,12,.12)";
   ctx.lineWidth = 1;
@@ -237,15 +238,24 @@ export function RadarFinder({ w }: { w: W }) {
   const [viewRef, phase] = useOnViewOnce<HTMLDivElement>();
   const live = React.useRef({ city, since: 0 });
   const desk = React.useRef<HTMLCanvasElement>(null);
-  React.useEffect(() => {
+  const off = React.useRef<(() => void) | undefined>(undefined);
+  // one canvas at every width: wide, it draws the whole 780 x 520 map; in a narrow box (a phone) it crops to the rings, with its words and pins drawn larger, so they stay readable
+  const start = React.useCallback(() => {
     const sans = desk.current ? fontOf(desk.current, "sans") : '"Plus Jakarta Sans", system-ui, sans-serif';
-    // one canvas at every width: wide, it draws the whole 780 x 520 map; in a narrow box (a phone) it crops to the rings, with its words and pins drawn larger, so they stay readable
-    const off = desk.current ? addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, W / H < 1.2, sans)) : undefined;
-    return () => off?.();
+    return desk.current ? addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, W / H < 1.2, sans)) : undefined;
   }, []);
+  React.useEffect(() => {
+    off.current = start();
+    return () => off.current?.();
+  }, [start]);
   const pick = (c: City, el: HTMLElement) => {
     setCity(c);
     live.current = { city: c, since: sceneTime() }; // a new city starts a fresh sweep
+    // with "reduce motion" the map is drawn once and not again: draw it again with the new city's names
+    if (isCalm()) {
+      off.current?.();
+      off.current = start();
+    }
     // the picked city comes fully into view in the swipe row
     el.scrollIntoView({ inline: "nearest", block: "nearest", behavior: isCalm() ? "auto" : "smooth" });
   };
