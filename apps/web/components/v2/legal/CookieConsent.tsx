@@ -137,7 +137,7 @@ export function CookieConsent({ initial, words }: { initial: Consent; words: Coo
   return (
     <>
       {!consent.decided && !settingsOpen ? (
-        <section role="region" aria-labelledby="cookie-notice-h" data-cookie="notice" className={`flex min-h-14 items-center gap-2 border-t border-edge bg-surface px-3 py-1.5 text-ink shadow-[var(--v2-shadow)] ${aboveBar ? "max-md:mb-[calc(4rem+env(safe-area-inset-bottom))]" : ""}`}>
+        <section role="region" aria-labelledby="cookie-notice-h" data-cookie="notice" className={`flex min-h-[55px] items-center gap-2 border-t border-edge bg-surface px-3 py-1.5 text-ink shadow-[var(--v2-shadow)] ${aboveBar ? "max-md:mb-[calc(4rem+env(safe-area-inset-bottom))]" : ""}`}>
           <h2 id="cookie-notice-h" className="sr-only font-sans">
             {words["cookie.notice.title"]}
           </h2>

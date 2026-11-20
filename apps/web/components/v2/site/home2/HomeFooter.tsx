@@ -22,27 +22,30 @@ const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.
  */
 export function HomeFooter({ t, lang }: { t: SiteT; lang: SiteLang; early?: { href: string; label: string } }) {
   return (
-    <footer id="end" className="relative overflow-hidden px-[var(--h3-gutter,clamp(16px,3vw,32px))] pb-0 pt-[clamp(32px,6vw,80px)]" data-part="home-footer">
-      <div className="h3-foot-grid relative mx-auto max-w-[1240px] border-b border-line pb-9">
+    <footer id="end" className="relative overflow-hidden px-[var(--h3-gutter,clamp(16px,3vw,32px))] pb-0 pt-[clamp(24px,6vw,80px)]" data-part="home-footer">
+      <div className="h3-foot-grid relative mx-auto max-w-[1240px] border-b border-line pb-4">
         <div className="h3-foot-wide flex flex-col">
           <p className="m-0 max-w-[420px] text-[15px] leading-snug text-muted">{t("h2.foot.line")}</p>
         </div>
-        <nav aria-label={t("h2.foot.product")} className="flex flex-col">
+        <nav aria-label={t("h2.foot.product")} className="h3-foot-wide h3-foot-links">
           <span className={head}>{t("h2.foot.product")}</span>
           <a className={link} href="#how-it-works">{t("nav.how")}</a>
           <a className={link} href="#lead-finder">{t("h2.nav.finder")}</a>
           <a className={link} href="#pricing">{t("nav.pricing")}</a>
           <a className={link} href="#faq">{t("h4.nav.faq")}</a>
         </nav>
-        <div className="flex flex-col">
+        <div className="h3-foot-wide flex flex-col">
           <span className={head}>{t("h2.foot.company")}</span>
-          <nav aria-label={t("foot.pages")} className="flex flex-col">
-            {SITE_PAGES.filter((page) => isServed({ kind: "page", page }) && page !== "pricing" && page !== "how-it-works").map((page) => ( // (Pricing and How it works are in the Product column on this page)
-              <Link key={page} className={link} href={sitePath(lang, { kind: "page", page })}>
-                {t(LABEL[page])}
-              </Link>
-            ))}
-          </nav>
+          <div className="flex flex-wrap items-center gap-x-4 min-[560px]:flex-col min-[560px]:items-start min-[560px]:gap-x-0">
+            <nav aria-label={t("foot.pages")} className="flex flex-wrap gap-x-4 min-[560px]:flex-col min-[560px]:gap-x-0">
+              {SITE_PAGES.filter((page) => isServed({ kind: "page", page }) && page !== "pricing" && page !== "how-it-works").map((page) => ( // (Pricing and How it works are in the Product column on this page)
+                <Link key={page} className={link} href={sitePath(lang, { kind: "page", page })}>
+                  {t(LABEL[page])}
+                </Link>
+              ))}
+            </nav>
+            <LegalLinks lang={lang} direction="row" contact={false} linkClass={link} />
+          </div>
         </div>
         <div className="h3-foot-wide flex flex-wrap items-center gap-x-3">
           <span className="text-sm font-extrabold text-muted">{t("h2.foot.talk")}</span>
@@ -50,7 +53,6 @@ export function HomeFooter({ t, lang }: { t: SiteT; lang: SiteLang; early?: { hr
             <WithWhatsapp text={t("h2.foot.whatsapp")} />
           </p>
         </div>
-        <LegalLinks lang={lang} direction="row" contact={false} linkClass={link} className="h3-foot-wide" />
       </div>
       <div className="relative mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-[18px] text-sm text-muted">
         <span>{t("h2.foot.copy")}</span>

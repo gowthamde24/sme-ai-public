@@ -45,7 +45,7 @@ describe("the cookie notice (job BH)", () => {
     expect(n).not.toHaveAttribute("aria-modal");
     expect(within(n).getByText("We only use cookies the site needs.")).toBeInTheDocument(); // ONE line; the full wording and the Privacy link are behind Settings
     expect(within(n).queryByRole("link")).toBeNull();
-    expect(n.className).toContain("min-h-14"); // a slim bar, 56 px
+    expect(n.className).toContain("min-h-[55px]"); // a slim bar (55 px and its 1 px edge: 56)
     expect(n.className).not.toContain("fixed"); // in the flow of the page (the root layout makes its wrapper sticky), so it never covers the footer
     expect(document.querySelector('[role="dialog"]')).toBeNull(); // not a wall: no dialog, no backdrop
     expect(document.querySelector(".bg-black\\/50")).toBeNull();

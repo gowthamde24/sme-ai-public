@@ -292,6 +292,10 @@
 /* the home footer's columns (1 / 2 / 4) */
 [data-ui="v2"] .h3-foot-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px) 16px; }
 [data-ui="v2"] .h3-foot-wide { grid-column: 1 / -1; }
+/* the Product links: two to a row on a phone, a column from 560 px */
+[data-ui="v2"] .h3-foot-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+[data-ui="v2"] .h3-foot-links > span { grid-column: 1 / -1; }
+@media (min-width: 560px) { [data-ui="v2"] .h3-foot-links { display: flex; flex-direction: column; } }
 @media (min-width: 560px) { [data-ui="v2"] .h3-foot-wide { grid-column: auto; } }
 
 /* two columns from 900 px (a phone with "Desktop site" is about 980 px: it gets the desktop page, scaled) */
