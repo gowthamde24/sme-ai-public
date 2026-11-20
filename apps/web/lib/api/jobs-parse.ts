@@ -3,7 +3,7 @@ import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type Jo
 import type { ExcludedCode, JobPlan, PlanBasisCode, PlanCost, PlanSearch, Suggestion } from "@/lib/jobs/plan";
 import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "@/lib/jobs/plan";
 import { SEARCH_AREA_MAX } from "@/lib/jobs/plan-const";
-import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES, type JobWho, type WhoNumberInfo } from "@/lib/jobs/who";
+import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, isWhoVoice, type JobWho, type WhoNumberInfo } from "@/lib/jobs/who";
 import { JOB_KINDS, JOB_STATUSES, NEEDS_TARGETS, PLAN_GATES, type Job, type JobParams, type JobSpeaks, type NeedsYouItem, type TodayJobs } from "@/lib/jobs/types";
 
 /**
@@ -159,7 +159,7 @@ export function parseWho(speaks: unknown, numbers: unknown): JobWho | null {
   const closed = <T extends string>(v: unknown, allowed: readonly T[]): T | null => (typeof v === "string" && (allowed as readonly string[]).includes(v) ? (v as T) : null);
   const language = closed(s.language, WHO_LANGUAGES);
   const tone = closed(s.tone, WHO_TONES);
-  const voice = closed(s.voice, WHO_VOICES);
+  const voice = isWhoVoice(s.voice) ? s.voice : null;
   if (!language || !tone || !voice) return null;
   // `voice_name` always comes with the voice (the API fills it from the catalogue); a name that is not short plain text is simply not used. The number is only ever the shop's: a word the web does not know (a second number) reads as it.
   const voiceName = typeof s.voice_name === "string" && /^[\p{L}\p{M}\p{N} .'’-]{1,40}$/u.test(s.voice_name) ? s.voice_name : null;

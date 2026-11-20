@@ -5,7 +5,8 @@ import { parsePicker, VOICE_ID, type Gender, type Picker, type PickerLang } from
 /**
  * The voice picker from C1's API (contract-voice-picker.md, PR #153). Under `/v1/tenants/{id}/ai-assistant`, the signed-in person's own token:
  *
- *   GET /voices   any member -> { languages: [{ language, default_id, chosen_id | null, active_id, voices: [{ id, name, label, gender: "female"|"male", default, chosen, sample_url: "/v1/voice-samples/<id>.mp3" }] }] }  (te, hi, kn, en)
+ *   GET /voices   any member -> { gender, languages: [{ language, default_id, chosen_id | null, active_id, voices: [{ id, name, label, gender: "female"|"male", tags, recommended, default, chosen, provider, sample_url: "/v1/voice-samples/<id>.mp3", sample_ready, sample_text, to_confirm }] }] }  (te, hi, kn, en; docs/contracts/voices-tones.md section 2: the short list, two women and two men a language, of two providers)
+ *     `sample_ready: false` = the recording is not made yet (the file answers 404): the voice card plays that voice with the live "Hear it" (`POST /voices/preview`, which speaks the voice in force) instead.
  *   PUT /voices   Owner, Admin { language, voice_id | null }   null = back to the default of that language   -> the same answer; 422 for an id that is not a voice of that language
  *   GET /v1/voice-samples/<id>.mp3   the pre-rendered sample, a static file, no sign-in; the browser never asks the API itself, our route does (the page's media rule allows only this app's address)
  * "Hear it" in the opening-line editor is `GET /voices/preview?language=` (lib/api/opening-line.ts), spoken in the voice in force.

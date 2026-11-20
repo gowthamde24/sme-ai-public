@@ -17,8 +17,8 @@ export type JobPageActions = {
   setSpeaks?: (patch: SpeaksPatch) => Promise<Reply<JobPatched>>;
 };
 
-/** What the page adds for the Who talks card: the voice sample route (null = no play buttons), the other job the command offers to change, and the change of ANY job of the workspace (the same patch). */
-export type WhoExtra = { sampleEndpoint: string | null; target: WhoTarget | null; changeJob: ((jobId: string, patch: SpeaksPatch) => Promise<Reply<JobPatched>>) | null; /** The three voices by the name the catalogue gives them (null = our own words for the three). */ voices?: readonly WhoVoiceName[] | null };
+/** What the page adds for the Who talks card: the workspace's `voice-pick` route, which plays the recorded sample of one voice (null = no play buttons), the other job the command offers to change, and the change of ANY job of the workspace (the same patch). */
+export type WhoExtra = { sampleEndpoint: string | null; target: WhoTarget | null; changeJob: ((jobId: string, patch: SpeaksPatch) => Promise<Reply<JobPatched>>) | null; /** The voices of the workspace's gender, the same list as the voice card (null = no voice list is drawn). */ voices?: readonly WhoVoiceName[] | null };
 
 /** A card of the job page: the same white card as the Jobs list. */
 export const jobCard = "rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";

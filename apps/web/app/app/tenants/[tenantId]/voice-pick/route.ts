@@ -39,7 +39,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const read = await readVoicePicker({ token: user.accessToken, tenantId });
     if (read.mode !== "ok") return new NextResponse(null, { status: 404 });
     const index = read.data.voices.findIndex((v) => v.id === id);
-    if (index < 0 || read.data.voices[index].sampleUrl === null) return new NextResponse(null, { status: 404 });
+    if (index < 0 || read.data.voices[index].sampleUrl === null || !read.data.voices[index].sampleReady) return new NextResponse(null, { status: 404 }); // (no recording yet: C1 `sample_ready: false`; the card plays such a voice live)
     if (read.data.fake) return new NextResponse(mockSampleWav({ voice: PITCHES[index % PITCHES.length], lang: "en", tone: "warm", name: "" }) as BodyInit, { status: 200, headers: { ...headers, "Content-Type": "audio/wav" } });
     const got = await getVoiceSampleFile(user.accessToken, read.data.voices[index].sampleUrl as string);
     if (!/^audio\/(mpeg|wav|x-wav|ogg|mp4|webm)(;|$)/.test(got.contentType)) return new NextResponse(null, { status: 404 });

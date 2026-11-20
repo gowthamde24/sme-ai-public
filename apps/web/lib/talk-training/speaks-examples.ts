@@ -9,18 +9,22 @@ export const EXAMPLES: Record<ExampleLang, Partial<Record<SpeakTone, Partial<Rec
   en: {
     respectful: { everyday_mixed: "Good morning. This is the AI assistant of {business}. Would it be convenient for you to visit the shop on Saturday?", everyday_pure: "Good morning. This is the AI assistant of {business}. Would it be convenient for you to visit the shop on Saturday?" },
     friendly: { everyday_mixed: "Hi! This is the AI assistant of {business}. Would you like to drop by the shop on Saturday?", everyday_pure: "Hi! This is the AI assistant of {business}. Would you like to drop by the shop on Saturday?" },
+    quick: { everyday_mixed: "Hello, {business}. Shop visit on Saturday, 11 am. Does it work?", everyday_pure: "Hello, {business}. Shop visit on Saturday, 11 am. Does it work?" },
   },
   te: {
     respectful: { everyday_mixed: "నమస్కారం అండీ. నేను {business} AI assistant ని. శనివారం షాప్‌కి రావడానికి మీకు వీలవుతుందా అండీ?", everyday_pure: "నమస్కారం అండీ. నేను {business} AI assistant ని. శనివారం దుకాణానికి రావడానికి మీకు వీలవుతుందా అండీ?" },
     friendly: { everyday_mixed: "హాయ్! నేను {business} AI assistant ని. శనివారం షాప్‌కి వస్తారా?", everyday_pure: "నమస్కారం! నేను {business} AI assistant ని. శనివారం దుకాణానికి వస్తారా?" },
+    quick: { everyday_mixed: "హలో, {business}. శనివారం ఉదయం 11కి షాప్‌కి రండి. వీలవుతుందా?", everyday_pure: "హలో, {business}. శనివారం ఉదయం 11కి దుకాణానికి రండి. వీలవుతుందా?" },
   },
   kn: {
     respectful: { everyday_mixed: "ನಮಸ್ಕಾರ. ನಾನು {business} AI assistant. ಶನಿವಾರ ಶಾಪ್‌ಗೆ ಬರಲು ನಿಮಗೆ ಅನುಕೂಲವಾಗುತ್ತಾ?", everyday_pure: "ನಮಸ್ಕಾರ. ನಾನು {business} AI assistant. ಶನಿವಾರ ಅಂಗಡಿಗೆ ಬರಲು ನಿಮಗೆ ಅನುಕೂಲವಾಗುತ್ತದೆಯೇ?" },
     friendly: { everyday_mixed: "ಹಾಯ್! ನಾನು {business} AI assistant. ಶನಿವಾರ ಶಾಪ್‌ಗೆ ಬರ್ತೀರಾ?", everyday_pure: "ನಮಸ್ಕಾರ! ನಾನು {business} AI assistant. ಶನಿವಾರ ಅಂಗಡಿಗೆ ಬರುತ್ತೀರಾ?" },
+    quick: { everyday_mixed: "ಹಲೋ, {business}. ಶನಿವಾರ ಬೆಳಗ್ಗೆ 11ಕ್ಕೆ ಶಾಪ್‌ಗೆ ಬನ್ನಿ. ಆಗುತ್ತಾ?", everyday_pure: "ಹಲೋ, {business}. ಶನಿವಾರ ಬೆಳಗ್ಗೆ 11ಕ್ಕೆ ಅಂಗಡಿಗೆ ಬನ್ನಿ. ಆಗುತ್ತದೆಯೇ?" },
   },
   hi: {
     respectful: { everyday_mixed: "नमस्ते जी, मैं {business} का AI assistant हूँ। क्या आप शनिवार को शॉप पर आ सकेंगे?", everyday_pure: "नमस्कार जी, मैं {business} का AI assistant हूँ। क्या आप शनिवार को दुकान पर पधार सकेंगे?" },
     friendly: { everyday_mixed: "हाय! मैं {business} का AI assistant हूँ। शनिवार को शॉप आ रहे हैं?", everyday_pure: "नमस्ते! मैं {business} का AI assistant हूँ। शनिवार को दुकान आएँगे?" },
+    quick: { everyday_mixed: "हैलो, {business}। शनिवार सुबह 11 बजे शॉप पर आइए। हो पाएगा?", everyday_pure: "हैलो, {business}। शनिवार सुबह 11 बजे दुकान पर आइए। हो पाएगा?" },
   },
 };
 

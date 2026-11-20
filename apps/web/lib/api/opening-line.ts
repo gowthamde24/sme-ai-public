@@ -156,7 +156,7 @@ export async function previewSpoken(token: string, tenantId: string, input: { la
   const mime = audio.mime === "audio/x-wav" ? "audio/wav" : audio.mime;
   if (typeof audio.base64 !== "string" || audio.base64.length > 4_000_000 || !/^[A-Za-z0-9+/=]+$/.test(audio.base64) || typeof mime !== "string" || !/^audio\/(wav|mpeg|ogg|mp4|webm)$/.test(mime)) throw new ApiContractError("Unexpected opening-line preview audio.");
   const bytes = Uint8Array.from(atob(audio.base64), (c) => c.charCodeAt(0));
-  return { audio: { base64: audio.base64, mime, seconds: mime === "audio/wav" ? wavSeconds(bytes) : 1 }, fake: false, spokenText: json.spoken_text };
+  return { audio: { base64: audio.base64, mime, seconds: mime === "audio/wav" ? wavSeconds(bytes) : 1 }, fake: false, spokenText: json.spoken_text, voiceId: typeof json.voice_id === "string" && /^[a-z0-9][a-z0-9_.-]{1,59}$/.test(json.voice_id) ? json.voice_id : null };
 }
 
 /**

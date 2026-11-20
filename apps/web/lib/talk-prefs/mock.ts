@@ -2,14 +2,18 @@ import type { Address, Field, Speed, Style, TalkLang, TalkOptions, TalkPrefs, Ta
 import { ADDRESSES, DEFAULTS, SPEEDS, STYLES, WORDS, addressFor } from "./types";
 
 /**
- * The test version of "How it talks to you" (OWNER_TALK_PREFS=mock): a small catalogue of made-up voice ids (three sounds, two genders, per language) and the person's choices in ONE cookie of this browser.
+ * The test version of "How it talks to you" (OWNER_TALK_PREFS=mock): a small catalogue of made-up voices (named, two women and two men per language) and the person's choices in ONE cookie of this browser.
  * No sound is made and none is claimed: the preview of a mock answer is only the words of the sample. Pure (the cookie is read and written by source.ts).
  */
-const SOUNDS = ["warm", "calm", "bright"] as const;
-const NAMES: Record<string, string> = { warm: "Warm", calm: "Calm", bright: "Bright" };
+const NAMES: Record<TalkLang, Record<"female" | "male", readonly string[]>> = {
+  te: { female: ["Ramya", "Kavitha"], male: ["Karthik", "Naveen"] },
+  kn: { female: ["Disha", "Chaitra"], male: ["Prakash", "Chetan"] },
+  hi: { female: ["Sanya", "Pooja"], male: ["Kabir", "Rohan"] },
+  en: { female: ["Janvi", "Sophia"], male: ["Dev", "Aarav"] },
+};
 
 export function mockVoices(language: TalkLang): TalkVoice[] {
-  return (["female", "male"] as const).flatMap((gender) => SOUNDS.map((sound): TalkVoice => ({ id: `${language}-mock-${gender === "female" ? "f" : "m"}-${sound}`, name: NAMES[sound], sound, gender, sample: true })));
+  return (["female", "male"] as const).flatMap((gender) => NAMES[language][gender].map((name): TalkVoice => ({ id: `${language}-${name.toLowerCase()}`, name, gender, sample: true })));
 }
 
 export type MockChoices = { voices: Partial<Record<TalkLang, string>>; style: Style; address: Address; words: WordsChoice; speed: Speed };
@@ -21,7 +25,7 @@ export function mockOptions(language: TalkLang): TalkOptions {
 
 export function mockPrefs(language: TalkLang, c: MockChoices, undoToken: string | null = null, changed: Field[] = []): TalkPrefs {
   const options = mockOptions(language);
-  const voice = options.voices.find((v) => v.id === c.voices[language]) ?? options.voices.find((v) => v.gender === "female" && v.sound === "calm") ?? null;
+  const voice = options.voices.find((v) => v.id === c.voices[language]) ?? options.voices.find((v) => v.gender === "female") ?? null;
   const address = options.address.includes(c.address) ? c.address : DEFAULTS.address;
   return { language, voice, style: c.style, address, words: c.words, speed: c.speed, isDefault: c.style === DEFAULTS.style && address === DEFAULTS.address && c.words === DEFAULTS.words && c.speed === DEFAULTS.speed && c.voices[language] === undefined, options, undoToken, changed };
 }

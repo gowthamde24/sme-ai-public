@@ -13,7 +13,7 @@ import { GET } from "./route";
 
 const T = "22222222-2222-2222-2222-222222222222";
 const get = (qs = "id=hi-sanya", id = T) => GET(new NextRequest(`http://x/app/tenants/${id}/voice-pick?${qs}`), { params: Promise.resolve({ tenantId: id }) });
-const picker = (fake: boolean, sampleUrl: string | null = "/static/hi.mp3") => ({ mode: "ok", data: { fake, choices: {}, voices: [{ id: "hi-sanya", sampleUrl }, { id: "hi-esha", sampleUrl: null }] } });
+const picker = (fake: boolean, sampleUrl: string | null = "/static/hi.mp3") => ({ mode: "ok", data: { fake, choices: {}, voices: [{ id: "hi-sanya", sampleUrl, sampleReady: true }, { id: "hi-esha", sampleUrl: null, sampleReady: false }, { id: "hi-pooja", sampleUrl: "/static/pooja.mp3", sampleReady: false }] } });
 
 beforeEach(() => {
   vi.unstubAllEnvs();
@@ -40,6 +40,7 @@ describe("GET voice-pick (the recorded sample of one voice)", () => {
     expect(r.headers.get("Cache-Control")).toBe("private, max-age=86400");
     expect(r.headers.get("X-Content-Type-Options")).toBe("nosniff");
     expect((await get("id=hi-esha")).status).toBe(404);
+    expect((await get("id=hi-pooja")).status).toBe(404); // a file is named but not made yet (C1 `sample_ready: false`): the card plays that voice live
     expect((await get("id=nobody")).status).toBe(404);
   });
   it("only the Owner and an Admin may hear it; signed out is 401, an expired token 401", async () => {

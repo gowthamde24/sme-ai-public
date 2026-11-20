@@ -2,27 +2,33 @@ import { introduceProblem, introduceToApi, parseIntroduceAs, type IntroduceAs } 
 
 /**
  * "How your assistant speaks" (owner decision 11 Nov 2026; C1's FIXED contract docs/contracts/how-assistant-speaks.md, PR #459: the endpoint `GET/PUT /how-assistant-speaks` is built after it, until then the panel runs on a mock made from the contract). One object for Tone, Words per
- * language (with the Region), and Introduce as. Casual is NOT an option here (the owner's own test call only); Formal is hidden. Pure: no fetch, no React.
+ * language, and Introduce as (and, since 21 Nov, the background and "Say AI assistant when greeting"). Casual is NOT an option here (the owner's own test call only); Formal is hidden. Pure: no fetch, no React.
  */
-export const TONES = ["respectful", "friendly"] as const;
+export const TONES = ["friendly", "respectful", "quick"] as const;
 export type SpeakTone = (typeof TONES)[number];
 export const STYLES = ["everyday_mixed", "everyday_pure"] as const; // "formal" is not offered; one saved earlier is shown as everyday_pure (the API does this)
 export type SpeakStyle = (typeof STYLES)[number];
-/** The languages the panel shows Words for (Tamil only for its regions; Malayalam and Marathi are paused, owner 9 Nov). */
+/** The languages the panel shows Words for (Tamil; Malayalam and Marathi are paused, owner 9 Nov). There is NO Region any more (C1, 21 Nov 2026: docs/contracts/voices-tones.md section 4): the API neither returns nor reads it. */
 export const SPEAK_LANGS = ["te", "kn", "hi", "ta"] as const;
 export type SpeakLang = (typeof SPEAK_LANGS)[number];
-export const REGIONS: Record<SpeakLang, readonly string[]> = { te: ["neutral", "coastal", "telangana", "rayalaseema"], kn: ["neutral", "bengaluru", "north_karnataka"], ta: ["neutral", "chennai", "kongu"], hi: ["neutral"] };
-/** The languages that have a region to choose (more than "neutral"). */
-export const REGION_LANGS = ["te", "kn", "ta"] as const;
-export type RegionLang = (typeof REGION_LANGS)[number];
+/** The very quiet sound under the assistant's voice on a call (voices-tones.md section 6); `quiet_office` is the default. */
+export const BACKGROUNDS = ["quiet_office", "shop", "off"] as const;
+export type Background = (typeof BACKGROUNDS)[number];
+export type BackgroundState = { value: Background; saved: boolean; /** the words of each choice as the API says them, per language (en, te, hi, kn, ...) */ options: { id: Background; label: Partial<Record<string, string>> }[] };
+/** "Say 'AI assistant' when greeting" (greeting-disclosure.md): false until the owner turns it on; `saved` = the owner chose. */
+export type SayAiState = { value: boolean; saved: boolean };
 export const EXAMPLE_LANGS = ["te", "kn", "hi", "en"] as const;
 export type ExampleLang = (typeof EXAMPLE_LANGS)[number];
 export type ToneSource = "saved" | "migrated" | "pack_default";
 export type LegacyAddress = "plain" | "sir_madam" | "garu" | "ji";
 
-export type LangStyle = { style: SpeakStyle; region: string; saved: boolean; examples: "approved" | "draft" };
+export type LangStyle = { style: SpeakStyle; saved: boolean; examples: "approved" | "draft" };
 export type HowSpeaks = {
   tone: { value: SpeakTone; source: ToneSource; packDefault: SpeakTone };
+  /** null = this API has no background yet (nothing is drawn) */
+  background: BackgroundState | null;
+  /** null = this API has no such setting yet (no switch is drawn: never a switch that does nothing) */
+  sayAi: SayAiState | null;
   words: Record<SpeakLang, LangStyle>;
   introduceAs: IntroduceAs & { ownerName: string | null };
   packDefaults: { tone: SpeakTone };
@@ -30,7 +36,7 @@ export type HowSpeaks = {
   updatedAt: string | null;
 };
 /** What the Owner changes: any subset (a key left out is not changed). `tone: null` resets to the business type's usual. */
-export type SpeaksChange = { tone?: SpeakTone | null; words?: Partial<Record<SpeakLang, { style?: SpeakStyle; region?: string }>>; introduceAs?: IntroduceAs };
+export type SpeaksChange = { tone?: SpeakTone | null; words?: Partial<Record<SpeakLang, { style?: SpeakStyle }>>; introduceAs?: IntroduceAs; background?: Background | null; sayAi?: boolean | null };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const one = <T extends string>(list: readonly T[], v: unknown): T | null => ((list as readonly unknown[]).includes(v) ? (v as T) : null);
@@ -47,8 +53,7 @@ export function parseHowSpeaks(raw: unknown): HowSpeaks | null {
     const e = raw.words.languages[l];
     if (!isRec(e)) return null;
     const style: SpeakStyle = e.style === "everyday_mixed" ? "everyday_mixed" : "everyday_pure";
-    const region = typeof e.region === "string" && REGIONS[l].includes(e.region) ? e.region : "neutral";
-    words[l] = { style, region, saved: e.saved === true, examples: e.examples === "approved" ? "approved" : "draft" };
+    words[l] = { style, saved: e.saved === true, examples: e.examples === "approved" ? "approved" : "draft" };
   }
   const ia = parseIntroduceAs({ kind: raw.introduce_as.kind, text: raw.introduce_as.text ?? null });
   if (!ia) return null;
@@ -56,6 +61,8 @@ export function parseHowSpeaks(raw: unknown): HowSpeaks | null {
   const pd = isRec(raw.pack_defaults) ? one(TONES, raw.pack_defaults.tone) : null;
   return {
     tone: { value: tone, source, packDefault },
+    background: parseBackground(raw.background),
+    sayAi: parseSayAi(raw.say_ai_when_greeting),
     words,
     introduceAs: { ...ia, ownerName },
     packDefaults: { tone: pd ?? packDefault },
@@ -64,24 +71,46 @@ export function parseHowSpeaks(raw: unknown): HowSpeaks | null {
   };
 }
 
+/** `background {value, saved, options: [{id, label: {en, te, ...}}]}`; absent or odd = null (an older API: no choice is drawn). */
+export function parseBackground(raw: unknown): BackgroundState | null {
+  if (!isRec(raw)) return null;
+  const value = one(BACKGROUNDS, raw.value);
+  if (!value || !Array.isArray(raw.options)) return null;
+  const options: BackgroundState["options"] = [];
+  for (const o of raw.options.slice(0, 6)) {
+    const id = isRec(o) ? one(BACKGROUNDS, o.id) : null;
+    if (!id || !isRec(o) || !isRec(o.label) || options.some((x) => x.id === id)) continue;
+    const label: Partial<Record<string, string>> = {};
+    for (const [lang, text] of Object.entries(o.label).slice(0, 12)) if (/^[a-z]{2}$/.test(lang) && typeof text === "string" && text.trim() !== "" && text.length <= 40) label[lang] = text.trim();
+    if (label.en) options.push({ id, label });
+  }
+  return options.length > 0 ? { value, saved: raw.saved === true, options } : null;
+}
+
+/** `say_ai_when_greeting {value, saved}`: absent = the API does not have it (null: no switch is drawn). */
+export function parseSayAi(raw: unknown): SayAiState | null {
+  return isRec(raw) && typeof raw.value === "boolean" ? { value: raw.value, saved: raw.saved === true } : null;
+}
+
 /** The contract's migration of the old "How to address customers": plain (never chosen) = the business type's usual; sir_madam, garu and ji = Respectful. Used by the mock; the API does it for real. */
 export const toneFromLegacy = (address: LegacyAddress | null, packDefault: SpeakTone): SpeakTone => (address === "sir_madam" || address === "garu" || address === "ji" ? "respectful" : packDefault);
 
-export type SpeaksProblem = "tone" | "language" | "style" | "region" | "introduce" | "empty";
+export type SpeaksProblem = "tone" | "language" | "style" | "introduce" | "background" | "say_ai" | "empty";
 /** The browser's change, checked again on the server with the contract's rules; the problem is a closed word, never the API's text. */
 export function speaksProblem(c: unknown): SpeaksProblem | null {
   if (!isRec(c)) return "empty";
   const keys = Object.keys(c);
-  if (keys.length === 0 || keys.some((k) => !["tone", "words", "introduceAs"].includes(k))) return "empty";
+  if (keys.length === 0 || keys.some((k) => !["tone", "words", "introduceAs", "background", "sayAi"].includes(k))) return "empty";
   if (c.tone !== undefined && c.tone !== null && one(TONES, c.tone) === null) return "tone";
   if (c.words !== undefined) {
     if (!isRec(c.words) || Object.keys(c.words).length === 0) return "language";
     for (const [l, v] of Object.entries(c.words)) {
-      if (!(SPEAK_LANGS as readonly string[]).includes(l) || !isRec(v) || Object.keys(v).length === 0 || Object.keys(v).some((k) => k !== "style" && k !== "region")) return "language";
+      if (!(SPEAK_LANGS as readonly string[]).includes(l) || !isRec(v) || Object.keys(v).length === 0 || Object.keys(v).some((k) => k !== "style")) return "language";
       if (v.style !== undefined && one(STYLES, v.style) === null) return "style";
-      if (v.region !== undefined && !(typeof v.region === "string" && REGIONS[l as SpeakLang].includes(v.region))) return "region";
     }
   }
+  if (c.background !== undefined && c.background !== null && one(BACKGROUNDS, c.background) === null) return "background";
+  if (c.sayAi !== undefined && c.sayAi !== null && typeof c.sayAi !== "boolean") return "say_ai";
   if (c.introduceAs !== undefined) {
     const ia = parseIntroduceAs(c.introduceAs);
     if (!ia || introduceProblem(ia) !== null) return "introduce";
@@ -95,7 +124,7 @@ export function speaksToApi(c: SpeaksChange): Record<string, unknown> {
     ...(c.tone !== undefined ? { tone: c.tone } : {}),
     ...(c.words ? { words: c.words } : {}),
     ...(c.introduceAs ? { introduce_as: introduceToApi(c.introduceAs) } : {}),
+    ...(c.background !== undefined ? { background: c.background } : {}),
+    ...(c.sayAi !== undefined ? { say_ai_when_greeting: c.sayAi } : {}),
   };
 }
-
-export const regionKey = (lang: RegionLang, region: string): string => (region === "neutral" ? "sp.region.neutral" : `sp.region.${lang}.${region}`);

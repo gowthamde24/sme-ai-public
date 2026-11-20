@@ -2,13 +2,14 @@ import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSettingsAdvanced";
 import { EmptyNext } from "@/components/v2/app/ds/EmptyNext";
-import { CallLimitCard, KnowledgeStep, TalkToYou, VoiceTone } from "@/components/v2/app/my-assistant/LazyMyAssistant";
+import { CallLimitCard, KnowledgeStep, TalkToYou, VoiceCard, VoiceTone } from "@/components/v2/app/my-assistant/LazyMyAssistant";
 import { Section } from "@/components/v2/app/my-assistant/Section";
 import { tabHref } from "@/components/v2/app/my-assistant/tabs";
 import { surface } from "@/components/v2/app/ui";
+import { appDict } from "@/i18n/app";
 import { wordsFor } from "@/i18n/app-words";
 import type { Lang } from "@/i18n/lang";
-import { CALL_LANG_NAMES, type CallLang } from "@/lib/assistant/types";
+import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { offeredLangs } from "@/lib/languages";
 import { currentAssistantName } from "@/lib/assistant/name";
 import { appV4, moreLanguages, autoReplyScreens, callSettingsScreens, jobsScreens, openingLineScreens, voicePickerScreens } from "@/lib/screens/flag";
@@ -17,7 +18,7 @@ import { setAutoReplyAction } from "../auto-reply-actions";
 import { saveCallSettingsAction } from "../call-settings-actions";
 import { previewOpeningLineAction } from "../opening-line-actions";
 import { saveTalkTrainingAction, resetTalkTrainingAction } from "../talk-training-actions";
-import { chooseVoiceAction } from "../voice-picker-actions";
+import { chooseVoiceAction, hearVoiceAction, toneExampleAction } from "../voice-picker-actions";
 import { saveCallLimitAction } from "../call-limit-actions";
 import { loadTalkPrefsAction, previewTalkPrefsAction, saveTalkPrefsAction, undoTalkPrefsAction } from "../talk-prefs-actions";
 import { addFactAction, addFileAction, addPasteAction, decideFactAction, discardSourceAction, draftFactsAction, editFactAction } from "../lead-setup-actions";
@@ -63,14 +64,22 @@ export function knowledgeTab({ lang, t, tenantId, base, owner, data, business }:
   );
 }
 
-/** Voice & tone: ONE plain card, "How your assistant sounds" (owner, 19 Nov 2026): the voice, "Speak to customers" with a live example and the greeting in one box; the rest under More choices on the same page. Then, with "How it talks to you" on, the person's own choices. */
-export function voiceTab({ lang, t, tenantId, base, owner, data, business, ownerFirst = null }: Common & { data: Awaited<ReturnType<typeof readVoiceTab>>; business: string; ownerFirst?: string | null }) {
+/** The tones in the words of each voice language, whatever language the app is in: the example under "How it talks" is written in the language of the voice that is picked. */
+const EXAMPLE_LANGS = ["te", "hi", "kn", "en"] as const satisfies readonly Lang[];
+const TONE_WORDS = ["friendly", "respectful", "quick"] as const;
+function toneExamples(): Record<string, Record<(typeof TONE_WORDS)[number], string>> {
+  return Object.fromEntries(EXAMPLE_LANGS.map((l) => [l, Object.fromEntries(TONE_WORDS.map((x) => [x, (appDict(l) as Record<string, string>)[`vc.ex.${x}`] ?? ""]))])) as Record<string, Record<(typeof TONE_WORDS)[number], string>>;
+}
+
+/** Voice & tone: TWO plain cards (owner, 20 Nov 2026: "one simple card"). 1. "Your assistant's voice": a row of named voices for each language, how it talks (three choices and one example), the background, the "Say 'AI assistant' when greeting" switch and the test call. 2. "Greeting and more choices": the greeting in one box, and More choices under it. Then, with "How it talks to you" on, the person's own choices. */
+export function voiceTab({ lang, t, tenantId, base, owner, data, business, ownerFirst = null, testCallHref = null }: Common & { data: Awaited<ReturnType<typeof readVoiceTab>>; business: string; ownerFirst?: string | null; testCallHref?: string | null }) {
   const { picker, training, speaks } = data;
-  const words = wordsFor(lang, ["tt.", "bv.end.", "sp.", "vt.", "mya.v."], ["today.err.mfa.link", "ope.preview", "vp.mock", "vp.err.sample", "vp.owneronly"]);
-  // with "How it talks to you" on, the tab has two parts: how it talks to customers (the card) and how it talks to the person
+  const words = wordsFor(lang, ["tt.", "bv.end.", "sp.", "vt."], ["today.err.mfa.link", "ope.preview", "vp.mock", "vp.err.sample", "vp.owneronly"]);
+  const cardWords = wordsFor(lang, ["vc.", "sp.err."], ["today.err.mfa.link", "vp.mock", "vp.err.sample", "vp.owneronly", "vp.none", "vp.recommended", "vt.lang", "vt.voice", "vt.play", "vt.stop", "vt.ex.label", "vt.hear.none", "sp.notsaved", "mya.v.selected"]);
+  // with "How it talks to you" on, the tab has two parts: how it talks to customers (the cards) and how it talks to the person
   const you = data.talk ? (
     <TalkToYou
-      words={wordsFor(lang, ["otp.", "vt.", "mya.v.warm", "mya.v.calm", "mya.v.bright", "mya.v.selected"])}
+      words={wordsFor(lang, ["otp.", "vt."])}
       initial={data.talk.prefs.data}
       languages={data.talk.languages}
       first={data.talk.first}
@@ -80,23 +89,42 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
       actions={{ load: loadTalkPrefsAction.bind(null, tenantId), save: saveTalkPrefsAction.bind(null, tenantId), undo: undoTalkPrefsAction.bind(null, tenantId), preview: previewTalkPrefsAction.bind(null, tenantId) }}
     />
   ) : null;
-  const first = (data.languages[0] ?? "te") as CallLang;
+  const first = data.languages[0] ?? "te";
+  const pickerOn = picker && voicePickerScreens() !== "off" ? picker : null;
+  // the name of the voice that speaks in each language now (the greeting's "Hear it" says it)
+  const voiceNames: Partial<Record<string, string>> = {};
+  if (pickerOn) for (const l of data.languages) voiceNames[l] = pickerOn.voices.find((v) => v.id === pickerOn.active[l] && v.language === l)?.name ?? pickerOn.voices.find((v) => v.language === l && v.gender === pickerOn.gender && (v.id === pickerOn.choices[l] || (!pickerOn.choices[l] && v.isDefault)))?.name;
+  const speaksPanel = speaks ? { ...speaks, save: saveSpeaksAction.bind(null, tenantId) } : null;
   return (
     <div className="flex flex-col gap-4" data-part="mya-voice">
-      {!picker && !training ? <EmptyNext title={t("mya.v.empty.t")} text={t("mya.v.empty.d")} action={{ href: `${base}/settings?section=assistant`, label: t("mya.v.empty.go") }} /> : null}
-      <VoiceTone
-        words={words}
+      {!picker && !training && !speaks ? <EmptyNext title={t("mya.v.empty.t")} text={t("mya.v.empty.d")} action={{ href: `${base}/settings?section=assistant`, label: t("mya.v.empty.go") }} /> : null}
+      <VoiceCard
+        words={cardWords}
         uiLang={lang}
-        picker={picker && voicePickerScreens() !== "off" ? { voices: picker.voices, choices: picker.choices, gender: picker.gender, fake: picker.fake } : null}
+        picker={pickerOn ? { voices: pickerOn.voices, choices: pickerOn.choices, active: pickerOn.active, gender: pickerOn.gender, fake: pickerOn.fake } : null}
         languages={data.languages}
         first={first}
+        langNames={CALL_LANG_NAMES}
         endpoint={`${base}/voice-pick`}
         choose={chooseVoiceAction.bind(null, tenantId)}
+        hear={pickerOn ? hearVoiceAction.bind(null, tenantId) : null}
+        speaks={speaksPanel}
+        examples={toneExamples()}
+        draftLangs={["te", "hi", "kn"]}
+        toneExample={pickerOn && voicePickerScreens() === "on" ? toneExampleAction.bind(null, tenantId) : null}
+        canEdit
+        securityHref="/app/security"
+        testCallHref={testCallHref}
+      />
+      <VoiceTone
+        words={words}
+        voiceNames={voiceNames}
+        first={first}
         training={training}
         actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
         canEdit={owner}
         securityHref="/app/security"
-        speaks={speaks ? { ...speaks, save: saveSpeaksAction.bind(null, tenantId) } : null}
+        speaks={speaksPanel}
         offered={offeredLangs(moreLanguages())}
         langNames={CALL_LANG_NAMES}
         business={business}

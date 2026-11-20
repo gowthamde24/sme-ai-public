@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { wordsFor } from "@/i18n/app-words";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
-import { parseHowSpeaks, REGIONS, type HowSpeaks } from "@/lib/talk-training/speaks";
+import { parseHowSpeaks, type HowSpeaks } from "@/lib/talk-training/speaks";
 import { EXAMPLES, exampleLine } from "@/lib/talk-training/speaks-examples";
 import type { TalkTrainingState } from "@/lib/talk-training/types";
 
@@ -12,12 +12,12 @@ import { TalkTraining } from "./TalkTraining";
 
 const W = wordsFor("en", ["tt.", "sp.", "today.err.mfa.link"]);
 const t = (key: string, vars?: Record<string, string | number>) => (W[key] ?? key).replace(/\{(\w+)\}/g, (m, k: string) => (vars && k in vars ? String(vars[k]) : m));
-const lang = (style = "everyday_mixed", region = "neutral", saved = false) => ({ style, region, saved, examples: "draft" });
+const lang = (style = "everyday_mixed", saved = false) => ({ style, saved, examples: "draft" });
 const RAW = (over: Record<string, unknown> = {}) => ({
-  tone: { value: "friendly", source: "pack_default", pack_default: "friendly", options: ["respectful", "friendly"] },
+  tone: { value: "friendly", source: "pack_default", pack_default: "friendly", options: ["friendly", "respectful", "quick"] },
   words: { languages: { te: lang(), kn: lang(), hi: lang(), ta: lang(), en: lang(), ml: lang() }, options: { styles: ["everyday_mixed", "everyday_pure"] } },
   introduce_as: { kind: "business", text: null, options: ["business", "owner", "custom"], owner_name: "Gowtham", preview: { te: "x", en: "y" } },
-  pack_defaults: { tone: "friendly", words: "everyday_mixed", region: "neutral" },
+  pack_defaults: { tone: "friendly", words: "everyday_mixed" },
   legacy_address: null,
   updated_at: null,
   ...over,
@@ -29,14 +29,16 @@ const mount = (h: HowSpeaks = H(), save: (c: unknown) => Promise<{ ok: true; dat
   render(<HowAssistantSpeaks t={t} langNames={CALL_LANG_NAMES} business="Lakshmi Silks" off={off} panel={{ initial: h, demo, save: save as never }} securityHref="/app/security" />);
 
 describe("How your assistant speaks (owner decision 11 Nov; C1's contract docs/contracts/how-assistant-speaks.md)", () => {
-  it("one panel: Tone (Respectful, Friendly, never Casual), Words (never Formal), Region and Introduce as; the test mode says it is made up", () => {
+  it("one panel: Tone (Friendly, Respectful, Short and quick; never Casual), Words (never Formal) and Introduce as, and no Region; the test mode says it is made up", () => {
     mount();
     const root = document.querySelector('[data-part="sp-panel"]') as HTMLElement;
     expect(within(root).getByRole("heading", { name: "How your assistant speaks" })).toBeInTheDocument();
     expect(root.querySelector('[data-part="sp-notsaved"]')).toHaveTextContent("Test mode");
     const tone = root.querySelector('[data-part="sp-tone"]') as HTMLElement;
-    expect([...tone.querySelectorAll("input")].map((i) => i.value)).toEqual(["respectful", "friendly"]);
+    expect([...tone.querySelectorAll("input")].map((i) => i.value)).toEqual(["friendly", "respectful", "quick"]);
     expect(within(tone).getByRole("radio", { name: /Friendly/ })).toBeChecked();
+    expect(within(tone).getByRole("radio", { name: /Short and quick/ })).toBeInTheDocument();
+    expect(root.querySelector('[data-part="sp-region"]')).toBeNull(); // Region is gone (C1, 21 Nov 2026)
     expect(tone).toHaveTextContent("Casual is only for your own test calls");
     expect(root).not.toHaveTextContent(/Formal/);
     const words = root.querySelector('[data-part="sp-words"]') as HTMLElement;
@@ -57,7 +59,7 @@ describe("How your assistant speaks (owner decision 11 Nov; C1's contract docs/c
     mount(H({ tone: { value: "friendly", source: "saved", pack_default: "friendly", options: [] } }));
     expect(document.querySelector('[data-part="sp-tone-source"]')).toBeNull();
   });
-  it("Words is ONE choice for all languages by default; \"Set per language\" opens the chooser, which opens by itself where the languages already differ; Region is for Telugu, Kannada and Tamil with their own regions", () => {
+  it("Words is ONE choice for all languages by default; \"Set per language\" opens the chooser, which opens by itself where the languages already differ", () => {
     mount();
     const words = document.querySelector('[data-part="sp-words"]') as HTMLElement;
     expect(words.querySelector('[data-part="sp-words-all"]')).toBeInTheDocument();
@@ -77,15 +79,6 @@ describe("How your assistant speaks (owner decision 11 Nov; C1's contract docs/c
     const diff = H({ words: { languages: { te: lang(), kn: lang("everyday_pure"), hi: lang(), ta: lang(), en: lang(), ml: lang() }, options: {} } });
     mount(diff);
     expect(document.querySelector('[data-part="sp-words"] button[aria-pressed]')).toBeInTheDocument(); // opened by itself: they already differ
-    cleanup();
-    mount();
-    const region = document.querySelector('[data-part="sp-region"]') as HTMLElement;
-    expect([...region.querySelectorAll("input")].map((i) => i.value)).toEqual([...REGIONS.te]);
-    fireEvent.click(within(region).getByRole("radio", { name: "Telangana" }));
-    expect(within(region).getByRole("button", { name: /తెలుగు/ })).toHaveTextContent("·");
-    fireEvent.click(within(region).getByRole("button", { name: "தமிழ்" }));
-    expect([...region.querySelectorAll("input")].map((i) => i.value)).toEqual([...REGIONS.ta]);
-    expect(within(region).getByRole("radio", { name: "Neutral (understood everywhere)" })).toBeChecked();
   });
   it("Save sends only what changed, in the contract's words (the single Words choice goes to every language), and shows what the API answered; nothing changed = nothing to save", async () => {
     const answered = H({ tone: { value: "respectful", source: "saved", pack_default: "friendly", options: [] } });
@@ -95,9 +88,8 @@ describe("How your assistant speaks (owner decision 11 Nov; C1's contract docs/c
     fireEvent.click(within(document.querySelector('[data-part="sp-tone"]') as HTMLElement).getByRole("radio", { name: /Respectful/ }));
     const words = document.querySelector('[data-part="sp-words"]') as HTMLElement;
     fireEvent.click(within(words).getByRole("radio", { name: /fewer English words/ }));
-    fireEvent.click(within(document.querySelector('[data-part="sp-region"]') as HTMLElement).getByRole("radio", { name: "Telangana" }));
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(save).toHaveBeenCalledWith({ tone: "respectful", words: { te: { style: "everyday_pure", region: "telangana" }, kn: { style: "everyday_pure" }, hi: { style: "everyday_pure" }, ta: { style: "everyday_pure" } } })); // the one choice writes the same value to every language
+    await waitFor(() => expect(save).toHaveBeenCalledWith({ tone: "respectful", words: { te: { style: "everyday_pure" }, kn: { style: "everyday_pure" }, hi: { style: "everyday_pure" }, ta: { style: "everyday_pure" } } })); // the one choice writes the same value to every language
     expect(await screen.findByRole("status")).toHaveTextContent("Saved.");
     await waitFor(() => expect(screen.getByRole("button", { name: "Save" })).toBeDisabled()); // what was saved is the new start (the button says "Saving…" until the transition ends)
   });
@@ -161,11 +153,11 @@ describe("How your assistant speaks (owner decision 11 Nov; C1's contract docs/c
     }
     expect(Object.keys(EXAMPLES).sort()).toEqual(["en", "hi", "kn", "te"]);
   });
-  it("changeOf: nothing changed is null; a region alone, and Introduce as with the same text, are not sent twice", () => {
+  it("changeOf: nothing changed is null; a word style alone, and Introduce as with the same text, are not sent twice", () => {
     const h = H();
-    const same = { tone: h.tone.value, words: Object.fromEntries((["te", "kn", "hi", "ta"] as const).map((l) => [l, { style: h.words[l].style, region: h.words[l].region }])) as never, introduceAs: { kind: "business" as const, text: null } };
+    const same = { tone: h.tone.value, words: Object.fromEntries((["te", "kn", "hi", "ta"] as const).map((l) => [l, { style: h.words[l].style }])) as never, introduceAs: { kind: "business" as const, text: null } };
     expect(changeOf(h, same)).toBeNull();
-    expect(changeOf(h, { ...same, words: { ...(same.words as Record<string, unknown>), te: { style: "everyday_mixed", region: "coastal" } } as never })).toEqual({ words: { te: { region: "coastal" } } });
+    expect(changeOf(h, { ...same, words: { ...(same.words as Record<string, unknown>), te: { style: "everyday_pure" } } as never })).toEqual({ words: { te: { style: "everyday_pure" } } });
     expect(changeOf(h, { ...same, introduceAs: { kind: "business", text: "ignored" } })).toBeNull();
   });
 });

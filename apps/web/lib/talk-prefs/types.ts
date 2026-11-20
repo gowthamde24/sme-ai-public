@@ -21,9 +21,8 @@ export const FIELDS: readonly Field[] = ["voice", "style", "address", "words", "
 export const DEFAULTS = { style: "respectful", address: "by_name", words: "mix", speed: "normal" } as const satisfies { style: Style; address: Address; words: WordsChoice; speed: Speed };
 
 export const VOICE_ID = /^[a-z]{2}-[a-z0-9_-]{2,40}$/;
-export type Sound = "warm" | "calm" | "bright";
-const SOUND_OF: Readonly<Record<string, Sound>> = { warm: "warm", calm: "calm", bright: "bright" };
-export type TalkVoice = { id: string; name: string; sound: Sound | null; gender: "female" | "male"; sample: boolean };
+/** A voice is shown by its first name (Ramya, Kavitha: C1's `name`); no Warm/Calm/Bright (owner, 20 Nov 2026). */
+export type TalkVoice = { id: string; name: string; gender: "female" | "male"; sample: boolean };
 
 export type TalkOptions = { voices: TalkVoice[]; style: Style[]; address: Address[]; words: WordsChoice[]; speed: Speed[] };
 export type TalkPrefs = {
@@ -54,8 +53,7 @@ export function parseVoice(v: unknown): TalkVoice | null {
   const gender = v.gender === "male" ? "male" : v.gender === "female" ? "female" : null;
   const name = typeof v.name === "string" ? v.name.slice(0, 60) : "";
   if (!gender || !name) return null;
-  const label = typeof v.label === "string" ? v.label.toLowerCase() : "";
-  return { id: v.id, name, sound: SOUND_OF[label] ?? null, gender, sample: v.sample !== false };
+  return { id: v.id, name, gender, sample: v.sample !== false };
 }
 
 /** The answer of GET / PUT / undo, read strictly: an answer that does not read is null (the screen then says "not available", never a half-filled form). */

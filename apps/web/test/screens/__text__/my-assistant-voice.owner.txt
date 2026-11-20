@@ -10,9 +10,9 @@ Sections
 <select label="SectionsKnowledgeVoice & toneRulesPractice">
   options: Knowledge=knowledge | Voice & tone=voice* | Rules=rules | Practice=practice
 Using defaults
-{label="How your assistant sounds"}
-## How your assistant sounds
-Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
+{label="Your assistant's voice"}
+## Your assistant's voice
+Pick a voice for each language. Customers hear it on calls. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
 {role=group label="Language"}
 [button type=button: తెలుగు]
 [button type=button: English]
@@ -20,14 +20,12 @@ Test mode: your choice is kept in this browser only, and the sounds are tones, n
 [button type=button: ಕನ್ನಡ]
 legend: Voice
 {role=radiogroup label="Voice"}
-<radio name=vt-voice label="WarmIn useFriendly and close, like a neighbour." value=warm checked>
-Warm In use Friendly and close, like a neighbour.
-[button type=button: Play: Warm]
-<radio name=vt-voice label="CalmNo voice with this sound in this language yet." disabled value=calm>
-Calm No voice with this sound in this language yet.
-<radio name=vt-voice label="BrightQuick and cheerful, full of energy." value=bright>
-Bright Quick and cheerful, full of energy.
-[button type=button: Play: Bright]
+<radio name=vc-voice label="RamyaWomanRecommendedIn use" value=te-ramya checked>
+Ramya Woman Recommended In use
+[button type=button: Hear Ramya]
+<radio name=vc-voice label="KavithaWomanChoose it, then you can hear it." value=te-kavitha>
+Kavitha Woman Choose it, then you can hear it.
+[button type=button disabled: Hear Kavitha]
 {label="Practice"}
 ## Practice
 Try your assistant the way a customer would.

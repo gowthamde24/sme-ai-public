@@ -14,7 +14,7 @@ import { saveSpeaks, type Facts } from "@/lib/talk-training/speaks-source";
 import { readFacts } from "./speaks-facts";
 
 /**
- * "How your assistant speaks": the Owner saves any subset of Tone, Words (with Region) and Introduce as (job speaks-panel; C1's contract docs/contracts/how-assistant-speaks.md: Owner and the second factor, `403 mfa_required`; `422 validation_error`). Checked here first with the contract's rules.
+ * "How your assistant speaks": the Owner or an Admin saves any subset of Tone, Words, Introduce as, the background and "Say AI assistant when greeting" (job speaks-panel; C1's contract docs/contracts/how-assistant-speaks.md: Owner and the second factor, `403 mfa_required`; `422 validation_error`). Checked here first with the contract's rules.
  * The answer is the whole object as it now stands.
  */
 export type SpeaksResult = { ok: true; data: HowSpeaks } | { ok: false; error: SpeaksProblem | "forbidden" | "mfa" | "not_available" | "down" | "rejected" };
@@ -29,7 +29,7 @@ export async function saveSpeaksAction(tenantId: string, input: unknown): Promis
   const user = await requireUser();
   try {
     const tenant = await fetchTenant(user.accessToken, tenantId);
-    if (tenant.role !== "owner") return { ok: false, error: "forbidden" };
+    if (tenant.role !== "owner" && tenant.role !== "admin") return { ok: false, error: "forbidden" }; // (C1, greeting-disclosure.md: "Owner, Admin write"; the API checks again and answers 403 / mfa_required itself)
     const facts: Facts = await readFacts(user.accessToken, tenantId, user.id);
     const data = await saveSpeaks({ token: user.accessToken, tenantId }, change, facts);
     revalidatePath(`/app/tenants/${tenantId}/ai-team/training`);
@@ -40,9 +40,7 @@ export async function saveSpeaksAction(tenantId: string, input: unknown): Promis
       if (error.code === "mfa_required") return { ok: false, error: "mfa" };
       if (error.status === 403) return { ok: false, error: "forbidden" };
       if (error.status === 422) {
-        // C1's closed `error.reason` (docs/contracts/how-assistant-speaks.md) names what was refused; without one, a refusal of a save that carried Introduce as is most likely that
-        if (error.reason === "region_not_of_language") return { ok: false, error: "region" };
-        if (error.reason !== undefined) return { ok: false, error: "introduce" };
+        // a refusal of a save that carried Introduce as is most likely that; any other refusal is "not accepted" (nothing was saved)
         return { ok: false, error: change.introduceAs ? "introduce" : "rejected" };
       }
     }

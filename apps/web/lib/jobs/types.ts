@@ -38,7 +38,7 @@ export type Job = {
   /** The staging preview ("my business") drew this from the sample data because the API route is not there yet (lib/screens/preview.ts); never set otherwise. */
   sample?: true;
 };
-/** `voice` is the catalogue id, `voiceName` the owner's word for it ("Soft woman"; the chip shows the name). The number is only ever the shop's. */
+/** `voice` is the catalogue id, `voiceName` its first name ("Ramya"; the chip shows the name). The number is only ever the shop's. */
 export type JobSpeaks = { language: string | null; voice: string | null; voiceName: string | null; number: string | null };
 
 /** Which of the four solid chips a status wears (design/jobs.css): the colour is never the only sign, the word and an icon sit with it. */

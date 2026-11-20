@@ -10,9 +10,9 @@ Sections
 <select label="SectionsKnowledgeVoice & toneRulesPractice">
   options: Knowledge=knowledge | Voice & tone=voice* | Rules=rules | Practice=practice
 Using defaults
-{label="How your assistant sounds"}
-## How your assistant sounds
-Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
+{label="Your assistant's voice"}
+## Your assistant's voice
+Pick a voice for each language. Customers hear it on calls. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
 {role=group label="Language"}
 [button type=button: తెలుగు]
 [button type=button: English]
@@ -20,14 +20,12 @@ Test mode: your choice is kept in this browser only, and the sounds are tones, n
 [button type=button: ಕನ್ನಡ]
 legend: Voice
 {role=radiogroup label="Voice"}
-<radio name=vt-voice label="WarmIn useFriendly and close, like a neighbour." value=warm checked>
-Warm In use Friendly and close, like a neighbour.
-[button type=button: Play: Warm]
-<radio name=vt-voice label="CalmNo voice with this sound in this language yet." disabled value=calm>
-Calm No voice with this sound in this language yet.
-<radio name=vt-voice label="BrightQuick and cheerful, full of energy." value=bright>
-Bright Quick and cheerful, full of energy.
-[button type=button: Play: Bright]
+<radio name=vc-voice label="RamyaWomanRecommendedIn use" value=te-ramya checked>
+Ramya Woman Recommended In use
+[button type=button: Hear Ramya]
+<radio name=vc-voice label="KavithaWomanChoose it, then you can hear it." value=te-kavitha>
+Kavitha Woman Choose it, then you can hear it.
+[button type=button disabled: Hear Kavitha]
 {label="How it talks to you"}
 ## How it talks to you
 Only yours. Your team chooses their own, and customers are not affected. Test version: your choices are kept in this browser only, and a sample shows its words, not a voice. Talk to me in
@@ -50,15 +48,12 @@ legend: Voice
 [button type=button: Female]
 [button type=button: Male]
 {role=radiogroup label="Voice"}
-<radio name=vt-me-voice label="Warm" value=te-mock-f-warm>
-Warm
-[button type=button: Hear it: Warm]
-<radio name=vt-me-voice label="Calm" value=te-mock-f-calm checked>
-Calm
-[button type=button: Hear it: Calm]
-<radio name=vt-me-voice label="Bright" value=te-mock-f-bright>
-Bright
-[button type=button: Hear it: Bright]
+<radio name=vt-me-voice label="Ramya" value=te-ramya checked>
+Ramya
+[button type=button: Hear it: Ramya]
+<radio name=vt-me-voice label="Kavitha" value=te-kavitha>
+Kavitha
+[button type=button: Hear it: Kavitha]
 legend: Words
 {role=radiogroup label="Words"}
 <radio name=vt-me-words label="Pure తెలుగు" value=pure>

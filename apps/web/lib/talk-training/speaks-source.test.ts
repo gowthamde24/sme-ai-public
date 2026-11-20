@@ -29,14 +29,26 @@ describe("How your assistant speaks, test mode (SPEAKS_PANEL_SCREENS=mock): made
     expect(p.mode === "ok" && p.data.tone).toMatchObject({ value: "respectful", source: "pack_default" }); // a school that never touched it
   });
   it("a save changes only what was sent; the first save writes the tone (saved), the old setting stays as it was; null resets", async () => {
-    const out = await saveSpeaks(CTX, { tone: "respectful", words: { te: { style: "everyday_pure", region: "telangana" } } }, { ...F, legacyAddress: "ji" });
+    const out = await saveSpeaks(CTX, { tone: "respectful", words: { te: { style: "everyday_pure" } } }, { ...F, legacyAddress: "ji" });
     expect(out.tone).toMatchObject({ value: "respectful", source: "saved" });
-    expect(out.words.te).toMatchObject({ style: "everyday_pure", region: "telangana", saved: true });
-    expect(out.words.kn).toMatchObject({ style: "everyday_mixed", region: "neutral", saved: false });
+    expect(out.words.te).toMatchObject({ style: "everyday_pure", saved: true });
+    expect(out.words.kn).toMatchObject({ style: "everyday_mixed", saved: false });
     expect(out.legacyAddress).toBe("ji"); // nothing is lost
     expect(jar.v.get(MOCK_COOKIE)?.length).toBeLessThan(3000);
-    const later = await saveSpeaks(CTX, { words: { te: { region: "coastal" } } }, F);
-    expect(later.words.te).toMatchObject({ style: "everyday_pure", region: "coastal" }); // the style kept, only the region changed
+    const later = await saveSpeaks(CTX, { words: { kn: { style: "everyday_pure" } } }, F);
+    expect(later.words.te).toMatchObject({ style: "everyday_pure" }); // what was saved before is kept
+    expect(later.words.kn).toMatchObject({ style: "everyday_pure", saved: true });
+    // the background and the AI switch: made up like the API's (the default is the quiet office and OFF), kept, and null puts them back
+    expect(later.background).toMatchObject({ value: "quiet_office", saved: false });
+    expect(later.sayAi).toEqual({ value: false, saved: false });
+    const set = await saveSpeaks(CTX, { background: "shop", sayAi: true, tone: "quick" }, F);
+    expect(set.background).toMatchObject({ value: "shop", saved: true });
+    expect(set.sayAi).toEqual({ value: true, saved: true });
+    expect(set.tone.value).toBe("quick");
+    const back = await saveSpeaks(CTX, { background: null, sayAi: null }, F);
+    expect(back.background).toMatchObject({ value: "quiet_office", saved: false });
+    expect(back.sayAi).toEqual({ value: false, saved: false });
+    await saveSpeaks(CTX, { tone: "respectful" }, F);
     const reset = await saveSpeaks(CTX, { tone: null }, { ...F, legacyAddress: "ji" });
     expect(reset.tone).toMatchObject({ value: "respectful", source: "migrated" }); // back to what the old setting maps to
   });

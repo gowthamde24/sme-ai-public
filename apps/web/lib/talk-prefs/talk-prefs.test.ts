@@ -13,9 +13,9 @@ import { addressFor, cleanPatch, parseTalkPrefs } from "./types";
 const GOOD = { voice: { id: "te-deepthi", name: "Deepthi", label: "Calm", gender: "female", sample: true }, style: "respectful", address: "by_name", words: "mix", speed: "normal", is_default: true, options: { voices: [{ id: "te-sindhu", name: "Sindhu", label: "Bright", gender: "female", sample: true }], style: ["friendly", "respectful", "very_formal", "short_direct"], address: ["by_name", "garu", "sir_madam", "anna_akka"], words: ["pure", "mix", "more_english"], speed: ["slower", "normal", "faster"] } };
 
 describe("the reader", () => {
-  it("reads C1's answer: the sound of a voice from its label, the lists, the defaults", () => {
+  it("reads C1's answer: a voice by its name (no Warm/Calm/Bright), the lists, the defaults", () => {
     const p = parseTalkPrefs(GOOD, "te");
-    expect(p?.voice).toEqual({ id: "te-deepthi", name: "Deepthi", sound: "calm", gender: "female", sample: true });
+    expect(p?.voice).toEqual({ id: "te-deepthi", name: "Deepthi", gender: "female", sample: true });
     expect(p?.options.voices.map((v) => v.id)).toEqual(["te-sindhu"]);
     expect(p).toMatchObject({ style: "respectful", address: "by_name", words: "mix", speed: "normal", isDefault: true, undoToken: null, changed: [] });
   });
@@ -74,12 +74,12 @@ describe("the test version (OWNER_TALK_PREFS=mock): one cookie, per browser, no 
     expect(await undoTalkChange("t", "te", token)).toEqual({ ok: false, error: "expired" });
   });
   it("the voice is kept per language; a voice of another language, a bad option or two changes are refused", async () => {
-    await saveTalkPrefs("t", "te", { voice: "te-mock-m-bright" });
+    await saveTalkPrefs("t", "te", { voice: "te-naveen" });
     const te = await loadTalkPrefs("t", "te");
     const hi = await loadTalkPrefs("t", "hi");
-    expect(te.ok && te.data.voice?.id).toBe("te-mock-m-bright");
-    expect(hi.ok && hi.data.voice?.id).toBe("hi-mock-f-calm");
-    expect(await saveTalkPrefs("t", "te", { voice: "hi-mock-f-warm" })).toEqual({ ok: false, error: "invalid" });
+    expect(te.ok && te.data.voice?.id).toBe("te-naveen");
+    expect(hi.ok && hi.data.voice?.id).toBe("hi-sanya");
+    expect(await saveTalkPrefs("t", "te", { voice: "hi-pooja" })).toEqual({ ok: false, error: "invalid" });
     expect(await saveTalkPrefs("t", "hi", { address: "garu" })).toEqual({ ok: false, error: "invalid" });
     expect(await saveTalkPrefs("t", "xx", { speed: "slower" })).toEqual({ ok: false, error: "invalid" });
     expect(await saveTalkPrefs("t", "te", { speed: "slower", style: "friendly" })).toEqual({ ok: false, error: "invalid" });

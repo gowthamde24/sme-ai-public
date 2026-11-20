@@ -28,11 +28,18 @@ const acts = (over: Partial<JobPageActions> = {}): JobPageActions => ({
   ...over,
 });
 const TARGET: WhoTarget = { id: "66666666-6666-4666-8666-666666666605", kind: "store_visits", customName: null, language: "en", to: "te" };
-const extra = (over: Partial<WhoExtra> = {}): WhoExtra => ({ sampleEndpoint: "/app/tenants/t/voice-sample", target: TARGET, changeJob: vi.fn(async () => patched()), ...over });
+const extra = (over: Partial<WhoExtra> = {}): WhoExtra => ({ sampleEndpoint: "/app/tenants/t/voice-pick", target: TARGET, changeJob: vi.fn(async () => patched()), voices: VOICES, ...over });
 const view = (kind = "speed_to_lead", a: JobPageActions | null = acts(), w: WhoExtra | null = extra()) => render(<JobPage detail={detailOf(kind)} words={words} base={BASE} lang="en" ago={{ unit: "min", n: 9 }} actions={a} whoExtra={w} />);
 const card = () => document.querySelector('[data-part="who-talks"]') as HTMLElement;
 const pill = (n: number) => within(card()).getByRole("combobox", { name: `This job speaks … in a … voice from …. (${n})` }) as HTMLSelectElement;
-const NAMES = [{ id: "female_warm" as const, name: "Soft woman" }, { id: "female_clear" as const, name: "Bright woman" }, { id: "male_calm" as const, name: "Calm man" }];
+// the voice card's own list (voices-tones.md section 9): catalogue ids, first names, per language; one recorded, one only heard live
+const VOICES = [
+  { id: "te-ramya", name: "Ramya", language: "te", recommended: true, ready: true },
+  { id: "te-kavitha", name: "Kavitha", language: "te", recommended: false, ready: false },
+  { id: "hi-sanya", name: "Sanya", language: "hi", recommended: true, ready: true },
+  { id: "hi-pooja", name: "Pooja", language: "hi", recommended: false, ready: false },
+  { id: "en-janvi", name: "Janvi", language: "en", recommended: true, ready: true },
+];
 
 describe("Who talks: the card", () => {
   it("is a plain sentence with the choice inside: Telugu, friendly, the shop number; with the AI line that cannot be switched off", () => {
@@ -48,25 +55,28 @@ describe("Who talks: the card", () => {
     expect(card().querySelector('[data-part="who-ai-line"]')).toHaveTextContent("Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.");
     // no switch for the AI line anywhere
     expect(card().querySelectorAll('[role="switch"]')).toHaveLength(0);
-    expect(card().querySelector('[data-part="who-tone-example"]')).toHaveTextContent("friendly “Hi Suresh garu, …”");
+    expect(card().querySelector('[data-part="who-tone-example"]')).toHaveTextContent("friendly “Hi Suresh, …”");
     expect(card().querySelector('[data-part="who-tone-example"]')).toHaveTextContent("+91 98480 xxx10");
   });
-  it("offers three voices, the chosen one ticked (round radios), and at most four choices on the card", () => {
+  it("offers the voices of the job's language by their names (the voice card's own list), the chosen one ticked (round radios); no Warm, Calm, Bright and no invented descriptions", () => {
     view();
     const voices = [...card().querySelectorAll('[data-voice] input[type="radio"]')] as HTMLInputElement[];
-    expect(voices.map((v) => v.value)).toEqual(["female_warm", "female_clear", "male_calm"]);
-    expect(voices.map((v) => v.checked)).toEqual([true, false, false]);
-    expect(card()).toHaveTextContent("Soft woman voice");
-    expect(card()).toHaveTextContent("Bright woman voice");
-    expect(card()).toHaveTextContent("Calm man voice");
+    expect(voices.map((v) => v.value)).toEqual(["te-ramya", "te-kavitha"]);
+    expect(voices.map((v) => v.checked)).toEqual([true, false]);
+    expect(card().querySelector('[data-voice="te-ramya"]')).toHaveTextContent("Ramya");
+    expect(card().querySelector('[data-voice="te-ramya"]')).toHaveTextContent("Recommended");
+    expect(card().querySelector('[data-voice="te-kavitha"]')).not.toHaveTextContent("Recommended");
+    for (const old of ["Soft woman", "Bright woman", "Calm man", "Warm", "Bright", "Calm"]) expect(card().textContent ?? "").not.toContain(old);
     expect(card().querySelectorAll("select")).toHaveLength(2);
   });
-  it("the voices carry the names the catalogue gives them (GET /ai-assistant/voices); the Play button still uses the id", () => {
-    view("speed_to_lead", acts(), extra({ voices: NAMES }));
-    const rows = [...card().querySelectorAll("[data-voice]")] as HTMLElement[];
-    expect(rows.map((r) => r.textContent)).toEqual([expect.stringContaining("Soft woman"), expect.stringContaining("Bright woman"), expect.stringContaining("Calm man")]);
-    expect(rows[0].textContent).not.toContain("Soft woman voice");
-    expect(card().querySelector('[data-play="male_calm"]')).toHaveAttribute("aria-label", "Play: Calm man");
+  it("the three tones are the voice card's words; the voice list follows the language; with no list read there is no voice list", () => {
+    view();
+    expect([...pill(2).options].map((o) => o.value)).toEqual(["friendly", "respectful", "quick"]);
+    fireEvent.change(pill(1), { target: { value: "hi" } });
+    expect([...card().querySelectorAll("[data-voice]")].map((r) => r.getAttribute("data-voice"))).toEqual(["hi-sanya", "hi-pooja"]);
+    cleanup();
+    view("speed_to_lead", acts(), extra({ voices: null }));
+    expect(card().querySelector('[data-part="who-voices"]')).toBeNull();
   });
   it("the language lives here: the old language line of What it says is gone", () => {
     view();
@@ -92,27 +102,27 @@ describe("Who talks: it saves exactly the adapter's payload", () => {
   it("one choice = one patch of the adapter's closed words: tone, language, voice (never the number)", async () => {
     const a = acts();
     view("speed_to_lead", a);
-    fireEvent.change(pill(2), { target: { value: "casual" } });
+    fireEvent.change(pill(2), { target: { value: "quick" } });
     fireEvent.change(pill(1), { target: { value: "hi" } });
-    fireEvent.click(card().querySelector('[data-voice="male_calm"] input') as HTMLElement);
+    fireEvent.click(card().querySelector('[data-voice="hi-pooja"] input') as HTMLElement);
     await waitFor(() => expect(a.setSpeaks).toHaveBeenCalledTimes(3));
     const sent = (a.setSpeaks as ReturnType<typeof vi.fn>).mock.calls.map((c) => c[0]);
-    expect(sent).toEqual([speaksPatch("tone", "casual"), speaksPatch("language", "hi"), speaksPatch("voice", "male_calm")]);
-    expect(sent).toEqual([{ tone: "casual" }, { language: "hi" }, { voice: "male_calm" }]);
-    expect(card().querySelector('[data-part="who-tone-example"]')).toHaveTextContent("casual “Hi Suresh, …”");
+    expect(sent).toEqual([speaksPatch("tone", "quick"), speaksPatch("language", "hi"), speaksPatch("voice", "hi-pooja")]);
+    expect(sent).toEqual([{ tone: "quick" }, { language: "hi" }, { voice: "hi-pooja" }]);
+    expect(card().querySelector('[data-part="who-tone-example"]')).toHaveTextContent("short and quick “Hello Suresh, one minute? …”");
   });
   it("puts the choice back and says why when the API says no", async () => {
     const a = acts({ setSpeaks: vi.fn(async () => ({ ok: false as const, kind: "invalid" as const, error: "That voice is not available." })) });
     view("speed_to_lead", a);
-    fireEvent.change(pill(2), { target: { value: "casual" } });
+    fireEvent.change(pill(2), { target: { value: "quick" } });
     expect(await screen.findByText("That voice is not available.")).toBeInTheDocument();
     expect(pill(2).value).toBe("friendly");
   });
   it("a person who only reads sees the card with every choice off, no rename and no command", () => {
-    view("speed_to_lead", null, null);
+    view("speed_to_lead", null, extra());
     expect(card()).toBeTruthy();
     expect(card().querySelectorAll("select:disabled")).toHaveLength(2);
-    expect(card().querySelectorAll('input[type="radio"]:disabled')).toHaveLength(3);
+    expect(card().querySelectorAll('input[type="radio"]:disabled')).toHaveLength(2);
     expect(within(card()).queryByRole("button", { name: "Rename" })).toBeNull();
     expect(card().querySelector('[data-part="who-command"]')).toBeNull();
   });
@@ -152,21 +162,22 @@ describe("Who talks: the job's own name", () => {
   });
 });
 
-describe("Who talks: the voices play through the voice sample route", () => {
+describe("Who talks: the voices play through the voice-pick route (the recorded sample of one voice)", () => {
   const created: string[] = [];
   beforeEach(() => {
     created.length = 0;
     vi.stubGlobal("Audio", class { src: string; onended: (() => void) | null = null; onerror: (() => void) | null = null; constructor(src: string) { this.src = src; created.push(src); } pause() {} play() { return Promise.resolve(); } });
   });
   afterEach(() => vi.unstubAllGlobals());
-  it("each voice has a Play button with the route's own query (voice, language, tone, the job's name)", () => {
+  it("a voice with a recording has a Play button that asks the route for that voice's id; one with no recording has none; again stops it", () => {
     view();
-    expect(card().querySelectorAll("[data-play]")).toHaveLength(3);
-    fireEvent.click(card().querySelector('[data-play="female_clear"]') as HTMLElement);
-    expect(created).toEqual(["/app/tenants/t/voice-sample?voice=female_clear&lang=te&tone=warm"]);
-    expect(card().querySelector('[data-play="female_clear"]')).toHaveAttribute("aria-pressed", "true");
-    fireEvent.click(card().querySelector('[data-play="female_clear"]') as HTMLElement);
-    expect(card().querySelector('[data-play="female_clear"]')).toHaveAttribute("aria-pressed", "false");
+    expect([...card().querySelectorAll("[data-play]")].map((b) => b.getAttribute("data-play"))).toEqual(["te-ramya"]);
+    fireEvent.click(card().querySelector('[data-play="te-ramya"]') as HTMLElement);
+    expect(created).toEqual(["/app/tenants/t/voice-pick?id=te-ramya"]);
+    expect(card().querySelector('[data-play="te-ramya"]')).toHaveAttribute("aria-pressed", "true");
+    expect(card().querySelector('[data-play="te-ramya"]')).toHaveAttribute("aria-label", "Stop: Ramya");
+    fireEvent.click(card().querySelector('[data-play="te-ramya"]') as HTMLElement);
+    expect(card().querySelector('[data-play="te-ramya"]')).toHaveAttribute("aria-pressed", "false");
   });
   it("no sample route, no play buttons", () => {
     view("speed_to_lead", acts(), extra({ sampleEndpoint: null }));

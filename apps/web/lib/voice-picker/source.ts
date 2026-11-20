@@ -1,5 +1,9 @@
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { getVoicePicker, putVoiceChoice, putVoiceGender } from "@/lib/api/voice-picker";
+import { PreviewUnsupported, previewSpoken } from "@/lib/api/opening-line";
+import { getToneExample } from "@/lib/api/voice-samples";
+import type { CallLang } from "@/lib/assistant/types";
+import type { Preview } from "@/lib/opening-line/types";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { voicePickerScreens } from "@/lib/screens/flag";
 
@@ -30,7 +34,13 @@ const parseJar = (v: unknown): Jar | null => {
 const NONE: Jar = { gender: "female", choices: {} };
 const mock = async (): Promise<Picker> => {
   const jar = await readJar(MOCK_COOKIE, parseJar, NONE);
-  return { gender: jar.gender, voices: [...MOCK_VOICES], choices: jar.choices, fake: true };
+  const active: Choices = {};
+  for (const l of PICKER_LANGS) {
+    const mine = MOCK_VOICES.filter((v) => v.language === l && v.gender === jar.gender);
+    const id = mine.find((v) => v.id === jar.choices[l])?.id ?? mine.find((v) => v.isDefault)?.id;
+    if (id) active[l] = id;
+  }
+  return { gender: jar.gender, voices: [...MOCK_VOICES], choices: jar.choices, active, fake: true };
 };
 
 const refusal = (error: unknown): SaveError => {
@@ -92,5 +102,37 @@ export async function saveVoiceGender(ctx: Ctx, gender: unknown): Promise<Saved<
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return { ok: false, error: refusal(error) };
+  }
+}
+
+/**
+ * The live "Hear it" of the voice card: the workspace's SAVED opening line spoken in the voice in force for `language` (`POST /voices/preview {language}`, text null = the saved line). The API has no way to ask for another voice: it speaks the one that is chosen, so the card offers it for the voice in use only. The test mode has no sound ({audio: null, fake: true}).
+ * 404 `no_preview` = no voice service here (audio null); 429 passes on as "rate". The answer carries `voiceId`, the voice that really spoke.
+ */
+export async function hearActive(ctx: Ctx, language: unknown): Promise<Saved<Preview> | { ok: false; error: "rate" }> {
+  const mode = voicePickerScreens();
+  if (mode === "off") return { ok: false, error: "not_available" };
+  if (typeof language !== "string" || !(PICKER_LANGS as readonly string[]).includes(language)) return { ok: false, error: "invalid" };
+  if (mode === "mock") return { ok: true, data: { audio: null, fake: true } };
+  try {
+    return { ok: true, data: await previewSpoken(ctx.token, ctx.tenantId, { language: language as CallLang, text: null, mentionAi: null }) };
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    if (error instanceof PreviewUnsupported) return { ok: false, error: "not_available" };
+    if (error instanceof ApiRequestError && error.status === 429) return { ok: false, error: "rate" };
+    return { ok: false, error: refusal(error) };
+  }
+}
+
+/** The example words under the tones (`voice-preview/text`): the text, or null where the API has none (the test mode, an older API, any failure: the screen then shows its own sentence). */
+export async function toneExample(ctx: Ctx, language: unknown, tone: unknown): Promise<string | null> {
+  if (voicePickerScreens() !== "on") return null;
+  if (typeof language !== "string" || !(PICKER_LANGS as readonly string[]).includes(language)) return null;
+  if (tone !== "friendly" && tone !== "respectful" && tone !== "quick") return null;
+  try {
+    return await getToneExample(ctx.token, ctx.tenantId, language, tone);
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    return null;
   }
 }

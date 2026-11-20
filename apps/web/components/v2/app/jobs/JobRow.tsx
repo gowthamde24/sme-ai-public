@@ -30,8 +30,8 @@ const pc = "inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full 
 function SpeaksChips({ speaks, t, words }: { speaks: JobSpeaks; t: Say; words: Words }) {
   const lang = speaks.language ? (words[`jobs.page.lang.${speaks.language}`] ? t(`jobs.page.lang.${speaks.language}`) : null) : null;
   const num = speaks.number ? t(words[`jobs.page.number.${speaks.number}`] ? `jobs.page.number.${speaks.number}` : "jobs.page.number.other") : null;
-  // the chip shows the voice's NAME (the owner's word, "Soft woman"); with only the catalogue id the three known voices have a name of ours; an id we have no name for is left out, never shown as a code
-  const voice = speaks.voiceName ? t("jobs.page.voice", { name: speaks.voiceName }) : speaks.voice && words[`jobs.who.voice.${speaks.voice}`] ? t(`jobs.who.voice.${speaks.voice}`) : null;
+  // the chip shows the voice's NAME ("Ramya", sent with the voice); an id with no name is left out, never shown as a code
+  const voice = speaks.voiceName ? t("jobs.page.voice", { name: speaks.voiceName }) : null;
   if (!lang && !voice && !num) return null;
   return (
     <span data-part="job-speaks" className="mt-1.5 flex flex-wrap items-center gap-1.5">

@@ -4,7 +4,7 @@ import * as React from "react";
 
 import type { CallLang } from "@/lib/assistant/types";
 import { introduceProblem, type IntroduceAs } from "@/lib/talk-training/introduce";
-import { EXAMPLE_LANGS, REGION_LANGS, REGIONS, regionKey, SPEAK_LANGS, STYLES, TONES, type ExampleLang, type HowSpeaks, type RegionLang, type SpeakLang, type SpeaksChange, type SpeakStyle, type SpeakTone } from "@/lib/talk-training/speaks";
+import { EXAMPLE_LANGS, SPEAK_LANGS, STYLES, TONES, type ExampleLang, type HowSpeaks, type SpeakLang, type SpeaksChange, type SpeakStyle, type SpeakTone } from "@/lib/talk-training/speaks";
 import { exampleLine } from "@/lib/talk-training/speaks-examples";
 
 import { alertBox, btnMain, checkRow, fieldHelp, noteBox, okBox } from "../ui";
@@ -18,10 +18,10 @@ const hearBtn = "mt-2 inline-flex min-h-11 items-center rounded-full border bord
 export type SpeaksOut = { ok: true; data: HowSpeaks } | { ok: false; error: string };
 export type SpeaksPanel = { initial: HowSpeaks; /** the test mode (made-up choices kept in this browser): the panel says so */ demo: boolean; save: (change: SpeaksChange) => Promise<SpeaksOut> };
 
-export type Draft = { tone: SpeakTone; words: Record<SpeakLang, { style: SpeakStyle; region: string }>; introduceAs: IntroduceAs };
+export type Draft = { tone: SpeakTone; words: Record<SpeakLang, { style: SpeakStyle }>; introduceAs: IntroduceAs };
 export const draftOf = (h: HowSpeaks): Draft => ({
   tone: h.tone.value,
-  words: Object.fromEntries(SPEAK_LANGS.map((l) => [l, { style: h.words[l].style, region: h.words[l].region }])) as Draft["words"],
+  words: Object.fromEntries(SPEAK_LANGS.map((l) => [l, { style: h.words[l].style }])) as Draft["words"],
   introduceAs: { kind: h.introduceAs.kind, text: h.introduceAs.text },
 });
 
@@ -32,7 +32,7 @@ export function changeOf(from: HowSpeaks, d: Draft): SpeaksChange | null {
   for (const l of SPEAK_LANGS) {
     const a = from.words[l];
     const b = d.words[l];
-    if (a.style !== b.style || a.region !== b.region) (c.words ??= {})[l] = { ...(a.style !== b.style ? { style: b.style } : {}), ...(a.region !== b.region ? { region: b.region } : {}) };
+    if (a.style !== b.style) (c.words ??= {})[l] = { style: b.style };
   }
   const ia = d.introduceAs;
   if (ia.kind !== from.introduceAs.kind || (ia.kind !== "business" && (ia.text ?? "").trim() !== (from.introduceAs.text ?? "").trim())) c.introduceAs = ia;
@@ -40,8 +40,8 @@ export function changeOf(from: HowSpeaks, d: Draft): SpeaksChange | null {
 }
 
 /**
- * "How your assistant speaks" (owner decision 11 Nov 2026; C1's fixed contract docs/contracts/how-assistant-speaks.md), one panel in Talk training for every business: Tone (Respectful, Friendly; Casual is only on an owner test call), Words (everyday with English words, or
- * with fewer; no Formal) for each language, Region (Telugu, Kannada, Tamil) and Introduce as (moved here), each with "Hear an example" (a written sample line for now). It replaces "How to address customers": an old setting is shown as the tone it maps to, and says so. One Save sends only what
+ * "How your assistant speaks" (owner decision 11 Nov 2026; C1's fixed contract docs/contracts/how-assistant-speaks.md), one panel in Talk training for every business: Tone (Friendly, Respectful, Short and quick; Casual is only on an owner test call), Words (everyday with English words, or
+ * with fewer; no Formal) for each language and Introduce as (moved here; no Region any more, 21 Nov 2026), each with "Hear an example" (a written sample line for now). It replaces "How to address customers": an old setting is shown as the tone it maps to, and says so. One Save sends only what
  * changed (Owner and the second factor). A language's choices are chosen per language, as the API keeps them.
  */
 export function HowAssistantSpeaks({ t, langNames, business, off, panel, securityHref }: { t: Say; langNames: Record<CallLang, string>; business: string | null; off: boolean; panel: SpeaksPanel; securityHref: string }) {
@@ -49,8 +49,7 @@ export function HowAssistantSpeaks({ t, langNames, business, off, panel, securit
   const [d, setD] = React.useState<Draft>(() => draftOf(panel.initial));
   const [wordsLang, setWordsLang] = React.useState<SpeakLang>("te");
   const [perLang, setPerLang] = React.useState(() => !SPEAK_LANGS.every((l) => panel.initial.words[l].style === panel.initial.words.te.style)); // one choice for all languages by default; "set per language" opens the chooser (and it opens by itself where the languages already differ)
-  const [regionLang, setRegionLang] = React.useState<RegionLang>("te");
-  const [hear, setHear] = React.useState<"tone" | "words" | "region" | null>(null);
+  const [hear, setHear] = React.useState<"tone" | "words" | null>(null);
   const [exLang, setExLang] = React.useState<ExampleLang>("te");
   const [msg, setMsg] = React.useState<{ ok: true } | { ok: false; error: string } | null>(null);
   const [busy, start] = React.useTransition();
@@ -74,7 +73,7 @@ export function HowAssistantSpeaks({ t, langNames, business, off, panel, securit
     });
   };
   const exampleStyle: SpeakStyle = d.words[exLang === "en" ? "te" : (exLang as SpeakLang)]?.style ?? "everyday_mixed";
-  const example = (who: "tone" | "words" | "region") =>
+  const example = (who: "tone" | "words") =>
     hear === who ? (
       <div className="mt-2 rounded-lg bg-surface-2 p-3" data-part={`sp-example-${who}`}>
         <div role="group" aria-label={t("sp.hear.lang")} className="flex flex-wrap gap-2">
@@ -91,7 +90,7 @@ export function HowAssistantSpeaks({ t, langNames, business, off, panel, securit
         <p className={fieldHelp}>{t("sp.hear.draft")}</p>
       </div>
     ) : null;
-  const hearButton = (who: "tone" | "words" | "region") => (
+  const hearButton = (who: "tone" | "words") => (
     <button type="button" className={hearBtn} aria-expanded={hear === who} onClick={() => setHear(hear === who ? null : who)} data-part={`sp-hear-${who}`}>
       {t("sp.hear")}
     </button>
@@ -186,29 +185,6 @@ export function HowAssistantSpeaks({ t, langNames, business, off, panel, securit
         )}
         {hearButton("words")}
         {example("words")}
-      </fieldset>
-
-      <fieldset data-part="sp-region">
-        <legend className={h3}>{t("sp.region")}</legend>
-        <p className={fieldHelp}>{t("sp.region.help")}</p>
-        <div role="group" aria-label={t("sp.region")} className="mt-2 flex flex-wrap gap-2">
-          {REGION_LANGS.map((l) => (
-            <button key={l} type="button" aria-pressed={l === regionLang} onClick={() => setRegionLang(l)} className={chip(l === regionLang)}>
-              {langNames[l]}
-              {d.words[l].region !== "neutral" ? <span aria-hidden="true"> ·</span> : null}
-            </button>
-          ))}
-        </div>
-        <div className="mt-1 flex flex-col">
-          {REGIONS[regionLang].map((r) => (
-            <label key={r} className={checkRow}>
-              <input type="radio" name={`sp-region-${regionLang}`} value={r} checked={d.words[regionLang].region === r} disabled={off} onChange={() => setWord(regionLang, { region: r })} className="size-5 shrink-0 accent-brand-text" />
-              {t(regionKey(regionLang, r))}
-            </label>
-          ))}
-        </div>
-        {hearButton("region")}
-        {example("region")}
       </fieldset>
 
       <IntroduceAsField t={t} value={d.introduceAs} off={off} business={business} ownerName={state.introduceAs.ownerName} onChange={(introduceAs) => touch({ ...d, introduceAs })} />

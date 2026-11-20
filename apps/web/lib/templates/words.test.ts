@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import app from "@/i18n/strings/app.json";
-import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES } from "@/lib/jobs/who";
+import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES } from "@/lib/jobs/who";
 
 import { CATEGORIES, CHECK_CODES, FIX_CODES, DRAFT_LANGS, runChecks, type Message } from "./meta-checks";
 import { REJECTION_CODES } from "./types";
@@ -26,7 +26,8 @@ describe("the builder and Who talks have words for every closed code (en, te, hi
       ...["waiting", "approved", "needs_change"].map((s) => `jobs.tb.status.${s}`),
       ...WHO_LANGUAGES.map((l) => `jobs.opt.language.${l}`),
       ...WHO_TONES.flatMap((c) => [`jobs.who.tone.${c}`, `jobs.who.tone.ex.${c}`]),
-      ...WHO_VOICES.flatMap((c) => [`jobs.who.voice.${c}`, `jobs.who.voice.${c}.d`]),
+      "jobs.who.voice",
+      "jobs.who.voice.recommended",
       ...WHO_NUMBERS.map((c) => `jobs.who.number.${c}`),
     ].filter((k) => !has(k));
     expect(missing).toEqual([]);

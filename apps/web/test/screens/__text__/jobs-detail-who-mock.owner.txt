@@ -14,20 +14,14 @@ Customers hear: “the AI assistant of Neelambari Silks”
   options: the customer’s language=customer | English=en | Telugu=te* | Hindi=hi | Kannada=kn
 in a
 <select label="This job speaks … in a … voice from …. (2)">
-  options: respectful | friendly* | casual
+  options: friendly* | respectful | short and quick=quick
 voice from the shop number .
-friendly “Hi Suresh garu, …” · +91 98480 xxx10
+friendly “Hi Suresh, …” · +91 98480 xxx10
 legend: Voice
-<radio name=who-voice-66666666-6666-4666-8666-666666666601 label="Soft womanWarm, a little slow" value=female_warm checked>
-Soft woman Warm, a little slow
-[button type=button: Play: Soft woman]
-<radio name=who-voice-66666666-6666-4666-8666-666666666601 label="Bright womanQuick and cheerful" value=female_clear>
-Bright woman Quick and cheerful
-[button type=button: Play: Bright woman]
-<radio name=who-voice-66666666-6666-4666-8666-666666666601 label="Calm manSteady and clear" value=male_calm>
-Calm man Steady and clear
-[button type=button: Play: Calm man]
-Samples play on your phone only. No customer hears them.
+<radio name=who-voice-66666666-6666-4666-8666-666666666601 label="RamyaRecommended" value=te-ramya checked>
+Ramya Recommended
+<radio name=who-voice-66666666-6666-4666-8666-666666666601 label="Kavitha" value=te-kavitha>
+Kavitha
 What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am → call at 9:30 am. Call every new enquiry right away talks in Telugu from the shop number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off. Or just ask your assistant
 [button type=button: “Make the visits job speak Telugu.”]
 ## When

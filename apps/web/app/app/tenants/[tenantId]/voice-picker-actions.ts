@@ -6,7 +6,8 @@ import { redirect } from "next/navigation";
 import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
-import { saveVoiceChoice, saveVoiceGender, type SaveError } from "@/lib/voice-picker/source";
+import type { Preview } from "@/lib/opening-line/types";
+import { hearActive, saveVoiceChoice, saveVoiceGender, toneExample, type SaveError } from "@/lib/voice-picker/source";
 
 /** The voice picker's one move: the Owner or an Admin chooses the voice of a language (`null` = back to the default). The workspace is the one the page bound the action to; the language and the voice id are checked again in lib/voice-picker/source.ts. */
 export type VoiceChoiceResult = { ok: true } | { ok: false; error: SaveError };
@@ -40,4 +41,22 @@ export async function chooseVoiceGenderAction(tenantId: string, gender: unknown)
   const out = await saveVoiceGender({ token: g.token, tenantId }, gender);
   if (out.ok) revalidatePath(`/app/tenants/${tenantId}/settings`);
   return out.ok ? { ok: true } : out;
+}
+
+/**
+ * The voice card's live "Hear it" (the voice in force speaks the saved greeting; spends characters, so only on a press): the Owner or an Admin. `rate` = too many in a minute or the day's allowance is used.
+ */
+export type HearResult = { ok: true; preview: Preview } | { ok: false; error: SaveError | "rate" };
+export async function hearVoiceAction(tenantId: string, language: unknown): Promise<HearResult> {
+  const g = await gate(tenantId);
+  if (!g.ok) return g;
+  const out = await hearActive({ token: g.token, tenantId }, language);
+  return out.ok ? { ok: true, preview: out.data } : out;
+}
+
+/** The example line under the three tones, in the voice language and tone chosen (text only, free): null = use the screen's own sentence. */
+export async function toneExampleAction(tenantId: string, language: unknown, tone: unknown): Promise<string | null> {
+  const g = await gate(tenantId);
+  if (!g.ok) return null;
+  return toneExample({ token: g.token, tenantId }, language, tone);
 }

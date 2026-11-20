@@ -15,7 +15,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("otp.") || k.startsWith("vt.") || k.startsWith("mya.v.")));
+const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("otp.") || k.startsWith("vt.")));
 const prefsFor = (language: TalkLang, over: Partial<typeof MOCK_START> = {}, token: string | null = null, changed: TalkPrefs["changed"] = []) => mockPrefs(language, { ...MOCK_START, ...over }, token, changed);
 
 function setup(over: Partial<TalkToYouActions> = {}, mock = true, ownerFirst: string | null = null) {
@@ -61,15 +61,16 @@ describe("How it talks to you (made plain, owner 19 Nov 2026)", () => {
     await waitFor(() => expect(ex()).toHaveTextContent("Gowtham garu, నమస్కారం."));
   });
 
-  it("the voices (under More choices) are named by their sound, filtered by female / male, as round radios with one play button each", () => {
+  it("the voices (under More choices) are named by their own names, filtered by female / male, as round radios with one play button each; never Warm, Calm or Bright", () => {
     setup();
     const voices = [...document.querySelectorAll("[data-voice]")].map((e) => e.textContent);
-    expect(voices.join(" ")).toMatch(/Warm.*Calm.*Bright/s);
-    expect(document.querySelectorAll("[data-voice]")).toHaveLength(3);
-    expect(document.querySelectorAll('[data-voice] input[type="radio"]')).toHaveLength(3);
-    expect(document.querySelectorAll("[data-voice] button")).toHaveLength(3);
+    expect(voices.join(" ")).toMatch(/Ramya.*Kavitha/s);
+    expect(voices.join(" ")).not.toMatch(/Warm|Calm|Bright/);
+    expect(document.querySelectorAll("[data-voice]")).toHaveLength(2);
+    expect(document.querySelectorAll('[data-voice] input[type="radio"]')).toHaveLength(2);
+    expect(document.querySelectorAll("[data-voice] button")).toHaveLength(2);
     fireEvent.click(document.querySelector('[data-gender="male"]') as HTMLElement);
-    expect([...document.querySelectorAll("[data-voice]")].map((e) => e.getAttribute("data-voice"))).toEqual(["te-mock-m-warm", "te-mock-m-calm", "te-mock-m-bright"]);
+    expect([...document.querySelectorAll("[data-voice]")].map((e) => e.getAttribute("data-voice"))).toEqual(["te-karthik", "te-naveen"]);
   });
 
   it("'call me' offers what the language has: anna / akka and garu in Telugu, no garu in Hindi, only name and sir / madam in English", { timeout: 15_000 }, async () => {
@@ -113,8 +114,8 @@ describe("How it talks to you (made plain, owner 19 Nov 2026)", () => {
     fireEvent.click(screen.getByRole("radio", { name: "More English" }));
     await waitFor(() => expect(a.save).toHaveBeenLastCalledWith("te", { words: "more_english" }));
     await waitFor(() => expect(screen.getByRole("radio", { name: "More English" })).toBeEnabled());
-    fireEvent.click(within(document.querySelector('[data-voice="te-mock-f-bright"]') as HTMLElement).getByRole("radio"));
-    await waitFor(() => expect(a.save).toHaveBeenLastCalledWith("te", { voice: "te-mock-f-bright" }));
+    fireEvent.click(within(document.querySelector('[data-voice="te-kavitha"]') as HTMLElement).getByRole("radio"));
+    await waitFor(() => expect(a.save).toHaveBeenLastCalledWith("te", { voice: "te-kavitha" }));
   });
 
   it("choosing what is already chosen saves nothing", () => {
@@ -155,10 +156,10 @@ describe("How it talks to you (made plain, owner 19 Nov 2026)", () => {
     URL.revokeObjectURL = vi.fn();
     const preview = vi.fn().mockResolvedValueOnce({ ok: true as const, data: { text: "Real sample", audio: { contentType: "audio/wav", base64: "AAAA" } } }).mockResolvedValueOnce({ ok: false as const, error: "limit" as const });
     setup({ preview }, false);
-    fireEvent.click(screen.getByRole("button", { name: "Hear it: Calm" }));
+    fireEvent.click(screen.getByRole("button", { name: "Hear it: Ramya" }));
     await waitFor(() => expect(played).toEqual(["blob:sample"]));
     expect(screen.queryByText(/Test version: no sound yet/)).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Hear it: Bright" }));
+    fireEvent.click(screen.getByRole("button", { name: "Hear it: Kavitha" }));
     await screen.findByText("Too many samples. Wait a minute and try again.");
   });
 

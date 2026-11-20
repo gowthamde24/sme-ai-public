@@ -19,7 +19,7 @@ import { getJob } from "@/lib/api/jobs";
 import { requireUser } from "@/lib/auth/session";
 import { agoOf } from "@/lib/jobs/detail";
 import { jobNameKey } from "@/lib/jobs/types";
-import { jobsScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { jobsScreens, voicePickerScreens } from "@/lib/screens/flag";
 
 import { setJobEnabledAction } from "../actions";
 import { addJobFaqAction, removeJobFaqAction, renameJobAction, setJobFindsOutAction, setJobSettingAction, setJobSpeaksAction, testJobAction } from "./actions";
@@ -74,10 +74,10 @@ export default async function JobRoute({ params }: PageProps<"/app/tenants/[tena
         setSpeaks: setJobSpeaksAction.bind(null, tenantId, jobId),
       }
     : null;
-  // Who talks: the play buttons use the voice sample route when it is on; the command offers the visits job (a read of the jobs list)
+  // Who talks: the play buttons use the voice-pick route (the recorded sample of one catalogue voice) when it is on; the command offers the visits job (a read of the jobs list)
   const whoExtra: WhoExtra | null =
     decides && detail.who
-      ? { sampleEndpoint: voiceSampleScreens() === "off" ? null : `${base}/voice-sample`, target: await readWhoTarget(token, tenantId, detail), changeJob: setJobSpeaksAction.bind(null, tenantId), voices: await readWhoVoices(token, tenantId) }
+      ? { sampleEndpoint: voicePickerScreens() === "off" ? null : `${base}/voice-pick`, target: await readWhoTarget(token, tenantId, detail), changeJob: setJobSpeaksAction.bind(null, tenantId), voices: await readWhoVoices(token, tenantId) }
       : null;
   const name = detail.job.customName ?? words[jobNameKey(detail.job.kind)] ?? "";
   return (
