@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import { useOnViewOnce } from "../home/use-on-view-once";
 import { addScene, inkOf, type Look } from "./scene";
 
 type W = Readonly<Record<string, string>>;
@@ -19,11 +20,11 @@ const B = (p: Pt[], u: number): Pt => {
   return [v * v * v * p[0][0] + 3 * v * v * u * p[1][0] + 3 * v * u * u * p[2][0] + u * u * u * p[3][0], v * v * v * p[0][1] + 3 * v * v * u * p[1][1] + 3 * v * u * u * p[2][1] + u * u * u * p[3][1]];
 };
 const warmPath = (yo: number): Pt[] => [[0, 230 + yo], [260, 230 + yo], [470, 130 + yo * 0.5], [700, 120 + yo * 0.25]];
-const coldPath = (yo: number): Pt[] => [[0, 230 + yo], [260, 230 + yo], [320, 360 + yo], [300, 470 + yo * 0.4]];
+const coldPath = (yo: number): Pt[] => [[0, 230 + yo], [260, 230 + yo], [320, 300 + yo], [300, 352 + yo * 0.4]];
 
 /**
  * Today's pipe, kept (owner, 20 Nov 2026: "the previous animation style was good"), simplified (21 Nov): a month's enquiries flow in from the left at ONE steady speed; the ones called back in time run on to the end of the pipe, the missed share peels off
- * into the drain and turns grey. Few moving dots, no glow, a short tail. Drawn in the design's 764 x 520 space and scaled to the canvas (the box keeps that shape at every width); the dots are drawn larger on a narrow canvas so they read on a phone.
+ * into the drain and turns grey. Few moving dots, no glow, a short tail. Drawn in the design's 764 x 400 space and scaled to the canvas (the box keeps that shape at every width); the dots are drawn larger on a narrow canvas so they read on a phone.
  * Its three labels (the start, the end, the drain, with their live counts) are DOM over the drawing. Colours: green is called back, grey is gone cold. The scene is paused off screen (scene.ts); with "reduce motion" the dots stand still.
  */
 function drawLeak(ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look, s: { enq: number; miss: number }): void {
@@ -111,10 +112,29 @@ export function LeakCalc({ w }: { w: W }) {
     io.observe(el);
     return () => io.disconnect();
   }, []);
+  // the rupee figure counts up ONCE when it scrolls into view (the final figure is in the page from the start, so nothing flashes or shifts: a sizer holds the final width)
+  const [viewRef, phase] = useOnViewOnce<HTMLDivElement>();
+  const [count, setCount] = React.useState<number | null>(null);
+  const finalLost = React.useRef(0);
   const cold = Math.round((enq * miss) / 100);
   const warm = enq - cold;
   const buyers = Math.round((cold * buy) / 100);
   const lost = buyers * avg;
+  React.useEffect(() => {
+    finalLost.current = lost;
+  });
+  React.useEffect(() => {
+    if (phase !== "played") return;
+    let raf = 0;
+    const t0 = performance.now();
+    const step = (now: number) => {
+      const u = Math.min(1, (now - t0) / 1400);
+      setCount(u >= 1 ? null : Math.round(finalLost.current * (1 - (1 - u) ** 3)));
+      if (u < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [phase]);
   const slider = (x: Slider) => (
     <div className="h4-slider" key={x.id}>
       <div className="h4-slider-row">
@@ -156,9 +176,14 @@ export function LeakCalc({ w }: { w: W }) {
             <span className="h4-flow-n">{num(cold)}</span>
           </p>
         </div>
-        <div className="h4-result" aria-live="polite" data-part="steps">
-          <p className="h4-result-n h4-hot" data-part="at-stake">
-            {inr(lost)}
+        <div className="h4-result" aria-live={count === null ? "polite" : "off"} data-part="steps" ref={viewRef} data-phase={phase}>
+          <p className="h4-result-n h4-hot">
+            <span className="h4-count-sizer" aria-hidden="true">
+              {inr(lost)}
+            </span>
+            <span className="h4-count" data-part="at-stake">
+              {inr(count ?? lost)}
+            </span>
           </p>
           <p className="h4-result-d">{w["h4.leak.slip"]}</p>
         </div>

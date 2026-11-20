@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import { useOnViewOnce } from "../home/use-on-view-once";
 import { addScene, fontOf, isCalm, sceneTime, type Look } from "./scene";
 
 type W = Readonly<Record<string, string>>;
@@ -52,9 +53,11 @@ export function sweepAt(t: number, since: number): { a: number; fresh: boolean }
 }
 
 function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look, state: { city: City; since: number }, crop: boolean, sans: string): void {
-  const k = crop ? W / 520 : W / 780;
+  const k = crop ? W / 470 : W / 780;
+  // a narrow map shows 470 map units across and as many down as its box holds, centred on the shop (a little of the outer ring may be cut at the top and bottom)
+  const vy = crop ? 260 - H / k / 2 : 0;
   // the phone draws the square at about 0.6 of the desktop's size: its words, pins and tags are scaled back up to the desktop's sizes on screen (f: map units per CSS pixel; u: the pins)
-  const f = crop ? 520 / (W / look.dpr) : 1;
+  const f = crop ? 470 / (W / look.dpr) : 1;
   const u = crop ? Math.max(1, f * 0.9) : 1;
   const cx = 390;
   const cy = 260;
@@ -64,7 +67,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
   const ink = look.dark ? "244,242,238" : "30,30,36";
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, W, H);
-  ctx.setTransform(k, 0, 0, k, crop ? -130 * k : 0, 0);
+  ctx.setTransform(k, 0, 0, k, crop ? -155 * k : 0, -vy * k);
   ctx.fillStyle = `rgba(${ink},.10)`;
   for (let x = 8; x < 780; x += 16)
     for (let y = 8; y < 520; y += 16) {
@@ -114,7 +117,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = "rgba(194,65,12,.75)";
-    ctx.fillText(label, cx + 6 * f, cy - rr + 16 * f);
+    ctx.fillText(label, cx + rr * 0.7 + 4 * f, cy - rr * 0.7 + 4 * f);
   });
   ctx.strokeStyle = "rgba(194,65,12,.12)";
   ctx.lineWidth = 1;
@@ -207,7 +210,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     const tw = ctx.measureText(label).width;
     const bw = tw + 16 * f;
     // the tag sits up and right of its pin; where the radar's edge would cut it off it flips to the pin's left, level with the pin (so it never lands on a neighbour's tag above)
-    const right = crop ? 650 : 780;
+    const right = crop ? 625 : 780;
     const flip = p.x + 14 * u + bw > right - 6 * f;
     const bx = flip ? p.x - 14 * u - bw : p.x + 14 * u;
     const by = flip ? p.y - 11 * f : p.y - 26 * f;
@@ -231,6 +234,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
  */
 export function RadarFinder({ w }: { w: W }) {
   const [city, setCity] = React.useState<City>("Hyderabad");
+  const [viewRef, phase] = useOnViewOnce<HTMLDivElement>();
   const live = React.useRef({ city, since: 0 });
   const desk = React.useRef<HTMLCanvasElement>(null);
   React.useEffect(() => {
@@ -247,7 +251,7 @@ export function RadarFinder({ w }: { w: W }) {
   };
   const rows = [PINS.find((p) => p.d === "call"), PINS.find((p) => p.d === "ask")].filter((p): p is Pin => p !== undefined);
   return (
-    <div className="h4-radar" data-part="radar" data-city={city}>
+    <div className="h4-radar" data-part="radar" data-city={city} ref={viewRef} data-phase={phase}>
       <div className="h4-panel h4-radar-card">
         <div className="h4-cities-wrap">
           <div role="radiogroup" aria-label={w["h2.finder.city"]} className="h4-cities">
@@ -263,14 +267,11 @@ export function RadarFinder({ w }: { w: W }) {
           <span className="h4-eg">{w["h4.eg"]}</span>
         </div>
         <ul className="h4-found-list">
-          {rows.map((p) => (
-            <li key={`${city}-${p.id}`} className="h4-fc" data-found={p.id}>
+          {rows.map((p, i) => (
+            <li key={`${city}-${p.id}`} className="h4-fc" data-found={p.id} style={{ "--i": i } as React.CSSProperties}>
               <p className="h4-fc-top">
                 <span>
-                  <b>
-                    {w[`h2.finder.pin.${p.id + 1}.what`]}, {AREAS[city][p.id]}
-                  </b>{" "}
-                  <span className="h4-fc-km">{p.km}</span>
+                  <b>{w[`h2.finder.pin.${p.id + 1}.what`]}</b> <span className="h4-fc-km">{p.km}</span>
                 </span>
                 <span className={`h4-chip ${p.d === "call" ? "h4-chip-call" : "h4-chip-ask"}`}>{w[`h2.finder.${p.d}`]}</span>
               </p>

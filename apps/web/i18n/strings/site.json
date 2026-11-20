@@ -10379,19 +10379,6 @@
    "ta": "draft"
   }
  },
- "h3.built.title": {
-  "en": "Built in from day one",
-  "te": "మొదటి రోజు నుంచే అన్నీ ఉంటాయి",
-  "hi": "पहले दिन से सब कुछ साथ",
-  "kn": "ಮೊದಲ ದಿನದಿಂದಲೇ ಎಲ್ಲಾ ಜೊತೆಗಿದೆ",
-  "ta": "முதல் நாளிலிருந்தே எல்லாம் இருக்கும்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h3.plans.free": {
   "en": "Free early access until paid plans start",
   "te": "Paid plans మొదలయ్యే వరకు early access free",
@@ -10741,123 +10728,6 @@
    "ta": "draft"
   }
  },
- "h4.voices.t": {
-  "en": "Hear it in your language",
-  "te": "మీ భాషలో వినండి",
-  "hi": "अपनी भाषा में सुनिए",
-  "kn": "ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಕೇಳಿ",
-  "ta": "உங்கள் மொழியில் கேளுங்கள்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.voices.sub": {
-  "en": "These are examples of what the assistant sounds like.",
-  "te": "ఇవి assistant గొంతుకి examples మాత్రమే.",
-  "hi": "ये assistant की आवाज़ के examples हैं।",
-  "kn": "ಇವು assistant ಧ್ವನಿಯ examples ಮಾತ್ರ.",
-  "ta": "இவை assistant-இன் குரலுக்கு examples மட்டும்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.v.1.biz": {
-  "en": "Saree shop",
-  "te": "చీరల షాప్",
-  "hi": "साड़ी की दुकान",
-  "kn": "ಸೀರೆ ಅಂಗಡಿ",
-  "ta": "புடவைக் கடை",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.v.2.biz": {
-  "en": "Building materials",
-  "te": "బిల్డింగ్ మెటీరియల్ షాప్",
-  "hi": "बिल्डिंग मटीरियल की दुकान",
-  "kn": "ಬಿಲ್ಡಿಂಗ್ ಮೆಟೀರಿಯಲ್ ಅಂಗಡಿ",
-  "ta": "கட்டுமானப் பொருள் கடை",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.v.3.biz": {
-  "en": "Any business",
-  "te": "ఏ business అయినా",
-  "hi": "कोई भी business",
-  "kn": "ಯಾವುದೇ business",
-  "ta": "எந்த business-ஆனாலும்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.v.4.biz": {
-  "en": "Coaching centre",
-  "te": "కోచింగ్ సెంటర్",
-  "hi": "कोचिंग सेंटर",
-  "kn": "ಕೋಚಿಂಗ್ ಸೆಂಟರ್",
-  "ta": "கோச்சிங் சென்டர்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.voices.play": {
-  "en": "Play the sample",
-  "te": "Sample వినండి",
-  "hi": "Sample सुनिए",
-  "kn": "Sample ಕೇಳಿ",
-  "ta": "Sample-ஐக் கேளுங்கள்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.voices.stop": {
-  "en": "Stop the sample",
-  "te": "Sample ఆపండి",
-  "hi": "Sample रोकिए",
-  "kn": "Sample ನಿಲ್ಲಿಸಿ",
-  "ta": "Sample-ஐ நிறுத்துங்கள்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.voices.playing": {
-  "en": "Playing",
-  "te": "వినిపిస్తోంది",
-  "hi": "चल रहा है",
-  "kn": "ಕೇಳಿಸುತ್ತಿದೆ",
-  "ta": "ஒலிக்கிறது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h4.dot": {
   "en": "Show item {n} of {total}",
   "te": "{total} లో {n} వది చూపించు",
@@ -10949,58 +10819,6 @@
    "ta": "draft"
   }
  },
- "h4.bi.1": {
-  "en": "Your own business number",
-  "te": "మీ సొంత business number",
-  "hi": "आपका अपना business number",
-  "kn": "ನಿಮ್ಮದೇ business number",
-  "ta": "உங்கள் சொந்த business number",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.bi.2": {
-  "en": "Only people who said yes",
-  "te": "అనుమతి ఇచ్చినవాళ్ళకే",
-  "hi": "सिर्फ़ उन्हें जिन्होंने हाँ कहा",
-  "kn": "ಹೌದು ಅಂದವರಿಗೆ ಮಾತ್ರ",
-  "ta": "சரி என்றவர்களுக்கு மட்டும்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.bi.3": {
-  "en": "STOP works at once",
-  "te": "STOP అంటే వెంటనే ఆగుతుంది",
-  "hi": "STOP लिखते ही तुरंत रुक जाता है",
-  "kn": "STOP ಅಂದ ತಕ್ಷಣ ನಿಲ್ಲುತ್ತದೆ",
-  "ta": "STOP என்றால் உடனே நிற்கும்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.bi.4": {
-  "en": "Quiet hours at night",
-  "te": "రాత్రి quiet hours",
-  "hi": "रात में quiet hours",
-  "kn": "ರಾತ್ರಿ quiet hours",
-  "ta": "இரவில் quiet hours",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h4.pl.title": {
   "en": "Simple plans in rupees",
   "te": "Rupees లో simple plans",
@@ -11053,12 +10871,129 @@
    "ta": "draft"
   }
  },
- "h4.bi.4.d": {
-  "en": "No calls late at night",
-  "te": "రాత్రి లేట్‌గా calls ఉండవు",
-  "hi": "देर रात calls नहीं",
-  "kn": "ತಡರಾತ್ರಿ calls ಇಲ್ಲ",
-  "ta": "இரவு நேரத்தில் calls இல்லை",
+ "h4.tr.1": {
+  "en": "Your own number",
+  "te": "మీ సొంత number",
+  "hi": "आपका अपना number",
+  "kn": "ನಿಮ್ಮದೇ number",
+  "ta": "உங்கள் சொந்த number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.tr.2": {
+  "en": "Only people who said yes",
+  "te": "అనుమతి ఇచ్చినవాళ్ళకే",
+  "hi": "सिर्फ़ उन्हें जिन्होंने हाँ कहा",
+  "kn": "ಹೌದು ಅಂದವರಿಗೆ ಮಾತ್ರ",
+  "ta": "சரி என்றவர்களுக்கு மட்டும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.tr.3": {
+  "en": "STOP works at once",
+  "te": "STOP అంటే వెంటనే ఆగుతుంది",
+  "hi": "STOP लिखते ही तुरंत रुक जाता है",
+  "kn": "STOP ಅಂದ ತಕ್ಷಣ ನಿಲ್ಲುತ್ತದೆ",
+  "ta": "STOP என்றால் உடனே நிற்கும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.tr.4": {
+  "en": "Quiet hours",
+  "te": "రాత్రి quiet hours",
+  "hi": "रात के quiet hours",
+  "kn": "ರಾತ್ರಿ quiet hours",
+  "ta": "இரவு quiet hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.m.kyc": {
+  "en": "KYC done",
+  "te": "KYC అయింది",
+  "hi": "KYC हो गया",
+  "kn": "KYC ಆಯಿತು",
+  "ta": "KYC முடிந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.m.yes": {
+  "en": "Yes, contact me",
+  "te": "అవును, contact చేయండి",
+  "hi": "हाँ, मुझे contact करें",
+  "kn": "ಹೌದು, contact ಮಾಡಿ",
+  "ta": "ஆம், contact செய்யுங்கள்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.m.added": {
+  "en": "Added to your list",
+  "te": "మీ list లో చేరింది",
+  "hi": "आपकी list में जुड़ गया",
+  "kn": "ನಿಮ್ಮ list ಗೆ ಸೇರಿದೆ",
+  "ta": "உங்கள் list-இல் சேர்ந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.m.done": {
+  "en": "Done, no more messages",
+  "te": "Done, ఇక messages రావు",
+  "hi": "Done, अब messages नहीं आएँगे",
+  "kn": "Done, ಇನ್ನು messages ಬರುವುದಿಲ್ಲ",
+  "ta": "Done, இனி messages வராது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.m.wait": {
+  "en": "Waits till morning",
+  "te": "ఉదయం వరకు ఆగుతుంది",
+  "hi": "सुबह तक रुकता है",
+  "kn": "ಬೆಳಿಗ್ಗೆ ತನಕ ಕಾಯುತ್ತದೆ",
+  "ta": "காலை வரை காத்திருக்கும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.built.title": {
+  "en": "Built in from day one",
+  "te": "మొదటి రోజు నుంచే అన్నీ ఉంటాయి",
+  "hi": "पहले दिन से सब कुछ साथ",
+  "kn": "ಮೊದಲ ದಿನದಿಂದಲೇ ಎಲ್ಲಾ ಜೊತೆಗಿದೆ",
+  "ta": "முதல் நாளிலிருந்தே எல்லாம் இருக்கும்",
   "status": {
    "te": "draft",
    "hi": "draft",

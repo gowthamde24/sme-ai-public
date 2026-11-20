@@ -1,4 +1,4 @@
-import { ArrowRight, Hand, Moon, Phone, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -6,10 +6,8 @@ import { LeakCalc, RadarFinder } from "@/components/v2/site/LazyIslands";
 import type { SiteKey, SiteT } from "@/i18n/site";
 import { PUBLIC_PLANS, PLAN_FACTS, rupees, type PublicPlan } from "@/lib/site/plans";
 
-import audioManifest from "../../../../public/audio/site/manifest.json";
-import { parseManifest, playable } from "../home2/voice";
 import { Swipe } from "./Swipe";
-import { VoiceCards, type VoiceCard } from "./VoiceCards";
+import { TrustRow } from "./TrustRow";
 
 type Start = { href: string; label: string };
 const k = (s: string) => s as SiteKey;
@@ -17,17 +15,6 @@ const k = (s: string) => s as SiteKey;
 const words = (t: SiteT, keys: readonly string[]): Record<string, string> => Object.fromEntries(keys.map((key) => [key, t(k(key))]));
 const FINDER_KEYS = [...["city", "call", "ask"].map((x) => `h2.finder.${x}`), "h4.eg", ...[1, 4].map((i) => `h2.finder.pin.${i}.what`)];
 const LEAK_KEYS = [...["enq", "miss", "buy", "avg", "in"].map((x) => `h2.leak.${x}`), ...["warm", "cold", "note"].map((x) => `h3.leak.${x}`), "h4.leak.slip", "h4.leak.with", "h4.leak.more"];
-
-/**
- * The four sample voices: the site's own recorded clips (public/audio/site, the manifest the hero and the phone use; a clip waiting for a native speaker's review is `draft: true` there and is left out here too), Telugu first, then Hindi, Kannada, English.
- * Each is a call's first line in that language, with the clip's own words as its transcript (two lines of it show). Static files: nothing is asked of the app or of another site.
- */
-const VOICES = [
-  { n: 1, clip: "call-saree-1", lang: "te" },
-  { n: 2, clip: "call-build-1", lang: "hi" },
-  { n: 3, clip: "try-kn", lang: "kn" },
-  { n: 4, clip: "call-coach-1", lang: "en" },
-] as const;
 
 /** A section's title block (the spec's: a title of at most six words, then one grey line). */
 function Head({ id, title, sub }: { id: string; title: string; sub?: string }) {
@@ -41,9 +28,13 @@ function Head({ id, title, sub }: { id: string; title: string; sub?: string }) {
   );
 }
 
-function Section({ id, labelledBy, children }: { id: string; labelledBy: string; children: ReactNode }) {
+/** `aliases`: the old anchors of the header and the footer (#finder, #plans, #built) until they link to the new ids (#lead-finder, #pricing): an empty mark, so no link of the page points at nothing meanwhile. */
+function Section({ id, labelledBy, aliases = [], children }: { id: string; labelledBy: string; aliases?: string[]; children: ReactNode }) {
   return (
     <section id={id} aria-labelledby={labelledBy} className="h4" data-part={`h4-${id}`}>
+      {aliases.map((a) => (
+        <span key={a} id={a} />
+      ))}
       <div className="h4-wrap">{children}</div>
     </section>
   );
@@ -62,55 +53,31 @@ function PlanCard({ plan, t }: { plan: PublicPlan; t: SiteT }) {
         {rupees(plan.monthly)} <span>{t("pp.mo")}</span>
       </p>
       <p className="h4-card-d">{line}</p>
+      {plan.recommended ? (
+        <span className="h4-minbar" aria-hidden="true">
+          <span />
+        </span>
+      ) : null}
     </div>
   );
 }
 
 /**
- * The sections of the home page between the try-it box and the FAQ (website-spec-v4, sections 4 to 8), designed at 390 px first (design/home4.css): what late call-backs cost, the Lead Finder, the voices, what is built in, the plans. Each is a title of at most six
- * words, one grey line and one visual. Every word comes from the string store; the page reads fully with JavaScript off (the swipe rows are plain scrolling lists, the transcripts and the plans are server markup).
+ * The sections of the home page between the try-it box and the FAQ (website-spec-v4): what late call-backs cost, the Lead Finder, and the plans with ONE trust row under them (the voices and the built-in section are gone: the length rule). Designed at 390 px first
+ * (design/home4.css). Each is a title of at most six words, one grey line and one visual. Every word comes from the string store; the page reads fully with JavaScript off (the swipe rows are plain scrolling lists, the transcripts and the plans are server markup).
  */
 export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
-  const manifest = parseManifest(audioManifest);
-  const voices: VoiceCard[] = VOICES.flatMap((v) => {
-    const clip = manifest?.clips[v.clip];
-    if (!clip || !playable(manifest, v.clip)) return [];
-    return [{ id: v.clip, biz: t(k(`h4.v.${v.n}.biz`)), langName: t(k(`h2.lang.${v.lang}`)), lang: v.lang, text: clip.text, seconds: clip.duration, sources: clip.sources }];
-  });
-  const icons = [<Phone key="1" size={20} strokeWidth={2.2} />, <ShieldCheck key="2" size={20} strokeWidth={2.2} />, <Hand key="3" size={20} strokeWidth={2.2} />, <Moon key="4" size={20} strokeWidth={2.2} />];
   return (
     <>
       <Section id="calc" labelledBy="calc-title">
         <Head id="calc-title" title={t("h4.leak.t")} sub={t("h4.leak.sub")} />
         <LeakCalc w={words(t, LEAK_KEYS)} />
       </Section>
-      <Section id="finder" labelledBy="finder-title">
+      <Section id="lead-finder" labelledBy="finder-title" aliases={["finder"]}>
         <Head id="finder-title" title={t("h4.finder.t")} sub={t("h4.finder.sub")} />
         <RadarFinder w={words(t, FINDER_KEYS)} />
       </Section>
-      {voices.length > 0 ? (
-        <Section id="voices" labelledBy="voices-title">
-          <Head id="voices-title" title={t("h4.voices.t")} sub={t("h4.voices.sub")} />
-          <div className="h4-voices">
-            <VoiceCards items={voices} w={{ play: t("h4.voices.play"), stop: t("h4.voices.stop"), playing: t("h4.voices.playing"), dot: t("h4.dot"), region: t("h4.voices.t") }} />
-          </div>
-        </Section>
-      ) : null}
-      <Section id="built" labelledBy="built-title">
-        <Head id="built-title" title={t("h3.built.title")} />
-        <ul className="h4-built" data-part="built-in">
-          {icons.map((ico, i) => (
-            <li key={i} className="h4-card h4-built-card" data-built={i + 1}>
-              <span className="h4-ico" aria-hidden="true">
-                {ico}
-              </span>
-              <h3 className="h4-h3">{t(k(`h4.bi.${i + 1}`))}</h3>
-              {i === 3 ? <p className="h4-card-d">{t("h4.bi.4.d")}</p> : null}
-            </li>
-          ))}
-        </ul>
-      </Section>
-      <Section id="plans" labelledBy="plans-title">
+      <Section id="pricing" labelledBy="plans-title" aliases={["plans", "built"]}>
         <Head id="plans-title" title={t("h4.pl.title")} />
         <Swipe label={t("h4.pl.title")} dotWord={t("h4.dot")} className="h4-plans">
           {PUBLIC_PLANS.map((p) => (
@@ -124,6 +91,7 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
             <ArrowRight size={16} strokeWidth={2.4} aria-hidden="true" />
           </Link>
         </div>
+        <TrustRow w={{ t1: t("h4.tr.1"), t2: t("h4.tr.2"), t3: t("h4.tr.3"), t4: t("h4.tr.4"), kyc: t("h4.m.kyc"), yes: t("h4.m.yes"), added: t("h4.m.added"), done: t("h4.m.done"), wait: t("h4.m.wait") }} />
       </Section>
     </>
   );

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   The lower sections of the home page (website-spec-v4, sections 4 to 8), DESIGNED AT 390 PX FIRST (owner, 21 Nov 2026: "our mobile version is not good", then "it is zoomed", then "not too much information"): what late call-backs cost, the Lead Finder, the voices, what is built in, the plans. Each is a title, one grey line and one visual.
+   The lower sections of the home page (website-spec-v4), DESIGNED AT 390 PX FIRST (owner, 21 Nov 2026: "our mobile version is not good", then "it is zoomed", then "not too much information", then the length rule): what late call-backs cost, the Lead Finder, the plans with one trust row of four tiny live moments. Each is a title, one grey line and one visual.
    The same density as the app, the owner's FINAL type scale (21 Nov 2026: "zoomed is not good, it should be normal"): on a phone (up to 520 px) a section title is 22 px (24 from 520), a card title 17 px, body text 15 px on a 1.5 line, labels and small text 14 px (the audit's floor), buttons 15 px text at 44 px, the side padding 16 px, a card has 16 px padding, an icon 18-20 px; from 768 px titles 30 px, 36 px from 1024 and 40 px from 1280, body 16-17 px. Sizes step at these widths; no font size follows the viewport width. Nothing is a scaled desktop:
    the phone has its own layout (swipe rows with dots, a 2 x 2, a list) and from 768 px the cards lie side by side; 1440 px only widens the same layout.
    Type: the site's one font (the sans stack), two weights here, 400 and 700; no uppercase, no letter-spacing, no monospace. Colour: ONE orange, #c2410c (text on light #b23a08, on dark #ff9d6e): the money figure, one highlight per section,
@@ -52,7 +52,6 @@
   [data-ui="v2"] .h4-dots { display: none; }
   [data-ui="v2"] .h4-plans .h4-track { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
-@media (min-width: 1024px) { [data-ui="v2"] .h4-voices .h4-track { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 /* ---- 1. the cost of late call-backs ---- */
 [data-ui="v2"] .h4-leak { display: flex; flex-direction: column; gap: 12px; }
@@ -68,7 +67,7 @@
 [data-ui="v2"] .h4-more summary:focus-visible { outline: 2px solid var(--v2-ring); outline-offset: 2px; border-radius: 6px; }
 [data-ui="v2"] .h4-more-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px 40px; }
 [data-ui="v2"] .h4-leak-card { display: flex; flex-direction: column; gap: 0; overflow: hidden; padding: 0; }
-[data-ui="v2"] .h4-flow { position: relative; width: 100%; aspect-ratio: 764 / 520; }
+[data-ui="v2"] .h4-flow { position: relative; width: 100%; aspect-ratio: 764 / 400; }
 [data-ui="v2"] .h4-leak-card > .h4-with, [data-ui="v2"] .h4-leak-card > .h4-small { padding-inline: var(--h4-pad); }
 [data-ui="v2"] .h4-leak-card > .h4-small { padding-block: 2px 12px; }
 [data-ui="v2"] .h4-flow-lab { position: absolute; display: flex; flex-direction: column; margin: 0; font-size: 14px; line-height: 1.25; }
@@ -79,6 +78,9 @@
 [data-ui="v2"] .h4-flow-in .h4-flow-n { color: var(--v2-ink); }
 [data-ui="v2"] .h4-result { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 10px; border-top: 1px solid var(--v2-border); padding: 6px var(--h4-pad) 6px; }
 [data-ui="v2"] .h4-result-n { margin: 0; font-size: 32px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+[data-ui="v2"] .h4-count-sizer { visibility: hidden; }
+[data-ui="v2"] .h4-count { position: absolute; left: 0; top: 0; white-space: nowrap; }
+[data-ui="v2"] .h4-result-n { position: relative; }
 [data-ui="v2"] .h4-result-d { margin: 0; font-size: 15px; line-height: 1.4; color: var(--v2-muted); }
 [data-ui="v2"] .h4-with { display: flex; flex-direction: column; gap: 6px; padding-bottom: 4px; }
 [data-ui="v2"] .h4-with p { margin: 0; font-size: 15px; line-height: 1.5; }
@@ -114,7 +116,7 @@
 [data-ui="v2"] .h4-city:active { transform: scale(0.97); }
 [data-ui="v2"] .h4-city[aria-checked="true"] { background: var(--v2-ink); color: var(--v2-bg); box-shadow: none; }
 [data-ui="v2"] .h4-city:focus-visible { outline: 2px solid var(--v2-ring); outline-offset: 2px; }
-[data-ui="v2"] .h4-radar-map { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; border-block: 1px solid var(--v2-border); background: var(--v2-surface-2); }
+[data-ui="v2"] .h4-radar-map { position: relative; width: 100%; aspect-ratio: 1.15; overflow: hidden; border-block: 1px solid var(--v2-border); background: var(--v2-surface-2); }
 @media (min-width: 560px) { [data-ui="v2"] .h4-radar-map { aspect-ratio: 780 / 520; } }
 [data-ui="v2"] .h4-eg { position: absolute; top: 10px; left: 10px; border-radius: 999px; background: var(--v2-surface); padding: 2px 10px; font-size: 14px; line-height: 1.45; color: var(--v2-muted); box-shadow: inset 0 0 0 1px var(--v2-border-strong); }
 [data-ui="v2"] .h4-found-list { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 12px 16px 16px; list-style: none; }
@@ -135,32 +137,23 @@
   [data-ui="v2"] .h4-fc { padding: 14px 16px; }
 }
 
-/* ---- 3. the voices ---- */
-[data-ui="v2"] .h4-audio-off { display: none; }
-[data-ui="v2"] .h4-voice { display: flex; flex-direction: column; gap: 12px; }
-[data-ui="v2"] .h4-voice-top { display: flex; align-items: center; gap: 12px; }
-[data-ui="v2"] .h4-play { display: inline-flex; flex: none; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 50%; background: var(--h3-or); color: #fff; cursor: pointer; transition: transform 100ms ease; }
-[data-ui="v2"] .h4-play:active { transform: scale(0.94); }
-[data-ui="v2"] .h4-play:focus-visible { outline: 2px solid var(--v2-ring); outline-offset: 3px; }
-[data-ui="v2"] .h4-play-ico { margin-left: 2px; }
-[data-ui="v2"] .h4-voice-meta { display: flex; min-width: 0; flex-direction: column; margin: 0; }
-[data-ui="v2"] .h4-voice-lang { font-size: 15px; font-weight: 700; line-height: 1.3; }
-[data-ui="v2"] .h4-voice-state { font-size: 14px; line-height: 1.3; color: var(--v2-muted); }
-[data-ui="v2"] .h4-voice[data-playing] { border-color: var(--h3-or); box-shadow: inset 0 0 0 1px var(--h3-or), var(--v2-shadow); }
-[data-ui="v2"] .h4-voice[data-playing] .h4-voice-state { font-weight: 700; color: var(--h3-ot); }
-[data-ui="v2"] .h4-voice-bar { display: block; height: 3px; overflow: hidden; border-radius: 999px; background: var(--v2-border); }
-[data-ui="v2"] .h4-voice-bar span { display: block; width: 100%; height: 100%; background: var(--h3-or); transform-origin: left; transform: scaleX(0); transition: transform 250ms linear; }
-[data-ui="v2"] .h4-voice-says { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin: 0; font-size: 15px; line-height: 1.5; color: var(--v2-ink); }
-[data-ui="v2"] .h4-voice-says::before { content: "\201C"; }
-[data-ui="v2"] .h4-voice-says::after { content: "\201D"; }
-[data-ui="v2"] .h4-voice audio { width: 100%; margin-top: 4px; }
-
-/* ---- 4. built in: four small cards, two by two on a phone ---- */
-[data-ui="v2"] .h4-built { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
-[data-ui="v2"] .h4-built-card { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-[data-ui="v2"] .h4-ico { display: inline-flex; flex: none; width: 36px; height: 36px; align-items: center; justify-content: center; border-radius: 10px; background: var(--v2-surface-2); color: var(--v2-ink); }
-@media (min-width: 768px) { [data-ui="v2"] .h4-built { gap: 16px; } }
-@media (min-width: 1024px) { [data-ui="v2"] .h4-built { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+/* ---- 3. the trust row under the plans: four mini cards, each a tiny live moment that plays once ---- */
+[data-ui="v2"] .h4-trust { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0 0; padding: 0; list-style: none; }
+[data-ui="v2"] .h4-mini { display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--v2-border); border-radius: 14px; background: var(--v2-surface); box-shadow: var(--v2-shadow); padding: 12px; }
+[data-ui="v2"] .h4-moment { display: flex; height: 64px; flex-direction: column; justify-content: center; align-items: flex-start; gap: 6px; overflow: hidden; border-radius: 10px; background: var(--v2-surface-2); padding: 0 10px; font-size: 13px; line-height: 1.25; }
+[data-ui="v2"] .h4-mini-t { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.3; }
+[data-ui="v2"] .h4-num { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+[data-ui="v2"] .h4-ok { display: inline-flex; align-items: center; gap: 4px; color: var(--v2-green-text); font-size: 13px; font-weight: 700; }
+[data-ui="v2"] .h4-cb { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+[data-ui="v2"] .h4-box { display: inline-flex; width: 18px; height: 18px; flex: none; align-items: center; justify-content: center; border-radius: 5px; background: var(--v2-surface); box-shadow: inset 0 0 0 1.5px var(--v2-border-strong); color: #fff; }
+[data-ui="v2"] .h4-tick { display: block; border-radius: 5px; width: 18px; height: 18px; padding: 3px; background: var(--h3-or); }
+[data-ui="v2"] .h4-b { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; border-radius: 10px; padding: 3px 8px; font-weight: 700; }
+[data-ui="v2"] .h4-b-out { align-self: flex-end; background: var(--v2-green-text); color: var(--v2-surface); }
+[data-ui="v2"] .h4-b-in { background: var(--v2-surface); box-shadow: inset 0 0 0 1px var(--v2-border-strong); }
+[data-ui="v2"] .h4-chk { flex: none; color: var(--v2-green-text); }
+[data-ui="v2"] .h4-time { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; background: var(--v2-surface); padding: 2px 10px; font-weight: 700; font-variant-numeric: tabular-nums; box-shadow: inset 0 0 0 1px var(--v2-border-strong); }
+[data-ui="v2"] .h4-wait { color: var(--v2-muted); font-weight: 700; }
+@media (min-width: 768px) { [data-ui="v2"] .h4-trust { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 24px; } }
 
 /* ---- 5. the plans ---- */
 [data-ui="v2"] .h4-plan { display: flex; flex-direction: column; gap: 6px; }
@@ -169,6 +162,8 @@
 [data-ui="v2"] .h4-rec { border-radius: 999px; background: var(--v2-brand-bg); padding: 2px 10px; font-size: 14px; font-weight: 700; line-height: 1.45; color: var(--h3-ot); }
 [data-ui="v2"] .h4-price { margin: 6px 0 0; font-size: 26px; font-weight: 700; line-height: 1.05; font-variant-numeric: tabular-nums; }
 [data-ui="v2"] .h4-price span { font-size: 15px; font-weight: 400; color: var(--v2-muted); }
+[data-ui="v2"] .h4-minbar { display: block; height: 6px; overflow: hidden; border-radius: 999px; background: var(--v2-surface-2); margin-top: 4px; }
+[data-ui="v2"] .h4-minbar span { display: block; width: 100%; height: 100%; border-radius: 999px; background: var(--h3-or); transform-origin: left; }
 [data-ui="v2"] .h4-plans-note { display: flex; flex-direction: column; gap: 0; margin-top: 4px; }
 [data-ui="v2"] .h4-plans-note p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--v2-muted); }
 [data-ui="v2"] .h4-plans-note a { display: inline-flex; min-height: 44px; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: var(--h3-ot); }
@@ -186,6 +181,17 @@
 }
 @media (min-width: 1024px) { [data-ui="v2"] .h4-h2 { font-size: 36px; } [data-ui="v2"] .h4-lead { font-size: 17px; } [data-ui="v2"] .h4-h3 { font-size: 18px; } }
 @media (min-width: 1280px) { [data-ui="v2"] .h4-h2 { font-size: 40px; } }
+
+/* the tiny live moments: each plays ONCE when its block is 40% in view (components/v2/site/home/use-on-view-once.ts). "final" (no JavaScript, "reduce motion") is the page as drawn above, finished; "ready" is the start (opacity and transform only, nothing changes size);
+   "played" runs to the end. The Pro plan's minutes bar fills; the Lead Finder's rows slide in as the sweep passes; the trust row's moments run one after the other. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"] .h4-trust[data-phase="ready"] .h4-s, [data-ui="v2"] .h4-radar[data-phase="ready"] .h4-fc, [data-ui="v2"] .h4-trust[data-phase="ready"] .h4-tick { opacity: 0; transform: translateY(6px); }
+  [data-ui="v2"] .h4-trust[data-phase="ready"] .h4-tick { transform: scale(0.4); }
+  [data-ui="v2"] .h4-swipe[data-phase="ready"] .h4-minbar span { transform: scaleX(0); }
+  [data-ui="v2"] .h4-trust[data-phase="played"] .h4-s { transition: opacity 400ms ease, transform 400ms ease; transition-delay: calc(var(--i, 0) * 350ms); }
+  [data-ui="v2"] .h4-radar[data-phase="played"] .h4-fc { transition: opacity 500ms ease, transform 500ms ease; transition-delay: calc(0.6s + var(--i, 0) * 0.9s); }
+  [data-ui="v2"] .h4-swipe[data-phase="played"] .h4-minbar span { transition: transform 1500ms cubic-bezier(0.23, 1, 0.32, 1); }
+}
 
 /* a section fades in once as it comes into view (browsers with scroll-driven animations only; elsewhere it is simply there; never with "reduce motion") */
 @media (prefers-reduced-motion: no-preference) {
