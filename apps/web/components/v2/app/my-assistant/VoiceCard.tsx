@@ -52,7 +52,7 @@ const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-se
 const h3 = "m-0 text-[16px] font-semibold text-ink";
 const radio = "size-5 shrink-0 accent-brand-text";
 const playBtn = "inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border border-edge bg-surface px-4 text-sm font-semibold hover:bg-surface-2 disabled:opacity-50";
-type Note = "saved" | "error" | "sample" | "live" | "rate" | "silent" | "unknown" | "other" | null;
+type Note = "saved" | "error" | "sample" | "live" | "rate" | "silent" | "unknown" | "unavailable" | "other" | null;
 
 /**
  * THE VOICE CARD, "Your assistant's voice" (owner, 20 Nov 2026: one simple card): for each language a row of NAMED voices (Ramya, Kavitha ...) with a play button and a round radio; how it talks as three plain choices (Friendly, Respectful, Short and quick) with ONE example sentence
@@ -64,7 +64,10 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
   const t = makeT(words);
   const router = useRouter();
   const [lang, setLang] = React.useState<PickerLang>(languages.includes(first) ? first : (languages[0] ?? first));
-  const [picked, setPicked] = React.useState<Partial<Record<PickerLang, string>>>({});
+  // what was picked here, kept only for the voices document it was picked on: the page read again after a choice brings a new one, and what the API says replaces it
+  const [pickedOn, setPickedOn] = React.useState<{ on: unknown; ids: Partial<Record<PickerLang, string>> }>({ on: null, ids: {} });
+  const picked = pickedOn.on === picker ? pickedOn.ids : {};
+  const setPicked = (f: (p: Partial<Record<PickerLang, string>>) => Partial<Record<PickerLang, string>>) => setPickedOn((c) => ({ on: picker, ids: f(c.on === picker ? c.ids : {}) }));
   const [playing, setPlaying] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState<string | null>(null);
   const [note, setNote] = React.useState<Note>(null);
@@ -86,8 +89,10 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
   const [saving, startSpeaks] = React.useTransition();
   const [apiText, setApiText] = React.useState<Record<string, string>>({});
 
-  const mine = picker ? picker.voices.filter((v) => v.language === lang && v.gender === picker.gender) : [];
-  const inUse = picker ? (picked[lang] ?? (picker.active[lang] && mine.some((v) => v.id === picker.active[lang]) ? picker.active[lang] : null) ?? mine.find((v) => v.id === picker.choices[lang])?.id ?? mine.find((v) => v.isDefault)?.id ?? null) : null;
+  // ALL the listed voices of the language, women first, then men (C1: the short list has both; choosing one of the other gender switches the assistant's voice type with the same call)
+  const mine = picker ? [...picker.voices.filter((v) => v.language === lang && v.gender === "female"), ...picker.voices.filter((v) => v.language === lang && v.gender === "male")] : [];
+  const own = picker ? mine.filter((v) => v.gender === picker.gender) : [];
+  const inUse = picker ? (picked[lang] ?? (picker.active[lang] && mine.some((v) => v.id === picker.active[lang]) ? picker.active[lang] : null) ?? own.find((v) => v.id === picker.choices[lang])?.id ?? own.find((v) => v.isDefault)?.id ?? null) : null;
   const edit = canEdit && !busy;
 
   const play = (v: PickerVoice) => {
@@ -146,7 +151,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
         router.refresh();
       } else {
         setPicked((p) => ({ ...p, [language]: before }));
-        setNote("error");
+        setNote(out.error === "invalid" ? "unavailable" : "error"); // 422: the API does not take that voice (yet): the choice stays where it was, nothing is made up
       }
     });
   };
@@ -187,7 +192,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
   const sayAi = state?.sayAi ?? null;
   const optionName = (id: string): string => bg?.options.find((o) => o.id === id)?.label[uiLang] ?? bg?.options.find((o) => o.id === id)?.label.en ?? id;
   const speaksErr = speaksNote && !speaksNote.ok ? (t(`sp.err.${speaksNote.error}`) !== `sp.err.${speaksNote.error}` ? t(`sp.err.${speaksNote.error}`) : t("sp.err.rejected")) : null;
-  const noteText: Record<Exclude<Note, null | "saved">, string> = { error: t("vc.err.save"), sample: t("vp.err.sample"), live: t("vc.err.live"), rate: t("vc.err.rate"), silent: t("vt.hear.none"), unknown: t("vc.err.unknown"), other: t("vc.err.other") };
+  const noteText: Record<Exclude<Note, null | "saved">, string> = { error: t("vc.err.save"), sample: t("vp.err.sample"), live: t("vc.err.live"), rate: t("vc.err.rate"), silent: t("vt.hear.none"), unknown: t("vc.err.unknown"), unavailable: t("vc.err.unavailable"), other: t("vc.err.other") };
   if (!picker && !speaks) return null;
 
   return (
@@ -224,8 +229,15 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
                 {t("vp.none")}
               </p>
             ) : (
-              <div role="radiogroup" aria-label={t("vt.voice")} className="grid gap-2 sm:grid-cols-2">
-                {mine.map((v) => {
+              <div role="radiogroup" aria-label={t("vt.voice")} className="flex flex-col gap-3">
+                {([["female", "vc.women"], ["male", "vc.men"]] as const).map(([g, key]) => {
+                  const list = mine.filter((v) => v.gender === g);
+                  if (list.length === 0) return null;
+                  return (
+                    <div key={g} data-group={g} className="flex flex-col gap-2">
+                      {mine.some((v) => v.gender !== g) ? <p className="m-0 text-sm font-semibold text-muted">{t(key)}</p> : null}
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        {list.map((v) => {
                   const on = v.id === inUse;
                   const here = playing === v.id;
                   const waiting = loading === v.id;
@@ -253,6 +265,10 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
                         {waiting ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : here ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
                         {t(here ? "vt.stop" : "vt.play")}
                       </button>
+                    </div>
+                  );
+                })}
+                      </div>
                     </div>
                   );
                 })}

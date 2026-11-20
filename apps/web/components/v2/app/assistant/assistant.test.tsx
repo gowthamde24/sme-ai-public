@@ -277,7 +277,7 @@ describe("Settings > AI assistant", () => {
     it("shows the AI disclosure in the preview, and 'Hear it' plays the chosen voice", () => {
       install();
       draw({ samples });
-      expect(screen.getByText(/Unless you turn it off in the opening line, every call opens by saying it is an AI assistant/)).toBeInTheDocument();
+      expect(screen.getByText(/A call opens by saying it is an AI assistant only if you turned on/)).toBeInTheDocument();
       fireEvent.click(screen.getByRole("button", { name: /Hear it/ }));
       expect(made).toHaveLength(1);
     });

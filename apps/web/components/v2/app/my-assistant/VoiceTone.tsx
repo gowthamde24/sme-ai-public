@@ -21,7 +21,7 @@ const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-se
 const h3 = "m-0 text-[16px] font-semibold text-ink";
 const GREETING_NAMES = ["customer", "business", "assistant"] as const satisfies readonly Placeholder[];
 
-export type PreviewFn = (language: CallLang, text: string, mentionAi: null, unsaved: boolean) => Promise<{ ok: true; preview: Preview } | { ok: false; error: string }>;
+export type PreviewFn = (language: CallLang, text: string, mentionAi: boolean | null, unsaved: boolean) => Promise<{ ok: true; preview: Preview } | { ok: false; error: string }>;
 
 export type VoiceToneProps = {
   words?: Words;
@@ -41,6 +41,9 @@ export type VoiceToneProps = {
   assistantName: string | null;
   /** "Hear it" beside the greeting: the opening-line preview (the greeting as it is on the screen, in the voice in force, nothing saved); null = not there */
   hearIt: PreviewFn | null;
+  /** The business's switch "Say 'AI assistant' when greeting" (default OFF) and the suggested greeting of each language as that switch stands (the opening line's default with or without the AI sentence); null = the Talk training suggestion stands */
+  sayAi?: boolean | null;
+  suggested?: Partial<Record<string, string>> | null;
   /** The say-it-like-this list and what goes into the instructions (APP_V4) */
   v4?: boolean;
 };
@@ -51,7 +54,7 @@ type Msg = { ok: true } | { ok: false; from: "doc"; error: TalkError } | { ok: f
  * Voice & tone, the second card, "Greeting and more choices" (owner, 19 Nov 2026: "simplify all these"; 20 Nov: the voice, the tone, the background and the test call moved to the voice card, VoiceCard.tsx): the greeting in one box with a "Hear it" button, and under "More choices" the words
  * per language, how to address people, what never to say, and the questions and answers. The greeting and the lists go in the whole Talk training document, Words in the speaks change (only what changed), each with the Owner's second step; one Save sends both. Introduce as is on Place a test call.
  */
-export function VoiceTone({ words, voiceNames, first, training, actions, canEdit, securityHref, speaks, offered = LAUNCH_LANGS, langNames, business, assistantName, hearIt, v4 = false }: VoiceToneProps) {
+export function VoiceTone({ words, voiceNames, first, training, actions, canEdit, securityHref, speaks, offered = LAUNCH_LANGS, langNames, business, assistantName, hearIt, sayAi = null, suggested = null, v4 = false }: VoiceToneProps) {
   const t = makeT(words);
   const [lang, setLang] = React.useState<CallLang>(first);
   // the greeting and the rest of Talk training
@@ -119,7 +122,9 @@ export function VoiceTone({ words, voiceNames, first, training, actions, canEdit
 
   // ---- the greeting ----
   const pillText = (name: Placeholder) => t(`vt.ph.${name}` as "vt.ph.customer");
-  const greetingText = doc && state ? shownGreeting(doc.greeting[lang], state.defaults.greeting[lang]) : "";
+  const suggestion = suggested?.[lang] ?? state?.defaults.greeting[lang]; // FOLLOWS THE SWITCH: the suggestion is the one with or without the AI sentence as "Say AI assistant when greeting" stands (the page is read again when it is toggled)
+  // (a new suggestion from the page, after the switch was toggled, gives the greeting box a new key: it is not controlled while it is typed in)
+  const greetingText = doc && state ? shownGreeting(doc.greeting[lang], suggestion) : "";
   const unknownHere = unknownPlaceholders(doc?.greeting[lang] ?? "");
   // "Hear it": the greeting AS IT IS ON THE SCREEN (the pills filled with the example names, as in the line under the box), in the voice in force (the one chosen in the voice card above, saved the moment it is chosen) and the saved tone: the API speaks it the way a call does.
   const [heard, setHeard] = React.useState(false);
@@ -132,7 +137,7 @@ export function VoiceTone({ words, voiceNames, first, training, actions, canEdit
     setHearing(true);
     setHearNote(null);
     setHeard(true);
-    void hearIt(lang, text, null, true)
+    void hearIt(lang, text, sayAi, true)
       .catch(() => ({ ok: false as const, error: "down" }))
       .then((out) => {
         if (!out.ok) {
@@ -201,7 +206,7 @@ export function VoiceTone({ words, voiceNames, first, training, actions, canEdit
             {t("vt.greet")}
           </p>
           <GreetingBox
-            key={`${lang}-${rev}`}
+            key={`${lang}-${rev}-${suggestion ?? ""}`}
             id="vt-greeting"
             label={t("vt.greet")}
             value={greetingText}
@@ -253,9 +258,6 @@ export function VoiceTone({ words, voiceNames, first, training, actions, canEdit
             </div>
           ) : null}
           <p className="m-0 text-sm text-muted">{t("vt.greet.help")}</p>
-          <p className="m-0 text-sm text-muted" data-part="ai-always">
-            {t("tt.ai.always")}
-          </p>
         </div>
       ) : null}
 

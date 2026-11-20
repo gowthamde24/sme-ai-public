@@ -6,9 +6,9 @@ When a customer books a visit, your assistant reminds them on WhatsApp so they c
 [button type=button: Priya]
 {label="Who talks"}
 ## Who talks
-Always says it is an AI P Priya
+Says it is an AI if asked P Priya
 [button type=button: Rename]
-Customers hear: “Priya, the AI assistant of Neelambari Silks”
+Customers hear: “Priya from Neelambari Silks”
 {label="This job speaks … in a … voice from …."} This job speaks
 <select label="This job speaks … in a … voice from …. (1)">
   options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn
@@ -22,7 +22,7 @@ legend: Voice
 Janvi Recommended
 <radio name=who-voice-66666666-6666-4666-8666-666666666605 label="Sophia" value=en-sophia checked>
 Sophia
-What it will do: Lakshmi books a visit at 11 am → reminder at 10 am → visit at 4 pm. Priya talks in English from the shop number. Uses your message: Visit reminder Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.
+What it will do: Lakshmi books a visit at 11 am → reminder at 10 am → visit at 4 pm. Priya talks in English from the shop number. Uses your message: Visit reminder If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.
 ## When
 Remind customers
 <select label="Remind customers … their visit">
@@ -49,7 +49,7 @@ Your assistant uses these when a customer asks. Example: Do you open on Sundays?
 [button type=button: Add a question]
 summary: More choices Rest day, who is left out, and more
 <checkbox label="Tell me on WhatsApp when a store visit is booked" checked>
-Tell me on WhatsApp when a store visit is booked These always stay on: STOP, quiet hours and the AI line. They never change here.
+Tell me on WhatsApp when a store visit is booked These always stay on: STOP and quiet hours. They never change here.
 ## Results
 Last 7 days
 17

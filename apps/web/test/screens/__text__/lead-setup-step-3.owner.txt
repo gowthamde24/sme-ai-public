@@ -52,7 +52,7 @@ No prices and no promises here. Your assistant states prices only from facts you
 - Interested · 5 minutes after · WhatsApp messages
 {label="Rules that always apply"}
 ### Rules that always apply
-- The assistant says it is an AI assistant on every call.
+- If someone asks, the assistant says it is an AI assistant.
 - It states only facts you approved, and never a price you did not approve.
 - It stops when someone says no or sends STOP.
 These belong to your business type and to the platform. They cannot be changed here.

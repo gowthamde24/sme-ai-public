@@ -85,8 +85,8 @@ function setup(over: Partial<VoiceCardProps> = {}, voiceOver: { choices?: Partia
     testCallHref: `${BASE}/calls?test=1`,
     ...over,
   };
-  render(<VoiceCard {...props} />);
-  return { choose, hear, save, toneExample };
+  const view = render(<VoiceCard {...props} />);
+  return { choose, hear, save, toneExample, view, props };
 }
 const root = () => document.querySelector('[data-part="mya-voice-card"]') as HTMLElement;
 const voice = (id: string) => document.querySelector(`[data-voice="${id}"]`) as HTMLElement;
@@ -95,7 +95,7 @@ describe("the voice card, \"Your assistant's voice\" (owner, 20 Nov 2026)", () =
   it("is ONE card with one heading: named voices, no Warm/Calm/Bright, no Region, no speed", () => {
     setup();
     expect(within(root()).getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual(["Your assistant's voice"]);
-    expect([...root().querySelectorAll("[data-voice]")].map((v) => v.getAttribute("data-voice"))).toEqual(["te-ramya", "te-kavitha"]);
+    expect([...root().querySelectorAll("[data-voice]")].map((v) => v.getAttribute("data-voice"))).toEqual(["te-ramya", "te-kavitha", "te-karthik", "te-naveen"]);
     expect(voice("te-ramya")).toHaveTextContent("Ramya");
     expect(voice("te-kavitha")).toHaveTextContent("Kavitha");
     for (const gone of ["Warm", "Calm", "Bright", "Region", "Speed", "speed", "Choose a sound", "Use this sound"]) expect(root().textContent ?? "").not.toContain(gone);
@@ -115,13 +115,54 @@ describe("the voice card, \"Your assistant's voice\" (owner, 20 Nov 2026)", () =
     cleanup();
     setup({}, { gender: "male" });
     expect(voice("te-karthik")).toHaveTextContent("Man");
-    expect([...root().querySelectorAll("[data-voice]")].map((v) => v.getAttribute("data-voice"))).toEqual(["te-karthik", "te-naveen"]); // the workspace's gender only, with no control to change it here
+    expect(voice("te-karthik")).toHaveAttribute("data-selected", "true"); // a man's workspace: the man's default is in use
+    expect(voice("te-ramya")).toHaveAttribute("data-selected", "false");
+  });
+
+  it("shows ALL the listed voices of the language, grouped Women then Men (women first), each with its own play button", () => {
+    setup();
+    expect([...root().querySelectorAll("[data-voice]")].map((v) => v.getAttribute("data-voice"))).toEqual(["te-ramya", "te-kavitha", "te-karthik", "te-naveen"]);
+    const groups = [...root().querySelectorAll("[data-group]")];
+    expect(groups.map((g) => g.getAttribute("data-group"))).toEqual(["female", "male"]);
+    expect(groups[0]).toHaveTextContent("Women");
+    expect(groups[1]).toHaveTextContent("Men");
+    expect(within(groups[1] as HTMLElement).getAllByRole("button", { name: /^Hear / })).toHaveLength(2);
+    expect(within(groups[1] as HTMLElement).getByText("Karthik")).toBeInTheDocument();
+    for (const b of root().querySelectorAll("[data-play]")) expect(b).toBeEnabled();
+    cleanup();
+    setup({ picker: { voices: MOCK_VOICES.filter((v) => v.language === "te" && v.gender === "female"), choices: {}, active: {}, gender: "female", fake: false }, languages: ["te"] });
+    expect(root().querySelectorAll("[data-group]")).toHaveLength(1);
+    expect(root()).not.toHaveTextContent("Women"); // one group needs no heading
+  });
+
+  it("choosing a man's voice in a woman's workspace is ONE choice (the API switches the voice type with it): the page's answer is drawn, the man In use under Men, the Women group no longer In use", async () => {
+    const { choose, view, props } = setup();
+    fireEvent.click(within(voice("te-karthik")).getByRole("radio"));
+    await waitFor(() => expect(choose).toHaveBeenCalledWith("te", "te-karthik"));
+    await waitFor(() => expect(voice("te-karthik")).toHaveAttribute("data-selected", "true"));
+    expect(refresh).toHaveBeenCalled();
+    // the page is read again: the whole voices document says the workspace is a man's now
+    view.rerender(<VoiceCard {...props} picker={{ voices: MOCK_VOICES, choices: { te: "te-karthik" }, active: { te: "te-karthik" }, gender: "male", fake: false }} />);
+    expect(voice("te-karthik")).toHaveAttribute("data-selected", "true");
+    expect(voice("te-karthik")).toHaveTextContent("In use");
+    expect(voice("te-ramya")).toHaveAttribute("data-selected", "false");
+    expect(root().querySelector('[data-group="male"]')).toContainElement(voice("te-karthik"));
+    expect(screen.getByText("Saved. New calls use it.")).toBeInTheDocument();
+  });
+
+  it("when the API still refuses a voice of the other gender (422) the card says so plainly and keeps the previous choice: nothing is made up", async () => {
+    setup({ choose: vi.fn(async () => ({ ok: false as const, error: "invalid" })) });
+    fireEvent.click(within(voice("te-karthik")).getByRole("radio"));
+    expect(await screen.findByRole("alert")).toHaveTextContent("That voice is not available yet.");
+    expect(voice("te-ramya")).toHaveAttribute("data-selected", "true");
+    expect(voice("te-karthik")).toHaveAttribute("data-selected", "false");
+    expect(screen.queryByText("Saved. New calls use it.")).toBeNull();
   });
 
   it("the language chips switch the row; each language has its own voices and its own one in use", () => {
     setup();
     fireEvent.click(screen.getByRole("button", { name: CALL_LANG_NAMES.hi }));
-    expect([...root().querySelectorAll("[data-voice]")].map((v) => v.getAttribute("data-voice"))).toEqual(["hi-sanya", "hi-pooja"]);
+    expect([...root().querySelectorAll("[data-voice]")].map((v) => v.getAttribute("data-voice"))).toEqual(["hi-sanya", "hi-pooja", "hi-kabir", "hi-rohan"]);
     expect(voice("hi-sanya")).toHaveAttribute("data-selected", "true");
     fireEvent.click(screen.getByRole("button", { name: CALL_LANG_NAMES.en }));
     expect(voice("en-janvi")).toBeInTheDocument();
@@ -220,6 +261,10 @@ describe("the voice card, \"Your assistant's voice\" (owner, 20 Nov 2026)", () =
     expect(refresh).toHaveBeenCalled();
     cleanup();
     setup({ choose: vi.fn(async () => ({ ok: false as const, error: "invalid" })) });
+    fireEvent.click(within(voice("te-kavitha")).getByRole("radio"));
+    expect(await screen.findByRole("alert")).toHaveTextContent("That voice is not available yet.");
+    cleanup();
+    setup({ choose: vi.fn(async () => ({ ok: false as const, error: "down" })) });
     fireEvent.click(within(voice("te-kavitha")).getByRole("radio"));
     expect(await screen.findByRole("alert")).toHaveTextContent("Could not save the voice.");
     expect(voice("te-ramya")).toHaveAttribute("data-selected", "true");

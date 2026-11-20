@@ -54,8 +54,8 @@ export async function readVoiceTab(c: Ctx) {
   const picker = voicePickerScreens() === "off" ? null : await readVoicePicker(ctx).catch((e) => soft<never>(e));
   // the languages of the cards: the four the phone voice is offered in (owner, 9 Nov), the business's own first
   const own = picker?.mode === "ok" ? await getWorkspaceProfile(c.token, c.tenantId).then((p) => p.languages, (e) => soft<string[]>(e) ?? []) : [];
-  // (C1: `languages[]` lists the languages that have voices; a language with none for the workspace's gender is not drawn)
-  const hasVoices = (l: PickerLang): boolean => picker?.mode !== "ok" || picker.data.voices.some((v) => v.language === l && v.gender === picker.data.gender);
+  // (C1: `languages[]` lists the languages that have voices; one with none is not drawn)
+  const hasVoices = (l: PickerLang): boolean => picker?.mode !== "ok" || picker.data.voices.some((v) => v.language === l);
   const languages: PickerLang[] = pickerOrder(own).filter((l) => (LIVE_LANGS as readonly string[]).includes(l) && hasVoices(l));
   // How your assistant speaks and the greeting: Talk training (the API exists; TALK_TRAINING_SCREENS)
   const training = talkTrainingScreens() ? await getTalkTraining(c.token, c.tenantId).catch((e) => soft<never>(e)) : null;

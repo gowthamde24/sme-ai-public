@@ -42,7 +42,8 @@ describe("the talk-training document (C1's docs/contracts/talk-training.md)", ()
     expect(() => parseTalkTraining({ ...OUT, saved: "no" })).toThrow();
     expect(() => parseTalkTraining({ ...OUT, training: { ...DOC, address: "boss" } })).toThrow();
     expect(() => parseTalkTraining({ ...OUT, training: { ...DOC, questions: Array(9).fill("Which colour?") } })).toThrow();
-    expect(parseTalkTraining(OUT)).toMatchObject({ saved: false, rules: ["Always says it is an AI."], updatedAt: null });
+    expect(parseTalkTraining(OUT)).toMatchObject({ saved: false, rules: [], updatedAt: null }); // "Always says it is an AI." is left out: it is true only when asked
+    expect(parseTalkTraining({ ...OUT, rules: ["Always says it is an AI.", "Never says it is a person.", "Answers honestly if asked."] })?.rules).toEqual(["Never says it is a person.", "Answers honestly if asked."]);
   });
 
   it("checks what the browser sends again: trims, drops empty rows, refuses too many and the same line twice", () => {

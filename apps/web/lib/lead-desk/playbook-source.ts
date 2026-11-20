@@ -45,7 +45,7 @@ function defaultsFor(pack: string): PlaybookBody {
     raw: {},
   };
 }
-const SAFETY = ["The assistant says it is an AI assistant on every call.", "It states only facts you approved, and never a price you did not approve.", "It stops when someone says no or sends STOP."];
+const SAFETY = ["If someone asks, the assistant says it is an AI assistant.", "It states only facts you approved, and never a price you did not approve.", "It stops when someone says no or sends STOP."];
 
 /** The playbook in force (the saved one, else the template's), or null when it cannot be read. `packId` is the workspace's business type. */
 export async function readPlaybook(ctx: Ctx, packId: string | null): Promise<PlaybookRead | null> {

@@ -6,9 +6,9 @@ When a customer asked a price or you promised to get back, your assistant follow
 [button type=button: Follow up on price questions and promises]
 {label="Who talks"}
 ## Who talks
-Always says it is an AI F Follow up on price questions and promises
+Says it is an AI if asked F Follow up on price questions and promises
 [button type=button: Rename]
-Customers hear: “the AI assistant of Neelambari Silks”
+Customers hear: “the assistant of Neelambari Silks”
 {label="This job speaks … in a … voice from …."} This job speaks
 <select label="This job speaks … in a … voice from …. (1)">
   options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn
@@ -22,7 +22,7 @@ legend: Voice
 Janvi Recommended
 <radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Sophia" value=en-sophia>
 Sophia
-What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the shop number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off. Or just ask your assistant
+What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone. Or just ask your assistant
 [button type=button: “Make the visits job speak Telugu.”]
 {role=alert} Why: WhatsApp only lets us write first with an approved template once a customer’s 24 hours are over. Pick a template and it goes out after your OK.
 - Sravani Reddy Asked a price 2 days ago. WhatsApp’s 24 hours are over. [Send template](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
@@ -61,7 +61,7 @@ Rest day:
 <select label="Rest day: …">
   options: none | Sunday=sunday* | Saturday and Sunday=weekend
 <checkbox label="Stop a customer's job after 3 tries" checked>
-Stop a customer's job after 3 tries These always stay on: STOP, quiet hours and the AI line. They never change here.
+Stop a customer's job after 3 tries These always stay on: STOP and quiet hours. They never change here.
 ## Results
 Last 7 days
 21

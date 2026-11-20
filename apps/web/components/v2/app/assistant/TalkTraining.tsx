@@ -156,9 +156,6 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
             </p>
           </div>
         ) : null}
-        <p className="mt-4 text-sm text-muted" data-part="ai-always">
-          {t("tt.ai.always")}
-        </p>
       </div>
 
       {speaks && !addressToo ? null : (

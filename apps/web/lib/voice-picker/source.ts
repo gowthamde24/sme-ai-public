@@ -73,11 +73,14 @@ export async function saveVoiceChoice(ctx: Ctx, language: unknown, voiceId: unkn
   const lang = language as PickerLang;
   if (mode === "mock") {
     const jar = await readJar(MOCK_COOKIE, parseJar, NONE);
-    if (voiceId !== null && !MOCK_VOICES.some((x) => x.id === voiceId && x.language === lang && x.gender === jar.gender)) return { ok: false, error: "invalid" };
-    const next: Choices = { ...jar.choices };
+    // C1 (decided 20 Nov): a voice of EITHER gender is accepted, and it switches the assistant's gender in the same call (the other languages go back to the new gender's defaults)
+    const picked = voiceId === null ? null : MOCK_VOICES.find((x) => x.id === voiceId && x.language === lang);
+    if (voiceId !== null && !picked) return { ok: false, error: "invalid" };
+    const gender = picked ? picked.gender : jar.gender;
+    const next: Choices = gender === jar.gender ? { ...jar.choices } : {};
     if (voiceId === null) delete next[lang];
     else next[lang] = voiceId;
-    if (!(await writeJar(MOCK_COOKIE, { gender: jar.gender, choices: next }))) return { ok: false, error: "invalid" };
+    if (!(await writeJar(MOCK_COOKIE, { gender, choices: next }))) return { ok: false, error: "invalid" };
     return { ok: true, data: await mock() };
   }
   try {

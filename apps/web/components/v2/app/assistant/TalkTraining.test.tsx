@@ -447,9 +447,9 @@ describe("one greeting (owner 13 Nov 2026): the four placeholders, a preview and
     expect(screen.getByRole("button", { name: "Save" })).toBeEnabled();
   });
 
-  it("there is no AI-mention switch: one line says the assistant always says it is an AI (owner, 18 Nov)", () => {
+  it("there is no AI-mention switch here and no line saying the assistant ALWAYS announces itself (it follows 'Say AI assistant when greeting')", () => {
     draw(withGreeting("Hello"));
     expect(screen.queryByRole("switch")).toBeNull();
-    expect(document.querySelector('[data-part="ai-always"]')).toHaveTextContent("Your assistant always says it is an AI assistant.");
+    expect(document.querySelector('[data-part="ai-always"]')).toBeNull();
   });
 });
