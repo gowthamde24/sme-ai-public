@@ -19,7 +19,8 @@ Older, narrower plans (kept as reference, this file supersedes their ORDER): `do
 ## 1. Accounts and public ids [OWNER, then C1 checks]
 ```
 cp deploy/production.env.example deploy/.env.production     # git ignores it
-# fill: PROD_PROJECT_ID PROD_PROJECT_NUMBER PROD_SUPABASE_REF PROD_SCHEDULER_EMAIL
+# fill: PROD_PROJECT_ID=stack19-production  PROD_PROJECT_NUMBER=488341211094 (created by the owner, 21 Nov 2026, billing enabled; the API will be https://sme-api-488341211094.asia-south1.run.app)
+#       PROD_SUPABASE_REF=<the 20 letters of the production Supabase project: still to be created by the owner>  PROD_SCHEDULER_EMAIL
 #       PROD_WEB_ORIGIN=https://app.stack19.com  PROD_MAIL_DOMAIN=stack19.com  (PROD_SITE_ORIGIN=https://stack19.com optional)
 ```
 **[C1 ON GO]** `deploy/production.sh preflight` (read-only): ids differ from staging, git clean on main == origin/main, required secrets exist, prints `PROD_CONFIRM=<commit>`.
@@ -38,8 +39,8 @@ Rollback of this step: none needed for an empty database; a bad migration is fix
 
 ## 3. Google side [OWNER presses, C1 prepared]
 ```
-gcloud services enable run.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com cloudbuild.googleapis.com cloudscheduler.googleapis.com logging.googleapis.com monitoring.googleapis.com --project <PROD_PROJECT_ID>
-gcloud artifacts repositories create sme --repository-format=docker --location=asia-south1 --project <PROD_PROJECT_ID>
+gcloud services enable run.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com cloudbuild.googleapis.com cloudscheduler.googleapis.com logging.googleapis.com monitoring.googleapis.com --project stack19-production
+gcloud artifacts repositories create sme --repository-format=docker --location=asia-south1 --project stack19-production
 # service accounts: sme-api-run sme-web-run sme-worker-run sme-tick sme-build  (exact least-privilege grants: docs/runbooks/hosting-owner-runbook.md section "service accounts")
 deploy/budget-alerts.sh            # dry run first; INR 1,000 monthly alert, alerts only
 ```
@@ -47,7 +48,7 @@ deploy/budget-alerts.sh            # dry run first; INR 1,000 monthly alert, ale
 ## 4. Secrets: names only, each typed at a HIDDEN prompt in the owner's terminal [OWNER]
 Never in chat, a file or a command line. Pattern (value is typed, nothing shows):
 ```
-read -rs -p "value: " V; echo; printf %s "$V" | gcloud secrets create <NAME> --project <PROD_PROJECT_ID> --replication-policy=automatic --data-file=-; unset V
+read -rs -p "value: " V; echo; printf %s "$V" | gcloud secrets create <NAME> --project stack19-production --replication-policy=automatic --data-file=-; unset V
 ```
 | Secret name | What | Needed for |
 |---|---|---|
@@ -66,7 +67,7 @@ read -rs -p "value: " V; echo; printf %s "$V" | gcloud secrets create <NAME> --p
 | `sme-whatsapp-verify-token` | a long random string the owner invents, entered also in Meta | WhatsApp webhook handshake |
 | `sme-turnstile-secret` | Cloudflare Turnstile secret key (only the waitlist slice) | waitlist |
 Grant each secret to ONLY the service account that reads it (`gcloud secrets add-iam-policy-binding <NAME> --member serviceAccount:<sa> --role roles/secretmanager.secretAccessor`); C1 prints the grant table to read together. The Customer Zero list forbids any staging secret in production: do not copy values.
-Check (C1 ON GO): `gcloud secrets list --project <PROD_PROJECT_ID> --format='value(name)'`.
+Check (C1 ON GO): `gcloud secrets list --project stack19-production --format='value(name)'`.
 
 ## 4b. Sign-in: Continue with Google only (owner, 21 Nov) [OWNER, start FIRST: Google's review takes days]
 Already built (ADR 0115, `social-sign-up.md`): the second factor is OPTIONAL for everybody (never asked at sign-up or login; only a person who turned the authenticator on is asked once per session, only for sensitive actions); the Stack19 staff console keeps its own mandatory 2FA. Production steps, all by hand and never `supabase config push`:
@@ -95,15 +96,15 @@ The API is deployed WITHOUT traffic, compared with the declared settings, and on
 ```
 deploy/production.sh deploy web          # DRY RUN, then --execute with PROD_CONFIRM; uses deploy/production-web-flags.env
 deploy/production.sh deploy worker       # DRY RUN, then --execute
-python3 deploy/drift.py snapshot production web    <PROD_PROJECT_ID> asia-south1   # writes deploy/settings/production/web.env   -> reviewed PR
-python3 deploy/drift.py snapshot production worker <PROD_PROJECT_ID> asia-south1   # writes deploy/settings/production/worker.env -> reviewed PR
+python3 deploy/drift.py snapshot production web    stack19-production asia-south1   # writes deploy/settings/production/web.env   -> reviewed PR
+python3 deploy/drift.py snapshot production worker stack19-production asia-south1   # writes deploy/settings/production/worker.env -> reviewed PR
 ```
 From the snapshot on, every deploy of web and worker first compares live with declared (STOP on a difference); `make drift-staging` is the same check for staging.
 Rollback of any step: `deploy/production.sh rollback sme-api|sme-web [REVISION] --execute` (100 % traffic to the earlier revision), `latest` to undo. Worker: redeploy the previous tag. Everything off: `AGENTS_ENABLED=false` redeploy, or set min-instances 0, or close the real-data gate (`real-data-gate.md`).
 
 ## 7. Webhooks and providers [OWNER clicks, C1 gives the exact values]
-The API's address never changes: `https://sme-api-<PROD_PROJECT_NUMBER>.asia-south1.run.app`. The app domain (`app.stack19.com`) is a Cloudflare Worker in front of the web only; calls and callbacks use the run.app address.
-* **WhatsApp (Meta developers > the production app > WhatsApp > Configuration)**: Callback URL `https://sme-api-<NUMBER>.asia-south1.run.app/v1/webhooks/whatsapp`, Verify token = the value of `sme-whatsapp-verify-token` (owner types it into Meta), subscribe to `messages` (and message_template_status_update). Then in the app: Settings > Connect WhatsApp (Embedded Signup) as the owner of the new business; templates are submitted automatically after Connect.
+The API's address never changes: `https://sme-api-488341211094.asia-south1.run.app`. The app domain (`app.stack19.com`) is a Cloudflare Worker in front of the web only; calls and callbacks use the run.app address.
+* **WhatsApp (Meta developers > the production app > WhatsApp > Configuration)**: Callback URL `https://sme-api-488341211094.asia-south1.run.app/v1/webhooks/whatsapp`, Verify token = the value of `sme-whatsapp-verify-token` (owner types it into Meta), subscribe to `messages` (and message_template_status_update). Then in the app: Settings > Connect WhatsApp (Embedded Signup) as the owner of the new business; templates are submitted automatically after Connect.
 * **A2P declaration (TRAI Third Amendment, 18 Sep 2026; EVERY new number, BEFORE its first outbound call) [OWNER, via Plivo]**: declare the number/range to the operator as application/AI-initiated (A2P) with its CLI; an undeclared number is treated as spam.
 * **Plivo (console)**: an 080 or 022 number in the production account, KYC with GST / certificate / Udyam (the 080 decision of 12 Nov); an XML application whose Answer URL is `.../v1/telephony/plivo/answer` and Hangup URL `.../v1/telephony/plivo/hangup`; link the number; inbound stays OFF in the line row until the test call. **[GATE]** `TELEPHONY_MODE=live` only by the owner's written "live" (reviewed PR, `ALLOW_FLAG_CHANGE=TELEPHONY_MODE PROD_LIVE_OK=yes`).
 * **Plivo fallback Worker** (`deploy/cloudflare-worker-plivo-fallback.js`, variables set in the Cloudflare dashboard): before real calls.
@@ -112,7 +113,7 @@ The API's address never changes: `https://sme-api-<PROD_PROJECT_NUMBER>.asia-sou
 
 ## 8. Smoke tests and gates [C1 ON GO]
 ```
-python3 scripts/verify_hosted.py --api https://sme-api-<NUMBER>.asia-south1.run.app --web https://app.stack19.com     # must end ALL CHECKS PASSED; keep the output (hosting_ref)
+python3 scripts/verify_hosted.py --api https://sme-api-488341211094.asia-south1.run.app --web https://app.stack19.com     # must end ALL CHECKS PASSED; keep the output (hosting_ref)
 ALERT_EMAIL=<owner> deploy/production-alerts.sh       # dry run, then --execute; trigger each alert once, owner sees the mail
 deploy/production.sh rollback sme-api && deploy/production.sh latest sme-api     # dry runs, then once for real with --execute
 ```
