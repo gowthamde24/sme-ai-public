@@ -74,13 +74,15 @@ export type NewJobSheetData = {
   sampleItem: Texts | null;
   own: PackJobs;
   others: { pack: string; name: Texts; jobs: PackJobs }[];
+  /** The staging preview ("my business") drew these ideas from the sample data because the API route is not there yet; never set otherwise. */
+  sample?: true;
 };
 
 /** What the server hands the sheet: the data and the facts the previews are filled with (the shop's name, the main assistant's name, the person's language). */
 export type SheetLoad = { data: NewJobSheetData; lang: string; business: string; assistant: string | null; /** the language the business talks to its customers in (read only when a template has a sample voice); null/absent = not known */ businessLang?: string | null };
 
 /** The festival calendar (data per region from C1: never written in the web): one dated entry per festival the shop may prepare for. `season` is the word a template's `season` carries. */
-export type Festival = { season: Exclude<TemplateSeason, "none">; name: Texts; date: string };
+export type Festival = { season: Exclude<TemplateSeason, "none">; name: Texts; date: string; /** from the sample data (the staging preview, route not there yet) */ sample?: true };
 
 /** Payment reminders are LATER (planner, 19 Nov: "Get paid stays later"): such a template is hidden everywhere, also when the data marks it popular. */
 export const isLater = (t: JobTemplate): boolean => t.goal === "get_paid";

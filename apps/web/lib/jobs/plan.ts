@@ -47,6 +47,8 @@ export type PlanFinds = { key: string; text: string | null };
 
 export type JobPlan = {
   planId: string;
+  /** The staging preview ("my business") drew this plan from the sample planner because the API route is not there yet; never set otherwise. */
+  sample?: true;
   /** What the assistant understood, in a few words (the planner's text, not a code). */
   title: string;
   /** Who it is for: `basis` is a code with numbers (`jobs.new.who.<code>`), `eligible` of `total`, and the ones left out with a reason code each. */
@@ -93,4 +95,4 @@ export type JobTested = { channel: PlanChannel; mock: boolean; minutesUsed: numb
 export type Suggestion = { kind: JobKind; /** a title of its own (the wedding-season offer), else the plain job name */ title: { code: string } | null; why: { code: string; params: Readonly<Record<string, string | number>> }; preview: string; ready: boolean };
 
 /** The suggestions for the business, and the word of its heading (`jobs.new.sug.<heading>`: "saree" = "Jobs for a saree shop"; null = "Jobs to start with"). */
-export type SuggestionList = { items: Suggestion[]; heading: string | null };
+export type SuggestionList = { items: Suggestion[]; heading: string | null; /** from the sample data (the staging preview, route not there yet) */ sample?: true };

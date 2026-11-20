@@ -1,5 +1,7 @@
 import { photoJson, summaryJson } from "@/lib/api/catalogue-fixtures";
 
+import type { SampleType } from "@/lib/screens/preview";
+
 import type { SellStyle } from "./types";
 
 /**
@@ -39,16 +41,36 @@ const PRICES: Wire[] = [
   { id: id(2, "pric"), name: "Silk blend dupatta", moq: 24, unit: "piece", rates: [{ from_qty: 24, rate_paise: 32_000 }, { from_qty: 100, rate_paise: 29_500 }], good_until: "2026-12-31" },
   { id: id(3, "pric"), name: "Handloom towel", moq: 12, unit: "piece", rates: [{ from_qty: 12, rate_paise: 9_600 }, { from_qty: 60, rate_paise: 8_800 }, { from_qty: 240, rate_paise: 8_000 }], good_until: "2026-12-31" },
 ];
+/** The sample businesses of the staging picker (lib/jobs/sample-fixtures.ts): the car dealer's cars (products), the real-estate agent's properties and the school's admissions (courses). No type = the saree shop's lists above. */
+const CAR = { fabric: "other", fabric_label: "Other", zari: "none", border: null, occasions: [], price_band: "above_50k", price_band_label: "Above ₹50,000", stock_status: "in_stock", stock_label: "In stock" } as const;
+const CARS: Wire[] = [
+  summaryJson({ ...CAR, id: id(1, "prod"), name: "Compact SUV", colours: ["white", "black"], price_paise: 99_000_000, price_text: "₹9,90,000", stock_count: 3 }, null),
+  summaryJson({ ...CAR, id: id(2, "prod"), name: "Family sedan", colours: ["navy", "white"], price_paise: 85_000_000, price_text: "₹8,50,000", stock_count: 5 }, null),
+  summaryJson({ ...CAR, id: id(3, "prod"), name: "City hatchback", colours: ["red", "white"], price_paise: 65_000_000, price_text: "₹6,50,000", stock_status: "few_left", stock_label: "Few left", stock_count: 1 }, null),
+  summaryJson({ ...CAR, id: id(4, "prod"), name: "7-seat family car", colours: ["black"], price_paise: 100_000_000, price_text: "₹10,00,000", stock_count: 0 }, null),
+];
+const HOMES: Wire[] = [
+  { id: id(1, "prop"), name: "2BHK in Kondapur", location: "Kondapur", size: 1150, size_unit: "sq_ft", note: "3rd floor", price_paise: 680_000_000, status: "available" },
+  { id: id(2, "prop"), name: "Plot in Shamshabad", location: "Shamshabad", size: 200, size_unit: "sq_yd", note: "corner plot", price_paise: 1_200_000_000, status: "booked" },
+  { id: id(3, "prop"), name: "3BHK villa in Gachibowli", location: "Gachibowli", size: 2400, size_unit: "sq_ft", note: "with garden", price_paise: 2_400_000_000, status: "sold" },
+];
+const ADMISSIONS: Wire[] = [
+  { id: id(1, "cour"), name: "Class 10 admission", batch: "Academic year 2027", starts_on: "2027-06-10", fee_paise: 6_500_000, seats: { state: "left", count: 12 }, total: 60, description: "English and Telugu medium sections" },
+  { id: id(2, "cour"), name: "Class 6 admission", batch: "Academic year 2027", starts_on: "2027-06-10", fee_paise: 5_500_000, seats: { state: "left", count: 20 }, total: null },
+  { id: id(3, "cour"), name: "Summer camp", batch: "April, mornings", starts_on: "2027-04-15", fee_paise: 350_000, seats: { state: "full", count: null }, total: null },
+];
+const OWN: Partial<Record<SampleType, Partial<Record<SellStyle, Wire[]>>>> = { cars: { products: CARS }, realestate: { properties: HOMES }, school: { courses: ADMISSIONS } };
 const BY_STYLE: Record<SellStyle, Wire[]> = { products: PRODUCTS, services: SERVICES, courses: COURSES, properties: PROPERTIES, pricelist: PRICES };
+const rowsOf = (style: SellStyle, type: SampleType | null): Wire[] => (type ? OWN[type]?.[style] : undefined) ?? BY_STYLE[style];
 
-/** `GET /what-you-sell?style=` in the mock: the shop's list of that style. */
-export function wireSell(style: SellStyle): Wire {
-  return { style, items: BY_STYLE[style], next_cursor: null };
+/** `GET /what-you-sell?style=` in the mock: the shop's list of that style (a sample business's own list for the staging picker). */
+export function wireSell(style: SellStyle, type: SampleType | null = null): Wire {
+  return { style, items: rowsOf(style, type), next_cursor: null };
 }
 
 /** What the assistant "understood" from photos or a sheet in the mock (nothing is read: two made-up entries of the style, not saved until the owner taps Save). A real shop uses the reading call (`POST /what-you-sell/{style}/read`, parsed by `parseSellReading`). */
-export function wireUnderstood(style: SellStyle, from: "photos" | "sheet"): Wire {
-  const rows = BY_STYLE[style].slice(from === "photos" ? 0 : 1, from === "photos" ? 2 : 3).map((r, i) => ({ ...r, id: id(90 + i, "draf") }));
+export function wireUnderstood(style: SellStyle, from: "photos" | "sheet", type: SampleType | null = null): Wire {
+  const rows = rowsOf(style, type).slice(from === "photos" ? 0 : 1, from === "photos" ? 2 : 3).map((r, i) => ({ ...r, id: id(90 + i, "draf") }));
   return { style, items: rows };
 }
 
