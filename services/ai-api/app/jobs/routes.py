@@ -177,4 +177,37 @@ def generate_samples(body: GenerateIn, principal: PrincipalDep, runtime: Runtime
         raise ApiError(403, "forbidden", "Your role does not allow this action.") from None
 
 
+@ops_router.get("/index")
+def sample_index(principal: PrincipalDep, jobs: JobsDep) -> dict[str, Any]:
+    """What exists (the system account only: the database checks it): every sample's key, the hash of its words and its characters, and the characters spent in all."""
+    if jobs.samples is None:
+        raise ApiError(503, "voice_unavailable", "The voice service is not available on this system.")
+    try:
+        return jobs.samples.index(principal.token)
+    except RepositoryError:
+        raise ApiError(403, "forbidden", "Your role does not allow this action.") from None
+
+
+class RecodeIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    pack: str = Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")
+    template_id: str = Field(pattern=r"^[a-z][a-z0-9_]{2,40}$")
+    language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    content_type: Literal["audio/mpeg", "audio/ogg", "audio/wav"]
+    audio_b64: str = Field(min_length=4, max_length=2_000_000)
+
+
+@ops_router.post("/recode")
+def recode_sample(body: RecodeIn, principal: PrincipalDep, jobs: JobsDep) -> dict[str, Any]:
+    """Replace the sound of a sample whose words are the same (a smaller encoding of the same recording; the system account only). Spends nothing: no voice credits, no characters counted."""
+    if jobs.samples is None:
+        raise ApiError(503, "voice_unavailable", "The voice service is not available on this system.")
+    try:
+        return jobs.samples.recode(principal.token, body.pack, body.template_id, body.language, body.sha256, body.content_type, body.audio_b64)
+    except RepositoryError:
+        raise ApiError(403, "forbidden", "Your role does not allow this action.") from None
+
+
 __all__ = ["ops_router", "router", "samples_router"]
