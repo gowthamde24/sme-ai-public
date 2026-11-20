@@ -61,13 +61,13 @@
   --v2-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 4px 16px rgba(16, 24, 40, 0.06);
   --v2-shadow-pop: 0 8px 32px rgba(16, 24, 40, 0.16);
 
-  /* Font stacks. The variables come from next/font (design/fonts.ts, set by V2Root); Telugu, Devanagari and Kannada
+  /* Font stacks. The variables come from next/font (design/fonts.ts, set by V2Root); Telugu, Devanagari, Kannada and Tamil
      follow the Latin font and are used only for their own glyphs. Every var() has a fallback: an undefined variable
      would make the whole declaration invalid and silently hand the font back to the legacy stylesheet. */
   --v2-font-sans-stack: var(--v2-font-sans, system-ui), var(--v2-font-telugu, system-ui), var(--v2-font-devanagari, system-ui),
-    var(--v2-font-kannada, system-ui), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    var(--v2-font-kannada, system-ui), var(--v2-font-tamil, system-ui), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --v2-font-display-stack: var(--v2-font-display, system-ui), var(--v2-font-telugu, system-ui), var(--v2-font-devanagari, system-ui),
-    var(--v2-font-kannada, system-ui), system-ui, sans-serif;
+    var(--v2-font-kannada, system-ui), var(--v2-font-tamil, system-ui), system-ui, sans-serif;
 }
 
 [data-ui="v2"][data-theme="dark"] {

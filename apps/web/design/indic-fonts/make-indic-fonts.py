@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Regenerates the three Indic web fonts in this folder (job CH). A developer tool: never run by the build, the tests or CI.
+"""Regenerates the four Indic web fonts in this folder (job CH). A developer tool: never run by the build, the tests or CI.
 
   python3 -I design/indic-fonts/make-indic-fonts.py          # from apps/web; needs `fontTools` and `brotli` (pip), and network for fonts.googleapis.com
 
-What it does: downloads Google's own per-script file of Noto Sans Telugu / Devanagari / Kannada (the variable font, weights 100 to 900, already cut to that script's letters),
+What it does: downloads Google's own per-script file of Noto Sans Telugu / Devanagari / Kannada / Tamil (the variable font, weights 100 to 900, already cut to that script's letters),
 and limits the weight axis to 400 to 700 (the weights the app uses: normal, medium, semibold, bold). Nothing else is removed: every letter, mark and shaping rule of the script stays, so
 conjuncts (a consonant joined to the next) still form. Output: NotoSans<Script>-400-700.woff2, about 40 to 55 per cent smaller than the 100-900 file. The fonts are SIL OFL 1.1 (OFL.txt).
 Why not cut by letter ranges (as Google does for Latin): a Telugu / Hindi / Kannada syllable is shaped as one run; splitting a script over two files would break the joined letters.
@@ -19,7 +19,7 @@ from fontTools.varLib import instancer
 
 HERE = Path(__file__).resolve().parent
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"  # Google serves woff2 to a current browser
-SCRIPTS = {"Telugu": "telugu", "Devanagari": "devanagari", "Kannada": "kannada"}
+SCRIPTS = {"Telugu": "telugu", "Devanagari": "devanagari", "Kannada": "kannada", "Tamil": "tamil"}
 
 
 def fetch(url: str) -> bytes:

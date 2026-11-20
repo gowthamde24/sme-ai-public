@@ -26,18 +26,19 @@ describe("v2FontClassName: a page downloads only the Indic font of its own langu
     expect(v2FontClassName("te")).toBe("var-sans var-display var-telugu");
     expect(v2FontClassName("hi")).toBe("var-sans var-display var-devanagari");
     expect(v2FontClassName("kn")).toBe("var-sans var-display var-kannada");
+    expect(v2FontClassName("ta")).toBe("var-sans var-display var-tamil");
   });
-  it("an unknown language gets none, and no language at all gets all three", () => {
+  it("an unknown language gets none, and no language at all gets all four", () => {
     expect(v2FontClassName("fr")).toBe("var-sans var-display");
-    expect(v2FontClassName()).toBe("var-sans var-display var-telugu var-devanagari var-kannada");
+    expect(v2FontClassName()).toBe("var-sans var-display var-telugu var-devanagari var-kannada var-tamil");
   });
 });
 
 describe("the Indic fonts are the cut files in design/indic-fonts (job CH)", () => {
   const dir = path.join(__dirname, "indic-fonts");
-  const FILES = { "--v2-font-telugu": "NotoSansTelugu-400-700.woff2", "--v2-font-devanagari": "NotoSansDevanagari-400-700.woff2", "--v2-font-kannada": "NotoSansKannada-400-700.woff2" };
+  const FILES = { "--v2-font-telugu": "NotoSansTelugu-400-700.woff2", "--v2-font-devanagari": "NotoSansDevanagari-400-700.woff2", "--v2-font-kannada": "NotoSansKannada-400-700.woff2", "--v2-font-tamil": "NotoSansTamil-400-700.woff2" };
   // the sizes that were measured when the files were made; a bigger file means the weight axis was widened again (the whole point is not to ship 100 to 900)
-  const CEILING = { "--v2-font-telugu": 70_000, "--v2-font-devanagari": 90_000, "--v2-font-kannada": 52_000 };
+  const CEILING = { "--v2-font-telugu": 70_000, "--v2-font-devanagari": 90_000, "--v2-font-kannada": 52_000, "--v2-font-tamil": 30_000 };
 
   it("each language's font is its own local file, 400 to 700, never preloaded, with a unicode-range", () => {
     expect(localCalls.map((c) => c.variable).sort()).toEqual(Object.keys(FILES).sort());
@@ -52,7 +53,7 @@ describe("the Indic fonts are the cut files in design/indic-fonts (job CH)", () 
   it("every font loader is a plain `const x = localFont({...})` in the module (the build refuses a helper around it: the unit test cannot see that, the build does)", () => {
     const source = fs.readFileSync(path.join(__dirname, "fonts.ts"), "utf8");
     const calls = source.split("\n").filter((line) => line.includes("localFont("));
-    expect(calls.length).toBe(3);
+    expect(calls.length).toBe(4);
     for (const line of calls) expect(line).toMatch(/^const \w+ = localFont\(\{$/);
   });
   it("the files exist, are woff2, stay under their measured size, and the licence is next to them", () => {

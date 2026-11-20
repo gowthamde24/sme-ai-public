@@ -625,9 +625,11 @@
 [data-ui="v2"][data-ds="6"]:lang(te) *,
 [data-ui="v2"][data-ds="6"]:lang(hi) *,
 [data-ui="v2"][data-ds="6"]:lang(kn) *,
+[data-ui="v2"][data-ds="6"]:lang(ta) *,
 [data-ui="v2"][data-ds="6"] :lang(te),
 [data-ui="v2"][data-ds="6"] :lang(hi),
-[data-ui="v2"][data-ds="6"] :lang(kn) { letter-spacing: 0 !important; text-transform: none !important; font-variant-ligatures: common-ligatures; text-rendering: optimizeLegibility; }
+[data-ui="v2"][data-ds="6"] :lang(kn),
+[data-ui="v2"][data-ds="6"] :lang(ta) { letter-spacing: 0 !important; text-transform: none !important; font-variant-ligatures: common-ligatures; text-rendering: optimizeLegibility; }
 
 /* Forms on a phone (owner, 18 Nov): a focused field scrolls clear of the floating orb and the tab bar (scroll-padding), so the last fields and their help lines are never under it. (The orb itself steps aside while a field is focused: a Tailwind variant on the orb, because its `grid` utility is `!important` and no unlayered rule can beat it.) */
 @media (max-width: 767px) {
