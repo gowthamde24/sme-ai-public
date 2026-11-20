@@ -80,7 +80,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
     )
 
 
-def build_tasks_dialer(settings: Any, phone: Any, tone_for: Any = None) -> Any:
+def build_tasks_dialer(settings: Any, phone: Any, tone_for: Any = None, say_ai_for: Any = None) -> Any:
     """The dialer of approved Lead Desk tasks. `plivo` only when the phone service can place outbound calls (TELEPHONY_OUTBOUND, Plivo Auth ID and Token); otherwise the fake, loudly. Anything else is a mistake."""
     from app.tasks.dialer import FakeDialer
 
@@ -96,7 +96,7 @@ def build_tasks_dialer(settings: Any, phone: Any, tone_for: Any = None) -> Any:
         return FakeDialer()
     from app.telephony.plivo_tasks import PlivoTaskDialer
 
-    return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for)
+    return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for, say_ai_for=say_ai_for)
 
 
 class NamedCallDialer:
@@ -114,7 +114,7 @@ class NamedCallDialer:
         return (self._real if phone and self._on_list(phone) else self._fallback).call(**kwargs)
 
 
-def build_named_dialer(settings: Any, phone: Any, fallback: Any, tone_for: Any = None) -> Any:
+def build_named_dialer(settings: Any, phone: Any, fallback: Any, tone_for: Any = None, say_ai_for: Any = None) -> Any:
     """The dialer for a plan whose one person the Owner named; None when this deployment cannot place outbound calls (then the plan runs on the ordinary dialer)."""
     placer = getattr(phone, "outbound", None)
     repo = getattr(phone, "outbound_repo", None)
@@ -122,7 +122,7 @@ def build_named_dialer(settings: Any, phone: Any, fallback: Any, tone_for: Any =
         return None
     from app.telephony.plivo_tasks import PlivoTaskDialer
 
-    real = PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for)
+    real = PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for, say_ai_for=say_ai_for)
     return NamedCallDialer(real, fallback, placer.on_sandbox)
 
 
@@ -148,5 +148,26 @@ def call_tone_lookup(rest_url: str, anon_key: str, packs_dir: str | None) -> Any
         except Exception:   # noqa: BLE001 - an unreadable setting is the business type's default
             doc = None
         return tone_mod.effective_tone(doc, pack_default)[0]
+
+    return lookup
+
+
+def call_greeting_lookup(rest_url: str, anon_key: str) -> Any:
+    """For a Lead Desk call: does the greeting say "AI assistant"? The workspace's saved setting `say_ai_when_greeting` (default OFF: the name only), read as the member, else as the phone server's own account. An unreadable setting is OFF."""
+    from app.opening import greeting
+    from app.talk_training.repository import PostgrestTalkTraining
+
+    trainings = PostgrestTalkTraining(rest_url, anon_key)
+
+    def lookup(token: str, tenant_id: uuid.UUID) -> bool:
+        try:
+            row = trainings.get(token, tenant_id)
+            doc = row.get("doc") if isinstance(row, dict) and isinstance(row.get("doc"), dict) else None
+        except Exception:   # noqa: BLE001 - not a member: the call door of the phone server's account
+            try:
+                doc = trainings.for_call(token, tenant_id)
+            except Exception:   # noqa: BLE001 - an unreadable setting is the default
+                doc = None
+        return greeting.resolved_from(doc)
 
     return lookup

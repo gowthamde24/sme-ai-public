@@ -25,11 +25,13 @@ from app.how_speaks.models import (
     IntroduceOut,
     IntroducePreviewOut,
     PackDefaultsOut,
+    SayAiOut,
     ToneOut,
     WordsLanguageOut,
     WordsOptionsOut,
     WordsOut,
 )
+from app.opening import greeting
 from app.speaking.models import LanguageStyle, SpeakingStyleIn
 from app.talk_training import introduce
 from app.talk_training.models import TalkTraining
@@ -102,6 +104,7 @@ def _out(runtime: Runtime, ctx: TenantContext) -> HowAssistantSpeaksOut:
             preview=IntroducePreviewOut(te=_preview("te", value, business, pick), en=_preview("en", value, business, pick)),
         ),
         background=BackgroundOut(value=ambience.valid(training.background), saved=training.background is not None, options=[BackgroundOption(id=word, label=dict(ambience.LABELS[word])) for word in ambience.BACKGROUNDS]),  # type: ignore[arg-type]
+        say_ai_when_greeting=SayAiOut(value=greeting.resolve_greeting_disclosure(training.say_ai_when_greeting), saved=training.say_ai_when_greeting is not None),
         pack_defaults=PackDefaultsOut(tone=pack_default, words=register.DEFAULT_STYLE),  # type: ignore[arg-type]
         legacy_address=(training.address if row is not None else None),
         updated_at=row.get("updated_at") if row is not None else None,
@@ -130,11 +133,13 @@ def put_how_assistant_speaks(ctx: OwnerStrong, runtime: RuntimeDep, body: HowAss
         if choice is not None and choice.region is not None and choice.region not in register.REGIONS[lang]:
             raise ApiError(422, "validation_error", f"Invalid input: words.{lang}.region", extra={"fields": [f"words.{lang}.region"], "reason": "region_not_of_language"})
     # 2. the Talk training document (tone, introduce_as): the saved document, else the business type's defaults, with only these parts changed
-    if "tone" in sent or "introduce_as" in sent or "background" in sent:
+    if "tone" in sent or "introduce_as" in sent or "background" in sent or "say_ai_when_greeting" in sent:
         _, training = _row_and_training(runtime, ctx)
         doc = training.model_dump(mode="json")
         if "tone" in sent:
             doc["tone"] = body.tone   # None = back to "not chosen yet" (the business type decides)
+        if "say_ai_when_greeting" in sent:
+            doc["say_ai_when_greeting"] = body.say_ai_when_greeting   # None = back to the default: the name only
         if "background" in sent:
             doc["background"] = body.background   # None = back to "not chosen yet": quiet_office
         if "introduce_as" in sent:

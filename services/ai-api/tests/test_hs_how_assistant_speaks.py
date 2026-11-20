@@ -163,3 +163,19 @@ def test_there_is_no_region_in_the_answer_and_an_old_region_is_accepted_but_chan
     from app.speaking.service import SpeakingService
 
     assert SpeakingService(speaking).style_for("t", TENANT_A.id, "te") == ("everyday_mixed", "neutral")
+
+
+def test_say_ai_when_greeting_is_off_until_chosen_then_a_boolean_and_null_resets_it() -> None:
+    client, training, _ = world("textiles")
+    assert client.get(URL, headers=auth("a_owner")).json()["say_ai_when_greeting"] == {"value": False, "saved": False}
+    on = client.put(URL, json={"say_ai_when_greeting": True}, headers=auth("a_owner")).json()["say_ai_when_greeting"]
+    assert on == {"value": True, "saved": True} and training.rows[TENANT_A.id]["doc"]["say_ai_when_greeting"] is True
+    assert client.put(URL, json={"say_ai_when_greeting": False}, headers=auth("a_owner")).json()["say_ai_when_greeting"] == {"value": False, "saved": True}
+    assert client.put(URL, json={"say_ai_when_greeting": None}, headers=auth("a_owner")).json()["say_ai_when_greeting"] == {"value": False, "saved": False}
+    bad: object
+    for bad in ("yes", 1, "true", {}):
+        assert client.put(URL, json={"say_ai_when_greeting": bad}, headers=auth("a_owner")).status_code == 422, bad
+    assert client.put(URL, json={"say_ai_when_greeting": True}, headers=auth("a_viewer")).status_code in (401, 403)
+    # another part saved alone leaves the choice as it was
+    client.put(URL, json={"say_ai_when_greeting": True}, headers=auth("a_owner"))
+    assert client.put(URL, json={"tone": "quick"}, headers=auth("a_owner")).json()["say_ai_when_greeting"]["value"] is True

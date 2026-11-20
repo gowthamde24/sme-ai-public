@@ -53,7 +53,7 @@ def test_an_answered_call_is_real_unclear_and_says_only_what_is_known() -> None:
     dialer, repo, api = dialer_for()
     result = ask(dialer)
     assert len(api.placed) == 1 and result.simulated is False and result.outcome == "unclear" and result.captured == {} and result.category is None
-    assert result.minutes == 2 and result.transcript and result.transcript[0]["who"] == "assistant" and has_ai_disclosure(result.transcript[0]["text"]) and "Padma Silks" in result.transcript[0]["text"]
+    assert result.minutes == 2 and result.transcript and result.transcript[0]["who"] == "assistant" and not has_ai_disclosure(result.transcript[0]["text"]) and "Padma Silks" in result.transcript[0]["text"]
     assert all(PERSON not in u for u in (api.placed[0]["answer_url"], api.placed[0]["hangup_url"])), "no number in an address"
     assert "k=goal" in api.placed[0]["answer_url"] and "Which colour" not in api.placed[0]["answer_url"]
 

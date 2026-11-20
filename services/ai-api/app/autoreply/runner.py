@@ -6,7 +6,7 @@ from __future__ import annotations
 import logging
 import uuid
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
@@ -20,6 +20,7 @@ from app.autoreply.rules import (
     product_of,
     promises_follow_up,
 )
+from app.opening.honesty import ensure_honest
 from app.tenancy.repository import RepositoryError, TokenRejected
 
 logger = logging.getLogger("app.autoreply.runner")
@@ -88,6 +89,9 @@ class AutoReplyRunner:
             self._repository.skip(token, enquiry, "model unavailable or unusable")
             result.skipped += 1
             return
+        # "are you a person / a robot / an AI?" is answered truthfully by code (owner, 20 Nov 2026), in every language and whatever the greeting setting is: the model's planned words never decide it
+        said, gloss = ensure_honest(str(item.get("text", "")), draft.text, draft.gloss_en, draft.language, str(item.get("business") or "the business"))
+        draft = replace(draft, text=said, gloss_en=gloss)
         reason = must_hand_over(str(item.get("text", "")), confidence=draft.confidence, model_wants_person=draft.wants_person)
         answer = self._repository.submit(token, enquiry, draft.text, draft.language, draft.gloss_en, reason is not None)
         message = answer.get("message") or {}

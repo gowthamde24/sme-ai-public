@@ -236,6 +236,7 @@ def queued_messages_attention(ctx: SalesPlus, runtime: RuntimeDep) -> QueuedAtte
 
 def _consent_ask(runtime: Runtime, ctx: TenantContext, lead_id: uuid.UUID, message_id: uuid.UUID) -> tuple[ConsentAskOut, dict[str, Any]]:
     """The draft: what the database knows about the lead's contact, and the words in the customer's language (the same words as the ask of a plan's left-out people)."""
+    from app.opening.resolve import say_ai_setting
     from app.tasks import compose
 
     info = _repo(runtime).consent_ask_info(ctx.principal.token, ctx.tenant.id, lead_id)
@@ -254,7 +255,7 @@ def _consent_ask(runtime: Runtime, ctx: TenantContext, lead_id: uuid.UUID, messa
     how = "none" if reason else ("message" if window_open else "template")
     out = ConsentAskOut.model_validate({
         "lead_id": lead_id, "customer": str(info.get("customer") or ""), "needed": reason in (None, "no_template"), "reason": reason, "language": language,
-        "text": compose.consent_ask_text(language, ctx.tenant.name), "how": how, "window_open": window_open, "message_id": message_id,
+        "text": compose.consent_ask_text(language, ctx.tenant.name, say_ai_setting(runtime, ctx)), "how": how, "window_open": window_open, "message_id": message_id,
     })
     return out, info
 

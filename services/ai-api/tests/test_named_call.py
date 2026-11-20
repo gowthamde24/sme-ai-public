@@ -161,7 +161,7 @@ def test_a_plan_the_owner_named_runs_on_the_named_dialer_and_any_other_plan_does
             return SimpleNamespace(plan=SimpleNamespace(consent=SimpleNamespace(owner_named=task_id.int == 1)))
 
     class _Runner:
-        def __init__(self, repo: object, dialer: object, outbox: object) -> None:
+        def __init__(self, repo: object, dialer: object, outbox: object, **_kw: object) -> None:
             chosen.append(str(getattr(dialer, "name", "?")))
 
         def run(self, *args: object) -> None:

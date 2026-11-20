@@ -59,9 +59,19 @@ class PlivoTaskDialer:
     name = "plivo"
 
     def __init__(self, outbound: PlivoOutbound, repo: OutboundRepo, *, max_wait_s: float = 230.0, poll_s: float = 2.0, sleep: Callable[[float], None] = time.sleep,
-                 clock: Callable[[], float] = time.monotonic, tone_for: Callable[[str, uuid.UUID], str] | None = None) -> None:
+                 clock: Callable[[], float] = time.monotonic, tone_for: Callable[[str, uuid.UUID], str] | None = None, say_ai_for: Callable[[str, uuid.UUID], bool] | None = None) -> None:
         self._outbound, self._repo, self._max_wait, self._poll, self._sleep, self._clock = outbound, repo, max_wait_s, poll_s, sleep, clock
+        self._say_ai_for = say_ai_for   # the workspace's setting "Say 'AI assistant' when greeting" (default OFF); an unreadable setting is OFF
         self._tone_for = tone_for   # the workspace's default call tone, from its business type (packages/packs/call_tones.json); the goal text never decides it
+
+    def _say_ai(self, token: str, tenant_id: uuid.UUID) -> bool:
+        if self._say_ai_for is None:
+            return False
+        try:
+            return bool(self._say_ai_for(token, tenant_id))
+        except Exception as exc:  # noqa: BLE001 - only the class is logged
+            log.warning("plivo_task greeting setting lookup failed %s", exc.__class__.__name__)
+            return False
 
     def _tone(self, token: str, tenant_id: uuid.UUID) -> str:
         """Respectful for a school workspace, friendly for the rest; never casual (place() allows only the Owner's own test call to be casual). Anything that goes wrong is friendly."""
@@ -81,7 +91,7 @@ class PlivoTaskDialer:
             return _failed()
         try:
             placed = self._outbound.place(token, tenant_id, phone, language=language, purpose=PURPOSE, kind="goal", business=business, goal=goal_text(goal or "Follow up with the person.", questions), tone=self._tone(token, tenant_id), questions=ask_list(questions),
-                                         person_name=person_name or None, person_gender=tone_mod.addressee_gender(goal), approval_kind="task", approval_ref=task_id)
+                                         person_name=person_name or None, person_gender=tone_mod.addressee_gender(goal), approval_kind="task", approval_ref=task_id, say_ai=self._say_ai(token, tenant_id))
         except OutboundRefused as exc:
             log.info("plivo_task call refused reason=%s", exc.reason)   # a closed word; the refused call row holds it too
             return _failed()
@@ -103,7 +113,7 @@ class PlivoTaskDialer:
             return CallResult("no_answer", None, {}, [], 0, simulated=False)
         if end in ("failed", "refused", "cancelled"):
             return _failed()
-        opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for("goal", language), inbound=False)
+        opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for("goal", language, say_ai=self._say_ai(token, tenant_id)), inbound=False, mention_ai=self._say_ai(token, tenant_id))
         minutes = max(1, math.ceil(seconds / 60))
         learned = FINISHED.take(placed.call_id) if end == "completed" else None
         if learned is None or not any(t.get("who") == "caller" for t in learned.transcript):

@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, StrictBool
 
 Tone = Literal["friendly", "respectful", "quick"]
 Background = Literal["quiet_office", "shop", "off"]
@@ -72,11 +72,17 @@ class BackgroundOut(_Strict):
     options: list[BackgroundOption]
 
 
+class SayAiOut(_Strict):
+    value: bool    # false until the owner turns it on: the greeting is the name only
+    saved: bool    # the owner chose (false = the default)
+
+
 class HowAssistantSpeaksOut(_Strict):
     tone: ToneOut
     words: WordsOut
     introduce_as: IntroduceOut
     background: BackgroundOut
+    say_ai_when_greeting: SayAiOut
     pack_defaults: PackDefaultsOut
     legacy_address: Literal["plain", "sir_madam", "garu", "ji"] | None
     updated_at: datetime | None
@@ -96,6 +102,7 @@ class HowAssistantSpeaksIn(_Strict):
     """Any subset; a key left out is not changed, `null` resets that part to the default. `tone: "casual"` is a 422 (`fields: ["tone"]`)."""
 
     tone: Tone | None = None
+    say_ai_when_greeting: StrictBool | None = None   # greet with "I'm the AI assistant of {business}" (true) or the name only (false, the default); `null` = back to the default. A non-boolean is a 422.
     background: Background | None = None   # the quiet bed under the assistant's voice on calls; `null` = back to the default (quiet_office)
     words: dict[Language, WordsIn | None] | None = None
     introduce_as: IntroduceIn | None = None
