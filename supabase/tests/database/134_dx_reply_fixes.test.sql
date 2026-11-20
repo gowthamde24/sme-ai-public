@@ -4,6 +4,7 @@
 begin;
 select no_plan();
 select tests.seed_two_tenants();
+insert into public.talk_training (tenant_id, doc, updated_by) values (tests.tid('a'), '{"say_ai_when_greeting": true}', gen_random_uuid());   -- 21 Nov 2026: the AI line follows the business's setting (default OFF); this business turned it on
 select tests.seed_crm();
 select tests.seed_t008();
 select tests.seed_t009();
@@ -117,9 +118,13 @@ insert into workspace.opening_settings (workspace_id, campaign_key, mention_ai, 
 select pg_temp.mk('dx10');
 select pg_temp.inbound('dx10', '2026-10-05 23:20:00+05:30');
 select pg_temp.sub('dx_a10', 'dx10', 'assistant', 'reply_to_inbound', 'The assistant wrote this, setting off.');
-select is((select disclosure_added from public.outbox_messages where id = tests.rid('dx_a10')), true, 'B6: with the Owner''s switch off, the assistant''s message STILL carries the label (always disclosed)');
-select is(app.outbox_mention_ai(tests.tid('a')), true, 'B7: the switch is read and ignored: the assistant always says it is an AI (owner, 18 Nov 2026)');
-select is(app.outbox_mention_ai(tests.tid('b')), true, 'B8: and so for a business that never touched it');
+select is((select disclosure_added from public.outbox_messages where id = tests.rid('dx_a10')), true, 'B6: the old per-campaign switch is ignored: the label follows the business''s Talk setting (this business turned it on)');
+select is(app.outbox_mention_ai(tests.tid('a')), true, 'B7: the line follows the Talk training setting (owner, 20 Nov 2026), here ON');
+select is(app.outbox_mention_ai(tests.tid('b')), false, 'B8: a business that never chose: OFF by default (name only)');
+update public.talk_training set doc = '{"say_ai_when_greeting": false}' where tenant_id = tests.tid('a');
+select is(app.outbox_mention_ai(tests.tid('a')), false, 'B9: turned off explicitly: no line');
+update public.talk_training set doc = '{"say_ai_when_greeting": "yes"}' where tenant_id = tests.tid('a');
+select is(app.outbox_mention_ai(tests.tid('a')), false, 'B10: anything but a real true/false counts as OFF');
 
 select * from finish();
 rollback;
