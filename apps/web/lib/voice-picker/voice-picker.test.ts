@@ -160,7 +160,11 @@ describe("the voice picker source", () => {
     vi.stubEnv("VOICE_PICKER_SCREENS", "mock");
     await saveVoiceChoice(CTX, "te", "te-kavitha");
     expect(await saveVoiceGender(CTX, "male")).toMatchObject({ ok: true, data: { gender: "male", choices: {} } });
-    expect(await saveVoiceChoice(CTX, "te", "te-kavitha")).toEqual({ ok: false, error: "invalid" }); // a female voice while the workspace is male
+    // C1 (20 Nov): a voice of EITHER gender is accepted and switches the assistant's gender with the same call; the other languages go back to the new gender's defaults
+    await saveVoiceChoice(CTX, "hi", "hi-kabir");
+    expect(await saveVoiceChoice(CTX, "te", "te-kavitha")).toMatchObject({ ok: true, data: { gender: "female", choices: { te: "te-kavitha" }, active: { te: "te-kavitha", hi: "hi-sanya" } } }); // a woman's voice while the workspace is male: it is a woman's workspace now, Hindi is back to its default
+    expect(await saveVoiceChoice(CTX, "te", "te-nobody")).toEqual({ ok: false, error: "invalid" });
+    await saveVoiceGender(CTX, "male");
     expect(await saveVoiceChoice(CTX, "te", "te-naveen")).toMatchObject({ ok: true, data: { gender: "male", choices: { te: "te-naveen" } } });
     expect(await saveVoiceGender(CTX, "other")).toEqual({ ok: false, error: "invalid" });
     vi.stubEnv("VOICE_PICKER_SCREENS", "1");

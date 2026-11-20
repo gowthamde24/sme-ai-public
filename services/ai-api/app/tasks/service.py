@@ -272,7 +272,10 @@ class TasksService:
                     dialer = self._named_dialer
             except Exception as exc:   # an unreadable task runs on the ordinary dialer, as before
                 logger.warning("task dialer choice failed: %s", exc.__class__.__name__)
-        TaskRunner(self._repo, dialer, runtime.outbox, say_ai_for=lambda tok, tid: greeting.from_repo(getattr(runtime, "talk_training", None), tok, tid)).run(token, tenant_id, tenant_name, task_id)
+        def say_ai_for(tok: str, tid: uuid.UUID, job: str | None = None) -> bool:
+            return greeting.from_repo(getattr(runtime, "talk_training", None), tok, tid, job=job)
+
+        TaskRunner(self._repo, dialer, runtime.outbox, say_ai_for=say_ai_for).run(token, tenant_id, tenant_name, task_id)
 
     def report(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> ReportOut:
         raw = self._repo.report(token, tenant_id, task_id)

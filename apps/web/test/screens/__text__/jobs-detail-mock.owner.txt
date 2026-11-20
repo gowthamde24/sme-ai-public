@@ -6,9 +6,9 @@ When someone enquires, your assistant calls them within minutes, answers their q
 [button type=button: Call every new enquiry right away]
 {label="Who talks"}
 ## Who talks
-Always says it is an AI C Call every new enquiry right away
+Says it is an AI if asked C Call every new enquiry right away
 [button type=button: Rename]
-Customers hear: “the AI assistant of Neelambari Silks”
+Customers hear: “the assistant of Neelambari Silks”
 {label="This job speaks … in a … voice from …."} This job speaks
 <select label="This job speaks … in a … voice from …. (1)">
   options: the customer’s language=customer | English=en | Telugu=te* | Hindi=hi | Kannada=kn
@@ -22,7 +22,7 @@ legend: Voice
 Ramya Recommended
 <radio name=who-voice-66666666-6666-4666-8666-666666666601 label="Kavitha" value=te-kavitha>
 Kavitha
-What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am → call at 9:30 am. Call every new enquiry right away talks in Telugu from the shop number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off. Or just ask your assistant
+What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am → call at 9:30 am. Call every new enquiry right away talks in Telugu from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone. Or just ask your assistant
 [button type=button: “Make the visits job speak Telugu.”]
 ## When
 Call new enquiries
@@ -72,7 +72,7 @@ Call from
 <checkbox label="Tell me on WhatsApp when a store visit is booked" checked>
 Tell me on WhatsApp when a store visit is booked
 <checkbox label="Stop a customer's job after 3 tries" checked>
-Stop a customer's job after 3 tries These always stay on: STOP, quiet hours and the AI line. They never change here. [All settings for this job](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/rules?all=1)
+Stop a customer's job after 3 tries These always stay on: STOP and quiet hours. They never change here. [All settings for this job](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/rules?all=1)
 ## Results
 Last 7 days
 38

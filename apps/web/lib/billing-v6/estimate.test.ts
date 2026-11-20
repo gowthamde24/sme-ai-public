@@ -19,9 +19,9 @@ describe("the estimate of a plan of calls", () => {
     expect(callingTime(150)).toBe("about 2 h 30 min of calling");
     expect(callingTime(0)).toBe("about 0 min of calling");
   });
-  it("mocks it: minutes in the plan are free, the rest is ₹4.50 a minute from the wallet", () => {
+  it("mocks it: minutes in the plan are free, the rest is ₹5 a minute from the wallet", () => {
     expect(mockEstimate(50, 3)).toEqual({ costText: "Included in your plan", timeText: "about 2 h 30 min of calling", totalMinutes: 150, includedMinutesUsed: 150, enough: true, shortfallText: null });
-    expect(mockEstimate(300, 3)).toMatchObject({ totalMinutes: 900, includedMinutesUsed: 500, costText: "₹1,800", enough: false, shortfallText: "You need ₹250 more" });
+    expect(mockEstimate(300, 3)).toMatchObject({ totalMinutes: 900, includedMinutesUsed: 500, costText: "₹2,000", enough: false, shortfallText: "You need ₹450 more" });
     expect(mockEstimate(0, 3).totalMinutes).toBe(0);
   });
   it("makes the same shape from a plan's own numbers", () => {

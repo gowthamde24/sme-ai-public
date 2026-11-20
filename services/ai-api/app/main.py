@@ -105,6 +105,7 @@ from app.dues.routes import router as dues_router
 from app.education import errors as education_errors
 from app.education.repository import PostgrestEducationRepository
 from app.education.routes import router as education_router
+from app.enhance.routes import router as enhance_router
 from app.enquiries import repository as enquiries_repo
 from app.enquiries.repository import PostgrestEnquiriesRepository
 from app.enquiries.routes import router as enquiries_router
@@ -140,6 +141,7 @@ from app.integrations.routes_calendar import public_router as calendar_public_ro
 from app.integrations.routes_contacts import router as contacts_by_phone_router
 from app.integrations.routes_import import router as spreadsheet_import_router
 from app.integrations.routes_policy import router as policy_router
+from app.jobs.detail_routes import router as job_detail_router
 from app.jobs.routes import ops_router as job_samples_ops_router
 from app.jobs.routes import router as jobs_router
 from app.jobs.routes import samples_router as job_samples_router
@@ -1532,6 +1534,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_sources_router)
     app.include_router(assistant_work_router)
     app.include_router(talk_training_router)
+    app.include_router(enhance_router)
     app.include_router(ai_team_router)
     app.include_router(activity_log_router)
     app.include_router(search_router)
@@ -1542,6 +1545,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(jobs_router)
     app.include_router(do_not_call_router)
     app.include_router(job_faq_router)
+    # last of the /jobs routers: `/jobs/{job_id}` must not hide a word path
+    app.include_router(job_detail_router)
     app.include_router(job_samples_router)
     app.include_router(job_samples_ops_router)
     app.include_router(lead_profile_router)

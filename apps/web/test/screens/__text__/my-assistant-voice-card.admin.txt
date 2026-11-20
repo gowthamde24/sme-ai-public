@@ -18,13 +18,20 @@ Pick a voice for each language. Customers hear it on calls. Test mode: these cho
 [button type=button: हिन्दी]
 [button type=button: ಕನ್ನಡ]
 legend: Voice
-{role=radiogroup label="Voice"}
+{role=radiogroup label="Voice"} Women
 <radio name=vc-voice label="RamyaWomanRecommendedIn use" value=te-ramya checked>
 Ramya Woman Recommended In use
 [button type=button: Hear Ramya]
 <radio name=vc-voice label="KavithaWoman" value=te-kavitha>
 Kavitha Woman
 [button type=button: Hear Kavitha]
+Men
+<radio name=vc-voice label="KarthikManRecommended" value=te-karthik>
+Karthik Man Recommended
+[button type=button: Hear Karthik]
+<radio name=vc-voice label="NaveenMan" value=te-naveen>
+Naveen Man
+[button type=button: Hear Naveen]
 legend: How it talks
 {role=radiogroup label="How it talks"}
 <radio name=vc-tone label="FriendlyRelaxed and warm." value=friendly checked>
@@ -56,7 +63,7 @@ Test mode: these choices are kept in this browser only. Nothing is sent to your 
 Greeting
 {role=textbox label="Greeting"} నమస్కారం the customer's name గారూ, నేను your assistant's name , your shop name AI assistant . ఒక్క నిమిషం మాట్లాడొచ్చా?
 [button type=button: Hear it]
-What the customer hears, with made-up names నమస్కారం రవి గారూ, నేను your assistant, Demo Silks (synthetic) AI అసిస్టెంట్. ఒక్క నిమిషం మాట్లాడొచ్చా? Customers hear this first. Keep our suggestion or change it. Your assistant always says it is an AI assistant.
+What the customer hears, with made-up names నమస్కారం రవి గారూ, నేను your assistant, Demo Silks (synthetic) AI అసిస్టెంట్. ఒక్క నిమిషం మాట్లాడొచ్చా? Customers hear this first. Keep our suggestion or change it.
 summary: More choices Words, what never to say, questions and answers
 legend: Words
 <radio name=sp-words-all label="Everyday, with English wordsHow people really talk: saree, stock, offer, price, WhatsApp. The usual." disabled value=everyday_mixed checked>
@@ -90,8 +97,7 @@ Your assistant answers
 Good answers A few answers the way you would give them. Your assistant copies the tone and length, not the words. Up to 5.
 In its instructions What your assistant is told about words on every call. A saved change counts from the next call. Never say
 - "guaranteed"
-Say it like this Nothing yet. Always on (you can't change these)
-- Always says it is an AI assistant.
+Say it like this Nothing yet.
 {label="Practice"}
 ## Practice
 Try your assistant the way a customer would.

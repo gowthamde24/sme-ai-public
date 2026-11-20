@@ -28,13 +28,13 @@ export function parsePricing(json: unknown): Pricing | null {
   return { gstText: text(o.gst_text), freeStartText: text(o.free_start_text), plans };
 }
 
-/** The test catalogue (the owner's final pricing of 13 Nov): pay as you go, Pro, Business (the ids are C1's: payg, sales_assistant, sales_lead_finder). */
+/** The test catalogue = the owner's FINAL pricing of 19 Nov (decision-plans-and-pricing.md, same numbers as lib/site/plans.ts; a test pins them together): every plan has every feature, 1 number included, extra minutes ₹5. (Was the 13 Nov pricing: ₹4.50 / ₹4 a minute, 3 numbers.): pay as you go, Pro, Business (the ids are C1's: payg, sales_assistant, sales_lead_finder). */
 export const MOCK_PRICING: Pricing = {
   gstText: "+18% GST on invoices",
   freeStartText: "₹50 free to start, no card",
   plans: [
-    { id: "payg", name: "Pay as you go", monthlyText: "₹499 a month", includedMinutes: 0, rateText: "₹5 a minute", numbersIncluded: 1, leadFinder: false },
-    { id: "sales_assistant", name: "Pro", monthlyText: "₹1,999 a month", includedMinutes: 500, rateText: "₹4.50 a minute", numbersIncluded: 1, leadFinder: false },
-    { id: "sales_lead_finder", name: "Business", monthlyText: "₹5,999 a month", includedMinutes: 1500, rateText: "₹4 a minute", numbersIncluded: 3, leadFinder: true },
+    { id: "payg", name: "Pay as you go", monthlyText: "₹499 a month", includedMinutes: 0, rateText: "₹5 a minute", numbersIncluded: 1, leadFinder: true },
+    { id: "sales_assistant", name: "Pro", monthlyText: "₹1,999 a month", includedMinutes: 500, rateText: "₹5 a minute", numbersIncluded: 1, leadFinder: true },
+    { id: "sales_lead_finder", name: "Business", monthlyText: "₹5,999 a month", includedMinutes: 1500, rateText: "₹5 a minute", numbersIncluded: 1, leadFinder: true },
   ],
 };

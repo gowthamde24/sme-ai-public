@@ -4,7 +4,7 @@ When a customer asked a price or you promised to get back, your assistant follow
 [button type=button disabled: Follow up on price questions and promises]
 {label="Who talks"}
 ## Who talks
-Always says it is an AI F Follow up on price questions and promises Customers hear: “the AI assistant of Neelambari Silks”
+Says it is an AI if asked F Follow up on price questions and promises Customers hear: “the assistant of Neelambari Silks”
 {label="This job speaks … in a … voice from …."} This job speaks
 <select label="This job speaks … in a … voice from …. (1)" disabled>
   options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn
@@ -12,7 +12,7 @@ in a
 <select label="This job speaks … in a … voice from …. (2)" disabled>
   options: friendly | respectful* | short and quick=quick
 voice from the shop number .
-respectful “Namaskaram Suresh garu, …” · +91 98480 xxx10 What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the shop number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.
+respectful “Namaskaram Suresh garu, …” · +91 98480 xxx10 What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.
 {role=alert} Why: WhatsApp only lets us write first with an approved template once a customer’s 24 hours are over. Pick a template and it goes out after your OK.
 - Sravani Reddy Asked a price 2 days ago. WhatsApp’s 24 hours are over.
 - Padma Asked about the blue Pochampally saree 3 days ago. WhatsApp’s 24 hours are over.
@@ -47,7 +47,7 @@ Rest day:
 <select label="Rest day: …" disabled>
   options: none | Sunday=sunday* | Saturday and Sunday=weekend
 <checkbox label="Stop a customer's job after 3 tries" disabled checked>
-Stop a customer's job after 3 tries These always stay on: STOP, quiet hours and the AI line. They never change here.
+Stop a customer's job after 3 tries These always stay on: STOP and quiet hours. They never change here.
 ## Results
 Last 7 days
 21

@@ -25,6 +25,7 @@ ROUTE_WORDS = frozenset(
         "briefing",   # GET /today/briefing (the briefing numbers, 19 Nov)
         "festivals",   # GET /jobs/festivals (festival calendar, 20 Nov)
         "job-samples", "generate", "ops", "index", "recode",   # job-card samples, 20-21 Nov
+        "enhance",   # POST /ai-assistant/enhance (21 Nov)
         "contacted",   # POST /prospects/{id}/contacted (Lead Finder "Mark as contacted", 19 Nov)
         "rule-templates",   # GET /outreach/rule-templates (rules v2, 16 Nov)
         "staff",   # GET /visits/staff, PUT /visits/staff/{id} (14 Nov)

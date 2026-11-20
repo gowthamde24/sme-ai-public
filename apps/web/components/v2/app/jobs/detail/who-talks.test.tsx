@@ -45,14 +45,15 @@ describe("Who talks: the card", () => {
   it("is a plain sentence with the choice inside: Telugu, friendly, the shop number; with the AI line that cannot be switched off", () => {
     view();
     expect(card()).toHaveTextContent("Who talks");
-    expect(card()).toHaveTextContent("Always says it is an AI");
+    expect(card()).toHaveTextContent("Says it is an AI if asked");
+    expect(card()).not.toHaveTextContent("Always says it is an AI");
     expect([pill(1).value, pill(2).value]).toEqual(["te", "friendly"]);
     // the number is the shop's, and only that: a plain word in the sentence, never a choice (the second number is not a product)
     expect(card().querySelector('[data-part="who-number-word"]')).toHaveTextContent("the shop number");
     expect(within(card()).queryByRole("combobox", { name: /\(3\)/ })).toBeNull();
     expect(card().textContent).not.toMatch(/second number/i);
     expect(within(card()).getByText(/This job speaks/)).toBeInTheDocument();
-    expect(card().querySelector('[data-part="who-ai-line"]')).toHaveTextContent("Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.");
+    expect(card().querySelector('[data-part="who-ai-line"]')).toHaveTextContent("If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.");
     // no switch for the AI line anywhere
     expect(card().querySelectorAll('[role="switch"]')).toHaveLength(0);
     expect(card().querySelector('[data-part="who-tone-example"]')).toHaveTextContent("friendly “Hi Suresh, …”");
@@ -129,21 +130,21 @@ describe("Who talks: it saves exactly the adapter's payload", () => {
 });
 
 describe("Who talks: the job's own name", () => {
-  it("no name: the plain job name, and customers hear only the AI assistant of the shop", () => {
+  it("no name: the plain job name, and customers hear only the assistant of the shop", () => {
     view();
     expect(card().querySelector('[data-part="who-name"]')).toHaveTextContent("Call every new enquiry right away");
-    expect(card().querySelector('[data-part="who-hear"]')).toHaveTextContent("Customers hear: “the AI assistant of Neelambari Silks”");
+    expect(card().querySelector('[data-part="who-hear"]')).toHaveTextContent("Customers hear: “the assistant of Neelambari Silks”");
   });
-  it("a set name shows “Priya, the AI assistant of Neelambari Silks”; clearing it goes back to the plain name", async () => {
+  it("a set name shows “Priya from Neelambari Silks”; clearing it goes back to the plain name", async () => {
     const a = acts();
     view("speed_to_lead", a);
     fireEvent.click(within(card()).getByRole("button", { name: "Rename" }));
     const box = within(card()).getByRole("textbox") as HTMLInputElement;
     fireEvent.change(box, { target: { value: "Priya" } });
-    expect(card().querySelector("form")).toHaveTextContent("Customers hear: “Priya, the AI assistant of Neelambari Silks”");
+    expect(card().querySelector("form")).toHaveTextContent("Customers hear: “Priya from Neelambari Silks”");
     fireEvent.click(within(card()).getByRole("button", { name: "Save" }));
     await waitFor(() => expect(a.rename).toHaveBeenCalledWith("Priya"));
-    expect(await screen.findByText("Customers hear: “Priya, the AI assistant of Neelambari Silks”")).toBeInTheDocument();
+    expect(await screen.findByText("Customers hear: “Priya from Neelambari Silks”")).toBeInTheDocument();
     expect(card().querySelector('[data-part="who-name"]')).toHaveTextContent("Priya");
     fireEvent.click(within(card()).getByRole("button", { name: "Rename" }));
     expect(card().querySelector("form")).toHaveTextContent("Clear it, and it goes back to “Call every new enquiry right away”.");

@@ -26,6 +26,7 @@ from app.auth.deps import (
 )
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
+from app.jobs import listing
 from app.jobs.routes import jobs_on
 from app.jobs.trust import REFUSALS, JobsRefused
 from app.jobs.wiring import JobsRuntime
@@ -139,6 +140,32 @@ def _uuid(value: str) -> uuid.UUID:
     return parsed
 
 
+def _kind_of(job_id: str, ctx: TenantContext) -> tuple[uuid.UUID, str | None]:
+    parsed = _uuid(job_id)
+    return parsed, next((k for k in listing.KINDS if listing.job_id(ctx.tenant.id, k) == parsed), None)
+
+
+def _meta_write(job_id: str, ctx: TenantContext, jobs: JobsRuntime) -> uuid.UUID:
+    """The row the FAQs hang on. The id of a Job (`GET /jobs`: one per kind, never stored) is turned into the job's jobs_meta row, made now if it is the first need; any other id is taken as the row's own id (the database
+    refuses one that is not this workspace's)."""
+    parsed, kind = _kind_of(job_id, ctx)
+    if kind is None:
+        return parsed
+    store = _store(jobs)
+    return uuid.UUID(str(_run(lambda: store.meta_ensure(ctx.principal.token, ctx.tenant.id, kind))["id"]))
+
+
+def _meta_read(job_id: str, ctx: TenantContext, jobs: JobsRuntime) -> uuid.UUID | None:
+    """The same for a read: a Job that has no row yet has no FAQs (None), nothing is made by a read."""
+    parsed, kind = _kind_of(job_id, ctx)
+    if kind is None:
+        return parsed
+    store = _store(jobs)
+    rows = _run(lambda: store.meta_list(ctx.principal.token, ctx.tenant.id))
+    found = next((m for m in rows if m.get("kind") == kind), None)
+    return uuid.UUID(str(found["id"])) if found else None
+
+
 # ------------------------------------------------------------------------------------------------------------------ the do-not-call list
 @dnc_router.get("", response_model=DoNotCallList)
 def list_do_not_call(
@@ -178,25 +205,31 @@ def remove_do_not_call(entry_id: str, ctx: OwnerStrong, jobs: JobsDep) -> dict[s
 # ------------------------------------------------------------------------------------------------------------------ the FAQs of a job
 @faq_router.get("", response_model=FaqList)
 def list_faqs(job_id: str, ctx: AnyMember, jobs: JobsDep) -> dict[str, Any]:
-    return {"items": _run(lambda: _store(jobs).faq_list(ctx.principal.token, ctx.tenant.id, _uuid(job_id)))}
+    meta = _meta_read(job_id, ctx, jobs)
+    if meta is None:
+        return {"items": []}
+    return {"items": _run(lambda: _store(jobs).faq_list(ctx.principal.token, ctx.tenant.id, meta))}
 
 
 @faq_router.post("", response_model=FaqOut)
 def add_faq(job_id: str, body: FaqIn, ctx: OwnerOrAdmin, jobs: JobsDep) -> dict[str, Any]:
     """A question and its answer (300 characters each) the helper may use. An answer that states a price, a discount or a promise is refused (422 `faq_not_allowed`)."""
-    out: dict[str, Any] = _run(lambda: _store(jobs).faq_add(ctx.principal.token, ctx.tenant.id, _uuid(job_id), body.id or uuid.uuid4(), body.question, body.answer))
+    meta = _meta_write(job_id, ctx, jobs)
+    out: dict[str, Any] = _run(lambda: _store(jobs).faq_add(ctx.principal.token, ctx.tenant.id, meta, body.id or uuid.uuid4(), body.question, body.answer))
     return out
 
 
 @faq_router.patch("/{faq_id}", response_model=FaqOut)
 def change_faq(job_id: str, faq_id: str, body: FaqPatch, ctx: OwnerOrAdmin, jobs: JobsDep) -> dict[str, Any]:
-    out: dict[str, Any] = _run(lambda: _store(jobs).faq_update(ctx.principal.token, ctx.tenant.id, _uuid(job_id), _uuid(faq_id), body.question, body.answer))
+    meta = _meta_write(job_id, ctx, jobs)
+    out: dict[str, Any] = _run(lambda: _store(jobs).faq_update(ctx.principal.token, ctx.tenant.id, meta, _uuid(faq_id), body.question, body.answer))
     return out
 
 
 @faq_router.post("/{faq_id}/remove", response_model=FaqRemoved)
 def remove_faq(job_id: str, faq_id: str, ctx: OwnerOrAdmin, jobs: JobsDep) -> dict[str, Any]:
-    out: dict[str, Any] = _run(lambda: _store(jobs).faq_remove(ctx.principal.token, ctx.tenant.id, _uuid(job_id), _uuid(faq_id)))
+    meta = _meta_write(job_id, ctx, jobs)
+    out: dict[str, Any] = _run(lambda: _store(jobs).faq_remove(ctx.principal.token, ctx.tenant.id, meta, _uuid(faq_id)))
     return out
 
 

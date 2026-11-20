@@ -924,11 +924,11 @@
   }
  },
  "how.habits.4": {
-  "en": "Every message says it was written by an AI assistant.",
-  "te": "ప్రతి మెసేజ్‌లో AI అసిస్టెంట్ రాసిందని ఉంటుంది.",
-  "hi": "हर message बताता है कि उसे AI assistant ने लिखा है।",
-  "kn": "ಪ್ರತಿ message ನಲ್ಲಿ AI assistant ಬರೆದಿದೆ ಎಂದು ಇರುತ್ತದೆ.",
-  "ta": "ஒவ்வொரு message-இலும் அதை AI assistant எழுதியது என்று இருக்கும்.",
+  "en": "If someone asks, it always says it's the business's AI assistant.",
+  "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "ta": "யாராவது கேட்டால், இது எப்போதும் தான் அந்த வணிகத்தின் AI assistant என்று சொல்லும்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1067,11 +1067,11 @@
   }
  },
  "sec.ai.t": {
-  "en": "AI is always labelled",
-  "te": "AI అని ఎప్పుడూ చెబుతుంది",
-  "hi": "AI हमेशा बताया जाता है",
-  "kn": "AI ಎಂದು ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ",
-  "ta": "AI எப்போதும் குறிக்கப்படும்",
+  "en": "Honest about being an AI",
+  "te": "AI అని నిజాయితీగా చెప్తుంది",
+  "hi": "AI होने के बारे में ईमानदार",
+  "kn": "AI ಎಂದು ಪ್ರಾಮಾಣಿಕವಾಗಿ ಹೇಳುತ್ತದೆ",
+  "ta": "AI என்பதில் நேர்மை",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1080,11 +1080,11 @@
   }
  },
  "sec.ai.d": {
-  "en": "Messages the AI writes say they were written by an AI assistant. Web pages and incoming messages are treated as untrusted text and cannot give the AI orders.",
-  "te": "AI రాసే మెసేజ్‌లలో AI అసిస్టెంట్ రాసిందని ఉంటుంది. వెబ్ పేజీలు, వచ్చే మెసేజ్‌లను నమ్మదగని టెక్స్ట్‌గా చూస్తాం, అవి AIకి ఆదేశాలు ఇవ్వలేవు.",
-  "hi": "AI के लिखे messages में बताया जाता है कि उन्हें AI assistant ने लिखा है। वेब पेज और आने वाले messages को भरोसे के लायक नहीं माना जाता, वे AI को आदेश नहीं दे सकते।",
-  "kn": "AI ಬರೆದ messages ನಲ್ಲಿ AI assistant ಬರೆದಿದೆ ಎಂದು ಇರುತ್ತದೆ. ವೆಬ್ ಪುಟ, ಬರುವ messages ಅನ್ನು ನಂಬಲಾಗದ ಪಠ್ಯವೆಂದು ನೋಡುತ್ತೇವೆ, ಅವು AIಗೆ ಆದೇಶ ಕೊಡಲಾರವು.",
-  "ta": "AI எழுதும் messages-இல் அவை AI assistant எழுதியவை என்று இருக்கும். Web pages, வரும் messages நம்பத்தகாத text-ஆகவே கருதப்படும், அவை AI-க்கு உத்தரவு கொடுக்க முடியாது.",
+  "en": "If someone asks, it always says it's the business's AI assistant. Web pages and incoming messages are treated as untrusted text and cannot give the AI orders.",
+  "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది. వెబ్ పేజీలు, వచ్చే మెసేజ్‌లను నమ్మదగని టెక్స్ట్‌గా చూస్తాం, అవి AIకి ఆదేశాలు ఇవ్వలేవు.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है। वेब पेज और आने वाले messages को भरोसे के लायक नहीं माना जाता, वे AI को आदेश नहीं दे सकते।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ. ವೆಬ್ ಪುಟ, ಬರುವ messages ಅನ್ನು ನಂಬಲಾಗದ ಪಠ್ಯವೆಂದು ನೋಡುತ್ತೇವೆ, ಅವು AIಗೆ ಆದೇಶ ಕೊಡಲಾರವು.",
+  "ta": "யாராவது கேட்டால், இது எப்போதும் தான் அந்த வணிகத்தின் AI assistant என்று சொல்லும். Web pages, வரும் messages நம்பத்தகாத text-ஆகவே கருதப்படும், அவை AI-க்கு உத்தரவு கொடுக்க முடியாது.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -2079,11 +2079,11 @@
   }
  },
  "meta.security.description": {
-  "en": "How each business is kept apart, who sees what, how AI is labelled, children's data, and what we have not done yet.",
-  "te": "ప్రతి వ్యాపారం ఎలా వేరుగా ఉంటుంది, ఎవరికి ఏం కనిపిస్తుంది, AI ఎలా లేబుల్ అవుతుంది, పిల్లల డేటా, ఇంకా మేము చేయనివి.",
-  "hi": "हर business कैसे अलग रहता है, किसे क्या दिखता है, AI कैसे लेबल होता है, बच्चों का डेटा, और हमने क्या नहीं किया।",
-  "kn": "ಪ್ರತಿ business ಹೇಗೆ ಪ್ರತ್ಯೇಕ, ಯಾರಿಗೆ ಏನು ಕಾಣುತ್ತದೆ, AI ಹೇಗೆ ಲೇಬಲ್ ಆಗುತ್ತದೆ, ಮಕ್ಕಳ ಡೇಟಾ, ನಾವು ಇನ್ನೂ ಮಾಡದ್ದು.",
-  "ta": "ஒவ்வொரு business-ம் எப்படித் தனியாக வைக்கப்படுகிறது, யாருக்கு எது தெரியும், AI எப்படிக் குறிக்கப்படுகிறது, குழந்தைகளின் data, நாங்கள் இன்னும் செய்யாதவை.",
+  "en": "How each business is kept apart, who sees what, how it is honest about being an AI, children's data, and what we have not done yet.",
+  "te": "ప్రతి వ్యాపారం ఎలా వేరుగా ఉంటుంది, ఎవరికి ఏం కనిపిస్తుంది, AI అని ఎలా నిజాయితీగా చెప్తుంది, పిల్లల డేటా, ఇంకా మేము చేయనివి.",
+  "hi": "हर business कैसे अलग रहता है, किसे क्या दिखता है, AI होने के बारे में यह कैसे ईमानदार रहता है, बच्चों का डेटा, और हमने क्या नहीं किया।",
+  "kn": "ಪ್ರತಿ business ಹೇಗೆ ಪ್ರತ್ಯೇಕ, ಯಾರಿಗೆ ಏನು ಕಾಣುತ್ತದೆ, AI ಎಂದು ಹೇಗೆ ಪ್ರಾಮಾಣಿಕವಾಗಿ ಹೇಳುತ್ತದೆ, ಮಕ್ಕಳ ಡೇಟಾ, ನಾವು ಇನ್ನೂ ಮಾಡದ್ದು.",
+  "ta": "ஒவ்வொரு business-ம் எப்படித் தனியாக வைக்கப்படுகிறது, யாருக்கு எது தெரியும், AI என்பதில் எப்படி நேர்மையாக இருக்கிறது, குழந்தைகளின் data, நாங்கள் இன்னும் செய்யாதவை.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -2188,10 +2188,10 @@
   }
  },
  "home.trust.3": {
-  "en": "AI always labelled",
-  "te": "AI అని ఎప్పుడూ చెబుతుంది",
-  "hi": "AI हमेशा बताया जाता है",
-  "kn": "AI ಎಂದು ಯಾವಾಗಲೂ ಹೇಳಲಾಗುತ್ತದೆ",
+  "en": "Honest about being an AI",
+  "te": "AI అని నిజాయితీగా చెప్తుంది",
+  "hi": "AI होने के बारे में ईमानदार",
+  "kn": "AI ಎಂದು ಪ್ರಾಮಾಣಿಕವಾಗಿ ಹೇಳುತ್ತದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3402,10 +3402,10 @@
   }
  },
  "hm.trust.3.d": {
-  "en": "It always says it is your business's AI assistant.",
-  "te": "ఇది ఎప్పుడూ మీ వ్యాపారం యొక్క AI అసిస్టెంట్ అని చెప్తుంది.",
-  "hi": "यह हमेशा बताता है कि यह आपके कारोबार का AI असिस्टेंट है।",
-  "kn": "ಇದು ಯಾವಾಗಲೂ ನಿಮ್ಮ ವ್ಯಾಪಾರದ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "en": "If someone asks, it always says it's the business's AI assistant.",
+  "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10954,11 +10954,11 @@
   }
  },
  "h4.faq.2.a": {
-  "en": "Yes. It always says it is an AI assistant when it greets.",
-  "te": "అవును. Greet చేసేటప్పుడు ఎప్పుడూ తాను AI assistant అని చెప్తుంది.",
-  "hi": "हाँ। Greet करते समय यह हमेशा बताता है कि यह AI assistant है।",
-  "kn": "ಹೌದು. Greet ಮಾಡುವಾಗ ಯಾವಾಗಲೂ ತಾನು AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
-  "ta": "ஆம். வாழ்த்தும்போது எப்போதும் தான் AI assistant என்று சொல்லும்.",
+  "en": "If someone asks, it always says it's the business's AI assistant.",
+  "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "ta": "யாராவது கேட்டால், இது எப்போதும் தான் அந்த வணிகத்தின் AI assistant என்று சொல்லும்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11037,19 +11037,6 @@
   "hi": "यह आपसे खरीद सकने वाले businesses ढूँढता है। Call आप करते हैं।",
   "kn": "ನಿಮ್ಮಿಂದ ಕೊಳ್ಳಬಹುದಾದ businesses ಅನ್ನು ಇದು ಹುಡುಕುತ್ತದೆ. Call ಮಾಡುವುದು ನೀವೇ.",
   "ta": "உங்களிடம் வாங்கக்கூடிய businesses-ஐ இது தேடும். Call செய்வது நீங்களே.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.pl.payg": {
-  "en": "{p}/min · 1 number",
-  "te": "{p}/నిమిషం · 1 number",
-  "hi": "{p}/मिनट · 1 number",
-  "kn": "{p}/ನಿಮಿಷ · 1 number",
-  "ta": "{p}/நிமிடம் · 1 number",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11148,19 +11135,6 @@
    "ta": "draft"
   }
  },
- "h4.pl.min": {
-  "en": "{n} minutes · 1 number",
-  "te": "{n} నిమిషాలు · 1 number",
-  "hi": "{n} मिनट · 1 number",
-  "kn": "{n} ನಿಮಿಷ · 1 number",
-  "ta": "{n} நிமிடம் · 1 number",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h4.pl.title": {
   "en": "Simple plans in rupees",
   "te": "Rupees లో simple plans",
@@ -11206,19 +11180,6 @@
   "hi": "late call-back से आपका कितना नुकसान",
   "kn": "late call-back ನಿಂದ ನಿಮಗೆ ಎಷ್ಟು ನಷ್ಟ",
   "ta": "late call-back-ஆல் உங்களுக்கு எவ்வளவு இழப்பு",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.dot": {
-  "en": "Show item {n} of {total}",
-  "te": "{total} లో {n} వది చూపించు",
-  "hi": "{total} में से {n} दिखाएँ",
-  "kn": "{total} ರಲ್ಲಿ {n} ತೋರಿಸಿ",
-  "ta": "{total}-இல் {n} காட்டு",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11383,11 +11344,11 @@
   }
  },
  "h5.f.2": {
-  "en": "Answers your calls day and night",
-  "te": "మీ calls కి పగలూ రాత్రీ జవాబిస్తుంది",
-  "hi": "आपकी calls का जवाब दिन-रात देता है",
-  "kn": "ಹಗಲು ರಾತ್ರಿ ನಿಮ್ಮ calls ಗೆ ಉತ್ತರಿಸುತ್ತದೆ",
-  "ta": "இரவும் பகலும் உங்கள் calls-க்கு பதில் சொல்லும்",
+  "en": "Answers your calls when you can't",
+  "te": "మీరు ఎత్తలేనప్పుడు మీ calls కి జవాబిస్తుంది",
+  "hi": "जब आप नहीं उठा पाते, तब आपकी calls का जवाब देता है",
+  "kn": "ನೀವು ಎತ್ತಲಾಗದಾಗ ನಿಮ್ಮ calls ಗೆ ಉತ್ತರಿಸುತ್ತದೆ",
+  "ta": "நீங்கள் எடுக்க முடியாதபோது உங்கள் calls-க்கு பதில் சொல்லும்",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11505,6 +11466,136 @@
   "hi": "तेलुगु, हिंदी, कन्नड़ और अंग्रेज़ी में नमस्ते",
   "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್ ನಲ್ಲಿ ನಮಸ್ಕಾರ",
   "ta": "தெலுங்கு, இந்தி, கன்னடம், ஆங்கிலத்தில் வணக்கம்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.built.t": {
+  "en": "Built in from day one",
+  "te": "మొదటి రోజు నుంచే ఉన్నవి",
+  "hi": "पहले दिन से शामिल",
+  "kn": "ಮೊದಲ ದಿನದಿಂದಲೇ ಇರುವುದು",
+  "ta": "முதல் நாளிலிருந்தே உள்ளவை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.every": {
+  "en": "Every plan has",
+  "te": "ప్రతి plan లో ఉండేవి",
+  "hi": "हर plan में",
+  "kn": "ಪ್ರತಿ plan ನಲ್ಲಿ ಇರುವುದು",
+  "ta": "ஒவ்வொரு plan-இலும் உள்ளவை",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.2": {
+  "en": "Tries again later",
+  "te": "తర్వాత మళ్ళీ ప్రయత్నిస్తుంది",
+  "hi": "बाद में फिर कोशिश करता है",
+  "kn": "ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ",
+  "ta": "பிறகு மீண்டும் முயற்சிக்கும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.1": {
+  "en": "Busy",
+  "te": "Busy అయింది",
+  "hi": "Busy था",
+  "kn": "Busy ಆಗಿತ್ತು",
+  "ta": "Busy-ஆக இருந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.e2": {
+  "en": "Telugu, Hindi, Kannada, English",
+  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్",
+  "hi": "तेलुगु, हिन्दी, कन्नड़, अंग्रेज़ी",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್",
+  "ta": "தெலுங்கு, இந்தி, கன்னடம், ஆங்கிலம்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.t": {
+  "en": "Calls again if busy",
+  "te": "Busy అయితే మళ్ళీ call చేస్తుంది",
+  "hi": "Busy हो तो दोबारा call करता है",
+  "kn": "Busy ಆದರೆ ಮತ್ತೆ call ಮಾಡುತ್ತದೆ",
+  "ta": "Busy என்றால் மீண்டும் call செய்யும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.e1": {
+  "en": "AI calls and WhatsApp replies",
+  "te": "AI calls, WhatsApp కి replies",
+  "hi": "AI calls और WhatsApp replies",
+  "kn": "AI calls, WhatsApp ಗೆ replies",
+  "ta": "AI calls மற்றும் WhatsApp replies",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.m.extra": {
+  "en": "Extra number",
+  "te": "ఎక్స్‌ట్రా number",
+  "hi": "एक्स्ट्रा number",
+  "kn": "ಹೆಚ್ಚುವರಿ number",
+  "ta": "கூடுதல் number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.3": {
+  "en": "Connected, visit booked",
+  "te": "Connect అయింది, visit book అయింది",
+  "hi": "बात हुई, visit book हुई",
+  "kn": "Connect ಆಯಿತು, visit book ಆಯಿತು",
+  "ta": "Connect ஆனது, visit book ஆனது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.num": {
+  "en": "1 business number",
+  "te": "ఒక business number",
+  "hi": "एक business number",
+  "kn": "ಒಂದು business number",
+  "ta": "ஒரு business number",
   "status": {
    "te": "draft",
    "hi": "draft",

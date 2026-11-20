@@ -229,9 +229,9 @@ describe("the job page: renaming and the switch, with Undo", () => {
     view("speed_to_lead", a);
     fireEvent.click(screen.getByRole("button", { name: "Rename" }));
     const form = part("rename");
-    expect(within(form).getByText("Customers hear: “the AI assistant of Neelambari Silks”")).toBeInTheDocument();
+    expect(within(form).getByText("Customers hear: “the assistant of Neelambari Silks”")).toBeInTheDocument();
     fireEvent.change(within(form).getByRole("textbox"), { target: { value: "Priya" } });
-    expect(within(form).getByText("Customers hear: “Priya, the AI assistant of Neelambari Silks”")).toBeInTheDocument();
+    expect(within(form).getByText("Customers hear: “Priya from Neelambari Silks”")).toBeInTheDocument();
     fireEvent.click(within(form).getByRole("button", { name: "Save" }));
     await waitFor(() => expect(a.rename).toHaveBeenCalledWith("Priya"));
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent("Priya");

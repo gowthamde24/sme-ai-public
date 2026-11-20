@@ -24,7 +24,7 @@ Uses none of your free call minutes. 5 messages.
 [button type=button: Start]
 [button type=button: Change by talking]
 [button type=button: Test message to my phone]
-The assistant says it is an AI, stops when someone says STOP, and never writes outside 10 am to 6 pm. You can pause or undo from the job page. This plan is kept for 30 minutes.
+It says it is an AI if someone asks, stops when someone says STOP, and never writes outside 10 am to 6 pm. You can pause or undo from the job page. This plan is kept for 30 minutes.
 {label="Jobs for a saree shop"}
 ## Jobs for a saree shop
 Picked from your shop’s details and last week’s numbers. One tap starts one. You can change anything after.

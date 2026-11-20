@@ -87,6 +87,8 @@ duplicate_value
 education_unavailable
 email_not_confirmed
 empty_enquiry
+enhance_busy
+enhance_unavailable
 enquiries_unavailable
 enquiry_has_requirement
 enquiry_unusable
@@ -150,6 +152,9 @@ invitation_invalid
 invitation_locked
 invitation_not_pending
 invoice_number_used
+job_locked
+job_not_set_up
+job_not_switchable
 jobs_unavailable
 keep_owner
 key_rejected
@@ -357,6 +362,7 @@ secret_request_expired
 secret_request_used
 secrets_unavailable
 session_ended
+setting_invalid
 sheet_link_invalid
 sheet_not_public
 sheet_refused
@@ -402,6 +408,7 @@ trip_state
 type_change_refused
 unauthorized
 unavailable
+unknown_voice
 unreadable_file
 unsupported_type
 upstream_error
