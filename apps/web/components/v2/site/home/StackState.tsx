@@ -2,7 +2,8 @@
 
 import * as React from "react";
 
-import type { StackChat } from "./chat-stack";
+import type { StackChat } from "./chat-types";
+import { afterFirstScroll } from "./first-scroll";
 
 // the pace of one conversation (about 13 s in all): the call's captions one by one, the call ends, the WhatsApp stacks in, it holds, it fades, the next language starts
 const CALL_FIRST = 600;
@@ -38,17 +39,17 @@ export function StackProvider({ chats, children }: { chats: readonly StackChat[]
   const started = React.useRef(false);
   React.useEffect(() => {
     if (!visible || started.current) return;
-    started.current = true;
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      started.current = true;
       still.current = true;
       return;
     }
-    // the first chat is whole in the server markup; once the phone is seen, the conversation starts from its call
-    const id = window.setTimeout(() => {
+    // the first chat is whole in the server markup (and stays whole in a picture of the page taken at load); once the phone is seen AND the visitor has scrolled, the conversation starts from its call
+    return afterFirstScroll(() => {
+      started.current = true;
       setSt({ idx: 0, phase: "call", n: 0 });
       setLive(true);
-    }, 0);
-    return () => window.clearTimeout(id);
+    });
   }, [visible]);
   React.useEffect(() => {
     if (!live || !visible) return;

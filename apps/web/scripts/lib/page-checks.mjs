@@ -146,7 +146,8 @@ export const LAYOUT = `(() => { ${HELPERS}
     const r = e.getBoundingClientRect();
     if (r.right <= w + 0.5 && r.left >= -0.5) continue;
     let clipped = false;
-    for (let p = e.parentElement; p && p !== document.body; p = p.parentElement) { const o = getComputedStyle(p); if (/(auto|scroll)/.test(o.overflowX)) { const pr = p.getBoundingClientRect(); if (pr.right <= w + 0.5 && pr.left >= -0.5) { clipped = true; break; } } }
+    for (let p = e.parentElement; p && p !== document.body; p = p.parentElement) { const o = getComputedStyle(p); if (/(auto|scroll)/.test(o.overflowX) || (e.closest('[data-illustration]') && /(hidden|clip)/.test(o.overflowX))) { // (a drawing may slide behind its own overflow-hidden frame: the greetings band)
+       const pr = p.getBoundingClientRect(); if (pr.right <= w + 0.5 && pr.left >= -0.5) { clipped = true; break; } } }
     if (!clipped && !srOnly(e)) offenders.push(label(e) + ' right=' + Math.round(r.right));
   }
   const flow = [...document.querySelectorAll('[data-flow]')].find(vis);

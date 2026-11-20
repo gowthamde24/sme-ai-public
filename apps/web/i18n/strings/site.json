@@ -6740,32 +6740,6 @@
    "kn": "draft"
   }
  },
- "h2.mode.picked": {
-  "en": "Customer picked up",
-  "te": "కస్టమర్ ఫోన్ ఎత్తారు",
-  "hi": "Customer ने फ़ोन उठाया",
-  "kn": "Customer ಫೋನ್ ಎತ್ತಿದರು",
-  "ta": "Customer call-ஐ எடுத்தார்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.mode.listening": {
-  "en": "Listening",
-  "te": "వింటోంది",
-  "hi": "सुन रही है",
-  "kn": "ಕೇಳುತ್ತಿದೆ",
-  "ta": "கேட்கிறது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h2.mode.in": {
   "en": "Your enquiry is in. Calling you",
   "te": "మీ ఎంక్వైరీ వచ్చింది. మీకు కాల్ చేస్తోంది",
@@ -6786,19 +6760,6 @@
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  }
- },
- "h2.mode.wait": {
-  "en": "Waiting for your reply",
-  "te": "మీ జవాబు కోసం చూస్తోంది",
-  "hi": "आपके जवाब का इंतज़ार",
-  "kn": "ನಿಮ್ಮ ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದೆ",
-  "ta": "உங்கள் பதிலுக்காகக் காத்திருக்கிறது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
   }
  },
  "h2.lang.te": {
@@ -6885,84 +6846,6 @@
   "hi": "अंग्रेज़ी",
   "kn": "ಇಂಗ್ಲಿಷ್",
   "ta": "ஆங்கிலம்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.1.t": {
-  "en": "Answered in seconds",
-  "te": "సెకన్లలో జవాబు",
-  "hi": "Seconds में जवाब",
-  "kn": "Seconds ನಲ್ಲಿ ಉತ್ತರ",
-  "ta": "சில seconds-இல் பதில்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.1.d": {
-  "en": "In the customer's language",
-  "te": "కస్టమర్ భాషలో",
-  "hi": "Customer की भाषा में",
-  "kn": "Customer ಭಾಷೆಯಲ್ಲಿ",
-  "ta": "Customer-இன் மொழியில்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.2.t": {
-  "en": "Quote ready",
-  "te": "Quote ready",
-  "hi": "Quote तैयार",
-  "kn": "Quote ಸಿದ್ಧ",
-  "ta": "Quote தயார்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.2.d": {
-  "en": "Waiting for your OK",
-  "te": "మీ OK కోసం చూస్తోంది",
-  "hi": "आपके OK का इंतज़ार",
-  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
-  "ta": "உங்கள் OK-க்காகக் காத்திருக்கிறது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.3.t": {
-  "en": "Visit booked",
-  "te": "Visit book అయింది",
-  "hi": "Visit book हो गई",
-  "kn": "Visit book ಆಯಿತು",
-  "ta": "Visit book ஆனது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.out.3.d": {
-  "en": "Saturday, 11 am",
-  "te": "శనివారం, ఉదయం 11",
-  "hi": "शनिवार, सुबह 11 बजे",
-  "kn": "ಶನಿವಾರ, ಬೆಳಿಗ್ಗೆ 11",
-  "ta": "சனிக்கிழமை, காலை 11 மணி",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -7201,32 +7084,6 @@
    "kn": "draft"
   }
  },
- "h2.hear": {
-  "en": "Hear it",
-  "te": "వినండి",
-  "hi": "सुनें",
-  "kn": "ಕೇಳಿ",
-  "ta": "கேளுங்கள்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h2.hear.on": {
-  "en": "Sound on",
-  "te": "శబ్దం ఆన్",
-  "hi": "आवाज़ चालू",
-  "kn": "ಧ್ವನಿ ಆನ್",
-  "ta": "Sound on",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h2.greet.label": {
   "en": "Seven languages",
   "te": "ఏడు భాషలు",
@@ -7246,8 +7103,10 @@
   "status": {
    "te": "draft",
    "hi": "draft",
-   "kn": "draft"
-  }
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Customer பேசும் மொழியிலேயே பதில் சொல்லும், மக்கள் உண்மையில் கலந்து பேசும் விதத்திலும்."
  },
  "h2.call.title": {
   "en": "Hear a call, or just read it.",
@@ -10290,162 +10149,6 @@
    "ta": "draft"
   }
  },
- "h3.src.1.t": {
-  "en": "Meta ads",
-  "te": "Meta ads",
-  "hi": "Meta ads",
-  "kn": "Meta ads",
-  "ta": "Meta ads",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.1.d": {
-  "en": "2BHK in Kondapur",
-  "te": "Kondapur లో 2BHK",
-  "hi": "Kondapur में 2BHK",
-  "kn": "Kondapur ನಲ್ಲಿ 2BHK",
-  "ta": "Kondapur-இல் 2BHK",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.2.t": {
-  "en": "JustDial, IndiaMART",
-  "te": "JustDial, IndiaMART",
-  "hi": "JustDial, IndiaMART",
-  "kn": "JustDial, IndiaMART",
-  "ta": "JustDial, IndiaMART",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.2.d": {
-  "en": "Price for 200 bags",
-  "te": "200 bags price",
-  "hi": "200 bags का price",
-  "kn": "200 bags price",
-  "ta": "200 bags-க்கு price",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.3.t": {
-  "en": "Website form",
-  "te": "Website form",
-  "hi": "Website form",
-  "kn": "Website form",
-  "ta": "Website form",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.3.d": {
-  "en": "B.Tech admission",
-  "te": "B.Tech admission",
-  "hi": "B.Tech admission",
-  "kn": "B.Tech admission",
-  "ta": "B.Tech admission",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.4.t": {
-  "en": "WhatsApp",
-  "te": "WhatsApp",
-  "hi": "WhatsApp",
-  "kn": "WhatsApp",
-  "ta": "WhatsApp",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.4.d": {
-  "en": "Saree for a wedding",
-  "te": "Wedding కి saree",
-  "hi": "शादी के लिए saree",
-  "kn": "Wedding ಗೆ saree",
-  "ta": "கல்யாணத்துக்கு saree",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.5.t": {
-  "en": "Missed call",
-  "te": "Missed call",
-  "hi": "Missed call",
-  "kn": "Missed call",
-  "ta": "Missed call",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.5.d": {
-  "en": "Test drive: SUV",
-  "te": "Test drive: SUV",
-  "hi": "Test drive: SUV",
-  "kn": "Test drive: SUV",
-  "ta": "Test drive: SUV",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.6.t": {
-  "en": "Google",
-  "te": "Google",
-  "hi": "Google",
-  "kn": "Google",
-  "ta": "Google",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.src.6.d": {
-  "en": "Demo class timings",
-  "te": "Demo class timings",
-  "hi": "Demo class timings",
-  "kn": "Demo class timings",
-  "ta": "Demo class timings",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h3.stage.t": {
   "en": "Enquiries from every platform, answered in seconds",
   "te": "అన్ని platforms నుంచి వచ్చే enquiries కి seconds లో జవాబు",
@@ -10892,19 +10595,6 @@
   "hi": "Call खत्म होते ही लिख दिया जाता है।",
   "kn": "Call ಮುಗಿದ ತಕ್ಷಣ ಬರೆದಿರುತ್ತದೆ.",
   "ta": "Call முடிந்தவுடன் எழுதப்படும்.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h3.hero.langs": {
-  "en": "Telugu · Hindi · Kannada · English",
-  "te": "తెలుగు · हिन्दी · ಕನ್ನಡ · English",
-  "hi": "తెలుగు · हिन्दी · ಕನ್ನಡ · English",
-  "kn": "తెలుగు · हिन्दी · ಕನ್ನಡ · English",
-  "ta": "தெலுங்கு · இந்தி · கன்னடம் · ஆங்கிலம்",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11601,12 +11291,194 @@
    "ta": "draft"
   }
  },
- "h4.pl.num": {
-  "en": "1 business number",
-  "te": "ఒక business number",
-  "hi": "एक business number",
-  "kn": "ಒಂದು business number",
-  "ta": "ஒரு business number",
+ "h3.ask.orb": {
+  "en": "Play an example",
+  "te": "ఉదాహరణ ప్లే చేయండి",
+  "hi": "उदाहरण चलाएँ",
+  "kn": "ಉದಾಹರಣೆ ಪ್ಲೇ ಮಾಡಿ",
+  "ta": "எடுத்துக்காட்டை இயக்கு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h3.ask.eg": {
+  "en": "Example",
+  "te": "ఉదాహరణ",
+  "hi": "उदाहरण",
+  "kn": "ಉದಾಹರಣೆ",
+  "ta": "எடுத்துக்காட்டு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.pill": {
+  "en": "నమస్కారం · తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "te": "నమస్కారం · తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "hi": "నమస్కారం · తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "kn": "నమస్కారం · తెలుగు · हिन्दी · ಕನ್ನಡ · English",
+  "ta": "నమస్కారం · தெலுங்கு · இந்தி · கன்னடம் · English",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.f.1": {
+  "en": "Answers every enquiry in seconds",
+  "te": "ప్రతి enquiry కి సెకన్లలో జవాబిస్తుంది",
+  "hi": "हर enquiry का जवाब कुछ ही seconds में",
+  "kn": "ಪ್ರತಿ enquiry ಗೆ ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಉತ್ತರ",
+  "ta": "ஒவ்வொரு enquiry-க்கும் சில விநாடிகளில் பதில்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.f.2": {
+  "en": "Answers your calls when you can't",
+  "te": "మీరు ఎత్తలేనప్పుడు మీ calls కి జవాబిస్తుంది",
+  "hi": "जब आप नहीं उठा पाते, तब आपकी calls का जवाब देता है",
+  "kn": "ನೀವು ಎತ್ತಲಾಗದಾಗ ನಿಮ್ಮ calls ಗೆ ಉತ್ತರಿಸುತ್ತದೆ",
+  "ta": "நீங்கள் எடுக்க முடியாதபோது உங்கள் calls-க்கு பதில் சொல்லும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.f.3": {
+  "en": "Follows up on WhatsApp",
+  "te": "WhatsApp లో follow up చేస్తుంది",
+  "hi": "WhatsApp पर follow up करता है",
+  "kn": "WhatsApp ನಲ್ಲಿ follow up ಮಾಡುತ್ತದೆ",
+  "ta": "WhatsApp-இல் follow up செய்யும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.works.t": {
+  "en": "While it talks, it works",
+  "te": "మాట్లాడుతూనే పని చేస్తుంది",
+  "hi": "बात करते हुए ही काम करता है",
+  "kn": "ಮಾತಾಡುತ್ತಲೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "ta": "பேசும்போதே வேலை செய்யும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.works.sub": {
+  "en": "Every call ends with the next step done.",
+  "te": "ప్రతి call తర్వాతి step తో ముగుస్తుంది.",
+  "hi": "हर call अगले step के साथ खत्म होती है।",
+  "kn": "ಪ್ರತಿ call ಮುಂದಿನ step ನೊಂದಿಗೆ ಮುಗಿಯುತ್ತದೆ.",
+  "ta": "ஒவ்வொரு call-உம் அடுத்த step-உடன் முடியும்.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.w.1": {
+  "en": "WhatsApp sent",
+  "te": "WhatsApp పంపింది",
+  "hi": "WhatsApp भेजा",
+  "kn": "WhatsApp ಕಳುಹಿಸಿದೆ",
+  "ta": "WhatsApp அனுப்பப்பட்டது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.w.2": {
+  "en": "Visit booked",
+  "te": "Visit book అయింది",
+  "hi": "Visit book हुई",
+  "kn": "Visit book ಆಗಿದೆ",
+  "ta": "Visit book ஆனது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.w.3": {
+  "en": "Added to Today",
+  "te": "Today లో చేరింది",
+  "hi": "Today में जुड़ा",
+  "kn": "Today ಗೆ ಸೇರಿದೆ",
+  "ta": "Today-இல் சேர்ந்தது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.w.4": {
+  "en": "Follow-up set",
+  "te": "Follow-up పెట్టింది",
+  "hi": "Follow-up तय हुआ",
+  "kn": "Follow-up ಹೊಂದಿಸಿದೆ",
+  "ta": "Follow-up அமைக்கப்பட்டது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.w.5": {
+  "en": "Owner told",
+  "te": "Owner కి చెప్పింది",
+  "hi": "Owner को बताया",
+  "kn": "Owner ಗೆ ತಿಳಿಸಿದೆ",
+  "ta": "Owner-க்கு தெரிவிக்கப்பட்டது",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h5.greet.aria": {
+  "en": "Hello in Telugu, Hindi, Kannada and English",
+  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్ లో నమస్కారం",
+  "hi": "तेलुगु, हिंदी, कन्नड़ और अंग्रेज़ी में नमस्ते",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್ ನಲ್ಲಿ ನಮಸ್ಕಾರ",
+  "ta": "தெலுங்கு, இந்தி, கன்னடம், ஆங்கிலத்தில் வணக்கம்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.built.t": {
+  "en": "Built in from day one",
+  "te": "మొదటి రోజు నుంచే ఉన్నవి",
+  "hi": "पहले दिन से शामिल",
+  "kn": "ಮೊದಲ ದಿನದಿಂದಲೇ ಇರುವುದು",
+  "ta": "முதல் நாளிலிருந்தே உள்ளவை",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11627,51 +11499,12 @@
    "ta": "draft"
   }
  },
- "h4.pl.e1": {
-  "en": "AI calls and WhatsApp replies",
-  "te": "AI calls, WhatsApp కి replies",
-  "hi": "AI calls और WhatsApp replies",
-  "kn": "AI calls, WhatsApp ಗೆ replies",
-  "ta": "AI calls மற்றும் WhatsApp replies",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.pl.e2": {
-  "en": "Telugu, Hindi, Kannada, English",
-  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్",
-  "hi": "तेलुगु, हिन्दी, कन्नड़, अंग्रेज़ी",
-  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್",
-  "ta": "தெலுங்கு, இந்தி, கன்னடம், ஆங்கிலம்",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.m.extra": {
-  "en": "Extra number",
-  "te": "ఎక్స్‌ట్రా number",
-  "hi": "एक्स्ट्रा number",
-  "kn": "ಹೆಚ್ಚುವರಿ number",
-  "ta": "கூடுதல் number",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.bt.t": {
-  "en": "Calls again if busy",
-  "te": "Busy అయితే మళ్ళీ call చేస్తుంది",
-  "hi": "Busy हो तो दोबारा call करता है",
-  "kn": "Busy ಆದರೆ ಮತ್ತೆ call ಮಾಡುತ್ತದೆ",
-  "ta": "Busy என்றால் மீண்டும் call செய்யும்",
+ "h4.bt.2": {
+  "en": "Tries again later",
+  "te": "తర్వాత మళ్ళీ ప్రయత్నిస్తుంది",
+  "hi": "बाद में फिर कोशिश करता है",
+  "kn": "ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ",
+  "ta": "பிறகு மீண்டும் முயற்சிக்கும்",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11692,12 +11525,51 @@
    "ta": "draft"
   }
  },
- "h4.bt.2": {
-  "en": "Tries again later",
-  "te": "తర్వాత మళ్ళీ ప్రయత్నిస్తుంది",
-  "hi": "बाद में फिर कोशिश करता है",
-  "kn": "ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ",
-  "ta": "பிறகு மீண்டும் முயற்சிக்கும்",
+ "h4.pl.e2": {
+  "en": "Telugu, Hindi, Kannada, English",
+  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్",
+  "hi": "तेलुगु, हिन्दी, कन्नड़, अंग्रेज़ी",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್",
+  "ta": "தெலுங்கு, இந்தி, கன்னடம், ஆங்கிலம்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bt.t": {
+  "en": "Calls again if busy",
+  "te": "Busy అయితే మళ్ళీ call చేస్తుంది",
+  "hi": "Busy हो तो दोबारा call करता है",
+  "kn": "Busy ಆದರೆ ಮತ್ತೆ call ಮಾಡುತ್ತದೆ",
+  "ta": "Busy என்றால் மீண்டும் call செய்யும்",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.pl.e1": {
+  "en": "AI calls and WhatsApp replies",
+  "te": "AI calls, WhatsApp కి replies",
+  "hi": "AI calls और WhatsApp replies",
+  "kn": "AI calls, WhatsApp ಗೆ replies",
+  "ta": "AI calls மற்றும் WhatsApp replies",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.m.extra": {
+  "en": "Extra number",
+  "te": "ఎక్స్‌ట్రా number",
+  "hi": "एक्स्ट्रा number",
+  "kn": "ಹೆಚ್ಚುವರಿ number",
+  "ta": "கூடுதல் number",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11718,12 +11590,12 @@
    "ta": "draft"
   }
  },
- "h4.built.t": {
-  "en": "Built in from day one",
-  "te": "మొదటి రోజు నుంచే ఉన్నవి",
-  "hi": "पहले दिन से शामिल",
-  "kn": "ಮೊದಲ ದಿನದಿಂದಲೇ ಇರುವುದು",
-  "ta": "முதல் நாளிலிருந்தே உள்ளவை",
+ "h4.pl.num": {
+  "en": "1 business number",
+  "te": "ఒక business number",
+  "hi": "एक business number",
+  "kn": "ಒಂದು business number",
+  "ta": "ஒரு business number",
   "status": {
    "te": "draft",
    "hi": "draft",

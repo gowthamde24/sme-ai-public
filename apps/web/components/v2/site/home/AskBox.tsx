@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 
-import { useOnViewOnce } from "./use-on-view-once";
-
 /** One of the example jobs: the words of its plan card, already in the visitor's language (static; nothing is asked of an AI). */
 export type AskJob = { chip: string; who: string; says: string; when: string; keys: string[] };
 
@@ -17,13 +15,13 @@ const ROW_MS = 380; // then the plan card's four lines come in one by one
  * five example jobs. A live moment, played once when the block scrolls into view: the first example is TYPED into the box (about 1.2 s) and the card's four lines appear one by one; tapping a chip replays it for that chip (reduced
  * motion and no script: the final state at once, as the server draws it: the first example in the box and the card whole). It calls NO AI and sends NOTHING; the cost line is the same for every job (it names no price). "Set this up" leads to early access. The words come from the server (in the visitor's language).
  */
-export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: { label: string; placeholder: string; go: string; who: string; says: string; when: string; cost: string; costValue: string; plan: string }; jobs: AskJob[]; href: string }) {
+export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: { label: string; placeholder: string; go: string; orb: string; eg: string; who: string; says: string; when: string; cost: string; costValue: string; plan: string }; jobs: AskJob[]; href: string }) {
   // the server draws the FINAL state (the first example typed, its card whole); a browser that can play the moment starts it from empty
   const [text, setText] = useState(jobs[0].chip);
   const [picked, setPicked] = useState<number | null>(0);
   const [rows, setRows] = useState(4); // how many of the card's four lines are in
+  const [pulse, setPulse] = useState(false); // the orb's short pulse before the next example is typed
   const id = useId();
-  const [box, phase] = useOnViewOnce<HTMLDivElement>();
   const timers = useRef<number[]>([]);
   const stop = useCallback(() => {
     timers.current.forEach((t) => window.clearTimeout(t));
@@ -58,24 +56,18 @@ export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: 
     },
     [jobs, later, stop],
   );
-  const started = useRef(false);
-  // "ready": the block waits below the fold, empty (the start state); "played": it was seen once, the example is typed in; "final": reduced motion or no script: it stays whole
-  useEffect(() => {
-    if (started.current) return;
-    if (phase === "ready") {
-      const id = window.setTimeout(() => {
-        setText("");
-        setPicked(null);
-        setRows(0);
-      }, 0);
-      return () => window.clearTimeout(id);
-    }
-    if (phase === "played") {
-      started.current = true;
-      play(0, false);
-    }
-  }, [phase, play]);
   useEffect(() => stop, [stop]);
+  // the orb plays a SCRIPTED example (it listens to nothing and sends nothing): a short pulse with the word "Example", then the next sample sentence is typed in and its card fills, as when a chip is tapped
+  const playNext = () => {
+    stop();
+    const next = ((picked ?? -1) + 1) % jobs.length;
+    if (reduced()) return play(next, true);
+    setPulse(true);
+    later(() => {
+      setPulse(false);
+      play(next, false);
+    }, 1200);
+  };
   const fromText = (v: string) => {
     const q = v.toLowerCase();
     const i = jobs.findIndex((j) => j.keys.some((x) => q.includes(x)));
@@ -84,26 +76,32 @@ export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: 
   const job = picked === null ? null : jobs[picked];
   const rowsData = job ? [[words.who, job.who], [words.says, job.says], [words.when, job.when], [words.cost, words.costValue]] : [];
   return (
-    <div className="h3-ask" data-part="ask-box" ref={box}>
+    <div className="h3-ask" data-part="ask-box">
       <label htmlFor={id} className="sr-only">
         {words.label}
       </label>
-      <textarea
-        id={id}
-        value={text}
-        onChange={(e) => {
-          stop();
-          started.current = true;
-          setText(e.target.value);
-          const p = fromText(e.target.value);
-          setPicked(p);
-          setRows(p === null ? 0 : 4);
-        }}
-        placeholder={words.placeholder}
-        rows={2}
-        maxLength={400}
-        className="h3-ask-input"
-      />
+      <div className="h3-ask-field">
+        <textarea
+          id={id}
+          value={text}
+          onChange={(e) => {
+            stop();
+                    setPulse(false);
+            setText(e.target.value);
+            const p = fromText(e.target.value);
+            setPicked(p);
+            setRows(p === null ? 0 : 4);
+          }}
+          placeholder={words.placeholder}
+          rows={2}
+          maxLength={400}
+          className="h3-ask-input"
+        />
+        {pulse ? <span className="h3-orb-eg">{words.eg}</span> : null}
+        <button type="button" className="h3-orb-btn" aria-label={words.orb} title={words.orb} data-state={pulse ? "play" : undefined} onClick={playNext}>
+          <span className="orb" data-orb="still" aria-hidden="true" />
+        </button>
+      </div>
       <ul className="h3-chips" aria-label={words.label}>
         {jobs.map((j, i) => (
           <li key={i}>
@@ -112,8 +110,7 @@ export function AskBox({ words, jobs, href, arrow }: { arrow: ReactNode; words: 
               className="h3-chip"
               aria-pressed={picked === i}
               onClick={() => {
-                started.current = true;
-                play(i, reduced());
+                            play(i, reduced());
               }}
               data-chip={i + 1}
             >

@@ -60,7 +60,7 @@
 }
 
 /* type: one scale, clamp() between a phone and the 1240 px design */
-[data-ui="v2"] .h3-h1 { margin: 0; font-family: var(--v2-font-sans-stack); font-weight: 700; font-size: clamp(28px, calc(3vw + 17px), 60px); line-height: 1.12; letter-spacing: -0.01em; text-wrap: balance; }
+[data-ui="v2"] .h3-h1 { margin: 0; font-family: var(--v2-font-sans-stack); font-weight: 700; font-size: clamp(28px, calc(3vw + 17px), 56px); line-height: 1.12; letter-spacing: -0.01em; text-wrap: balance; }
 [data-ui="v2"] .h3-h2 { margin: 0; font-family: var(--v2-font-sans-stack); font-weight: 700; font-size: clamp(22px, calc(1.5vw + 17px), 40px); line-height: 1.2; letter-spacing: -0.01em; text-wrap: balance; }
 [data-ui="v2"] .h3-h3 { margin: 0; font-family: var(--v2-font-sans-stack); font-weight: 700; font-size: clamp(17px, calc(0.3vw + 16px), 20px); line-height: 1.3; letter-spacing: 0; }
 [data-ui="v2"] .h3-lead { margin: 0; font-size: clamp(15px, calc(0.25vw + 14px), 17px); line-height: 1.5; color: var(--v2-muted); text-wrap: pretty; }
@@ -71,7 +71,6 @@
 
 /* buttons: the primary one is the page's orange */
 [data-ui="v2"] .h3-btn { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: 10px; border-radius: 999px; padding: 0 clamp(18px, 2vw, 24px); font-size: 15px; font-weight: 600; line-height: 1.2; text-align: center; transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1); }
-[data-ui="v2"] .h3-btn:hover { transform: translateY(-1px); }
 [data-ui="v2"] .h3-btn:active { transform: scale(0.97); }
 [data-ui="v2"] .h3-btn-main { background: var(--h3-or, #c2410c); color: #fff; }
 [data-ui="v2"] .h3-btn-line { background: transparent; color: var(--v2-ink); box-shadow: inset 0 0 0 1.5px var(--v2-border-strong); }
@@ -89,14 +88,17 @@
 [data-ui="v2"] .h3-cta-row { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; margin-top: 4px; }
 [data-ui="v2"] .h3-btn-block { width: 100%; max-width: 420px; }
 [data-ui="v2"] .h3-textlink { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; padding: 0 8px; font-size: 15px; font-weight: 600; color: var(--v2-ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--v2-border-strong); }
-[data-ui="v2"] .h3-stage-wrap { display: none; margin-top: clamp(28px, 4vw, 56px); }
-@media (min-width: 768px) { [data-ui="v2"] .h3-stage-wrap { display: block; } }
-[data-ui="v2"] .h3-stage-slot { aspect-ratio: 360 / 390; max-width: 440px; margin-inline: auto; }
-@media (min-width: 900px) { [data-ui="v2"] .h3-stage-slot { aspect-ratio: 1240 / 540; max-width: 1240px; } }
-
 /* 2. what should your assistant do */
 [data-ui="v2"] .h3-ask { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 640px; margin-inline: auto; }
-[data-ui="v2"] .h3-ask-input { display: block; width: 100%; resize: none; border: 0; border-radius: 16px; background: var(--v2-surface); padding: 14px 16px; font: inherit; font-size: 16px; line-height: 1.5; color: var(--v2-ink); box-shadow: inset 0 0 0 1px var(--v2-border-strong); }
+[data-ui="v2"] .h3-ask-field { position: relative; }
+[data-ui="v2"] .h3-ask-input { display: block; width: 100%; padding-right: 68px !important; resize: none; border: 0; border-radius: 16px; background: var(--v2-surface); padding: 14px 16px; font: inherit; font-size: 16px; line-height: 1.5; color: var(--v2-ink); box-shadow: inset 0 0 0 1px var(--v2-border-strong); }
+/* the orb at the right end of the box: a small round sphere (the product's own, drawn by CSS: design/orb.css) that plays a SCRIPTED example: it listens to nothing; a short pulse and the word "Example", then the next sentence types in */
+[data-ui="v2"] .h3-orb-btn { position: absolute; right: 8px; top: 50%; width: 44px; height: 44px; margin-top: -22px; border-radius: 50%; padding: 4px; cursor: pointer; transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1); }
+[data-ui="v2"] .h3-orb-btn:active { transform: scale(0.94); }
+[data-ui="v2"] .h3-orb-btn::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid #c2410c; opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) { [data-ui="v2"] .h3-orb-btn[data-state="play"]::after { animation: h3-orb-pulse 600ms ease-out 2; } }
+@keyframes h3-orb-pulse { from { transform: scale(0.9); opacity: 0.9; } to { transform: scale(1.4); opacity: 0; } }
+[data-ui="v2"] .h3-orb-eg { position: absolute; right: 60px; top: 50%; margin-top: -11px; font-size: 14px; line-height: 22px; color: var(--v2-muted); pointer-events: none; }
 /* the chips: ONE row you swipe (snaps, a soft fade at the edges, no sideways scroll of the page) */
 [data-ui="v2"] .h3-chips { display: flex; gap: 8px; margin: 0 calc(var(--h3-gutter) * -1); padding: 2px var(--h3-gutter); list-style: none; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--h3-gutter), #000 calc(100% - var(--h3-gutter)), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 var(--h3-gutter), #000 calc(100% - var(--h3-gutter)), transparent 100%); }
 [data-ui="v2"] .h3-chips::-webkit-scrollbar { display: none; }
@@ -201,7 +203,6 @@
   [data-ui="v2"] .h3-how-phone { max-width: none; }
   [data-ui="v2"] .h3-duo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 14px; }
   [data-ui="v2"] .h3-duo-call, [data-ui="v2"] .h3-duo-chat { grid-area: auto; opacity: 1 !important; visibility: visible !important; }
-  [data-ui="v2"] .h3-duo-call:not([data-cur]), [data-ui="v2"] .h3-duo-chat:not([data-cur]) { display: none; }
 }
 @media (prefers-reduced-motion: reduce) and (max-width: 700px) { [data-ui="v2"] .h3-duo { grid-template-columns: minmax(0, 1fr); } }
 [data-ui="v2"] .h3-found { margin-top: 0; border-radius: 18px; background: var(--v2-surface); padding: 16px; box-shadow: inset 0 0 0 1px var(--v2-border), var(--v2-shadow); }
@@ -255,42 +256,9 @@
 [data-ui="v2"] .h3-final-in { display: flex; flex-direction: column; align-items: center; gap: clamp(18px, 2.2vw, 28px); }
 [data-ui="v2"] .h3-final .h3-lead { max-width: 620px; }
 
-/* Fit: a drawing laid out at its design size and scaled to the width of its box (components/v2/site/home2/Fit.tsx); the box keeps the drawing's proportions at every width */
-[data-ui="v2"] .h3-fit { position: relative; width: 100%; overflow: hidden; visibility: hidden; }
-[data-ui="v2"] .h3-fit[data-ready] { visibility: visible; }
-[data-ui="v2"] .h3-fit-in { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: scale(var(--fit, 1)); }
-/* the hero stage: upright (360 x 640, real size) below 900 px, the design's 1240 x 540 (scaled whole) from 900 px; one markup, one canvas: positions are classes, in percentages of the box */
-[data-ui="v2"] .h3-fit-stage { aspect-ratio: 360 / 390; max-width: 440px; margin-inline: auto; }
-[data-ui="v2"] .h3-fit-stage .h3-fit-in, [data-ui="v2"] .h3-stage { width: 100%; height: 100%; }
-[data-ui="v2"] .h3-stage { position: relative; }
-[data-ui="v2"] .h3-pos { position: absolute; }
-[data-ui="v2"] .h3-src, [data-ui="v2"] .h3-out { width: 46.7%; }
-[data-ui="v2"] .h3-src-0 { left: 2.2%; top: 0; } [data-ui="v2"] .h3-src-2 { left: 51.1%; top: 0; } [data-ui="v2"] .h3-src-3 { left: 2.2%; top: 15.4%; } [data-ui="v2"] .h3-src-4 { left: 51.1%; top: 15.4%; }
-[data-ui="v2"] .h3-src-1, [data-ui="v2"] .h3-src-5, [data-ui="v2"] .h3-out, [data-ui="v2"] .h3-cap { display: none; }
-[data-ui="v2"] .h3-orbp { left: 50%; top: 52.8%; width: 35.6%; aspect-ratio: 1; transform: translateX(-50%); }
-[data-ui="v2"] .h3-stage .h2-node { white-space: normal; gap: 8px; padding: 8px 10px; font-size: 13px; }
-[data-ui="v2"] .h3-stage .h2-ico { display: none; }
-[data-ui="v2"] .h3-stage .h3-cap .font-display { font-size: 15px; }
-[data-ui="v2"] .h3-stage .h3-cap .h2-glass { flex-wrap: wrap; }
-@media (min-width: 900px) {
-  [data-ui="v2"] .h3-fit-stage { aspect-ratio: 1240 / 540; max-width: 1240px; }
-  [data-ui="v2"] .h3-fit-stage .h3-fit-in, [data-ui="v2"] .h3-stage { width: 1240px; height: 540px; }
-  [data-ui="v2"] .h3-src, [data-ui="v2"] .h3-out { width: auto; }
-  [data-ui="v2"] .h3-src-1, [data-ui="v2"] .h3-src-5, [data-ui="v2"] .h3-out, [data-ui="v2"] .h3-cap { display: block; }
-  [data-ui="v2"] .h3-src-0 { left: 1.935%; top: 4.815%; } [data-ui="v2"] .h3-src-1 { left: 5%; top: 20.37%; } [data-ui="v2"] .h3-src-2 { left: 7.419%; top: 35.93%; }
-  [data-ui="v2"] .h3-src-3 { left: 7.419%; top: 51.48%; } [data-ui="v2"] .h3-src-4 { left: 5%; top: 67.04%; } [data-ui="v2"] .h3-src-5 { left: 1.935%; top: 82.59%; }
-  [data-ui="v2"] .h3-out-0, [data-ui="v2"] .h3-out-1, [data-ui="v2"] .h3-out-2 { left: auto; right: 1.935%; }
-  [data-ui="v2"] .h3-out-0 { top: 20%; } [data-ui="v2"] .h3-out-1 { top: 44.07%; } [data-ui="v2"] .h3-out-2 { top: 68.15%; }
-  [data-ui="v2"] .h3-orbp { top: 24.07%; width: 22.58%; }
-  [data-ui="v2"] .h3-cap { left: 50%; top: 85.56%; width: max-content; max-width: 660px; transform: translateX(-50%); }
-  [data-ui="v2"] .h3-stage .h2-node { white-space: nowrap; gap: 10px; padding: 9px 14px 9px 10px; font-size: 14px; }
-  [data-ui="v2"] .h3-stage .h2-ico { display: flex; }
-  [data-ui="v2"] .h3-stage .h3-cap .font-display { font-size: 18px; }
-  [data-ui="v2"] .h3-stage .h3-cap .h2-glass { flex-wrap: nowrap; }
-}
 
 /* the home footer's columns (1 / 2 / 4) */
-[data-ui="v2"] .h3-foot-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px) 16px; }
+[data-ui="v2"] .h3-foot-grid { display: grid; align-items: start; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px) 16px; }
 [data-ui="v2"] .h3-foot-wide { grid-column: 1 / -1; }
 /* the Product links: two to a row on a phone, a column from 560 px */
 [data-ui="v2"] .h3-foot-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -309,15 +277,6 @@
   [data-ui="v2"] .h3-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   [data-ui="v2"] .h3-foot-grid { grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); }
 }
-
-/* motion: the hero's lines rise once (transform and opacity only) */
-@media (prefers-reduced-motion: no-preference) {
-  [data-ui="v2"] .h3-hero-text > * { animation: h3-rise 700ms cubic-bezier(0.23, 1, 0.32, 1) both; }
-  [data-ui="v2"] .h3-hero-text > :nth-child(2) { animation-delay: 80ms; }
-  [data-ui="v2"] .h3-hero-text > :nth-child(3) { animation-delay: 160ms; }
-  [data-ui="v2"] .h3-hero-text > :nth-child(4) { animation-delay: 240ms; }
-}
-@keyframes h3-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 /* a jump to a part of the home page lands below the sticky header */
 [data-ui="v2"] [data-page="home"] section[id], [data-ui="v2"] [data-page="home"] footer[id] { scroll-margin-top: 88px; }
@@ -359,12 +318,23 @@
   [data-ui="v2"] .h3-leak-step:not(:last-child)::after { content: "\2192"; left: auto; bottom: auto; right: -32px; width: 32px; top: 50%; transform: translateY(-50%); }
 }
 
-/* the demo: the card directly below the phone on a phone; side by side from 768 px (the phone on the left, the card on the right) */
+/* the demo from 768 px: the CALL phone and the WHATSAPP phone side by side (260 px each, 32 px apart), the "What it found out" card under them (and, from 1100 px, in the same row, top-aligned); on a phone one phone and the card below it. The phone is drawn at 300 px and shown at 260 (zoom: it is an illustration, its text stays proportional) */
 @media (min-width: 768px) {
-  [data-ui="v2"] .h3-how-grid { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); column-gap: clamp(24px, 4vw, 56px); }
-  [data-ui="v2"] .h3-how-phone { margin-inline: 0 auto; }
-  [data-ui="v2"] .h3-how-grid { align-items: center; }
-  [data-ui="v2"] .h3-how-grid > .h3-found { max-width: 420px; }
+  [data-ui="v2"] .h3-how-grid { grid-template-columns: minmax(0, 1fr); justify-items: center; row-gap: 28px; }
+  [data-ui="v2"] .h3-how-phone { width: 100%; max-width: 552px; margin-inline: auto; }
+  [data-ui="v2"] .h3-dp { width: 300px; zoom: 0.8667; }
+  [data-ui="v2"] .h3-duo { grid-template-columns: repeat(2, 260px); justify-content: center; gap: 32px; }
+  [data-ui="v2"] .h3-duo-call, [data-ui="v2"] .h3-duo-chat { grid-area: auto; opacity: 1; visibility: visible; pointer-events: auto; }
+  [data-ui="v2"] .h3-how-grid > .h3-found { width: 100%; max-width: 552px; padding: 24px; }
+  [data-ui="v2"] .h3-found-h { font-size: 17px; margin-bottom: 14px; }
+  [data-ui="v2"] .h3-found dt { font-size: 15px; flex-basis: 84px; }
+  [data-ui="v2"] .h3-found dd { font-size: 17px; }
+  [data-ui="v2"] .h3-found dl { gap: 12px; }
+  [data-ui="v2"] .h3-found-sum { font-size: 15px; margin-top: 16px; }
+}
+@media (min-width: 1100px) {
+  [data-ui="v2"] .h3-how-grid { grid-template-columns: 552px 400px; justify-content: center; align-items: start; column-gap: 32px; }
+  [data-ui="v2"] .h3-how-grid > .h3-found { max-width: 400px; }
 }
 /* the sticky bottom bar of a phone: out of the way while the hero button, the final call or the footer is on screen (StickyCta); a transform only; not on a tablet or a desktop */
 [data-ui="v2"] .h3-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: flex; justify-content: center; padding: 10px var(--h3-gutter) calc(10px + env(safe-area-inset-bottom)); background: var(--v2-bg); border-top: 1px solid var(--v2-border); transform: translateY(110%); transition: transform 250ms ease-out; }
@@ -385,40 +355,27 @@
 @keyframes h3-sheet-in { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h3-sheet-panel { animation: none; } }
 
-[data-ui="v2"] .h3-hero-plain { margin: 0; font-size: 14px; color: var(--v2-muted); }
-/* still state from 768 px: the two phones need the whole width (the card goes below them) */
-@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
-  [data-ui="v2"] .h3-how-grid { grid-template-columns: minmax(0, 1fr); justify-items: center; }
-  [data-ui="v2"] .h3-how-phone { width: 100%; max-width: 700px; margin-inline: auto; }
-  [data-ui="v2"] .h3-how-grid > .h3-found { width: 100%; }
-}
-
-/* speed: everything below the first screen skips its style and layout work until it is near the window (content-visibility), with the section's known CONTENT height reserved (its padding is outside it) so nothing moves when it is drawn; the numbers are the measured content heights at 390, 768 and 1440 px, and "auto" then remembers the real one. Anchors, find-in-page and the sticky bar's observer still work: the box is there, only its insides wait. */
-[data-ui="v2"] [data-page="home"] :is(#ask, #calc, #lead-finder, #pricing, #faq, #join, #demo, #end) { content-visibility: auto; }
-[data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 481px; }
-[data-ui="v2"] [data-page="home"] #calc { contain-intrinsic-size: auto 604px; }
-[data-ui="v2"] [data-page="home"] #lead-finder { contain-intrinsic-size: auto 600px; }
-[data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 553px; }
-[data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 258px; }
-[data-ui="v2"] [data-page="home"] :is(#join, #demo) { contain-intrinsic-size: auto 183px; }
-[data-ui="v2"] [data-page="home"] #end { contain-intrinsic-size: auto 720px; }
+/* the hero pill, the three cells under the button, the hub of "While it talks, it works": all still */
+[data-ui="v2"] .h3-hero-pill { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 10px; min-height: 36px; max-width: 100%; border-radius: 999px; background: var(--v2-surface); padding: 6px 14px; font-size: 14px; line-height: 1.35; color: var(--v2-ink); box-shadow: inset 0 0 0 1px var(--v2-border-strong); }
+[data-ui="v2"] .h3-pill-hear { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--h3-ot); white-space: nowrap; }
+[data-ui="v2"] .h3-feats { display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 760px; margin: 8px 0 0; padding: 0; list-style: none; border-radius: 16px; background: var(--v2-surface); box-shadow: inset 0 0 0 1px var(--v2-border), var(--v2-shadow); text-align: left; }
+[data-ui="v2"] .h3-feat { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 8px 16px; font-size: 15px; font-weight: 600; line-height: 1.35; }
+[data-ui="v2"] .h3-feat + .h3-feat { border-top: 1px solid var(--v2-border); }
+[data-ui="v2"] .h3-feat-ico { display: inline-flex; flex: none; color: var(--h3-ot); }
 @media (min-width: 768px) {
-  [data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 511px; }
-  [data-ui="v2"] [data-page="home"] #calc { contain-intrinsic-size: auto 748px; }
-  [data-ui="v2"] [data-page="home"] #lead-finder { contain-intrinsic-size: auto 741px; }
-  [data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 392px; }
-  [data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 269px; }
-  [data-ui="v2"] [data-page="home"] :is(#join, #demo) { contain-intrinsic-size: auto 139px; }
-  [data-ui="v2"] [data-page="home"] #end { contain-intrinsic-size: auto 740px; }
+  [data-ui="v2"] .h3-feats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  [data-ui="v2"] .h3-feat { min-height: 64px; padding: 12px 20px; }
+  [data-ui="v2"] .h3-feat + .h3-feat { border-top: 0; border-left: 1px solid var(--v2-border); }
 }
-@media (min-width: 1200px) {
-  [data-ui="v2"] [data-page="home"] #ask { contain-intrinsic-size: auto 549px; }
-  [data-ui="v2"] [data-page="home"] #calc { contain-intrinsic-size: auto 576px; }
-  [data-ui="v2"] [data-page="home"] #lead-finder { contain-intrinsic-size: auto 651px; }
-  [data-ui="v2"] [data-page="home"] #pricing { contain-intrinsic-size: auto 393px; }
-  [data-ui="v2"] [data-page="home"] #faq { contain-intrinsic-size: auto 307px; }
-  [data-ui="v2"] [data-page="home"] :is(#join, #demo) { contain-intrinsic-size: auto 171px; }
-  [data-ui="v2"] [data-page="home"] #end { contain-intrinsic-size: auto 737px; }
-}
+[data-ui="v2"] .h3-hub { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+[data-ui="v2"] .h3-hub-mark { display: inline-flex; width: 72px; height: 72px; align-items: center; justify-content: center; border-radius: 50%; background: var(--v2-surface); box-shadow: inset 0 0 0 1px var(--v2-border-strong), var(--v2-shadow); }
+[data-ui="v2"] .h3-hub-chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; margin: 0; padding: 0; list-style: none; }
+[data-ui="v2"] .h3-hub-chip { display: flex; align-items: center; gap: 8px; min-height: 44px; border-radius: 12px; background: var(--v2-surface); padding: 8px 12px; font-size: 15px; font-weight: 600; line-height: 1.3; box-shadow: inset 0 0 0 1px var(--v2-border); }
+[data-ui="v2"] .h3-hub-chip svg { flex: none; color: var(--v2-green-text); }
+@media (min-width: 768px) { [data-ui="v2"] .h3-hub-chips { display: flex; flex-wrap: wrap; justify-content: center; } [data-ui="v2"] .h3-hub-chip { padding-inline: 16px; } }
+/* (no content-visibility on the sections below the first screen: a picture of the whole page, find-in-page and the audits must all see them drawn; the page's speed comes from the lighter DOM, the scenes drawn only when near, and the fonts) */
 /* the cookie bar and the sticky "Get free early access" bar stack: the bar goes above the notice while it is open */
 html:has([data-cookie="notice"]) [data-ui="v2"] .h3-sticky { bottom: 56px; }
+
+/* a jump or an element scrolled into view on a phone stops above the sticky bottom bar (so no link ends up under it) */
+@media (max-width: 899px) { html:has([data-page="home"]) { scroll-padding-bottom: 88px; } }

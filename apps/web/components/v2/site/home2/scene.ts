@@ -7,7 +7,7 @@ export type SceneDraw = (ctx: CanvasRenderingContext2D, w: number, h: number, t:
 /** What a scene needs to know about the page: dark theme, still (reduced motion), the ratio it draws at. */
 export type Look = { dark: boolean; calm: boolean; dpr: number };
 
-type Scene = { el: HTMLCanvasElement; draw: SceneDraw; visible: boolean; ctx: CanvasRenderingContext2D };
+type Scene = { el: HTMLCanvasElement; draw: SceneDraw; visible: boolean; ctx: CanvasRenderingContext2D; drawn?: boolean };
 
 const scenes = new Set<Scene>();
 let frame = 0;
@@ -26,7 +26,8 @@ export function isDark(el: Element): boolean {
 /** Seconds since the page's scenes started (the same clock for every scene and island). */
 export const sceneTime = (): number => (start ? (performance.now() - start) / 1000 : 0);
 
-function paint(s: Scene, now: number): void {
+/** `still`: the settled picture (the frame "reduce motion" shows), drawn once for a scene that is not near the window yet, so a picture of the page taken at load, a print or a fast scroll never meets an empty canvas. */
+function paint(s: Scene, now: number, still = false): void {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const w = Math.round((s.el.clientWidth || 1) * dpr);
   const h = Math.round((s.el.clientHeight || 1) * dpr);
@@ -34,7 +35,8 @@ function paint(s: Scene, now: number): void {
     s.el.width = w;
     s.el.height = h;
   }
-  const calm = isCalm();
+  const calm = still || isCalm();
+  s.drawn = true;
   s.draw(s.ctx, w, h, calm ? 1.3 : (now - start) / 1000, { dark: isDark(s.el), calm, dpr });
 }
 
@@ -68,11 +70,18 @@ export function addScene(el: HTMLCanvasElement, draw: SceneDraw): () => void {
   io?.observe(el);
   if (typeof ResizeObserver !== "undefined" && !ro)
     ro = new ResizeObserver((es) => {
-      if (!isCalm()) return;
-      for (const e of es) for (const sc of scenes) if (sc.el === e.target && sc.visible) paint(sc, performance.now());
+      for (const e of es)
+        for (const sc of scenes) if (sc.el === e.target && (sc.visible ? isCalm() : sc.drawn)) paint(sc, performance.now(), !sc.visible); // (a resized canvas is cleared: draw it again)
     });
   ro?.observe(el);
   if (s.visible) paint(s, performance.now());
+  else if (hasIo) {
+    // the settled picture as soon as the browser is idle after the page has loaded (one frame, off the critical path); the sweep itself starts when the scene comes near the window
+    const idle = (fn: () => void) => (typeof requestIdleCallback === "function" ? requestIdleCallback(fn, { timeout: 2000 }) : window.setTimeout(fn, 400));
+    idle(() => {
+      if (scenes.has(s) && !s.visible && !s.drawn) paint(s, performance.now(), true);
+    });
+  }
   if (!calm && !frame) frame = requestAnimationFrame(loop);
   return () => {
     scenes.delete(s);
