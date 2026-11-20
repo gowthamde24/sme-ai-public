@@ -548,3 +548,7 @@
     transform: none;
   }
 }
+
+/* the dark phone: the time under a bubble and the input's word keep 4.5:1 on their dark backgrounds (the public page's contrast audit) */
+.pp[data-pp-theme="dark"] .pp-b[data-from="me"] .pp-meta { color: rgba(233, 237, 239, 0.82); }
+.pp[data-pp-theme="dark"] .pp-input-box { color: #b4bfc6; }

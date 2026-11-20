@@ -37,7 +37,7 @@ const Battery = () => (
 
 function Shell({ variant = "full", theme = "auto", time = "9:41", animate = false, keepFrame = false, className = "", children }: Common & { children: ReactNode }) {
   return (
-    <div className={`pp ${className}`.trim()} data-pp-variant={variant} data-pp-theme={theme} {...(animate ? { "data-pp-animate": "" } : {})} {...(keepFrame ? { "data-pp-keep": "" } : {})} data-part="phone-preview">
+    <div className={`pp ${className}`.trim()} data-pp-variant={variant} data-pp-theme={theme} {...(animate ? { "data-pp-animate": "" } : {})} {...(keepFrame ? { "data-pp-keep": "" } : {})} data-part="phone-preview" data-illustration="">
       <div className="pp-frame">
         <div className="pp-screen">
           <span className="pp-cam" aria-hidden="true" />

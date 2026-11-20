@@ -120,7 +120,7 @@ export function HeroStage({ w }: { w: W }) {
     <div data-part="hero-stage" data-lit-out={litOut >= 0 ? litOut : undefined}>
       {/* ONE stage at every width (owner, 20 Nov 2026): the design's 1240 x 540 drawing, scaled to the width of the page (Fit); nothing is swapped for a phone */}
       <Fit className="h3-fit-stage">
-        <div className="h3-stage">
+        <div className="h3-stage" data-illustration="">
           <canvas ref={stageEl} aria-hidden="true" className="absolute inset-0 block size-full" />
           {SRC_Y.map((_, i) => (
             <div key={i} className={`h3-pos h3-src h3-src-${i}`}>
@@ -141,7 +141,7 @@ export function HeroStage({ w }: { w: W }) {
           <div className="h3-pos h3-cap">
             <div className="h2-glass flex items-center gap-3 rounded-[18px] px-[18px] py-2.5" aria-live="polite" data-part="caption">
               <span className="h2-blink" />
-              <span className="shrink-0 whitespace-nowrap text-[13px] font-bold text-brand-text">{mode}</span>
+              <span className="shrink-0 whitespace-nowrap text-sm font-bold text-brand-text">{mode}</span>
               <span className="min-w-0 font-display text-lg font-semibold leading-snug">{words}</span>
               {hear}
             </div>

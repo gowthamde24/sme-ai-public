@@ -10,7 +10,7 @@ import { sitePath, SITE_PAGES, type SitePage } from "@/lib/site/paths";
 import { WithWhatsapp } from "./WithWhatsapp";
 
 const link = "inline-flex min-h-11 items-center text-[15px] font-semibold text-muted hover:text-ink";
-const head = "mb-1.5 text-[13px] font-extrabold text-muted";
+const head = "mb-1.5 text-sm font-extrabold text-muted";
 const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help" };
 const LANG_NAME: Record<Lang, string> = { en: "English", te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ" };
 
@@ -56,7 +56,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
           </Link>
         </div>
       </div>
-      <div className="relative mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-[18px] text-[13px] text-muted">
+      <div className="relative mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-[18px] text-sm text-muted">
         <span>{t("h2.foot.copy")}</span>
         <nav aria-label={t("nav.languages")}>
           <ul className="m-0 flex list-none flex-wrap p-0" data-part="foot-langs">

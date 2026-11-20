@@ -270,14 +270,14 @@ export function RadarFinder({ w }: { w: W }) {
   const cities = (
     <div role="radiogroup" aria-label={w["h2.finder.city"]} className="h2-glass flex flex-wrap gap-0.5 rounded-[14px] p-1">
       {CITIES.map((c) => (
-        <button key={c} type="button" role="radio" aria-checked={city === c} onClick={() => pick(c)} data-city={c} className={`min-h-11 rounded-full px-3 text-[13px] font-extrabold ${city === c ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}>
+        <button key={c} type="button" role="radio" aria-checked={city === c} onClick={() => pick(c)} data-city={c} className={`min-h-11 rounded-full px-3 text-sm font-extrabold ${city === c ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}>
           {c}
         </button>
       ))}
     </div>
   );
   const legend = (
-    <div className="flex gap-3.5 text-xs font-bold">
+    <div className="flex gap-3.5 text-sm font-bold">
       <span className="inline-flex items-center gap-1.5">
         <span className="size-[9px] rounded-full bg-[#c2410c]" />
         {w["h2.finder.call"]}
@@ -318,7 +318,7 @@ export function RadarFinder({ w }: { w: W }) {
       <div className="h3-radar-list" aria-live="polite">
         <div className="mb-1 flex items-center justify-between">
           <p className="m-0 font-extrabold">{w["h2.finder.list"]}</p>
-          <span className="text-[13px] tabular-nums text-muted">{fill(w["h2.finder.of"], { n: String(seen.length) })}</span>
+          <span className="text-sm tabular-nums text-muted">{fill(w["h2.finder.of"], { n: String(seen.length) })}</span>
         </div>
         {[...seen]
           .sort((a, b) => a.id - b.id)
@@ -328,10 +328,10 @@ export function RadarFinder({ w }: { w: W }) {
                 <p className="m-0 min-w-0 text-[15px] font-extrabold">
                   {w[`h2.finder.pin.${p.id + 1}.what`]}, {AREAS[city][p.id]}
                 </p>
-                <span className="whitespace-nowrap text-xs tabular-nums text-muted">{p.km}</span>
+                <span className="whitespace-nowrap text-sm tabular-nums text-muted">{p.km}</span>
               </div>
-              <p className="m-0 text-[13px] leading-snug text-muted">{w[`h2.finder.pin.${p.id + 1}.why`]}</p>
-              <span className={`self-start rounded-full px-2.5 py-1 text-xs font-extrabold ${chip(p.d)}`}>{w[`h2.finder.${p.d}`]}</span>
+              <p className="m-0 text-sm leading-snug text-muted">{w[`h2.finder.pin.${p.id + 1}.why`]}</p>
+              <span className={`self-start rounded-full px-2.5 py-1 text-sm font-extrabold ${chip(p.d)}`}>{w[`h2.finder.${p.d}`]}</span>
             </div>
           ))}
         {seen.length === 0 ? <p className="m-0 text-sm text-muted">{w["h2.finder.empty"]}</p> : null}

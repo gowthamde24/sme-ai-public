@@ -45,7 +45,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
       <span aria-hidden="true" className="h2-prog" />
       <div className={`${container} flex min-h-16 items-center gap-2 py-2 sm:gap-3`}>
         {/* under 360 px the name is a size smaller, so the bar still fits with large text (Android 115%) */}
-        <Link href={home} className="shrink-0 whitespace-nowrap rounded-md max-[359px]:[&_.font-display]:text-xl" aria-label={BRAND_NAME}>
+        <Link href={home} className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-md max-[359px]:[&_.font-display]:text-xl" aria-label={BRAND_NAME}>
           <Wordmark />
         </Link>
         <nav aria-label={t("nav.sections")} className="ml-4 hidden items-center gap-1 min-[900px]:flex">
