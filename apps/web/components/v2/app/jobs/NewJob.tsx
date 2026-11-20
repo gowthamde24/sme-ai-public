@@ -116,6 +116,18 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
     boxRef.current?.focus();
     boxRef.current?.scrollIntoView?.({ block: "center" });
   }
+  /** A Lead Finder plan's choice: only what changed goes to `PATCH /jobs/plan/{id}`; the whole plan comes back (the same id). */
+  async function search(patch: SearchPatch) {
+    if (!plan || !actions.search) return;
+    setCard((c) => ({ ...c, searching: true, error: null }));
+    const r = await actions.search(plan.planId, patch);
+    if (!r.ok) {
+      setCard((c) => ({ ...c, searching: false, error: r.error }));
+      return;
+    }
+    setPlan(r.data);
+    setCard((c) => ({ ...c, searching: false }));
+  }
   function swap() {
     const alt = plan?.alternatives.find((a) => a.kind === "whatsapp");
     if (!alt) return;
@@ -179,7 +191,7 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
       </div>
       {plan && !unclear ? (
         <div className="min-w-0 md:sticky md:top-4 md:col-start-2 md:row-span-2 md:row-start-1">
-          <PlanCard plan={plan} words={words} base={base} state={card} onStart={() => void start()} onSwap={swap} onChange={change} onTest={() => void test()} onSearch={actions.search ? (patch) => void import("./search-change").then((m) => m.changeSearch(patch, plan, actions.search, setPlan, setCard)) : undefined} headingRef={planRef} />
+          <PlanCard plan={plan} words={words} base={base} state={card} onStart={() => void start()} onSwap={swap} onChange={change} onTest={() => void test()} onSearch={actions.search ? (patch) => void search(patch) : undefined} headingRef={planRef} />
         </div>
       ) : null}
       <div className="min-w-0 md:col-start-1">
