@@ -23,7 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app import gstin as gstin_module
 from app.auth.deps import AnyMember, OwnerOrAdmin, PrincipalDep, Runtime, get_runtime
 from app.errors import ApiError, not_found
-from app.jobs import festivals, samples, templates
+from app.jobs import festivals, listing, samples, templates
 from app.jobs.models import FestivalOut, FestivalsOut
 from app.jobs.wiring import JobsRuntime
 from app.tenancy.repository import RepositoryError
@@ -60,6 +60,19 @@ def _answer(request: Request, body: dict[str, Any]) -> Response:
     if _matches(request.headers.get("if-none-match"), etag):
         return Response(status_code=304, headers=headers)
     return JSONResponse(body, headers=headers)
+
+
+@router.get("")
+def list_jobs(request: Request, ctx: AnyMember, runtime: RuntimeDep) -> Response:
+    """GET /jobs: every job of the workspace (thin version: what already runs, read from its own subsystem; see app/jobs/listing.py)."""
+    return _answer(request, {"items": listing.jobs_of(runtime, ctx.principal.token, ctx.tenant.id)})
+
+
+@router.get("/today")
+def jobs_today(request: Request, ctx: AnyMember, runtime: RuntimeDep) -> Response:
+    """GET /jobs/today: the Today first paint in one call. Thin version: the jobs and the assistant's name; `needs_you` is [] until the full S2 (Today keeps its own list meanwhile)."""
+    assistant = runtime.repository.get_assistant_name(ctx.principal.token, ctx.tenant.id)
+    return _answer(request, {"jobs": listing.jobs_of(runtime, ctx.principal.token, ctx.tenant.id), "needs_you": [], "assistant": {"name": assistant}})
 
 
 @router.get("/templates")
