@@ -1,4 +1,5 @@
 import type { JobKind } from "./types";
+import type { SampleAudio } from "./sample-audio";
 
 /**
  * JOB TEMPLATES (decision-ai-team.md, "Job templates and the New job sheet"; owner 19 Nov 2026). The shapes the New job sheet and the live preview cards read. They follow C1's `packages/packs/<pack>/jobs.json`
@@ -27,8 +28,17 @@ export type Texts = { en: string } & Partial<Record<TemplateLang, string>>;
 /** The text in this language, else English. */
 export const textIn = (texts: Texts, lang: string): string => (TEMPLATE_LANGS.includes(lang as TemplateLang) ? texts[lang as TemplateLang] : undefined) ?? texts.en;
 
-/** An invented example prospect of a Lead Finder template: always labelled "Example" on screen. `fit` is a 0-100 score when the data has one (it comes from the prospects API, never made up by the web). */
-export type TemplateExample = { name: string; area: string; why: Texts; fit: number | null };
+/** Why a real prospect fits, the closed list of contract 1.1 part 1 (section 8 item 3): the API sends the CODE and its params, the web holds the sentence (`jobs.why.<code>`); a code not in the list reads as the generic line (`jobs.why.generic`). */
+export const WHY_CODES = ["sells_what_you_buy_from", "near_you", "well_rated", "open_business", "category_match"] as const;
+export type WhyCode = { code: string; params: WhyParams };
+export type WhyParams = Readonly<Record<string, string | number>>;
+export const isWhyCode = (w: Texts | WhyCode): w is WhyCode => "code" in w;
+
+/**
+ * An example prospect of a Lead Finder template. Two kinds, told apart by the template's `examplesReal`: an INVENTED one (from jobs.json; always labelled "Example", `why` is words, no `fit`), or one of the workspace's REAL best prospects
+ * (`why` is a code with params, `fit` 0..100 drawn as a chip). `fit` is never made up by the web.
+ */
+export type TemplateExample = { name: string; area: string; why: Texts | WhyCode; fit: number | null };
 
 export type JobTemplate = {
   id: string;
@@ -44,9 +54,13 @@ export type JobTemplate = {
   /** Customer-facing lines with {business} {customer} {item} {assistant} in them; a call is exactly two lines (the first says it is an AI). null = this template has no such preview. */
   whatsapp: Texts | null;
   call: Texts | null;
-  /** The 10-second voice sample: a link the player plays, or null (no sample yet: the player is not drawn). */
-  sampleAudio: string | null;
+  /** The 8 to 12 second voice samples, one link on our own site per language that has one (lib/jobs/sample-audio.ts picks by language), or null (no sample yet: the player is not drawn). */
+  sampleAudio: SampleAudio | null;
   examples: TemplateExample[];
+  /** true = the examples are the workspace's own best real prospects (draw their fit, no "Example" label); false = invented examples (labelled "Example", no real fit). */
+  examplesReal: boolean;
+  /** What {item} reads like for THIS template ("bridal silk sarees"); null = the shop's own sample item, else "your item". */
+  sampleItem: Texts | null;
   needs: TemplateNeed[];
   findsOut: string[];
   season: TemplateSeason;
@@ -63,7 +77,7 @@ export type NewJobSheetData = {
 };
 
 /** What the server hands the sheet: the data and the facts the previews are filled with (the shop's name, the main assistant's name, the person's language). */
-export type SheetLoad = { data: NewJobSheetData; lang: string; business: string; assistant: string | null };
+export type SheetLoad = { data: NewJobSheetData; lang: string; business: string; assistant: string | null; /** the language the business talks to its customers in (read only when a template has a sample voice); null/absent = not known */ businessLang?: string | null };
 
 /** The festival calendar (data per region from C1: never written in the web): one dated entry per festival the shop may prepare for. `season` is the word a template's `season` carries. */
 export type Festival = { season: Exclude<TemplateSeason, "none">; name: Texts; date: string };

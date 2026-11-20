@@ -2,15 +2,27 @@
 
 import { Gift, MessageCircle, Mic, Phone, Search, Sparkles, Store, Zap } from "lucide-react";
 
-import { fillText, textIn, type FillValues, type JobTemplate, type TemplateKind } from "@/lib/jobs/templates";
+import { pickSample } from "@/lib/jobs/sample-audio";
+import { fillText, isWhyCode, textIn, type FillValues, type JobTemplate, type TemplateKind, type Texts, type WhyCode } from "@/lib/jobs/templates";
 
-import { makeT, type Words } from "../../words";
+import { makeT, type Say, type Words } from "../../words";
 import { CallSnippet, ExampleProspects, SamplePlayer, WaBubble } from "./Previews";
 
 export const KIND_ICON: Record<TemplateKind, typeof Zap> = { speed_to_lead: Zap, answer_calls: Phone, followups: MessageCircle, store_visits: Store, offers: Gift, researcher: Search, custom: Sparkles };
 
 /** What a card says about itself and how its previews are filled: the person's language, the shop's name, the assistant's name and an example item. */
-export type CardContext = { lang: string; business: string; assistant: string; item: string; customer: string };
+export type CardContext = { lang: string; business: string; assistant: string; item: string; customer: string; /** the language the business talks to its customers in: the second choice of the sample voice */ businessLang?: string | null };
+/** The sentence of why a prospect fits: a real one is a code with params (`jobs.why.<code>`, an unknown code reads as the generic line); an invented one is the data's own words with the placeholders filled. */
+export function whyText(t: Say, words: Words, why: Texts | WhyCode, lang: string, v: FillValues): string {
+  if (!isWhyCode(why)) return fillText(textIn(why, lang), v);
+  const key = `jobs.why.${why.code}`;
+  const sentence = words[key];
+  // a sentence with a number or a word the API did not send would show "{km}": that is the generic line instead
+  // the API's `rating` is told as `{score}` in the sentence (the word "rating" may not stand in our words: i18n/strings/forbidden.ts)
+  const vars: Record<string, string | number> = { ...why.params, ...(why.params.rating !== undefined ? { score: why.params.rating } : {}) };
+  const whole = typeof sentence === "string" && [...sentence.matchAll(/\{(\w+)\}/g)].every((m) => m[1] in vars);
+  return t(whole ? key : "jobs.why.generic", vars);
+}
 export const fillValues = (c: CardContext): FillValues => ({ business: c.business, customer: c.customer, item: c.item, assistant: c.assistant });
 
 /** The channel line under a card's title: what the job sends or does. */
@@ -27,10 +39,12 @@ export function channelKey(t: JobTemplate): string {
 export function TemplateCard({ template: tpl, ctx, words, onUse, onSay, busy = false, index = 0, compact = false }: { template: JobTemplate; ctx: CardContext; words: Words; onUse: (t: JobTemplate) => void; onSay?: (t: JobTemplate) => void; busy?: boolean; index?: number; compact?: boolean }) {
   const t = makeT(words);
   const Icon = KIND_ICON[tpl.kind];
-  const v = fillValues(ctx);
+  // {item}: the template's own sample item ("bridal silk sarees"), else the shop's (set by the sheet), else "your item"
+  const v = fillValues({ ...ctx, item: tpl.sampleItem ? textIn(tpl.sampleItem, ctx.lang) : ctx.item });
   const title = textIn(tpl.title, ctx.lang);
   const chanKey = channelKey(tpl);
   const Chan = tpl.kind === "researcher" ? Search : tpl.call && !tpl.whatsapp ? Phone : MessageCircle;
+  const sample = tpl.call ? pickSample(tpl.sampleAudio, ctx.lang, ctx.businessLang ?? null) : null;
   const needs = tpl.needs.map((n) => t(`jobs.tpl.needs.${n}`));
   return (
     <article data-part="template-card" data-template={tpl.id} data-kind={tpl.kind} aria-label={title} className="jb-enter flex flex-col gap-3 rounded-2xl border border-line bg-surface p-3.5 md:p-4">
@@ -49,11 +63,11 @@ export function TemplateCard({ template: tpl, ctx, words, onUse, onSay, busy = f
       </div>
       {tpl.whatsapp ? <WaBubble business={ctx.business} text={fillText(textIn(tpl.whatsapp, ctx.lang), v)} t={t} /> : null}
       {tpl.call ? <CallSnippet assistant={ctx.assistant} text={fillText(textIn(tpl.call, ctx.lang), v)} t={t} /> : null}
-      {tpl.call && tpl.sampleAudio ? <SamplePlayer src={tpl.sampleAudio} t={t} /> : null}
+      {sample ? <SamplePlayer src={sample} t={t} /> : null}
       {tpl.examples.length > 0 ? (
         <>
-          <ExampleProspects examples={tpl.examples} why={(e) => fillText(textIn(e.why, ctx.lang), v)} t={t} />
-          <p className="m-0 text-[12.5px] leading-snug text-muted">{t("jobs.tpl.example.note")}</p>
+          <ExampleProspects examples={tpl.examples} real={tpl.examplesReal} why={(e) => whyText(t, words, e.why, ctx.lang, v)} t={t} />
+          <p className="m-0 text-[12.5px] leading-snug text-muted">{t(tpl.examplesReal ? "jobs.tpl.real.note" : "jobs.tpl.example.note")}</p>
         </>
       ) : null}
       <p className="m-0 text-[14.5px] font-medium leading-snug text-ink">{textIn(tpl.benefit, ctx.lang)}</p>

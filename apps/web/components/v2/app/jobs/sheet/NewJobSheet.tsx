@@ -4,7 +4,7 @@ import { ArrowRight, ChevronDown, ChevronRight, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 
-import { PLAN_TEXT_MAX, PLAN_TEXT_MIN, type JobPlan, type PlanChannel, type PlanInput } from "@/lib/jobs/plan";
+import { PLAN_TEXT_MAX, PLAN_TEXT_MIN, type JobPlan, type PlanChannel, type PlanInput, type SearchPatch } from "@/lib/jobs/plan";
 import { forSeason, groupByGoal, popularOf, textIn, type JobTemplate, type PackJobs, type SheetLoad, type TemplateSeason } from "@/lib/jobs/templates";
 
 import { Skeleton } from "../../ds/Skeleton";
@@ -16,7 +16,7 @@ import { StartedToast } from "../StartedToast";
 import { KIND_ICON, TemplateCard, type CardContext } from "./TemplateCard";
 import type { SheetActions } from "./types";
 
-const IDLE: PlanCardState = { starting: false, testing: false, swapping: false, note: null, error: null, waiting: null, quiet: false };
+const IDLE: PlanCardState = { starting: false, testing: false, swapping: false, searching: false, note: null, error: null, waiting: null, quiet: false };
 const FOCUSABLE = 'a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 type Loaded = { state: "loading" } | { state: "ready"; load: SheetLoad | null } | { state: "failed"; error: string };
@@ -26,7 +26,7 @@ type Loaded = { state: "loading" } | { state: "ready"; load: SheetLoad | null } 
  * microphone), "Popular for <business type>" (live preview cards), "More ideas" by goal (Answer every enquiry, Bring customers back, Fill your visits, Find new customers; "Get paid" is later and never shown), and "Ideas from other businesses".
  * Saying or typing a sentence shows the plan card below the box (the same `PlanCard`); a card's "Use this" asks for the plan of the card's own sentence exactly as if it had been typed. Nothing starts before Start. This is its own lazy chunk: the pages that open it ship only the button.
  */
-export default function NewJobSheet({ words, base, actions, onClose, initial, initialAsk = null, initialSeason = null }: { words: Words; base: string; actions: SheetActions; onClose: () => void; /** data the server already read (`?new=1`); undefined = read it now */ initial?: SheetLoad | null; /** open on this card's plan (the empty Jobs page) */ initialAsk?: string | null; /** open on the plan of the template of this festival season (the Today suggestion) */ initialSeason?: TemplateSeason | null }) {
+export default function NewJobSheet({ words, base, actions, onClose, initial, initialAsk = null, initialTemplate = null, initialSeason = null }: { words: Words; base: string; actions: SheetActions; onClose: () => void; /** data the server already read (`?new=1`); undefined = read it now */ initial?: SheetLoad | null; /** open on this card's plan (the empty Jobs page) */ initialAsk?: string | null; /** the id of that card's template: with it the real planner is asked for the template, not for the words */ initialTemplate?: string | null; /** open on the plan of the template of this festival season (the Today suggestion) */ initialSeason?: TemplateSeason | null }) {
   const t = makeT(words);
   const router = useRouter();
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -54,6 +54,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
     assistant: load?.assistant ?? t("jobs.tpl.sample.assistant"),
     item: (load?.data.sampleItem ? textIn(load.data.sampleItem, lang) : null) ?? t("jobs.tpl.sample.item"),
     customer: t("jobs.tpl.sample.customer"),
+    businessLang: load?.businessLang ?? null,
   };
   const own = load?.data.own ?? null;
   const popular = useMemo(() => (own ? popularOf(own) : []), [own]);
@@ -109,6 +110,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
 
   async function ask(input: PlanInput, swapping = false) {
     if ("text" in input) setText(input.text);
+    else if ("templateId" in input) setText(input.ask);
     setBoxError(null);
     setPlanning(true);
     if (swapping) setCard((c) => ({ ...c, swapping: true, error: null }));
@@ -131,9 +133,10 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
     const fromSeason = initialSeason && load ? forSeason(load.data.own, initialSeason) : null;
     const said = initialAsk ?? (fromSeason ? textIn(fromSeason.ask, lang) : null);
     if (!said) return;
+    const templateId = initialAsk !== null ? initialTemplate : (fromSeason?.id ?? null);
     autoAsked.current = true;
-    // asked on the next tick, not inside the effect: the box and the plan fill in as if the person had typed it
-    queueMicrotask(() => void ask({ text: said }));
+    // asked on the next tick, not inside the effect: the box and the plan fill in as if the person had typed it (a card's own template is asked by its id)
+    queueMicrotask(() => void ask(templateId ? { templateId, ask: said } : { text: said }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded, initialAsk, initialSeason]);
 
@@ -149,9 +152,9 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
   const onBoxKey = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) submit(e);
   };
-  /** "Use this": the card's own sentence, exactly as if it had been typed (same planner, same Start). */
+  /** "Use this": the card's template (the real planner starts from its id; the mock planner is given its sentence, exactly as if it had been typed). Same plan card, same Start. */
   function use(tpl: JobTemplate) {
-    void ask({ text: textIn(tpl.ask, lang) });
+    void ask({ templateId: tpl.id, ask: textIn(tpl.ask, lang) });
   }
   /** The round microphone of a card: its sentence goes into the box, ready to be changed by talking. */
   function say(tpl: JobTemplate) {
@@ -194,9 +197,21 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
   }
   function change() {
     if (!plan) return;
-    setText(source && "text" in source ? source.text : plan.title);
+    setText(source && "text" in source ? source.text : source && "templateId" in source ? source.ask : plan.title);
     boxRef.current?.focus();
     boxRef.current?.scrollIntoView?.({ block: "center" });
+  }
+  /** A Lead Finder plan's choice: only what changed goes to `PATCH /jobs/plan/{id}`; the whole plan comes back (the same id). */
+  async function search(patch: SearchPatch) {
+    if (!plan || !actions.search) return;
+    setCard((c) => ({ ...c, searching: true, error: null }));
+    const r = await actions.search(plan.planId, patch);
+    if (!r.ok) {
+      setCard((c) => ({ ...c, searching: false, error: r.error }));
+      return;
+    }
+    setPlan(r.data);
+    setCard((c) => ({ ...c, searching: false }));
   }
   function swap() {
     if (plan?.alternatives.find((a) => a.kind === "whatsapp")) void ask({ as: "whatsapp", planId: plan.planId }, true);
@@ -257,7 +272,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
               {t("jobs.new.unclear")}
             </p>
           ) : null}
-          {plan && !unclear ? <PlanCard plan={plan} words={words} base={base} state={card} onStart={() => void start()} onSwap={swap} onChange={change} onTest={() => void test()} headingRef={planRef} /> : null}
+          {plan && !unclear ? <PlanCard plan={plan} words={words} base={base} state={card} onStart={() => void start()} onSwap={swap} onChange={change} onTest={() => void test()} onSearch={actions.search ? (patch) => void search(patch) : undefined} headingRef={planRef} /> : null}
 
           {loaded.state === "loading" ? (
             <div data-part="ideas-loading" role="status" aria-label={t("jobs.tpl.loading")} className="flex flex-col gap-3">

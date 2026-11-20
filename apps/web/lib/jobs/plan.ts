@@ -1,3 +1,4 @@
+import type { SEARCH_FIT_BARS, SEARCH_RESULTS } from "./plan-const";
 import type { JobKind } from "./types";
 
 /**
@@ -18,13 +19,29 @@ export const WHEN_STARTS = ["today", "tomorrow", "after_ok"] as const;
 export type WhenStart = (typeof WHEN_STARTS)[number];
 /** `Plan.when {start, from, to, days, pace_per_hour}`: `from` and `to` are "HH:MM" (here minutes since midnight), `days` always lists the days (mon..sun). */
 export type PlanWhen = { start: WhenStart; fromMin: number; toMin: number; days: DayCode[]; pacePerHour: number };
-export type PlanCost = { minutes: number; minutesIncluded: number; /** the minutes already used this month (early access) */ minutesUsed: number; /** whole rupees on a paid plan, else null (early access: free minutes) */ rupees: number | null };
+export type PlanCost = {
+  minutes: number;
+  minutesIncluded: number;
+  /** the minutes already used this month (early access) */
+  minutesUsed: number;
+  /** whole rupees on a paid plan, else null (early access: free minutes) */
+  rupees: number | null;
+  /** The WhatsApp part of the plan (contract 1.1 part 1, T12): `count` messages; `rupees` a whole-rupee amount (GST extra) or null; `included` = inside the plan's free messages. null/absent = the plan says nothing about messages. */
+  messages?: PlanMessagesCost | null;
+  /** A Lead Finder plan counts searches, not calls: the free searches left this month and how many the plan gives. null/absent = not a search plan. */
+  searches?: { left: number; perMonth: number } | null;
+};
+export type PlanMessagesCost = { count: number; rupees: number | null; included: boolean };
+
+/** What a Lead Finder (researcher) plan will look for (`Plan.search`): the area in the owner's words (default: the shop's town), how many results (5, 10 or 20) and the fit bar (the lowest fit, 0 to 100, a prospect needs to be shown; 60, 70, 80 or 90 are offered). */
+export type PlanSearch = { area: string; results: number; fitBar: number };
+/** What may be changed on a search plan (`PATCH /jobs/plan/{id} {search: {...only what changed}}`). */
+export type SearchPatch = { area?: string; results?: (typeof SEARCH_RESULTS)[number]; fitBar?: (typeof SEARCH_FIT_BARS)[number] };
 
 /** Who a plan is for, the closed list of the contract (`who.basis.code`; `params {days, count}`): the Who line is built from it (`jobs.new.who.<code>`), `plan.title` stays the planner's own text. */
 export const PLAN_BASES = ["enquired_calls", "bought_calls", "consented_messages", "named_list", "said_yes_offer", "none"] as const;
 export type PlanBasisCode = (typeof PLAN_BASES)[number];
 /** What may block a plan (a 200 with `blockers`, never a 422): the codes the web has a sentence for (any other code gets the plain one). */
-export const PLAN_BLOCKERS = ["unclear_who", "no_number", "no_whatsapp", "minutes_used"] as const;
 
 export type PlanFinds = { key: string; text: string | null };
 
@@ -43,6 +60,8 @@ export type JobPlan = {
   /** "start" = the plan is what was asked; "send_whatsapp" = nobody can be called, the WhatsApp is the way. */
   primary: "start" | "send_whatsapp";
   alternatives: { kind: "whatsapp"; count: number }[];
+  /** What a Lead Finder plan will look for, or null/absent (every other plan). Its `says` is empty and its cost counts searches. */
+  search?: PlanSearch | null;
   /** Why the plan cannot start (for example `unclear_who`: the assistant could not tell who is meant). Empty = it can. */
   blockers: string[];
   expiresInMinutes: number | null;
@@ -52,8 +71,12 @@ export type JobPlan = {
 export const planChannel = (p: JobPlan): PlanChannel => p.says[0]?.channel ?? "call";
 export const planBlocked = (p: JobPlan): boolean => p.blockers.length > 0;
 
-/** What may be asked of the planner (contract section 4): the owner's sentence, a suggested job's kind (Look first), or the WhatsApp version of a plan already shown (`as: "whatsapp"` with its id). */
-export type PlanInput = { text: string } | { kind: JobKind } | { as: "whatsapp"; planId: string };
+/**
+ * What may be asked of the planner (contract section 4): the owner's sentence, a suggested job's kind (Look first), the WhatsApp version of a plan already shown (`as: "whatsapp"` with its id), or a template card's "Use this" (`templateId` = the snake_case id in jobs.json, `ask` = the card's sentence).
+ * The REAL planner is given the id (`POST /jobs/plan {template_id, language}`: it starts from the template, never guesses from words); the mock planner is given the sentence, exactly as if it had been typed.
+ */
+export type PlanInput = { text: string } | { kind: JobKind } | { as: "whatsapp"; planId: string } | { templateId: string; ask: string };
+/** The id of a job template in jobs.json (snake_case, as every pack writes it). */
 export const PLAN_TEXT_MIN = 3;
 export const PLAN_TEXT_MAX = 500;
 

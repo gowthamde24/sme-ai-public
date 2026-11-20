@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import app from "@/i18n/strings/app.json";
 
 import { DNC_HOWS, DNC_REASONS } from "./dnc";
-import { APPROVAL_KINDS, DAY_CODES, EXCLUDED_CODES, PLAN_BASES, PLAN_BLOCKERS, WHEN_STARTS } from "./plan";
+import { APPROVAL_KINDS, DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "./plan";
+import { PLAN_BLOCKERS } from "./plan-const";
 import { RESULT_CODES } from "./result";
 import { PLAN_GATES } from "./types";
 import { JOBS_CODE_WORDS } from "@/app/app/tenants/[tenantId]/jobs/refusal";
