@@ -10988,25 +10988,12 @@
    "ta": "draft"
   }
  },
- "h4.bi.3.d": {
-  "en": "Quiet hours: no calls at night.",
-  "te": "Quiet hours: రాత్రి calls ఉండవు.",
-  "hi": "Quiet hours: रात में calls नहीं।",
-  "kn": "Quiet hours: ರಾತ್ರಿ calls ಇಲ್ಲ.",
-  "ta": "Quiet hours: இரவில் calls இல்லை.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
  "h4.bi.4": {
-  "en": "Always says it's an AI",
-  "te": "ఇది AI అని ఎప్పుడూ చెప్తుంది",
-  "hi": "हमेशा बताता है कि यह AI है",
-  "kn": "AI ಅಂತ ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ",
-  "ta": "AI என்று எப்போதும் சொல்லும்",
+  "en": "Quiet hours at night",
+  "te": "రాత్రి quiet hours",
+  "hi": "रात में quiet hours",
+  "kn": "ರಾತ್ರಿ quiet hours",
+  "ta": "இரவில் quiet hours",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11059,6 +11046,19 @@
   "hi": "उदाहरण",
   "kn": "ಉದಾಹರಣೆ",
   "ta": "எடுத்துக்காட்டு",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "h4.bi.4.d": {
+  "en": "No calls late at night",
+  "te": "రాత్రి లేట్‌గా calls ఉండవు",
+  "hi": "देर रात calls नहीं",
+  "kn": "ತಡರಾತ್ರಿ calls ಇಲ್ಲ",
+  "ta": "இரவு நேரத்தில் calls இல்லை",
   "status": {
    "te": "draft",
    "hi": "draft",

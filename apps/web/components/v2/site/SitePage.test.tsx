@@ -212,11 +212,12 @@ describe("the home page (20 Nov 2026: one page for every width, the three animat
     expect(text(finder)).not.toMatch(/Checked \d+ places|Found on this sweep/); // no count line, no note
     expect(finder.match(/<canvas/g)).toHaveLength(1); // one map at every width
   });
-  it("built in (spec section 7): four small cards, the quiet hours as the line under STOP, no separate trust section", () => {
+  it("built in (spec section 7): four small cards (the quiet hours their own card), no separate trust section", () => {
     const built = home.match(/<section id="built"[\s\S]*?<\/section>/)![0];
     expect(built.match(/data-built="\d"/g)).toHaveLength(4);
-    for (const x of ["Your own business number", "Only people who said yes", "STOP works at once", "Quiet hours: no calls at night.", "Always says it's an AI"]) expect(text(built), x).toContain(x);
+    for (const x of ["Your own business number", "Only people who said yes", "STOP works at once", "Quiet hours at night", "No calls late at night"]) expect(text(built), x).toContain(x);
     expect(home).not.toContain('id="trust"');
+    expect(text(built)).not.toMatch(/Quiet hours: no calls/); // (it was the line under STOP before the quiet hours had a card)
   });
   it("the three plans (spec section 8: Pay as you go + ₹5 a minute, Pro with 500 minutes recommended, Business with 1,500): rupees, ONE line for GST, the number and free early access, a link to /pricing", () => {
     const plans = home.match(/<section id="plans"[\s\S]*?<\/section>/)![0];

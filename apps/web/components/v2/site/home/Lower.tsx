@@ -1,4 +1,4 @@
-import { ArrowRight, Hand, Phone, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Hand, Moon, Phone, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -77,7 +77,7 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
     if (!clip || !playable(manifest, v.clip)) return [];
     return [{ id: v.clip, biz: t(k(`h4.v.${v.n}.biz`)), langName: t(k(`h2.lang.${v.lang}`)), lang: v.lang, text: clip.text, seconds: clip.duration, sources: clip.sources }];
   });
-  const icons = [<Phone key="1" size={20} strokeWidth={2.2} />, <ShieldCheck key="2" size={20} strokeWidth={2.2} />, <Hand key="3" size={20} strokeWidth={2.2} />, <Sparkles key="4" size={20} strokeWidth={2.2} />];
+  const icons = [<Phone key="1" size={20} strokeWidth={2.2} />, <ShieldCheck key="2" size={20} strokeWidth={2.2} />, <Hand key="3" size={20} strokeWidth={2.2} />, <Moon key="4" size={20} strokeWidth={2.2} />];
   return (
     <>
       <Section id="calc" labelledBy="calc-title">
@@ -105,7 +105,7 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
                 {ico}
               </span>
               <h3 className="h4-h3">{t(k(`h4.bi.${i + 1}`))}</h3>
-              {i === 2 ? <p className="h4-card-d">{t("h4.bi.3.d")}</p> : null}
+              {i === 3 ? <p className="h4-card-d">{t("h4.bi.4.d")}</p> : null}
             </li>
           ))}
         </ul>
