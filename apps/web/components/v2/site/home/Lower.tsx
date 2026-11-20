@@ -85,11 +85,13 @@ export function LowerSections({ t }: { t: SiteT; cta?: Start }) {
           ))}
         </Swipe>
         <div className="h4-plans-note">
-          <p data-part="plans-free">{t("h4.pl.line", { gst: `${PLAN_FACTS.gstPercent}%` })}</p>
-          <Link href="/pricing" data-part="plans-more">
-            {t("h4.pl.more")}
-            <ArrowRight size={16} strokeWidth={2.4} aria-hidden="true" />
-          </Link>
+          <p data-part="plans-free">
+            {t("h4.pl.line", { gst: `${PLAN_FACTS.gstPercent}%` })}{" "}
+            <Link href="/pricing" className="h4-more-link" data-part="plans-more">
+              {t("h4.pl.more")}
+              <ArrowRight size={14} strokeWidth={2.4} aria-hidden="true" />
+            </Link>
+          </p>
         </div>
         <TrustRow w={{ t1: t("h4.tr.1"), t2: t("h4.tr.2"), t3: t("h4.tr.3"), t4: t("h4.tr.4"), kyc: t("h4.m.kyc"), yes: t("h4.m.yes"), added: t("h4.m.added"), done: t("h4.m.done"), wait: t("h4.m.wait") }} />
       </Section>
