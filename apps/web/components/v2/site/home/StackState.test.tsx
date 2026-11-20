@@ -50,7 +50,7 @@ describe("the phone (call, then chat) and the card run on ONE clock", () => {
     const sets = setsFor("en");
     return render(
       <StackProvider chats={STACK}>
-        <ChatStack chats={STACK} captions={["1", "2", "3", "4"]} sub="Business account" placeholder="Message" />
+        <ChatStack chats={STACK} captions={["1", "2", "3", "4"]} sub="Business account" placeholder="Message" icons={{ callButtons: null, headIcons: null, mic: null }} />
         <LangTabs chips={["te", "hi", "kn", "en"]} codes={["te", "hi", "kn", "en"]} label="Demo language" />
         <FoundCard heading="What it found out" listening="Listening…" summary="Summary is written the moment the call ends." sets={sets} />
       </StackProvider>,
@@ -123,7 +123,7 @@ describe("the language chips", () => {
     const { container } = render(
       <StackProvider chats={STACK}>
         <LangTabs chips={["te", "hi", "kn", "en"]} codes={["te", "hi", "kn", "en"]} label="Demo language" />
-        <ChatStack chats={STACK} captions={["1", "2", "3", "4"]} sub="Business account" placeholder="Message" />
+        <ChatStack chats={STACK} captions={["1", "2", "3", "4"]} sub="Business account" placeholder="Message" icons={{ callButtons: null, headIcons: null, mic: null }} />
         <FoundCard heading="What it found out" listening="Listening…" summary="Summary is written the moment the call ends." sets={sets} />
       </StackProvider>,
     );

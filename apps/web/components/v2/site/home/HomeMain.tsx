@@ -1,4 +1,4 @@
-import { ArrowRight, Check, ChevronDown, Languages, Moon, Phone, PhoneCall as PhoneCallIcon, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Grip, Languages, Mic, Moon, Phone, PhoneCall as PhoneCallIcon, PhoneOff, ShieldCheck, Volume2 } from "lucide-react";
 import Link from "next/link";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
@@ -27,6 +27,33 @@ type Start = { href: string; label: string };
 const k = (s: string) => s as SiteKey;
 /** The words a client island needs, filled on the server (the site's dictionaries never reach the browser whole). */
 const words = (t: SiteT, keys: readonly string[]): Record<string, string> => Object.fromEntries(keys.map((key) => [key, t(k(key))]));
+/** The demo phone's icons, drawn on the server so the page's script carries no icon code for them. */
+const DEMO_ICONS = {
+  callButtons: (
+    <>
+      <span className="h3-dp-btn">
+        <Mic size={20} strokeWidth={2} />
+      </span>
+      <span className="h3-dp-btn">
+        <Grip size={20} strokeWidth={2} />
+      </span>
+      <span className="h3-dp-btn">
+        <Volume2 size={20} strokeWidth={2} />
+      </span>
+      <span className="h3-dp-btn h3-dp-end">
+        <PhoneOff size={22} strokeWidth={2.2} />
+      </span>
+    </>
+  ),
+  headIcons: (
+    <>
+      <Phone aria-hidden="true" size={20} strokeWidth={2} />
+      <span className="h3-dp-dots" aria-hidden="true" />
+    </>
+  ),
+  mic: <Mic size={20} strokeWidth={2.2} />,
+};
+
 /** The words that pick a sample plan card when a visitor types (lower case; English and the three scripts' own words). */
 const JOB_KEYS = [
   ["site visit", "property", "flat", "plot", "house", "సైట్", "साइट", "ಸೈಟ್"],
@@ -163,7 +190,7 @@ function How({ t }: { t: SiteT }) {
           <div className="h3-how-grid">
             <div className="h3-how-phone" data-part="how-phone">
               <LangTabs chips={STACK.map((c) => SITE_LANGUAGE_NAMES[c.code].native)} codes={STACK.map((c) => c.code)} label={t("h3.tabs.label")} />
-              <ChatStack chats={STACK} captions={[1, 2, 3, 4].map((i) => t(k(`h3.stack.${i}`)))} sub={t("h3.phone.biz")} placeholder={t("h3.phone.msg")} />
+              <ChatStack chats={STACK} captions={[1, 2, 3, 4].map((i) => t(k(`h3.stack.${i}`)))} sub={t("h3.phone.biz")} placeholder={t("h3.phone.msg")} icons={DEMO_ICONS} />
             </div>
             <FoundCard heading={t("h3.how.f.h")} listening={t("h3.found.listen")} summary={t("h3.found.sum")} sets={FOUND_KEYS.map((rows) => rows.map(([l, v]) => ({ l: t(k(l)), v: t(k(v)) })))} />
           </div>

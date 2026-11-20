@@ -1,6 +1,5 @@
 "use client";
 
-import { Grip, Mic, Phone, PhoneOff, Volume2 } from "lucide-react";
 import * as React from "react";
 
 import { PpBubble, PpDay } from "@/components/v2/PhonePreview";
@@ -18,7 +17,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * call and the chat are two phones in the SAME box (they cross-fade, nothing moves). The words come from the server; `captions` say in the page's language what each conversation is. Transform and opacity only; the wave pauses while the
  * demo is off screen. With "reduce motion" (and before the script runs) it is ONE still state: the chat, whole, and the style sheet shows the call (its last caption) beside it (stacked on a narrow screen).
  */
-export function ChatStack({ chats, captions, sub, placeholder }: { chats: readonly StackChat[]; captions: string[]; sub: string; placeholder: string }) {
+export function ChatStack({ chats, captions, sub, placeholder, icons }: { chats: readonly StackChat[]; captions: string[]; sub: string; placeholder: string; /** The icons are drawn on the server (no icon code in the page's script): the call's round buttons, the chat header's icons, the input's mic. */ icons: { callButtons: React.ReactNode; headIcons: React.ReactNode; mic: React.ReactNode } }) {
   const { idx, phase, n, visible, setVisible } = useStack();
   const root = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
@@ -68,18 +67,7 @@ export function ChatStack({ chats, captions, sub, placeholder }: { chats: readon
                       ) : null}
                     </div>
                     <div className="h3-dp-btns" aria-hidden="true">
-                      <span className="h3-dp-btn">
-                        <Mic size={20} strokeWidth={2} />
-                      </span>
-                      <span className="h3-dp-btn">
-                        <Grip size={20} strokeWidth={2} />
-                      </span>
-                      <span className="h3-dp-btn">
-                        <Volume2 size={20} strokeWidth={2} />
-                      </span>
-                      <span className="h3-dp-btn h3-dp-end">
-                        <PhoneOff size={22} strokeWidth={2.2} />
-                      </span>
+                      {icons.callButtons}
                     </div>
                   </div>
                 </DarkPhone>
@@ -96,10 +84,7 @@ export function ChatStack({ chats, captions, sub, placeholder }: { chats: readon
                         <p className="pp-name">{c.name}</p>
                         <p className="pp-sub">{sub}</p>
                       </div>
-                      <span className="pp-head-icons">
-                        <Phone aria-hidden="true" size={20} strokeWidth={2} />
-                        <span className="h3-dp-dots" aria-hidden="true" />
-                      </span>
+                      <span className="pp-head-icons">{icons.headIcons}</span>
                     </div>
                     <div className="pp-body">
                       <PpDay>{c.day}</PpDay>
@@ -111,9 +96,7 @@ export function ChatStack({ chats, captions, sub, placeholder }: { chats: readon
                     </div>
                     <div className="pp-input" aria-hidden="true">
                       <span className="pp-input-box">{placeholder}</span>
-                      <span className="pp-mic">
-                        <Mic size={20} strokeWidth={2.2} />
-                      </span>
+                      <span className="pp-mic">{icons.mic}</span>
                     </div>
                   </div>
                 </DarkPhone>
