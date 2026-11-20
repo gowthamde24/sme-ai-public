@@ -149,7 +149,7 @@ def get_sample(pack: str, file: str, principal: PrincipalDep, jobs: JobsDep) -> 
     template_id, sha8, language = parsed
     try:
         found = jobs.samples.get(principal.token, pack, template_id, language)
-        audio = base64.b64decode(str((found or {}).get("audio_b64") or ""), validate=True) if found else b""
+        audio = base64.b64decode("".join(str((found or {}).get("audio_b64") or "").split()), validate=True) if found else b""   # Postgres encode(..., 'base64') wraps its lines every 76 characters
     except (RepositoryError, binascii.Error):
         raise not_found() from None
     if not found or not audio or found.get("sha8") != sha8:

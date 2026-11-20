@@ -182,3 +182,15 @@ def test_generating_needs_the_voice_the_flag_and_lets_the_database_decide_who() 
     assert c.post("/v1/ops/job-samples/generate", json={"languages": ["xx"]}, headers=auth("a_owner")).status_code == 422
     assert client_with(store, None).post("/v1/ops/job-samples/generate", json={}, headers=auth("a_owner")).status_code == 503
     assert client_with(store, tts, jobs=False).post("/v1/ops/job-samples/generate", json={}, headers=auth("a_owner")).status_code == 404
+
+
+def test_audio_that_postgres_wrapped_in_76_character_lines_still_plays() -> None:
+    """Staging, 21 Nov: encode(audio, 'base64') puts a newline every 76 characters; the strict decoder refused it and every sample was a 404."""
+    store, tts = FakeStore(), FakeTts()
+    run(store, tts, ["te"], 1)
+    (pack, tid, lang), row = next(iter(store.rows.items()))
+    raw = base64.b64decode(row["audio"])
+    flat = base64.b64encode(raw).decode()
+    row["audio"] = "\n".join(flat[i : i + 76] for i in range(0, len(flat), 76)) + "\n"
+    ok = get(client_with(store), f"/v1/job-samples/{pack}/{tid}_{row['sha'][:8]}.{lang}.mp3", "a_viewer")
+    assert ok.status_code == 200 and ok.content == raw
