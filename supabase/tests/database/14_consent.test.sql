@@ -100,7 +100,7 @@ select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'true', 'can
 
 select is(tests.outcome_as(tests.uid('a_viewer'), format($q$select public.suppress_contact(%L, %L, 'opted_out')$q$, tests.tid('a'), tests.rid('a_contact'))),
   '42501', 'viewer: DENY suppress');
-select is(tests.outcome_as(tests.uid('a_sales'), format($q$select public.suppress_contact(%L, %L, 'opted_out', 'verbal', 'call:789')$q$, tests.tid('a'), tests.rid('a_contact'))),
+select is(tests.outcome_as(tests.uid('a_sales'), format($q$select public.suppress_contact(%L, %L, 'opted_out', 'verbal', 'note:789')$q$, tests.tid('a'), tests.rid('a_contact'))),
   'rows:1', 'ALLOW: sales suppresses a contact');
 select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'false', 'can_contact: suppressed -> false even though consent was granted');
 select ok((select suppressed_at is not null and suppression_reason = 'opted_out' from public.contacts where id = tests.rid('a_contact')), 'suppression state recorded');

@@ -118,13 +118,13 @@ select is(pg_temp.sc('a_sales', format('select public.check_suppression(%L, %L::
 
 -- ============================================================================ C. the keys follow the contact's suppression and its lifting
 select is(pg_temp.events(), 0::bigint, 'C0 no event yet');
-select is(pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', 'verbal', 'call:1') is not null$q$, tests.tid('a'), tests.rid('a_contact'))), 'true', 'C1 Sales suppresses a keyed contact through the EXISTING function');
+select is(pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', 'verbal', 'note:1') is not null$q$, tests.tid('a'), tests.rid('a_contact'))), 'true', 'C1 Sales suppresses a keyed contact through the EXISTING function');
 select is((select string_agg(kind || ':' || event || ':' || reason, ',' order by kind) from suppression.key_events where tenant_id = tests.tid('a')), 'email:suppressed:opted_out,phone:suppressed:opted_out', 'C2 both keys became suppressed, with the contact''s reason');
 select is((select count(*) from suppression.key_events where source_contact_id = tests.rid('a_contact') and created_by = tests.uid('a_sales')), 2::bigint, 'C3 each event records the contact it came from and who did it');
 select is(pg_temp.sc('a_sales', format('select public.check_suppression(%L, %L::jsonb)', tests.tid('a'), jsonb_build_object('email', jsonb_build_array(pg_temp.h('a_mail')), 'phone', jsonb_build_array(pg_temp.h('nobody')))::text)),
           '{"email": true, "phone": false, "suppressed": true}', 'C4 check_suppression says which KIND, never why or whose');
-select is(pg_temp.sc('a_viewer', format('select public.suppress_contact(%L, %L, ''opted_out'', ''verbal'', ''call:1'') is not null', tests.tid('a'), tests.rid('a_contact'))), 'ERR:42501', 'C5 (control) a Viewer still cannot suppress');
-select is(pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', 'verbal', 'call:1') is not null$q$, tests.tid('a'), tests.rid('a_contact'))), 'true', 'C6 suppressing again is a no-op');
+select is(pg_temp.sc('a_viewer', format('select public.suppress_contact(%L, %L, ''opted_out'', ''verbal'', ''note:1'') is not null', tests.tid('a'), tests.rid('a_contact'))), 'ERR:42501', 'C5 (control) a Viewer still cannot suppress');
+select is(pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', 'verbal', 'note:1') is not null$q$, tests.tid('a'), tests.rid('a_contact'))), 'true', 'C6 suppressing again is a no-op');
 select is(pg_temp.events(), 2::bigint, 'C7 ... and writes no new event');
 -- a contact without keys: nothing to mirror
 select pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'manual', null, null) is not null$q$, tests.tid('a'), tests.rid('c5')));
@@ -157,7 +157,7 @@ select is((select count(*) from public.consent_events where contact_id = tests.r
 select is(pg_temp.sc('a_sales', format('select public.check_suppression(%L, %L::jsonb)', tests.tid('a'), jsonb_build_object('email', jsonb_build_array(pg_temp.h('c2_mail')))::text)), '{"email": true, "phone": false, "suppressed": true}', 'D5 the arriving contact''s OTHER key became suppressed too (the same person)');
 select is(pg_temp.sc('a_sales', format('select public.record_contact_keys(%L, %L::jsonb)', tests.rid('c2'), jsonb_build_object('version', 1, 'email', pg_temp.h('c2_mail'), 'phone', pg_temp.h('a_phone'))::text)) ::jsonb ->> 'flagged', 'false', 'D6 recording again flags nothing more (already suppressed)');
 -- an opt-out reason withdraws consent when a contact is flagged by it
-select pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', 'verbal', 'call:2') is not null$q$, tests.tid('a'), tests.rid('c6')));
+select pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', 'verbal', 'note:2') is not null$q$, tests.tid('a'), tests.rid('c6')));
 select pg_temp.rk('a_sales', 'c6', pg_temp.ks('c6_mail', 'c6_phone'));
 select pg_temp.sc('a_sales', format($q$select public.record_consent(%L, %L, 'email', 'granted', 'explicit_consent', 'web_form', 'form:c9')$q$, tests.tid('a'), tests.rid('c9')));
 select is(pg_temp.sc('a_sales', format('select public.record_contact_keys(%L, %L::jsonb)', tests.rid('c9'), jsonb_build_object('version', 1, 'email', pg_temp.h('c9_mail'), 'phone', pg_temp.h('c6_phone'))::text)) ::jsonb ->> 'flagged', 'true', 'D7 arriving with the phone key of an OPTED-OUT person is flagged');

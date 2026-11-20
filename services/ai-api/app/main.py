@@ -822,6 +822,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     crm_repo.ContactSuppressedError: ApiError(
         409, "contact_suppressed", "The contact is suppressed; lift the suppression first."
     ),
+    crm_repo.StoppedByCustomerError: ApiError(
+        409,
+        "stopped_by_customer",
+        "This customer asked us to stop, so this cannot be lifted. "
+        "It comes off only when the customer asks to be contacted again.",
+    ),
     crm_repo.RealDataGateError: ApiError(
         409,
         "real_data_gate_closed",

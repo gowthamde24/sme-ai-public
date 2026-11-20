@@ -39,7 +39,7 @@ select is(pg_temp.grant('email', 'form:1'), 'rows:1', 'setup: email granted');
 select is(pg_temp.grant('whatsapp', 'form:2'), 'rows:1', 'setup: whatsapp granted');
 select is(pg_temp.grant('phone', 'form:3'), 'rows:1', 'setup: phone granted');
 select is(pg_temp.state(), 'granted/granted/granted/-', 'before: all three granted, not suppressed');
-select is(pg_temp.suppress('opted_out', p_ref => 'call:55'), 'rows:1', 'ALLOW: sales records an opt-out');
+select is(pg_temp.suppress('opted_out', p_ref => 'note:55'), 'rows:1', 'ALLOW: sales records an opt-out');
 select is(pg_temp.state(), 'withdrawn/withdrawn/withdrawn/opted_out', 'R1: every granted channel is now withdrawn, in the same call');
 select is(pg_temp.events('a_contact', 'suppressed'), 1::bigint, 'R1: one suppressed ledger row');
 select is(pg_temp.events('a_contact', 'withdrawn'), 3::bigint, 'R1: one withdrawn ledger row per changed channel');
@@ -49,7 +49,7 @@ select is(
   array['email', 'phone', 'whatsapp'], 'R1: the withdrawn rows cover exactly email, whatsapp and phone');
 select is(
   (select count(*) from public.consent_events where contact_id = tests.rid('a_contact') and event_type = 'withdrawn'
-      and recorded_by = tests.uid('a_sales') and evidence_ref = 'call:55'),
+      and recorded_by = tests.uid('a_sales') and evidence_ref = 'note:55'),
   3::bigint, 'R1: the withdrawn rows carry who recorded them and the evidence given');
 select is(pg_temp.can('a_contact', 'email') || pg_temp.can('a_contact', 'whatsapp') || pg_temp.can('a_contact', 'phone'),
   'falsefalsefalse', 'can_contact is false on every channel');

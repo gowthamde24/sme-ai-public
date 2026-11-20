@@ -70,6 +70,10 @@ class ContactSuppressedError(RepositoryError):
     """SM002: consent cannot be granted while the contact is suppressed."""
 
 
+class StoppedByCustomerError(RepositoryError):
+    """SM985: the customer asked us to stop (WhatsApp, a call): nobody can lift it (21 Nov 2026)."""
+
+
 class RealDataGateError(RepositoryError):
     """SM401: the real-data gate is closed (ADR 0015): reserved e-mail domain and +00 phone only."""
 
@@ -188,6 +192,8 @@ def classify_error(status: int, body: Any) -> Exception:
         return InvalidTransitionError(code)
     if code == "SM002":
         return ContactSuppressedError(code)
+    if code == "SM985":
+        return StoppedByCustomerError(code)
     if code == "SM401":
         return RealDataGateError(code)
     if code == "SM701":  # job CK: the module is off for this business (default deny)
