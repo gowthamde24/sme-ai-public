@@ -4,8 +4,7 @@
 
 from __future__ import annotations
 
-import subprocess
-import sys
+import importlib.util
 from pathlib import Path
 
 from app.whatsapp import first_templates
@@ -17,7 +16,11 @@ FIRST_SET = {"lead_ack", "visit_reminder", "visit_confirmation", "missed_call_fo
 
 def test_the_backfill_is_the_generated_file_and_says_what_the_api_says() -> None:
     sql = MIGRATION.read_text(encoding="utf-8")
-    generated = subprocess.run([sys.executable, str(ROOT / "scripts" / "gen_catalogue_backfill.py")], capture_output=True, text=True, check=True).stdout
+    spec = importlib.util.spec_from_file_location("gen_catalogue_backfill", ROOT / "scripts" / "gen_catalogue_backfill.py")
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    generated = module.render()
     assert sql.strip() == generated.strip(), "regenerate it: python3 scripts/gen_catalogue_backfill.py > the migration"
     ours = [d for d in first_templates.drafts(("en", "te")) if d["name"] not in FIRST_SET]
     assert len({d["name"] for d in ours}) == 12 and len(ours) == 24
