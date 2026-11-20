@@ -4,29 +4,27 @@
 
 from __future__ import annotations
 
-import importlib.util
 from pathlib import Path
 
 from app.whatsapp import first_templates
 
 ROOT = Path(__file__).resolve().parents[3]
 MIGRATION = ROOT / "supabase" / "migrations" / "20261231986400_catalogue_backfill.sql"
+FIX = ROOT / "supabase" / "migrations" / "20261231986600_catalogue_text_fixes.sql"
 FIRST_SET = {"lead_ack", "visit_reminder", "visit_confirmation", "missed_call_followup", "followup_nudge", "catalogue_share", "new_collection_offer", "festival_offer", "continue_chat"}
 
 
-def test_the_backfill_is_the_generated_file_and_says_what_the_api_says() -> None:
+def test_every_draft_the_api_makes_is_what_the_backfill_wrote_or_what_the_text_fix_changed_it_to() -> None:
     sql = MIGRATION.read_text(encoding="utf-8")
-    spec = importlib.util.spec_from_file_location("gen_catalogue_backfill", ROOT / "scripts" / "gen_catalogue_backfill.py")
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    generated = module.render()
-    assert sql.strip() == generated.strip(), "regenerate it: python3 scripts/gen_catalogue_backfill.py > the migration"
+    fix = FIX.read_text(encoding="utf-8")
     ours = [d for d in first_templates.drafts(("en", "te")) if d["name"] not in FIRST_SET]
     assert len({d["name"] for d in ours}) == 12 and len(ours) == 24
     assert str(first_templates.NAMESPACE) in sql
     for d in ours:
-        assert d["body"].replace("'", "''") in sql and f"'{d['name']}'" in sql, d["name"]
+        body = d["body"].replace("'", "''")
+        assert f"'{d['name']}'" in sql and (body in sql or body in fix), d["name"] + " " + d["language"]
+    assert "w.status = 'draft'" in fix and "w.body = v.old_body" in fix, "only a draft that still holds the old words is changed"
+    assert "submitted" not in fix.lower().replace("nothing is submitted", "").replace("edited, submitted or approved", ""), "the fix sends nothing to Meta"
 
 
 def test_it_creates_drafts_only_for_businesses_that_have_the_first_set_and_never_sends_anything() -> None:

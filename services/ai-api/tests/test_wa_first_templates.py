@@ -17,6 +17,7 @@ OLD_THREE = OFFERS | {"visit_reminder", "visit_confirmation", "continue_chat"}  
 # the catalogue of 19-20 Nov 2026 (reports/template-catalogue.md): 12 more messages, English and Telugu, each with a third variable and a "sample3" for Meta
 NEW = {"visit_invite", "after_visit_thanks", "time_to_come_back", "we_missed_you", "order_ready", "new_batch_announcement", "admissions_open", "event_invite", "festival_greeting", "documents_pending", "new_listing_alert", "trip_coming_up"}
 THREE = OLD_THREE | NEW
+APPROVED_WITHOUT_STOP = {"followup_nudge", "catalogue_share"}   # the two APPROVED marketing messages of the first set carry no STOP line: listed for the owner, their text is not changed here
 SAMPLE3 = {"new_collection_offer": "Silk sarees", "festival_offer": "Diwali", "continue_chat": "silk sarees", "visit_invite": "appointment", "after_visit_thanks": "visit", "time_to_come_back": "check-up", "we_missed_you": "appointment", "order_ready": "order", "new_batch_announcement": "Class 10 Maths", "admissions_open": "Class 6", "event_invite": "open house", "festival_greeting": "Diwali", "documents_pending": "policy", "new_listing_alert": "2BHK in Gachibowli", "trip_coming_up": "Goa"}
 
 
@@ -41,6 +42,12 @@ def test_every_first_template_obeys_the_rules_of_meta_and_of_the_database() -> N
             assert d["opt_out_label"] == "", d   # a utility message carries no promotion button
         if d["name"] in NEW and d["category"] == "marketing":
             assert len(d["opt_out_label"]) >= 2, d   # every NEW marketing message carries the opt-out button
+        if d["category"] == "marketing" and d["name"] not in APPROVED_WITHOUT_STOP:
+            assert b.rstrip().endswith(("Reply STOP to unsubscribe.", "STOP అని పంపండి.")) or "STOP" in b, d   # every marketing message ends with the STOP line in English and Telugu (planner, 20 Nov 2026)
+            if d["language"] == "en":
+                assert b.rstrip().endswith("Reply STOP to unsubscribe."), d
+            if d["language"] == "te":
+                assert b.rstrip().endswith("వద్దనుకుంటే STOP అని పంపండి.") or b.rstrip().endswith("STOP అని పంపండి."), d
 
 
 def test_the_offers_and_the_visit_messages_exist_in_english_and_telugu_only_until_a_native_reader_has_checked_hindi_and_kannada() -> None:
