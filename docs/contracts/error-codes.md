@@ -392,7 +392,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `speaking_style_unavailable` | 503 | how_speaks, speaking |  |  | This is not available right now. |
 | `speech_unavailable` | 422 | voice |  |  | Spoken answers are not switched on for this system. |
 | `standup_limit` | 429 | ai_team | yes |  | You can make the stand-up again 3 times a day. Try again tomorrow morning. |
-| `stopped_by_customer` | 409 | jobs, outbox |  |  | This customer asked us to stop. Nothing can be sent until they write again. |
+| `stopped_by_customer` | 409 | jobs, main, outbox |  |  | This customer asked us to stop. Nothing can be sent until they write again. |
 | `storage_unavailable` | 503 | privacy |  |  | Files cannot be made on this system. |
 | `student_not_active` | 409 | main |  |  | The student left or was erased, so this cannot be done. |
 | `suggestion_changed` | 422 | quotes |  |  | The suggestion is no longer available. |
