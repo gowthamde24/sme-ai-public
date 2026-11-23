@@ -65,14 +65,23 @@ export function knowledgeTab({ lang, t, tenantId, base, owner, data, business }:
 }
 
 /** The tones in the words of each voice language, whatever language the app is in: the example under "How it talks" is written in the language of the voice that is picked. */
+/** One order of the language chips everywhere on this tab (owner's audit, 24 Nov: three different orders on one page): Telugu, Hindi, Kannada, English. */
+const CHIP_ORDER: readonly string[] = ["te", "hi", "kn", "en"];
+const inOneOrder = <L extends string>(list: readonly L[]): L[] => [...list].sort((a, b) => (CHIP_ORDER.indexOf(a) + 1 || 99) - (CHIP_ORDER.indexOf(b) + 1 || 99));
 const EXAMPLE_LANGS = ["te", "hi", "kn", "en"] as const satisfies readonly Lang[];
 const TONE_WORDS = ["friendly", "respectful", "quick"] as const;
+/** The real two-sided sample calls of this business type (customer line, assistant line, ...), per language and tone, from the words file; a type with none gets the default ones. */
+function toneConversations(pack: string | null): Record<string, Record<(typeof TONE_WORDS)[number], string[]>> {
+  // the samples are words (vc.cv.<business type>.<tone>); a type that has none gets vc.cv.default.<tone>
+  const p = pack && `vc.cv.${pack}.friendly` in (appDict("en") as Record<string, string>) ? pack : "default";
+  return Object.fromEntries(EXAMPLE_LANGS.map((l) => [l, Object.fromEntries(TONE_WORDS.map((x) => [x, String((appDict(l) as Record<string, string>)[`vc.cv.${p}.${x}`] ?? "").split("\n").filter(Boolean)]))])) as Record<string, Record<(typeof TONE_WORDS)[number], string[]>>;
+}
 function toneExamples(): Record<string, Record<(typeof TONE_WORDS)[number], string>> {
   return Object.fromEntries(EXAMPLE_LANGS.map((l) => [l, Object.fromEntries(TONE_WORDS.map((x) => [x, (appDict(l) as Record<string, string>)[`vc.ex.${x}`] ?? ""]))])) as Record<string, Record<(typeof TONE_WORDS)[number], string>>;
 }
 
 /** Voice & tone: TWO plain cards (owner, 20 Nov 2026: "one simple card"). 1. "Your assistant's voice": a row of named voices for each language, how it talks (three choices and one example), the background, the "Say 'AI assistant' when greeting" switch and the test call. 2. "Greeting and more choices": the greeting in one box, and More choices under it. Then, with "How it talks to you" on, the person's own choices. */
-export function voiceTab({ lang, t, tenantId, base, owner, data, business, ownerFirst = null, testCallHref = null }: Common & { data: Awaited<ReturnType<typeof readVoiceTab>>; business: string; ownerFirst?: string | null; testCallHref?: string | null }) {
+export function voiceTab({ lang, t, tenantId, base, owner, data, business, ownerFirst = null, testCallHref = null, pack = null }: Common & { data: Awaited<ReturnType<typeof readVoiceTab>>; business: string; ownerFirst?: string | null; testCallHref?: string | null; pack?: string | null }) {
   const { picker, training, speaks } = data;
   const words = wordsFor(lang, ["tt.", "bv.end.", "sp.", "vt."], ["today.err.mfa.link", "ope.preview", "vp.mock", "vp.err.sample", "vp.owneronly"]);
   const cardWords = wordsFor(lang, ["vc.", "sp.err."], ["today.err.mfa.link", "vp.mock", "vp.err.sample", "vp.owneronly", "vp.none", "vp.recommended", "vt.lang", "vt.voice", "vt.play", "vt.stop", "vt.ex.label", "vt.hear.none", "sp.notsaved", "mya.v.selected"]);
@@ -102,7 +111,7 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
         words={cardWords}
         uiLang={lang}
         picker={pickerOn ? { voices: pickerOn.voices, choices: pickerOn.choices, active: pickerOn.active, gender: pickerOn.gender, fake: pickerOn.fake } : null}
-        languages={data.languages}
+        languages={inOneOrder(data.languages)}
         first={first}
         langNames={CALL_LANG_NAMES}
         endpoint={`${base}/voice-pick`}
@@ -110,6 +119,7 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
         hear={pickerOn ? hearVoiceAction.bind(null, tenantId) : null}
         speaks={speaksPanel}
         examples={toneExamples()}
+        conversations={toneConversations(pack)}
         draftLangs={["te", "hi", "kn"]}
         toneExample={pickerOn && voicePickerScreens() === "on" ? toneExampleAction.bind(null, tenantId) : null}
         canEdit

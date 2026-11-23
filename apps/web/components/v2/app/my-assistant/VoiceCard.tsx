@@ -39,6 +39,8 @@ export type VoiceCardProps = {
   speaks: SpeaksPanel | null;
   /** our own example sentence for each language and tone (the words file); the API's text replaces it where it has one */
   examples: Readonly<Record<string, Partial<Record<SpeakTone, string>>>>;
+  /** a real two-sided sample call per language and tone (customer line, assistant line, ...): shown instead of the one-sided example when there is one */
+  conversations?: Readonly<Record<string, Partial<Record<SpeakTone, readonly string[]>>>>;
   /** the languages whose example sentences are drafts nobody native has read */
   draftLangs: readonly string[];
   toneExample: ToneExample | null;
@@ -60,7 +62,7 @@ type Note = "saved" | "error" | "sample" | "live" | "rate" | "silent" | "unknown
  * the reason, if the API says no. One sound at a time: starting one stops the other. Nothing plays by itself. A recorded sample plays through our own route; a voice with no recording (`sample_ready: false`) is heard live in its own voice and the tone on the screen (`voice_id` and `tone` go with the preview; the sound must name that voice, else it is not played as this one).
  * No Warm/Calm/Bright, no Region, no speed.
  */
-export function VoiceCard({ words, uiLang, picker, languages, first, langNames, endpoint, choose, hear, speaks, examples, draftLangs, toneExample, canEdit, securityHref, testCallHref }: VoiceCardProps) {
+export function VoiceCard({ words, uiLang, picker, languages, first, langNames, endpoint, choose, hear, speaks, examples, conversations, draftLangs, toneExample, canEdit, securityHref, testCallHref }: VoiceCardProps) {
   const t = makeT(words);
   const router = useRouter();
   const [lang, setLang] = React.useState<PickerLang>(languages.includes(first) ? first : (languages[0] ?? first));
@@ -90,7 +92,13 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
   const [apiText, setApiText] = React.useState<Record<string, string>>({});
 
   // ALL the listed voices of the language, women first, then men (C1: the short list has both; choosing one of the other gender switches the assistant's voice type with the same call)
-  const mine = picker ? [...picker.voices.filter((v) => v.language === lang && v.gender === "female"), ...picker.voices.filter((v) => v.language === lang && v.gender === "male")] : [];
+  // one row per voice name (a narration variant shares its name with the plain voice): keep the one in use, else the first
+  const oneEach = <V extends { id: string; name: string }>(list: readonly V[]): V[] =>
+    list.filter((v) => {
+      const same = list.filter((x) => x.name === v.name);
+      return (same.find((x) => x.id === picker?.active[lang]) ?? same[0]) === v;
+    });
+  const mine = picker ? [...oneEach(picker.voices.filter((v) => v.language === lang && v.gender === "female")), ...oneEach(picker.voices.filter((v) => v.language === lang && v.gender === "male"))] : [];
   const own = picker ? mine.filter((v) => v.gender === picker.gender) : [];
   const inUse = picker ? (picked[lang] ?? (picker.active[lang] && mine.some((v) => v.id === picker.active[lang]) ? picker.active[lang] : null) ?? own.find((v) => v.id === picker.choices[lang])?.id ?? own.find((v) => v.isDefault)?.id ?? null) : null;
   const edit = canEdit && !busy;
@@ -186,6 +194,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
     };
   }, [toneExample, state, apiText, exKey, lang, tone]);
   const example = apiText[exKey] ?? examples[exLang]?.[tone] ?? "";
+  const turns = conversations?.[conversations[lang] ? lang : "en"]?.[tone] ?? null;
   const isDraft = apiText[exKey] === undefined && draftLangs.includes(exLang);
 
   const bg = state?.background ?? null;
@@ -304,10 +313,25 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
               </label>
             ))}
           </div>
-          <p data-part="vc-example" aria-live="polite" lang={exLang} className="m-0 mt-1 min-h-[5.5rem] rounded-xl bg-surface-2 px-3.5 py-3 text-[15px] text-ink">
-            <span className="text-muted">{t("vt.ex.label")}</span> “{example}”
-            {isDraft ? <span className="mt-1 block text-sm text-muted">{t("vc.ex.draft")}</span> : null}
-          </p>
+          {turns ? (
+            <div data-part="vc-example" aria-live="polite" lang={conversations?.[lang] ? lang : "en"} className="m-0 mt-1 rounded-xl bg-surface-2 px-3.5 py-3 text-[15px] text-ink">
+              <p className="m-0 text-sm font-semibold text-muted">{t("vc.cv.label")}</p>
+              <ol className="m-0 mt-2 flex list-none flex-col gap-2 p-0">
+                {turns.map((line, i) => (
+                  <li key={i} data-from={i % 2 ? "assistant" : "customer"} className={i % 2 ? "ml-6" : "mr-6"}>
+                    <span className="block text-sm text-muted">{i % 2 ? t("vc.cv.assistant") : t("vc.cv.customer")}</span>
+                    {line}
+                  </li>
+                ))}
+              </ol>
+              {isDraft ? <span className="mt-2 block text-sm text-muted">{t("vc.ex.draft")}</span> : null}
+            </div>
+          ) : (
+            <p data-part="vc-example" aria-live="polite" lang={exLang} className="m-0 mt-1 min-h-[5.5rem] rounded-xl bg-surface-2 px-3.5 py-3 text-[15px] text-ink">
+              <span className="text-muted">{t("vt.ex.label")}</span> “{example}”
+              {isDraft ? <span className="mt-1 block text-sm text-muted">{t("vc.ex.draft")}</span> : null}
+            </p>
+          )}
         </fieldset>
       ) : null}
 
