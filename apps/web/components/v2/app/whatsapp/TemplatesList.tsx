@@ -17,7 +17,7 @@ const btnPrimary = "inline-flex min-h-11 items-center justify-center rounded-[9p
 /**
  * The message templates (job CC, screen 5): a template is what may be sent to a customer whose 24 hours are over, and only an approved one is ever used. The Owner and an Admin can send the drafts to WhatsApp for review (all of them, after a question that names how many, or one row at a time) and ask what WhatsApp answered; each answer redraws the status pills from the templates the API returns. Sending needs the second factor, which the API asks: a refusal says so and links to Security. Nothing is sent to a customer from here. A Sales member only reads.
  */
-export function TemplatesList({ words, items: initial, actions = null }: { words: Words; items: Template[]; /** null = read only (no buttons) */ actions?: TemplateActions | null }) {
+export function TemplatesList({ words, items: initial, actions = null, plain = false }: { /** TEMPLATES_PLAIN: plain rows instead of the table. */ plain?: boolean; words: Words; items: Template[]; /** null = read only (no buttons) */ actions?: TemplateActions | null }) {
   const t = makeT(words);
   // the rows are the page's until an answer from the API replaces them; a new page read (initial changes) wins again
   const [own, setOwn] = React.useState<{ from: Template[]; rows: Template[] }>({ from: initial, rows: initial });
@@ -55,6 +55,85 @@ export function TemplatesList({ words, items: initial, actions = null }: { words
       .filter(Boolean)
       .join(" ");
 
+  if (plain) {
+    // one row per message (all its languages together), its ONE status in words: the least finished language decides
+    const order = ["rejected", "paused", "disabled", "draft", "submitted", "approved"] as const;
+    const groups = new Map<string, Template[]>();
+    for (const x of items) groups.set(x.name.replace(/_v\d+$/, ""), [...(groups.get(x.name.replace(/_v\d+$/, "")) ?? []), x]);
+    const plainName = (n: string) => (words[`wa.tpl.plain.${n}`] ? t(`wa.tpl.plain.${n}`) : (n.replace(/_/g, " ").charAt(0).toUpperCase() + n.replace(/_/g, " ").slice(1)));
+    return (
+      <section data-whatsapp="templates" data-plain="" aria-label={t("wa.tpl.title")} className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <p className="m-0 min-w-0 flex-1 text-[15px] text-muted">{t("wa.tpl.plain.note")}</p>
+          {actions ? (
+            <button type="button" className={btnPrimary} disabled={busy !== null || drafts.length === 0} onClick={() => setAsking(true)} data-part="send-drafts">
+              {t("wa.tpl.plain.send_all")}
+            </button>
+          ) : null}
+        </div>
+        {actions && asking ? (
+          <div role="group" aria-label={t("wa.tpl.plain.send_all")} className="flex flex-wrap items-center gap-3 border-y border-line py-3" data-part="send-drafts-confirm">
+            <p className="m-0 text-base font-medium text-ink">{t(drafts.length === 1 ? "wa.tpl.send_all.confirm.one" : "wa.tpl.send_all.confirm.other", { n: drafts.length })}</p>
+            <button
+              type="button"
+              className={btnPrimary}
+              disabled={busy !== null || drafts.length === 0}
+              onClick={() => {
+                setAsking(false);
+                void go("all", actions.submitDrafts, sentAll, true);
+              }}
+            >
+              {t("wa.tpl.send_one")}
+            </button>
+            <button type="button" className="text-[15px] font-semibold text-muted underline underline-offset-4" onClick={() => setAsking(false)}>
+              {t("wa.tpl.cancel")}
+            </button>
+          </div>
+        ) : null}
+        <FailureNote failure={failure} words={words} own={(code) => (code === "whatsapp_refused" && failure?.error ? failure.error : waSentence(code, t))} />
+        {said ? (
+          <p role="status" className="m-0 text-base font-medium text-ink" data-part="template-said">
+            {said}
+          </p>
+        ) : null}
+        {notAccepted.length > 0 ? (
+          <ul role="status" className="m-0 flex list-none flex-col gap-1 p-0 text-[15px] text-ink" data-part="templates-not-accepted">
+            {notAccepted.map((f) => (
+              <li key={f.id} data-part="not-accepted-row">
+                {`${plainName(f.name.replace(/_v\d+$/, ""))} · ${words[`today.lang.${f.language}`] ?? f.language}: ${f.reason}`}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        {items.length === 0 ? (
+          <p className="m-0 text-base text-muted">{t("wa.tpl.none")}</p>
+        ) : (
+          <ul className="m-0 flex list-none flex-col border-t border-line p-0">
+            {[...groups.entries()].map(([name, rows]) => {
+              const status = order.find((o) => rows.some((r) => r.status === o)) ?? "approved";
+              const key = status === "paused" || status === "disabled" ? "rejected" : status;
+              return (
+                <li key={name} data-template={name} data-status={status} className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-line py-4">
+                  <div className="min-w-0 flex-1">
+                    <p className="m-0 text-[17px] font-semibold text-ink">{plainName(name)}</p>
+                    <p className="m-0 text-[15px] text-muted">{[...new Set(rows.map((r) => t(`today.lang.${r.language}`)))].join(" · ")}</p>
+                  </div>
+                  <span className={`shrink-0 text-[15px] ${status === "draft" ? "text-muted" : status === "approved" ? "text-ink" : "font-semibold text-brand-text"}`}>{t(`wa.tpl.plain.${key}`)}</span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {actions ? (
+          <p className="m-0">
+            <button type="button" className="text-[15px] font-semibold text-muted underline underline-offset-4" disabled={busy !== null} onClick={() => void go("sync", actions.sync, (r) => ((r.changed ?? 0) > 0 ? t("wa.tpl.done.sync", { n: r.changed ?? 0 }) : t("wa.tpl.done.nochange")), true)}>
+              {busy === "sync" ? t("dta.btn.working") : t("wa.tpl.sync")}
+            </button>
+          </p>
+        ) : null}
+      </section>
+    );
+  }
   return (
     <section className={card} aria-labelledby="wa-templates-h" data-whatsapp="templates">
       <h2 id="wa-templates-h" className={h2}>
