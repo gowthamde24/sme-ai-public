@@ -126,8 +126,8 @@ checks(check_name, ok, detail) as (
   -- first-run pack and What-you-sell (migrations 20261231988000 and 20261231988100): NULL (INFO) until they are applied, then a real check
   select 'what-you-sell: table, RLS, the audit and tenant-id triggers',
          case when to_regclass('public.sell_entries') is null then null
-              else (select c.relrowsecurity and c.relforcerowsecurity from pg_class c where c.oid = 'public.sell_entries'::regclass)
-                   and (select count(*) from pg_trigger where tgrelid = 'public.sell_entries'::regclass and not tgisinternal
+              else (select c.relrowsecurity and c.relforcerowsecurity from pg_class c where c.oid = to_regclass('public.sell_entries'))
+                   and (select count(*) from pg_trigger where tgrelid = to_regclass('public.sell_entries') and not tgisinternal
                            and tgname in ('audit_sell_entries', 'sell_entries_forbid_tenant_id_change')) = 2 end,
          case when to_regclass('public.sell_entries') is null then 'not applied yet' else 'sell_entries present' end
   union all
