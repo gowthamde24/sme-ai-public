@@ -4,6 +4,7 @@ begin;
 select no_plan();
 select tests.seed_two_tenants();
 select tests.cp_pack('a', 'textiles');
+update packs.workspace_pack set source = 'default' where tenant_id = tests.tid('a');   -- cp_pack marks it chosen by the operator; D wants a workspace nobody typed
 
 create function pg_temp.at(p_aal text, p_user text, p_sql text) returns text language plpgsql as $$
 begin perform tests.as_aal(p_aal); return tests.scalar_as(case when p_user = 'anon' then null else tests.uid(p_user) end, p_sql);
