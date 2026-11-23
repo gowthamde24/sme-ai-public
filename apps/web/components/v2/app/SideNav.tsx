@@ -60,7 +60,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
           {collapsed ? null : <span className="font-display text-xl font-extrabold tracking-tight">{BRAND_NAME}</span>}
         </Link>
       ) : null}
-      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} still={still} />
+      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={frame.ds ? null : badge} logoUrl={frame.logoUrl} still={still} early={frame.earlyAccess === true} />
       {desktop && !frame.ds ? (
         <div className="hidden px-2 pb-0.5 pt-1.5 lg:block">
           <button type="button" data-top="menu-search" onClick={() => window.dispatchEvent(new Event(OPEN_PALETTE))} aria-haspopup="dialog" aria-label={word(labels, "frame.search.jump", "Search or jump to")} title={collapsed ? word(labels, "frame.search.jump", "Search or jump to") : undefined} className={`inline-flex min-h-11 w-full items-center gap-2 rounded-xl border border-edge bg-surface px-3 text-left text-sm text-muted hover:border-brand-edge ${collapsed ? "justify-center px-0" : ""}`}>
