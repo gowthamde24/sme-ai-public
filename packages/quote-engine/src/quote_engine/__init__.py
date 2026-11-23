@@ -1,7 +1,7 @@
 """Pure synthetic quote calculation; see docs/plans/t009-quote-engine.md."""
-from datetime import date, timedelta
 import hashlib
 import json
+from datetime import date, timedelta
 
 ENGINE_VERSION = "1.1.0"
 

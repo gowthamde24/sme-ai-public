@@ -5,7 +5,6 @@ place; it must neither fail on the quote's foreign keys nor change one figure or
 column of those tables is classified SAFE (a code, a business sku or product name, a canonical request) and no planted identifier is found in any of them. The erasure
 code was NOT changed for this (the test passes against the T006b / T008 functions as they are). All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

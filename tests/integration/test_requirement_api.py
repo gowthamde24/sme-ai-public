@@ -3,7 +3,7 @@ a requirement run proposes fields, a person confirms / corrects / rejects / adds
 requirement is confirmed on type + quantity alone and requirement_v1 then shows exactly the accepted fields. Roles, tenants and the fixed
 errors are checked on every step."""
 
-# ruff: noqa: E501, S608, F811
+# ruff: noqa: F811
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from test_requirement_e2e import (
 )
 
 RAW = (
-    "Hello,​\nNeed  20 kanjivaram   sarees in red and 10 banarasi sarees in blue.\n"
+    "Hello,\u200b\nNeed  20 kanjivaram   sarees in red and 10 banarasi sarees in blue.\n"
     "Deliver to Hyderabad by 15 November 2026. Budget Rs 5,000 per piece. 30 days credit please.\n"
     "Call me on +91 98765 43210 or write to buyer@example.com. GSTIN 29ABCDE1234F1Z5."
 )
@@ -88,7 +88,7 @@ def by_key(v: dict[str, Any]) -> dict[tuple[int | None, str], dict[str, Any]]:
 
 def test_the_whole_flow_from_paste_to_a_confirmed_requirement(
     api: tuple[TestClient, World],
-) -> None:  # noqa: F811
+) -> None:
     client, w = api
     t = w.a
     # 1. paste: the contact details and the invisible character never reach the database
@@ -101,7 +101,7 @@ def test_the_whole_flow_from_paste_to_a_confirmed_requirement(
     assert (
         "98765" not in body
         and "buyer@example.com" not in body
-        and "​" not in body
+        and "\u200b" not in body
         and body.count("[contact removed]") == 2
     )
     assert "GSTIN 29ABCDE1234F1Z5" in body and "Rs 5,000" in body and "15 November 2026" in body
@@ -321,7 +321,7 @@ def test_the_whole_flow_from_paste_to_a_confirmed_requirement(
 
 def test_a_manual_field_added_to_a_draft_is_theirs_and_makes_it_confirmable(
     api: tuple[TestClient, World],
-) -> None:  # noqa: F811
+) -> None:
     client, w = api
     t = w.a
     eid = capture(client, t, "Need 5 paithani sarees to Pune by 20 November 2026").json()[
@@ -385,10 +385,10 @@ def test_a_manual_field_added_to_a_draft_is_theirs_and_makes_it_confirmable(
     assert len(view(client, t, eid)["fields"]) == 2
 
 
-def test_what_capture_refuses_and_hides(api: tuple[TestClient, World]) -> None:  # noqa: F811
+def test_what_capture_refuses_and_hides(api: tuple[TestClient, World]) -> None:
     client, w = api
     t = w.a
-    assert capture(client, t, "​ ​").status_code == 422
+    assert capture(client, t, "\u200b \u200b").status_code == 422
     assert capture(client, t, "ok", user="viewer").status_code == 403
     assert capture(client, w.b, "ok", user="sales").status_code in (200, 201)
     foreign = client.post(
@@ -434,7 +434,7 @@ def _post_field(
 
 def test_an_exact_retry_on_a_confirmed_requirement_is_matched_on_every_part_of_the_field(
     api: tuple[TestClient, World],
-) -> None:  # noqa: F811
+) -> None:
     """Small fix A1, mutation pass: the replay compares the slot (key AND line), the person, the value (code, number, basis, text) and the quote. Any difference is refused."""
     client, w = api
     t = w.a
@@ -506,7 +506,7 @@ def test_an_exact_retry_on_a_confirmed_requirement_is_matched_on_every_part_of_t
 
 def test_an_exact_retry_with_the_same_span_replays_and_another_span_of_the_same_words_does_not(
     api: tuple[TestClient, World],
-) -> None:  # noqa: F811
+) -> None:
     """The API finds the span itself, so a different span of the same words reaches the database only through its own function: the database must still refuse it."""
     from quote_support import rpc
 
@@ -563,7 +563,7 @@ def test_an_exact_retry_with_the_same_span_replays_and_another_span_of_the_same_
 
 def test_a_field_an_agent_proposed_and_a_person_confirmed_is_not_the_persons_own_retry(
     api: tuple[TestClient, World],
-) -> None:  # noqa: F811
+) -> None:
     """A person who CONFIRMED an agent's field did not type it: writing the same content again after the requirement is confirmed is refused, not replayed."""
     client, w = api
     t = w.a

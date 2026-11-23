@@ -16,11 +16,12 @@ from __future__ import annotations
 import argparse
 import re
 import sys
-import tomllib
 from pathlib import Path
 
+import tomllib
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import sb_mgmt  # noqa: E402
+import sb_mgmt
 
 ROOT = Path(__file__).resolve().parents[1]
 # the repository's name for each template, and the Management API's

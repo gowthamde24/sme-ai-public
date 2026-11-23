@@ -12,7 +12,6 @@ The English meaning is the English text next to it in the same table when there 
 (ANTHROPIC_API_KEY in the environment; a few hundred short lines, a few cents); it is then a machine translation, for the reviewer to correct. Nothing else is sent anywhere.
 Words used by rules and not spoken as a sentence (the goodbye words, the language names) are not included."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -176,7 +175,7 @@ def main() -> None:
     tables = sorted(api_tables(), key=lambda t: (PHONE_FILES.index(str(t["file"])) if str(t["file"]) in PHONE_FILES else 99, str(t["file"]), int(t["line"])))   # type: ignore[call-overload]
     for t in tables:
         is_phone = str(t["file"]) in PHONE_FILES
-        label = LABELS.get(str(t["name"]), f"{str(t['file'])}: {t['name']}{('.' + str(t['trail'])) if t['trail'] else ''}")
+        label = LABELS.get(str(t["name"]), f"{t['file']!s}: {t['name']}{('.' + str(t['trail'])) if t['trail'] else ''}")
         if is_phone and not label.startswith(("Phone", "Live", "Voice")):
             label = f"Phone/Live talk: {label}"
         if not is_phone:

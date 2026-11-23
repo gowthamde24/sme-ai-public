@@ -21,7 +21,6 @@ For every (business, predicate), against `expected` (a value, or null = the site
   abstained_ok    nothing expected and nothing proposed
 """
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -36,38 +35,38 @@ ROOT = Path(__file__).resolve().parents[1] / "golden" / "research"
 PREDICATES = ("buyer_type", "order_scale", "size_band", "operating_status")
 
 OTHER_COMPANY_OR_PAST = re.compile(
-    r"\b(sister|partner|affiliate|formerly|used to|no longer|not|never|closed our)\b", re.I
+    r"\b(sister|partner|affiliate|formerly|used to|no longer|not|never|closed our)\b", re.IGNORECASE
 )
 CUES: dict[tuple[str, str], re.Pattern[str]] = {
-    ("buyer_type", "wholesaler"): re.compile(r"wholesale", re.I),
-    ("buyer_type", "saree_shop"): re.compile(r"saree (?:shop|store|showroom)", re.I),
-    ("buyer_type", "boutique"): re.compile(r"boutique", re.I),
+    ("buyer_type", "wholesaler"): re.compile(r"wholesale", re.IGNORECASE),
+    ("buyer_type", "saree_shop"): re.compile(r"saree (?:shop|store|showroom)", re.IGNORECASE),
+    ("buyer_type", "boutique"): re.compile(r"boutique", re.IGNORECASE),
     ("buyer_type", "consumer"): re.compile(
-        r"walk-in customers|retail customers only|individual customers only", re.I
+        r"walk-in customers|retail customers only|individual customers only", re.IGNORECASE
     ),
-    ("buyer_type", "multi_brand_store"): re.compile(r"multi-?brand", re.I),
-    ("buyer_type", "regional_chain"): re.compile(r"\d+ (?:stores|branches|outlets)|chain of", re.I),
-    ("buyer_type", "other"): re.compile(r"uniforms|dress fabrics", re.I),
+    ("buyer_type", "multi_brand_store"): re.compile(r"multi-?brand", re.IGNORECASE),
+    ("buyer_type", "regional_chain"): re.compile(r"\d+ (?:stores|branches|outlets)|chain of", re.IGNORECASE),
+    ("buyer_type", "other"): re.compile(r"uniforms|dress fabrics", re.IGNORECASE),
     ("order_scale", "five_or_more_per_order"): re.compile(
-        r"minimum (?:of )?five pieces|five or more pieces|bulk", re.I
+        r"minimum (?:of )?five pieces|five or more pieces|bulk", re.IGNORECASE
     ),
     ("order_scale", "fewer_than_five_per_order"): re.compile(
-        r"single pieces?|no bulk|one piece at a time", re.I
+        r"single pieces?|no bulk|one piece at a time", re.IGNORECASE
     ),
     ("size_band", "large"): re.compile(
-        r"(?:over|more than) \d{3,} (?:staff|employees)|large group", re.I
+        r"(?:over|more than) \d{3,} (?:staff|employees)|large group", re.IGNORECASE
     ),
-    ("size_band", "medium"): re.compile(r"mid-sized|medium-sized", re.I),
-    ("size_band", "small"): re.compile(r"small (?:team|business)", re.I),
-    ("size_band", "micro"): re.compile(r"two people|one-person|one person|home-based", re.I),
+    ("size_band", "medium"): re.compile(r"mid-sized|medium-sized", re.IGNORECASE),
+    ("size_band", "small"): re.compile(r"small (?:team|business)", re.IGNORECASE),
+    ("size_band", "micro"): re.compile(r"two people|one-person|one person|home-based", re.IGNORECASE),
     ("operating_status", "active"): re.compile(
-        r"open (?:daily|every day|six days|seven days)", re.I
+        r"open (?:daily|every day|six days|seven days)", re.IGNORECASE
     ),
     ("operating_status", "closed"): re.compile(
-        r"closed permanently|permanently closed|shut down", re.I
+        r"closed permanently|permanently closed|shut down", re.IGNORECASE
     ),
     ("operating_status", "inactive"): re.compile(
-        r"temporarily closed|not operating|on a break", re.I
+        r"temporarily closed|not operating|on a break", re.IGNORECASE
     ),
 }
 

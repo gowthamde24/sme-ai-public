@@ -12,7 +12,6 @@ TEXT ONLY (no voice engine, no Cartesia), and every call is scored by code on fi
 `--code` lets the SAME scorer judge an older version (the "before") and this one (the "after"). Costs: one model call per caller line (7 languages x 5 personas x 4 lines = 140 short calls).
 The model's words are written to the report for people to read; nothing is sent anywhere else."""
 
-# ruff: noqa: E501
 
 
 from __future__ import annotations

@@ -1,7 +1,6 @@
 """`make seed-demo-outbox` (job AT): the local demo for the outbox. It refuses a non-local stack before any network call, holds no secret, is idempotent, and what it seeds shows in the approval
 queue and on Today (real stack, real application). Nothing it makes is sent to anyone: the only channel is a stand-in inside the application."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -20,8 +19,8 @@ from fastapi.testclient import TestClient
 SCRIPTS = Path(__file__).resolve().parents[2] / "scripts"
 SCRIPT = SCRIPTS / "seed_demo_outbox.py"
 sys.path.insert(0, str(SCRIPTS))
-import seed_demo_manual as manual  # noqa: E402
-from seed_demo import Config  # noqa: E402
+import seed_demo_manual as manual
+from seed_demo import Config
 
 spec = importlib.util.spec_from_file_location("seed_demo_outbox", SCRIPT)
 assert spec and spec.loader

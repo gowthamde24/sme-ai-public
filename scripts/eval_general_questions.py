@@ -1,4 +1,3 @@
-# ruff: noqa: E501
 """Live eval of general questions on STAGING (13 Nov 2026): the cases of tests/evals/general/cases.jsonl (Telugu, Kannada, Hindi, English) asked in the written chat as one synthetic demo owner. Real providers: the "what can
 you do?" cases are fixed words (no model call); the others are one light-model call, so the run costs a few rupees of the demo workspace's daily allowance.
 
@@ -22,11 +21,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-import seed_staging as ss  # noqa: E402
-from staging_smoke_api import Owner  # noqa: E402
-
-from app.assistant.language import COULD_NOT_ANSWER  # noqa: E402
-from app.turns.words import ABOUT_ASSISTANT  # noqa: E402
+import seed_staging as ss
+from app.assistant.language import COULD_NOT_ANSWER
+from app.turns.words import ABOUT_ASSISTANT
+from staging_smoke_api import Owner
 
 API = "https://sme-api-620338396268.asia-south1.run.app"
 CASES = Path(__file__).resolve().parents[1] / "tests" / "evals" / "general" / "cases.jsonl"
@@ -54,7 +52,7 @@ def ask_once(owner: Owner, text: str, language: str) -> dict[str, object]:
     text: list[str] = []
     errors: list[str] = []
     event = ""
-    with urllib.request.urlopen(req, timeout=120) as r:  # noqa: S310
+    with urllib.request.urlopen(req, timeout=120) as r:
         for raw in r:
             line = raw.decode().strip()
             if line.startswith("event:"):

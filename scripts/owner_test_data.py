@@ -1,4 +1,4 @@
-# ruff: noqa: E501  (long lines are this repository's seed-script style; its pyproject lists the other seed scripts under per-file E501 ignores)
+
 """A believable week of SYNTHETIC data for the owner's three test workspaces on staging (job test-workspaces, 4 Nov 2026), used by scripts/seed_owner_test.py (`--phase seed`).
 
     seed(pack, call) -> dict[str, str]      call(method, path_after_the_tenant, body=None, raw=None) -> (status, json), exactly as scripts/demo_data.py

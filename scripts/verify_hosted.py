@@ -245,7 +245,7 @@ def check_database(report: Report) -> None:
             f"run {SQL_FILE.relative_to(ROOT)} in the Supabase SQL editor as postgres; every row must be ok = true",
         )
         return
-    result = subprocess.run(  # noqa: S603 - fixed argv, our own SQL file; connection and read-only mode travel in the environment
+    result = subprocess.run(
         [psql, "-X", "-A", "-t", "-F", "\t", "-v", "ON_ERROR_STOP=1", "-f", str(SQL_FILE)],
         env=psql_environment(url, dict(os.environ)),
         capture_output=True,

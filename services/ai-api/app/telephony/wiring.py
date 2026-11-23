@@ -23,6 +23,7 @@ from app.telephony.plivo_api import PlivoApi
 from app.telephony.plivo_outbound import PlivoOutbound, PostgrestOutboundRepo
 from app.telephony.plivo_routes import PlivoConfig, SubaccountTokens
 from app.telephony.settings import gate_settings
+from app.telephony.voicelink_routes import VoicelinkConfig
 from app.voice.budget import RpcVoiceBudget
 from app.workspace_secrets import GcpSecretStore
 
@@ -37,8 +38,9 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
     password = settings.scheduler_password.get_secret_value() if settings.scheduler_password else ""
     base = (settings.public_base_url or "").strip()
     plivo_token = settings.plivo_auth_token.get_secret_value() if settings.plivo_auth_token else ""
+    vl_token = settings.voicelink_ws_token.get_secret_value() if settings.voicelink_ws_token else ""   # VoiceLink's bot address token: the route is off without it
     # a deployment can answer Exotel (needs its stream secret), Plivo (needs its Auth Token), or both
-    missing = [n for n, v in (("EXOTEL_STREAM_SECRET or PLIVO_AUTH_TOKEN", len(secret) >= 32 or len(plivo_token) >= 16), ("PUBLIC_BASE_URL", base), ("SCHEDULER_EMAIL", settings.scheduler_email), ("SCHEDULER_PASSWORD", password)) if not v]
+    missing = [n for n, v in (("EXOTEL_STREAM_SECRET or PLIVO_AUTH_TOKEN or VOICELINK_WS_TOKEN", len(secret) >= 32 or len(plivo_token) >= 16 or len(vl_token) >= 32), ("PUBLIC_BASE_URL", base), ("SCHEDULER_EMAIL", settings.scheduler_email), ("SCHEDULER_PASSWORD", password)) if not v]
     if gs.mode == "off":
         return None
     if missing:
@@ -73,6 +75,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         budget=RpcVoiceBudget(RpcClient(rest_url, anon_key), principal.token),
         opening_store=OpeningStore(f"{supabase_url}/storage/v1", anon_key, principal.token),
         plivo=PlivoConfig(auth_token=plivo_token, public_base=base, token_for=tokens) if len(plivo_token) >= 16 else None,
+        voicelink=VoicelinkConfig(ws_token=vl_token) if len(vl_token) >= 32 else None,
         usage=PostgrestUsageRecorder(RpcClient(rest_url, anon_key, timeout=USAGE_TIMEOUT_S), principal),   # the provider usage ledger, as the same scheduler account
         outbound=placer, outbound_repo=outbound_repo,
         trial=trial_rule(settings.exotel_trial_number, settings.exotel_trial_caller, settings.exotel_sid, settings.exotel_trial_app_id,

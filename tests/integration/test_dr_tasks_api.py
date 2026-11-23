@@ -2,7 +2,6 @@
 
 What this proves that the pgTAP file (127) and the unit tests cannot: the database's answers are accepted by the strict response models and conform to the generated contract (packages/contracts/tasks.schema.json); the roles hold over HTTP (Sales plans, only the Owner approves, Viewer reads); the approval starts a run whose messages are ordinary outbox rows (assistant, followup, a deterministic id) and whose people end done; the report puts a short answer first; another workspace sees nothing. The planning call itself (the model) is covered by the unit tests with a scripted model and by `make tasks-eval`."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -13,9 +12,8 @@ from typing import Any
 
 import jsonschema
 import operator_sql
-from conftest import bearer
-
 from app.tasks.repository import PostgrestTasksRepository
+from conftest import bearer
 
 ROOT = Path(__file__).resolve().parents[2]
 TASKS = json.loads((ROOT / "packages" / "contracts" / "tasks.schema.json").read_text(encoding="utf-8"))

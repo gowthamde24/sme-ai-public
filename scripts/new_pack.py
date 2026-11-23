@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import packs_check as pc  # noqa: E402
+import packs_check as pc
 
 BASE_MODULES = ["today", "inbox", "contacts", "enquiries", "followups", "call_list", "reports", "office", "integrations"]
 

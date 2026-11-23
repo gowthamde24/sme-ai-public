@@ -17,12 +17,12 @@ import wave
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.conversation.providers import CartesiaStreamTts  # noqa: E402
-from app.conversation.pronounce import default_pronunciations  # noqa: E402
-from app.conversation.voices import default_config  # noqa: E402
+from app.conversation.pronounce import default_pronunciations
+from app.conversation.providers import CartesiaStreamTts
+from app.conversation.voices import default_config
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from voice_filler_bank import RATE, trim  # noqa: E402
+from voice_filler_bank import RATE, trim
 
 
 def write_wav(path: Path, pcm: bytes) -> None:

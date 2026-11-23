@@ -16,8 +16,8 @@ import uuid
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import seed_staging as ss  # noqa: E402
-import staging_smoke_api as sm  # noqa: E402
+import seed_staging as ss
+import staging_smoke_api as sm
 
 QUESTION = "What needs me today? Answer in two short sentences."
 
@@ -25,10 +25,10 @@ QUESTION = "What needs me today? Answer in two short sentences."
 def ask(o: sm.Owner, api: str) -> dict:
     body = json.dumps({"message_id": str(uuid.uuid4()), "text": QUESTION}).encode()
     req = urllib.request.Request(f"{api}{o.t}/assistant/messages", data=body, method="POST",
-                                 headers={"Authorization": f"Bearer {o.token}", "Content-Type": "application/json", "Accept": "text/event-stream"})  # noqa: S310 - https only
+                                 headers={"Authorization": f"Bearer {o.token}", "Content-Type": "application/json", "Accept": "text/event-stream"})
     events: list[dict] = []
     try:
-        with urllib.request.urlopen(req, timeout=120) as r:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=120) as r:
             for raw in r:
                 line = raw.decode("utf-8", "replace").strip()
                 if line.startswith("data:"):

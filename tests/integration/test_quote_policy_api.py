@@ -8,7 +8,6 @@
     input rules refuse with a fixed sentence and create nothing.
 All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

@@ -1,8 +1,8 @@
 import copy
 import json
-from pathlib import Path
 import random
 import unittest
+from pathlib import Path
 
 import requirement_mapper as engine
 

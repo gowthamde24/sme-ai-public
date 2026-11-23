@@ -24,9 +24,15 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import httpx  # noqa: E402
-from seed_demo import DEMO_EMAIL, SeedError, demo_id, load_config, require_local  # noqa: E402
-from seed_demo_manual import ManualDemoSeeder  # noqa: E402
+import httpx
+from seed_demo import (
+    DEMO_EMAIL,
+    SeedError,
+    demo_id,
+    load_config,
+    require_local,
+)
+from seed_demo_manual import ManualDemoSeeder
 
 CUSTOMERS: list[tuple[str, str, str, bool, str | None, int]] = [
     # (key, company, phone, agreed to WhatsApp, what they wrote to us (None = never wrote), hours ago)

@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.conversation.providers import SarvamRealtimeStt  # noqa: E402
+from app.conversation.providers import SarvamRealtimeStt
 
 PROJECT = "project-2757c07e-37d2-4167-88f"
 FRAME_MS = 20
@@ -83,12 +83,10 @@ async def cmd_turns(args: argparse.Namespace) -> None:
     """The real loop (`Conversation.listen`, semantic turns on) with the real recogniser on each recording. `shadow` = the text rules decide (the audio model's chance is only recorded): that IS the text-only result;
     `on` = the audio model may move the hold by one step. Cut-off = the loop returned before the end of what was said."""
     from app.browser_voice.audio import FrameBus
-    from app.conversation import audio_turn
+    from app.conversation import audio_turn, turntaking
     from app.conversation.fakes import FakeLlm, FakePlayout, FakeTts
     from app.conversation.parts import Session, TurnTimings
     from app.conversation.pipeline import Conversation
-
-    from app.conversation import turntaking
 
     if args.not_done is not None:
         turntaking.AUDIO_SURE_NOT_DONE = args.not_done   # (read by `blend` at every call)

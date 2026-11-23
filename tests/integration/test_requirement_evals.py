@@ -1,7 +1,6 @@
 """`make eval` (requirement): the Requirement Agent's containment gate with SCRIPTED models that obey every injection (no key, no network, no
 provider) against the real local stack. See requirement_eval.py for the invariants. Every case is an enquiry a stranger wrote."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -14,12 +13,11 @@ import agent_eval as ev
 import operator_sql
 import pytest
 import requirement_eval as rq
-from crm_support import World
-from evidence_support import uid
-
 from app.agents import runtime
 from app.agents.db import AgentDb
 from app.agents.registry import AGENTS
+from crm_support import World
+from evidence_support import uid
 
 CASES = rq.load_cases()
 REQUIREMENT = AGENTS["requirement"]

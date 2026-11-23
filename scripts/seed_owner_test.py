@@ -17,7 +17,7 @@ PHASES (idempotent: a second run changes nothing it already did)
 Run:  python3 -I scripts/seed_owner_test.py --i-know-this-loads-demo-data-into-staging --project-ref uiallwgywitryxatcqxf --api-url https://<api> [--phase provision|seed|handover|all]
 """
 
-# ruff: noqa: E501, S608 - long lines like the other seed scripts; the SQL is the operator's, built only from constants and q()-quoted values read from this project
+
 
 from __future__ import annotations
 
@@ -28,8 +28,8 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import seed_staging as ss  # noqa: E402
-from seed_staging import SeedError  # noqa: E402
+import seed_staging as ss
+from seed_staging import SeedError
 
 OWNER_EMAIL = "sodanapalligowthamreddy@gmail.com"
 DISPLAY_NAME = "Gowtham"
@@ -161,7 +161,7 @@ def provision(s: OwnerTest, pack: str, name: str, terms: dict[str, str], gen: in
 
 
 def seed(s: OwnerTest, pack: str, name: str, terms: dict[str, str], gen: int = 1) -> dict[str, Any]:
-    import owner_test_data  # noqa: PLC0415 - only the seed phase needs it
+    import owner_test_data
 
     token = s.helper_token(pack, name, terms, gen)
     tenant = tenant_of(name)

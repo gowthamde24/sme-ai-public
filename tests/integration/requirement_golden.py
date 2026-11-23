@@ -15,7 +15,6 @@ The careful reviewer is a SCRIPT: it approves what equals the answer, corrects w
 and leaves what is missing alone. Every decision goes through the real decide function.
 """
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 

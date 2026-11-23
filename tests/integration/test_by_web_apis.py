@@ -1,7 +1,6 @@
 """Job BY on the real stack: the team (invitations by code, the failed-attempt lock that must SURVIVE the request, races, the second factor, roles, removal), the shop's basics, the weekly report and the
 notification feed with web-push end to end (a fake push service decrypts what the worker sends). All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -14,6 +13,10 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
+from app.notifications.repository import PostgrestNotificationsRepository
+from app.notifications.runner import PushRunner
+from app.notifications.webpush import VapidKeys, WebPushSender, b64e
+from app.scheduler.session import PrincipalSession
 from conftest import Stack, User, aal1_token, bearer
 from crm_support import Tenant, World
 from cryptography.hazmat.primitives import serialization
@@ -21,11 +24,6 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from evidence_support import uid
 from fastapi.testclient import TestClient
 from push_support import decrypt_push
-
-from app.notifications.repository import PostgrestNotificationsRepository
-from app.notifications.runner import PushRunner
-from app.notifications.webpush import VapidKeys, WebPushSender, b64e
-from app.scheduler.session import PrincipalSession
 
 
 def url(t: Tenant, path: str) -> str:

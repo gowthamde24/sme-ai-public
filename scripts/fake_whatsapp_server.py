@@ -26,15 +26,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
 
-from app.whatsapp import payloads, webhook  # noqa: E402
-from app.whatsapp.fake_graph import FakeGraph  # noqa: E402
+from app.whatsapp import payloads, webhook
+from app.whatsapp.fake_graph import FakeGraph
 
 
 def push(url: str, secret: str, payload: dict) -> int:
     body = payloads.raw(payload)
-    request = urllib.request.Request(url, data=body, method="POST", headers={"Content-Type": "application/json", "X-Hub-Signature-256": webhook.sign(body, secret)})  # noqa: S310 - a URL the developer passed
+    request = urllib.request.Request(url, data=body, method="POST", headers={"Content-Type": "application/json", "X-Hub-Signature-256": webhook.sign(body, secret)})
     try:
-        with urllib.request.urlopen(request, timeout=10) as response:  # noqa: S310
+        with urllib.request.urlopen(request, timeout=10) as response:
             return int(response.status)
     except urllib.error.HTTPError as exc:
         return int(exc.code)
@@ -66,13 +66,13 @@ def main() -> int:
         def log_message(self, *_: object) -> None:  # numbers and texts stay out of the log
             return
 
-        def do_GET(self) -> None:  # noqa: N802
+        def do_GET(self) -> None:
             if self.path == "/_fake/sent":
                 self._reply(200, graph.sent)
             else:
                 self._reply(404, {"error": "not found"})
 
-        def do_POST(self) -> None:  # noqa: N802
+        def do_POST(self) -> None:
             body = self.rfile.read(int(self.headers.get("Content-Length") or 0))
             if self.path.startswith("/_fake/"):
                 self._admin(self.path, json.loads(body or b"{}"))
@@ -109,7 +109,7 @@ def main() -> int:
                 self._reply(404, {"error": "not found"})
 
     server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
-    print(f"fake WhatsApp on http://127.0.0.1:{args.port} (token '{args.token}'), webhook -> {args.webhook_url}")  # noqa: T201
+    print(f"fake WhatsApp on http://127.0.0.1:{args.port} (token '{args.token}'), webhook -> {args.webhook_url}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

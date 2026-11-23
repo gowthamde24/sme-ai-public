@@ -109,7 +109,7 @@ def plan_ids_in_code(plans_dir: Path = PLANS, files: list[Path] | None = None, r
     ids = [p["id"] for p in load_catalogue(plans_dir)["plans"]]
     alternatives = "|".join(re.escape(i) for i in ids)
     literal = re.compile(rf"""(["'`])({alternatives})\1""")
-    talks_of_plan = re.compile(r"plan", re.I)
+    talks_of_plan = re.compile(r"plan", re.IGNORECASE)
     hits: list[str] = []
     allowed = _allowed()
     for path in files if files is not None else _code_files():

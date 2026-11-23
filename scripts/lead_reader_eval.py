@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.lead_profile.reader import AnthropicLeadReader  # noqa: E402
-from app.lead_profile.service import verified_fields  # noqa: E402
+from app.lead_profile.reader import AnthropicLeadReader
+from app.lead_profile.service import verified_fields
 
 ROOT = Path(__file__).resolve().parents[1]
 

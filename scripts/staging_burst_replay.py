@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# ruff: noqa: E501, S310, S603, S607, T201
 """The 12 Nov burst, replayed against STAGING through the API the way the web does it (docs/plans/db-timeouts-and-sizing.md, "The replay"). Read-only: it only GETs, as the demo owners.
 
   step 1  ONE signed-in owner opens Today every 5 s            (default 10 minutes)

@@ -12,7 +12,7 @@ competing write:
   * a storm of mixed operations from several clients: no deadlock (the database's own counter), no server error, the invariants hold.
 All data is synthetic."""
 
-# ruff: noqa: E501, S608, S311, B023
+# ruff: noqa: B023
 
 from __future__ import annotations
 
@@ -30,13 +30,12 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
+from app.followups.messages import FOLLOWUP_REFUSALS
 from crm_support import World
 from evidence_support import uid
 from fastapi.testclient import TestClient
 from followup_support import FollowWorld, Lead
 from test_requirement_concurrency import Held, _row_is_locked
-
-from app.followups.messages import FOLLOWUP_REFUSALS
 
 
 @pytest.fixture(scope="module")
@@ -86,7 +85,7 @@ def row_lock_held(table: str, row_id: str, mode: str) -> bool:
     `for update nowait` cannot tell a deliberate lock from those. `key share` fails only against an explicit FOR UPDATE; `no key update` fails against an explicit FOR SHARE or FOR UPDATE."""
     docker = shutil.which("docker")
     assert docker is not None, "docker is required for the integration tests"
-    out = subprocess.run(  # noqa: S603 (the arguments are this test's own: a table name and a row id it made)
+    out = subprocess.run(
         [docker, "exec", "-i", operator_sql.container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c", f"select 1 from public.{table} where id = '{row_id}' for {mode} nowait"],
         capture_output=True,
         text=True,

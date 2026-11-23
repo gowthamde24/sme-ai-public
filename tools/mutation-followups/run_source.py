@@ -8,7 +8,6 @@
 A mutant is ONE text replacement in ONE source file. The file must be clean in git before the mutant (the run refuses otherwise) and is restored with `git checkout`, never from memory. Results:
 tools/mutation-followups/out/py.jsonl and web.jsonl (git-ignored)."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -28,7 +27,7 @@ WEB_TESTS = [f"{T}/followups", "lib/api/followup-text.test.ts", "lib/api/followu
 
 
 def _git(*args: str) -> str:
-    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=False).stdout  # noqa: S603, S607
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=False).stdout
 
 
 def mutate(base: str, relative: str, old: str, new: str, nth: int, command: list[str], cwd: str) -> dict[str, Any]:
@@ -42,7 +41,7 @@ def mutate(base: str, relative: str, old: str, new: str, nth: int, command: list
         position = source.index(old, position + 1)  # a snippet that is gone is a loud error: the source moved, update the list
     full.write_text(source[:position] + new + source[position + len(old) :])
     try:
-        r = subprocess.run(command, cwd=cwd, capture_output=True, text=True, timeout=900, env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"), check=False)  # noqa: S603
+        r = subprocess.run(command, cwd=cwd, capture_output=True, text=True, timeout=900, env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"), check=False)
     finally:
         _git("checkout", "--", pathspec)
     if r.returncode == 0:

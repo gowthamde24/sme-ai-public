@@ -1,6 +1,5 @@
 """Shared pieces for the Main agent's tests on the real stack (job AG): an application with agents on, the operator's local switch, a server-sent-events reader."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -11,13 +10,12 @@ from typing import Any
 
 import operator_sql
 import pytest
-from conftest import Stack
-from fastapi.testclient import TestClient
-
 from app.agents.llm.interface import LlmClient
 from app.agents.llm.routing import ModelRouter
 from app.config import Settings
 from app.main import build_runtime, create_app
+from conftest import Stack
+from fastapi.testclient import TestClient
 
 
 def assistant_app(

@@ -10,7 +10,6 @@ them under random file names (<out>/<language>-<gender>-1.wav and -2.wav), so th
 Money: Sarvam's stop line is Rs 800 in total (Rs 103 spent on 20 Nov); the script refuses to send more than --max-sarvam-rupees (default 20) worth of Sarvam characters, at the price in SARVAM_RUPEES_PER_1000_CHARS (default 1.0, the Bulbul v4 Flash pay-as-you-go
 price of docs.sarvam.ai/api-reference-docs/getting-started/pricing on 20 Nov 2026; Sarvam's blog says Rs 2 per 1,000: check before a real run). Cartesia is covered by the owner's subscription. Keys come from the environment only."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -23,7 +22,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.conversation.voices import default_config, sample_text  # noqa: E402
+from app.conversation.voices import default_config, sample_text
 
 TAG = {"te": "te-IN", "hi": "hi-IN", "kn": "kn-IN", "en": "en-IN", "ta": "ta-IN", "ml": "ml-IN", "mr": "mr-IN"}
 
@@ -38,7 +37,7 @@ def main() -> int:
     args = ap.parse_args()
     rupees_per_1000 = float(os.environ.get("SARVAM_RUPEES_PER_1000_CHARS", "1.0"))
     cfg = default_config()
-    rng = random.Random(args.seed)  # noqa: S311 - which file is "1": not a secret
+    rng = random.Random(args.seed)
     jobs = []
     for language in ("te", "en", "hi", "kn", "ta", "ml"):
         if args.only and language != args.only:

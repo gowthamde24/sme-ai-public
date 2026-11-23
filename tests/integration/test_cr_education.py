@@ -10,7 +10,6 @@ What these prove that the pgTAP files (104 to 107) and the unit tests cannot:
   * a CANARY child label driven through the assistant, the exports, the reports, the search and the error paths: it appears nowhere but in the students table (no model input, no log line, no stored message, no
     audit row, no outbox message, no HTTP traffic of the API to the data layer other than the education routes)."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -25,13 +24,12 @@ import httpx
 import jsonschema
 import operator_sql
 import pytest
+from app.privacy.housekeeping import Housekeeping
+from app.privacy.repository import PostgrestPrivacyRepository
 from assistant_support import assistant_app, enable_assistant, events, restore, text_of
 from conftest import aal1_token, bearer
 from test_outbox_api import restore_clock
 from test_scheduler_api import Sched
-
-from app.privacy.housekeeping import Housekeeping
-from app.privacy.repository import PostgrestPrivacyRepository
 
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT = json.loads((ROOT / "packages" / "contracts" / "education.schema.json").read_text(encoding="utf-8"))

@@ -4,13 +4,13 @@
 amount is zero (see VERSIONS.md). Earlier renderers are frozen byte for byte in v1_0_0.py and v1_1_0.py
 so quotes rendered with them can be re-verified.
 """
-from datetime import date
-from importlib import import_module
 import hashlib
 import json
 import re
 import textwrap
 import unicodedata
+from datetime import date
+from importlib import import_module
 
 RENDERER_VERSION = "1.2.0"
 SUPPORTED_VERSIONS = ("1.0.0", "1.1.0", "1.2.0")

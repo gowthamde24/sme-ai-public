@@ -9,7 +9,6 @@
   * the refusals of creation (not approved, exists, no policy), the policy route, the keyset list.
 All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -20,14 +19,13 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
+from app.orders.repository import PostgrestOrdersRepository
 from conftest import aal1_token, bearer
 from crm_support import Tenant, World
 from evidence_support import uid
 from fastapi.testclient import TestClient
 from order_support import OrderWorld
 from quote_support import QuoteWorld
-
-from app.orders.repository import PostgrestOrdersRepository
 
 
 @pytest.fixture(scope="module")

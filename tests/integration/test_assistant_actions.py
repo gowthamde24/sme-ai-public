@@ -2,7 +2,6 @@
 price list and the confirmed requirement (the model gives no price); a follow-up is a draft; a customer-reply draft is machine text in the customer's language with an English
 gloss and no price; a recorded enquiry is cleaned of contact details like any pasted enquiry. Nothing is approved, sent or decided. All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -12,14 +11,19 @@ from typing import Any
 
 import operator_sql
 import pytest
+from app.agents.llm.interface import ToolCall
 from assistant_eval import Scripted, final, respond
-from assistant_support import assistant_app, drafts_of, enable_assistant, events, restore
+from assistant_support import (
+    assistant_app,
+    drafts_of,
+    enable_assistant,
+    events,
+    restore,
+)
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
 from test_today_api import Scene
-
-from app.agents.llm.interface import ToolCall
 
 HOLDER: dict[str, Any] = {"model": None}
 

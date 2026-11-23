@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# ruff: noqa: E501, S603, S607
 """Check of the demo reseed (scripts/demo_reseed/neelambari_silks.sql) on a LOCAL database. It never commits.
 
 What it does, in ONE transaction that ends in ROLLBACK:
@@ -187,7 +186,7 @@ def build(container: str) -> str:
 def engine_checks(out: str) -> list[str]:
     """Run the REAL quote engine (packages/quote-engine) on every stored quote request and compare: the request text is the engine's canonical text, the hash and every figure are the engine's."""
     sys.path.insert(0, str(ROOT / "packages/quote-engine/src"))
-    import quote_engine  # noqa: PLC0415 - stdlib-only package of this checkout
+    import quote_engine
 
     problems: list[str] = []
     n = 0

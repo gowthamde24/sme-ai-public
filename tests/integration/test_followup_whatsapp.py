@@ -3,7 +3,6 @@
 The SPIKE comes first: the plan rests on the assumption that the database already carries a lead whose contact has ONLY a phone number all the way through WhatsApp (a keyed contact, a first
 outbound WhatsApp touch, a WhatsApp draft, an approval, "I sent it"). If this test fails the ticket stops. Nothing here sends anything; a touch and a draft are records. All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -12,12 +11,11 @@ import uuid
 from typing import Any
 
 import pytest
+from app.followups import service
 from crm_support import World
 from fastapi.testclient import TestClient
 from followup_support import FollowWorld, Lead
 from test_followup_api import erase
-
-from app.followups import service
 
 
 @pytest.fixture(scope="module")
@@ -214,7 +212,7 @@ def test_an_erased_by_right_marker_on_a_shared_number_reads_key_in_every_channel
         fw.call("GET", "/followups/due", "sales").text,
         fw.call("GET", f"/leads/{a.id}/followup", "sales").text,
     ):
-        assert not re.search(r"erased[\s_-]*key", text, re.I) and "by right" not in text.lower()
+        assert not re.search(r"erased[\s_-]*key", text, re.IGNORECASE) and "by right" not in text.lower()
     fw.invariants()
 
 

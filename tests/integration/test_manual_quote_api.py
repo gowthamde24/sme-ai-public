@@ -8,7 +8,6 @@ pinned engine and the real text renderer.
   * a list-price quote still reads and renders exactly as before (the golden in services/ai-api/tests pins the raw bytes; here the real stack does it once more).
 All data is synthetic."""
 
-# ruff: noqa: E501, S311, S608
 
 from __future__ import annotations
 
@@ -18,13 +17,12 @@ from typing import Any
 
 import operator_sql
 import pytest
+from app.quotes import engine_port
 from conftest import aal1_token, bearer
 from crm_support import World
 from evidence_support import pg, uid
 from fastapi.testclient import TestClient
 from quote_support import QuoteWorld, rpc
-
-from app.quotes import engine_port
 
 TYPES: dict[
     str, tuple[str, int | None, int | None]

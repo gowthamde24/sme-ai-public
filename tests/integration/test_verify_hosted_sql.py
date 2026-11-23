@@ -1,7 +1,6 @@
 """supabase/hosted/verify.sql is what the operator runs on a hosted project. Here it runs against the LOCAL schema, which must pass every
 check, and against deliberately broken copies (inside a transaction that is rolled back), each of which it must catch."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

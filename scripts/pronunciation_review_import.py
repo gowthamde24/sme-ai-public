@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.pronunciation.lexicon import DATA, LANGUAGES  # noqa: E402
+from app.pronunciation.lexicon import DATA, LANGUAGES
 
 
 def _verified(entry: dict) -> list[str]:

@@ -27,15 +27,15 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import httpx  # noqa: E402
-import seed_demo  # noqa: E402
-from seed_demo import Seeder, SeedError, load_config, require_local  # noqa: E402
+import httpx
+import seed_demo
+from seed_demo import Seeder, SeedError, load_config, require_local
 
 TEST_EMAIL = "wa-test-owner@demo.example.test"
-TEST_PASSWORD = "Wa-Test-Only-Local-Password-1!"  # noqa: S105 - a local stack account, a different one from the demo owner's
+TEST_PASSWORD = "Wa-Test-Only-Local-Password-1!"
 TEST_WORKSPACE_NAME = "WA Test (local)"
 TEST_WORKSPACE_SLUG = "wa-test-local"
-TOKEN_REF = "meta_test"  # noqa: S105 - the NAME of the secret (the API's WHATSAPP_ACCESS_TOKEN answers to every name), not a token
+TOKEN_REF = "meta_test"
 
 
 class TestOwner(Seeder):

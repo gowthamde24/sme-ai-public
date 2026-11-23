@@ -27,11 +27,11 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import seed_staging as ss  # noqa: E402
-from staging_smoke_api import Owner  # noqa: E402
+import seed_staging as ss
+from staging_smoke_api import Owner
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.whatsapp.webhook import sign  # noqa: E402
+from app.whatsapp.webhook import sign
 
 WABA_ID = "1421890996429034"
 PHONE_NUMBER_ID = "1329673453571780"
@@ -65,7 +65,7 @@ def post_signed(api: str, secret: str, payload: dict[str, Any]) -> tuple[int, An
 def _post(api: str, body: bytes, signature: str) -> tuple[int, Any]:
     request = urllib.request.Request(f"{api}/v1/webhooks/whatsapp", data=body, method="POST", headers={"content-type": "application/json", "x-hub-signature-256": signature})
     try:
-        with urllib.request.urlopen(request, timeout=30) as r:  # noqa: S310 - https staging address given by the operator
+        with urllib.request.urlopen(request, timeout=30) as r:
             status, raw = r.status, r.read()
     except urllib.error.HTTPError as e:
         status, raw = e.code, e.read()

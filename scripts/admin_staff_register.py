@@ -1,4 +1,3 @@
-# ruff: noqa: E501
 """Register a Stack19 STAFF account for the admin console (owner / support / finance) on the HOSTED stack19-staging project.
 
 Run it yourself, in your own terminal (in Claude Code: `! python3 -I scripts/admin_staff_register.py ...`). The password and the authenticator code are typed at HIDDEN prompts: they never appear in the output, a file,
@@ -51,7 +50,7 @@ def valid_inputs(email: str, name: str, role: str) -> None:
 def register_sql(email: str, name: str, role: str) -> str:
     """The one statement that registers the account. The inputs were checked above to hold no quote or backslash; the quoting is doubled anyway."""
     valid_inputs(email, name, role)
-    q = lambda s: "'" + s.replace("'", "''") + "'"  # noqa: E731
+    q = lambda s: "'" + s.replace("'", "''") + "'"
     return f"select app.operator_register_staff({q(email)}, {q(name)}, {q(role)})"
 
 
@@ -60,7 +59,7 @@ def password_ok(pw: str) -> bool:
 
 
 def run(argv: list[str]) -> str:
-    done = subprocess.run(argv, capture_output=True, text=True, check=False)  # noqa: S603
+    done = subprocess.run(argv, capture_output=True, text=True, check=False)
     if done.returncode != 0:
         raise StaffError(f"`{argv[0]} {argv[1] if len(argv) > 1 else ''}` failed.")
     return done.stdout
@@ -68,9 +67,9 @@ def run(argv: list[str]) -> str:
 
 def http(method: str, url: str, headers: dict[str, str], body: Any = None) -> tuple[int, Any]:
     data = None if body is None else json.dumps(body).encode()
-    req = urllib.request.Request(url, method=method, data=data, headers={"Content-Type": "application/json", "User-Agent": "stack19-admin-staff-register", **headers})  # noqa: S310
+    req = urllib.request.Request(url, method=method, data=data, headers={"Content-Type": "application/json", "User-Agent": "stack19-admin-staff-register", **headers})
     try:
-        with urllib.request.urlopen(req, timeout=60) as r:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=60) as r:
             raw = r.read()
             return r.status, (json.loads(raw) if raw else None)
     except urllib.error.HTTPError as e:
@@ -121,7 +120,7 @@ def render_qr(grid: list[list[bool]]) -> str:
     rows = pad + [[False] * QUIET + r + [False] * QUIET for r in grid] + pad
     if len(rows) % 2:
         rows.append([False] * len(rows[0]))
-    colour = lambda dark: 16 if dark else 231  # noqa: E731
+    colour = lambda dark: 16 if dark else 231
     lines = []
     for top, bottom in zip(rows[0::2], rows[1::2], strict=True):
         lines.append("".join(f"\x1b[38;5;{colour(a)};48;5;{colour(b)}m\u2580" for a, b in zip(top, bottom, strict=True)) + "\x1b[0m")
@@ -131,7 +130,7 @@ def render_qr(grid: list[list[bool]]) -> str:
 def copy_to_clipboard(text: str) -> None:
     """macOS only (pbcopy). The owner's machine is a Mac; elsewhere the script stops rather than show a secret on screen."""
     try:
-        subprocess.run(["pbcopy"], input=text, text=True, check=True)  # noqa: S603, S607
+        subprocess.run(["pbcopy"], input=text, text=True, check=True)
     except (OSError, subprocess.CalledProcessError):
         raise StaffError("--show-secret needs macOS (pbcopy): the setup key is never printed. Scan the QR code instead.") from None
 

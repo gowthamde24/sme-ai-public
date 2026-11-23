@@ -15,7 +15,7 @@ the tenant's Owner with a second factor and never above the ceiling, and a cap h
 The agent switches are OFF by default and only the operator can turn them on, so this module turns them on for its own
 two tenants and restores the previous state afterwards."""
 
-# ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
+
 
 from __future__ import annotations
 

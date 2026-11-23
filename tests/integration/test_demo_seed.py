@@ -2,7 +2,7 @@
 every researched fact can carry evidence". Run here against the real stack with the real
 application, as the demo user; then a second user in another workspace proves none of it leaks."""
 
-# ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
+
 
 from __future__ import annotations
 
@@ -548,7 +548,7 @@ def test_the_synthetic_leads_contain_nothing_real() -> None:
             assert row["contact_name"].startswith("DEMO "), row["contact_name"]
             assert row["contact_phone"].startswith("+00 "), row["contact_phone"]
         assert str(row.get("source", "DEMO")).startswith("DEMO")
-        assert not re.search(r"\b(gmail|yahoo|hotmail|outlook)\b", str(row), re.I)
+        assert not re.search(r"\b(gmail|yahoo|hotmail|outlook)\b", str(row), re.IGNORECASE)
         assert not re.search(r"\+91|\b[6-9]\d{9}\b", str(row)), "no real-looking phone number"
 
 
@@ -614,19 +614,19 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
     user = demo_token(stack)
     try:
         operator_sql.sql(
-            "update public.platform_flags set enabled = false; "  # noqa: S608
+            "update public.platform_flags set enabled = false; "
             "update public.agent_definitions set allowed_tenants = '{}' "
             "where agent_name = 'selftest'; "
             f"delete from public.tenant_agent_settings where tenant_id = '{summary.tenant_id}'"
         )
-        bad = subprocess.run(  # noqa: S603 - our own script, fixed argv
+        bad = subprocess.run(
             [str(DEV_SCRIPT), "x'; drop table public.tenants; --"],
             capture_output=True,
             text=True,
             cwd=DEV_SCRIPT.parent.parent,
         )
         assert bad.returncode == 2, "a slug with SQL metacharacters is refused before anything runs"
-        unknown = subprocess.run(  # noqa: S603 - our own script, fixed argv
+        unknown = subprocess.run(
             [str(DEV_SCRIPT), "no-such-workspace"],
             capture_output=True,
             text=True,
@@ -640,7 +640,7 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
             == "false,false,false,false,false,false,false,false,false"
         ), "an unknown slug changed nothing"
 
-        done = subprocess.run(  # noqa: S603 - our own script, fixed argv
+        done = subprocess.run(
             [str(DEV_SCRIPT), seed.DEMO_WORKSPACE_SLUG],
             capture_output=True,
             text=True,
@@ -691,7 +691,7 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
             "/rpc/cancel_agent_run",
             json={"p_run_id": started.json()["run_id"]},
         )
-        again = subprocess.run(  # noqa: S603 - our own script, fixed argv
+        again = subprocess.run(
             [str(DEV_SCRIPT), seed.DEMO_WORKSPACE_SLUG],
             capture_output=True,
             text=True,
@@ -728,10 +728,9 @@ def test_the_agent_step_runs_one_selftest_run_on_the_demo_company_and_a_second_c
     stack: Stack, demo: Any
 ) -> None:
     import operator_sql
-    from fastapi.testclient import TestClient as AppClient
-
     from app.config import Settings
     from app.main import build_runtime, create_app
+    from fastapi.testclient import TestClient as AppClient
 
     first, _ = demo
     saved = operator_sql.snapshot_switches()
@@ -773,7 +772,7 @@ def test_every_sql_block_of_the_kill_switch_runbook_runs_against_the_real_schema
     runbook = (
         Path(__file__).resolve().parents[2] / "docs" / "runbooks" / "agents-kill-switch.md"
     ).read_text()
-    blocks = re.findall(r"```sql\n(.*?)```", runbook, re.S)
+    blocks = re.findall(r"```sql\n(.*?)```", runbook, re.DOTALL)
     assert len(blocks) >= 7, "the three levels, their verifications and the listing"
     slug = seed.DEMO_WORKSPACE_SLUG
     for block in blocks:

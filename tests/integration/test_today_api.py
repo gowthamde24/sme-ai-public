@@ -3,7 +3,6 @@ functions, the caller's own token. A business with a draft quote, a follow-up dr
 order steps; a second business with its own things; every role; and the proof that one business's rows never appear in another's answers.
 All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

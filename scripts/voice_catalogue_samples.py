@@ -7,7 +7,6 @@ when someone clicks play (cost and caps). Run it again only when the catalogue (
 Writes services/ai-api/app/conversation/data/samples/<voice id>.mp3: the spoken-style line of app.conversation.voices.SAMPLE_LINES in the voice's language with a neutral business name ("Sample Stores") and no person's name, one MP3 (44.1 kHz, 96 kbps, mono)
 per voice. Keys come from the environment only. Characters sent are counted and printed; `--check-fallbacks` sends a few words (about 60 characters in all) to each distinct Bulbul v4 Flash fallback voice to prove it exists."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -20,7 +19,7 @@ from pathlib import Path
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.conversation.voices import SAMPLES, default_config, sample_text  # noqa: E402
+from app.conversation.voices import SAMPLES, default_config, sample_text
 
 SHORT = {"te": "హా అండీ", "hi": "हाँ जी", "kn": "ಹೌದು", "en": "Hello", "ta": "ஆமாம்", "ml": "അതെ", "mr": "हो"}
 TAG = {"te": "te-IN", "hi": "hi-IN", "kn": "kn-IN", "en": "en-IN", "ta": "ta-IN", "ml": "ml-IN", "mr": "mr-IN"}

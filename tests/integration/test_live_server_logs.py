@@ -40,7 +40,7 @@ def server(tmp_path: Path) -> Iterator[tuple[str, Path]]:
     log = tmp_path / "server.log"
     env = {**os.environ, "API_ENV": "development"}
     with log.open("w") as sink:
-        proc = subprocess.Popen(  # noqa: S603 - our own interpreter and a fixed script
+        proc = subprocess.Popen(
             [sys.executable, "-c", LAUNCH, str(port)],
             cwd=API_DIR,
             env=env,
@@ -164,7 +164,7 @@ def test_no_log_line_of_a_real_server_contains_an_evidence_canary(
             url, headers=h, timeout=15, json={**good, "id": uid(), "url": EVIDENCE_URL + " nope"}
         ),
         httpx.post(
-            url, headers=h, timeout=15, json={**good, "id": uid(), "snippet": EVIDENCE_SNIPPET + "​"}
+            url, headers=h, timeout=15, json={**good, "id": uid(), "snippet": EVIDENCE_SNIPPET + "\u200b"}
         ),
         httpx.post(
             url, headers=h, timeout=15, json={**good, "id": uid(), "bogus": EVIDENCE_SNIPPET}

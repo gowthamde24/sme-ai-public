@@ -28,11 +28,11 @@ def token() -> str:
 def call(method: str, path: str, body: object | None = None) -> tuple[int, object]:
     if not path.startswith("/v1/"):
         raise ValueError("a Management API path starts with /v1/")
-    req = urllib.request.Request(  # noqa: S310 - fixed https host
+    req = urllib.request.Request(
         "https://api.supabase.com" + path, method=method, data=None if body is None else json.dumps(body).encode(),
         headers={"Authorization": "Bearer " + token(), "Content-Type": "application/json", "User-Agent": "stack19-ops"})
     try:
-        with urllib.request.urlopen(req, timeout=60) as r:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=60) as r:
             return r.status, json.loads(r.read() or b"null")
     except urllib.error.HTTPError as e:
         return e.code, e.read().decode()[:300]

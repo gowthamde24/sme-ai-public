@@ -1,12 +1,11 @@
 import copy
-from datetime import datetime, timedelta, timezone
 import hashlib
 import json
-from pathlib import Path
 import random
 import unittest
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
-import followup_cadence as engine
 from followup_cadence import ENGINE_VERSION, canonical_json, decide
 
 
@@ -304,9 +303,8 @@ class CadenceTests(unittest.TestCase):
             for key in path[:-1]:
                 target = target[key]
             target[path[-1]] = value
-            with self.subTest(path=path):
-                with self.assertRaises(TypeError):
-                    decide(r)
+            with self.subTest(path=path), self.assertRaises(TypeError):
+                decide(r)
 
     def test_seeded_properties(self):
         rng = random.Random(1010)

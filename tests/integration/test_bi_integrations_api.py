@@ -1,7 +1,6 @@
 """Job BI on the real stack: the accounting export (real orders, real events, real money), the spreadsheet imports (customers through the existing lead import, catalogue stock), the visits calendar
 feed (a real token, the anonymous read, revocation), the policy acceptance and the voice status, with the roles, the second factor and the other business each time. All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -19,14 +18,13 @@ from xml.etree import ElementTree as ET
 import httpx
 import operator_sql
 import pytest
+from app.integrations.xlsx import write_xlsx
 from conftest import aal1_token
 from crm_support import Tenant, World
 from evidence_support import uid
 from fastapi.testclient import TestClient
 from order_support import OrderWorld
 from quote_support import QuoteWorld
-
-from app.integrations.xlsx import write_xlsx
 
 INDIA = timedelta(hours=5, minutes=30)
 
@@ -101,7 +99,7 @@ def test_the_export_of_real_orders_agrees_with_the_database_in_every_format(clie
 
     z = zipfile.ZipFile(io.BytesIO(export(client, ow, fmt="tally_zip").content))
     assert z.namelist() == ["1-masters.xml", "2-vouchers.xml", "README.txt"]
-    root = ET.fromstring(z.read("2-vouchers.xml").split(b"\n", 1)[1])  # noqa: S314 - our own output
+    root = ET.fromstring(z.read("2-vouchers.xml").split(b"\n", 1)[1])
     mine = [v for v in root.iter("VOUCHER") if v.findtext("VOUCHERNUMBER") == f"SO-{order_no:05d}"]
     assert len(mine) == 1
     amounts = [(e.findtext("ISDEEMEDPOSITIVE"), e.findtext("AMOUNT")) for e in mine[0].findall("LEDGERENTRIES.LIST")]

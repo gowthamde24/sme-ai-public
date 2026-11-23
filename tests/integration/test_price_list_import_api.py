@@ -8,7 +8,6 @@
   * the database still decides: a version dated before the latest is refused.
 All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -236,7 +235,7 @@ def test_unknown_archived_and_inactive_products_and_hidden_characters_are_issues
         "NOPE-1,No such,100,1,500\n"
         "PL-GONE,Archived,100,1,500\n"
         "PL-OFF,Inactive,100,1,500\n"
-        "PL-BLUE,Zero​width,100,1,500\n"
+        "PL-BLUE,Zero\u200bwidth,100,1,500\n"
         'PL-SET,"Two\nlines",100,1,500\n'
     )
     r = client.post(url(pw.t, "/price-lists/import/preview"), json=body(csv), headers=h(pw.owner))

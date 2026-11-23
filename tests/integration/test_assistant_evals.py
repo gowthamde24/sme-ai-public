@@ -2,7 +2,6 @@
 injection and every request. What is checked is what must hold whatever a model does: answers carry real sources and no invented amount; a price is never set; nothing is
 sent or approved; one business never reads another. See assistant_eval.py for the cases. Part of `make eval` (and therefore of `make check`). All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -14,6 +13,11 @@ from typing import Any
 
 import operator_sql
 import pytest
+from app.agents.llm.routing import ModelRouter
+from app.assistant.hygiene import leaked_names
+from app.assistant.language import PLAIN_WORDS, WAITING_ALSO, reply_matches
+from app.assistant.runner import money_amounts
+from app.assistant.tools import TOOLS
 from assistant_eval import (
     Case,
     Scripted,
@@ -34,12 +38,6 @@ from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
 from test_today_api import Scene
-
-from app.agents.llm.routing import ModelRouter
-from app.assistant.hygiene import leaked_names
-from app.assistant.language import PLAIN_WORDS, WAITING_ALSO, reply_matches
-from app.assistant.runner import money_amounts
-from app.assistant.tools import TOOLS
 
 ALLOWED_TOOLS = {t.name for t in TOOLS} | {"refused_call", "tool_error"}
 HOLDER: dict[str, Any] = {"model": None, "light": False}

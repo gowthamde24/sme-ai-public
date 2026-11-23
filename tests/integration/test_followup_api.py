@@ -9,7 +9,6 @@
   * direct PostgREST attacks: no client writes a follow-up table, a Viewer reads none, another workspace's rows are invisible.
 All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -22,6 +21,7 @@ from typing import Any
 
 import httpx
 import pytest
+from app.followups.messages import FOLLOWUP_REFUSALS
 from conftest import aal1_token
 from crm_support import World
 from evidence_support import pg, uid
@@ -29,8 +29,6 @@ from fastapi.testclient import TestClient
 from followup_support import FollowWorld, Lead, policy_body
 from order_support import OrderWorld
 from quote_support import QuoteWorld
-
-from app.followups.messages import FOLLOWUP_REFUSALS
 
 
 @pytest.fixture(scope="module")
@@ -315,7 +313,7 @@ def test_sm220_every_reason_through_the_api(
         hidden, "SM220", "key"
     )  # PRIVACY: the client is told `key`, never that another person was erased by right
     assert (
-        not re.search(r"erased[\s_-]*key", hidden.text, re.I)
+        not re.search(r"erased[\s_-]*key", hidden.text, re.IGNORECASE)
         and "by right" not in hidden.text.lower()
     )
     assert any(
@@ -411,7 +409,7 @@ def test_a_lead_the_gate_blocks_is_never_shown_as_due_on_the_real_stack(
     erase(fw, g)
     blocked_as(f, "key", "whatsapp", listed=True)
     text = fw.call("GET", f"/leads/{f.id}/followup?channel=whatsapp", "sales").text
-    assert not re.search(r"erased[\s_-]*key", text, re.I) and "by right" not in text.lower()
+    assert not re.search(r"erased[\s_-]*key", text, re.IGNORECASE) and "by right" not in text.lower()
     fw.invariants()
 
 
@@ -734,7 +732,7 @@ def test_question_drafts_end_to_end_with_random_ids(fw: FollowWorld) -> None:
     first = fw.call("POST", f"/requirements/{requirement}/question-drafts/sync", "sales")
     assert first.status_code == 200, first.text
     drafts = first.json()["drafts"]
-    assert drafts and all(d["status"] == "draft" and d["line_no"] in range(0, 6) for d in drafts)
+    assert drafts and all(d["status"] == "draft" and d["line_no"] in range(6) for d in drafts)
     texts = {d["question_code"]: d["question_text"] for d in drafts}
     assert (
         "missing_delivery_city" in texts

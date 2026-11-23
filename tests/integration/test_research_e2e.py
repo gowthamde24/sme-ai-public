@@ -3,7 +3,6 @@ proposes claims; they change a lead's score only after a human ACCEPTS them, a r
 review wins, and two leads of ONE company see the same accepted claim. The score is the REAL review-queue score (the real reader and
 the real pure scorer)."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -16,13 +15,12 @@ from typing import Any
 
 import operator_sql
 import pytest
+from app.config import Settings
+from app.main import build_runtime, create_app
 from conftest import bearer
 from crm_support import Tenant, World
 from evidence_support import pg, uid
 from fastapi.testclient import TestClient
-
-from app.config import Settings
-from app.main import build_runtime, create_app
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURES = ROOT / "tests" / "fixtures" / "web"

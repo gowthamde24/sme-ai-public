@@ -29,7 +29,7 @@ def fetch(url: str) -> bytes:
 
 def script_file_url(family: str, subset: str) -> str:
     css = fetch("https://fonts.googleapis.com/css2?" + urllib.parse.urlencode({"family": f"Noto Sans {family}:wght@100..900", "display": "swap"})).decode()
-    for block in re.findall(r"/\* ([a-z-]+) \*/\s*@font-face\s*\{(.*?)\}", css, re.S):
+    for block in re.findall(r"/\* ([a-z-]+) \*/\s*@font-face\s*\{(.*?)\}", css, re.DOTALL):
         if block[0] == subset:
             return re.search(r"url\((https://[^)]+)\)", block[1]).group(1)
     raise SystemExit(f"no {subset} face in Google's answer for Noto Sans {family}")

@@ -1,14 +1,13 @@
 """Run by `make eval-live` BEFORE anything else: refuses (exit 2) unless the real adapter's own configuration gates are satisfied.
 Prints only a reason code, never a value from the environment."""
 
-# ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
+
 
 from __future__ import annotations
 
 import sys
 
 import agent_eval
-
 from app.config import Settings
 
 
