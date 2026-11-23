@@ -8,7 +8,7 @@ from typing import Any, Protocol
 
 import httpx
 
-from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError
+from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError, PackUnavailableError
 from app.rpc_base import RpcClient
 
 
@@ -26,7 +26,7 @@ class PacksRepository(Protocol):
 
 class PostgrestPacksRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
-        self._rpc = RpcClient(rest_url, anon_key, {"SM701": ModuleOffError, "SM721": ExampleAlreadyLoadedError}, client=client)
+        self._rpc = RpcClient(rest_url, anon_key, {"SM701": ModuleOffError, "SM702": PackUnavailableError, "SM721": ExampleAlreadyLoadedError}, client=client)
 
     def close(self) -> None:
         self._rpc.close()

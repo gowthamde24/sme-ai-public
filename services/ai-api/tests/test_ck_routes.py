@@ -16,7 +16,7 @@ import pytest
 from app.config import Settings
 from app.customfields.errors import CustomFieldLimitError, CustomValueInvalidError
 from app.customfields.repository import PostgrestCustomFieldsRepository
-from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError
+from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError, PackUnavailableError
 from app.packs.models import AuthProvidersOut
 from app.packs.providers import providers_from_settings
 from app.packs.registry import PackRegistry, default_directory
@@ -572,3 +572,22 @@ def test_creating_a_workspace_can_name_its_business_type_and_a_wrong_one_makes_n
         r = client.post(base, json={"name": "Wrong Co", "slug": "wrong-co", "pack": bad}, headers=h)
         assert r.status_code == 422, bad
     assert len(repo.created) == made and len(set_calls) == 2, "a wrong code makes no workspace and sets nothing"
+
+
+def test_an_unknown_pack_from_the_database_is_a_422_on_the_pack_field_not_a_502() -> None:
+    """Found by the staging end-to-end run, 25 Nov 2026: the database answers SM702 for a code that is no pack; unmapped, the API said 502."""
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(400, json={"code": "SM702", "message": "unavailable"})
+
+    repo = PostgrestPacksRepository("http://db.test/rest/v1", "anon-key", client=_mock(handler))
+    with pytest.raises(PackUnavailableError):
+        repo.workspace_pack_set("token", TENANT_A.id, "no_such_pack")
+    packs = FakePacks()
+
+    def refuse(token: str, tenant_id: uuid.UUID, pack: str) -> dict[str, Any]:
+        raise PackUnavailableError("SM702")
+
+    packs.workspace_pack_set = refuse  # type: ignore[attr-defined]
+    client, _ = make_client(packs=packs)
+    r = client.put(f"/v1/tenants/{TENANT_A.id}/pack", json={"pack": "no_such_pack"}, headers=auth("a_owner"))
+    assert r.status_code == 422 and r.json()["error"]["code"] == "validation_error" and r.json()["error"]["fields"] == ["pack"], r.text
