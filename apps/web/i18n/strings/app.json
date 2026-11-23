@@ -126467,5 +126467,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "start.type.title": {
+  "en": "What kind of business is this?",
+  "te": "ఇది ఏ రకమైన వ్యాపారం?",
+  "hi": "यह किस तरह का कारोबार है?",
+  "kn": "ಇದು ಯಾವ ರೀತಿಯ ವ್ಯಾಪಾರ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.sub": {
+  "en": "Pick the closest one. We then ask only the things that fit your business and use its own words.",
+  "te": "దగ్గరగా ఉన్నది ఎంచుకోండి. అప్పుడు మీ వ్యాపారానికి సరిపోయే వాటినే అడుగుతాం.",
+  "hi": "सबसे करीब वाला चुनें। फिर हम सिर्फ़ वही पूछेंगे जो आपके कारोबार पर लगता है।",
+  "kn": "ಹತ್ತಿರದ್ದನ್ನು ಆರಿಸಿ. ಆಮೇಲೆ ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಹೊಂದುವುದನ್ನೇ ಕೇಳುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.err": {
+  "en": "Could not save that. Try again.",
+  "te": "సేవ్ చేయలేకపోయాం. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "सेव नहीं हो सका। फिर कोशिश करें।",
+  "kn": "ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.err.role": {
+  "en": "Only the owner of the workspace can choose this.",
+  "te": "ఇది వర్క్‌స్పేస్ యజమాని మాత్రమే ఎంచుకోగలరు.",
+  "hi": "यह सिर्फ़ वर्कस्पेस का मालिक चुन सकता है।",
+  "kn": "ಇದನ್ನು ವರ್ಕ್‌ಸ್ಪೇಸ್ ಮಾಲೀಕರು ಮಾತ್ರ ಆರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.err.step_up": {
+  "en": "Confirm with your two-step code first, then choose again.",
+  "te": "ముందుగా మీ రెండు-దశల కోడ్‌తో నిర్ధారించండి, తర్వాత మళ్ళీ ఎంచుకోండి.",
+  "hi": "पहले अपने दो-चरण कोड से पुष्टि करें, फिर दोबारा चुनें।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್‌ನಿಂದ ದೃಢೀಕರಿಸಿ, ನಂತರ ಮತ್ತೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -227,3 +227,6 @@ export const earlyAccess = (value: string | undefined = process.env.EARLY_ACCESS
  * contracts/composer-queue-DRAFT.md). `1` = C1's routes, `mock` = made-up answers kept in a cookie of the browser (nothing is sent; texts with a `#` word walk through every state, see lib/api/chat-queue.ts), unset = the old behaviour (the template picker), unchanged. Only with DESIGN_V6.
  */
 export const chatQueueScreens = (value: string | undefined = process.env.CHAT_QUEUE_SCREENS): ScreenMode => screenMode(value);
+
+/** First run by business type (owner, 25 Nov 2026: the first-run steps asked for a saree whatever the business): a workspace made without a type is asked "What kind of business?" once, on Get started, and the answer is saved with PUT /pack (C1's first-run contract). `1` = on; unset = the page as it was (404 for such a workspace). */
+export const firstRunType = (value: string | undefined = process.env.FIRST_RUN_TYPE): boolean => value === "1";
