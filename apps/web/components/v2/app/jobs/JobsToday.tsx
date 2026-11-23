@@ -7,7 +7,7 @@ import { MessageSquareWarning } from "lucide-react";
 import { makeT, type Words } from "../words";
 import type { JobActions } from "./JobRow";
 import { JobRow } from "./LazyJobRow";
-import { JobLine } from "./JobLine";
+import { JobLine } from "./LazyJobLine";
 import type { FestivalHint } from "@/lib/jobs/festival";
 import { FestivalSuggestion } from "./sheet/LazyFestival";
 import { NewJobButton } from "./sheet/NewJobButton";

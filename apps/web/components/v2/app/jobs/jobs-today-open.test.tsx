@@ -7,6 +7,7 @@ import { MOCK_JOBS } from "@/lib/jobs/mock";
 import { JobsToday } from "./JobsToday";
 
 vi.mock("./LazyJobRow", async () => ({ JobRow: (await import("./JobRow")).JobRow }));
+vi.mock("./LazyJobLine", async () => ({ JobLine: (await import("./JobLine")).JobLine }));
 vi.mock("./sheet/LazyFestival", () => ({ FestivalSuggestion: () => null }));
 vi.mock("./sheet/NewJobButton", () => ({ NewJobButton: () => null }));
 
