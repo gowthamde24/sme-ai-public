@@ -26,9 +26,8 @@ VOICED_LANGUAGES: tuple[str, ...] = ("te", "en", "hi", "kn", "ta", "ml")
 SPEAKS_INSTEAD: dict[str, str] = {"mr": "hi"}
 TAGS: tuple[str, ...] = ("calm", "warm", "deep", "bright", "young", "mature", "energetic")
 GENDERS: tuple[str, ...] = ("female", "male")
-# the plain "what it sounds like" and "who it suits" groups of the voice picker (planner brief 23 Nov 2026; scripts/voice_categories.py derives them from the tags)
+# the plain "what it sounds like" groups of the voice picker (planner brief 23 Nov 2026; scripts/voice_categories.py derives them from the tags); the "who it suits" words are DATA (voices.json `best_for_words`: no business word in code)
 SOUNDS_LIKE: tuple[str, ...] = ("warm_friendly", "calm_reassuring", "bright_young", "energetic", "deep_confident")
-BEST_FOR: tuple[str, ...] = ("real_estate", "education", "clinic", "retail", "auto", "wholesale", "finance")
 DATA = Path(__file__).resolve().parent / "data"
 DEFAULT_FILE = DATA / "voices.json"
 SAMPLES = DATA / "samples"
@@ -89,7 +88,7 @@ class CatalogueVoice:
     listed: bool = False        # offered to the owner (since 21 Nov 2026 every voice is); an unlisted voice is only kept so an old stored choice does not break
     to_confirm: bool = False    # chosen by documented gender and style: no native listener has confirmed it yet
     sounds_like: str = ""                # ONE of SOUNDS_LIKE ("" only in a small test file that does not say)
-    best_for: tuple[str, ...] = ()       # businesses it suits, from BEST_FOR
+    best_for: tuple[str, ...] = ()       # businesses it suits, from the file's `best_for_words`
 
     @property
     def sample_file(self) -> Path:
@@ -106,6 +105,7 @@ class VoiceConfig:
     catalogue: dict[str, CatalogueVoice]
     first_audio_timeout_ms: int = 800  # no audio by then: the fallback speaks
     cooldown_s: float = 30.0  # after a primary failure, go straight to the fallback for this long (so a bad minute does not cost 800 ms on every sentence)
+    best_for_words: tuple[str, ...] = ()  # the words `best_for` may use (data)
 
     @property
     def languages(self) -> dict[str, LanguageVoices]:
@@ -156,6 +156,7 @@ def parse_config(data: object) -> VoiceConfig:
     timeout = int(data.get("first_audio_timeout_ms", 800))
     if not LOWEST_TIMEOUT_MS <= timeout <= HIGHEST_TIMEOUT_MS:
         raise ValueError(f"voices: first_audio_timeout_ms must be {LOWEST_TIMEOUT_MS} to {HIGHEST_TIMEOUT_MS}")
+    best_for_words = tuple(str(w) for w in data.get("best_for_words", ()))   # the businesses a voice may suit: DATA, so no business word sits in code
     every_voice_listed = not any(isinstance(r, dict) and "listed" in r for r in data["catalogue"])   # a file that never says `listed` (a small test file) lists every voice
     catalogue: dict[str, CatalogueVoice] = {}
     for raw in data["catalogue"]:
@@ -183,8 +184,8 @@ def parse_config(data: object) -> VoiceConfig:
             raise ValueError(f"{where}: tags are at most three of {TAGS}")
         sounds_like = str(raw.get("sounds_like", ""))
         best_for = tuple(str(b) for b in raw.get("best_for", ()))
-        if (sounds_like and sounds_like not in SOUNDS_LIKE) or any(b not in BEST_FOR for b in best_for):
-            raise ValueError(f"{where}: sounds_like is one of {SOUNDS_LIKE}; best_for is any of {BEST_FOR}")
+        if (sounds_like and sounds_like not in SOUNDS_LIKE) or any(b not in best_for_words for b in best_for):
+            raise ValueError(f"{where}: sounds_like is one of {SOUNDS_LIKE}; best_for is any of {best_for_words}")
         catalogue[vid] = CatalogueVoice(vid, lang, name, label, gender, bool(raw.get("default", False)), LanguageVoices(primary, fallback), tags, bool(raw.get("recommended", False)), provider, listed, bool(raw.get("to_confirm_by_native_listener", False)), sounds_like, best_for)
     for lang in CALL_LANGUAGES:
         if lang not in VOICED_LANGUAGES and not any(c.language == lang for c in catalogue.values()):
@@ -195,7 +196,7 @@ def parse_config(data: object) -> VoiceConfig:
                 raise ValueError(f"voices: language {lang} needs exactly one {gender} default (has {len(defaults)})")
             if not defaults[0].listed:
                 raise ValueError(f"voices: the {gender} default of {lang} must be on the short list")
-    return VoiceConfig(catalogue, timeout, float(data.get("cooldown_s", 30.0)))
+    return VoiceConfig(catalogue, timeout, float(data.get("cooldown_s", 30.0)), best_for_words)
 
 
 def load_config(path: str | Path | None = None) -> VoiceConfig:

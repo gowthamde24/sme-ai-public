@@ -73,7 +73,14 @@ def main() -> int:
     rec = recommended_ids(voices, sl)
     out: list[str] = []
     current: str | None = None
+    words = sorted({w for ws in BEST_FOR.values() for w in ws})
     for line in text.split("\n"):
+        if re.match(r'^ "best_for_words": ', line):
+            continue   # idempotent: written again below
+        if re.match(r'^ "cooldown_s": ', line):
+            out.append(line)
+            out.append(f' "best_for_words": {json.dumps(words)},')
+            continue
         m = re.match(r'^   "id": "([a-z]{2}-[a-z0-9_-]+)",$', line)
         if m:
             current = m.group(1)

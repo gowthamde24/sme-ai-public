@@ -11,7 +11,7 @@ from typing import Any
 
 import pytest
 
-from app.conversation.voices import BEST_FOR, SOUNDS_LIKE, default_config, parse_config
+from app.conversation.voices import SOUNDS_LIKE, default_config, parse_config
 from tests.fakes import TENANT_A, auth
 from tests.test_nv_picker import BASE, world
 
@@ -27,7 +27,7 @@ def voices() -> list[Any]:
 def test_every_voice_has_exactly_one_sounds_like_and_a_best_for_that_follows_it() -> None:
     for v in voices():
         assert v.sounds_like in SOUNDS_LIKE, v.id
-        assert v.best_for and set(v.best_for) == EXPECTED_BEST_FOR[v.sounds_like] and set(v.best_for) <= set(BEST_FOR), v.id
+        assert v.best_for and set(v.best_for) == EXPECTED_BEST_FOR[v.sounds_like] and set(v.best_for) <= set(default_config().best_for_words), v.id
 
 
 def test_sounds_like_follows_the_tags_by_the_priority_order() -> None:
@@ -79,7 +79,7 @@ def test_the_api_returns_the_fields_and_filters_by_each() -> None:
     client, _ = world()
     allv = client.get(f"{BASE}/voices", headers=auth("a_owner")).json()
     first = allv["languages"][0]["voices"][0]
-    assert first["sounds_like"] in SOUNDS_LIKE and set(first["best_for"]) <= set(BEST_FOR)
+    assert first["sounds_like"] in SOUNDS_LIKE and set(first["best_for"]) <= set(default_config().best_for_words)
     for sl in SOUNDS_LIKE:
         got = client.get(f"{BASE}/voices", params={"sounds_like": sl}, headers=auth("a_owner")).json()
         rows = [v for lang in got["languages"] for v in lang["voices"]]
@@ -88,6 +88,9 @@ def test_the_api_returns_the_fields_and_filters_by_each() -> None:
     rows = [v for lang in got["languages"] for v in lang["voices"]]
     assert rows and all("real_estate" in v["best_for"] and v["gender"] == "male" for v in rows)
     assert client.get(f"{BASE}/voices", params={"sounds_like": "shouty"}, headers=auth("a_owner")).status_code == 422
+    nothing = client.get(f"{BASE}/voices", params={"best_for": "space_travel"}, headers=auth("a_owner")).json()
+    assert not [v for lang in nothing["languages"] for v in lang["voices"]], "an unknown business word matches no voice"
+    assert sorted(default_config().best_for_words) == ["auto", "clinic", "education", "finance", "real_estate", "retail", "wholesale"]
     assert TENANT_A.id
 
 

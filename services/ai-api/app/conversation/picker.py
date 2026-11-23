@@ -164,7 +164,7 @@ def get_voices(
     provider: Annotated[Literal["cartesia", "sarvam"] | None, Query()] = None,
     q: Annotated[str | None, Query(max_length=40)] = None,
     sounds_like: Annotated[Literal["warm_friendly", "calm_reassuring", "bright_young", "energetic", "deep_confident"] | None, Query()] = None,
-    best_for: Annotated[Literal["real_estate", "education", "clinic", "retail", "auto", "wholesale", "finance"] | None, Query()] = None,
+    best_for: Annotated[str | None, Query(pattern="^[a-z_]{1,30}$")] = None,   # one of the file's best_for_words; any other word matches no voice
 ) -> VoicesOut:
     """`?gender=female|male&provider=cartesia|sarvam&q=text&sounds_like=warm_friendly&best_for=clinic` filter the voices of every language (a long list: 200+ voices); no filter returns them all. `gender` here is the voice filter, not the workspace's voice type. Every voice carries `sounds_like` (one of five) and `best_for` (the businesses it suits); `recommended` is exactly two women and two men in Telugu, Hindi, Kannada and English."""
     choices, gender = voice_state(runtime, ctx)
