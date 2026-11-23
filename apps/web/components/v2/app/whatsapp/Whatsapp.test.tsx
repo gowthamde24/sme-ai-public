@@ -124,6 +124,7 @@ describe("the templates", () => {
   it("lists them with the language, what they are for and where they stand; an empty list says so", () => {
     render(<TemplatesList words={WORDS} items={[{ id: L, name: "shop_update", language: "te", purpose: "followup", status: "approved" }, { id: T, name: "visit_note", language: "en", purpose: "visit", status: "submitted" }]} />);
     const rows = screen.getAllByRole("row");
+    expect(rows[1].className).toContain("max-sm:rounded-xl");
     expect(within(rows[1]).getByText("Telugu")).toBeInTheDocument();
     expect(within(rows[1]).getByText("Approved")).toBeInTheDocument();
     expect(within(rows[2]).getByText("Under review")).toBeInTheDocument();

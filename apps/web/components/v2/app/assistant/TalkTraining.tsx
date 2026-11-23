@@ -137,7 +137,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
           <div className="mt-2 flex flex-wrap items-center gap-2" data-part="tt-greeting-insert">
             <span className="text-sm text-muted">{t("ope.insert")}</span>
             {PLACEHOLDERS.map((p) => (
-              <button key={p} type="button" disabled={off} onClick={() => change({ greeting: { ...doc.greeting, [lang]: `${doc.greeting[lang] ?? ""}{${p}}`.slice(0, LIMITS.greeting.max) } })} className="min-h-11 rounded-full border border-edge bg-surface px-3 font-mono text-sm hover:bg-surface-2">
+              <button key={p} type="button" disabled={off} onClick={() => change({ greeting: { ...doc.greeting, [lang]: `${doc.greeting[lang] ?? ""}{${p}}`.slice(0, LIMITS.greeting.max) } })} className="min-h-11 rounded-full border border-edge bg-surface px-3 text-sm hover:bg-surface-2">
                 {`{${p}}`}
               </button>
             ))}
@@ -290,7 +290,7 @@ export function Instructions({ t, doc }: { t: T; doc: Doc }) {
     <div>
       <p className="m-0 text-sm font-bold text-muted">{title}</p>
       {lines.length ? (
-        <ul className="m-0 mt-1 list-none p-0 font-mono text-sm text-ink">
+        <ul className="m-0 mt-1 list-none p-0 text-sm text-ink">
           {lines.map((l) => (
             <li key={l} className="[overflow-wrap:anywhere]">
               {l}

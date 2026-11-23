@@ -180,10 +180,20 @@ def test_connecting_a_lead_source_opens_its_card_and_never_takes_a_key() -> None
     assert "NEVER ask for or take a key" in ca.PROMPT
 
 
+def _soon() -> str:
+    """The next Sunday in Kolkata (a future date that matches the "Sunday" in the texts): a booking in the past is dropped by the router, so a fixed date turns this test red the day after it (it did on 23 Nov 2026)."""
+    from datetime import timedelta
+
+    from app.assistant_work import record_actions
+
+    today = record_actions.kolkata_today()
+    return (today + timedelta(days=(6 - today.weekday()) % 7 or 7)).isoformat()   # the next Sunday: the texts of these tests say "Sunday"
+
+
 def test_arguments_next_to_the_decision_are_the_arguments_and_mark_as_reaches_the_router() -> None:
     from app.assistant_work import router
 
-    flat = {"decision": "do", "record_action": "visit_move", "target": "Suresh Hegde", "date": "2026-11-22", "time": "16:00"}
+    flat = {"decision": "do", "record_action": "visit_move", "target": "Suresh Hegde", "date": _soon(), "time": "16:00"}
     routed = router.check(flat, "Move Suresh Hegde's visit to Sunday 4 pm")
     assert routed.decision == "do" and routed.action == "record" and routed.args["record_action"] == "visit_move", routed
     assert router.touches("mark Keerthi Rangan as contacted") and router.touches("Mark Bhavani Reddy as qualified")
@@ -195,7 +205,7 @@ def test_an_empty_do_is_asked_again_once(monkeypatch: pytest.MonkeyPatch) -> Non
     from app.assistant_context import modelrun
     from app.assistant_work import router
 
-    answers: Iterator[dict[str, object]] = iter([{"decision": "do"}, {"decision": "do", "action": "record", "args": {"record_action": "visit_move", "target": "Suresh Hegde", "date": "2026-11-22", "time": "16:00"}}])
+    answers: Iterator[dict[str, object]] = iter([{"decision": "do"}, {"decision": "do", "action": "record", "args": {"record_action": "visit_move", "target": "Suresh Hegde", "date": _soon(), "time": "16:00"}}])
     calls: list[int] = []
 
     def fake_run(*a: object, **k: object) -> dict[str, object]:
