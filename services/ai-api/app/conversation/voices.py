@@ -26,6 +26,9 @@ VOICED_LANGUAGES: tuple[str, ...] = ("te", "en", "hi", "kn", "ta", "ml")
 SPEAKS_INSTEAD: dict[str, str] = {"mr": "hi"}
 TAGS: tuple[str, ...] = ("calm", "warm", "deep", "bright", "young", "mature", "energetic")
 GENDERS: tuple[str, ...] = ("female", "male")
+# the plain "what it sounds like" and "who it suits" groups of the voice picker (planner brief 23 Nov 2026; scripts/voice_categories.py derives them from the tags)
+SOUNDS_LIKE: tuple[str, ...] = ("warm_friendly", "calm_reassuring", "bright_young", "energetic", "deep_confident")
+BEST_FOR: tuple[str, ...] = ("real_estate", "education", "clinic", "retail", "auto", "wholesale", "finance")
 DATA = Path(__file__).resolve().parent / "data"
 DEFAULT_FILE = DATA / "voices.json"
 SAMPLES = DATA / "samples"
@@ -85,6 +88,8 @@ class CatalogueVoice:
     provider: str = "cartesia"  # cartesia | sarvam: who speaks it first (always the engine of `voices.primary`)
     listed: bool = False        # offered to the owner (since 21 Nov 2026 every voice is); an unlisted voice is only kept so an old stored choice does not break
     to_confirm: bool = False    # chosen by documented gender and style: no native listener has confirmed it yet
+    sounds_like: str = ""                # ONE of SOUNDS_LIKE ("" only in a small test file that does not say)
+    best_for: tuple[str, ...] = ()       # businesses it suits, from BEST_FOR
 
     @property
     def sample_file(self) -> Path:
@@ -176,7 +181,11 @@ def parse_config(data: object) -> VoiceConfig:
         tags = tuple(str(t) for t in raw.get("tags", ()))
         if any(t not in TAGS for t in tags) or len(tags) > 3:
             raise ValueError(f"{where}: tags are at most three of {TAGS}")
-        catalogue[vid] = CatalogueVoice(vid, lang, name, label, gender, bool(raw.get("default", False)), LanguageVoices(primary, fallback), tags, bool(raw.get("recommended", False)), provider, listed, bool(raw.get("to_confirm_by_native_listener", False)))
+        sounds_like = str(raw.get("sounds_like", ""))
+        best_for = tuple(str(b) for b in raw.get("best_for", ()))
+        if (sounds_like and sounds_like not in SOUNDS_LIKE) or any(b not in BEST_FOR for b in best_for):
+            raise ValueError(f"{where}: sounds_like is one of {SOUNDS_LIKE}; best_for is any of {BEST_FOR}")
+        catalogue[vid] = CatalogueVoice(vid, lang, name, label, gender, bool(raw.get("default", False)), LanguageVoices(primary, fallback), tags, bool(raw.get("recommended", False)), provider, listed, bool(raw.get("to_confirm_by_native_listener", False)), sounds_like, best_for)
     for lang in CALL_LANGUAGES:
         if lang not in VOICED_LANGUAGES and not any(c.language == lang for c in catalogue.values()):
             continue   # a language with no voice yet (job M1): nothing to check until the file gives it one

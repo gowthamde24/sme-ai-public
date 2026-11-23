@@ -160,7 +160,7 @@ def test_any_member_reads_the_catalogue_with_sample_urls_and_the_default_active(
     assert by_provider["te-ramya"] == "cartesia" and by_provider["te-kavitha"] == "sarvam" and by_provider["te-charan"] == "cartesia" and by_provider["te-tarun"] == "sarvam" and {"cartesia", "sarvam"} == set(by_provider.values())
     first = te["voices"][0]
     assert (first["id"], first["default"], first["chosen"]) == ("te-kavitha", True, False) and first["sample_url"] == "/v1/voice-samples/te-kavitha.mp3"
-    assert set(first) == {"id", "name", "label", "gender", "tags", "recommended", "default", "chosen", "sample_url", "sample_text", "provider", "sample_ready", "to_confirm"} and first["tags"] and first["recommended"] is True
+    assert set(first) == {"id", "name", "label", "gender", "tags", "recommended", "default", "chosen", "sample_url", "sample_text", "provider", "sample_ready", "to_confirm", "sounds_like", "best_for"} and first["tags"] and first["recommended"] is True
     assert len({v["sample_text"] for v in te["voices"]}) == 1, "the SAME line for every voice of a language"
     assert client.get(f"{BASE}/voices", headers=auth("b_owner")).status_code == 404, "another business reads nothing of ours"
 
