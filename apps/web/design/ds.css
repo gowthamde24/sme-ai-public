@@ -652,14 +652,18 @@
   [data-ui="v2"][data-ds="6"]:lang(te) [data-chat-sub] { display: -webkit-box !important; overflow: hidden !important; white-space: normal !important; text-overflow: clip !important; -webkit-box-orient: vertical !important; -webkit-line-clamp: 2 !important; }
 }
 
-/* Brand look (23 Nov 2026, owner: like the landing): the primary button and the active sidebar item carry the orange gradient. The button's gradient stays inside white-on-orange AA (>= 4.5:1 at both ends: #b83b09 5.6, #d2460a 4.5); the brighter landing orange (#f97316, #fdba74) is only for the active item's edge, never behind text. Colours only: no size or layout changes. */
+/* Brand look (23 Nov 2026, planner: no gradient, solid orange): the primary button is solid #c2410c (white on it 5.2:1), darker #a8370a on hover (6.6:1); the active sidebar row is a soft orange tint with a 3 px orange edge. Colours only: no size or layout changes. */
 [data-ui="v2"][data-ds="6"] {
-  --v2-brand-grad: linear-gradient(135deg, #b83b09 0%, #d2460a 100%);
-  --v2-active-grad: linear-gradient(90deg, rgba(249, 115, 22, 0.2), rgba(249, 115, 22, 0.04));
-  --v2-active-edge: linear-gradient(180deg, #fdba74, #f97316);
+  --v2-brand-hover: #a8370a;
+  --v2-active-tint: rgba(194, 65, 12, 0.14);
 }
-[data-ui="v2"][data-ds="6"] .bg-brand { background-image: var(--v2-brand-grad); }
+[data-ui="v2"][data-ds="6"] a.bg-brand:hover,
+[data-ui="v2"][data-ds="6"] button.bg-brand:not(:disabled):hover { background-color: var(--v2-brand-hover); filter: none; }
 [data-ui="v2"][data-ds="6"] [data-nav-row][aria-current="page"] {
-  background-image: var(--v2-active-grad);
-  box-shadow: inset 3px 0 0 #f97316;
+  background-color: var(--v2-active-tint);
+  box-shadow: inset 3px 0 0 #c2410c;
+}
+[data-ui="v2"][data-ds="6"][data-theme="dark"] [data-nav-row][aria-current="page"] { box-shadow: inset 3px 0 0 #f97316; }
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) [data-nav-row][aria-current="page"] { box-shadow: inset 3px 0 0 #f97316; }
 }
