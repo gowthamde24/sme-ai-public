@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import postcss from "postcss";
 import { describe, expect, it, vi } from "vitest";
 
 import { htmlText } from "@/test/html-text";
@@ -10,19 +11,19 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: 
 
 // next/dynamic loads a chunk on the client; a test renders the real components at once
 vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc }));
+// the home page's below-the-fold islands are chunks on the client; a test renders them at once
+vi.mock("./v9/lazy", async () => { const m = await import("./v9/below"); return { VoicesClient: m.VoicesClient, JobsClient: m.JobsClient, PipeClient: m.PipeClient, FaqClient: m.FaqClient, HowDemoClient: m.HowDemoClient, TryItClient: m.TryItClient, Reveal: m.Reveal, OrbRingLazy: () => null }; });
 
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { type SiteLang } from "@/i18n/lang";
 import { SITE_LANGS } from "@/i18n/site-lang";
-import { siteDict } from "@/i18n/site";
 import siteJson from "@/i18n/strings/site.json";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
 import { SITE_PACKS } from "@/lib/site/packs";
 import { allTargets } from "@/lib/site/routes";
 
 import { SitePage, type SiteActions } from "./SitePage";
-import { STACK } from "./home/chat-stack";
 
 const actions = (chatAvailable: boolean): SiteActions => ({ contactChat: vi.fn(), quoteChat: vi.fn(), chatAvailable });
 const render = (lang: SiteLang, target: SiteTarget, chat = true) => renderToStaticMarkup(<SitePage lang={lang} target={target} actions={actions(chat)} />);
@@ -33,10 +34,10 @@ describe("every page of the public site, in every language", () => {
   it.each(cases)("%s: one h1, the sign-up call to action, no raw key or placeholder, the right <html> language marker", (_n, lang, target) => {
     const html = render(lang, target);
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
-    expect(html).toMatch(/href="\/signup"/);
+    expect(html).toMatch(target.kind === "home" ? /href="#early-access"/ : /href="\/signup"/);
     const text = htmlText(html);
     expect(text).not.toMatch(/\{(?!customer\}|business\})[a-z_]+\}/); // an unfilled {placeholder} (the home page's opening-line example shows {customer} and {business} as they are typed)
-    expect(text).not.toMatch(/\b(hero|faq|pricing|nav|foot|steps|trust|owl|pack|how|security|contact|help|plan|meta|ld|v3)\.[a-z0-9_.]+\b/); // a missing key shown as itself
+    expect(text).not.toMatch(/\b(hero|faq|pricing|nav|foot|steps|trust|owl|pack|how|security|contact|help|plan|meta|ld|v3|v9)\.[a-z0-9_.]+\b/); // a missing key shown as itself
     expect(html).toContain(`lang="${lang}"`);
   });
 
@@ -76,235 +77,78 @@ describe("the business type pages come from the pack data", () => {
   });
 });
 
-describe("the home page (20 Nov 2026: one page for every width, the three animations kept, no business named or linked)", () => {
-  const home = render("en", { kind: "home" });
+describe("the home page (landing v9, approved by the owner on 23 Nov 2026: mocks/landing-v9/index.html)", () => {
+  const home = (lang: SiteLang = "en") => render(lang, { kind: "home" });
   const text = (html: string) => htmlText(html).replace(/\s+/g, " ");
-  it("the sections in order: hero, the phone demo, tell it what to do, calls in time, the Lead Finder, plans, built in, three questions, the final call to action, then the footer", () => {
-    const at = ["h1", "how-it-works", "languages", "works", "ask", "calc", "lead-finder", "pricing", "built", "faq", "join"].map((id) => home.indexOf(`id="${id}"`)); // (without the waitlist the closing section is #join; with it, #demo)
-    expect(at.every((i) => i > 0), JSON.stringify(at)).toBe(true);
+  it("the sections in order, each with its anchor: hero, inside the app, greetings, how it works, Lead Finder, voices, two jobs, while it talks, built in, late call-backs, pricing, questions, early access, footer", () => {
+    const html = home();
+    const at = ['id="hero"', 'id="try-it"', 'class="greet-sec"', 'id="how"', 'id="finder"', 'id="voices"', 'id="jobs"', 'class="g8"', 'id="calc"', 'id="pricing"', 'id="faq"', 'id="early-access"', 'class="ftr"'].map((s) => html.indexOf(s));
+    expect(at.every((n) => n > 0)).toBe(true);
     expect([...at].sort((x, y) => x - y)).toEqual(at);
-    const foot = home.match(/<footer[\s\S]*?<\/footer>/)![0];
-    expect(home.indexOf("<footer")).toBeGreaterThan(at[10]);
-    expect(foot).toContain('data-part="home-footer"');
-    expect(foot).toMatch(/role="img"[^>]*aria-label="Stack19"/); // the dot-matrix wordmark: one image to a screen reader, its name once
-    for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "WhatsApp +91 95023 80998"]) expect(text(foot), l).toContain(l);
-    expect(foot).toContain('href="https://wa.me/919502380998?text=Hi%20Stack19%2C%20I&#x27;d%20like%20early%20access."');
-    for (const gone of ["greetings", "call", "team", "after", "number", "voices", "sources", "day", "industries", "start"]) expect(home, gone).not.toContain(`id="${gone}"`);
-    expect(home.match(/data-part="greetings"/g)).toHaveLength(1); // the greetings band (te, hi, kn, en only: no Tamil greeting)
-    expect(home.match(/id="top"/g)).toHaveLength(1);
+    expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
+    expect(text(html)).toContain("Answer every call. Find new customers.");
   });
-  it("names no business and links to none: no business-type page address, no list of businesses", () => {
-    for (const p of SITE_PACKS) {
-      expect(home, p.slug).not.toContain(`href="/${p.slug}"`);
-      expect(text(home), p.slug).not.toContain(p.names.en);
-    }
-    expect(home).not.toMatch(/data-pack=|data-business=/);
+  it("one skip link, one <main id=main>, the page's own header and footer (the site shell adds none on the home page)", () => {
+    const html = home();
+    expect(html.match(/id="main"/g)).toHaveLength(1);
+    expect(html.match(/<header class="hdr"/g)).toHaveLength(1);
+    expect(html.match(/<footer class="ftr"/g)).toHaveLength(1);
   });
-  it("the hero: a headline, ONE plain line, ONE call to action and a small Hear a call link; no pills, no orb stage at any width", () => {
-    const hero = home.match(/<section[^>]*aria-labelledby="h1"[\s\S]*?<\/section>/)![0];
-    expect(text(hero.match(/<h1[\s\S]*?<\/h1>/)![0]).trim()).toBe("Every enquiry answered. Every call picked up.");
-    for (const x of ["Your AI assistant answers calls and WhatsApp in your customer's language.", "Get free early access", "Hear a call"]) expect(text(hero), x).toContain(x);
-    expect(hero).not.toMatch(/class="h3-pill"|data-part="hero-stage"/);
-    expect(hero).toContain('href="#how-it-works"');
-    expect(hero).toMatch(/class="h3-btn h3-btn-main h3-btn-block"[^>]*data-part="hero-cta"|data-part="hero-cta"/);
-    expect(home).not.toMatch(/hero-stage|data-source=|h3-stage/); // no orb, no source chips, no canvas for them: the hero goes straight into How it works
-    expect(home.match(/<h1[\s>]/g)).toHaveLength(1);
-    expect(text(home)).not.toMatch(/working name|Sme-?AI/i);
+  it("the early-access buttons lead to the closing card, whose button and line write to hello@ (the one contact address, no phone number)", () => {
+    const html = home();
+    expect(html).toMatch(/href="#early-access" class="btn-primary"/);
+    expect(html).toContain('href="mailto:hello@stack19.com');
+    expect(html).not.toMatch(/wa\.me|tel:|95023/); // (the sample numbers in the pictures are masked samples)
   });
-  it("one markup at every width: no section or part is hidden or swapped at a width (no lg:hidden, hidden md:block or max-lg:hidden pair) and the drawings are scaled whole, never replaced", () => {
-    const main = home.match(/<div class="h3 [\s\S]*?<footer/)![0];
-    expect(main).not.toMatch(/\b(max-)?(sm|md|lg|xl|min-\[\d+px\]):(hidden|block|flex)\b|\bhidden\b[^"]*\b(sm|md|lg|xl):|\blg:hidden\b/);
-    expect(main.match(/class="h3-fit h3-fit-stage/g) ?? []).toHaveLength(0); // the stage (the one scaled drawing) mounts from 768 px; the map and the pipe reflow in their own canvases
-    expect(main).not.toMatch(/data-part="(sources|caption|found|try|checked)-phone"|data-(source|out)-phone=/);
-    const dir = path.join(__dirname, "home");
-    const src = [...fs.readdirSync(dir).filter((f) => /\.tsx$/.test(f)).map((f) => fs.readFileSync(path.join(dir, f), "utf8")), ...["RadarFinder", "LeakCalc"].map((f) => fs.readFileSync(path.join(__dirname, `home2/${f}.tsx`), "utf8"))].join("\n");
-    expect(src).not.toMatch(/innerWidth|useMedia|:hidden|hidden (sm|md|lg|xl):|max-(sm|md|lg|xl):|\blg:/);
+  it("what is not built yet is labelled soon: Google Sheets, Your CRM and Meta ads", () => {
+    const t = text(home());
+    expect(t).toContain("Google Sheets (soon)");
+    expect(t).toContain("Your CRM (soon)");
+    expect(t).toContain("Meta ads (soon)");
+    expect(t).toContain("Google Sheets & CRM (soon)");
+    expect(t).not.toMatch(/Google Sheets(?! \(soon\)| &)/);
   });
-  it("what should your assistant do: a labelled box (type only, no microphone), five example chips across kinds of business and a button to sign-up; it calls no AI", () => {
-    const ask = home.match(/<section id="ask"[\s\S]*?<\/section>/)![0];
-    expect(text(ask)).toContain("Tell it what to do");
-    expect(ask).not.toMatch(/<svg[^>]*lucide-mic|data-part="ask-mic"|Speaking: soon/); // typing only
-    expect(ask).toMatch(/<label[^>]*class="sr-only"/);
-    expect(ask.match(/data-chip="\d"/g)).toHaveLength(5);
-    for (const x of ["Book site visits", "Call admission enquiries", "Remind about demo class", "Book test drives", "Order ready", "Set this up"]) expect(text(ask), x).toContain(x);
-    expect(ask).toMatch(/data-part="ask-go"/);
-    expect(ask).toContain('href="/signup"');
+  it("every voice pill says 'Sample soon' (there are no recordings yet), in every language tab's markup, and no voice provider other than the one credited is named", () => {
+    const html = home();
+    const pills = html.match(/class="vpill"/g)?.length ?? 0;
+    expect(pills).toBeGreaterThanOrEqual(16);
+    expect(html.match(/class="soon"/g)?.length).toBe(pills);
+    expect(html).toContain('aria-label="Cartesia"');
+    expect(text(html)).not.toMatch(/sarvam|bulbul/i);
   });
-  it("the demo: one phone box with the call and the chat of ONE conversation (the approved frame, a fifth smaller), the language chip, a caption, and the card; the markup is the still state (the chat whole, its card first)", () => {
-    const how = home.match(/<section id="how-it-works"[\s\S]*?<\/section>/)![0];
-    expect(how.match(/data-part="dark-phone"/g)).toHaveLength(2); // only the current conversation's call screen and chat screen are in the page (one cell, cross-fading)
-    expect(how.match(/data-part="stack-call"[^>]*data-on/g) ?? []).toHaveLength(0); // the still markup shows the chat of the first conversation
-    expect(how).not.toContain("data-pp-keep"); // on a phone the frame is its slim form, edge to edge (no phone inside the phone)
-    expect(how).not.toContain("data-step="); // no numbered steps: the demo itself shows call, WhatsApp, found out
-    for (const x of ["Watch it handle an enquiry", "EAMCET weekend batch", "Demo class, Saturday 10 am", "A coaching centre, in Telugu.", "Call ముగిసింది"]) expect(text(how), x).toContain(x);
-    expect(how).toContain('data-part="chat-stack"');
-    expect(how.match(/class="pp-b"/g)).toHaveLength(4);
-    expect(how.match(/class="h3-dp-cap"/g)).toHaveLength(1); // one caption on the call screen (ONE caption at a time)
-    expect(how).toMatch(/data-part="stack-lang"[\s\S]*?aria-pressed="true"[^>]*>తెలుగు</); // the language chips (a tap switches the demo language)
-    expect(how).toContain('data-phase="chat"');
+  it("says nothing it cannot back: no date for paid plans, no invented number of customers, none of the words the owner banned, no Tamil assistant", () => {
+    const t = text(home());
+    expect(t).not.toMatch(/February 2027|Feb 2027|2027/);
+    expect(t).not.toMatch(/\b(seamless(ly)?|unlock|elevate|supercharge|effortless(ly)?|cutting-edge|game-changer|leverage|empower|streamline)\b/i);
+    expect(t).not.toMatch(/Lead Desk|AI Workforce/);
+    expect(t).not.toMatch(/Tamil|தமிழ்/);
+    expect(t).not.toMatch(/\b\d[\d,]* (customers|businesses|shops) (trust|use|rely)/i);
   });
-  it("the phone demo: four conversations in the product's four languages, each with a call (4 captions, the first is the name of the business and Priya: the greeting default is OFF), a chat (4 bubbles) and a card, all of the SAME business; no Tamil assistant text; the phone is scaled by a variable", () => {
-    expect(STACK.map((c) => c.code)).toEqual(["te", "hi", "kn", "en"]);
-    expect(new Set(STACK.map((c) => c.name)).size).toBe(4);
-    for (const c of STACK) {
-      expect(c.call.lines, c.name).toHaveLength(4);
-      expect(c.lines, c.name).toHaveLength(4);
-      expect(c.call.lines[0].from).toBe("them");
-      expect(c.call.lines[0].text, c.name).not.toContain("AI assistant"); // name-only: the setting "Say AI assistant when greeting" is OFF by default
-      expect(c.call.lines[0].text, c.name).toContain("Priya");
-      expect(c.call.lines[0].text, c.name).toContain(c.name); // the call and the chat are the same conversation of the same business
-      const all = [...c.call.lines.map((l) => l.text), ...c.lines.map((l) => l.text), c.call.you, c.call.live, c.call.ended].join(" ");
-      expect(all, c.name).not.toMatch(/[\u0B80-\u0BFF]/); // no Tamil letter in any conversation
-    }
-    const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8");
-    expect(css).toMatch(/\.h3-dp \{[^}]*aspect-ratio: 1 \/ 2\.05[^}]*border-radius: 13%/); // the dark phone has real 6.1 inch proportions (outer body 1 : 2.05, corner radius 13% of the width)
-    
+  it("the plans are the plan data's: three cards with their monthly prices, extra minutes, searches and the 18% GST line", () => {
+    const t = text(home());
+    for (const s of ["Pay as you go", "₹499", "Pro", "₹1,999", "Business", "₹5,999", "Calls ₹5 a minute", "Extra minutes ₹5", "500 minutes included", "1,500 minutes included", "extra ₹299", "All prices exclude 18% GST"]) expect(t, s).toContain(s);
+    expect(t).not.toMatch(/yearly|annual|2 months free|price lock/i);
   });
-  it("the home FAQ tells the truth about the greeting (the setting is OFF by default): the prepared honest answer, with no claim that it always says it is an AI when it greets", () => {
-    const faq = home.match(/<section[^>]*id="faq"[\s\S]*?<\/section>/)![0];
-    expect(text(faq)).toContain("Can customers tell it's an AI?");
-    expect(text(faq)).toContain("If they ask, it always says so honestly. You choose whether it mentions it in the greeting.");
-    expect(text(faq)).not.toMatch(/when it greets\./);
-    expect(text(home)).not.toMatch(/AI always labelled|always labelled|written by an AI/);
+  it("the interactive parts are real controls: tabs with a tablist, the questions as buttons that say whether they are open, the job draft's chips as pressed-state buttons", () => {
+    const html = home();
+    expect(html.match(/role="tablist"/g)?.length).toBeGreaterThanOrEqual(4);
+    expect(html).toMatch(/class="faq-q" aria-expanded="true"/);
+    expect(html).toMatch(/aria-pressed="true"[^>]*>Call website enquiries/);
   });
-  it("not too much information (owner, 21 Nov 2026): every lower section is a title of at most 6 words and (where it has one) ONE grey line of at most 12, in English, with no paragraph", () => {
-    for (const id of ["calc", "lead-finder", "pricing", "built"]) {
-      const sec = home.match(new RegExp(`<section id="${id}"[\\s\\S]*?</section>`))![0];
-      const title = text(sec.match(/<h2[\s\S]*?<\/h2>/)![0]);
-      expect(title.split(" ").length, `${id}: ${title}`).toBeLessThanOrEqual(6);
-      const lead = sec.match(/<p class="h4-lead">([\s\S]*?)<\/p>/);
-      if (lead) expect(text(lead[1]).split(" ").length, `${id}: ${text(lead[1])}`).toBeLessThanOrEqual(12);
-      for (const para of sec.matchAll(/<p class="h4-card-d">([\s\S]*?)<\/p>/g)) expect(text(para[1]).split(" ").length, text(para[1])).toBeLessThanOrEqual(6);
-    }
+  it("the page is light-only and its stylesheet is scoped: every rule starts with .v9 (nothing leaks into the other pages), no yellow-purple gradients on text", () => {
+    const css = fs.readFileSync(path.join(__dirname, "../../../design/v9.css"), "utf8");
+    const unscoped: string[] = [];
+    postcss.parse(css).walkRules((r) => {
+      if (r.parent?.type === "atrule" && /keyframes$/.test((r.parent as postcss.AtRule).name)) return;
+      for (const sel of r.selectors) if (!sel.trim().startsWith(".v9")) unscoped.push(sel);
+    });
+    expect(unscoped).toEqual([]);
   });
-  it("what late call-backs cost (spec section 4): a title and one line, two sliders and 'More settings' (four sliders in all), the labelled pipe, ONE big rupee result, the contrast with a bar, the honest line; the Lead Finder: built, the owner calls them, no 'we call'", () => {
-    const calc = home.match(/<section id="calc"[\s\S]*?<\/section>/)![0];
-    expect(text(calc)).toContain("What late call-backs cost you");
-    expect(text(calc)).toContain("Move the sliders to your numbers.");
-    expect(calc.match(/type="range"/g)).toHaveLength(4);
-    for (const id of ["h2-enq", "h2-miss", "h2-buy", "h2-avg"]) expect(calc).toContain(`for="${id}"`);
-    expect(calc).toMatch(/id="h2-avg"[^>]*min="500"[^>]*max="50000"/);
-    expect(calc.match(/<details/g)).toHaveLength(1); // two sliders in view, the other two behind "More settings"
-    expect(text(calc)).toContain("More settings");
-    expect(calc).not.toContain("data-leak-step"); // one big result, no four cards
-    for (const x of ["Enquiries coming in", "150", "90", "called back in time", "went cold", "60", "₹48,000", "a month slipping away", "With Stack19: 150 of 150 answered in seconds", "Your estimate, not a promise."]) expect(text(calc), x).toContain(x);
-    expect(calc).toContain('class="h4-bar"');
-    expect(calc.match(/<canvas/g)).toHaveLength(1);
-    const finder = home.match(/<section id="lead-finder"[\s\S]*?<\/section>/)![0];
-    expect(text(finder)).toContain("Find new customers near you");
-    expect(text(finder)).toContain("It finds businesses that could buy from you. You call them.");
-    expect(text(finder)).not.toMatch(/Coming soon|early access|we call|calls them/i);
-    expect(finder.match(/role="radio"[^>]*data-city="(Hyderabad|Bengaluru|Chennai|Vijayawada)"/g)).toHaveLength(4);
-    for (const x of ["Example", "Contact", "Check first", "CBSE school", "International school"]) expect(text(finder), x).toContain(x);
-    expect(finder.match(/data-found="\d"/g)).toHaveLength(2); // two result rows: one Contact, one Check first
-    expect(text(finder)).not.toMatch(/Checked \d+ places|Found on this sweep/); // no count line, no note
-    expect(finder.match(/<canvas/g)).toHaveLength(1); // one map at every width
-  });
-  it("the plans (spec 8): three cards stacked on a phone (no carousel, no dots), what comes under each plan in tick lines from the plan data, one 'Every plan has' line, ONE line for GST, the number and free early access, a link to /pricing; the Pro minutes bar", () => {
-    const plans = home.match(/<section id="pricing"[\s\S]*?<\/section>/)![0];
-    expect([...plans.matchAll(/data-plan="(\w+)"/g)].map((m) => m[1])).toEqual(["payg", "pro", "business"]); // the spec's order
-    for (const x of ["Simple plans in rupees", "Pay as you go", "₹499", "Calls: ₹5 a minute", "Find customers: 2 searches free a month, then ₹49 each", "Set up on your own, with your assistant", "Pro", "₹1,999", "Recommended", "500 minutes included", "Extra minutes: ₹5 each", "Find customers: 10 searches a month, then ₹39 each", "Business", "₹5,999", "1,500 minutes included", "Find customers: 100 searches a month, then ₹29 each", "Priority set-up"]) expect(text(plans), x).toContain(x);
-    expect([...plans.matchAll(/<ul class="h4-plan-lines">[\s\S]*?<\/ul>/g)].map((m) => m[0].match(/<li/g)!.length)).toEqual([4, 5, 5]); // 4 or 5 tick lines each, "1 business number" among them
-    expect(plans.match(/1 business number<\/li>/g)).toHaveLength(3);
-    const every = text(plans.match(/<p class="h4-every"[\s\S]*?<\/p>/)![0]);
-    for (const x of ["Every plan has", "AI calls and WhatsApp replies", "Every feature, on every plan", "Telugu, Hindi, Kannada, English", "1 phone number included. More numbers: ₹299 a month each", "WhatsApp at Meta's own price, no markup from us", "Calls are billed every 30 seconds", "Calls nobody answers are free"]) expect(every, x).toContain(x);
-    for (const x of ["+18% GST · 1 business number included · Free early access until paid plans start.", "See full pricing"]) expect(text(plans), x).toContain(x);
-    expect(text(plans)).not.toMatch(/most popular|best value|unlimited|Lead Desk|AI Workforce|Price at launch|voice|yearly|annual|2 months free|locked/i); // nothing about voice pricing, nothing yearly
-    expect(plans).toContain('href="/pricing"');
-    expect(plans).not.toMatch(/h4-dot|h4-track|h4-swipe/); // stacked, not a carousel
-    expect(plans.match(/class="h4-minbar"/g)).toHaveLength(1); // only Pro has the bar, and it is drawn full and still
-    const css = fs.readFileSync(path.join(__dirname, "../../../design/home4.css"), "utf8");
-    expect(css).toMatch(/\.h4-plans \{ display: grid; grid-template-columns: minmax\(0, 1fr\)/); // one column on a phone
-    expect(css).toMatch(/@media \(min-width: 768px\) \{ \[data-ui="v2"\] \.h4-plans \{ grid-template-columns: repeat\(3/); // three side by side from 768 px
-  });
-  it("Built in from day one: a STILL bento after the plans (a wide card of numbers, a timeline, three small cards); nothing on the lower sections animates", () => {
-    const built = home.match(/<section id="built"[\s\S]*?<\/section>/)![0];
-    expect(text(built)).toContain("Built in from day one");
-    expect(built.match(/data-bento="\w+"/g)).toEqual(['data-bento="numbers"', 'data-bento="retry"', 'data-bento="consent"', 'data-bento="stop"', 'data-bento="quiet"']);
-    for (const x of ["Your own number", "080 4••• ••12".replace("••12", "••12"), "KYC done", "Extra number", "Calls again if busy", "Example", "10:00 Busy", "Tries again later", "5:00 pm Connected, visit booked", "Only people who said yes", "Yes, contact me", "Added to your list", "STOP works at once", "STOP", "Done, no more messages", "Quiet hours", "9:40 pm", "Waits till morning"]) expect(text(built), x).toContain(x);
-    expect(built.match(/data-illustration=""[^>]*aria-hidden="true"|aria-hidden="true"[^>]*data-illustration=""/g)).toHaveLength(4); // four pictures; the timeline is real text
-    expect(text(built)).not.toMatch(/\b\d{10}\b/); // masked digits only; "till morning", never a fixed hour of ours
-    for (const sec of ["calc", "lead-finder", "pricing", "built"]) expect(home.match(new RegExp(`<section id="${sec}"[\\s\\S]*?</section>`))![0], sec).not.toMatch(/data-phase|animation|transition/); // no play-once moments, no count-up, no slide-in
-    for (const gone of ["voices", "trust"]) expect(home, gone).not.toContain(`id="${gone}"`);
-  });
-  it("the final call to action: the line, the WhatsApp number and the closing form on joinWaitlist", () => {
-    const join = home.match(/<section id="(demo|join)"[\s\S]*?<\/section>/)![0];
-    expect(text(join)).toContain("Your next enquiry, answered in seconds.");
-    expect(text(join)).toContain("Or WhatsApp us on +91 95023 80998");
-    expect(home).not.toContain("[WHATSAPP NUMBER]");
-  });
-  it("the phones have side keys on the RIGHT edge only (a longer volume rocker above a shorter power key), drawn with pseudo-elements (no markup to read), nothing on the left, inside the width (the page does not grow)", () => {
-    const strip = (f: string) => fs.readFileSync(path.join(__dirname, "../../../design", f), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
-    for (const [file, sel] of [["home3.css", /\.h3-dp::before, \[data-ui="v2"\] \.h3-dp::after \{([^}]*)\}/], ["phone-preview.css", /\.pp-frame::before,\s*\.pp\[data-pp-variant="full"\] \.pp-frame::after \{([^}]*)\}/]] as const) {
-      const css = strip(file);
-      const rule = css.match(sel)![1];
-      expect(rule, file).toMatch(/right:\s*(-3px|calc\(-3px)/);
-      expect(rule, file).not.toMatch(/\bleft\s*:/);
-      expect(rule, file).toMatch(/pointer-events:\s*none/);
-    }
-    const dark = home.match(/data-part="dark-phone"[\s\S]*?<\/div><\/div><\/div>/)![0];
-    expect(dark).not.toMatch(/h3-dp-key|data-key/); // the keys are CSS only: nothing in the markup
-  });
-  it("the demo from 768 px: the call phone and the WhatsApp phone side by side (260 px each), the found-out card under them (and in the same row from 1100 px), no cross-fade (both shown); a phone keeps one", () => {
-    const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
-    const block = css.match(/@media \(min-width: 768px\) \{\s*\[data-ui="v2"\] \.h3-how-grid \{[\s\S]*?\n\}/)![0];
-    expect(block).toMatch(/\.h3-duo \{ grid-template-columns: repeat\(2, 260px\)/);
-    expect(block).toMatch(/\.h3-dp \{ width: 300px; zoom: 0\.8667; \}/); // drawn at 300 px, shown at 260
-    expect(block).toMatch(/\.h3-duo-call, \[data-ui="v2"\] \.h3-duo-chat \{ grid-area: auto; opacity: 1; visibility: visible/);
-    expect(block).toMatch(/\.h3-how-grid \{ grid-template-columns: minmax\(0, 1fr\)/); // the card is under the phones, not far to the right
-  });
-  it("one orange: the page's own css names no other orange and no gradient (the owner's colour rule, 20 Nov 2026)", () => {
-    const css = fs.readFileSync(path.join(__dirname, "../../../design/home3.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace("radial-gradient(circle, var(--h3-dot) 1px, transparent 1.3px)", "").replace(/radial-gradient\(120% 55% at 50% 0%.*?70%\)/, "").replace(/linear-gradient\(90deg, transparent 0, #000 var\(--h3-gutter\)[^;]*?transparent 100%\)/g, ""); // (the gradients allowed: the page's dot grid, and the dark call screen's very faint warm light drawn inside the phone)
-    expect(css).not.toMatch(/#ff773c|#ec486e|#ff9a6b|#ea580c|#f97316|gradient/i);
-    expect(css).not.toMatch(/background-attachment/); // (it repaints on every scroll)
-    expect(css).toMatch(/\[data-page="home"\]::before \{[^}]*position: fixed[^}]*will-change: transform/); // the white dotted page stays with the window: a fixed layer of its own
-    expect(css.match(/font-weight:\s*(\d+)/g)!.map((m) => m.replace(/\D/g, "")).filter((v, i, a) => a.indexOf(v) === i).sort()).toEqual(["400", "500", "600", "700"]); // Plus Jakarta Sans at 400, 500, 600 and 700 only
-  });
-  it("the lower sections' css (home4.css): designed for a phone, one orange, the site's one font, no uppercase or spacing, the owner's final type scale (22 px titles at 390, 15 px body, 16 px gutter), no font size from the viewport width, the 14 px floor", () => {
-    const css = fs.readFileSync(path.join(__dirname, "../../../design/home4.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
-    expect(css).not.toMatch(/#ff773c|#ec486e|#ff9a6b|#ea580c|#f97316/i);
-    expect(css).not.toMatch(/text-transform|font-family:\s*var\(--v2-font-(display|mono)|monospace|justify\b(?!-)|text-align:\s*justify|background-image|letter-spacing:\s*[-0-9.]/);
-    expect(css.match(/font-weight:\s*(\d+)/g)!.map((m) => m.replace(/\D/g, "")).filter((v, i, a) => a.indexOf(v) === i).sort()).toEqual(["400", "700"]);
-    // no text under 14 px (the canvases draw their own words); only the words INSIDE the tiny live moments (data-illustration) are 13 px
-    const small = css.split("}").filter((rule) => /font-size:\s*(\d+(?:\.\d+)?)px/.test(rule) && Number(rule.match(/font-size:\s*(\d+(?:\.\d+)?)px/)![1]) < 14).map((rule) => rule.split("{")[0].trim());
-    expect(small.filter((sel) => !/h4-(moment|ok)\b/.test(sel))).toEqual([]);
-    expect(css).toMatch(/\.h4-h2 \{[^}]*font-size: 22px/);
-    expect(css).toMatch(/\.h4-lead \{[^}]*font-size: 15px/);
-    expect(css).toMatch(/--h4-gutter: 16px;/);
-    expect(css).not.toMatch(/font-size:[^;}]*\bvw\b/); // sizes step at widths; none follows the viewport
-  });
-  it("with SITE_TRIAL_COPY=1 the trial button still leads to sign-up (the later words stay off the page body)", () => {
-    vi.stubEnv("SITE_TRIAL_COPY", "1");
-    const on = render("en", { kind: "home" });
-    vi.unstubAllEnvs();
-    expect(on).toContain('href="/signup"');
-  });
-  it("the sticky header with its scroll line, the three-bar logo, How it works, Lead Finder, Plans, Log in and Early access; the links sit in the bar from 900 px", () => {
-    const nav = home.match(/<header[\s\S]*?<\/header>/)![0];
-    expect(nav).toMatch(/\[position:sticky\]/);
-    expect(nav).toContain('class="h2-prog"');
-    for (const href of ['href="#how-it-works"', 'href="#lead-finder"', 'href="#pricing"', 'href="#faq"', 'href="/login"']) expect(nav, href).toContain(href);
-    for (const x of ["How it works", "Lead Finder", "Pricing", "FAQ", "Log in"]) expect(text(nav), x).toContain(x);
-    expect(nav).toContain("min-[900px]:flex");
-    expect(nav).toContain("data-mark");
-    expect(nav).not.toContain("data-orb");
-  });
-  it("says nothing it cannot back: no 'live now', no data-region claim, no invented number, no customer logos or praise, no GST claim", () => {
-    // the plans have their own test; the counter's percentages are the visitor's own sliders; the stage and the phone show labelled examples
-    const t = text(home.replace(/<section id="pricing"[\s\S]*?<\/section>/, "").replace(/<section id="calc"[\s\S]*?<\/section>/, ""));
-    expect(t).not.toMatch(/live now|stored in (india|mumbai)|\d\s?%|guarantee|testimonial|trusted by|used by|customers love|incl\w* GST|most popular/i);
-    expect(t).not.toMatch(/\d[\d,]*\+?\s+(customers|businesses|leads called|calls a day)/i);
-  });
-  it("no public page says 'Lead Desk' or 'AI Workforce' (owner, 19 Nov 2026): not in a heading, a title, a link, the share text or the schema.org data", () => {
-    for (const [n, lang, target] of cases) {
-      const html = render(lang, target);
-      expect(html, n).not.toMatch(/Lead Desk|AI Workforce|AI workforce/i);
-    }
-  });
-  it("carries application data and no FAQ data or offers (there is no price)", () => {
-    expect(home).toContain('"@type":"SoftwareApplication"');
-    expect(home).not.toContain("FAQPage");
-    expect(home).not.toContain("offers");
+  it.each(["te", "hi", "kn", "ta"] as const)("%s: the home page renders with no raw key (the new lines read in English until the owner's review)", (lang) => {
+    const html = home(lang);
+    expect(html).toContain('id="hero"');
+    expect(text(html)).not.toMatch(/\bv9\.[a-z0-9_.]+\b/);
+    expect(html).toContain('lang="' + lang + '"');
   });
 });
 
@@ -355,14 +199,6 @@ describe("The assistant's flow on the business pages and the other pages (night 
     expect(html.match(/data-ld-step=/g)).toHaveLength(6);
     expect(html.indexOf('data-part="ld-steps"')).toBeLessThan(html.indexOf('data-part="steps"'));
     expect(text(html)).toContain("The assistant at the core");
-  });
-  it.each(["te", "hi", "kn", "ta"] as const)("%s: the new home sections read in the language (no English headline, no raw key)", (lang) => {
-    const html = render(lang, { kind: "home" });
-    const d = siteDict(lang);
-    for (const k of ["h3.hero.t", "h3.ask.title", "h3.how.title", "h4.finder.t", "h4.pl.title", "h3.final.t"] as const) expect(text(html), k).toContain(d[k].replace(/&/g, "&amp;").replace(/&amp;/g, "&").replaceAll("\u00a0", " ")); // (a no-break space keeps "pick up" together in hi and kn)
-    expect(text(html)).not.toContain("Every enquiry answered.");
-    expect(text(html)).not.toContain("One call. One WhatsApp.");
-    expect(text(html)).not.toMatch(/\b(ld|v3)\.[a-z0-9_.]+\b/);
   });
 });
 
@@ -445,7 +281,6 @@ describe("Tamil, a language of the public website only", () => {
     const home = htmlText(render("ta", { kind: "home" }));
     expect(home).toMatch(/[\u0B80-\u0BFF]/);
     expect(home).toContain("WhatsApp");
-    expect(home).toContain("தெலுங்கு · இந்தி · கன்னடம்"); // the hero pill's language names
   });
   it("never says the assistant speaks Tamil: the word Tamil appears only as the name of the language itself (the language switch, one label)", () => {
     for (const [k, v] of Object.entries(siteJson as Record<string, { en: string; ta?: string }>)) {
@@ -480,41 +315,5 @@ describe("free early access on the pricing page (owner's launch scope, 18 Nov)",
     vi.stubEnv("EARLY_ACCESS", "");
     expect(render("en", { kind: "page", page: "pricing" })).not.toContain("use everything free while we open");
     vi.unstubAllEnvs();
-  });
-});
-
-describe("the home page's new pieces (22 Nov 2026): the hero pill and cells, the greetings band, the hub, no motion but the demo and the sweep", () => {
-  const home = render("en", { kind: "home" });
-  const text = (html: string) => htmlText(html).replace(/\s+/g, " ");
-  it("the hero: a pill above the headline that links to the demo's call, then the headline, the line, ONE button and three cells in one row; no language line under the button", () => {
-    const hero = home.match(/<section[^>]*aria-labelledby="h1"[\s\S]*?<\/section>/)![0];
-    expect(hero.indexOf("h3-hero-pill")).toBeLessThan(hero.indexOf("<h1"));
-    expect(hero).toMatch(/<a[^>]*class="h3-hero-pill"[^>]*href="#how-it-works"|<a[^>]*href="#how-it-works"[^>]*class="h3-hero-pill"/);
-    expect(text(hero)).toContain("నమస్కారం · తెలుగు · हिन्दी · ಕನ್ನಡ · English");
-    expect(text(hero)).toContain("Hear a call");
-    for (const x of ["Answers every enquiry in seconds", "Answers your calls when you can't", "Follows up on WhatsApp"]) expect(text(hero.match(/<ul class="h3-feats"[\s\S]*?<\/ul>/)![0]), x).toContain(x);
-    expect(hero).not.toContain("h3-hero-plain");
-  });
-  it("the greetings band sits right after the demo and before 'While it talks, it works': four greetings only (Telugu, Hindi, Kannada, English), decoration for a screen reader, the real sentence as text", () => {
-    expect(home.indexOf('id="how-it-works"')).toBeLessThan(home.indexOf('data-part="greetings"'));
-    expect(home.indexOf('data-part="greetings"')).toBeLessThan(home.indexOf('id="works"'));
-    const band = home.match(/<div class="h3-gband"[\s\S]*?<\/div><\/section>/)![0];
-    expect(band).toContain('role="img"');
-    expect(band.match(/data-w="([^"]+)"/g)!.map((m) => m.slice(8, -1)).filter((v, i, a) => a.indexOf(v) === i).sort()).toEqual(["Hello", "नमस्ते", "ನಮಸ್ಕಾರ", "నమస్కారం"].sort());
-    expect(band).not.toMatch(/வணக்கம்|நமஸ்காரம்/); // no Tamil greeting: the assistant does not speak Tamil
-    expect(text(band)).toContain("It answers in the language the customer speaks, including the mixed way people really talk.");
-    expect(band).not.toMatch(/<span[^>]*class="h3-gw"[^>]*>[^<]+</); // the lettering is drawn from data-w: no text node
-  });
-  it("'While it talks, it works': a still hub with the mark and five results, each one the product does today", () => {
-    const hub = home.match(/<section id="works"[\s\S]*?<\/section>/)![0];
-    expect(text(hub)).toContain("While it talks, it works");
-    expect(hub.match(/class="h3-hub-chip"/g)).toHaveLength(5);
-    for (const x of ["WhatsApp sent", "Visit booked", "Added to Today", "Follow-up set", "Owner told"]) expect(text(hub), x).toContain(x);
-  });
-  it("only two things move: no hero rise, no section fades, no count-up, no scatter wordmark, no live-moment classes", () => {
-    const dir = path.join(__dirname, "../../../design");
-    const css = ["home3.css", "home4.css", "footer-mark.css"].map((f) => fs.readFileSync(path.join(dir, f), "utf8").replace(/\/\*[\s\S]*?\*\//g, "")).join("\n");
-    expect(css).not.toMatch(/h3-rise|h4-in\b|animation-timeline|data-phase|h4-count-sizer/);
-    expect(home).not.toMatch(/data-phase="(final|ready|played)"|<canvas[^>]*brand-dots/); // (the demo's own data-phase is its call, chat, fade sequence)
   });
 });
