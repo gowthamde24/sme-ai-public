@@ -41,7 +41,16 @@ def items_of(runtime: Any, token: str, tenant_id: uuid.UUID) -> list[dict[str, A
     except Exception as err:   # noqa: BLE001 - Today may refuse or be down; the jobs still show
         logger.warning("jobs: needs-you not readable (%s)", type(err).__name__)
         return []
-    return [{"id": str(i.id), "code": i.kind, "kind": i.kind, "at": i.at.isoformat(), "target": {"type": TARGET_TYPE.get(i.target.type, i.target.type), "id": str(i.target.id)}} for i in shaped]
+    out: list[dict[str, Any]] = []
+    seen: set[tuple[str, str, str, str]] = set()
+    for i in shaped:
+        # one item per promise (25 Nov 2026): the same kind, the same person and the same words is one thing waiting, however many rows the subsystem holds for it
+        key = (i.kind, str(i.target.type), i.customer.strip().casefold(), i.summary.strip().casefold())
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"id": str(i.id), "code": i.kind, "kind": i.kind, "at": i.at.isoformat(), "customer": i.customer, "summary": i.summary, "target": {"type": TARGET_TYPE.get(i.target.type, i.target.type), "id": str(i.target.id)}})
+    return out
 
 
 def count_by_job(items: list[dict[str, Any]]) -> dict[str, int]:
