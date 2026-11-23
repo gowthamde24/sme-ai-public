@@ -1,0 +1,162 @@
+# ruff: noqa: E501
+"""Does every voice of the catalogue really speak? (planner brief 23 Nov 2026; owner: "test it ... all").
+
+A Cloud Run job on the API's image (keys bound from Secret Manager, nothing typed in a shell): for each listed voice of the chosen languages it speaks the voice's own sample line ONCE on its PRIMARY engine (no fallback, so a dead voice cannot hide behind
+its fallback) and checks that audio came back, is longer than MIN_SECONDS and is not silent. It prints one line per voice id (ok / FAIL + a closed reason word) and the characters sent per engine. No audio is kept. Characters are counted before each voice and
+the run stops when SARVAM_CAP (or CARTESIA_CAP) would be passed. The cost is the characters of the sample lines: about 19,900 Sarvam + 3,950 Cartesia for te, hi, kn, en."""
+
+from __future__ import annotations
+
+import argparse
+import array
+import asyncio
+import hashlib
+import io
+import json
+import math
+import os
+import sys
+import wave
+from collections.abc import Callable
+from dataclasses import dataclass
+from pathlib import Path
+
+from app.conversation.engines import real_engine_factory
+from app.conversation.fallback import EngineFactory
+from app.conversation.voices import (  # noqa: F401 - sample_text is re-used by the tests
+    CatalogueVoice,
+    default_config,
+    sample_text,
+)
+from app.pronunciation.speech import SpeechText
+
+MIN_SECONDS = 1.0
+SILENT_RMS = 40.0          # 16-bit samples: below this the clip is silence
+SARVAM_CAP = 40_000        # characters; the owner's cap for one run is Rs 200 (about 60,000 characters at Rs 30 per 10,000: this stops well before)
+CARTESIA_CAP = 12_000
+LANGUAGES = ("te", "hi", "kn", "en")
+# ONE fixed sentence per language, the same for every voice so voices compare fairly (owner 24 Nov 2026: previews are pre-recorded, never live AI for the listener). {name} = the voice's own name. No gendered verb forms. DRAFTS until the owner reviews the wording.
+SENTENCES: dict[str, str] = {
+    "en": "Hello, I'm {name}, your assistant. How can I help you today?",
+    "te": "నమస్కారం అండీ, నేను {name}, మీ assistant ని. ఈ రోజు మీకు ఎలా help చేయగలను?",
+    "hi": "नमस्ते जी, मैं {name}, आपका assistant। आज मैं आपकी क्या help करूँ?",
+    "kn": "ನಮಸ್ಕಾರ, ನಾನು {name}, ನಿಮ್ಮ assistant. ಇವತ್ತು ನಿಮಗೆ ಹೇಗೆ help ಮಾಡ್ಲಿ?",
+}
+
+
+def sentence_for(voice: CatalogueVoice) -> str:
+    return SENTENCES[voice.language].replace("{name}", voice.name)
+
+
+@dataclass
+class Result:
+    voice_id: str
+    engine: str
+    ok: bool
+    reason: str      # "" when ok, else a closed word: no_audio | too_short | silent | error:<ExceptionName> | cap
+    seconds: float = 0.0
+    pcm: bytes = b""          # kept only when asked (--keep); never printed
+    rate: int = 24000
+    sentence: str = ""
+
+
+def rms(pcm: bytes) -> float:
+    samples = array.array("h")
+    samples.frombytes(pcm[: len(pcm) // 2 * 2])
+    return math.sqrt(sum(s * s for s in samples) / len(samples)) if samples else 0.0
+
+
+async def check_one(voice: CatalogueVoice, make: EngineFactory, prepare: Callable[[str, str, str], str]) -> Result:
+    choice = voice.voices.primary
+    said = sentence_for(voice)
+    text = prepare(said, voice.language, choice.engine)
+    try:
+        engine = make(choice, voice.language)
+        pcm = b"".join([chunk async for chunk in engine.stream(text, voice.language)])
+    except Exception as exc:  # noqa: BLE001 - one dead voice must not stop the run
+        return Result(voice.id, choice.engine, False, f"error:{exc.__class__.__name__}")
+    if not pcm:
+        return Result(voice.id, choice.engine, False, "no_audio")
+    rate = int(getattr(engine, "sample_rate", 24000) or 24000)
+    seconds = len(pcm) / 2 / rate
+    if seconds < MIN_SECONDS:
+        return Result(voice.id, choice.engine, False, "too_short", seconds)
+    if rms(pcm) < SILENT_RMS:
+        return Result(voice.id, choice.engine, False, "silent", seconds)
+    return Result(voice.id, choice.engine, True, "", seconds, pcm, rate, said)
+
+
+async def run(voices: list[CatalogueVoice], make: EngineFactory, prepare: Callable[[str, str, str], str], caps: dict[str, int], pause_s: float = 0.0) -> tuple[list[Result], dict[str, int]]:
+    sent = {"cartesia": 0, "sarvam_v4": 0}
+    results: list[Result] = []
+    for voice in voices:
+        engine = voice.voices.primary.engine
+        chars = len(prepare(sentence_for(voice), voice.language, engine))
+        if sent.get(engine, 0) + chars > caps.get(engine, 0):
+            results.append(Result(voice.id, engine, False, "cap"))
+            continue
+        sent[engine] = sent.get(engine, 0) + chars
+        results.append(await check_one(voice, make, prepare))
+        if pause_s:
+            await asyncio.sleep(pause_s)
+    return results, sent
+
+
+def wav_bytes(pcm: bytes, rate: int) -> bytes:
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(rate)
+        w.writeframes(pcm)
+    return buf.getvalue()
+
+
+def keep(results: list[Result], out: Path) -> dict[str, object]:
+    """Write one WAV per good voice and a manifest (voice_id, language, engine, seconds, sha256 of the file, the sentence). Nothing else is stored; the manifest holds no key and no number."""
+    out.mkdir(parents=True, exist_ok=True)
+    rows: list[dict[str, object]] = []
+    for r in results:
+        if not r.ok:
+            continue
+        audio = wav_bytes(r.pcm, r.rate)
+        (out / f"{r.voice_id}.wav").write_bytes(audio)
+        rows.append({"voice_id": r.voice_id, "language": r.voice_id[:2], "engine": r.engine, "seconds": round(r.seconds, 2), "sha256": hashlib.sha256(audio).hexdigest(), "sentence": r.sentence, "status": "draft"})
+    manifest: dict[str, object] = {"sentences": SENTENCES, "files": rows}
+    (out / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
+    return manifest
+
+
+def report(results: list[Result], sent: dict[str, int]) -> str:
+    lines = [f"{r.voice_id:34s} {'ok  ' if r.ok else 'FAIL'} {r.engine:10s} {r.seconds:5.1f}s {r.reason}".rstrip() for r in results]
+    bad = [r for r in results if not r.ok]
+    lines.append(f"voices {len(results)}  ok {len(results) - len(bad)}  failed {len(bad)}  characters sent: sarvam {sent.get('sarvam_v4', 0)}, cartesia {sent.get('cartesia', 0)}")
+    lines.append("FAILED: " + (", ".join(f"{r.voice_id} ({r.reason})" for r in bad) if bad else "none"))
+    return "\n".join(lines)
+
+
+async def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--languages", default=",".join(LANGUAGES))
+    ap.add_argument("--only-recommended", action="store_true", help="only the recommended voices (a small, cheap run)")
+    ap.add_argument("--keep", default="", help="a folder (the mounted bucket): keep each good clip as a WAV plus manifest.json there")
+    ap.add_argument("--sarvam-cap", type=int, default=SARVAM_CAP)
+    ap.add_argument("--cartesia-cap", type=int, default=CARTESIA_CAP)
+    args = ap.parse_args(argv)
+    ck, sk = os.environ.get("CARTESIA_API_KEY", ""), os.environ.get("SARVAM_API_KEY", "")
+    if not ck or not sk:
+        print("both CARTESIA_API_KEY and SARVAM_API_KEY must be bound from Secret Manager", file=sys.stderr)
+        return 2
+    cfg, speech = default_config(), SpeechText()
+    wanted = set(args.languages.split(","))
+    voices = [v for v in cfg.catalogue.values() if v.language in wanted and (v.recommended or not args.only_recommended)]
+    voices.sort(key=lambda v: (v.language, v.gender, v.id))
+    results, sent = await run(voices, real_engine_factory(cartesia_key=ck, sarvam_key=sk), speech.prepare, {"sarvam_v4": args.sarvam_cap, "cartesia": args.cartesia_cap}, pause_s=0.2)
+    if args.keep:
+        keep(results, Path(args.keep))
+    print(report(results, sent))
+    return 0 if all(r.ok for r in results) else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(asyncio.run(main()))
