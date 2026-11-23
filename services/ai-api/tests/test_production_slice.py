@@ -19,6 +19,10 @@ PROD_SUPABASE_REF=prodrefabcdefghij
 PROD_WEB_ORIGIN=https://app.example.test
 PROD_MAIL_DOMAIN=example.test
 PROD_SCHEDULER_EMAIL=scheduler@example.test
+WHATSAPP_APP_ID=1234567890
+WHATSAPP_EMBEDDED_CONFIG_ID=9876543210
+WHATSAPP_EMBEDDED_VERSION=v5
+WHATSAPP_ALLOWED_RECIPIENTS=+910000000001
 """
 
 
@@ -104,9 +108,12 @@ def test_the_full_stack_deploys_from_its_declared_files_sandbox_one_warm_instanc
     for must in ("TELEPHONY_MODE=sandbox", "TELEPHONY_OUTBOUND=false", "TASKS_DIALER=|", "AGENTS_ENABLED=true", "PRIVACY_VERSION=2026-10-27", "SCHEDULER_EMAIL=scheduler@example.test",
                  "PUBLIC_BASE_URL=https://sme-api-111222333.asia-south1.run.app", "WORKSPACE_SECRETS_PROJECT=prod-project-test", "MAIL_FROM=noreply@example.test", "LLM_MODEL=claude-haiku-5-5",
                  "--no-cpu-throttling", "--min-instances 1", "--max-instances 1", "ANTHROPIC_API_KEY=sme-anthropic-api-key:latest", "PLIVO_AUTH_TOKEN=sme-plivo-auth-token:latest",
-                 "TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest", "SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest"):
+                 "TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest", "SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest",
+                 # WhatsApp go-live (3 Dec 2026): the adapter, the public ids from the deploy env, the FENCE from the deploy env, and the three secrets
+                 "OUTBOX_ADAPTER=whatsapp", "OUTBOX_WHATSAPP=true", "WHATSAPP_APP_ID=1234567890", "WHATSAPP_EMBEDDED_CONFIG_ID=9876543210", "WHATSAPP_ALLOWED_RECIPIENTS=+910000000001",
+                 "WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest", "WHATSAPP_APP_SECRET=sme-whatsapp-app-secret:latest", "WHATSAPP_VERIFY_TOKEN=sme-whatsapp-verify-token:latest"):
         assert must in deploy, must
-    for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=true", "WHATSAPP", "staging", "CAPTCHA"):
+    for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=true", "staging", "CAPTCHA"):
         assert never not in deploy, never
 
 
