@@ -24,6 +24,8 @@ WHATSAPP_ALLOWED_RECIPIENTS=+91XXXXXXXXXX,+91YYYYYYYYYY
 ```
 (the fence: ONLY these two numbers can ever receive a message while the line is set).
 
+**Safety facts (tested):** an UNSET fence in the adapter means "no fence" (it would message anyone), an EMPTY one means nothing is sent. The API deploy therefore READS the fence from `deploy/.env.production` and STOPS if it is empty or missing (`tests/test_production_slice.py`), so the API can never run without a fence; the worker sends an empty fence when the line is absent (nothing goes out). Widening the fence is a reviewed change plus his written word.
+
 ## 3. Merge the settings PR (C1, after his word): "WhatsApp production settings" (draft, HELD)
 It declares 7 settings and 3 secret bindings in `deploy/settings/production/` (62 -> 69 settings, 10 -> 13 secrets). Nothing changes on production until step 5.
 

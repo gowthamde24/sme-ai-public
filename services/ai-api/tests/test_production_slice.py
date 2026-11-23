@@ -131,3 +131,11 @@ def test_the_declared_full_files_carry_no_value_that_is_not_for_git() -> None:
         name, _, value = line.partition("=")
         assert "sb_" not in value and "eyJ" not in value and "@" not in value.replace("@env:", ""), name   # no key, no token, no address in the file (only @env: placeholders)
     assert "min_instances=1" in (FULL_DIR / "api.scale").read_text() and "max_instances=1" in (FULL_DIR / "api.scale").read_text()
+
+
+def test_the_api_deploy_refuses_to_go_without_a_fence_so_it_can_never_message_anyone_by_accident(tmp_path: Path) -> None:
+    """25 Nov 2026: an UNSET fence means "no fence" in the adapter (tests/test_whatsapp_units.py: allow_list(None) sends to anyone), so the declared setting reads it from the deploy environment and the tool stops on an empty or missing value."""
+    for dropped in ("WHATSAPP_ALLOWED_RECIPIENTS=+910000000001\n", "WHATSAPP_ALLOWED_RECIPIENTS=+910000000001"):
+        env_file = ENV_FILE.replace(dropped, "WHATSAPP_ALLOWED_RECIPIENTS=\n" if dropped.endswith("\n") else "WHATSAPP_ALLOWED_RECIPIENTS=")
+        done = run(tmp_path, "deploy", "api", env_file=env_file, PRIVACY_VERSION="2026-10-27", PROD_SCHEDULER_EMAIL="scheduler@example.test")
+        assert done.returncode != 0 and "WHATSAPP_ALLOWED_RECIPIENTS" in done.stderr + done.stdout
