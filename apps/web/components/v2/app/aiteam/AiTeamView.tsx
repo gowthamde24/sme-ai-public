@@ -353,7 +353,7 @@ function PhoneDay({ list, nowMinute, base, helperWord, w }: { list: Placed[]; no
       </>
     );
     rows.push(
-      <li key={m.id} data-mark={m.kind} data-owner={m.needsOwner ? "" : undefined} className={`border-l-2 pl-3 ${m.needsOwner ? "border-brand" : "border-line"}`}>
+      <li key={m.id} data-mark={m.kind} data-owner={m.needsOwner ? "" : undefined} className="border-l-2 border-line pl-3">
         {href ? (
           <Link href={href} className="flex min-h-12 items-start gap-2 rounded-lg py-1.5 hover:bg-surface-2">
             {inner}
