@@ -1,5 +1,5 @@
 import type { SiteKey, SiteT } from "@/i18n/site";
-import { VOICES } from "@/lib/site/v9-data";
+import { VOICES, WA } from "@/lib/site/v9-data";
 
 import { Phone as PhoneClient } from "./clients";
 import type { TryPlan } from "./below";
@@ -13,7 +13,7 @@ const k = (s: string) => s as SiteKey;
 const words = (t: SiteT) => ({ online: t(k("v9.phone.online")), message: t(k("v9.phone.message")), today: t(k("v9.phone.today")), live: t(k("v9.phone.live")), ended: t(k("v9.phone.ended")), ai: t(k("v9.phone.ai")) });
 
 export function Phone({ t, id, still }: { t: SiteT; id: string; still: boolean }) {
-  return <PhoneClient id={id} still={still} words={words(t)} />;
+  return <PhoneClient id={id} still={still} lang="te" demo={WA.te} words={words(t)} />;
 }
 
 export function HowDemo({ t }: { t: SiteT }) {

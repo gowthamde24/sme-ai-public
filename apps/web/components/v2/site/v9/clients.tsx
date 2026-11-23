@@ -6,7 +6,7 @@ import { Grip, Mic, Phone as Phone2, PhoneOff, Volume2 } from "lucide-react";
 
 import { PpBubble, PpDay } from "@/components/v2/PhonePreview";
 import { DarkPhone } from "@/components/v2/site/home/DarkPhone";
-import { WA, type DemoLang } from "@/lib/site/v9-data";
+import type { Demo, DemoLang } from "@/lib/site/v9-data";
 
 /**
  * The small interactive parts of the home page (landing v9, owner approved 23 Nov 2026). Everything static is a server component (./generated.tsx); only what moves or reacts to a tap is here: the phone
@@ -80,13 +80,11 @@ const tm = (n: number) => `10:${String(4 + n).padStart(2, "0")}`;
  * old home page (design/home3.css, `.h3-dp-*`) and the same WhatsApp chat (`PpBubble`, design/phone-preview.css). The call is a layer over the chat; after about four seconds it ends and the chat plays: the
  * customer's line, a typing pause, the assistant's reply, the brochure. Timers start once the phone is on screen; reduced motion shows the finished chat. `still` = the call screen only (the picture in "While it talks").
  */
-export function Phone({ id, still, lang = "te", words }: { id: string; still: boolean; lang?: DemoLang; words: PhoneWords }) {
+export function Phone({ id, still, lang, demo: d, words }: { id: string; still: boolean; lang: DemoLang; /** The conversation to play (the server passes it, so the four of them are not in this chunk). */ demo: Demo; words: PhoneWords }) {
   const root = useRef<HTMLDivElement>(null);
   const seen = useRef(false);
   const [phase, setPhase] = useState<"call" | "chat">("call");
   const [items, setItems] = useState<Item[]>([]);
-  const d = WA[lang];
-
   useEffect(() => {
     if (still) return;
     let timers: ReturnType<typeof setTimeout>[] = [];

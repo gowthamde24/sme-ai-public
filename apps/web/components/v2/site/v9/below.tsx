@@ -169,7 +169,7 @@ export function HowDemoClient({ w }: { w: HowWords }) {
     <>
       <Tabs label={w.tabs} items={DEMO_LANGS.map((k) => ({ key: k, text: DEMO_LANG_NAMES[k] }))} value={lang} onChange={setLang} />
       <div className="how8">
-        <Phone id="ph-how" still={false} lang={lang} words={w.phone} />
+        <Phone id="ph-how" still={false} lang={lang} demo={d} words={w.phone} />
         <div className="how8-right">
           <div className="fcard"><span className="ic">{ICON.search}</span><div><small>{w.asked}</small><strong>{d.asked}</strong></div></div>
           <div className="fcard"><span className="ic">{ICON.globe}</span><div><small>{w.language}</small><strong>{d.lang}</strong></div></div>
