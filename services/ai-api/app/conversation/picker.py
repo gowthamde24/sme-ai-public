@@ -28,18 +28,22 @@ from app.conversation.sound_read import sound_of
 from app.conversation.voices import (
     CALL_LANGUAGES,
     ID_FORMAT,
+    SAMPLES,
     CatalogueVoice,
     VoiceConfig,
     default_config,
     sample_text_of,
 )
 from app.errors import ApiError
+from app.telephony import tone as tone_mod
 from app.tenancy.models import Role
 from app.voice.interface import VoiceError
 from app.workspace.repository import WorkspaceRepository
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/ai-assistant", tags=["ai-assistant"])
 public_router = APIRouter(prefix="/v1/voice-samples", tags=["ai-assistant"])
+style_public_router = APIRouter(prefix="/v1/voice-style-samples", tags=["ai-assistant"])
+STYLE_SAMPLES = SAMPLES / "styles"   # <voice>.<style>.<language>.mp3 (docs/contracts/voice-styles.md): pre-recorded, one file per recommended voice x style x language
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
@@ -285,3 +289,15 @@ def sample(file_name: str) -> Response:
     if voice is None or not voice.sample_file.is_file():
         raise ApiError(404, "no_sample", "There is no sample for this voice.")
     return FileResponse(voice.sample_file, media_type="audio/mpeg", headers={"Cache-Control": "public, max-age=86400"})
+
+
+@style_public_router.get("/{file_name}")
+def style_sample(file_name: str) -> Response:
+    """`<voice id>.<style>.<language>.mp3`. Only a voice of the catalogue, a known style and a call language become a path: nothing the caller types reaches the file system."""
+    parts = file_name[:-4].split(".") if file_name.endswith(".mp3") else []
+    voice_id, style, language = (parts + ["", "", ""])[:3] if len(parts) == 3 else ("", "", "")
+    voice = default_config().catalogue.get(voice_id) if ID_FORMAT.match(voice_id) else None
+    path = STYLE_SAMPLES / f"{voice_id}.{style}.{language}.mp3"
+    if voice is None or style not in tone_mod.CHOICES or language not in ("te", "hi", "kn", "en") or not path.is_file():
+        raise ApiError(404, "no_sample", "There is no sample for this voice.")
+    return FileResponse(path, media_type="audio/mpeg", headers={"Cache-Control": "public, max-age=86400"})

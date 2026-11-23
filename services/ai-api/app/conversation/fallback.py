@@ -22,6 +22,7 @@ from contextlib import suppress
 from typing import Any
 
 from app.agents.register import address
+from app.conversation import style_voice
 from app.conversation.parts import StreamingTts
 from app.conversation.pronounce import Pronunciations, default_pronunciations
 from app.conversation.voices import VoiceChoice, VoiceConfig
@@ -60,6 +61,7 @@ class FallbackTts:
         self._skip_primary_until: dict[str, float] = {}
         self._fallback_in_turn = False
         self._loud = StreamNormaliser(self.sample_rate)   # one loudness for every voice and engine (app/voice/loudness.py); started again at every turn
+        self.style: str | None = None   # the speaking style of the call (app/conversation/style_voice.py): friendly or None = the engine's own sound
         self.pace = 1.0   # the speaking speed of the workspace (1.0 = the engine's own); passed to an engine that can take it
         self.served_engine = ""  # the engine that spoke the most recent piece: cartesia | sarvam_v4
         self.fallback_reason = ""  # "", "error", "timeout", "cooldown", "mid_stream"
@@ -105,7 +107,10 @@ class FallbackTts:
         engine = self._engines[key]
         set_pace = getattr(engine, "set_pace", None)
         if set_pace is not None:
-            set_pace(self.pace)   # an engine that can speak faster or slower is told the workspace's speed before every piece
+            set_pace(self.pace)
+        set_style = getattr(engine, "set_style", None)
+        if set_style is not None:
+            set_style(style_voice.settings_for(self.style, "sarvam" if choice.engine != "cartesia" else "cartesia"))   # the style's real voice settings (pitch, loudness, temperature, volume, emotion); empty for friendly   # an engine that can speak faster or slower is told the workspace's speed before every piece
         return engine
 
     async def prewarm(self) -> None:

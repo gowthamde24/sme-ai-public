@@ -81,6 +81,7 @@ from app.conversation.engines import real_engine_factory
 from app.conversation.fillers import FillerBank
 from app.conversation.picker import public_router as voice_samples_router
 from app.conversation.picker import router as voice_picker_router
+from app.conversation.picker import style_public_router as voice_style_samples_router
 from app.conversation.preview import CallVoicePreview
 from app.conversation.voices import default_config as voice_catalogue
 from app.crm import repository as crm_repo
@@ -1565,6 +1566,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(browser_voice_router)
     app.include_router(auto_reply_router)
     app.include_router(voice_samples_router)
+    app.include_router(voice_style_samples_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)

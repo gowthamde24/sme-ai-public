@@ -15,6 +15,7 @@ import json
 import logging
 import re
 from collections.abc import AsyncIterator
+from typing import Any
 from urllib.parse import urlencode
 
 import httpx
@@ -98,19 +99,27 @@ class SarvamStreamTts:
     def __init__(self, key: str, *, speaker: str, language: str = "te", model: str = "bulbul:v4-flash", pace: float = 1.05, min_buffer: int = 30) -> None:
         self._key, self._model, self._speaker, self._pace, self._min_buffer, self._language = key, model, speaker, pace, min_buffer, language
         self._base_pace = pace
+        self._speed = 1.0
+        self._style: dict[str, Any] = {}
         self._warm: websockets.ClientConnection | None = None
         self._warm_language = ""
 
     def set_pace(self, speed: float) -> None:
         """The workspace's speaking speed (1.0 = normal) on top of this engine's own base pace; Bulbul takes 0.5 to 2.0. A connection that is already open keeps its pace until it is opened again."""
-        self._pace = round(max(0.5, min(2.0, self._base_pace * speed)), 2)
+        self._speed = speed
+        self._pace = round(max(0.5, min(2.0, self._base_pace * speed * self._style.get("pace", 1.0))), 2)
+
+    def set_style(self, settings: dict[str, Any]) -> None:
+        """The speaking style's voice settings (app/conversation/style_voice.py): pace (a factor), pitch, loudness, temperature. Empty = the engine's own sound. Applies to the next connection."""
+        self._style = dict(settings)
+        self._pace = round(max(0.5, min(2.0, self._base_pace * self._speed * self._style.get("pace", 1.0))), 2)
 
     def __repr__(self) -> str:
         return f"SarvamStreamTts(model={self._model})"
 
     async def _open(self, language: str) -> websockets.ClientConnection:
         ws = await websockets.connect(f"{SARVAM_WS}/text-to-speech/ws?{urlencode({'model': self._model, 'send_completion_event': 'true'})}", additional_headers={"api-subscription-key": self._key}, max_size=None)
-        await ws.send(json.dumps({"type": "config", "data": {"speaker": self._speaker, "target_language_code": TAGS.get(language, "en-IN"), "language_code": TAGS.get(language, "en-IN"), "pace": self._pace, "min_buffer_size": self._min_buffer, "max_chunk_length": 150, "output_audio_codec": "linear16", "speech_sample_rate": self.sample_rate}}))
+        await ws.send(json.dumps({"type": "config", "data": {"speaker": self._speaker, "target_language_code": TAGS.get(language, "en-IN"), "language_code": TAGS.get(language, "en-IN"), "pace": self._pace, "min_buffer_size": self._min_buffer, "max_chunk_length": 150, "output_audio_codec": "linear16", "speech_sample_rate": self.sample_rate, **{k: v for k, v in self._style.items() if k in ("pitch", "loudness", "temperature")}}}))
         return ws
 
     async def prewarm(self) -> None:
@@ -151,11 +160,16 @@ class CartesiaStreamTts:
     def __init__(self, key: str, *, voice_id: str, model: str = "sonic-3.6", client: httpx.AsyncClient | None = None) -> None:
         self._key, self._voice_id, self._model = key, voice_id, model
         self._speed = 1.0
+        self._style: dict[str, Any] = {}
         self._client = client or httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0))
 
     def set_pace(self, speed: float) -> None:
         """The workspace's speaking speed (1.0 = the voice's own). Only a speed other than 1.0 is sent (`generation_config.speed`), so a workspace that never changed it speaks exactly as before."""
         self._speed = max(0.6, min(1.5, speed))
+
+    def set_style(self, settings: dict[str, Any]) -> None:
+        """The speaking style's voice settings (app/conversation/style_voice.py): speed (a factor), volume, emotion (English only). Empty = the voice's own sound."""
+        self._style = dict(settings)
 
     def __repr__(self) -> str:
         return f"CartesiaStreamTts(model={self._model})"
@@ -178,8 +192,16 @@ class CartesiaStreamTts:
 
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
         body = {"model_id": self._model, "transcript": text, "voice": {"mode": "id", "id": self._voice_id}, "language": language, "output_format": {"container": "raw", "encoding": "pcm_s16le", "sample_rate": self.sample_rate}}
-        if abs(self._speed - 1.0) > 0.001:
-            body["generation_config"] = {"speed": round(self._speed, 2)}
+        speed = max(0.6, min(1.5, self._speed * self._style.get("speed", 1.0)))
+        config: dict[str, Any] = {}
+        if abs(speed - 1.0) > 0.001:
+            config["speed"] = round(speed, 2)
+        if "volume" in self._style:
+            config["volume"] = self._style["volume"]
+        if self._style.get("emotion") and language == "en":   # emotion is documented for English only
+            config["emotion"] = self._style["emotion"]
+        if config:
+            body["generation_config"] = config
         try:
             async with self._client.stream("POST", f"{CARTESIA}/tts/bytes", headers={"X-API-Key": self._key, "Cartesia-Version": "2025-04-16"}, json=body) as resp:
                 if resp.status_code != 200:

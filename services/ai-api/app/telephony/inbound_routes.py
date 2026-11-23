@@ -236,6 +236,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     stored = stored or Stored(training=training)
     base_tts = FallbackTts(bv.config, bv.factory, chosen=dict(stored.choices), gender=stored.gender, pronunciations=default_pronunciations())   # the workspace's chosen voice and gender (before 21 Nov 2026 a call always spoke the default woman's voice)
     base_tts.pace = clamp_speed(stored.speed)
+    base_tts.style = tone_of(stored)[0]   # the speaking style's real voice settings (pitch, loudness, volume ...; friendly sends nothing extra)
     tts: Any = GuardedTts(base_tts, (training or {}).get("never_say") or [],
                           goal_tone=outbound.tone if outbound is not None and outbound.goal else None,
                           addressed_name=outbound.person_name if outbound is not None else None, titles_gender=outbound.person_gender if outbound is not None and not outbound.person_name else None)
