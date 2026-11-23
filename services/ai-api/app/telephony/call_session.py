@@ -23,6 +23,7 @@ from app.browser_voice.limits import Ledger, Limits, Usage
 from app.browser_voice.session import Kind, Parts, VoiceSession
 from app.conversation.parts import StreamingLlm
 from app.ops.usage import UsageRecorder, record_best_effort
+from app.telephony import apology as apology_mod
 from app.telephony import call_usage, caller_guard, language_rule, persona
 from app.telephony import outcome as outcome_mod
 from app.telephony import tone as tone_mod
@@ -79,6 +80,17 @@ class CallVoiceSession(VoiceSession):
 
     def _taken_over(self) -> bool:
         return bool(getattr(getattr(getattr(self, "socket", None), "_line", None), "taken_over", False))
+
+    _apology_planner: apology_mod.Apology | None = None
+
+    @property
+    def apology(self) -> apology_mod.Apology | None:
+        """After a long stretch of caller speech that gave no words: one short "sorry, say that again?" (app/telephony/apology.py). Never while a person has the call or after the closing line."""
+        if self._taken_over() or self.closing:
+            return None
+        if self._apology_planner is None:
+            self._apology_planner = apology_mod.Apology()
+        return self._apology_planner
 
     async def _answer(self, text: str, tm: Any) -> None:
         """While a person has taken the call over, the AI does not answer (the caller's words still reach the transcript)."""

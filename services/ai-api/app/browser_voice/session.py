@@ -699,9 +699,12 @@ class VoiceSession:
             if not text:
                 if self.bus._closed:  # noqa: SLF001 - the browser left
                     return
+                await self._maybe_apologise(tm)
                 continue
             failures = 0
             self._checked_in = False
+            if self.apology is not None:
+                self.apology.heard()
             if carried is None and self._voice is not None:
                 self._enrol_voice(tm)
             if is_goodbye(text):
@@ -764,6 +767,23 @@ class VoiceSession:
                 task.cancel()
                 with suppress(asyncio.CancelledError, Exception):
                     await task
+
+    # a phone call sets this (app/telephony/apology.py): a long stretch of caller speech that gave no words is apologised for, once in a while; Live talk leaves it None
+    apology: Any = None
+
+    async def _maybe_apologise(self, tm: TurnTimings) -> None:
+        """The caller spoke for a real stretch but nothing was recognised: "sorry, could you say that again?" (humanness audit item 4)."""
+        ap = self.apology
+        if ap is None or tm.speech_start_at is None or tm.eot_at is None:
+            return
+        now = self.clock()
+        if not ap.should(int((tm.eot_at - tm.speech_start_at) * 1000), None, now):
+            return
+        line = ap.line(self.language)
+        ap.spoke(now)
+        log.info("browser_voice_apology language=%s n=%d", self.language, ap.said)   # the count, never the words
+        await self._say(line)
+        self.bus.drop_before(0.0)   # our own question came back through the microphone
 
     # how long the line may be quiet: None = Live talk's own (check-in at ~8 s, end at the idle limit); a phone call sets (check-in after, end after) in seconds
     silence_s: tuple[float, float] | None = None
