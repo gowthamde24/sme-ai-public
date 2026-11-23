@@ -1,5 +1,5 @@
 // Job DF: the click-through of the web screens on staging, in a real browser, through https://staging.stack19.com (what job DC could not test: the web screens themselves).
-//   node e2e/staging-clickthrough.mjs [--size desktop|phone|both] [--only baseline,textiles,construction,education,ask,public,cold] [--out DIR]
+//   node e2e/staging-clickthrough.mjs [--size desktop|phone|both] [--only baseline,textiles,construction,campaigns,education,ask,public,leaddesk,cold] [--out DIR]
 // Staging only, synthetic data only (the packs' own "Example:" data and rows labelled "DF"). The demo owners' passwords and authenticator secrets are read from Google Secret Manager into memory (staging-df-lib.mjs);
 // nothing secret is printed, logged, written or photographed. Outbound sending stays off (the staging switch is "stopped", the only channel is the fake one). AI use is a handful of Ask questions per business.
 // It records PASS, FAIL or NOTE per step with timings and a picture, and writes the table to DIR/results.json (default ~/Desktop/v2-overnight/shots-df). Exit 1 if a step FAILs.
@@ -14,7 +14,7 @@ const arg = (name, fallback) => {
   return i > 0 ? process.argv[i + 1] : fallback;
 };
 const SIZE_ARG = arg("size", "desktop");
-const ONLY = arg("only", "baseline,textiles,construction,campaigns,education,ask,public").split(",");
+const ONLY = arg("only", "baseline,textiles,construction,campaigns,education,ask,public,leaddesk").split(",");
 const want = (k) => ONLY.includes(k);
 const SIZE_LIST = SIZE_ARG === "both" ? ["desktop", "phone"] : [SIZE_ARG];
 const TAG = new Date().toISOString().slice(5, 16).replace(/[-T:]/g, "");
@@ -22,7 +22,9 @@ const text = async (page) => (await page.locator("main").first().innerText().cat
 const must = (cond, what) => {
   if (!cond) throw new Error(what);
 };
-const short = { textiles: "textiles", construction_materials: "construction", education: "education" };
+const short = { textiles: "textiles", construction_materials: "construction", education: "education", real_estate: "sri-sai-homes", coaching: "vidya-coaching" };
+// night 4: the two Lead Desk demo workspaces (DEMO Sri Sai Homes, DEMO Vidya Coaching Centre); their passwords and authenticator secrets are sme-demo-<pack>-password / -totp like the others
+const LEAD_PACKS = ["real_estate", "coaching"];
 
 /** One step: run it, time it, take a picture, record PASS / FAIL (with the first line of the error and a picture of where it stopped). */
 async function step(s, size, biz, id, title, fn) {
@@ -544,6 +546,88 @@ async function ask(pack, size) {
   return spent;
 }
 
+// ------------------------------------------------------------------------------------------------------------------------------------ 7b. Lead Desk (night 4): the two demo workspaces, read-only
+/** A page that fits the screen: no sideways scroll (matters on the phone). */
+const fits = (s) => s.page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
+/** No raw string key (three dotted lowercase parts, like `ld.src.meta`) and no error page in the words of a screen. */
+const clean = (body) => {
+  must(!/something went wrong|application error|^not found/i.test(body), `the page shows an error: ${body.slice(0, 100)}`);
+  const raw = /\b[a-z]{2,8}\.[a-z_]{2,}\.[a-z_.]{2,}\b/.exec(body.replace(/\b(www|api)\.[a-z.]+/g, ""));
+  must(!raw, `a raw string key is on the page: ${raw?.[0]}`);
+};
+/** The screens of the Lead Desk as the owner of one demo workspace sees them. NOTHING is approved, bought, called or sent: pages are opened and read; the seeded data (scripts/demo_data.py) is what they are checked against. */
+async function leadDesk(pack, size) {
+  const s = await session(pack, size);
+  const page = (id, title, path, check) =>
+    step(s, size, pack, id, title, async () => {
+      const r = await open(s, path);
+      const body = await text(s.page);
+      clean(body);
+      must(await fits(s), "the page is wider than the screen");
+      const out = await check(body, r);
+      const note = typeof out === "object" && out ? out.note : out; // a check may answer { status: "NOTE", note } for something worth saying that is not a break of the screen itself
+      return { ...(typeof out === "object" && out ? { status: out.status } : {}), note: `${note ?? ""}${note ? "; " : ""}heading after ${r.toHeading} ms`.trim() };
+    });
+  const count = (body, re) => (body.match(re) ?? []).length;
+  await page("L1", "Today names the hot leads waiting for the owner", "", async (body) => {
+    if (/hot lead/i.test(body)) return "a hot lead is on Today";
+    // The two hand-offs exist (L5 counts them), the API puts them on Today, but this screen does not draw them: a NOTE with what it shows instead, until the web part is done (it is not a break of any screen)
+    const waiting = /(\d+) waiting for you/.exec(body)?.[1];
+    const calm = /All clear/.test(body);
+    const card = /Lead Desk\s*(Not available yet|Idle|Switched off|Ready)/.exec(body)?.[1];
+    return { status: "NOTE", note: `no hot lead is on Today${waiting ? `; it counts ${waiting} waiting for the owner` : ""}${calm ? ' and says "All clear"' : ""}${card ? `; the Lead Desk card in "Your team" says "${card}"` : ""}` };
+  });
+  await page("L2", "Lead Desk: the leads, where they came from, their state", "/lead-desk", async (body) => {
+    must(/Lead Desk/.test(body) && /Where from/.test(body) && /State/.test(body), "the filters (Where from, State) are not there");
+    const rows = count(body, /\(demo\)/g);
+    must(rows >= 20, `only ${rows} demo leads are listed (the seed makes 31, plus 3 a day)`);
+    must(/Your website form/.test(body) && /(Excel or CSV file|Pasted list)/.test(body), "the sources of the seeded leads are not named");
+    return `${rows} demo leads listed`;
+  });
+  await page("L3", "Lead sources: Meta, IndiaMART, portals, website form, sheet, webhook", "/lead-sources", async (body) => {
+    for (const w of ["Meta Lead Ads", "IndiaMART", "JustDial", "Your website form", "Google Sheets", "Zapier"]) must(body.includes(w), `source "${w}" is missing`);
+    const setups = await s.page.getByRole("button", { name: /^Set it up$/ }).count();
+    must(setups >= 4, `only ${setups} "Set it up" buttons`);
+    return `6 sources, ${setups} set-up buttons`;
+  });
+  await page("L4", "Add leads: the four ways to bring a list in", "/import", async (body) => {
+    for (const w of ["Excel or CSV file", "Google Sheet", "Paste a list", "Contacts file", "Lists you added"]) must(body.includes(w), `"${w}" is missing`);
+    must(await s.page.getByRole("button", { name: /Read the list/ }).isVisible(), "the \"Read the list\" button is not there");
+    return "4 ways and the list of what was added";
+  });
+  await page("L5", "Lead plans: hot leads, the standing rule, the batch approved once", "/outreach", async (body) => {
+    for (const w of ["Hot leads waiting for you", "Standing rules", "Plans for batches of leads", "How calling works"]) must(body.includes(w), `"${w}" is missing`);
+    const called = await s.page.getByRole("button", { name: /I have called them/ }).count();
+    must(called >= 2, `${called} hot-lead hand-offs (the seed makes 2)`);
+    must(await s.page.getByRole("button", { name: /Pause this rule/ }).first().isVisible(), "the standing rule has no \"Pause this rule\"");
+    return `${called} hand-offs waiting, a standing rule is on`;
+  });
+  await page("L6", "Lead report: by source, with the cost of a booking", "/lead-report", async (body) => {
+    must(/All sources together/.test(body) && /Each source/.test(body), "the two headings are not there");
+    const m = /(\d+) leads, (\d+) calls, (\d+) bookings?/.exec(body);
+    must(m && Number(m[1]) >= 20, `the totals line is wrong: ${m?.[0]}`);
+    must(/Cost of one booking/.test(body), "no cost of one booking");
+    return m?.[0];
+  });
+  await page("L7", "Ask Vijaya to do it: the ready-made tasks and the finished ones", "/tasks", async (body) => {
+    for (const w of ["Call new leads", "Supplier price enquiry", "Make a plan", "Your tasks"]) must(body.includes(w), `"${w}" is missing`);
+    const done = /Finished \((\d+)\)/.exec(body);
+    must(done && Number(done[1]) >= 2, `finished tasks: ${done?.[0]} (the seed makes 2)`);
+    must(/Nothing is called or sent until you approve/.test(body), "the promise \"nothing is called or sent until you approve\" is missing");
+    return done?.[0];
+  });
+  await page("L8", "Top-ups: usage, the six packs, bought and invoices (not bought)", "/settings?section=plan", async (body) => {
+    must(/Usage and top-ups/.test(body) && /Bought and invoices/.test(body), "the two headings are not there");
+    const packs = await s.page.getByRole("button", { name: /^\+(100|300|1,000) (minutes|messages)/ }).count();
+    must(packs === 6, `${packs} top-up packs instead of 6`);
+    must(/GST/.test(body), "no GST on the prices");
+    return "6 packs with GST, none bought";
+  });
+  if (s.errors.length) record(`${short[pack]}/${size} page errors seen on the Lead Desk screens`, "NOTE", s.errors.slice(0, 4).join(" | "));
+  await s.context.close();
+  await s.browser.close();
+}
+
 // ------------------------------------------------------------------------------------------------------------------------------------ 7. public pages
 async function publicPages(size) {
   const browser = await chromium.launch();
@@ -662,6 +746,12 @@ try {
     if (want("education")) extra.education = await safe(`education fees /${size}`, () => educationFees(size));
     if (want("ask")) for (const pack of process.env.DF_PACKS ? process.env.DF_PACKS.split(",") : PACKS) extra[`ask-${short[pack]}-${size}`] = await safe(`ask ${short[pack]}/${size}`, () => ask(pack, size));
     if (want("public")) await safe(`public pages /${size}`, () => publicPages(size));
+    if (want("leaddesk")) {
+      for (const pack of LEAD_PACKS) {
+        timings[`${short[pack]}/${size}`] = await safe(`baseline ${short[pack]}/${size}`, () => baseline(pack, size));
+        await safe(`lead desk ${short[pack]}/${size}`, () => leadDesk(pack, size));
+      }
+    }
   }
   if (want("cold")) extra.cold = await safe("cold start", () => cold(Number(arg("idle", "20"))));
 } finally {
