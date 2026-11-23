@@ -3366,7 +3366,8 @@
       ],
       "areas": [
         "jobs",
-        "packs"
+        "packs",
+        "tenancy"
       ],
       "default_message": "Business types are not available on this system.",
       "wait": false,

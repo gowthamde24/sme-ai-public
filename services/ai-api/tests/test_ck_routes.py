@@ -547,3 +547,28 @@ def test_the_owner_changes_the_pack_with_the_second_factor_and_a_member_reads_th
     for who in ("a_admin", "a_viewer", "a_sales"):
         assert client.put(f"{base}/pack", json={"pack": "clinic"}, headers=auth(who, aal="aal2")).status_code == 403, who
     assert len(calls) == 2
+
+
+def test_creating_a_workspace_can_name_its_business_type_and_a_wrong_one_makes_nothing() -> None:
+    packs = FakePacks()
+    set_calls: list[tuple[str, str]] = []
+
+    def set_pack(token: str, tenant_id: uuid.UUID, pack: str) -> dict[str, Any]:
+        set_calls.append(("set", pack))
+        return packs.workspace_pack(token, tenant_id)
+
+    packs.workspace_pack_set = set_pack  # type: ignore[attr-defined]
+    client, repo = make_client(packs=packs, pack_registry=PackRegistry(PACKS))
+    h = auth("a_owner")
+    base = "/v1/tenants"
+    plain = client.post(base, json={"name": "Plain Co", "slug": "plain-co"}, headers=h)
+    assert plain.status_code in (200, 201) and set_calls == [], "no pack named: today's default, nothing is set"
+    typed = client.post(base, json={"name": "Clinic Co", "slug": "clinic-co", "pack": "clinic"}, headers=h)
+    assert typed.status_code in (200, 201) and set_calls == [("set", "clinic")]
+    other = client.post(base, json={"name": "Other Co", "slug": "other-co", "pack": "other"}, headers=h)
+    assert other.status_code in (200, 201) and set_calls[-1] == ("set", "general_business"), "the public word other is the generic pack"
+    made = len(repo.created)
+    for bad in ("not_a_pack", "Bad Code", "x"):
+        r = client.post(base, json={"name": "Wrong Co", "slug": "wrong-co", "pack": bad}, headers=h)
+        assert r.status_code == 422, bad
+    assert len(repo.created) == made and len(set_calls) == 2, "a wrong code makes no workspace and sets nothing"
