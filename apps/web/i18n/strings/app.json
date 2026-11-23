@@ -126522,5 +126522,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "vc.sounds.t": {
+  "en": "Sounds like",
+  "te": "ఎలా వినిపిస్తుంది",
+  "hi": "कैसी सुनाई देती है",
+  "kn": "ಹೇಗೆ ಕೇಳಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.sounds.warm_friendly": {
+  "en": "Warm & friendly",
+  "te": "ఆప్యాయంగా, స్నేహంగా",
+  "hi": "गर्मजोशी भरी",
+  "kn": "ಆತ್ಮೀಯ, ಸ್ನೇಹಪರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.sounds.calm_reassuring": {
+  "en": "Calm & reassuring",
+  "te": "ప్రశాంతంగా, భరోసాగా",
+  "hi": "शांत और भरोसेमंद",
+  "kn": "ಶಾಂತ, ಭರವಸೆ ನೀಡುವ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.sounds.bright_young": {
+  "en": "Bright & young",
+  "te": "ఉత్సాహంగా, యువంగా",
+  "hi": "चमकदार और युवा",
+  "kn": "ಉತ್ಸಾಹ, ಯುವ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.sounds.energetic": {
+  "en": "Energetic",
+  "te": "చురుకుగా",
+  "hi": "ऊर्जावान",
+  "kn": "ಚುರುಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.sounds.deep_confident": {
+  "en": "Deep & confident",
+  "te": "గంభీరంగా, నమ్మకంగా",
+  "hi": "गहरी और आत्मविश्वासी",
+  "kn": "ಗಂಭೀರ, ಆತ್ಮವಿಶ್ವಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
