@@ -16,6 +16,8 @@ export const GENDERS = ["female", "male"] as const;
 export type Gender = (typeof GENDERS)[number];
 export const VOICE_ID = /^[a-z0-9][a-z0-9_.-]{1,59}$/;
 
+export const SOUNDS_LIKE = ["warm_friendly", "calm_reassuring", "bright_young", "energetic", "deep_confident"] as const;
+export type SoundsLike = (typeof SOUNDS_LIKE)[number];
 export type PickerVoice = {
   id: string;
   language: PickerLang;
@@ -27,6 +29,8 @@ export type PickerVoice = {
   tags: string[];
   /** The catalogue's two or three suggestions for the language: they carry a "Recommended" badge. */
   recommended: boolean;
+  /** C1's voice category (voices-tones.md 'Voice categories'): exactly one of the five, or null when the API does not say (an older answer). */
+  soundsLike: SoundsLike | null;
   gender: Gender;
   isDefault: boolean;
   /** A path on the API of the pre-rendered sample, or null when there is none yet. The browser never gets it: it asks this app's route. */
@@ -59,7 +63,7 @@ export function parsePicker(json: unknown): Picker | null {
       if (!isRecord(r) || typeof r.id !== "string" || !VOICE_ID.test(r.id) || typeof r.name !== "string" || r.name.length < 1 || r.name.length > 40 || (r.label !== undefined && (typeof r.label !== "string" || r.label.length > 30)) || typeof r.default !== "boolean") return null;
       if (!(GENDERS as readonly unknown[]).includes(r.gender)) return null;
       const tags = Array.isArray(r.tags) ? r.tags.filter((x): x is string => typeof x === "string" && x.length > 0 && x.length <= 20).slice(0, 6).map((x) => x.toLowerCase()) : [];
-      voices.push({ id: r.id, language, name: r.name, label: typeof r.label === "string" && r.label !== "" ? r.label : (tags[0] ?? ""), tags: tags.length > 0 ? tags : typeof r.label === "string" && r.label !== "" ? [r.label.toLowerCase()] : [], recommended: r.recommended === true, gender: r.gender as Gender, isDefault: r.default, sampleUrl: r.sample_url === null || r.sample_url === undefined ? null : safeSamplePath(r.sample_url), sampleReady: r.sample_ready === undefined ? typeof r.sample_url === "string" : r.sample_ready === true && typeof r.sample_url === "string", sampleText: typeof r.sample_text === "string" && r.sample_text.trim() !== "" && r.sample_text.length <= 1000 ? r.sample_text : null });
+      voices.push({ id: r.id, language, name: r.name, label: typeof r.label === "string" && r.label !== "" ? r.label : (tags[0] ?? ""), tags: tags.length > 0 ? tags : typeof r.label === "string" && r.label !== "" ? [r.label.toLowerCase()] : [], recommended: r.recommended === true, soundsLike: (SOUNDS_LIKE as readonly unknown[]).includes(r.sounds_like) ? (r.sounds_like as SoundsLike) : null, gender: r.gender as Gender, isDefault: r.default, sampleUrl: r.sample_url === null || r.sample_url === undefined ? null : safeSamplePath(r.sample_url), sampleReady: r.sample_ready === undefined ? typeof r.sample_url === "string" : r.sample_ready === true && typeof r.sample_url === "string", sampleText: typeof r.sample_text === "string" && r.sample_text.trim() !== "" && r.sample_text.length <= 1000 ? r.sample_text : null });
     }
     if (typeof row.active_id === "string" && VOICE_ID.test(row.active_id)) active[language] = row.active_id;
     const chosen = row.chosen_id;
@@ -77,7 +81,7 @@ export function inForce(picker: Picker, language: PickerLang): PickerVoice | nul
 }
 
 /** The catalogue as the test screens (VOICE_PICKER_SCREENS=mock) show it. */
-const V = (id: string, language: PickerLang, name: string, gender: Gender, tags: string[], o: { isDefault?: boolean; recommended?: boolean; ready?: boolean } = {}): PickerVoice => ({ id, language, name, label: tags[0] ?? "", tags, gender, isDefault: o.isDefault === true, recommended: o.recommended === true, sampleUrl: `/mock/${id}`, sampleReady: o.ready !== false, sampleText: null });
+const V = (id: string, language: PickerLang, name: string, gender: Gender, tags: string[], o: { isDefault?: boolean; recommended?: boolean; ready?: boolean } = {}): PickerVoice => ({ id, language, name, label: tags[0] ?? "", tags, soundsLike: null, gender, isDefault: o.isDefault === true, recommended: o.recommended === true, sampleUrl: `/mock/${id}`, sampleReady: o.ready !== false, sampleText: null });
 /** The short list as C1's voices-tones contract describes it (21 Nov 2026): per language and gender, two voices of different providers (one pre-rendered, one that is only heard live), the default first and the only one marked Recommended. */
 export const MOCK_VOICES: readonly PickerVoice[] = [
   V("te-ramya", "te", "Ramya", "female", ["warm"], { isDefault: true, recommended: true }),
