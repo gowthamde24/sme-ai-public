@@ -44,7 +44,7 @@ def test_bulbul_v3_is_sent_exactly_as_before() -> None:
         ("te", "aditya", "tarun_te_narration"), ("te", "rahul", "tarun_te_narration"),
         ("hi", "ritu", "kavya_hi_conversational"), ("hi", "rahul", "kabir_hi_conversational"),
         ("kn", "priya", "chaitra_kn_conversation"), ("kn", "aditya", "chetan_kn_conversation"),
-        ("en", None, "shalini_en_customer"), ("en", "rahul", "shubh_enhi_customer"),
+        ("en", None, "shalini_en_customer"), ("en", "rahul", "dev_en_conversational"),
     ],
 )
 def test_on_v4_a_v3_speaker_becomes_the_listed_sarvam_voice_of_the_language_and_gender(language: str, v3_speaker: str | None, expected: str) -> None:

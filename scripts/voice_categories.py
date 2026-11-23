@@ -26,7 +26,7 @@ BEST_FOR = {
 }
 OVERRIDES: dict[str, str] = {}   # voice id -> sounds_like, for a voice a listener places differently from its tags (reviewed; empty until a listener says so)
 RECOMMENDED_LANGUAGES = ("te", "hi", "kn", "en")
-PINNED = {"en-shalini", "en-shubh"}   # reviewed: the Sarvam voices a legacy v3 speaker (shalini, rahul ...) is mapped to on a call (tests/test_vl_sarvam_v4.py); they stay recommended, ahead of the spread rule
+PINNED = {"en-shalini"}   # reviewed: the Sarvam voices a legacy v3 speaker (shalini, rahul ...) is mapped to on a call (tests/test_vl_sarvam_v4.py); it stays recommended, ahead of the spread rule; en-shubh (shubh_enhi_customer) was dropped from the list on 24 Nov 2026: the voice check showed Sarvam refuses it for English
 CUSTOMER_ORDER = ("warm_friendly", "calm_reassuring", "bright_young", "energetic", "deep_confident")   # for the second recommended voice: the styles that suit a customer call first; a Sarvam voice among equals (it is the one a legacy v3 speaker maps to)
 
 
