@@ -9,7 +9,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, StrictBool
 
-Tone = Literal["friendly", "respectful", "quick"]
+Tone = Literal["friendly", "respectful", "quick", "professional", "calm_caring", "cheerful", "confident"]
 Background = Literal["quiet_office", "shop", "off"]
 Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Style = Literal["everyday_mixed", "everyday_pure"]
@@ -21,11 +21,19 @@ class _Strict(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class ToneOptionOut(_Strict):
+    id: Tone
+    label: dict[str, str]
+    hint: dict[str, str]
+    best_for: list[str]
+    reviewed: bool   # false until a native reader has approved the te/hi/kn words
+
+
 class ToneOut(_Strict):
     value: Tone
     source: Literal["saved", "migrated", "pack_default"]
     pack_default: Tone
-    options: list[Tone]
+    options: list[ToneOptionOut]
 
 
 class WordsLanguageOut(_Strict):

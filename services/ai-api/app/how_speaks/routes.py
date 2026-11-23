@@ -17,6 +17,7 @@ from fastapi import APIRouter, Depends, Response
 from app.agents import register
 from app.auth.deps import OwnerOrAdmin, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError
+from app.how_speaks import styles
 from app.how_speaks.models import (
     BackgroundOption,
     BackgroundOut,
@@ -97,7 +98,7 @@ def _out(runtime: Runtime, ctx: TenantContext) -> HowAssistantSpeaksOut:
     pick = introduce.Introduce(training.introduce_as.kind, training.introduce_as.text)
     business = ctx.tenant.name
     return HowAssistantSpeaksOut(
-        tone=ToneOut(value=value, source=source, pack_default=pack_default, options=list(tone_mod.CHOICES)),  # type: ignore[arg-type]
+        tone=ToneOut(value=value, source=source, pack_default=pack_default, options=styles.options()),  # type: ignore[arg-type]
         words=WordsOut(languages=languages, options=options),
         introduce_as=IntroduceOut(
             kind=pick.kind, text=pick.text, options=["business", "owner", "custom"], owner_name=_owner_name(runtime, ctx),  # type: ignore[arg-type]

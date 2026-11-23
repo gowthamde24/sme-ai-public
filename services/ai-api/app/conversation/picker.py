@@ -207,7 +207,7 @@ class PreviewIn(BaseModel):
     # 21 Nov 2026 (owner picks voices on the voice card): speak THIS listed voice live, saved or not; null = the voice in use. 422 unknown_voice for an id that is not a listed voice of `language`.
     voice_id: Annotated[str, StringConstraints(max_length=40)] | None = None
     # the tone to resolve (friendly | respectful | quick); null = the saved tone. It changes the words a call says after its opening and the pace; the opening line itself is the owner's.
-    tone: Literal["friendly", "respectful", "quick"] | None = None
+    tone: Literal["friendly", "respectful", "quick", "professional", "calm_caring", "cheerful", "confident"] | None = None
 
 
 class PreviewAudio(BaseModel):

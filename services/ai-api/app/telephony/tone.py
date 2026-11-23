@@ -17,8 +17,21 @@ import re
 TONES = ("respectful", "friendly", "casual")
 # What the Owner chooses (owner, 19-20 Nov 2026): THREE tones that change the WORDS and the pacing, never the voice or the loudness: friendly (the default) | respectful (polite forms, "గారు" after a name, ji) | quick (short and direct).
 # `casual` is only the Owner's own test call. `quick` is a tone like the others: it has its own opening, honest line, goodbye and rules below, and the same address rules as friendly (no "గారు", no sir or madam).
-CHOICES = ("friendly", "respectful", "quick")
+CHOICES = ("friendly", "respectful", "quick", "professional", "calm_caring", "cheerful", "confident")   # 24 Nov 2026: seven styles (docs/contracts/voice-styles.md)
 QUICK = "quick"
+# the four newer styles are a short wording block on top of a base register: its opening, honest line, goodbye and honorific rules are the base's (professional: respectful; the others: friendly)
+STYLE_BASE = {"professional": "respectful", "calm_caring": "friendly", "cheerful": "friendly", "confident": "friendly"}
+STYLE_RULES = {
+    "professional": "STYLE: professional. Clear and businesslike: complete short sentences, no small talk, no jokes, no slang; one thing at a time; thank the person once at the end. Never cold or rude.",
+    "calm_caring": "STYLE: calm and caring. Slow and reassuring: a warm, unhurried voice; acknowledge a worry or a difficulty first ('I understand') before the answer; short sentences, never pushy; never promise an outcome.",
+    "cheerful": "STYLE: cheerful. Upbeat and light: a smile in the words, short and lively, an easy 'sure' or 'great'; never over-excited, never a joke about the person's problem, never pushy.",
+    "confident": "STYLE: confident. Steady and to the point: say the answer plainly, no hedging words like 'maybe' or 'I think' where the facts are known; calm authority, never arrogant, never a promise beyond what is known.",
+}
+
+
+def base(tone: str | None) -> str | None:
+    """The register a style is built on (the same word for the three old tones)."""
+    return STYLE_BASE.get(tone or "", tone)
 ALL_TONES = (*TONES, QUICK)
 DEFAULT_TONE = "friendly"
 CASUAL_LANGUAGES = frozenset({"te", "en"})   # the languages whose informal register has been written out; the others stay friendly
@@ -54,6 +67,7 @@ def for_task_call(requested: str | None = None) -> str:
 
 def usable(tone: str | None, language: str) -> str:
     """The tone this language can really speak: casual only where it has been written out."""
+    tone = base(tone)
     if tone not in ALL_TONES:
         return DEFAULT_TONE
     return DEFAULT_TONE if tone == "casual" and language not in CASUAL_LANGUAGES else tone
@@ -174,6 +188,7 @@ PLAIN_BUSINESS = {"te": "నేను {business} నుంచి మాట్ల
 def opener(language: str, tone: str, introduce: object | None = None, say_ai: bool = True) -> str | None:
     """The tone's own opening (with {business} left in for the business form), or None: the language keeps its standard opening. `introduce` (an app.talk_training.introduce.Introduce) replaces "of {business}" by the owner's name or the
     Owner's own words; the AI-assistant words are in every form (the Introduce rules insist on them)."""
+    tone = base(tone) or tone
     from app.talk_training import introduce as intro_mod
 
     tone = usable(tone, language)
@@ -190,6 +205,7 @@ def opener(language: str, tone: str, introduce: object | None = None, say_ai: bo
 
 
 def honest_line(language: str, tone: str) -> str | None:
+    tone = base(tone) or tone
     tone = usable(tone, language)
     return {"te": HONEST_TE, "en": HONEST_EN}.get(language, {}).get(tone)
 
@@ -233,6 +249,7 @@ def spoken_telugu_rules(goal: str | None = None, chosen: str = DEFAULT_TONE) -> 
 
 def register_rules(language: str, tone: str, goal: str | None = None) -> str:
     """The tone paragraph of the prompt; examples (Telugu) follow as 'copy the register, never a fact'."""
+    tone = base(tone) or tone
     tone = usable(tone, language)
     if language == "te":
         shots = "\n".join(f"  * {line}" for line in EXAMPLES_TE[tone])
@@ -273,6 +290,7 @@ def _follows_the_addressed_name(text: str, at: int, addressed: str | None) -> bo
 def strip_honorifics(text: str, tone: str, language: str, addressed_name: str | None = None) -> tuple[str, int]:
     """Take the honorific ("గారు", "గారి", "గారికి" ...) out of a line and say HOW MANY were taken out (the number a call reports is exactly this). It survives ONLY in the Respectful tone and ONLY directly after the
     addressed person's own name ("Ramesh గారు"); a child, a third person, anyone else, and every other tone lose it (owner decision, 11 Nov 2026)."""
+    tone = base(tone) or tone
     tone = usable(tone, language)
     if language not in ("te", "en"):
         return text, 0
@@ -290,11 +308,13 @@ def strip_honorifics(text: str, tone: str, language: str, addressed_name: str | 
 
 def honorifics_in(text: str, tone: str = DEFAULT_TONE, language: str = "te", addressed_name: str | None = None) -> int:
     """How many honorifics `soften` would take out of this line."""
+    tone = base(tone) or tone
     return strip_honorifics(text, tone, language, addressed_name)[1]
 
 
 def soften(text: str, tone: str, language: str, addressed_name: str | None = None) -> str:
     """The honorific only after the addressed person's own name in Respectful, nowhere else; Casual (Telugu): also no 'అండీ' (the standalone particle, and the joined forms of the common words)."""
+    tone = base(tone) or tone
     tone = usable(tone, language)
     if language != "te" and language != "en":
         return text
@@ -318,6 +338,7 @@ _LOAN = re.compile("(?<![\u0C00-\u0C7F])(" + "|".join(re.escape(w) for w in sort
 
 def everyday(text: str, tone: str, language: str) -> tuple[str, int]:
     """(the line with the written forms swapped for what people say, how many were swapped). Telugu only: "ధన్యవాదాలు" -> "థాంక్స్ అండి" ("థాంక్స్" in Casual, which has no particle), and Telugu-script loanwords -> Latin."""
+    tone = base(tone) or tone
     if language != "te":
         return text, 0
     tone = usable(tone, language)
@@ -353,6 +374,7 @@ def addressee_gender(goal: str | None, contact_gender: str | None = None) -> str
 
 def addressing_rule(chosen: str, language: str, name: str | None = None, gender: str | None = None) -> str:
     """The prompt paragraph that says how to address the person, per tone."""
+    chosen = base(chosen) or chosen
     if chosen == "respectful":
         who = (f"The person you are calling is named {name}: address them as \"{name} గారు\" (the honorific ONLY directly after their own name, and not in every sentence); " if name else
                "You do not know the person's name: ")
@@ -406,6 +428,13 @@ POLITE_WORDS = {"hi": "'आप' and 'जी' after a name or a yes", "kn": "'ನ
 
 def inbound_rule(language: str, tone: str) -> str | None:
     """The TONE paragraph an inbound call's prompt gets for this tone, or None for friendly (the call's own base wording IS friendly). Built by code; no model call."""
+    style = tone
+    rule = _inbound_base_rule(language, tone)
+    extra = STYLE_RULES.get(style)
+    return f"{rule} {extra}" if rule and extra else (extra or rule)
+
+
+def _inbound_base_rule(language: str, tone: str) -> str | None:
     tone = usable(tone, language)
     if tone == "respectful":
         if language == "te":
