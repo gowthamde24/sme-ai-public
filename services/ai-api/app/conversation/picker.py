@@ -31,7 +31,7 @@ from app.conversation.voices import (
     CatalogueVoice,
     VoiceConfig,
     default_config,
-    sample_text,
+    sample_text_of,
 )
 from app.errors import ApiError
 from app.tenancy.models import Role
@@ -77,7 +77,7 @@ class VoiceOut(_Strict):
     default: bool   # the default of its gender in its language
     chosen: bool
     sample_url: str
-    sample_text: str   # the exact words of the pre-rendered sample (the same line for every voice of a language)
+    sample_text: str   # the exact words of the pre-rendered sample (the same sentence for every voice of a language, with the voice's own name)
     provider: Literal["cartesia", "sarvam"]   # who speaks it first; the other provider is its fallback (same language, same gender)
     sample_ready: bool   # a pre-rendered sample file exists (a new voice has none until the sample script has been run; the live "Hear it" preview always works)
     to_confirm: bool   # chosen by documented gender and style: no native listener has confirmed it yet
@@ -106,7 +106,7 @@ def _repo(runtime: Runtime) -> WorkspaceRepository:
 
 
 def _voice(c: CatalogueVoice, chosen: str | None) -> VoiceOut:
-    return VoiceOut(id=c.id, name=c.name, label=c.label, gender=c.gender, tags=list(c.tags), recommended=c.recommended, default=c.default, chosen=c.id == chosen, sample_url=SAMPLE_URL.format(id=c.id), sample_text=sample_text(c.language), provider=c.provider, sample_ready=c.sample_ready, to_confirm=c.to_confirm, sounds_like=c.sounds_like, best_for=list(c.best_for))  # type: ignore[arg-type]
+    return VoiceOut(id=c.id, name=c.name, label=c.label, gender=c.gender, tags=list(c.tags), recommended=c.recommended, default=c.default, chosen=c.id == chosen, sample_url=SAMPLE_URL.format(id=c.id), sample_text=sample_text_of(c), provider=c.provider, sample_ready=c.sample_ready, to_confirm=c.to_confirm, sounds_like=c.sounds_like, best_for=list(c.best_for))  # type: ignore[arg-type]
 
 
 def matches(c: CatalogueVoice, gender: str | None, provider: str | None, q: str | None, sounds_like: str | None = None, best_for: str | None = None) -> bool:

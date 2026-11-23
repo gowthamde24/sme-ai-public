@@ -20,7 +20,7 @@ BASE = f"/v1/tenants/{TENANT_A.id}/ai-assistant"
 
 def test_every_voice_is_listed_and_the_numbers_are_the_documented_ones() -> None:
     voices = list(CFG.catalogue.values())
-    assert all(v.listed for v in voices) and len(voices) >= 230
+    assert all(v.listed for v in voices if v.id != "en-shubh") and len(voices) >= 230   # en-shubh: unlisted 24 Nov 2026, the voice check showed Sarvam refuses it
     by = Counter((v.language, v.provider) for v in voices)
     # docs.sarvam.ai (20 Nov 2026): Bulbul v4 Flash has 4 Telugu, 4 Kannada, 4 Tamil, 116 Hindi and 62 English speakers in the languages we call (the Hindi-English `enhi` ones, Marathi and Malayalam are not added)
     assert by[("te", "sarvam")] == 4 and by[("kn", "sarvam")] == 4 and by[("ta", "sarvam")] == 4

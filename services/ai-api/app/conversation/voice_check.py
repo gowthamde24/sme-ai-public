@@ -24,9 +24,11 @@ from pathlib import Path
 from app.conversation.engines import real_engine_factory
 from app.conversation.fallback import EngineFactory
 from app.conversation.voices import (  # noqa: F401 - sample_text is re-used by the tests
+    FIXED_SENTENCES,
     CatalogueVoice,
     default_config,
     sample_text,
+    sample_text_of,
 )
 from app.pronunciation.speech import SpeechText
 
@@ -35,17 +37,8 @@ SILENT_RMS = 40.0          # 16-bit samples: below this the clip is silence
 SARVAM_CAP = 40_000        # characters; the owner's cap for one run is Rs 200 (about 60,000 characters at Rs 30 per 10,000: this stops well before)
 CARTESIA_CAP = 12_000
 LANGUAGES = ("te", "hi", "kn", "en")
-# ONE fixed sentence per language, the same for every voice so voices compare fairly (owner 24 Nov 2026: previews are pre-recorded, never live AI for the listener). {name} = the voice's own name. No gendered verb forms. DRAFTS until the owner reviews the wording.
-SENTENCES: dict[str, str] = {
-    "en": "Hello, I'm {name}, your assistant. How can I help you today?",
-    "te": "నమస్కారం అండీ, నేను {name}, మీ assistant ని. ఈ రోజు మీకు ఎలా help చేయగలను?",
-    "hi": "नमस्ते जी, मैं {name}, आपका assistant। आज मैं आपकी क्या help करूँ?",
-    "kn": "ನಮಸ್ಕಾರ, ನಾನು {name}, ನಿಮ್ಮ assistant. ಇವತ್ತು ನಿಮಗೆ ಹೇಗೆ help ಮಾಡ್ಲಿ?",
-}
-
-
 def sentence_for(voice: CatalogueVoice) -> str:
-    return SENTENCES[voice.language].replace("{name}", voice.name)
+    return sample_text_of(voice)
 
 
 @dataclass
@@ -122,7 +115,7 @@ def keep(results: list[Result], out: Path) -> dict[str, object]:
         audio = wav_bytes(r.pcm, r.rate)
         (out / f"{r.voice_id}.wav").write_bytes(audio)
         rows.append({"voice_id": r.voice_id, "language": r.voice_id[:2], "engine": r.engine, "seconds": round(r.seconds, 2), "sha256": hashlib.sha256(audio).hexdigest(), "sentence": r.sentence, "status": "draft"})
-    manifest: dict[str, object] = {"sentences": SENTENCES, "files": rows}
+    manifest: dict[str, object] = {"sentences": FIXED_SENTENCES, "files": rows}
     (out / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
     return manifest
 
