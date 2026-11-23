@@ -42,7 +42,7 @@ from app.errors import ApiError
 from app.logging_safety import one_line
 from app.opening import greeting
 from app.talk_training import introduce as introduce_mod
-from app.telephony import ambience, caller_guard, exotel, gate, inbound, persona
+from app.telephony import ambience, backchannel, caller_guard, exotel, gate, inbound, persona
 from app.telephony.call_opening import call_opening
 from app.telephony.call_session import CallPlan, run_call
 from app.telephony.greeting_audio import GREETINGS
@@ -264,6 +264,17 @@ class Prepared:
     rendering: "asyncio.Future[bytes | None] | None" = None
     background: str = "quiet_office"   # the quiet bed under our voice (app/telephony/ambience.py): quiet_office | shop | off
     ai_disclosed: bool = True   # whether the opening this call speaks really says it is an AI (stored on the call row, truthfully)
+    listening_tts: Any = None   # the separate voice object for the listening sounds (None: no listening sounds on this call)
+
+
+def _listening_voice(bv: Any, stored: Stored) -> Any:
+    """A SEPARATE voice object for the assistant's small listening sounds (app/telephony/backchannel.py): the call's own voice and speed, so it sounds like her, and it never shares a turn with the voice that talks. None when it cannot be built (no listening sounds, never a failed call)."""
+    try:
+        tts = FallbackTts(bv.config, bv.factory, chosen=dict(stored.choices), gender=stored.gender, pronunciations=default_pronunciations())
+        tts.pace = clamp_speed(stored.speed)
+        return tts
+    except Exception:  # noqa: BLE001
+        return None
 
 
 async def _prepare(service: InboundService, bv: Any, start: Any, outbound: OutboundCall | None = None) -> Prepared | None:
@@ -326,7 +337,7 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
 
         parts.greeting_keep = keep_and_store
     return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering, ai_disclosed=not text or gate.has_ai_disclosure(text),
-                    background=ambience.valid((training or {}).get("background") if isinstance(training, dict) else None))
+                    background=ambience.valid((training or {}).get("background") if isinstance(training, dict) else None), listening_tts=_listening_voice(bv, stored))
 
 
 def assistant_of(info: dict[str, Any] | None) -> str | None:
@@ -467,6 +478,9 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
     parts, model, slots = prepared.parts, prepared.model, prepared.slots
     with suppress(Exception):   # never a failed call because of the bed (no file, no bed)
         line.ambience = ambience.load_bed(prepared.background, int(getattr(line, "rate", ambience.BED_RATE)))
+    if prepared.listening_tts is not None and getattr(service, "backchannels", True):   # the assistant's small listening sounds (21 Nov 2026 audit): rendered once per call in the call's own voice, a few characters
+        line.backchannel.enabled = True
+        asyncio.ensure_future(backchannel.render(line.backchannel_clips, prepared.listening_tts, language))
     if reserving is not None:
         held = reserving
 

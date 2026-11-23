@@ -24,6 +24,7 @@ from typing import Any, Literal, Protocol
 
 from app.browser_voice.audio import OUT_RATE
 from app.conversation.endpointing import rms
+from app.telephony import backchannel as backchannel_mod
 from app.telephony import exotel
 from app.telephony.ambience import Bed
 from app.telephony.pcm import Resampler, pad_to_multiple
@@ -134,6 +135,12 @@ class PhoneLine:
         self.fade_ms: list[int] = []
         self.notice_speaker: Callable[[], Awaitable[None]] | None = None   # set by the call session: speaks the take-over announcement (only used when TAKEOVER_ANNOUNCE is on)
         self._closed = False
+        self.backchannel = backchannel_mod.Planner(enabled=False)   # the assistant's small listening sounds (app/telephony/backchannel.py); switched on by the call's preparation once its clips exist
+        self.backchannel_clips = backchannel_mod.Clips()
+        self._bc_buf = bytearray()
+        self._bc_until = 0.0           # our own listening sound is playing until then: the caller talking over it is not a barge-in
+        self._bc_task: asyncio.Future[None] | None = None
+        self.backchannels_said = 0
         self.ambience: Bed | None = None   # the quiet background bed (app/telephony/ambience.py), set by the call's preparation once the line's rate is known; mixed into OUR audio only
         # how the call ended, for the end-of-call log (names and numbers only, 5 Nov 2026: the 11:57 UTC call ended 0.4 s after admission and the log could not say whether Exotel sent `stop` or dropped
         # the socket, nor whether any of our audio had gone out)
@@ -224,11 +231,13 @@ class PhoneLine:
                 self._owner_q.put_nowait(pcm)
             if self.taken_over:
                 return   # no barge-in while a person talks: the caller may talk over them
-            if self._clock() < self._play_until:
+            speaking = self._clock() < self._play_until
+            if speaking:
                 self._watch_for_barge_in(pcm)
             else:
                 self._end_sound_run()
                 self._vad_buf.clear()
+            self._listen(pcm, speaking)
         elif isinstance(event, exotel.Mark):
             self._marks_played.add(event.name)   # the provider says a checkpoint has played
         elif isinstance(event, exotel.Dtmf):
@@ -239,9 +248,33 @@ class PhoneLine:
             self.stop_reason = exotel.closed_word(event.reason)
             self._finish("caller_hung_up")
 
+    def _listen(self, pcm: bytes, speaking: bool) -> None:
+        """Feed the caller's 20 ms frames to the backchannel planner (a pure rule); when it says now, one short listening sound goes out (never over our own speech, never while a person has the call)."""
+        if not self.backchannel.enabled or not len(self.backchannel_clips):
+            return
+        self._bc_buf += pcm
+        while len(self._bc_buf) >= FRAME_BYTES:
+            frame = bytes(self._bc_buf[:FRAME_BYTES])
+            del self._bc_buf[:FRAME_BYTES]
+            if self.backchannel.feed(rms(frame) >= self._barge_threshold, speaking=speaking or self._closed or self._hang_up_after_audio_end is not None, caller_text=self._caller_text, taken_over=self.taken_over):
+                if self._bc_task is None or self._bc_task.done():
+                    self._bc_task = asyncio.ensure_future(self._say_backchannel())
+
+    async def _say_backchannel(self) -> None:
+        clip = self.backchannel_clips.next()
+        if clip is None or self.start is None or self._down is None or self._closed or self.taken_over or self._clock() < self._play_until:
+            return
+        self._bc_until = self._clock() + len(clip) / 2 / OUT_RATE + 0.4   # the caller going on talking over this small sound is not an interruption
+        self.backchannels_said += 1
+        await self.send_bytes(clip)
+        await self.flush()
+
     def _watch_for_barge_in(self, pcm: bytes) -> None:
         """The caller's sound while we talk: a run of voiced 20 ms frames (short dips allowed). At STOP_SPEECH_MS it is an interruption: the session stops the voice (it fades, see `_fade_out`).
         A shorter run (a backchannel, a cough) changes nothing; both are logged with their length."""
+        if self._clock() < self._bc_until:
+            self._vad_buf.clear()
+            return
         self._vad_buf += pcm
         while len(self._vad_buf) >= FRAME_BYTES:
             frame = bytes(self._vad_buf[:FRAME_BYTES])
