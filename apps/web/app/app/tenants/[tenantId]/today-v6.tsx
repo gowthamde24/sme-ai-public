@@ -120,7 +120,7 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
       const checklist = showChecklist({ live: isLive, choice, reopen: setup === "1", manages });
       const wantDone = status !== null && manages && (checklist || choice !== "dismissed");
       const done = wantDone && status ? await readDone(token, tenantId, shop, modules, status, missing) : null;
-      const steps = done ? stepViews(done, base) : null;
+      const steps = done ? stepViews(done, base, modules.includes("catalogue")) : null;
       const count = steps ? doneCount(steps) : 0;
       const dayOne: DayOneIn | null =
         checklist && steps

@@ -58,3 +58,13 @@ describe("the Finish setup chip", () => {
     expect(showChip({ ...base, manages: false })).toBe(false);
   });
 });
+
+describe("where 'Add your catalogue & prices' opens (owner, 25 Nov 2026)", () => {
+  it("the catalogue for a type that has one; What you sell for every other type (never the saree catalogue, never a page that is off); the other six steps are the same for every type", () => {
+    const withCat = stepViews({}, "/app/tenants/T", true);
+    const without = stepViews({}, "/app/tenants/T", false);
+    expect(withCat.find((x) => x.id === "catalogue")?.href).toBe("/app/tenants/T/catalogue");
+    expect(without.find((x) => x.id === "catalogue")?.href).toBe("/app/tenants/T/what-you-sell");
+    expect(without.filter((x) => x.id !== "catalogue").map((x) => x.href)).toEqual(withCat.filter((x) => x.id !== "catalogue").map((x) => x.href));
+  });
+});
