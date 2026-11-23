@@ -1,0 +1,19 @@
+# Contract: first run by business type (C1 -> C2), 25 Nov 2026
+Status: **shapes fixed, built in one PR** ("live on staging" is added to this note when it is). Source: reports/first-run-by-business-type.md (gaps 5 and 6). Same error shape as everywhere. Base `/v1/tenants/{tenant_id}`.
+
+## 1. Set the business type (pack) of an existing workspace
+`PUT /pack` body `{"pack": "<code>"}` (Owner, second factor), `code` = one of `GET /packs/catalogue`'s codes (the 13 packs; the public word `other` is sent as `general_business`, as in the sign-up). Answer 200: the same object as `GET /pack` (`{pack: {code, version, source, ...}}`; the new `source` value is `owner`).
+* Allowed any time, by the Owner only. It switches the workspace to that pack's modules, labels and custom fields. It **adds** the new pack's custom fields and **never removes or changes** a field, a record or example data that exists (the old pack's fields stay as they are).
+* The same pack again: 200, nothing changes, no new audit line. An unknown or unpublished code: 422 `validation_error` `fields:["pack"]`. Not the Owner: 403; no second factor: 403 `mfa_required`.
+* Audited: `workspace_pack.choose` with `source: "owner"` (who, when, from and to; no personal data).
+
+## 2. The first-run facts that are not saree-only
+`GET /first-run` (any member):
+```json
+{ "pack": {"code": "textiles", "source": "default | signup | owner | legacy | operator", "typed": true},
+  "needs_type": false,
+  "items": {"count": 3} }
+```
+* `typed`: false only while `source` is `default` or `legacy` (nobody chose the type): then `needs_type` is true, and the web asks ONCE ("What kind of business?") before the wizard and the checklist. A workspace made at sign-up (`source: signup`) or changed by the Owner (`owner`) is typed.
+* `items.count`: how many catalogue items the workspace has so far, of any kind (a saree, a material, a course, a product: the catalogue holds them all; archived items do not count). The saree count of today is the same number for a textiles workspace, so `isFresh` can read `items.count === 0` for every pack.
+* Nothing else is added (no names, no prices).
