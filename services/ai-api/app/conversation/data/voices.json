@@ -2,6 +2,7 @@
  "$comment": "The voices a workspace owner can choose from for their assistant on calls and in previews (job voice-picker, owner decision 28 Oct; Bulbul v3 is dropped). Data, not code: the CATALOGUE is the list of allowed voices, one entry marked default per language (the default is what speaks until the owner chooses). Each entry names its Cartesia voice and a Bulbul v4 Flash FALLBACK voice of the SAME gender (checked on load). Ids are '<language>-<name>'. Add or remove a voice here and render its sample with scripts/voice_catalogue_samples.py. Labels are plain words for the screen. Voice system v2 (29 Oct 2026): native Cartesia voices of both genders in te, en, hi, kn, ta, ml, built by scripts/voice_catalogue_build.py; tags in plain words; recommended = the best three by a speech-to-text round trip. Voice list of 20 Nov 2026: `listed` marks the SHORT LIST the owner sees (two women and two men per language where the catalogue has them); `provider` is cartesia | sarvam (the engine that speaks the voice first; the other one is its fallback of the same language and gender); every listed voice is `to_confirm_by_native_listener` (chosen by documented gender and style, nobody has listened yet). Unlisted entries stay so a stored choice never breaks, but they are ignored (the default speaks). 21 Nov 2026 (owner: \"we also need all those from Sarvam and Cartesia\"): EVERY voice is listed, the 45 Cartesia voices of scripts/voice_catalogue_build.py and every Bulbul v4 Flash speaker documented for te, hi, kn, en and ta (docs.sarvam.ai/api/api-guides-tutorials/text-to-speech/voices): `gender_source: name` = the docs state no gender, it is read from the speaker's first name and must be confirmed by a listener. Each Sarvam voice has the Cartesia default of its language and gender behind it. Marathi has Sarvam speakers but no Cartesia voice to back them, so none is added; Malayalam has no Bulbul v4 Flash speaker.",
  "first_audio_timeout_ms": 800,
  "cooldown_s": 30,
+ "best_for_words": ["auto", "clinic", "education", "finance", "real_estate", "retail", "wholesale"],
  "catalogue": [
   {
    "id": "te-sindhu",
@@ -9,11 +10,13 @@
    "name": "Sindhu",
    "label": "Bright",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright",
     "young"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -37,10 +40,12 @@
    "name": "Deepthi",
    "label": "Bright",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -64,6 +69,8 @@
    "name": "Bhavani",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -91,6 +98,8 @@
    "name": "Divya",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -118,10 +127,12 @@
    "name": "Ramya",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -146,11 +157,13 @@
    "name": "Sarika",
    "label": "Calm",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm",
     "warm"
    ],
-   "recommended": false,
+   "recommended": true,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -174,6 +187,8 @@
    "name": "Shanti",
    "label": "Calm",
    "gender": "female",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "calm",
     "deep"
@@ -202,6 +217,8 @@
    "name": "Charan",
    "label": "Calm",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "calm",
     "bright"
@@ -231,11 +248,13 @@
    "name": "Pavan",
    "label": "Bright",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "bright",
     "energetic"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -259,6 +278,8 @@
    "name": "Vikram",
    "label": "Mature",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "mature",
     "energetic"
@@ -287,10 +308,12 @@
    "name": "Skylar",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -314,10 +337,12 @@
    "name": "Gemma",
    "label": "Mature",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "mature"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -341,6 +366,8 @@
    "name": "Jacqueline",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "warm",
     "young"
@@ -369,6 +396,8 @@
    "name": "Katie",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "warm",
     "young"
@@ -397,6 +426,8 @@
    "name": "Janvi",
    "label": "Calm",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -425,6 +456,8 @@
    "name": "Daniel",
    "label": "Bright",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -453,11 +486,13 @@
    "name": "Parker",
    "label": "Warm",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "warm",
     "young"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -481,11 +516,13 @@
    "name": "Archie",
    "label": "Warm",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "warm",
     "young"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -509,6 +546,8 @@
    "name": "Jameson",
    "label": "Warm",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -536,6 +575,8 @@
    "name": "Carson",
    "label": "Warm",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "warm",
     "young"
@@ -564,10 +605,12 @@
    "name": "Riva",
    "label": "Calm",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -591,12 +634,14 @@
    "name": "Siya",
    "label": "Calm",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "calm",
     "bright",
     "energetic"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -620,6 +665,8 @@
    "name": "Sana",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -647,6 +694,8 @@
    "name": "Meera",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "warm",
     "bright"
@@ -675,6 +724,8 @@
    "name": "Esha",
    "label": "Calm",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm",
     "warm"
@@ -703,10 +754,12 @@
    "name": "Sanya",
    "label": "Bright",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -731,11 +784,13 @@
    "name": "Rohan",
    "label": "Calm",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "calm",
     "bright"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -760,11 +815,13 @@
    "name": "Anuj",
    "label": "Mature",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "mature",
     "energetic"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -788,10 +845,12 @@
    "name": "Sagar",
    "label": "Energetic",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -815,6 +874,8 @@
    "name": "Atharv",
    "label": "Calm",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "calm",
     "bright",
@@ -844,6 +905,8 @@
    "name": "Dev",
    "label": "Warm",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -871,6 +934,8 @@
    "name": "Rehan",
    "label": "Warm",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -898,10 +963,12 @@
    "name": "Disha",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -926,6 +993,8 @@
    "name": "Divya",
    "label": "Bright",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "bright",
     "mature",
@@ -955,6 +1024,8 @@
    "name": "Prakash",
    "label": "Calm",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -983,6 +1054,8 @@
    "name": "Janani",
    "label": "Calm",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm",
     "warm",
@@ -1013,6 +1086,8 @@
    "name": "Akshara",
    "label": "Bright",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -1041,6 +1116,8 @@
    "name": "Anitha",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1068,6 +1145,8 @@
    "name": "Meena",
    "label": "Calm",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm",
     "mature"
@@ -1096,6 +1175,8 @@
    "name": "Kavya",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1123,6 +1204,8 @@
    "name": "Karthik",
    "label": "Calm",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "calm",
     "bright"
@@ -1152,6 +1235,8 @@
    "name": "Dinesh",
    "label": "Calm",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "calm",
     "bright"
@@ -1180,6 +1265,8 @@
    "name": "Arun",
    "label": "Energetic",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -1208,6 +1295,8 @@
    "name": "Latha",
    "label": "Warm",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "warm",
     "bright"
@@ -1237,6 +1326,8 @@
    "name": "Vijay",
    "label": "Warm",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "warm",
     "young"
@@ -1266,6 +1357,8 @@
    "name": "Kavitha",
    "label": "Natural",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1294,6 +1387,8 @@
    "name": "Tarun",
    "label": "Steady",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -1322,6 +1417,8 @@
    "name": "Shalini",
    "label": "Clear",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -1350,6 +1447,8 @@
    "name": "Shubh",
    "label": "Clear",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -1378,6 +1477,8 @@
    "name": "Kavya",
    "label": "Natural",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1406,6 +1507,8 @@
    "name": "Kabir",
    "label": "Natural",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -1434,6 +1537,8 @@
    "name": "Chaitra",
    "label": "Natural",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1462,6 +1567,8 @@
    "name": "Chetan",
    "label": "Natural",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -1490,6 +1597,8 @@
    "name": "Kavitha",
    "label": "Narration",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -1519,6 +1628,8 @@
    "name": "Pooja",
    "label": "Conversation",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1548,6 +1659,8 @@
    "name": "Chaitra",
    "label": "Narration",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -1577,10 +1690,12 @@
    "name": "Suchitra",
    "label": "Narration",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
-   "recommended": false,
+   "recommended": true,
    "default": false,
    "provider": "sarvam",
    "primary": {
@@ -1606,6 +1721,8 @@
    "name": "Aravind",
    "label": "Ads",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -1635,6 +1752,8 @@
    "name": "Aravind",
    "label": "Suspense",
    "gender": "male",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "deep"
    ],
@@ -1664,6 +1783,8 @@
    "name": "Gokul",
    "label": "Narration",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -1693,6 +1814,8 @@
    "name": "Vijay",
    "label": "Narration",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -1722,10 +1845,12 @@
    "name": "Aayan",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
-   "recommended": false,
+   "recommended": true,
    "default": false,
    "provider": "sarvam",
    "primary": {
@@ -1751,6 +1876,8 @@
    "name": "Amit",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1780,6 +1907,8 @@
    "name": "Ashutosh",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1809,6 +1938,8 @@
    "name": "Manan",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1838,6 +1969,8 @@
    "name": "Rahul",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1867,6 +2000,8 @@
    "name": "Sumit",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1896,6 +2031,8 @@
    "name": "Aditya",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -1925,6 +2062,8 @@
    "name": "Aditya",
    "label": "Sales",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -1954,6 +2093,8 @@
    "name": "Anand",
    "label": "Documentary",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -1983,6 +2124,8 @@
    "name": "Anand",
    "label": "News",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2012,6 +2155,8 @@
    "name": "Aparna",
    "label": "Customer",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -2041,10 +2186,12 @@
    "name": "Aparna",
    "label": "Kyc",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
-   "recommended": false,
+   "recommended": true,
    "default": false,
    "provider": "sarvam",
    "primary": {
@@ -2070,6 +2217,8 @@
    "name": "Ashok",
    "label": "Character",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "mature"
    ],
@@ -2099,6 +2248,8 @@
    "name": "Ashok",
    "label": "News",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2128,6 +2279,8 @@
    "name": "Chhavi",
    "label": "Kids",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "young"
    ],
@@ -2157,6 +2310,8 @@
    "name": "Ishita",
    "label": "Ads",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -2186,6 +2341,8 @@
    "name": "Ishita",
    "label": "Edtech",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -2215,6 +2372,8 @@
    "name": "Ishita",
    "label": "Banking",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2244,6 +2403,8 @@
    "name": "Ishita",
    "label": "Ads Informal",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic",
     "warm"
@@ -2274,6 +2435,8 @@
    "name": "Ishita",
    "label": "Devotional",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2303,6 +2466,8 @@
    "name": "Ishita",
    "label": "Numbers",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2332,6 +2497,8 @@
    "name": "Ishita",
    "label": "Social",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -2361,6 +2528,8 @@
    "name": "Kunal",
    "label": "Kids",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "young"
    ],
@@ -2390,6 +2559,8 @@
    "name": "Mahesh",
    "label": "Documentary",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2419,6 +2590,8 @@
    "name": "Mani",
    "label": "Devotional",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2448,6 +2621,8 @@
    "name": "Mani",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -2477,6 +2652,8 @@
    "name": "Mohit",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -2506,6 +2683,8 @@
    "name": "Nachiket",
    "label": "Devotional",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2535,6 +2714,8 @@
    "name": "Priya",
    "label": "Recovery",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2564,6 +2745,8 @@
    "name": "Ratan",
    "label": "Latenight",
    "gender": "male",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "deep"
    ],
@@ -2593,6 +2776,8 @@
    "name": "Ratan",
    "label": "Customer Expressive",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "warm",
     "energetic"
@@ -2623,6 +2808,8 @@
    "name": "Ratan",
    "label": "Documentary",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2652,6 +2839,8 @@
    "name": "Ratan",
    "label": "Devotional",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2681,6 +2870,8 @@
    "name": "Ratan",
    "label": "Recovery",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -2710,6 +2901,8 @@
    "name": "Ratan",
    "label": "Social",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -2739,6 +2932,8 @@
    "name": "Ratan",
    "label": "Sports",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -2768,6 +2963,8 @@
    "name": "Ratan",
    "label": "Latenight Warm",
    "gender": "male",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "deep",
     "warm"
@@ -2798,6 +2995,8 @@
    "name": "Rehan",
    "label": "Social",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -2827,6 +3026,8 @@
    "name": "Ritu",
    "label": "Customer Utility",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "warm",
     "calm"
@@ -2857,6 +3058,8 @@
    "name": "Ritu",
    "label": "Kids",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "young"
    ],
@@ -2886,6 +3089,8 @@
    "name": "Ritu",
    "label": "Conversation",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -2915,6 +3120,8 @@
    "name": "Ritu",
    "label": "Customer",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -2944,6 +3151,8 @@
    "name": "Ritu",
    "label": "Edtech",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -2973,6 +3182,8 @@
    "name": "Ritu",
    "label": "Ads Formal",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic",
     "calm"
@@ -3003,6 +3214,8 @@
    "name": "Ritu",
    "label": "Banking",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -3032,6 +3245,8 @@
    "name": "Ritu",
    "label": "Ads Informal",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic",
     "warm"
@@ -3062,6 +3277,8 @@
    "name": "Ritu",
    "label": "Insurance",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -3091,6 +3308,8 @@
    "name": "Ritu",
    "label": "Edtech Bot",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright",
     "calm"
@@ -3121,6 +3340,8 @@
    "name": "Ritu",
    "label": "Medical",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -3150,6 +3371,8 @@
    "name": "Ritu",
    "label": "Sales",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -3179,6 +3402,8 @@
    "name": "Ritu",
    "label": "Reels",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -3208,6 +3433,8 @@
    "name": "Ritu",
    "label": "Social",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -3237,6 +3464,8 @@
    "name": "Ritu",
    "label": "Customer Warm",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -3266,6 +3495,8 @@
    "name": "Ritu",
    "label": "Social Lively",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "bright",
     "energetic"
@@ -3296,6 +3527,8 @@
    "name": "Roopa",
    "label": "Companion",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -3325,6 +3558,8 @@
    "name": "Roopa",
    "label": "Narration",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -3354,6 +3589,8 @@
    "name": "Roopa",
    "label": "Recovery",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -3383,6 +3620,8 @@
    "name": "Roopa",
    "label": "Market",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -3412,6 +3651,8 @@
    "name": "Roopa",
    "label": "Conversational",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -3441,6 +3682,8 @@
    "name": "Sanchita",
    "label": "Assistant",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -3470,6 +3713,8 @@
    "name": "Sanchita",
    "label": "Edtech",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -3499,6 +3744,8 @@
    "name": "Sanchita",
    "label": "Banking",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -3528,6 +3775,8 @@
    "name": "Sanchita",
    "label": "Feedback",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -3557,6 +3806,8 @@
    "name": "Sanchita",
    "label": "Ads Formal",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic",
     "calm"
@@ -3587,6 +3838,8 @@
    "name": "Sanchita",
    "label": "Ads Informal",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic",
     "warm"
@@ -3617,6 +3870,8 @@
    "name": "Sanchita",
    "label": "Interview",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "mature"
    ],
@@ -3646,6 +3901,8 @@
    "name": "Sanchita",
    "label": "Romantic",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -3675,6 +3932,8 @@
    "name": "Sanchita",
    "label": "Market",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -3704,6 +3963,8 @@
    "name": "Sanchita",
    "label": "Social",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -3733,6 +3994,8 @@
    "name": "Sanchita",
    "label": "Kyc",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -3762,6 +4025,8 @@
    "name": "Sarika",
    "label": "Conversation",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -3791,6 +4056,8 @@
    "name": "Shalini",
    "label": "Companion",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -3820,6 +4087,8 @@
    "name": "Shalini",
    "label": "Social",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -3849,6 +4118,8 @@
    "name": "Shreya",
    "label": "Conversational",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -3878,6 +4149,8 @@
    "name": "Shreya",
    "label": "News",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -3907,6 +4180,8 @@
    "name": "Shruti",
    "label": "Edtech",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -3936,6 +4211,8 @@
    "name": "Shubh",
    "label": "Customer",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -3965,6 +4242,8 @@
    "name": "Shubh",
    "label": "Ecomm",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -3994,6 +4273,8 @@
    "name": "Shubh",
    "label": "Stories Mixed",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm",
     "warm"
@@ -4024,6 +4305,8 @@
    "name": "Shubh",
    "label": "Devotional",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -4053,6 +4336,8 @@
    "name": "Shubh",
    "label": "Ads",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -4082,6 +4367,8 @@
    "name": "Shubh",
    "label": "Recovery",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -4111,6 +4398,8 @@
    "name": "Shubh",
    "label": "Stories Dramatic",
    "gender": "male",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "calm",
     "deep"
@@ -4141,6 +4430,8 @@
    "name": "Simran",
    "label": "Assistant",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -4170,6 +4461,8 @@
    "name": "Simran",
    "label": "Narration",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -4199,6 +4492,8 @@
    "name": "Simran",
    "label": "Automobile",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -4228,6 +4523,8 @@
    "name": "Simran",
    "label": "Conversation",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -4257,6 +4554,8 @@
    "name": "Simran",
    "label": "News Breaking",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "calm",
     "energetic"
@@ -4287,6 +4586,8 @@
    "name": "Simran",
    "label": "Social Energetic",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -4316,6 +4617,8 @@
    "name": "Simran",
    "label": "Social Excited",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "bright",
     "energetic"
@@ -4346,6 +4649,8 @@
    "name": "Simran",
    "label": "Latenight",
    "gender": "female",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "deep"
    ],
@@ -4375,6 +4680,8 @@
    "name": "Simran",
    "label": "News",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -4404,6 +4711,8 @@
    "name": "Simran",
    "label": "Recovery",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -4433,6 +4742,8 @@
    "name": "Simran",
    "label": "Sales",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -4462,6 +4773,8 @@
    "name": "Suchitra",
    "label": "Ecomm",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -4491,6 +4804,8 @@
    "name": "Suhani",
    "label": "Social",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -4520,6 +4835,8 @@
    "name": "Sunny",
    "label": "Ads",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -4549,6 +4866,8 @@
    "name": "Sunny",
    "label": "Reels",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -4578,6 +4897,8 @@
    "name": "Tarun",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -4607,6 +4928,8 @@
    "name": "Tarun",
    "label": "Sales",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -4636,6 +4959,8 @@
    "name": "Chaitra",
    "label": "Customer",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -4665,6 +4990,8 @@
    "name": "Shilpa",
    "label": "Narration",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -4694,6 +5021,8 @@
    "name": "Tanya",
    "label": "Narration",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -4723,6 +5052,8 @@
    "name": "Aarti",
    "label": "Customer",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -4752,6 +5083,8 @@
    "name": "Advait",
    "label": "Character",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "mature"
    ],
@@ -4781,6 +5114,8 @@
    "name": "Aryaman",
    "label": "Ads",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -4810,6 +5145,8 @@
    "name": "Chirag",
    "label": "Social",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -4839,6 +5176,8 @@
    "name": "Girish",
    "label": "Devotional",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -4868,6 +5207,8 @@
    "name": "Mukul",
    "label": "Ads",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -4897,6 +5238,8 @@
    "name": "Mukul",
    "label": "Suspense",
    "gender": "male",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "deep"
    ],
@@ -4926,6 +5269,8 @@
    "name": "Suman",
    "label": "Companion",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -4955,6 +5300,8 @@
    "name": "Vaibhav",
    "label": "Social",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -4984,6 +5331,8 @@
    "name": "Vandana",
    "label": "Ecomm",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -5013,6 +5362,8 @@
    "name": "Vipul",
    "label": "Social",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -5042,6 +5393,8 @@
    "name": "Aditi",
    "label": "Stories",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5071,6 +5424,8 @@
    "name": "Aparna",
    "label": "Companion",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -5100,6 +5455,8 @@
    "name": "Aparna",
    "label": "Edtech",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -5129,6 +5486,8 @@
    "name": "Ashwin",
    "label": "Sports",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -5158,6 +5517,8 @@
    "name": "Ashwin",
    "label": "Sports Energetic",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -5187,6 +5548,8 @@
    "name": "Chandrika",
    "label": "Stories",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5216,6 +5579,8 @@
    "name": "Dev",
    "label": "Recovery",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5245,6 +5610,8 @@
    "name": "Dev",
    "label": "Conversational",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -5274,6 +5641,8 @@
    "name": "Deven",
    "label": "Conversation",
    "gender": "male",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -5303,6 +5672,8 @@
    "name": "Ishita",
    "label": "Customer",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -5332,6 +5703,8 @@
    "name": "Ishita",
    "label": "Medical",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5361,6 +5734,8 @@
    "name": "Ishita",
    "label": "Numbers",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5390,6 +5765,8 @@
    "name": "Ishita",
    "label": "Social",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -5419,6 +5796,8 @@
    "name": "Ishita",
    "label": "Stories",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5448,6 +5827,8 @@
    "name": "Kalpit",
    "label": "Edtech",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -5477,6 +5858,8 @@
    "name": "Nachiket",
    "label": "Ads",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -5506,6 +5889,8 @@
    "name": "Neha",
    "label": "Customer",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -5535,6 +5920,8 @@
    "name": "Neha",
    "label": "Latenight",
    "gender": "female",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "deep"
    ],
@@ -5564,6 +5951,8 @@
    "name": "Nupur",
    "label": "Kids",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "young"
    ],
@@ -5593,6 +5982,8 @@
    "name": "Ojas",
    "label": "Social",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -5622,6 +6013,8 @@
    "name": "Ritu",
    "label": "Edtech",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -5651,6 +6044,8 @@
    "name": "Ritu",
    "label": "Latenight",
    "gender": "female",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "deep"
    ],
@@ -5680,6 +6075,8 @@
    "name": "Ritu",
    "label": "Medical",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5709,6 +6106,8 @@
    "name": "Ritu",
    "label": "Reels",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -5738,6 +6137,8 @@
    "name": "Rohan",
    "label": "Recovery",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5767,6 +6168,8 @@
    "name": "Roopa",
    "label": "Conversational",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -5796,6 +6199,8 @@
    "name": "Rustom",
    "label": "Suspense",
    "gender": "male",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "deep"
    ],
@@ -5825,6 +6230,8 @@
    "name": "Sanchita",
    "label": "Companion",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -5854,6 +6261,8 @@
    "name": "Sanchita",
    "label": "Insurance",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5883,6 +6292,8 @@
    "name": "Sanchita",
    "label": "Recovery",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5912,6 +6323,8 @@
    "name": "Sanchita",
    "label": "Market",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -5941,6 +6354,8 @@
    "name": "Sanchita",
    "label": "Social",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -5970,6 +6385,8 @@
    "name": "Shabana",
    "label": "Edtech",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -5999,6 +6416,8 @@
    "name": "Shalini",
    "label": "Companion",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -6028,6 +6447,8 @@
    "name": "Shubh",
    "label": "Narration",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -6057,6 +6478,8 @@
    "name": "Shubh",
    "label": "Numbers",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -6086,6 +6509,8 @@
    "name": "Shubh",
    "label": "Ads",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -6115,6 +6540,8 @@
    "name": "Shubh",
    "label": "Recovery",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -6144,6 +6571,8 @@
    "name": "Shubh",
    "label": "Audiobook",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -6173,6 +6602,8 @@
    "name": "Shubh",
    "label": "Narration Gentle",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -6202,6 +6633,8 @@
    "name": "Shubh",
    "label": "Sports",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -6231,6 +6664,8 @@
    "name": "Simran",
    "label": "Narration",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -6260,6 +6695,8 @@
    "name": "Simran",
    "label": "Automobile",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -6289,6 +6726,8 @@
    "name": "Simran",
    "label": "Conversation",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -6318,6 +6757,8 @@
    "name": "Simran",
    "label": "Customer",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -6347,6 +6788,8 @@
    "name": "Simran",
    "label": "Edtech",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -6376,6 +6819,8 @@
    "name": "Simran",
    "label": "Edtech Bot",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright",
     "calm"
@@ -6406,6 +6851,8 @@
    "name": "Simran",
    "label": "Sales",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -6435,6 +6882,8 @@
    "name": "Simran",
    "label": "Recovery",
    "gender": "female",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -6464,6 +6913,8 @@
    "name": "Simran",
    "label": "Ads",
    "gender": "female",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -6493,6 +6944,8 @@
    "name": "Simran",
    "label": "Therapist",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -6522,6 +6975,8 @@
    "name": "Sunny",
    "label": "Social",
    "gender": "male",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -6551,6 +7006,8 @@
    "name": "Varun",
    "label": "Ads",
    "gender": "male",
+   "sounds_like": "energetic",
+   "best_for": ["auto", "retail"],
    "tags": [
     "energetic"
    ],
@@ -6580,6 +7037,8 @@
    "name": "Varun",
    "label": "Suspense",
    "gender": "male",
+   "sounds_like": "deep_confident",
+   "best_for": ["real_estate", "wholesale", "auto"],
    "tags": [
     "deep"
    ],
@@ -6609,6 +7068,8 @@
    "name": "Zarina",
    "label": "Conversation",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -6638,6 +7099,8 @@
    "name": "Amelia",
    "label": "Conversational",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -6667,6 +7130,8 @@
    "name": "Sophia",
    "label": "Conversational",
    "gender": "female",
+   "sounds_like": "warm_friendly",
+   "best_for": ["retail", "clinic"],
    "tags": [
     "warm"
    ],
@@ -6696,6 +7161,8 @@
    "name": "Girish",
    "label": "Documentary",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -6725,6 +7192,8 @@
    "name": "Girish",
    "label": "Devotional",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],
@@ -6754,6 +7223,8 @@
    "name": "Payal",
    "label": "Edtech",
    "gender": "female",
+   "sounds_like": "bright_young",
+   "best_for": ["education", "retail"],
    "tags": [
     "bright"
    ],
@@ -6783,6 +7254,8 @@
    "name": "Sarang",
    "label": "Narration",
    "gender": "male",
+   "sounds_like": "calm_reassuring",
+   "best_for": ["clinic", "finance", "wholesale"],
    "tags": [
     "calm"
    ],

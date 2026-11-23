@@ -81,6 +81,8 @@ class VoiceOut(_Strict):
     provider: Literal["cartesia", "sarvam"]   # who speaks it first; the other provider is its fallback (same language, same gender)
     sample_ready: bool   # a pre-rendered sample file exists (a new voice has none until the sample script has been run; the live "Hear it" preview always works)
     to_confirm: bool   # chosen by documented gender and style: no native listener has confirmed it yet
+    sounds_like: str   # warm_friendly | calm_reassuring | bright_young | energetic | deep_confident (what it sounds like, for the picker's groups)
+    best_for: list[str]   # the businesses it suits: real_estate, education, clinic, retail, auto, wholesale, finance
 
 
 class LanguageOut(_Strict):
@@ -104,14 +106,18 @@ def _repo(runtime: Runtime) -> WorkspaceRepository:
 
 
 def _voice(c: CatalogueVoice, chosen: str | None) -> VoiceOut:
-    return VoiceOut(id=c.id, name=c.name, label=c.label, gender=c.gender, tags=list(c.tags), recommended=c.recommended, default=c.default, chosen=c.id == chosen, sample_url=SAMPLE_URL.format(id=c.id), sample_text=sample_text(c.language), provider=c.provider, sample_ready=c.sample_ready, to_confirm=c.to_confirm)  # type: ignore[arg-type]
+    return VoiceOut(id=c.id, name=c.name, label=c.label, gender=c.gender, tags=list(c.tags), recommended=c.recommended, default=c.default, chosen=c.id == chosen, sample_url=SAMPLE_URL.format(id=c.id), sample_text=sample_text(c.language), provider=c.provider, sample_ready=c.sample_ready, to_confirm=c.to_confirm, sounds_like=c.sounds_like, best_for=list(c.best_for))  # type: ignore[arg-type]
 
 
-def matches(c: CatalogueVoice, gender: str | None, provider: str | None, q: str | None) -> bool:
-    """The list filters of GET /voices: the voice's gender, its provider, and a case-insensitive search over its id, name, label and tags."""
+def matches(c: CatalogueVoice, gender: str | None, provider: str | None, q: str | None, sounds_like: str | None = None, best_for: str | None = None) -> bool:
+    """The list filters of GET /voices: the voice's gender, its provider, what it sounds like, which business it suits, and a case-insensitive search over its id, name, label and tags."""
     if gender is not None and c.gender != gender:
         return False
     if provider is not None and c.provider != provider:
+        return False
+    if sounds_like is not None and c.sounds_like != sounds_like:
+        return False
+    if best_for is not None and best_for not in c.best_for:
         return False
     if q:
         needle = q.strip().lower()
@@ -119,7 +125,7 @@ def matches(c: CatalogueVoice, gender: str | None, provider: str | None, q: str 
     return True
 
 
-def out(config: VoiceConfig, choices: dict[str, str], gender: str = "female", *, only_gender: str | None = None, provider: str | None = None, q: str | None = None) -> VoicesOut:
+def out(config: VoiceConfig, choices: dict[str, str], gender: str = "female", *, only_gender: str | None = None, provider: str | None = None, q: str | None = None, sounds_like: str | None = None, best_for: str | None = None) -> VoicesOut:
     """The catalogue with this workspace's choices. A stored choice that is not (any longer) a catalogue voice of its language AND of the workspace's gender is reported as no choice."""
     rows: list[LanguageOut] = []
     for lang in CALL_LANGUAGES:
@@ -130,7 +136,7 @@ def out(config: VoiceConfig, choices: dict[str, str], gender: str = "female", *,
         chosen = picked.id if picked is not None and picked.language == lang and picked.gender == gender and picked.listed else None
         active = config.resolve(lang, chosen, gender).id
         listed = config.voices_of(lang, listed_only=True)
-        rows.append(LanguageOut(language=lang, default_id=default.id, chosen_id=chosen, active_id=active, voices=[_voice(c, chosen) for c in listed if matches(c, only_gender, provider, q)], total=len(listed)))  # type: ignore[arg-type]
+        rows.append(LanguageOut(language=lang, default_id=default.id, chosen_id=chosen, active_id=active, voices=[_voice(c, chosen) for c in listed if matches(c, only_gender, provider, q, sounds_like, best_for)], total=len(listed)))  # type: ignore[arg-type]
     return VoicesOut(gender=gender, languages=rows)  # type: ignore[arg-type]
 
 
@@ -157,10 +163,12 @@ def get_voices(
     voice_gender: Annotated[Gender | None, Query(alias="gender")] = None,
     provider: Annotated[Literal["cartesia", "sarvam"] | None, Query()] = None,
     q: Annotated[str | None, Query(max_length=40)] = None,
+    sounds_like: Annotated[Literal["warm_friendly", "calm_reassuring", "bright_young", "energetic", "deep_confident"] | None, Query()] = None,
+    best_for: Annotated[str | None, Query(pattern="^[a-z_]{1,30}$")] = None,   # one of the file's best_for_words; any other word matches no voice
 ) -> VoicesOut:
-    """`?gender=female|male&provider=cartesia|sarvam&q=text` filter the voices of every language (a long list: 200+ voices); no filter returns them all. `gender` here is the voice filter, not the workspace's voice type."""
+    """`?gender=female|male&provider=cartesia|sarvam&q=text&sounds_like=warm_friendly&best_for=clinic` filter the voices of every language (a long list: 200+ voices); no filter returns them all. `gender` here is the voice filter, not the workspace's voice type. Every voice carries `sounds_like` (one of five) and `best_for` (the businesses it suits); `recommended` is exactly two women and two men in Telugu, Hindi, Kannada and English."""
     choices, gender = voice_state(runtime, ctx)
-    return out(default_config(), choices, gender, only_gender=voice_gender, provider=provider, q=q)
+    return out(default_config(), choices, gender, only_gender=voice_gender, provider=provider, q=q, sounds_like=sounds_like, best_for=best_for)
 
 
 @router.put("/voices", response_model=VoicesOut)

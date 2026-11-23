@@ -82,3 +82,11 @@ The per-job voice (`speaks.voice`, `voice_name`) uses THE SAME list: a catalogue
 * A voice's `label` is its style for a Sarvam voice ("Conversational", "Narration", "Customer", "Ads", "Devotional", "Kids" ...: many are styles for adverts or stories, not for a business call: the screen may group or hide them by `label`); `name` is the first name (several voices share a name in different styles: show name and label together).
 * `PUT .../voices {language, voice_id}` accepts any of them (a voice of the other gender flips the assistant's gender in the same call, as before).
 * How the catalogue is refreshed: docs/runbooks/voice-catalogue-refresh.md.
+
+## Voice categories (23 Nov 2026, planner brief; staging)
+Every voice in `GET /v1/tenants/{id}/ai-assistant/voices` now also carries:
+- `sounds_like`: exactly ONE of `warm_friendly | calm_reassuring | bright_young | energetic | deep_confident` (derived from the tags, priority energetic > deep > bright/young > calm/mature > warm; `scripts/voice_categories.py` has a short reviewed override table).
+- `best_for`: the businesses it suits, from `real_estate | education | clinic | retail | auto | wholesale | finance` (warm_friendly: retail, clinic; calm_reassuring: clinic, finance, wholesale; bright_young: education, retail; energetic: auto, retail; deep_confident: real_estate, wholesale, auto).
+- `recommended` is now exactly 2 women + 2 men in Telugu, Hindi, Kannada and English (the language's default of that gender is always one of them, then a different speaker and style; the English Sarvam voices a legacy v3 speaker maps to are pinned).
+- New filters next to `gender`, `provider`, `q`: `?sounds_like=warm_friendly` and `?best_for=clinic` (422 for any other word). `total` stays the unfiltered count.
+Provider names stay in the data; the owner screens show only the new words. Groups are thin where the catalogue is thin: Kannada men have 2 voices (both recommended, same style), Telugu men 4.
