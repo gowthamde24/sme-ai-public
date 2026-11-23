@@ -22,6 +22,12 @@ const read = (items: unknown[], runs: Record<string, SweepRun[]> = {}, budget = 
 const ok = { ok: true as const, data: {} };
 const CARD = (over: Record<string, unknown> = {}) => ({ ok: true as const, data: { query: "retailers", area: "Jayanagar", maxResults: 10, weekday: 3, hour: 18, provider: "fixture" as const, estCostPaise: 0, costIsEstimate: false, attribution: null, nextRunAt: "2026-11-12T12:30:00Z", weeklyBudgetPaise: 0, budgetLeftPaise: 0, fitsBudget: true, sweepsUsed: 2, maxSweeps: 5, ...over } });
 const actions = () => ({ preview: vi.fn<(input: unknown) => Promise<never>>(async () => CARD() as never), add: vi.fn(async () => ok), change: vi.fn(async () => ok), run: vi.fn(async () => ok), remove: vi.fn(async () => ok) });
+/** These buttons are disabled while the step's request settles (`disabled={busy}`): on a busy runner the test found them before they were enabled and the click did nothing (CI flake, 3 times: 'Unable to find a label ...'). Wait until enabled, then click. */
+async function press(name: string) {
+  const button = await screen.findByRole("button", { name });
+  await waitFor(() => expect(button).toBeEnabled());
+  fireEvent.click(button);
+}
 afterEach(() => {
   cleanup();
   nav.refresh.mockClear();
@@ -83,14 +89,14 @@ describe("Add a weekly search", () => {
     const a = actions();
     render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/app/tenants/T/settings?section=leadfinder" />);
     fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
-    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
+    await press("Check and continue");
     expect(screen.getByText("Type what to find and where.")).toBeInTheDocument();
     expect(a.add).not.toHaveBeenCalled();
     fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find new retailers in Jayanagar" } });
     fireEvent.change(await screen.findByLabelText("Day"), { target: { value: "3" } });
     fireEvent.change(await screen.findByLabelText("Time (India time)"), { target: { value: "18" } });
     fireEvent.change(await screen.findByLabelText("Most businesses"), { target: { value: "10" } });
-    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
+    await press("Check and continue");
     await waitFor(() => expect(screen.getByText("This search will run by itself every week.")).toBeInTheDocument());
     expect(a.preview).toHaveBeenCalledWith({ text: "find new retailers in Jayanagar", weekday: 3, hour: 18, maxResults: 10 });
     expect(await screen.findByText("Runs every Wednesday at 18:00 · retailers, Jayanagar · up to 10 businesses")).toBeInTheDocument(); // the card is what the API understood
@@ -101,7 +107,7 @@ describe("Add a weekly search", () => {
     expect(a.add).not.toHaveBeenCalled(); // the preview stores nothing
     expect(await screen.findByText(/Every Wednesday at 18:00 it looks for up to 10 businesses/)).toBeInTheDocument();
     expect(await screen.findByText(/Nobody is called\./)).toBeInTheDocument();
-    fireEvent.click(await screen.findByRole("button", { name: "Yes, run it every week" }));
+    await press("Yes, run it every week");
     await waitFor(() => expect(a.add).toHaveBeenCalledWith({ text: "find new retailers in Jayanagar", weekday: 3, hour: 18, maxResults: 10 }));
     await waitFor(() => expect(nav.refresh).toHaveBeenCalled());
   });
@@ -111,7 +117,7 @@ describe("Add a weekly search", () => {
     render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/app/tenants/T/settings?section=leadfinder" />);
     fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
     fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
-    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
+    await press("Check and continue");
     await screen.findByText("This search will run by itself every week.");
     const prev = document.querySelector("[data-part=sweep-preview]") as HTMLElement;
     expect(prev).toHaveTextContent("About ₹450 a week (an estimate). · Google Maps");
@@ -125,7 +131,7 @@ describe("Add a weekly search", () => {
     render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/x" />);
     fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
     fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
-    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
+    await press("Check and continue");
     expect(await screen.findByText("You have the most weekly searches allowed. Remove one to add another.")).toBeInTheDocument();
     expect(screen.queryByText("This search will run by itself every week.")).toBeNull();
   });
@@ -134,8 +140,8 @@ describe("Add a weekly search", () => {
     render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/app/tenants/T/settings?section=leadfinder" />);
     fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
     fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
-    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
-    fireEvent.click(await screen.findByRole("button", { name: "Go back" }));
+    await press("Check and continue");
+    await press("Go back");
     expect(((await screen.findByLabelText("What to look for, and where")) as HTMLTextAreaElement).value).toBe("find shops in Eluru");
   });
   it("a refusal on the last step comes back in plain words on the form, not stuck on the second step", async () => {
@@ -144,8 +150,8 @@ describe("Add a weekly search", () => {
     render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/app/tenants/T/settings?section=leadfinder" />);
     fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
     fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
-    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
-    fireEvent.click(await screen.findByRole("button", { name: "Yes, run it every week" }));
+    await press("Check and continue");
+    await press("Yes, run it every week");
     expect(await screen.findByText("You have the most weekly searches allowed. Remove one to add another.")).toBeInTheDocument();
     expect(screen.queryByText("This search will run by itself every week.")).toBeNull(); // back on the form
     expect(nav.refresh).not.toHaveBeenCalled();
