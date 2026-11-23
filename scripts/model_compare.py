@@ -8,7 +8,6 @@
 HARD CAPS, counted BEFORE each call and kept across runs in usage.json: 150,000 tokens to Sarvam (the call's worst case, input estimate plus the output limit, must fit), and Claude Haiku only (the script
 refuses any other Claude model). A finished call is never repeated: results are cached in raw.json. Keys are read from Secret Manager into variables, never printed, logged or written. Synthetic text only."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -24,11 +23,20 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "services" / "ai-api"))
 
-from app.agents import compare  # noqa: E402
-from app.agents.compare import HAIKU_ONLY, JOBS, SARVAM_TOKEN_CAP, Result, TokenBudget  # noqa: E402
-from app.agents.llm.anthropic import AnthropicClient, AnthropicConfig  # noqa: E402
-from app.agents.llm.interface import LlmClient, LlmError  # noqa: E402
-from app.agents.llm.openai_compat import ChatCompletionsClient, sarvam_config  # noqa: E402
+from app.agents import compare
+from app.agents.compare import (
+    HAIKU_ONLY,
+    JOBS,
+    SARVAM_TOKEN_CAP,
+    Result,
+    TokenBudget,
+)
+from app.agents.llm.anthropic import AnthropicClient, AnthropicConfig
+from app.agents.llm.interface import LlmClient, LlmError
+from app.agents.llm.openai_compat import (
+    ChatCompletionsClient,
+    sarvam_config,
+)
 
 PROJECT = "project-2757c07e-37d2-4167-88f"
 DEFAULT_OUT = Path.home() / "Desktop" / "stack19-jobs" / "model-compare"

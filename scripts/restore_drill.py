@@ -96,7 +96,7 @@ class Drill:
     problems: list[str] = field(default_factory=list)
 
     def run(self, args: list[str], *, stdin: str | None = None) -> subprocess.CompletedProcess[str]:
-        return subprocess.run(args, input=stdin, capture_output=True, text=True, check=False)  # noqa: S603
+        return subprocess.run(args, input=stdin, capture_output=True, text=True, check=False)
 
     def psql(self, database: str, sql: str, *, user: str = "postgres") -> str:
         result = self.run(["docker", "exec", "-i", self.container, "psql", "-U", user, "-d", database, "-X", "-q", "-t", "-A", "-v", "ON_ERROR_STOP=1"], stdin=sql)
@@ -121,12 +121,12 @@ def local_drill(container: str = DEFAULT_CONTAINER) -> Drill:
     if not container.endswith("-agent"):
         drill.problems.append("refusing: --local runs only on the AGENT stack's container (its name ends in -agent), never the owner's")
         return drill
-    if subprocess.run(["docker", "inspect", "-f", "{{.State.Running}}", container], capture_output=True, text=True, check=False).stdout.strip() != "true":  # noqa: S603, S607
+    if subprocess.run(["docker", "inspect", "-f", "{{.State.Running}}", container], capture_output=True, text=True, check=False).stdout.strip() != "true":
         drill.problems.append(f"container {container} is not running (make agent-db-up)")
         return drill
     stamp = time.strftime("%Y%m%d%H%M%S")
     scratch = f"drill_{stamp}"
-    dump = f"/tmp/{scratch}.dump"  # noqa: S108 - inside the throwaway container
+    dump = f"/tmp/{scratch}.dump"
     try:
         before = drill.psql("postgres", COUNT_SQL)
         verify_sql = VERIFY_SQL.read_text(encoding="utf-8")

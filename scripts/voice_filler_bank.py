@@ -15,10 +15,10 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.conversation.fillers import BANK_DIR, bank_lines  # noqa: E402
-from app.conversation.providers import CartesiaStreamTts  # noqa: E402
-from app.conversation.pronounce import default_pronunciations  # noqa: E402
-from app.conversation.voices import default_config  # noqa: E402
+from app.conversation.fillers import BANK_DIR, bank_lines
+from app.conversation.pronounce import default_pronunciations
+from app.conversation.providers import CartesiaStreamTts
+from app.conversation.voices import default_config
 
 RATE = 24000
 THRESHOLD = 300  # 16-bit amplitude under which a sample counts as silence at the ends

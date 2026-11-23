@@ -30,11 +30,11 @@ Run:  python3 -I scripts/seed_staging.py --i-know-this-loads-demo-data-into-stag
 from __future__ import annotations
 
 import argparse
-import os
 import base64
 import hashlib
 import hmac
 import json
+import os
 import secrets
 import struct
 import subprocess
@@ -47,7 +47,7 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import demo_data  # noqa: E402
+import demo_data
 
 STAGING_REF = "uiallwgywitryxatcqxf"
 STAGING_NAME = "stack19-staging"
@@ -81,7 +81,7 @@ class SeedError(Exception):
 
 
 def run(argv: list[str], stdin: str | None = None) -> str:
-    out = subprocess.run(argv, input=stdin, capture_output=True, text=True, timeout=120, check=False)  # noqa: S603 - fixed argv
+    out = subprocess.run(argv, input=stdin, capture_output=True, text=True, timeout=120, check=False)
     if out.returncode != 0:
         raise SeedError(f"{argv[0]} {argv[1] if len(argv) > 1 else ''} failed (exit {out.returncode}).")
     return out.stdout
@@ -94,7 +94,7 @@ def json_from(text: str) -> Any:
 
 # ----------------------------------------------------------------------------- Secret Manager
 def secret_get(name: str) -> str | None:
-    out = subprocess.run(  # noqa: S603
+    out = subprocess.run(
         ["gcloud", "secrets", "versions", "access", "latest", f"--secret={name}", f"--project={GCP_PROJECT}"],
         capture_output=True, text=True, timeout=60, check=False,
     )
@@ -102,7 +102,7 @@ def secret_get(name: str) -> str | None:
 
 
 def secret_put(name: str, value: str) -> None:
-    exists = subprocess.run(  # noqa: S603
+    exists = subprocess.run(
         ["gcloud", "secrets", "describe", name, f"--project={GCP_PROJECT}"], capture_output=True, text=True, timeout=60, check=False
     ).returncode == 0
     if exists:
@@ -115,9 +115,9 @@ def secret_put(name: str, value: str) -> None:
 def http(method: str, url: str, headers: dict[str, str], body: Any = None) -> tuple[int, Any]:
     data = None if body is None else json.dumps(body).encode()
     lock = os.environ.get("ORIGIN_LOCK_SECRET")   # the origin lock (docs/runbooks/origin-lock.md): when the API is locked it wants this header; unset = nothing added
-    req = urllib.request.Request(url, method=method, data=data, headers={"Content-Type": "application/json", "User-Agent": "stack19-seed-staging", **({"X-Stack19-Origin": lock} if lock else {}), **headers})  # noqa: S310 - https only, checked
+    req = urllib.request.Request(url, method=method, data=data, headers={"Content-Type": "application/json", "User-Agent": "stack19-seed-staging", **({"X-Stack19-Origin": lock} if lock else {}), **headers})
     try:
-        with urllib.request.urlopen(req, timeout=60) as r:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=60) as r:
             raw = r.read()
             return r.status, (json.loads(raw) if raw else None)
     except urllib.error.HTTPError as e:
@@ -130,7 +130,7 @@ def http(method: str, url: str, headers: dict[str, str], body: Any = None) -> tu
 
 def totp_code(secret_b32: str) -> str:
     key = base64.b32decode(secret_b32.upper() + "=" * (-len(secret_b32) % 8))
-    digest = hmac.new(key, struct.pack(">Q", int(time.time() // 30)), hashlib.sha1).digest()  # noqa: S324 - RFC 6238
+    digest = hmac.new(key, struct.pack(">Q", int(time.time() // 30)), hashlib.sha1).digest()
     off = digest[-1] & 0x0F
     return f"{(struct.unpack('>I', digest[off:off + 4])[0] & 0x7FFFFFFF) % 10**6:06d}"
 
@@ -213,9 +213,9 @@ class Seeder:
 
     def call(self, token: str, method: str, path: str, body: Any = None, raw: tuple[bytes, str] | None = None) -> tuple[int, Any]:
         if raw is not None:  # a file: the body is the file itself with its own type (a photo)
-            req = urllib.request.Request(f"{self.api}{path}", method=method, data=raw[0], headers={"Authorization": f"Bearer {token}", "Content-Type": raw[1], "User-Agent": "stack19-seed-staging"})  # noqa: S310 - https only, checked
+            req = urllib.request.Request(f"{self.api}{path}", method=method, data=raw[0], headers={"Authorization": f"Bearer {token}", "Content-Type": raw[1], "User-Agent": "stack19-seed-staging"})
             try:
-                with urllib.request.urlopen(req, timeout=60) as r:  # noqa: S310
+                with urllib.request.urlopen(req, timeout=60) as r:
                     return r.status, json.loads(r.read() or b"null")
             except urllib.error.HTTPError as e:
                 try:
@@ -282,7 +282,7 @@ class Seeder:
             password = new_password()
             secret_put(SCHEDULER_SECRET, password)
         self.create_user(SCHEDULER_EMAIL, password, {})
-        sql = f"select app.operator_register_scheduler('{SCHEDULER_EMAIL}');"  # noqa: S608 - a constant
+        sql = f"select app.operator_register_scheduler('{SCHEDULER_EMAIL}');"
         run(["supabase", "db", "query", "--linked", "--agent", "no", sql])
         return SCHEDULER_EMAIL
 

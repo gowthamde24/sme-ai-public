@@ -1,10 +1,10 @@
 import copy
 import csv
-from io import StringIO
 import json
-from pathlib import Path
 import random
 import unittest
+from io import StringIO
+from pathlib import Path
 
 import price_list_csv as engine
 

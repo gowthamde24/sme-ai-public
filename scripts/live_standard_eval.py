@@ -27,7 +27,7 @@ from typing import Any
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "services" / "ai-api"))
 sys.path.insert(0, str(HERE))
-from app.conversation import live_eval as ev  # noqa: E402
+from app.conversation import live_eval as ev
 
 CASUAL = {
     "en": "Hello, how are you today?",
@@ -48,7 +48,6 @@ def pct(values: list[float], p: float) -> float:
 
 def style_live(model: str) -> list[tuple[str, str, list[str]]]:
     import httpx
-
     from app.agents.register import register_block
     from app.conversation.style import conversation_style_block
 
@@ -176,8 +175,8 @@ async def barge_in_ms(url: str, token: str, pcm: bytes, language: str, verify: b
 
 
 def staging(args: argparse.Namespace) -> dict[str, Any]:
-    import seed_staging as ss
     import browser_voice_latency
+    import seed_staging as ss
     from browser_voice_latency import FRAME_MS, read_wav, run  # noqa: F401
     from staging_smoke_api import Owner
 

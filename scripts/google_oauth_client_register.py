@@ -1,4 +1,3 @@
-# ruff: noqa: E501
 """Put the Google OAuth client of the Google Calendar sync (appointment booking slice 4) into Secret Manager, for the STAGING project.
 
 Run it yourself, in your own terminal (in Claude Code: `! python3 -I scripts/google_oauth_client_register.py ...`). The client id and the client secret are typed at HIDDEN prompts: they never appear in the
@@ -49,7 +48,7 @@ def valid_secret(value: str) -> bool:
 
 def gcloud(args: list[str], *, stdin: str | None = None) -> int:
     """Run gcloud; its output is swallowed (it never holds the value, but nothing of it is needed either)."""
-    done = subprocess.run(["gcloud", *args], input=stdin, capture_output=True, text=True, check=False)  # noqa: S603, S607
+    done = subprocess.run(["gcloud", *args], input=stdin, capture_output=True, text=True, check=False)
     return done.returncode
 
 

@@ -8,7 +8,6 @@ What these prove that the pgTAP files (108, 109) and the unit tests cannot:
   * the audio is never stored: no table of the database holds audio bytes or the spoken words;
   * the reports of a school answer in the one shape (validated against the generated contract), another pack's reports are refused as a module that is off, and a Viewer sees the catalogue only."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -23,18 +22,17 @@ from typing import Any
 import jsonschema
 import operator_sql
 import pytest
-from conftest import TEST_SUPPRESSION_KEY, aal1_token, bearer
-from fastapi.testclient import TestClient
-from pydantic import SecretStr
-from test_outbox_api import restore_clock
-from test_scheduler_api import Sched
-
 from app.config import Settings
 from app.main import build_runtime, create_app
 from app.outbox.voice_hook import VoiceNotes
 from app.scheduler.worker import Worker
 from app.voice.fake import FakeTts
 from app.voice.interface import VoiceStack
+from conftest import TEST_SUPPRESSION_KEY, aal1_token, bearer
+from fastapi.testclient import TestClient
+from pydantic import SecretStr
+from test_outbox_api import restore_clock
+from test_scheduler_api import Sched
 
 ROOT = Path(__file__).resolve().parents[2]
 VOICE = json.loads((ROOT / "packages" / "contracts" / "voice_notes.schema.json").read_text(encoding="utf-8"))

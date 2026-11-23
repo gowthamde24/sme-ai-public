@@ -1,10 +1,10 @@
 import copy
 import importlib.util
 import json
-from pathlib import Path
 import random
 import re
 import unittest
+from pathlib import Path
 
 import quote_text as engine
 

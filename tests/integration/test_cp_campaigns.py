@@ -8,7 +8,6 @@ What these prove that the pgTAP files (100 to 103) and the unit tests cannot:
     the call list and its outcomes, and the results, every shape validated against the generated contract;
   * the module gates on a real workspace (a textile workspace is refused with a plain 403 module_off; its call list works but is empty)."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

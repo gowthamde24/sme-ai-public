@@ -4,7 +4,6 @@ A SQL mutant is the LATEST definition of ONE function with ONE text replacement 
 (Python, web) is ONE text replacement in ONE file, restored with `git checkout`. Every result is appended to `out/*.jsonl` (git-ignored), keyed by the mutant's description, so a run can resume and the
 survivors can be re-run after the tests were strengthened. Only the local stack is ever touched: the database container is the AGENT stack's (SME_STACK=owner chooses the owner's, with OWNER_OK=1)."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -18,7 +17,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
-import stack_env  # noqa: E402  (the scripts folder is not a package)
+import stack_env
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "out"
@@ -45,13 +44,13 @@ def _docker() -> str:
 def psql(sql: str) -> tuple[int, str]:
     """Run SQL on the local database as the operator; (exit code, the tail of the output)."""
     cmd = [_docker(), "exec", "-i", container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-v", "ON_ERROR_STOP=1"]
-    r = subprocess.run(cmd, input=sql, capture_output=True, text=True, timeout=120, check=False)  # noqa: S603
+    r = subprocess.run(cmd, input=sql, capture_output=True, text=True, timeout=120, check=False)
     return r.returncode, (r.stdout + r.stderr)[-400:]
 
 
 def query(sql: str) -> str:
     cmd = [_docker(), "exec", "-i", container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c", sql]
-    r = subprocess.run(cmd, capture_output=True, text=True, timeout=60, check=False)  # noqa: S603
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=60, check=False)
     if r.returncode != 0:
         raise SystemExit(f"the local database did not answer: {r.stderr[-200:]}")
     return r.stdout.strip()
@@ -61,7 +60,7 @@ def pgtap(files: list[str] | None = None) -> tuple[bool, list[str]]:
     """pgTAP files (with the two helper files first). (passed, the first failing test names)."""
     d = "supabase/tests/database"
     args = ["supabase", "test", "db", f"{d}/00000_test_helpers.sql", f"{d}/00001_tenant_table_registry.sql", *[f"{d}/{f}.test.sql" for f in (files or PGTAP_FILES)]]
-    r = subprocess.run(args, cwd=ROOT, capture_output=True, text=True, timeout=600, check=False)  # noqa: S603, S607
+    r = subprocess.run(args, cwd=ROOT, capture_output=True, text=True, timeout=600, check=False)
     out = r.stdout + r.stderr
     failed = re.findall(r"# Failed test \d+: \"([^\"]{0,90})", out)
     ok = "Result: PASS" in out and r.returncode == 0

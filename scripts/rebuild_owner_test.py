@@ -11,7 +11,7 @@ Guards: staging only (scripts/seed_staging.py's guard: the flag, the project ref
 Run:  python3 -I scripts/rebuild_owner_test.py --i-know-this-loads-demo-data-into-staging --project-ref uiallwgywitryxatcqxf --api-url https://<api> --pack textiles \
           --reason "the owner asked for a fresh test week (4 Nov 2026)" [--dry-run]"""
 
-# ruff: noqa: E501, S608 - long lines like the other seed scripts; the SQL is the operator's, built only from constants and q()-quoted values
+
 
 from __future__ import annotations
 
@@ -22,8 +22,8 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import seed_staging as ss  # noqa: E402
-from seed_staging import SeedError  # noqa: E402
+import seed_staging as ss
+from seed_staging import SeedError
 
 PACKS = ("textiles", "construction_materials", "education")
 
@@ -61,7 +61,7 @@ def plan(sql: Any, name: str) -> dict[str, Any]:
 
 def rebuild(pack: str, reason: str, api_url: str, *, dry_run: bool = False) -> dict[str, Any]:
     try:
-        import seed_owner_test as sot  # type: ignore[import-not-found,unused-ignore]  # noqa: PLC0415 - C2's script (PR #293); needed only here
+        import seed_owner_test as sot  # type: ignore[import-not-found,unused-ignore]
     except ImportError:
         raise SeedError("scripts/seed_owner_test.py is not here yet (it comes with the test-workspaces PR)") from None
     name = dict(sot.WORKSPACES)[pack]
@@ -89,7 +89,7 @@ def rebuild(pack: str, reason: str, api_url: str, *, dry_run: bool = False) -> d
             self.create_user(email, password, {"terms_version": terms["terms"], "business_name": name_})
             return str(self.second_factor_for(key, self.sign_in(email, password)))
 
-    def _email(pack: str, gen: int = 1) -> str:  # noqa: ARG001 - the signature of seed_owner_test.helper_email; this generation's own number is used
+    def _email(pack: str, gen: int = 1) -> str:
         return generation_email(pack, g)
 
     sot.helper_email = _email   # the phases below look the helper up by its address
@@ -97,7 +97,7 @@ def rebuild(pack: str, reason: str, api_url: str, *, dry_run: bool = False) -> d
     terms = s.terms()
     out["provisioned"] = s.provision(pack, name, terms)
     tenant = str(out["provisioned"]["tenant_id"])
-    import owner_test_data  # type: ignore[import-not-found,unused-ignore]  # noqa: PLC0415 - C2's week of data
+    import owner_test_data  # type: ignore[import-not-found,unused-ignore]
 
     token = s.helper_token(pack, name, terms)
     out["seeded"] = owner_test_data.seed(pack, lambda m, path, b=None, raw=None: s.call(token, m, f"/v1/tenants/{tenant}{path}", b, raw))

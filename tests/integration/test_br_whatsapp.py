@@ -2,7 +2,6 @@
 outbox, the policy and the real adapter to the fake Graph; delivery statuses come back by webhook; a STOP stops everything; outside the 24-hour window only an approved template is sent. The database
 rules are pgTAP 86. All data is synthetic (numbers start +00, so the real-data gate stays closed)."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -16,16 +15,15 @@ from typing import Any
 
 import operator_sql
 import pytest
+from app.config import Settings
+from app.main import create_app
+from app.whatsapp import payloads, webhook
+from app.whatsapp.fake_graph import FakeGraph
 from conftest import TEST_SUPPRESSION_KEY, Stack, aal1_token, bearer
 from crm_support import Tenant, World
 from evidence_support import uid
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
-
-from app.config import Settings
-from app.main import create_app
-from app.whatsapp import payloads, webhook
-from app.whatsapp.fake_graph import FakeGraph
 
 APP_SECRET = "integration-app-secret"
 VERIFY = "integration-verify-token"
@@ -41,7 +39,7 @@ class GraphServer:
         graph = self.graph
 
         class Handler(BaseHTTPRequestHandler):
-            def do_POST(self) -> None:  # noqa: N802
+            def do_POST(self) -> None:
                 body = self.rfile.read(int(self.headers.get("Content-Length") or 0))
                 status, answer = graph.handle("POST", self.path, {k.lower(): v for k, v in self.headers.items()}, body)
                 data = json.dumps(answer).encode()

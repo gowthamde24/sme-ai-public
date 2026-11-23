@@ -2,7 +2,6 @@
 key ring), a cadence policy that makes the recipient's local clock read about noon NOW (so a test does not depend on the hour it runs), touches and drafts through OUR routes, and the operator
 reads and plants (aging a lead, a touch at an exact time, invariants) that no client can do. All data is synthetic."""
 
-# ruff: noqa: E501, S608, S603
 
 from __future__ import annotations
 
@@ -270,7 +269,7 @@ class FollowWorld:
 
     # ------------------------------------------------------------------------------ honest SQL for a held session (the request is built NOW from the recorded state, as the API does)
     def create_sql(self, lead: Lead, draft_id: str | None = None, channel: str = "email") -> str:
-        from datetime import UTC as _utc  # noqa: N811
+        from datetime import UTC as _utc
 
         from app.followups import cadence_port
         from app.followups.builder import build_request

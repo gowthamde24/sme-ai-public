@@ -1,6 +1,5 @@
 """The hand-written SQL mutants of T010 part 2 (what an operator cannot see): (function, the text to replace, its replacement, what it means, which occurrence). A snippet that is gone makes the generator stop with an error: the source moved, update the entry."""
 
-# ruff: noqa: E501
 
 M = [
  # --- active policy

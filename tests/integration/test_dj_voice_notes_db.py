@@ -1,7 +1,6 @@
 """Job DJ on the real local stack: the provider and speaker of a voice reach the worker's plan, a real voice nobody listened to cannot exist, and a campaign cannot carry a child's field into the words that are
 spoken or sent. Its own education workspace, template and guardian, the scheduler worker with the LOCAL FAKE channel. Synthetic data only; no key; no network."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -13,19 +12,18 @@ from typing import Any
 
 import operator_sql
 import pytest
-from conftest import TEST_SUPPRESSION_KEY, bearer
-from fastapi.testclient import TestClient
-from pydantic import SecretStr
-from test_cv_voice_reports import BASE, pin
-from test_outbox_api import restore_clock
-from test_scheduler_api import Sched
-
 from app.config import Settings
 from app.main import build_runtime, create_app
 from app.outbox.voice_hook import VoiceNotes
 from app.scheduler.worker import Worker
 from app.voice.fake import FakeTts
 from app.voice.interface import VoiceStack
+from conftest import TEST_SUPPRESSION_KEY, bearer
+from fastapi.testclient import TestClient
+from pydantic import SecretStr
+from test_cv_voice_reports import BASE, pin
+from test_outbox_api import restore_clock
+from test_scheduler_api import Sched
 
 
 class Scene:

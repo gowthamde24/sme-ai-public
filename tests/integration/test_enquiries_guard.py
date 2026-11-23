@@ -7,7 +7,6 @@ Every call goes straight to PostgREST with a user's own JWT (our API is skipped)
 Nothing here is a real person: every address and number is synthetic.
 """
 
-# ruff: noqa: E501, S311
 
 from __future__ import annotations
 
@@ -17,11 +16,10 @@ import uuid
 from pathlib import Path
 
 import pytest
+from app.requirements.scrub import has_contact, scrub
 from conftest import Stack
 from crm_support import World
 from evidence_support import code_of, pg
-
-from app.requirements.scrub import has_contact, scrub
 
 ROOT = Path(__file__).resolve().parents[2]
 VECTORS = json.loads((ROOT / "tests" / "vectors" / "enquiry_scrub.json").read_text())
@@ -175,7 +173,7 @@ def test_the_database_accepts_raw_indic_joiners_and_capture_keeps_them(w: World,
 
 @pytest.mark.parametrize(
     "hidden",
-    ["​", "‮", "‪", "⁦", "⁠", "﻿", "\U000e0041", " ", "\x01", "\x7f", "\x85"],
+    ["\u200b", "‮", "‪", "⁦", "⁠", "﻿", "\U000e0041", " ", "\x01", "\x7f", "\x85"],
     ids=[
         "zwsp",
         "rlo",
@@ -221,7 +219,7 @@ def test_property_what_capture_stores_always_passes_the_database(w: World) -> No
         "క్",
         "‎",
         "‏",
-        "​",
+        "\u200b",
         "‮",
         "﻿",
         "\U000e0041",

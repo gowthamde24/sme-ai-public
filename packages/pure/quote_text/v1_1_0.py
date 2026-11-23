@@ -3,13 +3,13 @@
 1.1.0 allows U+200C / U+200D after an Indic letter or mark (see VERSIONS.md). The 1.0.0
 renderer is frozen byte for byte in v1_0_0.py so quotes rendered with it can be re-verified.
 """
-from datetime import date
-from importlib import import_module
 import hashlib
 import json
 import re
 import textwrap
 import unicodedata
+from datetime import date
+from importlib import import_module
 
 RENDERER_VERSION = "1.1.0"
 SUPPORTED_VERSIONS = ("1.0.0", "1.1.0")

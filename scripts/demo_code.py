@@ -15,8 +15,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import stack_env  # noqa: E402
-from seed_demo import (  # noqa: E402
+import stack_env
+from seed_demo import (
     DEMO_EMAIL,
     SeedError,
     load_config,
@@ -31,9 +31,9 @@ def demo_user_id() -> str:
     docker = shutil.which("docker")
     if docker is None:
         raise SeedError("Cannot reach the local database container. Is Docker running, and did you run `make db-start`?")
-    out = subprocess.run(  # noqa: S603 - fixed argv; the email is a constant of this repository
+    out = subprocess.run(
         [docker, "exec", "-i", stack_env.db_container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-At", "-c",
-         f"select id from auth.users where email = '{DEMO_EMAIL}' limit 1"],  # noqa: S608
+         f"select id from auth.users where email = '{DEMO_EMAIL}' limit 1"],
         capture_output=True, text=True, timeout=30, check=False,
     )
     user_id = out.stdout.strip()

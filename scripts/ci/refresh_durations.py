@@ -15,7 +15,7 @@ import re
 import subprocess
 import sys
 import tempfile
-import xml.etree.ElementTree as ET  # noqa: S405 - our own CI's reports
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -24,7 +24,7 @@ FILE = re.compile(r"(test_[A-Za-z0-9_]+)")
 
 def seconds_per_file(report: Path) -> dict[str, float]:
     out: dict[str, float] = {}
-    for case in ET.parse(report).getroot().iter("testcase"):  # noqa: S314
+    for case in ET.parse(report).getroot().iter("testcase"):
         prop = next((p.get("value") for p in case.iter("property") if p.get("name") == "file"), None)   # recorded by tests/integration/conftest.py
         where = prop or case.get("file") or case.get("classname") or ""
         m = FILE.search(where)
@@ -41,7 +41,7 @@ def main(argv: list[str]) -> int:
     unit: dict[str, float] = {}
     integration: dict[str, float] = {}
     with tempfile.TemporaryDirectory() as tmp:
-        subprocess.run(["gh", "run", "download", run, "-D", tmp, "-p", "junit-*"], check=True)  # noqa: S603, S607
+        subprocess.run(["gh", "run", "download", run, "-D", tmp, "-p", "junit-*"], check=True)
         for report in sorted(Path(tmp).rglob("*.xml")):
             target = integration if "junit-int" in report.name or "junit-int" in str(report.parent) else unit
             for name, secs in seconds_per_file(report).items():

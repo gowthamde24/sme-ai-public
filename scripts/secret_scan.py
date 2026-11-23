@@ -35,7 +35,7 @@ MAX_BYTES = 1_000_000
 
 
 def tracked(root: Path) -> list[str]:
-    out = subprocess.run(["git", "ls-files", "-z"], cwd=root, check=True, capture_output=True).stdout  # noqa: S603, S607
+    out = subprocess.run(["git", "ls-files", "-z"], cwd=root, check=True, capture_output=True).stdout
     return [p for p in out.decode().split("\0") if p]
 
 

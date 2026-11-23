@@ -13,9 +13,9 @@ import uuid
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import staging_smoke_api as sm  # noqa: E402
+import staging_smoke_api as sm
 
-import seed_staging as ss  # noqa: E402  # isort: skip
+import seed_staging as ss  # isort: skip
 
 QUESTION = "Go through my recent quotes and enquiries and, in one full sentence each, tell me where each one stands and what I should do next."
 
@@ -24,10 +24,10 @@ TEXT: list[str] = []  # the answer text of the last run, to read it (synthetic w
 
 
 def timed(url: str, token: str, body: dict, headers: dict[str, str] | None = None) -> list[tuple[float, str]]:
-    req = urllib.request.Request(url, method="POST", data=json.dumps(body).encode(), headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json", **(headers or {})})  # noqa: S310 - https only
+    req = urllib.request.Request(url, method="POST", data=json.dumps(body).encode(), headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json", **(headers or {})})
     t0 = time.time()
     seen: list[tuple[float, str]] = []
-    with urllib.request.urlopen(req, timeout=180) as r:  # noqa: S310
+    with urllib.request.urlopen(req, timeout=180) as r:
         seen.append((time.time() - t0, f"headers (HTTP {r.status}, {r.headers.get('content-type')})"))
         for raw in r:
             line = raw.decode("utf-8", "replace").strip()

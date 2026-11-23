@@ -1,7 +1,6 @@
 """Shared helpers for tests that touch suppression keys (T010, ADR 0020). The keys here are well-formed FAKES (a sha256 of a word): the database cannot verify an HMAC, only
 store and compare it, so a test may make any 64-hex string. All data is synthetic."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 

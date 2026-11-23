@@ -19,8 +19,8 @@ import wave
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import seed_staging as ss  # noqa: E402
-from staging_smoke_api import Owner  # noqa: E402
+import seed_staging as ss
+from staging_smoke_api import Owner
 
 FRAME_MS = 20
 FILLER_FLAGS: list[bool] = []   # per turn: did a filler play?

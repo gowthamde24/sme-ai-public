@@ -13,7 +13,7 @@ agent switches are OFF by default and only the operator (a migration, or here th
 database owner) can turn them on, so this module turns them on for its own two tenants and
 restores the previous state exactly afterwards."""
 
-# ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
+
 
 from __future__ import annotations
 

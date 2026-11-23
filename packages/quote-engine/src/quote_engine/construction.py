@@ -117,7 +117,7 @@ def _ceil_div(numerator: int, denominator: int) -> int:
     return -((-numerator) // denominator)
 
 
-def _rounder(mode: str):  # noqa: ANN202 - a tiny closure
+def _rounder(mode: str):
     def rounded(numerator: int, denominator: int) -> int:
         whole, remainder = divmod(numerator, denominator)
         if mode == "down":
@@ -329,9 +329,7 @@ def _check_size(request: dict[str, Any]) -> None:
             if len(value) > 24:
                 raise _Invalid("OUT_OF_RANGE")
             stack.extend((v, depth + 1) for v in value)
-        elif type(value) is str and len(value) > MAX_ID:
-            raise _Invalid("OUT_OF_RANGE")
-        elif type(value) is int and abs(value) > 10**12:
+        elif type(value) is str and len(value) > MAX_ID or type(value) is int and abs(value) > 10**12:
             raise _Invalid("OUT_OF_RANGE")
 
 
@@ -350,7 +348,7 @@ def _range(request: dict[str, Any], day: date, digest: str, exact: dict[str, Any
     return {"total_low": min(low_total, exact["totals"]["total"]), "total_high": exact["totals"]["total"]}
 
 
-def _run(r: dict[str, Any], day: date, digest: str) -> dict[str, Any]:  # noqa: C901, PLR0912, PLR0915 - one straight calculation, kept in the order of the blueprint
+def _run(r: dict[str, Any], day: date, digest: str) -> dict[str, Any]:
     p = r["policy"]
     rounded = _rounder(p["rounding_mode"])
     flags: list[dict[str, Any]] = []

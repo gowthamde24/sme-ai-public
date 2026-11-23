@@ -6,7 +6,6 @@
 
 CAP: 600,000 Claude tokens in total, counted before each call and kept in register-ab.json. A finished call is never repeated. The key is read from Secret Manager into a variable; never printed, logged or written. Synthetic text only."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -21,10 +20,10 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "services" / "ai-api"))
 
-from app.agents import compare  # noqa: E402
-from app.agents.compare import HAIKU_ONLY, JOBS, Result  # noqa: E402
-from app.agents.llm.anthropic import AnthropicClient, AnthropicConfig  # noqa: E402
-from app.agents.llm.interface import LlmError  # noqa: E402
+from app.agents import compare
+from app.agents.compare import HAIKU_ONLY, JOBS, Result
+from app.agents.llm.anthropic import AnthropicClient, AnthropicConfig
+from app.agents.llm.interface import LlmError
 
 PROJECT = "project-2757c07e-37d2-4167-88f"
 DEFAULT_OUT = Path.home() / "Desktop" / "stack19-jobs" / "model-compare"

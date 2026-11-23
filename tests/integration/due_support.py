@@ -2,7 +2,6 @@
 so a test can have hundreds of leads with a history without hundreds of API calls. The leads have no contact and no company (the follow-up rules read none for these tests); the keyed leads whose
 gate matters are made through the API by `followup_support.FollowWorld`. All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

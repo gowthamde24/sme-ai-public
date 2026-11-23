@@ -1,7 +1,6 @@
 """Job EA: the conversational assistant on the real stack (real database functions, a scripted model): the type of a reply is stored, the history and the list are the caller's own, archive hides and deletes nothing,
 and a plan the caller never had is the same 404 as an unknown one. Synthetic data only."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -10,12 +9,11 @@ from collections.abc import Iterator
 from typing import Any
 
 import pytest
+from app.agents.llm.interface import LlmRequest, LlmResponse, Usage
 from assistant_support import assistant_app, enable_assistant, events, restore, text_of
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
-
-from app.agents.llm.interface import LlmRequest, LlmResponse, Usage
 
 HOLDER: dict[str, Any] = {"replies": []}
 

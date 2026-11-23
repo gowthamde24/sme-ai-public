@@ -14,7 +14,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "src"))
-from quote_engine.construction import calculate  # noqa: E402
+from quote_engine.construction import calculate
 
 PAVER = {
     "sku": "PV80-GREY", "name": "Paver block 80 mm grey", "mode": "area", "sold_per": "sq_ft", "unit_price_paise": 6500, "gst_bps": 1800, "hsn": "68101990",

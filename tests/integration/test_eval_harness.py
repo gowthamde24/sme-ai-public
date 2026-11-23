@@ -4,7 +4,6 @@ CI run 14 (2026-10-06): the whole tests/integration directory runs in ONE pytest
 written 500 agent steps (`max_writes_per_day`), and the research golden set ended `failed/budget` on the businesses that write, while `make check`
 (which runs the evals in a session of their own) passed. These tests keep that from coming back."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 

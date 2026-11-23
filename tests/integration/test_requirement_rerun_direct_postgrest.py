@@ -1,7 +1,7 @@
 """T008 commit 3c, attacked straight through PostgREST: a re-run never replaces a person's work (SM211), and a run cannot add to a requirement
 that stopped being its draft (SM209). The refusal is not an oracle (a Viewer or another tenant learns nothing). All text is synthetic."""
 
-# ruff: noqa: E501, F811, S608
+# ruff: noqa: F811
 
 from __future__ import annotations
 
@@ -13,7 +13,13 @@ from conftest import User
 from crm_support import World
 from evidence_support import pg
 from test_agent_direct_postgrest import is_state, rpc
-from test_requirement_direct_postgrest import BODY, capture, on, start, write  # noqa: F401
+from test_requirement_direct_postgrest import (  # noqa: F401
+    BODY,
+    capture,
+    on,
+    start,
+    write,
+)
 
 
 def _first_run(on: World, enquiry: str) -> tuple[str, dict[str, Any]]:

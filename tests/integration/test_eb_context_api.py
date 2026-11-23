@@ -1,7 +1,6 @@
 """Job EB part A on the real stack: the owner's notes are versioned in the database, the version check holds across two people, an old version is restorable as a new one, roles are enforced by the database,
 and one business never reads another's notes. Synthetic data only."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

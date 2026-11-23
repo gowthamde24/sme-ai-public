@@ -2,7 +2,6 @@
 the caller's own token. A business with a draft quote, a follow-up draft, a cancelled order holding money; every role; the kill switch; the daily cap; a retry; and the proof that
 a chat is private to its owner and one business never reads another's. All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -12,6 +11,9 @@ from typing import Any
 
 import operator_sql
 import pytest
+from app.agents.llm.interface import LlmError, LlmRateLimited
+from app.agents.llm.routing import ModelRouter
+from app.assistant.dev_model import DevAssistantModel
 from assistant_support import (
     assistant_app,
     conversation_of,
@@ -25,10 +27,6 @@ from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
 from test_today_api import Scene
-
-from app.agents.llm.interface import LlmError, LlmRateLimited
-from app.agents.llm.routing import ModelRouter
-from app.assistant.dev_model import DevAssistantModel
 
 
 @pytest.fixture(scope="module")

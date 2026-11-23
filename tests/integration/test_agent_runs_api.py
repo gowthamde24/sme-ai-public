@@ -12,7 +12,7 @@ with that user's token, writes only through the definer functions, and leaves UN
 suggestions that count toward a score only after an Owner / Admin accepts them; a cancel, a
 switch, a lost role and a model that OBEYS an injection each stop or contain a run."""
 
-# ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
+
 
 from __future__ import annotations
 
@@ -30,11 +30,6 @@ import httpx
 import jsonschema
 import operator_sql
 import pytest
-from conftest import User, bearer
-from crm_support import Tenant, World
-from evidence_support import pg, uid
-from fastapi.testclient import TestClient
-
 from app.agent_runs.executor import RunTask, ThreadRunExecutor
 from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agent_runs.wiring import AgentsRuntime
@@ -55,6 +50,10 @@ from app.agents.runtime import AgentRunner
 from app.config import Settings
 from app.crm.repository import PostgrestCrmRepository
 from app.main import build_runtime, create_app
+from conftest import User, bearer
+from crm_support import Tenant, World
+from evidence_support import pg, uid
+from fastapi.testclient import TestClient
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = json.loads((ROOT / "packages" / "contracts" / "agents.schema.json").read_text())

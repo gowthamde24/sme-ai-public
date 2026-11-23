@@ -2,7 +2,7 @@ import copy
 import unittest
 
 import quote_text as engine
-from test_quote_text import fixture, request, paise_tokens, expected_amounts
+from test_quote_text import expected_amounts, fixture, paise_tokens, request
 
 
 class TextBoundsTests(unittest.TestCase):

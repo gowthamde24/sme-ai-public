@@ -1,6 +1,5 @@
 """The rehearsal report: markdown, written for the owner to read. Numbers only from what the run recorded; nothing here is a judgement about whether they are good (no thresholds were set: plan decision 6)."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 

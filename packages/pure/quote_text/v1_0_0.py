@@ -1,10 +1,10 @@
 """Pure plain-text quote rendering; approval and copying belong to humans."""
-from datetime import date
 import hashlib
 import json
 import re
 import textwrap
 import unicodedata
+from datetime import date
 
 RENDERER_VERSION = "1.0.0"
 MAX_WIDTH = 60

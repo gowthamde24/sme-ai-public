@@ -7,7 +7,6 @@
   * a draft AND an approved quote block discard_requirement (SM212).
 All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -16,12 +15,11 @@ from typing import Any
 
 import httpx
 import pytest
+from app.quotes import engine_port
 from conftest import aal1_token
 from crm_support import World
 from evidence_support import code_of, pg, uid
 from quote_support import QuoteWorld, rpc
-
-from app.quotes import engine_port
 
 
 @pytest.fixture(scope="module")

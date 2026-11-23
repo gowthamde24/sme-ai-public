@@ -2,7 +2,6 @@
 id), the scripted model proposes areas, thicknesses, the product and the site, deterministic code types the values, and the DATABASE stores them as unreviewed proposals after checking every quote against the stored
 text and every key against the workspace's own vocabulary. A saree workspace keeps its own version and is refused the materials fields. Synthetic data only."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -12,13 +11,12 @@ from typing import Any
 
 import operator_sql
 import pytest
+from app.config import Settings
+from app.main import build_runtime, create_app
 from conftest import bearer
 from crm_support import Tenant, World
 from evidence_support import pg, uid
 from fastapi.testclient import TestClient
-
-from app.config import Settings
-from app.main import build_runtime, create_app
 
 BODY = "Hello,\nNeed about 1,000 sq ft of 80 mm paver blocks for a driveway. Site is at Kukatpally Hyderabad. Laying also needed. Need it by 25 October 2026. 50% advance is fine."
 SAREE_BODY = "Need 20 kanjivaram sarees in red. Deliver to Hyderabad."

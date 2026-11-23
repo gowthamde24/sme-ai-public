@@ -1,7 +1,6 @@
 """The list of SQL mutants: operators applied to every follow-up function, the hand-written ones (sql_manual.py), the guard-function operators, and the statement mutants (triggers, indexes, CHECK and
 unique constraints, RLS policies, grants). Every mutant has a stable `key` (function, operator, line, description, occurrence): a re-run after the source changed still finds it."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

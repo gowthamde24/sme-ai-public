@@ -4,7 +4,6 @@ the spreadsheet import at 5,000 rows with custom columns. Real GoTrue, PostgREST
 What these prove that the pgTAP files (93 to 95) and the unit tests cannot: the pack rows in the database are byte for byte the pack files, a refusal by the database (SM701 and friends) reaches the caller as the
 plain 403/422/409 the API promises, the shapes the web will read validate against the generated contract, and a 5,000-row file really runs through the real import in parts."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -27,8 +26,8 @@ from fastapi.testclient import TestClient
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
-import pack_migration as pm  # noqa: E402  (the scripts folder is not a package)
-import packs_check as pc  # noqa: E402
+import pack_migration as pm
+import packs_check as pc
 
 CONTRACT = json.loads((ROOT / "packages" / "contracts" / "packs.schema.json").read_text(encoding="utf-8"))
 

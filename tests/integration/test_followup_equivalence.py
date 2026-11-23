@@ -14,7 +14,6 @@ flag, a reply or a close would also stop the lead, while `app.followup_blocker` 
 database's checks in the engine's order, and this gate now requires agreement on due-ness AND on the reason in EVERY case.
 """
 
-# ruff: noqa: E501, S608, S311
 
 from __future__ import annotations
 
@@ -27,15 +26,14 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from app.followups import cadence_port
+from app.followups.builder import LeadSnapshot, build_request, utc_text
+from app.followups.repository import PostgrestFollowupsRepository
 from crm_support import World
 from evidence_support import uid
 from fastapi.testclient import TestClient
 from followup_support import FollowWorld, Lead, policy_body
 from order_support import psql
-
-from app.followups import cadence_port
-from app.followups.builder import LeadSnapshot, build_request, utc_text
-from app.followups.repository import PostgrestFollowupsRepository
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE = datetime(2026, 10, 7, 0, 0, 0, tzinfo=UTC)  # a Wednesday
@@ -277,7 +275,7 @@ def grid() -> list[tuple[str, dict[str, Any]]]:
 
     # 4. the touch cap and the initial-outreach rule: 0..max+1 outbound touches under a limit of 1..4
     for max_touches in (1, 2, 3, 4):
-        for outs in range(0, max_touches + 2):
+        for outs in range(max_touches + 2):
             history = [touch(ref + timedelta(days=i)) for i in range(outs)]
             cases.append(
                 (

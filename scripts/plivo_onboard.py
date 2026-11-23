@@ -7,7 +7,6 @@
 The Auth ID and Auth Token are read from the ENVIRONMENT (an env file you source), never from an argument and never printed. A new subaccount's token goes straight into Secret Manager (on gcloud's stdin).
 Nothing is bought without --execute AND --number. The tool never files a compliance application and never touches a document."""
 
-# ruff: noqa: E501
 from __future__ import annotations
 
 import argparse
@@ -18,8 +17,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
 
-from app.telephony.plivo_admin import PlivoAdmin  # noqa: E402
-from app.telephony.plivo_onboarding import GcloudSecretWriter, OnboardPlan, onboard  # noqa: E402
+from app.telephony.plivo_admin import PlivoAdmin
+from app.telephony.plivo_onboarding import (
+    GcloudSecretWriter,
+    OnboardPlan,
+    onboard,
+)
 
 PROJECT = "project-2757c07e-37d2-4167-88f"   # staging
 

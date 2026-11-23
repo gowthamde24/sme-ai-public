@@ -14,7 +14,6 @@ It decides nothing: no cadence rule, gate or lifecycle rule lives here. The only
 first run. Operator SQL is used in exactly three places, each said where it happens: (1) a lead's creation time is moved back 30 days (the API cannot: a touch may not be older than its lead,
 and a touch five days ago is the point); (2) counts of rows and of keys, never a value; (3) the day of the database, to start the policy today. Everything is synthetic. Nothing is sent to anyone."""
 
-# ruff: noqa: E501, S603, S607, S608
 
 from __future__ import annotations
 
@@ -30,13 +29,21 @@ from pathlib import Path
 from typing import Any
 
 import harness
-from drive import API_DIR, ENQUIRIES, SYNTHETIC_KEY, Rehearsal, RunResult, iso, prepare
-from fastapi.testclient import TestClient
-from harness import Api, Deviation, NetworkGuard, People, Recorder, Stack, operator_sql, rid
-from pydantic import SecretStr
-
 from app.config import Settings
 from app.main import create_app
+from drive import API_DIR, ENQUIRIES, SYNTHETIC_KEY, Rehearsal, RunResult, iso, prepare
+from fastapi.testclient import TestClient
+from harness import (
+    Api,
+    Deviation,
+    NetworkGuard,
+    People,
+    Recorder,
+    Stack,
+    operator_sql,
+    rid,
+)
+from pydantic import SecretStr
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT = ROOT / "rehearsal-followups-report.md"
@@ -1489,7 +1496,7 @@ class FollowupRehearsal:
         # (1) no setting names a message provider, and the follow-up code imports none
         names = sorted(Settings.model_fields)
         senders = re.compile(
-            r"smtp|mail|sendgrid|twilio|whatsapp|sms|webhook|postmark|resend|msg91|gupshup", re.I
+            r"smtp|mail|sendgrid|twilio|whatsapp|sms|webhook|postmark|resend|msg91|gupshup", re.IGNORECASE
         )
         rec.check(
             "nothing could send: no setting names a message provider",
@@ -1498,7 +1505,7 @@ class FollowupRehearsal:
         )
         imports = re.compile(
             r"^\s*(?:import|from)\s+(smtplib|aiosmtplib|twilio|sendgrid|boto3|slack_sdk|requests)\b",
-            re.M,
+            re.MULTILINE,
         )
         hits = [
             f.name

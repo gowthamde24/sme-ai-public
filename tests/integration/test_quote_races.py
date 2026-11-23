@@ -10,7 +10,6 @@ connection (PostgREST, as the real client) does the competing write:
   * a five-way storm: no deadlock, at most one draft and one approved quote, a discarded requirement has neither.
 All data is synthetic."""
 
-# ruff: noqa: E501, S608, S603, S311
 
 from __future__ import annotations
 
@@ -23,12 +22,11 @@ from concurrent.futures import ThreadPoolExecutor
 import httpx
 import operator_sql
 import pytest
+from app.quotes import engine_port
 from crm_support import World
 from evidence_support import code_of, uid
 from quote_support import QuoteWorld, rpc
 from test_requirement_concurrency import Held, _row_is_locked
-
-from app.quotes import engine_port
 
 
 @pytest.fixture(scope="module")

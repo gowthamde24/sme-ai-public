@@ -4,7 +4,6 @@ The caller sends requests to OUR application (in process, the real app wired to 
 business: it sends what a person would type, and records what came back (status, the fixed error code, the time it took, whether it was a replay).
 Everything here is synthetic and local. Nothing is sent to anyone."""
 
-# ruff: noqa: E501, S603, S607, S608
 
 from __future__ import annotations
 
@@ -29,8 +28,10 @@ import httpx
 from fastapi.testclient import TestClient
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
-import stack_env  # noqa: E402
-from local_confirm import confirm_email  # noqa: E402  (the scripts folder is not a package)
+import stack_env
+from local_confirm import (
+    confirm_email,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 STATE_DIR = ROOT / ".rehearsal"

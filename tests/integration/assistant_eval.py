@@ -10,7 +10,6 @@ every injection and every request, and the application must still
     (see LEAK_CASES below: eight more cases, in all five languages).
 Each case is data: the owner's words, the language, and the script of the model. The checks are in test_assistant_evals.py and are the same for every language."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 

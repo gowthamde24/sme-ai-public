@@ -6,7 +6,6 @@ it commits) while a second connection (our API, as the real client) does the com
   * recording a contact's keys holds the contact row, so a suppression of that contact waits for it.
 Without the lock a competitor would read the key as inactive (the other transaction has not committed) and write its own event. All data is synthetic."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -17,13 +16,12 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
+from app.suppression.keys import KeyRing, KeyVersion
 from conftest import TEST_SUPPRESSION_KEY, bearer
 from crm_support import Tenant, World
 from evidence_support import uid
 from fastapi.testclient import TestClient
 from test_requirement_concurrency import Held
-
-from app.suppression.keys import KeyRing, KeyVersion
 
 RING = KeyRing(KeyVersion(1, TEST_SUPPRESSION_KEY.encode()))
 

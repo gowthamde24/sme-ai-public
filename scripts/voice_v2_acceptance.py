@@ -12,7 +12,6 @@ A3 flips the workspace to male and repeats; A5 changes the Telugu voice and chec
 Keys come from Secret Manager / the Supabase CLI inside seed_staging (memory only). Two turns (te, en) are saved as .m4a for a person to listen to.
 """
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -36,7 +35,7 @@ import websockets
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent / "services" / "ai-api"))
-import seed_staging as S  # noqa: E402
+import seed_staging as S
 
 TENANT_PACK = "textiles"
 DEMO_TEXTILES = "e00d4db1-2c99-46a9-a273-07b9b9ff764c"   # the synthetic demo textiles workspace on staging

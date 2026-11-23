@@ -11,8 +11,7 @@ import random
 import unittest
 
 import quote_text as engine
-import quote_text.v1_0_0 as v1_0_0
-import quote_text.v1_1_0 as v1_1_0
+from quote_text import v1_0_0, v1_1_0
 from test_quote_text import expected_amounts, fixture, paise_tokens, request
 
 SHIPPING_PREFIXES = ("Shipping net: ", "GST on shipping (", "Shipping total: ")

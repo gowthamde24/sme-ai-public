@@ -16,7 +16,7 @@ through PostgREST directly is outside this harness: it is the documented limit o
 Cases live in tests/evals/cases/*.jsonl, thresholds in tests/evals/thresholds.json. The same cases can drive a REAL model
 (`make eval-live`, opt-in): only the runner-layer cases that carry hostile company text are meaningful live."""
 
-# ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
+
 
 from __future__ import annotations
 
@@ -29,8 +29,11 @@ from typing import Any
 
 import httpx
 import operator_sql
-
-from app.agent_runs.wiring import AgentSettingsError, build_llm_factory, llm_unavailable_reason
+from app.agent_runs.wiring import (
+    AgentSettingsError,
+    build_llm_factory,
+    llm_unavailable_reason,
+)
 from app.agents.db import AgentDb
 from app.agents.llm.fake import FakeProvider, call, respond
 from app.agents.llm.interface import LlmClient

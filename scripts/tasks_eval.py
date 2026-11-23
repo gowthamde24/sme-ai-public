@@ -6,7 +6,6 @@
 
 CAP: 500,000 Claude tokens in total, counted BEFORE each call (the request estimated generously plus its output limit) and kept in tasks-eval.json; a finished case is never repeated. The key is read from Secret Manager into a variable; never printed, logged or written. Synthetic text only."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -21,13 +20,13 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "services" / "ai-api"))
 
-from app.agents.compare import HAIKU_ONLY, estimate_input_tokens  # noqa: E402
-from app.agents.llm.anthropic import AnthropicClient, AnthropicConfig  # noqa: E402
-from app.agents.llm.interface import LlmError, LlmRequest, LlmResponse  # noqa: E402
-from app.errors import ApiError  # noqa: E402
-from app.tasks import evals  # noqa: E402
-from app.tasks.models import ProvidedContact  # noqa: E402
-from app.tasks.planner import Planner  # noqa: E402
+from app.agents.compare import HAIKU_ONLY, estimate_input_tokens
+from app.agents.llm.anthropic import AnthropicClient, AnthropicConfig
+from app.agents.llm.interface import LlmError, LlmRequest, LlmResponse
+from app.errors import ApiError
+from app.tasks import evals
+from app.tasks.models import ProvidedContact
+from app.tasks.planner import Planner
 
 PROJECT = "project-2757c07e-37d2-4167-88f"
 DEFAULT_OUT = Path.home() / "Desktop" / "stack19-jobs" / "model-compare"

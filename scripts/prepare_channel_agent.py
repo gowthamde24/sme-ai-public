@@ -17,14 +17,14 @@ from urllib.parse import urlparse
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from local_confirm import confirm_email, container  # noqa: E402
+from local_confirm import confirm_email, container
 
 CHANNEL_EMAIL = "channel@system.example.test"
-CHANNEL_PASSWORD = "Channel-Only-Local-Password-1!"  # noqa: S105 - a local stack account, no workspace
+CHANNEL_PASSWORD = "Channel-Only-Local-Password-1!"
 
 
 def die(message: str) -> None:
-    print(f"prepare-channel-agent: {message}", file=sys.stderr)  # noqa: T201
+    print(f"prepare-channel-agent: {message}", file=sys.stderr)
     raise SystemExit(1)
 
 
@@ -48,14 +48,14 @@ def main() -> None:
     docker = shutil.which("docker")
     if docker is None:
         die("docker is needed to register the channel account in the local database")
-    done = subprocess.run(  # noqa: S603 - fixed argv; the address is a constant of this file
+    done = subprocess.run(
         [docker, "exec", "-i", container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c",
-         f"select app.operator_register_channel_agent('{CHANNEL_EMAIL}')"],  # noqa: S608
+         f"select app.operator_register_channel_agent('{CHANNEL_EMAIL}')"],
         capture_output=True, text=True, timeout=30, check=False,
     )
     if done.returncode != 0:
         die("could not register the channel account in the local database")
-    print("prepare-channel-agent: the channel account is ready (local stack only).", file=sys.stderr)  # noqa: T201
+    print("prepare-channel-agent: the channel account is ready (local stack only).", file=sys.stderr)
 
 
 if __name__ == "__main__":

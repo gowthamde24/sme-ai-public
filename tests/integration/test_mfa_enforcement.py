@@ -4,7 +4,6 @@ server (TOTP enrolled and answered through its API). The database and the API ar
 separately: straight through PostgREST (the erasure functions, the agents switch, memberships, the
 workspace row) and through our API (exports, the ICP profile, the agents switch, erasure)."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -17,7 +16,15 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
-from conftest import Stack, User, aal1_token, aal2_token, bearer, challenge_verify, enroll_totp
+from conftest import (
+    Stack,
+    User,
+    aal1_token,
+    aal2_token,
+    bearer,
+    challenge_verify,
+    enroll_totp,
+)
 from crm_support import World
 from evidence_support import code_of, pg, uid
 from fastapi.testclient import TestClient

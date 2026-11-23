@@ -15,7 +15,6 @@ from each provider's own price list (research, not a bill) with the estimated co
 If a text-to-speech adapter is configured too (VOICE_TTS_PROVIDER-style: the same keys), the reference sentences are also spoken by it: time and characters are reported and the audio is written to
 <folder>/tts-out/ for you to LISTEN to (nothing scores a voice automatically)."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -32,7 +31,6 @@ from typing import Protocol
 
 import httpx
 import pytest
-
 from app.voice.audio import AudioRefused, inspect_audio
 from app.voice.fake import FakeTts  # noqa: F401  (kept importable for tests)
 from app.voice.interface import Price, SpeechToText, TextToSpeech, VoiceError

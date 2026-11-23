@@ -1,6 +1,5 @@
 """The hand-written Python mutants of the follow-up API: (file under services/ai-api, the text to replace, its replacement, what it means, which occurrence)."""
 
-# ruff: noqa: E501, E702
 
 P = []
 def a(f, old, new, desc, nth=0): P.append((f, old, new, desc, nth))

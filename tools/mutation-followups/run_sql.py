@@ -9,7 +9,6 @@
 Each mutant re-creates ONE function (or runs ONE statement), runs the tests and restores the original; the pgTAP baseline is re-checked before the first mutant, every 40 mutants and at the end, and the run
 stops if it fails. Results: tools/mutation-followups/out/sql.jsonl (git-ignored). If a run is killed half way, `make db-reset` returns the database to the migrations."""
 
-# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -37,7 +36,7 @@ BUILDER = ("followup_build", "followup_state_hash", "followup_result_ok", "follo
 def integration(files: list[str]) -> Callable[[], tuple[bool, list[str]]]:
     def run() -> tuple[bool, list[str]]:
         cmd = ["../../scripts/with-local-supabase-env.sh", ".venv/bin/pytest", "-c", "pyproject.toml", *files, "-q", "-x", "-p", "no:cacheprovider", "--no-header"]
-        r = subprocess.run(cmd, cwd=API, capture_output=True, text=True, timeout=1500, check=False)  # noqa: S603
+        r = subprocess.run(cmd, cwd=API, capture_output=True, text=True, timeout=1500, check=False)
         out = r.stdout + r.stderr
         return r.returncode == 0, [line.split(" - ")[0].replace("FAILED ", "")[:100] for line in out.splitlines() if line.startswith("FAILED")][:2]
 
