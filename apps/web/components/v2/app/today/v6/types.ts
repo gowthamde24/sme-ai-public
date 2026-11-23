@@ -36,4 +36,6 @@ export type V6In = {
   chip: ReactNode;
   /** JOBS: the "Running now" section (jobs as compact rows), drawn under Needs you; null = JOBS is off. */
   jobs?: ReactNode;
+  /** TODAY_OPEN: the open look of Today (bare category icons, one orange action per row, no boxes for empty notes) */
+  open?: boolean;
 };

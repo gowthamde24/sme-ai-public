@@ -716,3 +716,29 @@
 @media (max-width: 767px) {
   [data-ui="v2"][data-ds="6"] main:has([data-open="mya"]) [data-part="practice-panel"] { border-left: 0; border-top: 1px solid var(--v2-border); padding: 16px 0 0; }
 }
+
+/* --- Today in the open look (owner, 25 Nov 2026; TODAY_OPEN) --------------------------------------------------------------------------------------------------------------------------------------
+   Category colours: the colour of BARE 22px line icons (no tile, no tint, no circle). Calls blue, chats green, visits violet, offers gold, finding teal. Orange stays "needs you" + the one main button. */
+[data-ui="v2"][data-ds="6"] { --k-call: #2f5bea; --k-chat: #1e8e5a; --k-visit: #7b4fd1; --k-offer: #b7791f; --k-find: #0e8a8a; }
+[data-ui="v2"][data-ds="6"][data-theme="dark"] { --k-call: #8aa6ff; --k-chat: #4cc38a; --k-visit: #b79cf4; --k-offer: #e5b25d; --k-find: #4fc7c7; }
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) { --k-call: #8aa6ff; --k-chat: #4cc38a; --k-visit: #b79cf4; --k-offer: #e5b25d; --k-find: #4fc7c7; }
+}
+[data-ui="v2"][data-ds="6"] [data-k="call"] { color: var(--k-call); }
+[data-ui="v2"][data-ds="6"] [data-k="chat"] { color: var(--k-chat); }
+[data-ui="v2"][data-ds="6"] [data-k="visit"] { color: var(--k-visit); }
+[data-ui="v2"][data-ds="6"] [data-k="offer"] { color: var(--k-offer); }
+[data-ui="v2"][data-ds="6"] [data-k="find"] { color: var(--k-find); }
+/* Needs you: the icon is bare (no tile); the second action of a row is a plain grey link, only the first is a button */
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon] { background: none; width: auto; height: auto; min-width: 26px; font-size: 20px; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon] svg { width: 22px; height: 22px; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] .row-quiet { border: 0; background: none; border-radius: 0; color: var(--v2-muted); text-decoration: underline; text-underline-offset: 4px; padding-inline: 6px; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] .row-quiet:hover { background: none; color: var(--v2-ink); }
+/* Running now: a green switch when on (orange is only for "needs you" and the one main button) */
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="jobs-open"] .jb-switch[data-on] { background: var(--k-chat); }
+/* the festival suggestion: a hairline block, not a peach box */
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] { background: none; border: 0; border-top: 1px solid var(--v2-border); border-bottom: 1px solid var(--v2-border); border-radius: 0; box-shadow: none; padding-inline: 0; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] > p:first-child { color: var(--v2-muted); }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] [data-action="fest-later"] { border: 0; background: none; color: var(--v2-muted); text-decoration: underline; text-underline-offset: 4px; }
+/* empty side notes: one grey sentence, no box */
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="empty-note"] { background: none; border: 0; box-shadow: none; padding: 0; }

@@ -7,6 +7,7 @@ import { MessageSquareWarning } from "lucide-react";
 import { makeT, type Words } from "../words";
 import type { JobActions } from "./JobRow";
 import { JobRow } from "./LazyJobRow";
+import { JobLine } from "./JobLine";
 import type { FestivalHint } from "@/lib/jobs/festival";
 import { FestivalSuggestion } from "./sheet/LazyFestival";
 import { NewJobButton } from "./sheet/NewJobButton";
@@ -16,7 +17,7 @@ import type { SheetActions } from "./sheet/types";
 export type TodaySheet = { actions: SheetActions | null; festival: FestivalHint | null };
 
 /** "Running now" on Today (JOBS): what the assistant is doing for the shop, one compact row per job in ONE card: icon, name, the result line, a chip when it needs a look, and its switch. "See all jobs" opens the Jobs page. */
-export function JobsToday({ jobs, words, base, actions, sheet = null, messagesToChange = 0 }: { jobs: readonly Job[]; words: Words; base: string; actions: JobActions | null; sheet?: TodaySheet | null; /** How many of the shop's own messages WhatsApp sent back (the Needs-you code `message_needs_change`): one row that opens Chats > Templates. */ messagesToChange?: number }) {
+export function JobsToday({ jobs, words, base, actions, sheet = null, messagesToChange = 0, open = false }: { jobs: readonly Job[]; words: Words; base: string; actions: JobActions | null; sheet?: TodaySheet | null; /** TODAY_OPEN: hairline rows with bare category icons (JobLine), no card around the list. */ open?: boolean; /** How many of the shop's own messages WhatsApp sent back (the Needs-you code `message_needs_change`): one row that opens Chats > Templates. */ messagesToChange?: number }) {
   const t = makeT(words);
   if (jobs.length === 0) return null;
   return (
@@ -48,11 +49,19 @@ export function JobsToday({ jobs, words, base, actions, sheet = null, messagesTo
         </Link>
       ) : null}
       {sheet?.actions && sheet.festival ? <FestivalSuggestion festival={sheet.festival} words={words} base={base} actions={sheet.actions} /> : null}
-      <div className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
-        {jobs.map((j) => (
-          <JobRow key={j.id} job={j} words={words} base={base} actions={actions} />
-        ))}
-      </div>
+      {open ? (
+        <div data-part="jobs-open" className="flex flex-col">
+          {jobs.map((j) => (
+            <JobLine key={j.id} job={j} words={words} base={base} actions={actions} icon />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
+          {jobs.map((j) => (
+            <JobRow key={j.id} job={j} words={words} base={base} actions={actions} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
