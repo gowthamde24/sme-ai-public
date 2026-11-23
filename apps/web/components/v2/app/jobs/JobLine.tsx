@@ -6,7 +6,7 @@ import { useState } from "react";
 import { fmtDay, resultSentence } from "@/lib/jobs/result";
 import { jobGateKey, jobNameKey, jobState, type Job } from "@/lib/jobs/types";
 
-import { SpeaksChips, type JobActions } from "./JobRow";
+import { ICON, SpeaksChips, type JobActions } from "./JobRow";
 import { makeT, type Words } from "../words";
 
 /**
@@ -14,7 +14,11 @@ import { makeT, type Words } from "../words";
  * needs you), Turn on (it is paused) or the switch (it is running). No icon tile, no pill, no card: the line sits on the page between hairlines (the list draws them). Today keeps its own JobRow.
  * The words come from `jobs.*`; the status never says "Working on it" for a job that is off.
  */
-export function JobLine({ job, words, base, actions }: { job: Job; words: Words; base: string; actions: JobActions | null }) {
+/** The category colour of a job's bare line icon (design system, CATEGORY COLOURS): calls blue, chats green, visits violet, offers gold, finding teal. */
+export const JOB_CATEGORY: Record<Job["kind"], "call" | "chat" | "visit" | "offer" | "find"> = { speed_to_lead: "call", answer_calls: "call", followups: "chat", store_visits: "visit", offers: "offer", researcher: "find", payment_reminders: "chat", custom: "chat" };
+
+export function JobLine({ job, words, base, actions, icon = false }: { job: Job; words: Words; base: string; actions: JobActions | null; /** Today: a bare 22px line icon in the job's category colour before the name (no tile). */ icon?: boolean }) {
+  const Icon = ICON[job.kind];
   const t = makeT(words);
   const [now, setNow] = useState({ enabled: job.enabled, status: job.status });
   const [busy, setBusy] = useState(false);
@@ -69,6 +73,7 @@ export function JobLine({ job, words, base, actions }: { job: Job; words: Words;
 
   return (
     <div data-job={job.id} data-job-kind={job.kind} data-state={off ? "off" : needs ? "needs" : "running"} className="flex items-center gap-4 border-t border-line py-4 first:border-t-0">
+      {icon ? <Icon aria-hidden="true" data-k={JOB_CATEGORY[job.kind]} className="size-[22px] shrink-0" strokeWidth={1.8} /> : null}
       <Link href={href} prefetch={false} className="flex min-w-0 flex-1 flex-col items-start justify-center gap-0.5 no-underline">
         <span className="block text-[17px] font-semibold leading-snug text-ink">{name}</span>
         <span className="flex items-start gap-2 text-[15px] leading-snug text-muted">

@@ -70,7 +70,7 @@ import { readAssistant, readAssistantName } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens, planTierScreens } from "@/lib/screens/flag";
+import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens, planTierScreens, settingsOpen } from "@/lib/screens/flag";
 import { previewAllowed } from "@/lib/screens/preview";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
@@ -185,7 +185,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     return (
       <>
       <SettingsV6
-        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc.", "jobs.set.", "nset."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
+        words={wordsFor(lang, ["sv6.", "settings.biz.", "settings.language.", "set.f.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc.", "jobs.set.", "nset."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
         lang={lang}
         base={base}
         title={await menuTitle("settings", lang, user.accessToken, tenantId)}
@@ -486,8 +486,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   <>
                     <h2 className="mb-3 text-xl font-semibold">{t("settings.biz.title")}</h2>
                     <BusinessSimple
+                      plain={settingsOpen()}
                       variant="page"
-                      words={wordsFor(lang, ["settings.biz.", "jobs.set."])}
+                      words={wordsFor(lang, ["settings.biz.", "jobs.set.", "set.f."])}
                       action={saveBusinessAction.bind(null, tenantId)}
                       name={businessProfile.name}
                       town={businessProfile.town ?? ""}
@@ -704,7 +705,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             {jobsScreens() !== "off" ? (
               <>
                 <h2 className={`${pageH2} mt-0`}>{t("sv6.lang.title")}</h2>
-                <LanguageSimple bare words={wordsFor(lang, ["jobs.set.", "settings.biz.err."])} lang={lang} theme={theme} assistant={workspace ? { name: workspace.name, town: workspace.city ?? "", languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), choices: BUSINESS_LANGUAGES, save: saveBusinessAction.bind(null, tenantId) } : null} />
+                <LanguageSimple plain={settingsOpen()} bare words={wordsFor(lang, ["jobs.set.", "settings.biz.", "settings.language.", "set.f."])} lang={lang} theme={theme} assistant={workspace ? { name: workspace.name, town: workspace.city ?? "", languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), choices: BUSINESS_LANGUAGES, save: saveBusinessAction.bind(null, tenantId) } : null} />
               </>
             ) : (
               <>
@@ -721,7 +722,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             {jobsScreens() !== "off" ? (
               // JOBS: the three forms as one page of sentences with the choice inside and ONE Save (the same three actions)
               sending ? (
-                <AutomationSimple words={words} settings={sending} reminders={reminders} actions={{ saveSending: saveSendingAction.bind(null, tenantId), saveQuietHours: saveQuietHoursAction.bind(null, tenantId), saveReminders: saveRemindersAction.bind(null, tenantId) }} />
+                <AutomationSimple plain={settingsOpen()} words={words} settings={sending} reminders={reminders} actions={{ saveSending: saveSendingAction.bind(null, tenantId), saveQuietHours: saveQuietHoursAction.bind(null, tenantId), saveReminders: saveRemindersAction.bind(null, tenantId) }} />
               ) : (
                 <UnreadCard note={t("frame.notyet")} />
               )
@@ -743,7 +744,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           </div>
         ) : null}
         {section === "limits" ? <LimitsView limits={limits} words={wordsFor(lang, ["lim."])} /> : null}
-        {section === "notifications" ? jobsScreens() !== "off" ? <NotificationsSimple words={wordsFor(lang, ["nset.", "jobs.set."])} /> : <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
+        {section === "notifications" ? jobsScreens() !== "off" ? <NotificationsSimple plain={settingsOpen()} words={wordsFor(lang, ["nset.", "jobs.set."])} /> : <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
         {section === "security" ? (
           <section className={`${surface} flex flex-col gap-3`} aria-label={t("settings.security.title")}>
             <h2 className="text-xl font-semibold">{t("settings.security.title")}</h2>

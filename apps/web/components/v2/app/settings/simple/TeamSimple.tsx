@@ -14,20 +14,21 @@ import { InviteResult } from "../../team/InviteForm";
 import { DAYS, REASONS, canRemove, changeableTo, invitableRoles, labelProblem, teamSentence } from "../../team/team-model";
 import type { TeamActions } from "../../team/team-types";
 import { makeT, type Words } from "../../words";
+import { SelectField, TextField } from "./fields";
 import { EffectBox, PillText, Sentence, Val } from "./parts";
 
 /**
  * Team under JOBS (the simplicity pass): each person is ONE sentence with the choice inside ("Ramesh can [work with customers]. [Remove]"), the pending change said in a "What it will do:" line, and the same two actions as the old card (change the role, remove with a reason, or leave).
  * Nothing is lost: who may change whom (`changeableTo`), who may remove (`canRemove`), the second step, the sentence of every refusal and what is tidied when someone goes are the old card's.
  */
-export function TeamMembersSimple({ words, members, myRole, actions }: { words: Words; members: Member[]; myRole: string; actions: Pick<TeamActions, "changeRole" | "remove"> }) {
+export function TeamMembersSimple({ words, members, myRole, actions, plain = false }: { words: Words; members: Member[]; myRole: string; actions: Pick<TeamActions, "changeRole" | "remove">; /** SETTINGS_OPEN: plain rows (name, a grey line, a role field), no sentences. */ plain?: boolean }) {
   const t = makeT(words);
   const router = useRouter();
   const id = useId();
   const [list, setList] = useState(members);
   const [message, setMessage] = useState<string | null>(null);
   return (
-    <section className={card} aria-labelledby={`${id}-h`} data-team="members" data-simple="">
+    <section className={plain ? "flex flex-col gap-4" : card} aria-labelledby={`${id}-h`} data-team="members" data-simple="">
       <h2 id={`${id}-h`} className={h2}>
         {t("team.members.title")}
       </h2>
@@ -45,6 +46,7 @@ export function TeamMembersSimple({ words, members, myRole, actions }: { words: 
             <MemberLine
               key={m.user_id}
               words={words}
+              plain={plain}
               member={m}
               myRole={myRole}
               actions={actions}
@@ -66,7 +68,7 @@ export function TeamMembersSimple({ words, members, myRole, actions }: { words: 
   );
 }
 
-function MemberLine({ words, member, myRole, actions, onRole, onGone }: { words: Words; member: Member; myRole: string; actions: Pick<TeamActions, "changeRole" | "remove">; onRole: (role: Member["role"]) => void; onGone: (counts: { leads: number; opps: number; runs: number }) => void }) {
+function MemberLine({ words, member, myRole, actions, onRole, onGone, plain = false }: { plain?: boolean; words: Words; member: Member; myRole: string; actions: Pick<TeamActions, "changeRole" | "remove">; onRole: (role: Member["role"]) => void; onGone: (counts: { leads: number; opps: number; runs: number }) => void }) {
   const t = makeT(words);
   const roles = changeableTo(myRole, member);
   const removable = canRemove(myRole, member);
@@ -76,7 +78,7 @@ function MemberLine({ words, member, myRole, actions, onRole, onGone }: { words:
   const [busy, setBusy] = useState<"role" | "remove" | null>(null);
   const [failure, setFailure] = useState<Failed | null>(null);
   const name = member.display_name ?? t("team.member.unnamed");
-  const roleText = (r: string) => t(`jobs.set.team.role.${r}`);
+  const roleText = (r: string) => (r === "owner" ? t("team.role.owner") : t(`jobs.set.team.role.${r}`));
 
   async function saveRole() {
     setBusy("role");
@@ -102,7 +104,21 @@ function MemberLine({ words, member, myRole, actions, onRole, onGone }: { words:
       <div className="flex items-start gap-3">
         <PersonMark userId={member.user_id} name={name} className="mt-0.5 size-10" />
         <div className="min-w-0 flex-1">
-          {member.role === "owner" ? (
+          {plain ? (
+            <>
+              <p data-setting-line="member" className="m-0 text-[17px] font-semibold text-ink">
+                {name}
+                {member.is_you ? <span className="font-normal text-muted"> · {t("set.f.you")}</span> : null}
+              </p>
+              {roles.length > 0 ? (
+                <div className="mt-1.5 max-w-xs">
+                  <SelectField label={`${name}: ${t("team.role.label")}`} value={role} options={roles.map((r) => ({ value: r, label: roleText(r) }))} onChange={setRole} disabled={busy !== null} />
+                </div>
+              ) : (
+                <p className="m-0 text-[15px] text-muted">{roleText(member.role)}</p>
+              )}
+            </>
+          ) : member.role === "owner" ? (
             member.is_you ? (
               <p data-setting-line="member" className="m-0 text-[16px] leading-[2.3] text-ink">{t("jobs.set.team.line.you_owner")}</p>
             ) : (
@@ -118,7 +134,7 @@ function MemberLine({ words, member, myRole, actions, onRole, onGone }: { words:
       </div>
       {role !== member.role && roles.length > 0 ? (
         <div className="flex flex-col gap-2 pl-0 sm:pl-[52px]">
-          <EffectBox label={t("jobs.set.effect")} text={t("jobs.set.team.fx.change", { name, can: t(`jobs.set.team.can.${role}`) })} />
+          {plain ? <p className="m-0 text-[14px] text-muted">{t("jobs.set.team.fx.change", { name, can: t(`jobs.set.team.can.${role}`) })}</p> : <EffectBox label={t("jobs.set.effect")} text={t("jobs.set.team.fx.change", { name, can: t(`jobs.set.team.can.${role}`) })} />}
           <div>
             <button type="button" onClick={saveRole} disabled={busy !== null} className={`${secondary} jb-press`}>
               {busy === "role" ? t("dta.btn.working") : t("team.role.save")}
@@ -158,7 +174,7 @@ function MemberLine({ words, member, myRole, actions, onRole, onGone }: { words:
 }
 
 /** Invite a person under JOBS: "Invite someone as [Sales]. The code works for [7 days]. I will remember it as [label]." and what the code will do; the same action, the same code shown once (`InviteResult`). */
-export function InviteSimple({ words, myRole, workspaceName, actions }: { words: Words; myRole: string; workspaceName: string; actions: Pick<TeamActions, "invite"> }) {
+export function InviteSimple({ words, myRole, workspaceName, actions, plain = false }: { words: Words; myRole: string; workspaceName: string; actions: Pick<TeamActions, "invite">; /** SETTINGS_OPEN: plain labelled fields (Their job, Code works for, a note), no sentences. */ plain?: boolean }) {
   const t = makeT(words);
   const id = useId();
   const roles = invitableRoles(myRole);
@@ -186,7 +202,7 @@ export function InviteSimple({ words, myRole, workspaceName, actions }: { words:
     setLabel("");
   }
   return (
-    <section className={card} aria-labelledby={`${id}-h`} data-team="invite" data-simple="">
+    <section className={plain ? "flex flex-col gap-4 border-t border-line pt-6" : card} aria-labelledby={`${id}-h`} data-team="invite" data-simple="">
       <h2 id={`${id}-h`} className={h2}>
         {t("team.invite.title")}
       </h2>
@@ -197,6 +213,22 @@ export function InviteSimple({ words, myRole, workspaceName, actions }: { words:
           void make();
         }}
       >
+        {plain ? (
+          <>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <SelectField label={t("set.f.job")} value={role} options={roles.map((r) => ({ value: r, label: t(`team.role.${r}`) }))} onChange={setRole} />
+              <SelectField label={t("set.f.days")} value={String(days)} options={DAYS.map((d) => ({ value: String(d), label: t("team.invite.days_n", { n: d }) }))} onChange={(v) => setDays(Number(v))} />
+            </div>
+            <TextField label={t("set.f.note")} hint={t("team.invite.label_help")} value={label} onChange={setLabel} maxLength={60} />
+            {labelBad ? (
+              <p role="alert" className="m-0 text-sm font-medium text-red-text">
+                {t("team.invite.label_bad")}
+              </p>
+            ) : null}
+            <p className={help}>{t("jobs.set.inv.fx", { n: days, can: t(`jobs.set.team.can.${role}`) })}</p>
+          </>
+        ) : (
+          <>
         <Sentence line="invite-role" template={t("jobs.set.inv.line.role")} parts={{ role: (aria) => <Choose aria={aria} value={role} options={roles} text={(r) => t(`team.role.${r}`)} onChange={setRole} /> }} />
         <Sentence line="invite-days" template={t("jobs.set.inv.line.days")} parts={{ days: (aria) => <Choose aria={aria} value={String(days)} options={DAYS.map(String)} text={(d) => t("team.invite.days_n", { n: d })} onChange={(d) => setDays(Number(d))} /> }} />
         <Sentence line="invite-label" template={t("jobs.set.inv.line.label")} parts={{ label: (aria) => <PillText aria={aria} value={label} onChange={setLabel} placeholder={t("jobs.set.inv.ph.label")} maxLength={60} /> }} />
@@ -207,6 +239,8 @@ export function InviteSimple({ words, myRole, workspaceName, actions }: { words:
           </p>
         ) : null}
         <EffectBox label={t("jobs.set.effect")} text={t("jobs.set.inv.fx", { n: days, can: t(`jobs.set.team.can.${role}`) })} />
+          </>
+        )}
         <p className={help}>{t("team.invite.mfa")}</p>
         <FailureNote failure={failure} words={words} own={(code) => teamSentence(code, t)} />
         <div>

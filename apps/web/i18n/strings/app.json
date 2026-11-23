@@ -126588,5 +126588,170 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "set.f.line": {
+  "en": "Street address",
+  "te": "వీధి చిరునామా",
+  "hi": "गली का पता",
+  "kn": "ರಸ್ತೆ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.area": {
+  "en": "Area",
+  "te": "ప్రాంతం",
+  "hi": "इलाका",
+  "kn": "ಪ್ರದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.pin": {
+  "en": "PIN code",
+  "te": "PIN కోడ్",
+  "hi": "PIN कोड",
+  "kn": "PIN ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.unsaved": {
+  "en": "You have unsaved changes.",
+  "te": "మీరు చేసిన మార్పులు ఇంకా save కాలేదు.",
+  "hi": "आपके बदलाव अभी save नहीं हुए हैं।",
+  "kn": "ನೀವು ಮಾಡಿದ ಬದಲಾವಣೆಗಳು ಇನ್ನೂ save ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.saved": {
+  "en": "Saved.",
+  "te": "Save అయింది.",
+  "hi": "Save हो गया।",
+  "kn": "Save ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.job": {
+  "en": "Their job",
+  "te": "వారి పని",
+  "hi": "उनका काम",
+  "kn": "ಅವರ ಕೆಲಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.days": {
+  "en": "Code works for",
+  "te": "కోడ్ ఎన్ని రోజులు పనిచేస్తుంది",
+  "hi": "कोड कितने दिन चलेगा",
+  "kn": "ಕೋಡ್ ಎಷ್ಟು ದಿನ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.note": {
+  "en": "A note for yourself (optional)",
+  "te": "మీ కోసం ఒక నోట్ (ఇష్టమైతే)",
+  "hi": "आपके लिए एक नोट (चाहें तो)",
+  "kn": "ನಿಮಗಾಗಿ ಒಂದು ನೋಟ್ (ಬೇಕಾದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.you": {
+  "en": "You",
+  "te": "మీరు",
+  "hi": "आप",
+  "kn": "ನೀವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.limit": {
+  "en": "Most messages to one customer a day",
+  "te": "ఒక customer కి రోజుకు గరిష్టంగా ఎన్ని messages",
+  "hi": "एक customer को दिन में ज़्यादा से ज़्यादा कितने messages",
+  "kn": "ಒಬ್ಬ customer ಗೆ ದಿನಕ್ಕೆ ಗರಿಷ್ಠ ಎಷ್ಟು messages",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.qstart": {
+  "en": "Quiet from (India time)",
+  "te": "ఏ సమయం నుంచి నిశ్శబ్దం (భారత సమయం)",
+  "hi": "कब से शांत (भारतीय समय)",
+  "kn": "ಯಾವ ಸಮಯದಿಂದ ಮೌನ (ಭಾರತೀಯ ಸಮಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.qend": {
+  "en": "Quiet until (India time)",
+  "te": "ఏ సమయం వరకు నిశ్శబ్దం (భారత సమయం)",
+  "hi": "कब तक शांत (भारतीय समय)",
+  "kn": "ಯಾವ ಸಮಯದವರೆಗೆ ಮೌನ (ಭಾರತೀಯ ಸಮಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.evening": {
+  "en": "Evening reminder to visitors",
+  "te": "visitors కి సాయంత్రం reminder",
+  "hi": "visitors को शाम का reminder",
+  "kn": "visitors ಗೆ ಸಂಜೆ reminder",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.heads": {
+  "en": "Heads-up before a visit",
+  "te": "visit కి ముందు heads-up",
+  "hi": "visit से पहले heads-up",
+  "kn": "visit ಗಿಂತ ಮೊದಲು heads-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.noshow": {
+  "en": "Mark a visit as did-not-come",
+  "te": "రాని visit ని did-not-come గా mark చేయడం",
+  "hi": "न आई visit को did-not-come mark करना",
+  "kn": "ಬರದ visit ಅನ್ನು did-not-come ಎಂದು mark ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
