@@ -171,5 +171,7 @@ if $do_worker; then
     WORKER_EXTRA_ENV="$W_ENV" \
     WORKER_EXTRA_SECRETS="$W_SECRETS" \
     ./deploy/cloudrun.sh worker $execute
+  # the scheduler may start the job only after this grant: it is an IAM change, so it is PRINTED for the owner's exact OK, never run here (found 24 Nov 2026: without it every tick fails PERMISSION_DENIED)
+  echo "NEXT (IAM; the owner's OK for this exact command): gcloud run jobs add-iam-policy-binding sme-worker --project $PROJECT_ID --region $REGION --member serviceAccount:sme-tick@$PROJECT_ID.iam.gserviceaccount.com --role roles/run.invoker"
 fi
 echo "production: $WEB_ORIGIN  (api: $API_URL)  tag $TAG  $([ -n "$execute" ] && echo EXECUTED || echo 'DRY RUN: nothing was changed')"
