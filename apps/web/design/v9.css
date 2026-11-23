@@ -1827,3 +1827,32 @@
 /* the phone's size per place: the frame is 300 px wide, scaled with zoom (the sizes of the mock: hero 300, how it works 270, while it talks 248; 270, 268 and 256 on a phone) */
 .v9 #ph-hero { zoom: 1; } .v9 #ph-how { zoom: 0.9; } .v9 #ph-wit { zoom: 0.827; }
 @media (max-width: 767px) { .v9 #ph-hero { zoom: 0.9; } .v9 #ph-how { zoom: 0.893; } .v9 #ph-wit { zoom: 0.853; } }
+/* the frame keeps its own 300 px (home3.css scales .h3-dp to 260 from 768 px for the old two-phone demo; here the size is the zoom above); the chat starts below the island and the status bar */
+.v9 .v9-phone .h3-dp { width: 300px; zoom: 1; }
+.v9 .v9-phone .h3-dp-chat { padding-top: 46px; }
+/* the header: the language chip is a label only, so on a phone it gives way to the sign-in link and the button (the app being open) */
+.v9 .hdr-login { white-space: nowrap; }
+@media (max-width: 520px) { .v9 .lang-chip { display: none; } }
+
+/* The site sets letter-spacing 0 !important on headings (design/site-type.css: Telugu, Hindi, Kannada and Tamil letters must not be spaced); the approved mock tracks its Latin headings, so for English only the mock's own values are restored. */
+.v9:lang(en) .brand { letter-spacing: -0.01em !important; }
+.v9:lang(en) .sec-eye { letter-spacing: 0.08em !important; }
+.v9:lang(en) .sec-h2 { letter-spacing: -0.015em !important; }
+.v9:lang(en) .hero h1 { letter-spacing: -0.01em !important; }
+.v9:lang(en) .nf-title { letter-spacing: 0.06em !important; }
+.v9:lang(en) .plan-preview-head { letter-spacing: 0.06em !important; }
+.v9:lang(en) .found-head { letter-spacing: 0.06em !important; }
+.v9:lang(en) .cta-card h2 { letter-spacing: -0.015em !important; }
+.v9:lang(en) .wm-t { letter-spacing: calc(-14 * var(--u)) !important; }
+.v9:lang(en) .nf-head2 b { letter-spacing: .08em !important; }
+.v9:lang(en) .lf-result small { letter-spacing: .06em !important; }
+.v9:lang(en) .kyc-num { letter-spacing: .02em !important; }
+.v9:lang(en) .kyc-num small { letter-spacing: 0 !important; }
+.v9:lang(en) .pc8 .rec { letter-spacing: .04em !important; }
+.v9:lang(en) .pc8 .sl { letter-spacing: .08em !important; }
+.v9:lang(en) .cs-head small { letter-spacing: .02em !important; }
+.v9:lang(en) .cs-head h3 { letter-spacing: -.01em !important; }
+.v9:lang(en) .cs-sec h4 { letter-spacing: .06em !important; }
+.v9:lang(en) .cd-main h3 { letter-spacing: -.01em !important; }
+.v9:lang(en) .brand { letter-spacing: -0.025em !important; }
+.v9:lang(en) .aw-brand { letter-spacing: -0.02em !important; }
