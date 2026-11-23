@@ -63,8 +63,8 @@ def test_the_answer_xml_streams_both_ways_keeps_the_call_up_and_escapes_what_it_
     assert plivo.hangup_xml().endswith("<Response><Hangup/></Response>")
 
 
-def test_the_two_providers_are_two_records_of_one_shape_and_exotel_is_untouched() -> None:
-    assert set(wire.PROTOCOLS) == {"exotel", "plivo"} and wire.EXOTEL.ends_with_stop_event and not wire.PLIVO.ends_with_stop_event
+def test_the_providers_are_records_of_one_shape_and_exotel_is_untouched() -> None:
+    assert set(wire.PROTOCOLS) == {"exotel", "plivo", "voicelink"} and wire.EXOTEL.ends_with_stop_event and not wire.PLIVO.ends_with_stop_event
     assert wire.EXOTEL.default_rate == exotel.DEFAULT_RATE == 8000 and wire.PLIVO.rates == (8000, 16000)
     exo = json.loads(wire.EXOTEL.media_message("s", b"\x00" * 320, 8000))
     assert set(exo) == {"event", "stream_sid", "media"} and set(exo["media"]) == {"payload"}, "Exotel's message is still exactly its documented shape"
