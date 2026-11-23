@@ -805,6 +805,9 @@ export function V9Guard({ t }: { t: SiteT }) {
                 {t("v9.guard.14")}
               </div>
             </div>
+            <p className="kyc-note">
+              {t("v9.guard.landline")}
+            </p>
           </article>
           <article className="gt c">
             <h3>

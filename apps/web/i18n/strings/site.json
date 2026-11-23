@@ -15788,5 +15788,18 @@
    "kn": "draft",
    "ta": "draft"
   }
+ },
+ "v9.guard.landline": {
+  "en": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
+  "te": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
+  "hi": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
+  "kn": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
+  "ta": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
  }
 }
