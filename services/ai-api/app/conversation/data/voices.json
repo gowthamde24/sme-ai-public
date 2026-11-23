@@ -1452,7 +1452,7 @@
    "tags": [
     "bright"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "provider": "sarvam",
    "primary": {
@@ -1468,7 +1468,7 @@
     "gender": "male",
     "label": "Daniel"
    },
-   "listed": true,
+   "listed": false,
    "to_confirm_by_native_listener": true
   },
   {
@@ -5615,7 +5615,7 @@
    "tags": [
     "warm"
    ],
-   "recommended": false,
+   "recommended": true,
    "default": false,
    "provider": "sarvam",
    "primary": {
