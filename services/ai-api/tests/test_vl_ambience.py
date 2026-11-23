@@ -106,7 +106,7 @@ def test_the_shipped_beds_load_at_both_line_rates_and_match_the_script() -> None
 
 
 def test_the_setting_words_and_labels() -> None:
-    assert ambience.BACKGROUNDS == ("quiet_office", "shop", "off") and ambience.DEFAULT_BACKGROUND == "quiet_office"
+    assert ambience.BACKGROUNDS == ("off", "quiet_office", "busy_office", "call_centre", "shop", "market", "showroom", "clinic_reception", "home", "street") and ambience.DEFAULT_BACKGROUND == "quiet_office"
     assert ambience.valid(None) == "quiet_office" and ambience.valid("loud") == "quiet_office" and ambience.valid("off") == "off"
     for word in ambience.BACKGROUNDS:
         assert set(ambience.LABELS[word]) == set(ambience.LANGUAGES) and all(ambience.LABELS[word].values())

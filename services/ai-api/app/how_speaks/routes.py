@@ -37,7 +37,7 @@ from app.speaking.models import LanguageStyle, SpeakingStyleIn
 from app.talk_training import introduce
 from app.talk_training.models import TalkTraining
 from app.talk_training.routes import _defaults, _repo
-from app.telephony import ambience
+from app.telephony import ambience, background_samples
 from app.telephony import tone as tone_mod
 from app.tenancy.models import Role
 
@@ -104,7 +104,7 @@ def _out(runtime: Runtime, ctx: TenantContext) -> HowAssistantSpeaksOut:
             kind=pick.kind, text=pick.text, options=["business", "owner", "custom"], owner_name=_owner_name(runtime, ctx),  # type: ignore[arg-type]
             preview=IntroducePreviewOut(te=_preview("te", value, business, pick), en=_preview("en", value, business, pick)),
         ),
-        background=BackgroundOut(value=ambience.valid(training.background), saved=training.background is not None, options=[BackgroundOption(id=word, label=dict(ambience.LABELS[word])) for word in ambience.BACKGROUNDS]),  # type: ignore[arg-type]
+        background=BackgroundOut(value=ambience.valid(training.background), saved=training.background is not None, options=[BackgroundOption(id=word, label=dict(ambience.LABELS[word]), sample_url=background_samples.sample_url(word)) for word in ambience.BACKGROUNDS]),  # type: ignore[arg-type]
         say_ai_when_greeting=SayAiOut(value=greeting.resolve_greeting_disclosure(training.say_ai_when_greeting), saved=training.say_ai_when_greeting is not None),
         pack_defaults=PackDefaultsOut(tone=pack_default, words=register.DEFAULT_STYLE),  # type: ignore[arg-type]
         legacy_address=(training.address if row is not None else None),

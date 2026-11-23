@@ -10,7 +10,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, StrictBool
 
 Tone = Literal["friendly", "respectful", "quick", "professional", "calm_caring", "cheerful", "confident"]
-Background = Literal["quiet_office", "shop", "off"]
+Background = Literal["off", "quiet_office", "busy_office", "call_centre", "shop", "market", "showroom", "clinic_reception", "home", "street"]
 Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Style = Literal["everyday_mixed", "everyday_pure"]
 Region = Literal["neutral", "coastal", "telangana", "rayalaseema", "chennai", "kongu", "bengaluru", "north_karnataka"]
@@ -72,6 +72,7 @@ class PackDefaultsOut(_Strict):
 class BackgroundOption(_Strict):
     id: Background
     label: dict[Language, str]   # the words on the screen in all seven languages (drafts for a native reader)
+    sample_url: str | None = None   # "/v1/background-samples/<id>.mp3": a 6 s voice-free loop, pre-recorded; null for Off (docs/contracts/voice-styles.md section 2)
 
 
 class BackgroundOut(_Strict):

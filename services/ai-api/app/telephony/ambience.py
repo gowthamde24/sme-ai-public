@@ -25,7 +25,7 @@ from app.voice import loudness
 
 log = logging.getLogger("app.telephony.ambience")
 
-BACKGROUNDS: tuple[str, ...] = ("quiet_office", "shop", "off")
+BACKGROUNDS: tuple[str, ...] = ("off", "quiet_office", "busy_office", "call_centre", "shop", "market", "showroom", "clinic_reception", "home", "street")   # the 10 of docs/contracts/voice-styles.md section 2, in that order
 DEFAULT_BACKGROUND = "quiet_office"
 BED_DB = -30.0                  # under the voice's own level, never louder
 BED_RATE = 8000                 # the rate of the files
@@ -38,6 +38,14 @@ LABELS: dict[str, dict[str, str]] = {
     "quiet_office": {"en": "Quiet office", "te": "ప్రశాంతమైన office", "hi": "शांत office", "kn": "ಶಾಂತ office", "ta": "அமைதியான office", "ml": "ശാന്തമായ office", "mr": "शांत office"},
     "shop": {"en": "Shop", "te": "షాప్", "hi": "दुकान", "kn": "ಅಂಗಡಿ", "ta": "கடை", "ml": "കട", "mr": "दुकान"},
     "off": {"en": "Off", "te": "వద్దు", "hi": "बंद", "kn": "ಬೇಡ", "ta": "வேண்டாம்", "ml": "വേണ്ട", "mr": "बंद"},
+    # 25 Nov 2026, the seven new sounds (drafts for a native read, like the rest)
+    "busy_office": {"en": "Busy office", "te": "బిజీ office", "hi": "व्यस्त office", "kn": "ಬ್ಯುಸಿ office", "ta": "பரபரப்பான office", "ml": "തിരക്കുള്ള office", "mr": "व्यस्त office"},
+    "call_centre": {"en": "Call centre", "te": "కాల్ సెంటర్", "hi": "कॉल सेंटर", "kn": "ಕಾಲ್ ಸೆಂಟರ್", "ta": "கால் சென்டர்", "ml": "കോൾ സെന്റർ", "mr": "कॉल सेंटर"},
+    "market": {"en": "Market", "te": "మార్కెట్", "hi": "बाज़ार", "kn": "ಮಾರುಕಟ್ಟೆ", "ta": "சந்தை", "ml": "ചന്ത", "mr": "बाजार"},
+    "showroom": {"en": "Showroom", "te": "షోరూమ్", "hi": "शोरूम", "kn": "ಶೋರೂಮ್", "ta": "ஷோரூம்", "ml": "ഷോറൂം", "mr": "शोरूम"},
+    "clinic_reception": {"en": "Clinic reception", "te": "క్లినిక్ reception", "hi": "क्लिनिक reception", "kn": "ಕ್ಲಿನಿಕ್ reception", "ta": "கிளினிக் reception", "ml": "ക്ലിനിക് reception", "mr": "क्लिनिक reception"},
+    "home": {"en": "Home", "te": "ఇల్లు", "hi": "घर", "kn": "ಮನೆ", "ta": "வீடு", "ml": "വീട്", "mr": "घर"},
+    "street": {"en": "Street", "te": "వీధి", "hi": "सड़क", "kn": "ರಸ್ತೆ", "ta": "தெரு", "ml": "തെരുവ്", "mr": "रस्ता"},
 }
 
 
@@ -142,6 +150,8 @@ def load_bed(name: str, rate: int = BED_RATE, directory: Path | None = None) -> 
 def placeholder(name: str, seconds: float = 8.0, seed: int = 20261120, rate: int = BED_RATE) -> bytes:
     """The deterministic synthetic bed that ships until real recordings exist: seeded noise through one-pole filters (`quiet_office`: a low hum with a slow swell; `shop`: a brighter murmur with soft, sparse bumps).
     Same name and seed give the same bytes on every machine."""
+    if name in RECIPES:
+        return _recipe_bed(name, seconds, seed, rate)
     rng = random.Random(f"{name}:{seed}")  # noqa: S311 - a sound, not a secret
     n = int(seconds * rate)
     low, mid = 0.0, 0.0
@@ -160,5 +170,37 @@ def placeholder(name: str, seconds: float = 8.0, seed: int = 20261120, rate: int
             value = (low * 2.0 + mid * 0.8 + bump * rng.uniform(-1.0, 1.0) * 0.3) * swell
         else:
             value = low * 3.0 * swell
+        out.append(max(-32768, min(32767, int(value * 6000))))
+    return scale_to(out.tobytes(), 1500.0)
+
+
+# (low-pass a, band a, low gain, band gain, swell seconds, swell depth, bursts per second, burst gain, burst decay per sample): the seven sounds of 25 Nov 2026, own-made like the two before them (seeded filtered noise: a hum, a murmur made of
+# short rises and falls, now and then a click or a swell). Nothing is recorded or downloaded, so no licence applies (docs/licences/background-sounds.md); real recordings can replace any file later with no code change.
+RECIPES: dict[str, tuple[float, float, float, float, float, float, float, float, float]] = {
+    "busy_office": (0.03, 0.30, 1.4, 1.2, 2.3, 0.30, 7.0, 0.25, 0.9985),
+    "call_centre": (0.03, 0.35, 1.2, 1.5, 1.7, 0.35, 12.0, 0.30, 0.9980),
+    "market": (0.025, 0.42, 1.0, 1.8, 1.4, 0.40, 9.0, 0.45, 0.9975),
+    "showroom": (0.035, 0.20, 2.0, 0.6, 4.0, 0.20, 0.6, 0.35, 0.9992),
+    "clinic_reception": (0.04, 0.18, 2.4, 0.5, 5.0, 0.15, 0.4, 0.20, 0.9990),
+    "home": (0.035, 0.12, 2.0, 0.3, 6.0, 0.10, 0.25, 0.15, 0.9993),
+    "street": (0.018, 0.25, 3.2, 1.0, 6.5, 0.55, 1.4, 0.50, 0.9996),
+}
+
+
+def _recipe_bed(name: str, seconds: float, seed: int, rate: int) -> bytes:
+    a_low, a_mid, g_low, g_mid, swell_s, depth, burst_rate, burst_gain, decay = RECIPES[name]
+    rng = random.Random(f"{name}:{seed}")  # noqa: S311 - a sound, not a secret
+    n = int(seconds * rate)
+    low = mid = bump = 0.0
+    out = array.array("h")
+    for i in range(n):
+        white = rng.uniform(-1.0, 1.0)
+        low += a_low * (white - low)
+        mid += a_mid * (white - mid)
+        swell = (1.0 - depth) + depth * math.sin(2 * math.pi * i / (rate * swell_s))
+        if rng.random() < burst_rate / rate:
+            bump = 1.0
+        bump *= decay
+        value = (low * g_low + mid * g_mid * 0.5 + bump * rng.uniform(-1.0, 1.0) * burst_gain) * swell
         out.append(max(-32768, min(32767, int(value * 6000))))
     return scale_to(out.tobytes(), 1500.0)
