@@ -1,0 +1,9 @@
+"use client";
+
+import dynamic from "next/dynamic";
+
+// rendered on the server too (the words are in the page at once); the interactive code arrives as a chunk
+export const VoicesClient = dynamic(() => import("./below").then((m) => m.VoicesClient));
+export const JobsClient = dynamic(() => import("./below").then((m) => m.JobsClient));
+export const PipeClient = dynamic(() => import("./below").then((m) => m.PipeClient));
+export const FaqClient = dynamic(() => import("./below").then((m) => m.FaqClient));

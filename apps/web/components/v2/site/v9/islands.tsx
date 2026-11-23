@@ -1,7 +1,8 @@
 import type { SiteKey, SiteT } from "@/i18n/site";
 import { VOICES } from "@/lib/site/v9-data";
 
-import { FaqClient, HowDemoClient, JobsClient, PipeClient, Phone as PhoneClient, TryItClient, VoicesClient, type TryPlan } from "./clients";
+import { HowDemoClient, Phone as PhoneClient, TryItClient, type TryPlan } from "./clients";
+import { FaqClient, JobsClient, PipeClient, VoicesClient } from "./lazy";
 
 /**
  * The server side of the home page's islands (landing v9): each reads its words from the string store and hands them to the client component as plain props, so no dictionary reaches the browser.
