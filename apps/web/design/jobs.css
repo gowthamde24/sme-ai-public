@@ -50,7 +50,7 @@
   --jb-done-soft: #12301f;
   --jb-wait-soft: #3a2a0c;
   --jb-fail-soft: #3a1717;
-  --jb-info-soft: #25242a;
+  --jb-info-soft: #1a2340;
 }
 @media (prefers-color-scheme: dark) {
   [data-ui="v2"][data-jobs="1"]:not([data-theme="light"]) {
@@ -65,7 +65,7 @@
     --jb-done-soft: #12301f;
     --jb-wait-soft: #3a2a0c;
     --jb-fail-soft: #3a1717;
-    --jb-info-soft: #25242a;
+    --jb-info-soft: #1a2340;
   }
 }
 

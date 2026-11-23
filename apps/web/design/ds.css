@@ -53,19 +53,19 @@
 [data-ui="v2"][data-ds="6"][data-theme="dark"] {
   color-scheme: dark;
 
-  --v2-bg: #131216;
-  --v2-surface: #1c1b20;
-  --v2-surface-2: #25242a;
-  --v2-ink: #f4f4f5;
-  --v2-muted: #a5a3ac;
-  --v2-border: #2f2e35;
-  --v2-border-strong: #7a7881;
+  --v2-bg: #0b1020;
+  --v2-surface: #111830;
+  --v2-surface-2: #1a2340;
+  --v2-ink: #f4f5f8;
+  --v2-muted: #9aa6bd;
+  --v2-border: #242d4a;
+  --v2-border-strong: #7480a2;
 
   --v2-brand: #c2410c;
   --v2-on-brand: #ffffff;
   --v2-brand-edge: #c2410c;
   --v2-brand-text: #ff9d6e;
-  --v2-brand-bg: #2a2930;
+  --v2-brand-bg: #1c2748;
   --v2-ring: #ff9d6e;
 
   --v2-dot: rgba(244, 244, 245, 0.09);
@@ -83,7 +83,7 @@
   --ds-st-transferred-text: #9db8ff;
   --ds-st-transferred-bg: #162349;
   --ds-st-noanswer-text: #c4c4cb;
-  --ds-st-noanswer-bg: #26262b;
+  --ds-st-noanswer-bg: #1c2440;
   --ds-st-rejected-text: #fca5a5;
   --ds-st-rejected-bg: #3a1717;
   --ds-st-spam-text: #ffb27a;
@@ -97,19 +97,19 @@
   [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --v2-bg: #131216;
-    --v2-surface: #1c1b20;
-    --v2-surface-2: #25242a;
-    --v2-ink: #f4f4f5;
-    --v2-muted: #a5a3ac;
-    --v2-border: #2f2e35;
-    --v2-border-strong: #7a7881;
+    --v2-bg: #0b1020;
+    --v2-surface: #111830;
+    --v2-surface-2: #1a2340;
+    --v2-ink: #f4f5f8;
+    --v2-muted: #9aa6bd;
+    --v2-border: #242d4a;
+    --v2-border-strong: #7480a2;
 
     --v2-brand: #c2410c;
     --v2-on-brand: #ffffff;
     --v2-brand-edge: #c2410c;
     --v2-brand-text: #ff9d6e;
-    --v2-brand-bg: #2a2930;
+    --v2-brand-bg: #1c2748;
     --v2-ring: #ff9d6e;
 
     --v2-dot: rgba(244, 244, 245, 0.09);
@@ -127,7 +127,7 @@
     --ds-st-transferred-text: #9db8ff;
     --ds-st-transferred-bg: #162349;
     --ds-st-noanswer-text: #c4c4cb;
-    --ds-st-noanswer-bg: #26262b;
+    --ds-st-noanswer-bg: #1c2440;
     --ds-st-rejected-text: #fca5a5;
     --ds-st-rejected-bg: #3a1717;
     --ds-st-spam-text: #ffb27a;
@@ -309,9 +309,9 @@
    The band is glossy dark in BOTH themes: inside it the tokens are the dark ones, so every utility class there (text-ink, text-muted, border-line, bg-surface-2 ...) reads right whatever the theme.
    ========================================================================== */
 [data-ui="v2"][data-ds="6"] .ds-hero {
-  --v2-bg: #131216;
-  --v2-surface: #1c1b20;
-  --v2-surface-2: #25242a;
+  --v2-bg: #0b1020;
+  --v2-surface: #111830;
+  --v2-surface-2: #1a2340;
   --v2-ink: #fafafa;
   --v2-muted: #b4b3bb;
   --v2-border: rgba(255, 255, 255, 0.12);
@@ -327,7 +327,7 @@
   border-radius: 28px;
   padding: 22px 26px 22px;
   color: #fafafa;
-  background: linear-gradient(160deg, #1c1b20, #131216);
+  background: linear-gradient(160deg, #111830, #0b1020);
   box-shadow: 0 30px 70px rgba(8, 8, 12, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.6);
 }
 [data-ui="v2"][data-ds="6"] .ds-hero::before {
@@ -650,4 +650,16 @@
   }
   [data-ui="v2"][data-ds="6"]:lang(te) [data-call-dir-label] { position: absolute !important; width: 1px !important; height: 1px !important; margin: -1px !important; padding: 0 !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border-width: 0 !important; }
   [data-ui="v2"][data-ds="6"]:lang(te) [data-chat-sub] { display: -webkit-box !important; overflow: hidden !important; white-space: normal !important; text-overflow: clip !important; -webkit-box-orient: vertical !important; -webkit-line-clamp: 2 !important; }
+}
+
+/* Brand look (23 Nov 2026, owner: like the landing): the primary button and the active sidebar item carry the orange gradient. The button's gradient stays inside white-on-orange AA (>= 4.5:1 at both ends: #b83b09 5.6, #d2460a 4.5); the brighter landing orange (#f97316, #fdba74) is only for the active item's edge, never behind text. Colours only: no size or layout changes. */
+[data-ui="v2"][data-ds="6"] {
+  --v2-brand-grad: linear-gradient(135deg, #b83b09 0%, #d2460a 100%);
+  --v2-active-grad: linear-gradient(90deg, rgba(249, 115, 22, 0.2), rgba(249, 115, 22, 0.04));
+  --v2-active-edge: linear-gradient(180deg, #fdba74, #f97316);
+}
+[data-ui="v2"][data-ds="6"] .bg-brand { background-image: var(--v2-brand-grad); }
+[data-ui="v2"][data-ds="6"] [data-nav-row][aria-current="page"] {
+  background-image: var(--v2-active-grad);
+  box-shadow: inset 3px 0 0 #f97316;
 }
