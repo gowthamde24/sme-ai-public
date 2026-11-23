@@ -6,7 +6,7 @@ import type { FailedTemplate, RenamedTemplate, Template } from "@/lib/api/whatsa
 
 import { FailureNote } from "../cc/FailureNote";
 import { card, h2, pillClass, type Failed } from "../cc/kit";
-import { dataTable, dataTd, dataThCol, dataTr } from "../ui";
+import { dataThCol } from "../ui";
 import { makeT, type Words } from "../words";
 import { waSentence } from "./wa-model";
 import type { TemplateActions } from "./wa-types";
@@ -112,7 +112,7 @@ export function TemplatesList({ words, items: initial, actions = null }: { words
       {items.length === 0 ? (
         <p className="text-base text-muted">{t("wa.tpl.none")}</p>
       ) : (
-        <table className={dataTable}>
+        <table className="w-full border-collapse text-left text-base max-sm:block max-sm:[&_thead]:sr-only max-sm:[&>tbody]:flex max-sm:[&>tbody]:flex-col max-sm:[&>tbody]:gap-2.5">
           <thead>
             <tr>
               {["wa.tpl.col.name", "wa.tpl.col.language", "wa.tpl.col.purpose", "wa.tpl.col.status"].map((k) => (
@@ -124,22 +124,22 @@ export function TemplatesList({ words, items: initial, actions = null }: { words
           </thead>
           <tbody>
             {items.map((x) => (
-              <tr key={x.id} className={dataTr}>
-                <td data-label={t("wa.tpl.col.name")} className={`${dataTd} break-words font-mono text-sm`}>
+              <tr key={x.id} className="border-b border-line max-sm:grid max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:items-start max-sm:gap-x-3 max-sm:gap-y-1 max-sm:rounded-xl max-sm:border max-sm:border-line max-sm:bg-surface-2/40 max-sm:p-3">
+                <td data-label={t("wa.tpl.col.name")} className="px-3 py-2 align-top break-words font-mono text-sm max-sm:col-span-2 max-sm:p-0 max-sm:font-semibold max-sm:text-ink">
                   {x.name}
-                  {x.metaName && x.metaName !== x.name ? <span className="mt-1 block font-sans text-xs text-muted" data-part="meta-name">{t("wa.tpl.metaname", { name: x.metaName })}</span> : null}
-                  {x.optOutLabel ? <span className="mt-1 block font-sans text-xs text-muted">{t("wa.tpl.optout", { label: x.optOutLabel })}</span> : null}
+                  {x.metaName && x.metaName !== x.name ? <span className="mt-1 block font-sans text-sm font-normal text-muted" data-part="meta-name">{t("wa.tpl.metaname", { name: x.metaName })}</span> : null}
+                  {x.optOutLabel ? <span className="mt-1 block font-sans text-sm font-normal text-muted">{t("wa.tpl.optout", { label: x.optOutLabel })}</span> : null}
                 </td>
-                <td data-label={t("wa.tpl.col.language")} className={dataTd}>
+                <td data-label={t("wa.tpl.col.language")} className="px-3 py-2 align-top max-sm:col-start-1 max-sm:row-start-2 max-sm:p-0 max-sm:text-sm max-sm:text-muted">
                   {t(`today.lang.${x.language}`)}
                 </td>
-                <td data-label={t("wa.tpl.col.purpose")} className={dataTd}>
+                <td data-label={t("wa.tpl.col.purpose")} className="px-3 py-2 align-top max-sm:col-start-1 max-sm:row-start-3 max-sm:p-0 max-sm:text-sm max-sm:text-muted">
                   {["followup", "visit", "order_status", "info"].includes(x.purpose) ? t(`wa.tpl.purpose.${x.purpose}`) : x.purpose}
                 </td>
-                <td data-label={t("wa.tpl.col.status")} className={dataTd}>
+                <td data-label={t("wa.tpl.col.status")} className="px-3 py-2 align-top max-sm:col-start-2 max-sm:row-start-2 max-sm:row-span-2 max-sm:flex max-sm:flex-col max-sm:items-end max-sm:gap-2 max-sm:p-0">
                   <span className={pillClass(tone[x.status])}>{t(`wa.tpl.status.${x.status}`)}</span>
                   {actions && x.status === "draft" ? (
-                    <button type="button" className={`${btn} ml-2`} disabled={busy !== null} onClick={() => void go(x.id, () => actions.submitOne(x.id), () => t("wa.tpl.done.one"), false)} data-part="send-one">
+                    <button type="button" className={`${btn} ml-2 max-sm:ml-0`} disabled={busy !== null} onClick={() => void go(x.id, () => actions.submitOne(x.id), () => t("wa.tpl.done.one"), false)} data-part="send-one">
                       {busy === x.id ? t("dta.btn.working") : t("wa.tpl.send_one")}
                     </button>
                   ) : null}

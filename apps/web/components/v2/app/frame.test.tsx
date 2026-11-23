@@ -270,7 +270,7 @@ describe("AppFrame", () => {
         <main id="page">The page</main>
       </AppFrame>,
     );
-  it("has a footer with the Privacy notice, the Terms and Cookie settings, after the page and above the phone's bottom bar (job BH)", () => {
+  it("has a footer with the Privacy notice, the Terms and Cookie settings, after the page and above the phone's bottom bar (job BH)", async () => {
     const { container } = frame(owner);
     const footer = container.querySelector('[data-frame="legal"]') as HTMLElement;
     expect(footer.tagName).toBe("FOOTER");
@@ -279,6 +279,8 @@ describe("AppFrame", () => {
     expect(within(footer).getByRole("button", { name: "Cookie settings" })).toBeInTheDocument();
     expect(container.querySelector("#main-content")!.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(footer.className).toContain("pb-[calc(5rem+72px)]"); // clear of the fixed bottom bar on a phone (4rem) and of the floating orb (56px + 16px)
+    const { pageMain } = await import("./ui");
+    expect(pageMain).toContain("pb-28");
     expect(container.querySelector("#main-content")!.contains(footer)).toBe(false);
   });
   it("holds the page in the one v2 wrapper: a skip link, one wrapper, one language and one theme control", () => {

@@ -11,11 +11,11 @@ import { makeT, type Words } from "./words";
 export function PreviewBar({ words, choice }: { words: Words; choice: PreviewChoice }) {
   const t = makeT(words);
   return (
-    <div role="status" data-part="preview-bar" className="flex min-h-9 flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-amber-text px-4 py-1.5 text-center text-sm font-semibold text-on-brand">
-      <span>{choice.kind === "sample" ? t("preview.bar_sample", { business: personaOf(choice.type).business }) : t("preview.bar")}</span>
-      <form action={setPreviewAction}>
+    <div role="status" data-part="preview-bar" className="flex h-8 items-center justify-between gap-2 bg-amber-text px-3 text-sm font-semibold text-on-brand sm:h-auto sm:min-h-9 sm:flex-wrap sm:justify-center sm:gap-x-3 sm:gap-y-1 sm:px-4 sm:py-1.5 sm:text-center">
+      <span className="min-w-0 truncate sm:overflow-visible sm:whitespace-normal">{choice.kind === "sample" ? t("preview.bar_sample", { business: personaOf(choice.type).business }) : t("preview.bar")}</span>
+      <form action={setPreviewAction} className="shrink-0">
         <input type="hidden" name="on" value="0" />
-        <button type="submit" className="min-h-6 underline">
+        <button type="submit" className="min-h-6 whitespace-nowrap underline">
           {t("preview.bar_off")}
         </button>
       </form>

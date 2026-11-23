@@ -141,7 +141,7 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <span className="text-sm text-muted">{t("ope.insert")}</span>
             {PLACEHOLDERS.map((p) => (
-              <button key={p} type="button" onClick={() => insert(p)} className="min-h-11 rounded-full border border-edge bg-surface px-3 font-mono text-sm hover:bg-surface-2">
+              <button key={p} type="button" onClick={() => insert(p)} className="min-h-11 rounded-full border border-edge bg-surface px-3 text-sm hover:bg-surface-2">
                 {`{${p}}`}
               </button>
             ))}
