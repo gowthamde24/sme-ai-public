@@ -1,0 +1,175 @@
+{
+ "$comment": "Every external host the API code or the deploy scripts can call, and what it is. A new host fails tests/test_external_hosts.py until it is registered here, and a 'processor' entry must name an id on subprocessors.json (the list the privacy page draws), so no new company can receive personal data before the list says so (owner, 12 Nov 2026). Statuses: processor (id on the list), source (we only READ the owner's own data from it, nothing about customers is sent), dormant (code exists, no key is set on staging or production: 'env' names the settings that would switch it on; a deploy script that sets one fails the test), staging_only (live on staging only; must be resolved before production: the test fails if production.sh names the host), link (a link shown to a person, never called by the server), own (ours), ignored (a schema or fixture URL, not a call).",
+ "hosts": {
+  "api.anthropic.com": {
+   "processor": "anthropic"
+  },
+  "api.sarvam.ai": {
+   "processor": "sarvam"
+  },
+  "api.cartesia.ai": {
+   "processor": "cartesia"
+  },
+  "api.plivo.com": {
+   "processor": "plivo"
+  },
+  "api.resend.com": {
+   "processor": "resend"
+  },
+  "graph.facebook.com": {
+   "processor": "meta_whatsapp",
+   "note": "WhatsApp Cloud API and Meta lead retrieval (lead_sources/meta.py)"
+  },
+  "challenges.cloudflare.com": {
+   "processor": "cloudflare",
+   "note": "Turnstile, the human check on the public forms"
+  },
+  "places.googleapis.com": {
+   "processor": "google_places",
+   "note": "Lead Finder; only with the real-data gate open AND GOOGLE_PLACES_API_KEY set (config.py)"
+  },
+  "secretmanager.googleapis.com": {
+   "processor": "google_cloud"
+  },
+  "metadata.google.internal": {
+   "processor": "google_cloud"
+  },
+  "mapi.indiamart.com": {
+   "source": "IndiaMART leads pulled with the workspace's own key"
+  },
+  "docs.google.com": {
+   "source": "a Google Sheet the owner shares for lead import (lead_sources/sheets.py)"
+  },
+  "maps.google.com": {
+   "link": "a map link shown to the person (websearch/places.py)"
+  },
+  "stack19.com": {
+   "own": "our own address"
+  },
+  "assistant.internal": {
+   "ignored": "an internal label, not a host"
+  },
+  "json-schema.org": {
+   "ignored": "a schema identifier"
+  },
+  "schemas.openxmlformats.org": {
+   "ignored": "an XML namespace in the spreadsheet reader"
+  },
+  "api.exotel.com": {
+   "staging_only": "Exotel (India) carries the inbound sandbox calls on staging (EXOTEL_API_BASE in deploy/staging.sh); production calls use Plivo. List Exotel and remove this entry if it stays in production. Open point 2 of PR #500. (Exotel's India endpoint api.in.exotel.com is set by EXOTEL_API_BASE only.)"
+  },
+  "api.tavily.com": {
+   "dormant": "assistant web search",
+   "env": [
+    "TAVILY_API_KEY"
+   ]
+  },
+  "api.search.brave.com": {
+   "dormant": "assistant web search",
+   "env": [
+    "BRAVE_SEARCH_API_KEY"
+   ]
+  },
+  "api.metals.dev": {
+   "dormant": "metal price feed (no personal data)",
+   "env": [
+    "METALS_DEV_API_KEY"
+   ]
+  },
+  "api.razorpay.com": {
+   "dormant": "payment links",
+   "env": [
+    "RAZORPAY_KEY_ID",
+    "RAZORPAY_KEY_SECRET"
+   ]
+  },
+  "api.cashfree.com": {
+   "dormant": "payment links",
+   "env": [
+    "CASHFREE_CLIENT_SECRET"
+   ]
+  },
+  "sandbox.cashfree.com": {
+   "dormant": "payment links (test)",
+   "env": [
+    "CASHFREE_CLIENT_SECRET"
+   ]
+  },
+  "api.openai.com": {
+   "dormant": "another model provider (production sets LLM_PROVIDER=anthropic)",
+   "env": [
+    "OPENAI_API_KEY",
+    "LLM_API_KEY"
+   ]
+  },
+  "api.groq.com": {
+   "dormant": "another model provider",
+   "env": [
+    "LLM_API_KEY"
+   ]
+  },
+  "api.cerebras.ai": {
+   "dormant": "another model provider",
+   "env": [
+    "LLM_API_KEY"
+   ]
+  },
+  "openrouter.ai": {
+   "dormant": "another model provider",
+   "env": [
+    "LLM_API_KEY"
+   ]
+  },
+  "generativelanguage.googleapis.com": {
+   "dormant": "another model provider (Gemini)",
+   "env": [
+    "GEMINI_API_KEY"
+   ]
+  },
+  "speech.googleapis.com": {
+   "dormant": "speech bake-off adapter",
+   "env": [
+    "GOOGLE_API_KEY"
+   ]
+  },
+  "texttospeech.googleapis.com": {
+   "dormant": "speech bake-off adapter",
+   "env": [
+    "GOOGLE_API_KEY"
+   ]
+  },
+  "dhruva-api.bhashini.gov.in": {
+   "dormant": "speech bake-off adapter",
+   "env": [
+    "BHASHINI_API_KEY"
+   ]
+  },
+  "run.googleapis.com": {
+   "processor": "google_cloud",
+   "note": "Cloud Scheduler starts the worker job (deploy/cloudrun.sh)"
+  }
+ },
+ "suffixes": {
+  ".supabase.co": {
+   "processor": "supabase"
+  },
+  ".run.app": {
+   "processor": "google_cloud"
+  },
+  ".stack19.com": {
+   "own": "our own addresses"
+  },
+  ".test": {
+   "ignored": "fixture hosts in examples and tests"
+  }
+ },
+ "dormant_without_host": [
+  {
+   "dormant": "web push notifications (the browser's push service receives the encrypted notification)",
+   "env": [
+    "VAPID_PRIVATE_KEY",
+    "VAPID_PUBLIC_KEY"
+   ]
+  }
+ ]
+}
