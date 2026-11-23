@@ -10,7 +10,7 @@ A clip is a few characters of speech, so its cost is a few paise a call, spent o
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 # the words, per call language (drafts for a native read; short, spoken, no honorific that a tone could forbid)
 WORDS: dict[str, tuple[str, ...]] = {
@@ -43,7 +43,6 @@ class Planner:
     quiet_ms: int = 0
     since_last_ms: int = MIN_SPACING_MS   # the first one may come as soon as the caller has talked long enough
     fired_in_gap: bool = False
-    _frames_since: int = field(default=0, repr=False)
 
     def reset_turn(self) -> None:
         self.talk_ms = self.quiet_ms = 0
