@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { settingsOpen } from "@/lib/screens/flag";
 import type { ReactNode } from "react";
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
@@ -148,7 +149,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
         {simple ? (
           <Card id="business" title={t("sv6.biz.title")}>
             <div className="mt-3">
-              <BusinessSimple variant="card" words={words} action={save} name={biz?.name ?? tenantName} town={biz?.city ?? ""} languages={biz?.languages ?? []} choices={BUSINESS_LANGUAGES} canEdit={admin && biz !== null} canEditAddress={owner && biz !== null} address={biz ? { line: biz.addressLine, area: biz.area, pincode: biz.pincode } : null}>
+              <BusinessSimple plain={settingsOpen()} variant="card" words={words} action={save} name={biz?.name ?? tenantName} town={biz?.city ?? ""} languages={biz?.languages ?? []} choices={BUSINESS_LANGUAGES} canEdit={admin && biz !== null} canEditAddress={owner && biz !== null} address={biz ? { line: biz.addressLine, area: biz.area, pincode: biz.pincode } : null}>
                 <dl className="divide-y divide-line">
             {admin ? <HoursRow t={t} hours={data.hours} href={`${base}/visits?view=hours`} /> : null}
             <Row t={t} label={t("sv6.biz.gst")} value={data.gstin ?? null} href={admin ? `${settings}?section=business` : null} />

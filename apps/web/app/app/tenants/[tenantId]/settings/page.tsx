@@ -70,7 +70,7 @@ import { readAssistant, readAssistantName } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens, planTierScreens } from "@/lib/screens/flag";
+import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens, planTierScreens, settingsOpen } from "@/lib/screens/flag";
 import { previewAllowed } from "@/lib/screens/preview";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
@@ -486,6 +486,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   <>
                     <h2 className="mb-3 text-xl font-semibold">{t("settings.biz.title")}</h2>
                     <BusinessSimple
+                      plain={settingsOpen()}
                       variant="page"
                       words={wordsFor(lang, ["settings.biz.", "jobs.set."])}
                       action={saveBusinessAction.bind(null, tenantId)}
