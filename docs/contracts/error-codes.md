@@ -226,7 +226,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `no_notes` | 422 | assistant_context |  |  | Write or add some notes first, then test them. |
 | `no_order_policy` | 409 | main |  |  | No order policy is in force: the owner must publish one. |
 | `no_preview` | 404 | conversation |  |  | There is no preview on this system. |
-| `no_sample` | 404 | conversation, pronunciation, voicesample |  |  | There is no sample for this voice. |
+| `no_sample` | 404 | conversation, pronunciation, telephony, voicesample |  |  | There is no sample for this sound. |
 | `no_site_contact` | 422 | main |  |  | This trip has no site contact to tell. |
 | `no_speech` | 422 | voice |  |  | Nothing could be heard in that recording. |
 | `no_subscription` | 409 | main |  |  | Choose a plan first: a top-up or an upgrade needs one. |

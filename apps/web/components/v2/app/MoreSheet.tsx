@@ -20,7 +20,7 @@ const row = "flex min-h-12 w-full items-center gap-3 rounded-lg border border-li
  * The phone's More sheet (sidebar v2), its own chunk: it is drawn only after "More" is pressed, so no page's first load carries it (the route-JS budget). Every row of the menu that is not a tab of the bar, in its groups, the two
  * meters and "Top up · Plan & usage · Help", the person, the workspaces and Sign out. Frosted glass (solid where the browser cannot blur or the person asked for less transparency). The close button takes the focus; Escape closes it.
  */
-export function MoreSheet({ current, memberships, email, signOut, accountMark, labels, rest, activeMenu, waiting, counts, own, onClose, balanceBox = null, shortcuts = [] }: { /** Ways in that have no tab on the phone: Find customers, Lead sources (TabBar `shortcutsOf`). */ shortcuts?: readonly { id: string; path: string; icon: SpriteId }[]; /** Design system v6: the rupee balance box in place of the old meters. */ balanceBox?: { balance: { text: string; low: boolean; minutes: number | null } | null } | null; current: Membership; memberships: readonly Membership[]; email: string | null; signOut: () => Promise<void>; accountMark: ReactNode; labels?: Labels; rest: readonly MenuGroup[]; activeMenu: string | null; waiting: number | null; counts: NavCounts; own: Readonly<Record<string, string>>; onClose: () => void }) {
+export function MoreSheet({ current, memberships, email, signOut, accountMark, labels, rest, activeMenu, waiting, counts, own, onClose, balanceBox = null, hideMoney = false, shortcuts = [] }: { /** Free early access: no balance, no Top up, no Plan & usage link. */ hideMoney?: boolean; /** Ways in that have no tab on the phone: Find customers, Lead sources (TabBar `shortcutsOf`). */ shortcuts?: readonly { id: string; path: string; icon: SpriteId }[]; /** Design system v6: the rupee balance box in place of the old meters. */ balanceBox?: { balance: { text: string; low: boolean; minutes: number | null } | null } | null; current: Membership; memberships: readonly Membership[]; email: string | null; signOut: () => Promise<void>; accountMark: ReactNode; labels?: Labels; rest: readonly MenuGroup[]; activeMenu: string | null; waiting: number | null; counts: NavCounts; own: Readonly<Record<string, string>>; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     closeRef.current?.focus();
@@ -63,7 +63,7 @@ export function MoreSheet({ current, memberships, email, signOut, accountMark, l
                 </div>
               ) : null}
               <div className="rounded-xl border border-line bg-surface py-1">
-                {balanceBox ? <BalanceBox balance={balanceBox.balance} tenantId={current.id} labels={labels} onNavigate={onClose} /> : <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} onNavigate={onClose} />}
+                {hideMoney ? null : balanceBox ? <BalanceBox balance={balanceBox.balance} tenantId={current.id} labels={labels} onNavigate={onClose} /> : <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} onNavigate={onClose} />}
               </div>
               {memberships.length > 1 ? (
                 <div className="space-y-2">

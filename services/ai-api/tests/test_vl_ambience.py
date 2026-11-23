@@ -28,11 +28,11 @@ def db(a: float, b: float) -> float:
     return 20 * math.log10(a / b)
 
 
-def test_the_bed_is_30_db_under_the_voice_and_never_louder() -> None:
-    assert abs(db(ambience.bed_rms(), ld.TARGET_RMS) + 30.0) < 0.01 and ambience.bed_rms() < ld.TARGET_RMS
+def test_the_bed_is_28_db_under_the_voice_and_never_louder() -> None:
+    assert abs(db(ambience.bed_rms(), ld.TARGET_RMS) + 28.0) < 0.01 and ambience.bed_rms() < ld.TARGET_RMS
     bed = ambience.Bed(ambience.scale_to(ambience.placeholder("quiet_office"), ambience.bed_rms()))
     heard = bed.frame(len(ambience.placeholder("quiet_office")))   # the whole loop
-    assert abs(db(ld.rms_of(heard), ld.TARGET_RMS) + 30.0) < 0.6
+    assert abs(db(ld.rms_of(heard), ld.TARGET_RMS) + 28.0) < 0.6
     voice = sine(ld.TARGET_RMS * math.sqrt(2))   # a voice at the target level
     mixed = ambience.mix(voice, bed.frame(len(voice)))
     assert abs(db(ld.rms_of(mixed), ld.rms_of(voice))) < 0.3   # the bed adds almost nothing to the level
@@ -63,7 +63,7 @@ def test_the_loop_has_no_seam() -> None:
 
 def test_the_bed_adds_no_latency_the_same_length_in_and_out_and_pieces_equal_the_whole() -> None:
     loop = ambience.scale_to(ambience.make_loop(ambience.placeholder("shop")), ambience.bed_rms())
-    voice = sine(8000, ms=1000)
+    voice = sine(100, ms=1000)   # below the duck threshold: a breath, not speech (speech is ducked chunk by chunk: test_the_bed_ducks_...)
     whole = ambience.mix(voice, ambience.Bed(loop).frame(len(voice)))
     bed = ambience.Bed(loop)
     frame = 320   # 20 ms at 8 kHz
@@ -106,8 +106,8 @@ def test_the_shipped_beds_load_at_both_line_rates_and_match_the_script() -> None
 
 
 def test_the_setting_words_and_labels() -> None:
-    assert ambience.BACKGROUNDS == ("quiet_office", "shop", "off") and ambience.DEFAULT_BACKGROUND == "quiet_office"
-    assert ambience.valid(None) == "quiet_office" and ambience.valid("loud") == "quiet_office" and ambience.valid("off") == "off"
+    assert ambience.BACKGROUNDS == ("off", "quiet_office", "busy_office", "call_centre", "shop", "market", "showroom", "clinic_reception", "home", "street") and ambience.DEFAULT_BACKGROUND == "off"
+    assert ambience.valid(None) == "off" and ambience.valid("loud") == "off" and ambience.valid("off") == "off" and ambience.valid("shop") == "shop"
     for word in ambience.BACKGROUNDS:
         assert set(ambience.LABELS[word]) == set(ambience.LANGUAGES) and all(ambience.LABELS[word].values())
 
@@ -161,3 +161,22 @@ def test_the_ai_disclosure_words_are_exactly_as_they_were() -> None:
     assert tone_mod.HONEST_TE["friendly"] == "అవును, నేను AI assistant ని."
     assert tone_mod.OPENERS_EN["friendly"] == "Hello, this is the AI assistant of {business}. Is this a good time to talk?"
     assert tone_mod.OPENERS_TE["friendly"] == "హలో, నేను {business} నుంచి AI assistant ని. ఒక్క నిమిషం మాట్లాడొచ్చా?"
+
+
+def test_the_bed_ducks_while_the_voice_speaks_and_comes_back_after() -> None:
+    """25 Nov 2026: the voice always wins. A speech chunk takes the bed DUCK_DB lower within the chunk; silence brings it back over RELEASE_CHUNKS chunks; the length never changes."""
+    bed = ambience.Bed(ambience.scale_to(ambience.make_loop(ambience.placeholder("market")), ambience.bed_rms()))
+    voice = sine(ld.TARGET_RMS * math.sqrt(2), ms=20)
+    quiet = bytes(640)
+    plain = ambience.Bed(bed._loop).frame(len(quiet))   # noqa: SLF001 - the bed's own samples, for the comparison
+    start = ld.rms_of(bed.mix_into(quiet))
+    assert abs(db(start, ld.rms_of(plain))) < 0.2, "silence in, the whole bed out"
+    for _ in range(3):
+        out = bed.mix_into(voice)
+        assert len(out) == len(voice)
+    assert bed._gain == 10 ** (ambience.DUCK_DB / 20)   # noqa: SLF001 - fully ducked after speech
+    gains = []
+    for _ in range(ambience.RELEASE_CHUNKS + 1):
+        bed.mix_into(quiet)
+        gains.append(bed._gain)   # noqa: SLF001
+    assert gains == sorted(gains) and gains[-1] == 1.0 and gains[0] < 0.6, gains
