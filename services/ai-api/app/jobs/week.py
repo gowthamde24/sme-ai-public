@@ -9,6 +9,7 @@ A job that cannot be read gives null numbers; the list never fails for them."""
 from __future__ import annotations
 
 import logging
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -49,7 +50,22 @@ def week_of(env: Any, kind: str, now: datetime | None = None) -> dict[str, Any]:
     return {"calls": calls, "visits": visits, "cost": None, "numbers": numbers}
 
 
+def _kinds(runtime: Any, token: str, tenant_id: Any) -> list[str]:
+    """The kinds this business has, in the contract's order. Only the researcher can be missing (a school never has it): one cheap question, not the whole job list (which also reads Today)."""
+    out = [k for k in listing.KINDS if k != "researcher"]
+    try:
+        seen = runtime.lead_finder.availability(token, tenant_id) if runtime.lead_finder is not None else None
+    except Exception:   # noqa: BLE001 - not readable: leave the job out, like a business that never has it
+        seen = None
+    if seen is not None and seen.reason != "not_for_this_business":
+        out.append("researcher")
+    return out
+
+
 def week_all(runtime: Any, ctx: Any, now: datetime | None = None) -> dict[str, Any]:
-    env = catalogue.Env(runtime=runtime, ctx=ctx)
-    jobs = listing.jobs_of(runtime, env.token, env.tenant_id)
-    return {"days": DAYS, "items": [{"id": j["id"], "kind": j["kind"], **week_of(env, j["kind"], now)} for j in jobs]}
+    """One row per job. The jobs are read side by side (each one is a few calls to its own subsystem): the page takes as long as the slowest, not the sum (staging 25 Nov: 1.3 s p95 one after another)."""
+    env0 = catalogue.Env(runtime=runtime, ctx=ctx)
+    kinds = _kinds(runtime, env0.token, env0.tenant_id)
+    with ThreadPoolExecutor(max_workers=len(kinds)) as pool:
+        rows = list(pool.map(lambda k: week_of(catalogue.Env(runtime=runtime, ctx=ctx), k, now), kinds))
+    return {"days": DAYS, "items": [{"id": str(listing.job_id(env0.tenant_id, k)), "kind": k, **row} for k, row in zip(kinds, rows, strict=True)]}
