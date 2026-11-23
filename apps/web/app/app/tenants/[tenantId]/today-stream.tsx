@@ -16,6 +16,7 @@ import { LazyTodayBand, LazyTodayBandAfter } from "@/components/v2/app/today/v6/
 import { LazyWorkingOn } from "@/components/v2/app/today/v6/LazyWorkingOn";
 import { LazyYourDay } from "@/components/v2/app/today/v6/LazyYourDay";
 import { ResultsCard, VisitsCard } from "@/components/v2/app/today/v6/Lower";
+import { todayOpen } from "@/lib/screens/flag";
 import { quoteCandidates } from "@/components/v2/app/today/v6/band-data";
 import { availabilityOf, briefOf, dayViewOf, readyStore, visitRowsOf } from "@/components/v2/app/today/v6/stream-data";
 import { BandPlaceholder, BriefingPlaceholder, NeedsPlaceholder, PartUnavailable, ResultsPlaceholder, VisitsPlaceholder, WorkingPlaceholder, YourDayPlaceholder } from "@/components/v2/app/today/v6/Placeholders";
@@ -221,7 +222,7 @@ export function streamedToday(i: StreamIn): ReactElement {
   return (
     <main className={pageMainToday} lang={lang}>
       <Part of={topupsNode} fallback={null} />
-      <div data-screen="today" data-v6="" className="flex flex-col gap-4 md:gap-5">
+      <div data-screen="today" data-v6="" {...(todayOpen() ? { "data-open": "today" } : {})} className="flex flex-col gap-4 md:gap-5">
         <header className="sr-only">
           <div>
             <h1 className="sr-only" data-part="v6-heading">

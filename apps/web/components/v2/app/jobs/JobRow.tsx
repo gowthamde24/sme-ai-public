@@ -14,7 +14,7 @@ import { GateNote } from "./GateNote";
 
 export type JobActions = { setEnabled: (jobId: string, enabled: boolean) => Promise<Reply<JobSwitched>> };
 
-const ICON: Record<JobKind, typeof Zap> = { speed_to_lead: Zap, answer_calls: Phone, followups: MessageCircle, store_visits: Store, offers: Gift, researcher: Search, payment_reminders: Wallet, custom: Sparkles };
+export const ICON: Record<JobKind, typeof Zap> = { speed_to_lead: Zap, answer_calls: Phone, followups: MessageCircle, store_visits: Store, offers: Gift, researcher: Search, payment_reminders: Wallet, custom: Sparkles };
 
 /** The switch of one job: a round-knob switch (design/jobs.css `jb-switch`), instant on a tap (optimistic) and put back if the change did not go through. The tap area is 44 px through the padding of its button. */
 function JobSwitch({ label, on, busy, onChange }: { label: string; on: boolean; busy: boolean; onChange: (next: boolean) => void }) {
