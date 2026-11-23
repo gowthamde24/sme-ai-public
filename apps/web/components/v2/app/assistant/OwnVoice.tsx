@@ -266,7 +266,7 @@ export function OwnVoice({ words, voice, canEdit, endpoint, actions }: { words: 
               </div>
             ) : (
               <>
-                <blockquote className="rounded-lg border-l-4 border-brand-edge bg-surface-2 p-3 text-lg font-medium [overflow-wrap:anywhere]" data-part="consent-sentence">
+                <blockquote className="rounded-lg border border-line bg-surface-2 p-3 text-lg font-medium [overflow-wrap:anywhere]" data-part="consent-sentence">
                   {sentence}
                 </blockquote>
                 <Step label={t("ov.rec.consent")} take={consent} onTake={setConsent} seconds={CONSENT_SECONDS} t={t} mic={mic} upload={false} tooShort={t("ov.err.len.consent")} failedWith={(m) => setProblem(m ? { text: m } : null)} />
