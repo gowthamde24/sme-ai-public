@@ -18,7 +18,7 @@ fi
 # name | kind (prompt|generate) | required (req|opt) | readers (api,worker) | what it is (plain words, shown at the prompt)
 SECRETS=(
   "sme-suppression-hmac-key|generate|req|api,worker|the key that makes do-not-call numbers unreadable (generated here, nobody ever sees it)"
-  "sme-scheduler-password|prompt|req|api,worker|a NEW strong password for the scheduler account (the same one you register in Supabase for scheduler@stack19.com)"
+  "sme-scheduler-password|prompt|req|api,worker|a NEW strong password for the scheduler account (the account address is PROD_SCHEDULER_EMAIL in deploy/.env.production; this script creates that account with it)"
   "sme-resend-api-key|prompt|req|api,worker|Resend: the production SENDING key"
   "sme-anthropic-api-key|prompt|req|api,worker|Anthropic (Claude) key for production"
   "sme-sarvam-api-key|prompt|req|api,worker|Sarvam key (Telugu/Hindi/Kannada speech)"
@@ -42,7 +42,7 @@ grant() {   # secret, readers
 }
 
 created=0; skipped=0; missing_required=0; SCHED_PW=""
-REF="ijmsusgyilwskpjxfauu"; SCHEDULER_EMAIL="scheduler@stack19.com"
+REF="ijmsusgyilwskpjxfauu"; SCHEDULER_EMAIL="$(sed -n 's/^PROD_SCHEDULER_EMAIL=//p' deploy/.env.production 2>/dev/null | head -1 | tr -d '"\r ' || true)"   # the address lives in ONE place (the git-ignored deploy/.env.production), never in a source file
 for row in "${SECRETS[@]}"; do
   IFS='|' read -r name kind req readers what <<< "$row"
   if gcloud secrets describe "$name" --project "$PROJECT_ID" >/dev/null 2>&1; then
@@ -73,10 +73,11 @@ for row in "${SECRETS[@]}"; do
 done
 unset V 2>/dev/null || true
 
-# the scheduler's sign-in account (planner decision 23 Nov: scheduler@stack19.com, pre-confirmed, NO mailbox): created with the password typed above, in this terminal, and registered as the scheduler in the database.
+# the scheduler's sign-in account (planner decision 23 Nov: pre-confirmed, NO mailbox; the address is PROD_SCHEDULER_EMAIL): created with the password typed above, in this terminal, and registered as the scheduler in the database.
 # Needs the main checkout (linked to PRODUCTION: deploy/db_target.sh production must pass) and the Supabase CLI login. Skipped (with the reason) when the password was not typed in this run: run with --scheduler-account to do it from the stored secret.
 scheduler_account() {
   local pw="$1" key out
+  [ -n "$SCHEDULER_EMAIL" ] || { echo "scheduler account: skipped (PROD_SCHEDULER_EMAIL is empty in deploy/.env.production: set it, then run again with --scheduler-account)"; return 0; }
   ./deploy/db_target.sh production >/dev/null || { echo "scheduler account: skipped (this checkout is not linked to production)"; return 0; }
   key="$(supabase projects api-keys --project-ref "$REF" --agent no -o json 2>/dev/null | python3 -c 'import sys,json; d,_=json.JSONDecoder().raw_decode(sys.stdin.read()); print(next((k["api_key"] for k in d if k.get("type") in ("secret", "service_role") or k.get("name") == "service_role"), ""))' || true)"
   [ -n "$key" ] || { echo "scheduler account: skipped (could not read the project's service key: run `supabase login`)"; return 0; }
@@ -85,7 +86,6 @@ scheduler_account() {
   echo "scheduler account $SCHEDULER_EMAIL: $out"
   [ "$out" = created ] || [ "$out" = exists ] || return 0
   supabase db query --linked "select app.operator_register_scheduler('$SCHEDULER_EMAIL')" >/dev/null 2>&1 && echo "scheduler registered in the database" || echo "scheduler registration FAILED: tell the operator (select app.operator_register_scheduler('$SCHEDULER_EMAIL');)"
-  if [ -f deploy/.env.production ] && grep -q '^PROD_SCHEDULER_EMAIL=$' deploy/.env.production; then sed -i.bak "s|^PROD_SCHEDULER_EMAIL=\$|PROD_SCHEDULER_EMAIL=$SCHEDULER_EMAIL|" deploy/.env.production && rm -f deploy/.env.production.bak && echo "PROD_SCHEDULER_EMAIL set in deploy/.env.production"; fi
 }
 if [ -z "$CHECK" ]; then
   if [ -n "$SCHED_PW" ]; then scheduler_account "$SCHED_PW"; unset SCHED_PW
