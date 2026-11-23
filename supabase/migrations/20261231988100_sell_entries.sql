@@ -67,12 +67,12 @@ revoke all on public.sell_entries from public, anon, authenticated;
 grant select on public.sell_entries to authenticated;
 create policy sell_entries_select on public.sell_entries for select to authenticated using (tenant_id = any (((select app.my_tenant_ids()))::uuid[]));
 
-create function app.sell_item(p public.sell_entries) returns jsonb
+create function app.sell_item(p_id uuid, p_name text, p_data jsonb) returns jsonb
 language sql
 immutable
 set search_path = ''
-as $$ select jsonb_build_object('id', p.id, 'name', p.name) || p.data $$;
-revoke all on function app.sell_item(public.sell_entries) from public, anon, authenticated, service_role;
+as $$ select jsonb_build_object('id', p_id, 'name', p_name) || p_data $$;
+revoke all on function app.sell_item(uuid, text, jsonb) from public, anon, authenticated, service_role;
 
 create function public.sell_entry_list(p_tenant_id uuid, p_style text, p_limit integer default 50, p_after text default null) returns jsonb
 language plpgsql
@@ -84,8 +84,8 @@ declare
   v_limit  integer := least(greatest(coalesce(p_limit, 50), 1), 50);
   v_at     timestamptz;
   v_id     uuid;
-  v_rows   public.sell_entries[];
-  v_more   boolean;
+  v_items  jsonb;
+  v_seen   integer;
   v_next   text;
 begin
   if auth.uid() is null or p_tenant_id is null or not app.is_tenant_member(p_tenant_id) then
@@ -102,21 +102,26 @@ begin
       perform app.pack_error('invalid');
     end;
   end if;
-  select coalesce(array_agg(e), array[]::public.sell_entries[]) into v_rows
-    from (select * from public.sell_entries x
+  select coalesce(jsonb_agg(app.sell_item(p.id, p.name, p.data) order by p.created_at, p.id), '[]'::jsonb) into v_items
+    from (select x.id, x.name, x.data, x.created_at from public.sell_entries x
            where x.tenant_id = p_tenant_id and x.style = p_style and x.removed_at is null
              and (v_at is null or (x.created_at, x.id) > (v_at, v_id))
            order by x.created_at, x.id
-           limit v_limit + 1) e;
-  v_more := coalesce(array_length(v_rows, 1), 0) > v_limit;
-  if v_more then
-    v_rows := v_rows[1:v_limit];
-    v_next := to_char(v_rows[v_limit].created_at at time zone 'utc', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') || '|' || v_rows[v_limit].id::text;
+           limit v_limit) p;
+  -- one more row than the page means there is a next page; the cursor is the last row of THIS page
+  select count(*) into v_seen from (select 1 from public.sell_entries x
+           where x.tenant_id = p_tenant_id and x.style = p_style and x.removed_at is null
+             and (v_at is null or (x.created_at, x.id) > (v_at, v_id))
+           limit v_limit + 1) c;
+  if v_seen > v_limit then
+    select to_char(l.created_at at time zone 'utc', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') || '|' || l.id::text into v_next
+      from (select x.id, x.created_at from public.sell_entries x
+             where x.tenant_id = p_tenant_id and x.style = p_style and x.removed_at is null
+               and (v_at is null or (x.created_at, x.id) > (v_at, v_id))
+             order by x.created_at, x.id
+             limit 1 offset v_limit - 1) l;
   end if;
-  return jsonb_build_object(
-    'style', p_style,
-    'items', (select coalesce(jsonb_agg(app.sell_item(r) order by r.created_at, r.id), '[]'::jsonb) from unnest(v_rows) r),
-    'next_cursor', v_next);
+  return jsonb_build_object('style', p_style, 'items', v_items, 'next_cursor', v_next);
 end;
 $$;
 revoke all on function public.sell_entry_list(uuid, text, integer, text) from public, anon;
@@ -138,7 +143,7 @@ begin
   if not found then
     perform app.pack_error('reference');
   end if;
-  return app.sell_item(e);
+  return app.sell_item(e.id, e.name, e.data);
 end;
 $$;
 revoke all on function public.sell_entry_get(uuid, text, uuid) from public, anon;
@@ -181,7 +186,7 @@ begin
     insert into public.sell_entries (id, tenant_id, style, name, data, created_by) values (p_id, p_tenant_id, p_style, v_name, p_data, v_uid) returning * into e;
     v_created := true;
   end if;
-  return jsonb_build_object('item', app.sell_item(e), 'created', v_created);
+  return jsonb_build_object('item', app.sell_item(e.id, e.name, e.data), 'created', v_created);
 end;
 $$;
 revoke all on function public.sell_entry_put(uuid, text, uuid, text, jsonb) from public, anon;
