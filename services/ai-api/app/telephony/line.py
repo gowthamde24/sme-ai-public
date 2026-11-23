@@ -38,8 +38,8 @@ OPEN_TIMEOUT_S = 10.0
 # natural barge-in (owner, 6 Nov 2026): while we talk, the caller's sound is judged by its LENGTH. "haa", "hmm", "avunu", "sare", "ji", a cough: shorter than STOP_SPEECH_MS, ignored, we keep
 # talking. Real speech longer than that: we stop, and the voice FADES out over FADE_MS (ending in a quiet moment between words when there is one) instead of a hard cut.
 CLOSING_STOP_SPEECH_MS = 800   # owner, 12 Nov 2026: while the assistant says its CLOSING line only a stop word or a sound of this length stops it (a 460 ms sound cut the goodbye of the round 2 call)
-NO_WORDS_GRACE_MS = 250        # owner, 12 Nov 2026: at 450 ms the recogniser may not have produced a word yet ("ఆ" is a backchannel, but its text arrives late): wait this much longer for words before treating the sound as speech
-STOP_SPEECH_MS = 450   # owner, 11 Nov 2026 (was 600): a real interruption is heard sooner; short backchannels stay under it, and a longer one is still ignored when the live transcript says it is only a backchannel
+NO_WORDS_GRACE_MS = 200        # owner, 12 Nov 2026 (250), 23 Nov 2026 (200, with the 300 ms stop): at 300 ms the recogniser may not have produced a word yet ("ఆ" is a backchannel, but its text arrives late): wait this much longer for words before treating the sound as speech
+STOP_SPEECH_MS = 300   # planner/owner, 23 Nov 2026 (was 450, before that 600): a real interruption stops her within about 300 ms of the caller's sound; a sound without a word yet waits NO_WORDS_GRACE_MS more, and a longer one is still ignored when the live transcript says it is only a backchannel (humanness audit item 2)
 # Spoken STOP words, matched in the caller's live transcript while the assistant talks: they stop it at once, whatever the length of the sound (owner, 11 Nov 2026).
 STOP_WORDS = ("ఆగండి", "ఆగు", "ఆపండి", "ఆపు", "ఒక్క నిమిషం", "ఒక్క నిముషం", "ఒక్క నిమిషము", "stop", "wait", "hold on", "hang on", "रुकिए", "रुको", "ruko")
 # Backchannels: the sounds of listening. A sound that lasts long enough to be an interruption but whose live transcript is ONLY these is ignored.
@@ -299,7 +299,7 @@ class PhoneLine:
                     self._end_sound_run()
 
     def _stop(self, rule: str) -> None:
-        """An interruption: the session stops the voice (it fades). `rule` says which rule fired (audio_450ms | stop_word); logged with the length and loudness of the sound."""
+        """An interruption: the session stops the voice (it fades). `rule` says which rule fired (audio_300ms | stop_word); logged with the length and loudness of the sound."""
         self._stopped_run = True
         self.interruptions["stopped"] += 1
         log.info("phone_interruption decision=stopped rule=%s speech_ms=%d peak=%d threshold=%d words=%d", rule, self._talk_ms, round(self._peak), round(self._barge_threshold), len(_words_of(self._caller_text)))
@@ -361,7 +361,7 @@ class PhoneLine:
         if self._talk_ms >= MIN_SOUND_MS and not self._stopped_run:
             self.interruptions["ignored"] += 1
             if self._talk_ms < self.stop_speech_ms:
-                why = "shorter_than_450ms"
+                why = f"shorter_than_{self.stop_speech_ms}ms"
             elif only_backchannel(self._caller_text):
                 why = "backchannel_words"
             elif self._hang_up_interruptible and self._hang_up_after_audio_end is not None:

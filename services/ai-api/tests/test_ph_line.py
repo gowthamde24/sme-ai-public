@@ -351,20 +351,20 @@ class _Logs:
 
 @pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
-async def test_a_sound_of_500_ms_is_an_interruption_now_and_one_of_400_ms_is_not() -> None:
+async def test_a_sound_of_500_ms_is_an_interruption_now_and_one_of_250_ms_is_not() -> None:
     logs = _Logs()
     try:
         line, sim = await connected()
         await line.send_bytes(tone(300.0, 4000, OUT_RATE))
-        await sim.speak_for(400)
+        await sim.speak_for(250)
         await sim.quiet_for(400)
         await drain(line)
-        assert line.interruptions == {"stopped": 0, "ignored": 1}, "400 ms: still a short sound"
+        assert line.interruptions == {"stopped": 0, "ignored": 1}, "250 ms: still a short sound (the stop line is 300 ms since 23 Nov 2026)"
         line.note_caller_text("మీరు ఏమన్నారు")   # the recogniser has real words by then
         await sim.speak_for(520)
         seen = await drain(line)
         assert line.interruptions["stopped"] == 1 and ("text", {"type": "barge_in", "verify": False}) in seen
-        assert "rule=audio_450ms" in logs.text() and "words=2" in logs.text(), "the rule that fired is logged, with the number of words (never the words)"
+        assert "rule=audio_300ms" in logs.text() and "words=2" in logs.text(), "the rule that fired is logged, with the number of words (never the words)"
         await sim.close()
     finally:
         logs.close()
@@ -516,7 +516,7 @@ async def speaking_line() -> tuple[PhoneLine, SimulatedExotel, _Logs]:
 async def test_a_long_sound_whose_words_have_not_arrived_is_given_a_moment_and_a_backchannel_that_arrives_late_is_ignored() -> None:
     line, sim, logs = await speaking_line()
     try:
-        await sim.speak_for(520)    # past 450 ms and the recogniser has produced nothing yet: not stopped yet
+        await sim.speak_for(420)    # past 300 ms and the recogniser has produced nothing yet: not stopped yet (it waits NO_WORDS_GRACE_MS more)
         await drain(line)
         assert line.interruptions["stopped"] == 0 and not line._stopped_run  # noqa: SLF001
         line.note_caller_text("ఆ")  # the word "ఆ" arrives late: a backchannel
@@ -537,7 +537,7 @@ async def test_a_long_sound_with_no_words_at_all_is_an_interruption_after_the_gr
     try:
         await sim.speak_for(900)
         await drain(line)
-        assert line.interruptions["stopped"] == 1 and "rule=audio_700ms_no_words" in logs.text()
+        assert line.interruptions["stopped"] == 1 and "rule=audio_500ms_no_words" in logs.text()
         await sim.close()
     finally:
         logs.close()
