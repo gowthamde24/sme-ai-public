@@ -394,6 +394,19 @@ describe("the Calls page", () => {
     render(<CallsV6 {...props({ olderHref: `${BASE}/calls?cursor=2026-11-01T00%3A00%3A00Z` })} />);
     expect(screen.getByRole("link", { name: "Older calls" })).toHaveAttribute("href", `${BASE}/calls?cursor=2026-11-01T00%3A00%3A00Z`);
   });
+  it("shows only 20 rows first when there are 50 calls, and 'Show more' reveals 20 more at a time", () => {
+    const fifty = Array.from({ length: 50 }, (_, i) => row(i + 1, { who: `Caller ${i + 1}` }));
+    render(<CallsV6 {...props({ calls: fifty })} />);
+    expect(document.querySelectorAll('[data-part="calls-table"] tbody tr')).toHaveLength(20);
+    const btn = () => document.querySelector('[data-part="calls-show-more"]') as HTMLButtonElement | null;
+    expect(btn()).toHaveTextContent("Show more (30)");
+    fireEvent.click(btn()!);
+    expect(document.querySelectorAll('[data-part="calls-table"] tbody tr')).toHaveLength(40);
+    expect(btn()).toHaveTextContent("Show more (10)");
+    fireEvent.click(btn()!);
+    expect(document.querySelectorAll('[data-part="calls-table"] tbody tr')).toHaveLength(50);
+    expect(btn()).toBeNull();
+  });
   it("shows no phone number or wa.me link anywhere in the markup it builds", () => {
     render(<CallsV6 {...props({ selectedId: id(2), phoneOpen: true, selected: { call: DETAIL, timeline: TL } })} />);
     expect(document.body.innerHTML).not.toMatch(/wa\.me|href="tel:/);

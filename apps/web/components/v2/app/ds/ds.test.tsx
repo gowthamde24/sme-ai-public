@@ -104,7 +104,9 @@ import { PageHeader } from "./PageHeader";
 describe("the page header", () => {
   it("the title is the H1, the line is under it, the main action is on the right", () => {
     render(<PageHeader title="Calls" sub="Every call, newest first." right={<button type="button">Test call</button>} />);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Calls");
+    const h1 = screen.getByRole("heading", { level: 1 });
+    expect(h1).toHaveTextContent("Calls");
+    expect(h1).toHaveClass("text-2xl");
     expect(screen.getByText("Every call, newest first.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Test call" })).toBeInTheDocument();
   });
