@@ -14,9 +14,9 @@ Using defaults
 Pick a voice for each language. Customers hear it on calls. Test mode: these choices are kept in this browser only. Nothing is sent to your assistant yet. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
 {role=group label="Language"}
 [button type=button: తెలుగు]
-[button type=button: English]
 [button type=button: हिन्दी]
 [button type=button: ಕನ್ನಡ]
+[button type=button: English]
 legend: Voice
 {role=radiogroup label="Voice"} Women
 <radio name=vc-voice label="RamyaWomanRecommendedIn use" value=te-ramya checked>
@@ -40,7 +40,12 @@ Friendly Relaxed and warm.
 Respectful Polite, a little more formal.
 <radio name=vc-tone label="Short and quickThe answer first, in a few words." value=quick>
 Short and quick The answer first, in a few words.
-For example: “ హాయ్! శనివారం షాప్‌కి వస్తారా? ” This example wording is a draft.
+A sample call
+- Customer హాయ్, రేపు తెరిచి ఉంటారా?
+- Your assistant ఉంటాం అండీ, రేపు పది నుంచి ఏడు వరకు. మీరు వస్తారా?
+- Customer ఏ time బాగుంటుంది?
+- Your assistant పదకొండు తర్వాత ఎప్పుడైనా ప్రశాంతంగా ఉంటుంది. మీ పేరు రాసుకుంటాను, మీ కోసం సిద్ధంగా ఉంటాం.
+This example wording is a draft.
 legend: Background sound
 {role=radiogroup label="Background sound"}
 <radio name=vc-bg label="Quiet office" value=quiet_office checked>
@@ -63,7 +68,7 @@ Test mode: these choices are kept in this browser only. Nothing is sent to your 
 Greeting
 {role=textbox label="Greeting"} నమస్కారం the customer's name గారూ, నేను your assistant's name , your shop name AI assistant . ఒక్క నిమిషం మాట్లాడొచ్చా?
 [button type=button: Hear it]
-What the customer hears, with made-up names నమస్కారం రవి గారూ, నేను your assistant, Demo Silks (synthetic) AI అసిస్టెంట్. ఒక్క నిమిషం మాట్లాడొచ్చా? Customers hear this first. Keep our suggestion or change it.
+What the customer hears, with made-up names నమస్కారం రవి గారూ, నేను your assistant, Demo Silks AI అసిస్టెంట్. ఒక్క నిమిషం మాట్లాడొచ్చా? Customers hear this first. Keep our suggestion or change it.
 summary: More choices Words, what never to say, questions and answers
 legend: Words
 <radio name=sp-words-all label="Everyday, with English wordsHow people really talk: saree, stock, offer, price, WhatsApp. The usual." disabled value=everyday_mixed checked>

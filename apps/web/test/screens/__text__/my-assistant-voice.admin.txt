@@ -14,9 +14,9 @@ Using defaults
 Pick a voice for each language. Customers hear it on calls. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
 {role=group label="Language"}
 [button type=button: తెలుగు]
-[button type=button: English]
 [button type=button: हिन्दी]
 [button type=button: ಕನ್ನಡ]
+[button type=button: English]
 legend: Voice
 {role=radiogroup label="Voice"} Women
 <radio name=vc-voice label="RamyaWomanRecommendedIn use" value=te-ramya checked>
