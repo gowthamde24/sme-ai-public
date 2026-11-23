@@ -11,6 +11,7 @@ A clip is a few characters of speech, so its cost is a few paise a call, spent o
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 # the words, per call language (drafts for a native read; short, spoken, no honorific that a tone could forbid)
 WORDS: dict[str, tuple[str, ...]] = {
@@ -93,3 +94,22 @@ class Clips:
         clip = self._clips[self._at % len(self._clips)]
         self._at += 1
         return clip
+
+
+async def render(clips: Clips, tts: Any, language: str, *, timeout_s: float = 8.0) -> int:
+    """Speak the few listening words once with the call's own voice (a SEPARATE voice object from the one that talks, so the two never share a turn) and keep the clips. Returns how many were kept; any failure keeps what there is (no clip, no sound)."""
+    import asyncio
+    import logging
+
+    async def one(text: str) -> bytes:
+        return b"".join([chunk async for chunk in tts.stream(text, language)])
+
+    begin = getattr(tts, "begin_turn", None)
+    try:
+        if callable(begin):
+            begin()
+        for text in words_of(language):
+            clips.put(await asyncio.wait_for(one(text), timeout_s))
+    except Exception as exc:  # noqa: BLE001 - never a failed call because of a listening sound
+        logging.getLogger("app.telephony.backchannel").info("backchannel_render_stopped %s", exc.__class__.__name__)
+    return len(clips)
