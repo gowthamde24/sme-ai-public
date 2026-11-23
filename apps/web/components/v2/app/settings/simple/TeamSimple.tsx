@@ -78,7 +78,7 @@ function MemberLine({ words, member, myRole, actions, onRole, onGone, plain = fa
   const [busy, setBusy] = useState<"role" | "remove" | null>(null);
   const [failure, setFailure] = useState<Failed | null>(null);
   const name = member.display_name ?? t("team.member.unnamed");
-  const roleText = (r: string) => t(`jobs.set.team.role.${r}`);
+  const roleText = (r: string) => (r === "owner" ? t("team.role.owner") : t(`jobs.set.team.role.${r}`));
 
   async function saveRole() {
     setBusy("role");

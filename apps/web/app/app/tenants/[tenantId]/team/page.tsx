@@ -56,7 +56,7 @@ export default async function TeamPage({ params }: PageProps<"/app/tenants/[tena
     escalate(error);
     throw error;
   }
-  const words = wordsFor(lang, ["team.", "apierr.", "problem.", ...(jobsScreens() !== "off" ? ["jobs.set."] : [])], ["dta.btn.working", "dta.btn.copied", "dta.cal.copy_failed"]);
+  const words = wordsFor(lang, ["team.", "apierr.", "problem.", "set.f.", ...(jobsScreens() !== "off" ? ["jobs.set."] : [])], ["dta.btn.working", "dta.btn.copied", "dta.cal.copy_failed"]);
   const actions = {
     invite: inviteAction.bind(null, tenantId),
     revoke: revokeInvitationAction.bind(null, tenantId),
