@@ -126379,5 +126379,93 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.line.review": {
+  "en": "Review",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.turn_on": {
+  "en": "Turn on",
+  "te": "ఆన్ చేయండి",
+  "hi": "चालू करें",
+  "kn": "ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.paused": {
+  "en": "Paused",
+  "te": "ఆపి ఉంది",
+  "hi": "रुका हुआ है",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.paused_ran": {
+  "en": "Paused · last ran {day}",
+  "te": "ఆపి ఉంది · చివరిసారి {day}",
+  "hi": "रुका हुआ है · आखिरी बार {day}",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ · ಕೊನೆಯ ಬಾರಿ {day}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.act.no_number": {
+  "en": "Add phone number",
+  "te": "ఫోన్ నంబర్ జోడించండి",
+  "hi": "फ़ोन नंबर जोड़ें",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.act.no_whatsapp": {
+  "en": "Connect WhatsApp",
+  "te": "WhatsApp కనెక్ట్ చేయండి",
+  "hi": "WhatsApp जोड़ें",
+  "kn": "WhatsApp ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.act.minutes_used": {
+  "en": "Add minutes",
+  "te": "నిమిషాలు జోడించండి",
+  "hi": "मिनट जोड़ें",
+  "kn": "ನಿಮಿಷಗಳನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.act.billing_blocked": {
+  "en": "Open billing",
+  "te": "బిల్లింగ్ తెరవండి",
+  "hi": "बिलिंग खोलें",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -8,6 +8,7 @@ import { appDict } from "@/i18n/app";
 import { parseNewJobSheet } from "@/lib/api/job-templates";
 import { festivalHint } from "@/lib/jobs/festival";
 import { MOCK_JOBS, MOCK_PAGE_JOBS } from "@/lib/jobs/mock";
+import { filterJobs } from "@/lib/jobs/types";
 import { mockPlan, mockStartPlan } from "@/lib/jobs/plan-mock";
 import { wireNewJobSheet } from "@/lib/jobs/template-fixtures";
 import type { SheetLoad } from "@/lib/jobs/templates";
@@ -29,12 +30,29 @@ const sheetActions = (): SheetActions => ({
 const switches = { setEnabled: vi.fn(async (id: string, enabled: boolean) => ({ ok: true as const, data: { id, enabled, status: enabled ? ("running" as const) : ("paused" as const) } })) };
 
 describe("the Jobs page, the renamed Office", () => {
-  it("a group's rows sit in ONE column that may shrink (grid-cols-1 = minmax(0,1fr)) on a phone: an auto column grew to the widest row (430-470 px in a 358 px list) and pushed the status chips and the switch off the screen (staging walk, 20 Nov)", () => {
+  it("the open list (owner, 24 Nov): a group is ONE column of lines between hairlines (a dark rule above the first), no card, and each line's text may shrink beside its one action (min-w-0), so a phone never pushes the button off the screen", () => {
     const { container } = render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
-    const grid = container.querySelector("[data-group] > div") as HTMLElement;
-    expect(grid.className).toContain("grid-cols-1");
-    expect(grid.className).toContain("md:grid-cols-2");
-    expect(grid.className).toContain("[&>div]:min-w-0");
+    const list = container.querySelector("[data-group] > div") as HTMLElement;
+    expect(list.className).toContain("flex-col");
+    expect(list.className).toContain("border-t");
+    expect(list.className).not.toMatch(/rounded|bg-surface|grid-cols/);
+    const line = list.querySelector("[data-job]") as HTMLElement;
+    expect(line.querySelector("a")?.className).toContain("min-w-0");
+    expect(line.className).toContain("border-t");
+  });
+  it("a job that cannot run (a phone number is missing) is under Needs you, says WHY in the one orange line and offers the fix; the chips count exactly the jobs of the sections", () => {
+    const blocked = { ...MOCK_PAGE_JOBS[0], id: "blocked-1", enabled: false, status: "paused" as const, planGate: "no_number" as const, needsYou: 0 };
+    const jobs = [...MOCK_PAGE_JOBS, blocked];
+    const { container } = render(<JobsList jobs={jobs} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
+    const line = container.querySelector('[data-job="blocked-1"]') as HTMLElement;
+    expect(line.closest("[data-group]")).toHaveAttribute("data-group", "needs");
+    expect(line).toHaveTextContent("Needs a phone number first");
+    expect(line).not.toHaveTextContent(/^Paused/);
+    expect(within(line).getByRole("link", { name: "Add phone number" })).toHaveAttribute("href", `${BASE}/phone-number`);
+    for (const [group, filter] of [["needs", "needs_you"], ["running", "running"], ["off", "paused"]] as const) {
+      const n = container.querySelectorAll(`[data-group="${group}"] [data-job]`).length;
+      expect(filterJobs(jobs, filter), group).toHaveLength(n);
+    }
   });
   it("chips All / Running / Needs you / Paused with their counts; the open one is marked", () => {
     render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);

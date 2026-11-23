@@ -27,7 +27,7 @@ function JobSwitch({ label, on, busy, onChange }: { label: string; on: boolean; 
 
 const pc = "inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface px-2.5 text-[12.5px] font-semibold text-ink";
 /** How a named job sounds: its language, its voice and the number it speaks from, as small outline chips (a word we do not know is left out, never shown as a code). */
-function SpeaksChips({ speaks, t, words }: { speaks: JobSpeaks; t: Say; words: Words }) {
+export function SpeaksChips({ speaks, t, words }: { speaks: JobSpeaks; t: Say; words: Words }) {
   const lang = speaks.language ? (words[`jobs.page.lang.${speaks.language}`] ? t(`jobs.page.lang.${speaks.language}`) : null) : null;
   const num = speaks.number ? t(words[`jobs.page.number.${speaks.number}`] ? `jobs.page.number.${speaks.number}` : "jobs.page.number.other") : null;
   // the chip shows the voice's NAME ("Ramya", sent with the voice); an id with no name is left out, never shown as a code
