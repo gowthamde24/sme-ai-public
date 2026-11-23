@@ -786,12 +786,20 @@ def test_the_faqs_of_the_job_page_hang_on_the_jobs_own_row() -> None:
 
 
 # ------------------------------------------------------------------------------------------------------------------ what waits for the owner
+def test_the_same_promise_is_one_item_with_the_customer_and_when() -> None:
+    """25 Nov 2026: two identical rows for one promise (the demo's 'paver blocks') are one item; a different kind or target still is its own."""
+    w = World(today=Today(("followup_due", "lead"), ("followup_due", "lead"), ("followup_due", "order"), ("hot_lead_waiting", "lead")))
+    items = w.client.get(f"{JOBS}/today", headers=auth("a_owner")).json()["needs_you"]
+    assert [(i["kind"], i["target"]["type"]) for i in items] == [("followup_due", "lead"), ("followup_due", "order"), ("hot_lead_waiting", "lead")]
+    assert all(i["customer"] == "Ravi" and i["at"].startswith("2026-11-20") for i in items)
+
+
 def test_needs_you_is_the_list_today_shows_and_each_job_counts_its_own() -> None:
     w = World(today=Today(("hot_lead_waiting", "lead"), ("call_approval", "call_request"), ("visit_requested", "call_request"), ("campaign_approval", "campaign"), ("quote_approval", "quote"), ("fees_overdue", "fees")))
     body = w.client.get(f"{JOBS}/today", headers=auth("a_owner")).json()
     assert len(body["needs_you"]) == 6
     first = body["needs_you"][0]
-    assert set(first) == {"id", "code", "kind", "at", "target"} and first["kind"] == "hot_lead_waiting" and first["code"] == "hot_lead_waiting" and first["target"] == {"type": "lead", "id": str(CUSTOMER)}
+    assert set(first) == {"id", "code", "kind", "at", "customer", "summary", "target"} and first["customer"] == "Ravi" and first["kind"] == "hot_lead_waiting" and first["code"] == "hot_lead_waiting" and first["target"] == {"type": "lead", "id": str(CUSTOMER)}
     assert [(i["kind"], i["target"]["type"]) for i in body["needs_you"][1:]] == [("call_approval", "call_request"), ("visit_requested", "call_request"), ("campaign_approval", "approval"), ("quote_approval", "approval"), ("fees_overdue", "fees")]
     jobs = {j["kind"]: j for j in body["jobs"]}
     assert (jobs["speed_to_lead"]["needs_you"], jobs["store_visits"]["needs_you"], jobs["offers"]["needs_you"], jobs["followups"]["needs_you"]) == (2, 1, 1, 0)
