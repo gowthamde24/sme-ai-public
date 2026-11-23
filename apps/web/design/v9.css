@@ -1856,3 +1856,9 @@
 .v9:lang(en) .cd-main h3 { letter-spacing: -.01em !important; }
 .v9:lang(en) .brand { letter-spacing: -0.025em !important; }
 .v9:lang(en) .aw-brand { letter-spacing: -0.02em !important; }
+/* the chat fills the screen exactly (the screen is the flex column with overflow hidden and the rounded corners; the status bar is the island's row, the header starts below it, the bubbles and the input sit inside the screen's width): border-box, no padding of its own, no zoom, no width beyond the screen */
+.v9 .v9-phone .h3-dp-chat.pp { box-sizing: border-box; flex: 1 1 auto; width: 100%; min-width: 0; min-height: 0; max-width: 100%; padding: 46px 0 0; margin: 0; zoom: 1; overflow: hidden; border-radius: 0; }
+.v9 .v9-phone .h3-dp-chat .pp-head, .v9 .v9-phone .h3-dp-chat .pp-body, .v9 .v9-phone .h3-dp-chat .pp-input { box-sizing: border-box; min-width: 0; max-width: 100%; }
+.v9 .v9-phone .h3-dp-chat .pp-body { flex: 1 1 auto; min-height: 0; padding: 12px 10px; }
+.v9 .v9-phone .h3-dp-chat .pp-b { max-width: 84%; min-width: 0; }
+.v9 .v9-phone .h3-dp-chat .pp-input { border-radius: 0; }
