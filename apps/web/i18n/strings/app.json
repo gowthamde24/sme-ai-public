@@ -126423,5 +126423,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.line.act.no_number": {
+  "en": "Add phone number",
+  "te": "ఫోన్ నంబర్ జోడించండి",
+  "hi": "फ़ोन नंबर जोड़ें",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.act.no_whatsapp": {
+  "en": "Connect WhatsApp",
+  "te": "WhatsApp కనెక్ట్ చేయండి",
+  "hi": "WhatsApp जोड़ें",
+  "kn": "WhatsApp ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.act.minutes_used": {
+  "en": "Add minutes",
+  "te": "నిమిషాలు జోడించండి",
+  "hi": "मिनट जोड़ें",
+  "kn": "ನಿಮಿಷಗಳನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.act.billing_blocked": {
+  "en": "Open billing",
+  "te": "బిల్లింగ్ తెరవండి",
+  "hi": "बिलिंग खोलें",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

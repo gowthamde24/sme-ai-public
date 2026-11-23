@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { fmtDay, resultSentence } from "@/lib/jobs/result";
-import { jobGateKey, jobNameKey, type Job } from "@/lib/jobs/types";
+import { jobGateKey, jobNameKey, jobState, type Job } from "@/lib/jobs/types";
 
 import { SpeaksChips, type JobActions } from "./JobRow";
 import { makeT, type Words } from "../words";
@@ -21,8 +21,12 @@ export function JobLine({ job, words, base, actions }: { job: Job; words: Words;
   const [error, setError] = useState<string | null>(null);
   const name = job.customName ?? t(jobNameKey(job.kind));
   const href = `${base}/jobs/${job.id}`;
-  const off = !now.enabled || now.status === "paused";
-  const needs = !off && (now.status === "waiting" || now.status === "failed" || job.needsYou > 0);
+  const blocked = job.planGate !== null; // something is missing: the job cannot run, so it is never plain Paused
+  const off = !blocked && (!now.enabled || now.status === "paused");
+  const needs = blocked || (!off && jobState({ ...job, enabled: now.enabled, status: now.status }) === "needs");
+  // the place that fixes what is missing (the action's link): the number, WhatsApp, billing; any other need opens the job
+  const fixHref = job.planGate === "no_number" ? `${base}/phone-number` : job.planGate === "no_whatsapp" ? `${base}/integrations` : job.planGate === "minutes_used" || job.planGate === "billing_blocked" ? `${base}/billing` : href;
+  const fixLabel = job.planGate ? t(`jobs.line.act.${job.planGate}`) : t("jobs.line.review");
 
   async function change(next: boolean) {
     if (!actions) return;
@@ -79,8 +83,8 @@ export function JobLine({ job, words, base, actions }: { job: Job; words: Words;
         ) : null}
       </Link>
       {needs ? (
-        <Link href={href} prefetch={false} className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-brand-edge bg-brand px-4 text-[15px] font-semibold text-on-brand no-underline">
-          {t("jobs.line.review")}
+        <Link href={fixHref} prefetch={false} className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-brand-edge bg-brand px-4 text-[15px] font-semibold text-on-brand no-underline">
+          {fixLabel}
         </Link>
       ) : off ? (
         <button type="button" disabled={busy || !actions} onClick={() => void change(true)} className="write-ctl inline-flex min-h-11 shrink-0 items-center rounded-lg border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60">

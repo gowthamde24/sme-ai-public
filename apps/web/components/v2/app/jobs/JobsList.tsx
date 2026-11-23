@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import type { Suggestion } from "@/lib/jobs/plan";
 import type { SheetLoad } from "@/lib/jobs/templates";
-import { JOB_FILTERS, filterJobs, type Job, type JobFilter } from "@/lib/jobs/types";
+import { JOB_FILTERS, filterJobs, jobState, type Job, type JobFilter } from "@/lib/jobs/types";
 
 import { makeT, type Words } from "../words";
 import { JobLine } from "./JobLine";
@@ -21,7 +21,7 @@ export type JobsSheet = { actions: SheetActions | null; load: SheetLoad | null; 
 /** The three groups of the list (mock r3-07): what needs the owner first, then what is running, then what is off. */
 const GROUPS = ["needs", "running", "off"] as const;
 type Group = (typeof GROUPS)[number];
-const groupOf = (j: Job): Group => (!j.enabled || j.status === "paused" ? "off" : j.status === "waiting" || j.status === "failed" || j.needsYou > 0 ? "needs" : "running");
+const groupOf = (j: Job): Group => jobState(j);
 
 /**
  * The Jobs page (JOBS; the renamed Office): every job as a compact row in one card, grouped Needs you, Running, Off, with the filter chips (All, Running, Needs you, Off), "New job" and the Do-Not-Call link. A job the owner named shows its own voice, language and

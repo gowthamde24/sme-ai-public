@@ -54,11 +54,20 @@ export type JobSwitched = { id: string; enabled: boolean; status: JobStatus };
 /** The Today section and the Jobs page filter the same way. */
 export const JOB_FILTERS = ["all", "running", "needs_you", "paused"] as const;
 export type JobFilter = (typeof JOB_FILTERS)[number];
+/**
+ * Where a job stands, ONE answer for the groups and the chips of the page (so they always count the same jobs): "needs" = something the owner must do (a missing phone number, WhatsApp, minutes or
+ * billing: the job cannot run, so it is never plain Paused; or it waits for the OK, failed, or has things waiting), "off" = switched off or paused with nothing missing, "running" = on and well.
+ */
+export type JobState = "needs" | "running" | "off";
+export function jobState(j: Job): JobState {
+  if (j.planGate !== null) return "needs";
+  if (!j.enabled || j.status === "paused") return "off";
+  return j.status === "waiting" || j.status === "failed" || j.needsYou > 0 ? "needs" : "running";
+}
 export function filterJobs(jobs: readonly Job[], f: JobFilter): Job[] {
-  // "Running" = running and well: a job that needs the owner is under "Needs you", so the three chips and the three groups of the page count the same jobs (staging walk 20 Nov: Running 7 against RUNNING 5)
-  if (f === "running") return jobs.filter((j) => j.enabled && j.status !== "paused" && j.status !== "waiting" && j.status !== "failed" && j.needsYou === 0);
-  if (f === "needs_you") return jobs.filter((j) => j.status === "waiting" || j.status === "failed" || j.needsYou > 0);
-  if (f === "paused") return jobs.filter((j) => !j.enabled || j.status === "paused");
+  if (f === "running") return jobs.filter((j) => jobState(j) === "running");
+  if (f === "needs_you") return jobs.filter((j) => jobState(j) === "needs");
+  if (f === "paused") return jobs.filter((j) => jobState(j) === "off");
   return [...jobs];
 }
 
