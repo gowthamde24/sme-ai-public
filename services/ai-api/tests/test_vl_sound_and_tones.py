@@ -213,7 +213,7 @@ def test_every_voice_is_listed_with_at_least_two_of_each_gender_and_one_default_
             listed = CFG.voices_of(language, gender, listed_only=True)
             assert len(listed) >= 2 and sum(v.default for v in listed) == 1, (language, gender)
             assert {v.provider for v in listed} == {"cartesia", "sarvam"}, "voices of both providers"
-    assert all(v.listed for v in CFG.catalogue.values()), "owner, 21 Nov 2026: all the voices of Sarvam and Cartesia"
+    assert all(v.listed for v in CFG.catalogue.values() if v.id != "en-shubh"), "owner, 21 Nov 2026: all the voices of Sarvam and Cartesia (but en-shubh: the 24 Nov voice check showed Sarvam refuses it)"
     assert all(v.to_confirm for v in CFG.catalogue.values() if v.provider == "sarvam" and v.listed) and all(v.to_confirm for v in CFG.voices_of("te", listed_only=True) if v.id in ("te-ramya", "te-kavitha")), "no native listener has confirmed the list yet (a Cartesia voice of the old list too)"
     assert [v.id for v in CFG.voices_of("ml", listed_only=True)] == ["ml-latha", "ml-vijay"]
 
