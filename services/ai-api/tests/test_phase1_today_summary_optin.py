@@ -30,7 +30,7 @@ ACTIVE = {"now": 0, "max": 0}
 
 FACT_PATHS = (
     "/profile", "/institution/profile", "/institution/fee-plans", "/campaigns", "/lead-sources", "/lead-imports", "/outreach/rules", "/tasks",
-    "/materials/policy", "/materials/items", "/catalogue/items", "/quote-policy-versions", "/whatsapp/account", "/materials/quotes", "/modules",
+    "/materials/policy", "/materials/items", "/catalogue/items", "/quote-policy-versions", "/whatsapp/account", "/materials/quotes", "/modules", "/first-run",
 )   # the wave-1 paths /quotes and /tasks come from wave1()
 EVERYTHING_SET: dict[str, Any] = {
     "/profile": (200, {"name": "Shop", "town": "Guntur"}),
@@ -259,3 +259,19 @@ def test_the_closed_list_names_no_child_check_the_students_file_is_read_by_the_p
     with TestClient(build()) as client:
         data = get(client, "?include=setup_progress&checks=students_imported,business_profile")
     assert data["setup_progress"]["data"] == {"business_profile": True}
+
+
+def test_a_what_you_sell_entry_counts_as_the_catalogue_step_through_the_first_run_count() -> None:
+    ANSWERS.update(EVERYTHING_SET)
+    ANSWERS["/catalogue/items"] = (200, {"items": []})
+    ANSWERS["/first-run"] = (200, {"pack": {"code": "clinic", "source": "owner", "typed": True}, "needs_type": False, "items": {"count": 1}})
+    with TestClient(build()) as client:
+        assert get(client, "?only=setup_progress&checks=catalogue_has_items")["setup_progress"]["data"] == {"catalogue_has_items": True}
+    today_summary.reset_sections()
+    ANSWERS["/first-run"] = (200, {"pack": {"code": "clinic", "source": "owner", "typed": True}, "needs_type": False, "items": {"count": 0}})
+    with TestClient(build()) as client:
+        assert get(client, "?only=setup_progress&checks=catalogue_has_items")["setup_progress"]["data"] == {"catalogue_has_items": False}
+    today_summary.reset_sections()
+    ANSWERS.pop("/first-run")   # an API without the route: the catalogue answer stands on its own
+    with TestClient(build()) as client:
+        assert get(client, "?only=setup_progress&checks=catalogue_has_items")["setup_progress"]["data"] == {"catalogue_has_items": False}
