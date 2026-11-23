@@ -261,7 +261,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
         {simple && notificationsHref ? (
           <Card id="notifications" title={t("sv6.not.title")}>
             <div className="mt-3">
-              <NotificationsSimple words={words} bare />
+              <NotificationsSimple plain={settingsOpen()} words={words} bare />
             </div>
           </Card>
         ) : (
@@ -273,7 +273,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
         {simple ? (
           <Card id="language" title={t("sv6.lang.title")}>
             <div className="mt-3">
-              <LanguageSimple bare words={words} lang={lang} theme={theme} assistant={biz ? { name: biz.name, town: biz.city ?? "", languages: biz.languages, choices: BUSINESS_LANGUAGES, save: admin ? save : null } : null} />
+              <LanguageSimple plain={settingsOpen()} bare words={words} lang={lang} theme={theme} assistant={biz ? { name: biz.name, town: biz.city ?? "", languages: biz.languages, choices: BUSINESS_LANGUAGES, save: admin ? save : null } : null} />
             </div>
           </Card>
         ) : (

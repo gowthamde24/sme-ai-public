@@ -126687,5 +126687,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "auto.f.limit": {
+  "en": "Most messages to one customer a day",
+  "te": "ఒక customer కి రోజుకు గరిష్టంగా ఎన్ని messages",
+  "hi": "एक customer को दिन में ज़्यादा से ज़्यादा कितने messages",
+  "kn": "ಒಬ್ಬ customer ಗೆ ದಿನಕ್ಕೆ ಗರಿಷ್ಠ ಎಷ್ಟು messages",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.qstart": {
+  "en": "Quiet from (India time)",
+  "te": "ఏ సమయం నుంచి నిశ్శబ్దం (భారత సమయం)",
+  "hi": "कब से शांत (भारतीय समय)",
+  "kn": "ಯಾವ ಸಮಯದಿಂದ ಮೌನ (ಭಾರತೀಯ ಸಮಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.qend": {
+  "en": "Quiet until (India time)",
+  "te": "ఏ సమయం వరకు నిశ్శబ్దం (భారత సమయం)",
+  "hi": "कब तक शांत (भारतीय समय)",
+  "kn": "ಯಾವ ಸಮಯದವರೆಗೆ ಮೌನ (ಭಾರತೀಯ ಸಮಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.evening": {
+  "en": "Evening reminder to visitors",
+  "te": "visitors కి సాయంత్రం reminder",
+  "hi": "visitors को शाम का reminder",
+  "kn": "visitors ಗೆ ಸಂಜೆ reminder",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.heads": {
+  "en": "Heads-up before a visit",
+  "te": "visit కి ముందు heads-up",
+  "hi": "visit से पहले heads-up",
+  "kn": "visit ಗಿಂತ ಮೊದಲು heads-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.noshow": {
+  "en": "Mark a visit as did-not-come",
+  "te": "రాని visit ని did-not-come గా mark చేయడం",
+  "hi": "न आई visit को did-not-come mark करना",
+  "kn": "ಬರದ visit ಅನ್ನು did-not-come ಎಂದು mark ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

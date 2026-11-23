@@ -705,7 +705,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             {jobsScreens() !== "off" ? (
               <>
                 <h2 className={`${pageH2} mt-0`}>{t("sv6.lang.title")}</h2>
-                <LanguageSimple bare words={wordsFor(lang, ["jobs.set.", "settings.biz.err."])} lang={lang} theme={theme} assistant={workspace ? { name: workspace.name, town: workspace.city ?? "", languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), choices: BUSINESS_LANGUAGES, save: saveBusinessAction.bind(null, tenantId) } : null} />
+                <LanguageSimple plain={settingsOpen()} bare words={wordsFor(lang, ["jobs.set.", "settings.biz.", "settings.language.", "set.f."])} lang={lang} theme={theme} assistant={workspace ? { name: workspace.name, town: workspace.city ?? "", languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), choices: BUSINESS_LANGUAGES, save: saveBusinessAction.bind(null, tenantId) } : null} />
               </>
             ) : (
               <>
@@ -722,7 +722,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             {jobsScreens() !== "off" ? (
               // JOBS: the three forms as one page of sentences with the choice inside and ONE Save (the same three actions)
               sending ? (
-                <AutomationSimple words={words} settings={sending} reminders={reminders} actions={{ saveSending: saveSendingAction.bind(null, tenantId), saveQuietHours: saveQuietHoursAction.bind(null, tenantId), saveReminders: saveRemindersAction.bind(null, tenantId) }} />
+                <AutomationSimple plain={settingsOpen()} words={words} settings={sending} reminders={reminders} actions={{ saveSending: saveSendingAction.bind(null, tenantId), saveQuietHours: saveQuietHoursAction.bind(null, tenantId), saveReminders: saveRemindersAction.bind(null, tenantId) }} />
               ) : (
                 <UnreadCard note={t("frame.notyet")} />
               )
@@ -744,7 +744,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           </div>
         ) : null}
         {section === "limits" ? <LimitsView limits={limits} words={wordsFor(lang, ["lim."])} /> : null}
-        {section === "notifications" ? jobsScreens() !== "off" ? <NotificationsSimple words={wordsFor(lang, ["nset.", "jobs.set."])} /> : <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
+        {section === "notifications" ? jobsScreens() !== "off" ? <NotificationsSimple plain={settingsOpen()} words={wordsFor(lang, ["nset.", "jobs.set."])} /> : <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
         {section === "security" ? (
           <section className={`${surface} flex flex-col gap-3`} aria-label={t("settings.security.title")}>
             <h2 className="text-xl font-semibold">{t("settings.security.title")}</h2>

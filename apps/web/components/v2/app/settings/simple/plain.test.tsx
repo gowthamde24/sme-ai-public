@@ -64,3 +64,17 @@ describe("Team without sentences (SETTINGS_OPEN)", () => {
     expect(screen.queryByText(/can work with customers/)).toBeNull();
   });
 });
+
+import { LanguageSimple } from "./LanguageSimple";
+
+describe("Settings > Language without sentences (SETTINGS_OPEN)", () => {
+  it("App language and Appearance are labelled fields, the assistant's languages are ticks, Save waits for a change", () => {
+    const w = wordsFor("en", ["jobs.set.", "settings.biz.", "settings.language.", "set.f."]);
+    render(<LanguageSimple plain bare words={w} lang="en" theme="system" assistant={{ name: "A", town: "B", languages: ["en"], choices: BUSINESS_LANGUAGES, save: vi.fn(async () => ({ ok: true as const })) }} />);
+    expect(screen.getByLabelText("Language")).toBeInTheDocument();
+    expect(screen.getByLabelText("Appearance")).toBeInTheDocument();
+    expect(screen.getByLabelText("English")).toBeChecked();
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+    expect(screen.queryByText(/The app speaks/)).toBeNull();
+  });
+});
