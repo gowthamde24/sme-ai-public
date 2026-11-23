@@ -41,7 +41,7 @@ function draw(ctx: CanvasRenderingContext2D, W: number, t: number, state: OrbMot
   const g = ctx.createRadialGradient(r * 0.8, r * 0.7, r * 0.05, r, r, r * 1.02);
   g.addColorStop(0, "#2b2a31");
   g.addColorStop(0.55, "#1a1920");
-  g.addColorStop(1, "#070b16");
+  g.addColorStop(1, "#0e0d11");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, W);
   const core = ctx.createRadialGradient(r, r * 1.02, 0, r, r, r * 0.75);

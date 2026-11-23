@@ -28,7 +28,7 @@ export function PackLeadDesk({ packId, t, lang }: { packId: string; t: SiteT; la
         ))}
       </ol>
       {keys.note ? (
-        <p className="mt-8 max-w-3xl border-l-4 border-brand-text pl-4 text-[17px] font-semibold text-ink" data-part="ld-note">
+        <p className="mt-8 max-w-3xl text-[17px] font-semibold text-ink" data-part="ld-note">
           {t(keys.note)}
         </p>
       ) : null}

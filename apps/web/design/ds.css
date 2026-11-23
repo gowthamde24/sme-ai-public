@@ -53,19 +53,19 @@
 [data-ui="v2"][data-ds="6"][data-theme="dark"] {
   color-scheme: dark;
 
-  --v2-bg: #0b1020;
-  --v2-surface: #111830;
-  --v2-surface-2: #1a2340;
-  --v2-ink: #f4f5f8;
-  --v2-muted: #9aa6bd;
-  --v2-border: #242d4a;
-  --v2-border-strong: #7480a2;
+  --v2-bg: #0a0a0b;
+  --v2-surface: #121214;
+  --v2-surface-2: #1b1b1e;
+  --v2-ink: #f2f2f3;
+  --v2-muted: #9a9aa2;
+  --v2-border: #232325;
+  --v2-border-strong: #7a7a82;
 
   --v2-brand: #c2410c;
   --v2-on-brand: #ffffff;
   --v2-brand-edge: #c2410c;
   --v2-brand-text: #ff9d6e;
-  --v2-brand-bg: #1c2748;
+  --v2-brand-bg: #1f1f23;
   --v2-ring: #ff9d6e;
 
   --v2-dot: rgba(244, 244, 245, 0.09);
@@ -83,7 +83,7 @@
   --ds-st-transferred-text: #9db8ff;
   --ds-st-transferred-bg: #162349;
   --ds-st-noanswer-text: #c4c4cb;
-  --ds-st-noanswer-bg: #1c2440;
+  --ds-st-noanswer-bg: #1f1f22;
   --ds-st-rejected-text: #fca5a5;
   --ds-st-rejected-bg: #3a1717;
   --ds-st-spam-text: #ffb27a;
@@ -97,19 +97,19 @@
   [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --v2-bg: #0b1020;
-    --v2-surface: #111830;
-    --v2-surface-2: #1a2340;
-    --v2-ink: #f4f5f8;
-    --v2-muted: #9aa6bd;
-    --v2-border: #242d4a;
-    --v2-border-strong: #7480a2;
+    --v2-bg: #0a0a0b;
+    --v2-surface: #121214;
+    --v2-surface-2: #1b1b1e;
+    --v2-ink: #f2f2f3;
+    --v2-muted: #9a9aa2;
+    --v2-border: #232325;
+    --v2-border-strong: #7a7a82;
 
     --v2-brand: #c2410c;
     --v2-on-brand: #ffffff;
     --v2-brand-edge: #c2410c;
     --v2-brand-text: #ff9d6e;
-    --v2-brand-bg: #1c2748;
+    --v2-brand-bg: #1f1f23;
     --v2-ring: #ff9d6e;
 
     --v2-dot: rgba(244, 244, 245, 0.09);
@@ -127,7 +127,7 @@
     --ds-st-transferred-text: #9db8ff;
     --ds-st-transferred-bg: #162349;
     --ds-st-noanswer-text: #c4c4cb;
-    --ds-st-noanswer-bg: #1c2440;
+    --ds-st-noanswer-bg: #1f1f22;
     --ds-st-rejected-text: #fca5a5;
     --ds-st-rejected-bg: #3a1717;
     --ds-st-spam-text: #ffb27a;
@@ -309,9 +309,9 @@
    The band is glossy dark in BOTH themes: inside it the tokens are the dark ones, so every utility class there (text-ink, text-muted, border-line, bg-surface-2 ...) reads right whatever the theme.
    ========================================================================== */
 [data-ui="v2"][data-ds="6"] .ds-hero {
-  --v2-bg: #0b1020;
-  --v2-surface: #111830;
-  --v2-surface-2: #1a2340;
+  --v2-bg: #0a0a0b;
+  --v2-surface: #121214;
+  --v2-surface-2: #1b1b1e;
   --v2-ink: #fafafa;
   --v2-muted: #b4b3bb;
   --v2-border: rgba(255, 255, 255, 0.12);
@@ -327,7 +327,7 @@
   border-radius: 28px;
   padding: 22px 26px 22px;
   color: #fafafa;
-  background: linear-gradient(160deg, #111830, #0b1020);
+  background: linear-gradient(160deg, #121214, #0a0a0b);
   box-shadow: 0 30px 70px rgba(8, 8, 12, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.6);
 }
 [data-ui="v2"][data-ds="6"] .ds-hero::before {
