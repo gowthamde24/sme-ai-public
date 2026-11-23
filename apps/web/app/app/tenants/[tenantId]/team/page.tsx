@@ -6,6 +6,7 @@ import { InviteForm } from "@/components/v2/app/team/InviteForm";
 import { Invitations } from "@/components/v2/app/team/Invitations";
 import { TeamMembers } from "@/components/v2/app/team/TeamMembers";
 import { InviteSimple, TeamMembersSimple } from "@/components/v2/app/settings/simple/Lazy";
+import { settingsOpen } from "@/lib/screens/flag";
 import { pageMain } from "@/components/v2/app/ui";
 import { appT } from "@/i18n/app";
 import { partsWords, wordsFor } from "@/i18n/app-words";
@@ -55,7 +56,7 @@ export default async function TeamPage({ params }: PageProps<"/app/tenants/[tena
     escalate(error);
     throw error;
   }
-  const words = wordsFor(lang, ["team.", "apierr.", "problem.", ...(jobsScreens() !== "off" ? ["jobs.set."] : [])], ["dta.btn.working", "dta.btn.copied", "dta.cal.copy_failed"]);
+  const words = wordsFor(lang, ["team.", "apierr.", "problem.", "set.f.", ...(jobsScreens() !== "off" ? ["jobs.set."] : [])], ["dta.btn.working", "dta.btn.copied", "dta.cal.copy_failed"]);
   const actions = {
     invite: inviteAction.bind(null, tenantId),
     revoke: revokeInvitationAction.bind(null, tenantId),
@@ -66,8 +67,8 @@ export default async function TeamPage({ params }: PageProps<"/app/tenants/[tena
     <main className={pageMain} lang={lang}>
       <PageTop title={t("team.title")} sub={t("team.sub")} />
       <div className="mt-6 flex max-w-3xl flex-col gap-5">
-        {team.ok ? simple ? <TeamMembersSimple words={words} members={team.data.members} myRole={tenant.role} actions={actions} /> : <TeamMembers words={words} members={team.data.members} myRole={tenant.role} actions={actions} /> : <PartProblem kind={team.kind} retryAfter={team.retryAfter} words={words} title={t("team.members.title")} />}
-        {admin ? simple ? <InviteSimple words={words} myRole={tenant.role} workspaceName={tenant.name} actions={actions} /> : <InviteForm words={words} myRole={tenant.role} workspaceName={tenant.name} actions={actions} /> : null}
+        {team.ok ? simple ? <TeamMembersSimple plain={settingsOpen()} words={words} members={team.data.members} myRole={tenant.role} actions={actions} /> : <TeamMembers words={words} members={team.data.members} myRole={tenant.role} actions={actions} /> : <PartProblem kind={team.kind} retryAfter={team.retryAfter} words={words} title={t("team.members.title")} />}
+        {admin ? simple ? <InviteSimple plain={settingsOpen()} words={words} myRole={tenant.role} workspaceName={tenant.name} actions={actions} /> : <InviteForm words={words} myRole={tenant.role} workspaceName={tenant.name} actions={actions} /> : null}
         {invitations ? invitations.ok ? <Invitations words={words} items={invitations.data} myRole={tenant.role} actions={actions} /> : <PartProblem kind={invitations.kind} retryAfter={invitations.retryAfter} words={words} title={t("team.inv.title")} /> : null}
       </div>
     </main>

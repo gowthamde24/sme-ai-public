@@ -11,11 +11,19 @@ from typing import Any
 import pytest
 
 from app.jobs import listing
+from app.jobs import week as week_mod
 from app.jobs.wiring import JobsRuntime
 from tests.fakes import TENANT_A, auth, make_client
 from tests.test_jobs_s2_detail import PACKS, World
 
 JOBS = f"/v1/tenants/{TENANT_A.id}/jobs"
+
+
+@pytest.fixture(autouse=True)
+def _fresh_cache() -> Any:
+    week_mod._kept.clear()   # noqa: SLF001 - the answers are kept for 30 s per person: every test starts empty
+    yield
+    week_mod._kept.clear()   # noqa: SLF001
 
 
 def call(*, direction: str = "inbound", answered: bool = True, days_ago: float = 1, seconds: int = 90, simulated: bool = False) -> Any:
@@ -81,3 +89,40 @@ def test_a_business_that_never_has_the_lead_finder_has_no_researcher_row() -> No
     client, _ = make_client(jobs=JobsRuntime(directory=PACKS), lead_finder=SimpleNamespace(availability=lambda t, tid: SimpleNamespace(reason="not_for_this_business", available=False, access="hidden")))
     kinds = [i["kind"] for i in client.get(f"{JOBS}/week", headers=auth("a_owner")).json()["items"]]
     assert "researcher" not in kinds and kinds == [k for k in listing.KINDS if k != "researcher"]
+
+
+def test_the_answer_is_kept_for_a_short_time_per_person_and_never_shared() -> None:
+    reads: list[int] = []
+
+    def counting(token: str, tenant_id: Any, state: str, limit: int, before: Any) -> Any:
+        reads.append(1)
+        return SimpleNamespace(items=[call()])
+
+    w = World(calls=SimpleNamespace(list=counting))
+    first = week(w).json()
+    again = week(w).json()
+    assert first == again and len(reads) == 1, "the second look inside half a minute reads nothing"
+    other = week(w, "a_admin").json()
+    assert len(reads) == 2 and other["items"], "another person is computed with their own token, never handed the owner's answer"
+    week_mod._kept.clear()   # noqa: SLF001
+    week(w)
+    assert len(reads) == 3, "after the time (or a restart) it is read again"
+
+
+def test_an_answer_older_than_the_time_is_read_again(monkeypatch: pytest.MonkeyPatch) -> None:
+    reads: list[int] = []
+
+    def counting(*args: Any) -> Any:
+        reads.append(1)
+        return SimpleNamespace(items=[])
+
+    w = World(calls=SimpleNamespace(list=counting))
+    clock = {"t": 1000.0}
+    monkeypatch.setattr("app.jobs.week.time.monotonic", lambda: clock["t"])
+    week(w)
+    clock["t"] += week_mod.TTL_S - 1
+    week(w)
+    assert len(reads) == 1
+    clock["t"] += 2
+    week(w)
+    assert len(reads) == 2

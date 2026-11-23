@@ -3,6 +3,7 @@ import { type ReactNode } from "react";
 import { JobsToday } from "@/components/v2/app/jobs/JobsToday";
 import { FinishChip } from "@/components/v2/app/today/v6/day-one/FinishChip";
 import { doneCount, showChecklist, showChip, stepViews, type StepId } from "@/components/v2/app/today/v6/day-one/steps";
+import { todayOpen } from "@/lib/screens/flag";
 import type { DayOneIn, LiveCallSeed, V6In } from "@/components/v2/app/today/v6/types";
 import { wordsFor } from "@/i18n/app-words";
 import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
@@ -148,6 +149,7 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
         demoCall: manages && demoCall() && (await readIsDemo(token, tenantId, shop)) ? { start: startDemoCallAction.bind(null, tenantId), end: endDemoCallAction.bind(null, tenantId) } : null,
         dayOne,
         chip,
+        ...(todayOpen() ? { open: true } : {}),
       };
     })(),
   );
@@ -168,7 +170,7 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
         const messagesToChange = manages ? (r?.needsYou ?? []).filter((n) => n.code === "message_needs_change" && n.target.type === "message").length : 0;
         if (!list || list.length === 0) return null;
         const words = wordsFor(lang, ["jobs."]);
-        const section = <JobsToday jobs={list} words={words} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} sheet={sheet} messagesToChange={messagesToChange} />;
+        const section = <JobsToday jobs={list} words={words} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} sheet={sheet} messagesToChange={messagesToChange} open={todayOpen()} />;
         // the staging preview, "my business" (lib/screens/preview.ts): jobs drawn from the sample data (the route is not there yet) say so
         return list.some((j) => j.sample) ? (
           <>

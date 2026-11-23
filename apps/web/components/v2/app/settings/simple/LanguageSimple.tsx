@@ -13,6 +13,7 @@ import { JobChip } from "../../ds/JobChip";
 import { Choose } from "../../jobs/rules/parts";
 import { errorLine, okLine, primary } from "../../visits/styles";
 import { makeT } from "../../words";
+import { SaveBar, SelectField, TickGroup } from "./fields";
 import { EffectBox, MultiPanel, PillMulti, Sentence, Val, joinNames } from "./parts";
 
 type State = { ok: true } | { ok: false; error: string } | undefined;
@@ -24,7 +25,7 @@ const same = (a: readonly string[], b: readonly string[]) => a.length === b.leng
  * as the old controls did); the assistant's languages are the business languages, saved with ONE Save through the same action as Settings > Business (the name and city sent as they are, so only the languages change).
  * Someone who may not change the business reads the assistant's languages without a choice (`assistant` is null).
  */
-export function LanguageSimple({ words, lang, theme, assistant, bare = false }: { words: Readonly<Record<string, string>>; lang: Lang; theme: ThemePick; /** the business's own languages and the action that saves them (the Owner or an Admin); `save` null = read only; null = the business could not be read */ assistant: { name: string; town: string; languages: readonly string[]; choices: readonly CallLang[]; save: ((prev: State, formData: FormData) => Promise<State>) | null } | null; bare?: boolean }) {
+export function LanguageSimple({ words, lang, theme, assistant, bare = false, plain = false }: { /** SETTINGS_OPEN: plain labelled fields. */ plain?: boolean; words: Readonly<Record<string, string>>; lang: Lang; theme: ThemePick; /** the business's own languages and the action that saves them (the Owner or an Admin); `save` null = read only; null = the business could not be read */ assistant: { name: string; town: string; languages: readonly string[]; choices: readonly CallLang[]; save: ((prev: State, formData: FormData) => Promise<State>) | null } | null; bare?: boolean }) {
   const t = makeT(words);
   const uid = useId();
   const router = useRouter();
@@ -57,7 +58,34 @@ export function LanguageSimple({ words, lang, theme, assistant, bare = false }: 
   };
   const fxLook = t(`jobs.set.lang.fx.theme.${look}`);
   const fx = langs.length > 0 ? t("jobs.set.lang.fx", { app: LANGUAGE_NAMES[appLang].native, theme: fxLook, langs: names(langs) }) : t("jobs.set.lang.fx.nolang", { app: LANGUAGE_NAMES[appLang].native, theme: fxLook });
-  const body = (
+  const plainBody = (
+    <form action={run} className="flex flex-col gap-5" data-part="language-simple" data-plain="">
+      <SelectField label={t("settings.language.language")} hint={t("jobs.set.lang.help")} value={appLang} options={LANGS.map((l) => ({ value: l, label: LANGUAGE_NAMES[l as Lang].native }))} onChange={changeApp} />
+      <SelectField label={t("settings.language.appearance")} value={look} options={THEMES.map((k) => ({ value: k, label: t(`jobs.set.lang.theme.${k}`) }))} onChange={changeLook} />
+      {assistant && canSave ? (
+        <>
+          <TickGroup legend={t("settings.biz.langs")} hint={t("settings.biz.langs.help")} options={assistant.choices.map((c) => ({ value: c, label: CALL_LANG_NAMES[c] }))} values={langs} onChange={setLangs} disabled={pending} />
+          <input type="hidden" name="name" value={assistant.name} />
+          <input type="hidden" name="town" value={assistant.town} />
+          {langs.map((l) => (
+            <input key={l} type="hidden" name="languages" value={l} />
+          ))}
+        </>
+      ) : assistant ? (
+        <p className="m-0 text-[16px] text-muted">
+          <span className="font-semibold text-ink">{t("settings.biz.langs")}: </span>
+          {names(initial) || t("jobs.set.na")}
+        </p>
+      ) : null}
+      {state && !state.ok ? (
+        <p role="alert" className={errorLine}>
+          {t(`settings.biz.err.${state.error}`)}
+        </p>
+      ) : null}
+      {canSave ? <SaveBar dirty={dirty} saved={!!state?.ok} pending={pending} label={t("jobs.set.save")} unsaved={t("set.f.unsaved")} done={t("set.f.saved")} onClass={`${primary} jb-press`} /> : null}
+    </form>
+  );
+  const body = plain ? plainBody : (
     <form action={run} className="flex flex-col gap-3" data-part="language-simple">
       <p className="m-0 text-[14px] text-muted">{t("jobs.set.lang.help")}</p>
       <Sentence line="app" template={t("jobs.set.lang.line.app")} parts={{ app: (aria) => <Choose aria={aria} value={appLang} options={LANGS} text={(l) => LANGUAGE_NAMES[l as Lang].native} onChange={changeApp} /> }} />

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { settingsOpen } from "@/lib/screens/flag";
 import type { ReactNode } from "react";
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
@@ -148,7 +149,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
         {simple ? (
           <Card id="business" title={t("sv6.biz.title")}>
             <div className="mt-3">
-              <BusinessSimple variant="card" words={words} action={save} name={biz?.name ?? tenantName} town={biz?.city ?? ""} languages={biz?.languages ?? []} choices={BUSINESS_LANGUAGES} canEdit={admin && biz !== null} canEditAddress={owner && biz !== null} address={biz ? { line: biz.addressLine, area: biz.area, pincode: biz.pincode } : null}>
+              <BusinessSimple plain={settingsOpen()} variant="card" words={words} action={save} name={biz?.name ?? tenantName} town={biz?.city ?? ""} languages={biz?.languages ?? []} choices={BUSINESS_LANGUAGES} canEdit={admin && biz !== null} canEditAddress={owner && biz !== null} address={biz ? { line: biz.addressLine, area: biz.area, pincode: biz.pincode } : null}>
                 <dl className="divide-y divide-line">
             {admin ? <HoursRow t={t} hours={data.hours} href={`${base}/visits?view=hours`} /> : null}
             <Row t={t} label={t("sv6.biz.gst")} value={data.gstin ?? null} href={admin ? `${settings}?section=business` : null} />
@@ -260,7 +261,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
         {simple && notificationsHref ? (
           <Card id="notifications" title={t("sv6.not.title")}>
             <div className="mt-3">
-              <NotificationsSimple words={words} bare />
+              <NotificationsSimple plain={settingsOpen()} words={words} bare />
             </div>
           </Card>
         ) : (
@@ -272,7 +273,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
         {simple ? (
           <Card id="language" title={t("sv6.lang.title")}>
             <div className="mt-3">
-              <LanguageSimple bare words={words} lang={lang} theme={theme} assistant={biz ? { name: biz.name, town: biz.city ?? "", languages: biz.languages, choices: BUSINESS_LANGUAGES, save: admin ? save : null } : null} />
+              <LanguageSimple plain={settingsOpen()} bare words={words} lang={lang} theme={theme} assistant={biz ? { name: biz.name, town: biz.city ?? "", languages: biz.languages, choices: BUSINESS_LANGUAGES, save: admin ? save : null } : null} />
             </div>
           </Card>
         ) : (
