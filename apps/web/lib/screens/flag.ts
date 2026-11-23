@@ -227,3 +227,6 @@ export const earlyAccess = (value: string | undefined = process.env.EARLY_ACCESS
  * contracts/composer-queue-DRAFT.md). `1` = C1's routes, `mock` = made-up answers kept in a cookie of the browser (nothing is sent; texts with a `#` word walk through every state, see lib/api/chat-queue.ts), unset = the old behaviour (the template picker), unchanged. Only with DESIGN_V6.
  */
 export const chatQueueScreens = (value: string | undefined = process.env.CHAT_QUEUE_SCREENS): ScreenMode => screenMode(value);
+
+/** My assistant in the OPEN layout (owner chose it, 24 Nov 2026; mock "My assistant" in stack19-app-mock.html): two tabs, "To your customers" and "To you", the cards as plain hairline sections, the extra choices under "More choices". `1` = on; unset = the screen as it was. */
+export const myAssistantOpen = (value: string | undefined = process.env.MY_ASSISTANT_OPEN): boolean => value === "1";
