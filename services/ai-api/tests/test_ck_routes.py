@@ -522,3 +522,28 @@ def test_reset_removes_and_loads_again_in_one_call_owner_and_admin_only() -> Non
     body = r.json()
     assert body["removed"]["other"] == 4 and body["removed"]["companies"] == 2 and body["kept"]["contacts"] == 1 and body["status"]["loaded"] is True
     assert client.post(f"/v1/tenants/{A}/example-data/remove", headers=auth("a_owner")).json()["removed"]["other"] == 0
+
+
+# ---- first run by business type (docs/contracts/first-run.md, 25 Nov 2026)
+def test_the_owner_changes_the_pack_with_the_second_factor_and_a_member_reads_the_first_run_facts() -> None:
+    packs = FakePacks()
+    calls: list[tuple[str, str]] = []
+
+    def set_pack(token: str, tenant_id: uuid.UUID, pack: str) -> dict[str, Any]:
+        calls.append(("set", pack))
+        return packs.workspace_pack(token, tenant_id)
+
+    packs.workspace_pack_set = set_pack  # type: ignore[attr-defined]
+    packs.first_run_facts = lambda token, tenant_id: {"pack_code": "textiles", "source": "default", "typed": False, "items_count": 2}  # type: ignore[attr-defined]
+    client, _ = make_client(packs=packs)
+    base = f"/v1/tenants/{TENANT_A.id}"
+    facts = client.get(f"{base}/first-run", headers=auth("a_viewer"))
+    assert facts.status_code == 200 and facts.json() == {"pack": {"code": "textiles", "source": "default", "typed": False}, "needs_type": True, "items": {"count": 2}}
+    assert client.put(f"{base}/pack", json={"pack": "clinic"}, headers=auth("a_owner", aal="aal2")).status_code == 200 and calls == [("set", "clinic")]
+    assert client.put(f"{base}/pack", json={"pack": "other"}, headers=auth("a_owner", aal="aal2")).status_code == 200 and calls[-1] == ("set", "general_business"), "the public word other is the generic pack"
+    assert client.put(f"{base}/pack", json={"pack": "Bad Code"}, headers=auth("a_owner", aal="aal2")).status_code == 422
+    assert client.put(f"{base}/pack", json={"pack": "clinic", "x": 1}, headers=auth("a_owner", aal="aal2")).status_code == 422, "an unknown field is refused"
+    assert client.put(f"{base}/pack", json={"pack": "clinic"}, headers=auth("a_owner", aal="aal1")).status_code == 403, "the Owner needs the second factor"
+    for who in ("a_admin", "a_viewer", "a_sales"):
+        assert client.put(f"{base}/pack", json={"pack": "clinic"}, headers=auth(who, aal="aal2")).status_code == 403, who
+    assert len(calls) == 2

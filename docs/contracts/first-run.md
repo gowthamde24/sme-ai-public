@@ -15,5 +15,5 @@ Status: **shapes fixed, built in one PR** ("live on staging" is added to this no
   "items": {"count": 3} }
 ```
 * `typed`: false only while `source` is `default` or `legacy` (nobody chose the type): then `needs_type` is true, and the web asks ONCE ("What kind of business?") before the wizard and the checklist. A workspace made at sign-up (`source: signup`) or changed by the Owner (`owner`) is typed.
-* `items.count`: how many catalogue items the workspace has so far, of any kind (a saree, a material, a course, a product: the catalogue holds them all; archived items do not count). The saree count of today is the same number for a textiles workspace, so `isFresh` can read `items.count === 0` for every pack.
+* `items.count`: how many items the workspace's CATALOGUE holds so far (every row, drafts included). Today that table is saree-shaped, so it is the same number as the saree count of a textiles workspace and stays 0 for the other packs until the generic first-item step has its own storage (C2's report, gap 2: not built, no API exists for it yet); when it lands, its items are added to this count in the same call, so `isFresh` can read `items.count === 0` for every pack.
 * Nothing else is added (no names, no prices).
