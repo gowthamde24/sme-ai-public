@@ -126467,5 +126467,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "mya.open.customers": {
+  "en": "To your customers",
+  "te": "మీ కస్టమర్లకు",
+  "hi": "आपके ग्राहकों के लिए",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.open.you": {
+  "en": "To you",
+  "te": "మీకు",
+  "hi": "आपके लिए",
+  "kn": "ನಿಮಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.open.tabs": {
+  "en": "Who it talks to",
+  "te": "ఎవరితో మాట్లాడుతుంది",
+  "hi": "किससे बात करती है",
+  "kn": "ಯಾರೊಂದಿಗೆ ಮಾತನಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.open.more": {
+  "en": "More choices",
+  "te": "మరిన్ని ఎంపికలు",
+  "hi": "और विकल्प",
+  "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

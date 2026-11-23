@@ -686,3 +686,20 @@
 [data-ui="v2"][data-ds="6"] [data-frame="app"] main:not(:has([data-part="command-bar"])) :is(.text-xs, [class*="text-[11px]"], [class*="text-[12px]"], [class*="text-[12.5px]"], [class*="text-[13px]"], [class*="text-[13.5px]"]):not([data-illustration] *) {
   font-size: 14px !important;
 }
+
+/* My assistant, the OPEN layout (owner chose it, 24 Nov 2026): the three cards become plain sections on the page: no box, no radius, a hairline above each block; the tabs sit on a hairline. The data-open wrapper only exists with MY_ASSISTANT_OPEN=1. */
+[data-ui="v2"][data-ds="6"] [data-open="mya"] :is([data-part="mya-voice-card"], [data-part="mya-voice-tone"], [data-part="mya-talk-to-you"]) {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-voice-card"] > :is(fieldset, div[data-part]):not(:first-child) {
+  border-top: 1px solid var(--v2-border);
+  padding-top: 18px;
+}
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"] > div { border-top: 0; }
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"] summary::-webkit-details-marker { display: none; }
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"] summary::after { content: "+"; margin-left: auto; font-size: 20px; font-weight: 500; }
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"][open] summary::after { content: "\2212"; }

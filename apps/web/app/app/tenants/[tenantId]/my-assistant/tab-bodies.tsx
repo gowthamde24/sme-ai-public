@@ -12,7 +12,8 @@ import type { Lang } from "@/i18n/lang";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { offeredLangs } from "@/lib/languages";
 import { currentAssistantName } from "@/lib/assistant/name";
-import { appV4, moreLanguages, autoReplyScreens, callSettingsScreens, jobsScreens, openingLineScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { appV4, moreLanguages, autoReplyScreens, callSettingsScreens, jobsScreens, openingLineScreens, voicePickerScreens, myAssistantOpen } from "@/lib/screens/flag";
+import { OpenTabs } from "@/components/v2/app/my-assistant/OpenTabs";
 
 import { setAutoReplyAction } from "../auto-reply-actions";
 import { saveCallSettingsAction } from "../call-settings-actions";
@@ -104,8 +105,8 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
   const voiceNames: Partial<Record<string, string>> = {};
   if (pickerOn) for (const l of data.languages) voiceNames[l] = pickerOn.voices.find((v) => v.id === pickerOn.active[l] && v.language === l)?.name ?? pickerOn.voices.find((v) => v.language === l && v.gender === pickerOn.gender && (v.id === pickerOn.choices[l] || (!pickerOn.choices[l] && v.isDefault)))?.name;
   const speaksPanel = speaks ? { ...speaks, save: saveSpeaksAction.bind(null, tenantId) } : null;
-  return (
-    <div className="flex flex-col gap-4" data-part="mya-voice">
+  const cards = (
+    <>
       {!picker && !training && !speaks ? <EmptyNext title={t("mya.v.empty.t")} text={t("mya.v.empty.d")} action={{ href: `${base}/settings?section=assistant`, label: t("mya.v.empty.go") }} /> : null}
       <VoiceCard
         words={cardWords}
@@ -126,6 +127,31 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
         securityHref="/app/security"
         testCallHref={testCallHref}
       />
+      {myAssistantOpen() ? (
+        <details data-part="mya-more" className="group">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 border-t border-line pt-3 text-[15px] font-semibold text-muted">{t("mya.open.more")}</summary>
+          <div className="mt-3">
+            <VoiceTone
+              words={words}
+              voiceNames={voiceNames}
+              first={first}
+              training={training}
+              actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
+              canEdit={owner}
+              securityHref="/app/security"
+              speaks={speaksPanel}
+              offered={offeredLangs(moreLanguages())}
+              langNames={CALL_LANG_NAMES}
+              business={business}
+              assistantName={currentAssistantName()}
+              hearIt={openingLineScreens() !== "off" ? previewOpeningLineAction.bind(null, tenantId) : null}
+              sayAi={data.opening ? data.opening.mentionAi : (speaks?.initial.sayAi?.value ?? null)}
+              suggested={data.opening?.defaults ?? null}
+              v4={appV4()}
+            />
+          </div>
+        </details>
+      ) : (
       <VoiceTone
         words={words}
         voiceNames={voiceNames}
@@ -144,6 +170,18 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
         suggested={data.opening?.defaults ?? null}
         v4={appV4()}
       />
+      )}
+    </>
+  );
+  if (myAssistantOpen())
+    return (
+      <div data-part="mya-voice">
+        <OpenTabs customers={cards} you={you} labels={{ customers: t("mya.open.customers"), you: t("mya.open.you"), tabs: t("mya.open.tabs") }} />
+      </div>
+    );
+  return (
+    <div className="flex flex-col gap-4" data-part="mya-voice">
+      {cards}
       {you}
     </div>
   );
