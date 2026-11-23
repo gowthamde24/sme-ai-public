@@ -34,6 +34,6 @@ describe("the production web flags (owner, 25 Nov 2026: Customer Zero sees the r
   it("is free early access with the new look, and every flag it sets is also set on staging (staging stays the reference)", () => {
     expect(prod.EARLY_ACCESS).toBe("1");
     for (const k of ["DESIGN_V6", "APP_V4", "TODAY_V5", "JOBS", "PHONE_NUMBER_SCREENS"]) expect(prod[k], k).toBe("1");
-    for (const k of Object.keys(prod)) if (!["EARLY_ACCESS", "REVIEWED_TRANSLATIONS_ONLY", "JOBS"].includes(k)) expect(staging, k).toHaveProperty(k);
+    for (const k of Object.keys(prod)) if (!["EARLY_ACCESS", "REVIEWED_TRANSLATIONS_ONLY"].includes(k)) expect(staging, k).toHaveProperty(k);
   });
 });
