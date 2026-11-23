@@ -61,6 +61,7 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("voicelink_telephony", "/v1/telephony/voicelink/", False, 120),   # VoiceLink's WebSocket bot address (the secret token is in the path; inbound only)
     PublicRule("plivo_telephony", "/v1/telephony/plivo/", False, 120),  # job 3 phase A: Plivo's signed answer / hangup / stream-status requests (a few per call; the signature is the credential, the stream has its token and the gate)
     PublicRule("voice_samples", "/v1/voice-samples/", False, 120),
+    PublicRule("background_samples", "/v1/background-samples/", False, 120),   # the pre-recorded background-sound previews (static files, no data)
     PublicRule("voice_style_samples", "/v1/voice-style-samples/", False, 120),   # the pre-recorded style previews (static files, no data)  # job voice-picker: the pre-rendered samples (static files, no data)
     PublicRule("google_calendar_callback", "/v1/integrations/google-calendar/callback", True, 20),  # appointment booking slice 4: Google sends the browser back after the consent screen (the signed, one-time state is the credential)
     PublicRule("google_calendar_push", "/v1/integrations/google-calendar/push", True, 600),  # Google's push notifications (the channel token is the credential; a burst is debounced in the database)
