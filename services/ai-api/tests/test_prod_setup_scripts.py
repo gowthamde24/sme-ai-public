@@ -91,3 +91,26 @@ def test_the_secrets_prompt_generates_its_own_keys_and_a_typed_value_never_reach
     assert "skipped  sme-plivo-auth-id" in r.stdout
     ran = log.read_text()
     assert "secrets create sme-scheduler-password" in ran and "secretmanager.secretAccessor" in ran
+
+
+def test_the_scheduler_account_is_created_pre_confirmed_and_never_leaks_its_values() -> None:
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("prod_scheduler_account", ROOT / "deploy" / "prod_scheduler_account.py")
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    seen: list[tuple[str, dict[str, str], dict[str, object]]] = []
+
+    def ok(url: str, headers: dict[str, str], body: dict[str, object]) -> tuple[int, str]:
+        seen.append((url, headers, body))
+        return 200, "{}"
+
+    assert mod.create("ijmsusgyilwskpjxfauu", "KEY", "scheduler@stack19.com", "a-long-password-1", ok) == "created"
+    url, headers, body = seen[0]
+    assert url == "https://ijmsusgyilwskpjxfauu.supabase.co/auth/v1/admin/users" and body["email_confirm"] is True and body["email"] == "scheduler@stack19.com"
+    assert headers["apikey"] == "KEY"
+    assert mod.create("ijmsusgyilwskpjxfauu", "KEY", "scheduler@stack19.com", "a-long-password-1", lambda *a: (422, '{"msg":"A user with this email address has already been registered"}')) == "exists"
+    assert mod.create("ijmsusgyilwskpjxfauu", "KEY", "scheduler@stack19.com", "a-long-password-1", lambda *a: (401, "no")) == "refused"
+    assert mod.create("ijmsusgyilwskpjxfauu", "KEY", "scheduler@stack19.com", "short", ok) == "refused", "a weak password is refused before anything is sent"
+    assert mod.create("bad ref!", "KEY", "scheduler@stack19.com", "a-long-password-1", ok) == "refused" and len(seen) == 1

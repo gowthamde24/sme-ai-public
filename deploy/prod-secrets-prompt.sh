@@ -41,7 +41,8 @@ grant() {   # secret, readers
   done
 }
 
-created=0; skipped=0; missing_required=0
+created=0; skipped=0; missing_required=0; SCHED_PW=""
+REF="ijmsusgyilwskpjxfauu"; SCHEDULER_EMAIL="scheduler@stack19.com"
 for row in "${SECRETS[@]}"; do
   IFS='|' read -r name kind req readers what <<< "$row"
   if gcloud secrets describe "$name" --project "$PROJECT_ID" >/dev/null 2>&1; then
@@ -65,9 +66,31 @@ for row in "${SECRETS[@]}"; do
       echo "  this one is required: type it, or press Ctrl-C to stop (nothing half-created is left behind: re-run to continue)"; continue
     fi
     printf '%s' "$V" | gcloud secrets create "$name" --project "$PROJECT_ID" --replication-policy=automatic --data-file=- >/dev/null
+    [ "$name" = sme-scheduler-password ] && SCHED_PW="$V"
     unset V
     grant "$name" "$readers"; echo "created  $name  (read by: $readers)"; created=$((created + 1)); break
   done
 done
 unset V 2>/dev/null || true
+
+# the scheduler's sign-in account (planner decision 23 Nov: scheduler@stack19.com, pre-confirmed, NO mailbox): created with the password typed above, in this terminal, and registered as the scheduler in the database.
+# Needs the main checkout (linked to PRODUCTION: deploy/db_target.sh production must pass) and the Supabase CLI login. Skipped (with the reason) when the password was not typed in this run: run with --scheduler-account to do it from the stored secret.
+scheduler_account() {
+  local pw="$1" key out
+  ./deploy/db_target.sh production >/dev/null || { echo "scheduler account: skipped (this checkout is not linked to production)"; return 0; }
+  key="$(supabase projects api-keys --project-ref "$REF" --agent no -o json 2>/dev/null | python3 -c 'import sys,json; d,_=json.JSONDecoder().raw_decode(sys.stdin.read()); print(next((k["api_key"] for k in d if k.get("type") in ("secret", "service_role") or k.get("name") == "service_role"), ""))' || true)"
+  [ -n "$key" ] || { echo "scheduler account: skipped (could not read the project's service key: run `supabase login`)"; return 0; }
+  out="$(SCH_REF="$REF" SCH_KEY="$key" SCH_EMAIL="$SCHEDULER_EMAIL" SCH_PW="$pw" python3 deploy/prod_scheduler_account.py --env || true)"
+  unset key
+  echo "scheduler account $SCHEDULER_EMAIL: $out"
+  [ "$out" = created ] || [ "$out" = exists ] || return 0
+  supabase db query --linked "select app.operator_register_scheduler('$SCHEDULER_EMAIL')" >/dev/null 2>&1 && echo "scheduler registered in the database" || echo "scheduler registration FAILED: tell the operator (select app.operator_register_scheduler('$SCHEDULER_EMAIL');)"
+  if [ -f deploy/.env.production ] && grep -q '^PROD_SCHEDULER_EMAIL=$' deploy/.env.production; then sed -i.bak "s|^PROD_SCHEDULER_EMAIL=\$|PROD_SCHEDULER_EMAIL=$SCHEDULER_EMAIL|" deploy/.env.production && rm -f deploy/.env.production.bak && echo "PROD_SCHEDULER_EMAIL set in deploy/.env.production"; fi
+}
+if [ -z "$CHECK" ]; then
+  if [ -n "$SCHED_PW" ]; then scheduler_account "$SCHED_PW"; unset SCHED_PW
+  elif [ "${1:-}" = "--scheduler-account" ] || [ "${2:-}" = "--scheduler-account" ]; then
+    scheduler_account "$(gcloud secrets versions access latest --secret sme-scheduler-password --project "$PROJECT_ID")"
+  fi
+fi
 echo; echo "done: $created created, $skipped already existed$([ -n "$CHECK" ] && echo ", $missing_required required ones missing")"

@@ -50,7 +50,7 @@ deploy/budget-alerts.sh            # dry run first; INR 1,000 monthly alert, ale
 ```
 
 ## 4. Secrets: names only, each typed at a HIDDEN prompt in the owner's terminal [OWNER]
-**ONE COMMAND (owner, from the main checkout): `deploy/prod-secrets-prompt.sh --check` (lists what exists), then `deploy/prod-secrets-prompt.sh` (hidden prompt for each missing secret, in order; Enter skips an optional one; keys we can generate are generated; each secret is granted to ONLY the accounts that read it). The table below is what it asks.**
+**The scheduler account (`scheduler@stack19.com`, planner decision 23 Nov) is created by the same script right after you type its password: pre-confirmed through the Supabase admin API (no mailbox, no mail), then registered with `app.operator_register_scheduler`; `PROD_SCHEDULER_EMAIL` is filled in `deploy/.env.production`. Needs the main checkout (production-linked) and `supabase login`.** **ONE COMMAND (owner, from the main checkout): `deploy/prod-secrets-prompt.sh --check` (lists what exists), then `deploy/prod-secrets-prompt.sh` (hidden prompt for each missing secret, in order; Enter skips an optional one; keys we can generate are generated; each secret is granted to ONLY the accounts that read it). The table below is what it asks.**
 Never in chat, a file or a command line. Pattern (value is typed, nothing shows):
 ```
 read -rs -p "value: " V; echo; printf %s "$V" | gcloud secrets create <NAME> --project stack19-production --replication-policy=automatic --data-file=-; unset V
