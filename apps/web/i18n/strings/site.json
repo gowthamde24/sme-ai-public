@@ -15762,5 +15762,44 @@
    "ta": "draft"
   },
   "ta": "Yes. Early access is free (first business goes live in December) and we set everything up with you."
+ },
+ "v9.phone.live": {
+  "en": "Live",
+  "te": "Live",
+  "hi": "Live",
+  "kn": "Live",
+  "ta": "Live",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.phone.ended": {
+  "en": "Call ended",
+  "te": "Call ended",
+  "hi": "Call ended",
+  "kn": "Call ended",
+  "ta": "Call ended",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.phone.ai": {
+  "en": "AI assistant",
+  "te": "AI assistant",
+  "hi": "AI assistant",
+  "kn": "AI assistant",
+  "ta": "AI assistant",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
  }
 }

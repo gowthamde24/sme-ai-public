@@ -8,10 +8,10 @@ import { FaqClient, HowDemoClient, JobsClient, PipeClient, Phone as PhoneClient,
  * The sample conversations and voices are demo content (lib/site/v9-data.ts), the same in every site language.
  */
 const k = (s: string) => s as SiteKey;
-const words = (t: SiteT) => ({ online: t(k("v9.phone.online")), message: t(k("v9.phone.message")), today: t(k("v9.phone.today")) });
+const words = (t: SiteT) => ({ online: t(k("v9.phone.online")), message: t(k("v9.phone.message")), today: t(k("v9.phone.today")), live: t(k("v9.phone.live")), ended: t(k("v9.phone.ended")), ai: t(k("v9.phone.ai")) });
 
-export function Phone({ t, id, width, still }: { t: SiteT; id: string; width: number; still: boolean }) {
-  return <PhoneClient id={id} width={width} still={still} words={words(t)} />;
+export function Phone({ t, id, still }: { t: SiteT; id: string; still: boolean }) {
+  return <PhoneClient id={id} still={still} words={words(t)} />;
 }
 
 export function HowDemo({ t }: { t: SiteT }) {

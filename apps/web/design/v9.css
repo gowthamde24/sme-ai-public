@@ -1343,78 +1343,14 @@
     .v9 .hero-trust-quiet { max-width: 640px; }
 
     /* ---- Realistic flagship Android phone (idea: Galaxy S-Ultra class; no brand marks) ---- */
-    .v9 .s26 {
-      --pw: 300px;
-      position: relative;
-      width: var(--pw);
-      aspect-ratio: 9 / 19.3;
-      flex-shrink: 0;
-      font-size: max(14px, calc(var(--pw) * 0.05));
-      border-radius: calc(var(--pw) * 0.128);
-      padding: calc(var(--pw) * 0.013);
-      background: linear-gradient(145deg, #e3e5ea 0%, #8c929c 22%, #cfd3da 46%, #6c717b 72%, #bfc4cc 100%);
-      box-shadow: 0 46px 70px -18px rgba(11, 16, 32, 0.45), 0 18px 30px rgba(11, 16, 32, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.55), inset 0 0 0 3px rgba(60, 64, 72, 0.35);
-      text-align: left;
-    }
-    .v9 .s26 .k { position: absolute; right: calc(var(--pw) * -0.0135); width: calc(var(--pw) * 0.016); border-radius: 3px; background: linear-gradient(90deg, #6d727c, #d9dce2 60%, #9aa0aa); box-shadow: 0 1px 2px rgba(0,0,0,.35); }
-    .v9 .s26 .k-vol { top: 22%; height: 11.5%; }
-    .v9 .s26 .k-pwr { top: 37%; height: 6.2%; }
-    .v9 .s26-body { height: 100%; border-radius: calc(var(--pw) * 0.116); background: #050607; padding: calc(var(--pw) * 0.017); }
-    .v9 .s26-screen { position: relative; height: 100%; border-radius: calc(var(--pw) * 0.1); overflow: hidden; background: #0b141a; display: flex; flex-direction: column; }
-    .v9 .s26-cam { position: absolute; top: calc(var(--pw) * 0.034); left: 50%; width: calc(var(--pw) * 0.034); height: calc(var(--pw) * 0.034); transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 35% 35%, #2b3140 0 18%, #05070b 52%); box-shadow: 0 0 0 calc(var(--pw) * 0.004) #000; z-index: 6; }
-    .v9 .s26-status { position: relative; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: calc(var(--pw) * 0.036) calc(var(--pw) * 0.075) 0; height: calc(var(--pw) * 0.1); font-size: 14px; font-weight: 700; color: #e9edef; }
-    .v9 .s26-status svg { display: block; }
-    .v9 .s26-slot { position: absolute; bottom: calc(var(--pw) * 0.004); left: 50%; width: calc(var(--pw) * 0.17); height: calc(var(--pw) * 0.012); transform: translateX(-50%); border-radius: 99px; background: rgba(20, 22, 28, 0.85); }
-
-    .v9 .wa-head { display: flex; align-items: center; gap: 9px; padding: 8px 12px 9px 8px; background: #1f2c34; color: #e9edef; }
-    .v9 .wa-back { font-size: 20px; line-height: 1; color: #e9edef; padding-right: 2px; }
-    .v9 .wa-av { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--orange-grad); color: #fff; font-weight: 800; font-size: 15px; flex-shrink: 0; }
-    .v9 .wa-name { flex: 1; min-width: 0; line-height: 1.2; }
-    .v9 .wa-name strong { display: block; font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .v9 .wa-name span { font-size: 14px; color: #8696a0; }
-    .v9 .wa-ico { display: flex; gap: 12px; color: #aebac1; font-size: 16px; }
-    .v9 .wa-chat { position: relative; flex: 1; min-height: 0; padding: 10px 10px 8px; display: flex; flex-direction: column; justify-content: flex-end; gap: 7px; overflow: hidden;
-      background: radial-gradient(rgba(255,255,255,.035) 1.2px, transparent 1.4px) 0 0 / 18px 18px, #0b141a; }
-    .v9 .wa-day { align-self: center; font-size: 14px; color: #8696a0; background: rgba(32, 44, 51, .9); padding: 3px 11px; border-radius: 8px; }
-    .v9 .wa-b { position: relative; max-width: 84%; padding: 7px 10px 6px; border-radius: 10px; font-size: 15px; line-height: 1.35; color: #e9edef; animation: v9-waIn .32s ease both; }
-    .v9 .wa-b.in { align-self: flex-start; background: #202c33; border-top-left-radius: 2px; }
-    .v9 .wa-b.out { align-self: flex-end; background: #005c4b; border-top-right-radius: 2px; }
-    .v9 .wa-b .t { display: block; text-align: right; margin-top: 2px; font-size: 14px; color: rgba(233, 237, 239, .6); }
-    .v9 .wa-b.out .t::after { content: " ✓✓"; color: #53bdeb; }
-    .v9 .wa-file { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 10px; background: #005c4b; align-self: flex-end; max-width: 88%; animation: v9-waIn .32s ease both; }
-    .v9 .wa-file i { flex-shrink: 0; width: 34px; height: 38px; border-radius: 7px; background: #fff; color: #d92d20; font-style: normal; font-weight: 800; font-size: 14px; display: grid; place-items: center; }
-    .v9 .wa-file b { display: block; font-size: 15px; color: #e9edef; font-weight: 600; line-height: 1.2; }
-    .v9 .wa-file span { font-size: 14px; color: rgba(233, 237, 239, .65); }
-    .v9 .wa-typing { align-self: flex-start; display: flex; gap: 4px; padding: 11px 13px; background: #202c33; border-radius: 10px; border-top-left-radius: 2px; animation: v9-waIn .25s ease both; }
-    .v9 .wa-typing span { width: 7px; height: 7px; border-radius: 50%; background: #8696a0; animation: v9-waDot 1s infinite; }
-    .v9 .wa-typing span:nth-child(2) { animation-delay: .15s; }
-    .v9 .wa-typing span:nth-child(3) { animation-delay: .3s; }
-    .v9 .wa-input { display: flex; align-items: center; gap: 8px; padding: 8px 10px 14px; background: #0b141a; }
-    .v9 .wa-input .box { flex: 1; height: 34px; border-radius: 99px; background: #1f2c34; color: #8696a0; font-size: 14px; display: flex; align-items: center; padding: 0 12px; }
-    .v9 .wa-input .mic { width: 34px; height: 34px; border-radius: 50%; background: #00a884; display: grid; place-items: center; color: #fff; font-size: 14px; }
     @keyframes v9-waIn { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
     @keyframes v9-waDot { 0%, 60%, 100% { transform: translateY(0); opacity: .5; } 30% { transform: translateY(-4px); opacity: 1; } }
-
-    .v9 .s26-call { position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; padding-top: calc(var(--pw) * 0.2); background: radial-gradient(80% 55% at 50% 38%, rgba(249, 115, 22, .55), transparent 70%), linear-gradient(180deg, #2a1505 0%, #0b1020 62%); color: #fff; text-align: center; transition: opacity .45s ease; }
-    .v9 .s26-call.is-off { opacity: 0; pointer-events: none; }
-    .v9 .s26-call .ring { width: 78px; height: 78px; border-radius: 50%; padding: 4px; background: conic-gradient(#c2410c, #f97316, #fdba74, #c2410c); animation: v9-ringSpin 6s linear infinite; }
-    .v9 .s26-call .ring b { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: #0b1020; font-size: 26px; font-weight: 800; animation: v9-ringSpin 6s linear infinite reverse; }
-    .v9 .s26-call h4 { margin: 14px 0 2px; font-size: 18px; font-weight: 800; }
-    .v9 .s26-call p { margin: 0; font-size: 14px; color: #fdba74; font-weight: 600; }
-    .v9 .s26-call .wv { display: flex; align-items: center; gap: 4px; height: 38px; margin: 16px 0 0; }
-    .v9 .s26-call .wv span { width: 4px; height: 8px; border-radius: 3px; background: linear-gradient(#fdba74, #f97316); animation: v9-wv 1s ease-in-out infinite; }
-    .v9 .s26-call .wv span:nth-child(odd) { animation-duration: 1.25s; }
-    .v9 .s26-call .wv span:nth-child(3n) { animation-delay: .2s; }
-    .v9 .s26-call .wv span:nth-child(4n) { animation-delay: .4s; }
-    .v9 .s26-call .cap { margin: 14px 14px 0; padding: 10px 12px; border-radius: 14px; background: rgba(255, 255, 255, .1); font-size: 16px; line-height: 1.35; backdrop-filter: blur(6px); }
-    .v9 .s26-call .end { position: absolute; bottom: 8%; width: 52px; height: 52px; border-radius: 50%; background: #ef4444; display: grid; place-items: center; box-shadow: 0 0 0 7px rgba(239, 68, 68, .2); }
     @keyframes v9-ringSpin { to { transform: rotate(360deg); } }
     @keyframes v9-wv { 0%, 100% { height: 8px; } 50% { height: 32px; } }
 
     /* hero object */
     .v9 .navy-object { overflow: visible; margin-top: 118px; grid-template-columns: 300px minmax(0, 1fr); padding: 44px 44px 44px 40px; }
     .v9 .hero-phone { margin: -150px 0 -110px; transform: rotate(-3.5deg); transform-origin: 50% 80%; position: relative; z-index: 3; }
-    .v9 .hero-phone::before { content: ""; position: absolute; inset: -12% -22%; z-index: -1; background: radial-gradient(closest-side, rgba(249, 115, 22, .42), transparent 72%); filter: blur(10px); }
     .v9 .nf-stack { display: grid; gap: 14px; padding-left: 14px; }
     .v9 .nf-head2 { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #fff; }
     .v9 .nf-head2 b { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--orange-light); }
@@ -1433,7 +1369,6 @@
 
     /* how it works v8 */
     .v9 .how8 { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 56px; align-items: center; max-width: 960px; margin: 0 auto; }
-    .v9 .how8 .s26 { margin-inline: auto; }
     .v9 .how8-right { display: grid; gap: 16px; }
     .v9 .fcard { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-radius: 22px; background: #fff; border: 1px solid var(--line); box-shadow: 0 14px 34px rgba(11, 16, 32, .07); animation: v9-nfcBob 7s ease-in-out infinite; }
     .v9 .fcard:nth-child(2) { margin-left: 38px; animation-delay: 1s; }
@@ -1514,7 +1449,6 @@
     .v9 .wit > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
     .v9 .wit .beam { fill: none; stroke: url(#bg); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 4 9; animation: v9-dash 1.4s linear infinite; opacity: .85; }
     @keyframes v9-dash { to { stroke-dashoffset: -26; } }
-    .v9 .wit .s26 { position: absolute; left: 50%; top: 52px; transform: translateX(-50%); }
     .v9 .wc { position: absolute; width: 292px; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 24px; background: #fff; border: 1px solid var(--line); box-shadow: 0 18px 40px rgba(11, 16, 32, .1); animation: v9-nfcBob 7s ease-in-out infinite; }
     .v9 .wc .ic { width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center; flex-shrink: 0; color: #fff; font-size: 20px; font-weight: 800; background: var(--orange-grad); }
     .v9 .wc .ic.g { background: linear-gradient(135deg, #059669, #34d399); }
@@ -1618,13 +1552,12 @@
     .v9 .cartesia-logo [data-slot="mark"] { color: #309d4b; }
 
     @media (prefers-reduced-motion: reduce) {
-      .v9 .nfc, .v9 .fcard, .v9 .wc, .v9 .vtrack, .v9 .lf-sweep, .v9 .lf-pin, .v9 .lf-pin i, .v9 .consent .m, .v9 .consent .cc, .v9 .kyc-card, .v9 .kyc-stamp, .v9 .dial .hand, .v9 .s26-call .ring, .v9 .s26-call .ring b, .v9 .s26-call .wv span, .v9 .flow-arrow, .v9 .wa-b, .v9 .wa-typing span { animation: none !important; }
+      .v9 .nfc, .v9 .fcard, .v9 .wc, .v9 .vtrack, .v9 .lf-sweep, .v9 .lf-pin, .v9 .lf-pin i, .v9 .consent .m, .v9 .consent .cc, .v9 .kyc-card, .v9 .kyc-stamp, .v9 .dial .hand, .v9 .flow-arrow { animation: none !important; }
       .v9 .nfc { opacity: 1; transform: none; } .v9 .lf-pin { opacity: 1; } .v9 .consent .m { opacity: 1; } .v9 .kyc-stamp { transform: rotate(-6deg); opacity: 1; }
     }
     @media (max-width: 1180px) {
       .v9 .wit { width: 100%; height: auto; display: grid; justify-items: center; gap: 22px; }
       .v9 .wit > svg { display: none; }
-      .v9 .wit .s26 { position: relative; left: auto; top: auto; transform: none; }
       .v9 .wc { position: relative; inset: auto !important; width: 100%; max-width: 420px; }
       .v9 .wit-wrap { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; width: 100%; max-width: 760px; }
     }
@@ -1647,7 +1580,6 @@
       .v9 .navy-object { margin-top: 150px; }
       .v9 .tabs { max-width: 100%; } .v9 .tab-btn { padding: 9px 13px; font-size: 14px; }
       .v9 .hero-phone { --pw: 252px; margin-top: -140px; }
-      .v9 .how8 .s26 { --pw: 256px; }
       .v9 .fcard:nth-child(n) { margin-left: 0; }
       .v9 .vpill { width: 316px; padding: 14px; gap: 12px; }
       .v9 .vpill .av { width: 50px; height: 50px; font-size: 19px; }
@@ -1669,13 +1601,9 @@
     @media (max-width: 900px) { .v9 .hero-cells { margin-top: 40px; } }
 
     /* ======================= v9 CHANGES ======================= */
-    .v9 .s26 { aspect-ratio: 9 / 18; }
-    .v9 .s26-call .end svg { display: block; } .v9 .s26-call .end svg path { fill: #fff; }
     .v9 .navy-object { margin-top: 44px; overflow: hidden; grid-template-columns: 262px minmax(0, 1fr); padding: 40px 48px 40px 44px; gap: 44px; }
     .v9 .hero-phone { margin: 0 auto; transform: none; }
-    .v9 .hero-phone::before { inset: -8% -30%; }
     .v9 .hero-cells { margin-top: 44px; }
-    .v9 .wit .s26 { top: 68px; }
 
     /* app window (the app window) */
     .v9 .appwin { max-width: 1060px; margin: 0 auto; border-radius: 22px; overflow: hidden; background: #0b1020; border: 1px solid rgba(11, 16, 32, .2); box-shadow: 0 44px 90px rgba(11, 16, 32, .28); position: relative; }
@@ -1740,7 +1668,6 @@
     .v9 .hero-stage { display: grid; grid-template-columns: minmax(0, 1fr) 262px; gap: 48px; max-width: 1100px; margin: 44px auto 0; align-items: center; }
     .v9 .hero-stage .navy-object { margin: 0; grid-template-columns: minmax(0, 1fr); display: flex; flex-direction: column; justify-content: center; padding: 44px 44px 44px 40px; }
     .v9 .hero-stage .hero-phone { align-self: center; position: relative; margin: 0; }
-    .v9 .hero-stage .hero-phone::before { inset: -10% -34%; }
     @media (max-width: 900px) {
       .v9 .hero-stage { grid-template-columns: minmax(0, 1fr); gap: 26px; margin-top: 32px; }
       .v9 .hero-stage .hero-phone { order: -1; margin: 0 auto; }
@@ -1754,11 +1681,6 @@
     @media (max-width: 767px) { .v9 #ph-hero { --pw: 250px !important; } }
 
     /* v9c: wider, shorter phone body (owner: too long and narrow) */
-    .v9 .s26 { aspect-ratio: 9 / 18; }
-    .v9 .s26-status svg { width: 38px; height: 12px; }
-    .v9 .s26-status { padding: calc(var(--pw) * 0.036) calc(var(--pw) * 0.085) 0; }
-    .v9 .s26-status > span { display: inline-flex; align-items: center; }
-    .v9 .wa-name strong { font-size: 14px; }
     .v9 .hero-stage .hero-phone { --pw: 300px; } .v9 .hero-stage { grid-template-columns: minmax(0, 1fr) 300px; }
     .v9 #ph-hero { --pw: 300px !important; }
     @media (max-width: 900px) { .v9 .hero-stage { grid-template-columns: minmax(0, 1fr); } }
@@ -1771,11 +1693,7 @@
     .v9 .ico { display: block; flex-shrink: 0; }
     .v9 .navy-object { background: #0e1424; box-shadow: 0 30px 60px -20px rgba(11, 16, 32, .35); border: 1px solid rgba(255, 255, 255, .08); }
     .v9 .navy-object::before { display: none; }
-    .v9 .hero-phone::before { display: none; }
     .v9 .btn-primary::after { display: none; }
-    .v9 .s26-call { background: linear-gradient(180deg, #1c1410 0%, #0b1020 62%); }
-    .v9 .s26-call .ring { animation: none; background: linear-gradient(#f97316, #c2410c); padding: 3px; }
-    .v9 .s26-call .ring b { animation: none; }
 
     /* hero: call summary panel (looks like the product) */
     .v9 .cs { color: #e6eaf2; text-align: left; width: 100%; max-width: 640px; margin: 0 auto; }
@@ -1835,7 +1753,6 @@
     .v9 .lf { background: #f4f6fa; box-shadow: 0 18px 40px rgba(11, 16, 32, .08); }
     .v9 .lf-sweep { background: conic-gradient(from 0deg, rgba(194, 65, 12, 0) 0deg, rgba(194, 65, 12, 0) 250deg, rgba(194, 65, 12, .18) 358deg, rgba(194, 65, 12, 0) 360deg); }
     .v9 .lf-me { box-shadow: 0 0 0 6px rgba(194, 65, 12, .18); }
-    .v9 .s26-call { background: #0e1424; }
     .v9 .kyc-card { box-shadow: none; background: #fff; }
     .v9 .pipe .bucket b { text-shadow: none; }
     .v9 .try-chip.is-on { background: rgba(194, 65, 12, .22); }
@@ -1862,7 +1779,6 @@
     .v9 .cd-kv div:last-child { border-bottom: 0; }
     .v9 .cd-kv dt { font-size: 14px; color: #8794ad; } .v9 .cd-kv dd { margin: 0; font-size: 15px; font-weight: 600; color: #fff; text-align: right; }
     .v9 .cd-note { margin: 0; padding: 10px 22px; border-top: 1px solid rgba(255, 255, 255, .08); font-size: 14px; color: #8794ad; }
-    .v9 .s26-call { transition: opacity .12s linear; }
     @media (max-width: 900px) { .v9 .cd-body { grid-template-columns: minmax(0, 1fr); } .v9 .cd-kv { border-left: 0; border-top: 1px solid rgba(255, 255, 255, .08); } .v9 .cd-top { flex-direction: column; align-items: flex-start; } .v9 .cd-badges { justify-content: flex-start; } .v9 .cd-main { padding: 18px; } .v9 .cd-main h3 { font-size: 18px; } }
 
 
@@ -1886,3 +1802,28 @@
 /* the sign-in link (only when the app is open; the mock had none): quiet text next to the call to action */
 .v9 .hdr-login { font-size: 15px; font-weight: 600; color: var(--ink); padding: 8px 4px; }
 .v9 .hdr-login:hover { color: var(--orange); }
+
+/* The phone (23 Nov 2026, owner: use the dark phone everywhere): the site's own DarkPhone (design/home3.css .h3-dp-*) and the WhatsApp chat (design/phone-preview.css), flat: no glow, no gradient. The size is the frame's own 300 px scaled with zoom (set inline per phone). */
+.v9 .v9-phone { width: 300px; margin-inline: auto; flex: none; }
+.v9 .how8 .v9-phone { margin-inline: auto; }
+.v9 .wit .v9-phone { position: absolute; left: 50%; top: 52px; transform: translateX(-50%); }
+.v9 .v9-phone .h3-dp { margin: 0; }
+.v9 .v9-phone .h3-dp-screen { position: relative; }
+.v9 .v9-call { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; background: #0e0d10; transition: opacity .45s ease; }
+.v9 .v9-call.is-off { opacity: 0; pointer-events: none; }
+.v9 .v9-call .h3-dp-call { background-image: none; }
+.v9 .v9-call .h3-dp-av { box-shadow: 0 0 0 2px #c2410c; }
+.v9 .v9-phone .pp-body { justify-content: flex-end; }
+.v9 .v9-dots { display: inline-flex; gap: 4px; padding: 5px 2px; }
+.v9 .v9-dots i { display: block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .5; animation: v9-waDot 1s infinite; }
+.v9 .v9-dots i:nth-child(2) { animation-delay: .15s; }
+.v9 .v9-dots i:nth-child(3) { animation-delay: .3s; }
+.v9 .v9-file { display: flex; align-items: center; gap: 10px; min-width: 150px; }
+.v9 .v9-file i { display: grid; place-items: center; width: 34px; height: 40px; border-radius: 6px; background: #c2410c; color: #fff; font-size: 11px; font-style: normal; font-weight: 700; }
+.v9 .v9-file b { display: block; font-size: 14px; }
+.v9 .v9-file small { display: block; font-size: 13px; opacity: .75; }
+@media (prefers-reduced-motion: reduce) { .v9 .v9-dots i { animation: none; } .v9 .v9-call { transition: none; } }
+
+/* the phone's size per place: the frame is 300 px wide, scaled with zoom (the sizes of the mock: hero 300, how it works 270, while it talks 248; 270, 268 and 256 on a phone) */
+.v9 #ph-hero { zoom: 1; } .v9 #ph-how { zoom: 0.9; } .v9 #ph-wit { zoom: 0.827; }
+@media (max-width: 767px) { .v9 #ph-hero { zoom: 0.9; } .v9 #ph-how { zoom: 0.893; } .v9 #ph-wit { zoom: 0.853; } }

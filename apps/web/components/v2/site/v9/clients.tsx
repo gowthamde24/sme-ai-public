@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { Grip, Mic, Phone as Phone2, PhoneOff, Volume2 } from "lucide-react";
+
+import { PpBubble, PpDay } from "@/components/v2/PhonePreview";
+import { DarkPhone } from "@/components/v2/site/home/DarkPhone";
 import { DEMO_LANGS, DEMO_LANG_NAMES, WA, WAVE_HEIGHTS, type DemoLang, type Voice } from "@/lib/site/v9-data";
 
 /**
@@ -67,103 +71,62 @@ function Tabs<K extends string>({ label, items, value, onChange, className }: { 
 
 // ---------------------------------------------------------------------------------------------- the phone
 
+type Item = { key: number; kind: "day" | "in" | "out" | "file" | "typing"; text: string; meta?: string; time?: string };
+type PhoneWords = { online: string; message: string; today: string; live: string; ended: string; ai: string };
 const tm = (n: number) => `10:${String(4 + n).padStart(2, "0")}`;
-const END_CALL = "M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08a.956.956 0 0 1-.29-.7c0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28a11.27 11.27 0 0 0-2.67-1.85.996.996 0 0 1-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z";
 
-export function Phone({ id, width, still, lang = "te", words }: { id: string; width: number; still: boolean; lang?: DemoLang; words: { online: string; message: string; today: string } }) {
+/**
+ * The phone the owner likes (23 Nov 2026): the site's own dark phone (DarkPhone: near-black flat screen, dynamic-island pill, status bar, thin bezel, side keys on the right, home bar), the same call screen as the
+ * old home page (design/home3.css, `.h3-dp-*`) and the same WhatsApp chat (`PpBubble`, design/phone-preview.css). The call is a layer over the chat; after about four seconds it ends and the chat plays: the
+ * customer's line, a typing pause, the assistant's reply, the brochure. Timers start once the phone is on screen; reduced motion shows the finished chat. `still` = the call screen only (the picture in "While it talks").
+ */
+export function Phone({ id, still, lang = "te", words }: { id: string; still: boolean; lang?: DemoLang; words: PhoneWords }) {
   const root = useRef<HTMLDivElement>(null);
-  const chat = useRef<HTMLDivElement>(null);
-  const call = useRef<HTMLDivElement>(null);
   const seen = useRef(false);
+  const [phase, setPhase] = useState<"call" | "chat">("call");
+  const [items, setItems] = useState<Item[]>([]);
   const d = WA[lang];
 
   useEffect(() => {
-    const chatEl = chat.current;
-    const callEl = call.current;
-    if (!chatEl || !callEl || still) return;
+    if (still) return;
     let timers: ReturnType<typeof setTimeout>[] = [];
+    let n = 0;
     const at = (ms: number, fn: () => void) => timers.push(setTimeout(fn, ms));
     const stop = () => {
       timers.forEach(clearTimeout);
       timers = [];
     };
-    const add = (el: HTMLElement) => {
-      chatEl.appendChild(el);
-      while (chatEl.children.length > 7) chatEl.removeChild(chatEl.firstChild as ChildNode);
-    };
-    const el = (tag: string, cls: string) => {
-      const n = document.createElement(tag);
-      n.className = cls;
-      return n;
-    };
-    const bubble = (kind: string, text: string, i: number) => {
-      const b = el("div", `wa-b ${kind}`);
-      b.textContent = text;
-      const s = el("span", "t");
-      s.textContent = tm(i);
-      b.appendChild(s);
-      add(b);
-    };
-    const file = (name: string, meta: string) => {
-      const f = el("div", "wa-file");
-      const i = el("i", "");
-      i.textContent = "PDF";
-      const box = document.createElement("div");
-      const b = document.createElement("b");
-      b.textContent = name;
-      const s = document.createElement("span");
-      s.textContent = meta;
-      box.append(b, s);
-      f.append(i, box);
-      add(f);
-    };
-    const typing = () => {
-      const t = el("div", "wa-typing");
-      t.innerHTML = "<span></span><span></span><span></span>";
-      add(t);
-      return t;
-    };
-    const day = () => {
-      const x = el("div", "wa-day");
-      x.textContent = words.today;
-      add(x);
-    };
+    const push = (it: Omit<Item, "key">) => setItems((cur): Item[] => [...cur.filter((x) => x.kind !== "typing"), { ...it, key: ++n }].slice(-6));
     const final = () => {
-      chatEl.innerHTML = "";
-      day();
-      d.steps.forEach((s, i) => (s.length === 3 ? file(s[1], s[2]) : bubble(s[0], s[1], i)));
-      callEl.classList.add("is-off");
+      setPhase("chat");
+      setItems([{ key: 0, kind: "day" as const, text: words.today }, ...d.steps.map((st, i): Item => (st.length === 3 ? { key: i + 1, kind: "file", text: st[1], meta: st[2] } : { key: i + 1, kind: st[0], text: st[1], time: tm(i) }))].slice(-6));
     };
     const play = () => {
       stop();
-      chatEl.innerHTML = "";
+      n = 0;
+      setItems([]);
       if (reducedMotion()) return final();
-      callEl.classList.remove("is-off");
+      setPhase("call");
       let t = 3800;
       at(t, () => {
-        callEl.classList.add("is-off");
-        day();
+        setPhase("chat");
+        push({ kind: "day", text: words.today });
       });
-      d.steps.forEach((s, i) => {
-        if (s.length === 2 && s[0] === "in") {
+      d.steps.forEach((st, i) => {
+        if (st.length === 3) {
           t += 900;
-          const line = s[1];
-          at(t, () => bubble("in", line, i));
-        } else if (s.length === 2) {
+          const [, name, meta] = st;
+          at(t, () => push({ kind: "file", text: name, meta }));
+        } else if (st[0] === "in") {
+          t += 900;
+          const line = st[1];
+          at(t, () => push({ kind: "in", text: line, time: tm(i) }));
+        } else {
           t += 700;
-          let ty: HTMLElement | null = null;
-          at(t, () => {
-            ty = typing();
-          });
+          at(t, () => setItems((cur): Item[] => [...cur, { key: ++n, kind: "typing" as const, text: "" }].slice(-6)));
           t += 1400;
-          at(t, () => {
-            ty?.remove();
-            bubble("out", s[1], i);
-          });
-        } else if (s.length === 3) {
-          t += 900;
-          const [, name, meta] = s;
-          at(t, () => file(name, meta));
+          const line = st[1];
+          at(t, () => push({ kind: "out", text: line, time: tm(i) }));
         }
       });
       t += 4200;
@@ -192,68 +155,80 @@ export function Phone({ id, width, still, lang = "te", words }: { id: string; wi
   }, [d, still, words.today]);
 
   const initial = d.biz[0];
+  const shownPhase = still ? "call" : phase;
   return (
-    <div ref={root} className={`s26${still ? " static" : ""}`} id={id} style={{ "--pw": `${width}px` } as React.CSSProperties} aria-hidden="true">
-      <i className="k k-vol" />
-      <i className="k k-pwr" />
-      <div className="s26-body">
-        <div className="s26-screen">
-          <span className="s26-cam" />
-          <div className="s26-status">
-            <span>9:41</span>
-            <span>
-              <svg width="46" height="14" viewBox="0 0 46 14" fill="#e9edef">
-                <path d="M1 11h3v2H1zM6 8h3v5H6zM11 5h3v8h-3zM16 2h3v11h-3z" />
-                <rect x="26" y="2" width="18" height="10" rx="3" fill="none" stroke="#e9edef" strokeWidth="1.6" />
-                <rect x="28" y="4" width="11" height="6" rx="1.5" />
-              </svg>
+    <div ref={root} className="v9-phone" id={id} aria-hidden="true">
+      <DarkPhone part="dark-phone">
+        <div className="pp h3-dp-chat" data-pp-theme="dark" data-pp-variant="peek">
+          <div className="pp-head">
+            <span className="h3-dp-back" aria-hidden="true" />
+            <span className="pp-avatar" aria-hidden="true">{initial}</span>
+            <div className="pp-who">
+              <p className="pp-name">{d.biz}</p>
+              <p className="pp-sub">{words.online}</p>
+            </div>
+            <span className="pp-head-icons">
+              <Phone2 aria-hidden="true" size={20} strokeWidth={2} />
+              <span className="h3-dp-dots" aria-hidden="true" />
             </span>
           </div>
-          <div className="wa-head">
-            <span className="wa-back">‹</span>
-            <span className="wa-av">{initial}</span>
-            <div className="wa-name">
-              <strong>{d.biz}</strong>
-              <span>{words.online}</span>
-            </div>
-            <span className="wa-ico">
-              <span>⌕</span>
-              <span>⋮</span>
-            </span>
+          <div className="pp-body">
+            {items.map((it) =>
+              it.kind === "day" ? (
+                <PpDay key={it.key}>{it.text}</PpDay>
+              ) : it.kind === "typing" ? (
+                <PpBubble key={it.key} from="me">
+                  <span className="v9-dots"><i /><i /><i /></span>
+                </PpBubble>
+              ) : it.kind === "file" ? (
+                <PpBubble key={it.key} from="me" ticks="read">
+                  <span className="v9-file"><i>PDF</i><span><b>{it.text}</b><small>{it.meta}</small></span></span>
+                </PpBubble>
+              ) : (
+                <PpBubble key={it.key} from={it.kind === "in" ? "them" : "me"} tail time={it.time} ticks={it.kind === "out" ? "read" : undefined}>
+                  <span lang={lang}>{it.text}</span>
+                </PpBubble>
+              ),
+            )}
           </div>
-          <div className="wa-chat" ref={chat} />
-          <div className="wa-input">
-            <div className="box">{words.message}</div>
-            <span className="mic">●</span>
-          </div>
-          <div className="s26-call" ref={call}>
-            <div className="ring">
-              <b>{initial}</b>
-            </div>
-            <h4>{d.biz}</h4>
-            <p>{d.label}</p>
-            <div className="wv">
-              {Array.from({ length: 13 }, (_, i) => (
-                <span key={i} />
-              ))}
-            </div>
-            <div className="cap">{d.cap}</div>
-            <span className="end">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff">
-                <path d={END_CALL} />
-              </svg>
-            </span>
+          <div className="pp-input" aria-hidden="true">
+            <span className="pp-input-box">{words.message}</span>
+            <span className="pp-mic"><Mic size={20} strokeWidth={2.2} /></span>
           </div>
         </div>
-      </div>
-      <span className="s26-slot" />
+        <div className={`v9-call${shownPhase === "chat" ? " is-off" : ""}`}>
+          <div className="h3-dp-call">
+            <span className="h3-dp-av" aria-hidden="true">{initial}</span>
+            <p className="h3-dp-name">{d.biz}</p>
+            <p className="h3-dp-sub">{d.label}</p>
+            <div className="h3-dp-wave" aria-hidden="true">
+              {[0, 1, 2, 3, 4, 5, 6].map((k) => (
+                <i key={k} />
+              ))}
+            </div>
+            <p className="h3-dp-live">{words.live}</p>
+            <div className="h3-dp-capbox">
+              <p className="h3-dp-cap" data-from="them" lang={lang}>
+                <span className="h3-dp-who">{words.ai}</span>
+                {d.cap}
+              </p>
+            </div>
+            <div className="h3-dp-btns" aria-hidden="true">
+              <span className="h3-dp-btn"><Mic size={20} strokeWidth={2} /></span>
+              <span className="h3-dp-btn"><Grip size={20} strokeWidth={2} /></span>
+              <span className="h3-dp-btn"><Volume2 size={20} strokeWidth={2} /></span>
+              <span className="h3-dp-btn h3-dp-end"><PhoneOff size={22} strokeWidth={2.2} /></span>
+            </div>
+          </div>
+        </div>
+      </DarkPhone>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------------------------- how it works
 
-export type HowWords = { tabs: string; phone: { online: string; message: string; today: string }; asked: string; language: string; followUp: string; status: string; added: string };
+export type HowWords = { tabs: string; phone: { online: string; message: string; today: string; live: string; ended: string; ai: string }; asked: string; language: string; followUp: string; status: string; added: string };
 export function HowDemoClient({ w }: { w: HowWords }) {
   const [lang, setLang] = useState<DemoLang>("te");
   const d = WA[lang];
@@ -261,7 +236,7 @@ export function HowDemoClient({ w }: { w: HowWords }) {
     <>
       <Tabs label={w.tabs} items={DEMO_LANGS.map((k) => ({ key: k, text: DEMO_LANG_NAMES[k] }))} value={lang} onChange={setLang} />
       <div className="how8">
-        <Phone id="ph-how" width={270} still={false} lang={lang} words={w.phone} />
+        <Phone id="ph-how" still={false} lang={lang} words={w.phone} />
         <div className="how8-right">
           <div className="fcard"><span className="ic">{ICON.search}</span><div><small>{w.asked}</small><strong>{d.asked}</strong></div></div>
           <div className="fcard"><span className="ic">{ICON.globe}</span><div><small>{w.language}</small><strong>{d.lang}</strong></div></div>

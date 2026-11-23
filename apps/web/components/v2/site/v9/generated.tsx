@@ -197,7 +197,7 @@ export function V9Hero({ t }: { t: SiteT }) {
             </div>
           </div>
           <div className="hero-phone">
-            <Phone t={t} id="ph-hero" width={300} still={false} />
+            <Phone t={t} id="ph-hero" still={false} />
           </div>
         </div>
         <div className="hero-cells">
@@ -640,7 +640,7 @@ export function V9Wit({ t }: { t: SiteT }) {
             <circle r="5.5" fill="#f97316" />
             <animateMotion dur="3.2s" begin="2.8s" repeatCount="indefinite" path="M768 527 C 695 527 715 405 648 375"></animateMotion>
           </svg>
-          <Phone t={t} id="ph-wit" width={248} still={true} />
+          <Phone t={t} id="ph-wit" still={true} />
           <div className="wc c1">
             <span className="ic g">
               <svg className="ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
