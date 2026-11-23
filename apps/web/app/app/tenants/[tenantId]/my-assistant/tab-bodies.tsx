@@ -121,6 +121,7 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
         speaks={speaksPanel}
         examples={toneExamples()}
         conversations={toneConversations(pack)}
+        open={myAssistantOpen()}
         draftLangs={["te", "hi", "kn"]}
         toneExample={pickerOn && voicePickerScreens() === "on" ? toneExampleAction.bind(null, tenantId) : null}
         canEdit

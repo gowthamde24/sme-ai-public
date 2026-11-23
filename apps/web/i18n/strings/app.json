@@ -126511,5 +126511,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "vc.see_all": {
+  "en": "See all voices ({n})",
+  "te": "అన్ని voices చూడండి ({n})",
+  "hi": "सभी voices देखें ({n})",
+  "kn": "ಎಲ್ಲಾ voices ನೋಡಿ ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
