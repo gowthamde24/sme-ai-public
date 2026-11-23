@@ -15801,5 +15801,18 @@
    "kn": "draft",
    "ta": "draft"
   }
+ },
+ "v9.ftr.tm": {
+  "en": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
+  "te": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
+  "hi": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
+  "kn": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
+  "ta": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
  }
 }

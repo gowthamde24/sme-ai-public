@@ -11,6 +11,7 @@ import { websiteOnly } from "@/lib/site/mode";
 import { sitePath } from "@/lib/site/paths";
 
 import { Faq, HowDemo, JobsDemo, Phone, Pipe, TryIt, Voices } from "./islands";
+import { MarkCrm, MarkForms, MarkMeta, MarkSheets, MarkToday, MarkUpload, MarkWhatsApp } from "./brands";
 import { OrbRingLazy } from "./lazy";
 
 export function V9Hdr({ t }: { t: SiteT }) {
@@ -393,19 +394,24 @@ export function V9How({ t }: { t: SiteT }) {
             <span className="flow-lbl">
               {t("v9.how.3")}
             </span>
-            <span className="chip-item">
+            <span className="chip-item lg">
+              <MarkForms />
               {t("v9.how.4")}
             </span>
-            <span className="chip-item">
+            <span className="chip-item lg">
+              <MarkWhatsApp />
               {t("v9.how.5")}
             </span>
-            <span className="chip-item">
+            <span className="chip-item lg">
+              <MarkUpload />
               {t("v9.how.6")}
             </span>
-            <span className="chip-item chip-soon">
+            <span className="chip-item lg chip-soon">
+              <MarkSheets />
               {t("v9.how.7")}
             </span>
-            <span className="chip-item chip-soon">
+            <span className="chip-item lg chip-soon">
+              <MarkMeta />
               {t("v9.how.8")}
             </span>
           </div>
@@ -422,16 +428,20 @@ export function V9How({ t }: { t: SiteT }) {
             <span className="flow-lbl">
               {t("v9.how.10")}
             </span>
-            <span className="chip-item">
+            <span className="chip-item lg">
+              <MarkWhatsApp />
               {t("v9.how.5")}
             </span>
-            <span className="chip-item">
+            <span className="chip-item lg">
+              <MarkToday />
               {t("v9.how.11")}
             </span>
-            <span className="chip-item chip-soon">
+            <span className="chip-item lg chip-soon">
+              <MarkSheets />
               {t("v9.how.7")}
             </span>
-            <span className="chip-item chip-soon">
+            <span className="chip-item lg chip-soon">
+              <MarkCrm />
               {t("v9.how.12")}
             </span>
           </div>
@@ -1382,6 +1392,9 @@ export function V9Ftr({ t, lang }: { t: SiteT; lang: SiteLang }) {
             </svg>
           </span>
         </div>
+        <p className="ftr-tm">
+          {t("v9.ftr.tm")}
+        </p>
       </div>
       <div className="wm-box" aria-hidden="true">
         <div className="wm">

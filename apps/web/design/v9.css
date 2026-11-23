@@ -1872,3 +1872,10 @@
 .v9 #early-access { padding-top: 20px; }
 .v9 .v9-phone .pp-head-icons svg { display: none; }
 .v9 .kyc-note { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+
+/* the flow row's names with their marks (owner, 25 Nov): the mock's rules; a chip that is not built yet keeps its dashed edge and its mark at 55% */
+.v9 .chip-item.lg { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px 9px 12px; font-size: 16px; font-weight: 600; color: var(--ink); }
+.v9 .chip-item.lg .bl { flex-shrink: 0; display: block; }
+.v9 .chip-item.lg .ln { color: var(--muted); }
+.v9 .chip-item.lg.chip-soon .bl:not(.ln) { opacity: 0.55; filter: grayscale(0.35); }
+.v9 .ftr-tm { margin: 18px 0 0; font-size: 14px; color: var(--muted); }
