@@ -5,7 +5,7 @@ import { getHowSpeaks, putHowSpeaks } from "@/lib/api/how-speaks";
 import { speaksPanelScreens } from "@/lib/screens/flag";
 
 import { INTRODUCE_DEFAULT, type IntroduceAs } from "./introduce";
-import { BACKGROUNDS, parseHowSpeaks, SPEAK_LANGS, speaksProblem, toneFromLegacy, type Background, type HowSpeaks, type LegacyAddress, type SpeakLang, type SpeakStyle, type SpeaksChange, type SpeakTone } from "./speaks";
+import { parseHowSpeaks, SPEAK_LANGS, speaksProblem, toneFromLegacy, type Background, type HowSpeaks, type LegacyAddress, type SpeakLang, type SpeakStyle, type SpeaksChange, type SpeakTone } from "./speaks";
 
 /**
  * Where "How your assistant speaks" comes from and goes (job speaks-panel; C1's fixed contract docs/contracts/how-assistant-speaks.md). `mock` = ONE cookie of the browser, answered the way the contract says (the old "How to address customers" is mapped to a tone until the panel is saved;
@@ -32,7 +32,7 @@ async function load(): Promise<Kept> {
 }
 
 /** The words of the three background choices as the API sends them (the test mode answers with the same). */
-const BACKGROUND_WORDS: Record<Background, Partial<Record<string, string>>> = {
+const BACKGROUND_WORDS: Partial<Record<Background, Partial<Record<string, string>>>> = {
   quiet_office: { en: "Quiet office", te: "ప్రశాంతమైన ఆఫీస్", hi: "शांत ऑफिस", kn: "ಶಾಂತ ಆಫೀಸ್" },
   shop: { en: "Shop", te: "షాప్", hi: "दुकान", kn: "ಅಂಗಡಿ" },
   off: { en: "Off", te: "ఆఫ్", hi: "बंद", kn: "ಆಫ್" },
@@ -49,8 +49,8 @@ function build(k: Kept, f: Facts): HowSpeaks {
   }
   const ia = k.i ? { kind: k.i.k, text: k.i.x } : INTRODUCE_DEFAULT;
   return {
-    tone: { value: saved ? (k.t as SpeakTone) : toneFromLegacy(f.legacyAddress, f.packDefault), source: saved ? "saved" : migrated ? "migrated" : "pack_default", packDefault: f.packDefault },
-    background: { value: k.b ?? "quiet_office", saved: k.b !== undefined, options: BACKGROUNDS.map((id) => ({ id, label: BACKGROUND_WORDS[id] })) },
+    tone: { value: saved ? (k.t as SpeakTone) : toneFromLegacy(f.legacyAddress, f.packDefault), source: saved ? "saved" : migrated ? "migrated" : "pack_default", packDefault: f.packDefault, options: [] },
+    background: { value: k.b ?? "quiet_office", saved: k.b !== undefined, options: ((["quiet_office", "shop", "off"] as const).map((id) => ({ id, label: BACKGROUND_WORDS[id] ?? { en: id }, sampleUrl: null }))) },
     sayAi: { value: k.a ?? false, saved: k.a !== undefined },
     words,
     introduceAs: { ...ia, ownerName: f.ownerName },

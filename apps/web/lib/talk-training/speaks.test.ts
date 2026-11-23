@@ -70,3 +70,26 @@ describe("How your assistant speaks (C1's fixed contract): the shapes and the ru
     expect(parseHowSpeaks(RAW({ say_ai_when_greeting: { value: "yes" } }))?.sayAi).toBeNull();
   });
 });
+
+describe("the seven styles and ten sounds as the API lists them (voice-styles.md)", () => {
+  const opt = (id: string) => ({ id, label: { en: id, te: "ఉదా" }, hint: { en: "a hint" }, best_for: ["retail", "clinic"], reviewed: false });
+  it("tone.options as objects gives the list in the API's order, with words per language and the kinds of business; the older strings give an empty list (the three known styles are drawn)", () => {
+    const ids = ["friendly", "respectful", "quick", "professional", "calm_caring", "cheerful", "confident"];
+    const got = parseHowSpeaks(RAW({ tone: { value: "calm_caring", source: "saved", pack_default: "friendly", options: ids.map(opt) } }));
+    expect(got?.tone.value).toBe("calm_caring");
+    expect(got?.tone.options.map((o) => o.id)).toEqual(ids);
+    expect(got?.tone.options[3]).toMatchObject({ label: { en: "professional", te: "ఉదా" }, hint: { en: "a hint" }, bestFor: ["retail", "clinic"] });
+    expect(parseHowSpeaks(RAW())?.tone.options).toEqual([]);
+    expect(parseHowSpeaks(RAW({ tone: { value: "friendly", source: "saved", pack_default: "friendly", options: [opt("friendly"), opt("loud"), { id: "quick" }] } }))?.tone.options.map((o) => o.id)).toEqual(["friendly"]);
+  });
+  it("background.options keeps up to ten sounds with their preview path (null for Off or anything that is not a preview path)", () => {
+    const ids = ["off", "quiet_office", "busy_office", "call_centre", "shop", "market", "showroom", "clinic_reception", "home", "street"];
+    const bg = { value: "off", saved: true, options: ids.map((id) => ({ id, label: { en: id }, sample_url: id === "off" ? null : `/v1/background-samples/${id}.mp3` })) };
+    const got = parseHowSpeaks(RAW({ background: bg }));
+    expect(got?.background?.options.map((o) => o.id)).toEqual(ids);
+    expect(got?.background?.options[0].sampleUrl).toBeNull();
+    expect(got?.background?.options[4].sampleUrl).toBe("/v1/background-samples/shop.mp3");
+    const odd = parseHowSpeaks(RAW({ background: { ...bg, options: [{ id: "shop", label: { en: "Shop" }, sample_url: "https://elsewhere.example/x.mp3" }] } }));
+    expect(odd?.background?.options[0].sampleUrl).toBeNull();
+  });
+});

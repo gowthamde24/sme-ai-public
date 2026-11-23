@@ -415,3 +415,20 @@ describe("the open layout of the voice card (MY_ASSISTANT_OPEN, owner's mock)", 
     if (ex) expect(ex.className).not.toMatch(/bg-surface-2/);
   });
 });
+
+describe("'Sounds like' chips of the open voice list (C1's voice categories)", () => {
+  it("shows Recommended and only the categories this language has voices for; a category lists ALL its voices; the chip pressed is marked; no category data = no chips", () => {
+    const voices = MOCK_VOICES.map((v) => ({ ...v, soundsLike: v.gender === "female" ? ("warm_friendly" as const) : ("deep_confident" as const) }));
+    setup({ open: true, picker: { voices, choices: {}, active: {}, gender: "female", fake: false } });
+    const chips = within(document.querySelector('[data-part="vc-sounds"]') as HTMLElement).getAllByRole("button").map((b) => b.textContent);
+    expect(chips).toEqual(["Recommended", "Warm & friendly", "Deep & confident"]);
+    fireEvent.click(screen.getByRole("button", { name: "Deep & confident" }));
+    expect(screen.getByRole("button", { name: "Deep & confident" })).toHaveAttribute("aria-pressed", "true");
+    const shown = [...document.querySelectorAll('[data-part="vc-voice-rows"] [data-voice]')].map((v) => v.getAttribute("data-voice"));
+    expect(shown.every((id) => voices.find((v) => v.id === id)?.soundsLike === "deep_confident")).toBe(true);
+  });
+  it("an answer with no categories draws no chips", () => {
+    setup({ open: true });
+    expect(document.querySelector('[data-part="vc-sounds"]')).toBeNull();
+  });
+});
