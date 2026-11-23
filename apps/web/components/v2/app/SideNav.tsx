@@ -114,7 +114,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
             <span className="sr-only">{word(labels, "frame.help", "Help")}</span>
           </Link>
         ) : null}
-        {current && !collapsed ? (frame.ds ? <BalanceBox balance={frame.balance ?? null} tenantId={current.id} labels={labels} /> : <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} />) : null}
+        {current && !collapsed ? (frame.earlyAccess ? null : frame.ds ? <BalanceBox balance={frame.balance ?? null} tenantId={current.id} labels={labels} /> : <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} />) : null}
         {frame.ds ? null : <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} mark={mark} />}
         {frame.ds ? null : (
           <>

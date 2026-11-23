@@ -233,3 +233,5 @@ export const myAssistantOpen = (value: string | undefined = process.env.MY_ASSIS
 
 /** Today in the open look (owner, 25 Nov 2026; mock Today + Jobs): "Running now" as open rows with bare category-coloured line icons and a green switch, "Needs you" rows with bare icons and ONE orange action (the second action a grey link), the empty side boxes as one grey sentence. `1` = on; unset = as it was. Only with DESIGN_V6. */
 export const todayOpen = (value: string | undefined = process.env.TODAY_OPEN): boolean => value === "1";
+/** The First day page in the open layout (owner, 25 Nov 2026; mock "First day"): one title, one sentence, "Skip for now", a thin progress line, the seven steps as hairline rows with ONE orange Start, a plain line with the small orb, a grey help line: no ring, no cards, no gradient, no Go live until the last step. `1` = on; unset = the boxed day one as it was. */
+export const firstDayOpen = (value: string | undefined = process.env.FIRST_DAY_OPEN): boolean => value === "1";
