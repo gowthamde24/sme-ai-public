@@ -1,18 +1,18 @@
 # Leads
-Qualify candidate leads against your Ideal Customer Profile (ICP). Unbiased blind review is enabled .
+Pick who is a good fit for your business. Hidden-score check is enabled .
 {label="Parts of Leads"} [To look at](/app/tenants/22222222-2222-2222-2222-222222222222/review current=page) [All leads](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads) [Suggestions](/app/tenants/22222222-2222-2222-2222-222222222222/suggestions)
-Active ICP Profile: Version 1 (SHA-256: 0123456789ab ... ) Filter: [All](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=true current=page) [Unreviewed only](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=true&unreviewed=true) Score filters are available only with Blind Scoring off. [Blind Scoring: ON](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=false)
-{label="Candidate Leads (2)"}
-## Candidate Leads (2)
+Who you want to find: Version 1 ( 0123456789ab ... ) Filter: [All](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=true current=page) [Unreviewed only](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=true&unreviewed=true) Score filters show only when hidden-score check is off. [Hidden-score check: ON](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=false)
+{label="Leads to review (2)"}
+## Leads to review (2)
 ### Kanchipuram Silks Emporium
-Bengaluru , IN · Silk Wholesale · Source: directory Unreviewed Score Hidden (Blind)
+Bengaluru , IN · Silk Wholesale · Source: directory Unreviewed Score hidden
 Contact
 summary: Contact details
 Gowtham (Proprietor) · gowtham@example.test · +0098765432
 Evidence
 [View evidence & details →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
 ### Dharmavaram Saree Traders
-Dharmavaram , IN · Saree Retailing · Source: referral BAD (wrong_product) Score Hidden (Blind)
+Dharmavaram , IN · Saree Retailing · Source: referral BAD (wrong_product) Score hidden
 Contact
 No contact information attached
 Evidence
