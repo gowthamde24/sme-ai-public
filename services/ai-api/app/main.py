@@ -132,6 +132,7 @@ from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
 from app.hardening.originlock import OriginLockMiddleware
 from app.hardening.ratelimit import RateLimitMiddleware
+from app.how_speaks.my_style import router as my_assistant_style_router
 from app.how_speaks.routes import router as how_speaks_router
 from app.integrations import errors as integration_errors
 from app.integrations.policy import PolicyVersions
@@ -1567,6 +1568,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(auto_reply_router)
     app.include_router(voice_samples_router)
     app.include_router(voice_style_samples_router)
+    app.include_router(my_assistant_style_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)

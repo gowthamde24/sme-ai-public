@@ -29,3 +29,10 @@ class PostgrestTalkTraining:
     def for_call(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         got = self._rpc.call(token, "talk_training_for_call", {"p_tenant_id": str(tenant_id)})
         return got if isinstance(got, dict) else None
+
+    def my_style_get(self, token: str) -> dict[str, Any]:
+        """The signed-in person's OWN assistant style (migration 20261231988200): {value, saved}. Never a workspace setting."""
+        return self._rpc.object(token, "my_assistant_style_get", {})
+
+    def my_style_set(self, token: str, style: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "my_assistant_style_set", {"p_style": style})
