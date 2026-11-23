@@ -192,7 +192,7 @@ class ExhaustiveTests(unittest.TestCase):
         for _ in range(60000):
             value = "".join(rng.choice(pool) for _ in range(rng.randint(1, 8)))
             without = value.replace(ZWNJ, "").replace(ZWJ, "")
-            placed = all(i > 0 and value[i - 1] not in (ZWNJ, ZWJ) and not reference_unsafe(value[i - 1] + char)
+            placed = all(i > 0 and value[i - 1] not in (ZWNJ, ZWJ) and not reference_unsafe(value[i - 1] + value[i])
                          for i, char in enumerate(value) if char in (ZWNJ, ZWJ))
             expected_refused = not (not refuses(legacy, without) and placed)
             self.assertIs(refuses(engine, value), expected_refused, ascii(value))

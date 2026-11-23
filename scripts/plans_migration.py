@@ -8,7 +8,7 @@ A migration on main is append-only, so a catalogue VERSION that was synced is ne
 (`-- plans-sync: <version> <sha256>`) that this script reads back. The manifest stored in the database is plans.json without its `$schema` line; its SHA-256 is taken over the canonical JSON (sorted keys, no
 spaces, UTF-8), so the test and this script agree on the same bytes."""
 
-
+# ruff: noqa: S608 - this script WRITES a migration file from reviewed JSON; it executes no SQL
 
 from __future__ import annotations
 
@@ -22,11 +22,11 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import plans_check as pc
+import plans_check as pc  # noqa: E402
 
 ROOT = pc.ROOT
 MIGRATIONS = ROOT / "supabase" / "migrations"
-MARK = re.compile(r"^-- plans-sync: (\d+) ([0-9a-f]{64})\s*$", re.MULTILINE)
+MARK = re.compile(r"^-- plans-sync: (\d+) ([0-9a-f]{64})\s*$", re.M)
 
 
 def manifest_of(cat: dict[str, Any]) -> dict[str, Any]:

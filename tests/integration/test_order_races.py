@@ -10,7 +10,7 @@ transaction (it runs the function and sleeps before it commits) while a second c
   * a storm of mixed events from several clients: no deadlock, no server error, `seq` gapless, the cache equals the ledger, the money conserves.
 All data is synthetic."""
 
-# ruff: noqa: B023
+# ruff: noqa: E501, S608, S311, B023
 
 from __future__ import annotations
 
@@ -148,7 +148,7 @@ def test_create_and_withdraw_at_once_are_one_or_the_other(ow: OrderWorld) -> Non
         a, b = both(
             lambda: ow.create_order(quote),
             lambda: ow.qw.withdraw(quote, token=ow.users["admin"].token),
-        )
+        )  # noqa: B023
         codes = {code_of(a), code_of(b)}
         assert codes in ({"", "SM237"}, {"", "SM230"}), (a.text, b.text)
         orders, status = order_count(quote), qstatus(quote)
@@ -179,7 +179,7 @@ def test_two_creates_at_once_make_one_order_and_distinct_numbers(ow: OrderWorld)
     for _ in range(4):
         q1, _, _ = approved(ow)
         q2, _, _ = approved(ow)
-        x, y = both(lambda: ow.create_order(q1), lambda: ow.create_order(q2))
+        x, y = both(lambda: ow.create_order(q1), lambda: ow.create_order(q2))  # noqa: B023
         assert (
             x.status_code == y.status_code == 200 and x.json()["order_no"] != y.json()["order_no"]
         ), (x.text, y.text)  # the number is the tenant's next
@@ -228,7 +228,7 @@ def test_a_newer_approval_and_an_order_on_the_older_quote_at_once_never_leave_bo
         new = newer_draft(ow, requirement)
         a, b = both(
             lambda: ow.create_order(old), lambda: ow.qw.approve(new, token=ow.users["admin"].token)
-        )
+        )  # noqa: B023
         outcome = (qstatus(old), qstatus(new), order_count(old))
         assert outcome in (("approved", "draft", 1), ("superseded", "approved", 0)), (
             outcome,
@@ -451,7 +451,7 @@ def test_an_approval_that_runs_while_a_decline_is_uncommitted_is_refused(ow: Ord
 def test_a_new_approval_and_a_decline_at_once_never_leave_a_superseded_quote_with_an_open_order(ow: OrderWorld) -> None:
     for _ in range(4):
         order, old, _, new = sent_order_with_new_draft(ow)
-        a, b = both(lambda: ow.qw.approve(new, token=ow.users["admin"].token), lambda: ow.run_event(order, "sales", "customer_decline", reason="price").response)
+        a, b = both(lambda: ow.qw.approve(new, token=ow.users["admin"].token), lambda: ow.run_event(order, "sales", "customer_decline", reason="price").response)  # noqa: B023
         assert code_of(b) == "", b.text  # the decline always succeeds
         outcome = (qstatus(old), qstatus(new), ow.state(order), code_of(a))
         assert outcome in (("superseded", "approved", "declined", ""), ("approved", "draft", "declined", "SM237")), outcome

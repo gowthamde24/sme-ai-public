@@ -4,6 +4,7 @@ Proved: the word and character error rate arithmetic (including Telugu words and
 truth and Chrome files by name, the language from the file name), every adapter switched on only by its own environment variables, the per-language table with latency and list prices, the spend guard,
 text-to-speech audio written to tts-out for listening, and that the report lands outside the repository. The request shapes of the providers are tested in services/ai-api/tests/test_voice.py."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 

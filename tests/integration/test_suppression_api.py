@@ -7,6 +7,7 @@ THE LEAK CHECK: no response, no audit row and no PostgREST read ever holds a key
 KNOWN LIMIT (documented here as a test): the database cannot verify an HMAC, so a member may record a WRONG key for a contact (option A; option B is required before an external customer).
 All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -21,14 +22,15 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
-from app.config import Settings
-from app.main import create_app
-from app.suppression.keys import KeyRing, KeyVersion
 from conftest import TEST_SUPPRESSION_KEY, aal1_token, bearer
 from crm_support import Tenant, World
 from evidence_support import code_of, pg, uid
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
+
+from app.config import Settings
+from app.main import create_app
+from app.suppression.keys import KeyRing, KeyVersion
 
 RING = KeyRing(KeyVersion(1, TEST_SUPPRESSION_KEY.encode()))
 HEX64 = re.compile(r"[0-9a-f]{64}")

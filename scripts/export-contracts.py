@@ -14,8 +14,8 @@ from app.crm.contracts import schema_text, ts_text
 from app.education import contracts as education
 from app.erasure import contracts as erasure
 from app.evidence import contracts as evidence
-from app.lead_sources import contracts as lead_sources
 from app.leads import contracts as leads
+from app.lead_sources import contracts as lead_sources
 from app.leadspack import contracts as leads_pack
 from app.marksmessages import contracts as marks_messages
 from app.materials import contracts as materials
@@ -30,8 +30,7 @@ from app.voice_notes import contracts as voice_notes
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-import error_catalog
-
+import error_catalog  # noqa: E402  (the error-code catalog, read from the API source: docs/contracts/error-codes.md)
 (ROOT / "packages/contracts/crm.schema.json").write_text(schema_text())
 (ROOT / "packages/contracts/crm.ts").write_text(ts_text())
 (ROOT / "packages/contracts/evidence.schema.json").write_text(evidence.schema_text())

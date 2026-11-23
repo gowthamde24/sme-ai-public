@@ -19,8 +19,8 @@ from pathlib import Path
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tests" / "integration"))
-import operator_sql
-from local_confirm import confirm_email
+import operator_sql  # noqa: E402  (talks to the LOCAL database container only)
+from local_confirm import confirm_email  # noqa: E402
 
 URL = os.environ["SUPABASE_URL"].rstrip("/")
 ANON = os.environ.get("SUPABASE_PUBLISHABLE_KEY") or os.environ["SUPABASE_ANON_KEY"]

@@ -7,6 +7,7 @@ For each language it builds a corpus (shared-lexicon words in a carrier sentence
 catalogue voice, writes what Sarvam heard, and ranks the clips by how far the words are from what was meant (app/pronunciation/qa.py). Clips are kept under <out>/clips/<lang>/ for the weekly review export. Characters are counted in code and the run stops
 before the cap. The recogniser cannot hear accent: it finds gross errors only."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -19,8 +20,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from app.pronunciation import qa
-from app.pronunciation.nightly import round_trip
+from app.pronunciation import qa  # noqa: E402
+from app.pronunciation.nightly import round_trip  # noqa: E402
 
 
 async def main() -> int:

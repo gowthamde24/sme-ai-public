@@ -19,6 +19,7 @@ The nine intents, asked in each of the four languages (36 tasks). The customers 
 A tool counts as USED only if its step ended `ok` (a call the application refused, or with arguments it did not accept, is a wrong call, not a use). Argument values are not recorded by the
 runtime (only a hash), so "the right arguments" is judged by the effect: the step ended `ok`."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 

@@ -1,5 +1,6 @@
 """Count the results and list what is still alive: python3 tools/mutation-followups/summary.py [sql|py|web]"""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

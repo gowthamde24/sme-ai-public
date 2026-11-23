@@ -12,8 +12,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import seed_staging as ss
-import staging_smoke_api as sm
+import seed_staging as ss  # noqa: E402
+import staging_smoke_api as sm  # noqa: E402
 
 TOOLS = {"call-settings.put_settings": "calling_hours", "ai-assistant.put_auto_reply": "auto_reply", "lead-sources.pause_source": "pause_source", "lead-sources.resume_source": "resume_source",
          "lead-imports.import_leads": "add_lead", "example-data.example_remove": "remove_example_data"}
@@ -92,8 +92,8 @@ def main() -> int:
         import uuid
 
         body = json.dumps({"message_id": str(uuid.uuid4()), "conversation_id": None, "text": text, "language": language}).encode()
-        req = urllib.request.Request(f"{api}{o.t}/assistant/turns", data=body, method="POST", headers={"Authorization": f"Bearer {o.token}", "Content-Type": "application/json", "Accept": "text/event-stream"})
-        with urllib.request.urlopen(req, timeout=180) as r:
+        req = urllib.request.Request(f"{api}{o.t}/assistant/turns", data=body, method="POST", headers={"Authorization": f"Bearer {o.token}", "Content-Type": "application/json", "Accept": "text/event-stream"})  # noqa: S310
+        with urllib.request.urlopen(req, timeout=180) as r:  # noqa: S310
             raw = r.read().decode()
         evs = [(b.split("\n")[0][7:], json.loads(b.split("\n")[1][6:])) for b in raw.strip().split("\n\n") if b.startswith("event: ") and "\n" in b]
         for _, d in evs:

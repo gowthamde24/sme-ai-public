@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Put the Meta app's secret and the test Page's access token (Lead Ads, Track D) into Secret Manager, for the STAGING project.
 
 Run it yourself, in your own terminal (in Claude Code: `! python3 -I scripts/staging_meta_secrets.py --i-know-this-writes-staging-secrets --project project-2757c07e-37d2-4167-88f`).
@@ -45,7 +46,7 @@ def valid_token(value: str) -> bool:
 
 def gcloud(args: list[str], *, stdin: str | None = None) -> int:
     """Run gcloud; its output is swallowed (it never holds the value, but nothing of it is needed either)."""
-    done = subprocess.run(["gcloud", *args], input=stdin, capture_output=True, text=True, check=False)
+    done = subprocess.run(["gcloud", *args], input=stdin, capture_output=True, text=True, check=False)  # noqa: S603, S607
     return done.returncode
 
 

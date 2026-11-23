@@ -5,6 +5,7 @@
   * the shipping lines of the text follow the policy: a policy with no shipping fee prints none, a policy with a fee prints the three lines.
 Nothing here sends anything. All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

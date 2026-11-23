@@ -1,6 +1,6 @@
 import copy
-import unittest
 from datetime import date, timedelta
+import unittest
 
 import followup_cadence as engine
 from test_cadence import fixture

@@ -2,6 +2,7 @@
 whole command (Rs 100 unless CONFIRM_SPEND=1), the report outside the repository and the sheet for a native reader. Everything is pure except the last test, which reads the recorded steps of a real
 answer from the local stack. No key, no network, no cost."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -17,12 +18,13 @@ import assistant_smoke as smoke
 import bakeoff_shop as shop
 import model_bakeoff as bake
 import pytest
-from app.assistant.language import detect_language
 from assistant_support import assistant_app, enable_assistant, restore
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
 from test_today_api import Scene
+
+from app.assistant.language import detect_language
 
 ZERO = dict.fromkeys(smoke.INJECTION_KEYS, 0)
 TASKS = {t.id: t for t in shop.SHOP_TASKS}
@@ -346,6 +348,7 @@ def test_every_provider_builds_the_runtime_the_command_would_use() -> None:
 
 def test_groq_is_called_at_its_own_address_with_the_key_in_the_bearer_header_only() -> None:
     import httpx
+
     from app.agents.llm.interface import Block, LlmRequest, TaskClass, Trust
     from app.agents.llm.openai_compat import ChatCompletionsClient, hosted_free_config
 

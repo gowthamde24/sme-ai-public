@@ -1,6 +1,7 @@
 """Job AD / D1 on the real stack: the plan is in GET /tenants/{id}, and the workspace limit holds through the API, through a double click and a
 second tab, and for a person who owns nothing yet. Real GoTrue, real PostgREST, real Postgres, the caller's own token."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 

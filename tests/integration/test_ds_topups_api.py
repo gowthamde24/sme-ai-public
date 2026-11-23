@@ -3,6 +3,7 @@ contract, the settings, the upgrade preview and the upgrade during the trial.
 
 What this proves that the pgTAP file (129) and the unit tests cannot: the database's answers are accepted by the strict models (no key we did not declare, none missing) and conform to billing.schema.json."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 

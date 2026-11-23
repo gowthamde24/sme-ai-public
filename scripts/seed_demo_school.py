@@ -14,10 +14,10 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import demo_data
-import httpx
-import seed_demo
-from local_confirm import confirm_email
+import demo_data  # noqa: E402
+import httpx  # noqa: E402
+import seed_demo  # noqa: E402
+from local_confirm import confirm_email  # noqa: E402
 
 IST = timezone(timedelta(hours=5, minutes=30))
 OWNERS = [

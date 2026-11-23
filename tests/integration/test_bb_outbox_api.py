@@ -4,6 +4,7 @@ test_scheduler_api.py (the worker's own account) and the database rules in pgTAP
 
 Time: like test_outbox_api.py, the module runs twice with the outbox clock pinned to 14:00 IST (day) and 23:30 IST (night), on yesterday's India date."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

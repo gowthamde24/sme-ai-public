@@ -3,6 +3,7 @@ registered worker account for the webhooks. Proved: an IndiaMART pull makes lead
 recorded on the order until a person records it (through the order lifecycle), and a repeat records nothing twice; a bad signature changes nothing; a missed call is found by its number; a call is
 placed only for an approved request, within the hours, once; and business B reaches none of it. All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -14,12 +15,6 @@ from typing import Any
 
 import operator_sql
 import pytest
-from app.connectors.calls import FakeBridge
-from app.connectors.indiamart import FixtureLeadSource
-from app.connectors.payments import FakePayments
-from app.connectors.repository import PostgrestConnectorsRepository
-from app.connectors.runtime import Connectors
-from app.scheduler.session import PrincipalSession
 from conftest import Stack, bearer
 from crm_support import World
 from fastapi.testclient import TestClient
@@ -27,6 +22,13 @@ from followup_support import FollowWorld
 from order_support import OrderWorld
 from quote_support import QuoteWorld
 from test_outbox_api import restore_clock
+
+from app.connectors.calls import FakeBridge
+from app.connectors.indiamart import FixtureLeadSource
+from app.connectors.payments import FakePayments
+from app.connectors.repository import PostgrestConnectorsRepository
+from app.connectors.runtime import Connectors
+from app.scheduler.session import PrincipalSession
 
 TOKEN = "T" * 32
 

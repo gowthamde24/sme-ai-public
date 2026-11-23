@@ -6,6 +6,7 @@ Time: every visit rule is India time by the database's clock, app.visit_now() ->
 that clock pinned (for the module, restored afterwards) to 14:00 IST on a day three weeks ago ("day") and to 23:30 IST on the days after ("night"), each run on its own dates so the two never
 compete for the same places. A separate test pins the minutes around midnight. The clock itself is also tested at explicit instants in pgTAP 77."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -16,8 +17,6 @@ from typing import Any
 
 import operator_sql
 import pytest
-from app.outbox.adapter import LocalFakeAdapter
-from app.visits import texts
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
@@ -25,6 +24,9 @@ from followup_support import FollowWorld, Lead
 from order_support import OrderWorld
 from quote_support import QuoteWorld
 from test_outbox_api import restore_clock
+
+from app.outbox.adapter import LocalFakeAdapter
+from app.visits import texts
 
 
 def sf(dispatched: dict[str, Any]) -> dict[str, int]:

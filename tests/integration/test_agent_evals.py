@@ -4,6 +4,7 @@ Every case in tests/evals/cases/*.jsonl is a model that OBEYS an injection. The 
 database after each case: zero changes outside the run's scope, zero state change beyond unverified agent rows of this run.
 A regression baseline (tests/evals/baseline.json) fails the build if a case disappears or flips from pass to fail."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -16,13 +17,14 @@ from typing import Any
 import agent_eval as ev
 import operator_sql
 import pytest
+from conftest import bearer
+from crm_support import World
+from evidence_support import pg, uid
+
 from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agents.db import AgentDb
 from app.agents.inputs import input_sha256, model_input_from_company
 from app.config import Settings
-from conftest import bearer
-from crm_support import World
-from evidence_support import pg, uid
 
 CASES = ev.load_cases()
 

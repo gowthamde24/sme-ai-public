@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa: E501
 """Creates the production SCHEDULER sign-in account already confirmed (no mailbox, no mail ever sent): Supabase Auth admin API, `email_confirm: true`. Reads ONE JSON object from stdin
 ({"ref", "key", "email", "password"}) so the service key and the password never appear on a command line; prints only a word: created | exists | refused. Called by deploy/prod-secrets-prompt.sh in the owner's terminal."""
 
@@ -14,9 +15,9 @@ from typing import Any
 
 
 def post(url: str, headers: dict[str, str], body: dict[str, Any]) -> tuple[int, str]:
-    req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={**headers, "Content-Type": "application/json"}, method="POST")
+    req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={**headers, "Content-Type": "application/json"}, method="POST")  # noqa: S310
     try:
-        with urllib.request.urlopen(req, timeout=30) as r:
+        with urllib.request.urlopen(req, timeout=30) as r:  # noqa: S310
             return r.status, r.read().decode()[:400]
     except urllib.error.HTTPError as e:
         return e.code, e.read().decode()[:400]

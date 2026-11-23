@@ -6,7 +6,7 @@ It talks to the local database container (`docker exec ... psql`), so it cannot 
 this machine's stack, and it needs no key of any kind. The container is the AGENT stack's unless
 SME_STACK=owner (scripts/stack_env.py, docs/runbooks/two-local-stacks.md)."""
 
-
+# ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
-import stack_env
+import stack_env  # noqa: E402  (the scripts folder is not a package)
 
 
 def container() -> str:
@@ -34,7 +34,7 @@ def sql(statement: str) -> str:
         pytest.fail(
             "docker is required for the agent integration tests (the local Supabase stack runs in it)"
         )
-    result = subprocess.run(
+    result = subprocess.run(  # noqa: S603 - fixed argv, our own container, our own SQL text
         [
             docker,
             "exec",
@@ -68,7 +68,7 @@ def sql_result(statement: str, *, timeout: int = 60) -> tuple[int, str, str]:
     docker = shutil.which("docker")
     if docker is None:
         pytest.fail("docker is required for the agent integration tests")
-    result = subprocess.run(
+    result = subprocess.run(  # noqa: S603 - fixed argv, our own container, our own SQL text
         [
             docker,
             "exec",

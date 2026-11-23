@@ -1,7 +1,7 @@
 """Pure INR order lifecycle proposals. No persistence, approvals or payment I/O."""
+from datetime import datetime, timezone
 import hashlib
 import json
-from datetime import datetime, timezone
 
 ENGINE_VERSION = "1.0.0"
 MAX_AMOUNT = 1_000_000_000

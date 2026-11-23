@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Create or rotate the billing webhook's own system account on the HOSTED stack19-staging project (owner, 13 Nov 2026).
 
 Only this account (and a business's Owner) may settle an order; the API signs in as it to apply the signed Razorpay events. Its password is made HERE, at random, straight into Secret Manager:
@@ -46,11 +47,11 @@ def new_password() -> str:
 def register_sql(email: str = ACCOUNT_EMAIL) -> str:
     if not EMAIL.fullmatch(email):
         raise AccountError("That does not look like a system e-mail address.")
-    return f"select app.operator_register_billing_webhook('{email}')"
+    return f"select app.operator_register_billing_webhook('{email}')"  # noqa: S608 - the address was checked above: no quote can be in it
 
 
 def run(argv: list[str], stdin: str | None = None) -> str:
-    done = subprocess.run(argv, input=stdin, capture_output=True, text=True, timeout=120, check=False)
+    done = subprocess.run(argv, input=stdin, capture_output=True, text=True, timeout=120, check=False)  # noqa: S603 - fixed argv
     if done.returncode != 0:
         raise AccountError(f"`{argv[0]} {argv[1] if len(argv) > 1 else ''}` failed (exit {done.returncode}).")
     return done.stdout
@@ -62,9 +63,9 @@ def json_from(text: str) -> Any:
 
 def http(method: str, url: str, headers: dict[str, str], body: Any = None) -> tuple[int, Any]:
     data = None if body is None else json.dumps(body).encode()
-    req = urllib.request.Request(url, method=method, data=data, headers={"Content-Type": "application/json", "User-Agent": "stack19-billing-webhook-account", **headers})
+    req = urllib.request.Request(url, method=method, data=data, headers={"Content-Type": "application/json", "User-Agent": "stack19-billing-webhook-account", **headers})  # noqa: S310
     try:
-        with urllib.request.urlopen(req, timeout=60) as r:
+        with urllib.request.urlopen(req, timeout=60) as r:  # noqa: S310
             raw = r.read()
             return r.status, (json.loads(raw) if raw else None)
     except urllib.error.HTTPError as e:
@@ -76,7 +77,7 @@ def http(method: str, url: str, headers: dict[str, str], body: Any = None) -> tu
 
 
 def secret_exists() -> bool:
-    return subprocess.run(["gcloud", "secrets", "describe", VAULT_ENTRY, f"--project={GCP_PROJECT}"], capture_output=True, text=True, timeout=60, check=False).returncode == 0
+    return subprocess.run(["gcloud", "secrets", "describe", VAULT_ENTRY, f"--project={GCP_PROJECT}"], capture_output=True, text=True, timeout=60, check=False).returncode == 0  # noqa: S603, S607
 
 
 def secret_put(value: str) -> None:

@@ -6,6 +6,7 @@ What this proves that the pgTAP file (111) and the unit tests cannot:
   * the journey through HTTP: the catalogue, the meter at the start, call seconds recorded by the registered CHANNEL account, the notices at 80 and 100 percent, the stop (platform switch on) and the gate that
     refuses a call start, the 30-day trial with a payment method, a failed payment, and a cancel."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -19,14 +20,15 @@ from typing import Any
 import jsonschema
 import operator_sql
 import pytest
+from conftest import bearer
+from test_outbox_api import restore_clock
+
 from app.billing import fake
 from app.billing.errors import PlanLimitReachedError
 from app.billing.provider import ProviderEvent, build_provider
 from app.billing.repository import PostgrestBillingRepository
 from app.billing.service import BillingService, UsageGate
 from app.tenancy.repository import Forbidden
-from conftest import bearer
-from test_outbox_api import restore_clock
 
 ROOT = Path(__file__).resolve().parents[2]
 BILLING = json.loads((ROOT / "packages" / "contracts" / "billing.schema.json").read_text(encoding="utf-8"))
@@ -164,11 +166,7 @@ def test_the_trial_a_failed_payment_and_the_cancel_through_http(client: Any, eva
 
 
 def test_a_workspace_whose_trial_ended_unpaid_is_read_only_and_its_owners_are_told(client: Any, eval_world: Any, scene: Any, stack: Any, signup: Any) -> None:
-    from app.billing.mail import (
-        BillingReminders,
-        FakeEmailSender,
-        PostgrestBillingMailRepository,
-    )
+    from app.billing.mail import BillingReminders, FakeEmailSender, PostgrestBillingMailRepository
 
     a = eval_world.a
     owner = bearer(a.users["owner"])

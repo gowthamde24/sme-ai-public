@@ -3,7 +3,7 @@ gate is closed, a contact's e-mail must be on a reserved domain and its phone mu
 local database owner) opens or closes it; one workspace's gate never affects another's. What an attack achieved is judged by the victim
 data afterwards."""
 
-
+# ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
 
 from __future__ import annotations
 

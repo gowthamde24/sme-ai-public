@@ -1,6 +1,7 @@
 """`make eval` (research): the Research Agent's containment gate with SCRIPTED models that obey every injection (no key, no network,
 no provider), the synthetic fixture sites, and the real local stack. See research_eval.py for the invariants."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -14,14 +15,15 @@ import agent_eval as ev
 import operator_sql
 import pytest
 import research_eval as rev
+from conftest import bearer
+from crm_support import Tenant, World
+from evidence_support import pg, uid
+
 from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agents import runtime
 from app.agents.db import AgentDb
 from app.agents.inputs import input_sha256, model_input_from_company
 from app.agents.registry import AGENTS
-from conftest import bearer
-from crm_support import Tenant, World
-from evidence_support import pg, uid
 
 CASES = rev.load_cases()
 RESEARCH = AGENTS["research"]

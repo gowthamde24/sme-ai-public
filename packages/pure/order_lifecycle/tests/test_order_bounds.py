@@ -1,7 +1,8 @@
+import copy
 import unittest
 
 import order_lifecycle as engine
-from test_lifecycle import fixture
+from test_lifecycle import event, fixture
 
 
 class OrderBoundsTests(unittest.TestCase):

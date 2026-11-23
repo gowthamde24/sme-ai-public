@@ -12,6 +12,7 @@ THE ORACLE for the database level is the REAL pinned engine: for every lead of t
 gate) and the real `followup_cadence` decides; a lead is expected in the candidates when it has an outbound touch, is not archived, is not stopped by the database, and the engine does not call it terminal.
 The function is not asked what it thinks of itself. All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -22,11 +23,12 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
-from app.followups import cadence_port, service
 from crm_support import World
 from due_support import bulk_leads
 from fastapi.testclient import TestClient
 from followup_support import FollowWorld, Lead
+
+from app.followups import cadence_port, service
 
 
 class Workspace:

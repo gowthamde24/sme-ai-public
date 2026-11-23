@@ -69,7 +69,7 @@ AGENT_SUPABASE_URL = f"http://127.0.0.1:{stack_env.AGENT.api_port}"
 AGENT_API_URL = "http://localhost:8001"  # the agents' own API (the owner's is 8000)
 
 DEMO_EMAIL = "demo-owner@demo.example.test"
-DEMO_PASSWORD = "Demo-Only-Local-Password-1!"
+DEMO_PASSWORD = "Demo-Only-Local-Password-1!"  # noqa: S105 - synthetic user, local stack only
 DEMO_WORKSPACE_NAME = "DEMO Synthetic Sarees Co (fictional)"
 DEMO_WORKSPACE_SLUG = "demo-synthetic-sme"
 ICP_TEMPLATE = ROOT / "config" / "icp" / "silk-wholesale.v1.json"
@@ -369,9 +369,9 @@ def local_factor_secret(user_id: str) -> str:
     docker = shutil.which("docker")
     if docker is None or not re.fullmatch(r"[0-9a-f-]{36}", user_id):
         raise SeedError("Cannot read the demo authenticator from the local database container.")
-    out = subprocess.run(
+    out = subprocess.run(  # noqa: S603 - fixed argv; the id is a validated uuid
         [docker, "exec", "-i", stack_env.db_container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-At", "-c",
-         f"select secret from auth.mfa_factors where user_id = '{user_id}' and status = 'verified' order by created_at limit 1"],
+         f"select secret from auth.mfa_factors where user_id = '{user_id}' and status = 'verified' order by created_at limit 1"],  # noqa: S608
         capture_output=True, text=True, timeout=30, check=False,
     )
     secret = out.stdout.strip()

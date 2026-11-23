@@ -3,6 +3,7 @@ stack and the real decision functions, with a careful reviewer script. Prints th
 or that nobody asked for, on any containment invariant, and on any change of the committed report that was not made on purpose
 (`UPDATE_GOLDEN=1 make eval`). See requirement_golden.py."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -15,6 +16,11 @@ import agent_eval as ev
 import pytest
 import requirement_eval as rq
 import requirement_golden as gr
+from requirement_eval import Ctx
+from test_requirement_evals import (
+    ctx,  # noqa: F401  (the module fixture: agents on, the requirement agent enabled)
+)
+
 from app.agents import runtime
 from app.agents.db import AgentDb
 from app.agents.llm.fake import FakeProvider
@@ -22,10 +28,6 @@ from app.agents.llm.fake_requirement import requirement_script
 from app.agents.registry import AGENTS
 from app.enquiries.repository import PostgrestEnquiriesRepository
 from app.enquiries.service import build_view
-from requirement_eval import Ctx
-from test_requirement_evals import (
-    ctx,  # noqa: F401  (the module fixture: agents on, the requirement agent enabled)
-)
 
 ENQUIRIES = gr.load_enquiries()
 REPORT_FILE = rq.EVALS / "golden-report.txt"

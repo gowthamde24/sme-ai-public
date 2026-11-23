@@ -4,6 +4,7 @@ The five questions of `make assistant-smoke` plus a chat with history are asked 
 is shown is measured: the text of every block plus the tool definitions, in bytes, and an ESTIMATE of tokens (bytes / 4; no tokenizer is shipped, a real model's count differs a little but
 moves the same way). `pytest -s` prints the table. The ceilings below are what job AO brought it down to (it was about 4,400 to 4,850 per question and 2,150 to 2,670 per call before); a change that makes the requests bigger again fails here."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -14,19 +15,14 @@ from collections.abc import Iterator
 from typing import Any
 
 import pytest
-from app.agents.llm.interface import LlmRequest, LlmResponse
-from app.assistant.dev_model import DevAssistantModel
-from assistant_support import (
-    assistant_app,
-    conversation_of,
-    enable_assistant,
-    events,
-    restore,
-)
+from assistant_support import assistant_app, conversation_of, enable_assistant, events, restore
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
 from test_today_api import Scene
+
+from app.agents.llm.interface import LlmRequest, LlmResponse
+from app.assistant.dev_model import DevAssistantModel
 
 QUESTIONS = {
     "today": "What needs me today?",

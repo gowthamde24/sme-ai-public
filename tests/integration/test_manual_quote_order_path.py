@@ -2,6 +2,7 @@
 through OUR application on the real stack. A typed-price quote has no price list, no product, and may have no delivery state or GST label; the order path copies the quote's
 TOTALS (create_order_from_quote reads the totals, the validity and the advance, nothing else), so nothing in it needs those. All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

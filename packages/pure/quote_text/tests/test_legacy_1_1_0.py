@@ -5,8 +5,8 @@ The suites that were the 1.1.0 package's own (test_quote_text, test_text_bounds)
 included. The 1.1.0 golden vectors (fixtures/golden_1_1_0.json) are checked by value in test_joiners.
 """
 import hashlib
-import unittest
 from pathlib import Path
+import unittest
 
 import quote_text.v1_1_0 as frozen
 import test_quote_text as base

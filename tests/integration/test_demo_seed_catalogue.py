@@ -1,6 +1,7 @@
 """`make seed-demo-catalogue` (job AY): twelve invented sarees with GENERATED placeholder pictures in the demo workspace. It refuses a non-local stack before any network call, holds no secret, makes no file
 and reads no photo from anywhere (the pictures are drawn in memory), is idempotent, and what it makes shows in the catalogue with working signed URLs (real stack, real Storage). Nothing is sent."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -20,8 +21,8 @@ from PIL import Image
 SCRIPTS = Path(__file__).resolve().parents[2] / "scripts"
 SCRIPT = SCRIPTS / "seed_demo_catalogue.py"
 sys.path.insert(0, str(SCRIPTS))
-import seed_demo_manual as manual
-from seed_demo import Config
+import seed_demo_manual as manual  # noqa: E402
+from seed_demo import Config  # noqa: E402
 
 spec = importlib.util.spec_from_file_location("seed_demo_catalogue", SCRIPT)
 assert spec and spec.loader

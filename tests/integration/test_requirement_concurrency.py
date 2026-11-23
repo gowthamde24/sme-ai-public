@@ -13,7 +13,7 @@ A last test lets five competing operations run at once for several rounds and ch
 at most one active requirement, a re-run never overwrites a person's work, a confirmed requirement is confirmable.
 All text is synthetic."""
 
-# ruff: noqa: F811
+# ruff: noqa: E501, F811, S608, S603
 
 from __future__ import annotations
 
@@ -34,13 +34,7 @@ from conftest import User
 from crm_support import World
 from evidence_support import code_of, pg
 from test_agent_direct_postgrest import rpc
-from test_requirement_direct_postgrest import (  # noqa: F401
-    BODY,
-    capture,
-    on,
-    start,
-    write,
-)
+from test_requirement_direct_postgrest import BODY, capture, on, start, write  # noqa: F401
 
 HOLD_SECONDS = 4.0
 
@@ -368,9 +362,9 @@ def _one_round(on: World, round_no: int) -> None:
     d = Draft(on, rerun=True)
     try:
         d.confirm_both()
-        confirm = lambda: rpc(on, d.sales, "confirm_requirement", p_requirement_id=d.requirement)
-        discard = lambda: rpc(on, d.sales, "discard_requirement", p_requirement_id=d.requirement)
-        correct = lambda: d.decide(d.quantity, "correct", value_int=25, basis="piece")
+        confirm = lambda: rpc(on, d.sales, "confirm_requirement", p_requirement_id=d.requirement)  # noqa: E731
+        discard = lambda: rpc(on, d.sales, "discard_requirement", p_requirement_id=d.requirement)  # noqa: E731
+        correct = lambda: d.decide(d.quantity, "correct", value_int=25, basis="piece")  # noqa: E731
         actions: list[Callable[[], httpx.Response]] = [
             confirm,
             d.add_field,

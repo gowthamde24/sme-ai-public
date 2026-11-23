@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import seed_staging as ss
+import seed_staging as ss  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = uuid.UUID("7b1d2c3e-5f40-4a6b-9c8d-0e1f2a3b4c5d")

@@ -4,6 +4,7 @@ mail catcher (Mailpit, the stack's own: 54324 for the owner's stack, 54424 for t
 The web server action `signUp` makes exactly the Auth call made here (same body, same metadata); its logic is unit-tested in apps/web.
 Throwaway accounts only; the only mail server involved is the one inside the local stack."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -97,10 +98,10 @@ def confirmed(stack: Stack) -> User:
 # ==== local mail only ====
 def test_confirmation_is_on_and_there_is_no_smtp_server_to_send_to() -> None:
     config = (ROOT / "supabase" / "config.toml").read_text()
-    assert re.search(r"^enable_confirmations = true$", config, re.MULTILINE)
-    assert not re.search(r"^\[auth\.email\.smtp\]", config, re.MULTILINE), "an SMTP section would let a real mail leave this machine"
-    assert not re.search(r"^\s*smtp_host\s*=", config, re.MULTILINE)
-    assert re.search(r"^\[local_smtp\]\s*\nenabled = true", config, re.MULTILINE)
+    assert re.search(r"^enable_confirmations = true$", config, re.M)
+    assert not re.search(r"^\[auth\.email\.smtp\]", config, re.M), "an SMTP section would let a real mail leave this machine"
+    assert not re.search(r"^\s*smtp_host\s*=", config, re.M)
+    assert re.search(r"^\[local_smtp\]\s*\nenabled = true", config, re.M)
 
 
 def test_the_confirmation_mail_lands_in_the_local_catcher_and_links_to_the_apps_own_page(stack: Stack) -> None:

@@ -6,6 +6,7 @@ same request, ACCEPT the engine's own canonical request and result through publi
 approve the quote later (the approval re-builds from the stored lines). Cases are seeded (reproducible) and cover every GST rate bound, small prices (half-paise ties),
 both customer kinds, credit limits and prices outside an item type's range. A failure names the case. All data is synthetic."""
 
+# ruff: noqa: E501, S311, S608
 
 from __future__ import annotations
 
@@ -16,10 +17,11 @@ from typing import Any
 
 import operator_sql
 import pytest
-from app.quotes import engine_port
 from crm_support import World
 from evidence_support import uid
 from quote_support import QuoteWorld, rpc, today
+
+from app.quotes import engine_port
 
 CASES = int(os.environ.get("QUOTE_EQUIVALENCE_CASES", "30"))
 TYPES: dict[

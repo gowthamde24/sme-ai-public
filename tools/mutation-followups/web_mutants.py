@@ -1,5 +1,6 @@
 """The hand-written web mutants of the follow-up screens: (file under apps/web, the text to replace, its replacement, what it means, which occurrence)."""
 
+# ruff: noqa: E501, E702
 
 T = "app/app/tenants/[tenantId]/followups"
 FL = f"{T}/followup-logic.ts"; FA = f"{T}/followup-actions.ts"; LV = f"{T}/lead-followup-view.tsx"; FD = f"{T}/draft-forms.tsx"; TF = f"{T}/touch-form.tsx"; UF = f"{T}/use-followup-action.ts"

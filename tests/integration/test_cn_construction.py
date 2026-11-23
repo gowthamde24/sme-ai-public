@@ -6,6 +6,7 @@ What these prove that the pgTAP files (96 to 99) and the unit tests cannot:
     a real photo in Storage, the delivery note, the site contact's update through the outbox, the dues ledger and the credit warning;
   * the module gate (a textile workspace is refused with a plain 403), the roles, and the shapes the web will read validate against the generated contract."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -76,7 +77,7 @@ def test_the_sql_twin_gives_the_python_references_figures_on_random_requests() -
 
     engine_port.engine()  # puts packages/quote-engine/src on the path, through the one door
     random_request = load_random_request()
-    rng = random.Random(20261014)
+    rng = random.Random(20261014)  # noqa: S311 - a fixed seed for a repeatable test, not a secret
     checked = 0
     for _ in range(150):
         request = random_request(rng)

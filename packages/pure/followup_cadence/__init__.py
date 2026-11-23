@@ -1,8 +1,8 @@
 """Pure follow-up cadence decisions; no sending or external I/O."""
 
+from datetime import date, datetime, timedelta, timezone
 import hashlib
 import json
-from datetime import date, datetime, timedelta, timezone
 
 ENGINE_VERSION = "1.0.0"
 

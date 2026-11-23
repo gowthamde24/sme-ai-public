@@ -5,6 +5,7 @@ Time: the policy keeps quiet hours 21:00 to 09:00 India time by the database's o
 twice, with that clock pinned (for the module, restored afterwards) to 14:00 IST ("day": a message goes at once) and to 23:30 IST ("night": it is held until 09:00). The pins are on yesterday's India
 date, so they are always in the past (an enquiry may not be received in the future). The clock itself is also tested at explicit instants in pgTAP 76."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -15,11 +16,12 @@ from typing import Any
 
 import operator_sql
 import pytest
-from app.outbox.adapter import LocalFakeAdapter
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
 from followup_support import FollowWorld, Lead
+
+from app.outbox.adapter import LocalFakeAdapter
 
 
 def sf(dispatched: dict[str, Any]) -> dict[str, int]:
