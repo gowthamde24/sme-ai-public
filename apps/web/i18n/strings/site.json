@@ -12435,19 +12435,6 @@
   },
   "ta": "Meta ads (soon)"
  },
- "v9.how.9": {
-  "en": "{brand}",
-  "te": "{brand}",
-  "hi": "{brand}",
-  "kn": "{brand}",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "{brand}"
- },
  "v9.how.10": {
   "en": "Result goes to",
   "te": "Result goes to",

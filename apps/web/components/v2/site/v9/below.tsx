@@ -126,11 +126,11 @@ export function PipeClient({ w }: { w: PipeWords }) {
   return (
     <>
       <Tabs className="pipe-tabs" label={w.tabs} items={[{ key: "fast" as const, text: w.fast }, { key: "slow" as const, text: w.slow }]} value={mode} onChange={setMode} />
-      <div className="pipe" ref={pipe}>
+      <div className="pipe" ref={pipe} data-mode={mode}>
         <div className="src"><span className="src-dot" />{w.src}</div>
         <div className={`pclock${fast ? "" : " slow"}`}><small>{w.clock}</small><b>{fast ? w.fastTime : w.slowTime}</b></div>
         <div className="funnel" /><div className="neck" />
-        <div className="bucket" ref={bucket}><div className="fill" style={{ height: fast ? "90%" : "32%" }} /><b>{w.bucket}</b></div>
+        <div className="bucket" ref={bucket}><div className="fill" /><b>{w.bucket}</b></div>
         <div className="tray"><span>{w.lost}</span><small>{w.lostSub}</small></div>
       </div>
     </>
@@ -217,7 +217,7 @@ export function TryItClient({ w }: { w: TryWords }) {
         <div className="plan-row"><span>{w.says}</span><strong>{plan.say}</strong></div>
         <div className="plan-row"><span>{w.when}</span><strong>{plan.when}</strong></div>
         <div className="plan-row"><span>{w.cost}</span><strong>{plan.cost}</strong></div>
-        <a href="#early-access" className="btn-primary" style={{ marginTop: 6 }}>{w.cta}</a>
+        <a href="#early-access" className="btn-primary">{w.cta}</a>
       </div>
     </div>
   );

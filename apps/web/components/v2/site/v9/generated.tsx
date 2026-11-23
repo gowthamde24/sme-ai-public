@@ -1,6 +1,5 @@
 // GENERATED ONCE from mocks/landing-v9/index.html by tools/c2-v9-convert.py (23 Nov 2026), then edited by hand. Server components: the words come from the string store (v9.*), the interactive parts are the islands in ./islands.
 import Link from "next/link";
-import type { CSSProperties } from "react";
 
 import { CookieSettingsLink } from "@/components/v2/legal/CookieSettingsLink";
 import type { SiteLang } from "@/i18n/lang";
@@ -12,6 +11,7 @@ import { websiteOnly } from "@/lib/site/mode";
 import { sitePath } from "@/lib/site/paths";
 
 import { Faq, HowDemo, JobsDemo, Phone, Pipe, TryIt, Voices } from "./islands";
+import { OrbRingLazy } from "./lazy";
 
 export function V9Hdr({ t }: { t: SiteT }) {
   return (
@@ -412,8 +412,8 @@ export function V9How({ t }: { t: SiteT }) {
           <span className="flow-arrow">
             {"→"}
           </span>
-          <span className="flow-core">
-            {t("v9.how.9")}
+          <span className="flow-orb" aria-hidden="true">
+            <OrbRingLazy state="ambient" size="xl" />
           </span>
           <span className="flow-arrow">
             {"→"}
@@ -1172,7 +1172,7 @@ export function V9Faq({ t }: { t: SiteT }) {
 
 export function V9Cta({ t }: { t: SiteT }) {
   return (
-    <section className="sec sec-white" id="early-access" style={{ paddingTop: "20px" } as CSSProperties} data-reveal="">
+    <section className="sec sec-white" id="early-access" data-reveal="">
       <div className="wrap">
         <div className="cta-card" id="contact">
           <h2>

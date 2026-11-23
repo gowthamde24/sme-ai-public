@@ -1862,3 +1862,11 @@
 .v9 .v9-phone .h3-dp-chat .pp-body { flex: 1 1 auto; min-height: 0; padding: 12px 10px; }
 .v9 .v9-phone .h3-dp-chat .pp-b { max-width: 84%; min-width: 0; }
 .v9 .v9-phone .h3-dp-chat .pp-input { border-radius: 0; }
+
+/* the flow line's centre is the product's own orb in its tick ring (owner, 24 Nov: the voice orb instead of the name circle): the box is reserved at 132 px, no halo or glow of ours around it */
+.v9 .flow-orb { display: grid; place-items: center; width: 132px; height: 132px; flex: none; }
+/* the late call-back picture: how full the bucket is, by mode (set in the markup as data-mode) */
+.v9 .pipe[data-mode="slow"] .fill { height: 32%; }
+.v9 .pipe[data-mode="fast"] .fill { height: 90%; }
+.v9 .aw-draft .btn-primary { margin-top: 6px; }
+.v9 #early-access { padding-top: 20px; }
