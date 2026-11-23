@@ -392,3 +392,43 @@ describe("the words of the voice card exist in all four languages", () => {
     }
   });
 });
+
+describe("the open layout of the voice card (MY_ASSISTANT_OPEN, owner's mock)", () => {
+  it("lists voices as plain rows: the recommended and the one in use first, the others behind 'See all voices (N)'; no box and no tint on the selected row, the radio at the far right", () => {
+    setup({ open: true });
+    const rows = document.querySelector('[data-part="vc-voice-rows"]') as HTMLElement;
+    expect(rows).not.toBeNull();
+    const all = [...root().querySelectorAll("[data-voice]")].map((v) => v.getAttribute("data-voice"));
+    expect(all).toHaveLength(4); // every voice is still on the page (the rest inside the See all expander)
+    const seeAll = document.querySelector('[data-part="vc-see-all"]') as HTMLElement | null;
+    const shownFirst = [...rows.querySelectorAll(":scope > div [data-voice]")].map((v) => v.getAttribute("data-voice"));
+    expect(shownFirst.length + (seeAll ? seeAll.querySelectorAll("[data-voice]").length : 0)).toBe(4);
+    if (seeAll) expect(seeAll.querySelector("summary")?.textContent).toMatch(/^See all voices \(\d+\)$/);
+    const selected = document.querySelector('[data-selected="true"]') as HTMLElement;
+    expect(selected.className).not.toMatch(/border-brand|bg-surface-2|rounded-xl/);
+    expect(selected.querySelector('input[type="radio"]')).toBeChecked();
+    expect(selected.lastElementChild?.tagName).toBe("INPUT");
+  });
+  it("the sample call is a hairline block, not a filled box", () => {
+    setup({ open: true, conversations: { en: { friendly: ["Hello?", "Hello, this is the shop."] } } });
+    const ex = document.querySelector('[data-part="vc-example"]') as HTMLElement | null;
+    if (ex) expect(ex.className).not.toMatch(/bg-surface-2/);
+  });
+});
+
+describe("'Sounds like' chips of the open voice list (C1's voice categories)", () => {
+  it("shows Recommended and only the categories this language has voices for; a category lists ALL its voices; the chip pressed is marked; no category data = no chips", () => {
+    const voices = MOCK_VOICES.map((v) => ({ ...v, soundsLike: v.gender === "female" ? ("warm_friendly" as const) : ("deep_confident" as const) }));
+    setup({ open: true, picker: { voices, choices: {}, active: {}, gender: "female", fake: false } });
+    const chips = within(document.querySelector('[data-part="vc-sounds"]') as HTMLElement).getAllByRole("button").map((b) => b.textContent);
+    expect(chips).toEqual(["Recommended", "Warm & friendly", "Deep & confident"]);
+    fireEvent.click(screen.getByRole("button", { name: "Deep & confident" }));
+    expect(screen.getByRole("button", { name: "Deep & confident" })).toHaveAttribute("aria-pressed", "true");
+    const shown = [...document.querySelectorAll('[data-part="vc-voice-rows"] [data-voice]')].map((v) => v.getAttribute("data-voice"));
+    expect(shown.every((id) => voices.find((v) => v.id === id)?.soundsLike === "deep_confident")).toBe(true);
+  });
+  it("an answer with no categories draws no chips", () => {
+    setup({ open: true });
+    expect(document.querySelector('[data-part="vc-sounds"]')).toBeNull();
+  });
+});

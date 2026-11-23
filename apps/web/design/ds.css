@@ -9,7 +9,7 @@
   color-scheme: light;
 
   /* neutral off-white (owner, 14 Nov: the cream was too sepia): page #fafafa, cards white with a 1px #ececec edge, cool-grey text */
-  --v2-bg: #ffffff;
+  --v2-bg: #fafafa;
   --v2-surface: #ffffff;
   --v2-surface-2: #f4f5f7;
   --v2-ink: #16181d;
@@ -144,16 +144,7 @@
   background-image: none;
   isolation: isolate;
 }
-[data-ui="v2"][data-ds="6"] [data-frame="app"]::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: radial-gradient(circle, var(--v2-dot) 1px, transparent 1.3px);
-  background-size: 22px 22px;
-  will-change: transform;
-}
+/* (no dot grid behind the app: the page is flat, owner 25 Nov 2026: light #fafafa, dark #0a0a0b; the landing keeps its own look) */
 /* The glowing border (the command bar, a reply that waits for the owner's OK): a gradient edge and a soft orange halo. Still when the person asks for less motion. */
 [data-ui="v2"][data-ds="6"] .ds-glow {
   border: 1.5px solid transparent;
@@ -685,4 +676,34 @@
 /* (d) the 14 px floor for text the owner reads (the small utilities lift to 14; a drawing of a phone or a sample, data-illustration, keeps its own size) */
 [data-ui="v2"][data-ds="6"] [data-frame="app"] main:not(:has([data-part="command-bar"])) :is(.text-xs, [class*="text-[11px]"], [class*="text-[12px]"], [class*="text-[12.5px]"], [class*="text-[13px]"], [class*="text-[13.5px]"]):not([data-illustration] *) {
   font-size: 14px !important;
+}
+
+/* My assistant, the OPEN layout (owner chose it, 24 Nov 2026): the three cards become plain sections on the page: no box, no radius, a hairline above each block; the tabs sit on a hairline. The data-open wrapper only exists with MY_ASSISTANT_OPEN=1. */
+[data-ui="v2"][data-ds="6"] [data-open="mya"] :is([data-part="mya-voice-card"], [data-part="mya-voice-tone"], [data-part="mya-talk-to-you"]) {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-voice-card"] > :is(fieldset, div[data-part]):not(:first-child) {
+  border-top: 1px solid var(--v2-border);
+  padding-top: 18px;
+}
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"] > div { border-top: 0; }
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"] summary::-webkit-details-marker { display: none; }
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"] summary::after { content: "+"; margin-left: auto; font-size: 20px; font-weight: 500; }
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"][open] summary::after { content: "\2212"; }
+
+/* the Practice panel on a My assistant page in the open layout: no box, plain text beside ONE vertical rule (the mock) */
+[data-ui="v2"][data-ds="6"] main:has([data-open="mya"]) [data-part="practice-panel"] {
+  border: 0;
+  border-left: 1px solid var(--v2-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0 0 0 24px;
+}
+@media (max-width: 767px) {
+  [data-ui="v2"][data-ds="6"] main:has([data-open="mya"]) [data-part="practice-panel"] { border-left: 0; border-top: 1px solid var(--v2-border); padding: 16px 0 0; }
 }

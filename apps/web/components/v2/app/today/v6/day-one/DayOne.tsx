@@ -9,6 +9,7 @@ import { primeAudio } from "@/lib/browser-voice/audio-io";
 
 import { LazyLiveBar } from "../LazyLiveBar";
 import { OrbRing } from "../OrbRing";
+import { DayOneOpen } from "./DayOneOpen";
 import { STEP_IDS, TOTAL_MINUTES, type StepView } from "./steps";
 
 export type DayOneActions = {
@@ -45,7 +46,7 @@ export function ProgressRing({ done, total, label = "" }: { done: number; total:
  * highlighted with "Start", the middle three marked "Optional · defaults are set"); on the right the progress ring and "Continue setup", "Not sure? Just talk." (the same live conversation as the command bar, in place) and "Need help?" (WhatsApp support); under it an empty state
  * with "Make a test call". "Skip for now" is under the headline. "Go live with defaults" shows once a business name and a connected phone number are done; before that the Go live button says what is missing. It is a lazy chunk: Today's first paint does not carry it.
  */
-export default function DayOne({ name, steps, canGoLive, missing, actions, words, language, helpHref, testCallHref }: { name: string; steps: readonly StepView[]; canGoLive: boolean; missing: readonly ("business_name" | "phone_number")[]; actions: DayOneActions; words: Words; language: string; helpHref: string; testCallHref: string }) {
+function DayOneBoxed({ name, steps, canGoLive, missing, actions, words, language, helpHref, testCallHref }: { name: string; steps: readonly StepView[]; canGoLive: boolean; missing: readonly ("business_name" | "phone_number")[]; actions: DayOneActions; words: Words; language: string; helpHref: string; testCallHref: string }) {
   const t = makeT(words);
   const done = steps.filter((s) => s.done).length;
   const current = steps.find((s) => s.current) ?? null;
@@ -196,4 +197,10 @@ export default function DayOne({ name, steps, canGoLive, missing, actions, words
       </section>
     </div>
   );
+}
+
+/** FIRST_DAY_OPEN picks the open layout (DayOneOpen); otherwise the boxed one above. */
+export default function DayOne(props: React.ComponentProps<typeof DayOneBoxed> & { open?: boolean }) {
+  const { open, ...rest } = props;
+  return open ? <DayOneOpen {...rest} /> : <DayOneBoxed {...rest} />;
 }
