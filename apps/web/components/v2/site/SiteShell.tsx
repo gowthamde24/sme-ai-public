@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 
 import { SiteFooter } from "@/components/v2/site/SiteFooter";
 import { SiteHeader } from "@/components/v2/site/SiteHeader";
-import { homeEarly } from "@/components/v2/site/home2/early";
 import { V2Root } from "@/components/v2/V2Root";
 import type { SiteT } from "@/i18n/site";
 import type { SiteLang } from "@/i18n/lang";
@@ -20,9 +19,15 @@ export function SiteShell({ lang, theme, t, target, children }: { lang: SiteLang
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-charcoal focus:px-4 focus:py-3 focus:text-on-charcoal">
           {t("skip")}
         </a>
-        <SiteHeader t={t} lang={lang} theme={theme} target={target} />
-        <main id="main">{children}</main>
-        <SiteFooter t={t} lang={lang} target={target} early={target.kind === "home" ? homeEarly(t, lang) : undefined} />
+        {target.kind === "home" ? (
+          children // the home page (landing v9) draws its own header, <main id="main"> and footer
+        ) : (
+          <>
+            <SiteHeader t={t} lang={lang} theme={theme} target={target} />
+            <main id="main">{children}</main>
+            <SiteFooter t={t} lang={lang} target={target} early={undefined} />
+          </>
+        )}
       </div>
     </V2Root>
   );

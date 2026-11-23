@@ -11602,5 +11602,4165 @@
    "kn": "draft",
    "ta": "draft"
   }
+ },
+ "v9.hdr.1": {
+  "en": "{brand}",
+  "te": "{brand}",
+  "hi": "{brand}",
+  "kn": "{brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "{brand}"
+ },
+ "v9.hdr.2": {
+  "en": "Main",
+  "te": "Main",
+  "hi": "Main",
+  "kn": "Main",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Main"
+ },
+ "v9.hdr.3": {
+  "en": "How it works",
+  "te": "How it works",
+  "hi": "How it works",
+  "kn": "How it works",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "How it works"
+ },
+ "v9.hdr.4": {
+  "en": "Lead Finder",
+  "te": "Lead Finder",
+  "hi": "Lead Finder",
+  "kn": "Lead Finder",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Lead Finder"
+ },
+ "v9.hdr.5": {
+  "en": "Voices",
+  "te": "Voices",
+  "hi": "Voices",
+  "kn": "Voices",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Voices"
+ },
+ "v9.hdr.6": {
+  "en": "Pricing",
+  "te": "Pricing",
+  "hi": "Pricing",
+  "kn": "Pricing",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Pricing"
+ },
+ "v9.hdr.7": {
+  "en": "Contact",
+  "te": "Contact",
+  "hi": "Contact",
+  "kn": "Contact",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Contact"
+ },
+ "v9.hdr.8": {
+  "en": "English",
+  "te": "English",
+  "hi": "English",
+  "kn": "English",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "English"
+ },
+ "v9.hdr.9": {
+  "en": "Join early access",
+  "te": "Join early access",
+  "hi": "Join early access",
+  "kn": "Join early access",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Join early access"
+ },
+ "v9.hero.1": {
+  "en": "నమస్కారం · Speaks 4 languages",
+  "te": "నమస్కారం · Speaks 4 languages",
+  "hi": "నమస్కారం · Speaks 4 languages",
+  "kn": "నమస్కారం · Speaks 4 languages",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "నమస్కారం · Speaks 4 languages"
+ },
+ "v9.hero.2": {
+  "en": "▶ Hear a call",
+  "te": "▶ Hear a call",
+  "hi": "▶ Hear a call",
+  "kn": "▶ Hear a call",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "▶ Hear a call"
+ },
+ "v9.hero.3": {
+  "en": "Answer every call. Find new customers.",
+  "te": "Answer every call. Find new customers.",
+  "hi": "Answer every call. Find new customers.",
+  "kn": "Answer every call. Find new customers.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Answer every call. Find new customers."
+ },
+ "v9.hero.4": {
+  "en": "An AI telecaller for small businesses. Calls, WhatsApp and new customers, in your language.",
+  "te": "An AI telecaller for small businesses. Calls, WhatsApp and new customers, in your language.",
+  "hi": "An AI telecaller for small businesses. Calls, WhatsApp and new customers, in your language.",
+  "kn": "An AI telecaller for small businesses. Calls, WhatsApp and new customers, in your language.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "An AI telecaller for small businesses. Calls, WhatsApp and new customers, in your language."
+ },
+ "v9.hero.5": {
+  "en": "Get free early access",
+  "te": "Get free early access",
+  "hi": "Get free early access",
+  "kn": "Get free early access",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Get free early access"
+ },
+ "v9.hero.6": {
+  "en": "Free early access · set up with you",
+  "te": "Free early access · set up with you",
+  "hi": "Free early access · set up with you",
+  "kn": "Free early access · set up with you",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Free early access · set up with you"
+ },
+ "v9.hero.7": {
+  "en": "Telugu · Hindi · Kannada · English · First business goes live in December",
+  "te": "Telugu · Hindi · Kannada · English · First business goes live in December",
+  "hi": "Telugu · Hindi · Kannada · English · First business goes live in December",
+  "kn": "Telugu · Hindi · Kannada · English · First business goes live in December",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Telugu · Hindi · Kannada · English · First business goes live in December"
+ },
+ "v9.hero.8": {
+  "en": "Calls",
+  "te": "Calls",
+  "hi": "Calls",
+  "kn": "Calls",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Calls"
+ },
+ "v9.hero.9": {
+  "en": "Call",
+  "te": "Call",
+  "hi": "Call",
+  "kn": "Call",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Call"
+ },
+ "v9.hero.10": {
+  "en": "Telugu",
+  "te": "Telugu",
+  "hi": "Telugu",
+  "kn": "Telugu",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Telugu"
+ },
+ "v9.hero.11": {
+  "en": "1 min 12 s",
+  "te": "1 min 12 s",
+  "hi": "1 min 12 s",
+  "kn": "1 min 12 s",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "1 min 12 s"
+ },
+ "v9.hero.12": {
+  "en": "Today, 10:04",
+  "te": "Today, 10:04",
+  "hi": "Today, 10:04",
+  "kn": "Today, 10:04",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Today, 10:04"
+ },
+ "v9.hero.13": {
+  "en": "Summary",
+  "te": "Summary",
+  "hi": "Summary",
+  "kn": "Summary",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Summary"
+ },
+ "v9.hero.14": {
+  "en": "Details",
+  "te": "Details",
+  "hi": "Details",
+  "kn": "Details",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Details"
+ },
+ "v9.hero.15": {
+  "en": "Asked about MPC batch timings and fees",
+  "te": "Asked about MPC batch timings and fees",
+  "hi": "Asked about MPC batch timings and fees",
+  "kn": "Asked about MPC batch timings and fees",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Asked about MPC batch timings and fees"
+ },
+ "v9.hero.16": {
+  "en": "The caller enquired after Inter results. The assistant answered in Telugu, sent the brochure on WhatsApp and booked a demo class for Saturday at 11:00.",
+  "te": "The caller enquired after Inter results. The assistant answered in Telugu, sent the brochure on WhatsApp and booked a demo class for Saturday at 11:00.",
+  "hi": "The caller enquired after Inter results. The assistant answered in Telugu, sent the brochure on WhatsApp and booked a demo class for Saturday at 11:00.",
+  "kn": "The caller enquired after Inter results. The assistant answered in Telugu, sent the brochure on WhatsApp and booked a demo class for Saturday at 11:00.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "The caller enquired after Inter results. The assistant answered in Telugu, sent the brochure on WhatsApp and booked a demo class for Saturday at 11:00."
+ },
+ "v9.hero.17": {
+  "en": "Next",
+  "te": "Next",
+  "hi": "Next",
+  "kn": "Next",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Next"
+ },
+ "v9.hero.18": {
+  "en": "Added to your Today screen",
+  "te": "Added to your Today screen",
+  "hi": "Added to your Today screen",
+  "kn": "Added to your Today screen",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Added to your Today screen"
+ },
+ "v9.hero.19": {
+  "en": "Caller",
+  "te": "Caller",
+  "hi": "Caller",
+  "kn": "Caller",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Caller"
+ },
+ "v9.hero.20": {
+  "en": "Language",
+  "te": "Language",
+  "hi": "Language",
+  "kn": "Language",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Language"
+ },
+ "v9.hero.21": {
+  "en": "Telugu, English",
+  "te": "Telugu, English",
+  "hi": "Telugu, English",
+  "kn": "Telugu, English",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Telugu, English"
+ },
+ "v9.hero.22": {
+  "en": "Interested in",
+  "te": "Interested in",
+  "hi": "Interested in",
+  "kn": "Interested in",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Interested in"
+ },
+ "v9.hero.23": {
+  "en": "MPC batch",
+  "te": "MPC batch",
+  "hi": "MPC batch",
+  "kn": "MPC batch",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "MPC batch"
+ },
+ "v9.hero.24": {
+  "en": "WhatsApp consent",
+  "te": "WhatsApp consent",
+  "hi": "WhatsApp consent",
+  "kn": "WhatsApp consent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "WhatsApp consent"
+ },
+ "v9.hero.25": {
+  "en": "Yes",
+  "te": "Yes",
+  "hi": "Yes",
+  "kn": "Yes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Yes"
+ },
+ "v9.hero.26": {
+  "en": "Visit booked",
+  "te": "Visit booked",
+  "hi": "Visit booked",
+  "kn": "Visit booked",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Visit booked"
+ },
+ "v9.hero.27": {
+  "en": "Saturday, 11:00",
+  "te": "Saturday, 11:00",
+  "hi": "Saturday, 11:00",
+  "kn": "Saturday, 11:00",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Saturday, 11:00"
+ },
+ "v9.hero.28": {
+  "en": "Illustrative sample.",
+  "te": "Illustrative sample.",
+  "hi": "Illustrative sample.",
+  "kn": "Illustrative sample.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Illustrative sample."
+ },
+ "v9.hero.29": {
+  "en": "Answers every call",
+  "te": "Answers every call",
+  "hi": "Answers every call",
+  "kn": "Answers every call",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Answers every call"
+ },
+ "v9.hero.30": {
+  "en": "Follows up on WhatsApp",
+  "te": "Follows up on WhatsApp",
+  "hi": "Follows up on WhatsApp",
+  "kn": "Follows up on WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Follows up on WhatsApp"
+ },
+ "v9.hero.31": {
+  "en": "Finds new customers",
+  "te": "Finds new customers",
+  "hi": "Finds new customers",
+  "kn": "Finds new customers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Finds new customers"
+ },
+ "v9.try.1": {
+  "en": "Inside {brand}",
+  "te": "Inside {brand}",
+  "hi": "Inside {brand}",
+  "kn": "Inside {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Inside {brand}"
+ },
+ "v9.try.2": {
+  "en": "Tell it what to do. See the job.",
+  "te": "Tell it what to do. See the job.",
+  "hi": "Tell it what to do. See the job.",
+  "kn": "Tell it what to do. See the job.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Tell it what to do. See the job."
+ },
+ "v9.try.3": {
+  "en": "This is the real kind of screen you work in. Pick an idea or type your own.",
+  "te": "This is the real kind of screen you work in. Pick an idea or type your own.",
+  "hi": "This is the real kind of screen you work in. Pick an idea or type your own.",
+  "kn": "This is the real kind of screen you work in. Pick an idea or type your own.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "This is the real kind of screen you work in. Pick an idea or type your own."
+ },
+ "v9.try.5": {
+  "en": "{brand}",
+  "te": "{brand}",
+  "hi": "{brand}",
+  "kn": "{brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "{brand}"
+ },
+ "v9.try.6": {
+  "en": "Today",
+  "te": "Today",
+  "hi": "Today",
+  "kn": "Today",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Today"
+ },
+ "v9.try.7": {
+  "en": "Calls",
+  "te": "Calls",
+  "hi": "Calls",
+  "kn": "Calls",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Calls"
+ },
+ "v9.try.8": {
+  "en": "Leads",
+  "te": "Leads",
+  "hi": "Leads",
+  "kn": "Leads",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Leads"
+ },
+ "v9.try.9": {
+  "en": "Chats",
+  "te": "Chats",
+  "hi": "Chats",
+  "kn": "Chats",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Chats"
+ },
+ "v9.try.10": {
+  "en": "Jobs",
+  "te": "Jobs",
+  "hi": "Jobs",
+  "kn": "Jobs",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Jobs"
+ },
+ "v9.try.11": {
+  "en": "Reports",
+  "te": "Reports",
+  "hi": "Reports",
+  "kn": "Reports",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Reports"
+ },
+ "v9.try.12": {
+  "en": "Settings",
+  "te": "Settings",
+  "hi": "Settings",
+  "kn": "Settings",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Settings"
+ },
+ "v9.try.13": {
+  "en": "B",
+  "te": "B",
+  "hi": "B",
+  "kn": "B",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "B"
+ },
+ "v9.try.14": {
+  "en": "Bright Path Academy",
+  "te": "Bright Path Academy",
+  "hi": "Bright Path Academy",
+  "kn": "Bright Path Academy",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Bright Path Academy"
+ },
+ "v9.try.15": {
+  "en": "Start a job",
+  "te": "Start a job",
+  "hi": "Start a job",
+  "kn": "Start a job",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Start a job"
+ },
+ "v9.try.16": {
+  "en": "● Assistant online",
+  "te": "● Assistant online",
+  "hi": "● Assistant online",
+  "kn": "● Assistant online",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "● Assistant online"
+ },
+ "v9.greet.1": {
+  "en": "It answers in the language the customer speaks, including the mixed way people really talk.",
+  "te": "It answers in the language the customer speaks, including the mixed way people really talk.",
+  "hi": "It answers in the language the customer speaks, including the mixed way people really talk.",
+  "kn": "It answers in the language the customer speaks, including the mixed way people really talk.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "It answers in the language the customer speaks, including the mixed way people really talk."
+ },
+ "v9.how.1": {
+  "en": "How it works",
+  "te": "How it works",
+  "hi": "How it works",
+  "kn": "How it works",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "How it works"
+ },
+ "v9.how.2": {
+  "en": "From call to WhatsApp to your Today screen.",
+  "te": "From call to WhatsApp to your Today screen.",
+  "hi": "From call to WhatsApp to your Today screen.",
+  "kn": "From call to WhatsApp to your Today screen.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "From call to WhatsApp to your Today screen."
+ },
+ "v9.how.3": {
+  "en": "Leads from",
+  "te": "Leads from",
+  "hi": "Leads from",
+  "kn": "Leads from",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Leads from"
+ },
+ "v9.how.4": {
+  "en": "Website forms",
+  "te": "Website forms",
+  "hi": "Website forms",
+  "kn": "Website forms",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Website forms"
+ },
+ "v9.how.5": {
+  "en": "WhatsApp",
+  "te": "WhatsApp",
+  "hi": "WhatsApp",
+  "kn": "WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "WhatsApp"
+ },
+ "v9.how.6": {
+  "en": "Uploaded lists",
+  "te": "Uploaded lists",
+  "hi": "Uploaded lists",
+  "kn": "Uploaded lists",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Uploaded lists"
+ },
+ "v9.how.7": {
+  "en": "Google Sheets (soon)",
+  "te": "Google Sheets (soon)",
+  "hi": "Google Sheets (soon)",
+  "kn": "Google Sheets (soon)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Google Sheets (soon)"
+ },
+ "v9.how.8": {
+  "en": "Meta ads (soon)",
+  "te": "Meta ads (soon)",
+  "hi": "Meta ads (soon)",
+  "kn": "Meta ads (soon)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Meta ads (soon)"
+ },
+ "v9.how.9": {
+  "en": "{brand}",
+  "te": "{brand}",
+  "hi": "{brand}",
+  "kn": "{brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "{brand}"
+ },
+ "v9.how.10": {
+  "en": "Result goes to",
+  "te": "Result goes to",
+  "hi": "Result goes to",
+  "kn": "Result goes to",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Result goes to"
+ },
+ "v9.how.11": {
+  "en": "Today screen",
+  "te": "Today screen",
+  "hi": "Today screen",
+  "kn": "Today screen",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Today screen"
+ },
+ "v9.how.12": {
+  "en": "Your CRM (soon)",
+  "te": "Your CRM (soon)",
+  "hi": "Your CRM (soon)",
+  "kn": "Your CRM (soon)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Your CRM (soon)"
+ },
+ "v9.finder.1": {
+  "en": "Lead Finder",
+  "te": "Lead Finder",
+  "hi": "Lead Finder",
+  "kn": "Lead Finder",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Lead Finder"
+ },
+ "v9.finder.2": {
+  "en": "Find new customers near you.",
+  "te": "Find new customers near you.",
+  "hi": "Find new customers near you.",
+  "kn": "Find new customers near you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Find new customers near you."
+ },
+ "v9.finder.3": {
+  "en": "It finds businesses that could buy from you. You review the list and call them.",
+  "te": "It finds businesses that could buy from you. You review the list and call them.",
+  "hi": "It finds businesses that could buy from you. You review the list and call them.",
+  "kn": "It finds businesses that could buy from you. You review the list and call them.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "It finds businesses that could buy from you. You review the list and call them."
+ },
+ "v9.finder.4": {
+  "en": "Your shop",
+  "te": "Your shop",
+  "hi": "Your shop",
+  "kn": "Your shop",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Your shop"
+ },
+ "v9.finder.5": {
+  "en": "Textile showroom",
+  "te": "Textile showroom",
+  "hi": "Textile showroom",
+  "kn": "Textile showroom",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Textile showroom"
+ },
+ "v9.finder.6": {
+  "en": "Coaching centre",
+  "te": "Coaching centre",
+  "hi": "Coaching centre",
+  "kn": "Coaching centre",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Coaching centre"
+ },
+ "v9.finder.7": {
+  "en": "Wholesale saree dealer",
+  "te": "Wholesale saree dealer",
+  "hi": "Wholesale saree dealer",
+  "kn": "Wholesale saree dealer",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Wholesale saree dealer"
+ },
+ "v9.finder.8": {
+  "en": "Clinic",
+  "te": "Clinic",
+  "hi": "Clinic",
+  "kn": "Clinic",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Clinic"
+ },
+ "v9.finder.9": {
+  "en": "New lead · sample",
+  "te": "New lead · sample",
+  "hi": "New lead · sample",
+  "kn": "New lead · sample",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "New lead · sample"
+ },
+ "v9.finder.10": {
+  "en": "Wholesale Textiles Showroom",
+  "te": "Wholesale Textiles Showroom",
+  "hi": "Wholesale Textiles Showroom",
+  "kn": "Wholesale Textiles Showroom",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Wholesale Textiles Showroom"
+ },
+ "v9.finder.11": {
+  "en": "Secunderabad · could buy from you",
+  "te": "Secunderabad · could buy from you",
+  "hi": "Secunderabad · could buy from you",
+  "kn": "Secunderabad · could buy from you",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Secunderabad · could buy from you"
+ },
+ "v9.finder.12": {
+  "en": "Review number",
+  "te": "Review number",
+  "hi": "Review number",
+  "kn": "Review number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Review number"
+ },
+ "v9.finder.13": {
+  "en": "Save to list",
+  "te": "Save to list",
+  "hi": "Save to list",
+  "kn": "Save to list",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Save to list"
+ },
+ "v9.finder.14": {
+  "en": "Sample result. Real results come from your own search.",
+  "te": "Sample result. Real results come from your own search.",
+  "hi": "Sample result. Real results come from your own search.",
+  "kn": "Sample result. Real results come from your own search.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Sample result. Real results come from your own search."
+ },
+ "v9.finder.15": {
+  "en": "Searches included every month, then",
+  "te": "Searches included every month, then",
+  "hi": "Searches included every month, then",
+  "kn": "Searches included every month, then",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Searches included every month, then"
+ },
+ "v9.finder.16": {
+  "en": "₹49",
+  "te": "₹49",
+  "hi": "₹49",
+  "kn": "₹49",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "₹49"
+ },
+ "v9.finder.17": {
+  "en": "Pay as you go",
+  "te": "Pay as you go",
+  "hi": "Pay as you go",
+  "kn": "Pay as you go",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Pay as you go"
+ },
+ "v9.finder.18": {
+  "en": "₹39",
+  "te": "₹39",
+  "hi": "₹39",
+  "kn": "₹39",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "₹39"
+ },
+ "v9.finder.19": {
+  "en": "Pro",
+  "te": "Pro",
+  "hi": "Pro",
+  "kn": "Pro",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Pro"
+ },
+ "v9.finder.20": {
+  "en": "₹29",
+  "te": "₹29",
+  "hi": "₹29",
+  "kn": "₹29",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "₹29"
+ },
+ "v9.finder.21": {
+  "en": "Business",
+  "te": "Business",
+  "hi": "Business",
+  "kn": "Business",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Business"
+ },
+ "v9.finder.22": {
+  "en": "for each extra search.",
+  "te": "for each extra search.",
+  "hi": "for each extra search.",
+  "kn": "for each extra search.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "for each extra search."
+ },
+ "v9.voices.1": {
+  "en": "Hear our voices",
+  "te": "Hear our voices",
+  "hi": "Hear our voices",
+  "kn": "Hear our voices",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Hear our voices"
+ },
+ "v9.voices.2": {
+  "en": "Voices matched to each business.",
+  "te": "Voices matched to each business.",
+  "hi": "Voices matched to each business.",
+  "kn": "Voices matched to each business.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Voices matched to each business."
+ },
+ "v9.voices.3": {
+  "en": "Sample recordings are added as each language clears review. Both sides of these calls are AI voices.",
+  "te": "Sample recordings are added as each language clears review. Both sides of these calls are AI voices.",
+  "hi": "Sample recordings are added as each language clears review. Both sides of these calls are AI voices.",
+  "kn": "Sample recordings are added as each language clears review. Both sides of these calls are AI voices.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Sample recordings are added as each language clears review. Both sides of these calls are AI voices."
+ },
+ "v9.jobs.1": {
+  "en": "Two jobs, one assistant",
+  "te": "Two jobs, one assistant",
+  "hi": "Two jobs, one assistant",
+  "kn": "Two jobs, one assistant",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Two jobs, one assistant"
+ },
+ "v9.jobs.2": {
+  "en": "Answer every call. Follow up every enquiry.",
+  "te": "Answer every call. Follow up every enquiry.",
+  "hi": "Answer every call. Follow up every enquiry.",
+  "kn": "Answer every call. Follow up every enquiry.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Answer every call. Follow up every enquiry."
+ },
+ "v9.wit.1": {
+  "en": "While it talks",
+  "te": "While it talks",
+  "hi": "While it talks",
+  "kn": "While it talks",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "While it talks"
+ },
+ "v9.wit.2": {
+  "en": "It does the work around the call.",
+  "te": "It does the work around the call.",
+  "hi": "It does the work around the call.",
+  "kn": "It does the work around the call.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "It does the work around the call."
+ },
+ "v9.wit.3": {
+  "en": "While your assistant is on the call, the follow-up work gets done: WhatsApp details, bookings, tasks and a message to you.",
+  "te": "While your assistant is on the call, the follow-up work gets done: WhatsApp details, bookings, tasks and a message to you.",
+  "hi": "While your assistant is on the call, the follow-up work gets done: WhatsApp details, bookings, tasks and a message to you.",
+  "kn": "While your assistant is on the call, the follow-up work gets done: WhatsApp details, bookings, tasks and a message to you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "While your assistant is on the call, the follow-up work gets done: WhatsApp details, bookings, tasks and a message to you."
+ },
+ "v9.wit.4": {
+  "en": "WhatsApp sent",
+  "te": "WhatsApp sent",
+  "hi": "WhatsApp sent",
+  "kn": "WhatsApp sent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "WhatsApp sent"
+ },
+ "v9.wit.5": {
+  "en": "Brochure and timings",
+  "te": "Brochure and timings",
+  "hi": "Brochure and timings",
+  "kn": "Brochure and timings",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Brochure and timings"
+ },
+ "v9.wit.6": {
+  "en": "Visit booked",
+  "te": "Visit booked",
+  "hi": "Visit booked",
+  "kn": "Visit booked",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Visit booked"
+ },
+ "v9.wit.7": {
+  "en": "Saturday · 11:00",
+  "te": "Saturday · 11:00",
+  "hi": "Saturday · 11:00",
+  "kn": "Saturday · 11:00",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Saturday · 11:00"
+ },
+ "v9.wit.8": {
+  "en": "Added to Today",
+  "te": "Added to Today",
+  "hi": "Added to Today",
+  "kn": "Added to Today",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Added to Today"
+ },
+ "v9.wit.9": {
+  "en": "Call back this enquiry",
+  "te": "Call back this enquiry",
+  "hi": "Call back this enquiry",
+  "kn": "Call back this enquiry",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Call back this enquiry"
+ },
+ "v9.wit.10": {
+  "en": "Follow-up set",
+  "te": "Follow-up set",
+  "hi": "Follow-up set",
+  "kn": "Follow-up set",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Follow-up set"
+ },
+ "v9.wit.11": {
+  "en": "Tomorrow · 10:00 reminder",
+  "te": "Tomorrow · 10:00 reminder",
+  "hi": "Tomorrow · 10:00 reminder",
+  "kn": "Tomorrow · 10:00 reminder",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Tomorrow · 10:00 reminder"
+ },
+ "v9.wit.12": {
+  "en": "Owner told",
+  "te": "Owner told",
+  "hi": "Owner told",
+  "kn": "Owner told",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Owner told"
+ },
+ "v9.wit.13": {
+  "en": "New visit booked for Saturday",
+  "te": "New visit booked for Saturday",
+  "hi": "New visit booked for Saturday",
+  "kn": "New visit booked for Saturday",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "New visit booked for Saturday"
+ },
+ "v9.wit.14": {
+  "en": "Google Sheets & CRM (soon)",
+  "te": "Google Sheets & CRM (soon)",
+  "hi": "Google Sheets & CRM (soon)",
+  "kn": "Google Sheets & CRM (soon)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Google Sheets & CRM (soon)"
+ },
+ "v9.wit.15": {
+  "en": "Rows added for you",
+  "te": "Rows added for you",
+  "hi": "Rows added for you",
+  "kn": "Rows added for you",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Rows added for you"
+ },
+ "v9.guard.1": {
+  "en": "Built in from day one",
+  "te": "Built in from day one",
+  "hi": "Built in from day one",
+  "kn": "Built in from day one",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Built in from day one"
+ },
+ "v9.guard.2": {
+  "en": "Guardrails that protect your business.",
+  "te": "Guardrails that protect your business.",
+  "hi": "Guardrails that protect your business.",
+  "kn": "Guardrails that protect your business.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Guardrails that protect your business."
+ },
+ "v9.guard.3": {
+  "en": "Only people who said yes",
+  "te": "Only people who said yes",
+  "hi": "Only people who said yes",
+  "kn": "Only people who said yes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Only people who said yes"
+ },
+ "v9.guard.4": {
+  "en": "It calls only where an enquiry or consent is on record. STOP works at once.",
+  "te": "It calls only where an enquiry or consent is on record. STOP works at once.",
+  "hi": "It calls only where an enquiry or consent is on record. STOP works at once.",
+  "kn": "It calls only where an enquiry or consent is on record. STOP works at once.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "It calls only where an enquiry or consent is on record. STOP works at once."
+ },
+ "v9.guard.5": {
+  "en": "Yes, call me ✓",
+  "te": "Yes, call me ✓",
+  "hi": "Yes, call me ✓",
+  "kn": "Yes, call me ✓",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Yes, call me ✓"
+ },
+ "v9.guard.6": {
+  "en": "Call scheduled · 10:00",
+  "te": "Call scheduled · 10:00",
+  "hi": "Call scheduled · 10:00",
+  "kn": "Call scheduled · 10:00",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Call scheduled · 10:00"
+ },
+ "v9.guard.7": {
+  "en": "consent on record",
+  "te": "consent on record",
+  "hi": "consent on record",
+  "kn": "consent on record",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "consent on record"
+ },
+ "v9.guard.8": {
+  "en": "STOP",
+  "te": "STOP",
+  "hi": "STOP",
+  "kn": "STOP",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "STOP"
+ },
+ "v9.guard.9": {
+  "en": "Your own number",
+  "te": "Your own number",
+  "hi": "Your own number",
+  "kn": "Your own number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Your own number"
+ },
+ "v9.guard.10": {
+  "en": "Numbers are requested against your business KYC, so calls come from your own line.",
+  "te": "Numbers are requested against your business KYC, so calls come from your own line.",
+  "hi": "Numbers are requested against your business KYC, so calls come from your own line.",
+  "kn": "Numbers are requested against your business KYC, so calls come from your own line.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Numbers are requested against your business KYC, so calls come from your own line."
+ },
+ "v9.guard.11": {
+  "en": "Business KYC",
+  "te": "Business KYC",
+  "hi": "Business KYC",
+  "kn": "Business KYC",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Business KYC"
+ },
+ "v9.guard.12": {
+  "en": "KYC filed",
+  "te": "KYC filed",
+  "hi": "KYC filed",
+  "kn": "KYC filed",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "KYC filed"
+ },
+ "v9.guard.13": {
+  "en": "Your business number",
+  "te": "Your business number",
+  "hi": "Your business number",
+  "kn": "Your business number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Your business number"
+ },
+ "v9.guard.14": {
+  "en": "+91 80xx xxx xxx",
+  "te": "+91 80xx xxx xxx",
+  "hi": "+91 80xx xxx xxx",
+  "kn": "+91 80xx xxx xxx",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "+91 80xx xxx xxx"
+ },
+ "v9.guard.15": {
+  "en": "Quiet hours",
+  "te": "Quiet hours",
+  "hi": "Quiet hours",
+  "kn": "Quiet hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Quiet hours"
+ },
+ "v9.guard.16": {
+  "en": "No calls from 9 pm to 9 am.",
+  "te": "No calls from 9 pm to 9 am.",
+  "hi": "No calls from 9 pm to 9 am.",
+  "kn": "No calls from 9 pm to 9 am.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "No calls from 9 pm to 9 am."
+ },
+ "v9.guard.17": {
+  "en": "9 pm–9 am",
+  "te": "9 pm–9 am",
+  "hi": "9 pm–9 am",
+  "kn": "9 pm–9 am",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "9 pm–9 am"
+ },
+ "v9.guard.18": {
+  "en": "9:40 pm → waits till morning",
+  "te": "9:40 pm → waits till morning",
+  "hi": "9:40 pm → waits till morning",
+  "kn": "9:40 pm → waits till morning",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "9:40 pm → waits till morning"
+ },
+ "v9.guard.19": {
+  "en": "Calls again if busy",
+  "te": "Calls again if busy",
+  "hi": "Calls again if busy",
+  "kn": "Calls again if busy",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Calls again if busy"
+ },
+ "v9.guard.20": {
+  "en": "Example",
+  "te": "Example",
+  "hi": "Example",
+  "kn": "Example",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Example"
+ },
+ "v9.guard.21": {
+  "en": "Tries again within calling hours, up to your limit.",
+  "te": "Tries again within calling hours, up to your limit.",
+  "hi": "Tries again within calling hours, up to your limit.",
+  "kn": "Tries again within calling hours, up to your limit.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Tries again within calling hours, up to your limit."
+ },
+ "v9.guard.22": {
+  "en": "10:00 Busy",
+  "te": "10:00 Busy",
+  "hi": "10:00 Busy",
+  "kn": "10:00 Busy",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "10:00 Busy"
+ },
+ "v9.guard.23": {
+  "en": "Tries again later",
+  "te": "Tries again later",
+  "hi": "Tries again later",
+  "kn": "Tries again later",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Tries again later"
+ },
+ "v9.guard.24": {
+  "en": "5:00 pm Connected, visit booked",
+  "te": "5:00 pm Connected, visit booked",
+  "hi": "5:00 pm Connected, visit booked",
+  "kn": "5:00 pm Connected, visit booked",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "5:00 pm Connected, visit booked"
+ },
+ "v9.guard.25": {
+  "en": "Limits you control",
+  "te": "Limits you control",
+  "hi": "Limits you control",
+  "kn": "Limits you control",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Limits you control"
+ },
+ "v9.guard.26": {
+  "en": "Daily calls per customer",
+  "te": "Daily calls per customer",
+  "hi": "Daily calls per customer",
+  "kn": "Daily calls per customer",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Daily calls per customer"
+ },
+ "v9.guard.27": {
+  "en": "Maximum call length",
+  "te": "Maximum call length",
+  "hi": "Maximum call length",
+  "kn": "Maximum call length",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Maximum call length"
+ },
+ "v9.guard.28": {
+  "en": "Calling hours",
+  "te": "Calling hours",
+  "hi": "Calling hours",
+  "kn": "Calling hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Calling hours"
+ },
+ "v9.calc.1": {
+  "en": "What late call-backs cost you",
+  "te": "What late call-backs cost you",
+  "hi": "What late call-backs cost you",
+  "kn": "What late call-backs cost you",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "What late call-backs cost you"
+ },
+ "v9.calc.2": {
+  "en": "Every enquiry is a customer waiting.",
+  "te": "Every enquiry is a customer waiting.",
+  "hi": "Every enquiry is a customer waiting.",
+  "kn": "Every enquiry is a customer waiting.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Every enquiry is a customer waiting."
+ },
+ "v9.calc.3": {
+  "en": "Watch the same enquiries arrive twice: once answered in seconds, once left waiting for hours.",
+  "te": "Watch the same enquiries arrive twice: once answered in seconds, once left waiting for hours.",
+  "hi": "Watch the same enquiries arrive twice: once answered in seconds, once left waiting for hours.",
+  "kn": "Watch the same enquiries arrive twice: once answered in seconds, once left waiting for hours.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Watch the same enquiries arrive twice: once answered in seconds, once left waiting for hours."
+ },
+ "v9.calc.4": {
+  "en": "Illustration, not a promise.",
+  "te": "Illustration, not a promise.",
+  "hi": "Illustration, not a promise.",
+  "kn": "Illustration, not a promise.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Illustration, not a promise."
+ },
+ "v9.pricing.1": {
+  "en": "Pricing",
+  "te": "Pricing",
+  "hi": "Pricing",
+  "kn": "Pricing",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Pricing"
+ },
+ "v9.pricing.2": {
+  "en": "Simple plans in rupees.",
+  "te": "Simple plans in rupees.",
+  "hi": "Simple plans in rupees.",
+  "kn": "Simple plans in rupees.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Simple plans in rupees."
+ },
+ "v9.pricing.3": {
+  "en": "Monthly plans. Every plan has every feature. You pay for minutes and searches.",
+  "te": "Monthly plans. Every plan has every feature. You pay for minutes and searches.",
+  "hi": "Monthly plans. Every plan has every feature. You pay for minutes and searches.",
+  "kn": "Monthly plans. Every plan has every feature. You pay for minutes and searches.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Monthly plans. Every plan has every feature. You pay for minutes and searches."
+ },
+ "v9.pricing.4": {
+  "en": "Pay as you go",
+  "te": "Pay as you go",
+  "hi": "Pay as you go",
+  "kn": "Pay as you go",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Pay as you go"
+ },
+ "v9.pricing.5": {
+  "en": "₹499",
+  "te": "₹499",
+  "hi": "₹499",
+  "kn": "₹499",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "₹499"
+ },
+ "v9.pricing.6": {
+  "en": "/month",
+  "te": "/month",
+  "hi": "/month",
+  "kn": "/month",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "/month"
+ },
+ "v9.pricing.7": {
+  "en": "Start small.",
+  "te": "Start small.",
+  "hi": "Start small.",
+  "kn": "Start small.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Start small."
+ },
+ "v9.pricing.8": {
+  "en": "Calls ₹5 a minute",
+  "te": "Calls ₹5 a minute",
+  "hi": "Calls ₹5 a minute",
+  "kn": "Calls ₹5 a minute",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Calls ₹5 a minute"
+ },
+ "v9.pricing.9": {
+  "en": "2 Lead Finder searches, then ₹49 each",
+  "te": "2 Lead Finder searches, then ₹49 each",
+  "hi": "2 Lead Finder searches, then ₹49 each",
+  "kn": "2 Lead Finder searches, then ₹49 each",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "2 Lead Finder searches, then ₹49 each"
+ },
+ "v9.pricing.10": {
+  "en": "1 business number (extra ₹299)",
+  "te": "1 business number (extra ₹299)",
+  "hi": "1 business number (extra ₹299)",
+  "kn": "1 business number (extra ₹299)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "1 business number (extra ₹299)"
+ },
+ "v9.pricing.11": {
+  "en": "Set up yourself with the assistant",
+  "te": "Set up yourself with the assistant",
+  "hi": "Set up yourself with the assistant",
+  "kn": "Set up yourself with the assistant",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Set up yourself with the assistant"
+ },
+ "v9.pricing.12": {
+  "en": "Get free early access",
+  "te": "Get free early access",
+  "hi": "Get free early access",
+  "kn": "Get free early access",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Get free early access"
+ },
+ "v9.pricing.13": {
+  "en": "Pro",
+  "te": "Pro",
+  "hi": "Pro",
+  "kn": "Pro",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Pro"
+ },
+ "v9.pricing.14": {
+  "en": "RECOMMENDED",
+  "te": "RECOMMENDED",
+  "hi": "RECOMMENDED",
+  "kn": "RECOMMENDED",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "RECOMMENDED"
+ },
+ "v9.pricing.15": {
+  "en": "₹1,999",
+  "te": "₹1,999",
+  "hi": "₹1,999",
+  "kn": "₹1,999",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "₹1,999"
+ },
+ "v9.pricing.16": {
+  "en": "For a shop or clinic with daily calls.",
+  "te": "For a shop or clinic with daily calls.",
+  "hi": "For a shop or clinic with daily calls.",
+  "kn": "For a shop or clinic with daily calls.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "For a shop or clinic with daily calls."
+ },
+ "v9.pricing.17": {
+  "en": "500 minutes included",
+  "te": "500 minutes included",
+  "hi": "500 minutes included",
+  "kn": "500 minutes included",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "500 minutes included"
+ },
+ "v9.pricing.18": {
+  "en": "Extra minutes ₹5",
+  "te": "Extra minutes ₹5",
+  "hi": "Extra minutes ₹5",
+  "kn": "Extra minutes ₹5",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Extra minutes ₹5"
+ },
+ "v9.pricing.19": {
+  "en": "10 Lead Finder searches, then ₹39 each",
+  "te": "10 Lead Finder searches, then ₹39 each",
+  "hi": "10 Lead Finder searches, then ₹39 each",
+  "kn": "10 Lead Finder searches, then ₹39 each",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "10 Lead Finder searches, then ₹39 each"
+ },
+ "v9.pricing.20": {
+  "en": "Business",
+  "te": "Business",
+  "hi": "Business",
+  "kn": "Business",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Business"
+ },
+ "v9.pricing.21": {
+  "en": "₹5,999",
+  "te": "₹5,999",
+  "hi": "₹5,999",
+  "kn": "₹5,999",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "₹5,999"
+ },
+ "v9.pricing.22": {
+  "en": "For busy teams and branches.",
+  "te": "For busy teams and branches.",
+  "hi": "For busy teams and branches.",
+  "kn": "For busy teams and branches.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "For busy teams and branches."
+ },
+ "v9.pricing.23": {
+  "en": "1,500 minutes included",
+  "te": "1,500 minutes included",
+  "hi": "1,500 minutes included",
+  "kn": "1,500 minutes included",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "1,500 minutes included"
+ },
+ "v9.pricing.24": {
+  "en": "100 Lead Finder searches, then ₹29 each",
+  "te": "100 Lead Finder searches, then ₹29 each",
+  "hi": "100 Lead Finder searches, then ₹29 each",
+  "kn": "100 Lead Finder searches, then ₹29 each",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "100 Lead Finder searches, then ₹29 each"
+ },
+ "v9.pricing.25": {
+  "en": "Priority setup",
+  "te": "Priority setup",
+  "hi": "Priority setup",
+  "kn": "Priority setup",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Priority setup"
+ },
+ "v9.pricing.26": {
+  "en": "Every plan includes",
+  "te": "Every plan includes",
+  "hi": "Every plan includes",
+  "kn": "Every plan includes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Every plan includes"
+ },
+ "v9.pricing.27": {
+  "en": "Telugu, Hindi, Kannada, English",
+  "te": "Telugu, Hindi, Kannada, English",
+  "hi": "Telugu, Hindi, Kannada, English",
+  "kn": "Telugu, Hindi, Kannada, English",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Telugu, Hindi, Kannada, English"
+ },
+ "v9.pricing.28": {
+  "en": "Full voice list",
+  "te": "Full voice list",
+  "hi": "Full voice list",
+  "kn": "Full voice list",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Full voice list"
+ },
+ "v9.pricing.29": {
+  "en": "WhatsApp follow-up",
+  "te": "WhatsApp follow-up",
+  "hi": "WhatsApp follow-up",
+  "kn": "WhatsApp follow-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "WhatsApp follow-up"
+ },
+ "v9.pricing.30": {
+  "en": "Today screen & call summaries",
+  "te": "Today screen & call summaries",
+  "hi": "Today screen & call summaries",
+  "kn": "Today screen & call summaries",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Today screen & call summaries"
+ },
+ "v9.pricing.31": {
+  "en": "Billed per 30 seconds",
+  "te": "Billed per 30 seconds",
+  "hi": "Billed per 30 seconds",
+  "kn": "Billed per 30 seconds",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Billed per 30 seconds"
+ },
+ "v9.pricing.32": {
+  "en": "Unanswered calls free",
+  "te": "Unanswered calls free",
+  "hi": "Unanswered calls free",
+  "kn": "Unanswered calls free",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Unanswered calls free"
+ },
+ "v9.pricing.33": {
+  "en": "WhatsApp messages are charged at Meta’s own price, with no markup from us.",
+  "te": "WhatsApp messages are charged at Meta’s own price, with no markup from us.",
+  "hi": "WhatsApp messages are charged at Meta’s own price, with no markup from us.",
+  "kn": "WhatsApp messages are charged at Meta’s own price, with no markup from us.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "WhatsApp messages are charged at Meta’s own price, with no markup from us."
+ },
+ "v9.pricing.34": {
+  "en": "All prices exclude 18% GST · Free early access until paid plans start.",
+  "te": "All prices exclude 18% GST · Free early access until paid plans start.",
+  "hi": "All prices exclude 18% GST · Free early access until paid plans start.",
+  "kn": "All prices exclude 18% GST · Free early access until paid plans start.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "All prices exclude 18% GST · Free early access until paid plans start."
+ },
+ "v9.faq.1": {
+  "en": "Questions",
+  "te": "Questions",
+  "hi": "Questions",
+  "kn": "Questions",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Questions"
+ },
+ "v9.faq.2": {
+  "en": "Common questions from owners.",
+  "te": "Common questions from owners.",
+  "hi": "Common questions from owners.",
+  "kn": "Common questions from owners.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Common questions from owners."
+ },
+ "v9.cta.1": {
+  "en": "Your next enquiry is waiting.",
+  "te": "Your next enquiry is waiting.",
+  "hi": "Your next enquiry is waiting.",
+  "kn": "Your next enquiry is waiting.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Your next enquiry is waiting."
+ },
+ "v9.cta.2": {
+  "en": "Start free in early access.",
+  "te": "Start free in early access.",
+  "hi": "Start free in early access.",
+  "kn": "Start free in early access.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Start free in early access."
+ },
+ "v9.cta.3": {
+  "en": "Get free early access",
+  "te": "Get free early access",
+  "hi": "Get free early access",
+  "kn": "Get free early access",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Get free early access"
+ },
+ "v9.cta.4": {
+  "en": "Or write to",
+  "te": "Or write to",
+  "hi": "Or write to",
+  "kn": "Or write to",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Or write to"
+ },
+ "v9.cta.6": {
+  "en": "First business goes live in December · set up with you",
+  "te": "First business goes live in December · set up with you",
+  "hi": "First business goes live in December · set up with you",
+  "kn": "First business goes live in December · set up with you",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "First business goes live in December · set up with you"
+ },
+ "v9.ftr.1": {
+  "en": "Product",
+  "te": "Product",
+  "hi": "Product",
+  "kn": "Product",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Product"
+ },
+ "v9.ftr.2": {
+  "en": "How it works",
+  "te": "How it works",
+  "hi": "How it works",
+  "kn": "How it works",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "How it works"
+ },
+ "v9.ftr.3": {
+  "en": "Voices",
+  "te": "Voices",
+  "hi": "Voices",
+  "kn": "Voices",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Voices"
+ },
+ "v9.ftr.4": {
+  "en": "Lead Finder",
+  "te": "Lead Finder",
+  "hi": "Lead Finder",
+  "kn": "Lead Finder",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Lead Finder"
+ },
+ "v9.ftr.5": {
+  "en": "Pricing",
+  "te": "Pricing",
+  "hi": "Pricing",
+  "kn": "Pricing",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Pricing"
+ },
+ "v9.ftr.6": {
+  "en": "Industries",
+  "te": "Industries",
+  "hi": "Industries",
+  "kn": "Industries",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Industries"
+ },
+ "v9.ftr.7": {
+  "en": "Real estate",
+  "te": "Real estate",
+  "hi": "Real estate",
+  "kn": "Real estate",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Real estate"
+ },
+ "v9.ftr.8": {
+  "en": "Education",
+  "te": "Education",
+  "hi": "Education",
+  "kn": "Education",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Education"
+ },
+ "v9.ftr.9": {
+  "en": "Healthcare",
+  "te": "Healthcare",
+  "hi": "Healthcare",
+  "kn": "Healthcare",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Healthcare"
+ },
+ "v9.ftr.10": {
+  "en": "Automotive",
+  "te": "Automotive",
+  "hi": "Automotive",
+  "kn": "Automotive",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Automotive"
+ },
+ "v9.ftr.11": {
+  "en": "Retail",
+  "te": "Retail",
+  "hi": "Retail",
+  "kn": "Retail",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Retail"
+ },
+ "v9.ftr.12": {
+  "en": "By language",
+  "te": "By language",
+  "hi": "By language",
+  "kn": "By language",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "By language"
+ },
+ "v9.ftr.13": {
+  "en": "Telugu",
+  "te": "Telugu",
+  "hi": "Telugu",
+  "kn": "Telugu",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Telugu"
+ },
+ "v9.ftr.14": {
+  "en": "Hindi",
+  "te": "Hindi",
+  "hi": "Hindi",
+  "kn": "Hindi",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Hindi"
+ },
+ "v9.ftr.15": {
+  "en": "Kannada",
+  "te": "Kannada",
+  "hi": "Kannada",
+  "kn": "Kannada",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Kannada"
+ },
+ "v9.ftr.16": {
+  "en": "English",
+  "te": "English",
+  "hi": "English",
+  "kn": "English",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "English"
+ },
+ "v9.ftr.17": {
+  "en": "Resources",
+  "te": "Resources",
+  "hi": "Resources",
+  "kn": "Resources",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Resources"
+ },
+ "v9.ftr.18": {
+  "en": "Late-call calculator",
+  "te": "Late-call calculator",
+  "hi": "Late-call calculator",
+  "kn": "Late-call calculator",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Late-call calculator"
+ },
+ "v9.ftr.19": {
+  "en": "FAQ",
+  "te": "FAQ",
+  "hi": "FAQ",
+  "kn": "FAQ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "FAQ"
+ },
+ "v9.ftr.20": {
+  "en": "Try-it preview",
+  "te": "Try-it preview",
+  "hi": "Try-it preview",
+  "kn": "Try-it preview",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Try-it preview"
+ },
+ "v9.ftr.21": {
+  "en": "Company",
+  "te": "Company",
+  "hi": "Company",
+  "kn": "Company",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Company"
+ },
+ "v9.ftr.22": {
+  "en": "Contact",
+  "te": "Contact",
+  "hi": "Contact",
+  "kn": "Contact",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Contact"
+ },
+ "v9.ftr.23": {
+  "en": "Privacy notice",
+  "te": "Privacy notice",
+  "hi": "Privacy notice",
+  "kn": "Privacy notice",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Privacy notice"
+ },
+ "v9.ftr.24": {
+  "en": "Terms",
+  "te": "Terms",
+  "hi": "Terms",
+  "kn": "Terms",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Terms"
+ },
+ "v9.ftr.25": {
+  "en": "Delete your data",
+  "te": "Delete your data",
+  "hi": "Delete your data",
+  "kn": "Delete your data",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Delete your data"
+ },
+ "v9.ftr.26": {
+  "en": "తెలుగు",
+  "te": "తెలుగు",
+  "hi": "తెలుగు",
+  "kn": "తెలుగు",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "తెలుగు"
+ },
+ "v9.ftr.27": {
+  "en": "हिन्दी",
+  "te": "हिन्दी",
+  "hi": "हिन्दी",
+  "kn": "हिन्दी",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "हिन्दी"
+ },
+ "v9.ftr.28": {
+  "en": "ಕನ್ನಡ",
+  "te": "ಕನ್ನಡ",
+  "hi": "ಕನ್ನಡ",
+  "kn": "ಕನ್ನಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "ಕನ್ನಡ"
+ },
+ "v9.ftr.29": {
+  "en": "Voices by",
+  "te": "Voices by",
+  "hi": "Voices by",
+  "kn": "Voices by",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Voices by"
+ },
+ "v9.ftr.30": {
+  "en": "Cartesia",
+  "te": "Cartesia",
+  "hi": "Cartesia",
+  "kn": "Cartesia",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Cartesia"
+ },
+ "v9.phone.online": {
+  "en": "online",
+  "te": "online",
+  "hi": "online",
+  "kn": "online",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "online"
+ },
+ "v9.phone.message": {
+  "en": "Message",
+  "te": "Message",
+  "hi": "Message",
+  "kn": "Message",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Message"
+ },
+ "v9.phone.today": {
+  "en": "Today",
+  "te": "Today",
+  "hi": "Today",
+  "kn": "Today",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Today"
+ },
+ "v9.how.w.tabs": {
+  "en": "Demo language",
+  "te": "Demo language",
+  "hi": "Demo language",
+  "kn": "Demo language",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Demo language"
+ },
+ "v9.how.w.asked": {
+  "en": "Asked for",
+  "te": "Asked for",
+  "hi": "Asked for",
+  "kn": "Asked for",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Asked for"
+ },
+ "v9.how.w.language": {
+  "en": "Language",
+  "te": "Language",
+  "hi": "Language",
+  "kn": "Language",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Language"
+ },
+ "v9.how.w.followup": {
+  "en": "Follow-up",
+  "te": "Follow-up",
+  "hi": "Follow-up",
+  "kn": "Follow-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Follow-up"
+ },
+ "v9.how.w.status": {
+  "en": "Status",
+  "te": "Status",
+  "hi": "Status",
+  "kn": "Status",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Status"
+ },
+ "v9.how.w.added": {
+  "en": "Added to Today",
+  "te": "Added to Today",
+  "hi": "Added to Today",
+  "kn": "Added to Today",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Added to Today"
+ },
+ "v9.try.w.ask": {
+  "en": "What should your assistant do?",
+  "te": "What should your assistant do?",
+  "hi": "What should your assistant do?",
+  "kn": "What should your assistant do?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "What should your assistant do?"
+ },
+ "v9.try.w.draft": {
+  "en": "Your job draft",
+  "te": "Your job draft",
+  "hi": "Your job draft",
+  "kn": "Your job draft",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Your job draft"
+ },
+ "v9.try.w.preview": {
+  "en": "Preview",
+  "te": "Preview",
+  "hi": "Preview",
+  "kn": "Preview",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Preview"
+ },
+ "v9.try.w.who": {
+  "en": "Who",
+  "te": "Who",
+  "hi": "Who",
+  "kn": "Who",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Who"
+ },
+ "v9.try.w.says": {
+  "en": "What it says",
+  "te": "What it says",
+  "hi": "What it says",
+  "kn": "What it says",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "What it says"
+ },
+ "v9.try.w.when": {
+  "en": "When",
+  "te": "When",
+  "hi": "When",
+  "kn": "When",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "When"
+ },
+ "v9.try.w.cost": {
+  "en": "Cost",
+  "te": "Cost",
+  "hi": "Cost",
+  "kn": "Cost",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Cost"
+ },
+ "v9.try.w.cta": {
+  "en": "Check the plan",
+  "te": "Check the plan",
+  "hi": "Check the plan",
+  "kn": "Check the plan",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Check the plan"
+ },
+ "v9.try.enquiry.chip": {
+  "en": "Call website enquiries",
+  "te": "Call website enquiries",
+  "hi": "Call website enquiries",
+  "kn": "Call website enquiries",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Call website enquiries"
+ },
+ "v9.try.enquiry.prompt": {
+  "en": "Call new website enquiries in Telugu with consent and send shop location on WhatsApp.",
+  "te": "Call new website enquiries in Telugu with consent and send shop location on WhatsApp.",
+  "hi": "Call new website enquiries in Telugu with consent and send shop location on WhatsApp.",
+  "kn": "Call new website enquiries in Telugu with consent and send shop location on WhatsApp.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Call new website enquiries in Telugu with consent and send shop location on WhatsApp."
+ },
+ "v9.try.enquiry.who": {
+  "en": "Website enquiries with consent",
+  "te": "Website enquiries with consent",
+  "hi": "Website enquiries with consent",
+  "kn": "Website enquiries with consent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Website enquiries with consent"
+ },
+ "v9.try.enquiry.say": {
+  "en": "Speaks Telugu, confirms interest, texts brochure",
+  "te": "Speaks Telugu, confirms interest, texts brochure",
+  "hi": "Speaks Telugu, confirms interest, texts brochure",
+  "kn": "Speaks Telugu, confirms interest, texts brochure",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Speaks Telugu, confirms interest, texts brochure"
+ },
+ "v9.try.enquiry.when": {
+  "en": "Open hours · pauses at 9 pm quiet hours",
+  "te": "Open hours · pauses at 9 pm quiet hours",
+  "hi": "Open hours · pauses at 9 pm quiet hours",
+  "kn": "Open hours · pauses at 9 pm quiet hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Open hours · pauses at 9 pm quiet hours"
+ },
+ "v9.try.enquiry.cost": {
+  "en": "Free early access now (you approve first)",
+  "te": "Free early access now (you approve first)",
+  "hi": "Free early access now (you approve first)",
+  "kn": "Free early access now (you approve first)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Free early access now (you approve first)"
+ },
+ "v9.try.visits.chip": {
+  "en": "Book site visits",
+  "te": "Book site visits",
+  "hi": "Book site visits",
+  "kn": "Book site visits",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Book site visits"
+ },
+ "v9.try.visits.prompt": {
+  "en": "Confirm Saturday site visit timings and share Google Maps location on WhatsApp.",
+  "te": "Confirm Saturday site visit timings and share Google Maps location on WhatsApp.",
+  "hi": "Confirm Saturday site visit timings and share Google Maps location on WhatsApp.",
+  "kn": "Confirm Saturday site visit timings and share Google Maps location on WhatsApp.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Confirm Saturday site visit timings and share Google Maps location on WhatsApp."
+ },
+ "v9.try.visits.who": {
+  "en": "Enquired property buyers",
+  "te": "Enquired property buyers",
+  "hi": "Enquired property buyers",
+  "kn": "Enquired property buyers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Enquired property buyers"
+ },
+ "v9.try.visits.say": {
+  "en": "Confirms visit slot and sends location pin",
+  "te": "Confirms visit slot and sends location pin",
+  "hi": "Confirms visit slot and sends location pin",
+  "kn": "Confirms visit slot and sends location pin",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Confirms visit slot and sends location pin"
+ },
+ "v9.try.visits.when": {
+  "en": "9:00 am – 9:00 pm calling hours",
+  "te": "9:00 am – 9:00 pm calling hours",
+  "hi": "9:00 am – 9:00 pm calling hours",
+  "kn": "9:00 am – 9:00 pm calling hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "9:00 am – 9:00 pm calling hours"
+ },
+ "v9.try.visits.cost": {
+  "en": "Free early access (you approve first)",
+  "te": "Free early access (you approve first)",
+  "hi": "Free early access (you approve first)",
+  "kn": "Free early access (you approve first)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Free early access (you approve first)"
+ },
+ "v9.try.demo.chip": {
+  "en": "Remind about the demo class",
+  "te": "Remind about the demo class",
+  "hi": "Remind about the demo class",
+  "kn": "Remind about the demo class",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Remind about the demo class"
+ },
+ "v9.try.demo.prompt": {
+  "en": "Remind students who enquired about the Sunday demo batch timings.",
+  "te": "Remind students who enquired about the Sunday demo batch timings.",
+  "hi": "Remind students who enquired about the Sunday demo batch timings.",
+  "kn": "Remind students who enquired about the Sunday demo batch timings.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Remind students who enquired about the Sunday demo batch timings."
+ },
+ "v9.try.demo.who": {
+  "en": "Coaching enquiry contacts",
+  "te": "Coaching enquiry contacts",
+  "hi": "Coaching enquiry contacts",
+  "kn": "Coaching enquiry contacts",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Coaching enquiry contacts"
+ },
+ "v9.try.demo.say": {
+  "en": "Reminds class time and checks attendance",
+  "te": "Reminds class time and checks attendance",
+  "hi": "Reminds class time and checks attendance",
+  "kn": "Reminds class time and checks attendance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Reminds class time and checks attendance"
+ },
+ "v9.try.demo.when": {
+  "en": "Scheduled before batch inside open hours",
+  "te": "Scheduled before batch inside open hours",
+  "hi": "Scheduled before batch inside open hours",
+  "kn": "Scheduled before batch inside open hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Scheduled before batch inside open hours"
+ },
+ "v9.try.demo.cost": {
+  "en": "Free early access now (you approve first)",
+  "te": "Free early access now (you approve first)",
+  "hi": "Free early access now (you approve first)",
+  "kn": "Free early access now (you approve first)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Free early access now (you approve first)"
+ },
+ "v9.try.testdrive.chip": {
+  "en": "Book test drives",
+  "te": "Book test drives",
+  "hi": "Book test drives",
+  "kn": "Book test drives",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Book test drives"
+ },
+ "v9.try.testdrive.prompt": {
+  "en": "Call car enquiries with consent and schedule weekday test drive slots.",
+  "te": "Call car enquiries with consent and schedule weekday test drive slots.",
+  "hi": "Call car enquiries with consent and schedule weekday test drive slots.",
+  "kn": "Call car enquiries with consent and schedule weekday test drive slots.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Call car enquiries with consent and schedule weekday test drive slots."
+ },
+ "v9.try.testdrive.who": {
+  "en": "Showroom website enquiries",
+  "te": "Showroom website enquiries",
+  "hi": "Showroom website enquiries",
+  "kn": "Showroom website enquiries",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Showroom website enquiries"
+ },
+ "v9.try.testdrive.say": {
+  "en": "Checks preferred model and schedules visit",
+  "te": "Checks preferred model and schedules visit",
+  "hi": "Checks preferred model and schedules visit",
+  "kn": "Checks preferred model and schedules visit",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Checks preferred model and schedules visit"
+ },
+ "v9.try.testdrive.when": {
+  "en": "Queued during open hours",
+  "te": "Queued during open hours",
+  "hi": "Queued during open hours",
+  "kn": "Queued during open hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Queued during open hours"
+ },
+ "v9.try.testdrive.cost": {
+  "en": "Free early access · 1 business number included",
+  "te": "Free early access · 1 business number included",
+  "hi": "Free early access · 1 business number included",
+  "kn": "Free early access · 1 business number included",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Free early access · 1 business number included"
+ },
+ "v9.try.finder.chip": {
+  "en": "Find new customers near me",
+  "te": "Find new customers near me",
+  "hi": "Find new customers near me",
+  "kn": "Find new customers near me",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Find new customers near me"
+ },
+ "v9.try.finder.prompt": {
+  "en": "Preview textile retailers nearby and review numbers before choosing whom to call.",
+  "te": "Preview textile retailers nearby and review numbers before choosing whom to call.",
+  "hi": "Preview textile retailers nearby and review numbers before choosing whom to call.",
+  "kn": "Preview textile retailers nearby and review numbers before choosing whom to call.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Preview textile retailers nearby and review numbers before choosing whom to call."
+ },
+ "v9.try.finder.who": {
+  "en": "Nearby retail categories",
+  "te": "Nearby retail categories",
+  "hi": "Nearby retail categories",
+  "kn": "Nearby retail categories",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Nearby retail categories"
+ },
+ "v9.try.finder.say": {
+  "en": "Builds reviewable call list for approval",
+  "te": "Builds reviewable call list for approval",
+  "hi": "Builds reviewable call list for approval",
+  "kn": "Builds reviewable call list for approval",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Builds reviewable call list for approval"
+ },
+ "v9.try.finder.when": {
+  "en": "Early access preview · runs on approval",
+  "te": "Early access preview · runs on approval",
+  "hi": "Early access preview · runs on approval",
+  "kn": "Early access preview · runs on approval",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Early access preview · runs on approval"
+ },
+ "v9.try.finder.cost": {
+  "en": "Free early access (limited monthly searches)",
+  "te": "Free early access (limited monthly searches)",
+  "hi": "Free early access (limited monthly searches)",
+  "kn": "Free early access (limited monthly searches)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Free early access (limited monthly searches)"
+ },
+ "v9.voices.w.tabs": {
+  "en": "Voice sample language",
+  "te": "Voice sample language",
+  "hi": "Voice sample language",
+  "kn": "Voice sample language",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Voice sample language"
+ },
+ "v9.voices.w.soon": {
+  "en": "Sample soon",
+  "te": "Sample soon",
+  "hi": "Sample soon",
+  "kn": "Sample soon",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Sample soon"
+ },
+ "v9.voices.l.real_estate": {
+  "en": "Real estate",
+  "te": "Real estate",
+  "hi": "Real estate",
+  "kn": "Real estate",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Real estate"
+ },
+ "v9.voices.l.coaching_education": {
+  "en": "Coaching / education",
+  "te": "Coaching / education",
+  "hi": "Coaching / education",
+  "kn": "Coaching / education",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Coaching / education"
+ },
+ "v9.voices.l.school_college": {
+  "en": "School / college",
+  "te": "School / college",
+  "hi": "School / college",
+  "kn": "School / college",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "School / college"
+ },
+ "v9.voices.l.clinic": {
+  "en": "Clinic",
+  "te": "Clinic",
+  "hi": "Clinic",
+  "kn": "Clinic",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Clinic"
+ },
+ "v9.voices.l.car_dealer": {
+  "en": "Car dealer",
+  "te": "Car dealer",
+  "hi": "Car dealer",
+  "kn": "Car dealer",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Car dealer"
+ },
+ "v9.voices.l.saree_textile_shop": {
+  "en": "Saree / textile shop",
+  "te": "Saree / textile shop",
+  "hi": "Saree / textile shop",
+  "kn": "Saree / textile shop",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Saree / textile shop"
+ },
+ "v9.voices.l.wholesale": {
+  "en": "Wholesale",
+  "te": "Wholesale",
+  "hi": "Wholesale",
+  "kn": "Wholesale",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Wholesale"
+ },
+ "v9.voices.l.loans_insurance": {
+  "en": "Loans / insurance",
+  "te": "Loans / insurance",
+  "hi": "Loans / insurance",
+  "kn": "Loans / insurance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Loans / insurance"
+ },
+ "v9.voices.l.deep_confident": {
+  "en": "Deep & confident",
+  "te": "Deep & confident",
+  "hi": "Deep & confident",
+  "kn": "Deep & confident",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Deep & confident"
+ },
+ "v9.voices.l.bright_young": {
+  "en": "Bright & young",
+  "te": "Bright & young",
+  "hi": "Bright & young",
+  "kn": "Bright & young",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Bright & young"
+ },
+ "v9.voices.l.calm_reassuring": {
+  "en": "Calm & reassuring",
+  "te": "Calm & reassuring",
+  "hi": "Calm & reassuring",
+  "kn": "Calm & reassuring",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Calm & reassuring"
+ },
+ "v9.voices.l.energetic": {
+  "en": "Energetic",
+  "te": "Energetic",
+  "hi": "Energetic",
+  "kn": "Energetic",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Energetic"
+ },
+ "v9.voices.l.warm_friendly": {
+  "en": "Warm & friendly",
+  "te": "Warm & friendly",
+  "hi": "Warm & friendly",
+  "kn": "Warm & friendly",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Warm & friendly"
+ },
+ "v9.voices.l.inbound": {
+  "en": "Inbound",
+  "te": "Inbound",
+  "hi": "Inbound",
+  "kn": "Inbound",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Inbound"
+ },
+ "v9.voices.l.outbound": {
+  "en": "Outbound",
+  "te": "Outbound",
+  "hi": "Outbound",
+  "kn": "Outbound",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Outbound"
+ },
+ "v9.jobs.w.tabs": {
+  "en": "Jobs",
+  "te": "Jobs",
+  "hi": "Jobs",
+  "kn": "Jobs",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Jobs"
+ },
+ "v9.jobs.answer.tab": {
+  "en": "Answer every call",
+  "te": "Answer every call",
+  "hi": "Answer every call",
+  "kn": "Answer every call",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Answer every call"
+ },
+ "v9.jobs.answer.title": {
+  "en": "Answer inbound calls during your hours.",
+  "te": "Answer inbound calls during your hours.",
+  "hi": "Answer inbound calls during your hours.",
+  "kn": "Answer inbound calls during your hours.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Answer inbound calls during your hours."
+ },
+ "v9.jobs.answer.c0": {
+  "en": "Speaks Telugu, Hindi, Kannada and English",
+  "te": "Speaks Telugu, Hindi, Kannada and English",
+  "hi": "Speaks Telugu, Hindi, Kannada and English",
+  "kn": "Speaks Telugu, Hindi, Kannada and English",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Speaks Telugu, Hindi, Kannada and English"
+ },
+ "v9.jobs.answer.c1": {
+  "en": "Sends approved WhatsApp details after the call",
+  "te": "Sends approved WhatsApp details after the call",
+  "hi": "Sends approved WhatsApp details after the call",
+  "kn": "Sends approved WhatsApp details after the call",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Sends approved WhatsApp details after the call"
+ },
+ "v9.jobs.answer.c2": {
+  "en": "Logs clear action items on your Today screen",
+  "te": "Logs clear action items on your Today screen",
+  "hi": "Logs clear action items on your Today screen",
+  "kn": "Logs clear action items on your Today screen",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Logs clear action items on your Today screen"
+ },
+ "v9.jobs.answer.v0s": {
+  "en": "Incoming call · Answered",
+  "te": "Incoming call · Answered",
+  "hi": "Incoming call · Answered",
+  "kn": "Incoming call · Answered",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Incoming call · Answered"
+ },
+ "v9.jobs.answer.v0t": {
+  "en": "Asked for a Saturday appointment",
+  "te": "Asked for a Saturday appointment",
+  "hi": "Asked for a Saturday appointment",
+  "kn": "Asked for a Saturday appointment",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Asked for a Saturday appointment"
+ },
+ "v9.jobs.answer.v1s": {
+  "en": "After the call · WhatsApp sent",
+  "te": "After the call · WhatsApp sent",
+  "hi": "After the call · WhatsApp sent",
+  "kn": "After the call · WhatsApp sent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "After the call · WhatsApp sent"
+ },
+ "v9.jobs.answer.v1t": {
+  "en": "Shop timings and the visit time agreed",
+  "te": "Shop timings and the visit time agreed",
+  "hi": "Shop timings and the visit time agreed",
+  "kn": "Shop timings and the visit time agreed",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Shop timings and the visit time agreed"
+ },
+ "v9.jobs.answer.v2s": {
+  "en": "Today screen",
+  "te": "Today screen",
+  "hi": "Today screen",
+  "kn": "Today screen",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Today screen"
+ },
+ "v9.jobs.answer.v2t": {
+  "en": "Confirmed and logged",
+  "te": "Confirmed and logged",
+  "hi": "Confirmed and logged",
+  "kn": "Confirmed and logged",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Confirmed and logged"
+ },
+ "v9.jobs.followup.tab": {
+  "en": "Follow up every enquiry",
+  "te": "Follow up every enquiry",
+  "hi": "Follow up every enquiry",
+  "kn": "Follow up every enquiry",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Follow up every enquiry"
+ },
+ "v9.jobs.followup.title": {
+  "en": "Follow up new enquiries automatically.",
+  "te": "Follow up new enquiries automatically.",
+  "hi": "Follow up new enquiries automatically.",
+  "kn": "Follow up new enquiries automatically.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Follow up new enquiries automatically."
+ },
+ "v9.jobs.followup.c0": {
+  "en": "Connects website forms, WhatsApp and uploaded lists",
+  "te": "Connects website forms, WhatsApp and uploaded lists",
+  "hi": "Connects website forms, WhatsApp and uploaded lists",
+  "kn": "Connects website forms, WhatsApp and uploaded lists",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Connects website forms, WhatsApp and uploaded lists"
+ },
+ "v9.jobs.followup.c1": {
+  "en": "Queues call-backs only where consent is recorded",
+  "te": "Queues call-backs only where consent is recorded",
+  "hi": "Queues call-backs only where consent is recorded",
+  "kn": "Queues call-backs only where consent is recorded",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Queues call-backs only where consent is recorded"
+ },
+ "v9.jobs.followup.c2": {
+  "en": "Sends offers only to contacts who opted in",
+  "te": "Sends offers only to contacts who opted in",
+  "hi": "Sends offers only to contacts who opted in",
+  "kn": "Sends offers only to contacts who opted in",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Sends offers only to contacts who opted in"
+ },
+ "v9.jobs.followup.v0s": {
+  "en": "Website enquiry",
+  "te": "Website enquiry",
+  "hi": "Website enquiry",
+  "kn": "Website enquiry",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Website enquiry"
+ },
+ "v9.jobs.followup.v0t": {
+  "en": "Call-back queued · consent ticked",
+  "te": "Call-back queued · consent ticked",
+  "hi": "Call-back queued · consent ticked",
+  "kn": "Call-back queued · consent ticked",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Call-back queued · consent ticked"
+ },
+ "v9.jobs.followup.v1s": {
+  "en": "WhatsApp enquiry",
+  "te": "WhatsApp enquiry",
+  "hi": "WhatsApp enquiry",
+  "kn": "WhatsApp enquiry",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "WhatsApp enquiry"
+ },
+ "v9.jobs.followup.v1t": {
+  "en": "Approved brochure sent, visit slot asked",
+  "te": "Approved brochure sent, visit slot asked",
+  "hi": "Approved brochure sent, visit slot asked",
+  "kn": "Approved brochure sent, visit slot asked",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Approved brochure sent, visit slot asked"
+ },
+ "v9.jobs.followup.v2s": {
+  "en": "Follow-up",
+  "te": "Follow-up",
+  "hi": "Follow-up",
+  "kn": "Follow-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Follow-up"
+ },
+ "v9.jobs.followup.v2t": {
+  "en": "Reminder set for tomorrow, 10:00",
+  "te": "Reminder set for tomorrow, 10:00",
+  "hi": "Reminder set for tomorrow, 10:00",
+  "kn": "Reminder set for tomorrow, 10:00",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Reminder set for tomorrow, 10:00"
+ },
+ "v9.pipe.w.tabs": {
+  "en": "Reply speed",
+  "te": "Reply speed",
+  "hi": "Reply speed",
+  "kn": "Reply speed",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Reply speed"
+ },
+ "v9.pipe.w.fast": {
+  "en": "Replied in seconds",
+  "te": "Replied in seconds",
+  "hi": "Replied in seconds",
+  "kn": "Replied in seconds",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Replied in seconds"
+ },
+ "v9.pipe.w.slow": {
+  "en": "Replied after hours",
+  "te": "Replied after hours",
+  "hi": "Replied after hours",
+  "kn": "Replied after hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Replied after hours"
+ },
+ "v9.pipe.w.src": {
+  "en": "Calls & WhatsApp enquiries arriving",
+  "te": "Calls & WhatsApp enquiries arriving",
+  "hi": "Calls & WhatsApp enquiries arriving",
+  "kn": "Calls & WhatsApp enquiries arriving",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Calls & WhatsApp enquiries arriving"
+ },
+ "v9.pipe.w.clock": {
+  "en": "Your reply time",
+  "te": "Your reply time",
+  "hi": "Your reply time",
+  "kn": "Your reply time",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Your reply time"
+ },
+ "v9.pipe.w.fastTime": {
+  "en": "8 sec",
+  "te": "8 sec",
+  "hi": "8 sec",
+  "kn": "8 sec",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "8 sec"
+ },
+ "v9.pipe.w.slowTime": {
+  "en": "5 hours",
+  "te": "5 hours",
+  "hi": "5 hours",
+  "kn": "5 hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "5 hours"
+ },
+ "v9.pipe.w.bucket": {
+  "en": "Customers",
+  "te": "Customers",
+  "hi": "Customers",
+  "kn": "Customers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Customers"
+ },
+ "v9.pipe.w.lost": {
+  "en": "Slipped away",
+  "te": "Slipped away",
+  "hi": "Slipped away",
+  "kn": "Slipped away",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Slipped away"
+ },
+ "v9.pipe.w.lostSub": {
+  "en": "to the next shop",
+  "te": "to the next shop",
+  "hi": "to the next shop",
+  "kn": "to the next shop",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "to the next shop"
+ },
+ "v9.faq.q0": {
+  "en": "Which languages does the assistant speak?",
+  "te": "Which languages does the assistant speak?",
+  "hi": "Which languages does the assistant speak?",
+  "kn": "Which languages does the assistant speak?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Which languages does the assistant speak?"
+ },
+ "v9.faq.a0": {
+  "en": "It speaks Telugu, Hindi, Kannada and English on calls and WhatsApp, including everyday mixed sentences.",
+  "te": "It speaks Telugu, Hindi, Kannada and English on calls and WhatsApp, including everyday mixed sentences.",
+  "hi": "It speaks Telugu, Hindi, Kannada and English on calls and WhatsApp, including everyday mixed sentences.",
+  "kn": "It speaks Telugu, Hindi, Kannada and English on calls and WhatsApp, including everyday mixed sentences.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "It speaks Telugu, Hindi, Kannada and English on calls and WhatsApp, including everyday mixed sentences."
+ },
+ "v9.faq.q1": {
+  "en": "Which number does it call from?",
+  "te": "Which number does it call from?",
+  "hi": "Which number does it call from?",
+  "kn": "Which number does it call from?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Which number does it call from?"
+ },
+ "v9.faq.a1": {
+  "en": "Your own dedicated business number provisioned against your shop KYC. Extra numbers are ₹299 a month once paid plans start.",
+  "te": "Your own dedicated business number provisioned against your shop KYC. Extra numbers are ₹299 a month once paid plans start.",
+  "hi": "Your own dedicated business number provisioned against your shop KYC. Extra numbers are ₹299 a month once paid plans start.",
+  "kn": "Your own dedicated business number provisioned against your shop KYC. Extra numbers are ₹299 a month once paid plans start.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Your own dedicated business number provisioned against your shop KYC. Extra numbers are ₹299 a month once paid plans start."
+ },
+ "v9.faq.q2": {
+  "en": "How does it handle new enquiries?",
+  "te": "How does it handle new enquiries?",
+  "hi": "How does it handle new enquiries?",
+  "kn": "How does it handle new enquiries?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "How does it handle new enquiries?"
+ },
+ "v9.faq.a2": {
+  "en": "Website and WhatsApp enquiries with consent are logged to your Today screen, answered on WhatsApp, and queued for a call-back inside your calling hours.",
+  "te": "Website and WhatsApp enquiries with consent are logged to your Today screen, answered on WhatsApp, and queued for a call-back inside your calling hours.",
+  "hi": "Website and WhatsApp enquiries with consent are logged to your Today screen, answered on WhatsApp, and queued for a call-back inside your calling hours.",
+  "kn": "Website and WhatsApp enquiries with consent are logged to your Today screen, answered on WhatsApp, and queued for a call-back inside your calling hours.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Website and WhatsApp enquiries with consent are logged to your Today screen, answered on WhatsApp, and queued for a call-back inside your calling hours."
+ },
+ "v9.faq.q3": {
+  "en": "What if a customer asks not to be called?",
+  "te": "What if a customer asks not to be called?",
+  "hi": "What if a customer asks not to be called?",
+  "kn": "What if a customer asks not to be called?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "What if a customer asks not to be called?"
+ },
+ "v9.faq.a3": {
+  "en": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–9 am).",
+  "te": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–9 am).",
+  "hi": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–9 am).",
+  "kn": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–9 am).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–9 am)."
+ },
+ "v9.faq.q4": {
+  "en": "Can I try it before paid plans start?",
+  "te": "Can I try it before paid plans start?",
+  "hi": "Can I try it before paid plans start?",
+  "kn": "Can I try it before paid plans start?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Can I try it before paid plans start?"
+ },
+ "v9.faq.a4": {
+  "en": "Yes. Early access is free (first business goes live in December) and we set everything up with you.",
+  "te": "Yes. Early access is free (first business goes live in December) and we set everything up with you.",
+  "hi": "Yes. Early access is free (first business goes live in December) and we set everything up with you.",
+  "kn": "Yes. Early access is free (first business goes live in December) and we set everything up with you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "Yes. Early access is free (first business goes live in December) and we set everything up with you."
  }
 }

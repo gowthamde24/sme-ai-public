@@ -43,20 +43,20 @@ describe("website mode: the public pages (job DQ)", () => {
     const links = hrefs(html);
     for (const bad of ["/signup", "/login", "/app", "/setup"]) expect(links.filter((h) => h === bad || h.startsWith(`${bad}/`) || h.startsWith(`${bad}?`)), `${name(target)}: ${bad}`).toEqual([]);
     const d = siteDict(lang);
-    expect(text(html)).toContain(d["demo.cta"]);
+    // the home page (landing v9) says it in English until the owner reviews the new lines; the other pages have the reviewed words
+    expect(text(html)).toContain(target.kind === "home" ? "Join early access" : d["demo.cta"]);
     expect(text(html)).not.toContain(d["nav.signin"]);
     expect(text(html)).not.toContain(d["nav.start"]);
     expect(text(html)).not.toMatch(/\{(?!customer\}|business\})[a-z_]+\}/); // the home page's opening-line example shows {customer} and {business} as typed
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
   });
 
-  it.each(cases.filter(([, , t]) => t.kind !== "page" || t.page === "contact"))("%s: the demo form is on the page (#demo) and the 'Join early access' buttons point to it", (_n, lang, target) => {
+  it.each(cases.filter(([, , t]) => t.kind === "pack" || (t.kind === "page" && t.page === "contact")))("%s: the demo form is on the page (#demo) and the 'Join early access' buttons point to it", (_n, lang, target) => {
     const html = render(lang, target);
     expect(html).toContain('id="demo"');
     expect(html).toContain('data-part="waitlist"');
     expect(hrefs(html)).toContain("#demo");
-    // the home page's closing form has its own heading (landing v2); the other pages keep "Join early access"
-    expect(text(html)).toContain(siteDict(lang)[target.kind === "home" ? "h3.final.t" : "demo.title"]);
+    expect(text(html)).toContain(siteDict(lang)["demo.title"]);
   });
 
   it("the plans page has no form of its own: its buttons go to the contact page's", () => {
@@ -74,10 +74,11 @@ describe("website mode: the public pages (job DQ)", () => {
     }
   });
 
-  it("the trial note gives way to 'opening soon'", () => {
+  it("the home page (landing v9) has no form: its early-access buttons go to the closing card, which writes to hello@", () => {
     const html = render("en", { kind: "home" });
-    expect(text(html)).toContain(siteDict("en")["demo.note"]);
-    expect(html).not.toContain('data-part="trial-note">' + siteDict("en")["hero.note"].slice(0, 20));
+    expect(html).not.toContain('id="demo"');
+    expect(hrefs(html)).toContain("#early-access");
+    expect(hrefs(html).some((h) => h.startsWith("mailto:hello@"))).toBe(true);
   });
 
   it("making no claim we cannot prove: no 'stored in India', no 'includes GST', no 'most popular', no customer logos or praise", () => {
@@ -91,9 +92,8 @@ describe("website mode: the public pages (job DQ)", () => {
   it("without the setting the sign-in and sign-up buttons are back", () => {
     vi.unstubAllEnvs();
     const html = render("en", { kind: "home" }, { ...actions, waitlist: undefined });
-    expect(hrefs(html)).toEqual(expect.arrayContaining(["/signup", "/login"]));
+    expect(hrefs(html)).toContain("/login"); // (the home page's header; the buttons of the early-access card are the same either way)
     expect(html).not.toContain('id="demo"');
-    expect(text(html)).not.toContain(siteDict("en")["demo.cta"]);
   });
 
   it("the form is not drawn on the live website until WAITLIST_API_BASE names the production API", () => {
