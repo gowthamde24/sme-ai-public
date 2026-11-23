@@ -105,7 +105,7 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
         )}
       </nav>
       {open && !v4 ? (
-        <MoreSheet current={current} memberships={memberships} email={email} signOut={signOut} accountMark={accountMark} labels={labels} rest={rest} activeMenu={activeMenu} waiting={frame.waiting} counts={counts} own={own} onClose={close} balanceBox={v6 ? { balance: frame.balance ?? null } : null} shortcuts={v6 ? shortcutsOf(current.role, frame.pack?.modules ?? []) : []} />
+        <MoreSheet current={current} memberships={memberships} email={email} signOut={signOut} accountMark={accountMark} labels={labels} rest={rest} activeMenu={activeMenu} waiting={frame.waiting} counts={counts} own={own} onClose={close} balanceBox={v6 ? { balance: frame.balance ?? null } : null} hideMoney={frame.earlyAccess === true} shortcuts={v6 ? shortcutsOf(current.role, frame.pack?.modules ?? []) : []} />
       ) : null}
     </>
   );
