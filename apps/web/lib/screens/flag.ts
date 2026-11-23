@@ -230,3 +230,6 @@ export const chatQueueScreens = (value: string | undefined = process.env.CHAT_QU
 
 /** My assistant in the OPEN layout (owner chose it, 24 Nov 2026; mock "My assistant" in stack19-app-mock.html): two tabs, "To your customers" and "To you", the cards as plain hairline sections, the extra choices under "More choices". `1` = on; unset = the screen as it was. */
 export const myAssistantOpen = (value: string | undefined = process.env.MY_ASSISTANT_OPEN): boolean => value === "1";
+
+/** The First day page in the open layout (owner, 25 Nov 2026; mock "First day"): one title, one sentence, "Skip for now", a thin progress line, the seven steps as hairline rows with ONE orange Start, a plain line with the small orb, a grey help line: no ring, no cards, no gradient, no Go live until the last step. `1` = on; unset = the boxed day one as it was. */
+export const firstDayOpen = (value: string | undefined = process.env.FIRST_DAY_OPEN): boolean => value === "1";

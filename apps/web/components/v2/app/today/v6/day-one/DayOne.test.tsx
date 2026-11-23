@@ -68,7 +68,7 @@ describe("day one: the setup checklist", () => {
     render(view({ shop: true }));
     expect(screen.getByRole("img", { name: "1/7" })).toBeInTheDocument();
     expect(screen.getByText("steps done")).toBeInTheDocument();
-    expect(screen.getByText("Next: Add your catalogue & prices")).toBeInTheDocument();
+    expect(screen.getByText("Next: Add what you sell")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Continue setup →" })).toHaveAttribute("href", `${BASE}/catalogue`);
   });
 

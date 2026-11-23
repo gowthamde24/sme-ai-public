@@ -5,13 +5,13 @@ About 15 minutes. Your assistant starts answering calls when you switch it on in
 form:
 [button type=submit: Skip for now]
 - Tell us about your shop · done Name, address, timings, what you sell 2 min
-- 2 [Add your catalogue & prices](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue) Upload a price list, photos, or your website [Start →](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+- 2 [Add what you sell](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue) Upload a price list, photos, or your website [Start →](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
 - 3 [Choose how your assistant speaks](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=voice) Voice, tone, region, how it introduces itself · Optional · defaults are set 2 min
 - 4 [Set the rules](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=rules) What it does alone, what needs your OK, calling hours · Optional · defaults are set 2 min
 - 5 [Practise with your assistant](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=practice) Talk to it here, or get a call on your phone · Optional · defaults are set 2 min
 - 6 [Connect your phone number](/app/tenants/22222222-2222-2222-2222-222222222222/phone-number) Get a business number, forward your shop number 1 min
 - 7 [Connect enquiry sources](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources) Instagram, Facebook, IndiaMART, your website 2 min
-1 of 7 done Next: Add your catalogue & prices Upload a price list, photos, or your website [Continue setup →](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+1 of 7 done Next: Add what you sell Upload a price list, photos, or your website [Continue setup →](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
 [button type=button: Go live]
 form:
 [button type=submit: Use a test number (staging)]
