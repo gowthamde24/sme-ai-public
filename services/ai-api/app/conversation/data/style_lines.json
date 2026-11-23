@@ -1,0 +1,132 @@
+{
+ "$comment": "The shop line of each of the 7 speaking styles per language, spoken once by each recommended voice (app/conversation/style_previews.py). {shop} is replaced by the sample business name. English is final; te/hi/kn are DRAFTS (review: needs_native_review). From reports/tone-samples-draft.csv, 24 Nov 2026.",
+ "business": "Sample Stores",
+ "styles": {
+  "friendly": {
+   "en": {
+    "line": "Hi, this is {shop} calling. Just checking if you can still visit us this week to see the sarees.",
+    "review": "ok"
+   },
+   "te": {
+    "line": "హాయ్, {shop} నుంచి మాట్లాడుతున్నాం. మీరు ఈ వారం sarees చూడ్డానికి వస్తారా?",
+    "review": "needs_native_review"
+   },
+   "hi": {
+    "line": "नमस्ते, {shop} से बोल रहे हैं। क्या आप इस हफ्ते साड़ी देखने आ पाएंगे?",
+    "review": "needs_native_review"
+   },
+   "kn": {
+    "line": "ಹಾಯ್, {shop} ನಿಂದ ಮಾತಾಡ್ತಿದ್ದೀವಿ. ಈ ವಾರ ಸೀರೆ ನೋಡಕ್ಕೆ ಬರ್ತೀರಾ?",
+    "review": "needs_native_review"
+   }
+  },
+  "respectful": {
+   "en": {
+    "line": "Good morning, this is {shop} calling. May I kindly confirm your visit to view our saree collection?",
+    "review": "ok"
+   },
+   "te": {
+    "line": "నమస్కారం, {shop} నుంచి మాట్లాడుతున్నాం. దయచేసి మీ visit confirm చేయగలరా గారూ?",
+    "review": "needs_native_review"
+   },
+   "hi": {
+    "line": "नमस्कार, {shop} से बोल रहे हैं। कृपया अपनी visit confirm कर दीजिए।",
+    "review": "needs_native_review"
+   },
+   "kn": {
+    "line": "ನಮಸ್ಕಾರ, {shop} ನಿಂದ ಮಾತಾಡ್ತಿದ್ದೀವಿ. ದಯವಿಟ್ಟು ನಿಮ್ಮ visit confirm ಮಾಡಿ ಕೊಡಿ.",
+    "review": "needs_native_review"
+   }
+  },
+  "quick": {
+   "en": {
+    "line": "Calling to confirm your visit. Can you come tomorrow?",
+    "review": "ok"
+   },
+   "te": {
+    "line": "మీ visit confirm చేస్తున్నాం. రేపు వస్తారా?",
+    "review": "needs_native_review"
+   },
+   "hi": {
+    "line": "आपकी visit confirm करनी है। कल आ पाएंगे?",
+    "review": "needs_native_review"
+   },
+   "kn": {
+    "line": "ನಿಮ್ಮ visit confirm ಮಾಡಬೇಕು. ನಾಳೆ ಬರ್ತೀರಾ?",
+    "review": "needs_native_review"
+   }
+  },
+  "professional": {
+   "en": {
+    "line": "This is {shop} calling to confirm your visit. Please confirm the date and timing.",
+    "review": "ok"
+   },
+   "te": {
+    "line": "{shop} నుంచి కాల్ చేస్తున్నాం. మీ visit confirm చేయడానికి, date మరియు timing తెలియజేయండి.",
+    "review": "needs_native_review"
+   },
+   "hi": {
+    "line": "{shop} की ओर से कॉल है। आपकी visit confirm करने के लिए date और timing बताइए।",
+    "review": "needs_native_review"
+   },
+   "kn": {
+    "line": "{shop} ನಿಂದ ಕಾಲ್. ನಿಮ್ಮ visit confirm ಮಾಡಲು date ಮತ್ತು timing ತಿಳಿಸಿ.",
+    "review": "needs_native_review"
+   }
+  },
+  "calm_caring": {
+   "en": {
+    "line": "Take your time. We are calling only to confirm your visit, and we are happy to help with anything you need.",
+    "review": "ok"
+   },
+   "te": {
+    "line": "కంగారు పడకండి. మీ visit confirm చేయడానికి మాత్రమే కాల్ చేశాం. ఏ సహాయం కావాలన్నా మేం ఉన్నాం.",
+    "review": "needs_native_review"
+   },
+   "hi": {
+    "line": "कोई जल्दी नहीं है। हम बस आपकी visit confirm करना चाहते हैं, किसी भी मदद के लिए हम हैं।",
+    "review": "needs_native_review"
+   },
+   "kn": {
+    "line": "ಗಾಬರಿ ಆಗಬೇಡಿ. ನಿಮ್ಮ visit confirm ಮಾಡೋಕೆ ಮಾತ್ರ ಕಾಲ್ ಮಾಡಿದ್ದೀವಿ. ಏನೇ ಸಹಾಯ ಬೇಕಿದ್ದರೂ ನಾವಿದ್ದೀವಿ.",
+    "review": "needs_native_review"
+   }
+  },
+  "cheerful": {
+   "en": {
+    "line": "Hello, great news, our new sarees are ready for you! Shall we confirm your visit?",
+    "review": "ok"
+   },
+   "te": {
+    "line": "హలో, శుభవార్త! కొత్త sarees మీ కోసం రెడీగా ఉన్నాయి. visit confirm చేద్దామా?",
+    "review": "needs_native_review"
+   },
+   "hi": {
+    "line": "नमस्ते! खुशखबरी है, नई साड़ियाँ आपके लिए तैयार हैं। क्या हम आपकी visit confirm कर दें?",
+    "review": "needs_native_review"
+   },
+   "kn": {
+    "line": "ನಮಸ್ಕಾರ! ಒಳ್ಳೆ ಸುದ್ದಿ, ಹೊಸ ಸೀರೆಗಳು ನಿಮಗಾಗಿ ರೆಡಿ ಇವೆ. visit confirm ಮಾಡೋಣವಾ?",
+    "review": "needs_native_review"
+   }
+  },
+  "confident": {
+   "en": {
+    "line": "Your visit is set. We will have the sarees ready. Please confirm the timing.",
+    "review": "ok"
+   },
+   "te": {
+    "line": "మీ visit సెట్ అయింది. Sarees రెడీగా ఉంటాయి. దయచేసి timing confirm చేయండి.",
+    "review": "needs_native_review"
+   },
+   "hi": {
+    "line": "आपकी visit तय है। साड़ियाँ तैयार रहेंगी। बस timing confirm कीजिए।",
+    "review": "needs_native_review"
+   },
+   "kn": {
+    "line": "ನಿಮ್ಮ visit ಫಿಕ್ಸ್ ಆಗಿದೆ. ಸೀರೆಗಳು ರೆಡಿ ಇರುತ್ತವೆ. ದಯವಿಟ್ಟು timing confirm ಮಾಡಿ.",
+    "review": "needs_native_review"
+   }
+  }
+ }
+}

@@ -18,7 +18,7 @@ Send = Callable[[MutableMapping[str, Any]], Awaitable[None]]
 
 HEADER = b"x-stack19-origin"
 EXEMPT = ("/health", "/ready")
-EXEMPT_PREFIXES = ("/v1/voice-samples/",)  # job voice-picker: static pre-rendered samples that a browser audio tag fetches directly (no data, no sign-in)
+EXEMPT_PREFIXES = ("/v1/voice-samples/", "/v1/voice-style-samples/")  # job voice-picker: static pre-rendered samples that a browser audio tag fetches directly (no data, no sign-in)
 
 
 def origin_ok(provided: bytes | None, secret: str) -> bool:
