@@ -12,13 +12,17 @@ export const TOTAL_MINUTES = STEP_IDS.reduce((sum, id) => sum + STEP_MINUTES[id]
 
 export type StepView = { id: StepId; minutes: number; optional: boolean; done: boolean; current: boolean; href: string };
 
-/** Where each step opens (existing pages; the My assistant tabs are the assistant slice's). */
-export function stepHref(id: StepId, base: string): string {
+/**
+ * Where each step opens (existing pages; the My assistant tabs are the assistant slice's). "Add your catalogue & prices" opens the catalogue only for a business type that HAS one (the `catalogue` module: the
+ * saree catalogue, or the materials list of a building-materials business); every other type opens "What you sell" (a page that is on for every type), never the saree catalogue and never a page that says
+ * "This part is not switched on" (owner, 25 Nov 2026).
+ */
+export function stepHref(id: StepId, base: string, hasCatalogue = true): string {
   switch (id) {
     case "shop":
       return `${base}/settings?section=business`;
     case "catalogue":
-      return `${base}/catalogue`;
+      return hasCatalogue ? `${base}/catalogue` : `${base}/what-you-sell`;
     case "speaks":
       return `${base}/ai-team/training?section=voice`;
     case "rules":
@@ -33,9 +37,9 @@ export function stepHref(id: StepId, base: string): string {
 }
 
 /** The seven steps with the first one not done marked as the current one. */
-export function stepViews(done: Readonly<Partial<Record<StepId, boolean>>>, base: string): StepView[] {
+export function stepViews(done: Readonly<Partial<Record<StepId, boolean>>>, base: string, hasCatalogue = true): StepView[] {
   const first = STEP_IDS.find((id) => !done[id]) ?? null;
-  return STEP_IDS.map((id) => ({ id, minutes: STEP_MINUTES[id], optional: OPTIONAL_STEPS.has(id), done: done[id] === true, current: id === first, href: stepHref(id, base) }));
+  return STEP_IDS.map((id) => ({ id, minutes: STEP_MINUTES[id], optional: OPTIONAL_STEPS.has(id), done: done[id] === true, current: id === first, href: stepHref(id, base, hasCatalogue) }));
 }
 export const doneCount = (steps: readonly StepView[]): number => steps.filter((s) => s.done).length;
 
