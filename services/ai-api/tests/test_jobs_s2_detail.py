@@ -302,11 +302,11 @@ class World:
     """Every subsystem the jobs read and write through, as fakes that keep what they are told."""
 
     def __init__(self, *, on: bool = True, outreach: Outreach | None = None, offers: tuple[dict[str, Any], ...] = (), today: Today | None = None, followups_none: bool = False, visits_default: bool = False, assistant_saved: bool = True,
-                 live: bool = True, doc: dict[str, Any] | None = None, billing: bool = True, crm: Any = None) -> None:
+                 live: bool = True, doc: dict[str, Any] | None = None, billing: bool = True, crm: Any = None, calls: Any = None) -> None:
         self.outreach = outreach or Outreach(rule(1), rule(2))
         self.status, self.assistant, self.visits, self.followups, self.campaigns = Status(live), AssistantSettings_(assistant_saved), Visits(visits_default), Followups(followups_none), Campaigns(*offers)
         self.finder, self.training, self.trust, self.today = Finder(), Training(doc), Trust(), today
-        self.client, _ = make_client(jobs=JobsRuntime(directory=PACKS, trust=self.trust) if on else None, outreach=self.outreach, assistant_status=self.status, phone_numbers=Numbers(), assistant_settings=self.assistant, visits=self.visits,  # type: ignore[arg-type]
+        self.client, _ = make_client(jobs=JobsRuntime(directory=PACKS, trust=self.trust) if on else None, calls=calls, outreach=self.outreach, assistant_status=self.status, phone_numbers=Numbers(), assistant_settings=self.assistant, visits=self.visits,  # type: ignore[arg-type]
                                      followups=self.followups, campaigns=self.campaigns, lead_finder=self.finder, talk_training=self.training, workspace=Workspace(), today=self.today, billing=Billing() if billing else None, **({"crm": crm} if crm is not None else {}))  # type: ignore[arg-type]
 
     def get(self, kind: str, user: str | None = "a_owner") -> Any:
