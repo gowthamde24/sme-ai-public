@@ -106,7 +106,7 @@ describe("the home page (landing v9, approved by the owner on 23 Nov 2026: mocks
     expect(t).toContain("Your CRM (soon)");
     expect(t).toContain("Meta ads (soon)");
     expect(t).toContain("Google Sheets & CRM (soon)");
-    expect(t).not.toMatch(/Google Sheets(?! \(soon\)| &)/);
+    expect(t).not.toMatch(/Google Sheets(?! \(soon\)| &| and Meta)/);
   });
   it("every voice pill says 'Sample soon' (there are no recordings yet), in every language tab's markup, and no voice provider other than the one credited is named", () => {
     const html = home();
@@ -123,6 +123,15 @@ describe("the home page (landing v9, approved by the owner on 23 Nov 2026: mocks
     expect(t).not.toMatch(/Lead Desk|AI Workforce/);
     expect(t).not.toMatch(/Tamil|தமிழ்/);
     expect(t).not.toMatch(/\b\d[\d,]* (customers|businesses|shops) (trust|use|rely)/i);
+  });
+  it("the flow row shows each connection with its mark: WhatsApp, Google Sheets and Meta in their official colours, the ones not built yet dashed and labelled soon; the footer names the trademarks", () => {
+    const html = home();
+    const row = html.slice(html.indexOf('class="flowline"'), html.indexOf('id="finder"'));
+    expect(row).toContain('fill="#25D366"');
+    expect(row).toContain('fill="#34A853"');
+    expect(row).toContain('fill="#0467DF"');
+    expect(row.match(/chip-item lg chip-soon/g)).toHaveLength(4); // Google Sheets (twice), Meta ads, Your CRM
+    expect(text(html)).toContain("WhatsApp, Google Sheets and Meta are trademarks of their owners");
   });
   it("the plans are the plan data's: three cards with their monthly prices, extra minutes, searches and the 18% GST line", () => {
     const t = text(home());
