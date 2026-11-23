@@ -4,6 +4,7 @@ What is proved here: the gates refuse in one line and never print a value; the b
 source, a reply that is not Telugu, a claimed send, an injection that moved something); and the whole command, run against the real local stack with a model that behaves, passes five of five
 and, with a model that obeys the injection, FAILS the injection question and only that one."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -15,13 +16,14 @@ from typing import Any
 
 import assistant_smoke as smoke
 import pytest
-from app.agents.llm.interface import LlmRequest, LlmResponse, ToolCall
 from assistant_eval import final, respond, seen_items
 from assistant_support import assistant_app, enable_assistant, restore
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
 from test_today_api import Scene
+
+from app.agents.llm.interface import LlmRequest, LlmResponse, ToolCall
 
 KEY = "sk-test-not-a-real-key-0123456789"
 GOOD_ENV = {

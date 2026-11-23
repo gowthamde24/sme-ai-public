@@ -1,9 +1,9 @@
 """Pure all-or-nothing CSV price-list parsing; integers only, no external I/O."""
 import csv
 import hashlib
+from io import StringIO
 import json
 import re
-from io import StringIO
 
 PARSER_VERSION = "1.0.0"
 # Mirror quote_engine 1.1.0 bounds without a runtime cross-package dependency.
@@ -63,7 +63,8 @@ def _preflight(text):
             raise _Invalid("FILE_LIMIT")
     except UnicodeEncodeError:
         raise _Invalid("INVALID_UTF8") from None
-    text = text.removeprefix("\ufeff")
+    if text.startswith("\ufeff"):
+        text = text[1:]
     quoted, start, length, columns, records = False, True, 0, 1, 0
     i = 0
     while i < len(text):
@@ -140,7 +141,8 @@ def parse(text):
     except _Invalid as exc:
         error(0, None, str(exc))
         return output()
-    text = text.removeprefix("\ufeff")
+    if text.startswith("\ufeff"):
+        text = text[1:]
     # StringIO is an in-memory adapter; no file, network or global state changes.
     reader = csv.reader(StringIO(text, newline=""), delimiter=",", strict=True)
     header = None

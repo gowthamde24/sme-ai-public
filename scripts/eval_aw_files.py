@@ -20,8 +20,8 @@ import uuid
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import seed_staging as ss
-import staging_smoke_api as sm
+import seed_staging as ss  # noqa: E402
+import staging_smoke_api as sm  # noqa: E402
 
 BROCHURE = ("Sri Lakshmi Silks, Kanchipuram. Since 1952 we weave pure silk sarees by hand. Our showroom is open every day from 10 am to 8 pm. "
             "Wholesale orders of 20 sarees or more get free delivery in Andhra Pradesh and Telangana. Bridal collection from Rs. 18,500.")
@@ -101,8 +101,8 @@ def cases() -> list[tuple[str, str, bytes, str, str, str, str]]:
 def turn(o: sm.Owner, api: str, file_id: str, text: str, language: str) -> list[tuple[str, dict]]:
     body = json.dumps({"message_id": str(uuid.uuid4()), "conversation_id": None, "text": text, "attachment_ids": [file_id], "language": language}).encode()
     req = urllib.request.Request(f"{api}{o.t}/assistant/turns", data=body, method="POST",
-                                 headers={"Authorization": f"Bearer {o.token}", "Content-Type": "application/json", "Accept": "text/event-stream"})
-    with urllib.request.urlopen(req, timeout=180) as r:
+                                 headers={"Authorization": f"Bearer {o.token}", "Content-Type": "application/json", "Accept": "text/event-stream"})  # noqa: S310 - https only
+    with urllib.request.urlopen(req, timeout=180) as r:  # noqa: S310
         raw = r.read().decode()
     out = []
     for block in raw.strip().split("\n\n"):

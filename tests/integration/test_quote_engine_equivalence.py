@@ -6,6 +6,7 @@ builds, and the database must ACCEPT the engine's own canonical request and resu
 the picks). Cases are seeded (reproducible) and cover every rounding mode, quantity breaks, free-shipping thresholds, taxed freight, both customer kinds, credit
 limits, the minimum order quantity, and half-paise ties. A failure names the case. All data is synthetic."""
 
+# ruff: noqa: E501, S311, S608
 
 from __future__ import annotations
 

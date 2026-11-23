@@ -21,14 +21,14 @@ from urllib.parse import urlparse
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from local_confirm import confirm_email, container
+from local_confirm import confirm_email, container  # noqa: E402
 
 SCHEDULER_EMAIL = "scheduler@system.example.test"
-SCHEDULER_PASSWORD = "Scheduler-Only-Local-Password-1!"
+SCHEDULER_PASSWORD = "Scheduler-Only-Local-Password-1!"  # noqa: S105 - a local stack account, no workspace
 
 
 def die(message: str) -> None:
-    print(f"dev-worker-local: {message}", file=sys.stderr)
+    print(f"dev-worker-local: {message}", file=sys.stderr)  # noqa: T201
     raise SystemExit(1)
 
 
@@ -52,16 +52,16 @@ def main() -> None:
     docker = shutil.which("docker")
     if docker is None:
         die("docker is needed to register the scheduler account in the local database")
-    done = subprocess.run(
+    done = subprocess.run(  # noqa: S603 - fixed argv; the address is a constant of this file
         [docker, "exec", "-i", container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c",
-         f"select app.operator_register_scheduler('{SCHEDULER_EMAIL}')"],
+         f"select app.operator_register_scheduler('{SCHEDULER_EMAIL}')"],  # noqa: S608
         capture_output=True, text=True, timeout=30, check=False,
     )
     if done.returncode != 0:
         die("could not register the scheduler account in the local database")
     env = {**os.environ, "SCHEDULER_EMAIL": SCHEDULER_EMAIL, "SCHEDULER_PASSWORD": SCHEDULER_PASSWORD}
     python = Path(".venv/bin/python")
-    os.execve(str(python), [str(python), "-m", "app.scheduler.worker", *sys.argv[1:]], env)
+    os.execve(str(python), [str(python), "-m", "app.scheduler.worker", *sys.argv[1:]], env)  # noqa: S606
 
 
 if __name__ == "__main__":

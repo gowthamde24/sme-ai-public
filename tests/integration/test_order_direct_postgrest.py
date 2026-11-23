@@ -10,6 +10,7 @@ event built by app/orders/builder.py from the state read with the caller's token
   * nothing a Viewer or another tenant reads, and no function body or table reachable from outside.
 All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -20,13 +21,14 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
-from app.orders import lifecycle_port
-from app.orders.builder import OrderEvent, build_request, utc_text
 from conftest import aal1_token
 from crm_support import World
 from evidence_support import code_of, pg, uid
 from order_support import OrderWorld
 from quote_support import QuoteWorld, rpc
+
+from app.orders import lifecycle_port
+from app.orders.builder import OrderEvent, build_request, utc_text
 
 
 @pytest.fixture(scope="module")

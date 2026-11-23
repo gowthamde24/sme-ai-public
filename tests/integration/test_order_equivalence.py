@@ -12,6 +12,7 @@ A coverage test fails when the generator stops reaching a rejection code, a flag
 Not compared: `allowed_next_events` (guidance for the web, never approval) and the rule trace (stored as given). Not representable in the database, so not generated: a historical
 duplicate ledger id (unique indexes), a ledger amount below 1 (a table check), a malformed timestamp (a typed column). All data is synthetic."""
 
+# ruff: noqa: E501, S311, S608
 
 from __future__ import annotations
 
@@ -24,9 +25,10 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import pytest
+from order_support import psql
+
 from app.orders import lifecycle_port
 from app.orders.lifecycle_port import STATES, run_transition
-from order_support import psql
 
 CASES = int(os.environ.get("ORDER_EQUIVALENCE_CASES", "2500"))
 SEED = 20261019

@@ -1,6 +1,7 @@
 """`make seed-demo-manual`: the local demo for the manual-price quote. It refuses a non-local stack before any network call, holds no
 secret, is idempotent, and what it seeds is enough to make a manual quote from the seeded enquiry (real stack, real application)."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

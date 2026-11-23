@@ -1,9 +1,9 @@
 import copy
 import hashlib
 import json
+from pathlib import Path
 import random
 import unittest
-from pathlib import Path
 
 import order_lifecycle as engine
 from order_lifecycle import canonical_json, transition

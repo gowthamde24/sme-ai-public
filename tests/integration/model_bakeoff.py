@@ -19,6 +19,7 @@ checked by a program; the QUALITY is for a native reader: the report ends with a
 nothing, development only) and `fake` (the scripted stand-in: no key, no cost, a plumbing check). The spend limit is now ONE limit for the whole command: Rs 100, unless CONFIRM_SPEND=1 (then SPEND_CAP_RS, at
 most the database's wall of Rs 500). The report is written OUTSIDE the repository: ~/Desktop/v2-overnight/model-bakeoff.md (REPORT=...)."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -37,14 +38,10 @@ from typing import Any
 import assistant_smoke as smoke
 import bakeoff_shop as shop
 import operator_sql
-from app.assistant.language import (
-    NO_ANSWER,
-    Language,
-    detect_owner_language,
-    reply_matches,
-)
-from app.assistant.runner import money_amounts
 from assistant_eval import build_cases
+
+from app.assistant.language import NO_ANSWER, Language, detect_owner_language, reply_matches
+from app.assistant.runner import money_amounts
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT_FILE = Path.home() / "Desktop" / "v2-overnight" / "model-bakeoff.md"  # outside the repository (job BQ); REPORT=... changes it
@@ -763,17 +760,11 @@ def main(argv: list[str] | None = None, env: Mapping[str, str] | None = None) ->
     report_path = Path(env.get("REPORT", "").strip() or REPORT_FILE).expanduser()
 
     import httpx
+    from fastapi.testclient import TestClient
+    from seed_demo import DEMO_WORKSPACE_SLUG, Config, Seeder, SeedError, demo_id, require_local
+
     from app.config import Settings
     from app.main import build_runtime, create_app
-    from fastapi.testclient import TestClient
-    from seed_demo import (
-        DEMO_WORKSPACE_SLUG,
-        Config,
-        Seeder,
-        SeedError,
-        demo_id,
-        require_local,
-    )
 
     supabase_url = env.get("SUPABASE_URL", "").rstrip("/")
     anon_key = env.get("SUPABASE_PUBLISHABLE_KEY") or env.get("SUPABASE_ANON_KEY", "")

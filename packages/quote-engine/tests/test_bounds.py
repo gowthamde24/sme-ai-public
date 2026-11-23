@@ -1,7 +1,7 @@
 import copy
 import json
-import unittest
 from pathlib import Path
+import unittest
 
 import quote_engine as engine
 

@@ -3,6 +3,7 @@ fields, and the DATABASE stores them as unreviewed proposals (it verifies every 
 the reservation before each model call are exercised end to end; a run that is refused or fails writes nothing; every start rule of the
 route (the wrong target kind, a viewer, an archived or foreign enquiry, a text that changed) is checked."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -12,12 +13,13 @@ from typing import Any
 
 import operator_sql
 import pytest
-from app.config import Settings
-from app.main import build_runtime, create_app
 from conftest import bearer
 from crm_support import Tenant, World
 from evidence_support import pg, uid
 from fastapi.testclient import TestClient
+
+from app.config import Settings
+from app.main import build_runtime, create_app
 
 BODY = (
     "Hello,\nNeed  20 kanjivaram   sarees in red and 10 banarasi sarees in blue.\n"

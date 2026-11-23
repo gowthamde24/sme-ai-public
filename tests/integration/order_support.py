@@ -3,6 +3,7 @@ API will run it: read the order's recorded state with the caller's token (PostgR
 record_order_event with the canonical request and result texts. Nothing here is the API (that comes later): it is the contract the API will follow.
 All data is synthetic."""
 
+# ruff: noqa: E501, S608, S603
 
 from __future__ import annotations
 
@@ -15,10 +16,11 @@ from typing import Any
 
 import httpx
 import operator_sql
-from app.orders import lifecycle_port
-from app.orders.builder import OrderEvent, OrderState, build_request
 from evidence_support import pg, uid
 from quote_support import QuoteWorld, rpc, today
+
+from app.orders import lifecycle_port
+from app.orders.builder import OrderEvent, OrderState, build_request
 
 
 def psql(statement: str, *, timeout: int = 120) -> str:

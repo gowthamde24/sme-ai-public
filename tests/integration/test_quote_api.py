@@ -8,6 +8,7 @@ Who may do what is checked on each: a Viewer is refused every quote read (403), 
 mfa_required, an Admin gets owner_approval_required on a flagged quote, and a second tenant's owner sees nothing (404 / an empty list). Nothing here sends anything.
 All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

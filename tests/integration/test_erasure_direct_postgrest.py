@@ -9,7 +9,7 @@ response alone.
 The happy paths go through OUR API (the Owner's page uses the same calls) and are validated against
 packages/contracts/erasure.schema.json."""
 
-
+# ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
 
 from __future__ import annotations
 

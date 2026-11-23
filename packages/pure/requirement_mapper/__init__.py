@@ -1,9 +1,9 @@
 """Deterministic proposed catalog matches; no pricing, decisions or external I/O."""
+from datetime import date
 import copy
 import hashlib
 import json
 import re
-from datetime import date
 
 MAPPER_VERSION = "1.0.0"
 MAX_LINES = 5

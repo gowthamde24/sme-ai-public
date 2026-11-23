@@ -10,7 +10,7 @@ new pack is a NEW migration. Every synced module and pack carries a marker comme
 The manifest stored in the database is the pack.json content without its `$schema` line; its SHA-256 is taken over the canonical JSON (sorted keys, no spaces, UTF-8), so the integration test and this
 script agree on the same bytes."""
 
-
+# ruff: noqa: S608 - this script WRITES a migration file from reviewed JSON; it executes no SQL
 
 from __future__ import annotations
 
@@ -24,12 +24,12 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import packs_check as pc
+import packs_check as pc  # noqa: E402
 
 ROOT = pc.ROOT
 MIGRATIONS = ROOT / "supabase" / "migrations"
-MODULE_MARK = re.compile(r"^-- module-sync: ([a-z][a-z0-9_]*)\s*$", re.MULTILINE)
-PACK_MARK = re.compile(r"^-- pack-sync: ([a-z][a-z0-9_]*) (\d+) ([0-9a-f]{64}) (default|-)\s*$", re.MULTILINE)
+MODULE_MARK = re.compile(r"^-- module-sync: ([a-z][a-z0-9_]*)\s*$", re.M)
+PACK_MARK = re.compile(r"^-- pack-sync: ([a-z][a-z0-9_]*) (\d+) ([0-9a-f]{64}) (default|-)\s*$", re.M)
 
 
 def manifest_of(pack: dict[str, Any]) -> dict[str, Any]:

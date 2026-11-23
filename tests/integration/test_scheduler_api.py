@@ -10,6 +10,7 @@ worker's account can read nothing and call nothing but its own functions.
 THE CLOCK. Every time decision is the database's, by app.outbox_now(); these tests NEVER lean on the real time. The module pins that clock (for the whole local database, restored afterwards) to
 explicit India-time instants on dates 40 days ago, the second pgTAP file 79 tests the same boundaries inside a transaction at 14:00 and 23:30."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -23,6 +24,13 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
+from conftest import Stack, User, aal1_token, bearer
+from crm_support import World
+from fastapi.testclient import TestClient
+from followup_support import FollowWorld, Lead
+from test_catalogue_api import png
+from test_outbox_api import restore_clock
+
 from app.catalogue.storage import HttpStorageClient
 from app.outbox.adapter import LocalFakeAdapter
 from app.scheduler.repository import PostgrestSchedulerRepository
@@ -30,12 +38,6 @@ from app.scheduler.session import PrincipalSession
 from app.scheduler.worker import Worker
 from app.tenancy.repository import UpstreamError
 from app.visits import texts
-from conftest import Stack, User, aal1_token, bearer
-from crm_support import World
-from fastapi.testclient import TestClient
-from followup_support import FollowWorld, Lead
-from test_catalogue_api import png
-from test_outbox_api import restore_clock
 
 IST = timezone(timedelta(hours=5, minutes=30))
 D0 = datetime.now(IST).date() - timedelta(days=40)

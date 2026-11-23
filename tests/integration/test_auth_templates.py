@@ -2,6 +2,7 @@
 app's confirm page can use: the page runs verifyOtp(type, token_hash), which is the /auth/v1/verify call made here. The Invite mail needs an admin key to be sent, and this suite holds none (by design), so it is covered
 by the static test services/ai-api/tests/test_auth_templates.py. Real GoTrue and the stack's own mail catcher (Mailpit); throwaway accounts only."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 

@@ -4,6 +4,7 @@ token. All data is synthetic.
 What this proves that the pgTAP files (114 to 118) and the unit tests cannot: the database's answers are accepted by the strict response models and conform to the generated contracts
 (packages/contracts/outcomes.schema.json and assistant_settings.schema.json); the registered CHANNEL account's recording (the AI's) arrives as `recorded_by: ai`; a person's correction is kept apart from it."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -18,11 +19,12 @@ from zoneinfo import ZoneInfo
 import jsonschema
 import operator_sql
 import pytest
+from conftest import bearer
+from test_outbox_api import restore_clock
+
 from app.outcomes.recorder import OutcomeRecorder
 from app.outcomes.repository import PostgrestOutcomesRepository
 from app.tenancy.repository import RepositoryError
-from conftest import bearer
-from test_outbox_api import restore_clock
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTCOMES = json.loads((ROOT / "packages" / "contracts" / "outcomes.schema.json").read_text(encoding="utf-8"))

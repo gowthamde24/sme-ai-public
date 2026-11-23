@@ -10,6 +10,7 @@ never returns a number; a suggested message is checked and counted.
 THE CLOCK. Whether a message goes now or waits for 09:00 is the database's outbox clock, so these tests never lean on the real time: the module pins it (for the whole local database, restored afterwards)
 to 14:00 India time five days ago, and the tests about quiet hours pin 23:30 (and the next morning) for their own duration."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -22,9 +23,6 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
-from app.agents.llm.interface import ToolCall
-from app.assistant.dev_model import DevAssistantModel
-from app.outbox.adapter import LocalFakeAdapter
 from assistant_eval import Scripted, final, respond
 from assistant_support import assistant_app, enable_assistant, events, restore
 from conftest import Stack, aal1_token, bearer
@@ -33,6 +31,10 @@ from fastapi.testclient import TestClient
 from followup_support import FollowWorld, Lead
 from PIL import Image
 from test_outbox_api import restore_clock
+
+from app.agents.llm.interface import ToolCall
+from app.assistant.dev_model import DevAssistantModel
+from app.outbox.adapter import LocalFakeAdapter
 
 IST = timezone(timedelta(hours=5, minutes=30))
 D0 = datetime.now(IST).date() - timedelta(days=5)

@@ -10,6 +10,7 @@ already in the catalogue keeps its id). Style tags come from the provider's own 
 sample mp3 of every chosen voice. The fillers are rendered afterwards by scripts/voice_filler_bank.py.
 """
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -25,7 +26,7 @@ from pathlib import Path
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.conversation.voices import DEFAULT_FILE, SAMPLES, sample_text
+from app.conversation.voices import DEFAULT_FILE, SAMPLES, sample_text  # noqa: E402
 
 LANGS = ("te", "en", "hi", "kn", "ta", "ml", "mr")   # mr (job M1): no Marathi voice is in the catalogue yet; a run with --write picks them (never in CI)
 GENDER = {"feminine": "female", "masculine": "male"}

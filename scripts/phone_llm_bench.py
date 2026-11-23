@@ -19,10 +19,10 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.agents.register.address import gendered_words
-from app.conversation.providers import AnthropicStream, SarvamChatStream
-from app.opening.honesty import claims_to_be_human
-from app.telephony import persona
+from app.agents.register.address import gendered_words  # noqa: E402
+from app.conversation.providers import AnthropicStream, SarvamChatStream  # noqa: E402
+from app.opening.honesty import claims_to_be_human  # noqa: E402
+from app.telephony import persona  # noqa: E402
 
 PROJECT = "project-2757c07e-37d2-4167-88f"
 FACTS = [{"kind": "hours", "text": "The shop is open from 9 in the morning to 8 in the evening, every day except Sunday."}, {"kind": "product", "text": "We sell silk and cotton sarees, and dress materials."},
@@ -37,8 +37,8 @@ TURNS: list[tuple[str, str]] = [
     ("ml", "ഹലോ, ആരാണ് സംസാരിക്കുന്നത്?"), ("ml", "ഇപ്പോൾ തിരക്കിലാണ്, പിന്നീട് വിളിക്കൂ"),
 ]
 SCRIPTS = {"te": r"[ఀ-౿]", "hi": r"[ऀ-ॿ]", "kn": r"[ಀ-೿]", "ta": r"[஀-௿]", "ml": r"[ഀ-ൿ]"}
-MONEY = re.compile(r"(?:₹|\brs\.?\s?|\brupees?\b|రూ|रु|₹)\s?\d|\d+\s?(?:rupees|రూపాయ|रुपये)", re.IGNORECASE)
-PROMISE = re.compile(r"\b(?:i promise|guarantee|definitely will|100 ?%)\b|తప్పకుండా హామీ|गारंटी", re.IGNORECASE)
+MONEY = re.compile(r"(?:₹|\brs\.?\s?|\brupees?\b|రూ|रु|₹)\s?\d|\d+\s?(?:rupees|రూపాయ|रुपये)", re.I)
+PROMISE = re.compile(r"\b(?:i promise|guarantee|definitely will|100 ?%)\b|తప్పకుండా హామీ|गारंटी", re.I)
 
 
 def secret(name: str) -> str:

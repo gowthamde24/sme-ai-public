@@ -16,16 +16,10 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import httpx
-from PIL import Image, ImageDraw
-from seed_demo import (
-    DEMO_EMAIL,
-    SeedError,
-    demo_id,
-    load_config,
-    require_local,
-)
-from seed_demo_manual import ManualDemoSeeder
+import httpx  # noqa: E402
+from PIL import Image, ImageDraw  # noqa: E402
+from seed_demo import DEMO_EMAIL, SeedError, demo_id, load_config, require_local  # noqa: E402
+from seed_demo_manual import ManualDemoSeeder  # noqa: E402
 
 PALETTE: dict[str, tuple[int, int, int]] = {
     "red": (190, 30, 45), "maroon": (110, 20, 40), "pink": (230, 120, 165), "orange": (235, 130, 30), "yellow": (240, 200, 40),

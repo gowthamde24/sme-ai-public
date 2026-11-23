@@ -2,6 +2,7 @@
 policy, one effective today, one in the future and two versions on the same date. The request builder embeds the policy it was given, so a different pick would be a different request (SM226) or,
 worse, a draft made under the wrong policy: this pins the selection rule on both sides, at several dates. All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -9,11 +10,12 @@ import uuid
 from datetime import date, timedelta
 
 import pytest
-from app.followups.repository import PostgrestFollowupsRepository
 from crm_support import World
 from evidence_support import uid
 from fastapi.testclient import TestClient
 from followup_support import FollowWorld
+
+from app.followups.repository import PostgrestFollowupsRepository
 
 
 @pytest.fixture(scope="module")

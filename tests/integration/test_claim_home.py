@@ -3,6 +3,7 @@ ICP score looks; it changes the lead's score only after a human ACCEPTS it; a re
 the old way (on the lead) still reach the score. Attacks go straight to PostgREST, skipping our API. The score is the REAL
 review-queue score (the real reader and the real pure scorer)."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

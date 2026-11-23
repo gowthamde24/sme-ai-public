@@ -15,6 +15,7 @@ agent_runs, agent_run_steps, agent_cost_reservations, audit_events, requirements
   E   the case's own expectations (which slots were written, which were refused, how the run ended)
 """
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -25,14 +26,15 @@ from pathlib import Path
 from typing import Any
 
 import agent_eval as ev
+from conftest import bearer
+from crm_support import Tenant, World
+from evidence_support import pg, uid
+
 from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agents.inputs import enquiry_input_from_row, enquiry_input_sha256
 from app.agents.llm.fake import FakeProvider
 from app.requirements.capture_text import prepare_body
 from app.requirements.quote import verify
-from conftest import bearer
-from crm_support import Tenant, World
-from evidence_support import pg, uid
 
 EVALS = Path(__file__).resolve().parents[1] / "evals" / "requirement"
 GOLDEN = Path(__file__).resolve().parents[1] / "golden" / "requirement"

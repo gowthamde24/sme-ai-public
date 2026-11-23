@@ -6,6 +6,7 @@ THE GATE: not one WRONG claim may be accepted. Also: every stored quote appears 
 invariant of the containment evals is broken by any business, and the committed report (tests/evals/research/golden-report.txt) is what
 this run produces (a change in outcomes must be a deliberate update: `UPDATE_GOLDEN=1 make eval`)."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -22,6 +23,10 @@ import golden_report as gr
 import operator_sql
 import pytest
 import research_eval as rev
+from conftest import bearer
+from crm_support import World
+from evidence_support import pg, uid
+
 from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agents import runtime
 from app.agents.db import AgentDb
@@ -31,9 +36,6 @@ from app.agents.registry import AGENTS
 from app.agents.research_tools import has_contact_detail
 from app.webfetch.fakes import FixturePageFetcher
 from app.webfetch.sanitize import sanitize_html
-from conftest import bearer
-from crm_support import World
-from evidence_support import pg, uid
 
 EVALS = Path(__file__).resolve().parents[1] / "evals" / "research"
 REPORT_FILE = EVALS / "golden-report.txt"

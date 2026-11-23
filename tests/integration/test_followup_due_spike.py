@@ -8,6 +8,7 @@ OPT-IN: runs only with DUE_SPIKE=1 (it loads 20,000 leads and 100,000+ outbound 
 The function is timed INSIDE the database (clock_timestamp around each call, so no docker or HTTP overhead). The numbers are printed, not asserted tightly (only a loose 10 s bound so the machine's speed cannot
 make it flaky); the budget of section 4 is: first page under 300 ms (p95 over 20 runs) and a page that has to skip 300 terminal leads under 1.5 s. All data is synthetic."""
 
+# ruff: noqa: E501, S608, T201
 
 from __future__ import annotations
 

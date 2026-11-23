@@ -19,9 +19,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "services" / "ai-api"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from app.voice.interface import VoiceError
-from app.voice.sarvam import SarvamTts
-from app.voice.spoken import (
+from voice_samples import read_key  # noqa: E402
+
+from app.voice.interface import VoiceError  # noqa: E402
+from app.voice.sarvam import SarvamTts  # noqa: E402
+from app.voice.spoken import (  # noqa: E402
     SPOKEN_CHAR_CAP,
     SPOKEN_PACE,
     SPOKEN_TEMPERATURE,
@@ -31,7 +33,6 @@ from app.voice.spoken import (
     plan_spoken,
     spoken_within_cap,
 )
-from voice_samples import read_key
 
 DEFAULT_OUT = Path.home() / "Desktop" / "stack19-jobs" / "voice-samples" / "spoken"
 

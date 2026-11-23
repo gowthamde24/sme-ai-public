@@ -8,6 +8,7 @@
 HARD CAPS, counted BEFORE anything is sent and kept across runs in usage.json: 9,000 characters of text-to-speech and 180 seconds of audio for speech-to-text. The key is read from SARVAM_API_KEY or from
 Secret Manager (sme-sarvam-api-key) into a variable; it is never printed, logged or written. Synthetic lines only."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -22,8 +23,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "services" / "ai-api"))
 
-from app.voice.interface import VoiceError
-from app.voice.samples import (
+from app.voice.interface import VoiceError  # noqa: E402
+from app.voice.samples import (  # noqa: E402
     STT_SECOND_CAP,
     STYLES,
     TTS_CHAR_CAP,
@@ -35,7 +36,7 @@ from app.voice.samples import (
     within_cap,
     word_accuracy,
 )
-from app.voice.sarvam import SarvamStt, SarvamTts
+from app.voice.sarvam import SarvamStt, SarvamTts  # noqa: E402
 
 PROJECT = "project-2757c07e-37d2-4167-88f"
 SECRET = "sme-sarvam-api-key"

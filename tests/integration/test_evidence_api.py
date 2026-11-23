@@ -305,10 +305,10 @@ def test_concurrent_identical_requests_create_exactly_one_row(w: World) -> None:
         {"url": "file:///etc/passwd"},
         {"url": "ftp://example.test/x"},
         {"url": "https://user:pw@example.test/"},
-        {"url": "https://example.test/a\u200bb"},
+        {"url": "https://example.test/a​b"},
         {"url": "https://example.test/" + "a" * 2100},
         {"snippet": "x" * 1001},
-        {"snippet": "a\u200bb"},
+        {"snippet": "a​b"},
         {"snippet": "a\U000e0020b"},
         {"snippet": "a﻿b"},
         {"snippet": "a b"},
@@ -612,7 +612,7 @@ def test_no_response_or_audit_row_contains_the_canary(w: World) -> None:
             w.a,
             "companies",
             target,
-            {**good, "id": uid(), "snippet": CANARY_SNIPPET + "\u200b"},
+            {**good, "id": uid(), "snippet": CANARY_SNIPPET + "​"},
         ),
         ev(
             w,

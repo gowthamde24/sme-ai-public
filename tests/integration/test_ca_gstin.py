@@ -2,6 +2,7 @@
 cleared through the CRM API, the shop's own GSTIN through the business profile (second factor, roles), and both show on an order, a quote and in the accounting files (CSV, XLSX, Vyapar; not in the Tally files).
 All data is synthetic."""
 
+# ruff: noqa: E501, S608, S311
 
 from __future__ import annotations
 
@@ -12,8 +13,6 @@ import zipfile
 from typing import Any
 
 import operator_sql
-from app import gstin as g
-from app.integrations.xlsx import read_xlsx
 from conftest import aal1_token
 from crm_support import World
 from fastapi.testclient import TestClient
@@ -25,6 +24,9 @@ from test_bi_integrations_api import (  # noqa: F401 - `ow` is a fixture
     run_order,
     url,
 )
+
+from app import gstin as g
+from app.integrations.xlsx import read_xlsx
 
 ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 

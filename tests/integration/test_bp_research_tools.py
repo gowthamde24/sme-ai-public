@@ -3,6 +3,7 @@
 reservation on the AI ledger; the shop's daily limit stops a call BEFORE the provider; a customer's name never leaves; the status route; and confirming a shop from the map (one company, one lead, only the
 place ID kept, idempotent, isolated per business). All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -14,13 +15,6 @@ from typing import Any
 
 import operator_sql
 import pytest
-from app.agents.llm.interface import LlmRequest, LlmResponse, ToolCall, Usage
-from app.agents.web import SearchHit
-from app.config import Settings
-from app.main import build_runtime, create_app
-from app.websearch.metals import FixtureMetals
-from app.websearch.places import FixturePlaces
-from app.websearch.service import ResearchWeb
 from assistant_support import (
     conversation_of,
     enable_assistant,
@@ -32,6 +26,14 @@ from assistant_support import (
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
+
+from app.agents.llm.interface import LlmRequest, LlmResponse, ToolCall, Usage
+from app.agents.web import SearchHit
+from app.config import Settings
+from app.main import build_runtime, create_app
+from app.websearch.metals import FixtureMetals
+from app.websearch.places import FixturePlaces
+from app.websearch.service import ResearchWeb
 
 PLACE = "ChIJFIXTURE000000002"
 

@@ -1,6 +1,7 @@
 """Job BN on the real stack: "download my data" end to end (the real API, the real Storage, a real signed link), the workspace export, the file clean-up by the worker, account and workspace deletion
 with their cooling-off, retention and grievances, with the roles, the second factor and the other business each time, and the re-accept gate. All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -14,6 +15,11 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
+from conftest import Stack, User, aal1_token, bearer
+from crm_support import Tenant, World
+from evidence_support import uid
+from fastapi.testclient import TestClient
+
 from app.catalogue.storage import HttpStorageClient
 from app.config import Settings
 from app.main import create_app
@@ -21,10 +27,6 @@ from app.privacy.export_builder import WORKSPACE_TABLES
 from app.privacy.housekeeping import Housekeeping
 from app.privacy.repository import PostgrestPrivacyRepository
 from app.scheduler.session import PrincipalSession
-from conftest import Stack, User, aal1_token, bearer
-from crm_support import Tenant, World
-from evidence_support import uid
-from fastapi.testclient import TestClient
 
 
 def url(t: Tenant, path: str) -> str:

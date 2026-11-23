@@ -2,6 +2,7 @@
 spoken answer stream back; the transcript becomes the owner's message; the transcription and the spoken answer are charged to the workspace's AI ledger; nothing is stored (no file, no row with audio);
 the allowance and the limits refuse before anything is sent. No real provider is called and no key exists."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -12,17 +13,18 @@ from typing import Any
 
 import operator_sql
 import pytest
+from assistant_support import enable_assistant, events, restore, text_of
+from conftest import Stack, bearer
+from crm_support import World
+from fastapi.testclient import TestClient
+from test_today_api import Scene
+
 from app.assistant.dev_model import DevAssistantModel
 from app.config import Settings
 from app.main import build_runtime, create_app
 from app.voice.audio import inspect_audio
 from app.voice.fake import FakeStt, FakeTts, tone
 from app.voice.interface import VoiceStack
-from assistant_support import enable_assistant, events, restore, text_of
-from conftest import Stack, bearer
-from crm_support import World
-from fastapi.testclient import TestClient
-from test_today_api import Scene
 
 WAV = tone(1.0)
 

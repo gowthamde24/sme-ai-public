@@ -7,6 +7,7 @@
   * containment: a requirement run cannot write a claim or evidence; nobody but the definer functions writes a requirement or a field.
 All text is synthetic."""
 
+# ruff: noqa: E501, S608, S311
 
 from __future__ import annotations
 
@@ -18,11 +19,12 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
-from app.requirements.quote import find_quote, normalise_ws, verify
 from conftest import User
 from crm_support import Tenant, World
 from evidence_support import code_of, pg, uid
 from test_agent_direct_postgrest import rpc
+
+from app.requirements.quote import find_quote, normalise_ws, verify
 
 GENERIC = "requirement action not permitted"
 BODY = "Hello,\nNeed  20 kanjivaram   sarees\tby 15 November 2026.\nDeliver to Hyderabad. Payment 30 days credit."

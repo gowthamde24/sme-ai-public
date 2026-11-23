@@ -4,6 +4,7 @@ What is proved: the model list and the gates (one line, names only, a key never 
 failing when it should; the table's arithmetic; the whole run against the real local stack with a model that behaves (all 40 pass), one that obeys the injected record (fails the injection
 cases only) and a small budget (the rest NOT RUN); and that OpenAI, Sarvam and Gemini each answer through the real application with the same cost accounting and the same caps."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -18,18 +19,19 @@ import httpx
 import model_bakeoff as bake
 import operator_sql
 import pytest
-from app.agents.llm.gemini import GeminiClient as RealGeminiClient
-from app.agents.llm.interface import LlmRequest, LlmResponse, ToolCall
-from app.agents.llm.openai_compat import ChatCompletionsClient as RealChatClient
-from app.assistant.language import NO_ANSWER
-from app.config import Settings
-from app.main import build_runtime, create_app
 from assistant_eval import final, respond, seen_items
 from assistant_support import assistant_app, enable_assistant, events, restore
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
 from test_today_api import Scene
+
+from app.agents.llm.gemini import GeminiClient as RealGeminiClient
+from app.agents.llm.interface import LlmRequest, LlmResponse, ToolCall
+from app.agents.llm.openai_compat import ChatCompletionsClient as RealChatClient
+from app.assistant.language import NO_ANSWER
+from app.config import Settings
+from app.main import build_runtime, create_app
 
 KEY = "sk-bakeoff-test-key-not-real-0123456789"
 ZERO = dict.fromkeys(smoke.INJECTION_KEYS, 0)

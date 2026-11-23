@@ -2,6 +2,7 @@
 +91 and ten digits; a second holder of the same number is refused; the suppression key of a phone-only contact exists; the lead import and the spreadsheet import make phone-only contacts and find
 existing ones by their number; a WhatsApp message can be made for a phone-only customer; an erasure of a phone-only contact works. All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -12,11 +13,12 @@ import uuid
 import httpx
 import operator_sql
 import pytest
-from app.suppression.keys import normalise_phone
 from conftest import bearer
 from crm_support import World
 from evidence_support import uid
 from fastapi.testclient import TestClient
+
+from app.suppression.keys import normalise_phone
 
 NUMBERS = [
     "+91 98765 43210", "098765-43210", "91-9876543210", "0091 98765 43210", "(98765) 43210", "９８７６５４３２１０", "९८७६५ ४३२१०", "౯౮౭౬౫ ౪౩౨౧౦", "೯೮೭೬೫೪೩೨೧೦", "௯௮௭௬௫௪௩௨௧௦", "৯৮৭৬৫৪৩২১০",

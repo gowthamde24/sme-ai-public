@@ -15,6 +15,7 @@ after) with the research agent's own invariants:
   E   the case's own expectations (how many rows, which values, what was fetched)
 """
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -25,6 +26,7 @@ from pathlib import Path
 from typing import Any
 
 import agent_eval as ev
+
 from app.agents.llm.fake import FakeProvider
 from app.agents.research_tools import normalise
 from app.agents.research_vocab import CLAIM_VOCAB

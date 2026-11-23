@@ -5,6 +5,7 @@ anonymises their free text and identifiers in place; it must neither fail on the
 nothing to erase IN the order tables: every text column is classified SAFE and no planted identifier is found in any of them. The order keeps running afterwards. The erasure code
 was NOT changed for this. All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

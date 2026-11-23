@@ -542,7 +542,7 @@ def test_an_oversized_or_unclean_snapshot_is_refused(
     }
     for name, snapshot in (
         ("oversized", {"note": "x" * 5000}),
-        ("zero-width space", {"note": "a\u200bb"}),
+        ("zero-width space", {"note": "a​b"}),
         ("bidi override", {"note": "a‮b"}),
     ):
         body = label_row(w.a.id, w.a.rows["leads"]["id"], snapshot=snapshot, **base)

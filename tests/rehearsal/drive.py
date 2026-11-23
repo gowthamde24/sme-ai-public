@@ -9,6 +9,7 @@ It decides nothing: it sends what a person would type and compares the answers w
 price, tax, advance or lifecycle rule of its own; the only knowledge in it is the expected result of each step, written down by a person before the engine ever ran.
 Everything is synthetic and local. Nothing is sent to anyone. Run it with `make rehearse-thin-slice`; it writes `rehearsal-report.md` at the repository root."""
 
+# ruff: noqa: E501, S603, S607
 
 from __future__ import annotations
 
@@ -23,9 +24,6 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from app.config import Settings
-from app.leads.csv_rows import rows_from_csv
-from app.main import create_app
 from fastapi.testclient import TestClient
 from harness import (
     Api,
@@ -39,6 +37,10 @@ from harness import (
 )
 from pydantic import SecretStr
 from report import write_report
+
+from app.config import Settings
+from app.leads.csv_rows import rows_from_csv
+from app.main import create_app
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "tests" / "rehearsal" / "data"

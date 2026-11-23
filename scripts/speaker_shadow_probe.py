@@ -19,8 +19,8 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import seed_staging as ss
-from staging_smoke_api import Owner
+import seed_staging as ss  # noqa: E402
+from staging_smoke_api import Owner  # noqa: E402
 
 FRAME = 640
 VERBOSE = False

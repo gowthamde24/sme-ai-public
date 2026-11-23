@@ -24,17 +24,16 @@ from urllib.parse import urlparse
 
 import httpx
 import pytest
-from app.config import Settings
-from app.hardening import ratelimit
-from app.main import create_app
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
+from app.config import Settings
+from app.hardening import ratelimit
+from app.main import create_app
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
-import stack_env
-from local_confirm import (
-    confirm_email,
-)
+import stack_env  # noqa: E402
+from local_confirm import confirm_email  # noqa: E402  (the scripts folder is not a package)
 
 
 def _stack_guard(env: dict[str, str]) -> str | None:

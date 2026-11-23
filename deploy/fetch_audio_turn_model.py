@@ -21,7 +21,7 @@ def main(directory: str) -> int:
     target = Path(directory)
     for name, url, sha256 in MODELS:
         try:
-            with urllib.request.urlopen(url, timeout=120) as response:
+            with urllib.request.urlopen(url, timeout=120) as response:  # noqa: S310 - a fixed https URL
                 data = response.read()
         except OSError as exc:
             print(f"{name} not downloaded:", type(exc).__name__)

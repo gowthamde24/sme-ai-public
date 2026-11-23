@@ -4,16 +4,12 @@ import ast
 import copy
 import hashlib
 import json
+from pathlib import Path
 import random
 import unittest
-from pathlib import Path
 
 from quote_engine import construction
-from quote_engine.construction import (
-    CONSTRUCTION_ENGINE_VERSION,
-    calculate,
-    canonical_json,
-)
+from quote_engine.construction import CONSTRUCTION_ENGINE_VERSION, calculate, canonical_json
 
 HERE = Path(__file__).parent
 VECTORS = json.loads((HERE / "fixtures" / "construction_vectors.json").read_text(encoding="utf-8"))["vectors"]
@@ -206,8 +202,8 @@ class Invariants(unittest.TestCase):
             last = trips
 
     def test_the_wastage_rounding_matches_exact_fractions(self):
-        import math
         from fractions import Fraction
+        import math
 
         rng = random.Random(7)
         base = vector("worked_example_1000_sqft_80mm_paver_2_trips")["request"]

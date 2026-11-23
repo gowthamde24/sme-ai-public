@@ -13,8 +13,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import demo_data
-import seed_staging as ss
+import demo_data  # noqa: E402
+import seed_staging as ss  # noqa: E402
 
 
 def main() -> int:

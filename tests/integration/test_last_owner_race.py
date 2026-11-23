@@ -31,7 +31,7 @@ def _new_tenant_with_two_owners(stack: Stack, one: User, two: User) -> str:
     tenant_id = str(created.json()["id"])
     # The free trial allows one workspace per owner (job AD, D1). This test needs many, so the
     # OPERATOR (a client cannot) raises this workspace's limit before the second owner is added.
-    operator_sql.sql(f"update public.tenants set workspace_limit = 100 where id = '{tenant_id}'")
+    operator_sql.sql(f"update public.tenants set workspace_limit = 100 where id = '{tenant_id}'")  # noqa: S608, E501 - an id the database just returned
     added = httpx.post(
         f"{stack.rest}/memberships",
         headers=stack.headers(one.token),

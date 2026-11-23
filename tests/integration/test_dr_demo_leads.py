@@ -3,6 +3,7 @@
 What this proves that the unit tests cannot: the whole path (approved facts, four lead imports with their costs, a standing rule, a batch planned and approved once, outcomes reported, hand-offs, the report) works against the real
 database, and a second run changes nothing. The tasks need a model to plan them (the staging seed runs those): `tasks=False` here."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -14,7 +15,7 @@ from typing import Any
 from conftest import bearer
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
-import demo_data
+import demo_data  # noqa: E402
 
 TODAY = datetime.now(timezone(timedelta(hours=5, minutes=30))).date()   # the report counts what arrived up to the database's today
 

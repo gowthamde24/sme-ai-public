@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """The off-topic eval of the automatic WhatsApp reply: a thin wrapper of app/autoreply/offtopic_eval.py (see there).
 
 The owner never types the model key in a shell: run it as the Cloud Run job `sme-offtopic-eval` (key bound from Secret Manager)."""

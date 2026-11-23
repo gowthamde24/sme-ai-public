@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import stack_env
+import stack_env  # noqa: E402  (the scripts folder is not a package)
 
 _EMAIL = re.compile(r"^[A-Za-z0-9._+-]{1,64}@[A-Za-z0-9.-]{1,120}$")
 
@@ -32,9 +32,9 @@ def confirm_email(email: str) -> None:
     docker = shutil.which("docker")
     if docker is None or not _EMAIL.fullmatch(email):
         raise RuntimeError("Cannot confirm the account: docker is missing or the address is unexpected.")
-    done = subprocess.run(
+    done = subprocess.run(  # noqa: S603 - fixed argv; the address is validated above
         [docker, "exec", "-i", container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c",
-         f"update auth.users set email_confirmed_at = coalesce(email_confirmed_at, now()) where lower(email) = lower('{email}')"],
+         f"update auth.users set email_confirmed_at = coalesce(email_confirmed_at, now()) where lower(email) = lower('{email}')"],  # noqa: S608
         capture_output=True, text=True, timeout=30, check=False,
     )
     if done.returncode != 0:

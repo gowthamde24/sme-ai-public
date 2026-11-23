@@ -9,6 +9,7 @@
   * the synthetic operator seed is idempotent and callable by no client.
 All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 

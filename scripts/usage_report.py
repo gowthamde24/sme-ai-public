@@ -144,7 +144,7 @@ def build_report(data: dict[str, Any], catalogue: dict[str, Any], assumptions: d
         lv = c["levels"]
         rows.append([c["id"], "no ceiling" if c["minutes"] is None else c["minutes"], "no ceiling" if c["messages"] is None else c["messages"], f"Rs {c['ai_ceiling']:.0f}" if c["ai_ceiling"] is not None else "-",
                      " / ".join(f"{lv[k]['total']:.0f}" for k in LEVELS), " / ".join(f"{lv[k]['price_for_margin']:.0f}" for k in LEVELS)])
-    out.append(table(rows, ["plan", "included minutes", "included messages", "AI fair-use ceiling a month", "cost low / typical / heavy", "price for the target margin, low / typical / heavy"]))
+    out.append(table(rows, ["plan", "included minutes", "included messages", "AI fair-use ceiling a month", "cost low / typical / heavy", f"price for the target margin, low / typical / heavy"]))
     out += ["", "### Where each total comes from (typical use)", ""]
     rows = []
     for c in costs:

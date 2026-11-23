@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import sb_mgmt
+import sb_mgmt  # noqa: E402
 
 STAGING_REF = "uiallwgywitryxatcqxf"
 GCP_PROJECT = "project-2757c07e-37d2-4167-88f"

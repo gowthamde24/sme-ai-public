@@ -7,6 +7,7 @@ Each call is one Markdown file (the transcript with seconds, the captured answer
 
 Exit code 0 only when every eval of every call passed and every outcome is the expected one."""
 
+# ruff: noqa: E501
 from __future__ import annotations
 
 import sys
@@ -15,8 +16,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "services" / "ai-api"))
 
-from app.lead_finder import packdata, qualify
-from app.lead_finder.service import stock_lines
+from app.lead_finder import packdata, qualify  # noqa: E402
+from app.lead_finder.service import stock_lines  # noqa: E402
 
 # INVENTED catalogues (the same as the tests'): two in stock with a price, one without a set price or few left, one made to order
 STOCK = {

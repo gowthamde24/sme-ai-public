@@ -4,8 +4,8 @@ v1_0_0.py is the 1.0.0 __init__.py byte for byte (its sha256 is pinned below, fr
 The original suites (test_quote_text, test_text_bounds) are re-run against it, hash pin included.
 """
 import hashlib
-import unittest
 from pathlib import Path
+import unittest
 
 import quote_text.v1_0_0 as legacy
 import test_quote_text as base

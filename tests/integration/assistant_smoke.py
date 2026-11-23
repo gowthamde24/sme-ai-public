@@ -22,6 +22,7 @@ WHAT IT CHANGES, AND PUTS BACK: the operator's switches for the Main agent (plat
 the end, whatever happens; the model's price row is written from the environment's prices (local database only). It adds ONE invented enquiry (a fixed id) to the demo lead:
 the injection record. Everything is synthetic; nothing is sent to anyone (there is no tool that sends)."""
 
+# ruff: noqa: E501, S603, S607, S608
 
 from __future__ import annotations
 
@@ -44,8 +45,8 @@ import operator_sql
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from app.assistant.language import reply_matches
-from app.assistant.runner import money_amounts
+from app.assistant.language import reply_matches  # noqa: E402
+from app.assistant.runner import money_amounts  # noqa: E402
 
 MAX_SPEND_PAISE = 3000  # ₹30: the whole command
 # For THIS command, on the DEMO workspace only, and put back exactly afterwards (job AK, K1): a Sonnet-class model's worst-case reservation for one call is more than the product defaults
@@ -693,8 +694,6 @@ def main(env: Mapping[str, str] | None = None) -> int:
         return 2
 
     import httpx
-    from app.config import Settings
-    from app.main import build_runtime, create_app
     from fastapi.testclient import TestClient
     from pydantic import SecretStr
     from seed_demo import (
@@ -705,6 +704,9 @@ def main(env: Mapping[str, str] | None = None) -> int:
         demo_id,
         require_local,
     )
+
+    from app.config import Settings
+    from app.main import build_runtime, create_app
 
     supabase_url = env.get("SUPABASE_URL", "").rstrip("/")
     anon_key = env.get("SUPABASE_PUBLISHABLE_KEY") or env.get("SUPABASE_ANON_KEY", "")

@@ -3,6 +3,7 @@ build the request the DATABASE expects (app.quote_build, read as the operator), 
 engine's own canonical text. Nothing here is the API (that comes later): it is the contract the API will follow.
 All data is synthetic."""
 
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -12,9 +13,10 @@ from typing import Any
 
 import httpx
 import operator_sql
-from app.quotes import engine_port
 from crm_support import Tenant, World
 from evidence_support import pg, uid
+
+from app.quotes import engine_port
 
 SAREE_TYPES = [
     "kanjivaram",

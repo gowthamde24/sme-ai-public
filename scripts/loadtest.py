@@ -31,7 +31,7 @@ from urllib.parse import urlsplit
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from local_confirm import confirm_email
+from local_confirm import confirm_email  # noqa: E402
 
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
 OWNER_PORTS = {8000, 54321}
@@ -126,7 +126,7 @@ class Shop:
         self.slug = f"lt-{run}-{n}"
         self.leads: list[str] = []
         self.companies: list[str] = []
-        self.rng = random.Random(f"{run}-{n}")
+        self.rng = random.Random(f"{run}-{n}")  # noqa: S311
 
     @property
     def base(self) -> str:
@@ -254,8 +254,8 @@ def enable_assistant(slugs: str) -> None:
 
     if not re.fullmatch(r"('[a-z0-9-]+',?)+", slugs):  # our own generated slugs only
         raise ValueError("unexpected slug list")
-    sql = f"select app.operator_enable_assistant(slug) from public.tenants where slug in ({slugs})"
-    subprocess.run(["docker", "exec", "-i", container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c", sql], capture_output=True, text=True, check=True, timeout=120)
+    sql = f"select app.operator_enable_assistant(slug) from public.tenants where slug in ({slugs})"  # noqa: S608
+    subprocess.run(["docker", "exec", "-i", container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c", sql], capture_output=True, text=True, check=True, timeout=120)  # noqa: S603, S607
 
 
 def main(argv: list[str]) -> int:

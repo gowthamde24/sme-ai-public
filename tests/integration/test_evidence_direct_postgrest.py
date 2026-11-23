@@ -675,7 +675,7 @@ def test_rpc_cannot_forge_or_widen_anything(
     bad: list[tuple[dict[str, Any], str]] = [
         ({"p_url": "javascript:alert(1)"}, "23514"),
         ({"p_url": "https://u:p@example.test/"}, "23514"),
-        ({"p_snippet": "a\u200bb"}, "23514"),
+        ({"p_snippet": "a​b"}, "23514"),
         ({"p_snippet": "x" * 1001}, "23514"),
         ({"p_snippet": "a\U000e0020b"}, "23514"),
         ({"p_retrieved_at": "2999-01-01T00:00:00Z"}, "23514"),
@@ -711,9 +711,7 @@ def test_rpc_is_not_callable_by_a_stranger_even_with_valid_ids_of_a_real_tenant(
         json={"email": stranger_email, "password": stranger_password},
         timeout=15,
     ).raise_for_status()
-    from local_confirm import (
-        confirm_email,  # the local stack asks for confirmation (job AD / D2)
-    )
+    from local_confirm import confirm_email  # the local stack asks for confirmation (job AD / D2)
 
     confirm_email(stranger_email)
     stranger = httpx.post(

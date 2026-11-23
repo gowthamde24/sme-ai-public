@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """A1 of job assistant-does-the-work: the coverage table, generated from the LIVE route list (never typed). Writes docs/assistant-tools-coverage.md and prints the numbers.
 
 Run from services/ai-api:  PYTHONPATH=$PWD python ../../scripts/assistant_coverage.py [--check]
@@ -13,9 +14,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "services" / "ai-api"))
 
-from app.assistant_tools import catalog
-from app.config import Settings
-from app.main import create_app
+from app.assistant_tools import catalog  # noqa: E402
+from app.config import Settings  # noqa: E402
+from app.main import create_app  # noqa: E402
 
 OUT = ROOT / "docs" / "assistant-tools-coverage.md"
 REASON_WORDS = {

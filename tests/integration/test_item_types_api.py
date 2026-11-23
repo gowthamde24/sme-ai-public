@@ -7,6 +7,7 @@
   * a client has no direct write on the table (the function is the only writer).
 All data is synthetic: item type names and prices are placeholders."""
 
+# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -139,7 +140,7 @@ def test_the_range_rules_are_the_databases_too(world: World) -> None:
     code = "R" + uid()[:8]
     # the API refuses a bad shape first; the database refuses what the API does not look at
     assert save(world, t, code, min_price_paise=9, max_price_paise=5).status_code == 422
-    r = save(world, t, code, name="Zero\u200bwidth")
+    r = save(world, t, code, name="Zero​width")
     assert r.status_code == 422 and err(r) in {"validation_error", "invalid_value"}, r.text
     assert all(v["code"] != code for v in listing(world, t).json())
     ok = save(world, t, code, min_price_paise=5, max_price_paise=5)
