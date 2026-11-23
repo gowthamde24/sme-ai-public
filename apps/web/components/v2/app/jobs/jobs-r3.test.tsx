@@ -29,12 +29,15 @@ const sheetActions = (): SheetActions => ({
 const switches = { setEnabled: vi.fn(async (id: string, enabled: boolean) => ({ ok: true as const, data: { id, enabled, status: enabled ? ("running" as const) : ("paused" as const) } })) };
 
 describe("the Jobs page, the renamed Office", () => {
-  it("a group's rows sit in ONE column that may shrink (grid-cols-1 = minmax(0,1fr)) on a phone: an auto column grew to the widest row (430-470 px in a 358 px list) and pushed the status chips and the switch off the screen (staging walk, 20 Nov)", () => {
+  it("the open list (owner, 24 Nov): a group is ONE column of lines between hairlines (a dark rule above the first), no card, and each line's text may shrink beside its one action (min-w-0), so a phone never pushes the button off the screen", () => {
     const { container } = render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
-    const grid = container.querySelector("[data-group] > div") as HTMLElement;
-    expect(grid.className).toContain("grid-cols-1");
-    expect(grid.className).toContain("md:grid-cols-2");
-    expect(grid.className).toContain("[&>div]:min-w-0");
+    const list = container.querySelector("[data-group] > div") as HTMLElement;
+    expect(list.className).toContain("flex-col");
+    expect(list.className).toContain("border-t");
+    expect(list.className).not.toMatch(/rounded|bg-surface|grid-cols/);
+    const line = list.querySelector("[data-job]") as HTMLElement;
+    expect(line.querySelector("a")?.className).toContain("min-w-0");
+    expect(line.className).toContain("border-t");
   });
   it("chips All / Running / Needs you / Paused with their counts; the open one is marked", () => {
     render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);

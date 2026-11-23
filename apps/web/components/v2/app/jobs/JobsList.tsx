@@ -6,7 +6,8 @@ import type { SheetLoad } from "@/lib/jobs/templates";
 import { JOB_FILTERS, filterJobs, type Job, type JobFilter } from "@/lib/jobs/types";
 
 import { makeT, type Words } from "../words";
-import { JobRow, type JobActions } from "./JobRow";
+import { JobLine } from "./JobLine";
+import type { JobActions } from "./JobRow";
 import { SuggestedJobs, type SuggestionActions } from "./SuggestedJobs";
 import { JobsEmpty } from "./sheet/LazyJobsEmpty";
 import { NewJobButton } from "./sheet/NewJobButton";
@@ -30,7 +31,7 @@ export function JobsList({ jobs, filter, words, base, actions, suggestions = [],
   const t = makeT(words);
   const shown = filterJobs(jobs, filter);
   const grouped = filter === "all" ? GROUPS.map((g) => ({ g, rows: shown.filter((j) => groupOf(j) === g) })).filter((x) => x.rows.length > 0) : [{ g: null, rows: shown }];
-  const rowOf = (j: Job) => <JobRow key={j.id} job={j} words={words} base={base} actions={actions} chips />;
+  const rowOf = (j: Job) => <JobLine key={j.id} job={j} words={words} base={base} actions={actions} />;
   return (
     <div data-part="jobs-list" className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -68,27 +69,24 @@ export function JobsList({ jobs, filter, words, base, actions, suggestions = [],
           {t(filter === "needs_you" && jobs.length > 0 ? "jobs.page.empty.needs" : "jobs.page.empty")}
         </p>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-8">
           {grouped.map(({ g, rows }) => (
-            <section key={g ?? "rows"} data-group={g ?? undefined} aria-label={g ? t(`jobs.page.group.${g}`) : undefined} className="flex flex-col gap-1.5">
+            <section key={g ?? "rows"} data-group={g ?? undefined} aria-label={g ? t(`jobs.page.group.${g}`) : undefined} className="flex flex-col">
               {g ? (
-                <h2 className="m-0 flex items-center gap-2 px-1 text-[12px] font-bold uppercase tracking-wider text-muted">
-                  {t(`jobs.page.group.${g}`)}
-                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-surface-2 px-1.5 text-[12px] font-bold normal-case tracking-normal text-ink">{rows.length}</span>
+                <h2 className="m-0 mb-2 text-[15px] font-semibold text-muted">
+                  {t(`jobs.page.group.${g}`)} <span className="font-normal">{rows.length}</span>
                 </h2>
               ) : null}
-              <div className="grid grid-cols-1 gap-x-4 gap-y-0 overflow-hidden rounded-2xl border border-line bg-surface md:grid-cols-2 [&>div]:min-w-0 [&>div]:border-b [&>div]:border-line">{rows.map(rowOf)}</div>
+              <div className="flex flex-col border-t border-ink">{rows.map(rowOf)}</div>
             </section>
           ))}
         </div>
       )}
-      <Link href={`${base}/do-not-call`} prefetch={false} data-part="dnc-link" className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-2.5 no-underline">
-        <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-surface-2 text-ink">
-          <Ban className="size-[18px]" />
-        </span>
+      <Link href={`${base}/do-not-call`} prefetch={false} data-part="dnc-link" className="flex min-h-14 items-center gap-3 border-t border-line py-3 no-underline">
+        <Ban aria-hidden="true" className="size-[18px] shrink-0 text-muted" />
         <span className="min-w-0 flex-1">
           <span className="block text-[15px] font-semibold leading-snug text-ink">{t("jobs.page.dnc.title")}</span>
-          <span className="block text-[13px] leading-snug text-muted">{t("jobs.page.dnc.sub")}</span>
+          <span className="block text-[14px] leading-snug text-muted">{t("jobs.page.dnc.sub")}</span>
         </span>
       </Link>
     </div>

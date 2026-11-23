@@ -126379,5 +126379,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.line.review": {
+  "en": "Review",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.turn_on": {
+  "en": "Turn on",
+  "te": "ఆన్ చేయండి",
+  "hi": "चालू करें",
+  "kn": "ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.paused": {
+  "en": "Paused",
+  "te": "ఆపి ఉంది",
+  "hi": "रुका हुआ है",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.line.paused_ran": {
+  "en": "Paused · last ran {day}",
+  "te": "ఆపి ఉంది · చివరిసారి {day}",
+  "hi": "रुका हुआ है · आखिरी बार {day}",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ · ಕೊನೆಯ ಬಾರಿ {day}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
