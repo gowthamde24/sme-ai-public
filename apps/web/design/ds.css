@@ -9,7 +9,7 @@
   color-scheme: light;
 
   /* neutral off-white (owner, 14 Nov: the cream was too sepia): page #fafafa, cards white with a 1px #ececec edge, cool-grey text */
-  --v2-bg: #ffffff;
+  --v2-bg: #fafafa;
   --v2-surface: #ffffff;
   --v2-surface-2: #f4f5f7;
   --v2-ink: #16181d;
@@ -144,16 +144,7 @@
   background-image: none;
   isolation: isolate;
 }
-[data-ui="v2"][data-ds="6"] [data-frame="app"]::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: radial-gradient(circle, var(--v2-dot) 1px, transparent 1.3px);
-  background-size: 22px 22px;
-  will-change: transform;
-}
+/* (no dot grid behind the app: the page is flat, owner 25 Nov 2026: light #fafafa, dark #0a0a0b; the landing keeps its own look) */
 /* The glowing border (the command bar, a reply that waits for the owner's OK): a gradient edge and a soft orange halo. Still when the person asks for less motion. */
 [data-ui="v2"][data-ds="6"] .ds-glow {
   border: 1.5px solid transparent;
