@@ -104,7 +104,7 @@ describe("GET /jobs/today", () => {
     expect(t.assistantName).toBe("Asha");
     expect(parseJobsToday({ jobs: [] })).toEqual({ jobs: [], needsYou: [], assistantName: null });
     expect(() => parseJobsToday({ jobs: "no" })).toThrow();
-    expect(() => parseJobsToday({ jobs: [{ ...wire, plan_gate: { code: "x y" } }] })).toThrow();
+    expect(parseJobsToday({ jobs: [{ ...wire, plan_gate: { code: "x y" } }] }).jobs).toEqual([]); // a row it cannot read is left out, not a failed page
   });
   it("off: nothing; mock: the mock jobs in the same shape and no request; on: a plain GET of /jobs/today (not /jobs), null when the API has none", async () => {
     h.mode.v = "off";

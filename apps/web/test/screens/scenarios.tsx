@@ -804,6 +804,7 @@ add({ id: "phone-number", render: async () => (await import("@/app/app/tenants/[
 add({ id: "talk", render: async () => (await import("@/app/app/tenants/[tenantId]/talk/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
 add({ id: "ai-team-training", render: async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "office-old-address", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => base(role) });
+add({ id: "leads-old-address", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/leads/page")).default(props({})) as unknown as Promise<ReactElement>, handlers: (role) => base(role) }); // a typed or bookmarked /leads: the harness records the redirect to /review
 for (const section of ["business", "language", "security"] as const) {
   add({ id: `settings-${section}`, roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: "27AAPFU0939F1ZV", state: "Maharashtra" }) }) });
 }

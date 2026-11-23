@@ -26,8 +26,8 @@
  "nav.pricing": {
   "en": "Pricing",
   "te": "ధరలు",
-  "hi": "कीमतें",
-  "kn": "ಬೆಲೆಗಳು",
+  "hi": "Plans और कीमतें",
+  "kn": "Plans ಮತ್ತು ಬೆಲೆಗಳು",
   "ta": "விலைகள்",
   "status": {
    "te": "draft",
@@ -102,7 +102,7 @@
  "nav.start": {
   "en": "Get started",
   "te": "ప్రారంభించండి",
-  "hi": "आरंभ करें",
+  "hi": "शुरू करें",
   "kn": "ಶುರು ಮಾಡಿ",
   "ta": "தொடங்குங்கள்",
   "status": {
@@ -180,8 +180,8 @@
  "foot.note": {
   "en": "Made-up example data is labelled wherever it appears.",
   "te": "కల్పిత ఉదాహరణ డేటా ఎక్కడ కనిపించినా దాని మీద లేబుల్ ఉంటుంది.",
-  "hi": "बनाया हुआ उदाहरण डेटा जहाँ भी दिखता है, उस पर लेबल होता है।",
-  "kn": "ಕಲ್ಪಿತ ಉದಾಹರಣೆ ಡೇಟಾ ಎಲ್ಲಿ ಕಾಣಿಸಿದರೂ ಅದರ ಮೇಲೆ ಲೇಬಲ್ ಇರುತ್ತದೆ.",
+  "hi": "Sample data जहाँ भी दिखेगा, उस पर साफ़ लिखा होगा।",
+  "kn": "Sample data ಎಲ್ಲೇ ಇದ್ದರೂ, ಅದರ ಮೇಲೆ ಸ್ಪಷ್ಟವಾಗಿ ಬರೆದಿರುತ್ತದೆ.",
   "ta": "எங்கு எடுத்துக்காட்டுத் தரவு வந்தாலும், அது example என்று குறிக்கப்பட்டிருக்கும்.",
   "status": {
    "te": "draft",
@@ -285,7 +285,7 @@
  "hero.cta": {
   "en": "Get started",
   "te": "ప్రారంభించండి",
-  "hi": "आरंभ करें",
+  "hi": "शुरू करें",
   "kn": "ಶುರು ಮಾಡಿ",
   "ta": "தொடங்குங்கள்",
   "status": {
@@ -359,8 +359,8 @@
  "faq.title": {
   "en": "Questions, answered calmly",
   "te": "ప్రశ్నలు, ప్రశాంతంగా జవాబులు",
-  "hi": "सवाल, शांति से जवाब",
-  "kn": "ಪ್ರಶ್ನೆಗಳು, ಶಾಂತವಾಗಿ ಉತ್ತರ",
+  "hi": "आम सवाल, सीधे जवाब",
+  "kn": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳಿಗೆ ನೇರ ಉತ್ತರ",
   "ta": "கேள்விகள், நிதானமான பதில்கள்",
   "status": {
    "te": "draft",
@@ -398,7 +398,7 @@
  "price.title": {
   "en": "Simple plans. Every plan has every feature.",
   "te": "Simple plans. ప్రతి plan లో అన్ని features ఉంటాయి.",
-  "hi": "सीधे plans। हर plan में सारे features।",
+  "hi": "आसान plans। हर plan में सारे features।",
   "kn": "ಸರಳ plans. ಪ್ರತಿ plan ನಲ್ಲೂ ಎಲ್ಲಾ features ಇವೆ.",
   "ta": "எளிய plans. ஒவ்வொரு plan-இலும் எல்லா features-உம் உண்டு.",
   "status": {
@@ -411,7 +411,7 @@
  "price.sub": {
   "en": "Early access is free. Paid plans start in February 2027, at these launch prices. Plans only differ in what is included.",
   "te": "Early access free. Paid plans 2027 February నుంచి, ఈ launch prices తో. Plans లో తేడా included ఉన్నవాటిలోనే.",
-  "hi": "Early access free है। Paid plans फरवरी 2027 से, इन launch prices पर। Plans में फर्क सिर्फ़ included चीज़ों का है।",
+  "hi": "Early access free है। Paid plans फरवरी 2027 से इन launch prices पर शुरू होंगे। Plans में फर्क सिर्फ़ usage limit का है।",
   "kn": "Early access free. Paid plans 2027 ಫೆಬ್ರವರಿಯಿಂದ, ಈ launch prices ನಲ್ಲಿ. Plans ನಲ್ಲಿ ವ್ಯತ್ಯಾಸ included ಇರುವುದರಲ್ಲಿ ಮಾತ್ರ.",
   "ta": "Early access இலவசம். Paid plans 2027 பிப்ரவரியில் தொடங்கும், இந்த launch prices-இல். Plans-க்குள் வித்தியாசம், சேர்க்கப்பட்டிருப்பவற்றில் மட்டுமே.",
   "status": {
@@ -437,8 +437,8 @@
  "price.trial.t": {
   "en": "Try it with your own business",
   "te": "మీ సొంత వ్యాపారంతో ప్రయత్నించండి",
-  "hi": "अपने ही business के साथ आज़माइए",
-  "kn": "ನಿಮ್ಮದೇ business ನೊಂದಿಗೆ ಪ್ರಯತ್ನಿಸಿ",
+  "hi": "अपने business के साथ try करके देखिए",
+  "kn": "ನಿಮ್ಮದೇ business ಗೆ try ಮಾಡಿ ನೋಡಿ",
   "ta": "உங்கள் சொந்த business-இல் முயன்று பாருங்கள்",
   "status": {
    "te": "draft",
@@ -520,8 +520,8 @@
  "price.dfy.d": {
   "en": "One call: we import your price list or student list, set your rules and connect WhatsApp. Paid once.",
   "te": "ఒక్క కాల్: మీ ధరల జాబితా లేదా విద్యార్థుల జాబితా ఇంపోర్ట్ చేసి, నియమాలు సెట్ చేసి, వాట్సాప్ కనెక్ట్ చేస్తాం. ఒక్కసారే పేమెంట్.",
-  "hi": "एक call: हम आपकी प्राइस लिस्ट या विद्यार्थियों की सूची इंपोर्ट करते हैं, नियम तय करते हैं और WhatsApp जोड़ते हैं। एक ही बार का payment।",
-  "kn": "ಒಂದು call: ನಿಮ್ಮ ಬೆಲೆ ಪಟ್ಟಿ ಅಥವಾ ವಿದ್ಯಾರ್ಥಿ ಪಟ್ಟಿ ಇಂಪೋರ್ಟ್ ಮಾಡಿ, ನಿಯಮ ಹೊಂದಿಸಿ, WhatsApp ಸಂಪರ್ಕಿಸುತ್ತೇವೆ. ಒಮ್ಮೆ ಮಾತ್ರ payment.",
+  "hi": "एक call में हम आपकी price list या student list import कर देंगे, rules set कर देंगे और WhatsApp connect कर देंगे। One-time payment।",
+  "kn": "ಒಂದು call ನಲ್ಲಿ ನಿಮ್ಮ price list ಅಥವಾ student list import ಮಾಡಿ, rules set ಮಾಡಿ, WhatsApp connect ಮಾಡಿ ಕೊಡುತ್ತೇವೆ. ಒಂದೇ ಸಲ payment.",
   "ta": "ஒரு call: உங்கள் price list அல்லது student list-ஐ import செய்து, rules அமைத்து, WhatsApp-ஐ இணைப்போம். ஒரே ஒரு முறை மட்டும் கட்டணம்.",
   "status": {
    "te": "draft",
@@ -546,7 +546,7 @@
  "price.founding.d": {
   "en": "The first businesses to join get a founding offer. Ask us on WhatsApp for the details.",
   "te": "మొదట చేరే వ్యాపారాలకు ఫౌండింగ్ ఆఫర్ ఉంటుంది. వివరాల కోసం వాట్సాప్‌లో అడగండి.",
-  "hi": "सबसे पहले जुड़ने वाले businesses को founding offer मिलता है। ब्योरे के लिए WhatsApp पर पूछें।",
+  "hi": "सबसे पहले जुड़ने वाले businesses को founding offer मिलेगा। Details के लिए WhatsApp पर पूछें।",
   "kn": "ಮೊದಲು ಸೇರುವ businesses ಗೆ founding offer ಇದೆ. ವಿವರಕ್ಕೆ WhatsApp ನಲ್ಲಿ ಕೇಳಿ.",
   "ta": "முதலில் சேரும் businesses-க்கு founding offer உண்டு. Details-க்கு WhatsApp-இல் கேளுங்கள்.",
   "status": {
@@ -616,8 +616,8 @@
  "price.fair.t": {
   "en": "How fair use works",
   "te": "ఫెయిర్ యూజ్ ఎలా పనిచేస్తుంది",
-  "hi": "फ़ेयर यूज़ कैसे काम करता है",
-  "kn": "ಫೇರ್ ಯೂಸ್ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "hi": "Fair use कैसे काम करता है",
+  "kn": "Fair use ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
   "ta": "Fair use எப்படி வேலை செய்கிறது",
   "status": {
    "te": "draft",
@@ -629,8 +629,8 @@
  "price.fair.1": {
   "en": "A usage meter shows today's and this month's use.",
   "te": "యూసేజ్ మీటర్ ఈరోజు, ఈ నెల వాడకాన్ని చూపిస్తుంది.",
-  "hi": "यूसेज मीटर आज और इस महीने का इस्तेमाल दिखाता है।",
-  "kn": "ಯೂಸೇಜ್ ಮೀಟರ್ ಇವತ್ತು, ಈ ತಿಂಗಳ ಬಳಕೆ ತೋರಿಸುತ್ತದೆ.",
+  "hi": "Usage meter आज और इस महीने का इस्तेमाल दिखाता है।",
+  "kn": "Usage meter ಇವತ್ತಿನ ಮತ್ತು ಈ ತಿಂಗಳ ಬಳಕೆಯನ್ನು ತೋರಿಸುತ್ತದೆ.",
   "ta": "Usage meter இன்றைய, இந்த மாதத்தின் பயன்பாட்டைக் காட்டும்.",
   "status": {
    "te": "draft",
@@ -642,8 +642,8 @@
  "price.fair.2": {
   "en": "When you are near the top, the app tells you.",
   "te": "పైకి దగ్గరగా వచ్చినప్పుడు యాప్ మీకు చెబుతుంది.",
-  "hi": "सीमा के पास पहुँचने पर ऐप आपको बताता है।",
-  "kn": "ಮಿತಿಯ ಹತ್ತಿರ ಬಂದಾಗ ಆ್ಯಪ್ ನಿಮಗೆ ಹೇಳುತ್ತದೆ.",
+  "hi": "Limit के पास पहुँचने पर app आपको बता देता है।",
+  "kn": "Limit ಹತ್ತಿರ ಬಂದಾಗ app ನಿಮಗೆ ತಿಳಿಸುತ್ತದೆ.",
   "ta": "வரம்பை நெருங்கும்போது app உங்களுக்குச் சொல்லும்.",
   "status": {
    "te": "draft",
@@ -655,8 +655,8 @@
  "price.fair.3": {
   "en": "At the limit, {assistant} switches to a lighter mode until midnight. Quotes, orders and customers keep working.",
   "te": "పరిమితి దగ్గర {assistant} అర్ధరాత్రి వరకు తేలికైన మోడ్‌లోకి మారుతుంది. కోట్లు, ఆర్డర్లు, కస్టమర్లు పనిచేస్తూనే ఉంటాయి.",
-  "hi": "सीमा पर {assistant} आधी रात तक हल्के मोड में चला जाता है। Quotes, orders और customers चलते रहते हैं।",
-  "kn": "ಮಿತಿಯಲ್ಲಿ {assistant} ಮಧ್ಯರಾತ್ರಿವರೆಗೆ ಹಗುರ ಮೋಡ್‌ಗೆ ಹೋಗುತ್ತದೆ. Quotes, orders, customers ಎಂದಿನಂತೆ ನಡೆಯುತ್ತವೆ.",
+  "hi": "Limit पूरी होने पर {assistant} रात 12 बजे तक light mode में चला जाता है। Quotes, orders और customers पहले की तरह चलते रहते हैं।",
+  "kn": "Limit ಮುಗಿದಾಗ {assistant} ಮಧ್ಯರಾತ್ರಿವರೆಗೆ light mode ಗೆ ಹೋಗುತ್ತದೆ. Quotes, orders, customers ಎಂದಿನಂತೆ ನಡೆಯುತ್ತವೆ.",
   "ta": "வரம்பை எட்டியதும் {assistant} நள்ளிரவு வரை இலகுவான mode-க்கு மாறும். Quotes, orders, customers வழக்கம்போல் இயங்கும்.",
   "status": {
    "te": "draft",
@@ -719,7 +719,7 @@
   "en": "Early access is free, so there is nothing to run out of. With paid plans (from February 2027): extra minutes are ₹{minute} each, taken from your wallet. We warn you at 80% and again at 100% of your included minutes, and you can set a spending limit for each feature.",
   "te": "Early access free, కాబట్టి అయిపోయేది ఏమీ లేదు. Paid plans తో (2027 February నుంచి): extra minutes ఒక్కోటి ₹{minute}, మీ wallet నుంచి. Included minutes లో 80% దగ్గర, మళ్ళీ 100% దగ్గర మీకు చెప్తాం, ప్రతి feature కి spending limit కూడా పెట్టుకోవచ్చు.",
   "hi": "Early access free है, इसलिए खत्म होने जैसा कुछ नहीं। Paid plans के साथ (फरवरी 2027 से): extra minutes ₹{minute} प्रति minute, wallet से। Included minutes के 80% और 100% पर हम बताते हैं, और आप spending limit भी लगा सकते हैं।",
-  "kn": "Early access free, ಆದ್ದರಿಂದ ಮುಗಿಯುವುದು ಏನೂ ಇಲ್ಲ. Paid plans ನೊಂದಿಗೆ (2027 ಫೆಬ್ರವರಿಯಿಂದ): extra minutes ಒಂದಕ್ಕೆ ₹{minute}, ನಿಮ್ಮ wallet ನಿಂದ. Included minutes ನ 80% ಮತ್ತು ಮತ್ತೆ 100% ಬಂದಾಗ ನಿಮಗೆ ತಿಳಿಸುತ್ತೇವೆ, ಪ್ರತಿ feature ಗೂ spending limit ಇಡಬಹುದು.",
+  "kn": "Early access free, ಹಾಗಾಗಿ ಮುಗಿಯುವ ಮಾತೇ ಇಲ್ಲ. Paid plans ನಲ್ಲಿ (2027 ಫೆಬ್ರವರಿಯಿಂದ): extra minutes ನಿಮಿಷಕ್ಕೆ ₹{minute}, ನಿಮ್ಮ wallet ನಿಂದ ಕಟ್ ಆಗುತ್ತದೆ. Included minutes 80% ಮತ್ತು 100% ತಲುಪಿದಾಗ ನಿಮಗೆ ತಿಳಿಸುತ್ತೇವೆ, ಪ್ರತಿ feature ಗೂ spending limit ಇಡಬಹುದು.",
   "ta": "Early access இலவசம், அதனால் தீர்ந்துபோக எதுவும் இல்லை. Paid plans-இல் (2027 பிப்ரவரி முதல்): கூடுதல் minutes ஒவ்வொன்றும் ₹{minute}, உங்கள் wallet-இல் இருந்து எடுக்கப்படும். சேர்க்கப்பட்ட minutes-இல் 80%, 100% ஆகும்போது நாங்கள் எச்சரிப்போம், ஒவ்வொரு feature-க்கும் spending limit வைக்கலாம்.",
   "status": {
    "te": "draft",
@@ -770,8 +770,8 @@
  "how.sub": {
   "en": "The assistant at the core: enquiries in, calls, WhatsApp, outcome, follow-ups and results. Industry packs add the words and tools of your trade.",
   "te": "Core లో assistant: enquiries రావడం, calls, WhatsApp, outcome, follow-up, results. Industry packs మీ trade మాటలు, tools కలుపుతాయి.",
-  "hi": "केंद्र में assistant: enquiries आना, calls, WhatsApp, नतीजा, follow-up और results। Industry packs आपके trade के शब्द और tools जोड़ते हैं।",
-  "kn": "ಮುಖ್ಯದಲ್ಲಿ assistant: enquiries ಬರುವುದು, calls, WhatsApp, ಫಲಿತಾಂಶ, follow-up, results. Industry packs ನಿಮ್ಮ trade ನ ಮಾತು, tools ಸೇರಿಸುತ್ತವೆ.",
+  "hi": "सबके बीच में आपका assistant: नई enquiries, calls, WhatsApp, result, follow-up और reports। Industry packs आपके काम के हिसाब से शब्द और tools जोड़ते हैं।",
+  "kn": "ಎಲ್ಲದರ ಕೇಂದ್ರದಲ್ಲಿ ನಿಮ್ಮ assistant: enquiries, calls, WhatsApp, result, follow-up ಮತ್ತು reports. Industry packs ನಿಮ್ಮ trade ಗೆ ತಕ್ಕ ಪದಗಳು ಮತ್ತು tools ಸೇರಿಸುತ್ತವೆ.",
   "ta": "நடுவில் assistant: enquiries வருவது, calls, WhatsApp, outcome, follow-ups, results. உங்கள் தொழிலின் வார்த்தைகளையும் tools-ஐயும் industry packs சேர்க்கும்.",
   "status": {
    "te": "draft",
@@ -796,8 +796,8 @@
  "how.waits.t": {
   "en": "What always waits for you",
   "te": "ఎప్పుడూ మీ కోసం ఆగేవి",
-  "hi": "जो हमेशा आपके लिए रुकता है",
-  "kn": "ಯಾವಾಗಲೂ ನಿಮಗಾಗಿ ಕಾಯುವುದು",
+  "hi": "जो काम हमेशा आपके OK से ही होते हैं",
+  "kn": "ಯಾವಾಗಲೂ ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುವ ಕೆಲಸಗಳು",
   "ta": "எப்போதும் உங்களுக்காகக் காத்திருப்பவை",
   "status": {
    "te": "draft",
@@ -809,8 +809,8 @@
  "how.waits.1": {
   "en": "Prices, discounts, advances and refunds",
   "te": "ధరలు, డిస్కౌంట్లు, అడ్వాన్సులు, రీఫండ్‌లు",
-  "hi": "कीमतें, डिस्काउंट, एडवांस और रिफ़ंड",
-  "kn": "ಬೆಲೆ, ಡಿಸ್ಕೌಂಟ್, ಅಡ್ವಾನ್ಸ್, ರೀಫಂಡ್",
+  "hi": "Prices, discount, advance और refund",
+  "kn": "Prices, discount, advance ಮತ್ತು refund",
   "ta": "விலைகள், discounts, advances, refunds",
   "status": {
    "te": "draft",
@@ -822,8 +822,8 @@
  "how.waits.2": {
   "en": "Promises, such as a delivery date or that stock will be there",
   "te": "ప్రామిస్‌లు, డెలివరీ తేదీ లేదా స్టాక్ గురించి చెప్పేవి",
-  "hi": "वादे, जैसे delivery की तारीख़ या स्टॉक की बात",
-  "kn": "ಮಾತುಗಳು, delivery ದಿನಾಂಕ ಅಥವಾ ಸ್ಟಾಕ್ ಬಗ್ಗೆ",
+  "hi": "कोई भी वादा, जैसे delivery date या stock की पक्की बात",
+  "kn": "ಭರವಸೆಗಳು, ಉದಾಹರಣೆಗೆ delivery date ಅಥವಾ stock ಬಗ್ಗೆ ಮಾತು ಕೊಡುವುದು",
   "ta": "வாக்குறுதிகள், உதாரணமாக delivery தேதி அல்லது stock இருக்கும் என்பது",
   "status": {
    "te": "draft",
@@ -836,7 +836,7 @@
   "en": "Complaints and anything upset",
   "te": "కంప్లైంట్‌లు, కోపంగా ఉన్న ఏదైనా",
   "hi": "शिकायतें और कोई भी नाराज़गी",
-  "kn": "ದೂರುಗಳು ಮತ್ತು ಕೋಪದ ಯಾವುದೇ ವಿಷಯ",
+  "kn": "ದೂರುಗಳು ಅಥವಾ customer ಅಸಮಾಧಾನಗೊಂಡಿರುವ ಯಾವುದೇ ವಿಷಯ",
   "ta": "புகார்கள், கோபமாக இருக்கும் எதுவும்",
   "status": {
    "te": "draft",
@@ -887,7 +887,7 @@
  "how.habits.1": {
   "en": "Only customers who agreed are messaged, and the agreement is recorded.",
   "te": "అంగీకరించిన కస్టమర్లకే మెసేజ్ వెళ్తుంది, అంగీకారం రికార్డ్ అవుతుంది.",
-  "hi": "सिर्फ़ सहमत customers को message जाता है, और सहमति दर्ज रहती है।",
+  "hi": "सिर्फ़ उन्हीं customers को message जाता है जिन्होंने हाँ कहा हो, और उनकी consent save रहती है।",
   "kn": "ಒಪ್ಪಿದ customers ಗೆ ಮಾತ್ರ message ಹೋಗುತ್ತದೆ, ಒಪ್ಪಿಗೆ ಬರೆದಿಟ್ಟಿರುತ್ತದೆ.",
   "ta": "சம்மதம் சொன்ன customers-க்கு மட்டுமே message போகும், அந்தச் சம்மதம் பதிவில் இருக்கும்.",
   "status": {
@@ -913,8 +913,8 @@
  "how.habits.3": {
   "en": "A daily limit for each customer, and quiet hours at night.",
   "te": "ప్రతి కస్టమర్‌కి రోజువారీ పరిమితి, రాత్రి నిశ్శబ్ద సమయం.",
-  "hi": "हर customer के लिए रोज़ की सीमा, और रात में शांति के घंटे।",
-  "kn": "ಪ್ರತಿ customer ಗೆ ದಿನದ ಮಿತಿ, ರಾತ್ರಿ ಶಾಂತ ಸಮಯ.",
+  "hi": "हर customer के लिए रोज़ की limit, और रात के quiet hours।",
+  "kn": "ಪ್ರತಿ customer ಗೆ ದಿನದ limit, ಮತ್ತು ರಾತ್ರಿ quiet hours.",
   "ta": "ஒவ்வொரு customer-க்கும் ஒரு நாளுக்கு ஒரு limit, இரவில் quiet hours.",
   "status": {
    "te": "draft",
@@ -926,8 +926,8 @@
  "how.habits.4": {
   "en": "If someone asks, it always says it's the business's AI assistant.",
   "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది.",
-  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है।",
-  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस business का AI assistant है।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ತಾನು ಆ business ನ AI assistant ಅಂತ ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ.",
   "ta": "யாராவது கேட்டால், இது எப்போதும் தான் அந்த வணிகத்தின் AI assistant என்று சொல்லும்.",
   "status": {
    "te": "draft",
@@ -939,8 +939,8 @@
  "how.habits.5": {
   "en": "One switch turns automatic sending off. Then every message waits for you.",
   "te": "ఒక్క స్విచ్‌తో ఆటోమేటిక్ పంపడం ఆఫ్ అవుతుంది. అప్పుడు ప్రతి మెసేజ్ మీ కోసం ఆగుతుంది.",
-  "hi": "एक स्विच से ऑटोमैटिक भेजना बंद हो जाता है। तब हर message आपके लिए रुकता है।",
-  "kn": "ಒಂದು ಸ್ವಿಚ್‌ನಿಂದ ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದು ಆಫ್ ಆಗುತ್ತದೆ. ಆಗ ಪ್ರತಿ message ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "hi": "एक switch से automatic भेजना बंद हो जाता है। फिर हर message आपके OK का इंतज़ार करता है।",
+  "kn": "ಒಂದು switch ನಿಂದ automatic ಕಳುಹಿಸುವುದು off ಆಗುತ್ತದೆ. ಆಗ ಪ್ರತಿ message ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತದೆ.",
   "ta": "ஒரு switch தானாக அனுப்புவதை நிறுத்தும். அப்போது ஒவ்வொரு message-உம் உங்களுக்காகக் காத்திருக்கும்.",
   "status": {
    "te": "draft",
@@ -953,7 +953,7 @@
   "en": "No tool can promise how WhatsApp treats a number. These are the habits that keep it in good standing.",
   "te": "వాట్సాప్ నంబర్‌ని ఎలా చూస్తుందో ఏ టూల్ ప్రామిస్ చేయలేదు. నంబర్‌ని మంచి స్థితిలో ఉంచే అలవాట్లు ఇవి.",
   "hi": "WhatsApp किसी number के साथ कैसे पेश आएगा, यह कोई टूल पक्का नहीं कह सकता। ये वे आदतें हैं जो number को अच्छी हालत में रखती हैं।",
-  "kn": "WhatsApp number ನೊಂದಿಗೆ ಹೇಗೆ ನಡೆದುಕೊಳ್ಳುತ್ತದೆ ಎಂದು ಯಾವ ಟೂಲ್ ಕೂಡ ಖಚಿತವಾಗಿ ಹೇಳಲಾರದು. number ಚೆನ್ನಾಗಿರುವಂತೆ ಇಡುವ ಅಭ್ಯಾಸಗಳಿವು.",
+  "kn": "WhatsApp ಒಂದು number ಅನ್ನು ಹೇಗೆ treat ಮಾಡುತ್ತದೆ ಅಂತ ಯಾವ tool ಕೂಡ ಖಚಿತವಾಗಿ ಹೇಳಲು ಆಗುವುದಿಲ್ಲ. ನಿಮ್ಮ number ಸುರಕ್ಷಿತವಾಗಿ ಇಡುವ ಅಭ್ಯಾಸಗಳಿವು.",
   "ta": "WhatsApp ஒரு number-ஐ எப்படி நடத்தும் என்பதை எந்த tool-ம் உறுதியாகச் சொல்ல முடியாது. Number-ஐ நல்ல நிலையில் வைத்திருக்கும் பழக்கங்கள் இவை.",
   "status": {
    "te": "draft",
@@ -965,8 +965,8 @@
  "sec.title": {
   "en": "Security and privacy, in plain words",
   "te": "సెక్యూరిటీ, ప్రైవసీ, సరళమైన మాటల్లో",
-  "hi": "सिक्योरिटी और प्राइवेसी, सीधे शब्दों में",
-  "kn": "ಸೆಕ್ಯುರಿಟಿ, ಪ್ರೈವೆಸಿ, ಸರಳ ಮಾತುಗಳಲ್ಲಿ",
+  "hi": "Security और privacy, सीधी भाषा में",
+  "kn": "Security ಮತ್ತು privacy, ಸರಳ ಮಾತುಗಳಲ್ಲಿ",
   "ta": "பாதுகாப்பும் privacy-யும், எளிய வார்த்தைகளில்",
   "status": {
    "te": "draft",
@@ -1004,8 +1004,8 @@
  "sec.apart.d": {
   "en": "Every business's records are kept apart from every other business. This is enforced in the database, not only on screen.",
   "te": "ప్రతి వ్యాపారం రికార్డులు ఇతర వ్యాపారాల నుండి వేరుగా ఉంటాయి. ఇది స్క్రీన్‌లోనే కాదు, డేటాబేస్‌లోనే అమలవుతుంది.",
-  "hi": "हर business के रिकॉर्ड दूसरे businesses से अलग रखे जाते हैं। यह सिर्फ़ स्क्रीन पर नहीं, डेटाबेस में लागू है।",
-  "kn": "ಪ್ರತಿ business ನ ದಾಖಲೆಗಳು ಬೇರೆ businesses ನಿಂದ ಪ್ರತ್ಯೇಕ. ಇದು ಸ್ಕ್ರೀನ್‌ನಲ್ಲಷ್ಟೇ ಅಲ್ಲ, ಡೇಟಾಬೇಸ್‌ನಲ್ಲೇ ಜಾರಿಯಲ್ಲಿದೆ.",
+  "hi": "हर business के records दूसरे businesses से पूरी तरह अलग रहते हैं। यह सिर्फ़ screen पर नहीं, database के level पर अलग रखा जाता है।",
+  "kn": "ಪ್ರತಿ business ನ records ಬೇರೆ businesses ನಿಂದ ಸಂಪೂರ್ಣ ಪ್ರತ್ಯೇಕವಾಗಿರುತ್ತವೆ. ಇದು screen ನಲ್ಲಷ್ಟೇ ಅಲ್ಲ, database ನಲ್ಲೇ ಬೇರೆ ಬೇರೆಯಾಗಿರುತ್ತದೆ.",
   "ta": "ஒவ்வொரு business-இன் records-உம் மற்ற businesses-இல் இருந்து தனியாக வைக்கப்படுகின்றன. இது திரையில் மட்டுமல்ல, database-இலேயே அமலில் உள்ளது.",
   "status": {
    "te": "draft",
@@ -1030,8 +1030,8 @@
  "sec.who.d": {
   "en": "Each person in your business has a role: Owner, Admin, Sales or Viewer. The role decides what they can see and do. Money actions need a second step (an authenticator code).",
   "te": "మీ వ్యాపారంలో ప్రతి వ్యక్తికి ఒక రోల్ ఉంటుంది: ఓనర్, అడ్మిన్, సేల్స్ లేదా వ్యూయర్. ఏం చూడగలరో, ఏం చేయగలరో రోల్ తేలుస్తుంది. డబ్బు పనులకు రెండో స్టెప్ (ఆథెంటికేటర్ కోడ్) కావాలి.",
-  "hi": "आपके business में हर व्यक्ति का एक रोल होता है: ओनर, एडमिन, सेल्स या व्यूअर। रोल तय करता है कि वह क्या देख और कर सकता है। पैसे के काम के लिए दूसरा step (ऑथेंटिकेटर कोड) चाहिए।",
-  "kn": "ನಿಮ್ಮ business ನಲ್ಲಿ ಪ್ರತಿ ವ್ಯಕ್ತಿಗೆ ಒಂದು ರೋಲ್ ಇರುತ್ತದೆ: ಓನರ್, ಅಡ್ಮಿನ್, ಸೇಲ್ಸ್ ಅಥವಾ ವ್ಯೂವರ್. ಏನು ನೋಡಬಹುದು, ಏನು ಮಾಡಬಹುದು ಎಂದು ರೋಲ್ ಹೇಳುತ್ತದೆ. ಹಣದ ಕೆಲಸಗಳಿಗೆ ಎರಡನೇ ಹಂತ (ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್) ಬೇಕು.",
+  "hi": "आपके business में हर सदस्य का एक role होता है: Owner, Admin, Sales या Viewer। Role तय करता है कि कौन क्या देख और कर सकता है। पैसों से जुड़े काम के लिए दूसरा step (authenticator code) चाहिए।",
+  "kn": "ನಿಮ್ಮ business ನಲ್ಲಿ ಪ್ರತಿಯೊಬ್ಬರಿಗೂ ಒಂದು role ಇರುತ್ತದೆ: Owner, Admin, Sales ಅಥವಾ Viewer. ಯಾರು ಏನು ನೋಡಬಹುದು, ಏನು ಮಾಡಬಹುದು ಅಂತ role ನಿರ್ಧರಿಸುತ್ತದೆ. ಹಣಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಕೆಲಸಗಳಿಗೆ ಎರಡನೇ step (authenticator code) ಬೇಕು.",
   "ta": "உங்கள் business-இல் ஒவ்வொருவருக்கும் ஒரு role உண்டு: Owner, Admin, Sales அல்லது Viewer. அவர்கள் எதைப் பார்க்கலாம், எதைச் செய்யலாம் என்பதை role முடிவு செய்யும். பணம் தொடர்பான செயல்களுக்கு இரண்டாவது படி (authenticator code) தேவை.",
   "status": {
    "te": "draft",
@@ -1056,8 +1056,8 @@
  "sec.rights.d": {
   "en": "The app can export your records and remove a person's details when they ask. We built it with India's DPDP Act in mind. We have not had an independent review yet.",
   "te": "యాప్ మీ రికార్డులను ఎక్స్‌పోర్ట్ చేయగలదు, ఒక వ్యక్తి అడిగినప్పుడు వారి వివరాలు తొలగించగలదు. భారతదేశ DPDP చట్టాన్ని దృష్టిలో ఉంచుకుని తయారు చేశాం. ఇంకా స్వతంత్ర సమీక్ష జరగలేదు.",
-  "hi": "ऐप आपके रिकॉर्ड एक्सपोर्ट कर सकता है और किसी व्यक्ति के कहने पर उसकी जानकारी हटा सकता है। हमने इसे भारत के DPDP क़ानून को ध्यान में रखकर बनाया है। अभी कोई स्वतंत्र जाँच नहीं हुई है।",
-  "kn": "ಆ್ಯಪ್ ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಬಹುದು, ಒಬ್ಬ ವ್ಯಕ್ತಿ ಕೇಳಿದಾಗ ಅವರ ವಿವರ ತೆಗೆಯಬಹುದು. ಭಾರತದ DPDP ಕಾಯ್ದೆಯನ್ನು ಗಮನದಲ್ಲಿಟ್ಟು ರೂಪಿಸಿದ್ದೇವೆ. ಇನ್ನೂ ಸ್ವತಂತ್ರ ಪರೀಕ್ಷೆ ನಡೆದಿಲ್ಲ.",
+  "hi": "App से आप अपने records export कर सकते हैं और किसी के कहने पर उसकी details हटा सकते हैं। हमने इसे भारत के DPDP कानून को ध्यान में रखकर बनाया है। अभी इसकी बाहर से (independent) जाँच नहीं हुई है।",
+  "kn": "App ನಲ್ಲಿ ನಿಮ್ಮ records export ಮಾಡಬಹುದು, ಯಾರಾದರೂ ಕೇಳಿದಾಗ ಅವರ details delete ಮಾಡಬಹುದು. ಭಾರತದ DPDP ಕಾಯ್ದೆಯನ್ನು ಗಮನದಲ್ಲಿಟ್ಟು ಇದನ್ನು ಮಾಡಿದ್ದೇವೆ. ಇನ್ನೂ independent review ನಡೆದಿಲ್ಲ.",
   "ta": "App உங்கள் records-ஐ export செய்யும், ஒருவர் கேட்டால் அவர் விவரங்களை நீக்கும். இந்தியாவின் DPDP சட்டத்தை மனதில் வைத்து இதை உருவாக்கினோம். இன்னும் சுயாதீன review நடக்கவில்லை.",
   "status": {
    "te": "draft",
@@ -1082,8 +1082,8 @@
  "sec.ai.d": {
   "en": "If someone asks, it always says it's the business's AI assistant. Web pages and incoming messages are treated as untrusted text and cannot give the AI orders.",
   "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది. వెబ్ పేజీలు, వచ్చే మెసేజ్‌లను నమ్మదగని టెక్స్ట్‌గా చూస్తాం, అవి AIకి ఆదేశాలు ఇవ్వలేవు.",
-  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है। वेब पेज और आने वाले messages को भरोसे के लायक नहीं माना जाता, वे AI को आदेश नहीं दे सकते।",
-  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ. ವೆಬ್ ಪುಟ, ಬರುವ messages ಅನ್ನು ನಂಬಲಾಗದ ಪಠ್ಯವೆಂದು ನೋಡುತ್ತೇವೆ, ಅವು AIಗೆ ಆದೇಶ ಕೊಡಲಾರವು.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस business का AI assistant है। Web pages और बाहर से आने वाले messages पर आँख बंद करके भरोसा नहीं किया जाता — वे AI को instructions नहीं दे सकते।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ತಾನು ಆ business ನ AI assistant ಅಂತ ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ. Web pages ಮತ್ತು ಹೊರಗಿನಿಂದ ಬರುವ messages ಅನ್ನು ಸುರಕ್ಷಿತವಲ್ಲದ text ಅಂತ ಪರಿಗಣಿಸುತ್ತೇವೆ — ಅವು AI ಗೆ instructions ಕೊಡಲು ಆಗುವುದಿಲ್ಲ.",
   "ta": "யாராவது கேட்டால், இது எப்போதும் தான் அந்த வணிகத்தின் AI assistant என்று சொல்லும். Web pages, வரும் messages நம்பத்தகாத text-ஆகவே கருதப்படும், அவை AI-க்கு உத்தரவு கொடுக்க முடியாது.",
   "status": {
    "te": "draft",
@@ -1095,8 +1095,8 @@
  "sec.kids.t": {
   "en": "Children's data (education)",
   "te": "పిల్లల డేటా (విద్య)",
-  "hi": "बच्चों का डेटा (शिक्षा)",
-  "kn": "ಮಕ್ಕಳ ಡೇಟಾ (ಶಿಕ್ಷಣ)",
+  "hi": "बच्चों का data (education)",
+  "kn": "ಮಕ್ಕಳ data (education)",
   "ta": "குழந்தைகளின் data (education)",
   "status": {
    "te": "draft",
@@ -1108,8 +1108,8 @@
  "sec.kids.d": {
   "en": "Only what a fee reminder needs, never given to an AI model, messages only to parents. Real student data waits for a legal review of children's data.",
   "te": "ఫీజు రిమైండర్‌కి కావలసినవే, AI మోడల్‌కి ఎప్పుడూ ఇవ్వరు, మెసేజ్‌లు తల్లిదండ్రులకే. నిజమైన విద్యార్థుల డేటా కోసం ముందు పిల్లల డేటా న్యాయ సమీక్ష జరగాలి.",
-  "hi": "सिर्फ़ वही जो फ़ीस reminder के लिए चाहिए, AI मॉडल को कभी नहीं दिया जाता, message सिर्फ़ अभिभावकों को। असली विद्यार्थियों का डेटा बच्चों के डेटा की कानूनी जाँच के बाद ही आएगा।",
-  "kn": "ಫೀಸ್ reminder ಗೆ ಬೇಕಾದದ್ದು ಮಾತ್ರ, AI ಮಾಡೆಲ್‌ಗೆ ಎಂದೂ ಕೊಡುವುದಿಲ್ಲ, messages ಪೋಷಕರಿಗೆ ಮಾತ್ರ. ನಿಜವಾದ ವಿದ್ಯಾರ್ಥಿ ಡೇಟಾ ಬರುವ ಮೊದಲು ಮಕ್ಕಳ ಡೇಟಾದ ಕಾನೂನು ಪರೀಕ್ಷೆ ನಡೆಯಬೇಕು.",
+  "hi": "सिर्फ़ वही जानकारी जो fees reminder के लिए ज़रूरी है — AI model को कभी नहीं दी जाती, और message सिर्फ़ parents को जाता है। असली students का data बच्चों के data की legal जाँच पूरी होने के बाद ही लिया जाएगा।",
+  "kn": "Fees reminder ಗೆ ಬೇಕಾದಷ್ಟೇ details, AI model ಗೆ ಎಂದೂ ಕೊಡುವುದಿಲ್ಲ, messages parents ಗೆ ಮಾತ್ರ. ನಿಜವಾದ student data ಹಾಕುವ ಮೊದಲು ಮಕ್ಕಳ data ದ legal review ನಡೆಯಬೇಕು.",
   "ta": "Fee reminder-க்குத் தேவையானது மட்டும், AI model-க்கு ஒருபோதும் கொடுக்கப்படாது, messages பெற்றோருக்கு மட்டும். உண்மையான student data, குழந்தைகளின் data பற்றிய legal review-க்குப் பிறகே வரும்.",
   "status": {
    "te": "draft",
@@ -1134,8 +1134,8 @@
  "sec.where.d": {
   "en": "The product is not hosted for real customers yet; it runs on test systems with made-up data. Before any real customer data is stored, we will name the hosting region here. We plan a region in India.",
   "te": "ప్రొడక్ట్ ఇంకా నిజమైన కస్టమర్ల కోసం హోస్ట్ కాలేదు; కల్పిత డేటాతో టెస్ట్ సిస్టమ్‌లలో నడుస్తోంది. నిజమైన కస్టమర్ డేటా నిల్వ చేసే ముందు హోస్టింగ్ ప్రాంతాన్ని ఇక్కడ చెబుతాం. భారతదేశంలో ఒక ప్రాంతం ప్లాన్ చేస్తున్నాం.",
-  "hi": "प्रोडक्ट अभी असली customers के लिए होस्ट नहीं हुआ है; वह बनाए हुए डेटा के साथ टेस्ट सिस्टम पर चलता है। असली customer डेटा रखने से पहले हम यहाँ होस्टिंग का क्षेत्र बताएँगे। हम भारत में एक क्षेत्र सोच रहे हैं।",
-  "kn": "ಪ್ರೊಡಕ್ಟ್ ಇನ್ನೂ ನಿಜವಾದ customer ಗೆ ಹೋಸ್ಟ್ ಆಗಿಲ್ಲ; ಕಲ್ಪಿತ ಡೇಟಾದೊಂದಿಗೆ ಟೆಸ್ಟ್ ಸಿಸ್ಟಮ್‌ಗಳಲ್ಲಿ ನಡೆಯುತ್ತಿದೆ. ನಿಜವಾದ customer ಡೇಟಾ ಇಡುವ ಮೊದಲು ಹೋಸ್ಟಿಂಗ್ ಪ್ರದೇಶವನ್ನು ಇಲ್ಲಿ ಹೇಳುತ್ತೇವೆ. ಭಾರತದಲ್ಲಿ ಒಂದು ಪ್ರದೇಶ ಯೋಜಿಸಿದ್ದೇವೆ.",
+  "hi": "Product अभी असली customers के लिए live host नहीं हुआ है; यह अभी sample data के साथ test system पर चल रहा है। असली customer data रखने से पहले हम यहाँ hosting region का नाम बताएँगे। हमारा plan भारत में ही server रखने का है।",
+  "kn": "Product ಇನ್ನೂ ನಿಜವಾದ customers ಗೆ live host ಆಗಿಲ್ಲ; ಸದ್ಯಕ್ಕೆ sample data ಜೊತೆ test systems ನಲ್ಲಿ ನಡೆಯುತ್ತಿದೆ. ನಿಜವಾದ customer data ಇಡುವ ಮೊದಲು hosting region ಯಾವುದು ಅಂತ ಇಲ್ಲಿ ತಿಳಿಸುತ್ತೇವೆ. ಭಾರತದಲ್ಲೇ server ಇಡುವ plan ಇದೆ.",
   "ta": "Product இன்னும் உண்மையான customers-க்காக host செய்யப்படவில்லை; கற்பனையான data-வுடன் test systems-இல் ஓடுகிறது. உண்மையான customer data-வை வைப்பதற்கு முன், hosting region-ஐ இங்கே சொல்வோம். இந்தியாவில் ஒரு region-ஐத் திட்டமிடுகிறோம்.",
   "status": {
    "te": "draft",
@@ -1148,7 +1148,7 @@
   "en": "What we have not done yet",
   "te": "మేము ఇంకా చేయనివి",
   "hi": "जो हमने अभी नहीं किया",
-  "kn": "ನಾವು ಇನ್ನೂ ಮಾಡದ್ದು",
+  "kn": "ನಾವು ಇನ್ನೂ ಮಾಡಿಲ್ಲದ ಕೆಲಸಗಳು",
   "ta": "நாங்கள் இன்னும் செய்யாதவை",
   "status": {
    "te": "draft",
@@ -1160,8 +1160,8 @@
  "sec.notyet.1": {
   "en": "An independent review of our data practices.",
   "te": "మా డేటా పద్ధతులపై స్వతంత్ర సమీక్ష.",
-  "hi": "हमारे डेटा तरीक़ों की स्वतंत्र जाँच।",
-  "kn": "ನಮ್ಮ ಡೇಟಾ ವಿಧಾನಗಳ ಸ್ವತಂತ್ರ ಪರೀಕ್ಷೆ.",
+  "hi": "हमारे data संभालने के तरीके की बाहर से (independent) जाँच।",
+  "kn": "ನಮ್ಮ data ನಿರ್ವಹಣೆಯ independent review.",
   "ta": "எங்கள் data நடைமுறைகளின் சுயாதீன review.",
   "status": {
    "te": "draft",
@@ -1173,7 +1173,7 @@
  "sec.notyet.2": {
   "en": "Real customer data in a hosted system.",
   "te": "హోస్ట్ చేసిన సిస్టమ్‌లో నిజమైన కస్టమర్ డేటా.",
-  "hi": "होस्ट किए सिस्टम में असली customer डेटा।",
+  "hi": "Live hosted system में असली customer data।",
   "kn": "ಹೋಸ್ಟ್ ಮಾಡಿದ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ನಿಜವಾದ customer ಡೇಟಾ.",
   "ta": "Host செய்யப்பட்ட system-இல் உண்மையான customer data.",
   "status": {
@@ -1187,7 +1187,7 @@
   "en": "The legal review of children's data.",
   "te": "పిల్లల డేటా న్యాయ సమీక్ష.",
   "hi": "बच्चों के डेटा की कानूनी जाँच।",
-  "kn": "ಮಕ್ಕಳ ಡೇಟಾದ ಕಾನೂನು ಪರೀಕ್ಷೆ.",
+  "kn": "ಮಕ್ಕಳ data ದ legal review.",
   "ta": "குழந்தைகளின் data பற்றிய legal review.",
   "status": {
    "te": "draft",
@@ -1199,7 +1199,7 @@
  "sec.more": {
   "en": "Read the Privacy notice and the Terms",
   "te": "ప్రైవసీ నోటీసు, నిబంధనలు చదవండి",
-  "hi": "प्राइवेसी नोटिस और शर्तें पढ़ें",
+  "hi": "Privacy notice और Terms पढ़ें",
   "kn": "ಪ್ರೈವೆಸಿ ನೋಟಿಸ್, ನಿಯಮಗಳನ್ನು ಓದಿ",
   "ta": "தனியுரிமை அறிவிப்பையும் பயன்பாட்டு விதிமுறைகளையும் படியுங்கள்",
   "status": {
@@ -1288,7 +1288,7 @@
  "contact.type": {
   "en": "Your kind of business",
   "te": "మీ వ్యాపార రకం",
-  "hi": "आपके business का प्रकार",
+  "hi": "किस तरह का business है",
   "kn": "ನಿಮ್ಮ business ನ ರೀತಿ",
   "ta": "உங்கள் business வகை",
   "status": {
@@ -1314,8 +1314,8 @@
  "contact.what": {
   "en": "What would you like to ask? (optional)",
   "te": "మీరు ఏం అడగాలనుకుంటున్నారు? (ఐచ్ఛికం)",
-  "hi": "आप क्या पूछना चाहते हैं? (वैकल्पिक)",
-  "kn": "ನೀವು ಏನು ಕೇಳಲು ಬಯಸುತ್ತೀರಿ? (ಐಚ್ಛಿಕ)",
+  "hi": "आप क्या पूछना चाहते हैं? (optional)",
+  "kn": "ನೀವು ಏನು ಕೇಳಬೇಕು ಅಂದುಕೊಂಡಿದ್ದೀರಿ? (optional)",
   "ta": "என்ன கேட்க விரும்புகிறீர்கள்? (விருப்பம்)",
   "status": {
    "te": "draft",
@@ -1327,7 +1327,7 @@
  "contact.consent": {
   "en": "I agree that {brand} may reply to me on WhatsApp about this. I have read the Privacy notice.",
   "te": "దీని గురించి {brand} నాకు వాట్సాప్‌లో జవాబివ్వవచ్చని అంగీకరిస్తున్నాను. ప్రైవసీ నోటీసు చదివాను.",
-  "hi": "मैं मानता हूँ कि {brand} इस बारे में मुझे WhatsApp पर जवाब दे सकता है। मैंने प्राइवेसी नोटिस पढ़ी है।",
+  "hi": "मैं सहमत हूँ कि {brand} इस बारे में मुझे WhatsApp पर जवाब दे सकता है। मैंने Privacy notice पढ़ लिया है।",
   "kn": "ಈ ಬಗ್ಗೆ {brand} ನನಗೆ WhatsApp ನಲ್ಲಿ ಉತ್ತರ ಕೊಡಬಹುದು ಎಂದು ಒಪ್ಪುತ್ತೇನೆ. ಪ್ರೈವೆಸಿ ನೋಟಿಸ್ ಓದಿದ್ದೇನೆ.",
   "ta": "இது பற்றி {brand} எனக்கு WhatsApp-இல் பதில் அனுப்பலாம் என்று சம்மதிக்கிறேன். தனியுரிமை அறிவிப்பைப் படித்தேன்.",
   "status": {
@@ -1380,7 +1380,7 @@
   "en": "Our WhatsApp number is not set up on this site yet. Please check back soon.",
   "te": "మా వాట్సాప్ నంబర్ ఈ సైట్‌లో ఇంకా సెట్ కాలేదు. కొంచెం సేపటి తర్వాత చూడండి.",
   "hi": "हमारा WhatsApp number इस साइट पर अभी सेट नहीं हुआ है। थोड़ी देर बाद देखें।",
-  "kn": "ನಮ್ಮ WhatsApp number ಈ ಸೈಟ್‌ನಲ್ಲಿ ಇನ್ನೂ ಹೊಂದಿಸಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ನೋಡಿ.",
+  "kn": "ನಮ್ಮ WhatsApp number ಈ site ನಲ್ಲಿ ಇನ್ನೂ set up ಆಗಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ನೋಡಿ.",
   "ta": "எங்கள் WhatsApp number இந்த site-இல் இன்னும் அமைக்கப்படவில்லை. கொஞ்ச நேரம் கழித்துப் பாருங்கள்.",
   "status": {
    "te": "draft",
@@ -1484,7 +1484,7 @@
   "en": "Short answers, and where to read more. Still stuck? Ask us on WhatsApp.",
   "te": "చిన్న జవాబులు, ఇంకా ఎక్కడ చదవాలో. ఇంకా ఇరుక్కుంటే వాట్సాప్‌లో అడగండి.",
   "hi": "छोटे जवाब, और आगे कहाँ पढ़ें। फिर भी अटके हैं? हमसे WhatsApp पर पूछें।",
-  "kn": "ಚಿಕ್ಕ ಉತ್ತರಗಳು, ಇನ್ನಷ್ಟು ಎಲ್ಲಿ ಓದಬೇಕು. ಇನ್ನೂ ಸಿಕ್ಕಿಹಾಕಿಕೊಂಡಿದ್ದೀರಾ? WhatsApp ನಲ್ಲಿ ಕೇಳಿ.",
+  "kn": "ಚಿಕ್ಕ ಉತ್ತರಗಳು ಮತ್ತು ಹೆಚ್ಚಿನ ಮಾಹಿತಿ. ಇನ್ನೂ ಗೊಂದಲ ಇದೆಯಾ? WhatsApp ನಲ್ಲಿ ಕೇಳಿ.",
   "ta": "சிறு பதில்கள், மேலும் எங்கே படிக்கலாம். இன்னும் சிக்கலா? WhatsApp-இல் கேளுங்கள்.",
   "status": {
    "te": "draft",
@@ -1509,7 +1509,7 @@
  "help.1.d": {
   "en": "Sign up, choose your kind of business, and follow the checklist on Today. Each step asks only what it needs.",
   "te": "సైన్ అప్ అయి, మీ వ్యాపార రకం ఎంచుకుని, టుడేలోని చెక్‌లిస్ట్ అనుసరించండి. ప్రతి స్టెప్ అవసరమైనదే అడుగుతుంది.",
-  "hi": "साइन अप करें, अपने business का प्रकार चुनें और आज की स्क्रीन की चेकलिस्ट देखें। हर step सिर्फ़ ज़रूरी बात पूछता है।",
+  "hi": "Sign up करें, अपना business चुनें और Today screen की checklist देखें। हर step सिर्फ़ ज़रूरी बात पूछता है।",
   "kn": "ಸೈನ್ ಅಪ್ ಆಗಿ, ನಿಮ್ಮ business ನ ರೀತಿ ಆರಿಸಿ, ಟುಡೇನ ಚೆಕ್‌ಲಿಸ್ಟ್ ಅನುಸರಿಸಿ. ಪ್ರತಿ ಹಂತ ಬೇಕಾದದ್ದನ್ನು ಮಾತ್ರ ಕೇಳುತ್ತದೆ.",
   "ta": "Sign up செய்யுங்கள், உங்கள் business வகையைத் தேர்ந்தெடுங்கள், Today-இல் உள்ள checklist-ஐப் பின்பற்றுங்கள். ஒவ்வொரு படியும் தேவையானதை மட்டுமே கேட்கும்.",
   "status": {
@@ -1523,7 +1523,7 @@
   "en": "Connecting WhatsApp",
   "te": "వాట్సాప్ కనెక్ట్ చేయడం",
   "hi": "WhatsApp जोड़ना",
-  "kn": "WhatsApp ಸಂಪರ್ಕಿಸುವುದು",
+  "kn": "WhatsApp connect ಮಾಡುವುದು",
   "ta": "WhatsApp-ஐ இணைப்பது",
   "status": {
    "te": "draft",
@@ -1536,7 +1536,7 @@
   "en": "You connect your own business number. The app asks for a second step (an authenticator code) first.",
   "te": "మీ సొంత బిజినెస్ నంబర్ కనెక్ట్ చేస్తారు. యాప్ ముందు రెండో స్టెప్ (ఆథెంటికేటర్ కోడ్) అడుగుతుంది.",
   "hi": "आप अपना business number जोड़ते हैं। ऐप पहले दूसरा step (ऑथेंटिकेटर कोड) माँगता है।",
-  "kn": "ನಿಮ್ಮ ಸ್ವಂತ business number ಸಂಪರ್ಕಿಸುತ್ತೀರಿ. ಆ್ಯಪ್ ಮೊದಲು ಎರಡನೇ ಹಂತ (ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್) ಕೇಳುತ್ತದೆ.",
+  "kn": "ನಿಮ್ಮದೇ business number ಅನ್ನು connect ಮಾಡುತ್ತೀರಿ. App ಮೊದಲು ಎರಡನೇ step (authenticator code) ಕೇಳುತ್ತದೆ.",
   "ta": "உங்கள் சொந்த business number-ஐ இணைப்பீர்கள். App முதலில் இரண்டாவது படியை (authenticator code) கேட்கும்.",
   "status": {
    "te": "draft",
@@ -1561,8 +1561,8 @@
  "help.3.d": {
   "en": "Quotes come from your price list by fixed rules. The AI never sets a price, and you approve each quote.",
   "te": "కోట్లు మీ ధరల జాబితా నుండి నియమాల ప్రకారం వస్తాయి. AI ఎప్పుడూ ధర పెట్టదు, ప్రతి కోట్‌ని మీరు ఓకే చేస్తారు.",
-  "hi": "Quote आपकी प्राइस लिस्ट से तय नियमों से बनते हैं। AI कभी कीमत तय नहीं करता, और हर quote आप OK करते हैं।",
-  "kn": "Quote ನಿಮ್ಮ ಬೆಲೆ ಪಟ್ಟಿಯಿಂದ ನಿಯಮಗಳಂತೆ ಬರುತ್ತದೆ. AI ಎಂದೂ ಬೆಲೆ ಹಾಕುವುದಿಲ್ಲ, ಪ್ರತಿ quote ನೀವು OK ಮಾಡುತ್ತೀರಿ.",
+  "hi": "Quote आपकी price list और तय rules से बनते हैं। AI कभी खुद कीमत तय नहीं करता, और हर quote आप OK करते हैं।",
+  "kn": "Quote ನಿಮ್ಮ price list ಮತ್ತು rules ಪ್ರಕಾರ ರೆಡಿ ಆಗುತ್ತದೆ. AI ತಾನಾಗೇ ಬೆಲೆ ನಿಗದಿ ಮಾಡುವುದಿಲ್ಲ, ಪ್ರತಿ quote ಅನ್ನೂ ನೀವೇ OK ಮಾಡುತ್ತೀರಿ.",
   "ta": "Quotes உங்கள் price list-இல் இருந்து நிலையான விதிகளின்படி வரும். AI ஒருபோதும் விலையை முடிவு செய்யாது, ஒவ்வொரு quote-க்கும் நீங்கள் OK சொல்வீர்கள்.",
   "status": {
    "te": "draft",
@@ -1640,7 +1640,7 @@
   "en": "Each business is kept apart. You can export your records and remove a person's details when they ask.",
   "te": "ప్రతి వ్యాపారం వేరుగా ఉంటుంది. మీ రికార్డులు ఎక్స్‌పోర్ట్ చేయవచ్చు, ఒకరు అడిగినప్పుడు వారి వివరాలు తొలగించవచ్చు.",
   "hi": "हर business अलग रहता है। आप अपने रिकॉर्ड एक्सपोर्ट कर सकते हैं और किसी के कहने पर उसकी जानकारी हटा सकते हैं।",
-  "kn": "ಪ್ರತಿ business ಪ್ರತ್ಯೇಕ ಇರುತ್ತದೆ. ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಬಹುದು, ಒಬ್ಬರು ಕೇಳಿದಾಗ ಅವರ ವಿವರ ತೆಗೆಯಬಹುದು.",
+  "kn": "ಪ್ರತಿ business ಪ್ರತ್ಯೇಕವಾಗಿರುತ್ತದೆ. ನಿಮ್ಮ records ಅನ್ನು export ಮಾಡಬಹುದು, ಯಾರಾದರೂ ಕೇಳಿದಾಗ ಅವರ details delete ಮಾಡಬಹುದು.",
   "ta": "ஒவ்வொரு business-ம் தனியாக வைக்கப்படுகிறது. உங்கள் records-ஐ export செய்யலாம், ஒருவர் கேட்டால் அவர் விவரங்களை நீக்கலாம்.",
   "status": {
    "te": "draft",
@@ -1665,8 +1665,8 @@
  "help.7.d": {
   "en": "Pricing will be announced soon. Before anything is charged we show you the plan and the price, and you must agree to it.",
   "te": "ధరలు త్వరలో ప్రకటిస్తాం. ఏదైనా కట్టించే ముందు ప్లాన్, ధర చూపిస్తాం, మీరు ఒప్పుకోవాలి.",
-  "hi": "कीमतें जल्द घोषित की जाएँगी। कुछ भी लेने से पहले हम plan और कीमत दिखाएँगे, और आपको उसे मानना होगा।",
-  "kn": "ಬೆಲೆಗಳನ್ನು ಶೀಘ್ರದಲ್ಲೇ ಘೋಷಿಸುತ್ತೇವೆ. ಏನಾದರೂ ಕಟ್ಟಿಸುವ ಮೊದಲು plan, ಬೆಲೆ ತೋರಿಸುತ್ತೇವೆ, ನೀವು ಒಪ್ಪಬೇಕು.",
+  "hi": "Prices जल्द बताए जाएँगे। कोई भी charge लेने से पहले हम plan और कीमत साफ़ दिखाएँगे, और आपकी मंज़ूरी के बाद ही आगे बढ़ेंगे।",
+  "kn": "Prices ಅನ್ನು ಬೇಗ ತಿಳಿಸುತ್ತೇವೆ. ಏನಾದರೂ charge ಮಾಡುವ ಮೊದಲು plan ಮತ್ತು price ತೋರಿಸುತ್ತೇವೆ, ನೀವು ಒಪ್ಪಿದ ಮೇಲೆಯೇ ಶುರುವಾಗುತ್ತದೆ.",
   "ta": "விலைகள் விரைவில் அறிவிக்கப்படும். எதையாவது கட்டணமாக எடுப்பதற்கு முன் plan-ஐயும் விலையையும் காட்டுவோம், நீங்கள் அதற்குச் சம்மதிக்க வேண்டும்.",
   "status": {
    "te": "draft",
@@ -1691,8 +1691,8 @@
  "calc.area": {
   "en": "Area to cover",
   "te": "కవర్ చేయాల్సిన ఏరియా",
-  "hi": "ढकने का एरिया",
-  "kn": "ಮುಚ್ಚಬೇಕಾದ ಏರಿಯಾ",
+  "hi": "कितने area में लगाना है",
+  "kn": "ಹಾಕಬೇಕಾದ area",
   "ta": "மூட வேண்டிய பரப்பு",
   "status": {
    "te": "draft",
@@ -1704,7 +1704,7 @@
  "calc.unit": {
   "en": "Unit",
   "te": "యూనిట్",
-  "hi": "इकाई",
+  "hi": "यूनिट",
   "kn": "ಯೂನಿಟ್",
   "ta": "அலகு",
   "status": {
@@ -1717,8 +1717,8 @@
  "calc.unit.sq_ft": {
   "en": "sq ft",
   "te": "చ.అ.",
-  "hi": "वर्ग फ़ुट",
-  "kn": "ಚ.ಅ.",
+  "hi": "sq ft",
+  "kn": "sq ft",
   "ta": "sq ft",
   "status": {
    "te": "draft",
@@ -1730,8 +1730,8 @@
  "calc.unit.sq_m": {
   "en": "sq m",
   "te": "చ.మీ.",
-  "hi": "वर्ग मीटर",
-  "kn": "ಚ.ಮೀ.",
+  "hi": "sq m",
+  "kn": "sq m",
   "ta": "sq m",
   "status": {
    "te": "draft",
@@ -1743,8 +1743,8 @@
  "calc.product": {
   "en": "Paver type",
   "te": "పేవర్ రకం",
-  "hi": "पेवर का प्रकार",
-  "kn": "ಪೇವರ್ ಪ್ರಕಾರ",
+  "hi": "Paver का type",
+  "kn": "Paver ಮಾದರಿ",
   "ta": "Paver வகை",
   "status": {
    "te": "draft",
@@ -1756,8 +1756,8 @@
  "calc.wastage": {
   "en": "Extra for breakage and cuts",
   "te": "విరగడం, కటింగ్‌కి అదనం",
-  "hi": "टूट-फूट और कटाई का अतिरिक्त",
-  "kn": "ಒಡೆಯುವಿಕೆ, ಕಟಿಂಗ್‌ಗೆ ಹೆಚ್ಚುವರಿ",
+  "hi": "टूट-फूट और cutting के लिए extra",
+  "kn": "ಒಡೆಯೋದು ಮತ್ತು cutting ಗಾಗಿ extra",
   "ta": "உடைவு, வெட்டுக்கான கூடுதல்",
   "status": {
    "te": "draft",
@@ -1769,8 +1769,8 @@
  "calc.price": {
   "en": "Your price per {unit} (optional)",
   "te": "మీ {unit} ధర (ఐచ్ఛికం)",
-  "hi": "आपकी प्रति {unit} कीमत (वैकल्पिक)",
-  "kn": "ನಿಮ್ಮ {unit} ಬೆಲೆ (ಐಚ್ಛಿಕ)",
+  "hi": "आपका rate प्रति {unit} (optional)",
+  "kn": "ನಿಮ್ಮ ಪ್ರತಿ {unit} rate (optional)",
   "ta": "உங்கள் விலை, ஒரு {unit}-க்கு (விருப்பம்)",
   "status": {
    "te": "draft",
@@ -1782,8 +1782,8 @@
  "calc.price.help": {
   "en": "Type a price you were quoted to see the material amount. We do not know any seller's price.",
   "te": "మీకు చెప్పిన ధర టైప్ చేస్తే మెటీరియల్ మొత్తం కనిపిస్తుంది. ఏ అమ్మకందారు ధరా మాకు తెలియదు.",
-  "hi": "आपको बताई गई कीमत लिखें तो मटीरियल की रकम दिखेगी। हमें किसी विक्रेता की कीमत नहीं पता।",
-  "kn": "ನಿಮಗೆ ಹೇಳಿದ ಬೆಲೆ ಬರೆದರೆ ಮೆಟೀರಿಯಲ್ ಮೊತ್ತ ಕಾಣುತ್ತದೆ. ನಮಗೆ ಯಾವ ಮಾರಾಟಗಾರರ ಬೆಲೆಯೂ ಗೊತ್ತಿಲ್ಲ.",
+  "hi": "आपको जो rate मिला है वह लिखें तो material का कुल खर्च दिखेगा। हमें किसी dealer का rate नहीं पता।",
+  "kn": "ನಿಮಗೆ ಹೇಳಿದ rate ಬರೆದರೆ material ವೆಚ್ಚ ಕಾಣುತ್ತದೆ. ನಮಗೆ ಯಾವ dealer ದರನೂ ಗೊತ್ತಿಲ್ಲ.",
   "ta": "உங்களுக்குச் சொல்லப்பட்ட விலையை எழுதினால் material தொகை தெரியும். எந்த seller-இன் விலையும் எங்களுக்குத் தெரியாது.",
   "status": {
    "te": "draft",
@@ -1847,8 +1847,8 @@
  "calc.withWastage": {
   "en": "including the extra for breakage and cuts",
   "te": "విరగడం, కటింగ్ అదనంతో కలిపి",
-  "hi": "टूट-फूट और कटाई के अतिरिक्त समेत",
-  "kn": "ಒಡೆಯುವಿಕೆ, ಕಟಿಂಗ್ ಹೆಚ್ಚುವರಿ ಸೇರಿ",
+  "hi": "टूट-फूट और cutting का extra मिलाकर",
+  "kn": "ಒಡೆಯೋದು ಮತ್ತು cutting ನ extra ಸೇರಿ",
   "ta": "உடைவு, வெட்டுக்கான கூடுதலையும் சேர்த்து",
   "status": {
    "te": "draft",
@@ -1861,7 +1861,7 @@
   "en": "Material amount, before GST and transport",
   "te": "మెటీరియల్ మొత్తం, GST, ట్రాన్స్‌పోర్ట్‌కి ముందు",
   "hi": "मटीरियल की रकम, GST और ट्रांसपोर्ट से पहले",
-  "kn": "ಮೆಟೀರಿಯಲ್ ಮೊತ್ತ, GST, ಸಾಗಣೆಗೆ ಮೊದಲು",
+  "kn": "Material ಮೊತ್ತ, GST ಮತ್ತು transport ಗೆ ಮೊದಲು",
   "ta": "Material தொகை, GST, போக்குவரத்துக்கு முன்",
   "status": {
    "te": "draft",
@@ -1873,8 +1873,8 @@
  "calc.delivered": {
   "en": "Area covered by the blocks",
   "te": "బ్లాకులు కవర్ చేసే ఏరియా",
-  "hi": "ब्लॉकों से ढका एरिया",
-  "kn": "ಬ್ಲಾಕ್‌ಗಳು ಮುಚ್ಚುವ ಏರಿಯಾ",
+  "hi": "Blocks से cover होने वाला area",
+  "kn": "Blocks ಕವರ್ ಮಾಡುವ area",
   "ta": "Blocks மூடும் பரப்பு",
   "status": {
    "te": "draft",
@@ -1912,8 +1912,8 @@
  "calc.cta.help": {
   "en": "This opens WhatsApp with your numbers filled in. A seller who uses {brand} can then quote exactly.",
   "te": "ఇది మీ అంకెలతో వాట్సాప్ తెరుస్తుంది. {brand} వాడే అమ్మకందారు కచ్చితంగా కోట్ ఇవ్వగలరు.",
-  "hi": "यह आपके आँकड़ों के साथ WhatsApp खोलता है। {brand} इस्तेमाल करने वाला विक्रेता फिर सही quote दे सकता है।",
-  "kn": "ಇದು ನಿಮ್ಮ ಅಂಕಿಗಳೊಂದಿಗೆ WhatsApp ತೆರೆಯುತ್ತದೆ. {brand} ಬಳಸುವ ಮಾರಾಟಗಾರರು ನಿಖರವಾಗಿ quote ಕೊಡಬಹುದು.",
+  "hi": "यह आपकी details के साथ WhatsApp खोलता है। फिर {brand} इस्तेमाल करने वाला dealer आपको सही quote दे सकता है।",
+  "kn": "ಇದು ನಿಮ್ಮ details ಜೊತೆ WhatsApp open ಮಾಡುತ್ತದೆ. ಆಗ {brand} ಬಳಸುವ dealer ನಿಮಗೆ ಸರಿಯಾದ quote ಕೊಡಬಹುದು.",
   "ta": "இது உங்கள் numbers நிரப்பப்பட்ட WhatsApp-ஐத் திறக்கும். {brand} பயன்படுத்தும் seller அதன் பிறகு சரியாக quote கொடுக்க முடியும்.",
   "status": {
    "te": "draft",
@@ -1938,8 +1938,8 @@
  "calc.lead.city": {
   "en": "City or town (optional)",
   "te": "నగరం లేదా ఊరు (ఐచ్ఛికం)",
-  "hi": "शहर या कस्बा (वैकल्पिक)",
-  "kn": "ನಗರ ಅಥವಾ ಊರು (ಐಚ್ಛಿಕ)",
+  "hi": "शहर या गाँव (optional)",
+  "kn": "ನಗರ ಅಥವಾ ಊರು (optional)",
   "ta": "நகரம் அல்லது ஊர் (விருப்பம்)",
   "status": {
    "te": "draft",
@@ -1951,7 +1951,7 @@
  "calc.lead.consent": {
   "en": "I agree that {brand} may reply to me on WhatsApp about this quote. I have read the Privacy notice.",
   "te": "ఈ కోట్ గురించి {brand} నాకు వాట్సాప్‌లో జవాబివ్వవచ్చని అంగీకరిస్తున్నాను. ప్రైవసీ నోటీసు చదివాను.",
-  "hi": "मैं मानता हूँ कि {brand} इस quote के बारे में मुझे WhatsApp पर जवाब दे सकता है। मैंने प्राइवेसी नोटिस पढ़ी है।",
+  "hi": "मैं सहमत हूँ कि {brand} इस quote के बारे में मुझे WhatsApp पर जवाब दे सकता है। मैंने Privacy notice पढ़ लिया है।",
   "kn": "ಈ quote ಬಗ್ಗೆ {brand} ನನಗೆ WhatsApp ನಲ್ಲಿ ಉತ್ತರ ಕೊಡಬಹುದು ಎಂದು ಒಪ್ಪುತ್ತೇನೆ. ಪ್ರೈವೆಸಿ ನೋಟಿಸ್ ಓದಿದ್ದೇನೆ.",
   "ta": "இந்த quote பற்றி {brand} எனக்கு WhatsApp-இல் பதில் அனுப்பலாம் என்று சம்மதிக்கிறேன். தனியுரிமை அறிவிப்பைப் படித்தேன்.",
   "status": {
@@ -2016,8 +2016,8 @@
  "meta.pricing.title": {
   "en": "Pricing: {brand}",
   "te": "ధరలు: {brand}",
-  "hi": "कीमतें: {brand}",
-  "kn": "ಬೆಲೆಗಳು: {brand}",
+  "hi": "Plans और कीमतें: {brand}",
+  "kn": "Plans ಮತ್ತು ಬೆಲೆಗಳು: {brand}",
   "ta": "விலைகள்: {brand}",
   "status": {
    "te": "draft",
@@ -2212,7 +2212,7 @@
  "cta.start": {
   "en": "Get started",
   "te": "ప్రారంభించండి",
-  "hi": "आरंभ करें",
+  "hi": "शुरू करें",
   "kn": "ಶುರು ಮಾಡಿ",
   "ta": "தொடங்குங்கள்",
   "status": {
@@ -2462,8 +2462,8 @@
  "contact.addr.sub": {
   "en": "Choose the address that fits your question. Select the text to copy it, or use the Copy button.",
   "te": "మీ ప్రశ్నకు సరిపోయే చిరునామా ఎంచుకోండి. టెక్స్ట్‌ను సెలెక్ట్ చేసి కాపీ చేయవచ్చు, లేదా కాపీ బటన్ వాడండి.",
-  "hi": "अपने सवाल के हिसाब से पता चुनें। लिखे हुए को चुनकर कॉपी करें, या कॉपी बटन दबाएँ।",
-  "kn": "ನಿಮ್ಮ ಪ್ರಶ್ನೆಗೆ ಹೊಂದುವ ವಿಳಾಸ ಆರಿಸಿ. ಬರಹವನ್ನು ಆಯ್ದು ಕಾಪಿ ಮಾಡಬಹುದು, ಅಥವಾ ಕಾಪಿ ಬಟನ್ ಬಳಸಿ.",
+  "hi": "अपने सवाल के हिसाब से email चुनें। Text को select करके copy करें, या Copy button दबाएँ।",
+  "kn": "ನಿಮ್ಮ ಪ್ರಶ್ನೆಗೆ ಸರಿಹೊಂದುವ email ID ಆರಿಸಿ. Text select ಮಾಡಿ copy ಮಾಡಬಹುದು, ಅಥವಾ Copy button ಒತ್ತಿ.",
   "ta": "உங்கள் கேள்விக்குப் பொருத்தமான address-ஐத் தேர்ந்தெடுங்கள். Text-ஐத் தேர்ந்தெடுத்து copy செய்யலாம், அல்லது Copy button-ஐப் பயன்படுத்தலாம்.",
   "status": {
    "te": "draft",
@@ -2605,8 +2605,8 @@
  "contact.addr.privacy.note": {
   "en": "Requests to see, correct or erase your data: answered within {requests} days. Withdrawing consent: acted on within {withdrawal} hours. Other complaints: within {grievances} days.",
   "te": "మీ డేటాను చూడటం, సరిదిద్దడం, తొలగించడం గురించి అడిగితే {requests} రోజుల్లో జవాబు. సమ్మతి వెనక్కి తీసుకుంటే {withdrawal} గంటల్లో అమలు. ఇతర ఫిర్యాదులకు {grievances} రోజుల్లో.",
-  "hi": "आपकी जानकारी देखने, सुधारने या मिटाने के बारे में पूछें तो {requests} दिन के अंदर जवाब। सहमति वापस लेने पर {withdrawal} घंटे के अंदर अमल। दूसरी शिकायतें: {grievances} दिन के अंदर।",
-  "kn": "ನಿಮ್ಮ ಡೇಟಾ ನೋಡಲು, ತಿದ್ದಲು ಅಥವಾ ಅಳಿಸಲು ಕೇಳಿಕೆ: {requests} ದಿನಗಳ ಒಳಗೆ ಉತ್ತರ. ಒಪ್ಪಿಗೆ ವಾಪಸ್ ಪಡೆದರೆ: {withdrawal} ಗಂಟೆಗಳ ಒಳಗೆ ಕ್ರಮ. ಬೇರೆ ದೂರುಗಳು: {grievances} ದಿನಗಳ ಒಳಗೆ.",
+  "hi": "आपका data देखने, सुधारने या हटाने की request पर {requests} दिन के अंदर जवाब। Consent वापस लेने पर {withdrawal} घंटे के अंदर action। बाकी शिकायतें: {grievances} दिन के अंदर।",
+  "kn": "ನಿಮ್ಮ data ನೋಡಲು, ತಿದ್ದಲು ಅಥವಾ ಅಳಿಸಲು request ಮಾಡಿದರೆ: {requests} ದಿನಗಳ ಒಳಗೆ ಉತ್ತರ. ಒಪ್ಪಿಗೆ ವಾಪಸ್ ಪಡೆದರೆ: {withdrawal} ಗಂಟೆಗಳ ಒಳಗೆ action. ಬೇರೆ ದೂರುಗಳು: {grievances} ದಿನಗಳ ಒಳಗೆ.",
   "ta": "உங்கள் data-வைப் பார்க்க, திருத்த அல்லது அழிக்கக் கேட்டால்: {requests} நாட்களுக்குள் பதில். சம்மதத்தைத் திரும்பப் பெற்றால்: {withdrawal} மணி நேரத்துக்குள் நடவடிக்கை. மற்ற புகார்கள்: {grievances} நாட்களுக்குள்.",
   "status": {
    "te": "draft",
@@ -3024,8 +3024,8 @@
  "hm.w.1.n": {
   "en": "Catch leads",
   "te": "లీడ్స్ పట్టుకోవడం",
-  "hi": "Leads पकड़ना",
-  "kn": "Leads ಹಿಡಿಯುವುದು",
+  "hi": "नई leads जुटाना",
+  "kn": "ಹೊಸ leads ಸಂಗ್ರಹಿಸುವುದು",
   "ta": "Leads பிடிப்பது",
   "status": {
    "te": "draft",
@@ -3037,8 +3037,8 @@
  "hm.w.1.d": {
   "en": "Catches every lead from your website forms, WhatsApp, missed calls, spreadsheets and Meta lead ads, and picks up every enquiry call and message, day or night.",
   "te": "మీ వెబ్‌సైట్ ఫారమ్‌లు, వాట్సాప్, మిస్డ్ కాల్స్, స్ప్రెడ్‌షీట్లు, Meta లీడ్ ప్రకటనల నుంచి వచ్చే ప్రతి లీడ్‌నీ పట్టుకుంటుంది. పగలూ రాత్రీ ప్రతి ఎంక్వయిరీ కాల్, మెసేజ్ అందుకుంటుంది.",
-  "hi": "आपके website form, WhatsApp, missed call, spreadsheet और Meta lead ads से आने वाली हर lead को पकड़ता है, और दिन-रात हर enquiry का call और message उठाता है।",
-  "kn": "ನಿಮ್ಮ website forms, WhatsApp, missed call, spreadsheet, Meta lead ads ನಿಂದ ಬರುವ ಪ್ರತಿ lead ಅನ್ನೂ ಹಿಡಿಯುತ್ತದೆ. ಹಗಲೂ ರಾತ್ರಿ ಪ್ರತಿ enquiry call, message ಎತ್ತಿಕೊಳ್ಳುತ್ತದೆ.",
+  "hi": "आपके website form, WhatsApp, missed call, spreadsheet और Meta lead ads से आने वाली हर lead को संभालता है, और दिन-रात हर enquiry का call उठाता है और message का जवाब देता है।",
+  "kn": "ನಿಮ್ಮ website forms, WhatsApp, missed call, spreadsheet, Meta lead ads ನಿಂದ ಬರುವ ಪ್ರತಿ lead ಅನ್ನೂ ತಕ್ಷಣ ನೋಟ್ ಮಾಡುತ್ತದೆ. ಹಗಲೂ ರಾತ್ರಿ ಪ್ರತಿ enquiry call ಎತ್ತುತ್ತದೆ ಮತ್ತು message ಗೆ ಉತ್ತರಿಸುತ್ತದೆ.",
   "ta": "உங்கள் website forms, WhatsApp, missed calls, spreadsheets, Meta lead ads எல்லாவற்றிலிருந்தும் வரும் ஒவ்வொரு lead-ஐயும் பிடிக்கும். இரவும் பகலும் ஒவ்வொரு enquiry call, message-ஐயும் எடுக்கும்.",
   "status": {
    "te": "draft",
@@ -3076,8 +3076,8 @@
  "hm.w.2.d": {
   "en": "Researches each lead: what they need, their budget and their history with you.",
   "te": "ప్రతి లీడ్ గురించి రీసెర్చ్ చేస్తుంది: వాళ్లకేం కావాలి, బడ్జెట్ ఎంత, మీతో ఇంతకుముందు ఏం జరిగింది.",
-  "hi": "हर lead के बारे में रिसर्च करता है: उन्हें क्या चाहिए, बजट कितना है और आपके साथ पहले क्या हुआ।",
-  "kn": "ಪ್ರತಿ lead ಬಗ್ಗೆ ರಿಸರ್ಚ್ ಮಾಡುತ್ತದೆ: ಅವರಿಗೆ ಏನು ಬೇಕು, ಬಜೆಟ್ ಎಷ್ಟು, ನಿಮ್ಮೊಂದಿಗೆ ಹಿಂದೆ ಏನಾಯಿತು.",
+  "hi": "हर lead की details देखता है: उन्हें क्या चाहिए, budget कितना है और पहले आपसे क्या बात हुई थी।",
+  "kn": "ಪ್ರತಿ lead details ನೋಡುತ್ತದೆ: ಅವರಿಗೆ ಏನು ಬೇಕು, budget ಎಷ್ಟು, ನಿಮ್ಮ ಜೊತೆ ಹಿಂದೆ ಏನು ಮಾತಾಡಿದ್ದರು.",
   "ta": "ஒவ்வொரு lead பற்றியும் research செய்யும்: அவர்களுக்கு என்ன வேண்டும், budget எவ்வளவு, உங்களுடன் முன்பு என்ன நடந்தது.",
   "status": {
    "te": "draft",
@@ -3193,8 +3193,8 @@
  "hm.w.5.d": {
   "en": "Marks every call and chat positive or negative, with the reason, on your Today page.",
   "te": "ప్రతి కాల్, చాట్‌ని పాజిటివ్ లేదా నెగటివ్ అని కారణంతో మీ Today పేజీలో రాస్తుంది.",
-  "hi": "हर call और चैट को वजह के साथ पॉज़िटिव या नेगेटिव लिखता है, आपके Today पेज पर।",
-  "kn": "ಪ್ರತಿ call, ಚಾಟ್ ಅನ್ನು ಕಾರಣದೊಂದಿಗೆ ಪಾಸಿಟಿವ್ ಅಥವಾ ನೆಗೆಟಿವ್ ಎಂದು ನಿಮ್ಮ Today ಪುಟದಲ್ಲಿ ಬರೆಯುತ್ತದೆ.",
+  "hi": "हर call और chat को वजह के साथ positive या negative mark करता है, आपके Today page पर।",
+  "kn": "ಪ್ರತಿ call ಮತ್ತು chat ಗೆ ಕಾರಣದ ಜೊತೆ positive ಅಥವಾ negative ಅಂತ ನಿಮ್ಮ Today page ನಲ್ಲಿ mark ಮಾಡುತ್ತದೆ.",
   "ta": "ஒவ்வொரு call, chat-ஐயும் காரணத்துடன் positive அல்லது negative என்று உங்கள் Today page-இல் குறிக்கும்.",
   "status": {
    "te": "draft",
@@ -3232,8 +3232,8 @@
  "hm.w.6.d": {
   "en": "Follows up at the right time: next steps for a yes, a gentle check-in later for a no. Stops at once if they say don't contact me.",
   "te": "సరైన సమయంలో ఫాలో-అప్ చేస్తుంది: ఓకే అంటే తర్వాతి అడుగులు, వద్దంటే కొంతకాలం తర్వాత మెల్లగా అడగడం. \"నన్ను సంప్రదించకండి\" అంటే వెంటనే ఆపేస్తుంది.",
-  "hi": "सही समय पर follow-up करता है: हाँ पर अगले कदम, ना पर बाद में नरमी से हालचाल। \"मुझे संपर्क न करें\" कहने पर तुरंत रुक जाता है।",
-  "kn": "ಸರಿಯಾದ ಸಮಯದಲ್ಲಿ follow-up ಮಾಡುತ್ತದೆ: ಹೌದು ಅಂದರೆ ಮುಂದಿನ ಹೆಜ್ಜೆ, ಬೇಡ ಅಂದರೆ ಸ್ವಲ್ಪ ಕಾಲದ ನಂತರ ನಯವಾಗಿ ವಿಚಾರಿಸುವುದು. \"ನನ್ನನ್ನು ಸಂಪರ್ಕಿಸಬೇಡಿ\" ಎಂದರೆ ತಕ್ಷಣ ನಿಲ್ಲಿಸುತ್ತದೆ.",
+  "hi": "सही समय पर follow-up करता है: हाँ कहने पर अगला step, ना कहने पर बाद में आराम से एक check-in। अगर कोई मना कर दे तो तुरंत रुक जाता है।",
+  "kn": "ಸರಿಯಾದ ಸಮಯದಲ್ಲಿ follow-up ಮಾಡುತ್ತದೆ: ಹೌದು ಅಂದರೆ ಮುಂದಿನ step, ಬೇಡ ಅಂದರೆ ಸ್ವಲ್ಪ ದಿನ ಬಿಟ್ಟು ಮತ್ತೆ ಸೌಜನ್ಯದಿಂದ ಕೇಳುತ್ತದೆ. Call/message ಬೇಡ ಅಂದರೆ ತಕ್ಷಣ ನಿಲ್ಲಿಸುತ್ತದೆ.",
   "ta": "சரியான நேரத்தில் follow-up செய்யும்: yes என்றால் அடுத்த படிகள், no என்றால் பிறகு மென்மையாக ஒரு விசாரிப்பு. \"என்னைத் தொடர்புகொள்ளாதீர்கள்\" என்றால் உடனே நின்றுவிடும்.",
   "status": {
    "te": "draft",
@@ -3336,7 +3336,7 @@
  "hm.loop": {
   "en": "Then the loop starts again: happy customers reorder, and new leads keep coming.",
   "te": "తర్వాత మళ్ళీ మొదలు: సంతోషంగా ఉన్న కస్టమర్లు మళ్ళీ ఆర్డర్ ఇస్తారు, కొత్త లీడ్స్ వస్తూనే ఉంటాయి.",
-  "hi": "फिर चक्र दोबारा शुरू: खुश customers फिर order करते हैं और नई leads आती रहती हैं।",
+  "hi": "फिर यही सिलसिला चलता रहता है: खुश customers दोबारा order देते हैं और नई leads आती रहती हैं।",
   "kn": "ನಂತರ ಮತ್ತೆ ಶುರು: ಸಂತೋಷದ customers ಮತ್ತೆ order ಮಾಡುತ್ತಾರೆ, ಹೊಸ leads ಬರುತ್ತಲೇ ಇರುತ್ತವೆ.",
   "ta": "பிறகு மீண்டும் முதலிலிருந்து: மகிழ்ச்சியான customers மறுபடி order செய்கிறார்கள், புதிய leads வந்துகொண்டே இருக்கின்றன.",
   "status": {
@@ -3591,8 +3591,8 @@
  "how.steps.t": {
   "en": "The full team: six AI workers",
   "te": "పూర్తి టీమ్: ఆరుగురు AI వర్కర్లు",
-  "hi": "पूरी टीम: छह AI वर्कर",
-  "kn": "ಪೂರ್ಣ ತಂಡ: ಆರು AI ವರ್ಕರ್‌ಗಳು",
+  "hi": "पूरी team: 6 AI workers",
+  "kn": "ಪೂರ್ತಿ team: 6 AI workers",
   "ta": "முழு team: ஆறு AI workers",
   "status": {
    "te": "draft",
@@ -3643,8 +3643,8 @@
  "demo.sub": {
   "en": "Tell us about your business. We will get in touch when your place opens.",
   "te": "మీ వ్యాపారం గురించి చెప్పండి. మీ స్థానం ఓపెన్ అయినప్పుడు మేము మిమ్మల్ని సంప్రదిస్తాం.",
-  "hi": "अपने business के बारे में बताइए। आपकी जगह खुलने पर हम आपसे संपर्क करेंगे।",
-  "kn": "ನಿಮ್ಮ business ನ ಬಗ್ಗೆ ತಿಳಿಸಿ. ನಿಮ್ಮ ಸ್ಥಾನ ತೆರೆದಾಗ ನಾವು ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತೇವೆ.",
+  "hi": "अपने business के बारे में बताइए। आपका access शुरू होते ही हम आपसे बात करेंगे।",
+  "kn": "ನಿಮ್ಮ business ಬಗ್ಗೆ ತಿಳಿಸಿ. ನಿಮ್ಮ access ಶುರುವಾದಾಗ ನಾವು contact ಮಾಡುತ್ತೇವೆ.",
   "ta": "உங்கள் business பற்றிச் சொல்லுங்கள். உங்களுக்கான இடம் திறந்ததும் தொடர்புகொள்வோம்.",
   "status": {
    "te": "draft",
@@ -3695,8 +3695,8 @@
  "demo.marketing": {
   "en": "Also send me news and offers about {brand} (optional). These can be stopped at any time.",
   "te": "{brand} గురించి వార్తలు, ఆఫర్లు కూడా పంపండి (ఐచ్ఛికం). వీటిని ఎప్పుడైనా ఆపవచ్చు.",
-  "hi": "{brand} की खबरें और offers भी भेजें (वैकल्पिक)। इन्हें कभी भी बंद कराया जा सकता है।",
-  "kn": "{brand} ಬಗ್ಗೆ ಸುದ್ದಿ, offers ಅನ್ನೂ ಕಳುಹಿಸಿ (ಐಚ್ಛಿಕ). ಇವುಗಳನ್ನು ಯಾವಾಗ ಬೇಕಾದರೂ ನಿಲ್ಲಿಸಬಹುದು.",
+  "hi": "{brand} के updates और offers भी भेजें (optional)। इन्हें कभी भी बंद कर सकते हैं।",
+  "kn": "{brand} ನ updates ಮತ್ತು offers ಕೂಡ ಕಳುಹಿಸಿ (optional). ಇವುಗಳನ್ನು ಯಾವಾಗ ಬೇಕಾದರೂ ನಿಲ್ಲಿಸಬಹುದು.",
   "ta": "{brand} பற்றிய news, offers-ஐயும் எனக்கு அனுப்புங்கள் (விருப்பம்). இவற்றை எப்போது வேண்டுமானாலும் நிறுத்தலாம்.",
   "status": {
    "te": "draft",
@@ -3708,7 +3708,7 @@
  "demo.notice": {
   "en": "We use these details only to contact you about early access.",
   "te": "ముందస్తు యాక్సెస్ గురించి మిమ్మల్ని సంప్రదించడానికి మాత్రమే ఈ వివరాలను వాడతాం.",
-  "hi": "इन जानकारियों का उपयोग हम केवल early access के बारे में आपसे संपर्क करने के लिए करते हैं।",
+  "hi": "ये details हम सिर्फ़ early access के बारे में आपसे बात करने के लिए इस्तेमाल करेंगे।",
   "kn": "Early access ಬಗ್ಗೆ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಲು ಮಾತ್ರ ಈ ವಿವರಗಳನ್ನು ಬಳಸುತ್ತೇವೆ.",
   "ta": "Early access பற்றி உங்களைத் தொடர்புகொள்ள மட்டுமே இந்த விவரங்களைப் பயன்படுத்துவோம்.",
   "status": {
@@ -3734,8 +3734,8 @@
  "demo.thanks.t": {
   "en": "You're on the list.",
   "te": "మీరు జాబితాలో ఉన్నారు.",
-  "hi": "आप सूची में हैं।",
-  "kn": "ನೀವು ಪಟ್ಟಿಯಲ್ಲಿದ್ದೀರಿ.",
+  "hi": "आप list में जुड़ गए हैं।",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು list ಗೆ ಸೇರಿದೆ.",
   "ta": "நீங்கள் list-இல் இருக்கிறீர்கள்.",
   "status": {
    "te": "draft",
@@ -3747,8 +3747,8 @@
  "demo.thanks.d": {
   "en": "We will get in touch when your place opens. News and offers are sent only if you ticked the optional box.",
   "te": "మీ స్థానం ఓపెన్ అయినప్పుడు మేము సంప్రదిస్తాం. వార్తలు, ఆఫర్లు మీరు ఐచ్ఛిక బాక్స్‌ను టిక్ చేస్తేనే పంపుతాం.",
-  "hi": "आपकी जगह खुलने पर हम संपर्क करेंगे। खबरें और offers तभी भेजे जाते हैं जब आपने वैकल्पिक बॉक्स पर टिक किया हो।",
-  "kn": "ನಿಮ್ಮ ಸ್ಥಾನ ತೆರೆದಾಗ ನಾವು ಸಂಪರ್ಕಿಸುತ್ತೇವೆ. ಸುದ್ದಿ ಮತ್ತು offers ಅನ್ನು ನೀವು ಐಚ್ಛಿಕ ಬಾಕ್ಸ್ ಟಿಕ್ ಮಾಡಿದರೆ ಮಾತ್ರ ಕಳುಹಿಸುತ್ತೇವೆ.",
+  "hi": "आपका access शुरू होते ही हम आपसे बात करेंगे। Updates और offers तभी भेजेंगे जब आपने optional box पर tick किया हो।",
+  "kn": "ನಿಮ್ಮ access ಶುರುವಾದಾಗ ನಾವು contact ಮಾಡುತ್ತೇವೆ. Updates ಮತ್ತು offers ಅನ್ನು ನೀವು optional box tick ಮಾಡಿದರೆ ಮಾತ್ರ ಕಳುಹಿಸುತ್ತೇವೆ.",
   "ta": "உங்களுக்கான இடம் திறந்ததும் தொடர்புகொள்வோம். நீங்கள் விருப்பமான box-ஐ tick செய்திருந்தால் மட்டுமே news, offers அனுப்புவோம்.",
   "status": {
    "te": "draft",
@@ -3774,7 +3774,7 @@
   "en": "We could not save your details just now. Write to us by e-mail instead.",
   "te": "మీ వివరాలను ఇప్పుడు సేవ్ చేయలేకపోయాము. బదులుగా మాకు ఈమెయిల్ చేయండి.",
   "hi": "आपकी जानकारी अभी सेव नहीं हो सकी। इसकी जगह हमें ईमेल कीजिए।",
-  "kn": "ನಿಮ್ಮ ವಿವರಗಳನ್ನು ಈಗ ಉಳಿಸಲು ಆಗಲಿಲ್ಲ. ಬದಲಿಗೆ ನಮಗೆ ಇಮೇಲ್ ಮಾಡಿ.",
+  "kn": "ನಿಮ್ಮ details ಈಗ save ಆಗಲಿಲ್ಲ. ಬದಲಿಗೆ ನಮಗೆ email ಮಾಡಿ.",
   "ta": "உங்கள் விவரங்களை இப்போது சேமிக்க முடியவில்லை. அதற்குப் பதிலாக எங்களுக்கு e-mail எழுதுங்கள்.",
   "status": {
    "te": "draft",
@@ -3799,7 +3799,7 @@
  "demo.consent": {
   "en": "I agree that {brand} may contact me about early access, using the phone number or e-mail I gave.",
   "te": "ముందస్తు యాక్సెస్ గురించి నేను ఇచ్చిన ఫోన్ నంబర్ లేదా ఇ-మెయిల్‌తో {brand} నన్ను సంప్రదించవచ్చని అంగీకరిస్తున్నాను.",
-  "hi": "मैं सहमत हूँ कि {brand} मेरे दिए गए फ़ोन number या ई-मेल पर early access के बारे में मुझसे संपर्क कर सकता है।",
+  "hi": "मैं सहमत हूँ कि {brand} मेरे दिए गए phone number या email पर early access के बारे में मुझसे बात कर सकता है।",
   "kn": "ನಾನು ನೀಡಿದ ಫೋನ್ ಸಂಖ್ಯೆ ಅಥವಾ ಇ-ಮೇಲ್‌ನಲ್ಲಿ early access ಬಗ್ಗೆ {brand} ನನ್ನನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು ಎಂದು ಒಪ್ಪುತ್ತೇನೆ.",
   "ta": "நான் கொடுத்த phone number அல்லது e-mail-இல் early access பற்றி {brand} என்னைத் தொடர்புகொள்ளலாம் என்று சம்மதிக்கிறேன்.",
   "status": {
@@ -3838,8 +3838,8 @@
  "demo.err.city": {
   "en": "Please type your city or town.",
   "te": "మీ నగరం లేదా పట్టణం పేరు టైప్ చేయండి.",
-  "hi": "अपना शहर या कस्बा लिखिए।",
-  "kn": "ನಿಮ್ಮ ನಗರ ಅಥವಾ ಪಟ್ಟಣದ ಹೆಸರನ್ನು ಟೈಪ್ ಮಾಡಿ.",
+  "hi": "अपने शहर या गाँव का नाम लिखिए।",
+  "kn": "ನಿಮ್ಮ ಊರು ಅಥವಾ city ಹೆಸರು ಬರೆಯಿರಿ.",
   "ta": "உங்கள் நகரம் அல்லது ஊரின் பெயரை எழுதுங்கள்.",
   "status": {
    "te": "draft",
@@ -3851,8 +3851,8 @@
  "demo.note": {
   "en": "Opening to businesses soon. Join early access and we will tell you when your place is ready.",
   "te": "త్వరలో వ్యాపారాలకు ఓపెన్ అవుతుంది. ముందస్తు యాక్సెస్‌లో చేరండి, మీ స్థానం సిద్ధమైనప్పుడు మేము చెప్తాం.",
-  "hi": "जल्द ही businesses के लिए खुल रहा है। early access में शामिल हों, आपकी जगह तैयार होने पर हम बताएँगे।",
-  "kn": "ಶೀಘ್ರದಲ್ಲೇ businesses ಗೆ ತೆರೆಯುತ್ತಿದೆ. early access ಗೆ ಸೇರಿ, ನಿಮ್ಮ ಸ್ಥಾನ ಸಿದ್ಧವಾದಾಗ ನಾವು ತಿಳಿಸುತ್ತೇವೆ.",
+  "hi": "जल्द ही businesses के लिए शुरू हो रहा है। Early access में जुड़ें, आपका access तैयार होते ही हम बताएँगे।",
+  "kn": "ಶೀಘ್ರದಲ್ಲೇ businesses ಗೆ ಶುರುವಾಗುತ್ತಿದೆ. Early access ಗೆ ಸೇರಿ, ನಿಮ್ಮ access ರೆಡಿ ಆದಾಗ ನಾವು ತಿಳಿಸುತ್ತೇವೆ.",
   "ta": "விரைவில் businesses-க்குத் திறக்கிறது. Early access-இல் சேருங்கள், உங்களுக்கான இடம் தயாரானதும் சொல்வோம்.",
   "status": {
    "te": "draft",
@@ -3877,8 +3877,8 @@
  "soon.sub": {
   "en": "The app is not open to everyone yet. Tell us about your business and we will contact you when your place is ready.",
   "te": "యాప్ ఇంకా అందరికీ తెరవలేదు. మీ వ్యాపారం గురించి చెప్పండి, మీ చోటు సిద్ధమైనప్పుడు సంప్రదిస్తాము.",
-  "hi": "ऐप अभी सबके लिए नहीं खुला है। अपने business के बारे में बताइए, आपकी जगह तैयार होने पर हम संपर्क करेंगे।",
-  "kn": "ಆ್ಯಪ್ ಇನ್ನೂ ಎಲ್ಲರಿಗೂ ತೆರೆದಿಲ್ಲ. ನಿಮ್ಮ business ನ ಬಗ್ಗೆ ಹೇಳಿ, ನಿಮ್ಮ ಸ್ಥಾನ ಸಿದ್ಧವಾದಾಗ ಸಂಪರ್ಕಿಸುತ್ತೇವೆ.",
+  "hi": "App अभी सबके लिए शुरू नहीं हुआ है। अपने business के बारे में बताइए, आपका access तैयार होते ही हम आपसे बात करेंगे।",
+  "kn": "App ಇನ್ನೂ ಎಲ್ಲರಿಗೂ ಶುರುವಾಗಿಲ್ಲ. ನಿಮ್ಮ business ಬಗ್ಗೆ ಹೇಳಿ, ನಿಮ್ಮ access ರೆಡಿ ಆದಾಗ ನಾವು contact ಮಾಡುತ್ತೇವೆ.",
   "ta": "App இன்னும் எல்லோருக்கும் திறக்கவில்லை. உங்கள் business பற்றிச் சொல்லுங்கள், உங்களுக்கான இடம் தயாரானதும் நாங்கள் தொடர்புகொள்வோம்.",
   "status": {
    "te": "draft",
@@ -3891,7 +3891,7 @@
   "en": "Opening soon: {brand}",
   "te": "త్వరలో ప్రారంభం: {brand}",
   "hi": "जल्द शुरू: {brand}",
-  "kn": "ಶೀಘ್ರದಲ್ಲೇ ಆರಂಭ: {brand}",
+  "kn": "ಶೀಘ್ರದಲ್ಲೇ ಶುರು: {brand}",
   "ta": "விரைவில் தொடங்குகிறது: {brand}",
   "status": {
    "te": "draft",
@@ -3925,7 +3925,7 @@
  "ld.rules": {
   "en": "We call only people who gave their number to the business. We follow calling hours and do-not-disturb rules.",
   "te": "వ్యాపారానికి తమ నంబర్ ఇచ్చిన వాళ్లకే మేము కాల్ చేస్తాం. కాలింగ్ టైమ్, డూ-నాట్-డిస్టర్బ్ నియమాలు పాటిస్తాం.",
-  "hi": "हम सिर्फ़ उन्हीं को call करते हैं जिन्होंने business को अपना number दिया है। calling hours और डू-नॉट-डिस्टर्ब के नियम हम मानते हैं।",
+  "hi": "हम सिर्फ़ उन्हीं को call करते हैं जिन्होंने business को अपना number दिया है। Calling hours और DND (do-not-disturb) के नियम हम मानते हैं।",
   "kn": "Business ಗೆ ತಮ್ಮ number ಕೊಟ್ಟವರಿಗೆ ಮಾತ್ರ ನಾವು call ಮಾಡುತ್ತೇವೆ. calling hours ಮತ್ತು do-not-disturb ನಿಯಮಗಳನ್ನು ಪಾಲಿಸುತ್ತೇವೆ.",
   "ta": "Business-க்குத் தங்கள் number-ஐக் கொடுத்தவர்களுக்கு மட்டுமே call செய்கிறோம். Calling hours-ஐயும் do-not-disturb விதிகளையும் பின்பற்றுகிறோம்.",
   "status": {
@@ -3950,7 +3950,7 @@
   "en": "From a new lead to a clear yes or no.",
   "te": "కొత్త లీడ్ నుంచి స్పష్టమైన అవును లేదా కాదు వరకు.",
   "hi": "नए lead से साफ़ हाँ या ना तक।",
-  "kn": "ಹೊಸ lead ನಿಂದ ಸ್ಪಷ್ಟ ಹೌದು ಅಥವಾ ಇಲ್ಲ ವರೆಗೆ.",
+  "kn": "ಹೊಸ lead ನಿಂದ ಸ್ಪಷ್ಟ ಹೌದು ಅಥವಾ ಇಲ್ಲ ಎನ್ನುವವರೆಗೆ.",
   "ta": "புதிய lead-இலிருந்து தெளிவான yes அல்லது no வரை.",
   "status": {
    "te": "draft",
@@ -3963,7 +3963,7 @@
   "en": "Six steps. You see every result, and you can ask {assistant} to do the next job for you.",
   "te": "ఆరు స్టెప్పులు. ప్రతి ఫలితం మీకు కనిపిస్తుంది, తర్వాతి పనిని {assistant} చేత చేయించుకోవచ్చు.",
   "hi": "छह step। हर नतीजा आपको दिखता है, और अगला काम आप {assistant} से करवा सकते हैं।",
-  "kn": "ಆರು ಹಂತಗಳು. ಪ್ರತಿ ಫಲಿತಾಂಶ ನಿಮಗೆ ಕಾಣುತ್ತದೆ, ಮುಂದಿನ ಕೆಲಸವನ್ನು {assistant} ಅವರಿಂದ ಮಾಡಿಸಬಹುದು.",
+  "kn": "6 steps. ಪ್ರತಿ result ನಿಮಗೆ ಕಾಣುತ್ತದೆ, ಮುಂದಿನ ಕೆಲಸವನ್ನು {assistant} ಮೂಲಕ ಮಾಡಿಸಬಹುದು.",
   "ta": "ஆறு படிகள். ஒவ்வொரு முடிவும் உங்களுக்குத் தெரியும், அடுத்த வேலையையும் {assistant}-இடம் செய்யச் சொல்லலாம்.",
   "status": {
    "te": "draft",
@@ -3988,7 +3988,7 @@
  "ld.s.1.t": {
   "en": "A lead arrives",
   "te": "లీడ్ వస్తుంది",
-  "hi": "Lead आता है",
+  "hi": "नई lead आती है",
   "kn": "Lead ಬರುತ್ತದೆ",
   "ta": "ஒரு lead வருகிறது",
   "status": {
@@ -4014,7 +4014,7 @@
  "ld.s.2.t": {
   "en": "{assistant} calls right away",
   "te": "{assistant} వెంటనే కాల్ చేస్తుంది",
-  "hi": "{assistant} तुरंत call करती है",
+  "hi": "{assistant} तुरंत call करता है",
   "kn": "{assistant} ತಕ್ಷಣ call ಮಾಡುತ್ತದೆ",
   "ta": "{assistant} உடனே call செய்யும்",
   "status": {
@@ -4053,7 +4053,7 @@
  "ld.s.3.d": {
   "en": "When the customer asks, {assistant} sends photos, the location or other details on WhatsApp.",
   "te": "కస్టమర్ అడిగితే {assistant} ఫోటోలు, లొకేషన్ లేదా వివరాలను వాట్సాప్‌లో పంపుతుంది.",
-  "hi": "Customer पूछे तो {assistant} फ़ोटो, लोकेशन या दूसरी डिटेल WhatsApp पर भेजती है।",
+  "hi": "Customer पूछे तो {assistant} photo, location या दूसरी details WhatsApp पर भेजता है।",
   "kn": "Customer ಕೇಳಿದರೆ {assistant} ಫೋಟೋ, ಲೊಕೇಶನ್ ಅಥವಾ ವಿವರಗಳನ್ನು WhatsApp ನಲ್ಲಿ ಕಳಿಸುತ್ತದೆ.",
   "ta": "Customer கேட்டால் {assistant} photos, location அல்லது மற்ற details-ஐ WhatsApp-இல் அனுப்பும்.",
   "status": {
@@ -4105,7 +4105,7 @@
  "ld.s.5.d": {
   "en": "{assistant} follows up at the right time, and stops at once if the customer says not to contact them.",
   "te": "సరైన సమయంలో {assistant} ఫాలో-అప్ చేస్తుంది. కస్టమర్ వద్దంటే వెంటనే ఆపేస్తుంది.",
-  "hi": "सही समय पर {assistant} follow-up करती है। customer मना करे तो तुरंत रुक जाती है।",
+  "hi": "सही समय पर {assistant} follow-up करता है। Customer मना करे तो तुरंत रुक जाता है।",
   "kn": "ಸರಿಯಾದ ಸಮಯದಲ್ಲಿ {assistant} follow-up ಮಾಡುತ್ತದೆ. customer ಬೇಡ ಎಂದರೆ ತಕ್ಷಣ ನಿಲ್ಲಿಸುತ್ತದೆ.",
   "ta": "சரியான நேரத்தில் {assistant} follow-up செய்யும். Customer தொடர்புகொள்ள வேண்டாம் என்றால் உடனே நிறுத்திவிடும்.",
   "status": {
@@ -4131,7 +4131,7 @@
  "ld.s.6.d": {
   "en": "Reports show what worked, and a list shows the leads you should call yourself.",
   "te": "ఏది పనిచేసిందో రిపోర్టులు చూపిస్తాయి, మీరే కాల్ చేయాల్సిన లీడ్స్ లిస్ట్‌లో ఉంటాయి.",
-  "hi": "रिपोर्ट दिखाती है कि क्या चला, और लिस्ट में वे leads हैं जिन्हें आपको खुद call करना है।",
+  "hi": "Report दिखाती है कि क्या काम कर रहा है, और list में वे leads होती हैं जिन्हें आपको खुद call करना है।",
   "kn": "ಏನು ಕೆಲಸ ಮಾಡಿತು ಎಂದು ರಿಪೋರ್ಟ್ ತೋರಿಸುತ್ತದೆ, ನೀವೇ call ಮಾಡಬೇಕಾದ leads ಲಿಸ್ಟ್‌ನಲ್ಲಿರುತ್ತವೆ.",
   "ta": "எது வேலை செய்தது என்று reports காட்டும், நீங்களே call செய்ய வேண்டிய leads ஒரு list-இல் இருக்கும்.",
   "status": {
@@ -4570,7 +4570,7 @@
   "en": "An enquiry arrives from a Meta lead ad or WhatsApp.",
   "te": "Meta లీడ్ ప్రకటన నుంచి లేదా వాట్సాప్‌లో ఎంక్వయిరీ వస్తుంది.",
   "hi": "Meta lead ad या WhatsApp से enquiry आती है।",
-  "kn": "Meta lead ಜಾಹೀರಾತು ಅಥವಾ WhatsApp ನಿಂದ enquiry ಬರುತ್ತದೆ.",
+  "kn": "Meta lead ad ಅಥವಾ WhatsApp ನಿಂದ enquiry ಬರುತ್ತದೆ.",
   "ta": "Meta lead ad அல்லது WhatsApp-இல் இருந்து ஒரு enquiry வருகிறது.",
   "status": {
    "te": "draft",
@@ -4582,7 +4582,7 @@
  "ld.pack.textiles.2": {
   "en": "{assistant} calls right away, in the customer's language.",
   "te": "{assistant} వెంటనే కస్టమర్ భాషలో కాల్ చేస్తుంది.",
-  "hi": "{assistant} तुरंत customer की भाषा में call करती है।",
+  "hi": "{assistant} तुरंत customer की भाषा में call करता है।",
   "kn": "{assistant} ತಕ್ಷಣ customer ಭಾಷೆಯಲ್ಲಿ call ಮಾಡುತ್ತದೆ.",
   "ta": "{assistant} உடனே customer-இன் மொழியில் call செய்யும்.",
   "status": {
@@ -4608,7 +4608,7 @@
  "ld.pack.textiles.4": {
   "en": "{assistant} invites the customer for a store visit.",
   "te": "{assistant} కస్టమర్‌ని షాప్ విజిట్‌కి పిలుస్తుంది.",
-  "hi": "{assistant} customer को दुकान आने के लिए बुलाती है।",
+  "hi": "{assistant} customer को दुकान आने के लिए बुलाता है।",
   "kn": "{assistant} customer ಅನ್ನು store visit ಗೆ ಕರೆಯುತ್ತದೆ.",
   "ta": "{assistant} customer-ஐக் கடைக்கு visit செய்ய அழைக்கும்.",
   "status": {
@@ -4647,7 +4647,7 @@
  "ld.pack.construction_materials.2": {
   "en": "{assistant} calls and notes what the customer needs.",
   "te": "{assistant} కాల్ చేసి కస్టమర్‌కి ఏం కావాలో రాసుకుంటుంది.",
-  "hi": "{assistant} call करके लिखती है कि customer को क्या चाहिए।",
+  "hi": "{assistant} call करके लिखता है कि customer को क्या चाहिए।",
   "kn": "{assistant} call ಮಾಡಿ customer ಗೆ ಏನು ಬೇಕು ಎಂದು ಬರೆದುಕೊಳ್ಳುತ್ತದೆ.",
   "ta": "{assistant} call செய்து, customer-க்கு என்ன வேண்டும் என்று குறித்துக்கொள்ளும்.",
   "status": {
@@ -4673,7 +4673,7 @@
  "ld.pack.construction_materials.4": {
   "en": "{assistant} follows up on the delivery.",
   "te": "డెలివరీ గురించి {assistant} ఫాలో-అప్ చేస్తుంది.",
-  "hi": "Delivery के बारे में {assistant} follow-up करती है।",
+  "hi": "Delivery के बारे में {assistant} follow-up करता है।",
   "kn": "Delivery ಬಗ್ಗೆ {assistant} follow-up ಮಾಡುತ್ತದೆ.",
   "ta": "Delivery பற்றி {assistant} follow-up செய்யும்.",
   "status": {
@@ -4712,7 +4712,7 @@
  "ld.pack.education.2": {
   "en": "{assistant} calls the parent right away, in their language.",
   "te": "{assistant} వెంటనే పేరెంట్‌కి వాళ్ల భాషలో కాల్ చేస్తుంది.",
-  "hi": "{assistant} तुरंत parent को उनकी भाषा में call करती है।",
+  "hi": "{assistant} तुरंत parent को उनकी भाषा में call करता है।",
   "kn": "{assistant} ತಕ್ಷಣ ಪೋಷಕರಿಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ call ಮಾಡುತ್ತದೆ.",
   "ta": "{assistant} உடனே பெற்றோருக்கு அவர்கள் மொழியில் call செய்யும்.",
   "status": {
@@ -4738,7 +4738,7 @@
  "ld.pack.education.note": {
   "en": "{assistant} never talks about fees, marks or dues on calls and chats. Your school looks after those.",
   "te": "కాల్స్, చాట్లలో ఫీజులు, మార్కులు, బకాయిల గురించి {assistant} ఎప్పుడూ మాట్లాడదు. అవి మీ స్కూల్ చూసుకుంటుంది.",
-  "hi": "Call और चैट में फ़ीस, मार्क्स या बकाया के बारे में {assistant} कभी बात नहीं करती। वह आपका स्कूल खुद देखता है।",
+  "hi": "Call और chat में fees, marks या बकाया के बारे में {assistant} कभी बात नहीं करता। वह आपका school खुद देखता है।",
   "kn": "Call, ಚಾಟ್‌ನಲ್ಲಿ ಫೀಸ್, ಮಾರ್ಕ್ಸ್, ಬಾಕಿ ಬಗ್ಗೆ {assistant} ಎಂದಿಗೂ ಮಾತನಾಡುವುದಿಲ್ಲ. ಅದನ್ನು ನಿಮ್ಮ ಶಾಲೆ ನೋಡಿಕೊಳ್ಳುತ್ತದೆ.",
   "ta": "Calls, chats-இல் fees, marks, dues பற்றி {assistant} ஒருபோதும் பேசாது. அவற்றை உங்கள் school பார்த்துக்கொள்ளும்.",
   "status": {
@@ -6385,8 +6385,8 @@
  "contact.err.check": {
   "en": "We could not check that you are a person. Wait a moment and try again.",
   "te": "మీరు మనిషే అని తెలుసుకోలేకపోయాము. కొంచెం ఆగి మళ్లీ ప్రయత్నించండి.",
-  "hi": "हम यह जाँच नहीं सके कि आप इंसान हैं। थोड़ा रुककर फिर कोशिश करें।",
-  "kn": "ನೀವು ಮನುಷ್ಯರೇ ಎಂದು ತಿಳಿಯಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಕಾಯ್ದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "hi": "Verification पूरा नहीं हो पाया। थोड़ा रुककर फिर कोशिश करें।",
+  "kn": "Verification ಆಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತು ಬಿಟ್ಟು ಮತ್ತೆ try ಮಾಡಿ.",
   "ta": "நீங்கள் மனிதர்தானா என்று எங்களால் சரிபார்க்க முடியவில்லை. கொஞ்சம் காத்திருந்து மீண்டும் முயலுங்கள்.",
   "status": {
    "te": "draft",
@@ -6398,8 +6398,8 @@
  "sec.transit.t": {
   "en": "Safe in transit",
   "te": "వెళ్లేటప్పుడు భద్రంగా",
-  "hi": "भेजते समय सुरक्षित",
-  "kn": "ಹೋಗುವಾಗ ಸುರಕ್ಷಿತ",
+  "hi": "Data जाते समय सुरक्षित",
+  "kn": "Data ಕಳುಹಿಸುವಾಗ ಸುರಕ್ಷಿತ",
   "ta": "போகும் வழியில் பாதுகாப்பு",
   "status": {
    "te": "draft",
@@ -6411,8 +6411,8 @@
  "sec.transit.d": {
   "en": "The site and the app are served over HTTPS only, and our pages tell your browser to insist on it (HSTS). They also stop other sites from putting our pages in a frame and from running scripts we did not send.",
   "te": "సైట్, యాప్ HTTPS ద్వారా మాత్రమే వస్తాయి, మీ బ్రౌజర్ దాన్నే పట్టుబట్టేలా మా పేజీలు చెబుతాయి (HSTS). మా పేజీలను వేరే సైట్లు ఫ్రేమ్‌లో పెట్టకుండా, మేము పంపని స్క్రిప్టులు నడవకుండా కూడా ఆపుతాయి.",
-  "hi": "साइट और ऐप सिर्फ़ HTTPS से चलते हैं, और हमारे पन्ने आपके ब्राउज़र से यही ज़रूरी करवाते हैं (HSTS)। वे दूसरी साइटों को हमारे पन्ने फ़्रेम में डालने और ऐसी स्क्रिप्ट चलाने से भी रोकते हैं जो हमने नहीं भेजीं।",
-  "kn": "ಸೈಟ್ ಮತ್ತು ಆ್ಯಪ್ HTTPS ಮೂಲಕ ಮಾತ್ರ ಬರುತ್ತವೆ, ನಿಮ್ಮ ಬ್ರೌಸರ್ ಅದನ್ನೇ ಒತ್ತಾಯಿಸುವಂತೆ ನಮ್ಮ ಪುಟಗಳು ಹೇಳುತ್ತವೆ (HSTS). ನಮ್ಮ ಪುಟಗಳನ್ನು ಬೇರೆ ಸೈಟ್‌ಗಳು ಫ್ರೇಮ್‌ನಲ್ಲಿ ಇಡದಂತೆ, ನಾವು ಕಳುಹಿಸದ ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳು ನಡೆಯದಂತೆ ಕೂಡ ತಡೆಯುತ್ತವೆ.",
+  "hi": "Website और app सिर्फ़ HTTPS पर चलते हैं, और हमारे pages आपके browser को यही इस्तेमाल करने के लिए कहते हैं (HSTS)। वे दूसरी sites को हमारे pages को frame में डालने या बाहरी scripts चलाने से भी रोकते हैं।",
+  "kn": "Website ಮತ್ತು app HTTPS ಮೂಲಕ ಮಾತ್ರ open ಆಗುತ್ತವೆ, ನಿಮ್ಮ browser ಅದನ್ನೇ ಬಳಸುವಂತೆ ನಮ್ಮ pages ಸೆಟ್ ಆಗಿವೆ (HSTS). ಬೇರೆ sites ನಮ್ಮ pages ಅನ್ನು frame ನಲ್ಲಿ ಹಾಕದಂತೆ ಮತ್ತು ನಾವು ಕಳುಹಿಸದ scripts run ಆಗದಂತೆ ತಡೆಯುತ್ತವೆ.",
   "ta": "Site-உம் app-உம் HTTPS வழியாக மட்டுமே வருகின்றன, உங்கள் browser அதையே வலியுறுத்த எங்கள் pages சொல்கின்றன (HSTS). மற்ற sites எங்கள் pages-ஐ frame-க்குள் வைப்பதையும், நாங்கள் அனுப்பாத scripts ஓடுவதையும் அவை தடுக்கின்றன.",
   "status": {
    "te": "draft",
@@ -6437,8 +6437,8 @@
  "sec.signin.d": {
   "en": "A wrong e-mail and a wrong password get the same answer, so nobody can use the sign-in page to find out who has an account. Two-step sign-in with an authenticator app is your choice, and one button in Settings signs you out of every device.",
   "te": "తప్పు ఇ-మెయిల్‌కి, తప్పు పాస్‌వర్డ్‌కి ఒకే జవాబు వస్తుంది, కాబట్టి ఎవరికి ఖాతా ఉందో సైన్ ఇన్ పేజీతో తెలుసుకోలేరు. ఆథెంటికేటర్ యాప్‌తో రెండు-దశల సైన్ ఇన్ మీ ఇష్టం, సెట్టింగ్స్‌లో ఒక బటన్ అన్ని పరికరాల నుండి మిమ్మల్ని సైన్ అవుట్ చేస్తుంది.",
-  "hi": "गलत ई-मेल और गलत पासवर्ड का जवाब एक ही है, इसलिए कोई साइन-इन पन्ने से यह नहीं जान सकता कि किसका खाता है। दो-चरण साइन-इन आपकी मर्ज़ी है, और सेटिंग्स का एक बटन हर डिवाइस से साइन आउट कर देता है।",
-  "kn": "ತಪ್ಪು ಇ-ಮೇಲ್‌ಗೂ ತಪ್ಪು ಪಾಸ್‌ವರ್ಡ್‌ಗೂ ಒಂದೇ ಉತ್ತರ ಬರುತ್ತದೆ, ಆದ್ದರಿಂದ ಯಾರಿಗೆ ಖಾತೆ ಇದೆ ಎಂದು ಸೈನ್ ಇನ್ ಪುಟದಿಂದ ತಿಳಿಯಲಾಗದು. ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಎರಡು-ಹಂತದ ಸೈನ್ ಇನ್ ನಿಮ್ಮ ಆಯ್ಕೆ, ಸೆಟ್ಟಿಂಗ್ಸ್‌ನ ಒಂದು ಬಟನ್ ಎಲ್ಲಾ ಸಾಧನಗಳಿಂದ ಸೈನ್ ಔಟ್ ಮಾಡುತ್ತದೆ.",
+  "hi": "गलत email और password पर एक ही जवाब मिलता है, ताकि sign-in page से किसी का account पता न चले। Authenticator app से two-step sign-in आपकी मर्ज़ी है, और Settings के एक button से हर device से sign out हो जाता है।",
+  "kn": "ತಪ್ಪು email ಗೂ ತಪ್ಪು password ಗೂ ಒಂದೇ message ಬರುತ್ತದೆ, ಹಾಗಾಗಿ ಯಾರಿಗೆ account ಇದೆ ಅಂತ sign-in page ಇಂದ ತಿಳಿಯಲು ಆಗುವುದಿಲ್ಲ. Authenticator app ನ two-step sign-in ನಿಮ್ಮ ಆಯ್ಕೆ, Settings ನ ಒಂದು button ಎಲ್ಲಾ devices ನಿಂದ sign out ಮಾಡುತ್ತದೆ.",
   "ta": "தவறான e-mail-க்கும் தவறான password-க்கும் ஒரே பதில் வரும், அதனால் யாருக்கு account உள்ளது என்பதை sign-in page வழியாகக் கண்டுபிடிக்க முடியாது. Authenticator app-இல் இரண்டு-படி sign-in உங்கள் விருப்பம், Settings-இல் ஒரு button எல்லா devices-இலிருந்தும் உங்களை sign out செய்யும்.",
   "status": {
    "te": "draft",
@@ -6450,7 +6450,7 @@
  "sec.report.t": {
   "en": "Found a weakness? Tell us",
   "te": "లోపం కనిపించిందా? మాకు చెప్పండి",
-  "hi": "कोई कमज़ोरी मिली? हमें बताइए",
+  "hi": "कोई security bug या कमी मिली? हमें बताइए",
   "kn": "ದೋಷ ಕಂಡಿತೇ? ನಮಗೆ ಹೇಳಿ",
   "ta": "ஒரு பலவீனம் கண்டீர்களா? எங்களுக்குச் சொல்லுங்கள்",
   "status": {
@@ -6463,8 +6463,8 @@
  "sec.report.d": {
   "en": "Write to {address} with what you found and how to see it. Please do not look at other people's data or slow the service down while you test. We read every report; we cannot promise a reward.",
   "te": "మీరు ఏమి కనుగొన్నారో, దాన్ని ఎలా చూడవచ్చో {address} కి రాయండి. పరీక్షిస్తున్నప్పుడు ఇతరుల డేటాను చూడకండి, సేవను నెమ్మదింపజేయకండి. ప్రతి రిపోర్టు మేము చదువుతాం; బహుమతి ఇస్తామని మాట ఇవ్వలేము.",
-  "hi": "आपने क्या पाया और उसे कैसे देखा जाए, यह {address} पर लिखिए। जाँच करते समय दूसरों का डेटा न देखें और सेवा को धीमा न करें। हम हर रिपोर्ट पढ़ते हैं; इनाम का वादा नहीं कर सकते।",
-  "kn": "ನೀವು ಏನು ಕಂಡಿರಿ, ಅದನ್ನು ಹೇಗೆ ನೋಡಬಹುದು ಎಂದು {address} ಗೆ ಬರೆಯಿರಿ. ಪರೀಕ್ಷಿಸುವಾಗ ಬೇರೆಯವರ ಡೇಟಾ ನೋಡಬೇಡಿ, ಸೇವೆಯನ್ನು ನಿಧಾನಗೊಳಿಸಬೇಡಿ. ಪ್ರತಿ ವರದಿಯನ್ನು ನಾವು ಓದುತ್ತೇವೆ; ಬಹುಮಾನದ ಭರವಸೆ ಕೊಡಲಾಗದು.",
+  "hi": "आपको क्या मिला और उसे कैसे check करें, यह {address} पर भेज दीजिए। Test करते समय दूसरों का data न देखें और service को slow न करें। हम हर report पढ़ते हैं, लेकिन इनाम का वादा नहीं कर सकते।",
+  "kn": "ನಿಮಗೆ ಏನು ಕಾಣಿಸಿತು ಮತ್ತು ಅದನ್ನು ಹೇಗೆ check ಮಾಡಬಹುದು ಅಂತ {address} ಗೆ ಬರೆಯಿರಿ. Test ಮಾಡುವಾಗ ಬೇರೆಯವರ data ನೋಡಬೇಡಿ, service ಅನ್ನು slow ಮಾಡಬೇಡಿ. ಪ್ರತಿ report ಅನ್ನೂ ನಾವು ಓದುತ್ತೇವೆ; ಆದರೆ reward ಕೊಡುತ್ತೇವೆ ಅಂತ ಭರವಸೆ ಕೊಡಲು ಆಗುವುದಿಲ್ಲ.",
   "ta": "நீங்கள் என்ன கண்டீர்கள், அதை எப்படிப் பார்ப்பது என்று {address}-க்கு எழுதுங்கள். சோதிக்கும்போது மற்றவர்களின் data-வைப் பார்க்காதீர்கள், service-ஐ மெதுவாக்காதீர்கள். ஒவ்வொரு report-ஐயும் படிக்கிறோம்; பரிசு தருவோம் என்று உறுதி சொல்ல முடியாது.",
   "status": {
    "te": "draft",
@@ -6476,8 +6476,8 @@
  "sec.notyet.4": {
   "en": "Backups with a tested restore, for the day real customer data arrives.",
   "te": "నిజమైన కస్టమర్ డేటా వచ్చే రోజుకు, పరీక్షించిన రీస్టోర్‌తో బ్యాకప్‌లు.",
-  "hi": "असली customer डेटा आने के दिन के लिए, जाँचे हुए रीस्टोर वाले बैकअप।",
-  "kn": "ನಿಜವಾದ customer ಡೇಟಾ ಬರುವ ದಿನಕ್ಕಾಗಿ, ಪರೀಕ್ಷಿಸಿದ ರೀಸ್ಟೋರ್‌ನ ಬ್ಯಾಕಪ್‌ಗಳು.",
+  "hi": "असली customer data आने से पहले, ऐसे backups जिनका restore test किया जा चुका हो।",
+  "kn": "ನಿಜವಾದ customer data ಬರುವ ಮುನ್ನ, restore test ಮಾಡಿದ backups.",
   "ta": "உண்மையான customer data வரும் நாளுக்காக, சோதிக்கப்பட்ட restore உள்ள backups.",
   "status": {
    "te": "draft",
@@ -6581,8 +6581,8 @@
  "h2.nav.login": {
   "en": "Log in",
   "te": "లాగిన్",
-  "hi": "लॉग इन",
-  "kn": "ಲಾಗಿನ್",
+  "hi": "Log in",
+  "kn": "Log in",
   "ta": "Log in",
   "status": {
    "te": "draft",
@@ -8606,7 +8606,7 @@
   "en": "Not called back in 5 minutes",
   "te": "5 నిమిషాల్లో తిరిగి కాల్ చేయనివి",
   "hi": "5 मिनट में call back नहीं हुआ",
-  "kn": "5 ನಿಮಿಷದಲ್ಲಿ ಮರಳಿ call ಮಾಡದವು",
+  "kn": "5 ನಿಮಿಷದಲ್ಲಿ call back ಮಾಡದೇ ಬಿಟ್ಟವು",
   "ta": "5 நிமிடத்தில் call back செய்யப்படாதவை",
   "status": {
    "te": "draft",
@@ -9074,8 +9074,8 @@
  "h2.join.phone": {
   "en": "Phone or e-mail",
   "te": "ఫోన్ లేదా ఇ-మెయిల్",
-  "hi": "फ़ोन या ई-मेल",
-  "kn": "ಫೋನ್ ಅಥವಾ ಇ-ಮೇಲ್",
+  "hi": "Phone या email",
+  "kn": "Phone ಅಥವಾ email",
   "ta": "Phone அல்லது e-mail",
   "status": {
    "te": "draft",
@@ -9087,8 +9087,8 @@
  "h2.join.biz": {
   "en": "Type of business",
   "te": "వ్యాపార రకం",
-  "hi": "Business का प्रकार",
-  "kn": "Business ನ ವಿಧ",
+  "hi": "किस तरह का business है",
+  "kn": "ಯಾವ ತರಹದ business",
   "ta": "Business வகை",
   "status": {
    "te": "draft",
@@ -9113,8 +9113,8 @@
  "h2.join.thanks": {
   "en": "You're on the list. We will contact you when your place opens.",
   "te": "మీరు జాబితాలో ఉన్నారు. మీ స్థానం ఓపెన్ అయినప్పుడు సంప్రదిస్తాం.",
-  "hi": "आप सूची में हैं। आपकी जगह खुलने पर हम संपर्क करेंगे।",
-  "kn": "ನೀವು ಪಟ್ಟಿಯಲ್ಲಿದ್ದೀರಿ. ನಿಮ್ಮ ಸ್ಥಾನ ತೆರೆದಾಗ ಸಂಪರ್ಕಿಸುತ್ತೇವೆ.",
+  "hi": "आप list में जुड़ गए हैं। आपका access शुरू होते ही हम आपसे बात करेंगे।",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು list ಗೆ ಸೇರಿದೆ. ನಿಮ್ಮ access ರೆಡಿ ಆದಾಗ ನಾವು contact ಮಾಡುತ್ತೇವೆ.",
   "ta": "நீங்கள் list-இல் இருக்கிறீர்கள். உங்களுக்கான இடம் திறந்ததும் தொடர்புகொள்வோம்.",
   "status": {
    "te": "draft",
@@ -9126,7 +9126,7 @@
  "h2.join.once": {
   "en": "We use your details only to contact you about early access.",
   "te": "ముందస్తు యాక్సెస్ గురించి మిమ్మల్ని సంప్రదించడానికి మాత్రమే మీ వివరాలు వాడతాం.",
-  "hi": "आपकी जानकारी का उपयोग हम केवल early access के बारे में संपर्क करने के लिए करते हैं।",
+  "hi": "आपकी details हम सिर्फ़ early access के बारे में बात करने के लिए इस्तेमाल करेंगे।",
   "kn": "Early access ಬಗ್ಗೆ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಲು ಮಾತ್ರ ನಿಮ್ಮ ವಿವರಗಳನ್ನು ಬಳಸುತ್ತೇವೆ.",
   "ta": "Early access பற்றித் தொடர்புகொள்ள மட்டுமே உங்கள் விவரங்களைப் பயன்படுத்துவோம்.",
   "status": {
@@ -9152,8 +9152,8 @@
  "h2.foot.product": {
   "en": "Product",
   "te": "ప్రోడక్ట్",
-  "hi": "प्रोडक्ट",
-  "kn": "ಪ್ರಾಡಕ್ಟ್",
+  "hi": "Product",
+  "kn": "Product",
   "ta": "Product",
   "status": {
    "te": "draft",
@@ -9216,7 +9216,7 @@
   "en": "© {year} {brand}. Made in India, for Indian small businesses.",
   "te": "© {year} {brand}. భారతదేశంలో తయారు, భారతదేశ చిన్న వ్యాపారాల కోసం.",
   "hi": "© {year} {brand}. भारत में बना, भारत के छोटे businesses के लिए।",
-  "kn": "© {year} {brand}. ಭಾರತದಲ್ಲಿ ತಯಾರು, ಭಾರತದ ಸಣ್ಣ businesses ಗಾಗಿ.",
+  "kn": "© {year} {brand}. ಭಾರತದಲ್ಲಿ ತಯಾರಿಸಿದ್ದು, ಭಾರತದ ಸಣ್ಣ businesses ಗಾಗಿ.",
   "ta": "© {year} {brand}. இந்தியாவில் உருவாக்கப்பட்டது, இந்திய சிறு businesses-க்காக.",
   "status": {
    "te": "draft",
@@ -9241,8 +9241,8 @@
  "h2.foot.rebuild": {
   "en": "Rebuild the name",
   "te": "పేరును మళ్లీ కట్టండి",
-  "hi": "नाम फिर से बनाएँ",
-  "kn": "ಹೆಸರನ್ನು ಮತ್ತೆ ಕಟ್ಟಿ",
+  "hi": "Animation फिर से देखें",
+  "kn": "Animation ಮತ್ತೆ ನೋಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9347,7 +9347,7 @@
   "en": "Legal name",
   "te": "చట్టపరమైన పేరు",
   "hi": "कानूनी नाम",
-  "kn": "ಕಾನೂನುಬದ್ಧ ಹೆಸರು",
+  "kn": "ಅಧಿಕೃತ ಹೆಸರು (Legal name)",
   "ta": "சட்டப்படியான பெயர்",
   "status": {
    "te": "draft",
@@ -9385,8 +9385,8 @@
  "price.early": {
   "en": "Free during early access: use everything free while we open to businesses. The plans below start after early access.",
   "te": "ఎర్లీ యాక్సెస్ సమయంలో ఉచితం: మేము వ్యాపారాలకు తెరుస్తున్న సమయంలో అన్నీ ఉచితంగా వాడండి. కింద ఉన్న ప్లాన్లు ఎర్లీ యాక్సెస్ తర్వాత మొదలవుతాయి.",
-  "hi": "Early access के दौरान मुफ़्त: जब तक हम businesses के लिए खुल रहे हैं, सब कुछ मुफ़्त इस्तेमाल करें। नीचे दिए plans early access के बाद शुरू होंगे।",
-  "kn": "Early access ಸಮಯದಲ್ಲಿ ಉಚಿತ: ನಾವು businesses ಗೆ ತೆರೆಯುತ್ತಿರುವಾಗ ಎಲ್ಲವನ್ನೂ ಉಚಿತವಾಗಿ ಬಳಸಿ. ಕೆಳಗಿನ plans early access ನಂತರ ಶುರುವಾಗುತ್ತವೆ.",
+  "hi": "Early access में सब free है: अभी आप पूरा product बिना किसी charge के इस्तेमाल कर सकते हैं। नीचे दिए plans early access के बाद शुरू होंगे।",
+  "kn": "Early access ನಲ್ಲಿ ಎಲ್ಲವೂ free: ಈಗ ಎಲ್ಲಾ features ಅನ್ನು free ಆಗಿ ಬಳಸಿ. ಕೆಳಗಿನ plans early access ನಂತರ ಶುರುವಾಗುತ್ತವೆ.",
   "ta": "Early access காலத்தில் இலவசம்: நாங்கள் businesses-க்குத் திறக்கும்போது எல்லாவற்றையும் இலவசமாகப் பயன்படுத்துங்கள். கீழே உள்ள plans, early access முடிந்த பிறகு தொடங்கும்.",
   "status": {
    "te": "draft",
@@ -9476,7 +9476,7 @@
  "pp.perminute": {
   "en": "Calls: ₹{minute} a minute",
   "te": "Calls: నిమిషానికి ₹{minute}",
-  "hi": "Calls: ₹{minute} प्रति मिनट",
+  "hi": "Calls: ₹{minute}/मिनट",
   "kn": "Calls: ನಿಮಿಷಕ್ಕೆ ₹{minute}",
   "ta": "Calls: நிமிடத்துக்கு ₹{minute}",
   "status": {
@@ -9502,8 +9502,8 @@
  "pp.extra": {
   "en": "Extra minutes: ₹{minute} each",
   "te": "Extra minutes: ఒక్కోటి ₹{minute}",
-  "hi": "Extra minutes: ₹{minute} प्रति minute",
-  "kn": "Extra minutes: ಒಂದಕ್ಕೆ ₹{minute}",
+  "hi": "Extra minutes: ₹{minute}/मिनट",
+  "kn": "Extra minutes: ನಿಮಿಷಕ್ಕೆ ₹{minute}",
   "ta": "கூடுதல் minutes: ஒவ்வொன்றும் ₹{minute}",
   "status": {
    "te": "draft",
@@ -9515,7 +9515,7 @@
  "pp.find.payg": {
   "en": "Find customers: {free} searches free a month, then ₹{p} each",
   "te": "Find customers: నెలకి {free} searches free, తర్వాత ఒక్కోటి ₹{p}",
-  "hi": "Find customers: महीने में {free} searches free, फिर ₹{p} प्रति search",
+  "hi": "Find customers: महीने में {free} searches free, उसके बाद ₹{p}/search",
   "kn": "Find customers: ತಿಂಗಳಿಗೆ {free} searches free, ನಂತರ ಒಂದಕ್ಕೆ ₹{p}",
   "ta": "Find customers: மாதம் {free} searches இலவசம், பிறகு ஒவ்வொன்றும் ₹{p}",
   "status": {
@@ -9528,7 +9528,7 @@
  "pp.find.n": {
   "en": "Find customers: {n} searches a month, then ₹{p} each",
   "te": "Find customers: నెలకి {n} searches, తర్వాత ఒక్కోటి ₹{p}",
-  "hi": "Find customers: महीने में {n} searches, फिर ₹{p} प्रति search",
+  "hi": "Find customers: महीने में {n} searches, उसके बाद ₹{p}/search",
   "kn": "Find customers: ತಿಂಗಳಿಗೆ {n} searches, ನಂತರ ಒಂದಕ್ಕೆ ₹{p}",
   "ta": "Find customers: மாதம் {n} searches, பிறகு ஒவ்வொன்றும் ₹{p}",
   "status": {
@@ -9593,7 +9593,7 @@
  "pp.sh.2": {
   "en": "1 phone number included. More numbers: ₹{number} a month each",
   "te": "1 phone number included. ఇంకా numbers కావాలంటే: ఒక్కోటి నెలకి ₹{number}",
-  "hi": "1 phone number शामिल। और numbers: ₹{number} महीना प्रति number",
+  "hi": "1 phone number शामिल। Extra numbers: ₹{number}/महीना हर number के लिए",
   "kn": "1 phone number ಒಳಗೊಂಡಿದೆ. ಹೆಚ್ಚು numbers: ತಿಂಗಳಿಗೆ ಒಂದಕ್ಕೆ ₹{number}",
   "ta": "1 phone number சேர்க்கப்பட்டுள்ளது. கூடுதல் numbers: ஒவ்வொன்றும் மாதம் ₹{number}",
   "status": {
@@ -9659,7 +9659,7 @@
   "en": "Start with ₹{start} free in your wallet",
   "te": "Wallet లో ₹{start} free తో మొదలుపెట్టండి",
   "hi": "Wallet में ₹{start} free के साथ शुरू कीजिए",
-  "kn": "Wallet ನಲ್ಲಿ ₹{start} free ನೊಂದಿಗೆ ಆರಂಭಿಸಿ",
+  "kn": "Wallet ನಲ್ಲಿ ₹{start} free ಜೊತೆ start ಮಾಡಿ",
   "ta": "உங்கள் wallet-இல் ₹{start} இலவசத்துடன் ஆரம்பிக்கலாம்",
   "status": {
    "te": "draft",
@@ -9711,7 +9711,7 @@
   "en": "The paid-plan prices here are before GST. 18% GST is added on top, so Pro is ₹{pro} + 18% GST. Early access is free.",
   "te": "ఇక్కడి paid-plan prices GST కి ముందువి. 18% GST అదనంగా కలుస్తుంది, అంటే Pro: ₹{pro} + 18% GST. Early access free.",
   "hi": "यहाँ के paid-plan prices GST से पहले के हैं। ऊपर से 18% GST जुड़ता है, यानी Pro: ₹{pro} + 18% GST। Early access free है।",
-  "kn": "ಇಲ್ಲಿರುವ paid-plan ಬೆಲೆಗಳು GST ಗೆ ಮೊದಲಿನವು. 18% GST ಹೆಚ್ಚುವರಿಯಾಗಿ ಸೇರುತ್ತದೆ, ಅಂದರೆ Pro: ₹{pro} + 18% GST. Early access free.",
+  "kn": "ಇಲ್ಲಿ ತೋರಿಸಿರುವ paid-plan prices ನಲ್ಲಿ GST ಸೇರಿಲ್ಲ. 18% GST ಪ್ರತ್ಯೇಕವಾಗಿ ಸೇರುತ್ತದೆ, ಅಂದರೆ Pro: ₹{pro} + 18% GST. Early access free.",
   "ta": "இங்கே உள்ள paid-plan விலைகள் GST-க்கு முந்தையவை. 18% GST கூடுதலாகச் சேரும், அதாவது Pro: ₹{pro} + 18% GST. Early access இலவசம்.",
   "status": {
    "te": "draft",
@@ -9736,7 +9736,7 @@
  "price.faq.5.a": {
   "en": "Early access is free. With paid plans (from February 2027), ₹{start} is added to your wallet when you join, so you can try your assistant before you pay anything.",
   "te": "Early access free. Paid plans తో (2027 February నుంచి), join అయినప్పుడు మీ wallet లో ₹{start} వేస్తాం, ఏమీ pay చేయకముందే మీ assistant ని try చేయవచ్చు.",
-  "hi": "Early access free है। Paid plans के साथ (फरवरी 2027 से), जुड़ते ही आपके wallet में ₹{start} डल जाते हैं, ताकि कुछ भी pay करने से पहले आप अपना assistant आज़मा सकें।",
+  "hi": "Early access free है। Paid plans (फरवरी 2027 से) में जुड़ते ही आपके wallet में ₹{start} मिल जाते हैं, ताकि कुछ भी pay करने से पहले आप अपना assistant try कर सकें।",
   "kn": "Early access free. Paid plans ನೊಂದಿಗೆ (2027 ಫೆಬ್ರವರಿಯಿಂದ), ನೀವು ಸೇರಿದಾಗ ನಿಮ್ಮ wallet ಗೆ ₹{start} ಹಾಕುತ್ತೇವೆ, ಏನೂ pay ಮಾಡುವ ಮೊದಲೇ ನಿಮ್ಮ assistant ಅನ್ನು try ಮಾಡಬಹುದು.",
   "ta": "Early access இலவசம். Paid plans-இல் (2027 பிப்ரவரி முதல்), நீங்கள் சேரும்போது உங்கள் wallet-இல் ₹{start} சேர்க்கப்படும். எதுவும் கட்டுவதற்கு முன்பே உங்கள் assistant-ஐ முயன்று பார்க்கலாம்.",
   "status": {
@@ -9788,8 +9788,8 @@
  "h3.hero.t": {
   "en": "Every enquiry answered. Every call picked up.",
   "te": "ప్రతి enquiry కి జవాబు. ప్రతి call lift అవుతుంది.",
-  "hi": "हर enquiry का जवाब। हर call pick up होती है।",
-  "kn": "ಪ್ರತಿ enquiry ಗೆ ಉತ್ತರ. ಪ್ರತಿ call pick up ಆಗುತ್ತದೆ.",
+  "hi": "हर enquiry का जवाब। हर call समय पर उठेगी।",
+  "kn": "ಪ್ರತಿ enquiry ಗೂ ಉತ್ತರ. ಯಾವ call ಕೂಡ miss ಆಗಲ್ಲ.",
   "ta": "ஒவ்வொரு enquiry-க்கும் பதில். ஒவ்வொரு call-ம் எடுக்கப்படும்.",
   "status": {
    "te": "draft",
@@ -10202,8 +10202,8 @@
  "h3.leak.cold": {
   "en": "went cold",
   "te": "చేజారిపోయాయి",
-  "hi": "ठंडी पड़ गईं",
-  "kn": "ತಣ್ಣಗಾದವು",
+  "hi": "Cold हो गईं",
+  "kn": "Cold ಆದವು",
   "ta": "ஆறிப்போனவை",
   "status": {
    "te": "draft",
@@ -10502,7 +10502,7 @@
   "en": "Today, after 6 pm",
   "te": "ఈరోజు, 6 pm తర్వాత",
   "hi": "आज, 6 pm के बाद",
-  "kn": "ಇಂದು, 6 pm ನಂತರ",
+  "kn": "ಇವತ್ತು, 6 pm ನಂತರ",
   "ta": "இன்று, 6 pm-க்குப் பிறகு",
   "status": {
    "te": "draft",
@@ -10540,8 +10540,8 @@
  "h3.eb.ask": {
   "en": "Try it",
   "te": "ప్రయత్నించండి",
-  "hi": "आज़माइए",
-  "kn": "ಪ್ರಯತ್ನಿಸಿ",
+  "hi": "Try करके देखिए",
+  "kn": "Try ಮಾಡಿ ನೋಡಿ",
   "ta": "முயற்சி செய்யுங்கள்",
   "status": {
    "te": "draft",
@@ -10592,8 +10592,8 @@
  "h3.found.sum": {
   "en": "Written the moment the call ends.",
   "te": "Call ముగియగానే రాసి ఉంటుంది.",
-  "hi": "Call खत्म होते ही लिख दिया जाता है।",
-  "kn": "Call ಮುಗಿದ ತಕ್ಷಣ ಬರೆದಿರುತ್ತದೆ.",
+  "hi": "Call खत्म होते ही सब note हो जाता है।",
+  "kn": "Call ಮುಗಿದ ತಕ್ಷಣ summary ರೆಡಿ ಆಗುತ್ತದೆ.",
   "ta": "Call முடிந்தவுடன் எழுதப்படும்.",
   "status": {
    "te": "draft",
@@ -10697,7 +10697,7 @@
   "en": "Hi, you asked about a flat. Can you visit this Saturday?",
   "te": "నమస్తే, మీరు flat గురించి అడిగారు. ఈ శనివారం visit చేయగలరా?",
   "hi": "नमस्ते, आपने flat के बारे में पूछा था। क्या आप इस शनिवार visit कर सकते हैं?",
-  "kn": "ನಮಸ್ಕಾರ, ನೀವು flat ಬಗ್ಗೆ ಕೇಳಿದ್ದಿರಿ. ಈ ಶನಿವಾರ visit ಮಾಡಬಹುದೇ?",
+  "kn": "ನಮಸ್ಕಾರ, ನೀವು flat ಬಗ್ಗೆ ಕೇಳಿದ್ರಿ ಅಲ್ವಾ. ಈ ಶನಿವಾರ visit ಗೆ ಬರೋಕೆ ಆಗುತ್ತಾ?",
   "ta": "வணக்கம், நீங்கள் flat பற்றி கேட்டீர்கள். இந்த சனிக்கிழமை visit செய்ய முடியுமா?",
   "status": {
    "te": "draft",
@@ -10735,8 +10735,8 @@
  "h3.job.2.says": {
   "en": "Thanks for asking about admissions. Shall I book a demo class?",
   "te": "Admissions గురించి అడిగినందుకు thanks. Demo class book చేయనా?",
-  "hi": "Admission के बारे में पूछने के लिए धन्यवाद। Demo class book कर दूँ?",
-  "kn": "Admission ಬಗ್ಗೆ ಕೇಳಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದ. Demo class book ಮಾಡಲಾ?",
+  "hi": "Admission के बारे में पूछने के लिए शुक्रिया। Demo class book कर दूँ?",
+  "kn": "Admission ಬಗ್ಗೆ ಕೇಳಿದ್ದಕ್ಕೆ thanks. Demo class book ಮಾಡಲಾ?",
   "ta": "Admission பற்றி கேட்டதற்கு நன்றி. Demo class book செய்யவா?",
   "status": {
    "te": "draft",
@@ -10813,8 +10813,8 @@
  "h3.job.4.says": {
   "en": "Thanks for your interest. Which day suits you for a test drive?",
   "te": "Interest చూపినందుకు thanks. Test drive కి ఏ రోజు వీలవుతుంది?",
-  "hi": "Interest दिखाने के लिए धन्यवाद। Test drive के लिए कौन सा दिन ठीक रहेगा?",
-  "kn": "Interest ತೋರಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದ. Test drive ಗೆ ಯಾವ ದಿನ ಅನುಕೂಲ?",
+  "hi": "Enquiry के लिए शुक्रिया। Test drive के लिए कौन सा दिन ठीक रहेगा?",
+  "kn": "Enquiry ಮಾಡಿದ್ದಕ್ಕೆ thanks. Test drive ಗೆ ಯಾವ ದಿನ ನಿಮಗೆ comfortable?",
   "ta": "Interest காட்டியதற்கு நன்றி. Test drive-க்கு எந்த நாள் வசதி?",
   "status": {
    "te": "draft",
@@ -10853,7 +10853,7 @@
   "en": "Your order is ready. Can you pick it up today?",
   "te": "మీ order ready. ఈరోజు pickup చేసుకోగలరా?",
   "hi": "आपका order ready है। क्या आज pickup कर सकते हैं?",
-  "kn": "ನಿಮ್ಮ order ready. ಇಂದು pickup ಮಾಡಬಹುದೇ?",
+  "kn": "ನಿಮ್ಮ order ready ಇದೆ. ಇವತ್ತು pickup ಮಾಡೋಕೆ ಆಗುತ್ತಾ?",
   "ta": "உங்கள் order ready. இன்று pickup செய்ய முடியுமா?",
   "status": {
    "te": "draft",
@@ -10865,7 +10865,7 @@
  "h3.job.5.when": {
   "en": "As soon as it is ready",
   "te": "Ready అయిన వెంటనే",
-  "hi": "ready होते ही",
+  "hi": "Ready होते ही",
   "kn": "Ready ಆದ ತಕ್ಷಣ",
   "ta": "Ready ஆனவுடன்",
   "status": {
@@ -10878,8 +10878,8 @@
  "h4.faq.t": {
   "en": "Quick questions",
   "te": "త్వరిత ప్రశ్నలు",
-  "hi": "छोटे सवाल",
-  "kn": "ಸಣ್ಣ ಪ್ರಶ್ನೆಗಳು",
+  "hi": "आम सवाल",
+  "kn": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
   "ta": "சிறு கேள்விகள்",
   "status": {
    "te": "draft",
@@ -10918,7 +10918,7 @@
   "en": "Does it speak Telugu?",
   "te": "Telugu మాట్లాడుతుందా?",
   "hi": "क्या यह Telugu बोलता है?",
-  "kn": "Telugu ಮಾತಾಡುತ್ತದೆಯೇ?",
+  "kn": "Telugu ಮಾತಾಡುತ್ತಾ?",
   "ta": "தெலுங்கு பேசுமா?",
   "status": {
    "te": "draft",
@@ -10956,8 +10956,8 @@
  "h4.faq.2.a": {
   "en": "If someone asks, it always says it's the business's AI assistant.",
   "te": "ఎవరైనా అడిగితే, అది ఎప్పుడూ ఆ బిజినెస్ AI assistant అనే చెప్తుంది.",
-  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस बिज़नेस का AI assistant है।",
-  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ಆ ಬಿಸಿನೆಸ್‌ನ AI assistant ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "hi": "कोई पूछे तो यह हमेशा बताता है कि यह उस business का AI assistant है।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ತಾನು ಆ business ನ AI assistant ಅಂತ ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ.",
   "ta": "யாராவது கேட்டால், இது எப்போதும் தான் அந்த வணிகத்தின் AI assistant என்று சொல்லும்.",
   "status": {
    "te": "draft",
@@ -11021,8 +11021,8 @@
  "h4.faq.2.a.quiet": {
   "en": "If they ask, it always says so honestly. You choose whether it mentions it in the greeting.",
   "te": "వాళ్ళు అడిగితే, ఎప్పుడూ నిజాయితీగా చెప్తుంది. Greeting లో చెప్పాలో లేదో మీరే ఎంచుకోండి.",
-  "hi": "अगर वे पूछें, तो यह हमेशा ईमानदारी से बताता है। Greeting में बताना है या नहीं, यह आप चुनिए।",
-  "kn": "ಅವರು ಕೇಳಿದರೆ, ಯಾವಾಗಲೂ ಪ್ರಾಮಾಣಿಕವಾಗಿ ಹೇಳುತ್ತದೆ. Greeting ನಲ್ಲಿ ಹೇಳಬೇಕೇ ಬೇಡವೇ ಎಂದು ನೀವೇ ಆರಿಸಿ.",
+  "hi": "कोई पूछे तो यह हमेशा साफ़-साफ़ बताता है। Greeting में बताना है या नहीं, यह आप तय कीजिए।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದರೆ, ಯಾವಾಗಲೂ ನಿಜ ಹೇಳುತ್ತದೆ. Greeting ನಲ್ಲಿ ಹೇಳಬೇಕಾ ಬೇಡವಾ ಅಂತ ನೀವೇ choose ಮಾಡಿ.",
   "ta": "அவர்கள் கேட்டால், எப்போதும் நேர்மையாகச் சொல்லும். Greeting-இல் சொல்ல வேண்டுமா என்பதை நீங்களே தேர்ந்தெடுங்கள்.",
   "status": {
    "te": "draft",
@@ -11034,8 +11034,8 @@
  "h4.finder.sub": {
   "en": "It finds businesses that could buy from you. You call them.",
   "te": "మీ దగ్గర కొనగలిగే businesses ని ఇది వెతుకుతుంది. Call చేసేది మీరే.",
-  "hi": "यह आपसे खरीद सकने वाले businesses ढूँढता है। Call आप करते हैं।",
-  "kn": "ನಿಮ್ಮಿಂದ ಕೊಳ್ಳಬಹುದಾದ businesses ಅನ್ನು ಇದು ಹುಡುಕುತ್ತದೆ. Call ಮಾಡುವುದು ನೀವೇ.",
+  "hi": "यह ऐसे businesses ढूँढता है जो आपके customer बन सकते हैं। Call आप खुद करते हैं।",
+  "kn": "ನಿಮ್ಮಿಂದ ಖರೀದಿ ಮಾಡಬಹುದಾದ businesses ಅನ್ನು ಇದು ಹುಡುಕುತ್ತದೆ. Call ಮಾಡುವುದು ನೀವೇ.",
   "ta": "உங்களிடம் வாங்கக்கூடிய businesses-ஐ இது தேடும். Call செய்வது நீங்களே.",
   "status": {
    "te": "draft",
@@ -11086,7 +11086,7 @@
  "h4.pl.more": {
   "en": "See full pricing",
   "te": "పూర్తి pricing చూడండి",
-  "hi": "पूरा pricing देखिए",
+  "hi": "पूरी pricing देखिए",
   "kn": "ಪೂರ್ತಿ pricing ನೋಡಿ",
   "ta": "முழு pricing-ஐப் பாருங்கள்",
   "status": {
@@ -11138,7 +11138,7 @@
  "h4.pl.title": {
   "en": "Simple plans in rupees",
   "te": "Rupees లో simple plans",
-  "hi": "रुपये में सीधे plans",
+  "hi": "रुपये में आसान plans",
   "kn": "ರೂಪಾಯಿಗಳಲ್ಲಿ ಸರಳ plans",
   "ta": "ரூபாயில் எளிய plans",
   "status": {
@@ -11165,7 +11165,7 @@
   "en": "Move the sliders to your numbers.",
   "te": "Sliders ని మీ numbers కి జరపండి.",
   "hi": "Sliders को अपने numbers पर ले जाइए।",
-  "kn": "Sliders ಅನ್ನು ನಿಮ್ಮ numbers ಗೆ ಜರುಗಿಸಿ.",
+  "kn": "Sliders ಅನ್ನು ನಿಮ್ಮ numbers ಗೆ adjust ಮಾಡಿ.",
   "ta": "Sliders-ஐ உங்கள் numbers-க்கு நகர்த்துங்கள்.",
   "status": {
    "te": "draft",
@@ -11177,8 +11177,8 @@
  "h4.leak.t": {
   "en": "What late call-backs cost you",
   "te": "ఆలస్యంగా call back చేస్తే మీకు ఎంత నష్టం",
-  "hi": "late call-back से आपका कितना नुकसान",
-  "kn": "late call-back ನಿಂದ ನಿಮಗೆ ಎಷ್ಟು ನಷ್ಟ",
+  "hi": "देरी से call back करने का कितना नुकसान होता है",
+  "kn": "Late call-back ಇಂದ ನಿಮಗೆ ಎಷ್ಟು ನಷ್ಟ ಆಗುತ್ತದೆ",
   "ta": "late call-back-ஆல் உங்களுக்கு எவ்வளவு இழப்பு",
   "status": {
    "te": "draft",

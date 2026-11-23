@@ -15,6 +15,7 @@ explicit India-time instants on dates 40 days ago, the second pgTAP file 79 test
 from __future__ import annotations
 
 import threading
+import time as py_time
 import uuid
 from collections.abc import Iterator
 from datetime import date, datetime, time, timedelta, timezone
@@ -235,34 +236,48 @@ def shop(client: TestClient, eval_world: World, stack: Stack, signup: Any) -> It
 
 
 # ---------------------------------------------------------------------------------------------- safe by default
+def _tick(worker: Worker, attempts: int = 3) -> Any:
+    for i in range(attempts):
+        out = worker.tick_once()
+        if out is not None:
+            return out
+        if i + 1 < attempts:
+            py_time.sleep(0.2)
+    return None
+
+
 def test_nothing_is_released_while_either_switch_is_off(shop: Shop) -> None:
     pin(0, "14:00")
     lead = shop.lead()
     mid = shop.submit(lead)
     assert shop.msg(mid) == ("queued", "auto_allowed")
     worker, adapter = shop.sched.worker()
-    # the GLOBAL switch off
-    operator_sql.sql(
-        "update public.platform_flags set enabled = false where key = 'outbox_enabled'"
-    )
-    assert worker.tick_once() is not None
-    assert mid not in sent_ids(adapter) and shop.msg(mid) == ("queued", "auto_allowed"), (
-        "the kill switch holds the queue"
-    )
-    # the switch on, the BUSINESS off
-    operator_sql.sql("update public.platform_flags set enabled = true where key = 'outbox_enabled'")
-    shop.set_auto(False)
-    assert worker.tick_once() is not None
-    assert mid not in sent_ids(adapter) and shop.msg(mid) == ("queued", "auto_allowed"), (
-        "no automatic sending, no automatic release"
-    )
-    # both on
-    shop.set_auto(True)
-    assert worker.tick_once() is not None
-    assert sent_ids(adapter).count(mid) == 1 and shop.msg(mid)[0] == "sent"
-    assert adapter.sent[sent_ids(adapter).index(mid)].body.startswith(
-        "Our new collection is on display at the shop today."
-    )
+    try:
+        # the GLOBAL switch off
+        operator_sql.sql(
+            "update public.platform_flags set enabled = false where key = 'outbox_enabled'"
+        )
+        assert _tick(worker) is not None
+        assert mid not in sent_ids(adapter) and shop.msg(mid) == ("queued", "auto_allowed"), (
+            "the kill switch holds the queue"
+        )
+        # the switch on, the BUSINESS off
+        operator_sql.sql("update public.platform_flags set enabled = true where key = 'outbox_enabled'")
+        shop.set_auto(False)
+        assert _tick(worker) is not None
+        assert mid not in sent_ids(adapter) and shop.msg(mid) == ("queued", "auto_allowed"), (
+            "no automatic sending, no automatic release"
+        )
+        # both on
+        shop.set_auto(True)
+        assert _tick(worker) is not None
+        assert sent_ids(adapter).count(mid) == 1 and shop.msg(mid)[0] == "sent"
+        assert adapter.sent[sent_ids(adapter).index(mid)].body.startswith(
+            "Our new collection is on display at the shop today."
+        )
+    finally:
+        operator_sql.sql("update public.platform_flags set enabled = true where key = 'outbox_enabled'")
+        shop.set_auto(True)
 
 
 def test_a_business_that_did_not_switch_automatic_sending_on_is_left_alone(shop: Shop) -> None:

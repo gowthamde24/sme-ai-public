@@ -126005,5 +126005,104 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.job.cost.minutes_only": {
+  "en": "{used} minutes used this month",
+  "te": "ఈ నెల {used} నిమిషాలు వాడారు",
+  "hi": "इस महीने {used} मिनट इस्तेमाल हुए",
+  "kn": "ಈ ತಿಂಗಳು {used} ನಿಮಿಷ ಬಳಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.part.down": {
+  "en": "{part} can't be shown right now. The rest of this page works.",
+  "te": "{part} ఇప్పుడు చూపించలేకపోతున్నాం. పేజీలో మిగతాది పని చేస్తుంది.",
+  "hi": "{part} अभी दिखा नहीं पा रहे। पेज का बाकी हिस्सा चल रहा है।",
+  "kn": "{part} ಈಗ ತೋರಿಸಲು ಆಗುತ್ತಿಲ್ಲ. ಪೇಜ್‌ನ ಉಳಿದದ್ದು ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.part.says": {
+  "en": "What it says",
+  "te": "ఏం చెప్తుందో",
+  "hi": "क्या कहता है",
+  "kn": "ಏನು ಹೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.part.settings": {
+  "en": "Settings",
+  "te": "సెట్టింగ్స్",
+  "hi": "सेटिंग्स",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.part.results": {
+  "en": "Results",
+  "te": "ఫలితాలు",
+  "hi": "नतीजे",
+  "kn": "ಫಲಿತಾಂಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.part.faqs": {
+  "en": "Questions and answers",
+  "te": "ప్రశ్నలు, జవాబులు",
+  "hi": "सवाल और जवाब",
+  "kn": "ಪ್ರಶ್ನೆ ಉತ್ತರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.part.cost": {
+  "en": "The cost this month",
+  "te": "ఈ నెల ఖర్చు",
+  "hi": "इस महीने का खर्च",
+  "kn": "ಈ ತಿಂಗಳ ಖರ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.part.finds": {
+  "en": "What it finds out",
+  "te": "ఏం తెలుసుకుంటుందో",
+  "hi": "क्या पता करता है",
+  "kn": "ಏನು ತಿಳಿದುಕೊಳ್ಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.setting.own": {
+  "en": "Your own setting",
+  "te": "మీ సొంత సెట్టింగ్",
+  "hi": "आपकी अपनी सेटिंग",
+  "kn": "ನಿಮ್ಮದೇ ಸೆಟ್ಟಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

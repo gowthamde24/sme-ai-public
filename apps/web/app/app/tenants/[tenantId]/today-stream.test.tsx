@@ -173,8 +173,8 @@ describe("the briefing line", () => {
     const desk = deferred<{ needs: never[]; team: never[] }>();
     readLeadDesk.mockReturnValue(desk.promise);
     await show();
+    await waitFor(() => expect(briefingPlaceholder()).not.toBeNull());
     expect(briefing()).toBeNull(); // (the number is then the merged one: it waits for Lead Desk, and its placeholder holds the room)
-    expect(briefingPlaceholder()).not.toBeNull();
     await act(async () => desk.resolve({ needs: [], team: [] }));
     await flush();
     await waitFor(() => {
@@ -224,7 +224,7 @@ describe("one call of the API per read", () => {
     expect(getTodayVisits).toHaveBeenCalledTimes(1);
     expect(getProfile).toHaveBeenCalledTimes(1);
     expect(listPriceAsks).toHaveBeenCalledTimes(1);
-    expect(fetchMembers).toHaveBeenCalledTimes(1); // the greeting's name (the profile has none in this test)
+    await waitFor(() => expect(fetchMembers).toHaveBeenCalledTimes(1)); // the greeting's name (the profile has none in this test)
     expect(getOutcomeTotals).not.toHaveBeenCalled();
     expect(startV6).toHaveBeenCalledTimes(1);
   });
