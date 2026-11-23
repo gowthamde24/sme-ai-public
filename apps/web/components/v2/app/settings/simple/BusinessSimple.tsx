@@ -9,6 +9,7 @@ import { JobChip } from "../../ds/JobChip";
 import { errorLine, okLine, primary } from "../../visits/styles";
 import { makeT } from "../../words";
 import type { OwnerFields } from "../BusinessForm";
+import { SaveBar, TextField, TickGroup } from "./fields";
 import { EffectBox, MoreChoices, MultiPanel, PillMulti, PillText, Sentence, Val, joinNames } from "./parts";
 
 type State = { ok: true } | { ok: false; error: string } | undefined;
@@ -21,7 +22,7 @@ const same = (a: readonly string[], b: readonly string[]) => a.length === b.leng
  * `variant="card"` is the card of the Settings page (name and city, the address for the Owner, the languages kept as they are; `children` are the rows under "More choices"), `variant="page"` is the Business tab (name, city, languages; kind and phone for the Owner).
  * Someone who may not change it reads the same sentences, without choices.
  */
-export function BusinessSimple({ variant, words, action, name, town, languages, choices, canEdit, owner = null, address = null, canEditAddress = false, children }: { variant: "card" | "page"; words: Readonly<Record<string, string>>; action: (prev: State, formData: FormData) => Promise<State>; name: string; town: string; languages: readonly string[]; choices: readonly CallLang[]; canEdit: boolean; owner?: OwnerFields | null; address?: Address | null; canEditAddress?: boolean; children?: ReactNode }) {
+export function BusinessSimple({ variant, words, action, name, town, languages, choices, canEdit, owner = null, address = null, canEditAddress = false, plain = false, children }: { variant: "card" | "page"; words: Readonly<Record<string, string>>; action: (prev: State, formData: FormData) => Promise<State>; name: string; town: string; languages: readonly string[]; choices: readonly CallLang[]; canEdit: boolean; owner?: OwnerFields | null; address?: Address | null; canEditAddress?: boolean; /** SETTINGS_OPEN: plain labelled fields instead of sentences. */ plain?: boolean; children?: ReactNode }) {
   const t = makeT(words);
   const uid = useId();
   const page = variant === "page";
@@ -73,6 +74,52 @@ export function BusinessSimple({ variant, words, action, name, town, languages, 
     ) : address && (address.line || address.area || address.pincode) ? (
       <Sentence line="address" template={t("jobs.set.biz.line.addr")} parts={{ line: () => <Val>{address.line ?? "-"}</Val>, area: () => <Val>{address.area ?? "-"}</Val>, pin: () => <Val>{address.pincode ?? "-"}</Val> }} />
     ) : null;
+
+  if (plain) {
+    const kind0 = page && owner && owner.groups.length > 0 ? owner : null;
+    if (!canEdit) {
+      const rows: [string, string][] = [[t("settings.biz.name"), name], [t("settings.biz.town"), town], ...(address && (address.line || address.area || address.pincode) ? ([[t("set.f.line"), [address.line, address.area, address.pincode].filter(Boolean).join(", ")]] as [string, string][]) : []), ...(showLangs && base.langs.length > 0 ? ([[t("settings.biz.langs"), langNames(base.langs)]] as [string, string][]) : [])];
+      return (
+        <dl data-part="business-simple" data-readonly="" data-plain="" className="m-0 flex flex-col gap-4">
+          {rows.map(([k, val]) => (
+            <div key={k}>
+              <dt className="text-[15px] font-semibold text-ink">{k}</dt>
+              <dd className="m-0 text-[16px] text-muted">{val || "-"}</dd>
+            </div>
+          ))}
+        </dl>
+      );
+    }
+    const both = !page && canEditAddress;
+    return (
+      <form action={run} onChange={() => setTouched(true)} className="flex flex-col gap-5" data-part="business-simple" data-plain="">
+        <TextField label={t("settings.biz.name")} hint={t("jobs.set.biz.help")} name="name" value={v.name} onChange={(x) => set({ name: x })} maxLength={120} required autoComplete="organization" disabled={pending} />
+        <TextField label={t("settings.biz.town")} name="town" value={v.town} onChange={(x) => set({ town: x })} minLength={2} maxLength={80} autoComplete="address-level2" disabled={pending} />
+        {both ? (
+          <>
+            <TextField label={t("set.f.line")} name="address_line" value={v.line} onChange={(x) => set({ line: x })} minLength={3} maxLength={160} autoComplete="address-line1" disabled={pending} />
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <TextField label={t("set.f.area")} name="area" value={v.area} onChange={(x) => set({ area: x })} minLength={2} maxLength={80} disabled={pending} />
+              <TextField label={t("set.f.pin")} name="pincode" value={v.pin} onChange={(x) => set({ pin: x })} inputMode="numeric" pattern="[1-9][0-9]{5}" maxLength={6} autoComplete="postal-code" disabled={pending} />
+            </div>
+          </>
+        ) : null}
+        {showLangs ? <TickGroup legend={t("settings.biz.langs")} hint={t("settings.biz.langs.help")} options={choices.map((c) => ({ value: c, label: CALL_LANG_NAMES[c] }))} values={v.langs} onChange={(next) => { set({ langs: next }); setTouched(true); }} disabled={pending} /> : null}
+        {(showLangs ? v.langs : base.langs).map((l) => (
+          <input key={l} type="hidden" name="languages" value={l} />
+        ))}
+        {kind0 ? <TypeCombobox groups={kind0.groups} words={kind0.typeWords} otherId={kind0.otherId} initial={kind0.type} otherInitial={kind0.typeLabel} /> : null}
+        {page && owner !== null ? <TextField label={t("settings.biz.phone")} hint={t("settings.biz.phone.help")} name="phone" value={v.phone} onChange={(x) => set({ phone: x })} inputMode="tel" disabled={pending} /> : null}
+        {children}
+        {state && !state.ok ? (
+          <p role="alert" className={errorLine}>
+            {t(`settings.biz.err.${state.error}`)}
+          </p>
+        ) : null}
+        <SaveBar dirty={dirty} saved={!!state?.ok} pending={pending} label={t("settings.biz.save")} unsaved={t("set.f.unsaved")} done={t("set.f.saved")} onClass={`${primary} jb-press`} />
+      </form>
+    );
+  }
 
   if (!canEdit) {
     return (

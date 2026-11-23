@@ -10,6 +10,7 @@ import { QUIET_END, QUIET_START, type OutboxSettings } from "@/lib/api/outbox";
 import { JobChip } from "../ds/JobChip";
 import { Tick } from "../ds/Tick";
 import { PillSelect } from "../jobs/detail/SettingLines";
+import { SelectField } from "../settings/simple/fields";
 import { makeT, type Say } from "../words";
 import { errorLine, okLine, primary } from "../visits/styles";
 import {
@@ -36,6 +37,9 @@ const choices = (list: number[], current: string) => [
   ).map(String),
 ];
 
+const PlainCtx = React.createContext(false);
+const plainCard = "flex flex-col gap-4 border-t border-line pt-6";
+const plainFx = "m-0 text-[14px] text-muted";
 const jobsCard =
   "flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
 const heading = "m-0 font-display text-[17px] font-bold leading-tight text-ink";
@@ -47,9 +51,12 @@ function Sentence({
   id,
   template,
   pills,
+  labels,
 }: {
   id: string;
   template: string;
+  /** SETTINGS_OPEN: the plain label of each choice (the sentence is not drawn). */
+  labels?: Readonly<Record<string, string>>;
   pills: Readonly<
     Record<
       string,
@@ -64,6 +71,16 @@ function Sentence({
 }) {
   const plain = template.replace(/\{\w+\}/g, "…");
   const keys = Object.keys(pills);
+  const open = React.useContext(PlainCtx);
+  if (open && labels) {
+    return (
+      <div data-setting-line={id} className={keys.length > 1 ? "grid grid-cols-1 gap-5 sm:grid-cols-2" : ""}>
+        {keys.map((k) => (
+          <SelectField key={k} label={labels[k] ?? plain} value={pills[k].value} options={pills[k].options.map((o) => ({ value: o, label: pills[k].text(o) }))} onChange={pills[k].onChange} />
+        ))}
+      </div>
+    );
+  }
   return (
     <p
       data-setting-line={id}
@@ -119,7 +136,10 @@ export function AutomationSimple({
   settings,
   reminders,
   actions,
+  plain = false,
 }: {
+  /** SETTINGS_OPEN: plain labelled fields, no box around each part. */
+  plain?: boolean;
   words: Readonly<Record<string, string>>;
   settings: OutboxSettings;
   reminders: SchedulerSettings | null;
@@ -233,6 +253,7 @@ export function AutomationSimple({
   const noShowLine = (
     <Sentence
       id="noshow"
+      labels={{ noshow: t("auto.f.noshow") }}
       template={t("jobs.auto.line.noshow")}
       pills={{
         noshow: {
@@ -252,13 +273,14 @@ export function AutomationSimple({
   );
 
   return (
-    <div data-part="automation" className="flex flex-col gap-4">
+    <PlainCtx.Provider value={plain}>
+    <div data-part="automation" className={plain ? "flex flex-col gap-6" : "flex flex-col gap-4"}>
       <p className="m-0 text-[14px] text-muted">{t("jobs.auto.help")}</p>
 
       <section
         data-part="auto-sending"
         aria-labelledby="auto-sending-h"
-        className={jobsCard}
+        className={plain ? plainCard : jobsCard}
       >
         <h2 id="auto-sending-h" className={heading}>
           {t("agentset.sending.title")}
@@ -271,6 +293,7 @@ export function AutomationSimple({
         />
         <Sentence
           id="limit"
+          labels={{ limit: t("auto.f.limit") }}
           template={t("jobs.auto.line.limit")}
           pills={{
             limit: {
@@ -286,13 +309,14 @@ export function AutomationSimple({
       <section
         data-part="auto-quiet"
         aria-labelledby="auto-quiet-h"
-        className={jobsCard}
+        className={plain ? plainCard : jobsCard}
       >
         <h2 id="auto-quiet-h" className={heading}>
           {t("agentset.quiet.title")}
         </h2>
         <Sentence
           id="quiet"
+          labels={{ start: t("auto.f.qstart"), end: t("auto.f.qend") }}
           template={t("jobs.auto.line.quiet")}
           pills={{
             start: {
@@ -309,15 +333,15 @@ export function AutomationSimple({
             },
           }}
         />
-        <p data-part="effect" aria-live="polite" className={effectBox}>
-          <b>{t("jobs.auto.effect")}</b> {fx.quiet}
+        <p data-part="effect" aria-live="polite" className={plain ? plainFx : effectBox}>
+          {plain ? null : <b>{t("jobs.auto.effect")}</b>} {fx.quiet}
         </p>
       </section>
 
       <section
         data-part="auto-reminders"
         aria-labelledby="auto-reminders-h"
-        className={jobsCard}
+        className={plain ? plainCard : jobsCard}
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 id="auto-reminders-h" className={heading}>
@@ -331,6 +355,7 @@ export function AutomationSimple({
           <>
             <Sentence
               id="evening"
+              labels={{ evening: t("auto.f.evening") }}
               template={t("jobs.auto.line.evening")}
               pills={{
                 evening: {
@@ -351,6 +376,7 @@ export function AutomationSimple({
             />
             <Sentence
               id="heads"
+              labels={{ heads: t("auto.f.heads") }}
               template={t("jobs.auto.line.heads")}
               pills={{
                 heads: {
@@ -381,8 +407,8 @@ export function AutomationSimple({
                 })}
               </p>
             ) : null}
-            <p data-part="effect" aria-live="polite" className={effectBox}>
-              <b>{t("jobs.auto.effect")}</b> {fx.visits}
+            <p data-part="effect" aria-live="polite" className={plain ? plainFx : effectBox}>
+              {plain ? null : <b>{t("jobs.auto.effect")}</b>} {fx.visits}
             </p>
           </>
         ) : (
@@ -391,7 +417,7 @@ export function AutomationSimple({
       </section>
 
       {reminders ? (
-        <details data-part="auto-more" className={`${jobsCard} group`}>
+        <details data-part="auto-more" className={`${plain ? plainCard : jobsCard} group`}>
           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
             <span className="min-w-0">
               <span className="block font-display text-[17px] font-bold leading-tight text-ink">
@@ -442,15 +468,20 @@ export function AutomationSimple({
           >
             {busy ? t("today.act.working") : t("agentset.save")}
           </button>
-          {dirty && !busy ? (
-            <JobChip tone="wait">{t("jobs.auto.chip.dirty")}</JobChip>
-          ) : null}
-          {justSaved && !dirty ? (
-            <JobChip tone="done">{t("jobs.auto.chip.saved")}</JobChip>
-          ) : null}
+          {plain ? (
+            <p role="status" className="m-0 text-[14px] text-muted">
+              {dirty && !busy ? t("set.f.unsaved") : justSaved ? t("set.f.saved") : ""}
+            </p>
+          ) : (
+            <>
+              {dirty && !busy ? <JobChip tone="wait">{t("jobs.auto.chip.dirty")}</JobChip> : null}
+              {justSaved && !dirty ? <JobChip tone="done">{t("jobs.auto.chip.saved")}</JobChip> : null}
+            </>
+          )}
         </div>
         <p className="m-0 text-sm text-muted">{t("agentset.mfa")}</p>
       </div>
     </div>
+    </PlainCtx.Provider>
   );
 }
