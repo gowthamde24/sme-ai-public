@@ -302,11 +302,11 @@ class World:
     """Every subsystem the jobs read and write through, as fakes that keep what they are told."""
 
     def __init__(self, *, on: bool = True, outreach: Outreach | None = None, offers: tuple[dict[str, Any], ...] = (), today: Today | None = None, followups_none: bool = False, visits_default: bool = False, assistant_saved: bool = True,
-                 live: bool = True, doc: dict[str, Any] | None = None, billing: bool = True, crm: Any = None) -> None:
+                 live: bool = True, doc: dict[str, Any] | None = None, billing: bool = True, crm: Any = None, calls: Any = None) -> None:
         self.outreach = outreach or Outreach(rule(1), rule(2))
         self.status, self.assistant, self.visits, self.followups, self.campaigns = Status(live), AssistantSettings_(assistant_saved), Visits(visits_default), Followups(followups_none), Campaigns(*offers)
         self.finder, self.training, self.trust, self.today = Finder(), Training(doc), Trust(), today
-        self.client, _ = make_client(jobs=JobsRuntime(directory=PACKS, trust=self.trust) if on else None, outreach=self.outreach, assistant_status=self.status, phone_numbers=Numbers(), assistant_settings=self.assistant, visits=self.visits,  # type: ignore[arg-type]
+        self.client, _ = make_client(jobs=JobsRuntime(directory=PACKS, trust=self.trust) if on else None, calls=calls, outreach=self.outreach, assistant_status=self.status, phone_numbers=Numbers(), assistant_settings=self.assistant, visits=self.visits,  # type: ignore[arg-type]
                                      followups=self.followups, campaigns=self.campaigns, lead_finder=self.finder, talk_training=self.training, workspace=Workspace(), today=self.today, billing=Billing() if billing else None, **({"crm": crm} if crm is not None else {}))  # type: ignore[arg-type]
 
     def get(self, kind: str, user: str | None = "a_owner") -> Any:
@@ -786,12 +786,20 @@ def test_the_faqs_of_the_job_page_hang_on_the_jobs_own_row() -> None:
 
 
 # ------------------------------------------------------------------------------------------------------------------ what waits for the owner
+def test_the_same_promise_is_one_item_with_the_customer_and_when() -> None:
+    """25 Nov 2026: two identical rows for one promise (the demo's 'paver blocks') are one item; a different kind or target still is its own."""
+    w = World(today=Today(("followup_due", "lead"), ("followup_due", "lead"), ("followup_due", "order"), ("hot_lead_waiting", "lead")))
+    items = w.client.get(f"{JOBS}/today", headers=auth("a_owner")).json()["needs_you"]
+    assert [(i["kind"], i["target"]["type"]) for i in items] == [("followup_due", "lead"), ("followup_due", "order"), ("hot_lead_waiting", "lead")]
+    assert all(i["customer"] == "Ravi" and i["at"].startswith("2026-11-20") for i in items)
+
+
 def test_needs_you_is_the_list_today_shows_and_each_job_counts_its_own() -> None:
     w = World(today=Today(("hot_lead_waiting", "lead"), ("call_approval", "call_request"), ("visit_requested", "call_request"), ("campaign_approval", "campaign"), ("quote_approval", "quote"), ("fees_overdue", "fees")))
     body = w.client.get(f"{JOBS}/today", headers=auth("a_owner")).json()
     assert len(body["needs_you"]) == 6
     first = body["needs_you"][0]
-    assert set(first) == {"id", "code", "kind", "at", "target"} and first["kind"] == "hot_lead_waiting" and first["code"] == "hot_lead_waiting" and first["target"] == {"type": "lead", "id": str(CUSTOMER)}
+    assert set(first) == {"id", "code", "kind", "at", "customer", "summary", "target"} and first["customer"] == "Ravi" and first["kind"] == "hot_lead_waiting" and first["code"] == "hot_lead_waiting" and first["target"] == {"type": "lead", "id": str(CUSTOMER)}
     assert [(i["kind"], i["target"]["type"]) for i in body["needs_you"][1:]] == [("call_approval", "call_request"), ("visit_requested", "call_request"), ("campaign_approval", "approval"), ("quote_approval", "approval"), ("fees_overdue", "fees")]
     jobs = {j["kind"]: j for j in body["jobs"]}
     assert (jobs["speed_to_lead"]["needs_you"], jobs["store_visits"]["needs_you"], jobs["offers"]["needs_you"], jobs["followups"]["needs_you"]) == (2, 1, 1, 0)

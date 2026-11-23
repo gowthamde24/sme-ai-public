@@ -140,16 +140,17 @@ def test_the_three_tones_are_the_options_and_quick_can_be_saved_and_is_what_the_
     assert client.put(URL, json={"tone": "casual"}, headers=auth("a_owner")).status_code == 422
 
 
-def test_the_background_is_quiet_office_until_chosen_then_a_closed_word_with_labels_in_seven_languages() -> None:
+def test_the_background_is_off_until_chosen_then_a_closed_word_with_labels_in_seven_languages() -> None:
     client, training, _ = world("textiles")
     first = client.get(URL, headers=auth("a_owner")).json()["background"]
-    assert first["value"] == "quiet_office" and first["saved"] is False and [o["id"] for o in first["options"]] == ["quiet_office", "shop", "off"]
+    assert first["value"] == "off" and first["saved"] is False and [o["id"] for o in first["options"]] == ["off", "quiet_office", "busy_office", "call_centre", "shop", "market", "showroom", "clinic_reception", "home", "street"]
     assert all(set(o["label"]) == {"en", "te", "hi", "kn", "ta", "ml", "mr"} and all(o["label"].values()) for o in first["options"])
+    assert [o["sample_url"] for o in first["options"]] == [None] + [f"/v1/background-samples/{o['id']}.mp3" for o in first["options"][1:]]   # Off has no preview, every sound has one
     shop = client.put(URL, json={"background": "shop"}, headers=auth("a_owner")).json()["background"]
     assert shop["value"] == "shop" and shop["saved"] is True and training.rows[TENANT_A.id]["doc"]["background"] == "shop"
     assert client.put(URL, json={"background": "off"}, headers=auth("a_owner")).json()["background"]["value"] == "off"
     reset = client.put(URL, json={"background": None}, headers=auth("a_owner")).json()["background"]
-    assert reset["value"] == "quiet_office" and reset["saved"] is False
+    assert reset["value"] == "off" and reset["saved"] is False
     assert client.put(URL, json={"background": "stadium"}, headers=auth("a_owner")).status_code == 422
     assert client.put(URL, json={"background": "shop"}, headers=auth("a_admin")).status_code in (401, 403)
 

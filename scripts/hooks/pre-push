@@ -49,7 +49,8 @@ if has '^(services/ai-api/|tests/integration/|tests/rehearsal/|scripts/.*\.py$|t
   else
     LINT_PATHS=$(awk -F'ruff check ' '/\.venv\/bin\/ruff check/ {print $2; exit}' Makefile)
     # shellcheck disable=SC2086
-    run "api ruff" bash -c "cd services/ai-api && '$API_TOOLS/ruff' check ${LINT_PATHS:-.}"
+    # --config: the extra paths (scripts/, tests/, tools/) sit outside the package, so without it ruff would find another config, or none, for them (25 Nov 2026: 4,119 findings on a clean tree); CI lints with the package's own file
+    run "api ruff" bash -c "cd services/ai-api && '$API_TOOLS/ruff' check --config pyproject.toml ${LINT_PATHS:-.}"
     run "api mypy" bash -c "cd services/ai-api && PYTHONPATH=\$PWD '$API_TOOLS/mypy'"
   fi
 fi
@@ -58,6 +59,9 @@ if has '^apps/web/'; then
   if [ ! -d apps/web/node_modules ]; then
     echo "pre-push: apps/web/node_modules is missing (cd apps/web && npm ci)"; FAILED+=("web tools")
   else
+    # tsc of this app needs more than node's default heap (about 2 GB): on an 8 GB Mac it died with "JavaScript heap out of memory" (exit 134, 25 Nov 2026) and passed in 41 s with 5 GB.
+    # An NODE_OPTIONS you set yourself wins.
+    export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=${SME_NODE_HEAP_MB:-5120}}"
     run "web eslint" bash -c "cd apps/web && npm run -s lint"
     run "web tsc" bash -c "cd apps/web && npm run -s typecheck"
   fi

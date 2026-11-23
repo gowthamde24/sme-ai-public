@@ -24,7 +24,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app import gstin as gstin_module
 from app.auth.deps import AnyMember, OwnerOrAdmin, PrincipalDep, Runtime, get_runtime
 from app.errors import ApiError, not_found
-from app.jobs import festivals, listing, samples, templates
+from app.jobs import festivals, listing, samples, templates, week
 from app.jobs import needs as needs_mod
 from app.jobs.models import FestivalOut, FestivalsOut
 from app.jobs.wiring import JobsRuntime
@@ -68,6 +68,12 @@ def _answer(request: Request, body: dict[str, Any]) -> Response:
 def list_jobs(request: Request, ctx: AnyMember, runtime: RuntimeDep) -> Response:
     """GET /jobs: every job of the workspace (thin version: what already runs, read from its own subsystem; see app/jobs/listing.py)."""
     return _answer(request, {"items": listing.jobs_of(runtime, ctx.principal.token, ctx.tenant.id)})
+
+
+@router.get("/week")
+def jobs_week(request: Request, ctx: AnyMember, runtime: RuntimeDep) -> Response:
+    """GET /jobs/week: per job the last seven days in whole numbers `{days, items: [{id, kind, calls, visits, cost, numbers}]}` (docs/contracts/jobs-week.md)."""
+    return _answer(request, week.week_all(runtime, ctx))
 
 
 @router.get("/today")
