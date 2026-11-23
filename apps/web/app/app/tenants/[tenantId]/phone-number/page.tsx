@@ -12,7 +12,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
-import { appV4, designV6, jobsScreens } from "@/lib/screens/flag";
+import { appV4, designV6, jobsScreens, phoneSteps } from "@/lib/screens/flag";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { PhoneV6 } from "@/components/v2/app/phone/PhoneV6";
 import { PhoneNumberPanel } from "@/components/v2/app/phone/PhoneNumberPanel";
@@ -132,7 +132,7 @@ async function readKyc(token: string, tenantId: string, owner: boolean, t: Retur
   return (
     <div className="flex max-w-2xl flex-col gap-4">
       {owner && security?.level === "aal1" && current && CAN_SEND.has(current.state) && options ? <SecondStepNotice message={t("phkyc.mfa")} t={t} /> : null}
-      <KycCard words={wordsFor(lang, ["phkyc.", "apierr.", "ds.file."], ["dta.btn.working"])} status={current} options={options} canEdit={owner} defaultEmail={email ?? ""} endpoint={`/app/tenants/${tenantId}/phone-kyc`} />
+      <KycCard steps={phoneSteps()} words={wordsFor(lang, ["phkyc.", "apierr.", "ds.file."], ["dta.btn.working"])} status={current} options={options} canEdit={owner} defaultEmail={email ?? ""} endpoint={`/app/tenants/${tenantId}/phone-kyc`} />
     </div>
   );
 }
