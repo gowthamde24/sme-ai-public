@@ -41,6 +41,7 @@ Backups: Dashboard > Database > Backups: daily backup on, first backup exists BE
 Rollback of this step: none needed for an empty database; a bad migration is fixed forward by a new migration (never edit applied ones).
 
 ## 3. Google side [OWNER presses, C1 prepared]
+**ONE COMMAND (owner): `deploy/prod-google-setup.sh` is a DRY RUN that prints every command; `deploy/prod-google-setup.sh --apply` runs them (APIs, repo `sme`, the five service accounts, grants, build bucket, budget alerts). Safe to run twice. The commands below are what it does.**
 ```
 gcloud services enable run.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com cloudbuild.googleapis.com cloudscheduler.googleapis.com logging.googleapis.com monitoring.googleapis.com --project stack19-production
 gcloud artifacts repositories create sme --repository-format=docker --location=asia-south1 --project stack19-production
@@ -49,6 +50,7 @@ deploy/budget-alerts.sh            # dry run first; INR 1,000 monthly alert, ale
 ```
 
 ## 4. Secrets: names only, each typed at a HIDDEN prompt in the owner's terminal [OWNER]
+**ONE COMMAND (owner, from the main checkout): `deploy/prod-secrets-prompt.sh --check` (lists what exists), then `deploy/prod-secrets-prompt.sh` (hidden prompt for each missing secret, in order; Enter skips an optional one; keys we can generate are generated; each secret is granted to ONLY the accounts that read it). The table below is what it asks.**
 Never in chat, a file or a command line. Pattern (value is typed, nothing shows):
 ```
 read -rs -p "value: " V; echo; printf %s "$V" | gcloud secrets create <NAME> --project stack19-production --replication-policy=automatic --data-file=-; unset V
