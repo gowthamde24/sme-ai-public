@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { DEMO_LANGS, DEMO_LANG_NAMES, WAVE_HEIGHTS, type DemoLang, type Voice } from "@/lib/site/v9-data";
+import { DEMO_LANGS, DEMO_LANG_NAMES, WA, WAVE_HEIGHTS, type DemoLang, type Voice } from "@/lib/site/v9-data";
 
-import { ICON, TICK, Tabs, reducedMotion } from "./clients";
+import { ICON, Phone, TICK, Tabs, reducedMotion } from "./clients";
 
 /** The islands below the first screen (voices, the two jobs, the late call-back picture, the questions): a chunk of their own, loaded with the page's other lazy chunks (./lazy.tsx), so the first visit's JavaScript stays inside the route budget. */
 // ---------------------------------------------------------------------------------------------- voices
@@ -155,6 +155,70 @@ export function FaqClient({ items }: { items: { q: string; a: string }[] }) {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------------------------- how it works
+
+export type HowWords = { tabs: string; phone: { online: string; message: string; today: string; live: string; ended: string; ai: string }; asked: string; language: string; followUp: string; status: string; added: string };
+export function HowDemoClient({ w }: { w: HowWords }) {
+  const [lang, setLang] = useState<DemoLang>("te");
+  const d = WA[lang];
+  return (
+    <>
+      <Tabs label={w.tabs} items={DEMO_LANGS.map((k) => ({ key: k, text: DEMO_LANG_NAMES[k] }))} value={lang} onChange={setLang} />
+      <div className="how8">
+        <Phone id="ph-how" still={false} lang={lang} words={w.phone} />
+        <div className="how8-right">
+          <div className="fcard"><span className="ic">{ICON.search}</span><div><small>{w.asked}</small><strong>{d.asked}</strong></div></div>
+          <div className="fcard"><span className="ic">{ICON.globe}</span><div><small>{w.language}</small><strong>{d.lang}</strong></div></div>
+          <div className="fcard"><span className="ic">{ICON.chat}</span><div><small>{w.followUp}</small><strong>{d.next}</strong></div></div>
+          <div className="fcard"><span className="ic">{ICON.list}</span><div><small>{w.status}</small><strong>{w.added}</strong></div></div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ---------------------------------------------------------------------------------------------- try it
+
+export type TryPlan = { key: string; chip: string; prompt: string; who: string; say: string; when: string; cost: string };
+export type TryWords = { ask: string; draft: string; preview: string; who: string; says: string; when: string; cost: string; cta: string; plans: TryPlan[] };
+export function TryItClient({ w }: { w: TryWords }) {
+  const [on, setOn] = useState(w.plans[0].key);
+  const plan = w.plans.find((p) => p.key === on) ?? w.plans[0];
+  const [text, setText] = useState(plan.prompt);
+  return (
+    <div className="aw-cols">
+      <div>
+        <label className="aw-lbl" htmlFor="try-input">{w.ask}</label>
+        <textarea className="try-input" id="try-input" value={text} onChange={(e) => setText(e.target.value)} />
+        <div className="try-chips">
+          {w.plans.map((p) => (
+            <button
+              key={p.key}
+              type="button"
+              aria-pressed={on === p.key}
+              className={`try-chip${on === p.key ? " is-on" : ""}`}
+              onClick={() => {
+                setOn(p.key);
+                setText(p.prompt);
+              }}
+            >
+              {p.chip}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="plan-preview aw-draft">
+        <div className="plan-preview-head"><span>{w.draft}</span><span>{w.preview}</span></div>
+        <div className="plan-row"><span>{w.who}</span><strong>{plan.who}</strong></div>
+        <div className="plan-row"><span>{w.says}</span><strong>{plan.say}</strong></div>
+        <div className="plan-row"><span>{w.when}</span><strong>{plan.when}</strong></div>
+        <div className="plan-row"><span>{w.cost}</span><strong>{plan.cost}</strong></div>
+        <a href="#early-access" className="btn-primary" style={{ marginTop: 6 }}>{w.cta}</a>
+      </div>
     </div>
   );
 }

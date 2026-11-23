@@ -7,3 +7,5 @@ export const VoicesClient = dynamic(() => import("./below").then((m) => m.Voices
 export const JobsClient = dynamic(() => import("./below").then((m) => m.JobsClient));
 export const PipeClient = dynamic(() => import("./below").then((m) => m.PipeClient));
 export const FaqClient = dynamic(() => import("./below").then((m) => m.FaqClient));
+export const HowDemoClient = dynamic(() => import("./below").then((m) => m.HowDemoClient));
+export const TryItClient = dynamic(() => import("./below").then((m) => m.TryItClient));
