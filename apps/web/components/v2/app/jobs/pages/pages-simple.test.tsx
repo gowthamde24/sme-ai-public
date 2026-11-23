@@ -45,7 +45,6 @@ describe("Calls filters as a sentence (JOBS)", () => {
     draw();
     expect(said(line("calls"))).toBe("Show all (4) calls from any time.");
     expect(screen.getByRole("searchbox")).toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent("Calls on the screen: 4.");
     // the status choice holds every status of the old chips, each with its count
     const options = Array.from((screen.getByLabelText("Which calls") as HTMLSelectElement).options).map((o) => o.textContent);
     expect(options).toEqual(["all (4)", "completed (1)", "transferred (0)", "unanswered (1)", "refused (1)", "spam (0)", "live (1)"]);
@@ -83,7 +82,6 @@ describe("Calls filters as a sentence (JOBS)", () => {
     const form = screen.getByRole("search");
     expect(Array.from(form.querySelectorAll("input[type=hidden]")).map((i) => `${(i as HTMLInputElement).name}=${(i as HTMLInputElement).value}`)).toEqual(["status=no_answer", "when=today", "line=l1"]);
     expect(within(form).getByRole("searchbox")).toHaveValue("sita");
-    expect(screen.getByRole("status")).toHaveTextContent("Calls on the screen: 1 of 4.");
     expect((document.querySelector('[data-part="more-choices"]') as HTMLDetailsElement).open).toBe(true);
   });
 

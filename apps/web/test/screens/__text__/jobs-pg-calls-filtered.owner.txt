@@ -13,7 +13,6 @@ calls from
 Search calls . Looks in names, numbers and what happened. The exact words said on a call are not searched yet.
 <search name=q label="Search calls. Looks in names, numbers and what happened. The exact words said on a call are not searched yet." placeholder="Search name, number or what they said" maxlength=80 value=sita>
 [button type=submit: Search]
-{role=status} Calls on the screen: 1 of 4.
 summary: More choices Only one of your numbers.
 Show calls that came in on
 <select label="Number">

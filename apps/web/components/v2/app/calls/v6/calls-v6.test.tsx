@@ -93,18 +93,18 @@ describe("the search, the chips and the dropdowns", () => {
 });
 
 describe("the table", () => {
-  it("has the six columns; each row: who and in/out, the outcome sentence, a status pill, length, cost in rupees, time", () => {
+  it("has the six columns; each row: who and in/out, the outcome sentence, a status pill only for an exception, length, cost in rupees, time", () => {
     render(<CallsTable words={W} base={BASE} query={parseCallsQuery({})} items={ROWS} selectedId={null} when={when} />);
     expect(screen.getAllByRole("columnheader").map((h) => h.textContent)).toEqual(["Customer", "What happened", "Status", "Duration", "Cost", "Time"]);
     const r2 = document.querySelector(`[data-call="${id(2)}"]`) as HTMLElement;
     expect(within(r2).getByRole("link", { name: "Lakshmi" })).toHaveAttribute("href", `${BASE}/calls/${id(2)}`);
     expect(r2).toHaveTextContent("In");
     expect(r2).toHaveTextContent("Visit booked");
-    expect(r2).toHaveTextContent("Completed");
+    expect(r2).not.toHaveTextContent("Completed"); // the normal state is silent (simplification rule 4)
     expect(r2).toHaveTextContent("2:06");
     expect(r2).toHaveTextContent("₹4.5");
     expect(r2).toHaveTextContent("11-12");
-    expect(r2.querySelector('[data-status="completed"]')).not.toBeNull();
+    expect(r2.querySelector('[data-status="completed"]')).toBeNull();
     const live = document.querySelector(`[data-call="${id(1)}"]`) as HTMLElement;
     expect(live.querySelector('[data-status="live"]')).toHaveTextContent("Live");
     expect(live).toHaveTextContent("0:42");

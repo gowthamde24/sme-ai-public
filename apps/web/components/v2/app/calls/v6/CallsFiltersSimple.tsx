@@ -7,7 +7,7 @@ import { STATUS_ORDER } from "@/lib/calls/status";
 import { btnQuiet } from "../../ui";
 import { makeT, type Words } from "../../words";
 import { LinkSentence } from "../../jobs/pages/LazyLinkSentence";
-import { EffectLine, MoreBox, pgCard } from "../../jobs/pages/parts";
+import { MoreBox, pgCard } from "../../jobs/pages/parts";
 
 export type CallsFiltersSimpleProps = { words: Words; base: string; query: CallsQuery; counts: Record<CallStatusWord | "all", number>; lines: readonly { id: string; label: string }[]; shown: number; total: number };
 
@@ -47,7 +47,6 @@ export function CallsFiltersSimple({ words, base, query, counts, lines, shown, t
           {t("calls6.search.go")}
         </button>
       </form>
-      <EffectLine part="calls-effect" text={filtered ? t("jobs.pg.calls.effect.some", { shown: num(shown), total: num(total) }) : t("jobs.pg.calls.effect.all", { n: num(total) })} />
       {lines.length > 0 || query.line ? (
         <MoreBox title={t("jobs.pg.more")} sub={t("jobs.pg.calls.more.sub")} open={query.line !== null}>
           <LinkSentence line="calls-line" template={t("jobs.pg.calls.line.sentence")} choices={{ line: { label: t("calls6.line.label"), value: lineValue, options: lineOptions } }} />

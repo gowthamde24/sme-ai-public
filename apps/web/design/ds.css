@@ -669,3 +669,20 @@
   font-weight: 600;
   box-shadow: none;
 }
+
+/* ---- THE OPEN LOOK on every working page (owner, 24 Nov: "the whole app", through shared styles, not page by page). Not on Today (its band, orb and cards are owner-approved: main holds the command bar), not on the nav, the orb or the bottom bar (they are outside main). ---- */
+[data-ui="v2"][data-ds="6"] [data-frame="app"] main:not(:has([data-part="command-bar"])) {
+  /* (a) cards: a hairline, no shadow, radius 12 (rounded-xl) */
+  --v2-shadow: none;
+}
+/* (b) quiet section labels: 15 px semibold grey; the page title (h1) and the items' own titles (h3) are untouched */
+[data-ui="v2"][data-ds="6"] [data-frame="app"] main:not(:has([data-part="command-bar"])) h2:not([data-illustration] *):not(:lang(te)):not(:lang(hi)):not(:lang(kn)) {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--v2-muted);
+}
+/* (d) the 14 px floor for text the owner reads (the small utilities lift to 14; a drawing of a phone or a sample, data-illustration, keeps its own size) */
+[data-ui="v2"][data-ds="6"] [data-frame="app"] main:not(:has([data-part="command-bar"])) :is(.text-xs, [class*="text-[11px]"], [class*="text-[12px]"], [class*="text-[12.5px]"], [class*="text-[13px]"], [class*="text-[13.5px]"]):not([data-illustration] *) {
+  font-size: 14px !important;
+}

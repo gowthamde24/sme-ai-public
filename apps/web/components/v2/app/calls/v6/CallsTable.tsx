@@ -42,9 +42,12 @@ export function CallsTable({ words, base, query, items, selectedId, when, pageSi
         </td>
         <td className={`col-span-2 row-start-2 min-w-0 text-ink [overflow-wrap:anywhere] ${cell}`}>{sentenceText(callSentence(c), words, why)}</td>
         <td className={`col-start-1 row-start-3 md:whitespace-nowrap ${cell}`}>
-          <StatusPill status={status}>
-            {t(`calls6.st.${status}`)}
-          </StatusPill>
+          {/* the normal state is silent: only an exception (no answer, rejected, spam, live, passed to a person) gets a pill (simplification rule 4, owner 25 Nov) */}
+          {status === "completed" ? null : (
+            <StatusPill status={status}>
+              {t(`calls6.st.${status}`)}
+            </StatusPill>
+          )}
         </td>
         <td className={`col-start-2 row-start-3 text-right text-sm text-muted md:whitespace-nowrap md:text-left md:text-[13.5px] md:text-ink ${cell}`}>
           {c.live ? <span className="font-semibold text-brand-text">{clockShort(secs)}</span> : clockShort(secs)}
