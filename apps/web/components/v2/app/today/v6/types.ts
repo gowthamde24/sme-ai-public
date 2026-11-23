@@ -10,7 +10,7 @@ import type { ResultsView } from "./results-data";
 export type LiveCallSeed = { id: string; who: string; elapsedS: number };
 
 /** What the day-one checklist is given (the page decides everything; the checklist only draws). */
-export type DayOneIn = { name: string; steps: StepView[]; canGoLive: boolean; missing: ("business_name" | "phone_number")[]; actions: DayOneActions; helpHref: string; testCallHref: string };
+export type DayOneIn = { name: string; steps: StepView[]; canGoLive: boolean; missing: ("business_name" | "phone_number")[]; actions: DayOneActions; helpHref: string; testCallHref: string; /** FIRST_DAY_OPEN: the open layout of the page (no ring, no cards) */ open?: boolean };
 
 /**
  * What the page gives Today for the design system v6 (DESIGN_V6): the words, the language's name, the business name and language, today's calls (the start times, for "Your day"; null = not known), the approved job, this week's results, a made-up live call (staging only), the day-one checklist
@@ -36,4 +36,6 @@ export type V6In = {
   chip: ReactNode;
   /** JOBS: the "Running now" section (jobs as compact rows), drawn under Needs you; null = JOBS is off. */
   jobs?: ReactNode;
+  /** TODAY_OPEN: the open look of Today (bare category icons, one orange action per row, no boxes for empty notes) */
+  open?: boolean;
 };

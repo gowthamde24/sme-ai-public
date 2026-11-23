@@ -255,6 +255,7 @@ from app.team import errors as team_errors
 from app.team.repository import PostgrestTeamRepository
 from app.team.routes import public_router as team_public_router
 from app.team.routes import router as team_router
+from app.telephony.background_samples import router as background_samples_router
 from app.telephony.inbound_routes import router as phone_inbound_router
 from app.telephony.live import LiveCalls
 from app.telephony.plivo_routes import router as plivo_router
@@ -1567,6 +1568,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(auto_reply_router)
     app.include_router(voice_samples_router)
     app.include_router(voice_style_samples_router)
+    app.include_router(background_samples_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)

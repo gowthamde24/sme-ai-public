@@ -2605,9 +2605,10 @@
       "areas": [
         "conversation",
         "pronunciation",
+        "telephony",
         "voicesample"
       ],
-      "default_message": "There is no sample for this voice.",
+      "default_message": "There is no sample for this sound.",
       "wait": false,
       "extras": []
     },
