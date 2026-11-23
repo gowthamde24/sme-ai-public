@@ -14,7 +14,7 @@ from urllib.parse import unquote
 
 from app.conversation.picker import out
 from app.conversation.preview import CallVoicePreview
-from app.conversation.voices import SAMPLE_LINES, default_config, sample_text
+from app.conversation.voices import FIXED_SENTENCES, SAMPLE_LINES, default_config, sample_text_of
 from app.voice.interface import VoiceError
 from tests.fakes import TENANT_A, auth, make_client
 from tests.test_nv_picker import FakeChoices
@@ -152,7 +152,11 @@ def test_each_catalogue_voice_reports_the_exact_words_of_its_sample_and_they_nam
     seen = 0
     for lang in voices:
         for v in lang.voices:
-            assert v.sample_text == sample_text(lang.language) and "Sample Stores" in v.sample_text
+            assert v.sample_text == sample_text_of(default_config().catalogue[v.id])
+            if lang.language in FIXED_SENTENCES:   # 24 Nov 2026: the fixed sentence with the voice's own name
+                assert v.name in v.sample_text and "Sample Stores" not in v.sample_text
+            else:   # Tamil, Malayalam, Marathi keep the older business line, which names nobody
+                assert "Sample Stores" in v.sample_text and v.name not in v.sample_text
             seen += 1
     assert seen == len([c for c in cfg.catalogue.values() if c.listed]) and seen >= 9, "the short list"
     for text in SAMPLE_LINES.values():

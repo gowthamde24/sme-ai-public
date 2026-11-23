@@ -47,8 +47,24 @@ SAMPLE_LINES: dict[str, str] = {
 
 
 def sample_text(language: str) -> str:
-    """The exact words of the pre-rendered sample of a voice of this language."""
+    """The long business sample line of a language (the older samples of Tamil, Malayalam and Marathi voices)."""
     return SAMPLE_LINES[language].replace("{b}", SAMPLE_BUSINESS)
+
+
+# ONE fixed sentence per language, the same for every voice so voices compare fairly (owner 24 Nov 2026: previews are pre-recorded, never live AI for the listener); {name} is the voice's own name. No gendered verb forms.
+# Telugu, Hindi and Kannada are DRAFTS for the owner's review (a regenerate costs a few rupees).
+FIXED_SENTENCES: dict[str, str] = {
+    "en": "Hello, I'm {name}, your assistant. How can I help you today?",
+    "te": "నమస్కారం అండీ, నేను {name}, మీ assistant ని. ఈ రోజు మీకు ఎలా help చేయగలను?",
+    "hi": "नमस्ते जी, मैं {name}, आपका assistant। आज मैं आपकी क्या help करूँ?",
+    "kn": "ನಮಸ್ಕಾರ, ನಾನು {name}, ನಿಮ್ಮ assistant. ಇವತ್ತು ನಿಮಗೆ ಹೇಗೆ help ಮಾಡ್ಲಿ?",
+}
+
+
+def sample_text_of(voice: CatalogueVoice) -> str:
+    """The exact words of this voice's pre-rendered sample: the fixed sentence with its name, or the older business line for a language without one."""
+    fixed = FIXED_SENTENCES.get(voice.language)
+    return fixed.replace("{name}", voice.name) if fixed else sample_text(voice.language)
 LOWEST_TIMEOUT_MS, HIGHEST_TIMEOUT_MS = 200, 3000
 ID_FORMAT = re.compile(r"^[a-z]{2}-[a-z0-9_]{2,40}$")  # the same pattern the database holds
 
