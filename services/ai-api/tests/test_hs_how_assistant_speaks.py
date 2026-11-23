@@ -8,6 +8,7 @@ from __future__ import annotations
 import uuid
 from typing import Any
 
+from app.how_speaks import styles
 from app.packs.registry import PackRegistry
 from app.speaking.service import SpeakingService
 from tests.ds_fakes import FakeSpeakingRepository
@@ -15,6 +16,7 @@ from tests.fakes import TENANT_A, auth, make_client
 from tests.test_pack_tone import PACKS
 from tests.test_tt_talk_training import FakeRepo
 
+OPTIONS = styles.options()   # the seven styles as objects (docs/contracts/voice-styles.md)
 URL = f"/v1/tenants/{TENANT_A.id}/how-assistant-speaks"
 
 
@@ -42,7 +44,7 @@ def world(pack_id: str = "textiles", doc: dict[str, Any] | None = None) -> tuple
 def test_nothing_saved_the_business_type_decides_and_formal_is_not_offered() -> None:
     client, _, _ = world("textiles")
     body = client.get(URL, headers=auth("a_owner")).json()
-    assert body["tone"] == {"value": "friendly", "source": "pack_default", "pack_default": "friendly", "options": ["friendly", "respectful", "quick"]}
+    assert body["tone"] == {"value": "friendly", "source": "pack_default", "pack_default": "friendly", "options": OPTIONS}
     assert body["words"]["options"]["styles"] == ["everyday_mixed", "everyday_pure"] and set(body["words"]["languages"]) == {"te", "en", "hi", "kn", "ta", "ml"}
     assert body["words"]["languages"]["te"] == {"style": "everyday_mixed", "saved": False, "examples": "approved"}
     assert body["introduce_as"]["kind"] == "business" and body["introduce_as"]["owner_name"] == "Gowtham" and body["introduce_as"]["options"] == ["business", "owner", "custom"]
@@ -60,7 +62,7 @@ def test_the_old_address_value_is_mapped_and_nothing_is_lost() -> None:
     friendly_school_never_touched, _, _ = world("textiles", {"address": "plain"})
     assert friendly_school_never_touched.get(URL, headers=auth("a_owner")).json()["tone"]["value"] == "friendly"
     client, training, _ = world("education", {"address": "garu"})
-    assert client.put(URL, json={"tone": "friendly"}, headers=auth("a_owner")).json()["tone"] == {"value": "friendly", "source": "saved", "pack_default": "respectful", "options": ["friendly", "respectful", "quick"]}
+    assert client.put(URL, json={"tone": "friendly"}, headers=auth("a_owner")).json()["tone"] == {"value": "friendly", "source": "saved", "pack_default": "respectful", "options": OPTIONS}
     assert training.rows[TENANT_A.id]["doc"]["address"] == "garu", "the old value stays in the document"
 
 
@@ -91,7 +93,7 @@ def test_a_subset_changes_only_that_part_and_null_resets_it() -> None:
     assert again["tone"]["value"] == "friendly" and again["introduce_as"]["kind"] == "custom"
     # null puts it back
     reset = client.put(URL, json={"tone": None, "words": {"te": None}, "introduce_as": None}, headers=auth("a_owner")).json()
-    assert reset["tone"] == {"value": "respectful", "source": "pack_default", "pack_default": "respectful", "options": ["friendly", "respectful", "quick"]}
+    assert reset["tone"] == {"value": "respectful", "source": "pack_default", "pack_default": "respectful", "options": OPTIONS}
     assert reset["words"]["languages"]["te"]["saved"] is False and reset["words"]["languages"]["ta"]["saved"] is True and reset["introduce_as"]["kind"] == "business"
     assert set(speaking.saved) == {"ta"}
 
@@ -133,7 +135,7 @@ def test_another_workspace_is_not_reachable() -> None:
 def test_the_three_tones_are_the_options_and_quick_can_be_saved_and_is_what_the_calls_read() -> None:
     client, training, _ = world("textiles")
     body = client.put(URL, json={"tone": "quick"}, headers=auth("a_owner")).json()
-    assert body["tone"] == {"value": "quick", "source": "saved", "pack_default": "friendly", "options": ["friendly", "respectful", "quick"]}
+    assert body["tone"] == {"value": "quick", "source": "saved", "pack_default": "friendly", "options": OPTIONS}
     assert training.rows[TENANT_A.id]["doc"]["tone"] == "quick"
     assert client.put(URL, json={"tone": "casual"}, headers=auth("a_owner")).status_code == 422
 
