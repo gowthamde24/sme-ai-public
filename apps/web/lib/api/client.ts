@@ -258,11 +258,13 @@ export async function createTenant(
   accessToken: string,
   name: string,
   slug: string,
+  pack?: string,
 ): Promise<TenantDetail> {
+  // `pack` (optional, C1's first-run contract section 3): the business type chosen when the workspace is made; omitted = the API's own default
   return parseTenantDetail(
     await apiRequest("/v1/tenants", accessToken, {
       method: "POST",
-      body: JSON.stringify({ name, slug }),
+      body: JSON.stringify(pack ? { name, slug, pack } : { name, slug }),
     }),
   );
 }

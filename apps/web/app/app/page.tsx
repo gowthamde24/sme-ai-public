@@ -11,6 +11,8 @@ import { Rich } from "@/components/v2/app/rich";
 import { makeT } from "@/components/v2/app/words";
 import { getLang } from "@/i18n/get-lang";
 import { wordsFor } from "@/i18n/app-words";
+import { listPacks } from "@/lib/api/pack";
+import { firstRunType } from "@/lib/screens/flag";
 
 import { signOut } from "./actions";
 import { CreateTenantForm } from "./create-tenant-form";
@@ -24,8 +26,11 @@ export const dynamic = "force-dynamic";
 export default async function AppPage() {
   const user = await requireUser();
   const lang = await getLang();
-  const words = wordsFor(lang, ["acct."]);
+  const words = wordsFor(lang, ["acct.", "start.type."]);
   const t = makeT(words);
+  // FIRST_RUN_TYPE: the business types, asked as plain rows before a workspace is made (a failed read = the form as it was)
+  const packs = firstRunType() ? await listPacks().catch(() => []) : [];
+  const types = packs.map((p) => ({ id: p.packId, name: p.names[lang] ?? p.names.en, line: p.summary[lang] ?? p.summary.en ?? "" }));
 
   let me: Me | null = null;
   try {
@@ -101,7 +106,7 @@ export default async function AppPage() {
 
       <div id="create-workspace" className={sectionBlock}>
         <AddButton key={me?.memberships.length ?? 0} label={t("acct.add_a_workspace")}>
-          <CreateTenantForm words={words} />
+          <CreateTenantForm words={words} types={types} />
         </AddButton>
       </div>
     </main>
