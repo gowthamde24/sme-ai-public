@@ -38,7 +38,7 @@ def test_the_draft_has_the_words_in_the_customers_language_and_sends_nothing(w: 
     assert r.status_code == 200, r.text
     got = r.json()
     assert got["needed"] is True and got["reason"] is None and got["how"] == "message" and got["window_open"] is True and got["customer"] == "Kalyani Gowda"
-    assert "May we call you and send you messages on WhatsApp" in got["text"] and "STOP" in got["text"]
+    assert "May we call you and send you WhatsApp messages about it" in got["text"] and "about your enquiry" in got["text"] and "STOP" in got["text"]
     uuid.UUID(got["message_id"])
     assert w.db.names() == ["consent_ask_info"], "a read: no message was made"
 
