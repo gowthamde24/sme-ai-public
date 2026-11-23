@@ -126104,5 +126104,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "calls6.more": {
+  "en": "Show more",
+  "te": "ఇంకా చూపించండి",
+  "hi": "और दिखाएँ",
+  "kn": "ಇನ್ನಷ್ಟು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
