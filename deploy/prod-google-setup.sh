@@ -47,7 +47,7 @@ bucket="${PROJECT_ID}_cloudbuild"
 if gcloud storage buckets describe "gs://$bucket" --project "$PROJECT_ID" >/dev/null 2>&1; then say "exists: bucket $bucket"
 else act gcloud storage buckets create "gs://$bucket" --location "$REGION" --project "$PROJECT_ID" --uniform-bucket-level-access; fi
 act gcloud storage buckets add-iam-policy-binding "gs://$bucket" --member "serviceAccount:$(SA sme-build)" --role roles/storage.objectViewer --quiet
-say "(the worker job's invoker grant for sme-tick is made by deploy/production.sh when the job exists; the secrets' grants are made by deploy/prod-secrets-prompt.sh)"
+say "(the worker job's invoker grant for sme-tick cannot be made yet: the job does not exist; deploy/production.sh deploy worker PRINTS the exact command for the owner's OK; the secrets' grants are made by deploy/prod-secrets-prompt.sh)"
 
 say "== 5. budget alerts (alerts only: a budget never stops spending; the hard stops are max-instances and the providers' caps)"
 act env PROJECT_ID="$PROJECT_ID" ./deploy/budget-alerts.sh $([ -n "$APPLY" ] && echo --apply)
