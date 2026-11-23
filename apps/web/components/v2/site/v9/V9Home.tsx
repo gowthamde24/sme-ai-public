@@ -1,7 +1,7 @@
 import "@/design/v9.css";
 
 import { V9Calc, V9Cta, V9Faq, V9Finder, V9Ftr, V9Greet, V9Guard, V9Hdr, V9Hero, V9How, V9Jobs, V9Pricing, V9Try, V9Voices, V9Wit } from "./generated";
-import { Reveal } from "./clients";
+import { Reveal } from "./lazy";
 import type { SiteLang } from "@/i18n/lang";
 import type { SiteT } from "@/i18n/site";
 

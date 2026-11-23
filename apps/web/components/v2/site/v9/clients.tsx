@@ -225,29 +225,3 @@ export function Phone({ id, still, lang = "te", words }: { id: string; still: bo
     </div>
   );
 }
-
-// ---------------------------------------------------------------------------------------------- scroll reveal
-
-/** Sections below the fold fade in once. Nothing is hidden before this runs and nothing is hidden when motion is reduced. */
-export function Reveal() {
-  useEffect(() => {
-    const root = document.querySelector(".v9");
-    if (!root || reducedMotion() || !("IntersectionObserver" in window)) return;
-    const els = Array.from(root.querySelectorAll<HTMLElement>("[data-reveal]")).filter((e) => e.getBoundingClientRect().top > window.innerHeight);
-    els.forEach((e) => e.classList.add("rv-wait"));
-    const io = new IntersectionObserver(
-      (ents) => {
-        for (const e of ents)
-          if (e.isIntersecting) {
-            e.target.classList.add("is-shown");
-            e.target.classList.remove("rv-wait");
-            io.unobserve(e.target);
-          }
-      },
-      { threshold: 0.06 },
-    );
-    els.forEach((e) => io.observe(e));
-    return () => io.disconnect();
-  }, []);
-  return null;
-}

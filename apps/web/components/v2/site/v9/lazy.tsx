@@ -9,3 +9,4 @@ export const PipeClient = dynamic(() => import("./below").then((m) => m.PipeClie
 export const FaqClient = dynamic(() => import("./below").then((m) => m.FaqClient));
 export const HowDemoClient = dynamic(() => import("./below").then((m) => m.HowDemoClient));
 export const TryItClient = dynamic(() => import("./below").then((m) => m.TryItClient));
+export const Reveal = dynamic(() => import("./below").then((m) => m.Reveal));
