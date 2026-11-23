@@ -47,7 +47,7 @@ export function DayOneOpen({ name, steps, canGoLive, actions, words, language, h
       <div data-part="progress" className="mt-3">
         <p className="m-0 text-[15px] font-semibold text-ink">{t("tv6.d1.progress", { done, total })}</p>
         <div role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={done} aria-label={t("tv6.d1.progress", { done, total })} className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-surface-2">
-          <div className="h-full rounded-full bg-ink" data-fill={done} style={{ width: `${Math.round((done / total) * 100)}%` }} />
+          <div data-fill={done} style={{ height: "100%", borderRadius: "9999px", background: "var(--v2-ink)", width: `${Math.round((done / total) * 100)}%` }} />
         </div>
       </div>
       <ol data-part="steps" className="m-0 mt-5 flex list-none flex-col border-t border-ink p-0">
