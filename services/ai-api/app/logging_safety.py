@@ -90,7 +90,8 @@ ROUTE_WORDS = frozenset(
         "entitlements",  # plans as feature switches
         "stats", "quote-draft",
         # job voice-picker
-        "voice-samples", "voice-style-samples", "first-run",
+        "voice-samples", "voice-style-samples", "first-run", "what-you-sell",
+        "voice-chat", "auto-reply", "turns", "actions",
         "voice-chat", "auto-reply", "turns", "actions",
         # job EB: the owner's notes
         "context", "save", "test", "understand", "versions",

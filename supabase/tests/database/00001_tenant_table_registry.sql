@@ -307,6 +307,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('catalogue_items',
    $$insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by) values (%2$L, %1$L, 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', %5$L)$$,
    'name = name', $$delete from public.catalogue_items where id = %2$L$$, false),
+  -- 25 Nov 2026: what a business sells in the services / courses / properties / price-list styles. Written only by SECURITY DEFINER functions; every member reads.
+  ('sell_entries',
+   $$insert into public.sell_entries (id, tenant_id, style, name, data, created_by) values (%2$L, %1$L, 'services', 'Synthetic service', '{}'::jsonb, %5$L)$$,
+   'name = name', $$delete from public.sell_entries where id = %2$L$$, false),
   ('catalogue_photos',
    $$with i as (insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by) values (gen_random_uuid(), %1$L, 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', %5$L) returning id)
      insert into public.catalogue_photos (id, tenant_id, item_id, position, bucket, path, thumb_path, width, height, bytes, thumb_bytes, created_by)
@@ -889,6 +893,8 @@ select t, r, s, i, u, d from (values
   ('store_visits',         'sales', true, false, false, false), ('store_visits',         'viewer', true, false, false, false),
   ('catalogue_items',      'owner', true, false, false, false), ('catalogue_items',      'admin', true, false, false, false),
   ('catalogue_items',      'sales', true, false, false, false), ('catalogue_items',      'viewer', true, false, false, false),
+  ('sell_entries',         'owner', true, false, false, false), ('sell_entries',         'admin', true, false, false, false),
+  ('sell_entries',         'sales', true, false, false, false), ('sell_entries',         'viewer', true, false, false, false),
   ('catalogue_photos',     'owner', true, false, false, false), ('catalogue_photos',     'admin', true, false, false, false),
   ('catalogue_photos',     'sales', true, false, false, false), ('catalogue_photos',     'viewer', true, false, false, false),
   ('outbox_events',       'owner', true, false, false, false), ('outbox_events',       'admin', true, false, false, false),
