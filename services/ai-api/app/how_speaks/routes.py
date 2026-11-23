@@ -142,7 +142,7 @@ def put_how_assistant_speaks(ctx: OwnerStrong, runtime: RuntimeDep, body: HowAss
         if "say_ai_when_greeting" in sent:
             doc["say_ai_when_greeting"] = body.say_ai_when_greeting   # None = back to the default: the name only
         if "background" in sent:
-            doc["background"] = body.background   # None = back to "not chosen yet": quiet_office
+            doc["background"] = body.background   # None = back to "not chosen yet": off
         if "introduce_as" in sent:
             doc["introduce_as"] = {"kind": pick.kind, "text": pick.text} if pick is not None else {"kind": "business", "text": None}
         _repo(runtime).save(ctx.principal.token, ctx.tenant.id, TalkTraining.model_validate(doc).model_dump(mode="json"))

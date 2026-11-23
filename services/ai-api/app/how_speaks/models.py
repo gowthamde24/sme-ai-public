@@ -112,6 +112,6 @@ class HowAssistantSpeaksIn(_Strict):
 
     tone: Tone | None = None
     say_ai_when_greeting: StrictBool | None = None   # greet with "I'm the AI assistant of {business}" (true) or the name only (false, the default); `null` = back to the default. A non-boolean is a 422.
-    background: Background | None = None   # the quiet bed under the assistant's voice on calls; `null` = back to the default (quiet_office)
+    background: Background | None = None   # the quiet bed under the assistant's voice on calls; `null` = back to the default (off)
     words: dict[Language, WordsIn | None] | None = None
     introduce_as: IntroduceIn | None = None
