@@ -126115,5 +126115,269 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "vc.cv.textiles.friendly": {
+  "en": "Do you have Kanchi pattu sarees under ten thousand?\nYes, we do! A few lovely ones in maroon and green. Want to come and see them?\nIs the shop open on Sunday?\nSunday is open, 10 to 8. I'll keep a few aside for you. What time suits you?",
+  "te": "పది వేలలోపు కంచి పట్టు చీరలు ఉన్నాయా?\nఉన్నాయండీ! మెరూన్, గ్రీన్ లో కొన్ని చాలా బాగున్నాయి. షాప్ కి వచ్చి చూస్తారా?\nఆదివారం షాప్ తెరిచి ఉంటుందా?\nఆదివారం తెరిచే ఉంటుందండీ, పది నుంచి ఎనిమిది వరకు. కొన్ని మీకోసం పక్కన పెడతాను. ఏ time కి వస్తారు?",
+  "hi": "दस हज़ार के अंदर कांचीपुरम पट्टू साड़ियाँ हैं क्या?\nजी हाँ! मैरून और ग्रीन में कुछ बहुत सुंदर हैं। दुकान पर आकर देखेंगे?\nक्या रविवार को दुकान खुली रहती है?\nरविवार को खुली है जी, दस से आठ बजे तक। कुछ आपके लिए अलग रख दूँगी। किस time आएँगे?",
+  "kn": "ಹತ್ತು ಸಾವಿರದೊಳಗೆ ಕಾಂಚಿ ಪಟ್ಟು ಸೀರೆ ಇದೆಯಾ?\nಇದೆ ಸರ್! ಮರೂನ್, ಗ್ರೀನ್ ನಲ್ಲಿ ಕೆಲವು ತುಂಬಾ ಚೆನ್ನಾಗಿವೆ. ಅಂಗಡಿಗೆ ಬಂದು ನೋಡ್ತೀರಾ?\nಭಾನುವಾರ ಅಂಗಡಿ ತೆರೆದಿರುತ್ತಾ?\nಭಾನುವಾರ ತೆರೆದಿರುತ್ತೆ, ಹತ್ತರಿಂದ ಎಂಟರವರೆಗೆ. ಕೆಲವನ್ನು ನಿಮಗಾಗಿ ತೆಗೆದಿಡ್ತೀನಿ. ಯಾವ time ಗೆ ಬರ್ತೀರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.textiles.respectful": {
+  "en": "Good morning. Do you have Kanchi pattu sarees under ten thousand rupees?\nGood morning. Yes, we do. We have a few in maroon and green in that range.\nIs the shop open on Sunday?\nYes, we are open on Sunday from 10 am to 8 pm. May I note a time for your visit?",
+  "te": "నమస్కారం. పది వేల రూపాయల లోపు కంచి పట్టు చీరలు ఉన్నాయా?\nనమస్కారం అండీ. ఉన్నాయి. ఆ range లో మెరూన్, గ్రీన్ రంగుల్లో కొన్ని ఉన్నాయి.\nఆదివారం షాప్ తెరిచి ఉంటుందా?\nఅవునండీ, ఆదివారం ఉదయం పది నుంచి రాత్రి ఎనిమిది వరకు తెరిచి ఉంటుంది. మీరు వచ్చే time ని note చేసుకోనా?",
+  "hi": "नमस्कार। दस हज़ार रुपये के अंदर कांचीपुरम पट्टू साड़ियाँ हैं?\nनमस्कार जी। जी हाँ, उस range में मैरून और ग्रीन रंग में कुछ साड़ियाँ हैं।\nक्या रविवार को दुकान खुली है?\nजी हाँ, रविवार को सुबह दस से रात आठ बजे तक खुली रहती है। क्या मैं आपके आने का time note कर लूँ?",
+  "kn": "ನಮಸ್ಕಾರ. ಹತ್ತು ಸಾವಿರ ರೂಪಾಯಿಯೊಳಗೆ ಕಾಂಚಿ ಪಟ್ಟು ಸೀರೆ ಇದೆಯಾ?\nನಮಸ್ಕಾರ. ಹೌದು, ಆ range ನಲ್ಲಿ ಮರೂನ್, ಗ್ರೀನ್ ಬಣ್ಣದಲ್ಲಿ ಕೆಲವು ಇವೆ.\nಭಾನುವಾರ ಅಂಗಡಿ ತೆರೆದಿರುತ್ತಾ?\nಹೌದು, ಭಾನುವಾರ ಬೆಳಿಗ್ಗೆ ಹತ್ತರಿಂದ ರಾತ್ರಿ ಎಂಟರವರೆಗೆ ತೆರೆದಿರುತ್ತೆ. ನೀವು ಬರುವ time note ಮಾಡಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.textiles.quick": {
+  "en": "Kanchi pattu under ten thousand?\nYes. Maroon and green. Come and see?\nOpen Sunday?\nYes, 10 to 8. What time?",
+  "te": "పది వేలలోపు కంచి పట్టు ఉందా?\nఉంది. మెరూన్, గ్రీన్. వచ్చి చూస్తారా?\nఆదివారం తెరిచి ఉంటుందా?\nఅవును, పది నుంచి ఎనిమిది. ఏ time?",
+  "hi": "दस हज़ार में कांचीपुरम पट्टू है?\nहै। मैरून, ग्रीन। आकर देखेंगे?\nरविवार को खुला है?\nहाँ, दस से आठ। कौन सा time?",
+  "kn": "ಹತ್ತು ಸಾವಿರದೊಳಗೆ ಕಾಂಚಿ ಪಟ್ಟು ಇದೆಯಾ?\nಇದೆ. ಮರೂನ್, ಗ್ರೀನ್. ಬಂದು ನೋಡ್ತೀರಾ?\nಭಾನುವಾರ ತೆರೆದಿರುತ್ತಾ?\nಹೌದು, ಹತ್ತರಿಂದ ಎಂಟು. ಯಾವ time?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.construction_materials.friendly": {
+  "en": "Do you have 80 mm paver blocks in grey?\nYes, we have them in stock. Shall I send the price list on WhatsApp?\nCan you deliver to Kukatpally?\nWe can! Tell me the day you want it, and I'll check the truck for you.",
+  "te": "80 mm పేవర్ బ్లాక్స్ గ్రే రంగులో ఉన్నాయా?\nఉన్నాయండీ, stock ఉంది. price list WhatsApp లో పంపమంటారా?\nకూకట్‌పల్లికి deliver చేస్తారా?\nచేస్తాం అండీ! మీకు ఏ రోజు కావాలో చెప్పండి, లారీ ఉందో చూస్తాను.",
+  "hi": "80 mm पेवर ब्लॉक ग्रे रंग में हैं?\nजी हाँ, stock में हैं। price list WhatsApp पर भेज दूँ?\nक्या कूकटपल्ली में delivery हो जाएगी?\nजी हो जाएगी! आपको किस दिन चाहिए, बता दीजिए, मैं गाड़ी देख लेती हूँ।",
+  "kn": "80 mm ಪೇವರ್ ಬ್ಲಾಕ್ ಗ್ರೇ ಬಣ್ಣದಲ್ಲಿ ಇದೆಯಾ?\nಇದೆ ಸರ್, stock ಇದೆ. price list WhatsApp ನಲ್ಲಿ ಕಳಿಸಲಾ?\nಕೂಕಟ್‌ಪಲ್ಲಿಗೆ delivery ಮಾಡ್ತೀರಾ?\nಮಾಡ್ತೀವಿ ಸರ್! ನಿಮಗೆ ಯಾವ ದಿನ ಬೇಕು ಹೇಳಿ, ಲಾರಿ ಇದೆಯಾ ನೋಡ್ತೀನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.construction_materials.respectful": {
+  "en": "Good afternoon. Do you stock 80 mm grey paver blocks?\nGood afternoon. Yes, they are in stock. May I send the price list on WhatsApp?\nDo you deliver to Kukatpally?\nYes, we do. Please tell me the day you need them, and I will confirm the delivery.",
+  "te": "నమస్కారం. 80 mm గ్రే పేవర్ బ్లాక్స్ stock లో ఉన్నాయా?\nనమస్కారం అండీ. ఉన్నాయి. price list ని WhatsApp లో పంపమంటారా?\nకూకట్‌పల్లికి delivery ఇస్తారా?\nఇస్తాం అండీ. మీకు ఏ రోజు కావాలో చెబితే, delivery confirm చేస్తాను.",
+  "hi": "नमस्कार। 80 mm ग्रे पेवर ब्लॉक stock में हैं?\nनमस्कार जी। हाँ, stock में हैं। क्या मैं price list WhatsApp पर भेज दूँ?\nक्या कूकटपल्ली में delivery होती है?\nजी हाँ। आपको किस दिन चाहिए, यह बता दें, मैं delivery confirm कर दूँगी।",
+  "kn": "ನಮಸ್ಕಾರ. 80 mm ಗ್ರೇ ಪೇವರ್ ಬ್ಲಾಕ್ stock ನಲ್ಲಿ ಇದೆಯಾ?\nನಮಸ್ಕಾರ. ಹೌದು, ಇದೆ. price list ಅನ್ನು WhatsApp ನಲ್ಲಿ ಕಳಿಸಲಾ?\nಕೂಕಟ್‌ಪಲ್ಲಿಗೆ delivery ಇದೆಯಾ?\nಹೌದು. ನಿಮಗೆ ಯಾವ ದಿನ ಬೇಕು ಅಂತ ಹೇಳಿದರೆ, delivery confirm ಮಾಡ್ತೀನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.construction_materials.quick": {
+  "en": "80 mm grey pavers?\nIn stock. Price list on WhatsApp?\nDeliver to Kukatpally?\nYes. Which day?",
+  "te": "80 mm గ్రే పేవర్స్ ఉన్నాయా?\nఉన్నాయి. price list WhatsApp లో పంపనా?\nకూకట్‌పల్లికి delivery?\nఅవును. ఏ రోజు?",
+  "hi": "80 mm ग्रे पेवर्स हैं?\nहैं। Price list WhatsApp पर भेजूँ?\nकूकटपल्ली delivery?\nहाँ। किस दिन?",
+  "kn": "80 mm ಗ್ರೇ ಪೇವರ್ಸ್ ಇದೆಯಾ?\nಇದೆ. price list WhatsApp ನಲ್ಲಿ ಕಳಿಸಲಾ?\nಕೂಕಟ್‌ಪಲ್ಲಿಗೆ delivery?\nಹೌದು. ಯಾವ ದಿನ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.education.friendly": {
+  "en": "What are the Class 10 batch timings?\nWe have a morning batch at 7 and an evening batch at 5. Which one is easier for your child?\nCan my son try one class first?\nOf course! We have a free demo class on Saturday. Shall I put his name down?",
+  "te": "పదో తరగతి batch timings ఏమిటి?\nఉదయం ఏడుకి ఒక batch, సాయంత్రం ఐదుకి ఒక batch ఉన్నాయండీ. మీ అబ్బాయికి ఏది సులువు?\nమా అబ్బాయి ముందు ఒక class చూడొచ్చా?\nతప్పకుండా అండీ! శనివారం free demo class ఉంది. వాడి పేరు రాసుకోనా?",
+  "hi": "दसवीं के batch का time क्या है?\nसुबह सात बजे और शाम पाँच बजे के दो batch हैं। आपके बच्चे को कौन सा आसान रहेगा?\nक्या मेरा बेटा पहले एक class देख सकता है?\nबिल्कुल! शनिवार को free demo class है। क्या मैं उसका नाम लिख लूँ?",
+  "kn": "ಹತ್ತನೇ ತರಗತಿ batch time ಏನು?\nಬೆಳಿಗ್ಗೆ ಏಳಕ್ಕೆ ಒಂದು, ಸಂಜೆ ಐದಕ್ಕೆ ಒಂದು batch ಇದೆ. ನಿಮ್ಮ ಮಗನಿಗೆ ಯಾವುದು ಅನುಕೂಲ?\nನನ್ನ ಮಗ ಮೊದಲು ಒಂದು class ನೋಡಬಹುದಾ?\nಖಂಡಿತ! ಶನಿವಾರ free demo class ಇದೆ. ಅವನ ಹೆಸರು ಬರೆದುಕೊಳ್ಳಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.education.respectful": {
+  "en": "Good evening. What are the batch timings for Class 10?\nGood evening. There is a morning batch at 7 and an evening batch at 5. Which would suit your child?\nMay my son attend one class before joining?\nCertainly. A free demo class is held on Saturday. May I note his name?",
+  "te": "నమస్కారం. పదో తరగతి batch timings తెలియజేయండి.\nనమస్కారం అండీ. ఉదయం ఏడు గంటలకు, సాయంత్రం ఐదు గంటలకు batches ఉన్నాయి. మీ అబ్బాయికి ఏది అనుకూలం?\nచేరే ముందు మా అబ్బాయి ఒక class కి హాజరు కావచ్చా?\nతప్పకుండా అండీ. శనివారం free demo class ఉంది. అతని పేరు note చేసుకోవచ్చా?",
+  "hi": "नमस्कार। दसवीं के batch का time बताइए।\nनमस्कार जी। सुबह सात बजे और शाम पाँच बजे के batch हैं। आपके बच्चे के लिए कौन सा ठीक रहेगा?\nक्या मेरा बेटा जुड़ने से पहले एक class में आ सकता है?\nज़रूर। शनिवार को free demo class होती है। क्या मैं उसका नाम note कर लूँ?",
+  "kn": "ನಮಸ್ಕಾರ. ಹತ್ತನೇ ತರಗತಿ batch time ತಿಳಿಸಿ.\nನಮಸ್ಕಾರ. ಬೆಳಿಗ್ಗೆ ಏಳು, ಸಂಜೆ ಐದು ಗಂಟೆಗೆ batch ಇದೆ. ನಿಮ್ಮ ಮಗನಿಗೆ ಯಾವುದು ಅನುಕೂಲ?\nಸೇರುವ ಮೊದಲು ನನ್ನ ಮಗ ಒಂದು class ಗೆ ಬರಬಹುದಾ?\nಖಂಡಿತ. ಶನಿವಾರ free demo class ಇದೆ. ಅವನ ಹೆಸರು note ಮಾಡಿಕೊಳ್ಳಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.education.quick": {
+  "en": "Class 10 batch timings?\n7 am or 5 pm. Which?\nCan he try one class?\nYes, free demo Saturday. His name?",
+  "te": "పదో తరగతి batch timings?\nఉదయం ఏడు లేదా సాయంత్రం ఐదు. ఏది?\nవాడు ఒక class చూడొచ్చా?\nఅవును, శనివారం free demo. వాడి పేరు?",
+  "hi": "दसवीं के batch का time?\nसुबह सात या शाम पाँच। कौन सा?\nक्या वह एक class देख सकता है?\nहाँ, शनिवार को free demo। उसका नाम?",
+  "kn": "ಹತ್ತನೇ ತರಗತಿ batch time?\nಬೆಳಿಗ್ಗೆ ಏಳು ಅಥವಾ ಸಂಜೆ ಐದು. ಯಾವುದು?\nಅವನು ಒಂದು class ನೋಡಬಹುದಾ?\nಹೌದು, ಶನಿವಾರ free demo. ಅವನ ಹೆಸರು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.real_estate.friendly": {
+  "en": "Can I see the 2BHK flat this Saturday?\nYes, of course! Saturday morning is free. Would 11 o'clock be good?\n11 is fine. Where do we meet?\nAt the project gate. I'll send the location on WhatsApp right now.",
+  "te": "ఈ శనివారం 2BHK ఫ్లాట్ చూడొచ్చా?\nతప్పకుండా అండీ! శనివారం ఉదయం free గా ఉంది. పదకొండు గంటలకు ఓకేనా?\nపదకొండు ఓకే. ఎక్కడ కలవాలి?\nproject gate దగ్గర అండీ. location ఇప్పుడే WhatsApp లో పంపిస్తాను.",
+  "hi": "क्या मैं इस शनिवार 2BHK फ्लैट देख सकता हूँ?\nजी बिल्कुल! शनिवार सुबह time खाली है। ग्यारह बजे ठीक रहेगा?\nग्यारह बजे ठीक है। कहाँ मिलना है?\nProject के gate पर जी। location अभी WhatsApp पर भेज देती हूँ।",
+  "kn": "ಈ ಶನಿವಾರ 2BHK ಫ್ಲ್ಯಾಟ್ ನೋಡಬಹುದಾ?\nಖಂಡಿತ ಸರ್! ಶನಿವಾರ ಬೆಳಿಗ್ಗೆ free ಇದೆ. ಹನ್ನೊಂದು ಗಂಟೆಗೆ ಆಗುತ್ತಾ?\nಹನ್ನೊಂದು ಸರಿ. ಎಲ್ಲಿ ಸಿಗೋಣ?\nproject gate ಹತ್ತಿರ ಸರ್. location ಈಗಲೇ WhatsApp ನಲ್ಲಿ ಕಳಿಸ್ತೀನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.real_estate.respectful": {
+  "en": "Good morning. May I visit the 2BHK flat this Saturday?\nGood morning. Certainly. Saturday morning is available. Would 11 am suit you?\n11 am is fine. Where should I come?\nPlease come to the project gate. I will send the location on WhatsApp now.",
+  "te": "నమస్కారం. ఈ శనివారం 2BHK ఫ్లాట్ చూడటానికి రావచ్చా?\nనమస్కారం అండీ. తప్పకుండా. శనివారం ఉదయం అందుబాటులో ఉంది. పదకొండు గంటలకు మీకు వీలవుతుందా?\nపదకొండు ఓకే. ఎక్కడికి రావాలి?\nproject gate దగ్గరికి రండి అండీ. location ని ఇప్పుడే WhatsApp లో పంపుతాను.",
+  "hi": "नमस्कार। क्या मैं इस शनिवार 2BHK फ्लैट देखने आ सकता हूँ?\nनमस्कार जी। ज़रूर। शनिवार सुबह का time उपलब्ध है। ग्यारह बजे आपको ठीक रहेगा?\nग्यारह बजे ठीक है। कहाँ आना होगा?\nकृपया project के gate पर आइए। मैं location अभी WhatsApp पर भेज रही हूँ।",
+  "kn": "ನಮಸ್ಕಾರ. ಈ ಶನಿವಾರ 2BHK ಫ್ಲ್ಯಾಟ್ ನೋಡಲು ಬರಬಹುದಾ?\nನಮಸ್ಕಾರ. ಖಂಡಿತ. ಶನಿವಾರ ಬೆಳಿಗ್ಗೆ ಲಭ್ಯವಿದೆ. ಹನ್ನೊಂದು ಗಂಟೆಗೆ ನಿಮಗೆ ಅನುಕೂಲವಾ?\nಹನ್ನೊಂದು ಸರಿ. ಎಲ್ಲಿಗೆ ಬರಬೇಕು?\nದಯವಿಟ್ಟು project gate ಹತ್ತಿರ ಬನ್ನಿ. location ಅನ್ನು ಈಗಲೇ WhatsApp ನಲ್ಲಿ ಕಳಿಸ್ತೀನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.real_estate.quick": {
+  "en": "2BHK visit Saturday?\nYes. 11 am?\nOK. Where?\nProject gate. Location on WhatsApp now.",
+  "te": "శనివారం 2BHK visit?\nఅవును. పదకొండు గంటలకు?\nఓకే. ఎక్కడ?\nproject gate. location ఇప్పుడే WhatsApp లో.",
+  "hi": "शनिवार को 2BHK visit?\nहाँ। ग्यारह बजे?\nठीक है। कहाँ?\nProject gate। Location अभी WhatsApp पर।",
+  "kn": "ಶನಿವಾರ 2BHK visit?\nಹೌದು. ಹನ್ನೊಂದು ಗಂಟೆ?\nಸರಿ. ಎಲ್ಲಿ?\nproject gate. location ಈಗ WhatsApp ನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.clinic.friendly": {
+  "en": "Can I get an appointment this evening?\nYes, I have a slot at 5:15 or 6. Which one is better for you?\n5:15, please.\nDone! 5:15 this evening. I'll send the clinic address on WhatsApp.",
+  "te": "ఈ సాయంత్రం appointment దొరుకుతుందా?\nదొరుకుతుందండీ, ఐదు పదిహేనుకి లేదా ఆరుకి slot ఉంది. ఏది మీకు సులువు?\nఐదు పదిహేనుకి ఇవ్వండి.\nఅయిపోయింది అండీ! ఈ సాయంత్రం ఐదు పదిహేను. clinic address WhatsApp లో పంపుతాను.",
+  "hi": "क्या आज शाम appointment मिल सकती है?\nजी, पाँच बजकर पंद्रह मिनट या छह बजे का slot है। कौन सा ठीक रहेगा?\nपाँच पंद्रह वाला दे दीजिए।\nहो गया जी! आज शाम पाँच पंद्रह। clinic का address WhatsApp पर भेज देती हूँ।",
+  "kn": "ಇವತ್ತು ಸಂಜೆ appointment ಸಿಗುತ್ತಾ?\nಸಿಗುತ್ತೆ ಸರ್, ಐದು ಹದಿನೈದು ಅಥವಾ ಆರಕ್ಕೆ slot ಇದೆ. ಯಾವುದು ಅನುಕೂಲ?\nಐದು ಹದಿನೈದಕ್ಕೆ ಕೊಡಿ.\nಆಯ್ತು ಸರ್! ಇವತ್ತು ಸಂಜೆ ಐದು ಹದಿನೈದು. clinic address WhatsApp ನಲ್ಲಿ ಕಳಿಸ್ತೀನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.clinic.respectful": {
+  "en": "Good evening. May I book an appointment for this evening?\nGood evening. Yes. A slot is open at 5:15 and at 6. Which would you prefer?\n5:15, please.\nYour appointment is booked for 5:15 this evening. I will send the clinic address on WhatsApp.",
+  "te": "నమస్కారం. ఈ సాయంత్రానికి appointment బుక్ చేయవచ్చా?\nనమస్కారం అండీ. చేయవచ్చు. ఐదు పదిహేనుకి, ఆరుకి slots ఉన్నాయి. ఏది మీకు ఇష్టం?\nఐదు పదిహేనుకి ఇవ్వండి.\nమీ appointment ఈ సాయంత్రం ఐదు పదిహేనుకి బుక్ అయింది అండీ. clinic address WhatsApp లో పంపుతాను.",
+  "hi": "नमस्कार। क्या आज शाम के लिए appointment बुक हो सकती है?\nनमस्कार जी। हाँ। पाँच पंद्रह और छह बजे के slot खाली हैं। आप कौन सा पसंद करेंगे?\nपाँच पंद्रह वाला दीजिए।\nआपकी appointment आज शाम पाँच पंद्रह के लिए बुक हो गई है। मैं clinic का address WhatsApp पर भेज रही हूँ।",
+  "kn": "ನಮಸ್ಕಾರ. ಇವತ್ತು ಸಂಜೆಗೆ appointment ಬುಕ್ ಮಾಡಬಹುದಾ?\nನಮಸ್ಕಾರ. ಹೌದು. ಐದು ಹದಿನೈದು ಮತ್ತು ಆರು ಗಂಟೆಗೆ slot ಇದೆ. ಯಾವುದು ಇಷ್ಟ?\nಐದು ಹದಿನೈದಕ್ಕೆ ಕೊಡಿ.\nನಿಮ್ಮ appointment ಇವತ್ತು ಸಂಜೆ ಐದು ಹದಿನೈದಕ್ಕೆ ಬುಕ್ ಆಗಿದೆ. clinic address ಅನ್ನು WhatsApp ನಲ್ಲಿ ಕಳಿಸ್ತೀನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.clinic.quick": {
+  "en": "Appointment this evening?\nYes. 5:15 or 6?\n5:15.\nBooked. Address on WhatsApp.",
+  "te": "ఈ సాయంత్రం appointment?\nఉంది. ఐదు పదిహేను లేదా ఆరు?\nఐదు పదిహేను.\nబుక్ అయింది. address WhatsApp లో.",
+  "hi": "आज शाम appointment?\nहै। पाँच पंद्रह या छह?\nपाँच पंद्रह।\nबुक हो गया। Address WhatsApp पर।",
+  "kn": "ಇವತ್ತು ಸಂಜೆ appointment?\nಇದೆ. ಐದು ಹದಿನೈದು ಅಥವಾ ಆರು?\nಐದು ಹದಿನೈದು.\nಬುಕ್ ಆಯ್ತು. address WhatsApp ನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.auto_dealer.friendly": {
+  "en": "I'd like to test drive the hatchback this week.\nGreat choice! I have Thursday or Friday afternoon. Which one is better?\nFriday at 3.\nFriday at 3 it is. I'll send the showroom location on WhatsApp.",
+  "te": "ఈ వారం hatchback test drive చేయాలనుంది.\nమంచి choice అండీ! గురువారం లేదా శుక్రవారం మధ్యాహ్నం ఖాళీగా ఉంది. ఏది మీకు సులువు?\nశుక్రవారం మూడు గంటలకి.\nశుక్రవారం మూడు గంటలకి fix చేశాను. showroom location WhatsApp లో పంపుతాను.",
+  "hi": "मुझे इस हफ्ते hatchback की test drive लेनी है।\nअच्छा choice है जी! गुरुवार या शुक्रवार दोपहर खाली है। कौन सा ठीक रहेगा?\nशुक्रवार को तीन बजे।\nशुक्रवार तीन बजे fix कर दिया। showroom की location WhatsApp पर भेज देती हूँ।",
+  "kn": "ಈ ವಾರ hatchback test drive ಮಾಡಬೇಕು.\nಒಳ್ಳೆಯ choice ಸರ್! ಗುರುವಾರ ಅಥವಾ ಶುಕ್ರವಾರ ಮಧ್ಯಾಹ್ನ ಖಾಲಿ ಇದೆ. ಯಾವುದು ಅನುಕೂಲ?\nಶುಕ್ರವಾರ ಮೂರು ಗಂಟೆಗೆ.\nಶುಕ್ರವಾರ ಮೂರು ಗಂಟೆಗೆ fix ಮಾಡಿದ್ದೀನಿ. showroom location WhatsApp ನಲ್ಲಿ ಕಳಿಸ್ತೀನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.auto_dealer.respectful": {
+  "en": "Good morning. I would like to test drive the hatchback this week.\nGood morning. Certainly. Thursday and Friday afternoons are available. Which would you prefer?\nFriday at 3 pm.\nYour test drive is set for Friday at 3 pm. I will send the showroom location on WhatsApp.",
+  "te": "నమస్కారం. ఈ వారం hatchback test drive చేయాలనుకుంటున్నాను.\nనమస్కారం అండీ. తప్పకుండా. గురువారం, శుక్రవారం మధ్యాహ్నాలు అందుబాటులో ఉన్నాయి. ఏది మీకు ఇష్టం?\nశుక్రవారం మధ్యాహ్నం మూడు గంటలకు.\nమీ test drive శుక్రవారం మధ్యాహ్నం మూడు గంటలకు fix అయింది అండీ. showroom location WhatsApp లో పంపుతాను.",
+  "hi": "नमस्कार। मैं इस हफ्ते hatchback की test drive लेना चाहता हूँ।\nनमस्कार जी। ज़रूर। गुरुवार और शुक्रवार की दोपहर उपलब्ध है। आप कौन सा पसंद करेंगे?\nशुक्रवार को दोपहर तीन बजे।\nआपकी test drive शुक्रवार दोपहर तीन बजे के लिए तय हो गई है। मैं showroom की location WhatsApp पर भेज रही हूँ।",
+  "kn": "ನಮಸ್ಕಾರ. ಈ ವಾರ hatchback test drive ಮಾಡಬೇಕು ಅಂತ ಇದ್ದೇನೆ.\nನಮಸ್ಕಾರ. ಖಂಡಿತ. ಗುರುವಾರ, ಶುಕ್ರವಾರ ಮಧ್ಯಾಹ್ನ ಲಭ್ಯವಿದೆ. ಯಾವುದು ಇಷ್ಟ?\nಶುಕ್ರವಾರ ಮಧ್ಯಾಹ್ನ ಮೂರು ಗಂಟೆಗೆ.\nನಿಮ್ಮ test drive ಶುಕ್ರವಾರ ಮಧ್ಯಾಹ್ನ ಮೂರು ಗಂಟೆಗೆ fix ಆಗಿದೆ. showroom location WhatsApp ನಲ್ಲಿ ಕಳಿಸ್ತೀನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.auto_dealer.quick": {
+  "en": "Test drive, hatchback, this week?\nYes. Thursday or Friday afternoon?\nFriday 3.\nSet. Location on WhatsApp.",
+  "te": "ఈ వారం hatchback test drive?\nఅవును. గురువారం లేదా శుక్రవారం మధ్యాహ్నం?\nశుక్రవారం మూడు.\nfix అయింది. location WhatsApp లో.",
+  "hi": "इस हफ्ते hatchback test drive?\nहाँ। गुरुवार या शुक्रवार दोपहर?\nशुक्रवार तीन बजे।\nतय। Location WhatsApp पर।",
+  "kn": "ಈ ವಾರ hatchback test drive?\nಹೌದು. ಗುರುವಾರ ಅಥವಾ ಶುಕ್ರವಾರ ಮಧ್ಯಾಹ್ನ?\nಶುಕ್ರವಾರ ಮೂರು.\nfix ಆಯ್ತು. location WhatsApp ನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.label": {
+  "en": "A sample call",
+  "te": "ఒక sample call",
+  "hi": "एक sample call",
+  "kn": "ಒಂದು sample call",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.assistant": {
+  "en": "Your assistant",
+  "te": "మీ assistant",
+  "hi": "आपकी assistant",
+  "kn": "ನಿಮ್ಮ assistant",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.default.friendly": {
+  "en": "Hi, are you open tomorrow?\nYes, we're open tomorrow from 10 to 7. Would you like to drop by?\nWhat time is best?\nAnytime after 11 is quiet. I can note your name so we're ready for you.",
+  "te": "హాయ్, రేపు తెరిచి ఉంటారా?\nఉంటాం అండీ, రేపు పది నుంచి ఏడు వరకు. మీరు వస్తారా?\nఏ time బాగుంటుంది?\nపదకొండు తర్వాత ఎప్పుడైనా ప్రశాంతంగా ఉంటుంది. మీ పేరు రాసుకుంటాను, మీ కోసం సిద్ధంగా ఉంటాం.",
+  "hi": "नमस्ते, क्या आप कल खुले हैं?\nजी, कल दस से सात बजे तक खुले हैं। आप आएँगे?\nकौन सा time ठीक रहेगा?\nग्यारह बजे के बाद कभी भी शांति रहती है। मैं आपका नाम लिख लेती हूँ, आपके लिए तैयार रहेंगे।",
+  "kn": "ಹಾಯ್, ನಾಳೆ ತೆರೆದಿರ್ತೀರಾ?\nತೆರೆದಿರ್ತೀವಿ ಸರ್, ನಾಳೆ ಹತ್ತರಿಂದ ಏಳರವರೆಗೆ. ಬರ್ತೀರಾ?\nಯಾವ time ಚೆನ್ನಾಗಿರುತ್ತೆ?\nಹನ್ನೊಂದರ ನಂತರ ಯಾವಾಗ ಬೇಕಾದರೂ ಶಾಂತವಾಗಿರುತ್ತೆ. ನಿಮ್ಮ ಹೆಸರು ಬರೆದುಕೊಳ್ತೀನಿ, ನಿಮಗಾಗಿ ತಯಾರಾಗಿರ್ತೀವಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.default.respectful": {
+  "en": "Good morning. Are you open tomorrow?\nGood morning. Yes, we are open tomorrow from 10 am to 7 pm. Would you like to visit?\nWhat time would be best?\nAfter 11 am it is quieter. May I note your name so that we are ready for you?",
+  "te": "నమస్కారం. రేపు మీరు తెరిచి ఉంటారా?\nనమస్కారం అండీ. అవును, రేపు ఉదయం పది నుంచి సాయంత్రం ఏడు వరకు తెరిచి ఉంటాం. మీరు రావాలనుకుంటున్నారా?\nఏ time బాగుంటుంది?\nపదకొండు తర్వాత కొంచెం ప్రశాంతంగా ఉంటుంది అండీ. మీ పేరు note చేసుకోవచ్చా, మీ కోసం సిద్ధంగా ఉంటాం.",
+  "hi": "नमस्कार। क्या आप कल खुले हैं?\nनमस्कार जी। हाँ, कल सुबह दस से शाम सात बजे तक खुले हैं। क्या आप आना चाहेंगे?\nकौन सा time ठीक रहेगा?\nग्यारह बजे के बाद थोड़ी शांति रहती है। क्या मैं आपका नाम note कर लूँ, ताकि हम तैयार रहें?",
+  "kn": "ನಮಸ್ಕಾರ. ನಾಳೆ ನೀವು ತೆರೆದಿರ್ತೀರಾ?\nನಮಸ್ಕಾರ. ಹೌದು, ನಾಳೆ ಬೆಳಿಗ್ಗೆ ಹತ್ತರಿಂದ ಸಂಜೆ ಏಳರವರೆಗೆ ತೆರೆದಿರ್ತೀವಿ. ಬರ್ತೀರಾ?\nಯಾವ time ಚೆನ್ನಾಗಿರುತ್ತೆ?\nಹನ್ನೊಂದರ ನಂತರ ಸ್ವಲ್ಪ ಶಾಂತವಾಗಿರುತ್ತೆ. ನಿಮ್ಮ ಹೆಸರು note ಮಾಡಿಕೊಳ್ಳಲಾ, ನಿಮಗಾಗಿ ತಯಾರಾಗಿರ್ತೀವಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.cv.default.quick": {
+  "en": "Open tomorrow?\nYes, 10 to 7. Coming?\nWhat time?\nAfter 11. Your name?",
+  "te": "రేపు తెరిచి ఉంటారా?\nఅవును, పది నుంచి ఏడు. వస్తారా?\nఏ time?\nపదకొండు తర్వాత. మీ పేరు?",
+  "hi": "कल खुले हैं?\nहाँ, दस से सात। आएँगे?\nकौन सा time?\nग्यारह के बाद। आपका नाम?",
+  "kn": "ನಾಳೆ ತೆರೆದಿರ್ತೀರಾ?\nಹೌದು, ಹತ್ತರಿಂದ ಏಳು. ಬರ್ತೀರಾ?\nಯಾವ time?\nಹನ್ನೊಂದರ ನಂತರ. ನಿಮ್ಮ ಹೆಸರು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
