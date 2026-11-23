@@ -5,6 +5,8 @@ import { introduceProblem, introduceToApi, parseIntroduceAs, type IntroduceAs } 
  * language, and Introduce as (and, since 21 Nov, the background and "Say AI assistant when greeting"). Casual is NOT an option here (the owner's own test call only); Formal is hidden. Pure: no fetch, no React.
  */
 export const TONES = ["friendly", "respectful", "quick", "professional", "calm_caring", "cheerful", "confident"] as const; // the 7 speaking styles (C1's voice-styles.md section 1); the first three are the ones that always existed
+/** The three styles that always existed: the older panels (How your assistant speaks) offer these only. */
+export const BASE_TONES = ["friendly", "respectful", "quick"] as const;
 /** The three styles that have a prepared sample call; each of the four newer ones speaks on top of one of them (C1: professional on respectful, the others on friendly). */
 export const BASE_TONE: Readonly<Record<SpeakTone, "friendly" | "respectful" | "quick">> = { friendly: "friendly", respectful: "respectful", quick: "quick", professional: "respectful", calm_caring: "friendly", cheerful: "friendly", confident: "friendly" };
 /** A speaking style as the API lists it: its words per language (drafts until reviewed) and the kinds of business it suits. */

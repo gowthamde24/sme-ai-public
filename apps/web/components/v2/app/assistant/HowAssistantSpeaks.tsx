@@ -4,7 +4,7 @@ import * as React from "react";
 
 import type { CallLang } from "@/lib/assistant/types";
 import { introduceProblem, type IntroduceAs } from "@/lib/talk-training/introduce";
-import { EXAMPLE_LANGS, SPEAK_LANGS, STYLES, TONES, type ExampleLang, type HowSpeaks, type SpeakLang, type SpeaksChange, type SpeakStyle, type SpeakTone } from "@/lib/talk-training/speaks";
+import { BASE_TONES, EXAMPLE_LANGS, SPEAK_LANGS, STYLES, type ExampleLang, type HowSpeaks, type SpeakLang, type SpeaksChange, type SpeakStyle, type SpeakTone } from "@/lib/talk-training/speaks";
 import { exampleLine } from "@/lib/talk-training/speaks-examples";
 
 import { alertBox, btnMain, checkRow, fieldHelp, noteBox, okBox } from "../ui";
@@ -114,7 +114,7 @@ export function HowAssistantSpeaks({ t, langNames, business, off, panel, securit
       <fieldset data-part="sp-tone">
         <legend className={h3}>{t("sp.tone")}</legend>
         <div className="mt-1 flex flex-col">
-          {TONES.map((x) => (
+          {BASE_TONES.map((x) => (
             <label key={x} className={checkRow}>
               <input type="radio" name="sp-tone" value={x} checked={d.tone === x} disabled={off} onChange={() => touch({ ...d, tone: x })} className="size-5 shrink-0 accent-brand-text" />
               <span>
