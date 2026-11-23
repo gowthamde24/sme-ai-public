@@ -738,6 +738,11 @@
 [data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon] svg { width: 22px !important; height: 22px !important; }
 [data-ui="v2"][data-ds="6"] [data-open="today"] .row-quiet { border: 0 !important; background: none !important; border-radius: 0 !important; color: var(--v2-muted) !important; text-decoration: underline !important; text-underline-offset: 4px !important; padding-inline: 6px !important; }
 [data-ui="v2"][data-ds="6"] [data-open="today"] .row-quiet:hover { background: none !important; color: var(--v2-ink) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] #needs-you-list { border: 0 !important; border-radius: 0 !important; background: none !important; border-top: 1px solid var(--v2-border) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon][data-k="call"] { color: var(--k-call) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon][data-k="chat"] { color: var(--k-chat) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon][data-k="visit"] { color: var(--k-visit) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon][data-k="offer"] { color: var(--k-offer) !important; }
 /* the festival suggestion: a hairline block, not a peach box */
 [data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] { background: none !important; border: 0 !important; border-top: 1px solid var(--v2-border) !important; border-bottom: 1px solid var(--v2-border) !important; border-radius: 0 !important; box-shadow: none !important; padding-inline: 0 !important; }
 [data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] > p:first-child { color: var(--v2-muted) !important; }
