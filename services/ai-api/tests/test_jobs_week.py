@@ -75,3 +75,9 @@ def test_with_jobs_off_it_is_404() -> None:
 def test_the_word_path_wins_over_the_job_id() -> None:
     client, _ = make_client(jobs=JobsRuntime(directory=PACKS))
     assert client.get(f"{JOBS}/week", headers=auth("a_owner")).status_code != 422
+
+
+def test_a_business_that_never_has_the_lead_finder_has_no_researcher_row() -> None:
+    client, _ = make_client(jobs=JobsRuntime(directory=PACKS), lead_finder=SimpleNamespace(availability=lambda t, tid: SimpleNamespace(reason="not_for_this_business", available=False, access="hidden")))
+    kinds = [i["kind"] for i in client.get(f"{JOBS}/week", headers=auth("a_owner")).json()["items"]]
+    assert "researcher" not in kinds and kinds == [k for k in listing.KINDS if k != "researcher"]

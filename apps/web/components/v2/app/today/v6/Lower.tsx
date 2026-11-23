@@ -15,7 +15,7 @@ export function VisitsCard({ rows, t }: { rows: readonly VisitRow[]; t: Say }) {
         {t("tv6.vis.title")}
       </h2>
       {rows.length === 0 ? (
-        <p className={`${card} px-4 py-3.5 text-sm text-muted`}>{t("tv6.vis.none")}</p>
+        <p data-part="empty-note" className={`${card} px-4 py-3.5 text-sm text-muted`}>{t("tv6.vis.none")}</p>
       ) : (
         <ul className={`${card} px-4 py-1.5`}>
           {rows.map((r) => (
@@ -43,7 +43,7 @@ export function ResultsCard({ stages, costs, t }: { stages: readonly ResultsStag
       <h2 id="results-h" className={h2}>
         {t("tv6.res.title")}
       </h2>
-      <div className={`${card} p-4`}>
+      <div data-part={stages.length === 0 ? "empty-note" : undefined} className={`${card} p-4`}>
         {stages.length === 0 ? (
           <p className="text-sm text-muted">{t("tv6.res.none")}</p>
         ) : (

@@ -99,7 +99,7 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
   const dayView = v6 ? dayViewOf(now, v6, ready) : null;
   const visitRows = visitRowsOf(ready);
   return (
-    <div data-screen="today" {...(v6 ? { "data-v6": "" } : {})} className="flex flex-col gap-4 md:gap-5">
+    <div data-screen="today" {...(v6 ? { "data-v6": "" } : {})} {...(v6?.open ? { "data-open": "today" } : {})} className="flex flex-col gap-4 md:gap-5">
       <header className={v6 ? "sr-only" : "flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4"}>
         <div>
           {/* the page's H1 is the menu's word, "Today" (owner rule, 6 Nov: every menu item opens its own page with the menu's word as its H1), beside the date; the greeting stays the big line */}
