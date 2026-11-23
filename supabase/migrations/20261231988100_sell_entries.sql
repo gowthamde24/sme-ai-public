@@ -54,9 +54,12 @@ create table public.sell_entries (
 );
 create index sell_entries_list_idx on public.sell_entries (tenant_id, style, created_at, id) where removed_at is null;
 comment on table public.sell_entries is 'What a business sells, for the services, courses, properties and price-list styles of the "What you sell" section. Written only by SECURITY DEFINER functions; every member reads.';
-comment on column public.sell_entries.name is 'SAFE: the name of something the business sells; passes app.text_is_clean. CLEAN-EXEMPT: pattern CHECK';
+comment on column public.sell_entries.name is 'SAFE: the name of something the business sells; no personal data intended; passes app.text_is_clean';
 comment on column public.sell_entries.style is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
 comment on column public.sell_entries.data is 'SAFE: the style''s own fields: closed words, whole numbers (paise) and short texts that passed app.text_is_clean in sell_entry_put. CLEAN-EXEMPT: closed key list (app.sell_data_keys_ok)';
+
+create trigger sell_entries_forbid_tenant_id_change before update on public.sell_entries for each row execute function app.forbid_tenant_id_change();
+create trigger audit_sell_entries after insert or update or delete on public.sell_entries for each row execute function app.audit_row_change('sell_entry');
 
 alter table public.sell_entries enable row level security;
 alter table public.sell_entries force row level security;
@@ -178,7 +181,6 @@ begin
     insert into public.sell_entries (id, tenant_id, style, name, data, created_by) values (p_id, p_tenant_id, p_style, v_name, p_data, v_uid) returning * into e;
     v_created := true;
   end if;
-  perform app.write_audit_event(p_tenant_id, case when v_created then 'sell_entry.create' else 'sell_entry.update' end, 'sell_entry', p_id, null, jsonb_build_object('style', p_style));
   return jsonb_build_object('item', app.sell_item(e), 'created', v_created);
 end;
 $$;
@@ -202,7 +204,6 @@ begin
   end if;
   if e.removed_at is null then
     update public.sell_entries x set removed_at = now(), updated_by = auth.uid(), updated_at = now() where x.tenant_id = p_tenant_id and x.id = p_id;
-    perform app.write_audit_event(p_tenant_id, 'sell_entry.remove', 'sell_entry', p_id, null, jsonb_build_object('style', p_style));
   end if;
   return jsonb_build_object('removed', true);
 end;
