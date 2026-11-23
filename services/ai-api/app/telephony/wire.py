@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from app.telephony import exotel, plivo
+from app.telephony import exotel, plivo, voicelink
 
 
 @dataclass(frozen=True)
@@ -33,4 +33,7 @@ EXOTEL = WireProtocol("exotel", exotel.DEFAULT_RATE, exotel.RATES, exotel.parse,
                       exotel.mark_message, exotel.clear_message, exotel.valid_out_chunk, True)
 PLIVO = WireProtocol("plivo", plivo.DEFAULT_RATE, plivo.RATES, plivo.parse, plivo.event_name, plivo.chunk_bytes, plivo.media_message, plivo.mark_message, plivo.clear_message, plivo.valid_out_chunk, False)
 
-PROTOCOLS: dict[str, WireProtocol] = {"exotel": EXOTEL, "plivo": PLIVO}
+VOICELINK = WireProtocol("voicelink", voicelink.DEFAULT_RATE, voicelink.RATES, voicelink.parse, voicelink.event_name, voicelink.chunk_bytes, voicelink.media_message, voicelink.mark_message, voicelink.clear_message,
+                         voicelink.valid_out_chunk, True)   # 24 Nov 2026: from VoiceLink's public documentation, not yet proven on a real call
+
+PROTOCOLS: dict[str, WireProtocol] = {"exotel": EXOTEL, "plivo": PLIVO, "voicelink": VOICELINK}
