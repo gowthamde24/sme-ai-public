@@ -729,16 +729,19 @@
 [data-ui="v2"][data-ds="6"] [data-k="visit"] { color: var(--k-visit); }
 [data-ui="v2"][data-ds="6"] [data-k="offer"] { color: var(--k-offer); }
 [data-ui="v2"][data-ds="6"] [data-k="find"] { color: var(--k-find); }
-/* Needs you: the icon is bare (no tile); the second action of a row is a plain grey link, only the first is a button */
-[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon] { background: none; width: auto; height: auto; min-width: 26px; font-size: 20px; }
-[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon] svg { width: 22px; height: 22px; }
-[data-ui="v2"][data-ds="6"] [data-open="today"] .row-quiet { border: 0; background: none; border-radius: 0; color: var(--v2-muted); text-decoration: underline; text-underline-offset: 4px; padding-inline: 6px; }
-[data-ui="v2"][data-ds="6"] [data-open="today"] .row-quiet:hover { background: none; color: var(--v2-ink); }
 /* Running now: a green switch when on (orange is only for "needs you" and the one main button) */
 [data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="jobs-open"] .jb-switch[data-on] { background: var(--k-chat); }
+/* the rules that must beat Tailwind's important utilities sit in @layer theme with !important (see the phone pass note above) */
+@layer theme {
+/* Needs you: the icon is bare (no tile); the second action of a row is a plain grey link, only the first is a button */
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon] { background: none !important; width: auto !important; height: auto !important; min-width: 26px !important; font-size: 20px !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon] svg { width: 22px !important; height: 22px !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] .row-quiet { border: 0 !important; background: none !important; border-radius: 0 !important; color: var(--v2-muted) !important; text-decoration: underline !important; text-underline-offset: 4px !important; padding-inline: 6px !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] .row-quiet:hover { background: none !important; color: var(--v2-ink) !important; }
 /* the festival suggestion: a hairline block, not a peach box */
-[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] { background: none; border: 0; border-top: 1px solid var(--v2-border); border-bottom: 1px solid var(--v2-border); border-radius: 0; box-shadow: none; padding-inline: 0; }
-[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] > p:first-child { color: var(--v2-muted); }
-[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] [data-action="fest-later"] { border: 0; background: none; color: var(--v2-muted); text-decoration: underline; text-underline-offset: 4px; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] { background: none !important; border: 0 !important; border-top: 1px solid var(--v2-border) !important; border-bottom: 1px solid var(--v2-border) !important; border-radius: 0 !important; box-shadow: none !important; padding-inline: 0 !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] > p:first-child { color: var(--v2-muted) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] [data-action="fest-later"] { border: 0 !important; background: none !important; color: var(--v2-muted) !important; text-decoration: underline !important; text-underline-offset: 4px !important; }
 /* empty side notes: one grey sentence, no box */
-[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="empty-note"] { background: none; border: 0; box-shadow: none; padding: 0; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="empty-note"] { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+}
