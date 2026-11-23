@@ -32,10 +32,10 @@
 
   /* the dark bands of the public home page (the languages and the last call to action): the same in both themes, a shade deeper in the dark one so the band still reads as a band */
   --v2-night: #17161a;
-  --v2-on-night: #f2f0ec;
-  --v2-night-muted: #c9c6cf;
+  --v2-on-night: #f4f5f8;
+  --v2-night-muted: #c9ced8;
   --v2-night-2: #232227;
-  --v2-night-line: #4a4752;
+  --v2-night-line: #3a4566;
 
   --v2-info-text: #3950e6;
   --v2-info-bg: #eaedfd;
@@ -74,30 +74,30 @@
 [data-ui="v2"][data-theme="dark"] {
   color-scheme: dark;
 
-  --v2-bg: #131216;
-  --v2-surface: #1c1b20;
-  --v2-surface-2: #25242a;
-  --v2-ink: #f4f4f5;
-  --v2-muted: #a5a3ac;
-  --v2-border: #2f2e35;
-  --v2-border-strong: #7a7881;
+  --v2-bg: #0b1020;
+  --v2-surface: #111830;
+  --v2-surface-2: #1a2340;
+  --v2-ink: #f4f5f8;
+  --v2-muted: #9aa6bd;
+  --v2-border: #242d4a;
+  --v2-border-strong: #7480a2;
 
   --v2-brand: #c2410c;
   --v2-on-brand: #ffffff;
   --v2-brand-edge: #c2410c;
   --v2-brand-text: #ff9d6e;
-  --v2-brand-bg: #2a2930;
+  --v2-brand-bg: #1c2748;
   --v2-pill-edge: rgba(194, 65, 12, 0.5);   /* dark: the pill is a neutral fill, so a thin orange edge says it can be edited */
   --v2-ring: #ff9d6e;
 
-  --v2-charcoal: #312f2f;
-  --v2-on-charcoal: #f4f4f5;
+  --v2-charcoal: #1a2340;
+  --v2-on-charcoal: #f4f5f8;
 
-  --v2-night: #0e0d11;
-  --v2-on-night: #f2f0ec;
-  --v2-night-muted: #c9c6cf;
-  --v2-night-2: #1b1a1f;
-  --v2-night-line: #4a4752;
+  --v2-night: #070b16;
+  --v2-on-night: #f4f5f8;
+  --v2-night-muted: #c9ced8;
+  --v2-night-2: #111830;
+  --v2-night-line: #3a4566;
 
   --v2-info-text: #9aa8ff;
   --v2-info-bg: #1d2247;
@@ -129,30 +129,30 @@
   [data-ui="v2"]:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --v2-bg: #131216;
-    --v2-surface: #1c1b20;
-    --v2-surface-2: #25242a;
-    --v2-ink: #f4f4f5;
-    --v2-muted: #a5a3ac;
-    --v2-border: #2f2e35;
-    --v2-border-strong: #7a7881;
+    --v2-bg: #0b1020;
+    --v2-surface: #111830;
+    --v2-surface-2: #1a2340;
+    --v2-ink: #f4f5f8;
+    --v2-muted: #9aa6bd;
+    --v2-border: #242d4a;
+    --v2-border-strong: #7480a2;
 
     --v2-brand: #c2410c;
     --v2-on-brand: #ffffff;
     --v2-brand-edge: #c2410c;
     --v2-brand-text: #ff9d6e;
-    --v2-brand-bg: #2a2930;
+    --v2-brand-bg: #1c2748;
     --v2-pill-edge: rgba(194, 65, 12, 0.5);
     --v2-ring: #ff9d6e;
 
-    --v2-charcoal: #312f2f;
-    --v2-on-charcoal: #f4f4f5;
+    --v2-charcoal: #1a2340;
+    --v2-on-charcoal: #f4f5f8;
 
-    --v2-night: #0e0d11;
-    --v2-on-night: #f2f0ec;
-    --v2-night-muted: #c9c6cf;
-    --v2-night-2: #1b1a1f;
-    --v2-night-line: #4a4752;
+    --v2-night: #070b16;
+    --v2-on-night: #f4f5f8;
+    --v2-night-muted: #c9ced8;
+    --v2-night-2: #111830;
+    --v2-night-line: #3a4566;
 
     --v2-info-text: #9aa8ff;
     --v2-info-bg: #1d2247;
