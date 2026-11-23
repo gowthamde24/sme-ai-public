@@ -111,9 +111,14 @@ def test_the_answer_is_kept_for_a_short_time_per_person_and_never_shared() -> No
 
 def test_an_answer_older_than_the_time_is_read_again(monkeypatch: pytest.MonkeyPatch) -> None:
     reads: list[int] = []
-    w = World(calls=SimpleNamespace(list=lambda *a: (reads.append(1), SimpleNamespace(items=[]))[1]))
+
+    def counting(*args: Any) -> Any:
+        reads.append(1)
+        return SimpleNamespace(items=[])
+
+    w = World(calls=SimpleNamespace(list=counting))
     clock = {"t": 1000.0}
-    monkeypatch.setattr(week_mod.time, "monotonic", lambda: clock["t"])
+    monkeypatch.setattr("app.jobs.week.time.monotonic", lambda: clock["t"])
     week(w)
     clock["t"] += week_mod.TTL_S - 1
     week(w)
