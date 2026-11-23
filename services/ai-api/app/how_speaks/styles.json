@@ -1,0 +1,12 @@
+{
+ "$comment": "The 7 speaking styles shown by GET /how-assistant-speaks (docs/contracts/voice-styles.md): words for the screen in en/te/hi/kn (DRAFTS for a native read; ta/ml/mr show the English words) and the businesses each suits. Data, not code.",
+ "styles": [
+  {"id": "friendly", "best_for": ["retail", "clinic"], "label": {"en": "Friendly", "te": "స్నేహంగా", "hi": "दोस्ताना", "kn": "ಸ್ನೇಹಪರ"}, "hint": {"en": "Warm and relaxed", "te": "వెచ్చగా, సహజంగా", "hi": "गर्मजोशी भरा, सहज", "kn": "ಆತ್ಮೀಯ, ಸಹಜ"}},
+  {"id": "respectful", "best_for": ["education", "finance"], "label": {"en": "Respectful", "te": "గౌరవంగా", "hi": "सम्मानजनक", "kn": "ಗೌರವಯುತ"}, "hint": {"en": "Polite, a little formal", "te": "మర్యాదగా, కొంచెం ఫార్మల్", "hi": "विनम्र, थोड़ा औपचारिक", "kn": "ವಿನಯದಿಂದ, ಸ್ವಲ್ಪ ಔಪಚಾರಿಕ"}},
+  {"id": "quick", "best_for": ["wholesale", "auto"], "label": {"en": "Short and quick", "te": "క్లుప్తంగా, వేగంగా", "hi": "छोटा और तेज़", "kn": "ಚಿಕ್ಕ ಮತ್ತು ವೇಗ"}, "hint": {"en": "The answer first, few words", "te": "ముందు జవాబు, తక్కువ మాటలు", "hi": "पहले जवाब, कम शब्द", "kn": "ಮೊದಲು ಉತ್ತರ, ಕಡಿಮೆ ಮಾತು"}},
+  {"id": "professional", "best_for": ["finance", "wholesale"], "label": {"en": "Professional", "te": "ప్రొఫెషనల్", "hi": "प्रोफ़ेशनल", "kn": "ಪ್ರೊಫೆಷನಲ್"}, "hint": {"en": "Clear and businesslike", "te": "స్పష్టంగా, వ్యాపార శైలిలో", "hi": "साफ़, कामकाजी", "kn": "ಸ್ಪಷ್ಟ, ವ್ಯವಹಾರಿಕ"}},
+  {"id": "calm_caring", "best_for": ["clinic", "finance"], "label": {"en": "Calm and caring", "te": "ప్రశాంతంగా, ఆదరంగా", "hi": "शांत और परवाह करने वाला", "kn": "ಶಾಂತ ಮತ್ತು ಕಾಳಜಿಯ"}, "hint": {"en": "Slower and reassuring", "te": "నెమ్మదిగా, భరోసాగా", "hi": "धीमा और भरोसा देने वाला", "kn": "ನಿಧಾನ, ಭರವಸೆ ನೀಡುವ"}},
+  {"id": "cheerful", "best_for": ["retail", "education"], "label": {"en": "Cheerful", "te": "ఉత్సాహంగా", "hi": "उत्साही", "kn": "ಉತ್ಸಾಹದ"}, "hint": {"en": "Upbeat and light", "te": "లైట్ గా, ఉల్లాసంగా", "hi": "हल्का, खुशमिज़ाज", "kn": "ಹಗುರ, ಉಲ್ಲಾಸ"}},
+  {"id": "confident", "best_for": ["real_estate", "auto"], "label": {"en": "Confident", "te": "నమ్మకంగా", "hi": "आत्मविश्वासी", "kn": "ಆತ್ಮವಿಶ್ವಾಸದ"}, "hint": {"en": "Steady and to the point", "te": "స్థిరంగా, సూటిగా", "hi": "ठोस, सीधा", "kn": "ಸ್ಥಿರ, ನೇರ"}}
+ ]
+}
