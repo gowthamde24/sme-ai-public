@@ -8,9 +8,9 @@ import { jobNameKey, type JobStatus } from "@/lib/jobs/types";
 import { groupIndian } from "@/lib/money";
 
 import { makeT, type Words } from "../../words";
-import { FaqCard, FindsOutCard, WhoTalks } from "./LazyJobLists";
+import { FailureCard, FaqCard, FindsOutCard, TryCard, WhoTalks } from "./LazyJobLists";
 import { JobHeader } from "./JobHeader";
-import { FailureCard, ResultsCard, TryCard } from "./JobResults";
+import { ResultsCard } from "./JobResults";
 import { JobSaysCard } from "./JobSays";
 import { SettingLineView } from "./SettingLines";
 import { jobCard, type JobPageActions, type WhoExtra } from "./types";
