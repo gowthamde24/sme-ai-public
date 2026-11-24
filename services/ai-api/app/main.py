@@ -185,6 +185,8 @@ from app.materials.routes import router as materials_router
 from app.notifications.routes import me_router as notifications_me_router
 from app.notifications.routes import router as notifications_router
 from app.notifications.wiring import build_notifications
+from app.numbers.routes import router as numbers_router
+from app.numbers.wiring import build_numbers
 from app.observability.sentry import init_sentry
 from app.opening.routes import router as opening_router
 from app.ops.usage import build_usage_recorder
@@ -551,6 +553,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_status=AssistantStatusService(
             PostgrestStatusRepository(config.rest_url, config.anon_key)
         ),
+        numbers=build_numbers(settings, config.rest_url, config.anon_key),
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
         assistant_settings=AssistantSettingsService(
             PostgrestAssistantSettingsRepository(config.rest_url, config.anon_key)
@@ -1512,6 +1515,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(admin_router)
     app.include_router(admin_tenant_router)
     app.include_router(assistant_status_router)
+    app.include_router(numbers_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_context_router)

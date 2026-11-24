@@ -21,6 +21,8 @@ import { shortUnit } from "./sell-text";
 import type { SaveExtra, SellActions, Work } from "./types";
 
 const FOCUSABLE = 'a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
+/** The plain field (owner, 25 Nov 2026: no fill-in-the-blank sentences): a label above, the field full width, rounded corners, no tint. */
+const inputCls = "min-h-11 w-full rounded-lg border border-edge bg-transparent px-3 text-[16px] text-ink outline-none focus:border-brand-edge aria-[invalid=true]:border-red-text";
 const pill = "min-h-11 rounded-full border border-edge bg-surface-2 px-3.5 text-[16px] font-semibold text-ink outline-none focus:border-brand-edge aria-[invalid=true]:border-red-text";
 const nameBox = "min-h-12 w-full rounded-xl border border-edge bg-surface px-3.5 text-[16px] text-ink outline-none focus:border-brand-edge aria-[invalid=true]:border-red-text";
 const btnMain = "jb-press inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-6 text-[16px] font-bold text-on-brand disabled:opacity-60";
@@ -35,46 +37,21 @@ type View =
   | { v: "done"; entry: SellEntry; photosPath: string | null; note: boolean }
   | { v: "message"; text: string; href: string | null };
 
-/** A sentence with its choices inside: "It sells for {price} and comes in {colours}." The `{slot}` marks come from the words (so every language puts them where its own sentence needs them). A full stop or comma after a choice stays with it. */
-function Sentence({ text, slots, nowrap = false }: { text: string; slots: Record<string, ReactNode>; nowrap?: boolean }) {
-  const nodes: { key: number; node: ReactNode; tail: string }[] = [];
-  text.split(/(\{[a-z0-9]+\})/).forEach((part, i) => {
-    const slot = /^\{([a-z0-9]+)\}$/.exec(part);
-    if (slot) {
-      nodes.push({ key: i, node: slots[slot[1]], tail: "" });
-      return;
-    }
-    let rest = part;
-    const punct = /^[.,:;!?]+/.exec(rest.trimStart());
-    if (punct && nodes.length > 0 && /^[.,:;!?]/.test(rest.trimStart()) && rest.trimStart() === rest.slice(rest.length - rest.trimStart().length)) {
-      nodes[nodes.length - 1].tail = punct[0];
-      rest = rest.trimStart().slice(punct[0].length);
-    }
-    if (rest.trim() !== "") nodes.push({ key: i, node: rest.trim(), tail: "" });
-  });
+function Fld({ label, hint, children }: { label: string; hint?: string | null; children: ReactNode }) {
   return (
-    <p className={`m-0 flex items-center gap-x-2 gap-y-2.5 text-[16px] leading-snug text-ink ${nowrap ? "min-w-0 flex-1 flex-nowrap gap-x-1.5 text-[15px]" : "flex-wrap"}`}>
-      {nodes.map((n) => (
-        <span key={n.key} className="inline-flex items-center">
-          {n.node}
-          {n.tail}
-        </span>
-      ))}
-    </p>
+    <label className="flex min-w-0 flex-col gap-1.5">
+      <span className="text-[15px] font-bold text-ink">{label}</span>
+      {children}
+      {hint ? <span className="text-[14px] font-normal text-muted">{hint}</span> : null}
+    </label>
   );
 }
-
-function Num({ value, onChange, label, width = "w-24", invalid, suffix }: { value: string; onChange: (v: string) => void; label: string; width?: string; invalid?: boolean; suffix?: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <input type="text" inputMode="decimal" autoComplete="off" data-voice="never" aria-label={label} aria-invalid={invalid ? true : undefined} value={value} onChange={(e) => onChange(e.target.value)} className={`${pill} ${width} text-center`} />
-      {suffix ? <span className="text-[15px] text-muted">{suffix}</span> : null}
-    </span>
-  );
+function Num({ value, onChange, label, invalid }: { value: string; onChange: (v: string) => void; label: string; invalid?: boolean }) {
+  return <input type="text" inputMode="decimal" autoComplete="off" data-voice="never" aria-label={label} aria-invalid={invalid ? true : undefined} value={value} onChange={(e) => onChange(e.target.value)} className={inputCls} />;
 }
 function Pick<T extends string>({ value, onChange, options, label }: { value: T; onChange: (v: T) => void; options: readonly { id: T; text: string }[]; label: string }) {
   return (
-    <select aria-label={label} value={value} onChange={(e) => onChange(e.target.value as T)} className={`${pill} pr-8`}>
+    <select aria-label={label} value={value} onChange={(e) => onChange(e.target.value as T)} className={inputCls}>
       {options.map((o) => (
         <option key={o.id} value={o.id}>
           {o.text}
@@ -86,7 +63,7 @@ function Pick<T extends string>({ value, onChange, options, label }: { value: T;
 
 function ColourButton({ chosen, open, onToggle, t, invalid }: { chosen: readonly string[]; open: boolean; onToggle: () => void; t: Say; invalid: boolean }) {
   return (
-    <button type="button" data-part="colours-open" aria-expanded={open} data-invalid={invalid ? "" : undefined} onClick={onToggle} className={`${pill} jb-press data-[invalid]:border-red-text`}>
+    <button type="button" data-part="colours-open" aria-expanded={open} data-invalid={invalid ? "" : undefined} onClick={onToggle} className={`${inputCls} jb-press text-left data-[invalid]:border-red-text`}>
       {chosen.length === 0 ? t("jobs.sell.p.pick") : chosen.length === 1 ? t("jobs.sell.colour.one") : t("jobs.sell.colour.n", { n: chosen.length })}
     </button>
   );
@@ -118,23 +95,30 @@ function Fields({ style, form, set, t, bad, owner }: { style: SellStyle; form: S
       <input type="text" name="name" maxLength={128} autoComplete="off" data-voice="allow" aria-invalid={inv("name") ? true : undefined} value={(form as { name: string }).name} onChange={(e) => u("name", e.target.value)} placeholder={NAME_EXAMPLE[style]} className={nameBox} />
     </label>
   );
-  const sentence = (key: string, slots: Record<string, ReactNode>) => <Sentence text={t(key)} slots={slots} />;
   const options = <T extends string>(ids: readonly T[], key: string): { id: T; text: string }[] => ids.map((id) => ({ id, text: t(`${key}.${id}`) }));
+  const grid = "grid grid-cols-1 gap-4 min-[420px]:grid-cols-2";
   if (style === "products") {
     const f = form as SellForm["products"];
     return (
       <>
         {name}
-        {sentence("jobs.sell.p.s1", {
-          price: <Num value={f.price} onChange={(v) => u("price", v)} label={t("jobs.sell.f.price")} width="w-28" invalid={inv("price")} suffix={undefined} />,
-          colours: <ColourButton chosen={f.colours} open={coloursOpen} onToggle={() => setColoursOpen((o) => !o)} t={t} invalid={inv("colours")} />,
-        })}
-        {coloursOpen ? <ColourPanel chosen={f.colours} onChange={(c) => u("colours", c)} t={t} /> : null}
+        <Fld label={t("jobs.sell.f.price")}>
+          <Num value={f.price} onChange={(v) => u("price", v)} label={t("jobs.sell.f.price")} invalid={inv("price")} />
+        </Fld>
+        <div role="group" aria-label={t("jobs.sell.p.colours")} className="flex flex-col gap-1.5">
+          <span className="text-[15px] font-bold text-ink">{t("jobs.sell.p.colours")}</span>
+          <ColourButton chosen={f.colours} open={coloursOpen} onToggle={() => setColoursOpen((o) => !o)} t={t} invalid={inv("colours")} />
+          {coloursOpen ? <ColourPanel chosen={f.colours} onChange={(c) => u("colours", c)} t={t} /> : null}
+        </div>
         {!owner ? <p className="m-0 text-[13.5px] text-muted">{t("jobs.sell.p.admin")}</p> : null}
-        {sentence("jobs.sell.p.s2", {
-          stock: <Pick value={f.stock} onChange={(v) => u("stock", v)} options={options(["in_stock", "few_left", "made_to_order"] as const, "jobs.sell.stock")} label={t("jobs.sell.f.stock")} />,
-          count: <Num value={f.count} onChange={(v) => u("count", v)} label={t("jobs.sell.f.count")} width="w-20" invalid={inv("count")} />,
-        })}
+        <div className={grid}>
+          <Fld label={t("jobs.sell.f.stock")}>
+            <Pick value={f.stock} onChange={(v) => u("stock", v)} options={options(["in_stock", "few_left", "made_to_order"] as const, "jobs.sell.stock")} label={t("jobs.sell.f.stock")} />
+          </Fld>
+          <Fld label={t("jobs.sell.f.count")}>
+            <Num value={f.count} onChange={(v) => u("count", v)} label={t("jobs.sell.f.count")} invalid={inv("count")} />
+          </Fld>
+        </div>
       </>
     );
   }
@@ -143,11 +127,17 @@ function Fields({ style, form, set, t, bad, owner }: { style: SellStyle; form: S
     return (
       <>
         {name}
-        {sentence("jobs.sell.s.s1", {
-          minutes: <Num value={f.minutes} onChange={(v) => u("minutes", v)} label={t("jobs.sell.f.minutes")} width="w-20" invalid={inv("minutes")} suffix={t("jobs.sell.f.minutes")} />,
-          price: <Num value={f.price} onChange={(v) => u("price", v)} label={t("jobs.sell.f.price")} width="w-28" invalid={inv("price")} />,
-          booking: <Pick value={f.booking} onChange={(v) => u("booking", v)} options={options(BOOKING_WORDS, "jobs.sell.booking")} label={t("jobs.sell.f.booking")} />,
-        })}
+        <div className={grid}>
+          <Fld label={t("jobs.sell.f.minutes.l")}>
+            <Num value={f.minutes} onChange={(v) => u("minutes", v)} label={t("jobs.sell.f.minutes.l")} invalid={inv("minutes")} />
+          </Fld>
+          <Fld label={t("jobs.sell.f.price")}>
+            <Num value={f.price} onChange={(v) => u("price", v)} label={t("jobs.sell.f.price")} invalid={inv("price")} />
+          </Fld>
+        </div>
+        <Fld label={t("jobs.sell.f.booking")}>
+          <Pick value={f.booking} onChange={(v) => u("booking", v)} options={options(BOOKING_WORDS, "jobs.sell.booking")} label={t("jobs.sell.f.booking")} />
+        </Fld>
       </>
     );
   }
@@ -156,12 +146,20 @@ function Fields({ style, form, set, t, bad, owner }: { style: SellStyle; form: S
     return (
       <>
         {name}
-        {sentence("jobs.sell.c.s1", {
-          batch: <input type="text" aria-label={t("jobs.sell.f.batch")} aria-invalid={inv("batch") ? true : undefined} data-voice="allow" value={f.batch} maxLength={120} onChange={(e) => u("batch", e.target.value)} placeholder={BATCH_EXAMPLE} className={`${pill} w-56`} />,
-          date: <input type="date" aria-label={t("jobs.sell.f.starts")} aria-invalid={inv("startsOn") ? true : undefined} value={f.startsOn} onChange={(e) => u("startsOn", e.target.value)} className={pill} />,
-          fee: <Num value={f.fee} onChange={(v) => u("fee", v)} label={t("jobs.sell.f.fee")} width="w-28" invalid={inv("fee")} />,
-          seats: <Num value={f.seats} onChange={(v) => u("seats", v)} label={t("jobs.sell.f.seats")} width="w-20" invalid={inv("seats")} />,
-        })}
+        <Fld label={t("jobs.sell.f.batch")}>
+          <input type="text" aria-label={t("jobs.sell.f.batch")} aria-invalid={inv("batch") ? true : undefined} data-voice="allow" value={f.batch} maxLength={120} onChange={(e) => u("batch", e.target.value)} placeholder={BATCH_EXAMPLE} className={inputCls} />
+        </Fld>
+        <Fld label={t("jobs.sell.f.starts")}>
+          <input type="date" aria-label={t("jobs.sell.f.starts")} aria-invalid={inv("startsOn") ? true : undefined} value={f.startsOn} onChange={(e) => u("startsOn", e.target.value)} className={inputCls} />
+        </Fld>
+        <div className={grid}>
+          <Fld label={t("jobs.sell.f.fee")}>
+            <Num value={f.fee} onChange={(v) => u("fee", v)} label={t("jobs.sell.f.fee")} invalid={inv("fee")} />
+          </Fld>
+          <Fld label={t("jobs.sell.f.seats")}>
+            <Num value={f.seats} onChange={(v) => u("seats", v)} label={t("jobs.sell.f.seats")} invalid={inv("seats")} />
+          </Fld>
+        </div>
       </>
     );
   }
@@ -170,50 +168,71 @@ function Fields({ style, form, set, t, bad, owner }: { style: SellStyle; form: S
     return (
       <>
         {name}
-        {sentence("jobs.sell.r.s1", {
-          location: <input type="text" aria-label={t("jobs.sell.f.location")} aria-invalid={inv("location") ? true : undefined} data-voice="allow" value={f.location} maxLength={120} onChange={(e) => u("location", e.target.value)} placeholder={PLACE_EXAMPLE} className={`${pill} w-44`} />,
-          size: (
-            <span className="inline-flex items-center gap-1.5">
-              <Num value={f.size} onChange={(v) => u("size", v)} label={t("jobs.sell.f.size")} width="w-24" invalid={inv("size")} />
-              <Pick value={f.sizeUnit} onChange={(v) => u("sizeUnit", v)} options={SIZE_UNITS.map((id) => ({ id, text: SIZE_SHORT[id] }))} label={t("jobs.sell.f.size.unit")} />
-            </span>
-          ),
-          price: <Num value={f.price} onChange={(v) => u("price", v)} label={t("jobs.sell.f.price")} width="w-32" invalid={inv("price")} />,
-          status: <Pick value={f.status} onChange={(v) => u("status", v)} options={options(PROPERTY_STATUSES, "jobs.sell.status")} label={t("jobs.sell.f.status")} />,
-        })}
-        <p className="m-0 text-[13.5px] text-muted">{t("jobs.sell.r.price.help")}</p>
+        <Fld label={t("jobs.sell.f.location")}>
+          <input type="text" aria-label={t("jobs.sell.f.location")} aria-invalid={inv("location") ? true : undefined} data-voice="allow" value={f.location} maxLength={120} onChange={(e) => u("location", e.target.value)} placeholder={PLACE_EXAMPLE} className={inputCls} />
+        </Fld>
+        <div className={grid}>
+          <Fld label={t("jobs.sell.f.size")}>
+            <Num value={f.size} onChange={(v) => u("size", v)} label={t("jobs.sell.f.size")} invalid={inv("size")} />
+          </Fld>
+          <Fld label={t("jobs.sell.f.size.unit")}>
+            <Pick value={f.sizeUnit} onChange={(v) => u("sizeUnit", v)} options={SIZE_UNITS.map((id) => ({ id, text: SIZE_SHORT[id] }))} label={t("jobs.sell.f.size.unit")} />
+          </Fld>
+        </div>
+        <Fld label={t("jobs.sell.f.price")} hint={t("jobs.sell.r.price.help")}>
+          <Num value={f.price} onChange={(v) => u("price", v)} label={t("jobs.sell.f.price")} invalid={inv("price")} />
+        </Fld>
+        <Fld label={t("jobs.sell.f.status")}>
+          <Pick value={f.status} onChange={(v) => u("status", v)} options={options(PROPERTY_STATUSES, "jobs.sell.status")} label={t("jobs.sell.f.status")} />
+        </Fld>
       </>
     );
   }
   const f = form as PriceForm;
   const unit = f.unit;
+  const per = t(`jobs.sell.unit.${unit}.one`);
+  const unitWord = shortUnit(unit) || t(`jobs.sell.unit.${unit}`);
   const setRate = (i: number, k: "fromQty" | "rate", v: string) => u("rates", f.rates.map((r, n) => (n === i ? { ...r, [k]: v } : r)));
   return (
     <>
       {name}
-      {sentence("jobs.sell.w.s1", {
-        moq: <Num value={f.moq} onChange={(v) => u("moq", v)} label={t("jobs.sell.f.moq")} width="w-24" invalid={inv("moq")} />,
-        unit: <Pick value={f.unit} onChange={(v) => u("unit", v)} options={QTY_UNITS.map((id) => ({ id, text: t(`jobs.sell.unit.${id}`) }))} label={t("jobs.sell.f.unit")} />,
-      })}
-      <fieldset className="m-0 flex flex-col gap-2.5 border-0 p-0">
+      <div className={grid}>
+        <Fld label={t("jobs.sell.f.moq")}>
+          <Num value={f.moq} onChange={(v) => u("moq", v)} label={t("jobs.sell.f.moq")} invalid={inv("moq")} />
+        </Fld>
+        <Fld label={t("jobs.sell.f.unit")}>
+          <Pick value={f.unit} onChange={(v) => u("unit", v)} options={QTY_UNITS.map((id) => ({ id, text: t(`jobs.sell.unit.${id}`) }))} label={t("jobs.sell.f.unit")} />
+        </Fld>
+      </div>
+      <fieldset data-part="rates" className="m-0 flex min-w-0 flex-col gap-2.5 border-0 p-0">
         <legend className="mb-1 text-[15px] font-bold text-ink">{t("jobs.sell.w.rates")}</legend>
+        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.75rem] gap-x-3 text-[14px] font-semibold text-muted" aria-hidden="true">
+          <span>{t("jobs.sell.w.col.from", { unit: unitWord })}</span>
+          <span>{t("jobs.sell.w.col.rate", { per })}</span>
+          <span />
+        </div>
         {f.rates.map((r, i) => (
-          <div key={i} data-part="rate" className="flex items-center gap-2">
-            <Sentence nowrap text={t("jobs.sell.w.rate")} slots={{ qty: <Num value={r.fromQty} onChange={(v) => setRate(i, "fromQty", v)} label={t("jobs.sell.w.from")} width="w-[4.5rem]" invalid={inv("rates")} />, unit: <span>{shortUnit(unit) || t(`jobs.sell.unit.${unit}`)}</span>, rate: <Num value={r.rate} onChange={(v) => setRate(i, "rate", v)} label={t("jobs.sell.f.rate")} width="w-[4.5rem]" invalid={inv("rates")} />, per: <span>{t(`jobs.sell.unit.${unit}.one`)}</span> }} />
+          <div key={i} data-part="rate" className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.75rem] items-center gap-x-3">
+            <Num value={r.fromQty} onChange={(v) => setRate(i, "fromQty", v)} label={t("jobs.sell.w.from")} invalid={inv("rates")} />
+            <Num value={r.rate} onChange={(v) => setRate(i, "rate", v)} label={t("jobs.sell.f.rate")} invalid={inv("rates")} />
             {f.rates.length > 1 ? (
-              <button type="button" aria-label={t("jobs.sell.w.remove")} onClick={() => u("rates", f.rates.filter((_, n) => n !== i))} className="jb-press -mr-2 grid size-11 shrink-0 place-items-center rounded-full text-muted">
+              <button type="button" aria-label={t("jobs.sell.w.remove")} onClick={() => u("rates", f.rates.filter((_, n) => n !== i))} className="jb-press grid size-11 shrink-0 place-items-center rounded-full text-muted">
                 <Trash2 aria-hidden="true" className="size-4" />
               </button>
-            ) : null}
+            ) : (
+              <span />
+            )}
           </div>
         ))}
         {f.rates.length < 8 ? (
-          <button type="button" data-part="add-rate" onClick={() => u("rates", [...f.rates, { fromQty: "", rate: "" }])} className="jb-press self-start rounded-full border border-edge bg-surface px-4 text-[15px] font-semibold text-ink min-h-11">
+          <button type="button" data-part="add-rate" onClick={() => u("rates", [...f.rates, { fromQty: "", rate: "" }])} className="jb-press min-h-11 self-start rounded-lg border border-edge bg-transparent px-4 text-[15px] font-semibold text-ink">
             {t("jobs.sell.w.add")}
           </button>
         ) : null}
       </fieldset>
-      {sentence("jobs.sell.w.until", { date: <input type="date" aria-label={t("jobs.sell.f.until")} aria-invalid={inv("goodUntil") ? true : undefined} value={f.goodUntil} onChange={(e) => u("goodUntil", e.target.value)} className={pill} /> })}
+      <Fld label={t("jobs.sell.w.until.l")} hint={t("jobs.sell.w.until.hint")}>
+        <input type="date" aria-label={t("jobs.sell.w.until.l")} aria-invalid={inv("goodUntil") ? true : undefined} value={f.goodUntil} onChange={(e) => u("goodUntil", e.target.value)} className={inputCls} />
+      </Fld>
     </>
   );
 }
@@ -241,7 +260,7 @@ function MoreFields({ style, form, set, t, base, entry, live }: { style: SellSty
           </label>
           <label className="flex flex-col gap-1.5 text-[15px] text-ink">
             {t("jobs.sell.s.place")}
-            <select value={(form as SellForm["services"]).place} onChange={(e) => u("place", e.target.value)} className={`${pill} w-full`}>
+            <select value={(form as SellForm["services"]).place} onChange={(e) => u("place", e.target.value)} className={inputCls}>
               <option value="">{t("jobs.sell.s.place.none")}</option>
               {PLACE_WORDS.map((p) => (
                 <option key={p} value={p}>

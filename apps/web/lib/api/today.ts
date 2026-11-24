@@ -19,7 +19,7 @@ export type NeedsYouAgent = "quote_writer" | "followup_desk" | "order_desk";
  * `phone_call` (C1 #347, 5 Nov): a call in which the caller asked to talk to a person; Today decides it in place (Call back, Done).
  */
 // 20 Nov (C1 #6xx): `calls` (outreach_paused: calls paused because 2+ people asked to stop; the id is the workspace's own: opens the Do-Not-Call list) and `message` (message_needs_change: a template WhatsApp sent back: opens Chats > Templates). An item whose target type is a word this screen does not know is a generic row, never an error.
-export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "material_quote", "campaign", "fees", "phone_call", "billing", "calls", "message"] as const;
+export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "material_quote", "campaign", "fees", "phone_call", "billing", "calls", "message", "price_list"] as const;
 export type TargetType = (typeof TARGET_TYPES)[number];
 export interface Target {
   type: TargetType;

@@ -78,6 +78,10 @@ class InboundStore:
         out = self._call("call_sound_for_call", {"p_tenant_id": str(tenant_id)})
         return out if isinstance(out, dict) else None
 
+    def telephony_alert(self, ok: bool, detail: str | None = None) -> None:
+        """A "Needs you" item for the owner and finance (the scheduler account raises it): a telephony thing that needs a person, or its all-clear."""
+        self._call("ops_telephony_setting_report", {"p_ok": ok, "p_detail": (detail or "")[:480] or None})
+
     def fact_pack(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """What an AI call may use to answer about the business (migration 988600): notes, FAQ answers, hours, catalogue, the current price list. Read at the START of a call (never per turn) and remembered for
         FACT_PACK_TTL_S, so a call's start does not wait for the database; an edit applies within that time. None when unreadable (the call then states no facts, as before)."""

@@ -120,7 +120,7 @@ def test_the_readiness_line_says_what_the_phone_assistant_can_answer_with_and_th
     """28 Nov 2026: before a real call the owner sees whether the phone assistant will answer prices or only deflect."""
     client, _ = world()
     r = client.get(f"{URL}/phone-knows", headers=auth("a_viewer"))
-    assert r.status_code == 200 and r.json() == {"price_rows": 0, "catalogue_items": 3, "faq_answers": 0, "notes_lines": 2, "has_hours": True, "missing": ["price_list"], "ready": False, "message": "Add your price list so the assistant can answer prices."}
+    assert r.status_code == 200 and r.json() == {"price_rows": 0, "catalogue_items": 3, "faq_answers": 0, "notes_lines": 2, "has_hours": True, "missing": ["price_list"], "ready": False, "message": "Add your prices so the assistant can answer them: a price on each item, or a price list."}
     client2, repo2 = world(knows={"price_rows": 12, "faq_answers": 4})
     done = client2.get(f"{URL}/phone-knows", headers=auth("a_owner")).json()
     assert done["ready"] is True and done["missing"] == [] and done["message"] is None

@@ -261,3 +261,6 @@ export const reportsOpen = (value: string | undefined = process.env.REPORTS_OPEN
 
 /** The industry pages (/for/<industry>: textiles, clinics, coaching centres, real estate, car dealers, wholesale), English only. Off = the address is a 404 and the sitemap does not list it. `1` = on. */
 export const industryPages = (value: string | undefined = process.env.INDUSTRY_PAGES): boolean => value === "1";
+
+/** The call rules, outreach rules, assistant name and developer keys as plain labelled fields (owner, 25 Nov / 29 Nov 2026: no fill-in-the-blank sentences): the JOBS sentence look draws only when SETTINGS_OPEN is off. */
+export const sentenceForms = (): boolean => jobsScreens() !== "off" && !settingsOpen();
