@@ -1021,7 +1021,8 @@ add({ id: "accept", roles: ["owner"], render: async () => (await import("@/app/a
 // always was), and `today-default-pack` below runs the default business type of an existing workspace and must read exactly like `today`.
 const CONSTRUCTION = otherPackIds().find((i) => workspacePack(i).modules.includes("deliveries"))!;
 // a business type that ships no example data (the Lead Desk types): Today must not offer to load an empty sample
-const NO_EXAMPLES = selectableIds().find((i) => !workspacePack(i).hasExampleData)!;
+// the first pack by name without example data was "auto_dealer" until 29 Nov 2026 (41 more types were added); the snapshot is that one
+const NO_EXAMPLES = selectableIds().find((i) => i === "auto_dealer" && !workspacePack(i).hasExampleData) ?? selectableIds().find((i) => !workspacePack(i).hasExampleData)!;
 const EDUCATION = otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!;
 const packOf = (id: string, source: "signup" | "default" | "legacy" = "signup") => () => workspacePack(id, source);
 const packCardReads: Record<string, Handler> = {
