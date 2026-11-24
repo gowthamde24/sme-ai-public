@@ -49,8 +49,8 @@ describe("/privacy and /terms (job BH)", () => {
     expect(screen.getByRole("heading", { level: 1, name: title })).toHaveAttribute("lang", "en");
     expect(screen.queryByRole("note")).toBeNull();
     expect(document.body.textContent).toContain(`Version ${LEGAL_VERSION}`);
-    expect(LEGAL_UPDATED).toBe("2026-10-27");
-    expect(document.body.textContent).toContain("Last updated: 27 October 2026");
+    expect(LEGAL_UPDATED).toBe("2026-11-26");
+    expect(document.body.textContent).toContain("Last updated: 26 November 2026");
     expect(document.body.textContent).not.toMatch(/pending legal review|\[EFFECTIVE DATE\]|\[CONFIRM|\[LEGAL REVIEW/);
   });
   it("the draft banner comes back, in English, when the flag is switched on again, and nothing else changes", async () => {
@@ -96,7 +96,7 @@ describe("/privacy and /terms (job BH)", () => {
   });
   it("the Privacy notice is plain and short and still says the essentials: what we collect and why, who handles it, where it is stored, how long, how to see, correct, delete and stop (owner, 18 Nov)", () => {
     const all = textOf(PRIVACY);
-    for (const word of ["What we collect, and why", "Who helps us handle it", "Where it is stored", "How long we keep it", "Mumbai", "withdraw", "correct", "delete", "STOP", "{proprietor}", "{privacy_email}", "never do", "not stored by Stack19; we keep only the application status"]) expect(all, word).toContain(word);
+    for (const word of ["What we collect, and why", "Who helps us handle it", "Where it is stored", "How long we keep it", "Mumbai", "withdraw", "correct", "delete", "STOP", "{proprietor}", "{privacy_email}", "never do", "Stack19 does not keep them. We keep only the application status"]) expect(all, word).toContain(word);
     expect(all.length).toBeLessThan(9000); // a notice the owner reads in a few minutes
   });
   it("it names what we really keep and who handles it: the groups of data, the AI, calls not recorded, cookies, the processors list from our service", () => {

@@ -211,3 +211,20 @@ describe("Reports (the approved mock)", () => {
     expect(document.querySelector("[data-more]")).toBeInTheDocument();
   });
 });
+
+describe("Reports as one calm page (REPORTS_OPEN)", () => {
+  it("three numbers, one sentence, one chart, and the other reports folded under 'More reports'", () => {
+    vi.stubEnv("REPORTS_OPEN", "1");
+    const { container } = render(<ReportsV6 {...props()} />);
+    vi.unstubAllEnvs();
+    expect(container.querySelectorAll("[data-kpi]")).toHaveLength(3);
+    expect(container.querySelector("[data-kpi='cost']")).toBeNull();
+    expect(container.querySelector("[data-part='sentence']")).not.toBeNull();
+    expect(container.querySelector("[data-part='chart']")).not.toBeNull();
+    const more = container.querySelector("details[data-part='more-reports']");
+    expect(more).not.toBeNull();
+    expect(more?.querySelector("[data-part='sources']")).not.toBeNull();
+    expect(more?.querySelector("[data-part='funnel']")).not.toBeNull();
+    expect(container.querySelector("[data-part='chart']")?.closest("details")).toBeNull();
+  });
+});

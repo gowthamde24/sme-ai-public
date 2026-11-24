@@ -1,7 +1,7 @@
 {
  "$comment": "Job DQ (DPDP): the companies that process personal data for Stack19, as data. The country is where the service processes or stores the data. First draft: the owner checks each line against the provider's current terms (docs/runbooks/dpdp-owner-checklist.md).",
- "version": "2026-10-27",
- "updated_on": "2026-10-27",
+ "version": "2026-11-26",
+ "updated_on": "2026-11-26",
  "wording": "draft",
  "subprocessors": [
   {
@@ -59,6 +59,22 @@
    "country": "India",
    "data": "The text to be spoken, or a short recording to be understood",
    "link": "https://www.sarvam.ai/terms"
+  },
+  {
+   "id": "cartesia",
+   "name": "Cartesia",
+   "purpose": "Turns the assistant's written reply into a spoken voice on calls and in voice samples, when you switch it on",
+   "country": "United States (Cartesia's data centres)",
+   "data": "The text to be spoken (the assistant's reply); never the caller's phone number",
+   "link": "https://cartesia.ai"
+  },
+  {
+   "id": "voicelink",
+   "name": "VoiceLink",
+   "purpose": "Carries our phone calls: answers calls to your business number and places call-backs to people who enquired",
+   "country": "India",
+   "data": "The phone number of the caller and of your business, the call's audio while it lasts and how long it lasted; Stack19 keeps no recording and VoiceLink's own recording is off",
+   "link": "https://app.voicelink.co.in"
   }
  ]
 }
