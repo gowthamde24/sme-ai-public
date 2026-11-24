@@ -22,7 +22,11 @@ select is(pg_temp.has_item('a_sales', 'a'), 'false', 'B3: Sales does not');
 select is(pg_temp.has_item('b_owner', 'b'), 'false', 'B4: another workspace without a line does not');
 select is(pg_temp.has_item('b_owner', 'a'), 'ERR:42501', 'B5: and cannot ask about workspace A');
 
-select tests.seed_t009();
+set local session_replication_role = replica;
+insert into public.price_lists (id, tenant_id, name) values (tests.rid('a_pl'), tests.tid('a'), 'Fixture price list');
+insert into public.price_list_versions (id, tenant_id, price_list_id, version_no, effective_from, item_count, content_sha256) values (tests.rid('a_plv'), tests.tid('a'), tests.rid('a_pl'), 1, current_date, 1, repeat('0', 64));
+insert into public.price_list_items (id, tenant_id, version_id, product_id, sku, name, unit_price_paise, minimum_order_quantity, tax_bps) values (tests.rid('a_pli'), tests.tid('a'), tests.rid('a_plv'), tests.rid('a_product'), 'SKU-1', 'Silk saree', 100000, 1, 500);
+reset session_replication_role;
 select is(pg_temp.has_item('a_owner', 'a'), 'false', 'C1: the first price row and the item is gone');
 
 select * from finish();
