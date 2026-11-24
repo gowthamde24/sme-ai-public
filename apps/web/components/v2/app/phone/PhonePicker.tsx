@@ -98,9 +98,14 @@ export function PhonePicker({ words, actions, own, canEdit, mock = false }: { wo
       <ol className="m-0 flex list-none flex-col p-0">
         <Step n={1} title={mine ? t("pick.mine") : t("pick.s1.title")} state={mine ? "done" : "now"}>
           {mine ? (
-            <p className="m-0 mt-1 text-[22px] font-semibold tabular-nums text-ink" data-part="my-number">
-              {mine.display}
-            </p>
+            <>
+              <p className="m-0 mt-1 text-[22px] font-semibold tabular-nums text-ink" data-part="my-number">
+                {mine.display}
+              </p>
+              <p className="m-0 mt-1 text-[15px] text-muted" data-part="my-type">
+                {t(`pick.type.short.${mine.type}` as "pick.type.short.mobile")}
+              </p>
+            </>
           ) : (
             <>
               <p className="m-0 mt-1 text-[15px] text-muted">{t("pick.s1.body")}</p>
