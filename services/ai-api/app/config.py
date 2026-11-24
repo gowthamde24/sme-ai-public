@@ -444,6 +444,9 @@ class Settings(BaseSettings):
     # The line's billing pulse in seconds: 60 (a started minute, the Exotel placeholder above) or 30
     # (Plivo India lists Rs 0.38 a minute in 30-second pulses, before GST; staging sets 38 and 30).
     telephony_cost_pulse_s: int = 60
+    # INBOUND calls only, when the line charges differently by direction (VoiceLink reseller: Rs
+    # 0.25 a minute in, Rs 0.50 out, 60 s pulses from the answer). Unset: one rate for both.
+    telephony_cost_paise_per_minute_inbound: int | None = None
     # Inbound on the Exotel sandbox (job phone-calls part 5). Outbound stays refused by the gate
     # until TELEPHONY_OUTBOUND is true (there is no dialer yet). The stream secret signs the
     # per-call token of the Voicebot URL (Secret Manager: sme-exotel-stream-secret).

@@ -122,5 +122,7 @@ select is(pg_temp.w($q$select (public.ops_plivo_balance_report('low', 1, repeat(
 select is(pg_temp.w($q$select (public.ops_plivo_balance_report(null))::text$q$), 'ERR:22023', 'H4: no state');
 select is(pg_temp.w($q$select (public.ops_plivo_balance_report('ok', 1e12))::text$q$), 'ERR:22023', 'H5: an absurd amount');
 
+select ok(pg_temp.w($q$select (public.ops_plivo_balance_due() ->> 'calls_7d_paise')$q$, 'outsider') ~ '^[0-9]+$', 'I1: the answer also carries the last 7 days of call cost in paise (a whole number)');
+
 select * from finish();
 rollback;

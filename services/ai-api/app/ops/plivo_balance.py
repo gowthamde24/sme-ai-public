@@ -130,11 +130,24 @@ def _where(brand: str, kind: str) -> str:
     return f"in the {brand} portal"
 
 
-def alert_detail(account: Account, limit: Limit, brand: str = "Plivo") -> str:
-    """The sentence of the "Needs you" item: what Plivo said, what it comes to, the limit, auto-recharge, what to do. No number of a person, no key."""
+def cover_sentence(balance_inr: Decimal, calls_7d_paise: int | None) -> str:
+    """How long the wallet lasts at the last 7 days' call use (our own cost ledger: calls only, the monthly number and channel fees are on top). Empty when the database did not say."""
+    if calls_7d_paise is None or calls_7d_paise < 0:
+        return ""
+    if calls_7d_paise == 0:
+        return " No calls were made in the last 7 days, so the days left cannot be worked out."
+    per_day = Decimal(calls_7d_paise) / Decimal(700)   # paise -> rupees, over 7 days
+    if balance_inr <= 0:
+        return f" Calls used about Rs {_whole_rupees(per_day)} a day over the last 7 days: no days of cover are left."
+    days = int((balance_inr / per_day).quantize(Decimal(1), ROUND_HALF_UP))
+    return f" At the last 7 days' call use (about Rs {_whole_rupees(per_day)} a day) the balance covers about {days} more day{'' if days == 1 else 's'} of calls; the monthly number and channel fees come on top."
+
+
+def alert_detail(account: Account, limit: Limit, brand: str = "Plivo", calls_7d_paise: int | None = None) -> str:
+    """The sentence of the "Needs you" item: what Plivo said, what it comes to, the limit, auto-recharge, the days of cover left at the last 7 days' use, what to do. No number of a person, no key."""
     rupees = _whole_rupees(limit.rupees(account.credits))
     seen = f"{brand} reports {account.credits.normalize():f} {limit.currency}" + ("" if limit.currency == "INR" else f", about Rs {rupees} at Rs {limit.inr_per_unit.normalize():f} to the {limit.currency}") + "."
-    return f"{seen} The limit is Rs {_whole_rupees(limit.min_inr)}. Auto-recharge is {_recharge_word(account.auto_recharge)}. Top up {_where(brand, 'console')} so calls keep working."
+    return f"{seen} The limit is Rs {_whole_rupees(limit.min_inr)}. Auto-recharge is {_recharge_word(account.auto_recharge)}.{cover_sentence(limit.rupees(account.credits), calls_7d_paise)} Top up {_where(brand, 'console')} so calls keep working."
 
 
 def whatsapp_text(balance_inr: Decimal, limit_inr: Decimal, recharge: bool | None, brand: str = "Plivo") -> str:
@@ -186,12 +199,13 @@ class PlivoBalanceCheck:
         state = self._rpc.object(token, "ops_plivo_balance_due", {})
         read = "idle"
         if state.get("read_due") is True:
-            state = self._read(token)
+            spent = state.get("calls_7d_paise")
+            state = self._read(token, spent if isinstance(spent, int) and not isinstance(spent, bool) else None)
             read = str(state.get("state") or "failed")
         told = state.get("whatsapp_due") is True and self._tell_owner(token, state)
         return PassResult(read, told)
 
-    def _read(self, token: str) -> dict[str, Any]:
+    def _read(self, token: str, calls_7d_paise: int | None = None) -> dict[str, Any]:
         try:
             account = parse_account(self._reader.account_details())
         except PlivoError as exc:
@@ -200,7 +214,7 @@ class PlivoBalanceCheck:
         low = self._limit.is_low(account.credits)
         args: dict[str, Any] = {"p_state": "low" if low else "ok", "p_balance_inr": float(self._limit.rupees(account.credits)), "p_auto_recharge": account.auto_recharge}
         if low:
-            args["p_detail"] = alert_detail(account, self._limit, self._brand)
+            args["p_detail"] = alert_detail(account, self._limit, self._brand, calls_7d_paise)
         logger.info("plivo balance: read, state=%s auto_recharge=%s", args["p_state"], _recharge_word(account.auto_recharge))
         return self._rpc.object(token, "ops_plivo_balance_report", args)
 
