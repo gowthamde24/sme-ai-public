@@ -239,6 +239,8 @@ from app.scheduler.repository import PostgrestSchedulerRepository
 from app.scheduler.routes import router as scheduler_router
 from app.search.routes import PostgrestSearch
 from app.search.routes import router as search_router
+from app.sell_lists.repository import ListRepository
+from app.sell_lists.routes import router as sell_lists_router
 from app.sites import errors as site_errors
 from app.sites.repository import PostgrestSitesRepository
 from app.sites.routes import router as sites_router
@@ -554,6 +556,11 @@ def build_runtime(settings: Settings) -> Runtime | None:
             PostgrestStatusRepository(config.rest_url, config.anon_key)
         ),
         numbers=build_numbers(settings, config.rest_url, config.anon_key),
+        sell_lists=(
+            ListRepository(config.rest_url, config.anon_key)
+            if settings.what_you_sell_lists
+            else None
+        ),
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
         assistant_settings=AssistantSettingsService(
             PostgrestAssistantSettingsRepository(config.rest_url, config.anon_key)
@@ -1516,6 +1523,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(admin_tenant_router)
     app.include_router(assistant_status_router)
     app.include_router(numbers_router)
+    app.include_router(sell_lists_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_context_router)

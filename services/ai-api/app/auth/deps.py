@@ -171,6 +171,7 @@ class Runtime:
     # "My assistant": Not live / In training / Live and the Go live / Pause button
     assistant_status: Any = None
     numbers: Any = None   # the number picker's service; None: its routes answer 503
+    sell_lists: Any = None   # WHAT_YOU_SELL_LISTS: the lists' repository; None: 404
     # job DM: outcomes of calls and WhatsApp follow-ups (positive, negative, unclear)
     outcomes: OutcomesRepository | None = None
     # job DM: the AI assistant's settings per workspace (Settings > AI assistant)
