@@ -488,6 +488,7 @@ select is(
         'app.call_openings_worker',   -- the call-openings bucket's storage rules (migration 20261231310000): only the telephony worker reads and writes it   -- Needs you (migration 20261231280000): the Cartesia cap's warnings, in the notice workspace only, for its Owner and Admin
         'app.today_fees_overdue',
         'app.today_templates_needing_change',   -- Needs you (migration 20261231986800): a message WhatsApp sent back, for the Owner and Admin   -- Needs you (migration 20261228100000): a school's overdue fees as a count and a total, for its Owner and Admin
+        'app.today_phone_needs_prices',   -- Needs you (migration 20261231989000): a phone line with no price list, Owner and Admin only
         'app.today_calls_paused',   -- Needs you: outbound calls paused after 2 stops in 10 days (migration 20261231987300); answers the caller's own workspace, Owner and Admin only
         -- the own-voice bucket's storage rules are evaluated as the caller, who must be able to run this one (job DP part 5)
         'app.ovc_bucket_tenant')),
