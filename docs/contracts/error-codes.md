@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (470)
+## Codes (477)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -162,6 +162,8 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `integrations_unavailable` | 503 | integrations |  |  | This is not available on this system. |
 | `internal_error` | 500 | errors |  |  | Something went wrong on our side. |
 | `invalid` | 422 | activity |  | field | Say which limit to tighten. |
+| `invalid_call` | 422 | developer_api |  | fields | Send a lead_id (the id of a lead you posted) and, if you like, dry_run: true. |
+| `invalid_campaign` | 422 | developer_api |  | fields | (the sentence varies: show `message`) |
 | `invalid_cursor` | 400, 422 | activity, developer_api, leads, marksmessages, outcomes, webhooks_out |  |  | Invalid pagination cursor. |
 | `invalid_decision` | 422 | enquiries |  |  | A correction carries the corrected value; a confirm or a reject carries none. |
 | `invalid_delivery_state` | 422 | quotes |  |  | The delivery state is not a state or union territory code. |
@@ -201,6 +203,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `lead_finder_off` | 409 | lead_finder |  |  | Finding new customers is switched off right now. |
 | `lead_finder_unavailable` | 503 | lead_finder |  |  | Finding new customers is not available right now. |
 | `lead_has_no_company` | 409 | agent_runs |  |  | This lead has no company yet. Link a company first. |
+| `lead_has_no_number` | 422 | developer_api |  |  | This lead has no phone number, so it cannot be called. |
 | `lead_intake_unavailable` | 503 | lead_sources |  |  | Not available right now. |
 | `lead_playbook_unavailable` | 503 | leadspack |  |  | This is not available right now. |
 | `lead_profile_unavailable` | 503 | lead_profile |  |  | This is not available on this system. |
@@ -241,6 +244,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `no_subscription` | 409 | main |  |  | Choose a plan first: a top-up or an upgrade needs one. |
 | `no_template` | 409 | leadspack |  |  | This business type has no lead playbook. |
 | `no_text_found` | 422 | knowledge |  |  | No text was found in that file. |
+| `no_usable_contacts` | 422 | developer_api |  | refused | None of the contacts could be used: each needs a valid phone number and consent. See `refused` for the reason of each. |
 | `no_whatsapp` | 409 | outbox |  |  | WhatsApp is not connected for this business. |
 | `nobody_to_ask` | 422 | turns |  |  | Nobody left out needs asking. |
 | `not_a_search` | 422 | lead_finder |  |  | Say what to find and where, for example: find new retailers in Jayanagar. |
@@ -252,7 +256,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_confirmable` | 409 | main |  |  | A line needs a saree type and a quantity that a person confirmed or corrected. |
 | `not_connected` | 409 | lead_sources |  |  | Connect this source first, then test it. |
 | `not_for_schools` | 422 | assistant_context, lead_profile, main, tasks |  | reason | Leads of a school are never sent to the AI. |
-| `not_found` | 404 | assistant, assistant_work, connectors, errors, lead_sources, main |  |  | Not found. |
+| `not_found` | 404 | assistant, assistant_work, connectors, developer_api, errors, lead_sources, main |  |  | Not found. |
 | `not_generated` | 404 | ai_team |  |  | Today's stand-up has not been made yet. |
 | `not_in_a_state_for_this` | 409 | connectors |  |  | This cannot be done in its present state. |
 | `not_in_plan` | 403 | lead_finder |  | feature, upgrade_to | Finding new customers is part of AI Workforce. |
@@ -271,6 +275,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `nothing_to_undo` | 409 | assistant_work, catalogue |  | fields, reason | This change cannot be undone. |
 | `notifications_unavailable` | 503 | notifications |  |  | This is not available on this system. |
 | `number_not_available` | 409 | phone_numbers |  |  | That number is not available any more. Choose another. |
+| `number_on_dnd` | 422 | developer_api |  |  | This number is on the Do-Not-Disturb list. We don't call it. |
 | `number_provider_unavailable` | 502 | phone_numbers |  |  | The phone provider did not answer. Try again in a minute. |
 | `numbers_unavailable` | 503 | numbers, phone_numbers |  | fields, reason | This is not available right now. |
 | `open_payment_link` | 409 | connectors |  |  | This order already has an open payment link. |
@@ -358,7 +363,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `quote_text_refused` | 409 | quotes |  |  | The stored quote cannot be rendered. |
 | `quote_text_unavailable` | 503 | quotes |  |  | Quote text is not available right now. |
 | `quotes_unavailable` | 503 | lead_finder, quotes |  |  | Quotes are not available right now. |
-| `rate_limited` | 429 | conversation, dpdp, errors, hardening, integrations, lead_sources, pronunciation, signup, voicesample, whatsapp | yes |  | Request failed. |
+| `rate_limited` | 429 | conversation, developer_api, dpdp, errors, hardening, integrations, lead_sources, pronunciation, signup, voicesample, whatsapp | yes |  | Request failed. |
 | `reader_unavailable` | 503 | knowledge |  |  | Pictures and scanned pages cannot be read yet. Type or paste the text instead. |
 | `real_data_gate_closed` | 409 | main |  |  | This workspace accepts synthetic data only for now: use an e-mail address on a reserved domain (such as example.test) and a phone number that starts with +00. |
 | `real_data_not_open` | 422 | assistant_work |  |  | (the sentence varies: show `message`) |
@@ -436,6 +441,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `today_unavailable` | 503 | today |  |  | This is not available right now. |
 | `token_expiring` | 409 | assistant, main |  |  | Your session is about to expire. Sign in again and retry. |
 | `too_large` | 413 | connectors, lead_sources |  |  | Too large. |
+| `too_many_calls` | 429 | developer_api | yes |  | Ten calls are already open in this workspace. Wait for one to finish. |
 | `too_many_invitations` | 409 | main |  |  | Twenty invitations are waiting. Revoke one first. |
 | `too_many_keys` | 409 | developer_api |  |  | This workspace already has 10 active keys. Revoke one first. |
 | `too_many_photos` | 409 | main |  |  | An item can have at most 8 photos. |
@@ -471,6 +477,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `voice_too_long` | 422 | voice_notes |  |  | The sample is too long. |
 | `voice_unavailable` | 503 | assistant_context, jobs, voice, voice_notes |  |  | Voice is not available right now. |
 | `waiting_for_whatsapp` | 403 | main |  |  | Connect your WhatsApp to start. Until then you can set everything up, but messages, AI calls and campaigns stay off. |
+| `wallet_empty` | 402 | developer_api |  |  | The wallet cannot cover this call. Add money in the app and try again. |
 | `webhook_url_invalid` | 422 | webhooks_out |  | reason | (the sentence varies: show `message`) |
 | `webhooks_out_unavailable` | 503 | webhooks_out | yes |  | Webhooks are not available right now. Try again in a minute. |
 | `webhooks_unavailable` | 503 | billing, connectors |  |  | Not available right now. |

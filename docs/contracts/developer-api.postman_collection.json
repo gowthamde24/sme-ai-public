@@ -1,0 +1,476 @@
+{
+  "info": {
+    "description": "The Stack19 developer API. TEST MODE only: keys start with `sk_test_`, every call is simulated, nothing is dialled or sent, and every answer carries `Stack19-Mode: test`. Send `Authorization: Bearer sk_test_...`. 60 requests a minute per key (`X-RateLimit-Limit`, `X-RateLimit-Remaining`, `Retry-After` on 429). Every refusal has the one body `{error: {code, message, retry_after, request_id}}`; the codes are listed in docs/contracts/error-codes.md. Contract: docs/contracts/developer-api.md.",
+    "name": "Stack19 developer API (test mode)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create a lead (idempotent)",
+      "request": {
+        "body": {
+          "mode": "raw",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          },
+          "raw": "{\n  \"consent\": {\n    \"at\": \"2026-11-24T10:00:00Z\",\n    \"given\": true,\n    \"text\": \"I agree to be called\"\n  },\n  \"custom_fields\": {\n    \"budget\": \"50000\"\n  },\n  \"language\": \"te\",\n  \"name\": \"Ravi Kumar\",\n  \"notes\": \"Wants 40 sarees for a wedding\",\n  \"phone\": \"+919800000001\",\n  \"source\": \"website\"\n}"
+        },
+        "description": "Needs: leads:write. Send an `Idempotency-Key` header (1 to 100 characters); the same key with the same body returns the first answer (200, `Idempotent-Replayed: true`).",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          },
+          {
+            "key": "Idempotency-Key",
+            "type": "text",
+            "value": "{{$guid}}"
+          },
+          {
+            "key": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          }
+        ],
+        "method": "POST",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "leads"
+          ],
+          "query": [],
+          "raw": "{{base_url}}/api/v1/leads",
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "List leads, oldest change first",
+      "request": {
+        "description": "Needs: leads:read.",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          }
+        ],
+        "method": "GET",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "leads"
+          ],
+          "query": [
+            {
+              "disabled": true,
+              "key": "updated_since",
+              "value": ""
+            },
+            {
+              "disabled": true,
+              "key": "limit",
+              "value": ""
+            },
+            {
+              "disabled": true,
+              "key": "after",
+              "value": ""
+            }
+          ],
+          "raw": "{{base_url}}/api/v1/leads?updated_since=&limit=&after=",
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Get one lead",
+      "request": {
+        "description": "Needs: leads:read.",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          }
+        ],
+        "method": "GET",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "leads",
+            ":lead_id"
+          ],
+          "query": [],
+          "raw": "{{base_url}}/api/v1/leads/:lead_id",
+          "variable": [
+            {
+              "description": "The id.",
+              "key": "lead_id",
+              "value": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Requests, leads, calls and campaigns today and this month",
+      "request": {
+        "description": "Needs: usage:read.",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          }
+        ],
+        "method": "GET",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "usage"
+          ],
+          "query": [],
+          "raw": "{{base_url}}/api/v1/usage",
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "The key and the workspace it belongs to",
+      "request": {
+        "description": "Needs: any live key.",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          }
+        ],
+        "method": "GET",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "me"
+          ],
+          "query": [],
+          "raw": "{{base_url}}/api/v1/me",
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Place a simulated call to a lead (idempotent); dry_run only checks",
+      "request": {
+        "body": {
+          "mode": "raw",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          },
+          "raw": "{\n  \"dry_run\": true,\n  \"lead_id\": \"00000000-0000-4000-8000-000000000000\"\n}"
+        },
+        "description": "Needs: calls:write. Send an `Idempotency-Key` header (1 to 100 characters); the same key with the same body returns the first answer (200, `Idempotent-Replayed: true`). Not needed with `dry_run: true`, which checks every gate and places nothing.",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          },
+          {
+            "key": "Idempotency-Key",
+            "type": "text",
+            "value": "{{$guid}}"
+          },
+          {
+            "key": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          }
+        ],
+        "method": "POST",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "calls"
+          ],
+          "query": [],
+          "raw": "{{base_url}}/api/v1/calls",
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "List calls, oldest first",
+      "request": {
+        "description": "Needs: calls:read.",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          }
+        ],
+        "method": "GET",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "calls"
+          ],
+          "query": [
+            {
+              "disabled": true,
+              "key": "lead_id",
+              "value": ""
+            },
+            {
+              "disabled": true,
+              "key": "limit",
+              "value": ""
+            },
+            {
+              "disabled": true,
+              "key": "after",
+              "value": ""
+            }
+          ],
+          "raw": "{{base_url}}/api/v1/calls?lead_id=&limit=&after=",
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Get one call",
+      "request": {
+        "description": "Needs: calls:read.",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          }
+        ],
+        "method": "GET",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "calls",
+            ":call_id"
+          ],
+          "query": [],
+          "raw": "{{base_url}}/api/v1/calls/:call_id",
+          "variable": [
+            {
+              "description": "The id.",
+              "key": "call_id",
+              "value": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create a campaign: a list of consented contacts and a job (idempotent)",
+      "request": {
+        "body": {
+          "mode": "raw",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          },
+          "raw": "{\n  \"contacts\": [\n    {\n      \"consent\": {\n        \"given\": true,\n        \"text\": \"I agree to be called\"\n      },\n      \"name\": \"Ravi Kumar\",\n      \"phone\": \"+919800000001\",\n      \"source\": \"website\"\n    }\n  ],\n  \"job\": {\n    \"goal\": \"Ask if they still want the saree catalogue.\",\n    \"name\": \"Follow up\"\n  },\n  \"language\": \"te\",\n  \"name\": \"Diwali enquiries\"\n}"
+        },
+        "description": "Needs: campaigns:write. Send an `Idempotency-Key` header (1 to 100 characters); the same key with the same body returns the first answer (200, `Idempotent-Replayed: true`).",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          },
+          {
+            "key": "Idempotency-Key",
+            "type": "text",
+            "value": "{{$guid}}"
+          },
+          {
+            "key": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          }
+        ],
+        "method": "POST",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "campaigns"
+          ],
+          "query": [],
+          "raw": "{{base_url}}/api/v1/campaigns",
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "List campaigns, oldest first",
+      "request": {
+        "description": "Needs: campaigns:read.",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          }
+        ],
+        "method": "GET",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "campaigns"
+          ],
+          "query": [
+            {
+              "disabled": true,
+              "key": "limit",
+              "value": ""
+            },
+            {
+              "disabled": true,
+              "key": "after",
+              "value": ""
+            }
+          ],
+          "raw": "{{base_url}}/api/v1/campaigns?limit=&after=",
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Get one campaign, with its lead ids",
+      "request": {
+        "description": "Needs: campaigns:read.",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          }
+        ],
+        "method": "GET",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "campaigns",
+            ":campaign_id"
+          ],
+          "query": [],
+          "raw": "{{base_url}}/api/v1/campaigns/:campaign_id",
+          "variable": [
+            {
+              "description": "The id.",
+              "key": "campaign_id",
+              "value": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "The workspace's API requests of the last 30 days, newest first (no bodies)",
+      "request": {
+        "description": "Needs: usage:read.",
+        "header": [
+          {
+            "key": "Authorization",
+            "type": "text",
+            "value": "Bearer {{api_key}}"
+          }
+        ],
+        "method": "GET",
+        "url": {
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "activity"
+          ],
+          "query": [
+            {
+              "disabled": true,
+              "key": "limit",
+              "value": ""
+            },
+            {
+              "disabled": true,
+              "key": "before",
+              "value": ""
+            }
+          ],
+          "raw": "{{base_url}}/api/v1/activity?limit=&before=",
+          "variable": []
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "description": "Your test key (sk_test_...). Keep it out of shared collections.",
+      "key": "api_key",
+      "value": ""
+    }
+  ]
+}

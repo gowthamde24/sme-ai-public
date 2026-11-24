@@ -2,6 +2,7 @@
 {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.ts from the API models.
 Run through `make contracts` (uses the API virtualenv)."""
 
+import subprocess
 import sys
 from pathlib import Path
 
@@ -76,6 +77,7 @@ import error_catalog  # noqa: E402  (the error-code catalog, read from the API s
 (ROOT / "packages/contracts/tasks.schema.json").write_text(tasks.schema_text())
 (ROOT / "packages/contracts/tasks.ts").write_text(tasks.ts_text())
 error_catalog.write()
+subprocess.run([sys.executable, str(ROOT / "scripts/developer_openapi.py")], check=True)   # the developer API's OpenAPI document and Postman collection
 print(
     "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.schema.json "
     "and {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.ts"
