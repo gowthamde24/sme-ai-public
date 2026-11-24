@@ -518,3 +518,27 @@ def test_the_cursor_helpers_round_trip_a_name_with_a_bar() -> None:
     i = uuid.UUID(int=7)
     raw = service.encode_cursor(2, "Name | with bar", i)
     assert service.decode_cursor(raw) == (2, "Name | with bar", i)
+
+
+def test_undo_price_is_the_owners_alone_puts_back_the_old_price_and_says_when_there_is_nothing_to_undo() -> None:
+    """28 Nov 2026: the phone price screens: one tap to put the last price change back (30 days; the database refuses a second undo)."""
+    w = World()
+    w.db.items[I1] = {**w.db.items[I1], "price_paise": 99900, "updated_by_name": "Lakshmi"}
+    w.db.undo_to = 85000
+    for user in ("a_admin", "a_sales", "a_viewer"):
+        assert w.call("POST", f"/items/{I1}/undo-price", user).status_code == 403, user
+    assert not [c for c in w.db.calls if c[0] == "catalogue_price_undo"], "only the Owner reaches the database"
+    r = w.call("POST", f"/items/{I1}/undo-price", "a_owner")
+    assert r.status_code == 200 and r.json()["price_paise"] == 85000
+    w.db.nothing_to_undo = True
+    r2 = w.call("POST", f"/items/{I1}/undo-price", "a_owner")
+    assert r2.status_code == 409 and r2.json()["error"]["code"] == "nothing_to_undo" and r2.json()["error"]["fields"] == ["nothing_to_undo"]
+    assert w.call("POST", f"/items/{uuid.uuid4()}/undo-price", "a_owner").status_code == 404
+
+
+def test_an_item_says_who_changed_it_last() -> None:
+    w = World()
+    w.db.items[I1] = {**w.db.items[I1], "updated_by_name": "Lakshmi"}
+    assert w.call("GET", f"/items/{I1}", "a_viewer").json()["updated_by_name"] == "Lakshmi"
+    w.db.items[I1] = {k: v for k, v in w.db.items[I1].items() if k != "updated_by_name"}
+    assert w.call("GET", f"/items/{I1}", "a_viewer").json()["updated_by_name"] is None

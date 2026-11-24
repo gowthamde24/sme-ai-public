@@ -54,6 +54,8 @@ class FakeCatalogue:
         self.calls: list[tuple[str, str, dict[str, Any]]] = []
         self.items: dict[str, dict[str, Any]] = {}
         self.raise_next: Exception | None = None
+        self.nothing_to_undo = False
+        self.undo_to: int | None = None
 
     def _log(self, name: str, token: str, args: dict[str, Any]) -> None:
         self.calls.append((name, token, args))
@@ -133,6 +135,19 @@ class FakeCatalogue:
         by_id = {p["id"]: p for p in item["photos"]}
         item["photos"] = [dict(by_id[str(pid)], position=n) for n, pid in enumerate(photo_ids, 1)]
         return {"item_id": str(item_id)}
+
+    def undo_price(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> dict[str, Any]:
+        self._log("catalogue_price_undo", token, {"p_item_id": str(item_id)})
+        if str(item_id) not in self.items:
+            from app.crm.repository import NotFoundError
+
+            raise NotFoundError("23503")
+        if self.nothing_to_undo:
+            from app.catalogue.errors import NothingToUndoError
+
+            raise NothingToUndoError("SM851")
+        self.items[str(item_id)] = {**self.items[str(item_id)], "price_paise": self.undo_to}
+        return dict(self.items[str(item_id)])
 
     def get_item(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> dict[str, Any]:
         self._log("catalogue_get", token, {"p_item_id": str(item_id)})

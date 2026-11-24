@@ -77,6 +77,8 @@ class ItemBase(_Strict):
     photo_count: int
     created_at: datetime
     updated_at: datetime
+    # who last changed the item (a display name; only a member of this business is ever named; null for a system change)
+    updated_by_name: str | None = None
 
 
 class CatalogueItemSummary(ItemBase):

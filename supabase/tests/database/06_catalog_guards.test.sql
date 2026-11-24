@@ -274,6 +274,8 @@ select is(
         'app.my_second_factor_on',  -- job DT: the client-write trigger (security invoker) asks it; it answers for the caller only
         'public.catalogue_ensure_bucket',
         'public.catalogue_item_save',
+        'public.catalogue_price_undo',   -- 28 Nov 2026: the Owner puts the last price change back (migration 20261231990400)
+        'app.member_display_name',   -- the item reader names who last changed an item (a member of that business only)
         'public.catalogue_photo_add',
         'public.catalogue_photo_remove',
         'public.catalogue_photos_reorder',
@@ -521,7 +523,7 @@ select is(
                      'public.call_request_offer_visit', 'public.visit_list', 'public.ai_usage_week',
                      'public.scheduler_settings_get', 'public.scheduler_settings_set', 'public.scheduler_tenants', 'public.scheduler_heartbeat', 'public.scheduler_claim_due', 'public.scheduler_mark',
                      'public.scheduler_due_reminders', 'public.scheduler_queue_reminder', 'public.scheduler_mark_no_shows', 'public.scheduler_record', 'public.scheduler_status',
-                     'public.catalogue_ensure_bucket', 'public.catalogue_item_save', 'public.catalogue_photo_add', 'public.catalogue_photo_remove', 'public.catalogue_photos_reorder',
+                     'public.catalogue_ensure_bucket', 'public.catalogue_item_save', 'public.catalogue_price_undo', 'public.catalogue_photo_add', 'public.catalogue_photo_remove', 'public.catalogue_photos_reorder',
                      'public.outbox_list', 'public.outbox_summary',
                      'public.export_accounting_data', 'public.import_job_preview_save', 'public.import_job_get', 'public.import_job_list', 'public.import_job_begin', 'public.import_job_finish',
                      'public.catalogue_stock_list', 'public.catalogue_stock_apply', 'public.calendar_feed_create', 'public.calendar_feed_status', 'public.calendar_feed_revoke', 'public.calendar_feed_read',

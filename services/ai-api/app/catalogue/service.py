@@ -94,6 +94,7 @@ def _base(row: dict[str, Any]) -> dict[str, Any]:
             "photo_count": len(row.get("photos") or []),
             "created_at": row["created_at"],
             "updated_at": row["updated_at"],
+            "updated_by_name": row.get("updated_by_name") if isinstance(row.get("updated_by_name"), str) else None,
         }
     except (KeyError, TypeError):
         raise UpstreamError("unexpected catalogue row") from None
