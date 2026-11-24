@@ -32,6 +32,11 @@ class LeadSourcesRepository(Protocol):
     # the registered worker account
     def live(self, worker_token: str, token_hash: str, rows: list[dict[str, Any]]) -> dict[str, Any]: ...
     def form_info(self, worker_token: str, token_hash: str) -> dict[str, Any]: ...
+    def activity_add(self, worker_token: str, token_hash: str, outcome: str, reason: str, test: bool) -> None: ...
+    def activity(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, limit: int) -> dict[str, Any]: ...
+    def job_link(self, token: str, tenant_id: uuid.UUID, job_id: str, source_id: uuid.UUID) -> dict[str, Any]: ...
+    def job_address(self, token: str, tenant_id: uuid.UUID, job_id: str) -> dict[str, Any] | None: ...
+    def test_logged(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, outcome: str, reason: str) -> None: ...
     def meta_consent(self, worker_token: str, token_hash: str, items: list[dict[str, Any]]) -> dict[str, Any]: ...
     def unparsed_add(self, worker_token: str, token_hash: str, subject: str | None, body: str) -> dict[str, Any]: ...
     def sheets_due(self, worker_token: str, limit: int) -> list[dict[str, Any]]: ...
@@ -106,6 +111,19 @@ class PostgrestLeadSourcesRepository:
     def form_info(self, worker_token: str, token_hash: str) -> dict[str, Any]:
         return self._rpc.object(worker_token, "scheduler_lead_form_info", {"p_token_hash": token_hash})
 
+    def activity_add(self, worker_token: str, token_hash: str, outcome: str, reason: str, test: bool) -> None:
+        self._rpc.call(worker_token, "scheduler_lead_activity", {"p_token_hash": token_hash, "p_outcome": outcome, "p_reason": reason, "p_test": test})
+
+    def activity(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, limit: int) -> dict[str, Any]:
+        return self._rpc.object(token, "lead_source_activity_list", {"p_tenant_id": str(tenant_id), "p_source_id": str(source_id), "p_limit": limit})
+
+    def job_link(self, token: str, tenant_id: uuid.UUID, job_id: str, source_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "job_lead_address_link", {"p_tenant_id": str(tenant_id), "p_job_id": job_id, "p_source_id": str(source_id)})
+
+    def job_address(self, token: str, tenant_id: uuid.UUID, job_id: str) -> dict[str, Any] | None:
+        out = self._rpc.call(token, "job_lead_address_get", {"p_tenant_id": str(tenant_id), "p_job_id": job_id})
+        return out if isinstance(out, dict) else None
+
     def meta_consent(self, worker_token: str, token_hash: str, items: list[dict[str, Any]]) -> dict[str, Any]:
         return self._rpc.object(worker_token, "scheduler_lead_meta_consent", {"p_token_hash": token_hash, "p_items": items})
 
@@ -146,3 +164,6 @@ class PostgrestLeadSourcesRepository:
     def test_lead(self, token: str, tenant_id: uuid.UUID, kind: str, row: dict[str, Any]) -> dict[str, Any]:
         """One test row through the intake of the workspace's source of this kind, marked as a test (migration 20261231900000); the lead's id, or none."""
         return self._rpc.object(token, "lead_source_test_lead", {"p_tenant_id": str(tenant_id), "p_kind": kind, "p_row": row})
+
+    def test_logged(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, outcome: str, reason: str) -> None:
+        self._rpc.call(token, "lead_source_test_logged", {"p_tenant_id": str(tenant_id), "p_source_id": str(source_id), "p_outcome": outcome, "p_reason": reason})

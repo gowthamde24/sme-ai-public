@@ -165,7 +165,7 @@ insert into exempt (tbl, why) values
   ('team.invitations', 'the team'), ('workspace.profiles', 'the workspace profile'),
   ('public.call_settings', 'call settings: every business type has calls (job DP)'),
   ('public.lead_playbooks', 'the lead playbook: every business type (job DR)'), ('public.knowledge_sources', 'the knowledge base: every business type (job DR)'), ('public.knowledge_facts', 'the knowledge base: every business type (job DR)'),
-  ('public.lead_sources', 'lead sources: every business type (job DR)'), ('public.lead_consents', 'lead sources: every business type (job DR)'), ('public.lead_intakes', 'lead sources: every business type (job DR)'), ('public.lead_flags', 'lead sources: every business type (job DR)'),
+  ('public.lead_sources', 'lead sources: every business type (job DR)'), ('public.lead_source_activity', 'lead sources: what arrived at an address, closed words only (28 Nov 2026)'), ('public.lead_consents', 'lead sources: every business type (job DR)'), ('public.lead_intakes', 'lead sources: every business type (job DR)'), ('public.lead_flags', 'lead sources: every business type (job DR)'),
   ('public.lead_arrivals', 'lead sources: every business type (job DR)'), ('public.lead_source_costs', 'lead sources: every business type (job DR)'), ('public.lead_sheet_links', 'lead sources: every business type (job DR)'), ('public.lead_unparsed', 'lead sources: every business type (job DR)'),
   ('public.outreach_policy', 'speed to lead and approve once: every business type (job DR A3)'),
   ('public.outreach_batches', 'speed to lead and approve once: every business type (job DR A3)'),

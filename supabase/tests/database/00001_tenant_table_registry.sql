@@ -425,6 +425,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('lead_sources',
    $$insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, token_hint, created_by) values (%2$L, %1$L, 'webhook', 'webhook', 'Generic source', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), 'abcd', %5$L)$$,
    'label = label', $$delete from public.lead_sources where id = %2$L$$, true),
+  ('lead_source_activity',
+   $$with s as (insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, token_hint, created_by) values (gen_random_uuid(), %1$L, 'webhook', 'webhook', 'Activity source', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), 'abcd', %5$L) returning id)
+     insert into public.lead_source_activity (tenant_id, source_id, outcome, reason) select %1$L, s.id, 'accepted', 'new_lead' from s$$,
+   'reason = reason', $$delete from public.lead_source_activity where tenant_id = %1$L$$, false),
   ('lead_consents',
    $$insert into public.lead_consents (id, tenant_id, list_name, purpose, basis, how_collected, statement_version, confirmed_by) values (%2$L, %1$L, 'Generic list', 'Generic purpose', 'explicit_consent', 'Generic way', 'dr-2026-10-27', %5$L)$$,
    'list_name = list_name', $$delete from public.lead_consents where id = %2$L$$, false),
@@ -1002,6 +1006,7 @@ select t, r, s, i, u, d from (values
   ('knowledge_sources', 'owner', true, false, false, false), ('knowledge_sources', 'admin', true, false, false, false), ('knowledge_sources', 'sales', false, false, false, false), ('knowledge_sources', 'viewer', false, false, false, false),
   ('knowledge_facts', 'owner', true, false, false, false), ('knowledge_facts', 'admin', true, false, false, false), ('knowledge_facts', 'sales', false, false, false, false), ('knowledge_facts', 'viewer', false, false, false, false),
   ('lead_sources', 'owner', true, false, false, false), ('lead_sources', 'admin', true, false, false, false), ('lead_sources', 'sales', false, false, false, false), ('lead_sources', 'viewer', false, false, false, false),
+  ('lead_source_activity', 'owner', true, false, false, false), ('lead_source_activity', 'admin', true, false, false, false), ('lead_source_activity', 'sales', false, false, false, false), ('lead_source_activity', 'viewer', false, false, false, false),
   ('lead_consents', 'owner', true, false, false, false), ('lead_consents', 'admin', true, false, false, false), ('lead_consents', 'sales', false, false, false, false), ('lead_consents', 'viewer', false, false, false, false),
   ('lead_intakes', 'owner', true, false, false, false), ('lead_intakes', 'admin', true, false, false, false), ('lead_intakes', 'sales', false, false, false, false), ('lead_intakes', 'viewer', false, false, false, false),
   ('lead_source_costs', 'owner', true, false, false, false), ('lead_source_costs', 'admin', true, false, false, false), ('lead_source_costs', 'sales', false, false, false, false), ('lead_source_costs', 'viewer', false, false, false, false),
