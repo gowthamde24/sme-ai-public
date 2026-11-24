@@ -126973,5 +126973,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "qp.f.save": {
+  "en": "Save changes",
+  "te": "మార్పులను save చేయండి",
+  "hi": "बदलाव save करें",
+  "kn": "ಬದಲಾವಣೆಗಳನ್ನು save ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "qp.f.apply": {
+  "en": "Changes apply to new quotes only. Old quotes keep their rules.",
+  "te": "మార్పులు కొత్త quotes కి మాత్రమే వర్తిస్తాయి. పాత quotes వాటి rules నే ఉంచుకుంటాయి.",
+  "hi": "बदलाव सिर्फ़ नए quotes पर लागू होते हैं। पुराने quotes अपने rules रखते हैं।",
+  "kn": "ಬದಲಾವಣೆಗಳು ಹೊಸ quotes ಗೆ ಮಾತ್ರ ಅನ್ವಯಿಸುತ್ತವೆ. ಹಳೆಯ quotes ತಮ್ಮ rules ಅನ್ನೇ ಉಳಿಸಿಕೊಳ್ಳುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
