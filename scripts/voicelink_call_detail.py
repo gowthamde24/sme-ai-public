@@ -21,6 +21,7 @@ from app.telephony.voicelink_api import VoicelinkApi, VoicelinkError
 SAFE = frozenset({
     "call_status", "call_type", "bot_type", "bot_id", "did_id", "client_id", "carrier_id", "reseller_id", "direction", "status", "status_label", "duration", "billsec", "talk_time", "total_cost", "cost", "rate",
     "created_at", "updated_at", "answered_at", "ended_at", "start_time", "end_time", "hangup_cause", "hangup_by", "end_reason", "disposition", "pulse", "pulses", "recording_status", "is_recorded", "call_recording",
+    "disconnect_reason", "hangup_reason", "call_answered_time", "call_end_time", "call_duration", "talk_duration", "bot_name", "bot_type_label", "currency_symbol",
 })
 
 
