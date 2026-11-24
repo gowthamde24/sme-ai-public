@@ -1,4 +1,4 @@
-"""The ONE door to lane C's pure price-list CSV parser (`packages/pure/price_list_csv`, docs/plans/price-list-csv.md).
+"""The ONE door to lane C's pure price-list CSV parser (`packages/pure/price_list_csv`, docs-private/plans/price-list-csv.md).
 
 The parser turns CSV text into engine-shaped items or fixed error codes; it reads no file, no network and no clock, and it echoes no cell. The adapter gives lane A the guarantees the package
 cannot give itself, the same way `app/orders/lifecycle_port.py` does for the lifecycle:
@@ -26,7 +26,7 @@ from typing import Any
 ALLOWED_PARSER_VERSIONS: frozenset[str] = frozenset({"1.0.0"})
 MODULE_NAME = "price_list_csv"
 
-# The parser's closed error codes (docs/plans/price-list-csv.md). Anything else is refused.
+# The parser's closed error codes (docs-private/plans/price-list-csv.md). Anything else is refused.
 PARSER_CODES: tuple[str, ...] = (
     "FILE_LIMIT", "INVALID_UTF8", "HEADER_REQUIRED", "DUPLICATE_COLUMN", "UNKNOWN_COLUMN", "MISSING_COLUMN", "UNPAIRED_BREAK_COLUMN", "CSV_FORMAT", "ROW_WIDTH", "INVALID_SKU",
     "DUPLICATE_SKU", "INVALID_NAME", "INVALID_MONEY", "MONEY_OUT_OF_RANGE", "INVALID_INTEGER", "INTEGER_OUT_OF_RANGE", "INCOMPLETE_BREAK", "BREAK_GAP", "INVALID_PRICE_BREAKS",

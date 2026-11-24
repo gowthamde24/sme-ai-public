@@ -6,7 +6,7 @@
 #   errors      any ERROR log line from the API in 5 minutes
 #   call_fail   calls that did not start or did not finish cleanly: plivo_signature_failed, plivo_outbound place_failed, phone_call_finish_failed, phone_call_row_failed, phone_call_heartbeat_failed
 #   latency     the caller waits: p95 of `to_first_sound_ms` (the log line `phone_turn`, ms from the end of the caller's turn to the first sound) above 3000 ms over 10 minutes
-#   datalayer   more than 5 data-layer timeouts (ReadTimeout) in a minute; breaker = the page breaker opened (Phase 1 of docs/plans/call-capacity-and-instances.md); concurrency = more than 30 requests at once for 2 minutes
+#   datalayer   more than 5 data-layer timeouts (ReadTimeout) in a minute; breaker = the page breaker opened (Phase 1 of docs-private/plans/call-capacity-and-instances.md); concurrency = more than 30 requests at once for 2 minutes
 #   instance    the API has no running instance (min-instances 1 must always show one)
 # SPEND is not here: budgets are separate (deploy/budget-alerts.sh, per month, 50/90/100 %), and the model/voice providers have their own caps (see the runbook).
 set -euo pipefail
@@ -40,7 +40,7 @@ run gcloud logging metrics create sme_turn_latency_ms --project "$P" --config-fr
 
 run gcloud logging metrics create sme_data_layer_timeouts --project "$P" --description "the data layer (Supabase) did not answer in time" \
   --log-filter "$SVC AND (jsonPayload.msg:\"unreachable: ReadTimeout\" OR jsonPayload.msg:\"unreachable: ConnectTimeout\")"
-run gcloud logging metrics create sme_admission_breaker --project "$P" --description "page reads were refused because the data layer failed (docs/plans/call-capacity-and-instances.md)" \
+run gcloud logging metrics create sme_admission_breaker --project "$P" --description "page reads were refused because the data layer failed (docs-private/plans/call-capacity-and-instances.md)" \
   --log-filter "$SVC AND jsonPayload.msg:\"admission breaker open\""
 run gcloud beta monitoring channels create --project "$P" --display-name "Stack19 alerts" --type email --channel-labels "email_address=$ALERT_EMAIL"
 CH='$(gcloud beta monitoring channels list --project '"$P"' --filter="displayName=\"Stack19 alerts\"" --format="value(name)" | head -1)'

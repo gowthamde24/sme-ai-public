@@ -59,7 +59,7 @@ def test_a_goal_is_plain_words_a_number_an_address_or_a_link_is_refused() -> Non
     client, _ = make_client(phone_inbound=svc)
     ok = client.post(URL, json={"to": OWNER, "goal": GOAL}, headers=auth("a_owner"))
     assert ok.status_code == 202 and len(api.placed) == 1
-    for bad in ("short", "x" * 401, "Call him back on 9502380998 about the saree", "Ask for 95 02 38 09 98 please call", "Write to ravi@example.com about the saree", "Send the link https://x.example/a to him",
+    for bad in ("short", "x" * 401, "Call him back on 9000000998 about the saree", "Ask for 95 02 38 09 98 please call", "Write to ravi@example.com about the saree", "Send the link https://x.example/a to him",
                 "Open www.example.com and read it", "line one\nline two is a control character here"):
         r = client.post(URL, json={"to": OWNER, "goal": bad}, headers=auth("a_owner"))
         assert r.status_code == 422 and r.json()["error"]["code"] == "validation_error" and r.json()["error"]["fields"] == ["goal"], bad

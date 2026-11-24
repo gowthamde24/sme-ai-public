@@ -1,4 +1,4 @@
-// The FALLBACK for the shop's phone line (docs/runbooks/customer-zero-go-live-checklist.md, section C). Set it as the Plivo application's "Fallback Answer URL": when Plivo cannot get an answer from the API
+// The FALLBACK for the shop's phone line (docs-private/runbooks/customer-zero-go-live-checklist.md, section C). Set it as the Plivo application's "Fallback Answer URL": when Plivo cannot get an answer from the API
 // (down, rolling back, a timeout), Plivo asks this Worker instead. It runs on Cloudflare, so an outage of the API or of Google Cloud cannot take it down. It makes NO promise to the caller and holds no secret of Plivo.
 //
 // What it does (owner decision 11 Nov 2026):

@@ -3,7 +3,7 @@
 Status: **accepted** (2026-10-05). Built in T006b milestone 1 and approved by the owner with a fix batch (migration
 `20261010090200_t006b_review_fixes.sql`: phone prefix, `www.`, statement timeout; typed confirmation on the Privacy page).
 Related: ADR 0001 (tenancy), 0005 (PII-aware audit and the consent ledger), 0008 (evidence), 0013 (agents),
-`docs/pre-pilot-checklist.md` (HARD GATE before T012).
+`docs-private/pre-pilot-checklist.md` (HARD GATE before T012).
 Code: `supabase/migrations/20261010090000_t006b_erasure_foundation.sql` (tables, registry, guards),
 `supabase/migrations/20261010090100_t006b_erasure_functions.sql` (the three functions and the scope handlers),
 `supabase/migrations/20261010090200_t006b_review_fixes.sql` (sweep patterns, statement timeout),

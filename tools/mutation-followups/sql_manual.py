@@ -161,7 +161,7 @@ M = [
  # --- question drafts
  ("public.persist_question_drafts", "jsonb_array_length(p_items) > 40", "jsonb_array_length(p_items) > 4000", "questions: no cap on items", 0),
  ("public.decide_question_draft", "app.has_tenant_role(d.tenant_id, array['owner', 'admin', 'sales']::public.app_role[])", "true", "questions: decide without a role", 0),
- # --- the due list's candidates (docs/plans/followups-due-candidates-plan.md): the terminal list, the facts, the order, the cursor, the caps
+ # --- the due list's candidates (docs-private/plans/followups-due-candidates-plan.md): the terminal list, the facts, the order, the cursor, the caps
  ("public.followup_due_candidates", "array['suppressed', 'replied', 'closed', 'max_touches']", "array['replied', 'closed', 'max_touches']", "terminal list without suppressed", 0),
  ("public.followup_due_candidates", "array['suppressed', 'replied', 'closed', 'max_touches']", "array['suppressed', 'closed', 'max_touches']", "terminal list without replied", 0),
  ("public.followup_due_candidates", "array['suppressed', 'replied', 'closed', 'max_touches']", "array['suppressed', 'replied', 'max_touches']", "terminal list without closed", 0),

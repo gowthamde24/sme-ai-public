@@ -1,4 +1,4 @@
-"""The follow-up due list's candidates (docs/plans/followups-due-candidates-plan.md), on the REAL stack: the proof that the lead that has waited longest is never missed.
+"""The follow-up due list's candidates (docs-private/plans/followups-due-candidates-plan.md), on the REAL stack: the proof that the lead that has waited longest is never missed.
 
 One workspace of 600+ leads (module-scoped, built once):
   * 120 leads touched in the last hours ("not yet"), 340 older ones (2 to 38 days ago), 60 that replied, 40 at the policy's touch limit, 30 archived, 15 lost: made in bulk by the operator (straight SQL);

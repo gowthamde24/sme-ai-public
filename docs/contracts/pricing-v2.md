@@ -1,6 +1,6 @@
 # Billing v2: the API shapes for C2 (the owner's final pricing, 13 Nov 2026) — C1 -> C2
 
-Everything is in **rupees**; the ledger counts paise (1 credit = ₹1 inside), but **no answer and no string says "credits"**. Flag `PRICING_V2` (on in staging, off in production); off = these routes answer 404. Plans and rules: `docs/plans/billing-v2-final-pricing.md`. Built behind v1 (the old `/billing` trial routes are untouched).
+Everything is in **rupees**; the ledger counts paise (1 credit = ₹1 inside), but **no answer and no string says "credits"**. Flag `PRICING_V2` (on in staging, off in production); off = these routes answer 404. Plans and rules: `docs-private/plans/billing-v2-final-pricing.md`. Built behind v1 (the old `/billing` trial routes are untouched).
 
 | Method and path | Who | Answer |
 |---|---|---|

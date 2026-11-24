@@ -1,6 +1,6 @@
 # Calls (AI phone calls): the Calls page contract
 
-Base `/v1/tenants/{tenant_id}/calls`. Errors have the one shape `{error:{code,message,retry_after,request_id}}`. Plan: `docs/plans/phone-calls.md`. Everything is **sandbox** until the owner confirms the legal answers: every call says `sandbox: true`; the page should say "Test call" next to it. No audio is ever kept (`recorded` is always `false`).
+Base `/v1/tenants/{tenant_id}/calls`. Errors have the one shape `{error:{code,message,retry_after,request_id}}`. Plan: `docs-private/plans/phone-calls.md`. Everything is **sandbox** until the owner confirms the legal answers: every call says `sandbox: true`; the page should say "Test call" next to it. No audio is ever kept (`recorded` is always `false`).
 
 ## `GET /calls?state=live|finished|all&limit=50&cursor=`
 

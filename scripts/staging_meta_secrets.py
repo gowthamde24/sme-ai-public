@@ -6,7 +6,7 @@ Both values are typed at HIDDEN prompts: they never appear in the output, a file
 `gcloud secrets ... --data-file=-` on standard input only.
 
 Before: in the Meta app, App settings > Basic shows the App Secret (press Show); Graph API Explorer gives the Page access token (user or Page = the test Page, permissions leads_retrieval,
-pages_show_list, pages_manage_metadata, pages_read_engagement). See docs/plans/meta-app-review.md and docs/runbooks/lead-sources.md.
+pages_show_list, pages_manage_metadata, pages_read_engagement). See docs-private/plans/meta-app-review.md and docs/runbooks/lead-sources.md.
 
 What it does (stops at the first problem, prints no value):
   1. refuses unless the flag is given and the project is the staging one;

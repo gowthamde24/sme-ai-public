@@ -1,4 +1,4 @@
-// npm run guard:v2 [-- <base-ref>] [--allow <glob> ...]: the guard of the workspace redesign (docs/plans/workspace-v2-redesign-plan.md, 4.1).
+// npm run guard:v2 [-- <base-ref>] [--allow <glob> ...]: the guard of the workspace redesign (docs-private/plans/workspace-v2-redesign-plan.md, 4.1).
 // Compares HEAD with a base ref (default: the branch before this one in the stack, given as the first argument) and fails when a LOOK batch
 //   1. touched a path it may not touch (actions, lib, *-logic, proxy, csp, next.config, API, SQL, contracts, the root layout, globals.css);
 //   2. changed any role list line (ROLES / WRITERS / ... / *_ROLES, ADMINS) in the app sources;

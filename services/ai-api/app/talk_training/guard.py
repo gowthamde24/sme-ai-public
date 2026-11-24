@@ -63,8 +63,11 @@ def _words(sentence: str) -> frozenset[str]:
 class GuardedTts:
     """The voice, with the never-say check in front of it: each sentence sent to be spoken is checked first."""
 
-    def __init__(self, inner: Any, never_say: Sequence[str], *, goal_tone: str | None = None, addressed_name: str | None = None, titles_gender: str | None = None) -> None:
+    def __init__(self, inner: Any, never_say: Sequence[str], *, goal_tone: str | None = None, addressed_name: str | None = None, titles_gender: str | None = None, allowed_paise: frozenset[int] | None = None) -> None:
         self._inner, self._never = inner, list(never_say)
+        # the fact pack's rule about money (28 Nov 2026): when set, a sentence that holds a rupee amount which is not one of these (a price-list amount) is never spoken; a short deflection is said instead
+        self._allowed_paise = allowed_paise
+        self.amounts_blocked = 0
         self._goal_tone = goal_tone   # set on an OUTBOUND goal call: no promise is spoken, and the tone's particles are taken out (app/telephony/promises.py, tone.py)
         self._addressed_name = addressed_name  # the called person's own name (Lead Desk): the only name "గారు" may follow, and only in Respectful
         self._titles_gender = titles_gender    # "male" / "female" when the name is unknown and the gender is known: Respectful may use sir / madam, at most twice in the call
@@ -212,6 +215,13 @@ class GuardedTts:
 
     def stream(self, text: str, language: str, *args: Any, **kwargs: Any) -> AsyncIterator[bytes]:
         said = safe_line(text, self._never, language)
+        if said == text and self._allowed_paise is not None and self._goal_tone is None:
+            from app.telephony.fact_pack import amounts_paise
+
+            if any(a not in self._allowed_paise for a in amounts_paise(text)):
+                self.amounts_blocked += 1
+                logger.info("amount blocked: language=%s", language)   # a closed line, never the amount or the sentence
+                return self._inner.stream(SAFE.get(language, SAFE["en"]), language, *args, **kwargs)  # type: ignore[no-any-return]
         if said != text:
             self.blocked += 1
             if self._goal_tone is not None:   # (the usual safe line says "I will check with the team and get back to you": a promise a goal call cannot keep)

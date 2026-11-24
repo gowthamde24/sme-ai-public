@@ -1,6 +1,7 @@
 """deploy/Dockerfile.api must carry lane C's pure packages and put them on PYTHONPATH.
 
-Source: docs/pre-pilot-checklist.md, the T012 (deploy) row. Without them the image cannot import
+Source: docs-private/pre-pilot-checklist.md, the T012 (deploy) row. Without them the image
+cannot import
 `quote_engine`, `quote_text`, `requirement_mapper` or `followup_cadence`, and quotes and follow-ups
 fail closed with 503. The API finds the packages only in a checkout; in an image it relies on
 PYTHONPATH. CI does not build the image, so this test reads the file. (Proved once by a local build

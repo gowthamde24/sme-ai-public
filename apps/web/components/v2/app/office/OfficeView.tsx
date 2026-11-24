@@ -17,7 +17,7 @@ const WORD_KEYS = [
 ];
 
 /**
- * The Office (docs/plans/office-3d-proposal.md): the helpers as a plush room around one table, or as a list, and the event feed. `agents` are the rows of `getAgentsStatus()` (always all seven);
+ * The Office (docs-private/plans/office-3d-proposal.md): the helpers as a plush room around one table, or as a list, and the event feed. `agents` are the rows of `getAgentsStatus()` (always all seven);
  * null = they cannot be read and the screen says "Not available yet" (it names no agent it cannot verify). A helper that is `not_available` is not built; `switched_off` has its switch off:
  * each says so, on its tag and its card. The chosen helper is `?agent=` (a real link). "Runs and cost" is the existing page of agent runs. The server draws the List; OfficeRoom (client)
  * draws the room (plain DOM and CSS, so the server draws it too) or the list, and keeps the person's choice.

@@ -37,7 +37,7 @@ export const viewport: Viewport = {
 };
 
 /**
- * `data-theme` on <html> is the theme bridge of the workspace redesign (docs/plans/workspace-v2-redesign-plan.md, 2.9): the choice made with the
+ * `data-theme` on <html> is the theme bridge of the workspace redesign (docs-private/plans/workspace-v2-redesign-plan.md, 2.9): the choice made with the
  * v2 theme button (cookie `sme_theme`) also reaches the screens that are not yet in the v2 look, through two blocks at the end of globals.css.
  * No choice means no attribute: everything follows the system, as before. Removed in the clean-up batch.
  */

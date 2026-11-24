@@ -9,7 +9,7 @@ output, a file, the shell history or the chat, and this script never stores them
 Before: create the OAuth client in the Google Cloud console (APIs & Services > Credentials > Create credentials > OAuth client ID > Web application), with the Authorized redirect URI
     https://sme-api-620338396268.asia-south1.run.app/v1/integrations/google-calendar/callback
 (the staging API's PUBLIC_BASE_URL + /v1/integrations/google-calendar/callback), and enable the Google Calendar API in the same project. The consent screen's scopes: calendar.events and
-calendar.freebusy only (docs/plans/google-oauth-verification.md).
+calendar.freebusy only (docs-private/plans/google-oauth-verification.md).
 
 What it does (stops at the first problem, prints no value):
   1. refuses unless the flag is given and the project is the staging one;

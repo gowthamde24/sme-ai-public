@@ -1,4 +1,4 @@
-"""The settings the assistant can change from the chat, one table (owner, 14 Nov 2026: "the assistant does everything the website can do"; docs/plans/assistant-tool-coverage.md, slice G).
+"""The settings the assistant can change from the chat, one table (owner, 14 Nov 2026: "the assistant does everything the website can do"; docs-private/plans/assistant-tool-coverage.md, slice G).
 
 Each entry names the screen's own routes (a read tool and the write tool, both in the tool catalogue), the fields the owner may change by words, and each field's rule. The model only PICKS the setting and
 the fields from the owner's words; CODE checks every value: its type, its range or its closed list, and that a name, a number or a sentence is really in what the owner said. The step is built from the

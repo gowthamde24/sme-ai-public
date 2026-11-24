@@ -2,7 +2,7 @@
 
 The GOLDEN vectors pin the package's behaviour by value (canonical hash of the request and sha256 of the whole canonical output). If lane C changes the package, even without a version bump,
 these fail until a person reviews the change and moves the pins; if the version changes, ALLOWED_CADENCE_VERSIONS makes the adapter fail closed first. The decisions checked by hand below are
-typed from docs/plans/t010-followup-cadence.md (not generated from the package), so a changed rule cannot pass by moving a pin. The database's own copy of the due rules is pinned equal to the
+typed from docs-private/plans/t010-followup-cadence.md (not generated from the package), so a changed rule cannot pass by moving a pin. The database's own copy of the due rules is pinned equal to the
 real engine by the equivalence gate (tests/integration/test_followup_equivalence.py)."""
 
 from __future__ import annotations

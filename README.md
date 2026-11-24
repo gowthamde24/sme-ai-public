@@ -68,4 +68,4 @@ If it does not start: Next.js allows one `next dev` per folder, so stop an older
 
 ## Status
 
-T001 (bootstrap) is done. T002 (tenant/auth/RLS) is implemented across three milestones and awaiting final review; nothing else starts until it is approved. Open risks: `docs/pre-pilot-checklist.md`.
+T001 (bootstrap) is done. T002 (tenant/auth/RLS) is implemented across three milestones and awaiting final review; nothing else starts until it is approved. Open risks: `docs-private/pre-pilot-checklist.md`.

@@ -1,5 +1,5 @@
 # ruff: noqa: E501
-"""Admin console, phase 1 (owner approved 13 Nov 2026, docs/plans/admin-console.md). The DATABASE proves everything (staff row, role, second factor, 30-minute session, access with a reason); this layer only shapes the answers and
+"""Admin console, phase 1 (owner approved 13 Nov 2026, docs-private/plans/admin-console.md). The DATABASE proves everything (staff row, role, second factor, 30-minute session, access with a reason); this layer only shapes the answers and
 turns the database's coded refusals into the API's. Money is rupees text next to paise; end-customer names and numbers arrive already masked."""
 
 from __future__ import annotations

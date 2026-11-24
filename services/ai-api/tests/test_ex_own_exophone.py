@@ -26,7 +26,7 @@ def test_a_hyderabad_landline_is_one_number(raw: str) -> None:
 
 
 def test_mobiles_are_unchanged_and_the_shared_rule_does_not_take_landlines() -> None:
-    for raw in ("09502380998", "+919502380998", "9502380998"):
+    for raw in ("09000000998", "+919000000998", "9000000998"):
         assert normalise_line(raw) == normalise(raw) == OWNER
     assert normalise("04045903172") is None, "callers and leads keep the mobile rule"
     for junk in ("", "0000", "12345", "040459031", "00404590317200", None, 42):

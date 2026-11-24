@@ -1,4 +1,4 @@
-"""The ONE door to lane C's pure quote engine (`packages/quote-engine`, docs/plans/t009-quote-engine.md).
+"""The ONE door to lane C's pure quote engine (`packages/quote-engine`, docs-private/plans/t009-quote-engine.md).
 
 Nothing else in the API may import `quote_engine`: a boundary test fails if another module does. The adapter exists to give lane A three guarantees the
 package cannot give itself:
@@ -15,7 +15,7 @@ result whose `canonical_hash` differs (QuoteEngineError), so a change of the has
 
 Money is integer paise and rates integer basis points end to end; the engine rejects floats and booleans (TypeError). `as_of` is supplied by the caller;
 the engine reads no clock. No dependency is added: the package is stdlib-only and is put on the import path from the repository checkout when it is
-not already importable (the Docker image needs two COPY lines: docs/pre-pilot-checklist.md, T012)."""
+not already importable (the Docker image needs two COPY lines: docs-private/pre-pilot-checklist.md, T012)."""
 
 from __future__ import annotations
 

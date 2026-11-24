@@ -1,6 +1,6 @@
 # Runbook: the shared ledger and reminder campaigns (job CP, ADR 0086)
 
-For the owner or the support person setting up payment, fee or delivery reminders, and for the next developer. Everything here is local and uses synthetic data. **The money rule is ACCEPTED by the owner but not yet confirmed by the lawyer: no workspace is opened to real customer data for a campaign with amounts before that** (`docs/pre-pilot-checklist.md`, "Reminder campaigns and the shared ledger").
+For the owner or the support person setting up payment, fee or delivery reminders, and for the next developer. Everything here is local and uses synthetic data. **The money rule is ACCEPTED by the owner but not yet confirmed by the lawyer: no workspace is opened to real customer data for a campaign with amounts before that** (`docs-private/pre-pilot-checklist.md`, "Reminder campaigns and the shared ledger").
 
 ## 1. What must be true before a campaign can send
 

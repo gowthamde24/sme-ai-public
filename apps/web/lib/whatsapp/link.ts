@@ -2,7 +2,7 @@ import { MAX_LINK_TEXT_ENCODED, encodedLength } from "./limit";
 
 /**
  * The WhatsApp number rule and the `wa.me` address. SERVER ONLY, and only the redirect route under app/app/tenants/[tenantId]/quotes/[quoteId]/whatsapp/ may import this file (test/whatsapp-guard.test.ts): this is the
- * one place in the web app that turns a stored phone number into something that leaves the server, and it does so only inside a redirect response to one click (docs/plans/open-in-whatsapp-plan.md, section 2).
+ * one place in the web app that turns a stored phone number into something that leaves the server, and it does so only inside a redirect response to one click (docs-private/plans/open-in-whatsapp-plan.md, section 2).
  *
  * The stored number is whatever the person typed. WhatsApp needs digits with the country code. The rule is the owner's (decision 2 of the plan), and it never guesses:
  *   - a number written with a leading `+`, or with `00`, keeps the country code it was written with;

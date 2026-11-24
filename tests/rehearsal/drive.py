@@ -1,4 +1,4 @@
-"""The thin-slice rehearsal driver (docs/plans/thin-slice-rehearsal.md, step 3).
+"""The thin-slice rehearsal driver (docs-private/plans/thin-slice-rehearsal.md, step 3).
 
 One script, run through OUR API as the people of a small workspace (Owner, Admin, Sales, Viewer, and a second workspace's Owner), from a fresh local database to `closed_paid`:
 import a synthetic CSV of leads, paste enquiries, enter and confirm the requirement, pick products, quote, approve, start an order, record what happens until it closes, with the side
@@ -989,7 +989,7 @@ class Rehearsal:
         self.import_leads()
         self.quotes_phase()
         if until == "quotes":
-            return  # the orders are left for a person to start by hand in the browser (docs/rehearsal-click-checklist.md)
+            return  # the orders are left for a person to start by hand in the browser (docs-private/rehearsal-click-checklist.md)
         self.orders_phase()
         self.gates()
         self.audit_and_provenance()
