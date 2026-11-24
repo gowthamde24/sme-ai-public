@@ -45,6 +45,7 @@ ROUTE_WORDS = frozenset(
         "phone-kyc", "options",   # /phone-kyc (14 Nov)
         "business", "aadhaar", "pan", "gst", "documents", "details",   # /phone-kyc/business steps
         "describe",   # POST /jobs/describe (24 Nov)
+        "guides",   # GET /lead-sources/guides (24 Nov)
         "phone-line", "available", "release",   # /phone-line (18 Nov)
         "reply", "assign",   # POST /admin/support/tickets/{id}/reply and /assign (14 Nov)
         "demo", "start", "end",   # POST /calls/demo/start and /end (13 Nov)

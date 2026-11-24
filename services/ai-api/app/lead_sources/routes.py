@@ -30,7 +30,7 @@ from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_ro
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
 from app.hardening.replay import ReplayGuard
-from app.lead_sources import consent_tick, mime
+from app.lead_sources import consent_tick, guides, mime
 from app.lead_sources.columns_ai import RunColumnMatcher
 from app.lead_sources.models import (
     ActivityOut,
@@ -316,6 +316,20 @@ def pull_indiamart(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     from app.lead_sources.indiamart import pull
 
     return pull(runtime, _service(runtime), ctx)
+
+
+@router.get("/lead-sources/guides")
+def source_guides(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    return {"guides": guides.listing(), "note": guides.consent_note()}
+
+
+@router.get("/lead-sources/guides/{guide_id}")
+def source_guide(guide_id: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    base = (_service(runtime).base or "").rstrip("/")
+    found = guides.guide(guide_id, f"{base}/v1/lead-intake/YOUR-ADDRESS" if base else "/v1/lead-intake/YOUR-ADDRESS")
+    if found is None:
+        raise not_found()
+    return found
 
 
 @router.post("/lead-sources/{source_id}/rotate", response_model=SourceWithSecretOut)

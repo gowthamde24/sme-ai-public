@@ -1,0 +1,315 @@
+{
+ "version": 1,
+ "note": "How to send leads from a tool to a job's lead address. {ADDRESS} stands for the address shown once when it was made. Consent: a lead arrives 'ask first' unless the tool also sends consent_text and consent_at.",
+ "guides": [
+  {
+   "id": "zoho_crm",
+   "name": "Zoho CRM",
+   "group": "crm",
+   "steps": [
+    "In Zoho CRM open Setup, then Automation, then Workflow Rules (or Webhooks).",
+    "Make a rule on the Leads module: when a lead is created, run the action Webhook.",
+    "Set the webhook URL to {ADDRESS} and the method to POST, with the body type JSON (or form data).",
+    "Choose these fields in the body: Full Name as name, Mobile as phone, Email as email, City as city, Description as message and the Lead Id as external_id.",
+    "Save, then press Send a test lead here to see how a sample is understood."
+   ],
+   "sample": {
+    "name": "Ravi Kumar",
+    "phone": "9876543210",
+    "email": "ravi@example.com",
+    "city": "Guntur",
+    "message": "Interested in a 3BHK",
+    "external_id": "zc-1001"
+   },
+   "mapping": {
+    "Full Name": "name",
+    "Mobile": "phone",
+    "Email": "email",
+    "City": "city",
+    "Description": "message",
+    "Lead Id": "external_id"
+   }
+  },
+  {
+   "id": "leadsquared",
+   "name": "LeadSquared",
+   "group": "crm",
+   "steps": [
+    "In LeadSquared open Settings, then API and Webhooks, then Webhooks.",
+    "Add a webhook for the event Lead creation (and Lead update if you want changes).",
+    "Set the URL to {ADDRESS}, method POST, content type JSON.",
+    "Map: FirstName to name, Phone (or Mobile) to phone, EmailAddress to email, mx_City to city, Notes to message and ProspectID to external_id.",
+    "Test it with a sample lead."
+   ],
+   "sample": {
+    "name": "Asha",
+    "phone": "+919123456780",
+    "email": "asha@example.com",
+    "city": "Hyderabad",
+    "message": "Wants a demo",
+    "external_id": "lsq-77"
+   },
+   "mapping": {
+    "FirstName": "name",
+    "Phone": "phone",
+    "EmailAddress": "email",
+    "mx_City": "city",
+    "Notes": "message",
+    "ProspectID": "external_id"
+   }
+  },
+  {
+   "id": "sell_do",
+   "name": "Sell.Do",
+   "group": "crm",
+   "steps": [
+    "In Sell.Do open Settings, then Integrations, then Webhooks.",
+    "Add a webhook on the event Lead created.",
+    "Set the URL to {ADDRESS} with method POST and format JSON.",
+    "Use these names: name, mobile (as phone), email, city, requirement (as message) and lead_id.",
+    "Press Send a test lead here to confirm."
+   ],
+   "sample": {
+    "name": "Suresh",
+    "mobile": "9000011111",
+    "email": "s@example.com",
+    "city": "Vijayawada",
+    "requirement": "2BHK near the metro",
+    "lead_id": "sd-501"
+   },
+   "mapping": {
+    "name": "name",
+    "mobile": "phone",
+    "email": "email",
+    "city": "city",
+    "requirement": "message",
+    "lead_id": "external_id"
+   }
+  },
+  {
+   "id": "hubspot",
+   "name": "HubSpot",
+   "group": "crm",
+   "steps": [
+    "In HubSpot open Automation, then Workflows, and make a contact-based workflow that starts when a contact is created.",
+    "Add the action Send a webhook.",
+    "Method POST, URL {ADDRESS}, authentication none (the address is the key).",
+    "In the request body choose: firstname as name, phone as phone, email as email, city as city, message as message and hs_object_id as external_id.",
+    "Turn the workflow on only after a test lead looks right."
+   ],
+   "sample": {
+    "name": "Meera",
+    "phone": "9811122233",
+    "email": "meera@example.com",
+    "city": "Chennai",
+    "message": "Call me tomorrow",
+    "external_id": "hs-9"
+   },
+   "mapping": {
+    "firstname": "name",
+    "phone": "phone",
+    "email": "email",
+    "city": "city",
+    "message": "message",
+    "hs_object_id": "external_id"
+   }
+  },
+  {
+   "id": "zapier",
+   "name": "Zapier",
+   "group": "automation",
+   "steps": [
+    "Make a Zap with your form or sheet as the trigger.",
+    "Add the action Webhooks by Zapier, then POST.",
+    "URL {ADDRESS}, payload type JSON.",
+    "Add the data fields: name, phone, email, city, message.",
+    "Test the step in Zapier, then press Send a test lead here to compare."
+   ],
+   "sample": {
+    "name": "Kiran",
+    "phone": "9700099999",
+    "email": "k@example.com",
+    "city": "Warangal",
+    "message": "Price list please"
+   },
+   "mapping": {
+    "name": "name",
+    "phone": "phone",
+    "email": "email",
+    "city": "city",
+    "message": "message"
+   }
+  },
+  {
+   "id": "make",
+   "name": "Make (Integromat)",
+   "group": "automation",
+   "steps": [
+    "Make a scenario with your form or sheet as the first module.",
+    "Add the module HTTP, then Make a request.",
+    "URL {ADDRESS}, method POST, body type JSON (application/json), input method JSON string.",
+    "Body: the fields name, phone, email, city and message from the first module.",
+    "Run the scenario once, then check the activity list here."
+   ],
+   "sample": {
+    "name": "Divya",
+    "phone": "9988776655",
+    "email": "d@example.com",
+    "city": "Tirupati",
+    "message": "Need a quote"
+   },
+   "mapping": {
+    "name": "name",
+    "phone": "phone",
+    "email": "email",
+    "city": "city",
+    "message": "message"
+   }
+  },
+  {
+   "id": "n8n",
+   "name": "n8n",
+   "group": "automation",
+   "steps": [
+    "In your workflow add the node HTTP Request after your trigger.",
+    "Method POST, URL {ADDRESS}, Send Body on, body content type JSON.",
+    "Add the fields name, phone, email, city, message (use expressions from the trigger).",
+    "Execute the node, then look at the activity list here."
+   ],
+   "sample": {
+    "name": "Ramesh",
+    "phone": "9955512345",
+    "email": "r@example.com",
+    "city": "Nellore",
+    "message": "Visit tomorrow"
+   },
+   "mapping": {
+    "name": "name",
+    "phone": "phone",
+    "email": "email",
+    "city": "city",
+    "message": "message"
+   }
+  },
+  {
+   "id": "pabbly",
+   "name": "Pabbly Connect",
+   "group": "automation",
+   "steps": [
+    "Make a workflow with your form or sheet as the trigger.",
+    "Add the action API by Pabbly, then POST.",
+    "URL {ADDRESS}, payload type JSON.",
+    "Map name, phone, email, city and message.",
+    "Test the workflow and check the activity list here."
+   ],
+   "sample": {
+    "name": "Lakshmi",
+    "phone": "9444400000",
+    "email": "l@example.com",
+    "city": "Madurai",
+    "message": "Brochure"
+   },
+   "mapping": {
+    "name": "name",
+    "phone": "phone",
+    "email": "email",
+    "city": "city",
+    "message": "message"
+   }
+  },
+  {
+   "id": "google_forms",
+   "name": "Google Forms (Apps Script)",
+   "group": "website",
+   "steps": [
+    "Open your Google Form, then the three dots, then Script editor.",
+    "Paste the script below, replace the question titles if yours differ, and save.",
+    "In the script editor choose Triggers, add a trigger: function onSubmit, event source From form, event type On form submit.",
+    "Submit the form once yourself and look at the activity list here."
+   ],
+   "sample": {
+    "name": "Test",
+    "phone": "9000000001",
+    "message": "Form test"
+   },
+   "mapping": {
+    "Name": "name",
+    "Phone": "phone",
+    "Email": "email",
+    "City": "city",
+    "Message": "message"
+   },
+   "snippet": "function onSubmit(e) {\n  var r = e.response.getItemResponses(), body = {};\n  r.forEach(function (i) { body[i.getItem().getTitle().toLowerCase()] = i.getResponse(); });\n  UrlFetchApp.fetch('{ADDRESS}', {method: 'post', contentType: 'application/json', payload: JSON.stringify(body), muteHttpExceptions: true});\n}",
+   "note": "Name your questions Name, Phone, Email, City and Message so they are understood."
+  },
+  {
+   "id": "wordpress",
+   "name": "WordPress (a form plugin)",
+   "group": "website",
+   "steps": [
+    "Use any form plugin that can send a webhook (Contact Form 7 with a webhook add-on, WPForms, Fluent Forms, Elementor Forms).",
+    "Add a webhook to your form: URL {ADDRESS}, method POST, format JSON or form data.",
+    "Name the fields name, phone, email, city and message (or use the plugin's field mapping).",
+    "Submit the form once, then check the activity list here."
+   ],
+   "sample": {
+    "name": "Test",
+    "phone": "9000000002",
+    "message": "WordPress test"
+   },
+   "mapping": {
+    "your-name": "name",
+    "your-phone": "phone",
+    "your-email": "email",
+    "your-message": "message"
+   },
+   "note": "Our own form snippet (a plain HTML form) also works on any WordPress page: use Website form instead."
+  },
+  {
+   "id": "wix",
+   "name": "Wix Forms",
+   "group": "website",
+   "steps": [
+    "In Wix open Automations and make an automation: trigger Form submitted, pick your form.",
+    "Action: Send HTTP request (or Send a webhook), method POST, URL {ADDRESS}, body JSON.",
+    "Body fields: name, phone, email, city, message from the form.",
+    "Submit the form once and check the activity list here."
+   ],
+   "sample": {
+    "name": "Test",
+    "phone": "9000000003",
+    "message": "Wix test"
+   },
+   "mapping": {
+    "name": "name",
+    "phone": "phone",
+    "email": "email",
+    "city": "city",
+    "message": "message"
+   }
+  },
+  {
+   "id": "google_sheets",
+   "name": "Google Sheets (a new row = a new lead)",
+   "group": "sheet",
+   "steps": [
+    "The simplest way is Lead sheets here: paste your sheet's link and we read new rows every few minutes.",
+    "If you prefer pushing: in the sheet open Extensions, Apps Script, paste the script below, and add a trigger: function onRow, event source From spreadsheet, event type On change.",
+    "The sheet's first row must be the headings Name, Phone, Email, City, Message."
+   ],
+   "sample": {
+    "name": "Test",
+    "phone": "9000000004",
+    "message": "Sheet test"
+   },
+   "mapping": {
+    "Name": "name",
+    "Phone": "phone",
+    "Email": "email",
+    "City": "city",
+    "Message": "message"
+   },
+   "snippet": "function onRow(e) {\n  var s = SpreadsheetApp.getActiveSheet(), last = s.getLastRow();\n  var h = s.getRange(1, 1, 1, s.getLastColumn()).getValues()[0], v = s.getRange(last, 1, 1, h.length).getValues()[0], body = {};\n  h.forEach(function (k, i) { body[String(k).toLowerCase()] = v[i]; });\n  UrlFetchApp.fetch('{ADDRESS}', {method: 'post', contentType: 'application/json', payload: JSON.stringify(body), muteHttpExceptions: true});\n}"
+  }
+ ]
+}
