@@ -44,7 +44,7 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
   let call: CallDetail | null = null;
   let timeline: TimelineItem[] | null = null;
   const simple = jobsScreens() !== "off";
-  const words = wordsFor(lang, ["calls6.", "ph.", "outcome.cat.", "outcome.result.", "dst.teach", "today.err.", ...(simple ? ["jobs.pg.calls."] : [])], ["dta.btn.working", ...(simple ? ["jobs.pg.more"] : [])]);
+  const words = wordsFor(lang, ["calls6.", "bsc.", "ph.", "outcome.cat.", "outcome.result.", "dst.teach", "today.err.", ...(simple ? ["jobs.pg.calls."] : [])], ["dta.btn.working", ...(simple ? ["jobs.pg.more"] : [])]);
   const now = clock();
   const why = (reason: string | null) => words[`ph.why.${refuseWhy(reason)}`] ?? "";
   const listed = await Promise.allSettled([listCalls(token, tenantId, cursor)]).then(([r]) => r);

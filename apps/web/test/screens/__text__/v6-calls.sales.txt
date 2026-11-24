@@ -3,6 +3,12 @@ Every call your assistant answered or made
 {role=search} Search calls . Looks in names, numbers and what happened. The exact words said on a call are not searched yet.
 <search name=q label="Search calls. Looks in names, numbers and what happened. The exact words said on a call are not searched yet." placeholder="Search name, number or what they said" maxlength=80>
 [button type=submit: Search]
+summary: Before you start calling Read the five rules
+- 1 Only call people who agreed. People who asked about your business, or said yes to calls. Not bought or collected lists.
+- 2 We fix the calling hours. Calls go out between 9 am and 9 pm. Outside these hours they wait.
+- 3 Do-not-call is automatic. When someone asks you to stop, they are added to your do-not-call list and are never called again.
+- 4 Your business is the caller. You are responsible for who is called and what is said. We place the call for you.
+- 5 Phone rules may apply. The national do-not-disturb list and phone company rules can stop some calls, mostly calls about offers.
 {label="Filter calls by status"} [All 4](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true) [Completed 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=completed) [Transferred 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=transferred) [No answer 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer) [Rejected 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=rejected) [Spam 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=spam) [Live 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=live)
 summary: Any time
 - [Any time](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true)

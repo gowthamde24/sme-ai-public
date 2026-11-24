@@ -127543,5 +127543,379 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bsc.title": {
+  "en": "Before you start calling",
+  "te": "కాల్ చేయడం మొదలుపెట్టే ముందు",
+  "hi": "कॉल शुरू करने से पहले",
+  "kn": "ಕರೆ ಮಾಡಲು ಶುರುಮಾಡುವ ಮೊದಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.read": {
+  "en": "Read the five rules",
+  "te": "ఐదు రూల్స్ చదవండి",
+  "hi": "पाँच नियम पढ़ें",
+  "kn": "ಐದು ನಿಯಮಗಳನ್ನು ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.r1.t": {
+  "en": "Only call people who agreed.",
+  "te": "అంగీకరించిన వాళ్ళకే కాల్ చేయండి.",
+  "hi": "सिर्फ़ उन्हीं को कॉल करें जिन्होंने हाँ कहा है।",
+  "kn": "ಒಪ್ಪಿಗೆ ನೀಡಿದವರಿಗೆ ಮಾತ್ರ ಕರೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.r1.x": {
+  "en": "People who asked about your business, or said yes to calls. Not bought or collected lists.",
+  "te": "మీ బిజినెస్ గురించి అడిగినవాళ్ళు, లేదా కాల్స్‌కి అవును అన్నవాళ్ళు. కొన్న లేదా సేకరించిన lists కాదు.",
+  "hi": "जिन्होंने आपके बिज़नेस के बारे में पूछा या कॉल के लिए हाँ कहा। ख़रीदी या जमा की हुई lists नहीं।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ಕೇಳಿದವರು, ಅಥವಾ ಕರೆಗೆ ಹೌದು ಎಂದವರು. ಕೊಂಡ ಅಥವಾ ಸಂಗ್ರಹಿಸಿದ lists ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.r2.t": {
+  "en": "We fix the calling hours.",
+  "te": "కాల్ చేసే సమయాలను మేమే నిర్ణయిస్తాం.",
+  "hi": "कॉल के घंटे हम तय करते हैं।",
+  "kn": "ಕರೆ ಮಾಡುವ ಸಮಯವನ್ನು ನಾವು ನಿಗದಿಪಡಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.r2.x": {
+  "en": "Calls go out between 9 am and 9 pm. Outside these hours they wait.",
+  "te": "కాల్స్ ఉదయం 9 నుంచి రాత్రి 9 మధ్యే వెళ్తాయి. ఆ సమయం బయట అవి వేచి ఉంటాయి.",
+  "hi": "कॉल सुबह 9 से रात 9 बजे के बीच ही जाते हैं। इसके बाहर वे इंतज़ार करते हैं।",
+  "kn": "ಕರೆಗಳು ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಹೋಗುತ್ತವೆ. ಆ ಸಮಯದ ಹೊರಗೆ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.r3.t": {
+  "en": "Do-not-call is automatic.",
+  "te": "do-not-call ఆటోమేటిక్.",
+  "hi": "do-not-call अपने आप होता है।",
+  "kn": "do-not-call ತಾನಾಗಿಯೇ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.r3.x": {
+  "en": "When someone asks you to stop, they are added to your do-not-call list and are never called again.",
+  "te": "ఎవరైనా ఆపమని అడిగితే, వాళ్ళు మీ do-not-call list లో చేరతారు, మళ్ళీ ఎప్పుడూ కాల్ చేయరు.",
+  "hi": "कोई रुकने को कहे तो वह आपकी do-not-call list में जुड़ जाता है और उसे दोबारा कॉल नहीं किया जाता।",
+  "kn": "ಯಾರಾದರೂ ನಿಲ್ಲಿಸಲು ಹೇಳಿದರೆ, ಅವರು ನಿಮ್ಮ do-not-call list ಗೆ ಸೇರುತ್ತಾರೆ, ಮತ್ತೆ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.r4.t": {
+  "en": "Your business is the caller.",
+  "te": "కాల్ చేసేది మీ బిజినెస్.",
+  "hi": "कॉल करने वाला आपका बिज़नेस है।",
+  "kn": "ಕರೆ ಮಾಡುವವರು ನಿಮ್ಮ ಬಿಸಿನೆಸ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.r4.x": {
+  "en": "You are responsible for who is called and what is said. We place the call for you.",
+  "te": "ఎవరికి కాల్ చేస్తారో, ఏం చెబుతారో దానికి మీరే బాధ్యులు. కాల్‌ని మేము మీ తరఫున చేస్తాం.",
+  "hi": "किसे कॉल हो और क्या कहा जाए, इसकी ज़िम्मेदारी आपकी है। कॉल हम आपकी ओर से लगाते हैं।",
+  "kn": "ಯಾರಿಗೆ ಕರೆ ಮಾಡುತ್ತೀರಿ, ಏನು ಹೇಳುತ್ತೀರಿ ಎಂಬುದಕ್ಕೆ ನೀವೇ ಜವಾಬ್ದಾರರು. ಕರೆಯನ್ನು ನಾವು ನಿಮ್ಮ ಪರವಾಗಿ ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.r5.t": {
+  "en": "Phone rules may apply.",
+  "te": "ఫోన్ రూల్స్ వర్తించవచ్చు.",
+  "hi": "फ़ोन के नियम लागू हो सकते हैं।",
+  "kn": "ಫೋನ್ ನಿಯಮಗಳು ಅನ್ವಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bsc.r5.x": {
+  "en": "The national do-not-disturb list and phone company rules can stop some calls, mostly calls about offers.",
+  "te": "నేషనల్ do-not-disturb list, ఫోన్ కంపెనీ రూల్స్ కొన్ని కాల్స్‌ని ఆపవచ్చు, ముఖ్యంగా ఆఫర్ల కాల్స్‌ని.",
+  "hi": "राष्ट्रीय do-not-disturb list और फ़ोन कंपनी के नियम कुछ कॉल रोक सकते हैं, ज़्यादातर ऑफ़र वाले कॉल।",
+  "kn": "ರಾಷ್ಟ್ರೀಯ do-not-disturb list ಮತ್ತು ಫೋನ್ ಕಂಪನಿ ನಿಯಮಗಳು ಕೆಲವು ಕರೆಗಳನ್ನು ತಡೆಯಬಹುದು, ವಿಶೇಷವಾಗಿ ಆಫರ್ ಕರೆಗಳನ್ನು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.fb.t": {
+  "en": "Facebook and Instagram",
+  "te": "ఫేస్‌బుక్, ఇన్‌స్టాగ్రామ్",
+  "hi": "फ़ेसबुक और इंस्टाग्राम",
+  "kn": "ಫೇಸ್‌ಬುಕ್ ಮತ್ತು ಇನ್‌ಸ್ಟಾಗ್ರಾಂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.fb.x": {
+  "en": "Leads from your ads arrive here as soon as someone fills the form.",
+  "te": "మీ ads నుంచి leads ఫారం నింపగానే ఇక్కడికి వస్తాయి.",
+  "hi": "आपके ads के leads फ़ॉर्म भरते ही यहाँ आ जाते हैं।",
+  "kn": "ನಿಮ್ಮ ads ನ leads ಫಾರ್ಮ್ ತುಂಬಿದ ತಕ್ಷಣ ಇಲ್ಲಿಗೆ ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.sheet.t": {
+  "en": "Google Sheets",
+  "te": "గూగుల్ షీట్స్",
+  "hi": "गूगल शीट्स",
+  "kn": "ಗೂಗಲ್ ಶೀಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.sheet.x": {
+  "en": "Every new row of your sheet becomes a lead.",
+  "te": "మీ sheet లోని ప్రతి కొత్త వరుస ఒక lead అవుతుంది.",
+  "hi": "आपकी sheet की हर नई पंक्ति एक lead बन जाती है।",
+  "kn": "ನಿಮ್ಮ sheet ನ ಪ್ರತಿ ಹೊಸ ಸಾಲು ಒಂದು lead ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.web.t": {
+  "en": "My website",
+  "te": "నా వెబ్‌సైట్",
+  "hi": "मेरी वेबसाइट",
+  "kn": "ನನ್ನ ವೆಬ್‌ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.web.x": {
+  "en": "A form on your site, or a snippet your developer adds.",
+  "te": "మీ సైట్‌లో ఒక ఫారం, లేదా మీ developer add చేసే snippet.",
+  "hi": "आपकी साइट पर एक फ़ॉर्म, या आपका developer जो snippet जोड़े।",
+  "kn": "ನಿಮ್ಮ ಸೈಟ್‌ನಲ್ಲಿ ಒಂದು ಫಾರ್ಮ್, ಅಥವಾ ನಿಮ್ಮ developer ಸೇರಿಸುವ snippet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.crm.t": {
+  "en": "My CRM",
+  "te": "నా CRM",
+  "hi": "मेरा CRM",
+  "kn": "ನನ್ನ CRM",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.crm.x": {
+  "en": "Send leads from the tool your team already uses.",
+  "te": "మీ టీమ్ ఇప్పటికే వాడే టూల్ నుంచి leads పంపండి.",
+  "hi": "जो टूल आपकी टीम पहले से इस्तेमाल करती है उससे leads भेजिए।",
+  "kn": "ನಿಮ್ಮ ತಂಡ ಈಗಾಗಲೇ ಬಳಸುವ ಟೂಲ್‌ನಿಂದ leads ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.mart.t": {
+  "en": "IndiaMART and JustDial",
+  "te": "ఇండియామార్ట్, జస్ట్‌డయల్",
+  "hi": "इंडियामार्ट और जस्टडायल",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್ ಮತ್ತು ಜಸ್ಟ್‌ಡಯಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.mart.x": {
+  "en": "Enquiries from the portals reach you without copying.",
+  "te": "పోర్టల్స్ నుంచి enquiries కాపీ చేయకుండానే మీకు వస్తాయి.",
+  "hi": "पोर्टल के enquiries बिना कॉपी किए आप तक पहुँचते हैं।",
+  "kn": "ಪೋರ್ಟಲ್‌ಗಳ enquiries ನಕಲು ಮಾಡದೆ ನಿಮಗೆ ತಲುಪುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.auto.t": {
+  "en": "An automation tool",
+  "te": "ఆటోమేషన్ టూల్",
+  "hi": "ऑटोमेशन टूल",
+  "kn": "ಆಟೋಮೇಷನ್ ಟೂಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.auto.x": {
+  "en": "Zapier, Make, n8n, Pabbly and others.",
+  "te": "Zapier, Make, n8n, Pabbly ఇంకా ఇతరాలు.",
+  "hi": "Zapier, Make, n8n, Pabbly और दूसरे।",
+  "kn": "Zapier, Make, n8n, Pabbly ಮತ್ತು ಇತರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.dev.t": {
+  "en": "Developer or API",
+  "te": "డెవలపర్ లేదా API",
+  "hi": "डेवलपर या API",
+  "kn": "ಡೆವಲಪರ್ ಅಥವಾ API",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.dev.x": {
+  "en": "For someone who writes code: a key and a few lines.",
+  "te": "కోడ్ రాసేవాళ్ళ కోసం: ఒక key, కొన్ని లైన్లు.",
+  "hi": "कोड लिखने वाले के लिए: एक key और कुछ पंक्तियाँ।",
+  "kn": "ಕೋಡ್ ಬರೆಯುವವರಿಗೆ: ಒಂದು key, ಕೆಲವು ಸಾಲುಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.title": {
+  "en": "Guides for each source",
+  "te": "ప్రతి source కి గైడ్లు",
+  "hi": "हर source के लिए गाइड",
+  "kn": "ಪ್ರತಿ source ಗೆ ಮಾರ್ಗದರ್ಶಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.works": {
+  "en": "Works with anything that can send a web request.",
+  "te": "వెబ్ రిక్వెస్ట్ పంపగల ఏ దానితోనైనా పనిచేస్తుంది.",
+  "hi": "वेब रिक्वेस्ट भेज सकने वाली किसी भी चीज़ के साथ काम करता है।",
+  "kn": "ವೆಬ್ ರಿಕ್ವೆಸ್ಟ್ ಕಳುಹಿಸಬಲ್ಲ ಯಾವುದರೊಂದಿಗೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.back": {
+  "en": "← Lead sources",
+  "te": "← లీడ్ సోర్సెస్",
+  "hi": "← लीड स्रोत",
+  "kn": "← ಲೀಡ್ ಮೂలಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.mail": {
+  "en": "Email this to my developer",
+  "te": "ఇది నా developer కి ఈమెయిల్ చేయండి",
+  "hi": "यह मेरे developer को ईमेल करें",
+  "kn": "ಇದನ್ನು ನನ್ನ developer ಗೆ ಇಮೇಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.setup": {
+  "en": "Have us set it up",
+  "te": "మీరే సెటప్ చేసి పెట్టండి",
+  "hi": "हमसे सेट अप करवाएँ",
+  "kn": "ನೀವೇ ಸೆಟ್ ಅಪ್ ಮಾಡಿಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.setup.note": {
+  "en": "Setting it up for you is free during early access. We write to you within a day.",
+  "te": "early access లో సెటప్ చేసి పెట్టడం ఉచితం. ఒక రోజులో మీకు రాస్తాం.",
+  "hi": "early access में सेट अप करना मुफ़्त है। हम एक दिन में आपको लिखेंगे।",
+  "kn": "early access ನಲ್ಲಿ ಸೆಟ್ ಅಪ್ ಮಾಡಿಕೊಡುವುದು ಉಚಿತ. ಒಂದು ದಿನದಲ್ಲಿ ನಿಮಗೆ ಬರೆಯುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.steps": {
+  "en": "Steps",
+  "te": "స్టెప్స్",
+  "hi": "स्टेप्स",
+  "kn": "ಹಂತಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsg.address.note": {
+  "en": "Your lead address is made per job and shown on this page when the feature is on. Use it where this guide says YOUR_ADDRESS.",
+  "te": "lead address ప్రతి job కి తయారవుతుంది, ఈ ఫీచర్ ఆన్ అయినప్పుడు ఈ పేజీలో కనిపిస్తుంది. గైడ్‌లో YOUR_ADDRESS అన్న చోట దాన్ని వాడండి.",
+  "hi": "lead address हर job के लिए बनता है और यह फ़ीचर चालू होने पर इसी पेज पर दिखता है। गाइड में जहाँ YOUR_ADDRESS लिखा है वहाँ वही डालिए।",
+  "kn": "lead address ಪ್ರತಿ job ಗೆ ಆಗುತ್ತದೆ, ಈ ಫೀಚರ್ ಆನ್ ಆದಾಗ ಈ ಪುಟದಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಮಾರ್ಗದರ್ಶಿಯಲ್ಲಿ YOUR_ADDRESS ಎಂದಿರುವಲ್ಲಿ ಅದನ್ನು ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

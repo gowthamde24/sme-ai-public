@@ -1,0 +1,7 @@
+{
+ "sheet": "function sendLead(e) {\n  const sheet = e.source.getActiveSheet();\n  const row = sheet.getRange(sheet.getLastRow(), 1, 1, 3).getValues()[0];\n  UrlFetchApp.fetch('YOUR_ADDRESS', {\n    method: 'post',\n    contentType: 'application/json',\n    payload: JSON.stringify({ name: row[0], phone: row[1], note: row[2] }),\n  });\n}",
+ "web": "<form action=\"YOUR_ADDRESS\" method=\"post\">\n  <input name=\"name\" placeholder=\"Your name\" required>\n  <input name=\"phone\" placeholder=\"Phone number\" required>\n  <input name=\"note\" placeholder=\"What do you need?\">\n  <button>Send</button>\n</form>",
+ "crm": "POST YOUR_ADDRESS\nContent-Type: application/json\n\n{ \"name\": \"Asha\", \"phone\": \"+919800000000\", \"email\": \"asha@example.com\", \"note\": \"Asked about silk\" }",
+ "auto": "POST YOUR_ADDRESS\nContent-Type: application/json\n\n{ \"name\": \"Asha\", \"phone\": \"+919800000000\", \"note\": \"Asked about silk\" }",
+ "dev": "curl -X POST https://api.stack19.in/v1/leads \\\n  -H \"Authorization: Bearer YOUR_KEY\" \\\n  -H \"Idempotency-Key: asha-001\" \\\n  -d '{\"name\":\"Asha\",\"phone\":\"+919800000000\",\"dry_run\":true}'"
+}
