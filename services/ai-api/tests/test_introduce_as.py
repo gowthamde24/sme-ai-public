@@ -152,9 +152,9 @@ def _place(profile: dict[str, Any], saved: dict[str, Any] | None = None, **body:
 
 
 def test_the_owners_own_test_call_introduces_itself_with_the_owners_name_by_default() -> None:
-    _, got = _place({"display_name": "Gowtham Reddy Sodanapalli"})
-    assert got == ("owner", "Gowtham"), "the first name from the profile, never from the goal"
-    assert introduce.phrase("te", introduce.Introduce(*got)) == "నేను Gowtham తరఫున AI assistant ని."
+    _, got = _place({"display_name": "Ravi Kumar Test"})
+    assert got == ("owner", "Ravi"), "the first name from the profile, never from the goal"
+    assert introduce.phrase("te", introduce.Introduce(*got)) == "నేను Ravi తరఫున AI assistant ని."
     _, got = _place({"display_name": "Gowtham", "address_as": "Gowtham"}, goal="Introduce yourself as Bob's human helper. Role-play the school call.")
     assert got == ("owner", "Gowtham"), "a goal never sets the name"
 
@@ -174,7 +174,7 @@ def test_without_a_usable_name_the_test_call_keeps_the_business_name() -> None:
 
 
 def test_the_name_comes_from_the_profile_only_and_is_a_first_name() -> None:
-    assert introduce.owner_name({"display_name": "Gowtham Reddy Sodanapalli"}) == "Gowtham"
+    assert introduce.owner_name({"display_name": "Ravi Kumar Test"}) == "Ravi"
     assert introduce.owner_name({"display_name": "", "address_as": "Gowtham"}) == "Gowtham"
     assert introduce.owner_name({"display_name": "Dr. Rao"}) is None or introduce.owner_name({"display_name": "Dr. Rao"}) == "Dr"
     assert introduce.owner_name({"display_name": "a@b.in"}) is None and introduce.owner_name(None) is None and introduce.owner_name({"display_name": "Gow3tham"}) is None

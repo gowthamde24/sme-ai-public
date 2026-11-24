@@ -1,7 +1,7 @@
 # ADR 0021: Orders: an approved quote becomes an order that follows the pure lifecycle (order conversion, commits 1-4: the database and its proofs)
 
-Status: accepted for the local-first stage (owner review of the plan 2026-10-06, all defaults accepted; plan and decisions: `docs/plans/order-conversion.md`). Related: ADR 0018 (decision 9, lock order), ADR 0019 (quote integration; the withdrawal hook), ADR 0013 (option A / B), ADR 0016 (second factor),
-ADR 0017 (local-first), ADR 0020 (suppression; the follow-up stop reads order states), `docs/plans/order-lifecycle.md` (lane C's pure package `packages/pure/order_lifecycle`, 1.0.0, the contract this wraps).
+Status: accepted for the local-first stage (owner review of the plan 2026-10-06, all defaults accepted; plan and decisions: `docs-private/plans/order-conversion.md`). Related: ADR 0018 (decision 9, lock order), ADR 0019 (quote integration; the withdrawal hook), ADR 0013 (option A / B), ADR 0016 (second factor),
+ADR 0017 (local-first), ADR 0020 (suppression; the follow-up stop reads order states), `docs-private/plans/order-lifecycle.md` (lane C's pure package `packages/pure/order_lifecycle`, 1.0.0, the contract this wraps).
 
 ## Context
 A person who has approved a quote needs a record of what happens next: the quote was sent, the customer accepted or declined, money arrived, goods left. Lane C's package `order_lifecycle` is the pure rule set for those transitions. It proposes; it persists, authorises and reconciles nothing.

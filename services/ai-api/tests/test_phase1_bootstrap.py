@@ -1,4 +1,4 @@
-"""GET /v1/tenants/{id}/bootstrap (Phase 1, item 1i; contract: docs/plans/call-capacity-and-instances.md section 2a): the layout's reads in one request, each part the existing route, one failed part never fails the others."""
+"""GET /v1/tenants/{id}/bootstrap (Phase 1, item 1i; contract: docs-private/plans/call-capacity-and-instances.md section 2a): the layout's reads in one request, each part the existing route, one failed part never fails the others."""
 
 # ruff: noqa: E501
 

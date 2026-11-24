@@ -45,7 +45,7 @@ from tests.test_dv_browser_voice import arun, until
 from tests.test_ph_inbound import FakeStore, fake_parts
 
 TOKEN = "voicelink-bot-address-token-for-tests-0123456789abcdef"
-OWNER = "+919502380998"
+OWNER = "+919000000998"
 LINE = "+918065590140"
 TENANT = uuid.UUID(int=0x0B0E)
 ROW = uuid.UUID(int=0xA11CE)
@@ -107,9 +107,9 @@ def test_add_lead_sends_ten_digits_the_country_code_apart_and_our_ids_as_a_json_
     queued = api(fake).add_lead(did_number=LINE, customer_number=OWNER, custom_parameters={"call": str(ROW), "tenant": str(TENANT)}, websocket_url="wss://x.test/ws", webhook_url="https://x.test/hook")
     assert queued == "4711"
     sent = next(b for m, p, b, _ in fake.seen if p.endswith("/add_lead"))
-    assert sent["did_number"] == "918065590140" and sent["customer_number"] == "9502380998" and sent["country_code"] == "91" and sent["call_limit"] == 1
+    assert sent["did_number"] == "918065590140" and sent["customer_number"] == "9000000998" and sent["country_code"] == "91" and sent["call_limit"] == 1
     assert json.loads(sent["custom_parameters"]) == {"call": str(ROW), "tenant": str(TENANT)} and sent["websocket_url"] == "wss://x.test/ws" and sent["webhook_url"] == "https://x.test/hook"
-    assert indian_mobile_10("+919502380998") == "9502380998" and indian_mobile_10("+14155550100") is None and indian_mobile_10("9502380998") == "9502380998"
+    assert indian_mobile_10("+919000000998") == "9000000998" and indian_mobile_10("+14155550100") is None and indian_mobile_10("9000000998") == "9000000998"
     assert digits_with_country("+918065590140") == "918065590140"
 
 
@@ -195,7 +195,7 @@ def test_the_placer_places_a_voicelink_test_call_to_the_owner_through_the_same_g
     placed = placer.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert placed.provider_call_id == "4711" and ("ringing", "4711") in repo.calls
     sent = next(b for m, p, b, _ in fake.seen if p.endswith("/add_lead"))
-    assert sent["customer_number"] == "9502380998" and json.loads(sent["custom_parameters"])["call"] == str(ROW)
+    assert sent["customer_number"] == "9000000998" and json.loads(sent["custom_parameters"])["call"] == str(ROW)
     # a number that is not on the sandbox list is refused by the gate BEFORE VoiceLink is asked
     before = len(fake.seen)
     with pytest.raises(OutboundRefused):
@@ -328,7 +328,7 @@ def hook_client(repo: OutRepo | None = None, *, on: bool = True) -> tuple[TestCl
 
 
 def event(name: str, status: str = "", **over: Any) -> dict[str, Any]:
-    return {"event": name, "callId": "1764828073.53871", "fromNumber": "918065590140", "toNumber": "9502380998", "direction": "outbound", "callStatus": status, "duration": 0,
+    return {"event": name, "callId": "1764828073.53871", "fromNumber": "918065590140", "toNumber": "9000000998", "direction": "outbound", "callStatus": status, "duration": 0,
             "customParameters": json.dumps({"call": str(ROW), "tenant": str(TENANT)}), **over}
 
 
@@ -364,7 +364,7 @@ def test_the_webhook_answers_only_with_the_token_and_only_for_small_json() -> No
 
 def test_the_dynamic_inbound_call_answer_names_our_bot_and_webhook_with_the_token() -> None:
     client, _ = hook_client()
-    r = client.post(f"/v1/telephony/voicelink/inbound_call/{TOKEN}", json={"callerId": "918065590140", "customerNumber": "9502380998", "callId": "eca4d07b-3afb-4e9d-b666-597adf5ea584", "sid": "stream_x"})
+    r = client.post(f"/v1/telephony/voicelink/inbound_call/{TOKEN}", json={"callerId": "918065590140", "customerNumber": "9000000998", "callId": "eca4d07b-3afb-4e9d-b666-597adf5ea584", "sid": "stream_x"})
     assert r.status_code == 200 and r.json() == {"ws_url": f"wss://api.example.test/v1/telephony/voicelink/ws/{TOKEN}?call_id=eca4d07b-3afb-4e9d-b666-597adf5ea584", "webhook_url": f"{BASE}/v1/telephony/voicelink/webhook/{TOKEN}"}
     assert client.post("/v1/telephony/voicelink/inbound_call/wrong", json={}).status_code == 404
 

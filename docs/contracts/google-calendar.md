@@ -1,6 +1,6 @@
 # Google Calendar 2-way sync: the contract for the web (C2)
 
-Appointment booking slice 4 (`docs/plans/appointment-booking.md`). Built by C1 behind a **fake Google**: until the owner creates the OAuth client, staging answers `configured: false` and every other route `409 not_configured`. The code: `services/ai-api/app/google_calendar/`, migration `20261231800000_google_calendar.sql`, pgTAP 206, `tests/test_google_calendar.py`.
+Appointment booking slice 4 (`docs-private/plans/appointment-booking.md`). Built by C1 behind a **fake Google**: until the owner creates the OAuth client, staging answers `configured: false` and every other route `409 not_configured`. The code: `services/ai-api/app/google_calendar/`, migration `20261231800000_google_calendar.sql`, pgTAP 206, `tests/test_google_calendar.py`.
 
 ## What it does
 

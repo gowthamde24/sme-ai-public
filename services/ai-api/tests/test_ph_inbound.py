@@ -1,4 +1,4 @@
-"""Inbound calls on the Exotel sandbox (job phone-calls part 5; owner, 4 Nov 2026: inbound ONLY, ONLY from +919502380998, into the Owner Test workspace). Fakes only: no network, no key, no audio engine.
+"""Inbound calls on the Exotel sandbox (job phone-calls part 5; owner, 4 Nov 2026: inbound ONLY, ONLY from +919000000998, into the Owner Test workspace). Fakes only: no network, no key, no audio engine.
 
 Proven: the per-call token (signed, expires, bound to the call); the Voicebot URL answers a wss address with it, and nothing while inbound is off or for a caller not on the list; before any audio the stream needs a
 good token, a caller on the sandbox list, a known line, EXOTEL'S OWN confirmation of the call, and the gate; then a whole call runs through the real call session with the simulator on the other end, the row is
@@ -28,7 +28,7 @@ from tests.fakes import make_client
 from tests.test_dv_browser_voice import arun, until
 
 SECRET = b"s" * 48
-OWNER = "+919502380998"
+OWNER = "+919000000998"
 EXOPHONE = "+919513886363"
 TENANT = uuid.UUID(int=0x0B0E)
 NOW = 1_800_000_000.0
@@ -120,13 +120,13 @@ def test_the_voicebot_url_answers_the_calls_stream_address_and_nothing_while_off
     off = _client(None).get("/v1/telephony/exotel/stream-url")
     assert off.status_code == 403 and off.json()["error"]["code"] == "telephony_off"
     client = _client(service())
-    ok = client.get("/v1/telephony/exotel/stream-url", params={"CallSid": "CA123", "CallFrom": "09502380998", "CallTo": "09513886363"})
+    ok = client.get("/v1/telephony/exotel/stream-url", params={"CallSid": "CA123", "CallFrom": "09000000998", "CallTo": "09513886363"})
     assert ok.status_code == 200, ok.text
     url = ok.json()["url"]
     assert url.startswith("wss://api.example.test/v1/telephony/exotel/stream/")
     token = url.split("/stream/", 1)[1].split("?", 1)[0]
     assert inbound.verify(SECRET, token, inbound.monotonic(), "CA123") and not inbound.verify(SECRET, token, inbound.monotonic(), "CAother")
-    posted = client.post("/v1/telephony/exotel/stream-url", data={"CallSid": "CA124", "From": "+919502380998"})
+    posted = client.post("/v1/telephony/exotel/stream-url", data={"CallSid": "CA124", "From": "+919000000998"})
     assert posted.status_code == 200 and posted.json()["url"].startswith("wss://")
     assert client.get("/v1/telephony/exotel/stream-url").status_code == 200, "Exotel may send no parameters: the stream decides"
 
@@ -232,7 +232,7 @@ async def test_a_call_from_the_owner_is_answered_by_the_ai_and_finished_with_its
     assert numbers["bytes_out"] > 0 and numbers["first_out_ms"] is not None and numbers["events"].get("start") == 1, "our audio went out, and when"
     assert numbers["cost_paise_estimate"] == 100, "one started minute at the estimate"
     line = next(r for r in records if r.startswith("phone_call_numbers "))
-    assert OWNER not in line and "9502380998" not in line and "open" not in line, "no number and no word of the caller in the log"
+    assert OWNER not in line and "9000000998" not in line and "open" not in line, "no number and no word of the caller in the log"
 
 
 @arun
@@ -282,7 +282,7 @@ def test_the_voicebot_url_can_answer_the_bare_address_as_text_and_logs_only_name
     try:
         svc = service()
         svc.url_format = "text"
-        r = _client(svc).get("/v1/telephony/exotel/stream-url", params={"CallSid": "CA9", "CallFrom": "09502380998"})
+        r = _client(svc).get("/v1/telephony/exotel/stream-url", params={"CallSid": "CA9", "CallFrom": "09000000998"})
     finally:
         logger.removeHandler(handler)
     assert r.status_code == 200 and r.headers["content-type"].startswith("text/plain")
@@ -290,7 +290,7 @@ def test_the_voicebot_url_can_answer_the_bare_address_as_text_and_logs_only_name
     query = r.text.split("?", 1)[1]
     assert len(query) <= 200 and query.count("&") + 1 <= 3, "inside Exotel's 3 parameters and 256 characters, with room to spare"
     shape = next(m for m in records if m.startswith("exotel_stream_url request"))
-    assert "params=CallFrom,CallSid" in shape and "9502380998" not in " ".join(records) and "CA9" not in " ".join(records), "names only, never a value"
+    assert "params=CallFrom,CallSid" in shape and "9000000998" not in " ".join(records) and "CA9" not in " ".join(records), "names only, never a value"
 
 
 @arun

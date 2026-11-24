@@ -638,7 +638,7 @@ class FollowupRehearsal:
             (contacts, both, phone_only),
         )
 
-    # ------------------------------------------------------------------------------ WhatsApp as a first-class channel (docs/plans/followups-whatsapp.md)
+    # ------------------------------------------------------------------------------ WhatsApp as a first-class channel (docs-private/plans/followups-whatsapp.md)
     def check_channels(self) -> None:
         """What the due list and the lead pages say about CHANNELS right after the preparation. Hand-worked from the plan: the cadence is the lead's, the gate is the channel's; a lead is listed when at least one channel is open;
         the page opens on the default channel (the open draft's, else the latest outbound e-mail or WhatsApp touch's while that channel is open, else e-mail, else WhatsApp)."""

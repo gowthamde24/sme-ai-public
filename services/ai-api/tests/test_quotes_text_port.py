@@ -66,7 +66,7 @@ DISPLAY: dict[str, Any] = {
 
 
 def independent_render_hash(version: str, request: dict[str, Any]) -> str:
-    """The renderer's documented hash, written out here WITHOUT importing the renderer (docs/plans/quote-text.md, packages/pure/quote_text/VERSIONS.md): sha256 of the sorted, compact, ASCII JSON of
+    """The renderer's documented hash, written out here WITHOUT importing the renderer (docs-private/plans/quote-text.md, packages/pure/quote_text/VERSIONS.md): sha256 of the sorted, compact, ASCII JSON of
     {"renderer_version": V, "inputs": request}. It is itself pinned by GOLDEN_RENDER_HASH_1_0_0 below, a value written down when only 1.0.0 existed."""
     blob = json.dumps(
         {"renderer_version": version, "inputs": request},

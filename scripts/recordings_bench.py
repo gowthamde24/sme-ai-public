@@ -213,7 +213,7 @@ async def cmd_interrupt(args: argparse.Namespace) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("command", choices=["transcribe", "turns", "interrupt"])
-    ap.add_argument("--model", type=Path, default=Path("/private/tmp/claude-501/-Users-gowthamreddys/74038738-9dd6-4d5e-b8e9-a34e4cc5f4c9/scratchpad/turnspike/models/indic-smart-turn-base-int8.onnx"))
+    ap.add_argument("--model", type=Path, default=Path("models/indic-smart-turn-base-int8.onnx"))
     ap.add_argument("--files", default="1,2,3,4,5,6,7,8")
     ap.add_argument("--variants", default="shadow,on")
     ap.add_argument("--not-done", type=float, default=None, help="try another 'the voice sounds unfinished' threshold for the audio model (default: the code's)")

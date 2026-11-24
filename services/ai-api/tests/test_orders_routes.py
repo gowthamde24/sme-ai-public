@@ -633,7 +633,7 @@ LATE = datetime(2030, 1, 1, tzinfo=UTC)  # after it
 @pytest.mark.parametrize(
     ("state", "payments", "role", "now", "expected"),
     [
-        # hand-read from docs/plans/order-lifecycle.md: the structural matrix, then the guards
+        # hand-read from docs-private/plans/order-lifecycle.md: the structural matrix, then the guards
         ("quote_approved", (), Role.OWNER, EARLY, ["send_quote", "cancel"]),
         ("quote_approved", (), Role.OWNER, LATE, ["expire", "cancel"]),
         ("quote_sent", (), Role.SALES, EARLY, ["customer_accept", "customer_decline", "cancel"]),

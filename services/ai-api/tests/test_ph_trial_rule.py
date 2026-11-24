@@ -107,7 +107,7 @@ async def test_the_lookup_asks_again_on_a_404_and_never_on_another_answer() -> N
         def reply(request: httpx.Request) -> httpx.Response:
             seen.append(request.url.path)
             code = statuses[min(len(seen) - 1, len(statuses) - 1)]
-            return httpx.Response(code, json={"Call": {"Status": "in-progress", "From": "09502380998", "To": "09513886363"}} if code == 200 else {})
+            return httpx.Response(code, json={"Call": {"Status": "in-progress", "From": "09000000998", "To": "09513886363"}} if code == 200 else {})
 
         return httpx.AsyncClient(transport=httpx.MockTransport(reply)), seen
 
@@ -201,8 +201,8 @@ async def test_every_other_number_keeps_the_strict_rule_with_the_caller() -> Non
 
 
 def test_the_caller_is_described_by_shape_and_yes_no_never_its_digits() -> None:
-    assert inbound.caller_diagnosis("+919502380998", OWNER) == "caller_matches=yes caller_shape=plus12 caller_india=yes"
-    assert inbound.caller_diagnosis("09502380998", OWNER).startswith("caller_matches=yes caller_shape=zero11")
+    assert inbound.caller_diagnosis("+919000000998", OWNER) == "caller_matches=yes caller_shape=plus12 caller_india=yes"
+    assert inbound.caller_diagnosis("09000000998", OWNER).startswith("caller_matches=yes caller_shape=zero11")
     assert inbound.caller_diagnosis("+4915112345678", OWNER) == "caller_matches=no caller_shape=plus13 caller_india=no"
     assert inbound.caller_diagnosis("", OWNER) == "caller_matches=absent caller_shape=absent caller_india=no"
     assert inbound.caller_diagnosis("anonymous", OWNER) == "caller_matches=no caller_shape=digits0+letters caller_india=no"
@@ -213,7 +213,7 @@ def test_the_rule_exists_only_with_the_number_and_our_account_and_only_in_sandbo
     assert inbound.trial_rule("", OWNER, OUR_SID, APP) is None
     r = inbound.trial_rule("09513886363", "", OUR_SID, "", max_call_s=900)
     assert r is not None and r.caller is None and r.app_id == "" and r.max_call_s == 180, "the caller and the app id are not needed for the rule"
-    r = inbound.trial_rule("09513886363", "9502380998", OUR_SID, APP, max_call_s=900)
+    r = inbound.trial_rule("09513886363", "9000000998", OUR_SID, APP, max_call_s=900)
     assert r is not None and r.number == EXOPHONE and r.caller == OWNER and r.max_call_s == 180 and r.max_concurrent == 1
     base = dict(exotel_stream_secret="x" * 40, public_base_url="https://api.example.test", scheduler_email="s@example.test", scheduler_password="p" * 20, exotel_sid=OUR_SID,
                 exotel_api_key="k", exotel_api_token="t", exotel_trial_number="09513886363", exotel_trial_caller=OWNER, exotel_trial_app_id=APP, telephony_sandbox_numbers=OWNER)
@@ -246,7 +246,7 @@ async def test_a_whole_trial_call_is_answered_and_the_log_names_the_rule_but_no_
     assert "exotel_inbound admitted rule=trial_pin_path" in records
     diag = next(r for r in records if r.startswith("exotel_start "))
     assert "account_matches=yes" in diag and "app_id_matches=absent" in diag and "trial_number=to" in diag and "custom=-" in diag and "caller_matches=no caller_shape=plus13 caller_india=no" in diag
-    assert all(v not in r for r in records for v in (APP, "sim ", OWNER, "9502380998", "CA123", "4915112345678")), "names and yes/no only, never a value"
+    assert all(v not in r for r in records for v in (APP, "sim ", OWNER, "9000000998", "CA123", "4915112345678")), "names and yes/no only, never a value"
     assert any(r.startswith("exotel_stream start call_sid_fp=") and r.split("call_sid_fp=")[1].split(" ")[0] == inbound.fingerprint(SECRET, "CA123") for r in records)
 
 
@@ -329,7 +329,7 @@ def test_the_stream_url_marks_the_token_when_exotel_names_the_trial_number_as_to
     svc = service()
     svc.trial = rule(number=EXOPHONE)
     try:
-        exo = {"CallSid": "CA9", "CallFrom": "09502380998", "From": "09502380998", "CallTo": LANDED, "Direction": "incoming"}
+        exo = {"CallSid": "CA9", "CallFrom": "09000000998", "From": "09000000998", "CallTo": LANDED, "Direction": "incoming"}
         marked = _client(svc).get("/v1/telephony/exotel/stream-url", params={**exo, "To": "09513886363"}).json()["url"]
         plain = _client(svc).get("/v1/telephony/exotel/stream-url", params={**exo, "To": LANDED}).json()["url"]
     finally:
@@ -383,7 +383,7 @@ async def test_the_end_of_call_line_says_how_it_ended_and_what_went_each_way_nam
     try:
         sim, task = await _call(svc, inbound.mint(SECRET, inbound.monotonic(), "CA123", inbound.TRIAL_MARK), {"to_number": "+918037091588"})
         await asyncio.sleep(0.5)
-        await sim.hang_up("callended 4 from +919502380998")
+        await sim.hang_up("callended 4 from +919000000998")
         await asyncio.wait_for(task, 10)
     finally:
         log.removeHandler(handler)
@@ -391,7 +391,7 @@ async def test_the_end_of_call_line_says_how_it_ended_and_what_went_each_way_nam
     numbers = json.loads(line.split(" ", 1)[1])
     assert numbers["end"] == "caller_hung_up" and numbers["end_how"] == "stop" and numbers["stop_reason"] == "other", "a reason with a number in it is never logged as it is"
     assert numbers["events"].get("start") == 1 and numbers["events"].get("stop") == 1 and set(numbers) >= {"bytes_in", "bytes_out", "first_out_ms", "close_code"}
-    assert "9502380998" not in line
+    assert "9000000998" not in line
 
 
 def test_event_names_and_reasons_are_closed_words() -> None:

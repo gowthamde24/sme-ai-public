@@ -19,7 +19,7 @@ const WRITE_ROLES = ["owner", "admin", "sales"];
 const NO_STORE = { "Cache-Control": "no-store" };
 
 /**
- * GET /app/tenants/[tenantId]/quotes/[quoteId]/whatsapp[?chat=1]: "Open in WhatsApp" for an approved quote (docs/plans/open-in-whatsapp-plan.md). It answers a 302 to `https://wa.me/<number>?text=<the approved quote text>`,
+ * GET /app/tenants/[tenantId]/quotes/[quoteId]/whatsapp[?chat=1]: "Open in WhatsApp" for an approved quote (docs-private/plans/open-in-whatsapp-plan.md). It answers a 302 to `https://wa.me/<number>?text=<the approved quote text>`,
  * or, with `chat=1`, to the chat alone. THIS SYSTEM SENDS NOTHING: the person presses send in their own WhatsApp.
  *
  * The phone number is read here, on the server, with the person's own token, and appears in exactly one place: the `Location` of that one redirect. A failure is never a page of text: it is a redirect back to the quote screen

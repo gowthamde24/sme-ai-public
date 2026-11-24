@@ -24,7 +24,7 @@ Four connectors, each behind an interface with a fake, each OFF until the owner 
 
 ## TRAI / DND notes (not legal advice; unverified against the regulation's text)
 * Exotel's own FAQ (read via search 2026-10-12) states the TCCCPR 2018 reading that promotional calls and SMS may be made only 09:00–21:00 IST and need the consumer's consent, and that transactional calls are not time limited. The regulation itself was not read. The bridge uses 09:00–21:00 for every call, the conservative reading.
-* Exotel's Number Metadata API returns a `DND` field (Yes / No / Unavailable); **no DND check is made**. The bridge only calls someone the owner already has a relationship with and asked to call, and never a stopped contact; whether that is outside the DND rules is for the DPDP/TRAI review (ADR 0017, `docs/pre-pilot-checklist.md`).
+* Exotel's Number Metadata API returns a `DND` field (Yes / No / Unavailable); **no DND check is made**. The bridge only calls someone the owner already has a relationship with and asked to call, and never a stopped contact; whether that is outside the DND rules is for the DPDP/TRAI review (ADR 0017, `docs-private/pre-pilot-checklist.md`).
 * A missed call to the business's number is not a WhatsApp opt-in: the auto-reply needs recorded consent.
 
 ## Pricing notes (read 2026-10-12; secondary sources, check before relying)

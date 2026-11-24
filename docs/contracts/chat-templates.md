@@ -14,4 +14,4 @@ After the assistant replies to a WhatsApp message (`app/autoreply/runner.py`), t
 * `POST /v1/tenants/{t}/conversations/{lead_id}/template` body `{template_id, message_id?}` -> the same answer as `POST /outbox/messages` (`{message: {status, reason, ...}, replayed, dispatched}`; status queued | needs_approval | blocked). There is no field for words or values. The message is an `owner` message of the category of the template's purpose; the outbox applies consent, STOP, quiet hours, the daily limit and the word check. The sender finds the template by the message's words (an edited message is no longer a template).
 
 ## 3. Marketing templates and the opt-out button
-See `docs/plans/textiles-campaigns-marketing.md` (owner decisions 16 Nov 2026).
+See `docs-private/plans/textiles-campaigns-marketing.md` (owner decisions 16 Nov 2026).

@@ -1,4 +1,4 @@
--- T010 part 2 (docs/plans/t010-integration.md, migration 20261024090000): touches, the cadence policy, follow-up drafts. NOTHING IS SENT: every row here is a person's record.
+-- T010 part 2 (docs-private/plans/t010-integration.md, migration 20261024090000): touches, the cadence policy, follow-up drafts. NOTHING IS SENT: every row here is a person's record.
 --   A catalog (definer, search_path, grants, no client write)   B create_followup_policy_version (Owner + aal2, role first, every shape, replay, effective dates)
 --   C record_touch (role x aal, shapes, replay, the outbound GATE cell by cell, an inbound touch is always recordable, the cap, side effects)
 --   D create_followup_draft (role x aal, the gate, SM227 stops, SM222, SM226 forgeries, SM225 reasons, SM223, template, replay)   E approve_followup_draft (role x aal, SM223, SM224, the gate again, SM227 again)
@@ -996,7 +996,7 @@ select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('gm', 'gm', 'email', pg_tem
 select is((select count(*) from public.followup_drafts where lead_id in (tests.rid('dm'), tests.rid('gm'))), 2::bigint, 'N24 and no draft was added for either lead');
 select is((select count(*) from public.lead_touches where draft_id = pg_temp.did('gm')), 1::bigint, 'N25 a replay records no touch: the one touch that carries gm is still the only one');
 
--- ============================================================================ O. commit 5, the mutation pass: guards that no test had reached (docs/checklist-notes/A.md, "T010 part 2")
+-- ============================================================================ O. commit 5, the mutation pass: guards that no test had reached (docs-private/checklist-notes/A.md, "T010 part 2")
 -- A guard that another guard also enforces (the function AND the table's CHECK, a trigger AND a grant) answers the same SQLSTATE whichever fires, so a test of the SQLSTATE alone cannot tell which of them
 -- works. These helpers isolate one: inside a sub-transaction that is rolled back, every other CHECK of the table is dropped and its user triggers are disabled, the privileged statement runs, and the
 -- answer is the SQLSTATE and the name of the constraint that refused it ('ok' when nothing did).
@@ -1214,7 +1214,7 @@ select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"allowed_weekdays": [1.5]}'
 select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"holidays": [null]}')::text), '22023', 'O110 a holiday that is JSON null is an invalid policy (22023), not a NULL in the stored array');
 select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"holidays": [20261225]}')::text), '22023', 'O111 a holiday that is a number is an invalid policy (22023)');
 
--- --- why the 4d replay needs no tenant condition: a draft's lead and its tenant are tied by a composite foreign key (docs/checklist-notes/A.md, the "replay without its tenant condition" row)
+-- --- why the 4d replay needs no tenant condition: a draft's lead and its tenant are tied by a composite foreign key (docs-private/checklist-notes/A.md, the "replay without its tenant condition" row)
 select is((select pg_get_constraintdef(oid) from pg_constraint where conrelid = 'public.followup_drafts'::regclass and conname = 'followup_drafts_tenant_id_lead_id_fkey'),
           'FOREIGN KEY (tenant_id, lead_id) REFERENCES leads(tenant_id, id)', 'O112 a draft''s (tenant, lead) must be a lead of THAT tenant: the composite foreign key exists');
 create function pg_temp.sandbox_con(p_sql text) returns text language plpgsql as $$

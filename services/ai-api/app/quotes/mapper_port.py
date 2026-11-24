@@ -1,4 +1,4 @@
-"""The ONE door to lane C's pure requirement mapper (`packages/pure/requirement_mapper`, docs/plans/requirement-mapper.md).
+"""The ONE door to lane C's pure requirement mapper (`packages/pure/requirement_mapper`, docs-private/plans/requirement-mapper.md).
 
 The mapper PROPOSES: for each requirement line it says matched / ambiguous / unmatched / needs_human / needs_input and, for a matched line, an
 order line. It never prices, never chooses between candidates and never writes. A PERSON confirms every proposal (a pick, `pick_requirement_line_product`);

@@ -1,4 +1,4 @@
-"""Pure synthetic quote calculation; see docs/plans/t009-quote-engine.md."""
+"""Pure synthetic quote calculation; see docs-private/plans/t009-quote-engine.md."""
 from datetime import date, timedelta
 import hashlib
 import json

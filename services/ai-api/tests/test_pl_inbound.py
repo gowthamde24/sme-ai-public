@@ -31,7 +31,7 @@ from tests.test_ph_inbound import FakeStore, fake_parts
 
 TOKEN = "plivo-auth-token-for-tests-only-0123456789"
 BASE = "https://api.example.test"
-OWNER = "+919502380998"
+OWNER = "+919000000998"
 LINE = "+918065590129"
 TENANT = uuid.UUID(int=0x0B0E)
 CALL = "11111111-2222-3333-4444-555555555555"
@@ -52,7 +52,7 @@ ANSWER = "/v1/telephony/plivo/answer"
 
 
 def ring(**over: str) -> dict[str, str]:
-    return {"CallUUID": CALL, "From": "919502380998", "To": "918065590129", "Direction": "inbound", "CallStatus": "ringing", "Event": "StartApp", **over}
+    return {"CallUUID": CALL, "From": "919000000998", "To": "918065590129", "Direction": "inbound", "CallStatus": "ringing", "Event": "StartApp", **over}
 
 
 class Capture(logging.Handler):
@@ -86,7 +86,7 @@ def test_a_signed_request_for_a_plivo_line_is_answered_with_the_stream_and_a_tok
     token = ws.rsplit("/", 1)[1]
     secret = PlivoConfig(auth_token=TOKEN, public_base=BASE).ws_secret()
     assert inbound.verify(secret, token, inbound.monotonic(), CALL) and not inbound.verify(secret, token, inbound.monotonic(), "another-call"), "bound to this call"
-    assert "919502380998" not in r.text and "8065590129" not in r.text and OWNER not in r.text, "no number in the XML (the hosting logs the stream address)"
+    assert "919000000998" not in r.text and "8065590129" not in r.text and OWNER not in r.text, "no number in the XML (the hosting logs the stream address)"
     assert 'statusCallbackUrl="https://api.example.test/v1/telephony/plivo/stream-status"' in r.text
     assert CALL in BOOK._items and BOOK._items[CALL].tenant_id == TENANT
 
@@ -137,7 +137,7 @@ def test_a_call_we_do_not_take_is_answered_with_hangup_and_admits_nothing() -> N
         assert r.status_code == 200 and r.text.endswith("<Response><Hangup/></Response>"), (reason, r.text)
         assert BOOK._items == {}, reason
         assert any(f"refused={reason}" in m for m in records), (reason, records)
-        assert "9502380998" not in " ".join(records) and "9876543210" not in " ".join(records), "no number in the log"
+        assert "9000000998" not in " ".join(records) and "9876543210" not in " ".join(records), "no number in the log"
 
 
 def test_the_answer_reads_the_signature_with_the_token_of_the_lines_own_account_when_it_has_one() -> None:
@@ -160,7 +160,7 @@ def test_the_hangup_and_stream_status_callbacks_are_signed_and_log_names_and_num
     try:
         client = _client(service())
         hang = {"CallUUID": CALL, "CallStatus": "completed", "Event": "Hangup", "HangupCauseName": "End Of XML Instructions", "HangupCauseCode": "4010", "HangupSource": "Plivo", "Duration": "38",
-                "BillDuration": "60", "From": "919502380998", "To": "918065590129", "Direction": "inbound"}
+                "BillDuration": "60", "From": "919000000998", "To": "918065590129", "Direction": "inbound"}
         assert post(client, "/v1/telephony/plivo/hangup", hang).status_code == 200
         assert client.post("/v1/telephony/plivo/hangup", data=hang, headers=signed("/v1/telephony/plivo/hangup", hang, token="x")).status_code == 403
         status = {"CallUUID": CALL, "Event": "StartStream", "Error": ""}
@@ -170,7 +170,7 @@ def test_the_hangup_and_stream_status_callbacks_are_signed_and_log_names_and_num
         logging.getLogger("app.telephony.plivo").removeHandler(handler)
     text = " ".join(records)
     assert "End Of XML Instructions" in text and "4010" in text and "StartStream" in text
-    assert "9502380998" not in text and "8065590129" not in text and CALL not in text, "no number and no raw call id in the log"
+    assert "9000000998" not in text and "8065590129" not in text and CALL not in text, "no number and no raw call id in the log"
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the socket and a whole call
@@ -223,7 +223,7 @@ async def test_a_call_is_answered_by_the_assistant_recorded_as_plivo_and_ends_wh
     assert numbers is not None and numbers["line_rate"] == 8000 and numbers["out_chunk_bytes"] == 1600 and numbers["events"].get("start") == 1 and "stop" not in numbers["events"]
     assert numbers["end_how"] == "socket_closed" and numbers["end"] == "caller_hung_up"
     text = " ".join(records)
-    assert "9502380998" not in text and "8065590129" not in text and CALL not in text and "what time" not in text, "no number, no raw call id, no word of the caller in the log"
+    assert "9000000998" not in text and "8065590129" not in text and CALL not in text and "what time" not in text, "no number, no raw call id, no word of the caller in the log"
     assert CALL not in json.dumps(numbers), "and none in the numbers of the call"
     assert "plivo_inbound admitted" in text and "exotel_inbound" not in text, "the log names the provider that called"
     assert "playedStream" in numbers["events"] and numbers["events"].get("other", 0) == 0, "Plivo's camelCase events are counted by name, not as other"

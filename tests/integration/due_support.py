@@ -1,4 +1,4 @@
-"""Shared helpers for the due-candidates tests (docs/plans/followups-due-candidates-plan.md): synthetic leads in BULK, written the way only the operator can (straight SQL on the local stack),
+"""Shared helpers for the due-candidates tests (docs-private/plans/followups-due-candidates-plan.md): synthetic leads in BULK, written the way only the operator can (straight SQL on the local stack),
 so a test can have hundreds of leads with a history without hundreds of API calls. The leads have no contact and no company (the follow-up rules read none for these tests); the keyed leads whose
 gate matters are made through the API by `followup_support.FollowWorld`. All data is synthetic."""
 

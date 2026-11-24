@@ -1,4 +1,4 @@
--- DRAFT of public.followup_due_candidates (docs/plans/followups-due-candidates-plan.md, slice C0).
+-- DRAFT of public.followup_due_candidates (docs-private/plans/followups-due-candidates-plan.md, slice C0).
 -- Applied BY HAND to the LOCAL database by the opt-in spike test (tests/integration/test_followup_due_spike.py, DUE_SPIKE=1) to measure its cost, and dropped again. NOT a migration.
 -- The C1 migration starts from this text. Option B: facts + app.followup_stopped + the database's own blocker, dropping only its four TERMINAL answers.
 create or replace function public.followup_due_candidates(p_tenant_id uuid, p_after_at timestamptz, p_after_id uuid, p_limit integer, p_scan_max integer) returns jsonb

@@ -12,7 +12,7 @@ export const LEGAL_UPDATED = "2026-11-26";
 
 /**
  * While true, the legal pages show a "Draft, pending legal review" banner. Job DB: the owner asked for the pages to carry no such line (Meta and Google read them), so it is false; "pending lawyer review" is said in the report
- * of the job, and the DPDP legal review is still the owner's to commission (docs/pre-pilot-checklist.md). Setting it back to true brings the banner back everywhere; nothing else needs to change.
+ * of the job, and the DPDP legal review is still the owner's to commission (docs-private/pre-pilot-checklist.md). Setting it back to true brings the banner back everywhere; nothing else needs to change.
  */
 export const LEGAL_IS_DRAFT = false;
 

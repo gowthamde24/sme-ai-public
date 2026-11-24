@@ -1,6 +1,6 @@
 # Today summary: the API contract (C1 -> C2, call-capacity plan Phase 1, owner approved 12 Nov 2026)
 
-Status: **reviewed by C2 on 12 Nov 2026 (seven corrections and the `skip` parameter taken in); to be published (contract first; the route follows in its own PR, the web behind `TODAY_SUMMARY_SCREENS` after that).** Owner's target: Today in 1 to 3 requests instead of about 30; first load under 3 s from India (not promised yet: the cause of the first-read delays is being measured, see `docs/plans/db-timeouts-and-sizing.md`).
+Status: **reviewed by C2 on 12 Nov 2026 (seven corrections and the `skip` parameter taken in); to be published (contract first; the route follows in its own PR, the web behind `TODAY_SUMMARY_SCREENS` after that).** Owner's target: Today in 1 to 3 requests instead of about 30; first load under 3 s from India (not promised yet: the cause of the first-read delays is being measured, see `docs-private/plans/db-timeouts-and-sizing.md`).
 Base `/v1/tenants/{tenant_id}`. Errors have the one shape `{error:{code,message,retry_after,request_id}}`. JSON is snake_case. Fields and sections may be ADDED without a new contract; the web ignores what it does not know.
 
 ## Why a second "bootstrap"

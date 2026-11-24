@@ -1,6 +1,6 @@
 """The real list of Indian state and union-territory codes: ISO 3166-2:IN, 28 states and 8 union territories (36 codes).
 
-`delivery_state` of a quote is one of these (the API validates it; the database only checks two capital letters: docs/pre-pilot-checklist.md, "Quotes"). The codes are the ISO ones,
+`delivery_state` of a quote is one of these (the API validates it; the database only checks two capital letters: docs-private/pre-pilot-checklist.md, "Quotes"). The codes are the ISO ones,
 not the vehicle-registration abbreviations (Telangana is TG, not TS; Uttarakhand UT, not UK; Odisha OD). A person picks a NAME; the code is stored. The list is a fact about
 geography, not tax advice: which tax applies to which state is the owner's and the accountant's input."""
 

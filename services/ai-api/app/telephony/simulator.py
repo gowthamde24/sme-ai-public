@@ -238,7 +238,7 @@ class SimulatedVoicelink:
     media_format audio/alaw 8000), 20 ms inbound `media` frames of base64 A-law, `stop` when the caller hangs up. What the line sends back is held to the documented shapes (media {payload}, mark {name}, clear {stream_sid});
     every mark we send is echoed back as a `mark` (UNVERIFIED: whether VoiceLink says "played" this way; the line has its own estimate when it does not)."""
 
-    def __init__(self, wire: QueueWire, *, call_id: str = "vl-call-0001", stream_id: str = "stream_sim_1", caller: str = "+919502380998", to: str = "+918065590140", custom: dict[str, str] | None = None,
+    def __init__(self, wire: QueueWire, *, call_id: str = "vl-call-0001", stream_id: str = "stream_sim_1", caller: str = "+919000000998", to: str = "+918065590140", custom: dict[str, str] | None = None,
                  encoding: str = "audio/alaw", pace: float = 1.0, echo_marks: bool = True) -> None:
         self._wire, self.pace, self.stream_id, self.call_id, self.echo_marks = wire, pace, stream_id, call_id, echo_marks
         self.rate = 8000

@@ -1,4 +1,4 @@
-"""C12: Razorpay billing in TEST mode, against recorded-shape fakes (no network, no key). The first run against Razorpay's test servers needs the owner's test keys (docs/plans/razorpay-test-billing.md)."""
+"""C12: Razorpay billing in TEST mode, against recorded-shape fakes (no network, no key). The first run against Razorpay's test servers needs the owner's test keys (docs-private/plans/razorpay-test-billing.md)."""
 
 # ruff: noqa: E501
 
