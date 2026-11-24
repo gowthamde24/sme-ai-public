@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 import uuid
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Protocol
 
 from app.numbers.buyer import TYPES, BuyerSettings, PickerRefused, buy
@@ -105,8 +105,17 @@ class Claimed:
 
 
 class NumberService:
-    def __init__(self, repo: NumberRepository, api: VoicelinkApi, buyer: BuyerSettings, *, alert: Callable[[str], None] | None = None) -> None:
+    def __init__(
+        self,
+        repo: NumberRepository,
+        api: VoicelinkApi,
+        buyer: BuyerSettings,
+        *,
+        alert: Callable[[str], None] | None = None,
+        client_for: Callable[[str, uuid.UUID], int | None] | None = None,
+    ) -> None:
         self._repo, self._api, self._buyer, self._alert = repo, api, buyer, alert
+        self._client_for = client_for   # KYC_PER_CLIENT: the workspace's own VoiceLink client (None = its KYC is not complete)
 
     def numbers(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         return [{"number": r["number"], "display": display(str(r["number"])), "type": r.get("kind") or "mobile", "state": r.get("state"), "label": r.get("label")} for r in self._repo.listing(token, tenant_id)]
@@ -126,9 +135,15 @@ class NumberService:
         return [Offer(r.number, display(r.number), kind) for r in rows[:PAGE]], len(rows) > PAGE
 
     def claim(self, token: str, tenant_id: uuid.UUID, number: str, kind: str) -> Claimed:
+        buyer = self._buyer
+        if self._client_for is not None:
+            client_id = self._client_for(token, tenant_id)
+            if client_id is None:
+                raise PickerBlocked("kyc_required")
+            buyer = replace(buyer, client_id=client_id)
         claim_id = self._repo.begin(token, tenant_id, number, kind)   # every platform rule, atomically, or a closed refusal
         try:
-            bought = buy(self._api, self._buyer, number, kind)
+            bought = buy(self._api, buyer, number, kind)
         except PickerRefused as refused:
             self._repo.finish(token, claim_id, "failed", refused.reason)
             if refused.reason in ("wallet_low", "vendor_unavailable"):

@@ -212,6 +212,8 @@ class Runtime:
     workspace_secrets: Any = None
     # the in-app KYC of a business's phone number (app/phone_kyc); None without a Plivo account
     phone_kyc: Any = None
+    # business KYC per VoiceLink client (KYC_PER_CLIENT, Model B); None unless on
+    business_kyc: Any = None
     # a business's own phone number (app/phone_numbers); None unless the provider is on
     phone_numbers: Any = None
     # how the assistant talks on calls (app/talk_training: the Owner's training)

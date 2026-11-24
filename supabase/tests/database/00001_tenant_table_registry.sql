@@ -651,6 +651,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('voice_note_usage',
    $$insert into public.voice_note_usage (tenant_id, ref_id, kind, seconds, chars, voice_code, language) values (%1$L, %2$L, 'note', 5, 50, 'fake-en', 'en')$$,
    'seconds = seconds', $$delete from public.voice_note_usage where ref_id = %2$L$$, false),
+  -- business KYC per client (24 Nov 2026): 'telephony.business_clients' (a tenant table outside the public schema: no client role has any privilege on it, only the public.business_client_* functions touch it).
   -- more than one API instance (24 Nov 2026): 'telephony.call_commands' (a tenant table outside the public schema: no client role has any privilege on it, only the public.call_command_* functions touch it).
   -- sign-up opening (24 Nov 2026): 'signup.trial_identities' (a tenant table outside the public schema: no client role has any privilege on it, only the public.signup_* functions touch it).
   -- billing v2 (13 Nov 2026): 'pricing.subscriptions', 'pricing.wallet_lots', 'pricing.usage', 'pricing.invoices', 'pricing.free_starts', 'pricing.events', 'pricing.orders', 'ops.provider_usage', 'ops.number_purchases' (tenant tables outside the public schema: no client role has any privilege on them, only the public.pricing_* / public.ops_* functions reach them, proved by pgTAP 193 and 196 and the exempt list of test 93) are classified here by this comment.

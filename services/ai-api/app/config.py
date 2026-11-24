@@ -489,6 +489,11 @@ class Settings(BaseSettings):
     # The number picker (28 Nov 2026): a business picks its own VoiceLink number; we buy it with OUR
     # money. Off until the planner turns it on (and the database switch is on too).
     phone_picker: bool = False
+    # business KYC per VoiceLink client (Model B, 24 Nov 2026; docs/contracts/business-kyc.md):
+    # off in production. ON: a number is bought under the workspace's OWN client once its KYC
+    # is complete (else `kyc_required`); KYC_RETURN_URL is the page DigiLocker returns to.
+    kyc_per_client: bool = False
+    kyc_return_url: str | None = None
     picker_client_id: int | None = None      # OUR VoiceLink client the bought numbers are given to
     picker_bot_id: int | None = None         # OUR WebSocket bot the numbers are pointed at
     picker_wallet_floor_inr: int = 1000      # never buy with less than this in our VoiceLink wallet

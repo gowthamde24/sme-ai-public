@@ -24,7 +24,7 @@ OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, s
 Kind = Literal["mobile", "landline"]
 WORDS = {
     "paused": "We cannot add numbers right now.", "not_on_plan": "Your plan does not include another number.", "already_has_number": "Your plan includes one number, and you have it.",
-    "daily_limit": "We cannot add numbers right now, we have told our team.", "wallet_low": "We cannot add numbers right now, we have told our team.", "number_taken": "That number was just taken. Please pick another.", "unavailable": "We cannot add numbers right now.",
+    "kyc_required": "Verify your business first to get a number in its name.", "daily_limit": "We cannot add numbers right now, we have told our team.", "wallet_low": "We cannot add numbers right now, we have told our team.", "number_taken": "That number was just taken. Please pick another.", "unavailable": "We cannot add numbers right now.",
 }
 
 

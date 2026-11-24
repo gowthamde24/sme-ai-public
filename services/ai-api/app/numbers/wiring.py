@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from app.config import Settings
 from app.numbers.buyer import BuyerSettings
@@ -14,7 +15,7 @@ from app.telephony.voicelink_api import VoicelinkApi
 log = logging.getLogger("app.numbers.wiring")
 
 
-def build_numbers(settings: Settings, rest_url: str, anon_key: str) -> NumberService | None:
+def build_numbers(settings: Settings, rest_url: str, anon_key: str, business_kyc: Any = None) -> NumberService | None:
     if not settings.phone_picker:
         return None
     user = settings.voicelink_username.get_secret_value() if settings.voicelink_username else ""
@@ -24,4 +25,5 @@ def build_numbers(settings: Settings, rest_url: str, anon_key: str) -> NumberSer
         return None
     api = VoicelinkApi(user, password, base_url=settings.voicelink_api_base)
     buyer = BuyerSettings(client_id=int(settings.picker_client_id), bot_id=int(settings.picker_bot_id), wallet_floor_inr=float(settings.picker_wallet_floor_inr), max_total_inr=float(settings.picker_max_total_inr))
-    return NumberService(PostgrestNumberRepository(rest_url, anon_key), api, buyer)
+    resolver = business_kyc.client_for if business_kyc is not None else None   # KYC_PER_CLIENT: the number goes to the workspace's own client
+    return NumberService(PostgrestNumberRepository(rest_url, anon_key), api, buyer, client_for=resolver)

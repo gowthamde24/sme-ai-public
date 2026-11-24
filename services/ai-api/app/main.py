@@ -60,6 +60,8 @@ from app.browser_voice.routes import parse_stt_modes
 from app.browser_voice.routes import router as browser_voice_router
 from app.browser_voice.runtime import BrowserVoice
 from app.browser_voice.store import PostgrestUsageStore
+from app.business_kyc.routes import router as business_kyc_router
+from app.business_kyc.wiring import build_business_kyc
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
 from app.callsettings.repository import PostgrestCallSettingsRepository
@@ -457,6 +459,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
     key_ring = build_key_ring(settings)
     voice_stack = build_voice(settings)
     live_calls = LiveCalls()
+    business_kyc = build_business_kyc(settings, config.rest_url, config.anon_key)
     phone_inbound = build_phone_inbound(
         settings, config.rest_url, config.supabase_url, config.anon_key
     )
@@ -612,7 +615,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_status=AssistantStatusService(
             PostgrestStatusRepository(config.rest_url, config.anon_key)
         ),
-        numbers=build_numbers(settings, config.rest_url, config.anon_key),
+        numbers=build_numbers(settings, config.rest_url, config.anon_key, business_kyc),
+        business_kyc=business_kyc,
         sell_lists=(
             ListRepository(config.rest_url, config.anon_key)
             if settings.what_you_sell_lists
@@ -1611,6 +1615,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(dpdp_me_router)
     app.include_router(speaking_router)
     app.include_router(phone_kyc_router)
+    app.include_router(business_kyc_router)
     app.include_router(phone_numbers_router)
     app.include_router(how_speaks_router)
     app.include_router(bootstrap_router)
