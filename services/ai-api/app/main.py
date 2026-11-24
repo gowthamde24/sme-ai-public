@@ -263,6 +263,7 @@ from app.telephony.inbound_routes import router as phone_inbound_router
 from app.telephony.live import LiveCalls
 from app.telephony.plivo_routes import router as plivo_router
 from app.telephony.repository import CallStateError, PostgrestCallsRepository
+from app.telephony.lines_routes import router as phone_lines_router
 from app.telephony.routes import router as calls_router
 from app.telephony.service import CallsService
 from app.telephony.voicelink_routes import router as voicelink_router
@@ -1570,6 +1571,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(tasks_router)
     app.include_router(lead_finder_router)
     app.include_router(calls_router)
+    app.include_router(phone_lines_router)
     app.include_router(assistant_tools_router)
     app.include_router(phone_inbound_router)
     app.include_router(plivo_router)
