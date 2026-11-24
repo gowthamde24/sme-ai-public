@@ -1,11 +1,11 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
-import { Fragment } from "react";
-
 import { HOUR_KEYS, fmtHhmm, type JobSetting, type SettingLine } from "@/lib/jobs/detail";
 
+import { ChevronDown } from "lucide-react";
+
 import { Tick } from "../../ds/Tick";
+import { SelectField } from "../../settings/simple/fields";
 import type { Say } from "../../words";
 
 /** The label of one choice: a time as "9:30 am", else the words `jobs.opt.<key>.<value>`; a value the web has no words for shows as it is (never blank). */
@@ -32,27 +32,47 @@ export function PillSelect({ label, value, options, optionText, disabled, invali
   );
 }
 
+/** The label of one setting: its own words for this kind of job (`jobs.f.<job>.<key>`, e.g. the opening hour of a store visit and the first calling hour of a call), else `jobs.f.<key>`. */
+export function settingLabel(t: Say, kind: string | undefined, key: string): string {
+  if (kind) {
+    const own = t(`jobs.f.${kind}.${key}`);
+    if (own !== `jobs.f.${kind}.${key}`) return own;
+  }
+  const k = `jobs.f.${key}`;
+  const s = t(k);
+  return s === k ? key.replace(/_/g, " ") : s;
+}
+
 /**
- * One line of settings as a sentence with the choice inside ("Call new enquiries [right away]"). The sentence is `jobs.line.<id>` with `{key}` where each choice goes; a tick (a yes or no) is its own line with the sentence as its label.
- * The selects have names for the screen reader: the whole sentence without the choice markers.
+ * One setting of a job as a plain labelled field (owner, 25 Nov / 29 Nov 2026: no fill-in-the-blank sentences): the label above, the choice as a dropdown; a tick (a yes or no) is its own line with the label as its words.
+ * The dropdown's name for the screen reader is its label.
  */
-export function SettingLineView({ line, byKey, values, t, disabled, invalid = [], onChange }: { line: SettingLine; byKey: ReadonlyMap<string, JobSetting>; values: Readonly<Record<string, string>>; t: Say; disabled: boolean; /** keys of the settings the API refused */ invalid?: readonly string[]; onChange: (key: string, value: string) => void }) {
+export function SettingLineView({ line, byKey, values, t, disabled, invalid = [], onChange, kind }: { line: SettingLine; byKey: ReadonlyMap<string, JobSetting>; values: Readonly<Record<string, string>>; t: Say; disabled: boolean; /** keys of the settings the API refused the last time: marked */ invalid?: readonly string[]; onChange: (key: string, value: string) => void; /** the job's kind: some settings have words of their own for it */ kind?: string }) {
   const first = byKey.get(line.keys[0]);
   if (!first) return null;
   if (first.type === "toggle") {
-    return <Tick data-setting={first.key} label={t(`jobs.line.${first.key}`)} checked={values[first.key] === "on"} disabled={disabled} onChange={(e) => onChange(first.key, e.target.checked ? "on" : "off")} />;
+    return <Tick data-setting={first.key} label={t(`jobs.line.${first.key}`) !== `jobs.line.${first.key}` ? t(`jobs.line.${first.key}`) : settingLabel(t, kind, first.key)} checked={values[first.key] === "on"} disabled={disabled} onChange={(e) => onChange(first.key, e.target.checked ? "on" : "off")} />;
   }
-  const template = t(`jobs.line.${line.id}`);
-  const plain = template.replace(/\{\w+\}/g, "…");
-  const many = line.keys.length > 1;
   return (
-    <p data-setting-line={line.id} className="m-0 text-[16px] leading-[2.3] text-ink">
-      {template.split(/(\{\w+\})/g).map((part, i) => {
-        const key = /^\{(\w+)\}$/.exec(part)?.[1];
-        const s = key ? byKey.get(key) : undefined;
-        if (!s) return <Fragment key={i}>{part}</Fragment>;
-        return <PillSelect key={i} label={many ? `${plain} (${line.keys.indexOf(s.key) + 1})` : plain} value={values[s.key] ?? s.value} options={(values[s.key] ?? s.value) === "" && !s.options.includes("") ? ["", ...s.options] : s.options} optionText={(v) => (v === "" ? t("jobs.job.setting.own") : optionLabel(t, s.key, v))} disabled={disabled} invalid={invalid.includes(s.key)} onChange={(v) => onChange(s.key, v)} />;
+    <div data-setting-line={line.id} className={line.keys.length > 1 ? "grid grid-cols-1 gap-4 min-[420px]:grid-cols-2" : "flex flex-col"}>
+      {line.keys.map((key) => {
+        const s = byKey.get(key);
+        if (!s) return null;
+        const label = settingLabel(t, kind, key);
+        const value = values[s.key] ?? s.value;
+        const options = value === "" && !s.options.includes("") ? ["", ...s.options] : s.options;
+        return (
+          <SelectField
+            key={key}
+            label={label}
+            value={value}
+            options={options.map((o) => ({ value: o, label: optionLabel(t, s.key, o), disabled: o === "" }))}
+            disabled={disabled}
+            invalid={invalid.includes(s.key)}
+            onChange={(v) => onChange(s.key, v)}
+          />
+        );
       })}
-    </p>
+    </div>
   );
 }
