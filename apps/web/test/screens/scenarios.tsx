@@ -54,7 +54,7 @@ import {
   parseAdmissionDetail, parseAdmissionList, parseFeeEntries, parseFeePlan, parseFeePlanList, parseFeeReceipt, parseFeeStatement, parseGuardianFees, parseLateFeesPreview, parsePending, parseProfile as parseInstitution, parseProgrammes, parseStudent, parseStudentList,
 } from "@/lib/api/education";
 import * as EDU from "@/lib/api/education-fixtures";
-import { parseKycOptions, parseKycStatus } from "@/lib/api/phone-kyc";
+import { parseOwnList } from "@/lib/api/numbers";
 import { parseCatalogue, parseReport } from "@/lib/api/reports";
 import * as RPT from "@/lib/api/reports-fixtures";
 import { CALL_LIST_JSON, CAMPAIGN, DETAIL_ISSUES_JSON, DETAIL_JSON as CAMPAIGN_DETAIL_JSON, DETAIL_RUNNING_JSON, LIST_JSON, PREVIEW_ISSUES_JSON, PREVIEW_JSON, RECIPIENTS_JSON, RESULTS_JSON } from "@/lib/api/campaigns-fixtures";
@@ -788,18 +788,13 @@ add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await im
 add({ id: "office-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/ai-team/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "integrations", render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/page")).default(props({})), handlers: (role) => base(role) });
 // the registration (KYC) card of the Phone number page: the API's status and documents on offer (Owner and Admin read the documents; the page asks only while a filing can be sent)
-const KYC_ID = "33333333-3333-4333-8333-333333333333";
-const kycStatus = (state: string, over: Record<string, unknown> = {}) => ({ state, kyc_id: state === "not_started" ? null : KYC_ID, doc_kind: state === "not_started" ? null : "gst", compliance_id: state === "not_started" ? null : "comp-1", reason: null, created_at: "2026-11-19T05:00:00Z", updated_at: "2026-11-19T05:00:00Z", checked_at: null, live: true, can_choose_number: state === "accepted", ...over });
-const KYC_OPTIONS = { live: true, documents: [{ kind: "gst", number_label: "GSTIN", number_example: "36ABCDE1234F1Z5", plivo_document: "GST" }, { kind: "udyam", number_label: "Udyam registration number", number_example: "UDYAM-TS-02-0000001", plivo_document: "Udyam" }, { kind: "coi", number_label: "CIN / LLPIN", number_example: "U12345TG2020PTC123456", plivo_document: "Certificate of Incorporation" }], max_file_bytes: 5_000_000, file_types: ["application/pdf", "image/jpeg", "image/png"], kept_note: "The document is sent to Plivo and not kept by Stack19." };
-const kycReads = (role: Role, state: string, over: Record<string, unknown> = {}): Record<string, Handler> => ({
-  getKycStatus: () => parseKycStatus(kycStatus(state, over)),
-  getKycOptions: () => {
-    if (role !== "owner" && role !== "admin") throw new ApiRequestError(403, "forbidden", "Not allowed.");
-    return parseKycOptions(KYC_OPTIONS);
-  },
-});
 // sidebar v2 (5 Nov): the business's calling number, honestly "not set up yet" until telephony exists
-add({ id: "phone-number", render: async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})), handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started") }) });
+// VoiceLink only (29 Nov): the number the workspace has (GET /numbers) or one line that we set it up
+const ownNumbers = (rows: Record<string, unknown>[]): Record<string, Handler> => ({ listOwn: () => parseOwnList({ numbers: rows }) });
+add({ id: "phone-number", render: async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})), handlers: (role) => ({ ...base(role), listOwn: () => { throw new ApiRequestError(404, "not_found", "No."); } }) });
+add({ id: "phone-number-mobile-on", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})), handlers: (role) => ({ ...base(role), ...ownNumbers([{ number: "+919876543210", display: "+91 98765 43210", type: "mobile", state: "calls_on", label: null }]) }) });
+add({ id: "phone-number-landline-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})), handlers: (role) => ({ ...base(role), ...ownNumbers([{ number: "+914012345678", display: "+91 40123 45678", type: "landline", state: "calls_off", label: null }]) }) });
+add({ id: "phone-number-getting-ready", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})), handlers: (role) => ({ ...base(role), ...ownNumbers([{ number: "+919876543210", display: "+91 98765 43210", type: "mobile", state: "getting_ready", label: null }]) }) });
 // owner rule, 6 Nov: every menu item opens its own page. Talk to assistant (the conversation), Train how it talks (the talk-training panel, out of Settings; its API is off here, so it says it cannot be read), and the old address of My AI team
 add({ id: "talk", render: async () => (await import("@/app/app/tenants/[tenantId]/talk/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
 add({ id: "ai-team-training", render: async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({})), handlers: (role) => base(role) });
@@ -1641,19 +1636,7 @@ add({ id: "billing-v2-over-limit", roles: ["owner"], render: billingV2("over"), 
 add({ id: "billing-v2-upgrade-hint", roles: ["owner"], render: billingV2("upgrade"), handlers: (role) => base(role) });
 add({ id: "billing-v2-numbers", roles: ["owner", "admin"], render: billingV2("numbers"), handlers: (role) => base(role) });
 // phone numbers (design system v6): the status card, then the test screen's panel; without the test screen the page shows its next step
-const phoneV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})));
-add({ id: "phone-number-v6-test-screen", roles: ["owner", "admin"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started") }) });
-add({ id: "phone-number-v6-next-step", roles: ["owner"], render: phoneV6({}), handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started") }) });
 // the registration card in each state (no JOBS or other flag: it stands on the API's own answer): Owner sends, Admin reads
-add({ id: "phone-kyc-not-started", roles: ["owner", "admin"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started") }) });
-add({ id: "phone-kyc-test-mode", roles: ["owner"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started", { live: false }) }) });
-add({ id: "phone-kyc-second-step", roles: ["owner"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started"), getAccountSecurity: SECURITY_FIRST_LEVEL }) });
-add({ id: "phone-kyc-checking", roles: ["owner", "admin"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "submitted") }) });
-add({ id: "phone-kyc-accepted", roles: ["owner"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "accepted") }) });
-add({ id: "phone-kyc-rejected", roles: ["owner", "admin"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "rejected", { reason: "The GSTIN does not match the business name on the document." }) }) });
-add({ id: "phone-kyc-expired", roles: ["owner"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "expired") }) });
-add({ id: "phone-kyc-unavailable", roles: ["owner"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), getKycStatus: () => { throw new ApiRequestError(503, "kyc_unavailable", "x"); } }) });
-add({ id: "phone-kyc-options-unreadable", roles: ["owner"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), getKycStatus: () => parseKycStatus(kycStatus("not_started")), getKycOptions: () => { throw new ApiRequestError(503, "kyc_unavailable", "x"); } }) });
 // catalogue (design system v6): the page header, an Edit link on each saree, the drafts line, the next step of an empty catalogue, and the editor's one main button
 add({ id: "catalogue-v6", roles: ["owner", "sales"], render: () => withEnv(V6_ENV, async () => (await cataloguePage())(props({}, {}))), handlers: catalogueHandlers });
 add({ id: "catalogue-v6-empty", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await cataloguePage())(props({}, {}))), handlers: (role) => ({ ...base(role), listCatalogueItems: () => parseItemPage(pageJson([])) }) });
@@ -1820,9 +1803,6 @@ const jpReports = (search: Record<string, string> = {}) => () => withEnv({ ...V6
 add({ id: "jobs-pg-reports", roles: ["owner", "admin", "sales"], render: jpReports(), handlers: reportsV6Reads });
 add({ id: "jobs-pg-reports-today", roles: ["owner"], render: jpReports({ range: "today" }), handlers: reportsV6Reads });
 add({ id: "jobs-pg-reports-custom", roles: ["owner"], render: jpReports({ range: "custom", from: "2026-09-30", to: "2026-10-05" }), handlers: reportsV6Reads });
-const jpPhone = () => withEnv({ ...V6_ENV, ...JP_ENV, PHONE_NUMBER_SCREENS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})));
-add({ id: "jobs-pg-phone", roles: ["owner", "admin"], render: jpPhone, handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started") }) });
-add({ id: "jobs-pg-phone-registered", roles: ["owner"], render: jpPhone, handlers: (role) => ({ ...base(role), ...kycReads(role, "accepted") }) });
 const jpCatalogue = (search: Record<string, string> = {}) => () => withEnv({ ...V6_ENV, ...JP_ENV }, async () => (await cataloguePage())(props({}, search)));
 add({ id: "jobs-pg-catalogue", roles: ["owner", "sales"], render: jpCatalogue(), handlers: catalogueHandlers });
 add({ id: "jobs-pg-catalogue-filtered", roles: ["owner"], render: jpCatalogue({ fabric: "soft_silk", stock: "few_left", colour: "blue", q: "blue" }), handlers: catalogueHandlers });
