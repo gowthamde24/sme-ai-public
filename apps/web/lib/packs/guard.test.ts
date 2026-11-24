@@ -70,10 +70,14 @@ describe("every page of a workspace has been decided (a new page must say whethe
   // owner rule, 6 Nov (every menu item opens its own page): Train how it talks and Talk to assistant are pages of every business type; the demo video (#318) is too (its own flag)
   // app v4 part 4: Phone calls and one call (behind APP_V4 and the feature `app_v4`, like Tasks and Lead plans behind theirs: every business type takes calls)
 <<<<<<< HEAD
+<<<<<<< HEAD
   const OPEN = ["", "/add-lead", "/ai-team/training", "/assistant-work-preview", "/billing", "/calls", "/calls/[callId]", "/demo-video", "/do-not-call", "/everything", "/help", "/help/[guide]", "/import", "/jobs", "/jobs/[jobId]", "/jobs/new", "/lead-desk", "/lead-report", "/lead-setup", "/lead-sources", "/lead-sources/guides/[guide]", "/map", "/marketing-consent", "/my-assistant", "/outbox", "/outreach", "/outreach/batches/[batchId]", "/outreach/new", "/outreach/rules", "/phone-number", "/plans", "/privacy", "/settings", "/start", "/suppression", "/talk", "/tasks", "/tasks/[taskId]", "/team", "/what-you-sell"];
 =======
   const OPEN = ["", "/add-lead", "/ai-team/training", "/assistant-work-preview", "/billing", "/calls", "/calls/[callId]", "/demo-video", "/do-not-call", "/everything", "/help", "/help/[guide]", "/import", "/jobs", "/jobs/[jobId]", "/jobs/new", "/lead-desk", "/lead-report", "/lead-setup", "/lead-sources", "/map", "/marketing-consent", "/my-assistant", "/outbox", "/outreach", "/outreach/batches/[batchId]", "/outreach/new", "/outreach/rules", "/phone-number", "/plans", "/privacy", "/settings", "/start", "/suppression", "/talk", "/tasks", "/tasks/[taskId]", "/team", "/what-you-sell", "/what-you-sell/lists/[listId]", "/what-you-sell/lists/[listId]/columns", "/what-you-sell/lists/new"];
 >>>>>>> origin/c2/lists
+=======
+  const OPEN = ["", "/add-lead", "/ai-team/training", "/assistant-work-preview", "/billing", "/calls", "/calls/[callId]", "/demo-video", "/developers", "/do-not-call", "/everything", "/help", "/help/[guide]", "/import", "/jobs", "/jobs/[jobId]", "/jobs/new", "/lead-desk", "/lead-report", "/lead-setup", "/lead-sources", "/map", "/marketing-consent", "/my-assistant", "/outbox", "/outreach", "/outreach/batches/[batchId]", "/outreach/new", "/outreach/rules", "/phone-number", "/plans", "/privacy", "/settings", "/start", "/suppression", "/talk", "/tasks", "/tasks/[taskId]", "/team", "/what-you-sell"];
+>>>>>>> origin/c2/developers
   it("finds the pages", () => {
     expect(routes.length).toBeGreaterThan(30);
   });
