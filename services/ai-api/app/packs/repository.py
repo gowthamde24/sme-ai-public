@@ -8,13 +8,15 @@ from typing import Any, Protocol
 
 import httpx
 
-from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError
+from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError, PackUnavailableError
 from app.rpc_base import RpcClient
 
 
 class PacksRepository(Protocol):
     def workspace_pack(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def workspace_modules(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
+    def workspace_pack_set(self, token: str, tenant_id: uuid.UUID, pack: str) -> dict[str, Any]: ...
+    def first_run_facts(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def catalogue(self, token: str) -> list[dict[str, Any]]: ...
     def example_status(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def example_load(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
@@ -24,13 +26,19 @@ class PacksRepository(Protocol):
 
 class PostgrestPacksRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
-        self._rpc = RpcClient(rest_url, anon_key, {"SM701": ModuleOffError, "SM721": ExampleAlreadyLoadedError}, client=client)
+        self._rpc = RpcClient(rest_url, anon_key, {"SM701": ModuleOffError, "SM702": PackUnavailableError, "SM721": ExampleAlreadyLoadedError}, client=client)
 
     def close(self) -> None:
         self._rpc.close()
 
     def workspace_pack(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "workspace_pack_get", {"p_tenant_id": str(tenant_id)})
+
+    def workspace_pack_set(self, token: str, tenant_id: uuid.UUID, pack: str) -> dict[str, Any]:
+        return self._rpc.object(token, "workspace_pack_set", {"p_tenant_id": str(tenant_id), "p_pack": pack})
+
+    def first_run_facts(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "first_run_facts", {"p_tenant_id": str(tenant_id)})
 
     def workspace_modules(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         result = self._rpc.call(token, "workspace_modules", {"p_tenant_id": str(tenant_id)})

@@ -8,7 +8,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 PackStatus = Literal["draft", "preview", "published"]
 PackSource = Literal["signup", "default", "legacy", "operator", "owner"]
@@ -133,3 +133,28 @@ class AccountSecurityOut(_Out):
     provider: Literal["email", "google", "facebook"] | None = None
     # the groups of actions that need the code from a person who turned the authenticator on
     needed_for: list[Literal["approvals", "whatsapp_connect", "rules_and_prices", "imports_and_exports", "team_and_privacy"]]
+
+
+class PackChangeIn(BaseModel):
+    """PUT /v1/tenants/{id}/pack: the Owner changes the business type (docs/contracts/first-run.md). `other` is the public word of the generic pack."""
+
+    model_config = ConfigDict(extra="forbid")
+    pack: str = Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")
+
+
+class FirstRunPackOut(_Out):
+    code: str
+    source: PackSource
+    typed: bool
+
+
+class FirstRunItemsOut(_Out):
+    count: int
+
+
+class FirstRunOut(_Out):
+    """GET /v1/tenants/{id}/first-run: has anybody chosen the business type, and how many catalogue items exist so far."""
+
+    pack: FirstRunPackOut
+    needs_type: bool
+    items: FirstRunItemsOut

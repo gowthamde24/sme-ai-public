@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Query
 
@@ -75,13 +75,30 @@ def complete_account_setup(
     return result
 
 
+def _checked_pack(runtime: Any, pack: str | None) -> str | None:
+    if pack is None:
+        return None
+    code = internal_code(pack)
+    listed = runtime.pack_registry.selectable().packs if runtime.pack_registry is not None else []
+    if code not in {p.pack_id for p in listed}:
+        raise ApiError(
+            422, "validation_error", "The request was not valid.", extra={"fields": ["pack"]}
+        )
+    if runtime.packs is None:
+        raise ApiError(503, "packs_unavailable", "Business types are not available on this system.")
+    return code
+
+
 @router.post("/tenants", response_model=TenantDetailOut)
 def create_tenant(
     body: CreateTenantIn, principal: PrincipalDep, runtime: RuntimeDep
 ) -> TenantDetailOut:
     """Create a tenant and become its Owner. Idempotent: the Owner retrying the same slug gets the
     same tenant back (HTTP 200), with no duplicate tenant, membership or audit event."""
+    code = _checked_pack(runtime, body.pack)   # checked BEFORE anything is made
     tenant = runtime.repository.create_tenant(principal.token, body.name, body.slug)
+    if code is not None and runtime.packs is not None:   # the creator is the Owner now
+        runtime.packs.workspace_pack_set(principal.token, tenant.id, code)
     return TenantDetailOut(id=tenant.id, name=tenant.name, slug=tenant.slug, role=Role.OWNER)
 
 

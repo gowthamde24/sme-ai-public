@@ -204,7 +204,7 @@ from app.ownvoice import repository as own_voice_repo
 from app.ownvoice.repository import PostgrestOwnVoiceRepository
 from app.ownvoice.routes import router as own_voice_router
 from app.ownvoice.service import OwnVoiceService
-from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError
+from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError, PackUnavailableError
 from app.packs.providers import providers_from_settings
 from app.packs.registry import PackRegistry, default_directory
 from app.packs.repository import PostgrestPacksRepository
@@ -633,6 +633,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     # Packs and custom fields (job CK). Fixed sentences: nothing from the data layer.
     ModuleOffError: ApiError(
         403, "module_off", "That is not part of this kind of business, so it is switched off."
+    ),
+    PackUnavailableError: ApiError(
+        422,
+        "validation_error",
+        "That kind of business is not available.",
+        extra={"fields": ["pack"]},
     ),
     ExampleAlreadyLoadedError: ApiError(
         409, "example_data_loaded", "The example data is already loaded."

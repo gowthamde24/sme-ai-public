@@ -288,7 +288,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `owner_ok_required` | 409 | admin |  |  | This business asked to be asked first. They have not said yes yet. |
 | `owner_required` | 403 | main |  |  | This action needs the owner. |
 | `pack_unknown` | 422 | main |  |  | That top-up pack does not exist or is for the other kind. |
-| `packs_unavailable` | 503 | jobs, packs |  |  | Business types are not available on this system. |
+| `packs_unavailable` | 503 | jobs, packs, tenancy |  |  | Business types are not available on this system. |
 | `parser_failed` | 502 | lead_sources |  |  | The sample e-mail could not be read. Tell us, this should not happen. |
 | `payload_too_large` | 413 | errors, hardening, whatsapp |  |  | Too large. |
 | `payment_method_declined` | 402 | main |  |  | The payment method was not accepted. Nothing was charged. |
