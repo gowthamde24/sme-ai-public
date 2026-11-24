@@ -444,6 +444,7 @@
       ],
       "areas": [
         "billing",
+        "credits",
         "main",
         "pricing"
       ],
@@ -4258,6 +4259,66 @@
       "extras": []
     },
     {
+      "code": "refund_already_done",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "That top-up already has a refund.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "refund_declined",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "The payment provider did not refund. Nothing changed: the balance is back.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "refund_not_a_topup",
+      "statuses": [
+        404
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "That is not a paid top-up of this business.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "refund_nothing_unused",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "Nothing is left to refund: the balance from that top-up was used.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "refund_unconfirmed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "The refund was asked for but not confirmed. Do not repeat it: check the payment at Razorpay first. The unused balance stays taken out until you do.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "replay",
       "statuses": [
         409
@@ -4761,6 +4822,18 @@
       "extras": []
     },
     {
+      "code": "statement_dates_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "The end date is before the start date.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "stopped_by_customer",
       "statuses": [
         409
@@ -5044,6 +5117,42 @@
       ],
       "default_message": "Too many samples this hour. Try again later.",
       "wait": true,
+      "extras": []
+    },
+    {
+      "code": "topup_amount_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "Choose a whole number of rupees from ₹100 to ₹1,00,000.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "topup_not_verified",
+      "statuses": [
+        402
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "We could not verify this payment, so nothing was added. If money left your account, wait a few minutes: it is added when the bank confirms.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "topup_order_unknown",
+      "statuses": [
+        404
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "We could not find that payment.",
+      "wait": false,
       "extras": []
     },
     {

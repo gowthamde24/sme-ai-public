@@ -60,7 +60,7 @@ async def razorpay_billing(request: Request) -> JSONResponse:
         return JSONResponse({"ok": True})
     token = _token(connectors)
     for event in events:
-        if event.kind == "order_paid":   # only billing v2 knows paid orders
+        if event.kind in ("order_paid", "payment_failed"):   # only billing v2 knows paid and failed orders
             continue
         try:
             billing.apply(token, event)

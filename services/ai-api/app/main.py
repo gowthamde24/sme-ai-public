@@ -84,6 +84,9 @@ from app.conversation.picker import router as voice_picker_router
 from app.conversation.picker import style_public_router as voice_style_samples_router
 from app.conversation.preview import CallVoicePreview
 from app.conversation.voices import default_config as voice_catalogue
+from app.credits.routes import admin_router as credits_admin_router
+from app.credits.routes import router as credits_router
+from app.credits.service import CreditsService, PostgrestCreditsRepository
 from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
 from app.crm.routes import router as crm_router
@@ -373,7 +376,7 @@ def _billing_provider(settings: Settings) -> BillingProvider:
             and settings.billing_razorpay_webhook_secret is not None
             else None
         )
-        return build_provider(settings.billing_provider, keys)
+        return build_provider(settings.billing_provider, keys, live_ok=settings.razorpay_live_ok)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
 
@@ -407,6 +410,13 @@ def build_runtime(settings: Settings) -> Runtime | None:
     # the provider usage ledger, as the scheduler account; None when that account is not configured
     usage = build_usage_recorder(settings, config)
     billing_webhook = _billing_webhook_session(settings, config)
+    pricing_service = (
+        PricingService(
+            PostgrestPricingRepository(config.rest_url, config.anon_key), billing_provider
+        )
+        if settings.pricing_v2
+        else None
+    )
     workspace_secrets = build_workspace_secrets(settings, config.rest_url, config.anon_key)
     return Runtime(
         verifier=TokenVerifier.from_config(config),
@@ -534,11 +544,12 @@ def build_runtime(settings: Settings) -> Runtime | None:
         call_settings=CallSettingsService(
             PostgrestCallSettingsRepository(config.rest_url, config.anon_key)
         ),
-        pricing=(
-            PricingService(
-                PostgrestPricingRepository(config.rest_url, config.anon_key), billing_provider
+        pricing=pricing_service,
+        credits=(
+            CreditsService(
+                PostgrestCreditsRepository(config.rest_url, config.anon_key), pricing_service
             )
-            if settings.pricing_v2
+            if pricing_service is not None
             else None
         ),
         billing_webhook=billing_webhook,
@@ -1512,6 +1523,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(call_settings_router)
     app.include_router(pricing_public_router)
     app.include_router(pricing_router)
+    app.include_router(credits_router)
+    app.include_router(credits_admin_router)
     app.include_router(admin_router)
     app.include_router(admin_tenant_router)
     app.include_router(assistant_status_router)
