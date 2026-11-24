@@ -787,19 +787,6 @@ export function V9Guard({ t }: { t: SiteT }) {
               {t("v9.guard.10")}
             </p>
             <div className="kyc">
-              <div className="kyc-card">
-                <b>
-                  {t("v9.guard.11")}
-                </b>
-                <div className="ln"></div>
-                <div className="ln s"></div>
-                <span className="kyc-stamp">
-                  {t("v9.guard.12")}
-                </span>
-              </div>
-              <span className="kyc-arrow">
-                {"→"}
-              </span>
               <div className="kyc-num">
                 <small>
                   {t("v9.guard.13")}
