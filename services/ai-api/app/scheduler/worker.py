@@ -73,6 +73,8 @@ from app.suppression.wiring import build_key_ring
 from app.telephony.housekeeping import OrphanCalls
 from app.tenancy.repository import TokenRejected
 from app.voice.factory import build_note_voice
+from app.webhooks_out.runner import WebhookRunner
+from app.webhooks_out.wiring import build_webhook_runner
 from app.whatsapp.metered import metered
 from app.whatsapp.status_sync import TemplateStatusSync, build_template_sync
 from app.workspace_secrets_wiring import build_workspace_secrets
@@ -123,6 +125,7 @@ class Worker:
         plivo_balance: PlivoBalanceCheck | None = None,
         token_expiry: TokenExpiryCheck | None = None,
         template_sync: TemplateStatusSync | None = None,
+        webhooks: WebhookRunner | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -175,6 +178,8 @@ class Worker:
         self._token_expiry = token_expiry
         # planner 20 Nov 2026: WhatsApp's decision on our templates read every few minutes (None unless TEMPLATE_SYNC is on)
         self._template_sync = template_sync
+        # connectors plan C1 item 2: outbound webhooks (None unless WEBHOOKS_OUT=on and the secret store exists)
+        self._webhooks = webhooks
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -211,6 +216,7 @@ class Worker:
             self._token_expiry_pass(token)
             self._template_sync_pass(token)
             self._google_calendar_pass(token)
+            self._webhooks_pass(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -331,6 +337,17 @@ class Worker:
             raise
         except Exception as exc:   # a failed pass never fails the tick
             logger.error("lead reader pass crashed: %s", exc.__class__.__name__)
+
+    def _webhooks_pass(self, token: str) -> None:
+        """Outbound webhooks: the due deliveries are sent and recorded (app/webhooks_out/runner.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._webhooks is None:
+            return
+        try:
+            self._webhooks.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("webhooks pass crashed: %s", exc.__class__.__name__)
 
     def _google_calendar_pass(self, token: str) -> None:
         """Appointments to Google Calendar and busy times back (app/google_calendar/sync.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
@@ -487,6 +504,7 @@ def build_worker(settings: Settings) -> Worker:
         plivo_balance=build_plivo_balance(settings, config.rest_url, config.anon_key, adapter),
         token_expiry=build_token_expiry(settings, config.rest_url, config.anon_key),
         template_sync=build_template_sync(settings, config.rest_url, config.anon_key),
+        webhooks=build_webhook_runner(settings, config.rest_url, config.anon_key),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         google_alerts=GoogleCapAlerts(RpcClient(config.rest_url, config.anon_key), _billing_sender(settings)),
         storage=storage,

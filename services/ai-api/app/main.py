@@ -292,6 +292,8 @@ from app.voice_notes.repository import PostgrestVoiceNotesRepository
 from app.voice_notes.routes import router as voice_notes_router
 from app.voicesample.routes import router as voice_sample_router
 from app.voicesample.service import VoiceSampleService
+from app.webhooks_out.routes import router as webhooks_out_router
+from app.webhooks_out.wiring import build_webhooks_out
 from app.websearch.repository import PostgrestResearchUsageRepository
 from app.websearch.routes import router as research_router
 from app.websearch.wiring import build_research_web
@@ -475,6 +477,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         jobs=build_jobs(settings, config.rest_url, config.anon_key),
         developer_api=build_developer_api(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
+        ),
+        webhooks_out=build_webhooks_out(
+            settings, config.rest_url, config.anon_key, workspace_secrets
         ),
         lead_finder=LeadFinderService(
             PostgrestLeadFinderRepository(config.rest_url, config.anon_key),
@@ -1556,6 +1561,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(glance_router)
     app.include_router(developer_router)
     app.include_router(developer_api_router)
+    app.include_router(webhooks_out_router)
     app.include_router(jobs_router)
     app.include_router(do_not_call_router)
     app.include_router(job_faq_router)

@@ -52,7 +52,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "voice_settings", "voice_choices", "campaign_voice", "voice_note_usage",
     "billing_subscriptions", "billing_events", "billing_usage_events", "billing_topups", "billing_notices", "billing_lapse_reminders", "billing_pending_reminders", "billing_trial_reminders",
     "billing_invoices", "billing_topup_purchases", "billing_topup_draws", "billing_topup_settings", "billing_alert_sends",
-    "outcomes", "assistant_settings",
+    "outcomes", "assistant_settings", "webhook_endpoints", "webhook_deliveries",
     "evidence", "evidence_links", "claims", "claim_reviews", "icp_config_versions", "mapper_config_versions", "import_batches", "import_rows",
     "assistant_conversations", "assistant_messages", "assistant_reply_drafts", "assistant_context_versions", "lead_inbound_addresses", "lead_profiles", "lead_website_forms",
     "own_voices",

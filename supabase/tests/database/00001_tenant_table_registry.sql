@@ -583,6 +583,14 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with k as (insert into public.developer_api_keys (tenant_id, name, key_hash, prefix, last4, scopes, created_by) values (%1$L, 'Generic key', encode(sha256(convert_to(%2$L || 'k', 'UTF8')), 'hex'), 'sk_test_abcd', 'wxyz', array['leads:write'], %5$L) returning id)
      insert into public.developer_sandbox_leads (id, tenant_id, key_id, idem_key, body_sha, name, phone, consent, next_step) select %2$L, %1$L, k.id, 'idem', repeat('a', 64), 'Generic lead', '+919800000001', '{"given": true}'::jsonb, 'none' from k$$,
    'status = status', $$delete from public.developer_sandbox_leads where id = %2$L$$, true),
+  -- outbound webhooks (migration 20261231992000): written only by webhook_endpoint_* (Owner or Admin) and, for the log, by the queueing triggers and the worker's webhook_delivery_record
+  ('webhook_endpoints',
+   $$insert into public.webhook_endpoints (id, tenant_id, url, events, secret_last4, created_by) values (%2$L, %1$L, 'https://hooks.example.com/generic', array['lead.created'], 'wxyz', %5$L)$$,
+   'active = active', $$delete from public.webhook_endpoints where id = %2$L$$, true),
+  ('webhook_deliveries',
+   $$with e as (insert into public.webhook_endpoints (tenant_id, url, events, secret_last4, created_by) values (%1$L, 'https://hooks.example.com/generic', array['lead.created'], 'wxyz', %5$L) returning id)
+     insert into public.webhook_deliveries (id, tenant_id, endpoint_id, event_id, event, subject_kind) select %2$L, %1$L, e.id, gen_random_uuid(), 'test.ping', 'test' from e$$,
+   'status = status', $$delete from public.webhook_deliveries where id = %2$L$$, false),
   -- a workspace's own switch per helper (migration 20261231170000): written only by agent_switch_set
   ('tenant_agent_switches',
    $$insert into public.tenant_agent_switches (id, tenant_id, agent_name, enabled, updated_by) values (%2$L, %1$L, 'research', false, %5$L) on conflict (tenant_id, agent_name) do update set id = excluded.id$$,
@@ -984,6 +992,10 @@ select t, r, s, i, u, d from (values
   ('developer_api_keys', 'sales', false, false, false, false), ('developer_api_keys', 'viewer', false, false, false, false),
   ('developer_sandbox_leads', 'owner', true, false, false, false), ('developer_sandbox_leads', 'admin', true, false, false, false),
   ('developer_sandbox_leads', 'sales', false, false, false, false), ('developer_sandbox_leads', 'viewer', false, false, false, false),
+  ('webhook_endpoints', 'owner', true, false, false, false), ('webhook_endpoints', 'admin', true, false, false, false),
+  ('webhook_endpoints', 'sales', false, false, false, false), ('webhook_endpoints', 'viewer', false, false, false, false),
+  ('webhook_deliveries', 'owner', true, false, false, false), ('webhook_deliveries', 'admin', true, false, false, false),
+  ('webhook_deliveries', 'sales', false, false, false, false), ('webhook_deliveries', 'viewer', false, false, false, false),
   ('tenant_agent_switches', 'owner', true, false, false, false), ('tenant_agent_switches', 'admin', true, false, false, false),
   ('tenant_agent_switches', 'sales', false, false, false, false), ('tenant_agent_switches', 'viewer', false, false, false, false),
   ('ai_team_standups', 'owner', true, false, false, false), ('ai_team_standups', 'admin', true, false, false, false),

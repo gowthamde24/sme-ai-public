@@ -101,7 +101,7 @@ do $$
 declare
   r record;
 begin
-  for r in select * from tests.tenant_table_registry where table_name in ('developer_api_keys', 'jobs_meta') order by table_name loop
+  for r in select * from tests.tenant_table_registry where table_name in ('developer_api_keys', 'jobs_meta', 'webhook_endpoints') order by table_name loop
     execute format(r.insert_sql, tests.tid('b'), gen_random_uuid(), tests.rid('b_company'), tests.rid('b_contact'), tests.pool_uid(3));
   end loop;
 end $$;
