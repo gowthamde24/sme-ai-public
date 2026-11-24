@@ -228,6 +228,8 @@ export const earlyAccess = (value: string | undefined = process.env.EARLY_ACCESS
  */
 export const chatQueueScreens = (value: string | undefined = process.env.CHAT_QUEUE_SCREENS): ScreenMode => screenMode(value);
 
+/** First run by business type (owner, 25 Nov 2026: the first-run steps asked for a saree whatever the business): a workspace made without a type is asked "What kind of business?" once, on Get started, and the answer is saved with PUT /pack (C1's first-run contract). `1` = on; unset = the page as it was (404 for such a workspace). */
+export const firstRunType = (value: string | undefined = process.env.FIRST_RUN_TYPE): boolean => value === "1";
 /** My assistant in the OPEN layout (owner chose it, 24 Nov 2026; mock "My assistant" in stack19-app-mock.html): two tabs, "To your customers" and "To you", the cards as plain hairline sections, the extra choices under "More choices". `1` = on; unset = the screen as it was. */
 export const myAssistantOpen = (value: string | undefined = process.env.MY_ASSISTANT_OPEN): boolean => value === "1";
 
@@ -242,3 +244,6 @@ export const firstDayOpen = (value: string | undefined = process.env.FIRST_DAY_O
 
 /** Chats > Messages we send as plain rows (owner, 25 Nov 2026; mock "Chats"): a plain name, the languages, one status in words (Not sent yet / Waiting for WhatsApp / Approved), ONE "Send all for approval". `1` = on; unset = the table with technical names. */
 export const templatesPlain = (value: string | undefined = process.env.TEMPLATES_PLAIN): boolean => value === "1";
+
+/** Filters without sentences (owner, 25 Nov 2026: 'Show [ ] calls from [ ]' is gone everywhere): a bar of labelled outlined dropdowns + the search box + a quiet 'N shown', no card around it, no 'More choices' box. Calls, Leads, Reports, Catalogue. `1` = on; unset = the sentence filters as they were. */
+export const filtersOpen = (value: string | undefined = process.env.FILTERS_OPEN): boolean => value === "1";

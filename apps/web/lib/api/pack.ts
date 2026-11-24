@@ -21,7 +21,7 @@ const bad = (what: string): never => {
 };
 
 const STATUSES: readonly PackStatus[] = ["draft", "preview", "published"];
-const SOURCES = ["signup", "default", "legacy", "operator"] as const;
+const SOURCES = ["signup", "default", "legacy", "operator", "owner"] as const;
 const CODE = /^[a-z][a-z0-9_]{1,30}$/;
 const LABEL_KEY = /^[a-z][a-z0-9_]*\.[a-z][a-z0-9_.]*$/;
 const LANGS = ["en", "te", "hi", "kn"] as const;
@@ -154,6 +154,15 @@ export async function getWorkspacePack(accessToken: string, tenantId: string): P
   const parsed = parseWorkspacePack(pack.value);
   if (modules.status === "fulfilled") return { ...parsed, modules: parseEnabledModules(modules.value) };
   return parsed;
+}
+
+/**
+ * `PUT /v1/tenants/{id}/pack {"pack": "<code>"}` (C1's contract docs/contracts/first-run.md; Owner, second factor): the owner chooses the business type of a workspace made without one. The answer
+ * is the pack as `GET /pack` gives it (its `source` is now `owner`). It ADDS the new type's fields and removes nothing; the same type again is a no-op.
+ */
+export async function setWorkspacePack(accessToken: string, tenantId: string, pack: string): Promise<WorkspacePack> {
+  if (!CODE.test(pack)) throw new ApiContractError("pack code");
+  return parseWorkspacePack(await apiRequest(`/v1/tenants/${encodeURIComponent(tenantId)}/pack`, accessToken, { method: "PUT", body: JSON.stringify({ pack }) }));
 }
 
 export function moduleOn(pack: Pick<WorkspacePack, "modules"> | null | undefined, module: string): boolean {

@@ -61,7 +61,7 @@ export function stepChecks(modules: readonly string[], leadDesk: readonly LeadDe
  * with a chosen business type (or moved by the operator) gets the checklist.
  */
 export function usesChecklist(pack: Pick<WorkspacePack, "source"> | null): boolean {
-  return pack !== null && (pack.source === "signup" || pack.source === "operator");
+  return pack !== null && (pack.source === "signup" || pack.source === "operator" || pack.source === "owner");
 }
 
 export async function readActivation(accessToken: string, tenantId: string, pack: Pick<WorkspacePack, "modules">, t: AppT, leadDesk: readonly LeadDeskStep[] = []): Promise<Activation> {

@@ -1,0 +1,2 @@
+/** One business-type tile (BOXED vs OPEN: tiles that differ and are compared are boxed): one border, light radius, no shadow, no tint; the chosen one has an ink border plus a 1px ring. The radio inside is real (screen-reader only). */
+export const TYPE_TILE = "relative flex min-h-24 cursor-pointer flex-col justify-center gap-0.5 rounded-xl border border-line bg-transparent p-4 has-[:checked]:border-ink has-[:checked]:shadow-[0_0_0_1px_var(--v2-ink)] has-[:focus-visible]:outline-2";

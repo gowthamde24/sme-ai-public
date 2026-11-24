@@ -2,6 +2,7 @@ import { Search } from "lucide-react";
 
 import { LEAD_CHIPS, type ChipCounts, type LeadChip } from "@/lib/leads-v6/chips";
 
+import { filtersOpen } from "@/lib/screens/flag";
 import { LinkSentence } from "../jobs/pages/LazyLinkSentence";
 import { EffectLine, pgCard } from "../jobs/pages/parts";
 import { btnQuiet } from "../ui";
@@ -23,9 +24,11 @@ export function LeadsFiltersSimple({ words, base, chip, q, counts, shown, chipHr
   const t = makeT(words);
   const num = (n: number) => n.toLocaleString("en-IN");
   const statuses = ["all", ...LEAD_CHIPS] as const;
+  const plain = filtersOpen();
   return (
-    <section data-part="leads-filters" data-simple="" className={`${pgCard} flex flex-col gap-3`}>
+    <section data-part="leads-filters" data-simple="" className={plain ? "flex flex-col gap-3" : `${pgCard} flex flex-col gap-3`}>
       <LinkSentence
+        plain={plain}
         line="leads"
         template={t("jobs.pg.leads.line")}
         choices={{
@@ -45,7 +48,13 @@ export function LeadsFiltersSimple({ words, base, chip, q, counts, shown, chipHr
           {t("lv6.search.go")}
         </button>
       </form>
-      <EffectLine part="leads-effect" text={q ? t("jobs.pg.leads.effect.q", { n: num(shown), q }) : t("jobs.pg.leads.effect", { n: num(shown) })} />
+      {plain ? (
+        <p data-part="leads-effect" className="m-0 text-[14px] text-muted">
+          {q ? t("jobs.pg.leads.effect.q", { n: num(shown), q }) : t("jobs.pg.leads.effect", { n: num(shown) })}
+        </p>
+      ) : (
+        <EffectLine part="leads-effect" text={q ? t("jobs.pg.leads.effect.q", { n: num(shown), q }) : t("jobs.pg.leads.effect", { n: num(shown) })} />
+      )}
     </section>
   );
 }

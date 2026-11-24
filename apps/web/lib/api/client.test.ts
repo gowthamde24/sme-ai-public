@@ -68,6 +68,17 @@ describe("api client", () => {
     await expect(fetchMe("t")).rejects.toBeInstanceOf(ApiAuthError);
   });
 
+  it("createTenant sends the business type only when one was chosen (first-run contract: POST /v1/tenants takes an optional pack)", async () => {
+    const detail = { id: "22222222-2222-4222-8222-222222222222", name: "Acme", slug: "acme-silks", role: "owner", created_at: "2026-11-25T10:00:00Z" };
+    const f = vi.fn(async () => new Response(JSON.stringify(detail), { status: 201, headers: { "content-type": "application/json" } }));
+    globalThis.fetch = f as unknown as typeof fetch;
+    await createTenant("t", "Acme", "acme-silks", "clinic").catch(() => null);
+    await createTenant("t", "Acme", "acme-silks").catch(() => null);
+    const bodies = (f.mock.calls as unknown as [string, RequestInit][]).map((c) => JSON.parse(String(c[1].body)));
+    expect(bodies[0]).toEqual({ name: "Acme", slug: "acme-silks", pack: "clinic" });
+    expect(bodies[1]).toEqual({ name: "Acme", slug: "acme-silks" });
+  });
+
   it("surfaces the API error code and status", async () => {
     globalThis.fetch = respond(409, {
       error: { code: "slug_unavailable", message: "taken" },
