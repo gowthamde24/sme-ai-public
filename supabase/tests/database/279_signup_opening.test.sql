@@ -12,7 +12,7 @@ end $$;
 -- A. closed by default; the switch is for system accounts only
 select is(pg_temp.at('a_owner', $q$select (public.signup_status() ->> 'open')$q$), 'false', 'A1: sign-up is closed until the operator opens it');
 select is(pg_temp.at('a_owner', $q$select public.signup_phone_start(encode(sha256(convert_to('p1', 'UTF8')), 'hex'), encode(sha256(convert_to('c1', 'UTF8')), 'hex'), null) ->> 'reason'$q$), 'closed', 'A2: no phone code while closed');
-select is(pg_temp.at('a_owner', $q$select public.ops_signup_set(true)::text$q$), 'ERR:42501', 'A3: a member cannot open it');
+select is(pg_temp.at('a_owner', $q$select public.ops_signup_set(true, null, null, null, null)::text$q$), 'ERR:42501', 'A3: a member cannot open it');
 select is(pg_temp.at('anon', $q$select public.signup_status()::text$q$), 'ERR:42501', 'A4: nor a stranger read the status');
 select is(pg_temp.at('a_owner', format($q$select public.signup_trial_claim(%L) ->> 'reason'$q$, tests.tid('a'))), 'closed', 'A5: no credit while closed');
 select is(signup.email_key('A.B+news@Gmail.com'), signup.email_key('ab@googlemail.com'), 'A6: Gmail dots, +tags and googlemail are one identity');
@@ -25,7 +25,9 @@ select is(pg_temp.at('a_owner', $q$select public.signup_consent_record('cookies'
 select is(pg_temp.at('a_owner', $q$select public.signup_status() ->> 'consent_done'$q$), 'false', 'B3: not done yet');
 select is(pg_temp.at('a_owner', $q$select public.signup_consent_record('terms', '2026-11')::text$q$), '{"ok": true}', 'B4: terms recorded');
 select is(pg_temp.at('a_owner', $q$select public.signup_consent_record('privacy', '2026-11')::text$q$), '{"ok": true}', 'B5: privacy recorded');
-select is(pg_temp.at('a_owner', $q$select public.signup_status() ->> 'consent_done'$q$), 'true', 'B6: both current versions recorded');
+select is(pg_temp.at('a_owner', $q$select public.signup_status() ->> 'consent_done'$q$), 'false', 'B5b: two of three is not done');
+select is(pg_temp.at('a_owner', $q$select public.signup_consent_record('aup', '2026-11')::text$q$), '{"ok": true}', 'B5c: the acceptable-use policy recorded');
+select is(pg_temp.at('a_owner', $q$select public.signup_status() ->> 'consent_done'$q$), 'true', 'B6: all three current versions recorded');
 select is(pg_temp.at('a_owner', format($q$select public.signup_trial_claim(%L) ->> 'reason'$q$, tests.tid('a'))), 'phone_not_verified', 'B7: no credit without a verified phone');
 
 -- C. the phone code: wrong tries are counted and kept, five is the end, the right code verifies
@@ -61,6 +63,7 @@ select is((select count(*) from signup.trial_identities where tenant_id = tests.
 select is(pg_temp.at('b_owner', $q$select signup.hit('x:0000000000000000', 1)::text$q$), 'ERR:42501', 'E0: the helpers are not callable by members');
 select is(pg_temp.at('b_owner', $q$select public.signup_consent_record('terms', '2026-11')::text$q$), '{"ok": true}', 'E1: b consents (terms)');
 select is(pg_temp.at('b_owner', $q$select public.signup_consent_record('privacy', '2026-11')::text$q$), '{"ok": true}', 'E2: (privacy)');
+select is(pg_temp.at('b_owner', $q$select public.signup_consent_record('aup', '2026-11')::text$q$), '{"ok": true}', 'E2b: (acceptable use)');
 select is(pg_temp.at('b_owner', $q$select public.signup_phone_start(encode(sha256(convert_to('p1', 'UTF8')), 'hex'), encode(sha256(convert_to('c9', 'UTF8')), 'hex'), encode(sha256(convert_to('ip2', 'UTF8')), 'hex'))::text$q$), '{"ok": false, "reason": "phone_taken"}', 'E3: a phone already proved by someone else is refused');
 select is(pg_temp.at('b_owner', $q$select (public.signup_phone_start(encode(sha256(convert_to('p2', 'UTF8')), 'hex'), encode(sha256(convert_to('c9', 'UTF8')), 'hex'), encode(sha256(convert_to('ip2', 'UTF8')), 'hex'))) ->> 'ok'$q$), 'true', 'E4: another phone starts');
 select is(pg_temp.at('b_owner', $q$select public.signup_phone_verify(encode(sha256(convert_to('c9', 'UTF8')), 'hex'))::text$q$), '{"ok": true}', 'E5: and verifies');

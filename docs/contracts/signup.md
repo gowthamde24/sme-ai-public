@@ -4,10 +4,10 @@ Off (404) unless the API has `SIGNUP_OPEN=true`. The database's own switch `sign
 All routes need a signed-in person (Supabase token). No response carries a phone number, an e-mail, an address or a code (except `debug_code` on a staging API with `SIGNUP_PHONE_SENDER=fake` and `SIGNUP_FAKE_CODE_ECHO=true`; the API refuses to start with the echo in production).
 
 ## GET /v1/signup/status
-`{ open, terms_version, privacy_version, email_confirmed, email_blocked, consent_done, phone_verified, trial_claimed }`. The screen shows the next missing step.
+`{ open, terms_version, privacy_version, aup_version, email_confirmed, email_blocked, consent_done, phone_verified, trial_claimed }`. The screen shows the next missing step.
 
-## POST /v1/signup/consent  `{ kind: "terms"|"privacy", version }`
-200 `{ok:true}`. 422 when the version is not the current one (so an old tick never counts). Record both kinds before the claim.
+## POST /v1/signup/consent  `{ kind: "terms"|"privacy"|"aup", version }`
+200 `{ok:true}`. 422 when the version is not the current one (so an old tick never counts). Record all three (terms, privacy notice, acceptable-use policy) before the claim; `status` carries the three current versions.
 
 ## POST /v1/signup/phone/start  `{ phone }`
 Indian numbers as typed ("98480 12345", "+91 98480-12345") or E.164. 200 `{ok:true, expires_in_s:600}`. A code (6 digits) is sent; it lives 10 minutes, 5 tries.

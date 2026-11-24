@@ -15,6 +15,7 @@ class StatusOut(_Strict):
     open: bool
     terms_version: str
     privacy_version: str
+    aup_version: str
     email_confirmed: bool
     email_blocked: bool
     consent_done: bool
@@ -23,7 +24,7 @@ class StatusOut(_Strict):
 
 
 class ConsentIn(_Strict):
-    kind: Literal["terms", "privacy"]
+    kind: Literal["terms", "privacy", "aup"]
     version: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9._-]{1,20}$")]
 
 

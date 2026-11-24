@@ -25,7 +25,7 @@ class FakeRepo:
         self.calls: list[tuple[str, tuple[Any, ...]]] = []
 
     def status(self, token: str) -> dict[str, Any]:
-        return {"open": True, "terms_version": "2026-11", "privacy_version": "2026-11", "email_confirmed": True, "email_blocked": False, "consent_done": False, "phone_verified": False, "trial_claimed": False}
+        return {"open": True, "terms_version": "2026-11", "privacy_version": "2026-11", "aup_version": "2026-11", "email_confirmed": True, "email_blocked": False, "consent_done": False, "phone_verified": False, "trial_claimed": False}
 
     def consent(self, token: str, kind: str, version: str) -> dict[str, Any]:
         self.calls.append(("consent", (kind, version)))
@@ -67,6 +67,7 @@ def test_status_and_consent() -> None:
     assert client.get(f"{URL}/status", headers=auth("a_owner")).json()["terms_version"] == "2026-11"
     assert client.post(f"{URL}/consent", json={"kind": "terms", "version": "2026-11"}, headers=auth("a_owner")).json() == {"ok": True}
     assert repo.calls == [("consent", ("terms", "2026-11"))]
+    assert client.post(f"{URL}/consent", json={"kind": "aup", "version": "2026-11"}, headers=auth("a_owner")).json() == {"ok": True}
     assert client.post(f"{URL}/consent", json={"kind": "cookies", "version": "2026-11"}, headers=auth("a_owner")).status_code == 422
     assert client.post(f"{URL}/consent", json={"kind": "terms", "version": "bad version!"}, headers=auth("a_owner")).status_code == 422
 
