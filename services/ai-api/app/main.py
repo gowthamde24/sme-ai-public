@@ -146,6 +146,7 @@ from app.jobs.detail_routes import router as job_detail_router
 from app.jobs.routes import ops_router as job_samples_ops_router
 from app.jobs.routes import router as jobs_router
 from app.jobs.routes import samples_router as job_samples_router
+from app.jobs.sell_routes import router as sell_router
 from app.jobs.trust_routes import dnc_router as do_not_call_router
 from app.jobs.trust_routes import faq_router as job_faq_router
 from app.jobs.wiring import build_jobs
@@ -204,7 +205,7 @@ from app.ownvoice import repository as own_voice_repo
 from app.ownvoice.repository import PostgrestOwnVoiceRepository
 from app.ownvoice.routes import router as own_voice_router
 from app.ownvoice.service import OwnVoiceService
-from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError
+from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError, PackUnavailableError
 from app.packs.providers import providers_from_settings
 from app.packs.registry import PackRegistry, default_directory
 from app.packs.repository import PostgrestPacksRepository
@@ -262,6 +263,7 @@ from app.telephony.plivo_routes import router as plivo_router
 from app.telephony.repository import CallStateError, PostgrestCallsRepository
 from app.telephony.routes import router as calls_router
 from app.telephony.service import CallsService
+from app.telephony.voicelink_routes import router as voicelink_router
 from app.telephony.wiring import (
     build_named_dialer,
     build_phone_inbound,
@@ -633,6 +635,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     # Packs and custom fields (job CK). Fixed sentences: nothing from the data layer.
     ModuleOffError: ApiError(
         403, "module_off", "That is not part of this kind of business, so it is switched off."
+    ),
+    PackUnavailableError: ApiError(
+        422,
+        "validation_error",
+        "That kind of business is not available.",
+        extra={"fields": ["pack"]},
     ),
     ExampleAlreadyLoadedError: ApiError(
         409, "example_data_loaded", "The example data is already loaded."
@@ -1547,6 +1555,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(jobs_router)
     app.include_router(do_not_call_router)
     app.include_router(job_faq_router)
+    app.include_router(sell_router)
     # last of the /jobs routers: `/jobs/{job_id}` must not hide a word path
     app.include_router(job_detail_router)
     app.include_router(job_samples_router)
@@ -1560,6 +1569,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(assistant_tools_router)
     app.include_router(phone_inbound_router)
     app.include_router(plivo_router)
+    app.include_router(voicelink_router)
     app.include_router(voice_sample_router)
     app.include_router(pronunciation_router)
     app.include_router(activity_router)

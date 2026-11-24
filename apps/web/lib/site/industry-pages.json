@@ -1,0 +1,179 @@
+{
+ "pricingLine": "Plans start at ₹499 a month, calls are ₹5 a minute and billed per 30 seconds, and a call nobody answers is free. Free early access until paid plans start. Prices exclude 18% GST.",
+ "industries": [
+  {
+   "slug": "textiles",
+   "pack": "textiles",
+   "label": "For textile and saree shops",
+   "headline": "Answer every saree enquiry, in your customer's language.",
+   "sub": "Your assistant picks up calls and WhatsApp when you are busy with a customer, tells people what you have and what it costs, and puts who wants to visit on your Today screen.",
+   "sections": [
+    {
+     "title": "When you are with a customer",
+     "text": "It answers the phone and WhatsApp in Telugu, Hindi, Kannada or English, so the next person asking about a Kanchi or a Banarasi is not left waiting."
+    },
+    {
+     "title": "It uses your catalogue",
+     "text": "What you sell, the colours and the prices come from the list you keep in Stack19, so what customers hear is what you put there."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Every call becomes a short summary on Today. Offers and quotes wait for your OK before they go to a customer."
+    }
+   ],
+   "metaTitle": "AI phone assistant for textile and saree shops | Stack19",
+   "metaDescription": "Answers saree-shop calls and WhatsApp in Telugu, Hindi, Kannada and English, shares what you sell, and shows you who wants to visit.",
+   "call": [
+    "Do you have Kanchi pattu sarees under ten thousand?",
+    "Yes, we do! A few lovely ones in maroon and green. Want to come and see them?",
+    "Is the shop open on Sunday?",
+    "Sunday is open, 10 to 8. I'll keep a few aside for you. What time suits you?"
+   ]
+  },
+  {
+   "slug": "clinics",
+   "pack": "clinic",
+   "label": "For clinics",
+   "headline": "A calm phone assistant for your clinic.",
+   "sub": "It answers when the front desk is busy, takes the name and what the patient is asking about, and asks when they would like to come in.",
+   "sections": [
+    {
+     "title": "When the desk is busy",
+     "text": "Calls and WhatsApp messages are answered in Telugu, Hindi, Kannada or English, so patients are not left on hold or sent to voicemail."
+    },
+    {
+     "title": "It writes down the details",
+     "text": "Name, number and what the patient says they want to book or ask about are written down after every call, in one place."
+    },
+    {
+     "title": "Your staff decide",
+     "text": "The summaries land on Today and your staff follow up. You decide what goes out to a patient."
+    }
+   ],
+   "metaTitle": "AI phone assistant for clinics | Stack19",
+   "metaDescription": "Answers clinic calls and WhatsApp in Telugu, Hindi, Kannada and English, writes down what each patient wants, and leaves the decisions to your staff.",
+   "call": [
+    "Can I get an appointment this evening?",
+    "Yes, I have a slot at 5:15 or 6. Which one is better for you?",
+    "5:15, please.",
+    "Done! 5:15 this evening. I'll send the clinic address on WhatsApp."
+   ]
+  },
+  {
+   "slug": "coaching",
+   "pack": "education",
+   "label": "For coaching centres",
+   "headline": "Never miss an admission enquiry.",
+   "sub": "Parents and students call while you are teaching. Your assistant answers, shares what you have told it about batches and fees, and calls new enquiries back.",
+   "sections": [
+    {
+     "title": "While you are teaching",
+     "text": "It picks up calls and WhatsApp in four languages and notes who is asking about which course."
+    },
+    {
+     "title": "It calls new enquiries back",
+     "text": "A person who left their number gets a call soon after, not the next day, if you switch that job on and they agreed to be contacted."
+    },
+    {
+     "title": "You see every one",
+     "text": "Each enquiry is on your Today screen with a short summary, so you know who to talk to first."
+    }
+   ],
+   "metaTitle": "AI phone assistant for coaching centres | Stack19",
+   "metaDescription": "Answers admission calls and WhatsApp in Telugu, Hindi, Kannada and English and calls new enquiries back, with a summary of each on your screen.",
+   "call": [
+    "What are the Class 10 batch timings?",
+    "We have a morning batch at 7 and an evening batch at 5. Which one is easier for your child?",
+    "Can my son try one class first?",
+    "Of course! We have a free demo class on Saturday. Shall I put his name down?"
+   ]
+  },
+  {
+   "slug": "real-estate",
+   "pack": "real_estate",
+   "label": "For real estate",
+   "headline": "Answer property enquiries while you are on site.",
+   "sub": "Buyers ask several agents. Your assistant answers the call you cannot take, asks what they are looking for, and tells you who to ring back.",
+   "sections": [
+    {
+     "title": "When you are on a site visit",
+     "text": "Calls and WhatsApp are answered in Telugu, Hindi, Kannada or English, so a buyer does not move on to the next agent."
+    },
+    {
+     "title": "It writes down the basics",
+     "text": "What the buyer says about the kind of property, the area and the budget is written down after each call, so you can start the conversation where it stopped."
+    },
+    {
+     "title": "You decide who to call",
+     "text": "You see each enquiry on Today with a short summary and decide who to call back first."
+    }
+   ],
+   "metaTitle": "AI phone assistant for real estate | Stack19",
+   "metaDescription": "Answers property enquiries in Telugu, Hindi, Kannada and English while you are on site, and notes what each buyer is looking for.",
+   "call": [
+    "Can I see the 2BHK flat this Saturday?",
+    "Yes, of course! Saturday morning is free. Would 11 o'clock be good?",
+    "11 is fine. Where do we meet?",
+    "At the project gate. I'll send the location on WhatsApp right now."
+   ]
+  },
+  {
+   "slug": "car-dealers",
+   "pack": "auto_dealer",
+   "label": "For car dealers",
+   "headline": "Answer every car enquiry, even on a busy Saturday.",
+   "sub": "The showroom phone rings while everyone is with a customer. Your assistant answers, asks which car and when they would like to come, and shows you who is serious.",
+   "sections": [
+    {
+     "title": "When the showroom is full",
+     "text": "It answers calls and WhatsApp in Telugu, Hindi, Kannada or English, so no enquiry waits for a free salesperson."
+    },
+    {
+     "title": "It writes down the details",
+     "text": "Which car the person asks about and when they could visit are written down after each call."
+    },
+    {
+     "title": "Your team follows up",
+     "text": "Summaries land on Today and your team follows up. Prices and discounts are for your salespeople to talk about."
+    }
+   ],
+   "metaTitle": "AI phone assistant for car dealers | Stack19",
+   "metaDescription": "Answers showroom calls and WhatsApp in Telugu, Hindi, Kannada and English and writes down which car and when each person can visit.",
+   "call": [
+    "I'd like to test drive the hatchback this week.",
+    "Great choice! I have Thursday or Friday afternoon. Which one is better?",
+    "Friday at 3.",
+    "Friday at 3 it is. I'll send the showroom location on WhatsApp."
+   ]
+  },
+  {
+   "slug": "wholesale",
+   "pack": "construction_materials",
+   "label": "For wholesale and trading",
+   "headline": "Answer the buyer's call, every time.",
+   "sub": "Regular buyers phone with quick questions. Your assistant answers, shares the price list you have given it, and tells you who asked for a quote.",
+   "sections": [
+    {
+     "title": "When you are loading or away",
+     "text": "Calls and WhatsApp are answered in Telugu, Hindi, Kannada or English, so a repeat buyer is not left without an answer."
+    },
+    {
+     "title": "It uses your price list",
+     "text": "Items and prices come from the list you keep in Stack19, so what buyers hear is what you put there."
+    },
+    {
+     "title": "You approve the quotes",
+     "text": "A quote waits for your OK. Every call is a short summary on Today, so you know who to ring."
+    }
+   ],
+   "metaTitle": "AI phone assistant for wholesale and trading | Stack19",
+   "metaDescription": "Answers buyer calls and WhatsApp in Telugu, Hindi, Kannada and English, shares your price list and shows you who asked for a quote.",
+   "call": [
+    "Do you have 80 mm paver blocks in grey?",
+    "Yes, we have them in stock. Shall I send the price list on WhatsApp?",
+    "Can you deliver to Kukatpally?",
+    "We can! Tell me the day you want it, and I'll check the truck for you."
+   ]
+  }
+ ]
+}

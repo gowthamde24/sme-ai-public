@@ -123,16 +123,36 @@ def _whole_rupees(amount: Decimal) -> int:
     return int(amount.quantize(Decimal(1), ROUND_HALF_UP))
 
 
-def alert_detail(account: Account, limit: Limit) -> str:
-    """The sentence of the "Needs you" item: what Plivo said, what it comes to, the limit, auto-recharge, what to do. No number of a person, no key."""
+def _where(brand: str, kind: str) -> str:
+    """Where to top up, in the words each provider's texts always used (Plivo: "the Plivo console" / "at plivo.com"; the owner reads these)."""
+    if brand == "Plivo":
+        return "in the Plivo console" if kind == "console" else "at plivo.com"
+    return f"in the {brand} portal"
+
+
+def cover_sentence(balance_inr: Decimal, calls_7d_paise: int | None) -> str:
+    """How long the wallet lasts at the last 7 days' call use (our own cost ledger: calls only, the monthly number and channel fees are on top). Empty when the database did not say."""
+    if calls_7d_paise is None or calls_7d_paise < 0:
+        return ""
+    if calls_7d_paise == 0:
+        return " No calls were made in the last 7 days, so the days left cannot be worked out."
+    per_day = Decimal(calls_7d_paise) / Decimal(700)   # paise -> rupees, over 7 days
+    if balance_inr <= 0:
+        return f" Calls used about Rs {_whole_rupees(per_day)} a day over the last 7 days: no days of cover are left."
+    days = int((balance_inr / per_day).quantize(Decimal(1), ROUND_HALF_UP))
+    return f" At the last 7 days' call use (about Rs {_whole_rupees(per_day)} a day) the balance covers about {days} more day{'' if days == 1 else 's'} of calls; the monthly number and channel fees come on top."
+
+
+def alert_detail(account: Account, limit: Limit, brand: str = "Plivo", calls_7d_paise: int | None = None) -> str:
+    """The sentence of the "Needs you" item: what Plivo said, what it comes to, the limit, auto-recharge, the days of cover left at the last 7 days' use, what to do. No number of a person, no key."""
     rupees = _whole_rupees(limit.rupees(account.credits))
-    seen = f"Plivo reports {account.credits.normalize():f} {limit.currency}" + ("" if limit.currency == "INR" else f", about Rs {rupees} at Rs {limit.inr_per_unit.normalize():f} to the {limit.currency}") + "."
-    return f"{seen} The limit is Rs {_whole_rupees(limit.min_inr)}. Auto-recharge is {_recharge_word(account.auto_recharge)}. Top up in the Plivo console so calls keep working."
+    seen = f"{brand} reports {account.credits.normalize():f} {limit.currency}" + ("" if limit.currency == "INR" else f", about Rs {rupees} at Rs {limit.inr_per_unit.normalize():f} to the {limit.currency}") + "."
+    return f"{seen} The limit is Rs {_whole_rupees(limit.min_inr)}. Auto-recharge is {_recharge_word(account.auto_recharge)}.{cover_sentence(limit.rupees(account.credits), calls_7d_paise)} Top up {_where(brand, 'console')} so calls keep working."
 
 
-def whatsapp_text(balance_inr: Decimal, limit_inr: Decimal, recharge: bool | None) -> str:
+def whatsapp_text(balance_inr: Decimal, limit_inr: Decimal, recharge: bool | None, brand: str = "Plivo") -> str:
     """The one line sent to the owner (one template variable: no new line, short)."""
-    return f"Plivo balance is low: about Rs {_whole_rupees(balance_inr)} left (limit Rs {_whole_rupees(limit_inr)}). Auto-recharge: {_recharge_word(recharge)}. Top up at plivo.com so calls keep working."
+    return f"{brand} balance is low: about Rs {_whole_rupees(balance_inr)} left (limit Rs {_whole_rupees(limit_inr)}). Auto-recharge: {_recharge_word(recharge)}. Top up {_where(brand, 'text')} so calls keep working."
 
 
 class AdapterOwnerNotice:
@@ -170,8 +190,8 @@ class PassResult:
 
 
 class PlivoBalanceCheck:
-    def __init__(self, reader: AccountReader, rpc: BalanceRpc, limit: Limit, notice: OwnerNotice | None = None, *, clock: Callable[[], datetime] | None = None) -> None:
-        self._reader, self._rpc, self._limit, self._notice = reader, rpc, limit, notice
+    def __init__(self, reader: AccountReader, rpc: BalanceRpc, limit: Limit, notice: OwnerNotice | None = None, *, clock: Callable[[], datetime] | None = None, brand: str = "Plivo") -> None:
+        self._reader, self._rpc, self._limit, self._notice, self._brand = reader, rpc, limit, notice, brand
         self._clock = clock or (lambda: datetime.now(INDIA))
 
     def run(self, token: str) -> PassResult:
@@ -179,12 +199,13 @@ class PlivoBalanceCheck:
         state = self._rpc.object(token, "ops_plivo_balance_due", {})
         read = "idle"
         if state.get("read_due") is True:
-            state = self._read(token)
+            spent = state.get("calls_7d_paise")
+            state = self._read(token, spent if isinstance(spent, int) and not isinstance(spent, bool) else None)
             read = str(state.get("state") or "failed")
         told = state.get("whatsapp_due") is True and self._tell_owner(token, state)
         return PassResult(read, told)
 
-    def _read(self, token: str) -> dict[str, Any]:
+    def _read(self, token: str, calls_7d_paise: int | None = None) -> dict[str, Any]:
         try:
             account = parse_account(self._reader.account_details())
         except PlivoError as exc:
@@ -193,7 +214,7 @@ class PlivoBalanceCheck:
         low = self._limit.is_low(account.credits)
         args: dict[str, Any] = {"p_state": "low" if low else "ok", "p_balance_inr": float(self._limit.rupees(account.credits)), "p_auto_recharge": account.auto_recharge}
         if low:
-            args["p_detail"] = alert_detail(account, self._limit)
+            args["p_detail"] = alert_detail(account, self._limit, self._brand, calls_7d_paise)
         logger.info("plivo balance: read, state=%s auto_recharge=%s", args["p_state"], _recharge_word(account.auto_recharge))
         return self._rpc.object(token, "ops_plivo_balance_report", args)
 
@@ -205,7 +226,7 @@ class PlivoBalanceCheck:
         except (KeyError, InvalidOperation):
             return False
         recharge = state.get("auto_recharge")
-        text = whatsapp_text(balance, self._limit.min_inr, recharge if isinstance(recharge, bool) else None)
+        text = whatsapp_text(balance, self._limit.min_inr, recharge if isinstance(recharge, bool) else None, self._brand)
         if not self._notice.send(text, self._clock().astimezone(INDIA).date().isoformat()):
             logger.warning("plivo balance: the WhatsApp message to the owner did not go; it is tried again on the next tick")
             return False
@@ -213,14 +234,27 @@ class PlivoBalanceCheck:
         return True
 
 
+def voicelink_in_use(settings: Settings) -> bool:
+    """VoiceLink is the telephony provider here: TELEPHONY_PROVIDER says so, or it is unset and VoiceLink's login is given and Plivo's is not."""
+    has_vl = bool(settings.voicelink_username and settings.voicelink_username.get_secret_value() and settings.voicelink_password and settings.voicelink_password.get_secret_value())
+    choice = (settings.telephony_provider or "").strip().lower()
+    return choice == "voicelink" or (choice == "" and has_vl and not (settings.plivo_auth_id and settings.plivo_auth_token))
+
+
 def build_plivo_balance(settings: Settings, rest_url: str, anon_key: str, adapter: ChannelAdapter, *, reader: AccountReader | None = None, rpc: BalanceRpc | None = None) -> PlivoBalanceCheck | None:
     """The check for the worker, or None while PLIVO_BALANCE_CHECK is off (the default). A switch that is on but cannot work stops the worker at start (ConfigurationError) rather than failing quietly every day."""
     if not settings.plivo_balance_check:
         return None
     limit = Limit.build(settings.plivo_balance_min_inr, settings.plivo_balance_currency, settings.plivo_balance_inr_per_unit)
+    brand = "Plivo"
+    if reader is None and voicelink_in_use(settings):   # 24 Nov 2026 (owner): VoiceLink is the only telephony provider; the same daily check reads its wallet (the PLIVO_BALANCE_* settings keep their names: limit, currency, who is told)
+        from app.telephony.voicelink_api import VoicelinkApi, VoicelinkBalanceReader
+
+        reader = VoicelinkBalanceReader(VoicelinkApi(settings.voicelink_username.get_secret_value() if settings.voicelink_username else "", settings.voicelink_password.get_secret_value() if settings.voicelink_password else "", base_url=settings.voicelink_api_base), currency=limit.currency)
+        brand = "VoiceLink"
     if reader is None:
         if not settings.plivo_auth_id or settings.plivo_auth_token is None or not settings.plivo_auth_token.get_secret_value():
-            raise ConfigurationError("PLIVO_BALANCE_CHECK needs PLIVO_AUTH_ID and PLIVO_AUTH_TOKEN")
+            raise ConfigurationError("PLIVO_BALANCE_CHECK needs PLIVO_AUTH_ID and PLIVO_AUTH_TOKEN (or VOICELINK_USERNAME and VOICELINK_PASSWORD)")
         try:
             reader = PlivoApi(settings.plivo_auth_id, settings.plivo_auth_token.get_secret_value())
         except ValueError as exc:
@@ -244,7 +278,7 @@ def build_plivo_balance(settings: Settings, rest_url: str, anon_key: str, adapte
             logger.warning("plivo balance: the worker's channel is not WhatsApp (OUTBOX_ADAPTER), so only the Needs-you item is raised, no message goes to the owner")
     else:
         logger.warning("plivo balance: PLIVO_BALANCE_ALERT_TO is not set, so only the Needs-you item is raised, no message goes to the owner")
-    return PlivoBalanceCheck(reader, rpc or RpcClient(rest_url, anon_key), limit, notice)
+    return PlivoBalanceCheck(reader, rpc or RpcClient(rest_url, anon_key), limit, notice, brand=brand)
 
 
-__all__ = ["Account", "AdapterOwnerNotice", "Limit", "PassResult", "PlivoBalanceCheck", "alert_detail", "build_plivo_balance", "parse_account", "whatsapp_text"]
+__all__ = ["voicelink_in_use", "Account", "AdapterOwnerNotice", "Limit", "PassResult", "PlivoBalanceCheck", "alert_detail", "build_plivo_balance", "parse_account", "whatsapp_text"]

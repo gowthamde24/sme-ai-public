@@ -41,11 +41,14 @@ describe("Developer API keys card (test mode)", () => {
     expect(document.body.textContent).not.toContain(SECRET);
   });
 
-  it("puts the revoked keys after the active ones under their own heading, even when the API lists them first", () => {
+  it("shows the active keys as the list and puts the revoked ones behind one plain line, Revoked (n), even when the API lists them first", () => {
     show(actions(), [K2, K1]);
     const keys = [...document.querySelectorAll("[data-key]")].map((e) => e.getAttribute("data-key"));
     expect(keys).toEqual([K1.id, K2.id]);
-    expect(screen.getByText("Revoked keys")).toBeInTheDocument();
+    const more = document.querySelector('details[data-part="revoked-keys"]') as HTMLElement;
+    expect(more.querySelector("summary")).toHaveTextContent("Revoked (1)");
+    expect(more.querySelector(`[data-key="${K2.id}"]`)).not.toBeNull();
+    expect(more.querySelector(`[data-key="${K1.id}"]`)).toBeNull();
   });
 
   it("makes a key: sends the name, the scopes and the addresses (test only), then shows the secret ONCE with the warning and a copy button; 'I have saved it' removes it", async () => {

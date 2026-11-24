@@ -16,7 +16,7 @@ import pytest
 from app.config import Settings
 from app.customfields.errors import CustomFieldLimitError, CustomValueInvalidError
 from app.customfields.repository import PostgrestCustomFieldsRepository
-from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError
+from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError, PackUnavailableError
 from app.packs.models import AuthProvidersOut
 from app.packs.providers import providers_from_settings
 from app.packs.registry import PackRegistry, default_directory
@@ -522,3 +522,72 @@ def test_reset_removes_and_loads_again_in_one_call_owner_and_admin_only() -> Non
     body = r.json()
     assert body["removed"]["other"] == 4 and body["removed"]["companies"] == 2 and body["kept"]["contacts"] == 1 and body["status"]["loaded"] is True
     assert client.post(f"/v1/tenants/{A}/example-data/remove", headers=auth("a_owner")).json()["removed"]["other"] == 0
+
+
+# ---- first run by business type (docs/contracts/first-run.md, 25 Nov 2026)
+def test_the_owner_changes_the_pack_with_the_second_factor_and_a_member_reads_the_first_run_facts() -> None:
+    packs = FakePacks()
+    calls: list[tuple[str, str]] = []
+
+    def set_pack(token: str, tenant_id: uuid.UUID, pack: str) -> dict[str, Any]:
+        calls.append(("set", pack))
+        return packs.workspace_pack(token, tenant_id)
+
+    packs.workspace_pack_set = set_pack  # type: ignore[attr-defined]
+    packs.first_run_facts = lambda token, tenant_id: {"pack_code": "textiles", "source": "default", "typed": False, "items_count": 2}  # type: ignore[attr-defined]
+    client, _ = make_client(packs=packs)
+    base = f"/v1/tenants/{TENANT_A.id}"
+    facts = client.get(f"{base}/first-run", headers=auth("a_viewer"))
+    assert facts.status_code == 200 and facts.json() == {"pack": {"code": "textiles", "source": "default", "typed": False}, "needs_type": True, "items": {"count": 2}}
+    assert client.put(f"{base}/pack", json={"pack": "clinic"}, headers=auth("a_owner", aal="aal2")).status_code == 200 and calls == [("set", "clinic")]
+    assert client.put(f"{base}/pack", json={"pack": "other"}, headers=auth("a_owner", aal="aal2")).status_code == 200 and calls[-1] == ("set", "general_business"), "the public word other is the generic pack"
+    assert client.put(f"{base}/pack", json={"pack": "Bad Code"}, headers=auth("a_owner", aal="aal2")).status_code == 422
+    assert client.put(f"{base}/pack", json={"pack": "clinic", "x": 1}, headers=auth("a_owner", aal="aal2")).status_code == 422, "an unknown field is refused"
+    assert client.put(f"{base}/pack", json={"pack": "clinic"}, headers=auth("a_owner", aal="aal1")).status_code == 403, "the Owner needs the second factor"
+    for who in ("a_admin", "a_viewer", "a_sales"):
+        assert client.put(f"{base}/pack", json={"pack": "clinic"}, headers=auth(who, aal="aal2")).status_code == 403, who
+    assert len(calls) == 2
+
+
+def test_creating_a_workspace_can_name_its_business_type_and_a_wrong_one_makes_nothing() -> None:
+    packs = FakePacks()
+    set_calls: list[tuple[str, str]] = []
+
+    def set_pack(token: str, tenant_id: uuid.UUID, pack: str) -> dict[str, Any]:
+        set_calls.append(("set", pack))
+        return packs.workspace_pack(token, tenant_id)
+
+    packs.workspace_pack_set = set_pack  # type: ignore[attr-defined]
+    client, repo = make_client(packs=packs, pack_registry=PackRegistry(PACKS))
+    h = auth("a_owner")
+    base = "/v1/tenants"
+    plain = client.post(base, json={"name": "Plain Co", "slug": "plain-co"}, headers=h)
+    assert plain.status_code in (200, 201) and set_calls == [], "no pack named: today's default, nothing is set"
+    typed = client.post(base, json={"name": "Clinic Co", "slug": "clinic-co", "pack": "clinic"}, headers=h)
+    assert typed.status_code in (200, 201) and set_calls == [("set", "clinic")]
+    other = client.post(base, json={"name": "Other Co", "slug": "other-co", "pack": "other"}, headers=h)
+    assert other.status_code in (200, 201) and set_calls[-1] == ("set", "general_business"), "the public word other is the generic pack"
+    made = len(repo.created)
+    for bad in ("not_a_pack", "Bad Code", "x"):
+        r = client.post(base, json={"name": "Wrong Co", "slug": "wrong-co", "pack": bad}, headers=h)
+        assert r.status_code == 422, bad
+    assert len(repo.created) == made and len(set_calls) == 2, "a wrong code makes no workspace and sets nothing"
+
+
+def test_an_unknown_pack_from_the_database_is_a_422_on_the_pack_field_not_a_502() -> None:
+    """Found by the staging end-to-end run, 25 Nov 2026: the database answers SM702 for a code that is no pack; unmapped, the API said 502."""
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(400, json={"code": "SM702", "message": "unavailable"})
+
+    repo = PostgrestPacksRepository("http://db.test/rest/v1", "anon-key", client=_mock(handler))
+    with pytest.raises(PackUnavailableError):
+        repo.workspace_pack_set("token", TENANT_A.id, "no_such_pack")
+    packs = FakePacks()
+
+    def refuse(token: str, tenant_id: uuid.UUID, pack: str) -> dict[str, Any]:
+        raise PackUnavailableError("SM702")
+
+    packs.workspace_pack_set = refuse  # type: ignore[attr-defined]
+    client, _ = make_client(packs=packs)
+    r = client.put(f"/v1/tenants/{TENANT_A.id}/pack", json={"pack": "no_such_pack"}, headers=auth("a_owner"))
+    assert r.status_code == 422 and r.json()["error"]["code"] == "validation_error" and r.json()["error"]["fields"] == ["pack"], r.text

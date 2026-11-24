@@ -79,6 +79,7 @@ def test_every_route_without_a_sign_in_has_a_rate_rule_and_is_on_the_known_list(
         "/v1/webhooks/whatsapp", "/v1/webhooks/razorpay", "/v1/webhooks/razorpay-billing", "/v1/webhooks/cashfree", "/v1/webhooks/fake-payments",  # jobs BR, BZ: signed or secret-path webhooks
         "/v1/webhooks/exotel/{token}/missed-call", "/v1/webhooks/exotel/{token}/call-status",
         "/api/v1/leads", "/api/v1/leads/{lead_id}", "/api/v1/usage",  # ADR 0121: the developer API (a key is the credential, checked by the database; rate rule developer_api)
+        "/v1/telephony/voicelink/webhook/{token}", "/v1/telephony/voicelink/inbound_call/{token}",  # VoiceLink (26 Nov 2026): its call events and its dynamic inbound routing; the secret token is in the path (rate rule voicelink_telephony)
         "/v1/telephony/plivo/answer", "/v1/telephony/plivo/outbound-answer", "/v1/telephony/plivo/hangup", "/v1/telephony/plivo/stream-status",  # job 3 phase A: Plivo's signed requests (rate rule plivo_telephony)
         "/v1/integrations/google-calendar/callback", "/v1/integrations/google-calendar/push",  # appointment booking slice 4: Google's browser redirect (signed one-time state) and push notifications (channel token)
         "/v1/telephony/exotel/stream-url",  # job phone-calls part 5: the Voicebot applet asks it once per call for the call's own stream address (rate limited; the stream checks its token and Exotel's own record)

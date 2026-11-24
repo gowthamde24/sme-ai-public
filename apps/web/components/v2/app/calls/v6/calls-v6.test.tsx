@@ -420,3 +420,15 @@ describe("callsHref", () => {
 });
 
 void waitFor;
+
+describe("Calls as a list (CALLS_OPEN)", () => {
+  it("one hairline row per call: who, a sentence, when; no column headings, no cost column", () => {
+    vi.stubEnv("CALLS_OPEN", "1");
+    const { container } = render(<CallsTable words={W} base={BASE} query={parseCallsQuery({})} items={ROWS} selectedId={null} when={when} />);
+    vi.unstubAllEnvs();
+    expect(container.querySelector("table")).toBeNull();
+    expect(container.querySelectorAll("li[data-call]")).toHaveLength(ROWS.length);
+    expect(screen.queryByText("Cost")).toBeNull();
+    expect(container.querySelector("[data-open]")).not.toBeNull();
+  });
+});

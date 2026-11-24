@@ -156,6 +156,36 @@ export const LAYOUT = `(() => { ${HELPERS}
   return { viewportW: w, viewportH: h, docScrollWidth: doc, offenders: offenders.slice(0, 6), h1Bottom: first(document.querySelector('h1')), ctaBottom: first(document.querySelector('main a[href="/signup"]')), pageKind: (document.querySelector('[data-page]') || { getAttribute: () => null }).getAttribute('data-page'), cardBottom: first(document.querySelector('#shop h2')), mode: flow ? flow.getAttribute('data-mode') : 'page' };
 })()`;
 
+/** Two visible pieces of text of the same section whose boxes cross (planner, 24 Nov 2026: the live landing at 390 px had the clock chip on the source chip, a label on a dashed box, the phone peeking between cards).
+ *  Own text only (a Range over the element's own text nodes), the header and the cookie bar are left out, aria-hidden pictures (the phone mock, decorations) are left out, an ancestor and its
+ *  descendant never count, a box fully transparent (opacity under .05, itself or an ancestor) is not visible. A touch of 2 px either way is a border, not an overlap. */
+export const OVERLAP = `(() => { ${HELPERS}
+  const skip = (e) => e.closest('header, .hdr, [data-part="cookie-bar"], [role="dialog"], [aria-hidden="true"], svg, script, style, noscript, [data-cookie], .sr-only, details:not([open]) > :not(summary)');
+  const faded = (e) => { for (let p = e; p && p !== document.body; p = p.parentElement) { if (parseFloat(getComputedStyle(p).opacity) < 0.05) return true; } return false; };
+  const clip = (e) => { const cs = getComputedStyle(e); return cs.overflow === 'hidden' || cs.overflowY === 'hidden' || cs.webkitLineClamp !== 'none'; };
+  const boxes = [];
+  for (const e of document.querySelectorAll('main *')) {
+    if (skip(e) || !vis(e)) continue;
+    const own = [...e.childNodes].filter((n) => n.nodeType === 3 && n.textContent.trim());
+    if (own.length === 0 || faded(e)) continue;
+    // one rectangle per line of text (a wrapped inline element is not one big box); a clipped element (line clamp, overflow hidden) is its own box
+    let rects;
+    if (clip(e)) { const r = e.getBoundingClientRect(); rects = [r]; }
+    else { const range = document.createRange(); range.setStartBefore(own[0]); range.setEndAfter(own[own.length - 1]); rects = [...range.getClientRects()]; }
+    rects = rects.filter((r) => r.width >= 4 && r.height >= 4);
+    if (rects.length === 0) continue;
+    boxes.push({ e, rects, section: e.closest('section') || document.body });
+  }
+  const cross = (r1, r2) => Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left) > 2 && Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top) > 2;
+  const out = [];
+  for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
+    const a = boxes[i], b = boxes[j];
+    if (a.section !== b.section || a.e.contains(b.e) || b.e.contains(a.e)) continue;
+    if (a.rects.some((r1) => b.rects.some((r2) => cross(r1, r2)))) out.push(label(a.e) + '  x  ' + label(b.e));
+  }
+  return out.slice(0, 8);
+})()`;
+
 /** One tab stop: what has focus and how it looks. */
 export const FOCUS_STATE = `(() => { ${HELPERS}
   const e = document.activeElement;

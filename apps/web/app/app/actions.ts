@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, createTenant } from "@/lib/api/client";
 import { requireUser } from "@/lib/auth/session";
+import { firstRunType } from "@/lib/screens/flag";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { serverT } from "@/i18n/server-t";
 
@@ -26,6 +27,9 @@ export async function createTenantAction(
 
   const name = field(formData, "name");
   const slug = field(formData, "slug");
+  // FIRST_RUN_TYPE: the business type chosen on the form (a code from GET /v1/packs); anything else is left out and the API decides
+  const packField = field(formData, "pack");
+  const pack = firstRunType() && /^[a-z][a-z0-9_]{1,30}$/.test(packField) ? packField : undefined;
   if (name.length < 1 || name.length > 120)
     return { error: t("acct.enter_a_name_up_to_120") };
   if (!SLUG.test(slug)) {
@@ -37,7 +41,7 @@ export async function createTenantAction(
 
   let failure: TenantFormState;
   try {
-    await createTenant(user.accessToken, name, slug);
+    await (pack ? createTenant(user.accessToken, name, slug, pack) : createTenant(user.accessToken, name, slug));
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (

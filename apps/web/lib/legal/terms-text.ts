@@ -51,7 +51,7 @@ export const TERMS: LegalText = {
             "Our service providers handle it only for us. The list is in the Privacy notice.",
             "It is kept in India (Mumbai). A few providers (speech and AI) may handle a request outside India: the Privacy notice says which.",
             "You can download your data at any time and ask us to delete it. We delete your workspace within 30 days of your request (draft: the owner confirms the number), except what the law makes us keep.",
-            "Phone-number registration documents (GST or Udyam) go through us to Plivo, the phone provider. We do not store the file. We only keep the registration number, its status and the type of document.",
+            "Phone-number registration documents (GST or Udyam) are given by you to VoiceLink, the phone provider. Stack19 does not keep the file. We only keep the registration number, its status and the type of document.",
           ],
         },
       ],

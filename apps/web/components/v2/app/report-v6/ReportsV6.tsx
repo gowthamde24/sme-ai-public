@@ -1,5 +1,7 @@
 import { Lightbulb } from "lucide-react";
 import Link from "next/link";
+
+import { reportsOpen } from "@/lib/screens/flag";
 import { Fragment, type ReactNode } from "react";
 
 import { formatRupeesShort } from "@/lib/money";
@@ -45,7 +47,7 @@ export type ReportsV6Props = {
 const card = "rounded-[18px] border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:px-[18px]";
 const h3 = "m-0 font-display text-base font-extrabold";
 const sub = "m-0 mb-3 mt-1 text-[12.5px] text-muted";
-const SRC_COLOURS = ["var(--ds-ch-don-1)", "var(--ds-ch-don-2)", "var(--ds-ch-don-3)", "var(--ds-ch-don-4)", "var(--ds-ch-don-5)"];
+const SRC_COLOURS = ["color-mix(in srgb, var(--v2-ink) 90%, transparent)", "color-mix(in srgb, var(--v2-ink) 66%, transparent)", "color-mix(in srgb, var(--v2-ink) 46%, transparent)", "color-mix(in srgb, var(--v2-ink) 28%, transparent)", "color-mix(in srgb, var(--v2-ink) 14%, transparent)"];
 const hourWord = (h: number): string => `${h % 12 === 0 ? 12 : h % 12} ${h >= 12 ? "pm" : "am"}`;
 
 /**
@@ -158,83 +160,8 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
   // the sales line
   const salesTotals = s ? runningTotal(s.perDay) : [];
 
-  return (
-    <main className={pageMain} lang={lang} data-part="reports-v6">
-      {heading}
-      {simple ? (
-        <div className="mt-4">
-          <PeriodSimple words={words} lang={lang} base={base} period={period} />
-        </div>
-      ) : null}
-      {mock ? (
-        <p role="note" className="mt-3 text-sm text-muted">
-          {t("rv6.mock")}
-        </p>
-      ) : null}
-      {series.capped ? (
-        <p role="note" className="mt-3 text-sm text-muted">
-          {t("rv6.capped")}
-        </p>
-      ) : null}
-
-      <ul data-part="tiles" className="m-0 mt-4 grid list-none grid-cols-1 gap-3.5 p-0 sm:grid-cols-2 xl:grid-cols-4">
-        {kpi("enquiries", t("rv6.kpi.enquiries"), e ? total(e.total) : null, eChange ? delta(eChange, eChange.percent !== null ? `${eChange.percent}%` : String(eChange.diff)) : null)}
-        {kpi("visits", t("rv6.kpi.visits"), v ? total(v.total) : null, vChange ? delta(vChange, String(vChange.diff), false) : null)}
-        {kpi("sales", t("rv6.kpi.sales"), s ? formatRupeesShort(s.total) : null, sChange ? delta(sChange, formatRupeesShort(sChange.diff), false) : null)}
-        {kpi("cost", t("rv6.kpi.cost"), cost !== null ? formatRupeesShort(cost) : null, <em className="text-[12.5px] not-italic text-muted">{v && v.total > 0 && cost !== null ? t("rv6.kpi.perVisit", { amount: formatRupeesShort(Math.round(cost / 100 / v.total) * 100) }) : t("rv6.kpi.costNote")}</em>)}
-      </ul>
-
-      <div className="mt-4 grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[1.6fr_1fr]">
-        <section aria-labelledby="rv6-chart" data-part="chart" className={`${card} min-w-0`}>
-          <h2 id="rv6-chart" className={h3}>
-            {t("rv6.chart.title")}
-          </h2>
-          <p className={sub}>{t("rv6.chart.sub")}</p>
-          <p className="m-0 mb-1.5 flex gap-3.5 text-xs text-muted">
-            <span className="inline-flex items-center gap-1.5">
-              <i aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-[3px] bg-gradient-to-r from-[var(--ds-ch-enq-1)] to-[var(--ds-ch-enq-3)]" />
-              {t("rv6.chart.enq")}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <i aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-[3px] bg-[var(--ds-ch-vis-2)]" />
-              {t("rv6.chart.vis")}
-            </span>
-          </p>
-          {e && v ? (
-            <>
-              <EnquiryChart
-                labels={labels}
-                enquiries={e.perDay}
-                visits={v.perDay}
-                partial={partial}
-                summary={t("rv6.chart.summary", { e: e.total, v: v.total, n: days.length })}
-                tips={labels.map((l, i) => ({ title: partial !== null && i === labels.length - 1 ? `${l.full} · ${partial}` : l.full, enquiries: t("rv6.tip.enq", { n: e.perDay[i] }), visits: t("rv6.tip.vis", { n: v.perDay[i] }) }))}
-              />
-              <table className="sr-only">
-                <caption>{t("rv6.chart.title")}</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">{t("rv6.chart.day")}</th>
-                    <th scope="col">{t("rv6.chart.enq")}</th>
-                    <th scope="col">{t("rv6.chart.vis")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {days.map((d, i) => (
-                    <tr key={d}>
-                      <th scope="row">{labels[i].full}</th>
-                      <td>{e.perDay[i]}</td>
-                      <td>{v.perDay[i]}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          ) : (
-            <p className="m-0 py-10 text-center text-base text-muted">{t("rv6.na")}</p>
-          )}
-        </section>
-
+  const open = reportsOpen();
+  const sourcesSection = (
         <section aria-labelledby="rv6-src" data-part="sources" className={`${card} min-w-0`}>
           <h2 id="rv6-src" className={h3}>
             {t("rv6.src.title")}
@@ -283,26 +210,14 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
             </p>
           ) : null}
         </section>
-      </div>
-
+  );
+  const thirdGrid = (
       <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-3">
         <section aria-labelledby="rv6-funnel" data-part="funnel" className={`${card} min-w-0`}>
           <h2 id="rv6-funnel" className={h3}>
             {t("rv6.funnel.title")}
           </h2>
           <p className={sub}>{t("rv6.funnel.sub")}</p>
-          <svg width="0" height="0" aria-hidden="true" focusable="false" className="absolute">
-            <defs>
-              <linearGradient id="rv6-fg" x1="0" x2="1">
-                <stop offset="0" stopColor="var(--ds-ch-enq-1)" />
-                <stop offset="1" stopColor="var(--ds-ch-don-1)" />
-              </linearGradient>
-              <linearGradient id="rv6-fw" x1="0" x2="1">
-                <stop offset="0" stopColor="var(--ds-ch-won-1)" />
-                <stop offset="1" stopColor="var(--ds-ch-won)" />
-              </linearGradient>
-            </defs>
-          </svg>
           <ol className="m-0 flex list-none flex-col gap-0.5 p-0">
             {funnel.map((f, i) =>
               f.value === null ? (
@@ -315,7 +230,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
                   <span className="text-muted">{t(`rv6.stage.${f.id}`)}</span>
                   <svg viewBox="0 0 100 22" preserveAspectRatio="none" aria-hidden="true" focusable="false" className="h-[22px] w-full">
                     <rect width="100" height="22" rx="4" fill="var(--v2-bg)" />
-                    {widths[i] > 0 ? <rect width={widths[i]} height="22" rx="4" fill={f.id === "won" ? "url(#rv6-fw)" : "url(#rv6-fg)"} /> : null}
+                    {widths[i] > 0 ? <rect width={widths[i]} height="22" rx="4" fill={f.id === "won" ? "var(--k-chat)" : "var(--v2-ink)"} /> : null}
                   </svg>
                   <b className="text-right tabular-nums">{f.value}</b>
                   <em className="text-right text-[11.5px] not-italic text-muted">{f.previous !== null && f.previous > 0 ? `${Math.round((f.value / f.previous) * 100)}%` : ""}</em>
@@ -382,6 +297,103 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
           )}
         </section>
       </div>
+  );
+
+  return (
+    <main className={pageMain} lang={lang} data-part="reports-v6">
+      {heading}
+      {simple ? (
+        <div className="mt-4">
+          <PeriodSimple words={words} lang={lang} base={base} period={period} />
+        </div>
+      ) : null}
+      {mock ? (
+        <p role="note" className="mt-3 text-sm text-muted">
+          {t("rv6.mock")}
+        </p>
+      ) : null}
+      {series.capped ? (
+        <p role="note" className="mt-3 text-sm text-muted">
+          {t("rv6.capped")}
+        </p>
+      ) : null}
+
+      <ul data-part="tiles" className="m-0 mt-4 grid list-none grid-cols-1 gap-3.5 p-0 sm:grid-cols-2 xl:grid-cols-4">
+        {kpi("enquiries", t("rv6.kpi.enquiries"), e ? total(e.total) : null, eChange ? delta(eChange, eChange.percent !== null ? `${eChange.percent}%` : String(eChange.diff)) : null)}
+        {kpi("visits", t("rv6.kpi.visits"), v ? total(v.total) : null, vChange ? delta(vChange, String(vChange.diff), false) : null)}
+        {kpi("sales", t("rv6.kpi.sales"), s ? formatRupeesShort(s.total) : null, sChange ? delta(sChange, formatRupeesShort(sChange.diff), false) : null)}
+        {open ? null : kpi("cost", t("rv6.kpi.cost"), cost !== null ? formatRupeesShort(cost) : null, <em className="text-[12.5px] not-italic text-muted">{v && v.total > 0 && cost !== null ? t("rv6.kpi.perVisit", { amount: formatRupeesShort(Math.round(cost / 100 / v.total) * 100) }) : t("rv6.kpi.costNote")}</em>)}
+      </ul>
+      {open && e && v ? (
+        <p data-part="sentence" className="m-0 mt-4 text-[16px] text-ink">
+          {t("rv6.open.sentence", { e: total(e.total), v: total(v.total), s: s ? formatRupeesShort(s.total) : t("rv6.na") })}
+        </p>
+      ) : null}
+
+      <div className={open ? "mt-4 grid grid-cols-1 gap-4" : "mt-4 grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[1.6fr_1fr]"}>
+        <section aria-labelledby="rv6-chart" data-part="chart" className={`${card} min-w-0`}>
+          <h2 id="rv6-chart" className={h3}>
+            {t("rv6.chart.title")}
+          </h2>
+          <p className={sub}>{t("rv6.chart.sub")}</p>
+          <p className="m-0 mb-1.5 flex gap-3.5 text-xs text-muted">
+            <span className="inline-flex items-center gap-1.5">
+              <i aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-[3px] bg-ink" />
+              {t("rv6.chart.enq")}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <i aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-[3px] bg-[var(--k-visit)]" />
+              {t("rv6.chart.vis")}
+            </span>
+          </p>
+          {e && v ? (
+            <>
+              <EnquiryChart
+                labels={labels}
+                enquiries={e.perDay}
+                visits={v.perDay}
+                partial={partial}
+                summary={t("rv6.chart.summary", { e: e.total, v: v.total, n: days.length })}
+                tips={labels.map((l, i) => ({ title: partial !== null && i === labels.length - 1 ? `${l.full} · ${partial}` : l.full, enquiries: t("rv6.tip.enq", { n: e.perDay[i] }), visits: t("rv6.tip.vis", { n: v.perDay[i] }) }))}
+              />
+              <table className="sr-only">
+                <caption>{t("rv6.chart.title")}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">{t("rv6.chart.day")}</th>
+                    <th scope="col">{t("rv6.chart.enq")}</th>
+                    <th scope="col">{t("rv6.chart.vis")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {days.map((d, i) => (
+                    <tr key={d}>
+                      <th scope="row">{labels[i].full}</th>
+                      <td>{e.perDay[i]}</td>
+                      <td>{v.perDay[i]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          ) : (
+            <p className="m-0 py-10 text-center text-base text-muted">{t("rv6.na")}</p>
+          )}
+        </section>
+
+          {open ? null : sourcesSection}
+      </div>
+      {open ? (
+        <details data-part="more-reports" className="group mt-5 border-y border-line py-1">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center text-[15px] font-semibold text-ink [&::-webkit-details-marker]:hidden">{t("rv6.open.more")}</summary>
+          <div className="mt-3 flex flex-col gap-4">
+            {sourcesSection}
+            {thirdGrid}
+          </div>
+        </details>
+      ) : (
+        thirdGrid
+      )}
       <p className="mt-4 text-sm text-muted">
         <Link href={`${base}/outreach`} className="font-semibold text-brand-text underline">
           {t("rv6.link.campaigns")}

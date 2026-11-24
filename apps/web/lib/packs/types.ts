@@ -41,7 +41,7 @@ export type PackSummary = {
 };
 /** The business type of one workspace (pinned to the version it chose). `modules` is what the workspace has ON (the API's own answer, default deny); `packModules` is the pack's default set. */
 export type WorkspacePack = PackSummary & {
-  readonly source: "signup" | "default" | "legacy" | "operator";
+  readonly source: "signup" | "default" | "legacy" | "operator" | "owner";
   readonly coreTab: string;
   readonly modules: readonly string[];
   readonly units: readonly string[];

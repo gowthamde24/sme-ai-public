@@ -14,7 +14,11 @@ import { readActivation, usesChecklist } from "@/lib/packs/activation";
 import { leadDeskSteps } from "@/lib/packs/lead-activation";
 import { readPackCached } from "@/lib/packs/read";
 
-import { saveProfileAction } from "./actions";
+import { TypePicker } from "@/components/v2/app/start/TypePicker";
+import { listPacks } from "@/lib/api/pack";
+import { firstRunType } from "@/lib/screens/flag";
+
+import { saveProfileAction, setPackAction } from "./actions";
 import { BRAND_NAME } from "@/design/brand";
 
 export const metadata = { title: `Get started · ${BRAND_NAME}` };
@@ -41,13 +45,32 @@ export default async function StartPage({ params }: PageProps<"/app/tenants/[ten
     throw error;
   }
   const pack = await readPackCached(user.accessToken, tenantId);
-  if (!pack || !usesChecklist(pack)) notFound();
+  if (!pack) notFound();
+  // a workspace made WITHOUT a business type (FIRST_RUN_TYPE): ask once, then the page below is the chosen type's own
+  if (!usesChecklist(pack) && !(firstRunType() && (role === "owner" || role === "admin"))) notFound();
   const base = `/app/tenants/${tenantId}`;
   if (role !== "owner" && role !== "admin") {
     return (
       <main className={pageMain} lang={lang}>
         <h1 className={pageH1}>{t("start.page.title")}</h1>
         <p className={bodyText}>{t("start.page.role")}</p>
+      </main>
+    );
+  }
+  if (!usesChecklist(pack)) {
+    const packs = await listPacks().catch(() => []);
+    const names = (p: (typeof packs)[number]) => p.names[lang] ?? p.names.en;
+    const dict = appDict(lang) as Record<string, string>;
+    return (
+      <main className={pageMain} lang={lang}>
+        <h1 className={pageH1}>{t("start.page.title")}</h1>
+        <div className="mt-6 max-w-3xl">
+          <TypePicker
+            choices={packs.map((p) => ({ id: p.packId, name: names(p), line: p.summary[lang] ?? p.summary.en ?? "" }))}
+            words={Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("start.type.")))}
+            save={setPackAction.bind(null, tenantId)}
+          />
+        </div>
       </main>
     );
   }

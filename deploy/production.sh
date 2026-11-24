@@ -125,7 +125,7 @@ if $do_api; then
     : "${PRIVACY_VERSION:?REFUSED: set PRIVACY_VERSION to the version string of the owner-approved privacy text (a stale or unapproved value would make the form accept consent to the wrong text)}"
   else
     : "${PROD_SCHEDULER_EMAIL:?set PROD_SCHEDULER_EMAIL (the scheduler account of the production project)}"
-    PRIVACY_VERSION="${PRIVACY_VERSION:-2026-10-27}"   # the text that is live today; the owner's new version string comes with the approval
+    PRIVACY_VERSION="${PRIVACY_VERSION:-2026-11-26}"   # the text that is live today (26 Nov 2026: VoiceLink named, not Plivo); a new version string comes with the owner's approval and the same string is declared in deploy/settings/production/api.env
     # TELEPHONY: `live` is the owner's written go-live (customer-zero-go-live-checklist.md): the declared file may only say it when PROD_LIVE_OK=yes, and the deploy names the change (ALLOW_FLAG_CHANGE=TELEPHONY_MODE).
     if grep -q '^TELEPHONY_MODE=live' "$API_SETTINGS_DIR/api.env" && [ "${PROD_LIVE_OK:-}" != yes ]; then echo "REFUSED: $API_SETTINGS_DIR/api.env says TELEPHONY_MODE=live: that needs PROD_LIVE_OK=yes (the owner's written go-live)" >&2; exit 2; fi
   fi
@@ -165,6 +165,11 @@ if $do_worker; then
     [ "${PROD_WORKER_AUTO_REPLY:-0}" != 1 ] || { W_ENV="$W_ENV,AUTO_REPLY_ENABLED=true,AUTO_REPLY_MODEL=claude-haiku-5-5"; W_SECRETS="$W_SECRETS,ANTHROPIC_API_KEY=sme-anthropic-api-key:latest"; }
     [ "${PROD_WORKER_TOKEN_EXPIRY:-0}" != 1 ] || W_ENV="$W_ENV,TOKEN_EXPIRY_CHECK=true"
     [ "${PROD_WORKER_TEMPLATE_SYNC:-0}" != 1 ] || W_ENV="$W_ENV,TEMPLATE_SYNC=true"
+  fi
+  # VoiceLink (owner, 24 Nov 2026: the only telephony provider): the worker reads its wallet once a day (a "Needs you" item below the limit). Off unless PROD_VOICELINK=1 (the login secrets exist); PROD_VOICELINK_MIN_INR sets the limit (default 500).
+  if [ "$slice" != waitlist ] && [ "${PROD_VOICELINK:-0}" = 1 ]; then
+    W_ENV="$W_ENV,TELEPHONY_PROVIDER=voicelink,PLIVO_BALANCE_CHECK=true,PLIVO_BALANCE_CURRENCY=INR,PLIVO_BALANCE_MIN_INR=${PROD_VOICELINK_MIN_INR:-500}"
+    W_SECRETS="$W_SECRETS,VOICELINK_USERNAME=sme-voicelink-username:latest,VOICELINK_PASSWORD=sme-voicelink-password:latest"
   fi
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="${PROD_SCHEDULER_EMAIL:?set PROD_SCHEDULER_EMAIL}" \
     WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER="$OUTBOX_FOR_WORKER" \

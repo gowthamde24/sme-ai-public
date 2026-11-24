@@ -83,12 +83,12 @@ def test_the_secrets_check_lists_and_asks_nothing(tmp_path: Path) -> None:
 def test_the_secrets_prompt_generates_its_own_keys_and_a_typed_value_never_reaches_a_command_line(tmp_path: Path) -> None:
     env, log = fake_gcloud(tmp_path, existing="iam service-accounts describe")
     # the typed values and the typed values on stdin: the required prompts get a value, every optional one is skipped with Enter
-    typed = "TYPED-SECRET-VALUE-1\nTYPED-SECRET-VALUE-2\nTYPED-SECRET-VALUE-3\nTYPED-SECRET-VALUE-4\nTYPED-SECRET-VALUE-5\n+919000000001\n\n\n\n\nn\n\n"
+    typed = "TYPED-SECRET-VALUE-1\nTYPED-SECRET-VALUE-2\nTYPED-SECRET-VALUE-3\nTYPED-SECRET-VALUE-4\nTYPED-SECRET-VALUE-5\n+919000000001\n\n\n\n\n\n\nn\n\n"
     r = run("prod-secrets-prompt.sh", env, stdin=typed)
     assert r.returncode == 0, r.stderr
     assert "created  sme-suppression-hmac-key  (generated" in r.stdout and "created  sme-exotel-stream-secret  (generated" in r.stdout
     assert "TYPED-SECRET-VALUE" not in r.stdout + r.stderr + log.read_text(), "a typed secret is never printed, logged or put on a command line"
-    assert "skipped  sme-plivo-auth-id" in r.stdout
+    assert "skipped  sme-plivo-auth-id" in r.stdout and "skipped  sme-voicelink-username" in r.stdout and "created  sme-voicelink-ws-token  (generated" in r.stdout
     ran = log.read_text()
     assert "secrets create sme-scheduler-password" in ran and "secretmanager.secretAccessor" in ran
 
@@ -114,3 +114,30 @@ def test_the_scheduler_account_is_created_pre_confirmed_and_never_leaks_its_valu
     assert mod.create("ijmsusgyilwskpjxfauu", "KEY", "scheduler@stack19.com", "a-long-password-1", lambda *a: (401, "no")) == "refused"
     assert mod.create("ijmsusgyilwskpjxfauu", "KEY", "scheduler@stack19.com", "short", ok) == "refused", "a weak password is refused before anything is sent"
     assert mod.create("bad ref!", "KEY", "scheduler@stack19.com", "a-long-password-1", ok) == "refused" and len(seen) == 1
+
+
+def test_a_voicelink_username_with_spaces_and_capitals_and_a_password_with_edge_spaces_reach_the_secret_exactly(tmp_path: Path) -> None:
+    """The owner's VoiceLink username is a full name with spaces ('Gowtham Reddy Sodanapalli'): the hidden prompt must not trim, split or refuse it (a made-up name here)."""
+    env, log = fake_gcloud(tmp_path, existing="iam service-accounts describe")
+    bin_dir = tmp_path / "bin"
+    saved = tmp_path / "saved"
+    saved.mkdir()
+    (bin_dir / "gcloud").write_text(
+        "#!/bin/sh\n"
+        f'echo "$*" >> "{log}"\n'
+        'case "$*" in\n'
+        f'  *"secrets create"*) cat > "{saved}/$3"; exit 0;;\n'
+        '  "projects describe"*) echo 488341211094; exit 0;;\n'
+        '  "billing projects describe"*) echo True; exit 0;;\n'
+        '  *"iam service-accounts describe"*) exit 0;;\n'
+        "esac\n"
+        'case "$*" in *describe*) exit 1;; esac\nexit 0\n'
+    )
+    username, password = "Ada Test Lovelace-Example", "  pa ss word  "
+    typed = "TYPED-1\nTYPED-2\nTYPED-3\nTYPED-4\nTYPED-5\n+919000000001\n" + username + "\n" + password + "\n\n\n\n\n\nn\n\n"
+    r = run("prod-secrets-prompt.sh", env, stdin=typed)
+    assert r.returncode == 0, r.stderr
+    assert "created  sme-voicelink-username" in r.stdout and "created  sme-voicelink-password" in r.stdout
+    assert (saved / "sme-voicelink-username").read_text() == username, "the username is stored exactly as typed (spaces and capitals kept)"
+    assert (saved / "sme-voicelink-password").read_text() == password, "leading and trailing spaces of a password are kept"
+    assert username not in r.stdout + r.stderr + log.read_text() and "pa ss word" not in r.stdout + r.stderr + log.read_text()

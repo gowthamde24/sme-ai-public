@@ -21,6 +21,17 @@ export default function YourDay({ view, words, tenantId, mockLive, liveCalls = [
   const live = useLiveCall(tenantId, mockLive, liveCalls) !== null;
   const summary = [view.handled !== null ? t("tv6.day.handled", { n: view.handled }) : null, view.sent !== null ? t("tv6.day.sent", { n: view.sent }) : null, view.nextVisit ? t("tv6.day.next_visit", { name: view.nextVisit.name, time: view.nextVisit.time }) : null, view.next ? t("tv6.day.next", { n: view.next.n, time: view.next.time }) : null].filter((x) => x !== null);
   const newest = view.calls.length - 1;
+  // nothing to draw yet (no call, no visit, nothing planned, no call live): ONE grey line, not an empty chart in a big box
+  if (view.calls.length === 0 && view.visits.length === 0 && view.planned.length === 0 && !live) {
+    return (
+      <section data-part="your-day" data-empty="1" aria-labelledby="your-day-h" className="min-w-0 px-1 text-[15px] text-muted">
+        <h2 id="your-day-h" className="m-0 text-[15px] font-normal">
+          <b className="mr-2.5 font-display font-semibold text-ink">{t("tv6.day.title")}</b>
+          <span data-part="day-summary">{t("tv6.day.empty")}</span>
+        </h2>
+      </section>
+    );
+  }
   return (
     <section data-part="your-day" aria-labelledby="your-day-h" className="min-w-0 rounded-[20px] border border-line bg-surface px-5 pb-2.5 pt-4 shadow-[var(--v2-shadow)]">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-[12.5px] text-muted">
@@ -54,12 +65,12 @@ export default function YourDay({ view, words, tenantId, mockLive, liveCalls = [
             <span aria-hidden="true" className="absolute inset-x-0 bottom-[10px] h-px bg-line" />
             {view.now ? (
               <At s={{ left: 0, bottom: 10, width: `${view.now.pct}%` }}>
-                <i className="block h-0.5 w-full rounded-sm bg-gradient-to-r from-brand/20 to-brand" />
+                <i className="block h-0.5 w-full rounded-sm bg-muted" />
               </At>
             ) : null}
             {view.calls.map((c, i) => (
               <At key={i} s={{ left: `${c.pct}%`, bottom: 10 + c.lane * 7 }}>
-                <i data-dot="call" className={`block size-2 -translate-x-1/2 rounded-full bg-brand shadow-[0_0_6px_rgba(251,146,60,0.6)] ${live && i === newest ? "ds-pulse-dot" : ""}`} />
+                <i data-dot="call" className={`block size-2 -translate-x-1/2 rounded-full bg-brand ${live && i === newest ? "ds-pulse-dot" : ""}`} />
                 {c.more > 0 ? (
                   <b data-part="more-calls" className="absolute -top-1 left-1.5 whitespace-nowrap text-[10px] font-bold text-muted">
                     +{c.more}

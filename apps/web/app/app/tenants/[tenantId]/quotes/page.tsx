@@ -83,7 +83,7 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
                 <th scope="col" className={th}>{t("enq.quote")}</th>
                 <th scope="col" className={th}>{t("enq.customer")}</th>
                 <th scope="col" className={`${th} ${cellRight}`}>{t("enq.total")}</th>
-                <th scope="col" className={th}>{t("enq.valid_until")}</th>
+                <th scope="col" className={`${th} hidden md:table-cell`}>{t("enq.valid_until")}</th>
                 <th scope="col" className={th}>{t("enq.status")}</th>
               </tr>
             </thead>
@@ -100,7 +100,7 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
                     <span className="block text-sm text-muted">{[q.city, t(`enq.kind.${q.customer_kind}`)].filter(Boolean).join(" · ")}</span>
                   </td>
                   <td className={`${td} ${cellRight} font-semibold tabular-nums`}>{formatRupees(q.total_paise)}</td>
-                  <td className={`${td} text-muted`}>{formatDate(q.valid_until)}</td>
+                  <td className={`${td} hidden text-muted md:table-cell`}>{formatDate(q.valid_until)}</td>
                   <td className={td}>
                     <Pill tone={TONE[q.outcome]}>{t(`enq.outcome.${q.outcome}`)}</Pill>
                   </td>

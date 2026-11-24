@@ -73,3 +73,9 @@ The other four first templates (`followup_nudge`, `catalogue_share`, `new_collec
 
 ## 9. What is NOT in this go-live (said plainly)
 Auto-reply on WhatsApp (separate switch, his word), WhatsApp calling, the missed-call message (waits on his privacy yes/no: reports/missed-call-whatsapp-decision.md), marketing sends.
+
+## State on 28 Nov 2026 (C1)
+* The three production secrets exist (`sme-whatsapp-token`, `sme-whatsapp-app-secret` copied from staging by pipe with the owner's yes; `sme-whatsapp-verify-token` generated fresh). The values are the PRODUCTION Meta app's (App ID 1407102551140162, system user `stack19-api`), which staging also uses until the staging app is separated after go-live.
+* The token never expires: Meta's `debug_token` answered "never" and the daily check stored the date 2100-01-01 (checked 24 Nov 03:17 UTC, staging database). It is therefore a system-user token, not the 24-hour test token. Its two permissions are proved only in part from the files: the template list syncs (20 templates approved, so `whatsapp_business_management` works); `whatsapp_business_messaging` is proved by the first real send inside the fence, or by the one-line scope check the planner runs (names only, `reports/` message of 28 Nov).
+* Still needed from the owner: the two fence numbers (his and the shop owner's), business verified yes/no, his OK on configuration ID 1141606261911446.
+

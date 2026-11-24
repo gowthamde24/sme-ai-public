@@ -8,7 +8,7 @@ const apiRequest = vi.fn();
 const apiPublicRequest = vi.fn();
 vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a), apiPublicRequest: (...a: unknown[]) => apiPublicRequest(...a) }));
 
-import { getAccountSecurity, getAuthProviders, getWorkspacePack, listPacks, moduleOn, parseEnabledModules, parsePackSummary, parseWorkspacePack, parseWords } from "./pack";
+import { getAccountSecurity, getAuthProviders, getWorkspacePack, listPacks, moduleOn, parseEnabledModules, setWorkspacePack, parsePackSummary, parseWorkspacePack, parseWords } from "./pack";
 
 const T = "22222222-2222-4222-8222-222222222222";
 beforeEach(() => vi.resetAllMocks());
@@ -133,5 +133,21 @@ describe("the business type of a workspace (GET .../pack and .../modules)", () =
     expect(moduleOn(null, "anything")).toBe(true);
     expect(moduleOn({ modules: ["today"] }, "today")).toBe(true);
     expect(moduleOn({ modules: ["today"] }, "fees")).toBe(false);
+  });
+});
+
+describe("the owner chooses the business type of a workspace made without one (PUT /v1/tenants/{id}/pack, first-run contract)", () => {
+  it("sends the code, and reads the answer as a pack whose source is 'owner'", async () => {
+    const id = selectableIds()[0];
+    apiRequest.mockResolvedValue({ ...packWire(id), source: "owner" });
+    const pack = await setWorkspacePack("tok", T, id);
+    expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/pack`, "tok", { method: "PUT", body: JSON.stringify({ pack: id }) });
+    expect(pack.source).toBe("owner");
+  });
+  it("refuses a code that is not a pack code before any request, and passes an API refusal on", async () => {
+    await expect(setWorkspacePack("tok", T, "Not A Code")).rejects.toThrow(ApiContractError);
+    expect(apiRequest).not.toHaveBeenCalled();
+    apiRequest.mockRejectedValue(new ApiRequestError(403, "forbidden", "no"));
+    await expect(setWorkspacePack("tok", T, selectableIds()[0])).rejects.toThrow(ApiRequestError);
   });
 });

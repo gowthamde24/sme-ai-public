@@ -11,7 +11,8 @@ import { UsageCard, planText } from "@/components/v2/app/frame-parts";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { menuTitle } from "../menu-title";
 import { ApiDownV2, PageTop, Pill, SectionTabs } from "@/components/v2/app/parts";
-import { breakAll, btnQuiet, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface } from "@/components/v2/app/ui";
+import { SettingsSections } from "@/components/v2/app/settings/LazySettingsSections";
+import { breakAll, btnQuiet, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface as boxedSurface } from "@/components/v2/app/ui";
 import { appT, frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
 import { getLang } from "@/i18n/get-lang";
@@ -70,7 +71,7 @@ import { readAssistant, readAssistantName } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens, planTierScreens } from "@/lib/screens/flag";
+import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens, planTierScreens, settingsOpen } from "@/lib/screens/flag";
 import { previewAllowed } from "@/lib/screens/preview";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
@@ -148,6 +149,9 @@ function UnreadCard({ note }: { note: string }) {
 }
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
+/** SETTINGS_OPEN: a section is a block between hairlines, not a card (owner, 25 Nov 2026: the mock has no cards and no tabs). */
+const surface = settingsOpen() ? "border-t border-line pt-6" : boxedSurface;
+
 /**
  * /app/tenants/[tenantId]/settings, one part at a time (?section=): the business and its plan, the members (a list: nobody is added here), the language and the look, the security of the
  * person's sign-in, and privacy (the way to the erasure and suppression pages). The plan and the AI usage come from getPlan() / getAiUsage() of lib/api (Job AD); one that cannot be read says "Not available yet", and the
@@ -185,7 +189,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     return (
       <>
       <SettingsV6
-        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc.", "jobs.set.", "nset."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
+        words={wordsFor(lang, ["sv6.", "settings.biz.", "settings.language.", "set.f.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc.", "jobs.set.", "nset."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
         lang={lang}
         base={base}
         title={await menuTitle("settings", lang, user.accessToken, tenantId)}
@@ -469,7 +473,24 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     <main className={pageMain} lang={lang}>
       <PageTop title={t("nav.item.settings")} />
       {helpTipFor(lang, base, "settings")}
-      <SectionTabs label={t("settings.parts_label")} items={tabs.map((x) => ({ key: x.key, label: x.label, href: `${base}/settings?section=${x.key}`, current: x.key === section }))} />
+      {settingsOpen() ? (
+        <SettingsSections
+          label={t("settings.parts_label")}
+          selectLabel={t("set.g.section")}
+          groups={(
+            [
+              ["business", "set.g.business", ["business", "profile", "plan", "fields"]], // plan-id-ok: these are Settings section keys ("business" is the Business tab, "plan" the Plan tab), not plan ids
+              ["team", "set.g.team", ["members"]],
+              ["assistant", "set.g.assistant", ["assistant", "activity", "leadfinder"]],
+              ["quotes", "set.g.quotes", ["quotes", "agent", "limits"]],
+              ["language", "set.g.language", ["language", "notifications"]],
+              ["more", "set.g.more", ["data", "security", "privacy"]],
+            ] as const
+          ).map(([key, labelKey, keys]) => ({ key, label: t(labelKey), items: tabs.filter((x) => (keys as readonly string[]).includes(x.key)).map((x) => ({ key: x.key, label: x.label, href: `${base}/settings?section=${x.key}`, current: x.key === section })) }))}
+        />
+      ) : (
+        <SectionTabs label={t("settings.parts_label")} items={tabs.map((x) => ({ key: x.key, label: x.label, href: `${base}/settings?section=${x.key}`, current: x.key === section }))} />
+      )}
       <div className="mt-6 max-w-3xl space-y-4">
         {previewAllowed() ? (
           <p className="m-0" data-part="preview-link">
@@ -486,8 +507,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   <>
                     <h2 className="mb-3 text-xl font-semibold">{t("settings.biz.title")}</h2>
                     <BusinessSimple
+                      plain={settingsOpen()}
                       variant="page"
-                      words={wordsFor(lang, ["settings.biz.", "jobs.set."])}
+                      words={wordsFor(lang, ["settings.biz.", "jobs.set.", "set.f."])}
                       action={saveBusinessAction.bind(null, tenantId)}
                       name={businessProfile.name}
                       town={businessProfile.town ?? ""}
@@ -512,7 +534,23 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 {workspace ? <BusinessLogo action={logoAction.bind(null, tenantId)} words={wordsFor(lang, ["settings.biz.logo."])} logoUrl={workspace.logoUrl} initial={businessProfile.name.slice(0, 1).toUpperCase()} /> : null}
               </section>
             ) : null}
-            {finish && finish.done < finish.total ? <ActivationCard activation={finish} base={base} t={t} hide={setStepHiddenAction.bind(null, tenantId)} hidden={putAway} /> : null}
+            {finish && finish.done < finish.total ? (
+              settingsOpen() ? (
+                <p data-start="line" className="m-0 text-[15px] text-muted">
+                  {t("start.title")} · {t("start.count", { done: finish.done, total: finish.total })}
+                  {finish.next?.href ? (
+                    <>
+                      {" · "}
+                      <Link prefetch={false} href={finish.next.href.startsWith("/app") ? finish.next.href : `${base}${finish.next.href}`} className="font-semibold text-ink underline underline-offset-4">
+                        {t("start.next")}
+                      </Link>
+                    </>
+                  ) : null}
+                </p>
+              ) : (
+                <ActivationCard activation={finish} base={base} t={t} hide={setStepHiddenAction.bind(null, tenantId)} hidden={putAway} />
+              )
+            ) : null}
             <section className={surface} aria-label={t("settings.tab.business")}>
               <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {businessProfile ? null : (
@@ -704,7 +742,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             {jobsScreens() !== "off" ? (
               <>
                 <h2 className={`${pageH2} mt-0`}>{t("sv6.lang.title")}</h2>
-                <LanguageSimple bare words={wordsFor(lang, ["jobs.set.", "settings.biz.err."])} lang={lang} theme={theme} assistant={workspace ? { name: workspace.name, town: workspace.city ?? "", languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), choices: BUSINESS_LANGUAGES, save: saveBusinessAction.bind(null, tenantId) } : null} />
+                <LanguageSimple plain={settingsOpen()} bare words={wordsFor(lang, ["jobs.set.", "settings.biz.", "settings.language.", "set.f."])} lang={lang} theme={theme} assistant={workspace ? { name: workspace.name, town: workspace.city ?? "", languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), choices: BUSINESS_LANGUAGES, save: saveBusinessAction.bind(null, tenantId) } : null} />
               </>
             ) : (
               <>
@@ -721,7 +759,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             {jobsScreens() !== "off" ? (
               // JOBS: the three forms as one page of sentences with the choice inside and ONE Save (the same three actions)
               sending ? (
-                <AutomationSimple words={words} settings={sending} reminders={reminders} actions={{ saveSending: saveSendingAction.bind(null, tenantId), saveQuietHours: saveQuietHoursAction.bind(null, tenantId), saveReminders: saveRemindersAction.bind(null, tenantId) }} />
+                <AutomationSimple plain={settingsOpen()} words={words} settings={sending} reminders={reminders} actions={{ saveSending: saveSendingAction.bind(null, tenantId), saveQuietHours: saveQuietHoursAction.bind(null, tenantId), saveReminders: saveRemindersAction.bind(null, tenantId) }} />
               ) : (
                 <UnreadCard note={t("frame.notyet")} />
               )
@@ -743,7 +781,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           </div>
         ) : null}
         {section === "limits" ? <LimitsView limits={limits} words={wordsFor(lang, ["lim."])} /> : null}
-        {section === "notifications" ? jobsScreens() !== "off" ? <NotificationsSimple words={wordsFor(lang, ["nset.", "jobs.set."])} /> : <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
+        {section === "notifications" ? jobsScreens() !== "off" ? <NotificationsSimple plain={settingsOpen()} words={wordsFor(lang, ["nset.", "jobs.set."])} /> : <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
         {section === "security" ? (
           <section className={`${surface} flex flex-col gap-3`} aria-label={t("settings.security.title")}>
             <h2 className="text-xl font-semibold">{t("settings.security.title")}</h2>

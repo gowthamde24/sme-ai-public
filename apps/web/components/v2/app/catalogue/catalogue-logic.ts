@@ -15,6 +15,8 @@ export type CatalogueQuery = {
   occasions: Occasion[];
   bands: PriceBand[];
   stock: StockChoice | null;
+  /** FILTERS_OPEN: the list view (rows) instead of the photo cards; absent = photos. */
+  view?: "list";
 };
 
 export const EMPTY_QUERY: CatalogueQuery = { q: "", fabric: null, colours: [], occasions: [], bands: [], stock: null };
@@ -45,6 +47,7 @@ export function parseQuery(raw: Raw): CatalogueQuery {
     occasions: words(raw.occasion, OCCASIONS, 4),
     bands: words(raw.band, PRICE_BANDS, 5),
     stock: (STOCK_CHOICES as readonly string[]).includes(stock) ? (stock as StockChoice) : null,
+    ...(first(raw.view) === "list" ? { view: "list" as const } : {}),
   };
 }
 
@@ -57,6 +60,7 @@ export function hrefFor(base: string, q: CatalogueQuery, extra: { lead?: string 
   if (q.occasions.length) p.set("occasion", q.occasions.join(","));
   if (q.bands.length) p.set("band", q.bands.join(","));
   if (q.stock) p.set("stock", q.stock);
+  if (q.view) p.set("view", q.view);
   if (extra.lead) p.set("lead", extra.lead);
   if (extra.after) p.set("after", extra.after);
   const s = p.toString();

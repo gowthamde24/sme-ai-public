@@ -12,7 +12,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Literal
 
-from app.telephony import exotel, plivo
+from app.telephony import exotel, plivo, voicelink
 from app.telephony.pcm import tone
 
 
@@ -226,6 +226,86 @@ class SimulatedPlivo:
                 await self.press(str(arg))
             elif what == "hangup":
                 await self.hang_up()
+
+    async def close(self) -> None:
+        self._wire.close()
+        if self._reader is not None:
+            self._reader.cancel()
+
+
+class SimulatedVoicelink:
+    """Plays VoiceLink's side of a WebSocket-bot call, from VoiceLink's public documentation (24 Nov 2026; NOT yet seen on a real call): `connected`, then `start` (stream_sid, call_sid, account_sid, from, to, custom_parameters,
+    media_format audio/alaw 8000), 20 ms inbound `media` frames of base64 A-law, `stop` when the caller hangs up. What the line sends back is held to the documented shapes (media {payload}, mark {name}, clear {stream_sid});
+    every mark we send is echoed back as a `mark` (UNVERIFIED: whether VoiceLink says "played" this way; the line has its own estimate when it does not)."""
+
+    def __init__(self, wire: QueueWire, *, call_id: str = "vl-call-0001", stream_id: str = "stream_sim_1", caller: str = "+919502380998", to: str = "+918065590140", custom: dict[str, str] | None = None,
+                 encoding: str = "audio/alaw", pace: float = 1.0, echo_marks: bool = True) -> None:
+        self._wire, self.pace, self.stream_id, self.call_id, self.echo_marks = wire, pace, stream_id, call_id, echo_marks
+        self.rate = 8000
+        self._start = {"event": "start", "sequence_number": 0, "stream_sid": stream_id, "start": {"stream_sid": stream_id, "call_sid": call_id, "account_sid": "42", "from": caller, "to": to,
+                       "custom_parameters": custom or {}, "media_format": {"encoding": encoding, "sample_rate": "8000"}}}
+        self.heard = Heard()
+        self._t0 = time.monotonic()
+        self._chunk = 0
+        self._reader: asyncio.Task[None] | None = None
+
+    async def connect(self) -> None:
+        await self._wire.send_text(json.dumps({"event": "connected"}))
+        await self._wire.send_text(json.dumps(self._start))
+        self._t0 = time.monotonic()
+        self._reader = asyncio.ensure_future(self._listen())
+
+    async def _listen(self) -> None:
+        while True:
+            raw = await self._wire.receive_text()
+            if raw is None:
+                return
+            now = time.monotonic() - self._t0
+            msg = json.loads(raw)
+            event = msg.get("event")
+            if event == "media":
+                media = msg.get("media") or {}
+                alaw = base64.b64decode(media.get("payload", ""), validate=True)
+                if set(msg) != {"event", "media"} or set(media) != {"payload"}:
+                    self.heard.problems.append("media not in the documented shape")
+                if not alaw:
+                    self.heard.problems.append("empty media")
+                self.heard.media.append((now, alaw))
+                self.heard.order.append("media")
+            elif event == "mark":
+                name = str((msg.get("mark") or {}).get("name", ""))
+                if set(msg) != {"event", "mark"} or not name:
+                    self.heard.problems.append("mark not in the documented shape")
+                self.heard.marks.append((now, name))
+                self.heard.order.append("mark")
+                if self.echo_marks:
+                    await self._wire.send_text(json.dumps({"event": "mark", "mark": {"name": name}}))
+            elif event == "clear":
+                self.heard.clears.append(now)
+                self.heard.order.append("clear")
+                if msg.get("stream_sid") != self.stream_id or set(msg) != {"event", "stream_sid"}:
+                    self.heard.problems.append("clear not in the documented shape for this stream")
+
+    async def say(self, pcm: bytes, *, frame_ms: int = 20) -> None:
+        """Send caller audio the way VoiceLink does: 20 ms frames of base64 A-law, paced."""
+        size = self.rate * 2 * frame_ms // 1000
+        for i in range(0, len(pcm), size):
+            self._chunk += 1
+            payload = base64.b64encode(voicelink.pcm_to_alaw(pcm[i : i + size])).decode()
+            await self._wire.send_text(json.dumps({"event": "media", "media": {"track": "inbound", "chunk": self._chunk, "timestamp": self._chunk * frame_ms, "payload": payload}}))
+            if self.pace:
+                await asyncio.sleep(frame_ms / 1000 * self.pace)
+
+    async def speak_for(self, ms: int, freq: float = 220.0) -> None:
+        await self.say(tone(freq, ms, self.rate, amplitude=0.4))
+
+    async def quiet_for(self, ms: int) -> None:
+        await self.say(b"\x00\x00" * (self.rate * ms // 1000))
+
+    async def hang_up(self, reason: str = "") -> None:
+        """The caller hangs up: VoiceLink sends `stop`, then closes the socket."""
+        await self._wire.send_text(json.dumps({"event": "stop", "stop": {"callSid": self.call_id}}))
+        self._wire.close()
 
     async def close(self) -> None:
         self._wire.close()

@@ -23,7 +23,7 @@ import { readPackCards } from "@/lib/packs/pack-cards";
 import { LiveNowCard } from "@/components/v2/app/call/LiveNowCard";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
-import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, designV6, leadsScreens, outcomeScreens, outreachScreens, taskScreens, todayV5 } from "@/lib/screens/flag";
+import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, designV6, leadsScreens, outcomeScreens, outreachScreens, taskScreens, todayV5, firstRunType } from "@/lib/screens/flag";
 import type { V6In } from "@/components/v2/app/today/v6/types";
 import { composeToday } from "./today-compose";
 import { todayActionsFor } from "./today-bind";
@@ -96,6 +96,8 @@ export async function TodayScreen({ briefing: briefingGiven, accessToken, userId
   const base = `/app/tenants/${tenantId}`;
   const manages = role === "owner" || role === "admin";
   const ownSteps = manages && usesChecklist(pack);
+  // FIRST_RUN_TYPE: a workspace made without a business type is asked once, on Get started, before anything else (the first steps then are the business's own, not a saree shop's)
+  if (firstRunType() && manages && pack !== null && !usesChecklist(pack)) redirect(`${base}/start`);
   const tt: T = (key, vars) => t(key as "frame.notyet", vars);
   // does this business type have a lead template (the API's own list)? Only then does "Your team" show the Lead Desk workers (and are the leads read for it)
   const deskPack = pack ? (await templatesAsked).some((x) => x.packId === pack.packId) : false;

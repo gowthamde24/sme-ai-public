@@ -346,3 +346,24 @@ def test_the_real_client_reads_the_account_with_one_get_and_nothing_else() -> No
     with pytest.raises(PlivoError) as bad:
         not_json.account_details()
     assert bad.value.reason == "bad_response"
+
+
+# ---- days of cover (26 Nov 2026): the "Needs you" item says how long the wallet lasts at the last 7 days' call use ----
+
+def test_cover_sentence_works_out_the_days_from_the_last_seven_days() -> None:
+    from app.ops.plivo_balance import cover_sentence
+
+    text = cover_sentence(Decimal("420"), 7 * 6000)   # Rs 60 a day (6,000 paise a day for 7 days)
+    assert "about Rs 60 a day" in text and "about 7 more days" in text and "number and channel fees come on top" in text
+    assert "1 more day of" in cover_sentence(Decimal("60"), 7 * 6000)
+    assert "No calls were made in the last 7 days" in cover_sentence(Decimal("420"), 0)
+    assert "no days of cover are left" in cover_sentence(Decimal("0"), 7 * 6000)
+    assert cover_sentence(Decimal("420"), None) == ""   # the database did not say: nothing is guessed
+
+
+def test_the_alert_carries_the_cover_only_when_the_database_gave_the_spend() -> None:
+    limit = Limit.build(500, "INR", 0.0)
+    account = parse_account({"cash_credits": "420", "auto_recharge": False})
+    assert "more day" not in alert_detail(account, limit, "VoiceLink")
+    assert "about 7 more days" in alert_detail(account, limit, "VoiceLink", 7 * 6000)
+    assert len(alert_detail(account, limit, "VoiceLink", 7 * 6000)) < 500   # the database refuses a longer sentence

@@ -225,7 +225,7 @@
   [data-ui="v2"][data-jobs="1"] [data-status="rejected"] { --p-ic: var(--jb-ic-x); }
   [data-ui="v2"][data-jobs="1"] [data-status="spam"] { --p-ic: var(--jb-ic-ban); }
   [data-ui="v2"][data-jobs="1"] [data-status="live"] { --p-ic: var(--jb-ic-dot); }
-  [data-ui="v2"][data-jobs="1"] :is(.jb-pill, [data-status], [data-needs-late], [data-needs-tag]) {
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill, span[data-status], [data-needs-late], [data-needs-tag]) {
     display: inline-flex !important;
     align-items: center !important;
     gap: 5px !important;
@@ -240,7 +240,7 @@
     line-height: 1 !important;
     white-space: nowrap !important;
   }
-  [data-ui="v2"][data-jobs="1"] :is(.jb-pill, [data-status], [data-needs-late], [data-needs-tag])::before {
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill, span[data-status], [data-needs-late], [data-needs-tag])::before {
     content: "";
     flex: none;
     inline-size: 14px;
@@ -249,7 +249,7 @@
     -webkit-mask: var(--p-ic) center / contain no-repeat;
     mask: var(--p-ic) center / contain no-repeat;
   }
-  [data-ui="v2"][data-jobs="1"] [data-status] [data-dot] { display: none !important; }
+  [data-ui="v2"][data-jobs="1"] span[data-status] [data-dot] { display: none !important; }
 }
 
 /* ---- the switch of a job: a round knob, the knob moves with transform; the track's colour changes at once (no animated paint) ---- */

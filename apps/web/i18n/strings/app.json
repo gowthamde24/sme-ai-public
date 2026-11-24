@@ -99941,10 +99941,10 @@
   }
  },
  "rv6.chart.sub": {
-  "en": "Orange: enquiries each day. Green: how many booked a shop visit.",
-  "te": "నారింజ: రోజువారీ ఎంక్వైరీలు. ఆకుపచ్చ: షాప్ విజిట్ బుక్ చేసినవారు.",
-  "hi": "नारंगी: हर दिन की पूछताछ। हरा: कितनों ने दुकान की विज़िट बुक की।",
-  "kn": "ಕಿತ್ತಳೆ: ದಿನದ ವಿಚಾರಣೆಗಳು. ಹಸಿರು: ಎಷ್ಟು ಜನ ಅಂಗಡಿ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿದರು.",
+  "en": "Dark line: enquiries each day. Coloured line: how many booked a shop visit.",
+  "te": "నల్ల లైన్: రోజువారీ ఎంక్వైరీలు. రంగు లైన్: షాప్ విజిట్ బుక్ చేసినవారు.",
+  "hi": "गहरी रेखा: हर दिन की पूछताछ। रंगीन रेखा: कितनों ने दुकान की विज़िट बुक की।",
+  "kn": "ಗಾಢ ರೇಖೆ: ದಿನದ ವಿಚಾರಣೆಗಳು. ಬಣ್ಣದ ರೇಖೆ: ಎಷ್ಟು ಜನ ಅಂಗಡಿ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿದರು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -126583,6 +126583,633 @@
   "te": "గంభీరంగా, నమ్మకంగా",
   "hi": "गहरी और आत्मविश्वासी",
   "kn": "ಗಂಭೀರ, ಆತ್ಮವಿಶ್ವಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.line": {
+  "en": "Street address",
+  "te": "వీధి చిరునామా",
+  "hi": "गली का पता",
+  "kn": "ರಸ್ತೆ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.area": {
+  "en": "Area",
+  "te": "ప్రాంతం",
+  "hi": "इलाका",
+  "kn": "ಪ್ರದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.pin": {
+  "en": "PIN code",
+  "te": "PIN కోడ్",
+  "hi": "PIN कोड",
+  "kn": "PIN ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.unsaved": {
+  "en": "You have unsaved changes.",
+  "te": "మీరు చేసిన మార్పులు ఇంకా save కాలేదు.",
+  "hi": "आपके बदलाव अभी save नहीं हुए हैं।",
+  "kn": "ನೀವು ಮಾಡಿದ ಬದಲಾವಣೆಗಳು ಇನ್ನೂ save ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.saved": {
+  "en": "Saved.",
+  "te": "Save అయింది.",
+  "hi": "Save हो गया।",
+  "kn": "Save ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.job": {
+  "en": "Their job",
+  "te": "వారి పని",
+  "hi": "उनका काम",
+  "kn": "ಅವರ ಕೆಲಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.days": {
+  "en": "Code works for",
+  "te": "కోడ్ ఎన్ని రోజులు పనిచేస్తుంది",
+  "hi": "कोड कितने दिन चलेगा",
+  "kn": "ಕೋಡ್ ಎಷ್ಟು ದಿನ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.note": {
+  "en": "A note for yourself (optional)",
+  "te": "మీ కోసం ఒక నోట్ (ఇష్టమైతే)",
+  "hi": "आपके लिए एक नोट (चाहें तो)",
+  "kn": "ನಿಮಗಾಗಿ ಒಂದು ನೋಟ್ (ಬೇಕಾದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.f.you": {
+  "en": "You",
+  "te": "మీరు",
+  "hi": "आप",
+  "kn": "ನೀವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.limit": {
+  "en": "Most messages to one customer a day",
+  "te": "ఒక customer కి రోజుకు గరిష్టంగా ఎన్ని messages",
+  "hi": "एक customer को दिन में ज़्यादा से ज़्यादा कितने messages",
+  "kn": "ಒಬ್ಬ customer ಗೆ ದಿನಕ್ಕೆ ಗರಿಷ್ಠ ಎಷ್ಟು messages",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.qstart": {
+  "en": "Quiet from (India time)",
+  "te": "ఏ సమయం నుంచి నిశ్శబ్దం (భారత సమయం)",
+  "hi": "कब से शांत (भारतीय समय)",
+  "kn": "ಯಾವ ಸಮಯದಿಂದ ಮೌನ (ಭಾರತೀಯ ಸಮಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.qend": {
+  "en": "Quiet until (India time)",
+  "te": "ఏ సమయం వరకు నిశ్శబ్దం (భారత సమయం)",
+  "hi": "कब तक शांत (भारतीय समय)",
+  "kn": "ಯಾವ ಸಮಯದವರೆಗೆ ಮೌನ (ಭಾರತೀಯ ಸಮಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.evening": {
+  "en": "Evening reminder to visitors",
+  "te": "visitors కి సాయంత్రం reminder",
+  "hi": "visitors को शाम का reminder",
+  "kn": "visitors ಗೆ ಸಂಜೆ reminder",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.heads": {
+  "en": "Heads-up before a visit",
+  "te": "visit కి ముందు heads-up",
+  "hi": "visit से पहले heads-up",
+  "kn": "visit ಗಿಂತ ಮೊದಲು heads-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "auto.f.noshow": {
+  "en": "Mark a visit as did-not-come",
+  "te": "రాని visit ని did-not-come గా mark చేయడం",
+  "hi": "न आई visit को did-not-come mark करना",
+  "kn": "ಬರದ visit ಅನ್ನು did-not-come ಎಂದು mark ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s1": {
+  "en": "Choose a document for your business",
+  "te": "మీ వ్యాపారానికి ఒక document ఎంచుకోండి",
+  "hi": "अपने बिज़नेस के लिए एक document चुनिए",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಒಂದು document ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s1.sub": {
+  "en": "Any one of these is enough.",
+  "te": "వీటిలో ఏదైనా ఒకటి చాలు.",
+  "hi": "इनमें से कोई एक काफ़ी है।",
+  "kn": "ಇವುಗಳಲ್ಲಿ ಯಾವುದಾದರೂ ಒಂದು ಸಾಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s2": {
+  "en": "Upload it",
+  "te": "దాన్ని upload చేయండి",
+  "hi": "उसे upload कीजिए",
+  "kn": "ಅದನ್ನು upload ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s2.sub": {
+  "en": "A photo or a PDF. It goes to the phone company and is not kept by us.",
+  "te": "ఫోటో లేదా PDF. ఇది phone company కి వెళ్తుంది, మా దగ్గర ఉండదు.",
+  "hi": "फ़ोटो या PDF। यह phone company के पास जाता है, हमारे पास नहीं रहता।",
+  "kn": "ಫೋಟೋ ಅಥವಾ PDF. ಇದು phone company ಗೆ ಹೋಗುತ್ತದೆ, ನಮ್ಮ ಬಳಿ ಉಳಿಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s3": {
+  "en": "You get your number",
+  "te": "మీకు number వస్తుంది",
+  "hi": "आपको number मिलता है",
+  "kn": "ನಿಮಗೆ number ಸಿಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s3.sub": {
+  "en": "When the phone company accepts it, you choose your number here.",
+  "te": "phone company ఒప్పుకున్నాక, మీ number ని ఇక్కడే ఎంచుకుంటారు.",
+  "hi": "phone company के मंज़ूर करने के बाद, आप अपना number यहीं चुनते हैं।",
+  "kn": "phone company ಒಪ್ಪಿದ ಮೇಲೆ, ನಿಮ್ಮ number ಅನ್ನು ಇಲ್ಲೇ ಆರಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.lead_ack": {
+  "en": "Thanks for your enquiry",
+  "te": "మీ enquiry కి ధన్యవాదాలు",
+  "hi": "आपकी enquiry के लिए धन्यवाद",
+  "kn": "ನಿಮ್ಮ enquiry ಗೆ ಧನ್ಯವಾದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.visit_reminder": {
+  "en": "Visit reminder",
+  "te": "visit గుర్తు చేయడం",
+  "hi": "visit की याद दिलाना",
+  "kn": "visit ನೆನಪಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.draft": {
+  "en": "Not sent yet",
+  "te": "ఇంకా పంపలేదు",
+  "hi": "अभी भेजा नहीं गया",
+  "kn": "ಇನ್ನೂ ಕಳುಹಿಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.submitted": {
+  "en": "Waiting for WhatsApp",
+  "te": "WhatsApp సమాధానం కోసం ఎదురుచూస్తోంది",
+  "hi": "WhatsApp के जवाब का इंतज़ार",
+  "kn": "WhatsApp ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.approved": {
+  "en": "Approved",
+  "te": "ఒప్పుకుంది",
+  "hi": "मंज़ूर",
+  "kn": "ಒಪ್ಪಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.rejected": {
+  "en": "Not accepted",
+  "te": "ఒప్పుకోలేదు",
+  "hi": "मंज़ूर नहीं हुआ",
+  "kn": "ಒಪ್ಪಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.send_all": {
+  "en": "Send all for approval",
+  "te": "అన్నీ ఆమోదం కోసం పంపండి",
+  "hi": "सब मंज़ूरी के लिए भेजें",
+  "kn": "ಎಲ್ಲವನ್ನೂ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.note": {
+  "en": "WhatsApp needs to approve messages we start. Replies inside 24 hours need no approval.",
+  "te": "మనం మొదలుపెట్టే messages ని WhatsApp ఆమోదించాలి. 24 గంటల లోపు replies కి ఆమోదం అవసరం లేదు.",
+  "hi": "जो messages हम शुरू करते हैं उन्हें WhatsApp मंज़ूर करता है। 24 घंटे के अंदर के replies को मंज़ूरी नहीं चाहिए।",
+  "kn": "ನಾವು ಶುರು ಮಾಡುವ messages ಅನ್ನು WhatsApp ಒಪ್ಪಬೇಕು. 24 ಗಂಟೆಯೊಳಗಿನ replies ಗೆ ಒಪ್ಪಿಗೆ ಬೇಕಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.title": {
+  "en": "Messages we send",
+  "te": "మనం పంపే messages",
+  "hi": "हम जो messages भेजते हैं",
+  "kn": "ನಾವು ಕಳುಹಿಸುವ messages",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.title": {
+  "en": "What kind of business is this?",
+  "te": "ఇది ఏ రకమైన వ్యాపారం?",
+  "hi": "यह किस तरह का कारोबार है?",
+  "kn": "ಇದು ಯಾವ ರೀತಿಯ ವ್ಯಾಪಾರ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.sub": {
+  "en": "Pick the closest one. We then ask only the things that fit your business and use its own words.",
+  "te": "దగ్గరగా ఉన్నది ఎంచుకోండి. అప్పుడు మీ వ్యాపారానికి సరిపోయే వాటినే అడుగుతాం.",
+  "hi": "सबसे करीब वाला चुनें। फिर हम सिर्फ़ वही पूछेंगे जो आपके कारोबार पर लगता है।",
+  "kn": "ಹತ್ತಿರದ್ದನ್ನು ಆರಿಸಿ. ಆಮೇಲೆ ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಹೊಂದುವುದನ್ನೇ ಕೇಳುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.err": {
+  "en": "Could not save that. Try again.",
+  "te": "సేవ్ చేయలేకపోయాం. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "सेव नहीं हो सका। फिर कोशिश करें।",
+  "kn": "ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.err.role": {
+  "en": "Only the owner of the workspace can choose this.",
+  "te": "ఇది వర్క్‌స్పేస్ యజమాని మాత్రమే ఎంచుకోగలరు.",
+  "hi": "यह सिर्फ़ वर्कस्पेस का मालिक चुन सकता है।",
+  "kn": "ಇದನ್ನು ವರ್ಕ್‌ಸ್ಪೇಸ್ ಮಾಲೀಕರು ಮಾತ್ರ ಆರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.err.step_up": {
+  "en": "Confirm with your two-step code first, then choose again.",
+  "te": "ముందుగా మీ రెండు-దశల కోడ్‌తో నిర్ధారించండి, తర్వాత మళ్ళీ ఎంచుకోండి.",
+  "hi": "पहले अपने दो-चरण कोड से पुष्टि करें, फिर दोबारा चुनें।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್‌ನಿಂದ ದೃಢೀಕರಿಸಿ, ನಂತರ ಮತ್ತೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "qp.f.save": {
+  "en": "Save changes",
+  "te": "మార్పులను save చేయండి",
+  "hi": "बदलाव save करें",
+  "kn": "ಬದಲಾವಣೆಗಳನ್ನು save ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "qp.f.apply": {
+  "en": "Changes apply to new quotes only. Old quotes keep their rules.",
+  "te": "మార్పులు కొత్త quotes కి మాత్రమే వర్తిస్తాయి. పాత quotes వాటి rules నే ఉంచుకుంటాయి.",
+  "hi": "बदलाव सिर्फ़ नए quotes पर लागू होते हैं। पुराने quotes अपने rules रखते हैं।",
+  "kn": "ಬದಲಾವಣೆಗಳು ಹೊಸ quotes ಗೆ ಮಾತ್ರ ಅನ್ವಯಿಸುತ್ತವೆ. ಹಳೆಯ quotes ತಮ್ಮ rules ಅನ್ನೇ ಉಳಿಸಿಕೊಳ್ಳುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.early": {
+  "en": "Free early access",
+  "te": "ఉచిత early access",
+  "hi": "मुफ़्त early access",
+  "kn": "ಉಚಿತ early access",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.open.sentence": {
+  "en": "{e} enquiries came in, {v} visits were booked and sales from visits were {s}.",
+  "te": "{e} enquiries వచ్చాయి, {v} visits book అయ్యాయి, visits నుంచి sales {s}.",
+  "hi": "{e} enquiries आईं, {v} visits book हुईं और visits से sales {s} रहीं।",
+  "kn": "{e} enquiries ಬಂದವು, {v} visits book ಆದವು, visits ಇಂದ sales {s}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.open.more": {
+  "en": "More reports",
+  "te": "మరిన్ని reports",
+  "hi": "और reports",
+  "kn": "ಇನ್ನಷ್ಟು reports",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.f.any_colour": {
+  "en": "Any colour",
+  "te": "ఏ రంగైనా",
+  "hi": "कोई भी रंग",
+  "kn": "ಯಾವ ಬಣ್ಣವಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.f.any_occasion": {
+  "en": "Any occasion",
+  "te": "ఏ సందర్భమైనా",
+  "hi": "कोई भी मौका",
+  "kn": "ಯಾವ ಸಂದರ್ಭವಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.f.any_price": {
+  "en": "Any price",
+  "te": "ఏ ధరైనా",
+  "hi": "कोई भी दाम",
+  "kn": "ಯಾವ ಬೆಲೆಯಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.view.list": {
+  "en": "List",
+  "te": "జాబితా",
+  "hi": "सूची",
+  "kn": "ಪಟ್ಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.view.photos": {
+  "en": "Photos",
+  "te": "ఫోటోలు",
+  "hi": "फ़ोटो",
+  "kn": "ಫೋಟೋಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.view.label": {
+  "en": "How to show the sarees",
+  "te": "చీరలను ఎలా చూపాలి",
+  "hi": "साड़ियाँ कैसे दिखाएँ",
+  "kn": "ಸೀರೆಗಳನ್ನು ಹೇಗೆ ತೋರಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.business": {
+  "en": "Business",
+  "te": "వ్యాపారం",
+  "hi": "बिज़नेस",
+  "kn": "ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.team": {
+  "en": "Team",
+  "te": "టీమ్",
+  "hi": "टीम",
+  "kn": "ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.assistant": {
+  "en": "Assistant",
+  "te": "అసిస్టెంట్",
+  "hi": "असिस्टेंट",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.quotes": {
+  "en": "Quotes and limits",
+  "te": "Quotes మరియు limits",
+  "hi": "Quotes और limits",
+  "kn": "Quotes ಮತ್ತು limits",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.language": {
+  "en": "Language and alerts",
+  "te": "భాష మరియు alerts",
+  "hi": "भाषा और alerts",
+  "kn": "ಭಾಷೆ ಮತ್ತು alerts",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.more": {
+  "en": "More",
+  "te": "ఇంకా",
+  "hi": "और",
+  "kn": "ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.section": {
+  "en": "Section",
+  "te": "విభాగం",
+  "hi": "सेक्शन",
+  "kn": "ವಿಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.card.more": {
+  "en": "Test and settings",
+  "te": "టెస్ట్, సెట్టింగ్స్",
+  "hi": "जाँच और सेटिंग",
+  "kn": "ಪರೀಕ್ಷೆ ಮತ್ತು ಸೆಟ್ಟಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.empty": {
+  "en": "No calls yet today. They show here as they come.",
+  "te": "ఈ రోజు ఇంకా కాల్స్ రాలేదు. వచ్చినప్పుడు ఇక్కడ కనిపిస్తాయి.",
+  "hi": "आज अभी कोई कॉल नहीं आई। आते ही यहाँ दिखेंगी।",
+  "kn": "ಇಂದು ಇನ್ನೂ ಕರೆಗಳು ಬಂದಿಲ್ಲ. ಬಂದಾಗ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rev.more": {
+  "en": "More",
+  "te": "మరిన్ని",
+  "hi": "और",
+  "kn": "ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.revoked_n": {
+  "en": "Revoked ({n})",
+  "te": "రద్దు చేసినవి ({n})",
+  "hi": "रद्द की गई ({n})",
+  "kn": "ರದ್ದುಪಡಿಸಿದವು ({n})",
   "status": {
    "te": "draft",
    "hi": "draft",

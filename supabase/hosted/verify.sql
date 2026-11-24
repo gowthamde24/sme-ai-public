@@ -132,13 +132,13 @@ checks(check_name, ok, detail) as (
          case when to_regclass('public.sell_entries') is null then 'not applied yet' else 'sell_entries present' end
   union all
   select 'first-run and what-you-sell functions exist and anon cannot run them',
-         case when to_regprocedure('public.first_run_facts(uuid)') is null then null
+         case when to_regprocedure('public.sell_entry_put(uuid,text,uuid,text,jsonb)') is null then null
               else (select count(*) from pg_proc where pronamespace = 'public'::regnamespace
                        and proname in ('workspace_pack_set', 'first_run_facts', 'sell_entry_list', 'sell_entry_put', 'sell_entry_remove')) >= 5
                    and not exists (select 1 from pg_proc p where p.pronamespace = 'public'::regnamespace
                        and p.proname in ('workspace_pack_set', 'first_run_facts', 'sell_entry_list', 'sell_entry_put', 'sell_entry_remove')
                        and has_function_privilege('anon', p.oid, 'execute')) end,
-         case when to_regprocedure('public.first_run_facts(uuid)') is null then 'not applied yet' else 'five functions, anon has no execute' end
+         case when to_regprocedure('public.sell_entry_put(uuid,text,uuid,text,jsonb)') is null then 'not applied yet (both migrations: 988000 and 988100)' else 'five functions, anon has no execute' end
 ),
 infos(check_name, ok, detail) as (
   select 'INFO workspaces with the real-data gate OPEN', null::boolean,

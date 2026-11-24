@@ -146,3 +146,20 @@ describe("Add or change a saree as sentences (JOBS)", () => {
     expect(document.querySelector("[data-simple]")).toBeNull();
   });
 });
+
+describe("Catalogue: List | Photos (FILTERS_OPEN)", () => {
+  it("a switch of two links; the list view is hairline rows (name, fabric, price) instead of the photo cards; the choice rides in the address", () => {
+    vi.stubEnv("FILTERS_OPEN", "1");
+    const q = { ...EMPTY_QUERY, view: "list" as const };
+    const { container } = render(<CatalogueView base={BASE} words={W} role="owner" query={q} items={rows()} more={null} lead={null} simple />);
+    vi.unstubAllEnvs();
+    const sw = container.querySelector("[data-part='view-switch']")!;
+    expect(sw.querySelectorAll("a")).toHaveLength(2);
+    expect(sw.querySelector("[aria-current='true']")?.textContent).toBe("List");
+    expect(container.querySelector("[data-grid='items']")).toBeNull();
+    expect(container.querySelectorAll("[data-item-row]").length).toBe(rows().length);
+    expect(hrefFor(BASE, q)).toContain("view=list");
+    expect(parseQuery({ view: "list" }).view).toBe("list");
+    expect(parseQuery({}).view).toBeUndefined();
+  });
+});

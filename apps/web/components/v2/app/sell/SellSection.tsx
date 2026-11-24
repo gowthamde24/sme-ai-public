@@ -59,7 +59,7 @@ export function SellSection({ style, entries: first, words, base, actions, live,
             {ways.map((w) => {
               const inner = (
                 <>
-                  <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-bg text-brand-text">
+                  <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center text-ink">
                     {w.icon}
                   </span>
                   <span className="min-w-0">

@@ -14,11 +14,11 @@ import { Faq, HowDemo, JobsDemo, Phone, Pipe, TryIt, Voices } from "./islands";
 import { MarkCrm, MarkForms, MarkMeta, MarkSheets, MarkToday, MarkUpload, MarkWhatsApp } from "./brands";
 import { OrbRingLazy } from "./lazy";
 
-export function V9Hdr({ t }: { t: SiteT }) {
+export function V9Hdr({ t, home = "" }: { t: SiteT; /** "/" on a page that is not the home page: the in-page links then go to the home page's sections */ home?: string }) {
   return (
     <header className="hdr">
       <div className="hdr-in">
-        <a href="#hero" className="brand">
+        <a href={`${home}#hero`} className="brand">
           <svg className="mark" width="28" height="28" viewBox="0 0 96 96" aria-hidden="true" fill="none" strokeWidth="18" strokeLinecap="round">
             <path d="M23 23h28" stroke="#c2410c" />
             <path d="M23 48h50" stroke="#16181d" />
@@ -29,19 +29,19 @@ export function V9Hdr({ t }: { t: SiteT }) {
           </span>
         </a>
         <nav className="nav" aria-label={t("v9.hdr.2")}>
-          <a href="#how">
+          <a href={`${home}#how`}>
             {t("v9.hdr.3")}
           </a>
-          <a href="#finder">
+          <a href={`${home}#finder`}>
             {t("v9.hdr.4")}
           </a>
-          <a href="#voices">
+          <a href={`${home}#voices`}>
             {t("v9.hdr.5")}
           </a>
-          <a href="#pricing">
+          <a href={`${home}#pricing`}>
             {t("v9.hdr.6")}
           </a>
-          <a href="#contact">
+          <a href={`${home}#contact`}>
             {t("v9.hdr.7")}
           </a>
         </nav>
@@ -54,7 +54,7 @@ export function V9Hdr({ t }: { t: SiteT }) {
               {t("h2.nav.login")}
             </Link>
           )}
-          <a href="#early-access" className="hdr-cta">
+          <a href={`${home}#early-access`} className="hdr-cta">
             {t("v9.hdr.9")}
           </a>
         </div>
@@ -833,9 +833,6 @@ export function V9Guard({ t }: { t: SiteT }) {
                 <text x="75" y="48" textAnchor="middle" fontSize="22" fill="#0b1020" fontFamily="inherit">
                   {"☾"}
                 </text>
-                <text x="75" y="92" textAnchor="middle" fontSize="14" fontWeight="700" fill="#0b1020" fontFamily="inherit">
-                  {t("v9.guard.17")}
-                </text>
                 <g className="hand">
                   <line x1="75" y1="75" x2="75" y2="21" stroke="#f97316" strokeWidth="3" strokeLinecap="round" />
                   <circle cx="75" cy="15" r="6" fill="#f97316" />
@@ -1214,7 +1211,7 @@ export function V9Cta({ t }: { t: SiteT }) {
   );
 }
 
-export function V9Ftr({ t, lang }: { t: SiteT; lang: SiteLang }) {
+export function V9Ftr({ t, lang, home = "" }: { t: SiteT; lang: SiteLang; /** "/" on a page that is not the home page */ home?: string }) {
   const legal = legalT(lang === "ta" ? "en" : lang);
   return (
     <footer className="ftr">
@@ -1226,22 +1223,22 @@ export function V9Ftr({ t, lang }: { t: SiteT; lang: SiteLang }) {
             </h3>
             <ul>
               <li>
-                <a href="#how">
+                <a href={`${home}#how`}>
                   {t("v9.ftr.2")}
                 </a>
               </li>
               <li>
-                <a href="#voices">
+                <a href={`${home}#voices`}>
                   {t("v9.ftr.3")}
                 </a>
               </li>
               <li>
-                <a href="#finder">
+                <a href={`${home}#finder`}>
                   {t("v9.ftr.4")}
                 </a>
               </li>
               <li>
-                <a href="#pricing">
+                <a href={`${home}#pricing`}>
                   {t("v9.ftr.5")}
                 </a>
               </li>
@@ -1253,27 +1250,27 @@ export function V9Ftr({ t, lang }: { t: SiteT; lang: SiteLang }) {
             </h3>
             <ul>
               <li>
-                <a href="#voices">
+                <a href={`${home}#voices`}>
                   {t("v9.ftr.7")}
                 </a>
               </li>
               <li>
-                <a href="#voices">
+                <a href={`${home}#voices`}>
                   {t("v9.ftr.8")}
                 </a>
               </li>
               <li>
-                <a href="#voices">
+                <a href={`${home}#voices`}>
                   {t("v9.ftr.9")}
                 </a>
               </li>
               <li>
-                <a href="#voices">
+                <a href={`${home}#voices`}>
                   {t("v9.ftr.10")}
                 </a>
               </li>
               <li>
-                <a href="#voices">
+                <a href={`${home}#voices`}>
                   {t("v9.ftr.11")}
                 </a>
               </li>
@@ -1285,22 +1282,22 @@ export function V9Ftr({ t, lang }: { t: SiteT; lang: SiteLang }) {
             </h3>
             <ul>
               <li>
-                <a href="#how">
+                <a href={`${home}#how`}>
                   {t("v9.ftr.13")}
                 </a>
               </li>
               <li>
-                <a href="#how">
+                <a href={`${home}#how`}>
                   {t("v9.ftr.14")}
                 </a>
               </li>
               <li>
-                <a href="#how">
+                <a href={`${home}#how`}>
                   {t("v9.ftr.15")}
                 </a>
               </li>
               <li>
-                <a href="#how">
+                <a href={`${home}#how`}>
                   {t("v9.ftr.16")}
                 </a>
               </li>
@@ -1312,17 +1309,17 @@ export function V9Ftr({ t, lang }: { t: SiteT; lang: SiteLang }) {
             </h3>
             <ul>
               <li>
-                <a href="#calc">
+                <a href={`${home}#calc`}>
                   {t("v9.ftr.18")}
                 </a>
               </li>
               <li>
-                <a href="#faq">
+                <a href={`${home}#faq`}>
                   {t("v9.ftr.19")}
                 </a>
               </li>
               <li>
-                <a href="#try-it">
+                <a href={`${home}#try-it`}>
                   {t("v9.ftr.20")}
                 </a>
               </li>
@@ -1334,7 +1331,7 @@ export function V9Ftr({ t, lang }: { t: SiteT; lang: SiteLang }) {
             </h3>
             <ul>
               <li>
-                <a href="#contact">
+                <a href={`${home}#contact`}>
                   {t("v9.ftr.22")}
                 </a>
               </li>
