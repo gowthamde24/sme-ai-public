@@ -256,3 +256,6 @@ export const leadsOpen = (value: string | undefined = process.env.LEADS_OPEN): b
 
 /** Reports as one calm page (owner, 25 Nov 2026; mock "Reports"): the period dropdown, THREE numbers (enquiries, visits, sales), one plain sentence, ONE chart, and 'More reports' (sources, funnel, busiest times, sales line) folded under it. `1` = on; unset = the eight widgets. */
 export const reportsOpen = (value: string | undefined = process.env.REPORTS_OPEN): boolean => value === "1";
+
+/** The industry pages (/for/<industry>: textiles, clinics, coaching centres, real estate, car dealers, wholesale), English only. Off = the address is a 404 and the sitemap does not list it. `1` = on. */
+export const industryPages = (value: string | undefined = process.env.INDUSTRY_PAGES): boolean => value === "1";
