@@ -350,6 +350,11 @@ recording_missing
 recording_not_base64
 recording_too_large
 recordings_not_removed
+refund_already_done
+refund_declined
+refund_not_a_topup
+refund_nothing_unused
+refund_unconfirmed
 replay
 reports_unavailable
 requirement_confirmed
@@ -393,6 +398,7 @@ source_too_large
 speaking_style_unavailable
 speech_unavailable
 standup_limit
+statement_dates_invalid
 stopped_by_customer
 storage_unavailable
 student_not_active
@@ -417,6 +423,9 @@ too_many_keys
 too_many_photos
 too_many_previews
 too_many_webhooks
+topup_amount_invalid
+topup_not_verified
+topup_order_unknown
 trial_already_started
 trip_state
 type_change_refused

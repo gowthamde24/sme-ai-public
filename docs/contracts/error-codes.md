@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (461)
+## Codes (470)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -51,7 +51,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `bad_cursor` | 422 | admin, knowledge, lead_finder |  |  | That page marker is not valid. |
 | `bad_request` | 400 | connectors, errors, whatsapp |  |  | Bad request. |
 | `being_sent` | 409 | outbox |  |  | This message is being handed over right now. Look again in a minute. |
-| `billing_unavailable` | 503 | billing, main, pricing |  |  | Plans and billing are not available right now. |
+| `billing_unavailable` | 503 | billing, credits, main, pricing |  |  | Plans and billing are not available right now. |
 | `business_profile_unavailable` | 503 | businessprofile |  |  | The business profile is not available right now. |
 | `business_type_unavailable` | 422 | main |  |  | That kind of business is not available yet. Choose one of the kinds on the sign-up page. |
 | `busy` | 503 | errors, hardening |  |  | The service is busy. Try again in a moment. |
@@ -368,6 +368,11 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `recording_not_base64` | 422 | ownvoice |  |  | That recording could not be read. |
 | `recording_too_large` | 413 | ownvoice |  |  | That recording is too big. |
 | `recordings_not_removed` | 502 | ownvoice |  |  | The recordings could not be removed right now. Press delete again in a moment. |
+| `refund_already_done` | 409 | credits |  |  | That top-up already has a refund. |
+| `refund_declined` | 502 | credits |  |  | The payment provider did not refund. Nothing changed: the balance is back. |
+| `refund_not_a_topup` | 404 | credits |  |  | That is not a paid top-up of this business. |
+| `refund_nothing_unused` | 409 | credits |  |  | Nothing is left to refund: the balance from that top-up was used. |
+| `refund_unconfirmed` | 502 | credits |  |  | The refund was asked for but not confirmed. Do not repeat it: check the payment at Razorpay first. The unused balance stays taken out until you do. |
 | `replay` | 409 | lead_sources |  | reason | This call was already received or is too old. |
 | `reports_unavailable` | 503 | reports |  |  | Reports are not available right now. |
 | `requirement_confirmed` | 409 | main |  |  | This enquiry already has a confirmed requirement. Discard it first. |
@@ -411,6 +416,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `speaking_style_unavailable` | 503 | how_speaks, speaking |  |  | This is not available right now. |
 | `speech_unavailable` | 422 | voice |  |  | Spoken answers are not switched on for this system. |
 | `standup_limit` | 429 | ai_team | yes |  | You can make the stand-up again 3 times a day. Try again tomorrow morning. |
+| `statement_dates_invalid` | 422 | credits |  |  | The end date is before the start date. |
 | `stopped_by_customer` | 409 | jobs, main, outbox |  |  | This customer asked us to stop. Nothing can be sent until they write again. |
 | `storage_unavailable` | 503 | privacy |  |  | Files cannot be made on this system. |
 | `student_not_active` | 409 | main |  |  | The student left or was erased, so this cannot be done. |
@@ -435,6 +441,9 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `too_many_photos` | 409 | main |  |  | An item can have at most 8 photos. |
 | `too_many_previews` | 429 | voice_notes | yes |  | Too many samples this hour. Try again later. |
 | `too_many_webhooks` | 409 | webhooks_out |  |  | This workspace already has 5 webhook endpoints. Delete one first. |
+| `topup_amount_invalid` | 422 | credits |  |  | Choose a whole number of rupees from ₹100 to ₹1,00,000. |
+| `topup_not_verified` | 402 | credits |  |  | We could not verify this payment, so nothing was added. If money left your account, wait a few minutes: it is added when the bank confirms. |
+| `topup_order_unknown` | 404 | credits |  |  | We could not find that payment. |
 | `trial_already_started` | 409 | main |  |  | This workspace has already started its trial. |
 | `trip_state` | 409 | main |  |  | That cannot be done in the state the trip is in now. Reload and look again. |
 | `type_change_refused` | 409 | workspace |  | reason | This business type cannot be changed now. |

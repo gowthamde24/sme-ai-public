@@ -77,6 +77,8 @@ class NeedsYouItem(_Out):
         "message_needs_change",
         # 28 Nov 2026 (migration 20261231989000): the workspace has a phone line but no price list, so the phone assistant cannot answer prices; opens the price list
         "phone_needs_prices",
+        # 24 Nov 2026 (migration 20261231992210): the call balance is under about 4 minutes of calls and no included minutes are left; the item opens the top-up page (target billing)
+        "credits_low",
     ]
     id: uuid.UUID
     customer: str

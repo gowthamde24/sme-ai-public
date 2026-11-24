@@ -3,7 +3,7 @@ from datetime import date
 from functools import lru_cache
 from typing import Any, Literal
 
-from pydantic import SecretStr, field_validator
+from pydantic import SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Supabase Auth signs access tokens with ES256 (JWKS) by default; legacy projects use HS256.
@@ -219,6 +219,10 @@ class Settings(BaseSettings):
     cashfree_client_id: str | None = None
     cashfree_client_secret: SecretStr | None = None
     cashfree_env: str = "sandbox"  # sandbox | production
+    # The live-mode guard (credits top-up, 24 Nov 2026): a Razorpay LIVE key (rzp_live_...) in
+    # either key setting stops the process at start unless this is true. Off everywhere (production
+    # too) until the owner says live payments may start; the keys are the owner's.
+    razorpay_live_ok: bool = False
     public_base_url: str | None = None  # https address of this API as providers reach it
     # Job DR / A2: lead sources. Off or unset by default (an unset door answers "not available").
     # The website form, the webhook and a public Google Sheet need no key.
@@ -310,6 +314,19 @@ class Settings(BaseSettings):
     terms_effective_from: date | None = None
     privacy_effective_from: date | None = None
     policy_enforce: bool = False
+
+    @model_validator(mode="after")
+    def _a_live_razorpay_key_needs_an_explicit_yes(self) -> "Settings":
+        """A live key moves real money: refused at start unless RAZORPAY_LIVE_OK is true."""
+        for name in ("billing_razorpay_key_id", "razorpay_key_id"):
+            key = getattr(self, name)
+            live = isinstance(key, str) and key.strip().startswith("rzp_live_")
+            if live and not self.razorpay_live_ok:
+                raise ValueError(
+                    f"{name.upper()} is a Razorpay LIVE key: set RAZORPAY_LIVE_OK=true to allow "
+                    "live payments, or use a rzp_test_ key"
+                )
+        return self
 
     @field_validator("voicelink_ws_token", mode="before")
     @classmethod

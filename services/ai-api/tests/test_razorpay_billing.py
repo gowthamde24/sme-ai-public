@@ -33,7 +33,7 @@ def request(ref: str = "x", price: int | None = 99900) -> CreateSubscription:
 
 
 def test_only_test_keys_are_accepted_and_nothing_is_printed() -> None:
-    with pytest.raises(ValueError, match="TEST keys"):
+    with pytest.raises(ValueError, match="RAZORPAY_LIVE_OK"):
         RazorpayBilling("rzp_live_abc", SECRET, HOOK)
     with pytest.raises(ValueError):
         RazorpayBilling(KEY, "", HOOK)

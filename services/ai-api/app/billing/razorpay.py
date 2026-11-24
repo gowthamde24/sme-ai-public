@@ -2,7 +2,7 @@
 (Subscriptions API, Checkout signature, Webhooks) and tested against recorded-shape fakes: it has NOT yet run against Razorpay's test servers, because no test key is stored. The first run with the
 owner's test keys is the check of this file (docs-private/plans/razorpay-test-billing.md).
 
-  * Keys: `rzp_test_...` only. A `rzp_live_` key stops the process at start (live billing is OFF everywhere until the owner says so).
+  * Keys: `rzp_test_...`. A `rzp_live_` key stops the process at start unless RAZORPAY_LIVE_OK is true (live billing is OFF everywhere until the owner says so; credits top-up, 24 Nov 2026).
   * Checkout: the server creates the subscription (`begin_checkout`, notes carry our tenant id and plan), the browser opens Razorpay's Checkout with its id, and returns payment id, subscription id and
     signature. Our servers never see a card or a UPI detail. `checkout_ref` = "<subscription_id>.<payment_id>.<signature>"; the signature is verified here (HMAC-SHA256 of "<payment_id>|<subscription_id>").
   * Events: POST /v1/webhooks/razorpay-billing, header X-Razorpay-Signature = hex HMAC-SHA256 of the raw body with the WEBHOOK secret; the event id is X-Razorpay-Event-Id (applying one twice changes nothing).
@@ -61,10 +61,17 @@ def _safe_id(value: object) -> str | None:
 
 class RazorpayBilling:
     name = "razorpay"
+    mode = "test"   # set per instance from the key
 
-    def __init__(self, key_id: str, key_secret: str, webhook_secret: str, *, client: httpx.Client | None = None, base_url: str = BASE) -> None:
-        if not key_id.startswith("rzp_test_"):
-            raise ValueError("BILLING_PROVIDER=razorpay accepts only Razorpay TEST keys (rzp_test_...): live billing is off")
+    def __init__(self, key_id: str, key_secret: str, webhook_secret: str, *, live_ok: bool = False, client: httpx.Client | None = None, base_url: str = BASE) -> None:
+        if key_id.startswith("rzp_live_"):
+            if not live_ok:
+                raise ValueError("BILLING_PROVIDER=razorpay was given a LIVE key (rzp_live_...): live payments need RAZORPAY_LIVE_OK=true, which is off")
+            self.mode = "live"
+        elif key_id.startswith("rzp_test_"):
+            self.mode = "test"
+        else:
+            raise ValueError("BILLING_PROVIDER=razorpay needs a Razorpay key (rzp_test_... or, with RAZORPAY_LIVE_OK, rzp_live_...)")
         if not key_secret or not webhook_secret:
             raise ValueError("BILLING_PROVIDER=razorpay needs the key secret and the webhook secret")
         self._key_id = key_id
@@ -141,6 +148,16 @@ class RazorpayBilling:
         expected = hmac.new(self._secret, f"{order_id}|{payment_id}".encode(), hashlib.sha256).hexdigest()
         return hmac.compare_digest(signature.encode(), expected.encode())
 
+    def refund_payment(self, payment_id: str, amount_paise: int, idempotency_key: str) -> str:
+        """A refund of `amount_paise` of a captured payment (`POST /v1/payments/<id>/refund`); the receipt carries our idempotency key. Answers Razorpay's refund id."""
+        if not _safe_id(payment_id) or amount_paise <= 0:
+            raise NotSupportedError("bad refund request")
+        made = self._call("POST", f"/v1/payments/{payment_id}/refund", {"amount": amount_paise, "speed": "normal", "receipt": idempotency_key[:40], "notes": {"idempotency_key": idempotency_key[:64]}})
+        rid = _safe_id(made.get("id"))
+        if rid is None:
+            raise NotSupportedError("bad refund answer")
+        return rid
+
     def create_subscription(self, request: CreateSubscription) -> ProviderSubscription:
         """Step 2: the browser returned "<subscription_id>.<payment_id>.<signature>". A wrong signature is a payment method that could not be authorised. Charges nothing."""
         parts = request.checkout_ref.split(".")
@@ -190,6 +207,18 @@ class RazorpayBilling:
         event_id = headers.get("x-razorpay-event-id") or hashlib.sha256(raw_body).hexdigest()[:40]
         return [ProviderEvent(f"razorpay:{event_id}"[:120], tenant, "order_paid", paid if isinstance(paid, int) and not isinstance(paid, bool) else None, datetime.now(UTC), order_id, payment_id)]
 
+    @staticmethod
+    def _payment_failed(headers: Mapping[str, str], raw_body: bytes, payload: dict[str, Any]) -> list[ProviderEvent]:
+        """payment.failed carries the payment (with its order id) but not our workspace: the database finds the workspace from the order. The reason is reduced to a plain word."""
+        pay = payload["payment"]["entity"]
+        order_id, payment_id = _safe_id(pay.get("order_id")), _safe_id(pay.get("id"))
+        if order_id is None or payment_id is None:
+            return []
+        reason = str(pay.get("error_reason") or pay.get("error_code") or "").lower()
+        word = "payment_cancelled" if "cancel" in reason else "bank_declined" if "declin" in reason or "insufficient" in reason else "payment_failed"
+        event_id = headers.get("x-razorpay-event-id") or hashlib.sha256(raw_body).hexdigest()[:40]
+        return [ProviderEvent(f"razorpay:{event_id}"[:120], "", "payment_failed", None, datetime.now(UTC), order_id, payment_id, word)]
+
     def verify_webhook(self, headers: Mapping[str, str], raw_body: bytes) -> list[ProviderEvent]:
         if len(raw_body) > MAX_BODY:
             raise WebhookRejected
@@ -203,6 +232,8 @@ class RazorpayBilling:
             payload = doc["payload"]
             if event == "order.paid":
                 return self._order_paid(headers, raw_body, payload)
+            if event == "payment.failed":
+                return self._payment_failed(headers, raw_body, payload)
             sub = payload["subscription"]["entity"]
             tenant = sub["notes"]["tenant_id"]
         except (ValueError, KeyError, TypeError):

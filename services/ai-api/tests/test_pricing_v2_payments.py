@@ -52,7 +52,7 @@ class PayRepo(FakeRepo):
         self.orders[order_id] = {"purpose": purpose, "base": base, "total": base + (base * 18 + 50) // 100}
         return {"order_id": order_id, "total_paise": self.orders[order_id]["total"]}
 
-    def order_settle(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_ref: str) -> dict[str, Any]:
+    def order_settle(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_ref: str, paid_paise: int | None = None) -> dict[str, Any]:
         self.tokens.append(token)
         o = self.orders[order_id]
         first = "paid" not in o
@@ -61,6 +61,11 @@ class PayRepo(FakeRepo):
             self.b["balance_paise"] += o["base"]
         self.calls.append(("order_settle", (order_id, payment_ref)))
         return {"settled": first}
+
+    def order_failed(self, token: str, order_id: str, code: str) -> dict[str, Any]:
+        self.tokens.append(token)
+        self.calls.append(("order_failed", (order_id, code)))
+        return {"recorded": True, "reason": None}
 
     def provider_event(self, token: str, tenant_id: uuid.UUID, event_id: str, kind: str, amount_paise: int | None) -> dict[str, Any]:
         self.tokens.append(token)

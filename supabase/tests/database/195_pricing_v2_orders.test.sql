@@ -22,7 +22,7 @@ select is(pg_temp.oc('a_admin', 'a', 'order_TEST000001', 'topup', 100000), 'ERR:
 select is(pg_temp.oc('a_owner', 'a', 'order_TEST000001', 'topup', 500), 'ERR:22023', 'A2: a top-up under Rs 100 is refused');
 select is(pg_temp.oc('a_owner', 'a', 'order_TEST000001', 'topup', 20000000), 'ERR:22023', 'A3: and over Rs 1,00,000');
 select is(pg_temp.j(pg_temp.oc('a_owner', 'a', 'order_TEST000001', 'topup', 100000), 'total_paise'), '118000', 'A4: Rs 1,000 + 18 % GST: the provider is asked for Rs 1,180');
-select is(pg_temp.j(pg_temp.oc('a_owner', 'a', 'order_TEST000001', 'topup', 999999), 'total_paise'), '118000', 'A5: creating the same order again changes nothing (the stored amount stands)');
+select is(pg_temp.j(pg_temp.oc('a_owner', 'a', 'order_TEST000001', 'topup', 999900), 'total_paise'), '118000', 'A5: creating the same order again changes nothing (the stored amount stands)');
 select is(pg_temp.os('a_owner', 'a', 'order_TEST000001', 'pay_TEST000001') like '%"settled": true%', true, 'A6: paid: settled');
 select is(pricing.balance_of(tests.tid('a')), 100000::bigint, 'A7: the wallet got the BASE Rs 1,000, not the Rs 1,180');
 select is((select total_paise from pricing.invoices where tenant_id = tests.tid('a') and kind = 'topup'), 118000::bigint, 'A8: the invoice is Rs 1,180 with GST');

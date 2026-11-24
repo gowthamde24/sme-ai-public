@@ -28,7 +28,7 @@ from app.pricing.models import (
 from app.rpc_base import RpcClient
 from app.tenancy.repository import RepositoryError
 
-LOW_MINUTES = 20   # a balance under about 20 minutes of calling is "low"
+LOW_MINUTES = 4   # a balance under about 4 minutes of calling (and no included minutes left) is "low": the database's pricing.settings.low_balance_minutes says the same (credits top-up, 24 Nov 2026)
 
 
 class FairUseError(RepositoryError):
@@ -52,7 +52,8 @@ class PricingRepository(Protocol):
     def change_apply(self, token: str, tenant_id: uuid.UUID, plan_id: str, interval: str, ref: str) -> dict[str, Any]: ...
     def cancel(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def order_create(self, token: str, tenant_id: uuid.UUID, order_id: str, purpose: str, amount_paise: int | None, plan_id: str | None, interval: str | None) -> dict[str, Any]: ...
-    def order_settle(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_ref: str) -> dict[str, Any]: ...
+    def order_settle(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_ref: str, paid_paise: int | None = None) -> dict[str, Any]: ...
+    def order_failed(self, token: str, order_id: str, code: str) -> dict[str, Any]: ...
     def provider_event(self, token: str, tenant_id: uuid.UUID, event_id: str, kind: str, amount_paise: int | None) -> dict[str, Any]: ...
     def invoices(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
 
@@ -88,8 +89,14 @@ class PostgrestPricingRepository:
     def order_create(self, token: str, tenant_id: uuid.UUID, order_id: str, purpose: str, amount_paise: int | None, plan_id: str | None, interval: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "pricing_order_create", {"p_tenant_id": str(tenant_id), "p_order_id": order_id, "p_purpose": purpose, "p_amount_paise": amount_paise, "p_plan_id": plan_id, "p_interval": interval})
 
-    def order_settle(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_ref: str) -> dict[str, Any]:
-        return self._rpc.object(token, "pricing_order_settle", {"p_tenant_id": str(tenant_id), "p_order_id": order_id, "p_payment_ref": payment_ref})
+    def order_settle(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_ref: str, paid_paise: int | None = None) -> dict[str, Any]:
+        args: dict[str, Any] = {"p_tenant_id": str(tenant_id), "p_order_id": order_id, "p_payment_ref": payment_ref}
+        if paid_paise is not None:   # the webhook knows what was paid: the database refuses to credit a different amount than the order's total
+            args["p_paid_paise"] = paid_paise
+        return self._rpc.object(token, "pricing_order_settle", args)
+
+    def order_failed(self, token: str, order_id: str, code: str) -> dict[str, Any]:
+        return self._rpc.object(token, "pricing_order_failed", {"p_order_id": order_id, "p_code": code})
 
     def provider_event(self, token: str, tenant_id: uuid.UUID, event_id: str, kind: str, amount_paise: int | None) -> dict[str, Any]:
         return self._rpc.object(token, "pricing_provider_event", {"p_tenant_id": str(tenant_id), "p_event_id": event_id, "p_kind": kind, "p_amount_paise": amount_paise})
@@ -129,7 +136,7 @@ def balance_out(doc: dict[str, Any], rate: int | None = None) -> BalanceOut:
     free_left = int(doc.get("free_start_left_paise") or 0)
     return BalanceOut(
         balance_paise=paise, balance_text=inr(paise), minutes_estimate=minutes, summary_text=f"{inr(paise)} · {minutes_text(minutes)}", plan_id=doc["plan_id"], plan_name=doc["plan_name"],
-        low=minutes < LOW_MINUTES, topup_available=True, free_start_granted=bool(doc.get("free_start_granted")), free_start_left_paise=free_left,
+        low=minutes < LOW_MINUTES and max(int(doc["included_minutes"]) * 2 - int(doc.get("included_half_used") or 0), 0) == 0, topup_available=True, free_start_granted=bool(doc.get("free_start_granted")), free_start_left_paise=free_left,
         free_start_left_text=inr(free_left) if free_left else None, included_minutes=int(doc["included_minutes"]), included_minutes_left=left_half // 2,
         subscription=SubscriptionOut.model_validate(sub) if isinstance(sub, dict) else None,
     )
@@ -261,10 +268,18 @@ class PricingService:
 
     def confirm_order(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_id: str, signature: str) -> BalanceOut:
         """The browser returned the payment id and its signature: checked here, then the stored order is settled once (the balance credited / the plan changed / the fee recorded)."""
+        self.settle_checked(token, tenant_id, order_id, payment_id, signature)
+        return self.balance(token, tenant_id)
+
+    def settle_checked(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_id: str, signature: str) -> dict[str, Any]:
+        """Check the provider's signature over "<order>|<payment>", then settle the stored order once. Answers the database's word on it ({settled, replayed, purpose}); a wrong signature settles nothing."""
         if not self._need_provider().verify_order_payment(order_id, payment_id, signature):
             raise PaymentNotVerifiedError(order_id)
-        self._repo.order_settle(token, tenant_id, order_id, payment_id)
-        return self.balance(token, tenant_id)
+        return self._repo.order_settle(token, tenant_id, order_id, payment_id)
+
+    @property
+    def provider(self) -> BillingProvider | None:
+        return self._provider
 
     def invoices(self, token: str, tenant_id: uuid.UUID) -> InvoicesOut:
         return InvoicesOut(items=[InvoiceOut(number=i["number"], kind=i["kind"], subtotal_text=inr(int(i["subtotal_paise"])), gst_text=inr(int(i["gst_paise"])), total_text=inr(int(i["total_paise"])),
@@ -274,10 +289,15 @@ class PricingService:
         """The provider's signed events, applied once each: a renewal, a halt, a cancel, a paid order (the browser may have settled it already: then nothing happens)."""
         done = 0
         for e in events:
+            if e.kind == "payment_failed":   # carries the order but not our workspace: the database finds it from the order
+                if e.order_id:
+                    self._repo.order_failed(worker_token, e.order_id, e.reason or "payment_failed")
+                done += 1
+                continue
             tenant = uuid.UUID(e.tenant_id)
             if e.kind == "order_paid":
                 if e.order_id and e.payment_id:
-                    self._repo.order_settle(worker_token, tenant, e.order_id, e.payment_id)
+                    self._repo.order_settle(worker_token, tenant, e.order_id, e.payment_id, e.amount_paise)
             else:
                 self._repo.provider_event(worker_token, tenant, e.event_id, e.kind, e.amount_paise)
             done += 1
