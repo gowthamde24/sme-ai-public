@@ -128016,5 +128016,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "mya.knows.price_list": {
+  "en": "Add your price list so the assistant can answer prices.",
+  "te": "మీ ప్రైస్ లిస్ట్ add చేయండి, అప్పుడు అసిస్టెంట్ ధరలు చెప్పగలదు.",
+  "hi": "अपनी price list जोड़िए, तब असिस्टेंट दाम बता सकेगा।",
+  "kn": "ನಿಮ್ಮ price list ಸೇರಿಸಿ, ಆಗ ಅಸಿಸ್ಟೆಂಟ್ ಬೆಲೆ ಹೇಳಬಲ್ಲದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.knows.catalogue": {
+  "en": "Add what you sell so the assistant can answer questions about it.",
+  "te": "మీరు ఏం అమ్ముతారో add చేయండి, అప్పుడు అసిస్టెంట్ దాని గురించి జవాబివ్వగలదు.",
+  "hi": "आप जो बेचते हैं उसे जोड़िए, तब असिस्टेंट उसके बारे में जवाब दे सकेगा।",
+  "kn": "ನೀವು ಏನು ಮಾರುತ್ತೀರಿ ಎಂದು ಸೇರಿಸಿ, ಆಗ ಅಸಿಸ್ಟೆಂಟ್ ಅದರ ಬಗ್ಗೆ ಉತ್ತರಿಸಬಲ್ಲದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.knows.answers": {
+  "en": "Add a few answers so the assistant can reply to common questions.",
+  "te": "కొన్ని జవాబులు add చేయండి, అప్పుడు అసిస్టెంట్ సాధారణ ప్రశ్నలకు జవాబివ్వగలదు.",
+  "hi": "कुछ जवाब जोड़िए, तब असिस्टेंट आम सवालों का जवाब दे सकेगा।",
+  "kn": "ಕೆಲವು ಉತ್ತರಗಳನ್ನು ಸೇರಿಸಿ, ಆಗ ಅಸಿಸ್ಟೆಂಟ್ ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಬಲ್ಲದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.knows.ready": {
+  "en": "Your assistant can answer from {prices} prices, {items} items and {answers} answers.",
+  "te": "మీ అసిస్టెంట్ {prices} ధరలు, {items} items, {answers} జవాబులతో జవాబివ్వగలదు.",
+  "hi": "आपका असिस्टेंट {prices} दाम, {items} items और {answers} जवाबों से जवाब दे सकता है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ {prices} ಬೆಲೆ, {items} items ಮತ್ತು {answers} ಉತ್ತರಗಳಿಂದ ಉತ್ತರಿಸಬಲ್ಲದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.knows.go.price_list": {
+  "en": "Price lists",
+  "te": "ప్రైస్ లిస్ట్‌లు",
+  "hi": "प्राइस लिस्ट",
+  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.knows.go.catalogue": {
+  "en": "What you sell",
+  "te": "మీరు అమ్మేవి",
+  "hi": "आप क्या बेचते हैं",
+  "kn": "ನೀವು ಮಾರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.knows.go.answers": {
+  "en": "Add answers",
+  "te": "జవాబులు add చేయండి",
+  "hi": "जवाब जोड़ें",
+  "kn": "ಉತ್ತರ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

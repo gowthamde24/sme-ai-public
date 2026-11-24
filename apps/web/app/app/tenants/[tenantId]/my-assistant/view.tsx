@@ -19,6 +19,7 @@ import { businessLanguage } from "@/lib/assistant/business-language";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
+import { readPhoneKnows } from "@/lib/assistant-status/knows";
 import { readAssistantStatus } from "@/lib/assistant-status/source";
 import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { requireUser } from "@/lib/auth/session";
@@ -58,7 +59,7 @@ export async function renderMyAssistant(tenantId: string, which: "overview" | Se
   if (tenant.role !== "owner" && tenant.role !== "admin") return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("mya.title")} message={t("mya.rolesonly")} />;
   const owner = tenant.role === "owner";
   const tab = which;
-  const status = await readAssistantStatus(user.accessToken, tenantId);
+  const [status, knows] = await Promise.all([readAssistantStatus(user.accessToken, tenantId), readPhoneKnows(user.accessToken, tenantId)]);
   const common = { lang, t, tenantId, base, owner };
   const ctx = { token: user.accessToken, tenantId, userId: user.id, modules: tab === "rules" ? ((await readPackCached(user.accessToken, tenantId).catch(() => null))?.modules ?? null) : null };
 
@@ -81,7 +82,7 @@ export async function renderMyAssistant(tenantId: string, which: "overview" | Se
     ) : tab === "practice" ? (
       practiceTab({ t })
     ) : (
-      <GoLivePanel words={wordsFor(lang, ["mya.g.", "mya.missing.", "mya.tab.", "nav.assistant."])} base={base} status={status} button={goLive} mock={assistantStatusScreens() === "mock"} />
+      <GoLivePanel words={wordsFor(lang, ["mya.g.", "mya.missing.", "mya.tab.", "mya.knows.", "nav.assistant."])} base={base} status={status} button={goLive} mock={assistantStatusScreens() === "mock"} knows={knows} />
     );
   return (
     <main className={pageMain} lang={lang} {...(myAssistantOpen() ? { "data-mya-over": "" } : {})}>
