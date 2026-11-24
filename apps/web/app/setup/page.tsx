@@ -5,6 +5,8 @@ import { getLang } from "@/i18n/get-lang";
 import { signupT } from "@/i18n/signup";
 import { ApiAuthError } from "@/lib/api/client";
 import { fetchAccountSetup, type AccountSetup } from "@/lib/api/account";
+import { getSignupStatus } from "@/lib/api/signup-open";
+import { SignupSteps } from "@/components/v2/auth/SignupSteps";
 import { requireUser } from "@/lib/auth/session";
 import { listPacks } from "@/lib/api/pack";
 import { parseSignupPack, pickSignupPack, signupCards, SIGNUP_PACK_COOKIE } from "@/lib/packs/signup";
@@ -15,6 +17,7 @@ import { cookies } from "next/headers";
 
 
 import { completeSetup } from "../app/setup/actions";
+import { acceptConsentAction, startPhoneAction, verifyPhoneAction } from "./signup-actions";
 import { SetupForm } from "./setup-form";
 import { BRAND_NAME } from "@/design/brand";
 
@@ -49,6 +52,20 @@ export default async function SetupPage() {
   if (state !== null && state !== "needed") redirect("/app");
   const lang = await getLang();
   const t = signupT(lang);
+  // opening sign-up (C1's docs/contracts/signup.md): while the API has it on, the next missing check (terms and privacy, then the phone code) comes before the business is made; closed or unreadable = the set-up as it was
+  const status = await getSignupStatus(user.accessToken);
+  const pending = status && status.open ? (!status.consentDone ? "consent" : !status.phoneVerified ? "phone" : null) : null;
+  if (status && pending) {
+    const words: Record<string, string> = {};
+    for (const k of ["su.terms", "su.privacy", "su.read.terms", "su.read.privacy", "su.agree", "su.phone.l", "su.phone.h", "su.phone.send", "su.code.sent", "su.code.l", "su.code.verify", "su.code.resend", "su.err.signup_closed", "su.err.email_unconfirmed", "su.err.email_not_allowed", "su.err.rate_limited", "su.err.phone_taken", "su.err.phone_code_unavailable", "su.err.validation_error", "su.err.code_wrong", "su.err.code_expired", "su.err.code_missing", "su.err.code_locked", "su.err.version_outdated", "su.err.unavailable"] as const) words[k] = t(k);
+    return (
+      <main id="main" className={authMain} lang={lang}>
+        <h1 className={authH1}>{t("su.title")}</h1>
+        <p className={authLead}>{t("su.sub")}</p>
+        <SignupSteps words={words} step={pending} versions={{ terms: status.termsVersion, privacy: status.privacyVersion }} links={{ terms: "/terms", privacy: "/privacy" }} actions={{ consent: acceptConsentAction, start: startPhoneAction, verify: verifyPhoneAction }} />
+      </main>
+    );
+  }
   // the kind of business chosen on the first sign-up step (job CL): in the account's metadata (e-mail way) or the cookie of the browser that went to Google or Facebook; checked against what `GET /v1/packs` offers (and again by the database)
   const packs = await listPacks().catch(() => []);
   const templates = await readTemplates();
