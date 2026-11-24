@@ -17,6 +17,7 @@ import { readPackCached } from "@/lib/packs/read";
 
 import { readLeadLabel } from "../../visits/visits-data";
 import { searchLeadsAction, sendCatalogueAction } from "../catalogue-actions";
+import { undoPriceAction } from "../price-actions";
 import { catalogueWords } from "../catalogue-words";
 import { partsWords } from "@/i18n/app-words";
 import { BRAND_NAME } from "@/design/brand";
@@ -73,7 +74,7 @@ export default async function CatalogueItemPage({ params, searchParams }: PagePr
   const send: SendActions | null = writer ? { search: searchLeadsAction.bind(null, tenantId), send: sendCatalogueAction.bind(null, tenantId) } : null;
   return (
     <main className={pageMain} lang={lang}>
-      <ItemView base={`/app/tenants/${tenantId}`} item={item} role={tenant.role} words={catalogueWords(lang)} lead={lead} saved={pick(raw.saved) === "1"} send={send} />
+      <ItemView base={`/app/tenants/${tenantId}`} item={item} role={tenant.role} words={catalogueWords(lang)} lead={lead} saved={pick(raw.saved) === "1"} send={send} undo={tenant.role === "owner" ? undoPriceAction.bind(null, tenantId, itemId) : null} />
     </main>
   );
 }

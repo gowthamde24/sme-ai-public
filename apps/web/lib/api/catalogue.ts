@@ -21,7 +21,7 @@ export const OCCASIONS = ["wedding", "festival", "daily", "party"] as const;
 export type Occasion = (typeof OCCASIONS)[number];
 export const PRICE_BANDS = ["under_5k", "5k_10k", "10k_25k", "25k_50k", "above_50k"] as const;
 export type PriceBand = (typeof PRICE_BANDS)[number];
-export const STOCK_STATUSES = ["in_stock", "few_left", "made_to_order"] as const;
+export const STOCK_STATUSES = ["in_stock", "few_left", "made_to_order", "out_of_stock"] as const;
 export type StockStatus = (typeof STOCK_STATUSES)[number];
 
 /** The limits of the contract the screens keep to. */
@@ -70,6 +70,8 @@ export interface ItemBase {
   photo_count: number;
   created_at: string;
   updated_at: string;
+  /** The display name of the person who last changed the item (C1, 29 Nov 2026), null for a change made by the system; left out by an older API (then undefined: the line "Last changed by" is not drawn). */
+  updated_by_name?: string | null;
 }
 export interface ItemSummary extends ItemBase {
   cover: Photo | null;
@@ -171,6 +173,7 @@ function parseBase(json: Rec): ItemBase {
     photo_count: int(json.photo_count, "photo_count", 0, MAX_PHOTOS),
     created_at: when(json.created_at, "created_at"),
     updated_at: when(json.updated_at, "updated_at"),
+    ...(json.updated_by_name !== undefined ? { updated_by_name: typeof json.updated_by_name === "string" && json.updated_by_name.length <= 80 ? json.updated_by_name : null } : {}),
   };
 }
 
@@ -297,4 +300,12 @@ export async function putQuantity(accessToken: string, tenantId: string, itemId:
   if (quantity !== null && (!Number.isInteger(quantity) || quantity < 0 || quantity > MAX_QUANTITY)) throw new ApiContractError("quantity");
   const json = await apiRequest(tenantPath(tenantId, `items/${idOf(itemId)}/quantity`), accessToken, { method: "PUT", body: JSON.stringify({ quantity }) });
   if (!isRecord(json) || json.id !== itemId) throw new ApiContractError("Unexpected quantity answer.");
+}
+
+/**
+ * `POST /catalogue/items/{id}/undo-price` (C1, 29 Nov 2026; Owner only): puts back the price the item had before its last price change, when that change is under 30 days old. 200 = the whole item; 409 `nothing_to_undo` = no change in the last 30 days or it was already
+ * undone; 403 `forbidden` for anyone but the Owner. The undo is itself recorded and shows as a change by the Owner.
+ */
+export async function undoPrice(accessToken: string, tenantId: string, itemId: string): Promise<Item> {
+  return parseItem(await apiRequest(tenantPath(tenantId, `items/${idOf(itemId)}/undo-price`), accessToken, { method: "POST", body: "{}" }));
 }
