@@ -24,7 +24,9 @@ from app.auth.deps import (
     OwnerOrAdmin,
     PrincipalDep,
     Runtime,
+    TenantContext,
     get_runtime,
+    require_tenant_role,
 )
 from app.errors import ApiError
 from app.jobs import identity
@@ -35,19 +37,25 @@ from app.packs.models import (
     ExampleDataRemoveOut,
     ExampleDataResetOut,
     ExampleDataStatusOut,
+    FirstRunItemsOut,
+    FirstRunOut,
+    FirstRunPackOut,
     LanguageReview,
     ModuleStateOut,
+    PackChangeIn,
     PackListOut,
     SellStyle,
     WorkspaceModulesOut,
     WorkspacePackOut,
 )
 from app.packs.repository import PacksRepository
-from app.workspace.other_type import public_id
+from app.tenancy.models import Role
+from app.workspace.other_type import internal_code, public_id
 
 public_router = APIRouter(prefix="/v1", tags=["packs"])
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["packs"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
+OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
 
 
 def _repo(runtime: Runtime) -> PacksRepository:
@@ -102,7 +110,23 @@ def _has_example_data(manifest: dict[str, Any]) -> bool:
 
 @router.get("/pack", response_model=WorkspacePackOut)
 def get_pack(ctx: AnyMember, runtime: RuntimeDep) -> WorkspacePackOut:
-    row = _repo(runtime).workspace_pack(ctx.principal.token, ctx.tenant.id)
+    return _pack_out(_repo(runtime).workspace_pack(ctx.principal.token, ctx.tenant.id))
+
+
+@router.put("/pack", response_model=WorkspacePackOut)
+def change_pack(body: PackChangeIn, ctx: OwnerStrong, runtime: RuntimeDep) -> WorkspacePackOut:
+    """The Owner changes the business type of an existing workspace (docs/contracts/first-run.md). Adds the new pack's fields, removes nothing; the same pack again changes nothing."""
+    return _pack_out(_repo(runtime).workspace_pack_set(ctx.principal.token, ctx.tenant.id, internal_code(body.pack)))
+
+
+@router.get("/first-run", response_model=FirstRunOut)
+def first_run(ctx: AnyMember, runtime: RuntimeDep) -> FirstRunOut:
+    row = _repo(runtime).first_run_facts(ctx.principal.token, ctx.tenant.id)
+    typed = bool(row.get("typed"))
+    return FirstRunOut(pack=FirstRunPackOut(code=str(row["pack_code"]), source=row["source"], typed=typed), needs_type=not typed, items=FirstRunItemsOut(count=int(row.get("items_count") or 0)))
+
+
+def _pack_out(row: dict[str, Any]) -> WorkspacePackOut:
     manifest = row.get("manifest") or {}
     labels = {lang: {str(k): str(v) for k, v in words.items()} for lang, words in (manifest.get("labels") or {}).items() if isinstance(words, dict)}
     return WorkspacePackOut(

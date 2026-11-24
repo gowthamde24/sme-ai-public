@@ -406,9 +406,16 @@ def _fact(run: Run, check: str) -> Awaitable[bool | None]:
         body = await _got(run, "/v1/account/security", absolute=True)
         return (body.get("second_factor_on") is True or body.get("session_level") == "aal2") if isinstance(body, dict) else None
 
+    async def first_run_items() -> bool | None:
+        """The first-run count (catalogue items + the "What you sell" entries that are not removed; docs/contracts/first-run.md): True when there is one. A route this API does not have yet is simply not asked (None)."""
+        body = await _got(run, "/first-run")
+        items = body.get("items") if isinstance(body, dict) else None
+        count = items.get("count") if isinstance(items, dict) else None
+        return count > 0 if isinstance(count, int) and not isinstance(count, bool) else None
+
     async def catalogue() -> bool | None:
         mat = _has_rows(run, "/materials/items?limit=1&include_inactive=true") if await _materials_on(run) else asyncio.sleep(0, None)
-        return await _either(mat, _has_rows(run, "/catalogue/items?limit=1&include_inactive=true"))
+        return await _either(mat, _has_rows(run, "/catalogue/items?limit=1&include_inactive=true"), first_run_items())
 
     async def whatsapp() -> bool | None:
         body = await _got(run, "/whatsapp/account")
