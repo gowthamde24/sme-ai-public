@@ -40,6 +40,21 @@ class Wallet:
 
 
 @dataclass(frozen=True)
+class LockedOrder:
+    order_id: int
+    did_count: int
+    total: float   # rupees: OUR cost (never shown to a customer)
+
+
+@dataclass(frozen=True)
+class OrderSummary:
+    total: float
+    did_count: int
+    channel_count: int
+    wallet_balance: float
+
+
+@dataclass(frozen=True)
 class AvailableDid:
     """One number for sale. `monthly_rate` is OUR cost (rupees a month): for the guardrails and the audit, never for a screen."""
 
@@ -170,6 +185,44 @@ class VoicelinkApi:
         data = self._request("GET", "/call-routing/list")
         return [r for r in data if isinstance(r, dict)] if isinstance(data, list) else []
 
+    # ------------------------------------------------------------------------------------------------ the number picker's WRITES (28 Nov 2026): these move money and change the account; only app/numbers/buyer.py calls them
+    def lock_did(self, did_id: int, months: int = 1) -> LockedOrder:
+        """Lock ONE number and open a draft order (`POST /reseller/purchase/lock-did`). Nothing is charged yet. A number that is no longer free is refused (a closed `refused`)."""
+        data = self._request("POST", "/reseller/purchase/lock-did", json_body={"did_ids": [int(did_id)], "months": int(months)})
+        try:
+            locked = data["locked_dids"]
+            return LockedOrder(order_id=int(data["order_id"]), did_count=len(locked), total=float(sum(float(x.get("total_price") or 0) for x in locked)))
+        except (KeyError, TypeError, ValueError, AttributeError):
+            raise VoicelinkError("server") from None
+
+    def order_summary(self, order_id: int) -> OrderSummary:
+        """The server's own totals of a draft order (`GET /reseller/purchase/summary/{id}`): what the order would cost, how many numbers and channels it holds, and the wallet it would be paid from."""
+        data = self._request("GET", f"/reseller/purchase/summary/{int(order_id)}")
+        try:
+            return OrderSummary(total=float(data["total"]), did_count=int(data.get("did_count") or 0), channel_count=int(data.get("channel_count") or 0), wallet_balance=float(data.get("wallet_balance") or 0))
+        except (KeyError, TypeError, ValueError, AttributeError):
+            raise VoicelinkError("server") from None
+
+    def confirm_purchase(self, order_id: int) -> str:
+        """THE PURCHASE (`POST /reseller/purchase/confirm`): the order is paid from OUR wallet. Returns VoiceLink's order number."""
+        data = self._request("POST", "/reseller/purchase/confirm", json_body={"order_id": int(order_id)})
+        return str(data.get("order_number") or "") if isinstance(data, dict) else ""
+
+    def map_did(self, *, client_id: int, did_id: int, description: str = "") -> None:
+        """Give a bought number to OUR client (`POST /reseller/client/map-did`), assigned, with call recording OFF (it is on by default and our privacy text says calls are not recorded)."""
+        body: dict[str, Any] = {"did_id": int(did_id), "client_id": int(client_id), "user_status": 2, "call_recording": 0}
+        if description:
+            body["description"] = description[:200]
+        self._request("POST", "/reseller/client/map-did", json_body=body)
+
+    def create_routing(self, *, did_id: int, bot_id: int) -> int:
+        """Point a number at our WebSocket bot for inbound and outbound (`POST /call-routing/create`: 3 = WebSocket bot both ways). Returns the routing id."""
+        data = self._request("POST", "/call-routing/create", json_body={"did_id": int(did_id), "status": 1, "for_inbound_call": 3, "for_outbound_call": 3, "inbound_websocket_bot_id": int(bot_id), "outbound_websocket_bot_id": int(bot_id)})
+        try:
+            return int(data["id"])
+        except (KeyError, TypeError, ValueError):
+            raise VoicelinkError("server") from None
+
     def call_details(self, call_id: str) -> dict[str, Any]:
         data = self._request("GET", "/call-log/details", params={"call_id": call_id})
         return data if isinstance(data, dict) else {}
@@ -245,4 +298,4 @@ class VoicelinkCaller:
         return False
 
 
-__all__ = ["AvailableDid", "recording_on", "VoicelinkApi", "VoicelinkBalanceReader", "VoicelinkCaller", "VoicelinkError", "Wallet", "digits_with_country", "indian_mobile_10"]
+__all__ = ["AvailableDid", "LockedOrder", "OrderSummary", "recording_on", "VoicelinkApi", "VoicelinkBalanceReader", "VoicelinkCaller", "VoicelinkError", "Wallet", "digits_with_country", "indian_mobile_10"]
