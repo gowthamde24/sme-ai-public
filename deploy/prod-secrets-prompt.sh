@@ -58,7 +58,7 @@ for row in "${SECRETS[@]}"; do
     if [ "$name" = sme-whatsapp-verify-token ] && [ "$req" = opt ]; then
       read -rp "$name: $what. Generate it now? [y/N] " yn; [ "$yn" = y ] || { echo "skipped  $name"; continue; }
     fi
-    openssl rand -hex 32 | gcloud secrets create "$name" --project "$PROJECT_ID" --replication-policy=automatic --data-file=- >/dev/null
+    printf '%s' "$(openssl rand -hex 32)" | gcloud secrets create "$name" --project "$PROJECT_ID" --replication-policy=automatic --data-file=- >/dev/null
     grant "$name" "$readers"; echo "created  $name  (generated; read by: $readers)"; created=$((created + 1)); continue
   fi
   while :; do

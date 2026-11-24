@@ -12,7 +12,8 @@ case "${1:-}" in
   *) echo "usage: $0 staging|production" >&2; exit 2 ;;
 esac
 host=$(gcloud run services describe sme-api --region asia-south1 --project "$project" --format='value(status.url)' | sed 's#^https://##')
-token=$(gcloud secrets versions access latest --secret=sme-voicelink-ws-token --project "$project")
+token=$(gcloud secrets versions access latest --secret=sme-voicelink-ws-token --project "$project" | tr -d '\r\n')
+case "$token" in *[[:space:]]*) echo "the token holds a space: not usable" >&2; exit 1 ;; esac
 [ "${#token}" -ge 32 ] || { echo "the token is shorter than 32 characters: not usable" >&2; exit 1; }
 echo "VoiceLink addresses for $1 (keep them private, they contain the secret):"
 echo "  websocket_url : wss://${host}/v1/telephony/voicelink/ws/${token}"
