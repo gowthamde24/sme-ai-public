@@ -1,5 +1,5 @@
 -- Two platform alerts that are COMPUTED when the staff open the alerts list (28 Nov 2026), so they cannot be missed by a process that is itself down:
---   worker_stale  the background worker's heartbeat (scheduler.heartbeat) is older than five of its own intervals (at least ten minutes), or it has never reported
+--   worker_stale  the background worker's heartbeat (scheduler.heartbeat) is older than five of its own intervals (at least ten minutes); a system that has NEVER had a heartbeat (a fresh database) is not an alert
 --   quiet_line    a live VoiceLink number (inbound on) got real inbound calls in the 14 days before but NONE in the last 24 hours: the carrier or the bot may be broken
 -- Nothing is stored; the items appear and disappear with the facts. Visible to owner, support and finance (worker) and owner and finance (quiet line). No personal data: a sentence with a count.
 
@@ -7,13 +7,11 @@ create function admin.computed_alerts(p_role text) returns jsonb language sql st
 $$
   select coalesce(jsonb_agg(x.item order by x.n), '[]'::jsonb) from (
     select 1 as n, jsonb_build_object('id', md5('worker_stale')::uuid, 'kind', 'worker_stale', 'severity', 'warn', 'title', 'The background worker has stopped',
-             'detail', case when h.last_tick_at is null then 'The worker has never reported. Messages, follow-ups and the daily checks are not running: look at the worker job in Cloud Run.'
-                            else 'The worker last reported ' || (extract(epoch from (app.outbox_now() - h.last_tick_at)) / 60)::int || ' minutes ago (it reports every ' || h.interval_seconds || ' seconds). Messages, follow-ups and the daily checks are not running: look at the worker job in Cloud Run.' end,
+             'detail', 'The worker last reported ' || (extract(epoch from (app.outbox_now() - h.last_tick_at)) / 60)::int || ' minutes ago (it reports every ' || h.interval_seconds || ' seconds). Messages, follow-ups and the daily checks are not running: look at the worker job in Cloud Run.',
              'created_at', app.outbox_now(), 'acknowledged', false) as item
-      from (select null::timestamptz as last_tick_at, 60 as interval_seconds where not exists (select 1 from scheduler.heartbeat)
-            union all select hb.last_tick_at, hb.interval_seconds from scheduler.heartbeat hb where hb.id = 1) h
+      from scheduler.heartbeat h
      where p_role in ('owner', 'support', 'finance')
-       and (h.last_tick_at is null or h.last_tick_at < app.outbox_now() - greatest(interval '10 minutes', h.interval_seconds * 5 * interval '1 second'))
+       and h.id = 1 and h.last_tick_at < app.outbox_now() - greatest(interval '10 minutes', h.interval_seconds * 5 * interval '1 second')
     union all
     select 2, jsonb_build_object('id', md5('quiet_line')::uuid, 'kind', 'quiet_line', 'severity', 'warn', 'title', 'A live phone number got no calls today',
              'detail', 'A number that was getting calls (' || before.n || ' in the 14 days before) has had none in the last 24 hours. Place one test call from a phone, and if it does not connect check the number at VoiceLink.',

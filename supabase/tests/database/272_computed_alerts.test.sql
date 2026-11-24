@@ -8,7 +8,7 @@ create function pg_temp.kinds(p_role text) returns text language sql as $$
 
 set local session_replication_role = replica;
 delete from scheduler.heartbeat;
-select is(pg_temp.kinds('owner'), 'worker_stale', 'A1: the worker never reported: an item');
+select is(pg_temp.kinds('owner'), '', 'A1: no heartbeat row at all (a fresh database): not an alert');
 insert into scheduler.heartbeat (id, last_tick_at, interval_seconds, ticks, last_errors) values (1, app.outbox_now(), 60, 5, 0);
 select is(pg_temp.kinds('owner'), '', 'A2: a fresh heartbeat: nothing');
 update scheduler.heartbeat set last_tick_at = app.outbox_now() - interval '2 hours';
