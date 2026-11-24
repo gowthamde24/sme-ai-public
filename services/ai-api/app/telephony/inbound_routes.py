@@ -81,6 +81,7 @@ class InboundService:
     opening_store: OpeningStore | None = None   # the opening kept across restarts (Supabase Storage, `call-openings`); None: memory only
     outbound: Any = None   # app/telephony/plivo_outbound.PlivoOutbound: places a call (phase B); None: this deployment places none
     outbound_repo: Any = None   # app/telephony/plivo_outbound.PostgrestOutboundRepo: ends a placed call nobody answered (phase B)
+    voicelink: Any = None   # app/telephony/voicelink_routes.VoicelinkConfig when VoiceLink calls are switched on here (VOICELINK_WS_TOKEN); None: the VoiceLink address answers nothing
     plivo: Any = None   # app/telephony/plivo_routes.PlivoConfig when Plivo calls are switched on here; None: the Plivo addresses answer "off"
     usage: Any = None   # app/ops/usage.UsageRecorder: what each provider was used for at the end of a call (the usage ledger); None: nothing is recorded
 
