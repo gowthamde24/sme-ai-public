@@ -6,6 +6,7 @@ import { STATUS_ORDER } from "@/lib/calls/status";
 
 import { btnQuiet } from "../../ui";
 import { makeT, type Words } from "../../words";
+import { filtersOpen } from "@/lib/screens/flag";
 import { LinkSentence } from "../../jobs/pages/LazyLinkSentence";
 import { MoreBox, pgCard } from "../../jobs/pages/parts";
 
@@ -21,10 +22,12 @@ export function CallsFiltersSimple({ words, base, query, counts, lines, shown, t
   const num = (n: number) => n.toLocaleString("en-IN");
   const lineValue = query.line ?? "all";
   const lineOptions = [{ value: "all", text: t("jobs.pg.calls.line.all"), href: callsHref(base, { ...query, line: null }) }, ...lines.map((l) => ({ value: l.id, text: l.label, href: callsHref(base, { ...query, line: l.id }) }))];
+  const plain = filtersOpen();
   const filtered = query.status !== "all" || query.when !== "any" || query.line !== null || query.q !== "";
   return (
-    <section data-part="calls-filters" data-simple="" aria-label={t("calls6.chips.label")} className={`${pgCard} flex flex-col gap-3`}>
+    <section data-part="calls-filters" data-simple="" aria-label={t("calls6.chips.label")} className={plain ? "flex flex-col gap-3" : `${pgCard} flex flex-col gap-3`}>
       <LinkSentence
+        plain={plain}
         line="calls"
         template={t("jobs.pg.calls.line")}
         choices={{
@@ -48,9 +51,13 @@ export function CallsFiltersSimple({ words, base, query, counts, lines, shown, t
         </button>
       </form>
       {lines.length > 0 || query.line ? (
-        <MoreBox title={t("jobs.pg.more")} sub={t("jobs.pg.calls.more.sub")} open={query.line !== null}>
-          <LinkSentence line="calls-line" template={t("jobs.pg.calls.line.sentence")} choices={{ line: { label: t("calls6.line.label"), value: lineValue, options: lineOptions } }} />
-        </MoreBox>
+        plain ? (
+          <LinkSentence plain line="calls-line" template={t("jobs.pg.calls.line.sentence")} choices={{ line: { label: t("calls6.line.label"), value: lineValue, options: lineOptions } }} />
+        ) : (
+          <MoreBox title={t("jobs.pg.more")} sub={t("jobs.pg.calls.more.sub")} open={query.line !== null}>
+            <LinkSentence line="calls-line" template={t("jobs.pg.calls.line.sentence")} choices={{ line: { label: t("calls6.line.label"), value: lineValue, options: lineOptions } }} />
+          </MoreBox>
+        )
       ) : null}
     </section>
   );

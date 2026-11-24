@@ -242,3 +242,6 @@ export const firstDayOpen = (value: string | undefined = process.env.FIRST_DAY_O
 
 /** Chats > Messages we send as plain rows (owner, 25 Nov 2026; mock "Chats"): a plain name, the languages, one status in words (Not sent yet / Waiting for WhatsApp / Approved), ONE "Send all for approval". `1` = on; unset = the table with technical names. */
 export const templatesPlain = (value: string | undefined = process.env.TEMPLATES_PLAIN): boolean => value === "1";
+
+/** Filters without sentences (owner, 25 Nov 2026: 'Show [ ] calls from [ ]' is gone everywhere): a bar of labelled outlined dropdowns + the search box + a quiet 'N shown', no card around it, no 'More choices' box. Calls, Leads, Reports, Catalogue. `1` = on; unset = the sentence filters as they were. */
+export const filtersOpen = (value: string | undefined = process.env.FILTERS_OPEN): boolean => value === "1";
