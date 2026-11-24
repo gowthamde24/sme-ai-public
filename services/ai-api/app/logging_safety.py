@@ -25,6 +25,7 @@ ROUTE_WORDS = frozenset(
         "undo-price",   # POST /catalogue/items/{id}/undo-price (28 Nov)
         "phone-lines",   # GET /phone-lines (28 Nov)
         "phone-knows",   # GET /assistant/phone-knows (28 Nov)
+        "signup", "consent", "phone", "verify", "trial-claim",   # opening sign-up (24 Nov)
         "numbers", "claim",   # the number picker routes (28 Nov)
         "template",   # POST /conversations/{id}/template (a template picked in a chat, 16 Nov)
         "marketing-consent", "consented",   # campaigns S3, 17 Nov

@@ -149,6 +149,19 @@ class Settings(BaseSettings):
     # Billing v2: the owner's final pricing of 13 Nov 2026
     # (docs-private/plans/billing-v2-final-pricing.md). On in staging, off in production.
     pricing_v2: bool = False
+    # opening sign-up (24 Nov 2026; docs/contracts/signup.md): the routes exist only when
+    # SIGNUP_OPEN is on (off in production until the planner and the owner's gate). The
+    # database's own switch (signup.settings.open) decides whether a credit is granted.
+    # SIGNUP_PHONE_SENDER: "none" (no code can be sent), "fake" (staging, tests) or "whatsapp".
+    signup_open: bool = False
+    signup_phone_sender: str = "none"
+    # the WhatsApp sender (SIGNUP_PHONE_SENDER=whatsapp): Stack19's OWN number id, an approved
+    # Authentication template and a token (secret) that may send from it
+    signup_whatsapp_phone_number_id: str | None = None
+    signup_whatsapp_template: str = "stack19_signup_code"
+    signup_whatsapp_token: SecretStr | None = None
+    # staging proof only: the start answer carries the code; refused in production
+    signup_fake_code_echo: bool = False
     admin_console: bool = False   # the staff console API (/v1/admin); staging only
     admin_environment: str = "production"   # "staging" or "production" (Overview tag)
     # C12: Razorpay Subscriptions in TEST mode only (rzp_test_ keys). The secrets come only from the

@@ -14,6 +14,9 @@ Levels: read 267, sensitive:deleting 18, sensitive:members 4, sensitive:money 23
 **680 operations** under `/v1/tenants/{tenant_id}`: **591 tools**, 89 screen only (29 of them forbidden for the assistant). **Tools are 90.8% of the non-forbidden operations** (target 90%). Write tools: 326, of which 61 declare an undo.
 
 Levels: read 265, sensitive:deleting 16, sensitive:members 4, sensitive:money 23, sensitive:secrets 1, sensitive:sending 39, write 243.  Screen only: assistant_itself 37, billing 16, binary_upload 7, developer_keys 3, erasure 4, internal 10, outside_sign_in 2, owner_says_so 1, real_data_gate 1, safety_switch 5, workspace_deletion 3.
+**680 operations** under `/v1/tenants/{tenant_id}`: **590 tools**, 90 screen only (30 of them forbidden for the assistant). **Tools are 90.8% of the non-forbidden operations** (target 90%). Write tools: 326, of which 61 declare an undo.
+
+Levels: read 264, sensitive:deleting 16, sensitive:members 4, sensitive:money 23, sensitive:secrets 1, sensitive:sending 39, write 243.  Screen only: assistant_itself 37, billing 17, binary_upload 7, developer_keys 3, erasure 4, internal 10, outside_sign_in 2, owner_says_so 1, real_data_gate 1, safety_switch 5, workspace_deletion 3.
 
 | Tool or screen | Method | Path (after the tenant) | Level | Undo | What the route does |
 |---|---|---|---|---|---|
@@ -122,6 +125,7 @@ Levels: read 265, sensitive:deleting 16, sensitive:members 4, sensitive:money 23
 | screen only: billing changes: always a screen and the owner | POST | `/billing/topups` | | | Buy Topup |
 | screen only: billing changes: always a screen and the owner | PUT | `/billing/topups/settings` | | | Put Topup Settings |
 | screen only: billing changes: always a screen and the owner | POST | `/billing/trial` | | | Start Trial |
+| screen only: billing changes: always a screen and the owner | POST | `/billing/trial-claim` | | | Trial Claim |
 | screen only: billing changes: always a screen and the owner | POST | `/billing/upgrade` | | | Upgrade |
 | `billing.upgrade_preview` | GET | `/billing/upgrade-preview` | read |  | Upgrade Preview |
 | `billing.get_usage` | GET | `/billing/usage` | read |  | Get Usage |
