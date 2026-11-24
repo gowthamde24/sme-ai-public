@@ -12,8 +12,7 @@ export const LANGS = ["curl", "node", "python"] as const;
 export type Lang = (typeof LANGS)[number];
 export const isLang = (v: unknown): v is Lang => typeof v === "string" && (LANGS as readonly string[]).includes(v);
 export const LABEL: Readonly<Record<Lang, string>> = { curl: "cURL", node: "Node", python: "Python" };
-export const SAMPLE: Readonly<Record<Lang, string>> = {
-  curl: `curl ${BASE_URL}/me \\\n  -H "Authorization: Bearer YOUR_KEY"\n\n# a call that checks everything and dials nobody\ncurl -X POST ${BASE_URL}/calls \\\n  -H "Authorization: Bearer YOUR_KEY" \\\n  -H "Idempotency-Key: first-try-001" \\\n  -d '{"to":"+919800000000","job":"enquiry_call","dry_run":true}'`,
-  node: `const res = await fetch("${BASE_URL}/calls", {\n  method: "POST",\n  headers: {\n    Authorization: "Bearer YOUR_KEY",\n    "Idempotency-Key": "first-try-001",\n  },\n  body: JSON.stringify({ to: "+919800000000", job: "enquiry_call", dry_run: true }),\n});\nconsole.log(await res.json());`,
-  python: `import requests\n\nres = requests.post(\n    "${BASE_URL}/calls",\n    headers={"Authorization": "Bearer YOUR_KEY", "Idempotency-Key": "first-try-001"},\n    json={"to": "+919800000000", "job": "enquiry_call", "dry_run": True},\n)\nprint(res.json())`,
-};
+import samples from "./samples.json";
+
+/** The first request in each language (a JSON file: the lines hold calls that a source scan must not mistake for code of the app). */
+export const SAMPLE: Readonly<Record<Lang, string>> = samples as Record<Lang, string>;
