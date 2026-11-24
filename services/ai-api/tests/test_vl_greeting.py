@@ -74,7 +74,7 @@ def test_an_inbound_call_says_ai_only_when_the_setting_is_on(language: str) -> N
 def test_with_the_setting_on_the_standard_opening_words_are_exactly_as_they_were() -> None:
     # (the pin of 20 Nov 2026, rewritten: the words are unchanged when the setting is ON; the default is no longer "always")
     assert persona.INBOUND_OPENING["en"] == "Hello, I'm {assistant}, the AI assistant from {business}. How can I help you?"
-    assert persona.INBOUND_OPENING["te"] == "హలో, నేను {business} నుంచి {assistant}, AI అసిస్టెంట్‌ని. ఇప్పుడు ఒక నిమిషం మాట్లాడొచ్చా?"
+    assert persona.INBOUND_OPENING["te"] == "హలో, నేను {business} నుంచి {assistant}, AI అసిస్టెంట్‌ని. చెప్పండి, నేను మీకు ఎలా help చేయగలను?"
     assert tone_mod.opener("en", "friendly") == "Hello, this is the AI assistant of {business}. Is this a good time to talk?"
     assert tone_mod.opener("te", "friendly") == "హలో, నేను {business} నుంచి AI assistant ని. ఒక్క నిమిషం మాట్లాడొచ్చా?"
     assert tone_mod.honest_line("en", "friendly") == "Yes, I'm an AI assistant." and tone_mod.honest_line("te", "friendly") == "అవును, నేను AI assistant ని."
@@ -213,11 +213,10 @@ def test_the_prompts_of_every_customer_facing_surface_carry_the_honesty_rule() -
 
 
 def test_no_inbound_opening_asks_the_person_who_rang_us_for_their_time() -> None:
-    """26 Nov 2026: a caller who rang the shop is asked how we can help, never "do you have a minute?" (the outbound question). Telugu is reviewed text and waits for the owner's yes: it is the one exception."""
-    outbound_questions = ("Do you have a minute", "एक मिनट बात कर सकते", "ಒಂದು ನಿಮಿಷ ಮಾತಾಡಬಹುದಾ", "ஒரு நிமிஷம் பேசலாமா", "ഒരു മിനിറ്റ് സംസാരിക്കാമോ", "एक मिनिट बोलू शकतो का")
+    """26 Nov 2026: a caller who rang the shop is asked how we can help, never "do you have a minute?" (the outbound question).  Telugu too since 28 Nov 2026: the owner's own wording."""
+    outbound_questions = ("ఒక నిమిషం మాట్లాడొచ్చా", "Do you have a minute", "एक मिनट बात कर सकते", "ಒಂದು ನಿಮಿಷ ಮಾತಾಡಬಹುದಾ", "ஒரு நிமிஷம் பேசலாமா", "ഒരു മിനിറ്റ് സംസാരിക്കാമോ", "एक मिनिट बोलू शकतो का")
     for table in (persona.INBOUND_OPENING, persona.PLAIN_INBOUND_OPENING):
         for language, text in table.items():
-            if language == "te":
-                continue
             assert not any(q in text for q in outbound_questions), (language, text)
+    assert persona.PLAIN_INBOUND_OPENING["te"].endswith("చెప్పండి, నేను మీకు ఎలా help చేయగలను?")
     assert persona.PLAIN_INBOUND_OPENING["en"].endswith("How can I help you?") and persona.INBOUND_OPENING["en"].endswith("How can I help you?")
