@@ -17,7 +17,7 @@
 import { chromeEngine } from "./lib/engines.mjs";
 import { LANGS, startNext } from "./lib/next-server.mjs";
 import { startTlsProxy } from "./lib/tls-proxy.mjs";
-import { FOCUSABLE_COUNT, FOCUSABLE_NAMES, FOCUS_STATE, LAYOUT, STRUCTURE, TEXT_AND_TARGETS } from "./lib/page-checks.mjs";
+import { FOCUSABLE_COUNT, FOCUSABLE_NAMES, FOCUS_STATE, LAYOUT, OVERLAP, STRUCTURE, TEXT_AND_TARGETS } from "./lib/page-checks.mjs";
 
 const argv = process.argv.slice(2);
 const engineName = argv.includes("--engine") ? argv[argv.indexOf("--engine") + 1] : "chrome";
@@ -90,6 +90,8 @@ try {
         if (bottom == null) problems.push(`${what} not found`);
         else if (bottom > height) problems.push(`${what} ends at ${bottom}, below the first screen (${height})`);
       }
+      // nothing may sit on top of other text on a phone or a tablet: the same section never holds two boxes of text that cross
+      if (width <= 768) problems.push(...(await withPage({ lang, width, height, reduced: true }, (p) => p.eval(OVERLAP))).map((o) => `text on text: ${o}`));
       report(`layout ${lang} ${width}x${height} (${r.mode}): scrollWidth ${r.docScrollWidth}/${r.viewportW}; first screen ${height}: h1 ${r.h1Bottom}, sign-up button ${r.ctaBottom}`, problems);
     }
   }

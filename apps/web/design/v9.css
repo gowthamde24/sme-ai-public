@@ -1879,3 +1879,31 @@
 .v9 .chip-item.lg .ln { color: var(--muted); }
 .v9 .chip-item.lg.chip-soon .bl:not(.ln) { opacity: 0.55; filter: grayscale(0.35); }
 .v9 .ftr-tm { margin: 18px 0 0; font-size: 14px; color: var(--muted); }
+
+/* ==========================================================================
+   Phone overlaps (planner, 24 Nov 2026: reports/landing-mobile-overlaps.md; the live site at a true 390 px). Nothing on a phone may sit on top of other text.
+   1 the sticky header is opaque; 2 "While it talks": the phone is in the flow above the cards; 3 the late call-back picture: the clock and the source chip never share a line,
+   the "Slipped away" box sits under the bucket; 5 the voices are ONE row you swipe (no half-cut marquee); 6 the consent pill wraps cleanly; 7 the lead finder map clips its
+   decoration; 8 no dotted wordmark in the footer. (4, the dial label, is removed in the markup.)
+   ========================================================================== */
+.v9 .hdr { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+@media (max-width: 1180px) {
+  .v9 .wit .v9-phone { position: static; transform: none; order: -1; margin-inline: auto; }
+}
+@media (max-width: 767px) {
+  .v9 .pipe { height: 610px; }
+  .v9 .pipe .src { left: auto; right: 0; transform: none; max-width: calc(100% - 140px); white-space: normal; text-align: left; line-height: 1.25; border-radius: 18px; }
+  .v9 .pipe .bucket { bottom: 130px; }
+  .v9 .pipe .tray { right: auto; left: 50%; transform: translateX(-50%); bottom: 0; width: min(100%, 260px); height: 96px; }
+  .v9 .vmq { margin: 0 -16px; padding: 6px 16px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-mask-image: none; mask-image: none; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .v9 .vmq::-webkit-scrollbar { display: none; }
+  .v9 .vmq .vtrack { animation: none; }
+  .v9 .vmq .vtrack > span[aria-hidden] { display: none !important; }
+  .v9 .vmq + .vmq { display: none; }
+  .v9 .vpill { width: min(300px, 82vw); scroll-snap-align: start; }
+  .v9 .consent .cc { flex-wrap: wrap; gap: 4px 10px; }
+  .v9 .consent .cc em { margin-left: 0; flex-basis: 100%; }
+  .v9 .lf-map { overflow: hidden; }
+  .v9 .lf-pin, .v9 .lf-me-l { display: none; } /* their labels would sit on the result card on a phone */
+  .v9 .wm-box { display: none; }
+}

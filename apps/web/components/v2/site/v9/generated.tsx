@@ -833,9 +833,6 @@ export function V9Guard({ t }: { t: SiteT }) {
                 <text x="75" y="48" textAnchor="middle" fontSize="22" fill="#0b1020" fontFamily="inherit">
                   {"☾"}
                 </text>
-                <text x="75" y="92" textAnchor="middle" fontSize="14" fontWeight="700" fill="#0b1020" fontFamily="inherit">
-                  {t("v9.guard.17")}
-                </text>
                 <g className="hand">
                   <line x1="75" y1="75" x2="75" y2="21" stroke="#f97316" strokeWidth="3" strokeLinecap="round" />
                   <circle cx="75" cy="15" r="6" fill="#f97316" />
