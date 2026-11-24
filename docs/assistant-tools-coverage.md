@@ -11,6 +11,9 @@ Levels: read 268, sensitive:deleting 18, sensitive:members 4, sensitive:money 23
 **688 operations** under `/v1/tenants/{tenant_id}`: **599 tools**, 89 screen only (29 of them forbidden for the assistant). **Tools are 90.9% of the non-forbidden operations** (target 90%). Write tools: 332, of which 62 declare an undo.
 
 Levels: read 267, sensitive:deleting 18, sensitive:members 4, sensitive:money 23, sensitive:secrets 2, sensitive:sending 39, write 246.  Screen only: assistant_itself 37, billing 16, binary_upload 7, developer_keys 3, erasure 4, internal 10, outside_sign_in 2, owner_says_so 1, real_data_gate 1, safety_switch 5, workspace_deletion 3.
+**680 operations** under `/v1/tenants/{tenant_id}`: **591 tools**, 89 screen only (29 of them forbidden for the assistant). **Tools are 90.8% of the non-forbidden operations** (target 90%). Write tools: 326, of which 61 declare an undo.
+
+Levels: read 265, sensitive:deleting 16, sensitive:members 4, sensitive:money 23, sensitive:secrets 1, sensitive:sending 39, write 243.  Screen only: assistant_itself 37, billing 16, binary_upload 7, developer_keys 3, erasure 4, internal 10, outside_sign_in 2, owner_says_so 1, real_data_gate 1, safety_switch 5, workspace_deletion 3.
 
 | Tool or screen | Method | Path (after the tenant) | Level | Undo | What the route does |
 |---|---|---|---|---|---|
@@ -557,6 +560,7 @@ Levels: read 267, sensitive:deleting 18, sensitive:members 4, sensitive:money 23
 | `phone-line.take` | POST | `/phone-line` | sensitive (money) | none | Take |
 | `phone-line.available` | GET | `/phone-line/available` | read |  | Available |
 | `phone-line.give_back` | POST | `/phone-line/release` | write | none | Give Back |
+| `phone-lines.phone_lines` | GET | `/phone-lines` | read |  | Phone Lines |
 | `places.confirm_place` | POST | `/places/confirm` | write | none | Confirm Place |
 | `price-asks.list_price_asks` | GET | `/price-asks` | read |  | List Price Asks |
 | `price-asks.create_price_ask` | POST | `/price-asks` | write | none | Create Price Ask |

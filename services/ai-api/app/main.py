@@ -262,6 +262,7 @@ from app.team.routes import public_router as team_public_router
 from app.team.routes import router as team_router
 from app.telephony.background_samples import router as background_samples_router
 from app.telephony.inbound_routes import router as phone_inbound_router
+from app.telephony.lines_routes import router as phone_lines_router
 from app.telephony.live import LiveCalls
 from app.telephony.plivo_routes import router as plivo_router
 from app.telephony.repository import CallStateError, PostgrestCallsRepository
@@ -1578,6 +1579,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(tasks_router)
     app.include_router(lead_finder_router)
     app.include_router(calls_router)
+    app.include_router(phone_lines_router)
     app.include_router(assistant_tools_router)
     app.include_router(phone_inbound_router)
     app.include_router(plivo_router)
