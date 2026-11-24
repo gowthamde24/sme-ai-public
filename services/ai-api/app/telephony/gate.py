@@ -8,6 +8,7 @@ the AI says it is an AI first, calls only 09:00 to 21:00 India time, respects DN
 
 from __future__ import annotations
 
+import logging
 import re
 from collections.abc import Collection
 from dataclasses import dataclass, field
@@ -17,6 +18,7 @@ from zoneinfo import ZoneInfo
 
 from app.connectors.phone import normalise
 
+log = logging.getLogger("app.telephony.gate")
 IST = ZoneInfo("Asia/Kolkata")
 WINDOW_FROM_MINUTE = 9 * 60    # the regulation's window for promotional calls; applied to every outbound call
 WINDOW_TO_MINUTE = 21 * 60
@@ -65,7 +67,15 @@ class Settings:
     sandbox_numbers: frozenset[str] = frozenset()   # +91... forms; the only numbers a sandbox call may ring
     shop_numbers: frozenset[str] = frozenset()   # the shop's own mobiles: a caller showing one of them is a forward that hid the real number (app/telephony/caller_guard.py)
     max_concurrent: int = 2
+    # 28 Nov 2026 (owner: "remove time constraints for now, for testing"): in SANDBOX mode only, a number on the sandbox list ignores the calling hours (09:00-21:00, the workspace's hours, holidays). It is
+    # ignored in every other mode, so it can never weaken a live call. Consent, STOP, do-not-call, the sandbox list and the limits stay. Remove it before the real-data gate (2 Dec).
+    sandbox_ignores_hours: bool = False
     outbound: bool = True   # False (TELEPHONY_OUTBOUND unset): an inbound-only deployment; every outbound call is refused as telephony_off
+
+
+def hours_bypassed(settings: Settings) -> bool:
+    """True only in sandbox mode with the switch on. Live (and off) never bypass anything."""
+    return settings.mode == "sandbox" and settings.sandbox_ignores_hours
 
 
 @dataclass(frozen=True)
@@ -146,12 +156,17 @@ def check_outbound(settings: Settings, f: OutboundFacts) -> Allowed | Refused:
         return Refused("purpose_not_allowed")
     local = f.now.astimezone(IST)
     minute = local.hour * 60 + local.minute
+    late: Refused | None = None
     if not WINDOW_FROM_MINUTE <= minute < WINDOW_TO_MINUTE:
-        return Refused("outside_window")
-    if local.date().isoformat() in set(f.holidays):
-        return Refused("holiday")
-    if local.isoweekday() not in set(f.hours.days) or not f.hours.from_minute <= minute < f.hours.to_minute:
-        return Refused("outside_hours")
+        late = Refused("outside_window")
+    elif local.date().isoformat() in set(f.holidays):
+        late = Refused("holiday")
+    elif local.isoweekday() not in set(f.hours.days) or not f.hours.from_minute <= minute < f.hours.to_minute:
+        late = Refused("outside_hours")
+    if late is not None:
+        if not hours_bypassed(settings):
+            return late
+        log.info("telephony_gate hours_bypassed_sandbox rule=%s", late.reason)   # a closed word and the rule that would have refused: never a number
     if f.calls_to_contact_this_week >= f.weekly_limit:
         return Refused("weekly_limit")
     if f.daily_cap is not None and f.calls_today >= f.daily_cap:
@@ -215,5 +230,8 @@ def check_inbound(settings: Settings, f: InboundFacts) -> InboundDecision | Refu
         local = f.now.astimezone(IST)
         minute = local.hour * 60 + local.minute
         if local.isoweekday() not in set(f.hours.days) or not f.hours.from_minute <= minute < f.hours.to_minute:
+            if hours_bypassed(settings):
+                log.info("telephony_gate hours_bypassed_sandbox rule=outside_hours")
+                return InboundDecision(True)
             return InboundDecision(False, "outside_hours")
     return InboundDecision(True)
