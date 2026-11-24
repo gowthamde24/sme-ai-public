@@ -6,7 +6,7 @@ import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchActiveIcpConfig, fetchReviewQueue, SCORE_BANDS, type PageReviewQueueLeadOut, type ScoreBand } from "@/lib/api/leads";
 import { LeadsTabs, PageTop, Pill } from "@/components/v2/app/parts";
-import { alertBox, btnMainLink, cardBoxFull, codeInline, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH2, pageH3, pageMain, pillLinkBase, pillLinkGreen, pillLinkGreenOn, pillLinkInfo, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
+import { alertBox, btnMainLink, cardBoxFull, codeInline, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH2, pageH3, pageMain, pillLinkBase, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
 import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 
@@ -144,12 +144,14 @@ export default async function ReviewQueuePage({
             )}
           </div>
           {canExport && (
-            <div>
+            <details className="min-w-0" data-part="review-more">
+              <summary className="cursor-pointer text-sm text-muted underline underline-offset-4">{t("rev.more")}</summary>
+            <div className="mt-2">
               <div className={rowWrap}>
-                <a href={`/app/tenants/${tenantId}/review/export?format=csv`} className={pillLinkGreen} download>
+                <a href={`/app/tenants/${tenantId}/review/export?format=csv`} className={`${pillLinkBase} ${pillLinkQuiet}`} download>
                   {t("rev.export_csv")}
                 </a>
-                <a href={`/app/tenants/${tenantId}/review/export?format=json`} className={pillLinkInfo} download>
+                <a href={`/app/tenants/${tenantId}/review/export?format=json`} className={`${pillLinkBase} ${pillLinkQuiet}`} download>
                   {t("rev.export_json")}
                 </a>
               </div>
@@ -157,6 +159,7 @@ export default async function ReviewQueuePage({
                 {t("rev.the_file_lists_every_label_with")}
               </p>
             </div>
+            </details>
           )}
         </div>
       </div>
@@ -183,7 +186,7 @@ export default async function ReviewQueuePage({
         </div>
 
         <div className={rowWrap}>
-          <Link href={here({ blind: !blind })} className={`${pillLinkBase} ${blind ? pillLinkGreenOn : pillLinkQuiet}`}>
+          <Link href={here({ blind: !blind })} className={`${pillLinkBase} ${pillLinkQuiet}`}>
             {blind ? t("rev.blind_scoring_on") : t("rev.blind_scoring_off")}
           </Link>
         </div>
@@ -239,7 +242,7 @@ export default async function ReviewQueuePage({
                     <div className={rowWrap}>
                       {/* Status / Label Badge */}
                       {hasLabel ? (
-                        <Pill tone={label === "good" ? "green" : label === "bad" ? "red" : "amber"}>
+                        <Pill tone="neutral">
                           {label?.toUpperCase()}
                           {reason ? ` (${reason})` : ""}
                         </Pill>
@@ -249,7 +252,7 @@ export default async function ReviewQueuePage({
 
                       {/* Score Badge */}
                       {item.score !== null && item.score !== undefined ? (
-                        <Pill tone={BAND_TONE[item.score_band ?? "low_priority"] ?? "neutral"}>
+                        <Pill tone="neutral">
                           {t("rev.score_n", { n: item.score })}
                         </Pill>
                       ) : (
@@ -288,11 +291,14 @@ export default async function ReviewQueuePage({
 
                   {/* Factor breakdown if score is unblinded */}
                   {item.snapshot && (
+                    <details data-part="score-more">
+                      <summary className="cursor-pointer text-sm text-muted underline underline-offset-4">{t("rev.more")}</summary>
                     <FactorBreakdown words={words}
                       factors={item.snapshot.factors}
                       flags={item.snapshot.flags}
                       maxReachable={item.score_max_reachable ?? null}
                     />
+                    </details>
                   )}
 
                   {/* Review Labeling Actions */}
@@ -331,14 +337,6 @@ export default async function ReviewQueuePage({
   );
 }
 
-const BAND_TONE: Record<string, "green" | "info" | "amber" | "neutral"> = {
-  priority: "green",
-  worth_reviewing: "info",
-  "worth-reviewing": "info",
-  maybe: "amber",
-  low_priority: "neutral",
-  "low-priority": "neutral",
-};
 
 function ApiDown({ words }: { words?: Words }) {
   const t = makeT(words);

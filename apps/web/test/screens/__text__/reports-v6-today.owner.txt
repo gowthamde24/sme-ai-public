@@ -20,7 +20,7 @@ To
 - Cost of your assistant – Not available yet
 {label="Enquiries and visits per day"}
 ## Enquiries and visits per day
-Orange: enquiries each day. Green: how many booked a shop visit. Enquiries Visits booked
+Dark line: enquiries each day. Coloured line: how many booked a shop visit. Enquiries Visits booked
 caption: Enquiries and visits per day
 table:
   | th Day | th Enquiries | th Visits booked |
