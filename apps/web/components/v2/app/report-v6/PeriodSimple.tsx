@@ -23,7 +23,7 @@ export function PeriodSimple({ words, lang, base, period }: { words: Words; lang
   return (
     <section data-part="period" data-simple="" className={plain ? "flex flex-col gap-3" : `${pgCard} flex flex-col gap-3`}>
       <LinkSentence plain={plain} line="period" template={t("jobs.pg.rep.line")} choices={{ period: { label: t("rv6.range.label"), value: period.key, options } }} />
-      {plain ? <p data-part="period-effect" className="m-0 text-[14px] text-muted">{one ? t("jobs.pg.rep.effect.one", { day: dayShort(period.from, lang), prev: dayShort(period.previous.to, lang) }) : t("jobs.pg.rep.effect", { from: dayShort(period.from, lang), to: dayShort(period.to, lang) })}</p> : null}
+      {plain ? <p data-part="period-effect" className="m-0 text-[14px] text-muted">{one ? t("jobs.pg.rep.effect.one", { day: dayShort(period.from, lang), prev: dayShort(period.previous.to, lang) }) : t("jobs.pg.rep.effect", { from: dayShort(period.from, lang), to: dayShort(period.to, lang), pfrom: dayShort(period.previous.from, lang), pto: dayShort(period.previous.to, lang) })}</p> : null}
       {plain ? null : <EffectLine
         part="period-effect"
         text={one ? t("jobs.pg.rep.effect.one", { day: dayShort(period.from, lang), prev: dayShort(period.previous.to, lang) }) : t("jobs.pg.rep.effect", { from: dayShort(period.from, lang), to: dayShort(period.to, lang), pfrom: dayShort(period.previous.from, lang), pto: dayShort(period.previous.to, lang) })}
