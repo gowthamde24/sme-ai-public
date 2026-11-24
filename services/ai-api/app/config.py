@@ -295,6 +295,20 @@ class Settings(BaseSettings):
     privacy_effective_from: date | None = None
     policy_enforce: bool = False
 
+    @field_validator("voicelink_ws_token", mode="before")
+    @classmethod
+    def _ws_token_has_no_edge_whitespace(cls, value: Any) -> Any:
+        """The token is compared byte for byte with the one in VoiceLink's bot address: a stray
+        newline in the stored secret (28 Nov 2026) made every call bad_token."""
+        return value.strip() if isinstance(value, str) else value
+
+    @field_validator("voicelink_username", "voicelink_password", mode="before")
+    @classmethod
+    def _login_has_no_line_ending(cls, value: Any) -> Any:
+        """Only a trailing line ending is removed: a username can hold spaces (a full name), and a
+        password can start or end with one."""
+        return value.rstrip("\r\n") if isinstance(value, str) else value
+
     @field_validator("terms_effective_from", "privacy_effective_from", mode="before")
     @classmethod
     def _empty_date_is_none(cls, value: Any) -> Any:

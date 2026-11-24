@@ -485,3 +485,39 @@ def test_the_probe_prints_counts_and_closed_words_only(monkeypatch: pytest.Monke
     assert "did-types: ok 2=Mobile, 3=Landline" in out and "mobile: ok 1 rows, first ends ...3210" in out and "mobile filter '98': ok 1 rows" in out
     assert "landline: auth (status 403)" in out
     assert "never-printed-password" not in out and "secret-token-xyz" not in out and "9876543210" not in out and "299" not in out
+
+
+def test_the_diagnosis_script_reads_numbers_routing_and_bots_and_never_prints_a_token_or_password(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    import hashlib
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location("voicelink_diagnose", Path(__file__).resolve().parents[3] / "scripts" / "voicelink_diagnose.py")
+    assert spec is not None and spec.loader is not None
+    diag = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(diag)
+    token = "t" * 64
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        path = request.url.path
+        if path.endswith("/auth/login"):
+            return httpx.Response(200, json={"data": {"access_token": "secret-bearer-xyz"}, "status": True})
+        if path.endswith("/reseller/profile"):
+            return httpx.Response(200, json={"data": {"wallet": {"balance": 4900, "currency": "INR"}}, "status": True})
+        if path.endswith("/reseller/did/purchased"):
+            return httpx.Response(200, json={"data": {"data": [{"did_number": "919429492464", "type_label": "Mobile", "status": 2, "user_status": 2, "is_expired": False, "expiry_date": "2026-12-31", "auto_renew": True, "client_id": 5, "call_routing": {"for_inbound_call": 3, "for_outbound_call": 3, "status": 1}}]}, "status": True})
+        if path.endswith("/call-routing/list"):
+            return httpx.Response(200, json={"data": [{"did_number": "9429492464", "for_inbound_call": 3, "for_outbound_call": 3, "status": 1, "status_label": "Active"}], "status": True})
+        if path.endswith("/websocket-bot/list"):
+            return httpx.Response(200, json={"data": {"data": [{"bot_name": "Stack19", "status": 1, "status_label": "Active", "client_id": 5, "websocket_url": f"wss://api.example.test/v1/telephony/voicelink/ws/{token}", "webhook_url": f"https://api.example.test/v1/telephony/voicelink/webhook/{token}"}]}, "status": True})
+        return httpx.Response(404)
+
+    real = diag.VoicelinkApi
+    monkeypatch.setattr(diag, "VoicelinkApi", lambda u, p: real(u, p, client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))))
+    monkeypatch.setenv("VOICELINK_USERNAME", "Ada Test Lovelace-Example")
+    monkeypatch.setenv("VOICELINK_PASSWORD", "never-printed-password")
+    assert diag.main() == 0
+    out = capsys.readouterr().out
+    assert "...2464 Mobile status=2" in out and "routing: inbound=3 outbound=3 status=1" in out and "Stack19: status=1 (Active)" in out
+    assert f"<token len=64 sha8={hashlib.sha256(token.encode()).hexdigest()[:8]}>" in out and "wss://api.example.test/v1/telephony/voicelink/ws/<token" in out
+    assert token not in out and "never-printed-password" not in out and "secret-bearer-xyz" not in out and "9429492464" not in out
