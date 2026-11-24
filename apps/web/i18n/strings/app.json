@@ -123761,28 +123761,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.p.s1": {
-  "en": "It sells for {price} and comes in {colours}.",
-  "te": "ధర {price}. రంగులు: {colours}.",
-  "hi": "कीमत {price} है और रंग: {colours}।",
-  "kn": "ಬೆಲೆ {price}. ಬಣ್ಣಗಳು: {colours}.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.p.s2": {
-  "en": "Right now it is {stock}. I have {count} of it.",
-  "te": "ప్రస్తుతం ఇది {stock}. నా దగ్గర {count} ఉన్నాయి.",
-  "hi": "अभी यह {stock} है। मेरे पास {count} हैं।",
-  "kn": "ಈಗ ಇದು {stock}. ನನ್ನ ಬಳಿ {count} ಇವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.p.pick": {
   "en": "Pick colours",
   "te": "రంగులు ఎంచుకోండి",
@@ -123849,17 +123827,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.s.s1": {
-  "en": "It takes {minutes} and costs {price}. Customers can book it {booking}.",
-  "te": "దీనికి {minutes} పడుతుంది, ధర {price}. కస్టమర్లు {booking} బుక్ చేసుకోవచ్చు.",
-  "hi": "इसमें {minutes} लगते हैं और कीमत {price} है। ग्राहक इसे {booking} बुक कर सकते हैं।",
-  "kn": "ಇದಕ್ಕೆ {minutes} ಬೇಕು, ಬೆಲೆ {price}. ಗ್ರಾಹಕರು {booking} ಬುಕ್ ಮಾಡಬಹುದು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.s.from": {
   "en": "The price is a “from” price",
   "te": "ఇది “నుంచి” ధర",
@@ -123893,28 +123860,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.c.s1": {
-  "en": "The batch meets {batch} from {date}. The fee is {fee} for the whole course, with {seats} seats.",
-  "te": "బ్యాచ్ {batch}, {date} నుంచి. మొత్తం కోర్సుకు ఫీజు {fee}, {seats} సీట్లు.",
-  "hi": "बैच {batch} को लगता है, {date} से। पूरे कोर्स की फ़ीस {fee} है, {seats} सीटें हैं।",
-  "kn": "ಬ್ಯಾಚ್ {batch}, {date} ಇಂದ. ಇಡೀ ಕೋರ್ಸ್‌ಗೆ ಫೀಸ್ {fee}, {seats} ಸೀಟುಗಳು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.r.s1": {
-  "en": "It is in {location}, {size}, and costs {price}. It is {status}.",
-  "te": "ఇది {location} లో ఉంది, {size}, ధర {price}. ఇది {status}.",
-  "hi": "यह {location} में है, {size}, कीमत {price}। यह {status} है।",
-  "kn": "ಇದು {location} ನಲ್ಲಿದೆ, {size}, ಬೆಲೆ {price}. ಇದು {status}.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.r.price.help": {
   "en": "Write the price like 68 lakh or 1.2 crore.",
   "te": "ధర ఇలా రాయండి: 68 lakh లేదా 1.2 crore.",
@@ -123937,33 +123882,11 @@
    "kn": "draft"
   }
  },
- "jobs.sell.w.s1": {
-  "en": "The smallest order is {moq} {unit}.",
-  "te": "కనీస ఆర్డర్ {moq} {unit}.",
-  "hi": "सबसे छोटा ऑर्डर {moq} {unit} है।",
-  "kn": "ಕನಿಷ್ಠ ಆರ್ಡರ್ {moq} {unit}.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.w.rates": {
-  "en": "Rate for bigger orders",
-  "te": "పెద్ద ఆర్డర్లకు రేటు",
-  "hi": "बड़े ऑर्डर का रेट",
-  "kn": "ದೊಡ್ಡ ಆರ್ಡರ್‌ಗಳಿಗೆ ರೇಟ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.w.rate": {
-  "en": "From {qty} {unit}: ₹ {rate} a {per}",
-  "te": "{qty} {unit} నుంచి: {per}కి ₹ {rate}",
-  "hi": "{qty} {unit} से: ₹ {rate} प्रति {per}",
-  "kn": "{qty} {unit} ಇಂದ: {per}ಗೆ ₹ {rate}",
+  "en": "Rates for bigger orders",
+  "te": "పెద్ద ఆర్డర్లకు రేట్లు",
+  "hi": "बड़े ऑर्डर के रेट",
+  "kn": "ದೊಡ್ಡ ಆರ್ಡರ್‌ಗಳ ದರಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -123997,17 +123920,6 @@
   "te": "ఈ రేటు తీసేయండి",
   "hi": "यह रेट हटाएं",
   "kn": "ಈ ರೇಟ್ ತೆಗೆಯಿರಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.w.until": {
-  "en": "These rates are good until {date}.",
-  "te": "ఈ రేట్లు {date} వరకు చెల్లుతాయి.",
-  "hi": "ये रेट {date} तक मान्य हैं।",
-  "kn": "ಈ ರೇಟ್‌ಗಳು {date} ವರೆಗೆ ಸಲ್ಲುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -127848,6 +127760,116 @@
   "te": "కాల్స్‌లో, చాట్‌లో కస్టమర్లకు జవాబిచ్చేటప్పుడు మీ అసిస్టెంట్ దీన్ని చదువుతుంది.",
   "hi": "आपका असिस्टेंट कॉल और चैट में ग्राहकों को जवाब देते समय इसे पढ़ता है।",
   "kn": "ಕರೆ ಮತ್ತು ಚಾಟ್‌ನಲ್ಲಿ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸುವಾಗ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಇದನ್ನು ಓದುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.minutes.l": {
+  "en": "How long it takes (minutes)",
+  "te": "ఎంత సేపు పడుతుంది (నిమిషాలు)",
+  "hi": "कितना समय लगता है (मिनट)",
+  "kn": "ಎಷ್ಟು ಸಮಯ ಬೇಕು (ನಿಮಿಷ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.col.from": {
+  "en": "From ({unit})",
+  "te": "ఇంత నుంచి ({unit})",
+  "hi": "इतने से ({unit})",
+  "kn": "ಇಷ್ಟರಿಂದ ({unit})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.col.rate": {
+  "en": "Price per {per} (₹)",
+  "te": "ఒక {per} ధర (₹)",
+  "hi": "एक {per} का दाम (₹)",
+  "kn": "ಒಂದು {per} ಬೆಲೆ (₹)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.until.l": {
+  "en": "Rates valid until",
+  "te": "ఈ రేట్లు ఎప్పటి వరకు",
+  "hi": "ये रेट कब तक",
+  "kn": "ಈ ದರಗಳು ಯಾವಾಗಲವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.until.hint": {
+  "en": "Optional. Leave empty if the rates have no end date.",
+  "te": "ఐచ్ఛికం. ఆఖరి తేదీ లేకపోతే ఖాళీగా వదలండి.",
+  "hi": "वैकल्पिक। अंतिम तारीख़ न हो तो खाली छोड़ें।",
+  "kn": "ಐಚ್ಛಿಕ. ಕೊನೆಯ ದಿನಾಂಕ ಇಲ್ಲದಿದ್ದರೆ ಖಾಲಿ ಬಿಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.f.area": {
+  "en": "Where to look",
+  "te": "ఎక్కడ వెతకాలి",
+  "hi": "कहाँ खोजें",
+  "kn": "ಎಲ್ಲಿ ಹುಡುಕಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.h.area": {
+  "en": "A town or a part of town. It looks for businesses near it.",
+  "te": "ఊరు లేదా ఊరిలో ఒక ప్రాంతం. దాని దగ్గరి బిజినెస్‌లను వెతుకుతుంది.",
+  "hi": "शहर या शहर का हिस्सा। उसके पास के व्यवसाय खोजेगा।",
+  "kn": "ಊರು ಅಥವಾ ಊರಿನ ಒಂದು ಭಾಗ. ಅದರ ಹತ್ತಿರದ ಬಿಸಿನೆಸ್‌ಗಳನ್ನು ಹುಡುಕುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.f.results": {
+  "en": "How many businesses to find",
+  "te": "ఎన్ని బిజినెస్‌లు వెతకాలి",
+  "hi": "कितने व्यवसाय खोजें",
+  "kn": "ಎಷ್ಟು ಬಿಸಿನೆಸ್ ಹುಡುಕಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.f.fit": {
+  "en": "Keep only the ones that fit at least",
+  "te": "కనీసం ఇంత సరిపోయేవే ఉంచండి",
+  "hi": "कम से कम इतने फ़िट वाले ही रखें",
+  "kn": "ಕನಿಷ್ಠ ಇಷ್ಟು ಹೊಂದುವವುಗಳನ್ನು ಮಾತ್ರ ಇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.h.fit": {
+  "en": "Out of 100. A higher number gives fewer, better matches.",
+  "te": "100 లో. ఎక్కువ సంఖ్య అంటే తక్కువ, కానీ బాగా సరిపోయేవి.",
+  "hi": "100 में से। बड़ी संख्या यानी कम, पर बेहतर मैच।",
+  "kn": "100 ರಲ್ಲಿ. ದೊಡ್ಡ ಸಂಖ್ಯೆ ಎಂದರೆ ಕಡಿಮೆ, ಆದರೆ ಉತ್ತಮ ಹೊಂದಾಣಿಕೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

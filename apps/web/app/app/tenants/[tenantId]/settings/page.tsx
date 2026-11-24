@@ -117,7 +117,7 @@ import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person }
 import { signOutEverywhereAction } from "../../../actions";
 import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantActivity";
 import { readActivity } from "@/lib/assistant-work/source";
-import { appV4, assistantWorkScreens, designV6, jobsScreens, moreLanguages } from "@/lib/screens/flag";
+import { appV4, assistantWorkScreens, designV6, jobsScreens, moreLanguages, sentenceForms } from "@/lib/screens/flag";
 import { SettingsV6 } from "@/components/v2/app/settings/SettingsV6";
 import { BusinessSimple, LanguageSimple, NotificationsSimple } from "@/components/v2/app/settings/simple/Lazy";
 import { readSettingsV6 } from "./settings-v6-data";
@@ -456,7 +456,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                           locked={callSettings.lockedPurposes}
                           canEdit={tenant.role === "owner"}
                           mock={callSettingsScreens() === "mock"}
-                          simple={jobsScreens() !== "off"}
+                          simple={sentenceForms()}
                           saved={callSettings.saved}
                           actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
                         />
@@ -661,7 +661,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               <AssistantSettings
                 offered={offeredLangs(moreLanguages())}
               words={withModuleWords(wordsFor(lang, jobsScreens() !== "off" ? ["asst.", "jobs.set.b."] : ["asst."], ["bv.speaking.in"]), pack)}
-              simple={jobsScreens() !== "off"}
+              simple={sentenceForms()}
               initial={assistant.settings}
               profile={assistantProfile(pack?.modules ?? null)}
               shop={tenant.name}

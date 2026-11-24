@@ -185,8 +185,28 @@ def _custom(value: Any) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
+_NESTED = ("data", "call", "payload", "call_details", "details")
+
+
+def _pick(body: dict[str, Any], *names: str) -> Any:
+    """The first of these fields, at the top level of the webhook or inside a nested object (data, call, payload). VoiceLink's webhook is documented with camelCase names (event, callId, callStatus, duration, customParameters) while its
+    call record uses snake_case (call_id, unique_id, call_status, call_duration): both are read (28 Nov 2026)."""
+    for source in (body, *(body[k] for k in _NESTED if isinstance(body.get(k), dict))):
+        for name in names:
+            if source.get(name) not in (None, ""):
+                return source[name]
+    return None
+
+
+# VoiceLink's words for how a call ended, as the ones `finish_after_hangup` knows (an unknown word is a failure, never a success): its Reports page says "Answered" and "NoAnswered"
+_STATUS_WORDS = {"noanswered": "no-answer", "noanswer": "no-answer", "unanswered": "no-answer", "ringtimeout": "no-answer", "timeout": "timeout", "busy": "busy", "userbusy": "busy", "failed": "failed", "failure": "failed",
+                 "congestion": "failed", "unreachable": "failed", "unavailable": "failed", "switchedoff": "failed", "rejected": "failed", "cancelled": "cancel", "canceled": "cancel", "cancel": "cancel",
+                 "answered": "completed", "answer": "completed", "completed": "completed"}
+
+
 def _status_word(value: Any) -> str:
-    return str(value or "").strip().lower().replace("_", "-").replace(" ", "-")[:30]
+    compact = "".join(ch for ch in str(value or "").lower() if ch.isalnum())
+    return _STATUS_WORDS.get(compact, str(value or "").strip().lower().replace("_", "-").replace(" ", "-")[:30])
 
 
 def _finish_unanswered(service: InboundService, tenant: uuid.UUID, row: uuid.UUID, call_status: str) -> str | None:
@@ -229,14 +249,17 @@ async def webhook(request: Request, token: str) -> JSONResponse:
         return JSONResponse({"ok": False}, status_code=400)
     if not isinstance(body, dict):
         return JSONResponse({"ok": False}, status_code=400)
-    event = str(body.get("event") or "")[:30]
-    call_id = str(body.get("callId") or "")[:100]
     log.info("voicelink_webhook_shape keys=%s", _shape(body))   # field NAMES only (28 Nov 2026: the first real webhook read empty with the documented names), never a value
-    custom = _custom(body.get("customParameters"))
+    event = str(_pick(body, "event", "event_type", "type") or "")[:30]
+    call_id = str(_pick(body, "callId", "call_id", "unique_id", "uuid") or "")[:100]
+    custom = _custom(_pick(body, "customParameters", "custom_parameters"))
     row, tenant = _uuid(custom.get("call")), _uuid(custom.get("tenant"))
-    status = _status_word(body.get("callStatus"))
+    status = _status_word(_pick(body, "callStatus", "call_status"))
+    kind = str(_pick(body, "direction", "call_type") or "")
+    direction = "inbound" if kind.upper() in ("INBOUND", "VL-IN") else "outbound" if kind.upper() in ("OUTBOUND", "VL-OUT") else kind[:10].lower()
+    seconds = str(_pick(body, "duration", "call_duration", "talk_duration") or "")[:8]
     key = config.fingerprint_key()
-    log.info("voicelink_webhook event=%s call_fp=%s direction=%s status=%s duration=%s ours=%s", event, inbound.fingerprint(key, call_id), str(body.get("direction") or "")[:10], status, str(body.get("duration") or "")[:8], row is not None)
+    log.info("voicelink_webhook event=%s call_fp=%s direction=%s status=%s duration=%s ours=%s", event, inbound.fingerprint(key, call_id), direction, status, seconds, row is not None and tenant is not None)
     if row is not None and tenant is not None:
         if event == "call.initiated":
             await asyncio.to_thread(_mark_ringing, service, tenant, row, call_id)
