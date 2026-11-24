@@ -154,6 +154,9 @@ class Settings(BaseSettings):
     # database's own switch (signup.settings.open) decides whether a credit is granted.
     # SIGNUP_PHONE_SENDER: "none" (no code can be sent), "fake" (staging, tests) or "whatsapp".
     signup_open: bool = False
+    # more than one API instance (24 Nov 2026): the live-call count and whisper / hang-up
+    # go through the database; leave off while the API has one instance (max-instances 1)
+    call_coordination: bool = False
     signup_phone_sender: str = "none"
     # the WhatsApp sender (SIGNUP_PHONE_SENDER=whatsapp): Stack19's OWN number id, an approved
     # Authentication template and a token (secret) that may send from it

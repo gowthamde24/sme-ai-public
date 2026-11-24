@@ -231,6 +231,8 @@ class Runtime:
     jobs: JobsRuntime | None = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
+    # calls across API instances (CALL_COORDINATION): None with one instance
+    call_commands: Any = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
     voice_sample: VoiceSampleService | None = None
     # job voice-picker: the opening line in the chosen voice; None = no preview here

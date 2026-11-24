@@ -236,6 +236,7 @@ from app.quotes.repository import PostgrestQuotesRepository
 from app.quotes.routes import router as quotes_router
 from app.reports.repository import PostgrestReportsRepository
 from app.reports.routes import router as reports_router
+from app.rpc_base import RpcClient
 from app.scheduler.repository import PostgrestSchedulerRepository
 from app.scheduler.routes import router as scheduler_router
 from app.search.routes import PostgrestSearch
@@ -266,6 +267,7 @@ from app.team.repository import PostgrestTeamRepository
 from app.team.routes import public_router as team_public_router
 from app.team.routes import router as team_router
 from app.telephony.background_samples import router as background_samples_router
+from app.telephony.cross import RpcCommandStore, run_worker
 from app.telephony.inbound_routes import router as phone_inbound_router
 from app.telephony.lines_routes import router as phone_lines_router
 from app.telephony.live import LiveCalls
@@ -335,6 +337,13 @@ def _outbox_adapter(settings: Settings) -> ChannelAdapter:
         return build_adapter(settings.outbox_adapter, settings)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
+
+
+def _call_commands(settings: Settings, config: AuthConfig, phone: Any, live: LiveCalls) -> Any:
+    """Calls across API instances (CALL_COORDINATION); None with one instance."""
+    if not settings.call_coordination or phone is None or getattr(phone, "store", None) is None:
+        return None
+    return RpcCommandStore(RpcClient(config.rest_url, config.anon_key), phone.store.scheduler_token)
 
 
 def _signup_service(settings: Settings, config: AuthConfig) -> SignupService | None:
@@ -447,6 +456,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
     )
     key_ring = build_key_ring(settings)
     voice_stack = build_voice(settings)
+    live_calls = LiveCalls()
     phone_inbound = build_phone_inbound(
         settings, config.rest_url, config.supabase_url, config.anon_key
     )
@@ -540,7 +550,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
             announce_takeover=settings.takeover_announce,
             takeover_allowed=settings.takeover_allowed,
         ),
-        live_calls=LiveCalls(),
+        live_calls=live_calls,
+        call_commands=_call_commands(settings, config, phone_inbound, live_calls),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         call_voice=_call_voice(settings),
         browser_voice=_browser_voice(settings, config),
@@ -1303,8 +1314,14 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             from app.telephony.greeting_audio import start_warm
 
             warming = asyncio.create_task(start_warm(phone, voice, stop=stop_warm))
+        coordination: asyncio.Task[None] | None = None
+        if runtime is not None and runtime.call_commands and runtime.live_calls is not None:
+            commands, live = runtime.call_commands, runtime.live_calls
+            coordination = asyncio.create_task(run_worker(live, commands, stop_warm))
         yield
         stop_warm.set()
+        if coordination is not None:
+            coordination.cancel()
         if warming is not None:
             warming.cancel()
         if runtime is not None:
