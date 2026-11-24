@@ -50,7 +50,7 @@ LANGUAGE_NAMES = {"te": "Telugu", "en": "English", "hi": "Hindi", "kn": "Kannada
 ALLOWED_ROLES = (Role.OWNER, Role.ADMIN, Role.SALES)
 # The owner (or a teammate) talking to their own assistant is not a customer call: a short hello of its own, and a longer pause before a turn ends (people stop to think; Sarvam suggests 800 for open conversation, 900 at most).
 # The words are drafts for a native reader.
-OWNER_GREETING = {"en": "Hi, how can I help?", "te": "చెప్పండి, ఏం చేయాలి?", "hi": "बताइए, मैं क्या करूँ?", "kn": "ಹೇಳಿ, ಏನು ಮಾಡಬೇಕು?", "ta": "சொல்லுங்கள், என்ன செய்ய வேண்டும்?", "ml": "പറയൂ, എന്താണ് ചെയ്യേണ്ടത്?", "mr": "सांगा, मी काय करू?"}
+OWNER_GREETING = {"en": "Hi, how can I help?", "te": "చెప్పండి, నేను మీకు ఎలా help చేయగలను?", "hi": "बताइए, मैं क्या करूँ?", "kn": "ಹೇಳಿ, ಏನು ಮಾಡಬೇಕು?", "ta": "சொல்லுங்கள், என்ன செய்ய வேண்டும்?", "ml": "പറയൂ, എന്താണ് ചെയ്യേണ്ടത്?", "mr": "सांगा, मी काय करू?"}
 OWNER_SILENCE_MS = 900
 
 
