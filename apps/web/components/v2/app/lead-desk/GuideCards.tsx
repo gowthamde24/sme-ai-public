@@ -4,7 +4,7 @@ import { GUIDE_IDS } from "@/lib/lead-desk/guides";
 
 import { makeT, type Words } from "../words";
 
-/** "Guides for each source" (mock "Lead sources"): one boxed card for each way leads reach Stack19 (a thing you open), each opening its step-by-step guide page. */
+/** "Guides for each source" (mock "Lead sources"): one boxed card for each way leads reach the product (a thing you open), each opening its step-by-step guide page. */
 export function GuideCards({ words, base }: { words: Words; base: string }) {
   const t = makeT(words);
   return (

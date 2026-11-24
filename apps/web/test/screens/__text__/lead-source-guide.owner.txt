@@ -1,6 +1,5 @@
-[← Lead sources](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources)
 # Google Sheets
-Every new row of your sheet becomes a lead.
+Every new row of your sheet becomes a lead. [← Lead sources](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources)
 - 1 Open your Google Sheet. Put headings in the first row: name, phone, and what they asked.
 - 2 In Extensions > Apps Script paste the snippet below and replace YOUR_ADDRESS. Run it once to allow it.
 - 3 Add a trigger: run it on every new form submit or edit. New rows become leads.
