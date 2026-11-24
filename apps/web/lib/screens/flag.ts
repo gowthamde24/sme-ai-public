@@ -141,7 +141,7 @@ export const speaksPanelScreens = (value: string | undefined = process.env.SPEAK
 export const moreLanguages = (value: string | undefined = process.env.MORE_LANGUAGES): boolean => value === "1";
 
 /**
- * "Open in WhatsApp" and "I sent it" on an approved message in the Outbox (owner 13 Nov 2026, job C10; the proposal in `docs/plans/open-in-whatsapp-plan.md` section 2 widened to TWO redirect routes: the quote and the outbox message). The button opens the owner's own WhatsApp with the words ready;
+ * "Open in WhatsApp" and "I sent it" on an approved message in the Outbox (owner 13 Nov 2026, job C10; the proposal in `docs-private/plans/open-in-whatsapp-plan.md` section 2 widened to TWO redirect routes: the quote and the outbox message). The button opens the owner's own WhatsApp with the words ready;
  * THIS SYSTEM SENDS NOTHING. "I sent it" marks the message sent by hand (C1's `POST /outbox/messages/{id}/mark-sent`). `mock` = the button works the same, "I sent it" records nothing (staging, until C1's route is on staging), `1` = C1's route, unset = not there (production).
  */
 export const outboxWhatsappScreens = (value: string | undefined = process.env.OUTBOX_WHATSAPP): ScreenMode => screenMode(value);
@@ -235,6 +235,8 @@ export const myAssistantOpen = (value: string | undefined = process.env.MY_ASSIS
 
 /** Phone numbers as three plain steps (owner, 25 Nov 2026; mock "Phone numbers"): Choose a document, Upload it, You get your number; the current step open, the others one grey line; no card, no status pill. `1` = on; unset = the registration card as it was. Only with DESIGN_V6. */
 export const phoneSteps = (value: string | undefined = process.env.PHONE_STEPS): boolean => value === "1";
+/** The number picker (owner, 28 Nov 2026; mock "Phone numbers"; C1's contract note): the owner picks their own business number from a list (type, "starts with", numbers as radio rows, "Use this number"), then "ready in a minute", then the shop-number forwarding codes. `mock` = made-up numbers and a cookie (staging: nothing is bought); `1` = C1's routes (not live yet: C1 builds the buying side after a read-only probe); unset = the page as it was. Only with DESIGN_V6. */
+export const phonePicker = (value: string | undefined = process.env.PHONE_PICKER): ScreenMode => screenMode(value);
 /** Settings and Team without sentences (owner, 25 Nov 2026; mock "Settings"): plain labelled fields (label above, one grey hint), one Save with "You have unsaved changes." / "Saved.", the invite as plain fields. `1` = on; unset = the sentence forms as they were. Only with JOBS. */
 export const settingsOpen = (value: string | undefined = process.env.SETTINGS_OPEN): boolean => value === "1";
 /** Today in the open look (owner, 25 Nov 2026; mock Today + Jobs): "Running now" as open rows with bare category-coloured line icons and a green switch, "Needs you" rows with bare icons and ONE orange action (the second action a grey link), the empty side boxes as one grey sentence. `1` = on; unset = as it was. Only with DESIGN_V6. */

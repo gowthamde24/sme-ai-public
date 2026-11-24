@@ -69,7 +69,7 @@ The worker never runs a read-only or waiting workspace, and the outbox's claim a
 
 **`POST /v1/tenants/{tenant_id}/billing/resume`** (Owner, second factor): body `ResumeIn` `{plan_id, checkout_ref}` (same values as the trial's) -> `BillingOut` with `subscription.status` `active`, `can_resume` false, `access` `full`. A paid plan starts **at once with no new trial**: the first month is recorded as paid, the period runs one month, the provider's next charge is one month ahead. Works from read-only (it is under `/billing`). Errors: **409 `not_lapsed`** (a trial is running, a plan is active, the workspace waits for WhatsApp, or it is exempt), 422 `plan_unknown`, 402 `payment_method_declined` (nothing starts), 403 `mfa_required`, 403 for anyone but the Owner. Example request: `resume_request`.
 
-**Exempt workspaces** (Customer Zero and the demo workspaces) never lapse: `access` is always `full` and `can_resume` false. The operator switch is `app.operator_billing_exempt(tenant, true)` (docs/runbooks/billing-exempt.md).
+**Exempt workspaces** (Customer Zero and the demo workspaces) never lapse: `access` is always `full` and `can_resume` false. The operator switch is `app.operator_billing_exempt(tenant, true)` (docs-private/runbooks/billing-exempt.md).
 
 ## Plans as feature switches: AI Workforce and Lead Desk (owner decision 4 Nov 2026; catalogue version 4)
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { guessFabric } from "@/lib/catalogue/fabric-guess";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
@@ -16,7 +17,7 @@ import { FreshPhotos } from "./FreshPhotos";
 import { ItemFieldsSimple } from "./LazyItemFieldsSimple";
 import { vocab } from "./ItemCard";
 import { PhotoTray, type TraySlot } from "./PhotoTray";
-import { BAND_WORDS, moveItem, rupeesToPaise, soonestExpiry } from "./catalogue-logic";
+import { bandForPaise, bandText, moveItem, rupeesToPaise, soonestExpiry } from "./catalogue-logic";
 import type { EditorActions, ItemOutcome, SaveInput, Uploader } from "./catalogue-types";
 import { photoErrorKey } from "./photo-errors";
 import type { preparePhoto } from "./prepare-photo";
@@ -75,7 +76,12 @@ export function ItemEditor(p: ItemEditorProps) {
   const prepare: typeof preparePhoto = p.prepare ?? ((file) => import("./prepare-photo").then((m) => m.preparePhoto(file)).catch(() => ({ ok: false as const, code: "photo_type_unsupported" as const })));
   const owner = p.role === "owner";
 
-  const [name, setName] = React.useState(item?.name ?? "");
+  const [name, setNameRaw] = React.useState(item?.name ?? "");
+  const setName = (v: string) => {
+    setNameRaw(v);
+    const g = !item && !chosen.fabric ? guessFabric(v) : null;
+    if (g) setFabric(g);
+  };
   const [fabric, setFabric] = React.useState<Fabric>(item?.fabric ?? "kanchi_pattu");
   const [colours, setColours] = React.useState<Colour[]>(item?.colours ?? []);
   const [zari, setZari] = React.useState<Zari>(item?.zari ?? "none");
@@ -84,6 +90,8 @@ export function ItemEditor(p: ItemEditorProps) {
   const [band, setBand] = React.useState<PriceBand>(item?.price_band ?? "10k_25k");
   const [stock, setStock] = React.useState<StockStatus>(item?.stock_status ?? "in_stock");
   const [active, setActive] = React.useState(item?.active ?? false);
+  // a NEW saree: the fabric follows the name and "show to customers" turns on with the first photo, until the owner chooses herself (ten sarees in a row must not all end up as the first fabric of the list and hidden)
+  const [chosen, setChosen] = React.useState({ fabric: false, shown: false });
   const [custom, setCustom] = React.useState<FieldValues>(p.custom ?? {});
   const [priceText, setPriceText] = React.useState("");
   const [clearPrice, setClearPrice] = React.useState(false);
@@ -133,7 +141,10 @@ export function ItemEditor(p: ItemEditorProps) {
       added.push({ key: newKey(), kind: "new", photoId: crypto.randomUUID(), file, preview: URL.createObjectURL(file), status: "waiting", percent: 0, error: null, stored: null });
     }
     setPicked(errors);
-    if (added.length) setSlots((cur) => [...cur, ...added]);
+    if (added.length) {
+      setSlots((cur) => [...cur, ...added]);
+      if (!item && !chosen.shown) setActive(true);
+    }
     if (takeRef.current) takeRef.current.value = "";
     if (chooseRef.current) chooseRef.current.value = "";
   }
@@ -304,7 +315,10 @@ export function ItemEditor(p: ItemEditorProps) {
             clearPrice={clearPrice}
             shown={showActive}
             setName={setName}
-            setFabric={setFabric}
+            setFabric={(f) => {
+              setChosen((c) => ({ ...c, fabric: true }));
+              setFabric(f);
+            }}
             setColours={setColours}
             setZari={setZari}
             setBorder={setBorder}
@@ -332,7 +346,10 @@ export function ItemEditor(p: ItemEditorProps) {
             <label htmlFor="cat-fabric" className={label}>
               {say(words, "catalogue.field.fabric")}
             </label>
-            <select id="cat-fabric" value={fabric} disabled={busy} onChange={(e) => setFabric(e.target.value as Fabric)} className={field}>
+            <select id="cat-fabric" value={fabric} disabled={busy} onChange={(e) => {
+                setChosen((c) => ({ ...c, fabric: true }));
+                setFabric(e.target.value as Fabric);
+              }} className={field}>
               {FABRICS.map((f) => (
                 <option key={f} value={f}>
                   {vocab(words, "fabric", f, f)}
@@ -398,7 +415,7 @@ export function ItemEditor(p: ItemEditorProps) {
             <select id="cat-band" value={band} disabled={busy} onChange={(e) => setBand(e.target.value as PriceBand)} aria-describedby="cat-band-help" className={field}>
               {PRICE_BANDS.map((b) => (
                 <option key={b} value={b}>
-                  {BAND_WORDS[b]}
+                  {bandText(words, b)}
                 </option>
               ))}
             </select>
@@ -428,7 +445,11 @@ export function ItemEditor(p: ItemEditorProps) {
               <label htmlFor="cat-price" className={label}>
                 {say(words, "catalogue.field.price")} (₹)
               </label>
-              <input id="cat-price" inputMode="decimal" autoComplete="off" value={priceText} disabled={busy || clearPrice} onChange={(e) => setPriceText(e.target.value)} aria-describedby="cat-price-help" className={`${field} max-w-60`} />
+              <input id="cat-price" inputMode="decimal" autoComplete="off" value={priceText} disabled={busy || clearPrice} onChange={(e) => {
+                    setPriceText(e.target.value);
+                    const paise = rupeesToPaise(e.target.value);
+                    if (paise !== null) setBand(bandForPaise(paise)); // the range follows the exact price
+                  }} aria-describedby="cat-price-help" className={`${field} max-w-60`} />
               <p id="cat-price-help" className={help}>
                 {say(words, "catalogue.form.price.owner")}
               </p>
@@ -493,7 +514,10 @@ export function ItemEditor(p: ItemEditorProps) {
 
         {p.simple ? (
           <div className="rounded-2xl border border-line p-4">
-            <Tick label={<b className="font-semibold">{say(words, "catalogue.form.active")}</b>} sub={liveCount === 0 ? say(words, "catalogue.form.active.needs") : say(words, "catalogue.form.active.help")} checked={showActive} disabled={busy || liveCount === 0} onChange={(e) => setActive(e.target.checked)} />
+            <Tick label={<b className="font-semibold">{say(words, "catalogue.form.active")}</b>} sub={liveCount === 0 ? say(words, "catalogue.form.active.needs") : say(words, "catalogue.form.active.help")} checked={showActive} disabled={busy || liveCount === 0} onChange={(e) => {
+                setChosen((c) => ({ ...c, shown: true }));
+                setActive(e.target.checked);
+              }} />
           </div>
         ) : (
         <div className="rounded-2xl border border-line p-4">

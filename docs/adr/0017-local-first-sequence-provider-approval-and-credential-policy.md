@@ -1,7 +1,7 @@
 # ADR 0017: Local-first sequence, provider approval and credential policy
 
-Status: accepted (owner decision, 2026-10-05). Related: ADR 0013 (agents), ADR 0015 (real-data gate and hosting), `docs/plans/roadmap.md`,
-`docs/plans/key-model-audit.md`, CLAUDE.md non-negotiables 2, 8 and 9.
+Status: accepted (owner decision, 2026-10-05). Related: ADR 0013 (agents), ADR 0015 (real-data gate and hosting), `docs-private/plans/roadmap.md`,
+`docs-private/plans/key-model-audit.md`, CLAUDE.md non-negotiables 2, 8 and 9.
 
 ## Context
 T006 and T006b built the agent runtime, erasure, the real-data gate, MFA and the hosting tooling. The owner has decided not to pay for or
@@ -28,7 +28,7 @@ the owner approves. **Do not blanket-restore `service_role` writes.** The revoke
 definer function or a dedicated role (ADR 0013 option B) granted only the specific tables.
 
 **d. Naming.** Prefer the publishable / secret key names over anon / service_role in new code, docs and variables. The migration of
-existing names is proposed in `docs/plans/key-model-audit.md` and supports both names for a while.
+existing names is proposed in `docs-private/plans/key-model-audit.md` and supports both names for a while.
 
 ## Consequences
 * The next tickets (T007 onward) are built and tested against fakes and fixtures. A live call to any provider happens only at a named

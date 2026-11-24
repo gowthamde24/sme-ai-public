@@ -63,8 +63,12 @@ def _words(sentence: str) -> frozenset[str]:
 class GuardedTts:
     """The voice, with the never-say check in front of it: each sentence sent to be spoken is checked first."""
 
-    def __init__(self, inner: Any, never_say: Sequence[str], *, goal_tone: str | None = None, addressed_name: str | None = None, titles_gender: str | None = None) -> None:
+    def __init__(self, inner: Any, never_say: Sequence[str], *, goal_tone: str | None = None, addressed_name: str | None = None, titles_gender: str | None = None, allowed_paise: frozenset[int] | None = None) -> None:
         self._inner, self._never = inner, list(never_say)
+        # the fact pack's rule about money (28 Nov 2026): when set, a sentence that holds a rupee amount which is not one of these (a price-list amount) is never spoken; a short deflection is said instead
+        self._allowed_paise = allowed_paise
+        self._price_asked = False   # the caller's last turn asked about a price: a bare "five hundred" in the next answer is an amount
+        self.amounts_blocked = 0
         self._goal_tone = goal_tone   # set on an OUTBOUND goal call: no promise is spoken, and the tone's particles are taken out (app/telephony/promises.py, tone.py)
         self._addressed_name = addressed_name  # the called person's own name (Lead Desk): the only name "గారు" may follow, and only in Respectful
         self._titles_gender = titles_gender    # "male" / "female" when the name is unknown and the gender is known: Respectful may use sir / madam, at most twice in the call
@@ -210,8 +214,21 @@ class GuardedTts:
                 logger.info("child terms spoken: n=%d words=%s", len(kids), ",".join(kids))
         return said
 
+    def note_caller(self, text: str) -> None:
+        """The caller's last words (the phone session tells the voice before each reply): only whether a price was asked is kept, never the words."""
+        from app.telephony.fact_pack import asks_price
+
+        self._price_asked = asks_price(text)
+
     def stream(self, text: str, language: str, *args: Any, **kwargs: Any) -> AsyncIterator[bytes]:
         said = safe_line(text, self._never, language)
+        if said == text and self._allowed_paise is not None and self._goal_tone is None:
+            from app.telephony.fact_pack import all_amounts_paise
+
+            if any(a not in self._allowed_paise for a in all_amounts_paise(text, price_context=self._price_asked)):
+                self.amounts_blocked += 1
+                logger.info("amount blocked: language=%s", language)   # a closed line, never the amount or the sentence
+                return self._inner.stream(SAFE.get(language, SAFE["en"]), language, *args, **kwargs)  # type: ignore[no-any-return]
         if said != text:
             self.blocked += 1
             if self._goal_tone is not None:   # (the usual safe line says "I will check with the team and get back to you": a promise a goal call cannot keep)

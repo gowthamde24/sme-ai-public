@@ -1,7 +1,7 @@
 # ADR 0020: Suppression keys (HMAC) and consent-aware follow-up (T010, part 1: the hard gate)
 
-Status: accepted for the local-first stage (owner review of the plan 2026-10-06; plan and amendments: `docs/plans/t010-integration.md`). Related: ADR 0005 (consent ledger), ADR 0013 (option A / B), ADR 0014 (erasure; open question 1,
-"suppression after erasure"), ADR 0016 (second factor), ADR 0017 (local-first), `docs/plans/t010-followup-cadence.md` (lane C's pure cadence).
+Status: accepted for the local-first stage (owner review of the plan 2026-10-06; plan and amendments: `docs-private/plans/t010-integration.md`). Related: ADR 0005 (consent ledger), ADR 0013 (option A / B), ADR 0014 (erasure; open question 1,
+"suppression after erasure"), ADR 0016 (second factor), ADR 0017 (local-first), `docs-private/plans/t010-followup-cadence.md` (lane C's pure cadence).
 
 ## Context
 Erasing a contact removes its e-mail and phone. A later import of the same address would start with no opt-out, and a person who asked not to be contacted could be contacted again. The checklist made this a HARD GATE before the first outreach.

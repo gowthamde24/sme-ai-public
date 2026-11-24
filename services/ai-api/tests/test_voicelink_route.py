@@ -19,7 +19,7 @@ from tests.test_dv_browser_voice import arun, until
 from tests.test_ph_inbound import FakeStore, fake_parts
 
 TOKEN = "voicelink-bot-address-token-for-tests-0123456789abcdef"
-OWNER = "+919502380998"
+OWNER = "+919000000998"
 LINE = "+918065590140"
 TENANT = uuid.UUID(int=0x0B0E)
 CALL = "vl-call-0001"
@@ -99,7 +99,7 @@ async def test_a_whole_call_is_answered_recorded_as_voicelink_and_ends_with_the_
     assert sim.heard.problems == [], sim.heard.problems
     assert sim.heard.audio_bytes > 0 and sim.heard.marks
     text = " ".join(records)
-    assert "9502380998" not in text and "8065590140" not in text and CALL not in text and TOKEN not in text, "no number, no raw call id, not the address token in the log"
+    assert "9000000998" not in text and "8065590140" not in text and CALL not in text and TOKEN not in text, "no number, no raw call id, not the address token in the log"
     assert "voicelink_inbound admitted" in text and "exotel_inbound" not in text
 
 
@@ -133,3 +133,29 @@ async def test_refusals_never_start_a_call_a_call_we_placed_is_not_built_yet_and
         await asyncio.wait_for(task, 10)
         assert getattr(store, "begun", []) == [], kw
         assert sim.heard.audio_bytes == 0, kw
+
+
+def test_the_webhook_shape_line_holds_field_names_only() -> None:
+    from app.telephony.voicelink_routes import _shape
+
+    text = _shape({"event": "call.ended", "data": {"call_id": "1764.5", "caller": "+919876543210", "status": "ANSWER"}, "custom parameters": "x", "zz": 1})
+    assert text == "custom_parameters,data{call_id,caller,status},event,zz" or text == "customparameters,data{call_id,caller,status},event,zz"
+    assert "1764" not in text and "9876" not in text and "ANSWER" not in text and "call.ended" not in text
+
+
+@arun
+async def test_a_socket_that_closes_before_the_start_event_is_logged_with_the_events_it_sent() -> None:
+    """28 Nov 2026: VoiceLink opened the bot and closed it within milliseconds (a reachability test looks like this): the line says which events came first (names and counts only)."""
+    records: list[str] = []
+    handler = logging.Handler()
+    handler.emit = lambda record: records.append(record.getMessage())  # type: ignore[method-assign]
+    logging.getLogger("app.telephony.voicelink").addHandler(handler)
+    logging.getLogger("app.telephony.voicelink").setLevel(logging.INFO)
+    try:
+        ours, theirs = QueueWire.pair()
+        theirs.close()
+        await handle(service(), SimpleNamespace(limits=Limits()), None, TOKEN, ours, open_timeout=2.0)
+    finally:
+        logging.getLogger("app.telephony.voicelink").removeHandler(handler)
+    text = " ".join(records)
+    assert "voicelink_inbound refused=no_start end_how=socket_closed events=none" in text

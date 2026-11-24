@@ -56,6 +56,9 @@ def test_the_state_is_made_from_the_facts() -> None:
     assert live.state == "live" and live.can_go_live and live.missing == [] and live.using_defaults == ["voice", "rules"]
     lost = status_of({"live": True, "business_name_ok": True, "phone_number_ok": False})
     assert lost.state == "not_live" and lost.missing == ["phone_number"] and not lost.can_go_live, "a live assistant whose number is gone is not live"
+    paused = status_of({"live": False, "ever_changed": True, "business_name_ok": True, "phone_number_ok": True, "voice_saved": True})
+    assert paused.state == "paused", "a switch row says the assistant was turned off: paused, whatever was trained"
+    assert status_of({"live": False, "ever_changed": False, "business_name_ok": True, "phone_number_ok": True}).state == "not_live"
     nothing = status_of({})
     assert nothing.missing == ["business_name", "phone_number"] and nothing.using_defaults == ["voice", "rules"]
 
@@ -73,7 +76,7 @@ def test_the_owner_goes_live_and_pauses() -> None:
     client, repo = world()
     r = client.post(f"{URL}/go-live", headers=auth("a_owner"))
     assert r.status_code == 200 and r.json()["state"] == "live"
-    assert client.post(f"{URL}/pause", headers=auth("a_owner")).json()["state"] == "not_live"
+    assert client.post(f"{URL}/pause", headers=auth("a_owner")).json()["state"] == "paused", "switched off by the Owner: paused, not 'never started' (28 Nov 2026)"
     assert repo.calls == ["go_live", "pause"]
 
 

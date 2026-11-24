@@ -535,7 +535,9 @@
       ],
       "default_message": "The call could not be placed.",
       "wait": false,
-      "extras": []
+      "extras": [
+        "reason"
+      ]
     },
     {
       "code": "call_settings_unavailable",

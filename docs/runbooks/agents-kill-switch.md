@@ -170,7 +170,7 @@ on conflict (model) do update set input_micros_per_mtok = excluded.input_micros_
 
 If the API process itself must stop (for example a runaway cost at the model provider): stop the process (this ends every
 in-flight run), set `AGENTS_ENABLED=false` for the next start, **and** set the provider-side spend cap (the real limit; see
-`docs/pre-pilot-checklist.md`). The database's daily cap limits what the runtime reserves and reports; it cannot see what the provider bills.
+`docs-private/pre-pilot-checklist.md`). The database's daily cap limits what the runtime reserves and reports; it cannot see what the provider bills.
 
 
 ## The plan allowance (job AK / K2): a daily AND a monthly window

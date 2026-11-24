@@ -98,7 +98,7 @@ fi
 WHATSAPP_ALLOWED_RECIPIENTS="${WHATSAPP_ALLOWED_RECIPIENTS-}"
 
 if [ "$what" = "api" ] || [ "$what" = "all" ]; then
-  # ONE server on staging (owner, 9 Nov 2026): a live call lives on the server that answered it, so Take over, Whisper and Hang up only work on that one (deploy/settings/staging/api.scale). Production needs the routing below (docs/pre-pilot-checklist.md)
+  # ONE server on staging (owner, 9 Nov 2026): a live call lives on the server that answered it, so Take over, Whisper and Hang up only work on that one (deploy/settings/staging/api.scale). Production needs the routing below (docs-private/pre-pilot-checklist.md)
   # API_TIMEOUT=660: a browser Talk live session is one WebSocket request and Cloud Run ends a request at its timeout; the session cap on staging is 600 s (BROWSER_VOICE_SESSION_SECONDS), so the request may live a minute longer (owner, 13 Nov 2026). Production keeps 300 until the owner decides.
   API_TIMEOUT=660 NO_TRAFFIC=1 API_SETTINGS_DIR="$API_SETTINGS_DIR" RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true ./deploy/cloudrun.sh api $execute
 fi

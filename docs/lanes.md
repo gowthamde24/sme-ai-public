@@ -16,7 +16,7 @@ B's deliberately narrow grant keeps server-rendered database-facing pages and ex
 
 B first writes an API contract file in docs/contracts/B/: request/response shapes, errors and synthetic examples. A reviews before wiring; B uses a mock until the endpoint exists. Generated packages/contracts/ stays A-owned. Mock screens must be clearly identified as mock/demo; never present invented state as live backend state.
 
-Each lane writes docs/checklist-notes/A.md, B.md or C.md with ticket, checklist row, test evidence and unresolved risks. A merges the notes into docs/pre-pilot-checklist.md after review, preserving unresolved items. Allocate unused ADR numbers within the lane range; never renumber or overwrite existing ADRs. A’s range starts at 0017 but stops before B's reserved 0040; coordinate another allocation when exhausted.
+Each lane writes docs-private/checklist-notes/A.md, B.md or C.md with ticket, checklist row, test evidence and unresolved risks. A merges the notes into docs-private/pre-pilot-checklist.md after review, preserving unresolved items. Allocate unused ADR numbers within the lane range; never renumber or overwrite existing ADRs. A’s range starts at 0017 but stops before B's reserved 0040; coordinate another allocation when exhausted.
 
 ## Owner commands
 

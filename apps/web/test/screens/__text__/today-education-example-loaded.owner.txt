@@ -11,7 +11,7 @@ form:
 form:
 [button type=submit: Remove and load it again]
 {role=status} Example data loaded.
-{role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
+{role=status} Sending is stopped . Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
 {label="Needs you"}
 ## Needs you
 5 5 waiting for you

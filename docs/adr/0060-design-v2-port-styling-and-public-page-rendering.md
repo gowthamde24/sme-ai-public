@@ -1,6 +1,6 @@
 # ADR 0060: Design v2 port: how v2 styles live next to the legacy CSS, and how the public pages are rendered
 
-Status: **accepted by the owner 2026-10-07** (decision 1 as proposed; decision 2 changed to the fallback, see below). Evidence: `docs/plans/port-design-v2-stage0-findings.md`. Related: `docs/plans/port-design-v2.md` (the plan and the owner's 15 answers), ADR 0016 (the nonce-based CSP), AGENTS.md and `docs/lanes.md` (lane paths). ADR numbers 0060 to 0069 are reserved for this port.
+Status: **accepted by the owner 2026-10-07** (decision 1 as proposed; decision 2 changed to the fallback, see below). Evidence: `docs-private/plans/port-design-v2-stage0-findings.md`. Related: `docs-private/plans/port-design-v2.md` (the plan and the owner's 15 answers), ADR 0016 (the nonce-based CSP), AGENTS.md and `docs/lanes.md` (lane paths). ADR numbers 0060 to 0069 are reserved for this port.
 
 ## Context
 `design-lab/` (a Vite SPA, reference only) holds design v2 and a landing and sign-in page. `apps/web` is the real Next.js 16.3.8 app. Two facts block a straight port:

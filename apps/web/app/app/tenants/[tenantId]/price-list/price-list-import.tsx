@@ -11,6 +11,13 @@ import { alertBox, btnMain, bulletList, codeInline, dataTable, dataTd, dataThCol
 import { Rich } from "@/components/v2/app/rich";
 import { makeT, type Words } from "@/components/v2/app/words";
 
+const lines = (text: string): string => text.replace(/\r\n?/g, "\n");
+/** A file that is not a plain list (an Excel file, a photo, a PDF) shows as garbage in the box: spot it by its name, its type, or characters no list holds. */
+const NOT_A_LIST = /\.(xlsx?|ods|pdf|jpe?g|png|webp|heic|heif|gif|docx?)$/i;
+const looksBinary = (text: string): boolean => /[\u0000-\u0008\u000e-\u001f\ufffd]/.test(text.slice(0, 2000));
+/** The example the owner can download and fill in: the five columns and two lines. */
+const SAMPLE = "sku,name,unit_price,moq,tax_bps,min_qty_1,price_1\nSAREE-001,Maroon Kanchi pattu,38500,1,500,5,37500\nSAREE-002,Cotton daily wear,1200,2,500,10,1100\n";
+
 type Previewed = { state: PreviewState; checked: { csv: string; date: string; versionId: string } } | undefined;
 type PreviewAction = (prev: PreviewState, formData: FormData) => Promise<PreviewState>;
 type CommitAction = (prev: CommitState, formData: FormData) => Promise<CommitState>;
@@ -49,7 +56,8 @@ export function PriceListImport({
   const previewState = previewed?.state;
   const checked = previewed?.checked ?? null;
   // the verdict is shown only when no check is running and the text and date are exactly the checked ones
-  const fresh = !checking && checked !== null && checked.csv === csv && checked.date === date;
+  // (a browser hands a textarea's lines to a form with CRLF line ends: compare the lines, not the line ends, or the result of a check on a file of several lines is never shown)
+  const fresh = !checking && checked !== null && lines(checked.csv) === lines(csv) && checked.date === date;
   const result = fresh ? previewState?.preview : undefined;
   const current = result?.ok === true;
   const stale = !checking && previewState?.preview !== undefined && !fresh;
@@ -62,7 +70,21 @@ export function PriceListImport({
       setFileError(FILE_TOO_BIG);
       return;
     }
-    setCsv(await file.text());
+    const body = await file.text();
+    if (NOT_A_LIST.test(file.name) || looksBinary(body)) {
+      event.target.value = "";
+      setFileError(t("pl.err.notlist"));
+      return;
+    }
+    setCsv(body);
+  }
+  function sample() {
+    const url = URL.createObjectURL(new Blob([SAMPLE], { type: "text/csv" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "price-list-example.csv";
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   return (
@@ -85,6 +107,11 @@ export function PriceListImport({
           <Rich t={t} k="pl.columns_line" with={{ cols: <code className={codeInline}>sku, name, unit_price, moq, tax_bps</code>, first: <code className={codeInline}>min_qty_1, price_1</code>, last: <code className={codeInline}>min_qty_5, price_5</code> }} />
         </p>
         <p className={mutedText}>{t("pl.columns_help")}</p>
+        <div>
+          <button type="button" onClick={sample} className="text-sm text-muted underline underline-offset-4" data-part="pl-sample">
+            {t("pl.sample")}
+          </button>
+        </div>
         <label htmlFor="pl-date" className={fieldLabel}>
         {t("pl.the_price_list_starts_on")}
       </label>

@@ -60,7 +60,7 @@ Never regenerate a vector to make a failing test pass; a changed vector means a 
 
 ## 1.2.0: no zero shipping lines
 
-Why: the owners decided (docs/plans/manual-price-quote-plan.md, section 12, item 4, 2026-10-08) that a quote shows no
+Why: the owners decided (docs-private/plans/manual-price-quote-plan.md, section 12, item 4, 2026-10-08) that a quote shows no
 shipping line whose amount is zero. A business with no courier has a policy fee of 0, and 1.1.0 still printed
 `Shipping net`, `GST on shipping (r%)` and `Shipping total` with 0.00 on every quote.
 

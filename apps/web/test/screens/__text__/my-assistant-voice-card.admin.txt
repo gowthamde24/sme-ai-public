@@ -1,4 +1,4 @@
-# Train how it talks
+# Teach your assistant
 Not live Teach your assistant how to speak on calls: how to greet, what to ask, and what never to say. Only the owner can go live or pause.
 {label="Sections"}
 - [Knowledge](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=knowledge)

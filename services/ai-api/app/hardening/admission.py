@@ -1,4 +1,4 @@
-"""Calls first, pages second (Phase 1 of docs/plans/call-capacity-and-instances.md, owner 12 Nov 2026).
+"""Calls first, pages second (Phase 1 of docs-private/plans/call-capacity-and-instances.md, owner 12 Nov 2026).
 
 One API instance carries a live call (its callbacks, its media socket, its live actions) AND every page of the web app. On 12 Nov 2026 the data layer was slow, page requests waited on it for 10 to 36 seconds, the
 instance reached its request limit and refused work with 502. This pure ASGI middleware keeps the call path free whatever the pages and the data layer do:

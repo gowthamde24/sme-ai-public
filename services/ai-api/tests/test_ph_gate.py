@@ -180,3 +180,42 @@ def test_after_hours_the_assistant_does_not_hold_a_conversation() -> None:
     assert gate.check_inbound(SANDBOX, inbound(now=late)) == InboundDecision(False, "outside_hours")
     sunday = datetime(2026, 11, 8, 11, 0, tzinfo=IST)
     assert gate.check_inbound(SANDBOX, inbound(now=sunday)) == InboundDecision(False, "outside_hours")
+
+
+# ---- sandbox-only hours exemption (owner, 28 Nov 2026: "remove time constraints for now, for testing") -------------------------------------------------------------------------------
+
+NIGHT = datetime(2026, 11, 3, 22, 30, tzinfo=IST)     # a Tuesday, after the 21:00 window
+SANDBOX_FREE = Settings(mode="sandbox", sandbox_numbers=frozenset({"+919876543210"}), sandbox_ignores_hours=True)
+LIVE_FREE = Settings(mode="live", live_confirmed=True, sandbox_ignores_hours=True)
+
+
+def test_in_sandbox_with_the_switch_a_listed_number_may_be_called_at_night_and_only_the_hours_rules_are_lifted(caplog: pytest.LogCaptureFixture) -> None:
+    import logging
+
+    with caplog.at_level(logging.INFO, logger="app.telephony.gate"):
+        assert not isinstance(gate.check_outbound(SANDBOX_FREE, facts(now=NIGHT)), Refused), "the hours are lifted"
+        assert not isinstance(gate.check_outbound(SANDBOX_FREE, facts(now=datetime(2026, 11, 8, 11, 0, tzinfo=IST))), Refused), "a Sunday outside the workspace days too"
+    assert "hours_bypassed_sandbox rule=outside_window" in caplog.text and "9876543210" not in caplog.text, "a closed word, never a number"
+    # everything else still holds
+    assert refused(SANDBOX_FREE, facts(now=NIGHT, number="+919000000000")) == "not_on_sandbox_list"
+    assert refused(SANDBOX_FREE, facts(now=NIGHT, can_contact=False)) == "no_consent"
+    assert refused(SANDBOX_FREE, facts(now=NIGHT, dnd="yes")) == "dnd"
+    assert refused(SANDBOX_FREE, facts(now=NIGHT, suppressed=True)) == "suppressed"
+    assert refused(SANDBOX_FREE, facts(now=NIGHT, calls_to_contact_this_week=99)) == "weekly_limit"
+
+
+def test_the_switch_does_nothing_without_sandbox_mode_so_it_cannot_weaken_a_live_call() -> None:
+    assert refused(SANDBOX, facts(now=NIGHT)) == "outside_window", "sandbox without the switch: refused as before"
+    live_facts = facts(now=NIGHT, proof_of_request=True)
+    assert refused(LIVE_FREE, live_facts) == "outside_window", "LIVE with the switch on: still refused outside the window"
+    assert refused(Settings(mode="off", sandbox_ignores_hours=True), facts(now=NIGHT)) == "telephony_off"
+
+
+def test_the_deployment_setting_reaches_the_gate_and_is_off_by_default() -> None:
+    from types import SimpleNamespace
+
+    from app.telephony.settings import gate_settings
+
+    base = {"telephony_mode": "sandbox", "telephony_live_confirmed": False, "telephony_sandbox_numbers": "", "telephony_max_concurrent": 1, "telephony_outbound": True}
+    assert gate_settings(SimpleNamespace(**base)).sandbox_ignores_hours is False
+    assert gate_settings(SimpleNamespace(**base, telephony_sandbox_ignores_hours=True)).sandbox_ignores_hours is True

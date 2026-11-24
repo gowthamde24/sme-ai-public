@@ -152,11 +152,11 @@ In order, none of it before the previous is done and written down:
 2. Upgrade the Supabase project to **Pro** (Billing; keep the spend cap ON), then the Pro items of `hosted-auth-settings.md`.
 3. Custom SMTP working; the invitation e-mail tested with your own address.
 4. `backup-restore-drill.md` done; `verify_hosted.py` passing; the erasure timing test of `hosting-deploy.md`.
-5. The DPDP review (T012) written; then the operator opens the gate (`real-data-gate.md`). Only then does any real customer record go in.
+5. The DPDP review (T012) written; then the operator opens the gate (`docs-private/runbooks/real-data-gate.md`). Only then does any real customer record go in.
 
 ## Stopping and cleaning up
 * Stop spending at once: Cloud Run > each service > Delete (the images in Artifact Registry cost cents; delete them too), Cloud Scheduler > pause or delete `sme-worker-tick`. Supabase Free costs nothing; Pro: downgrade in Billing (export first with `backup-db.sh`).
 * Remove the agents' reach: `AGENTS_ENABLED=false` and `docs/runbooks/agents-kill-switch.md`.
 
 ## What this runbook does not cover (on purpose)
-A real WhatsApp or e-mail sending channel (none exists; ADR 0066), rate limiting of the API (listed in `docs/pre-pilot-checklist.md`), the DPDP review, and choosing a model provider. Each needs its own decision.
+A real WhatsApp or e-mail sending channel (none exists; ADR 0066), rate limiting of the API (listed in `docs-private/pre-pilot-checklist.md`), the DPDP review, and choosing a model provider. Each needs its own decision.

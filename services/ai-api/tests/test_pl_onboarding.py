@@ -47,7 +47,7 @@ class FakePlivo:
         self.requests.append((request.method, request.url.path + ("?" + request.url.query.decode() if request.url.query else ""), body, who))
         path = request.url.path
         if self.fail_on and self.fail_on in path:
-            return httpx.Response(400, json={"error": "refused for +919502380998"})
+            return httpx.Response(400, json={"error": "refused for +919000000998"})
         if path.endswith("/Subaccount/"):
             return httpx.Response(201, json={"api_id": "x", "auth_id": SUB_ID, "auth_token": SUB_TOKEN, "message": "created"})
         if "/PhoneNumber/Compliance/" in path:
@@ -177,7 +177,7 @@ def test_a_plivo_refusal_stops_the_run_at_that_step_with_a_closed_word_and_never
         main, make = admins(fake)
         result = onboard(plan(), main, secrets, make, execute=True, token_of=lambda _id: SUB_TOKEN)
         assert result.steps[-1].name == step and result.steps[-1].status == "failed" and result.steps[-1].detail == "rejected", fail
-        assert "9502380998" not in json.dumps([vars(s) for s in result.steps])
+        assert "9000000998" not in json.dumps([vars(s) for s in result.steps])
 
 
 def test_the_line_sql_cleans_the_name_and_refuses_a_bad_id() -> None:

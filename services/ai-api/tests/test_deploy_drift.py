@@ -50,8 +50,8 @@ def test_a_named_change_is_allowed_and_a_job_with_no_instance_limits_is_not_drif
 
 
 def test_a_snapshot_never_writes_a_phone_number_or_a_key_like_value() -> None:
-    text = drift.snapshot_text("staging", "worker", {"WHATSAPP_ALLOWED_RECIPIENTS": "919502380998", "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_x", "TOKEN_EXPIRY_CHECK": "true", "@minScale": ""})
-    assert "919502380998" not in text and "sb_publishable_x" not in text and "WHATSAPP_ALLOWED_RECIPIENTS=@ignore" in text and "TOKEN_EXPIRY_CHECK=true" in text and "@minScale" not in text
+    text = drift.snapshot_text("staging", "worker", {"WHATSAPP_ALLOWED_RECIPIENTS": "919000000998", "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_x", "TOKEN_EXPIRY_CHECK": "true", "@minScale": ""})
+    assert "919000000998" not in text and "sb_publishable_x" not in text and "WHATSAPP_ALLOWED_RECIPIENTS=@ignore" in text and "TOKEN_EXPIRY_CHECK=true" in text and "@minScale" not in text
 
 
 @pytest.mark.parametrize("which", ["web", "worker"])

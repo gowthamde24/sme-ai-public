@@ -1,4 +1,4 @@
-"""Google Places ROUTE 1 (owner decision 12 Nov 2026; docs/plans/lead-finder-places-storage.md): from Google only the place ID and the coordinates are kept (the coordinates 30 days), and OUR decision. The
+"""Google Places ROUTE 1 (owner decision 12 Nov 2026; docs-private/plans/lead-finder-places-storage.md): from Google only the place ID and the coordinates are kept (the coordinates 30 days), and OUR decision. The
 name, phone, address, website, rating and reviews are fetched fresh by place ID, for one answer, and dropped. The database side is pgTAP 191; here: what the API hands the database, what it shows, and the mock."""
 
 # ruff: noqa: E501

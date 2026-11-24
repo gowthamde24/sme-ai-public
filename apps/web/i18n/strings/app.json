@@ -60,7 +60,7 @@
   "hi": "लीड",
   "kn": "ಲೀಡ್‌ಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -104,7 +104,7 @@
   "hi": "दाम और प्रोडक्ट",
   "kn": "ಬೆಲೆ ಮತ್ತು ಪ್ರಾಡಕ್ಟ್ಸ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126,7 +126,7 @@
   "hi": "इंटीग्रेशन",
   "kn": "ಇಂಟಿಗ್ರೇಷನ್‌ಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -258,7 +258,7 @@
   "hi": "सभी वर्कस्पेस",
   "kn": "ಎಲ್ಲಾ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -1825,7 +1825,7 @@
   "hi": "रुका हुआ",
   "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -1891,7 +1891,7 @@
   "hi": "{count} आपका इंतज़ार",
   "kn": "{count} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -2078,7 +2078,7 @@
   "hi": "रोकें",
   "kn": "ನಿಲ್ಲಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -4738,7 +4738,7 @@
   "hi": "दुकान की विज़िट",
   "kn": "ಅಂಗಡಿ ಭೇಟಿಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -4806,7 +4806,7 @@
   "hi": "आज के लिए कोई विज़िट बुक नहीं है।",
   "kn": "ಇಂದಿಗೆ ಯಾವುದೇ ಭೇಟಿ ಬುಕ್ ಆಗಿಲ್ಲ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -7809,7 +7809,7 @@
   "hi": "सेव करें",
   "kn": "ಸೇವ್ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -8613,7 +8613,7 @@
   "hi": "कैटलॉग",
   "kn": "ಕ್ಯಾಟಲಾಗ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -8635,7 +8635,7 @@
   "hi": "साड़ी जोड़ें",
   "kn": "ಸೀರೆ ಸೇರಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -8701,7 +8701,7 @@
   "hi": "कपड़ा",
   "kn": "ಫ್ಯಾಬ್ರಿಕ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -8712,7 +8712,7 @@
   "hi": "रंग",
   "kn": "ಬಣ್ಣ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -8723,7 +8723,7 @@
   "hi": "मौका",
   "kn": "ಸಂದರ್ಭ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -8746,7 +8746,7 @@
   "hi": "स्टॉक",
   "kn": "ಸ್ಟಾಕ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -8790,7 +8790,7 @@
   "hi": "कुछ ही बचे हैं",
   "kn": "ಕೆಲವೇ ಉಳಿದಿವೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -8999,7 +8999,7 @@
   "hi": "कांची पट्टू",
   "kn": "ಕಾಂಚಿ ಪಟ್ಟು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9010,7 +9010,7 @@
   "hi": "धर्मावरम सिल्क",
   "kn": "ಧರ್ಮಾವರಂ ಸಿಲ್ಕ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9021,7 +9021,7 @@
   "hi": "सॉफ्ट सिल्क",
   "kn": "ಸಾಫ್ಟ್ ಸಿಲ್ಕ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9032,7 +9032,7 @@
   "hi": "कॉटन सिल्क",
   "kn": "ಕಾಟನ್ ಸಿಲ್ಕ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9043,7 +9043,7 @@
   "hi": "बनारसी",
   "kn": "ಬನಾರಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9054,7 +9054,7 @@
   "hi": "मैसूर सिल्क",
   "kn": "ಮೈಸೂರು ಸಿಲ್ಕ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9065,7 +9065,7 @@
   "hi": "उप्पाडा",
   "kn": "ಉಪ್ಪಾಡ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9076,7 +9076,7 @@
   "hi": "प्योर कॉटन",
   "kn": "ಪ್ಯೂರ್ ಕಾಟನ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9087,7 +9087,7 @@
   "hi": "जॉर्जेट",
   "kn": "ಜಾರ್ಜೆಟ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9098,7 +9098,7 @@
   "hi": "दूसरा",
   "kn": "ಇತರೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9109,7 +9109,7 @@
   "hi": "लाल",
   "kn": "ಕೆಂಪು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9120,7 +9120,7 @@
   "hi": "मरून",
   "kn": "ಮರೂನ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9131,7 +9131,7 @@
   "hi": "गुलाबी",
   "kn": "ಗುಲಾಬಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9142,7 +9142,7 @@
   "hi": "नारंगी",
   "kn": "ಕಿತ್ತಳೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9153,7 +9153,7 @@
   "hi": "पीला",
   "kn": "ಹಳದಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9164,7 +9164,7 @@
   "hi": "हरा",
   "kn": "ಹಸಿರು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9175,7 +9175,7 @@
   "hi": "नीला",
   "kn": "ನೀಲಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9186,7 +9186,7 @@
   "hi": "नेवी ब्लू",
   "kn": "ನೇವಿ ಬ್ಲೂ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9197,7 +9197,7 @@
   "hi": "बैंगनी",
   "kn": "ನೇರಳೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9208,7 +9208,7 @@
   "hi": "काला",
   "kn": "ಕಪ್ಪು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9219,7 +9219,7 @@
   "hi": "सफेद",
   "kn": "ಬಿಳಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9230,7 +9230,7 @@
   "hi": "क्रीम",
   "kn": "ಕ್ರೀಮ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9241,7 +9241,7 @@
   "hi": "सुनहरा",
   "kn": "ಚಿನ್ನದ ಬಣ್ಣ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9252,7 +9252,7 @@
   "hi": "सिल्वर",
   "kn": "ಬೆಳ್ಳಿ ಬಣ್ಣ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9263,7 +9263,7 @@
   "hi": "भूरा",
   "kn": "ಕಂದು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9274,7 +9274,7 @@
   "hi": "ग्रे",
   "kn": "ಬೂದು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9285,7 +9285,7 @@
   "hi": "कई रंग",
   "kn": "ಹಲವು ಬಣ್ಣಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9406,7 +9406,7 @@
   "hi": "नाम",
   "kn": "ಹೆಸರು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9428,7 +9428,7 @@
   "hi": "रंग",
   "kn": "ಬಣ್ಣಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9606,7 +9606,7 @@
   "hi": "जैसे: टेंपल बॉर्डर वाली मरून कांची पट्टू",
   "kn": "ಉದಾಹರಣೆ: ಟೆಂಪಲ್ ಬಾರ್ಡರ್ ಇರುವ ಮರೂನ್ ಕಾಂಚಿ ಪಟ್ಟು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9617,7 +9617,7 @@
   "hi": "एक से चार चुनें।",
   "kn": "ಒಂದರಿಂದ ನಾಲ್ಕು ಆರಿಸಿ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9710,7 +9710,7 @@
   "hi": "यह साड़ी ग्राहकों को दिखाएँ",
   "kn": "ಈ ಸೀರೆಯನ್ನು ಗ್ರಾಹಕರಿಗೆ ತೋರಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9732,7 +9732,7 @@
   "hi": "ग्राहकों को दिखाने के लिए कम से कम एक फोटो जोड़ें।",
   "kn": "ಗ್ರಾಹಕರಿಗೆ ತೋರಿಸಲು ಕನಿಷ್ಠ ಒಂದು ಫೋಟೋ ಸೇರಿಸಿ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9743,7 +9743,7 @@
   "hi": "फोटो",
   "kn": "ಫೋಟೋಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9754,7 +9754,7 @@
   "hi": "आठ फोटो तक। पहला कवर होता है। क्रम बदलने के लिए फोटो को खींचें या तीर वाले बटन दबाएँ।",
   "kn": "ಎಂಟು ಫೋಟೋಗಳವರೆಗೆ. ಮೊದಲನೆಯದು ಕವರ್. ಕ್ರಮ ಬದಲಿಸಲು ಫೋಟೋ ಎಳೆಯಿರಿ ಅಥವಾ ಬಾಣದ ಬಟನ್ ಒತ್ತಿ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -11455,7 +11455,7 @@
   "hi": "अभी छोड़ें",
   "kn": "ಸದ್ಯಕ್ಕೆ ಬಿಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -11901,7 +11901,7 @@
   "hi": "{done}/{total} पूरे",
   "kn": "{done}/{total} ಪೂರ್ಣ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -13846,7 +13846,7 @@
   "hi": "विवरण",
   "kn": "ವಿವರಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -20442,7 +20442,7 @@
   "hi": "प्रोडक्ट जोड़ें",
   "kn": "ಪ್ರೊಡಕ್ಟ್ ಸೇರಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -20747,10 +20747,10 @@
   "humanOnly": true
  },
  "pl.sku": {
-  "en": "sku",
-  "te": "sku",
-  "hi": "sku",
-  "kn": "sku",
+  "en": "Product code",
+  "te": "Product code",
+  "hi": "Product code",
+  "kn": "Product code",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -21789,7 +21789,7 @@
   "hi": "कॉन्टैक्ट",
   "kn": "ಸಂಪರ್ಕ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -26129,7 +26129,7 @@
   "hi": "चल रहा है",
   "kn": "ನಡೆಯುತ್ತಿದೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -27162,10 +27162,10 @@
   }
  },
  "pl.col_sku": {
-  "en": "sku",
-  "te": "sku",
-  "hi": "sku",
-  "kn": "sku",
+  "en": "Product code",
+  "te": "Product code",
+  "hi": "Product code",
+  "kn": "Product code",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27357,10 +27357,10 @@
   "humanOnly": true
  },
  "pl.columns_line": {
-  "en": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog.",
-  "te": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog.",
-  "hi": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog.",
-  "kn": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog.",
+  "en": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every product code (sku) must already be a product in your catalog.",
+  "te": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every product code (sku) must already be a product in your catalog.",
+  "hi": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every product code (sku) must already be a product in your catalog.",
+  "kn": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every product code (sku) must already be a product in your catalog.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -29646,7 +29646,7 @@
   "hi": "वर्कस्पेस बनाएँ",
   "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -35185,7 +35185,7 @@
   "hi": "रिटेलर खोजें",
   "kn": "ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -36576,7 +36576,7 @@
   "hi": "कस्टमर चैट",
   "kn": "ಕಸ್ಟಮರ್ ಚಾಟ್‌ಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -38326,7 +38326,7 @@
   "hi": "फ़ीस",
   "kn": "ಶುಲ್ಕಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -38337,7 +38337,7 @@
   "hi": "भुगतान रिमाइंडर",
   "kn": "ಪೇಮೆಂಟ್ ರಿಮೈಂಡರ್‌ಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -38799,7 +38799,7 @@
   "hi": "व्यापार का नाम",
   "kn": "ವ್ಯಾಪಾರದ ಹೆಸರು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -40636,7 +40636,7 @@
   "hi": "पिन कोड",
   "kn": "ಪಿನ್ ಕೋಡ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -41010,7 +41010,7 @@
   "hi": "क्षेत्रफल",
   "kn": "ಏರಿಯಾ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -55378,7 +55378,7 @@
   "hi": "आपका प्लान",
   "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -55719,7 +55719,7 @@
   "hi": "प्लान बदलें",
   "kn": "ಪ್ಲಾನ್ ಬದಲಾಯಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -56797,7 +56797,7 @@
   "hi": "लाइव",
   "kn": "ಲೈವ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -56995,7 +56995,7 @@
   "hi": "मेरा असिस्टेंट",
   "kn": "ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -57589,7 +57589,7 @@
   "hi": "सोम",
   "kn": "ಸೋಮ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -57600,7 +57600,7 @@
   "hi": "मंगल",
   "kn": "ಮಂಗಳ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -57611,7 +57611,7 @@
   "hi": "बुध",
   "kn": "ಬುಧ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -57622,7 +57622,7 @@
   "hi": "गुरु",
   "kn": "ಗುರು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -57633,7 +57633,7 @@
   "hi": "शुक्र",
   "kn": "ಶುಕ್ರ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -57644,7 +57644,7 @@
   "hi": "शनि",
   "kn": "ಶನಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -63358,7 +63358,7 @@
   "hi": "आप क्या बेचते हैं",
   "kn": "ನೀವು ಮಾರುವುದು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -63710,7 +63710,7 @@
   "hi": "सेट करें",
   "kn": "ಸೆಟ್ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -71025,7 +71025,7 @@
   "hi": "इनवॉइस",
   "kn": "ಇನ್‌ವಾಯ್ಸ್‌ಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -73269,7 +73269,7 @@
   "hi": "डेमो शुरू करें",
   "kn": "ಡೆಮೊ ಶುರು ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -74050,7 +74050,7 @@
   "hi": "भेजें",
   "kn": "ಕಳುಹಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -74331,10 +74331,10 @@
   }
  },
  "ctx.lead": {
-  "en": "Tell {assistant} about your business, the way you would brief a new employee. It uses this in chats, calls, Ask and drafts. If something is not here or in your records, it does not make it up.",
-  "te": "కొత్తగా చేరిన ఉద్యోగికి చెప్పినట్లు మీ వ్యాపారం గురించి {assistant}కి చెప్పండి. చాట్‌లు, కాల్స్, అడగండి, డ్రాఫ్ట్‌లలో ఇది వాడబడుతుంది. ఇక్కడ లేదా మీ రికార్డుల్లో లేనిది అది కల్పించదు.",
-  "hi": "नए कर्मचारी को समझाने की तरह {assistant} को अपने व्यापार के बारे में बताइए। चैट, कॉल, पूछिए और ड्राफ्ट में यह इस्तेमाल होता है। जो यहाँ या आपके रिकॉर्ड में नहीं है, वह अपनी तरफ़ से नहीं बनाती।",
-  "kn": "ಹೊಸ ಉದ್ಯೋಗಿಗೆ ಹೇಳುವಂತೆ ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ {assistant}ಗೆ ಹೇಳಿ. ಚಾಟ್, ಕರೆ, ಕೇಳಿ ಮತ್ತು ಡ್ರಾಫ್ಟ್‌ಗಳಲ್ಲಿ ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ಇಲ್ಲಿ ಅಥವಾ ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ಇಲ್ಲದ್ದನ್ನು ಅದು ಸೃಷ್ಟಿಸುವುದಿಲ್ಲ.",
+  "en": "Tell {assistant} about your business, the way you would brief a new employee. If something is not here or in your records, it does not make it up.",
+  "te": "కొత్తగా చేరిన ఉద్యోగికి చెప్పినట్లు మీ వ్యాపారం గురించి {assistant}కి చెప్పండి. ఇక్కడ లేదా మీ రికార్డుల్లో లేనిది అది కల్పించదు.",
+  "hi": "नए कर्मचारी को समझाने की तरह {assistant} को अपने व्यापार के बारे में बताइए। जो यहाँ या आपके रिकॉर्ड में नहीं है, वह अपनी तरफ़ से नहीं बनाती।",
+  "kn": "ಹೊಸ ಉದ್ಯೋಗಿಗೆ ಹೇಳುವಂತೆ ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ {assistant}ಗೆ ಹೇಳಿ. ಇಲ್ಲಿ ಅಥವಾ ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ಇಲ್ಲದ್ದನ್ನು ಅದು ಸೃಷ್ಟಿಸುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -78197,7 +78197,7 @@
   "hi": "{brand} द्वारा संचालित",
   "kn": "{brand} ಆಧಾರಿತ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -78549,7 +78549,7 @@
   "hi": "कैंपेन",
   "kn": "ಕ್ಯಾಂಪೇನ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -83356,7 +83356,7 @@
   "hi": "ग्राहक क्या कहता है",
   "kn": "ಗ್ರಾಹಕರು ಏನು ಹೇಳುತ್ತಾರೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -94503,7 +94503,7 @@
   "hi": "ओके करें",
   "kn": "ಓಕೆ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95446,7 +95446,7 @@
   "hi": "मेरा असिस्टेंट",
   "kn": "ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95457,7 +95457,7 @@
   "hi": "आपके असिस्टेंट को क्या पता है, वह कैसा सुनाई देता है और उसके नियम। हर चीज़ का काम करने वाला डिफ़ॉल्ट पहले से है।",
   "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಏನು ಗೊತ್ತು, ಹೇಗೆ ಕೇಳಿಸುತ್ತದೆ, ಅದರ ನಿಯಮಗಳು. ಎಲ್ಲದಕ್ಕೂ ಈಗಾಗಲೇ ಕೆಲಸ ಮಾಡುವ ಡಿಫಾಲ್ಟ್ ಇದೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95468,7 +95468,7 @@
   "hi": "सिर्फ़ मालिक और एडमिन मेरा असिस्टेंट खोल सकते हैं।",
   "kn": "ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್ ತೆರೆಯಬಹುದು.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95479,7 +95479,7 @@
   "hi": "मेरे असिस्टेंट के हिस्से",
   "kn": "ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್ ವಿಭಾಗಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95490,7 +95490,7 @@
   "hi": "जानकारी",
   "kn": "ಮಾಹಿತಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95501,7 +95501,7 @@
   "hi": "आवाज़ और लहजा",
   "kn": "ಧ್ವನಿ ಮತ್ತು ಶೈಲಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95512,7 +95512,7 @@
   "hi": "नियम",
   "kn": "ನಿಯಮಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95523,7 +95523,7 @@
   "hi": "प्रैक्टिस",
   "kn": "ಅಭ್ಯಾಸ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95534,7 +95534,7 @@
   "hi": "गो लाइव",
   "kn": "ಗೋ ಲೈವ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95545,7 +95545,7 @@
   "hi": "डिफ़ॉल्ट के साथ",
   "kn": "ಡಿಫಾಲ್ಟ್‌ಗಳೊಂದಿಗೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95556,7 +95556,7 @@
   "hi": "गो लाइव",
   "kn": "ಗೋ ಲೈವ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95567,7 +95567,7 @@
   "hi": "पॉज़",
   "kn": "ಪಾಸ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95578,7 +95578,7 @@
   "hi": "एक पल…",
   "kn": "ಒಂದು ಕ್ಷಣ…",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95589,7 +95589,7 @@
   "hi": "सिर्फ़ मालिक गो लाइव या पॉज़ कर सकते हैं।",
   "kn": "ಮಾಲೀಕರು ಮಾತ್ರ ಗೋ ಲೈವ್ ಅಥವಾ ಪಾಸ್ ಮಾಡಬಹುದು.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95633,7 +95633,7 @@
   "hi": "आपके बिज़नेस का नाम",
   "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಹೆಸರು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95644,7 +95644,7 @@
   "hi": "जुड़ा हुआ फ़ोन नंबर",
   "kn": "ಸಂಪರ್ಕಗೊಂಡ ಫೋನ್ ನಂಬರ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -95677,7 +95677,7 @@
   "hi": "सिर्फ़ ये दो चाहिए। बाकी सबका काम करने वाला डिफ़ॉल्ट है।",
   "kn": "ಇವೆರಡೇ ಬೇಕು. ಉಳಿದೆಲ್ಲದಕ್ಕೂ ಕೆಲಸ ಮಾಡುವ ಡಿಫಾಲ್ಟ್ ಇದೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96107,7 +96107,7 @@
   "hi": "ग्राहक की तरह अपने असिस्टेंट को आज़माएँ।",
   "kn": "ಗ್ರಾಹಕರಂತೆ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅನ್ನು ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96118,7 +96118,7 @@
   "hi": "अभी बात करें",
   "kn": "ಈಗ ಮಾತನಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96129,7 +96129,7 @@
   "hi": "मेरे फ़ोन पर कॉल करें",
   "kn": "ನನ್ನ ಫೋನ್‌ಗೆ ಕರೆ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96163,7 +96163,7 @@
   "hi": "आपके असिस्टेंट के जवाब",
   "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96174,7 +96174,7 @@
   "hi": "अभी बात करें दबाएँ, या टाइप करें कि ग्राहक क्या पूछेगा।",
   "kn": "ಈಗ ಮಾತನಾಡಿ ಒತ್ತಿ, ಅಥವಾ ಗ್ರಾಹಕರು ಕೇಳುವುದನ್ನು ಟೈಪ್ ಮಾಡಿ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96191,10 +96191,10 @@
   }
  },
  "mya.g.sub.not_live": {
-  "en": "Your assistant is not answering customers yet. Practise first, or go live with the defaults.",
-  "te": "మీ అసిస్టెంట్ ఇంకా కస్టమర్లకు జవాబివ్వడం లేదు. ముందు ప్రాక్టీస్ చేయండి, లేదా డిఫాల్ట్‌లతో లైవ్‌కు వెళ్లండి.",
+  "en": "Not answering customers now. Practise first, or go live with the defaults.",
+  "te": "ఇప్పుడు కస్టమర్లకు జవాబివ్వడం లేదు. ముందు ప్రాక్టీస్ చేయండి, లేదా డిఫాల్ట్‌లతో లైవ్‌కు వెళ్లండి.",
   "hi": "आपका असिस्टेंट अभी ग्राहकों को जवाब नहीं दे रहा। पहले प्रैक्टिस करें, या डिफ़ॉल्ट के साथ लाइव हो जाएँ।",
-  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಇನ್ನೂ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸುತ್ತಿಲ್ಲ. ಮೊದಲು ಅಭ್ಯಾಸ ಮಾಡಿ, ಅಥವಾ ಡಿಫಾಲ್ಟ್‌ಗಳೊಂದಿಗೆ ಲೈವ್ ಆಗಿ.",
+  "kn": "ಈಗ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸುತ್ತಿಲ್ಲ. ಮೊದಲು ಅಭ್ಯಾಸ ಮಾಡಿ, ಅಥವಾ ಡಿಫಾಲ್ಟ್‌ಗಳೊಂದಿಗೆ ಲೈವ್ ಆಗಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -96218,7 +96218,7 @@
   "hi": "आपका असिस्टेंट ग्राहकों को जवाब दे रहा है।",
   "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸುತ್ತಿದೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96229,7 +96229,7 @@
   "hi": "क्या ज़रूरी है",
   "kn": "ಬೇಕಾದವು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96837,7 +96837,7 @@
   "hi": "रिपोर्ट",
   "kn": "ವರದಿಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96848,7 +96848,7 @@
   "hi": "आपके असिस्टेंट ने क्या दिलाया: विज़िट, कोट और बिक्री।",
   "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ತಂದದ್ದು: ಭೇಟಿಗಳು, ಕೋಟ್‌ಗಳು, ಮಾರಾಟ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96859,7 +96859,7 @@
   "hi": "समय",
   "kn": "ಸಮಯ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96870,7 +96870,7 @@
   "hi": "इस हफ़्ते",
   "kn": "ಈ ವಾರ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96881,7 +96881,7 @@
   "hi": "पिछले 7 दिन",
   "kn": "ಕಳೆದ 7 ದಿನ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -96892,7 +96892,7 @@
   "hi": "पिछले 30 दिन",
   "kn": "ಕಳೆದ 30 ದಿನ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -97663,7 +97663,7 @@
   "hi": "बिलिंग",
   "kn": "ಬಿಲ್ಲಿಂಗ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -97674,7 +97674,7 @@
   "hi": "आपका प्लान, रुपयों में आपका बैलेंस, जोड़े गए पैसे और आपके इनवॉइस।",
   "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್, ರೂಪಾಯಿಗಳಲ್ಲಿ ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್, ನೀವು ಸೇರಿಸಿದ ಹಣ ಮತ್ತು ನಿಮ್ಮ ಇನ್ವಾಯ್ಸ್‌ಗಳು.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -97837,7 +97837,7 @@
   "hi": "इस महीने {total} मिनट में से {left} बचे हैं",
   "kn": "ಈ ತಿಂಗಳು {total} ನಿಮಿಷಗಳಲ್ಲಿ {left} ಉಳಿದಿವೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -97883,7 +97883,7 @@
   "hi": "प्लान",
   "kn": "ಪ್ಲಾನ್‌ಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -97905,7 +97905,7 @@
   "hi": "यह प्लान चुनें",
   "kn": "ಈ ಪ್ಲಾನ್ ಆರಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -97916,7 +97916,7 @@
   "hi": "हर महीने {n} कॉल मिनट शामिल",
   "kn": "ತಿಂಗಳಿಗೆ {n} ಕರೆ ನಿಮಿಷಗಳು ಸೇರಿವೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -97939,7 +97939,7 @@
   "hi": "शामिल फ़ोन नंबर: {n}",
   "kn": "ಸೇರಿದ ಫೋನ್ ನಂಬರ್‌ಗಳು: {n}",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -98173,7 +98173,7 @@
   "hi": "फ़ोटो और दामों के साथ आपकी साड़ियाँ। ग्राहकों को वही दिखती हैं जो आपने पब्लिश की हैं।",
   "kn": "ಫೋಟೋ ಮತ್ತು ಬೆಲೆಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಸೀರೆಗಳು. ನೀವು ಪ್ರಕಟಿಸಿದವು ಮಾತ್ರ ಗ್ರಾಹಕರಿಗೆ ಕಾಣುತ್ತವೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -98184,7 +98184,7 @@
   "hi": "बदलें",
   "kn": "ಬದಲಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -98195,7 +98195,7 @@
   "hi": "पब्लिश करें",
   "kn": "ಪ್ರಕಟಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -98406,7 +98406,7 @@
   "hi": "उदाहरण: मंज़ूर चिह्नित करें",
   "kn": "ಉದಾಹರಣೆ: ಅನುಮೋದಿಸಿದಂತೆ ಗುರುತಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100221,7 +100221,7 @@
   "hi": "आपका बिज़नेस, आपकी टीम और सब कुछ कैसे जुड़ा है, यहाँ है। बदलने के लिए कार्ड पर बदलें दबाएँ।",
   "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ, ನಿಮ್ಮ ತಂಡ ಮತ್ತು ಎಲ್ಲವೂ ಹೇಗೆ ಜೋಡಣೆಯಾಗಿದೆ ಎಂಬುದು ಇಲ್ಲಿದೆ. ಬದಲಾಯಿಸಲು ಕಾರ್ಡ್‌ನಲ್ಲಿ ಎಡಿಟ್ ಒತ್ತಿ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100232,7 +100232,7 @@
   "hi": "अभी सेट नहीं है",
   "kn": "ಇನ್ನೂ ಹೊಂದಿಸಿಲ್ಲ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100265,7 +100265,7 @@
   "hi": "दुकान का समय",
   "kn": "ಅಂಗಡಿ ಸಮಯ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100276,7 +100276,7 @@
   "hi": "GST नंबर",
   "kn": "GST ನಂಬರ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100287,7 +100287,7 @@
   "hi": "लोगो",
   "kn": "ಲೋಗೋ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100353,7 +100353,7 @@
   "hi": "कोट कौन मंज़ूर कर सकता है",
   "kn": "ಕೋಟ್‌ಗಳನ್ನು ಯಾರು ಅನುಮೋದಿಸಬಹುದು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100386,7 +100386,7 @@
   "hi": "कनेक्शन",
   "kn": "ಸಂಪರ್ಕಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100496,7 +100496,7 @@
   "hi": "भाषा और थीम",
   "kn": "ಭಾಷೆ ಮತ್ತು ಥೀಮ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100626,7 +100626,7 @@
   "hi": "डेवलपर API कीज़",
   "kn": "ಡೆವಲಪರ್ API ಕೀಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100637,7 +100637,7 @@
   "hi": "सिर्फ़ टेस्ट मोड",
   "kn": "ಟೆಸ್ಟ್ ಮೋಡ್ ಮಾತ್ರ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100769,7 +100769,7 @@
   "hi": "ग्राहक कब विज़िट बुक कर सकते हैं, यह इन्हीं समयों से तय होता है।",
   "kn": "ಗ್ರಾಹಕರು ಯಾವಾಗ ಭೇಟಿ ಬುಕ್ ಮಾಡಬಹುದು ಎಂಬುದನ್ನು ಈ ಸಮಯಗಳು ನಿರ್ಧರಿಸುತ್ತವೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100780,7 +100780,7 @@
   "hi": "ये सामान्य समय हैं। आपने अपने समय अभी सेव नहीं किए हैं।",
   "kn": "ಇವು ಸಾಮಾನ್ಯ ಸಮಯಗಳು. ನಿಮ್ಮ ಸ್ವಂತ ಸಮಯಗಳನ್ನು ಇನ್ನೂ ಉಳಿಸಿಲ್ಲ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100814,7 +100814,7 @@
   "hi": "कीज़ से आपका अपना सॉफ़्टवेयर आपके असिस्टेंट को पूछताछ भेज सकता है। अभी सिर्फ़ टेस्ट कीज़ हैं: कोई असली कॉल या मैसेज नहीं जाता। की बनाते समय सिर्फ़ एक बार दिखती है।",
   "kn": "ಕೀಗಳಿಂದ ನಿಮ್ಮ ಸ್ವಂತ ಸಾಫ್ಟ್‌ವೇರ್ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ವಿಚಾರಣೆಗಳನ್ನು ಕಳುಹಿಸಬಹುದು. ಈಗ ಟೆಸ್ಟ್ ಕೀಗಳು ಮಾತ್ರ ಇವೆ: ಯಾವುದೇ ನಿಜವಾದ ಕರೆ ಅಥವಾ ಸಂದೇಶ ಹೋಗುವುದಿಲ್ಲ. ಕೀ ಮಾಡಿದಾಗ ಒಮ್ಮೆ ಮಾತ್ರ ಕಾಣಿಸುತ್ತದೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -100836,7 +100836,7 @@
   "hi": "टेस्ट की बनाएँ",
   "kn": "ಟೆಸ್ಟ್ ಕೀ ರಚಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -101013,7 +101013,7 @@
   "hi": "आपकी टेस्ट कीज़",
   "kn": "ನಿಮ್ಮ ಟೆಸ್ಟ್ ಕೀಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -101123,7 +101123,7 @@
   "hi": "टेस्ट इस्तेमाल: आज {today} रिक्वेस्ट, इस महीने {month}",
   "kn": "ಟೆಸ್ಟ್ ಬಳಕೆ: ಇಂದು {today} ವಿನಂತಿಗಳು, ಈ ತಿಂಗಳು {month}",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -101189,7 +101189,7 @@
   "hi": "सड़क का पता",
   "kn": "ಬೀದಿ ವಿಳಾಸ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -105368,7 +105368,7 @@
   "hi": "ड्राफ्ट",
   "kn": "ಡ್ರಾಫ್ಟ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -105379,7 +105379,7 @@
   "hi": "फ़ोटो add करें",
   "kn": "ಫೋಟೋ add ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -105456,7 +105456,7 @@
   "hi": "हर quote पर लगने वाले रूल: कितने दिन valid, advance और discount limit।",
   "kn": "ಪ್ರತಿ quote ಗೆ ಅನ್ವಯಿಸುವ ರೂಲ್ಸ್: ಎಷ್ಟು ದಿನ valid, advance ಮತ್ತು discount limit.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -105720,7 +105720,7 @@
   "hi": "कॉल और मैसेज में आपका असिस्टेंट अपना क्या नाम बताए, यहाँ लिखें। खाली छोड़ेंगे तो वह बिना नाम के बात करेगा।",
   "kn": "ಕಾಲ್ ಮತ್ತು ಮೆಸೇಜ್‌ಗಳಲ್ಲಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ತನ್ನ ಹೆಸರೇನು ಎಂದು ಹೇಳಬೇಕೋ ಇಲ್ಲಿ ಬರೆಯಿರಿ. ಖಾಲಿ ಬಿಟ್ಟರೆ ಹೆಸರಿಲ್ಲದೆ ಮಾತನಾಡುತ್ತದೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -105764,7 +105764,7 @@
   "hi": "अभी कोई नाम नहीं: यह “आपका असिस्टेंट” कहता है।",
   "kn": "ಈಗ ಹೆಸರಿಲ್ಲ: “ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್” ಎಂದು ಹೇಳುತ್ತದೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -105775,7 +105775,7 @@
   "hi": "नाम सेव करें",
   "kn": "ಹೆಸರು ಸೇವ್ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -106877,7 +106877,7 @@
   "hi": "WhatsApp ने मैसेज मना कर दिया। टेस्ट नंबर पर सिर्फ़ अप्रूव हुए टेस्ट नंबरों को ही मैसेज भेज सकते हैं।",
   "kn": "WhatsApp ಮೆಸೇಜ್ ಅನ್ನು ನಿರಾಕರಿಸಿತು. ಟೆಸ್ಟ್ ನಂಬರ್‌ನಲ್ಲಿ ಅಪ್ರೂವ್ ಆದ ಟೆಸ್ಟ್ ನಂಬರ್‌ಗಳಿಗೆ ಮಾತ್ರ ಮೆಸೇಜ್ ಕಳುಹಿಸಬಹುದು.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -106888,7 +106888,7 @@
   "hi": "देखें कि नंबर टेस्ट लिस्ट में है और टेम्पलेट अप्रूव है, फिर दोबारा कोशिश करें।",
   "kn": "ನಂಬರ್ ಟೆಸ್ಟ್ ಲಿಸ್ಟ್‌ನಲ್ಲಿದೆಯೇ, ಟೆಂಪ್ಲೇಟ್ ಅಪ್ರೂವ್ ಆಗಿದೆಯೇ ನೋಡಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -109857,7 +109857,7 @@
   "hi": "अपने फ़ोन से कॉल करें",
   "kn": "ನಿಮ್ಮ ಫೋನ್‌ನಿಂದ ಕಾಲ್ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -110165,7 +110165,7 @@
   "hi": "अभी चल रहे हैं",
   "kn": "ಈಗ ನಡೆಯುತ್ತಿರುವವು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -110176,7 +110176,7 @@
   "hi": "सभी जॉब्स",
   "kn": "ಎಲ್ಲಾ ಜಾಬ್ಸ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -110187,7 +110187,7 @@
   "hi": "हर नई enquiry को तुरंत कॉल करें",
   "kn": "ಪ್ರತಿ ಹೊಸ enquiry ಗೆ ತಕ್ಷಣ ಕಾಲ್ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -110198,7 +110198,7 @@
   "hi": "जब मैं न उठा सकूँ तो मेरे कॉल का जवाब दें",
   "kn": "ನಾನು ಎತ್ತಲಾಗದ ಕಾಲ್‌ಗಳಿಗೆ ಉತ್ತರಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -110209,7 +110209,7 @@
   "hi": "दाम पूछने वालों और किए वादों पर follow-up करें",
   "kn": "ಬೆಲೆ ಕೇಳಿದವರಿಗೆ, ಕೊಟ್ಟ ಮಾತಿಗೆ follow-up ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -110220,7 +110220,7 @@
   "hi": "स्टोर विज़िट बुक करें और याद दिलाएँ",
   "kn": "ಸ್ಟೋರ್ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿ ನೆನಪಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -110231,7 +110231,7 @@
   "hi": "हाँ कहने वाले ग्राहकों को फ़ेस्टिवल ऑफ़र भेजें",
   "kn": "ಹೌದು ಎಂದ ಗ್ರಾಹಕರಿಗೆ ಫೆಸ್ಟಿವಲ್ ಆಫರ್ ಕಳುಹಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -110242,7 +110242,7 @@
   "hi": "मुझसे खरीद सकने वाली नई दुकानें खोजें",
   "kn": "ನನ್ನಿಂದ ಖರೀದಿಸಬಹುದಾದ ಹೊಸ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -110440,7 +110440,7 @@
   "hi": "नया जॉब",
   "kn": "ಹೊಸ ಜಾಬ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -111419,7 +111419,7 @@
   "hi": "डू-नॉट-कॉल लिस्ट",
   "kn": "ಡೂ-ನಾಟ್-ಕಾಲ್ ಲಿಸ್ಟ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -111716,7 +111716,7 @@
   "hi": "वे नंबर जिन्हें असिस्टेंट कभी कॉल या मैसेज नहीं करता।",
   "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಎಂದಿಗೂ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡದ ನಂಬರ್‌ಗಳು.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112068,7 +112068,7 @@
   "hi": "और विकल्प",
   "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112497,7 +112497,7 @@
   "hi": "नई enquiry को {response} कॉल करें",
   "kn": "ಹೊಸ enquiry ಗಳಿಗೆ {response} ಕಾಲ್ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112508,7 +112508,7 @@
   "hi": "सिर्फ़ {from_hour} से {to_hour} के बीच",
   "kn": "{from_hour} ರಿಂದ {to_hour} ನಡುವೆ ಮಾತ್ರ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112519,7 +112519,7 @@
   "hi": "कोई न उठाए तो {retries} फिर कोशिश करें",
   "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ {retries} ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112530,7 +112530,7 @@
   "hi": "{language} में बोलें",
   "kn": "{language} ನಲ್ಲಿ ಮಾತನಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112541,7 +112541,7 @@
   "hi": "आराम का दिन: {never_day}",
   "kn": "ವಿಶ್ರಾಂತಿ ದಿನ: {never_day}",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112552,7 +112552,7 @@
   "hi": "पिछले {recent_days} में खरीदने वाले ग्राहकों को छोड़ें",
   "kn": "ಕಳೆದ {recent_days} ಒಳಗೆ ಖರೀದಿಸಿದ ಗ್ರಾಹಕರನ್ನು ಬಿಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112563,7 +112563,7 @@
   "hi": "{call_from} से कॉल करें",
   "kn": "{call_from} ನಿಂದ ಕಾಲ್ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112574,7 +112574,7 @@
   "hi": "स्टोर विज़िट बुक होने पर WhatsApp पर बताएँ",
   "kn": "ಸ್ಟೋರ್ ವಿಸಿಟ್ ಬುಕ್ ಆದರೆ WhatsApp ನಲ್ಲಿ ಹೇಳಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112585,7 +112585,7 @@
   "hi": "एक ग्राहक के लिए 3 कोशिशों के बाद रुकें",
   "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ 3 ಪ್ರಯತ್ನಗಳ ನಂತರ ನಿಲ್ಲಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112596,7 +112596,7 @@
   "hi": "ग्राहक जवाब न दे तो {wait_days} बाद follow-up करें",
   "kn": "ಗ್ರಾಹಕರು ಉತ್ತರಿಸದಿದ್ದರೆ {wait_days} ನಂತರ follow-up ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112607,7 +112607,7 @@
   "hi": "ग्राहकों को विज़िट से {remind_before} याद दिलाएँ",
   "kn": "ಗ್ರಾಹಕರಿಗೆ ವಿಸಿಟ್‌ಗೆ {remind_before} ನೆನಪಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112618,7 +112618,7 @@
   "hi": "मैं {answer_after} में न उठाऊँ तो आप उठाएँ",
   "kn": "ನಾನು {answer_after} ಒಳಗೆ ಎತ್ತದಿದ್ದರೆ ನೀವು ಎತ್ತಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112629,7 +112629,7 @@
   "hi": "ऑफ़र {send_at} पर भेजें",
   "kn": "ಆಫರ್ ಅನ್ನು {send_at} ಕ್ಕೆ ಕಳುಹಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -112640,7 +112640,7 @@
   "hi": "मेरे स्टोर से {radius} के अंदर की दुकानें ढूँढें",
   "kn": "ನನ್ನ ಸ್ಟೋರ್‌ನಿಂದ {radius} ಒಳಗಿನ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -114818,7 +114818,7 @@
   "hi": "पहले फ़ोन नंबर चाहिए",
   "kn": "ಮೊದಲು ಫೋನ್ ನಂಬರ್ ಬೇಕು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116006,7 +116006,7 @@
   "hi": "टेस्ट मोड: फ़ोन कंपनी को कुछ नहीं भेजा जाता।",
   "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಫೋನ್ ಕಂಪನಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116391,7 +116391,7 @@
   "hi": "जाँच ली, सब ठीक है। टेस्ट मोड: फ़ोन कंपनी को कुछ नहीं भेजा गया।",
   "kn": "ಪರಿಶೀಲಿಸಿದ್ದೇವೆ, ಎಲ್ಲವೂ ಸರಿಯಿದೆ. ಟೆಸ್ಟ್ ಮೋಡ್: ಫೋನ್ ಕಂಪನಿಗೆ ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116600,7 +116600,7 @@
   "hi": "{status} कॉल दिखाओ, {when}।",
   "kn": "{status} ಕರೆಗಳನ್ನು ತೋರಿಸಿ, {when}.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116611,7 +116611,7 @@
   "hi": "कौन से कॉल",
   "kn": "ಯಾವ ಕರೆಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116622,7 +116622,7 @@
   "hi": "सभी",
   "kn": "ಎಲ್ಲಾ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116633,7 +116633,7 @@
   "hi": "पूरे हुए",
   "kn": "ಪೂರ್ಣಗೊಂಡ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116644,7 +116644,7 @@
   "hi": "ट्रांसफर हुए",
   "kn": "ಟ್ರಾನ್ಸ್‌ಫರ್ ಆದ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116655,7 +116655,7 @@
   "hi": "बिना जवाब के",
   "kn": "ಉತ್ತರ ಇಲ್ಲದ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116666,7 +116666,7 @@
   "hi": "रिजेक्ट हुए",
   "kn": "ರಿಜೆಕ್ಟ್ ಆದ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116677,7 +116677,7 @@
   "hi": "स्पैम",
   "kn": "ಸ್ಪ್ಯಾಮ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116688,7 +116688,7 @@
   "hi": "लाइव",
   "kn": "ಲೈವ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116699,7 +116699,7 @@
   "hi": "किसी भी समय",
   "kn": "ಯಾವಾಗಲಾದರೂ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116710,7 +116710,7 @@
   "hi": "आज",
   "kn": "ಇಂದು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116721,7 +116721,7 @@
   "hi": "पिछले 7 दिन",
   "kn": "ಕಳೆದ 7 ದಿನ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116732,7 +116732,7 @@
   "hi": "पिछले 30 दिन",
   "kn": "ಕಳೆದ 30 ದಿನ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -116743,7 +116743,7 @@
   "hi": "स्क्रीन पर कॉल: {n}।",
   "kn": "ಪರದೆಯ ಮೇಲೆ ಕರೆಗಳು: {n}.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117161,7 +117161,7 @@
   "hi": "इन रंगों में:",
   "kn": "ಈ ಬಣ್ಣಗಳಲ್ಲಿ:",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117172,7 +117172,7 @@
   "hi": "रंग चुनें",
   "kn": "ಬಣ್ಣಗಳನ್ನು ಆರಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117227,7 +117227,7 @@
   "hi": "ज़री, बॉर्डर, मौक़ा, स्टॉक और सही कीमत।",
   "kn": "ಜರಿ, ಬಾರ್ಡರ್, ಸಂದರ್ಭ, ಸ್ಟಾಕ್ ಮತ್ತು ನಿಖರ ಬೆಲೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117403,7 +117403,7 @@
   "hi": "यह क्या करेगा:",
   "kn": "ಇದು ಏನು ಮಾಡುತ್ತದೆ:",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117414,7 +117414,7 @@
   "hi": "और विकल्प",
   "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117425,7 +117425,7 @@
   "hi": "ज़्यादातर दिन ज़रूरत नहीं",
   "kn": "ಹೆಚ್ಚಿನ ದಿನ ಬೇಕಾಗಿಲ್ಲ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117436,7 +117436,7 @@
   "hi": "अभी save नहीं हुआ",
   "kn": "ಇನ್ನೂ save ಆಗಿಲ್ಲ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117447,7 +117447,7 @@
   "hi": "Save हो गया",
   "kn": "Save ಆಯಿತು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117458,7 +117458,7 @@
   "hi": "Save करें",
   "kn": "Save ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117469,7 +117469,7 @@
   "hi": "अभी set नहीं है",
   "kn": "ಇನ್ನೂ set ಮಾಡಿಲ್ಲ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117491,7 +117491,7 @@
   "hi": "messages और calls में customers को यह नाम दिखता है। कभी भी बदल सकते हैं।",
   "kn": "messages, calls ನಲ್ಲಿ customers ಗೆ ಈ ಹೆಸರು ಕಾಣುತ್ತದೆ. ಯಾವಾಗ ಬೇಕಾದರೂ ಬದಲಾಯಿಸಬಹುದು.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117678,7 +117678,7 @@
   "hi": "app तुरंत बदलता है। आपके assistant की भाषाएँ Save दबाने पर save होती हैं।",
   "kn": "app ತಕ್ಷಣ ಬದಲಾಗುತ್ತದೆ. ನಿಮ್ಮ assistant ಭಾಷೆಗಳು Save ಒತ್ತಿದಾಗ save ಆಗುತ್ತವೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117722,7 +117722,7 @@
   "hi": "मेरे phone जैसा",
   "kn": "ನನ್ನ phone ಹಾಗೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117733,7 +117733,7 @@
   "hi": "हल्का (light)",
   "kn": "light ಆಗಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117744,7 +117744,7 @@
   "hi": "गहरा (dark)",
   "kn": "dark ಆಗಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117810,7 +117810,7 @@
   "hi": "यह सिर्फ़ इस device के लिए है, यानी इस phone या computer के लिए।",
   "kn": "ಇದು ಈ device ಗೆ ಮಾತ್ರ, ಅಂದರೆ ಈ phone ಅಥವಾ computer ಗೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117843,7 +117843,7 @@
   "hi": "हाँ",
   "kn": "ಹೌದು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117909,7 +117909,7 @@
   "hi": "{name} owner हैं।",
   "kn": "{name} ಈ business ನ owner.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -117920,7 +117920,7 @@
   "hi": "आप owner हैं।",
   "kn": "ನೀವು owner.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -118041,7 +118041,7 @@
   "hi": "लोग add करें या बदलें",
   "kn": "ಜನರನ್ನು add ಮಾಡಿ ಅಥವಾ ಬದಲಾಯಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -118481,7 +118481,7 @@
   "hi": "voice, भाषा और यह क्या कर सकता है",
   "kn": "voice, ಭಾಷೆ ಮತ್ತು ಅದು ಏನು ಮಾಡಬಹುದು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -118547,7 +118547,7 @@
   "hi": "WhatsApp अभी कनेक्ट नहीं हुआ है.",
   "kn": "WhatsApp ಇನ್ನೂ ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -118569,7 +118569,7 @@
   "hi": "message templates: {approved} approve हो गए, {review} review में हैं.",
   "kn": "message templates: {approved} approve ಆಗಿವೆ, {review} review ನಲ್ಲಿವೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -118613,7 +118613,7 @@
   "hi": "lead sources अभी नहीं पढ़े जा सके.",
   "kn": "lead sources ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -118635,7 +118635,7 @@
   "hi": "कॉल के लिए आपके पास अभी business number नहीं है.",
   "kn": "ಕಾಲ್‌ಗಳಿಗೆ ನಿಮಗೆ ಇನ್ನೂ business number ಇಲ್ಲ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -118657,7 +118657,7 @@
   "hi": "आपका business phone और आपको मिलने वाले कॉल",
   "kn": "ನಿಮ್ಮ business phone, ನಿಮಗೆ ಬರುವ ಕಾಲ್‌ಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -118972,7 +118972,7 @@
   "hi": "इसके बजाय कॉल करें",
   "kn": "ಬದಲಿಗೆ ಕರೆ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -118983,7 +118983,7 @@
   "hi": "रद्द करें",
   "kn": "ರದ್ದು ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -118994,7 +118994,7 @@
   "hi": "जवाब देते ही भेज देंगे",
   "kn": "ಅವರು ರಿಪ್ಲೈ ಮಾಡಿದ ತಕ್ಷಣ ಹೋಗುತ್ತದೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -119005,7 +119005,7 @@
   "hi": "हमने {name} को एक छोटा हेलो भेजा है। जवाब देते ही आपका मैसेज चला जाएगा।",
   "kn": "ನಾವು {name} ಗೆ ಒಂದು ಚಿಕ್ಕ ಹಲೋ ಕಳುಹಿಸಿದ್ದೇವೆ. ಅವರು ರಿಪ್ಲೈ ಮಾಡಿದ ತಕ್ಷಣ ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗುತ್ತದೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -119016,7 +119016,7 @@
   "hi": "भेज रहे हैं…",
   "kn": "ಕಳುಹಿಸುತ್ತಿದ್ದೇವೆ…",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -119027,7 +119027,7 @@
   "hi": "{name} ने जवाब दिया। आपका मैसेज अभी जा रहा है।",
   "kn": "{name} ರಿಪ್ಲೈ ಮಾಡಿದ್ದಾರೆ. ನಿಮ್ಮ ಮೆಸೇಜ್ ಈಗ ಹೋಗುತ್ತಿದೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -119038,7 +119038,7 @@
   "hi": "आपका मैसेज भेज दिया गया",
   "kn": "ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಯಿತು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -119049,7 +119049,7 @@
   "hi": "यह ऊपर चैट में दिखेगा। आप जब चाहें दूसरा मैसेज लिख सकते हैं।",
   "kn": "ಇದು ಮೇಲಿನ ಚಾಟ್‌ನಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಬೇಕಾದಾಗ ಇನ್ನೊಂದು ಮೆಸೇಜ್ ಬರೆಯಬಹುದು.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -119060,7 +119060,7 @@
   "hi": "नहीं भेजा गया",
   "kn": "ಹೋಗಲಿಲ್ಲ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -120105,7 +120105,7 @@
   "hi": "{festival} {n} दिन में है। क्या मैं त्योहार का ऑफ़र तैयार करूँ?",
   "kn": "{festival} {n} ದಿನಗಳಲ್ಲಿದೆ. ಹಬ್ಬದ ಆಫರ್ ತಯಾರಿಸಲೇ?",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -120127,7 +120127,7 @@
   "hi": "हाँ, दिखाइए",
   "kn": "ಹೌದು, ತೋರಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -121798,7 +121798,7 @@
   "hi": "बोलिए",
   "kn": "ಹೇಳಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -122898,7 +122898,7 @@
   "hi": "आप क्या बेचते हैं",
   "kn": "ನೀವು ಏನು ಮಾರುತ್ತೀರಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -122909,7 +122909,7 @@
   "hi": "आपका असिस्टेंट इसी लिस्ट से ग्राहकों को जवाब देता है। जो तरीका आसान लगे, उससे इसमें जोड़ें।",
   "kn": "ಈ ಲಿಸ್ಟ್ ನೋಡಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರ ಕೊಡುತ್ತದೆ. ನಿಮಗೆ ಯಾವುದು ಸುಲಭವೋ ಆ ರೀತಿಯಲ್ಲಿ ಇದಕ್ಕೆ ಸೇರಿಸಿ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -122942,7 +122942,7 @@
   "hi": "अभी आपकी लिस्ट नहीं पढ़ पाया। थोड़ी देर में फिर कोशिश करें।",
   "kn": "ಈಗ ನಿಮ್ಮ ಲಿಸ್ಟ್ ಓದಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -122953,7 +122953,7 @@
   "hi": "सिर्फ़ पहले {n} आइटम दिख रहे हैं। बाकी पुराने पेज पर हैं।",
   "kn": "ಮೊದಲ {n} ಐಟಂಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸಲಾಗುತ್ತಿದೆ. ಉಳಿದವು ಹಳೆಯ ಪೇಜ್‌ನಲ್ಲಿವೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -122964,7 +122964,7 @@
   "hi": "पुराना पेज खोलें",
   "kn": "ಹಳೆಯ ಪೇಜ್ ತೆರೆಯಿರಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -122975,7 +122975,7 @@
   "hi": "कोटेशन के लिए प्राइस लिस्ट खोलें",
   "kn": "ಕೊಟೇಶನ್‌ಗಳಿಗಾಗಿ ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ತೆರೆಯಿರಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -122997,7 +122997,7 @@
   "hi": "अपने तरीके से भरें",
   "kn": "ನಿಮಗೆ ಇಷ್ಟವಾದ ರೀತಿಯಲ್ಲಿ ತುಂಬಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -123030,7 +123030,7 @@
   "hi": "फ़ोटो लें",
   "kn": "ಫೋಟೋ ತೆಗೆಯಿರಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -123052,7 +123052,7 @@
   "hi": "शीट इम्पोर्ट करें",
   "kn": "ಶೀಟ್ ಇಂಪೋರ್ಟ್ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -123305,7 +123305,7 @@
   "hi": "साड़ी की दुकान, ज्वेलरी, किराना या डीलर के लिए",
   "kn": "ಸೀರೆ ಅಂಗಡಿ, ಜ್ಯುವೆಲ್ಲರಿ, ಕಿರಾಣಾ ಅಥವಾ ಡೀಲರ್‌ಗಾಗಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -123761,28 +123761,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.p.s1": {
-  "en": "It sells for {price} and comes in {colours}.",
-  "te": "ధర {price}. రంగులు: {colours}.",
-  "hi": "कीमत {price} है और रंग: {colours}।",
-  "kn": "ಬೆಲೆ {price}. ಬಣ್ಣಗಳು: {colours}.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.p.s2": {
-  "en": "Right now it is {stock}. I have {count} of it.",
-  "te": "ప్రస్తుతం ఇది {stock}. నా దగ్గర {count} ఉన్నాయి.",
-  "hi": "अभी यह {stock} है। मेरे पास {count} हैं।",
-  "kn": "ಈಗ ಇದು {stock}. ನನ್ನ ಬಳಿ {count} ಇವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.p.pick": {
   "en": "Pick colours",
   "te": "రంగులు ఎంచుకోండి",
@@ -123849,17 +123827,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.s.s1": {
-  "en": "It takes {minutes} and costs {price}. Customers can book it {booking}.",
-  "te": "దీనికి {minutes} పడుతుంది, ధర {price}. కస్టమర్లు {booking} బుక్ చేసుకోవచ్చు.",
-  "hi": "इसमें {minutes} लगते हैं और कीमत {price} है। ग्राहक इसे {booking} बुक कर सकते हैं।",
-  "kn": "ಇದಕ್ಕೆ {minutes} ಬೇಕು, ಬೆಲೆ {price}. ಗ್ರಾಹಕರು {booking} ಬುಕ್ ಮಾಡಬಹುದು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.s.from": {
   "en": "The price is a “from” price",
   "te": "ఇది “నుంచి” ధర",
@@ -123893,28 +123860,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.c.s1": {
-  "en": "The batch meets {batch} from {date}. The fee is {fee} for the whole course, with {seats} seats.",
-  "te": "బ్యాచ్ {batch}, {date} నుంచి. మొత్తం కోర్సుకు ఫీజు {fee}, {seats} సీట్లు.",
-  "hi": "बैच {batch} को लगता है, {date} से। पूरे कोर्स की फ़ीस {fee} है, {seats} सीटें हैं।",
-  "kn": "ಬ್ಯಾಚ್ {batch}, {date} ಇಂದ. ಇಡೀ ಕೋರ್ಸ್‌ಗೆ ಫೀಸ್ {fee}, {seats} ಸೀಟುಗಳು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.r.s1": {
-  "en": "It is in {location}, {size}, and costs {price}. It is {status}.",
-  "te": "ఇది {location} లో ఉంది, {size}, ధర {price}. ఇది {status}.",
-  "hi": "यह {location} में है, {size}, कीमत {price}। यह {status} है।",
-  "kn": "ಇದು {location} ನಲ್ಲಿದೆ, {size}, ಬೆಲೆ {price}. ಇದು {status}.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.r.price.help": {
   "en": "Write the price like 68 lakh or 1.2 crore.",
   "te": "ధర ఇలా రాయండి: 68 lakh లేదా 1.2 crore.",
@@ -123937,33 +123882,11 @@
    "kn": "draft"
   }
  },
- "jobs.sell.w.s1": {
-  "en": "The smallest order is {moq} {unit}.",
-  "te": "కనీస ఆర్డర్ {moq} {unit}.",
-  "hi": "सबसे छोटा ऑर्डर {moq} {unit} है।",
-  "kn": "ಕನಿಷ್ಠ ಆರ್ಡರ್ {moq} {unit}.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.w.rates": {
-  "en": "Rate for bigger orders",
-  "te": "పెద్ద ఆర్డర్లకు రేటు",
-  "hi": "बड़े ऑर्डर का रेट",
-  "kn": "ದೊಡ್ಡ ಆರ್ಡರ್‌ಗಳಿಗೆ ರೇಟ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.w.rate": {
-  "en": "From {qty} {unit}: ₹ {rate} a {per}",
-  "te": "{qty} {unit} నుంచి: {per}కి ₹ {rate}",
-  "hi": "{qty} {unit} से: ₹ {rate} प्रति {per}",
-  "kn": "{qty} {unit} ಇಂದ: {per}ಗೆ ₹ {rate}",
+  "en": "Rates for bigger orders",
+  "te": "పెద్ద ఆర్డర్లకు రేట్లు",
+  "hi": "बड़े ऑर्डर के रेट",
+  "kn": "ದೊಡ್ಡ ಆರ್ಡರ್‌ಗಳ ದರಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -123997,17 +123920,6 @@
   "te": "ఈ రేటు తీసేయండి",
   "hi": "यह रेट हटाएं",
   "kn": "ಈ ರೇಟ್ ತೆಗೆಯಿರಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.w.until": {
-  "en": "These rates are good until {date}.",
-  "te": "ఈ రేట్లు {date} వరకు చెల్లుతాయి.",
-  "hi": "ये रेट {date} तक मान्य हैं।",
-  "kn": "ಈ ರೇಟ್‌ಗಳು {date} ವರೆಗೆ ಸಲ್ಲುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -124130,7 +124042,7 @@
   "hi": "{n} स्टॉक में",
   "kn": "{n} ಸ್ಟಾಕ್‌ನಲ್ಲಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126111,7 +126023,7 @@
   "hi": "और दिखाएँ",
   "kn": "ಇನ್ನಷ್ಟು ತೋರಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126386,7 +126298,7 @@
   "hi": "देखें",
   "kn": "ನೋಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126397,7 +126309,7 @@
   "hi": "चालू करें",
   "kn": "ಆನ್ ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126408,7 +126320,7 @@
   "hi": "रुका हुआ है",
   "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126419,7 +126331,7 @@
   "hi": "रुका हुआ है · आखिरी बार {day}",
   "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ · ಕೊನೆಯ ಬಾರಿ {day}",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126430,7 +126342,7 @@
   "hi": "फ़ोन नंबर जोड़ें",
   "kn": "ಫೋನ್ ನಂಬರ್ ಸೇರಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126474,7 +126386,7 @@
   "hi": "आपके ग्राहकों के लिए",
   "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126485,7 +126397,7 @@
   "hi": "आपके लिए",
   "kn": "ನಿಮಗೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126496,7 +126408,7 @@
   "hi": "किससे बात करती है",
   "kn": "ಯಾರೊಂದಿಗೆ ಮಾತನಾಡುತ್ತದೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126507,7 +126419,7 @@
   "hi": "और विकल्प",
   "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126595,7 +126507,7 @@
   "hi": "गली का पता",
   "kn": "ರಸ್ತೆ ವಿಳಾಸ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126606,7 +126518,7 @@
   "hi": "इलाका",
   "kn": "ಪ್ರದೇಶ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126617,7 +126529,7 @@
   "hi": "PIN कोड",
   "kn": "PIN ಕೋಡ್",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126628,7 +126540,7 @@
   "hi": "आपके बदलाव अभी save नहीं हुए हैं।",
   "kn": "ನೀವು ಮಾಡಿದ ಬದಲಾವಣೆಗಳು ಇನ್ನೂ save ಆಗಿಲ್ಲ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126639,7 +126551,7 @@
   "hi": "Save हो गया।",
   "kn": "Save ಆಯಿತು.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126650,7 +126562,7 @@
   "hi": "उनका काम",
   "kn": "ಅವರ ಕೆಲಸ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126661,7 +126573,7 @@
   "hi": "कोड कितने दिन चलेगा",
   "kn": "ಕೋಡ್ ಎಷ್ಟು ದಿನ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126672,7 +126584,7 @@
   "hi": "आपके लिए एक नोट (चाहें तो)",
   "kn": "ನಿಮಗಾಗಿ ಒಂದು ನೋಟ್ (ಬೇಕಾದರೆ)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126683,7 +126595,7 @@
   "hi": "आप",
   "kn": "ನೀವು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126694,7 +126606,7 @@
   "hi": "एक customer को दिन में ज़्यादा से ज़्यादा कितने messages",
   "kn": "ಒಬ್ಬ customer ಗೆ ದಿನಕ್ಕೆ ಗರಿಷ್ಠ ಎಷ್ಟು messages",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126705,7 +126617,7 @@
   "hi": "कब से शांत (भारतीय समय)",
   "kn": "ಯಾವ ಸಮಯದಿಂದ ಮೌನ (ಭಾರತೀಯ ಸಮಯ)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126716,7 +126628,7 @@
   "hi": "कब तक शांत (भारतीय समय)",
   "kn": "ಯಾವ ಸಮಯದವರೆಗೆ ಮೌನ (ಭಾರತೀಯ ಸಮಯ)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126727,7 +126639,7 @@
   "hi": "visitors को शाम का reminder",
   "kn": "visitors ಗೆ ಸಂಜೆ reminder",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126738,7 +126650,7 @@
   "hi": "visit से पहले heads-up",
   "kn": "visit ಗಿಂತ ಮೊದಲು heads-up",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126749,7 +126661,7 @@
   "hi": "न आई visit को did-not-come mark करना",
   "kn": "ಬರದ visit ಅನ್ನು did-not-come ಎಂದು mark ಮಾಡುವುದು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126760,7 +126672,7 @@
   "hi": "अपने बिज़नेस के लिए एक document चुनिए",
   "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಒಂದು document ಆರಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126771,7 +126683,7 @@
   "hi": "इनमें से कोई एक काफ़ी है।",
   "kn": "ಇವುಗಳಲ್ಲಿ ಯಾವುದಾದರೂ ಒಂದು ಸಾಕು.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126782,7 +126694,7 @@
   "hi": "उसे upload कीजिए",
   "kn": "ಅದನ್ನು upload ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126793,7 +126705,7 @@
   "hi": "फ़ोटो या PDF। यह phone company के पास जाता है, हमारे पास नहीं रहता।",
   "kn": "ಫೋಟೋ ಅಥವಾ PDF. ಇದು phone company ಗೆ ಹೋಗುತ್ತದೆ, ನಮ್ಮ ಬಳಿ ಉಳಿಯುವುದಿಲ್ಲ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126804,7 +126716,7 @@
   "hi": "आपको number मिलता है",
   "kn": "ನಿಮಗೆ number ಸಿಗುತ್ತದೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126815,7 +126727,7 @@
   "hi": "phone company के मंज़ूर करने के बाद, आप अपना number यहीं चुनते हैं।",
   "kn": "phone company ಒಪ್ಪಿದ ಮೇಲೆ, ನಿಮ್ಮ number ಅನ್ನು ಇಲ್ಲೇ ಆರಿಸುತ್ತೀರಿ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126826,7 +126738,7 @@
   "hi": "आपकी enquiry के लिए धन्यवाद",
   "kn": "ನಿಮ್ಮ enquiry ಗೆ ಧನ್ಯವಾದ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126837,7 +126749,7 @@
   "hi": "visit की याद दिलाना",
   "kn": "visit ನೆನಪಿಸುವುದು",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126848,7 +126760,7 @@
   "hi": "अभी भेजा नहीं गया",
   "kn": "ಇನ್ನೂ ಕಳುಹಿಸಿಲ್ಲ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126859,7 +126771,7 @@
   "hi": "WhatsApp के जवाब का इंतज़ार",
   "kn": "WhatsApp ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126870,7 +126782,7 @@
   "hi": "मंज़ूर",
   "kn": "ಒಪ್ಪಿದೆ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126881,7 +126793,7 @@
   "hi": "मंज़ूर नहीं हुआ",
   "kn": "ಒಪ್ಪಿಲ್ಲ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126892,7 +126804,7 @@
   "hi": "सब मंज़ूरी के लिए भेजें",
   "kn": "ಎಲ್ಲವನ್ನೂ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಳುಹಿಸಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126903,7 +126815,7 @@
   "hi": "जो messages हम शुरू करते हैं उन्हें WhatsApp मंज़ूर करता है। 24 घंटे के अंदर के replies को मंज़ूरी नहीं चाहिए।",
   "kn": "ನಾವು ಶುರು ಮಾಡುವ messages ಅನ್ನು WhatsApp ಒಪ್ಪಬೇಕು. 24 ಗಂಟೆಯೊಳಗಿನ replies ಗೆ ಒಪ್ಪಿಗೆ ಬೇಕಿಲ್ಲ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126914,7 +126826,7 @@
   "hi": "हम जो messages भेजते हैं",
   "kn": "ನಾವು ಕಳುಹಿಸುವ messages",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126925,7 +126837,7 @@
   "hi": "यह किस तरह का कारोबार है?",
   "kn": "ಇದು ಯಾವ ರೀತಿಯ ವ್ಯಾಪಾರ?",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126980,7 +126892,7 @@
   "hi": "बदलाव save करें",
   "kn": "ಬದಲಾವಣೆಗಳನ್ನು save ಮಾಡಿ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -126991,7 +126903,7 @@
   "hi": "बदलाव सिर्फ़ नए quotes पर लागू होते हैं। पुराने quotes अपने rules रखते हैं।",
   "kn": "ಬದಲಾವಣೆಗಳು ಹೊಸ quotes ಗೆ ಮಾತ್ರ ಅನ್ವಯಿಸುತ್ತವೆ. ಹಳೆಯ quotes ತಮ್ಮ rules ಅನ್ನೇ ಉಳಿಸಿಕೊಳ್ಳುತ್ತವೆ.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -127002,7 +126914,7 @@
   "hi": "मुफ़्त early access",
   "kn": "ಉಚಿತ early access",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -127013,7 +126925,7 @@
   "hi": "{e} enquiries आईं, {v} visits book हुईं और visits से sales {s} रहीं।",
   "kn": "{e} enquiries ಬಂದವು, {v} visits book ಆದವು, visits ಇಂದ sales {s}.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -127024,7 +126936,7 @@
   "hi": "और reports",
   "kn": "ಇನ್ನಷ್ಟು reports",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -127035,7 +126947,7 @@
   "hi": "कोई भी रंग",
   "kn": "ಯಾವ ಬಣ್ಣವಾದರೂ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -127046,7 +126958,7 @@
   "hi": "कोई भी मौका",
   "kn": "ಯಾವ ಸಂದರ್ಭವಾದರೂ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -127057,7 +126969,7 @@
   "hi": "कोई भी दाम",
   "kn": "ಯಾವ ಬೆಲೆಯಾದರೂ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -127210,6 +127122,699 @@
   "te": "రద్దు చేసినవి ({n})",
   "hi": "रद्द की गई ({n})",
   "kn": "ರದ್ದುಪಡಿಸಿದವು ({n})",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.sub": {
+  "en": "Choose the number your customers will call. Your assistant answers it.",
+  "te": "మీ కస్టమర్లు కాల్ చేసే నంబర్ ఎంచుకోండి. మీ అసిస్టెంట్ దానికి సమాధానం ఇస్తుంది.",
+  "hi": "वह नंबर चुनिए जिस पर आपके ग्राहक कॉल करेंगे। आपका असिस्टेंट उसे उठाएगा।",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರು ಕರೆ ಮಾಡುವ ನಂಬರ್ ಆರಿಸಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅದನ್ನು ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s1.title": {
+  "en": "Pick your number",
+  "te": "మీ నంబర్ ఎంచుకోండి",
+  "hi": "अपना नंबर चुनिए",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್ ಆರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.mine": {
+  "en": "Your number",
+  "te": "మీ నంబర్",
+  "hi": "आपका नंबर",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s1.body": {
+  "en": "Mobile numbers get answered more often on call-backs. Your first number is included in your plan.",
+  "te": "కాల్‌బ్యాక్‌లో మొబైల్ నంబర్లకు ఎక్కువసార్లు సమాధానం వస్తుంది. మీ మొదటి నంబర్ మీ ప్లాన్‌లోనే ఉంటుంది.",
+  "hi": "कॉल-बैक में मोबाइल नंबर ज़्यादा उठाए जाते हैं। आपका पहला नंबर आपके प्लान में शामिल है।",
+  "kn": "ಕಾಲ್‌ಬ್ಯಾಕ್‌ನಲ್ಲಿ ಮೊಬೈಲ್ ನಂಬರ್‌ಗಳಿಗೆ ಹೆಚ್ಚು ಉತ್ತರ ಸಿಗುತ್ತದೆ. ನಿಮ್ಮ ಮೊದಲ ನಂಬರ್ ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಸೇರಿದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.type": {
+  "en": "Number type",
+  "te": "నంబర్ రకం",
+  "hi": "नंबर का प्रकार",
+  "kn": "ನಂಬರ್ ಪ್ರಕಾರ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.type.mobile": {
+  "en": "Mobile",
+  "te": "మొబైల్",
+  "hi": "मोबाइल",
+  "kn": "ಮೊಬೈಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.type.landline": {
+  "en": "Landline (040, 080...)",
+  "te": "ల్యాండ్‌లైన్ (040, 080...)",
+  "hi": "लैंडलाइन (040, 080...)",
+  "kn": "ಲ್ಯಾಂಡ್‌ಲೈನ್ (040, 080...)",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.type.short.mobile": {
+  "en": "Mobile",
+  "te": "మొబైల్",
+  "hi": "मोबाइल",
+  "kn": "ಮೊಬೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.type.short.landline": {
+  "en": "Landline",
+  "te": "ల్యాండ్‌లైన్",
+  "hi": "लैंडलाइन",
+  "kn": "ಲ್ಯಾಂಡ್‌ಲೈನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.prefix": {
+  "en": "Starts with (optional)",
+  "te": "ఇవి మొదట ఉండాలి (ఐచ్ఛికం)",
+  "hi": "इनसे शुरू हो (वैकल्पिक)",
+  "kn": "ಇವುಗಳಿಂದ ಶುರು (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.search": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजिए",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.list": {
+  "en": "Numbers you can use",
+  "te": "మీరు తీసుకోగల నంబర్లు",
+  "hi": "जो नंबर आप ले सकते हैं",
+  "kn": "ನೀವು ತೆಗೆದುಕೊಳ್ಳಬಹುದಾದ ನಂಬರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.use": {
+  "en": "Use this number",
+  "te": "ఈ నంబర్ తీసుకోండి",
+  "hi": "यह नंबर लीजिए",
+  "kn": "ಈ ನಂಬರ್ ತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.more": {
+  "en": "Show more numbers",
+  "te": "ఇంకా నంబర్లు చూపించండి",
+  "hi": "और नंबर दिखाइए",
+  "kn": "ಇನ್ನಷ್ಟು ನಂಬರ್ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.none": {
+  "en": "No number starts with that. Try fewer digits.",
+  "te": "అలా మొదలయ్యే నంబర్ లేదు. తక్కువ అంకెలు ప్రయత్నించండి.",
+  "hi": "इससे शुरू होने वाला कोई नंबर नहीं है। कम अंक आज़माइए।",
+  "kn": "ಹಾಗೆ ಶುರುವಾಗುವ ನಂಬರ್ ಇಲ್ಲ. ಕಡಿಮೆ ಅಂಕೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.prefix": {
+  "en": "Use digits only, up to 6.",
+  "te": "అంకెలు మాత్రమే, 6 వరకు.",
+  "hi": "सिर्फ़ अंक, 6 तक।",
+  "kn": "ಅಂಕೆಗಳು ಮಾತ್ರ, 6 ವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.down": {
+  "en": "We could not look up numbers just now. Try again in a minute.",
+  "te": "ఇప్పుడు నంబర్లు చూడలేకపోయాం. ఒక నిమిషంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी नंबर नहीं देख पाए। एक मिनट में फिर कोशिश कीजिए।",
+  "kn": "ಈಗ ನಂಬರ್‌ಗಳನ್ನು ನೋಡಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.taken": {
+  "en": "Someone just took that number. Pick another one from the list.",
+  "te": "ఆ నంబర్ ఇప్పుడే ఎవరో తీసుకున్నారు. లిస్ట్ నుంచి వేరొకటి ఎంచుకోండి.",
+  "hi": "वह नंबर अभी किसी ने ले लिया। सूची से दूसरा चुनिए।",
+  "kn": "ಆ ನಂಬರ್ ಈಗಷ್ಟೇ ಬೇರೆಯವರು ತೆಗೆದುಕೊಂಡರು. ಪಟ್ಟಿಯಿಂದ ಇನ್ನೊಂದು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.forbidden": {
+  "en": "Only the owner can pick the number.",
+  "te": "నంబర్ ఎంచుకోవడం ఓనర్ మాత్రమే చేయగలరు.",
+  "hi": "नंबर सिर्फ़ मालिक चुन सकते हैं।",
+  "kn": "ನಂಬರ್ ಆರಿಸುವುದು ಮಾಲೀಕರು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.stepup": {
+  "en": "Sign in again with your second code, then pick the number.",
+  "te": "రెండో కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, నంబర్ ఎంచుకోండి.",
+  "hi": "दूसरे कोड से फिर साइन इन कीजिए, फिर नंबर चुनिए।",
+  "kn": "ಎರಡನೇ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ನಂತರ ನಂಬರ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.now": {
+  "en": "We cannot add numbers right now. We have told our team.",
+  "te": "ఇప్పుడు నంబర్లు చేర్చలేం. మా టీమ్‌కి చెప్పాం.",
+  "hi": "अभी नंबर नहीं जोड़ सकते। हमने अपनी टीम को बता दिया है।",
+  "kn": "ಈಗ ನಂಬರ್ ಸೇರಿಸಲಾಗುವುದಿಲ್ಲ. ನಮ್ಮ ತಂಡಕ್ಕೆ ತಿಳಿಸಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.why.not_on_plan": {
+  "en": "An extra number is on paid plans. Your first number is included in every plan.",
+  "te": "ఎక్స్‌ట్రా నంబర్ పెయిడ్ ప్లాన్లలో ఉంటుంది. మీ మొదటి నంబర్ ప్రతి ప్లాన్‌లో ఉంటుంది.",
+  "hi": "अतिरिक्त नंबर पेड प्लान में मिलता है। पहला नंबर हर प्लान में शामिल है।",
+  "kn": "ಹೆಚ್ಚುವರಿ ನಂಬರ್ ಪೇಯ್ಡ್ ಪ್ಲಾನ್‌ಗಳಲ್ಲಿ ಇದೆ. ಮೊದಲ ನಂಬರ್ ಪ್ರತಿ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಸೇರಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.why.already_has_number": {
+  "en": "You already have your number. An extra number is on paid plans.",
+  "te": "మీకు ఇప్పటికే నంబర్ ఉంది. ఎక్స్‌ట్రా నంబర్ పెయిడ్ ప్లాన్లలో ఉంటుంది.",
+  "hi": "आपके पास पहले से नंबर है। अतिरिक्त नंबर पेड प्लान में मिलता है।",
+  "kn": "ನಿಮ್ಮ ಬಳಿ ಈಗಾಗಲೇ ನಂಬರ್ ಇದೆ. ಹೆಚ್ಚುವರಿ ನಂಬರ್ ಪೇಯ್ಡ್ ಪ್ಲಾನ್‌ಗಳಲ್ಲಿ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.why.paused": {
+  "en": "Choosing numbers is paused for a short while. Please try later.",
+  "te": "నంబర్లు ఎంచుకోవడం కొంతసేపు ఆపాం. కాసేపటి తర్వాత ప్రయత్నించండి.",
+  "hi": "नंबर चुनना थोड़ी देर के लिए रुका है। बाद में कोशिश कीजिए।",
+  "kn": "ನಂಬರ್ ಆರಿಸುವುದು ಸ್ವಲ್ಪ ಹೊತ್ತು ನಿಲ್ಲಿಸಲಾಗಿದೆ. ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s2.title": {
+  "en": "It is ready in a minute",
+  "te": "ఒక నిమిషంలో రెడీ అవుతుంది",
+  "hi": "एक मिनट में तैयार",
+  "kn": "ಒಂದು ನಿಮಿಷದಲ್ಲಿ ರೆಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s2.body": {
+  "en": "We connect it to your assistant. Nothing to upload for a normal business number.",
+  "te": "మేము దాన్ని మీ అసిస్టెంట్‌కి కలుపుతాం. మామూలు బిజినెస్ నంబర్‌కి ఏమీ అప్‌లోడ్ చేయక్కర్లేదు.",
+  "hi": "हम उसे आपके असिस्टेंट से जोड़ देते हैं। सामान्य बिज़नेस नंबर के लिए कुछ अपलोड नहीं करना।",
+  "kn": "ನಾವು ಅದನ್ನು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಜೋಡಿಸುತ್ತೇವೆ. ಸಾಮಾನ್ಯ ಬಿಸಿನೆಸ್ ನಂಬರ್‌ಗೆ ಏನೂ ಅಪ್‌ಲೋಡ್ ಮಾಡಬೇಕಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s2.getting": {
+  "en": "We are connecting {number} to your assistant. This takes about a minute.",
+  "te": "{number} ని మీ అసిస్టెంట్‌కి కలుపుతున్నాం. ఒక నిమిషం పడుతుంది.",
+  "hi": "हम {number} को आपके असिस्टेंट से जोड़ रहे हैं। करीब एक मिनट लगेगा।",
+  "kn": "{number} ಅನ್ನು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಜೋಡಿಸುತ್ತಿದ್ದೇವೆ. ಸುಮಾರು ಒಂದು ನಿಮಿಷ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s2.ready": {
+  "en": "{number} is ready. Your assistant can answer it.",
+  "te": "{number} రెడీ. మీ అసిస్టెంట్ దానికి సమాధానం ఇవ్వగలదు.",
+  "hi": "{number} तैयार है। आपका असिस्टेंट उसे उठा सकता है।",
+  "kn": "{number} ರೆಡಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅದಕ್ಕೆ ಉತ್ತರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.title": {
+  "en": "Keep your shop number too",
+  "te": "మీ షాప్ నంబర్ కూడా ఉంచుకోండి",
+  "hi": "अपना दुकान का नंबर भी रखिए",
+  "kn": "ನಿಮ್ಮ ಅಂಗಡಿ ನಂಬರ್ ಕೂಡ ಇಟ್ಟುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.body": {
+  "en": "Forward unanswered calls from your shop phone to this number. Pick your phone company to see the code.",
+  "te": "మీ షాప్ ఫోన్‌లో ఎత్తని కాల్స్‌ని ఈ నంబర్‌కి ఫార్వర్డ్ చేయండి. కోడ్ చూడటానికి మీ ఫోన్ కంపెనీ ఎంచుకోండి.",
+  "hi": "दुकान के फ़ोन पर जो कॉल न उठें, उन्हें इस नंबर पर फ़ॉरवर्ड कीजिए। कोड देखने के लिए अपनी फ़ोन कंपनी चुनिए।",
+  "kn": "ಅಂಗಡಿ ಫೋನ್‌ನಲ್ಲಿ ಎತ್ತದ ಕರೆಗಳನ್ನು ಈ ನಂಬರ್‌ಗೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ. ಕೋಡ್ ನೋಡಲು ನಿಮ್ಮ ಫೋನ್ ಕಂಪನಿ ಆರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.company": {
+  "en": "Your phone company",
+  "te": "మీ ఫోన్ కంపెనీ",
+  "hi": "आपकी फ़ोन कंपनी",
+  "kn": "ನಿಮ್ಮ ಫೋನ್ ಕಂಪನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.co.airtel": {
+  "en": "Airtel",
+  "te": "ఎయిర్‌టెల్",
+  "hi": "एयरटेल",
+  "kn": "ಏರ್‌ಟೆಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.co.vi": {
+  "en": "Vi",
+  "te": "వి (Vi)",
+  "hi": "वी (Vi)",
+  "kn": "ವಿ (Vi)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.co.bsnl": {
+  "en": "BSNL",
+  "te": "బీఎస్ఎన్ఎల్ (BSNL)",
+  "hi": "बीएसएनएल (BSNL)",
+  "kn": "ಬಿಎಸ್‌ಎನ್‌ಎಲ್ (BSNL)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.co.jio": {
+  "en": "Jio",
+  "te": "జియో",
+  "hi": "जियो",
+  "kn": "ಜಿಯೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.code": {
+  "en": "Dial this on your shop phone, then press call:",
+  "te": "మీ షాప్ ఫోన్‌లో ఇది డయల్ చేసి కాల్ నొక్కండి:",
+  "hi": "दुकान के फ़ोन पर यह डायल करके कॉल दबाइए:",
+  "kn": "ಅಂಗಡಿ ಫೋನ್‌ನಲ್ಲಿ ಇದನ್ನು ಡಯಲ್ ಮಾಡಿ ಕರೆ ಒತ್ತಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.off": {
+  "en": "To switch it off, dial:",
+  "te": "ఆపేయడానికి ఇది డయల్ చేయండి:",
+  "hi": "बंद करने के लिए यह डायल कीजिए:",
+  "kn": "ನಿಲ್ಲಿಸಲು ಇದನ್ನು ಡಯಲ್ ಮಾಡಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.nocode": {
+  "en": "Ask your phone company to forward unanswered calls to this number, or look under Call forwarding in its app.",
+  "te": "ఎత్తని కాల్స్‌ని ఈ నంబర్‌కి ఫార్వర్డ్ చేయమని మీ ఫోన్ కంపెనీని అడగండి, లేదా వాళ్ల యాప్‌లో కాల్ ఫార్వర్డింగ్ చూడండి.",
+  "hi": "अपनी फ़ोन कंपनी से कहिए कि न उठी कॉल इस नंबर पर फ़ॉरवर्ड करें, या उसके ऐप में कॉल फ़ॉरवर्डिंग देखिए।",
+  "kn": "ಎತ್ತದ ಕರೆಗಳನ್ನು ಈ ನಂಬರ್‌ಗೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಲು ನಿಮ್ಮ ಫೋನ್ ಕಂಪನಿಯನ್ನು ಕೇಳಿ, ಅಥವಾ ಅದರ ಆ್ಯಪ್‌ನಲ್ಲಿ ಕಾಲ್ ಫಾರ್ವರ್ಡಿಂಗ್ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.test": {
+  "en": "Test screen: these numbers are made up and nothing is bought.",
+  "te": "టెస్ట్ స్క్రీన్: ఈ నంబర్లు కల్పితం, ఏదీ కొనడం లేదు.",
+  "hi": "टेस्ट स्क्रीन: ये नंबर बनाए हुए हैं, कुछ खरीदा नहीं जाता।",
+  "kn": "ಟೆಸ್ಟ್ ಸ್ಕ್ರೀನ್: ಈ ನಂಬರ್‌ಗಳು ಕಲ್ಪಿತ, ಏನೂ ಖರೀದಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.err.notlist": {
+  "en": "This file is not a plain list. To use an Excel file, a photo or a PDF, give it to your assistant on the Today page (the paperclip). Or save it as a CSV list and choose that.",
+  "te": "ఇది సాదా లిస్ట్ ఫైల్ కాదు. ఎక్సెల్ ఫైల్, ఫోటో లేదా PDF వాడాలంటే Today పేజీలో మీ అసిస్టెంట్‌కి (క్లిప్ గుర్తు) ఇవ్వండి. లేదా CSV లిస్ట్‌గా సేవ్ చేసి అది ఎంచుకోండి.",
+  "hi": "यह सादी सूची वाली फ़ाइल नहीं है। Excel फ़ाइल, फ़ोटो या PDF के लिए उसे Today पेज पर अपने असिस्टेंट को दीजिए (क्लिप का निशान)। या CSV सूची में सेव करके वह चुनिए।",
+  "kn": "ಇದು ಸರಳ ಪಟ್ಟಿಯ ಫೈಲ್ ಅಲ್ಲ. Excel ಫೈಲ್, ಫೋಟೋ ಅಥವಾ PDF ಬಳಸಲು Today ಪುಟದಲ್ಲಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ (ಕ್ಲಿಪ್ ಗುರುತು) ಕೊಡಿ. ಅಥವಾ CSV ಪಟ್ಟಿಯಾಗಿ ಸೇವ್ ಮಾಡಿ ಅದನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.sample": {
+  "en": "Download an example file",
+  "te": "ఉదాహరణ ఫైల్ డౌన్‌లోడ్ చేయండి",
+  "hi": "उदाहरण फ़ाइल डाउनलोड कीजिए",
+  "kn": "ಉದಾಹರಣೆ ಫೈಲ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.band.under_5k": {
+  "en": "Under ₹5,000",
+  "te": "₹5,000 లోపు",
+  "hi": "₹5,000 से कम",
+  "kn": "₹5,000ಕ್ಕಿಂತ ಕಡಿಮೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.band.5k_10k": {
+  "en": "₹5,000 to ₹10,000",
+  "te": "₹5,000 నుంచి ₹10,000",
+  "hi": "₹5,000 से ₹10,000",
+  "kn": "₹5,000 ರಿಂದ ₹10,000",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.band.10k_25k": {
+  "en": "₹10,000 to ₹25,000",
+  "te": "₹10,000 నుంచి ₹25,000",
+  "hi": "₹10,000 से ₹25,000",
+  "kn": "₹10,000 ರಿಂದ ₹25,000",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.band.25k_50k": {
+  "en": "₹25,000 to ₹50,000",
+  "te": "₹25,000 నుంచి ₹50,000",
+  "hi": "₹25,000 से ₹50,000",
+  "kn": "₹25,000 ರಿಂದ ₹50,000",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.band.above_50k": {
+  "en": "Above ₹50,000",
+  "te": "₹50,000 పైన",
+  "hi": "₹50,000 से ऊपर",
+  "kn": "₹50,000ಕ್ಕಿಂತ ಹೆಚ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.f.lang": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.f.speed": {
+  "en": "Speed",
+  "te": "వేగం",
+  "hi": "रफ़्तार",
+  "kn": "ವೇಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.f.style": {
+  "en": "Tone",
+  "te": "మాట తీరు",
+  "hi": "बोलने का ढंग",
+  "kn": "ಮಾತಿನ ರೀತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.f.address": {
+  "en": "Call me",
+  "te": "నన్ను ఎలా పిలవాలి",
+  "hi": "मुझे कैसे बुलाए",
+  "kn": "ನನ್ನನ್ನು ಹೇಗೆ ಕರೆಯಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.h.lang": {
+  "en": "The language it talks to you in.",
+  "te": "మీతో ఏ భాషలో మాట్లాడాలి.",
+  "hi": "आपसे किस भाषा में बात करे।",
+  "kn": "ನಿಮ್ಮೊಂದಿಗೆ ಯಾವ ಭಾಷೆಯಲ್ಲಿ ಮಾತಾಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.h.speed": {
+  "en": "How fast it speaks to you.",
+  "te": "మీతో ఎంత వేగంగా మాట్లాడాలి.",
+  "hi": "आपसे कितनी तेज़ बोले।",
+  "kn": "ನಿಮ್ಮೊಂದಿಗೆ ಎಷ್ಟು ವೇಗವಾಗಿ ಮಾತಾಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.h.style": {
+  "en": "How it sounds: friendly, respectful, short and quick, and so on.",
+  "te": "ఎలా మాట్లాడాలి: ఫ్రెండ్లీగా, గౌరవంగా, క్లుప్తంగా, ఇలా.",
+  "hi": "कैसे बोले: दोस्ताना, आदर से, छोटा और तेज़, वगैरह।",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕು: ಸ್ನೇಹದಿಂದ, ಗೌರವದಿಂದ, ಚುಟುಕಾಗಿ, ಇತ್ಯಾದಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.h.address": {
+  "en": "What it calls you: by name, with garu, sir or madam.",
+  "te": "మిమ్మల్ని ఎలా పిలవాలి: పేరుతో, గారు, సర్ లేదా మేడమ్.",
+  "hi": "आपको क्या कहे: नाम से, गारु, सर या मैडम।",
+  "kn": "ನಿಮ್ಮನ್ನು ಏನೆಂದು ಕರೆಯಬೇಕು: ಹೆಸರಿನಿಂದ, ಗಾರು, ಸರ್ ಅಥವಾ ಮೇಡಂ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.unsaved": {
+  "en": "You have unsaved changes.",
+  "te": "మీరు చేసిన మార్పులు ఇంకా save కాలేదు.",
+  "hi": "बदलाव सेव नहीं हुए हैं।",
+  "kn": "ಸೇವ್ ಮಾಡದ ಬದಲಾವಣೆಗಳಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.title.teach": {
+  "en": "Teach your assistant",
+  "te": "మీ అసిస్టెంట్‌కి నేర్పండి",
+  "hi": "अपने असिस्टेंट को सिखाइए",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.used.plain": {
+  "en": "Your assistant reads this when it answers customers on calls and chats.",
+  "te": "కాల్స్‌లో, చాట్‌లో కస్టమర్లకు జవాబిచ్చేటప్పుడు మీ అసిస్టెంట్ దీన్ని చదువుతుంది.",
+  "hi": "आपका असिस्टेंट कॉल और चैट में ग्राहकों को जवाब देते समय इसे पढ़ता है।",
+  "kn": "ಕರೆ ಮತ್ತು ಚಾಟ್‌ನಲ್ಲಿ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸುವಾಗ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಇದನ್ನು ಓದುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.f.minutes.l": {
+  "en": "How long it takes (minutes)",
+  "te": "ఎంత సేపు పడుతుంది (నిమిషాలు)",
+  "hi": "कितना समय लगता है (मिनट)",
+  "kn": "ಎಷ್ಟು ಸಮಯ ಬೇಕು (ನಿಮಿಷ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.col.from": {
+  "en": "From ({unit})",
+  "te": "ఇంత నుంచి ({unit})",
+  "hi": "इतने से ({unit})",
+  "kn": "ಇಷ್ಟರಿಂದ ({unit})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.col.rate": {
+  "en": "Price per {per} (₹)",
+  "te": "ఒక {per} ధర (₹)",
+  "hi": "एक {per} का दाम (₹)",
+  "kn": "ಒಂದು {per} ಬೆಲೆ (₹)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.until.l": {
+  "en": "Rates valid until",
+  "te": "ఈ రేట్లు ఎప్పటి వరకు",
+  "hi": "ये रेट कब तक",
+  "kn": "ಈ ದರಗಳು ಯಾವಾಗಲವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.w.until.hint": {
+  "en": "Optional. Leave empty if the rates have no end date.",
+  "te": "ఐచ్ఛికం. ఆఖరి తేదీ లేకపోతే ఖాళీగా వదలండి.",
+  "hi": "वैकल्पिक। अंतिम तारीख़ न हो तो खाली छोड़ें।",
+  "kn": "ಐಚ್ಛಿಕ. ಕೊನೆಯ ದಿನಾಂಕ ಇಲ್ಲದಿದ್ದರೆ ಖಾಲಿ ಬಿಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

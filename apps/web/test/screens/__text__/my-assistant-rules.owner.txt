@@ -1,4 +1,4 @@
-# Train how it talks
+# Teach your assistant
 Not live Teach your assistant how to speak on calls: how to greet, what to ask, and what never to say.
 [button type=button: Go live]
 {label="Sections"}

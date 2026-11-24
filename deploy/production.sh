@@ -126,7 +126,7 @@ if $do_api; then
   else
     : "${PROD_SCHEDULER_EMAIL:?set PROD_SCHEDULER_EMAIL (the scheduler account of the production project)}"
     PRIVACY_VERSION="${PRIVACY_VERSION:-2026-11-26}"   # the text that is live today (26 Nov 2026: VoiceLink named, not Plivo); a new version string comes with the owner's approval and the same string is declared in deploy/settings/production/api.env
-    # TELEPHONY: `live` is the owner's written go-live (customer-zero-go-live-checklist.md): the declared file may only say it when PROD_LIVE_OK=yes, and the deploy names the change (ALLOW_FLAG_CHANGE=TELEPHONY_MODE).
+    # TELEPHONY: `live` is the owner's written go-live (docs-private/runbooks/customer-zero-go-live-checklist.md): the declared file may only say it when PROD_LIVE_OK=yes, and the deploy names the change (ALLOW_FLAG_CHANGE=TELEPHONY_MODE).
     if grep -q '^TELEPHONY_MODE=live' "$API_SETTINGS_DIR/api.env" && [ "${PROD_LIVE_OK:-}" != yes ]; then echo "REFUSED: $API_SETTINGS_DIR/api.env says TELEPHONY_MODE=live: that needs PROD_LIVE_OK=yes (the owner's written go-live)" >&2; exit 2; fi
   fi
   export PRIVACY_VERSION
@@ -141,7 +141,7 @@ if $do_worker && [ "$slice" != waitlist ]; then python3 deploy/drift.py check pr
 
 if $do_api; then
   # slice: agents off, scale to zero, request-based CPU. Full: ONE instance with always-on CPU (the answer to a call must never wait for a cold start, ADR 0072; MAX 1 because a live call lives on the server that answered it:
-  # Take over, Whisper, Hang up only work there, so a second instance is not allowed until the routing in docs/pre-pilot-checklist.md exists; TELEPHONY_MAX_CONCURRENT caps the calls on it). The scale comes from api.scale.
+  # Take over, Whisper, Hang up only work there, so a second instance is not allowed until the routing in docs-private/pre-pilot-checklist.md exists; TELEPHONY_MAX_CONCURRENT caps the calls on it). The scale comes from api.scale.
   # No WhatsApp Cloud API in production v1 (owner, 11 Nov 2026): the WhatsApp summary is a prepared text the owner sends by hand; the outbox adapter stays the fake one.
   if [ "$slice" = waitlist ]; then agents=false; cpu_always=false; else agents=true; cpu_always=true; fi
   NO_TRAFFIC=1 API_SETTINGS_DIR="$API_SETTINGS_DIR" RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED="$agents" CPU_ALWAYS="$cpu_always" ./deploy/cloudrun.sh api $execute

@@ -459,7 +459,7 @@ def engine_terminal(
 def test_every_answer_the_candidates_function_drops_is_terminal_for_the_real_engine(
     evaluated: list[tuple[str, dict[str, Any], str | None, str]], engine_terminal: list[bool | None]
 ) -> None:
-    """The safe direction (docs/plans/followups-due-candidates-plan.md, section 7): a lead the database's blocker calls terminal must be terminal for the real engine too, in EVERY grid case, so the
+    """The safe direction (docs-private/plans/followups-due-candidates-plan.md, section 7): a lead the database's blocker calls terminal must be terminal for the real engine too, in EVERY grid case, so the
     candidates function can never hide a lead the engine could still make due. A failure here means the terminal list is wrong: it is not to be weakened."""
     terminal = candidates_terminal_list()
     assert terminal == ("suppressed", "replied", "closed", "max_touches")

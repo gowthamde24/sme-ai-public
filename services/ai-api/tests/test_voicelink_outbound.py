@@ -45,7 +45,7 @@ from tests.test_dv_browser_voice import arun, until
 from tests.test_ph_inbound import FakeStore, fake_parts
 
 TOKEN = "voicelink-bot-address-token-for-tests-0123456789abcdef"
-OWNER = "+919502380998"
+OWNER = "+919000000998"
 LINE = "+918065590140"
 TENANT = uuid.UUID(int=0x0B0E)
 ROW = uuid.UUID(int=0xA11CE)
@@ -107,9 +107,9 @@ def test_add_lead_sends_ten_digits_the_country_code_apart_and_our_ids_as_a_json_
     queued = api(fake).add_lead(did_number=LINE, customer_number=OWNER, custom_parameters={"call": str(ROW), "tenant": str(TENANT)}, websocket_url="wss://x.test/ws", webhook_url="https://x.test/hook")
     assert queued == "4711"
     sent = next(b for m, p, b, _ in fake.seen if p.endswith("/add_lead"))
-    assert sent["did_number"] == "918065590140" and sent["customer_number"] == "9502380998" and sent["country_code"] == "91" and sent["call_limit"] == 1
+    assert sent["did_number"] == "918065590140" and sent["customer_number"] == "9000000998" and sent["country_code"] == "91" and sent["call_limit"] == 1
     assert json.loads(sent["custom_parameters"]) == {"call": str(ROW), "tenant": str(TENANT)} and sent["websocket_url"] == "wss://x.test/ws" and sent["webhook_url"] == "https://x.test/hook"
-    assert indian_mobile_10("+919502380998") == "9502380998" and indian_mobile_10("+14155550100") is None and indian_mobile_10("9502380998") == "9502380998"
+    assert indian_mobile_10("+919000000998") == "9000000998" and indian_mobile_10("+14155550100") is None and indian_mobile_10("9000000998") == "9000000998"
     assert digits_with_country("+918065590140") == "918065590140"
 
 
@@ -195,7 +195,7 @@ def test_the_placer_places_a_voicelink_test_call_to_the_owner_through_the_same_g
     placed = placer.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert placed.provider_call_id == "4711" and ("ringing", "4711") in repo.calls
     sent = next(b for m, p, b, _ in fake.seen if p.endswith("/add_lead"))
-    assert sent["customer_number"] == "9502380998" and json.loads(sent["custom_parameters"])["call"] == str(ROW)
+    assert sent["customer_number"] == "9000000998" and json.loads(sent["custom_parameters"])["call"] == str(ROW)
     # a number that is not on the sandbox list is refused by the gate BEFORE VoiceLink is asked
     before = len(fake.seen)
     with pytest.raises(OutboundRefused):
@@ -328,7 +328,7 @@ def hook_client(repo: OutRepo | None = None, *, on: bool = True) -> tuple[TestCl
 
 
 def event(name: str, status: str = "", **over: Any) -> dict[str, Any]:
-    return {"event": name, "callId": "1764828073.53871", "fromNumber": "918065590140", "toNumber": "9502380998", "direction": "outbound", "callStatus": status, "duration": 0,
+    return {"event": name, "callId": "1764828073.53871", "fromNumber": "918065590140", "toNumber": "9000000998", "direction": "outbound", "callStatus": status, "duration": 0,
             "customParameters": json.dumps({"call": str(ROW), "tenant": str(TENANT)}), **over}
 
 
@@ -364,14 +364,14 @@ def test_the_webhook_answers_only_with_the_token_and_only_for_small_json() -> No
 
 def test_the_dynamic_inbound_call_answer_names_our_bot_and_webhook_with_the_token() -> None:
     client, _ = hook_client()
-    r = client.post(f"/v1/telephony/voicelink/inbound_call/{TOKEN}", json={"callerId": "918065590140", "customerNumber": "9502380998", "callId": "eca4d07b-3afb-4e9d-b666-597adf5ea584", "sid": "stream_x"})
+    r = client.post(f"/v1/telephony/voicelink/inbound_call/{TOKEN}", json={"callerId": "918065590140", "customerNumber": "9000000998", "callId": "eca4d07b-3afb-4e9d-b666-597adf5ea584", "sid": "stream_x"})
     assert r.status_code == 200 and r.json() == {"ws_url": f"wss://api.example.test/v1/telephony/voicelink/ws/{TOKEN}?call_id=eca4d07b-3afb-4e9d-b666-597adf5ea584", "webhook_url": f"{BASE}/v1/telephony/voicelink/webhook/{TOKEN}"}
     assert client.post("/v1/telephony/voicelink/inbound_call/wrong", json={}).status_code == 404
 
 
 # ------------------------------------------------------------------------------------------------------------------ the wallet check and the provider choice
 def test_the_wallet_reader_gives_the_two_facts_of_the_balance_check_and_a_foreign_currency_is_a_failed_read() -> None:
-    assert VoicelinkBalanceReader(api(FakeVoicelink()), currency="INR").account_details() == {"cash_credits": 812.5, "auto_recharge": None}
+    assert VoicelinkBalanceReader(api(FakeVoicelink()), currency="INR").account_details() == {"cash_credits": 812.5, "auto_recharge": None, "recording_numbers": 0}
     with pytest.raises(VoicelinkError):
         VoicelinkBalanceReader(api(FakeVoicelink(wallet={"balance": 10, "currency": "USD"})), currency="INR").account_details()
 
@@ -485,3 +485,98 @@ def test_the_probe_prints_counts_and_closed_words_only(monkeypatch: pytest.Monke
     assert "did-types: ok 2=Mobile, 3=Landline" in out and "mobile: ok 1 rows, first ends ...3210" in out and "mobile filter '98': ok 1 rows" in out
     assert "landline: auth (status 403)" in out
     assert "never-printed-password" not in out and "secret-token-xyz" not in out and "9876543210" not in out and "299" not in out
+
+
+def test_the_diagnosis_script_reads_numbers_routing_and_bots_and_never_prints_a_token_or_password(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    import hashlib
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location("voicelink_diagnose", Path(__file__).resolve().parents[3] / "scripts" / "voicelink_diagnose.py")
+    assert spec is not None and spec.loader is not None
+    diag = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(diag)
+    token = "t" * 64
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        path = request.url.path
+        if path.endswith("/auth/login"):
+            return httpx.Response(200, json={"data": {"access_token": "secret-bearer-xyz"}, "status": True})
+        if path.endswith("/reseller/profile"):
+            return httpx.Response(200, json={"data": {"wallet": {"balance": 4900, "currency": "INR"}}, "status": True})
+        if path.endswith("/reseller/did/purchased"):
+            return httpx.Response(200, json={"data": {"data": [{"did_number": "919429492464", "type_label": "Mobile", "status": 2, "user_status": 2, "is_expired": False, "expiry_date": "2026-12-31", "auto_renew": True, "client_id": 5, "call_routing": {"for_inbound_call": 3, "for_outbound_call": 3, "status": 1}}]}, "status": True})
+        if path.endswith("/call-routing/list"):
+            return httpx.Response(200, json={"data": [{"did_number": "9429492464", "for_inbound_call": 3, "for_outbound_call": 3, "status": 1, "status_label": "Active"}], "status": True})
+        if path.endswith("/websocket-bot/list"):
+            return httpx.Response(200, json={"data": {"data": [{"bot_name": "Stack19", "status": 1, "status_label": "Active", "client_id": 5, "websocket_url": f"wss://api.example.test/v1/telephony/voicelink/ws/{token}", "webhook_url": f"https://api.example.test/v1/telephony/voicelink/webhook/{token}"}]}, "status": True})
+        return httpx.Response(404)
+
+    real = diag.VoicelinkApi
+    monkeypatch.setattr(diag, "VoicelinkApi", lambda u, p: real(u, p, client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))))
+    monkeypatch.setenv("VOICELINK_USERNAME", "Ada Test Lovelace-Example")
+    monkeypatch.setenv("VOICELINK_PASSWORD", "never-printed-password")
+    assert diag.main() == 0
+    out = capsys.readouterr().out
+    assert "...2464 Mobile status=2" in out and "routing: inbound=3 outbound=3 status=1" in out and "Stack19: status=1 (Active)" in out
+    assert f"<token len=64 sha8={hashlib.sha256(token.encode()).hexdigest()[:8]}>" in out and "wss://api.example.test/v1/telephony/voicelink/ws/<token" in out
+    assert token not in out and "never-printed-password" not in out and "secret-bearer-xyz" not in out and "9429492464" not in out
+
+
+def test_recording_on_reads_the_flag_the_cautious_way_and_the_wallet_reader_counts_numbers_that_record() -> None:
+    from app.telephony.voicelink_api import VoicelinkBalanceReader, recording_on
+
+    assert [recording_on({"call_recording": v}) for v in (1, "1", True, "Yes", "enabled", 0, "0", False, "No", "off", None)] == [True, True, True, True, True, False, False, False, False, False, False]
+    assert recording_on({"call_recording_label": "Yes"}) is True and recording_on({}) is False, "no field: nothing to count (the daily check cannot see it, the diagnose line shows off)"
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/auth/login"):
+            return httpx.Response(200, json={"data": {"access_token": "t"}, "status": True})
+        if request.url.path.endswith("/reseller/profile"):
+            return httpx.Response(200, json={"data": {"wallet": {"balance": 100, "currency": "INR"}}, "status": True})
+        return httpx.Response(200, json={"data": {"data": [{"did_number": "919429492464", "call_recording": 1}, {"did_number": "919400000001", "call_recording": 0}]}, "status": True})
+
+    reader = VoicelinkBalanceReader(VoicelinkApi("u", "p", client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))), currency="INR")
+    assert reader.account_details() == {"cash_credits": 100.0, "auto_recharge": None, "recording_numbers": 1}
+
+
+def test_the_webhook_reads_the_call_records_snake_case_names_and_nested_objects_and_voicelinks_own_status_words() -> None:
+    """28 Nov 2026: the first real webhook read empty with the documented names. Both styles are read, at the top or inside data/call/payload; the Reports words (NoAnswered, Answered) map to what we know."""
+    snake = {"event": "call.ended", "data": {"call_id": "u-1", "unique_id": "u-1", "call_status": "NoAnswered", "call_type": "VL-OUT", "call_duration": 0, "custom_parameters": json.dumps({"call": str(ROW), "tenant": str(TENANT)})}}
+    client, repo = hook_client()
+    assert client.post(f"/v1/telephony/voicelink/webhook/{TOKEN}", json=snake).status_code == 200
+    assert ("finish", ("no_answer", "no_answer")) in repo.calls, "NoAnswered closes a call nobody answered"
+    client2, repo2 = hook_client()
+    nested_initiated = {"event": "call.initiated", "call": {"call_id": "vl-77", "custom_parameters": {"call": str(ROW), "tenant": str(TENANT)}}}
+    client2.post(f"/v1/telephony/voicelink/webhook/{TOKEN}", json=nested_initiated)
+    assert ("ringing", "vl-77") in repo2.calls and "status" not in snake
+    from app.telephony.voicelink_routes import _status_word
+
+    assert [_status_word(w) for w in ("NoAnswered", "NO ANSWER", "Answered", "BUSY", "Cancelled", "Congestion", "something-new")] == ["no-answer", "no-answer", "completed", "busy", "cancel", "failed", "something-new"]
+
+
+def test_the_call_detail_script_prints_field_names_and_only_non_personal_values(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location("voicelink_call_detail", Path(__file__).resolve().parents[3] / "scripts" / "voicelink_call_detail.py")
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    record = {"call_id": "1764.5", "unique_id": "u-1", "did_number": "919429492464", "customer_number": "919573989785", "call_status": "Answered", "duration": 67, "total_cost": "0.5000", "bot_type": 3,
+              "recording": "https://files.example.test/client_1/secret.mp3", "created_at": "2026-11-24 18:48:33", "meta": {"caller": "919573989785", "hangup_by": "bot"}, "events": [{"type": "x", "number": "9195"}]}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/auth/login"):
+            return httpx.Response(200, json={"data": {"access_token": "bearer-xyz"}, "status": True})
+        return httpx.Response(200, json={"data": record, "status": True})
+
+    real = mod.VoicelinkApi
+    monkeypatch.setattr(mod, "VoicelinkApi", lambda u, p: real(u, p, client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))))
+    monkeypatch.setenv("VOICELINK_USERNAME", "u")
+    monkeypatch.setenv("VOICELINK_PASSWORD", "never-printed")
+    assert mod.main(["x", "61872340-19d3-400a-a0fb-1d5de68502bf"]) == 0
+    out = capsys.readouterr().out
+    assert "call_status: str = 'Answered'" in out and "duration: int = 67" in out and "total_cost: str = '0.5000'" in out and "did_number: str (length 12)" in out and "hangup_by: str = 'bot'" in out
+    for secret in ("919429492464", "919573989785", "secret.mp3", "bearer-xyz", "never-printed", "files.example.test"):
+        assert secret not in out, secret

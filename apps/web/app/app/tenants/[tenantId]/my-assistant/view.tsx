@@ -25,7 +25,6 @@ import { requireUser } from "@/lib/auth/session";
 import { readPackCached } from "@/lib/packs/read";
 import { appV4, assistantStatusScreens, designV6, talkTrainingScreens, teachScreens, testCallScreens, myAssistantOpen } from "@/lib/screens/flag";
 
-import { menuTitle } from "../menu-title";
 import { goLiveOrPauseAction } from "../my-assistant-actions";
 import { practiceCallAction } from "../talk-training-actions";
 import { teachAction, undoTeachAction } from "../teach-actions";
@@ -88,7 +87,7 @@ export async function renderMyAssistant(tenantId: string, which: "overview" | Se
     <main className={pageMain} lang={lang} {...(myAssistantOpen() ? { "data-mya-over": "" } : {})}>
       {helpTipFor(lang, base, "myassistant", true)}
       <PageHeader
-        title={tab === "overview" ? t("mya.title") : await menuTitle("train", lang, user.accessToken, tenantId)}
+        title={tab === "overview" ? t("mya.title") : t("mya.title.teach")}
         sub={tab === "overview" ? t("mya.sub") : t("tt.sub")}
         badge={status ? <StatusPill status={STATE_PILL[status.state]}>{t(`nav.assistant.${status.state}`)}</StatusPill> : null}
         right={goLive}

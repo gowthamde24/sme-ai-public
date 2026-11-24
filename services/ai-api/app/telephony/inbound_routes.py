@@ -42,11 +42,22 @@ from app.errors import ApiError
 from app.logging_safety import one_line
 from app.opening import greeting
 from app.talk_training import introduce as introduce_mod
-from app.telephony import ambience, backchannel, caller_guard, exotel, gate, inbound, persona
+from app.telephony import (
+    ambience,
+    backchannel,
+    caller_guard,
+    exotel,
+    fact_pack,
+    gate,
+    inbound,
+    persona,
+)
 from app.telephony.call_opening import call_opening
 from app.telephony.call_session import CallPlan, run_call
+from app.telephony.fact_pack import FactPack
 from app.telephony.greeting_audio import GREETINGS
 from app.telephony.inbound_store import InboundStore
+from app.telephony.model import FirstTokenFallback
 from app.telephony.opening_store import OpeningStore, opening_path
 from app.voice.budget import PER_CALL, Hold, VoiceBudget
 
@@ -68,6 +79,7 @@ class InboundService:
     cost_paise_per_minute_inbound: int | None = None   # an inbound call's own rate when it differs from the outbound one
     language: str = "en"
     llm_choice: str = "haiku"
+    first_token_s: float = 1.2   # TELEPHONY_FIRST_TOKEN_MS: with Sarvam speaking, the longest it may stay silent before the same turn goes to Haiku
     business: str = "the business"   # what the opening line names (TELEPHONY_INBOUND_BUSINESS; the scheduler account does not read workspace names)
     max_call_s: int = 300
     call_summaries: bool = False   # the short summary, outcome and name after each call (owner, 7 Nov 2026): on in the real wiring; off in tests, so no test ever asks a real model
@@ -201,13 +213,16 @@ def visit_label(slot: dict[str, Any]) -> str:
 
 
 def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = (), assistant: str | None = None,
-                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool | None = None, stored: Stored | None = None) -> tuple[Parts, str]:
+                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool | None = None, stored: Stored | None = None, first_token_s: float = 1.2, pack: FactPack | None = None) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in the CALL's language (te-IN on a Telugu line; owner, 6 Nov 2026: "auto" let a caller's "hello" turn a Telugu call English),
     following the call when it switches (app/telephony/language_rule.py), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
     if llm_choice == "sarvam":
-        llm: Any = SarvamChatStream(bv.sarvam_key, max_tokens=REPLY_MAX_TOKENS, client=bv.client)
-        model = "sarvam-105b"
+        # Sarvam speaks ONLY behind the first-token deadline (docs/runbooks/phone-model.md): if it sends no first piece within `first_token_s` (about one request in ten hangs for 30 s on its own), the SAME turn
+        # goes to Haiku at once. `model` is the fallback's model id (the primary uses its own).
+        llm: Any = FirstTokenFallback(SarvamChatStream(bv.sarvam_key, max_tokens=REPLY_MAX_TOKENS, client=bv.client), AnthropicStream(bv.anthropic_key or "", max_tokens=REPLY_MAX_TOKENS, client=bv.client),
+                                      primary_model="sarvam-105b", first_token_s=first_token_s)
+        model = bv.fast_model
     else:
         llm, model = AnthropicStream(bv.anthropic_key or "", max_tokens=REPLY_MAX_TOKENS, client=bv.client), bv.fast_model
     from app.talk_training.guard import GuardedTts
@@ -241,12 +256,13 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     base_tts.style = tone_of(stored)[0]   # the speaking style's real voice settings (pitch, loudness, volume ...; friendly sends nothing extra)
     tts: Any = GuardedTts(base_tts, (training or {}).get("never_say") or [],
                           goal_tone=outbound.tone if outbound is not None and outbound.goal else None,
-                          addressed_name=outbound.person_name if outbound is not None else None, titles_gender=outbound.person_gender if outbound is not None and not outbound.person_name else None)
+                          addressed_name=outbound.person_name if outbound is not None else None, titles_gender=outbound.person_gender if outbound is not None and not outbound.person_name else None,
+                          allowed_paise=pack.allowed_paise if pack is not None else None)   # with a fact pack, an amount that is not a price-list amount is never spoken
     parts = Parts(
         stt_for=lambda lang: SarvamRealtimeStt(bv.sarvam_key, language=lang, silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(lang, bv.stt_modes)),
         tts=tts,
         llm=llm,
-        system_for=lambda lang: goal_prompt(lang) if outbound is not None and outbound.goal else persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose=outbound.purpose if outbound else "inbound", goal=outbound.goal if outbound else None, facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
+        system_for=lambda lang: goal_prompt(lang) if outbound is not None and outbound.goal else persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose=outbound.purpose if outbound else "inbound", goal=outbound.goal if outbound else None, facts=list(pack.facts) if pack is not None else [], allow_prices=bool(pack is not None and pack.has_prices), customer_first_name=None, training=training, visit_slots=visit_labels,
                                                       corrections=corrections, opening=opening_for(lang), opening_says_ai=gate.has_ai_disclosure(opening_for(lang)), tone=tone_of(stored)[0]),
         greeting_for=opening_for,
         models={"fast": model, "strong": model},
@@ -306,12 +322,12 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             log.warning("exotel_inbound %s_unreadable %s", name, exc.__class__.__name__)
             return default
 
-    training, slots, corrections, sound_row = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("call_sound", None))
+    training, slots, corrections, sound_row, pack_raw = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("call_sound", None), read("fact_pack", None))
     stored = Stored.from_call_row(sound_row if isinstance(sound_row, dict) else None, training if isinstance(training, dict) else None)   # the workspace's voice, tone and speed: the SAME values and the same function as the previews (app/conversation/sound.py)
     slots = list(slots or [])
     labels = tuple(visit_label(sl) for sl in slots)
     if service.parts_for is None:
-        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, assistant=assistant, corrections=tuple(corrections or ()), stored=stored, **cast(Any, {"outbound": outbound} if outbound is not None else {}))
+        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, first_token_s=service.first_token_s, pack=fact_pack.build(pack_raw) if outbound is None and pack_raw is not None else None, assistant=assistant, corrections=tuple(corrections or ()), stored=stored, **cast(Any, {"outbound": outbound} if outbound is not None else {}))
     else:
         parts, model = service.parts_for(bv, business, language, service.llm_choice)
     text = parts.greeting_for(language)

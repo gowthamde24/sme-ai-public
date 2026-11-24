@@ -1,4 +1,4 @@
-// The contact sheet of the workspace redesign (docs/plans/workspace-v2-redesign-plan.md, section 6). ON DEMAND, LOCAL ONLY, not in CI.
+// The contact sheet of the workspace redesign (docs-private/plans/workspace-v2-redesign-plan.md, section 6). ON DEMAND, LOCAL ONLY, not in CI.
 //
 //   node e2e/screens.mjs --batch b1a-frame --out ~/Desktop/v2-overnight/shots/b1a-frame [--only orders,review] [--base http://localhost:3002]
 //

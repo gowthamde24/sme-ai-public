@@ -37,7 +37,7 @@ class Clock:
 class Wire:
     def __init__(self, clock: Clock, rate: int | None = 8000) -> None:
         fmt: dict[str, Any] = {"encoding": "base64", "sample_rate": str(rate)} if rate else {}
-        start: dict[str, Any] = {"stream_sid": SID, "call_sid": "CA1", "account_sid": "a", "from": "09502380998", "to": "04045903172", **({"media_format": fmt} if fmt else {})}
+        start: dict[str, Any] = {"stream_sid": SID, "call_sid": "CA1", "account_sid": "a", "from": "09000000998", "to": "04045903172", **({"media_format": fmt} if fmt else {})}
         self.inbox: asyncio.Queue[str | None] = asyncio.Queue()
         for m in ({"event": "connected"}, {"event": "start", "stream_sid": SID, "start": start}):
             self.inbox.put_nowait(json.dumps(m))

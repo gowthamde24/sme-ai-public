@@ -12,7 +12,7 @@ import { Choose, Sentence } from "../jobs/rules/parts";
 import { say, type TodayWords } from "../today/today-words";
 import { field, help, label } from "../visits/styles";
 import { vocab } from "./ItemCard";
-import { BAND_WORDS } from "./catalogue-logic";
+import { bandText } from "./catalogue-logic";
 
 /** What the form of the saree holds (it lives in the editor; this part only draws it and says every change). */
 export type ItemFormValues = {
@@ -77,7 +77,7 @@ export function ItemFieldsSimple(p: ItemFormValues & ItemFormSetters) {
           template={t("jobs.pg.item.line")}
           parts={{
             fabric: () => <Choose aria={t("catalogue.field.fabric")} value={p.fabric} options={FABRICS} text={fabricName} disabled={busy} onChange={(v) => p.setFabric(v as Fabric)} />,
-            band: () => <Choose aria={t("catalogue.field.price_band")} value={p.band} options={PRICE_BANDS} text={(b) => BAND_WORDS[b as PriceBand]} disabled={busy} onChange={(v) => p.setBand(v as PriceBand)} />,
+            band: () => <Choose aria={t("catalogue.field.price_band")} value={p.band} options={PRICE_BANDS} text={(b) => bandText(p.words, b as PriceBand)} disabled={busy} onChange={(v) => p.setBand(v as PriceBand)} />,
           }}
         />
         <details data-part="colours" open={p.colours.length === 0} className="group">
@@ -98,7 +98,7 @@ export function ItemFieldsSimple(p: ItemFormValues & ItemFormSetters) {
             <p className={help}>{t("catalogue.form.colours.help")}</p>
           </fieldset>
         </details>
-        <EffectLine part="item-effect" label={t("jobs.pg.item.effect.label")} text={p.shown ? t("jobs.pg.item.effect.shown", { name: nameShown, fabric: fabricName(p.fabric), band: BAND_WORDS[p.band] }) : t("jobs.pg.item.effect.hidden", { name: nameShown })} />
+        <EffectLine part="item-effect" label={t("jobs.pg.item.effect.label")} text={p.shown ? t("jobs.pg.item.effect.shown", { name: nameShown, fabric: fabricName(p.fabric), band: bandText(p.words, p.band) }) : t("jobs.pg.item.effect.hidden", { name: nameShown })} />
       </section>
       <MoreBox title={t("jobs.pg.more")} sub={t("jobs.pg.item.more.sub")}>
         <Sentence line="zari" template={t("jobs.pg.item.zari")} parts={{ zari: () => <Choose aria={t("catalogue.field.zari")} value={p.zari} options={ZARIS} text={(z) => t(`catalogue.zari.${z}`)} disabled={busy} onChange={(v) => p.setZari(v as Zari)} /> }} />

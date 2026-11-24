@@ -1,6 +1,6 @@
 # DPDP in operation (job DQ part 4)
 
-What exists, where it lives and what the operator does. The contract for the web is `docs/contracts/dpdp.md`; the decisions are in ADR 0104; the breach plan is `docs/runbooks/breach.md`.
+What exists, where it lives and what the operator does. The contract for the web is `docs/contracts/dpdp.md`; the decisions are in ADR 0104; the breach plan is `docs-private/runbooks/breach.md`.
 
 ## What the person can do (all logged)
 | Right | How |

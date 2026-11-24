@@ -1,4 +1,4 @@
-"""The ONE door to lane C's pure order lifecycle (`packages/pure/order_lifecycle`, docs/plans/order-lifecycle.md, ADR 0021).
+"""The ONE door to lane C's pure order lifecycle (`packages/pure/order_lifecycle`, docs-private/plans/order-lifecycle.md, ADR 0021).
 
 The lifecycle PROPOSES a transition for one event on one order (state, ledger, policy, flags) and returns the new state, the money and the flags. It persists nothing, authorises nothing and
 approves nothing: `owner_override` is not proof (the database derives it from the caller's role) and its hash binds the request, not the person. Nothing else in the API may import
@@ -13,7 +13,7 @@ approves nothing: `owner_override` is not proof (the database derives it from th
     differs, and refuses a result of a shape it does not know (LifecycleError).
 
 Money is integer paise; timestamps are canonical `YYYY-MM-DDTHH:MM:SSZ`; the package reads no clock. No dependency is added: it is stdlib-only and is put on the import path from the repository
-checkout when it is not already importable (the Docker image needs `COPY packages/pure ./packages/pure`: docs/pre-pilot-checklist.md, T012)."""
+checkout when it is not already importable (the Docker image needs `COPY packages/pure ./packages/pure`: docs-private/pre-pilot-checklist.md, T012)."""
 
 from __future__ import annotations
 

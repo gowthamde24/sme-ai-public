@@ -2,6 +2,7 @@ import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSettingsAdvanced";
 import { EmptyNext } from "@/components/v2/app/ds/EmptyNext";
+import { settingsOpen } from "@/lib/screens/flag";
 import { CallLimitCard, KnowledgeStep, TalkToYou, VoiceCard, VoiceTone } from "@/components/v2/app/my-assistant/LazyMyAssistant";
 import { Section } from "@/components/v2/app/my-assistant/Section";
 import { tabHref } from "@/components/v2/app/my-assistant/tabs";
@@ -96,6 +97,7 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
       langNames={CALL_LANG_NAMES}
       mock={data.talk.prefs.mock}
       ownerFirst={ownerFirst}
+      plain={settingsOpen()}
       actions={{ load: loadTalkPrefsAction.bind(null, tenantId), save: saveTalkPrefsAction.bind(null, tenantId), undo: undoTalkPrefsAction.bind(null, tenantId), preview: previewTalkPrefsAction.bind(null, tenantId) }}
     />
   ) : null;

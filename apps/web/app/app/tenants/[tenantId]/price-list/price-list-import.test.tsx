@@ -47,13 +47,35 @@ describe("PriceListImport", () => {
     expect(screen.getByRole("heading", { name: "The file is good" })).toBeInTheDocument();
   });
 
+  it("a check on lines the browser sent with CRLF line ends still shows its result (the browser changes a textarea's line ends in a form)", async () => {
+    const p = props({ preview: vi.fn(async (_prev: unknown, fd: FormData) => { fd.set("csv", String(fd.get("csv")).replace(/\n/g, "\r\n")); return { ok: true as const, preview: parsePreview(PREVIEW_JSON) }; }) as never });
+    render(<PriceListImport {...p} />);
+    type(GOOD_TEXT);
+    await check();
+    expect(await screen.findByRole("heading", { name: "The file is good" })).toBeInTheDocument();
+    expect(screen.queryByText(/changed since the last check/)).toBeNull();
+  });
+
+  it("an Excel file, a photo or a PDF is not put in the box as garbage: the owner is told where to give it", async () => {
+    render(<PriceListImport {...props()} />);
+    const input = screen.getByLabelText("Choose a CSV file") as HTMLInputElement;
+    await act(async () => fireEvent.change(input, { target: { files: [new File([new Uint8Array([80, 75, 3, 4, 0, 0])], "rates.xlsx")] } }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("This file is not a plain list");
+    expect((screen.getByLabelText("Or paste the file's text") as HTMLTextAreaElement).value).toBe("");
+  });
+
+  it("offers an example file to download", () => {
+    render(<PriceListImport {...props()} />);
+    expect(screen.getByRole("button", { name: "Download an example file" })).toBeInTheDocument();
+  });
+
   it("a file with problems lists them with their rows and columns and offers no save", async () => {
     render(<PriceListImport {...props({ preview: vi.fn(async () => ({ ok: true as const, preview: parsePreview(BAD_JSON) })) })} />);
     type("x");
     await check();
     const list = await screen.findByRole("list", { name: "Problems in the file" });
     const items = within(list).getAllByRole("listitem");
-    expect(items[0]).toHaveTextContent("Row 1, sku: The sku may use only letters");
+    expect(items[0]).toHaveTextContent("Row 1, product code: The product code may use only letters");
     expect(items[1]).toHaveTextContent("Row 3, unit price: This is not an amount in rupees");
     expect(items[2]).toHaveTextContent("The file: The file is too big");
     expect(screen.getByRole("heading", { name: "The file has problems" })).toBeInTheDocument();

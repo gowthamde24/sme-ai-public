@@ -1,4 +1,4 @@
-"""Shared pieces of the follow-up mutation tools (T010 part 2, commit 5; docs/checklist-notes/A.md). Standard library only.
+"""Shared pieces of the follow-up mutation tools (T010 part 2, commit 5; docs-private/checklist-notes/A.md). Standard library only.
 
 A SQL mutant is the LATEST definition of ONE function with ONE text replacement (or ONE statement and its undo), applied to the LOCAL database, run against the pgTAP files, and restored. A source mutant
 (Python, web) is ONE text replacement in ONE file, restored with `git checkout`. Every result is appended to `out/*.jsonl` (git-ignored), keyed by the mutant's description, so a run can resume and the

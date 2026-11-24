@@ -18,7 +18,7 @@ def main() -> int:
         print(f"eval-live refused: {why}", file=sys.stderr)
         print(
             "It needs LLM_PROVIDER=anthropic, AGENTS_ENABLED=true, LLM_MODEL, ANTHROPIC_API_KEY, both price settings and "
-            "LLM_SPEND_CAP_CONFIRMED=true (see docs/pre-pilot-checklist.md). Nothing was run.",
+            "LLM_SPEND_CAP_CONFIRMED=true (see docs-private/pre-pilot-checklist.md). Nothing was run.",
             file=sys.stderr,
         )
         return 2

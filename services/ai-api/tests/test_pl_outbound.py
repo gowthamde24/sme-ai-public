@@ -126,7 +126,7 @@ def test_a_test_call_to_the_owners_own_phone_is_placed_from_the_businesss_line_w
     assert call["from"] == LINE and call["to"] == OWNER
     for url in (call["answer_url"], call["hangup_url"]):
         assert url.startswith(f"{BASE}/v1/telephony/plivo/") and f"call={placed.call_id}" in url and f"tenant={TENANT}" in url and "lang=en" in url and "p=visit_reminder" in url and "k=test" in url
-        assert "9502380998" not in url and OWNER not in url, "no number in an address Plivo (and our logs) will see"
+        assert "9000000998" not in url and OWNER not in url, "no number in an address Plivo (and our logs) will see"
     assert call["answer_url"].split("?")[0].endswith("/outbound-answer") and call["hangup_url"].split("?")[0].endswith("/hangup")
     assert repo.tokens == ["tok"]
 
@@ -197,7 +197,7 @@ def outbound_service(store: FakeStore | None = None, *, numbers: frozenset[str] 
 
 def ring_out(**over: str) -> dict[str, str]:
     """What Plivo asks when the callee of a call we placed picks up: From is OUR line, To is the callee."""
-    return {"CallUUID": "55555555-2222-3333-4444-555555555555", "From": "918065590129", "To": "919502380998", "Direction": "outbound", "CallStatus": "in-progress", "Event": "StartApp", **over}
+    return {"CallUUID": "55555555-2222-3333-4444-555555555555", "From": "918065590129", "To": "919000000998", "Direction": "outbound", "CallStatus": "in-progress", "Event": "StartApp", **over}
 
 
 def _client(svc: InboundService) -> Any:
@@ -219,7 +219,7 @@ def test_the_answer_to_a_call_we_placed_is_signed_checked_against_the_list_again
     BOOK._items.clear()
     params = ring_out()
     r = _client(outbound_service()).post(f"{OUT}?{QUERY}", data=params, headers=signed_query(f"{OUT}?{QUERY}", params))
-    assert r.status_code == 200 and "<Stream" in r.text and "/v1/telephony/plivo/stream/" in r.text and "9502380998" not in r.text
+    assert r.status_code == 200 and "<Stream" in r.text and "/v1/telephony/plivo/stream/" in r.text and "9000000998" not in r.text
     admitted = BOOK._items[params["CallUUID"]]
     assert admitted.outbound is not None and admitted.outbound.row_id == ROW and admitted.outbound.purpose == "visit_reminder" and admitted.caller == OWNER and admitted.line_no == LINE
     assert admitted.outbound.opening_line == TEST_OPENING["en"] and admitted.outbound.goal and "TEST" in admitted.outbound.goal
@@ -279,7 +279,7 @@ async def test_a_call_we_placed_runs_the_same_pipeline_on_the_existing_row_and_i
     assert len(store.finished) == 1 and store.finished[0][0] == ROW
     assert sim.heard.problems == [] and sim.heard.audio_bytes > 0
     text = " ".join(records.records)
-    assert "9502380998" not in text and "8065590129" not in text and call not in text, "no number, no raw call id in the log"
+    assert "9000000998" not in text and "8065590129" not in text and call not in text, "no number, no raw call id in the log"
     assert any("plivo_outbound admitted" in m for m in records.records)
 
 
@@ -311,7 +311,7 @@ def test_the_hangup_callback_of_a_placed_call_nobody_answered_ends_its_row_over_
     store = FakeStore(line={**PLIVO_LINE, "tenant_id": str(TENANT)})
     store.scheduler_token = lambda: "scheduler-token"   # type: ignore[attr-defined]
     svc = outbound_service(store, repo=repo)
-    params = {"CallUUID": "77777777-2222-3333-4444-555555555555", "CallStatus": "busy", "Event": "Hangup", "Direction": "outbound", "From": "918065590129", "To": "919502380998", "HangupCauseName": "User Busy"}
+    params = {"CallUUID": "77777777-2222-3333-4444-555555555555", "CallStatus": "busy", "Event": "Hangup", "Direction": "outbound", "From": "918065590129", "To": "919000000998", "HangupCauseName": "User Busy"}
     path = f"/v1/telephony/plivo/hangup?call={row}&tenant={TENANT}"
     client = _client(svc)
     assert client.post(path, data=params, headers=signed_query(path, params)).status_code == 200
@@ -399,6 +399,10 @@ def test_a_provider_failure_is_a_502_and_a_deployment_that_places_nothing_is_a_5
     out, _, _ = placer(api=api)
     failed = _owner_client(out).post(URL, json={"to": OWNER}, headers=auth("a_owner"))
     assert failed.status_code == 502 and failed.json()["error"]["code"] == "call_provider_failed"
+    assert failed.json()["error"]["reason"] == "provider_failed"
+    api.fail_with = "auth"   # a refused login (VoiceLink 401) is its own closed word (28 Nov 2026), never silent
+    refused_login = _owner_client(placer(api=api)[0]).post(URL, json={"to": OWNER}, headers=auth("a_owner"))
+    assert refused_login.status_code == 502 and refused_login.json()["error"]["reason"] == "voicelink_auth"
     off = _owner_client(None).post(URL, json={"to": OWNER}, headers=auth("a_owner"))
     assert off.status_code == 503 and off.json()["error"]["code"] == "calls_unavailable"
 
@@ -417,7 +421,7 @@ def test_the_answer_and_hangup_urls_with_a_query_pass_when_signed_and_are_refuse
     answer_path = f"{OUT}?{QUERY}"
     hangup_path = f"/v1/telephony/plivo/hangup?call={ROW}&tenant={TENANT}&lang=en&p=visit_reminder&k=test"
     answer_form = ring_out()
-    hangup_form = {"CallUUID": "88888888-2222-3333-4444-555555555555", "CallStatus": "completed", "Event": "Hangup", "Direction": "outbound", "From": "918065590129", "To": "919502380998",
+    hangup_form = {"CallUUID": "88888888-2222-3333-4444-555555555555", "CallStatus": "completed", "Event": "Hangup", "Direction": "outbound", "From": "918065590129", "To": "919000000998",
                    "HangupCauseName": "Normal Hangup", "HangupSource": "Callee", "Duration": "7", "BillDuration": "7"}
     client = _client(outbound_service())
     for path, form in ((answer_path, answer_form), (hangup_path, hangup_form)):
@@ -437,7 +441,7 @@ def test_the_answer_and_hangup_urls_with_a_query_pass_when_signed_and_are_refuse
         assert client.post(hangup_path, data=hangup_form).status_code == 403
         text = caplog.text
     assert "signed=NO" in text and "Normal Hangup" in text and "Callee" in text, "the cause and the source are logged even when the signature fails"
-    assert "919502380998" not in text and "918065590129" not in text and "plivo_signature_failed" in text and "query_keys=call,tenant,lang,p,k" in text
+    assert "919000000998" not in text and "918065590129" not in text and "plivo_signature_failed" in text and "query_keys=call,tenant,lang,p,k" in text
 
 
 # ---- proof of request (owner, 18 Nov 2026): a LIVE call-back needs a request the person made; the sandbox is unchanged

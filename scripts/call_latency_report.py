@@ -15,7 +15,7 @@ The carrier's own playback delay (Plivo) is not in our log; `--probe` is for the
 
   python3 scripts/call_latency_report.py --days 7                 print the table
   python3 scripts/call_latency_report.py --days 1 --since 2026-11-15T00:00:00Z
-  python3 scripts/call_latency_report.py --days 7 --write docs/plans/call-latency.md   also write the report file"""
+  python3 scripts/call_latency_report.py --days 7 --write docs-private/plans/call-latency.md   also write the report file"""
 
 from __future__ import annotations
 

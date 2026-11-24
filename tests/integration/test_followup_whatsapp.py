@@ -1,4 +1,4 @@
-"""WhatsApp as a first-class channel in the follow-up screens (docs/plans/followups-whatsapp.md), commit 1, on the REAL stack.
+"""WhatsApp as a first-class channel in the follow-up screens (docs-private/plans/followups-whatsapp.md), commit 1, on the REAL stack.
 
 The SPIKE comes first: the plan rests on the assumption that the database already carries a lead whose contact has ONLY a phone number all the way through WhatsApp (a keyed contact, a first
 outbound WhatsApp touch, a WhatsApp draft, an approval, "I sent it"). If this test fails the ticket stops. Nothing here sends anything; a touch and a draft are records. All data is synthetic."""

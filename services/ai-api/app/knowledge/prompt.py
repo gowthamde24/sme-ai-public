@@ -15,9 +15,11 @@ def facts_block(facts: Sequence[dict[str, Any]], *, allow_prices: bool) -> str:
     if not usable:
         return NOTHING
     lines = [f"- {' '.join(str(f['text']).split())}" for f in usable]
-    rule = "State only these facts; if the customer asks for anything else, say the team will get back to them. Never work out a total, a discount or a balance."
+    rule = "State only these facts; if the customer asks for anything else, say ONCE, naturally, that you will ask the owner and the team will call back; never invent. Never work out a total, a discount or a balance."
     if not allow_prices:
         rule += " Do not state any price or amount."
+    else:
+        rule += " A price is said only exactly as listed above, written as digits with Rs (for example Rs 1,250); an item or a price that is not listed is not quoted: say that you will ask the owner."
     return "FACTS YOU MAY STATE (approved by the business owner):\n" + "\n".join(lines) + "\n" + rule
 
 

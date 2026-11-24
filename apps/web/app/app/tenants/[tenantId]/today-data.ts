@@ -158,7 +158,7 @@ function rethrowAuth(error: unknown): null {
   return null;
 }
 
-/** The first word of a full name ("Gowtham Reddy Sodanapalli" -> "Gowtham"); "" when there is none. */
+/** The first word of a full name ("Ada Test Lovelace" -> "Ada"); "" when there is none. */
 export const firstName = (full: string | null | undefined): string => (full ?? "").trim().split(/\s+/)[0] ?? "";
 
 /** The name for the greeting: what the person asked to be called (My profile, "How should I address you?"), else their name there (`GET /me/profile`), else the one the members list has for them (it is null for most). Never throws except for a rejected session. */

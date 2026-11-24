@@ -1,4 +1,4 @@
--- The follow-up due list's candidates (docs/plans/followups-due-candidates-plan.md, migration 20261028090000): public.followup_due_candidates, a READ-ONLY, role-first, security-definer list of the leads a
+-- The follow-up due list's candidates (docs-private/plans/followups-due-candidates-plan.md, migration 20261028090000): public.followup_due_candidates, a READ-ONLY, role-first, security-definer list of the leads a
 -- person might have to follow up, oldest last outbound touch first, with a keyset cursor. It is a SAFE SUPERSET of what the pinned engine would call due: it drops only leads that provably cannot be (no
 -- outbound touch, archived, stopped by the database, or one of the blocker's four TERMINAL answers) and copies no cadence rule. NOTHING IS SENT; nothing is written.
 --   A catalog (definer, stable, search_path, grants)   B the role matrix and the generic refusal   C parameters (22023)   D which leads are in, by construction (hand-labelled shapes and a generated grid)

@@ -164,7 +164,7 @@ export function rupeesToPaise(text: string): number | null {
   return paise >= 100 && paise <= 100_000_000 ? paise : null;
 }
 
-/** The price bands as a customer is told them: money, so English in every language (the API's own wording). */
+/** The price bands in English (the fallback, and what the tests pin). The words a person reads are the string store's `catalogue.band.<band>` (owner, 29 Nov: Telugu too, reviewed by him); a page that did not load them shows these. */
 export const BAND_WORDS: Record<PriceBand, string> = {
   under_5k: "Under ₹5,000",
   "5k_10k": "₹5,000 to ₹10,000",
@@ -172,3 +172,14 @@ export const BAND_WORDS: Record<PriceBand, string> = {
   "25k_50k": "₹25,000 to ₹50,000",
   above_50k: "Above ₹50,000",
 };
+
+/** The price band in the person's language: the string store's word when the page loaded it, else the English. */
+export function bandText(words: Readonly<Record<string, string>> | undefined, band: PriceBand): string {
+  return words?.[`catalogue.band.${band}`] ?? BAND_WORDS[band];
+}
+
+/** The price band an exact price falls in (the bands are 5,000 / 10,000 / 25,000 / 50,000 rupees): typing the price keeps the range right, so a saree is never left in the first range by accident. */
+export function bandForPaise(paise: number): PriceBand {
+  const rupees = paise / 100;
+  return rupees < 5000 ? "under_5k" : rupees < 10000 ? "5k_10k" : rupees < 25000 ? "10k_25k" : rupees < 50000 ? "25k_50k" : "above_50k";
+}

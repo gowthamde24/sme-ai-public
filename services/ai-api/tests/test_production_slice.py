@@ -105,7 +105,7 @@ def test_the_full_stack_deploys_from_its_declared_files_sandbox_one_warm_instanc
     done = run(tmp_path, "deploy", "api", PROD_SCHEDULER_EMAIL="scheduler@example.test")   # no PRIVACY_VERSION in the shell: the declared file (and the script default) say 2026-11-26, never a stale value
     assert done.returncode == 0, done.stderr + done.stdout
     deploy = next(line for line in done.stdout.splitlines() if "gcloud run deploy sme-api" in line).replace("\\", "")
-    for must in ("TELEPHONY_MODE=sandbox", "TELEPHONY_OUTBOUND=false", "TASKS_DIALER=|", "AGENTS_ENABLED=true", "PRIVACY_VERSION=2026-11-26", "TERMS_VERSION=2026-11-26", "SCHEDULER_EMAIL=scheduler@example.test",
+    for must in ("TELEPHONY_MODE=sandbox", "TELEPHONY_OUTBOUND=true", "TELEPHONY_MAX_CONCURRENT=2", "TELEPHONY_SANDBOX_IGNORES_HOURS=true", "TASKS_DIALER=|", "AGENTS_ENABLED=true", "PRIVACY_VERSION=2026-11-26", "TERMS_VERSION=2026-11-26", "SCHEDULER_EMAIL=scheduler@example.test",
                  "PUBLIC_BASE_URL=https://sme-api-111222333.asia-south1.run.app", "WORKSPACE_SECRETS_PROJECT=prod-project-test", "MAIL_FROM=noreply@example.test", "LLM_MODEL=claude-haiku-5-5",
                  "--no-cpu-throttling", "--min-instances 1", "--max-instances 1", "ANTHROPIC_API_KEY=sme-anthropic-api-key:latest", "PLIVO_AUTH_TOKEN=sme-plivo-auth-token:latest",
                  "TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest", "SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest",
@@ -126,7 +126,7 @@ def test_the_full_stack_without_a_scheduler_account_is_refused(tmp_path: Path) -
 
 def test_the_declared_full_files_carry_no_value_that_is_not_for_git() -> None:
     env = (FULL_DIR / "api.env").read_text()
-    assert "TELEPHONY_MODE=sandbox" in env and "TELEPHONY_OUTBOUND=false" in env and "TASKS_DIALER=\n" in env
+    assert "TELEPHONY_MODE=sandbox" in env and "TELEPHONY_OUTBOUND=true" in env and "TASKS_DIALER=\n" in env   # outbound is on only because the mode is still sandbox: the sandbox list is the fence
     for line in env.splitlines():
         if line.startswith("#") or not line.strip():
             continue
