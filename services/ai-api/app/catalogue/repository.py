@@ -9,7 +9,12 @@ from typing import Any, Protocol
 
 import httpx
 
-from app.catalogue.errors import NeedsPhotoError, NothingToUndoError, PhotoFilesMissingError, TooManyPhotosError
+from app.catalogue.errors import (
+    NeedsPhotoError,
+    NothingToUndoError,
+    PhotoFilesMissingError,
+    TooManyPhotosError,
+)
 from app.crm.repository import classify_error
 from app.tenancy.repository import MfaRequired, RepositoryError, UpstreamError
 
