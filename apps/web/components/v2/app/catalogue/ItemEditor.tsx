@@ -79,7 +79,7 @@ export function ItemEditor(p: ItemEditorProps) {
   const [name, setNameRaw] = React.useState(item?.name ?? "");
   const setName = (v: string) => {
     setNameRaw(v);
-    const g = !item && !touched.current.fabric ? guessFabric(v) : null;
+    const g = !item && !chosen.fabric ? guessFabric(v) : null;
     if (g) setFabric(g);
   };
   const [fabric, setFabric] = React.useState<Fabric>(item?.fabric ?? "kanchi_pattu");
@@ -91,7 +91,7 @@ export function ItemEditor(p: ItemEditorProps) {
   const [stock, setStock] = React.useState<StockStatus>(item?.stock_status ?? "in_stock");
   const [active, setActive] = React.useState(item?.active ?? false);
   // a NEW saree: the fabric follows the name and "show to customers" turns on with the first photo, until the owner chooses herself (ten sarees in a row must not all end up as the first fabric of the list and hidden)
-  const touched = React.useRef({ fabric: false, shown: false });
+  const [chosen, setChosen] = React.useState({ fabric: false, shown: false });
   const [custom, setCustom] = React.useState<FieldValues>(p.custom ?? {});
   const [priceText, setPriceText] = React.useState("");
   const [clearPrice, setClearPrice] = React.useState(false);
@@ -143,7 +143,7 @@ export function ItemEditor(p: ItemEditorProps) {
     setPicked(errors);
     if (added.length) {
       setSlots((cur) => [...cur, ...added]);
-      if (!item && !touched.current.shown) setActive(true);
+      if (!item && !chosen.shown) setActive(true);
     }
     if (takeRef.current) takeRef.current.value = "";
     if (chooseRef.current) chooseRef.current.value = "";
@@ -316,7 +316,7 @@ export function ItemEditor(p: ItemEditorProps) {
             shown={showActive}
             setName={setName}
             setFabric={(f) => {
-              touched.current.fabric = true;
+              setChosen((c) => ({ ...c, fabric: true }));
               setFabric(f);
             }}
             setColours={setColours}
@@ -347,7 +347,7 @@ export function ItemEditor(p: ItemEditorProps) {
               {say(words, "catalogue.field.fabric")}
             </label>
             <select id="cat-fabric" value={fabric} disabled={busy} onChange={(e) => {
-                touched.current.fabric = true;
+                setChosen((c) => ({ ...c, fabric: true }));
                 setFabric(e.target.value as Fabric);
               }} className={field}>
               {FABRICS.map((f) => (
@@ -511,7 +511,7 @@ export function ItemEditor(p: ItemEditorProps) {
         {p.simple ? (
           <div className="rounded-2xl border border-line p-4">
             <Tick label={<b className="font-semibold">{say(words, "catalogue.form.active")}</b>} sub={liveCount === 0 ? say(words, "catalogue.form.active.needs") : say(words, "catalogue.form.active.help")} checked={showActive} disabled={busy || liveCount === 0} onChange={(e) => {
-                touched.current.shown = true;
+                setChosen((c) => ({ ...c, shown: true }));
                 setActive(e.target.checked);
               }} />
           </div>
