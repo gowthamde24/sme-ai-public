@@ -12,7 +12,7 @@ import { AddButton } from "@/components/v2/app/AddButton";
 import { link, mutedText, noteBox, spaceTop } from "@/components/v2/app/ui";
 import { makeT } from "@/components/v2/app/words";
 import { partsWords } from "@/i18n/app-words";
-import { jobsScreens } from "@/lib/screens/flag";
+import { jobsScreens, settingsOpen } from "@/lib/screens/flag";
 import type { Lang } from "@/i18n/lang";
 import { wordsFor } from "@/i18n/app-words";
 
@@ -67,9 +67,13 @@ export async function QuotePolicySection({ accessToken, tenantId, role, secondFa
     </p>
   ) : (
     <div className={spaceTop}>
-      <AddButton label={t("qp.publish_a_new_version")}>
-        <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} words={words} simple={simple} />
-      </AddButton>
+      {settingsOpen() ? (
+        <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} words={words} plain />
+      ) : (
+        <AddButton label={t("qp.publish_a_new_version")}>
+          <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} words={words} simple={simple} />
+        </AddButton>
+      )}
     </div>
   );
   return <QuotePolicyView words={words} versions={versions} today={today} form={form} embedded simple={simple} />;
