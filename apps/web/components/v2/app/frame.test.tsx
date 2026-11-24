@@ -222,6 +222,10 @@ describe("WorkspaceSwitcher", () => {
     expect(screen.getByRole("link")).toHaveTextContent("Acme SilksFree trial plan");
     expect(screen.queryByText("Switch workspace")).toBeNull();
   });
+  it("under free early access the grey line says so instead of the plan (one name line + one grey line)", () => {
+    render(<WorkspaceSwitcher memberships={only("owner")} plan={loaded.plan} early />);
+    expect(screen.getByRole("link")).toHaveTextContent("Acme SilksFree early access");
+  });
   it("two or more: the name opens the list, with each role, and goes to a workspace's HOME, never the same sub-page", () => {
     render(<WorkspaceSwitcher memberships={owner} plan={null} />);
     const list = screen.getByRole("list", { name: "Your workspaces" });

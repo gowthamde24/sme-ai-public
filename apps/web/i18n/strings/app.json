@@ -126995,5 +126995,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "frame.early": {
+  "en": "Free early access",
+  "te": "ఉచిత early access",
+  "hi": "मुफ़्त early access",
+  "kn": "ಉಚಿತ early access",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
