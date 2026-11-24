@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, String
 SoldPer = Literal["piece", "sq_ft", "sq_m", "box", "bag", "tonne", "cft", "truckload"]
 AreaUnit = Literal["sq_ft", "sq_m"]
 Rounding = Literal["half_up", "half_even", "down"]
-Stock = Literal["in_stock", "few_left", "made_to_order"]
+Stock = Literal["in_stock", "few_left", "made_to_order", "out_of_stock"]
 Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 QuoteStatus = Literal["draft", "approved", "rejected", "superseded"]
 RejectCode = Literal["wrong_prices", "customer_changed", "duplicate", "withdrawn", "other"]

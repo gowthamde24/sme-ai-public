@@ -200,3 +200,9 @@ def test_prices_from_the_catalogue_and_what_you_sell_are_said_like_price_list_ro
     assert "Kanchi red: Rs 12,500 per piece" in text and "Fall and pico: Rs 150 per service" in text
     assert "Handloom cotton: Rs 900 per piece when you buy 10 or more" in text and "Rs 800 per piece when you buy 50 or more" in text and "minimum order" not in text
     assert pack.allowed_paise == frozenset({1250000, 15000, 90000, 80000}), "an amount in none of the sources is not allowed"
+
+
+def test_an_out_of_stock_catalogue_item_is_said_as_out_of_stock_not_as_made_to_order() -> None:
+    raw = {"catalogue": [{"name": "Red kanchi", "fabric": "kanchi_pattu", "colours": ["red"], "occasions": ["wedding"], "stock": "out_of_stock"}]}
+    text = text_of(fact_pack.build(raw, now=TUE_11))
+    assert "Red kanchi" in text and "out of stock" in text and "made to order" not in text

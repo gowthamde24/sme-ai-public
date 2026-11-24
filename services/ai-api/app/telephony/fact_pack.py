@@ -21,7 +21,7 @@ IST = ZoneInfo("Asia/Kolkata")
 MAX_TOKENS = 1500           # the whole pack (measured 28 Nov with count_tokens: Telugu about 1.1 characters a token, English about 2.6)
 BUDGET = {"prices": 500, "catalogue": 350, "faq": 350}   # tokens per section; the notes get what is left
 DAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-STOCK = {"in_stock": "in stock", "few_left": "only a few left", "made_to_order": "made to order"}
+STOCK = {"in_stock": "in stock", "few_left": "only a few left", "made_to_order": "made to order", "out_of_stock": "out of stock"}
 UNITS = {"piece": "piece", "metre": "metre", "meter": "metre", "kg": "kg", "set": "set", "dozen": "dozen", "pair": "pair", "service": "service", "course": "course", "listing": "listing"}
 REMOVED = "(price: ask the price list)"
 
