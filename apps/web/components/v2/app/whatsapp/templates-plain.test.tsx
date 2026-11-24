@@ -16,8 +16,8 @@ describe("Messages we send as plain rows (TEMPLATES_PLAIN)", () => {
   it("one row per message with a plain name, its languages and ONE status in words; no technical name, no table", () => {
     const { container } = render(<TemplatesList plain words={WORDS} items={ITEMS} actions={actions} />);
     expect(container.querySelector("table")).toBeNull();
-    const rows = [...container.querySelectorAll("[data-template]")] as HTMLElement[];
-    expect(rows.map((r) => r.getAttribute("data-template"))).toEqual(["lead_ack", "visit_reminder", "missed_call_followup"]);
+    const rows = [...container.querySelectorAll("[data-tpl]")] as HTMLElement[];
+    expect(rows.map((r) => r.getAttribute("data-tpl"))).toEqual(["lead_ack", "visit_reminder", "missed_call_followup"]);
     expect(within(rows[0]).getByText("Thanks for your enquiry")).toBeInTheDocument();
     expect(within(rows[0]).getByText("English · Telugu")).toBeInTheDocument();
     expect(within(rows[0]).getByText("Not sent yet")).toBeInTheDocument();

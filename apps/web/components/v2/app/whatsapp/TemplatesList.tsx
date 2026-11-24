@@ -113,7 +113,7 @@ export function TemplatesList({ words, items: initial, actions = null, plain = f
               const status = order.find((o) => rows.some((r) => r.status === o)) ?? "approved";
               const key = status === "paused" || status === "disabled" ? "rejected" : status;
               return (
-                <li key={name} data-template={name} data-status={status} className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-line py-4">
+                <li key={name} data-tpl={name} data-tstate={status} className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-line py-4">
                   <div className="min-w-0 flex-1">
                     <p className="m-0 text-[17px] font-semibold text-ink">{plainName(name)}</p>
                     <p className="m-0 text-[15px] text-muted">{[...new Set(rows.map((r) => t(`today.lang.${r.language}`)))].join(" · ")}</p>
