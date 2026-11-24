@@ -36,6 +36,13 @@ describe("targetPaths: calls paused and a message sent back", () => {
   });
 });
 
+describe("targetPaths: the phone assistant has no price list", () => {
+  it("`price_list` opens the price list page of this workspace", async () => {
+    const prices = { type: "price_list" as const, id: T };
+    expect((await targetPaths("tok", T, [prices]))(prices)).toBe(`/app/tenants/${T}/price-list`);
+  });
+});
+
 describe("targetPaths: a quote opens its enquiry", () => {
   it("the newest 50 come from the list; an older one from the Today summary when it holds it; only what the summary does not hold is read one by one", async () => {
     summaryEnquiry.mockImplementation(async (_t: string, id: string) => (id === Q_SUMMARY ? E_SUMMARY : id === Q_UNPLACED ? null : undefined));
