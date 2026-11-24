@@ -413,3 +413,20 @@ def test_the_repository_carries_the_providers_word_on_its_calls_and_line_lookup(
     assert [a["p_provider"] for f, a in sent] == ["voicelink", "voicelink"]
     assert PostgrestOutboundRepo(cast(Any, Rpc())).line_for_tenant("t", TENANT) is None or True
     assert sent[-1][1]["p_provider"] == "plivo", "the default is unchanged"
+
+
+def test_a_username_with_spaces_and_capitals_goes_to_the_login_as_one_json_value() -> None:
+    """The reseller login can be a full name with spaces (owner, 26 Nov 2026): it travels as one JSON string, never split, trimmed or put into a URL (a made-up name here)."""
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        if request.url.path.endswith("/auth/login"):
+            return httpx.Response(200, json={"status": True, "data": {"access_token": "tok"}})
+        return httpx.Response(200, json={"data": {"wallet": {"balance": "100", "currency": "INR"}, "currency": "INR"}, "status": True})
+
+    client = httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))
+    VoicelinkApi("Ada Test Lovelace-Example", "  pa ss word  ", client=client).wallet()
+    login = seen[0]
+    assert json.loads(login.content) == {"username": "Ada Test Lovelace-Example", "password": "  pa ss word  "}
+    assert "Ada" not in str(login.url) and "Lovelace" not in str(login.url), "never in the address"
