@@ -22,7 +22,7 @@ class FakeLists:
         self.refuse: str | None = None
         self.created = True
 
-    def _go(self, name: str, payload: Any, out: Any) -> Any:
+    def _go(self, name: str, payload: Any, out: dict[str, Any]) -> dict[str, Any]:
         self.calls.append((name, payload))
         if self.refuse:
             raise ListRefused(self.refuse)
