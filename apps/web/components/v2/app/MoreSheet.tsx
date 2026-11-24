@@ -10,6 +10,7 @@ import { SpriteIcon, type SpriteId } from "./icons";
 import { NavGroups } from "./NavGroups";
 import { NavMeters } from "./NavMeters";
 import { BalanceBox } from "./ds/BalanceBox";
+import { Appearance } from "./Appearance";
 import { word, type Labels } from "./labels";
 import { ADMINS, type MenuGroup } from "./nav";
 import type { Membership } from "./use-workspace";
@@ -76,6 +77,7 @@ export function MoreSheet({ current, memberships, email, signOut, accountMark, l
                   ))}
                 </div>
               ) : null}
+              <Appearance labels={labels} className="rounded-xl border border-line bg-surface p-3" />
               <form action={signOut}>
                 <button type="submit" className={`${row} text-red-text`}>
                   <SpriteIcon id="log-out" />

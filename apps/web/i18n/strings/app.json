@@ -127499,5 +127499,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "frame.appearance": {
+  "en": "Appearance",
+  "te": "రూపం",
+  "hi": "रूप",
+  "kn": "ನೋಟ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.theme.light": {
+  "en": "Light",
+  "te": "లైట్",
+  "hi": "लाइट",
+  "kn": "ಲೈಟ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.theme.dark": {
+  "en": "Dark",
+  "te": "డార్క్",
+  "hi": "डार्क",
+  "kn": "ಡಾರ್ಕ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.theme.system": {
+  "en": "Automatic",
+  "te": "ఆటోమేటిక్",
+  "hi": "अपने आप",
+  "kn": "ತಾನಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
