@@ -125,7 +125,7 @@ if $do_api; then
     : "${PRIVACY_VERSION:?REFUSED: set PRIVACY_VERSION to the version string of the owner-approved privacy text (a stale or unapproved value would make the form accept consent to the wrong text)}"
   else
     : "${PROD_SCHEDULER_EMAIL:?set PROD_SCHEDULER_EMAIL (the scheduler account of the production project)}"
-    PRIVACY_VERSION="${PRIVACY_VERSION:-2026-10-27}"   # the text that is live today; the owner's new version string comes with the approval
+    PRIVACY_VERSION="${PRIVACY_VERSION:-2026-11-26}"   # the text that is live today (26 Nov 2026: VoiceLink named, not Plivo); a new version string comes with the owner's approval and the same string is declared in deploy/settings/production/api.env
     # TELEPHONY: `live` is the owner's written go-live (customer-zero-go-live-checklist.md): the declared file may only say it when PROD_LIVE_OK=yes, and the deploy names the change (ALLOW_FLAG_CHANGE=TELEPHONY_MODE).
     if grep -q '^TELEPHONY_MODE=live' "$API_SETTINGS_DIR/api.env" && [ "${PROD_LIVE_OK:-}" != yes ]; then echo "REFUSED: $API_SETTINGS_DIR/api.env says TELEPHONY_MODE=live: that needs PROD_LIVE_OK=yes (the owner's written go-live)" >&2; exit 2; fi
   fi
