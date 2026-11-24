@@ -216,9 +216,9 @@ class GuardedTts:
     def stream(self, text: str, language: str, *args: Any, **kwargs: Any) -> AsyncIterator[bytes]:
         said = safe_line(text, self._never, language)
         if said == text and self._allowed_paise is not None and self._goal_tone is None:
-            from app.telephony.fact_pack import amounts_paise
+            from app.telephony.fact_pack import all_amounts_paise
 
-            if any(a not in self._allowed_paise for a in amounts_paise(text)):
+            if any(a not in self._allowed_paise for a in all_amounts_paise(text)):
                 self.amounts_blocked += 1
                 logger.info("amount blocked: language=%s", language)   # a closed line, never the amount or the sentence
                 return self._inner.stream(SAFE.get(language, SAFE["en"]), language, *args, **kwargs)  # type: ignore[no-any-return]
