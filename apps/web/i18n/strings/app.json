@@ -127666,5 +127666,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "catalogue.band.under_5k": {
+  "en": "Under ₹5,000",
+  "te": "₹5,000 లోపు",
+  "hi": "₹5,000 से कम",
+  "kn": "₹5,000ಕ್ಕಿಂತ ಕಡಿಮೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.band.5k_10k": {
+  "en": "₹5,000 to ₹10,000",
+  "te": "₹5,000 నుంచి ₹10,000",
+  "hi": "₹5,000 से ₹10,000",
+  "kn": "₹5,000 ರಿಂದ ₹10,000",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.band.10k_25k": {
+  "en": "₹10,000 to ₹25,000",
+  "te": "₹10,000 నుంచి ₹25,000",
+  "hi": "₹10,000 से ₹25,000",
+  "kn": "₹10,000 ರಿಂದ ₹25,000",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.band.25k_50k": {
+  "en": "₹25,000 to ₹50,000",
+  "te": "₹25,000 నుంచి ₹50,000",
+  "hi": "₹25,000 से ₹50,000",
+  "kn": "₹25,000 ರಿಂದ ₹50,000",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.band.above_50k": {
+  "en": "Above ₹50,000",
+  "te": "₹50,000 పైన",
+  "hi": "₹50,000 से ऊपर",
+  "kn": "₹50,000ಕ್ಕಿಂತ ಹೆಚ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

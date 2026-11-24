@@ -14,7 +14,7 @@ import { CatalogueFiltersSimple } from "./CatalogueFiltersSimple";
 import { FreshPhotos } from "./FreshPhotos";
 import { Photo } from "./Photo";
 import { ItemCard, vocab } from "./ItemCard";
-import { BAND_WORDS, STOCK_CHOICES, activeFilters, badgesOf, priceOf, hrefFor, isFiltered, soonestExpiry, toggled, type CatalogueQuery } from "./catalogue-logic";
+import { bandText, STOCK_CHOICES, activeFilters, badgesOf, priceOf, hrefFor, isFiltered, soonestExpiry, toggled, type CatalogueQuery } from "./catalogue-logic";
 
 export type CatalogueViewProps = { /** Design system v6 (DESIGN_V6): the page header with the "?" and the main button, a line about drafts, an Edit link on each saree and an empty page that shows its next step. */ ds?: boolean; /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
   /** The "?" tip of the screen (job BT): drawn under the heading. */
@@ -162,7 +162,7 @@ export function CatalogueView({ ds = false, title = null, base, words, role, que
               "catalogue.filter.band",
               PRICE_BANDS.map((b) => (
                 <Chip key={b} words={words} on={query.bands.includes(b)} href={link(toggled(query, "band", b))}>
-                  {BAND_WORDS[b]}
+                  {bandText(words, b)}
                 </Chip>
               )),
             )}
