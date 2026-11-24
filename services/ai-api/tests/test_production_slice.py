@@ -108,7 +108,9 @@ def test_the_full_stack_deploys_from_its_declared_files_sandbox_one_warm_instanc
                  # VoiceLink, the only provider (24 Nov 2026): the provider word, the per-minute cost it charges, and the three secrets (bot address token, login)
                  "TELEPHONY_PROVIDER=voicelink", "TELEPHONY_COST_PAISE_PER_MINUTE=50", "TELEPHONY_COST_PAISE_PER_MINUTE_INBOUND=25", "TELEPHONY_COST_PULSE_S=60", "VOICELINK_WS_TOKEN=sme-voicelink-ws-token:latest", "VOICELINK_USERNAME=sme-voicelink-username:latest", "VOICELINK_PASSWORD=sme-voicelink-password:latest"):
         assert must in deploy, must
-    for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=false", "WHATSAPP", "staging", "CAPTCHA"):
+    # no WhatsApp Cloud API setting in production (WHATSAPP_*): only OUTBOX_WHATSAPP=true, which records the owner's own "I sent it" for a message sent by hand (owner, 28 Nov 2026)
+    assert "OUTBOX_WHATSAPP=true" in deploy
+    for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=false", "WHATSAPP_", "staging", "CAPTCHA"):
         assert never not in deploy, never
 
 

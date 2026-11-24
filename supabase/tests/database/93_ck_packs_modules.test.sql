@@ -186,6 +186,7 @@ insert into exempt (tbl, why) values
   ('admin.support_tickets', 'admin console: the support queue (subject, channel, priority, assignee)'),
   ('admin.audit', 'admin console: the append-only trail of what Stack19 staff looked at and did'), ('admin.access_grants', 'admin console: a staff member''s 15-minute access to one business, with a reason'), ('admin.access_approvals', 'admin console: the shop owner''s OK for one support visit'), ('admin.tenant_support_settings', 'admin console: the shop owner''s switch to be asked first'),
   ('pricing.events', 'billing v2: the payment provider''s events, once each'), ('pricing.orders', 'billing v2: the orders paid at the provider, settled once'), ('pricing.invoices', 'billing v2: invoices with GST'), ('pricing.free_starts', 'billing v2: the free start, once per business'),
+  ('ops.number_purchases', 'the number picker: one row per number claim of a workspace (operator ledger kept by the platform: the buyer, the number, the state, the cost; core, no module)'),
   ('ops.provider_usage', 'admin console: what each provider cost us per call, message, search and assistant turn (operator ledger, core, no module)'),
   ('public.sell_entries', 'what you sell, the services / courses / properties / price-list styles: core for every business type (the style comes from the pack, no module)'),
   ('packs.workspace_pack', 'the pack itself'), ('packs.example_batches', 'example data bookkeeping'), ('packs.example_rows', 'example data bookkeeping');
