@@ -1,4 +1,4 @@
-# Thin-slice rehearsal (docs/plans/thin-slice-rehearsal.md)
+# Thin-slice rehearsal (docs-private/plans/thin-slice-rehearsal.md)
 
 `make db-reset && make rehearse-thin-slice` runs the whole slice through our API on the LOCAL stack, as an Owner, an Admin, a Sales user and a Viewer (plus a second workspace's Owner), from the synthetic CSV in `data/` to `closed_paid`, then runs it a second time on the same database (it must change nothing). It writes `rehearsal-report.md` at the repository root (git-ignored).
 

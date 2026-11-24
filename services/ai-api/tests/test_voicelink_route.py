@@ -19,7 +19,7 @@ from tests.test_dv_browser_voice import arun, until
 from tests.test_ph_inbound import FakeStore, fake_parts
 
 TOKEN = "voicelink-bot-address-token-for-tests-0123456789abcdef"
-OWNER = "+919502380998"
+OWNER = "+919000000998"
 LINE = "+918065590140"
 TENANT = uuid.UUID(int=0x0B0E)
 CALL = "vl-call-0001"
@@ -99,7 +99,7 @@ async def test_a_whole_call_is_answered_recorded_as_voicelink_and_ends_with_the_
     assert sim.heard.problems == [], sim.heard.problems
     assert sim.heard.audio_bytes > 0 and sim.heard.marks
     text = " ".join(records)
-    assert "9502380998" not in text and "8065590140" not in text and CALL not in text and TOKEN not in text, "no number, no raw call id, not the address token in the log"
+    assert "9000000998" not in text and "8065590140" not in text and CALL not in text and TOKEN not in text, "no number, no raw call id, not the address token in the log"
     assert "voicelink_inbound admitted" in text and "exotel_inbound" not in text
 
 

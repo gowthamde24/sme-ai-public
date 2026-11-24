@@ -1,6 +1,6 @@
 """Razorpay Subscriptions for billing, TEST MODE ONLY (C12, owner decision 12 Nov 2026: "Razorpay TEST billing, mocked until the owner stores the TEST keys"). Written from Razorpay's documentation
 (Subscriptions API, Checkout signature, Webhooks) and tested against recorded-shape fakes: it has NOT yet run against Razorpay's test servers, because no test key is stored. The first run with the
-owner's test keys is the check of this file (docs/plans/razorpay-test-billing.md).
+owner's test keys is the check of this file (docs-private/plans/razorpay-test-billing.md).
 
   * Keys: `rzp_test_...` only. A `rzp_live_` key stops the process at start (live billing is OFF everywhere until the owner says so).
   * Checkout: the server creates the subscription (`begin_checkout`, notes carry our tenant id and plan), the browser opens Razorpay's Checkout with its id, and returns payment id, subscription id and

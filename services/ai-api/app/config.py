@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     api_cors_origins: str = ""
     # Job CB (ADR 0082): hardening and operations.
     rate_limit_enabled: bool = True
-    # Calls first, pages second (docs/plans/call-capacity-and-instances.md, Phase 1;
+    # Calls first, pages second (docs-private/plans/call-capacity-and-instances.md, Phase 1;
     # owner 12 Nov 2026). All 0 = off (the default); the deployment sets them.
     # PAGE_MAX_INFLIGHT: how many page requests run at once (the next gets 503 busy
     # at once; calls are never limited), with a breaker on slow reads.
@@ -147,7 +147,7 @@ class Settings(BaseSettings):
     # anything else stops the process at start.
     billing_provider: str = "fake"
     # Billing v2: the owner's final pricing of 13 Nov 2026
-    # (docs/plans/billing-v2-final-pricing.md). On in staging, off in production.
+    # (docs-private/plans/billing-v2-final-pricing.md). On in staging, off in production.
     pricing_v2: bool = False
     admin_console: bool = False   # the staff console API (/v1/admin); staging only
     admin_environment: str = "production"   # "staging" or "production" (Overview tag)

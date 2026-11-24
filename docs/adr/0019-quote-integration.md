@@ -1,8 +1,8 @@
 # ADR 0019: Quote integration: reference data, recomputation, approval (T009)
 
-Status: accepted for the local-first stage (owner review of migration parts 1 and 2 and of the mapper adapter, 2026-10-06; plan: `docs/plans/t009-quote-integration.md`).
-Related: ADR 0013 (agents; option A / option B), ADR 0016 (second factor), ADR 0018 (enquiries and requirements; the lock order), `docs/plans/t009-quote-engine.md`
-(lane C's pure engine), `docs/plans/requirement-mapper.md`, `docs/plans/quote-text.md`.
+Status: accepted for the local-first stage (owner review of migration parts 1 and 2 and of the mapper adapter, 2026-10-06; plan: `docs-private/plans/t009-quote-integration.md`).
+Related: ADR 0013 (agents; option A / option B), ADR 0016 (second factor), ADR 0018 (enquiries and requirements; the lock order), `docs-private/plans/t009-quote-engine.md`
+(lane C's pure engine), `docs-private/plans/requirement-mapper.md`, `docs-private/plans/quote-text.md`.
 
 ## Context
 After a person has confirmed a requirement (ADR 0018) the product needs a DRAFT quote an Owner or Admin can approve. The arithmetic is lane C's pure engine
@@ -40,7 +40,7 @@ locks. Sorting by sku uses the "C" collation (code point) everywhere, because th
 Sales may only withdraw their own draft. Owner or Admin may withdraw an approved quote (aal2). SQLSTATEs SM212 to SM218, mapped to fixed API messages; nothing from the database reaches a client.
 
 **6. Withdrawing an approved quote** keeps the status set unchanged: the quote moves approved to `superseded` with `withdrawn_by`, `withdrawn_at` and a reason code recorded once (the guard trigger
-and the table checks enforce it). A later order conversion must refuse a withdrawal once an order exists (docs/plans/order-conversion.md).
+and the table checks enforce it). A later order conversion must refuse a withdrawal once an order exists (docs-private/plans/order-conversion.md).
 
 ## What the database proves, and what it trusts (the honest limits)
 * It binds the stored request text to the engine's hash and makes every input equal its authoritative source; it recomputes every figure of the v1 subset and the flags. It does NOT run the

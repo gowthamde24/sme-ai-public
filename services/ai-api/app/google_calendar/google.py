@@ -1,6 +1,6 @@
 """Google, as this feature needs it: OAuth (authorization code with PKCE, offline access), the primary calendar's events (ours only), freebusy, and push channels. Plain REST over httpx: no Google SDK.
 
-SCOPES (docs/plans/google-oauth-verification.md, checked against Google's scope table and the method pages, Nov 2026):
+SCOPES (docs-private/plans/google-oauth-verification.md, checked against Google's scope table and the method pages, Nov 2026):
   * https://www.googleapis.com/auth/calendar.events    events.insert / get / patch / delete of the appointments WE write, and events.watch (the push channel). The scope the owner's plan and the
                                                         verification pack name. `calendar` would add sharing and deleting calendars. (`calendar.events.owned`, "calendars you own", is a little
                                                         narrower and is also accepted by these methods: switching is this line plus the consent screen, if Google's review asks for it.)

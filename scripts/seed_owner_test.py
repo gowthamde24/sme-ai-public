@@ -21,6 +21,7 @@ Run:  python3 -I scripts/seed_owner_test.py --i-know-this-loads-demo-data-into-s
 
 from __future__ import annotations
 
+import os
 import argparse
 import json
 import sys
@@ -31,7 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import seed_staging as ss  # noqa: E402
 from seed_staging import SeedError  # noqa: E402
 
-OWNER_EMAIL = "sodanapalligowthamreddy@gmail.com"
+OWNER_EMAIL = os.environ.get("OWNER_TEST_EMAIL", "").strip().lower()   # the owner's own sign-in e-mail: from the environment, never written in the repository
 DISPLAY_NAME = "Gowtham"
 HELPER_DOMAIN = ss.DEMO_DOMAIN
 # pack, workspace name (the account's metadata: the setup uses it as the business name)
@@ -117,7 +118,7 @@ class OwnerTest(ss.Seeder):
         # the owner: the operator adds the existing account as Owner (once)
         already = sql(f"select 1 as x from public.memberships m join auth.users u on u.id = m.user_id where m.tenant_id = {q(tenant)} and lower(u.email) = {q(OWNER_EMAIL)}")
         if not already:
-            # the free trial allows one owned workspace per owner (tenants.workspace_limit, "changed by the operator only", docs/pre-pilot-checklist.md). The owner already owns one (Stack19 Owner
+            # the free trial allows one owned workspace per owner (tenants.workspace_limit, "changed by the operator only", docs-private/pre-pilot-checklist.md). The owner already owns one (Stack19 Owner
             # Test, left as it is); a person's allowance is the largest limit among the workspaces they own or join, so the TEST workspaces carry 4 (the owner's one + these three).
             sql(f"update public.tenants set workspace_limit = 4 where id = {q(tenant)} and workspace_limit < 4 returning id")
             sql(f"select app.operator_add_owner_exception({q(slug)}, {q(OWNER_EMAIL)}, {q(REASON)})")
@@ -189,6 +190,9 @@ PHASES = {"provision": provision, "seed": seed, "handover": handover}
 
 
 def main() -> int:
+    if not OWNER_EMAIL:
+        print("seed_owner_test: set OWNER_TEST_EMAIL to the owner's own sign-in e-mail (it is not kept in the repository)", file=sys.stderr)
+        return 2
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--i-know-this-loads-demo-data-into-staging", action="store_true")
     ap.add_argument("--project-ref", required=True)

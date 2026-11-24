@@ -51,7 +51,7 @@ Body `{ "given": true|false, "via": "signup"|"google"|"settings" (default "setti
 Every public POST takes an optional `captcha_token`. `CAPTCHA_PROVIDER=none` (today, everywhere) accepts without one; when it is switched to `turnstile` a missing/invalid token is `400 captcha_failed`. The web needs no change today; when it adds the widget, send the widget's token as `captcha_token`.
 
 ## 5. Not in this contract
-Cookie banner, the privacy page layout and the wording of the notice are C2's. The breach runbook is internal (docs/runbooks/breach.md).
+Cookie banner, the privacy page layout and the wording of the notice are C2's. The breach runbook is internal (docs-private/runbooks/breach.md).
 
 ## 6. Additions made while building (27 Oct, nothing above changed)
 - `POST /v1/public/waitlist` answers **409 `policy_version_outdated`** when `notice_version` is not the current `privacy_version` (read `GET /v1/privacy/notice` when the form opens and send that value).

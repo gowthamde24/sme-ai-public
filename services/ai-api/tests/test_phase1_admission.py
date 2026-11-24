@@ -1,4 +1,4 @@
-"""Calls first, pages second (Phase 1, docs/plans/call-capacity-and-instances.md; owner 12 Nov 2026): the page limiter, the breaker, the read cache and the short memory of the membership lookup. Pure ASGI, no network."""
+"""Calls first, pages second (Phase 1, docs-private/plans/call-capacity-and-instances.md; owner 12 Nov 2026): the page limiter, the breaker, the read cache and the short memory of the membership lookup. Pure ASGI, no network."""
 
 # ruff: noqa: E501
 

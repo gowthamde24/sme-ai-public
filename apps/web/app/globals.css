@@ -637,7 +637,7 @@ fieldset.form-plain {
   }
 }
 
-/* ---- Workspace redesign: theme bridge (docs/plans/workspace-v2-redesign-plan.md, 2.9; owner approved 2026-10-09) ----
+/* ---- Workspace redesign: theme bridge (docs-private/plans/workspace-v2-redesign-plan.md, 2.9; owner approved 2026-10-09) ----
    The v2 theme button writes data-theme on <html>. Screens not yet in the v2 look follow it, in both directions: dark on a light phone and light
    on a dark phone. With no choice there is no attribute and nothing here applies. Deleted with the last legacy screen (Batch 6). */
 html[data-theme="dark"] {

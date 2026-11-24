@@ -8,7 +8,7 @@ import { fitsInLink } from "@/lib/whatsapp/limit";
 
 /**
  * What the quote screen needs to decide which WhatsApp controls to show for an APPROVED quote. It holds no phone number and no text from the API: only closed words, booleans and ids. The number itself is read only by the redirect
- * route (docs/plans/open-in-whatsapp-plan.md, section 2).
+ * route (docs-private/plans/open-in-whatsapp-plan.md, section 2).
  *
  *   - `gate`: "open" (the database's own gate for WhatsApp lets the channel through), one of the gate words (`consent | contact | key | erased | unkeyed`), or "unread" (it could not be read right now)
  *   - `consentContactId`: the lead's contact, only when the gate word is `consent`, to link to the consent page

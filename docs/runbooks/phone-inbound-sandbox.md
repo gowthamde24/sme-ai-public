@@ -1,6 +1,6 @@
 # Inbound phone calls on the Exotel sandbox (staging)
 
-Job phone-calls part 5, owner brief 4 Nov 2026: **inbound only**, **only from +919502380998**, into the **Owner Test** workspace. No outbound (`TELEPHONY_OUTBOUND` stays false: the gate refuses every
+Job phone-calls part 5, owner brief 4 Nov 2026: **inbound only**, **only from the owner's own number**, into the **Owner Test** workspace. No outbound (`TELEPHONY_OUTBOUND` stays false: the gate refuses every
 outbound call), no recording, no other number.
 
 **Since 6 Nov 2026: the business's own ExoPhone, 040 4590 3172 (Hyderabad), App ID 1371752 (`voicebot-mum-prod-default-flow`), no PIN.** It replaces the shared trial number 09513886363.
@@ -36,9 +36,10 @@ outbound call), no recording, no other number.
 ## Who may call in: the allowed list, kept out of every chat and log
 The callers allowed in are the secret `sme-telephony-sandbox-numbers` (comma-separated E.164). The owner writes it himself in his own terminal (zsh): the number is typed hidden, never shown, never in the shell history, never in a chat.
 ```
+read -s "OWNER?Owner's own mobile, 10 digits (hidden): "; echo
 read -s "BRO?Second tester's mobile, 10 digits (hidden): "; echo
 if [[ "$BRO" =~ '^[6-9][0-9]{9}$' ]]; then
-  printf '%s' "+919502380998,+91$BRO" | gcloud secrets create sme-telephony-sandbox-numbers --project project-2757c07e-37d2-4167-88f \
+  printf '%s' "+91$OWNER,+91$BRO" | gcloud secrets create sme-telephony-sandbox-numbers --project project-2757c07e-37d2-4167-88f \
       --replication-policy=user-managed --locations=asia-south1 --data-file=- \
     && gcloud secrets add-iam-policy-binding sme-telephony-sandbox-numbers --project project-2757c07e-37d2-4167-88f \
       --member=serviceAccount:sme-api-run@project-2757c07e-37d2-4167-88f.iam.gserviceaccount.com --role=roles/secretmanager.secretAccessor --condition=None --format=none \

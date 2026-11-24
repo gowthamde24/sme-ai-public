@@ -142,7 +142,7 @@ async function main() {
           await save(s.page, name, `${url} in English`, { fullPage: true });
           if (name === "privacy") {
             const text = await s.page.locator("body").innerText();
-            for (const w of ["Mumbai", "Grievance Officer", "Gowtham Reddy Sodanapalli", "privacy@stack19.com", "within 30 days", "Schools and colleges"]) check(text.includes(w), `${tag} privacy: "${w}" is missing`);
+            for (const w of ["Mumbai", "Grievance Officer", ...(process.env.E2E_OFFICER_NAME ? [process.env.E2E_OFFICER_NAME] : []), "privacy@stack19.com", "within 30 days", "Schools and colleges"]) check(text.includes(w), `${tag} privacy: "${w}" is missing`);
           }
           await s.context.close();
         }

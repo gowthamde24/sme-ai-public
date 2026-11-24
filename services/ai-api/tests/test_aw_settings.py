@@ -1,4 +1,4 @@
-"""One saved setting changed by words (owner, 14 Nov 2026, slice G of docs/plans/assistant-tool-coverage.md): the model picks the setting and the fields, CODE checks every value against the owner's own
+"""One saved setting changed by words (owner, 14 Nov 2026, slice G of docs-private/plans/assistant-tool-coverage.md): the model picks the setting and the fields, CODE checks every value against the owner's own
 words and the route's range, the card says old -> new, "Do it" writes it through the screen's own route and Undo puts it back."""
 
 # ruff: noqa: E501

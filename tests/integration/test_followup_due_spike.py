@@ -1,4 +1,4 @@
-"""TIMING of the due list's candidates function (docs/plans/followups-due-candidates-plan.md, sections 4 and 12). It began as the C0 SPIKE (option B measured with a draft of the function applied by hand) and, since
+"""TIMING of the due list's candidates function (docs-private/plans/followups-due-candidates-plan.md, sections 4 and 12). It began as the C0 SPIKE (option B measured with a draft of the function applied by hand) and, since
 C1, measures the function the MIGRATION made: nothing is created or dropped here.
 
 OPT-IN: runs only with DUE_SPIKE=1 (it loads 20,000 leads and 100,000+ outbound touches and takes a few minutes), never in `make check`:

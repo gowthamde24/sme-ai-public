@@ -1,4 +1,4 @@
-"""A tiny time-to-live memory for the two lookups every signed-in request repeats (Phase 1 of docs/plans/call-capacity-and-instances.md, owner 12 Nov 2026): who the caller is in the workspace (their membership) and whether
+"""A tiny time-to-live memory for the two lookups every signed-in request repeats (Phase 1 of docs-private/plans/call-capacity-and-instances.md, owner 12 Nov 2026): who the caller is in the workspace (their membership) and whether
 they have accepted the current terms and privacy notice. One page load made about 12 requests, each asking the database both. Used for READS only: a write (and any action that needs the second factor) always asks the
 database. A change of role or removal from a workspace shows within MEMBERSHIP seconds on reads; an accepted-terms result is kept POLICY seconds. 0 = off (the default; the deployment sets the seconds). One process's memory;
 nothing is stored beyond the lookup's own small result, and a failed or negative result is never kept."""

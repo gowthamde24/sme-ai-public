@@ -1,12 +1,12 @@
 """The joiner rule lives in TWO places that must never drift apart: `app.requirements.capture_text.strip_invisible` (what an enquiry stores) and the renderer's `_unsafe` (what a customer text refuses).
-The renderer is a pure package that imports nothing, so it carries its own copy (docs/checklist-notes/C.md, "What lane A must change to adopt 1.1.0", item 3). This test imports both and compares them on
+The renderer is a pure package that imports nothing, so it carries its own copy (docs-private/checklist-notes/C.md, "What lane A must change to adopt 1.1.0", item 3). This test imports both and compares them on
 EVERY string up to length 4 over an alphabet that holds each kind of character the rule distinguishes.
 
 The statement proved: capture changes a string exactly when the renderer refuses it. So (1) whatever capture stores, the renderer accepts (a stored enquiry can never make a customer text fail because of a joiner),
 and (2) capture keeps a joiner exactly where the renderer accepts one.
 
 Known, deliberate differences are kept OUT of the alphabet and are not pinned here: a line feed or tab (capture keeps them, and turns U+2028/U+2029 into one; the renderer refuses them), and private-use or unassigned code points (capture removes
-them, the renderer, like the database, accepts them: docs/checklist-notes/C.md, "Decision to confirm")."""
+them, the renderer, like the database, accepts them: docs-private/checklist-notes/C.md, "Decision to confirm")."""
 
 # ruff: noqa: E501
 

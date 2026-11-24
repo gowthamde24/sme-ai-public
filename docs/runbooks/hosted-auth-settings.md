@@ -10,9 +10,9 @@ Set in the Supabase dashboard (names are the dashboard's; they move, look for th
 
 ## Sign-in
 - [ ] **Allow new users to sign up: OFF** until the owner decides to open sign-up on the hosted project. (Authentication > Sign In / Providers.)
-      People are invited, then added to a workspace by the operator (`add-family-member.md`). `verify_hosted.py` checks `disable_signup`.
+      People are invited, then added to a workspace by the operator (`docs-private/runbooks/add-family-member.md`). `verify_hosted.py` checks `disable_signup`.
       The app has open sign-up built and working locally (ADR 0061, job AD); turning this ON hosted also needs the rows added to
-      `docs/pre-pilot-checklist.md` (rate limits and CAPTCHA, the terms text) and the "Confirm sign-up" template
+      `docs-private/pre-pilot-checklist.md` (rate limits and CAPTCHA, the terms text) and the "Confirm sign-up" template
       below pointing at `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/app`. Never `supabase config push` the local file.
 - [ ] **Confirm e-mail: ON.** (`mailer_autoconfirm` must be false.) The web app's `/auth/confirm` route exists (M3a); the e-mail templates below must point at it.
 - [ ] **E-mail provider only.** Every other provider and phone sign-in OFF.
@@ -21,7 +21,7 @@ Set in the Supabase dashboard (names are the dashboard's; they move, look for th
 - [ ] **MFA (TOTP): enrol and verify both ON** for the project. The app has the enrolment screen (`/app/security`) and enforces aal2 for
       Owner and Admin on privileged actions in the database and the API (ADR 0016). If this setting is off, Owners cannot enrol and are
       locked out of those actions. The setting cannot be read from outside; `scripts/verify_hosted.py` checks the other side (the database
-      enforcement is installed; every Owner/Admin has a verified authenticator). Lost device: `mfa-recovery.md`.
+      enforcement is installed; every Owner/Admin has a verified authenticator). Lost device: `docs-private/runbooks/mfa-recovery.md`.
 - [ ] **Rate limits** reviewed (sign-in, token refresh, e-mail sending). Defaults are generous.
 
 ## URLs and e-mail

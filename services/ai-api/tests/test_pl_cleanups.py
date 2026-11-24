@@ -36,5 +36,5 @@ async def test_the_same_interruption_told_twice_clears_and_fades_once() -> None:
 
 def test_event_names_in_the_log_include_camel_case_and_still_never_a_value() -> None:
     assert event_name('{"event": "playedStream"}') == "playedStream" and event_name('{"event": "clearedAudio"}') == "clearedAudio" and event_name('{"event": "media"}') == "media"
-    assert event_name('{"event": "9502380998"}') == "other" and event_name('{"event": "a b"}') == "other" and event_name('{"event": "' + "x" * 30 + '"}') == "other"
+    assert event_name('{"event": "9000000998"}') == "other" and event_name('{"event": "a b"}') == "other" and event_name('{"event": "' + "x" * 30 + '"}') == "other"
     assert event_name("not json") == "unreadable"

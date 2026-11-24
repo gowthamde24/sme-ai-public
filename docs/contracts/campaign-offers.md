@@ -1,6 +1,6 @@
 # Offer campaigns and marketing consent: the API (campaigns S3, 17 Nov 2026)
 
-Plan: `docs/plans/textiles-campaigns-marketing.md`. Database: S1 (`marketing_consent`), S2 (kind `offer`), S3 (migration `20261231979800`). Screens (S4) are C2's. Everything is under `/v1/tenants/{tenant_id}`.
+Plan: `docs-private/plans/textiles-campaigns-marketing.md`. Database: S1 (`marketing_consent`), S2 (kind `offer`), S3 (migration `20261231979800`). Screens (S4) are C2's. Everything is under `/v1/tenants/{tenant_id}`.
 
 ## 1. An offer campaign
 `PUT /campaigns/{id}` with `kind: "offer"` is the ordinary campaign call plus two fields:

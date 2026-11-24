@@ -78,7 +78,7 @@ class RepoWithPhones(FakeTasksRepository):
 
 
 def test_a_number_the_whatsapp_test_fence_would_refuse_gets_the_reason_and_the_manual_card_and_nothing_is_sent() -> None:
-    client, _, box = world(MESSAGE, adapter=Adapter({"919502380998"}), repo=RepoWithPhones())
+    client, _, box = world(MESSAGE, adapter=Adapter({"919000000998"}), repo=RepoWithPhones())
     evs = events(turn(client, "send Babu Rao: How are you?"))
     card = next(d["card"] for n, d in evs if n == "work_card")
     assert card["state"] == "manual" and card["manual_reason"] == "test_recipient_only" and card["undo"] is None

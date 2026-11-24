@@ -1,6 +1,6 @@
 # ADR 0104: DPDP from day one (job DQ, part 4)
 
-Status: built on branch `api/dq-dpdp` (night run 27 Oct 2026). Engineering decisions, not legal advice; the owner confirms the current DPDP Rules before the first real-data customer (`docs/runbooks/real-data-gate.md`, `docs/runbooks/breach.md`).
+Status: built on branch `api/dq-dpdp` (night run 27 Oct 2026). Engineering decisions, not legal advice; the owner confirms the current DPDP Rules before the first real-data customer (`docs-private/runbooks/real-data-gate.md`, `docs-private/runbooks/breach.md`).
 
 ## Decision
 1. **Consent is a ledger, not a flag.** `privacy.consent_events` is append-only: who, which purpose, given or withdrawn, the notice version, how (sign-up, Google, settings, prompt) and when. Two purposes: `service` (needed for the account; written when the notice is accepted; it cannot be withdrawn without ending the account, and the table refuses a withdrawal) and `marketing` (separate, off until the person turns it on). Giving and withdrawing are the SAME one call (`PUT /v1/me/consents/marketing`), so withdrawing is exactly as easy as giving. The notice version is the server's, never the browser's. A change is also written to the audit trail of each of the person's workspaces (the purpose and the action, never a value).

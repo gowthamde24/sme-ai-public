@@ -364,7 +364,7 @@ select is(
         -- T010 part 2: touches, the cadence policy, follow-up drafts and question drafts. The role is proven first in every one; aal2 for a policy and for approving a draft
         'public.create_followup_policy_version',
         'public.followup_gate',
-        'public.followup_due_candidates',  -- the due list's candidates (a read; role proven first; docs/plans/followups-due-candidates-plan.md)
+        'public.followup_due_candidates',  -- the due list's candidates (a read; role proven first; docs-private/plans/followups-due-candidates-plan.md)
         'public.record_touch',
         'public.create_followup_draft',
         'public.approve_followup_draft',

@@ -1,4 +1,4 @@
-"""Mark the demo workspaces of STAGING as exempt from the read-only lapse (job DP part 3, docs/runbooks/billing-exempt.md).
+"""Mark the demo workspaces of STAGING as exempt from the read-only lapse (job DP part 3, docs-private/runbooks/billing-exempt.md).
 
   python3 -I scripts/exempt_demo_workspaces.py            DRY RUN (the default): lists the demo workspaces and their flag
   python3 -I scripts/exempt_demo_workspaces.py --apply    sets billing_exempt on them (app.operator_billing_exempt)

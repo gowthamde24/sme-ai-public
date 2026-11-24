@@ -83,7 +83,7 @@ export type BatchInput = {
 
 /** A rule's language: one of the call languages, or "auto" (the lead's own language, else the business's main one; the default for a new rule). */
 export type RuleLang = CallLang | "auto";
-/** One step of what happens to a lead (C1 docs/plans/speed-to-lead-rules-v2.md): the call, the retries, then a WhatsApp template. */
+/** One step of what happens to a lead (C1 docs-private/plans/speed-to-lead-rules-v2.md): the call, the retries, then a WhatsApp template. */
 export type RuleStep = { kind: "call"; minutes: number } | { kind: "retry"; afterMinutes: number } | { kind: "retry"; nextMorning: string } | { kind: "whatsapp"; template: string };
 /** The policy's retry steps: after this many minutes, or the next morning at this minute of the day (570 = 09:30). */
 export type RetryStep = { afterMinutes: number } | { nextMorningMinute: number };

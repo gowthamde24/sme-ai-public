@@ -27,7 +27,7 @@ now read, because only the Auth server can raise it.
    `aal2` to remove a verified factor.
 6. **Lost device.** Supabase TOTP has no recovery codes. The Owner asks the operator, who verifies identity out of band and removes the
    factor with `app.operator_reset_mfa(email, reason)` (audited, reason recorded) or in the dashboard; the person signs in with the
-   password and enrols again (`docs/runbooks/mfa-recovery.md`). The UI says so.
+   password and enrols again (`docs-private/runbooks/mfa-recovery.md`). The UI says so.
 7. **Local vs hosted.** TOTP is enabled in `supabase/config.toml` for local development only. The hosted setting is applied by hand
    (`docs/runbooks/hosted-auth-settings.md`); the verifier reads it from the public auth settings (GET only).
 

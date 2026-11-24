@@ -5,7 +5,7 @@ is built yet). Builds on ADR 0001 (tenancy, memberships
 as the single source of authorization), ADR 0002 (API authentication), ADR 0004 (RLS pattern), ADR 0005
 (PII-aware audit, `created_via`), ADR 0008 (evidence and claims; its decision 9 left this question open) and
 ADR 0010 (the import path, the first user of server-declared `created_via`). It is the precondition for the
-T006 (agent runtime) plan (`docs/pre-pilot-checklist.md`).
+T006 (agent runtime) plan (`docs-private/pre-pilot-checklist.md`).
 
 ## Owner decisions (2026-10-04)
 
@@ -866,7 +866,7 @@ reads (`buyer_type`, `order_scale`, `size_band`, `operating_status`), each a val
 ## Addendum (T008 closing batch): live-batch checklist
 Before the first live model call of ANY agent, an agent definition's `max_cost_micros` and `max_output_tokens` are reconciled with the chosen model's `agent_model_prices` row so the worst-case reservation of that agent's largest input fits (the
 reservation bounds a call's input by the UTF-8 bytes it sends plus a fixed overhead, "T007 M2 note: the daily cost cap" above). For the Requirement Agent the numbers and the proposal (`max_output_tokens` 2,500) are in ADR 0018 and the checklist row
-"LIVE-BATCH COST RECONCILIATION" in `docs/pre-pilot-checklist.md`.
+"LIVE-BATCH COST RECONCILIATION" in `docs-private/pre-pilot-checklist.md`.
 
 ### Addendum (job AF, 2026-10-09): the cost day is the Asia/Kolkata day
 The daily cap above is counted per **Asia/Kolkata** day, not per UTC day, so the usage card (job AD, `public.ai_usage_today`) and the limit always agree. One

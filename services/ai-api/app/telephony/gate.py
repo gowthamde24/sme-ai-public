@@ -1,7 +1,7 @@
 """The gate: nothing is dialled and nothing is answered unless every rule here says yes (job phone-calls part 1, owner brief 31 Oct 2026). Pure code: the caller gathers the facts from the database and the settings, this
 function decides, and the reason of a refusal is a closed word that is stored on the call row. No clock is read here (`now` is given), no network, no randomness: a test pins each rule.
 
-The order below is the order of the checks; the first refusal wins, so the reason says the first thing to fix. The strictest reading is built in (owner has not had the lawyer's answers yet, docs/pre-pilot-checklist.md):
+The order below is the order of the checks; the first refusal wins, so the reason says the first thing to fix. The strictest reading is built in (owner has not had the lawyer's answers yet, docs-private/pre-pilot-checklist.md):
 the AI says it is an AI first, calls only 09:00 to 21:00 India time, respects DND, stops at once on request, records nothing."""
 
 # ruff: noqa: E501

@@ -1,6 +1,6 @@
 """T009 part 2 on the real stack: the database's own arithmetic EQUALS the real engine's, on random inputs.
 
-create_quote_draft refuses any result that is not what the database recomputes from its own sources (docs/plans/t009-quote-integration.md, "what the database
+create_quote_draft refuses any result that is not what the database recomputes from its own sources (docs-private/plans/t009-quote-integration.md, "what the database
 proves"). That is only safe if the two implementations agree. Here the REAL engine (packages/quote-engine, through the adapter) runs on the request the database
 builds, and the database must ACCEPT the engine's own canonical request and result, store the same figures, and approve the quote later (the approval re-builds from
 the picks). Cases are seeded (reproducible) and cover every rounding mode, quantity breaks, free-shipping thresholds, taxed freight, both customer kinds, credit

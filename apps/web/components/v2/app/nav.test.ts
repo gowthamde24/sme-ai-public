@@ -4,7 +4,7 @@ import { FOOT, NAV, barItems, footItems, hrefOf, itemFor, visibleGroups, workspa
 
 const T = "22222222-2222-2222-2222-222222222222";
 
-/** The menu of the design-lab app (docs/plans/workspace-v2-redesign-plan.md, 2.2, as ported in Job AC batch C1), typed out by hand: the menu must agree with it. [owner, admin, sales, viewer] */
+/** The menu of the design-lab app (docs-private/plans/workspace-v2-redesign-plan.md, 2.2, as ported in Job AC batch C1), typed out by hand: the menu must agree with it. [owner, admin, sales, viewer] */
 const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, boolean]][]> = {
   Work: [
     ["Today", "", "today", [true, true, true, true]],

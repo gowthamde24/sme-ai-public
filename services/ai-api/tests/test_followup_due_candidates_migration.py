@@ -1,4 +1,4 @@
-"""The due list's candidates function (docs/plans/followups-due-candidates-plan.md, section 7): copy tests for migration 20261028090000.
+"""The due list's candidates function (docs-private/plans/followups-due-candidates-plan.md, section 7): copy tests for migration 20261028090000.
 
 * `public.followup_due_candidates` is defined ONCE, in that migration, and nothing after it redefines it without this file noticing; its text is PINNED (a normalised hash), so an edit to the terminal list, the
   role proof, the ordering or the paging must be made here on purpose;
