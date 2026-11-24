@@ -260,10 +260,10 @@ from app.team.routes import public_router as team_public_router
 from app.team.routes import router as team_router
 from app.telephony.background_samples import router as background_samples_router
 from app.telephony.inbound_routes import router as phone_inbound_router
+from app.telephony.lines_routes import router as phone_lines_router
 from app.telephony.live import LiveCalls
 from app.telephony.plivo_routes import router as plivo_router
 from app.telephony.repository import CallStateError, PostgrestCallsRepository
-from app.telephony.lines_routes import router as phone_lines_router
 from app.telephony.routes import router as calls_router
 from app.telephony.service import CallsService
 from app.telephony.voicelink_routes import router as voicelink_router
