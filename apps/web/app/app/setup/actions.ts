@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import { submitAccountSetup } from "@/lib/api/account";
+import { fetchAccountSetup } from "@/lib/api/account";
 import { saveProfile } from "@/lib/api/profile";
+import { claimTrial, getSignupStatus } from "@/lib/api/signup-open";
 import { getCurrentPolicies } from "@/lib/api/policy";
 import { requireUser } from "@/lib/auth/session";
 import { SIGNUP_MARKETING_COOKIE } from "@/lib/dpdp/cookie";
@@ -26,6 +28,7 @@ export async function completeSetup(input: CompleteSetupInput): Promise<Complete
   const policies = user.signupPolicies ?? (await getCurrentPolicies().catch(() => undefined));
   const result = await runCompleteSetup(input, { token: user.accessToken, submit: submitAccountSetup, saveName: (token, tenantId, name) => saveProfile(token, tenantId, { name }), policies });
   if (result.ok) {
+    await claimTrialCredits(user.accessToken);
     await recordSignupMarketing(user.accessToken, user.signupMarketing === true);
     revalidatePath("/app");
   }
@@ -48,4 +51,18 @@ async function recordSignupMarketing(token: string, byEmail: boolean): Promise<v
   }
   if (!byEmail && provider !== "google" && provider !== "facebook") return;
   await changeMarketing(token, true, provider === "google" ? "google" : "signup");
+}
+
+/**
+ * The free credits (C1's trial-claim, once per person): claimed right after the business is made, only while sign-up is open (the status says so). The API answers 200 either way ("granted" or a closed reason); any failure here changes nothing, the business is never held up.
+ */
+async function claimTrialCredits(token: string): Promise<void> {
+  try {
+    const status = await getSignupStatus(token);
+    if (!status || !status.open || status.trialClaimed) return;
+    const setup = await fetchAccountSetup(token);
+    if (setup.tenantId) await claimTrial(token, setup.tenantId);
+  } catch {
+    // never blocks the set-up
+  }
 }
