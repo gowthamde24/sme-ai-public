@@ -1890,6 +1890,12 @@
 @media (max-width: 1180px) {
   .v9 .wit .v9-phone { position: static; transform: none; order: -1; margin-inline: auto; }
 }
+@media (max-width: 1100px) {
+  .v9 .lf-pin, .v9 .lf-me-l { display: none; }
+}
+@media (max-width: 900px) {
+  .v9 .kyc-stamp { position: static; display: inline-block; margin-top: 8px; transform: none; }
+}
 @media (max-width: 767px) {
   .v9 .pipe { height: 610px; }
   .v9 .pipe .src { left: auto; right: 0; transform: none; max-width: calc(100% - 140px); white-space: normal; text-align: left; line-height: 1.25; border-radius: 18px; }
