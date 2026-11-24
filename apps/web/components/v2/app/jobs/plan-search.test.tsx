@@ -26,15 +26,15 @@ const drawCard = (plan: JobPlan, over: { onSearch?: (p: SearchPatch) => void; on
   render(<PlanCard plan={plan} words={words} base={BASE} state={{ ...IDLE, ...over.state }} onStart={over.onStart ?? vi.fn()} onSwap={vi.fn()} onChange={vi.fn()} onTest={vi.fn()} onSearch={over.onSearch} />);
 
 describe("the researcher plan card (Lead Finder): three plain choices, no 'what it says'", () => {
-  it("draws the area (the shop's town as the default), how many and the fit bar as sentences with the choice inside; no who, says, when or test", () => {
+  it("draws the area (the shop's town as the default), how many and the fit bar as labelled fields (no sentence with a blank); no who, says, when or test", () => {
     drawCard(researcher(), { onSearch: vi.fn() });
     const card = within(screen.getByRole("article"));
     expect(card.getByRole("heading", { name: "Find new customers: saree shops and boutiques" })).toBeInTheDocument();
-    expect((card.getByRole("textbox", { name: /Look for businesses near/ }) as HTMLInputElement).value).toBe("Vijayawada");
-    expect((card.getByRole("combobox", { name: /Find up to/ }) as HTMLSelectElement).value).toBe("10");
-    expect(Array.from((card.getByRole("combobox", { name: /Find up to/ }) as HTMLSelectElement).options).map((o) => o.value)).toEqual(["5", "10", "20"]);
-    expect((card.getByRole("combobox", { name: /Keep only the ones that fit/ }) as HTMLSelectElement).value).toBe("70");
-    expect(Array.from((card.getByRole("combobox", { name: /Keep only the ones that fit/ }) as HTMLSelectElement).options).map((o) => o.value)).toEqual(["60", "70", "80", "90"]);
+    expect((card.getByRole("textbox", { name: /Where to look/ }) as HTMLInputElement).value).toBe("Vijayawada");
+    expect((card.getByRole("combobox", { name: /How many businesses to find/ }) as HTMLSelectElement).value).toBe("10");
+    expect(Array.from((card.getByRole("combobox", { name: /How many businesses to find/ }) as HTMLSelectElement).options).map((o) => o.value)).toEqual(["5", "10", "20"]);
+    expect((card.getByRole("combobox", { name: /Keep only the ones that fit at least/ }) as HTMLSelectElement).value).toBe("70");
+    expect(Array.from((card.getByRole("combobox", { name: /Keep only the ones that fit at least/ }) as HTMLSelectElement).options).map((o) => o.value)).toEqual(["60", "70", "80", "90"]);
     expect(card.getByText(/Free searches left this month: 2 of 3/)).toBeInTheDocument();
     expect(card.getByRole("button", { name: "Start" })).toBeEnabled();
     expect(card.queryByText("Who")).toBeNull();
@@ -46,11 +46,11 @@ describe("the researcher plan card (Lead Finder): three plain choices, no 'what 
   it("changing a choice sends ONLY what changed", () => {
     const onSearch = vi.fn();
     drawCard(researcher(), { onSearch });
-    fireEvent.change(screen.getByRole("combobox", { name: /Find up to/ }), { target: { value: "20" } });
+    fireEvent.change(screen.getByRole("combobox", { name: /How many businesses to find/ }), { target: { value: "20" } });
     expect(onSearch).toHaveBeenLastCalledWith({ results: 20 });
-    fireEvent.change(screen.getByRole("combobox", { name: /Keep only the ones that fit/ }), { target: { value: "90" } });
+    fireEvent.change(screen.getByRole("combobox", { name: /Keep only the ones that fit at least/ }), { target: { value: "90" } });
     expect(onSearch).toHaveBeenLastCalledWith({ fitBar: 90 });
-    const area = screen.getByRole("textbox", { name: /Look for businesses near/ });
+    const area = screen.getByRole("textbox", { name: /Where to look/ });
     fireEvent.change(area, { target: { value: "Guntur" } });
     expect(onSearch).toHaveBeenCalledTimes(2); // typing sends nothing
     fireEvent.keyDown(area, { key: "Enter" });
@@ -60,7 +60,7 @@ describe("the researcher plan card (Lead Finder): three plain choices, no 'what 
   it("the area goes when the box is left; an empty box or an unchanged one sends nothing and puts the plan's own area back", () => {
     const onSearch = vi.fn();
     drawCard(researcher(), { onSearch });
-    const area = screen.getByRole("textbox", { name: /Look for businesses near/ }) as HTMLInputElement;
+    const area = screen.getByRole("textbox", { name: /Where to look/ }) as HTMLInputElement;
     fireEvent.change(area, { target: { value: "  " } });
     fireEvent.blur(area);
     expect(area.value).toBe("Vijayawada");
@@ -91,7 +91,7 @@ describe("the researcher plan card (Lead Finder): three plain choices, no 'what 
     expect(card.queryByRole("button", { name: "Start" })).toBeNull();
     expect(card.getByText(/Type the area to search in/)).toBeInTheDocument();
     expect(document.querySelector('[data-part="plan-blocked"]')).toBeNull(); // still the search card, not the plain blocked one
-    const area = screen.getByRole("textbox", { name: /Look for businesses near/ }) as HTMLInputElement;
+    const area = screen.getByRole("textbox", { name: /Where to look/ }) as HTMLInputElement;
     expect(area.value).toBe("");
     fireEvent.change(area, { target: { value: "Tenali" } });
     fireEvent.blur(area);
@@ -130,18 +130,18 @@ describe("the researcher plan inside the Start a job page: a change calls PATCH 
     const search = vi.fn(async (_id: string, patch: SearchPatch) => ({ ok: true as const, data: researcher({ results: patch.results ?? 10, left: 0 }) }));
     const a = acts({ search });
     draw(a);
-    fireEvent.change(await screen.findByRole("combobox", { name: /Find up to/ }), { target: { value: "5" } });
+    fireEvent.change(await screen.findByRole("combobox", { name: /How many businesses to find/ }), { target: { value: "5" } });
     await waitFor(() => expect(search).toHaveBeenCalledWith("plan-researcher", { results: 5 }));
     await waitFor(() => expect(screen.getByText("No free search left this month.")).toBeInTheDocument());
-    expect((screen.getByRole("combobox", { name: /Find up to/ }) as HTMLSelectElement).value).toBe("5");
+    expect((screen.getByRole("combobox", { name: /How many businesses to find/ }) as HTMLSelectElement).value).toBe("5");
     expect(a.start).not.toHaveBeenCalled();
   });
   it("a refusal is shown on the card and the plan stays as it was", async () => {
     const search = vi.fn(async () => ({ ok: false as const, kind: "unavailable" as const, error: "This plan has expired: say it again." }));
     draw(acts({ search }));
-    fireEvent.change(await screen.findByRole("combobox", { name: /Find up to/ }), { target: { value: "20" } });
+    fireEvent.change(await screen.findByRole("combobox", { name: /How many businesses to find/ }), { target: { value: "20" } });
     expect(await screen.findByRole("alert")).toHaveTextContent("This plan has expired: say it again.");
-    expect((screen.getByRole("combobox", { name: /Find up to/ }) as HTMLSelectElement).value).toBe("10");
+    expect((screen.getByRole("combobox", { name: /How many businesses to find/ }) as HTMLSelectElement).value).toBe("10");
   });
 });
 

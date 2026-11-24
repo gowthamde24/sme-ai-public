@@ -13,6 +13,7 @@ import { expectNoSentenceForm, sentenceFormsIn } from "../test/helpers/no-senten
 const ROOT = path.resolve(__dirname, "..");
 const PLAIN_WHEN_ON = "the plain labelled fields are the production look (SETTINGS_OPEN / FILTERS_OPEN / PHONE_STEPS / JOBS are on); the sentence branch only draws with the flag off";
 const TO_FIX = "TO FIX (found 29 Nov by the sweep): still drawn in production under JOBS; converting to plain labelled fields, one page per PR";
+const GATED = "drawn only when `sentenceForms()` (JOBS on and SETTINGS_OPEN off); with SETTINGS_OPEN on (production) the labelled form is used (29 Nov)";
 const ALLOWED: Record<string, string> = {
   "app/app/tenants/[tenantId]/quote-policy/quote-policy-simple-fields.tsx": PLAIN_WHEN_ON,
   "components/v2/app/agent-settings/AutomationSimple.tsx": PLAIN_WHEN_ON,
@@ -28,14 +29,13 @@ const ALLOWED: Record<string, string> = {
   "components/v2/app/settings/simple/LanguageSimple.tsx": PLAIN_WHEN_ON,
   "components/v2/app/settings/simple/NotificationsSimple.tsx": PLAIN_WHEN_ON,
   "components/v2/app/settings/simple/TeamSimple.tsx": PLAIN_WHEN_ON,
-  "components/v2/app/assistant/AssistantSentences.tsx": TO_FIX,
-  "components/v2/app/assistant/CallSettingsSimple.tsx": TO_FIX,
+  "components/v2/app/assistant/AssistantSentences.tsx": GATED,
+  "components/v2/app/assistant/CallSettingsSimple.tsx": GATED,
   "components/v2/app/billing/v2/LimitLine.tsx": "Billing v2 is not on in production (BILLING_V2); convert before it is",
-  "components/v2/app/jobs/PlanSearch.tsx": TO_FIX,
-  "components/v2/app/jobs/rules/PolicySentences.tsx": TO_FIX,
-  "components/v2/app/jobs/rules/RulesSimple.tsx": TO_FIX,
-  "components/v2/app/settings/AssistantNameCard.tsx": TO_FIX,
-  "components/v2/app/settings/DeveloperKeysCard.tsx": TO_FIX,
+  "components/v2/app/jobs/rules/PolicySentences.tsx": GATED,
+  "components/v2/app/jobs/rules/RulesSimple.tsx": GATED,
+  "components/v2/app/settings/AssistantNameCard.tsx": GATED,
+  "components/v2/app/settings/DeveloperKeysCard.tsx": GATED,
 };
 
 function sources(dir: string, out: string[] = []): string[] {
