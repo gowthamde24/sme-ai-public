@@ -36,7 +36,7 @@ class ReadIn(BaseModel):
     kind: Literal["photo", "sheet", "talk"]
     file_id: uuid.UUID | None = None
     text: Annotated[str, StringConstraints(max_length=2000)] | None = None
-    language: Literal["en", "te", "hi", "kn", "ta", "ml"] = "en"
+    language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"] = "en"
 
 
 def _store(jobs: JobsRuntime) -> Any:
