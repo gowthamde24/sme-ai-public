@@ -18,13 +18,13 @@ respectful “Namaskaram Suresh garu, …” · +91 98480 xxx10 What it will do:
 - Padma Asked about the blue Pochampally saree 3 days ago. WhatsApp’s 24 hours are over.
 ## When
 If a customer does not reply, follow up after
-<select label="If a customer does not reply, follow up after …" disabled>
+<select label="If a customer does not reply, follow up after" disabled>
   options: 1 day=1* | 2 days=2 | 3 days=3
-Only between
-<select label="Only between … and … (1)" disabled>
+From
+<select label="From" disabled>
   options: 8 am=08:00 | 8:30 am=08:30 | 9 am=09:00 | 9:30 am=09:30 | 10 am=10:00* | 10:30 am=10:30 | 11 am=11:00
-and
-<select label="Only between … and … (2)" disabled>
+To
+<select label="To" disabled>
   options: 5 pm=17:00 | 6 pm=18:00 | 7 pm=19:00* | 8 pm=20:00 | 9 pm=21:00
 What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply.
 - 4 pm price question
@@ -43,8 +43,8 @@ Their budget
 Your assistant uses these when a customer asks. Example: Do you open on Sundays?
 - Can I return a saree? Yes, within 7 days with the bill, if it is not worn or washed.
 summary: More choices Rest day, who is left out, and more
-Rest day:
-<select label="Rest day: …" disabled>
+Rest day
+<select label="Rest day" disabled>
   options: none | Sunday=sunday* | Saturday and Sunday=weekend
 <checkbox label="Stop a customer's job after 3 tries" disabled checked>
 Stop a customer's job after 3 tries These always stay on: STOP and quiet hours. They never change here.
