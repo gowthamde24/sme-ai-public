@@ -140,6 +140,17 @@ def execute_request(
                 contact.email,
                 contact.phone,
             )
+    if not body.dry_run and found.status == "pending":
+        # 28 Nov 2026 (owner, recording option B): VoiceLink may hold recordings of this
+        # customer's calls and we cannot delete them from here: the platform's staff get one
+        # item naming the call ids. Best effort (the function may not be pushed yet): an
+        # erasure is never held up by it.
+        try:
+            _repo(runtime).recordings_notify(ctx.principal.token, found.id)
+        except Exception as exc:  # noqa: BLE001 - only the class is logged
+            logger.warning(
+                "erasure: the recordings item could not be raised (%s)", exc.__class__.__name__
+            )
     return _repo(runtime).execute(ctx.principal.token, found.id, dry_run=body.dry_run)
 
 

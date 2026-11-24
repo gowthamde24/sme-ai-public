@@ -190,9 +190,10 @@ class PassResult:
 
 
 class PlivoBalanceCheck:
-    def __init__(self, reader: AccountReader, rpc: BalanceRpc, limit: Limit, notice: OwnerNotice | None = None, *, clock: Callable[[], datetime] | None = None, brand: str = "Plivo") -> None:
+    def __init__(self, reader: AccountReader, rpc: BalanceRpc, limit: Limit, notice: OwnerNotice | None = None, *, clock: Callable[[], datetime] | None = None, brand: str = "Plivo", recording_expected: bool = False) -> None:
         self._reader, self._rpc, self._limit, self._notice, self._brand = reader, rpc, limit, notice, brand
         self._clock = clock or (lambda: datetime.now(INDIA))
+        self._recording_expected = recording_expected   # VOICELINK_RECORDING_EXPECTED: recording is ON on purpose (owner, 28 Nov 2026); the item is raised when the state differs from this
 
     def run(self, token: str) -> PassResult:
         """One pass (the worker calls it every tick; the database says whether anything is due, so a day has one read and at most one message)."""
@@ -228,7 +229,11 @@ class PlivoBalanceCheck:
         if not isinstance(count, int) or isinstance(count, bool):
             return
         try:
-            if count > 0:
+            if self._recording_expected:   # on purpose: the call opening says so; an item only when VoiceLink shows NO number recording (then nothing is kept to review and the notice is untrue)
+                ok = count > 0
+                detail = None if ok else f"{self._brand} call recording is OFF for all our numbers, but calls are expected to be recorded (the opening tells callers so). Switch it on in the {self._brand} portal (the number's Call Recording setting) or set VOICELINK_RECORDING_EXPECTED to false and redeploy."
+                self._rpc.call(token, "ops_telephony_setting_report", {"p_ok": ok, "p_detail": detail} if detail else {"p_ok": True})
+            elif count > 0:
                 self._rpc.call(token, "ops_telephony_setting_report", {"p_ok": False, "p_detail": f"{self._brand} call recording is ON for {count} of our numbers. Our privacy text says calls are not recorded: switch it off in the {self._brand} portal (the number's Call Recording setting), then check again tomorrow."})
             else:
                 self._rpc.call(token, "ops_telephony_setting_report", {"p_ok": True})
@@ -295,7 +300,7 @@ def build_plivo_balance(settings: Settings, rest_url: str, anon_key: str, adapte
             logger.warning("plivo balance: the worker's channel is not WhatsApp (OUTBOX_ADAPTER), so only the Needs-you item is raised, no message goes to the owner")
     else:
         logger.warning("plivo balance: PLIVO_BALANCE_ALERT_TO is not set, so only the Needs-you item is raised, no message goes to the owner")
-    return PlivoBalanceCheck(reader, rpc or RpcClient(rest_url, anon_key), limit, notice, brand=brand)
+    return PlivoBalanceCheck(reader, rpc or RpcClient(rest_url, anon_key), limit, notice, brand=brand, recording_expected=settings.voicelink_recording_expected)
 
 
 __all__ = ["voicelink_in_use", "Account", "AdapterOwnerNotice", "Limit", "PassResult", "PlivoBalanceCheck", "alert_detail", "build_plivo_balance", "parse_account", "whatsapp_text"]

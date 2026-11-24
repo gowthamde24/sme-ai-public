@@ -10,7 +10,7 @@ reported as a partial result so the caller can record it and tell the team.
   5. VoiceLink's own summary of the draft: exactly ONE number, NO channel, a total within the limit and
      covered by the wallet                                                              -> rate_too_high
   6. confirm the purchase (the order is paid from our wallet)
-  7. give the number to our client with call recording OFF, then point it at our bot (inbound and outbound)
+  7. give the number to our client with call recording as the expectation says (OFF unless VOICELINK_RECORDING_EXPECTED), then point it at our bot (inbound and outbound)
 
 Every refusal is a closed word; no price, number or id is ever put in a message or a log line."""
 
@@ -49,6 +49,7 @@ class BuyerSettings:
     wallet_floor_inr: float = 1000.0
     max_total_inr: float = 500.0   # for ONE number, excluding GST: a limit, not a price (a mobile number is about Rs 300 a month)
     months: int = 1
+    recording: bool = False   # VOICELINK_RECORDING_EXPECTED: a number is given over with recording ON, as the expectation says; else OFF
 
 
 @dataclass(frozen=True)
@@ -102,7 +103,7 @@ def buy(api: VoicelinkApi, settings: BuyerSettings, number: str, kind: str) -> B
         raise PickerRefused("vendor_unavailable") from None
     stage: Literal["bought", "mapped", "routed"] = "bought"
     try:
-        api.map_did(client_id=settings.client_id, did_id=did.did_id, description="Stack19 customer number")
+        api.map_did(client_id=settings.client_id, did_id=did.did_id, description="Stack19 customer number", recording=settings.recording)
         stage = "mapped"
         api.create_routing(did_id=did.did_id, bot_id=settings.bot_id)
         stage = "routed"

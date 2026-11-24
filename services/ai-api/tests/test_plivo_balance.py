@@ -411,3 +411,14 @@ def test_a_number_that_records_raises_one_item_and_none_clears_it_and_a_failed_r
 
     result = PlivoBalanceCheck(_Reader(1), Down(), limit("INR", 0.0), None, clock=lambda: NOON, brand="VoiceLink").run(TOKEN)
     assert result.read in ("ok", "low"), "the balance read stands"
+
+
+def test_when_recording_is_expected_on_the_item_is_raised_only_when_it_is_off() -> None:
+    """28 Nov 2026 (owner, option B): VOICELINK_RECORDING_EXPECTED=true: recording ON is the plan, so ON clears the item and OFF raises one."""
+    on = FakeRpc()
+    PlivoBalanceCheck(_Reader(2), on, limit("INR", 0.0), None, clock=lambda: NOON, brand="VoiceLink", recording_expected=True).run(TOKEN)
+    assert [(n, a) for n, a in on.calls if n == "ops_telephony_setting_report"] == [("ops_telephony_setting_report", {"p_ok": True})]
+    off = FakeRpc()
+    PlivoBalanceCheck(_Reader(0), off, limit("INR", 0.0), None, clock=lambda: NOON, brand="VoiceLink", recording_expected=True).run(TOKEN)
+    sent = [a for n, a in off.calls if n == "ops_telephony_setting_report"]
+    assert len(sent) == 1 and sent[0]["p_ok"] is False and "recording is OFF" in sent[0]["p_detail"] and "VOICELINK_RECORDING_EXPECTED" in sent[0]["p_detail"]

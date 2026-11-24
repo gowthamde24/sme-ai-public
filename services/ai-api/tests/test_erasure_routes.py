@@ -309,3 +309,20 @@ def test_nothing_in_the_api_can_open_or_close_the_gate(w: World) -> None:
         )
         assert r.status_code in (404, 405), method
     assert TENANT_A.id not in w.repo.open_gates
+
+
+def test_executing_raises_the_recordings_item_first_and_its_failure_never_stops_it(
+    w: World,
+) -> None:
+    """28 Nov 2026 (recording option B): VoiceLink may hold recordings of the erased customer's
+    calls; a preview raises nothing."""
+    w.repo.seed(TENANT_A.id, REQ)
+    h = auth("a_owner")
+    preview = client(w).post(w.url(f"/{REQ}/execute"), json={"dry_run": True}, headers=h)
+    assert preview.status_code == 200 and "recordings_notify" not in w.repo.calls
+    assert client(w).post(w.url(f"/{REQ}/execute"), json={}, headers=h).status_code == 200
+    assert w.repo.calls[-2:] == ["recordings_notify", "execute"]
+    w.repo.calls.clear()
+    w.repo.recordings_error = RuntimeError("not pushed yet")
+    assert client(w).post(w.url(f"/{REQ}/execute"), json={}, headers=h).status_code == 200
+    assert w.repo.calls[-1] == "execute"

@@ -41,6 +41,7 @@ class FakeErasureRepository:
         self.request_error: Exception | None = None
         self.execute_error: Exception | None = None
         self.cancel_error: Exception | None = None
+        self.recordings_error: Exception | None = None
         self.open_gates: set[uuid.UUID] = set()
 
     def _seen(self, token: str, call: str) -> None:
@@ -124,6 +125,12 @@ class FakeErasureRepository:
             )
             return out
         return result(request_id, scope=row.scope, status="dry_run", dry_run=True)
+
+    def recordings_notify(self, token: str, request_id: uuid.UUID) -> int:
+        self._seen(token, "recordings_notify")
+        if self.recordings_error is not None:
+            raise self.recordings_error
+        return 1
 
     def cancel(self, token: str, request_id: uuid.UUID) -> bool:
         self._seen(token, "cancel")
