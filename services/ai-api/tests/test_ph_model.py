@@ -75,3 +75,30 @@ async def test_once_the_primary_has_started_the_turn_stays_with_it() -> None:
     except RuntimeError:
         pass
     assert out == ["Partly "] and backup.models == [], "words already spoken are never answered twice"
+
+
+def test_the_phone_builds_sarvam_behind_the_first_token_fallback_and_haiku_alone() -> None:
+    """28 Nov 2026: TELEPHONY_LLM=sarvam once built Sarvam ALONE (the deadline was read and dropped): a stalled Sarvam request is half a minute of silence on a call. The phone's parts now hold the fallback, with the deadline, and Haiku's model id for the turn."""
+    import httpx
+
+    from app.browser_voice.limits import Ledger, Limits
+    from app.browser_voice.runtime import BrowserVoice
+    from app.conversation.providers import AnthropicStream, SarvamChatStream
+    from app.conversation.voices import default_config
+    from app.telephony.inbound_routes import phone_parts
+    from app.telephony.model import FirstTokenFallback
+
+    bv = BrowserVoice(config=default_config(), factory=lambda choice, language: None, sarvam_key="k", anthropic_key="k", fast_model="haiku-id", turn_model="claude", limits=Limits(), ledger=Ledger(Limits()), allowed_origins=(), client=httpx.AsyncClient())  # type: ignore[arg-type,return-value]
+    parts, model = phone_parts(bv, "Stack19", "te", "sarvam", first_token_s=0.7)
+    assert isinstance(parts.llm, FirstTokenFallback) and isinstance(parts.llm._primary, SarvamChatStream) and isinstance(parts.llm._fallback, AnthropicStream)  # noqa: SLF001
+    assert parts.llm._deadline == 0.7 and parts.llm._primary_model == "sarvam-105b" and model == "haiku-id"  # noqa: SLF001
+    parts, model = phone_parts(bv, "Stack19", "te", "haiku", first_token_s=0.7)
+    assert isinstance(parts.llm, AnthropicStream) and model == "haiku-id"
+
+
+def test_the_deployment_passes_the_deadline_and_the_choice_to_the_phone() -> None:
+    from types import SimpleNamespace
+
+    from app.telephony.settings import phone_llm_choice
+
+    assert phone_llm_choice(SimpleNamespace(telephony_llm="sarvam", telephony_first_token_ms=700)) == ("sarvam", 0.7)
