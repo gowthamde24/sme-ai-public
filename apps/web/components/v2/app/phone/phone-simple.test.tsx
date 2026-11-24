@@ -69,3 +69,13 @@ describe("Get a number as a sentence (JOBS)", () => {
     expect(document.querySelector('[data-part="phone-pick"]')).toBeNull();
   });
 });
+
+describe("Get a number without a sentence (PHONE_STEPS)", () => {
+  it("the city is a labelled field with the cost as its one grey hint, then ONE button", () => {
+    render(<PhoneNumberPanel plain words={WORDS} initial={NOTHING} canEdit mock={false} actions={acts()} simple />);
+    expect(screen.queryByText(/Get a number in/)).toBeNull();
+    expect(screen.getAllByRole("combobox").length).toBe(1);
+    expect(document.querySelector("[data-part=phone-cost], [data-field] p")).not.toBeNull();
+    expect(screen.getAllByRole("button", { name: /Get this number|Get a number/ }).length).toBe(1);
+  });
+});

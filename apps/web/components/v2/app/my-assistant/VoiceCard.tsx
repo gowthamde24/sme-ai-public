@@ -7,8 +7,8 @@ import * as React from "react";
 
 import type { CallLang } from "@/lib/assistant/types";
 import type { Preview } from "@/lib/opening-line/types";
-import { BACKGROUNDS, TONES, type HowSpeaks, type SpeakTone } from "@/lib/talk-training/speaks";
-import type { Gender, PickerLang, PickerVoice } from "@/lib/voice-picker/types";
+import { BASE_TONE, type HowSpeaks, type SpeakTone } from "@/lib/talk-training/speaks";
+import { SOUNDS_LIKE, type Gender, type PickerLang, type PickerVoice } from "@/lib/voice-picker/types";
 
 import type { SpeaksPanel } from "../assistant/HowAssistantSpeaks";
 import { alertBox, btnQuiet, fieldHelp, okBox } from "../ui";
@@ -41,6 +41,8 @@ export type VoiceCardProps = {
   examples: Readonly<Record<string, Partial<Record<SpeakTone, string>>>>;
   /** a real two-sided sample call per language and tone (customer line, assistant line, ...): shown instead of the one-sided example when there is one */
   conversations?: Readonly<Record<string, Partial<Record<SpeakTone, readonly string[]>>>>;
+  /** the OPEN layout (MY_ASSISTANT_OPEN): the voices are a plain row list (recommended first, the rest under See all), the sample call a hairline block */
+  open?: boolean;
   /** the languages whose example sentences are drafts nobody native has read */
   draftLangs: readonly string[];
   toneExample: ToneExample | null;
@@ -62,7 +64,7 @@ type Note = "saved" | "error" | "sample" | "live" | "rate" | "silent" | "unknown
  * the reason, if the API says no. One sound at a time: starting one stops the other. Nothing plays by itself. A recorded sample plays through our own route; a voice with no recording (`sample_ready: false`) is heard live in its own voice and the tone on the screen (`voice_id` and `tone` go with the preview; the sound must name that voice, else it is not played as this one).
  * No Warm/Calm/Bright, no Region, no speed.
  */
-export function VoiceCard({ words, uiLang, picker, languages, first, langNames, endpoint, choose, hear, speaks, examples, conversations, draftLangs, toneExample, canEdit, securityHref, testCallHref }: VoiceCardProps) {
+export function VoiceCard({ words, uiLang, picker, languages, first, langNames, endpoint, choose, hear, speaks, examples, conversations, open = false, draftLangs, toneExample, canEdit, securityHref, testCallHref }: VoiceCardProps) {
   const t = makeT(words);
   const router = useRouter();
   const [lang, setLang] = React.useState<PickerLang>(languages.includes(first) ? first : (languages[0] ?? first));
@@ -89,6 +91,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
   const [state, setState] = React.useState<HowSpeaks | null>(speaks?.initial ?? null);
   const [speaksNote, setSpeaksNote] = React.useState<{ ok: true } | { ok: false; error: string } | null>(null);
   const [saving, startSpeaks] = React.useTransition();
+  const [sounds, setSounds] = React.useState<(typeof SOUNDS_LIKE)[number] | null>(null);
   const [apiText, setApiText] = React.useState<Record<string, string>>({});
 
   // ALL the listed voices of the language, women first, then men (C1: the short list has both; choosing one of the other gender switches the assistant's voice type with the same call)
@@ -193,8 +196,12 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
       live = false;
     };
   }, [toneExample, state, apiText, exKey, lang, tone]);
-  const example = apiText[exKey] ?? examples[exLang]?.[tone] ?? "";
-  const turns = conversations?.[conversations[lang] ? lang : "en"]?.[tone] ?? null;
+  const example = apiText[exKey] ?? examples[exLang]?.[BASE_TONE[tone]] ?? "";
+  // the styles: the API's list (7, with their words in the language of the page; drafts until reviewed), or the three the web has always known
+  const toneList: { id: SpeakTone; label: string; hint: string }[] = state?.tone.options?.length
+    ? state.tone.options.map((o) => ({ id: o.id, label: o.label[uiLang] ?? o.label.en ?? o.id, hint: o.hint[uiLang] ?? o.hint.en ?? "" }))
+    : (["friendly", "respectful", "quick"] as const).map((x) => ({ id: x, label: t(`vc.tone.${x}`), hint: t(`vc.tone.${x}.d`) }));
+  const turns = conversations?.[conversations[lang] ? lang : "en"]?.[BASE_TONE[tone]] ?? null;
   const isDraft = apiText[exKey] === undefined && draftLangs.includes(exLang);
 
   const bg = state?.background ?? null;
@@ -204,6 +211,40 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
   const noteText: Record<Exclude<Note, null | "saved">, string> = { error: t("vc.err.save"), sample: t("vp.err.sample"), live: t("vc.err.live"), rate: t("vc.err.rate"), silent: t("vt.hear.none"), unknown: t("vc.err.unknown"), unavailable: t("vc.err.unavailable"), other: t("vc.err.other") };
   if (!picker && !speaks) return null;
 
+  // the open layout's voice rows: avatar initial, the name (bold when it is the one in use), one grey line, Play, then the round radio at the far right; hairlines between rows, no box, no tint
+  const openRow = (v: (typeof mine)[number]) => {
+    const on = v.id === inUse;
+    const here = playing === v.id;
+    const waiting = loading === v.id;
+    const later = !(v.sampleReady && v.sampleUrl) && !hear;
+    return (
+      <div key={v.id} data-voice={v.id} data-selected={on ? "true" : "false"} className="flex min-h-14 items-center gap-3 border-t border-line py-2">
+        <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-full bg-surface-2 text-[15px] font-semibold text-muted">
+          {v.name.slice(0, 1)}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className={`block text-[16px] text-ink ${on ? "font-bold" : "font-semibold"}`}>{v.name}</span>
+          <span className="block text-sm text-muted">
+            {t(v.gender === "male" ? "vc.man" : "vc.woman")}
+            {v.recommended ? ` · ${t("vp.recommended")}` : ""}
+            {on ? ` · ${t("mya.v.selected")}` : ""}
+            {later ? ` · ${t("vc.later")}` : ""}
+          </span>
+        </span>
+        <button type="button" data-play={v.id} disabled={later} aria-pressed={here} aria-label={t(here ? "vc.stop.aria" : "vc.play.aria", { name: v.name })} onClick={() => play(v)} className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg px-2 text-[15px] font-semibold text-muted hover:text-ink disabled:opacity-50">
+          {waiting ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : here ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
+          {t(here ? "vt.stop" : "vt.play")}
+        </button>
+        <input type="radio" name="vc-voice" value={v.id} checked={on} disabled={!edit} aria-label={v.name} onChange={() => !on && use(v)} className={`${radio} shrink-0 !accent-[var(--v2-ink)]`} />
+      </div>
+    );
+  };
+  // 'Sounds like' (C1's voice categories): a row of chips, only the categories this language has voices for; none chosen = Recommended first
+  const categories = SOUNDS_LIKE.filter((c) => mine.some((v) => v.soundsLike === c));
+  const chosenSounds = sounds !== null && categories.includes(sounds) ? sounds : null;
+  // recommended first (and the one in use, whatever it is); everything else behind "See all voices (N)"; a language with no recommended voice shows them all
+  const shownFirst = chosenSounds ? mine.filter((v) => v.soundsLike === chosenSounds) : mine.some((v) => v.recommended) ? mine.filter((v) => v.recommended || v.id === inUse) : mine;
+  const hiddenRest = chosenSounds ? [] : mine.filter((v) => !shownFirst.includes(v));
   return (
     <section data-part="mya-voice-card" aria-labelledby="vc-h" className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-4 md:p-5">
       <div>
@@ -238,6 +279,36 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
                 {t("vp.none")}
               </p>
             ) : (
+              open ? (
+                <div className="flex flex-col" data-part="vc-voice-open">
+                  {categories.length > 0 ? (
+                    <div role="group" aria-label={t("vc.sounds.t")} data-part="vc-sounds" className="mb-2 flex flex-wrap gap-2">
+                      {[null, ...categories].map((c) => (
+                        <button key={c ?? "rec"} type="button" aria-pressed={chosenSounds === c} onClick={() => setSounds(c)} className={`min-h-9 rounded-full border px-3.5 text-sm font-semibold ${chosenSounds === c ? "border-ink bg-ink text-bg" : "border-line text-muted"}`}>
+                          {c === null ? t("vp.recommended") : t(`vc.sounds.${c}`)}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                <div role="radiogroup" aria-label={t("vt.voice")} className="flex flex-col" data-part="vc-voice-rows">
+                  {([["female", "vc.women"], ["male", "vc.men"]] as const).map(([g, key]) => {
+                    const list = shownFirst.filter((v) => v.gender === g);
+                    return list.length === 0 ? null : (
+                      <div key={g} data-group={g} className="flex flex-col pb-2">
+                        {mine.some((v) => v.gender !== g) ? <p className="m-0 pb-1 pt-2 text-sm font-semibold text-muted">{t(key)}</p> : null}
+                        {list.map(openRow)}
+                      </div>
+                    );
+                  })}
+                  {hiddenRest.length > 0 ? (
+                    <details data-part="vc-see-all" className="border-t border-line">
+                      <summary className="flex min-h-11 cursor-pointer list-none items-center py-2 text-[15px] font-semibold text-ink">{t("vc.see_all", { n: mine.length })}</summary>
+                      <div className="flex flex-col">{hiddenRest.map(openRow)}</div>
+                    </details>
+                  ) : null}
+                </div>
+                </div>
+              ) : (
               <div role="radiogroup" aria-label={t("vt.voice")} className="flex flex-col gap-3">
                 {([["female", "vc.women"], ["male", "vc.men"]] as const).map(([g, key]) => {
                   const list = mine.filter((v) => v.gender === g);
@@ -282,6 +353,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
                   );
                 })}
               </div>
+              )
             )}
             <div className="min-h-5" aria-live="polite">
               {note === "saved" ? (
@@ -303,18 +375,18 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
         <fieldset className="m-0 min-w-0 border-0 p-0" data-part="vc-tone">
           <legend className={`${h3} mb-1`}>{t("vc.tone.t")}</legend>
           <div role="radiogroup" aria-label={t("vc.tone.t")} className="flex flex-col">
-            {TONES.map((x) => (
-              <label key={x} className={`flex min-h-11 items-start gap-3 py-2 ${canEdit ? "cursor-pointer" : "opacity-80"}`}>
-                <input type="radio" name="vc-tone" value={x} checked={tone === x} disabled={!canEdit} onChange={() => tone !== x && change({ tone: x })} className={`${radio} mt-0.5`} />
+            {toneList.map((o) => (
+              <label key={o.id} className={`flex min-h-11 items-start gap-3 py-2 ${canEdit ? "cursor-pointer" : "opacity-80"}`}>
+                <input type="radio" name="vc-tone" value={o.id} checked={tone === o.id} disabled={!canEdit} onChange={() => tone !== o.id && change({ tone: o.id })} className={`${radio} mt-0.5 ${open ? "!accent-[var(--v2-ink)]" : ""}`} />
                 <span className="min-w-0">
-                  <span className="block text-[16px] font-semibold text-ink">{t(`vc.tone.${x}`)}</span>
-                  <span className="block text-sm text-muted">{t(`vc.tone.${x}.d`)}</span>
+                  <span className="block text-[16px] font-semibold text-ink">{o.label}</span>
+                  <span className="block text-sm text-muted">{o.hint}</span>
                 </span>
               </label>
             ))}
           </div>
           {turns ? (
-            <div data-part="vc-example" aria-live="polite" lang={conversations?.[lang] ? lang : "en"} className="m-0 mt-1 rounded-xl bg-surface-2 px-3.5 py-3 text-[15px] text-ink">
+            <div data-part="vc-example" aria-live="polite" lang={conversations?.[lang] ? lang : "en"} className={open ? "m-0 mt-2 border-t border-line pt-3 text-[15px] text-ink" : "m-0 mt-1 rounded-xl bg-surface-2 px-3.5 py-3 text-[15px] text-ink"}>
               <p className="m-0 text-sm font-semibold text-muted">{t("vc.cv.label")}</p>
               <ol className="m-0 mt-2 flex list-none flex-col gap-2 p-0">
                 {turns.map((line, i) => (
@@ -338,10 +410,10 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
       {bg ? (
         <fieldset className="m-0 min-w-0 border-0 p-0" data-part="vc-background">
           <legend className={`${h3} mb-1`}>{t("vc.bg.t")}</legend>
-          <div role="radiogroup" aria-label={t("vc.bg.t")} className="flex flex-wrap gap-x-5">
-            {BACKGROUNDS.filter((id) => bg.options.some((o) => o.id === id)).map((id) => (
+          <div role="radiogroup" aria-label={t("vc.bg.t")} className={open ? "flex flex-col" : "flex flex-wrap gap-x-5"}>
+            {bg.options.map((o) => o.id).map((id) => (
               <label key={id} className={`flex min-h-11 items-center gap-2.5 text-[15px] ${canEdit ? "cursor-pointer" : "opacity-80"}`}>
-                <input type="radio" name="vc-bg" value={id} checked={bg.value === id} disabled={!canEdit} onChange={() => bg.value !== id && change({ background: id })} className={radio} />
+                <input type="radio" name="vc-bg" value={id} checked={bg.value === id} disabled={!canEdit} onChange={() => bg.value !== id && change({ background: id })} className={`${radio} ${open ? "!accent-[var(--v2-ink)]" : ""}`} />
                 {optionName(id)}
               </label>
             ))}

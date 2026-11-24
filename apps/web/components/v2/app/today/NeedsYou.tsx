@@ -76,7 +76,7 @@ function RowIcon({ cardKey }: { cardKey: string }) {
   const k = cardKey.toLowerCase();
   const cls = "size-[18px]";
   return (
-    <span aria-hidden="true" data-needs-icon="" className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-brand-bg text-base font-bold text-brand-text">
+    <span aria-hidden="true" data-needs-icon="" data-k={k.includes("quote") || k.includes("offer") ? "offer" : k.includes("visit") ? "visit" : k.includes("call") || k.includes("person") || k.includes("callback") ? "call" : "chat"} className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-brand-bg text-base font-bold text-brand-text">
       {k.includes("quote") ? "₹" : k.includes("visit") ? <CalendarDays className={cls} /> : k.includes("call") || k.includes("person") || k.includes("callback") ? <Phone className={cls} /> : k.includes("outbox") || k.includes("message") ? <MessageCircle className={cls} /> : <FileText className={cls} />}
     </span>
   );

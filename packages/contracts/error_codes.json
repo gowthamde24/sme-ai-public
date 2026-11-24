@@ -2605,9 +2605,10 @@
       "areas": [
         "conversation",
         "pronunciation",
+        "telephony",
         "voicesample"
       ],
-      "default_message": "There is no sample for this voice.",
+      "default_message": "There is no sample for this sound.",
       "wait": false,
       "extras": []
     },
@@ -3366,7 +3367,8 @@
       ],
       "areas": [
         "jobs",
-        "packs"
+        "packs",
+        "tenancy"
       ],
       "default_message": "Business types are not available on this system.",
       "wait": false,
@@ -5172,6 +5174,7 @@
         "followups",
         "how_speaks",
         "integrations",
+        "jobs",
         "lead_profile",
         "lead_sources",
         "main",

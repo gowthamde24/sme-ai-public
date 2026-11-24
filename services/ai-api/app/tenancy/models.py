@@ -140,6 +140,9 @@ class AuditEventListOut(_Out):
     next_before_id: int | None
 
 
+PACK_PATTERN = r"^[a-z][a-z0-9_]{1,30}$"
+
+
 class CreateTenantIn(BaseModel):
     """Input validation mirrors the database rules; the database remains the authority."""
 
@@ -147,3 +150,6 @@ class CreateTenantIn(BaseModel):
 
     name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
     slug: Annotated[str, StringConstraints(strip_whitespace=True, pattern=SLUG_PATTERN)]
+    # the business type of the new workspace (docs/contracts/first-run.md): one of GET /v1/packs
+    # ("other" = the generic pack); omitted = today's default pack
+    pack: Annotated[str, StringConstraints(pattern=PACK_PATTERN)] | None = None

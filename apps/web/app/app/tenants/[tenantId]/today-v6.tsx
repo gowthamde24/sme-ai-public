@@ -3,6 +3,7 @@ import { type ReactNode } from "react";
 import { JobsToday } from "@/components/v2/app/jobs/JobsToday";
 import { FinishChip } from "@/components/v2/app/today/v6/day-one/FinishChip";
 import { doneCount, showChecklist, showChip, stepViews, type StepId } from "@/components/v2/app/today/v6/day-one/steps";
+import { todayOpen } from "@/lib/screens/flag";
 import type { DayOneIn, LiveCallSeed, V6In } from "@/components/v2/app/today/v6/types";
 import { wordsFor } from "@/i18n/app-words";
 import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
@@ -28,7 +29,7 @@ import { readAssistantStatus } from "@/lib/assistant-status/source";
 import { readChoice } from "@/lib/assistant-status/setup-choice";
 import type { StepCheck } from "@/lib/packs/activation";
 import { readFacts } from "@/lib/packs/activation-facts";
-import { assistantStatusScreens, callScreens, demoCall, designV6, outreachScreens, taskScreens } from "@/lib/screens/flag";
+import { assistantStatusScreens, callScreens, demoCall, designV6, outreachScreens, taskScreens, firstDayOpen } from "@/lib/screens/flag";
 import { readResultsV6 } from "./report/v6-data";
 import { setJobEnabledAction } from "./jobs/actions";
 import { changeSearchAction, planJobAction, startPlanAction, testPlanAction } from "./jobs/new/actions";
@@ -120,7 +121,7 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
       const checklist = showChecklist({ live: isLive, choice, reopen: setup === "1", manages });
       const wantDone = status !== null && manages && (checklist || choice !== "dismissed");
       const done = wantDone && status ? await readDone(token, tenantId, shop, modules, status, missing) : null;
-      const steps = done ? stepViews(done, base) : null;
+      const steps = done ? stepViews(done, base, modules.includes("catalogue")) : null;
       const count = steps ? doneCount(steps) : 0;
       const dayOne: DayOneIn | null =
         checklist && steps
@@ -132,6 +133,7 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
               actions: { skip: skipSetupAction.bind(null, tenantId), goLive: goLiveAction.bind(null, tenantId), testNumber: manages && assistantStatusScreens() === "mock" ? testNumberAction.bind(null, tenantId) : null },
               helpHref: "/app/support/whatsapp?page=today",
               testCallHref: `${base}/calls`,
+              ...(firstDayOpen() ? { open: true } : {}),
             }
           : null;
       const chip: ReactNode = steps && showChip({ done: count, choice, checklistShown: checklist, manages }) ? <FinishChip done={count} base={base} words={words} dismiss={dismissChipAction.bind(null, tenantId)} /> : null;
@@ -147,6 +149,7 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
         demoCall: manages && demoCall() && (await readIsDemo(token, tenantId, shop)) ? { start: startDemoCallAction.bind(null, tenantId), end: endDemoCallAction.bind(null, tenantId) } : null,
         dayOne,
         chip,
+        ...(todayOpen() ? { open: true } : {}),
       };
     })(),
   );
@@ -167,7 +170,7 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
         const messagesToChange = manages ? (r?.needsYou ?? []).filter((n) => n.code === "message_needs_change" && n.target.type === "message").length : 0;
         if (!list || list.length === 0) return null;
         const words = wordsFor(lang, ["jobs."]);
-        const section = <JobsToday jobs={list} words={words} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} sheet={sheet} messagesToChange={messagesToChange} />;
+        const section = <JobsToday jobs={list} words={words} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} sheet={sheet} messagesToChange={messagesToChange} open={todayOpen()} />;
         // the staging preview, "my business" (lib/screens/preview.ts): jobs drawn from the sample data (the route is not there yet) say so
         return list.some((j) => j.sample) ? (
           <>

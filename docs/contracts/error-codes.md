@@ -226,7 +226,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `no_notes` | 422 | assistant_context |  |  | Write or add some notes first, then test them. |
 | `no_order_policy` | 409 | main |  |  | No order policy is in force: the owner must publish one. |
 | `no_preview` | 404 | conversation |  |  | There is no preview on this system. |
-| `no_sample` | 404 | conversation, pronunciation, voicesample |  |  | There is no sample for this voice. |
+| `no_sample` | 404 | conversation, pronunciation, telephony, voicesample |  |  | There is no sample for this sound. |
 | `no_site_contact` | 422 | main |  |  | This trip has no site contact to tell. |
 | `no_speech` | 422 | voice |  |  | Nothing could be heard in that recording. |
 | `no_subscription` | 409 | main |  |  | Choose a plan first: a top-up or an upgrade needs one. |
@@ -288,7 +288,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `owner_ok_required` | 409 | admin |  |  | This business asked to be asked first. They have not said yes yet. |
 | `owner_required` | 403 | main |  |  | This action needs the owner. |
 | `pack_unknown` | 422 | main |  |  | That top-up pack does not exist or is for the other kind. |
-| `packs_unavailable` | 503 | jobs, packs |  |  | Business types are not available on this system. |
+| `packs_unavailable` | 503 | jobs, packs, tenancy |  |  | Business types are not available on this system. |
 | `parser_failed` | 502 | lead_sources |  |  | The sample e-mail could not be read. Tell us, this should not happen. |
 | `payload_too_large` | 413 | errors, hardening, whatsapp |  |  | Too large. |
 | `payment_method_declined` | 402 | main |  |  | The payment method was not accepted. Nothing was charged. |
@@ -431,7 +431,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `unsupported_type` | 415 | knowledge, lead_sources |  |  | That kind of body is not accepted. |
 | `upstream_error` | 502 | agent_runs, assistant, catalogue, erasure, main, materials, today, voice_notes |  |  | The data layer failed. |
 | `upstream_unavailable` | 502 | lead_sources |  |  | Try again shortly. |
-| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, lead_profile, lead_sources, main, materials, opening, orders, outbox, outcomes, search, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
+| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, jobs, lead_profile, lead_sources, main, materials, opening, orders, outbox, outcomes, search, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
 | `value_not_accepted` | 422 | enquiries |  |  | (the sentence varies: show `message`) |
 | `vision_unavailable` | 503 | assistant_context |  |  | Reading pictures and PDFs is not switched on for this system. Paste the text instead. |
 | `visit_state` | 409 | main |  |  | That cannot be done in the state the visit is in now. Reload and look again. |

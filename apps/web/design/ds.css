@@ -9,7 +9,7 @@
   color-scheme: light;
 
   /* neutral off-white (owner, 14 Nov: the cream was too sepia): page #fafafa, cards white with a 1px #ececec edge, cool-grey text */
-  --v2-bg: #ffffff;
+  --v2-bg: #fafafa;
   --v2-surface: #ffffff;
   --v2-surface-2: #f4f5f7;
   --v2-ink: #16181d;
@@ -144,16 +144,7 @@
   background-image: none;
   isolation: isolate;
 }
-[data-ui="v2"][data-ds="6"] [data-frame="app"]::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: radial-gradient(circle, var(--v2-dot) 1px, transparent 1.3px);
-  background-size: 22px 22px;
-  will-change: transform;
-}
+/* (no dot grid behind the app: the page is flat, owner 25 Nov 2026: light #fafafa, dark #0a0a0b; the landing keeps its own look) */
 /* The glowing border (the command bar, a reply that waits for the owner's OK): a gradient edge and a soft orange halo. Still when the person asks for less motion. */
 [data-ui="v2"][data-ds="6"] .ds-glow {
   border: 1.5px solid transparent;
@@ -685,4 +676,68 @@
 /* (d) the 14 px floor for text the owner reads (the small utilities lift to 14; a drawing of a phone or a sample, data-illustration, keeps its own size) */
 [data-ui="v2"][data-ds="6"] [data-frame="app"] main:not(:has([data-part="command-bar"])) :is(.text-xs, [class*="text-[11px]"], [class*="text-[12px]"], [class*="text-[12.5px]"], [class*="text-[13px]"], [class*="text-[13.5px]"]):not([data-illustration] *) {
   font-size: 14px !important;
+}
+
+/* My assistant, the OPEN layout (owner chose it, 24 Nov 2026): the three cards become plain sections on the page: no box, no radius, a hairline above each block; the tabs sit on a hairline. The data-open wrapper only exists with MY_ASSISTANT_OPEN=1. */
+[data-ui="v2"][data-ds="6"] [data-open="mya"] :is([data-part="mya-voice-card"], [data-part="mya-voice-tone"], [data-part="mya-talk-to-you"]) {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-voice-card"] > :is(fieldset, div[data-part]):not(:first-child) {
+  border-top: 1px solid var(--v2-border);
+  padding-top: 18px;
+}
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"] > div { border-top: 0; }
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"] summary::-webkit-details-marker { display: none; }
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"] summary::after { content: "+"; margin-left: auto; font-size: 20px; font-weight: 500; }
+[data-ui="v2"][data-ds="6"] [data-open="mya"] [data-part="mya-more"][open] summary::after { content: "\2212"; }
+
+/* the Practice panel on a My assistant page in the open layout: no box, plain text beside ONE vertical rule (the mock) */
+[data-ui="v2"][data-ds="6"] main:has([data-open="mya"]) [data-part="practice-panel"] {
+  border: 0;
+  border-left: 1px solid var(--v2-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0 0 0 24px;
+}
+@media (max-width: 767px) {
+  [data-ui="v2"][data-ds="6"] main:has([data-open="mya"]) [data-part="practice-panel"] { border-left: 0; border-top: 1px solid var(--v2-border); padding: 16px 0 0; }
+}
+
+/* --- Today in the open look (owner, 25 Nov 2026; TODAY_OPEN) --------------------------------------------------------------------------------------------------------------------------------------
+   Category colours: the colour of BARE 22px line icons (no tile, no tint, no circle). Calls blue, chats green, visits violet, offers gold, finding teal. Orange stays "needs you" + the one main button. */
+[data-ui="v2"][data-ds="6"] { --k-call: #2f5bea; --k-chat: #1e8e5a; --k-visit: #7b4fd1; --k-offer: #b7791f; --k-find: #0e8a8a; }
+[data-ui="v2"][data-ds="6"][data-theme="dark"] { --k-call: #8aa6ff; --k-chat: #4cc38a; --k-visit: #b79cf4; --k-offer: #e5b25d; --k-find: #4fc7c7; }
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) { --k-call: #8aa6ff; --k-chat: #4cc38a; --k-visit: #b79cf4; --k-offer: #e5b25d; --k-find: #4fc7c7; }
+}
+[data-ui="v2"][data-ds="6"] [data-k="call"] { color: var(--k-call); }
+[data-ui="v2"][data-ds="6"] [data-k="chat"] { color: var(--k-chat); }
+[data-ui="v2"][data-ds="6"] [data-k="visit"] { color: var(--k-visit); }
+[data-ui="v2"][data-ds="6"] [data-k="offer"] { color: var(--k-offer); }
+[data-ui="v2"][data-ds="6"] [data-k="find"] { color: var(--k-find); }
+/* Running now: a green switch when on (orange is only for "needs you" and the one main button) */
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="jobs-open"] .jb-switch[data-on] { background: var(--k-chat); }
+/* the rules that must beat Tailwind's important utilities sit in @layer theme with !important (see the phone pass note above) */
+@layer theme {
+/* Needs you: the icon is bare (no tile); the second action of a row is a plain grey link, only the first is a button */
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon] { background: none !important; width: auto !important; height: auto !important; min-width: 26px !important; font-size: 20px !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon] svg { width: 22px !important; height: 22px !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] .row-quiet { border: 0 !important; background: none !important; border-radius: 0 !important; color: var(--v2-muted) !important; text-decoration: underline !important; text-underline-offset: 4px !important; padding-inline: 6px !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] .row-quiet:hover { background: none !important; color: var(--v2-ink) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] #needs-you-list { border: 0 !important; border-radius: 0 !important; background: none !important; border-top: 1px solid var(--v2-border) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon][data-k="call"] { color: var(--k-call) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon][data-k="chat"] { color: var(--k-chat) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon][data-k="visit"] { color: var(--k-visit) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-needs-icon][data-k="offer"] { color: var(--k-offer) !important; }
+/* the festival suggestion: a hairline block, not a peach box */
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] { background: none !important; border: 0 !important; border-top: 1px solid var(--v2-border) !important; border-bottom: 1px solid var(--v2-border) !important; border-radius: 0 !important; box-shadow: none !important; padding-inline: 0 !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] > p:first-child { color: var(--v2-muted) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="festival-suggestion"] [data-action="fest-later"] { border: 0 !important; background: none !important; color: var(--v2-muted) !important; text-decoration: underline !important; text-underline-offset: 4px !important; }
+/* empty side notes: one grey sentence, no box */
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="empty-note"] { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
 }

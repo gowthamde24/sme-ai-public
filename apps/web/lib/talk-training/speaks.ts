@@ -4,7 +4,13 @@ import { introduceProblem, introduceToApi, parseIntroduceAs, type IntroduceAs } 
  * "How your assistant speaks" (owner decision 11 Nov 2026; C1's FIXED contract docs/contracts/how-assistant-speaks.md, PR #459: the endpoint `GET/PUT /how-assistant-speaks` is built after it, until then the panel runs on a mock made from the contract). One object for Tone, Words per
  * language, and Introduce as (and, since 21 Nov, the background and "Say AI assistant when greeting"). Casual is NOT an option here (the owner's own test call only); Formal is hidden. Pure: no fetch, no React.
  */
-export const TONES = ["friendly", "respectful", "quick"] as const;
+export const TONES = ["friendly", "respectful", "quick", "professional", "calm_caring", "cheerful", "confident"] as const; // the 7 speaking styles (C1's voice-styles.md section 1); the first three are the ones that always existed
+/** The three styles that always existed: the older panels (How your assistant speaks) offer these only. */
+export const BASE_TONES = ["friendly", "respectful", "quick"] as const;
+/** The three styles that have a prepared sample call; each of the four newer ones speaks on top of one of them (C1: professional on respectful, the others on friendly). */
+export const BASE_TONE: Readonly<Record<SpeakTone, "friendly" | "respectful" | "quick">> = { friendly: "friendly", respectful: "respectful", quick: "quick", professional: "respectful", calm_caring: "friendly", cheerful: "friendly", confident: "friendly" };
+/** A speaking style as the API lists it: its words per language (drafts until reviewed) and the kinds of business it suits. */
+export type ToneOption = { id: SpeakTone; label: Partial<Record<string, string>>; hint: Partial<Record<string, string>>; bestFor: string[] };
 export type SpeakTone = (typeof TONES)[number];
 export const STYLES = ["everyday_mixed", "everyday_pure"] as const; // "formal" is not offered; one saved earlier is shown as everyday_pure (the API does this)
 export type SpeakStyle = (typeof STYLES)[number];
@@ -12,9 +18,9 @@ export type SpeakStyle = (typeof STYLES)[number];
 export const SPEAK_LANGS = ["te", "kn", "hi", "ta"] as const;
 export type SpeakLang = (typeof SPEAK_LANGS)[number];
 /** The very quiet sound under the assistant's voice on a call (voices-tones.md section 6); `quiet_office` is the default. */
-export const BACKGROUNDS = ["quiet_office", "shop", "off"] as const;
+export const BACKGROUNDS = ["off", "quiet_office", "busy_office", "call_centre", "shop", "market", "showroom", "clinic_reception", "home", "street"] as const;
 export type Background = (typeof BACKGROUNDS)[number];
-export type BackgroundState = { value: Background; saved: boolean; /** the words of each choice as the API says them, per language (en, te, hi, kn, ...) */ options: { id: Background; label: Partial<Record<string, string>> }[] };
+export type BackgroundState = { value: Background; saved: boolean; /** the words of each choice as the API says them, per language (en, te, hi, kn, ...) */ options: { id: Background; label: Partial<Record<string, string>>; /** the API path of its 6-second preview (null for Off) */ sampleUrl: string | null }[] };
 /** "Say 'AI assistant' when greeting" (greeting-disclosure.md): false until the owner turns it on; `saved` = the owner chose. */
 export type SayAiState = { value: boolean; saved: boolean };
 export const EXAMPLE_LANGS = ["te", "kn", "hi", "en"] as const;
@@ -24,7 +30,7 @@ export type LegacyAddress = "plain" | "sir_madam" | "garu" | "ji";
 
 export type LangStyle = { style: SpeakStyle; saved: boolean; examples: "approved" | "draft" };
 export type HowSpeaks = {
-  tone: { value: SpeakTone; source: ToneSource; packDefault: SpeakTone };
+  tone: { value: SpeakTone; source: ToneSource; packDefault: SpeakTone; /** the styles the API lists (7); empty from an older API: the three that always existed are drawn */ options: ToneOption[] };
   /** null = this API has no background yet (nothing is drawn) */
   background: BackgroundState | null;
   /** null = this API has no such setting yet (no switch is drawn: never a switch that does nothing) */
@@ -60,7 +66,7 @@ export function parseHowSpeaks(raw: unknown): HowSpeaks | null {
   const ownerName = typeof raw.introduce_as.owner_name === "string" && raw.introduce_as.owner_name.trim() !== "" ? raw.introduce_as.owner_name.trim().slice(0, 40) : null;
   const pd = isRec(raw.pack_defaults) ? one(TONES, raw.pack_defaults.tone) : null;
   return {
-    tone: { value: tone, source, packDefault },
+    tone: { value: tone, source, packDefault, options: parseToneOptions(raw.tone.options) },
     background: parseBackground(raw.background),
     sayAi: parseSayAi(raw.say_ai_when_greeting),
     words,
@@ -71,18 +77,37 @@ export function parseHowSpeaks(raw: unknown): HowSpeaks | null {
   };
 }
 
+const words = (raw: unknown, max: number): Partial<Record<string, string>> => {
+  const out: Partial<Record<string, string>> = {};
+  if (isRec(raw)) for (const [lang, text] of Object.entries(raw).slice(0, 12)) if (/^[a-z]{2}$/.test(lang) && typeof text === "string" && text.trim() !== "" && text.length <= max) out[lang] = text.trim();
+  return out;
+};
+/** `tone.options`: from this stage of the API the entries are objects `{id, label{}, hint{}, best_for[], reviewed}`; the older strings (or anything odd) give an empty list: the three styles the web has always known are drawn. */
+export function parseToneOptions(raw: unknown): ToneOption[] {
+  if (!Array.isArray(raw)) return [];
+  const out: ToneOption[] = [];
+  for (const o of raw.slice(0, 12)) {
+    const id = isRec(o) ? one(TONES, o.id) : null;
+    if (!id || !isRec(o) || out.some((x) => x.id === id)) continue;
+    const label = words(o.label, 40);
+    if (!label.en) continue;
+    out.push({ id, label, hint: words(o.hint, 80), bestFor: Array.isArray(o.best_for) ? o.best_for.filter((b): b is string => typeof b === "string" && /^[a-z_]{2,20}$/.test(b)).slice(0, 8) : [] });
+  }
+  return out;
+}
+
 /** `background {value, saved, options: [{id, label: {en, te, ...}}]}`; absent or odd = null (an older API: no choice is drawn). */
 export function parseBackground(raw: unknown): BackgroundState | null {
   if (!isRec(raw)) return null;
   const value = one(BACKGROUNDS, raw.value);
   if (!value || !Array.isArray(raw.options)) return null;
   const options: BackgroundState["options"] = [];
-  for (const o of raw.options.slice(0, 6)) {
+  for (const o of raw.options.slice(0, 12)) {
     const id = isRec(o) ? one(BACKGROUNDS, o.id) : null;
     if (!id || !isRec(o) || !isRec(o.label) || options.some((x) => x.id === id)) continue;
     const label: Partial<Record<string, string>> = {};
     for (const [lang, text] of Object.entries(o.label).slice(0, 12)) if (/^[a-z]{2}$/.test(lang) && typeof text === "string" && text.trim() !== "" && text.length <= 40) label[lang] = text.trim();
-    if (label.en) options.push({ id, label });
+    if (label.en) options.push({ id, label, sampleUrl: typeof o.sample_url === "string" && /^\/v1\/background-samples\/[a-z_]+\.mp3$/.test(o.sample_url) ? o.sample_url : null });
   }
   return options.length > 0 ? { value, saved: raw.saved === true, options } : null;
 }
