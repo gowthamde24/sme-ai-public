@@ -21,7 +21,6 @@ from typing import Any
 ROUTE_WORDS = frozenset(
     {
         "lists", "columns", "commit", "mappings",   # the lists of what you sell (28 Nov)
-        "lists", "columns",   # the lists of what you sell (28 Nov)
         "undo-price",   # POST /catalogue/items/{id}/undo-price (28 Nov)
         "phone-lines",   # GET /phone-lines (28 Nov)
         "phone-knows",   # GET /assistant/phone-knows (28 Nov)

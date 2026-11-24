@@ -711,33 +711,6 @@
       "title": "ModuleStateOut",
       "type": "object"
     },
-    "PackCategoryOut": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "title": "Id",
-          "type": "string"
-        },
-        "name": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "title": "Name",
-          "type": "object"
-        },
-        "colour": {
-          "title": "Colour",
-          "type": "string"
-        }
-      },
-      "required": [
-        "id",
-        "name",
-        "colour"
-      ],
-      "title": "PackCategoryOut",
-      "type": "object"
-    },
     "PackListOut": {
       "additionalProperties": false,
       "properties": {
@@ -746,14 +719,6 @@
             "$ref": "#/$defs/PackSummaryOut"
           },
           "title": "Packs",
-          "type": "array"
-        },
-        "categories": {
-          "default": [],
-          "items": {
-            "$ref": "#/$defs/PackCategoryOut"
-          },
-          "title": "Categories",
           "type": "array"
         }
       },
@@ -808,23 +773,6 @@
         },
         "owl_prop": {
           "title": "Owl Prop",
-          "type": "string"
-        },
-        "category": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Category"
-        },
-        "keywords": {
-          "default": "",
-          "title": "Keywords",
           "type": "string"
         }
       },
