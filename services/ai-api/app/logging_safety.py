@@ -20,7 +20,7 @@ from typing import Any
 # complete), plus the framework's documentation routes. Anything else in a path is user-supplied.
 ROUTE_WORDS = frozenset(
     {
-        "lists", "columns",   # the lists of what you sell (28 Nov)
+        "lists", "columns", "commit", "mappings",   # the lists of what you sell and their import (28 Nov)
         "numbers", "claim",   # the number picker routes (28 Nov)
         "template",   # POST /conversations/{id}/template (a template picked in a chat, 16 Nov)
         "marketing-consent", "consented",   # campaigns S3, 17 Nov

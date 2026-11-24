@@ -1,6 +1,6 @@
 # Contract: "What you sell", the four styles that are not products (C1 -> C2), 25 Nov 2026
 Status: **built on a branch, held** (migration 20261231988100; it goes in with the combined production database push). This is the API the web adapter `apps/web/lib/api/what-you-sell.ts` has always called ("contract 1.1 part 1"): until now only the web side existed, so the adapter answered "not ready" on every 404. Behind the API flag `JOBS` (404 `not_found` on every route while it is off; the workspace door comes first). Same error shape as everywhere. Base `/v1/tenants/{tenant_id}`.
-Products are NOT here: `style=products` is the catalogue (`/catalogue/...`), unchanged. There is **no reading call** (`POST .../read`): it answers 404 and the adapter shows "not ready" for it.
+Products are NOT here: `style=products` is the catalogue (`/catalogue/...`), unchanged. The reading call is built (28 Nov 2026): see the last section.
 
 ## Read
 `GET /what-you-sell?style=services|courses|properties|pricelist&limit=1..50&cursor=` (any member) -> `{ "style": "services", "items": [ { "id": "<uuid>", "name": "Haircut", ...the style's fields } ], "next_cursor": "<short word> | null" }`. Oldest first. Removed entries are not listed. `style=products` or any other word: 422.
@@ -19,3 +19,10 @@ Products are NOT here: `style=products` is the catalogue (`/catalogue/...`), unc
 
 ## First run
 `GET /first-run` `items.count` = the catalogue's items + these entries that are not removed (docs/contracts/first-run.md). A non-textile business saves its first item here.
+
+## The reading call (28 Nov 2026)
+`POST /what-you-sell/{style}/read` (style = services | courses | properties | pricelist; Owner or Admin; the JOBS flag as the other routes) body `{ "kind": "sheet" | "photo" | "talk", "file_id": "<uuid from POST /assistant/files>" (sheet, photo), "text": "<= 2000 characters" (talk), "language": en|te|hi|kn|ta|ml }` -> `{ "style", "drafts": [ ... ], "unclear": bool, "notes": [ { "code", "row"? } ] }`. **Nothing is saved**: the owner checks each draft and saves it with the PUT above.
+* A sheet is read cell by cell (xlsx, csv); a photo or PDF by local OCR first and, only when that finds nothing, by the AI model's vision (never in a school's workspace; it costs one assistant run, the hourly limit applies: 429 `ai_limit`); the owner's words (talk) one item a line ("Fall and pico 150"). All CODE: a price is the digits the file holds (`1,200`, `Rs. 4,800`, `₹1,250`, `1250/-`, up to 2 decimals) in whole paise; a price that is not clearly one (a range, "call us", a word) is NOT guessed: the draft carries `null` and the note `price_missing` with its row (1 to 20).
+* Drafts (at most 20): pricelist `{name, moq (1 when the sheet has none), unit (only when the sheet says piece/metre/kg/set/dozen), rates: [{from_qty: moq, rate_paise | null}], good_until: null}`; services and properties `{name, price_paise | null}`; courses `{name, fee_paise | null}`.
+* Notes (closed): `price_missing` (row), `unit_missing` (row, said once), `too_many` (more than 20 rows: only the first 20), `unreadable` (no table of an item and a price was found: `unclear: true`, no drafts).
+* Errors: 404 for `products` or any other style, for a file that is gone (`file_gone`) and while JOBS or the assistant-work door is off; 422 `file_unreadable` with `reason` (and `fields`): doc_format (save as .docx), heic (send a JPG), scanned_school, no_reader (vision is off), unreadable; 422 `validation_error` (no text, no file); 403 for Sales and Viewer; 429 `ai_limit`.

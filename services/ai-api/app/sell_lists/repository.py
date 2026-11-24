@@ -54,3 +54,9 @@ class ListRepository:
 
     def row_remove(self, token: str, tenant_id: uuid.UUID, list_id: uuid.UUID, row_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "sell_row_remove", {"p_tenant_id": str(tenant_id), "p_list_id": str(list_id), "p_id": str(row_id)})
+
+    def mappings(self, token: str, tenant_id: uuid.UUID, list_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "sell_list_mappings", {"p_tenant_id": str(tenant_id), "p_list_id": str(list_id)})
+
+    def rows_import(self, token: str, tenant_id: uuid.UUID, list_id: uuid.UUID, rows: list[dict[str, Any]], label: str | None, mapping: dict[str, Any] | None) -> dict[str, Any]:
+        return self._rpc.object(token, "sell_rows_import", {"p_tenant_id": str(tenant_id), "p_list_id": str(list_id), "p_rows": rows, "p_label": label, "p_mapping": mapping})

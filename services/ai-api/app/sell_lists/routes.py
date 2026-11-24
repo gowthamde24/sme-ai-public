@@ -9,6 +9,9 @@
   GET  /v1/tenants/{t}/lists/{id}/rows?limit&cursor&q any member
   PUT  /v1/tenants/{t}/lists/{id}/rows/{row_id}       Owner/Admin: {name, cells, active}; only the Owner sets or changes a rupee amount
   POST /v1/tenants/{t}/lists/{id}/rows/{row_id}/remove  Owner/Admin
+  GET  /v1/tenants/{t}/lists/{id}/import/mappings     any member: the remembered heading -> column mappings
+  POST /v1/tenants/{t}/lists/{id}/import/preview      Owner/Admin: {file_id, mapping?} -> {mapping, rows, notes, unclear} (nothing saved)
+  POST /v1/tenants/{t}/lists/{id}/import/commit       Owner/Admin: {rows, save_label?, mapping?} -> {created, updated} (all or nothing; a known name updates that item)
 NOTE: no `from __future__ import annotations` (request models are attached to the endpoint signatures at registration time)."""
 
 import uuid
@@ -20,6 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 from app.auth.deps import AnyMember, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError, not_found
+from app.sell_lists import importer
 from app.sell_lists.repository import ListRefused
 from app.tenancy.models import Role
 
@@ -150,3 +154,47 @@ def put_row(list_id: uuid.UUID, row_id: uuid.UUID, body: RowIn, ctx: OwnerAdminS
 @router.post("/{list_id}/rows/{row_id}/remove")
 def remove_row(list_id: uuid.UUID, row_id: uuid.UUID, ctx: OwnerAdminStrong, runtime: RuntimeDep) -> JSONResponse:
     return _json(_run(_repo(runtime).row_remove, ctx.principal.token, ctx.tenant.id, list_id, row_id))
+
+
+class PreviewIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    file_id: uuid.UUID
+    mapping: dict[Annotated[str, StringConstraints(min_length=1, max_length=80)], Annotated[str, StringConstraints(max_length=40)] | None] | None = None
+
+
+class ImportRowIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    name: Annotated[str, StringConstraints(min_length=1, max_length=120)]
+    cells: dict[Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,29}$")], Any] = {}
+
+
+class CommitIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    rows: Annotated[list[ImportRowIn], Field(max_length=1000)]
+    save_label: Annotated[str, StringConstraints(min_length=1, max_length=80)] | None = None
+    mapping: dict[Annotated[str, StringConstraints(min_length=1, max_length=80)], Annotated[str, StringConstraints(max_length=40)] | None] | None = None
+
+
+@router.get("/{list_id}/import/mappings")
+def import_mappings(list_id: uuid.UUID, ctx: AnyMember, runtime: RuntimeDep) -> JSONResponse:
+    return _json(_run(_repo(runtime).mappings, ctx.principal.token, ctx.tenant.id, list_id))
+
+
+@router.post("/{list_id}/import/preview")
+def import_preview(list_id: uuid.UUID, body: PreviewIn, ctx: OwnerAdminStrong, runtime: RuntimeDep) -> JSONResponse:
+    """The file's table matched to this list's columns: nothing is saved. The owner corrects it on the screen and sends the rows to /import/commit."""
+    from app.jobs import sell_read
+
+    repo = _repo(runtime)
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    the_list = _run(repo.get, token, tenant, list_id)
+    saved = _run(repo.mappings, token, tenant, list_id).get("mappings", [])
+    table, _ = sell_read.load_table(runtime, ctx, body.file_id)
+    got = importer.propose(the_list, table, mapping=body.mapping, saved=saved)
+    return _json({"mapping": got.mapping, "rows": got.rows, "notes": got.notes, "unclear": got.unclear})
+
+
+@router.post("/{list_id}/import/commit")
+def import_commit(list_id: uuid.UUID, body: CommitIn, ctx: OwnerAdminStrong, runtime: RuntimeDep) -> JSONResponse:
+    rows = [r.model_dump() for r in body.rows]
+    return _json(_run(_repo(runtime).rows_import, ctx.principal.token, ctx.tenant.id, list_id, rows, body.save_label, body.mapping), 201)

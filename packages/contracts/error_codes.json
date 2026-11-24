@@ -112,6 +112,20 @@
       "extras": []
     },
     {
+      "code": "ai_limit",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "",
+      "wait": true,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
       "code": "ai_team_unavailable",
       "statuses": [
         503
@@ -1331,6 +1345,18 @@
       "extras": []
     },
     {
+      "code": "file_gone",
+      "statuses": [
+        404
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "file_too_large",
       "statuses": [
         413,
@@ -1374,11 +1400,15 @@
         422
       ],
       "areas": [
-        "assistant_context"
+        "assistant_context",
+        "jobs"
       ],
       "default_message": "I could not hear any words in that recording.",
       "wait": false,
-      "extras": []
+      "extras": [
+        "fields",
+        "reason"
+      ]
     },
     {
       "code": "file_unsafe",

@@ -57,8 +57,9 @@ def auto_mapping(columns: list[dict[str, Any]], headings: list[str]) -> dict[str
     by_label = {_norm(c["label"]): c for c in columns}
     for h in out:   # 1. the column's own label
         if out[h] is None and norm[h] in by_label and by_label[norm[h]]["key"] not in taken:
-            out[h] = by_label[norm[h]]["key"]
-            taken.add(out[h] or "")
+            key = str(by_label[norm[h]]["key"])
+            out[h] = key
+            taken.add(key)
     price_cols = [c for c in columns if c.get("role") == "price"]
     for h in out:   # 2. a price heading: a price column whose label shares a word with it, else the default price column
         if out[h] is not None or norm[h] not in ROLE_WORDS["price"] and not any(w in ROLE_WORDS["price"] for w in _words(h)):
@@ -72,9 +73,9 @@ def auto_mapping(columns: list[dict[str, Any]], headings: list[str]) -> dict[str
         col = next((c for c in columns if c.get("role") == role and c["key"] not in taken), None)
         if col is None:
             continue
-        h = next((h for h in out if out[h] is None and norm[h] in ROLE_WORDS[role]), None)
-        if h is not None:
-            out[h] = col["key"]
+        found = next((x for x in out if out[x] is None and norm[x] in ROLE_WORDS[role]), None)
+        if found is not None:
+            out[found] = col["key"]
             taken.add(col["key"])
     return out
 
