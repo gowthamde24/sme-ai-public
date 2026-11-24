@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "yoga_studio",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "yoga and wellness studios",
+    "te": "యోగా, వెల్‌నెస్ స్టూడియోలు"
+  }
+}

@@ -92,7 +92,7 @@ def test_every_introduction_and_every_sample_states_ai_assistant() -> None:
 def test_the_samples_cover_every_language_style_and_business_type() -> None:
     d = data.load()
     # job DR: the nine leads-and-calls types share the "leads" lines; every other type has its own
-    assert set(d["samples"]) | {"real_estate", "coaching", "clinic", "insurance_loans", "auto_dealer", "interiors_solar", "travel", "gym", "wholesale_b2b", "general_business"} == set(d["defaults"]) | {"leads"}
+    assert set(d["samples"]) | {"real_estate", "coaching", "clinic", "insurance_loans", "auto_dealer", "interiors_solar", "travel", "gym", "wholesale_b2b", "general_business", *['agri_nursery', 'appliance_vehicle_repair', 'arts_music', 'bakery_sweets', 'car_service', 'catering_tiffin', 'cleaning_pest', 'cloud_kitchen', 'consultants_agencies', 'creators_communities', 'dental', 'diagnostics_lab', 'digital_products', 'electronics', 'event_wedding', 'fashion_tailor', 'finance_agent', 'furniture', 'hardware_paint', 'home_repair', 'hotel_homestay', 'jewellery', 'kirana', 'laundry_dry_cleaning', 'legal_ca', 'ngo_trust', 'online_courses', 'online_store', 'pharmacy', 'photography', 'physio_rehab', 'preschool', 'restaurant', 'salon_beauty', 'skills_training', 'software_saas', 'sports_academy', 'stationery_gifts', 'vehicle_rental', 'vet_pet', 'yoga_studio']} == set(d["defaults"]) | {"leads"}  # the 41 types added 29 Nov 2026 share the "leads" lines too
     assert "leads" in d["samples"] and all(data.sample(biz, "en", "warm", "Asha", "Shop") for biz in d["defaults"])
     for biz in d["samples"]:
         assert set(d["samples"][biz]) == set(LANGS)

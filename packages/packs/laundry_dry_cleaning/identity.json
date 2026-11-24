@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "laundry_dry_cleaning",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "laundry and dry cleaners",
+    "te": "లాండ్రీ, డ్రై క్లీనింగ్ షాపులు"
+  }
+}

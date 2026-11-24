@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "hardware_paint",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "hardware and paint shops",
+    "te": "హార్డ్‌వేర్, పెయింట్ షాపులు"
+  }
+}

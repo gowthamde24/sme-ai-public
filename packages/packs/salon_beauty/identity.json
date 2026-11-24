@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "salon_beauty",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "salons and spas",
+    "te": "సెలూన్లు, స్పాలు"
+  }
+}

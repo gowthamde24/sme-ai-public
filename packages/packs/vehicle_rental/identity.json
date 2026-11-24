@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "vehicle_rental",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "rental businesses",
+    "te": "రెంటల్ బిజినెస్‌లు"
+  }
+}

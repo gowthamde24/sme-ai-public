@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "arts_music",
+  "status": "draft",
+  "sell_style": "courses",
+  "plural_names": {
+    "en": "music, dance and art classes",
+    "te": "మ్యూజిక్, డ్యాన్స్, ఆర్ట్ క్లాసులు"
+  }
+}

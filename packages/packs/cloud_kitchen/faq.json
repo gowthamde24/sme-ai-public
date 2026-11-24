@@ -1,0 +1,68 @@
+{
+  "$schema": "../faq.schema.json",
+  "pack": "cloud_kitchen",
+  "version": 1,
+  "$comment": "Starter questions only: the owner writes the answers, and the assistant says 'I will ask the owner' until then.",
+  "questions": [
+    {
+      "code": "q1",
+      "ask": {
+        "en": "What are your opening hours?"
+      }
+    },
+    {
+      "code": "q2",
+      "ask": {
+        "en": "Where are you, and how do I reach you?"
+      }
+    },
+    {
+      "code": "q3",
+      "ask": {
+        "en": "How do I pay, and do you give a bill?"
+      }
+    },
+    {
+      "code": "q4",
+      "ask": {
+        "en": "What does it cost, and is there a minimum?"
+      }
+    },
+    {
+      "code": "q5",
+      "ask": {
+        "en": "Do you deliver or come to me?"
+      }
+    },
+    {
+      "code": "q6",
+      "ask": {
+        "en": "Which areas do you deliver to?"
+      }
+    },
+    {
+      "code": "q7",
+      "ask": {
+        "en": "How long does delivery take?"
+      }
+    },
+    {
+      "code": "q8",
+      "ask": {
+        "en": "Do you take bulk or party orders?"
+      }
+    },
+    {
+      "code": "q9",
+      "ask": {
+        "en": "Is the food freshly made?"
+      }
+    },
+    {
+      "code": "q10",
+      "ask": {
+        "en": "Can I order on WhatsApp?"
+      }
+    }
+  ]
+}

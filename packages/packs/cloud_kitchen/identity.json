@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "cloud_kitchen",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "cloud kitchens",
+    "te": "క్లౌడ్ కిచెన్లు"
+  }
+}

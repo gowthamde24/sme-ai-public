@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "digital_products",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "digital product sellers",
+    "te": "డిజిటల్ ప్రొడక్ట్ సెల్లర్లు"
+  }
+}

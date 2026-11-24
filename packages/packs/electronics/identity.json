@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "electronics",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "electronics shops",
+    "te": "ఎలక్ట్రానిక్స్ షాపులు"
+  }
+}

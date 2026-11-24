@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "finance_agent",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "finance agents",
+    "te": "ఫైనాన్స్ ఏజెంట్లు"
+  }
+}
