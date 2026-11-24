@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { COLOURS, FABRICS, PRICE_BANDS, ZARIS, type Colour, type Fabric, type PriceBand, type Zari } from "@/lib/api/catalogue";
 
-import { BAND_WORDS } from "../catalogue/catalogue-logic";
+import { bandText } from "../catalogue/catalogue-logic";
 import type { Uploader } from "../catalogue/catalogue-types";
 import { photoErrorKey } from "../catalogue/photo-errors";
 import { preparePhoto } from "../catalogue/prepare-photo";
@@ -189,7 +189,7 @@ export function SareeStep({ words, itemId, uploadUrl, save, onAdded, uploader, p
         <select id="setup-band" value={band} onChange={(e) => setBand(e.target.value as PriceBand)} className={field}>
           {PRICE_BANDS.map((b) => (
             <option key={b} value={b}>
-              {BAND_WORDS[b]}
+              {bandText(words, b)}
             </option>
           ))}
         </select>

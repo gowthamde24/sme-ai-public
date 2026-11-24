@@ -8,7 +8,7 @@ import { EffectLine, MoreBox, pgCard } from "../jobs/pages/parts";
 import { say, type TodayWords } from "../today/today-words";
 import { secondary } from "../visits/styles";
 import { vocab } from "./ItemCard";
-import { BAND_WORDS, STOCK_CHOICES, hrefFor, toggled, type CatalogueQuery } from "./catalogue-logic";
+import { bandText, STOCK_CHOICES, hrefFor, toggled, type CatalogueQuery } from "./catalogue-logic";
 
 const plainChip = (on: boolean) => `inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 text-[15px] leading-tight text-ink ${on ? "border-ink font-semibold" : "border-line font-medium hover:bg-surface-2"}`;
 const chipClass = (on: boolean) => `inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-[15px] leading-tight ${on ? "bg-brand-bg font-semibold text-brand-text" : "bg-surface-2 font-medium text-ink hover:bg-line"}`;
@@ -37,7 +37,7 @@ export function CatalogueFiltersSimple({ base, words, query, leadId, effect }: {
     <>
       {group("colour", "catalogue.filter.colour", COLOURS.map((c) => chip(query.colours.includes(c), link(toggled(query, "colour", c)), vocab(words, "colour", c, c))))}
       {group("occasion", "catalogue.filter.occasion", OCCASIONS.map((o) => chip(query.occasions.includes(o), link(toggled(query, "occasion", o)), vocab(words, "occasion", o, o))))}
-      {group("band", "catalogue.filter.band", PRICE_BANDS.map((b) => chip(query.bands.includes(b), link(toggled(query, "band", b)), BAND_WORDS[b])))}
+      {group("band", "catalogue.filter.band", PRICE_BANDS.map((b) => chip(query.bands.includes(b), link(toggled(query, "band", b)), bandText(words, b))))}
     </>
   );
   return (
@@ -53,7 +53,7 @@ export function CatalogueFiltersSimple({ base, words, query, leadId, effect }: {
             ? {
                 colour: { label: say(words, "catalogue.filter.colour"), value: query.colours[0] ?? "any", options: [{ value: "any", text: say(words, "catalogue.f.any_colour"), href: link({ ...query, colours: [] }) }, ...COLOURS.map((c) => ({ value: c, text: vocab(words, "colour", c, c), href: link({ ...query, colours: [c] }) }))] },
                 occasion: { label: say(words, "catalogue.filter.occasion"), value: query.occasions[0] ?? "any", options: [{ value: "any", text: say(words, "catalogue.f.any_occasion"), href: link({ ...query, occasions: [] }) }, ...OCCASIONS.map((o) => ({ value: o, text: vocab(words, "occasion", o, o), href: link({ ...query, occasions: [o] }) }))] },
-                price: { label: say(words, "catalogue.filter.band"), value: query.bands[0] ?? "any", options: [{ value: "any", text: say(words, "catalogue.f.any_price"), href: link({ ...query, bands: [] }) }, ...PRICE_BANDS.map((b) => ({ value: b, text: BAND_WORDS[b], href: link({ ...query, bands: [b] }) }))] },
+                price: { label: say(words, "catalogue.filter.band"), value: query.bands[0] ?? "any", options: [{ value: "any", text: say(words, "catalogue.f.any_price"), href: link({ ...query, bands: [] }) }, ...PRICE_BANDS.map((b) => ({ value: b, text: bandText(words, b), href: link({ ...query, bands: [b] }) }))] },
               }
             : {}),
         }}

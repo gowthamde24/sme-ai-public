@@ -17,7 +17,7 @@ import { FreshPhotos } from "./FreshPhotos";
 import { ItemFieldsSimple } from "./LazyItemFieldsSimple";
 import { vocab } from "./ItemCard";
 import { PhotoTray, type TraySlot } from "./PhotoTray";
-import { BAND_WORDS, moveItem, rupeesToPaise, soonestExpiry } from "./catalogue-logic";
+import { bandText, moveItem, rupeesToPaise, soonestExpiry } from "./catalogue-logic";
 import type { EditorActions, ItemOutcome, SaveInput, Uploader } from "./catalogue-types";
 import { photoErrorKey } from "./photo-errors";
 import type { preparePhoto } from "./prepare-photo";
@@ -415,7 +415,7 @@ export function ItemEditor(p: ItemEditorProps) {
             <select id="cat-band" value={band} disabled={busy} onChange={(e) => setBand(e.target.value as PriceBand)} aria-describedby="cat-band-help" className={field}>
               {PRICE_BANDS.map((b) => (
                 <option key={b} value={b}>
-                  {BAND_WORDS[b]}
+                  {bandText(words, b)}
                 </option>
               ))}
             </select>
