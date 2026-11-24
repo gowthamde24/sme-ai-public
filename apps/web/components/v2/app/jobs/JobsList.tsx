@@ -77,7 +77,7 @@ export function JobsList({ jobs, filter, words, base, actions, suggestions = [],
                   {t(`jobs.page.group.${g}`)} <span className="font-normal">{rows.length}</span>
                 </h2>
               ) : null}
-              <div className="flex flex-col border-t border-ink">{rows.map(rowOf)}</div>
+              <div className="grid grid-cols-1 gap-3 lg:grid-cols-2" data-part="job-grid">{rows.map(rowOf)}</div>
             </section>
           ))}
         </div>

@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { ADMINS } from "@/components/v2/app/nav";
 import { ApiDownV2, NotShownV2, PageTop } from "@/components/v2/app/parts";
-import { btnMain, pageMain, tileBadge, tileCard, tileGrid, tileIcon } from "@/components/v2/app/ui";
+import { btnMain, pageMain } from "@/components/v2/app/ui";
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -26,6 +26,9 @@ const AVAILABLE: { key: string; icon: LucideIcon; href: (base: string) => string
   { key: "calendar", icon: CalendarDays, href: (base) => `${base}/settings?section=data`, cta: "integrations.data.cta" },
   { key: "accounting", icon: Calculator, href: (base) => `${base}/settings?section=data`, cta: "integrations.data.cta" },
 ];
+
+/** The card of a "connect something" grid (a THING you connect = a card): one border, light radius, bare category icon left of the title, text left, one button. */
+const card = "flex h-full min-w-0 flex-col items-start gap-2 rounded-[14px] border border-line bg-surface p-[18px] text-left";
 
 /**
  * /app/tenants/[tenantId]/integrations (owner and admin): what can be connected. The price list import goes to the price-list page, WhatsApp to its Connect page and the calendar and the accounting export to Settings > Data (job CC);
@@ -50,47 +53,40 @@ export default async function IntegrationsPage({ params }: PageProps<"/app/tenan
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={t("nav.item.integrations")} sub={t("integrations.sub")} />
-      <ul className={tileGrid}>
-        <li className={tileCard}>
-          <div className="flex items-start justify-between gap-3">
-            <span className={`${tileIcon} bg-brand-bg text-brand-text`}>
-              <FileSpreadsheet className="size-6" aria-hidden="true" />
-            </span>
-            <span className={`${tileBadge} border-green-text bg-green-bg text-green-text`}>{t("integrations.available")}</span>
+      <ul className="mt-5 grid grid-cols-1 gap-3.5 md:grid-cols-2 xl:grid-cols-3" data-part="source-grid">
+        <li className={card} data-first="1">
+          <div className="flex w-full min-w-0 items-center gap-3">
+            <FileSpreadsheet data-k="find" className="size-6 shrink-0" strokeWidth={1.8} aria-hidden="true" />
+            <h2 className="min-w-0 text-[17px] font-semibold leading-snug text-ink">{t("integrations.pricelist.title")}</h2>
           </div>
-          <h2 className="mt-4 text-xl font-semibold">{t("integrations.pricelist.title")}</h2>
-          <p className="mt-1 text-base text-muted">{t("integrations.pricelist.body")}</p>
-          <Link href={`/app/tenants/${tenantId}/price-list`} className={`${btnMain} mt-4 w-full gap-2`}>
+          <p className="m-0 text-[15px] leading-snug text-muted">{t("integrations.pricelist.body")}</p>
+          <p className="m-0 flex items-center gap-2 text-sm text-muted"><span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-green-text" />{t("integrations.available")}</p>
+          <Link href={`/app/tenants/${tenantId}/price-list`} className={`${btnMain} mt-1 gap-2 self-start`}>
             <Upload className="size-5" aria-hidden="true" />
             {t("integrations.pricelist.cta")}
           </Link>
         </li>
         {AVAILABLE.map(({ key, icon: Icon, href, cta }) => (
-          <li key={key} className={tileCard}>
-            <div className="flex items-start justify-between gap-3">
-              <span className={`${tileIcon} bg-brand-bg text-brand-text`}>
-                <Icon className="size-6" aria-hidden="true" />
-              </span>
-              <span className={`${tileBadge} border-green-text bg-green-bg text-green-text`}>{t("integrations.available")}</span>
+          <li key={key} className={card}>
+            <div className="flex w-full min-w-0 items-center gap-3">
+              <Icon data-k={key === "whatsapp" ? "chat" : "find"} className="size-6 shrink-0" strokeWidth={1.8} aria-hidden="true" />
+              <h2 className="min-w-0 text-[17px] font-semibold leading-snug text-ink">{t(`integrations.${key}.title` as "integrations.email.title")}</h2>
             </div>
-            <h2 className="mt-4 text-xl font-semibold">{t(`integrations.${key}.title` as "integrations.email.title")}</h2>
-            <p className="mt-1 text-base text-muted">{t(`integrations.${key}.body` as "integrations.email.body")}</p>
-            <Link href={href(`/app/tenants/${tenantId}`)} className={`${btnMain} mt-4 w-full gap-2`}>
-              <Icon className="size-5" aria-hidden="true" />
+            <p className="m-0 text-[15px] leading-snug text-muted">{t(`integrations.${key}.body` as "integrations.email.body")}</p>
+            <p className="m-0 flex items-center gap-2 text-sm text-muted"><span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-green-text" />{t("integrations.available")}</p>
+            <Link href={href(`/app/tenants/${tenantId}`)} className={`${btnMain} mt-1 gap-2 self-start`}>
               {t(cta as "integrations.whatsapp.cta")}
             </Link>
           </li>
         ))}
         {OTHERS.map(({ key, icon: Icon }) => (
-          <li key={key} className={tileCard}>
-            <div className="flex items-start justify-between gap-3">
-              <span className={tileIcon}>
-                <Icon className="size-6" aria-hidden="true" />
-              </span>
-              <span className={`${tileBadge} border-line bg-surface-2 text-ink`}>{t("frame.notyet")}</span>
+          <li key={key} className={card}>
+            <div className="flex w-full min-w-0 items-center gap-3">
+              <Icon data-k="find" className="size-6 shrink-0" strokeWidth={1.8} aria-hidden="true" />
+              <h2 className="min-w-0 text-[17px] font-semibold leading-snug text-ink">{t(`integrations.${key}.title` as "integrations.email.title")}</h2>
             </div>
-            <h2 className="mt-4 text-xl font-semibold">{t(`integrations.${key}.title` as "integrations.email.title")}</h2>
-            <p className="mt-1 text-base text-muted">{t(`integrations.${key}.body` as "integrations.email.body")}</p>
+            <p className="m-0 text-[15px] leading-snug text-muted">{t(`integrations.${key}.body` as "integrations.email.body")}</p>
+            <p className="m-0 text-sm text-muted">{t("frame.notyet")}</p>
           </li>
         ))}
       </ul>

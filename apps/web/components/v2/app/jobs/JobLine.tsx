@@ -17,7 +17,7 @@ import { makeT, type Words } from "../words";
 /** The category colour of a job's bare line icon (design system, CATEGORY COLOURS): calls blue, chats green, visits violet, offers gold, finding teal. */
 export const JOB_CATEGORY: Record<Job["kind"], "call" | "chat" | "visit" | "offer" | "find"> = { speed_to_lead: "call", answer_calls: "call", followups: "chat", store_visits: "visit", offers: "offer", researcher: "find", payment_reminders: "chat", custom: "chat" };
 
-export function JobLine({ job, words, base, actions, icon = false }: { job: Job; words: Words; base: string; actions: JobActions | null; /** Today: a bare 22px line icon in the job's category colour before the name (no tile). */ icon?: boolean }) {
+export function JobLine({ job, words, base, actions }: { job: Job; words: Words; base: string; actions: JobActions | null }) {
   const Icon = ICON[job.kind];
   const t = makeT(words);
   const [now, setNow] = useState({ enabled: job.enabled, status: job.status });
@@ -72,34 +72,44 @@ export function JobLine({ job, words, base, actions, icon = false }: { job: Job;
         : result;
 
   return (
-    <div data-job={job.id} data-job-kind={job.kind} data-state={off ? "off" : needs ? "needs" : "running"} className="flex items-center gap-4 border-t border-line py-4 first:border-t-0">
-      {icon ? <Icon aria-hidden="true" data-k={JOB_CATEGORY[job.kind]} className="size-[22px] shrink-0" strokeWidth={1.8} /> : null}
-      <Link href={href} prefetch={false} className="flex min-w-0 flex-1 flex-col items-start justify-center gap-0.5 no-underline">
-        <span className="block text-[17px] font-semibold leading-snug text-ink">{name}</span>
-        <span className="flex items-start gap-2 text-[15px] leading-snug text-muted">
-          <span aria-hidden="true" className={`mt-[7px] size-2 shrink-0 rounded-full ${needs ? "bg-brand" : "bg-muted"}`} />
-          <span className={needs ? "font-medium text-ink" : ""}>{status}</span>
-        </span>
-        {job.speaks ? <SpeaksChips speaks={job.speaks} t={t} words={words} /> : null}
-        {error ? (
-          <span role="alert" className="block text-sm text-red-text">
-            {error}
+    <div
+      data-job={job.id}
+      data-job-kind={job.kind}
+      data-part="job-card"
+      data-state={off ? "off" : needs ? "needs" : "running"}
+      className={`flex h-full min-w-0 flex-col justify-center rounded-[14px] border bg-surface p-4 text-left ${needs ? "border-ink" : "border-line"}`}
+    >
+      <div className={`flex gap-3 ${needs || off ? "flex-col sm:flex-row sm:items-center" : "items-center"}`}>
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+        <Icon aria-hidden="true" data-k={JOB_CATEGORY[job.kind]} className="mt-0.5 size-6 shrink-0" strokeWidth={1.8} />
+        <Link href={href} prefetch={false} className="flex min-w-0 flex-1 flex-col items-start gap-1 no-underline">
+          <span className="block text-[17px] font-semibold leading-snug text-ink">{name}</span>
+          <span className="flex items-start gap-2 text-[15px] leading-snug text-muted">
+            <span aria-hidden="true" className={`mt-[7px] size-2 shrink-0 rounded-full ${needs ? "bg-brand" : off ? "border border-muted" : "bg-green-text"}`} />
+            <span className={needs ? "font-medium text-brand-text" : ""}>{status}</span>
           </span>
-        ) : null}
-      </Link>
-      {needs ? (
-        <Link href={fixHref} prefetch={false} className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-brand-edge bg-brand px-4 text-[15px] font-semibold text-on-brand no-underline">
-          {fixLabel}
+          {job.speaks ? <SpeaksChips speaks={job.speaks} t={t} words={words} /> : null}
+          {error ? (
+            <span role="alert" className="block text-sm text-red-text">
+              {error}
+            </span>
+          ) : null}
         </Link>
-      ) : off ? (
-        <button type="button" disabled={busy || !actions} onClick={() => void change(true)} className="write-ctl inline-flex min-h-11 shrink-0 items-center rounded-lg border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60">
-          {t("jobs.line.turn_on")}
-        </button>
-      ) : (
-        <button type="button" role="switch" aria-checked={true} aria-label={name} disabled={busy || !actions} onClick={() => void change(false)} className="jb-switch-hit write-ctl -my-2 -mr-2 grid min-h-11 min-w-11 shrink-0 place-items-center">
-          <span className="jb-switch" aria-hidden="true" data-on="" />
-        </button>
-      )}
+        </div>
+        {needs ? (
+          <Link href={fixHref} prefetch={false} className="inline-flex min-h-11 shrink-0 items-center self-start rounded-lg border border-ink bg-surface px-4 sm:self-center text-[15px] font-semibold text-ink no-underline">
+            {fixLabel}
+          </Link>
+        ) : off ? (
+          <button type="button" disabled={busy || !actions} onClick={() => void change(true)} className="write-ctl inline-flex min-h-11 shrink-0 items-center self-start rounded-lg border border-edge sm:self-center bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60">
+            {t("jobs.line.turn_on")}
+          </button>
+        ) : (
+          <button type="button" role="switch" aria-checked={true} aria-label={name} disabled={busy || !actions} onClick={() => void change(false)} className="jb-switch-hit write-ctl -my-2 -mr-2 grid min-h-11 min-w-11 shrink-0 place-items-center">
+            <span className="jb-switch" aria-hidden="true" data-on="" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

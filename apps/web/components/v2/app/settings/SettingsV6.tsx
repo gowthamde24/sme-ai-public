@@ -145,7 +145,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
   return (
     <main className={pageMain} lang={lang} data-part="settings-v6">
       <PageHeader title={title} sub={t("sv6.sub")} right={help} />
-      <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="mt-5 grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
         {simple ? (
           <Card id="business" title={t("sv6.biz.title")}>
             <div className="mt-3">
