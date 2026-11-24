@@ -2,10 +2,10 @@ import { textIn } from "./text";
 import type { PackSummary } from "./types";
 
 /** What a sign-up card needs (plain, in one language). Built from `GET /v1/packs`: the web keeps no list of business types. */
-export type SignupCard = { id: string; name: string; tagline: string; accent: string; owlProp: string; validated: boolean };
+export type SignupCard = { id: string; name: string; tagline: string; accent: string; owlProp: string; validated: boolean; /** the group (id, its name in this language, its colour and place), when the API sends groups */ category: { id: string; name: string; colour: string; order: number } | null; keywords: string };
 
 export function signupCards(packs: readonly PackSummary[], lang: string): SignupCard[] {
-  return packs.map((p) => ({ id: p.packId, name: textIn(p.names, lang), tagline: textIn(p.summary, lang), accent: p.accent, owlProp: p.owlProp, validated: p.validated }));
+  return packs.map((p) => ({ id: p.packId, name: textIn(p.names, lang), tagline: textIn(p.summary, lang), accent: p.accent, owlProp: p.owlProp, validated: p.validated, category: p.category ? { id: p.category.id, name: textIn(p.category.name, lang), colour: p.category.colour, order: p.category.order } : null, keywords: p.keywords ?? "" }));
 }
 
 /** A pack code: lower case, digits and underscores (the API's own rule). */
