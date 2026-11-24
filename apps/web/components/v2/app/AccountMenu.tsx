@@ -4,7 +4,7 @@ import { IntentLink as Link } from "./NavGroups";
 import type { ReactNode } from "react";
 
 import { Disclosure } from "./Disclosure";
-import { Appearance } from "./Appearance";
+import { Appearance } from "./LazyAppearance";
 import { word, type Labels } from "./labels";
 
 const rowLink = "flex min-h-11 w-full items-center rounded-lg px-3 text-left text-base text-ink hover:bg-surface-2";
