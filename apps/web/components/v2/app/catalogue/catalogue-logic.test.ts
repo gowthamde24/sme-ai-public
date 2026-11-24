@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { COLOURS, FABRICS, OCCASIONS, PRICE_BANDS } from "@/lib/api/catalogue";
 
-import { BAND_WORDS, bandText, EMPTY_QUERY, activeFilters, apiFilters, badgesOf, hrefFor, isFiltered, makeCover, moveItem, narrow, narrowsItself, parseQuery, priceOf, rupeesToPaise, soonestExpiry, toggled } from "./catalogue-logic";
+import { BAND_WORDS, bandForPaise, bandText, EMPTY_QUERY, activeFilters, apiFilters, badgesOf, hrefFor, isFiltered, makeCover, moveItem, narrow, narrowsItself, parseQuery, priceOf, rupeesToPaise, soonestExpiry, toggled } from "./catalogue-logic";
 import { item, rows } from "./catalogue-test-kit";
 
 const BASE = "/app/tenants/T";
@@ -154,5 +154,11 @@ describe("the price band words", () => {
     expect(bandText({ "catalogue.band.under_5k": "₹5,000 లోపు" }, "under_5k")).toBe("₹5,000 లోపు");
     expect(bandText({}, "under_5k")).toBe(BAND_WORDS.under_5k);
     expect(bandText(undefined, "above_50k")).toBe("Above ₹50,000");
+  });
+});
+
+describe("the price band of an exact price", () => {
+  it("follows the rupees (5,000 / 10,000 / 25,000 / 50,000)", () => {
+    expect([450000, 500000, 999900, 1000000, 2499900, 2500000, 4999900, 5000000].map(bandForPaise)).toEqual(["under_5k", "5k_10k", "5k_10k", "10k_25k", "10k_25k", "25k_50k", "25k_50k", "above_50k"]);
   });
 });
