@@ -98,7 +98,7 @@ class PhoneKnowsOut(BaseModel):
     message: str | None = None   # one plain sentence for the first thing to add; None when ready
 
 
-_ADD = {"price_list": "Add your price list so the assistant can answer prices.", "catalogue": "Add your catalogue so the assistant can answer what you sell.", "answers": "Add a few answers to questions customers ask, or notes about your business, so the assistant can answer them."}
+_ADD = {"price_list": "Add your prices so the assistant can answer them: a price on each item, or a price list.", "catalogue": "Add your catalogue so the assistant can answer what you sell.", "answers": "Add a few answers to questions customers ask, or notes about your business, so the assistant can answer them."}
 
 
 def knows_of(raw: dict[str, Any]) -> PhoneKnowsOut:

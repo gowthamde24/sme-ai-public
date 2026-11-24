@@ -22,7 +22,7 @@ MAX_TOKENS = 1500           # the whole pack (measured 28 Nov with count_tokens:
 BUDGET = {"prices": 500, "catalogue": 350, "faq": 350}   # tokens per section; the notes get what is left
 DAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 STOCK = {"in_stock": "in stock", "few_left": "only a few left", "made_to_order": "made to order"}
-UNITS = {"piece": "piece", "metre": "metre", "meter": "metre", "kg": "kg", "set": "set", "dozen": "dozen", "pair": "pair"}
+UNITS = {"piece": "piece", "metre": "metre", "meter": "metre", "kg": "kg", "set": "set", "dozen": "dozen", "pair": "pair", "service": "service", "course": "course", "listing": "listing"}
 REMOVED = "(price: ask the price list)"
 
 # a rupee amount in the words of an owner or of a model: a marker before or after the number
@@ -120,7 +120,10 @@ def build(raw: dict[str, Any] | None, *, now: datetime | None = None) -> FactPac
             gst = int(row.get("tax_bps") or 0) / 100
         except (KeyError, TypeError, ValueError):
             continue
-        line = f"{name}: {rupees(paise)} per {unit}" + (f", minimum order {moq}" if moq > 1 else "") + (f", plus {gst:g}% GST" if gst else "")
+        if row.get("tier") is True:   # a price-list rate for a bigger order: "from 50" is the quantity at which this rate starts, not a minimum order
+            line = f"{name}: {rupees(paise)} per {unit}" + (f" when you buy {moq} or more" if moq > 1 else "")
+        else:
+            line = f"{name}: {rupees(paise)} per {unit}" + (f", minimum order {moq}" if moq > 1 else "") + (f", plus {gst:g}% GST" if gst else "")
         price_lines.append((line, paise))
     used = 0
     for line, paise in price_lines:
