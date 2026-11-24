@@ -29,7 +29,8 @@ export function CallsTable({ words, base, query, items, selectedId, when, pageSi
       const status = callStatus(c);
       const open = selectedId === c.id;
       const s = callSentence(c);
-      const said = s.kind === "result" && s.result === "unclear" ? "" : sentenceText(s, words, why);
+      const raw = s.kind === "result" && s.result === "unclear" ? "" : sentenceText(s, words, why);
+      const said = /^no clear result\.?$/i.test(raw.trim()) ? "" : raw; // the normal "nothing to say" is silent
       return (
         <li key={c.id} data-call={c.id} data-status-of={status} aria-selected={open ? "true" : undefined} className={`relative flex items-start gap-3 border-b border-line px-1 py-3.5 ${open ? "bg-surface-2" : ""}`}>
           <div className="min-w-0 flex-1">
