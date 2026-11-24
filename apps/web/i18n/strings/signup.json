@@ -784,5 +784,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "signup.type.describe.label": {
+  "en": "Or describe what you sell",
+  "te": "లేదా మీరు ఏం అమ్ముతారో చెప్పండి",
+  "hi": "या बताइए कि आप क्या बेचते हैं",
+  "kn": "ಅಥವಾ ನೀವು ಏನು ಮಾರುತ್ತೀರಿ ಎಂದು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.describe.hint": {
+  "en": "A few words, in any language. For example: sweets and cakes, home delivery.",
+  "te": "కొన్ని మాటలు చాలు, ఏ భాషలోనైనా. ఉదాహరణకు: స్వీట్స్, కేక్స్, home delivery.",
+  "hi": "कुछ शब्द काफ़ी हैं, किसी भी भाषा में। जैसे: मिठाई और केक, home delivery।",
+  "kn": "ಕೆಲವು ಪದಗಳು ಸಾಕು, ಯಾವ ಭಾಷೆಯಲ್ಲಾದರೂ. ಉದಾಹರಣೆಗೆ: ಸಿಹಿತಿಂಡಿ, ಕೇಕ್, home delivery.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.describe.button": {
+  "en": "Find my type",
+  "te": "నా రకం కనుక్కోండి",
+  "hi": "मेरा प्रकार खोजें",
+  "kn": "ನನ್ನ ಪ್ರಕಾರ ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.describe.closest": {
+  "en": "Closest match",
+  "te": "దగ్గరగా సరిపోయేది",
+  "hi": "सबसे करीबी मेल",
+  "kn": "ಹತ್ತಿರದ ಹೊಂದಾಣಿಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.describe.use": {
+  "en": "Use this",
+  "te": "ఇది తీసుకోండి",
+  "hi": "यह चुनें",
+  "kn": "ಇದನ್ನು ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.describe.none": {
+  "en": "We could not match that. Try other words, or choose Something else.",
+  "te": "అది సరిపోలేదు. వేరే మాటలు రాయండి, లేదా Something else ఎంచుకోండి.",
+  "hi": "यह मेल नहीं खाया। दूसरे शब्द आज़माइए, या Something else चुनिए।",
+  "kn": "ಅದು ಹೊಂದಲಿಲ್ಲ. ಬೇರೆ ಪದಗಳನ್ನು ಬರೆಯಿರಿ, ಅಥವಾ Something else ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
