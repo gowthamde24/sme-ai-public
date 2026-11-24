@@ -466,6 +466,16 @@ class Settings(BaseSettings):
     # bot's address, at least 32 characters, from Secret Manager. Without it the VoiceLink
     # address answers nothing. Inbound only.
     voicelink_ws_token: SecretStr | None = None
+    # VoiceLink is the only telephony provider (owner, 24 Nov 2026). Its reseller login (a username
+    # and a password, from Secret Manager; the password never in a log) is used to place outbound
+    # calls (`add_lead`), to read the wallet for the daily low-balance check and to list numbers.
+    # TELEPHONY_PROVIDER: "" (the provider whose login is given; Plivo's wins when both are) |
+    # "voicelink" | "plivo". The API base is VoiceLink's own; a setting only so a test can use
+    # a fake.
+    telephony_provider: str = ""
+    voicelink_username: SecretStr | None = None
+    voicelink_password: SecretStr | None = None
+    voicelink_api_base: str = "https://app.voicelink.co.in/api/v1"
     # in-app KYC of a business's phone number (owner, 14 Nov 2026). OFF until the owner says so:
     # the form is checked and nothing is sent to Plivo. ON files the application with Plivo.
     plivo_kyc_live: bool = False
