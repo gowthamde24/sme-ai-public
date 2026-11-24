@@ -126686,6 +126686,17 @@
    "kn": "draft"
   }
  },
+ "jobs.today.others": {
+  "en": "Waiting for you or paused",
+  "te": "మీ కోసం ఎదురుచూస్తున్నవి లేదా ఆపినవి",
+  "hi": "आपका इंतज़ार कर रहे या रुके हुए",
+  "kn": "ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿರುವ ಅಥವಾ ನಿಲ್ಲಿಸಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "jobs.f.when": {
   "en": "When it calls a new enquiry",
   "te": "కొత్త ఎంక్వైరీకి ఎప్పుడు కాల్ చేయాలి",
