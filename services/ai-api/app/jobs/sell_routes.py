@@ -5,17 +5,19 @@
                                                                  with `fields`; only the Owner sets or changes an amount (403 for an Admin)
   POST /v1/tenants/{t}/what-you-sell/{style}/{id}/remove         Owner, Admin: soft remove (the API has no HTTP DELETE); removing twice is fine
 
-`style=products` is never stored here: the catalogue has the products. There is no reading call. NOTE: no `from __future__ import annotations` (request models are attached to the endpoint signatures at registration time)."""
+`style=products` is never stored here: the catalogue has the products.
+  POST /v1/tenants/{t}/what-you-sell/{style}/read                Owner, Admin: {kind: sheet|photo|talk, file_id?, text?, language} -> {style, drafts[], unclear, notes[]} (the reading call, 28 Nov 2026: at most 20 drafts, NOTHING saved) NOTE: no `from __future__ import annotations` (request models are attached to the endpoint signatures at registration time)."""
 
 # ruff: noqa: E501
 
 import uuid
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Body, Depends, Query
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, ConfigDict, StringConstraints
 
-from app.auth.deps import AnyMember, TenantContext, require_tenant_role
+from app.auth.deps import AnyMember, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError, not_found
 from app.jobs.routes import jobs_on
 from app.jobs.sell import STYLES, Style, check_entry
@@ -25,6 +27,16 @@ from app.tenancy.models import Role
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/what-you-sell", tags=["jobs"])
 JobsDep = Annotated[JobsRuntime, Depends(jobs_on)]
 OwnerAdminStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, strong=True))]
+OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
+
+
+class ReadIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal["photo", "sheet", "talk"]
+    file_id: uuid.UUID | None = None
+    text: Annotated[str, StringConstraints(max_length=2000)] | None = None
+    language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"] = "en"
 
 
 def _store(jobs: JobsRuntime) -> Any:
@@ -68,3 +80,33 @@ def put_entry(style: str, entry_id: str, ctx: OwnerAdminStrong, jobs: JobsDep, b
 def remove_entry(style: str, entry_id: str, ctx: OwnerAdminStrong, jobs: JobsDep) -> JSONResponse:
     _store(jobs).remove(ctx.principal.token, ctx.tenant.id, _style(style), _entry_id(entry_id))
     return JSONResponse({"removed": True}, headers={"Cache-Control": "no-store"})
+
+
+READ_WORDS = {
+    "gone": "That file is no longer there. Please add it again.",
+    "unreadable": "That file could not be read.",
+    "doc_format": "Please save that document as .docx and try again.",
+    "heic": "Please send the picture as a JPG.",
+    "scanned_school": "Pictures are not read for this kind of workspace.",
+    "no_reader": "Reading pictures is not available right now.",
+    "too_big": "That file is too big.",
+    "run_limit_reached": "The assistant has done its reading for this hour. Please try again later.",
+}
+
+
+@router.post("/{style}/read")
+def read_entries(style: str, body: ReadIn, ctx: OwnerAdmin, jobs: JobsDep, runtime: RuntimeDep) -> JSONResponse:
+    """A sheet, a picture or the owner's own words become draft entries (nothing is saved): the owner checks each and saves it with the usual PUT."""
+    from app.jobs import sell_read
+
+    kind = _style(style)
+    if body.kind == "talk":
+        if not body.text or not body.text.strip():
+            raise ApiError(422, "validation_error", "Say what you sell and the price.", extra={"fields": ["text"]})
+        reading = sell_read.drafts_from_table(kind, sell_read.table_from_text(body.text))
+    else:
+        if body.file_id is None:
+            raise ApiError(422, "validation_error", "Add the file first.", extra={"fields": ["file_id"]})
+        reading = sell_read.read_file(runtime, ctx, kind, body.file_id)
+    out = {"style": kind, "drafts": reading.drafts, "unclear": reading.unclear, "notes": reading.notes}
+    return JSONResponse(out, headers={"Cache-Control": "no-store"})

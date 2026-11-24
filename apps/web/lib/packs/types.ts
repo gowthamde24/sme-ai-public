@@ -38,7 +38,12 @@ export type PackSummary = {
   readonly summary: Words;
   readonly accent: string;
   readonly owlProp: string;
+  /** The group the type is shown in and the words a person may type to find it (`GET /v1/packs`, from packages/packs/categories.json); absent on an older API. */
+  readonly category?: PackCategory | null;
+  readonly keywords?: string;
 };
+/** A group of business types (Retail and wholesale, Food...): `colour` is one of the product's category colours, `order` its place on the screen. */
+export type PackCategory = { readonly id: string; readonly name: Words; readonly colour: string; readonly order: number };
 /** The business type of one workspace (pinned to the version it chose). `modules` is what the workspace has ON (the API's own answer, default deny); `packModules` is the pack's default set. */
 export type WorkspacePack = PackSummary & {
   readonly source: "signup" | "default" | "legacy" | "operator" | "owner";

@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (445)
+## Codes (447)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -25,6 +25,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `agents_busy` | 503 | agent_runs |  |  | Agents are busy. Try again shortly. |
 | `agents_disabled` | 409 | assistant, main |  |  | Agents are not enabled for this workspace. |
 | `agents_unavailable` | 503 | agent_runs |  |  | Agents are not available right now. |
+| `ai_limit` | 429 | jobs | yes | reason | (the sentence varies: show `message`) |
 | `ai_team_unavailable` | 503 | ai_team |  |  | This is not available right now. |
 | `already_has_number` | 409 | phone_numbers |  |  | This business already has a phone number. Give it back first. |
 | `already_member` | 409 | main |  |  | You are already a member of that workspace. |
@@ -124,10 +125,11 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `fee_plan_exists` | 409 | main |  |  | The student already has a fee plan for that year. |
 | `fee_plan_in_use` | 409 | main |  |  | A student has this fee plan, so it cannot change. Make a new plan. |
 | `file_empty` | 422 | assistant_work |  |  | That file is empty. |
+| `file_gone` | 404 | jobs |  |  | (the sentence varies: show `message`) |
 | `file_too_large` | 413, 422 | assistant_context, assistant_work |  |  | That file is too big (at most 15 MB). |
 | `file_too_long` | 422 | assistant_context |  |  | That PDF has too many pages (25 at most). Send fewer pages, or paste the text. |
 | `file_type` | 415 | assistant_work |  |  | That kind of file is not taken here. A sheet (.xlsx, .csv), a contacts file (.vcf), a PDF, a picture, a document or a text file works. |
-| `file_unreadable` | 422 | assistant_context |  |  | I could not hear any words in that recording. |
+| `file_unreadable` | 422 | assistant_context, jobs |  | fields, reason | I could not hear any words in that recording. |
 | `file_unsafe` | 422 | assistant_work |  |  | That file looks unsafe (it carries a program or macros), so it was not kept. |
 | `followup_cadence_failed` | 502 | followups |  |  | The follow-up rules could not be run. Nothing was recorded. |
 | `followup_cadence_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
