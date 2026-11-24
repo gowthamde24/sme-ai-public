@@ -45,6 +45,8 @@ insert into public.lead_intakes (id, tenant_id, import_id, kind, source_tag, con
 values (tests.rid('b_fk_lint'), tests.tid('b'), tests.rid('b_fk_lint'), 'paste', 'pasted_list', repeat('b', 64), 1, '{}'::jsonb, tests.uid('b_owner'));
 
 -- job AY: the photos of a message reference a catalogue photo of the business, and a photo its item; the generic attack needs a tenant-B item and photo to aim at
+-- 28 Nov 2026: the lists of what a business sells reference a list; the generic attack needs a tenant-B list to aim at
+insert into public.sell_lists (id, tenant_id, name, kind, created_by) values (tests.rid('b_fk_list'), tests.tid('b'), 'Synthetic list b', 'other', tests.uid('b_owner'));
 insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by)
 values (tests.rid('b_fk_item'), tests.tid('b'), 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', tests.uid('b_owner'));
 insert into public.catalogue_photos (id, tenant_id, item_id, position, bucket, path, thumb_path, width, height, bytes, thumb_bytes, created_by)
