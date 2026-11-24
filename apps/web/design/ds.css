@@ -748,3 +748,18 @@
 [data-ui="v2"][data-ds="6"] [data-open="leads"] tbody tr[data-selected="true"] { background: var(--v2-surface-2) !important; }
 [data-ui="v2"][data-ds="6"] [data-open="leads"] tbody a { color: var(--v2-ink) !important; font-family: inherit !important; }
 }
+/* Orange discipline (planner, 25 Nov 2026): ONE orange button per Today screen (the first, oldest Needs-you item's main action; the dark band's own button and the First day Start button are their screens' one); every other button there is outlined in ink. Chat avatars are neutral grey with initials. */
+@layer theme {
+[data-ui="v2"][data-ds="6"] [data-open="today"] :is(a, button).bg-brand { background: transparent !important; color: var(--v2-ink) !important; border-color: var(--v2-ink) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"] #needs-you-list > :first-child :is(a, button).bg-brand,
+[data-ui="v2"][data-ds="6"] [data-open="today"] [data-open="day-one"] :is(a, button).bg-brand,
+[data-ui="v2"][data-ds="6"] [data-open="today"] .ds-band :is(a, button).bg-brand,
+[data-ui="v2"][data-ds="6"] [data-open="today"] .ds-hero :is(a, button).bg-brand { background: var(--v2-brand) !important; color: var(--v2-on-brand) !important; border-color: var(--v2-brand) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="today"]:has([data-open="day-one"]) #needs-you-list > :first-child :is(a, button).bg-brand { background: transparent !important; color: var(--v2-ink) !important; border-color: var(--v2-ink) !important; }
+[data-ui="v2"][data-ds="6"] .ds-av { background-color: var(--v2-surface-2) !important; color: var(--v2-ink) !important; }
+}
+/* My assistant overview (MY_ASSISTANT_OPEN): no cards in cards: the Go-live block and the Practice panel are plain sections */
+@layer theme {
+[data-ui="v2"][data-ds="6"] main[data-mya-over] :is([data-part="mya-golive-tab"], [data-part="practice-panel"]) { border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; padding-inline: 0 !important; }
+[data-ui="v2"][data-ds="6"] main[data-mya-over] [data-part="practice-panel"] { border-top: 1px solid var(--v2-border) !important; padding-top: 20px !important; }
+}

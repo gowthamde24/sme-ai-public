@@ -127094,5 +127094,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "set.g.business": {
+  "en": "Business",
+  "te": "వ్యాపారం",
+  "hi": "बिज़नेस",
+  "kn": "ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.team": {
+  "en": "Team",
+  "te": "టీమ్",
+  "hi": "टीम",
+  "kn": "ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.assistant": {
+  "en": "Assistant",
+  "te": "అసిస్టెంట్",
+  "hi": "असिस्टेंट",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.quotes": {
+  "en": "Quotes and limits",
+  "te": "Quotes మరియు limits",
+  "hi": "Quotes और limits",
+  "kn": "Quotes ಮತ್ತು limits",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.language": {
+  "en": "Language and alerts",
+  "te": "భాష మరియు alerts",
+  "hi": "भाषा और alerts",
+  "kn": "ಭಾಷೆ ಮತ್ತು alerts",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.more": {
+  "en": "More",
+  "te": "ఇంకా",
+  "hi": "और",
+  "kn": "ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "set.g.section": {
+  "en": "Section",
+  "te": "విభాగం",
+  "hi": "सेक्शन",
+  "kn": "ವಿಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
