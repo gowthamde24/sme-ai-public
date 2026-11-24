@@ -140,3 +140,41 @@ def test_the_store_reads_the_pack_once_a_minute_per_workspace() -> None:
     tenant = uuid.uuid4()
     assert store.fact_pack(tenant) == {"notes": "x"} and store.fact_pack(tenant) == {"notes": "x"}
     assert calls == ["phone_fact_pack"]
+
+
+@pytest.mark.parametrize(
+    ("sentence", "paise"),
+    [
+        ("రెండు వేల ఐదు వందల రూపాయలు అండీ", [250000]), ("రెండు వేలు", [200000]), ("వెయ్యి రూపాయలు", [100000]), ("ఐదు వందల రూపాయలు", [50000]), ("రూ. రెండు వేలు", [200000]), ("ఐదు లక్షలు", [50000000]),
+        ("two thousand rupees", [200000]), ("one thousand two hundred fifty rupees", [125000]), ("twelve hundred rupees", [120000]), ("Rs two thousand", [200000]), ("a hundred rupees", [10000]),
+        ("we open at nine", []), ("two days", []), ("రెండు రోజుల్లో డెలివరీ", []), ("మూడు వందల మంది వస్తారు", []),
+    ],
+)
+def test_an_amount_said_in_words_is_read_in_telugu_and_english(sentence: str, paise: list[int]) -> None:
+    """28 Nov 2026 (money safety): the digits check could not see an amount spoken as words."""
+    assert fact_pack.word_amounts_paise(sentence) == paise
+
+
+def test_the_voice_blocks_an_unlisted_amount_said_in_words_and_lets_the_listed_one_through() -> None:
+    inner = Inner()
+    voice = GuardedTts(inner, [], allowed_paise=frozenset({125000}))
+    voice.stream("ఆ చీర రెండు వేల రూపాయలు అండీ.", "te")
+    voice.stream("It is two thousand rupees.", "en")
+    voice.stream("It is one thousand two hundred fifty rupees.", "en")
+    voice.stream("వెయ్యి రెండు వందల యాభై రూపాయలు అండీ.", "te")
+    voice.stream("Delivery is in two days.", "en")
+    assert inner.said == [SAFE["te"], SAFE["en"], "It is one thousand two hundred fifty rupees.", "వెయ్యి రెండు వందల యాభై రూపాయలు అండీ.", "Delivery is in two days."]
+    assert voice.amounts_blocked == 2
+
+
+def test_a_bare_hundreds_run_is_an_amount_when_the_caller_asked_about_a_price() -> None:
+    assert fact_pack.word_amounts_paise("ఐదు వందలు అండీ") == [] and fact_pack.word_amounts_paise("ఐదు వందలు అండీ", price_context=True) == [50000]
+    assert all(fact_pack.asks_price(t) for t in ("ఈ చీర ధర ఎంత?", "what is the price", "How much is it", "రేటు చెప్పండి")) and not fact_pack.asks_price("మీ షాప్ ఎక్కడ?")
+    inner = Inner()
+    voice = GuardedTts(inner, [], allowed_paise=frozenset({125000}))
+    voice.stream("ఐదు వందలు అండీ.", "te")             # no price asked yet: passes (not an amount)
+    voice.note_caller("ఈ చీర ధర ఎంత?")
+    voice.stream("ఐదు వందలు అండీ.", "te")             # a price was asked: blocked
+    voice.note_caller("మీ షాప్ ఎక్కడ?")
+    voice.stream("ఐదు వందల మంది వస్తారు.", "te")      # another topic: passes again
+    assert inner.said == ["ఐదు వందలు అండీ.", SAFE["te"], "ఐదు వందల మంది వస్తారు."]
