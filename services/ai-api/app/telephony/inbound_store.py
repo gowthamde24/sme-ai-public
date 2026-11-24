@@ -19,12 +19,14 @@ class Principal(Protocol):
 
 
 LINE_TTL_S = 300.0
+FACT_PACK_TTL_S = 60.0
 
 
 class InboundStore:
     def __init__(self, rpc: RpcClient, principal: Principal) -> None:
         self._rpc, self._principal = rpc, principal
         self._lines: dict[str, tuple[float, dict[str, Any]]] = {}
+        self._packs: dict[uuid.UUID, tuple[float, dict[str, Any]]] = {}
 
     def scheduler_token(self) -> str:
         """The phone server's own token (the registered scheduler account), for the few calls that are not a call session's (ending a placed call nobody answered)."""
@@ -79,6 +81,19 @@ class InboundStore:
     def telephony_alert(self, ok: bool, detail: str | None = None) -> None:
         """A "Needs you" item for the owner and finance (the scheduler account raises it): a telephony thing that needs a person, or its all-clear."""
         self._call("ops_telephony_setting_report", {"p_ok": ok, "p_detail": (detail or "")[:480] or None})
+
+    def fact_pack(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
+        """What an AI call may use to answer about the business (migration 988600): notes, FAQ answers, hours, catalogue, the current price list. Read at the START of a call (never per turn) and remembered for
+        FACT_PACK_TTL_S, so a call's start does not wait for the database; an edit applies within that time. None when unreadable (the call then states no facts, as before)."""
+        now = time.monotonic()
+        hit = self._packs.get(tenant_id)
+        if hit is not None and now - hit[0] < FACT_PACK_TTL_S:
+            return dict(hit[1])
+        out = self._call("phone_fact_pack", {"p_tenant_id": str(tenant_id)})
+        pack = out if isinstance(out, dict) else None
+        if pack is not None:
+            self._packs[tenant_id] = (now, dict(pack))
+        return pack
 
     def talk_training(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """The Owner's "How I talk to customers" for this call (the scheduler account reads it); None when nothing is saved."""
