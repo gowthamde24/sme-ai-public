@@ -1940,3 +1940,8 @@
   .v9 .ind-hero .hero-top { text-align: left; }
   .v9 .ind-hero .hero-acts { justify-content: flex-start; }
 }
+.v9.ind .sec { padding-block: 56px; }
+@media (max-width: 767px) {
+  .v9.ind .sec { padding-block: 32px; }
+  .v9.ind .ind-points { gap: 22px; }
+}
