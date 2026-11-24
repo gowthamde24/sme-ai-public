@@ -24,14 +24,14 @@ Janvi Recommended
 Sophia
 What it will do: Lakshmi books a visit at 11 am → reminder at 10 am → visit at 4 pm. Priya talks in English from the shop number. Uses your message: Visit reminder If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.
 ## When
-Remind customers
-<select label="Remind customers … their visit">
+Remind customers before their visit
+<select label="Remind customers before their visit">
   options: 1 day before=day_before* | 3 hours before=hours_3 | 1 day and 3 hours before=both
-their visit Only between
-<select label="Only between … and … (1)">
+Store opens at
+<select label="Store opens at">
   options: 8 am=08:00 | 8:30 am=08:30 | 9 am=09:00 | 9:30 am=09:30 | 10 am=10:00* | 10:30 am=10:30 | 11 am=11:00
-and
-<select label="Only between … and … (2)">
+Store closes at
+<select label="Store closes at">
   options: 5 pm=17:00 | 6 pm=18:00 | 7 pm=19:00* | 8 pm=20:00 | 9 pm=21:00
 What it will do: Lakshmi books a visit at 11 am → reminder at 10 am → visit at 4 pm.
 - 11 am booked

@@ -112,3 +112,11 @@ def test_an_unknown_type_and_a_garbled_number_are_refused_without_a_call() -> No
     with pytest.raises(PickerRefused):
         buy(fake.api(), SETTINGS, "12345", "mobile")
     assert not any("purchase" in p for p in fake.paths())
+
+
+def test_with_recording_expected_the_number_is_given_over_with_recording_on() -> None:
+    """28 Nov 2026 (owner, option B): VOICELINK_RECORDING_EXPECTED turns recording ON for a bought number, so the opening's notice is true."""
+    fake = Fake()
+    buy(fake.api(), BuyerSettings(client_id=5879, bot_id=1362, recording=True), NUMBER, "mobile")
+    mapped = next(b for _, p, b in fake.calls if p.endswith("map-did"))
+    assert mapped["call_recording"] == 1

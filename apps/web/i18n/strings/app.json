@@ -126697,6 +126697,853 @@
    "kn": "draft"
   }
  },
+ "jobs.f.when": {
+  "en": "When it calls a new enquiry",
+  "te": "కొత్త ఎంక్వైరీకి ఎప్పుడు కాల్ చేయాలి",
+  "hi": "नई पूछताछ को कब कॉल करे",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆಗೆ ಯಾವಾಗ ಕರೆ ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.language": {
+  "en": "Language of the call",
+  "te": "కాల్ భాష",
+  "hi": "कॉल की भाषा",
+  "kn": "ಕರೆಯ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.tries": {
+  "en": "If nobody answers",
+  "te": "ఎవరూ ఎత్తకపోతే",
+  "hi": "अगर कोई न उठाए",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.thank_you_whatsapp": {
+  "en": "Send a thank-you WhatsApp first",
+  "te": "ముందు థాంక్యూ వాట్సాప్ పంపండి",
+  "hi": "पहले धन्यवाद वाला व्हाट्सऐप भेजे",
+  "kn": "ಮೊದಲು ಧನ್ಯವಾದ ವಾಟ್ಸಾಪ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.from_hour": {
+  "en": "From",
+  "te": "ఇప్పటి నుంచి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.to_hour": {
+  "en": "To",
+  "te": "వరకు",
+  "hi": "तक",
+  "kn": "ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.speed_to_lead.from_hour": {
+  "en": "Calls start at",
+  "te": "కాల్స్ మొదలయ్యే సమయం",
+  "hi": "कॉल शुरू होने का समय",
+  "kn": "ಕರೆ ಶುರುವಾಗುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.speed_to_lead.to_hour": {
+  "en": "Calls stop at",
+  "te": "కాల్స్ ఆగే సమయం",
+  "hi": "कॉल बंद होने का समय",
+  "kn": "ಕರೆ ನಿಲ್ಲುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.store_visits.from_hour": {
+  "en": "Store opens at",
+  "te": "షాప్ తెరిచే సమయం",
+  "hi": "दुकान खुलने का समय",
+  "kn": "ಅಂಗಡಿ ತೆರೆಯುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.store_visits.to_hour": {
+  "en": "Store closes at",
+  "te": "షాప్ మూసే సమయం",
+  "hi": "दुकान बंद होने का समय",
+  "kn": "ಅಂಗಡಿ ಮುಚ್ಚುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.say_ai_when_greeting": {
+  "en": "Say it is an AI assistant when greeting",
+  "te": "పలకరించేటప్పుడు AI అసిస్టెంట్ అని చెప్పాలా",
+  "hi": "अभिवादन में बताए कि यह AI असिस्टेंट है",
+  "kn": "ಶುಭಾಶಯದಲ್ಲಿ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳಬೇಕೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.nudges": {
+  "en": "How many reminders",
+  "te": "ఎన్ని రిమైండర్లు",
+  "hi": "कितने रिमाइंडर",
+  "kn": "ಎಷ್ಟು ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.gap_days": {
+  "en": "Days between reminders",
+  "te": "రిమైండర్ల మధ్య రోజులు",
+  "hi": "रिमाइंडर के बीच दिन",
+  "kn": "ರಿಮೈಂಡರ್‌ಗಳ ನಡುವಿನ ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.slot_minutes": {
+  "en": "Length of one visit",
+  "te": "ఒక విజిట్ ఎంత సేపు",
+  "hi": "एक विज़िट कितनी देर की",
+  "kn": "ಒಂದು ವಿಸಿಟ್ ಎಷ್ಟು ಹೊತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.buffer_minutes": {
+  "en": "Gap between visits",
+  "te": "విజిట్ల మధ్య గ్యాప్",
+  "hi": "विज़िट के बीच का गैप",
+  "kn": "ವಿಸಿಟ್‌ಗಳ ನಡುವಿನ ಗ್ಯಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.weekly_cap": {
+  "en": "Offers a week to one customer",
+  "te": "ఒక కస్టమర్‌కి వారానికి ఆఫర్లు",
+  "hi": "एक ग्राहक को हफ़्ते में ऑफ़र",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ವಾರಕ್ಕೆ ಆಫರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.results_per_search": {
+  "en": "Shops in each search",
+  "te": "ప్రతి సెర్చ్‌లో షాప్‌లు",
+  "hi": "हर खोज में दुकानें",
+  "kn": "ಪ್ರತಿ ಹುಡುಕಾಟದಲ್ಲಿ ಅಂಗಡಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.fit_bar": {
+  "en": "Show only matches of at least",
+  "te": "కనీసం ఇంత మ్యాచ్ ఉన్నవే చూపించండి",
+  "hi": "कम से कम इतना मैच दिखाएँ",
+  "kn": "ಕನಿಷ್ಠ ಇಷ್ಟು ಹೊಂದಾಣಿಕೆ ಇರುವುದನ್ನು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.when.right_away": {
+  "en": "Right away",
+  "te": "వెంటనే",
+  "hi": "तुरंत",
+  "kn": "ತಕ್ಷಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.when.after_10_min": {
+  "en": "After 10 minutes",
+  "te": "10 నిమిషాల తర్వాత",
+  "hi": "10 मिनट बाद",
+  "kn": "10 ನಿಮಿಷದ ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.language.auto": {
+  "en": "Same as the customer",
+  "te": "కస్టమర్ భాషలోనే",
+  "hi": "ग्राहक की भाषा में",
+  "kn": "ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.language.ta": {
+  "en": "Tamil",
+  "te": "తమిళం",
+  "hi": "तमिल",
+  "kn": "ತಮಿಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.language.ml": {
+  "en": "Malayalam",
+  "te": "మలయాళం",
+  "hi": "मलयालम",
+  "kn": "ಮಲಯಾಳಂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.language.mr": {
+  "en": "Marathi",
+  "te": "మరాఠీ",
+  "hi": "मराठी",
+  "kn": "ಮರಾಠಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.tries.tries_1": {
+  "en": "1 try",
+  "te": "1 ప్రయత్నం",
+  "hi": "1 कोशिश",
+  "kn": "1 ಪ್ರಯತ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.tries.tries_2": {
+  "en": "2 tries",
+  "te": "2 ప్రయత్నాలు",
+  "hi": "2 कोशिशें",
+  "kn": "2 ಪ್ರಯತ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.tries.tries_3": {
+  "en": "3 tries",
+  "te": "3 ప్రయత్నాలు",
+  "hi": "3 कोशिशें",
+  "kn": "3 ಪ್ರಯತ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.say_ai_when_greeting.business": {
+  "en": "Follow the business setting",
+  "te": "బిజినెస్ సెట్టింగ్ ప్రకారం",
+  "hi": "बिज़नेस सेटिंग के अनुसार",
+  "kn": "ಬಿಸಿನೆಸ್ ಸೆಟ್ಟಿಂಗ್ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.say_ai_when_greeting.on": {
+  "en": "Always say it",
+  "te": "ఎప్పుడూ చెప్పాలి",
+  "hi": "हमेशा बताए",
+  "kn": "ಯಾವಾಗಲೂ ಹೇಳಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.say_ai_when_greeting.off": {
+  "en": "Do not say it",
+  "te": "చెప్పనక్కర్లేదు",
+  "hi": "न बताए",
+  "kn": "ಹೇಳಬೇಕಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.nudges.nudges_1": {
+  "en": "1 reminder",
+  "te": "1 రిమైండర్",
+  "hi": "1 रिमाइंडर",
+  "kn": "1 ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.nudges.nudges_2": {
+  "en": "2 reminders",
+  "te": "2 రిమైండర్లు",
+  "hi": "2 रिमाइंडर",
+  "kn": "2 ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.nudges.nudges_3": {
+  "en": "3 reminders",
+  "te": "3 రిమైండర్లు",
+  "hi": "3 रिमाइंडर",
+  "kn": "3 ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.gap_days.days_2": {
+  "en": "2 days",
+  "te": "2 రోజులు",
+  "hi": "2 दिन",
+  "kn": "2 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.gap_days.days_3": {
+  "en": "3 days",
+  "te": "3 రోజులు",
+  "hi": "3 दिन",
+  "kn": "3 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.gap_days.days_5": {
+  "en": "5 days",
+  "te": "5 రోజులు",
+  "hi": "5 दिन",
+  "kn": "5 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_15": {
+  "en": "15 minutes",
+  "te": "15 నిమిషాలు",
+  "hi": "15 मिनट",
+  "kn": "15 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_20": {
+  "en": "20 minutes",
+  "te": "20 నిమిషాలు",
+  "hi": "20 मिनट",
+  "kn": "20 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_30": {
+  "en": "30 minutes",
+  "te": "30 నిమిషాలు",
+  "hi": "30 मिनट",
+  "kn": "30 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_45": {
+  "en": "45 minutes",
+  "te": "45 నిమిషాలు",
+  "hi": "45 मिनट",
+  "kn": "45 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_60": {
+  "en": "1 hour",
+  "te": "1 గంట",
+  "hi": "1 घंटा",
+  "kn": "1 ಗಂಟೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_90": {
+  "en": "1 hour 30 minutes",
+  "te": "1 గంట 30 నిమిషాలు",
+  "hi": "1 घंटा 30 मिनट",
+  "kn": "1 ಗಂಟೆ 30 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_120": {
+  "en": "2 hours",
+  "te": "2 గంటలు",
+  "hi": "2 घंटे",
+  "kn": "2 ಗಂಟೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.buffer_minutes.minutes_0": {
+  "en": "No gap",
+  "te": "గ్యాప్ లేదు",
+  "hi": "कोई गैप नहीं",
+  "kn": "ಗ್ಯಾಪ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.buffer_minutes.minutes_10": {
+  "en": "10 minutes",
+  "te": "10 నిమిషాలు",
+  "hi": "10 मिनट",
+  "kn": "10 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.buffer_minutes.minutes_15": {
+  "en": "15 minutes",
+  "te": "15 నిమిషాలు",
+  "hi": "15 मिनट",
+  "kn": "15 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.buffer_minutes.minutes_30": {
+  "en": "30 minutes",
+  "te": "30 నిమిషాలు",
+  "hi": "30 मिनट",
+  "kn": "30 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.weekly_cap.cap_1": {
+  "en": "1 offer a week",
+  "te": "వారానికి 1 ఆఫర్",
+  "hi": "हफ़्ते में 1 ऑफ़र",
+  "kn": "ವಾರಕ್ಕೆ 1 ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.weekly_cap.cap_2": {
+  "en": "2 offers a week",
+  "te": "వారానికి 2 ఆఫర్లు",
+  "hi": "हफ़्ते में 2 ऑफ़र",
+  "kn": "ವಾರಕ್ಕೆ 2 ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.weekly_cap.cap_3": {
+  "en": "3 offers a week",
+  "te": "వారానికి 3 ఆఫర్లు",
+  "hi": "हफ़्ते में 3 ऑफ़र",
+  "kn": "ವಾರಕ್ಕೆ 3 ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.results_per_search.results_5": {
+  "en": "5 shops",
+  "te": "5 షాప్‌లు",
+  "hi": "5 दुकानें",
+  "kn": "5 ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.results_per_search.results_10": {
+  "en": "10 shops",
+  "te": "10 షాప్‌లు",
+  "hi": "10 दुकानें",
+  "kn": "10 ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.results_per_search.results_20": {
+  "en": "20 shops",
+  "te": "20 షాప్‌లు",
+  "hi": "20 दुकानें",
+  "kn": "20 ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.fit_bar.fit_60": {
+  "en": "60 and above",
+  "te": "60 ఆ పైన",
+  "hi": "60 और ऊपर",
+  "kn": "60 ಮತ್ತು ಮೇಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.fit_bar.fit_70": {
+  "en": "70 and above",
+  "te": "70 ఆ పైన",
+  "hi": "70 और ऊपर",
+  "kn": "70 ಮತ್ತು ಮೇಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.fit_bar.fit_80": {
+  "en": "80 and above",
+  "te": "80 ఆ పైన",
+  "hi": "80 और ऊपर",
+  "kn": "80 ಮತ್ತು ಮೇಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.fit_bar.fit_90": {
+  "en": "90 and above",
+  "te": "90 ఆ పైన",
+  "hi": "90 और ऊपर",
+  "kn": "90 ಮತ್ತು ಮೇಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.need": {
+  "en": "What they need",
+  "te": "వాళ్ళకు ఏం కావాలి",
+  "hi": "उन्हें क्या चाहिए",
+  "kn": "ಅವರಿಗೆ ಏನು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.quantity": {
+  "en": "How much they need",
+  "te": "ఎంత కావాలి",
+  "hi": "कितना चाहिए",
+  "kn": "ಎಷ್ಟು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.when": {
+  "en": "When they need it",
+  "te": "ఎప్పటికి కావాలి",
+  "hi": "कब तक चाहिए",
+  "kn": "ಯಾವಾಗ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.visit": {
+  "en": "Whether they will visit",
+  "te": "వస్తారా లేదా",
+  "hi": "आएँगे या नहीं",
+  "kn": "ಬರುತ್ತಾರೆಯೇ ಇಲ್ಲವೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.budget_range": {
+  "en": "Their budget",
+  "te": "వాళ్ళ బడ్జెట్",
+  "hi": "उनका बजट",
+  "kn": "ಅವರ ಬಜೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.still_interested": {
+  "en": "Whether they are still interested",
+  "te": "ఇంకా ఆసక్తి ఉందా",
+  "hi": "अब भी रुचि है या नहीं",
+  "kn": "ಇನ್ನೂ ಆಸಕ್ತಿ ಇದೆಯೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.response": {
+  "en": "Call new enquiries",
+  "te": "కొత్త ఎంక్వైరీలకు కాల్ చేయండి",
+  "hi": "नई पूछताछ को कॉल करें",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆಗಳಿಗೆ ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.retries": {
+  "en": "If nobody answers, try again",
+  "te": "ఎవరూ ఎత్తకపోతే మళ్ళీ ప్రయత్నించండి",
+  "hi": "कोई न उठाए तो फिर कोशिश करें",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.never_day": {
+  "en": "Rest day",
+  "te": "విశ్రాంతి రోజు",
+  "hi": "आराम का दिन",
+  "kn": "ವಿಶ್ರಾಂತಿ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.recent_days": {
+  "en": "Leave out customers who bought in the last",
+  "te": "ఇటీవల కొన్నవారిని వదిలేయండి, గత",
+  "hi": "हाल में खरीदने वालों को छोड़ें, पिछले",
+  "kn": "ಇತ್ತೀಚೆಗೆ ಖರೀದಿಸಿದವರನ್ನು ಬಿಡಿ, ಕಳೆದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.call_from": {
+  "en": "Call from",
+  "te": "ఏ నంబర్ నుంచి కాల్ చేయాలి",
+  "hi": "किस नंबर से कॉल करें",
+  "kn": "ಯಾವ ನಂಬರ್‌ನಿಂದ ಕರೆ ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.wait_days": {
+  "en": "If a customer does not reply, follow up after",
+  "te": "కస్టమర్ జవాబివ్వకపోతే ఫాలో అప్ చేయండి, ఇంత తర్వాత",
+  "hi": "ग्राहक जवाब न दे तो फ़ॉलो-अप करें, इतने बाद",
+  "kn": "ಗ್ರಾಹಕರು ಉತ್ತರಿಸದಿದ್ದರೆ ಫಾಲೋ-ಅಪ್ ಮಾಡಿ, ಇಷ್ಟು ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.remind_before": {
+  "en": "Remind customers before their visit",
+  "te": "విజిట్‌కి ముందు కస్టమర్లకు రిమైండ్ చేయండి",
+  "hi": "विज़िट से पहले ग्राहकों को याद दिलाएँ",
+  "kn": "ವಿಸಿಟ್‌ಗೆ ಮೊದಲು ಗ್ರಾಹಕರಿಗೆ ನೆನಪಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.answer_after": {
+  "en": "Answer when I have not picked up in",
+  "te": "నేను ఎత్తకపోతే జవాబివ్వండి, ఇంత లోపు",
+  "hi": "जब मैं न उठाऊँ तो जवाब दें, इतने में",
+  "kn": "ನಾನು ಎತ್ತದಿದ್ದರೆ ಉತ್ತರಿಸಿ, ಇಷ್ಟರೊಳಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.send_at": {
+  "en": "Send the offer at",
+  "te": "ఆఫర్ పంపే సమయం",
+  "hi": "ऑफ़र भेजने का समय",
+  "kn": "ಆಫರ್ ಕಳುಹಿಸುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.radius": {
+  "en": "Look for shops within",
+  "te": "దూరంలోని షాప్‌లు వెతకండి",
+  "hi": "इतनी दूरी की दुकानें खोजें",
+  "kn": "ಇಷ್ಟು ದೂರದ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.appearance": {
+  "en": "Appearance",
+  "te": "రూపం",
+  "hi": "रूप",
+  "kn": "ನೋಟ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.theme.light": {
+  "en": "Light",
+  "te": "లైట్",
+  "hi": "लाइट",
+  "kn": "ಲೈಟ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.theme.dark": {
+  "en": "Dark",
+  "te": "డార్క్",
+  "hi": "डार्क",
+  "kn": "ಡಾರ್ಕ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.theme.system": {
+  "en": "Automatic",
+  "te": "ఆటోమేటిక్",
+  "hi": "अपने आप",
+  "kn": "ತಾನಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "wls.kind.products": {
   "en": "Products",
   "te": "ప్రొడక్ట్స్",

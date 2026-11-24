@@ -4,6 +4,7 @@ import { IntentLink as Link } from "./NavGroups";
 import type { ReactNode } from "react";
 
 import { Disclosure } from "./Disclosure";
+import { Appearance } from "./LazyAppearance";
 import { word, type Labels } from "./labels";
 
 const rowLink = "flex min-h-11 w-full items-center rounded-lg px-3 text-left text-base text-ink hover:bg-surface-2";
@@ -33,6 +34,7 @@ export function AccountMenu({ email, role, signOut, labels, collapsed = false, s
     >
       <p className="truncate px-3 py-2 text-sm text-muted">{who}</p>
       {extra}
+      <Appearance labels={labels} className="px-3 py-2" />
       <Link href="/app/security" className={rowLink}>
         {word(labels, "frame.security", "Security")}
       </Link>

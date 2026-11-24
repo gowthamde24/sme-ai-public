@@ -73,6 +73,27 @@ PLAIN_INBOUND_OPENING = {
     "mr": "नमस्कार, मी {business} कडून {assistant} बोलतेय. सांगा, मी तुम्हाला कशी मदत करू?",
 }
 PLAIN_REVIEWED = frozenset(PLAIN_INBOUND_OPENING)
+
+# The recording notice (owner decision 28 Nov 2026, option B: VoiceLink records calls in the first weeks, to review quality): ONE short sentence spoken inside the opening of an inbound call, right after the greeting and
+# before "how can I help you?". It is part of the opening text, so it is spoken from the same kept audio (no extra wait for the first sound). Money, consent and privacy sentences wait for a person's review: only the
+# languages in RECORDING_NOTICE_APPROVED speak their own text; the others say the English sentence until a native reader approves (add the code to the set; the drafts below are for the owner's yes). Spoken, friendly, English business words.
+RECORDING_NOTICE = {
+    "en": "This call may be recorded to improve the service.",
+    "te": "మా service ఇంకా బాగా చేయడానికి ఈ call record అవ్వచ్చు.",
+    "hi": "हमारी service और बेहतर करने के लिए यह call record हो सकती है।",
+    "kn": "ನಮ್ಮ service ಇನ್ನೂ ಚೆನ್ನಾಗಿ ಮಾಡೋಕೆ ಈ call record ಆಗಬಹುದು.",
+}
+RECORDING_NOTICE_APPROVED = frozenset({"en"})
+
+
+def with_recording_notice(language: str, opening: str) -> str:
+    """The opening with the recording notice after its first sentence ("Hello, this is Priya from X. <notice> How can I help you?"); a one-sentence opening gets it after. Said once: an opening that already holds it is unchanged."""
+    notice = RECORDING_NOTICE[language] if language in RECORDING_NOTICE_APPROVED and language in RECORDING_NOTICE else RECORDING_NOTICE["en"]
+    if notice in opening or RECORDING_NOTICE["en"] in opening:
+        return opening
+    first = first_sentence(opening)
+    rest = opening[len(first):].lstrip()
+    return f"{first} {notice} {rest}".strip() if rest else f"{first} {notice}"
 DEFAULT_ASSISTANT = "Priya"
 # how "AI assistant" is written in each language's own script (owner, 7 Nov 2026: "AI అసిస్టెంట్", never "AI assistant" in Latin letters inside a Telugu sentence); the endings join after a zero-width non-joiner
 AI_ASSISTANT_WORD = {"en": "AI assistant", "te": "AI అసిస్టెంట్", "hi": "AI असिस्टेंट", "kn": "AI ಅಸಿಸ್ಟೆಂಟ್", "ta": "AI அசிஸ்டென்ட்", "ml": "AI അസിസ്റ്റന്റ്", "mr": "AI असिस्टंट"}

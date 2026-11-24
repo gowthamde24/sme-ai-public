@@ -1,4 +1,4 @@
-import type { AccountSecurity, AuthProviders, PackStatus, PackSummary, Words, WorkspacePack } from "@/lib/packs/types";
+import type { AccountSecurity, AuthProviders, PackCategory, PackStatus, PackSummary, Words, WorkspacePack } from "@/lib/packs/types";
 
 import { ApiAuthError, ApiContractError, ApiRequestError, apiPublicRequest, apiRequest } from "./client";
 
@@ -44,7 +44,27 @@ function parseCode(v: unknown, what: string): string {
   return typeof v === "string" && CODE.test(v) ? v : bad(what);
 }
 
+const CATEGORY_COLOURS = ["call", "chat", "visit", "offer", "find"];
+/** The groups of `GET /v1/packs` (optional: an older API sends none): id, name, colour, in the order to draw. */
+export function parseCategories(json: unknown): PackCategory[] {
+  if (!Array.isArray(json)) return [];
+  const out: PackCategory[] = [];
+  json.slice(0, 12).forEach((c, order) => {
+    if (!isRecord(c) || typeof c.id !== "string" || !CODE.test(c.id)) return;
+    try {
+      out.push({ id: c.id, name: parseWords(c.name, "category name"), colour: typeof c.colour === "string" && CATEGORY_COLOURS.includes(c.colour) ? c.colour : "call", order });
+    } catch {
+      /* a group that does not read is left out: its types fall back to "other" */
+    }
+  });
+  return out;
+}
+
 export function parsePackSummary(json: unknown): PackSummary {
+  return parsePackWithGroups(json, []);
+}
+
+function parsePackWithGroups(json: unknown, categories: readonly PackCategory[]): PackSummary {
   if (!isRecord(json)) return bad("pack");
   if (typeof json.version !== "number" || !Number.isSafeInteger(json.version) || json.version < 1) return bad("version");
   if (!STATUSES.includes(json.status as PackStatus)) return bad("status");
@@ -58,14 +78,17 @@ export function parsePackSummary(json: unknown): PackSummary {
     summary: parseWords(json.summary, "summary"),
     accent: parseCode(json.accent, "accent"),
     owlProp: parseCode(json.owl_prop, "owl_prop"),
+    category: typeof json.category === "string" ? (categories.find((c) => c.id === json.category) ?? null) : null,
+    ...(typeof json.keywords === "string" ? { keywords: json.keywords.slice(0, 300) } : {}),
   };
 }
 
 /** `GET /v1/packs`. An answer with no business type at all is an error (a sign-up page with no cards helps nobody). */
 export async function listPacks(): Promise<PackSummary[]> {
   const json = await apiPublicRequest("/v1/packs");
-  if (!isRecord(json) || !Array.isArray(json.packs) || json.packs.length < 1 || json.packs.length > 40) return bad("packs");
-  return json.packs.map(parsePackSummary);
+  if (!isRecord(json) || !Array.isArray(json.packs) || json.packs.length < 1 || json.packs.length > 100) return bad("packs");
+  const categories = parseCategories(json.categories);
+  return json.packs.map((p) => parsePackWithGroups(p, categories));
 }
 
 /** `GET /v1/auth/providers`: Google and Facebook are offered only when the server says so. Anything unreadable counts as "off" (e-mail is always there). */

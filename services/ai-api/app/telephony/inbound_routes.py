@@ -79,6 +79,7 @@ class InboundService:
     cost_paise_per_minute_inbound: int | None = None   # an inbound call's own rate when it differs from the outbound one
     language: str = "en"
     llm_choice: str = "haiku"
+    recording_notice: bool = False   # VOICELINK_RECORDING_EXPECTED: VoiceLink records these calls (owner, 28 Nov 2026), so the opening says so
     first_token_s: float = 1.2   # TELEPHONY_FIRST_TOKEN_MS: with Sarvam speaking, the longest it may stay silent before the same turn goes to Haiku
     business: str = "the business"   # what the opening line names (TELEPHONY_INBOUND_BUSINESS; the scheduler account does not read workspace names)
     max_call_s: int = 300
@@ -213,7 +214,7 @@ def visit_label(slot: dict[str, Any]) -> str:
 
 
 def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = (), assistant: str | None = None,
-                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool | None = None, stored: Stored | None = None, first_token_s: float = 1.2, pack: FactPack | None = None) -> tuple[Parts, str]:
+                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool | None = None, stored: Stored | None = None, first_token_s: float = 1.2, pack: FactPack | None = None, recording_notice: bool = False) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in the CALL's language (te-IN on a Telugu line; owner, 6 Nov 2026: "auto" let a caller's "hello" turn a Telugu call English),
     following the call when it switches (app/telephony/language_rule.py), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
@@ -241,7 +242,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     say_ai = mention_ai if mention_ai is not None else greeting.resolved_for_job(training if isinstance(training, dict) else None, job)
 
     def opening_for(lang: str) -> str:
-        return call_opening(lang, business=business, assistant=assistant, training=training, say_ai=say_ai, outbound=outbound, introduction=introduction())
+        return call_opening(lang, business=business, assistant=assistant, training=training, say_ai=say_ai, outbound=outbound, introduction=introduction(), recording_notice=recording_notice)
 
     def goal_prompt(lang: str) -> str:
         """An outbound GOAL call is not an enquiry call (11 Nov 2026): its own prompt, the goal first and the hard rules above everything."""
@@ -327,7 +328,7 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
     slots = list(slots or [])
     labels = tuple(visit_label(sl) for sl in slots)
     if service.parts_for is None:
-        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, first_token_s=service.first_token_s, pack=fact_pack.build(pack_raw) if outbound is None and pack_raw is not None else None, assistant=assistant, corrections=tuple(corrections or ()), stored=stored, **cast(Any, {"outbound": outbound} if outbound is not None else {}))
+        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, first_token_s=service.first_token_s, recording_notice=service.recording_notice, pack=fact_pack.build(pack_raw) if outbound is None and pack_raw is not None else None, assistant=assistant, corrections=tuple(corrections or ()), stored=stored, **cast(Any, {"outbound": outbound} if outbound is not None else {}))
     else:
         parts, model = service.parts_for(bv, business, language, service.llm_choice)
     text = parts.greeting_for(language)
