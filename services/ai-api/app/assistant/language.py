@@ -180,7 +180,7 @@ def reply_matches(text: str, language: Language) -> bool:
 # Fixed phrases, written once, in each language: what the assistant says when it will not guess, cannot do something, or has no answer to show. They are not model output.
 NO_ANSWER: dict[Language, str] = {
     "en": "I looked, and there is nothing to show for that yet.",
-    "te": "చూశాను, దీని గురించి ఇప్పుడు చూపించడానికి ఏమీ లేదు.",
+    "te": "చూశాను అండీ, దీని గురించి ఇప్పుడు ఏమీ లేదు.",
     "hi": "मैंने देखा, इसके बारे में अभी दिखाने को कुछ नहीं है।",
     "kn": "ನೋಡಿದೆ, ಇದರ ಬಗ್ಗೆ ಈಗ ತೋರಿಸಲು ಏನೂ ಇಲ್ಲ.",
     "ta": "பார்த்தேன், இதற்கு இப்போது காட்ட எதுவும் இல்லை.",
@@ -229,7 +229,7 @@ MONEY_NOT_CONFIRMED: dict[Language, str] = {
 # A native reader of each language should check these words.
 NO_RECORD_HELP: dict[Language, str] = {
     "en": "I looked, and there is nothing to show for that yet. Tell me a customer's name, a date or a product and I will look again, or ask me to draft a follow-up.",
-    "te": "చూశాను, దీని గురించి ఇప్పుడు చూపించడానికి ఏమీ లేదు. కస్టమర్ పేరు, తేదీ లేదా వస్తువు చెప్పండి, మళ్ళీ చూస్తాను; లేదా ఫాలో-అప్ డ్రాఫ్ట్ చేయమని అడగండి.",
+    "te": "చూశాను అండీ, దీని గురించి ఇప్పుడు ఏమీ లేదు. Customer పేరు, date లేదా item చెప్తే మళ్ళీ చూస్తాను. Follow-up draft కావాలంటే చెప్పండి.",
     "hi": "मैंने देखा, इसके बारे में अभी दिखाने को कुछ नहीं है। किसी ग्राहक का नाम, तारीख या सामान बताइए, मैं फिर देखता हूँ; या फॉलो-अप ड्राफ़्ट बनाने को कहिए।",
     "kn": "ನೋಡಿದೆ, ಇದರ ಬಗ್ಗೆ ಈಗ ತೋರಿಸಲು ಏನೂ ಇಲ್ಲ. ಗ್ರಾಹಕರ ಹೆಸರು, ದಿನಾಂಕ ಅಥವಾ ವಸ್ತು ಹೇಳಿ, ಮತ್ತೆ ನೋಡುತ್ತೇನೆ; ಅಥವಾ ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್ ಮಾಡಲು ಹೇಳಿ.",
     "ta": "பார்த்தேன், இதற்கு இப்போது காட்ட எதுவும் இல்லை. வாடிக்கையாளர் பெயர், தேதி அல்லது பொருளைச் சொல்லுங்கள், மீண்டும் பார்க்கிறேன்; அல்லது பின்தொடர்வு வரைவு செய்யச் சொல்லுங்கள்.",
