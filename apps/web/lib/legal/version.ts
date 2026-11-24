@@ -17,4 +17,4 @@ export const LEGAL_UPDATED = "2026-11-26";
 export const LEGAL_IS_DRAFT = false;
 
 /** Texts that are DRAFTS until the owner approves them (owner, 12 Nov 2026): their page always shows the "Draft, pending legal review" banner, is never indexed, and exists only where LEGAL_DRAFT_PAGES is on (staging). */
-export const DRAFT_DOC_IDS: readonly string[] = ["refund"];
+export const DRAFT_DOC_IDS: readonly string[] = ["refund", "aup"];
