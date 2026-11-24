@@ -465,6 +465,9 @@ class Settings(BaseSettings):
     # until TELEPHONY_OUTBOUND is true (there is no dialer yet). The stream secret signs the
     # per-call token of the Voicebot URL (Secret Manager: sme-exotel-stream-secret).
     telephony_outbound: bool = False
+    # SANDBOX ONLY, for testing (owner, 28 Nov 2026): a sandbox-list number ignores the
+    # calling hours. Ignored in live mode. Remove before the 2 Dec real-data gate.
+    telephony_sandbox_ignores_hours: bool = False
     # Live take-over (job TO, owner decision 10 Nov 2026): a short spoken announcement to the caller
     # when a person from the business takes over. OFF by default (the owner will choose);
     # TAKEOVER_ANNOUNCE=true turns it on.

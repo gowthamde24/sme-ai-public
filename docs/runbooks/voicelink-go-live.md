@@ -42,6 +42,8 @@ update public.phone_numbers set inbound_on = true where number = '+91XXXXXXXXXX'
 ## Dated items
 * **Second channel before Thu 3 Dec (owner buys it in the portal, prorated).** Until then production declares `TELEPHONY_MAX_CONCURRENT=1` (one channel = one live call for the whole reseller account), so our own gate refuses a second call before VoiceLink is asked. When the second channel is bought, a tiny PR sets it back to 2 and the planner deploys it (`ALLOW_FLAG_CHANGE=TELEPHONY_MAX_CONCURRENT`).
 
+* **Testing only, remove before the 2 Dec real-data gate:** `TELEPHONY_SANDBOX_IGNORES_HOURS=true` in production api.env lets the three sandbox numbers be called and answered at any hour (sandbox mode only). Delete the line (or set false) and deploy with `ALLOW_FLAG_CHANGE=TELEPHONY_SANDBOX_IGNORES_HOURS`. `TELEPHONY_MAX_CONCURRENT` is 2 since the second channel was bought (28 Nov).
+
 ## Post-launch list (decided 26 Nov 2026: not for launch)
 * A spoken "all lines are busy" message and a "Needs you" line when a call is refused for lack of a free channel (today a refused call closes silently with a closed reason word in the log and nothing is shown).
 
