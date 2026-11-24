@@ -24,7 +24,6 @@ vi.mock("@/components/v2/app/settings/LazyAssistantNameCard", async () => ({ Ass
 vi.mock("@/components/v2/app/settings/LazyDeveloperKeys", async () => ({ DeveloperKeysCard: (await import("@/components/v2/app/settings/DeveloperKeysCard")).DeveloperKeysCard }));
 // the plain-sentence pages (JOBS, the simplicity pass): their lazy chunks are drawn at once in the snapshot
 vi.mock("@/components/v2/app/jobs/pages/LazyLinkSentence", async () => ({ LinkSentence: (await import("@/components/v2/app/jobs/pages/LinkSentence")).LinkSentence }));
-vi.mock("@/components/v2/app/phone/LazyPhoneGetSimple", async () => ({ PhoneGetSimple: (await import("@/components/v2/app/phone/PhoneGetSimple")).PhoneGetSimple }));
 vi.mock("@/components/v2/app/catalogue/LazyItemFieldsSimple", async () => ({ ItemFieldsSimple: (await import("@/components/v2/app/catalogue/ItemFieldsSimple")).ItemFieldsSimple }));
 vi.mock("@/components/v2/app/jobs/rules/LazyPolicySentences", async () => ({ PolicySentences: (await import("@/components/v2/app/jobs/rules/PolicySentences")).PolicySentences }));
 // JOBS (What you sell): the list and its sheet are lazy chunks on a real page; the snapshot draws the list at once
@@ -138,7 +137,7 @@ vi.mock("@/lib/api/consent-list", async (orig) => (await import("./state")).wrap
 vi.mock("@/lib/api/lead-finder", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-finder")>(), ["readAvailability", "redecideProspects", "listProspects", "getProspectStats", "getProspect", "getFinderSettings", "listSearches"]));
 vi.mock("@/lib/api/team", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/team")>(), ["getTeam", "listInvitations"]));
 vi.mock("@/lib/api/whatsapp", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/whatsapp")>(), ["getWhatsappAccount", "getConnectConfig", "listTemplates", "listConversations", "getThread", "listChatTemplates"]));
-vi.mock("@/lib/api/phone-kyc", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/phone-kyc")>(), ["getKycStatus", "getKycOptions"]));
+vi.mock("@/lib/api/numbers", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/numbers")>(), ["listOwn"]));
 vi.mock("@/lib/api/gstin", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/gstin")>(), ["getBusinessProfile"]));
 vi.mock("@/lib/api/policy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/policy")>(), ["getPolicyStatus"]));
 vi.mock("@/lib/api/pack", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/pack")>(), ["getWorkspacePack", "getAccountSecurity", "listPacks"]));

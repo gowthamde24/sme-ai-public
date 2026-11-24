@@ -233,8 +233,6 @@ export const firstRunType = (value: string | undefined = process.env.FIRST_RUN_T
 /** My assistant in the OPEN layout (owner chose it, 24 Nov 2026; mock "My assistant" in stack19-app-mock.html): two tabs, "To your customers" and "To you", the cards as plain hairline sections, the extra choices under "More choices". `1` = on; unset = the screen as it was. */
 export const myAssistantOpen = (value: string | undefined = process.env.MY_ASSISTANT_OPEN): boolean => value === "1";
 
-/** Phone numbers as three plain steps (owner, 25 Nov 2026; mock "Phone numbers"): Choose a document, Upload it, You get your number; the current step open, the others one grey line; no card, no status pill. `1` = on; unset = the registration card as it was. Only with DESIGN_V6. */
-export const phoneSteps = (value: string | undefined = process.env.PHONE_STEPS): boolean => value === "1";
 /** The number picker (owner, 28 Nov 2026; mock "Phone numbers"; C1's contract note): the owner picks their own business number from a list (type, "starts with", numbers as radio rows, "Use this number"), then "ready in a minute", then the shop-number forwarding codes. `mock` = made-up numbers and a cookie (staging: nothing is bought); `1` = C1's routes (not live yet: C1 builds the buying side after a read-only probe); unset = the page as it was. Only with DESIGN_V6. */
 export const phonePicker = (value: string | undefined = process.env.PHONE_PICKER): ScreenMode => screenMode(value);
 /** Settings and Team without sentences (owner, 25 Nov 2026; mock "Settings"): plain labelled fields (label above, one grey hint), one Save with "You have unsaved changes." / "Saved.", the invite as plain fields. `1` = on; unset = the sentence forms as they were. Only with JOBS. */
