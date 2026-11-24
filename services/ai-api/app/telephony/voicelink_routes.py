@@ -104,6 +104,8 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
         return await _close(wire)
     key = config.fingerprint_key()
     log.info("voicelink_stream start call_fp=%s stream_fp=%s rate=%d", inbound.fingerprint(key, start.call_sid), inbound.fingerprint(key, start.stream_sid), start.sample_rate)
+    # the shape of VoiceLink's start event, as NAMES only (never a value, a number or an id): what the first real call must tell us (reports/voicelink-first-call-checklist.md)
+    log.info("voicelink_start_shape fields=%s custom_keys=%s encoding=%s has_from=%s has_to=%s", ",".join(start.fields), ",".join(sorted(start.custom)), start.encoding, bool(start.from_number), bool(start.to_number))
     if start.encoding != voicelink.ENCODING:
         return await _refuse(wire, line, "unsupported_encoding")
     began = inbound.monotonic()
@@ -144,6 +146,7 @@ async def _outbound(service: InboundService, bv: Any, live: Any, wire: Any, line
             found = await inbound.find_line_quick(service.store.line_find, line_no)
             if found and found.get("provider") == PROVIDER and str(found.get("tenant_id")) == str(tenant):
                 ours, callee = line_no, normalise(other)
+                log.info("voicelink_outbound ours_side=%s", "to" if mine == start.to_number else "from")   # which of the two VoiceLink calls our number: one of the first-call unknowns
                 break
     if ours is None or callee is None:
         return await _refuse(wire, line, "no_such_line")
