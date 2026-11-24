@@ -200,3 +200,20 @@ def test_prices_from_the_catalogue_and_what_you_sell_are_said_like_price_list_ro
     assert "Kanchi red: Rs 12,500 per piece" in text and "Fall and pico: Rs 150 per service" in text
     assert "Handloom cotton: Rs 900 per piece when you buy 10 or more" in text and "Rs 800 per piece when you buy 50 or more" in text and "minimum order" not in text
     assert pack.allowed_paise == frozenset({1250000, 15000, 90000, 80000}), "an amount in none of the sources is not allowed"
+
+
+def test_list_prices_carry_the_item_the_column_label_and_the_period_and_the_usual_one_is_marked() -> None:
+    """28 Nov 2026, lists slice 4: two prices of one item can never be swapped, and a list item's availability and description are said as the list states them."""
+    raw = {
+        "prices": [
+            {"name": "Cotton", "unit": "piece", "paise": 45000, "moq": 1, "tax_bps": None, "tier": False, "label": "Wholesale price", "period": "per_unit", "default": False},
+            {"name": "Cotton", "unit": "piece", "paise": 52000, "moq": 1, "tax_bps": None, "tier": False, "label": "Retail price", "period": "one_time", "default": True},
+            {"name": "Pro plan", "unit": "piece", "paise": 99900, "moq": 1, "tax_bps": None, "tier": False, "label": "Price", "period": "per_month", "default": True},
+        ],
+        "items": [{"name": "Cotton", "availability": "Out of stock", "description": "Soft cotton, 5 metres"}, {"name": "E-book", "availability": "Always available", "description": None}],
+    }
+    pack = fact_pack.build(raw, now=TUE_11)
+    text = text_of(pack)
+    assert "Cotton, Wholesale price: Rs 450 per unit" in text and "Cotton, Retail price: Rs 520 (the usual price" in text and "Pro plan, Price: Rs 999 per month (the usual price" in text
+    assert "Cotton: Out of stock. Soft cotton, 5 metres" in text and "E-book: Always available" in text
+    assert pack.allowed_paise == frozenset({45000, 52000, 99900})
