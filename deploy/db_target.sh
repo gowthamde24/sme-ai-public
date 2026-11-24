@@ -3,7 +3,7 @@
 #   deploy/db_target.sh staging      exit 0 only when supabase/.temp/project-ref is the STAGING project (uiallwgywitryxatcqxf)
 #   deploy/db_target.sh production   exit 0 only when it is the PRODUCTION project (ijmsusgyilwskpjxfauu)
 #   deploy/db_target.sh              prints which one it is
-# Staging pushes come from a c1wt-* worktree only; production pushes only at the owner's go (docs/runbooks/production-bringup-all-in-order.md).
+# Staging pushes come from a c1wt-* worktree only; production pushes only at the owner's go (docs-private/runbooks/production-bringup-all-in-order.md).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 STAGING="uiallwgywitryxatcqxf"; PRODUCTION="ijmsusgyilwskpjxfauu"

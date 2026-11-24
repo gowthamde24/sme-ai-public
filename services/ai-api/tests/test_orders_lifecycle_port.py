@@ -2,7 +2,7 @@
 
 The GOLDEN vectors pin the package's behaviour by value (canonical hash of the request and sha256 of the whole canonical output). If lane C changes the package, even without a version bump,
 these fail until a person reviews the change and moves the pins; if the version changes, ALLOWED_LIFECYCLE_VERSIONS makes the adapter fail closed first. The state x event table is typed by
-hand from docs/plans/order-lifecycle.md (not generated from the package), so a changed matrix cannot pass by moving a pin."""
+hand from docs-private/plans/order-lifecycle.md (not generated from the package), so a changed matrix cannot pass by moving a pin."""
 
 # ruff: noqa: E501
 

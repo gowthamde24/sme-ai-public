@@ -1,6 +1,6 @@
 # Runbook: the education pack (job CR, ADR 0087)
 
-For the owner or the support person setting up a school, a college or a coaching centre, and for the next developer. Everything here is local and uses **synthetic** data (every number is a `+00 ...` number). **No real student may be entered before the DPDP children's review** (`docs/pre-pilot-checklist.md`, "Education core"): the real-data gate for a workspace that keeps students opens only with a review reference that begins `dpdp-children:`.
+For the owner or the support person setting up a school, a college or a coaching centre, and for the next developer. Everything here is local and uses **synthetic** data (every number is a `+00 ...` number). **No real student may be entered before the DPDP children's review** (`docs-private/pre-pilot-checklist.md`, "Education core"): the real-data gate for a workspace that keeps students opens only with a review reference that begins `dpdp-children:`.
 
 ## 1. Set up the institution (Owner or Admin)
 

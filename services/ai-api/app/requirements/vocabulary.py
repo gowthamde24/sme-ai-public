@@ -17,7 +17,7 @@ CERTAINTIES = ("stated", "implied", "ambiguous")
 STATES = ("proposed", "confirmed", "corrected", "rejected")
 MAX_LINES = 5
 
-# caps aligned with the quote engine's operational bounds (docs/plans/t009-quote-engine.md; owner change H)
+# caps aligned with the quote engine's operational bounds (docs-private/plans/t009-quote-engine.md; owner change H)
 MAX_QUANTITY = 10_000
 MAX_UNIT_BUDGET_PAISE = 100_000_000
 MAX_TOTAL_BUDGET_PAISE = 1_000_000_000

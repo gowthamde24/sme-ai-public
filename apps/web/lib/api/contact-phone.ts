@@ -3,7 +3,7 @@ import { isCanonicalUuid } from "./crm";
 
 /**
  * The stored phone of one contact, or null when it has none. SERVER ONLY, and only the WhatsApp redirect route may import this file (test/whatsapp-guard.test.ts): the number is read there, on the server, with the person's
- * own token, used for one redirect response and never put in a page, a prop, an action result, an error or a log line (docs/plans/open-in-whatsapp-plan.md, section 2). Nothing else of the contact is read or kept.
+ * own token, used for one redirect response and never put in a page, a prop, an action result, an error or a log line (docs-private/plans/open-in-whatsapp-plan.md, section 2). Nothing else of the contact is read or kept.
  * An answer of the wrong shape is a contract error with a fixed message; the message never contains the value.
  */
 export async function fetchContactPhone(accessToken: string, tenantId: string, contactId: string): Promise<string | null> {

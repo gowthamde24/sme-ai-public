@@ -4,7 +4,7 @@ import { timed } from "@/lib/observe/server-timing";
 import { ApiAuthError, ApiRequestError, apiRequestOnce, isBusy, refusal } from "./client";
 
 /**
- * One request for what the signed-in layout reads on every page (C1's Phase 1, docs/plans/call-capacity-and-instances.md section 2a, owner approved 12 Nov 2026): `GET /v1/tenants/{id}/bootstrap` answers
+ * One request for what the signed-in layout reads on every page (C1's Phase 1, docs-private/plans/call-capacity-and-instances.md section 2a, owner approved 12 Nov 2026): `GET /v1/tenants/{id}/bootstrap` answers
  * `{parts: {name: {ok, data, error:{code,status}}}, generated_at}`, each part being the SAME body as its own route, so every existing reader and parser works unchanged: `apiRequest` (client.ts) asks here first
  * for the routes in PARTS. SERVER ONLY (client.ts reaches this file only behind `typeof window === "undefined"`, so no browser ever loads it).
  * Behind BOOTSTRAP=1 (off by default). It is used only after the workspace layout has PRIMED it for this request (`primeBootstrap`): a route handler, which does not prime, keeps asking its own routes (a poll that needs

@@ -1,4 +1,4 @@
-"""The ONE door to lane C's pure follow-up cadence engine (`packages/pure/followup_cadence`, docs/plans/t010-followup-cadence.md, ADR 0022).
+"""The ONE door to lane C's pure follow-up cadence engine (`packages/pure/followup_cadence`, docs-private/plans/t010-followup-cadence.md, ADR 0022).
 
 The engine PROPOSES: stop, wait or draft a follow-up. It persists, sends, authorises and approves nothing, and its hash binds the request, not the person. Nothing else in the API may import
 `followup_cadence`: a boundary test fails if another module does. The adapter gives lane A the guarantees the package cannot give itself (the pattern of app/orders/lifecycle_port.py):
@@ -13,7 +13,7 @@ The engine PROPOSES: stop, wait or draft a follow-up. It persists, sends, author
 
 The adapter DECIDES NOTHING about a lead: it runs the engine on the request the builder made (app/followups/builder.py, equal to the database's `app.followup_build`). The database recomputes the
 rules that matter and refuses any difference (SM225, SM226). No dependency is added: the package is stdlib-only and is put on the import path from the repository checkout when it is not
-already importable (the Docker image needs `COPY packages/pure ./packages/pure`: docs/pre-pilot-checklist.md, T012)."""
+already importable (the Docker image needs `COPY packages/pure ./packages/pure`: docs-private/pre-pilot-checklist.md, T012)."""
 
 from __future__ import annotations
 

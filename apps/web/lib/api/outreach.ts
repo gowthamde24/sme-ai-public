@@ -19,7 +19,7 @@ const id = (v: unknown, what: string): string => (typeof v === "string" && isCan
 const lang = (v: unknown, what: string) => oneOf(v, CALL_LANGS, what);
 const RULE_LANGS = [...CALL_LANGS, "auto"] as const;
 const ruleLang = (v: unknown, what: string): RuleLang => oneOf(v, RULE_LANGS, what);
-/** A template is named, never written: the name of one of the workspace's WhatsApp templates (C1 docs/plans/speed-to-lead-rules-v2.md). */
+/** A template is named, never written: the name of one of the workspace's WhatsApp templates (C1 docs-private/plans/speed-to-lead-rules-v2.md). */
 const tplName = (v: unknown, what: string): string | null => (v === null || v === undefined ? null : typeof v === "string" && /^[a-z0-9_]{1,64}$/.test(v) ? v : bad(what));
 /** What the API prints of a rule's plan: the call, the retries, then the WhatsApp template. Anything else makes the plan unreadable (null): the screen then builds it from the policy. */
 const planSteps = (v: unknown): RuleStep[] | null => {

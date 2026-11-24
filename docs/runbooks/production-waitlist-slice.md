@@ -16,7 +16,7 @@ The waitlist is `POST /v1/public/waitlist` and `GET /v1/privacy/notice` on the A
 | The public site's waitlist form switched on (C2: `WAITLIST=1`, `WAITLIST_API_BASE=<production API>`, `TURNSTILE_SITE_KEY`) | The app on `app.stack19.com` |
 
 ## What stays exactly as it is (the safety list)
-* The real-data gate of every workspace stays **closed** (`real-data-gate.md`); the waitlist is its own table and is not a workspace. The Lead Desk dialer stays **off**, telephony stays **off**, no WhatsApp Cloud API.
+* The real-data gate of every workspace stays **closed** (`docs-private/runbooks/real-data-gate.md`); the waitlist is its own table and is not a workspace. The Lead Desk dialer stays **off**, telephony stays **off**, no WhatsApp Cloud API.
 * Every production step needs the owner's go, `PROD_CONFIRM=<commit>`, a clean main equal to origin/main, and a dry run read first (`production.sh`).
 * **Real people's data is stored from the first form**: so (a) the privacy text is the owner-approved one and `PRIVACY_VERSION` is its new version string, set on the API at the same deploy as the site build that carries the text (a stale form gets `409 policy_version_outdated`); (b) the first backup exists BEFORE the form is switched on; (c) the way to remove a person is `app.operator_delete_waitlist_entry(contact)` (DPDP; migration `wl_operator_delete_waitlist`), tried once on a test entry before go-live; (d) the captcha is on (`CAPTCHA_PROVIDER=turnstile`; the code default is `none`, which would accept bots).
 * No point-in-time recovery for now, daily backups only (owner's baseline, `production-bringup.md`).
@@ -24,7 +24,7 @@ The waitlist is `POST /v1/public/waitlist` and `GET /v1/privacy/notice` on the A
 ## Order (dates are proposals; each step waits for the owner)
 | # | Step | Who | Proposed |
 |---|---|---|---|
-| 0 | Prepare: `production.sh` gets `PROD_SLICE=waitlist` (only the slice's secrets required; agents, telephony and the warm instance off; refuses to run without an explicit `PRIVACY_VERSION`; sets turnstile). Settings of production declared in a versioned file from the first revision (`docs/plans/declared-settings.md`, step 4). Tests. | C1 | before the weekend |
+| 0 | Prepare: `production.sh` gets `PROD_SLICE=waitlist` (only the slice's secrets required; agents, telephony and the warm instance off; refuses to run without an explicit `PRIVACY_VERSION`; sets turnstile). Settings of production declared in a versioned file from the first revision (`docs-private/plans/declared-settings.md`, step 4). Tests. | C1 | before the weekend |
 | 1 | Owner buys Supabase Pro; creates the production Supabase project (Mumbai) and the production Google project **linked to the paid billing account**; budget alerts; fills `deploy/.env.production` (public ids only) | OWNER | Sat 14 / Sun 15 Nov |
 | 2 | `supabase db push --dry-run` (read the list), `db push`, `verify.sql` every row `ok = true`, `hosted-auth-settings.md` by hand | OWNER types the DB password, C1 reads the output | Mon 16 Nov |
 | 3 | Backups: the Pro daily backup is on and the first one exists; restore drill into a scratch project, timed (`backup-restore-drill.md`) | both | Mon 16 to Tue 17 Nov |

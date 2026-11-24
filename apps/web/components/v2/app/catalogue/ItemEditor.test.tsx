@@ -345,6 +345,14 @@ describe("changing a saree that exists", () => {
   });
 });
 
+describe("the price range follows the exact price", () => {
+  it("typing 7800 puts the saree in the 5,000 to 10,000 range (it is not left in the first range by accident)", () => {
+    show();
+    fireEvent.change(screen.getByLabelText(/Exact price/), { target: { value: "7800" } });
+    expect((screen.getByLabelText("Price range") as HTMLSelectElement).value).toBe("5k_10k");
+  });
+});
+
 describe("the exact price is the owner's alone", () => {
   it("the owner has the price field, with the second-factor note; an admin has none and is told who can set it", () => {
     show({ item: item({ price_paise: null, price_text: null }) });

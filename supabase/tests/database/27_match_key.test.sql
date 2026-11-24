@@ -8,7 +8,7 @@
 --
 -- IMMUTABLE is safe for the expression index because: normalize() is IMMUTABLE; lower() here uses the DATABASE default
 -- collation (ICU, en_US.UTF-8), which is fixed for the life of the database; no session setting changes the result.
--- Caveat (docs/pre-pilot-checklist.md): a PostgreSQL / ICU upgrade that changes Unicode tables, or a restore into a database
+-- Caveat (docs-private/pre-pilot-checklist.md): a PostgreSQL / ICU upgrade that changes Unicode tables, or a restore into a database
 -- with another collation, needs REINDEX of the two expression indexes on companies.
 begin;
 select no_plan();

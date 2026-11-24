@@ -286,13 +286,13 @@ seed-quote-data:
 	@test -n "$(TENANT)" || { echo "usage: make seed-quote-data TENANT=<workspace slug>"; exit 2; }
 	cd $(API) && .venv/bin/python seeds/seed_quote_reference_data.py --tenant-slug "$(TENANT)"
 
-# Rehearsal step 3 (docs/plans/thin-slice-rehearsal.md): the whole slice through the API as Owner, Admin, Sales and Viewer (and a second workspace), from the synthetic CSV to
+# Rehearsal step 3 (docs-private/plans/thin-slice-rehearsal.md): the whole slice through the API as Owner, Admin, Sales and Viewer (and a second workspace), from the synthetic CSV to
 # closed_paid, then run a second time on the same database (it must change nothing). Local stack only, synthetic data, no model, nothing sent. Run `make db-reset` first for a
 # fresh database. Writes rehearsal-report.md at the repository root (git-ignored). Opt-in: not part of make check.
 rehearse-thin-slice:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../tests/rehearsal/drive.py
 
-# The same rehearsal up to APPROVED QUOTES only (no order is started): the owner then clicks the orders by hand in the browser (docs/rehearsal-click-checklist.md). Run `make db-reset` first.
+# The same rehearsal up to APPROVED QUOTES only (no order is started): the owner then clicks the orders by hand in the browser (docs-private/rehearsal-click-checklist.md). Run `make db-reset` first.
 rehearse-prepare-click:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../tests/rehearsal/drive.py --until=quotes
 

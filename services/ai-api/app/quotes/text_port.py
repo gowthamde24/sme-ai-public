@@ -1,4 +1,4 @@
-"""The ONE door to lane C's pure quote text renderer (`packages/pure/quote_text`, docs/plans/quote-text.md).
+"""The ONE door to lane C's pure quote text renderer (`packages/pure/quote_text`, docs-private/plans/quote-text.md).
 
 The renderer turns an APPROVED engine result into plain text a person copies into WhatsApp or e-mail. It sends nothing, reads no contacts and approves nothing; it checks
 that the hash it is given equals the engine result's hash, but it is NOT an authorization or a signature check. THIS module and its caller are: lane A supplies `approved=True` only

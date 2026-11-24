@@ -2,7 +2,7 @@
 
 ## C1: PHASE 1 IS BUILT (13 Nov 2026), flag `ADMIN_CONSOLE` (on in staging). Read this block first: it overrides the draft below where they differ.
 
-Owner's decisions (13 Nov): roles are **`owner`, `support`, `finance`** (exactly one `owner`), not `support|admin`. Staff always sign in with a second factor; a session ends after **30 minutes without a call**. View-as-owner is **reason + audit + read-only** (no consent step), with a per-business switch "Require my OK before support views my account" (default OFF). End-customer names and numbers are **masked**. Staff accounts are made by an operator script (`docs/runbooks/admin-console-staff.md`), never by sign-up. Plan: `docs/plans/admin-console.md`.
+Owner's decisions (13 Nov): roles are **`owner`, `support`, `finance`** (exactly one `owner`), not `support|admin`. Staff always sign in with a second factor; a session ends after **30 minutes without a call**. View-as-owner is **reason + audit + read-only** (no consent step), with a per-business switch "Require my OK before support views my account" (default OFF). End-customer names and numbers are **masked**. Staff accounts are made by an operator script (`docs-private/runbooks/admin-console-staff.md`), never by sign-up. Plan: `docs-private/plans/admin-console.md`.
 
 | Route | Who | Answer |
 |---|---|---|

@@ -117,7 +117,7 @@ def test_the_scheduler_account_is_created_pre_confirmed_and_never_leaks_its_valu
 
 
 def test_a_voicelink_username_with_spaces_and_capitals_and_a_password_with_edge_spaces_reach_the_secret_exactly(tmp_path: Path) -> None:
-    """The owner's VoiceLink username is a full name with spaces ('Gowtham Reddy Sodanapalli'): the hidden prompt must not trim, split or refuse it (a made-up name here)."""
+    """A VoiceLink username can be a full name with spaces: the hidden prompt must not trim, split or refuse it (a made-up name here)."""
     env, log = fake_gcloud(tmp_path, existing="iam service-accounts describe")
     bin_dir = tmp_path / "bin"
     saved = tmp_path / "saved"

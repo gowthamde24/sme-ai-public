@@ -1,4 +1,4 @@
-"""GET /v1/tenants/{tenant_id}/bootstrap: the reads the signed-in layout makes on EVERY page load, in one request (docs/plans/call-capacity-and-instances.md, section 2a).
+"""GET /v1/tenants/{tenant_id}/bootstrap: the reads the signed-in layout makes on EVERY page load, in one request (docs-private/plans/call-capacity-and-instances.md, section 2a).
 
 Each part is the existing route run server-side, with the caller's own headers: the same authorization, the same data, no new logic. One slow or failed part does not fail the others; a failed part says its HTTP status
 (the layout treats a 403 on `ai_usage` differently from a failure). Parts are run together, each with its own time limit. The sub-requests carry a private per-process header so the page limiter does not count them

@@ -1,7 +1,7 @@
 # ADR 0018: Enquiries, requirements and the Requirement Agent (T008)
 
-Status: accepted for the local-first stage (owner review of commits 1-3 on 2026-10-05; plan: `docs/plans/t008-requirement-agent.md`). Related: ADR 0013 (agents),
-ADR 0014 (erasure), ADR 0017 (local-first), `docs/plans/t009-quote-engine.md`, `docs/plans/t010-followup-cadence.md`.
+Status: accepted for the local-first stage (owner review of commits 1-3 on 2026-10-05; plan: `docs-private/plans/t008-requirement-agent.md`). Related: ADR 0013 (agents),
+ADR 0014 (erasure), ADR 0017 (local-first), `docs-private/plans/t009-quote-engine.md`, `docs-private/plans/t010-followup-cadence.md`.
 
 ## Context
 After "Reply / Enquiry Captured" the product needs a structured requirement before any quote: what saree, how many, by when, to where, how paid. A customer writes that

@@ -1,4 +1,4 @@
--- T010 part 2 (docs/plans/t010-integration.md decision 10, migration 20261024090100): persisted QUESTION DRAFTS. The API derives the clarifying questions of a requirement from closed templates
+-- T010 part 2 (docs-private/plans/t010-integration.md decision 10, migration 20261024090100): persisted QUESTION DRAFTS. The API derives the clarifying questions of a requirement from closed templates
 -- and stores them for a person to approve and copy. NOTHING IS SENT.
 --   A catalog   B persist_question_drafts (role x aal, every shape, text hygiene and contact data, the sync rules, replay, atomicity)   C decide_question_draft (role x aal, the state machine, replay)
 --   D direct writes and the guard triggers   E audit and invariants
@@ -190,7 +190,7 @@ select is((select count(*) from public.question_drafts d where d.status = 'draft
 select is((select count(*) from public.question_drafts d where not exists (select 1 from public.requirements r where r.tenant_id = d.tenant_id and r.id = d.requirement_id)), 0::bigint, 'E7 every question''s requirement is in its own tenant');
 select is((select count(*) from public.question_drafts d where d.question_text ~ '[@]' or app.text_has_contact(d.question_text) or not app.text_is_clean(d.question_text)), 0::bigint, 'E8 no question holds contact data or a hidden character');
 
--- ============================================================================ F. commit 5, the mutation pass (docs/checklist-notes/A.md, "T010 part 2")
+-- ============================================================================ F. commit 5, the mutation pass (docs-private/checklist-notes/A.md, "T010 part 2")
 -- the one CHECK constraint left standing (see 62, section O): every other CHECK of the table is dropped and its user triggers disabled inside a sub-transaction that is rolled back
 create function pg_temp.only_check(p_table regclass, p_keep text, p_sql text) returns text language plpgsql as $$
 declare

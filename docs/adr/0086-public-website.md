@@ -17,4 +17,4 @@ Status: **ACCEPTED** by the owner's direction of 2026-10-14 (the Stack19 bluepri
 * No public lead API, table or consent record exists; until it does the lead is a WhatsApp message in Stack19's own number. A business-side "opt in to receive website enquiries" is a later job.
 * The help index lists seven topics and has no separate articles. Hosting is described honestly ("not hosted for real customers yet"); no region or certification claim is made.
 * Telugu, Hindi and Kannada words need a native reviewer before launch (the banner stays until then).
-* The repository copy of the blueprint (`docs/plans/stack19-blueprint.md`) lacks section 13 and the founding-offer terms; the Desktop copy is the current one.
+* The repository copy of the blueprint (`docs-private/plans/stack19-blueprint.md`) lacks section 13 and the founding-offer terms; the Desktop copy is the current one.

@@ -1,6 +1,6 @@
 # Contract: appointment booking (C1 -> C2), 14 Nov 2026
 
-The app says **appointments**; the API keeps the name `visits` (one engine: `docs/plans/appointment-booking.md`). Base `/v1/tenants/{tenant_id}`; every route below exists on staging once PR #620 is deployed. Times are India time; `date` is `YYYY-MM-DD`, `slot_start` is `HH:MM` (a start on the slot grid). Roles: every member reads; Owner, Admin and Sales book, move and cancel; Owner and Admin change the settings and the staff.
+The app says **appointments**; the API keeps the name `visits` (one engine: `docs-private/plans/appointment-booking.md`). Base `/v1/tenants/{tenant_id}`; every route below exists on staging once PR #620 is deployed. Times are India time; `date` is `YYYY-MM-DD`, `slot_start` is `HH:MM` (a start on the slot grid). Roles: every member reads; Owner, Admin and Sales book, move and cancel; Owner and Admin change the settings and the staff.
 
 ## 1. Settings (the open hours, slot length, places, buffer, closed days)
 `GET /visits/settings` and `PUT /visits/settings` (Owner, Admin):

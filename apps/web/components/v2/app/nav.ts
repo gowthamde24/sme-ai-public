@@ -53,7 +53,7 @@ export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
  * The menu as the design-lab app draws it: four labelled groups (Work, Your business, Your team, Connect), then, below the scrolling part, Settings. The
  * pages the old menu listed one by one are reached from the screens now: follow-ups and suggestions from Leads, the item types, price list, products and quote policy from "Prices and
  * products" (the word "Catalogue" is the saree photo catalogue since job BC), the privacy and security pages from Settings, runs and cost from Office. Each page still belongs to one item (`also`), so the marker and the way back stay right.
- * There is no "Your team" members page yet (docs/plans/members-and-invitations.md): "Your team" is the group of the AI team (Office).
+ * There is no "Your team" members page yet (docs-private/plans/members-and-invitations.md): "Your team" is the group of the AI team (Office).
  */
 /**
  * The pages that exist only in the design-system-v6 menu (DESIGN_V6, owner 13 Nov 2026): the assistant's own page (tabs Knowledge, Voice & tone, Rules, Practice, Go live) and Billing. They are in no older menu or tab row, so they are kept out of NAV (whose shape the older menus pin) and added

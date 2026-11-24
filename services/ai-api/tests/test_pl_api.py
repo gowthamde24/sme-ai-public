@@ -26,13 +26,13 @@ def test_a_call_is_fired_with_basic_auth_the_documented_body_and_digits_only_num
         seen.append(request)
         return httpx.Response(201, json={"message": "call fired", "request_uuid": "5b5c21a9-1111-2222-3333-444455556666", "api_id": "x"})
 
-    got = api(handler).place_call(from_number="+918065590129", to_number="+919502380998", answer_url="https://a.example/v1/telephony/plivo/outbound-answer?call=c1", hangup_url="https://a.example/v1/telephony/plivo/hangup?call=c1")
+    got = api(handler).place_call(from_number="+918065590129", to_number="+919000000998", answer_url="https://a.example/v1/telephony/plivo/outbound-answer?call=c1", hangup_url="https://a.example/v1/telephony/plivo/hangup?call=c1")
     assert got == "5b5c21a9-1111-2222-3333-444455556666"
     request = seen[0]
     assert request.method == "POST" and request.url.path == f"/v1/Account/{ID}/Call/" and request.url.host == "api.plivo.com"
     assert request.headers["authorization"].startswith("Basic ")
     body = json.loads(request.content)
-    assert body == {"from": "918065590129", "to": "919502380998", "answer_url": "https://a.example/v1/telephony/plivo/outbound-answer?call=c1", "answer_method": "POST",
+    assert body == {"from": "918065590129", "to": "919000000998", "answer_url": "https://a.example/v1/telephony/plivo/outbound-answer?call=c1", "answer_method": "POST",
                     "hangup_url": "https://a.example/v1/telephony/plivo/hangup?call=c1", "hangup_method": "POST", "ring_timeout": 30, "time_limit": 180}
 
 
@@ -51,10 +51,10 @@ def test_hang_up_is_a_delete_and_false_when_plivo_no_longer_knows_the_call() -> 
 
 @pytest.mark.parametrize(("status", "reason"), [(401, "unauthorized"), (403, "unauthorized"), (429, "rate_limited"), (400, "rejected"), (422, "rejected"), (500, "unavailable"), (503, "unavailable")])
 def test_every_failure_is_a_closed_word_and_never_the_body(status: int, reason: str) -> None:
-    client = api(lambda request: httpx.Response(status, json={"error": "to number +919502380998 is not allowed"}))
+    client = api(lambda request: httpx.Response(status, json={"error": "to number +919000000998 is not allowed"}))
     with pytest.raises(PlivoError) as caught:
-        client.place_call(from_number="+918065590129", to_number="+919502380998", answer_url="https://a.example/x", hangup_url="https://a.example/y")
-    assert caught.value.reason == reason and "9502380998" not in str(caught.value) and TOKEN not in str(caught.value)
+        client.place_call(from_number="+918065590129", to_number="+919000000998", answer_url="https://a.example/x", hangup_url="https://a.example/y")
+    assert caught.value.reason == reason and "9000000998" not in str(caught.value) and TOKEN not in str(caught.value)
 
 
 def test_a_timeout_a_dead_network_and_a_strange_answer() -> None:
@@ -64,7 +64,7 @@ def test_a_timeout_a_dead_network_and_a_strange_answer() -> None:
     def dead(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("down", request=request)
 
-    kw: dict[str, Any] = dict(from_number="+918065590129", to_number="+919502380998", answer_url="https://a.example/x", hangup_url="https://a.example/y")
+    kw: dict[str, Any] = dict(from_number="+918065590129", to_number="+919000000998", answer_url="https://a.example/x", hangup_url="https://a.example/y")
     for handler, reason in ((slow, "timeout"), (dead, "unavailable"), (lambda r: httpx.Response(201, json={"message": "ok"}), "bad_response"), (lambda r: httpx.Response(201, text="not json"), "bad_response"),
                             (lambda r: httpx.Response(201, json={"request_uuid": "../x"}), "bad_response")):
         with pytest.raises(PlivoError) as caught:
@@ -83,8 +83,8 @@ def test_the_credentials_are_checked_hidden_and_never_in_a_repr() -> None:
 
 def test_the_fake_dials_nobody_and_can_fail_on_purpose() -> None:
     fake = FakePlivoApi()
-    assert fake.place_call(from_number="+918065590129", to_number="+919502380998", answer_url="a", hangup_url="b").startswith("00000000")
-    assert fake.placed[0]["to"] == "+919502380998" and digits("+91 95023-80998") == "919502380998"
+    assert fake.place_call(from_number="+918065590129", to_number="+919000000998", answer_url="a", hangup_url="b").startswith("00000000")
+    assert fake.placed[0]["to"] == "+919000000998" and digits("+91 90000-00998") == "919000000998"
     fake.fail_with = "rejected"
     with pytest.raises(PlivoError):
         fake.place_call(from_number="x", to_number="y", answer_url="a", hangup_url="b")

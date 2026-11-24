@@ -1,6 +1,6 @@
 # Mutation tools for T010 part 2 (follow-ups)
 
-The runner and the mutant lists of the mutation pass of commit 5 (`docs/checklist-notes/A.md`, "T010 part 2 (commits 1-4d): mutation pass"). They are NOT part of `make check` (a full SQL run is about
+The runner and the mutant lists of the mutation pass of commit 5 (`docs-private/checklist-notes/A.md`, "T010 part 2 (commits 1-4d): mutation pass"). They are NOT part of `make check` (a full SQL run is about
 45 minutes). Run them at a milestone, or when a follow-up function, trigger, constraint or screen changes. Standard library only: no dependency was added.
 
 A **mutant** is the code with ONE small change that should make a test fail. If every test still passes, the mutant **survived**: a test is missing (or the change is equivalent: nothing observable
@@ -39,7 +39,7 @@ that does not move that mutant.
 
 ## Reading a survivor
 
-1. Is it **equivalent**? (another layer refuses with the same SQLSTATE; the case cannot be reached; two values can never be equal.) If so, write the reason in `docs/checklist-notes/A.md`.
+1. Is it **equivalent**? (another layer refuses with the same SQLSTATE; the case cannot be reached; two values can never be equal.) If so, write the reason in `docs-private/checklist-notes/A.md`.
 2. Otherwise a test is missing: add it, then `--survivors` (and `--realstack` for lock and builder mutants).
 3. A test that fails ONLY because another guard raised the same SQLSTATE proves nothing about the guard you meant: isolate it (pgTAP 62 section O has `only_check`, which drops every other CHECK of a table in a
    rolled-back sub-transaction; the race tests have `row_lock_held`, which tells a deliberate `FOR UPDATE` / `FOR SHARE` from the lock any UPDATE takes).
