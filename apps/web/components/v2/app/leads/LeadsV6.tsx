@@ -1,5 +1,7 @@
 import { ProspectContact } from "@/components/v2/app/prospects/ProspectContact";
 import Link from "next/link";
+
+import { leadsOpen } from "@/lib/screens/flag";
 import { AssistantNote } from "./AssistantNote";
 import type { ReactNode } from "react";
 
@@ -110,7 +112,7 @@ export function LeadsV6Body({ words, lang, base, rows, counts, chip, q, sourceNa
           {rows.length === 0 ? (
             <p className={`${card} text-base text-muted`}>{t("lv6.none")}</p>
           ) : (
-            <table data-part="leads-table" className="w-full border-separate border-spacing-y-2 text-left">
+            <table data-part="leads-table" {...(leadsOpen() ? { "data-open": "leads" } : {})} className="w-full border-separate border-spacing-y-2 text-left">
               <thead className="hidden md:table-header-group">
                 <tr className="text-sm font-semibold text-muted">
                   <th scope="col" className="px-3 py-1">{t("lv6.col.customer")}</th>
@@ -139,7 +141,7 @@ export function LeadsV6Body({ words, lang, base, rows, counts, chip, q, sourceNa
                       <td className="block px-3 py-1 text-base text-muted max-md:col-span-2 max-md:row-start-2 max-md:line-clamp-2 max-md:p-0 max-md:text-sm md:table-cell md:py-3">{r.line || "-"}</td>
                       <td className="block px-3 py-1 text-sm text-muted max-md:col-start-1 max-md:row-start-3 max-md:p-0 max-md:text-xs md:table-cell md:py-3">{sourceOf(r)}</td>
                       <td className="block px-3 py-1 max-md:col-start-2 max-md:row-start-1 max-md:justify-self-end max-md:p-0 md:table-cell md:py-3">
-                        <StatusPill status={CHIP_STATUS[r.chip]}>{t(`lv6.chip.${r.chip}`)}</StatusPill>
+                        {leadsOpen() && r.chip === "new" ? null : <StatusPill status={CHIP_STATUS[r.chip]}>{t(`lv6.chip.${r.chip}`)}</StatusPill>}
                       </td>
                       <td className="block whitespace-nowrap px-3 pb-3 pt-1 text-sm text-muted max-md:col-start-2 max-md:row-start-3 max-md:p-0 max-md:text-right max-md:text-xs md:table-cell md:py-3">{dateText(r.at, lang)}</td>
                     </tr>

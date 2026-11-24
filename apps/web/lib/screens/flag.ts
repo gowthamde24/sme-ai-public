@@ -247,3 +247,12 @@ export const templatesPlain = (value: string | undefined = process.env.TEMPLATES
 
 /** Filters without sentences (owner, 25 Nov 2026: 'Show [ ] calls from [ ]' is gone everywhere): a bar of labelled outlined dropdowns + the search box + a quiet 'N shown', no card around it, no 'More choices' box. Calls, Leads, Reports, Catalogue. `1` = on; unset = the sentence filters as they were. */
 export const filtersOpen = (value: string | undefined = process.env.FILTERS_OPEN): boolean => value === "1";
+
+/** Calls as a list (owner, 25 Nov 2026; mock "Calls"): who (with in/out in grey), what happened in one sentence, when; no column headings, no cost or duration in the list (they are in the detail), a badge only for an exception, no sentence for an unclear result. `1` = on; unset = the table. */
+export const callsOpen = (value: string | undefined = process.env.CALLS_OPEN): boolean => value === "1";
+
+/** Leads as an open list (owner, 25 Nov 2026; mock "Leads"): hairline rows (no card per row), names in ink (orange is only "needs you"), the normal "New" state without a pill. `1` = on; unset = the card rows. */
+export const leadsOpen = (value: string | undefined = process.env.LEADS_OPEN): boolean => value === "1";
+
+/** Reports as one calm page (owner, 25 Nov 2026; mock "Reports"): the period dropdown, THREE numbers (enquiries, visits, sales), one plain sentence, ONE chart, and 'More reports' (sources, funnel, busiest times, sales line) folded under it. `1` = on; unset = the eight widgets. */
+export const reportsOpen = (value: string | undefined = process.env.REPORTS_OPEN): boolean => value === "1";
