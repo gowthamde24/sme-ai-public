@@ -9,6 +9,7 @@ import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
+import { escalate } from "@/lib/api/failure";
 import { getList, getRows } from "@/lib/api/lists";
 import { requireUser } from "@/lib/auth/session";
 import { whatYouSellLists } from "@/lib/screens/flag";
@@ -38,6 +39,7 @@ export default async function ListPage({ params, searchParams }: PageProps<"/app
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     throw error;
   }
   const lang = await getLang();
