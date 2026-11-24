@@ -413,3 +413,75 @@ def test_the_repository_carries_the_providers_word_on_its_calls_and_line_lookup(
     assert [a["p_provider"] for f, a in sent] == ["voicelink", "voicelink"]
     assert PostgrestOutboundRepo(cast(Any, Rpc())).line_for_tenant("t", TENANT) is None or True
     assert sent[-1][1]["p_provider"] == "plivo", "the default is unchanged"
+
+
+def test_a_username_with_spaces_and_capitals_goes_to_the_login_as_one_json_value() -> None:
+    """The reseller login can be a full name with spaces (owner, 26 Nov 2026): it travels as one JSON string, never split, trimmed or put into a URL (a made-up name here)."""
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        if request.url.path.endswith("/auth/login"):
+            return httpx.Response(200, json={"status": True, "data": {"access_token": "tok"}})
+        return httpx.Response(200, json={"data": {"wallet": {"balance": "100", "currency": "INR"}, "currency": "INR"}, "status": True})
+
+    client = httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))
+    VoicelinkApi("Ada Test Lovelace-Example", "  pa ss word  ", client=client).wallet()
+    login = seen[0]
+    assert json.loads(login.content) == {"username": "Ada Test Lovelace-Example", "password": "  pa ss word  "}
+    assert "Ada" not in str(login.url) and "Lovelace" not in str(login.url), "never in the address"
+
+
+def test_the_picker_reads_list_the_types_and_the_numbers_for_sale_and_never_buy() -> None:
+    """did-types and purchase/dids are READS (28 Nov 2026): the filter is sent as `number`, the rate stays inside our object, nothing is locked or confirmed."""
+    seen: list[tuple[str, str, dict[str, str]]] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/auth/login"):
+            return httpx.Response(200, json={"data": {"access_token": "tok"}, "status": True})
+        seen.append((request.method, request.url.path, dict(request.url.params)))
+        if request.url.path.endswith("/reseller/did-types"):
+            return httpx.Response(200, json={"data": [{"id": 2, "name": "Mobile", "requires_request": 0}, {"id": 4, "name": "140 Series", "requires_request": 1}], "status": True})
+        return httpx.Response(200, json={"data": {"data": [{"id": 7, "did_type": 2, "did_number": "+919876543210", "type_label": "Mobile", "monthly_rate": 299, "total_price": 299}, {"id": 8, "did_number": "bad"}, "junk"]}, "status": True})
+
+    client = httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))
+    vl = VoicelinkApi("u", "p", client=client)
+    assert [t["name"] for t in vl.did_types()] == ["Mobile", "140 Series"]
+    found = vl.available_dids(did_type=2, prefix="9876", per_page=500)
+    assert [(d.did_id, d.number, d.type_label, d.monthly_rate) for d in found] == [(7, "+919876543210", "Mobile", 299.0)]
+    method, path, params = seen[1]
+    assert method == "GET" and path.endswith("/reseller/purchase/dids") and params == {"country_code": "+91", "type": "2", "months": "1", "per_page": "100", "page": "1", "number": "9876"}
+    assert all(m == "GET" for m, _, _ in seen), "a read never posts"
+
+
+def test_the_probe_prints_counts_and_closed_words_only(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    """scripts/voicelink_probe.py: four reads, no password, no token, no full number in its output; a refusal prints the closed word."""
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location("voicelink_probe", Path(__file__).resolve().parents[3] / "scripts" / "voicelink_probe.py")
+    assert spec is not None and spec.loader is not None
+    probe = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(probe)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        path = request.url.path
+        if path.endswith("/auth/login"):
+            return httpx.Response(200, json={"data": {"access_token": "secret-token-xyz"}, "status": True})
+        if path.endswith("/reseller/profile"):
+            return httpx.Response(200, json={"data": {"wallet": {"balance": 5000, "currency": "INR"}}, "status": True})
+        if path.endswith("/reseller/did-types"):
+            return httpx.Response(200, json={"data": [{"id": 2, "name": "Mobile", "requires_request": 0}, {"id": 3, "name": "Landline", "requires_request": 0}], "status": True})
+        if request.url.params.get("type") == "3":
+            return httpx.Response(403, json={"status": False, "message": "plan"})
+        return httpx.Response(200, json={"data": {"data": [{"id": 7, "did_number": "+919876543210", "type_label": "Mobile", "monthly_rate": 299}]}, "status": True})
+
+    real = probe.VoicelinkApi
+    monkeypatch.setattr(probe, "VoicelinkApi", lambda u, p: real(u, p, client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))))
+    monkeypatch.setenv("VOICELINK_USERNAME", "Ada Test Lovelace-Example")
+    monkeypatch.setenv("VOICELINK_PASSWORD", "never-printed-password")
+    assert probe.main(["--prefix", "98"]) == 0
+    out = capsys.readouterr().out
+    assert "did-types: ok 2=Mobile, 3=Landline" in out and "mobile: ok 1 rows, first ends ...3210" in out and "mobile filter '98': ok 1 rows" in out
+    assert "landline: auth (status 403)" in out
+    assert "never-printed-password" not in out and "secret-token-xyz" not in out and "9876543210" not in out and "299" not in out
