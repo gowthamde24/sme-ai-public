@@ -127215,5 +127215,434 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "pick.sub": {
+  "en": "Choose the number your customers will call. Your assistant answers it.",
+  "te": "మీ కస్టమర్లు కాల్ చేసే నంబర్ ఎంచుకోండి. మీ అసిస్టెంట్ దానికి సమాధానం ఇస్తుంది.",
+  "hi": "वह नंबर चुनिए जिस पर आपके ग्राहक कॉल करेंगे। आपका असिस्टेंट उसे उठाएगा।",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರು ಕರೆ ಮಾಡುವ ನಂಬರ್ ಆರಿಸಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅದನ್ನು ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s1.title": {
+  "en": "Pick your number",
+  "te": "మీ నంబర్ ఎంచుకోండి",
+  "hi": "अपना नंबर चुनिए",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.mine": {
+  "en": "Your number",
+  "te": "మీ నంబర్",
+  "hi": "आपका नंबर",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s1.body": {
+  "en": "Mobile numbers get answered more often on call-backs. Your first number is included in your plan.",
+  "te": "కాల్‌బ్యాక్‌లో మొబైల్ నంబర్లకు ఎక్కువసార్లు సమాధానం వస్తుంది. మీ మొదటి నంబర్ మీ ప్లాన్‌లోనే ఉంటుంది.",
+  "hi": "कॉल-बैक में मोबाइल नंबर ज़्यादा उठाए जाते हैं। आपका पहला नंबर आपके प्लान में शामिल है।",
+  "kn": "ಕಾಲ್‌ಬ್ಯಾಕ್‌ನಲ್ಲಿ ಮೊಬೈಲ್ ನಂಬರ್‌ಗಳಿಗೆ ಹೆಚ್ಚು ಉತ್ತರ ಸಿಗುತ್ತದೆ. ನಿಮ್ಮ ಮೊದಲ ನಂಬರ್ ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಸೇರಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.type": {
+  "en": "Number type",
+  "te": "నంబర్ రకం",
+  "hi": "नंबर का प्रकार",
+  "kn": "ನಂಬರ್ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.type.mobile": {
+  "en": "Mobile",
+  "te": "మొబైల్",
+  "hi": "मोबाइल",
+  "kn": "ಮೊಬೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.type.landline": {
+  "en": "Landline (040, 080...)",
+  "te": "ల్యాండ్‌లైన్ (040, 080...)",
+  "hi": "लैंडलाइन (040, 080...)",
+  "kn": "ಲ್ಯಾಂಡ್‌ಲೈನ್ (040, 080...)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.type.short.mobile": {
+  "en": "Mobile",
+  "te": "మొబైల్",
+  "hi": "मोबाइल",
+  "kn": "ಮೊಬೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.type.short.landline": {
+  "en": "Landline",
+  "te": "ల్యాండ్‌లైన్",
+  "hi": "लैंडलाइन",
+  "kn": "ಲ್ಯಾಂಡ್‌ಲೈನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.prefix": {
+  "en": "Starts with (optional)",
+  "te": "ఇవి మొదట ఉండాలి (ఐచ్ఛికం)",
+  "hi": "इनसे शुरू हो (वैकल्पिक)",
+  "kn": "ಇವುಗಳಿಂದ ಶುರು (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.search": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजिए",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.list": {
+  "en": "Numbers you can use",
+  "te": "మీరు తీసుకోగల నంబర్లు",
+  "hi": "जो नंबर आप ले सकते हैं",
+  "kn": "ನೀವು ತೆಗೆದುಕೊಳ್ಳಬಹುದಾದ ನಂಬರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.use": {
+  "en": "Use this number",
+  "te": "ఈ నంబర్ తీసుకోండి",
+  "hi": "यह नंबर लीजिए",
+  "kn": "ಈ ನಂಬರ್ ತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.more": {
+  "en": "Show more numbers",
+  "te": "ఇంకా నంబర్లు చూపించండి",
+  "hi": "और नंबर दिखाइए",
+  "kn": "ಇನ್ನಷ್ಟು ನಂಬರ್ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.none": {
+  "en": "No number starts with that. Try fewer digits.",
+  "te": "అలా మొదలయ్యే నంబర్ లేదు. తక్కువ అంకెలు ప్రయత్నించండి.",
+  "hi": "इससे शुरू होने वाला कोई नंबर नहीं है। कम अंक आज़माइए।",
+  "kn": "ಹಾಗೆ ಶುರುವಾಗುವ ನಂಬರ್ ಇಲ್ಲ. ಕಡಿಮೆ ಅಂಕೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.prefix": {
+  "en": "Use digits only, up to 6.",
+  "te": "అంకెలు మాత్రమే, 6 వరకు.",
+  "hi": "सिर्फ़ अंक, 6 तक।",
+  "kn": "ಅಂಕೆಗಳು ಮಾತ್ರ, 6 ವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.down": {
+  "en": "We could not look up numbers just now. Try again in a minute.",
+  "te": "ఇప్పుడు నంబర్లు చూడలేకపోయాం. ఒక నిమిషంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी नंबर नहीं देख पाए। एक मिनट में फिर कोशिश कीजिए।",
+  "kn": "ಈಗ ನಂಬರ್‌ಗಳನ್ನು ನೋಡಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.taken": {
+  "en": "Someone just took that number. Pick another one from the list.",
+  "te": "ఆ నంబర్ ఇప్పుడే ఎవరో తీసుకున్నారు. లిస్ట్ నుంచి వేరొకటి ఎంచుకోండి.",
+  "hi": "वह नंबर अभी किसी ने ले लिया। सूची से दूसरा चुनिए।",
+  "kn": "ಆ ನಂಬರ್ ಈಗಷ್ಟೇ ಬೇರೆಯವರು ತೆಗೆದುಕೊಂಡರು. ಪಟ್ಟಿಯಿಂದ ಇನ್ನೊಂದು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.forbidden": {
+  "en": "Only the owner can pick the number.",
+  "te": "నంబర్ ఎంచుకోవడం ఓనర్ మాత్రమే చేయగలరు.",
+  "hi": "नंबर सिर्फ़ मालिक चुन सकते हैं।",
+  "kn": "ನಂಬರ್ ಆರಿಸುವುದು ಮಾಲೀಕರು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.stepup": {
+  "en": "Sign in again with your second code, then pick the number.",
+  "te": "రెండో కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, నంబర్ ఎంచుకోండి.",
+  "hi": "दूसरे कोड से फिर साइन इन कीजिए, फिर नंबर चुनिए।",
+  "kn": "ಎರಡನೇ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ನಂತರ ನಂಬರ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.err.now": {
+  "en": "We cannot add numbers right now. We have told our team.",
+  "te": "ఇప్పుడు నంబర్లు చేర్చలేం. మా టీమ్‌కి చెప్పాం.",
+  "hi": "अभी नंबर नहीं जोड़ सकते। हमने अपनी टीम को बता दिया है।",
+  "kn": "ಈಗ ನಂಬರ್ ಸೇರಿಸಲಾಗುವುದಿಲ್ಲ. ನಮ್ಮ ತಂಡಕ್ಕೆ ತಿಳಿಸಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.why.not_on_plan": {
+  "en": "An extra number is on paid plans. Your first number is included in every plan.",
+  "te": "ఎక్స్‌ట్రా నంబర్ పెయిడ్ ప్లాన్లలో ఉంటుంది. మీ మొదటి నంబర్ ప్రతి ప్లాన్‌లో ఉంటుంది.",
+  "hi": "अतिरिक्त नंबर पेड प्लान में मिलता है। पहला नंबर हर प्लान में शामिल है।",
+  "kn": "ಹೆಚ್ಚುವರಿ ನಂಬರ್ ಪೇಯ್ಡ್ ಪ್ಲಾನ್‌ಗಳಲ್ಲಿ ಇದೆ. ಮೊದಲ ನಂಬರ್ ಪ್ರತಿ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಸೇರಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.why.already_has_number": {
+  "en": "You already have your number. An extra number is on paid plans.",
+  "te": "మీకు ఇప్పటికే నంబర్ ఉంది. ఎక్స్‌ట్రా నంబర్ పెయిడ్ ప్లాన్లలో ఉంటుంది.",
+  "hi": "आपके पास पहले से नंबर है। अतिरिक्त नंबर पेड प्लान में मिलता है।",
+  "kn": "ನಿಮ್ಮ ಬಳಿ ಈಗಾಗಲೇ ನಂಬರ್ ಇದೆ. ಹೆಚ್ಚುವರಿ ನಂಬರ್ ಪೇಯ್ಡ್ ಪ್ಲಾನ್‌ಗಳಲ್ಲಿ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.why.paused": {
+  "en": "Choosing numbers is paused for a short while. Please try later.",
+  "te": "నంబర్లు ఎంచుకోవడం కొంతసేపు ఆపాం. కాసేపటి తర్వాత ప్రయత్నించండి.",
+  "hi": "नंबर चुनना थोड़ी देर के लिए रुका है। बाद में कोशिश कीजिए।",
+  "kn": "ನಂಬರ್ ಆರಿಸುವುದು ಸ್ವಲ್ಪ ಹೊತ್ತು ನಿಲ್ಲಿಸಲಾಗಿದೆ. ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s2.title": {
+  "en": "It is ready in a minute",
+  "te": "ఒక నిమిషంలో రెడీ అవుతుంది",
+  "hi": "एक मिनट में तैयार",
+  "kn": "ಒಂದು ನಿಮಿಷದಲ್ಲಿ ರೆಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s2.body": {
+  "en": "We connect it to your assistant. Nothing to upload for a normal business number.",
+  "te": "మేము దాన్ని మీ అసిస్టెంట్‌కి కలుపుతాం. మామూలు బిజినెస్ నంబర్‌కి ఏమీ అప్‌లోడ్ చేయక్కర్లేదు.",
+  "hi": "हम उसे आपके असिस्टेंट से जोड़ देते हैं। सामान्य बिज़नेस नंबर के लिए कुछ अपलोड नहीं करना।",
+  "kn": "ನಾವು ಅದನ್ನು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಜೋಡಿಸುತ್ತೇವೆ. ಸಾಮಾನ್ಯ ಬಿಸಿನೆಸ್ ನಂಬರ್‌ಗೆ ಏನೂ ಅಪ್‌ಲೋಡ್ ಮಾಡಬೇಕಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s2.getting": {
+  "en": "We are connecting {number} to your assistant. This takes about a minute.",
+  "te": "{number} ని మీ అసిస్టెంట్‌కి కలుపుతున్నాం. ఒక నిమిషం పడుతుంది.",
+  "hi": "हम {number} को आपके असिस्टेंट से जोड़ रहे हैं। करीब एक मिनट लगेगा।",
+  "kn": "{number} ಅನ್ನು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಜೋಡಿಸುತ್ತಿದ್ದೇವೆ. ಸುಮಾರು ಒಂದು ನಿಮಿಷ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s2.ready": {
+  "en": "{number} is ready. Your assistant can answer it.",
+  "te": "{number} రెడీ. మీ అసిస్టెంట్ దానికి సమాధానం ఇవ్వగలదు.",
+  "hi": "{number} तैयार है। आपका असिस्टेंट उसे उठा सकता है।",
+  "kn": "{number} ರೆಡಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅದಕ್ಕೆ ಉತ್ತರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.title": {
+  "en": "Keep your shop number too",
+  "te": "మీ షాప్ నంబర్ కూడా ఉంచుకోండి",
+  "hi": "अपना दुकान का नंबर भी रखिए",
+  "kn": "ನಿಮ್ಮ ಅಂಗಡಿ ನಂಬರ್ ಕೂಡ ಇಟ್ಟುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.body": {
+  "en": "Forward unanswered calls from your shop phone to this number. Pick your phone company to see the code.",
+  "te": "మీ షాప్ ఫోన్‌లో ఎత్తని కాల్స్‌ని ఈ నంబర్‌కి ఫార్వర్డ్ చేయండి. కోడ్ చూడటానికి మీ ఫోన్ కంపెనీ ఎంచుకోండి.",
+  "hi": "दुकान के फ़ोन पर जो कॉल न उठें, उन्हें इस नंबर पर फ़ॉरवर्ड कीजिए। कोड देखने के लिए अपनी फ़ोन कंपनी चुनिए।",
+  "kn": "ಅಂಗಡಿ ಫೋನ್‌ನಲ್ಲಿ ಎತ್ತದ ಕರೆಗಳನ್ನು ಈ ನಂಬರ್‌ಗೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ. ಕೋಡ್ ನೋಡಲು ನಿಮ್ಮ ಫೋನ್ ಕಂಪನಿ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.company": {
+  "en": "Your phone company",
+  "te": "మీ ఫోన్ కంపెనీ",
+  "hi": "आपकी फ़ोन कंपनी",
+  "kn": "ನಿಮ್ಮ ಫೋನ್ ಕಂಪನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.co.airtel": {
+  "en": "Airtel",
+  "te": "ఎయిర్‌టెల్",
+  "hi": "एयरटेल",
+  "kn": "ಏರ್‌ಟೆಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.co.vi": {
+  "en": "Vi",
+  "te": "వి (Vi)",
+  "hi": "वी (Vi)",
+  "kn": "ವಿ (Vi)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.co.bsnl": {
+  "en": "BSNL",
+  "te": "బీఎస్ఎన్ఎల్ (BSNL)",
+  "hi": "बीएसएनएल (BSNL)",
+  "kn": "ಬಿಎಸ್‌ಎನ್‌ಎಲ್ (BSNL)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.co.jio": {
+  "en": "Jio",
+  "te": "జియో",
+  "hi": "जियो",
+  "kn": "ಜಿಯೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.code": {
+  "en": "Dial this on your shop phone, then press call:",
+  "te": "మీ షాప్ ఫోన్‌లో ఇది డయల్ చేసి కాల్ నొక్కండి:",
+  "hi": "दुकान के फ़ोन पर यह डायल करके कॉल दबाइए:",
+  "kn": "ಅಂಗಡಿ ಫೋನ್‌ನಲ್ಲಿ ಇದನ್ನು ಡಯಲ್ ಮಾಡಿ ಕರೆ ಒತ್ತಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.off": {
+  "en": "To switch it off, dial:",
+  "te": "ఆపేయడానికి ఇది డయల్ చేయండి:",
+  "hi": "बंद करने के लिए यह डायल कीजिए:",
+  "kn": "ನಿಲ್ಲಿಸಲು ಇದನ್ನು ಡಯಲ್ ಮಾಡಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.s3.nocode": {
+  "en": "Ask your phone company to forward unanswered calls to this number, or look under Call forwarding in its app.",
+  "te": "ఎత్తని కాల్స్‌ని ఈ నంబర్‌కి ఫార్వర్డ్ చేయమని మీ ఫోన్ కంపెనీని అడగండి, లేదా వాళ్ల యాప్‌లో కాల్ ఫార్వర్డింగ్ చూడండి.",
+  "hi": "अपनी फ़ोन कंपनी से कहिए कि न उठी कॉल इस नंबर पर फ़ॉरवर्ड करें, या उसके ऐप में कॉल फ़ॉरवर्डिंग देखिए।",
+  "kn": "ಎತ್ತದ ಕರೆಗಳನ್ನು ಈ ನಂಬರ್‌ಗೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಲು ನಿಮ್ಮ ಫೋನ್ ಕಂಪನಿಯನ್ನು ಕೇಳಿ, ಅಥವಾ ಅದರ ಆ್ಯಪ್‌ನಲ್ಲಿ ಕಾಲ್ ಫಾರ್ವರ್ಡಿಂಗ್ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.test": {
+  "en": "Test screen: these numbers are made up and nothing is bought.",
+  "te": "టెస్ట్ స్క్రీన్: ఈ నంబర్లు కల్పితం, ఏదీ కొనడం లేదు.",
+  "hi": "टेस्ट स्क्रीन: ये नंबर बनाए हुए हैं, कुछ खरीदा नहीं जाता।",
+  "kn": "ಟೆಸ್ಟ್ ಸ್ಕ್ರೀನ್: ಈ ನಂಬರ್‌ಗಳು ಕಲ್ಪಿತ, ಏನೂ ಖರೀದಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

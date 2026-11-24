@@ -12,11 +12,13 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
-import { appV4, designV6, jobsScreens, phoneSteps } from "@/lib/screens/flag";
+import { appV4, designV6, jobsScreens, phonePicker, phoneSteps } from "@/lib/screens/flag";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { PhoneV6 } from "@/components/v2/app/phone/PhoneV6";
 import { PhoneNumberPanel } from "@/components/v2/app/phone/PhoneNumberPanel";
 import { KycCard } from "@/components/v2/app/phone/KycCard";
+import { PhonePicker } from "@/components/v2/app/phone/LazyPhonePicker";
+import { readOwn } from "@/lib/phone-picker/source";
 import { SecondStepNotice } from "@/components/v2/app/security/SecondStepNotice";
 import { getAccountSecurity } from "@/lib/api/pack";
 import { settle } from "@/lib/api/part";
@@ -26,6 +28,7 @@ import { readPhone } from "@/lib/phone-number/source";
 import { menuTitle } from "../menu-title";
 import { readIsDemo } from "../today-read";
 import { approveStepAction, releaseNumberAction, requestNumberAction } from "./actions";
+import { claimNumberAction, ownNumberAction, searchNumbersAction } from "./picker-actions";
 
 export const metadata = { title: `Your business number · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -51,6 +54,24 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
   const lang = await getLang();
   const t = appT(lang);
   if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("phone.title")} message={t("int.admins_only")} />;
+  // PHONE_PICKER (owner, 28 Nov 2026): the owner picks their own number from a list; the registration steps below stay for workspaces that are not on the picker
+  if (phonePicker() !== "off") {
+    const own = await readOwn(user.accessToken, tenantId);
+    return (
+      <main className={pageMain} lang={lang}>
+        <PageTop title={await menuTitle("phone", lang, user.accessToken, tenantId)} sub={t("pick.sub")} />
+        <div className="mt-4">
+          <PhonePicker
+            words={wordsFor(lang, ["pick."])}
+            own={own}
+            canEdit={tenant.role === "owner"}
+            mock={phonePicker() === "mock"}
+            actions={{ search: searchNumbersAction.bind(null, tenantId), claim: claimNumberAction.bind(null, tenantId), poll: ownNumberAction.bind(null, tenantId) }}
+          />
+        </div>
+      </main>
+    );
+  }
   const phone = await readPhone();
   const kyc = await readKyc(user.accessToken, tenantId, tenant.role === "owner", t, lang, user.email);
   // design system v6: plain-language cards (the status, then the test screen's own panel: Edit = the city, one main button)
