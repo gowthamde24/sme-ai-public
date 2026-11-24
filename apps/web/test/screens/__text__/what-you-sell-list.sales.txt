@@ -1,0 +1,16 @@
+[← What you sell](/app/tenants/22222222-2222-2222-2222-222222222222/what-you-sell)
+# Dress materials
+Products · 3 items
+{role=search}
+<search label="Search" placeholder="Search" maxlength=80>
+[button type=submit: Search]
+<select label="Lining">
+  options: Lining: all=* | Cotton | Satin
+<select label="Availability">
+  options: Availability: all=* | In stock | Few left | Out of stock
+<select label="Sort">
+  options: Sort: newest first=new* | Sort: name, A to Z=az | Sort: Retail price, low to high=price
+-
+[button type=button disabled: Cotton dress material, blueLiningCottonRetail price₹1,450AvailabilityIn stock]
+-
+[button type=button disabled: Chanderi dress material, mustardLiningSatinRetail priceNo priceAvailabilityFew left]

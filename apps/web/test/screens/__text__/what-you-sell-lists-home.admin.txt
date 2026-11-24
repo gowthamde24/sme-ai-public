@@ -1,0 +1,27 @@
+# What you sell
+Your assistant answers customers from this list. Add to it in whichever way is easiest.
+{label="Your lists"}
+## Your lists
+[Add a list](/app/tenants/22222222-2222-2222-2222-222222222222/what-you-sell/lists/new) Your assistant answers customers from these lists, and says only the prices in the price columns.
+- [Products Dress materials 3 items](/app/tenants/22222222-2222-2222-2222-222222222222/what-you-sell/lists/33333333-3333-4333-8333-333333333333)
+- [Digital products Ebooks and guides 18 items](/app/tenants/22222222-2222-2222-2222-222222222222/what-you-sell/lists/44444444-4444-4444-8444-444444444444)
+2 of 10 lists used.
+{role=status} Test mode: these are made-up examples. Nothing is saved.
+{label="Fill it your way"}
+## Fill it your way
+[button type=button: Say it“Kanjivaram silk saree, 8,500 rupees, red and green, 4 in stock.” Talk like you would to a helper.]
+[button type=button: Take photosPhotograph the shelf or your bill book. I read the names and prices.]
+[button type=button: Import a sheetExcel, CSV or Google Sheet. I match the columns for you.]
+{label="Products4"}
+## Products 4
+[button type=button: Add a product]
+For a saree shop, jewellery, kirana or a dealer
+-
+[button type=button: Kanjivaram silk saree3 colours · Red, Green, Gold₹8,5004 in stock]
+-
+[button type=button: Mysore silk saree2 colours · Maroon, Green₹5,20012 in stock]
+-
+[button type=button: Pochampally ikat cotton4 colours · Red, Blue, Green, Yellow₹1,4502 left]
+-
+[button type=button: Brocade blouse piece1 colour · Gold₹650Sold out]
+[Open the old page](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
