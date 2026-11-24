@@ -5,6 +5,7 @@ import { appDict } from "@/i18n/app";
 import { parseJob } from "@/lib/api/jobs-parse";
 import { WIRE_JOB_VARIANTS } from "@/lib/jobs/fixtures";
 import { MOCK_JOBS } from "@/lib/jobs/mock";
+import { jobState } from "@/lib/jobs/types";
 
 import { JobRow } from "./JobRow";
 import { JobsList } from "./JobsList";
@@ -109,7 +110,9 @@ describe("Today's Running now and the Jobs page", () => {
   it("Today: a heading with the count, a row per job and See all jobs; nothing at all with no jobs", () => {
     const { container, rerender } = render(<JobsToday jobs={MOCK_JOBS} words={words} base={BASE} actions={acts()} />);
     expect(screen.getByRole("heading", { name: "Running now" })).toBeInTheDocument();
-    expect(container.querySelector("[data-count]")).toHaveAttribute("data-count", "6");
+    // the count is the jobs that really run now, not the number of job types (owner, 29 Nov)
+    const runningNow = MOCK_JOBS.filter((j) => jobState(j) === "running").length;
+    expect(container.querySelector("[data-count]")).toHaveAttribute("data-count", String(runningNow));
     expect(container.querySelectorAll("[data-job]")).toHaveLength(6);
     expect(screen.getByRole("link", { name: "See all jobs" })).toHaveAttribute("href", `${BASE}/jobs`);
     rerender(<JobsToday jobs={[]} words={words} base={BASE} actions={null} />);
