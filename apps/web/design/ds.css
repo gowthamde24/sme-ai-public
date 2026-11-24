@@ -776,3 +776,21 @@
 @layer theme {
 [data-ui="v2"][data-ds="6"] [data-part="job-card"] .jb-switch[data-on] { background: var(--k-chat) !important; }
 }
+
+/* ONE neutral pattern for every notice (owner, 25 Nov 2026: "still not corrected"): no tinted box, no coloured border. A tinted notice box becomes a plain row between two hairlines with a small status dot and grey text (the dot is amber / red / green / grey by the notice's own tone); a tinted pill becomes a plain outline with grey text. The tint colours themselves are off in this design, so a tinted chip or tile that is not caught below shows no fill either. */
+@layer theme {
+[data-ui="v2"][data-ds="6"] { --v2-amber-bg: transparent !important; --v2-red-bg: transparent !important; --v2-green-bg: transparent !important; --v2-info-bg: transparent !important; --v2-brand-bg: transparent !important; --jb-wait-soft: transparent !important; }
+[data-ui="v2"][data-ds="6"] :is(.bg-amber-bg, .bg-red-bg, .bg-green-bg, .bg-info-bg):is(.rounded-lg, .rounded-xl, .rounded-2xl, .rounded-\[20px\]):not(label, button, a, [role="switch"], select, input, textarea, li[data-card]) {
+  position: relative; border: 0 !important; border-top: 1px solid var(--v2-border) !important; border-bottom: 1px solid var(--v2-border) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; padding-left: 22px !important; padding-right: 0 !important; color: var(--v2-muted) !important;
+}
+[data-ui="v2"][data-ds="6"] :is(.bg-amber-bg, .bg-red-bg, .bg-green-bg, .bg-info-bg):is(.rounded-lg, .rounded-xl, .rounded-2xl, .rounded-\[20px\]):not(label, button, a, [role="switch"], select, input, textarea, li[data-card])::before {
+  content: ""; position: absolute; left: 2px; top: 1.15em; width: 8px; height: 8px; border-radius: 50%; background: var(--v2-muted);
+}
+[data-ui="v2"][data-ds="6"] .bg-amber-bg:is(.rounded-lg, .rounded-xl, .rounded-2xl, .rounded-\[20px\]):not(label, button, a, li[data-card])::before { background: var(--v2-amber-text); }
+[data-ui="v2"][data-ds="6"] .bg-red-bg:is(.rounded-lg, .rounded-xl, .rounded-2xl, .rounded-\[20px\]):not(label, button, a, li[data-card])::before { background: var(--v2-red-text); }
+[data-ui="v2"][data-ds="6"] .bg-green-bg:is(.rounded-lg, .rounded-xl, .rounded-2xl, .rounded-\[20px\]):not(label, button, a, li[data-card])::before { background: var(--v2-green-text); }
+[data-ui="v2"][data-ds="6"] :is(.bg-amber-bg, .bg-red-bg, .bg-green-bg, .bg-info-bg):is(.rounded-lg, .rounded-xl, .rounded-2xl, .rounded-\[20px\]) :is(.text-amber-text, .text-red-text, .text-green-text, .text-info-text) { color: inherit !important; }
+[data-ui="v2"][data-ds="6"] :is(.bg-amber-bg, .bg-red-bg, .bg-green-bg, .bg-info-bg, .bg-brand-bg).rounded-full:not(.size-2, .size-3):is(span, p, div) { border: 1px solid var(--v2-border) !important; background: none !important; color: var(--v2-muted) !important; }
+/* Today: a text link in the page is grey and underlined; orange is for the one main action and what needs the owner */
+[data-ui="v2"][data-ds="6"] [data-open="today"] a.text-brand-text { color: var(--v2-muted) !important; text-decoration: underline; text-underline-offset: 4px; }
+}

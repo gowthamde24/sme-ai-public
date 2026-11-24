@@ -56,6 +56,12 @@ export function NavLink({ item, tenantId, on, labels, badge = null, collapsed = 
             <span aria-hidden="true" className="lv-dot" data-live-dot="" />
             <span className="sr-only">{badge.text}</span>
           </span>
+        ) : !/^\d/.test(badge.text) ? (
+          // a word (Not live, In training, Live): a small dot and the word in grey, never a coloured pill
+          <span data-nav-badge={item.id} className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-medium text-muted">
+            <span aria-hidden="true" className={`size-1.5 rounded-full ${badge.tone === "green" ? "bg-green-text" : badge.tone === "soft" ? "bg-amber-text" : "border border-muted"}`} />
+            {badge.text}
+          </span>
         ) : (
           <span data-nav-badge={item.id} className={`inline-flex h-6 shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2 text-xs font-semibold tabular-nums ${TONE[badge.tone]}`}>
             {badge.tone === "green" && item.id === "m-calls" ? <span aria-hidden="true" className="size-1.5 rounded-full bg-green-text" /> : null}

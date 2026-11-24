@@ -6,7 +6,7 @@ form:
 ## See how it works with example data
 ·
 [button type=submit: Load example data]
-{role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
+{role=status} Sending is stopped . Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
 {label="Needs you"}
 ## Needs you
 6 6 waiting for you
