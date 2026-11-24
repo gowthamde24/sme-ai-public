@@ -25,7 +25,7 @@ Plivo is dropped (its code stays dormant). Everything below is VoiceLink. **Ther
 ## The planner's / C1's steps (production; each on the exact text, dry run first, rollback ready)
 1. Database: migration `20261231987900_voicelink_provider.sql` (the provider list accepts `voicelink`). It sorts BEFORE migrations already applied, so the push needs `supabase db push --include-all`; the dry run must list EXACTLY that one file.
    Also `20261231988300_balance_check_calls_7d.sql` (one extra key, `calls_7d_paise`, in the answer of `ops_plivo_balance_due`, for the days-of-cover sentence; a normal push, it sorts after everything applied). Until it is pushed the check simply leaves the sentence out.
-2. API deploy (the declared files carry `TELEPHONY_PROVIDER=voicelink`, the cost 50 / 60, and the three bindings VOICELINK_WS_TOKEN / USERNAME / PASSWORD): `ALLOW_FLAG_CHANGE=TELEPHONY_PROVIDER,TELEPHONY_COST_PAISE_PER_MINUTE,TELEPHONY_COST_PAISE_PER_MINUTE_INBOUND,TELEPHONY_COST_PULSE_S,VOICELINK_WS_TOKEN,VOICELINK_USERNAME,VOICELINK_PASSWORD PROD_CONFIRM=<id> deploy/production.sh deploy api --execute`.
+2. API deploy (the declared files carry `TELEPHONY_PROVIDER=voicelink`, the cost 50 / 60, and the three bindings VOICELINK_WS_TOKEN / USERNAME / PASSWORD): `ALLOW_FLAG_CHANGE=TELEPHONY_PROVIDER,TELEPHONY_COST_PAISE_PER_MINUTE,TELEPHONY_COST_PAISE_PER_MINUTE_INBOUND,TELEPHONY_MAX_CONCURRENT,TELEPHONY_COST_PULSE_S,VOICELINK_WS_TOKEN,VOICELINK_USERNAME,VOICELINK_PASSWORD PROD_CONFIRM=<id> deploy/production.sh deploy api --execute`.
 3. Worker: `PROD_VOICELINK=1 PROD_CONFIRM=<id> deploy/production.sh deploy worker --execute` (the daily wallet check; then `python3 deploy/drift.py snapshot production worker stack19-production asia-south1`, a reviewed PR).
 4. Attach the number to the workspace (operator SQL, production, the planner's run; inbound OFF first):
 ```sql
@@ -38,6 +38,12 @@ update public.phone_numbers set inbound_on = true where number = '+91XXXXXXXXXX'
 6. **First outbound test**: the Owner's "Place a test call" to his own phone (sandbox list). Checks as above plus the webhook lines (`voicelink_webhook event=call.initiated ... ours=True`, then `call.ended`).
 7. **The shop's own number forwards to the VoiceLink number** (the three-phone test of the go-live checklist): on the shop's phone, forward unanswered calls to the VoiceLink number (carrier code `**61*<number>#` for no-answer, `**67*<number>#` for busy; cancel with `##002#`). The one question is whether the caller's own number survives the forward (VoiceLink's `customerNumber`/`from`): test with a third phone; if it does not, the assistant cannot call people back and the shop gives out the VoiceLink number instead.
 8. Live outbound only by the owner's written word (`TELEPHONY_MODE=live` needs `PROD_LIVE_OK=yes`, the gate's consent and proof-of-request rules apply): until then outbound calls ring only numbers on the sandbox list.
+
+## Dated items
+* **Second channel before Thu 3 Dec (owner buys it in the portal, prorated).** Until then production declares `TELEPHONY_MAX_CONCURRENT=1` (one channel = one live call for the whole reseller account), so our own gate refuses a second call before VoiceLink is asked. When the second channel is bought, a tiny PR sets it back to 2 and the planner deploys it (`ALLOW_FLAG_CHANGE=TELEPHONY_MAX_CONCURRENT`).
+
+## Post-launch list (decided 26 Nov 2026: not for launch)
+* A spoken "all lines are busy" message and a "Needs you" line when a call is refused for lack of a free channel (today a refused call closes silently with a closed reason word in the log and nothing is shown).
 
 ## Undo, each alone
 `update public.phone_numbers set inbound_on = false where provider = 'voicelink';` stops inbound answering; `deploy/production.sh rollback sme-api --execute`; remove the bot's mapping in the VoiceLink portal; unset `PROD_VOICELINK` and redeploy the worker.
