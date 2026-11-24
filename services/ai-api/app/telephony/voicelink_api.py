@@ -39,6 +39,16 @@ class Wallet:
     currency: str
 
 
+@dataclass(frozen=True)
+class AvailableDid:
+    """One number for sale. `monthly_rate` is OUR cost (rupees a month): for the guardrails and the audit, never for a screen."""
+
+    did_id: int
+    number: str   # +91XXXXXXXXXX
+    type_label: str
+    monthly_rate: float
+
+
 def digits_with_country(number: str) -> str | None:
     """+919876543210 -> 919876543210 (the form of VoiceLink's DID list); None for anything that is not a plain international number."""
     normal = normalise(number)
@@ -124,6 +134,31 @@ class VoicelinkApi:
         rows = data.get("data") if isinstance(data, dict) else None
         return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
 
+    # ------------------------------------------------------------------------------------------------ the number picker's READS (28 Nov 2026; no money moves here)
+    def did_types(self) -> list[dict[str, Any]]:
+        """The DID types our plan sells: [{id, name, requires_request}] (`GET /reseller/did-types`). A type with requires_request=1 needs VoiceLink's approval and is never sold by the picker."""
+        data = self._request("GET", "/reseller/did-types")
+        return [r for r in data if isinstance(r, dict)] if isinstance(data, list) else []
+
+    def available_dids(self, *, did_type: int, prefix: str = "", months: int = 1, per_page: int = 20, page: int = 1) -> list[AvailableDid]:
+        """Numbers for sale of one type (2 = Mobile, 3 = Landline), optionally those containing `prefix` digits (`GET /reseller/purchase/dids`; a read: nothing is locked or bought). The monthly rate stays in the object for OUR
+        guardrails and is never shown to a customer."""
+        params: dict[str, Any] = {"country_code": "+91", "type": did_type, "months": months, "per_page": max(1, min(per_page, 100)), "page": max(1, page)}
+        if prefix:
+            params["number"] = prefix
+        data = self._request("GET", "/reseller/purchase/dids", params=params)
+        rows = data.get("data") if isinstance(data, dict) else None
+        found: list[AvailableDid] = []
+        for r in rows if isinstance(rows, list) else []:
+            if not isinstance(r, dict):
+                continue
+            number = digits_with_country(str(r.get("did_number") or ""))
+            try:
+                found.append(AvailableDid(did_id=int(r["id"]), number=f"+{number}" if number else "", type_label=str(r.get("type_label") or ""), monthly_rate=float(r.get("monthly_rate") or 0)))
+            except (KeyError, TypeError, ValueError):
+                continue
+        return [d for d in found if d.number]
+
     def call_details(self, call_id: str) -> dict[str, Any]:
         data = self._request("GET", "/call-log/details", params={"call_id": call_id})
         return data if isinstance(data, dict) else {}
@@ -184,4 +219,4 @@ class VoicelinkCaller:
         return False
 
 
-__all__ = ["VoicelinkApi", "VoicelinkBalanceReader", "VoicelinkCaller", "VoicelinkError", "Wallet", "digits_with_country", "indian_mobile_10"]
+__all__ = ["AvailableDid", "VoicelinkApi", "VoicelinkBalanceReader", "VoicelinkCaller", "VoicelinkError", "Wallet", "digits_with_country", "indian_mobile_10"]
