@@ -77,9 +77,9 @@ export function JobLine({ job, words, base, actions }: { job: Job; words: Words;
       data-job-kind={job.kind}
       data-part="job-card"
       data-state={off ? "off" : needs ? "needs" : "running"}
-      className={`flex h-full min-w-0 flex-col gap-3 rounded-[14px] border bg-surface p-4 text-left ${needs ? "border-ink ring-1 ring-ink" : "border-line"}`}
+      className={`flex h-full min-w-0 flex-col justify-center rounded-[14px] border bg-surface p-4 text-left ${needs ? "border-ink" : "border-line"}`}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-center gap-3">
         <Icon aria-hidden="true" data-k={JOB_CATEGORY[job.kind]} className="mt-0.5 size-6 shrink-0" strokeWidth={1.8} />
         <Link href={href} prefetch={false} className="flex min-w-0 flex-1 flex-col items-start gap-1 no-underline">
           <span className="block text-[17px] font-semibold leading-snug text-ink">{name}</span>
@@ -94,21 +94,20 @@ export function JobLine({ job, words, base, actions }: { job: Job; words: Words;
             </span>
           ) : null}
         </Link>
-        {!needs && !off ? (
+        {needs ? (
+          <Link href={fixHref} prefetch={false} className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-ink bg-surface px-4 text-[15px] font-semibold text-ink no-underline">
+            {fixLabel}
+          </Link>
+        ) : off ? (
+          <button type="button" disabled={busy || !actions} onClick={() => void change(true)} className="write-ctl inline-flex min-h-11 shrink-0 items-center rounded-lg border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60">
+            {t("jobs.line.turn_on")}
+          </button>
+        ) : (
           <button type="button" role="switch" aria-checked={true} aria-label={name} disabled={busy || !actions} onClick={() => void change(false)} className="jb-switch-hit write-ctl -my-2 -mr-2 grid min-h-11 min-w-11 shrink-0 place-items-center">
             <span className="jb-switch" aria-hidden="true" data-on="" />
           </button>
-        ) : null}
+        )}
       </div>
-      {needs ? (
-        <Link href={fixHref} prefetch={false} className="mt-auto inline-flex min-h-11 self-start items-center rounded-lg border border-ink bg-surface px-4 text-[15px] font-semibold text-ink no-underline">
-          {fixLabel}
-        </Link>
-      ) : off ? (
-        <button type="button" disabled={busy || !actions} onClick={() => void change(true)} className="write-ctl mt-auto inline-flex min-h-11 self-start items-center rounded-lg border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60">
-          {t("jobs.line.turn_on")}
-        </button>
-      ) : null}
     </div>
   );
 }

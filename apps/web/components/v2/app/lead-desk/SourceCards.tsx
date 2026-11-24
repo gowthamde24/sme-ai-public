@@ -46,7 +46,7 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, openCa
   // the one orange button of the grid is the first card that can still be connected; every other action is outlined (CSS, ds.css)
   const first = cards.findIndex((c) => c.available && c.state !== "connected");
   return (
-    <section className="flex flex-col gap-3" aria-labelledby="cards-h" data-part="source-cards">
+    <section className="mt-5 flex flex-col gap-3" aria-labelledby="cards-h" data-part="source-cards">
       {/* one heading on the page (owner, 17 Nov: "Lead sources" and "Where your leads come from" said the same twice): the page's title and sub line carry it, this one is for screen readers */}
       <h2 id="cards-h" className="sr-only">{t("sc.title")}</h2>
       <ul className="grid grid-cols-1 gap-3.5 md:grid-cols-2 xl:grid-cols-3" data-part="source-grid">
