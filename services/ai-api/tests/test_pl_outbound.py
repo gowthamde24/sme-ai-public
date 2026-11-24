@@ -399,6 +399,10 @@ def test_a_provider_failure_is_a_502_and_a_deployment_that_places_nothing_is_a_5
     out, _, _ = placer(api=api)
     failed = _owner_client(out).post(URL, json={"to": OWNER}, headers=auth("a_owner"))
     assert failed.status_code == 502 and failed.json()["error"]["code"] == "call_provider_failed"
+    assert failed.json()["error"]["reason"] == "provider_failed"
+    api.fail_with = "auth"   # a refused login (VoiceLink 401) is its own closed word (28 Nov 2026), never silent
+    refused_login = _owner_client(placer(api=api)[0]).post(URL, json={"to": OWNER}, headers=auth("a_owner"))
+    assert refused_login.status_code == 502 and refused_login.json()["error"]["reason"] == "voicelink_auth"
     off = _owner_client(None).post(URL, json={"to": OWNER}, headers=auth("a_owner"))
     assert off.status_code == 503 and off.json()["error"]["code"] == "calls_unavailable"
 

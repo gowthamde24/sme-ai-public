@@ -58,7 +58,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `calculator_unavailable` | 503 | materials |  |  | The calculator is not available right now. |
 | `call_not_allowed` | 409 | telephony |  | reason | That call is not allowed. |
 | `call_not_here` | 409 | telephony |  |  | That call is not on this server, or it has already ended. |
-| `call_provider_failed` | 502 | connectors, telephony |  |  | The call could not be placed. |
+| `call_provider_failed` | 502 | connectors, telephony |  | reason | The call could not be placed. |
 | `call_settings_unavailable` | 503 | callsettings |  |  | Call settings are not available right now. |
 | `call_state` | 409 | main |  |  | That cannot be done in the state the call is in now. Reload and look again. |
 | `calls_unavailable` | 503 | telephony |  |  | Calls are not available right now. |

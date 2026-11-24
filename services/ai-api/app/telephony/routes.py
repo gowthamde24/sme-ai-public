@@ -193,8 +193,9 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
         if used_up is not None:   # Customer Zero's own number of free minutes is used up: one plain sentence (the web translates by the code and the two extras)
             raise ApiError(409, "free_minutes_used_up", used_up[0], extra={"minutes": used_up[1], "restarts_on": used_up[2]}) from None
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
-    except PlivoError:
-        raise ApiError(502, "call_provider_failed", "The call could not be placed.") from None
+    except PlivoError as failure:
+        # a refused login is its own closed word (the Owner and the planner see what to fix), any other failure stays the general one (28 Nov 2026)
+        raise ApiError(502, "call_provider_failed", "The call could not be placed.", extra={"reason": "voicelink_auth" if failure.reason == "auth" else "provider_failed"}) from None
     return PlaceOut(call_id=str(placed.call_id), state=placed.state)
 
 
