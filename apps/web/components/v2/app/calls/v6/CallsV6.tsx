@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { EmptyNext } from "@/components/v2/app/ds/EmptyNext";
+import { BeforeYouCall } from "@/components/v2/app/lead-desk/BeforeYouCall";
 import { PageHeader } from "@/components/v2/app/ds/PageHeader";
 import type { TeachActions } from "@/components/v2/app/ds/TeachThis";
 import type { DecisionResult } from "@/components/v2/app/today/actions-types";
@@ -91,6 +92,9 @@ export function CallsV6(p: CallsV6Props) {
       <main className={pageMain} lang={p.lang} data-screen="calls">
         {p.help}
         {header}
+        <div className="mt-4">
+          <BeforeYouCall words={p.words} />
+        </div>
         <div className="mt-8">
           <EmptyNext title={t("calls6.empty.title")} text={t("calls6.empty.text")} action={{ href: p.testHref ?? `${p.base}/my-assistant`, label: t("calls6.empty.action") }} help={t("calls6.empty.help")} />
         </div>
@@ -100,6 +104,9 @@ export function CallsV6(p: CallsV6Props) {
     <main className={`${pageMain} lg:pb-28`} lang={p.lang} data-screen="calls">
       {p.help}
       {header}
+      <div className="mt-4">
+        <BeforeYouCall words={p.words} open={false} />
+      </div>
       <div className="mt-4 flex flex-col gap-4">
         <div className={open ? "hidden lg:block" : undefined}>
           {p.simple ? <CallsFiltersSimple words={p.words} base={p.base} query={p.query} counts={counts} lines={lineOptions(all)} shown={shown.length} total={all.length} /> : <CallsFilters words={p.words} base={p.base} query={p.query} counts={counts} lines={lineOptions(all)} />}
