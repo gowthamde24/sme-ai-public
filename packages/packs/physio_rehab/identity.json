@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "physio_rehab",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "physiotherapy clinics",
+    "te": "ఫిజియోథెరపీ క్లినిక్‌లు"
+  }
+}

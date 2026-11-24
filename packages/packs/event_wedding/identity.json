@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "event_wedding",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "event and wedding planners",
+    "te": "ఈవెంట్, వెడ్డింగ్ ప్లానర్లు"
+  }
+}

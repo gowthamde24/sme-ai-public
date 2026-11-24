@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "fashion_tailor",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "boutiques and tailors",
+    "te": "బోటిక్‌లు, టైలర్లు"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "kirana",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "kirana stores",
+    "te": "కిరాణా షాపులు"
+  }
+}

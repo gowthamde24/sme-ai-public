@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "skills_training",
+  "status": "draft",
+  "sell_style": "courses",
+  "plural_names": {
+    "en": "training institutes",
+    "te": "ట్రైనింగ్ ఇన్‌స్టిట్యూట్లు"
+  }
+}

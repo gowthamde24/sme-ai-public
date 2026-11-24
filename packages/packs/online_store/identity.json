@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "online_store",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "online stores",
+    "te": "ఆన్‌లైన్ స్టోర్లు"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "cleaning_pest",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "cleaning and pest control services",
+    "te": "క్లీనింగ్, పెస్ట్ కంట్రోల్ సర్వీసులు"
+  }
+}

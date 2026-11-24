@@ -1,0 +1,188 @@
+{
+  "$comment": "Lead Finder data for this business type (ADR 0119; added 18 Nov 2026 so every business has it). Read by app/lead_finder/packdata.py. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real business. Who it looks for: clinics, nursing homes and care homes that buy regularly. The Telugu words are drafts for a native reader.",
+  "default_query": {
+    "en": "clinics, nursing homes and old-age homes",
+    "te": "clinics, nursing homes and old-age homes"
+  },
+  "category_hint": "retailer",
+  "uses_stock": false,
+  "persona": "organisation",
+  "buyer_types": [
+    {
+      "code": "shop",
+      "label": "Shop",
+      "weight": 40,
+      "words": [
+        "shop",
+        "store",
+        "stores",
+        "mart",
+        "traders"
+      ]
+    },
+    {
+      "code": "office",
+      "label": "Office or company",
+      "weight": 34,
+      "words": [
+        "office",
+        "enterprises",
+        "solutions",
+        "company",
+        "pvt ltd"
+      ]
+    },
+    {
+      "code": "service",
+      "label": "Service business",
+      "weight": 30,
+      "words": [
+        "services",
+        "centre",
+        "center",
+        "studio",
+        "salon",
+        "agency"
+      ]
+    }
+  ],
+  "related_types": [
+    {
+      "code": "restaurant",
+      "label": "Restaurant or cafe",
+      "weight": 12,
+      "words": [
+        "restaurant",
+        "cafe",
+        "hotel",
+        "bakery"
+      ]
+    }
+  ],
+  "competitor_words": [
+    "wholesale",
+    "distributor",
+    "franchise"
+  ],
+  "very_large_words": [
+    "mall",
+    "chain",
+    "corporation",
+    "limited"
+  ],
+  "very_large_reviews": 1500,
+  "call": {
+    "purpose": {
+      "en": "We work with local businesses in your area.",
+      "te": "మీ ఏరియాలో local businesses తో మేము పనిచేస్తాం."
+    },
+    "questions": {
+      "sells": {
+        "en": "What do you mainly need or work on now?",
+        "te": "మీరు ఇప్పుడు ముఖ్యంగా ఏ పని మీద ఉన్నారు, ఏం అవసరం?"
+      },
+      "price": {
+        "en": "What budget do you usually work with?",
+        "te": "మీరు సాధారణంగా ఎంత budget తో చూస్తారు?"
+      },
+      "quantity": {
+        "en": "Roughly how many people or units is it for?",
+        "te": "సుమారు ఎంత మందికి లేదా ఎన్ని units కి?"
+      },
+      "supplier": {
+        "en": "Who do you work with now?",
+        "te": "ఇప్పుడు ఎవరితో చేస్తున్నారు?"
+      },
+      "timing": {
+        "en": "When would you want to start?",
+        "te": "ఎప్పుడు start చేయాలనుకుంటున్నారు?"
+      },
+      "decision": {
+        "en": "Who decides on this?",
+        "te": "దీని గురించి ఎవరు decide చేస్తారు?"
+      }
+    }
+  },
+  "fixture": {
+    "$comment": "INVENTED businesses for demo workspaces. {area} is the searched area. kind: buyer | related | competitor | very_large | not_buyer | no_phone.",
+    "templates": [
+      {
+        "name": "Sri Lakshmi Stores",
+        "category": "Shop",
+        "kind": "buyer",
+        "rating": 4.3,
+        "reviews": 160
+      },
+      {
+        "name": "{area} Enterprises",
+        "category": "Office",
+        "kind": "buyer",
+        "rating": 4.1,
+        "reviews": 60
+      },
+      {
+        "name": "Venkat Solutions",
+        "category": "Company",
+        "kind": "buyer",
+        "rating": 4.2,
+        "reviews": 45
+      },
+      {
+        "name": "Annapurna Salon",
+        "category": "Salon",
+        "kind": "buyer",
+        "rating": 4.5,
+        "reviews": 88
+      },
+      {
+        "name": "Balaji Services",
+        "category": "Service business",
+        "kind": "buyer",
+        "rating": 4.0,
+        "reviews": 52
+      },
+      {
+        "name": "Meenakshi Studio",
+        "category": "Studio",
+        "kind": "buyer",
+        "rating": 4.4,
+        "reviews": 70
+      },
+      {
+        "name": "Sai Traders",
+        "category": "Shop",
+        "kind": "buyer",
+        "rating": 4.0,
+        "reviews": 41
+      },
+      {
+        "name": "Krishna Bakery",
+        "category": "Bakery",
+        "kind": "related",
+        "rating": 4.3,
+        "reviews": 120
+      },
+      {
+        "name": "{area} Wholesale Mart",
+        "category": "Wholesaler",
+        "kind": "competitor",
+        "rating": 4.2,
+        "reviews": 260
+      },
+      {
+        "name": "City Mall",
+        "category": "Mall",
+        "kind": "very_large",
+        "rating": 4.1,
+        "reviews": 4200
+      },
+      {
+        "name": "Nandini Centre",
+        "category": "Service business",
+        "kind": "no_phone",
+        "rating": 4.0,
+        "reviews": 25
+      }
+    ]
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "../faq.schema.json",
+  "pack": "arts_music",
+  "version": 1,
+  "$comment": "Starter questions only: the owner writes the answers, and the assistant says 'I will ask the owner' until then.",
+  "questions": [
+    {
+      "code": "q1",
+      "ask": {
+        "en": "What are your opening hours?"
+      }
+    },
+    {
+      "code": "q2",
+      "ask": {
+        "en": "Where are you, and how do I reach you?"
+      }
+    },
+    {
+      "code": "q3",
+      "ask": {
+        "en": "How do I pay, and do you give a bill?"
+      }
+    },
+    {
+      "code": "q4",
+      "ask": {
+        "en": "What does it cost, and is there a minimum?"
+      }
+    },
+    {
+      "code": "q5",
+      "ask": {
+        "en": "Do you deliver or come to me?"
+      }
+    },
+    {
+      "code": "q6",
+      "ask": {
+        "en": "Can I attend a trial class?"
+      }
+    },
+    {
+      "code": "q7",
+      "ask": {
+        "en": "What age groups do you teach?"
+      }
+    },
+    {
+      "code": "q8",
+      "ask": {
+        "en": "What are the batch timings?"
+      }
+    },
+    {
+      "code": "q9",
+      "ask": {
+        "en": "Do I need my own instrument?"
+      }
+    },
+    {
+      "code": "q10",
+      "ask": {
+        "en": "Is there a yearly show?"
+      }
+    }
+  ]
+}

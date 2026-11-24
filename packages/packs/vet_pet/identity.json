@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "vet_pet",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "vet clinics and pet shops",
+    "te": "వెట్ క్లినిక్‌లు, పెట్ షాపులు"
+  }
+}

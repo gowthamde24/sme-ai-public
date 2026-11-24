@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "home_repair",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "home repair services",
+    "te": "ఇంటి రిపేర్ సర్వీసులు"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "stationery_gifts",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "stationery and gift shops",
+    "te": "స్టేషనరీ, గిఫ్ట్ షాపులు"
+  }
+}

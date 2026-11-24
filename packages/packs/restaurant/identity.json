@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "restaurant",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "restaurants and cafes",
+    "te": "రెస్టారెంట్లు, కేఫ్‌లు"
+  }
+}

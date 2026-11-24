@@ -137,7 +137,7 @@ def test_the_answer_has_the_workspaces_own_templates_and_every_other_type_sorted
     assert body["own"]["pack"] == "textiles" and body["own"]["status"] == "draft" and body["own"]["version"] >= 1
     assert len(body["own"]["templates"]) >= 8
     packs_with_jobs = sorted(p.parent.name for p in PACKS.glob("*/jobs.json"))
-    assert len(packs_with_jobs) == 13
+    assert len(packs_with_jobs) == 54
     others = [o["pack"] for o in body["others"]]
     assert sorted(others) == [p for p in packs_with_jobs if p != "textiles"] and "textiles" not in others
     english = [packdata_names(PACKS, o) for o in others]
@@ -163,7 +163,7 @@ def test_a_pack_without_a_names_file_still_gets_its_normal_names() -> None:
     client, _ = make_client(jobs=on(), packs=FakePacks("no_such_pack"))
     body = get(client, TEMPLATES).json()
     assert body["business_type"] == {"pack": "no_such_pack", "name": {"en": "Fake pack", "te": "ఫేక్"}}, "the pack's own names from the database row"
-    assert body["own"]["templates"] == [] and len(body["others"]) == 13, "a pack whose templates cannot be read has none, the others are still shown"
+    assert body["own"]["templates"] == [] and len(body["others"]) == 54, "a pack whose templates cannot be read has none, the others are still shown"
 
 
 def test_get_paid_templates_are_removed_while_the_flag_is_off() -> None:
@@ -174,8 +174,8 @@ def test_get_paid_templates_are_removed_while_the_flag_is_off() -> None:
         assert name not in {t["id"] for t in every_template(body)}
     full, _ = make_client(jobs=on(get_paid=True), packs=FakePacks())
     paid = [t for t in every_template(get(full, TEMPLATES).json()) if t["goal"] == "get_paid"]
-    assert len(paid) == 13 and {"payment_reminder_gentle", "fee_reminder", "payment_step_reminder", "payment_due_reminder"} <= {t["id"] for t in paid}
-    assert len(every_template(get(full, TEMPLATES).json())) - len(every_template(body)) == 13
+    assert len(paid) == 54 and {"payment_reminder_gentle", "fee_reminder", "payment_step_reminder", "payment_due_reminder"} <= {t["id"] for t in paid}
+    assert len(every_template(get(full, TEMPLATES).json())) - len(every_template(body)) == 54
 
 
 def test_the_sample_item_is_the_first_active_item_as_written_and_absent_without_one() -> None:

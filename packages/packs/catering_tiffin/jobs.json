@@ -1,0 +1,378 @@
+{
+  "$comment": "Job templates of the Catering and tiffin services business type (jobs contract section 5). DRAFT: every customer-facing text is for a native reader to check before it goes live. The texts are the generic ones with this type's word for a tasting. No price, discount, delivery promise, refund promise or guarantee anywhere; templates are for enquirers and consenting customers only; the researcher template never calls or messages a prospect.",
+  "status": "draft",
+  "pack": "catering_tiffin",
+  "version": 1,
+  "templates": [
+    {
+      "id": "enquiry_call_right_away",
+      "kind": "speed_to_lead",
+      "goal": "answer_every_enquiry",
+      "popular": true,
+      "title": {
+        "en": "Call every new enquiry right away",
+        "te": "కొత్త ఎంక్వైరీకి వెంటనే కాల్ చేయండి"
+      },
+      "benefit": {
+        "en": "A thank-you message and a quick call, while the customer is still looking",
+        "te": "కస్టమర్ ఇంకా చూస్తున్నప్పుడే థాంక్యూ మెసేజ్, ఒక చిన్న కాల్"
+      },
+      "ask": {
+        "en": "Call every new enquiry right away",
+        "te": "కొత్త ఎంక్వైరీ రాగానే వెంటనే కాల్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Thank you for asking about {item} at {business}. We will call you to understand what you need. – {business}",
+          "te": "హాయ్ {customer}! {business} లో {item} గురించి అడిగినందుకు థాంక్యూ. మీకు ఏం కావాలో తెలుసుకోవడానికి మేం కాల్ చేస్తాం. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, you enquired about {item}.\nIs now a good time for two quick questions?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} గురించి మీరు ఎంక్వైరీ చేశారు.\nఇప్పుడు రెండు చిన్న ప్రశ్నలు అడగొచ్చా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "lead_source"
+      ],
+      "finds_out": [
+        "need",
+        "quantity",
+        "when",
+        "visit"
+      ]
+    },
+    {
+      "id": "answer_calls_when_busy",
+      "kind": "answer_calls",
+      "goal": "answer_every_enquiry",
+      "popular": true,
+      "title": {
+        "en": "Answer my calls when I can't",
+        "te": "నేను ఎత్తలేనప్పుడు నా కాల్స్ ఎత్తండి"
+      },
+      "benefit": {
+        "en": "No customer call goes unanswered, and you see who wanted what",
+        "te": "ఏ కస్టమర్ కాల్ మిస్ అవ్వదు, ఎవరికి ఏం కావాలో మీకు కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Answer my business calls when I cannot pick up",
+        "te": "నేను ఫోన్ ఎత్తలేనప్పుడు బిజినెస్ కాల్స్ ఎత్తండి"
+      },
+      "preview": {
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Our team is busy at the moment, how can I help you?\nTell me what you are looking for and I will pass it on to them.",
+          "te": "{assistant}ని, {business} AI assistant ని. ఇప్పుడు మా టీమ్ బిజీగా ఉన్నారు, నేను ఎలా హెల్ప్ చేయగలను?\nమీకు ఏం కావాలో చెప్పండి, నేను వాళ్ళకి చెప్తాను."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "phone_number"
+      ],
+      "finds_out": [
+        "need",
+        "when",
+        "visit"
+      ]
+    },
+    {
+      "id": "quiet_enquiry_follow_up",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": true,
+      "title": {
+        "en": "Follow up on enquiries that went quiet",
+        "te": "సైలెంట్ అయిన ఎంక్వైరీలను ఫాలో అప్ చేయండి"
+      },
+      "benefit": {
+        "en": "A gentle check-in with people who asked and then stopped replying",
+        "te": "అడిగి, తర్వాత రిప్లై ఇవ్వని వాళ్ళని మెల్లగా అడుగుతుంది"
+      },
+      "ask": {
+        "en": "Follow up with customers who enquired and did not reply",
+        "te": "ఎంక్వైరీ చేసి రిప్లై ఇవ్వని కస్టమర్లను ఫాలో అప్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! You asked about {item} at {business} a few days ago. Are you still looking? Tell us and we will help you. – {business}",
+          "te": "హాయ్ {customer}! కొన్ని రోజుల క్రితం {business} లో {item} గురించి అడిగారు. ఇంకా చూస్తున్నారా? చెప్పండి, మేం హెల్ప్ చేస్తాం. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [
+        "still_interested",
+        "need"
+      ]
+    },
+    {
+      "id": "visit_booking",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": true,
+      "title": {
+        "en": "Tasting booking",
+        "te": "టేస్టింగ్ బుకింగ్"
+      },
+      "benefit": {
+        "en": "Turns an enquiry into a tasting: the customer picks a day, you see it on Today",
+        "te": "ఎంక్వైరీని టేస్టింగ్‌గా మారుస్తుంది: కస్టమర్ ఒక రోజు ఎంచుకుంటారు, మీకు Today లో కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Ask customers who enquired to book a tasting and pick a day",
+        "te": "ఎంక్వైరీ చేసిన కస్టమర్లను టేస్టింగ్ చేయమని అడిగి, ఒక రోజు బుక్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Would you like to book a tasting at {business} for {item}? Tell us a day that suits you and we will book it.",
+          "te": "హాయ్ {customer}! {business} కి వచ్చి {item} చూడాలనుకుంటున్నారా? మీకు వీలైన రోజు చెప్పండి, టేస్టింగ్ బుక్ చేస్తాం."
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, would you like to book a tasting for {item}?\nWhich day suits you?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, మా దగ్గరికి వచ్చి {item} చూస్తారా?\nమీకు ఏ రోజు వీలవుతుంది?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "visit",
+        "when"
+      ]
+    },
+    {
+      "id": "visit_reminder_day_before",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Tasting reminder the day before",
+        "te": "ముందు రోజు టేస్టింగ్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "Fewer forgotten tastings: a small reminder, and an easy way to change the day",
+        "te": "టేస్టింగ్‌లు మర్చిపోరు: చిన్న రిమైండర్, రోజు మార్చుకోవడం కూడా సులువు"
+      },
+      "ask": {
+        "en": "Remind customers the day before their tasting",
+        "te": "టేస్టింగ్ ముందు రోజు కస్టమర్లకు రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A small reminder: your tasting at {business} is tomorrow. Reply here if you want to change the day. – {business}",
+          "te": "హాయ్ {customer}! చిన్న రిమైండర్: రేపు {business} కి మీ టేస్టింగ్ ఉంది. రోజు మార్చాలంటే ఇక్కడే రిప్లై ఇవ్వండి. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "when"
+      ]
+    },
+    {
+      "id": "new_arrival_message",
+      "kind": "offers",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "New arrival",
+        "te": "కొత్త అరైవల్"
+      },
+      "benefit": {
+        "en": "Tell customers who said yes to messages about something new, with details on request",
+        "te": "ఓకే చెప్పిన కస్టమర్లకు కొత్తది వచ్చిందని చెప్తుంది, అడిగితే వివరాలు పంపుతుంది"
+      },
+      "ask": {
+        "en": "Tell my customers about our new arrival",
+        "te": "మా కొత్త అరైవల్ గురించి నా కస్టమర్లకు చెప్పండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! New at {business}: {item}. Reply YES and we will send you the details.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! {business} లో కొత్తగా {item} వచ్చింది. వివరాలు కావాలంటే YES అని రిప్లై ఇవ్వండి.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "catalogue_item"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "festival_greeting",
+      "kind": "offers",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "Festival greeting",
+        "te": "పండుగ శుభాకాంక్షలు"
+      },
+      "benefit": {
+        "en": "A warm festival wish to customers who said yes to messages, so they remember you",
+        "te": "ఓకే చెప్పిన కస్టమర్లకు పండుగ శుభాకాంక్షలు, వాళ్ళకి మీరు గుర్తుండేలా"
+      },
+      "ask": {
+        "en": "Send my customers a Diwali greeting from the shop",
+        "te": "షాప్ తరఫున నా కస్టమర్లకు దీపావళి శుభాకాంక్షలు పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Happy Diwali from all of us at {business}. Thank you for being with us.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! {business} అందరి తరఫున మీకు దీపావళి శుభాకాంక్షలు. మాతో ఉన్నందుకు థాంక్యూ.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [],
+      "season": "diwali"
+    },
+    {
+      "id": "thank_you_after_purchase",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "Thank-you after a purchase",
+        "te": "కొన్న తర్వాత థాంక్యూ మెసేజ్"
+      },
+      "benefit": {
+        "en": "A short thank-you and a question, so customers remember you and come back",
+        "te": "చిన్న థాంక్యూ, ఒక ప్రశ్న: కస్టమర్లకు మీరు గుర్తుండి మళ్ళీ వస్తారు"
+      },
+      "ask": {
+        "en": "Thank customers a few days after they buy and ask how it is going",
+        "te": "కస్టమర్లు కొన్న కొన్ని రోజుల తర్వాత థాంక్యూ చెప్పి, ఎలా ఉందో అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Thank you for buying {item} from {business}. How is it going? Tell us if there is anything we can help with. – {business}",
+          "te": "హాయ్ {customer}! {business} లో {item} కొన్నందుకు థాంక్యూ. ఎలా ఉంది? మేం ఏమైనా హెల్ప్ చేయాలంటే చెప్పండి. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [
+        "still_interested"
+      ]
+    },
+    {
+      "id": "order_ready",
+      "kind": "custom",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Order ready",
+        "te": "ఆర్డర్ రెడీ"
+      },
+      "benefit": {
+        "en": "Tell the customer their order is ready, so they come to collect it",
+        "te": "ఆర్డర్ రెడీ అయిందని కస్టమర్‌కి చెప్తుంది, వాళ్ళు వచ్చి తీసుకెళ్తారు"
+      },
+      "ask": {
+        "en": "Tell my customers when their order is ready to collect",
+        "te": "ఆర్డర్ రెడీ అయినప్పుడు తీసుకెళ్ళమని నా కస్టమర్లకు చెప్పండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Your order of {item} is ready at {business}. You can collect it when we are open. – {business}",
+          "te": "హాయ్ {customer}! మీ {item} ఆర్డర్ {business} లో రెడీ అయ్యింది. మేం తెరిచి ఉన్నప్పుడు వచ్చి తీసుకెళ్ళండి. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "payment_reminder_gentle",
+      "kind": "custom",
+      "goal": "get_paid",
+      "popular": false,
+      "title": {
+        "en": "Payment reminder",
+        "te": "పేమెంట్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "A polite reminder to customers whose payment is pending, no amount in the message",
+        "te": "పేమెంట్ పెండింగ్‌లో ఉన్న కస్టమర్లకు మర్యాదగా రిమైండర్, మెసేజ్‌లో అమౌంట్ ఉండదు"
+      },
+      "ask": {
+        "en": "Send a gentle payment reminder to customers whose payment is pending",
+        "te": "పేమెంట్ పెండింగ్‌లో ఉన్న కస్టమర్లకు మర్యాదగా రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A friendly reminder from {business}: a payment for your last order is still pending. Please let us know when it is done. Thank you!",
+          "te": "హాయ్ {customer}! {business} నుంచి ఒక ఫ్రెండ్లీ రిమైండర్: మీ లాస్ట్ ఆర్డర్‌కి పేమెంట్ ఇంకా పెండింగ్‌లో ఉంది. అయ్యాక మాకు చెప్పండి. థాంక్యూ!"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "find_shops_and_offices",
+      "kind": "researcher",
+      "goal": "find_new_customers",
+      "popular": false,
+      "title": {
+        "en": "Find new customers near you",
+        "te": "మీ దగ్గర కొత్త కస్టమర్లను వెతకండి"
+      },
+      "benefit": {
+        "en": "Finds offices, hostels and event halls near you, and says why each one fits. You contact them yourself.",
+        "te": "మీ దగ్గర మీకు కస్టమర్లు కాగల బిజినెస్‌లను వెతికి, ప్రతిదీ ఎందుకు సరిపోతుందో చెబుతుంది. వాళ్ళను మీరే కాంటాక్ట్ చేస్తారు."
+      },
+      "ask": {
+        "en": "Find offices, hostels and event halls near us that could buy from me; I will contact them myself",
+        "te": "మీ దగ్గర నాకు కస్టమర్లు కాగల బిజినెస్‌లను వెతకండి; వాళ్ళను నేనే కాంటాక్ట్ చేస్తాను"
+      },
+      "examples": [
+        {
+          "name": "Bluebell Stationers (example)",
+          "area": "Market Road",
+          "why": {
+            "en": "A busy shop in your area that may need your products",
+            "te": "మీ ఏరియాలో బిజీగా ఉన్న షాప్, మీ ప్రొడక్ట్స్ కావాలేమో"
+          }
+        },
+        {
+          "name": "Orchid Business Centre (example)",
+          "area": "Tech Corridor",
+          "why": {
+            "en": "An office with many staff, near enough to visit in person",
+            "te": "చాలా మంది స్టాఫ్ ఉన్న ఆఫీస్, నేరుగా వెళ్ళి కలవచ్చు"
+          }
+        },
+        {
+          "name": "Sunrise Service Point (example)",
+          "area": "Station Road",
+          "why": {
+            "en": "A service business with regular customers",
+            "te": "రెగ్యులర్ కస్టమర్లు ఉన్న సర్వీస్ బిజినెస్"
+          }
+        }
+      ],
+      "needs": [],
+      "finds_out": []
+    }
+  ]
+}

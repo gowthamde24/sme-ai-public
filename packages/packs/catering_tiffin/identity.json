@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "catering_tiffin",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "caterers and tiffin services",
+    "te": "క్యాటరింగ్, టిఫిన్ సర్వీసులు"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "sports_academy",
+  "status": "draft",
+  "sell_style": "courses",
+  "plural_names": {
+    "en": "sports academies",
+    "te": "స్పోర్ట్స్ అకాడమీలు"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "consultants_agencies",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "consultants and agencies",
+    "te": "కన్సల్టెంట్లు, ఏజెన్సీలు"
+  }
+}

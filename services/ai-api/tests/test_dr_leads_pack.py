@@ -35,6 +35,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "scripts"))
 import packs_check as pc  # noqa: E402
 
+ADDED = ('kirana', 'jewellery', 'electronics', 'furniture', 'stationery_gifts', 'hardware_paint', 'pharmacy', 'fashion_tailor', 'online_store', 'restaurant', 'bakery_sweets', 'catering_tiffin', 'cloud_kitchen', 'salon_beauty', 'home_repair', 'cleaning_pest', 'appliance_vehicle_repair', 'photography', 'event_wedding', 'laundry_dry_cleaning', 'dental', 'physio_rehab', 'vet_pet', 'diagnostics_lab', 'preschool', 'arts_music', 'skills_training', 'online_courses', 'car_service', 'vehicle_rental', 'hotel_homestay', 'finance_agent', 'legal_ca', 'consultants_agencies', 'digital_products', 'software_saas', 'creators_communities', 'yoga_studio', 'sports_academy', 'agri_nursery', 'ngo_trust')   # the 41 types added 29 Nov 2026 (reports/business-type-catalogue.md)
 NINE = ("real_estate", "coaching", "clinic", "insurance_loans", "auto_dealer", "interiors_solar", "travel", "gym", "wholesale_b2b")
 T = f"/v1/tenants/{TENANT_A.id}"
 
@@ -57,7 +58,7 @@ def test_the_nine_types_are_packs_with_a_template_and_the_checker_passes() -> No
 
 def test_every_template_asks_questions_that_fill_a_field_and_states_no_price() -> None:
     templates = default_templates()
-    assert templates.ids() == sorted([*NINE, "general_business"])   # job DT: the generic type next to the nine
+    assert templates.ids() == sorted([*NINE, "general_business", *ADDED])   # job DT: the generic type next to the nine
     for name in [*NINE, "general_business"]:
         t = templates.get(name)
         assert t is not None and 3 <= len(t.questions) <= 8 and len(t.objections) >= 3 and t.safety
@@ -96,8 +97,8 @@ def test_the_public_template_routes() -> None:
     listing = client.get("/v1/lead-templates")
     assert listing.status_code == 200 and "max-age" in listing.headers["cache-control"]
     ids = [t["pack_id"] for t in listing.json()["templates"]]
-    assert ids == ["other" if i == "general_business" else i for i in sorted([*NINE, "general_business"])]   # job DT: the generic pack is "other" on screens
-    first = listing.json()["templates"][0]
+    assert ids == ["other" if i == "general_business" else i for i in sorted([*NINE, "general_business", *ADDED])]   # job DT: the generic pack is "other" on screens
+    first = next(t for t in listing.json()["templates"] if t["pack_id"] == "auto_dealer")
     assert first["goal"]["code"] == "test_drive" and first["goal"]["label"]["te"] and first["question_count"] >= 3 and first["validated"] is False
     one = client.get("/v1/lead-templates/real_estate").json()
     assert one["goal"]["code"] == "site_visit" and one["questions"][2]["field_definition"]["kind"] == "choice"

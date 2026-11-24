@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "bakery_sweets",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "bakeries and sweet shops",
+    "te": "బేకరీలు, స్వీట్ షాపులు"
+  }
+}

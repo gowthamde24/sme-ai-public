@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "online_courses",
+  "status": "draft",
+  "sell_style": "courses",
+  "plural_names": {
+    "en": "course creators",
+    "te": "కోర్స్ క్రియేటర్లు"
+  }
+}

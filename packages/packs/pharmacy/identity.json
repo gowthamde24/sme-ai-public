@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "pharmacy",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "medical stores",
+    "te": "మెడికల్ స్టోర్లు"
+  }
+}

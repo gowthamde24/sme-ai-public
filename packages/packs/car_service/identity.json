@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "car_service",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "garages and service centres",
+    "te": "గ్యారేజీలు, సర్వీస్ సెంటర్లు"
+  }
+}

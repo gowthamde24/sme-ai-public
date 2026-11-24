@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "photography",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "photographers",
+    "te": "ఫోటోగ్రాఫర్లు"
+  }
+}

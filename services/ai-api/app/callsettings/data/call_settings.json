@@ -566,6 +566,1441 @@
         "sales_followup",
         "visit_reminder"
       ]
+    },
+    "kirana": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "jewellery": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "electronics": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "furniture": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "stationery_gifts": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "hardware_paint": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "pharmacy": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "fashion_tailor": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "online_store": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "restaurant": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "bakery_sweets": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "catering_tiffin": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "cloud_kitchen": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "salon_beauty": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "home_repair": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "cleaning_pest": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "appliance_vehicle_repair": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "photography": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "event_wedding": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "laundry_dry_cleaning": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "dental": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "physio_rehab": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "vet_pet": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "diagnostics_lab": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "preschool": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "arts_music": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "skills_training": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "online_courses": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "car_service": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "vehicle_rental": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "hotel_homestay": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "finance_agent": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "legal_ca": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "consultants_agencies": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "digital_products": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "software_saas": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "creators_communities": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "yoga_studio": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "sports_academy": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "agri_nursery": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
+    },
+    "ngo_trust": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
     }
   }
 }

@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "hotel_homestay",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "hotels and homestays",
+    "te": "హోటళ్ళు, హోమ్‌స్టేలు"
+  }
+}

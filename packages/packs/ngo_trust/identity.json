@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "ngo_trust",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "NGOs and trusts",
+    "te": "NGOలు, ట్రస్టులు"
+  }
+}

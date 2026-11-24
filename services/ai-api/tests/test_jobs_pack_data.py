@@ -23,6 +23,48 @@ STYLES = {
     "textiles": "products", "construction_materials": "products", "auto_dealer": "products", "general_business": "products",
     "clinic": "services", "gym": "services", "insurance_loans": "services", "interiors_solar": "services", "travel": "services",
     "education": "courses", "coaching": "courses", "real_estate": "properties", "wholesale_b2b": "pricelist",
+    # the 41 types added 29 Nov 2026 (reports/business-type-catalogue.md)
+    "kirana": "products",
+    "jewellery": "products",
+    "electronics": "products",
+    "furniture": "products",
+    "stationery_gifts": "products",
+    "hardware_paint": "products",
+    "pharmacy": "products",
+    "fashion_tailor": "products",
+    "online_store": "products",
+    "restaurant": "products",
+    "bakery_sweets": "products",
+    "catering_tiffin": "products",
+    "cloud_kitchen": "products",
+    "salon_beauty": "services",
+    "home_repair": "services",
+    "cleaning_pest": "services",
+    "appliance_vehicle_repair": "services",
+    "photography": "services",
+    "event_wedding": "services",
+    "laundry_dry_cleaning": "services",
+    "dental": "services",
+    "physio_rehab": "services",
+    "vet_pet": "services",
+    "diagnostics_lab": "services",
+    "preschool": "courses",
+    "arts_music": "courses",
+    "skills_training": "courses",
+    "online_courses": "courses",
+    "car_service": "services",
+    "vehicle_rental": "products",
+    "hotel_homestay": "products",
+    "finance_agent": "services",
+    "legal_ca": "services",
+    "consultants_agencies": "services",
+    "digital_products": "products",
+    "software_saas": "services",
+    "creators_communities": "services",
+    "yoga_studio": "services",
+    "sports_academy": "courses",
+    "agri_nursery": "products",
+    "ngo_trust": "services",
 }  # fmt: skip
 
 
@@ -32,7 +74,7 @@ def raw(pack_id: str) -> dict[str, Any]:
 
 # ------------------------------------------------------------------------------------------------------------------ identity: sell_style and plural_names
 def test_the_style_map_covers_exactly_the_packs() -> None:
-    assert set(IDS) == set(STYLES) and len(IDS) == 13
+    assert set(IDS) == set(STYLES) and len(IDS) == 54
 
 
 @pytest.mark.parametrize("pack_id", IDS)
