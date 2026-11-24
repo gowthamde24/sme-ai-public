@@ -1819,7 +1819,6 @@ add({ id: "what-you-sell-mock", roles: ["owner", "admin", "sales"], render: sell
 add({ id: "what-you-sell-mock-services", roles: ["owner"], render: sellPage, handlers: sellPack("clinic") });
 add({ id: "what-you-sell-mock-courses", roles: ["owner"], render: sellPage, handlers: sellPack("coaching") });
 add({ id: "what-you-sell-mock-properties", roles: ["owner"], render: sellPage, handlers: sellPack("real_estate") });
-<<<<<<< HEAD
 // WHAT_YOU_SELL_LISTS (29 Nov 2026): the owner's own lists, a list as a table, the columns, Add a list
 const LIST_ID = "33333333-3333-4333-8333-333333333333";
 const WYS_LIST = { id: LIST_ID, name: "Dress materials", kind: "products", is_main: false, row_count: 3, columns: [
@@ -1835,8 +1834,6 @@ add({ id: "what-you-sell-lists-home", roles: ["owner", "admin"], render: () => l
 add({ id: "what-you-sell-list", roles: ["owner", "admin", "sales"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/[listId]/page")).default(props({ listId: LIST_ID }))), handlers: listsHandlers });
 add({ id: "what-you-sell-list-columns", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/[listId]/columns/page")).default(props({ listId: LIST_ID }))), handlers: listsHandlers });
 add({ id: "what-you-sell-list-new", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/new/page")).default(props({}))), handlers: listsHandlers });
-=======
 add({ id: "developers", roles: ["owner", "admin"], render: () => withEnv({ DEVELOPER_KEYS_SCREENS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({}, { tab: "keys" }))), handlers: base });
 add({ id: "developers-overview", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({})), handlers: base });
->>>>>>> origin/c2/developers
 add({ id: "what-you-sell-mock-pricelist", roles: ["owner", "sales"], render: sellPage, handlers: sellPack("wholesale_b2b") });

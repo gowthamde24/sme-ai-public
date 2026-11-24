@@ -58,7 +58,7 @@ export function ProductEditor(p: { base: string; itemId: string; item: MaterialI
   const [name, setName] = React.useState(item?.name ?? "");
   const [unit, setUnit] = React.useState<(typeof UNITS)[number]>(item?.sell_unit ?? "sq_ft");
   const [areaUnit, setAreaUnit] = React.useState<"" | "sq_ft" | "sq_m">(item?.area_unit ?? "");
-  const [stock, setStock] = React.useState<(typeof STOCKS)[number]>(item?.stock_status ?? "in_stock");
+  const [stock, setStock] = React.useState<(typeof STOCKS)[number]>(item?.stock_status === "out_of_stock" ? "made_to_order" : (item?.stock_status ?? "in_stock")); // (the materials routes have no "out of stock" yet)
   const [active, setActive] = React.useState(item?.active ?? false);
   const [custom, setCustom] = React.useState<FieldValues>(p.custom ?? {});
   const [priceText, setPriceText] = React.useState("");
