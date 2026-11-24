@@ -68,7 +68,7 @@ export function LiveCall({ words, call, backHref, testMode }: { words: Words; ca
         {showTranscript ? (
           <ol data-part="transcript" lang={call.lang} className="flex w-full flex-col gap-2 text-left text-base">
             {call.transcript.map((l, i) => (
-              <li key={i} className={`rounded-xl px-3 py-2 ${l.who === "ai" ? "self-start bg-surface-2" : "self-end bg-brand-bg"}`}>
+              <li key={i} className={`rounded-xl px-3 py-2 ${l.who === "ai" ? "self-start bg-surface-2" : "self-end border border-line bg-surface"}`}>
                 <span className="block text-xs font-semibold text-muted">{t(l.who === "ai" ? "call.ai" : "call.customer")}</span>
                 {l.text}
               </li>

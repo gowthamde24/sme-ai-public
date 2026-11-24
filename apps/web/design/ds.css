@@ -794,3 +794,8 @@
 /* Today: a text link in the page is grey and underlined; orange is for the one main action and what needs the owner */
 [data-ui="v2"][data-ds="6"] [data-open="today"] a.text-brand-text { color: var(--v2-muted) !important; text-decoration: underline; text-underline-offset: 4px; }
 }
+
+/* a notice that is an error or a warning reads in full ink; an info or ok notice stays grey: with the box gone, the dot colour AND the strength of the words tell them apart */
+@layer theme {
+[data-ui="v2"][data-ds="6"] :is(.bg-red-bg, .bg-amber-bg):is(.rounded-lg, .rounded-xl, .rounded-2xl, .rounded-\[20px\]):not(label, button, a, [role="switch"], select, input, textarea, li[data-card]) { color: var(--v2-ink) !important; font-weight: 600; }
+}
