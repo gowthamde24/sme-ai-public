@@ -72,7 +72,7 @@ def check_open(link: str | None) -> None:
         print("recording address: none in this record (the call was not recorded, or VoiceLink keeps it elsewhere)")
         return
     host = urlparse(link).hostname or ""
-    kind = "amazon storage" if "amazonaws.com" in host else "voicelink domain" if host.endswith("voicelink.co.in") else "another host"
+    kind = "amazon storage" if host.endswith(".amazonaws.com") else "voicelink domain" if host == "voicelink.co.in" or host.endswith(".voicelink.co.in") else "another host"
     request = urllib.request.Request(link, method="HEAD")
     try:
         with urllib.request.urlopen(request, timeout=20) as reply:  # noqa: S310 - the address comes from VoiceLink's own record
