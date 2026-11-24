@@ -14,13 +14,21 @@ reported as a partial result so the caller can record it and tell the team.
 
 Every refusal is a closed word; no price, number or id is ever put in a message or a log line."""
 
+# ruff: noqa: E501
+
+
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
 from typing import Literal
 
-from app.telephony.voicelink_api import AvailableDid, VoicelinkApi, VoicelinkError, digits_with_country
+from app.telephony.voicelink_api import (
+    AvailableDid,
+    VoicelinkApi,
+    VoicelinkError,
+    digits_with_country,
+)
 
 log = logging.getLogger("app.numbers.buyer")
 TYPES = {"mobile": 2, "landline": 3}   # VoiceLink's DID type ids; the types that need an approval request (140/160 series) are never sold here
