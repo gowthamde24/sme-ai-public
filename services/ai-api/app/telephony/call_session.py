@@ -100,6 +100,9 @@ class CallVoiceSession(VoiceSession):
         add_turn = getattr(line, "add_turn", None)
         index, began = (len(line.transcript), line.elapsed()) if callable(add_turn) and line is not None else (0, 0.0)
         guard = getattr(getattr(self, "parts", None), "tts", None)
+        note_caller = getattr(guard, "note_caller", None)
+        if callable(note_caller):
+            note_caller(text)   # the voice learns whether a price was asked (only that, never the words)
         said_lines = getattr(guard, "said_lines", None)
         first_said = len(said_lines) if isinstance(said_lines, list) else 0
         try:
