@@ -5,7 +5,7 @@ Your sarees with photos and prices. Customers see the ones you have published. [
 [button type=submit: Search]
 summary: Filters
 legend: Stock
-[Available now](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?stock=available) [Few left](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?stock=few_left) [Made to order](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?stock=made_to_order)
+[Available now](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?stock=available) [Few left](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?stock=few_left) [Made to order](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?stock=made_to_order) [Out of stock](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?stock=out_of_stock)
 legend: Fabric
 [Kanchi pattu](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?fabric=kanchi_pattu) [Dharmavaram silk](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?fabric=dharmavaram_silk) [Soft silk](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?fabric=soft_silk) [Cotton silk](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?fabric=cotton_silk) [Banarasi](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?fabric=banarasi) [Mysore silk](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?fabric=mysore_silk) [Uppada](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?fabric=uppada) [Pure cotton](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?fabric=pure_cotton) [Georgette](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?fabric=georgette) [Other](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?fabric=other)
 legend: Colour

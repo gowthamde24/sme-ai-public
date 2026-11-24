@@ -127917,5 +127917,104 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "catalogue.stock.out_of_stock": {
+  "en": "Out of stock",
+  "te": "స్టాక్ లేదు",
+  "hi": "स्टॉक नहीं है",
+  "kn": "ಸ್ಟಾಕ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.pg.cat.st.out_of_stock": {
+  "en": "sarees out of stock",
+  "te": "స్టాక్ లేని చీరలు",
+  "hi": "स्टॉक में नहीं वाली साड़ियाँ",
+  "kn": "ಸ್ಟಾಕ್ ಇಲ್ಲದ ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.price.undo": {
+  "en": "Undo price change",
+  "te": "ధర మార్పును వెనక్కి తీసుకోండి",
+  "hi": "दाम का बदलाव वापस लें",
+  "kn": "ಬೆಲೆ ಬದಲಾವಣೆಯನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.price.undone": {
+  "en": "The earlier price is back.",
+  "te": "ముందు ధర తిరిగి వచ్చింది.",
+  "hi": "पहले वाला दाम वापस आ गया।",
+  "kn": "ಹಿಂದಿನ ಬೆಲೆ ಮರಳಿ ಬಂದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.price.nothing": {
+  "en": "There is no price change to undo.",
+  "te": "వెనక్కి తీసుకునే ధర మార్పు లేదు.",
+  "hi": "वापस लेने लायक दाम का कोई बदलाव नहीं है।",
+  "kn": "ಹಿಂತೆಗೆದುಕೊಳ್ಳಲು ಬೆಲೆ ಬದಲಾವಣೆ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.price.owner_only": {
+  "en": "Only the Owner can undo a price change.",
+  "te": "ధర మార్పును Owner మాత్రమే వెనక్కి తీసుకోగలరు.",
+  "hi": "दाम का बदलाव सिर्फ़ Owner वापस ले सकते हैं।",
+  "kn": "ಬೆಲೆ ಬದಲಾವಣೆಯನ್ನು Owner ಮಾತ್ರ ಹಿಂತೆಗೆದುಕೊಳ್ಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.price.down": {
+  "en": "We could not do that just now. Try again in a minute.",
+  "te": "ఇప్పుడు అది చేయలేకపోయాం. ఒక నిమిషం తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो पाया। एक मिनट बाद फिर कोशिश कीजिए।",
+  "kn": "ಈಗ ಅದನ್ನು ಮಾಡಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.price.changed_by": {
+  "en": "Last changed by {name}, {when}.",
+  "te": "చివరిగా {name} మార్చారు, {when}.",
+  "hi": "आख़िरी बदलाव {name} ने किया, {when}।",
+  "kn": "ಕೊನೆಯದಾಗಿ {name} ಬದಲಿಸಿದರು, {when}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.price.changed": {
+  "en": "Last changed {when}.",
+  "te": "చివరిగా {when} మార్చారు.",
+  "hi": "आख़िरी बदलाव {when}।",
+  "kn": "ಕೊನೆಯದಾಗಿ {when} ಬದಲಿಸಲಾಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
