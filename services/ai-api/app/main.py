@@ -145,6 +145,7 @@ from app.integrations.routes_calendar import public_router as calendar_public_ro
 from app.integrations.routes_contacts import router as contacts_by_phone_router
 from app.integrations.routes_import import router as spreadsheet_import_router
 from app.integrations.routes_policy import router as policy_router
+from app.jobs.describe_routes import router as jobs_describe_router
 from app.jobs.detail_routes import router as job_detail_router
 from app.jobs.routes import ops_router as job_samples_ops_router
 from app.jobs.routes import router as jobs_router
@@ -339,6 +340,18 @@ def _outbox_adapter(settings: Settings) -> ChannelAdapter:
         return build_adapter(settings.outbox_adapter, settings)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
+
+
+def _daily_cap(config: AuthConfig) -> Any:
+    """The daily allowance of a model-backed helper (migration 991300)."""
+    rpc = RpcClient(config.rest_url, config.anon_key)
+
+    def take(token: str, tenant_id: Any, feature: str, limit: int) -> bool:
+        args = {"p_tenant_id": str(tenant_id), "p_feature": feature, "p_limit": limit}
+        out = rpc.object(token, "daily_cap_take", args)
+        return bool(out.get("ok"))
+
+    return take
 
 
 def _call_commands(settings: Settings, config: AuthConfig, phone: Any, live: LiveCalls) -> Any:
@@ -617,6 +630,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         numbers=build_numbers(settings, config.rest_url, config.anon_key, business_kyc),
         business_kyc=business_kyc,
+        daily_cap=_daily_cap(config),
         sell_lists=(
             ListRepository(config.rest_url, config.anon_key)
             if settings.what_you_sell_lists
@@ -1635,6 +1649,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(developer_router)
     app.include_router(developer_api_router)
     app.include_router(jobs_router)
+    app.include_router(jobs_describe_router)
     app.include_router(do_not_call_router)
     app.include_router(job_faq_router)
     app.include_router(sell_router)

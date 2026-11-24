@@ -43,7 +43,8 @@ ROUTE_WORDS = frozenset(
         "call-limit", "ask-consent", "ask-first", "dismiss", "rows", "unsend",   # tasks, imports
         "alerts", "ack", "google",   # admin usage and alerts (14 Nov)
         "phone-kyc", "options",   # /phone-kyc (14 Nov)
-        "business", "aadhaar", "pan", "gst", "documents", "details",   # /phone-kyc/business steps (24 Nov)
+        "business", "aadhaar", "pan", "gst", "documents", "details",   # /phone-kyc/business steps
+        "describe",   # POST /jobs/describe (24 Nov)
         "phone-line", "available", "release",   # /phone-line (18 Nov)
         "reply", "assign",   # POST /admin/support/tickets/{id}/reply and /assign (14 Nov)
         "demo", "start", "end",   # POST /calls/demo/start and /end (13 Nov)

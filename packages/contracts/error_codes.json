@@ -119,7 +119,7 @@
       "areas": [
         "jobs"
       ],
-      "default_message": "",
+      "default_message": "That is enough describing for today. Try again tomorrow.",
       "wait": true,
       "extras": [
         "reason"
@@ -1039,6 +1039,18 @@
         "deliveries"
       ],
       "default_message": "Deliveries are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "describe_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "We could not read that just now. Please try again.",
       "wait": false,
       "extras": []
     },

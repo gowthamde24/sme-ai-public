@@ -214,6 +214,8 @@ class Runtime:
     phone_kyc: Any = None
     # business KYC per VoiceLink client (KYC_PER_CLIENT, Model B); None unless on
     business_kyc: Any = None
+    # the daily allowance of model-backed helpers (migration 991300); None = no limit (tests)
+    daily_cap: Any = None
     # a business's own phone number (app/phone_numbers); None unless the provider is on
     phone_numbers: Any = None
     # how the assistant talks on calls (app/talk_training: the Owner's training)
