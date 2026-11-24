@@ -63,7 +63,7 @@ for row in "${SECRETS[@]}"; do
   fi
   while :; do
     printf '\n%s\n  %s\n' "$name" "$what"
-    read -rsp "  value (hidden; $([ "$req" = opt ] && echo 'Enter to skip' || echo 'required')): " V; echo
+    IFS= read -rsp "  value (hidden; $([ "$req" = opt ] && echo 'Enter to skip' || echo 'required')): " V; echo
     if [ -z "$V" ]; then
       [ "$req" = opt ] && { echo "skipped  $name"; break; }
       echo "  this one is required: type it, or press Ctrl-C to stop (nothing half-created is left behind: re-run to continue)"; continue
