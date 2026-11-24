@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 
 import type { PackState } from "@/app/app/tenants/[tenantId]/start/actions";
 import { makeT, type Words } from "../words";
+import { TYPE_TILE } from "./tile";
 
 export type TypeChoice = { id: string; name: string; line: string };
 
@@ -41,7 +42,7 @@ export function TypePicker({ choices, words, save }: { choices: readonly TypeCho
             key={c.id}
             data-type={c.id}
             data-picked={picked === c.id ? "" : undefined}
-            className="relative flex min-h-24 cursor-pointer flex-col justify-center gap-0.5 rounded-xl border border-line bg-transparent p-4 has-[:checked]:border-ink has-[:checked]:shadow-[0_0_0_1px_var(--v2-ink)] has-[:focus-visible]:outline-2"
+            className={TYPE_TILE}
           >
             <input type="radio" name="start-type" value={c.id} checked={picked === c.id} disabled={pending} onChange={() => choose(c.id)} className="sr-only" />
             <span className="block text-[16px] font-semibold text-ink">{c.name}</span>

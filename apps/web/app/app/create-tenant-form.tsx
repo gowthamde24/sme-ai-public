@@ -4,6 +4,7 @@ import { useActionState, useId } from "react";
 
 import { alertBox, btnMain, fieldInput, fieldLabel, formCard } from "@/components/v2/app/ui";
 
+import { TYPE_TILE } from "@/components/v2/app/start/tile";
 import { makeT, type Words } from "@/components/v2/app/words";
 
 import { createTenantAction, type TenantFormState } from "./actions";
@@ -44,7 +45,7 @@ export function CreateTenantForm({ words, types = [] }: { words?: Words; /** FIR
           <legend className={fieldLabel}>{t("start.type.title")}</legend>
           <div role="radiogroup" aria-label={t("start.type.title")} className="mt-1 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
             {types.map((p) => (
-              <label key={p.id} data-type={p.id} className="relative flex min-h-24 cursor-pointer flex-col justify-center gap-0.5 rounded-xl border border-line bg-transparent p-4 has-[:checked]:border-ink has-[:checked]:shadow-[0_0_0_1px_var(--v2-ink)] has-[:focus-visible]:outline-2">
+              <label key={p.id} data-type={p.id} className={TYPE_TILE}>
                 <input type="radio" name="pack" value={p.id} required className="sr-only" />
                 <span className="block text-[16px] font-semibold text-ink">{p.name}</span>
                 {p.line ? <span className="block text-sm text-muted">{p.line}</span> : null}

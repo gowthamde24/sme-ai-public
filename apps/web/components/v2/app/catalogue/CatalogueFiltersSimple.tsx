@@ -33,6 +33,13 @@ export function CatalogueFiltersSimple({ base, words, query, leadId, effect }: {
       {on ? <span className="sr-only"> ({say(words, "catalogue.chip.on")})</span> : null}
     </Link>
   );
+  const groups = (
+    <>
+      {group("colour", "catalogue.filter.colour", COLOURS.map((c) => chip(query.colours.includes(c), link(toggled(query, "colour", c)), vocab(words, "colour", c, c))))}
+      {group("occasion", "catalogue.filter.occasion", OCCASIONS.map((o) => chip(query.occasions.includes(o), link(toggled(query, "occasion", o)), vocab(words, "occasion", o, o))))}
+      {group("band", "catalogue.filter.band", PRICE_BANDS.map((b) => chip(query.bands.includes(b), link(toggled(query, "band", b)), BAND_WORDS[b])))}
+    </>
+  );
   return (
     <section data-part="catalogue-filters" data-simple="" className={plain ? "flex flex-col gap-3" : `${pgCard} flex flex-col gap-3`}>
       <LinkSentence
@@ -61,16 +68,10 @@ export function CatalogueFiltersSimple({ base, words, query, leadId, effect }: {
       </form>
       {effect ? (plain ? <p data-part="catalogue-effect" className="m-0 text-[14px] text-muted">{effect}</p> : <EffectLine part="catalogue-effect" text={effect} />) : null}
       {plain ? (
-        <div className="flex flex-col gap-3">
-          {group("colour", "catalogue.filter.colour", COLOURS.map((c) => chip(query.colours.includes(c), link(toggled(query, "colour", c)), vocab(words, "colour", c, c))))}
-          {group("occasion", "catalogue.filter.occasion", OCCASIONS.map((o) => chip(query.occasions.includes(o), link(toggled(query, "occasion", o)), vocab(words, "occasion", o, o))))}
-          {group("band", "catalogue.filter.band", PRICE_BANDS.map((b) => chip(query.bands.includes(b), link(toggled(query, "band", b)), BAND_WORDS[b])))}
-        </div>
+        <div className="flex flex-col gap-3">{groups}</div>
       ) : (
       <MoreBox title={say(words, "jobs.pg.more")} sub={say(words, "jobs.pg.cat.more.sub")} open={moreOn}>
-        {group("colour", "catalogue.filter.colour", COLOURS.map((c) => chip(query.colours.includes(c), link(toggled(query, "colour", c)), vocab(words, "colour", c, c))))}
-        {group("occasion", "catalogue.filter.occasion", OCCASIONS.map((o) => chip(query.occasions.includes(o), link(toggled(query, "occasion", o)), vocab(words, "occasion", o, o))))}
-        {group("band", "catalogue.filter.band", PRICE_BANDS.map((b) => chip(query.bands.includes(b), link(toggled(query, "band", b)), BAND_WORDS[b])))}
+        {groups}
       </MoreBox>
       )}
     </section>
