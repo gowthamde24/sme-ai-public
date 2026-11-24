@@ -73,7 +73,9 @@ export function DeveloperKeysCard({ words, lang, keys, usage, mock, actions, sim
   };
   // the API lists revoked keys too: the active ones first, the revoked ones after, under their own heading and greyed
   const list = [...(keys ?? [])].sort((a, b) => Number(a.revokedAt !== null) - Number(b.revokedAt !== null));
-  const firstRevoked = list.findIndex((k) => k.revokedAt !== null);
+  // the active keys are the list; the revoked ones sit behind ONE plain line, "Revoked (12)"
+  const active = list.filter((k) => k.revokedAt === null);
+  const revoked = list.filter((k) => k.revokedAt !== null);
   if (simple) {
     const named = name.trim();
     const mayList = scopes.map((x) => t(`sv6.dk.scope.${x.replace(":", "_")}`)).join(", ");
@@ -120,15 +122,11 @@ export function DeveloperKeysCard({ words, lang, keys, usage, mock, actions, sim
         ) : (
           <>
             <h3 className="m-0 text-sm font-semibold text-muted">{t("sv6.dk.list")}</h3>
-            <ul className="m-0 flex list-none flex-col divide-y divide-line p-0">
-              {list.map((k, i) => (
+            {active.length > 0 ? (
+<ul className="m-0 flex list-none flex-col divide-y divide-line p-0">
+              {active.map((k) => (
                 <Fragment key={k.id}>
-                  {i === firstRevoked ? (
-                    <li data-part="revoked-heading" className="pt-3 text-sm font-semibold text-muted">
-                      {t("sv6.dk.revoked_list")}
-                    </li>
-                  ) : null}
-                  <li data-key={k.id} data-revoked={k.revokedAt ? "true" : undefined} className={`flex flex-col gap-1 py-3 ${k.revokedAt ? "opacity-60" : ""}`}>
+                                    <li data-key={k.id} data-revoked={k.revokedAt ? "true" : undefined} className={`flex flex-col gap-1 py-3 ${k.revokedAt ? "opacity-60" : ""}`}>
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <p className="m-0 min-w-0 truncate text-[16px] font-semibold text-ink" data-name="">
                         {k.name}
@@ -177,6 +175,64 @@ export function DeveloperKeysCard({ words, lang, keys, usage, mock, actions, sim
                 </Fragment>
               ))}
             </ul>
+) : null}
+{revoked.length > 0 ? (
+<details data-part="revoked-keys" className="mt-3">
+<summary className="cursor-pointer text-sm text-muted underline underline-offset-4">{t("sv6.dk.revoked_n", { n: revoked.length })}</summary>
+<ul className="m-0 flex list-none flex-col divide-y divide-line p-0">
+              {revoked.map((k) => (
+                <Fragment key={k.id}>
+                                    <li data-key={k.id} data-revoked={k.revokedAt ? "true" : undefined} className={`flex flex-col gap-1 py-3 ${k.revokedAt ? "opacity-60" : ""}`}>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="m-0 min-w-0 truncate text-[16px] font-semibold text-ink" data-name="">
+                        {k.name}
+                      </p>
+                      {k.revokedAt ? <JobChip tone="fail">{t("sv6.dk.revoked")}</JobChip> : null}
+                    </div>
+                    <p className="m-0 font-mono text-sm text-muted [overflow-wrap:anywhere]">
+                      {k.prefix}…{k.last4}
+                    </p>
+                    <p className="m-0 text-sm text-muted">{k.scopes.map((x) => t(`sv6.dk.scope.${x.replace(":", "_")}`)).join(", ")}</p>
+                    <p className="m-0 text-sm text-muted">{k.lastUsedAt ? t("sv6.dk.used", { date: date(k.lastUsedAt) }) : t("sv6.dk.never")}</p>
+                    {!k.revokedAt ? (
+                      asking?.id === k.id ? (
+                        <div className="mt-1 rounded-xl bg-[var(--jb-wait-soft)] p-3">
+                          <p className="m-0 text-sm">{t(asking.what === "rotate" ? "sv6.dk.rotate.sure" : "sv6.dk.revoke.sure")}</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              disabled={busy}
+                              onClick={() => {
+                                const what = asking.what;
+                                setAsking(null);
+                                void run(() => (what === "rotate" ? actions.rotate(k.id) : actions.revoke(k.id)), what === "rotate" ? reveal : () => undefined);
+                              }}
+                              className={`${primary} jb-press`}
+                            >
+                              {t(asking.what === "rotate" ? "sv6.dk.rotate.yes" : "sv6.dk.revoke.yes")}
+                            </button>
+                            <button type="button" disabled={busy} onClick={() => setAsking(null)} className={btnQuiet}>
+                              {t("today.act.cancel")}
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mt-1 flex flex-wrap gap-2">
+                          <button type="button" disabled={busy} onClick={() => setAsking({ id: k.id, what: "rotate" })} className={btnQuiet} aria-label={`${t("sv6.dk.rotate")}: ${k.name}`}>
+                            {t("sv6.dk.rotate")}
+                          </button>
+                          <button type="button" disabled={busy} onClick={() => setAsking({ id: k.id, what: "revoke" })} className={btnQuiet} aria-label={`${t("sv6.dk.revoke")}: ${k.name}`}>
+                            {t("sv6.dk.revoke")}
+                          </button>
+                        </div>
+                      )
+                    ) : null}
+                  </li>
+                </Fragment>
+              ))}
+            </ul>
+</details>
+) : null}
           </>
         )}
         {usage ? (
@@ -286,15 +342,11 @@ export function DeveloperKeysCard({ words, lang, keys, usage, mock, actions, sim
       ) : (
         <>
           <h3 className="mt-3 text-sm font-semibold text-muted">{t("sv6.dk.list")}</h3>
-          <ul className="divide-y divide-line">
-            {list.map((k, i) => (
+          {active.length > 0 ? (
+<ul className="divide-y divide-line">
+            {active.map((k) => (
               <Fragment key={k.id}>
-              {i === firstRevoked ? (
-                <li data-part="revoked-heading" className="pt-3 text-sm font-semibold text-muted">
-                  {t("sv6.dk.revoked_list")}
-                </li>
-              ) : null}
-              <li data-key={k.id} data-revoked={k.revokedAt ? "true" : undefined} className={`py-2.5 ${k.revokedAt ? "opacity-60" : ""}`}>
+                            <li data-key={k.id} data-revoked={k.revokedAt ? "true" : undefined} className={`py-2.5 ${k.revokedAt ? "opacity-60" : ""}`}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="min-w-0 truncate text-base font-semibold" data-name="">
                     {k.name}
@@ -343,6 +395,64 @@ export function DeveloperKeysCard({ words, lang, keys, usage, mock, actions, sim
               </Fragment>
             ))}
           </ul>
+) : null}
+{revoked.length > 0 ? (
+<details data-part="revoked-keys" className="mt-3">
+<summary className="cursor-pointer text-sm text-muted underline underline-offset-4">{t("sv6.dk.revoked_n", { n: revoked.length })}</summary>
+<ul className="divide-y divide-line">
+            {revoked.map((k) => (
+              <Fragment key={k.id}>
+                            <li data-key={k.id} data-revoked={k.revokedAt ? "true" : undefined} className={`py-2.5 ${k.revokedAt ? "opacity-60" : ""}`}>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="min-w-0 truncate text-base font-semibold" data-name="">
+                    {k.name}
+                  </p>
+                  {k.revokedAt ? <span className="text-sm font-semibold text-muted">{t("sv6.dk.revoked")}</span> : null}
+                </div>
+                <p className="font-mono text-sm text-muted [overflow-wrap:anywhere]">
+                  {k.prefix}…{k.last4}
+                </p>
+                <p className="text-sm text-muted">{k.scopes.map((s) => t(`sv6.dk.scope.${s.replace(":", "_")}`)).join(", ")}</p>
+                <p className="text-sm text-muted">{k.lastUsedAt ? t("sv6.dk.used", { date: date(k.lastUsedAt) }) : t("sv6.dk.never")}</p>
+                {!k.revokedAt ? (
+                  asking?.id === k.id ? (
+                    <div className="mt-2 rounded-lg bg-surface-2 p-3">
+                      <p className="text-sm">{t(asking.what === "rotate" ? "sv6.dk.rotate.sure" : "sv6.dk.revoke.sure")}</p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => {
+                            const what = asking.what;
+                            setAsking(null);
+                            void run(() => (what === "rotate" ? actions.rotate(k.id) : actions.revoke(k.id)), what === "rotate" ? reveal : () => undefined);
+                          }}
+                          className={btnMain}
+                        >
+                          {t(asking.what === "rotate" ? "sv6.dk.rotate.yes" : "sv6.dk.revoke.yes")}
+                        </button>
+                        <button type="button" disabled={busy} onClick={() => setAsking(null)} className={btnQuiet}>
+                          {t("today.act.cancel")}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <button type="button" disabled={busy} onClick={() => setAsking({ id: k.id, what: "rotate" })} className={btnQuiet} aria-label={`${t("sv6.dk.rotate")}: ${k.name}`}>
+                        {t("sv6.dk.rotate")}
+                      </button>
+                      <button type="button" disabled={busy} onClick={() => setAsking({ id: k.id, what: "revoke" })} className={btnQuiet} aria-label={`${t("sv6.dk.revoke")}: ${k.name}`}>
+                        {t("sv6.dk.revoke")}
+                      </button>
+                    </div>
+                  )
+                ) : null}
+              </li>
+              </Fragment>
+            ))}
+          </ul>
+</details>
+) : null}
         </>
       )}
       {usage ? (

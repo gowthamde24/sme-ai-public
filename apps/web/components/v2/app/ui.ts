@@ -135,9 +135,9 @@ export const pillLinkInfo = `${pillLinkRoot} border-info-text bg-info-bg text-in
 export const pillLinkQuiet = "border-line bg-surface-2 text-muted";
 export const factorGrid = "mt-2 grid gap-2 text-sm [grid-template-columns:repeat(auto-fit,minmax(140px,1fr))]";
 export const factorItem = "rounded-lg bg-surface-2 px-2 py-1.5";
-export const btnGood = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-green-text bg-green-bg px-4 text-base font-semibold text-green-text hover:brightness-95 disabled:opacity-60";
-export const btnMaybe = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-amber-text bg-amber-bg px-4 text-base font-semibold text-amber-text hover:brightness-95 disabled:opacity-60";
-export const btnBad = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-red-text bg-red-bg px-4 text-base font-semibold text-red-text hover:brightness-95 disabled:opacity-60";
+export const btnGood = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2 disabled:opacity-60"; // neutral and outlined (owner, 25 Nov): Good, Maybe and Bad are told apart by their words, not by colour
+export const btnMaybe = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2 disabled:opacity-60"; // neutral and outlined (owner, 25 Nov): Good, Maybe and Bad are told apart by their words, not by colour
+export const btnBad = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2 disabled:opacity-60"; // neutral and outlined (owner, 25 Nov): Good, Maybe and Bad are told apart by their words, not by colour
 /** A row of right-aligned figures (an order's total and received), a right-aligned cell, a right-aligned line. */
 export const figureRow = "flex gap-6 text-right";
 export const cellRight = "text-right";

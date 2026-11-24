@@ -47,7 +47,7 @@ export type ReportsV6Props = {
 const card = "rounded-[18px] border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:px-[18px]";
 const h3 = "m-0 font-display text-base font-extrabold";
 const sub = "m-0 mb-3 mt-1 text-[12.5px] text-muted";
-const SRC_COLOURS = ["var(--ds-ch-don-1)", "var(--ds-ch-don-2)", "var(--ds-ch-don-3)", "var(--ds-ch-don-4)", "var(--ds-ch-don-5)"];
+const SRC_COLOURS = ["color-mix(in srgb, var(--v2-ink) 90%, transparent)", "color-mix(in srgb, var(--v2-ink) 66%, transparent)", "color-mix(in srgb, var(--v2-ink) 46%, transparent)", "color-mix(in srgb, var(--v2-ink) 28%, transparent)", "color-mix(in srgb, var(--v2-ink) 14%, transparent)"];
 const hourWord = (h: number): string => `${h % 12 === 0 ? 12 : h % 12} ${h >= 12 ? "pm" : "am"}`;
 
 /**
@@ -218,18 +218,6 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
             {t("rv6.funnel.title")}
           </h2>
           <p className={sub}>{t("rv6.funnel.sub")}</p>
-          <svg width="0" height="0" aria-hidden="true" focusable="false" className="absolute">
-            <defs>
-              <linearGradient id="rv6-fg" x1="0" x2="1">
-                <stop offset="0" stopColor="var(--ds-ch-enq-1)" />
-                <stop offset="1" stopColor="var(--ds-ch-don-1)" />
-              </linearGradient>
-              <linearGradient id="rv6-fw" x1="0" x2="1">
-                <stop offset="0" stopColor="var(--ds-ch-won-1)" />
-                <stop offset="1" stopColor="var(--ds-ch-won)" />
-              </linearGradient>
-            </defs>
-          </svg>
           <ol className="m-0 flex list-none flex-col gap-0.5 p-0">
             {funnel.map((f, i) =>
               f.value === null ? (
@@ -242,7 +230,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
                   <span className="text-muted">{t(`rv6.stage.${f.id}`)}</span>
                   <svg viewBox="0 0 100 22" preserveAspectRatio="none" aria-hidden="true" focusable="false" className="h-[22px] w-full">
                     <rect width="100" height="22" rx="4" fill="var(--v2-bg)" />
-                    {widths[i] > 0 ? <rect width={widths[i]} height="22" rx="4" fill={f.id === "won" ? "url(#rv6-fw)" : "url(#rv6-fg)"} /> : null}
+                    {widths[i] > 0 ? <rect width={widths[i]} height="22" rx="4" fill={f.id === "won" ? "var(--k-chat)" : "var(--v2-ink)"} /> : null}
                   </svg>
                   <b className="text-right tabular-nums">{f.value}</b>
                   <em className="text-right text-[11.5px] not-italic text-muted">{f.previous !== null && f.previous > 0 ? `${Math.round((f.value / f.previous) * 100)}%` : ""}</em>
@@ -350,11 +338,11 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
           <p className={sub}>{t("rv6.chart.sub")}</p>
           <p className="m-0 mb-1.5 flex gap-3.5 text-xs text-muted">
             <span className="inline-flex items-center gap-1.5">
-              <i aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-[3px] bg-gradient-to-r from-[var(--ds-ch-enq-1)] to-[var(--ds-ch-enq-3)]" />
+              <i aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-[3px] bg-ink" />
               {t("rv6.chart.enq")}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <i aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-[3px] bg-[var(--ds-ch-vis-2)]" />
+              <i aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-[3px] bg-[var(--k-visit)]" />
               {t("rv6.chart.vis")}
             </span>
           </p>

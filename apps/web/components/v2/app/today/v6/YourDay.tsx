@@ -65,12 +65,12 @@ export default function YourDay({ view, words, tenantId, mockLive, liveCalls = [
             <span aria-hidden="true" className="absolute inset-x-0 bottom-[10px] h-px bg-line" />
             {view.now ? (
               <At s={{ left: 0, bottom: 10, width: `${view.now.pct}%` }}>
-                <i className="block h-0.5 w-full rounded-sm bg-gradient-to-r from-brand/20 to-brand" />
+                <i className="block h-0.5 w-full rounded-sm bg-muted" />
               </At>
             ) : null}
             {view.calls.map((c, i) => (
               <At key={i} s={{ left: `${c.pct}%`, bottom: 10 + c.lane * 7 }}>
-                <i data-dot="call" className={`block size-2 -translate-x-1/2 rounded-full bg-brand shadow-[0_0_6px_rgba(251,146,60,0.6)] ${live && i === newest ? "ds-pulse-dot" : ""}`} />
+                <i data-dot="call" className={`block size-2 -translate-x-1/2 rounded-full bg-brand ${live && i === newest ? "ds-pulse-dot" : ""}`} />
                 {c.more > 0 ? (
                   <b data-part="more-calls" className="absolute -top-1 left-1.5 whitespace-nowrap text-[10px] font-bold text-muted">
                     +{c.more}
