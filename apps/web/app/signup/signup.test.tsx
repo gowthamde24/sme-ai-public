@@ -114,10 +114,8 @@ describe("/signup step 1: what kind of business do you run?", () => {
     render(await SignupPage(props()));
     expect(screen.getByRole("heading", { level: 1, name: "What kind of business do you run?" })).toBeInTheDocument();
     expect(screen.getByText("Step 1 of 2")).toBeInTheDocument();
-    const box = screen.getByRole("combobox", { name: "Business type" });
-    expect(box).toHaveAttribute("aria-expanded", "false");
-    fireEvent.focus(box);
-    const options = within(screen.getByRole("listbox")).getAllByRole("option");
+    expect(screen.getByRole("searchbox", { name: "Business type" })).toBeInTheDocument();
+    const options = Array.from(document.querySelectorAll<HTMLElement>("[data-pack-card]"));
     expect(options.map((o) => o.getAttribute("data-pack-card"))).toEqual(IDS);
     expect(within(options[1]).getByText(nameOf(SECOND))).toBeInTheDocument();
     expect(within(options[2]).getByText(SUMMARIES[2].summary.en)).toBeInTheDocument();
@@ -126,10 +124,8 @@ describe("/signup step 1: what kind of business do you run?", () => {
   });
   it("typing filters the list; choosing a kind goes on to step 2 with it", async () => {
     render(await SignupPage(props()));
-    const box = screen.getByRole("combobox", { name: "Business type" });
-    fireEvent.focus(box);
-    fireEvent.change(box, { target: { value: nameOf(SECOND).slice(0, 4) } });
-    const left = within(screen.getByRole("listbox")).getAllByRole("option");
+    fireEvent.change(screen.getByRole("searchbox", { name: "Business type" }), { target: { value: nameOf(SECOND).slice(0, 4) } });
+    const left = Array.from(document.querySelectorAll<HTMLElement>("[data-pack-card]"));
     expect(left.map((o) => o.getAttribute("data-pack-card"))).toContain(IDS[1]);
     fireEvent.click(left.find((o) => o.getAttribute("data-pack-card") === IDS[1])!);
     expect(push).toHaveBeenCalledWith(`/signup?type=${IDS[1]}`);

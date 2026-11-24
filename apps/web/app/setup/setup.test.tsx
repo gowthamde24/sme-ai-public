@@ -34,8 +34,7 @@ const groups = [
   { key: "other", label: "Other", options: [{ id: "other", name: "Other", tagline: "Anything else" }] },
 ];
 const pick = (name: string) => {
-  fireEvent.focus(screen.getByRole("combobox"));
-  fireEvent.click(within(screen.getByRole("listbox")).getByRole("option", { name: new RegExp(name) }));
+  fireEvent.click(screen.getByRole("radio", { name: new RegExp(name) }));
 };
 const submit = () => fireEvent.submit(screen.getByRole("button", { name: "Continue" }).closest("form")!);
 const name = (v: string) => fireEvent.change(screen.getByLabelText("Your business name"), { target: { value: v } });
@@ -62,7 +61,7 @@ describe("SetupForm: only the kind of business and its name are asked", () => {
   it("starts with the kind chosen at sign-up and needs only the name", async () => {
     const action = vi.fn(async (): Promise<CompleteSetupResult> => ({ ok: true }));
     render(<SetupForm words={words} lang="en" action={action} groups={groups} remembered="textiles" />);
-    expect(screen.getByRole("combobox")).toHaveAttribute("placeholder", "Textiles");
+    expect(screen.getByRole("radio", { name: /Textiles/ })).toHaveAttribute("aria-checked", "true");
     name("Asha Silks");
     submit();
     await waitFor(() => expect(action).toHaveBeenCalledWith({ businessType: "textiles", language: "en", businessName: "Asha Silks" }));
@@ -120,12 +119,11 @@ describe("/setup", () => {
     render(await SetupPage());
     expect(requireUser).toHaveBeenCalled();
     expect(screen.getByRole("heading", { level: 1, name: "Set up your business" })).toBeInTheDocument();
-    expect(screen.getByRole("combobox")).toBeInTheDocument();
+    expect(screen.getByRole("searchbox")).toBeInTheDocument();
     expect(screen.getByLabelText("Your business name")).toBeRequired();
-    expect(screen.getAllByRole("radio")).toHaveLength(4); // the four languages: the kinds are in the list, not radios
+    expect(screen.getAllByRole("radio", { checked: false }).filter((r) => r.getAttribute("name") === "language").length + screen.getAllByRole("radio").filter((r) => r.getAttribute("name") === "language" && (r as HTMLInputElement).checked).length).toBe(4); // the four languages (the kinds are tiles)
     expect(fetchAccountSetup).toHaveBeenCalledWith("t");
-    fireEvent.focus(screen.getByRole("combobox"));
-    expect(within(screen.getByRole("listbox")).getAllByRole("option")).toHaveLength(IDS.length);
+    expect(document.querySelectorAll("[data-pack-card]")).toHaveLength(IDS.length);
   });
   it("is wired to the real completeSetup action, with the kind the account carries", async () => {
     requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack: IDS[1] });
@@ -139,7 +137,7 @@ describe("/setup", () => {
     for (const signupPack of ["a_type_nobody_offers", "Not A Code"]) {
       requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack });
       render(await SetupPage());
-      expect(screen.getByRole("combobox")).toHaveAttribute("placeholder", "Choose or search your business type");
+      expect(document.querySelectorAll('[data-pack-card][aria-checked="true"]')).toHaveLength(0);
       cleanup();
     }
   });
@@ -165,7 +163,7 @@ describe("/setup", () => {
     requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack: IDS[1] });
     completeSetup.mockResolvedValue({ ok: true });
     render(await SetupPage());
-    expect(screen.queryByRole("combobox")).toBeNull();
+    expect(screen.queryByRole("searchbox")).toBeNull();
     name("Asha Silks");
     submit();
     await waitFor(() => expect(completeSetup).toHaveBeenCalledWith({ businessType: IDS[1], language: "en", businessName: "Asha Silks" }));

@@ -30,11 +30,9 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-const optionIds = () => {
-  fireEvent.focus(screen.getByRole("combobox"));
-  return within(screen.getByRole("listbox")).getAllByRole("option").map((e) => e.getAttribute("data-pack-card"));
-};
-const groupLabels = () => within(screen.getByRole("listbox")).getAllByRole("group").map((g) => g.querySelector("p")?.textContent);
+// the types are boxed tiles in groups (29 Nov 2026): a tile carries data-pack-card, a group is a section with its heading
+const optionIds = () => Array.from(document.querySelectorAll("[data-pack-card]")).map((e) => e.getAttribute("data-pack-card"));
+const groupLabels = () => Array.from(document.querySelectorAll("[data-group] h3")).map((h) => h.textContent);
 
 describe("sign-up step 1: one list, grouped (Built especially for / Businesses with enquiries / Other)", () => {
   it("with the leads flag off the types are one plain group, and the templates are not asked", async () => {
@@ -56,7 +54,7 @@ describe("sign-up step 1: one list, grouped (Built especially for / Businesses w
     render(await SignupPage(props()));
     expect(optionIds().at(-1)).toBe("other");
     expect(groupLabels().at(-1)).toBe("Other");
-    fireEvent.click(within(screen.getByRole("listbox")).getByRole("option", { name: /Other/ }));
+    fireEvent.click(document.querySelector('[data-pack-card="other"]')!);
     expect(push).toHaveBeenCalledWith("/signup?type=other");
   });
   it("one of the nine chosen goes to step 2 (the sign-in choices) as an ordinary business type", async () => {
