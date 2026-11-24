@@ -649,6 +649,54 @@
       "extras": []
     },
     {
+      "code": "code_expired",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "That code is too old. Ask for a new one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "code_locked",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "Too many wrong codes. Ask for a new code.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "code_missing",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "Ask for a new code first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "code_wrong",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "That code is not right.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "company_has_no_website",
       "statuses": [
         409
@@ -1078,6 +1126,18 @@
       "extras": []
     },
     {
+      "code": "email_not_allowed",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "Please use your own, permanent e-mail address.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "email_not_confirmed",
       "statuses": [
         403
@@ -1086,6 +1146,18 @@
         "main"
       ],
       "default_message": "Confirm your email address first: use the link we sent you.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "email_unconfirmed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "Confirm your e-mail first.",
       "wait": false,
       "extras": []
     },
@@ -3455,6 +3527,18 @@
       "extras": []
     },
     {
+      "code": "phone_code_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "We cannot send a code right now. Please try again later.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "phone_invalid",
       "statuses": [
         422
@@ -3475,6 +3559,18 @@
         "phone_numbers"
       ],
       "default_message": "The phone provider has not accepted your business registration. A number can be taken once it has.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "phone_taken",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "That phone number is already used by another account.",
       "wait": false,
       "extras": []
     },
@@ -4112,6 +4208,7 @@
         "integrations",
         "lead_sources",
         "pronunciation",
+        "signup",
         "voicesample",
         "whatsapp"
       ],
@@ -4594,6 +4691,30 @@
         "main"
       ],
       "default_message": "The shop is closed that day.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "signup_closed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "Sign-up is not open yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "signup_refused",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "That did not work. Please try again.",
       "wait": false,
       "extras": []
     },
@@ -5191,6 +5312,7 @@
         "outbox",
         "outcomes",
         "search",
+        "signup",
         "sites",
         "telephony",
         "tenancy",

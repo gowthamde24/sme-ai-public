@@ -215,6 +215,7 @@ select is(
         'public.pricing_catalogue',
         'public.pricing_balance',
         'public.pricing_free_start_grant',
+        'public.signup_status', 'public.signup_consent_record', 'public.signup_phone_start', 'public.signup_phone_verify', 'public.signup_trial_claim', 'public.ops_signup_set',
         'public.pricing_topup_credit',
         'public.pricing_charge_call',
         'public.pricing_can_start_call',
@@ -414,7 +415,7 @@ select is(
         'public.business_profile_set',
         -- job CK (ADR 0084 parts 1 and 2): the pack a business runs and its modules (every member reads), the packs a person may choose, custom fields (Owner / Admin with a second factor to define; the roles that may edit the
         -- entity to fill in), and the example data (Owner / Admin). Each proves the role first; the pack tables themselves have no client grant.
-        'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue', 'public.workspace_pack_set', 'public.first_run_facts', 'public.sell_entry_list', 'public.sell_entry_get', 'public.sell_entry_put', 'public.sell_entry_remove',
+        'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue', 'public.workspace_pack_set', 'public.first_run_facts', 'public.sell_entry_list', 'public.sell_entry_get', 'public.signup_status', 'public.signup_consent_record', 'public.signup_phone_start', 'public.signup_phone_verify', 'public.signup_trial_claim', 'public.ops_signup_set', 'public.sell_entry_put', 'public.sell_entry_remove',
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
         'public.example_data_status', 'public.example_data_load', 'public.example_data_remove', 'public.example_data_reset',
         -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
@@ -560,7 +561,7 @@ select is(
                      'public.business_profile_set',
         -- job CK (ADR 0084 parts 1 and 2): the pack a business runs and its modules (every member reads), the packs a person may choose, custom fields (Owner / Admin with a second factor to define; the roles that may edit the
         -- entity to fill in), and the example data (Owner / Admin). Each proves the role first; the pack tables themselves have no client grant.
-        'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue', 'public.workspace_pack_set', 'public.first_run_facts', 'public.sell_entry_list', 'public.sell_entry_get', 'public.sell_entry_put', 'public.sell_entry_remove',
+        'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue', 'public.workspace_pack_set', 'public.first_run_facts', 'public.sell_entry_list', 'public.sell_entry_get', 'public.signup_status', 'public.signup_consent_record', 'public.signup_phone_start', 'public.signup_phone_verify', 'public.signup_trial_claim', 'public.ops_signup_set', 'public.sell_entry_put', 'public.sell_entry_remove',
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
         'public.example_data_status', 'public.example_data_load', 'public.example_data_remove', 'public.example_data_reset',
         -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)

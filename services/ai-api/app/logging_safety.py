@@ -21,6 +21,7 @@ from typing import Any
 ROUTE_WORDS = frozenset(
     {
         "phone-knows",   # GET /assistant/phone-knows (28 Nov)
+        "signup", "consent", "phone", "verify", "trial-claim",   # opening sign-up (24 Nov)
         "numbers", "claim",   # the number picker routes (28 Nov)
         "template",   # POST /conversations/{id}/template (a template picked in a chat, 16 Nov)
         "marketing-consent", "consented",   # campaigns S3, 17 Nov

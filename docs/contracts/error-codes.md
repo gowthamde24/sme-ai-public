@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (445)
+## Codes (455)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -68,6 +68,10 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `cap_required` | 422 | main |  |  | Set a monthly limit above zero for this. |
 | `captcha_failed` | 400 | dpdp |  |  | We could not check that you are a person. Please try again. |
 | `catalogue_unavailable` | 503 | catalogue, materials |  |  | The catalogue is not available right now. |
+| `code_expired` | 422 | signup |  |  | That code is too old. Ask for a new one. |
+| `code_locked` | 429 | signup | yes |  | Too many wrong codes. Ask for a new code. |
+| `code_missing` | 422 | signup |  |  | Ask for a new code first. |
+| `code_wrong` | 422 | signup |  |  | That code is not right. |
 | `company_has_no_website` | 409 | agent_runs |  |  | This company has no website to research. |
 | `confirm_needed` | 409 | assistant_work |  |  | Confirm this on the card first. |
 | `confirm_required` | 422 | whatsapp |  |  | Press Confirm to send this to WhatsApp for review. |
@@ -103,7 +107,9 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `dues_unavailable` | 503 | dues |  |  | Dues are not available right now. |
 | `duplicate_value` | 409 | main |  |  | (the sentence varies: show `message`) |
 | `education_unavailable` | 503 | education, integrations |  |  | Education is not available right now. |
+| `email_not_allowed` | 422 | signup |  |  | Please use your own, permanent e-mail address. |
 | `email_not_confirmed` | 403 | main |  |  | Confirm your email address first: use the link we sent you. |
+| `email_unconfirmed` | 409 | signup |  |  | Confirm your e-mail first. |
 | `empty_enquiry` | 422 | enquiries |  |  | There is no text left to store after cleaning it. |
 | `enhance_busy` | 429 | enhance | yes |  | That is a lot of rewrites for one hour. Try again a little later. |
 | `enhance_unavailable` | 503 | enhance |  |  | Enhance is not available right now. |
@@ -295,8 +301,10 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `payment_not_verified` | 402 | pricing |  |  | The payment could not be verified. Nothing was added. |
 | `payment_provider_failed` | 502 | connectors |  |  | The payment service could not make the link. Nothing was sent to the customer. |
 | `payment_required` | 422 | pricing |  |  | This change has an amount to pay. Pay it first. |
+| `phone_code_unavailable` | 503 | signup |  |  | We cannot send a code right now. Please try again later. |
 | `phone_invalid` | 422 | jobs |  |  | That is not a phone number we can use. Check the digits. |
 | `phone_kyc_required` | 409 | phone_numbers |  |  | The phone provider has not accepted your business registration. A number can be taken once it has. |
+| `phone_taken` | 409 | signup |  |  | That phone number is already used by another account. |
 | `photo_animated` | 422 | catalogue |  |  | Use a still photo, not an animation. |
 | `photo_files_missing` | 409 | main |  |  | The photo did not finish uploading. Try again. |
 | `photo_too_big` | 422 | catalogue |  |  | That photo has too many pixels. Use a smaller one. |
@@ -347,7 +355,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `quote_text_refused` | 409 | quotes |  |  | The stored quote cannot be rendered. |
 | `quote_text_unavailable` | 503 | quotes |  |  | Quote text is not available right now. |
 | `quotes_unavailable` | 503 | lead_finder, quotes |  |  | Quotes are not available right now. |
-| `rate_limited` | 429 | conversation, dpdp, errors, hardening, integrations, lead_sources, pronunciation, voicesample, whatsapp | yes |  | Request failed. |
+| `rate_limited` | 429 | conversation, dpdp, errors, hardening, integrations, lead_sources, pronunciation, signup, voicesample, whatsapp | yes |  | Request failed. |
 | `reader_unavailable` | 503 | knowledge |  |  | Pictures and scanned pages cannot be read yet. Type or paste the text instead. |
 | `real_data_gate_closed` | 409 | main |  |  | This workspace accepts synthetic data only for now: use an e-mail address on a reserved domain (such as example.test) and a phone number that starts with +00. |
 | `real_data_not_open` | 422 | assistant_work |  |  | (the sentence varies: show `message`) |
@@ -387,6 +395,8 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `sheet_unreachable` | 502 | lead_sources |  |  | Google Sheets could not be reached. Try again. |
 | `sheets_unavailable` | 503 | lead_sources |  |  | Google Sheets cannot be read right now. |
 | `shop_closed` | 409 | main |  |  | The shop is closed that day. |
+| `signup_closed` | 409 | signup |  |  | Sign-up is not open yet. |
+| `signup_refused` | 409 | signup |  |  | That did not work. Please try again. |
 | `site_contact_invalid` | 422 | main |  |  | That site contact is not a contact of this business. |
 | `sites_unavailable` | 503 | sites |  |  | Sites are not available right now. |
 | `slot_full` | 409 | main |  |  | Every place in that time is taken. Choose another time. |
@@ -431,7 +441,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `unsupported_type` | 415 | knowledge, lead_sources |  |  | That kind of body is not accepted. |
 | `upstream_error` | 502 | agent_runs, assistant, catalogue, erasure, main, materials, today, voice_notes |  |  | The data layer failed. |
 | `upstream_unavailable` | 502 | lead_sources |  |  | Try again shortly. |
-| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, jobs, lead_profile, lead_sources, main, materials, numbers, opening, orders, outbox, outcomes, search, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
+| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, jobs, lead_profile, lead_sources, main, materials, numbers, opening, orders, outbox, outcomes, search, signup, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
 | `value_not_accepted` | 422 | enquiries |  |  | (the sentence varies: show `message`) |
 | `vision_unavailable` | 503 | assistant_context |  |  | Reading pictures and PDFs is not switched on for this system. Paste the text instead. |
 | `visit_state` | 409 | main |  |  | That cannot be done in the state the visit is in now. Reload and look again. |

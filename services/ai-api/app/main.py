@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import logging
 import secrets
 from collections.abc import AsyncIterator
@@ -239,6 +240,10 @@ from app.scheduler.repository import PostgrestSchedulerRepository
 from app.scheduler.routes import router as scheduler_router
 from app.search.routes import PostgrestSearch
 from app.search.routes import router as search_router
+from app.signup.routes import claim_router as signup_claim_router
+from app.signup.routes import router as signup_router
+from app.signup.sender import FakeSender, NoSender
+from app.signup.service import SignupRepository, SignupService
 from app.sites import errors as site_errors
 from app.sites.repository import PostgrestSitesRepository
 from app.sites.routes import router as sites_router
@@ -326,6 +331,31 @@ def _outbox_adapter(settings: Settings) -> ChannelAdapter:
         return build_adapter(settings.outbox_adapter, settings)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
+
+
+def _signup_service(settings: Settings, config: AuthConfig) -> SignupService | None:
+    """Opening sign-up: None unless SIGNUP_OPEN.
+
+    The phone and code hashes are keyed with the suppression key (refused at start-up without
+    it); the fake code echo is refused in production."""
+    if not settings.signup_open:
+        return None
+    key = settings.suppression_hmac_key
+    if key is None:
+        raise RuntimeError("SIGNUP_OPEN needs SUPPRESSION_HMAC_KEY")
+    echo = settings.signup_fake_code_echo
+    fake_sender = settings.signup_phone_sender == "fake"
+    if echo and (settings.admin_environment == "production" or not fake_sender):
+        raise RuntimeError("SIGNUP_FAKE_CODE_ECHO needs a staging API with the fake sender")
+    sender = FakeSender(echo=echo) if fake_sender else NoSender()
+    secret = hashlib.sha256(b"signup-opening:" + key.get_secret_value().encode()).digest()
+    return SignupService(
+        SignupRepository(config.rest_url, config.anon_key),
+        secret,
+        sender,
+        echo_code=echo,
+        proxy_hops=settings.trusted_proxy_hops,
+    )
 
 
 def _signing_key(settings: Settings) -> bytes:
@@ -541,6 +571,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
             if settings.pricing_v2
             else None
         ),
+        signup=_signup_service(settings, config),
         billing_webhook=billing_webhook,
         admin=(
             AdminService(
@@ -1512,6 +1543,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(call_settings_router)
     app.include_router(pricing_public_router)
     app.include_router(pricing_router)
+    app.include_router(signup_router)
+    app.include_router(signup_claim_router)
     app.include_router(admin_router)
     app.include_router(admin_tenant_router)
     app.include_router(assistant_status_router)

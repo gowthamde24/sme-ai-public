@@ -50,6 +50,10 @@ campaigns_unavailable
 cap_required
 captcha_failed
 catalogue_unavailable
+code_expired
+code_locked
+code_missing
+code_wrong
 company_has_no_website
 confirm_needed
 confirm_required
@@ -85,7 +89,9 @@ draft_failed
 dues_unavailable
 duplicate_value
 education_unavailable
+email_not_allowed
 email_not_confirmed
+email_unconfirmed
 empty_enquiry
 enhance_busy
 enhance_unavailable
@@ -277,8 +283,10 @@ payment_method_declined
 payment_not_verified
 payment_provider_failed
 payment_required
+phone_code_unavailable
 phone_invalid
 phone_kyc_required
+phone_taken
 photo_animated
 photo_files_missing
 photo_too_big
@@ -369,6 +377,8 @@ sheet_refused
 sheet_unreachable
 sheets_unavailable
 shop_closed
+signup_closed
+signup_refused
 site_contact_invalid
 sites_unavailable
 slot_full
