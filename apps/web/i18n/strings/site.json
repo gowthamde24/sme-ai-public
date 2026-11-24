@@ -12656,19 +12656,6 @@
   },
   "ta": "Sample result. Real results come from your own search."
  },
- "v9.finder.15": {
-  "en": "Searches included every month, then",
-  "te": "Searches included every month, then",
-  "hi": "Searches included every month, then",
-  "kn": "Searches included every month, then",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Searches included every month, then"
- },
  "v9.finder.16": {
   "en": "₹49",
   "te": "₹49",
@@ -12746,19 +12733,6 @@
    "ta": "draft"
   },
   "ta": "Business"
- },
- "v9.finder.22": {
-  "en": "for each extra search.",
-  "te": "for each extra search.",
-  "hi": "for each extra search.",
-  "kn": "for each extra search.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "for each extra search."
  },
  "v9.voices.1": {
   "en": "Hear our voices",
@@ -13293,45 +13267,6 @@
   },
   "ta": "Tries again within calling hours, up to your limit."
  },
- "v9.guard.22": {
-  "en": "10:00 Busy",
-  "te": "10:00 Busy",
-  "hi": "10:00 Busy",
-  "kn": "10:00 Busy",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "10:00 Busy"
- },
- "v9.guard.23": {
-  "en": "Tries again later",
-  "te": "Tries again later",
-  "hi": "Tries again later",
-  "kn": "Tries again later",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Tries again later"
- },
- "v9.guard.24": {
-  "en": "5:00 pm Connected, visit booked",
-  "te": "5:00 pm Connected, visit booked",
-  "hi": "5:00 pm Connected, visit booked",
-  "kn": "5:00 pm Connected, visit booked",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "5:00 pm Connected, visit booked"
- },
  "v9.guard.25": {
   "en": "Limits you control",
   "te": "Limits you control",
@@ -13411,30 +13346,17 @@
   "ta": "Every enquiry is a customer waiting."
  },
  "v9.calc.3": {
-  "en": "Watch the same enquiries arrive twice: once answered in seconds, once left waiting for hours.",
-  "te": "Watch the same enquiries arrive twice: once answered in seconds, once left waiting for hours.",
-  "hi": "Watch the same enquiries arrive twice: once answered in seconds, once left waiting for hours.",
-  "kn": "Watch the same enquiries arrive twice: once answered in seconds, once left waiting for hours.",
+  "en": "The same enquiry, with and without a fast call-back.",
+  "te": "The same enquiry, with and without a fast call-back.",
+  "hi": "The same enquiry, with and without a fast call-back.",
+  "kn": "The same enquiry, with and without a fast call-back.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "Watch the same enquiries arrive twice: once answered in seconds, once left waiting for hours."
- },
- "v9.calc.4": {
-  "en": "Illustration, not a promise.",
-  "te": "Illustration, not a promise.",
-  "hi": "Illustration, not a promise.",
-  "kn": "Illustration, not a promise.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Illustration, not a promise."
+  "ta": "The same enquiry, with and without a fast call-back."
  },
  "v9.pricing.1": {
   "en": "Pricing",
@@ -15490,136 +15412,6 @@
   },
   "ta": "Reminder set for tomorrow, 10:00"
  },
- "v9.pipe.w.tabs": {
-  "en": "Reply speed",
-  "te": "Reply speed",
-  "hi": "Reply speed",
-  "kn": "Reply speed",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Reply speed"
- },
- "v9.pipe.w.fast": {
-  "en": "Replied in seconds",
-  "te": "Replied in seconds",
-  "hi": "Replied in seconds",
-  "kn": "Replied in seconds",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Replied in seconds"
- },
- "v9.pipe.w.slow": {
-  "en": "Replied after hours",
-  "te": "Replied after hours",
-  "hi": "Replied after hours",
-  "kn": "Replied after hours",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Replied after hours"
- },
- "v9.pipe.w.src": {
-  "en": "Calls & WhatsApp enquiries arriving",
-  "te": "Calls & WhatsApp enquiries arriving",
-  "hi": "Calls & WhatsApp enquiries arriving",
-  "kn": "Calls & WhatsApp enquiries arriving",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Calls & WhatsApp enquiries arriving"
- },
- "v9.pipe.w.clock": {
-  "en": "Your reply time",
-  "te": "Your reply time",
-  "hi": "Your reply time",
-  "kn": "Your reply time",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Your reply time"
- },
- "v9.pipe.w.fastTime": {
-  "en": "8 sec",
-  "te": "8 sec",
-  "hi": "8 sec",
-  "kn": "8 sec",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "8 sec"
- },
- "v9.pipe.w.slowTime": {
-  "en": "5 hours",
-  "te": "5 hours",
-  "hi": "5 hours",
-  "kn": "5 hours",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "5 hours"
- },
- "v9.pipe.w.bucket": {
-  "en": "Customers",
-  "te": "Customers",
-  "hi": "Customers",
-  "kn": "Customers",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Customers"
- },
- "v9.pipe.w.lost": {
-  "en": "Slipped away",
-  "te": "Slipped away",
-  "hi": "Slipped away",
-  "kn": "Slipped away",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Slipped away"
- },
- "v9.pipe.w.lostSub": {
-  "en": "to the next shop",
-  "te": "to the next shop",
-  "hi": "to the next shop",
-  "kn": "to the next shop",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "to the next shop"
- },
  "v9.faq.q0": {
   "en": "Which languages does the assistant speak?",
   "te": "Which languages does the assistant speak?",
@@ -15808,6 +15600,201 @@
   "hi": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
   "kn": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
   "ta": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.finder.price.title": {
+  "en": "Extra searches",
+  "te": "Extra searches",
+  "hi": "Extra searches",
+  "kn": "Extra searches",
+  "ta": "Extra searches",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.finder.price.note": {
+  "en": "Price of each extra search. Some searches are included every month.",
+  "te": "Price of each extra search. Some searches are included every month.",
+  "hi": "Price of each extra search. Some searches are included every month.",
+  "kn": "Price of each extra search. Some searches are included every month.",
+  "ta": "Price of each extra search. Some searches are included every month.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.guard.t1.time": {
+  "en": "10:00 am",
+  "te": "10:00 am",
+  "hi": "10:00 am",
+  "kn": "10:00 am",
+  "ta": "10:00 am",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.guard.t1.what": {
+  "en": "Busy. It tries again later.",
+  "te": "Busy. It tries again later.",
+  "hi": "Busy. It tries again later.",
+  "kn": "Busy. It tries again later.",
+  "ta": "Busy. It tries again later.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.guard.t2.time": {
+  "en": "1:30 pm",
+  "te": "1:30 pm",
+  "hi": "1:30 pm",
+  "kn": "1:30 pm",
+  "ta": "1:30 pm",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.guard.t2.what": {
+  "en": "No answer. It tries again.",
+  "te": "No answer. It tries again.",
+  "hi": "No answer. It tries again.",
+  "kn": "No answer. It tries again.",
+  "ta": "No answer. It tries again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.guard.t3.time": {
+  "en": "5:00 pm",
+  "te": "5:00 pm",
+  "hi": "5:00 pm",
+  "kn": "5:00 pm",
+  "ta": "5:00 pm",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.guard.t3.what": {
+  "en": "Connected. Visit booked.",
+  "te": "Connected. Visit booked.",
+  "hi": "Connected. Visit booked.",
+  "kn": "Connected. Visit booked.",
+  "ta": "Connected. Visit booked.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.cmp.time": {
+  "en": "4:10 pm",
+  "te": "4:10 pm",
+  "hi": "4:10 pm",
+  "kn": "4:10 pm",
+  "ta": "4:10 pm",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.cmp.enq": {
+  "en": "A customer asks about a product.",
+  "te": "A customer asks about a product.",
+  "hi": "A customer asks about a product.",
+  "kn": "A customer asks about a product.",
+  "ta": "A customer asks about a product.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.cmp.without": {
+  "en": "Without a fast call-back",
+  "te": "Without a fast call-back",
+  "hi": "Without a fast call-back",
+  "kn": "Without a fast call-back",
+  "ta": "Without a fast call-back",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.cmp.without.t": {
+  "en": "Nobody calls back, so they ask the next shop.",
+  "te": "Nobody calls back, so they ask the next shop.",
+  "hi": "Nobody calls back, so they ask the next shop.",
+  "kn": "Nobody calls back, so they ask the next shop.",
+  "ta": "Nobody calls back, so they ask the next shop.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.cmp.with": {
+  "en": "With {brand}",
+  "te": "With {brand}",
+  "hi": "With {brand}",
+  "kn": "With {brand}",
+  "ta": "With {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.cmp.with.t": {
+  "en": "Called back at 4:12 pm. Visit booked.",
+  "te": "Called back at 4:12 pm. Visit booked.",
+  "hi": "Called back at 4:12 pm. Visit booked.",
+  "kn": "Called back at 4:12 pm. Visit booked.",
+  "ta": "Called back at 4:12 pm. Visit booked.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
+ },
+ "v9.calc.4": {
+  "en": "Example, not a promise.",
+  "te": "Example, not a promise.",
+  "hi": "Example, not a promise.",
+  "kn": "Example, not a promise.",
+  "ta": "Example, not a promise.",
   "status": {
    "te": "draft",
    "hi": "draft",

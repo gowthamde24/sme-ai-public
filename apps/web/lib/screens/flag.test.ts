@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { leadsOpen, pronunciationScreens, reportsOpen, callsOpen, filtersOpen, todayOpen, firstDayOpen, settingsOpen, phoneSteps, templatesPlain, myAssistantOpen, firstRunType, assistantScreens, assistantWorkScreens, balanceScreens, callScreens, earlyAccess, outcomeScreens, planTierScreens, screenMode, topupScreens } from "./flag";
+import { leadsOpen, pronunciationScreens, reportsOpen, callsOpen, filtersOpen, todayOpen, firstDayOpen, settingsOpen, templatesPlain, myAssistantOpen, firstRunType, assistantScreens, assistantWorkScreens, balanceScreens, callScreens, earlyAccess, outcomeScreens, planTierScreens, screenMode, topupScreens } from "./flag";
 import { enabledFeatures } from "./features";
 
 describe("the flags of the live call, outcomes and AI assistant screens", () => {
@@ -69,7 +69,7 @@ describe("free early access (owner's launch scope, 18 Nov)", () => {
 
 describe("the flags that only change a screen's look are on for exactly 1, from their own variable", () => {
   it("is off for anything else, and reads its own variable at request time", () => {
-    const fns = { leadsOpen, reportsOpen, callsOpen, filtersOpen, todayOpen, firstDayOpen, settingsOpen, phoneSteps, templatesPlain, myAssistantOpen, firstRunType } as const;
+    const fns = { leadsOpen, reportsOpen, callsOpen, filtersOpen, todayOpen, firstDayOpen, settingsOpen, templatesPlain, myAssistantOpen, firstRunType } as const;
     for (const [name, fn] of Object.entries(fns)) {
       for (const v of [undefined, "", "0", "yes", "true", "mock", " 1"]) expect(fn(v), `${name}(${String(v)})`).toBe(false);
       expect(fn("1"), name).toBe(true);
