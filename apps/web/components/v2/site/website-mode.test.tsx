@@ -5,7 +5,7 @@ vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars", teluguFon
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc }));
 // the home page's below-the-fold islands are chunks on the client; a test renders them at once
-vi.mock("./v9/lazy", async () => { const m = await import("./v9/below"); return { VoicesClient: m.VoicesClient, JobsClient: m.JobsClient, PipeClient: m.PipeClient, FaqClient: m.FaqClient, HowDemoClient: m.HowDemoClient, TryItClient: m.TryItClient, Reveal: m.Reveal, OrbRingLazy: () => null }; });
+vi.mock("./v9/lazy", async () => { const m = await import("./v9/below"); return { VoicesClient: m.VoicesClient, JobsClient: m.JobsClient, FaqClient: m.FaqClient, HowDemoClient: m.HowDemoClient, TryItClient: m.TryItClient, Reveal: m.Reveal, OrbRingLazy: () => null }; });
 
 import { renderToStaticMarkup } from "react-dom/server";
 
