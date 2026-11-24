@@ -518,7 +518,7 @@ function Bubble({ m, index, t, words, teach, next }: { m: ThreadItem; index: num
   const ticks = state === "delivered" || state === "read" ? "✓✓" : state === "sent" ? "✓" : null;
   return (
     <li className={`flex flex-col gap-1 ${mine ? "items-end" : "items-start"}`} data-direction={m.direction} data-by={mine ? (assistant ? "assistant" : "owner") : "customer"}>
-      <div className={`max-w-[68%] px-[13px] py-2.5 text-ink shadow-[0_1px_0_rgba(0,0,0,0.04)] ${mine ? "rounded-[14px_14px_4px_14px] bg-brand-bg" : "rounded-[14px_14px_14px_4px] border border-line bg-surface"}`}>
+      <div className={`max-w-[68%] px-[13px] py-2.5 text-ink shadow-[0_1px_0_rgba(0,0,0,0.04)] ${mine ? "rounded-[14px_14px_4px_14px] bg-surface-2" : "rounded-[14px_14px_14px_4px] border border-line bg-surface"}`}>
         <p className="m-0 whitespace-pre-wrap [overflow-wrap:anywhere]">{m.text}</p>
         {m.photos > 0 ? <p className="m-0 mt-1 text-sm text-muted">{t("wa.thread.photos", { n: m.photos })}</p> : null}
         <p className="m-0 mt-1 text-right text-[11px] text-muted">

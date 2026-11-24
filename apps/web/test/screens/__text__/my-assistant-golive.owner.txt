@@ -3,7 +3,7 @@ Not live What your assistant knows, how it sounds and its rules. Everything alre
 [button type=button: Go live]
 {label="Go live"}
 ## Go live
-Not live yet Your assistant is not answering customers yet. Practise first, or go live with the defaults. What is needed
+Not live yet Not answering customers now. Practise first, or go live with the defaults. What is needed
 - ✓ Your business name Done
 - ✓ A connected phone number Done
 Only these two are needed. Everything else has a working default. Still on defaults

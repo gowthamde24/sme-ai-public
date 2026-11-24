@@ -49,12 +49,12 @@ AFTER_HOURS = {"en": "Thank you for calling {business}. We are closed right now.
 
 # the person rang US: no "I am calling about your enquiry"; it says it is an AI and asks how it can help (drafts for a native reader, like the other fixed words)
 # 26 Nov 2026: every language except Telugu now ASKS HOW IT CAN HELP, as this comment always said; they had been given the outbound question "do you have a minute to talk?", which asks the person who rang us for THEIR time. Telugu is
-# reviewed text and changes only with the owner's own yes (the Telugu lines below still carry the old question until he answers).
+# reviewed text and changes only with the owner's own yes (the Telugu lines below carry his own wording since 28 Nov 2026: "చెప్పండి, నేను మీకు ఎలా help చేయగలను?"; the question "can you talk for a minute?" stays for calls WE place).
 # Every call, every language (owner, 6 Nov 2026): the assistant's name (Settings > Assistant, default Priya), the business (the workspace's name), and "AI assistant" IN THE FIRST SENTENCE;
 # then one short question. The written text keeps the business as it is written ("Stack19"); the voice says it in English (app/pronunciation/brand.py). Drafts for a native reader except te.
 INBOUND_OPENING = {
     "en": "Hello, I'm {assistant}, the AI assistant from {business}. How can I help you?",
-    "te": "హలో, నేను {business} నుంచి {assistant}, AI అసిస్టెంట్‌ని. ఇప్పుడు ఒక నిమిషం మాట్లాడొచ్చా?",
+    "te": "హలో, నేను {business} నుంచి {assistant}, AI అసిస్టెంట్‌ని. చెప్పండి, నేను మీకు ఎలా help చేయగలను?",
     "hi": "नमस्ते जी, मैं {business} से {assistant}, AI असिस्टेंट बोल रही हूँ। बताइए, मैं आपकी कैसे मदद कर सकती हूँ?",
     "kn": "ಹಲೋ, ನಾನು {business} ಇಂದ {assistant}, AI ಅಸಿಸ್ಟೆಂಟ್. ಹೇಳಿ, ನಾನು ಹೇಗೆ help ಮಾಡಲಿ?",
     "ta": "ஹலோ, நான் {business} லிருந்து {assistant}, AI அசிஸ்டென்ட். சொல்லுங்க, நான் எப்படி help பண்ணட்டும்?",
@@ -65,7 +65,7 @@ INBOUND_OPENING = {
 # the others are the standard opening without its AI words, drafts for a native reader. A customer who asks whether this is a person or a robot always gets the honest answer (app/opening/honesty.py), whatever this says.
 PLAIN_INBOUND_OPENING = {
     "en": "Hello, this is {assistant} from {business}. How can I help you?",
-    "te": "హలో, నేను {business} నుంచి {assistant}. ఇప్పుడు ఒక నిమిషం మాట్లాడొచ్చా?",
+    "te": "హలో, నేను {business} నుంచి {assistant}. చెప్పండి, నేను మీకు ఎలా help చేయగలను?",
     "hi": "नमस्ते जी, मैं {business} से {assistant} बोल रही हूँ। बताइए, मैं आपकी कैसे मदद कर सकती हूँ?",
     "kn": "ಹಲೋ, ನಾನು {business} ಇಂದ {assistant}. ಹೇಳಿ, ನಾನು ಹೇಗೆ help ಮಾಡಲಿ?",
     "ta": "ஹலோ, நான் {business} லிருந்து {assistant}. சொல்லுங்க, நான் எப்படி help பண்ணட்டும்?",
