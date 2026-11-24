@@ -19,6 +19,10 @@ PROD_SUPABASE_REF=prodrefabcdefghij
 PROD_WEB_ORIGIN=https://app.example.test
 PROD_MAIL_DOMAIN=example.test
 PROD_SCHEDULER_EMAIL=scheduler@example.test
+WHATSAPP_APP_ID=1234567890
+WHATSAPP_EMBEDDED_CONFIG_ID=9876543210
+WHATSAPP_EMBEDDED_VERSION=v5
+WHATSAPP_ALLOWED_RECIPIENTS=+910000000001
 """
 
 
@@ -106,9 +110,12 @@ def test_the_full_stack_deploys_from_its_declared_files_sandbox_one_warm_instanc
                  "--no-cpu-throttling", "--min-instances 1", "--max-instances 1", "ANTHROPIC_API_KEY=sme-anthropic-api-key:latest", "PLIVO_AUTH_TOKEN=sme-plivo-auth-token:latest",
                  "TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest", "SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest",
                  # VoiceLink, the only provider (24 Nov 2026): the provider word, the per-minute cost it charges, and the three secrets (bot address token, login)
-                 "TELEPHONY_PROVIDER=voicelink", "TELEPHONY_COST_PAISE_PER_MINUTE=50", "TELEPHONY_COST_PAISE_PER_MINUTE_INBOUND=25", "TELEPHONY_COST_PULSE_S=60", "VOICELINK_WS_TOKEN=sme-voicelink-ws-token:latest", "VOICELINK_USERNAME=sme-voicelink-username:latest", "VOICELINK_PASSWORD=sme-voicelink-password:latest"):
+                 "TELEPHONY_PROVIDER=voicelink", "TELEPHONY_COST_PAISE_PER_MINUTE=50", "TELEPHONY_COST_PAISE_PER_MINUTE_INBOUND=25", "TELEPHONY_COST_PULSE_S=60", "VOICELINK_WS_TOKEN=sme-voicelink-ws-token:latest", "VOICELINK_USERNAME=sme-voicelink-username:latest", "VOICELINK_PASSWORD=sme-voicelink-password:latest",
+                 # WhatsApp go-live (3 Dec 2026): the adapter, the public ids from the deploy env, the FENCE from the deploy env, and the three secrets
+                 "OUTBOX_ADAPTER=whatsapp", "OUTBOX_WHATSAPP=true", "WHATSAPP_APP_ID=1234567890", "WHATSAPP_EMBEDDED_CONFIG_ID=9876543210", "WHATSAPP_ALLOWED_RECIPIENTS=+910000000001",
+                 "WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest", "WHATSAPP_APP_SECRET=sme-whatsapp-app-secret:latest", "WHATSAPP_VERIFY_TOKEN=sme-whatsapp-verify-token:latest"):
         assert must in deploy, must
-    for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=false", "WHATSAPP", "staging", "CAPTCHA"):
+    for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=true", "staging", "CAPTCHA"):
         assert never not in deploy, never
 
 
@@ -126,3 +133,11 @@ def test_the_declared_full_files_carry_no_value_that_is_not_for_git() -> None:
         name, _, value = line.partition("=")
         assert "sb_" not in value and "eyJ" not in value and "@" not in value.replace("@env:", ""), name   # no key, no token, no address in the file (only @env: placeholders)
     assert "min_instances=1" in (FULL_DIR / "api.scale").read_text() and "max_instances=1" in (FULL_DIR / "api.scale").read_text()
+
+
+def test_the_api_deploy_refuses_to_go_without_a_fence_so_it_can_never_message_anyone_by_accident(tmp_path: Path) -> None:
+    """25 Nov 2026: an UNSET fence means "no fence" in the adapter (tests/test_whatsapp_units.py: allow_list(None) sends to anyone), so the declared setting reads it from the deploy environment and the tool stops on an empty or missing value."""
+    for dropped in ("WHATSAPP_ALLOWED_RECIPIENTS=+910000000001\n", "WHATSAPP_ALLOWED_RECIPIENTS=+910000000001"):
+        env_file = ENV_FILE.replace(dropped, "WHATSAPP_ALLOWED_RECIPIENTS=\n" if dropped.endswith("\n") else "WHATSAPP_ALLOWED_RECIPIENTS=")
+        done = run(tmp_path, "deploy", "api", env_file=env_file, PRIVACY_VERSION="2026-10-27", PROD_SCHEDULER_EMAIL="scheduler@example.test")
+        assert done.returncode != 0 and "WHATSAPP_ALLOWED_RECIPIENTS" in done.stderr + done.stdout
