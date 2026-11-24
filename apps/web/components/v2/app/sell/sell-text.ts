@@ -29,7 +29,9 @@ export function entryText(t: Say, e: SellEntry): EntryText {
       const names = e.colours.map((c) => t(`catalogue.colour.${c}`)).join(", ");
       const s = e.stock;
       const chip = { tone: "info" as const, solid: s.state === "sold_out", text: s.state === "sold_out" ? t("jobs.sell.stock.sold_out") : s.state === "made_to_order" ? t("jobs.sell.stock.made_to_order") : s.count !== null ? t(s.state === "few_left" ? "jobs.sell.stock.left" : "jobs.sell.stock.in", { n: s.count }) : t(s.state === "few_left" ? "jobs.sell.stock.few_left" : "jobs.sell.stock.in_stock") };
-      return { title: e.name, line: `${plural(t, "jobs.sell.colour", e.colours.length)}${names ? ` · ${names}` : ""}`, price: e.pricePaise !== null ? rupeeText(e.pricePaise) : "", chip, rates: [] };
+      // the normal state (plain "In stock") is silent: a chip only where something is worth a look (a count, few left, made to order, sold out)
+      const silent = s.state === "in_stock" && s.count === null;
+      return { title: e.name, line: `${plural(t, "jobs.sell.colour", e.colours.length)}${names ? ` · ${names}` : ""}`, price: e.pricePaise !== null ? rupeeText(e.pricePaise) : "", chip: silent ? null : chip, rates: [] };
     }
     case "services":
       return {

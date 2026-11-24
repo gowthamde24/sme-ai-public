@@ -132,7 +132,7 @@ function CompactRow({ cardKey, tone, label, title, reason, tag = null, late = nu
             ) : null}
             <span data-needs-sub="" className="min-w-0 max-w-full truncate">{sub && !sub.toLowerCase().startsWith(label.toLowerCase()) ? `${label} · ${sub}` : (sub ?? label)}</span>
             {quote ? (
-              <Link prefetch={false} href={quote} data-needs-quote="" className="shrink-0 text-xs font-semibold text-brand-text hover:underline">
+              <Link prefetch={false} href={quote} data-needs-quote="" className="shrink-0 text-xs font-semibold text-muted underline hover:text-ink">
                 {say(ctx.words, "today.quote.open")}
               </Link>
             ) : null}

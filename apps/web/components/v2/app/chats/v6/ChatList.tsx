@@ -52,7 +52,7 @@ export function ChatList({ words, base, filter, q, chats, waiting, selectedId, n
             const av = avatarOf(name);
             return (
               <li key={c.lead_id} className="border-b border-line">
-                <Link href={href(base, filter, q, c.lead_id)} aria-current={open ? "true" : undefined} data-unread={c.unread ? "yes" : undefined} data-handling={h.state} className={`flex gap-[11px] px-3.5 py-3 hover:bg-surface-2 max-md:py-2 ${open ? "bg-brand-bg" : ""}`}>
+                <Link href={href(base, filter, q, c.lead_id)} aria-current={open ? "true" : undefined} data-unread={c.unread ? "yes" : undefined} data-handling={h.state} className={`flex gap-[11px] px-3.5 py-3 hover:bg-surface-2 max-md:py-2 ${open ? "bg-surface-2" : ""}`}>
                   <span aria-hidden="true" data-c={av.colour} className="ds-av inline-flex size-10 shrink-0 items-center justify-center rounded-full font-extrabold max-md:size-9">
                     {av.letter}
                   </span>
