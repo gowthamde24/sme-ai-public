@@ -575,6 +575,8 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$insert into public.talk_training (id, tenant_id, doc, updated_by) values (%2$L, %1$L, '{"address": "plain"}'::jsonb, %5$L) on conflict (tenant_id) do update set id = excluded.id$$,
    'doc = doc', $$delete from public.talk_training where id = %2$L$$, false),
   -- the developer API, D1: 'integrations.developer_api_usage' (a counter per key and minute outside the public schema: no client can reach it, no audit trigger because of its volume, no personal data) is classified here by this note
+  -- the developer API, D2 (migration 20261231992100): 'integrations.developer_api_calls', 'integrations.developer_api_campaigns', 'integrations.developer_api_campaign_contacts' and 'integrations.developer_api_activity'
+  -- (outside the public schema: RLS forced, no client privileges, no audit trigger because of their volume, no personal data; pgTAP 168 pins this) are classified here by this note
   -- the developer API, D1 (migration 20261231210000): keys (written only by developer_key_*), and the TEST sandbox leads (written only by developer_sandbox_lead_create, as the worker)
   ('developer_api_keys',
    $$insert into public.developer_api_keys (id, tenant_id, name, key_hash, prefix, last4, scopes, created_by) values (%2$L, %1$L, 'Generic key', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), 'sk_test_abcd', 'wxyz', array['leads:read'], %5$L)$$,

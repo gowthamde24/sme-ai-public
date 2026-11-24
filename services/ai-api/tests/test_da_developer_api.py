@@ -12,7 +12,7 @@ import logging
 import uuid
 from datetime import UTC, datetime
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
@@ -31,7 +31,7 @@ class FakeDeveloperRepo:
         self.keys: dict[str, dict[str, Any]] = {}   # by hash
         self.leads: list[dict[str, Any]] = []
         self.minute: dict[str, int] = {}
-        self.calls: list[str] = []
+        self.calls: list[str | None] = []
 
     @staticmethod
     def _manager(token: str) -> None:
@@ -86,13 +86,13 @@ class FakeDeveloperRepo:
             raise Forbidden("42501")
         return k
 
-    def auth(self, worker: str, key_hash: str, scope: str, ip: str | None) -> dict[str, Any]:
+    def auth(self, worker: str, key_hash: str, scope: str | None, ip: str | None) -> dict[str, Any]:
         assert worker == WORKER
         self.calls.append(scope)
         k = self.keys.get(key_hash)
         if k is None or k["revoked_at"]:
             return {"ok": False, "code": "invalid_key"}
-        if scope not in k["scopes"]:
+        if scope is not None and scope not in k["scopes"]:   # None: any live key (GET /me)
             return {"ok": False, "code": "missing_scope"}
         if k["ip_allow"]:
             try:
@@ -131,6 +131,9 @@ class FakeDeveloperRepo:
             rows = [r for r in rows if (r["updated_at"], r["id"]) > (after_at.isoformat() if after_at else "", str(after_id))]
         return rows[:limit]
 
+    def activity_log(self, worker: str, key_hash: str, method: str, route: str, status: int, latency_ms: int) -> bool:
+        return False   # the D2 tests (test_dv_developer_api_v1.py) keep the log
+
     def api_usage(self, worker: str, key_hash: str) -> dict[str, Any]:
         self._live(key_hash, "usage:read")
         return {"mode": "test", "today": {"leads": len(self.leads)}}
@@ -138,7 +141,7 @@ class FakeDeveloperRepo:
 
 def world(on: bool = True) -> tuple[Any, FakeDeveloperRepo]:
     repo = FakeDeveloperRepo()
-    api = DeveloperApi(repo, SimpleNamespace(token=lambda: WORKER)) if on else None
+    api = DeveloperApi(cast(Any, repo), SimpleNamespace(token=lambda: WORKER)) if on else None
     client, _ = make_client(developer_api=api)
     return client, repo
 

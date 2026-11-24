@@ -95,6 +95,7 @@ from app.deliveries.repository import PostgrestDeliveriesRepository
 from app.deliveries.routes import router as deliveries_router
 from app.developer_api.routes import api_router as developer_api_router
 from app.developer_api.routes import router as developer_router
+from app.developer_api.v1 import v1_router as developer_v1_router
 from app.developer_api.wiring import build_developer_api
 from app.dpdp.routes import me_router as dpdp_me_router
 from app.dpdp.routes import public_router as dpdp_public_router
@@ -1556,6 +1557,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(glance_router)
     app.include_router(developer_router)
     app.include_router(developer_api_router)
+    app.include_router(developer_v1_router)
     app.include_router(jobs_router)
     app.include_router(do_not_call_router)
     app.include_router(job_faq_router)

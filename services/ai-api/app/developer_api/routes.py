@@ -12,6 +12,8 @@
   GET  /api/v1/leads/{lead_id}  leads:read
   GET  /api/v1/leads            leads:read    ?updated_since=&limit=&after=
   GET  /api/v1/usage            usage:read
+  (part D2, the rest of v1: GET /me, calls, campaigns and the activity log, are in app/developer_api/v1.py)
+  GET  /v1/tenants/{tenant_id}/developer/activity   the API activity log (30 days; route, status, latency, key; no bodies)
 
 The key is never logged, stored, echoed or put in an error. Off unless DEVELOPER_API=test (then every route answers 404).
 NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint signatures at registration)."""
@@ -35,6 +37,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints, Validation
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.repository import InvalidValueError
 from app.developer_api import keys as K
+from app.developer_api.activity import ActivityRoute
 from app.errors import ApiError, not_found
 from app.tenancy.models import Role
 from app.tenancy.repository import Forbidden
@@ -42,7 +45,7 @@ from app.tenancy.repository import Forbidden
 logger = logging.getLogger("app.developer_api")
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/developer", tags=["developer"])
-api_router = APIRouter(prefix="/api/v1", tags=["developer-api"])
+api_router = APIRouter(prefix="/api/v1", tags=["developer-api"], route_class=ActivityRoute)
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 Manager = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
 MODE = {"Stack19-Mode": "test"}
@@ -56,7 +59,7 @@ class _Strict(BaseModel):
 
 class KeyCreateIn(_Strict):
     name: Annotated[Text, StringConstraints(min_length=1, max_length=60)]
-    scopes: Annotated[list[Literal["leads:write", "leads:read", "calls:read", "campaigns:write", "webhooks", "usage:read"]], Field(min_length=1, max_length=6)]
+    scopes: Annotated[list[Literal["leads:write", "leads:read", "calls:read", "calls:write", "campaigns:write", "campaigns:read", "webhooks", "usage:read"]], Field(min_length=1, max_length=8)]
     ip_allow: Annotated[list[Annotated[str, StringConstraints(max_length=50)]], Field(max_length=10)] = []
     mode: Literal["test", "live"] = "test"
 
@@ -68,7 +71,9 @@ class ConsentIn(_Strict):
 
 
 class LeadIn(_Strict):
-    model_config = ConfigDict(extra="forbid", strict=True)
+    model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"examples": [{
+        "name": "Ravi Kumar", "phone": "+919800000001", "source": "website", "language": "te", "notes": "Wants 40 sarees for a wedding", "custom_fields": {"budget": "50000"},
+        "consent": {"given": True, "text": "I agree to be called", "at": "2026-11-24T10:00:00Z"}}]})
     name: Annotated[Text, StringConstraints(min_length=1, max_length=120)]
     phone: Annotated[str, StringConstraints(pattern=r"^\+91[6-9][0-9]{9}$")] | None = None
     email: Annotated[str, StringConstraints(min_length=3, max_length=254, pattern=r"^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$")] | None = None
@@ -139,6 +144,13 @@ def revoke_key(key_id: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]
     return {"key": key}
 
 
+@router.get("/activity")
+def activity(ctx: Manager, runtime: RuntimeDep, key_id: uuid.UUID | None = None, limit: Annotated[int, Query(ge=1, le=100)] = 50, before: Annotated[str | None, Query(max_length=200)] = None) -> dict[str, Any]:
+    before_at, before_id = _cursor(before)
+    rows = _service(runtime).repo.activity_for_settings(ctx.principal.token, ctx.tenant.id, key_id, before_at, before_id, limit + 1)
+    return {"items": rows[:limit], "next_before": next_cursor(rows, limit, "at")}
+
+
 @router.get("/usage")
 def usage(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     return dict(_service(runtime).repo.usage(ctx.principal.token, ctx.tenant.id))
@@ -157,7 +169,7 @@ def _refused(status: int, code: str, message: str, extra_headers: dict[str, str]
     return ApiError(status, code, message, headers={**MODE, **(extra_headers or {})}, retry_after=retry_after)
 
 
-def _authorize(request: Request, response: Response, runtime: Runtime, scope: str) -> Caller:
+def _authorize(request: Request, response: Response, runtime: Runtime, scope: str | None) -> Caller:
     service = _service(runtime)
     secret = K.bearer(request.headers.get("authorization"))
     if secret is None:
@@ -186,7 +198,7 @@ def _lead_out(lead: dict[str, Any], duplicate: bool = False) -> dict[str, Any]:
     return {**lead, "duplicate": duplicate}
 
 
-@api_router.post("/leads", status_code=201)
+@api_router.post("/leads", status_code=201, operation_id="createLead", summary="Create a lead (idempotent)")
 async def create_lead(request: Request, response: Response, runtime: RuntimeDep, body: Annotated[dict[str, Any], Body()],
                       idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None) -> Any:
     caller = await asyncio.to_thread(_authorize, request, response, runtime, "leads:write")
@@ -222,7 +234,7 @@ async def create_lead(request: Request, response: Response, runtime: RuntimeDep,
     return JSONResponse(_lead_out(got["lead"]), status_code=201, headers=headers)
 
 
-@api_router.get("/leads/{lead_id}")
+@api_router.get("/leads/{lead_id}", operation_id="getLead", summary="Get one lead")
 async def get_lead(lead_id: str, request: Request, response: Response, runtime: RuntimeDep) -> dict[str, Any]:
     caller = await asyncio.to_thread(_authorize, request, response, runtime, "leads:read")
     try:
@@ -235,6 +247,14 @@ async def get_lead(lead_id: str, request: Request, response: Response, runtime: 
     return _lead_out(lead)
 
 
+def next_cursor(rows: list[dict[str, Any]], limit: int, field: str) -> str | None:
+    """The `after` / `before` value for the next page: the last row of this page, when there is another page."""
+    if len(rows) <= limit or not rows[:limit]:
+        return None
+    last = rows[limit - 1]
+    return base64.urlsafe_b64encode(f"{last[field]}|{last['id']}".encode()).decode().rstrip("=")
+
+
 def _cursor(raw: str | None) -> tuple[datetime | None, uuid.UUID | None]:
     if not raw:
         return None, None
@@ -245,21 +265,17 @@ def _cursor(raw: str | None) -> tuple[datetime | None, uuid.UUID | None]:
         raise ApiError(400, "invalid_cursor", "This `after` value is not one we gave you.", headers=MODE) from None
 
 
-@api_router.get("/leads")
+@api_router.get("/leads", operation_id="listLeads", summary="List leads, oldest change first")
 async def list_leads(request: Request, response: Response, runtime: RuntimeDep, updated_since: datetime | None = None,
                      limit: Annotated[int, Query(ge=1, le=100)] = 50, after: Annotated[str | None, Query(max_length=200)] = None) -> dict[str, Any]:
     caller = await asyncio.to_thread(_authorize, request, response, runtime, "leads:read")
     after_at, after_id = _cursor(after)
     rows = await asyncio.to_thread(_service(runtime).repo.leads_list, caller.worker, caller.key_hash, updated_since, after_at, after_id, limit + 1)
     page = rows[:limit]
-    nxt = None
-    if len(rows) > limit and page:
-        last = page[-1]
-        nxt = base64.urlsafe_b64encode(f"{last['updated_at']}|{last['id']}".encode()).decode().rstrip("=")
-    return {"items": [_lead_out(r) for r in page], "next_after": nxt}
+    return {"items": [_lead_out(r) for r in page], "next_after": next_cursor(rows, limit, "updated_at")}
 
 
-@api_router.get("/usage")
+@api_router.get("/usage", operation_id="getUsage", summary="Requests, leads, calls and campaigns today and this month")
 async def api_usage(request: Request, response: Response, runtime: RuntimeDep) -> dict[str, Any]:
     caller = await asyncio.to_thread(_authorize, request, response, runtime, "usage:read")
     return dict(await asyncio.to_thread(_service(runtime).repo.api_usage, caller.worker, caller.key_hash))

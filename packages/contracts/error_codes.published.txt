@@ -137,6 +137,8 @@ individuals_not_allowed
 integrations_unavailable
 internal_error
 invalid
+invalid_call
+invalid_campaign
 invalid_cursor
 invalid_decision
 invalid_delivery_state
@@ -176,6 +178,7 @@ lead_finder_not_available
 lead_finder_off
 lead_finder_unavailable
 lead_has_no_company
+lead_has_no_number
 lead_intake_unavailable
 lead_playbook_unavailable
 lead_profile_unavailable
@@ -216,6 +219,7 @@ no_speech
 no_subscription
 no_template
 no_text_found
+no_usable_contacts
 no_whatsapp
 nobody_to_ask
 not_a_search
@@ -246,6 +250,7 @@ nothing_to_test
 nothing_to_undo
 notifications_unavailable
 number_not_available
+number_on_dnd
 number_provider_unavailable
 numbers_unavailable
 open_payment_link
@@ -401,6 +406,7 @@ timeline_unavailable
 today_unavailable
 token_expiring
 too_large
+too_many_calls
 too_many_invitations
 too_many_keys
 too_many_photos
@@ -432,6 +438,7 @@ voice_timeout
 voice_too_long
 voice_unavailable
 waiting_for_whatsapp
+wallet_empty
 webhooks_unavailable
 whatsapp_connect_refused
 whatsapp_no_access

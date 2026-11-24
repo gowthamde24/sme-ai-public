@@ -1733,6 +1733,34 @@
       ]
     },
     {
+      "code": "invalid_call",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "Send a lead_id (the id of a lead you posted) and, if you like, dry_run: true.",
+      "wait": false,
+      "extras": [
+        "fields"
+      ]
+    },
+    {
+      "code": "invalid_campaign",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "fields"
+      ]
+    },
+    {
       "code": "invalid_cursor",
       "statuses": [
         400,
@@ -2211,6 +2239,18 @@
         "agent_runs"
       ],
       "default_message": "This lead has no company yet. Link a company first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_has_no_number",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "This lead has no phone number, so it cannot be called.",
       "wait": false,
       "extras": []
     },
@@ -2705,6 +2745,20 @@
       "extras": []
     },
     {
+      "code": "no_usable_contacts",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "None of the contacts could be used: each needs a valid phone number and consent. See `refused` for the reason of each.",
+      "wait": false,
+      "extras": [
+        "refused"
+      ]
+    },
+    {
       "code": "no_whatsapp",
       "statuses": [
         409
@@ -2851,6 +2905,7 @@
         "assistant",
         "assistant_work",
         "connectors",
+        "developer_api",
         "errors",
         "lead_sources",
         "main"
@@ -3075,6 +3130,18 @@
         "phone_numbers"
       ],
       "default_message": "That number is not available any more. Choose another.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "number_on_dnd",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "This number is on the Do-Not-Disturb list. We don't call it.",
       "wait": false,
       "extras": []
     },
@@ -4136,6 +4203,7 @@
       ],
       "areas": [
         "conversation",
+        "developer_api",
         "dpdp",
         "errors",
         "hardening",
@@ -4999,6 +5067,18 @@
       "extras": []
     },
     {
+      "code": "too_many_calls",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "Ten calls are already open in this workspace. Wait for one to finish.",
+      "wait": true,
+      "extras": []
+    },
+    {
       "code": "too_many_invitations",
       "statuses": [
         409
@@ -5430,6 +5510,18 @@
         "main"
       ],
       "default_message": "Connect your WhatsApp to start. Until then you can set everything up, but messages, AI calls and campaigns stay off.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "wallet_empty",
+      "statuses": [
+        402
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "The wallet cannot cover this call. Add money in the app and try again.",
       "wait": false,
       "extras": []
     },
