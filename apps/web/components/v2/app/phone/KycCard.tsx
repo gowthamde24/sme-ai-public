@@ -25,7 +25,7 @@ type Send = (body: KycBody) => Promise<KycReply>;
 type Typed = { docKind: DocKind; number: string; legal: string; email: string; addr1: string; addr2: string; city: string; state: string; postal: string };
 const EMPTY: Omit<Typed, "docKind" | "email"> = { number: "", legal: "", addr1: "", addr2: "", city: "", state: "", postal: "" };
 
-export function KycCard({ words, status: initial, options, canEdit, defaultEmail = "", endpoint, send }: { words: Words; status: KycStatus | null; options: KycOptions | null; canEdit: boolean; defaultEmail?: string; endpoint: string; send?: Send }) {
+export function KycCard({ words, status: initial, options, canEdit, defaultEmail = "", endpoint, send, steps = false }: { /** PHONE_STEPS: three plain steps instead of the card. */ steps?: boolean; words: Words; status: KycStatus | null; options: KycOptions | null; canEdit: boolean; defaultEmail?: string; endpoint: string; send?: Send }) {
   const t = makeT(words);
   const id = React.useId();
   const [status, setStatus] = React.useState(initial);
@@ -43,6 +43,8 @@ export function KycCard({ words, status: initial, options, canEdit, defaultEmail
   const sendable = status !== null && CAN_SEND.has(status.state);
   const form = canEdit && sendable && options !== null;
   const again = status !== null && status.state !== "not_started";
+  // the plain steps: 1 while the person can still send (the form is under step 1), 3 while the phone company checks, 4 = all done
+  const stepNow = sendable ? 1 : shown === "accepted" ? 4 : 3;
   const doc = options?.documents.find((d) => d.kind === typed.docKind) ?? options?.documents[0] ?? null;
   const maxBytes = options?.maxFileBytes ?? 5_000_000;
   const mb = String(Math.floor(maxBytes / 1_000_000));
@@ -115,7 +117,14 @@ export function KycCard({ words, status: initial, options, canEdit, defaultEmail
   const anyProblem = Object.keys(problems).some((k) => problems[k as FieldProblem]) || fileProblem !== null;
 
   return (
-    <section aria-labelledby={`${id}-title`} data-part="phone-kyc-card" data-kyc-state={shown} className={`${card} max-w-2xl`}>
+    <section aria-labelledby={`${id}-title`} data-part="phone-kyc-card" data-kyc-state={shown} {...(steps ? { "data-steps": "" } : {})} className={steps ? "max-w-2xl" : `${card} max-w-2xl`}>
+      {steps ? <Step n={1} now={stepNow} title={t("phsteps.s1")} sub={t("phsteps.s1.sub")} /> : null}
+      {steps && word !== "not_started" ? (
+        <p className="m-0 mt-3 text-base font-medium text-ink" data-part="kyc-text">
+          {t(`phkyc.text.${word}`)}
+        </p>
+      ) : null}
+      {steps ? null : (<>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id={`${id}-title`} className="font-display text-xl font-semibold">
           {t("phkyc.title")}
@@ -125,6 +134,7 @@ export function KycCard({ words, status: initial, options, canEdit, defaultEmail
       <p className="mt-2 text-base text-muted" data-part="kyc-text">
         {t(`phkyc.text.${word}`)}
       </p>
+      </>)}
       {status && !status.live ? (
         <p className={warnBox} data-part="kyc-testmode">
           {t("phkyc.testmode")}
@@ -275,11 +285,34 @@ export function KycCard({ words, status: initial, options, canEdit, defaultEmail
           </div>
         </form>
       ) : null}
+      {steps ? (
+        <>
+          <Step n={2} now={stepNow} title={t("phsteps.s2")} sub={t("phsteps.s2.sub")} />
+          <Step n={3} now={stepNow} title={t("phsteps.s3")} sub={t("phsteps.s3.sub")} />
+        </>
+      ) : null}
       {said ? (
         <p role="status" className={status?.live ? okBox : warnBox} data-part="kyc-said">
           {said}
         </p>
       ) : null}
     </section>
+  );
+}
+
+/** One of the three plain steps: a number (a tick when done), a title (bold on the current step) and ONE grey line; hairlines between, no card. */
+function Step({ n, now, title, sub }: { n: number; now: number; title: string; sub: string }) {
+  const done = n < now;
+  const current = n === now;
+  return (
+    <div data-step={n} data-state={done ? "done" : current ? "current" : "todo"} aria-current={current ? "step" : undefined} className="flex items-start gap-4 border-b border-line py-4 first:border-t first:border-ink">
+      <span aria-hidden="true" className={`grid size-7 shrink-0 place-items-center text-[15px] ${current ? "font-bold text-ink" : "text-muted"}`}>
+        {done ? "✓" : n}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className={`m-0 text-[17px] ${current ? "font-bold text-ink" : done ? "text-muted" : "font-semibold text-ink"}`}>{title}</p>
+        <p className="m-0 text-[15px] text-muted">{sub}</p>
+      </div>
+    </div>
   );
 }

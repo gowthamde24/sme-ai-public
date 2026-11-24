@@ -126753,5 +126753,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "phsteps.s1": {
+  "en": "Choose a document for your business",
+  "te": "మీ వ్యాపారానికి ఒక document ఎంచుకోండి",
+  "hi": "अपने बिज़नेस के लिए एक document चुनिए",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಒಂದು document ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s1.sub": {
+  "en": "Any one of these is enough.",
+  "te": "వీటిలో ఏదైనా ఒకటి చాలు.",
+  "hi": "इनमें से कोई एक काफ़ी है।",
+  "kn": "ಇವುಗಳಲ್ಲಿ ಯಾವುದಾದರೂ ಒಂದು ಸಾಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s2": {
+  "en": "Upload it",
+  "te": "దాన్ని upload చేయండి",
+  "hi": "उसे upload कीजिए",
+  "kn": "ಅದನ್ನು upload ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s2.sub": {
+  "en": "A photo or a PDF. It goes to the phone company and is not kept by us.",
+  "te": "ఫోటో లేదా PDF. ఇది phone company కి వెళ్తుంది, మా దగ్గర ఉండదు.",
+  "hi": "फ़ोटो या PDF। यह phone company के पास जाता है, हमारे पास नहीं रहता।",
+  "kn": "ಫೋಟೋ ಅಥವಾ PDF. ಇದು phone company ಗೆ ಹೋಗುತ್ತದೆ, ನಮ್ಮ ಬಳಿ ಉಳಿಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s3": {
+  "en": "You get your number",
+  "te": "మీకు number వస్తుంది",
+  "hi": "आपको number मिलता है",
+  "kn": "ನಿಮಗೆ number ಸಿಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phsteps.s3.sub": {
+  "en": "When the phone company accepts it, you choose your number here.",
+  "te": "phone company ఒప్పుకున్నాక, మీ number ని ఇక్కడే ఎంచుకుంటారు.",
+  "hi": "phone company के मंज़ूर करने के बाद, आप अपना number यहीं चुनते हैं।",
+  "kn": "phone company ಒಪ್ಪಿದ ಮೇಲೆ, ನಿಮ್ಮ number ಅನ್ನು ಇಲ್ಲೇ ಆರಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
