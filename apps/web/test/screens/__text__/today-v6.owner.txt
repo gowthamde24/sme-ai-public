@@ -1,5 +1,5 @@
 # Today
-{role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
+{role=status} Sending is stopped . Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
 {label="Good morning"} Tuesday, 6 October · Demo Silks (synthetic) Ready to answer
 ## Good morning
 [button type=button: Tap to talk]

@@ -100,7 +100,7 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     line = inbound.TimedLine(wire, proto=VOICELINK)
     start = await line.open(open_timeout)
     if start is None:
-        log.info("voicelink_inbound refused=no_start")
+        log.info("voicelink_inbound refused=no_start end_how=%s events=%s", getattr(line, "end_how", None), ",".join(f"{k}:{v}" for k, v in sorted(getattr(line, "events", {}).items())) or "none")   # which events VoiceLink sent before it closed (names and counts only): a reachability test sends none
         return await _close(wire)
     key = config.fingerprint_key()
     log.info("voicelink_stream start call_fp=%s stream_fp=%s rate=%d", inbound.fingerprint(key, start.call_sid), inbound.fingerprint(key, start.stream_sid), start.sample_rate)
