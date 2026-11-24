@@ -67,6 +67,7 @@ class GuardedTts:
         self._inner, self._never = inner, list(never_say)
         # the fact pack's rule about money (28 Nov 2026): when set, a sentence that holds a rupee amount which is not one of these (a price-list amount) is never spoken; a short deflection is said instead
         self._allowed_paise = allowed_paise
+        self._price_asked = False   # the caller's last turn asked about a price: a bare "five hundred" in the next answer is an amount
         self.amounts_blocked = 0
         self._goal_tone = goal_tone   # set on an OUTBOUND goal call: no promise is spoken, and the tone's particles are taken out (app/telephony/promises.py, tone.py)
         self._addressed_name = addressed_name  # the called person's own name (Lead Desk): the only name "గారు" may follow, and only in Respectful
@@ -213,12 +214,18 @@ class GuardedTts:
                 logger.info("child terms spoken: n=%d words=%s", len(kids), ",".join(kids))
         return said
 
+    def note_caller(self, text: str) -> None:
+        """The caller's last words (the phone session tells the voice before each reply): only whether a price was asked is kept, never the words."""
+        from app.telephony.fact_pack import asks_price
+
+        self._price_asked = asks_price(text)
+
     def stream(self, text: str, language: str, *args: Any, **kwargs: Any) -> AsyncIterator[bytes]:
         said = safe_line(text, self._never, language)
         if said == text and self._allowed_paise is not None and self._goal_tone is None:
             from app.telephony.fact_pack import all_amounts_paise
 
-            if any(a not in self._allowed_paise for a in all_amounts_paise(text)):
+            if any(a not in self._allowed_paise for a in all_amounts_paise(text, price_context=self._price_asked)):
                 self.amounts_blocked += 1
                 logger.info("amount blocked: language=%s", language)   # a closed line, never the amount or the sentence
                 return self._inner.stream(SAFE.get(language, SAFE["en"]), language, *args, **kwargs)  # type: ignore[no-any-return]

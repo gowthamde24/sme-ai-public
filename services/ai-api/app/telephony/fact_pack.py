@@ -191,9 +191,10 @@ def _is_number_word(token: str) -> bool:
     return t in _TE_UNITS or t in _EN_UNITS or t in _TE_HUNDRED or t in _TE_THOUSAND or t in _TE_LAKH or t in ("hundred", "thousand", "lakh", "lakhs", "and")
 
 
-def word_amounts_paise(text: str) -> list[int]:
+def word_amounts_paise(text: str, *, price_context: bool = False) -> list[int]:
     """Every rupee amount said in number words. A run of number words counts when a rupee word is next to it, or when it holds a thousand or a lakh word (a sum of money in a sales call); a run whose value cannot be
-    worked out is UNKNOWN (-1) and is blocked like any amount that is not on the price list."""
+    worked out is UNKNOWN (-1) and is blocked like any amount that is not on the price list. `price_context`: the caller's last turn asked about a price, so a bare hundreds run ("ఐదు వందలు") in the answer is an
+    amount too (two hundred people is not a price; five hundred, answering "how much?", is)."""
     tokens = [t.strip(".") for t in _SPLIT.split(text.replace("₹", " ₹ ")) if t.strip(".")]
     found: list[int] = []
     i = 0
@@ -207,7 +208,7 @@ def word_amounts_paise(text: str) -> list[int]:
         run = [t for t in tokens[i:j]]
         before = tokens[i - 1] if i > 0 else ""
         after = tokens[j] if j < len(tokens) else ""
-        big = any(t.casefold() in (*_TE_THOUSAND, *_TE_LAKH, "thousand", "lakh", "lakhs") for t in run)
+        big = any(t.casefold() in (*_TE_THOUSAND, *_TE_LAKH, "thousand", "lakh", "lakhs") for t in run) or (price_context and any(t.casefold() in (*_TE_HUNDRED, "hundred") for t in run))
         if _RUPEE_WORDS.match(after) or _RUPEE_WORDS.match(before) or big:
             value = _value(run)
             found.append(value * 100 if value else UNKNOWN)
@@ -215,6 +216,14 @@ def word_amounts_paise(text: str) -> list[int]:
     return found
 
 
-def all_amounts_paise(text: str) -> list[int]:
+_PRICE_ASK = re.compile(r"ధర|రేటు|ఎంత|ఖరీదు|\bprice\b|\brate\b|\bcost\b|\bhow much\b|कीमत|दाम|कितना|ಬೆಲೆ|ಎಷ್ಟು", re.IGNORECASE)
+
+
+def asks_price(text: str) -> bool:
+    """Did the caller ask what something costs (ధర, ఎంత, price, rate, cost, how much ...)?"""
+    return bool(_PRICE_ASK.search(text))
+
+
+def all_amounts_paise(text: str, *, price_context: bool = False) -> list[int]:
     """Digits and words together: what the guard checks against the price list."""
-    return amounts_paise(text) + word_amounts_paise(text)
+    return amounts_paise(text) + word_amounts_paise(text, price_context=price_context)

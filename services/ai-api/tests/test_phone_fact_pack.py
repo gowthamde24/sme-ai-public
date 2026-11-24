@@ -165,3 +165,16 @@ def test_the_voice_blocks_an_unlisted_amount_said_in_words_and_lets_the_listed_o
     voice.stream("Delivery is in two days.", "en")
     assert inner.said == [SAFE["te"], SAFE["en"], "It is one thousand two hundred fifty rupees.", "వెయ్యి రెండు వందల యాభై రూపాయలు అండీ.", "Delivery is in two days."]
     assert voice.amounts_blocked == 2
+
+
+def test_a_bare_hundreds_run_is_an_amount_when_the_caller_asked_about_a_price() -> None:
+    assert fact_pack.word_amounts_paise("ఐదు వందలు అండీ") == [] and fact_pack.word_amounts_paise("ఐదు వందలు అండీ", price_context=True) == [50000]
+    assert all(fact_pack.asks_price(t) for t in ("ఈ చీర ధర ఎంత?", "what is the price", "How much is it", "రేటు చెప్పండి")) and not fact_pack.asks_price("మీ షాప్ ఎక్కడ?")
+    inner = Inner()
+    voice = GuardedTts(inner, [], allowed_paise=frozenset({125000}))
+    voice.stream("ఐదు వందలు అండీ.", "te")             # no price asked yet: passes (not an amount)
+    voice.note_caller("ఈ చీర ధర ఎంత?")
+    voice.stream("ఐదు వందలు అండీ.", "te")             # a price was asked: blocked
+    voice.note_caller("మీ షాప్ ఎక్కడ?")
+    voice.stream("ఐదు వందల మంది వస్తారు.", "te")      # another topic: passes again
+    assert inner.said == ["ఐదు వందలు అండీ.", SAFE["te"], "ఐదు వందల మంది వస్తారు."]
