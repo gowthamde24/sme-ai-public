@@ -47,8 +47,9 @@ class PostgrestStatusRepository:
 class AssistantStatusOut(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    # not_live: it never went live and nothing was trained; in_training: not live, but a voice or rules were saved; live: it answers customers
-    state: Literal["not_live", "in_training", "live"]
+    # not_live: it never went live and nothing was trained; in_training: not live, but a voice or rules were saved; live: it answers customers;
+    # paused: it was switched off (by the Owner's Pause, or by Stack19 support: see held_by_support) and a switch row exists, so it is not "never started" (28 Nov 2026)
+    state: Literal["not_live", "in_training", "live", "paused"]
     # true when nothing required is missing (a name of its own and a connected phone number)
     can_go_live: bool
     # what is missing to go live: "business_name", "phone_number"
@@ -72,7 +73,8 @@ def status_of(facts: dict[str, Any]) -> AssistantStatusOut:
         defaults.append("rules")
     live = facts.get("live") is True and not missing   # a live assistant whose name or number has gone is not live
     trained = bool(facts.get("voice_saved") or facts.get("rules_saved"))
-    state: Literal["not_live", "in_training", "live"] = "live" if live else ("in_training" if trained else "not_live")
+    paused = not live and facts.get("ever_changed") is True and facts.get("live") is False
+    state: Literal["not_live", "in_training", "live", "paused"] = "live" if live else ("paused" if paused else ("in_training" if trained else "not_live"))
     return AssistantStatusOut(state=state, can_go_live=not missing, missing=missing, using_defaults=defaults, held_by_support=facts.get("staff_hold") is True)
 
 

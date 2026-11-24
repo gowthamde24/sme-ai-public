@@ -9,6 +9,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -91,7 +92,9 @@ def test_the_phone_and_live_talk_models_may_finish_a_kannada_reply() -> None:
         bv = BrowserVoice(config=default_config(), factory=lambda choice, language: None, sarvam_key="k", anthropic_key="k", fast_model="m", turn_model=turn_model, limits=Limits(), ledger=Ledger(Limits()), allowed_origins=(), client=httpx.AsyncClient())  # type: ignore[arg-type,return-value]
         assert bv.fast_llm()._max_tokens == REPLY_MAX_TOKENS  # type: ignore[attr-defined]  # noqa: SLF001
         parts, _ = phone_parts(bv, "Stack19", "kn", "sarvam" if turn_model == "sarvam" else "haiku")
-        assert parts.llm._max_tokens == REPLY_MAX_TOKENS  # type: ignore[attr-defined]  # noqa: SLF001
+        llm: Any = parts.llm   # Sarvam speaks behind the first-token fallback: its own stream is the primary
+        spoken: Any = llm._primary if turn_model == "sarvam" else llm  # noqa: SLF001
+        assert spoken._max_tokens == REPLY_MAX_TOKENS  # noqa: SLF001
 
 
 def test_the_scorer_flags_the_brand_in_another_script_but_not_the_word_stock() -> None:

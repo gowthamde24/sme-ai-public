@@ -100,7 +100,7 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     line = inbound.TimedLine(wire, proto=VOICELINK)
     start = await line.open(open_timeout)
     if start is None:
-        log.info("voicelink_inbound refused=no_start")
+        log.info("voicelink_inbound refused=no_start end_how=%s events=%s", getattr(line, "end_how", None), ",".join(f"{k}:{v}" for k, v in sorted(getattr(line, "events", {}).items())) or "none")   # which events VoiceLink sent before it closed (names and counts only): a reachability test sends none
         return await _close(wire)
     key = config.fingerprint_key()
     log.info("voicelink_stream start call_fp=%s stream_fp=%s rate=%d", inbound.fingerprint(key, start.call_sid), inbound.fingerprint(key, start.stream_sid), start.sample_rate)
@@ -231,6 +231,7 @@ async def webhook(request: Request, token: str) -> JSONResponse:
         return JSONResponse({"ok": False}, status_code=400)
     event = str(body.get("event") or "")[:30]
     call_id = str(body.get("callId") or "")[:100]
+    log.info("voicelink_webhook_shape keys=%s", _shape(body))   # field NAMES only (28 Nov 2026: the first real webhook read empty with the documented names), never a value
     custom = _custom(body.get("customParameters"))
     row, tenant = _uuid(custom.get("call")), _uuid(custom.get("tenant"))
     status = _status_word(body.get("callStatus"))
@@ -244,6 +245,16 @@ async def webhook(request: Request, token: str) -> JSONResponse:
             if ended:
                 log.info("voicelink_outbound ended call_fp=%s state=%s", str(row)[:8], ended)
     return JSONResponse({"ok": True})
+
+
+def _shape(body: dict[str, Any], depth: int = 0) -> str:
+    """The names of a webhook's fields, one level of nesting deep, as `a,b,c{x,y}`: no value is ever read into the log."""
+    parts: list[str] = []
+    for key in sorted(body)[:30]:
+        name = "".join(ch for ch in str(key)[:40] if ch.isalnum() or ch in "_-.")
+        child = body[key]
+        parts.append(f"{name}{{{_shape(child, depth + 1)}}}" if isinstance(child, dict) and depth == 0 else name)
+    return ",".join(parts)
 
 
 @router.post("/inbound_call/{token}")

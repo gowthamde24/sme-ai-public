@@ -93,7 +93,7 @@ async def test_the_phone_session_follows_the_rule_and_logs_each_switch() -> None
 # ---- the opening and the disclosure ----------------------------------------------------------------------------------------------------------
 
 def test_the_telugu_opening_is_the_owners_words_with_the_workspace_names() -> None:
-    assert persona.opening_line("te", business="Stack19", assistant=None, customer=None, inbound=True) == "హలో, నేను Stack19 నుంచి Priya, AI అసిస్టెంట్‌ని. ఇప్పుడు ఒక నిమిషం మాట్లాడొచ్చా?"
+    assert persona.opening_line("te", business="Stack19", assistant=None, customer=None, inbound=True) == "హలో, నేను Stack19 నుంచి Priya, AI అసిస్టెంట్‌ని. చెప్పండి, నేను మీకు ఎలా help చేయగలను?"
     assert persona.opening_line("te", business="Padma Silks", assistant="Lakshmi", customer=None, inbound=True).startswith("హలో, నేను Padma Silks నుంచి Lakshmi, AI అసిస్టెంట్‌ని.")
 
 
@@ -118,7 +118,7 @@ async def test_the_call_uses_the_workspaces_names_from_the_line() -> None:
     svc.parts_for = None
     seen: dict[str, Any] = {}
 
-    def fake_parts(bv: Any, business: str, language: str, llm_choice: str, training: Any = None, labels: Any = (), assistant: str | None = None, corrections: Any = (), mention_ai: bool = True, stored: Any = None) -> Any:
+    def fake_parts(bv: Any, business: str, language: str, llm_choice: str, training: Any = None, labels: Any = (), assistant: str | None = None, corrections: Any = (), mention_ai: bool = True, stored: Any = None, first_token_s: float = 1.2) -> Any:
         seen.update(business=business, assistant=assistant)
         parts = type("P", (), {"greeting_for": lambda self, lang: "x", "tts": None})()
         return parts, "m"

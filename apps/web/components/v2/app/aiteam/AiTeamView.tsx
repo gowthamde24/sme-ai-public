@@ -240,7 +240,7 @@ function DayChip({ on, onClick, children }: { on: boolean; onClick: () => void; 
 
 function FlowButton({ on, onClick, count, word, k }: { on: boolean; onClick: () => void; count: number; word: string; k: string }) {
   return (
-    <button type="button" aria-pressed={on} onClick={onClick} data-flow={k} className={`inline-flex min-h-11 items-baseline gap-1.5 rounded-lg px-2.5 text-base ${on ? "bg-brand-bg text-brand-text" : "text-ink hover:bg-surface-2"}`}>
+    <button type="button" aria-pressed={on} onClick={onClick} data-flow={k} className={`inline-flex min-h-11 items-baseline gap-1.5 rounded-lg px-2.5 text-base ${on ? "bg-surface-2 font-semibold text-ink" : "text-ink hover:bg-surface-2"}`}>
       <span className="font-display text-xl font-bold">{count}</span>
       <span>{word}</span>
     </button>

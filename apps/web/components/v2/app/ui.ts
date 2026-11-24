@@ -57,7 +57,7 @@ export const listPlain = "mt-3 flex flex-col gap-3";
 export const listItemCard = "rounded-xl border border-line bg-surface p-4";
 export const tabRow = "mt-4 flex flex-wrap gap-2 border-b border-line pb-3";
 export const tabLink = "inline-flex min-h-11 items-center rounded-lg px-3 text-base font-medium text-ink hover:bg-surface-2";
-export const tabLinkOn = "bg-brand-bg font-semibold text-brand-text";
+export const tabLinkOn = "bg-surface-2 font-semibold text-ink";
 /** Tabs as the design-lab app draws them: a line under the row, the current tab marked with an orange line under its word. */
 export const tabsBar = "mt-6 flex flex-wrap gap-x-1 border-b border-line";
 export const tabsItem = "-mb-px inline-flex min-h-11 items-center border-b-2 px-4 text-base";
