@@ -218,7 +218,7 @@ def examples_block(language: str, business: str) -> str:
 
 
 def system_prompt(*, business: str, assistant: str | None, language: str, purpose: str, facts: Sequence[dict[str, Any]], customer_first_name: str | None, goal: str | None = None, notes: str = "",
-                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = (), opening: str | None = None, opening_says_ai: bool = True, tone: str | None = None) -> str:
+                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = (), opening: str | None = None, opening_says_ai: bool = True, tone: str | None = None, allow_prices: bool = False) -> str:
     """The rules of a phone call. The customer's words are DATA between a per-call delimiter. `opening`: the line the caller has ALREADY heard (an inbound call opens with it before the model is asked anything)."""
     marker = secrets.token_hex(6)
     who = assistant or "the assistant"
@@ -238,7 +238,7 @@ def system_prompt(*, business: str, assistant: str | None, language: str, purpos
         "If they ask you not to call again, say you will not and end politely. When the goal is done or they want to go, say a short goodbye.",
         register_block(language),
         examples_block(language, business),
-        facts_block(facts, allow_prices=False),
+        facts_block(facts, allow_prices=allow_prices),
     ]
     if customer_first_name:
         lines.append(f"The customer's first name is {customer_first_name}. Use it at most once.")
