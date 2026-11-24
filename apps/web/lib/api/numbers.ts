@@ -44,12 +44,12 @@ export async function listAvailable(accessToken: string, tenantId: string, type:
   if (prefix) q.set("prefix", prefix);
   return parseAvailable(await apiRequest(`${base(tenantId)}/available?${q.toString()}`, accessToken));
 }
-/** The 201 of a claim carries the number and its state only (no type): the type is the one of the list the person picked from. */
+/** The 201 of a claim carries the number, its state and (since 28 Nov, C1's note) its type; an older answer without the type keeps the type of the list the person picked from. */
 export function parseClaimed(json: unknown, type: NumberType): OwnNumber {
   const x = rec(json, "number");
   const number = str(x.number, "number", 20);
   if (!isNumber(number)) bad("number");
-  return { number, display: displayNumber(number), type, state: oneOf(x.state, NUMBER_STATES, "state"), label: null };
+  return { number, display: displayNumber(number), type: x.type === undefined ? type : oneOf(x.type, NUMBER_TYPES, "type"), state: oneOf(x.state, NUMBER_STATES, "state"), label: null };
 }
 export async function claimNumber(accessToken: string, tenantId: string, number: string, type: NumberType): Promise<OwnNumber> {
   return parseClaimed(await apiRequest(`${base(tenantId)}/claim`, accessToken, { method: "POST", body: JSON.stringify({ number }) }), type);
