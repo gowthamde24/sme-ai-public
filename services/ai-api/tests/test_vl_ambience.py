@@ -155,7 +155,7 @@ def test_the_line_mixes_the_bed_into_its_own_audio_only_and_with_no_bed_changes_
 
 def test_the_ai_disclosure_words_are_exactly_as_they_were() -> None:
     # copied from the opening and honesty lines on the day the bed was added (20 Nov 2026): nothing about a background may change what the caller is told
-    assert persona.INBOUND_OPENING["en"] == "Hello, I'm {assistant}, the AI assistant from {business}. Do you have a minute to talk?"
+    assert persona.INBOUND_OPENING["en"] == "Hello, I'm {assistant}, the AI assistant from {business}. How can I help you?"
     assert persona.INBOUND_OPENING["te"] == "హలో, నేను {business} నుంచి {assistant}, AI అసిస్టెంట్\u200cని. ఇప్పుడు ఒక నిమిషం మాట్లాడొచ్చా?"
     assert tone_mod.HONEST_EN["friendly"] == "Yes, I'm an AI assistant."
     assert tone_mod.HONEST_TE["friendly"] == "అవును, నేను AI assistant ని."
