@@ -1,3 +1,4 @@
+import { expectNoSentenceForm } from "@/test/helpers/no-sentence-form";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -133,6 +134,28 @@ describe("add and change", () => {
     expect(vi.mocked(a.save).mock.calls[0][1]).toBe(entriesOf("pricelist")[1].id);
     await waitFor(() => expect(screen.getByText("Silk dupatta")).toBeInTheDocument());
     expect(document.querySelectorAll("[data-entry]")).toHaveLength(3);
+  });
+  it("the Add an item drawer is plain labelled fields: Name, Smallest order and Counted in, a table of rates with two column headings, Rates valid until with its hint; no sentence with a blank (owner, 29 Nov)", async () => {
+    section("pricelist");
+    fireEvent.click(screen.getByRole("button", { name: "Add an item" }));
+    const dialog = await screen.findByRole("dialog");
+    for (const label of ["Name", "Smallest order", "Counted in", "Rates valid until"]) expect(within(dialog).getByLabelText(label)).toBeInTheDocument();
+    expect(within(dialog).getByText("Rates for bigger orders")).toBeInTheDocument();
+    expect(within(dialog).getByText(/^From \(/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/^Price per .* \(₹\)$/)).toBeInTheDocument();
+    expect(within(dialog).getByText("Optional. Leave empty if the rates have no end date.")).toBeInTheDocument();
+    expect(dialog.textContent).not.toMatch(/The smallest order is|These rates are good until|₹ .* a /);
+    expectNoSentenceForm(dialog);
+  });
+  it("every style's drawer is free of sentence forms", async () => {
+    for (const [style, button] of [["products", "Add a product"], ["services", "Add a service"], ["courses", "Add a course"], ["properties", "Add a property"]] as const) {
+      section(style);
+      const open = screen.queryByRole("button", { name: button });
+      if (!open) { cleanup(); continue; }
+      fireEvent.click(open);
+      expectNoSentenceForm(await screen.findByRole("dialog"));
+      cleanup();
+    }
   });
   it("a price list can take another rate and drop one", async () => {
     section("pricelist");
