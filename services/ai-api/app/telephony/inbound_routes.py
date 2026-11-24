@@ -65,6 +65,7 @@ class InboundService:
     calls: inbound.ExotelCalls | None
     cost_paise_per_minute: int
     cost_pulse_s: int = 60
+    cost_paise_per_minute_inbound: int | None = None   # an inbound call's own rate when it differs from the outbound one
     language: str = "en"
     llm_choice: str = "haiku"
     business: str = "the business"   # what the opening line names (TELEPHONY_INBOUND_BUSINESS; the scheduler account does not read workspace names)
@@ -507,7 +508,7 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
             info = await asyncio.to_thread(service.store.line_find, number)   # remembered from admission: no new wait
     ending, hidden = caller_marks(service.gate_settings, start, outbound)
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="outbound" if outbound else "inbound", language=language, business=service.business, max_call_s=max_call_s,
-                    cost_paise_per_minute=service.cost_paise_per_minute, cost_pulse_s=service.cost_pulse_s, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
+                    cost_paise_per_minute=(service.cost_paise_per_minute_inbound if outbound is None and service.cost_paise_per_minute_inbound is not None else service.cost_paise_per_minute), cost_pulse_s=service.cost_pulse_s, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
                     carrier=provider, caller_ending=ending, caller_hidden=hidden, goal=(outbound.goal if outbound is not None and outbound.goal else None), goal_tone=outbound.tone if outbound is not None and outbound.goal else None, task_questions=outbound.questions if outbound else (), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
     if live is not None:
         live.add(tenant, call_id, line)

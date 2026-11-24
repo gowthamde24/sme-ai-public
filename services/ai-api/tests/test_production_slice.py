@@ -106,7 +106,7 @@ def test_the_full_stack_deploys_from_its_declared_files_sandbox_one_warm_instanc
                  "--no-cpu-throttling", "--min-instances 1", "--max-instances 1", "ANTHROPIC_API_KEY=sme-anthropic-api-key:latest", "PLIVO_AUTH_TOKEN=sme-plivo-auth-token:latest",
                  "TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest", "SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest",
                  # VoiceLink, the only provider (24 Nov 2026): the provider word, the per-minute cost it charges, and the three secrets (bot address token, login)
-                 "TELEPHONY_PROVIDER=voicelink", "TELEPHONY_COST_PAISE_PER_MINUTE=50", "TELEPHONY_COST_PULSE_S=60"):   # (the three VoiceLink secret bindings are OFF in this variant until the secrets exist)
+                 "TELEPHONY_PROVIDER=voicelink", "TELEPHONY_COST_PAISE_PER_MINUTE=50", "TELEPHONY_COST_PAISE_PER_MINUTE_INBOUND=25", "TELEPHONY_COST_PULSE_S=60"):   # (the three VoiceLink secret bindings are OFF in this variant until the secrets exist)
         assert must in deploy, must
     for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=true", "WHATSAPP", "staging", "CAPTCHA"):
         assert never not in deploy, never
