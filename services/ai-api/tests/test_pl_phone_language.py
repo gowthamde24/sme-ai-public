@@ -174,7 +174,7 @@ def test_both_voice_engines_receive_stack_nineteen_through_the_call_voice() -> N
 def test_the_model_is_told_the_languages_the_brand_honesty_tone_and_short_turns() -> None:
     prompt = persona.system_prompt(business="Stack19", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None)
     for words in ("NEVER say you cannot speak", "Telugu, Kannada, Tamil, Malayalam, Hindi, English and Marathi", 'written exactly "Stack19"', "Never translate it", "never write its number as a word",
-                  "నేను AI అసిస్టెంట్‌ని అండీ", "Never claim to be human", "Mirror the caller", "friendly shop assistant", "NOT in every sentence", "INTERRUPTED", "ఆ, చెప్పండి", "[END]", "సరే అండీ, bye!", "about 25 words", "ONE question", "own script"):
+                  "నేను AI అసిస్టెంట్‌ని అండీ", "Never claim to be human", "Mirror the caller", "friendly shop assistant", "NOT in every sentence", "INTERRUPTED", "ఆ, చెప్పండి", "[END]", "సరే అండీ, bye!", "about 18 words", "ONE question", "NOT KNOWING", "own script"):
         assert words in prompt, words
     assert "Speak Telugu" in prompt
 
