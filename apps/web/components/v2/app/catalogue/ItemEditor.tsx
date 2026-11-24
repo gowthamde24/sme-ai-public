@@ -17,7 +17,7 @@ import { FreshPhotos } from "./FreshPhotos";
 import { ItemFieldsSimple } from "./LazyItemFieldsSimple";
 import { vocab } from "./ItemCard";
 import { PhotoTray, type TraySlot } from "./PhotoTray";
-import { bandText, moveItem, rupeesToPaise, soonestExpiry } from "./catalogue-logic";
+import { bandForPaise, bandText, moveItem, rupeesToPaise, soonestExpiry } from "./catalogue-logic";
 import type { EditorActions, ItemOutcome, SaveInput, Uploader } from "./catalogue-types";
 import { photoErrorKey } from "./photo-errors";
 import type { preparePhoto } from "./prepare-photo";
@@ -445,7 +445,11 @@ export function ItemEditor(p: ItemEditorProps) {
               <label htmlFor="cat-price" className={label}>
                 {say(words, "catalogue.field.price")} (₹)
               </label>
-              <input id="cat-price" inputMode="decimal" autoComplete="off" value={priceText} disabled={busy || clearPrice} onChange={(e) => setPriceText(e.target.value)} aria-describedby="cat-price-help" className={`${field} max-w-60`} />
+              <input id="cat-price" inputMode="decimal" autoComplete="off" value={priceText} disabled={busy || clearPrice} onChange={(e) => {
+                    setPriceText(e.target.value);
+                    const paise = rupeesToPaise(e.target.value);
+                    if (paise !== null) setBand(bandForPaise(paise)); // the range follows the exact price
+                  }} aria-describedby="cat-price-help" className={`${field} max-w-60`} />
               <p id="cat-price-help" className={help}>
                 {say(words, "catalogue.form.price.owner")}
               </p>

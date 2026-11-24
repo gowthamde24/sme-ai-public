@@ -177,3 +177,9 @@ export const BAND_WORDS: Record<PriceBand, string> = {
 export function bandText(words: Readonly<Record<string, string>> | undefined, band: PriceBand): string {
   return words?.[`catalogue.band.${band}`] ?? BAND_WORDS[band];
 }
+
+/** The price band an exact price falls in (the bands are 5,000 / 10,000 / 25,000 / 50,000 rupees): typing the price keeps the range right, so a saree is never left in the first range by accident. */
+export function bandForPaise(paise: number): PriceBand {
+  const rupees = paise / 100;
+  return rupees < 5000 ? "under_5k" : rupees < 10000 ? "5k_10k" : rupees < 25000 ? "10k_25k" : rupees < 50000 ? "25k_50k" : "above_50k";
+}
