@@ -169,3 +169,46 @@ describe("How it talks to you (made plain, owner 19 Nov 2026)", () => {
     await screen.findByText("Couldn't do that. Try again.");
   });
 });
+
+describe("How it talks to you, plain fields (SETTINGS_OPEN, owner 25 Nov 2026: no fill-in-the-blank sentences)", () => {
+  function plainSetup(save?: TalkToYouActions["save"]) {
+    const actions: TalkToYouActions = {
+      load: vi.fn(async (l) => ({ ok: true as const, data: prefsFor(l) })),
+      save: save ?? (vi.fn(async (l, patch) => ({ ok: true as const, data: { ...prefsFor(l, { ...MOCK_START, ...patch } as never, "u1"), undoToken: "u1" } })) as never),
+      undo: vi.fn(async (l) => ({ ok: true as const, data: prefsFor(l) })),
+      preview: vi.fn(async () => ({ ok: true as const, data: { text: "Sample words", audio: null } })),
+    };
+    render(<TalkToYou words={WORDS} initial={prefsFor("te")} languages={["te", "kn", "hi", "en"]} first="te" langNames={CALL_LANG_NAMES} mock ownerFirst="Gowtham" actions={actions} plain />);
+    return actions;
+  }
+
+  it("has four labelled fields with a one-line hint each and ONE Save, and no sentence with a blank in it", () => {
+    plainSetup();
+    for (const label of ["Language", "Speed", "Tone", "Call me"]) expect(screen.getByLabelText(label)).toBeInstanceOf(HTMLSelectElement);
+    expect(document.querySelectorAll("[data-setting-line]")).toHaveLength(0);
+    expect(document.body.textContent).not.toMatch(/Talk to me in|and call me|\[/);
+    expect(screen.getAllByRole("button", { name: "Save" })).toHaveLength(1);
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+    expect(screen.getByText("The language it talks to you in.")).toBeInTheDocument();
+  });
+
+  it("nothing is saved until Save: the example follows the choices, then Save sends one request per changed field", async () => {
+    const a = plainSetup();
+    fireEvent.change(screen.getByLabelText("Tone"), { target: { value: "friendly" } });
+    fireEvent.change(screen.getByLabelText("Call me"), { target: { value: "garu" } });
+    expect(a.save).not.toHaveBeenCalled();
+    expect(screen.getByText("You have unsaved changes.")).toBeInTheDocument();
+    expect(document.querySelector('[data-part="vt-me-example"]')).toHaveTextContent("హాయ్ Gowtham garu!"); // the friendly sample, calling the owner by name + garu, before anything is saved
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(a.save).toHaveBeenCalledTimes(2));
+    expect((a.save as ReturnType<typeof vi.fn>).mock.calls.map((c) => c[1])).toEqual([{ style: "friendly" }, { address: "garu" }]);
+    await screen.findByText("Saved, only for you.");
+    expect(screen.queryByRole("button", { name: /Undo/ })).toBeNull(); // two changes: no single Undo
+  });
+
+  it("changing the language still loads that language's choices", async () => {
+    const a = plainSetup();
+    fireEvent.change(screen.getByLabelText("Language"), { target: { value: "en" } });
+    await waitFor(() => expect(a.load).toHaveBeenCalledWith("en"));
+  });
+});

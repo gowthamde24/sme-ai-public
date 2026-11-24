@@ -1,4 +1,4 @@
-# Train how it talks
+# Teach your assistant
 Not live Teach your assistant how to speak on calls: how to greet, what to ask, and what never to say. Only the owner can go live or pause.
 {label="Sections"}
 - [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=knowledge current=page)
@@ -14,7 +14,7 @@ Using defaults What your assistant knows about your business. It only states wha
 Your business name, town and languages. Your assistant uses these when it talks. [Edit business details](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business)
 {label="About my business"}
 ## About my business
-Tell your assistant about your business, the way you would brief a new employee. It uses this in chats, calls, Ask and drafts. If something is not here or in your records, it does not make it up. Used in: chats, calls, Ask, drafts Your notes
+Tell your assistant about your business, the way you would brief a new employee. If something is not here or in your records, it does not make it up. Your assistant reads this when it answers customers on calls and chats. Your notes
 <textarea label="Your notes" placeholder="What you sell, prices, delivery, timings, what to always say, what never to promise…" maxlength=20000>
 Saved 0 of 20,000 Not sure what to write? Tap a heading to add it:
 [button type=button: Prices]

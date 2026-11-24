@@ -206,7 +206,7 @@ export function AboutBusiness({ words, initial, endpoint, canEdit, lang, sources
       <header className="flex flex-col gap-1">
         <h2 id="ctx-h" className="text-lg font-semibold text-ink">{t("ctx.title")}</h2>
         <p className="text-sm text-muted">{t("ctx.lead")}</p>
-        {initial.usedBy.length > 0 ? <p className={fieldHelp}>{t("ctx.used")} {initial.usedBy.map((u) => t(`ctx.used.${u}` as "ctx.used.chats")).join(", ")}</p> : null}
+        {initial.usedBy.length > 0 ? <p className={fieldHelp}>{t("ctx.used.plain")}</p> : null}
       </header>
 
       {!canEdit ? <p className={warnBox}>{t("ctx.err.forbidden")}</p> : null}
