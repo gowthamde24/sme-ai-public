@@ -14,6 +14,8 @@ while IFS= read -r line; do   # every secret the staging API declares (deploy/se
   name="${line%%=*}"; ref="${line#*=}"; ref="${ref%%:*}"
   value="$(gcloud secrets versions access latest --secret "$ref" --project "$PROJECT" 2>/dev/null)" && export "$name=$value"
 done < deploy/settings/staging/api.secrets
+# Razorpay TEST keys (no real money), if the owner's local file exists: local runs only, never copied into a repo
+[ -f /Volumes/Stack19/stack19/.secrets-local/razorpay-test.env ] && . /Volumes/Stack19/stack19/.secrets-local/razorpay-test.env
 API_ENV=development API_CORS_ORIGINS=http://localhost:3000
 ADMIN_ENVIRONMENT=staging
 SIGNUP_OPEN=true SIGNUP_PHONE_SENDER=fake SIGNUP_FAKE_CODE_ECHO=true
