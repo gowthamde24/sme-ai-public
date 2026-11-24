@@ -36,6 +36,8 @@ export async function targetPaths(accessToken: string, tenantId: string, targets
         return jobsScreens() === "off" ? `${base}/chats` : `${base}/do-not-call`;
       case "message": // a WhatsApp message sent back by WhatsApp: Chats > Templates shows why
         return `${base}/chats/templates`;
+      case "price_list": // the phone assistant has no price list to answer prices from (the id is the workspace's own): the price list page
+        return `${base}/price-list`;
       case "billing": // the voice credits' warning (the id is the workspace's own): Settings > Plan & usage
         return `${base}/settings?section=plan`;
       case "outbox_message":

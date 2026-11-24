@@ -126543,6 +126543,61 @@
    "kn": "draft"
   }
  },
+ "jobs.new.search.f.area": {
+  "en": "Where to look",
+  "te": "ఎక్కడ వెతకాలి",
+  "hi": "कहाँ खोजें",
+  "kn": "ಎಲ್ಲಿ ಹುಡುಕಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.h.area": {
+  "en": "A town or a part of town. It looks for businesses near it.",
+  "te": "ఊరు లేదా ఊరిలో ఒక ప్రాంతం. దాని దగ్గరి బిజినెస్‌లను వెతుకుతుంది.",
+  "hi": "शहर या शहर का हिस्सा। उसके पास के व्यवसाय खोजेगा।",
+  "kn": "ಊರು ಅಥವಾ ಊರಿನ ಒಂದು ಭಾಗ. ಅದರ ಹತ್ತಿರದ ಬಿಸಿನೆಸ್‌ಗಳನ್ನು ಹುಡುಕುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.f.results": {
+  "en": "How many businesses to find",
+  "te": "ఎన్ని బిజినెస్‌లు వెతకాలి",
+  "hi": "कितने व्यवसाय खोजें",
+  "kn": "ಎಷ್ಟು ಬಿಸಿನೆಸ್ ಹುಡುಕಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.f.fit": {
+  "en": "Keep only the ones that fit at least",
+  "te": "కనీసం ఇంత సరిపోయేవే ఉంచండి",
+  "hi": "कम से कम इतने फ़िट वाले ही रखें",
+  "kn": "ಕನಿಷ್ಠ ಇಷ್ಟು ಹೊಂದುವವುಗಳನ್ನು ಮಾತ್ರ ಇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.h.fit": {
+  "en": "Out of 100. A higher number gives fewer, better matches.",
+  "te": "100 లో. ఎక్కువ సంఖ్య అంటే తక్కువ, కానీ బాగా సరిపోయేవి.",
+  "hi": "100 में से। बड़ी संख्या यानी कम, पर बेहतर मैच।",
+  "kn": "100 ರಲ್ಲಿ. ದೊಡ್ಡ ಸಂಖ್ಯೆ ಎಂದರೆ ಕಡಿಮೆ, ಆದರೆ ಉತ್ತಮ ಹೊಂದಾಣಿಕೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "phn.sub": {
   "en": "The number your customers call. Your assistant answers it.",
   "te": "మీ కస్టమర్లు కాల్ చేసే నంబర్. మీ అసిస్టెంట్ దానికి జవాబిస్తుంది.",

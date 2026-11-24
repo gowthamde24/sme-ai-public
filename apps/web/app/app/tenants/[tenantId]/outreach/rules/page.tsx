@@ -13,7 +13,7 @@ import { goalNames, languageNames, sourceNames, clockText } from "@/lib/outreach
 import { buildSteps, retryPhrase } from "@/components/v2/app/outreach/plan-text";
 import { makeT } from "@/components/v2/app/words";
 import { redirectToJob } from "@/lib/jobs/redirect";
-import { jobsScreens, outreachScreens } from "@/lib/screens/flag";
+import { jobsScreens, outreachScreens, sentenceForms } from "@/lib/screens/flag";
 import { PolicySentences } from "@/components/v2/app/jobs/rules/LazyPolicySentences";
 
 import { leadContext } from "../../lead-context";
@@ -35,7 +35,7 @@ export default async function OutreachRulesPage({ params, searchParams }: PagePr
   await redirectToJob(got.ctx.accessToken, tenantId, "speed_to_lead", (await searchParams).all); // JOBS on: the standing rules are the speed-to-lead job's
   const { accessToken, userId, tenant, pack } = got.ctx;
   const lang = await getLang();
-  const simple = jobsScreens() !== "off";
+  const simple = sentenceForms();
   const words = withPackGoalWords(wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day.", "today.lang.", "cv6.", ...(simple ? ["jobs.rules."] : [])]), pack?.packId);
   const base = `/app/tenants/${tenantId}`;
   const ctx = { token: accessToken, tenantId, userId };

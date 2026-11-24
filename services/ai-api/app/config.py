@@ -468,6 +468,13 @@ class Settings(BaseSettings):
     # SANDBOX ONLY, for testing (owner, 28 Nov 2026): a sandbox-list number ignores the
     # calling hours. Ignored in live mode. Remove before the 2 Dec real-data gate.
     telephony_sandbox_ignores_hours: bool = False
+    # The number picker (28 Nov 2026): a business picks its own VoiceLink number; we buy it with OUR
+    # money. Off until the planner turns it on (and the database switch is on too).
+    phone_picker: bool = False
+    picker_client_id: int | None = None      # OUR VoiceLink client the bought numbers are given to
+    picker_bot_id: int | None = None         # OUR WebSocket bot the numbers are pointed at
+    picker_wallet_floor_inr: int = 1000      # never buy with less than this in our VoiceLink wallet
+    picker_max_total_inr: int = 500          # the most one number may cost a month, before GST
     # Live take-over (job TO, owner decision 10 Nov 2026): a short spoken announcement to the caller
     # when a person from the business takes over. OFF by default (the owner will choose);
     # TAKEOVER_ANNOUNCE=true turns it on.
