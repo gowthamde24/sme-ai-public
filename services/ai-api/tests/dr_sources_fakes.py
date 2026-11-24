@@ -18,6 +18,7 @@ from app.lead_sources.phones import check_phone
 class FakeLeadSourcesRepository:
     def __init__(self, *, gate_closed: bool = False) -> None:
         self.gate_closed = gate_closed
+        self.activity_: dict[str, list[dict[str, Any]]] = {}
         self.contacts: dict[str, dict[str, Any]] = {}
         self.items: set[tuple[str, str]] = set()
         self.parts: dict[str, dict[str, Any]] = {}
@@ -126,6 +127,29 @@ class FakeLeadSourcesRepository:
         if args["p_consent"]:
             self.consents[args["p_consent_id"]] = args["p_consent"]
         return {"created": True, "source": self._src(sid)}
+
+    def activity_add(self, worker_token: str, token_hash: str, outcome: str, reason: str, test: bool) -> None:
+        sid = self.by_hash.get(token_hash)
+        if sid is not None:
+            self.activity_.setdefault(sid, []).append({"at": "2026-11-24T10:00:00+00:00", "outcome": outcome, "reason": reason, "test": test})
+
+    def activity(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, limit: int) -> dict[str, Any]:
+        if str(source_id) not in self.sources_:
+            raise KeyError("reference")
+        return {"items": list(reversed(self.activity_.get(str(source_id), [])))[:limit]}
+
+    def job_link(self, token: str, tenant_id: uuid.UUID, job_id: str, source_id: uuid.UUID) -> dict[str, Any]:
+        self.sources_[str(source_id)]["job_id"] = job_id
+        return {"source_id": str(source_id), "job_id": job_id}
+
+    def job_address(self, token: str, tenant_id: uuid.UUID, job_id: str) -> dict[str, Any] | None:
+        for sid, s in self.sources_.items():
+            if s.get("job_id") == job_id:
+                return {"source_id": sid, "job_id": job_id, "status": s["status"], "token_hint": s.get("token_hint"), "last_received_at": None, "received_count": 0, "label": s["label"]}
+        return None
+
+    def test_logged(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, outcome: str, reason: str) -> None:
+        self.activity_.setdefault(str(source_id), []).append({"at": "2026-11-24T10:00:00+00:00", "outcome": outcome, "reason": reason, "test": True})
 
     def consent_tick(self, token: str, tenant_id: uuid.UUID, kinds: list[str], text_version: str) -> dict[str, Any]:
         self.calls.append("consent_tick")

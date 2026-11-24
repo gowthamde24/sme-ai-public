@@ -412,3 +412,42 @@ class EmailAddressOut(_Strict):
     gmail_filter_guide: list[GuideStep]
     sample_portals: list[str]
     gmail_confirmation: GmailConfirmation | None
+
+
+class ActivityItem(_Strict):
+    at: datetime
+    outcome: Literal["accepted", "duplicate", "refused"]
+    reason: str
+    test: bool
+
+
+class ActivityOut(_Strict):
+    items: list[ActivityItem]
+
+
+class SampleLeadIn(_Strict):
+    """A sample post, as the connected tool would send it (the same field names the address accepts)."""
+
+    sample: dict[str, Any]
+
+
+class SampleLeadOut(_Strict):
+    outcome: Literal["accepted", "duplicate", "refused"]
+    reason: str
+    mapped: dict[str, str]   # which fields were understood: field -> "set" | "empty" (never the values)
+    stored: Literal[False] = False
+
+
+class JobAddressIn(_Strict):
+    source_id: ApiUuid
+
+
+class JobAddressOut(_Strict):
+    source_id: ApiUuid
+    job_id: str
+    status: Literal["active", "paused"]
+    token_hint: str | None
+    last_received_at: datetime | None
+    received_count: int
+    label: str
+    secret: SecretOut | None = None   # shown once, on the call that made the address

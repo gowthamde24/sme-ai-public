@@ -737,6 +737,21 @@ class LeadSourcesService:
         self.repo.test_logged(token, tenant_id, source_id, outcome, reason)
         return {"outcome": outcome, "reason": reason, "mapped": mapped, "stored": False}
 
+    def job_address_ensure(self, token: str, tenant_id: uuid.UUID, job_id: str, source_id: uuid.UUID) -> tuple[dict[str, Any], bool]:
+        """The lead address of one job: the same address on every call; made (a webhook source, linked to the job) the first time, its secret shown only then."""
+        existing = self.repo.job_address(token, tenant_id, job_id)
+        if existing is not None:
+            return {**existing, "secret": None}, False
+        from app.lead_sources.models import SourceCreate
+
+        out, created = self.source_create(token, tenant_id, SourceCreate(source_id=source_id, kind="webhook", label=f"Form for {job_id.replace('_', ' ')}"))
+        linked = self.repo.job_link(token, tenant_id, job_id, source_id)
+        return {
+            "source_id": linked["source_id"], "job_id": job_id, "status": out["status"], "token_hint": out.get("token_hint"),
+            "last_received_at": out.get("last_received_at"), "received_count": out.get("received_count", 0), "label": out["label"],
+            "secret": out.get("secret"),
+        }, created
+
     def _first_touch(self) -> None:
         """A NEW lead is stored: the outreach step runs now, in a thread (the arrival is answered at once), instead of at the worker's next minute. The database still decides everything (hours, consent, caps)."""
         run = self._after_arrival

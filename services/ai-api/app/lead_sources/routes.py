@@ -33,6 +33,7 @@ from app.hardening.replay import ReplayGuard
 from app.lead_sources import consent_tick, mime
 from app.lead_sources.columns_ai import RunColumnMatcher
 from app.lead_sources.models import (
+    ActivityOut,
     Card,
     CardConnected,
     CardsOut,
@@ -43,6 +44,8 @@ from app.lead_sources.models import (
     ImportsOut,
     ImportUndoOut,
     IndiaMartPullOut,
+    JobAddressIn,
+    JobAddressOut,
     MailIn,
     MailOut,
     PreviewIn,
@@ -50,6 +53,8 @@ from app.lead_sources.models import (
     ReadIn,
     ReadOut,
     ReceivedOut,
+    SampleLeadIn,
+    SampleLeadOut,
     SheetAccessOut,
     SheetLinkIn,
     SheetLinkOut,
@@ -326,6 +331,40 @@ def pause_source(source_id: str, ctx: Manager, runtime: RuntimeDep) -> dict[str,
 @router.post("/lead-sources/{source_id}/resume", response_model=SourceOut)
 def resume_source(source_id: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     return _service(runtime).source_status(ctx.principal.token, ctx.tenant.id, _id(source_id), "active")
+
+
+# ------------------------------------------------------------------------------------------------------------------ one address per job, what arrived, a test lead
+_JOB = re.compile(r"^[a-z][a-z0-9_]{1,60}$")
+
+
+def _job(job_id: str) -> str:
+    if not _JOB.fullmatch(job_id):
+        raise ApiError(422, "validation_error", "The request was not valid.", extra={"fields": ["job_id"]})
+    return job_id
+
+
+@router.get("/jobs/{job_id}/lead-address", response_model=JobAddressOut | None)
+def get_job_address(job_id: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any] | None:
+    return _service(runtime).job_address(ctx.principal.token, ctx.tenant.id, _job(job_id))
+
+
+@router.post("/jobs/{job_id}/lead-address", response_model=JobAddressOut, status_code=201)
+def make_job_address(job_id: str, body: JobAddressIn, response: Response, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    out, created = _service(runtime).job_address_ensure(ctx.principal.token, ctx.tenant.id, _job(job_id), uuid.UUID(str(body.source_id)))
+    if not created:
+        response.status_code = 200
+    return out
+
+
+@router.get("/lead-sources/{source_id}/activity", response_model=ActivityOut)
+def source_activity(source_id: str, ctx: Manager, runtime: RuntimeDep, limit: Annotated[int, Query(ge=1, le=100)] = 50) -> dict[str, Any]:
+    return _service(runtime).source_activity(ctx.principal.token, ctx.tenant.id, _id(source_id), limit)
+
+
+@router.post("/lead-sources/{source_id}/test-lead", response_model=SampleLeadOut)
+def source_test_lead(source_id: str, body: SampleLeadIn, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    """"Send a test lead": what a post like this WOULD become at this address; nothing is stored as a lead (only the activity list notes that a test was tried)."""
+    return _service(runtime).source_dry_run(ctx.principal.token, ctx.tenant.id, _id(source_id), body.sample)
 
 
 # ------------------------------------------------------------------------------------------------------------------ the history of a lead

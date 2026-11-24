@@ -7,7 +7,7 @@ comment on column public.lead_sources.job_id is 'SAFE: the id of the job this ad
 create unique index lead_sources_one_per_job on public.lead_sources (tenant_id, job_id) where job_id is not null and kind = 'webhook';
 
 create table public.lead_source_activity (
-  id        bigint generated always as identity primary key,
+  id        uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references public.tenants (id) on delete restrict,
   source_id uuid not null,
   at        timestamptz not null default now(),
