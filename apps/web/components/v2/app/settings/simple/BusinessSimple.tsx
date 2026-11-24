@@ -92,7 +92,7 @@ export function BusinessSimple({ variant, words, action, name, town, languages, 
     }
     const both = !page && canEditAddress;
     return (
-      <form action={run} onChange={() => setTouched(true)} className="flex flex-col gap-5" data-part="business-simple" data-plain="">
+      <form action={run} onChange={() => setTouched(true)} className="mb-6 flex flex-col gap-5" data-part="business-simple" data-plain="">
         <TextField label={t("settings.biz.name")} hint={t("jobs.set.biz.help")} name="name" value={v.name} onChange={(x) => set({ name: x })} maxLength={120} required autoComplete="organization" disabled={pending} />
         <TextField label={t("settings.biz.town")} name="town" value={v.town} onChange={(x) => set({ town: x })} minLength={2} maxLength={80} autoComplete="address-level2" disabled={pending} />
         {both ? (

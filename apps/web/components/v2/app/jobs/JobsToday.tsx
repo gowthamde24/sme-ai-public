@@ -22,7 +22,7 @@ export function JobsToday({ jobs, words, base, actions, sheet = null, messagesTo
   if (jobs.length === 0) return null;
   return (
     <section data-part="jobs-today" aria-labelledby="jobs-today-heading" className="flex min-w-0 flex-col gap-3">
-      <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
         <h2 id="jobs-today-heading" className="whitespace-nowrap font-display text-xl font-semibold md:text-2xl">
           {t("jobs.today.title")}
         </h2>
