@@ -53,7 +53,7 @@ comment on column public.sell_lists.kind is 'SAFE: a closed word. CLEAN-EXEMPT: 
 
 create table public.sell_list_columns (
   id            uuid not null,
-  tenant_id     uuid not null,
+  tenant_id     uuid not null references public.tenants (id) on delete restrict,
   list_id       uuid not null,
   key           text not null check (key ~ '^[a-z][a-z0-9_]{0,29}$'),
   label         text not null check (char_length(label) between 1 and 40 and app.text_is_clean(label)),
@@ -90,7 +90,7 @@ comment on column public.sell_list_columns.billing_period is 'SAFE: a closed wor
 
 create table public.sell_list_rows (
   id         uuid not null,
-  tenant_id  uuid not null,
+  tenant_id  uuid not null references public.tenants (id) on delete restrict,
   list_id    uuid not null,
   name       text not null check (char_length(name) between 1 and 120 and app.text_is_clean(name)),
   cells      jsonb not null default '{}'::jsonb check (jsonb_typeof(cells) = 'object' and pg_column_size(cells) <= 6000),
@@ -111,7 +111,7 @@ comment on column public.sell_list_rows.cells is 'SAFE: the cells of the row: te
 
 create table public.sell_list_imports (
   id         uuid not null,
-  tenant_id  uuid not null,
+  tenant_id  uuid not null references public.tenants (id) on delete restrict,
   list_id    uuid not null,
   label      text not null check (char_length(label) between 1 and 80 and app.text_is_clean(label)),
   mapping    jsonb not null check (jsonb_typeof(mapping) = 'object' and pg_column_size(mapping) <= 4000),
@@ -120,6 +120,7 @@ create table public.sell_list_imports (
   primary key (tenant_id, id),
   foreign key (tenant_id, list_id) references public.sell_lists (tenant_id, id) on delete restrict
 );
+create index sell_list_imports_list_idx on public.sell_list_imports (tenant_id, list_id, created_at);
 comment on table public.sell_list_imports is 'A remembered mapping from the headings of an Excel or CSV file to the columns of a list. Written only by SECURITY DEFINER functions.';
 comment on column public.sell_list_imports.label is 'SAFE: a short name for the mapping, for example the file''s name without the extension; passes app.text_is_clean';
 comment on column public.sell_list_imports.mapping is 'SAFE: file heading -> column key pairs; headings are the shop''s own column words (no personal data) and pass app.text_is_clean in the function. CLEAN-EXEMPT: checked in the function';
@@ -140,6 +141,7 @@ end $$;
 create trigger audit_sell_lists after insert or update or delete on public.sell_lists for each row execute function app.audit_row_change('sell_list');
 create trigger audit_sell_list_columns after insert or update or delete on public.sell_list_columns for each row execute function app.audit_row_change('sell_list_column');
 create trigger audit_sell_list_rows after insert or update or delete on public.sell_list_rows for each row execute function app.audit_row_change('sell_list_row');
+create trigger audit_sell_list_imports after insert or update or delete on public.sell_list_imports for each row execute function app.audit_row_change('sell_list_import');
 
 -- ------------------------------------------------------------------------------------------------------------------------------ helpers
 create function app.sell_list_slug(p_tenant uuid, p_list uuid, p_label text) returns text
