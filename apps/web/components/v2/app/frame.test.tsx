@@ -294,7 +294,7 @@ describe("AppFrame", () => {
     expect(container.querySelectorAll('[data-ui="v2"]')).toHaveLength(1); // one wrapper for the frame and the page
     expect(container.querySelector("#main-content")?.closest('[data-ui="v2"]')?.getAttribute("data-theme")).toBe("dark");
     expect(screen.getAllByRole("combobox")).toHaveLength(1); // the language select
-    expect(screen.getByRole("button", { name: /light/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /light mode/i })).toBeInTheDocument();
     expect(container.querySelector("[data-frame='app']")).not.toBeNull();
   });
   it("keeps the page working when the world does not (job BW): the guard sits under the top bar, before the page, and the page gets the frame's words", () => {
