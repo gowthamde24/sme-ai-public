@@ -31,7 +31,7 @@ export function JobsToday({ jobs, words, base, actions, sheet = null, messagesTo
         </span>
         <span className="ml-auto flex shrink-0 items-center gap-1">
           {sheet?.actions ? <NewJobButton words={words} base={base} actions={sheet.actions} size="sm" /> : null}
-          <Link href={`${base}/jobs`} prefetch={false} className="inline-flex min-h-11 items-center whitespace-nowrap px-1.5 text-sm font-semibold text-brand-text hover:underline">
+          <Link href={`${base}/jobs`} prefetch={false} className="inline-flex min-h-11 items-center whitespace-nowrap px-1.5 text-sm font-semibold text-muted underline-offset-4 hover:text-ink hover:underline">
             {t("jobs.today.all")}
           </Link>
         </span>
