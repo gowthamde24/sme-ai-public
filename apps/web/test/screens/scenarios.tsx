@@ -1463,6 +1463,7 @@ add({ id: "import-leads", render: withLeadsFlag("mock", async () => (await impor
 add({ id: "add-lead", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/add-lead/page")).default(props({}))), handlers: base });
 add({ id: "import-leads-off", roles: ["owner"], render: withLeadsFlag(undefined, async () => (await import("@/app/app/tenants/[tenantId]/import/page")).default(props({}))), handlers: base });
 add({ id: "lead-sources", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/lead-sources/page")).default(props({}))), handlers: base });
+add({ id: "lead-source-guide", roles: ["owner", "admin"], render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/lead-sources/guides/[guide]/page")).default(props({ guide: "sheet" }))), handlers: base });
 // -- scenarios: top-ups (web/ds-topups)
 // Night 4 F2 (TOPUP_SCREENS=mock): Settings > Plan with Usage and top-ups, and Today. The fake provider's cookie cannot be read outside a request, so every scenario shows its review default (80 percent of the minutes); the other states are in the unit tests.
 const withEnv = async <T,>(vars: Record<string, string>, run: () => Promise<T>): Promise<T> => {
