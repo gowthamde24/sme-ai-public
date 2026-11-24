@@ -27,7 +27,7 @@ class OutboundLike(Protocol):
     def tone(self) -> str: ...
 
 
-def call_opening(language: str, *, business: str, assistant: str | None, training: dict[str, Any] | None, say_ai: bool, outbound: OutboundLike | None = None, introduction: Any = None) -> str:
+def call_opening(language: str, *, business: str, assistant: str | None, training: dict[str, Any] | None, say_ai: bool, outbound: OutboundLike | None = None, introduction: Any = None, recording_notice: bool = False) -> str:
     """An inbound call (`outbound` None): the standard inbound opening, or the Owner's trained greeting. A call we placed: the Owner's opening (a test call), else the trained greeting, else the standard outbound opening, with or
     without the AI words as `say_ai` says."""
     from app.talk_training.prompt import greeting as trained_greeting
@@ -38,4 +38,5 @@ def call_opening(language: str, *, business: str, assistant: str | None, trainin
         # ONE greeting (owner decision 13 Nov 2026, decided by C1): a call to a customer opens with the Owner's Talk training greeting when there is one
         standard = outbound.opening_line if say_ai else plivo_outbound.opening_for(outbound.kind, language, outbound.tone, None, False)
         return persona.opening_line(language, business=business, assistant=assistant, customer=None, owner_line=owner_line or trained_greeting(training, language) or standard, inbound=False, mention_ai=say_ai)
-    return persona.opening_line(language, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, language), mention_ai=say_ai)
+    said = persona.opening_line(language, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, language), mention_ai=say_ai)
+    return persona.with_recording_notice(language, said) if recording_notice else said   # only a call a person rang in on says it is recorded (VOICELINK_RECORDING_EXPECTED)

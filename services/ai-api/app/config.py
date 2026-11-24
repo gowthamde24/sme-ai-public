@@ -503,6 +503,11 @@ class Settings(BaseSettings):
     voicelink_username: SecretStr | None = None
     voicelink_password: SecretStr | None = None
     voicelink_api_base: str = "https://app.voicelink.co.in/api/v1"
+    # Call recording is ON on purpose (owner decision 28 Nov 2026, option B: in the first weeks
+    # VoiceLink records calls so the owner can review quality). True: inbound calls open with "This
+    # call may be recorded to improve the service" and the daily check raises an item only when
+    # VoiceLink shows recording OFF. False (default): no notice; the check raises an item when ON.
+    voicelink_recording_expected: bool = False
     # in-app KYC of a business's phone number (owner, 14 Nov 2026). OFF until the owner says so:
     # the form is checked and nothing is sent to Plivo. ON files the application with Plivo.
     plivo_kyc_live: bool = False
