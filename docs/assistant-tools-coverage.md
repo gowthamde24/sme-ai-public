@@ -8,6 +8,9 @@ Levels: read 264, sensitive:deleting 16, sensitive:members 4, sensitive:money 23
 **692 operations** under `/v1/tenants/{tenant_id}`: **603 tools**, 89 screen only (29 of them forbidden for the assistant). **Tools are 91.0% of the non-forbidden operations** (target 90%). Write tools: 335, of which 62 declare an undo.
 
 Levels: read 268, sensitive:deleting 18, sensitive:members 4, sensitive:money 23, sensitive:secrets 2, sensitive:sending 39, write 249.  Screen only: assistant_itself 37, billing 16, binary_upload 7, developer_keys 3, erasure 4, internal 10, outside_sign_in 2, owner_says_so 1, real_data_gate 1, safety_switch 5, workspace_deletion 3.
+**688 operations** under `/v1/tenants/{tenant_id}`: **599 tools**, 89 screen only (29 of them forbidden for the assistant). **Tools are 90.9% of the non-forbidden operations** (target 90%). Write tools: 332, of which 62 declare an undo.
+
+Levels: read 267, sensitive:deleting 18, sensitive:members 4, sensitive:money 23, sensitive:secrets 2, sensitive:sending 39, write 246.  Screen only: assistant_itself 37, billing 16, binary_upload 7, developer_keys 3, erasure 4, internal 10, outside_sign_in 2, owner_says_so 1, real_data_gate 1, safety_switch 5, workspace_deletion 3.
 
 | Tool or screen | Method | Path (after the tenant) | Level | Undo | What the route does |
 |---|---|---|---|---|---|
