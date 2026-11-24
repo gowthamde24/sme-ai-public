@@ -1,7 +1,7 @@
 {
  "$comment": "Job DQ (DPDP): the companies that process personal data for Stack19, as data. The country is where the service processes or stores the data. First draft: the owner checks each line against the provider's current terms (docs/runbooks/dpdp-owner-checklist.md).",
- "version": "2026-11-28",
- "updated_on": "2026-11-28",
+ "version": "2026-11-29",
+ "updated_on": "2026-11-29",
  "wording": "draft",
  "subprocessors": [
   {
@@ -73,7 +73,7 @@
    "name": "VoiceLink",
    "purpose": "Carries our phone calls: answers calls to your business number and places call-backs to people who enquired",
    "country": "India",
-   "data": "The phone number of the caller and of your business, the call's audio while it lasts and how long it lasted; Stack19 keeps no recording and VoiceLink's own recording is off",
+   "data": "The phone number of the caller and of your business, the call's audio while it lasts and how long it lasted. Stack19 keeps no recording. VoiceLink can record calls on its own network when recording is switched on for a number: we keep it switched off and check that every day",
    "link": "https://app.voicelink.co.in"
   }
  ]

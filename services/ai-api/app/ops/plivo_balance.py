@@ -207,7 +207,8 @@ class PlivoBalanceCheck:
 
     def _read(self, token: str, calls_7d_paise: int | None = None) -> dict[str, Any]:
         try:
-            account = parse_account(self._reader.account_details())
+            details = self._reader.account_details()
+            account = parse_account(details)
         except PlivoError as exc:
             logger.warning("plivo balance: the account could not be read (%s)", exc.reason)   # a closed word: never a body, a key or a number
             if exc.reason == "auth" and self._brand == "VoiceLink":   # a known reason is a "Needs you" item at once (28 Nov 2026: the stored username was the display name; nothing showed for hours)
@@ -218,7 +219,21 @@ class PlivoBalanceCheck:
         if low:
             args["p_detail"] = alert_detail(account, self._limit, self._brand, calls_7d_paise)
         logger.info("plivo balance: read, state=%s auto_recharge=%s", args["p_state"], _recharge_word(account.auto_recharge))
+        self._report_recording(token, details.get("recording_numbers"))
         return self._rpc.object(token, "ops_plivo_balance_report", args)
+
+    def _report_recording(self, token: str, count: Any) -> None:
+        """VoiceLink records a number's calls on its network when "call recording" is on for it (28 Nov 2026: it was, while the privacy text says calls are not recorded). The day's read also tells the database how many numbers
+        record: an item for the owner while any does, cleared when none does. Best effort: a failure here (the function not pushed yet, a network error) never spoils the balance read."""
+        if not isinstance(count, int) or isinstance(count, bool):
+            return
+        try:
+            if count > 0:
+                self._rpc.call(token, "ops_telephony_setting_report", {"p_ok": False, "p_detail": f"{self._brand} call recording is ON for {count} of our numbers. Our privacy text says calls are not recorded: switch it off in the {self._brand} portal (the number's Call Recording setting), then check again tomorrow."})
+            else:
+                self._rpc.call(token, "ops_telephony_setting_report", {"p_ok": True})
+        except Exception as exc:  # noqa: BLE001 - only the class is logged
+            logger.warning("plivo balance: the recording check could not be reported (%s)", exc.__class__.__name__)
 
     def _tell_owner(self, token: str, state: dict[str, Any]) -> bool:
         if self._notice is None:

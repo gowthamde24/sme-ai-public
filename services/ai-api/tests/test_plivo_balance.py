@@ -381,3 +381,33 @@ def test_a_refused_voicelink_login_is_reported_with_its_reason_at_once_and_a_pli
     plain.fail_with = "auth"
     PlivoBalanceCheck(plain, other, limit(), None, clock=lambda: NOON).run(TOKEN)
     assert other.calls[1][1] == {"p_state": "failed"}, "Plivo's own failures behave as before"
+
+
+class _Reader:
+    def __init__(self, recording: object) -> None:
+        self.recording = recording
+
+    def account_details(self) -> dict[str, Any]:
+        return {"cash_credits": "900", "auto_recharge": None, "recording_numbers": self.recording}
+
+
+def test_a_number_that_records_raises_one_item_and_none_clears_it_and_a_failed_report_never_spoils_the_read() -> None:
+    rpc = FakeRpc()
+    PlivoBalanceCheck(_Reader(2), rpc, limit("INR", 0.0), None, clock=lambda: NOON, brand="VoiceLink").run(TOKEN)
+    sent = [(n, a) for n, a in rpc.calls if n == "ops_telephony_setting_report"]
+    assert len(sent) == 1 and sent[0][1]["p_ok"] is False and "ON for 2 of our numbers" in sent[0][1]["p_detail"] and "not recorded" in sent[0][1]["p_detail"]
+    rpc2 = FakeRpc()
+    PlivoBalanceCheck(_Reader(0), rpc2, limit("INR", 0.0), None, clock=lambda: NOON, brand="VoiceLink").run(TOKEN)
+    assert [(n, a) for n, a in rpc2.calls if n == "ops_telephony_setting_report"] == [("ops_telephony_setting_report", {"p_ok": True})]
+    rpc3 = FakeRpc()
+    PlivoBalanceCheck(_Reader(None), rpc3, limit("INR", 0.0), None, clock=lambda: NOON).run(TOKEN)
+    assert "ops_telephony_setting_report" not in [n for n, _ in rpc3.calls], "a reader that does not say (Plivo) reports nothing"
+
+    class Down(FakeRpc):
+        def call(self, token: str, function: str, args: dict[str, Any]) -> Any:
+            if function == "ops_telephony_setting_report":
+                raise RuntimeError("not pushed yet")
+            return super().call(token, function, args)
+
+    result = PlivoBalanceCheck(_Reader(1), Down(), limit("INR", 0.0), None, clock=lambda: NOON, brand="VoiceLink").run(TOKEN)
+    assert result.read in ("ok", "low"), "the balance read stands"
