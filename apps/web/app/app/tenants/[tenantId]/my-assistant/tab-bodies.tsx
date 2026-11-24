@@ -2,7 +2,7 @@ import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSettingsAdvanced";
 import { EmptyNext } from "@/components/v2/app/ds/EmptyNext";
-import { settingsOpen } from "@/lib/screens/flag";
+import { sentenceForms, settingsOpen } from "@/lib/screens/flag";
 import { CallLimitCard, KnowledgeStep, TalkToYou, VoiceCard, VoiceTone } from "@/components/v2/app/my-assistant/LazyMyAssistant";
 import { Section } from "@/components/v2/app/my-assistant/Section";
 import { tabHref } from "@/components/v2/app/my-assistant/tabs";
@@ -206,7 +206,7 @@ export function rulesTab({ lang, t, tenantId, base, owner, data }: Common & { da
           locked={callSettings.lockedPurposes}
           canEdit={owner}
           mock={callSettingsScreens() === "mock"}
-          simple={jobsScreens() !== "off"}
+          simple={sentenceForms()}
           saved={callSettings.saved}
           actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
         />

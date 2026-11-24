@@ -46,7 +46,7 @@ class Target(_Out):
     """Where "Open" goes for an item: a quote, a lead (its follow-ups), an enquiry, an order, a message held for approval or a call request."""
 
     # material_quote: the building-materials quote; campaign: a message campaign; fees: the school's fee list (the id is the workspace's)
-    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "billing", "material_quote", "campaign", "fees", "phone_call", "message", "calls"]
+    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "billing", "material_quote", "campaign", "fees", "phone_call", "message", "calls", "price_list"]
     id: uuid.UUID
 
 
@@ -75,6 +75,8 @@ class NeedsYouItem(_Out):
         "enquired_again",
         # 20 Nov 2026 (migration 20261231986800): WhatsApp sent one of our messages (a template) back (rejected, paused or disabled); the owner changes it in Chats, Templates
         "message_needs_change",
+        # 28 Nov 2026 (migration 20261231989000): the workspace has a phone line but no price list, so the phone assistant cannot answer prices; opens the price list
+        "phone_needs_prices",
     ]
     id: uuid.UUID
     customer: str

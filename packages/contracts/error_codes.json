@@ -3066,11 +3066,15 @@
         503
       ],
       "areas": [
+        "numbers",
         "phone_numbers"
       ],
-      "default_message": "Phone numbers are not available right now.",
+      "default_message": "This is not available right now.",
       "wait": false,
-      "extras": []
+      "extras": [
+        "fields",
+        "reason"
+      ]
     },
     {
       "code": "open_payment_link",
@@ -5181,6 +5185,7 @@
         "lead_sources",
         "main",
         "materials",
+        "numbers",
         "opening",
         "orders",
         "outbox",
