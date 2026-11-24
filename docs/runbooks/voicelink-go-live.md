@@ -47,3 +47,9 @@ update public.phone_numbers set inbound_on = true where number = '+91XXXXXXXXXX'
 
 ## Undo, each alone
 `update public.phone_numbers set inbound_on = false where provider = 'voicelink';` stops inbound answering; `deploy/production.sh rollback sme-api --execute`; remove the bot's mapping in the VoiceLink portal; unset `PROD_VOICELINK` and redeploy the worker.
+
+## First OUTBOUND test: the switch, the fence, the steps, the stop rule (28 Nov 2026)
+* **The one setting:** production `TELEPHONY_OUTBOUND` false -> true (declared in deploy/settings/production/api.env; deploy with `ALLOW_FLAG_CHANGE=TELEPHONY_OUTBOUND`). `TELEPHONY_MODE` stays `sandbox`.
+* **Why it is safe (read in the code, app/telephony/gate.py `check_outbound`):** in sandbox mode the gate refuses any number that is not on the sandbox list (`not_on_sandbox_list`) before anything else about the call; `live` is refused without TELEPHONY_LIVE_CONFIRMED; no task or rule dials anyone (`TASKS_DIALER` is empty); the only way to place a call is the Owner's "Place a test call" (POST /v1/tenants/{t}/calls/place, Owner role), and it can only pick a number from the sandbox list (the picker shows masked numbers). A refused call is stored as a refused call with its closed word. So at most the 3 listed phones can ever ring.
+* **Steps (owner, in the app, workspace stack19-practice, between 09:00 and 21:00 IST):** Calls > Place a test call > pick the phone (his own +919502380998 can RECEIVE; the brother's also) > language Telugu > Place. The phone rings; answer, say hello; the assistant opens after the person's first word; talk over it once; hang up. Expected log lines: checklist section 2.
+* **Stop rule:** two failed or odd calls in a row -> stop, send the log lines. To switch outbound off: a declared-file PR setting TELEPHONY_OUTBOUND=false and the API deploy, or `deploy/production.sh rollback sme-api --execute` to the previous revision (inbound keeps working either way).
