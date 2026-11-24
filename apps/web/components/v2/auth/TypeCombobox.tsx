@@ -5,9 +5,10 @@ import * as React from "react";
 
 import { authField, authHint, authLabel } from "./ui";
 
-export type TypeOption = { id: string; name: string; tagline: string };
-export type TypeGroup = { key: string; label: string; options: readonly TypeOption[] };
-export type TypeWords = Readonly<Record<"label" | "placeholder" | "none" | "otherAsk" | "otherHint", string>>;
+export type TypeOption = { id: string; name: string; tagline: string; /** words a person may type to find it (from the API's groups file) */ keywords?: string };
+/** `colour`: one of the product's category colours (call, chat, visit, offer, find), `icon`: the group's id, which picks its line icon; both absent in the plain grouping. */
+export type TypeGroup = { key: string; label: string; options: readonly TypeOption[]; colour?: string; icon?: string };
+export type TypeWords = Readonly<Record<"label" | "placeholder" | "none" | "otherAsk" | "otherHint", string>> & Partial<Readonly<Record<"describeLabel" | "describeHint" | "describeButton" | "describeClosest" | "describeUse" | "describeNone", string>>>;
 
 /** 2 to 60 letters, as the free text of "Other" must be (the same rule the API applies). */
 export const OTHER_MIN = 2;

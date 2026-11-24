@@ -799,3 +799,10 @@
 @layer theme {
 [data-ui="v2"][data-ds="6"] :is(.bg-red-bg, .bg-amber-bg):is(.rounded-lg, .rounded-xl, .rounded-2xl, .rounded-\[20px\]):not(label, button, a, [role="switch"], select, input, textarea, li[data-card]) { color: var(--v2-ink) !important; font-weight: 600; }
 }
+
+/* the category colours also on the sign-up and set-up pages (the business-type tiles): the same five as the app's, light and dark */
+[data-ui="v2"] { --k-call: #2f5bea; --k-chat: #1e8e5a; --k-visit: #7b4fd1; --k-offer: #b7791f; --k-find: #0e8a8a; }
+[data-ui="v2"][data-theme="dark"] { --k-call: #8aa6ff; --k-chat: #4cc38a; --k-visit: #b79cf4; --k-offer: #e5b25d; --k-find: #4fc7c7; }
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"]:not([data-theme="light"]) { --k-call: #8aa6ff; --k-chat: #4cc38a; --k-visit: #b79cf4; --k-offer: #e5b25d; --k-find: #4fc7c7; }
+}

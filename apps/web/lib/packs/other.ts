@@ -12,7 +12,20 @@ export const OTHER_TYPE = "other";
 export function typeGroups(cards: readonly SignupCard[], templateIds: ReadonlySet<string>, words: { deep: string; leads: string; all: string; other: string; otherTagline: string }): TypeGroup[] {
   const other = cards.find((c) => c.id === OTHER_TYPE);
   const rest = cards.filter((c) => c.id !== OTHER_TYPE);
-  const option = (c: SignupCard) => ({ id: c.id, name: c.name, tagline: c.tagline });
+  const option = (c: SignupCard) => ({ id: c.id, name: c.name, tagline: c.tagline, ...(c.keywords ? { keywords: c.keywords } : {}) });
+  // the API sends groups (Retail and wholesale, Food, ...): one group each, in its order, the types by name; a type without a group goes into the last one
+  if (rest.some((c) => c.category !== null)) {
+    const seen = new Map<string, { order: number; label: string; colour: string; cards: SignupCard[] }>();
+    for (const c of rest) {
+      const k = c.category ?? { id: "other", name: words.all, colour: "call", order: 99 };
+      const g = seen.get(k.id) ?? { order: k.order, label: k.name, colour: k.colour, cards: [] };
+      g.cards.push(c);
+      seen.set(k.id, g);
+    }
+    const byGroup: TypeGroup[] = [...seen.entries()].sort((a, b) => a[1].order - b[1].order).map(([id, g]) => ({ key: id, label: g.label, colour: g.colour, icon: id, options: g.cards.sort((a, b) => a.name.localeCompare(b.name)).map(option) }));
+    if (other) byGroup.push({ key: "other", label: words.other, options: [{ id: OTHER_TYPE, name: words.other, tagline: words.otherTagline }] });
+    return byGroup.filter((g) => g.options.length > 0);
+  }
   const lead = rest.filter((c) => templateIds.has(c.id));
   const deep = rest.filter((c) => !templateIds.has(c.id));
   const groups: TypeGroup[] = templateIds.size === 0 ? [{ key: "all", label: words.all, options: rest.map(option) }] : [{ key: "deep", label: words.deep, options: deep.map(option) }, { key: "leads", label: words.leads, options: lead.map(option) }];

@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { TypeCombobox, type TypeGroup, type TypeWords, OTHER_MAX, OTHER_MIN } from "@/components/v2/auth/TypeCombobox";
+import { type TypeGroup, type TypeWords, OTHER_MAX, OTHER_MIN } from "@/components/v2/auth/TypeCombobox";
+import { TypeTiles } from "@/components/v2/auth/TypeTiles";
 import { authAlert, authChoice, authChoices, authField, authForm, authHint, authLabel, authRow, authSubmit } from "@/components/v2/auth/ui";
 import { LANGS, LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { LANG_COOKIE, readLang, serializePreference } from "@/i18n/preferences";
@@ -51,7 +52,7 @@ export function SetupForm({ action, words, lang, groups, remembered = null, othe
         });
       }}
     >
-      {groups.length > 0 ? <TypeCombobox groups={groups} words={words.type} otherId={otherId} initial={remembered} /> : <input type="hidden" name="type" value={remembered ?? ""} />}
+      {groups.length > 0 ? <TypeTiles groups={groups} words={words.type} otherId={otherId} initial={remembered} /> : <input type="hidden" name="type" value={remembered ?? ""} />}
       <label htmlFor="setup-business-name" className={authLabel}>
         {words.name}
       </label>
