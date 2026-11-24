@@ -540,6 +540,21 @@ def test_recording_on_reads_the_flag_the_cautious_way_and_the_wallet_reader_coun
     assert reader.account_details() == {"cash_credits": 100.0, "auto_recharge": None, "recording_numbers": 1}
 
 
+def test_the_webhook_reads_the_call_records_snake_case_names_and_nested_objects_and_voicelinks_own_status_words() -> None:
+    """28 Nov 2026: the first real webhook read empty with the documented names. Both styles are read, at the top or inside data/call/payload; the Reports words (NoAnswered, Answered) map to what we know."""
+    snake = {"event": "call.ended", "data": {"call_id": "u-1", "unique_id": "u-1", "call_status": "NoAnswered", "call_type": "VL-OUT", "call_duration": 0, "custom_parameters": json.dumps({"call": str(ROW), "tenant": str(TENANT)})}}
+    client, repo = hook_client()
+    assert client.post(f"/v1/telephony/voicelink/webhook/{TOKEN}", json=snake).status_code == 200
+    assert ("finish", ("no_answer", "no_answer")) in repo.calls, "NoAnswered closes a call nobody answered"
+    client2, repo2 = hook_client()
+    nested_initiated = {"event": "call.initiated", "call": {"call_id": "vl-77", "custom_parameters": {"call": str(ROW), "tenant": str(TENANT)}}}
+    client2.post(f"/v1/telephony/voicelink/webhook/{TOKEN}", json=nested_initiated)
+    assert ("ringing", "vl-77") in repo2.calls and "status" not in snake
+    from app.telephony.voicelink_routes import _status_word
+
+    assert [_status_word(w) for w in ("NoAnswered", "NO ANSWER", "Answered", "BUSY", "Cancelled", "Congestion", "something-new")] == ["no-answer", "no-answer", "completed", "busy", "cancel", "failed", "something-new"]
+
+
 def test_the_call_detail_script_prints_field_names_and_only_non_personal_values(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     import importlib.util
     from pathlib import Path
