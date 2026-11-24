@@ -101,7 +101,7 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
     if kind == "enquired_again":
         return "A customer you already know enquired again. Reply or call back: a repeat customer is a warm lead."
     if kind == "phone_needs_prices":
-        return "Add your price list so the phone assistant can answer prices. Until then it tells callers the team will call back."
+        return "Add your prices so the phone assistant can answer them: a price on each item, or a price list. Until then it tells callers the team will call back."
     if kind == "message_needs_change":
         return f"WhatsApp sent the message \"{ref}\" back. Open Chats, Templates to see why and change it."
     if kind == "material_quote_approval":

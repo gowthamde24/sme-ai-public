@@ -142,6 +142,13 @@ def test_the_store_reads_the_pack_once_a_minute_per_workspace() -> None:
     assert calls == ["phone_fact_pack"]
 
 
+def test_holidays_join_the_pack_and_today_being_one_makes_the_business_closed() -> None:
+    raw = {**RAW, "holidays": ["2026-11-03", "2026-12-25"]}
+    pack = text_of(fact_pack.build(raw, now=TUE_11))
+    assert "so the business is CLOSED (today is a holiday)" in pack and "closed on these dates (holidays): 2026-11-03, 2026-12-25" in pack
+    assert "so the business is OPEN" in text_of(fact_pack.build({**RAW, "holidays": ["2026-12-25"]}, now=TUE_11))
+
+
 @pytest.mark.parametrize(
     ("sentence", "paise"),
     [
@@ -178,3 +185,18 @@ def test_a_bare_hundreds_run_is_an_amount_when_the_caller_asked_about_a_price() 
     voice.note_caller("మీ షాప్ ఎక్కడ?")
     voice.stream("ఐదు వందల మంది వస్తారు.", "te")      # another topic: passes again
     assert inner.said == ["ఐదు వందలు అండీ.", SAFE["te"], "ఐదు వందల మంది వస్తారు."]
+
+
+def test_prices_from_the_catalogue_and_what_you_sell_are_said_like_price_list_rows_and_tiers_are_not_minimums() -> None:
+    """28 Nov 2026: a shop that adds sarees with an exact price, or a service or a quantity rate, is answered; only the amounts in the pack are allowed."""
+    raw = {"prices": [
+        {"name": "Kanchi red", "unit": "piece", "paise": 1250000, "moq": 1, "tax_bps": None, "tier": False},
+        {"name": "Fall and pico", "unit": "service", "paise": 15000, "moq": 1, "tax_bps": None, "tier": False},
+        {"name": "Handloom cotton", "unit": "piece", "paise": 90000, "moq": 10, "tax_bps": None, "tier": True},
+        {"name": "Handloom cotton", "unit": "piece", "paise": 80000, "moq": 50, "tax_bps": None, "tier": True},
+    ]}
+    pack = fact_pack.build(raw, now=TUE_11)
+    text = text_of(pack)
+    assert "Kanchi red: Rs 12,500 per piece" in text and "Fall and pico: Rs 150 per service" in text
+    assert "Handloom cotton: Rs 900 per piece when you buy 10 or more" in text and "Rs 800 per piece when you buy 50 or more" in text and "minimum order" not in text
+    assert pack.allowed_paise == frozenset({1250000, 15000, 90000, 80000}), "an amount in none of the sources is not allowed"
