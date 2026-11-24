@@ -166,3 +166,18 @@ describe("the design system v6: Today draws no tab row (the final Today design)"
     }
   });
 });
+
+describe("Settings without the Settings | Team row (SETTINGS_OPEN)", () => {
+  it("draws no tab row on Settings or Team when the frame says so; the other rows keep theirs", () => {
+    nav.pathname = `/app/tenants/${A}/settings`;
+    const off = render(<GroupTabs memberships={only("owner")} frame={{ ...NO_FRAME_DATA, ds: true }} />);
+    expect(off.container.querySelector('[data-tabs="v6"]')).not.toBeNull();
+    off.unmount();
+    const on = render(<GroupTabs memberships={only("owner")} frame={{ ...NO_FRAME_DATA, ds: true, settingsOpen: true }} />);
+    expect(on.container.querySelector('[data-tabs="v6"]')).toBeNull();
+    on.unmount();
+    nav.pathname = `/app/tenants/${A}/team`;
+    const team = render(<GroupTabs memberships={only("owner")} frame={{ ...NO_FRAME_DATA, ds: true, settingsOpen: true }} />);
+    expect(team.container.querySelector('[data-tabs="v6"]')).toBeNull();
+  });
+});

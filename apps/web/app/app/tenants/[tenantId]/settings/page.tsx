@@ -11,7 +11,7 @@ import { UsageCard, planText } from "@/components/v2/app/frame-parts";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { menuTitle } from "../menu-title";
 import { ApiDownV2, PageTop, Pill, SectionTabs } from "@/components/v2/app/parts";
-import { breakAll, btnQuiet, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface } from "@/components/v2/app/ui";
+import { breakAll, btnQuiet, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface as boxedSurface } from "@/components/v2/app/ui";
 import { appT, frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
 import { getLang } from "@/i18n/get-lang";
@@ -147,6 +147,9 @@ function UnreadCard({ note }: { note: string }) {
   );
 }
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+
+/** SETTINGS_OPEN: a section is a block between hairlines, not a card (owner, 25 Nov 2026: the mock has no cards and no tabs). */
+const surface = settingsOpen() ? "border-t border-line pt-6" : boxedSurface;
 
 /**
  * /app/tenants/[tenantId]/settings, one part at a time (?section=): the business and its plan, the members (a list: nobody is added here), the language and the look, the security of the

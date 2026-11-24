@@ -16,7 +16,7 @@ import { readPackCached } from "@/lib/packs/read";
 import { packFrame } from "@/lib/packs/resolve";
 import { readAssistantStatus } from "@/lib/assistant-status/source";
 import { readBalance } from "@/lib/balance/source";
-import { activityScreens, appV4, designV6, earlyAccess } from "@/lib/screens/flag";
+import { activityScreens, appV4, designV6, earlyAccess, settingsOpen } from "@/lib/screens/flag";
 
 import { readTodayCached } from "./tenants/[tenantId]/today-read";
 
@@ -72,6 +72,7 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
     pack: frame && !finderOn && frame.modules.includes("lead_finder") ? { ...frame, modules: frame.modules.filter((m) => m !== "lead_finder") } : frame,
     v4: appV4(),
     ...(earlyAccess() ? { earlyAccess: true } : {}),
+    ...(settingsOpen() ? { settingsOpen: true } : {}),
     ...(designV6() ? { ds: true, balance: balance ? { text: balance.text, low: balance.low, minutes: balance.minutesEstimate } : null, assistant: assistant ? assistant.state : null } : {}),
   };
 }

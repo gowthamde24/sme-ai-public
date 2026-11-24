@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { COLOURS, FABRICS, OCCASIONS, PRICE_BANDS, type ItemSummary } from "@/lib/api/catalogue";
 
+import { filtersOpen } from "@/lib/screens/flag";
+
 import { EmptyNext } from "../ds/EmptyNext";
 import { PageHeader } from "../ds/PageHeader";
 import { OrbMark } from "../mark/OrbMark";
@@ -10,8 +12,9 @@ import type { Role } from "../today/types";
 import { card, field, primary, secondary } from "../visits/styles";
 import { CatalogueFiltersSimple } from "./CatalogueFiltersSimple";
 import { FreshPhotos } from "./FreshPhotos";
+import { Photo } from "./Photo";
 import { ItemCard, vocab } from "./ItemCard";
-import { BAND_WORDS, STOCK_CHOICES, activeFilters, hrefFor, isFiltered, soonestExpiry, toggled, type CatalogueQuery } from "./catalogue-logic";
+import { BAND_WORDS, STOCK_CHOICES, activeFilters, badgesOf, priceOf, hrefFor, isFiltered, soonestExpiry, toggled, type CatalogueQuery } from "./catalogue-logic";
 
 export type CatalogueViewProps = { /** Design system v6 (DESIGN_V6): the page header with the "?" and the main button, a line about drafts, an Edit link on each saree and an empty page that shows its next step. */ ds?: boolean; /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
   /** The "?" tip of the screen (job BT): drawn under the heading. */
@@ -213,11 +216,49 @@ export function CatalogueView({ ds = false, title = null, base, words, role, que
             {simple ? null : <p className="text-sm text-muted" aria-live="polite">
               {more ? say(words, "catalogue.results.more", { n: items.length }) : say(words, items.length === 1 ? "catalogue.results.one" : "catalogue.results.other", { n: items.length })}
             </p>}
+            {filtersOpen() ? (
+              <nav aria-label={say(words, "catalogue.view.label")} data-part="view-switch" className="flex gap-1 text-[15px]">
+                {([["photos", say(words, "catalogue.view.photos"), { ...query, view: undefined }], ["list", say(words, "catalogue.view.list"), { ...query, view: "list" as const }]] as const).map(([k, label, q]) => {
+                  const on = (query.view === "list") === (k === "list");
+                  return (
+                    <Link key={k} href={hrefFor(base, q, { lead: leadId })} aria-current={on ? "true" : undefined} className={`inline-flex min-h-11 items-center rounded-lg border px-4 ${on ? "border-ink font-semibold text-ink" : "border-line text-muted"}`}>
+                      {label}
+                    </Link>
+                  );
+                })}
+              </nav>
+            ) : null}
+            {filtersOpen() && query.view === "list" ? (
+              <ul data-list="items" className="m-0 flex list-none flex-col border-t border-ink p-0">
+                {items.map((item) => (
+                  <li key={item.id} data-item-row={item.id} className="border-b border-line">
+                    <Link href={`${base}/catalogue/${item.id}${leadId ? `?lead=${leadId}` : ""}`} className="flex min-h-14 items-center gap-3 py-3">
+                      <span className="block size-12 shrink-0 overflow-hidden rounded-lg bg-surface-2">
+                        {item.cover ? <Photo src={item.cover.thumb_url ?? null} width={4} height={4} alt="" words={words} shape="square" /> : null}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[17px] font-semibold text-ink">{item.name}</span>
+                        <span className="block truncate text-[15px] text-muted">{vocab(words, "fabric", item.fabric, item.fabric_label)}</span>
+                      </span>
+                      <span className="shrink-0 text-right text-[15px]">
+                        <span className="block font-semibold text-ink">{priceOf(item)}</span>
+                        {badgesOf(item).map((b) => (
+                          <span key={b} data-badge={b} className="block text-sm text-muted">
+                            {say(words, b === "inactive" ? "catalogue.v6.draft" : `catalogue.stock.${b}`)}
+                          </span>
+                        ))}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
             <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4" data-grid="items">
               {items.map((item, i) => (
                 <ItemCard key={item.id} item={item} words={words} eager={i < 2} href={`${base}/catalogue/${item.id}${leadId ? `?lead=${leadId}` : ""}`} edit={ds && admin ? `${base}/catalogue/${item.id}/edit` : null} />
               ))}
             </ul>
+            )}
             {more ? (
               <p>
                 <Link href={hrefFor(base, query, { lead: leadId, after: more })} className={secondary}>
