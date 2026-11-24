@@ -231,6 +231,9 @@ class Runtime:
     # the developer API (app/developer_api.DeveloperApi)
     # None: DEVELOPER_API=off, every route answers 404
     developer_api: Any = None
+    # outbound webhooks (app/webhooks_out.WebhooksOut)
+    # None: WEBHOOKS_OUT=off, every route answers 404
+    webhooks_out: Any = None
     # Jobs (app/jobs): the flags and the pack files; None: JOBS=off, every /jobs route answers 404
     jobs: JobsRuntime | None = None
     calls: CallsService | None = None

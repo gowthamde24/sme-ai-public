@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (458)
+## Codes (461)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -162,7 +162,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `integrations_unavailable` | 503 | integrations |  |  | This is not available on this system. |
 | `internal_error` | 500 | errors |  |  | Something went wrong on our side. |
 | `invalid` | 422 | activity |  | field | Say which limit to tighten. |
-| `invalid_cursor` | 400, 422 | activity, developer_api, leads, marksmessages, outcomes |  |  | Invalid pagination cursor. |
+| `invalid_cursor` | 400, 422 | activity, developer_api, leads, marksmessages, outcomes, webhooks_out |  |  | Invalid pagination cursor. |
 | `invalid_decision` | 422 | enquiries |  |  | A correction carries the corrected value; a confirm or a reject carries none. |
 | `invalid_delivery_state` | 422 | quotes |  |  | The delivery state is not a state or union territory code. |
 | `invalid_hours` | 422 | lead_finder |  |  | The calling hours must start before they end. |
@@ -434,6 +434,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `too_many_keys` | 409 | developer_api |  |  | This workspace already has 10 active keys. Revoke one first. |
 | `too_many_photos` | 409 | main |  |  | An item can have at most 8 photos. |
 | `too_many_previews` | 429 | voice_notes | yes |  | Too many samples this hour. Try again later. |
+| `too_many_webhooks` | 409 | webhooks_out |  |  | This workspace already has 5 webhook endpoints. Delete one first. |
 | `trial_already_started` | 409 | main |  |  | This workspace has already started its trial. |
 | `trip_state` | 409 | main |  |  | That cannot be done in the state the trip is in now. Reload and look again. |
 | `type_change_refused` | 409 | workspace |  | reason | This business type cannot be changed now. |
@@ -461,6 +462,8 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `voice_too_long` | 422 | voice_notes |  |  | The sample is too long. |
 | `voice_unavailable` | 503 | assistant_context, jobs, voice, voice_notes |  |  | Voice is not available right now. |
 | `waiting_for_whatsapp` | 403 | main |  |  | Connect your WhatsApp to start. Until then you can set everything up, but messages, AI calls and campaigns stay off. |
+| `webhook_url_invalid` | 422 | webhooks_out |  | reason | (the sentence varies: show `message`) |
+| `webhooks_out_unavailable` | 503 | webhooks_out | yes |  | Webhooks are not available right now. Try again in a minute. |
 | `webhooks_unavailable` | 503 | billing, connectors |  |  | Not available right now. |
 | `whatsapp_connect_refused` | 502 | whatsapp |  |  | WhatsApp did not accept the connection. Try again in a minute. |
 | `whatsapp_no_access` | 409 | whatsapp |  |  | We cannot reach that number yet. Finish the sign-up in Meta's window and try again. |

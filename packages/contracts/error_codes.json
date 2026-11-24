@@ -1827,7 +1827,8 @@
         "developer_api",
         "leads",
         "marksmessages",
-        "outcomes"
+        "outcomes",
+        "webhooks_out"
       ],
       "default_message": "Invalid pagination cursor.",
       "wait": false,
@@ -5184,6 +5185,18 @@
       "extras": []
     },
     {
+      "code": "too_many_webhooks",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "webhooks_out"
+      ],
+      "default_message": "This workspace already has 5 webhook endpoints. Delete one first.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "trial_already_started",
       "statuses": [
         409
@@ -5569,6 +5582,32 @@
       ],
       "default_message": "Connect your WhatsApp to start. Until then you can set everything up, but messages, AI calls and campaigns stay off.",
       "wait": false,
+      "extras": []
+    },
+    {
+      "code": "webhook_url_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "webhooks_out"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
+      "code": "webhooks_out_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "webhooks_out"
+      ],
+      "default_message": "Webhooks are not available right now. Try again in a minute.",
+      "wait": true,
       "extras": []
     },
     {

@@ -459,6 +459,10 @@ class Settings(BaseSettings):
     # The developer API (ADR 0121; docs/contracts/developer-api.md): off (default) |
     # test (test-mode keys and the sandbox; no live keys exist)
     developer_api: Literal["off", "test"] = "off"
+    # Outbound webhooks (docs/contracts/webhooks-out.md): off (default; the routes answer 404 and
+    # the worker sends nothing: the kill switch) | on. Needs WORKSPACE_SECRETS (the signing
+    # secrets live in Secret Manager). Production stays off until the owner's gate.
+    webhooks_out: Literal["off", "on"] = "off"
     # Jobs (jobs contract 1.0, 1.1): off (default) | on. Off: every /jobs route is a 404.
     # JOBS_GET_PAID: off (default) hides the "get paid" job templates (Get paid ships in v1.1).
     jobs: Literal["off", "on"] = "off"
