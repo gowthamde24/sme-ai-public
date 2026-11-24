@@ -127006,5 +127006,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "rv6.open.sentence": {
+  "en": "{e} enquiries came in, {v} visits were booked and sales from visits were {s}.",
+  "te": "{e} enquiries వచ్చాయి, {v} visits book అయ్యాయి, visits నుంచి sales {s}.",
+  "hi": "{e} enquiries आईं, {v} visits book हुईं और visits से sales {s} रहीं।",
+  "kn": "{e} enquiries ಬಂದವು, {v} visits book ಆದವು, visits ಇಂದ sales {s}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.open.more": {
+  "en": "More reports",
+  "te": "మరిన్ని reports",
+  "hi": "और reports",
+  "kn": "ಇನ್ನಷ್ಟು reports",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.f.any_colour": {
+  "en": "Any colour",
+  "te": "ఏ రంగైనా",
+  "hi": "कोई भी रंग",
+  "kn": "ಯಾವ ಬಣ್ಣವಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.f.any_occasion": {
+  "en": "Any occasion",
+  "te": "ఏ సందర్భమైనా",
+  "hi": "कोई भी मौका",
+  "kn": "ಯಾವ ಸಂದರ್ಭವಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.f.any_price": {
+  "en": "Any price",
+  "te": "ఏ ధరైనా",
+  "hi": "कोई भी दाम",
+  "kn": "ಯಾವ ಬೆಲೆಯಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

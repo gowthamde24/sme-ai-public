@@ -49,6 +49,13 @@ export function CatalogueFiltersSimple({ base, words, query, leadId, effect }: {
         choices={{
           stock: { label: say(words, "catalogue.filter.stock"), value: query.stock ?? "all", options: [{ value: "all", text: say(words, "jobs.pg.cat.st.all"), href: link({ ...query, stock: null }) }, ...STOCK_CHOICES.map((s) => ({ value: s, text: say(words, `jobs.pg.cat.st.${s}`), href: link({ ...query, stock: s }) }))] },
           fabric: { label: say(words, "catalogue.filter.fabric"), value: query.fabric ?? "any", options: [{ value: "any", text: say(words, "jobs.pg.cat.fab.any"), href: link({ ...query, fabric: null }) }, ...FABRICS.map((f) => ({ value: f, text: vocab(words, "fabric", f, f), href: link({ ...query, fabric: f }) }))] },
+          ...(plain
+            ? {
+                colour: { label: say(words, "catalogue.filter.colour"), value: query.colours[0] ?? "any", options: [{ value: "any", text: say(words, "catalogue.f.any_colour"), href: link({ ...query, colours: [] }) }, ...COLOURS.map((c) => ({ value: c, text: vocab(words, "colour", c, c), href: link({ ...query, colours: [c] }) }))] },
+                occasion: { label: say(words, "catalogue.filter.occasion"), value: query.occasions[0] ?? "any", options: [{ value: "any", text: say(words, "catalogue.f.any_occasion"), href: link({ ...query, occasions: [] }) }, ...OCCASIONS.map((o) => ({ value: o, text: vocab(words, "occasion", o, o), href: link({ ...query, occasions: [o] }) }))] },
+                price: { label: say(words, "catalogue.filter.band"), value: query.bands[0] ?? "any", options: [{ value: "any", text: say(words, "catalogue.f.any_price"), href: link({ ...query, bands: [] }) }, ...PRICE_BANDS.map((b) => ({ value: b, text: BAND_WORDS[b], href: link({ ...query, bands: [b] }) }))] },
+              }
+            : {}),
         }}
       />
       <form method="get" action={`${base}/catalogue`} role="search" className="flex flex-wrap items-center gap-2">
@@ -67,9 +74,7 @@ export function CatalogueFiltersSimple({ base, words, query, leadId, effect }: {
         </button>
       </form>
       {effect ? (plain ? <p data-part="catalogue-effect" className="m-0 text-[14px] text-muted">{effect}</p> : <EffectLine part="catalogue-effect" text={effect} />) : null}
-      {plain ? (
-        <div className="flex flex-col gap-3">{groups}</div>
-      ) : (
+      {plain ? null : (
       <MoreBox title={say(words, "jobs.pg.more")} sub={say(words, "jobs.pg.cat.more.sub")} open={moreOn}>
         {groups}
       </MoreBox>

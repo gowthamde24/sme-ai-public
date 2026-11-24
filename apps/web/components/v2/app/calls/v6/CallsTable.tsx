@@ -7,6 +7,8 @@ import { clockShort, rupeeCost } from "@/lib/calls/format";
 import { callSentence, callStatus, sentenceText } from "@/lib/calls/status";
 import { refuseWhy } from "@/lib/calls/view";
 
+import { callsOpen } from "@/lib/screens/flag";
+
 import { makeT, type Words } from "../../words";
 import { CallsTablePager } from "./CallsTablePager";
 
@@ -22,6 +24,46 @@ export function CallsTable({ words, base, query, items, selectedId, when, pageSi
   const t = makeT(words);
   const why = (reason: string | null) => words[`ph.why.${refuseWhy(reason)}`] ?? "";
   const head = "whitespace-nowrap px-3 py-[11px] text-left text-xs font-semibold text-muted";
+  if (callsOpen()) {
+    const row = (c: CallRow) => {
+      const status = callStatus(c);
+      const open = selectedId === c.id;
+      const s = callSentence(c);
+      const said = s.kind === "result" && s.result === "unclear" ? "" : sentenceText(s, words, why);
+      return (
+        <li key={c.id} data-call={c.id} data-status-of={status} aria-selected={open ? "true" : undefined} className={`relative flex items-start gap-3 border-b border-line px-1 py-3.5 ${open ? "bg-surface-2" : ""}`}>
+          <div className="min-w-0 flex-1">
+            <span className="flex min-w-0 items-baseline gap-1.5">
+              <Link href={callsHref(base, query, c.id)} scroll={false} aria-current={open ? "true" : undefined} className="min-w-0 truncate text-[17px] font-semibold text-ink after:absolute after:inset-0">
+                {c.who || t("ph.dir.inbound")}
+              </Link>
+              <span className="shrink-0 whitespace-nowrap text-sm text-muted">
+                <span aria-hidden="true">{c.direction === "inbound" ? "↙" : "↗"}</span> {t(c.direction === "inbound" ? "calls6.dir.in" : "calls6.dir.out")}
+              </span>
+            </span>
+            {said ? <p className="m-0 text-[15px] text-muted [overflow-wrap:anywhere]">{said}</p> : null}
+          </div>
+          <div className="flex shrink-0 flex-col items-end gap-1 text-sm text-muted">
+            <time dateTime={c.createdAt} className="whitespace-nowrap">{when(c.createdAt)}</time>
+            {c.live ? <span className="font-semibold text-brand-text">{clockShort(c.elapsedS)}</span> : status === "completed" ? null : <StatusPill status={status}>{t(`calls6.st.${status}`)}</StatusPill>}
+          </div>
+        </li>
+      );
+    };
+    const first = items.slice(0, pageSize);
+    const rest = items.slice(pageSize);
+    return (
+      <div data-part="calls-table" data-open="">
+        <ul className="m-0 flex list-none flex-col border-t border-ink p-0">{first.map(row)}</ul>
+        {rest.length > 0 ? (
+          <details className="group">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center py-3 text-[15px] font-semibold text-muted underline underline-offset-4 group-open:hidden [&::-webkit-details-marker]:hidden">{words["calls6.more"] ?? "Show more"}</summary>
+            <ul className="m-0 flex list-none flex-col p-0">{rest.map(row)}</ul>
+          </details>
+        ) : null}
+      </div>
+    );
+  }
   const renderRow = (c: CallRow) => {
     const status = callStatus(c);
     const open = selectedId === c.id;

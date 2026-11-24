@@ -741,3 +741,10 @@
 /* empty side notes: one grey sentence, no box */
 [data-ui="v2"][data-ds="6"] [data-open="today"] [data-part="empty-note"] { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
 }
+/* Leads as an open list (LEADS_OPEN): hairline rows, names in ink, the chosen row a neutral fill */
+@layer theme {
+[data-ui="v2"][data-ds="6"] [data-open="leads"] { border-spacing: 0 !important; }
+[data-ui="v2"][data-ds="6"] [data-open="leads"] tbody tr { background: none !important; box-shadow: none !important; border: 0 !important; border-bottom: 1px solid var(--v2-border) !important; border-radius: 0 !important; }
+[data-ui="v2"][data-ds="6"] [data-open="leads"] tbody tr[data-selected="true"] { background: var(--v2-surface-2) !important; }
+[data-ui="v2"][data-ds="6"] [data-open="leads"] tbody a { color: var(--v2-ink) !important; font-family: inherit !important; }
+}
