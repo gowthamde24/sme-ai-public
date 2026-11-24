@@ -86,6 +86,11 @@ class ErasureRepository(Protocol):
 
     def execute(self, token: str, request_id: uuid.UUID, *, dry_run: bool) -> ErasureResultOut: ...
 
+    def recordings_notify(self, token: str, request_id: uuid.UUID) -> int:
+        """Raise ONE platform item naming the VoiceLink call ids of the erased customer's
+        recorded calls (migration 989100); returns how many calls."""
+        ...
+
     def cancel(self, token: str, request_id: uuid.UUID) -> bool:
         """Cancel a pending request. Returns True for a replay."""
         ...
@@ -261,6 +266,12 @@ class PostgrestErasureRepository:
                 "erasure data layer returned a result that does not match ErasureResultOut"
             )
             raise UpstreamError("unexpected erasure result") from None
+
+    def recordings_notify(self, token: str, request_id: uuid.UUID) -> int:
+        result = self._rpc(
+            token, "erasure_recordings_notify", {"p_request_id": str(request_id)}, hide_denial=True
+        )
+        return result if isinstance(result, int) and not isinstance(result, bool) else 0
 
     def data_policy(self, token: str, tenant_id: uuid.UUID) -> DataPolicyOut:
         """No row means closed (the default)."""

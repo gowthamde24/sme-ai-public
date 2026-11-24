@@ -208,9 +208,9 @@ class VoicelinkApi:
         data = self._request("POST", "/reseller/purchase/confirm", json_body={"order_id": int(order_id)})
         return str(data.get("order_number") or "") if isinstance(data, dict) else ""
 
-    def map_did(self, *, client_id: int, did_id: int, description: str = "") -> None:
-        """Give a bought number to OUR client (`POST /reseller/client/map-did`), assigned, with call recording OFF (it is on by default and our privacy text says calls are not recorded)."""
-        body: dict[str, Any] = {"did_id": int(did_id), "client_id": int(client_id), "user_status": 2, "call_recording": 0}
+    def map_did(self, *, client_id: int, did_id: int, description: str = "", recording: bool = False) -> None:
+        """Give a bought number to OUR client (`POST /reseller/client/map-did`), assigned, with call recording OFF unless `recording` (owner decision 28 Nov 2026, option B: ON in the first weeks, and the opening says so; VOICELINK_RECORDING_EXPECTED)."""
+        body: dict[str, Any] = {"did_id": int(did_id), "client_id": int(client_id), "user_status": 2, "call_recording": 1 if recording else 0}
         if description:
             body["description"] = description[:200]
         self._request("POST", "/reseller/client/map-did", json_body=body)
