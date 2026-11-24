@@ -140,3 +140,10 @@ def test_the_store_reads_the_pack_once_a_minute_per_workspace() -> None:
     tenant = uuid.uuid4()
     assert store.fact_pack(tenant) == {"notes": "x"} and store.fact_pack(tenant) == {"notes": "x"}
     assert calls == ["phone_fact_pack"]
+
+
+def test_holidays_join_the_pack_and_today_being_one_makes_the_business_closed() -> None:
+    raw = {**RAW, "holidays": ["2026-11-03", "2026-12-25"]}
+    pack = text_of(fact_pack.build(raw, now=TUE_11))
+    assert "so the business is CLOSED (today is a holiday)" in pack and "closed on these dates (holidays): 2026-11-03, 2026-12-25" in pack
+    assert "so the business is OPEN" in text_of(fact_pack.build({**RAW, "holidays": ["2026-12-25"]}, now=TUE_11))

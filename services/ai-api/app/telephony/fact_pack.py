@@ -74,7 +74,7 @@ def _clock(minute: int) -> str:
     return f"{minute // 60}:{minute % 60:02d}"
 
 
-def _hours(raw: Any, now: datetime) -> list[str]:
+def _hours(raw: Any, now: datetime, holidays: tuple[str, ...] = ()) -> list[str]:
     if not isinstance(raw, dict) or not raw.get("days"):
         return []
     days = sorted({int(d) for d in raw["days"] if 1 <= int(d) <= 7})
@@ -82,8 +82,9 @@ def _hours(raw: Any, now: datetime) -> list[str]:
     span = f"{DAYS[first - 1]} to {DAYS[last - 1]}" if days == list(range(first, last + 1)) and len(days) > 2 else ", ".join(DAYS[d - 1] for d in days)
     local = now.astimezone(IST)
     minute = local.hour * 60 + local.minute
-    is_open = local.isoweekday() in days and start <= minute < end
-    return [f"Business hours (India time): {span}, {_clock(start)} to {_clock(end)}. Right now it is {DAYS[local.isoweekday() - 1]} {_clock(minute)}, so the business is {'OPEN' if is_open else 'CLOSED'}; if it is closed, say the team will answer when it opens."]
+    today_closed = local.date().isoformat() in holidays
+    is_open = local.isoweekday() in days and start <= minute < end and not today_closed
+    return [f"Business hours (India time): {span}, {_clock(start)} to {_clock(end)}. Right now it is {DAYS[local.isoweekday() - 1]} {_clock(minute)}, so the business is {'OPEN' if is_open else 'CLOSED'}" + (" (today is a holiday)" if today_closed else "") + "; if it is closed, say the team will answer when it opens."]
 
 
 def _take(lines: list[str], budget: int) -> list[str]:
@@ -104,8 +105,11 @@ def build(raw: dict[str, Any] | None, *, now: datetime | None = None) -> FactPac
     now = now or datetime.now(IST)
     facts: list[dict[str, str]] = []
     allowed: set[int] = set()
-    for text in _hours(raw.get("hours"), now):
+    holidays = tuple(str(h)[:10] for h in (raw.get("holidays") or []) if isinstance(h, str))
+    for text in _hours(raw.get("hours"), now, holidays):
         facts.append({"kind": "hours", "text": text})
+    if holidays:
+        facts.append({"kind": "hours", "text": "The business is closed on these dates (holidays): " + ", ".join(holidays[:12]) + "."})
     price_lines: list[tuple[str, int]] = []
     for row in raw.get("prices") or []:
         try:
