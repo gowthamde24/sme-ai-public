@@ -38,8 +38,12 @@ OPEN_TIMEOUT_S = 10.0
 # natural barge-in (owner, 6 Nov 2026): while we talk, the caller's sound is judged by its LENGTH. "haa", "hmm", "avunu", "sare", "ji", a cough: shorter than STOP_SPEECH_MS, ignored, we keep
 # talking. Real speech longer than that: we stop, and the voice FADES out over FADE_MS (ending in a quiet moment between words when there is one) instead of a hard cut.
 CLOSING_STOP_SPEECH_MS = 800   # owner, 12 Nov 2026: while the assistant says its CLOSING line only a stop word or a sound of this length stops it (a 460 ms sound cut the goodbye of the round 2 call)
-NO_WORDS_GRACE_MS = 200        # owner, 12 Nov 2026 (250), 23 Nov 2026 (200, with the 300 ms stop): at 300 ms the recogniser may not have produced a word yet ("ఆ" is a backchannel, but its text arrives late): wait this much longer for words before treating the sound as speech
-STOP_SPEECH_MS = 300   # planner/owner, 23 Nov 2026 (was 450, before that 600): a real interruption stops her within about 300 ms of the caller's sound; a sound without a word yet waits NO_WORDS_GRACE_MS more, and a longer one is still ignored when the live transcript says it is only a backchannel (humanness audit item 2)
+NO_WORDS_GRACE_MS = 450        # owner, 12 Nov 2026 (250), 23 Nov 2026 (200, with the 300 ms stop): at 300 ms the recogniser may not have produced a word yet ("ఆ" is a backchannel, but its text arrives late): wait this much longer for words before treating the sound as speech
+STOP_SPEECH_MS = 350   # 28 Nov 2026 (the brother's first call: the assistant was cut by a 500 ms loud sound with no word in it; 7 shorter ones were rightly ignored): 350 ms of sound and a word, or 800 ms with no word at all. Before: 300 (planner/owner, 23 Nov 2026, planner/owner, 23 Nov 2026 was 450, before that 600): a real interruption stops her within about 300 ms of the caller's sound; a sound without a word yet waits NO_WORDS_GRACE_MS more, and a longer one is still ignored when the live transcript says it is only a backchannel (humanness audit item 2)
+SPEECH_START_GRACE_MS = 300   # 28 Nov 2026: the first 300 ms after the assistant STARTS a stretch of speech never count as the caller's sound (the line's own echo and the click of the start)
+FLOOR_FRAMES = 50              # the first second of the call (50 frames of 20 ms) says how noisy this caller's line is
+FLOOR_FACTOR = 2.5             # the sound that counts must be this many times louder than that line's quiet level (the fixed threshold is the lowest it can be)
+FLOOR_MAX_THRESHOLD = 2000     # a very noisy line never raises the bar beyond this (real speech must still be able to stop us)
 # Spoken STOP words, matched in the caller's live transcript while the assistant talks: they stop it at once, whatever the length of the sound (owner, 11 Nov 2026).
 STOP_WORDS = ("ఆగండి", "ఆగు", "ఆపండి", "ఆపు", "ఒక్క నిమిషం", "ఒక్క నిముషం", "ఒక్క నిమిషము", "stop", "wait", "hold on", "hang on", "रुकिए", "रुको", "ruko")
 # Backchannels: the sounds of listening. A sound that lasts long enough to be an interruption but whose live transcript is ONLY these is ignored.
@@ -119,6 +123,9 @@ class PhoneLine:
         self.stop_speech_ms = STOP_SPEECH_MS if barge_ms == 160 else barge_ms   # (barge_ms: tests may set their own)
         self.no_words_grace_ms = NO_WORDS_GRACE_MS
         self._vad_buf = bytearray()
+        self._speech_began = -1e9   # when the current stretch of our speech began (the grace after it ignores the caller's sound)
+        self._floor_levels: list[float] = []   # the quiet level of this line, from the call's first second
+        self.noise_floor: int | None = None
         self._talk_ms = 0          # the caller's sound while we talk, in this run
         self._gap_ms = 0
         self._stopped_run = False
@@ -232,6 +239,7 @@ class PhoneLine:
             if self.taken_over:
                 return   # no barge-in while a person talks: the caller may talk over them
             speaking = self._clock() < self._play_until
+            self._note_floor(pcm)
             if speaking:
                 self._watch_for_barge_in(pcm)
             else:
@@ -269,10 +277,26 @@ class PhoneLine:
         await self.send_bytes(clip)
         await self.flush()
 
+    def _note_floor(self, pcm: bytes) -> None:
+        """The line's quiet level from the call's first second (the quietest tenth of the 20 ms frames): the bar for a real interruption is FLOOR_FACTOR times that, never lower than the fixed threshold, never above FLOOR_MAX_THRESHOLD (2,000)."""
+        if self.noise_floor is not None:
+            return
+        self._floor_buf = getattr(self, "_floor_buf", bytearray()) + pcm
+        while len(self._floor_buf) >= FRAME_BYTES and len(self._floor_levels) < FLOOR_FRAMES:
+            self._floor_levels.append(rms(bytes(self._floor_buf[:FRAME_BYTES])))
+            del self._floor_buf[:FRAME_BYTES]
+        if len(self._floor_levels) >= FLOOR_FRAMES:
+            quiet = sorted(self._floor_levels)[len(self._floor_levels) // 10]   # the quietest tenth: a caller who says hello in the first second still leaves quiet frames between the words
+            self.noise_floor = round(quiet)
+            raised = min(float(FLOOR_MAX_THRESHOLD), max(self._barge_threshold, quiet * FLOOR_FACTOR))
+            log.info("phone_noise_floor floor=%d threshold_before=%d threshold=%d", self.noise_floor, round(self._barge_threshold), round(raised))
+            self._barge_threshold = raised
+            self._floor_buf = bytearray()
+
     def _watch_for_barge_in(self, pcm: bytes) -> None:
         """The caller's sound while we talk: a run of voiced 20 ms frames (short dips allowed). At STOP_SPEECH_MS it is an interruption: the session stops the voice (it fades, see `_fade_out`).
         A shorter run (a backchannel, a cough) changes nothing; both are logged with their length."""
-        if self._clock() < self._bc_until:
+        if self._clock() < self._bc_until or self._clock() < self._speech_began + SPEECH_START_GRACE_MS / 1000:
             self._vad_buf.clear()
             return
         self._vad_buf += pcm
@@ -487,6 +511,8 @@ class PhoneLine:
         assert self.start is not None   # noqa: S101 - callers check
         if bed and self.ambience is not None:
             chunk = self.ambience.mix_into(chunk)   # the same length in, the same length out: nothing is delayed
+        if self._clock() >= self._play_until:
+            self._speech_began = self._clock()   # a new stretch of our speech begins now
         ahead = self._play_until - self._clock()
         if ahead > LEAD_S:   # real-time pace: wait until what was sent has (nearly) played
             await self._sleep(ahead - LEAD_S)
