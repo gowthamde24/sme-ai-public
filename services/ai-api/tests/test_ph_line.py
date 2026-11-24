@@ -356,15 +356,17 @@ async def test_a_sound_of_500_ms_is_an_interruption_now_and_one_of_250_ms_is_not
     try:
         line, sim = await connected()
         await line.send_bytes(tone(300.0, 4000, OUT_RATE))
+        keep_speaking(line)
+        await asyncio.sleep(0.33)   # the first 300 ms of our own speech never count (28 Nov 2026)
         await sim.speak_for(250)
         await sim.quiet_for(400)
         await drain(line)
-        assert line.interruptions == {"stopped": 0, "ignored": 1}, "250 ms: still a short sound (the stop line is 300 ms since 23 Nov 2026)"
+        assert line.interruptions == {"stopped": 0, "ignored": 1}, "250 ms: still a short sound (the stop line is 350 ms since 28 Nov 2026)"
         line.note_caller_text("మీరు ఏమన్నారు")   # the recogniser has real words by then
         await sim.speak_for(520)
         seen = await drain(line)
         assert line.interruptions["stopped"] == 1 and ("text", {"type": "barge_in", "verify": False}) in seen
-        assert "rule=audio_300ms" in logs.text() and "words=2" in logs.text(), "the rule that fired is logged, with the number of words (never the words)"
+        assert "rule=audio_350ms" in logs.text() and "words=2" in logs.text(), "the rule that fired is logged, with the number of words (never the words)"
         await sim.close()
     finally:
         logs.close()
@@ -511,6 +513,12 @@ async def speaking_line() -> tuple[PhoneLine, SimulatedExotel, _Logs]:
     return line, sim, logs
 
 
+def keep_speaking(line: PhoneLine) -> None:
+    """The assistant is in the middle of a long sentence (the test tone is only a moment long): it started now and plays for 20 s more."""
+    line._speech_began = line._clock()  # noqa: SLF001
+    line._play_until = line._clock() + 20  # noqa: SLF001
+
+
 @pytest.mark.serial   # real time: the line's grace periods and drain() wait on the clock, so this runs alone after the parallel tests (a rerun that passes is not a fix)
 @arun
 async def test_a_long_sound_whose_words_have_not_arrived_is_given_a_moment_and_a_backchannel_that_arrives_late_is_ignored() -> None:
@@ -535,9 +543,11 @@ async def test_a_long_sound_whose_words_have_not_arrived_is_given_a_moment_and_a
 async def test_a_long_sound_with_no_words_at_all_is_an_interruption_after_the_grace() -> None:
     line, sim, logs = await speaking_line()
     try:
-        await sim.speak_for(900)
+        keep_speaking(line)
+        await asyncio.sleep(0.33)   # the first 300 ms of our own speech never count (28 Nov 2026)
+        await sim.speak_for(1300)
         await drain(line)
-        assert line.interruptions["stopped"] == 1 and "rule=audio_500ms_no_words" in logs.text()
+        assert line.interruptions["stopped"] == 1 and "rule=audio_800ms_no_words" in logs.text(), "no word at all: 350 ms + 450 ms of grace (28 Nov 2026; was 500 ms)"
         await sim.close()
     finally:
         logs.close()
@@ -583,3 +593,42 @@ async def test_during_the_closing_line_a_sound_needs_800_ms_or_a_stop_word() -> 
         await sim.close()
     finally:
         logs.close()
+
+
+@pytest.mark.serial   # real time
+@arun
+async def test_a_loud_burst_of_500_ms_with_no_word_in_it_no_longer_stops_the_assistant() -> None:
+    """28 Nov 2026, the brother's first call: a 500 ms loud sound with no word in it (peak 8,733) stopped the assistant. Noise like that is now ignored; the same sound with words still stops it."""
+    line, sim, logs = await speaking_line()
+    try:
+        keep_speaking(line)
+        await asyncio.sleep(0.33)
+        await sim.speak_for(500)
+        await sim.quiet_for(500)
+        await drain(line)
+        assert line.interruptions["stopped"] == 0 and line.interruptions["ignored"] == 1, "a 500 ms burst with no word: ignored (it stopped the assistant before 28 Nov 2026)"
+        line.note_caller_text("మీరు ఏమన్నారు")
+        await sim.speak_for(500)
+        await drain(line)
+        assert line.interruptions["stopped"] == 1, "the same sound with words in it is a real interruption"
+        await sim.close()
+    finally:
+        logs.close()
+
+
+def _pcm(level: int, ms: int) -> bytes:
+    return array.array("h", [level, -level] * (16 * ms // 2)).tobytes()   # 16 kHz, a flat square wave of this size
+
+
+@arun
+async def test_the_bar_for_an_interruption_follows_the_quiet_level_of_the_line() -> None:
+    """The first second of the call sets the line's quiet level: a hissy line raises the bar (2.5 times its quiet level, never above 2,000), a clean one leaves the fixed threshold."""
+    clean, _ = await connected()
+    clean._note_floor(_pcm(60, 1000))
+    assert clean.noise_floor is not None and clean.noise_floor <= 100 and clean._barge_threshold == 700
+    noisy, _ = await connected()
+    noisy._note_floor(_pcm(500, 1000))
+    assert noisy.noise_floor is not None and 450 <= noisy.noise_floor <= 550 and noisy._barge_threshold == 1250
+    hiss, _ = await connected()
+    hiss._note_floor(_pcm(2500, 1000))
+    assert hiss._barge_threshold == 2000, "a very noisy line never raises the bar beyond 2,000"
