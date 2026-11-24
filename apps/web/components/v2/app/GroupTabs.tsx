@@ -35,6 +35,7 @@ export function GroupTabs({ memberships, labels: given_labels, frame: given }: {
   if (frame.ds) {
     const groups = menuGroupsV6(current.role, frame.pack);
     const rowId = activeV6Id(groups, path, tab);
+    if (frame.settingsOpen && rowId === "v6-settings") return null; // Settings is one page of sections (owner, 25 Nov): no Settings | Team row
     const item = groups.flatMap((g) => g.items).find((i) => i.id === rowId);
     const pages = item ? v6PagesOf(item).filter((p) => p.id !== "live") : [];
     // Today draws no tab row (the menu already has My assistant): the band comes first (the final Today design)

@@ -29,6 +29,8 @@ export type FrameData = {
   ds?: boolean;
   /** FREE EARLY ACCESS (EARLY_ACCESS=1): nothing in the app asks for money: no Top up, no Plan & usage link under the menu. Absent = off. */
   earlyAccess?: boolean;
+  /** SETTINGS_OPEN: Settings is one page of hairline sections, no Settings | Team tab row. Absent = off. */
+  settingsOpen?: boolean;
   /** JOBS is on (the one design system: round ticks, solid status chips, the branded loading; jobs on Today). Absent = off. */
   jobs?: boolean;
   /** The rupee balance for the menu's business card ("₹1,550"), or null when it is not known. Only with `ds`. Never "credits". */

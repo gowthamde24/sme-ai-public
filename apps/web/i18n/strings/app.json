@@ -127061,5 +127061,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "catalogue.view.list": {
+  "en": "List",
+  "te": "జాబితా",
+  "hi": "सूची",
+  "kn": "ಪಟ್ಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.view.photos": {
+  "en": "Photos",
+  "te": "ఫోటోలు",
+  "hi": "फ़ोटो",
+  "kn": "ಫೋಟೋಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.view.label": {
+  "en": "How to show the sarees",
+  "te": "చీరలను ఎలా చూపాలి",
+  "hi": "साड़ियाँ कैसे दिखाएँ",
+  "kn": "ಸೀರೆಗಳನ್ನು ಹೇಗೆ ತೋರಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
