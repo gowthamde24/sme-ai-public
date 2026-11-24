@@ -262,3 +262,9 @@ export const industryPages = (value: string | undefined = process.env.INDUSTRY_P
 
 /** The call rules, outreach rules, assistant name and developer keys as plain labelled fields (owner, 25 Nov / 29 Nov 2026: no fill-in-the-blank sentences): the JOBS sentence look draws only when SETTINGS_OPEN is off. */
 export const sentenceForms = (): boolean => jobsScreens() !== "off" && !settingsOpen();
+
+/**
+ * "What you sell" as named lists (owner's idea, 29 Nov 2026; C1's contract docs/contracts/sell-lists.md): the page shows the owner's lists as cards, a list is a table with columns the owner shapes. `1` = on (the API's own flag WHAT_YOU_SELL_LISTS must be on too: its routes
+ * answer 404 while it is off), anything else = the page as it was. Off in production until the planner's run.
+ */
+export const whatYouSellLists = (value: string | undefined = process.env.WHAT_YOU_SELL_LISTS): boolean => value === "1";

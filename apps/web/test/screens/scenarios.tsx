@@ -54,6 +54,7 @@ import {
   parseAdmissionDetail, parseAdmissionList, parseFeeEntries, parseFeePlan, parseFeePlanList, parseFeeReceipt, parseFeeStatement, parseGuardianFees, parseLateFeesPreview, parsePending, parseProfile as parseInstitution, parseProgrammes, parseStudent, parseStudentList,
 } from "@/lib/api/education";
 import * as EDU from "@/lib/api/education-fixtures";
+import { parseList, parseLists, parseRows } from "@/lib/api/lists";
 import { parseOwnList } from "@/lib/api/numbers";
 import { parseCatalogue, parseReport } from "@/lib/api/reports";
 import * as RPT from "@/lib/api/reports-fixtures";
@@ -1817,4 +1818,19 @@ add({ id: "what-you-sell-mock", roles: ["owner", "admin", "sales"], render: sell
 add({ id: "what-you-sell-mock-services", roles: ["owner"], render: sellPage, handlers: sellPack("clinic") });
 add({ id: "what-you-sell-mock-courses", roles: ["owner"], render: sellPage, handlers: sellPack("coaching") });
 add({ id: "what-you-sell-mock-properties", roles: ["owner"], render: sellPage, handlers: sellPack("real_estate") });
+// WHAT_YOU_SELL_LISTS (29 Nov 2026): the owner's own lists, a list as a table, the columns, Add a list
+const LIST_ID = "33333333-3333-4333-8333-333333333333";
+const WYS_LIST = { id: LIST_ID, name: "Dress materials", kind: "products", is_main: false, row_count: 3, columns: [
+  { key: "name", label: "Name", type: "text", choices: [], role: null, billing_period: null, quote_default: false },
+  { key: "lining", label: "Lining", type: "choice", choices: ["Cotton", "Satin"], role: null, billing_period: null, quote_default: false },
+  { key: "retail", label: "Retail price", type: "rupees", choices: [], role: "price", billing_period: "one_time", quote_default: true },
+  { key: "stock", label: "Availability", type: "choice", choices: ["In stock", "Few left", "Out of stock"], role: "availability", billing_period: null, quote_default: false },
+] };
+const WYS_ROWS = { items: [{ id: "r1", name: "Cotton dress material, blue", cells: { lining: "Cotton", retail: 145000, stock: "In stock" }, active: true }, { id: "r2", name: "Chanderi dress material, mustard", cells: { lining: "Satin", retail: null, stock: "Few left" }, active: true }], next_cursor: null };
+const listsEnv = <T,>(run: () => Promise<T>) => withEnv({ JOBS: "mock", WHAT_YOU_SELL_LISTS: "1" }, run);
+const listsHandlers = (role: Role): Record<string, Handler> => ({ ...base(role), getWorkspacePack: packOf("textiles"), getLists: () => parseLists({ lists: [WYS_LIST, { ...WYS_LIST, id: "44444444-4444-4444-8444-444444444444", name: "Ebooks and guides", kind: "digital", row_count: 18 }] }), getList: () => parseList(WYS_LIST), getRows: () => parseRows(WYS_ROWS) });
+add({ id: "what-you-sell-lists-home", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/page")).default(props({}))), handlers: listsHandlers });
+add({ id: "what-you-sell-list", roles: ["owner", "admin", "sales"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/[listId]/page")).default(props({ listId: LIST_ID }))), handlers: listsHandlers });
+add({ id: "what-you-sell-list-columns", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/[listId]/columns/page")).default(props({ listId: LIST_ID }))), handlers: listsHandlers });
+add({ id: "what-you-sell-list-new", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/new/page")).default(props({}))), handlers: listsHandlers });
 add({ id: "what-you-sell-mock-pricelist", roles: ["owner", "sales"], render: sellPage, handlers: sellPack("wholesale_b2b") });

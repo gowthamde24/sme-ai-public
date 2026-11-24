@@ -128192,5 +128192,1259 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "wls.kind.products": {
+  "en": "Products",
+  "te": "ప్రొడక్ట్స్",
+  "hi": "उत्पाद",
+  "kn": "ಉತ್ಪನ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.products.line": {
+  "en": "Things you sell by the piece",
+  "te": "ముక్కల లెక్కన అమ్మేవి",
+  "hi": "नग के हिसाब से बिकने वाली चीज़ें",
+  "kn": "ತುಂಡಿನ ಲೆಕ್ಕದಲ್ಲಿ ಮಾರುವವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.digital": {
+  "en": "Digital products",
+  "te": "డిజిటల్ ప్రొడక్ట్స్",
+  "hi": "डिजिटल उत्पाद",
+  "kn": "ಡಿಜಿಟಲ್ ಉತ್ಪನ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.digital.line": {
+  "en": "Ebooks, files, software, templates",
+  "te": "ఈబుక్స్, files, software, templates",
+  "hi": "ईबुक्स, files, software, templates",
+  "kn": "ಇಬುಕ್ಸ್, files, software, templates",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.services": {
+  "en": "Services",
+  "te": "సర్వీసులు",
+  "hi": "सेवाएँ",
+  "kn": "ಸೇವೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.services.line": {
+  "en": "Work you do for a price",
+  "te": "ధరకు మీరు చేసే పని",
+  "hi": "दाम लेकर आप जो काम करते हैं",
+  "kn": "ಬೆಲೆಗೆ ನೀವು ಮಾಡುವ ಕೆಲಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.bookings": {
+  "en": "Bookings and appointments",
+  "te": "బుకింగ్స్, అపాయింట్‌మెంట్లు",
+  "hi": "बुकिंग और अपॉइंटमेंट",
+  "kn": "ಬುಕಿಂಗ್, ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.bookings.line": {
+  "en": "Slots people book",
+  "te": "ప్రజలు బుక్ చేసే స్లాట్లు",
+  "hi": "लोग जो slots बुक करते हैं",
+  "kn": "ಜನರು ಬುಕ್ ಮಾಡುವ slots",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.courses": {
+  "en": "Courses and classes",
+  "te": "కోర్సులు, క్లాసులు",
+  "hi": "कोर्स और क्लास",
+  "kn": "ಕೋರ್ಸ್, ತರಗತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.courses.line": {
+  "en": "Fees, start dates, seats",
+  "te": "ఫీజులు, మొదలయ్యే తేదీలు, సీట్లు",
+  "hi": "फ़ीस, शुरू होने की तारीख़, सीटें",
+  "kn": "ಶುಲ್ಕ, ಪ್ರಾರಂಭ ದಿನಾಂಕ, ಸೀಟುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.subscriptions": {
+  "en": "Subscriptions and memberships",
+  "te": "సబ్‌స్క్రిప్షన్లు, మెంబర్‌షిప్‌లు",
+  "hi": "सब्सक्रिप्शन और मेंबरशिप",
+  "kn": "ಚಂದಾದಾರಿಕೆ, ಸದಸ್ಯತ್ವ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.subscriptions.line": {
+  "en": "Paid every month or year",
+  "te": "ప్రతి నెల లేదా సంవత్సరం చెల్లించేవి",
+  "hi": "हर महीने या साल का भुगतान",
+  "kn": "ಪ್ರತಿ ತಿಂಗಳು ಅಥವಾ ವರ್ಷ ಪಾವತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.rentals": {
+  "en": "Rentals and properties",
+  "te": "రెంటల్స్, ప్రాపర్టీలు",
+  "hi": "किराया और प्रॉपर्टी",
+  "kn": "ಬಾಡಿಗೆ, ಆಸ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.rentals.line": {
+  "en": "Per day, per month or a price",
+  "te": "రోజుకి, నెలకి లేదా ఒక ధర",
+  "hi": "दिन, महीने या एक दाम",
+  "kn": "ದಿನ, ತಿಂಗಳು ಅಥವಾ ಒಂದು ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.food": {
+  "en": "Food and menu",
+  "te": "ఫుడ్, మెనూ",
+  "hi": "खाना और मेन्यू",
+  "kn": "ಆಹಾರ, ಮೆನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.food.line": {
+  "en": "Dishes, boxes, tiffin plans",
+  "te": "వంటకాలు, బాక్సులు, tiffin ప్లాన్లు",
+  "hi": "व्यंजन, बॉक्स, tiffin प्लान",
+  "kn": "ತಿನಿಸುಗಳು, ಬಾಕ್ಸ್, tiffin ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.events": {
+  "en": "Events and tickets",
+  "te": "ఈవెంట్లు, టికెట్లు",
+  "hi": "इवेंट और टिकट",
+  "kn": "ಈವೆಂಟ್, ಟಿಕೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.events.line": {
+  "en": "Date, price, seats",
+  "te": "తేదీ, ధర, సీట్లు",
+  "hi": "तारीख़, दाम, सीटें",
+  "kn": "ದಿನಾಂಕ, ಬೆಲೆ, ಸೀಟುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.other": {
+  "en": "Something else",
+  "te": "ఇంకేదైనా",
+  "hi": "कुछ और",
+  "kn": "ಇನ್ನೇನಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.kind.other.line": {
+  "en": "Just a name. You add the columns.",
+  "te": "ఒక పేరు చాలు. columns మీరు add చేస్తారు.",
+  "hi": "बस एक नाम। columns आप जोड़ें।",
+  "kn": "ಒಂದು ಹೆಸರು ಸಾಕು. columns ನೀವು ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.title": {
+  "en": "Your lists",
+  "te": "మీ lists",
+  "hi": "आपकी lists",
+  "kn": "ನಿಮ್ಮ lists",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.sub": {
+  "en": "Your assistant answers customers from these lists, and says only the prices in the price columns.",
+  "te": "మీ అసిస్టెంట్ ఈ lists నుంచి కస్టమర్లకు జవాబిస్తుంది, price columns లోని ధరలే చెబుతుంది.",
+  "hi": "आपका असिस्टेंट इन lists से ग्राहकों को जवाब देता है, और सिर्फ़ price columns के दाम बताता है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಈ lists ಇಂದ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸುತ್ತದೆ, price columns ನ ಬೆಲೆಗಳನ್ನೇ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.add": {
+  "en": "Add a list",
+  "te": "list add చేయండి",
+  "hi": "list जोड़ें",
+  "kn": "list ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.items": {
+  "en": "{n} items",
+  "te": "{n} items ఉన్నాయి",
+  "hi": "{n} items हैं",
+  "kn": "{n} items ಇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.used": {
+  "en": "{n} of {max} lists used.",
+  "te": "{max} లో {n} lists వాడారు.",
+  "hi": "{max} में से {n} lists इस्तेमाल हुईं।",
+  "kn": "{max} ರಲ್ಲಿ {n} lists ಬಳಸಿದ್ದೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.builtin": {
+  "en": "Built in lists",
+  "te": "ముందే ఉన్న lists",
+  "hi": "पहले से मौजूद lists",
+  "kn": "ಮೊದಲೇ ಇರುವ lists",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.new.title": {
+  "en": "Add a list",
+  "te": "list add చేయండి",
+  "hi": "list जोड़ें",
+  "kn": "list ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.new.sub": {
+  "en": "A list is a table of what you sell. You can change its columns any time.",
+  "te": "list అంటే మీరు అమ్మేవాటి టేబుల్. columns ఎప్పుడైనా మార్చొచ్చు.",
+  "hi": "list यानी आप जो बेचते हैं उसकी टेबल। columns कभी भी बदल सकते हैं।",
+  "kn": "list ಎಂದರೆ ನೀವು ಮಾರುವುದರ ಟೇಬಲ್. columns ಯಾವಾಗ ಬೇಕಾದರೂ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.new.kind": {
+  "en": "1. What kind of list is it?",
+  "te": "1. ఇది ఏ రకమైన list?",
+  "hi": "1. यह किस तरह की list है?",
+  "kn": "1. ಇದು ಯಾವ ಬಗೆಯ list?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.new.name": {
+  "en": "2. Name it",
+  "te": "2. పేరు పెట్టండి",
+  "hi": "2. नाम दीजिए",
+  "kn": "2. ಹೆಸರು ಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.new.name.l": {
+  "en": "List name",
+  "te": "list పేరు",
+  "hi": "list का नाम",
+  "kn": "list ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.new.name.h": {
+  "en": "For example: Dupattas, Fabric by the metre, Bridal sets.",
+  "te": "ఉదాహరణకు: దుపట్టాలు, మీటర్ల లెక్కన fabric, bridal sets.",
+  "hi": "जैसे: दुपट्टे, मीटर के हिसाब से कपड़ा, bridal sets।",
+  "kn": "ಉದಾಹರಣೆಗೆ: ದುಪ್ಪಟ್ಟಾ, ಮೀಟರ್ ಲೆಕ್ಕದ fabric, bridal sets.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.new.create": {
+  "en": "Create the list",
+  "te": "list తయారు చేయండి",
+  "hi": "list बनाइए",
+  "kn": "list ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.new.starter": {
+  "en": "The starter columns are added for you. Change them in Edit columns.",
+  "te": "starter columns మీ కోసం add అయ్యాయి. Edit columns లో మార్చండి.",
+  "hi": "starter columns आपके लिए जुड़ गए हैं। Edit columns में बदलिए।",
+  "kn": "starter columns ನಿಮಗಾಗಿ ಸೇರಿವೆ. Edit columns ನಲ್ಲಿ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.back": {
+  "en": "← What you sell",
+  "te": "← మీరు అమ్మేవి",
+  "hi": "← आप क्या बेचते हैं",
+  "kn": "← ನೀವು ಮಾರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.saving": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सेव हो रहा है…",
+  "kn": "ಸೇವ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.list_limit": {
+  "en": "You have all the lists your plan allows. Remove one to add another.",
+  "te": "మీ ప్లాన్ ఇచ్చే lists అన్నీ ఉన్నాయి. కొత్తది కావాలంటే ఒకటి తీసేయండి.",
+  "hi": "आपके plan की सारी lists बन चुकी हैं। नई के लिए एक हटाइए।",
+  "kn": "ನಿಮ್ಮ plan ನ ಎಲ್ಲಾ lists ಇವೆ. ಹೊಸದಕ್ಕೆ ಒಂದನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.column_limit": {
+  "en": "A list can have 12 columns at most.",
+  "te": "ఒక list కి 12 columns వరకే ఉండొచ్చు.",
+  "hi": "एक list में ज़्यादा से ज़्यादा 12 columns हो सकते हैं।",
+  "kn": "ಒಂದು list ಗೆ ಗರಿಷ್ಠ 12 columns.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.row_limit": {
+  "en": "This list is full: 1,000 items at most.",
+  "te": "ఈ list నిండిపోయింది: 1,000 items వరకే.",
+  "hi": "यह list भर गई है: ज़्यादा से ज़्यादा 1,000 items।",
+  "kn": "ಈ list ತುಂಬಿದೆ: ಗರಿಷ್ಠ 1,000 items.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.name_taken": {
+  "en": "That name is already used here. Pick another.",
+  "te": "ఆ పేరు ఇక్కడ ఇప్పటికే ఉంది. వేరేది పెట్టండి.",
+  "hi": "यह नाम यहाँ पहले से है। दूसरा चुनिए।",
+  "kn": "ಆ ಹೆಸರು ಇಲ್ಲಿ ಈಗಾಗಲೇ ಇದೆ. ಬೇರೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.one_default_price": {
+  "en": "Exactly one price column is the one to quote by default.",
+  "te": "quote కి default గా ఒక్క price column మాత్రమే ఉండాలి.",
+  "hi": "default quote के लिए ठीक एक price column होना चाहिए।",
+  "kn": "default quote ಗೆ ಒಂದೇ price column ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.role_taken": {
+  "en": "Only one column can have that meaning.",
+  "te": "ఆ అర్థం ఒక్క column కే ఉండాలి.",
+  "hi": "वह मतलब सिर्फ़ एक column का हो सकता है।",
+  "kn": "ಆ ಅರ್ಥ ಒಂದೇ column ಗೆ ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.column_has_data": {
+  "en": "This column has information in it. Removing it hides it, and you can undo this for 30 days.",
+  "te": "ఈ column లో సమాచారం ఉంది. తీసేస్తే అది దాగిపోతుంది, 30 రోజులు undo చేయొచ్చు.",
+  "hi": "इस column में जानकारी है। हटाने पर वह छिप जाती है, 30 दिन तक undo कर सकते हैं।",
+  "kn": "ಈ column ನಲ್ಲಿ ಮಾಹಿತಿ ಇದೆ. ತೆಗೆದರೆ ಅದು ಮರೆಯಾಗುತ್ತದೆ, 30 ದಿನ undo ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.value_not_allowed": {
+  "en": "That value does not fit the column. Check it.",
+  "te": "ఆ విలువ ఈ column కి సరిపోదు. చూడండి.",
+  "hi": "वह मान इस column में नहीं बैठता। जाँचिए।",
+  "kn": "ಆ ಮೌಲ್ಯ ಈ column ಗೆ ಹೊಂದುವುದಿಲ್ಲ. ಪರಿಶೀಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.not_a_price": {
+  "en": "Type the price as an amount in rupees, for example 1450.",
+  "te": "ధరను రూపాయల్లో రాయండి, ఉదాహరణకు 1450.",
+  "hi": "दाम रुपये में लिखिए, जैसे 1450।",
+  "kn": "ಬೆಲೆಯನ್ನು ರೂಪಾಯಿಯಲ್ಲಿ ಬರೆಯಿರಿ, ಉದಾಹರಣೆಗೆ 1450.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.validation_error": {
+  "en": "Check what you typed and try again.",
+  "te": "మీరు రాసింది చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "जो लिखा है उसे जाँचकर फिर कोशिश कीजिए।",
+  "kn": "ನೀವು ಬರೆದದ್ದನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.forbidden": {
+  "en": "Only the Owner or an Admin can change lists. Only the Owner can change prices.",
+  "te": "lists ని Owner లేదా Admin మాత్రమే మార్చగలరు. ధరలను Owner మాత్రమే మార్చగలరు.",
+  "hi": "lists सिर्फ़ Owner या Admin बदल सकते हैं। दाम सिर्फ़ Owner बदल सकते हैं।",
+  "kn": "lists ಅನ್ನು Owner ಅಥವಾ Admin ಮಾತ್ರ ಬದಲಿಸಬಹುದು. ಬೆಲೆಗಳನ್ನು Owner ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.step_up_required": {
+  "en": "Sign in again with your second code, then save.",
+  "te": "మీ రెండో code తో మళ్ళీ sign in అయి, తర్వాత సేవ్ చేయండి.",
+  "hi": "अपने दूसरे code से फिर sign in कीजिए, फिर सेव कीजिए।",
+  "kn": "ನಿಮ್ಮ ಎರಡನೇ code ನಿಂದ ಮತ್ತೆ sign in ಆಗಿ, ನಂತರ ಸೇವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.not_found": {
+  "en": "This list or item is not there any more.",
+  "te": "ఈ list లేదా item ఇప్పుడు లేదు.",
+  "hi": "यह list या item अब नहीं है।",
+  "kn": "ಈ list ಅಥವಾ item ಈಗ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.err.unavailable": {
+  "en": "We could not do that just now. Try again in a minute.",
+  "te": "ఇప్పుడు అది చేయలేకపోయాం. ఒక నిమిషం తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो पाया। एक मिनट बाद फिर कोशिश कीजिए।",
+  "kn": "ಈಗ ಅದನ್ನು ಮಾಡಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.add_item": {
+  "en": "+ Add an item",
+  "te": "+ item add చేయండి",
+  "hi": "+ item जोड़ें",
+  "kn": "+ item ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.edit_columns": {
+  "en": "Edit columns",
+  "te": "columns మార్చండి",
+  "hi": "columns बदलें",
+  "kn": "columns ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.search": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.all": {
+  "en": "{name}: all",
+  "te": "{name}: అన్నీ",
+  "hi": "{name}: सभी",
+  "kn": "{name}: ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.sort": {
+  "en": "Sort",
+  "te": "క్రమం",
+  "hi": "क्रम",
+  "kn": "ಕ್ರಮ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.sort.new": {
+  "en": "Sort: newest first",
+  "te": "Sort: కొత్తవి ముందు",
+  "hi": "Sort: नए पहले",
+  "kn": "Sort: ಹೊಸದು ಮೊದಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.sort.az": {
+  "en": "Sort: name, A to Z",
+  "te": "Sort: పేరు, A నుంచి Z",
+  "hi": "Sort: नाम, A से Z",
+  "kn": "Sort: ಹೆಸರು, A ಇಂದ Z",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.sort.price": {
+  "en": "Sort: {name}, low to high",
+  "te": "Sort: {name}, తక్కువ నుంచి ఎక్కువ",
+  "hi": "Sort: {name}, कम से ज़्यादा",
+  "kn": "Sort: {name}, ಕಡಿಮೆ ಇಂದ ಹೆಚ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.none": {
+  "en": "Nothing here yet. Add the first item.",
+  "te": "ఇక్కడ ఇంకేమీ లేదు. మొదటి item add చేయండి.",
+  "hi": "यहाँ अभी कुछ नहीं है। पहला item जोड़िए।",
+  "kn": "ಇಲ್ಲಿ ಇನ್ನೂ ಏನೂ ಇಲ್ಲ. ಮೊದಲ item ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.more": {
+  "en": "Show more",
+  "te": "ఇంకా చూపించండి",
+  "hi": "और दिखाइए",
+  "kn": "ಇನ್ನಷ್ಟು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.price.add": {
+  "en": "Add price",
+  "te": "ధర add చేయండి",
+  "hi": "दाम जोड़ें",
+  "kn": "ಬೆಲೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.price.none": {
+  "en": "No price",
+  "te": "ధర లేదు",
+  "hi": "दाम नहीं",
+  "kn": "ಬೆಲೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.row.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.row.active": {
+  "en": "Show this item to the assistant",
+  "te": "ఈ item ని అసిస్టెంట్‌కి చూపించండి",
+  "hi": "यह item असिस्टेंट को दिखाइए",
+  "kn": "ಈ item ಅನ್ನು ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.row.price_owner": {
+  "en": "Only the Owner can change prices.",
+  "te": "ధరలను Owner మాత్రమే మార్చగలరు.",
+  "hi": "दाम सिर्फ़ Owner बदल सकते हैं।",
+  "kn": "ಬೆಲೆಗಳನ್ನು Owner ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.row.remove": {
+  "en": "Remove this item",
+  "te": "ఈ item ని తీసేయండి",
+  "hi": "यह item हटाइए",
+  "kn": "ಈ item ಅನ್ನು ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.row.yes": {
+  "en": "Yes",
+  "te": "అవును",
+  "hi": "हाँ",
+  "kn": "ಹೌದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.row.choose": {
+  "en": "Choose",
+  "te": "ఎంచుకోండి",
+  "hi": "चुनिए",
+  "kn": "ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.row.minutes": {
+  "en": "minutes",
+  "te": "నిమిషాలు",
+  "hi": "मिनट",
+  "kn": "ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.bill.one_time": {
+  "en": "one time",
+  "te": "ఒక్కసారి",
+  "hi": "एक बार",
+  "kn": "ಒಂದು ಸಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.bill.per_month": {
+  "en": "per month",
+  "te": "నెలకి",
+  "hi": "प्रति माह",
+  "kn": "ತಿಂಗಳಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.bill.per_year": {
+  "en": "per year",
+  "te": "సంవత్సరానికి",
+  "hi": "प्रति वर्ष",
+  "kn": "ವರ್ಷಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.bill.per_hour": {
+  "en": "per hour",
+  "te": "గంటకి",
+  "hi": "प्रति घंटा",
+  "kn": "ಗಂಟೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.bill.per_day": {
+  "en": "per day",
+  "te": "రోజుకి",
+  "hi": "प्रति दिन",
+  "kn": "ದಿನಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.bill.per_unit": {
+  "en": "per unit",
+  "te": "ఒక్కోదానికి",
+  "hi": "प्रति नग",
+  "kn": "ಒಂದಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.bill.from": {
+  "en": "from",
+  "te": "నుంచి",
+  "hi": "से शुरू",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.type.text": {
+  "en": "Text",
+  "te": "టెక్స్ట్",
+  "hi": "टेक्स्ट",
+  "kn": "ಪಠ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.type.number": {
+  "en": "Number",
+  "te": "సంఖ్య",
+  "hi": "संख्या",
+  "kn": "ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.type.rupees": {
+  "en": "Rupees",
+  "te": "రూపాయలు",
+  "hi": "रुपये",
+  "kn": "ರೂಪಾಯಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.type.yes_no": {
+  "en": "Yes or no",
+  "te": "అవును లేదా కాదు",
+  "hi": "हाँ या नहीं",
+  "kn": "ಹೌದು ಅಥವಾ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.type.choice": {
+  "en": "Choice",
+  "te": "ఎంపిక",
+  "hi": "चुनाव",
+  "kn": "ಆಯ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.type.photo": {
+  "en": "Photo",
+  "te": "ఫోటో",
+  "hi": "फ़ोटो",
+  "kn": "ಫೋಟೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.type.link": {
+  "en": "Link",
+  "te": "లింక్",
+  "hi": "लिंक",
+  "kn": "ಲಿಂಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.type.date": {
+  "en": "Date",
+  "te": "తేదీ",
+  "hi": "तारीख़",
+  "kn": "ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.type.datetime": {
+  "en": "Date and time",
+  "te": "తేదీ, సమయం",
+  "hi": "तारीख़ और समय",
+  "kn": "ದಿನಾಂಕ, ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.type.duration": {
+  "en": "Duration",
+  "te": "వ్యవధి",
+  "hi": "अवधि",
+  "kn": "ಅವಧಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.role.none": {
+  "en": "Nothing special",
+  "te": "ప్రత్యేకం ఏమీ లేదు",
+  "hi": "कुछ खास नहीं",
+  "kn": "ವಿಶೇಷ ಏನೂ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.role.price": {
+  "en": "This is a price",
+  "te": "ఇది ధర",
+  "hi": "यह दाम है",
+  "kn": "ಇದು ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.role.availability": {
+  "en": "Availability",
+  "te": "లభ్యత",
+  "hi": "उपलब्धता",
+  "kn": "ಲಭ್ಯತೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.role.quantity": {
+  "en": "Quantity in stock",
+  "te": "స్టాక్‌లో ఎంత",
+  "hi": "स्टॉक में कितना",
+  "kn": "ಸ್ಟಾಕ್‌ನಲ್ಲಿ ಎಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.role.how_to_buy": {
+  "en": "How to buy",
+  "te": "ఎలా కొనాలి",
+  "hi": "कैसे खरीदें",
+  "kn": "ಹೇಗೆ ಕೊಳ್ಳಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.role.description": {
+  "en": "Description",
+  "te": "వివరణ",
+  "hi": "विवरण",
+  "kn": "ವಿವರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.cols.title": {
+  "en": "Edit columns",
+  "te": "columns మార్చండి",
+  "hi": "columns बदलें",
+  "kn": "columns ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.cols.hint": {
+  "en": "Most lists do not need this page. Adding a list already picks the columns.",
+  "te": "చాలా lists కి ఈ పేజీ అవసరం లేదు. list add చేసినప్పుడే columns ఎంచుకుంటాం.",
+  "hi": "ज़्यादातर lists को इस पेज की ज़रूरत नहीं। list जोड़ते समय ही columns चुन लिए जाते हैं।",
+  "kn": "ಹೆಚ್ಚಿನ lists ಗೆ ಈ ಪುಟ ಬೇಕಾಗಿಲ್ಲ. list ಸೇರಿಸುವಾಗಲೇ columns ಆರಿಸಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.cols.count": {
+  "en": "{n} of {max} columns",
+  "te": "{max} లో {n} columns",
+  "hi": "{max} में से {n} columns",
+  "kn": "{max} ರಲ್ಲಿ {n} columns",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.name": {
+  "en": "Column name",
+  "te": "column పేరు",
+  "hi": "column का नाम",
+  "kn": "column ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.type": {
+  "en": "Type",
+  "te": "రకం",
+  "hi": "प्रकार",
+  "kn": "ಬಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.meaning": {
+  "en": "Meaning",
+  "te": "అర్థం",
+  "hi": "मतलब",
+  "kn": "ಅರ್ಥ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.billing": {
+  "en": "Billing",
+  "te": "బిల్లింగ్",
+  "hi": "बिलिंग",
+  "kn": "ಬಿಲ್ಲಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.quote": {
+  "en": "Quote this price by default",
+  "te": "default గా ఈ ధరతో quote ఇవ్వండి",
+  "hi": "default रूप से इसी दाम से quote दीजिए",
+  "kn": "default ಆಗಿ ಈ ಬೆಲೆಯಿಂದ quote ಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.choices": {
+  "en": "The choices, separated by commas",
+  "te": "ఎంపికలు, కామాలతో వేరు చేసి",
+  "hi": "विकल्प, कॉमा से अलग करके",
+  "kn": "ಆಯ್ಕೆಗಳು, ಅಲ್ಪವಿರಾಮದಿಂದ ಬೇರ್ಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.add": {
+  "en": "+ Add a column",
+  "te": "+ column add చేయండి",
+  "hi": "+ column जोड़ें",
+  "kn": "+ column ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.remove": {
+  "en": "Remove",
+  "te": "తీసేయండి",
+  "hi": "हटाइए",
+  "kn": "ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.up": {
+  "en": "Move up",
+  "te": "పైకి",
+  "hi": "ऊपर",
+  "kn": "ಮೇಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.down": {
+  "en": "Move down",
+  "te": "కిందకి",
+  "hi": "नीचे",
+  "kn": "ಕೆಳಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.more": {
+  "en": "More",
+  "te": "ఇంకా",
+  "hi": "और",
+  "kn": "ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.fewer": {
+  "en": "Fewer options",
+  "te": "తక్కువ ఎంపికలు",
+  "hi": "कम विकल्प",
+  "kn": "ಕಡಿಮೆ ಆಯ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.save": {
+  "en": "Save columns",
+  "te": "columns సేవ్ చేయండి",
+  "hi": "columns सेव करें",
+  "kn": "columns ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.note": {
+  "en": "The assistant says only the numbers in the price columns, with the billing period you chose. A number in any other column is never said as a price.",
+  "te": "అసిస్టెంట్ price columns లోని సంఖ్యలనే, మీరు ఎంచుకున్న billing తో కలిపి చెబుతుంది. ఇతర columns లోని సంఖ్యను ధరగా ఎప్పుడూ చెప్పదు.",
+  "hi": "असिस्टेंट सिर्फ़ price columns के नंबर, आपके चुने billing के साथ बताता है। किसी और column का नंबर दाम की तरह कभी नहीं बताता।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ price columns ನ ಸಂಖ್ಯೆಗಳನ್ನೇ, ನೀವು ಆರಿಸಿದ billing ಜೊತೆ ಹೇಳುತ್ತದೆ. ಬೇರೆ column ನ ಸಂಖ್ಯೆಯನ್ನು ಬೆಲೆ ಎಂದು ಹೇಳುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.hide": {
+  "en": "This column has information in it. Hide it? The information is kept for 30 days.",
+  "te": "ఈ column లో సమాచారం ఉంది. దాచేయాలా? సమాచారం 30 రోజులు ఉంటుంది.",
+  "hi": "इस column में जानकारी है। छिपा दें? जानकारी 30 दिन रखी जाती है।",
+  "kn": "ಈ column ನಲ್ಲಿ ಮಾಹಿತಿ ಇದೆ. ಮರೆಮಾಡಬೇಕೇ? ಮಾಹಿತಿ 30 ದಿನ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wls.col.hide.yes": {
+  "en": "Hide it and save",
+  "te": "దాచేసి సేవ్ చేయండి",
+  "hi": "छिपाकर सेव करें",
+  "kn": "ಮರೆಮಾಡಿ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

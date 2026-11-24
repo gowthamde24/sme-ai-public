@@ -1,0 +1,20 @@
+# Add a list
+A list is a table of what you sell. You can change its columns any time.
+form:
+1. What kind of list is it?
+{role=radiogroup label="1. What kind of list is it?"}
+[button type=button: ProductsThings you sell by the piece]
+[button type=button: Digital productsEbooks, files, software, templates]
+[button type=button: ServicesWork you do for a price]
+[button type=button: Bookings and appointmentsSlots people book]
+[button type=button: Courses and classesFees, start dates, seats]
+[button type=button: Subscriptions and membershipsPaid every month or year]
+[button type=button: Rentals and propertiesPer day, per month or a price]
+[button type=button: Food and menuDishes, boxes, tiffin plans]
+[button type=button: Events and ticketsDate, price, seats]
+[button type=button: Something elseJust a name. You add the columns.]
+2. Name it List name
+<text label="List name" maxlength=60>
+For example: Dupattas, Fabric by the metre, Bridal sets.
+[button type=submit: Create the list]
+[button type=button: Cancel]
