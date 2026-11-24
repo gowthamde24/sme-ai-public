@@ -48,27 +48,29 @@ AFTER_HOURS = {"en": "Thank you for calling {business}. We are closed right now.
 
 
 # the person rang US: no "I am calling about your enquiry"; it says it is an AI and asks how it can help (drafts for a native reader, like the other fixed words)
+# 26 Nov 2026: every language except Telugu now ASKS HOW IT CAN HELP, as this comment always said; they had been given the outbound question "do you have a minute to talk?", which asks the person who rang us for THEIR time. Telugu is
+# reviewed text and changes only with the owner's own yes (the Telugu lines below still carry the old question until he answers).
 # Every call, every language (owner, 6 Nov 2026): the assistant's name (Settings > Assistant, default Priya), the business (the workspace's name), and "AI assistant" IN THE FIRST SENTENCE;
 # then one short question. The written text keeps the business as it is written ("Stack19"); the voice says it in English (app/pronunciation/brand.py). Drafts for a native reader except te.
 INBOUND_OPENING = {
-    "en": "Hello, I'm {assistant}, the AI assistant from {business}. Do you have a minute to talk?",
+    "en": "Hello, I'm {assistant}, the AI assistant from {business}. How can I help you?",
     "te": "హలో, నేను {business} నుంచి {assistant}, AI అసిస్టెంట్‌ని. ఇప్పుడు ఒక నిమిషం మాట్లాడొచ్చా?",
-    "hi": "नमस्ते जी, मैं {business} से {assistant}, AI असिस्टेंट बोल रही हूँ। क्या अभी एक मिनट बात कर सकते हैं?",
-    "kn": "ಹಲೋ, ನಾನು {business} ಇಂದ {assistant}, AI ಅಸಿಸ್ಟೆಂಟ್. ಈಗ ಒಂದು ನಿಮಿಷ ಮಾತಾಡಬಹುದಾ?",
-    "ta": "ஹலோ, நான் {business} லிருந்து {assistant}, AI அசிஸ்டென்ட். இப்போ ஒரு நிமிஷம் பேசலாமா?",
-    "ml": "ഹലോ, ഞാൻ {business} ൽ നിന്ന് {assistant}, AI അസിസ്റ്റന്റ് ആണ്. ഇപ്പോൾ ഒരു മിനിറ്റ് സംസാരിക്കാമോ?",
-    "mr": "नमस्कार, मी {business} कडून {assistant}, AI असिस्टंट बोलतेय. आत्ता एक मिनिट बोलू शकतो का?",
+    "hi": "नमस्ते जी, मैं {business} से {assistant}, AI असिस्टेंट बोल रही हूँ। बताइए, मैं आपकी कैसे मदद कर सकती हूँ?",
+    "kn": "ಹಲೋ, ನಾನು {business} ಇಂದ {assistant}, AI ಅಸಿಸ್ಟೆಂಟ್. ಹೇಳಿ, ನಾನು ಹೇಗೆ help ಮಾಡಲಿ?",
+    "ta": "ஹலோ, நான் {business} லிருந்து {assistant}, AI அசிஸ்டென்ட். சொல்லுங்க, நான் எப்படி help பண்ணட்டும்?",
+    "ml": "ഹലോ, ഞാൻ {business} ൽ നിന്ന് {assistant}, AI അസിസ്റ്റന്റ് ആണ്. പറയൂ, ഞാൻ എങ്ങനെ help ചെയ്യണം?",
+    "mr": "नमस्कार, मी {business} कडून {assistant}, AI असिस्टंट बोलतेय. सांगा, मी तुम्हाला कशी मदत करू?",
 }
 # The plain opening (the name only, no AI mention): the DEFAULT since 20 Nov 2026 (the setting "Say 'AI assistant' when greeting" is OFF until the owner turns it on; app/opening/greeting.py). English is the owner's own wording;
 # the others are the standard opening without its AI words, drafts for a native reader. A customer who asks whether this is a person or a robot always gets the honest answer (app/opening/honesty.py), whatever this says.
 PLAIN_INBOUND_OPENING = {
     "en": "Hello, this is {assistant} from {business}. How can I help you?",
     "te": "హలో, నేను {business} నుంచి {assistant}. ఇప్పుడు ఒక నిమిషం మాట్లాడొచ్చా?",
-    "hi": "नमस्ते जी, मैं {business} से {assistant} बोल रही हूँ। क्या अभी एक मिनट बात कर सकते हैं?",
-    "kn": "ಹಲೋ, ನಾನು {business} ಇಂದ {assistant}. ಈಗ ಒಂದು ನಿಮಿಷ ಮಾತಾಡಬಹುದಾ?",
-    "ta": "ஹலோ, நான் {business} லிருந்து {assistant}. இப்போ ஒரு நிமிஷம் பேசலாமா?",
-    "ml": "ഹലോ, ഞാൻ {business} ൽ നിന്ന് {assistant} ആണ്. ഇപ്പോൾ ഒരു മിനിറ്റ് സംസാരിക്കാമോ?",
-    "mr": "नमस्कार, मी {business} कडून {assistant} बोलतेय. आत्ता एक मिनिट बोलू शकतो का?",
+    "hi": "नमस्ते जी, मैं {business} से {assistant} बोल रही हूँ। बताइए, मैं आपकी कैसे मदद कर सकती हूँ?",
+    "kn": "ಹಲೋ, ನಾನು {business} ಇಂದ {assistant}. ಹೇಳಿ, ನಾನು ಹೇಗೆ help ಮಾಡಲಿ?",
+    "ta": "ஹலோ, நான் {business} லிருந்து {assistant}. சொல்லுங்க, நான் எப்படி help பண்ணட்டும்?",
+    "ml": "ഹലോ, ഞാൻ {business} ൽ നിന്ന് {assistant} ആണ്. പറയൂ, ഞാൻ എങ്ങനെ help ചെയ്യണം?",
+    "mr": "नमस्कार, मी {business} कडून {assistant} बोलतेय. सांगा, मी तुम्हाला कशी मदत करू?",
 }
 PLAIN_REVIEWED = frozenset(PLAIN_INBOUND_OPENING)
 DEFAULT_ASSISTANT = "Priya"
