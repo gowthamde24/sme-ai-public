@@ -468,6 +468,8 @@ class Settings(BaseSettings):
     # SANDBOX ONLY, for testing (owner, 28 Nov 2026): a sandbox-list number ignores the
     # calling hours. Ignored in live mode. Remove before the 2 Dec real-data gate.
     telephony_sandbox_ignores_hours: bool = False
+    # The named lists of "What you sell" (28 Nov 2026): off until the planner turns it on.
+    what_you_sell_lists: bool = False
     # The number picker (28 Nov 2026): a business picks its own VoiceLink number; we buy it with OUR
     # money. Off until the planner turns it on (and the database switch is on too).
     phone_picker: bool = False
