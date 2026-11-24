@@ -76,6 +76,10 @@ class InboundStore:
         out = self._call("call_sound_for_call", {"p_tenant_id": str(tenant_id)})
         return out if isinstance(out, dict) else None
 
+    def telephony_alert(self, ok: bool, detail: str | None = None) -> None:
+        """A "Needs you" item for the owner and finance (the scheduler account raises it): a telephony thing that needs a person, or its all-clear."""
+        self._call("ops_telephony_setting_report", {"p_ok": ok, "p_detail": (detail or "")[:480] or None})
+
     def talk_training(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """The Owner's "How I talk to customers" for this call (the scheduler account reads it); None when nothing is saved."""
         out = self._call("talk_training_for_call", {"p_tenant_id": str(tenant_id)})
