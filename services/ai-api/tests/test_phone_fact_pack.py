@@ -217,3 +217,7 @@ def test_list_prices_carry_the_item_the_column_label_and_the_period_and_the_usua
     assert "Cotton, Wholesale price: Rs 450 per unit" in text and "Cotton, Retail price: Rs 520 (the usual price" in text and "Pro plan, Price: Rs 999 per month (the usual price" in text
     assert "Cotton: Out of stock. Soft cotton, 5 metres" in text and "E-book: Always available" in text
     assert pack.allowed_paise == frozenset({45000, 52000, 99900})
+def test_an_out_of_stock_catalogue_item_is_said_as_out_of_stock_not_as_made_to_order() -> None:
+    raw = {"catalogue": [{"name": "Red kanchi", "fabric": "kanchi_pattu", "colours": ["red"], "occasions": ["wedding"], "stock": "out_of_stock"}]}
+    text = text_of(fact_pack.build(raw, now=TUE_11))
+    assert "Red kanchi" in text and "out of stock" in text and "made to order" not in text

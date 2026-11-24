@@ -23,6 +23,7 @@ BUDGET = {"prices": 500, "catalogue": 350, "items": 250, "faq": 350}   # tokens 
 DAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 STOCK = {"in_stock": "in stock", "few_left": "only a few left", "made_to_order": "made to order"}
 PERIODS = {"one_time": "", "per_month": " per month", "per_year": " per year", "per_hour": " per hour", "per_day": " per day", "per_unit": " per unit"}   # a from-price is never in the pack
+STOCK = {"in_stock": "in stock", "few_left": "only a few left", "made_to_order": "made to order", "out_of_stock": "out of stock"}
 UNITS = {"piece": "piece", "metre": "metre", "meter": "metre", "kg": "kg", "set": "set", "dozen": "dozen", "pair": "pair", "service": "service", "course": "course", "listing": "listing"}
 REMOVED = "(price: ask the price list)"
 

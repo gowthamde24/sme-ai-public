@@ -59,7 +59,7 @@ from app.tenancy.repository import RepositoryError
 logger = logging.getLogger("app.lead_finder.service")
 ATTRIBUTION = "Google Maps"
 MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-_STOCK_WORD = {"in_stock": "in_stock", "few_left": "few_left", "made_to_order": "made_to_order"}
+_STOCK_WORD = {"in_stock": "in_stock", "few_left": "few_left", "made_to_order": "made_to_order", "out_of_stock": "out_of_stock"}
 
 
 # the "needs you" reasons that are decided again: none is the Owner's own choice

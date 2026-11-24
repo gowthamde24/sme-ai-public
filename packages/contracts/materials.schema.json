@@ -1790,7 +1790,8 @@
           "enum": [
             "in_stock",
             "few_left",
-            "made_to_order"
+            "made_to_order",
+            "out_of_stock"
           ],
           "title": "Stock Status",
           "type": "string"
@@ -1896,7 +1897,8 @@
           "enum": [
             "in_stock",
             "few_left",
-            "made_to_order"
+            "made_to_order",
+            "out_of_stock"
           ],
           "title": "Stock Status",
           "type": "string"
@@ -2033,7 +2035,8 @@
           "enum": [
             "in_stock",
             "few_left",
-            "made_to_order"
+            "made_to_order",
+            "out_of_stock"
           ],
           "title": "Stock Status",
           "type": "string"
