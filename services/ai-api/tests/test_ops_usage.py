@@ -523,3 +523,48 @@ def test_the_wiring_hands_the_scheduler_account_a_recorder_only_when_it_is_confi
     secret = SimpleNamespace(get_secret_value=lambda: "pw")
     assert build_usage_recorder(SimpleNamespace(scheduler_email="s@example.test", scheduler_password=None), config) is None
     assert isinstance(build_usage_recorder(SimpleNamespace(scheduler_email="s@example.test", scheduler_password=secret), config), PostgrestUsageRecorder)
+
+
+def test_the_phone_prompt_is_cached_and_cached_tokens_are_counted_at_their_price() -> None:
+    """24 Nov 2026: the system prompt of a call is sent with cache_control; a cache read counts a tenth, a cache write a quarter more, so the ledger's cost is right."""
+    import asyncio
+    import json
+
+    import httpx
+
+    from app.conversation.providers import AnthropicStream, _price_equivalent_input
+
+    assert _price_equivalent_input({"input_tokens": 141, "cache_read_input_tokens": 4550}) == 141 + 455
+    assert _price_equivalent_input({"input_tokens": 10, "cache_creation_input_tokens": 4000}) == 10 + 5000
+    assert _price_equivalent_input({}) == 0 and _price_equivalent_input({"input_tokens": True}) == 0
+
+    seen: dict[str, object] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["body"] = json.loads(request.content)
+        events = [
+            {"type": "message_start", "message": {"usage": {"input_tokens": 141, "cache_read_input_tokens": 4550, "output_tokens": 1}}},
+            {"type": "content_block_delta", "delta": {"type": "text_delta", "text": "Hi"}},
+            {"type": "message_delta", "usage": {"output_tokens": 6}},
+        ]
+        return httpx.Response(200, content="".join(f"data: {json.dumps(e)}\n\n" for e in events).encode(), headers={"content-type": "text/event-stream"})
+
+    stream = AnthropicStream("k", client=httpx.AsyncClient(transport=httpx.MockTransport(handler)))
+
+    async def run() -> list[str]:
+        return [piece async for piece in stream.stream("SYSTEM TEXT", [{"role": "user", "content": "hello"}], "claude-haiku-5-5")]
+
+    assert asyncio.run(run()) == ["Hi"]
+    body = seen["body"]
+    assert isinstance(body, dict) and body["system"] == [{"type": "text", "text": "SYSTEM TEXT", "cache_control": {"type": "ephemeral"}}]
+    assert (stream.input_tokens, stream.output_tokens) == (141 + 455, 6)
+
+
+def test_a_voicelink_call_gets_a_carrier_line_in_whole_minutes() -> None:
+    from app.telephony.call_usage import call_lines
+
+    cid = uuid.uuid4()
+    lines = call_lines(cid, carrier="voicelink", duration_s=61, tts_chars={}, stt_seconds=0, stt_is_sarvam_engine=False, tokens_in=0, tokens_out=0)
+    assert [(x.provider, x.unit, x.units) for x in lines] == [("voicelink", "second", 120)]
+    assert call_lines(cid, carrier="voicelink", duration_s=0, tts_chars={}, stt_seconds=0, stt_is_sarvam_engine=False, tokens_in=0, tokens_out=0) == []
+    assert call_lines(cid, carrier="exotel", duration_s=90, tts_chars={}, stt_seconds=0, stt_is_sarvam_engine=False, tokens_in=0, tokens_out=0) == []

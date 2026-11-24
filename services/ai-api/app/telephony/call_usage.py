@@ -1,6 +1,6 @@
 """What each provider was used for in ONE phone call, from what the call measured (admin console usage ledger, 13 Nov 2026). Pure: counts in, lines out; the recording is `app.ops.usage`.
 
-  * Plivo: the call's seconds as the phone server's clock measured them, rounded UP to Plivo's 30-second pulses (a carrier that is not Plivo, or a call of no length, records nothing)
+  * Plivo: the call's seconds as the phone server's clock measured them, rounded UP to Plivo's 30-second pulses; VoiceLink: the same, in 60-second pulses (any other carrier, or a call of no length, records nothing)
   * Cartesia / Sarvam voice: the characters each voice engine was GIVEN to speak (`Usage.tts_chars`, counted at the voice; a greeting played from memory is not counted because no engine was asked)
   * Sarvam speech-to-text: the seconds of the caller's audio sent to the recogniser (`Usage.stt_seconds`), only when the recogniser really is Sarvam's
   * Claude: the input and output tokens the model REPORTED (the streaming adapter reads them from the provider's own events); none reported = nothing recorded, never a guess
@@ -18,6 +18,7 @@ from typing import Any
 from app.ops.usage import UsageLine
 
 PLIVO_PULSE_S = 30   # Plivo India bills a call in 30-second pulses (1 to 30 s = one pulse)
+VOICELINK_PULSE_S = 60   # VoiceLink bills in whole 60-second pulses (the planner, 28 Nov; to confirm on the first invoice)
 TTS_ENGINES = {"cartesia": "cartesia", "sarvam_v4": "sarvam"}   # the voice engine's name in `tts_chars` -> the provider of the ledger
 
 
@@ -65,6 +66,10 @@ def call_lines(
         billed = plivo_billed_seconds(duration_s)
         if billed > 0:
             lines.append(UsageLine("plivo", "second", billed, "call", ref))
+    elif (carrier or "").lower() == "voicelink":
+        billed = plivo_billed_seconds(duration_s, VOICELINK_PULSE_S)
+        if billed > 0:
+            lines.append(UsageLine("voicelink", "second", billed, "call", ref))
     for engine, provider in TTS_ENGINES.items():
         chars = int(tts_chars.get(engine, 0) or 0)
         if chars > 0:
