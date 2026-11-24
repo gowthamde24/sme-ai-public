@@ -135,6 +135,14 @@ async def test_refusals_never_start_a_call_a_call_we_placed_is_not_built_yet_and
         assert sim.heard.audio_bytes == 0, kw
 
 
+def test_the_webhook_shape_line_holds_field_names_only() -> None:
+    from app.telephony.voicelink_routes import _shape
+
+    text = _shape({"event": "call.ended", "data": {"call_id": "1764.5", "caller": "+919876543210", "status": "ANSWER"}, "custom parameters": "x", "zz": 1})
+    assert text == "custom_parameters,data{call_id,caller,status},event,zz" or text == "customparameters,data{call_id,caller,status},event,zz"
+    assert "1764" not in text and "9876" not in text and "ANSWER" not in text and "call.ended" not in text
+
+
 @arun
 async def test_a_socket_that_closes_before_the_start_event_is_logged_with_the_events_it_sent() -> None:
     """28 Nov 2026: VoiceLink opened the bot and closed it within milliseconds (a reachability test looks like this): the line says which events came first (names and counts only)."""
