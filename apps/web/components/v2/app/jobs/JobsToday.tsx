@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { Job } from "@/lib/jobs/types";
+import { jobState, type Job } from "@/lib/jobs/types";
 
 import { MessageSquareWarning } from "lucide-react";
 
@@ -20,14 +20,17 @@ export type TodaySheet = { actions: SheetActions | null; festival: FestivalHint 
 export function JobsToday({ jobs, words, base, actions, sheet = null, messagesToChange = 0, open = false }: { jobs: readonly Job[]; words: Words; base: string; actions: JobActions | null; sheet?: TodaySheet | null; /** TODAY_OPEN: hairline rows with bare category icons (JobLine), no card around the list. */ open?: boolean; /** How many of the shop's own messages WhatsApp sent back (the Needs-you code `message_needs_change`): one row that opens Chats > Templates. */ messagesToChange?: number }) {
   const t = makeT(words);
   if (jobs.length === 0) return null;
+  // the count is the number of jobs that really run now (not the number of job types): the others (waiting for the owner, paused) are listed under their own grey line
+  const running = jobs.filter((j) => jobState(j) === "running");
+  const others = jobs.filter((j) => jobState(j) !== "running");
   return (
     <section data-part="jobs-today" aria-labelledby="jobs-today-heading" className="flex min-w-0 flex-col gap-3">
       <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
         <h2 id="jobs-today-heading" className="whitespace-nowrap font-display text-xl font-semibold md:text-2xl">
           {t("jobs.today.title")}
         </h2>
-        <span data-count={jobs.length} className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-surface-2 px-2 text-sm font-bold text-ink">
-          {jobs.length}
+        <span data-count={running.length} className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-surface-2 px-2 text-sm font-bold text-ink">
+          {running.length}
         </span>
         <span className="ml-auto flex shrink-0 items-center gap-1">
           {sheet?.actions ? <NewJobButton words={words} base={base} actions={sheet.actions} size="sm" /> : null}
@@ -51,7 +54,15 @@ export function JobsToday({ jobs, words, base, actions, sheet = null, messagesTo
       {sheet?.actions && sheet.festival ? <FestivalSuggestion festival={sheet.festival} words={words} base={base} actions={sheet.actions} /> : null}
       {open ? (
         <div data-part="jobs-open" className="grid grid-cols-1 gap-3">
-          {jobs.map((j) => (
+          {running.map((j) => (
+            <JobLine key={j.id} job={j} words={words} base={base} actions={actions} />
+          ))}
+          {others.length > 0 ? (
+            <p data-part="jobs-others" className="m-0 pt-1 text-[15px] text-muted">
+              {t("jobs.today.others")}
+            </p>
+          ) : null}
+          {others.map((j) => (
             <JobLine key={j.id} job={j} words={words} base={base} actions={actions} />
           ))}
         </div>
