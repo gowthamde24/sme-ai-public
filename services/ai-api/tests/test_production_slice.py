@@ -104,7 +104,9 @@ def test_the_full_stack_deploys_from_its_declared_files_sandbox_one_warm_instanc
     for must in ("TELEPHONY_MODE=sandbox", "TELEPHONY_OUTBOUND=false", "TASKS_DIALER=|", "AGENTS_ENABLED=true", "PRIVACY_VERSION=2026-10-27", "SCHEDULER_EMAIL=scheduler@example.test",
                  "PUBLIC_BASE_URL=https://sme-api-111222333.asia-south1.run.app", "WORKSPACE_SECRETS_PROJECT=prod-project-test", "MAIL_FROM=noreply@example.test", "LLM_MODEL=claude-haiku-5-5",
                  "--no-cpu-throttling", "--min-instances 1", "--max-instances 1", "ANTHROPIC_API_KEY=sme-anthropic-api-key:latest", "PLIVO_AUTH_TOKEN=sme-plivo-auth-token:latest",
-                 "TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest", "SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest"):
+                 "TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest", "SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest",
+                 # VoiceLink, the only provider (24 Nov 2026): the provider word, the per-minute cost it charges, and the three secrets (bot address token, login)
+                 "TELEPHONY_PROVIDER=voicelink", "TELEPHONY_COST_PAISE_PER_MINUTE=50", "TELEPHONY_COST_PULSE_S=60", "VOICELINK_WS_TOKEN=sme-voicelink-ws-token:latest", "VOICELINK_USERNAME=sme-voicelink-username:latest", "VOICELINK_PASSWORD=sme-voicelink-password:latest"):
         assert must in deploy, must
     for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=true", "WHATSAPP", "staging", "CAPTCHA"):
         assert never not in deploy, never

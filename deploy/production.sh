@@ -166,6 +166,11 @@ if $do_worker; then
     [ "${PROD_WORKER_TOKEN_EXPIRY:-0}" != 1 ] || W_ENV="$W_ENV,TOKEN_EXPIRY_CHECK=true"
     [ "${PROD_WORKER_TEMPLATE_SYNC:-0}" != 1 ] || W_ENV="$W_ENV,TEMPLATE_SYNC=true"
   fi
+  # VoiceLink (owner, 24 Nov 2026: the only telephony provider): the worker reads its wallet once a day (a "Needs you" item below the limit). Off unless PROD_VOICELINK=1 (the login secrets exist); PROD_VOICELINK_MIN_INR sets the limit (default 500).
+  if [ "$slice" != waitlist ] && [ "${PROD_VOICELINK:-0}" = 1 ]; then
+    W_ENV="$W_ENV,TELEPHONY_PROVIDER=voicelink,PLIVO_BALANCE_CHECK=true,PLIVO_BALANCE_CURRENCY=INR,PLIVO_BALANCE_MIN_INR=${PROD_VOICELINK_MIN_INR:-500}"
+    W_SECRETS="$W_SECRETS,VOICELINK_USERNAME=sme-voicelink-username:latest,VOICELINK_PASSWORD=sme-voicelink-password:latest"
+  fi
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="${PROD_SCHEDULER_EMAIL:?set PROD_SCHEDULER_EMAIL}" \
     WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER="$OUTBOX_FOR_WORKER" \
     WORKER_EXTRA_ENV="$W_ENV" \

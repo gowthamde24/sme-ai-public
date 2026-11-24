@@ -161,15 +161,16 @@ class OutboundRepo(Protocol):
 class PostgrestOutboundRepo:
     """The database side, with the CALLER's token (an Owner's for a test call, the phone server's for the dialer)."""
 
-    def __init__(self, rpc: RpcClient) -> None:
+    def __init__(self, rpc: RpcClient, provider: str = PROVIDER) -> None:
         self._rpc = rpc
+        self._provider = provider   # the provider word of the calls and the line this repository places (plivo | voicelink)
 
     def line_for_tenant(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
-        out = self._rpc.call(token, "phone_line_for_tenant", {"p_tenant_id": str(tenant_id), "p_provider": PROVIDER})
+        out = self._rpc.call(token, "phone_line_for_tenant", {"p_tenant_id": str(tenant_id), "p_provider": self._provider})
         return out if isinstance(out, dict) else None
 
     def begin(self, token: str, tenant_id: uuid.UUID, purpose: str, language: str, refuse_reason: str | None = None) -> uuid.UUID:
-        out = self._rpc.object(token, "phone_call_begin", {"p_tenant_id": str(tenant_id), "p_direction": "outbound", "p_provider": PROVIDER, "p_sandbox": True, "p_purpose": purpose, "p_language": language,
+        out = self._rpc.object(token, "phone_call_begin", {"p_tenant_id": str(tenant_id), "p_direction": "outbound", "p_provider": self._provider, "p_sandbox": True, "p_purpose": purpose, "p_language": language,
                                                            "p_ai_disclosed": True, "p_refuse_reason": refuse_reason})
         return uuid.UUID(str(out["id"]))
 
@@ -221,7 +222,9 @@ def answer_query(call_id: uuid.UUID, tenant_id: uuid.UUID, language: str, purpos
 
 class PlivoOutbound:
     def __init__(self, *, api: PlivoCaller, repo: OutboundRepo, gate_settings: gate.Settings, public_base: str, active_calls: Callable[[], int] = lambda: 0,
-                 clock: Callable[[], datetime] = lambda: datetime.now(UTC), max_call_s: int = 180, api_for: Callable[[dict[str, Any]], PlivoCaller | None] | None = None, id_key: bytes = b"") -> None:
+                 clock: Callable[[], datetime] = lambda: datetime.now(UTC), max_call_s: int = 180, api_for: Callable[[dict[str, Any]], PlivoCaller | None] | None = None, id_key: bytes = b"",
+                 provider: str = PROVIDER) -> None:
+        self.provider = provider   # "plivo" or "voicelink": the word on the calls' rows and the kind of line this placer needs (the REST client behind `api` is the only other difference)
         self._id_key = id_key or os.urandom(32)   # keys the ids of the test-number list (a plain hash of a phone number could be guessed back)
         self._api, self._repo, self._gate, self._base = api, repo, gate_settings, public_base.rstrip("/")
         self._api_for = api_for   # the REST client for a line that sits in a SUBACCOUNT (its own Auth ID and token); None or a None answer: the main account's
@@ -300,10 +303,10 @@ class PlivoOutbound:
         query = answer_query(call_id, tenant_id, language, purpose, kind)
         try:
             api = (self._api_for(line) if self._api_for is not None else None) or self._api
-            sid = api.place_call(from_number=str(line["number"]), to_number=number, answer_url=f"{self._base}/v1/telephony/plivo/outbound-answer?{query}",
-                                       hangup_url=f"{self._base}/v1/telephony/plivo/hangup?{query}", time_limit=self._max_call_s)
+            sid = api.place_call(from_number=str(line["number"]), to_number=number, answer_url=f"{self._base}/v1/telephony/{self.provider}/outbound-answer?{query}",
+                                       hangup_url=f"{self._base}/v1/telephony/{self.provider}/hangup?{query}", time_limit=self._max_call_s)
         except PlivoError as exc:
-            log.warning("plivo_outbound place_failed reason=%s", exc.reason)
+            log.warning("%s_outbound place_failed reason=%s", self.provider, exc.reason)
             PENDING.drop(call_id)
             self._repo.finish_unanswered(token, tenant_id, call_id, "failed", "error")
             raise
@@ -315,7 +318,7 @@ class PlivoOutbound:
         """End a call WE placed that is still ringing (or queued): ask Plivo to cancel it (by the request uuid, else as a call), then close the row as `cancelled`. Returns `cancelled`, or `not_ringing` when the row is not
         a Plivo outbound call in a ringing state (it was answered, or it already ended: nothing is done). A Plivo that no longer knows the call counts as cancelled (it ended on its own). A Plivo that cannot be reached raises PlivoError."""
         state = self._repo.state(token, tenant_id, call_id)
-        if state is None or state.get("direction") != "outbound" or state.get("provider") != PROVIDER or state.get("state") not in ("queued", "ringing"):
+        if state is None or state.get("direction") != "outbound" or state.get("provider") != self.provider or state.get("state") not in ("queued", "ringing"):
             return "not_ringing"
         sid = str(state.get("provider_call_sid") or "")
         if sid:

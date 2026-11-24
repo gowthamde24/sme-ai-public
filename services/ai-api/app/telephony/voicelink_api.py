@@ -1,0 +1,187 @@
+"""VoiceLink's REST API for the parts we use (26 Nov 2026; source: VoiceLink's API text, reports/voicelink-llms.txt; owner decision 24 Nov: VoiceLink is the only telephony provider).
+
+  VoicelinkApi      login (username + password -> a Bearer token, kept and renewed on a 401), the wallet (`reseller/profile`), the DIDs we own (`reseller/did/purchased`), a call's detail (`call-log/details`) and
+                    `add_lead` (an OUTBOUND call: VoiceLink dials the person from our DID and, when they answer, opens OUR WebSocket bot).
+  VoicelinkCaller   the same shape the Plivo placer calls (`place_call` / `cancel_request` / `hang_up`), so the gate, the call row, the dialers and the Owner's test call stay exactly as they are; only the dialling differs.
+
+The password never leaves this module and is never logged; a failure is a CLOSED word (`auth`, `refused`, `unreachable`, `server`, `bad_number`, `no_did`), never VoiceLink's text. UNVERIFIED until the first real call (said in
+reports/voicelink-saturday-steps.md): which of `from` / `to` VoiceLink puts in the start event of a call we placed, and whether `did_number` wants the country code in front (we send digits with 91, as their purchased list shows)."""
+
+# ruff: noqa: E501
+
+from __future__ import annotations
+
+import json
+import logging
+import threading
+from collections.abc import Callable
+from dataclasses import dataclass
+from typing import Any
+from urllib.parse import parse_qsl, urlsplit
+
+import httpx
+
+from app.connectors.phone import normalise
+from app.telephony.plivo_api import PlivoError
+
+log = logging.getLogger("app.telephony.voicelink_api")
+BASE_URL = "https://app.voicelink.co.in/api/v1"
+CLOSED_STATUS = {401: "auth", 403: "auth", 422: "refused", 400: "refused", 404: "refused", 429: "unreachable"}
+
+
+class VoicelinkError(PlivoError):
+    """A refusal or a failure of VoiceLink (a subclass of PlivoError so the placer, the dialers and the routes that already catch it need no change). `reason` is a closed word."""
+
+
+@dataclass(frozen=True)
+class Wallet:
+    balance: float
+    currency: str
+
+
+def digits_with_country(number: str) -> str | None:
+    """+919876543210 -> 919876543210 (the form of VoiceLink's DID list); None for anything that is not a plain international number."""
+    normal = normalise(number)
+    return normal.lstrip("+") if normal else None
+
+
+def indian_mobile_10(number: str) -> str | None:
+    """The 10 digits VoiceLink's add_lead wants (never +91 and never 91 in front: the country code goes in its own field); None when the number is not an Indian 10-digit one."""
+    normal = normalise(number)
+    if normal is None or not normal.startswith("+91") or len(normal) != 13 or not normal[3:].isdigit():
+        return None
+    return normal[3:]
+
+
+class VoicelinkApi:
+    def __init__(self, username: str, password: str, *, base_url: str = BASE_URL, client: httpx.Client | None = None, timeout: float = 15.0) -> None:
+        self._username, self._password = username, password
+        self._client = client or httpx.Client(base_url=base_url.rstrip("/"), timeout=httpx.Timeout(timeout, connect=5.0))
+        self._token: str | None = None
+        self._lock = threading.Lock()
+
+    def close(self) -> None:
+        self._client.close()
+
+    # ------------------------------------------------------------------------------------------------ plumbing
+    def _login(self) -> str:
+        try:
+            r = self._client.post("/auth/login", json={"username": self._username, "password": self._password}, headers={"Accept": "application/json"})
+        except httpx.HTTPError as exc:
+            log.warning("voicelink login unreachable: %s", exc.__class__.__name__)
+            raise VoicelinkError("unreachable") from None
+        if r.status_code != 200:
+            log.warning("voicelink login refused status=%s", r.status_code)
+            raise VoicelinkError("auth", r.status_code)
+        try:
+            token = str(r.json()["data"]["access_token"])
+        except (ValueError, KeyError, TypeError):
+            raise VoicelinkError("server") from None
+        return token
+
+    def _request(self, method: str, path: str, *, json_body: dict[str, Any] | None = None, params: dict[str, Any] | None = None) -> Any:
+        for attempt in (1, 2):
+            with self._lock:
+                if self._token is None:
+                    self._token = self._login()
+                token = self._token
+            try:
+                r = self._client.request(method, path, json=json_body, params=params, headers={"Authorization": f"Bearer {token}", "Accept": "application/json"})
+            except httpx.HTTPError as exc:
+                log.warning("voicelink %s %s unreachable: %s", method, path.split("?")[0], exc.__class__.__name__)
+                raise VoicelinkError("unreachable") from None
+            if r.status_code == 401 and attempt == 1:   # the token expired: log in again once
+                with self._lock:
+                    self._token = None
+                continue
+            if r.status_code >= 500:
+                raise VoicelinkError("server", r.status_code)
+            if r.status_code >= 400:
+                log.warning("voicelink %s %s refused status=%s", method, path.split("?")[0], r.status_code)
+                raise VoicelinkError(CLOSED_STATUS.get(r.status_code, "refused"), r.status_code)
+            try:
+                body = r.json()
+            except ValueError:
+                raise VoicelinkError("server") from None
+            if isinstance(body, dict) and body.get("status") is False:
+                raise VoicelinkError("refused", r.status_code)
+            return body.get("data") if isinstance(body, dict) else body
+        raise VoicelinkError("auth", 401)
+
+    # ------------------------------------------------------------------------------------------------ what we use
+    def wallet(self) -> Wallet:
+        """The account's wallet (a read; `reseller/profile`). A postpaid balance can be negative; the unit is the account's currency."""
+        data = self._request("GET", "/reseller/profile")
+        w = data.get("wallet") if isinstance(data, dict) else None
+        try:
+            return Wallet(float(w["balance"]), str(w.get("currency") or data.get("currency") or "INR"))   # type: ignore[index,union-attr]
+        except (KeyError, TypeError, ValueError, AttributeError):
+            raise VoicelinkError("server") from None
+
+    def purchased_dids(self) -> list[dict[str, Any]]:
+        """Our numbers at VoiceLink: [{did_number (digits with 91), type_label, expiry_date, is_expired, client_id, ...}] (first page, 100)."""
+        data = self._request("GET", "/reseller/did/purchased", params={"per_page": 100})
+        rows = data.get("data") if isinstance(data, dict) else None
+        return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+    def call_details(self, call_id: str) -> dict[str, Any]:
+        data = self._request("GET", "/call-log/details", params={"call_id": call_id})
+        return data if isinstance(data, dict) else {}
+
+    def add_lead(self, *, did_number: str, customer_number: str, custom_parameters: dict[str, str], websocket_url: str, webhook_url: str) -> str:
+        """Queue ONE outbound call. Returns VoiceLink's queue id (or "queued" when it names none)."""
+        did = digits_with_country(did_number)
+        number = indian_mobile_10(customer_number)
+        if did is None:
+            raise VoicelinkError("no_did")
+        if number is None:
+            raise VoicelinkError("bad_number")
+        data = self._request("POST", "/add_lead", json_body={"did_number": did, "customer_number": number, "country_code": "91", "custom_parameters": json.dumps(custom_parameters, separators=(",", ":")),
+                                                              "websocket_url": websocket_url, "webhook_url": webhook_url, "call_limit": 1})
+        if isinstance(data, dict):
+            for key in ("outbound_queue_id", "queue_id", "id"):
+                if data.get(key):
+                    return str(data[key])[:100]
+        return "queued"
+
+
+class VoicelinkBalanceReader:
+    """The daily balance check's reader (app/ops/plivo_balance.py `AccountReader`): the wallet as the two facts the check uses. A wallet in another currency than the check's is a failed read (a limit that cannot be compared is never a silent pass)."""
+
+    def __init__(self, api: VoicelinkApi, *, currency: str) -> None:
+        self._api, self._currency = api, currency.upper()
+
+    def account_details(self) -> dict[str, Any]:
+        wallet = self._api.wallet()
+        if wallet.currency.upper() != self._currency:
+            raise VoicelinkError("bad_response")
+        return {"cash_credits": wallet.balance, "auto_recharge": None}
+
+
+class VoicelinkCaller:
+    """What `PlivoOutbound` calls (the PlivoCaller protocol). It reads the call's identity from the answer address the placer built (row, workspace, language, purpose, kind: closed words and ids, no number), puts it
+    into VoiceLink's `custom_parameters` (VoiceLink hands it back in the WebSocket's `start`), and points VoiceLink at OUR bot address and OUR webhook, both carrying the secret token."""
+
+    def __init__(self, api: VoicelinkApi, *, public_base: str, ws_token: Callable[[], str]) -> None:
+        self._api = api
+        self._base = public_base.rstrip("/")
+        self._token = ws_token
+
+    def place_call(self, *, from_number: str, to_number: str, answer_url: str, hangup_url: str, ring_timeout: int = 30, time_limit: int = 180) -> str:
+        query = dict(parse_qsl(urlsplit(answer_url).query))
+        custom: dict[str, str] = {k: query[k] for k in ("call", "tenant", "lang", "p", "k") if k in query}
+        if not custom.get("call") or not custom.get("tenant"):
+            raise VoicelinkError("refused")
+        token = self._token()
+        ws = self._base.replace("https://", "wss://", 1).replace("http://", "ws://", 1) + f"/v1/telephony/voicelink/ws/{token}"
+        hook = f"{self._base}/v1/telephony/voicelink/webhook/{token}"
+        return self._api.add_lead(did_number=from_number, customer_number=to_number, custom_parameters=custom, websocket_url=ws, webhook_url=hook)
+
+    def cancel_request(self, request_uuid: str) -> bool:   # VoiceLink documents no way to cancel a queued lead: the row is closed on our side and the call, if it still rings, is refused at the socket
+        return False
+
+    def hang_up(self, call_uuid: str) -> bool:
+        return False
+
+
+__all__ = ["VoicelinkApi", "VoicelinkBalanceReader", "VoicelinkCaller", "VoicelinkError", "Wallet", "digits_with_country", "indian_mobile_10"]
