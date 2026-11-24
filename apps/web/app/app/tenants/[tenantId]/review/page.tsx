@@ -6,14 +6,13 @@ import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchActiveIcpConfig, fetchReviewQueue, SCORE_BANDS, type PageReviewQueueLeadOut, type ScoreBand } from "@/lib/api/leads";
 import { LeadsTabs, PageTop, Pill } from "@/components/v2/app/parts";
-import { alertBox, btnMainLink, cardBoxFull, codeInline, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH2, pageH3, pageMain, pillLinkBase, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
+import { alertBox, btnMainLink, cardBoxFull, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH2, pageH3, pageMain, pillLinkBase, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
 import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 
 import { FactorBreakdown } from "./factor-breakdown";
 import { ImportLeadsForm } from "./import-leads-form";
 import { LeadLabelForm } from "./lead-label-form";
-import { Rich } from "@/components/v2/app/rich";
 import { makeT, type Words } from "@/components/v2/app/words";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
@@ -28,6 +27,13 @@ const MAX_CURSOR = 300;
 
 function pick(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
+}
+
+/** A lead's source in words: the store's own for the known codes, else the code with spaces (never a raw `website_form`). */
+function sourceWord(t: (k: never, v?: never) => string, code: string): string {
+  const key = `rev.src.${code}`;
+  const word = (t as unknown as (k: string) => string)(key);
+  return word !== key ? word : code.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
 }
 
 export default async function ReviewQueuePage({
@@ -123,9 +129,7 @@ export default async function ReviewQueuePage({
       <PageTop
         title={t("rev.leads")}
         sub={
-          <>
-            <Rich t={t} k="rev.intro_blind" with={{ state: blind ? <strong>{t("rev.enabled")}</strong> : <span>{t("rev.disabled")}</span> }} />
-          </>
+          <>{t("rev.intro_plain")}</>
         }
       />
       <LeadsTabs tenantId={tenantId} role={tenant.role} current="review" />
@@ -137,7 +141,7 @@ export default async function ReviewQueuePage({
             <strong>{t("rev.active_icp_profile")}</strong>{" "}
             {activeIcp ? (
               <span>
-                <Rich t={t} k="rev.icp_version" vars={{ n: activeIcp.version_no }} with={{ hash: <code className={codeInline}>{activeIcp.config_sha256.slice(0, 12)}...</code> }} />
+                {t("rev.icp_version", { n: activeIcp.version_no })}
               </span>
             ) : (
               <span className={hintInline}>{t("rev.no_profile_published_yet_leads_remain")}</span>
@@ -234,8 +238,9 @@ export default async function ReviewQueuePage({
                     <div>
                       <h3 className={pageH3}>{String(comp.name || t("rev.unnamed"))}</h3>
                       <p className={mutedText}>
-                        {String(comp.city || "—")}, {String(comp.country || "—")} ·{" "}
-                        {t("rev.industry_source", { industry: String(comp.industry || t("rev.industry_general")), source: String(item.source || t("rev.source_import")) })}
+                        {[comp.city, comp.country].filter((x) => x).map(String).join(", ")}
+                        {comp.city || comp.country ? " · " : ""}
+                        {t("rev.industry_source", { industry: String(comp.industry || t("rev.industry_general")), source: sourceWord(t, String(item.source || "import")) })}
                       </p>
                     </div>
 

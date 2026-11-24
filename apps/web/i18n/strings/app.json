@@ -18204,10 +18204,10 @@
   }
  },
  "rev.evidence": {
-  "en": "Evidence",
-  "te": "ఆధారాలు",
-  "hi": "सबूत",
-  "kn": "ಪುರಾವೆಗಳು",
+  "en": "Details",
+  "te": "వివరాలు",
+  "hi": "ब्यौरा",
+  "kn": "ವಿವರ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -21905,10 +21905,10 @@
   }
  },
  "rev.active_icp_profile": {
-  "en": "Who you want to find:",
-  "te": "మీరు వెతుకుతున్నవారు:",
-  "hi": "आप जिन्हें ढूँढ रहे हैं:",
-  "kn": "ನೀವು ಹುಡುಕುತ್ತಿರುವವರು:",
+  "en": "The kind of customer you want:",
+  "te": "మీకు కావలసిన కస్టమర్ రకం:",
+  "hi": "आप किस तरह का ग्राहक चाहते हैं:",
+  "kn": "ನಿಮಗೆ ಬೇಕಾದ ಗ್ರಾಹಕರ ಬಗೆ:",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -21916,10 +21916,10 @@
   }
  },
  "rev.no_profile_published_yet_leads_remain": {
-  "en": "Not set up yet (leads appear without scores)",
-  "te": "ఇంకా సెట్ చేయలేదు (లీడ్‌లు స్కోర్ లేకుండా కనిపిస్తాయి)",
-  "hi": "अभी सेट नहीं है (लीड बिना स्कोर के दिखेंगी)",
-  "kn": "ಇನ್ನೂ ಸೆಟ್ ಮಾಡಿಲ್ಲ (ಲೀಡ್‌ಗಳು ಸ್ಕೋರ್ ಇಲ್ಲದೆ ಕಾಣುತ್ತವೆ)",
+  "en": "Not set up yet. Leads show without a score.",
+  "te": "ఇంకా సెట్ చేయలేదు. Leads స్కోర్ లేకుండా కనిపిస్తాయి.",
+  "hi": "अभी सेट नहीं है। Leads बिना स्कोर के दिखते हैं।",
+  "kn": "ಇನ್ನೂ ಸೆಟ್ ಮಾಡಿಲ್ಲ. Leads ಸ್ಕೋರ್ ಇಲ್ಲದೆ ಕಾಣುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -21983,10 +21983,10 @@
   }
  },
  "rev.score_filters_are_available_only_with": {
-  "en": "Score filters show only when hidden-score check is off.",
-  "te": "స్కోర్ దాచిన చూపు ఆఫ్‌లో ఉన్నప్పుడే స్కోర్ ఫిల్టర్లు కనిపిస్తాయి.",
-  "hi": "स्कोर फ़िल्टर तब दिखते हैं जब छिपा स्कोर जांच बंद हो।",
-  "kn": "ಮರೆಮಾಡಿದ ಸ್ಕೋರ್ ಪರಿಶೀಲನೆ ಆಫ್ ಇದ್ದಾಗ ಮಾತ್ರ ಸ್ಕೋರ್ ಫಿಲ್ಟರ್‌ಗಳು ಕಾಣುತ್ತವೆ.",
+  "en": "Score filters appear when scores are shown.",
+  "te": "స్కోర్లు కనిపిస్తున్నప్పుడే స్కోర్ ఫిల్టర్లు వస్తాయి.",
+  "hi": "स्कोर दिखने पर ही स्कोर फ़िल्टर आते हैं।",
+  "kn": "ಸ್ಕೋರ್ ಕಾಣುವಾಗ ಮಾತ್ರ ಸ್ಕೋರ್ ಫಿಲ್ಟರ್ ಬರುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -21994,10 +21994,10 @@
   }
  },
  "rev.blind_scoring_on": {
-  "en": "Hidden-score check: ON",
-  "te": "స్కోర్ దాచిన చూపు: ఆన్",
-  "hi": "छिपा स्कोर जांच: चालू",
-  "kn": "ಮರೆಮಾಡಿದ ಸ್ಕೋರ್ ಪರಿಶೀಲನೆ: ಆನ್",
+  "en": "Scores stay hidden until you mark a lead",
+  "te": "మీరు మార్క్ చేసే వరకు స్కోర్లు కనిపించవు",
+  "hi": "आप मार्क करें तब तक स्कोर छिपे रहते हैं",
+  "kn": "ನೀವು ಮಾರ್ಕ್ ಮಾಡುವವರೆಗೆ ಸ್ಕೋರ್ ಕಾಣುವುದಿಲ್ಲ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -22005,10 +22005,10 @@
   }
  },
  "rev.blind_scoring_off": {
-  "en": "Hidden-score check: OFF",
-  "te": "స్కోర్ దాచిన చూపు: ఆఫ్",
-  "hi": "छिपा स्कोर जांच: बंद",
-  "kn": "ಮರೆಮಾಡಿದ ಸ್ಕೋರ್ ಪರಿಶೀಲನೆ: ಆಫ್",
+  "en": "Scores are shown",
+  "te": "స్కోర్లు కనిపిస్తున్నాయి",
+  "hi": "स्कोर दिख रहे हैं",
+  "kn": "ಸ್ಕೋರ್ ಕಾಣುತ್ತಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -22126,10 +22126,10 @@
   }
  },
  "rev.view_evidence_details": {
-  "en": "View evidence & details →",
-  "te": "ఆధారాలు, వివరాలు చూడండి →",
-  "hi": "सबूत और जानकारी देखें →",
-  "kn": "ಆಧಾರ ಮತ್ತು ವಿವರಗಳನ್ನು ನೋಡಿ →",
+  "en": "Open this lead →",
+  "te": "ఈ lead ని తెరవండి →",
+  "hi": "यह lead खोलें →",
+  "kn": "ಈ lead ಅನ್ನು ತೆರೆಯಿರಿ →",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27720,10 +27720,10 @@
   }
  },
  "rev.report_line": {
-  "en": "Processed: {rows} rows · Created: {companies} companies, {contacts} contacts, {claims} claims · Skipped duplicates: {skipped} · Rejected: {rejected}",
-  "te": "ప్రాసెస్ చేసినవి: {rows} వరుసలు · తయారైనవి: {companies} కంపెనీలు, {contacts} కాంటాక్ట్‌లు, {claims} క్లెయిమ్‌లు · వదిలిన డూప్లికేట్లు: {skipped} · తిరస్కరించినవి: {rejected}",
-  "hi": "प्रोसेस की गईं: {rows} पंक्तियाँ · बनीं: {companies} कंपनियाँ, {contacts} कॉन्टैक्ट, {claims} क्लेम · छोड़े गए डुप्लिकेट: {skipped} · नामंज़ूर: {rejected}",
-  "kn": "ಪ್ರಕ್ರಿಯೆಗೊಂಡವು: {rows} ಸಾಲುಗಳು · ಮಾಡಲಾದವು: {companies} ಕಂಪನಿಗಳು, {contacts} ಸಂಪರ್ಕಗಳು, {claims} ಕ್ಲೈಮ್‌ಗಳು · ಬಿಟ್ಟ ಡುಪ್ಲಿಕೇಟ್‌ಗಳು: {skipped} · ತಿರಸ್ಕರಿಸಿದವು: {rejected}",
+  "en": "Read {rows} rows. Added {companies} companies and {contacts} contacts. Skipped {skipped} that were already there. Could not use {rejected}.",
+  "te": "{rows} rows చదివాం. {companies} companies, {contacts} contacts add అయ్యాయి. {skipped} ముందే ఉన్నాయి కాబట్టి వదిలేశాం. {rejected} వాడలేకపోయాం.",
+  "hi": "{rows} rows पढ़ीं। {companies} companies और {contacts} contacts जोड़े गए। {skipped} पहले से थे इसलिए छोड़ दिए। {rejected} इस्तेमाल नहीं कर सके।",
+  "kn": "{rows} rows ಓದಿದೆವು. {companies} companies ಮತ್ತು {contacts} contacts ಸೇರಿಸಲಾಯಿತು. {skipped} ಮೊದಲೇ ಇದ್ದುದರಿಂದ ಬಿಟ್ಟಿದ್ದೇವೆ. {rejected} ಬಳಸಲಾಗಲಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27742,10 +27742,10 @@
   }
  },
  "rev.icp_version": {
-  "en": "Version {n} ({hash})",
-  "te": "వెర్షన్ {n} ({hash})",
-  "hi": "वर्ज़न {n} ({hash})",
-  "kn": "ಆವೃತ್ತಿ {n} ({hash})",
+  "en": "Version {n}",
+  "te": "వెర్షన్ {n}",
+  "hi": "वर्ज़न {n}",
+  "kn": "ವರ್ಷನ್ {n}",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27764,10 +27764,10 @@
   }
  },
  "rev.unnamed": {
-  "en": "Unnamed Company",
-  "te": "పేరు లేని కంపెనీ",
-  "hi": "बिना नाम की कंपनी",
-  "kn": "ಹೆಸರಿಲ್ಲದ ಕಂಪನಿ",
+  "en": "No name",
+  "te": "పేరు లేదు",
+  "hi": "नाम नहीं",
+  "kn": "ಹೆಸರಿಲ್ಲ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27775,10 +27775,10 @@
   }
  },
  "rev.industry_general": {
-  "en": "General",
-  "te": "సాధారణం",
-  "hi": "सामान्य",
-  "kn": "ಸಾಮಾನ್ಯ",
+  "en": "Any kind",
+  "te": "ఏదైనా రకం",
+  "hi": "कोई भी प्रकार",
+  "kn": "ಯಾವುದೇ ಬಗೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27797,10 +27797,10 @@
   }
  },
  "rev.industry_source": {
-  "en": "{industry} · Source: {source}",
-  "te": "{industry} · మూలం: {source}",
-  "hi": "{industry} · स्रोत: {source}",
-  "kn": "{industry} · ಮೂಲ: {source}",
+  "en": "{industry} · from {source}",
+  "te": "{industry} · {source} నుంచి",
+  "hi": "{industry} · {source} से",
+  "kn": "{industry} · {source} ಇಂದ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -128088,6 +128088,105 @@
   "te": "జవాబులు add చేయండి",
   "hi": "जवाब जोड़ें",
   "kn": "ಉತ್ತರ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rev.intro_plain": {
+  "en": "Look at each lead and mark Good, Maybe or Bad.",
+  "te": "ప్రతి lead ని చూసి Good, Maybe లేదా Bad అని మార్క్ చేయండి.",
+  "hi": "हर lead को देखकर Good, Maybe या Bad मार्क कीजिए।",
+  "kn": "ಪ್ರತಿ lead ಅನ್ನು ನೋಡಿ Good, Maybe ಅಥವಾ Bad ಎಂದು ಮಾರ್ಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rev.src.website_form": {
+  "en": "Website form",
+  "te": "వెబ్‌సైట్ ఫారం",
+  "hi": "वेबसाइट फ़ॉर्म",
+  "kn": "ವೆಬ್‌ಸೈಟ್ ಫಾರ್ಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rev.src.meta_lead_ads": {
+  "en": "Meta lead ads",
+  "te": "Meta లీడ్ యాడ్స్",
+  "hi": "Meta लीड विज्ञापन",
+  "kn": "Meta ಲೀಡ್ ಜಾಹೀರಾತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rev.src.indiamart": {
+  "en": "IndiaMART",
+  "te": "ఇండియామార్ట్",
+  "hi": "इंडियामार्ट",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rev.src.justdial": {
+  "en": "JustDial",
+  "te": "జస్ట్‌డయల్",
+  "hi": "जस्टडायल",
+  "kn": "ಜಸ್ಟ್‌ಡಯಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rev.src.excel_upload": {
+  "en": "Spreadsheet",
+  "te": "స్ప్రెడ్‌షీట్",
+  "hi": "स्प्रेडशीट",
+  "kn": "ಸ್ಪ್ರೆಡ್‌ಶೀಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rev.src.manual": {
+  "en": "Added by hand",
+  "te": "చేతితో add చేశారు",
+  "hi": "हाथ से जोड़ा",
+  "kn": "ಕೈಯಿಂದ ಸೇರಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rev.src.import": {
+  "en": "Added list",
+  "te": "add చేసిన list",
+  "hi": "जोड़ी गई list",
+  "kn": "ಸೇರಿಸಿದ list",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rev.src.webhook": {
+  "en": "Connected app",
+  "te": "కనెక్ట్ చేసిన app",
+  "hi": "जुड़ा हुआ app",
+  "kn": "ಸಂಪರ್ಕಿತ app",
   "status": {
    "te": "draft",
    "hi": "draft",
