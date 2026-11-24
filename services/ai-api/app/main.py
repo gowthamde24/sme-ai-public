@@ -242,7 +242,7 @@ from app.search.routes import PostgrestSearch
 from app.search.routes import router as search_router
 from app.signup.routes import claim_router as signup_claim_router
 from app.signup.routes import router as signup_router
-from app.signup.sender import FakeSender, NoSender
+from app.signup.sender import FakeSender, NoSender, PhoneCodeSender, WhatsAppCodeSender
 from app.signup.service import SignupRepository, SignupService
 from app.sites import errors as site_errors
 from app.sites.repository import PostgrestSitesRepository
@@ -300,6 +300,7 @@ from app.voicesample.service import VoiceSampleService
 from app.websearch.repository import PostgrestResearchUsageRepository
 from app.websearch.routes import router as research_router
 from app.websearch.wiring import build_research_web
+from app.whatsapp.graph import GraphClient
 from app.whatsapp.metered import metered
 from app.whatsapp.repository import WhatsAppStateError
 from app.whatsapp.routes import public_router as whatsapp_public_router
@@ -347,7 +348,20 @@ def _signup_service(settings: Settings, config: AuthConfig) -> SignupService | N
     fake_sender = settings.signup_phone_sender == "fake"
     if echo and (settings.admin_environment == "production" or not fake_sender):
         raise RuntimeError("SIGNUP_FAKE_CODE_ECHO needs a staging API with the fake sender")
-    sender = FakeSender(echo=echo) if fake_sender else NoSender()
+    sender: PhoneCodeSender = NoSender()
+    if fake_sender:
+        sender = FakeSender(echo=echo)
+    elif settings.signup_phone_sender == "whatsapp":
+        token = settings.signup_whatsapp_token
+        if not settings.signup_whatsapp_phone_number_id or token is None:
+            raise RuntimeError("SIGNUP_PHONE_SENDER=whatsapp needs the number id and the token")
+        graph = GraphClient(settings.whatsapp_api_base, settings.whatsapp_graph_version)
+        sender = WhatsAppCodeSender(
+            graph,
+            settings.signup_whatsapp_phone_number_id,
+            token.get_secret_value(),
+            settings.signup_whatsapp_template,
+        )
     secret = hashlib.sha256(b"signup-opening:" + key.get_secret_value().encode()).digest()
     return SignupService(
         SignupRepository(config.rest_url, config.anon_key),

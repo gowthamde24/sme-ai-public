@@ -195,3 +195,30 @@ def test_the_startup_refuses_the_echo_in_production_and_a_missing_key() -> None:
     with pytest.raises(RuntimeError):
         _signup_service(Settings(**base, signup_fake_code_echo=True), cast(Any, Cfg()))
     assert _signup_service(Settings(**base, signup_fake_code_echo=True, signup_phone_sender="fake", admin_environment="staging"), cast(Any, Cfg())) is not None
+
+
+def test_the_whatsapp_sender_posts_an_authentication_template_and_keeps_the_code_out_of_errors() -> None:
+    from app.signup.sender import PhoneCodeUnavailable, WhatsAppCodeSender
+    from app.whatsapp.graph import GraphResult
+
+    seen: list[tuple[str, str, dict[str, Any]]] = []
+
+    class Graph:
+        ok = True
+
+        def post_message(self, number_id: str, token: str, payload: dict[str, Any]) -> GraphResult:
+            seen.append((number_id, token, payload))
+            return GraphResult(self.ok, 200 if self.ok else 400)
+
+    graph = Graph()
+    sender = WhatsAppCodeSender(graph, "111", "tok", "stack19_signup_code")
+    sender.send("+919848012345", "123456")
+    number_id, token, payload = seen[0]
+    assert (number_id, token) == ("111", "tok") and payload["to"] == "919848012345" and payload["type"] == "template"
+    template = payload["template"]
+    assert template["name"] == "stack19_signup_code" and template["components"][0]["parameters"][0]["text"] == "123456"
+    assert template["components"][1]["sub_type"] == "url"
+    graph.ok = False
+    with pytest.raises(PhoneCodeUnavailable) as err:
+        sender.send("+919848012345", "123456")
+    assert "123456" not in str(err.value) and "9848012345" not in str(err.value)

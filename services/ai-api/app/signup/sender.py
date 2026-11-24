@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Protocol
+from typing import Any, Protocol
 
 
 class PhoneCodeUnavailable(Exception):
@@ -31,3 +31,34 @@ class FakeSender:
 
     def send(self, phone_e164: str, code: str) -> None:
         self.last[phone_e164] = code
+
+
+class WhatsAppCodeSender:
+    """The code as a WhatsApp AUTHENTICATION template from Stack19's own number (Meta category "Authentication": the body carries the code, the one-tap button copies it).
+
+    Needs the platform's own WhatsApp number id, a token that may send from it and an approved template name (owner steps in docs/runbooks/signup-opening.md). The code and the number are never logged."""
+
+    def __init__(self, graph: Any, phone_number_id: str, token: str, template: str, language: str = "en") -> None:
+        self._graph = graph
+        self._number_id = phone_number_id
+        self._token = token
+        self._template = template
+        self._language = language
+
+    def send(self, phone_e164: str, code: str) -> None:
+        payload = {
+            "messaging_product": "whatsapp",
+            "to": phone_e164.lstrip("+"),
+            "type": "template",
+            "template": {
+                "name": self._template,
+                "language": {"code": self._language},
+                "components": [
+                    {"type": "body", "parameters": [{"type": "text", "text": code}]},
+                    {"type": "button", "sub_type": "url", "index": "0", "parameters": [{"type": "text", "text": code}]},
+                ],
+            },
+        }
+        result = self._graph.post_message(self._number_id, self._token, payload)
+        if not result.ok:
+            raise PhoneCodeUnavailable()
