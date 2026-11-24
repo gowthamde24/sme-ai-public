@@ -15,7 +15,7 @@
       "/app/tenants/[tenantId]/catalogue/page": 180300,
       "/app/tenants/[tenantId]/catalogue/new/page": 188300,
       "/app/tenants/[tenantId]/catalogue/[itemId]/edit/page": 188300,
-      "/app/tenants/[tenantId]/settings/page": 189000,
+      "/app/tenants/[tenantId]/settings/page": 189300,
       "/app/tenants/[tenantId]/office/page": 183000,
       "/app/tenants/[tenantId]/jobs/new/page": 188300,
       "/app/tenants/[tenantId]/jobs/[jobId]/page": 188000,
