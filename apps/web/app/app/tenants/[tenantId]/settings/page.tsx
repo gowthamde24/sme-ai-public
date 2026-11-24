@@ -11,7 +11,7 @@ import { UsageCard, planText } from "@/components/v2/app/frame-parts";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { menuTitle } from "../menu-title";
 import { ApiDownV2, PageTop, Pill, SectionTabs } from "@/components/v2/app/parts";
-import { SettingsSections } from "@/components/v2/app/settings/SettingsSections";
+import { SettingsSections } from "@/components/v2/app/settings/LazySettingsSections";
 import { breakAll, btnQuiet, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface as boxedSurface } from "@/components/v2/app/ui";
 import { appT, frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
