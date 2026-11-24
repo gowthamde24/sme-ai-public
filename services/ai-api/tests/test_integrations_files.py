@@ -243,13 +243,18 @@ def prep_stock(text: str) -> importer.Prepared:
 
 def test_stock_from_status_words_in_three_languages() -> None:
     p = prep_stock("Design,Status\nA,In stock\nB,few left\nC,Made to order\nD,స్టాక్ ఉంది\nE,थोड़े बचे\nF,खत्म\nG,out of stock\n")
-    assert [r["stock_status"] for r in p.rows] == ["in_stock", "few_left", "made_to_order", "in_stock", "few_left", "made_to_order", "made_to_order"]
-    assert p.notes[5] == "out_of_stock_is_made_to_order" and p.notes[6] == "out_of_stock_is_made_to_order" and p.notes[2] is None
+    assert [r["stock_status"] for r in p.rows] == ["in_stock", "few_left", "made_to_order", "in_stock", "few_left", "out_of_stock", "out_of_stock"]
+    assert all(n is None for n in p.notes), "an item that is gone is out of stock now: no note about made to order"
+
+
+def test_words_for_gone_are_out_of_stock_and_only_ordering_words_are_made_to_order() -> None:
+    p = prep_stock("Design,Status\nA,Sold out\nB,Finished\nC,No stock\nD,స్టాక్ లేదు\nE,అయిపోయింది\nF,स्टॉक नहीं\nG,ಸ್ಟಾಕ್ ಇಲ್ಲ\nH,on order\nI,ఆర్డర్ మీద\n")
+    assert [r["stock_status"] for r in p.rows] == ["out_of_stock"] * 7 + ["made_to_order"] * 2
 
 
 def test_stock_from_a_quantity() -> None:
     p = prep_stock("Item,Qty\nA,12\nB,2\nC,1\nD,0\nE,3.0\nF,\n")
-    assert [r["stock_status"] for r in p.rows] == ["in_stock", "few_left", "few_left", "made_to_order", "in_stock"]
+    assert [r["stock_status"] for r in p.rows] == ["in_stock", "few_left", "few_left", "out_of_stock", "in_stock"]
     assert [(i.line, i.code) for i in p.issues] == [(7, "quantity_invalid")], "a named item with no quantity (and no status) is a problem, said with a code"
 
 
@@ -294,4 +299,4 @@ def test_the_sample_files_read_as_documented() -> None:
     assert suggest(hi.header) == {"company_name": 0, "contact_phone": 1, "city": 2}
     st = load_grid((golden / "sample_stock.csv").read_bytes())
     p = importer.prepare_stock(st, suggest(st.header, "stock"))
-    assert [r["stock_status"] for r in p.rows] == ["few_left", "made_to_order", "in_stock", "few_left"] and p.issues == []
+    assert [r["stock_status"] for r in p.rows] == ["few_left", "out_of_stock", "in_stock", "few_left"] and p.issues == []

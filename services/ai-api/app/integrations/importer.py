@@ -30,8 +30,7 @@ ISSUE_CODES = (
     *custom.ISSUE_CODES,
 )  # fmt: skip
 _NUMBER = re.compile(r"^-?[0-9]+([.,][0-9]+)?$")  # a plain number (even a negative one) is a number to a spreadsheet, not a formula
-OUT_OF_STOCK = frozenset(normalise(w) for w in ("out of stock", "sold out", "no stock", "nil", "none", "స్టాక్ లేదు", "అయిపోయింది", "खत्म", "स्टॉक नहीं"))
-FEW_LEFT_MAX = 2  # a quantity of 1 or 2 is "few left"; 3 or more "in stock"; 0 "made to order"
+FEW_LEFT_MAX = 2  # a quantity of 1 or 2 is "few left"; 3 or more "in stock"; 0 "out of stock"
 
 
 @dataclass(frozen=True)
@@ -126,8 +125,10 @@ def prepare_customers(grid: Grid, mapping: dict[str, int], custom_defs: dict[str
 _STATUS_WORDS: dict[str, tuple[str, ...]] = {
     "in_stock": ("in stock", "instock", "available", "yes", "y", "ok", "full", "స్టాక్ ఉంది", "ఉంది", "లభ్యం", "అందుబాటులో ఉంది", "उपलब्ध", "स्टॉक में", "है", "हाँ", "हां"),
     "few_left": ("few left", "few", "low", "low stock", "limited", "last pieces", "కొన్ని మిగిలాయి", "తక్కువ", "తక్కువ స్టాక్", "कम", "थोड़ा", "थोड़े बचे", "कम स्टॉक", "सीमित"),
-    "made_to_order": ("made to order", "made to orders", "to order", "on order", "order", "out of stock", "sold out", "no stock", "nil", "none", "no", "n", "ఆర్డర్ మీద", "ఆర్డర్‌పై", "స్టాక్ లేదు", "అయిపోయింది",
-                      "ऑर्डर पर", "ऑर्डर पर बनेगा", "खत्म", "स्टॉक नहीं", "नहीं है", "नहीं"),
+    "made_to_order": ("made to order", "made to orders", "to order", "on order", "order", "ఆర్డర్ మీద", "ఆర్డర్‌పై", "ऑर्डर पर", "ऑर्डर पर बनेगा", "ಆರ್ಡರ್ ಮೇಲೆ"),
+    # 28 Nov 2026 (planner): a sheet that says the item is GONE is out of stock, not "made to order": telling a customer an item that is gone can be made to order is a wrong fact
+    "out_of_stock": ("out of stock", "out of stocks", "sold out", "soldout", "no stock", "nostock", "finished", "over", "nil", "none", "no", "n", "khatam", "స్టాక్ లేదు", "అయిపోయింది", "నిల్", "లేదు", "ఖాళీ",
+                     "खत्म", "स्टॉक नहीं", "स्टॉक खत्म", "नहीं है", "नहीं", "ಸ್ಟಾಕ್ ಇಲ್ಲ", "ಖಾಲಿ", "ಮುಗಿದಿದೆ"),
 }  # fmt: skip
 _WORD_TO_STATUS = {normalise(w): status for status, words in _STATUS_WORDS.items() for w in words}
 
@@ -141,7 +142,7 @@ def status_from_quantity(text: str) -> str | None:
     if not re.fullmatch(r"\d{1,6}(\.0+)?", t):
         return None
     n = int(float(t))
-    return "made_to_order" if n == 0 else "few_left" if n <= FEW_LEFT_MAX else "in_stock"
+    return "out_of_stock" if n == 0 else "few_left" if n <= FEW_LEFT_MAX else "in_stock"
 
 
 def prepare_stock(grid: Grid, mapping: dict[str, int]) -> Prepared:
@@ -187,7 +188,7 @@ def prepare_stock(grid: Grid, mapping: dict[str, int]) -> Prepared:
             continue
         out.rows.append({"name": cells["item_name"], "stock_status": status})
         out.lines.append(line)
-        out.notes.append("out_of_stock_is_made_to_order" if normalise(cells.get("stock_status", "")) in OUT_OF_STOCK else None)
+        out.notes.append(None)
     return out
 
 
