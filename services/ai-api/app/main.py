@@ -146,6 +146,7 @@ from app.jobs.detail_routes import router as job_detail_router
 from app.jobs.routes import ops_router as job_samples_ops_router
 from app.jobs.routes import router as jobs_router
 from app.jobs.routes import samples_router as job_samples_router
+from app.jobs.sell_routes import router as sell_router
 from app.jobs.trust_routes import dnc_router as do_not_call_router
 from app.jobs.trust_routes import faq_router as job_faq_router
 from app.jobs.wiring import build_jobs
@@ -1553,6 +1554,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(jobs_router)
     app.include_router(do_not_call_router)
     app.include_router(job_faq_router)
+    app.include_router(sell_router)
     # last of the /jobs routers: `/jobs/{job_id}` must not hide a word path
     app.include_router(job_detail_router)
     app.include_router(job_samples_router)
