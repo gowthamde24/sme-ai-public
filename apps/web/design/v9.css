@@ -1913,3 +1913,30 @@
   .v9 .lf-pin, .v9 .lf-me-l { display: none; } /* their labels would sit on the result card on a phone */
   .v9 .wm-box { display: none; }
 }
+
+/* ==========================================================================
+   Industry pages (/for/<industry>): the home page's look, plain: one headline, three sections, an example call, the pricing line. One column on a phone; nothing overlaps (scripts/audit-landing.mjs runs over these pages at 360, 390 and 768).
+   ========================================================================== */
+.v9 .ind-hero { padding-block: 56px 36px; }
+.v9 .ind-hero .hero-top { max-width: 760px; margin-inline: auto; text-align: center; }
+.v9 .ind-hero .hero-acts { justify-content: center; margin-top: 24px; }
+.v9 .ind-points { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr); max-width: 1000px; margin-inline: auto; }
+.v9 .ind-h { margin: 0 0 8px; font-size: 22px; line-height: 1.25; font-weight: 800; color: var(--ink); }
+.v9 .ind-p { margin: 0; font-size: 17px; line-height: 1.55; color: var(--body); }
+.v9 .ind-call { max-width: 720px; margin: 0 auto; border: 1px solid var(--line); border-radius: 20px; background: #fff; padding: 22px 22px 18px; }
+.v9 .ind-call-h { margin: 0; font-size: 20px; font-weight: 800; color: var(--ink); }
+.v9 .ind-call-note { margin: 4px 0 14px; font-size: 14px; color: var(--muted); }
+.v9 .ind-turns { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.v9 .ind-turns li { display: grid; gap: 2px; }
+.v9 .ind-turns b { font-size: 14px; color: var(--muted); font-weight: 700; }
+.v9 .ind-turns span { font-size: 17px; line-height: 1.5; color: var(--ink); }
+.v9 .ind-turns li[data-who="assistant"] span { color: var(--ink); font-weight: 600; }
+.v9 .ind-price { max-width: 720px; margin: 22px auto 0; text-align: center; font-size: 15px; line-height: 1.55; color: var(--muted); }
+@media (min-width: 900px) {
+  .v9 .ind-points { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px; }
+}
+@media (max-width: 767px) {
+  .v9 .ind-hero { padding-block: 36px 24px; }
+  .v9 .ind-hero .hero-top { text-align: left; }
+  .v9 .ind-hero .hero-acts { justify-content: flex-start; }
+}

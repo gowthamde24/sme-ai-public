@@ -15,7 +15,7 @@
 //   health      0 CSP violations and 0 console errors or warnings on every page load
 // Exit 1 on any failure. The numbers are printed, not summarised.
 import { chromeEngine } from "./lib/engines.mjs";
-import { LANGS, startNext } from "./lib/next-server.mjs";
+import { LANGS as ALL_LANGS, startNext } from "./lib/next-server.mjs";
 import { startTlsProxy } from "./lib/tls-proxy.mjs";
 import { FOCUSABLE_COUNT, FOCUSABLE_NAMES, FOCUS_STATE, LAYOUT, OVERLAP, STRUCTURE, TEXT_AND_TARGETS } from "./lib/page-checks.mjs";
 
@@ -23,6 +23,7 @@ const argv = process.argv.slice(2);
 const engineName = argv.includes("--engine") ? argv[argv.indexOf("--engine") + 1] : "chrome";
 const route = argv.includes("--path") ? argv[argv.indexOf("--path") + 1] : "/"; // "/" and "/landing" follow the language cookie; every other page has the language in its address ("/te/pricing")
 const byCookie = route === "/" || route === "/landing";
+const LANGS = route.startsWith("/for/") ? ["en"] : ALL_LANGS; // the industry pages (INDUSTRY_PAGES=1) are English only: run `INDUSTRY_PAGES=1 npm run audit:landing -- --path /for/clinics`
 const addressFor = (lang) => (byCookie ? route : lang === "en" ? route : `/${lang}${route}`);
 const SIZES = [[360, 780], [390, 844], [768, 1024], [1024, 768], [1440, 800]];
 
