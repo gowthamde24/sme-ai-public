@@ -108,8 +108,15 @@ export interface ModuleStateOut {
   reason: "pack" | "core";
 }
 
+export interface PackCategoryOut {
+  id: string;
+  name: Record<string, string>;
+  colour: string;
+}
+
 export interface PackListOut {
   packs: PackSummaryOut[];
+  categories?: PackCategoryOut[];
 }
 
 export interface PackSummaryOut {
@@ -121,6 +128,8 @@ export interface PackSummaryOut {
   summary: Record<string, string>;
   accent: string;
   owl_prop: string;
+  category?: string | null;
+  keywords?: string;
 }
 
 export interface WorkspaceModulesOut {
