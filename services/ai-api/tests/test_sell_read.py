@@ -104,3 +104,13 @@ def test_the_owners_words_and_the_refusals(w: World) -> None:
     assert w.read("services", {"kind": "sheet", "file_id": str(uuid.uuid4())}).status_code == 404
     assert w.read("services", {"kind": "talk", "text": "Haircut 300"}, "a_sales").status_code == 403
     assert w.read("services", {"kind": "talk", "text": "Haircut 300", "extra": 1}).status_code == 422
+
+
+def test_a_long_hostile_line_is_read_in_linear_time_and_is_not_a_price_line() -> None:
+    import time
+
+    hostile = "a " * 90 + "1" * 5000
+    started = time.perf_counter()
+    assert sell_read.table_from_text(hostile + "\n" + hostile) == []
+    assert time.perf_counter() - started < 0.5
+    assert sell_read.table_from_text("Haircut Rs 300\nFacial 800/-") == [["Item", "Price"], ["Haircut", "300"], ["Facial", "800"]]

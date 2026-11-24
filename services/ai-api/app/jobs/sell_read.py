@@ -21,7 +21,6 @@ _PRICE_HEAD = re.compile(r"(?i)\b(price|rate|mrp|cost|amount|fee|fees|charge|rs\
 _MOQ_HEAD = re.compile(r"(?i)\b(moq|min(imum)?\.? ?(qty|quantity|order)?)\b")
 _UNIT_HEAD = re.compile(r"(?i)\b(unit|per|uom)\b")
 _MONEY = re.compile(r"^(?:₹|rs\.?|inr)?\s*(\d{1,3}(?:,\d{2,3})+|\d+)(?:\.(\d{1,2}))?\s*(?:/-|/|only)?$", re.IGNORECASE)
-_LINE = re.compile(r"^\s*(?P<name>.+?)\s*[:\-–—=]*\s*(?:₹|rs\.?|inr)?\s*(?P<amount>\d{1,3}(?:,\d{2,3})+|\d+)(?:\.(?P<dec>\d{1,2}))?\s*(?:/-|/|only)?\s*$", re.IGNORECASE)
 
 
 @dataclass
@@ -44,14 +43,35 @@ def paise_of(cell: str) -> int | None:
     return paise if 100 <= paise <= MAX_PAISE else None
 
 
+def _split_line(ln: str) -> tuple[str, str] | None:
+    """"Haircut: Rs 300/-" -> ("Haircut", "300"). Linear: the amount is the digits, commas and dots at the END of the line (no pattern with a lazy name in front of it, which could backtrack on a long hostile line)."""
+    ln = ln[:200].strip()
+    for tail in ("/-", " only", "/"):
+        if ln.lower().endswith(tail):
+            ln = ln[: -len(tail)].rstrip()
+            break
+    i = len(ln)
+    while i > 0 and (ln[i - 1].isdigit() or ln[i - 1] in ",."):
+        i -= 1
+    token = ln[i:]
+    if not token or not token[0].isdigit() or paise_of(token) is None:
+        return None
+    name = ln[:i].rstrip(" :-–—=")
+    for cur in ("₹", "rs.", "rs", "inr"):
+        if name.lower().endswith(cur):
+            name = name[: -len(cur)].rstrip(" :-–—=")
+            break
+    return (name, token) if len(name) >= 2 else None
+
+
 def table_from_text(text: str) -> list[list[str]]:
     """The owner's words or a printed list, one item and its price a line ("Fall and pico 150", "Haircut: Rs 300/-"): a two-column table with a heading, or [] when most lines are not that."""
     lines = [ln for ln in (raw.strip() for raw in text.splitlines()) if ln]
     rows = []
     for ln in lines[:200]:
-        m = _LINE.match(ln)
-        if m and len(m.group("name").strip(" :-–—=")) >= 2:
-            rows.append([m.group("name").strip(" :-–—="), m.group("amount") + ("." + m.group("dec") if m.group("dec") else "")])
+        got = _split_line(ln)
+        if got is not None:
+            rows.append([got[0], got[1]])
     return [["Item", "Price"], *rows] if rows and len(rows) * 2 >= len(lines) else []
 
 
