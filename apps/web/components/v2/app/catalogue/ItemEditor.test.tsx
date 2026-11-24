@@ -115,8 +115,7 @@ describe("saving: details, photos with progress, order, then show", () => {
   it("does the steps in that order for a new saree, with the same ids on every call, and goes to the saree's page", async () => {
     const { actions, uploader, go } = show();
     fill();
-    put(choose(), file("a.jpg"), file("b.jpg"));
-    fireEvent.click(screen.getByLabelText("Show this saree to customers"));
+    put(choose(), file("a.jpg"), file("b.jpg")); // (the first photo turns "show to customers" on by itself)
     await save();
     // 1. the details, hidden (there is no photo yet)
     expect(actions.save).toHaveBeenNthCalledWith(1, ID, expect.objectContaining({ name: "Maroon Kanchi pattu", colours: ["maroon"], fabric: "kanchi_pattu", active: false }));
@@ -133,10 +132,22 @@ describe("saving: details, photos with progress, order, then show", () => {
     const { actions, go } = show();
     fill();
     put(choose(), file("a.jpg"));
+    fireEvent.click(screen.getByLabelText("Show this saree to customers")); // the owner takes the tick off: that is respected
     await save();
     expect(actions.save).toHaveBeenCalledTimes(1);
     expect(actions.save.mock.calls[0][1].active).toBe(false);
     expect(go).toHaveBeenCalledTimes(1);
+  });
+
+  it("a new saree: the first photo turns 'show' on by itself, and the name sets the fabric until the owner picks one", () => {
+    show();
+    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "TEST Mysore silk" } });
+    expect((screen.getByLabelText("Fabric") as HTMLSelectElement).value).toBe("mysore_silk");
+    put(choose(), file("a.jpg"));
+    expect(screen.getByLabelText("Show this saree to customers")).toBeChecked();
+    fireEvent.change(screen.getByLabelText("Fabric"), { target: { value: "uppada" } });
+    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "TEST Banarasi brocade" } });
+    expect((screen.getByLabelText("Fabric") as HTMLSelectElement).value).toBe("uppada"); // her own choice stays
   });
 
   it("shows how far each upload is while it is sent, then that it is done", async () => {
@@ -179,7 +190,6 @@ describe("saving: details, photos with progress, order, then show", () => {
     void uploader;
     fill();
     put(choose(), file("a.jpg"), file("b.jpg"), file("c.jpg"));
-    fireEvent.click(screen.getByLabelText("Show this saree to customers"));
     await save();
     expect(go).not.toHaveBeenCalled();
     expect(tray()[1]).toHaveTextContent("Not uploaded: This photo is bigger than 5 MB.");
