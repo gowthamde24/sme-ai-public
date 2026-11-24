@@ -5,13 +5,16 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 PROJECT=project-2757c07e-37d2-4167-88f
+while IFS= read -r line; do   # the declared staging settings (plain values; bash 3.2 cannot `source <(...)`)
+  case "$line" in ''|'#'*) ;; *=*) export "$line" ;; esac
+done < deploy/settings/staging/api.env
 set -a
-# shellcheck disable=SC1091
-. <(grep -v '^\s*#' deploy/settings/staging/api.env | grep '=')
-for pair in SCHEDULER_PASSWORD=sme-scheduler-password SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key CHANNEL_AGENT_PASSWORD=sme-channel-agent-password ANTHROPIC_API_KEY=sme-anthropic-api-key; do
-  export "${pair%%=*}=$(gcloud secrets versions access latest --secret "${pair#*=}" --project "$PROJECT")"
-done
-API_CORS_ORIGINS=http://localhost:3000
+while IFS= read -r line; do   # every secret the staging API declares (deploy/settings/staging/api.secrets), into this process only; one that cannot be read is skipped
+  case "$line" in ''|'#'*) continue ;; esac
+  name="${line%%=*}"; ref="${line#*=}"; ref="${ref%%:*}"
+  value="$(gcloud secrets versions access latest --secret "$ref" --project "$PROJECT" 2>/dev/null)" && export "$name=$value"
+done < deploy/settings/staging/api.secrets
+API_ENV=development API_CORS_ORIGINS=http://localhost:3000
 ADMIN_ENVIRONMENT=staging
 SIGNUP_OPEN=true SIGNUP_PHONE_SENDER=fake SIGNUP_FAKE_CODE_ECHO=true
 WHAT_YOU_SELL_LISTS=true PRICING_V2=true JOBS=on
