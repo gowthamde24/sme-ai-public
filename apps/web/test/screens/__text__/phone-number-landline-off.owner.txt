@@ -1,0 +1,8 @@
+# Phone number
+The number your customers call. Your assistant answers it.
+Your number
++91 40123 45678
+Type
+Landline
+Calls
+Off. Calls are not answered yet.

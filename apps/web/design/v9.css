@@ -1945,3 +1945,27 @@
   .v9.ind .sec { padding-block: 32px; }
   .v9.ind .ind-points { gap: 22px; }
 }
+
+/* 29 Nov 2026 (owner, on a phone): plain pictures. Extra searches as a price list, "Calls again if busy" as a three-step timeline, the late call-back as two rows. No metaphors, nothing floats. */
+.v9 .xprice { max-width: 520px; margin: 28px auto 0; text-align: left; }
+.v9 .xprice h3 { margin: 0 0 6px; font-size: 18px; color: var(--ink); }
+.v9 .xprice ul { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.v9 .xprice li { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; min-height: 48px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 16px; color: var(--ink); }
+.v9 .xprice li b { font-size: 17px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.v9 .xprice p { margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+.v9 .tl { margin: 16px 0 0; padding: 0; list-style: none; position: relative; }
+.v9 .tl li { position: relative; display: grid; grid-template-columns: 72px minmax(0, 1fr); column-gap: 14px; align-items: baseline; padding: 0 0 18px 26px; font-size: 15px; color: var(--body); }
+.v9 .tl li:last-child { padding-bottom: 0; }
+.v9 .tl li::before { content: ""; position: absolute; left: 5px; top: 12px; bottom: -4px; width: 2px; background: var(--line); }
+.v9 .tl li:last-child::before { display: none; }
+.v9 .tl li i { position: absolute; left: 0; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--ink); }
+.v9 .tl li:last-child i { background: #047857; }
+.v9 .tl li b { font-size: 15px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.v9 .cmp { max-width: 640px; margin: 8px auto 0; text-align: left; }
+.v9 .cmp-enq { margin: 0 0 14px; font-size: 17px; color: var(--ink); }
+.v9 .cmp-enq b { font-weight: 800; }
+.v9 .cmp-row { padding: 16px 0; border-top: 1px solid var(--line); }
+.v9 .cmp-row:last-child { border-bottom: 1px solid var(--line); }
+.v9 .cmp-row small { display: block; font-size: 14px; font-weight: 700; color: var(--muted); text-transform: none; letter-spacing: 0; }
+.v9 .cmp-row p { margin: 4px 0 0; font-size: 19px; line-height: 1.35; font-weight: 700; color: var(--ink); }
+.v9 .cmp-row.is-with small { color: #047857; }

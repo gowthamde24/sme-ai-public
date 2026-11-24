@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: 
 // next/dynamic loads a chunk on the client; a test renders the real components at once
 vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc }));
 // the home page's below-the-fold islands are chunks on the client; a test renders them at once
-vi.mock("./v9/lazy", async () => { const m = await import("./v9/below"); return { VoicesClient: m.VoicesClient, JobsClient: m.JobsClient, PipeClient: m.PipeClient, FaqClient: m.FaqClient, HowDemoClient: m.HowDemoClient, TryItClient: m.TryItClient, Reveal: m.Reveal, OrbRingLazy: () => null }; });
+vi.mock("./v9/lazy", async () => { const m = await import("./v9/below"); return { VoicesClient: m.VoicesClient, JobsClient: m.JobsClient, FaqClient: m.FaqClient, HowDemoClient: m.HowDemoClient, TryItClient: m.TryItClient, Reveal: m.Reveal, OrbRingLazy: () => null }; });
 
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -140,7 +140,7 @@ describe("the home page (landing v9, approved by the owner on 23 Nov 2026: mocks
   });
   it("the interactive parts are real controls: tabs with a tablist, the questions as buttons that say whether they are open, the job draft's chips as pressed-state buttons", () => {
     const html = home();
-    expect(html.match(/role="tablist"/g)?.length).toBeGreaterThanOrEqual(4);
+    expect(html.match(/role="tablist"/g)?.length).toBeGreaterThanOrEqual(3);
     expect(html).toMatch(/class="faq-q" aria-expanded="true"/);
     expect(html).toMatch(/aria-pressed="true"[^>]*>Call website enquiries/);
   });

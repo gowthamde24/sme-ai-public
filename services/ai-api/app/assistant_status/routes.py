@@ -11,6 +11,7 @@ from app.assistant_status.service import (
     AssistantStatusService,
     HeldBySupportError,
     NotReadyError,
+    PhoneKnowsOut,
 )
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError
@@ -47,3 +48,9 @@ def go_live(ctx: Owner, runtime: RuntimeDep) -> AssistantStatusOut:
 @router.post("/pause", response_model=AssistantStatusOut)
 def pause(ctx: Owner, runtime: RuntimeDep) -> AssistantStatusOut:
     return _service(runtime).pause(ctx.principal.token, ctx.tenant.id)
+
+
+@router.get("/phone-knows", response_model=PhoneKnowsOut)
+def phone_knows(ctx: AnyMember, runtime: RuntimeDep) -> PhoneKnowsOut:
+    """What the phone assistant has to answer with, as counts and a plain sentence (28 Nov 2026): the owner sees before a real call whether it will answer prices and products or only deflect."""
+    return _service(runtime).knows(ctx.principal.token, ctx.tenant.id)

@@ -22,7 +22,7 @@ MAX_TOKENS = 1500           # the whole pack (measured 28 Nov with count_tokens:
 BUDGET = {"prices": 500, "catalogue": 350, "faq": 350}   # tokens per section; the notes get what is left
 DAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 STOCK = {"in_stock": "in stock", "few_left": "only a few left", "made_to_order": "made to order"}
-UNITS = {"piece": "piece", "metre": "metre", "meter": "metre", "kg": "kg", "set": "set", "dozen": "dozen", "pair": "pair"}
+UNITS = {"piece": "piece", "metre": "metre", "meter": "metre", "kg": "kg", "set": "set", "dozen": "dozen", "pair": "pair", "service": "service", "course": "course", "listing": "listing"}
 REMOVED = "(price: ask the price list)"
 
 # a rupee amount in the words of an owner or of a model: a marker before or after the number
@@ -74,7 +74,7 @@ def _clock(minute: int) -> str:
     return f"{minute // 60}:{minute % 60:02d}"
 
 
-def _hours(raw: Any, now: datetime) -> list[str]:
+def _hours(raw: Any, now: datetime, holidays: tuple[str, ...] = ()) -> list[str]:
     if not isinstance(raw, dict) or not raw.get("days"):
         return []
     days = sorted({int(d) for d in raw["days"] if 1 <= int(d) <= 7})
@@ -82,8 +82,9 @@ def _hours(raw: Any, now: datetime) -> list[str]:
     span = f"{DAYS[first - 1]} to {DAYS[last - 1]}" if days == list(range(first, last + 1)) and len(days) > 2 else ", ".join(DAYS[d - 1] for d in days)
     local = now.astimezone(IST)
     minute = local.hour * 60 + local.minute
-    is_open = local.isoweekday() in days and start <= minute < end
-    return [f"Business hours (India time): {span}, {_clock(start)} to {_clock(end)}. Right now it is {DAYS[local.isoweekday() - 1]} {_clock(minute)}, so the business is {'OPEN' if is_open else 'CLOSED'}; if it is closed, say the team will answer when it opens."]
+    today_closed = local.date().isoformat() in holidays
+    is_open = local.isoweekday() in days and start <= minute < end and not today_closed
+    return [f"Business hours (India time): {span}, {_clock(start)} to {_clock(end)}. Right now it is {DAYS[local.isoweekday() - 1]} {_clock(minute)}, so the business is {'OPEN' if is_open else 'CLOSED'}" + (" (today is a holiday)" if today_closed else "") + "; if it is closed, say the team will answer when it opens."]
 
 
 def _take(lines: list[str], budget: int) -> list[str]:
@@ -104,8 +105,11 @@ def build(raw: dict[str, Any] | None, *, now: datetime | None = None) -> FactPac
     now = now or datetime.now(IST)
     facts: list[dict[str, str]] = []
     allowed: set[int] = set()
-    for text in _hours(raw.get("hours"), now):
+    holidays = tuple(str(h)[:10] for h in (raw.get("holidays") or []) if isinstance(h, str))
+    for text in _hours(raw.get("hours"), now, holidays):
         facts.append({"kind": "hours", "text": text})
+    if holidays:
+        facts.append({"kind": "hours", "text": "The business is closed on these dates (holidays): " + ", ".join(holidays[:12]) + "."})
     price_lines: list[tuple[str, int]] = []
     for row in raw.get("prices") or []:
         try:
@@ -116,7 +120,10 @@ def build(raw: dict[str, Any] | None, *, now: datetime | None = None) -> FactPac
             gst = int(row.get("tax_bps") or 0) / 100
         except (KeyError, TypeError, ValueError):
             continue
-        line = f"{name}: {rupees(paise)} per {unit}" + (f", minimum order {moq}" if moq > 1 else "") + (f", plus {gst:g}% GST" if gst else "")
+        if row.get("tier") is True:   # a price-list rate for a bigger order: "from 50" is the quantity at which this rate starts, not a minimum order
+            line = f"{name}: {rupees(paise)} per {unit}" + (f" when you buy {moq} or more" if moq > 1 else "")
+        else:
+            line = f"{name}: {rupees(paise)} per {unit}" + (f", minimum order {moq}" if moq > 1 else "") + (f", plus {gst:g}% GST" if gst else "")
         price_lines.append((line, paise))
     used = 0
     for line, paise in price_lines:

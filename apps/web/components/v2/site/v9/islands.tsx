@@ -3,7 +3,7 @@ import { VOICES, WA } from "@/lib/site/v9-data";
 
 import { Phone as PhoneClient } from "./clients";
 import type { TryPlan } from "./below";
-import { FaqClient, HowDemoClient, JobsClient, PipeClient, TryItClient, VoicesClient } from "./lazy";
+import { FaqClient, HowDemoClient, JobsClient, TryItClient, VoicesClient } from "./lazy";
 
 /**
  * The server side of the home page's islands (landing v9): each reads its words from the string store and hands them to the client component as plain props, so no dictionary reaches the browser.
@@ -50,9 +50,23 @@ export function JobsDemo({ t }: { t: SiteT }) {
   return <JobsClient w={{ tabs: t(k("v9.jobs.w.tabs")), jobs }} />;
 }
 
+/** What a late call-back costs, as two plain rows (no metaphor: every word says what happens). */
 export function Pipe({ t }: { t: SiteT }) {
-  const w = (n: string) => t(k(`v9.pipe.w.${n}`));
-  return <PipeClient w={{ tabs: w("tabs"), fast: w("fast"), slow: w("slow"), src: w("src"), clock: w("clock"), fastTime: w("fastTime"), slowTime: w("slowTime"), bucket: w("bucket"), lost: w("lost"), lostSub: w("lostSub") }} />;
+  return (
+    <div className="cmp" data-part="late-callback">
+      <p className="cmp-enq">
+        <b>{t(k("v9.cmp.time"))}</b> {t(k("v9.cmp.enq"))}
+      </p>
+      <div className="cmp-row">
+        <small>{t(k("v9.cmp.without"))}</small>
+        <p>{t(k("v9.cmp.without.t"))}</p>
+      </div>
+      <div className="cmp-row is-with">
+        <small>{t(k("v9.cmp.with"))}</small>
+        <p>{t(k("v9.cmp.with.t"))}</p>
+      </div>
+    </div>
+  );
 }
 
 export function Faq({ t }: { t: SiteT }) {

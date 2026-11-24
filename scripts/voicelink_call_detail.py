@@ -43,9 +43,52 @@ def show(name: str, value: Any, indent: int = 2) -> None:
         print(f"{pad}{name}: {type(value).__name__}" + (f" (length {len(text)})" if isinstance(value, str) else ""))
 
 
+def recording_link(data: Any) -> str | None:
+    """The first string under a key that names a recording and looks like a web address (any depth). Never printed."""
+    if isinstance(data, dict):
+        for key, value in data.items():
+            if "record" in str(key).lower() and isinstance(value, str) and value.startswith(("http://", "https://")):
+                return value
+        for value in data.values():
+            found = recording_link(value)
+            if found:
+                return found
+    elif isinstance(data, list):
+        for value in data:
+            found = recording_link(value)
+            if found:
+                return found
+    return None
+
+
+def check_open(link: str | None) -> None:
+    """Is the recording address open to anyone who has it? One HEAD request WITHOUT any login (28 Nov 2026, for the privacy text). Prints only the answer, the status number, whether it is https, and a hint of
+    the kind of host (never the address, never the file name, never the content)."""
+    import urllib.error
+    import urllib.request
+    from urllib.parse import urlparse
+
+    if not link:
+        print("recording address: none in this record (the call was not recorded, or VoiceLink keeps it elsewhere)")
+        return
+    host = urlparse(link).hostname or ""
+    kind = "amazon storage" if host.endswith(".amazonaws.com") else "voicelink domain" if host == "voicelink.co.in" or host.endswith(".voicelink.co.in") else "another host"
+    request = urllib.request.Request(link, method="HEAD")
+    try:
+        with urllib.request.urlopen(request, timeout=20) as reply:  # noqa: S310 - the address comes from VoiceLink's own record
+            status = reply.status
+    except urllib.error.HTTPError as exc:
+        status = exc.code
+    except Exception as exc:  # noqa: BLE001
+        print(f"recording address: could not be checked ({exc.__class__.__name__})")
+        return
+    verdict = "OPEN to anyone who has the address" if status == 200 else "NOT open without a login" if status in (401, 403) else "unclear"
+    print(f"recording address: https={link.startswith('https://')} host kind={kind} status without login={status}: {verdict}")
+
+
 def main(argv: list[str]) -> int:
-    if len(argv) != 2:
-        print("usage: voicelink_call_detail.py <call_id>", file=sys.stderr)
+    if len(argv) != 2 and not (len(argv) == 3 and argv[2] == "--check-recording-open"):
+        print("usage: voicelink_call_detail.py <call_id> [--check-recording-open]", file=sys.stderr)
         return 2
     user = os.environ.get("VOICELINK_USERNAME") or getpass.getpass("VoiceLink username (hidden): ")
     password = os.environ.get("VOICELINK_PASSWORD") or getpass.getpass("VoiceLink password (hidden): ")
@@ -60,6 +103,8 @@ def main(argv: list[str]) -> int:
     print("call record fields:")
     for key in sorted(data):
         show(str(key), data[key])
+    if len(argv) == 3:
+        check_open(recording_link(data))
     return 0
 
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { Mic, SendHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
@@ -9,7 +8,7 @@ import type { AskWords } from "./ask-words";
 
 
 /**
- * The question line of an assistant that is switched OFF for the workspace (first run: the workspace's own switch starts off). The line, the microphone and Send are drawn where they will be, so the person sees where they type, but they cannot be pressed,
+ * The question line of an assistant that is switched OFF for the workspace (first run: the workspace's own switch starts off). (No dead-looking input any more, owner 29 Nov: one sentence and one button.) The line, the microphone and Send were drawn where they will be, so the person sees where they type, but they cannot be pressed,
  * and under them: why, and for the Owner or an Admin ONE button that turns it on (then the page is read again and the live line takes its place). Anyone else is told whom to ask. `look` is the card (Today) or the panel (the floating orb).
  */
 export function AskOff({ words, look }: { words: AskWords; look: "card" | "panel" }) {
@@ -33,15 +32,6 @@ export function AskOff({ words, look }: { words: AskWords; look: "card" | "panel
   const big = look === "card";
   return (
     <div data-ask="off" data-ask-where={look} className="flex min-w-0 flex-col gap-3">
-      <div className="flex items-center gap-2" aria-hidden="true">
-        <div className={`flex min-w-0 flex-1 items-center rounded-full border border-edge bg-bg px-5 text-base text-muted opacity-70 ${big ? "min-h-12 md:min-h-14" : "min-h-11"}`}>{w(big ? "ask.placeholder.hero" : "ask.panel.placeholder")}</div>
-        <span className={`inline-flex shrink-0 items-center justify-center rounded-full border border-edge bg-surface text-muted opacity-70 ${big ? "size-12 md:size-14" : "size-11"}`}>
-          <Mic className="size-5" />
-        </span>
-        <span className={`inline-flex shrink-0 items-center justify-center rounded-full border border-edge bg-surface text-muted opacity-70 ${big ? "size-12 md:size-14" : "size-11"}`}>
-          <SendHorizontal className="size-5" />
-        </span>
-      </div>
       <p className="text-base text-muted">{w("ask.off.line")}</p>
       {turnOn ? (
         <div className="flex flex-wrap items-center gap-3">

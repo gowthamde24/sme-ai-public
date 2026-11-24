@@ -26,5 +26,11 @@ select is(pg_temp.w(format($q$select jsonb_typeof((public.phone_fact_pack(%L)) -
 select is(pg_temp.w(format($q$select jsonb_array_length((public.phone_fact_pack(%L)) -> 'prices')::text$q$, tests.tid('a'))), '0', 'B4: no price list: no amount can be said');
 select is(pg_temp.w($q$select public.phone_fact_pack(null)::text$q$), 'ERR:42501', 'B5: no workspace is a refusal');
 
+-- C. what the phone assistant knows, as counts for the owner (migration 988900): any member reads it, another workspace's member does not
+select is(pg_temp.w(format($q$select (public.phone_assistant_knows(%L))::text$q$, tests.tid('a')), 'a_owner') like '%"price_rows": 0%', true, 'C1: a member reads the counts (no price list: 0 rows)');
+select is(pg_temp.w(format($q$select (public.phone_assistant_knows(%L) ->> 'notes_lines')$q$, tests.tid('a')), 'a_owner'), '1', 'C2: the notes count their non-empty lines');
+select is(pg_temp.w(format($q$select public.phone_assistant_knows(%L)::text$q$, tests.tid('a')), 'b_owner'), 'ERR:42501', 'C3: another workspace''s member cannot read it');
+select is(pg_temp.w(format($q$select jsonb_typeof((public.phone_fact_pack(%L)) -> 'holidays')$q$, tests.tid('a'))), 'array', 'C4: the pack carries the holidays list (empty when the owner set none)');
+
 select * from finish();
 rollback;

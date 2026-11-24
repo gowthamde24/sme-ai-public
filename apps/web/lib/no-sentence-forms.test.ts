@@ -23,7 +23,6 @@ const ALLOWED: Record<string, string> = {
   "components/v2/app/jobs/pages/LinkSentence.tsx": "the component itself (its `plain` prop draws labelled selects)",
   "components/v2/app/leads/LeadsFiltersSimple.tsx": PLAIN_WHEN_ON,
   "components/v2/app/my-assistant/TalkToYou.tsx": PLAIN_WHEN_ON,
-  "components/v2/app/phone/PhoneGetSimple.tsx": PLAIN_WHEN_ON,
   "components/v2/app/report-v6/PeriodSimple.tsx": PLAIN_WHEN_ON,
   "components/v2/app/settings/simple/BusinessSimple.tsx": PLAIN_WHEN_ON,
   "components/v2/app/settings/simple/LanguageSimple.tsx": PLAIN_WHEN_ON,

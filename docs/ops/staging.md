@@ -15,7 +15,7 @@ Supabase in Mumbai) and `docs/runbooks/hosting-rehearsal-owner.md`; where this p
 | Google Cloud project | `project-2757c07e-37d2-4167-88f` (name stack19-staging), India billing account, free-trial credits | |
 
 Sizes: API and web 1 vCPU, 512 MiB, **min instances 0**, max 2 (API) and 3 (web). The API is deployed with `AGENTS_ENABLED=true` and CPU allocated while an instance is up (the assistant runs in a thread),
-but min instances stay 0, so there is no fixed cost: it scales to zero when idle. Outgoing messages are fake only (`OUTBOX_ADAPTER=fake`); WhatsApp, voice and payments are off.
+but min instances stay 0, so there is no fixed cost: it scales to zero when idle. Outgoing WhatsApp messages go through the real adapter (`OUTBOX_ADAPTER=whatsapp`) to the fenced numbers only (`WHATSAPP_ALLOWED_RECIPIENTS`); everything declared is in `deploy/settings/staging/*.env` (that is the truth, not this paragraph); payments run the fake provider.
 
 AI: `LLM_PROVIDER=anthropic`, `LLM_MODEL=claude-haiku-5-5` (Anthropic's cheapest model), prices recorded in the database (`agent_model_prices`) in millionths of a rupee per million tokens at an assumed
 Sarvam 105B is priced too (migration `20261222090000`: Rs 15 per million input tokens, Rs 60 per million output tokens, excl. GST; cached input Rs 5 per million, which the table cannot hold, so it is counted at Rs 15). Having a price does not switch it on: Claude stays the default for the owner chat (`BROWSER_VOICE_TURN_MODEL=claude`).

@@ -538,31 +538,23 @@ export function V9Finder({ t }: { t: SiteT }) {
             </p>
           </div>
         </div>
-        <div className="lf-price">
-          <span>
-            {t("v9.finder.15")}
-          </span>
-          <span className="pp-chip">
-            {t("v9.finder.16")}
-            <small>
-              {t("v9.finder.17")}
-            </small>
-          </span>
-          <span className="pp-chip">
-            {t("v9.finder.18")}
-            <small>
-              {t("v9.finder.19")}
-            </small>
-          </span>
-          <span className="pp-chip">
-            {t("v9.finder.20")}
-            <small>
-              {t("v9.finder.21")}
-            </small>
-          </span>
-          <span>
-            {t("v9.finder.22")}
-          </span>
+        <div className="xprice" data-part="extra-searches">
+          <h3>{t("v9.finder.price.title")}</h3>
+          <ul>
+            <li>
+              <span>{t("v9.finder.17")}</span>
+              <b>{t("v9.finder.16")}</b>
+            </li>
+            <li>
+              <span>{t("v9.finder.19")}</span>
+              <b>{t("v9.finder.18")}</b>
+            </li>
+            <li>
+              <span>{t("v9.finder.21")}</span>
+              <b>{t("v9.finder.20")}</b>
+            </li>
+          </ul>
+          <p>{t("v9.finder.price.note")}</p>
         </div>
       </div>
     </section>
@@ -854,29 +846,15 @@ export function V9Guard({ t }: { t: SiteT }) {
             <p>
               {t("v9.guard.21")}
             </p>
-            <div className="retry">
-              <svg viewBox="0 0 400 86" aria-hidden="true">
-                <path id="rp" d="M12 62 C 90 62 90 22 160 22 S 260 62 320 62 S 372 30 388 28" fill="none" stroke="#e1e4ea" strokeWidth="5" strokeLinecap="round" />
-                <circle cx="12" cy="62" r="8" fill="#ef4444" />
-                <circle cx="160" cy="22" r="8" fill="#f97316" />
-                <circle cx="388" cy="28" r="8" fill="#047857" />
-                <circle r="6" fill="#0b1020" />
-                <animateMotion dur="5s" repeatCount="indefinite">
-                  <mpath href="#rp" />
-                </animateMotion>
-              </svg>
-              <div className="lb">
-                <span>
-                  {t("v9.guard.22")}
-                </span>
-                <span>
-                  {t("v9.guard.23")}
-                </span>
-                <span>
-                  {t("v9.guard.24")}
-                </span>
-              </div>
-            </div>
+            <ol className="tl" data-part="retry-steps">
+              {(["1", "2", "3"] as const).map((n) => (
+                <li key={n}>
+                  <i aria-hidden="true" />
+                  <b>{t(`v9.guard.t${n}.time` as "v9.guard.t1.time")}</b>
+                  <span>{t(`v9.guard.t${n}.what` as "v9.guard.t1.what")}</span>
+                </li>
+              ))}
+            </ol>
           </article>
           <article className="gt e">
             <h3>

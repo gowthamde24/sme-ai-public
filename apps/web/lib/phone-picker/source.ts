@@ -85,6 +85,18 @@ export async function readOwn(token: string, tenantId: string): Promise<OwnNumbe
   }
 }
 
+/**
+ * The workspace's number for the page that has no picker (PHONE_PICKER off, VoiceLink only): a read of `GET /numbers`; where the API does not have it yet or fails, null (the page then says "We set up your number for you"). Never throws except for a lost session.
+ */
+export async function readNumber(token: string, tenantId: string): Promise<OwnNumber | null> {
+  try {
+    return (await listOwn(token, tenantId))[0] ?? null;
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    return null;
+  }
+}
+
 /** Test screen only: give the number back (so the picker can be tried again). */
 export async function resetMock(): Promise<void> {
   if (phonePicker() === "mock") await clearJar(COOKIE);

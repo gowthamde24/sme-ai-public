@@ -4,9 +4,9 @@
 
 Placeholders in `api.env`: `@env:NAME` (read from the deploy's environment: the Supabase publishable key, so no key-like string is in git), `@local:NAME` (from the gitignored `api.local.env` on the deploying machine: a personal phone number), `@worker-job:NAME` (from the Cloud Run job `sme-worker`: the test fence's numbers). `api.secrets` holds Secret Manager NAMES only.
 
-## The lead e-mail door (OFF on staging; not part of the declared settings)
+## The lead e-mail door (ON on staging: `LEAD_INBOUND_DOMAIN` and its three secrets are declared in api.env and api.secrets)
 
-It was live on 30 Oct 2026 (#239) and is absent from every staging revision since at least 6 Nov (the old script mounted it only when `API_LEAD_INTAKE=1` was typed in front of the command, and nobody did). The three secrets exist in Secret Manager. To switch it on (the owner decides: it receives real people's e-mail on a staging system), add these lines (do not copy them anywhere else):
+It was live on 30 Oct 2026 (#239), was absent for a while (the old script mounted it only when `API_LEAD_INTAKE=1` was typed in front of the command) and is declared again since #747; the text below is how it was first switched on. The three secrets exist in Secret Manager. To switch it on (the owner decides: it receives real people's e-mail on a staging system), add these lines (do not copy them anywhere else):
 
 ```
 # api.env

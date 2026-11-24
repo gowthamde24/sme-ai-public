@@ -5,7 +5,7 @@ vi.mock("next/headers", () => ({
   cookies: async () => ({ get: (n: string) => (jar.has(n) ? { value: jar.get(n) } : undefined), set: (n: string, v: string, o?: { maxAge?: number }) => (o?.maxAge === 0 ? jar.delete(n) : jar.set(n, v)) }),
 }));
 
-import { COOKIE, approveStep, readPhone, releaseNumber, requestNumber } from "./source";
+import { readPhone } from "./source";
 import { MOCK_NUMBER, NOTHING, parsePhone } from "./types";
 
 beforeEach(() => {
@@ -35,28 +35,7 @@ describe("the flag", () => {
     expect(await readPhone()).toEqual({ mode: "off" });
     vi.stubEnv("PHONE_NUMBER_SCREENS", "1");
     expect(await readPhone()).toEqual({ mode: "unavailable" });
-    expect(await requestNumber("hyderabad")).toEqual({ ok: false, error: "not_available" });
     vi.stubEnv("PHONE_NUMBER_SCREENS", "mock");
     expect(await readPhone()).toEqual({ mode: "ok", data: NOTHING, mock: true });
-  });
-});
-
-describe("the steps", () => {
-  it("pick a city -> reserved and waiting -> every step approved -> active -> given back", async () => {
-    expect(await requestNumber("mumbai")).toEqual({ ok: true, data: { state: "kyc_pending", city: "mumbai", number: MOCK_NUMBER.mumbai, done: [] } });
-    expect(await approveStep("owner_id")).toMatchObject({ ok: true, data: { state: "kyc_pending", done: ["owner_id"] } });
-    expect(await approveStep("owner_id")).toMatchObject({ ok: true, data: { state: "kyc_pending", done: ["owner_id"] } }); // twice is the same
-    expect(await approveStep("business_proof")).toMatchObject({ ok: true, data: { state: "active", done: ["business_proof", "owner_id"] } });
-    expect(JSON.parse(jar.get(COOKIE) ?? "{}").state).toBe("active");
-    expect(await releaseNumber()).toEqual({ ok: true, data: NOTHING });
-    expect(jar.has(COOKIE)).toBe(false);
-  });
-
-  it("refuses a bad city, a bad step, and a move from the wrong state", async () => {
-    expect(await requestNumber("delhi")).toEqual({ ok: false, error: "invalid" });
-    expect(await approveStep("owner_id")).toEqual({ ok: false, error: "state" }); // nothing reserved
-    await requestNumber("chennai");
-    expect(await requestNumber("mumbai")).toEqual({ ok: false, error: "state" }); // already has one
-    expect(await approveStep("passport")).toEqual({ ok: false, error: "invalid" });
   });
 });

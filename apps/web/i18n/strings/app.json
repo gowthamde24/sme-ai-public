@@ -60301,50 +60301,6 @@
    "kn": "draft"
   }
  },
- "phone.sub": {
-  "en": "The number your assistant calls customers from.",
-  "te": "మీ అసిస్టెంట్ కస్టమర్లకు కాల్ చేసే నంబర్.",
-  "hi": "वह नंबर जिससे आपका असिस्टेंट ग्राहकों को कॉल करता है।",
-  "kn": "ನಿಮ್ಮ ಸಹಾಯಕರು ಗ್ರಾಹಕರಿಗೆ ಕರೆ ಮಾಡುವ ನಂಬರ್.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.status.title": {
-  "en": "Calling number",
-  "te": "కాల్ చేసే నంబర్",
-  "hi": "कॉल करने का नंबर",
-  "kn": "ಕರೆ ಮಾಡುವ ನಂಬರ್",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.status.none": {
-  "en": "Not set up yet · coming soon",
-  "te": "ఇంకా సెటప్ కాలేదు · త్వరలో",
-  "hi": "अभी सेट नहीं · जल्द आ रहा है",
-  "kn": "ಇನ್ನೂ ಸೆಟಪ್ ಆಗಿಲ್ಲ · ಶೀಘ್ರದಲ್ಲಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.status.body": {
-  "en": "Calls to customers are not switched on yet. When they are, your business number shows here. Nothing is called until then.",
-  "te": "కస్టమర్లకు కాల్స్ ఇంకా ఆన్ కాలేదు. ఆన్ అయినప్పుడు మీ వ్యాపార నంబర్ ఇక్కడ కనిపిస్తుంది. అప్పటి వరకు ఎవరికీ కాల్ చేయం.",
-  "hi": "ग्राहकों को कॉल अभी चालू नहीं हैं। चालू होने पर आपका कारोबार नंबर यहाँ दिखेगा। तब तक किसी को कॉल नहीं किया जाता।",
-  "kn": "ಗ್ರಾಹಕರಿಗೆ ಕರೆಗಳು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ. ಆನ್ ಆದಾಗ ನಿಮ್ಮ ವ್ಯಾಪಾರ ನಂಬರ್ ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಅಲ್ಲಿಯವರೆಗೆ ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "nav.item.followups": {
   "en": "Follow-ups",
   "te": "ఫాలో-అప్‌లు",
@@ -98211,349 +98167,6 @@
    "kn": "draft"
   }
  },
- "phone.mock": {
-  "en": "Test screen: the numbers are made up. Nothing is bought, rented or rung.",
-  "te": "టెస్ట్ స్క్రీన్: నంబర్లు కల్పితం. ఏదీ కొనలేదు, అద్దెకు తీసుకోలేదు, కాల్ చేయలేదు.",
-  "hi": "टेस्ट स्क्रीन: नंबर काल्पनिक हैं। कुछ खरीदा, किराये पर लिया या कॉल नहीं किया गया।",
-  "kn": "ಟೆಸ್ಟ್ ಪರದೆ: ನಂಬರ್‌ಗಳು ಕಾಲ್ಪನಿಕ. ಏನನ್ನೂ ಖರೀದಿಸಿಲ್ಲ, ಬಾಡಿಗೆಗೆ ಪಡೆದಿಲ್ಲ, ಕರೆ ಮಾಡಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.city.title": {
-  "en": "Pick a city for your number",
-  "te": "మీ నంబర్‌కి సిటీ ఎంచుకోండి",
-  "hi": "अपने नंबर के लिए शहर चुनें",
-  "kn": "ನಿಮ್ಮ ನಂಬರ್‌ಗಾಗಿ ನಗರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.city.hyderabad": {
-  "en": "Hyderabad",
-  "te": "హైదరాబాద్",
-  "hi": "हैदराबाद",
-  "kn": "ಹೈದರಾಬಾದ್",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.city.bengaluru": {
-  "en": "Bengaluru",
-  "te": "బెంగళూరు",
-  "hi": "बेंगलुरु",
-  "kn": "ಬೆಂಗಳೂರು",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.city.chennai": {
-  "en": "Chennai",
-  "te": "చెన్నై",
-  "hi": "चेन्नई",
-  "kn": "ಚೆನ್ನೈ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.city.mumbai": {
-  "en": "Mumbai",
-  "te": "ముంబై",
-  "hi": "मुंबई",
-  "kn": "ಮುಂಬೈ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.cost": {
-  "en": "A business number costs money every month. You will see the price and say yes before anything is bought.",
-  "te": "బిజినెస్ నంబర్‌కి ప్రతి నెలా డబ్బు అవుతుంది. ఏదైనా కొనే ముందు ధర చూపిస్తాం, మీరు సరే అంటేనే కొంటాం.",
-  "hi": "A business number costs money every month. You will see the price and say yes before anything is bought.",
-  "kn": "A business number costs money every month. You will see the price and say yes before anything is bought.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "phone.get": {
-  "en": "Get a number",
-  "te": "నంబర్ తీసుకోండి",
-  "hi": "नंबर लें",
-  "kn": "ನಂಬರ್ ಪಡೆಯಿರಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.state.kyc_pending": {
-  "en": "Waiting for approval",
-  "te": "అప్రూవల్ ఇంకా రాలేదు",
-  "hi": "मंज़ूरी का इंतज़ार",
-  "kn": "ಅನುಮೋದನೆಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.state.active": {
-  "en": "Active",
-  "te": "పనిచేస్తోంది",
-  "hi": "चालू",
-  "kn": "ಸಕ್ರಿಯ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.number.label": {
-  "en": "Your number",
-  "te": "మీ నంబర్",
-  "hi": "आपका नंबर",
-  "kn": "ನಿಮ್ಮ ನಂಬರ್",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.kyc.title": {
-  "en": "Approval steps",
-  "te": "అప్రూవల్ స్టెప్స్",
-  "hi": "मंज़ूरी के चरण",
-  "kn": "ಅನುಮೋದನೆ ಹಂತಗಳು",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.kyc.sub": {
-  "en": "The phone company checks your business first. Your documents go straight to them and are not kept by us; we only show whether each step is approved.",
-  "te": "ఫోన్ కంపెనీ ముందు మీ వ్యాపారాన్ని చెక్ చేస్తుంది. మీ డాక్యుమెంట్లు నేరుగా వాళ్ళకే వెళ్తాయి, మేం ఉంచుకోం; ప్రతి స్టెప్ అప్రూవ్ అయిందా లేదా అనేది మాత్రమే చూపిస్తాం.",
-  "hi": "The phone company checks your business first. Your documents go straight to them and are not kept by us; we only show whether each step is approved.",
-  "kn": "The phone company checks your business first. Your documents go straight to them and are not kept by us; we only show whether each step is approved.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "phone.step.business_proof": {
-  "en": "Business proof (GST, Udyam or company certificate)",
-  "te": "బిజినెస్ ప్రూఫ్ (GST, Udyam లేదా కంపెనీ సర్టిఫికెట్)",
-  "hi": "बिज़नेस का प्रमाण (GST, उद्यम या कंपनी प्रमाणपत्र)",
-  "kn": "ವ್ಯಾಪಾರ ಪುರಾವೆ (GST, ಉದ್ಯಮ್ ಅಥವಾ ಕಂಪನಿ ಪ್ರಮಾಣಪತ್ರ)",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.step.owner_id": {
-  "en": "The owner's ID",
-  "te": "ఓనర్ ID కార్డు",
-  "hi": "मालिक का पहचान पत्र",
-  "kn": "ಮಾಲೀಕರ ಗುರುತಿನ ಚೀಟಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.step.done": {
-  "en": "Approved",
-  "te": "అప్రూవ్ అయింది",
-  "hi": "मंज़ूर",
-  "kn": "ಅನುಮೋದಿಸಲಾಗಿದೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.step.waiting": {
-  "en": "Waiting",
-  "te": "వేచి ఉంది",
-  "hi": "इंतज़ार में",
-  "kn": "ಕಾಯುತ್ತಿದೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.step.mark": {
-  "en": "Example: mark as approved",
-  "te": "ఉదాహరణ: ఆమోదించినట్లు గుర్తించండి",
-  "hi": "उदाहरण: मंज़ूर चिह्नित करें",
-  "kn": "ಉದಾಹರಣೆ: ಅನುಮೋದಿಸಿದಂತೆ ಗುರುತಿಸಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.test": {
-  "en": "Ring my phone to test",
-  "te": "టెస్ట్ చేయడానికి నా ఫోన్‌కు కాల్ చేయండి",
-  "hi": "जाँचने के लिए मेरे फ़ोन पर कॉल करें",
-  "kn": "ಪರೀಕ್ಷಿಸಲು ನನ್ನ ಫೋನ್‌ಗೆ ಕರೆ ಮಾಡಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.test.mock": {
-  "en": "Example only: nothing was rung.",
-  "te": "ఉదాహరణ మాత్రమే: ఏ కాల్ చేయలేదు.",
-  "hi": "सिर्फ़ उदाहरण: कोई कॉल नहीं की गई।",
-  "kn": "ಉದಾಹರಣೆ ಮಾತ್ರ: ಯಾವುದೇ ಕರೆ ಮಾಡಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.test.sent": {
-  "en": "Your phone will ring in a moment.",
-  "te": "మీ ఫోన్ కాసేపట్లో మోగుతుంది.",
-  "hi": "आपका फ़ोन अभी बजेगा।",
-  "kn": "ನಿಮ್ಮ ಫೋನ್ ಸ್ವಲ್ಪ ಹೊತ್ತಿನಲ್ಲಿ ರಿಂಗ್ ಆಗುತ್ತದೆ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.release": {
-  "en": "Give this number back",
-  "te": "ఈ నంబర్‌ను తిరిగి ఇవ్వండి",
-  "hi": "यह नंबर लौटाएँ",
-  "kn": "ಈ ನಂಬರ್ ಅನ್ನು ಹಿಂತಿರುಗಿಸಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.release.note": {
-  "en": "Calls to this number will stop working.",
-  "te": "ఈ నంబర్‌కు కాల్స్ ఇక పనిచేయవు.",
-  "hi": "इस नंबर पर कॉल आना बंद हो जाएगा।",
-  "kn": "ಈ ನಂಬರ್‌ಗೆ ಕರೆಗಳು ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.release.yes": {
-  "en": "Yes, give it back",
-  "te": "అవును, తిరిగి ఇవ్వండి",
-  "hi": "हाँ, लौटा दें",
-  "kn": "ಹೌದು, ಹಿಂತಿರುಗಿಸಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.released": {
-  "en": "The number was given back.",
-  "te": "నంబర్‌ను తిరిగి ఇచ్చాం.",
-  "hi": "नंबर लौटा दिया गया।",
-  "kn": "ನಂಬರ್ ಅನ್ನು ಹಿಂತಿರುಗಿಸಲಾಗಿದೆ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.owneronly": {
-  "en": "Only the owner changes this.",
-  "te": "దీన్ని ఓనర్ మాత్రమే మార్చగలరు.",
-  "hi": "इसे सिर्फ़ मालिक बदल सकते हैं।",
-  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.unavailable": {
-  "en": "This part is not available yet.",
-  "te": "ఈ భాగం ఇంకా అందుబాటులో లేదు.",
-  "hi": "यह हिस्सा अभी उपलब्ध नहीं है।",
-  "kn": "ಈ ಭಾಗ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.err.generic": {
-  "en": "That did not work. Try again.",
-  "te": "అది కుదరలేదు. మళ్ళీ ట్రై చేయండి.",
-  "hi": "यह नहीं हो सका। फिर कोशिश करें।",
-  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phone.err.state": {
-  "en": "This changed in the meantime. Reload the page.",
-  "te": "ఈలోగా ఇది మారింది. పేజీని రీలోడ్ చేయండి.",
-  "hi": "इस बीच यह बदल गया। पेज रीलोड करें।",
-  "kn": "ಈ ನಡುವೆ ಇದು ಬದಲಾಗಿದೆ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phv6.sub": {
-  "en": "The number your assistant calls your customers from.",
-  "te": "మీ అసిస్టెంట్ మీ కస్టమర్లకు కాల్ చేసే నంబర్.",
-  "hi": "वह नंबर जिससे आपका असिस्टेंट आपके ग्राहकों को कॉल करता है।",
-  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ ಕರೆ ಮಾಡುವ ನಂಬರ್.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phv6.card.title": {
-  "en": "Your business number",
-  "te": "మీ వ్యాపార నంబర్",
-  "hi": "आपका कारोबार का नंबर",
-  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ನಂಬರ್",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "phv6.state.not_set_up": {
   "en": "Not set up yet",
   "te": "ఇంకా సెట్ చేయలేదు",
@@ -98581,72 +98194,6 @@
   "te": "పనిచేస్తోంది",
   "hi": "चालू",
   "kn": "ಚಾಲನೆಯಲ್ಲಿದೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phv6.text.not_set_up": {
-  "en": "Pick a city and your assistant gets a number to call from. Until then, calls cannot go out.",
-  "te": "ఒక నగరాన్ని ఎంచుకోండి, కాల్ చేయడానికి మీ అసిస్టెంట్‌కు ఒక నంబర్ వస్తుంది. అప్పటివరకు కాల్స్ వెళ్లవు.",
-  "hi": "एक शहर चुनें और आपके असिस्टेंट को कॉल करने के लिए नंबर मिल जाता है। तब तक कॉल नहीं जा सकते।",
-  "kn": "ಒಂದು ನಗರ ಆರಿಸಿ, ಕರೆ ಮಾಡಲು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಒಂದು ನಂಬರ್ ಸಿಗುತ್ತದೆ. ಅಲ್ಲಿಯವರೆಗೆ ಕರೆಗಳು ಹೋಗುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phv6.text.kyc_pending": {
-  "en": "Your number is reserved. It starts working when the approval steps below are done.",
-  "te": "మీ నంబర్ రిజర్వ్ అయింది. కింద ఉన్న అప్రూవల్ స్టెప్స్ పూర్తయ్యాక అది పని చేస్తుంది.",
-  "hi": "आपका नंबर रिज़र्व हो गया है। नीचे के मंज़ूरी के कदम पूरे होते ही यह काम करने लगता है।",
-  "kn": "ನಿಮ್ಮ ನಂಬರ್ ಕಾದಿರಿಸಲಾಗಿದೆ. ಕೆಳಗಿನ ಅನುಮೋದನೆ ಹಂತಗಳು ಮುಗಿದ ಮೇಲೆ ಅದು ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phv6.text.active": {
-  "en": "Your number is ready. You can ring your own phone to test it.",
-  "te": "మీ నంబర్ రెడీ. టెస్ట్ చేయడానికి మీ ఫోన్‌కే కాల్ చేసి చూడొచ్చు.",
-  "hi": "आपका नंबर तैयार है। जाँचने के लिए आप अपने फ़ोन पर रिंग करवा सकते हैं।",
-  "kn": "ನಿಮ್ಮ ನಂಬರ್ ಸಿದ್ಧವಾಗಿದೆ. ಪರೀಕ್ಷಿಸಲು ನಿಮ್ಮ ಫೋನ್‌ಗೆ ರಿಂಗ್ ಮಾಡಿಸಿಕೊಳ್ಳಬಹುದು.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phv6.empty.title": {
-  "en": "Your business number will be here",
-  "te": "మీ వ్యాపార నంబర్ ఇక్కడ ఉంటుంది",
-  "hi": "आपका कारोबार का नंबर यहाँ होगा",
-  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ನಂಬರ್ ಇಲ್ಲಿ ಇರುತ್ತದೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phv6.empty.text": {
-  "en": "Phone numbers are not open yet. Your assistant can already answer customers on WhatsApp.",
-  "te": "ఫోన్ నంబర్లు ఇంకా అందుబాటులో లేవు. మీ అసిస్టెంట్ ఇప్పటికే WhatsApp లో కస్టమర్లకు జవాబిస్తోంది.",
-  "hi": "फ़ोन नंबर अभी खुले नहीं हैं। आपका असिस्टेंट अभी भी व्हाट्सऐप पर ग्राहकों को जवाब दे सकता है।",
-  "kn": "ಫೋನ್ ನಂಬರ್‌ಗಳು ಇನ್ನೂ ತೆರೆದಿಲ್ಲ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಈಗಾಗಲೇ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸಬಲ್ಲದು.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phv6.empty.action": {
-  "en": "Use your WhatsApp number for now",
-  "te": "ప్రస్తుతానికి మీ WhatsApp నంబర్ వాడండి",
-  "hi": "फ़िलहाल अपना व्हाट्सऐप नंबर इस्तेमाल करें",
-  "kn": "ಸದ್ಯಕ್ಕೆ ನಿಮ್ಮ ವಾಟ್ಸಾಪ್ ನಂಬರ್ ಬಳಸಿ",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -115802,721 +115349,6 @@
    "kn": "draft"
   }
  },
- "phkyc.title": {
-  "en": "Register your business",
-  "te": "మీ వ్యాపారాన్ని రిజిస్టర్ చేయండి",
-  "hi": "अपना बिज़नेस रजिस्टर करें",
-  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ರಿಜಿಸ್ಟ್ರೇಶನ್",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.state.not_started": {
-  "en": "Not registered yet",
-  "te": "ఇంకా రిజిస్టర్ చేయలేదు",
-  "hi": "अभी रजिस्टर नहीं हुआ",
-  "kn": "ಇನ್ನೂ ರಿಜಿಸ್ಟರ್ ಮಾಡಿಲ್ಲ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.state.checking": {
-  "en": "Being checked",
-  "te": "చెక్ చేస్తున్నారు",
-  "hi": "जाँच हो रही है",
-  "kn": "ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.state.accepted": {
-  "en": "Registered",
-  "te": "రిజిస్టర్ అయింది",
-  "hi": "रजिस्टर हो गया",
-  "kn": "ರಿಜಿಸ್ಟರ್ ಆಗಿದೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.state.rejected": {
-  "en": "Not accepted",
-  "te": "ఒప్పుకోలేదు",
-  "hi": "मंज़ूर नहीं हुआ",
-  "kn": "ಒಪ್ಪಿಲ್ಲ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.state.failed": {
-  "en": "Not sent",
-  "te": "పంపలేదు",
-  "hi": "भेजा नहीं गया",
-  "kn": "ಕಳುಹಿಸಲಾಗಿಲ್ಲ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.state.suspended": {
-  "en": "Paused",
-  "te": "ఆపేశారు",
-  "hi": "रोका गया है",
-  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.state.expired": {
-  "en": "Expired",
-  "te": "గడువు అయిపోయింది",
-  "hi": "अवधि ख़त्म हो गई",
-  "kn": "ಅವಧಿ ಮುಗಿದಿದೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.state.unavailable": {
-  "en": "Being set up",
-  "te": "సెట్ చేస్తున్నాం",
-  "hi": "सेट हो रहा है",
-  "kn": "ಸೆಟ್ ಮಾಡುತ್ತಿದ್ದೇವೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.text.not_started": {
-  "en": "Before you can choose a phone number, the phone company needs to know your business. One document is enough: GST, Udyam or company registration.",
-  "te": "ఫోన్ నంబర్ ఎంచుకునే ముందు ఫోన్ కంపెనీకి మీ బిజినెస్ గురించి తెలియాలి. ఒక్క డాక్యుమెంట్ చాలు: GST, Udyam లేదా కంపెనీ రిజిస్ట్రేషన్.",
-  "hi": "फ़ोन नंबर चुनने से पहले फ़ोन कंपनी को आपके बिज़नेस के बारे में जानना ज़रूरी है। एक डॉक्यूमेंट काफ़ी है: GST, Udyam या कंपनी रजिस्ट्रेशन।",
-  "kn": "ಫೋನ್ ನಂಬರ್ ಆರಿಸುವ ಮೊದಲು ಫೋನ್ ಕಂಪನಿಗೆ ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ತಿಳಿಯಬೇಕು. ಒಂದು ಡಾಕ್ಯುಮೆಂಟ್ ಸಾಕು: GST, Udyam ಅಥವಾ ಕಂಪನಿ ರಿಜಿಸ್ಟ್ರೇಶನ್.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.text.checking": {
-  "en": "Your details are with the phone company and they are checking them. You do not need to do anything. The answer will show here.",
-  "te": "మీ వివరాలు ఫోన్ కంపెనీ దగ్గర ఉన్నాయి, వాళ్ళు చెక్ చేస్తున్నారు. మీరు ఏమీ చేయక్కర్లేదు. జవాబు ఇక్కడే కనిపిస్తుంది.",
-  "hi": "आपकी जानकारी फ़ोन कंपनी के पास है और वे जाँच रहे हैं। आपको कुछ करने की ज़रूरत नहीं है। जवाब यहीं दिखेगा।",
-  "kn": "ನಿಮ್ಮ ವಿವರಗಳು ಫೋನ್ ಕಂಪನಿಯ ಬಳಿ ಇವೆ, ಅವರು ಪರಿಶೀಲಿಸುತ್ತಿದ್ದಾರೆ. ನೀವು ಏನೂ ಮಾಡಬೇಕಿಲ್ಲ. ಉತ್ತರ ಇಲ್ಲೇ ಕಾಣಿಸುತ್ತದೆ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.text.accepted": {
-  "en": "Your business is registered; you can choose your number now.",
-  "te": "మీ బిజినెస్ రిజిస్టర్ అయింది; ఇప్పుడు మీ నంబర్ ఎంచుకోవచ్చు.",
-  "hi": "आपका बिज़नेस रजिस्टर हो गया है; अब आप अपना नंबर चुन सकते हैं।",
-  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ರಿಜಿಸ್ಟರ್ ಆಗಿದೆ; ಈಗ ನಿಮ್ಮ ನಂಬರ್ ಆರಿಸಬಹುದು.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.text.rejected": {
-  "en": "The phone company did not accept it. Check the details below, fix what is wrong and send again.",
-  "te": "ఫోన్ కంపెనీ ఒప్పుకోలేదు. కింద వివరాలు చూసి, తప్పు ఉన్నది సరిచేసి మళ్ళీ పంపండి.",
-  "hi": "फ़ोन कंपनी ने इसे मंज़ूर नहीं किया। नीचे की जानकारी देखें, जो ग़लत है उसे ठीक करें और फिर से भेजें।",
-  "kn": "ಫೋನ್ ಕಂಪನಿ ಒಪ್ಪಲಿಲ್ಲ. ಕೆಳಗಿನ ವಿವರಗಳನ್ನು ನೋಡಿ, ತಪ್ಪಿದ್ದನ್ನು ಸರಿಪಡಿಸಿ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.text.failed": {
-  "en": "It was not sent. Check the details below and send again.",
-  "te": "పంపలేదు. కింద వివరాలు చూసి మళ్ళీ పంపండి.",
-  "hi": "यह भेजा नहीं गया। नीचे की जानकारी देखें और फिर से भेजें।",
-  "kn": "ಕಳುಹಿಸಲಾಗಿಲ್ಲ. ಕೆಳಗಿನ ವಿವರಗಳನ್ನು ನೋಡಿ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.text.suspended": {
-  "en": "The phone company has paused your registration. Send your details again to start a new one.",
-  "te": "ఫోన్ కంపెనీ మీ రిజిస్ట్రేషన్ ఆపేసింది. కొత్తది మొదలుపెట్టడానికి వివరాలు మళ్ళీ పంపండి.",
-  "hi": "फ़ोन कंपनी ने आपका रजिस्ट्रेशन रोक दिया है। नया शुरू करने के लिए जानकारी फिर से भेजें।",
-  "kn": "ಫೋನ್ ಕಂಪನಿ ನಿಮ್ಮ ರಿಜಿಸ್ಟ್ರೇಶನ್ ನಿಲ್ಲಿಸಿದೆ. ಹೊಸದು ಶುರು ಮಾಡಲು ವಿವರಗಳನ್ನು ಮತ್ತೆ ಕಳುಹಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.text.expired": {
-  "en": "Your registration has run out. Send your details again to renew it.",
-  "te": "మీ రిజిస్ట్రేషన్ గడువు అయిపోయింది. రెన్యూ చేయడానికి వివరాలు మళ్ళీ పంపండి.",
-  "hi": "आपके रजिस्ट्रेशन की अवधि ख़त्म हो गई है। रिन्यू करने के लिए जानकारी फिर से भेजें।",
-  "kn": "ನಿಮ್ಮ ರಿಜಿಸ್ಟ್ರೇಶನ್ ಅವಧಿ ಮುಗಿದಿದೆ. ರಿನ್ಯೂ ಮಾಡಲು ವಿವರಗಳನ್ನು ಮತ್ತೆ ಕಳುಹಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.text.unavailable": {
-  "en": "Registering your business number is being set up. Please check back soon.",
-  "te": "మీ బిజినెస్ నంబర్ రిజిస్ట్రేషన్ సెట్ చేస్తున్నాం. కొంచెం సేపటి తర్వాత చూడండి.",
-  "hi": "आपके बिज़नेस नंबर का रजिस्ट्रेशन सेट हो रहा है। थोड़ी देर बाद देखें।",
-  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ನಂಬರ್ ರಿಜಿಸ್ಟ್ರೇಶನ್ ಸೆಟ್ ಮಾಡುತ್ತಿದ್ದೇವೆ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ನೋಡಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.reason": {
-  "en": "The phone company says:",
-  "te": "ఫోన్ కంపెనీ చెప్పింది:",
-  "hi": "फ़ोन कंपनी ने कहा:",
-  "kn": "ಫೋನ್ ಕಂಪನಿ ಹೇಳಿದ್ದು:",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.testmode": {
-  "en": "Test mode: nothing is sent to the phone company.",
-  "te": "టెస్ట్ మోడ్: ఫోన్ కంపెనీకి ఏదీ పంపరు.",
-  "hi": "टेस्ट मोड: फ़ोन कंपनी को कुछ नहीं भेजा जाता।",
-  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಫೋನ್ ಕಂಪನಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.owneronly": {
-  "en": "Only the owner can send the registration. You can see here where it stands.",
-  "te": "రిజిస్ట్రేషన్ ఓనర్ మాత్రమే పంపగలరు. ఎంత వరకు వచ్చిందో ఇక్కడ చూడొచ్చు.",
-  "hi": "रजिस्ट्रेशन सिर्फ़ ओनर भेज सकते हैं। यहाँ आप देख सकते हैं कि बात कहाँ तक पहुँची है।",
-  "kn": "ರಿಜಿಸ್ಟ್ರೇಶನ್ ಅನ್ನು ಓನರ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು. ಎಲ್ಲಿಯವರೆಗೆ ಬಂದಿದೆ ಎಂದು ಇಲ್ಲಿ ನೋಡಬಹುದು.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.setting_up": {
-  "en": "The form is being set up. Please check back soon.",
-  "te": "ఫారమ్ సెట్ చేస్తున్నాం. కొంచెం సేపటి తర్వాత చూడండి.",
-  "hi": "फ़ॉर्म सेट हो रहा है। थोड़ी देर बाद देखें।",
-  "kn": "ಫಾರ್ಮ್ ಸೆಟ್ ಮಾಡುತ್ತಿದ್ದೇವೆ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ನೋಡಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.doc.title": {
-  "en": "Which document do you have?",
-  "te": "మీ దగ్గర ఏ డాక్యుమెంట్ ఉంది?",
-  "hi": "आपके पास कौन सा डॉक्यूमेंट है?",
-  "kn": "ನಿಮ್ಮ ಬಳಿ ಯಾವ ಡಾಕ್ಯುಮೆಂಟ್ ಇದೆ?",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.doc.one": {
-  "en": "One is enough.",
-  "te": "ఒకటి చాలు.",
-  "hi": "एक काफ़ी है।",
-  "kn": "ಒಂದು ಸಾಕು.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.doc.gst": {
-  "en": "GST registration",
-  "te": "GST రిజిస్ట్రేషన్",
-  "hi": "GST रजिस्ट्रेशन",
-  "kn": "GST ರಿಜಿಸ್ಟ್ರೇಶನ್",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.doc.udyam": {
-  "en": "Udyam registration",
-  "te": "Udyam రిజిస్ట్రేషన్",
-  "hi": "Udyam रजिस्ट्रेशन",
-  "kn": "Udyam ರಿಜಿಸ್ಟ್ರೇಶನ್",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.doc.coi": {
-  "en": "Company or LLP registration (CIN or LLPIN)",
-  "te": "కంపెనీ లేదా LLP రిజిస్ట్రేషన్ (CIN లేదా LLPIN)",
-  "hi": "कंपनी या LLP रजिस्ट्रेशन (CIN या LLPIN)",
-  "kn": "ಕಂಪನಿ ಅಥವಾ LLP ರಿಜಿಸ್ಟ್ರೇಶನ್ (CIN ಅಥವಾ LLPIN)",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.number.example": {
-  "en": "For example {example}",
-  "te": "ఉదాహరణకు {example}",
-  "hi": "जैसे {example}",
-  "kn": "ಉದಾಹರಣೆಗೆ {example}",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.f.legal": {
-  "en": "Business name",
-  "te": "బిజినెస్ పేరు",
-  "hi": "बिज़नेस का नाम",
-  "kn": "ಬಿಸಿನೆಸ್ ಹೆಸರು",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.f.legal.help": {
-  "en": "Exactly as it is written on the document.",
-  "te": "డాక్యుమెంట్‌లో ఎలా రాసి ఉందో అలాగే.",
-  "hi": "डॉक्यूमेंट में जैसा लिखा है, बिल्कुल वैसा।",
-  "kn": "ಡಾಕ್ಯುಮೆಂಟ್‌ನಲ್ಲಿ ಹೇಗೆ ಬರೆದಿದೆಯೋ ಹಾಗೆಯೇ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.f.email": {
-  "en": "E-mail",
-  "te": "ఈమెయిల్",
-  "hi": "ईमेल",
-  "kn": "ಇಮೇಲ್",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.f.addr1": {
-  "en": "Address",
-  "te": "అడ్రస్",
-  "hi": "पता",
-  "kn": "ವಿಳಾಸ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.f.addr2": {
-  "en": "Address, second line (if any)",
-  "te": "అడ్రస్, రెండో లైన్ (ఉంటే)",
-  "hi": "पता, दूसरी लाइन (हो तो)",
-  "kn": "ವಿಳಾಸ, ಎರಡನೇ ಸಾಲು (ಇದ್ದರೆ)",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.f.city": {
-  "en": "City",
-  "te": "సిటీ",
-  "hi": "शहर",
-  "kn": "ನಗರ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.f.state": {
-  "en": "State",
-  "te": "రాష్ట్రం",
-  "hi": "राज्य",
-  "kn": "ರಾಜ್ಯ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.f.postal": {
-  "en": "PIN code",
-  "te": "పిన్ కోడ్",
-  "hi": "पिन कोड",
-  "kn": "ಪಿನ್ ಕೋಡ್",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.f.file": {
-  "en": "Your document",
-  "te": "మీ డాక్యుమెంట్",
-  "hi": "आपका डॉक्यूमेंट",
-  "kn": "ನಿಮ್ಮ ಡಾಕ್ಯುಮೆಂಟ್",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.f.file.help": {
-  "en": "A PDF, JPG or PNG file, up to {mb} MB.",
-  "te": "PDF, JPG లేదా PNG ఫైల్, {mb} MB వరకు.",
-  "hi": "PDF, JPG या PNG फ़ाइल, {mb} MB तक।",
-  "kn": "PDF, JPG ಅಥವಾ PNG ಫೈಲ್, {mb} MB ವರೆಗೆ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.kept": {
-  "en": "Your document goes to the phone company and is not kept by us.",
-  "te": "మీ డాక్యుమెంట్ ఫోన్ కంపెనీకి వెళ్తుంది, మా దగ్గర ఉంచుకోము.",
-  "hi": "आपका डॉक्यूमेंट फ़ोन कंपनी को जाता है, हमारे पास नहीं रखा जाता।",
-  "kn": "ನಿಮ್ಮ ಡಾಕ್ಯುಮೆಂಟ್ ಫೋನ್ ಕಂಪನಿಗೆ ಹೋಗುತ್ತದೆ, ನಮ್ಮ ಬಳಿ ಉಳಿಯುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.btn.send": {
-  "en": "Send for registration",
-  "te": "రిజిస్ట్రేషన్‌కి పంపండి",
-  "hi": "रजिस्ट्रेशन के लिए भेजें",
-  "kn": "ರಿಜಿಸ್ಟ್ರೇಶನ್‌ಗೆ ಕಳುಹಿಸಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.btn.again": {
-  "en": "Fix and send again",
-  "te": "సరిచేసి మళ్ళీ పంపండి",
-  "hi": "ठीक करके फिर से भेजें",
-  "kn": "ಸರಿಪಡಿಸಿ ಮತ್ತೆ ಕಳುಹಿಸಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.number": {
-  "en": "That does not look like a {label}. For example {example}.",
-  "te": "ఇది {label} లాగా లేదు. ఉదాహరణకు {example}.",
-  "hi": "यह {label} जैसा नहीं लग रहा। जैसे {example}।",
-  "kn": "ಇದು {label} ತರ ಕಾಣುತ್ತಿಲ್ಲ. ಉದಾಹರಣೆಗೆ {example}.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.legal": {
-  "en": "Type the business name as it is on the document.",
-  "te": "డాక్యుమెంట్‌లో ఉన్నట్టే బిజినెస్ పేరు రాయండి.",
-  "hi": "डॉक्यूमेंट में जो बिज़नेस का नाम है वही लिखें।",
-  "kn": "ಡಾಕ್ಯುಮೆಂಟ್‌ನಲ್ಲಿರುವ ಬಿಸಿನೆಸ್ ಹೆಸರನ್ನು ಬರೆಯಿರಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.email": {
-  "en": "Type an e-mail address, like name@example.com.",
-  "te": "ఈమెయిల్ అడ్రస్ రాయండి, name@example.com లాగా.",
-  "hi": "ईमेल पता लिखें, जैसे name@example.com।",
-  "kn": "ಇಮೇಲ್ ವಿಳಾಸ ಬರೆಯಿರಿ, name@example.com ತರ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.addr1": {
-  "en": "Type the address of your business.",
-  "te": "మీ బిజినెస్ అడ్రస్ రాయండి.",
-  "hi": "अपने बिज़नेस का पता लिखें।",
-  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ವಿಳಾಸ ಬರೆಯಿರಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.city": {
-  "en": "Type the city.",
-  "te": "సిటీ రాయండి.",
-  "hi": "शहर लिखें।",
-  "kn": "ನಗರ ಬರೆಯಿರಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.state": {
-  "en": "Type the state.",
-  "te": "రాష్ట్రం రాయండి.",
-  "hi": "राज्य लिखें।",
-  "kn": "ರಾಜ್ಯ ಬರೆಯಿರಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.postal": {
-  "en": "The PIN code has 6 digits.",
-  "te": "పిన్ కోడ్‌లో 6 అంకెలు ఉంటాయి.",
-  "hi": "पिन कोड में 6 अंक होते हैं।",
-  "kn": "ಪಿನ್ ಕೋಡ್‌ನಲ್ಲಿ 6 ಅಂಕೆಗಳಿರುತ್ತವೆ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.file": {
-  "en": "Choose your document.",
-  "te": "మీ డాక్యుమెంట్ ఎంచుకోండి.",
-  "hi": "अपना डॉक्यूमेंट चुनें।",
-  "kn": "ನಿಮ್ಮ ಡಾಕ್ಯುಮೆಂಟ್ ಆರಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.file_type": {
-  "en": "Choose a PDF, JPG or PNG file.",
-  "te": "PDF, JPG లేదా PNG ఫైల్ ఎంచుకోండి.",
-  "hi": "PDF, JPG या PNG फ़ाइल चुनें।",
-  "kn": "PDF, JPG ಅಥವಾ PNG ಫೈಲ್ ಆರಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.file_size": {
-  "en": "That file is over {mb} MB. Choose a smaller PDF or photo.",
-  "te": "ఆ ఫైల్ {mb} MB కంటే ఎక్కువ ఉంది. చిన్న PDF లేదా ఫోటో ఎంచుకోండి.",
-  "hi": "वह फ़ाइल {mb} MB से बड़ी है। छोटी PDF या फ़ोटो चुनें।",
-  "kn": "ಆ ಫೈಲ್ {mb} MB ಗಿಂತ ದೊಡ್ಡದಾಗಿದೆ. ಚಿಕ್ಕ PDF ಅಥವಾ ಫೋಟೋ ಆರಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.file_read": {
-  "en": "We could not read that file. Choose it again.",
-  "te": "ఆ ఫైల్ చదవలేకపోయాం. మళ్ళీ ఎంచుకోండి.",
-  "hi": "वह फ़ाइल पढ़ नहीं पाए। उसे फिर से चुनें।",
-  "kn": "ಆ ಫೈಲ್ ಓದಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಆರಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.bad.summary": {
-  "en": "Nothing was sent. Please fix the points marked above.",
-  "te": "ఏదీ పంపలేదు. పైన గుర్తు పెట్టినవి సరిచేయండి.",
-  "hi": "कुछ नहीं भेजा गया। ऊपर जो निशान लगे हैं उन्हें ठीक करें।",
-  "kn": "ಏನೂ ಕಳುಹಿಸಿಲ್ಲ. ಮೇಲೆ ಗುರುತಿಸಿದವನ್ನು ಸರಿಪಡಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.sent": {
-  "en": "Sent. The phone company is checking your details.",
-  "te": "పంపాం. ఫోన్ కంపెనీ మీ వివరాలు చెక్ చేస్తోంది.",
-  "hi": "भेज दिया। फ़ोन कंपनी आपकी जानकारी जाँच रही है।",
-  "kn": "ಕಳುಹಿಸಿದ್ದೇವೆ. ಫೋನ್ ಕಂಪನಿ ನಿಮ್ಮ ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸುತ್ತಿದೆ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.sent.test": {
-  "en": "Checked and fine. Test mode: nothing was sent to the phone company.",
-  "te": "చెక్ చేశాం, అంతా బాగుంది. టెస్ట్ మోడ్: ఫోన్ కంపెనీకి ఏదీ పంపలేదు.",
-  "hi": "जाँच ली, सब ठीक है। टेस्ट मोड: फ़ोन कंपनी को कुछ नहीं भेजा गया।",
-  "kn": "ಪರಿಶೀಲಿಸಿದ್ದೇವೆ, ಎಲ್ಲವೂ ಸರಿಯಿದೆ. ಟೆಸ್ಟ್ ಮೋಡ್: ಫೋನ್ ಕಂಪನಿಗೆ ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.mfa": {
-  "en": "Sending the registration needs your two-step code first (an authenticator code). Set it up in Security, then come back here.",
-  "te": "రిజిస్ట్రేషన్ పంపే ముందు మీ టూ-స్టెప్ కోడ్ (ఆథెంటికేటర్ కోడ్) కావాలి. సెక్యూరిటీలో సెట్ చేసి, ఇక్కడికి తిరిగి రండి.",
-  "hi": "रजिस्ट्रेशन भेजने से पहले आपका टू-स्टेप कोड (ऑथेंटिकेटर कोड) ज़रूरी है। सिक्योरिटी में सेट करें, फिर यहाँ लौटें।",
-  "kn": "ರಿಜಿಸ್ಟ್ರೇಶನ್ ಕಳುಹಿಸುವ ಮೊದಲು ನಿಮ್ಮ ಟೂ-ಸ್ಟೆಪ್ ಕೋಡ್ (ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್) ಬೇಕು. ಸೆಕ್ಯುರಿಟಿಯಲ್ಲಿ ಹೊಂದಿಸಿ, ನಂತರ ಇಲ್ಲಿಗೆ ಬನ್ನಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.field": {
-  "en": "Nothing was sent. Please check the details and try again.",
-  "te": "ఏదీ పంపలేదు. వివరాలు చూసి మళ్ళీ ట్రై చేయండి.",
-  "hi": "कुछ नहीं भेजा गया। जानकारी देखें और फिर से कोशिश करें।",
-  "kn": "ಏನೂ ಕಳುಹಿಸಿಲ್ಲ. ವಿವರಗಳನ್ನು ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.not_owner": {
-  "en": "Only the owner can send the registration.",
-  "te": "రిజిస్ట్రేషన్ ఓనర్ మాత్రమే పంపగలరు.",
-  "hi": "रजिस्ट्रेशन सिर्फ़ ओनर भेज सकते हैं।",
-  "kn": "ರಿಜಿಸ್ಟ್ರೇಶನ್ ಅನ್ನು ಓನರ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.kyc_file_too_large": {
-  "en": "That file is over 5 MB. Choose a smaller PDF or photo.",
-  "te": "ఆ ఫైల్ 5 MB కంటే ఎక్కువ ఉంది. చిన్న PDF లేదా ఫోటో ఎంచుకోండి.",
-  "hi": "वह फ़ाइल 5 MB से बड़ी है। छोटी PDF या फ़ोटो चुनें।",
-  "kn": "ಆ ಫೈಲ್ 5 MB ಗಿಂತ ದೊಡ್ಡದಾಗಿದೆ. ಚಿಕ್ಕ PDF ಅಥವಾ ಫೋಟೋ ಆರಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.kyc_file_type": {
-  "en": "That does not look like a PDF, JPG or PNG file. Choose one of those.",
-  "te": "అది PDF, JPG లేదా PNG ఫైల్ లాగా లేదు. వాటిలో ఒకటి ఎంచుకోండి.",
-  "hi": "वह PDF, JPG या PNG फ़ाइल जैसी नहीं लग रही। इनमें से कोई एक चुनें।",
-  "kn": "ಅದು PDF, JPG ಅಥವಾ PNG ಫೈಲ್ ತರ ಕಾಣುತ್ತಿಲ್ಲ. ಅವುಗಳಲ್ಲಿ ಒಂದನ್ನು ಆರಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.kyc_file_unreadable": {
-  "en": "We could not read that file, or it is empty. Choose another copy of it.",
-  "te": "ఆ ఫైల్ చదవలేకపోయాం, లేదా అది ఖాళీగా ఉంది. దాని ఇంకో కాపీ ఎంచుకోండి.",
-  "hi": "वह फ़ाइल पढ़ी नहीं जा सकी, या ख़ाली है। उसकी दूसरी कॉपी चुनें।",
-  "kn": "ಆ ಫೈಲ್ ಓದಲಾಗಲಿಲ್ಲ, ಅಥವಾ ಖಾಲಿಯಾಗಿದೆ. ಅದರ ಇನ್ನೊಂದು ಕಾಪಿ ಆರಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.kyc_not_accepted": {
-  "en": "The phone company did not accept this. Check the document and the details, then send again.",
-  "te": "ఫోన్ కంపెనీ దీన్ని ఒప్పుకోలేదు. డాక్యుమెంట్, వివరాలు చూసి మళ్ళీ పంపండి.",
-  "hi": "फ़ोन कंपनी ने इसे मंज़ूर नहीं किया। डॉक्यूमेंट और जानकारी देखें, फिर से भेजें।",
-  "kn": "ಫೋನ್ ಕಂಪನಿ ಇದನ್ನು ಒಪ್ಪಲಿಲ್ಲ. ಡಾಕ್ಯುಮೆಂಟ್ ಮತ್ತು ವಿವರಗಳನ್ನು ನೋಡಿ, ಮತ್ತೆ ಕಳುಹಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.kyc_document_not_offered": {
-  "en": "The phone company does not take that document right now. Choose another one.",
-  "te": "ఫోన్ కంపెనీ ఇప్పుడు ఆ డాక్యుమెంట్ తీసుకోవడం లేదు. ఇంకోటి ఎంచుకోండి.",
-  "hi": "फ़ोन कंपनी अभी वह डॉक्यूमेंट नहीं ले रही। कोई दूसरा चुनें।",
-  "kn": "ಫೋನ್ ಕಂಪನಿ ಈಗ ಆ ಡಾಕ್ಯುಮೆಂಟ್ ತೆಗೆದುಕೊಳ್ಳುತ್ತಿಲ್ಲ. ಇನ್ನೊಂದನ್ನು ಆರಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.kyc_field_not_supported": {
-  "en": "The phone company cannot take one of these details yet. Please contact support.",
-  "te": "ఈ వివరాల్లో ఒకటి ఫోన్ కంపెనీ ఇంకా తీసుకోవడం లేదు. దయచేసి సపోర్ట్‌ని కాంటాక్ట్ చేయండి.",
-  "hi": "इनमें से एक जानकारी फ़ोन कंपनी अभी नहीं ले सकती। कृपया सपोर्ट से बात करें।",
-  "kn": "ಈ ವಿವರಗಳಲ್ಲಿ ಒಂದನ್ನು ಫೋನ್ ಕಂಪನಿ ಇನ್ನೂ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ. ದಯವಿಟ್ಟು ಸಪೋರ್ಟ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.kyc_provider_unavailable": {
-  "en": "The phone company did not answer. Wait a minute and press the button again; it will not be sent twice.",
-  "te": "ఫోన్ కంపెనీ జవాబు ఇవ్వలేదు. ఒక నిమిషం ఆగి మళ్ళీ బటన్ నొక్కండి; మేం రెండుసార్లు పంపం.",
-  "hi": "फ़ोन कंपनी ने जवाब नहीं दिया। एक मिनट रुककर फिर से बटन दबाएँ; यह दो बार नहीं जाएगा।",
-  "kn": "ಫೋನ್ ಕಂಪನಿ ಉತ್ತರಿಸಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಬಟನ್ ಒತ್ತಿ; ಎರಡು ಸಲ ಹೋಗುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.kyc_unavailable": {
-  "en": "Registering a number is not available right now. Please try again later.",
-  "te": "నంబర్ రిజిస్ట్రేషన్ ఇప్పుడు అందుబాటులో లేదు. కాసేపటి తర్వాత మళ్ళీ ట్రై చేయండి.",
-  "hi": "नंबर का रजिस्ट्रेशन अभी उपलब्ध नहीं है। थोड़ी देर बाद कोशिश करें।",
-  "kn": "ನಂಬರ್ ರಿಜಿಸ್ಟ್ರೇಶನ್ ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "ds.file.drop": {
   "en": "Drop your document here or choose a file",
   "te": "డాక్యుమెంట్‌ని ఇక్కడికి లాగండి, లేదా ఫైల్ ఎంచుకోండి",
@@ -116566,17 +115398,6 @@
   "te": "ఫైల్ తీసేశారు",
   "hi": "फ़ाइल हटा दी गई",
   "kn": "ಫೈಲ್ ತೆಗೆದಿದ್ದೀರಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phkyc.err.kyc_closed": {
-  "en": "The phone company closed that application. Check the details, then send it again as a new one.",
-  "te": "ఫోన్ కంపెనీ ఆ అప్లికేషన్ క్లోజ్ చేసింది. వివరాలు చూసి, కొత్తగా మళ్ళీ పంపండి.",
-  "hi": "फ़ोन कंपनी ने वह आवेदन बंद कर दिया। विवरण जाँचकर उसे नए आवेदन के रूप में फिर से भेजें।",
-  "kn": "ಫೋನ್ ಕಂಪನಿ ಆ ಅರ್ಜಿಯನ್ನು ಮುಚ್ಚಿದೆ. ವಿವರಗಳನ್ನು ನೋಡಿ, ಹೊಸದಾಗಿ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -117006,39 +115827,6 @@
   "te": "మీకు కావాల్సిన రెండు తేదీలు ఎంచుకోండి.",
   "hi": "अपनी दो तारीखें चुनें।",
   "kn": "ನಿಮಗೆ ಬೇಕಾದ ಎರಡು ದಿನಾಂಕಗಳನ್ನು ಆರಿಸಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.pg.phone.line": {
-  "en": "Get a number in {city}.",
-  "te": "{city} లో నంబర్ తీసుకోండి.",
-  "hi": "{city} में नंबर लें।",
-  "kn": "{city} ನಲ್ಲಿ ನಂಬರ್ ಪಡೆಯಿರಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.pg.phone.effect.label": {
-  "en": "What happens next:",
-  "te": "తర్వాత ఏమవుతుంది:",
-  "hi": "आगे क्या होगा:",
-  "kn": "ಮುಂದೆ ಏನಾಗುತ್ತದೆ:",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.pg.phone.effect": {
-  "en": "Your assistant gets a {city} number. It starts calling only after your business registration is approved.",
-  "te": "మీ అసిస్టెంట్‌కు {city} నంబర్ వస్తుంది. మీ బిజినెస్ రిజిస్ట్రేషన్ ఆమోదం అయ్యాకే కాల్ చేయడం మొదలవుతుంది.",
-  "hi": "आपके असिस्टेंट को {city} का नंबर मिलेगा। बिज़नेस रजिस्ट्रेशन मंज़ूर होने के बाद ही कॉल शुरू होंगे।",
-  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ {city} ನಂಬರ್ ಸಿಗುತ್ತದೆ. ಬಿಸಿನೆಸ್ ರಿಜಿಸ್ಟ್ರೇಶನ್ ಅನುಮೋದನೆ ಆದ ಮೇಲೆಯೇ ಕರೆ ಶುರುವಾಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -126666,72 +125454,6 @@
    "kn": "draft"
   }
  },
- "phsteps.s1": {
-  "en": "Choose a document for your business",
-  "te": "మీ వ్యాపారానికి ఒక document ఎంచుకోండి",
-  "hi": "अपने बिज़नेस के लिए एक document चुनिए",
-  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಒಂದು document ಆರಿಸಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phsteps.s1.sub": {
-  "en": "Any one of these is enough.",
-  "te": "వీటిలో ఏదైనా ఒకటి చాలు.",
-  "hi": "इनमें से कोई एक काफ़ी है।",
-  "kn": "ಇವುಗಳಲ್ಲಿ ಯಾವುದಾದರೂ ಒಂದು ಸಾಕು.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phsteps.s2": {
-  "en": "Upload it",
-  "te": "దాన్ని upload చేయండి",
-  "hi": "उसे upload कीजिए",
-  "kn": "ಅದನ್ನು upload ಮಾಡಿ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phsteps.s2.sub": {
-  "en": "A photo or a PDF. It goes to the phone company and is not kept by us.",
-  "te": "ఫోటో లేదా PDF. ఇది phone company కి వెళ్తుంది, మా దగ్గర ఉండదు.",
-  "hi": "फ़ोटो या PDF। यह phone company के पास जाता है, हमारे पास नहीं रहता।",
-  "kn": "ಫೋಟೋ ಅಥವಾ PDF. ಇದು phone company ಗೆ ಹೋಗುತ್ತದೆ, ನಮ್ಮ ಬಳಿ ಉಳಿಯುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phsteps.s3": {
-  "en": "You get your number",
-  "te": "మీకు number వస్తుంది",
-  "hi": "आपको number मिलता है",
-  "kn": "ನಿಮಗೆ number ಸಿಗುತ್ತದೆ",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "phsteps.s3.sub": {
-  "en": "When the phone company accepts it, you choose your number here.",
-  "te": "phone company ఒప్పుకున్నాక, మీ number ని ఇక్కడే ఎంచుకుంటారు.",
-  "hi": "phone company के मंज़ूर करने के बाद, आप अपना number यहीं चुनते हैं।",
-  "kn": "phone company ಒಪ್ಪಿದ ಮೇಲೆ, ನಿಮ್ಮ number ಅನ್ನು ಇಲ್ಲೇ ಆರಿಸುತ್ತೀರಿ.",
-  "status": {
-   "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "wa.tpl.plain.lead_ack": {
   "en": "Thanks for your enquiry",
   "te": "మీ enquiry కి ధన్యవాదాలు",
@@ -127870,6 +126592,952 @@
   "te": "100 లో. ఎక్కువ సంఖ్య అంటే తక్కువ, కానీ బాగా సరిపోయేవి.",
   "hi": "100 में से। बड़ी संख्या यानी कम, पर बेहतर मैच।",
   "kn": "100 ರಲ್ಲಿ. ದೊಡ್ಡ ಸಂಖ್ಯೆ ಎಂದರೆ ಕಡಿಮೆ, ಆದರೆ ಉತ್ತಮ ಹೊಂದಾಣಿಕೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phn.sub": {
+  "en": "The number your customers call. Your assistant answers it.",
+  "te": "మీ కస్టమర్లు కాల్ చేసే నంబర్. మీ అసిస్టెంట్ దానికి జవాబిస్తుంది.",
+  "hi": "वह नंबर जिस पर आपके ग्राहक कॉल करते हैं। आपका असिस्टेंट उसका जवाब देता है।",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರು ಕರೆ ಮಾಡುವ ನಂಬರ್. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅದಕ್ಕೆ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phn.setup": {
+  "en": "We set up your number for you.",
+  "te": "మీ నంబర్‌ని మేమే సెటప్ చేస్తాం.",
+  "hi": "आपका नंबर हम आपके लिए सेट कर देते हैं।",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್ ಅನ್ನು ನಾವೇ ಸೆಟ್ ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phn.number": {
+  "en": "Your number",
+  "te": "మీ నంబర్",
+  "hi": "आपका नंबर",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phn.type": {
+  "en": "Type",
+  "te": "రకం",
+  "hi": "प्रकार",
+  "kn": "ಬಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phn.calls": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phn.calls.on": {
+  "en": "On. Your assistant answers.",
+  "te": "ఆన్. మీ అసిస్టెంట్ జవాబిస్తుంది.",
+  "hi": "चालू। आपका असिस्टेंट जवाब देता है।",
+  "kn": "ಆನ್. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phn.calls.off": {
+  "en": "Off. Calls are not answered yet.",
+  "te": "ఆఫ్. కాల్స్‌కి ఇంకా జవాబివ్వడం లేదు.",
+  "hi": "बंद। कॉल का अभी जवाब नहीं दिया जाता।",
+  "kn": "ಆಫ್. ಕರೆಗಳಿಗೆ ಇನ್ನೂ ಉತ್ತರಿಸುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phn.calls.getting": {
+  "en": "Getting ready. About a minute.",
+  "te": "రెడీ అవుతోంది. ఒక నిమిషం.",
+  "hi": "तैयार हो रहा है। करीब एक मिनट।",
+  "kn": "ಸಿದ್ಧವಾಗುತ್ತಿದೆ. ಸುಮಾರು ಒಂದು ನಿಮಿಷ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.today.others": {
+  "en": "Waiting for you or paused",
+  "te": "మీ కోసం ఎదురుచూస్తున్నవి లేదా ఆపినవి",
+  "hi": "आपका इंतज़ार कर रहे या रुके हुए",
+  "kn": "ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿರುವ ಅಥವಾ ನಿಲ್ಲಿಸಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.when": {
+  "en": "When it calls a new enquiry",
+  "te": "కొత్త ఎంక్వైరీకి ఎప్పుడు కాల్ చేయాలి",
+  "hi": "नई पूछताछ को कब कॉल करे",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆಗೆ ಯಾವಾಗ ಕರೆ ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.language": {
+  "en": "Language of the call",
+  "te": "కాల్ భాష",
+  "hi": "कॉल की भाषा",
+  "kn": "ಕರೆಯ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.tries": {
+  "en": "If nobody answers",
+  "te": "ఎవరూ ఎత్తకపోతే",
+  "hi": "अगर कोई न उठाए",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.thank_you_whatsapp": {
+  "en": "Send a thank-you WhatsApp first",
+  "te": "ముందు థాంక్యూ వాట్సాప్ పంపండి",
+  "hi": "पहले धन्यवाद वाला व्हाट्सऐप भेजे",
+  "kn": "ಮೊದಲು ಧನ್ಯವಾದ ವಾಟ್ಸಾಪ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.from_hour": {
+  "en": "From",
+  "te": "ఇప్పటి నుంచి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.to_hour": {
+  "en": "To",
+  "te": "వరకు",
+  "hi": "तक",
+  "kn": "ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.speed_to_lead.from_hour": {
+  "en": "Calls start at",
+  "te": "కాల్స్ మొదలయ్యే సమయం",
+  "hi": "कॉल शुरू होने का समय",
+  "kn": "ಕರೆ ಶುರುವಾಗುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.speed_to_lead.to_hour": {
+  "en": "Calls stop at",
+  "te": "కాల్స్ ఆగే సమయం",
+  "hi": "कॉल बंद होने का समय",
+  "kn": "ಕರೆ ನಿಲ್ಲುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.store_visits.from_hour": {
+  "en": "Store opens at",
+  "te": "షాప్ తెరిచే సమయం",
+  "hi": "दुकान खुलने का समय",
+  "kn": "ಅಂಗಡಿ ತೆರೆಯುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.store_visits.to_hour": {
+  "en": "Store closes at",
+  "te": "షాప్ మూసే సమయం",
+  "hi": "दुकान बंद होने का समय",
+  "kn": "ಅಂಗಡಿ ಮುಚ್ಚುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.say_ai_when_greeting": {
+  "en": "Say it is an AI assistant when greeting",
+  "te": "పలకరించేటప్పుడు AI అసిస్టెంట్ అని చెప్పాలా",
+  "hi": "अभिवादन में बताए कि यह AI असिस्टेंट है",
+  "kn": "ಶುಭಾಶಯದಲ್ಲಿ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳಬೇಕೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.nudges": {
+  "en": "How many reminders",
+  "te": "ఎన్ని రిమైండర్లు",
+  "hi": "कितने रिमाइंडर",
+  "kn": "ಎಷ್ಟು ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.gap_days": {
+  "en": "Days between reminders",
+  "te": "రిమైండర్ల మధ్య రోజులు",
+  "hi": "रिमाइंडर के बीच दिन",
+  "kn": "ರಿಮೈಂಡರ್‌ಗಳ ನಡುವಿನ ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.slot_minutes": {
+  "en": "Length of one visit",
+  "te": "ఒక విజిట్ ఎంత సేపు",
+  "hi": "एक विज़िट कितनी देर की",
+  "kn": "ಒಂದು ವಿಸಿಟ್ ಎಷ್ಟು ಹೊತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.buffer_minutes": {
+  "en": "Gap between visits",
+  "te": "విజిట్ల మధ్య గ్యాప్",
+  "hi": "विज़िट के बीच का गैप",
+  "kn": "ವಿಸಿಟ್‌ಗಳ ನಡುವಿನ ಗ್ಯಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.weekly_cap": {
+  "en": "Offers a week to one customer",
+  "te": "ఒక కస్టమర్‌కి వారానికి ఆఫర్లు",
+  "hi": "एक ग्राहक को हफ़्ते में ऑफ़र",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ವಾರಕ್ಕೆ ಆಫರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.results_per_search": {
+  "en": "Shops in each search",
+  "te": "ప్రతి సెర్చ్‌లో షాప్‌లు",
+  "hi": "हर खोज में दुकानें",
+  "kn": "ಪ್ರತಿ ಹುಡುಕಾಟದಲ್ಲಿ ಅಂಗಡಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.fit_bar": {
+  "en": "Show only matches of at least",
+  "te": "కనీసం ఇంత మ్యాచ్ ఉన్నవే చూపించండి",
+  "hi": "कम से कम इतना मैच दिखाएँ",
+  "kn": "ಕನಿಷ್ಠ ಇಷ್ಟು ಹೊಂದಾಣಿಕೆ ಇರುವುದನ್ನು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.when.right_away": {
+  "en": "Right away",
+  "te": "వెంటనే",
+  "hi": "तुरंत",
+  "kn": "ತಕ್ಷಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.when.after_10_min": {
+  "en": "After 10 minutes",
+  "te": "10 నిమిషాల తర్వాత",
+  "hi": "10 मिनट बाद",
+  "kn": "10 ನಿಮಿಷದ ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.language.auto": {
+  "en": "Same as the customer",
+  "te": "కస్టమర్ భాషలోనే",
+  "hi": "ग्राहक की भाषा में",
+  "kn": "ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.language.ta": {
+  "en": "Tamil",
+  "te": "తమిళం",
+  "hi": "तमिल",
+  "kn": "ತಮಿಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.language.ml": {
+  "en": "Malayalam",
+  "te": "మలయాళం",
+  "hi": "मलयालम",
+  "kn": "ಮಲಯಾಳಂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.language.mr": {
+  "en": "Marathi",
+  "te": "మరాఠీ",
+  "hi": "मराठी",
+  "kn": "ಮರಾಠಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.tries.tries_1": {
+  "en": "1 try",
+  "te": "1 ప్రయత్నం",
+  "hi": "1 कोशिश",
+  "kn": "1 ಪ್ರಯತ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.tries.tries_2": {
+  "en": "2 tries",
+  "te": "2 ప్రయత్నాలు",
+  "hi": "2 कोशिशें",
+  "kn": "2 ಪ್ರಯತ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.tries.tries_3": {
+  "en": "3 tries",
+  "te": "3 ప్రయత్నాలు",
+  "hi": "3 कोशिशें",
+  "kn": "3 ಪ್ರಯತ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.say_ai_when_greeting.business": {
+  "en": "Follow the business setting",
+  "te": "బిజినెస్ సెట్టింగ్ ప్రకారం",
+  "hi": "बिज़नेस सेटिंग के अनुसार",
+  "kn": "ಬಿಸಿನೆಸ್ ಸೆಟ್ಟಿಂಗ್ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.say_ai_when_greeting.on": {
+  "en": "Always say it",
+  "te": "ఎప్పుడూ చెప్పాలి",
+  "hi": "हमेशा बताए",
+  "kn": "ಯಾವಾಗಲೂ ಹೇಳಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.say_ai_when_greeting.off": {
+  "en": "Do not say it",
+  "te": "చెప్పనక్కర్లేదు",
+  "hi": "न बताए",
+  "kn": "ಹೇಳಬೇಕಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.nudges.nudges_1": {
+  "en": "1 reminder",
+  "te": "1 రిమైండర్",
+  "hi": "1 रिमाइंडर",
+  "kn": "1 ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.nudges.nudges_2": {
+  "en": "2 reminders",
+  "te": "2 రిమైండర్లు",
+  "hi": "2 रिमाइंडर",
+  "kn": "2 ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.nudges.nudges_3": {
+  "en": "3 reminders",
+  "te": "3 రిమైండర్లు",
+  "hi": "3 रिमाइंडर",
+  "kn": "3 ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.gap_days.days_2": {
+  "en": "2 days",
+  "te": "2 రోజులు",
+  "hi": "2 दिन",
+  "kn": "2 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.gap_days.days_3": {
+  "en": "3 days",
+  "te": "3 రోజులు",
+  "hi": "3 दिन",
+  "kn": "3 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.gap_days.days_5": {
+  "en": "5 days",
+  "te": "5 రోజులు",
+  "hi": "5 दिन",
+  "kn": "5 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_15": {
+  "en": "15 minutes",
+  "te": "15 నిమిషాలు",
+  "hi": "15 मिनट",
+  "kn": "15 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_20": {
+  "en": "20 minutes",
+  "te": "20 నిమిషాలు",
+  "hi": "20 मिनट",
+  "kn": "20 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_30": {
+  "en": "30 minutes",
+  "te": "30 నిమిషాలు",
+  "hi": "30 मिनट",
+  "kn": "30 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_45": {
+  "en": "45 minutes",
+  "te": "45 నిమిషాలు",
+  "hi": "45 मिनट",
+  "kn": "45 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_60": {
+  "en": "1 hour",
+  "te": "1 గంట",
+  "hi": "1 घंटा",
+  "kn": "1 ಗಂಟೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_90": {
+  "en": "1 hour 30 minutes",
+  "te": "1 గంట 30 నిమిషాలు",
+  "hi": "1 घंटा 30 मिनट",
+  "kn": "1 ಗಂಟೆ 30 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.slot_minutes.minutes_120": {
+  "en": "2 hours",
+  "te": "2 గంటలు",
+  "hi": "2 घंटे",
+  "kn": "2 ಗಂಟೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.buffer_minutes.minutes_0": {
+  "en": "No gap",
+  "te": "గ్యాప్ లేదు",
+  "hi": "कोई गैप नहीं",
+  "kn": "ಗ್ಯಾಪ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.buffer_minutes.minutes_10": {
+  "en": "10 minutes",
+  "te": "10 నిమిషాలు",
+  "hi": "10 मिनट",
+  "kn": "10 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.buffer_minutes.minutes_15": {
+  "en": "15 minutes",
+  "te": "15 నిమిషాలు",
+  "hi": "15 मिनट",
+  "kn": "15 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.buffer_minutes.minutes_30": {
+  "en": "30 minutes",
+  "te": "30 నిమిషాలు",
+  "hi": "30 मिनट",
+  "kn": "30 ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.weekly_cap.cap_1": {
+  "en": "1 offer a week",
+  "te": "వారానికి 1 ఆఫర్",
+  "hi": "हफ़्ते में 1 ऑफ़र",
+  "kn": "ವಾರಕ್ಕೆ 1 ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.weekly_cap.cap_2": {
+  "en": "2 offers a week",
+  "te": "వారానికి 2 ఆఫర్లు",
+  "hi": "हफ़्ते में 2 ऑफ़र",
+  "kn": "ವಾರಕ್ಕೆ 2 ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.weekly_cap.cap_3": {
+  "en": "3 offers a week",
+  "te": "వారానికి 3 ఆఫర్లు",
+  "hi": "हफ़्ते में 3 ऑफ़र",
+  "kn": "ವಾರಕ್ಕೆ 3 ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.results_per_search.results_5": {
+  "en": "5 shops",
+  "te": "5 షాప్‌లు",
+  "hi": "5 दुकानें",
+  "kn": "5 ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.results_per_search.results_10": {
+  "en": "10 shops",
+  "te": "10 షాప్‌లు",
+  "hi": "10 दुकानें",
+  "kn": "10 ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.results_per_search.results_20": {
+  "en": "20 shops",
+  "te": "20 షాప్‌లు",
+  "hi": "20 दुकानें",
+  "kn": "20 ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.fit_bar.fit_60": {
+  "en": "60 and above",
+  "te": "60 ఆ పైన",
+  "hi": "60 और ऊपर",
+  "kn": "60 ಮತ್ತು ಮೇಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.fit_bar.fit_70": {
+  "en": "70 and above",
+  "te": "70 ఆ పైన",
+  "hi": "70 और ऊपर",
+  "kn": "70 ಮತ್ತು ಮೇಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.fit_bar.fit_80": {
+  "en": "80 and above",
+  "te": "80 ఆ పైన",
+  "hi": "80 और ऊपर",
+  "kn": "80 ಮತ್ತು ಮೇಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.opt.fit_bar.fit_90": {
+  "en": "90 and above",
+  "te": "90 ఆ పైన",
+  "hi": "90 और ऊपर",
+  "kn": "90 ಮತ್ತು ಮೇಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.need": {
+  "en": "What they need",
+  "te": "వాళ్ళకు ఏం కావాలి",
+  "hi": "उन्हें क्या चाहिए",
+  "kn": "ಅವರಿಗೆ ಏನು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.quantity": {
+  "en": "How much they need",
+  "te": "ఎంత కావాలి",
+  "hi": "कितना चाहिए",
+  "kn": "ಎಷ್ಟು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.when": {
+  "en": "When they need it",
+  "te": "ఎప్పటికి కావాలి",
+  "hi": "कब तक चाहिए",
+  "kn": "ಯಾವಾಗ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.visit": {
+  "en": "Whether they will visit",
+  "te": "వస్తారా లేదా",
+  "hi": "आएँगे या नहीं",
+  "kn": "ಬರುತ್ತಾರೆಯೇ ಇಲ್ಲವೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.budget_range": {
+  "en": "Their budget",
+  "te": "వాళ్ళ బడ్జెట్",
+  "hi": "उनका बजट",
+  "kn": "ಅವರ ಬಜೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.finds.still_interested": {
+  "en": "Whether they are still interested",
+  "te": "ఇంకా ఆసక్తి ఉందా",
+  "hi": "अब भी रुचि है या नहीं",
+  "kn": "ಇನ್ನೂ ಆಸಕ್ತಿ ಇದೆಯೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.response": {
+  "en": "Call new enquiries",
+  "te": "కొత్త ఎంక్వైరీలకు కాల్ చేయండి",
+  "hi": "नई पूछताछ को कॉल करें",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆಗಳಿಗೆ ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.retries": {
+  "en": "If nobody answers, try again",
+  "te": "ఎవరూ ఎత్తకపోతే మళ్ళీ ప్రయత్నించండి",
+  "hi": "कोई न उठाए तो फिर कोशिश करें",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.never_day": {
+  "en": "Rest day",
+  "te": "విశ్రాంతి రోజు",
+  "hi": "आराम का दिन",
+  "kn": "ವಿಶ್ರಾಂತಿ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.recent_days": {
+  "en": "Leave out customers who bought in the last",
+  "te": "ఇటీవల కొన్నవారిని వదిలేయండి, గత",
+  "hi": "हाल में खरीदने वालों को छोड़ें, पिछले",
+  "kn": "ಇತ್ತೀಚೆಗೆ ಖರೀದಿಸಿದವರನ್ನು ಬಿಡಿ, ಕಳೆದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.call_from": {
+  "en": "Call from",
+  "te": "ఏ నంబర్ నుంచి కాల్ చేయాలి",
+  "hi": "किस नंबर से कॉल करें",
+  "kn": "ಯಾವ ನಂಬರ್‌ನಿಂದ ಕರೆ ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.wait_days": {
+  "en": "If a customer does not reply, follow up after",
+  "te": "కస్టమర్ జవాబివ్వకపోతే ఫాలో అప్ చేయండి, ఇంత తర్వాత",
+  "hi": "ग्राहक जवाब न दे तो फ़ॉलो-अप करें, इतने बाद",
+  "kn": "ಗ್ರಾಹಕರು ಉತ್ತರಿಸದಿದ್ದರೆ ಫಾಲೋ-ಅಪ್ ಮಾಡಿ, ಇಷ್ಟು ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.remind_before": {
+  "en": "Remind customers before their visit",
+  "te": "విజిట్‌కి ముందు కస్టమర్లకు రిమైండ్ చేయండి",
+  "hi": "विज़िट से पहले ग्राहकों को याद दिलाएँ",
+  "kn": "ವಿಸಿಟ್‌ಗೆ ಮೊದಲು ಗ್ರಾಹಕರಿಗೆ ನೆನಪಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.answer_after": {
+  "en": "Answer when I have not picked up in",
+  "te": "నేను ఎత్తకపోతే జవాబివ్వండి, ఇంత లోపు",
+  "hi": "जब मैं न उठाऊँ तो जवाब दें, इतने में",
+  "kn": "ನಾನು ಎತ್ತದಿದ್ದರೆ ಉತ್ತರಿಸಿ, ಇಷ್ಟರೊಳಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.send_at": {
+  "en": "Send the offer at",
+  "te": "ఆఫర్ పంపే సమయం",
+  "hi": "ऑफ़र भेजने का समय",
+  "kn": "ಆಫರ್ ಕಳುಹಿಸುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.f.radius": {
+  "en": "Look for shops within",
+  "te": "దూరంలోని షాప్‌లు వెతకండి",
+  "hi": "इतनी दूरी की दुकानें खोजें",
+  "kn": "ಇಷ್ಟು ದೂರದ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.appearance": {
+  "en": "Appearance",
+  "te": "రూపం",
+  "hi": "रूप",
+  "kn": "ನೋಟ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.theme.light": {
+  "en": "Light",
+  "te": "లైట్",
+  "hi": "लाइट",
+  "kn": "ಲೈಟ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.theme.dark": {
+  "en": "Dark",
+  "te": "డార్క్",
+  "hi": "डार्क",
+  "kn": "ಡಾರ್ಕ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.theme.system": {
+  "en": "Automatic",
+  "te": "ఆటోమేటిక్",
+  "hi": "अपने आप",
+  "kn": "ತಾನಾಗಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
