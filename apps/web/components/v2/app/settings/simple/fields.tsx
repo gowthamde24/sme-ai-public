@@ -32,14 +32,14 @@ export function TextField({ label, hint, value, onChange, ...input }: TextProps)
   );
 }
 
-export function SelectField({ label, hint, value, options, onChange, disabled = false, name }: { label: string; hint?: string | null; value: string; options: readonly { value: string; label: string }[]; onChange: (v: string) => void; disabled?: boolean; name?: string }) {
+export function SelectField({ label, hint, value, options, onChange, disabled = false, name, invalid = false }: { /** the API refused this value the last time: marked */ invalid?: boolean; label: string; hint?: string | null; value: string; options: readonly { value: string; label: string; disabled?: boolean }[]; onChange: (v: string) => void; disabled?: boolean; name?: string }) {
   const id = useId();
   const list = options.some((o) => o.value === value) ? options : [{ value, label: value }, ...options];
   return (
     <Field id={id} label={label} hint={hint}>
-      <select id={id} name={name} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} className={fieldCls}>
+      <select id={id} name={name} value={value} disabled={disabled} aria-invalid={invalid ? true : undefined} onChange={(e) => onChange(e.target.value)} className={`${fieldCls} aria-[invalid=true]:border-red-text`}>
         {list.map((o) => (
-          <option key={o.value} value={o.value}>
+          <option key={o.value} value={o.value} disabled={o.disabled}>
             {o.label}
           </option>
         ))}

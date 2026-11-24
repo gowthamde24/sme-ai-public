@@ -148,7 +148,7 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
 
   const mainLines = linesOf(main);
   const moreLines = linesOf(more);
-  const lineProps = { byKey, values, t, disabled: !canChange, invalid: badKeys, onChange: (k: string, v: string) => void choose(k, v) };
+  const lineProps = { byKey, values, t, kind: job.kind, disabled: !canChange, invalid: badKeys, onChange: (k: string, v: string) => void choose(k, v) };
 
   return (
     <div data-part="job-page" data-job-kind={job.kind} className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-6">

@@ -26,16 +26,16 @@ What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am 
 [button type=button: “Make the visits job speak Telugu.”]
 ## When
 Call new enquiries
-<select label="Call new enquiries …">
+<select label="Call new enquiries">
   options: right away=right_away* | after 5 minutes=after_5 | after 15 minutes=after_15 | after an hour=after_60
-Only between
-<select label="Only between … and … (1)">
+Calls start at
+<select label="Calls start at">
   options: 8 am=08:00 | 8:30 am=08:30 | 9 am=09:00 | 9:30 am=09:30* | 10 am=10:00 | 10:30 am=10:30 | 11 am=11:00
-and
-<select label="Only between … and … (2)">
+Calls stop at
+<select label="Calls stop at">
   options: 5 pm=17:00 | 6 pm=18:00 | 7 pm=19:00* | 8 pm=20:00 | 9 pm=21:00
 If nobody answers, try again
-<select label="If nobody answers, try again …">
+<select label="If nobody answers, try again">
   options: 1 time=1 | 2 times=2 | 3 times=3* | 5 times=5
 What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am → call at 9:30 am.
 - 8:15 pm form
@@ -60,14 +60,14 @@ Your assistant uses these when a customer asks. Example: Do you open on Sundays?
 [button type=button: Remove “Can I see the sarees before I buy?”]
 [button type=button: Add a question]
 summary: More choices Rest day, who is left out, and more
-Rest day:
-<select label="Rest day: …">
+Rest day
+<select label="Rest day">
   options: none* | Sunday=sunday | Saturday and Sunday=weekend
 Leave out customers who bought in the last
-<select label="Leave out customers who bought in the last …">
+<select label="Leave out customers who bought in the last">
   options: 7 days=7* | 14 days=14 | 30 days=30
 Call from
-<select label="Call from …">
+<select label="Call from">
   options: my business number=business_number* | my own number=my_number
 <checkbox label="Tell me on WhatsApp when a store visit is booked" checked>
 Tell me on WhatsApp when a store visit is booked
