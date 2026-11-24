@@ -10,7 +10,7 @@ import { authField, authHint, authLabel } from "./ui";
 
 /** The line icon of a group, by the group's id from the API's groups file (data, not a business type); a group with no icon here gets the dots. */
 const ICONS: Readonly<Record<string, LucideIcon>> = { retail: ShoppingBag, food: UtensilsCrossed, services: Wrench, health: HeartPulse, education: GraduationCap, property: Building2, money: IndianRupee, digital: MonitorSmartphone, fitness: Dumbbell };
-const COLOURS = ["call", "chat", "visit", "offer", "find"];
+const COLOURS: Readonly<Record<string, string>> = { call: "text-[color:var(--k-call)]", chat: "text-[color:var(--k-chat)]", visit: "text-[color:var(--k-visit)]", offer: "text-[color:var(--k-offer)]", find: "text-[color:var(--k-find)]" };
 
 /**
  * The business type as a grid of boxed tiles in groups (owner, 29 Nov 2026: 54 types): a search box that filters the tiles as you type, one tile per type (its name and one line; one border, light radius, the chosen one outlined in ink),
@@ -52,11 +52,11 @@ export function TypeTiles({ groups, words, name = "type", otherId = null, askOth
       ) : (
         shown.map((g) => {
           const Icon = (g.icon ? ICONS[g.icon] : undefined) ?? Ellipsis;
-          const colour = g.colour && COLOURS.includes(g.colour) ? `var(--k-${g.colour})` : "currentColor";
+          const colour = (g.colour && COLOURS[g.colour]) || "";
           return (
             <section key={g.key} aria-labelledby={`${uid}-g-${g.key}`} data-group={g.key}>
               <h3 id={`${uid}-g-${g.key}`} className="m-0 mb-2 flex items-center gap-2 text-sm font-semibold text-muted">
-                <Icon className="size-5 shrink-0" style={{ color: colour }} aria-hidden="true" />
+                <Icon className={`size-5 shrink-0 ${colour}`} aria-hidden="true" />
                 {g.label}
               </h3>
               <div role="radiogroup" aria-labelledby={`${uid}-g-${g.key}`} className="grid grid-cols-2 gap-2 sm:grid-cols-3">
