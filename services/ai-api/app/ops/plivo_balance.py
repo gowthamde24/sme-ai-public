@@ -123,16 +123,23 @@ def _whole_rupees(amount: Decimal) -> int:
     return int(amount.quantize(Decimal(1), ROUND_HALF_UP))
 
 
+def _where(brand: str, kind: str) -> str:
+    """Where to top up, in the words each provider's texts always used (Plivo: "the Plivo console" / "at plivo.com"; the owner reads these)."""
+    if brand == "Plivo":
+        return "in the Plivo console" if kind == "console" else "at plivo.com"
+    return f"in the {brand} portal"
+
+
 def alert_detail(account: Account, limit: Limit, brand: str = "Plivo") -> str:
     """The sentence of the "Needs you" item: what Plivo said, what it comes to, the limit, auto-recharge, what to do. No number of a person, no key."""
     rupees = _whole_rupees(limit.rupees(account.credits))
     seen = f"{brand} reports {account.credits.normalize():f} {limit.currency}" + ("" if limit.currency == "INR" else f", about Rs {rupees} at Rs {limit.inr_per_unit.normalize():f} to the {limit.currency}") + "."
-    return f"{seen} The limit is Rs {_whole_rupees(limit.min_inr)}. Auto-recharge is {_recharge_word(account.auto_recharge)}. Top up in the {brand} portal so calls keep working."
+    return f"{seen} The limit is Rs {_whole_rupees(limit.min_inr)}. Auto-recharge is {_recharge_word(account.auto_recharge)}. Top up {_where(brand, 'console')} so calls keep working."
 
 
 def whatsapp_text(balance_inr: Decimal, limit_inr: Decimal, recharge: bool | None, brand: str = "Plivo") -> str:
     """The one line sent to the owner (one template variable: no new line, short)."""
-    return f"{brand} balance is low: about Rs {_whole_rupees(balance_inr)} left (limit Rs {_whole_rupees(limit_inr)}). Auto-recharge: {_recharge_word(recharge)}. Top up in the {brand} portal so calls keep working."
+    return f"{brand} balance is low: about Rs {_whole_rupees(balance_inr)} left (limit Rs {_whole_rupees(limit_inr)}). Auto-recharge: {_recharge_word(recharge)}. Top up {_where(brand, 'text')} so calls keep working."
 
 
 class AdapterOwnerNotice:
