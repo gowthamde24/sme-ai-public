@@ -38,6 +38,7 @@ export function PhonePicker({ words, actions, own, canEdit, mock = false }: { wo
   const [rows, setRows] = React.useState<PickNumber[] | null>(null);
   const [more, setMore] = React.useState(false);
   const [page, setPage] = React.useState(1);
+  const [shown, setShown] = React.useState(6); // six at a time: the server sends 20 a page, the list is not a wall
   const [picked, setPicked] = React.useState<string | null>(null);
   const [fail, setFail] = React.useState<Refusal | null>(null);
   const [busy, setBusy] = React.useState(false);
@@ -65,6 +66,7 @@ export function PhonePicker({ words, actions, own, canEdit, mock = false }: { wo
       return;
     }
     setRows((cur) => (nextPage > 1 && cur ? [...cur, ...r.numbers] : r.numbers));
+    if (nextPage === 1) setShown(6);
     setMore(r.more);
     setPage(r.page);
     if (nextPage === 1) setPicked(r.numbers[0]?.number ?? null);
@@ -129,7 +131,7 @@ export function PhonePicker({ words, actions, own, canEdit, mock = false }: { wo
                 <fieldset className="m-0 mt-4 border-0 p-0" data-part="number-list">
                   <legend className="sr-only">{t("pick.list")}</legend>
                   <div className="flex flex-col">
-                    {rows.map((n) => (
+                    {rows.slice(0, shown).map((n) => (
                       <label key={n.number} className="flex min-h-12 cursor-pointer items-center gap-3 border-b border-line py-2 first:border-t">
                         <input type="radio" name="pick-number" value={n.number} checked={picked === n.number} onChange={() => setPicked(n.number)} className="size-5 accent-ink" />
                         <b className="text-[17px] font-semibold tabular-nums text-ink">{n.display}</b>
@@ -137,8 +139,8 @@ export function PhonePicker({ words, actions, own, canEdit, mock = false }: { wo
                       </label>
                     ))}
                   </div>
-                  {more ? (
-                    <button type="button" disabled={busy} onClick={() => void look(page + 1)} className="mt-2 text-sm text-muted underline underline-offset-4">
+                  {more || shown < rows.length ? (
+                    <button type="button" disabled={busy} onClick={() => (shown < rows.length ? setShown(shown + 6) : void look(page + 1))} className="mt-2 text-sm text-muted underline underline-offset-4">
                       {t("pick.more")}
                     </button>
                   ) : null}
