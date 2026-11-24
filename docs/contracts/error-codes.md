@@ -263,7 +263,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `notifications_unavailable` | 503 | notifications |  |  | This is not available on this system. |
 | `number_not_available` | 409 | phone_numbers |  |  | That number is not available any more. Choose another. |
 | `number_provider_unavailable` | 502 | phone_numbers |  |  | The phone provider did not answer. Try again in a minute. |
-| `numbers_unavailable` | 503 | phone_numbers |  |  | Phone numbers are not available right now. |
+| `numbers_unavailable` | 503 | numbers, phone_numbers |  | fields, reason | This is not available right now. |
 | `open_payment_link` | 409 | connectors |  |  | This order already has an open payment link. |
 | `order_changed` | 409 | main |  |  | The order changed while you were working on it. Reload it and try again. |
 | `order_closed` | 409 | main |  |  | This order is closed. |
@@ -431,7 +431,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `unsupported_type` | 415 | knowledge, lead_sources |  |  | That kind of body is not accepted. |
 | `upstream_error` | 502 | agent_runs, assistant, catalogue, erasure, main, materials, today, voice_notes |  |  | The data layer failed. |
 | `upstream_unavailable` | 502 | lead_sources |  |  | Try again shortly. |
-| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, jobs, lead_profile, lead_sources, main, materials, opening, orders, outbox, outcomes, search, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
+| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, jobs, lead_profile, lead_sources, main, materials, numbers, opening, orders, outbox, outcomes, search, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
 | `value_not_accepted` | 422 | enquiries |  |  | (the sentence varies: show `message`) |
 | `vision_unavailable` | 503 | assistant_context |  |  | Reading pictures and PDFs is not switched on for this system. Paste the text instead. |
 | `visit_state` | 409 | main |  |  | That cannot be done in the state the visit is in now. Reload and look again. |
