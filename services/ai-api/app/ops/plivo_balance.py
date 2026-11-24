@@ -210,6 +210,8 @@ class PlivoBalanceCheck:
             account = parse_account(self._reader.account_details())
         except PlivoError as exc:
             logger.warning("plivo balance: the account could not be read (%s)", exc.reason)   # a closed word: never a body, a key or a number
+            if exc.reason == "auth" and self._brand == "VoiceLink":   # a known reason is a "Needs you" item at once (28 Nov 2026: the stored username was the display name; nothing showed for hours)
+                return self._rpc.object(token, "ops_plivo_balance_report", {"p_state": "failed", "p_detail": f"VoiceLink refused our login (status {exc.status}). The username must be the REGISTERED username (VoiceLink Profile page), not the display name. Fix the secret sme-voicelink-username (or the password), then redeploy the API and the worker."})
             return self._rpc.object(token, "ops_plivo_balance_report", {"p_state": "failed"})
         low = self._limit.is_low(account.credits)
         args: dict[str, Any] = {"p_state": "low" if low else "ok", "p_balance_inr": float(self._limit.rupees(account.credits)), "p_auto_recharge": account.auto_recharge}

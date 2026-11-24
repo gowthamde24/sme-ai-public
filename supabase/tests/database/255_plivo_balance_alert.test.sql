@@ -122,6 +122,12 @@ select is(pg_temp.w($q$select (public.ops_plivo_balance_report('low', 1, repeat(
 select is(pg_temp.w($q$select (public.ops_plivo_balance_report(null))::text$q$), 'ERR:22023', 'H4: no state');
 select is(pg_temp.w($q$select (public.ops_plivo_balance_report('ok', 1e12))::text$q$), 'ERR:22023', 'H5: an absurd amount');
 
+-- J. a failed read with a known reason is an item at once, with its own title and sentence (28 Nov 2026)
+delete from admin.alerts where kind = 'plivo_balance';
+select pg_temp.next_day();
+do $$ begin perform pg_temp.w($q$select (public.ops_plivo_balance_report('failed', null, 'VoiceLink refused the login (401). Use the registered username, not the display name.') ->> 'state')$q$); end $$;
+select is((select title from admin.alerts where kind = 'plivo_balance'), 'The telephony balance could not be read today', 'J1: a known reason is an item on the first failed read');
+select is((select detail from admin.alerts where kind = 'plivo_balance'), 'VoiceLink refused the login (401). Use the registered username, not the display name.', 'J2: with the sentence the worker made');
 select ok(pg_temp.w($q$select (public.ops_plivo_balance_due() ->> 'calls_7d_paise')$q$, 'outsider') ~ '^[0-9]+$', 'I1: the answer also carries the last 7 days of call cost in paise (a whole number)');
 
 select * from finish();

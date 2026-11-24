@@ -26,7 +26,7 @@ SECRETS=(
   "sme-exotel-stream-secret|generate|req|api|signs each call's media token (generated here)"
   "sme-telephony-sandbox-numbers|prompt|req|api|your OWN test phone numbers, comma separated, e.g. +919XXXXXXXXX (the only numbers calls may reach while telephony is in sandbox)"
   "sme-voicelink-ws-token|generate|req|api|the secret in the address of OUR VoiceLink WebSocket bot (generated here; the address you paste into VoiceLink's bot form is printed by deploy/voicelink-bot-url.sh production, on your terminal only)"
-  "sme-voicelink-username|prompt|opt|api,worker|VoiceLink: the username of OUR reseller login (Enter to skip until you have topped up and have it)"
+  "sme-voicelink-username|prompt|opt|api,worker|VoiceLink: the REGISTERED username of OUR reseller login (VoiceLink Profile page; NOT your display name; Enter to skip until you have it)"
   "sme-voicelink-password|prompt|opt|api,worker|VoiceLink: the password of that login (hidden; Enter to skip)"
   "sme-plivo-auth-id|prompt|opt|api|Plivo Auth ID (DROPPED 24 Nov: VoiceLink is the only provider; only if the Plivo code is ever revived') (after the top-up and the A2P e-mail; Enter to skip for now)"
   "sme-plivo-auth-token|prompt|opt|api|Plivo Auth Token (Enter to skip for now)"
