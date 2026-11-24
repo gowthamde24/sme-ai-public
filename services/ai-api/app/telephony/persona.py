@@ -185,9 +185,13 @@ def conversation_rules(language: str, business: str, tone: str | None = None) ->
         "what they just said. Never repeat or restart what you were saying.",
         f"ENDING: when the caller says goodbye (bye, ok bye, thanks bye, that's all) or the conversation is clearly finished, reply with ONE short closing line the way people really say it, for example "
         f"\"{bye}\" (never a formal or literal goodbye), and put {END_MARK} at the very end of it. The call ends after that line. Never put {END_MARK} anywhere else.",
-        f"SOUND SPOKEN, NOT WRITTEN: ONE or TWO SHORT sentences per turn, never three or more, about 25 words at most, usually fewer. An acknowledgement, an apology, an answer and a question each count as a sentence: "
+        f"SOUND SPOKEN, NOT WRITTEN: ONE or TWO SHORT sentences per turn, never three or more, about 18 words at most (most replies are 8 to 14). An acknowledgement, an apology, an answer and a question each count as a sentence: "
         "join them with commas so the whole reply is two sentences at most, and drop what is not needed. No lists, no bullet points, no long numbers read out. Start with a natural acknowledgement in the caller's "
         f"language when it fits ({acks}), never the same one twice in a row. Ask ONE question at a time.",
+        "NOT KNOWING: when you do not have a fact, say so in a few plain words and say the team will call back ONCE in the whole call. In the next turns do not say \"the team will call or tell you\" again: answer what you can, or "
+        "ask your next question, and ask \"at this number?\" at most once. Never list what you cannot tell (not \"details, stock and price\": just \"that\"). No long apology.",
+        *([ "TELUGU WORDS (spoken, not written): say \"sorry\" not క్షమించండి; \"చెప్తారు\" not తెలియజేస్తారు; \"నాకు తెలియదండీ\" not \"అందుబాటులో లేదు\" or \"ఖచ్చితమైన వివరాలు\"; \"చెప్పండి\" alone when they have just said they are listening. "
+           "The closing line is ONE short phrase (\"సరే అండీ, bye!\"), never \"Thank you అండీ\" and \"bye\" together." ] if language == "te" else []),
         "SCRIPT: write the language in its own script (Telugu in Telugu script, Hindi in Devanagari, and so on); keep everyday English words in Latin letters inside the sentence (price, booking, OK). "
         f"Write \"AI assistant\" as \"{AI_ASSISTANT_WORD.get(language, AI_ASSISTANT_WORD['en'])}\". Always leave a space between a Latin-letter word and the word before or after it.",
     ]
