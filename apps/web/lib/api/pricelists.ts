@@ -36,8 +36,8 @@ export const ISSUE_TEXT: Record<IssueCode, string> = {
   UNPAIRED_BREAK_COLUMN: "A quantity column for a price break has no matching price column (or the reverse).",
   CSV_FORMAT: "The file is not valid CSV (check the quotes and commas).",
   ROW_WIDTH: "The row has a different number of cells than the header.",
-  INVALID_SKU: "The sku may use only letters, digits, dot, underscore and hyphen (40 at most).",
-  DUPLICATE_SKU: "This sku is already on an earlier row.",
+  INVALID_SKU: "The product code may use only letters, digits, dot, underscore and hyphen (40 at most).",
+  DUPLICATE_SKU: "This product code is already on an earlier row.",
   INVALID_NAME: "The name is empty or longer than 128 characters.",
   INVALID_MONEY: "This is not an amount in rupees (for example 4200 or 1,200.50).",
   MONEY_OUT_OF_RANGE: "The amount must be more than zero and at most ₹10,00,000.",
@@ -46,14 +46,14 @@ export const ISSUE_TEXT: Record<IssueCode, string> = {
   INCOMPLETE_BREAK: "A price break needs both its quantity and its price.",
   BREAK_GAP: "Price breaks must start at break 1 and have no empty break before a filled one.",
   INVALID_PRICE_BREAKS: "Break quantities must go up, start at the minimum order quantity or above, and prices must not go up.",
-  UNKNOWN_SKU: "This sku is not a product in your catalog (or it is archived or switched off).",
+  UNKNOWN_SKU: "This product code is not in your catalog yet (or that product is archived or switched off). Add the product first, then load its price.",
   HIDDEN_CHARACTERS: "The name has an invisible or control character. Retype it.",
   NO_ITEMS: "The file has no products.",
   TOO_MANY_ITEMS: "A price list holds at most 1,000 products.",
 };
 /** The column names a person knows. */
 export const COLUMN_LABELS: Record<Column, string> = {
-  sku: "sku", name: "name", unit_price: "unit price", moq: "minimum quantity", tax_bps: "GST rate",
+  sku: "product code", name: "name", unit_price: "unit price", moq: "smallest quantity", tax_bps: "GST rate",
   min_qty_1: "break 1 quantity", price_1: "break 1 price", min_qty_2: "break 2 quantity", price_2: "break 2 price", min_qty_3: "break 3 quantity", price_3: "break 3 price",
   min_qty_4: "break 4 quantity", price_4: "break 4 price", min_qty_5: "break 5 quantity", price_5: "break 5 price",
 }; // fmt: skip
