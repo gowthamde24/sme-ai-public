@@ -127171,5 +127171,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sc.card.more": {
+  "en": "Test and settings",
+  "te": "టెస్ట్, సెట్టింగ్స్",
+  "hi": "जाँच और सेटिंग",
+  "kn": "ಪರೀಕ್ಷೆ ಮತ್ತು ಸೆಟ್ಟಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.empty": {
+  "en": "No calls yet today. They show here as they come.",
+  "te": "ఈ రోజు ఇంకా కాల్స్ రాలేదు. వచ్చినప్పుడు ఇక్కడ కనిపిస్తాయి.",
+  "hi": "आज अभी कोई कॉल नहीं आई। आते ही यहाँ दिखेंगी।",
+  "kn": "ಇಂದು ಇನ್ನೂ ಕರೆಗಳು ಬಂದಿಲ್ಲ. ಬಂದಾಗ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

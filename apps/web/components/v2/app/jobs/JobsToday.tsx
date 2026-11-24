@@ -50,9 +50,9 @@ export function JobsToday({ jobs, words, base, actions, sheet = null, messagesTo
       ) : null}
       {sheet?.actions && sheet.festival ? <FestivalSuggestion festival={sheet.festival} words={words} base={base} actions={sheet.actions} /> : null}
       {open ? (
-        <div data-part="jobs-open" className="flex flex-col">
+        <div data-part="jobs-open" className="grid grid-cols-1 gap-3">
           {jobs.map((j) => (
-            <JobLine key={j.id} job={j} words={words} base={base} actions={actions} icon />
+            <JobLine key={j.id} job={j} words={words} base={base} actions={actions} />
           ))}
         </div>
       ) : (

@@ -2,22 +2,31 @@
 
 import { refText } from "@/lib/sources/codes";
 import * as React from "react";
+import { Globe, Mail, Megaphone, MessageCircle, MessageSquare, PhoneMissed, Search, ShoppingBag, Table2, Upload, type LucideIcon } from "lucide-react";
 
 import type { PullResult } from "@/lib/lead-desk/sources/types";
 import type { Card, CardAction, CardKind, ConnectInfo, Done, EmailAddress, MetaPage, SourceError, TestResult, WebsiteSnippet } from "@/lib/sources/types";
 
-import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, okBox, surface, warnBox } from "../ui";
+import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, okBox, warnBox } from "../ui";
 import { makeT, type Words } from "../words";
 import { makeCardsPost, type CardsPost } from "./cards-post";
 import { ConsentTick } from "./ConsentTick";
 import { CopyBox } from "./CopyBox";
 
-const BADGE: Record<Card["state"], string> = {
-  connected: "bg-green-bg text-green-text",
-  waiting: "bg-surface-2 text-ink",
-  needs_attention: "bg-amber-bg text-amber-text",
-  paused: "bg-surface-2 text-muted",
-  off: "bg-surface-2 text-muted",
+/** The state is a dot and a word (no pill): green only when it works, orange only when it needs the owner, grey otherwise. */
+const DOT: Record<Card["state"], string> = { connected: "bg-green-text", waiting: "bg-muted", needs_attention: "bg-brand", paused: "bg-muted", off: "border border-muted" };
+/** A bare line icon in the category colour of what the source is (design system: no tile, no circle): ads and the web find customers, calls are blue, chats are green. */
+const SOURCE_ICON: Record<CardKind, { Icon: LucideIcon; k: "call" | "chat" | "find" | "offer" }> = {
+  meta: { Icon: Megaphone, k: "find" },
+  indiamart: { Icon: ShoppingBag, k: "offer" },
+  email_forward: { Icon: Mail, k: "find" },
+  website: { Icon: Globe, k: "find" },
+  files: { Icon: Upload, k: "find" },
+  whatsapp: { Icon: MessageCircle, k: "chat" },
+  missed_calls: { Icon: PhoneMissed, k: "call" },
+  click_to_whatsapp: { Icon: MessageSquare, k: "chat" },
+  google_ads: { Icon: Search, k: "find" },
+  sheets: { Icon: Table2, k: "find" },
 };
 
 /**
@@ -34,30 +43,41 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, openCa
     const r = (await post({ op: "cards" })) as Done<Card[]>;
     if (r.ok) setCards(r.data);
   };
+  // the one orange button of the grid is the first card that can still be connected; every other action is outlined (CSS, ds.css)
+  const first = cards.findIndex((c) => c.available && c.state !== "connected");
   return (
     <section className="flex flex-col gap-3" aria-labelledby="cards-h" data-part="source-cards">
       {/* one heading on the page (owner, 17 Nov: "Lead sources" and "Where your leads come from" said the same twice): the page's title and sub line carry it, this one is for screen readers */}
       <h2 id="cards-h" className="sr-only">{t("sc.title")}</h2>
-      <ul className="grid gap-3 md:grid-cols-2">
-        {cards.map((c) => (
-          <li key={c.kind} className={`${surface} flex flex-col gap-3`} data-card={c.kind} data-status={c.status}>
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <h3 className="text-base font-semibold text-ink">{t(`sc.${c.kind}` as "sc.meta")}</h3>
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${BADGE[c.state]}`}>{t(`sc.state.${c.state}` as "sc.state.connected")}</span>
+      <ul className="grid grid-cols-1 gap-3.5 md:grid-cols-2 xl:grid-cols-3" data-part="source-grid">
+        {cards.map((c, i) => {
+          const { Icon, k } = SOURCE_ICON[c.kind];
+          return (
+          <li key={c.kind} className="flex h-full min-w-0 flex-col items-start gap-2 rounded-[14px] border border-line bg-surface p-[18px] text-left" data-card={c.kind} data-cstate={c.status} data-first={i === first ? "1" : undefined}>
+            <div className="flex w-full min-w-0 items-center gap-3">
+              <Icon aria-hidden="true" data-k={k} className="size-6 shrink-0" strokeWidth={1.8} />
+              <h3 className="min-w-0 text-[17px] font-semibold leading-snug text-ink">{t(`sc.${c.kind}` as "sc.meta")}</h3>
             </div>
-            <p className="text-sm text-muted">{t(`sc.${c.kind}.what` as "sc.meta.what")}</p>
+            <p className="m-0 text-[15px] leading-snug text-muted">{t(`sc.${c.kind}.what` as "sc.meta.what")}</p>
+            {c.available ? (
+              <p className="m-0 flex items-center gap-2 text-sm text-muted" data-part="card-state">
+                <span aria-hidden="true" className={`size-2 shrink-0 rounded-full ${DOT[c.state]}`} />
+                <span className={c.state === "needs_attention" ? "font-medium text-ink" : ""}>{t(`sc.state.${c.state}` as "sc.state.connected")}</span>
+              </p>
+            ) : null}
             {/* one line about the leads: ours (last lead, how many this week) replaces the API's own sentence, which said the same thing again */}
-            {c.state === "connected" || c.state === "waiting" ? <p className="text-sm text-ink" data-part="last-lead">{lastLead(t, c)}</p> : c.detail ? <p className="text-sm text-ink">{refText(words, c.codes?.detail, c.detail)}</p> : null}
+            {c.state === "connected" || c.state === "waiting" ? <p className="m-0 text-sm text-ink" data-part="last-lead">{lastLead(t, c)}</p> : c.detail ? <p className="text-sm text-ink">{refText(words, c.codes?.detail, c.detail)}</p> : null}
             {c.problem ? <p className={warnBox} role="alert">{refText(words, c.codes?.problemMessage, c.problem.message)}</p> : null}
             {c.kind === "website" ? <p className={fieldHelp} data-part="website-consent">{t("sc.website.consent" as "sc.meta")}</p> : null}
             {c.kind === "website" && (c.state === "connected" || c.state === "waiting") ? <p className={fieldHelp} data-part="website-recopy">{t("sc.website.recopy")}</p> : null}
             {!c.available ? (
-              <p className={fieldHelp}>{t("sc.unavailable")}</p>
+              <p className="m-0 text-sm text-muted" data-part="card-off">{t("sc.unavailable")}</p>
             ) : (
               <CardBody card={c} t={t} words={words} post={post} base={base} consentTick={consentTick} open={open === c.kind} onOpen={(o) => setOpen(o ? c.kind : null)} onChanged={refresh} />
             )}
           </li>
-        ))}
+          );
+        })}
       </ul>
     </section>
   );
@@ -80,19 +100,31 @@ function CardBody({ card, t, words, post, base, open, onOpen, onChanged, consent
   // the e-mail parser (slice 5) is shown the once-only way when the API gives it a Test; the older card (the address read any time) stays until then
   if (card.kind === "missed_calls" || card.kind === "google_ads" || (card.kind === "email_forward" && card.testLabel !== null)) return <AddressCard card={card} t={t} words={words} post={post} onChanged={onChanged} />;
   // Instagram and Facebook ads that open WhatsApp: nothing to connect here, test or disconnect: it is on when the business's WhatsApp is connected, else the way to connect it
-  if (card.kind === "click_to_whatsapp") return card.state === "off" ? <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a> : <CostBox card={card} t={t} post={post} onChanged={onChanged} />;
+  if (card.kind === "click_to_whatsapp") return card.state === "off" ? <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a> : <More t={t}><CostBox card={card} t={t} post={post} onChanged={onChanged} /></More>;
   if (card.kind === "files") return <a href={`${base}/import`} className={`${btnMain} self-start`}>{t("sc.act.upload")}</a>;
   if (card.kind === "whatsapp") return card.status === "connected" ? null : <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a>;
   if (action === "resume") return <ResumeButton card={card.kind} label={t("sc.act.resume")} t={t} post={post} onChanged={onChanged} />;
-  if (action === "none" || action === "open") return <><Tools card={card} t={t} words={words} post={post} onChanged={onChanged} /><CostBox card={card} t={t} post={post} onChanged={onChanged} /></>;
+  if (action === "none" || action === "open") return <More t={t}><Tools card={card} t={t} words={words} post={post} onChanged={onChanged} /><CostBox card={card} t={t} post={post} onChanged={onChanged} /></More>;
   return (
     <div className="flex flex-col gap-3">
       <div><button type="button" className={card.status === "connected" ? btnQuiet : btnMain} aria-expanded={open} onClick={() => onOpen(!open)}>{label}</button></div>
       {open ? <Panel card={card} action={action} t={t} words={words} post={post} onChanged={onChanged} consentTick={consentTick} /> : null}
       {card.kind === "indiamart" && (card.state === "connected" || card.state === "waiting") ? <PullNow t={t} post={post} onChanged={onChanged} /> : null}
-      <Tools card={card} t={t} words={words} post={post} onChanged={onChanged} />
-      <CostBox card={card} t={t} post={post} onChanged={onChanged} />
+      <More t={t}>
+        <Tools card={card} t={t} words={words} post={post} onChanged={onChanged} />
+        <CostBox card={card} t={t} post={post} onChanged={onChanged} />
+      </More>
     </div>
+  );
+}
+
+/** The card's second-line parts (test, disconnect, what a lead costs) sit behind one quiet line, so a card shows ONE action and the rest is a tap away. */
+function More({ t, children }: { t: T; children: React.ReactNode }) {
+  return (
+    <details className="w-full" data-part="card-more">
+      <summary className="cursor-pointer text-sm text-muted underline underline-offset-4">{t("sc.card.more")}</summary>
+      <div className="mt-3 flex flex-col gap-3">{children}</div>
+    </details>
   );
 }
 

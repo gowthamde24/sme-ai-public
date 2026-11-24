@@ -54,10 +54,17 @@ describe("Your day (the final design)", () => {
   });
 
   it("scrolls sideways on a phone and leaves out what it cannot read", () => {
-    render(<YourDay view={buildDay({ now: NOW, calls: null, visits: null, sent: null, planned: null })} words={WORDS} tenantId={T} mockLive={null} />);
+    render(<YourDay view={buildDay({ now: NOW, calls: [at("09:05")], visits: null, sent: null, planned: null })} words={WORDS} tenantId={T} mockLive={null} />);
     expect(document.querySelector(".ds-day-scroll")).toHaveClass("overflow-x-auto");
     expect(document.querySelector('[data-part="day-track"]')).toHaveClass("min-w-[760px]");
-    expect(document.querySelector('[data-part="day-summary"]')).toBeNull();
-    expect(document.querySelectorAll('[data-dot="call"]')).toHaveLength(0);
+    expect(document.querySelector('[data-part="day-summary"]')).not.toHaveTextContent(/sent to you|next visit/);
+    expect(document.querySelectorAll('[data-dot="call"]')).toHaveLength(1);
+  });
+
+  it("with no call, no visit and nothing planned it is ONE grey line, not an empty chart in a big box", () => {
+    render(<YourDay view={buildDay({ now: NOW, calls: [], visits: [], sent: null, planned: null })} words={WORDS} tenantId={T} mockLive={null} />);
+    expect(document.querySelector('[data-part="day-track"]')).toBeNull();
+    expect(document.querySelector('[data-part="your-day"]')?.className).not.toMatch(/border|rounded|shadow/);
+    expect(document.querySelector('[data-part="day-summary"]')).toHaveTextContent("No calls yet today. They show here as they come.");
   });
 });

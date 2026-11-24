@@ -30,15 +30,18 @@ const sheetActions = (): SheetActions => ({
 const switches = { setEnabled: vi.fn(async (id: string, enabled: boolean) => ({ ok: true as const, data: { id, enabled, status: enabled ? ("running" as const) : ("paused" as const) } })) };
 
 describe("the Jobs page, the renamed Office", () => {
-  it("the open list (owner, 24 Nov): a group is ONE column of lines between hairlines (a dark rule above the first), no card, and each line's text may shrink beside its one action (min-w-0), so a phone never pushes the button off the screen", () => {
+  it("each job is ONE boxed card in a grid (owner, 25 Nov: a THING you switch on is a card): one column on a phone, two on a wide screen, the text may shrink beside the switch (min-w-0), a job that needs you has the ink border", () => {
     const { container } = render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
     const list = container.querySelector("[data-group] > div") as HTMLElement;
-    expect(list.className).toContain("flex-col");
-    expect(list.className).toContain("border-t");
-    expect(list.className).not.toMatch(/rounded|bg-surface|grid-cols/);
-    const line = list.querySelector("[data-job]") as HTMLElement;
-    expect(line.querySelector("a")?.className).toContain("min-w-0");
-    expect(line.className).toContain("border-t");
+    expect(list.className).toContain("grid-cols-1");
+    expect(list.className).toContain("lg:grid-cols-2");
+    const card = list.querySelector("[data-job]") as HTMLElement;
+    expect(card.className).toMatch(/rounded-\[14px\]/);
+    expect(card.className).toContain("border");
+    expect(card.querySelector("a")?.className).toContain("min-w-0");
+    expect(card.querySelector("svg[data-k]")).not.toBeNull();
+    const needs = container.querySelector('[data-state="needs"]') as HTMLElement | null;
+    if (needs) expect(needs.className).toContain("border-ink");
   });
   it("a job that cannot run (a phone number is missing) is under Needs you, says WHY in the one orange line and offers the fix; the chips count exactly the jobs of the sections", () => {
     const blocked = { ...MOCK_PAGE_JOBS[0], id: "blocked-1", enabled: false, status: "paused" as const, planGate: "no_number" as const, needsYou: 0 };
