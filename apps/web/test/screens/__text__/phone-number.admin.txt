@@ -1,8 +1,2 @@
 # Phone number
-Your business number. The number your assistant calls customers from.
-{label="Register your business"}
-## Register your business
-Not registered yet Before you can choose a phone number, the phone company needs to know your business. One document is enough: GST, Udyam or company registration. Only the owner can send the registration. You can see here where it stands.
-{label="Calling number"}
-## Calling number
-Not set up yet · coming soon Calls to customers are not switched on yet. When they are, your business number shows here. Nothing is called until then.
+The number your customers call. Your assistant answers it. We set up your number for you.
