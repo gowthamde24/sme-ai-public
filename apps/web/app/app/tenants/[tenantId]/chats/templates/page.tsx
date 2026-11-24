@@ -18,7 +18,7 @@ import { readOwnMessages } from "@/lib/api/template-builder";
 import { listTemplates } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
 import { BRAND_NAME } from "@/design/brand";
-import { jobsScreens } from "@/lib/screens/flag";
+import { jobsScreens, templatesPlain } from "@/lib/screens/flag";
 
 import { submitDraftsAction, submitTemplateAction, syncTemplatesAction } from "./actions";
 import { submitOwnMessageAction, useOwnMessageAction, writeOwnMessageAction } from "./own-actions";
@@ -66,7 +66,7 @@ export default async function TemplatesPage({ params }: PageProps<"/app/tenants/
   const sending = own ? ((await readJobs(user.accessToken, tenantId).catch(() => null)) ?? []).filter((j) => SENDING.includes(j.kind)).map((j) => ({ id: j.id, kind: j.kind, customName: j.customName })) : [];
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={t("chats6.tab.templates")} sub={t("chats6.tab.templates.sub")} />
+      <PageTop title={t(templatesPlain() ? "wa.tpl.plain.title" : "chats6.tab.templates")} sub={t("chats6.tab.templates.sub")} />
       <div className={`mt-6 flex flex-col gap-5 ${own ? "max-w-5xl" : "max-w-3xl"}`}>
         {ownRead && !ownRead.ok ? <PartProblem kind={ownRead.kind} retryAfter={ownRead.retryAfter} words={words} title={wordsFor(lang, ["jobs.tb.own.title"])["jobs.tb.own.title"]} /> : null}
         {own ? (
@@ -91,13 +91,13 @@ export default async function TemplatesPage({ params }: PageProps<"/app/tenants/
               <span className="mt-1 block text-[13px] font-normal text-muted">{t("jobs.tb.system.sub")}</span>
             </summary>
             <div className="mt-4">{templates.ok ? (
-              <TemplatesList words={words} items={templates.data} actions={{ submitDrafts: submitDraftsAction.bind(null, tenantId), submitOne: submitTemplateAction.bind(null, tenantId), sync: syncTemplatesAction.bind(null, tenantId) }} />
+              <TemplatesList plain={templatesPlain()} words={words} items={templates.data} actions={{ submitDrafts: submitDraftsAction.bind(null, tenantId), submitOne: submitTemplateAction.bind(null, tenantId), sync: syncTemplatesAction.bind(null, tenantId) }} />
             ) : (
               <PartProblem kind={templates.kind} retryAfter={templates.retryAfter} words={words} title={t("wa.tpl.title")} />
             )}</div>
           </details>
         ) : templates.ok ? (
-          <TemplatesList words={words} items={templates.data} actions={{ submitDrafts: submitDraftsAction.bind(null, tenantId), submitOne: submitTemplateAction.bind(null, tenantId), sync: syncTemplatesAction.bind(null, tenantId) }} />
+          <TemplatesList plain={templatesPlain()} words={words} items={templates.data} actions={{ submitDrafts: submitDraftsAction.bind(null, tenantId), submitOne: submitTemplateAction.bind(null, tenantId), sync: syncTemplatesAction.bind(null, tenantId) }} />
         ) : (
           <PartProblem kind={templates.kind} retryAfter={templates.retryAfter} words={words} title={t("wa.tpl.title")} />
         )}

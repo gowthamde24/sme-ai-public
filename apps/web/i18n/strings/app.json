@@ -126819,5 +126819,104 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "wa.tpl.plain.lead_ack": {
+  "en": "Thanks for your enquiry",
+  "te": "మీ enquiry కి ధన్యవాదాలు",
+  "hi": "आपकी enquiry के लिए धन्यवाद",
+  "kn": "ನಿಮ್ಮ enquiry ಗೆ ಧನ್ಯವಾದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.visit_reminder": {
+  "en": "Visit reminder",
+  "te": "visit గుర్తు చేయడం",
+  "hi": "visit की याद दिलाना",
+  "kn": "visit ನೆನಪಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.draft": {
+  "en": "Not sent yet",
+  "te": "ఇంకా పంపలేదు",
+  "hi": "अभी भेजा नहीं गया",
+  "kn": "ಇನ್ನೂ ಕಳುಹಿಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.submitted": {
+  "en": "Waiting for WhatsApp",
+  "te": "WhatsApp సమాధానం కోసం ఎదురుచూస్తోంది",
+  "hi": "WhatsApp के जवाब का इंतज़ार",
+  "kn": "WhatsApp ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.approved": {
+  "en": "Approved",
+  "te": "ఒప్పుకుంది",
+  "hi": "मंज़ूर",
+  "kn": "ಒಪ್ಪಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.rejected": {
+  "en": "Not accepted",
+  "te": "ఒప్పుకోలేదు",
+  "hi": "मंज़ूर नहीं हुआ",
+  "kn": "ಒಪ್ಪಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.send_all": {
+  "en": "Send all for approval",
+  "te": "అన్నీ ఆమోదం కోసం పంపండి",
+  "hi": "सब मंज़ूरी के लिए भेजें",
+  "kn": "ಎಲ್ಲವನ್ನೂ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.note": {
+  "en": "WhatsApp needs to approve messages we start. Replies inside 24 hours need no approval.",
+  "te": "మనం మొదలుపెట్టే messages ని WhatsApp ఆమోదించాలి. 24 గంటల లోపు replies కి ఆమోదం అవసరం లేదు.",
+  "hi": "जो messages हम शुरू करते हैं उन्हें WhatsApp मंज़ूर करता है। 24 घंटे के अंदर के replies को मंज़ूरी नहीं चाहिए।",
+  "kn": "ನಾವು ಶುರು ಮಾಡುವ messages ಅನ್ನು WhatsApp ಒಪ್ಪಬೇಕು. 24 ಗಂಟೆಯೊಳಗಿನ replies ಗೆ ಒಪ್ಪಿಗೆ ಬೇಕಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.plain.title": {
+  "en": "Messages we send",
+  "te": "మనం పంపే messages",
+  "hi": "हम जो messages भेजते हैं",
+  "kn": "ನಾವು ಕಳುಹಿಸುವ messages",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
