@@ -367,3 +367,17 @@ def test_the_alert_carries_the_cover_only_when_the_database_gave_the_spend() -> 
     assert "more day" not in alert_detail(account, limit, "VoiceLink")
     assert "about 7 more days" in alert_detail(account, limit, "VoiceLink", 7 * 6000)
     assert len(alert_detail(account, limit, "VoiceLink", 7 * 6000)) < 500   # the database refuses a longer sentence
+
+
+def test_a_refused_voicelink_login_is_reported_with_its_reason_at_once_and_a_plivo_failure_is_not_changed() -> None:
+    """28 Nov 2026: the stored username was the display name, VoiceLink answered 401 and nothing showed. A known reason now goes to the database WITH its sentence (the item is raised on the first failed read)."""
+    api, rpc = plivo("1.00"), FakeRpc()
+    api.fail_with = "auth"
+    result = PlivoBalanceCheck(api, rpc, limit(), None, clock=lambda: NOON, brand="VoiceLink").run(TOKEN)
+    args = rpc.calls[1][1]
+    assert result.read == "failed" and args["p_state"] == "failed" and "REGISTERED username" in args["p_detail"] and "display name" in args["p_detail"]
+    other = FakeRpc()
+    plain = plivo("1.00")
+    plain.fail_with = "auth"
+    PlivoBalanceCheck(plain, other, limit(), None, clock=lambda: NOON).run(TOKEN)
+    assert other.calls[1][1] == {"p_state": "failed"}, "Plivo's own failures behave as before"
