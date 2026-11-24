@@ -22,7 +22,7 @@ from app.telephony.opening_store import OpeningStore
 from app.telephony.plivo_api import PlivoApi
 from app.telephony.plivo_outbound import PlivoOutbound, PostgrestOutboundRepo
 from app.telephony.plivo_routes import PlivoConfig, SubaccountTokens
-from app.telephony.settings import gate_settings
+from app.telephony.settings import gate_settings, phone_llm_choice
 from app.telephony.voicelink_api import VoicelinkApi, VoicelinkCaller
 from app.telephony.voicelink_routes import VoicelinkConfig
 from app.voice.budget import RpcVoiceBudget
@@ -76,7 +76,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
     return InboundService(
         secret=secret.encode("utf-8") if len(secret) >= 32 else b"", public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal), calls=calls,
         cost_paise_per_minute=settings.telephony_cost_paise_per_minute, cost_pulse_s=settings.telephony_cost_pulse_s, cost_paise_per_minute_inbound=settings.telephony_cost_paise_per_minute_inbound, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
-        llm_choice=settings.telephony_llm, business=settings.telephony_inbound_business,
+        llm_choice=phone_llm_choice(settings)[0], first_token_s=phone_llm_choice(settings)[1], business=settings.telephony_inbound_business,
         max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)),
         english_lines=True, call_summaries=True,
         url_format="text" if settings.exotel_stream_url_format == "text" else "json",
