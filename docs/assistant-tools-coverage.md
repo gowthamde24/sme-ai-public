@@ -175,6 +175,7 @@ Levels: read 267, sensitive:deleting 18, sensitive:members 4, sensitive:money 23
 | screen only: a file's bytes: they come in through the chat's file drop (A2) | POST | `/catalogue/items/{item_id}/photos` | | | Upload Photo |
 | screen only: a file's bytes: they come in through the chat's file drop (A2) | PUT | `/catalogue/items/{item_id}/photos/order` | | | Reorder Photos |
 | `catalogue.put_quantity` | PUT | `/catalogue/items/{item_id}/quantity` | write | none | Put Quantity |
+| `catalogue.undo_price` | POST | `/catalogue/items/{item_id}/undo-price` | write | none | Undo Price |
 | `catalogue.low_stock` | GET | `/catalogue/low-stock` | read |  | Low Stock |
 | screen only: a file's bytes: they come in through the chat's file drop (A2) | POST | `/catalogue/photos/{photo_id}/remove` | | | Remove Photo |
 | `catalogue.get_item_values` | GET | `/catalogue/{item_id}/custom` | read |  | Get Item Values |

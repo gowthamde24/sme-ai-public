@@ -9,7 +9,12 @@ from typing import Any, Protocol
 
 import httpx
 
-from app.catalogue.errors import NeedsPhotoError, PhotoFilesMissingError, TooManyPhotosError
+from app.catalogue.errors import (
+    NeedsPhotoError,
+    NothingToUndoError,
+    PhotoFilesMissingError,
+    TooManyPhotosError,
+)
 from app.crm.repository import classify_error
 from app.tenancy.repository import MfaRequired, RepositoryError, UpstreamError
 
@@ -19,6 +24,7 @@ _ERRORS: dict[str, type[RepositoryError]] = {
     "SM521": NeedsPhotoError,
     "SM522": TooManyPhotosError,
     "SM523": PhotoFilesMissingError,
+    "SM851": NothingToUndoError,
 }
 
 
@@ -33,6 +39,8 @@ class CatalogueRepository(Protocol):
         self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID, photo_ids: list[uuid.UUID]
     ) -> dict[str, Any]: ...
     def get_item(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> dict[str, Any]: ...
+
+    def undo_price(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> dict[str, Any]: ...
     def set_quantity(
         self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID, quantity: int | None
     ) -> dict[str, Any]: ...
@@ -119,6 +127,9 @@ class PostgrestCatalogueRepository:
                 "p_photo_ids": [str(p) for p in photo_ids],
             },
         )
+
+    def undo_price(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> dict[str, Any]:
+        return self._object(token, "catalogue_price_undo", {"p_tenant_id": str(tenant_id), "p_item_id": str(item_id)})
 
     def get_item(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> dict[str, Any]:
         return self._object(

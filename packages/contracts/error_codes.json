@@ -3048,11 +3048,15 @@
         409
       ],
       "areas": [
-        "assistant_work"
+        "assistant_work",
+        "catalogue"
       ],
       "default_message": "This change cannot be undone.",
       "wait": false,
-      "extras": []
+      "extras": [
+        "fields",
+        "reason"
+      ]
     },
     {
       "code": "notifications_unavailable",

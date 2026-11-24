@@ -261,7 +261,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `nothing_to_cancel` | 409 | main |  |  | There is no active plan to cancel. |
 | `nothing_to_quote` | 422 | lead_finder |  |  | The suggested items' item types are switched off: there is nothing to put in a draft. |
 | `nothing_to_test` | 409 | lead_sources |  |  | There is nothing to test for this source yet. |
-| `nothing_to_undo` | 409 | assistant_work |  |  | This change cannot be undone. |
+| `nothing_to_undo` | 409 | assistant_work, catalogue |  | fields, reason | This change cannot be undone. |
 | `notifications_unavailable` | 503 | notifications |  |  | This is not available on this system. |
 | `number_not_available` | 409 | phone_numbers |  |  | That number is not available any more. Choose another. |
 | `number_provider_unavailable` | 502 | phone_numbers |  |  | The phone provider did not answer. Try again in a minute. |
