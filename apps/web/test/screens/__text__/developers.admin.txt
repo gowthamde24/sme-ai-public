@@ -1,0 +1,10 @@
+# Developers
+Use your assistant from your own tools: send leads, place calls, and get every result back.
+{label="Developers"} [Overview](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=overview) [API keys](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=keys current=page) [Webhooks](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=hooks) [API activity](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=activity) [Docs and downloads](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=docs)
+Test keys never call anyone.
+{label="Developer API keys"}
+## Developer API keys
+Test mode only sv6.dk.text
+{role=note} sv6.dk.mock
+No keys yet sv6.dk.usage
+[button type=button: sv6.dk.make]

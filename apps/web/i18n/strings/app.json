@@ -127543,5 +127543,115 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "dvp.title": {
+  "en": "Developers",
+  "te": "డెవలపర్లు",
+  "hi": "डेवलपर",
+  "kn": "ಡೆವಲಪರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvp.sub": {
+  "en": "Use your assistant from your own tools: send leads, place calls, and get every result back.",
+  "te": "మీ సొంత టూల్స్ నుంచి మీ అసిస్టెంట్‌ని వాడండి: leads పంపండి, కాల్స్ చేయండి, ప్రతి ఫలితం తిరిగి పొందండి.",
+  "hi": "अपने टूल से अपना असिस्टेंट इस्तेमाल करें: leads भेजें, कॉल करें, और हर नतीजा वापस पाएँ।",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಟೂಲ್‌ಗಳಿಂದ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಬಳಸಿ: leads ಕಳುಹಿಸಿ, ಕರೆ ಮಾಡಿ, ಪ್ರತಿ ಫಲಿತಾಂಶ ಹಿಂತಿರುಗಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvp.tab.overview": {
+  "en": "Overview",
+  "te": "సారాంశం",
+  "hi": "अवलोकन",
+  "kn": "ಸಾರಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvp.tab.keys": {
+  "en": "API keys",
+  "te": "API కీలు",
+  "hi": "API कुंजियाँ",
+  "kn": "API ಕೀಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvp.tab.hooks": {
+  "en": "Webhooks",
+  "te": "వెబ్‌హుక్స్",
+  "hi": "वेबहुक",
+  "kn": "ವೆಬ್‌ಹುಕ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvp.tab.activity": {
+  "en": "API activity",
+  "te": "API యాక్టివిటీ",
+  "hi": "API गतिविधि",
+  "kn": "API ಚಟುವಟಿಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvp.tab.docs": {
+  "en": "Docs and downloads",
+  "te": "డాక్స్, డౌన్‌లోడ్లు",
+  "hi": "डॉक्स और डाउनलोड",
+  "kn": "ಡಾಕ್ಸ್ ಮತ್ತು ಡೌನ್‌ಲೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvp.soon": {
+  "en": "Not open yet. It arrives with the developer API.",
+  "te": "ఇంకా తెరవలేదు. developer API తో వస్తుంది.",
+  "hi": "अभी खुला नहीं है। यह developer API के साथ आएगा।",
+  "kn": "ಇನ್ನೂ ತೆರೆದಿಲ್ಲ. developer API ಜೊತೆ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvp.keys.off": {
+  "en": "API keys are not open yet.",
+  "te": "API keys ఇంకా తెరవలేదు.",
+  "hi": "API keys अभी खुले नहीं हैं।",
+  "kn": "API keys ಇನ್ನೂ ತೆರೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvp.test": {
+  "en": "Test keys never call anyone.",
+  "te": "test keys ఎవరికీ కాల్ చేయవు.",
+  "hi": "test keys किसी को कॉल नहीं करतीं।",
+  "kn": "test keys ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ్ల",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

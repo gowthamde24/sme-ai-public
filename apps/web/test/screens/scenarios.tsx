@@ -1816,4 +1816,6 @@ add({ id: "what-you-sell-mock", roles: ["owner", "admin", "sales"], render: sell
 add({ id: "what-you-sell-mock-services", roles: ["owner"], render: sellPage, handlers: sellPack("clinic") });
 add({ id: "what-you-sell-mock-courses", roles: ["owner"], render: sellPage, handlers: sellPack("coaching") });
 add({ id: "what-you-sell-mock-properties", roles: ["owner"], render: sellPage, handlers: sellPack("real_estate") });
+add({ id: "developers", roles: ["owner", "admin"], render: () => withEnv({ DEVELOPER_KEYS_SCREENS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({}, { tab: "keys" }))), handlers: base });
+add({ id: "developers-overview", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({})), handlers: base });
 add({ id: "what-you-sell-mock-pricelist", roles: ["owner", "sales"], render: sellPage, handlers: sellPack("wholesale_b2b") });
