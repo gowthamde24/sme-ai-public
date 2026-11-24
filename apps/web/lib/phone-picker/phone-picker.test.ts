@@ -30,6 +30,7 @@ describe("the API answers (contract note, 28 Nov)", () => {
   });
   it("reads the claim (201 has no type: the picked type is kept) and the workspace numbers", () => {
     expect(parseClaimed({ number: "+919876543210", display: "x", state: "getting_ready" }, "mobile")).toMatchObject({ display: "+91 98765 43210", type: "mobile", state: "getting_ready" });
+    expect(parseClaimed({ number: "+914012345678", display: "x", type: "landline", state: "getting_ready" }, "mobile").type).toBe("landline"); // the server's own type wins
     expect(parseOwnList({ numbers: [{ number: "+919876543210", type: "mobile", state: "calls_off", label: null }] })[0].state).toBe("calls_off");
   });
   it("reads the reason of a 409 numbers_unavailable from `reason` or the first field, and drops a word outside the contract", () => {

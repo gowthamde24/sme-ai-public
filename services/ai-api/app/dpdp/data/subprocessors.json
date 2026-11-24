@@ -1,7 +1,7 @@
 {
  "$comment": "Job DQ (DPDP): the companies that process personal data for Stack19, as data. The country is where the service processes or stores the data. First draft: the owner checks each line against the provider's current terms (docs/runbooks/dpdp-owner-checklist.md).",
- "version": "2026-11-26",
- "updated_on": "2026-11-26",
+ "version": "2026-11-28",
+ "updated_on": "2026-11-28",
  "wording": "draft",
  "subprocessors": [
   {
@@ -55,9 +55,9 @@
   {
    "id": "sarvam",
    "name": "Sarvam AI",
-   "purpose": "Speaks and understands Indian languages on calls and voice notes, when you switch it on",
+   "purpose": "Speaks and understands Indian languages on calls and voice notes, and writes the assistant's replies on calls, when you switch it on",
    "country": "India",
-   "data": "The text to be spoken, or a short recording to be understood",
+   "data": "The text to be spoken, a short recording to be understood, and the words of the call so far (to write the reply)",
    "link": "https://www.sarvam.ai/terms"
   },
   {
