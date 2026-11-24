@@ -159,6 +159,17 @@ class VoicelinkApi:
                 continue
         return [d for d in found if d.number]
 
+    def websocket_bots(self) -> list[dict[str, Any]]:
+        """Our WebSocket bots as VoiceLink holds them: [{id, bot_name, status (1 active), websocket_url, webhook_url, ...}] (`GET /websocket-bot/list`; a read, for the diagnosis script)."""
+        data = self._request("GET", "/websocket-bot/list", params={"per_page": 100})
+        rows = data.get("data") if isinstance(data, dict) else None
+        return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
+
+    def call_routings(self) -> list[dict[str, Any]]:
+        """The routing of each of our numbers: [{did_number, status, for_inbound_call (3 = WebSocket bot), for_outbound_call, ...}] (`GET /call-routing/list`; a read)."""
+        data = self._request("GET", "/call-routing/list")
+        return [r for r in data if isinstance(r, dict)] if isinstance(data, list) else []
+
     def call_details(self, call_id: str) -> dict[str, Any]:
         data = self._request("GET", "/call-log/details", params={"call_id": call_id})
         return data if isinstance(data, dict) else {}
