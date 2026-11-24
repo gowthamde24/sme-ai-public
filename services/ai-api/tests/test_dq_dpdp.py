@@ -484,4 +484,12 @@ def test_the_sarvam_entry_says_it_also_writes_the_replies_on_calls() -> None:
     body = client.get("/v1/privacy/subprocessors").json()
     sarvam = next(s for s in body["subprocessors"] if s["id"] == "sarvam")
     assert "writes the assistant's replies on calls" in sarvam["purpose"] and "the words of the call so far" in sarvam["data"]
-    assert body["version"] == "2026-11-28"
+    assert body["version"] == "2026-11-29"
+
+
+def test_the_voicelink_entry_says_what_is_true_about_recording() -> None:
+    """28 Nov 2026: VoiceLink's recording was ON for our number while the entry said it was off. The entry now says VoiceLink CAN record when it is on, that we keep it off and that we check."""
+    client, _, _ = world()
+    entry = next(s for s in client.get("/v1/privacy/subprocessors").json()["subprocessors"] if s["id"] == "voicelink")
+    assert "VoiceLink can record calls on its own network when recording is switched on" in entry["data"] and "check that every day" in entry["data"]
+    assert "recording is off" not in entry["data"]

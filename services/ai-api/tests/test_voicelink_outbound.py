@@ -371,7 +371,7 @@ def test_the_dynamic_inbound_call_answer_names_our_bot_and_webhook_with_the_toke
 
 # ------------------------------------------------------------------------------------------------------------------ the wallet check and the provider choice
 def test_the_wallet_reader_gives_the_two_facts_of_the_balance_check_and_a_foreign_currency_is_a_failed_read() -> None:
-    assert VoicelinkBalanceReader(api(FakeVoicelink()), currency="INR").account_details() == {"cash_credits": 812.5, "auto_recharge": None}
+    assert VoicelinkBalanceReader(api(FakeVoicelink()), currency="INR").account_details() == {"cash_credits": 812.5, "auto_recharge": None, "recording_numbers": 0}
     with pytest.raises(VoicelinkError):
         VoicelinkBalanceReader(api(FakeVoicelink(wallet={"balance": 10, "currency": "USD"})), currency="INR").account_details()
 
@@ -521,3 +521,20 @@ def test_the_diagnosis_script_reads_numbers_routing_and_bots_and_never_prints_a_
     assert "...2464 Mobile status=2" in out and "routing: inbound=3 outbound=3 status=1" in out and "Stack19: status=1 (Active)" in out
     assert f"<token len=64 sha8={hashlib.sha256(token.encode()).hexdigest()[:8]}>" in out and "wss://api.example.test/v1/telephony/voicelink/ws/<token" in out
     assert token not in out and "never-printed-password" not in out and "secret-bearer-xyz" not in out and "9429492464" not in out
+
+
+def test_recording_on_reads_the_flag_the_cautious_way_and_the_wallet_reader_counts_numbers_that_record() -> None:
+    from app.telephony.voicelink_api import VoicelinkBalanceReader, recording_on
+
+    assert [recording_on({"call_recording": v}) for v in (1, "1", True, "Yes", "enabled", 0, "0", False, "No", "off", None)] == [True, True, True, True, True, False, False, False, False, False, False]
+    assert recording_on({"call_recording_label": "Yes"}) is True and recording_on({}) is False, "no field: nothing to count (the daily check cannot see it, the diagnose line shows off)"
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/auth/login"):
+            return httpx.Response(200, json={"data": {"access_token": "t"}, "status": True})
+        if request.url.path.endswith("/reseller/profile"):
+            return httpx.Response(200, json={"data": {"wallet": {"balance": 100, "currency": "INR"}}, "status": True})
+        return httpx.Response(200, json={"data": {"data": [{"did_number": "919429492464", "call_recording": 1}, {"did_number": "919400000001", "call_recording": 0}]}, "status": True})
+
+    reader = VoicelinkBalanceReader(VoicelinkApi("u", "p", client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))), currency="INR")
+    assert reader.account_details() == {"cash_credits": 100.0, "auto_recharge": None, "recording_numbers": 1}
