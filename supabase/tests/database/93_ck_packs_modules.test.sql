@@ -188,6 +188,7 @@ insert into exempt (tbl, why) values
   ('pricing.events', 'billing v2: the payment provider''s events, once each'), ('pricing.orders', 'billing v2: the orders paid at the provider, settled once'), ('pricing.invoices', 'billing v2: invoices with GST'), ('pricing.free_starts', 'billing v2: the free start, once per business'),
   ('ops.number_purchases', 'the number picker: one row per number claim of a workspace (operator ledger kept by the platform: the buyer, the number, the state, the cost; core, no module)'),
   ('ops.provider_usage', 'admin console: what each provider cost us per call, message, search and assistant turn (operator ledger, core, no module)'),
+  ('public.sell_lists', 'what you sell, the named lists a business shapes itself: core for every business type (no module)'), ('public.sell_list_columns', 'the columns of a list: core, no module'), ('public.sell_list_rows', 'the items of a list: core, no module'), ('public.sell_list_imports', 'a remembered heading-to-column mapping of an import: core, no module'),
   ('public.sell_entries', 'what you sell, the services / courses / properties / price-list styles: core for every business type (the style comes from the pack, no module)'),
   ('packs.workspace_pack', 'the pack itself'), ('packs.example_batches', 'example data bookkeeping'), ('packs.example_rows', 'example data bookkeeping');
 select is((select coalesce(string_agg(c.table_schema || '.' || c.table_name, ', ' order by c.table_schema, c.table_name), '')
