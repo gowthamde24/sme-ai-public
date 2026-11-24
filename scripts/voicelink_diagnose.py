@@ -22,7 +22,7 @@ from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
 
-from app.telephony.voicelink_api import VoicelinkApi, VoicelinkError
+from app.telephony.voicelink_api import VoicelinkApi, VoicelinkError, recording_on
 
 
 def address(url: str) -> str:
@@ -44,7 +44,7 @@ def main() -> int:
         print("numbers:")
         for d in api.purchased_dids():
             routing = d.get("call_routing") if isinstance(d.get("call_routing"), dict) else {}
-            print(f"  ...{str(d.get('did_number'))[-4:]} {d.get('type_label')} status={d.get('status')} user_status={d.get('user_status')} expired={d.get('is_expired')} expiry={d.get('expiry_date')} auto_renew={d.get('auto_renew')} client={d.get('client_id')} routing: inbound={routing.get('for_inbound_call')} outbound={routing.get('for_outbound_call')} status={routing.get('status')}")
+            print(f"  ...{str(d.get('did_number'))[-4:]} {d.get('type_label')} status={d.get('status')} user_status={d.get('user_status')} expired={d.get('is_expired')} expiry={d.get('expiry_date')} auto_renew={d.get('auto_renew')} recording={'ON' if recording_on(d) else 'off'} client={d.get('client_id')} routing: inbound={routing.get('for_inbound_call')} outbound={routing.get('for_outbound_call')} status={routing.get('status')}")
         print("routings:")
         for r in api.call_routings():
             print(f"  ...{str(r.get('did_number'))[-4:]} inbound={r.get('for_inbound_call')} outbound={r.get('for_outbound_call')} status={r.get('status')} ({r.get('status_label')})")

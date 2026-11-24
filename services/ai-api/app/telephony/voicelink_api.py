@@ -191,6 +191,16 @@ class VoicelinkApi:
         return "queued"
 
 
+def recording_on(row: dict[str, Any]) -> bool:
+    """Does VoiceLink record the calls of this number? Its list says `call_recording` as 0/1 or a word (Yes/No): anything but a clear "off" counts as on, so a surprise is never taken for safe."""
+    value = row.get("call_recording", row.get("call_recording_label"))
+    if value is None:
+        return False
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() not in ("0", "no", "false", "off", "disabled", "")
+
+
 class VoicelinkBalanceReader:
     """The daily balance check's reader (app/ops/plivo_balance.py `AccountReader`): the wallet as the two facts the check uses. A wallet in another currency than the check's is a failed read (a limit that cannot be compared is never a silent pass)."""
 
@@ -201,7 +211,12 @@ class VoicelinkBalanceReader:
         wallet = self._api.wallet()
         if wallet.currency.upper() != self._currency:
             raise VoicelinkError("bad_response")
-        return {"cash_credits": wallet.balance, "auto_recharge": None}
+        out: dict[str, Any] = {"cash_credits": wallet.balance, "auto_recharge": None}
+        try:   # how many of our numbers VoiceLink records on its network (a read; a failure here never fails the wallet read)
+            out["recording_numbers"] = sum(1 for row in self._api.purchased_dids() if recording_on(row))
+        except VoicelinkError:
+            pass
+        return out
 
 
 class VoicelinkCaller:
@@ -230,4 +245,4 @@ class VoicelinkCaller:
         return False
 
 
-__all__ = ["AvailableDid", "VoicelinkApi", "VoicelinkBalanceReader", "VoicelinkCaller", "VoicelinkError", "Wallet", "digits_with_country", "indian_mobile_10"]
+__all__ = ["AvailableDid", "recording_on", "VoicelinkApi", "VoicelinkBalanceReader", "VoicelinkCaller", "VoicelinkError", "Wallet", "digits_with_country", "indian_mobile_10"]

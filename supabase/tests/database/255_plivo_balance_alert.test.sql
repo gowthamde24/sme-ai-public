@@ -128,6 +128,16 @@ select pg_temp.next_day();
 do $$ begin perform pg_temp.w($q$select (public.ops_plivo_balance_report('failed', null, 'VoiceLink refused the login (401). Use the registered username, not the display name.') ->> 'state')$q$); end $$;
 select is((select title from admin.alerts where kind = 'plivo_balance'), 'The telephony balance could not be read today', 'J1: a known reason is an item on the first failed read');
 select is((select detail from admin.alerts where kind = 'plivo_balance'), 'VoiceLink refused the login (401). Use the registered username, not the display name.', 'J2: with the sentence the worker made');
+-- K. a telephony setting that is not as promised (28 Nov 2026, migration 988500): one item while it lasts, cleared when it is right again, only the system account reports it
+delete from admin.alerts where kind in ('plivo_balance', 'telephony_setting');
+select is(pg_temp.w($q$select public.ops_telephony_setting_report(false, 'VoiceLink call recording is ON for 1 of our numbers.')::text$q$), '', 'K1: the system account reports a wrong setting');
+select is((select title from admin.alerts where kind = 'telephony_setting' and acknowledged_at is null), 'A telephony setting is not as promised', 'K2: one open item with its title');
+do $$ begin perform pg_temp.w($q$select public.ops_telephony_setting_report(false, 'again')::text$q$); end $$;
+select is((select count(*) from admin.alerts where kind = 'telephony_setting' and acknowledged_at is null), 1::bigint, 'K3: a second report the same day is still ONE item');
+select is(pg_temp.w($q$select public.ops_telephony_setting_report(false)::text$q$), 'ERR:22023', 'K4: a wrong setting needs its sentence');
+select is(pg_temp.w($q$select public.ops_telephony_setting_report(false, 'x')::text$q$, 'a_owner'), 'ERR:42501', 'K5: a workspace owner cannot report it');
+do $$ begin perform pg_temp.w($q$select public.ops_telephony_setting_report(true)::text$q$); end $$;
+select is((select count(*) from admin.alerts where kind = 'telephony_setting' and acknowledged_at is null), 0::bigint, 'K6: when the setting is right again the item is cleared');
 select ok(pg_temp.w($q$select (public.ops_plivo_balance_due() ->> 'calls_7d_paise')$q$, 'outsider') ~ '^[0-9]+$', 'I1: the answer also carries the last 7 days of call cost in paise (a whole number)');
 
 select * from finish();
