@@ -74331,10 +74331,10 @@
   }
  },
  "ctx.lead": {
-  "en": "Tell {assistant} about your business, the way you would brief a new employee. It uses this in chats, calls, Ask and drafts. If something is not here or in your records, it does not make it up.",
-  "te": "కొత్తగా చేరిన ఉద్యోగికి చెప్పినట్లు మీ వ్యాపారం గురించి {assistant}కి చెప్పండి. చాట్‌లు, కాల్స్, అడగండి, డ్రాఫ్ట్‌లలో ఇది వాడబడుతుంది. ఇక్కడ లేదా మీ రికార్డుల్లో లేనిది అది కల్పించదు.",
-  "hi": "नए कर्मचारी को समझाने की तरह {assistant} को अपने व्यापार के बारे में बताइए। चैट, कॉल, पूछिए और ड्राफ्ट में यह इस्तेमाल होता है। जो यहाँ या आपके रिकॉर्ड में नहीं है, वह अपनी तरफ़ से नहीं बनाती।",
-  "kn": "ಹೊಸ ಉದ್ಯೋಗಿಗೆ ಹೇಳುವಂತೆ ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ {assistant}ಗೆ ಹೇಳಿ. ಚಾಟ್, ಕರೆ, ಕೇಳಿ ಮತ್ತು ಡ್ರಾಫ್ಟ್‌ಗಳಲ್ಲಿ ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ಇಲ್ಲಿ ಅಥವಾ ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ಇಲ್ಲದ್ದನ್ನು ಅದು ಸೃಷ್ಟಿಸುವುದಿಲ್ಲ.",
+  "en": "Tell {assistant} about your business, the way you would brief a new employee. If something is not here or in your records, it does not make it up.",
+  "te": "కొత్తగా చేరిన ఉద్యోగికి చెప్పినట్లు మీ వ్యాపారం గురించి {assistant}కి చెప్పండి. ఇక్కడ లేదా మీ రికార్డుల్లో లేనిది అది కల్పించదు.",
+  "hi": "नए कर्मचारी को समझाने की तरह {assistant} को अपने व्यापार के बारे में बताइए। जो यहाँ या आपके रिकॉर्ड में नहीं है, वह अपनी तरफ़ से नहीं बनाती।",
+  "kn": "ಹೊಸ ಉದ್ಯೋಗಿಗೆ ಹೇಳುವಂತೆ ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ {assistant}ಗೆ ಹೇಳಿ. ಇಲ್ಲಿ ಅಥವಾ ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ಇಲ್ಲದ್ದನ್ನು ಅದು ಸೃಷ್ಟಿಸುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -127716,6 +127716,138 @@
   "te": "₹50,000 పైన",
   "hi": "₹50,000 से ऊपर",
   "kn": "₹50,000ಕ್ಕಿಂತ ಹೆಚ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.f.lang": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.f.speed": {
+  "en": "Speed",
+  "te": "వేగం",
+  "hi": "रफ़्तार",
+  "kn": "ವೇಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.f.style": {
+  "en": "Tone",
+  "te": "మాట తీరు",
+  "hi": "बोलने का ढंग",
+  "kn": "ಮಾತಿನ ರೀತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.f.address": {
+  "en": "Call me",
+  "te": "నన్ను ఎలా పిలవాలి",
+  "hi": "मुझे कैसे बुलाए",
+  "kn": "ನನ್ನನ್ನು ಹೇಗೆ ಕರೆಯಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.h.lang": {
+  "en": "The language it talks to you in.",
+  "te": "మీతో ఏ భాషలో మాట్లాడాలి.",
+  "hi": "आपसे किस भाषा में बात करे।",
+  "kn": "ನಿಮ್ಮೊಂದಿಗೆ ಯಾವ ಭಾಷೆಯಲ್ಲಿ ಮಾತಾಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.h.speed": {
+  "en": "How fast it speaks to you.",
+  "te": "మీతో ఎంత వేగంగా మాట్లాడాలి.",
+  "hi": "आपसे कितनी तेज़ बोले।",
+  "kn": "ನಿಮ್ಮೊಂದಿಗೆ ಎಷ್ಟು ವೇಗವಾಗಿ ಮಾತಾಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.h.style": {
+  "en": "How it sounds: friendly, respectful, short and quick, and so on.",
+  "te": "ఎలా మాట్లాడాలి: ఫ్రెండ్లీగా, గౌరవంగా, క్లుప్తంగా, ఇలా.",
+  "hi": "कैसे बोले: दोस्ताना, आदर से, छोटा और तेज़, वगैरह।",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕು: ಸ್ನೇಹದಿಂದ, ಗೌರವದಿಂದ, ಚುಟುಕಾಗಿ, ಇತ್ಯಾದಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.h.address": {
+  "en": "What it calls you: by name, with garu, sir or madam.",
+  "te": "మిమ్మల్ని ఎలా పిలవాలి: పేరుతో, గారు, సర్ లేదా మేడమ్.",
+  "hi": "आपको क्या कहे: नाम से, गारु, सर या मैडम।",
+  "kn": "ನಿಮ್ಮನ್ನು ಏನೆಂದು ಕರೆಯಬೇಕು: ಹೆಸರಿನಿಂದ, ಗಾರು, ಸರ್ ಅಥವಾ ಮೇಡಂ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.unsaved": {
+  "en": "You have unsaved changes.",
+  "te": "మీరు చేసిన మార్పులు ఇంకా save కాలేదు.",
+  "hi": "बदलाव सेव नहीं हुए हैं।",
+  "kn": "ಸೇವ್ ಮಾಡದ ಬದಲಾವಣೆಗಳಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.title.teach": {
+  "en": "Teach your assistant",
+  "te": "మీ అసిస్టెంట్‌కి నేర్పండి",
+  "hi": "अपने असिस्टेंट को सिखाइए",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.used.plain": {
+  "en": "Your assistant reads this when it answers customers on calls and chats.",
+  "te": "కాల్స్‌లో, చాట్‌లో కస్టమర్లకు జవాబిచ్చేటప్పుడు మీ అసిస్టెంట్ దీన్ని చదువుతుంది.",
+  "hi": "आपका असिस्टेंट कॉल और चैट में ग्राहकों को जवाब देते समय इसे पढ़ता है।",
+  "kn": "ಕರೆ ಮತ್ತು ಚಾಟ್‌ನಲ್ಲಿ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸುವಾಗ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಇದನ್ನು ಓದುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

@@ -8,6 +8,7 @@ import { callFor, exampleFor } from "@/lib/talk-prefs/example";
 import { addressFor, type Field, type Patch, type Style, type TalkLang, type TalkPrefs, type TalkVoice } from "@/lib/talk-prefs/types";
 
 import { Choose, MoreChoices, Sentence } from "../jobs/rules/parts";
+import { SelectField } from "../settings/simple/fields";
 import { alertBox, checkRow, fieldHelp, okBox } from "../ui";
 import { makeT, type Words } from "../words";
 
@@ -49,11 +50,12 @@ function play(base64: string, contentType: string, onEnd: () => void): HTMLAudio
  * and ONE live example line that follows them; the voice (female or male, three sounds, each with a play button) and the words are under More choices. One "Hear it" plays the sample of the chosen style (cached by the API; in the test mode only the words are shown, never a made-up voice). A choice saves at once and shows
  * "Saved" with Undo (15 minutes); the lists and the voices come from the API, the labels are ours. The language decides which voices and which "call me" options exist. Nothing about how it is saved changed.
  */
-export function TalkToYou({ words, initial, languages, first, langNames, mock, actions, ownerFirst = null }: { words?: Words; /** The signed-in person's first name: the friendly sample greets them with it. */ ownerFirst?: string | null; initial: TalkPrefs; languages: readonly TalkLang[]; first: TalkLang; langNames: Record<string, string>; mock: boolean; actions: TalkToYouActions }) {
+export function TalkToYou({ words, initial, languages, first, langNames, mock, actions, ownerFirst = null, plain = false }: { /** SETTINGS_OPEN (owner, 25 Nov 2026: no fill-in-the-blank sentences): four labelled fields with a hint each and ONE Save instead of the two sentences. */ plain?: boolean; words?: Words; /** The signed-in person's first name: the friendly sample greets them with it. */ ownerFirst?: string | null; initial: TalkPrefs; languages: readonly TalkLang[]; first: TalkLang; langNames: Record<string, string>; mock: boolean; actions: TalkToYouActions }) {
   const t = makeT(words);
   const [lang, setLang] = React.useState<TalkLang>(first);
   const [prefs, setPrefs] = React.useState<TalkPrefs>(initial);
   const [gender, setGender] = React.useState<"female" | "male">(initial.voice?.gender ?? "female");
+  const [draft, setDraft] = React.useState<{ speed: string; style: string; address: string }>({ speed: initial.speed, style: initial.style, address: initial.address });
   const [note, setNote] = React.useState<Note>(null);
   const [playing, setPlaying] = React.useState<string | null>(null);
   const [sample, setSample] = React.useState<{ text: string; sound: boolean } | null>(null);
@@ -68,6 +70,7 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
   };
   const adopt = (data: TalkPrefs) => {
     setPrefs(data);
+    setDraft({ speed: data.speed, style: data.style, address: data.address });
     if (data.voice) setGender(data.voice.gender);
   };
   const changeLang = (l: TalkLang) =>
@@ -129,8 +132,31 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
   const addresses = addressFor(lang, o.address);
   const langName = langNames[lang] ?? lang;
   const label = (field: Field, value: string): string => (field === "words" && value === "pure" ? t("otp.words.pure", { lang: langName }) : t(`otp.${field}.${value}` as "otp.style.friendly"));
-  const call = callFor(prefs.address, ownerFirst, (name) => t(`vt.me.call.${prefs.address}` as "vt.me.call.garu", { name }));
-  const example = exampleFor(lang, prefs.style as Style, call);
+  const shownStyle = plain ? draft.style : prefs.style;
+  const shownAddress = plain ? draft.address : prefs.address;
+  const call = callFor(shownAddress as typeof prefs.address, ownerFirst, (name) => t(`vt.me.call.${shownAddress}` as "vt.me.call.garu", { name }));
+  const example = exampleFor(lang, shownStyle as Style, call);
+  const changed = (["speed", "style", "address"] as const).filter((f) => draft[f] !== prefs[f]);
+  // ONE Save: the API takes one change at a time (one Undo each), so the changed fields go one after the other; Undo is offered only when exactly one changed
+  const saveAll = () =>
+    start(async () => {
+      stop();
+      setNote(null);
+      let last: Extract<PrefsResult, { ok: true }> | null = null;
+      for (const f of changed) {
+        const out = await actions.save(lang, { [f]: draft[f] } as Patch).catch(() => null);
+        if (!out?.ok) {
+          if (last) adopt(last.data);
+          setNote({ kind: "error", fail: out && !out.ok ? out.error : "down" });
+          return;
+        }
+        last = out;
+      }
+      if (last) {
+        adopt(last.data);
+        setNote({ kind: "saved", token: changed.length === 1 ? last.data.undoToken : null, changed: last.data.changed });
+      }
+    });
   const chosen = (field: Exclude<Field, "voice">) => (value: string) => value !== prefs[field] && choose(field, value);
   const nameOf = (v: TalkVoice) => v.name;
   const hearPlaying = playing !== null;
@@ -148,6 +174,15 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
       </div>
 
       <div className="flex flex-col gap-1" data-part="vt-me-lines">
+        {plain ? (
+          <div className="flex flex-col gap-4" data-part="vt-me-fields">
+            <SelectField label={t("vt.me.f.lang")} hint={t("vt.me.h.lang")} value={lang} options={languages.map((l) => ({ value: l, label: langNames[l] ?? l }))} disabled={busy} onChange={(l) => l !== lang && changeLang(l as TalkLang)} />
+            <SelectField label={t("vt.me.f.speed")} hint={t("vt.me.h.speed")} value={draft.speed} options={o.speed.map((v) => ({ value: v, label: label("speed", v) }))} disabled={busy} onChange={(v) => setDraft((d) => ({ ...d, speed: v }))} />
+            <SelectField label={t("vt.me.f.style")} hint={t("vt.me.h.style")} value={draft.style} options={o.style.map((v) => ({ value: v, label: label("style", v) }))} disabled={busy} onChange={(v) => setDraft((d) => ({ ...d, style: v }))} />
+            <SelectField label={t("vt.me.f.address")} hint={t("vt.me.h.address")} value={draft.address} options={addresses.map((v) => ({ value: v, label: label("address", v) }))} disabled={busy} onChange={(v) => setDraft((d) => ({ ...d, address: v }))} />
+          </div>
+        ) : (
+          <>
         <Sentence
           line="me-lang"
           template={t("vt.me.s1")}
@@ -164,15 +199,27 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
             address: (a) => <Choose aria={a} value={prefs.address} options={addresses} text={(v) => label("address", v)} disabled={busy} onChange={chosen("address")} />,
           }}
         />
+          </>
+        )}
         <p data-part="vt-me-example" aria-live="polite" lang={lang} className="m-0 text-[15px] text-muted">
           {t("vt.ex.label")} <span className="font-medium text-ink">“{example}”</span>
         </p>
         <div className="mt-1">
-          <button type="button" aria-pressed={hearPlaying} data-hear={`style:${prefs.style}`} onClick={() => hear("style", prefs.style)} className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2">
+          <button type="button" aria-pressed={hearPlaying} data-hear={`style:${shownStyle}`} onClick={() => hear("style", shownStyle)} className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2">
             {hearPlaying ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
             {t(hearPlaying ? "vt.stop" : "vt.hear")}
           </button>
         </div>
+        {plain ? (
+          <div data-part="vt-me-save" className="flex flex-wrap items-center gap-3">
+            <button type="button" disabled={busy || changed.length === 0} onClick={saveAll} className="inline-flex min-h-11 items-center rounded-lg border border-brand-edge bg-brand px-5 text-[15px] font-semibold text-on-brand disabled:opacity-60">
+              {t("vt.me.save")}
+            </button>
+            <p role="status" className="m-0 text-[14px] text-muted">
+              {changed.length > 0 ? t("vt.me.unsaved") : ""}
+            </p>
+          </div>
+        ) : null}
         {sample && !sample.sound ? (
           <p data-part="otp-sample" className="m-0 text-sm text-muted">
             {t("otp.nosound")}
