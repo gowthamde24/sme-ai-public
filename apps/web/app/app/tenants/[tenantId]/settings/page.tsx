@@ -479,7 +479,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           selectLabel={t("set.g.section")}
           groups={(
             [
-              ["business", "set.g.business", ["business", "profile", "plan", "fields"]],
+              ["business", "set.g.business", ["business", "profile", "plan", "fields"]], // plan-id-ok: these are Settings section keys ("business" is the Business tab, "plan" the Plan tab), not plan ids
               ["team", "set.g.team", ["members"]],
               ["assistant", "set.g.assistant", ["assistant", "activity", "leadfinder"]],
               ["quotes", "set.g.quotes", ["quotes", "agent", "limits"]],

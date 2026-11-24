@@ -22,7 +22,13 @@
     }
    ],
    "metaTitle": "AI phone assistant for textile and saree shops | Stack19",
-   "metaDescription": "Answers saree-shop calls and WhatsApp in Telugu, Hindi, Kannada and English, shares what you sell, and shows you who wants to visit."
+   "metaDescription": "Answers saree-shop calls and WhatsApp in Telugu, Hindi, Kannada and English, shares what you sell, and shows you who wants to visit.",
+   "call": [
+    "Do you have Kanchi pattu sarees under ten thousand?",
+    "Yes, we do! A few lovely ones in maroon and green. Want to come and see them?",
+    "Is the shop open on Sunday?",
+    "Sunday is open, 10 to 8. I'll keep a few aside for you. What time suits you?"
+   ]
   },
   {
    "slug": "clinics",
@@ -45,7 +51,13 @@
     }
    ],
    "metaTitle": "AI phone assistant for clinics | Stack19",
-   "metaDescription": "Answers clinic calls and WhatsApp in Telugu, Hindi, Kannada and English, writes down what each patient wants, and leaves the decisions to your staff."
+   "metaDescription": "Answers clinic calls and WhatsApp in Telugu, Hindi, Kannada and English, writes down what each patient wants, and leaves the decisions to your staff.",
+   "call": [
+    "Can I get an appointment this evening?",
+    "Yes, I have a slot at 5:15 or 6. Which one is better for you?",
+    "5:15, please.",
+    "Done! 5:15 this evening. I'll send the clinic address on WhatsApp."
+   ]
   },
   {
    "slug": "coaching",
@@ -68,7 +80,13 @@
     }
    ],
    "metaTitle": "AI phone assistant for coaching centres | Stack19",
-   "metaDescription": "Answers admission calls and WhatsApp in Telugu, Hindi, Kannada and English and calls new enquiries back, with a summary of each on your screen."
+   "metaDescription": "Answers admission calls and WhatsApp in Telugu, Hindi, Kannada and English and calls new enquiries back, with a summary of each on your screen.",
+   "call": [
+    "What are the Class 10 batch timings?",
+    "We have a morning batch at 7 and an evening batch at 5. Which one is easier for your child?",
+    "Can my son try one class first?",
+    "Of course! We have a free demo class on Saturday. Shall I put his name down?"
+   ]
   },
   {
    "slug": "real-estate",
@@ -91,7 +109,13 @@
     }
    ],
    "metaTitle": "AI phone assistant for real estate | Stack19",
-   "metaDescription": "Answers property enquiries in Telugu, Hindi, Kannada and English while you are on site, and notes what each buyer is looking for."
+   "metaDescription": "Answers property enquiries in Telugu, Hindi, Kannada and English while you are on site, and notes what each buyer is looking for.",
+   "call": [
+    "Can I see the 2BHK flat this Saturday?",
+    "Yes, of course! Saturday morning is free. Would 11 o'clock be good?",
+    "11 is fine. Where do we meet?",
+    "At the project gate. I'll send the location on WhatsApp right now."
+   ]
   },
   {
    "slug": "car-dealers",
@@ -114,7 +138,13 @@
     }
    ],
    "metaTitle": "AI phone assistant for car dealers | Stack19",
-   "metaDescription": "Answers showroom calls and WhatsApp in Telugu, Hindi, Kannada and English and writes down which car and when each person can visit."
+   "metaDescription": "Answers showroom calls and WhatsApp in Telugu, Hindi, Kannada and English and writes down which car and when each person can visit.",
+   "call": [
+    "I'd like to test drive the hatchback this week.",
+    "Great choice! I have Thursday or Friday afternoon. Which one is better?",
+    "Friday at 3.",
+    "Friday at 3 it is. I'll send the showroom location on WhatsApp."
+   ]
   },
   {
    "slug": "wholesale",
@@ -137,7 +167,13 @@
     }
    ],
    "metaTitle": "AI phone assistant for wholesale and trading | Stack19",
-   "metaDescription": "Answers buyer calls and WhatsApp in Telugu, Hindi, Kannada and English, shares your price list and shows you who asked for a quote."
+   "metaDescription": "Answers buyer calls and WhatsApp in Telugu, Hindi, Kannada and English, shares your price list and shows you who asked for a quote.",
+   "call": [
+    "Do you have 80 mm paver blocks in grey?",
+    "Yes, we have them in stock. Shall I send the price list on WhatsApp?",
+    "Can you deliver to Kukatpally?",
+    "We can! Tell me the day you want it, and I'll check the truck for you."
+   ]
   }
  ]
 }

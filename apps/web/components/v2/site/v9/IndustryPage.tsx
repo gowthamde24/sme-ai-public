@@ -1,7 +1,6 @@
 import "@/design/v9.css";
 
 import { JsonLd } from "@/components/v2/site/JsonLd";
-import { appDict } from "@/i18n/app";
 import type { SiteT } from "@/i18n/site";
 import { BRAND_NAME } from "@/design/brand";
 import { PUBLIC_URL } from "@/lib/seo/site";
@@ -9,19 +8,13 @@ import { INDUSTRY_PRICING_LINE, type IndustryPageSpec } from "@/lib/site/industr
 
 import { V9Cta, V9Ftr, V9Hdr } from "./generated";
 
-/** The made-up example call of the business type, from the app's own sample calls (`vc.cv.<pack>.friendly`: four turns, the customer first). */
-function sampleCall(pack: string): readonly string[] {
-  const dict = appDict("en") as Record<string, string>;
-  return (dict[`vc.cv.${pack}.friendly`] ?? dict["vc.cv.default.friendly"] ?? "").split("\n").filter(Boolean);
-}
-
 /**
  * An industry page (`/for/<industry>`, flag INDUSTRY_PAGES; English only): in the look of the home page (design/v9.css, every rule under `.v9`): the home page's header and footer, ONE honest headline and sentence with the
  * ONE call to action, three plain sections, a made-up example call (said so), the pricing line and the home page's closing card (the same action). No customer claims, no numbers that are not the plans'.
  * The in-page links of the header and footer go to the home page's sections.
  */
 export function IndustryPage({ industry, t }: { industry: IndustryPageSpec; t: SiteT }) {
-  const call = sampleCall(industry.pack);
+  const call = industry.call;
   return (
     <div className="v9 ind" data-part="industry-page" data-industry={industry.slug}>
       <V9Hdr t={t} home="/" />

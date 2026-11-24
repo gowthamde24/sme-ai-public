@@ -15,6 +15,7 @@ describe("the industry pages' data", () => {
       expect(p.sections).toHaveLength(3);
       const call = (dict[`vc.cv.${p.pack}.friendly`] ?? "").split("\n").filter(Boolean);
       expect(call, p.slug).toHaveLength(4);
+      expect([...p.call], p.slug).toEqual(call); // the copy in the data is the app's own sample call
       expect(p.metaDescription.length).toBeLessThanOrEqual(170);
     }
   });
