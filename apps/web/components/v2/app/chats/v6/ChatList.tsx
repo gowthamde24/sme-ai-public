@@ -33,7 +33,7 @@ export function ChatList({ words, base, filter, q, chats, waiting, selectedId, n
     <section className="flex min-h-0 min-w-0 flex-col" data-chats="list" aria-label={t("chats6.list")}>
       <nav aria-label={t("chats6.filters")} className="flex flex-wrap gap-1.5 border-b border-line p-3 max-md:flex-nowrap max-md:overflow-x-auto max-md:p-2 max-md:[scrollbar-width:none]" data-part="chat-filters">
         {CHAT_FILTERS.map((f) => (
-          <Link key={f} href={href(base, f, q, selectedId)} aria-current={filter === f ? "true" : undefined} data-filter={f} className={`${chip} ${filter === f ? "border-ink bg-ink text-bg" : "border-line bg-surface text-ink hover:bg-surface-2"}`}>
+          <Link key={f} href={href(base, f, q, selectedId)} aria-current={filter === f ? "true" : undefined} data-filter={f} className={`${chip} ${filter === f ? "border-ink bg-transparent font-semibold text-ink shadow-[0_0_0_1px_var(--v2-ink)]" : "border-line bg-surface text-ink hover:bg-surface-2"}`}>
             {t(`chats6.f.${f}`)}
             {f !== "done" || counts.done > 0 ? <span className="tabular-nums">{counts[f].toLocaleString("en-IN")}</span> : null}
           </Link>

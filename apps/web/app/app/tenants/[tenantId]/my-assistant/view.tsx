@@ -23,7 +23,7 @@ import { readAssistantStatus } from "@/lib/assistant-status/source";
 import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { requireUser } from "@/lib/auth/session";
 import { readPackCached } from "@/lib/packs/read";
-import { appV4, assistantStatusScreens, designV6, talkTrainingScreens, teachScreens, testCallScreens } from "@/lib/screens/flag";
+import { appV4, assistantStatusScreens, designV6, talkTrainingScreens, teachScreens, testCallScreens, myAssistantOpen } from "@/lib/screens/flag";
 
 import { menuTitle } from "../menu-title";
 import { goLiveOrPauseAction } from "../my-assistant-actions";
@@ -85,7 +85,7 @@ export async function renderMyAssistant(tenantId: string, which: "overview" | Se
       <GoLivePanel words={wordsFor(lang, ["mya.g.", "mya.missing.", "mya.tab.", "nav.assistant."])} base={base} status={status} button={goLive} mock={assistantStatusScreens() === "mock"} />
     );
   return (
-    <main className={pageMain} lang={lang}>
+    <main className={pageMain} lang={lang} {...(myAssistantOpen() ? { "data-mya-over": "" } : {})}>
       {helpTipFor(lang, base, "myassistant", true)}
       <PageHeader
         title={tab === "overview" ? t("mya.title") : await menuTitle("train", lang, user.accessToken, tenantId)}

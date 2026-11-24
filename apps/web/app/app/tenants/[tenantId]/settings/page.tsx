@@ -11,6 +11,7 @@ import { UsageCard, planText } from "@/components/v2/app/frame-parts";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { menuTitle } from "../menu-title";
 import { ApiDownV2, PageTop, Pill, SectionTabs } from "@/components/v2/app/parts";
+import { SettingsSections } from "@/components/v2/app/settings/LazySettingsSections";
 import { breakAll, btnQuiet, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface as boxedSurface } from "@/components/v2/app/ui";
 import { appT, frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
@@ -472,7 +473,24 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     <main className={pageMain} lang={lang}>
       <PageTop title={t("nav.item.settings")} />
       {helpTipFor(lang, base, "settings")}
-      <SectionTabs label={t("settings.parts_label")} items={tabs.map((x) => ({ key: x.key, label: x.label, href: `${base}/settings?section=${x.key}`, current: x.key === section }))} />
+      {settingsOpen() ? (
+        <SettingsSections
+          label={t("settings.parts_label")}
+          selectLabel={t("set.g.section")}
+          groups={(
+            [
+              ["business", "set.g.business", ["business", "profile", "plan", "fields"]],
+              ["team", "set.g.team", ["members"]],
+              ["assistant", "set.g.assistant", ["assistant", "activity", "leadfinder"]],
+              ["quotes", "set.g.quotes", ["quotes", "agent", "limits"]],
+              ["language", "set.g.language", ["language", "notifications"]],
+              ["more", "set.g.more", ["data", "security", "privacy"]],
+            ] as const
+          ).map(([key, labelKey, keys]) => ({ key, label: t(labelKey), items: tabs.filter((x) => (keys as readonly string[]).includes(x.key)).map((x) => ({ key: x.key, label: x.label, href: `${base}/settings?section=${x.key}`, current: x.key === section })) }))}
+        />
+      ) : (
+        <SectionTabs label={t("settings.parts_label")} items={tabs.map((x) => ({ key: x.key, label: x.label, href: `${base}/settings?section=${x.key}`, current: x.key === section }))} />
+      )}
       <div className="mt-6 max-w-3xl space-y-4">
         {previewAllowed() ? (
           <p className="m-0" data-part="preview-link">
@@ -516,7 +534,23 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 {workspace ? <BusinessLogo action={logoAction.bind(null, tenantId)} words={wordsFor(lang, ["settings.biz.logo."])} logoUrl={workspace.logoUrl} initial={businessProfile.name.slice(0, 1).toUpperCase()} /> : null}
               </section>
             ) : null}
-            {finish && finish.done < finish.total ? <ActivationCard activation={finish} base={base} t={t} hide={setStepHiddenAction.bind(null, tenantId)} hidden={putAway} /> : null}
+            {finish && finish.done < finish.total ? (
+              settingsOpen() ? (
+                <p data-start="line" className="m-0 text-[15px] text-muted">
+                  {t("start.title")} · {t("start.count", { done: finish.done, total: finish.total })}
+                  {finish.next?.href ? (
+                    <>
+                      {" · "}
+                      <Link prefetch={false} href={finish.next.href.startsWith("/app") ? finish.next.href : `${base}${finish.next.href}`} className="font-semibold text-ink underline underline-offset-4">
+                        {t("start.next")}
+                      </Link>
+                    </>
+                  ) : null}
+                </p>
+              ) : (
+                <ActivationCard activation={finish} base={base} t={t} hide={setStepHiddenAction.bind(null, tenantId)} hidden={putAway} />
+              )
+            ) : null}
             <section className={surface} aria-label={t("settings.tab.business")}>
               <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {businessProfile ? null : (

@@ -53,7 +53,7 @@ const dateText = (iso: string, lang: string): string => (iso ? new Date(iso).toL
 export function LeadsV6Shell({ words, lang, base, help, canAdd, children }: { words: Words; lang: string; base: string; help: ReactNode; canAdd: boolean; children: ReactNode }) {
   const t = makeT(words);
   const addLink = canAdd ? (
-    <Link href={`${base}/add-lead`} className={btnMain}>
+    <Link href={`${base}/add-lead`} className={btnQuiet}>
       {t("lv6.add")}
     </Link>
   ) : null;

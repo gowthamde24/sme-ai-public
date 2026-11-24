@@ -122,7 +122,7 @@ export function PracticePanel({ words, language, langName, practice, teach, test
         {turns.length > 0 ? (
           <ol className="m-0 flex list-none flex-col gap-2 p-0" aria-live="polite" data-part="practice-turns">
             {turns.map((x, i) => (
-              <li key={i} data-who={x.who} className={`max-w-[92%] rounded-2xl px-3 py-2 text-sm ${x.who === "customer" ? "self-end bg-surface-2" : "self-start border border-line bg-brand-bg"}`}>
+              <li key={i} data-who={x.who} className={`max-w-[92%] rounded-2xl px-3 py-2 text-sm ${x.who === "customer" ? "self-end bg-surface-2" : "self-start border border-line bg-surface-2"}`}>
                 <span className="block text-xs font-bold text-muted">{t(x.who === "customer" ? "tt.practice.you" : "tt.practice.ai")}</span>
                 <span lang={practiceLang} className="[overflow-wrap:anywhere]">
                   {x.text}
@@ -153,7 +153,7 @@ export function PracticePanel({ words, language, langName, practice, teach, test
               </label>
               <input id="mya-practice-in" ref={input} lang={practiceLang} value={text} maxLength={400} disabled={busy} onChange={(e) => setText(e.target.value)} className={fieldInput} />
             </div>
-            <button type="submit" disabled={busy || text.trim() === ""} className={btnMain}>
+            <button type="submit" disabled={busy || text.trim() === ""} className={btnQuiet}>
               {busy ? t("tt.practice.sending") : t("tt.practice.send")}
             </button>
           </form>

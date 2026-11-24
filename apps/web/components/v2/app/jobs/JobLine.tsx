@@ -78,7 +78,7 @@ export function JobLine({ job, words, base, actions, icon = false }: { job: Job;
         <span className="block text-[17px] font-semibold leading-snug text-ink">{name}</span>
         <span className="flex items-start gap-2 text-[15px] leading-snug text-muted">
           <span aria-hidden="true" className={`mt-[7px] size-2 shrink-0 rounded-full ${needs ? "bg-brand" : "bg-muted"}`} />
-          <span className={needs ? "font-medium text-brand-text" : ""}>{status}</span>
+          <span className={needs ? "font-medium text-ink" : ""}>{status}</span>
         </span>
         {job.speaks ? <SpeaksChips speaks={job.speaks} t={t} words={words} /> : null}
         {error ? (
