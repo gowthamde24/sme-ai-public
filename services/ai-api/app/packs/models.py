@@ -33,10 +33,20 @@ class PackSummaryOut(_Out):
     summary: dict[str, str]
     accent: str
     owl_prop: str
+    # 28 Nov 2026 (packages/packs/categories.json): the group the sign-up tile sits in and the words a person may type to find it; null / empty when the file does not say
+    category: str | None = None
+    keywords: str = ""
+
+
+class PackCategoryOut(_Out):
+    id: str
+    name: dict[str, str]
+    colour: str
 
 
 class PackListOut(_Out):
     packs: list[PackSummaryOut]
+    categories: list[PackCategoryOut] = []
 
 
 class ModuleStateOut(_Out):

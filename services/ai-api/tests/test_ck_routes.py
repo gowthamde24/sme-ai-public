@@ -591,3 +591,22 @@ def test_an_unknown_pack_from_the_database_is_a_422_on_the_pack_field_not_a_502(
     client, _ = make_client(packs=packs)
     r = client.put(f"/v1/tenants/{TENANT_A.id}/pack", json={"pack": "no_such_pack"}, headers=auth("a_owner"))
     assert r.status_code == 422 and r.json()["error"]["code"] == "validation_error" and r.json()["error"]["fields"] == ["pack"], r.text
+
+
+def test_categories_and_keywords_come_from_the_file_and_a_missing_or_partial_file_is_never_an_error(tmp_path: Path) -> None:
+    """28 Nov 2026 (packages/packs/categories.json): no pack id in code; a pack the file does not name has no category and no keywords."""
+    import shutil
+
+    shutil.copytree(PACKS, tmp_path / "p")
+    (tmp_path / "p" / "categories.json").unlink(missing_ok=True)
+    plain = PackRegistry(tmp_path / "p").selectable()
+    assert plain.categories == [] and all(p.category is None and p.keywords == "" for p in plain.packs)
+    doc = {"categories": [{"id": "shops", "name": {"en": "Shops", "te": "షాపులు"}, "colour": "rose"}, {"id": "broken"}], "packs": {"textiles": "shops", "gym": "no_such_group"}, "keywords": {"textiles": "  saree   silk  cloth ", "ghost_pack": "x"}}
+    (tmp_path / "p" / "categories.json").write_text(json.dumps(doc), encoding="utf-8")
+    listed = PackRegistry(tmp_path / "p").selectable()
+    assert [c.id for c in listed.categories] == ["shops"], "a category that does not fit the shape is left out, the order is the file's"
+    by_id = {p.pack_id: p for p in listed.packs}
+    assert by_id["textiles"].category == "shops" and by_id["textiles"].keywords == "saree silk cloth"
+    assert by_id["gym"].category is None, "a pack pointing at a group that does not exist has no category"
+    (tmp_path / "p" / "categories.json").write_text("{not json", encoding="utf-8")
+    assert PackRegistry(tmp_path / "p").selectable().categories == []

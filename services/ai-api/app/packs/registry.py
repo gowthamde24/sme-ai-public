@@ -8,10 +8,11 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from app.packs.models import PackListOut, PackStatus, PackSummaryOut
+from app.packs.models import PackCategoryOut, PackListOut, PackStatus, PackSummaryOut
 
 logger = logging.getLogger("app.packs.registry")
 
@@ -74,8 +75,33 @@ class PackRegistry:
                     )  # fmt: skip
         else:
             logger.error("the packs directory was not found: sign-up cards cannot be served")
-        self._cache = PackListOut(packs=sorted(found.values(), key=lambda p: (not p.validated, p.pack_id)))
+        categories, assignment, keywords = self._categories()
+        for pack_id, summary in list(found.items()):
+            category = assignment.get(pack_id)
+            found[pack_id] = summary.model_copy(update={"category": category if category in {c.id for c in categories} else None, "keywords": keywords.get(pack_id, "")})
+        self._cache = PackListOut(packs=sorted(found.values(), key=lambda p: (not p.validated, p.pack_id)), categories=categories)
         return self._cache
+
+    def _categories(self) -> tuple[list[PackCategoryOut], dict[str, str], dict[str, str]]:
+        """packages/packs/categories.json: the groups of the sign-up tiles, which pack sits in which group and the words a person may type to find it. A missing or unreadable file, or a pack it does not name, is never an error: no category, no keywords."""
+        if self._directory is None:
+            return [], {}, {}
+        try:
+            doc = json.loads((self._directory / "categories.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return [], {}, {}
+        if not isinstance(doc, dict):
+            return [], {}, {}
+        categories: list[PackCategoryOut] = []
+        for raw in doc.get("categories") or []:
+            try:
+                categories.append(PackCategoryOut.model_validate(raw))
+            except ValidationError:
+                logger.error("a pack category could not be read and is left out")
+        raw_packs, raw_words = doc.get("packs"), doc.get("keywords")
+        packs: dict[Any, Any] = raw_packs if isinstance(raw_packs, dict) else {}
+        words: dict[Any, Any] = raw_words if isinstance(raw_words, dict) else {}
+        return categories, {str(k): str(v) for k, v in packs.items()}, {str(k): " ".join(str(v).split())[:300] for k, v in words.items()}
 
 
 DEFAULT_CALL_TONE = "friendly"
