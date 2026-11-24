@@ -1,0 +1,12 @@
+{
+ "_comment": "Words an owner types in a saree's name that tell its fabric (English and Telugu, lower case). The form sets the fabric from the name until the owner picks one. Data, not code: add words here.",
+ "kanchi_pattu": ["kanchi", "kanchipuram", "kanjivaram", "కంచి", "కాంజీవరం"],
+ "dharmavaram_silk": ["dharmavaram", "ధర్మవరం"],
+ "soft_silk": ["soft silk", "సాఫ్ట్ సిల్క్"],
+ "cotton_silk": ["cotton silk", "కాటన్ సిల్క్"],
+ "banarasi": ["banarasi", "benarasi", "banaras", "బనారసి"],
+ "mysore_silk": ["mysore", "మైసూర్"],
+ "uppada": ["uppada", "ఉప్పాడ"],
+ "pure_cotton": ["pure cotton", "handloom", "cotton", "chanderi", "కాటన్", "చేనేత"],
+ "georgette": ["georgette", "జార్జెట్"]
+}

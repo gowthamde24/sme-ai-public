@@ -20747,10 +20747,10 @@
   "humanOnly": true
  },
  "pl.sku": {
-  "en": "sku",
-  "te": "sku",
-  "hi": "sku",
-  "kn": "sku",
+  "en": "Product code",
+  "te": "Product code",
+  "hi": "Product code",
+  "kn": "Product code",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27162,10 +27162,10 @@
   }
  },
  "pl.col_sku": {
-  "en": "sku",
-  "te": "sku",
-  "hi": "sku",
-  "kn": "sku",
+  "en": "Product code",
+  "te": "Product code",
+  "hi": "Product code",
+  "kn": "Product code",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27357,10 +27357,10 @@
   "humanOnly": true
  },
  "pl.columns_line": {
-  "en": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog.",
-  "te": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog.",
-  "hi": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog.",
-  "kn": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog.",
+  "en": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every product code (sku) must already be a product in your catalog.",
+  "te": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every product code (sku) must already be a product in your catalog.",
+  "hi": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every product code (sku) must already be a product in your catalog.",
+  "kn": "Columns: {cols} and, optionally, {first} up to {last}. Prices are in rupees (4200 or 1,200.50). Every product code (sku) must already be a product in your catalog.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -127639,6 +127639,28 @@
   "te": "టెస్ట్ స్క్రీన్: ఈ నంబర్లు కల్పితం, ఏదీ కొనడం లేదు.",
   "hi": "टेस्ट स्क्रीन: ये नंबर बनाए हुए हैं, कुछ खरीदा नहीं जाता।",
   "kn": "ಟೆಸ್ಟ್ ಸ್ಕ್ರೀನ್: ಈ ನಂಬರ್‌ಗಳು ಕಲ್ಪಿತ, ಏನೂ ಖರೀದಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.err.notlist": {
+  "en": "This file is not a plain list. To use an Excel file, a photo or a PDF, give it to your assistant on the Today page (the paperclip). Or save it as a CSV list and choose that.",
+  "te": "ఇది సాదా లిస్ట్ ఫైల్ కాదు. ఎక్సెల్ ఫైల్, ఫోటో లేదా PDF వాడాలంటే Today పేజీలో మీ అసిస్టెంట్‌కి (క్లిప్ గుర్తు) ఇవ్వండి. లేదా CSV లిస్ట్‌గా సేవ్ చేసి అది ఎంచుకోండి.",
+  "hi": "यह सादी सूची वाली फ़ाइल नहीं है। Excel फ़ाइल, फ़ोटो या PDF के लिए उसे Today पेज पर अपने असिस्टेंट को दीजिए (क्लिप का निशान)। या CSV सूची में सेव करके वह चुनिए।",
+  "kn": "ಇದು ಸರಳ ಪಟ್ಟಿಯ ಫೈಲ್ ಅಲ್ಲ. Excel ಫೈಲ್, ಫೋಟೋ ಅಥವಾ PDF ಬಳಸಲು Today ಪುಟದಲ್ಲಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ (ಕ್ಲಿಪ್ ಗುರುತು) ಕೊಡಿ. ಅಥವಾ CSV ಪಟ್ಟಿಯಾಗಿ ಸೇವ್ ಮಾಡಿ ಅದನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.sample": {
+  "en": "Download an example file",
+  "te": "ఉదాహరణ ఫైల్ డౌన్‌లోడ్ చేయండి",
+  "hi": "उदाहरण फ़ाइल डाउनलोड कीजिए",
+  "kn": "ಉದಾಹರಣೆ ಫೈಲ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
