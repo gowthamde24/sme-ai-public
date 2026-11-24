@@ -9,7 +9,7 @@ export function SendingBanner({ words, demo = false }: { words: TodayWords; demo
     <p role="status" data-banner="sending-stopped" className="m-0 flex items-start gap-2.5 border-y border-line py-3 text-[15px] leading-snug text-muted">
       <span aria-hidden="true" className="mt-[7px] size-2 shrink-0 rounded-full bg-amber-text" />
       <span className="min-w-0">
-        {demo ? null : <b className="font-semibold text-ink">{say(words, "outbox.stopped.title")}. </b>}
+        {demo ? null : <><b className="font-semibold text-ink">{say(words, "outbox.stopped.title")}</b>. </>}
         {say(words, demo ? "outbox.stopped.demo" : "outbox.stopped.body")}
       </span>
     </p>
