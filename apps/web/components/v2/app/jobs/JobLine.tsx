@@ -79,7 +79,8 @@ export function JobLine({ job, words, base, actions }: { job: Job; words: Words;
       data-state={off ? "off" : needs ? "needs" : "running"}
       className={`flex h-full min-w-0 flex-col justify-center rounded-[14px] border bg-surface p-4 text-left ${needs ? "border-ink" : "border-line"}`}
     >
-      <div className="flex items-center gap-3">
+      <div className={`flex gap-3 ${needs || off ? "flex-col sm:flex-row sm:items-center" : "items-center"}`}>
+        <div className="flex min-w-0 flex-1 items-center gap-3">
         <Icon aria-hidden="true" data-k={JOB_CATEGORY[job.kind]} className="mt-0.5 size-6 shrink-0" strokeWidth={1.8} />
         <Link href={href} prefetch={false} className="flex min-w-0 flex-1 flex-col items-start gap-1 no-underline">
           <span className="block text-[17px] font-semibold leading-snug text-ink">{name}</span>
@@ -94,12 +95,13 @@ export function JobLine({ job, words, base, actions }: { job: Job; words: Words;
             </span>
           ) : null}
         </Link>
+        </div>
         {needs ? (
-          <Link href={fixHref} prefetch={false} className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-ink bg-surface px-4 text-[15px] font-semibold text-ink no-underline">
+          <Link href={fixHref} prefetch={false} className="inline-flex min-h-11 shrink-0 items-center self-start rounded-lg border border-ink bg-surface px-4 sm:self-center text-[15px] font-semibold text-ink no-underline">
             {fixLabel}
           </Link>
         ) : off ? (
-          <button type="button" disabled={busy || !actions} onClick={() => void change(true)} className="write-ctl inline-flex min-h-11 shrink-0 items-center rounded-lg border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60">
+          <button type="button" disabled={busy || !actions} onClick={() => void change(true)} className="write-ctl inline-flex min-h-11 shrink-0 items-center self-start rounded-lg border border-edge sm:self-center bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60">
             {t("jobs.line.turn_on")}
           </button>
         ) : (
