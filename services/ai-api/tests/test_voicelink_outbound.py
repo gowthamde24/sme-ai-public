@@ -538,3 +538,30 @@ def test_recording_on_reads_the_flag_the_cautious_way_and_the_wallet_reader_coun
 
     reader = VoicelinkBalanceReader(VoicelinkApi("u", "p", client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))), currency="INR")
     assert reader.account_details() == {"cash_credits": 100.0, "auto_recharge": None, "recording_numbers": 1}
+
+
+def test_the_call_detail_script_prints_field_names_and_only_non_personal_values(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location("voicelink_call_detail", Path(__file__).resolve().parents[3] / "scripts" / "voicelink_call_detail.py")
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    record = {"call_id": "1764.5", "unique_id": "u-1", "did_number": "919429492464", "customer_number": "919573989785", "call_status": "Answered", "duration": 67, "total_cost": "0.5000", "bot_type": 3,
+              "recording": "https://files.example.test/client_1/secret.mp3", "created_at": "2026-11-24 18:48:33", "meta": {"caller": "919573989785", "hangup_by": "bot"}, "events": [{"type": "x", "number": "9195"}]}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/auth/login"):
+            return httpx.Response(200, json={"data": {"access_token": "bearer-xyz"}, "status": True})
+        return httpx.Response(200, json={"data": record, "status": True})
+
+    real = mod.VoicelinkApi
+    monkeypatch.setattr(mod, "VoicelinkApi", lambda u, p: real(u, p, client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(handler))))
+    monkeypatch.setenv("VOICELINK_USERNAME", "u")
+    monkeypatch.setenv("VOICELINK_PASSWORD", "never-printed")
+    assert mod.main(["x", "61872340-19d3-400a-a0fb-1d5de68502bf"]) == 0
+    out = capsys.readouterr().out
+    assert "call_status: str = 'Answered'" in out and "duration: int = 67" in out and "total_cost: str = '0.5000'" in out and "did_number: str (length 12)" in out and "hangup_by: str = 'bot'" in out
+    for secret in ("919429492464", "919573989785", "secret.mp3", "bearer-xyz", "never-printed", "files.example.test"):
+        assert secret not in out, secret
