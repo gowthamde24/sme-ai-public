@@ -48,6 +48,8 @@ select is((select coalesce(owed_paise, 0) from pricing.debts where tenant_id = t
 select is(pricing.balance_of(tests.tid('a')), 8500::bigint, 'C2: the rest (Rs 100 less Rs 15) is the balance');
 select is(pg_temp.gate('a', 'inbound_ok') || pg_temp.gate('a', 'outbound_ok'), 'truetrue', 'C3: both directions are open again');
 select is(pg_temp.j(pg_temp.sc('a_owner', format('select public.pricing_balance(%L)::text', tests.tid('a'))), 'owed_paise'), '0', 'C3b: and nothing is owed any more');
+select is(pg_temp.j(pg_temp.sc('a_owner', format('select public.pricing_statement(%L)::text', tests.tid('a'))), 'closing_paise'), pg_temp.j(pg_temp.sc('a_owner', format('select public.pricing_statement(%L)::text', tests.tid('a'))), 'balance_paise'), 'C3c: the statement closes at the balance (the part of the top-up that paid the debt is a line of its own)');
+select is((select count(*) from jsonb_array_elements(pg_temp.sc('a_owner', format('select public.pricing_statement(%L)::text', tests.tid('a')))::jsonb -> 'items') i where i ->> 'label' = 'Calls taken while your balance was empty' and (i ->> 'amount_paise')::bigint = -1500), 1::bigint, 'C3d: ... "Calls taken while your balance was empty", minus Rs 15');
 select pricing.credit(tests.tid('a'), 'free_start', 'fs_cc', 3000);
 select is((select coalesce(owed_paise, 0) from pricing.debts where tenant_id = tests.tid('a')), 0::bigint, 'C4: a free start never pays a debt (and there is none)');
 
