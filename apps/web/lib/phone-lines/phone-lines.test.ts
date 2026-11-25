@@ -109,12 +109,12 @@ describe("the flags are declared like the others", () => {
         .filter((l) => /^[A-Z0-9_]+=/.test(l))
         .map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1)]),
     );
-  it("are on in staging (the panel for real, the lines as a made-up answer) and absent from production", () => {
+  it("are on in staging (the panel for real, the lines as a made-up answer); production has the real panel (release 2, planner 26 Nov 2026) and never the made-up lines", () => {
     const staging = flags("staging-web-flags.env");
     expect(staging.CALLS_PANEL).toBe("1");
     expect(staging.PHONE_LINES_SCREENS).toBe("mock");
     for (const file of ["production-web-flags.env", "settings/production/web.env"]) {
-      expect(Object.keys(flags(file)), file).not.toContain("CALLS_PANEL");
+      expect(flags(file).CALLS_PANEL, file).toBe("1");
       expect(Object.keys(flags(file)), file).not.toContain("PHONE_LINES_SCREENS");
     }
   });
