@@ -48,8 +48,8 @@ describe("the import screen (night 4, item 3)", () => {
     await paste();
     expect(a.read).toHaveBeenCalledWith(expect.objectContaining({ kind: "paste", text: "Ravi, 9000000001", content_base64: null }));
     expect(screen.getByText("3 leads found.")).toBeInTheDocument();
-    fireEvent.click(screen.getByLabelText("I confirm these people may be contacted for the reason below."));
-    expect(screen.getByRole("alert")).toHaveTextContent("Fill in all four to confirm.");
+    fireEvent.click(screen.getByLabelText("These people wrote to me (their enquiry is in writing), or their consent is recorded."));
+    expect(screen.getByRole("alert")).toHaveTextContent("Fill in all four to record it.");
     expect(screen.getByRole("button", { name: "Check the list" })).toBeDisabled();
     fireEvent.change(screen.getByLabelText("Name of this list"), { target: { value: "Open day" } });
     fireEvent.change(screen.getByLabelText("What you will contact them about"), { target: { value: "The new flats" } });
@@ -86,10 +86,10 @@ describe("the import screen (night 4, item 3)", () => {
     const a = actions({ preview: vi.fn(async () => ({ ok: true as const, data: { ...PREVIEW, counts: { ...COUNTS, no_consent: 412 }, estimate: { messages: 0, call_minutes: 0, cost_paise: 0, basis: "estimate" as const } } })) });
     draw(a);
     await paste();
-    expect(screen.getByText("Without this confirmation the leads are saved, but nothing is sent to them.")).toBeInTheDocument();
+    expect(screen.getByText("Without this record the leads are saved, but nothing is sent to them.")).toBeInTheDocument();
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Check the list" })));
     expect(a.preview).toHaveBeenCalledWith(expect.objectContaining({ consent_confirmed: false }));
-    expect(screen.getByText(/412 saved, nothing is sent to them \(no confirmation\)/)).toBeInTheDocument();
+    expect(screen.getByText(/412 saved, nothing is sent to them \(no record\)/)).toBeInTheDocument();
     expect(screen.queryByText(/About .* minutes of calls/)).toBeNull();
   });
 
@@ -97,8 +97,8 @@ describe("the import screen (night 4, item 3)", () => {
     const a = actions();
     draw(a, "sales");
     await paste();
-    expect(screen.getByText(/Only the Owner or an Admin can confirm this/)).toBeInTheDocument();
-    expect(screen.queryByLabelText("I confirm these people may be contacted for the reason below.")).toBeNull();
+    expect(screen.getByText(/Only the Owner or an Admin can record this/)).toBeInTheDocument();
+    expect(screen.queryByLabelText("These people wrote to me (their enquiry is in writing), or their consent is recorded.")).toBeNull();
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Check the list" })));
     expect(a.preview).toHaveBeenCalledWith(expect.objectContaining({ consent_confirmed: false }));
     cleanup();
@@ -155,10 +155,10 @@ describe("the import screen (night 4, item 3)", () => {
     expect(new TextDecoder().decode(Uint8Array.from(atob(sent.content_base64), (c) => c.charCodeAt(0)))).toBe('name,phone,message\n"Ravi","90000 00001","asked, about ""silk"""\n');
     expect(screen.queryByText("Which column is what?")).toBeNull();
     // the same consent confirmation as Add leads
-    expect(screen.getByLabelText("I confirm this person may be contacted for the reason below.")).toBeInTheDocument();
+    expect(screen.getByLabelText("This person wrote to me (their enquiry is in writing), or their consent is recorded.")).toBeInTheDocument();
     expect(screen.getAllByText("May you contact this person?").length).toBeGreaterThan(0); // (the heading for a screen reader and the box's own legend)
     expect(screen.queryByText(/these people/)).toBeNull();
-    expect(screen.getByText("Without this confirmation the lead is saved, but nothing is sent to this person.")).toBeInTheDocument();
+    expect(screen.getByText("Without this record the lead is saved, but nothing is sent to this person.")).toBeInTheDocument();
     expect(screen.queryByLabelText("Cost per lead in rupees (optional)")).toBeNull();
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "See what will happen" })));
     const body = (n: number) => JSON.parse((fetched.mock.calls[n] as unknown as [string, { body: string }])[1].body) as Record<string, unknown>;
@@ -173,7 +173,7 @@ describe("the import screen (night 4, item 3)", () => {
     render(<ImportScreen one words={words} base="/app/tenants/T" role="sales" test={false} fileEndpoint="/app/tenants/T/import/send" actions={a as unknown as ImportActions} sheets={null} />);
     fireEvent.change(screen.getByLabelText("Phone number"), { target: { value: "90000 00002" } });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Check this lead" })));
-    expect(screen.getByText(/You can add the lead, but nothing is sent to this person until the Owner or an Admin confirms\./)).toBeInTheDocument();
+    expect(screen.getByText(/You can add the lead, but nothing is sent to this person until the Owner or an Admin records it\./)).toBeInTheDocument();
     vi.unstubAllGlobals();
   });
 

@@ -201,11 +201,11 @@ describe("the job page: changing things", () => {
     expect(screen.getByRole("status")).not.toHaveTextContent("free minutes");
     expect(a.test).toHaveBeenLastCalledWith("whatsapp");
   });
-  it("outside 9 am to 9 pm the test is refused (409 quiet_hours): the button goes off and the sentence says when tests are sent", async () => {
+  it("outside 10 am to 9 pm the test is refused (409 quiet_hours): the button goes off and the sentence says when tests are sent", async () => {
     const a = acts({ test: vi.fn(async () => ({ ok: false as const, kind: "conflict" as const, error: "x", code: "quiet_hours" })) });
     view("speed_to_lead", a);
     fireEvent.click(screen.getByRole("button", { name: "Test call to my phone" }));
-    expect(await within(part("job-try")).findByRole("alert")).toHaveTextContent("Test calls and messages are only sent between 9 am and 9 pm.");
+    expect(await within(part("job-try")).findByRole("alert")).toHaveTextContent("Test calls and messages are only sent between 10 am and 9 pm.");
     expect(screen.getByRole("button", { name: "Test call to my phone" })).toBeDisabled();
     expect(a.test).toHaveBeenCalledTimes(1);
   });

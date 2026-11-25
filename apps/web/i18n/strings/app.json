@@ -47423,10 +47423,10 @@
   }
  },
  "camp.err.hours": {
-  "en": "Calls can only be made from 9 am to 9 pm India time.",
-  "te": "కాల్స్ ఉదయం 9 నుండి రాత్రి 9 వరకు (భారత సమయం) మాత్రమే చేయగలం.",
-  "hi": "कॉल केवल सुबह 9 से रात 9 बजे (भारतीय समय) के बीच हो सकती हैं।",
-  "kn": "ಕರೆಗಳನ್ನು ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರವರೆಗೆ (ಭಾರತೀಯ ಸಮಯ) ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "en": "Calls can only be made from 10 am to 9 pm India time.",
+  "te": "కాల్స్ ఉదయం 10 నుండి రాత్రి 9 వరకు (భారత సమయం) మాత్రమే చేయగలం.",
+  "hi": "कॉल केवल सुबह 10 से रात 9 बजे (भारतीय समय) के बीच हो सकती हैं।",
+  "kn": "ಕರೆಗಳನ್ನು ಬೆಳಿಗ್ಗೆ 10 ರಿಂದ ರಾತ್ರಿ 9 ರವರೆಗೆ (ಭಾರತೀಯ ಸಮಯ) ಮಾತ್ರ ಮಾಡಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -57859,10 +57859,10 @@
   }
  },
  "asst.hours.range": {
-  "en": "Calling hours are between 09:00 and 21:00, in steps of 15 minutes.",
-  "te": "కాల్ సమయాలు 09:00 నుంచి 21:00 మధ్య, 15 నిమిషాల అడుగులలో ఉండాలి.",
-  "hi": "कॉल का समय 09:00 से 21:00 के बीच, 15 मिनट के अंतर पर होना चाहिए।",
-  "kn": "ಕಾಲ್ ಸಮಯ 09:00 ರಿಂದ 21:00 ರ ನಡುವೆ, 15 ನಿಮಿಷಗಳ ಹಂತದಲ್ಲಿ ಇರಬೇಕು.",
+  "en": "Calling hours are between 10:00 and 21:00, in steps of 15 minutes.",
+  "te": "కాల్ సమయాలు 10:00 నుంచి 21:00 మధ్య, 15 నిమిషాల అడుగులలో ఉండాలి.",
+  "hi": "कॉल का समय 10:00 से 21:00 के बीच, 15 मिनट के अंतर पर होना चाहिए।",
+  "kn": "ಕಾಲ್ ಸಮಯ 10:00 ರಿಂದ 21:00 ರ ನಡುವೆ, 15 ನಿಮಿಷಗಳ ಹಂತದಲ್ಲಿ ಇರಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -65993,10 +65993,10 @@
   }
  },
  "li.consent.check": {
-  "en": "I confirm these people may be contacted for the reason below.",
-  "te": "కింది కారణం కోసం వీళ్లను సంప్రదించవచ్చని నేను నిర్ధారిస్తున్నాను.",
-  "hi": "मैं पुष्टि करता/करती हूँ कि नीचे दिए कारण से इनसे बात की जा सकती है।",
-  "kn": "ಕೆಳಗಿನ ಕಾರಣಕ್ಕಾಗಿ ಇವರನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು ಎಂದು ನಾನು ಖಚಿತಪಡಿಸುತ್ತೇನೆ.",
+  "en": "These people wrote to me (their enquiry is in writing), or their consent is recorded.",
+  "te": "వీళ్లు నాకు రాశారు (వాళ్ల enquiry రాతపూర్వకంగా ఉంది), లేదా వీళ్ల consent రికార్డ్ అయి ఉంది.",
+  "hi": "इन लोगों ने मुझे लिखा है (उनकी enquiry लिखित में है), या इनका consent रिकॉर्ड है।",
+  "kn": "ಇವರು ನನಗೆ ಬರೆದಿದ್ದಾರೆ (ಅವರ enquiry ಲಿಖಿತದಲ್ಲಿದೆ), ಅಥವಾ ಇವರ consent ರೆಕಾರ್ಡ್ ಆಗಿದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -66081,10 +66081,10 @@
   }
  },
  "li.consent.help": {
-  "en": "This is your own word. We keep it with the list: who said it, when, and what you wrote.",
-  "te": "ఇది మీ స్వంత మాట. దీన్ని లిస్ట్‌తో పాటు ఉంచుతాం: ఎవరు చెప్పారు, ఎప్పుడు, మీరు ఏం రాశారు.",
-  "hi": "यह आपका अपना वादा है। हम इसे लिस्ट के साथ रखते हैं: किसने कहा, कब, और आपने क्या लिखा।",
-  "kn": "ಇದು ನಿಮ್ಮ ಸ್ವಂತ ಮಾತು. ಇದನ್ನು ಲಿಸ್ಟ್‌ನೊಂದಿಗೆ ಇಡುತ್ತೇವೆ: ಯಾರು ಹೇಳಿದರು, ಯಾವಾಗ, ನೀವು ಏನು ಬರೆದಿರಿ.",
+  "en": "We keep it with the list: who ticked it, when, and what you wrote. Keep the proof too: the enquiry or the consent record.",
+  "te": "లిస్ట్‌తో పాటు మేము దీన్ని ఉంచుతాం: ఎవరు టిక్ చేశారు, ఎప్పుడు, మీరు ఏం రాశారు. రుజువు కూడా మీ దగ్గర ఉంచండి: enquiry లేదా consent రికార్డ్.",
+  "hi": "हम इसे लिस्ट के साथ रखते हैं: किसने टिक किया, कब, और आपने क्या लिखा। सबूत भी अपने पास रखें: enquiry या consent रिकॉर्ड।",
+  "kn": "ಲಿಸ್ಟ್ ಜೊತೆ ನಾವು ಇದನ್ನು ಇಡುತ್ತೇವೆ: ಯಾರು ಟಿಕ್ ಮಾಡಿದರು, ಯಾವಾಗ, ನೀವು ಏನು ಬರೆದಿರಿ. ಪುರಾವೆಯನ್ನೂ ನಿಮ್ಮ ಬಳಿ ಇಡಿ: enquiry ಅಥವಾ consent ರೆಕಾರ್ಡ್.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -66092,10 +66092,10 @@
   }
  },
  "li.consent.incomplete": {
-  "en": "Fill in all four to confirm.",
-  "te": "నిర్ధారించడానికి నాలుగూ నింపండి.",
-  "hi": "पुष्टि के लिए चारों भरें।",
-  "kn": "ಖಚಿತಪಡಿಸಲು ನಾಲ್ಕನ್ನೂ ತುಂಬಿ.",
+  "en": "Fill in all four to record it.",
+  "te": "రికార్డ్ చేయడానికి నాలుగూ నింపండి.",
+  "hi": "रिकॉर्ड करने के लिए चारों भरें।",
+  "kn": "ರೆಕಾರ್ಡ್ ಮಾಡಲು ನಾಲ್ಕನ್ನೂ ತುಂಬಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -66103,10 +66103,10 @@
   }
  },
  "li.consent.none": {
-  "en": "Without this confirmation the leads are saved, but nothing is sent to them.",
-  "te": "ఈ నిర్ధారణ లేకపోతే లీడ్స్ సేవ్ అవుతాయి, కానీ వాళ్లకు ఏమీ పంపరు.",
-  "hi": "इस पुष्टि के बिना लीड सेव हो जाती हैं, पर उन्हें कुछ नहीं भेजा जाता।",
-  "kn": "ಈ ದೃಢೀಕರಣ ಇಲ್ಲದಿದ್ದರೆ ಲೀಡ್ಸ್ ಸೇವ್ ಆಗುತ್ತವೆ, ಆದರೆ ಅವರಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "en": "Without this record the leads are saved, but nothing is sent to them.",
+  "te": "ఈ రికార్డ్ లేకపోతే leads సేవ్ అవుతాయి, కానీ వాళ్లకి ఏమీ వెళ్లదు.",
+  "hi": "इस रिकॉर्ड के बिना leads सेव होते हैं, पर उन्हें कुछ नहीं भेजा जाता।",
+  "kn": "ಈ ರೆಕಾರ್ಡ್ ಇಲ್ಲದಿದ್ದರೆ leads ಸೇವ್ ಆಗುತ್ತವೆ, ಆದರೆ ಅವರಿಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -66114,10 +66114,10 @@
   }
  },
  "li.consent.sales": {
-  "en": "Only the Owner or an Admin can confirm this. You can add the leads, but nothing is sent to them until the Owner or an Admin confirms.",
-  "te": "దీన్ని ఓనర్ లేదా అడ్మిన్ మాత్రమే నిర్ధారించగలరు. మీరు లీడ్స్ చేర్చవచ్చు, కానీ ఓనర్ లేదా అడ్మిన్ నిర్ధారించే వరకు వాళ్లకు ఏమీ పంపరు.",
-  "hi": "इसकी पुष्टि सिर्फ़ ओनर या एडमिन कर सकते हैं। आप लीड जोड़ सकते हैं, पर ओनर या एडमिन के पुष्टि करने तक उन्हें कुछ नहीं भेजा जाएगा।",
-  "kn": "ಇದನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಖಚಿತಪಡಿಸಬಹುದು. ನೀವು ಲೀಡ್ಸ್ ಸೇರಿಸಬಹುದು, ಆದರೆ ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಖಚಿತಪಡಿಸುವವರೆಗೆ ಅವರಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "en": "Only the Owner or an Admin can record this. You can add the leads, but nothing is sent to them until the Owner or an Admin records it.",
+  "te": "ఇది రికార్డ్ చేయడం Owner లేదా Admin మాత్రమే చేయగలరు. మీరు leads జోడించవచ్చు, కానీ Owner లేదా Admin రికార్డ్ చేసే వరకు వాళ్లకి ఏమీ వెళ్లదు.",
+  "hi": "इसे रिकॉर्ड सिर्फ़ Owner या Admin कर सकते हैं। आप leads जोड़ सकते हैं, पर Owner या Admin के रिकॉर्ड करने तक उन्हें कुछ नहीं भेजा जाता।",
+  "kn": "ಇದನ್ನು ರೆಕಾರ್ಡ್ ಮಾಡಲು Owner ಅಥವಾ Admin ಮಾತ್ರ ಸಾಧ್ಯ. ನೀವು leads ಸೇರಿಸಬಹುದು, ಆದರೆ Owner ಅಥವಾ Admin ರೆಕಾರ್ಡ್ ಮಾಡುವವರೆಗೆ ಅವರಿಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -66400,10 +66400,10 @@
   }
  },
  "li.pv.noconsent": {
-  "en": "{n} saved, nothing is sent to them (no confirmation)",
-  "te": "{n} సేవ్ అయ్యాయి, వాళ్లకు ఏమీ పంపరు (నిర్ధారణ లేదు)",
-  "hi": "{n} सेव हुईं, उन्हें कुछ नहीं भेजा जाएगा (पुष्टि नहीं)",
-  "kn": "{n} ಸೇವ್ ಆದವು, ಅವರಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ (ದೃಢೀಕರಣ ಇಲ್ಲ)",
+  "en": "{n} saved, nothing is sent to them (no record)",
+  "te": "{n} సేవ్ అయ్యాయి, వాళ్లకి ఏమీ వెళ్లదు (రికార్డ్ లేదు)",
+  "hi": "{n} सेव हुए, उन्हें कुछ नहीं भेजा जाता (रिकॉर्ड नहीं है)",
+  "kn": "{n} ಸೇವ್ ಆಗಿವೆ, ಅವರಿಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ (ರೆಕಾರ್ಡ್ ಇಲ್ಲ)",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -66741,10 +66741,10 @@
   }
  },
  "li.err.consent_owner_only": {
-  "en": "Only the Owner or an Admin can confirm consent. Remove the confirmation and add the leads without it.",
-  "te": "అనుమతిని ఓనర్ లేదా అడ్మిన్ మాత్రమే నిర్ధారించగలరు. నిర్ధారణ తీసేసి లీడ్స్ చేర్చండి.",
-  "hi": "अनुमति की पुष्टि सिर्फ़ ओनर या एडमिन कर सकते हैं। पुष्टि हटाकर लीड जोड़ें।",
-  "kn": "ಅನುಮತಿಯನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಖಚಿತಪಡಿಸಬಹುದು. ದೃಢೀಕರಣ ತೆಗೆದು ಲೀಡ್ಸ್ ಸೇರಿಸಿ.",
+  "en": "Only the Owner or an Admin can record consent. Untick it and add the leads without it.",
+  "te": "consent రికార్డ్ చేయడం Owner లేదా Admin మాత్రమే చేయగలరు. టిక్ తీసేసి leads ని అది లేకుండా జోడించండి.",
+  "hi": "consent रिकॉर्ड सिर्फ़ Owner या Admin कर सकते हैं। टिक हटाइए और leads को उसके बिना जोड़िए।",
+  "kn": "consent ರೆಕಾರ್ಡ್ ಮಾಡಲು Owner ಅಥವಾ Admin ಮಾತ್ರ ಸಾಧ್ಯ. ಟಿಕ್ ತೆಗೆದು leads ಅನ್ನು ಅದಿಲ್ಲದೆ ಸೇರಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -67610,10 +67610,10 @@
   }
  },
  "lsrc.consent.hint": {
-  "en": "You can also confirm that you may contact the people who come in. Without it their leads are saved, but nothing is sent to them.",
-  "te": "వచ్చే వాళ్లను సంప్రదించవచ్చని కూడా నిర్ధారించవచ్చు. లేకపోతే వాళ్ల లీడ్స్ సేవ్ అవుతాయి, కానీ వాళ్లకు ఏమీ పంపరు.",
-  "hi": "आप यह भी पुष्टि कर सकते हैं कि आने वालों से बात कर सकते हैं। इसके बिना उनकी लीड सेव होती हैं, पर उन्हें कुछ नहीं भेजा जाता।",
-  "kn": "ಬರುವವರನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು ಎಂದೂ ಖಚಿತಪಡಿಸಬಹುದು. ಇಲ್ಲದಿದ್ದರೆ ಅವರ ಲೀಡ್ಸ್ ಸೇವ್ ಆಗುತ್ತವೆ, ಆದರೆ ಅವರಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "en": "You can also record that the people who come in wrote to you or gave consent. Without it their leads are saved, but nothing is sent to them.",
+  "te": "వచ్చే వాళ్లు మీకు రాశారని లేదా consent ఇచ్చారని కూడా రికార్డ్ చేయవచ్చు. అది లేకపోతే వాళ్ల leads సేవ్ అవుతాయి, కానీ వాళ్లకి ఏమీ వెళ్లదు.",
+  "hi": "आप यह भी रिकॉर्ड कर सकते हैं कि आने वाले लोगों ने आपको लिखा या consent दिया। इसके बिना उनके leads सेव होते हैं, पर उन्हें कुछ नहीं भेजा जाता।",
+  "kn": "ಬರುವವರು ನಿಮಗೆ ಬರೆದಿದ್ದಾರೆ ಅಥವಾ consent ನೀಡಿದ್ದಾರೆ ಎಂದು ಕೂಡ ರೆಕಾರ್ಡ್ ಮಾಡಬಹುದು. ಅದಿಲ್ಲದಿದ್ದರೆ ಅವರ leads ಸೇವ್ ಆಗುತ್ತವೆ, ಆದರೆ ಅವರಿಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -88019,10 +88019,10 @@
   }
  },
  "li.one.consent.check": {
-  "en": "I confirm this person may be contacted for the reason below.",
-  "te": "కింది కారణం కోసం ఈ వ్యక్తిని సంప్రదించవచ్చని నేను నిర్ధారిస్తున్నాను.",
-  "hi": "मैं पुष्टि करता/करती हूँ कि नीचे दिए कारण से इस व्यक्ति से बात की जा सकती है।",
-  "kn": "ಕೆಳಗಿನ ಕಾರಣಕ್ಕಾಗಿ ಈ ವ್ಯಕ್ತಿಯನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು ಎಂದು ನಾನು ಖಚಿತಪಡಿಸುತ್ತೇನೆ.",
+  "en": "This person wrote to me (their enquiry is in writing), or their consent is recorded.",
+  "te": "ఈ వ్యక్తి నాకు రాశారు (వాళ్ల enquiry రాతపూర్వకంగా ఉంది), లేదా వాళ్ల consent రికార్డ్ అయి ఉంది.",
+  "hi": "इस व्यक्ति ने मुझे लिखा है (उनकी enquiry लिखित में है), या उनका consent रिकॉर्ड है।",
+  "kn": "ಈ ವ್ಯಕ್ತಿ ನನಗೆ ಬರೆದಿದ್ದಾರೆ (ಅವರ enquiry ಲಿಖಿತದಲ್ಲಿದೆ), ಅಥವಾ ಅವರ consent ರೆಕಾರ್ಡ್ ಆಗಿದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -88074,10 +88074,10 @@
   }
  },
  "li.one.consent.none": {
-  "en": "Without this confirmation the lead is saved, but nothing is sent to this person.",
-  "te": "ఈ నిర్ధారణ లేకపోతే లీడ్ సేవ్ అవుతుంది, కానీ ఈ వ్యక్తికి ఏమీ పంపరు.",
-  "hi": "इस पुष्टि के बिना लीड सेव हो जाती है, पर इस व्यक्ति को कुछ नहीं भेजा जाता।",
-  "kn": "ಈ ದೃಢೀಕರಣ ಇಲ್ಲದಿದ್ದರೆ ಲೀಡ್ ಸೇವ್ ಆಗುತ್ತದೆ, ಆದರೆ ಈ ವ್ಯಕ್ತಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "en": "Without this record the lead is saved, but nothing is sent to this person.",
+  "te": "ఈ రికార్డ్ లేకపోతే lead సేవ్ అవుతుంది, కానీ ఈ వ్యక్తికి ఏమీ వెళ్లదు.",
+  "hi": "इस रिकॉर्ड के बिना lead सेव होता है, पर इस व्यक्ति को कुछ नहीं भेजा जाता।",
+  "kn": "ಈ ರೆಕಾರ್ಡ್ ಇಲ್ಲದಿದ್ದರೆ lead ಸೇವ್ ಆಗುತ್ತದೆ, ಆದರೆ ಈ ವ್ಯಕ್ತಿಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -88085,10 +88085,10 @@
   }
  },
  "li.one.consent.sales": {
-  "en": "Only the Owner or an Admin can confirm this. You can add the lead, but nothing is sent to this person until the Owner or an Admin confirms.",
-  "te": "దీన్ని ఓనర్ లేదా అడ్మిన్ మాత్రమే నిర్ధారించగలరు. మీరు లీడ్ చేర్చవచ్చు, కానీ ఓనర్ లేదా అడ్మిన్ నిర్ధారించే వరకు ఈ వ్యక్తికి ఏమీ పంపరు.",
-  "hi": "इसकी पुष्टि सिर्फ़ ओनर या एडमिन कर सकते हैं। आप लीड जोड़ सकते हैं, पर ओनर या एडमिन के पुष्टि करने तक इस व्यक्ति को कुछ नहीं भेजा जाएगा।",
-  "kn": "ಇದನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಖಚಿತಪಡಿಸಬಹುದು. ನೀವು ಲೀಡ್ ಸೇರಿಸಬಹುದು, ಆದರೆ ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಖಚಿತಪಡಿಸುವವರೆಗೆ ಈ ವ್ಯಕ್ತಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "en": "Only the Owner or an Admin can record this. You can add the lead, but nothing is sent to this person until the Owner or an Admin records it.",
+  "te": "ఇది రికార్డ్ చేయడం Owner లేదా Admin మాత్రమే చేయగలరు. మీరు lead జోడించవచ్చు, కానీ Owner లేదా Admin రికార్డ్ చేసే వరకు ఈ వ్యక్తికి ఏమీ వెళ్లదు.",
+  "hi": "इसे रिकॉर्ड सिर्फ़ Owner या Admin कर सकते हैं। आप lead जोड़ सकते हैं, पर Owner या Admin के रिकॉर्ड करने तक इस व्यक्ति को कुछ नहीं भेजा जाता।",
+  "kn": "ಇದನ್ನು ರೆಕಾರ್ಡ್ ಮಾಡಲು Owner ಅಥವಾ Admin ಮಾತ್ರ ಸಾಧ್ಯ. ನೀವು lead ಸೇರಿಸಬಹುದು, ಆದರೆ Owner ಅಥವಾ Admin ರೆಕಾರ್ಡ್ ಮಾಡುವವರೆಗೆ ಈ ವ್ಯಕ್ತಿಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -88768,10 +88768,10 @@
   }
  },
  "tc.no.outside_window": {
-  "en": "Calls can only be placed between 9 am and 9 pm India time. No call was made. Try again in those hours.",
-  "te": "కాల్స్ భారత సమయం ఉదయం 9 నుండి రాత్రి 9 లోపే చేయగలం. కాల్ వెళ్ళలేదు. ఆ సమయంలో మళ్ళీ ప్రయత్నించండి.",
-  "hi": "कॉल सिर्फ़ भारतीय समय सुबह 9 से रात 9 बजे के बीच लग सकती है। कोई कॉल नहीं लगी। उसी समय में दोबारा कोशिश करें।",
-  "kn": "ಕರೆಗಳನ್ನು ಭಾರತೀಯ ಸಮಯ ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಮಾಡಬಹುದು. ಕರೆ ಹೋಗಿಲ್ಲ. ಆ ಸಮಯದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "Calls can only be placed between 10 am and 9 pm India time. No call was made. Try again in those hours.",
+  "te": "కాల్స్ భారత సమయం ఉదయం 10 నుండి రాత్రి 9 లోపే చేయగలం. కాల్ వెళ్ళలేదు. ఆ సమయంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कॉल सिर्फ़ भारतीय समय सुबह 10 से रात 9 बजे के बीच लग सकती है। कोई कॉल नहीं लगी। उसी समय में दोबारा कोशिश करें।",
+  "kn": "ಕರೆಗಳನ್ನು ಭಾರತೀಯ ಸಮಯ ಬೆಳಿಗ್ಗೆ 10 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಮಾಡಬಹುದು. ಕರೆ ಹೋಗಿಲ್ಲ. ಆ ಸಮಯದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -88891,10 +88891,10 @@
   "humanOnly": true
  },
  "tc.no.no_consent": {
-  "en": "Consent is not confirmed for this person. No call was made. Confirm that they agreed, then try again.",
-  "te": "Consent is not confirmed for this person. No call was made. Confirm that they agreed, then try again.",
-  "hi": "Consent is not confirmed for this person. No call was made. Confirm that they agreed, then try again.",
-  "kn": "Consent is not confirmed for this person. No call was made. Confirm that they agreed, then try again.",
+  "en": "No consent is recorded for this person. No call was made. Record it, then try again.",
+  "te": "No consent is recorded for this person. No call was made. Record it, then try again.",
+  "hi": "No consent is recorded for this person. No call was made. Record it, then try again.",
+  "kn": "No consent is recorded for this person. No call was made. Record it, then try again.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -91536,10 +91536,10 @@
   }
  },
  "apierr.code.outside_calling_hours": {
-  "en": "Calls go out only between 9 am and 9 pm India time. Nothing was called. Try again in those hours.",
-  "te": "కాల్స్ భారత సమయం ఉదయం 9 నుండి రాత్రి 9 మధ్య మాత్రమే వెళ్తాయి. ఎవరికీ కాల్ చేయలేదు. ఆ సమయంలో మళ్ళీ ప్రయత్నించండి.",
-  "hi": "कॉल सिर्फ़ भारतीय समय सुबह 9 से रात 9 बजे के बीच जाते हैं। किसी को कॉल नहीं किया गया। उन्हीं घंटों में फिर कोशिश करें।",
-  "kn": "ಕರೆಗಳು ಭಾರತೀಯ ಸಮಯ ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಹೋಗುತ್ತವೆ. ಯಾರಿಗೂ ಕರೆ ಮಾಡಿಲ್ಲ. ಆ ಸಮಯದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "Calls go out only between 10 am and 9 pm India time. Nothing was called. Try again in those hours.",
+  "te": "కాల్స్ భారత సమయం ఉదయం 10 నుండి రాత్రి 9 మధ్య మాత్రమే వెళ్తాయి. ఎవరికీ కాల్ చేయలేదు. ఆ సమయంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कॉल सिर्फ़ भारतीय समय सुबह 10 से रात 9 बजे के बीच जाते हैं। किसी को कॉल नहीं किया गया। उन्हीं घंटों में फिर कोशिश करें।",
+  "kn": "ಕರೆಗಳು ಭಾರತೀಯ ಸಮಯ ಬೆಳಿಗ್ಗೆ 10 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಹೋಗುತ್ತವೆ. ಯಾರಿಗೂ ಕರೆ ಮಾಡಿಲ್ಲ. ಆ ಸಮಯದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -91708,12 +91708,12 @@
   "humanOnly": true
  },
  "apierr.code.no_consent": {
-  "en": "Consent is not confirmed for this person, so nothing was sent. Confirm that they agreed, then try again.",
-  "te": "ఈ వ్యక్తి అనుమతి కన్ఫర్మ్ కాలేదు, అందుకే ఏమీ పంపలేదు. వాళ్ళు ఒప్పుకున్నారని కన్ఫర్మ్ చేసి, మళ్ళీ ట్రై చేయండి.",
-  "hi": "Consent is not confirmed for this person, so nothing was sent. Confirm that they agreed, then try again.",
-  "kn": "Consent is not confirmed for this person, so nothing was sent. Confirm that they agreed, then try again.",
+  "en": "No consent is recorded for this person, so nothing was sent. Record it first, then try again.",
+  "te": "No consent is recorded for this person, so nothing was sent. Record it first, then try again.",
+  "hi": "No consent is recorded for this person, so nothing was sent. Record it first, then try again.",
+  "kn": "No consent is recorded for this person, so nothing was sent. Record it first, then try again.",
   "status": {
-   "te": "reviewed",
+   "te": "draft",
    "hi": "draft",
    "kn": "draft"
   },
@@ -91732,12 +91732,12 @@
   "humanOnly": true
  },
  "ph.why.consent": {
-  "en": "consent is not confirmed",
-  "te": "అనుమతి ఇంకా కన్ఫర్మ్ కాలేదు",
-  "hi": "consent is not confirmed",
-  "kn": "consent is not confirmed",
+  "en": "no consent is recorded",
+  "te": "no consent is recorded",
+  "hi": "no consent is recorded",
+  "kn": "no consent is recorded",
   "status": {
-   "te": "reviewed",
+   "te": "draft",
    "hi": "draft",
    "kn": "draft"
   },
@@ -102056,47 +102056,47 @@
   }
  },
  "dst.af.confirm": {
-  "en": "I confirm they agreed",
-  "te": "వాళ్ళు ఒప్పుకున్నారని నేను కన్ఫర్మ్ చేస్తున్నాను",
-  "hi": "उन्होंने हाँ कहा है, confirm करता हूँ",
-  "kn": "ಅವರು ಒಪ್ಪಿದ್ದಾರೆ, confirm ಮಾಡ್ತೀನಿ",
+  "en": "Record their consent",
+  "te": "వాళ్ల consent రికార్డ్ చేయండి",
+  "hi": "उनका consent रिकॉर्ड करें",
+  "kn": "ಅವರ consent ರೆಕಾರ್ಡ್ ಮಾಡಿ",
   "status": {
-   "te": "reviewed",
+   "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
  "dst.af.confirm_q_call": {
-  "en": "I confirm these {n} people agreed to be called. This is recorded.",
-  "te": "కాల్ చేయడానికి ఈ {n} మంది ఒప్పుకున్నారని నేను కన్ఫర్మ్ చేస్తున్నాను. ఇది రికార్డ్ అవుతుంది.",
-  "hi": "I confirm these {n} people agreed to be called. This is recorded.",
-  "kn": "I confirm these {n} people agreed to be called. This is recorded.",
+  "en": "Record that these {n} people agreed to be called. It is kept with the date.",
+  "te": "Record that these {n} people agreed to be called. It is kept with the date.",
+  "hi": "Record that these {n} people agreed to be called. It is kept with the date.",
+  "kn": "Record that these {n} people agreed to be called. It is kept with the date.",
   "status": {
-   "te": "reviewed",
+   "te": "draft",
    "hi": "draft",
    "kn": "draft"
   },
   "humanOnly": true
  },
  "dst.af.confirm_q_send": {
-  "en": "I confirm these {n} people agreed to get messages. This is recorded.",
-  "te": "మెసేజ్‌లు పంపడానికి ఈ {n} మంది ఒప్పుకున్నారని నేను కన్ఫర్మ్ చేస్తున్నాను. ఇది రికార్డ్ అవుతుంది.",
-  "hi": "I confirm these {n} people agreed to get messages. This is recorded.",
-  "kn": "I confirm these {n} people agreed to get messages. This is recorded.",
+  "en": "Record that these {n} people agreed to get messages. It is kept with the date.",
+  "te": "Record that these {n} people agreed to get messages. It is kept with the date.",
+  "hi": "Record that these {n} people agreed to get messages. It is kept with the date.",
+  "kn": "Record that these {n} people agreed to get messages. It is kept with the date.",
   "status": {
-   "te": "reviewed",
+   "te": "draft",
    "hi": "draft",
    "kn": "draft"
   },
   "humanOnly": true
  },
  "dst.af.confirm_yes": {
-  "en": "Yes, I confirm",
-  "te": "అవును, కన్ఫర్మ్ చేస్తున్నాను",
-  "hi": "हाँ, confirm करता हूँ",
-  "kn": "ಹೌದು, confirm ಮಾಡ್ತೀನಿ",
+  "en": "Yes, record it",
+  "te": "అవును, రికార్డ్ చేయండి",
+  "hi": "हाँ, रिकॉर्ड करें",
+  "kn": "ಹೌದು, ರೆಕಾರ್ಡ್ ಮಾಡಿ",
   "status": {
-   "te": "reviewed",
+   "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
@@ -102548,12 +102548,12 @@
   "humanOnly": true
  },
  "dst.plan.owner_named": {
-  "en": "You named this person yourself, so your OK confirms they agreed to hear from you.",
-  "te": "ఈ వ్యక్తి పేరు మీరే చెప్పారు. మీ OK అంటే, వాళ్ళు ఒప్పుకున్నారని మీరు కన్ఫర్మ్ చేస్తున్నట్టు.",
-  "hi": "You named this person yourself, so your OK confirms they agreed to hear from you.",
-  "kn": "You named this person yourself, so your OK confirms they agreed to hear from you.",
+  "en": "You named this person yourself. Your OK is kept as the reason, with the date.",
+  "te": "You named this person yourself. Your OK is kept as the reason, with the date.",
+  "hi": "You named this person yourself. Your OK is kept as the reason, with the date.",
+  "kn": "You named this person yourself. Your OK is kept as the reason, with the date.",
   "status": {
-   "te": "reviewed",
+   "te": "draft",
    "hi": "draft",
    "kn": "draft"
   },
@@ -111280,10 +111280,10 @@
   }
  },
  "jobs.trust.consent": {
-  "en": "The people who fill this form have agreed to be contacted by phone and WhatsApp. The form says so in words they can read.",
-  "te": "ఈ ఫారమ్ నింపేవాళ్లు ఫోన్‌లో, WhatsApp‌లో సంప్రదించడానికి అనుమతి ఇచ్చారు. ఇది ఫారమ్‌లో వాళ్లు చదవగలిగే మాటల్లో రాసి ఉంది.",
-  "hi": "इस फ़ॉर्म को भरने वालों ने फ़ोन और WhatsApp पर संपर्क करने की अनुमति दी है। फ़ॉर्म में यह उनके पढ़ने लायक शब्दों में लिखा है।",
-  "kn": "ಈ ಫಾರ್ಮ್ ತುಂಬುವವರು ಫೋನ್ ಮತ್ತು WhatsApp ಮೂಲಕ ಸಂಪರ್ಕಿಸಲು ಅನುಮತಿ ನೀಡಿದ್ದಾರೆ. ಫಾರ್ಮ್‌ನಲ್ಲಿ ಇದನ್ನು ಅವರು ಓದಬಹುದಾದ ಮಾತುಗಳಲ್ಲಿ ಬರೆದಿದೆ.",
+  "en": "The form asks each person to agree to be contacted by phone and WhatsApp, in words they can read. Each answer is recorded with the date.",
+  "te": "ఫారమ్ ప్రతి వ్యక్తిని ఫోన్, WhatsApp లో సంప్రదించడానికి ఒప్పుకోమని, వాళ్లు చదవగలిగే మాటల్లో అడుగుతుంది. ప్రతి జవాబు తేదీతో రికార్డ్ అవుతుంది.",
+  "hi": "फ़ॉर्म हर व्यक्ति से फ़ोन और WhatsApp पर संपर्क की सहमति उन शब्दों में माँगता है जो वे पढ़ सकें। हर जवाब तारीख़ के साथ रिकॉर्ड होता है।",
+  "kn": "ಫಾರ್ಮ್ ಪ್ರತಿ ವ್ಯಕ್ತಿಯನ್ನು ಫೋನ್ ಮತ್ತು WhatsApp ನಲ್ಲಿ ಸಂಪರ್ಕಿಸಲು ಒಪ್ಪಿಗೆ, ಅವರು ಓದಬಲ್ಲ ಮಾತುಗಳಲ್ಲಿ ಕೇಳುತ್ತದೆ. ಪ್ರತಿ ಉತ್ತರ ದಿನಾಂಕದ ಜೊತೆ ರೆಕಾರ್ಡ್ ಆಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -111302,10 +111302,10 @@
   }
  },
  "sc.err.consent_required": {
-  "en": "The people who fill this form have agreed to be contacted by phone and WhatsApp. The form says so in words they can read.",
-  "te": "ఈ ఫారమ్ నింపేవాళ్లు ఫోన్‌లో, WhatsApp‌లో సంప్రదించడానికి అనుమతి ఇచ్చారు. ఇది ఫారమ్‌లో వాళ్లు చదవగలిగే మాటల్లో రాసి ఉంది.",
-  "hi": "इस फ़ॉर्म को भरने वालों ने फ़ोन और WhatsApp पर संपर्क करने की अनुमति दी है। फ़ॉर्म में यह उनके पढ़ने लायक शब्दों में लिखा है।",
-  "kn": "ಈ ಫಾರ್ಮ್ ತುಂಬುವವರು ಫೋನ್ ಮತ್ತು WhatsApp ಮೂಲಕ ಸಂಪರ್ಕಿಸಲು ಅನುಮತಿ ನೀಡಿದ್ದಾರೆ. ಫಾರ್ಮ್‌ನಲ್ಲಿ ಇದನ್ನು ಅವರು ಓದಬಹುದಾದ ಮಾತುಗಳಲ್ಲಿ ಬರೆದಿದೆ.",
+  "en": "The form asks each person to agree to be contacted by phone and WhatsApp, in words they can read. Each answer is recorded with the date.",
+  "te": "ఫారమ్ ప్రతి వ్యక్తిని ఫోన్, WhatsApp లో సంప్రదించడానికి ఒప్పుకోమని, వాళ్లు చదవగలిగే మాటల్లో అడుగుతుంది. ప్రతి జవాబు తేదీతో రికార్డ్ అవుతుంది.",
+  "hi": "फ़ॉर्म हर व्यक्ति से फ़ोन और WhatsApp पर संपर्क की सहमति उन शब्दों में माँगता है जो वे पढ़ सकें। हर जवाब तारीख़ के साथ रिकॉर्ड होता है।",
+  "kn": "ಫಾರ್ಮ್ ಪ್ರತಿ ವ್ಯಕ್ತಿಯನ್ನು ಫೋನ್ ಮತ್ತು WhatsApp ನಲ್ಲಿ ಸಂಪರ್ಕಿಸಲು ಒಪ್ಪಿಗೆ, ಅವರು ಓದಬಲ್ಲ ಮಾತುಗಳಲ್ಲಿ ಕೇಳುತ್ತದೆ. ಪ್ರತಿ ಉತ್ತರ ದಿನಾಂಕದ ಜೊತೆ ರೆಕಾರ್ಡ್ ಆಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -114404,10 +114404,10 @@
   }
  },
  "jobs.job.test.quiet": {
-  "en": "Test calls and messages are only sent between 9 am and 9 pm.",
-  "te": "టెస్ట్ కాల్స్, మెసేజ్‌లు ఉదయం 9 నుంచి రాత్రి 9 మధ్యే వెళ్తాయి.",
-  "hi": "टेस्ट कॉल और मैसेज सिर्फ़ सुबह 9 से रात 9 बजे के बीच भेजे जाते हैं।",
-  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ಮತ್ತು ಮೆಸೇಜ್ ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಹೋಗುತ್ತವೆ.",
+  "en": "Test calls and messages are only sent between 10 am and 9 pm.",
+  "te": "టెస్ట్ కాల్స్, మెసేజ్‌లు ఉదయం 10 నుంచి రాత్రి 9 మధ్యే వెళ్తాయి.",
+  "hi": "टेस्ट कॉल और मैसेज सिर्फ़ सुबह 10 से रात 9 बजे के बीच भेजे जाते हैं।",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ಮತ್ತು ಮೆಸೇಜ್ ಬೆಳಿಗ್ಗೆ 10 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಹೋಗುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -114701,10 +114701,10 @@
   }
  },
  "jobs.err.consent_required": {
-  "en": "First confirm that these people agreed to be contacted.",
-  "te": "ముందు వీళ్లు సంప్రదించడానికి అనుమతి ఇచ్చారని నిర్ధారించండి.",
-  "hi": "पहले पक्का करें कि इन लोगों ने संपर्क की अनुमति दी है।",
-  "kn": "ಮೊದಲು ಇವರು ಸಂಪರ್ಕಿಸಲು ಅನುಮತಿ ಕೊಟ್ಟಿದ್ದಾರೆ ಎಂದು ಖಚಿತಪಡಿಸಿ.",
+  "en": "First tick that these people wrote to you or that their consent is recorded.",
+  "te": "ముందు ఈ వాళ్లు మీకు రాశారని లేదా వాళ్ల consent రికార్డ్ అయి ఉందని టిక్ చేయండి.",
+  "hi": "पहले टिक करें कि इन लोगों ने आपको लिखा है या इनका consent रिकॉर्ड है।",
+  "kn": "ಮೊದಲು ಇವರು ನಿಮಗೆ ಬರೆದಿದ್ದಾರೆ ಅಥವಾ ಇವರ consent ರೆಕಾರ್ಡ್ ಆಗಿದೆ ಎಂದು ಟಿಕ್ ಮಾಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -124520,10 +124520,10 @@
   }
  },
  "vc.ai.d": {
-  "en": "If a customer asks, it always says it's your AI assistant.",
-  "te": "కస్టమర్ అడిగితే, అది ఎప్పుడూ మీ AI అసిస్టెంట్ అనే చెబుతుంది.",
-  "hi": "अगर कस्टमर पूछे, तो वह हमेशा बताता है कि वह आपका AI असिस्टेंट है।",
-  "kn": "ಕಸ್ಟಮರ್ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ತಾನು ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "en": "On unless you turn it off. If a customer asks, it always says it's your AI assistant.",
+  "te": "మీరు ఆఫ్ చేస్తే తప్ప ఆన్‌లో ఉంటుంది. కస్టమర్ అడిగితే, అది ఎప్పుడూ మీ AI అసిస్టెంట్ అనే చెబుతుంది.",
+  "hi": "आप बंद न करें तो चालू रहता है। अगर कस्टमर पूछे, तो वह हमेशा बताता है कि वह आपका AI असिस्टेंट है।",
+  "kn": "ನೀವು ಆಫ್ ಮಾಡದಿದ್ದರೆ ಆನ್ ಆಗಿರುತ್ತದೆ. ಕಸ್ಟಮರ್ ಕೇಳಿದರೆ, ಅದು ಯಾವಾಗಲೂ ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -127600,10 +127600,10 @@
   }
  },
  "bsc.r2.x": {
-  "en": "Calls go out between 9 am and 9 pm. Outside these hours they wait.",
-  "te": "కాల్స్ ఉదయం 9 నుంచి రాత్రి 9 మధ్యే వెళ్తాయి. ఆ సమయం బయట అవి వేచి ఉంటాయి.",
-  "hi": "कॉल सुबह 9 से रात 9 बजे के बीच ही जाते हैं। इसके बाहर वे इंतज़ार करते हैं।",
-  "kn": "ಕರೆಗಳು ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಹೋಗುತ್ತವೆ. ಆ ಸಮಯದ ಹೊರಗೆ ಕಾಯುತ್ತವೆ.",
+  "en": "Calls go out between 10 am and 9 pm. Outside these hours they wait.",
+  "te": "కాల్స్ ఉదయం 10 నుంచి రాత్రి 9 మధ్యే వెళ్తాయి. ఆ సమయం బయట అవి వేచి ఉంటాయి.",
+  "hi": "कॉल सुबह 10 से रात 9 बजे के बीच ही जाते हैं। इसके बाहर वे इंतज़ार करते हैं।",
+  "kn": "ಕರೆಗಳು ಬೆಳಿಗ್ಗೆ 10 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಹೋಗುತ್ತವೆ. ಆ ಸಮಯದ ಹೊರಗೆ ಕಾಯುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -130944,10 +130944,10 @@
   }
  },
  "cpn.rule.2.t": {
-  "en": "Calls go out between 9 am and 9 pm. Outside these hours they wait.",
-  "te": "కాల్స్ ఉదయం 9 నుంచి రాత్రి 9 లోపే వెళ్తాయి. ఆ టైమ్ దాటితే వేచి ఉంటాయి.",
-  "hi": "कॉल सुबह 9 बजे से रात 9 बजे के बीच जाते हैं। इस समय के बाहर वे रुके रहते हैं।",
-  "kn": "ಕರೆಗಳು ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರೊಳಗೆ ಹೋಗುತ್ತವೆ. ಆ ಸಮಯದ ಹೊರಗೆ ಕಾಯುತ್ತವೆ.",
+  "en": "Calls go out between 10 am and 9 pm. Outside these hours they wait.",
+  "te": "కాల్స్ ఉదయం 10 నుంచి రాత్రి 9 లోపే వెళ్తాయి. ఆ టైమ్ దాటితే వేచి ఉంటాయి.",
+  "hi": "कॉल सुबह 10 बजे से रात 9 बजे के बीच जाते हैं। इस समय के बाहर वे रुके रहते हैं।",
+  "kn": "ಕರೆಗಳು ಬೆಳಿಗ್ಗೆ 10 ರಿಂದ ರಾತ್ರಿ 9 ರೊಳಗೆ ಹೋಗುತ್ತವೆ. ಆ ಸಮಯದ ಹೊರಗೆ ಕಾಯುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -137053,6 +137053,149 @@
   "te": "అడ్రస్ మమ్మల్ని వేరే చోటికి పంపింది, మేము అలా వెళ్లము.",
   "hi": "पते ने हमें कहीं और भेज दिया, हम वहाँ नहीं जाते।",
   "kn": "ವಿಳಾಸ ನಮ್ಮನ್ನು ಬೇರೆಡೆಗೆ ಕಳಿಸಿತು, ನಾವು ಹಾಗೆ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.t": {
+  "en": "Switch off the AI greeting",
+  "te": "AI గ్రీటింగ్ ఆఫ్ చేయండి",
+  "hi": "AI ग्रीटिंग बंद करें",
+  "kn": "AI ಗ್ರೀಟಿಂಗ್ ಆಫ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.draft": {
+  "en": "Draft: the wording waits for the advocate's review.",
+  "te": "డ్రాఫ్ట్: ఈ మాటలు లాయర్ చూసేంతవరకు ఖరారు కాలేదు.",
+  "hi": "ड्राफ़्ट: ये शब्द वकील की जाँच तक पक्के नहीं हैं।",
+  "kn": "ಡ್ರಾಫ್ಟ್: ಈ ಮಾತುಗಳು ವಕೀಲರು ನೋಡುವವರೆಗೆ ಅಂತಿಮವಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.1": {
+  "en": "The assistant will never say it is a person.",
+  "te": "అసిస్టెంట్ తాను మనిషినని ఎప్పుడూ చెప్పదు.",
+  "hi": "असिस्टेंट कभी नहीं कहेगा कि वह इंसान है।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ತಾನು ಮನುಷ್ಯ ಎಂದು ಎಂದಿಗೂ ಹೇಳುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.2": {
+  "en": "If a customer asks, it says it is your AI assistant.",
+  "te": "కస్టమర్ అడిగితే, అది మీ AI అసిస్టెంట్ అని చెబుతుంది.",
+  "hi": "कस्टमर पूछे तो वह बताएगा कि वह आपका AI असिस्टेंट है।",
+  "kn": "ಕಸ್ಟಮರ್ ಕೇಳಿದರೆ, ಅದು ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.3": {
+  "en": "Every call made without the AI greeting is logged.",
+  "te": "AI గ్రీటింగ్ లేకుండా చేసిన ప్రతి కాల్ లాగ్ అవుతుంది.",
+  "hi": "AI ग्रीटिंग के बिना की गई हर कॉल लॉग होती है।",
+  "kn": "AI ಗ್ರೀಟಿಂಗ್ ಇಲ್ಲದೆ ಮಾಡಿದ ಪ್ರತಿ ಕಾಲ್ ಲಾಗ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.4": {
+  "en": "You are responsible for any rule that says people must be told they are speaking to an AI.",
+  "te": "ఎవరితో మాట్లాడుతున్నారో AI అని చెప్పాలనే ఏ నియమానికైనా మీరే బాధ్యులు.",
+  "hi": "लोगों को बताना ज़रूरी हो कि वे AI से बात कर रहे हैं, ऐसे किसी भी नियम की ज़िम्मेदारी आपकी है।",
+  "kn": "ಜನರಿಗೆ AI ಜೊತೆ ಮಾತಾಡುತ್ತಿದ್ದೀರಿ ಎಂದು ಹೇಳಬೇಕೆಂಬ ಯಾವುದೇ ನಿಯಮಕ್ಕೆ ನೀವೇ ಜವಾಬ್ದಾರರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.accept": {
+  "en": "I accept this undertaking",
+  "te": "ఈ హామీని నేను అంగీకరిస్తున్నాను",
+  "hi": "मैं यह वचन स्वीकार करता/करती हूँ",
+  "kn": "ಈ ಭರವಸೆಯನ್ನು ನಾನು ಒಪ್ಪುತ್ತೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.date": {
+  "en": "Date: {date}",
+  "te": "తేదీ: {date}",
+  "hi": "तारीख़: {date}",
+  "kn": "ದಿನಾಂಕ: {date}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.go": {
+  "en": "Switch it off",
+  "te": "ఆఫ్ చేయండి",
+  "hi": "बंद करें",
+  "kn": "ಆಫ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.keep": {
+  "en": "Keep it on",
+  "te": "ఆన్‌లో ఉంచండి",
+  "hi": "चालू रखें",
+  "kn": "ಆನ್ ಆಗಿಯೇ ಇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vc.ai.off.since": {
+  "en": "Switched off on {date}, with your written undertaking.",
+  "te": "{date} న ఆఫ్ చేశారు, మీ రాతపూర్వక హామీతో.",
+  "hi": "{date} को बंद किया गया, आपके लिखित वचन के साथ।",
+  "kn": "{date} ರಂದು ಆಫ್ ಮಾಡಲಾಗಿದೆ, ನಿಮ್ಮ ಲಿಖಿತ ಭರವಸೆಯೊಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.err.say_ai_undertaking": {
+  "en": "To switch it off, accept the undertaking first. Nothing was changed.",
+  "te": "ఆఫ్ చేయడానికి ముందు హామీని అంగీకరించండి. ఏదీ మారలేదు.",
+  "hi": "बंद करने के लिए पहले वचन स्वीकार करें। कुछ नहीं बदला।",
+  "kn": "ಆಫ್ ಮಾಡಲು ಮೊದಲು ಭರವಸೆಯನ್ನು ಒಪ್ಪಿ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tov.rule.monitor": {
+  "en": "While this is on, the greeting also says: \"This call may be monitored.\" When it is off, that line is not said.",
+  "te": "ఇది ఆన్‌లో ఉన్నంతవరకు గ్రీటింగ్‌లో \"ఈ కాల్‌ని వినవచ్చు\" అనే మాట కూడా ఉంటుంది. ఆఫ్‌లో ఉంటే ఆ మాట ఉండదు.",
+  "hi": "यह चालू रहने तक ग्रीटिंग में यह भी कहा जाता है: \"इस कॉल को सुना जा सकता है।\" बंद होने पर यह लाइन नहीं बोली जाती।",
+  "kn": "ಇದು ಆನ್ ಇರುವವರೆಗೆ ಗ್ರೀಟಿಂಗ್‌ನಲ್ಲಿ \"ಈ ಕಾಲ್ ಅನ್ನು ಆಲಿಸಬಹುದು\" ಎಂಬ ಮಾತೂ ಇರುತ್ತದೆ. ಆಫ್ ಇದ್ದರೆ ಆ ಮಾತು ಇರುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",

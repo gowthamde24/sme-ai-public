@@ -7,7 +7,7 @@ describe("speed-to-lead rules", () => {
     const own = { ...DEFAULT_SPEED_RULE, callWithinMinutes: 5, callAtMinute: 600 };
     const body = speedRulesBody({ default: DEFAULT_SPEED_RULE, perSource: { meta: own } });
     expect(body.default.in_hours).toEqual({ action: "call", call_within_minutes: 2 });
-    expect(body.default.after_hours).toEqual({ whatsapp_now: true, call_at_minute: 570 });
+    expect(body.default.after_hours).toEqual({ whatsapp_now: true, call_at_minute: 600 });
     const back = parseSpeedRules(body);
     expect(back?.perSource.meta).toEqual(own);
     expect(back?.perSource.website).toBeNull();

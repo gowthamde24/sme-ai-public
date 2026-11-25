@@ -11,7 +11,7 @@ describe("ask first: what the API answers is read as numbers and closed codes", 
   it("a WhatsApp ask: how many were queued, how many could not be and why, and the template status", () => {
     expect(parseAskConsent({ how: "whatsapp", asked: 12, queued: 9, blocked: 3, blocked_reasons: { no_opt_in: 3, "Bad Key": 1 }, template_status: "none_registered" })).toEqual({ how: "whatsapp", asked: 12, queued: 9, blocked: 3, blockedReasons: { no_opt_in: 3 }, templateStatus: "none_registered", newAction: null, newTaskId: null });
   });
-  it("'I confirm they agreed': a NEW plan card for a waiting plan, or a new task id for a started one; nothing else is trusted", () => {
+  it("'Record their consent': a NEW plan card for a waiting plan, or a new task id for a started one; nothing else is trusted", () => {
     const card = { type: "confirm_action", action_id: U };
     expect(parseAskConsent({ how: "owner_confirms", asked: 5, new_action: card })).toMatchObject({ how: "owner_confirms", asked: 5, newAction: card, newTaskId: null });
     expect(parseAskConsent({ how: "owner_confirms", asked: 5, new_task_id: U })).toMatchObject({ newTaskId: U });
