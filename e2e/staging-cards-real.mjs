@@ -30,7 +30,7 @@ try {
     ok("the forwarding card has a button (mail door on)", false, (await mail.textContent())?.slice(0, 120));
   } else {
     await btn.click();
-    const box = p.getByLabel("Your forwarding address");
+    const box = p.getByLabel("Your lead e-mail address");
     await box.waitFor({ timeout: 20000 });
     const first = await box.inputValue();
     ok("the forwarding address is the API's own", /@leads\.stack19\.com$/.test(first), first.replace(/^[^@]+/, "…"));
@@ -39,9 +39,9 @@ try {
     await p.reload({ waitUntil: "domcontentloaded" });
     await p.locator('[data-part="source-cards"]').waitFor({ timeout: 45000 });
     await p.locator('[data-card="email_forward"]').getByRole("button").first().click();
-    const again = await p.getByLabel("Your forwarding address").inputValue().catch(() => "");
-    await p.getByLabel("Your forwarding address").waitFor({ timeout: 20000 });
-    ok("the same address is shown again after a reload", (await p.getByLabel("Your forwarding address").inputValue()) === first);
+    const again = await p.getByLabel("Your lead e-mail address").inputValue().catch(() => "");
+    await p.getByLabel("Your lead e-mail address").waitFor({ timeout: 20000 });
+    ok("the same address is shown again after a reload", (await p.getByLabel("Your lead e-mail address").inputValue()) === first);
   }
   const web = p.locator('[data-card="website"]');
   if (cards.find((c) => c.kind === "website")?.status !== "coming_soon" && (await web.getByRole("button").count()) > 0) {

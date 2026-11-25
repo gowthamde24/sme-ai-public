@@ -57,7 +57,7 @@ def test_forwarding_makes_the_address_once_and_the_card_has_it_with_the_portals(
     assert card["kind"] == "setup" and card["setup"] == "email_forward" and card["id"] == str(setups.setup_id(TENANT_A.id, "email_forward"))
     address = card["copy"][0]["value"]
     assert address.startswith("leads+") and address.endswith("@in.example.test") and card["test"] == "send_test_mail" and card["last_test"] is None
-    assert [p["name"] for p in card["portals"]] == ["JustDial", "IndiaMART e-mail", "99acres", "MagicBricks", "Sulekha"] and card["screen"]["href"] == "/lead-sources"
+    assert [p["name"] for p in card["portals"]] == ["JustDial", "IndiaMART e-mail", "99acres", "MagicBricks", "Sulekha", "TradeIndia"] and card["screen"]["href"] == "/lead-sources"
     (again,) = cards_of(say(client, "forward my JustDial lead emails"))
     assert again["copy"][0]["value"] == address and repo.calls.count("source_create") == 1, "the same address, made once"
 

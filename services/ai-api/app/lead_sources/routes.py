@@ -30,7 +30,7 @@ from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_ro
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
 from app.hardening.replay import ReplayGuard
-from app.lead_sources import consent_tick, guides, mime
+from app.lead_sources import consent_tick, guides, mime, portal_connections
 from app.lead_sources.columns_ai import RunColumnMatcher
 from app.lead_sources.models import (
     ActivityOut,
@@ -318,6 +318,14 @@ def pull_indiamart(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     return pull(runtime, _service(runtime), ctx)
 
 
+@router.get("/lead-sources/portals")
+def source_portals(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    """Each portal's honest state (`automatic` or `account_manager`: "Available through your portal account manager"), the ways to get its leads here, and the message to send its team."""
+    from app.lead_sources.service import GMAIL_GUIDE, MAIL_STEPS
+
+    return {**portal_connections.listing(), "mail": {"steps": list(MAIL_STEPS), "gmail_rule": list(GMAIL_GUIDE)}}
+
+
 @router.get("/lead-sources/guides")
 def source_guides(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     return {"guides": guides.listing(), "note": guides.consent_note()}
@@ -535,8 +543,10 @@ def intake_form_page(token: str, runtime: RuntimeDep) -> Response:
 async def intake_form(token: str, request: Request, runtime: RuntimeDep) -> Response:
     _no_replay(request)
     raw = await _body(request)
-    _service(runtime).receive_form(token, _form_data(request, raw))
+    handled = _service(runtime).receive_form(token, _form_data(request, raw))
     headers = {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-store"}
+    if handled == "indiamart_push":
+        return JSONResponse(ReceivedOut().model_dump(), status_code=200, headers=headers)   # IndiaMART's Push API counts only an HTTP 200 as "received"
     if "text/html" in request.headers.get("accept", "").lower():
         return HTMLResponse('<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thank you</title><p style="font-family:sans-serif;margin:2rem">Thank you. We will contact you shortly.</p>', status_code=202, headers=headers)
     return JSONResponse(ReceivedOut().model_dump(), status_code=202, headers=headers)

@@ -62,7 +62,7 @@ try {
   await p.getByText(/Key saved \(\.\.\.5678\)/).waitFor({ timeout: 15000 }).then(() => ok("only a hint of the key comes back", true), () => ok("only a hint of the key comes back", false));
   ok("the key is not left in the box", (await keyBox.inputValue()) === "");
   await p.locator('[data-card="email_forward"]').getByRole("button").first().click();
-  await p.getByLabel("Your forwarding address").waitFor({ timeout: 15000 }).then(() => ok("the forwarding address appears", true), () => ok("the forwarding address appears", false));
+  await p.getByLabel("Your lead e-mail address").waitFor({ timeout: 15000 }).then(() => ok("the lead e-mail address appears", true), () => ok("the lead e-mail address appears", false));
   await p.locator('[data-card="website"]').getByRole("button").first().click();
   await p.getByLabel("Website snippet").waitFor({ timeout: 15000 }).then(() => ok("the website snippet appears", true), () => ok("the website snippet appears", false));
   await shot(s, `cs-${pack}-${size}-5-opened`);

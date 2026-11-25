@@ -48,3 +48,10 @@ def test_a_phone_line_without_a_price_list_is_one_plain_item_that_opens_the_pric
     item = needs_item(row("phone_needs_prices", "price_list", None, "price_list", customer=None))
     assert item.summary == "Add your prices so the phone assistant can answer them: a price on each item, or a price list. Until then it tells callers the team will call back."
     assert item.customer == "Phone assistant" and item.target.type == "price_list" and item.amount_paise is None
+
+
+def test_a_refused_indiamart_key_is_one_plain_item_that_opens_the_lead_sources_page() -> None:
+    """25 Nov 2026: the scheduled pull found the key refused; the Owner is told, once, in plain words."""
+    item = needs_item(row("indiamart_key_expired", "key", None, "lead_sources", customer=None))
+    assert item.customer == "IndiaMART" and item.target.type == "lead_sources" and item.amount_paise is None
+    assert item.summary.startswith("IndiaMART no longer accepts your key") and "paste a new one" in item.summary

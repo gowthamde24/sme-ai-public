@@ -485,6 +485,13 @@ class Settings(BaseSettings):
     # the worker sends nothing: the kill switch) | on. Needs WORKSPACE_SECRETS (the signing
     # secrets live in Secret Manager). Production stays off until the owner's gate.
     webhooks_out: Literal["off", "on"] = "off"
+    # The worker pulls IndiaMART leads by itself for every business that saved its OWN key
+    # (app/lead_sources/indiamart_pull.py). Off by default: nothing is asked of IndiaMART and
+    # nothing is read from Secret Manager.
+    indiamart_pull: Literal["off", "on"] = "off"
+    # A web-address lead source also reads IndiaMART's Push API body
+    # (app/lead_sources/indiamart_push.py). Off by default.
+    indiamart_push: Literal["off", "on"] = "off"
     # Jobs (jobs contract 1.0, 1.1): off (default) | on. Off: every /jobs route is a 404.
     # JOBS_GET_PAID: off (default) hides the "get paid" job templates (Get paid ships in v1.1).
     jobs: Literal["off", "on"] = "off"
