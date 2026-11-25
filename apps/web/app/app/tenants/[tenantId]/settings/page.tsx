@@ -95,6 +95,7 @@ import { renameAssistantAction, saveAssistantAction, testCallAction } from "../a
 import { saveCallSettingsAction } from "../call-settings-actions";
 import { deleteVoiceAction, sentenceAction } from "../own-voice-actions";
 import { FAKE_CHECKOUT, planScreens } from "@/lib/plan/flag";
+import { readDayOneActivation } from "@/lib/packs/day-one-activation";
 import { CATALOGUE, planById } from "@/lib/plan/catalogue";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
 import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "../plan-actions";
@@ -249,7 +250,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const businessProfile: BusinessProfile | null = workspace ? { name: workspace.name, town: workspace.city, languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), setupComplete: true } : admin && onBusiness ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const typeList = workspace && tenant.role === "owner" ? await readTypeList(lang) : null;
   // the steps still to do of "Finish setting up", all of them (the ones put away from Today are marked, with the way back)
-  const finish: Activation | null = admin && onBusiness && pack && usesChecklist(pack) ? await readActivation(user.accessToken, tenantId, pack, t, await leadDeskSteps(pack)).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const finish: Activation | null = admin && onBusiness && pack && usesChecklist(pack) ? await (designV6() ? readDayOneActivation({ token: user.accessToken, tenantId, shop: workspace?.name ?? businessProfile?.name ?? tenant.name, modules: pack.modules, base, t }).then((a) => a ?? readActivation(user.accessToken, tenantId, pack, t, [])) : readActivation(user.accessToken, tenantId, pack, t, await leadDeskSteps(pack))).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const putAway = finish ? await readHidden(tenantId) : [];
   const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business

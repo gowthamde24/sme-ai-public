@@ -38365,10 +38365,10 @@
   }
  },
  "start.title": {
-  "en": "Finish setting up",
+  "en": "Finish setup",
   "te": "సెటప్ పూర్తి చేయండి",
   "hi": "सेटअप पूरा करें",
-  "kn": "ಸೆಟಪ್ ಪೂರ್ಣಗೊಳಿಸಿ",
+  "kn": "ಸೆಟಪ್ ಮುಗಿಸಿ",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -93744,10 +93744,10 @@
   }
  },
  "tv6.chip.finish": {
-  "en": "Finish setup · {done}/{total}",
-  "te": "సెటప్ పూర్తి చేయండి · {done}/{total}",
-  "hi": "सेटअप पूरा करें · {done}/{total}",
-  "kn": "ಸೆಟಪ್ ಮುಗಿಸಿ · {done}/{total}",
+  "en": "Finish setup · {done} of {total}",
+  "te": "సెటప్ పూర్తి చేయండి · {total}లో {done}",
+  "hi": "सेटअप पूरा करें · {total} में से {done}",
+  "kn": "ಸೆಟಪ್ ಮುಗಿಸಿ · {total} ರಲ್ಲಿ {done}",
   "status": {
    "te": "reviewed",
    "hi": "draft",

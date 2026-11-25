@@ -7,8 +7,8 @@ City or town
 <text name=town label="City or town" required maxlength=80 minlength=2 autocomplete=address-level2 value=Guntur>
 Used in your messages and quotes.
 [button type=submit: Save]
-{label="Finish setting up"}
-## Finish setting up
+{label="Finish setup"}
+## Finish setup
 1 of 7 done
 - Tell us your business name and city Done
 - [Set up your institution The kind of place, when the year starts and your classes or courses. To do](/app/tenants/22222222-2222-2222-2222-222222222222/programmes)

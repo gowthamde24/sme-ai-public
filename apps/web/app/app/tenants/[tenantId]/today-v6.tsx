@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 
 import { JobsToday } from "@/components/v2/app/jobs/JobsToday";
 import { FinishChip } from "@/components/v2/app/today/v6/day-one/FinishChip";
-import { doneCount, showChecklist, showChip, stepViews, type StepId } from "@/components/v2/app/today/v6/day-one/steps";
+import { doneCount, showChecklist, showChip, stepViews } from "@/components/v2/app/today/v6/day-one/steps";
 import { todayOpen } from "@/lib/screens/flag";
 import type { DayOneIn, LiveCallSeed, V6In } from "@/components/v2/app/today/v6/types";
 import { wordsFor } from "@/i18n/app-words";
@@ -24,11 +24,10 @@ import { rangeOf } from "@/lib/reports-v6/results";
 import { readTasks } from "@/lib/tasks/source";
 import { sourceNameOf } from "./lead-desk-today";
 import { MOCK_CALL } from "@/lib/calls/mock";
-import { hasOwnName, missingFor } from "@/lib/assistant-status/go-live";
+import { missingFor } from "@/lib/assistant-status/go-live";
+import { readDone } from "@/lib/packs/day-one-activation";
 import { readAssistantStatus } from "@/lib/assistant-status/source";
 import { readChoice } from "@/lib/assistant-status/setup-choice";
-import type { StepCheck } from "@/lib/packs/activation";
-import { readFacts } from "@/lib/packs/activation-facts";
 import { assistantStatusScreens, callScreens, demoCall, designV6, outreachScreens, taskScreens, firstDayOpen } from "@/lib/screens/flag";
 import { readResultsV6 } from "./report/v6-data";
 import { setJobEnabledAction } from "./jobs/actions";
@@ -62,20 +61,6 @@ async function readCalls(token: string, tenantId: string): Promise<{ times: stri
     if (error instanceof ApiAuthError) throw error;
     return null;
   }
-}
-
-/** The seven steps of day one, done or not, from what can be read. A fact that cannot be read is "not done". "Practise" has no fact yet (C1's onboarding progress is still to build). */
-async function readDone(token: string, tenantId: string, shop: string, modules: readonly string[], status: NonNullable<Awaited<ReturnType<typeof readAssistantStatus>>>, missing: readonly string[]): Promise<Partial<Record<StepId, boolean>>> {
-  const facts: Partial<Record<StepCheck, boolean>> = await readFacts(token, tenantId, ["catalogue_has_items", "lead_source_added"], modules).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : {}));
-  return {
-    shop: hasOwnName(shop),
-    catalogue: facts.catalogue_has_items === true,
-    speaks: !status.usingDefaults.includes("voice"),
-    rules: !status.usingDefaults.includes("rules"),
-    practise: false,
-    phone: !missing.includes("phone_number"),
-    sources: facts.lead_source_added === true,
-  };
 }
 
 /** What the dark band (or the day-one checklist) needs besides Today's own data: the words, the language, the business, the checklist or the chip, the demo button and the calls that are live now. */
