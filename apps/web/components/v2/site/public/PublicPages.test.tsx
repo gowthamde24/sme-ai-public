@@ -36,11 +36,11 @@ describe("pricing (the approved mock)", () => {
     expect(h.match(/data-chosen/g)).toHaveLength(1);
     expect(h).toMatch(/data-plan="pro"[^>]*class="[^"]*border-ink/);
   });
-  it("lists what you pay for, tags the two unconfirmed rows as drafts and says GST is extra", () => {
+  it("lists what you pay for, has no draft tags (call charging is wired) and says GST is extra", () => {
     const t = text(h);
     for (const s of ["From ₹5 a minute", "₹299 a month", "Nothing to pay", "Free", "At Meta's price"]) expect(t, s).toContain(s);
-    expect(h.match(/data-part="draft-tag"/g)).toHaveLength(2);
-    expect(t).toContain("Draft: to be confirmed");
+    expect(h).not.toContain('data-part="draft-tag"');
+    expect(t).not.toContain("Draft: to be confirmed");
     expect(t).toContain("18% GST is added on your invoice");
   });
   it("has one start button, to sign-up", () => {

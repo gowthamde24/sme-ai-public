@@ -318,17 +318,6 @@
    "kn": "draft"
   }
  },
- "pub.price.tbc": {
-  "en": "Draft: to be confirmed",
-  "te": "డ్రాఫ్ట్: ఇంకా నిర్ధారించలేదు",
-  "hi": "ड्राफ्ट: अभी कन्फर्म होना बाकी",
-  "kn": "ಡ್ರಾಫ್ಟ್: ಇನ್ನೂ ಖಚಿತವಾಗಿಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "pub.price.gst": {
   "en": "Prices are without GST. {gst}% GST is added on your invoice. Credits never run out.",
   "te": "ధరలు GST లేకుండా. మీ ఇన్వాయిస్‌లో {gst}% GST కలుస్తుంది. క్రెడిట్స్ ఎప్పటికీ అయిపోవు.",

@@ -22,7 +22,7 @@ const source = (dir: string) => fs.readdirSync(dir).filter((f) => /\.tsx$/.test(
 describe("the calls panel strings", () => {
   it("has the strings (rules, hear, lines, billing)", () => {
     expect(keys.length).toBeGreaterThanOrEqual(30);
-    for (const k of ["cpn.rules.title", "cpn.rules.read", "cpn.hear.title", "cpn.hear.start", "cpn.once.title", "cpn.once.count", "cpn.once.note", "cpn.once.add", "cpn.bill.title", "cpn.bill.draft"]) expect(keys, k).toContain(k);
+    for (const k of ["cpn.rules.title", "cpn.rules.read", "cpn.hear.title", "cpn.hear.start", "cpn.once.title", "cpn.once.count", "cpn.once.note", "cpn.once.add", "cpn.bill.title"]) expect(keys, k).toContain(k);
     for (const n of [1, 2, 3, 4, 5]) expect(keys).toEqual(expect.arrayContaining([`cpn.rule.${n}.b`, `cpn.rule.${n}.t`]));
     for (const n of [1, 2, 3, 4]) expect(keys).toEqual(expect.arrayContaining([`cpn.bill.${n}.b`, `cpn.bill.${n}.t`]));
   });

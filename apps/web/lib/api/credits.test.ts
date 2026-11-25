@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { failOf, parseInvoice, parseOptions, parseOrder, parseStatement, parseTopups } from "./credits";
+import { failOf, parseBalanceAndDebt, parseInvoice, parseOptions, parseOrder, parseStatement, parseTopups } from "./credits";
 import { ApiRequestError } from "./client";
 
 describe("credits: C1's answers, checked", () => {
@@ -19,6 +19,12 @@ describe("credits: C1's answers, checked", () => {
     const inv = parseInvoice({ number: "S19-2627-000001", issued_at: "2026-11-24T10:00:00Z", subtotal_text: "₹1,000", gst_text: "₹180", total_text: "₹1,180", tax_split: "cgst_sgst", cgst_text: "₹90", sgst_text: "₹90", seller_details_missing: true });
     expect(inv.draft).toBe(true);
     expect(inv.lines).toEqual([{ label: "CGST 9%", text: "₹90" }, { label: "SGST 9%", text: "₹90" }]);
+  });
+  it("the debt: from debt_paise, or from a balance below zero; none otherwise", () => {
+    expect(parseBalanceAndDebt({ balance_paise: 0, debt_paise: 3500 }).debtPaise).toBe(3500);
+    expect(parseBalanceAndDebt({ balance_paise: -2000 })).toEqual({ balance: null, debtPaise: 2000 });
+    expect(parseBalanceAndDebt({ balance_paise: 5000 }).debtPaise).toBeNull();
+    expect(parseBalanceAndDebt("nope")).toEqual({ balance: null, debtPaise: null });
   });
   it("refusals are closed words", () => {
     expect(failOf(new ApiRequestError(422, "topup_amount_invalid", "x"))).toEqual({ ok: false, error: "amount" });

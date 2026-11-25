@@ -136,18 +136,17 @@ describe("Calls at once", () => {
 });
 
 describe("How calls are billed", () => {
-  it("four open rows, each tagged 'Draft: to be confirmed': unanswered or busy costs nothing, 30-second blocks, calls to you cost the same, testing is free", () => {
+  it("four open rows with no Draft tag (call charging is wired): nothing for an unanswered call, 30-second blocks, calls you receive cost the same, testing is free", () => {
     const { container } = render(<CallBillingFacts words={W} />);
     expect(screen.getByRole("heading", { name: "How calls are billed" })).toBeInTheDocument();
     const rows = container.querySelectorAll("[data-row]");
     expect(rows).toHaveLength(4);
     expect(rows[0]).toHaveTextContent("Nobody picks up, or the line is busy");
-    expect(rows[0]).toHaveTextContent("Nothing.");
-    expect(rows[1]).toHaveTextContent("30 seconds");
-    expect(rows[2]).toHaveTextContent("Calls to you cost the same");
-    expect(rows[3]).toHaveTextContent("Testing is free");
-    expect(container.querySelectorAll('[data-part="draft-tag"]')).toHaveLength(4);
-    for (const tag of container.querySelectorAll('[data-part="draft-tag"]')) expect(tag).toHaveTextContent("Draft: to be confirmed");
+    expect(rows[0]).toHaveTextContent("A call nobody answers costs nothing.");
+    expect(rows[1]).toHaveTextContent("Calls are billed per 30 seconds, rounded up.");
+    expect(rows[2]).toHaveTextContent("Calls you receive cost the same as calls we make for you.");
+    expect(rows[3]).toHaveTextContent("Test calls and practice are free.");
+    expect(container.querySelectorAll('[data-part="draft-tag"]')).toHaveLength(0);
   });
   it("writes no amount: the rates are the plan's, drawn by the page", () => {
     const { container } = render(<CallBillingFacts words={W} />);

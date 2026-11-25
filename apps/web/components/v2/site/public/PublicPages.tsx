@@ -32,7 +32,7 @@ function planLines(plan: PublicPlan, p: PubT): string[] {
 export function PricingPublic({ t, p, lang }: Props) {
   const v = pubVars();
   const start = startEntry(t, lang, p("pub.c.start"));
-  const rows: { id: string; tbc?: boolean }[] = [{ id: "call" }, { id: "number" }, { id: "unanswered", tbc: true }, { id: "testing", tbc: true }, { id: "wa" }];
+  const rows: { id: string }[] = [{ id: "call" }, { id: "number" }, { id: "unanswered" }, { id: "testing" }, { id: "wa" }];
   return (
     <>
       <PubHead title={p("pub.price.title")} sub={p("pub.price.sub")} />
@@ -68,7 +68,6 @@ export function PricingPublic({ t, p, lang }: Props) {
                 <dt className="font-semibold">{p(`pub.price.use.${r.id}.t` as PubKey)}</dt>
                 <dd className="text-right text-muted">
                   {p(`pub.price.use.${r.id}.v` as PubKey, v)}
-                  {r.tbc ? <span data-part="draft-tag" className="ml-2 inline-block rounded-full border border-edge px-2 py-0.5 text-xs font-semibold">{p("pub.price.tbc")}</span> : null}
                 </dd>
               </div>
             ))}

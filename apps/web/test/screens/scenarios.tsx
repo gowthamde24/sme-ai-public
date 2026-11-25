@@ -55,7 +55,7 @@ import {
 } from "@/lib/api/education";
 import * as EDU from "@/lib/api/education-fixtures";
 import { parseActivity, parseActivityUsage, parseEndpoints, parseEvents } from "@/lib/api/webhooks-out";
-import { parseInvoice, parseOptions, parseStatement, parseTopups } from "@/lib/api/credits";
+import { parseBalanceAndDebt, parseInvoice, parseOptions, parseStatement, parseTopups } from "@/lib/api/credits";
 import { parseBillingBalance } from "@/lib/billing-v6/balance";
 import { parseList, parseLists, parseRows } from "@/lib/api/lists";
 import { parseOwnList } from "@/lib/api/numbers";
@@ -1846,7 +1846,7 @@ const creditsEnv = <T,>(run: () => Promise<T>) => withEnv({ ...V6_ENV, CREDITS_S
 const CR_PRESETS = [500, 1000, 2000, 5000].map((r) => ({ added_paise: r * 100, gst_paise: r * 18, total_paise: r * 118, added_text: `₹${r.toLocaleString("en-IN")}`, gst_text: "", total_text: "" }));
 const crHandlers = (low: boolean, empty = false) => (role: Role): Record<string, Handler> => ({
   ...base(role),
-  getBalance: () => parseBillingBalance({ balance_paise: low ? 25000 : 482500, balance_text: low ? "₹250" : "₹4,825", low, minutes_estimate: low ? 3 : 96 }),
+  getBalance: () => parseBalanceAndDebt({ balance_paise: low ? 25000 : 482500, balance_text: low ? "₹250" : "₹4,825", low, minutes_estimate: low ? 3 : 96 }),
   getOptions: () => parseOptions({ gst_percent: 18, presets: CR_PRESETS, custom_min_rupees: 100, custom_max_rupees: 100000, mode: "fake", checkout_ready: true }),
   listTopups: () => parseTopups({ items: empty ? [] : [{ order_id: "order_1", state: "paid", added_text: "₹1,000", total_text: "₹1,180", created_at: "2026-11-24T10:00:00Z", paid_at: "2026-11-24T10:01:00Z", invoice_number: "S19-2627-000001", refunded: false }, { order_id: "order_2", state: "abandoned", added_text: "₹500", total_text: "₹590", created_at: "2026-11-23T10:00:00Z", paid_at: null, invoice_number: null, refunded: false }] }),
   getStatement: () => parseStatement({ items: empty ? [] : [{ at: "2026-11-24T10:01:00Z", kind: "credit", label: "Top-up", amount_paise: 100000, amount_text: "₹1,000", balance_after_text: "₹1,250", invoice_number: "S19-2627-000001" }, { at: "2026-11-24T12:00:00Z", kind: "usage", label: "Calls", amount_paise: -2500, amount_text: "-₹25", balance_after_text: "₹1,225", invoice_number: null }], has_more: false, balance_text: "₹1,225" }),
@@ -1855,6 +1855,7 @@ const crHandlers = (low: boolean, empty = false) => (role: Role): Record<string,
 add({ id: "credits-page", roles: ["owner", "admin"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(false) });
 add({ id: "credits-page-low", roles: ["owner"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(true) });
 add({ id: "credits-page-empty", roles: ["owner"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(false, true) });
+add({ id: "credits-page-debt", roles: ["owner"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: (role) => ({ ...crHandlers(true)(role), getBalance: () => parseBalanceAndDebt({ balance_paise: -3500, low: true }) }) });
 add({ id: "credits-invoice", roles: ["owner", "admin"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/invoices/[number]/page")).default(props({ number: "S19-2627-000001" }))), handlers: crHandlers(false) });
 
 // Developers > Webhooks and Activity (C1's webhooks-out.md and developer-api.md): one address that is failing and one that is fine, the five events, the counts and the requests; and the same tabs while the API has them off (404)

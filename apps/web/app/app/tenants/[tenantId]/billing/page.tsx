@@ -53,7 +53,7 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
   const facts = callsPanel() ? <CallBillingFacts words={wordsFor(lang, ["cpn.bill."])} /> : null;
   // CREDITS_SCREENS (29 Nov 2026): the balance, Add credits (Razorpay Checkout), the low-balance line, the statement and the GST invoices, on C1's credits routes (a part that cannot be read is left out, never filled in)
   if (creditsScreens()) {
-    const [balance, options, topups, statement] = await Promise.all([
+    const [read, options, topups, statement] = await Promise.all([
       getBalance(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
       getOptions(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
       listTopups(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
@@ -65,7 +65,8 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
         lang={lang}
         base={base}
         help={helpTipFor(lang, base, "billing", true)}
-        balance={balance}
+        balance={read?.balance ?? null}
+        debtPaise={read?.debtPaise ?? null}
         options={options}
         topups={topups}
         statement={statement}

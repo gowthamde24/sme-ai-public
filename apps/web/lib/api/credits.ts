@@ -1,7 +1,7 @@
 import { ApiAuthError, ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { parseBillingBalance, type BillingBalance } from "../billing-v6/balance";
-import { bool, int, optStr, readRows, rec, str } from "./shape";
+import { bool, int, isRec, optStr, readRows, rec, str } from "./shape";
 
 /**
  * Credits top-up through Razorpay (C1's docs/contracts/credits-topup.md, 24 Nov 2026; API flag PRICING_V2, 404 while off). SERVER ONLY, with the person's own token. Money is in whole paise; the texts of the API ("₹1,000") are shown as sent (they are made from the
@@ -106,4 +106,15 @@ export async function getInvoice(token: string, t: string, number: string): Prom
   if (!/^[A-Z0-9-]{5,20}$/.test(number)) throw new ApiContractError("invoice number");
   return parseInvoice(await apiRequest(`${base(t)}/gst-invoices/${number}`, token));
 }
-export const getBalance = async (token: string, t: string): Promise<BillingBalance | null> => parseBillingBalance(await apiRequest(`${base(t)}/balance`, token));
+/**
+ * The balance, and the debt when the wallet ran past zero (C1's docs/contracts/call-billing.md: an inbound call is answered up to a small floor below zero and the shortfall is a debt the next top-up pays first). The debt is read from `debt_paise` (or `shortfall_paise`) when the API sends it,
+ * else from a balance below zero; null when there is none. A balance the page cannot read is null (never invented).
+ */
+export type Balance = { balance: BillingBalance | null; debtPaise: number | null };
+export function parseBalanceAndDebt(json: unknown): Balance {
+  const x = isRec(json) ? json : {};
+  const debt = [x.debt_paise, x.shortfall_paise].find((v) => typeof v === "number" && Number.isSafeInteger(v) && v > 0);
+  const neg = typeof x.balance_paise === "number" && Number.isSafeInteger(x.balance_paise) && x.balance_paise < 0 ? -x.balance_paise : null;
+  return { balance: parseBillingBalance(json), debtPaise: (debt as number | undefined) ?? neg };
+}
+export const getBalance = async (token: string, t: string): Promise<Balance> => parseBalanceAndDebt(await apiRequest(`${base(t)}/balance`, token));

@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { Statement as StatementData, Topup, TopupOptions } from "@/lib/api/credits";
 import type { BillingBalance } from "@/lib/billing-v6/balance";
 
+import { formatRupeesShort } from "@/lib/money";
+
 import { AddCredits } from "./AddCredits";
 import { LowBalance } from "./LowBalance";
 import { Statement } from "./Statement";
@@ -16,7 +18,7 @@ type Actions = React.ComponentProps<typeof AddCredits>["actions"] & { statement:
  * Credits and billing (mock "Credits and billing"; C1's docs/contracts/credits-topup.md; flag CREDITS_SCREENS): the balance with how many minutes of calls it covers, the last top-up and Add credits (Owner), the low-balance line when the balance covers fewer than 4 minutes,
  * the statement, the invoices (one for each paid top-up, opened as a printable page) and a link to the billing details (the workspace name and GSTIN of Settings). Open rows between hairlines; nothing boxed. Admin sees everything and cannot add.
  */
-export function CreditsPage({ words, lang, base, balance, options, topups, statement, owner, actions, help, facts }: { words: Words; lang: string; base: string; balance: BillingBalance | null; options: TopupOptions | null; topups: readonly Topup[] | null; statement: StatementData | null; owner: boolean; actions: Actions; help: React.ReactNode; /** "How calls are billed" (CALLS_PANEL), when on. */ facts?: React.ReactNode }) {
+export function CreditsPage({ words, lang, base, balance, debtPaise, options, topups, statement, owner, actions, help, facts }: { words: Words; lang: string; base: string; balance: BillingBalance | null; /** The wallet ran past zero (call billing): the debt in paise, which the next top-up pays first. */ debtPaise?: number | null; options: TopupOptions | null; topups: readonly Topup[] | null; statement: StatementData | null; owner: boolean; actions: Actions; help: React.ReactNode; /** "How calls are billed" (CALLS_PANEL), when on. */ facts?: React.ReactNode }) {
   const t = makeT(words);
   const minutes = balance?.minutesEstimate ?? null;
   const last = topups?.find((x) => x.state === "paid") ?? null;
@@ -26,7 +28,14 @@ export function CreditsPage({ words, lang, base, balance, options, topups, state
       {help}
       <PageTop title={t("cr.title")} sub={t("cr.sub")} />
       <div className="mt-4 flex flex-col gap-4">
-        {balance?.low && minutes !== null ? <LowBalance minutes={minutes} words={words} add={add} /> : null}
+        {debtPaise ? (
+          <p role="status" data-part="debt" className="m-0 flex items-start gap-2 border-y border-line py-3 text-[15px] font-semibold text-ink">
+            <span aria-hidden="true" className="mt-2 size-2 shrink-0 rounded-full bg-brand" />
+            <span className="min-w-0 flex-1">{t("cr.debt", { n: formatRupeesShort(debtPaise) })}</span>
+            {add}
+          </p>
+        ) : null}
+        {!debtPaise && balance?.low && minutes !== null ? <LowBalance minutes={minutes} words={words} add={add} /> : null}
         <div className="flex flex-wrap items-end gap-x-9 gap-y-3 border-t border-ink pt-4" data-part="balance">
           <div>
             <p className="m-0 text-sm text-muted">{t("cr.balance")}</p>
@@ -37,7 +46,7 @@ export function CreditsPage({ words, lang, base, balance, options, topups, state
             <p className="m-0 text-sm text-muted">{t("cr.last")}</p>
             <p className="m-0 text-[22px] font-bold text-ink">{last ? last.addedText : t("cr.none")}</p>
           </div>
-          {!balance?.low && add ? <div className="md:ml-auto">{add}</div> : null}
+          {!balance?.low && !debtPaise && add ? <div className="md:ml-auto">{add}</div> : null}
         </div>
         <p className="m-0 border-y border-line py-3 text-[15px] text-muted">{t("cr.note")}</p>
 
