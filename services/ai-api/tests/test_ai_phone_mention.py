@@ -25,6 +25,7 @@ from tests.test_dv_browser_voice import arun
 from tests.test_ph_inbound import FakeStore
 
 TENANT = uuid.UUID(int=0x0B0F)
+UND = {"at": "2026-11-26", "by": "owner"}   # the written undertaking an OFF needs (lawyer's opinion, 25 Nov 2026)
 TRAINED = "Namaste! Welcome to {business}. This is {assistant}. How can I help you?"   # a trained greeting that does not say it is an AI
 
 
@@ -105,10 +106,10 @@ def service(store: SwitchStore, language: str = "en") -> InboundService:
 
 
 @arun
-async def test_the_call_is_prepared_with_the_name_only_by_default_and_the_old_switch_is_ignored() -> None:
+async def test_the_call_says_it_is_the_ai_assistant_by_default_and_the_old_switch_is_ignored() -> None:
     for switch in (True, False, None, "maybe"):
         prepared = await _prepare_for(service(SwitchStore(switch)), voice(), TENANT, business="Padma Silks")
-        assert prepared.ai_disclosed is False and not gate.has_ai_disclosure(prepared.text or "") and "Padma Silks" in (prepared.text or ""), switch
+        assert prepared.ai_disclosed is True and gate.has_ai_disclosure(prepared.text or "") and "Padma Silks" in (prepared.text or ""), switch
 
 
 @arun
@@ -119,20 +120,22 @@ async def test_with_the_setting_on_the_call_says_it_and_is_stored_as_disclosed_i
 
 
 @arun
-async def test_off_is_the_name_only_in_a_language_other_than_english_and_is_stored_as_not_disclosed() -> None:
-    prepared = await _prepare_for(service(SwitchStore(True, {"say_ai_when_greeting": False}), "te"), voice(), TENANT, business="Padma Silks")
+async def test_off_with_the_undertaking_is_the_name_only_in_a_language_other_than_english_and_off_without_it_stays_on() -> None:
+    prepared = await _prepare_for(service(SwitchStore(True, {"say_ai_when_greeting": False, "ai_off_undertaking": UND}), "te"), voice(), TENANT, business="Padma Silks")
     assert prepared.ai_disclosed is False and not gate.has_ai_disclosure(prepared.text or "")
+    kept = await _prepare_for(service(SwitchStore(True, {"say_ai_when_greeting": False}), "te"), voice(), TENANT, business="Padma Silks")
+    assert kept.ai_disclosed is True, "an OFF without the stored undertaking is read as not chosen: ON"
 
 
 @arun
-async def test_an_unreadable_training_document_is_the_default_off() -> None:
+async def test_an_unreadable_training_document_is_the_default_on() -> None:
     prepared = await _prepare_for(service(SwitchStore(raises=True)), voice(), TENANT, business="Padma Silks")
-    assert prepared.ai_disclosed is False
+    assert prepared.ai_disclosed is True
 
 
 @arun
 async def test_a_trained_greeting_is_spoken_as_written_when_off_and_gets_the_words_first_when_on() -> None:
-    off = await _prepare_for(service(SwitchStore(True, {"greeting": {"en": TRAINED}})), voice(), TENANT, business="Padma Silks")
+    off = await _prepare_for(service(SwitchStore(True, {"greeting": {"en": TRAINED}, "say_ai_when_greeting": False, "ai_off_undertaking": UND})), voice(), TENANT, business="Padma Silks")
     assert off.ai_disclosed is False and "Namaste" in (off.text or "")
     on = await _prepare_for(service(SwitchStore(False, {"greeting": {"en": TRAINED}, "say_ai_when_greeting": True})), voice(), TENANT, business="Padma Silks")
     assert on.ai_disclosed is True and gate.has_ai_disclosure(persona.first_sentence(on.text or ""))
@@ -142,7 +145,7 @@ async def test_a_trained_greeting_is_spoken_as_written_when_off_and_gets_the_wor
 @arun
 async def test_a_call_we_placed_follows_the_setting_and_the_gate_asks_only_when_it_is_on() -> None:
     out = OutboundCall(row_id=uuid.uuid4(), language="en", purpose="visit_reminder", goal=None, opening_line=None)
-    off = await _prepare_for(service(SwitchStore(True)), voice(), TENANT, business="Padma Silks", outbound=out)
+    off = await _prepare_for(service(SwitchStore(True, {"say_ai_when_greeting": False, "ai_off_undertaking": UND})), voice(), TENANT, business="Padma Silks", outbound=out)
     assert off.ai_disclosed is False and not gate.has_ai_disclosure(off.text or "")
     on = await _prepare_for(service(SwitchStore(False, {"say_ai_when_greeting": True})), voice(), TENANT, business="Padma Silks", outbound=out)
     assert on.ai_disclosed is True and gate.has_ai_disclosure(on.text or "")

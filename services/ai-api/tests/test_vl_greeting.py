@@ -33,15 +33,17 @@ IST = ZoneInfo("Asia/Kolkata")
 
 def test_the_resolver_follows_the_job_then_the_business_then_off() -> None:
     f = greeting.resolve_greeting_disclosure
-    assert f(None) is False and f(None, None) is False and f(None, "business") is False, "default OFF"
+    assert f(None) is True and f(None, None) is True and f(None, "business") is True, "default ON (the lawyer's opinion, 25 Nov 2026)"
     assert f(True) is True and f(True, "business") is True and f(False, "business") is False
     assert f(False, "on") is True and f(None, "on") is True and f(True, "off") is False and f(None, "off") is False
     assert f(True, "nonsense") is True and f(False, "nonsense") is False, "an unknown word follows the business"
     assert greeting.JOB_OVERRIDES == ("business", "on", "off")
 
 
-def test_the_setting_is_read_from_the_talk_training_document_and_an_unreadable_one_is_off() -> None:
-    assert greeting.setting_of({"say_ai_when_greeting": True}) is True and greeting.setting_of({"say_ai_when_greeting": False}) is False
+def test_the_setting_is_read_from_the_talk_training_document_and_an_unreadable_one_is_on() -> None:
+    undertaking = {"ai_off_undertaking": {"at": "2026-11-26", "by": "owner"}}
+    assert greeting.setting_of({"say_ai_when_greeting": True}) is True and greeting.setting_of({"say_ai_when_greeting": False, **undertaking}) is False
+    assert greeting.setting_of({"say_ai_when_greeting": False}) is None, "an OFF without the stored undertaking is read as not chosen (ON)"
     assert greeting.setting_of({}) is None and greeting.setting_of(None) is None and greeting.setting_of({"say_ai_when_greeting": "yes"}) is None
     repo = SimpleNamespace(get=lambda token, tenant: {"doc": {"say_ai_when_greeting": True}})
     assert greeting.from_repo(repo, "t", "x") is True and greeting.from_repo(repo, "t", "x", "off") is False
@@ -49,9 +51,9 @@ def test_the_setting_is_read_from_the_talk_training_document_and_an_unreadable_o
     def boom(token: str, tenant: object) -> dict[str, object]:
         raise RuntimeError("down")
 
-    assert greeting.from_repo(SimpleNamespace(get=boom), "t", "x") is False and greeting.from_repo(None, "t", "x") is False
+    assert greeting.from_repo(SimpleNamespace(get=boom), "t", "x") is True and greeting.from_repo(None, "t", "x") is True
     ctx = SimpleNamespace(principal=SimpleNamespace(token="t"), tenant=SimpleNamespace(id="x"))
-    assert say_ai_setting(SimpleNamespace(talk_training=repo), ctx) is True and say_ai_setting(SimpleNamespace(talk_training=None), ctx) is False  # type: ignore[arg-type]
+    assert say_ai_setting(SimpleNamespace(talk_training=repo), ctx) is True and say_ai_setting(SimpleNamespace(talk_training=None), ctx) is True  # type: ignore[arg-type]
 
 
 # ---- the greeting follows the setting: calls ---------------------------------------------------------------------------------------------------------
