@@ -126,3 +126,42 @@ def test_the_worker_keeps_the_count_fresh_and_stops() -> None:
         await asyncio.wait_for(task, 5)
 
     asyncio.run(scenario())
+
+
+def test_two_instances_sharing_one_database_whisper_hang_up_and_count_across_each_other() -> None:
+    """The multi-instance story end to end with two LiveCalls and two workers on ONE shared store (the database): a request that lands on instance A for a call held by B is done by B within a worker tick, and each sees the other's calls in the count."""
+
+    class Shared(FakeStore):
+        """One database for both instances: the count is every call held anywhere; a command waits for the instance that holds its call."""
+
+        def __init__(self, a: LiveCalls, b: LiveCalls) -> None:
+            super().__init__()
+            self.instances = (a, b)
+
+        def live_count(self) -> int:
+            return sum(i.local_count() for i in self.instances)
+
+    async def scenario() -> None:
+        a, b = LiveCalls(), LiveCalls()
+        shared = Shared(a, b)
+        line = Line()
+        b.add(TENANT_A.id, CALL, line)  # type: ignore[arg-type]
+        stop = asyncio.Event()
+        workers = [asyncio.create_task(cross.run_worker(i, shared, stop)) for i in (a, b)]
+        await asyncio.sleep(0.2)
+        assert a.count() == 1 and b.count() == 1, "A counts the call B holds"
+        # a request lands on A: the call is not here, so it is asked of the other instance
+        assert a.line_of(TENANT_A.id, CALL) is None
+        assert await cross.ask_other_instance(shared, "tok", TENANT_A.id, CALL, "whisper", "ask about the colour") is True
+        assert line.whispers == ["ask about the colour"]
+        assert await cross.ask_other_instance(shared, "tok", TENANT_A.id, CALL, "hang_up") is True
+        assert line.hung == ["stopped"]
+        stop.set()
+        await asyncio.wait_for(asyncio.gather(*workers), 5)
+
+    saved = (cross.BUSY_S, cross.IDLE_S)
+    cross.BUSY_S = cross.IDLE_S = 0.1
+    try:
+        asyncio.run(scenario())
+    finally:
+        cross.BUSY_S, cross.IDLE_S = saved
