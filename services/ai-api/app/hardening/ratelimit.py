@@ -66,6 +66,7 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("voice_style_samples", "/v1/voice-style-samples/", False, 120),   # the pre-recorded style previews (static files, no data)  # job voice-picker: the pre-rendered samples (static files, no data)
     PublicRule("google_calendar_callback", "/v1/integrations/google-calendar/callback", True, 20),  # appointment booking slice 4: Google sends the browser back after the consent screen (the signed, one-time state is the credential)
     PublicRule("google_calendar_push", "/v1/integrations/google-calendar/push", True, 600),  # Google's push notifications (the channel token is the credential; a burst is debounced in the database)
+    PublicRule("outlook_calendar_callback", "/v1/calendars/outlook/callback", True, 20),  # commerce-notify D: Microsoft sends the browser back after the consent screen (the signed, one-time state is the credential)
     PublicRule("docs", "/docs", False, 20),
     PublicRule("redoc", "/redoc", False, 20),
     PublicRule("openapi", "/openapi.json", True, 20),

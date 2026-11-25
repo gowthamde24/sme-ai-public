@@ -238,6 +238,11 @@ class Runtime:
     # outbound webhooks (app/webhooks_out.WebhooksOut)
     # None: WEBHOOKS_OUT=off, every route answers 404
     webhooks_out: Any = None
+    # commerce (Shopify, WooCommerce), notifications out (Slack, Telegram, Teams), calendars in
+    # (Calendly, Cal.com, Outlook): each is None unless its switch is on
+    commerce: Any = None
+    notify_out: Any = None
+    calendar_in: Any = None
     # Jobs (app/jobs): the flags and the pack files; None: JOBS=off, every /jobs route answers 404
     jobs: JobsRuntime | None = None
     calls: CallsService | None = None

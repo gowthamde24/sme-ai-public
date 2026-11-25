@@ -150,6 +150,7 @@ insert into exempt (tbl, why) values
   ('public.developer_api_keys', 'the developer API''s keys: core, every business type (no module)'),
   ('public.developer_sandbox_leads', 'the developer API''s test-mode leads: core, every business type (no module)'),
   ('public.webhook_endpoints', 'outbound webhooks: a business''s endpoints, core for every business type (no module)'), ('public.webhook_deliveries', 'outbound webhooks: the delivery log, core for every business type (no module)'),
+  ('public.notify_channels', 'notifications out: a business''s Slack, Telegram and Teams channels, core for every business type (no module)'), ('public.notify_deliveries', 'notifications out: the message log, core for every business type (no module)'),
   ('public.tenant_agent_switches', 'a switch per helper: core, every business type (no module)'),
   ('public.ai_team_standups', 'the morning stand-up text: core, every business type (no module)'),
   ('public.queued_replies', 'the chat composer queue: core, every business type (no module)'),
