@@ -31,15 +31,30 @@ describe("the PIN code lookup of the verification form", () => {
   });
   it("live: only the PIN goes to the India Post directory; a slow or broken answer is null; a bad PIN is never sent", async () => {
     flag.mode = "1";
-    const net = vi.fn(async () => ({ ok: true, json: async () => GOOD }));
+    const net = vi.fn(async () => ({ ok: true, text: async () => JSON.stringify(GOOD) }));
     vi.stubGlobal("fetch", net);
     expect(await lookupPin("515001")).toEqual({ state: "Andhra Pradesh", city: "Ananthapuramu" });
     expect(net).toHaveBeenCalledTimes(1);
-    expect((net.mock.calls[0] as unknown as [string, RequestInit])[0]).toBe("https://api.postalpincode.in/pincode/515001");
-    expect((net.mock.calls[0] as unknown as [string, RequestInit])[1]).not.toHaveProperty("body");
+    expect(String((net.mock.calls[0] as unknown as [URL, RequestInit])[0])).toBe("https://api.postalpincode.in/pincode/515001");
+    expect((net.mock.calls[0] as unknown as [URL, RequestInit])[1]).toMatchObject({ redirect: "error" }); // never follows a redirect elsewhere
+    expect((net.mock.calls[0] as unknown as [URL, RequestInit])[1]).not.toHaveProperty("body");
     expect(await lookupPin("012345")).toBeNull();
     expect(net).toHaveBeenCalledTimes(1);
     vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("slow"); }));
+    expect(await lookupPin("515001")).toBeNull();
+  });
+  it("anything that is not exactly six digits (letters, a path, a host, a query, a space trick) never reaches fetch", async () => {
+    flag.mode = "1";
+    const net = vi.fn(async () => ({ ok: true, text: async () => JSON.stringify(GOOD) }));
+    vi.stubGlobal("fetch", net);
+    for (const bad of ["../etc/passwd", "515001/../x", "515001?x=1", "515001#a", "515001@evil.test", "//evil.test/515001", "51500a", "5150012", "051500", "٥١٥٠٠١", "515 001", "", "https://evil.test/515001", 515001, null, undefined, { toString: () => "515001" }]) expect(await lookupPin(bad), String(bad)).toBeNull();
+    expect(net).not.toHaveBeenCalled();
+  });
+  it("an answer that is too big, or not JSON, is dropped", async () => {
+    flag.mode = "1";
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, text: async () => " ".repeat(30_000) + JSON.stringify(GOOD) })));
+    expect(await lookupPin("515001")).toBeNull();
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, text: async () => "<html>" })));
     expect(await lookupPin("515001")).toBeNull();
   });
 });

@@ -1,6 +1,6 @@
 import { kycPerClient } from "@/lib/screens/flag";
 
-import { pinProblem, stateFromPostal } from "./rules";
+import { stateFromPostal } from "./rules";
 
 /**
  * The PIN code lookup of the verification form (owner, 26 Nov 2026): when the 6 digits are complete the state and the city are filled in, and the person can correct them. VoiceLink only accepts a city as its own list spells it
@@ -30,13 +30,24 @@ export function parsePostal(json: unknown): PinFound | null {
   return district || state ? { state, city: district || null } : null;
 }
 
+const PIN = /^[1-9][0-9]{5}$/;
+const HOST = "https://api.postalpincode.in";
+/** The directory's answer for one PIN is a few kilobytes; anything bigger is not read. */
+const MAX_BODY = 20_000;
+
 export async function lookupPin(pin: unknown): Promise<PinFound | null> {
-  if (typeof pin !== "string" || pinProblem(pin) !== null || kycPerClient() === "off") return null;
+  if (typeof pin !== "string" || kycPerClient() === "off") return null;
   const p = pin.trim();
+  // the ONLY thing that goes into the address is six digits, checked here, right before the address is built: nothing a person types can change the host, the path or the query
+  if (!PIN.test(p)) return null;
   if (kycPerClient() === "mock") return MOCK[p] ?? null;
   try {
-    const res = await fetch(`https://api.postalpincode.in/pincode/${p}`, { cache: "no-store", signal: AbortSignal.timeout(5000), headers: { Accept: "application/json" } });
-    return res.ok ? parsePostal(await res.json()) : null;
+    const url = new URL(`/pincode/${encodeURIComponent(p)}`, HOST);
+    if (url.origin !== HOST) return null;
+    const res = await fetch(url, { cache: "no-store", redirect: "error", signal: AbortSignal.timeout(5000), headers: { Accept: "application/json" } });
+    if (!res.ok) return null;
+    const text = await res.text();
+    return text.length <= MAX_BODY ? parsePostal(JSON.parse(text)) : null;
   } catch {
     return null;
   }
