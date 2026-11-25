@@ -26,7 +26,7 @@ ROUTE_WORDS = frozenset(
         "extra-lines", "keep",   # more calls at once: buy, cancel, keep a line (26 Nov)
         "lead-address", "test-lead",   # one lead address per job, a test lead (24 Nov)
         "phone-knows",   # GET /assistant/phone-knows (28 Nov)
-        "signup", "consent", "phone", "verify", "turnstile", "trial-claim",   # opening sign-up (24 Nov)
+        "signup", "consent", "phone", "verify", "turnstile", "trial-claim",   # sign-up, check box
         "numbers", "claim",   # the number picker routes (28 Nov)
         "dev",   # GET /v1/dev/outbox, registered in development only (25 Nov)
         "portals",   # GET /lead-sources/portals (sa/connectors-rest, 26 Nov)
