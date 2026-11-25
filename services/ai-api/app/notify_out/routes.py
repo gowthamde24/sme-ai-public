@@ -19,6 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.repository import InvalidValueError
 from app.errors import ApiError, not_found
+from app.logging_safety import one_line
 from app.notify_out import messages, vendors
 from app.notify_out.service import NotifyOut
 from app.tenancy.models import Role
@@ -147,7 +148,7 @@ def test_channel(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]
         raise ApiError(429, "asked_too_soon", "Please wait a few seconds before testing again.", retry_after=10)
     secret = vault.get(tenant, kind)
     outcome = vendors.send(service.http, kind, secret, messages.test_text(str(existing.get("language") or "en"))) if secret else vendors.SendOutcome(False, "no_secret")
-    logger.info("notify test: kind=%s ok=%s reason=%s", kind, outcome.ok, outcome.reason or "-")
+    logger.info("notify test: kind=%s ok=%s reason=%s", one_line(kind), outcome.ok, one_line(outcome.reason or "-"))
     channel = service.repo.channel_test_result(token, tenant, kind, outcome.ok, outcome.reason)
     if channel is None:
         raise not_found()

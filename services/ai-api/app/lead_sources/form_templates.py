@@ -22,6 +22,7 @@ import re
 from datetime import UTC, datetime
 from email import policy
 from email.parser import BytesParser
+from email.utils import parseaddr
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -342,11 +343,18 @@ _PHONE = re.compile(r"\+?[0-9][0-9 ().-]{6,20}[0-9]")
 _EMAIL = re.compile(r"[^\s@,;|<>()\[\]]+@[^\s@,;|<>()\[\]]+\.[^\s@,;|<>()\[\]]+")
 
 
+def _sender_is(sender: str | None, domain: str) -> bool:
+    """The mail's From address is on `domain` or one of its sub-domains (the host is compared whole, never searched for inside the text: code scanning py/incomplete-url-substring-sanitization)."""
+    address = parseaddr(sender or "")[1].lower()
+    host = address.rpartition("@")[2] if "@" in address else ""
+    return host == domain or host.endswith("." + domain)
+
+
 def tradeindia_mail(sender: str, subject: str, body: str) -> portals.Parsed | None:
     """One lead from a TradeIndia mail (sender tradeindia.com, or the name in the subject), read by its `Label: value` lines; None when it is not one or has neither a number nor an address.
     Written from the usual lead-mail labels, NOT from a real TradeIndia mail (their format is not published): verify with a real mail."""
     head = f"{subject}\n{(body or '')[:600]}".lower()
-    if not ENABLED or not ("tradeindia.com" in (sender or "").lower() or "tradeindia" in head):
+    if not ENABLED or not (_sender_is(sender, "tradeindia.com") or "tradeindia" in head):
         return None
     wanted = {re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]+", " ", n.lower())).strip(): f for f, names in _TI_LABELS.items() for n in names}
     found: dict[str, list[str]] = {}

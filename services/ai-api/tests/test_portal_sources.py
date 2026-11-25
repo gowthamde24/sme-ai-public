@@ -10,6 +10,7 @@ import json
 import re
 import uuid
 from typing import Any, get_args
+from urllib.parse import urlparse
 
 import pytest
 
@@ -132,7 +133,7 @@ def test_only_indiamart_is_automatic_and_every_other_portal_says_so_honestly() -
             assert p["how"] == "account_manager" and p["state"] == "Available through your portal account manager"
             assert p["name"] in p["ask_text"] and "lead e-mail" in p["ways"][0] and "(your web address" in p["ask_text"]
     assert by_id["indiamart"]["ask_text"] is None and len(by_id["indiamart"]["steps"]) == 4
-    assert all("help.indiamart.com" in d for d in by_id["indiamart"]["docs"])
+    assert all(urlparse(d).hostname == "help.indiamart.com" for d in by_id["indiamart"]["docs"])
 
 
 def test_the_message_to_the_portal_carries_the_addresses_when_the_page_has_them_and_no_secret_otherwise() -> None:

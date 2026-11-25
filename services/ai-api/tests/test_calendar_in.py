@@ -11,6 +11,7 @@ import hashlib
 import hmac
 import json
 import logging
+import re
 import uuid
 from typing import Any
 
@@ -451,7 +452,7 @@ def test_consent_is_stored_only_with_the_owners_named_question_and_the_lead_gets
     raw = calcom_body(extra={"responses": {"attendeePhoneNumber": {"label": "Phone", "value": PHONE}, "agree": {"label": q, "value": "true"}}})
     w.client.post(door(setup), content=raw, headers=sign_calcom(raw, setup["secret"]))
     row = w.bridge.rows[0]
-    assert row["consent"] == "yes" and row["consent_text"] == q and row["consent_at"].startswith("2026-12-01") and "Cal.com" in row["consent_form"]
+    assert row["consent"] == "yes" and row["consent_text"] == q and row["consent_at"].startswith("2026-12-01") and re.search(r"Cal\.com", row["consent_form"]) is not None
 
 
 def test_a_busy_intake_makes_the_vendor_retry_and_other_lead_refusals_do_not_stop_the_booking() -> None:
@@ -520,7 +521,7 @@ def test_the_booking_link_is_pinned_to_the_vendor_and_said_only_when_shared() ->
     assert w.service.booking_link(TENANT_A.id) is None, "off by default"
     assert w.client.put(f"{T}/calcom/settings", json={"share_link": True}, headers=w.owner()).status_code == 200
     fact = w.service.booking_link(TENANT_A.id)
-    assert fact is not None and fact["kind"] == "booking" and "https://cal.com/example-shop/visit" in fact["text"] and "Cal.com" in fact["text"]
+    assert fact is not None and fact["kind"] == "booking" and "https://cal.com/example-shop/visit" in re.findall(r"https://\S+", fact["text"]) and re.search(r"Cal\.com", fact["text"]) is not None
     assert w.client.put(f"{T}/calcom/settings", json={"booking_link": "https://evil.example.test/x"}, headers=w.owner()).status_code == 422
 
 

@@ -31,6 +31,7 @@ from app.calendar_in.microsoft import MicrosoftError
 from app.calendar_in.repository import LinkStateError, NotConnectedError
 from app.calendar_in.service import CalendarInService
 from app.errors import ApiError, not_found
+from app.logging_safety import one_line
 from app.tenancy.models import Role
 from app.tenancy.repository import TokenRejected
 from app.workspace_secrets import SecretStoreError
@@ -189,7 +190,7 @@ async def calendars_webhook(kind: str, token: str, request: Request, runtime: Ru
     except Exception as exc:   # OUR side failed: the vendor retries
         logger.error("calendar webhook failed: %s", exc.__class__.__name__)
         outcome = "unavailable"
-    logger.info("calendar webhook: kind=%s outcome=%s", kind if kind in svc_mod.KINDS else "other", outcome)   # closed words only: never a body, a name or a number
+    logger.info("calendar webhook: kind=%s outcome=%s", one_line(kind if kind in svc_mod.KINDS else "other"), one_line(outcome))   # closed words only: never a body, a name or a number
     if outcome == "unknown":
         raise not_found()
     if outcome == "bad_signature":

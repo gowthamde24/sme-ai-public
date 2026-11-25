@@ -220,3 +220,10 @@ def test_the_tradeindia_reader_wants_a_tradeindia_mail_and_a_number_or_an_addres
     assert got is not None and got.row["phone"] == "9000011107" and got.row["message"] == "Rice" and got.portal == "tradeindia"
     ft.ENABLED = False
     assert ft.tradeindia_mail("inquiry@tradeindia.com", "New inquiry", "Mobile No: 9000011107") is None
+
+
+def test_a_sender_counts_only_when_its_host_is_the_portal_or_a_subdomain_of_it() -> None:
+    from app.lead_sources.form_templates import _sender_is
+
+    assert _sender_is("TradeIndia <leads@tradeindia.com>", "tradeindia.com") and _sender_is("leads@mail.tradeindia.com", "tradeindia.com")
+    assert not _sender_is("leads@nottradeindia.com", "tradeindia.com") and not _sender_is("tradeindia.com@evil.example.test", "tradeindia.com") and not _sender_is("", "tradeindia.com") and not _sender_is(None, "tradeindia.com")
