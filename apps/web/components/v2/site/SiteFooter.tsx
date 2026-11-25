@@ -11,6 +11,7 @@ import type { SiteT } from "@/i18n/site";
 import type { SiteLang } from "@/i18n/lang";
 import { SITE_LANGS, SITE_LANGUAGE_NAMES } from "@/i18n/site-lang";
 import { ADDRESSES } from "@/lib/site/business";
+import { loginHref } from "@/lib/site/login-url";
 import { isServed } from "@/lib/site/mode";
 import { sitePath, SITE_PAGES, type SitePage, type SiteTarget } from "@/lib/site/paths";
 
@@ -40,6 +41,11 @@ export function SiteFooter({ t, lang, target = { kind: "home" }, early }: { t: S
                 </Link>
               </li>
             ))}
+            <li>
+              <a href={loginHref()} className={row}>
+                {t("h2.nav.login")}
+              </a>
+            </li>
           </ul>
         </nav>
         <div>

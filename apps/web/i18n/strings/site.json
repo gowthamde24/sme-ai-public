@@ -6581,9 +6581,9 @@
  "h2.nav.login": {
   "en": "Log in",
   "te": "లాగిన్",
-  "hi": "Log in",
-  "kn": "Log in",
-  "ta": "Log in",
+  "hi": "लॉग इन",
+  "kn": "ಲಾಗಿನ್",
+  "ta": "உள்நுழை",
   "status": {
    "te": "reviewed",
    "hi": "draft",

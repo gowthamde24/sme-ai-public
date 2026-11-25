@@ -1800,8 +1800,10 @@
     .v9 .lf-map { position: absolute; inset: 0; }
   
 /* the sign-in link (only when the app is open; the mock had none): quiet text next to the call to action */
-.v9 .hdr-login { font-size: 15px; font-weight: 600; color: var(--ink); padding: 8px 4px; }
-.v9 .hdr-login:hover { color: var(--orange); }
+.v9 .hdr-login { display: inline-flex; align-items: center; height: 38px; padding: 0 15px; border: 1px solid var(--line, rgba(22, 24, 29, .18)); border-radius: 999px; font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.v9 .hdr-login:hover { color: var(--orange); border-color: currentColor; }
+@media (max-width: 767px) { .v9 .hdr-login { height: 36px; padding: 0 12px; } }
+@media (max-width: 440px) { .v9 .lang-chip { display: none; } }
 
 /* The phone (23 Nov 2026, owner: use the dark phone everywhere): the site's own DarkPhone (design/home3.css .h3-dp-*) and the WhatsApp chat (design/phone-preview.css), flat: no glow, no gradient. The size is the frame's own 300 px scaled with zoom (set inline per phone). */
 .v9 .v9-phone { width: 300px; margin-inline: auto; flex: none; }

@@ -6,6 +6,7 @@ import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
 import { type SiteLang } from "@/i18n/lang";
 import { SITE_LANGS, SITE_LANGUAGE_NAMES } from "@/i18n/site-lang";
+import { loginHref } from "@/lib/site/login-url";
 import { isServed } from "@/lib/site/mode";
 import { sitePath, SITE_PAGES, type SitePage } from "@/lib/site/paths";
 
@@ -43,6 +44,7 @@ export function HomeFooter({ t, lang }: { t: SiteT; lang: SiteLang; early?: { hr
                   {t(LABEL[page])}
                 </Link>
               ))}
+              <a className={link} href={loginHref()}>{t("h2.nav.login")}</a>
             </nav>
             <LegalLinks lang={lang} direction="row" contact={false} linkClass={link} />
           </div>
