@@ -32,7 +32,7 @@ SCREENS: dict[str, dict[str, str]] = {
     "google_sheet": {"label": "Lead sources -> Google Sheet", "href": "/lead-sources"},
 }
 TITLES = {
-    "indiamart": "Connect IndiaMART with your own key", "email_forward": "Forward your portal lead e-mails", "website_form": "A lead form for your website",
+    "indiamart": "Connect IndiaMART with your own key", "email_forward": "Get your portal lead e-mails here", "website_form": "A lead form for your website",
     "team_invite": "Invite your team", "voice_language": "Your assistant's voice and language", "followup_rules": "Follow-up rules", "google_sheet": "Leads from a Google Sheet",
 }
 STEPS: dict[str, list[str]] = {
@@ -45,13 +45,14 @@ STEPS: dict[str, list[str]] = {
     "followup_rules": ["Open Lead Desk -> Rules.", "Choose the lead source and 'call within N minutes' (calling hours apply).", "Approve once (your second sign-in step is asked)."],
     "google_sheet": ["Open Lead sources -> Google Sheet.", "Share your sheet as 'anyone with the link can view' and paste the link.", "Match the columns once; new rows become leads every 15 minutes."],
 }
-# the portals whose lead e-mails can be forwarded (what to do in each; the Gmail filter is the same for all)
+# the portals whose lead e-mails reach the lead address (what to do in each). First the portal's own setting; the one-time Gmail rule is only for a portal that mails your own Gmail
 PORTALS: list[dict[str, Any]] = [
-    {"name": "JustDial", "steps": ["In JustDial's 'Business' app or site, open Settings -> Lead e-mails and add the address above.", "Or forward JustDial's lead e-mails with the Gmail filter below."]},
-    {"name": "IndiaMART e-mail", "steps": ["IndiaMART sends each enquiry by e-mail: forward them with the Gmail filter below (or connect your IndiaMART key instead)."]},
-    {"name": "99acres", "steps": ["In 99acres, open My 99acres -> Responses -> e-mail settings and add the address above.", "Or forward the response e-mails with the Gmail filter below."]},
-    {"name": "MagicBricks", "steps": ["Forward MagicBricks' lead e-mails with the Gmail filter below."]},
-    {"name": "Sulekha", "steps": ["Forward Sulekha's lead e-mails with the Gmail filter below."]},
+    {"name": "JustDial", "steps": ["In JustDial's 'Business' app or site, open Settings -> Lead e-mails and add the address above.", "Only if JustDial mails your own Gmail: make the Gmail rule below once."]},
+    {"name": "IndiaMART e-mail", "steps": ["IndiaMART sends each enquiry by e-mail: add the address above as a lead e-mail in your IndiaMART settings, or make the Gmail rule below once (or connect your IndiaMART key instead)."]},
+    {"name": "99acres", "steps": ["In 99acres, open My 99acres -> Responses -> e-mail settings and add the address above.", "Only if 99acres mails your own Gmail: make the Gmail rule below once."]},
+    {"name": "MagicBricks", "steps": ["Add the address above as the lead e-mail in your MagicBricks account, or make the Gmail rule below once."]},
+    {"name": "Sulekha", "steps": ["Add the address above as the lead e-mail in your Sulekha account, or make the Gmail rule below once."]},
+    {"name": "TradeIndia", "steps": ["Add the address above as the inquiry e-mail in your TradeIndia account, or make the Gmail rule below once."]},
 ]
 
 

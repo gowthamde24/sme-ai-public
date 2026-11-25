@@ -54,7 +54,7 @@ Words are closed; the web holds a sentence for each. A value that is not in `opt
 | | main | `language` | `auto`, `en`, `te`, `hi`, `kn`, `ta`, `ml`, `mr` | every rule's language (`auto` = the customer's own) |
 | | main | `tries` | `tries_1`, `tries_2`, `tries_3` | the policy's retry steps (the owner's own first, the platform ladder only fills a gap) |
 | | main | `thank_you_whatsapp` | toggle | every rule's channel (`both` = call and WhatsApp template, `call`) |
-| | more | `from_hour`, `to_hour` | `09:00` to `21:00` on the half hour | the assistant's calling hours (Settings > AI assistant) |
+| | more | `from_hour`, `to_hour` | `10:00` to `21:00` on the half hour | the assistant's calling hours (Settings > AI assistant) |
 | | more | `say_ai_when_greeting` | `business`, `on`, `off` | the Talk training document (`say_ai_by_job`) |
 | answer_calls | more | `say_ai_when_greeting` | as above | (no other setting exists in the code base yet) |
 | followups | main | `nudges` | `nudges_1`, `nudges_2`, `nudges_3` | a NEW follow-up policy version (`max_touches` = nudges + 1, `gap_days` has one entry per nudge) |

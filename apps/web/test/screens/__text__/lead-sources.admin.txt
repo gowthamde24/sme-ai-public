@@ -17,7 +17,7 @@ Bring your IndiaMART leads in, with duplicates merged. Nothing set up yet.
 [button type=button: Set it up]
 {label="JustDial and other portals"}
 ## JustDial and other portals
-Forward the portal's lead e-mails to your own address. We read them and add the lead. Nothing set up yet.
+Set this address as the e-mail where your portal sends leads. Nothing to send on by hand: we read each mail and add the lead. Nothing set up yet.
 [button type=button: Set it up]
 {label="Your website form"}
 ## Your website form

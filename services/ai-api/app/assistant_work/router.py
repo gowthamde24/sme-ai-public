@@ -5,7 +5,7 @@ common-actions list").
   2. ONE cost-accounted model call (app/assistant_context/modelrun.py) picks the action from a CLOSED list and its arguments from the owner's words, or asks one question, or says it cannot do it
      yet, or says the request is not one of these (then the existing path answers).
   3. CODE checks every argument against the owner's words (a name, a phone number and an hour must be in what they typed; a choice must be on its closed list) and builds the step: the same route
-     the screen calls, with the person's token (app/assistant_tools/executor.py). The card's words are code's, with the state before and after ("Calling hours: 09:00-21:00 -> 10:00-19:00").
+     the screen calls, with the person's token (app/assistant_tools/executor.py). The card's words are code's, with the state before and after ("Calling hours: 10:00-21:00 -> 10:00-19:00").
   4. Every write is a plan card -> "Do it" -> Undo where the route declares one; a sensitive one needs the card's second tap, and the routes keep their own role and second-factor rules.
 Nobody is messaged or called because of this."""
 
@@ -55,7 +55,7 @@ Decide ONE of:
 - "cant_do": it is something only a person can do on a screen: `screen` = billing (plans, payments, cancelling), delete_workspace, real_data_gate (switching real data on), erase_person.
 - "not_mine": anything else (questions, calls or messages to customers, quotes, reports): the app answers it another way.
 Actions and their arguments:
-- calling_hours: when the AI may make calls. `from_time` and `to_time` as HH:MM, 24-hour (09:00 at the earliest, 21:00 at the latest; "10 to 7" means 10:00 to 19:00); `days` only if the owner names
+- calling_hours: when the AI may make calls. `from_time` and `to_time` as HH:MM, 24-hour (10:00 at the earliest, 21:00 at the latest; "10 to 7" means 10:00 to 19:00); `days` only if the owner names
   them: a list of mon, tue, wed, thu, fri, sat, sun.
 - auto_reply: switch the AI's automatic replies to customers on or off. `on`: true or false.
 - pause_source / resume_source: stop or start taking leads from one lead source ("pause", "stop", "resume"). "Disconnect" or "remove" a source is NOT this: it is a `client` navigate to page lead_sources with that source's `card` (its own Disconnect button, with a confirm). `source`: the source's name as the owner said it (IndiaMART, JustDial, the website form ...).
@@ -182,7 +182,7 @@ def check(raw: dict[str, Any], text: str) -> Routed:
     out: dict[str, Any] = {}
     if action == "calling_hours":
         start, end = _hour_in_words(str(args.get("from_time") or ""), text), _hour_in_words(str(args.get("to_time") or ""), text)
-        if start is None or end is None or not (540 <= start < end <= 1260) or start % 15 or end % 15:
+        if start is None or end is None or not (600 <= start < end <= 1260) or start % 15 or end % 15:
             return Routed("clarify", action=action, dropped=["hours"])
         days = [DAYS[d] for d in args.get("days") or [] if d in DAYS]
         out = {"from_minute": start, "to_minute": end, **({"days": sorted(set(days))} if days else {})}

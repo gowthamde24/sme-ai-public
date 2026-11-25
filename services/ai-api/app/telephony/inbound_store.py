@@ -10,6 +10,7 @@ import uuid
 from typing import Any, Protocol
 
 from app.rpc_base import RpcClient
+from app.telephony.line_limits import WorkspaceLines
 from app.telephony.outcome import CallOutcome
 
 
@@ -23,8 +24,9 @@ FACT_PACK_TTL_S = 60.0
 
 
 class InboundStore:
-    def __init__(self, rpc: RpcClient, principal: Principal, *, wallet_enforced: bool = False, kyc_enforced: bool = False) -> None:
+    def __init__(self, rpc: RpcClient, principal: Principal, *, wallet_enforced: bool = False, kyc_enforced: bool = False, workspace_lines: WorkspaceLines | None = None) -> None:
         self._rpc, self._principal = rpc, principal
+        self.workspace_lines = workspace_lines   # EXTRA_LINES: how many calls a workspace may have at once (None = only the deployment's limit)
         self._kyc = kyc_enforced   # KYC_PER_CLIENT: a number whose business is not verified yet takes no real call
         self._wallet = wallet_enforced   # BILLING_CHARGE_CALLS: an inbound call past the wallet's floor is refused (see app.wallet_gate)
         self._lines: dict[str, tuple[float, dict[str, Any]]] = {}
@@ -38,7 +40,21 @@ class InboundStore:
         return self._rpc.call(self._principal.token(), function, args)
 
     def line_find(self, number: str) -> dict[str, Any] | None:
-        """The line's row (its workspace, whether it answers, the names a call says). A found line is remembered for LINE_TTL_S, so a call's admission does not wait for the database
+        """The line's row (its workspace, whether it answers, the names a call says), with `lines` (how many calls the workspace may have at once) when EXTRA_LINES is on and it could be read. The lines
+        come from their own, shorter memory (line_limits.py), so a line bought or paused applies within seconds, not within the minutes the row is kept."""
+        found = self._line_row(number)
+        if found is not None and self.workspace_lines is not None:
+            try:
+                tenant = uuid.UUID(str(found.get("tenant_id")))
+            except ValueError:
+                return found
+            total = self.workspace_lines.total(tenant)
+            if total is not None:
+                found = {**found, "lines": total}
+        return found
+
+    def _line_row(self, number: str) -> dict[str, Any] | None:
+        """A found line is remembered for LINE_TTL_S, so a call's admission does not wait for the database
         (owner, 6 Nov 2026: first sound under a second); a change to a line (switched off, renamed) applies within that time."""
         now = time.monotonic()
         hit = self._lines.get(number)
@@ -84,6 +100,10 @@ class InboundStore:
         out = self._call("phone_mention_ai_for_call", {"p_tenant_id": str(tenant_id)})
         return out is not False
 
+    def monitored(self, tenant_id: uuid.UUID) -> bool:
+        """Has this workspace's Owner switched on listening in / taking over a live call (public.phone_monitored_for_call)? False when nothing is saved or anything is unclear: the line is then not said."""
+        return self._call("phone_monitored_for_call", {"p_tenant_id": str(tenant_id)}) is True
+
     def call_sound(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """The workspace's voice choices, voice gender, speed and style for this call (the scheduler account reads them; app/conversation/sound.py decides what they mean). None when unreadable."""
         out = self._call("call_sound_for_call", {"p_tenant_id": str(tenant_id)})
@@ -103,8 +123,29 @@ class InboundStore:
         out = self._call("phone_fact_pack", {"p_tenant_id": str(tenant_id)})
         pack = out if isinstance(out, dict) else None
         if pack is not None:
+            from app.calendar_in import (
+                links as booking_links,  # CALENDAR_IN: the owner's own booking page, only when they turned sharing on
+            )
+
+            if booking_links.PROVIDER is not None:
+                try:
+                    fact = booking_links.PROVIDER(tenant_id)
+                except Exception:  # noqa: BLE001 - a call without the link is the call as before
+                    fact = None
+                if fact:
+                    pack["booking_fact"] = fact
             self._packs[tenant_id] = (now, dict(pack))
         return pack
+
+    def order_facts(self, tenant_id: uuid.UUID, caller: str | None) -> list[dict[str, Any]]:
+        """The caller's OWN store orders (at most three; migration 992340), for the call's fact pack. Only the caller's own number is looked up; [] when none, when the number is not a mobile or on any failure."""
+        from app.lead_sources.phones import check_phone
+
+        phone = check_phone(caller).stored if caller else None
+        if not phone:
+            return []
+        out = self._call("commerce_order_facts", {"p_tenant_id": str(tenant_id), "p_phone": phone})
+        return [r for r in out if isinstance(r, dict)] if isinstance(out, list) else []
 
     def talk_training(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """The Owner's "How I talk to customers" for this call (the scheduler account reads it); None when nothing is saved."""

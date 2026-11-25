@@ -99,7 +99,7 @@ class FakeRepo:
         self.proof_asked.append(lead_id)
         if self.facts_error:
             raise RuntimeError("data layer down")
-        return {"contact_found": True, "can_contact": True, "suppressed": False, "erased_or_archived": False, "proof": self.proof_answer is not None, "proof_source": "website_form", "prospect": False,
+        return {"contact_found": True, "can_contact": True, "suppressed": False, "erased_or_archived": False, "proof": self.proof_answer is not None, "proof_source": "website_form", "prospect": False, "own_number_verified": True, "usage_ack": True,
                 "weekly_calls": 0, "weekly_limit": 1, "calls_today": 0, "minutes_today": 0, "hours": None, "holidays": [], "active_to_number": 0, **self.facts_override}
 
     def approved(self, token: str, tenant_id: uuid.UUID, kind: str, ref: uuid.UUID | None, number: str | None) -> bool:
@@ -113,7 +113,7 @@ class FakeRepo:
 def placer(*, mode: str = "sandbox", numbers: frozenset[str] = frozenset({OWNER}), now: datetime = INDIA_10AM, repo: FakeRepo | None = None, api: FakePlivoApi | None = None,
            confirmed: bool = False, active: int = 0) -> tuple[PlivoOutbound, FakeRepo, FakePlivoApi]:
     repo, api = repo or FakeRepo(), api or FakePlivoApi()
-    settings = gate.Settings(mode=mode, live_confirmed=confirmed, sandbox_numbers=numbers, max_concurrent=2, outbound=True)   # type: ignore[arg-type]
+    settings = gate.Settings(mode=mode, live_confirmed=confirmed, sandbox_numbers=numbers, max_concurrent=2, outbound=True, outbound_real=mode == "live")   # type: ignore[arg-type]
     return PlivoOutbound(api=api, repo=repo, gate_settings=settings, public_base=BASE, active_calls=lambda: active, clock=lambda: now), repo, api
 
 

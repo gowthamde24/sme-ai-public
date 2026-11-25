@@ -25,7 +25,8 @@ def test_no_sentence_of_any_card_state_is_without_a_code() -> None:
             sources_sets.append([{"kind": {"website_form": "website", "meta_lead_ads": "meta_lead_ads"}.get(kind, kind), "status": status}])
     stats_sets = [{}, {"by_tag": {t: {"received_7d": 3, "total": 9, "last_at": "2026-11-17T10:00:00+00:00"} for t in ("website_form", "meta_lead_ads", "indiamart", "email_forward", "missed_calls", "google_ads", "excel_upload", "click_to_whatsapp", "whatsapp")}},
                   {"by_tag": {"website_form": {"received_7d": 1}}, "whatsapp": {"status": "active"}, "sheets": {"total": 2, "needs_attention": 1}},
-                  {"whatsapp": {"status": "pending"}, "sheets": {"total": 1}, "imports": {"received_7d": 4}}, {"by_tag": {"website_form": {"received_7d": 0, "last_at": "2026-10-01T10:00:00+00:00"}}}]
+                  {"whatsapp": {"status": "pending"}, "sheets": {"total": 1}, "imports": {"received_7d": 4}}, {"by_tag": {"website_form": {"received_7d": 0, "last_at": "2026-10-01T10:00:00+00:00"}}},
+                  {"indiamart_pull": {"key_state": "expired"}, "by_tag": {"indiamart": {"received_7d": 2, "total": 5, "last_at": "2026-11-17T10:00:00+00:00"}}}]
     unknown: set[str] = set()
     for sources, stats, on in itertools.product(sources_sets, stats_sets, (Available(), Available(True, True, True, True, True, True))):
         for card in build_cards(sources, stats, on):

@@ -82,8 +82,9 @@ class BackgroundOut(_Strict):
 
 
 class SayAiOut(_Strict):
-    value: bool    # false until the owner turns it on: the greeting is the name only
+    value: bool    # true by default (lawyer's opinion, 25 Nov 2026): the greeting says it is an AI assistant; false only after the written undertaking
     saved: bool    # the owner chose (false = the default)
+    undertaking_accepted_at: datetime | None = None   # when the Owner accepted the written undertaking that allows switching it off (who is kept too); None = not accepted
 
 
 class HowAssistantSpeaksOut(_Strict):
@@ -107,11 +108,16 @@ class IntroduceIn(_Strict):
     text: str | None = None
 
 
+class UndertakingIn(_Strict):
+    accepted: Literal[True]   # the Owner ticked "I accept this undertaking"
+
+
 class HowAssistantSpeaksIn(_Strict):
     """Any subset; a key left out is not changed, `null` resets that part to the default. `tone: "casual"` is a 422 (`fields: ["tone"]`)."""
 
     tone: Tone | None = None
-    say_ai_when_greeting: StrictBool | None = None   # greet with "I'm the AI assistant of {business}" (true) or the name only (false, the default); `null` = back to the default. A non-boolean is a 422.
+    say_ai_undertaking: UndertakingIn | None = None   # sent with `say_ai_when_greeting: false`: the Owner accepts the written undertaking; the server stores when and who (a later "off" needs no new one)
+    say_ai_when_greeting: StrictBool | None = None   # greet with "I'm the AI assistant of {business}" (true, the default) or the name only (false: only with the undertaking, else 409 ai_undertaking_required); `null` = back to the default. A non-boolean is a 422.
     background: Background | None = None   # the quiet bed under the assistant's voice on calls; `null` = back to the default (off)
     words: dict[Language, WordsIn | None] | None = None
     introduce_as: IntroduceIn | None = None

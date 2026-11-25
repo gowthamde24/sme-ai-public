@@ -9,6 +9,7 @@ agents_disabled
 agents_unavailable
 ai_limit
 ai_team_unavailable
+ai_undertaking_required
 already_has_number
 already_member
 already_queued
@@ -39,6 +40,17 @@ business_type_unavailable
 busy
 calculator_inconsistent
 calculator_unavailable
+calendar_key_refused
+calendar_link_invalid
+calendar_needs_reconnect
+calendar_needs_setup
+calendar_no_public_address
+calendar_not_connected
+calendar_plan_refused
+calendar_secret_unavailable
+calendar_try_later
+calendar_unavailable
+calendar_vendor_unavailable
 call_not_allowed
 call_not_here
 call_provider_failed
@@ -51,10 +63,13 @@ campaigns_unavailable
 cap_required
 captcha_failed
 catalogue_unavailable
+channel_invalid
 code_expired
 code_locked
 code_missing
 code_wrong
+commerce_failed
+commerce_unavailable
 company_has_no_website
 confirm_needed
 confirm_required
@@ -70,6 +85,9 @@ contacted_at_invalid
 context_changed
 cooling_off
 correction_invalid
+credentials_invalid
+credits_needed
+crm_push_unavailable
 custom_field_limit
 custom_fields_unavailable
 custom_value_invalid
@@ -173,6 +191,7 @@ knowledge_unavailable
 kyc_closed
 kyc_document_not_offered
 kyc_field_not_supported
+kyc_fields_invalid
 kyc_file_too_large
 kyc_file_type
 kyc_file_unreadable
@@ -193,8 +212,13 @@ lead_search_unavailable
 lead_sources_unavailable
 limit_reached
 line_not_found
+lines_unavailable
+list_not_products
 live_not_available
 locked_for_business_type
+mail_failed
+mail_unavailable
+mapping_invalid
 mapping_required_missing
 marketing_blocked
 marks_bad_request
@@ -215,6 +239,7 @@ model_unavailable
 module_off
 name_invalid
 needs_photo
+needs_setup_by_us
 no_approved_quote
 no_consent_template
 no_notes
@@ -256,6 +281,7 @@ nothing_to_quote
 nothing_to_test
 nothing_to_undo
 notifications_unavailable
+notify_out_unavailable
 number_not_available
 number_on_dnd
 number_provider_unavailable
@@ -384,6 +410,7 @@ secret_request_used
 secrets_unavailable
 session_ended
 setting_invalid
+settings_invalid
 sheet_link_invalid
 sheet_not_public
 sheet_refused

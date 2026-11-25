@@ -2,7 +2,7 @@
 function decides, and the reason of a refusal is a closed word that is stored on the call row. No clock is read here (`now` is given), no network, no randomness: a test pins each rule.
 
 The order below is the order of the checks; the first refusal wins, so the reason says the first thing to fix. The strictest reading is built in (owner has not had the lawyer's answers yet, docs-private/pre-pilot-checklist.md):
-the AI says it is an AI first, calls only 09:00 to 21:00 India time, respects DND, stops at once on request, records nothing."""
+the AI says it is an AI first, calls only 10:00 to 21:00 India time, respects DND, stops at once on request, records nothing."""
 
 # ruff: noqa: E501
 
@@ -20,7 +20,7 @@ from app.connectors.phone import normalise
 
 log = logging.getLogger("app.telephony.gate")
 IST = ZoneInfo("Asia/Kolkata")
-WINDOW_FROM_MINUTE = 9 * 60    # the regulation's window for promotional calls; applied to every outbound call
+WINDOW_FROM_MINUTE = 10 * 60   # the window for promotional calls, 10:00 to 21:00 IST (the lawyer's written opinion, 25 Nov 2026: not 09:00); applied to every outbound call
 WINDOW_TO_MINUTE = 21 * 60
 
 Mode = Literal["off", "sandbox", "live"]
@@ -33,6 +33,11 @@ Approval = Literal["plan", "standing_rule", "task", "owner_test"]
 PROMOTIONAL: frozenset[str] = frozenset({"sales_followup", "admission_followup"})
 TRANSACTIONAL: frozenset[str] = frozenset({"payment_reminder", "visit_reminder", "event_reminder"})
 
+# the lawyer's written opinion (25 Nov 2026): an enquiry supports contact for SEVEN days (an application, such as an admission, three months); a Consent Registrar id has no such age
+ENQUIRY_DAYS = 7
+APPLICATION_ENQUIRY_DAYS = 92
+APPLICATION_PURPOSES: frozenset[str] = frozenset({"admission_followup"})
+LOGGED_COMPLAINT_PAUSE_AT = 5   # complaints recorded for the workspace (to the business, via the telecom provider, to the regulator): 5 in 10 days pauses its outbound calls (Today warns at 3)
 COMPLAINT_PAUSE_AT = 2   # 21 Nov 2026: outbound AI calls pause at this many people asking us to stop in 10 days; lifts by itself
 AI_MARK = re.compile(r"\bAI\b|ఏఐ|एआई|ಎಐ|ஏஐ|എഐ")
 
@@ -53,6 +58,7 @@ REASONS: tuple[str, ...] = (
     "telephony_off", "live_not_confirmed", "bad_number", "not_on_sandbox_list", "not_approved", "workspace_paused", "billing_blocked", "purpose_not_allowed", "school_rule",
     "outside_window", "outside_hours", "holiday", "weekly_limit", "daily_cap", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "no_ai_disclosure",
     "already_calling", "too_many_calls", "no_proof_of_request", "prospect_no_ai_call", "complaints_pause",
+    "enquiry_too_old", "outbound_not_real", "no_own_number", "usage_not_accepted",
     "inbound_off", "no_such_line", "blocked_caller",
     "trial_not_sandbox", "trial_account", "trial_app_id", "trial_busy", "trial_day_limit",
 )
@@ -67,10 +73,11 @@ class Settings:
     sandbox_numbers: frozenset[str] = frozenset()   # +91... forms; the only numbers a sandbox call may ring
     shop_numbers: frozenset[str] = frozenset()   # the shop's own mobiles: a caller showing one of them is a forward that hid the real number (app/telephony/caller_guard.py)
     max_concurrent: int = 2
-    # 28 Nov 2026 (owner: "remove time constraints for now, for testing"): in SANDBOX mode only, a number on the sandbox list ignores the calling hours (09:00-21:00, the workspace's hours, holidays). It is
+    # 28 Nov 2026 (owner: "remove time constraints for now, for testing"): in SANDBOX mode only, a number on the sandbox list ignores the calling hours (10:00-21:00, the workspace's hours, holidays). It is
     # ignored in every other mode, so it can never weaken a live call. Consent, STOP, do-not-call, the sandbox list and the limits stay. Remove it before the real-data gate (2 Dec).
     sandbox_ignores_hours: bool = False
     outbound: bool = True   # False (TELEPHONY_OUTBOUND unset): an inbound-only deployment; every outbound call is refused as telephony_off
+    outbound_real: bool = False   # OUTBOUND_REAL, the global kill switch in front of every non-sandbox outbound call (off until the telecom provider has answered); never read in sandbox mode
 
 
 def hours_bypassed(settings: Settings) -> bool:
@@ -117,6 +124,27 @@ class OutboundFacts:
     say_ai: bool = True                   # the RESOLVED setting "Say 'AI assistant' when greeting" (app/opening/greeting.py): true = the opening must say it is an AI; false (the owner's default) = the name only, nothing required
     active_calls_to_number: int = 0
     active_calls_total: int = 0
+    workspace_lines: int | None = None    # EXTRA_LINES: the lines THIS workspace has (2 for each number + the extra lines it bought); None = not counted per workspace (the deployment's limit alone)
+    active_calls_workspace: int = 0       # the calls this workspace has live now
+    # the lawyer's opinion (25 Nov 2026): who the person is and what the workspace has accepted
+    enquiry_age_days: float | None = None  # age of the newest written/digital enquiry of this person (up to 92 days); None = none found
+    registered_consent: bool = False      # a Consent Registrar id is recorded for this person's phone consent
+    own_number_verified: bool = False     # the workspace has its OWN KYC-verified number (Model B)
+    usage_ack: bool = False               # the Owner accepted the "how you will use this number" statement (dated)
+    logged_complaints: int = 0            # complaints recorded for this workspace in the last 10 days
+
+
+def enquiry_refusal(f: OutboundFacts) -> Refused | None:
+    """None when the person is a KNOWN lead: a Consent Registrar id (no age), or a written/digital enquiry within 7 days (3 months for an application, such as an admission). Otherwise the plain reason: the enquiry is too old, or there is none."""
+    if f.registered_consent:
+        return None
+    if f.enquiry_age_days is not None:
+        limit = APPLICATION_ENQUIRY_DAYS if f.purpose in APPLICATION_PURPOSES else ENQUIRY_DAYS
+        if f.enquiry_age_days <= limit:
+            return None
+    elif f.proof_of_request is True:   # the database's own 7-day proof (older callers that carry no age)
+        return None
+    return Refused("enquiry_too_old" if f.enquiry_age_days is not None else "no_proof_of_request")
 
 
 def is_promotional(purpose: str) -> bool:
@@ -135,6 +163,8 @@ def check_outbound(settings: Settings, f: OutboundFacts) -> Allowed | Refused:
         return Refused("prospect_no_ai_call")   # before anything else about the call: a prospect is reached by the owner personally
     if settings.mode == "live" and not settings.live_confirmed:
         return Refused("live_not_confirmed")
+    if settings.mode == "live" and not settings.outbound_real:
+        return Refused("outbound_not_real")   # the global kill switch: no real outbound call until the telecom provider's answer is in
     number = normalise(f.number)
     if number is None:
         return Refused("bad_number")
@@ -146,10 +176,16 @@ def check_outbound(settings: Settings, f: OutboundFacts) -> Allowed | Refused:
         return Refused("workspace_paused")
     if not f.billing_ok:
         return Refused("billing_blocked")
-    if f.recent_complaints >= COMPLAINT_PAUSE_AT:
+    if f.recent_complaints >= COMPLAINT_PAUSE_AT or f.logged_complaints >= LOGGED_COMPLAINT_PAUSE_AT:
         return Refused("complaints_pause")   # TRAI suspends outgoing calls at 3 complaints in 10 days (with a spam flag) or 5: we pause at 2 and tell the owner
-    if settings.mode == "live" and f.proof_of_request is not True:
-        return Refused("no_proof_of_request")   # a call-back needs a request the person made (owner, 18 Nov 2026): imported lists and typed-in leads never count
+    if settings.mode == "live":
+        refusal = enquiry_refusal(f)
+        if refusal is not None:
+            return refusal   # a call needs a request the person made in writing (owner, 18 Nov 2026) and the opinion's age limit: imported lists, typed-in leads and a business's own statement never count
+    if settings.mode == "live" and not f.own_number_verified:
+        return Refused("no_own_number")   # a real outbound call goes out only on the workspace's OWN verified number; the shared number stays limited to the owner's test numbers
+    if settings.mode == "live" and not f.usage_ack:
+        return Refused("usage_not_accepted")   # ... and only after the Owner accepted how the number will be used
     if f.is_school and f.purpose in PROMOTIONAL | {"payment_reminder"}:
         return Refused("school_rule")   # a school never makes sales calls and never calls about dues or fees
     if f.purpose not in f.allowed_purposes:
@@ -190,6 +226,8 @@ def check_outbound(settings: Settings, f: OutboundFacts) -> Allowed | Refused:
         return Refused("already_calling")
     if f.active_calls_total >= settings.max_concurrent:
         return Refused("too_many_calls")
+    if f.workspace_lines is not None and f.active_calls_workspace >= f.workspace_lines:
+        return Refused("too_many_calls")   # every line of the workspace is on a call (the plain reason an outbound call is refused: "all your lines are busy")
     return Allowed(promotional)
 
 
@@ -202,6 +240,8 @@ class InboundFacts:
     hours: Hours | None = None      # inside these the assistant talks; outside it only leaves a short message (see InboundDecision)
     blocked_caller: bool = False
     active_calls_total: int = 0
+    workspace_lines: int | None = None   # EXTRA_LINES: the lines of the workspace that owns the number; None = the deployment's limit alone
+    active_calls_workspace: int = 0
     from_number: str | None = None   # the caller (None: not known; a sandbox then relies on the stream's own check)
 
 
@@ -225,7 +265,9 @@ def check_inbound(settings: Settings, f: InboundFacts) -> InboundDecision | Refu
     if f.blocked_caller:
         return Refused("blocked_caller")
     if f.active_calls_total >= settings.max_concurrent:
-        return Refused("too_many_calls")
+        return Refused("too_many_calls")   # the deployment's hard safety limit, above every workspace's own lines
+    if f.workspace_lines is not None and f.active_calls_workspace >= f.workspace_lines:
+        return Refused("too_many_calls")   # this workspace's lines are all busy: the caller hears the line is busy
     if f.hours is not None:
         local = f.now.astimezone(IST)
         minute = local.hour * 60 + local.minute

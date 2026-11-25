@@ -29,9 +29,9 @@ logger = logging.getLogger("app.jobs")
 MAX_MAIN = 4
 GREETING_OPTIONS = ("business", "on", "off")
 HOURS_HALF = tuple(f"{h:02d}:{m:02d}" for h in range(6, 24) for m in (0, 30))          # a shop's opening and closing, on the half hour
-HOURS_CALLING = tuple(f"{h:02d}:{m:02d}" for h in range(9, 22) for m in (0, 30) if (h, m) <= (21, 0))   # the assistant's calling hours: 09:00 to 21:00
+HOURS_CALLING = tuple(f"{h:02d}:{m:02d}" for h in range(10, 22) for m in (0, 30) if (h, m) <= (21, 0))   # the assistant's calling hours: 10:00 to 21:00
 IST = timezone(timedelta(hours=5, minutes=30))
-LADDER_DEFAULT: tuple[dict[str, int], ...] = ({"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 570})
+LADDER_DEFAULT: tuple[dict[str, int], ...] = ({"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 600})
 
 
 def not_set_up() -> ApiError:

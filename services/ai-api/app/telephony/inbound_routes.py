@@ -28,6 +28,7 @@ from app.browser_voice.limits import Ledger
 from app.browser_voice.routes import OWNER_SILENCE_MS, stt_mode_for
 from app.browser_voice.runtime import BrowserVoice
 from app.browser_voice.session import Parts
+from app.commerce import facts as commerce_facts
 from app.connectors.phone import normalise, normalise_line
 from app.conversation.fallback import FallbackTts
 from app.conversation.pronounce import default_pronunciations
@@ -80,6 +81,7 @@ class InboundService:
     language: str = "en"
     llm_choice: str = "haiku"
     recording_notice: bool = False   # VOICELINK_RECORDING_EXPECTED: VoiceLink records these calls (owner, 28 Nov 2026), so the opening says so
+    monitor_allowed: bool = False   # TAKEOVER_ALLOWED: listening in is available on this deployment; a workspace whose Owner switched it on says "this call may be monitored" (lawyer's opinion, 25 Nov 2026)
     first_token_s: float = 1.2   # TELEPHONY_FIRST_TOKEN_MS: with Sarvam speaking, the longest it may stay silent before the same turn goes to Haiku
     business: str = "the business"   # what the opening line names (TELEPHONY_INBOUND_BUSINESS; the scheduler account does not read workspace names)
     max_call_s: int = 300
@@ -215,7 +217,7 @@ def visit_label(slot: dict[str, Any]) -> str:
 
 
 def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = (), assistant: str | None = None,
-                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool | None = None, stored: Stored | None = None, first_token_s: float = 1.2, pack: FactPack | None = None, recording_notice: bool = False) -> tuple[Parts, str]:
+                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool | None = None, stored: Stored | None = None, first_token_s: float = 1.2, pack: FactPack | None = None, recording_notice: bool = False, monitor_notice: bool = False) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in the CALL's language (te-IN on a Telugu line; owner, 6 Nov 2026: "auto" let a caller's "hello" turn a Telugu call English),
     following the call when it switches (app/telephony/language_rule.py), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
@@ -241,9 +243,11 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     # setting); `mention_ai` False only when a caller forces it
     job = outbound.job if outbound is not None else "answer_calls"
     say_ai = mention_ai if mention_ai is not None else greeting.resolved_for_job(training if isinstance(training, dict) else None, job)
+    if not say_ai:   # the lawyer's opinion (25 Nov 2026): every call that does not open with the AI mention is logged (a closed line; the call row keeps ai_disclosed = false)
+        log.info("telephony ai_mention_off direction=%s job=%s", "outbound" if outbound is not None else "inbound", job)
 
     def opening_for(lang: str) -> str:
-        return call_opening(lang, business=business, assistant=assistant, training=training, say_ai=say_ai, outbound=outbound, introduction=introduction(), recording_notice=recording_notice)
+        return call_opening(lang, business=business, assistant=assistant, training=training, say_ai=say_ai, outbound=outbound, introduction=introduction(), recording_notice=recording_notice, monitor_notice=monitor_notice)
 
     def goal_prompt(lang: str) -> str:
         """An outbound GOAL call is not an enquiry call (11 Nov 2026): its own prompt, the goal first and the hard rules above everything."""
@@ -306,10 +310,10 @@ async def _prepare(service: InboundService, bv: Any, start: Any, outbound: Outbo
     found = await inbound.find_line_quick(service.store.line_find, line_no)
     if not found or not found.get("tenant_id"):
         return None
-    return await _prepare_for(service, bv, uuid.UUID(str(found["tenant_id"])), business=found.get("business"), assistant=found.get("assistant"), outbound=outbound)
+    return await _prepare_for(service, bv, uuid.UUID(str(found["tenant_id"])), business=found.get("business"), assistant=found.get("assistant"), outbound=outbound, caller=getattr(start, "from_number", None))
 
 
-async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, business: str | None = None, assistant: str | None = None, outbound: OutboundCall | None = None) -> Prepared:
+async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, business: str | None = None, assistant: str | None = None, outbound: OutboundCall | None = None, caller: str | None = None) -> Prepared:
     """`business` and `assistant` are the workspace's own names (the line lookup; owner, 6 Nov 2026); without them the deployment's TELEPHONY_INBOUND_BUSINESS and the default assistant name."""
     language = outbound.language if outbound else service.language
     business = (business or "").strip() or service.business
@@ -324,12 +328,21 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             log.warning("exotel_inbound %s_unreadable %s", name, exc.__class__.__name__)
             return default
 
-    training, slots, corrections, sound_row, pack_raw = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("call_sound", None), read("fact_pack", None))
+    training, slots, corrections, sound_row, pack_raw, monitored_raw = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("call_sound", None), read("fact_pack", None), read("monitored", False))
+    monitored = bool(service.monitor_allowed and monitored_raw is True)   # only a workspace that can be listened to says so
+    if commerce_facts.ENABLED and outbound is None and caller and isinstance(pack_raw, dict):   # the caller's own store orders (COMMERCE=on), looked up by their number
+        try:
+            orders = await asyncio.to_thread(service.store.order_facts, tenant, caller)
+        except Exception as exc:  # noqa: BLE001 - a call without order facts is the call as before
+            log.warning("exotel_inbound order_facts_unreadable %s", exc.__class__.__name__)
+            orders = []
+        if orders:
+            pack_raw = {**pack_raw, "orders": orders}
     stored = Stored.from_call_row(sound_row if isinstance(sound_row, dict) else None, training if isinstance(training, dict) else None)   # the workspace's voice, tone and speed: the SAME values and the same function as the previews (app/conversation/sound.py)
     slots = list(slots or [])
     labels = tuple(visit_label(sl) for sl in slots)
     if service.parts_for is None:
-        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, first_token_s=service.first_token_s, recording_notice=service.recording_notice, pack=fact_pack.build(pack_raw) if outbound is None and pack_raw is not None else None, assistant=assistant, corrections=tuple(corrections or ()), stored=stored, **cast(Any, {"outbound": outbound} if outbound is not None else {}))
+        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, first_token_s=service.first_token_s, recording_notice=service.recording_notice, monitor_notice=monitored, pack=fact_pack.build(pack_raw) if outbound is None and pack_raw is not None else None, assistant=assistant, corrections=tuple(corrections or ()), stored=stored, **cast(Any, {"outbound": outbound} if outbound is not None else {}))
     else:
         parts, model = service.parts_for(bv, business, language, service.llm_choice)
     text = parts.greeting_for(language)

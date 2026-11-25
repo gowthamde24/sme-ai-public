@@ -1,0 +1,112 @@
+{
+ "version": 1,
+ "note": "How each portal's leads reach a business, said honestly. `automatic`: the portal documents a way a business sets up itself, and we built the receiving side (switch in the hosting list). `account_manager`: no public lead API or webhook is documented for a business to use on its own; the portal's own team switches it on when asked. Every portal that sends lead e-mails can also send them straight to the lead e-mail address; that needs nothing from the portal's team. {WEB_ADDRESS} and {MAIL_ADDRESS} stand for the addresses shown once when the source was made; {PORTAL} for the portal's name.",
+ "ask_text": "Hello {PORTAL} team,\n\nPlease send my new enquiries (leads) to my business software automatically, as each one arrives.\n\nWeb address to send them to: {WEB_ADDRESS}\nIf you can only send them by e-mail, send them to: {MAIL_ADDRESS}\n\nWith each lead please include the buyer's name, mobile number, e-mail and what they asked for. Please tell me when it is switched on, and send one test lead.\n\nThank you.",
+ "portals": [
+  {
+   "id": "indiamart",
+   "name": "IndiaMART",
+   "tag": "indiamart",
+   "how": "automatic",
+   "state": "Automatic",
+   "ways": [
+    "Your own key (Pull): paste your Lead Manager CRM key on the IndiaMART card. We fetch new leads every few minutes. The key lasts 7 days; the card says when it needs a new one.",
+    "IndiaMART Push API (a paid add-on): IndiaMART sends each lead to your web address the moment it arrives. No key, nothing to renew."
+   ],
+   "steps": [
+    "Open the web address of your IndiaMART lead source here and copy it. If you have none yet, make one on the Webhook source card.",
+    "In seller.indiamart.com open Lead Manager, then Import/Export Leads, the three dots, then Push API.",
+    "Choose Other as the platform, type a name, and paste the web address as the Webhook Listener URL.",
+    "IndiaMART sends a code to your main mobile number. Type it in. The Push API is now on, and each new lead shows here by itself."
+   ],
+   "docs": [
+    "https://help.indiamart.com/knowledge-base/integration-of-indiamarts-lead-manager-crm-push-api-with-third-party-crms-real-time-push-of-leads",
+    "https://help.indiamart.com/knowledge-base/lms-crm-integration-v2"
+   ],
+   "switch": "INDIAMART_PUSH (receiving the Push API body), INDIAMART_PULL (the scheduled pull with your own key)"
+  },
+  {
+   "id": "justdial",
+   "name": "JustDial",
+   "tag": "justdial",
+   "how": "account_manager",
+   "state": "Available through your portal account manager",
+   "ways": [
+    "Set the lead e-mail of your JustDial account to your lead e-mail address: each lead mail arrives here by itself.",
+    "Ask your JustDial account manager to send your leads to your web address (a lead API or webhook). JustDial does not publish this for businesses to switch on themselves."
+   ],
+   "docs": [
+    "https://help.leadsquared.com/integrate-justdial-with-leadsquared/",
+    "https://support.kylas.io/portal/en/kb/articles/how-to-integrate-justdial-to-get-leads-in-kylas-crm"
+   ]
+  },
+  {
+   "id": "sulekha",
+   "name": "Sulekha",
+   "tag": "sulekha",
+   "how": "account_manager",
+   "state": "Available through your portal account manager",
+   "ways": [
+    "Set the lead e-mail of your Sulekha account to your lead e-mail address: each lead mail arrives here by itself.",
+    "Ask your Sulekha contact to send your leads to your web address. No public lead API or webhook of Sulekha was found."
+   ],
+   "docs": []
+  },
+  {
+   "id": "tradeindia",
+   "name": "TradeIndia",
+   "tag": "tradeindia",
+   "how": "account_manager",
+   "state": "Available through your portal account manager",
+   "ways": [
+    "Set the lead e-mail of your TradeIndia account to your lead e-mail address: each inquiry mail arrives here by itself.",
+    "TradeIndia shows an Inquiry API (User ID, Profile ID and API key) under My profile, Inquiries and Contacts, My Inquiry API, but it publishes no documentation of it for businesses. Ask TradeIndia to send your inquiries to your web address."
+   ],
+   "docs": [
+    "https://support.kylas.io/portal/en/kb/articles/how-to-integrate-kylas-crm-with-your-trade-india-account-to-capture-leads"
+   ]
+  },
+  {
+   "id": "99acres",
+   "name": "99acres",
+   "tag": "99acres",
+   "how": "account_manager",
+   "state": "Available through your portal account manager",
+   "ways": [
+    "Set the lead e-mail of your 99acres account to your lead e-mail address: each lead mail arrives here by itself.",
+    "Ask your 99acres account manager to send your leads to your web address. 99acres sets this up on its side; there is no public page where a business does it alone."
+   ],
+   "docs": [
+    "https://support.sell.do/support/solutions/articles/6000068700-99acres-integration",
+    "https://docs.neodove.com/admin-portal/integrations/99acres-integration"
+   ]
+  },
+  {
+   "id": "magicbricks",
+   "name": "MagicBricks",
+   "tag": "magicbricks",
+   "how": "account_manager",
+   "state": "Available through your portal account manager",
+   "ways": [
+    "Set the lead e-mail of your MagicBricks account to your lead e-mail address: each lead mail arrives here by itself.",
+    "Ask your MagicBricks account manager to send your leads to your web address. MagicBricks switches this on from its side, usually within a week."
+   ],
+   "docs": [
+    "https://brixi-docs.pages.dev/integrations/lead-providers/magic-bricks",
+    "https://help.leadsquared.com/?p=16722"
+   ]
+  },
+  {
+   "id": "housing",
+   "name": "Housing.com",
+   "tag": "housing",
+   "how": "account_manager",
+   "state": "Available through your portal account manager",
+   "ways": [
+    "Set the lead e-mail of your Housing.com account to your lead e-mail address: each lead mail arrives here by itself.",
+    "Ask your Housing.com account manager to send your leads to your web address. No public lead API or webhook of Housing.com was found."
+   ],
+   "docs": []
+  }
+ ]
+}

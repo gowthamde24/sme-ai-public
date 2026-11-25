@@ -16,7 +16,7 @@ def gate_settings(settings: Any) -> Settings:
     numbers = frozenset(n for n in (normalise(part) for part in str(settings.telephony_sandbox_numbers).split(",")) if n)
     shop = frozenset(n for n in (normalise(part) for part in str(getattr(settings, "telephony_shop_numbers", "")).split(",")) if n)
     return Settings(mode=mode, live_confirmed=bool(settings.telephony_live_confirmed), sandbox_numbers=numbers, shop_numbers=shop, max_concurrent=max(1, int(settings.telephony_max_concurrent)),
-                    outbound=bool(getattr(settings, "telephony_outbound", False)), sandbox_ignores_hours=bool(getattr(settings, "telephony_sandbox_ignores_hours", False)))
+                    outbound=bool(getattr(settings, "telephony_outbound", False)), sandbox_ignores_hours=bool(getattr(settings, "telephony_sandbox_ignores_hours", False)), outbound_real=bool(getattr(settings, "outbound_real", False)))
 
 
 def phone_llm_choice(settings: Any) -> tuple[str, float]:

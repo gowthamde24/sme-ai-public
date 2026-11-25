@@ -24,7 +24,7 @@ from typing import Any, Protocol
 from app.errors import ApiError, not_found
 from app.integrations.sheet import MAX_UPLOAD_BYTES, Grid, SheetRefused, load_grid
 from app.lead_sources import cards as cards_mod
-from app.lead_sources import consent_tick, portals, reading
+from app.lead_sources import consent_tick, form_templates, indiamart_push, portals, reading
 from app.lead_sources import mapping as mp
 from app.lead_sources.dnd import DndLookup
 from app.lead_sources.meta import LeadgenRef, MetaError, MetaLeadFetcher, refs_of, signature_ok
@@ -48,9 +48,9 @@ AVG_CALL_MINUTES = 3
 _NS = uuid.UUID("5c1f2f55-0d0b-4b8e-9a3b-6a1d5f0c7e21")
 _FORM_ALIASES = {
     "name": ("name", "full_name", "fullname", "your_name", "customer_name", "first_name"),
-    "phone": ("phone", "mobile", "whatsapp", "contact_number", "phone_number", "mobile_number", "contact", "tel", "from", "callfrom", "call_from", "caller", "caller_id", "callerid", "cli", "calling_number", "from_number"),
-    "email": ("email", "e-mail", "email_address", "mail"),
-    "message": ("message", "requirement", "enquiry", "inquiry", "comments", "comment", "query", "note", "notes"),
+    "phone": ("phone", "your_phone", "your_mobile", "mobile", "whatsapp", "contact_number", "phone_number", "mobile_number", "contact", "tel", "from", "callfrom", "call_from", "caller", "caller_id", "callerid", "cli", "calling_number", "from_number"),
+    "email": ("email", "e-mail", "e_mail", "your_email", "email_address", "mail"),
+    "message": ("message", "your_message", "requirement", "enquiry", "inquiry", "comments", "comment", "query", "note", "notes"),
     "city": ("city", "location", "town"),
     "external_id": ("external_id", "lead_id", "id", "callsid", "call_sid", "calluuid", "call_uuid"),
 }
@@ -67,7 +67,11 @@ def consent_text(business: str | None) -> str:
 _GOOGLE_COLUMNS = {"FULL_NAME": "name", "FIRST_NAME": "name", "PHONE_NUMBER": "phone", "EMAIL": "email", "CITY": "city", "POSTAL_CODE": "city"}
 
 WEBHOOK_SOURCE_KIND = {"website": "website_form"}
-MAIL_STEPS = ("In the portal's settings (JustDial, Sulekha, 99acres, MagicBricks, Housing ...), set the e-mail that receives your leads to the address below, or forward your lead e-mails to it.", "The address is shown only now; make a new one any time.", "Press Test: a sample portal e-mail goes through the same reader as your real ones.")
+MAIL_STEPS = (
+    "In your portal's account settings (JustDial, Sulekha, TradeIndia, 99acres, MagicBricks, Housing ...), set the e-mail address that receives your leads to the address below. Nothing to send on by hand: each lead mail arrives here by itself.",
+    "If your portal can only mail your own Gmail, make the Gmail rule once (the steps are on this page). After that it runs by itself too.",
+    "The address is shown only now; make a new one any time. Press Test: a sample portal e-mail goes through the same reader as your real ones.",
+)
 WEBHOOK_KINDS = {
     "missed_calls": ("Missed calls", "Missed calls", ("In your phone company's settings for your business number, find the missed-call (or hang-up) callback.", "Paste this address there. It is shown only now; make a new one any time.", "Press Test: a test lead appears in your Leads.")),
     "google_ads": ("Google Ads lead form", "Google Ads lead form", ("In Google Ads, open your lead form and choose the webhook delivery.", "Paste this address as the webhook URL. It is shown only now; make a new one any time.", "Press Test: a test lead appears in your Leads.")),
@@ -81,11 +85,11 @@ def token_hash(token: str) -> str:
 
 
 GMAIL_GUIDE = (
-    "Open Gmail on a computer and open one lead e-mail from the portal.",
+    "Only if your portal can mail only your own Gmail (you do this once): open Gmail on a computer and open one lead e-mail from the portal.",
     "Click the three dots at the top, then 'Filter messages like this', then 'Create filter'.",
     "Tick 'Forward it to'. Click 'Add forwarding address' and paste the address above.",
     "Gmail sends a confirmation to that address. The code appears on this page within a minute: type it into Gmail.",
-    "Back in the filter, choose the address you added, and click 'Create filter'. From now on those e-mails come here by themselves.",
+    "Back in the filter, choose the address you added, and click 'Create filter'. From now on every mail like that one comes here by itself.",
 )
 _GMAIL_CODE = re.compile(r"(?:#|code[:\s]+)(\d{6,12})", re.I)
 
@@ -153,6 +157,7 @@ class LeadSourcesService:
         public_base_url: str | None = None,
         service_account_email: str | None = None,
         indiamart_available: bool = False,
+        indiamart_push: bool = False,
         billing: Any = None,
         matcher: mp.ColumnMatcher | None = None,
         after_arrival: Callable[[str], Any] | None = None,
@@ -170,6 +175,7 @@ class LeadSourcesService:
         self.base = (public_base_url or "").rstrip("/")
         self.service_account_email = service_account_email
         self.indiamart_available = indiamart_available
+        self.indiamart_push = indiamart_push   # INDIAMART_PUSH: a web-address source also understands IndiaMART's Push API body
         self.billing = billing
         self.matcher = matcher
         self._after_arrival = after_arrival   # speed to lead: run the outreach step the moment a new lead is stored (worker token in; counts only out)
@@ -284,6 +290,8 @@ class LeadSourcesService:
                 row["is_test"] = True
             if isinstance(r.get("consent"), dict):
                 row["consent"] = r["consent"]   # a Meta lead form's consent evidence: stored with the lead in the same transaction (migration 20261231950000)
+            if r.get("tag") in portals.TAGS:
+                row["tag"] = r["tag"]
             if r.get("external_id"):
                 row["external_id"] = r["external_id"]
             elif external_prefix and ident:
@@ -434,12 +442,19 @@ class LeadSourcesService:
             meta=self._available("meta_lead_ads"), indiamart=self.indiamart_available,
             email_forward=self._available("email_forward"), website=self.receiver is not None, missed_calls=self.receiver is not None, google_ads=self.receiver is not None,
         )
-        return cards_mod.build_cards(self.repo.sources(token, tenant_id), self.repo.cards_stats(token, tenant_id), available)
+        sources = self.repo.sources(token, tenant_id)
+        stats = self.repo.cards_stats(token, tenant_id)
+        if available.indiamart and any(x.get("kind") == "indiamart" and x.get("status") == "active" for x in sources):
+            try:
+                stats = {**stats, "indiamart_pull": self.repo.indiamart_status(token, tenant_id)}   # the scheduled pull's word on the key; a card never fails for it
+            except Exception as exc:   # noqa: BLE001
+                logger.warning("indiamart status not read: %s", exc.__class__.__name__)
+        return cards_mod.build_cards(sources, stats, available)
 
     def email_address(self, token: str, tenant_id: uuid.UUID, *, rotate: bool = False) -> dict[str, Any]:
         """The workspace's forwarding address (made on first use, shown again as often as asked; `rotate` makes a new one and the old one stops working)."""
         if not self.inbound_domain or self.receiver is None:
-            raise ApiError(503, "not_available", "Forwarding e-mails is not switched on yet. Ask us to switch it on.")
+            raise ApiError(503, "not_available", "Portal e-mails are not switched on yet. Ask us to switch it on.")
         current = self.repo.inbound_get(token, tenant_id)
         secret = str(current.get("token") or "")
         if not secret or rotate:
@@ -452,14 +467,14 @@ class LeadSourcesService:
                 source_id = uuid.uuid4()
                 self.repo.source_create(
                     token, tenant_id,
-                    {"p_id": str(source_id), "p_kind": "email_forward", "p_tag": tag_of("email_forward", None), "p_label": "Forwarded lead e-mails", "p_token_hash": token_hash(secret),
+                    {"p_id": str(source_id), "p_kind": "email_forward", "p_tag": tag_of("email_forward", None), "p_label": "Portal e-mails", "p_token_hash": token_hash(secret),
                      "p_token_hint": secret[-4:], "p_consent_id": None, "p_consent": None, "p_cost_paise": None},
                 )
             self.repo.inbound_set(token, tenant_id, source_id, secret)
         return {
             "address": f"leads+{secret}@{self.inbound_domain}",
             "gmail_filter_guide": [{"step": i + 1, "text": text} for i, text in enumerate(GMAIL_GUIDE)],
-            "sample_portals": ["JustDial", "Sulekha", "IndiaMART e-mail", "99acres", "MagicBricks"],
+            "sample_portals": ["JustDial", "Sulekha", "TradeIndia", "IndiaMART e-mail", "99acres", "MagicBricks", "Housing.com"],
             "gmail_confirmation": self._gmail_confirmation(token, tenant_id),
         }
 
@@ -517,7 +532,7 @@ class LeadSourcesService:
         card = self._card(token, tenant_id, kind)
         if mail:
             address = str(self._secret("email_forward", secret)["email_address"])
-            return {**card, "connect": {"type": "copy", "shown_once": True, "fields": [{"label": "Forward portal e-mails to", "value": address, "secret": True}], "steps": list(steps), "step_codes": [f"connect.{kind}.{i}" for i in range(1, len(steps) + 1)]}}
+            return {**card, "connect": {"type": "copy", "shown_once": True, "fields": [{"label": "Your lead e-mail address", "value": address, "secret": True}], "steps": list(steps), "step_codes": [f"connect.{kind}.{i}" for i in range(1, len(steps) + 1)]}}
         url = str(self._secret("webhook", secret)["url"])
         return {**card, "connect": {"type": "copy", "shown_once": True, "fields": [{"label": f"Address for {title}", "value": url, "secret": True}], "steps": list(steps), "step_codes": [f"connect.{kind}.{i}" for i in range(1, len(steps) + 1)]}}
 
@@ -773,7 +788,11 @@ class LeadSourcesService:
     @staticmethod
     def form_row(data: dict[str, Any]) -> dict[str, Any] | None:
         """A lead from a form or a webhook body: aliases accepted, extra fields ignored, a filled honeypot = a bot (None)."""
+        data = form_templates.flatten(data)   # a form tool's own envelope (Typeform, Tally, Jotform, Webflow, Google Ads) as a flat body; untouched while LEAD_FORM_TEMPLATES is off
         lower = {str(k).lower(): v for k, v in data.items() if isinstance(k, str)}
+        for k, v in data.items():   # a form plugin's own names ("your-name") are read like "your_name"
+            if isinstance(k, str) and "-" in k:
+                lower.setdefault(k.lower().replace("-", "_"), v)
         if str(lower.get("_hp") or "").strip():
             return None
         columns = data.get("user_column_data")
@@ -797,19 +816,28 @@ class LeadSourcesService:
                     row[field] = " ".join(v.split())[:size]
         return row
 
-    def receive_form(self, secret: str, data: dict[str, Any]) -> None:
-        row = self.form_row(data)
+    def receive_form(self, secret: str, data: dict[str, Any]) -> str | None:
+        """Takes one post to a lead address. Answers `indiamart_push` when it was one of IndiaMART's pushed leads (its Push API wants an HTTP 200 for "received"), else None."""
         if not _TOKEN.fullmatch(secret):
             raise not_found()
+        if self.indiamart_push and indiamart_push.is_push(data):
+            rows = indiamart_push.rows_of(data)
+            if not rows:
+                self.record_activity(secret, "refused", "invalid")
+                return "indiamart_push"
+            self._live(secret, rows)
+            return "indiamart_push"
+        row = self.form_row(data)
         if row is None:
             self.record_activity(secret, "refused", "bot")
-            return   # a bot: answered like a success, nothing stored
+            return None   # a bot: answered like a success, nothing stored
         ticked, evidence = row.pop("_ticked", False), (row.pop("_ctext", None), row.pop("_cat", None), row.pop("_cform", None))
         if ticked:
             consent = self.consent_evidence(self.form_business(secret), *evidence)
             if consent is not None:
                 row["consent"] = consent
         self._live(secret, [row])
+        return None
 
     @staticmethod
     def consent_evidence(business: str | None, text: str | None, given_at: str | None, form: str | None, now: datetime | None = None) -> dict[str, Any] | None:
@@ -839,7 +867,7 @@ class LeadSourcesService:
         return out
 
     def receive_mail(self, secret: str, mail: Any) -> str:
-        parsed = portals.parse_mail(mail.sender, mail.subject, mail.text)
+        parsed = form_templates.tradeindia_mail(mail.sender, mail.subject, mail.text) or portals.parse_mail(mail.sender, mail.subject, mail.text)   # TradeIndia's own labels first (LEAD_FORM_TEMPLATES), then the portals' reader
         if parsed is None:
             if not _TOKEN.fullmatch(secret):
                 raise not_found()
@@ -852,6 +880,8 @@ class LeadSourcesService:
         row = dict(parsed.row)
         if mail.message_id:
             row["external_id"] = "m:" + hashlib.sha256(mail.message_id.encode("utf-8")).hexdigest()[:40]
+        if parsed.portal in portals.TAGS:
+            row["tag"] = parsed.portal   # the lead shows the real portal ("JustDial", "Sulekha" ...), not "Forwarded e-mail"
         try:
             self._live(secret, [row])
         except ApiError as err:

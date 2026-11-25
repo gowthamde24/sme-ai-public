@@ -162,7 +162,10 @@ class Settings(BaseSettings):
     # more than one API instance (24 Nov 2026): the live-call count and whisper / hang-up
     # go through the database; leave off while the API has one instance (max-instances 1)
     call_coordination: bool = False
-    signup_phone_sender: str = "none"
+    signup_phone_sender: str = "none"   # none | fake | whatsapp | sms
+    # SMS (app/sms): off | fake. No real gateway yet (India's DLT sender id and
+    # templates come first).
+    sms_provider: str = "off"
     # the WhatsApp sender (SIGNUP_PHONE_SENDER=whatsapp): Stack19's OWN number id, an approved
     # Authentication template and a token (secret) that may send from it
     signup_whatsapp_phone_number_id: str | None = None
@@ -485,10 +488,42 @@ class Settings(BaseSettings):
     # the worker sends nothing: the kill switch) | on. Needs WORKSPACE_SECRETS (the signing
     # secrets live in Secret Manager). Production stays off until the owner's gate.
     webhooks_out: Literal["off", "on"] = "off"
+    # The worker pulls IndiaMART leads by itself for every business that saved its OWN key
+    # (app/lead_sources/indiamart_pull.py). Off by default: nothing is asked of IndiaMART and
+    # nothing is read from Secret Manager.
+    indiamart_pull: Literal["off", "on"] = "off"
+    # Results into the business's own CRM or sheet (docs/contracts/crm-push.md): off (default;
+    # the routes answer 404 and the worker pushes nothing: the kill switch) | on. Needs
+    # WORKSPACE_SECRETS (the keys live in Secret Manager). Zoho CRM and Salesforce stay "needs
+    # setup by us" until the owner registers our client with each vendor and these are set.
+    # Production stays off until the owner's gate.
+    crm_push: Literal["off", "on"] = "off"
+    crm_push_zoho_client_id: str | None = None
+    crm_push_zoho_client_secret: SecretStr | None = None
+    crm_push_salesforce_client_id: str | None = None
+    crm_push_salesforce_client_secret: SecretStr | None = None
+    # A web-address lead source also reads IndiaMART's Push API body
+    # (app/lead_sources/indiamart_push.py). Off by default.
+    indiamart_push: Literal["off", "on"] = "off"
     # Jobs (jobs contract 1.0, 1.1): off (default) | on. Off: every /jobs route is a 404.
     # JOBS_GET_PAID: off (default) hides the "get paid" job templates (Get paid ships in v1.1).
     jobs: Literal["off", "on"] = "off"
     jobs_get_paid: Literal["off", "on"] = "off"
+    # Commerce and notifications (docs/contracts/commerce-notify.md). Each switch is off by
+    # default; production stays off until the owner's gate.
+    #   COMMERCE      Shopify and WooCommerce orders, abandoned carts, catalogue (app/commerce)
+    #   NOTIFY_OUT    Slack, Telegram, Teams messages (app/notify_out)
+    #   CALENDAR_IN   Calendly and Cal.com bookings in, Outlook calendar (app/calendar_in)
+    #   LEAD_FORM_TEMPLATES  Typeform, Tally, Jotform, Webflow, Google Ads, TradeIndia readers
+    # The first three need WORKSPACE_SECRETS (their keys live in Secret Manager).
+    commerce: Literal["off", "on"] = "off"
+    notify_out: Literal["off", "on"] = "off"
+    calendar_in: Literal["off", "on"] = "off"
+    lead_form_templates: Literal["off", "on"] = "off"
+    # Outlook calendar: the OAuth app Stack19 registers (commerce-notify.md section D). Missing:
+    # the card says "needs setup by us".
+    microsoft_oauth_client_id: SecretStr | None = None
+    microsoft_oauth_client_secret: SecretStr | None = None
     # Who speaks on a call: haiku (default, steady) | sarvam (Sarvam 105B first, ~320 ms faster
     # to the first word, behind a first-token deadline that falls back to Haiku).
     # Measured 31 Oct 2026: docs/runbooks/phone-model.md.
@@ -510,11 +545,23 @@ class Settings(BaseSettings):
     # SANDBOX ONLY, for testing (owner, 28 Nov 2026): a sandbox-list number ignores the
     # calling hours. Ignored in live mode. Remove before the 2 Dec real-data gate.
     telephony_sandbox_ignores_hours: bool = False
+    # the global kill switch in front of every real (non-sandbox) outbound call; off until the telecom provider has answered (lawyer's opinion, 25 Nov 2026)
+    outbound_real: bool = False
     # The named lists of "What you sell" (28 Nov 2026): off until the planner turns it on.
     what_you_sell_lists: bool = False
     # The number picker (28 Nov 2026): a business picks its own VoiceLink number; we buy it with OUR
     # money. Off until the planner turns it on (and the database switch is on too).
     phone_picker: bool = False
+    # Extra lines (26 Nov 2026; migration 20261231992500): a workspace's "calls at once" is
+    # its own count (2 for each number + the extra lines it bought from its credits), not
+    # the deployment's. OFF until the planner turns it on (the database switch is off too).
+    # TELEPHONY_MAX_CONCURRENT stays as the hard cap above every workspace.
+    extra_lines: bool = False
+    # Buying the channel at VoiceLink for an extra line. OFF = the fake provider (nothing is
+    # bought, nothing is called); ON needs the VoiceLink login, never without the planner.
+    voicelink_channel_buy: bool = False
+    voicelink_channel_buy_max_inr: float = 200.0           # the most one channel purchase may cost in all (a hard cap, rupees)
+    voicelink_channel_wallet_floor_inr: float = 500.0      # never buy with less than this left in our VoiceLink wallet afterwards
     # business KYC per VoiceLink client (Model B, 24 Nov 2026; docs/contracts/business-kyc.md):
     # off in production. ON: a number is bought under the workspace's OWN client once its KYC
     # is complete (else `kyc_required`); KYC_RETURN_URL is the page DigiLocker returns to.
@@ -527,7 +574,7 @@ class Settings(BaseSettings):
     # Live take-over (job TO, owner decision 10 Nov 2026): a short spoken announcement to the caller
     # when a person from the business takes over. OFF by default (the owner will choose);
     # TAKEOVER_ANNOUNCE=true turns it on.
-    takeover_announce: bool = False
+    takeover_announce: bool = True   # a person joining a live call is announced to the caller (lawyer's opinion, 25 Nov 2026; was off)
     takeover_allowed: bool = False
     # TAKEOVER_ALLOWED: listening in on a live call is NOT available at launch (owner, 18 Nov 2026)  # noqa: E501
     exotel_stream_secret: SecretStr | None = None

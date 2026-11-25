@@ -196,6 +196,9 @@ def test_the_startup_refuses_the_echo_in_production_and_a_missing_key() -> None:
     with pytest.raises(RuntimeError):
         _signup_service(Settings(**base, signup_fake_code_echo=True), cast(Any, Cfg()))
     assert _signup_service(Settings(**base, signup_fake_code_echo=True, signup_phone_sender="fake", admin_environment="staging"), cast(Any, Cfg())) is not None
+    assert _signup_service(Settings(**base, signup_phone_sender="sms", sms_provider="fake"), cast(Any, Cfg())) is not None
+    with pytest.raises(RuntimeError):   # the SMS channel with no gateway chosen cannot start
+        _signup_service(Settings(**base, signup_phone_sender="sms"), cast(Any, Cfg()))
 
 
 def test_the_whatsapp_sender_posts_an_authentication_template_and_keeps_the_code_out_of_errors() -> None:

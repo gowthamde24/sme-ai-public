@@ -153,6 +153,10 @@ class InvoiceDetailOut(_Out):
     seller_details_missing: bool   # true until the owner of the product has entered the company name and GSTIN: such an invoice is not yet a valid tax invoice
 
 
+class InvoiceMailOut(_Out):
+    sent: bool
+
+
 ReasonCode = Literal["support_ticket", "customer_asked", "privacy_request", "incident", "billing_dispute", "other"]
 
 

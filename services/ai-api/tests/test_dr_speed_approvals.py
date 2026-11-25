@@ -45,7 +45,7 @@ def rule_body(**kw: Any) -> dict[str, Any]:
 def test_owner_and_admin_read_the_policy_and_only_the_owner_with_a_second_factor_changes_it() -> None:
     client, repo = world()
     body = client.get(f"{BASE}/policy", headers=auth("a_admin")).json()
-    assert body["night_call_minute"] == 570 and body["hours"]["from"] == "assistant" and "holidays" not in body["hours"]
+    assert body["night_call_minute"] == 600 and body["hours"]["from"] == "assistant" and "holidays" not in body["hours"]
     assert client.get(f"{BASE}/policy", headers=auth("a_sales")).status_code == 403
     assert client.put(f"{BASE}/policy", json={"max_attempts": 4}, headers=auth("a_admin")).status_code == 403
     assert client.put(f"{BASE}/policy", json={"max_attempts": 4}, headers=auth("a_owner", aal="aal1")).status_code == 403
@@ -118,11 +118,11 @@ def test_a_rule_without_words_to_type_and_without_a_language_gets_auto_and_the_d
 
 
 def test_a_rule_carries_its_plan_the_calls_the_retries_and_the_missed_call_template() -> None:
-    """Rules v2 (owner, 15 Nov): the screen writes the whole summary from `plan.steps`: the call, 10 minutes, 2 hours, the next morning at 09:30, then the template (only for a rule that sends WhatsApp)."""
+    """Rules v2 (owner, 15 Nov): the screen writes the whole summary from `plan.steps`: the call, 10 minutes, 2 hours, the next morning at 10:00, then the template (only for a rule that sends WhatsApp)."""
     client, repo = world()
     rows = client.get(f"{BASE}/rules", headers=auth("a_owner")).json()
     assert rows[0]["plan"]["steps"] == [
-        {"kind": "call", "minutes": 2}, {"kind": "retry", "after_minutes": 10}, {"kind": "retry", "after_minutes": 120}, {"kind": "retry", "next_morning": "09:30"},
+        {"kind": "call", "minutes": 2}, {"kind": "retry", "after_minutes": 10}, {"kind": "retry", "after_minutes": 120}, {"kind": "retry", "next_morning": "10:00"},
     ], "a call-only rule has no WhatsApp step"
     saved = client.post(f"{BASE}/rules", json=rule_body(channel="both", within_minutes=0), headers=auth("a_owner")).json()
     assert saved["plan"]["steps"][0] == {"kind": "call", "minutes": 0} and saved["plan"]["steps"][-1] == {"kind": "whatsapp", "template": "missed_call_followup"}
@@ -131,11 +131,11 @@ def test_a_rule_carries_its_plan_the_calls_the_retries_and_the_missed_call_templ
 
 def test_the_policy_retry_steps_are_read_and_changed_by_the_owner_with_the_second_factor() -> None:
     client, repo = world()
-    assert client.get(f"{BASE}/policy", headers=auth("a_owner")).json()["retry_steps"] == [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 570}]
+    assert client.get(f"{BASE}/policy", headers=auth("a_owner")).json()["retry_steps"] == [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 600}]
     steps = [{"after_minutes": 15}, {"next_morning_minute": 600}]
     assert client.put(f"{BASE}/policy", json={"retry_steps": steps}, headers=auth("a_owner")).status_code == 200
     assert repo.calls[-2][1][0] == {"retry_steps": steps} or any(name == "policy_set" and args[0] == {"retry_steps": steps} for name, args in repo.calls)
-    for bad in ([], [{"after_minutes": 0}], [{"after_minutes": 5, "next_morning_minute": 570}], [{"x": 1}], [{"next_morning_minute": 1440}], [{"after_minutes": 5}] * 7):
+    for bad in ([], [{"after_minutes": 0}], [{"after_minutes": 5, "next_morning_minute": 600}], [{"x": 1}], [{"next_morning_minute": 1440}], [{"after_minutes": 5}] * 7):
         assert client.put(f"{BASE}/policy", json={"retry_steps": bad}, headers=auth("a_owner")).status_code == 422, bad
     assert client.put(f"{BASE}/policy", json={"retry_steps": steps}, headers=auth("a_admin")).status_code == 403
 

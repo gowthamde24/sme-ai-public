@@ -13,7 +13,7 @@ import asyncio
 import logging
 import time
 import uuid
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 from app.telephony.live import LiveCalls
 
@@ -35,12 +35,17 @@ class CommandStore(Protocol):
 class RpcCommandStore:
     """The database's door: the owner's token for push and status, the phone server's own account for the count, the claim and the finish."""
 
-    def __init__(self, rpc: Any, system_token: Any) -> None:
+    def __init__(self, rpc: Any, system_token: Any, *, per_workspace: bool = False) -> None:
         self._rpc, self._system = rpc, system_token
+        self.per_workspace = per_workspace   # EXTRA_LINES: also count each workspace's live calls (migration 20261231992500)
 
     def live_count(self) -> int:
         out = self._rpc.call(self._system(), "phone_live_count", {})
         return out if isinstance(out, int) and not isinstance(out, bool) else 0
+
+    def live_by_tenant(self) -> dict[str, int]:
+        out = self._rpc.call(self._system(), "phone_live_by_tenant", {})
+        return {str(k): int(v) for k, v in out.items() if isinstance(v, int) and not isinstance(v, bool)} if isinstance(out, dict) else {}
 
     def push(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, kind: str, body: str | None) -> dict[str, Any]:
         out: dict[str, Any] = self._rpc.object(token, "call_command_push", {"p_tenant_id": str(tenant_id), "p_call_id": str(call_id), "p_kind": kind, "p_body": body})
@@ -106,6 +111,12 @@ async def run_worker(live: LiveCalls, store: CommandStore, stop: asyncio.Event) 
         try:
             live.platform_live = await asyncio.to_thread(store.live_count)
             live.platform_at = time.monotonic()
+            if getattr(store, "per_workspace", False):   # EXTRA_LINES: each workspace's own count of live calls, on every instance (its failure never spoils the rest)
+                try:
+                    live.tenant_live = await asyncio.to_thread(cast(Any, store).live_by_tenant)
+                    live.tenant_at = time.monotonic()
+                except Exception as exc:  # noqa: BLE001
+                    log.warning("per-workspace call count failed: %s", exc.__class__.__name__)
             if busy:
                 await apply_commands(live, store)
         except Exception as exc:  # noqa: BLE001

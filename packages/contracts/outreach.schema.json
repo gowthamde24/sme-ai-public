@@ -883,7 +883,7 @@
           "anyOf": [
             {
               "maximum": 720,
-              "minimum": 540,
+              "minimum": 600,
               "multipleOf": 15,
               "type": "integer"
             },

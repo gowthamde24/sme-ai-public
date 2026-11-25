@@ -53,9 +53,9 @@ class AssistantSettings(_Strict):
     handover_order_above_paise: Annotated[int, Field(ge=1, le=100_000_000_000)] | None
     # calling days, Monday = 1 to Sunday = 7
     call_days: Annotated[list[Annotated[int, Field(ge=1, le=7)]], Field(min_length=1, max_length=7)]
-    # calling hours as minutes after midnight, in steps of 15, from 09:00 (540) to 21:00 (1260)
-    call_from_minute: Annotated[int, Field(ge=540, le=1260, multiple_of=15)]
-    call_to_minute: Annotated[int, Field(ge=540, le=1260, multiple_of=15)]
+    # calling hours as minutes after midnight, in steps of 15, from 10:00 (600) to 21:00 (1260)
+    call_from_minute: Annotated[int, Field(ge=600, le=1260, multiple_of=15)]
+    call_to_minute: Annotated[int, Field(ge=600, le=1260, multiple_of=15)]
 
     @model_validator(mode="after")
     def _order(self) -> AssistantSettings:

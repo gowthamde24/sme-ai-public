@@ -23,10 +23,14 @@ ROUTE_WORDS = frozenset(
         "lists", "columns", "commit", "mappings",   # the lists of what you sell (28 Nov)
         "undo-price",   # POST /catalogue/items/{id}/undo-price (28 Nov)
         "phone-lines",   # GET /phone-lines (28 Nov)
+        "extra-lines", "keep",   # more calls at once: buy, cancel, keep a line (26 Nov)
         "lead-address", "test-lead",   # one lead address per job, a test lead (24 Nov)
         "phone-knows",   # GET /assistant/phone-knows (28 Nov)
         "signup", "consent", "phone", "verify", "trial-claim",   # opening sign-up (24 Nov)
         "numbers", "claim",   # the number picker routes (28 Nov)
+        "dev",   # GET /v1/dev/outbox, registered in development only (25 Nov)
+        "portals",   # GET /lead-sources/portals (sa/connectors-rest, 26 Nov)
+        "usage-ack", "registered-consent", "call-complaints", "ai-undertaking", "compliance", "abandoned-calls",   # calling compliance, lawyer's opinion (26 Nov)
         "template",   # POST /conversations/{id}/template (a template picked in a chat, 16 Nov)
         "marketing-consent", "consented",   # campaigns S3, 17 Nov
         "briefing",   # GET /today/briefing (the briefing numbers, 19 Nov)
@@ -38,6 +42,8 @@ ROUTE_WORDS = frozenset(
         "staff",   # GET /visits/staff, PUT /visits/staff/{id} (14 Nov)
         "practice",   # POST /talk-training/practice (app v4)
         "integrations", "google-calendar", "callback", "sync-now",   # Google Calendar (slice 4)
+        "calendars", "calendly", "calcom", "outlook",   # calendars in (section D)
+        "bookings", "needs-person",   # GET /calendars/bookings/needs-person
         "goodwill-credit", "unmask",   # POST /admin/businesses/{id}/goodwill-credit (14 Nov)
         "canned", "notes", "money", "summary", "failed-payments", "invoices.csv",   # admin 14 Nov
         "call-limit", "ask-consent", "ask-first", "dismiss", "rows", "unsend",   # tasks, imports
@@ -46,6 +52,8 @@ ROUTE_WORDS = frozenset(
         "business", "aadhaar", "pan", "gst", "documents", "details",   # /phone-kyc/business steps
         "describe",   # POST /jobs/describe (24 Nov)
         "guides",   # GET /lead-sources/guides (24 Nov)
+        "form-templates", "jotform",   # lead-form templates (25 Nov)
+        "commerce", "shopify", "woocommerce", "connections",   # Shopify, WooCommerce (B)
         "contact", "contact-requests",   # the Talk-to-us form and its staff read (25 Nov)
         "by-email", "wallet-debit", "webhook-failures",   # staff support routes (25 Nov)
         "credits", "topup-options", "refund", "failed",   # credits top-up routes
@@ -197,7 +205,9 @@ ROUTE_WORDS = frozenset(
         "scheduler", "draft-message",
         "voice", "research", "places", "business-profile", "ready", "metrics",
         # job BZ: connectors and webhooks (a secret in an address is never a word: always redacted)
+        "channels",   # /notify/channels/{kind}/test (notifications out)
         "connectors", "payment-links", "send", "record",
+        "crm", "retry",   # results into a business's own CRM or sheet (25 Nov 2026)
         "missed-calls", "handle", "connect",
         "razorpay", "cashfree", "fake-payments", "exotel", "missed-call", "call-status",
         "plivo", "outbound-answer", "place", "test-numbers",

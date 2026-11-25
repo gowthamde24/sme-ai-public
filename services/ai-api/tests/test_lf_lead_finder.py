@@ -204,7 +204,7 @@ def test_the_first_ten_calls_of_every_new_search_need_the_owner() -> None:
 def test_hours_and_the_daily_cap_make_it_wait_never_call() -> None:
     assert _d(place(), situation=sit(now=NIGHT, approved_in_search=10)).status == "researching"
     assert _d(place(), situation=sit(now=NIGHT, approved_in_search=10)).reason == "outside_hours"
-    assert _d(place(), settings=Settings(call_from_hour=9, call_to_hour=21), situation=sit(now=datetime(2026, 11, 4, 3, 0, tzinfo=UTC), approved_in_search=10)).reason == "outside_hours", "08:30 IST is before 09:00"
+    assert _d(place(), settings=Settings(call_from_hour=9, call_to_hour=21), situation=sit(now=datetime(2026, 11, 4, 4, 0, tzinfo=UTC), approved_in_search=10)).reason == "outside_hours", "09:30 IST is before 09:00"
     capped = _d(place(), settings=Settings(daily_call_cap=5), situation=sit(calls_today=3, ready_waiting=2, approved_in_search=10))
     assert capped.status == "researching" and capped.reason == "daily_cap"
     assert TEXTILES is not None

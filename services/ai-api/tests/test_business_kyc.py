@@ -25,6 +25,52 @@ PAN = "ABCDE1234F"
 class Repo:
     def __init__(self) -> None:
         self.row: dict[str, Any] | None = None
+        self.waiting = False
+        self.waits = 0
+        self.balance = 100000   # paise
+        self.price = 49900
+        self.reserve: dict[str, Any] | None = None
+        self.refunds = 0
+        self.removed = 0
+
+    def reserve_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        r = self.reserve
+        return {"price_paise": self.price, "state": r["state"] if r else "none", "amount_paise": r["amount"] if r else 0, "due_at": None}
+
+    def reserve_place(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        if self.reserve and self.reserve["state"] == "held":
+            return {"placed": True, "replayed": True, "amount_paise": self.reserve["amount"]}
+        if self.balance < self.price:
+            return {"placed": False, "reason": "credits_needed", "needed_paise": self.price, "balance_paise": self.balance}
+        self.balance -= self.price
+        self.reserve = {"state": "held", "amount": self.price}
+        return {"placed": True, "replayed": False, "amount_paise": self.price}
+
+    def reserve_close(self, token: str, tenant_id: uuid.UUID, outcome: str) -> bool:
+        if not self.reserve or self.reserve["state"] != "held":
+            return False
+        if outcome == "refunded":
+            self.balance += self.reserve["amount"]
+            self.refunds += 1
+            self.reserve["state"] = "refunded"
+        else:
+            self.reserve["state"] = "applied"
+        return True
+
+    def client_remove(self, token: str, tenant_id: uuid.UUID) -> None:
+        self.removed += 1
+        if self.row and self.row["state"] != "verified":
+            self.row = None
+
+    def wait_get(self, token: str, tenant_id: uuid.UUID) -> bool:
+        return self.waiting
+
+    def wait_put(self, token: str, tenant_id: uuid.UUID) -> None:
+        self.waiting = True
+        self.waits += 1
+
+    def wait_clear(self, token: str, tenant_id: uuid.UUID) -> None:
+        self.waiting = False
 
     def get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         return dict(self.row) if self.row else None
@@ -39,6 +85,7 @@ class FakeVoiceLink:
         self.calls: list[tuple[str, str, Any]] = []
         self.status_doc: dict[str, Any] = {"documents": {}, "current_step": "details", "kyc_status": 0}
         self.fail: dict[str, tuple[int, dict[str, Any]]] = {}
+        self.free_channels: int | None = None   # None: the profile does not say; 0: none free (create is refused with VoiceLink's own words)
 
     def handler(self, request: httpx.Request) -> httpx.Response:
         path = request.url.path.replace("/api/v1", "")
@@ -53,7 +100,11 @@ class FakeVoiceLink:
         if path in self.fail:
             status, data = self.fail[path]
             return httpx.Response(status, json={"status": False, "data": data, "message": "x"})
+        if path == "/reseller/profile":
+            return httpx.Response(200, json={"status": True, "data": {"wallet": {"balance": 5000, "currency": "INR"}, **({"channels": {"available": self.free_channels, "total_allocated": 2, "total_purchased": 2}} if self.free_channels is not None else {})}})
         if path == "/reseller/client/create":
+            if self.free_channels == 0:
+                return httpx.Response(422, json={"status": False, "message": "Channel count cannot exceed available channels (0).", "data": {}})
             return httpx.Response(200, json={"status": True, "data": {"client_id": 101}})
         if path == "/reseller/kyc/status":
             return httpx.Response(200, json={"status": True, "data": self.status_doc})
@@ -107,7 +158,7 @@ def test_start_makes_one_client_with_our_wallet_and_never_twice() -> None:
 def test_the_steps_forward_the_numbers_and_never_echo_them(caplog: pytest.LogCaptureFixture) -> None:
     client, repo, vl, _ = world()
     client.post(f"{T}/start", headers=auth("a_owner"))
-    d = client.post(f"{T}/details", json={"account_type": "business", "business_name": "Padma Silks", "full_name": "Padma Devi", "phone": "9848012345", "billing_address": "12 Main Road, Guntur", "accept_terms": True}, headers=auth("a_owner"))
+    d = client.post(f"{T}/details", json={"account_type": "business", "business_name": "Padma Silks", "full_name": "Padma Devi", "phone": "9848012345", "billing_address": "12 Main Road, Guntur", "city": "Guntur", "state": "Andhra Pradesh", "pincode": "522001", "accept_terms": True}, headers=auth("a_owner"))
     assert d.status_code == 200 and repo.row["state"] == "in_progress" and repo.row["account_type"] == "business"  # type: ignore[index]
     p = client.post(f"{T}/pan", json={"pan_number": PAN.lower(), "holder_name": "Padma Devi"}, headers=auth("a_owner"))
     g = client.post(f"{T}/gst", json={"gst_number": "37AAAAA0000A1Z5"}, headers=auth("a_owner"))
@@ -223,29 +274,49 @@ def _numbers_world(kyc: Any, vl_buy: Any = None) -> tuple[Any, list[Any], list[i
     return service, [original], bought
 
 
-def test_buy_first_verify_after_the_number_is_bought_for_the_businesses_own_client_and_is_kyc_pending() -> None:
+def test_a_new_number_is_bought_only_after_the_kyc_is_verified() -> None:
     client, repo, vl, kyc = world()
     service, restore, bought = _numbers_world(kyc)
     import app.numbers.service as svc
 
     try:
-        out = service.claim("t", TENANT_A.id, "+919876543210", "mobile", email="owner@example.test", name="Padma Silks")
-        assert out.state == "kyc_pending" and bought == [101]   # the client was made now (with the owner's e-mail) and the number bought for it
+        with pytest.raises(PickerBlocked) as err:   # no client yet: nothing is made, locked or bought
+            service.claim("t", TENANT_A.id, "+919876543210", "mobile", email="owner@example.test", name="Padma Silks")
+        assert err.value.reason == "kyc_required" and bought == [] and [c for c in vl.calls if c[1] == "/reseller/client/create"] == []
+        client.post(f"{T}/start", headers=auth("a_owner", email="owner@example.test"))   # the KYC opens without any number (step 2 of the flow)
         assert [c for c in vl.calls if c[1] == "/reseller/client/create"][0][2]["email"] == "owner@example.test"
-        assert service.numbers("t", TENANT_A.id)[0]["state"] == "kyc_pending"
+        with pytest.raises(PickerBlocked) as again:   # a client that is not verified yet is refused too
+            service.claim("t", TENANT_A.id, "+919876543210", "mobile")
+        assert again.value.reason == "kyc_required" and bought == []
         vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
-        assert service.numbers("t", TENANT_A.id)[0]["state"] == "calls_off" and repo.row is not None and repo.row["state"] == "verified"
-        assert service.claim("t", TENANT_A.id, "+919876543211", "mobile").state == "ready"
+        assert service.claim("t", TENANT_A.id, "+919876543211", "mobile").state == "ready" and bought == [101]   # verified: bought for that client
         assert len([c for c in vl.calls if c[1] == "/reseller/client/create"]) == 1, "one client per business"
+        assert repo.row is not None and repo.row["state"] == "verified"
     finally:
         svc.buy = restore[0]  # type: ignore[attr-defined]
 
 
-def test_voicelink_refusing_for_an_unverified_client_falls_back_to_kyc_required_or_keeps_the_paid_number() -> None:
+def test_a_number_bought_earlier_under_the_buy_first_rule_still_shows_kyc_pending_until_the_business_is_verified() -> None:
+    client, repo, vl, kyc = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    service, restore, _ = _numbers_world(kyc)
+    import app.numbers.service as svc
+
+    try:
+        assert service.numbers("t", TENANT_A.id)[0]["state"] == "kyc_pending"
+        vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
+        assert service.numbers("t", TENANT_A.id)[0]["state"] == "calls_off"
+    finally:
+        svc.buy = restore[0]  # type: ignore[attr-defined]
+
+
+def test_voicelink_refusing_for_a_verified_client_is_kyc_required_and_a_paid_number_is_kept_for_the_team() -> None:
     import app.numbers.service as svc
     from app.numbers.buyer import Bought, PickerRefused
 
     client, repo, vl, kyc = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
 
     def refuse(settings: BuyerSettings, number: str) -> Any:
         raise PickerRefused("kyc_required")
@@ -262,7 +333,7 @@ def test_voicelink_refusing_for_an_unverified_client_falls_back_to_kyc_required_
     service._alert = told.append
     try:
         out = service.claim("t", TENANT_A.id, "+919876543212", "mobile", email="o@example.test", name="X")
-        assert out.state == "kyc_pending" and len(told) == 1
+        assert out.state == "getting_ready" and len(told) == 1, "paid but VoiceLink would not map it: the team is told"
     finally:
         svc.buy = restore[0]  # type: ignore[attr-defined]
 
@@ -294,6 +365,186 @@ def test_the_worker_marks_the_businesses_voicelink_has_approved() -> None:
             return [{"tenant_id": str(TENANT_A.id), "client_id": 101}] if function == "business_client_pending" else None
 
     rpc = Rpc()
-    assert kyc.refresh_pending("sys", rpc) == 0 and [c[0] for c in rpc.calls] == ["business_client_pending"]  # type: ignore[arg-type]
+    assert kyc.refresh_pending("sys", rpc) == 0 and [c[0] for c in rpc.calls] == ["business_client_pending", "scheduler_line_reserves_due"]  # type: ignore[arg-type]   # the same pass also looks for first months held too long
     vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
-    assert kyc.refresh_pending("sys", rpc) == 1 and rpc.calls[-1] == ("business_client_mark_verified", {"p_tenant_id": str(TENANT_A.id)})  # type: ignore[arg-type]
+    assert kyc.refresh_pending("sys", rpc) == 1 and ("business_client_mark_verified", {"p_tenant_id": str(TENANT_A.id)}) in rpc.calls  # type: ignore[arg-type]
+
+
+# ------------------------------------------------------------------------------------------------ no free channel at VoiceLink (the probe of 25 Nov 2026)
+def test_with_no_free_channel_the_business_waits_for_its_line_instead_of_being_turned_away() -> None:
+    client, repo, vl, _ = world()
+    vl.free_channels = 0
+    got = client.post(f"{T}/start", headers=auth("a_owner"))
+    assert got.status_code == 201 and got.json()["state"] == "waiting_for_line" and got.json()["words"] == "We are setting up your line. This takes a short while."
+    assert repo.waiting and repo.row is None and [c for c in vl.calls if c[1] == "/reseller/client/create"] == [], "known to be empty: VoiceLink is not even asked"
+    still = client.get(T, headers=auth("a_owner")).json()   # the Owner's screen polls: still waiting, the retry does not make a client
+    assert still["state"] == "waiting_for_line" and repo.row is None
+    assert client.get(T, headers=auth("a_admin")).json()["state"] == "waiting_for_line", "an Admin sees it too"
+    assert [c for c in vl.calls if c[1] == "/reseller/client/create"] == []
+    vl.free_channels = 1   # the staff bought a channel
+    later = client.get(T, headers=auth("a_owner", email="owner@example.test")).json()
+    assert later["state"] == "created" and repo.row is not None and repo.row["client_id"] == 101 and repo.waiting is False
+    assert len([c for c in vl.calls if c[1] == "/reseller/client/create"]) == 1
+
+
+def test_a_refusal_for_no_channel_is_a_wait_even_when_the_pool_cannot_be_read_and_any_other_refusal_keeps_its_word() -> None:
+    client, repo, vl, _ = world()
+    vl.fail["/reseller/client/create"] = (422, {})   # a refusal that is not about channels
+    other = client.post(f"{T}/start", headers=auth("a_owner"))
+    assert other.status_code == 422 and other.json()["error"]["reason"] == "email_in_use" and repo.waiting is False
+    original = vl.handler
+
+    def pool_unreadable(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/reseller/profile"):
+            return httpx.Response(404, json={"status": False, "data": {}})
+        if request.url.path.endswith("/reseller/client/create"):
+            return httpx.Response(422, json={"status": False, "message": "Channel count cannot exceed available channels (0).", "data": {}})
+        return original(request)
+
+    api = VoicelinkApi("u", "p", base_url="https://vl.test/api/v1", client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(pool_unreadable)))
+    waiting_repo = Repo()
+    c2, _ = make_client(business_kyc=BusinessKycService(waiting_repo, api, return_url="https://stack19.test/kyc/done"))
+    got = c2.post(f"{T}/start", headers=auth("a_owner"))
+    assert got.status_code == 201 and got.json()["state"] == "waiting_for_line" and waiting_repo.waiting
+
+
+def test_a_city_voicelink_does_not_know_is_a_plain_field_error_never_an_echo() -> None:
+    client, repo, vl, _ = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.fail["/reseller/kyc/step-1-register-details"] = (422, {})
+    original = vl.handler
+
+    def city_refused(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/step-1-register-details"):
+            return httpx.Response(422, json={"status": False, "message": "City 'Anantapur' was not found in the selected state.", "data": {}})
+        return original(request)
+
+    api = VoicelinkApi("u", "p", base_url="https://vl.test/api/v1", client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(city_refused)))
+    c2, _ = make_client(business_kyc=BusinessKycService(repo, api, return_url="https://stack19.test/kyc/done"))
+    good = {"account_type": "individual", "full_name": "Test Person", "phone": "9999900000", "billing_address": "12 Test Road, Test Town", "city": "Anantapur", "state": "Andhra Pradesh", "pincode": "515001", "accept_terms": True}
+    got = c2.post(f"{T}/details", json=good, headers=auth("a_owner"))
+    assert got.status_code == 422 and got.json()["error"]["code"] == "kyc_fields_invalid" and got.json()["error"]["reasons"] == {"city": "city_not_found"} and "Anantapur" not in got.text
+
+
+def test_a_waiting_business_cannot_buy_a_number() -> None:
+    client, repo, vl, kyc = world()
+    vl.free_channels = 0
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    service, restore, bought = _numbers_world(kyc)
+    import app.numbers.service as svc
+
+    try:
+        with pytest.raises(PickerBlocked) as err:
+            service.claim("t", TENANT_A.id, "+919876543210", "mobile")
+        assert err.value.reason == "kyc_required" and bought == []
+    finally:
+        svc.buy = restore[0]  # type: ignore[attr-defined]
+
+
+# ------------------------------------------------------------------------------------------------ the first month of the number (the planner's money rule, 26 Nov 2026)
+def test_the_first_month_is_debited_when_the_client_is_made_and_too_little_credit_creates_nothing() -> None:
+    client, repo, vl, _ = world()
+    repo.balance = 1000
+    poor = client.post(f"{T}/start", headers=auth("a_owner"))
+    assert poor.status_code == 402 and poor.json()["error"]["code"] == "credits_needed" and poor.json()["error"]["needed_paise"] == 49900 and poor.json()["error"]["needed_text"] == "₹499"
+    assert repo.row is None and repo.reserve is None and [c for c in vl.calls if c[1] == "/reseller/client/create"] == [] and repo.balance == 1000
+    repo.balance = 100000
+    ok = client.post(f"{T}/start", headers=auth("a_owner"))
+    assert ok.status_code == 201 and ok.json()["state"] == "created" and repo.balance == 100000 - 49900
+    assert ok.json()["reserve"]["state"] == "held" and ok.json()["reserve"]["amount_text"] == "₹499" and ok.json()["reserve"]["price_text"] == "₹499"
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    assert repo.balance == 100000 - 49900, "starting again debits nothing more"
+
+
+def test_a_business_that_waits_for_a_line_is_not_charged_until_the_client_is_made() -> None:
+    client, repo, vl, _ = world()
+    vl.free_channels = 0
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    assert repo.balance == 100000 and repo.reserve is None
+    vl.free_channels = 1
+    assert client.get(T, headers=auth("a_owner")).json()["state"] == "created" and repo.balance == 100000 - 49900
+
+
+def test_if_voicelink_refuses_after_the_debit_the_money_goes_straight_back() -> None:
+    client, repo, vl, _ = world()
+    vl.fail["/reseller/client/create"] = (422, {})
+    refused = client.post(f"{T}/start", headers=auth("a_owner"))
+    assert refused.status_code == 422 and repo.balance == 100000 and repo.refunds == 1 and repo.reserve is not None and repo.reserve["state"] == "refunded"
+
+
+def test_cancel_refunds_deletes_the_client_and_lets_the_business_start_again_but_never_a_verified_one() -> None:
+    client, repo, vl, _ = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    got = client.post(f"{T}/cancel", headers=auth("a_owner"))
+    assert got.status_code == 200 and got.json()["state"] == "not_started" and repo.balance == 100000 and repo.refunds == 1 and repo.removed == 1
+    assert ("DELETE", "/reseller/client/delete/101", None) in vl.calls
+    assert client.post(f"{T}/cancel", headers=auth("a_admin")).status_code == 403
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
+    client.get(T, headers=auth("a_owner"))   # marks it verified
+    assert client.post(f"{T}/cancel", headers=auth("a_owner")).status_code == 422
+
+
+def test_the_workers_release_gives_back_a_reserve_held_too_long_and_is_idempotent() -> None:
+    client, repo, vl, kyc = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    calls: list[tuple[str, dict[str, Any]]] = []
+
+    class Rpc:
+        def call(self, token: str, fn: str, args: dict[str, Any]) -> Any:
+            calls.append((fn, args))
+            if fn == "scheduler_line_reserves_due":
+                return [{"tenant_id": str(TENANT_A.id), "client_id": 101}] if len([c for c in calls if c[0] == "scheduler_line_reserve_refund"]) == 0 else []
+            return {"refunded": True}
+
+    assert kyc.release_due("sys", Rpc()) == 1 and kyc.release_due("sys", Rpc()) == 0
+    assert ("scheduler_line_reserve_refund", {"p_tenant_id": str(TENANT_A.id), "p_reason": "expired"}) in calls
+    assert ("DELETE", "/reseller/client/delete/101", None) in vl.calls
+    vl.free_channels = 1
+    kyc.note_stock("sys", Rpc())
+    assert ("scheduler_channel_stock_put", {"p_free": 1}) in calls
+
+
+def test_a_purchase_applies_the_held_first_month() -> None:
+    client, repo, vl, kyc = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
+    service, restore, bought = _numbers_world(kyc)
+    import app.numbers.service as svc
+
+    try:
+        assert service.claim("t", TENANT_A.id, "+919876543211", "mobile").state == "ready"
+        assert repo.reserve is not None and repo.reserve["state"] == "applied" and repo.balance == 100000 - 49900
+    finally:
+        svc.buy = restore[0]  # type: ignore[attr-defined]
+
+
+def test_the_status_says_whether_the_digilocker_check_reached_voicelink_and_the_link_can_be_asked_for_again() -> None:
+    client, repo, vl, _ = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.status_doc = {"documents": {}, "kyc_status": 0, "current_step": "aadhaar", "aadhaar_verified": False}
+    pending = client.get(T, headers=auth("a_owner")).json()
+    assert pending["aadhaar_verified"] is False and pending["state"] != "verified"
+    first = client.post(f"{T}/aadhaar", headers=auth("a_owner"))
+    second = client.post(f"{T}/aadhaar", headers=auth("a_owner"))   # "Start the Aadhaar check again": a new link each time
+    assert first.status_code == 200 and second.status_code == 200 and first.json()["redirect_url"].startswith("https://") and second.json()["redirect_url"].startswith("https://")
+    assert len([c for c in vl.calls if c[1] == "/reseller/kyc/step-3-aadhaar-init"]) == 2
+    vl.status_doc = {"documents": {}, "kyc_status": 0, "current_step": "pan", "aadhaar_verified": True}
+    assert client.get(T, headers=auth("a_owner")).json()["aadhaar_verified"] is True
+    vl.status_doc = {"documents": {}, "kyc_status": 0, "current_step": "pan"}
+    assert client.get(T, headers=auth("a_owner")).json()["aadhaar_verified"] is None, "VoiceLink does not say: unknown, not false"
+
+
+def test_verified_is_voicelinks_kyc_status_one_and_complete_never_is_complete_alone() -> None:
+    from app.business_kyc.service import is_verified
+
+    assert is_verified({"kyc_status": 1, "is_complete": True}) is True
+    assert is_verified({"kyc_status": 0, "is_complete": True}) is False, "is_complete became true right after the Aadhaar check, while the status was still Pending (real account, 26 Nov 2026)"
+    assert is_verified({"kyc_status": 1, "is_complete": False}) is False
+    assert is_verified({"kyc_status": 1}) is False and is_verified({"is_complete": True}) is False and is_verified({}) is False
+    client, repo, vl, _ = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.status_doc = {"documents": {}, "kyc_status": 0, "is_complete": True, "current_step": "complete"}
+    assert client.get(T, headers=auth("a_owner")).json()["state"] != "verified" and repo.row is not None and repo.row["state"] != "verified"
+    vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True, "current_step": "complete"}
+    assert client.get(T, headers=auth("a_owner")).json()["state"] == "verified"

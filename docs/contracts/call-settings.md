@@ -36,7 +36,7 @@ Errors: 403 `mfa_required` (save without a second factor), 403 `workspace_read_o
 | `listening_sounds` | "hmm", "okay" while listening | true |
 | `pronunciations` | up to 50 of `{written, spoken}` (shop and product names); a name once | [] |
 | `keywords` | up to 100 words the speech recognition should expect (2..40 characters) | [] |
-| `hours` | `{days [1..7], from_minute, to_minute}` (09:00 = 540 to 21:00 = 1260, steps of 15) or **null = follow Settings > AI assistant** (`assistant_hours` shows what that is) | null |
+| `hours` | `{days [1..7], from_minute, to_minute}` (10:00 = 600 to 21:00 = 1260, steps of 15; the lawyer's opinion of 25 Nov 2026 moved the earliest start from 09:00 to 10:00) or **null = follow Settings > AI assistant** (`assistant_hours` shows what that is) | null |
 | `holidays` | up to 60 dates (`YYYY-MM-DD`, from yesterday to 400 days ahead) on which it never calls | [] |
 | `max_calls_per_customer_per_week` | 1..14 | 2 |
 | `auto_pause_refusals_per_hour` | 3..100: pause the campaign when the carrier refuses this many calls in an hour; **null = never pause on its own** | 10 |

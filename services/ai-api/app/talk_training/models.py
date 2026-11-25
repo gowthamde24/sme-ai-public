@@ -96,6 +96,7 @@ class TalkTraining(_Strict):
     tone: Literal["respectful", "friendly", "quick", "professional", "calm_caring", "cheerful", "confident"] | None = None   # the Owner's saved tone for calls to customers (the panel "How your assistant speaks"); None = not chosen yet (the business type decides)
     background: Literal["quiet_office", "shop", "off"] | None = None   # the quiet bed under the assistant's voice on calls (app/telephony/ambience.py); None = not chosen: quiet_office
     say_ai_when_greeting: bool | None = None   # "Say 'AI assistant' when greeting" (owner, 20 Nov 2026; app/opening/greeting.py): None = not chosen = OFF (the name only). The honest answer when asked is never a setting.
+    ai_off_undertaking: dict[str, str] | None = None   # written by the server only (app/talk_training/repository.py): when and who accepted the undertaking that allows the AI mention to be switched off
     say_ai_by_job: dict[Literal["speed_to_lead", "answer_calls", "followups", "store_visits", "offers"], Literal["on", "off"]] = {}   # a job's own override of the line above (jobs catalogue, docs/contracts/jobs-detail.md): a job not listed follows the business setting; the same words as `business | on | off`, `business` = not listed
     questions: list[Ask] = []
     never_say: list[Short] = []

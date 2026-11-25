@@ -86,7 +86,7 @@ describe("the lead sources page (night 4, item 4)", () => {
     fireEvent.change(within(card).getByLabelText("Which portal?"), { target: { value: "99acres" } });
     await act(async () => fireEvent.click(within(card).getByRole("button", { name: "Add this source" })));
     expect(a.create).toHaveBeenCalledWith(expect.objectContaining({ kind: "email_forward", portal: "99acres" }));
-    expect(screen.getByLabelText("E-mail address to forward to")).toHaveValue("leads+TOK@inbound.example.test");
+    expect(screen.getByLabelText("Your lead e-mail address")).toHaveValue("leads+TOK@inbound.example.test");
   });
 
   it("the consent confirmation can be given when a source is made (the four facts), and is incomplete until all four are there", async () => {

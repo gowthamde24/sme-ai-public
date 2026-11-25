@@ -37,5 +37,20 @@ select is(pg_temp.at('aal2', 'a_owner', format($$select public.workspace_pack_se
 select is(pg_temp.at('aal2', 'a_owner', format($$select public.workspace_pack_set(%L, 'Bad Code')::text$$, tests.tid('a'))), 'ERR:22023', 'C4: a malformed code is invalid');
 select is((select pack_code from packs.workspace_pack where tenant_id = tests.tid('a')), 'coaching', 'C5: a refusal changed nothing');
 
+-- E: choosing the pack the workspace already holds is a choice when nobody typed it (26 Nov 2026), and still a no-op once somebody did
+update packs.workspace_pack set pack_code = 'textiles', source = 'default' where tenant_id = tests.tid('a');
+select is(pg_temp.at('aal2', 'a_owner', format($$select (public.workspace_pack_set(%L, 'textiles') -> 'pack_id')$$, tests.tid('a'))), '"textiles"', 'E1: the Owner picks the pack the workspace already has');
+select is((select source from packs.workspace_pack where tenant_id = tests.tid('a')), 'owner', 'E2: the source now says the Owner chose it');
+select is((select count(*) from public.audit_events where tenant_id = tests.tid('a') and action = 'workspace_pack.choose'), 3::bigint, 'E3: one audit line for it');
+select is(pg_temp.at('aal1', 'a_owner', format($$select (public.first_run_facts(%L) ->> 'typed')$$, tests.tid('a'))), 'true', 'E4: and the workspace counts as typed (the picker stays away)');
+select is(pg_temp.at('aal2', 'a_owner', format($$select (public.workspace_pack_set(%L, 'textiles') -> 'pack_id')$$, tests.tid('a'))), '"textiles"', 'E5: the same pack again answers as before');
+select is((select count(*) from public.audit_events where tenant_id = tests.tid('a') and action = 'workspace_pack.choose'), 3::bigint, 'E6: and writes no new audit line');
+update packs.workspace_pack set source = 'signup' where tenant_id = tests.tid('a');
+select pg_temp.at('aal2', 'a_owner', format($$select (public.workspace_pack_set(%L, 'textiles') -> 'pack_id')$$, tests.tid('a')));
+select is((select source from packs.workspace_pack where tenant_id = tests.tid('a')), 'signup', 'E7: the same pack on a workspace made by sign-up changes nothing (source stays signup)');
+update packs.workspace_pack set source = 'legacy' where tenant_id = tests.tid('a');
+select pg_temp.at('aal2', 'a_owner', format($$select (public.workspace_pack_set(%L, 'textiles') -> 'pack_id')$$, tests.tid('a')));
+select is((select source from packs.workspace_pack where tenant_id = tests.tid('a')), 'owner', 'E8: a legacy workspace is recorded as chosen too');
+
 select * from finish();
 rollback;

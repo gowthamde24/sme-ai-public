@@ -238,6 +238,14 @@ class Runtime:
     # outbound webhooks (app/webhooks_out.WebhooksOut)
     # None: WEBHOOKS_OUT=off, every route answers 404
     webhooks_out: Any = None
+    # results into a business's own CRM or sheet (app/crm_push.CrmPush)
+    # None: CRM_PUSH=off, every route answers 404
+    crm_push: Any = None
+    # commerce (Shopify, WooCommerce), notifications out (Slack, Telegram, Teams), calendars in
+    # (Calendly, Cal.com, Outlook): each is None unless its switch is on
+    commerce: Any = None
+    notify_out: Any = None
+    calendar_in: Any = None
     # Jobs (app/jobs): the flags and the pack files; None: JOBS=off, every /jobs route answers 404
     jobs: JobsRuntime | None = None
     calls: CallsService | None = None
@@ -256,6 +264,11 @@ class Runtime:
     auto_reply: AutoReplySwitch | None = None
     # Google Calendar 2-way sync (app/google_calendar); None = not configured
     google_calendar: Any = None
+    # extra lines: more "calls at once" for a workspace (app/extra_lines)
+    # None: EXTRA_LINES=off, every route answers 404
+    extra_lines: Any = None
+    # the lawyer's opinion (25 Nov 2026): number usage statement, registered consent, complaints (app/compliance)
+    compliance: Any = None
 
 
 @dataclass(frozen=True)

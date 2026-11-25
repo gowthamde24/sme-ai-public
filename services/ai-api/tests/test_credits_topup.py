@@ -162,13 +162,13 @@ def sign(order: str, pay: str, secret: str = SECRET) -> str:
     return hmac.new(secret.encode(), f"{order}|{pay}".encode(), hashlib.sha256).hexdigest()
 
 
-def world(provider: Any = None, admin: bool = False) -> tuple[Any, Ledger, Any]:
+def world(provider: Any = None, admin: bool = False, mail: Any = None) -> tuple[Any, Ledger, Any]:
     ledger = Ledger()
     provider = provider or razorpay()
     pricing = PricingService(cast(Any, ledger), provider)
     credits = CreditsService(cast(Any, ledger), pricing)
     hook = SimpleNamespace(token=lambda: "hook-token")
-    client, _ = make_client(pricing=pricing, credits=credits, billing=SimpleNamespace(provider=provider, apply=lambda *a: None), connectors=SimpleNamespace(receiver=SimpleNamespace(token=lambda: "scheduler-token")), billing_webhook=hook, admin=SimpleNamespace() if admin else None)
+    client, _ = make_client(pricing=pricing, credits=credits, billing=SimpleNamespace(provider=provider, apply=lambda *a: None), connectors=SimpleNamespace(receiver=SimpleNamespace(token=lambda: "scheduler-token")), billing_webhook=hook, mail_sender=mail, admin=SimpleNamespace() if admin else None)
     return client, ledger, provider
 
 
@@ -602,3 +602,49 @@ def test_nothing_in_the_credits_answers_says_the_word_credits() -> None:
 
 def test_the_catalogue_constant_matches_the_database_gst() -> None:
     assert CATALOGUE["gst_percent"] == 18.0 and gst_of(100000, round(CATALOGUE["gst_percent"] * 100)) == 18000
+
+
+# ------------------------------------------------------------------------------------------------ the invoice by e-mail
+def test_a_first_paid_confirmation_mails_the_receipt_once_and_the_button_mails_it_again() -> None:
+    from app.billing.mail import FakeEmailSender
+
+    mail = FakeEmailSender()
+    client, ledger, _ = world(mail=mail)
+    o = make_order(client, 1000)
+    pay = {"payment_id": "pay_MAIL001", "signature": sign(o["order_id"], "pay_MAIL001")}
+    headers = auth("a_owner", email="owner@example.test")
+    assert client.post(f"{CR}/topups/{o['order_id']}/confirm", json=pay, headers=headers).status_code == 200
+    assert client.post(f"{CR}/topups/{o['order_id']}/confirm", json=pay, headers=headers).status_code == 200   # a repeat: no second receipt
+    assert len(mail.sent) == 1 and mail.sent[0].to == "owner@example.test" and ledger.invoices[0] in mail.sent[0].subject
+    assert "₹1,180" in mail.sent[0].body and "not yet a valid tax invoice" in mail.sent[0].body
+    again = client.post(f"{URL}/gst-invoices/{ledger.invoices[0]}/email", headers=headers)
+    assert again.status_code == 200 and again.json() == {"sent": True} and len(mail.sent) == 2
+    assert client.post(f"{URL}/gst-invoices/{ledger.invoices[0]}/email", headers=auth("a_sales", email="s@example.test")).status_code == 403
+    assert client.post(f"{URL}/gst-invoices/S19-{FY}-999999/email", headers=headers).status_code == 404
+
+
+def test_the_invoice_mail_needs_a_sender_and_an_address() -> None:
+    from app.billing.mail import FakeEmailSender
+
+    client, ledger, _ = world(mail=None)
+    o = make_order(client, 1000)
+    client.post(f"{CR}/topups/{o['order_id']}/confirm", json={"payment_id": "pay_MAIL002", "signature": sign(o["order_id"], "pay_MAIL002")}, headers=auth("a_owner"))   # a payment still works with no sender
+    assert client.post(f"{URL}/gst-invoices/{ledger.invoices[0]}/email", headers=auth("a_owner", email="o@example.test")).json()["error"]["code"] == "mail_unavailable"
+    mail = FakeEmailSender()
+    client2, ledger2, _ = world(mail=mail)
+    o2 = make_order(client2, 1000)
+    client2.post(f"{CR}/topups/{o2['order_id']}/confirm", json={"payment_id": "pay_MAIL003", "signature": sign(o2["order_id"], "pay_MAIL003")}, headers=auth("a_owner"))   # a token without an address: nothing is mailed
+    assert mail.sent == []
+    assert client2.post(f"{URL}/gst-invoices/{ledger2.invoices[0]}/email", headers=auth("a_owner")).json()["error"]["code"] == "mail_unavailable"
+
+
+def test_the_dev_outbox_shows_what_the_fake_sender_was_asked_to_send() -> None:
+    from app.billing.mail import FakeEmailSender
+
+    mail = FakeEmailSender()
+    client, _, _ = world(mail=mail)
+    o = make_order(client, 1000)
+    client.post(f"{CR}/topups/{o['order_id']}/confirm", json={"payment_id": "pay_DEV0001", "signature": sign(o["order_id"], "pay_DEV0001")}, headers=auth("a_owner", email="o@example.test"))
+    seen = client.get("/v1/dev/outbox", headers=auth("a_owner")).json()
+    assert [m["to"] for m in seen["emails"]] == ["o@example.test"] and "receipt" in seen["emails"][0]["subject"].lower()
+    assert client.get("/v1/dev/outbox").status_code == 401

@@ -504,3 +504,26 @@ def test_the_computed_alert_kinds_are_accepted_by_the_alerts_answer() -> None:
 
     for kind in ("worker_stale", "quiet_line", "wallet_low", "webhook_failing", "kyc_pending"):
         assert AlertOut.model_validate({"id": str(uuid.UUID(int=1)), "kind": kind, "severity": "warn", "title": "t", "detail": None, "created_at": NOW.isoformat(), "acknowledged": False}).kind == kind
+
+
+def test_staff_resend_an_invoice_to_the_owner_of_that_business() -> None:
+    from datetime import UTC, datetime
+
+    from app.billing.mail import FakeEmailSender
+
+    mail = FakeEmailSender()
+    repo: Any = FakeAdmin(None)
+    invoice = {"number": "S19-2627-000001", "kind": "topup", "issued_at": datetime(2026, 11, 20, 10, 0, tzinfo=UTC).isoformat(), "subtotal_paise": 100000, "gst_paise": 18000, "total_paise": 118000, "cgst_paise": 9000, "sgst_paise": 9000, "igst_paise": 0,
+               "tax_split": "cgst_sgst", "against_number": None, "gst_percent": 18.0, "buyer_name": "Neelambari Silks", "buyer_gstin": None, "buyer_state_code": "36", "seller_name": None, "seller_gstin": None, "seller_address": None, "seller_sac": None}
+    repo.invoice_resend = lambda token, tid, number, code, text: (repo._go("invoice_resend", (tid, number, code, text)), {"to": "owner@example.test", "invoice": invoice})[1]
+    client, _ = make_client(admin=AdminService(repo), mail_sender=mail)
+    body = {"reason_code": "customer_asked", "reason_text": "They lost the first e-mail"}
+    got = client.post(f"/v1/admin/businesses/{T1}/invoices/S19-2627-000001/resend", json=body, headers=auth("a_owner"))
+    assert got.status_code == 200 and got.json() == {"sent": True, "to_hint": "o***@example.test"}
+    assert repo.calls[-1] == ("invoice_resend", (T1, "S19-2627-000001", "customer_asked", "They lost the first e-mail"))
+    assert [m.to for m in mail.sent] == ["owner@example.test"] and "S19-2627-000001" in mail.sent[0].subject
+    for bad in ({**body, "reason_text": "ab"}, {**body, "reason_code": "because"}, {"reason_code": "other"}):
+        assert client.post(f"/v1/admin/businesses/{T1}/invoices/S19-2627-000001/resend", json=bad, headers=auth("a_owner")).status_code == 422
+    assert client.post(f"/v1/admin/businesses/{T1}/invoices/not-a-number/resend", json=body, headers=auth("a_owner")).status_code == 422
+    no_mail, _ = make_client(admin=AdminService(repo))
+    assert no_mail.post(f"/v1/admin/businesses/{T1}/invoices/S19-2627-000001/resend", json=body, headers=auth("a_owner")).json()["error"]["code"] == "mail_unavailable"

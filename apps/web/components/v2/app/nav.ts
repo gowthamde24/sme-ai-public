@@ -158,6 +158,8 @@ export const NAV: readonly NavGroup[] = [
       { id: "integrations", label: "Integrations", icon: "integrations", path: "/integrations", module: "integrations", roles: ADMINS },
       // night 4: where leads arrive from (Meta, IndiaMART, portals, the website form, a sheet, a webhook); a tab of Settings
       { id: "lead-sources", label: "Lead sources", icon: "integrations", path: "/lead-sources", also: ["/developers"], feature: "leads", roles: ADMINS },
+      // 25 Nov 2026 (docs/contracts/crm-push.md): results into the business's own CRM or sheet (HubSpot, LeadSquared, Google Sheets ...); exists only while CRM_PUSH_SCREENS is on
+      { id: "connectors", label: "Connectors", icon: "integrations", path: "/connectors", feature: "connectors", roles: ADMINS },
     ],
   },
 ];
@@ -214,7 +216,7 @@ export const MENU: readonly MenuEntry[] = [
   { id: "aiteam", group: "aiteam", label: "My AI team", icon: "aiteam", members: ["office"], count: "aiteam" },
   { id: "train", group: "aiteam", label: "Train how it talks", icon: "train", members: ["train"] },
   { id: "phone", group: "aiteam", label: "Phone number", icon: "phone", members: ["phone", "integrations"] },
-  { id: "sources", group: "setup", label: "Lead sources", icon: "sources", members: ["lead-sources"] },
+  { id: "sources", group: "setup", label: "Lead sources", icon: "sources", members: ["lead-sources", "connectors"] },
   // Settings: the business and plan, members, language and look, security and privacy, My profile (always there for everyone); Team is its tab
   { id: "settings", group: "setup", label: "Settings", icon: "settings", members: ["settings", "team"] },
 ];
@@ -507,7 +509,7 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
       { id: "v6-myassistant", label: "My assistant", icon: "assistant", pages: ["myassistant", "train", "office"], status: "assistant" },
       { id: "v6-calls", label: "Calls", icon: "calls", pages: ["phonecalls", "live"], count: "calls" },
       { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox", "templates"], count: "chats" },
-      { id: "v6-leads", label: "Leads", icon: "leads", pages: ["leaddesk", "leads", "followups", "visits", "map", "retailers", "import", "sites", "lead-sources"], count: "leads" },
+      { id: "v6-leads", label: "Leads", icon: "leads", pages: ["leaddesk", "leads", "followups", "visits", "map", "retailers", "import", "sites", "lead-sources", "connectors"], count: "leads" },
       // Campaigns is its own page (owner, 13 Nov 2026: not inside the Calls tabs); the call list and the tasks are its tabs
       { id: "v6-campaigns", label: "Campaigns", icon: "campaigns", pages: ["outreach", "outreachrules", "offerconsent", "campaigns", "calllist", "tasks"], hiddenWith: "jobs" },
       { id: "v6-reports", label: "Reports", icon: "report", pages: ["report", "leadreport", "everything"] },

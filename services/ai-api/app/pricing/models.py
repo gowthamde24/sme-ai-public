@@ -33,8 +33,8 @@ class CatalogueOut(_Out):
     gst_text: str                # "+18% GST on invoices"
     free_start_paise: int
     free_start_text: str         # "₹50 free to start, no card"
-    extra_number_paise: int      # 29900: every extra business number, a month (the first one is in every plan)
-    extra_number_text: str       # "₹299 a month for each extra number"
+    extra_number_paise: int      # 49900: every extra business number, a month (a number with its first call line)
+    extra_number_text: str       # "₹499 a month for each phone number"
     plans: list[PlanOut]
 
 

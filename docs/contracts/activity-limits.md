@@ -51,7 +51,7 @@ Status: **built and tested** (migration `20261231410000_al_activity_and_limits.s
             { "key": "call_discount_percent", "field": "call_discount_percent", "value": 10, "unit": "percent", "can_tighten": true },
             { "key": "call_big_order_paise", "field": "call_big_order_paise", "value": null, "unit": "paise", "can_tighten": true } ],
   "quiet_hours": { "messages": { "start_hour": 21, "end_hour": 9, "field": "message_quiet_hours", "source": "outbox_settings" },
-                   "calls": { "days": [1,2,3,4,5,6], "from_minute": 540, "to_minute": 1140, "holidays": [], "source": "assistant" | "call_settings" | "default", "field": "call_hours", "can_tighten": true } } }
+                   "calls": { "days": [1,2,3,4,5,6], "from_minute": 600, "to_minute": 1140, "holidays": [], "source": "assistant" | "call_settings" | "default", "field": "call_hours", "can_tighten": true } } }
 ```
 - `mode: "alone"` = the assistant does it without asking; `needs_ok` = it waits for the Owner (for the call kinds: it hands the matter to a person).
 - `message_routine` covers replies, info, visit, follow-up and order-status messages: `alone` only while **automatic sending** is on (off by default). Every other message waits.

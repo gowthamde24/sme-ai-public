@@ -23,13 +23,13 @@ from app.telephony.gate import (
 IST = ZoneInfo("Asia/Kolkata")
 TUESDAY_11 = datetime(2026, 11, 3, 11, 0, tzinfo=IST)   # a Tuesday (isoweekday 2)
 SANDBOX = Settings(mode="sandbox", sandbox_numbers=frozenset({"+919876543210"}))
-LIVE = Settings(mode="live", live_confirmed=True)
+LIVE = Settings(mode="live", live_confirmed=True, outbound_real=True)
 OPENING = "Hello, this is the AI assistant of Sri Textiles. Is this a good time to talk?"
 
 
 def facts(**kw: object) -> OutboundFacts:
     base = OutboundFacts(number="+919876543210", purpose="visit_reminder", now=TUESDAY_11, hours=Hours(days=[1, 2, 3, 4, 5, 6], from_minute=9 * 60, to_minute=20 * 60), approval="plan", approval_valid=True,
-                         can_contact=True, dnd="no", opening_line=OPENING)
+                         can_contact=True, dnd="no", opening_line=OPENING, own_number_verified=True, usage_ack=True)
     return replace(base, **kw)  # type: ignore[arg-type]
 
 
@@ -186,7 +186,7 @@ def test_after_hours_the_assistant_does_not_hold_a_conversation() -> None:
 
 NIGHT = datetime(2026, 11, 3, 22, 30, tzinfo=IST)     # a Tuesday, after the 21:00 window
 SANDBOX_FREE = Settings(mode="sandbox", sandbox_numbers=frozenset({"+919876543210"}), sandbox_ignores_hours=True)
-LIVE_FREE = Settings(mode="live", live_confirmed=True, sandbox_ignores_hours=True)
+LIVE_FREE = Settings(mode="live", live_confirmed=True, sandbox_ignores_hours=True, outbound_real=True)
 
 
 def test_in_sandbox_with_the_switch_a_listed_number_may_be_called_at_night_and_only_the_hours_rules_are_lifted(caplog: pytest.LogCaptureFixture) -> None:
