@@ -14,7 +14,7 @@ import { WithWhatsapp } from "./WithWhatsapp";
 
 const link = "inline-flex min-h-11 min-w-11 items-center text-[15px] font-semibold text-muted hover:text-ink";
 const head = "mb-1.5 text-sm font-extrabold text-muted";
-const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help" };
+const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help" | "nav.status" | "nav.aup" | "nav.refunds" | "nav.talk"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help", status: "nav.status", "acceptable-use": "nav.aup", refunds: "nav.refunds", "talk-to-us": "nav.talk" };
 
 /**
  * The home page's footer (landing v2 part B.13): the line, the product's sections (no business type is linked from the home page), the company's pages (only the ones that are served), "Talk to us" with the WhatsApp placeholder, then the dot-built wordmark

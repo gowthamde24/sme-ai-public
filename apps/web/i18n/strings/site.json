@@ -15801,5 +15801,57 @@
    "kn": "draft",
    "ta": "draft"
   }
+ },
+ "nav.status": {
+  "en": "Status",
+  "te": "స్టేటస్",
+  "hi": "स्टेटस",
+  "kn": "ಸ್ಟೇಟಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "நிலை"
+ },
+ "nav.aup": {
+  "en": "Acceptable use",
+  "te": "ఆమోదయోగ్య వినియోగం",
+  "hi": "स्वीकार्य उपयोग",
+  "kn": "ಒಪ್ಪಿಗೆಯ ಬಳಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "ஏற்கத்தக்க பயன்பாடு"
+ },
+ "nav.refunds": {
+  "en": "Refunds",
+  "te": "రిఫండ్స్",
+  "hi": "रिफ़ंड",
+  "kn": "ರಿಫಂಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "பணம் திரும்பப் பெறுதல்"
+ },
+ "nav.talk": {
+  "en": "Talk to us",
+  "te": "మాతో మాట్లాడండి",
+  "hi": "हमसे बात करें",
+  "kn": "ನಮ್ಮೊಂದಿಗೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "எங்களுடன் பேசுங்கள்"
  }
 }

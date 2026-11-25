@@ -1,6 +1,8 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
 
+import { HELP_ARTICLES } from "@/lib/public/data";
+
 import { SITE_PACKS } from "./packs";
 import { sitePath, SITE_PAGES } from "./paths";
 import { allTargets, resolveSite } from "./routes";
@@ -31,7 +33,7 @@ describe("the addresses of the public site", () => {
   });
   it("lists every page once: the home page, the fixed pages and one for each business type that has a landing file", () => {
     const all = allTargets();
-    expect(all).toHaveLength(1 + SITE_PAGES.length + SITE_PACKS.length);
+    expect(all).toHaveLength(1 + SITE_PAGES.length + HELP_ARTICLES.length + SITE_PACKS.length);
     for (const t of all) for (const lang of ["en", "te", "hi", "kn", "ta"] as const) {
       const path = sitePath(lang, t);
       const seg = path.split("/").filter(Boolean);

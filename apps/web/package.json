@@ -13,6 +13,7 @@
     "audit:leaks": "node scripts/audit-leaks.mjs",
     "audit:auth": "node scripts/audit-auth.mjs",
     "audit:landing": "node scripts/audit-landing.mjs",
+    "audit:public": "node scripts/audit-public.mjs",
     "audit:budget": "node scripts/audit-budget.mjs",
     "audit:route-js": "node scripts/audit-route-js.mjs",
     "audit:3d": "node scripts/audit-3d.mjs",

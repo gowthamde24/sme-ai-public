@@ -1,0 +1,2037 @@
+{
+ "pub.c.draft": {
+  "en": "Draft for approval",
+  "te": "ఆమోదం కోసం డ్రాఫ్ట్",
+  "hi": "अप्रूवल के लिए ड्राफ्ट",
+  "kn": "ಒಪ್ಪಿಗೆಗಾಗಿ ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.c.mail": {
+  "en": "Write to {mail}",
+  "te": "{mail} కి రాయండి",
+  "hi": "{mail} पर लिखें",
+  "kn": "{mail} ಗೆ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.c.talk": {
+  "en": "Talk to us",
+  "te": "మాతో మాట్లాడండి",
+  "hi": "हमसे बात करें",
+  "kn": "ನಮ್ಮೊಂದಿಗೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.c.start": {
+  "en": "Start free",
+  "te": "ఉచితంగా మొదలు పెట్టండి",
+  "hi": "फ्री में शुरू करें",
+  "kn": "ಉಚಿತವಾಗಿ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.meta.t": {
+  "en": "Pricing: {brand}",
+  "te": "ధరలు: {brand}",
+  "hi": "कीमतें: {brand}",
+  "kn": "ಬೆಲೆಗಳು: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.meta.d": {
+  "en": "Plans from {payg} a month, calls from {minute} a minute, and {free} free to start with no card. Prices are without GST.",
+  "te": "నెలకు {payg} నుంచి ప్లాన్లు, నిమిషానికి {minute} నుంచి కాల్స్, కార్డ్ లేకుండా {free} ఉచితంగా మొదలు. ధరలు GST లేకుండా.",
+  "hi": "{payg} महीने से प्लान, {minute} प्रति मिनट से कॉल, और बिना कार्ड के {free} फ्री से शुरुआत। कीमतें GST के बिना हैं।",
+  "kn": "ತಿಂಗಳಿಗೆ {payg} ರಿಂದ ಪ್ಲಾನ್‌ಗಳು, ನಿಮಿಷಕ್ಕೆ {minute} ರಿಂದ ಕಾಲ್‌ಗಳು, ಕಾರ್ಡ್ ಇಲ್ಲದೆ {free} ಉಚಿತ ಶುರು. ಬೆಲೆಗಳು GST ಇಲ್ಲದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.title": {
+  "en": "Simple pricing, in rupees",
+  "te": "సింపుల్ ధరలు, రూపాయల్లో",
+  "hi": "सीधी कीमतें, रुपयों में",
+  "kn": "ಸರಳ ಬೆಲೆಗಳು, ರೂಪಾಯಿಗಳಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.sub": {
+  "en": "Pick a plan, or just pay for the calls you use.",
+  "te": "ఒక ప్లాన్ ఎంచుకోండి, లేదా వాడిన కాల్స్‌కి మాత్రమే చెల్లించండి.",
+  "hi": "एक प्लान चुनें, या सिर्फ़ उन कॉल का पेमेंट करें जो आप इस्तेमाल करें।",
+  "kn": "ಒಂದು ಪ್ಲಾನ್ ಆಯ್ಕೆ ಮಾಡಿ, ಅಥವಾ ಬಳಸಿದ ಕಾಲ್‌ಗಳಿಗೆ ಮಾತ್ರ ಪೇಮೆಂಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.trial.t": {
+  "en": "{free} free to start. No card.",
+  "te": "మొదలు పెట్టడానికి {free} ఉచితం. కార్డ్ అవసరం లేదు.",
+  "hi": "शुरू करने के लिए {free} फ्री। कार्ड नहीं चाहिए।",
+  "kn": "ಶುರು ಮಾಡಲು {free} ಉಚಿತ. ಕಾರ್ಡ್ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.trial.d": {
+  "en": "About {minutes} minutes of calls, so you can hear your assistant answer before you pay anything.",
+  "te": "సుమారు {minutes} నిమిషాల కాల్స్. ఏమీ చెల్లించక ముందే మీ అసిస్టెంట్ జవాబు ఇవ్వడం వినవచ్చు.",
+  "hi": "करीब {minutes} मिनट की कॉल, ताकि कुछ भी पेमेंट करने से पहले आप अपने असिस्टेंट को जवाब देते सुन सकें।",
+  "kn": "ಸುಮಾರು {minutes} ನಿಮಿಷಗಳ ಕಾಲ್‌ಗಳು. ಏನೂ ಪೇಮೆಂಟ್ ಮಾಡುವ ಮೊದಲೇ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಿಸುವುದನ್ನು ಕೇಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.plans.h": {
+  "en": "Plans",
+  "te": "ప్లాన్లు",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.mo": {
+  "en": "a month",
+  "te": "నెలకు",
+  "hi": "महीना",
+  "kn": "ತಿಂಗಳಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.l.permin": {
+  "en": "Calls from {minute} a minute",
+  "te": "నిమిషానికి {minute} నుంచి కాల్స్",
+  "hi": "{minute} प्रति मिनट से कॉल",
+  "kn": "ನಿಮಿಷಕ್ಕೆ {minute} ರಿಂದ ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.l.number": {
+  "en": "One business number",
+  "te": "ఒక బిజినెస్ నంబర్",
+  "hi": "एक बिज़नेस नंबर",
+  "kn": "ಒಂದು ಬಿಸಿನೆಸ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.l.channels": {
+  "en": "Calls and WhatsApp",
+  "te": "కాల్స్ మరియు WhatsApp",
+  "hi": "कॉल और WhatsApp",
+  "kn": "ಕಾಲ್‌ಗಳು ಮತ್ತು WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.l.mins": {
+  "en": "{n} call minutes",
+  "te": "{n} కాల్ నిమిషాలు",
+  "hi": "{n} कॉल मिनट",
+  "kn": "{n} ಕಾಲ್ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.l.extra": {
+  "en": "Extra minutes {minute}",
+  "te": "అదనపు నిమిషాలు {minute}",
+  "hi": "एक्स्ट्रा मिनट {minute}",
+  "kn": "ಹೆಚ್ಚುವರಿ ನಿಮಿಷಗಳು {minute}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.l.prio": {
+  "en": "Priority setup",
+  "te": "ప్రయారిటీ సెటప్",
+  "hi": "प्रायोरिटी सेटअप",
+  "kn": "ಪ್ರಯಾರಿಟಿ ಸೆಟಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.h": {
+  "en": "Pay for what you use",
+  "te": "వాడినదానికే చెల్లించండి",
+  "hi": "जितना इस्तेमाल करें, उतना ही दें",
+  "kn": "ಬಳಸಿದ್ದಕ್ಕೆ ಮಾತ್ರ ಪೇಮೆಂಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.call.t": {
+  "en": "A call",
+  "te": "ఒక కాల్",
+  "hi": "एक कॉल",
+  "kn": "ಒಂದು ಕಾಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.call.v": {
+  "en": "From {minute} a minute",
+  "te": "నిమిషానికి {minute} నుంచి",
+  "hi": "{minute} प्रति मिनट से",
+  "kn": "ನಿಮಿಷಕ್ಕೆ {minute} ರಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.number.t": {
+  "en": "Another business number",
+  "te": "ఇంకో బిజినెస్ నంబర్",
+  "hi": "एक और बिज़नेस नंबर",
+  "kn": "ಇನ್ನೊಂದು ಬಿಸಿನೆಸ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.number.v": {
+  "en": "{number} a month",
+  "te": "నెలకు {number}",
+  "hi": "{number} महीना",
+  "kn": "ತಿಂಗಳಿಗೆ {number}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.unanswered.t": {
+  "en": "Nobody picks up, or the line is busy",
+  "te": "ఎవరూ ఎత్తలేదు, లేదా లైన్ బిజీగా ఉంది",
+  "hi": "कोई नहीं उठाता, या लाइन बिज़ी है",
+  "kn": "ಯಾರೂ ಎತ್ತಲಿಲ್ಲ, ಅಥವಾ ಲೈನ್ ಬಿಸಿಯಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.unanswered.v": {
+  "en": "Nothing to pay",
+  "te": "ఏమీ చెల్లించాల్సిన పని లేదు",
+  "hi": "कुछ नहीं देना",
+  "kn": "ಏನೂ ಪೇಮೆಂಟ್ ಮಾಡಬೇಕಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.testing.t": {
+  "en": "Testing your assistant",
+  "te": "మీ అసిస్టెంట్‌ని టెస్ట్ చేయడం",
+  "hi": "अपने असिस्टेंट को टेस्ट करना",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಟೆಸ್ಟ್ ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.testing.v": {
+  "en": "Free",
+  "te": "ఉచితం",
+  "hi": "फ्री",
+  "kn": "ಉಚಿತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.wa.t": {
+  "en": "WhatsApp messages",
+  "te": "WhatsApp మెసేజ్‌లు",
+  "hi": "WhatsApp मैसेज",
+  "kn": "WhatsApp ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.use.wa.v": {
+  "en": "At Meta's price, no extra from us",
+  "te": "Meta ధరకే, మా వైపు అదనం లేదు",
+  "hi": "Meta की कीमत पर, हमारी तरफ़ से कुछ एक्स्ट्रा नहीं",
+  "kn": "Meta ಬೆಲೆಯಲ್ಲೇ, ನಮ್ಮ ಕಡೆಯಿಂದ ಹೆಚ್ಚುವರಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.tbc": {
+  "en": "Draft: to be confirmed",
+  "te": "డ్రాఫ్ట్: ఇంకా నిర్ధారించలేదు",
+  "hi": "ड्राफ्ट: अभी कन्फर्म होना बाकी",
+  "kn": "ಡ್ರಾಫ್ಟ್: ಇನ್ನೂ ಖಚಿತವಾಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.gst": {
+  "en": "Prices are without GST. {gst}% GST is added on your invoice. Credits never run out.",
+  "te": "ధరలు GST లేకుండా. మీ ఇన్వాయిస్‌లో {gst}% GST కలుస్తుంది. క్రెడిట్స్ ఎప్పటికీ అయిపోవు.",
+  "hi": "कीमतें GST के बिना हैं। आपके इनवॉइस में {gst}% GST जुड़ता है। क्रेडिट कभी ख़त्म नहीं होते।",
+  "kn": "ಬೆಲೆಗಳು GST ಇಲ್ಲದೆ. ನಿಮ್ಮ ಇನ್‌ವಾಯ್ಸ್‌ನಲ್ಲಿ {gst}% GST ಸೇರುತ್ತದೆ. ಕ್ರೆಡಿಟ್‌ಗಳು ಎಂದಿಗೂ ಮುಗಿಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.faq.h": {
+  "en": "Questions people ask",
+  "te": "అందరూ అడిగే ప్రశ్నలు",
+  "hi": "लोग जो पूछते हैं",
+  "kn": "ಜನ ಕೇಳುವ ಪ್ರಶ್ನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.faq.1.q": {
+  "en": "What happens when my free credits finish?",
+  "te": "నా ఉచిత క్రెడిట్స్ అయిపోతే ఏమవుతుంది?",
+  "hi": "मेरे फ्री क्रेडिट ख़त्म हो जाएँ तो क्या होगा?",
+  "kn": "ನನ್ನ ಉಚಿತ ಕ್ರೆಡಿಟ್‌ಗಳು ಮುಗಿದರೆ ಏನಾಗುತ್ತದೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.faq.1.a": {
+  "en": "Add credits any time, or choose a plan. Nothing is charged by itself.",
+  "te": "ఎప్పుడైనా క్రెడిట్స్ యాడ్ చేయండి, లేదా ఒక ప్లాన్ ఎంచుకోండి. మీరు చెప్పకుండా ఏదీ చార్జ్ చేయరు.",
+  "hi": "कभी भी क्रेडिट जोड़ें, या कोई प्लान चुनें। अपने आप कुछ चार्ज नहीं होता।",
+  "kn": "ಯಾವಾಗ ಬೇಕಾದರೂ ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ, ಅಥವಾ ಪ್ಲಾನ್ ಆಯ್ಕೆ ಮಾಡಿ. ತಾನಾಗಿ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.faq.2.q": {
+  "en": "Can I stop any time?",
+  "te": "నేను ఎప్పుడైనా ఆపవచ్చా?",
+  "hi": "क्या मैं कभी भी बंद कर सकता हूँ?",
+  "kn": "ನಾನು ಯಾವಾಗ ಬೇಕಾದರೂ ನಿಲ್ಲಿಸಬಹುದೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.faq.2.a": {
+  "en": "Yes. Plans renew monthly and you can stop before the next month.",
+  "te": "అవును. ప్లాన్లు నెలనెలా రెన్యూ అవుతాయి, తర్వాతి నెలకు ముందే ఆపవచ్చు.",
+  "hi": "हाँ। प्लान हर महीने रिन्यू होते हैं और आप अगले महीने से पहले बंद कर सकते हैं।",
+  "kn": "ಹೌದು. ಪ್ಲಾನ್‌ಗಳು ತಿಂಗಳಿಗೊಮ್ಮೆ ರಿನ್ಯೂ ಆಗುತ್ತವೆ, ಮುಂದಿನ ತಿಂಗಳ ಮೊದಲೇ ನಿಲ್ಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.faq.3.q": {
+  "en": "Do I need a card to start?",
+  "te": "మొదలు పెట్టడానికి కార్డ్ కావాలా?",
+  "hi": "शुरू करने के लिए कार्ड चाहिए?",
+  "kn": "ಶುರು ಮಾಡಲು ಕಾರ್ಡ್ ಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.price.faq.3.a": {
+  "en": "No.",
+  "te": "వద్దు.",
+  "hi": "नहीं।",
+  "kn": "ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.meta.t": {
+  "en": "Help center: {brand}",
+  "te": "హెల్ప్ సెంటర్: {brand}",
+  "hi": "हेल्प सेंटर: {brand}",
+  "kn": "ಹೆಲ್ಪ್ ಸೆಂಟರ್: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.meta.d": {
+  "en": "Short answers about setting up your assistant, your lists, phone number, lead sources, billing, calling rules, recording, your data and languages.",
+  "te": "మీ అసిస్టెంట్ సెటప్, లిస్టులు, ఫోన్ నంబర్, లీడ్ సోర్సులు, బిల్లింగ్, కాలింగ్ రూల్స్, రికార్డింగ్, మీ డేటా, భాషల గురించి చిన్న జవాబులు.",
+  "hi": "असिस्टेंट सेटअप, आपकी लिस्ट, फ़ोन नंबर, लीड सोर्स, बिलिंग, कॉलिंग नियम, रिकॉर्डिंग, आपका डेटा और भाषाओं के बारे में छोटे जवाब।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಸೆಟಪ್, ಲಿಸ್ಟ್‌ಗಳು, ಫೋನ್ ನಂಬರ್, ಲೀಡ್ ಸೋರ್ಸ್, ಬಿಲ್ಲಿಂಗ್, ಕಾಲಿಂಗ್ ನಿಯಮಗಳು, ರೆಕಾರ್ಡಿಂಗ್, ನಿಮ್ಮ ಡೇಟಾ ಮತ್ತು ಭಾಷೆಗಳ ಬಗ್ಗೆ ಚಿಕ್ಕ ಉತ್ತರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.title": {
+  "en": "Help center",
+  "te": "హెల్ప్ సెంటర్",
+  "hi": "हेल्प सेंटर",
+  "kn": "ಹೆಲ್ಪ್ ಸೆಂಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sub": {
+  "en": "Short answers, in plain words.",
+  "te": "చిన్న జవాబులు, సులువైన మాటల్లో.",
+  "hi": "छोटे जवाब, आसान शब्दों में।",
+  "kn": "ಚಿಕ್ಕ ಉತ್ತರಗಳು, ಸರಳ ಮಾತುಗಳಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.search.label": {
+  "en": "Search for help",
+  "te": "హెల్ప్ కోసం వెతకండి",
+  "hi": "हेल्प खोजें",
+  "kn": "ಹೆಲ್ಪ್ ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.search.btn": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.search.none": {
+  "en": "Nothing found. Try another word, or ask us below.",
+  "te": "ఏమీ దొరకలేదు. ఇంకో మాట ప్రయత్నించండి, లేదా కింద మమ్మల్ని అడగండి.",
+  "hi": "कुछ नहीं मिला। कोई और शब्द आज़माएँ, या नीचे हमसे पूछें।",
+  "kn": "ಏನೂ ಸಿಗಲಿಲ್ಲ. ಬೇರೆ ಪದ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಕೆಳಗೆ ನಮ್ಮನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.still.h": {
+  "en": "Still stuck?",
+  "te": "ఇంకా ఇబ్బంది ఉందా?",
+  "hi": "अभी भी अटके हैं?",
+  "kn": "ಇನ್ನೂ ತೊಂದರೆ ಇದೆಯೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.still.d": {
+  "en": "Write to us and we reply within a day.",
+  "te": "మాకు రాయండి, ఒక రోజులో జవాబు ఇస్తాం.",
+  "hi": "हमें लिखें, हम एक दिन में जवाब देते हैं।",
+  "kn": "ನಮಗೆ ಬರೆಯಿರಿ, ಒಂದು ದಿನದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.back": {
+  "en": "All help articles",
+  "te": "అన్ని హెల్ప్ ఆర్టికల్స్",
+  "hi": "सभी हेल्प आर्टिकल",
+  "kn": "ಎಲ್ಲಾ ಹೆಲ್ಪ್ ಲೇಖನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.setup.t": {
+  "en": "Set up your assistant",
+  "te": "మీ అసిస్టెంట్‌ని సెటప్ చేయండి",
+  "hi": "अपना असिस्टेंट सेटअप करें",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಸೆಟಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.setup.d": {
+  "en": "Name, voice, language and going live",
+  "te": "పేరు, వాయిస్, భాష, లైవ్‌కి వెళ్ళడం",
+  "hi": "नाम, आवाज़, भाषा और लाइव होना",
+  "kn": "ಹೆಸರು, ವಾಯ್ಸ್, ಭಾಷೆ ಮತ್ತು ಲೈವ್ ಆಗುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.setup.1": {
+  "en": "Open My assistant. Give your assistant a name, choose a voice and the languages it should speak. Telugu, Hindi, Kannada and English are there.",
+  "te": "My assistant తెరవండి. మీ అసిస్టెంట్‌కి ఒక పేరు ఇవ్వండి, వాయిస్ మరియు అది మాట్లాడాల్సిన భాషలు ఎంచుకోండి. తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్ ఉన్నాయి.",
+  "hi": "My assistant खोलें। अपने असिस्टेंट को नाम दें, आवाज़ चुनें और वे भाषाएँ चुनें जो उसे बोलनी हैं। तेलुगु, हिंदी, कन्नड़ और अंग्रेज़ी उपलब्ध हैं।",
+  "kn": "My assistant ತೆರೆಯಿರಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೆಸರು ಕೊಡಿ, ವಾಯ್ಸ್ ಮತ್ತು ಅದು ಮಾತಾಡಬೇಕಾದ ಭಾಷೆಗಳನ್ನು ಆರಿಸಿ. ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್ ಇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.setup.2": {
+  "en": "Tell it about your business: what you sell, your opening hours and the questions customers ask most. It answers from what you write, and says it will ask you when it does not know.",
+  "te": "మీ బిజినెస్ గురించి చెప్పండి: మీరు ఏం అమ్ముతారు, ఓపెనింగ్ టైమింగ్స్, కస్టమర్లు ఎక్కువగా అడిగే ప్రశ్నలు. మీరు రాసిన దాన్నుంచే అది జవాబు ఇస్తుంది, తెలియకపోతే మిమ్మల్ని అడుగుతానని చెబుతుంది.",
+  "hi": "अपने बिज़नेस के बारे में बताएँ: आप क्या बेचते हैं, खुलने का समय और ग्राहक सबसे ज़्यादा क्या पूछते हैं। वह आपके लिखे से ही जवाब देता है, और जब नहीं पता होता तो कहता है कि आपसे पूछकर बताएगा।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ಹೇಳಿ: ಏನು ಮಾರುತ್ತೀರಿ, ತೆರೆಯುವ ಸಮಯ, ಗ್ರಾಹಕರು ಹೆಚ್ಚಾಗಿ ಕೇಳುವ ಪ್ರಶ್ನೆಗಳು. ನೀವು ಬರೆದಿದ್ದರಿಂದಲೇ ಅದು ಉತ್ತರಿಸುತ್ತದೆ, ಗೊತ್ತಿಲ್ಲದಿದ್ದರೆ ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತೇನೆ ಎನ್ನುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.setup.3": {
+  "en": "Listen to a short sample call, then press Go live. You can pause the assistant from the same place whenever you want.",
+  "te": "ఒక చిన్న శాంపిల్ కాల్ వినండి, తర్వాత Go live నొక్కండి. కావాలనుకున్నప్పుడు అదే చోట అసిస్టెంట్‌ని పాజ్ చేయవచ్చు.",
+  "hi": "एक छोटी सैंपल कॉल सुनें, फिर Go live दबाएँ। जब चाहें, उसी जगह से असिस्टेंट को पॉज़ कर सकते हैं।",
+  "kn": "ಒಂದು ಚಿಕ್ಕ ಸ್ಯಾಂಪಲ್ ಕಾಲ್ ಕೇಳಿ, ನಂತರ Go live ಒತ್ತಿ. ಬೇಕಾದಾಗ ಅದೇ ಜಾಗದಿಂದ ಅಸಿಸ್ಟೆಂಟ್ ಪಾಸ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sell.t": {
+  "en": "Add what you sell",
+  "te": "మీరు అమ్మేవి యాడ్ చేయండి",
+  "hi": "जो बेचते हैं वह जोड़ें",
+  "kn": "ನೀವು ಮಾರುವುದನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sell.d": {
+  "en": "Lists, prices and photos",
+  "te": "లిస్టులు, ధరలు, ఫోటోలు",
+  "hi": "लिस्ट, कीमतें और फ़ोटो",
+  "kn": "ಲಿಸ್ಟ್‌ಗಳು, ಬೆಲೆಗಳು, ಫೋಟೋಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sell.1": {
+  "en": "Open What you sell and add your first item. A list starts with columns that fit your kind of business, such as name, price and availability. Add photos if you have them.",
+  "te": "What you sell తెరిచి మొదటి ఐటమ్ యాడ్ చేయండి. లిస్ట్ మీ బిజినెస్‌కి సరిపోయే కాలమ్స్‌తో మొదలవుతుంది, ఉదాహరణకు పేరు, ధర, అందుబాటులో ఉందా. ఫోటోలు ఉంటే పెట్టండి.",
+  "hi": "What you sell खोलें और पहला आइटम जोड़ें। लिस्ट आपके बिज़नेस के हिसाब के कॉलम से शुरू होती है, जैसे नाम, कीमत और उपलब्धता। फ़ोटो हों तो जोड़ें।",
+  "kn": "What you sell ತೆರೆದು ಮೊದಲ ಐಟಂ ಸೇರಿಸಿ. ಲಿಸ್ಟ್ ನಿಮ್ಮ ಬಿಸಿನೆಸ್‌ಗೆ ಹೊಂದುವ ಕಾಲಮ್‌ಗಳೊಂದಿಗೆ ಶುರುವಾಗುತ್ತದೆ, ಉದಾಹರಣೆಗೆ ಹೆಸರು, ಬೆಲೆ, ಲಭ್ಯತೆ. ಫೋಟೋ ಇದ್ದರೆ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sell.2": {
+  "en": "Add items one by one, or bring a spreadsheet and check what was read before you save it.",
+  "te": "ఐటమ్స్‌ని ఒక్కొక్కటిగా యాడ్ చేయండి, లేదా స్ప్రెడ్‌షీట్ తెచ్చి, సేవ్ చేసే ముందు ఏం చదివిందో చూసుకోండి.",
+  "hi": "आइटम एक-एक करके जोड़ें, या स्प्रेडशीट लाएँ और सेव करने से पहले देख लें कि क्या पढ़ा गया।",
+  "kn": "ಐಟಂಗಳನ್ನು ಒಂದೊಂದಾಗಿ ಸೇರಿಸಿ, ಅಥವಾ ಸ್ಪ್ರೆಡ್‌ಶೀಟ್ ತಂದು, ಸೇವ್ ಮಾಡುವ ಮೊದಲು ಏನು ಓದಿದೆ ಎಂದು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sell.3": {
+  "en": "Your assistant tells customers only what is in your lists. Prices come from the list; the assistant never makes up a price. If something is not listed, it says it will check with you.",
+  "te": "మీ అసిస్టెంట్ మీ లిస్టులో ఉన్నదే కస్టమర్లకు చెబుతుంది. ధరలు లిస్ట్ నుంచే వస్తాయి, అసిస్టెంట్ తనంతట తాను ధర చెప్పదు. లిస్టులో లేనిది ఉంటే, మిమ్మల్ని అడిగి చెబుతానంటుంది.",
+  "hi": "आपका असिस्टेंट ग्राहकों को वही बताता है जो आपकी लिस्ट में है। कीमतें लिस्ट से आती हैं; असिस्टेंट अपनी तरफ़ से कीमत नहीं बनाता। जो लिस्ट में नहीं है, उसके लिए कहता है कि आपसे पूछकर बताएगा।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ನಿಮ್ಮ ಲಿಸ್ಟ್‌ನಲ್ಲಿರುವುದನ್ನೇ ಗ್ರಾಹಕರಿಗೆ ಹೇಳುತ್ತದೆ. ಬೆಲೆಗಳು ಲಿಸ್ಟ್‌ನಿಂದಲೇ ಬರುತ್ತವೆ, ಅಸಿಸ್ಟೆಂಟ್ ತಾನೇ ಬೆಲೆ ಹೇಳುವುದಿಲ್ಲ. ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಇಲ್ಲದಿದ್ದರೆ, ನಿಮ್ಮನ್ನು ಕೇಳಿ ಹೇಳುತ್ತೇನೆ ಎನ್ನುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.number.t": {
+  "en": "Get a phone number",
+  "te": "ఫోన్ నంబర్ తీసుకోండి",
+  "hi": "फ़ोन नंबर लें",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.number.d": {
+  "en": "Choose one and connect it",
+  "te": "ఒకటి ఎంచుకుని కనెక్ట్ చేయండి",
+  "hi": "एक चुनें और कनेक्ट करें",
+  "kn": "ಒಂದನ್ನು ಆರಿಸಿ ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.number.1": {
+  "en": "Open Phone numbers and choose the number your customers will call. Mobile numbers get answered more often when you call back.",
+  "te": "Phone numbers తెరిచి, కస్టమర్లు కాల్ చేసే నంబర్ ఎంచుకోండి. కాల్‌బ్యాక్ చేసినప్పుడు మొబైల్ నంబర్లకే ఎక్కువగా జవాబు వస్తుంది.",
+  "hi": "Phone numbers खोलें और वह नंबर चुनें जिस पर ग्राहक कॉल करेंगे। कॉल-बैक करने पर मोबाइल नंबर पर ज़्यादा जवाब मिलता है।",
+  "kn": "Phone numbers ತೆರೆದು ಗ್ರಾಹಕರು ಕಾಲ್ ಮಾಡುವ ನಂಬರ್ ಆರಿಸಿ. ಕಾಲ್‌ಬ್ಯಾಕ್ ಮಾಡಿದಾಗ ಮೊಬೈಲ್ ನಂಬರ್‌ಗಳಿಗೇ ಹೆಚ್ಚಾಗಿ ಉತ್ತರ ಸಿಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.number.2": {
+  "en": "We connect it to your assistant. Some numbers need a short business check before they go live; the page tells you what is needed and where it stands.",
+  "te": "దాన్ని మేము మీ అసిస్టెంట్‌కి కనెక్ట్ చేస్తాం. కొన్ని నంబర్లు లైవ్ అయ్యే ముందు చిన్న బిజినెస్ చెక్ అడుగుతాయి; ఏం కావాలో, ఎక్కడి వరకు వచ్చిందో పేజీ చెబుతుంది.",
+  "hi": "हम उसे आपके असिस्टेंट से कनेक्ट करते हैं। कुछ नंबर लाइव होने से पहले छोटी बिज़नेस जाँच माँगते हैं; पेज बताता है कि क्या चाहिए और अभी कहाँ तक पहुँचा है।",
+  "kn": "ನಾವು ಅದನ್ನು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಕನೆಕ್ಟ್ ಮಾಡುತ್ತೇವೆ. ಕೆಲವು ನಂಬರ್‌ಗಳು ಲೈವ್ ಆಗುವ ಮೊದಲು ಚಿಕ್ಕ ಬಿಸಿನೆಸ್ ಚೆಕ್ ಕೇಳುತ್ತವೆ; ಏನು ಬೇಕು, ಎಲ್ಲಿಯವರೆಗೆ ಬಂದಿದೆ ಎಂದು ಪೇಜ್ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.number.3": {
+  "en": "Keep your shop number too. Forward unanswered calls from your shop phone to the new number; the page shows the exact code for your phone company.",
+  "te": "మీ షాప్ నంబర్ కూడా అలాగే ఉంచండి. షాప్ ఫోన్‌లో ఎత్తని కాల్స్‌ని కొత్త నంబర్‌కి ఫార్వర్డ్ చేయండి; మీ ఫోన్ కంపెనీకి సరైన కోడ్ పేజీలో చూపిస్తాం.",
+  "hi": "अपना दुकान का नंबर भी रखें। दुकान के फ़ोन की बिना उठी कॉल नए नंबर पर फ़ॉरवर्ड करें; आपकी फ़ोन कंपनी का सही कोड पेज पर दिखता है।",
+  "kn": "ನಿಮ್ಮ ಅಂಗಡಿ ನಂಬರ್ ಕೂಡ ಇಟ್ಟುಕೊಳ್ಳಿ. ಅಂಗಡಿ ಫೋನ್‌ನಲ್ಲಿ ಎತ್ತದ ಕಾಲ್‌ಗಳನ್ನು ಹೊಸ ನಂಬರ್‌ಗೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ; ನಿಮ್ಮ ಫೋನ್ ಕಂಪನಿಗೆ ಸರಿಯಾದ ಕೋಡ್ ಪೇಜ್‌ನಲ್ಲಿ ತೋರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sources.t": {
+  "en": "Connect your lead sources",
+  "te": "మీ లీడ్ సోర్సులు కనెక్ట్ చేయండి",
+  "hi": "अपने लीड सोर्स कनेक्ट करें",
+  "kn": "ನಿಮ್ಮ ಲೀಡ್ ಸೋರ್ಸ್‌ಗಳನ್ನು ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sources.d": {
+  "en": "Website, Facebook, Google Sheets and more",
+  "te": "వెబ్‌సైట్, Facebook, Google Sheets ఇంకా మరిన్ని",
+  "hi": "वेबसाइट, Facebook, Google Sheets और बहुत कुछ",
+  "kn": "ವೆಬ್‌ಸೈಟ್, Facebook, Google Sheets ಮತ್ತು ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sources.1": {
+  "en": "Open Lead sources. Each source is a card with its state and one button: connected, or waiting for you.",
+  "te": "Lead sources తెరవండి. ప్రతి సోర్స్ ఒక కార్డ్, దాని స్థితి మరియు ఒక బటన్‌తో ఉంటుంది: కనెక్ట్ అయింది, లేదా మీ కోసం ఎదురుచూస్తోంది.",
+  "hi": "Lead sources खोलें। हर सोर्स एक कार्ड है, उसकी स्थिति और एक बटन के साथ: कनेक्टेड, या आपका इंतज़ार कर रहा है।",
+  "kn": "Lead sources ತೆರೆಯಿರಿ. ಪ್ರತಿ ಸೋರ್ಸ್ ಒಂದು ಕಾರ್ಡ್, ಅದರ ಸ್ಥಿತಿ ಮತ್ತು ಒಂದು ಬಟನ್‌ನೊಂದಿಗೆ ಇರುತ್ತದೆ: ಕನೆಕ್ಟ್ ಆಗಿದೆ, ಅಥವಾ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sources.2": {
+  "en": "A person who comes from a source shows up in Leads with where they came from, so you can follow up the right way. A source marked soon is not available yet.",
+  "te": "ఒక సోర్స్ నుంచి వచ్చిన వ్యక్తి Leads లో ఎక్కడి నుంచి వచ్చారో చూపిస్తూ కనిపిస్తారు, కాబట్టి సరైన పద్ధతిలో ఫాలో-అప్ చేయవచ్చు. soon అని ఉన్న సోర్స్ ఇంకా అందుబాటులో లేదు.",
+  "hi": "किसी सोर्स से आया व्यक्ति Leads में दिखता है, यह बताते हुए कि वह कहाँ से आया, ताकि आप सही तरीक़े से फ़ॉलो-अप कर सकें। जिस सोर्स पर soon लिखा है वह अभी उपलब्ध नहीं है।",
+  "kn": "ಒಂದು ಸೋರ್ಸ್‌ನಿಂದ ಬಂದವರು Leads ನಲ್ಲಿ ಎಲ್ಲಿಂದ ಬಂದರು ಎಂದು ತೋರಿಸುತ್ತಾ ಕಾಣುತ್ತಾರೆ, ಹಾಗಾಗಿ ಸರಿಯಾದ ರೀತಿಯಲ್ಲಿ ಫಾಲೋ-ಅಪ್ ಮಾಡಬಹುದು. soon ಎಂದಿರುವ ಸೋರ್ಸ್ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.sources.3": {
+  "en": "If a source you use is not there, tell us through Talk to us and we will note it down.",
+  "te": "మీరు వాడే సోర్స్ లేకపోతే, Talk to us ద్వారా చెప్పండి, మేము నోట్ చేసుకుంటాం.",
+  "hi": "अगर आपका इस्तेमाल किया जाने वाला सोर्स वहाँ नहीं है, तो Talk to us से बताएँ, हम नोट कर लेंगे।",
+  "kn": "ನೀವು ಬಳಸುವ ಸೋರ್ಸ್ ಇಲ್ಲದಿದ್ದರೆ, Talk to us ಮೂಲಕ ಹೇಳಿ, ನಾವು ಬರೆದುಕೊಳ್ಳುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.billing.t": {
+  "en": "Billing and credits",
+  "te": "బిల్లింగ్ మరియు క్రెడిట్స్",
+  "hi": "बिलिंग और क्रेडिट",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ಮತ್ತು ಕ್ರೆಡಿಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.billing.d": {
+  "en": "Adding credits, invoices and GST",
+  "te": "క్రెడిట్స్ యాడ్ చేయడం, ఇన్వాయిస్‌లు, GST",
+  "hi": "क्रेडिट जोड़ना, इनवॉइस और GST",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸುವುದು, ಇನ್‌ವಾಯ್ಸ್‌ಗಳು, GST",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.billing.1": {
+  "en": "You pay in rupees, from your credits. A new business starts with {free} free and no card. Credits never run out.",
+  "te": "మీరు రూపాయల్లో, మీ క్రెడిట్స్ నుంచి చెల్లిస్తారు. కొత్త బిజినెస్ {free} ఉచితంగా, కార్డ్ లేకుండా మొదలవుతుంది. క్రెడిట్స్ ఎప్పటికీ అయిపోవు.",
+  "hi": "आप रुपयों में, अपने क्रेडिट से पेमेंट करते हैं। नया बिज़नेस {free} फ्री और बिना कार्ड के शुरू होता है। क्रेडिट कभी ख़त्म नहीं होते।",
+  "kn": "ನೀವು ರೂಪಾಯಿಗಳಲ್ಲಿ, ನಿಮ್ಮ ಕ್ರೆಡಿಟ್‌ಗಳಿಂದ ಪೇಮೆಂಟ್ ಮಾಡುತ್ತೀರಿ. ಹೊಸ ಬಿಸಿನೆಸ್ {free} ಉಚಿತವಾಗಿ, ಕಾರ್ಡ್ ಇಲ್ಲದೆ ಶುರುವಾಗುತ್ತದೆ. ಕ್ರೆಡಿಟ್‌ಗಳು ಎಂದಿಗೂ ಮುಗಿಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.billing.2": {
+  "en": "Open Billing and choose Add credits. Calls use credits by the minute, and Billing shows what each one cost. You also see a warning when your credits are low.",
+  "te": "Billing తెరిచి Add credits ఎంచుకోండి. కాల్స్ నిమిషాల లెక్కన క్రెడిట్స్ వాడతాయి, ప్రతి కాల్‌కి ఎంత అయిందో Billing లో కనిపిస్తుంది. క్రెడిట్స్ తక్కువైతే హెచ్చరిక కూడా వస్తుంది.",
+  "hi": "Billing खोलें और Add credits चुनें। कॉल मिनट के हिसाब से क्रेडिट लेती है, और Billing में दिखता है कि हर कॉल पर कितना लगा। क्रेडिट कम होने पर चेतावनी भी दिखती है।",
+  "kn": "Billing ತೆರೆದು Add credits ಆರಿಸಿ. ಕಾಲ್‌ಗಳು ನಿಮಿಷದ ಲೆಕ್ಕದಲ್ಲಿ ಕ್ರೆಡಿಟ್ ಬಳಸುತ್ತವೆ, ಪ್ರತಿ ಕಾಲ್‌ಗೆ ಎಷ್ಟಾಯಿತು ಎಂದು Billing ನಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಕ್ರೆಡಿಟ್ ಕಡಿಮೆಯಾದರೆ ಎಚ್ಚರಿಕೆಯೂ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.billing.3": {
+  "en": "Invoices are in Billing. Prices are without GST; {gst}% GST is added on your invoice.",
+  "te": "ఇన్వాయిస్‌లు Billing లో ఉంటాయి. ధరలు GST లేకుండా; మీ ఇన్వాయిస్‌లో {gst}% GST కలుస్తుంది.",
+  "hi": "इनवॉइस Billing में हैं। कीमतें GST के बिना हैं; आपके इनवॉइस में {gst}% GST जुड़ता है।",
+  "kn": "ಇನ್‌ವಾಯ್ಸ್‌ಗಳು Billing ನಲ್ಲಿವೆ. ಬೆಲೆಗಳು GST ಇಲ್ಲದೆ; ನಿಮ್ಮ ಇನ್‌ವಾಯ್ಸ್‌ನಲ್ಲಿ {gst}% GST ಸೇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.rules.t": {
+  "en": "Calling rules",
+  "te": "కాలింగ్ రూల్స్",
+  "hi": "कॉलिंग नियम",
+  "kn": "ಕಾಲಿಂಗ್ ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.rules.d": {
+  "en": "Who can be called, calling hours, do-not-call",
+  "te": "ఎవరికి కాల్ చేయవచ్చు, కాలింగ్ టైమ్, డు-నాట్-కాల్",
+  "hi": "किसे कॉल हो सकती है, कॉलिंग का समय, डू-नॉट-कॉल",
+  "kn": "ಯಾರಿಗೆ ಕಾಲ್ ಮಾಡಬಹುದು, ಕಾಲಿಂಗ್ ಸಮಯ, ಡು-ನಾಟ್-ಕಾಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.rules.1": {
+  "en": "Your assistant calls only people who agreed to hear from you, and only between 9 am and 9 pm India time.",
+  "te": "మీ గురించి వినడానికి ఒప్పుకున్నవారికే, అది కూడా భారత కాలమానం ప్రకారం ఉదయం 9 నుంచి రాత్రి 9 మధ్యే మీ అసిస్టెంట్ కాల్ చేస్తుంది.",
+  "hi": "आपका असिस्टेंट सिर्फ़ उन्हीं को कॉल करता है जो आपसे सुनने के लिए राज़ी हुए, और सिर्फ़ भारतीय समय से सुबह 9 से रात 9 बजे के बीच।",
+  "kn": "ನಿಮ್ಮಿಂದ ಕೇಳಲು ಒಪ್ಪಿದವರಿಗೆ ಮಾತ್ರ, ಅದೂ ಭಾರತೀಯ ಸಮಯದ ಪ್ರಕಾರ ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.rules.2": {
+  "en": "A number on the national Do-Not-Disturb list is not called for promotions. You can message it on WhatsApp instead.",
+  "te": "నేషనల్ Do-Not-Disturb లిస్టులో ఉన్న నంబర్‌కి ప్రమోషన్ల కోసం కాల్ చేయరు. బదులుగా WhatsApp లో మెసేజ్ చేయవచ్చు.",
+  "hi": "नेशनल Do-Not-Disturb लिस्ट वाले नंबर पर प्रमोशन के लिए कॉल नहीं होती। उसकी जगह आप WhatsApp पर मैसेज कर सकते हैं।",
+  "kn": "ನ್ಯಾಷನಲ್ Do-Not-Disturb ಲಿಸ್ಟ್‌ನಲ್ಲಿರುವ ನಂಬರ್‌ಗೆ ಪ್ರಮೋಷನ್‌ಗಾಗಿ ಕಾಲ್ ಮಾಡುವುದಿಲ್ಲ. ಬದಲಿಗೆ WhatsApp ನಲ್ಲಿ ಮೆಸೇಜ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.rules.3": {
+  "en": "When someone asks not to be called, they are not called again. You can also add a number to your do-not-call list yourself.",
+  "te": "ఎవరైనా కాల్ చేయవద్దంటే, మళ్ళీ చేయరు. ఒక నంబర్‌ని మీరే మీ డు-నాట్-కాల్ లిస్టులో చేర్చవచ్చు కూడా.",
+  "hi": "जब कोई कॉल न करने को कहता है, तो उसे दोबारा कॉल नहीं होती। आप किसी नंबर को अपनी डू-नॉट-कॉल लिस्ट में ख़ुद भी जोड़ सकते हैं।",
+  "kn": "ಯಾರಾದರೂ ಕಾಲ್ ಮಾಡಬೇಡಿ ಎಂದರೆ, ಮತ್ತೆ ಮಾಡುವುದಿಲ್ಲ. ಒಂದು ನಂಬರ್ ಅನ್ನು ನೀವೇ ನಿಮ್ಮ ಡು-ನಾಟ್-ಕಾಲ್ ಲಿಸ್ಟ್‌ಗೆ ಸೇರಿಸಲೂಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.recording.t": {
+  "en": "Call recording",
+  "te": "కాల్ రికార్డింగ్",
+  "hi": "कॉल रिकॉर्डिंग",
+  "kn": "ಕಾಲ್ ರೆಕಾರ್ಡಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.recording.d": {
+  "en": "When calls are recorded and how it is told",
+  "te": "కాల్స్ ఎప్పుడు రికార్డ్ అవుతాయి, ఎలా చెబుతారు",
+  "hi": "कॉल कब रिकॉर्ड होती हैं और यह कैसे बताया जाता है",
+  "kn": "ಕಾಲ್‌ಗಳು ಯಾವಾಗ ರೆಕಾರ್ಡ್ ಆಗುತ್ತವೆ, ಹೇಗೆ ತಿಳಿಸಲಾಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.recording.1": {
+  "en": "At the start of a call the caller is told that they are talking to an assistant and that the call may be recorded.",
+  "te": "కాల్ మొదట్లో, తాము అసిస్టెంట్‌తో మాట్లాడుతున్నామని, కాల్ రికార్డ్ అవ్వచ్చని కాలర్‌కి చెబుతారు.",
+  "hi": "कॉल की शुरुआत में कॉल करने वाले को बताया जाता है कि वह असिस्टेंट से बात कर रहा है और कॉल रिकॉर्ड हो सकती है।",
+  "kn": "ಕಾಲ್ ಶುರುವಿನಲ್ಲಿ, ತಾವು ಅಸಿಸ್ಟೆಂಟ್ ಜೊತೆ ಮಾತಾಡುತ್ತಿದ್ದೇವೆ ಮತ್ತು ಕಾಲ್ ರೆಕಾರ್ಡ್ ಆಗಬಹುದು ಎಂದು ಕಾಲರ್‌ಗೆ ಹೇಳಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.recording.2": {
+  "en": "You can listen to a call and read its summary in Calls. Only people in your business can open them.",
+  "te": "Calls లో కాల్ వినవచ్చు, దాని సారాంశం చదవవచ్చు. మీ బిజినెస్‌లోని వారే వాటిని తెరవగలరు.",
+  "hi": "आप Calls में कॉल सुन सकते हैं और उसका सारांश पढ़ सकते हैं। उन्हें सिर्फ़ आपके बिज़नेस के लोग खोल सकते हैं।",
+  "kn": "Calls ನಲ್ಲಿ ಕಾಲ್ ಕೇಳಬಹುದು, ಅದರ ಸಾರಾಂಶ ಓದಬಹುದು. ನಿಮ್ಮ ಬಿಸಿನೆಸ್‌ನವರು ಮಾತ್ರ ಅವುಗಳನ್ನು ತೆರೆಯಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.recording.3": {
+  "en": "To ask for a recording to be removed, write to {mail}. See also Delete your data.",
+  "te": "ఒక రికార్డింగ్ తీసివేయమని అడగాలంటే, {mail} కి రాయండి. Delete your data కూడా చూడండి.",
+  "hi": "किसी रिकॉर्डिंग को हटाने के लिए {mail} पर लिखें। Delete your data भी देखें।",
+  "kn": "ಒಂದು ರೆಕಾರ್ಡಿಂಗ್ ತೆಗೆಯಲು ಕೇಳಲು {mail} ಗೆ ಬರೆಯಿರಿ. Delete your data ಕೂಡ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.delete.t": {
+  "en": "Delete your data",
+  "te": "మీ డేటాని తొలగించండి",
+  "hi": "अपना डेटा हटाएँ",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾ ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.delete.d": {
+  "en": "How to ask, and what happens",
+  "te": "ఎలా అడగాలి, ఏమవుతుంది",
+  "hi": "कैसे कहें और क्या होता है",
+  "kn": "ಹೇಗೆ ಕೇಳುವುದು, ಏನಾಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.delete.1": {
+  "en": "In the app, open Settings, then Privacy, then delete my account. The deletion happens after {cancel} days, so you can change your mind in that time. You can download your data first.",
+  "te": "యాప్‌లో Settings, తర్వాత Privacy, తర్వాత delete my account తెరవండి. తొలగింపు {cancel} రోజుల తర్వాత జరుగుతుంది, ఆ లోపు మనసు మార్చుకోవచ్చు. ముందుగా మీ డేటాని డౌన్‌లోడ్ చేసుకోవచ్చు.",
+  "hi": "ऐप में Settings, फिर Privacy, फिर delete my account खोलें। हटाना {cancel} दिन बाद होता है, इसलिए उतने समय में आप इरादा बदल सकते हैं। पहले अपना डेटा डाउनलोड कर सकते हैं।",
+  "kn": "ಆ್ಯಪ್‌ನಲ್ಲಿ Settings, ನಂತರ Privacy, ನಂತರ delete my account ತೆರೆಯಿರಿ. ಅಳಿಸುವಿಕೆ {cancel} ದಿನಗಳ ನಂತರ ಆಗುತ್ತದೆ, ಅಷ್ಟರಲ್ಲಿ ಮನಸ್ಸು ಬದಲಿಸಬಹುದು. ಮೊದಲು ನಿಮ್ಮ ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.delete.2": {
+  "en": "Or write to {privacy} from the e-mail address of your account and say what you want deleted. We answer within {days} days.",
+  "te": "లేదా మీ అకౌంట్ ఈ-మెయిల్ అడ్రస్ నుంచి {privacy} కి రాసి, ఏం తొలగించాలో చెప్పండి. {days} రోజుల్లో జవాబు ఇస్తాం.",
+  "hi": "या अपने अकाउंट के ई-मेल पते से {privacy} पर लिखें और बताएँ कि क्या हटाना है। हम {days} दिन में जवाब देते हैं।",
+  "kn": "ಅಥವಾ ನಿಮ್ಮ ಅಕೌಂಟ್‌ನ ಇ-ಮೇಲ್ ವಿಳಾಸದಿಂದ {privacy} ಗೆ ಬರೆದು ಏನು ಅಳಿಸಬೇಕು ಎಂದು ಹೇಳಿ. {days} ದಿನಗಳಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.delete.3": {
+  "en": "If you only want to stop being contacted, you do not have to delete anything. Write to the same address and we stop messages and calls to you within {hours} hours.",
+  "te": "మీకు సంప్రదించడం ఆపేయమని మాత్రమే కావాలంటే, ఏదీ తొలగించాల్సిన పని లేదు. అదే అడ్రస్‌కి రాయండి, {hours} గంటల్లో మీకు మెసేజ్‌లు, కాల్స్ ఆపేస్తాం.",
+  "hi": "अगर आप सिर्फ़ संपर्क बंद कराना चाहते हैं, तो कुछ हटाने की ज़रूरत नहीं। उसी पते पर लिखें, हम {hours} घंटे में आपको मैसेज और कॉल बंद कर देते हैं।",
+  "kn": "ನಿಮಗೆ ಸಂಪರ್ಕ ನಿಲ್ಲಿಸಬೇಕು ಎಂದಷ್ಟೇ ಬೇಕಾದರೆ, ಏನೂ ಅಳಿಸಬೇಕಿಲ್ಲ. ಅದೇ ವಿಳಾಸಕ್ಕೆ ಬರೆಯಿರಿ, {hours} ಗಂಟೆಗಳಲ್ಲಿ ನಿಮಗೆ ಮೆಸೇಜ್, ಕಾಲ್ ನಿಲ್ಲಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.languages.t": {
+  "en": "Languages",
+  "te": "భాషలు",
+  "hi": "भाषाएँ",
+  "kn": "ಭಾಷೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.languages.d": {
+  "en": "Telugu, Hindi, Kannada and English",
+  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్",
+  "hi": "तेलुगु, हिंदी, कन्नड़ और अंग्रेज़ी",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.languages.1": {
+  "en": "The app and this website are in English, Telugu, Hindi and Kannada. Change the language from the menu at the top.",
+  "te": "యాప్, ఈ వెబ్‌సైట్ ఇంగ్లీష్, తెలుగు, హిందీ, కన్నడలో ఉన్నాయి. పైన ఉన్న మెనూ నుంచి భాష మార్చుకోండి.",
+  "hi": "ऐप और यह वेबसाइट अंग्रेज़ी, तेलुगु, हिंदी और कन्नड़ में हैं। ऊपर के मेन्यू से भाषा बदलें।",
+  "kn": "ಆ್ಯಪ್ ಮತ್ತು ಈ ವೆಬ್‌ಸೈಟ್ ಇಂಗ್ಲಿಷ್, ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡದಲ್ಲಿವೆ. ಮೇಲಿನ ಮೆನುವಿನಿಂದ ಭಾಷೆ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.languages.2": {
+  "en": "You choose the languages your assistant speaks. It answers in the language the caller uses, among the ones you chose.",
+  "te": "మీ అసిస్టెంట్ మాట్లాడే భాషలను మీరే ఎంచుకుంటారు. మీరు ఎంచుకున్న వాటిలో, కాలర్ వాడే భాషలోనే అది జవాబు ఇస్తుంది.",
+  "hi": "आप चुनते हैं कि आपका असिस्टेंट कौन सी भाषाएँ बोले। आपकी चुनी भाषाओं में से, कॉल करने वाला जिस भाषा में बोले, उसी में जवाब देता है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಮಾತಾಡುವ ಭಾಷೆಗಳನ್ನು ನೀವೇ ಆರಿಸುತ್ತೀರಿ. ನೀವು ಆರಿಸಿದವುಗಳಲ್ಲಿ, ಕಾಲರ್ ಬಳಸುವ ಭಾಷೆಯಲ್ಲೇ ಅದು ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.languages.3": {
+  "en": "If a word reads wrong to you, tell us through Talk to us. We fix it.",
+  "te": "ఏదైనా మాట మీకు తప్పుగా అనిపిస్తే, Talk to us ద్వారా చెప్పండి. మేము సరిచేస్తాం.",
+  "hi": "अगर कोई शब्द आपको ग़लत लगे, तो Talk to us से बताएँ। हम ठीक कर देंगे।",
+  "kn": "ಯಾವುದಾದರೂ ಪದ ನಿಮಗೆ ತಪ್ಪಾಗಿ ಕಂಡರೆ, Talk to us ಮೂಲಕ ಹೇಳಿ. ನಾವು ಸರಿಪಡಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.contact.t": {
+  "en": "Contact us",
+  "te": "మమ్మల్ని సంప్రదించండి",
+  "hi": "हमसे संपर्क करें",
+  "kn": "ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.contact.d": {
+  "en": "We reply within a day",
+  "te": "ఒక రోజులో జవాబు ఇస్తాం",
+  "hi": "हम एक दिन में जवाब देते हैं",
+  "kn": "ಒಂದು ದಿನದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.contact.1": {
+  "en": "Write to {mail}. We reply within a day.",
+  "te": "{mail} కి రాయండి. ఒక రోజులో జవాబు ఇస్తాం.",
+  "hi": "{mail} पर लिखें। हम एक दिन में जवाब देते हैं।",
+  "kn": "{mail} ಗೆ ಬರೆಯಿರಿ. ಒಂದು ದಿನದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.contact.2": {
+  "en": "Or use Talk to us: tell us your name, your number and your kind of business, and we reach out at a time that suits you.",
+  "te": "లేదా Talk to us వాడండి: మీ పేరు, నంబర్, మీ బిజినెస్ రకం చెప్పండి, మీకు నచ్చిన టైమ్‌లో మేము సంప్రదిస్తాం.",
+  "hi": "या Talk to us इस्तेमाल करें: अपना नाम, नंबर और बिज़नेस का प्रकार बताएँ, हम आपके सुविधाजनक समय पर संपर्क करेंगे।",
+  "kn": "ಅಥವಾ Talk to us ಬಳಸಿ: ನಿಮ್ಮ ಹೆಸರು, ನಂಬರ್, ಬಿಸಿನೆಸ್ ಪ್ರಕಾರ ಹೇಳಿ, ನಿಮಗೆ ಅನುಕೂಲವಾದ ಸಮಯದಲ್ಲಿ ನಾವು ಸಂಪರ್ಕಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.help.contact.3": {
+  "en": "For anything about your data, write to {privacy}.",
+  "te": "మీ డేటాకి సంబంధించిన ఏ విషయానికైనా {privacy} కి రాయండి.",
+  "hi": "अपने डेटा से जुड़ी किसी भी बात के लिए {privacy} पर लिखें।",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾಗೆ ಸಂಬಂಧಿಸಿದ ಯಾವುದಕ್ಕೂ {privacy} ಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.meta.t": {
+  "en": "Status: {brand}",
+  "te": "స్టేటస్: {brand}",
+  "hi": "स्टेटस: {brand}",
+  "kn": "ಸ್ಟೇಟಸ್: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.meta.d": {
+  "en": "How {brand} is working right now, and any problems of the past 7 days.",
+  "te": "{brand} ఇప్పుడు ఎలా పనిచేస్తోంది, గత 7 రోజుల్లో ఏవైనా సమస్యలు ఉన్నాయా.",
+  "hi": "{brand} अभी कैसे काम कर रहा है, और पिछले 7 दिनों की कोई दिक़्क़त।",
+  "kn": "{brand} ಈಗ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತಿದೆ, ಮತ್ತು ಕಳೆದ 7 ದಿನಗಳ ಯಾವುದೇ ಸಮಸ್ಯೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.title": {
+  "en": "Status",
+  "te": "స్టేటస్",
+  "hi": "स्टेटस",
+  "kn": "ಸ್ಟೇಟಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.sub": {
+  "en": "How {brand} is working right now.",
+  "te": "{brand} ఇప్పుడు ఎలా పనిచేస్తోంది.",
+  "hi": "{brand} अभी कैसे काम कर रहा है।",
+  "kn": "{brand} ಈಗ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.ok": {
+  "en": "Everything is working",
+  "te": "అంతా బాగా పనిచేస్తోంది",
+  "hi": "सब कुछ ठीक चल रहा है",
+  "kn": "ಎಲ್ಲವೂ ಚೆನ್ನಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.down": {
+  "en": "We have a problem and are looking at it",
+  "te": "ఒక సమస్య ఉంది, చూస్తున్నాం",
+  "hi": "एक दिक़्क़त है और हम उसे देख रहे हैं",
+  "kn": "ಒಂದು ಸಮಸ್ಯೆ ಇದೆ, ನೋಡುತ್ತಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.unknown": {
+  "en": "We could not check just now",
+  "te": "ఇప్పుడే చెక్ చేయలేకపోయాం",
+  "hi": "अभी चेक नहीं कर पाए",
+  "kn": "ಈಗ ಚೆಕ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.r.site": {
+  "en": "Website",
+  "te": "వెబ్‌సైట్",
+  "hi": "वेबसाइट",
+  "kn": "ವೆಬ್‌ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.r.api": {
+  "en": "App, calls and chats service",
+  "te": "యాప్, కాల్స్, చాట్స్ సర్వీస్",
+  "hi": "ऐप, कॉल और चैट सर्विस",
+  "kn": "ಆ್ಯಪ್, ಕಾಲ್ ಮತ್ತು ಚಾಟ್ ಸರ್ವಿಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.working": {
+  "en": "Working",
+  "te": "పనిచేస్తోంది",
+  "hi": "चल रहा है",
+  "kn": "ಕೆಲಸ ಮಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.notworking": {
+  "en": "Not working",
+  "te": "పనిచేయడం లేదు",
+  "hi": "नहीं चल रहा",
+  "kn": "ಕೆಲಸ ಮಾಡುತ್ತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.unchecked": {
+  "en": "Could not check",
+  "te": "చెక్ చేయలేకపోయాం",
+  "hi": "चेक नहीं हो पाया",
+  "kn": "ಚೆಕ್ ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.checked": {
+  "en": "Checked {time}",
+  "te": "{time} కి చెక్ చేశాం",
+  "hi": "{time} को चेक किया",
+  "kn": "{time} ಕ್ಕೆ ಚೆಕ್ ಮಾಡಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.past.h": {
+  "en": "Past 7 days",
+  "te": "గత 7 రోజులు",
+  "hi": "पिछले 7 दिन",
+  "kn": "ಕಳೆದ 7 ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.past.none": {
+  "en": "No problems reported.",
+  "te": "ఏ సమస్యలూ రిపోర్ట్ కాలేదు.",
+  "hi": "कोई दिक़्क़त दर्ज नहीं हुई।",
+  "kn": "ಯಾವ ಸಮಸ್ಯೆಯೂ ವರದಿಯಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.note": {
+  "en": "This page checks the service each time you open it. If something is wrong we write it here, with the time it started.",
+  "te": "మీరు పేజీ తెరిచిన ప్రతిసారీ ఇది సర్వీస్‌ని చెక్ చేస్తుంది. ఏదైనా తప్పుగా ఉంటే ఇక్కడ రాస్తాం, అది మొదలైన టైమ్‌తో సహా.",
+  "hi": "आप जब भी यह पेज खोलते हैं, यह सर्विस को चेक करता है। कुछ गड़बड़ हो तो हम यहाँ लिखते हैं, शुरू होने के समय के साथ।",
+  "kn": "ನೀವು ಪೇಜ್ ತೆರೆದಾಗಲೆಲ್ಲ ಇದು ಸರ್ವಿಸ್ ಚೆಕ್ ಮಾಡುತ್ತದೆ. ಏನಾದರೂ ತೊಂದರೆ ಇದ್ದರೆ ಇಲ್ಲಿ ಬರೆಯುತ್ತೇವೆ, ಶುರುವಾದ ಸಮಯದೊಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.fixed": {
+  "en": "Fixed",
+  "te": "సరిచేశాం",
+  "hi": "ठीक हो गया",
+  "kn": "ಸರಿಪಡಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.status.ongoing": {
+  "en": "Still happening",
+  "te": "ఇంకా కొనసాగుతోంది",
+  "hi": "अभी भी जारी है",
+  "kn": "ಇನ್ನೂ ಮುಂದುವರಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.meta.t": {
+  "en": "Acceptable use: {brand}",
+  "te": "ఆమోదయోగ్య వినియోగం: {brand}",
+  "hi": "स्वीकार्य उपयोग: {brand}",
+  "kn": "ಒಪ್ಪಿಗೆಯ ಬಳಕೆ: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.meta.d": {
+  "en": "Five plain rules for anyone who uses {brand} to call or message people. Draft for approval.",
+  "te": "{brand} తో ప్రజలకు కాల్ లేదా మెసేజ్ చేసే ప్రతి ఒక్కరికీ ఐదు సులువైన రూల్స్. ఆమోదం కోసం డ్రాఫ్ట్.",
+  "hi": "{brand} से लोगों को कॉल या मैसेज करने वाले हर किसी के लिए पाँच सीधे नियम। अप्रूवल के लिए ड्राफ्ट।",
+  "kn": "{brand} ಮೂಲಕ ಜನರಿಗೆ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುವ ಎಲ್ಲರಿಗೂ ಐದು ಸರಳ ನಿಯಮಗಳು. ಒಪ್ಪಿಗೆಗಾಗಿ ಡ್ರಾಫ್ಟ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.title": {
+  "en": "Acceptable use",
+  "te": "ఆమోదయోగ్య వినియోగం",
+  "hi": "स्वीकार्य उपयोग",
+  "kn": "ಒಪ್ಪಿಗೆಯ ಬಳಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.sub": {
+  "en": "Five rules for anyone who uses {brand} to call or message people.",
+  "te": "{brand} తో ప్రజలకు కాల్ లేదా మెసేజ్ చేసే ప్రతి ఒక్కరికీ ఐదు రూల్స్.",
+  "hi": "{brand} से लोगों को कॉल या मैसेज करने वाले हर किसी के लिए पाँच नियम।",
+  "kn": "{brand} ಮೂಲಕ ಜನರಿಗೆ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುವ ಎಲ್ಲರಿಗೂ ಐದು ನಿಯಮಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.1.h": {
+  "en": "Only contact people who agreed.",
+  "te": "ఒప్పుకున్న వారిని మాత్రమే సంప్రదించండి.",
+  "hi": "सिर्फ़ उन्हीं से संपर्क करें जो राज़ी हुए।",
+  "kn": "ಒಪ್ಪಿದವರನ್ನು ಮಾತ್ರ ಸಂಪರ್ಕಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.1.t": {
+  "en": "People who asked about your business, or said yes to calls or messages. Never bought, scraped or collected lists.",
+  "te": "మీ బిజినెస్ గురించి అడిగినవారు, లేదా కాల్స్, మెసేజ్‌లకు సరే అన్నవారు. కొన్న, స్క్రాప్ చేసిన, ఎక్కడో నుంచి సేకరించిన లిస్టులు ఎప్పుడూ వద్దు.",
+  "hi": "जिन्होंने आपके बिज़नेस के बारे में पूछा, या कॉल या मैसेज के लिए हाँ कहा। ख़रीदी हुई, स्क्रैप की हुई या कहीं से जुटाई लिस्ट कभी नहीं।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ಕೇಳಿದವರು, ಅಥವಾ ಕಾಲ್, ಮೆಸೇಜ್‌ಗೆ ಹೌದು ಎಂದವರು. ಖರೀದಿಸಿದ, ಸ್ಕ್ರಾಪ್ ಮಾಡಿದ, ಎಲ್ಲಿಂದಲೋ ಸಂಗ್ರಹಿಸಿದ ಲಿಸ್ಟ್‌ಗಳು ಎಂದಿಗೂ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.2.h": {
+  "en": "Keep proof.",
+  "te": "రుజువు ఉంచుకోండి.",
+  "hi": "सबूत रखें।",
+  "kn": "ಸಾಕ್ಷ್ಯ ಇಟ್ಟುಕೊಳ್ಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.2.t": {
+  "en": "Be able to show where each person's details came from and when they agreed.",
+  "te": "ప్రతి వ్యక్తి వివరాలు ఎక్కడి నుంచి వచ్చాయో, ఎప్పుడు ఒప్పుకున్నారో చూపగలగాలి.",
+  "hi": "हर व्यक्ति की जानकारी कहाँ से आई और उसने कब हाँ कहा, यह दिखा पाएँ।",
+  "kn": "ಪ್ರತಿ ವ್ಯಕ್ತಿಯ ವಿವರ ಎಲ್ಲಿಂದ ಬಂತು, ಯಾವಾಗ ಒಪ್ಪಿದರು ಎಂದು ತೋರಿಸಲು ಸಾಧ್ಯವಾಗಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.3.h": {
+  "en": "Respect stop requests.",
+  "te": "ఆపమని అడిగితే గౌరవించండి.",
+  "hi": "रोकने की बात मानें।",
+  "kn": "ನಿಲ್ಲಿಸಿ ಎಂದರೆ ಗೌರವಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.3.t": {
+  "en": "When someone asks you to stop, they are never contacted again. We add them to your do-not-call list.",
+  "te": "ఎవరైనా ఆపమని అడిగితే, వారిని మళ్ళీ ఎప్పుడూ సంప్రదించరు. వారిని మీ డు-నాట్-కాల్ లిస్టులో చేరుస్తాం.",
+  "hi": "जब कोई रुकने को कहता है, तो उससे दोबारा संपर्क नहीं होता। हम उसे आपकी डू-नॉट-कॉल लिस्ट में जोड़ देते हैं।",
+  "kn": "ಯಾರಾದರೂ ನಿಲ್ಲಿಸಿ ಎಂದರೆ, ಅವರನ್ನು ಮತ್ತೆ ಎಂದಿಗೂ ಸಂಪರ್ಕಿಸುವುದಿಲ್ಲ. ಅವರನ್ನು ನಿಮ್ಮ ಡು-ನಾಟ್-ಕಾಲ್ ಲಿಸ್ಟ್‌ಗೆ ಸೇರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.4.h": {
+  "en": "Say who you are.",
+  "te": "మీరు ఎవరో చెప్పండి.",
+  "hi": "बताएँ कि आप कौन हैं।",
+  "kn": "ನೀವು ಯಾರು ಎಂದು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.4.t": {
+  "en": "Your business is the caller. The assistant says it is an assistant, and never pretends to be a person.",
+  "te": "కాల్ చేసేది మీ బిజినెస్. అసిస్టెంట్ తాను అసిస్టెంట్ అని చెబుతుంది, మనిషిలా నటించదు.",
+  "hi": "कॉल करने वाला आपका बिज़नेस है। असिस्टेंट बताता है कि वह असिस्टेंट है, और इंसान होने का दिखावा नहीं करता।",
+  "kn": "ಕಾಲ್ ಮಾಡುವುದು ನಿಮ್ಮ ಬಿಸಿನೆಸ್. ಅಸಿಸ್ಟೆಂಟ್ ತಾನು ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ, ಮನುಷ್ಯನಂತೆ ನಟಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.5.h": {
+  "en": "Follow the law.",
+  "te": "చట్టాన్ని పాటించండి.",
+  "hi": "क़ानून मानें।",
+  "kn": "ಕಾನೂನು ಪಾಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.5.t": {
+  "en": "Calling hours, the national do-not-disturb list and phone company rules apply. You are responsible for what you say and who you call.",
+  "te": "కాలింగ్ టైమ్, నేషనల్ డు-నాట్-డిస్టర్బ్ లిస్ట్, ఫోన్ కంపెనీ రూల్స్ వర్తిస్తాయి. మీరు ఏం చెబుతారో, ఎవరికి కాల్ చేస్తారో దానికి మీరే బాధ్యులు.",
+  "hi": "कॉलिंग का समय, नेशनल डू-नॉट-डिस्टर्ब लिस्ट और फ़ोन कंपनी के नियम लागू होते हैं। आप क्या कहते हैं और किसे कॉल करते हैं, इसकी ज़िम्मेदारी आपकी है।",
+  "kn": "ಕಾಲಿಂಗ್ ಸಮಯ, ನ್ಯಾಷನಲ್ ಡು-ನಾಟ್-ಡಿಸ್ಟರ್ಬ್ ಲಿಸ್ಟ್, ಫೋನ್ ಕಂಪನಿ ನಿಯಮಗಳು ಅನ್ವಯಿಸುತ್ತವೆ. ನೀವು ಏನು ಹೇಳುತ್ತೀರಿ, ಯಾರಿಗೆ ಕಾಲ್ ಮಾಡುತ್ತೀರಿ ಎಂಬುದಕ್ಕೆ ನೀವೇ ಜವಾಬ್ದಾರರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.end": {
+  "en": "If these rules are broken we can pause your calling or close the account.",
+  "te": "ఈ రూల్స్ ఉల్లంఘిస్తే మేము మీ కాలింగ్‌ని పాజ్ చేయవచ్చు, లేదా అకౌంట్‌ని మూసేయవచ్చు.",
+  "hi": "ये नियम टूटें तो हम आपकी कॉलिंग रोक सकते हैं या अकाउंट बंद कर सकते हैं।",
+  "kn": "ಈ ನಿಯಮಗಳನ್ನು ಮುರಿದರೆ ನಾವು ನಿಮ್ಮ ಕಾಲಿಂಗ್ ನಿಲ್ಲಿಸಬಹುದು, ಅಥವಾ ಅಕೌಂಟ್ ಮುಚ್ಚಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.aup.ask": {
+  "en": "Questions about these rules? Write to {mail}.",
+  "te": "ఈ రూల్స్ గురించి ప్రశ్నలు ఉన్నాయా? {mail} కి రాయండి.",
+  "hi": "इन नियमों के बारे में सवाल हैं? {mail} पर लिखें।",
+  "kn": "ಈ ನಿಯಮಗಳ ಬಗ್ಗೆ ಪ್ರಶ್ನೆಗಳಿವೆಯೇ? {mail} ಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.meta.t": {
+  "en": "Refunds: {brand}",
+  "te": "రిఫండ్స్: {brand}",
+  "hi": "रिफ़ंड: {brand}",
+  "kn": "ರಿಫಂಡ್‌ಗಳು: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.meta.d": {
+  "en": "What you can get back, in plain words. Draft for approval.",
+  "te": "మీకు ఏం తిరిగి వస్తుంది, సులువైన మాటల్లో. ఆమోదం కోసం డ్రాఫ్ట్.",
+  "hi": "आपको क्या वापस मिल सकता है, आसान शब्दों में। अप्रूवल के लिए ड्राफ्ट।",
+  "kn": "ನಿಮಗೆ ಏನು ವಾಪಸ್ ಸಿಗುತ್ತದೆ, ಸರಳ ಮಾತುಗಳಲ್ಲಿ. ಒಪ್ಪಿಗೆಗಾಗಿ ಡ್ರಾಫ್ಟ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.title": {
+  "en": "Refunds",
+  "te": "రిఫండ్స్",
+  "hi": "रिफ़ंड",
+  "kn": "ರಿಫಂಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.sub": {
+  "en": "What you can get back, in plain words.",
+  "te": "మీకు ఏం తిరిగి వస్తుంది, సులువైన మాటల్లో.",
+  "hi": "आपको क्या वापस मिल सकता है, आसान शब्दों में।",
+  "kn": "ನಿಮಗೆ ಏನು ವಾಪಸ್ ಸಿಗುತ್ತದೆ, ಸರಳ ಮಾತುಗಳಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.1.h": {
+  "en": "Unused credits.",
+  "te": "వాడని క్రెడిట్స్.",
+  "hi": "बिना इस्तेमाल के क्रेडिट।",
+  "kn": "ಬಳಸದ ಕ್ರೆಡಿಟ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.1.t": {
+  "en": "Credits you have not used can be refunded within 7 days of adding them.",
+  "te": "మీరు వాడని క్రెడిట్స్‌ని, యాడ్ చేసిన 7 రోజుల్లోపు రిఫండ్ చేయవచ్చు.",
+  "hi": "जो क्रेडिट आपने इस्तेमाल नहीं किए, वे जोड़ने के 7 दिन के अंदर रिफ़ंड हो सकते हैं।",
+  "kn": "ನೀವು ಬಳಸದ ಕ್ರೆಡಿಟ್‌ಗಳನ್ನು ಸೇರಿಸಿದ 7 ದಿನಗಳೊಳಗೆ ರಿಫಂಡ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.2.h": {
+  "en": "Plan fees.",
+  "te": "ప్లాన్ ఫీజులు.",
+  "hi": "प्लान की फ़ीस।",
+  "kn": "ಪ್ಲಾನ್ ಶುಲ್ಕಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.2.t": {
+  "en": "A monthly plan can be stopped before the next month. We do not refund a month that has started, unless we failed to give you the service.",
+  "te": "నెలవారీ ప్లాన్‌ని తర్వాతి నెలకు ముందే ఆపవచ్చు. మొదలైన నెలకి రిఫండ్ ఇవ్వం, మేము సర్వీస్ ఇవ్వలేకపోతే తప్ప.",
+  "hi": "मासिक प्लान अगले महीने से पहले बंद किया जा सकता है। शुरू हो चुके महीने का रिफ़ंड नहीं देते, जब तक हमने सर्विस देने में चूक न की हो।",
+  "kn": "ತಿಂಗಳ ಪ್ಲಾನ್ ಅನ್ನು ಮುಂದಿನ ತಿಂಗಳ ಮೊದಲು ನಿಲ್ಲಿಸಬಹುದು. ಶುರುವಾದ ತಿಂಗಳಿಗೆ ರಿಫಂಡ್ ಇಲ್ಲ, ನಾವು ಸರ್ವಿಸ್ ಕೊಡಲು ವಿಫಲರಾದರೆ ಹೊರತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.3.h": {
+  "en": "Calls that went wrong.",
+  "te": "తప్పుగా జరిగిన కాల్స్.",
+  "hi": "जो कॉल गड़बड़ हुईं।",
+  "kn": "ತಪ್ಪಾಗಿ ನಡೆದ ಕಾಲ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.3.t": {
+  "en": "If a call was billed because of a problem on our side, we give the credits back.",
+  "te": "మా వైపు సమస్య వల్ల ఒక కాల్‌కి బిల్ అయితే, ఆ క్రెడిట్స్ తిరిగి ఇస్తాం.",
+  "hi": "अगर हमारी तरफ़ की किसी गड़बड़ी से किसी कॉल का बिल बना, तो हम क्रेडिट वापस देते हैं।",
+  "kn": "ನಮ್ಮ ಕಡೆಯ ಸಮಸ್ಯೆಯಿಂದ ಒಂದು ಕಾಲ್‌ಗೆ ಬಿಲ್ ಆದರೆ, ಕ್ರೆಡಿಟ್‌ಗಳನ್ನು ವಾಪಸ್ ಕೊಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.4.h": {
+  "en": "Free start credits.",
+  "te": "ఉచిత స్టార్ట్ క్రెడిట్స్.",
+  "hi": "फ्री स्टार्ट क्रेडिट।",
+  "kn": "ಉಚಿತ ಶುರುವಿನ ಕ್ರೆಡಿಟ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.4.t": {
+  "en": "They cannot be paid out or refunded.",
+  "te": "వాటిని డబ్బుగా ఇవ్వడం, రిఫండ్ చేయడం కుదరదు.",
+  "hi": "इन्हें पैसे में नहीं दिया जा सकता और इनका रिफ़ंड नहीं होता।",
+  "kn": "ಅವುಗಳನ್ನು ಹಣವಾಗಿ ಕೊಡಲು, ರಿಫಂಡ್ ಮಾಡಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.refund.end": {
+  "en": "To ask for a refund write to {mail}. We answer within 2 working days.",
+  "te": "రిఫండ్ అడగాలంటే {mail} కి రాయండి. 2 పని రోజుల్లో జవాబు ఇస్తాం.",
+  "hi": "रिफ़ंड माँगने के लिए {mail} पर लिखें। हम 2 कार्य-दिवस में जवाब देते हैं।",
+  "kn": "ರಿಫಂಡ್ ಕೇಳಲು {mail} ಗೆ ಬರೆಯಿರಿ. 2 ಕೆಲಸದ ದಿನಗಳಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.meta.t": {
+  "en": "Talk to us: {brand}",
+  "te": "మాతో మాట్లాడండి: {brand}",
+  "hi": "हमसे बात करें: {brand}",
+  "kn": "ನಮ್ಮೊಂದಿಗೆ ಮಾತಾಡಿ: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.meta.d": {
+  "en": "Tell us a little about your business and ask for a demo.",
+  "te": "మీ బిజినెస్ గురించి కొంచెం చెప్పి, డెమో అడగండి.",
+  "hi": "अपने बिज़नेस के बारे में थोड़ा बताएँ और डेमो माँगें।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ಸ್ವಲ್ಪ ಹೇಳಿ, ಡೆಮೊ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.title": {
+  "en": "Talk to us",
+  "te": "మాతో మాట్లాడండి",
+  "hi": "हमसे बात करें",
+  "kn": "ನಮ್ಮೊಂದಿಗೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.sub": {
+  "en": "Tell us a little. We will show you how it works for your business.",
+  "te": "కొంచెం చెప్పండి. మీ బిజినెస్‌కి ఇది ఎలా పనిచేస్తుందో చూపిస్తాం.",
+  "hi": "थोड़ा बताएँ। हम दिखाएँगे कि यह आपके बिज़नेस के लिए कैसे काम करता है।",
+  "kn": "ಸ್ವಲ್ಪ ಹೇಳಿ. ನಿಮ್ಮ ಬಿಸಿನೆಸ್‌ಗೆ ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂದು ತೋರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.name": {
+  "en": "Your name",
+  "te": "మీ పేరు",
+  "hi": "आपका नाम",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.contact": {
+  "en": "Phone, WhatsApp number or e-mail",
+  "te": "ఫోన్, WhatsApp నంబర్ లేదా ఈ-మెయిల్",
+  "hi": "फ़ोन, WhatsApp नंबर या ई-मेल",
+  "kn": "ಫೋನ್, WhatsApp ನಂಬರ್ ಅಥವಾ ಇ-ಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.type": {
+  "en": "Your kind of business",
+  "te": "మీ బిజినెస్ రకం",
+  "hi": "आपके बिज़नेस का प्रकार",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.type.choose": {
+  "en": "Choose",
+  "te": "ఎంచుకోండి",
+  "hi": "चुनें",
+  "kn": "ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.textiles": {
+  "en": "Saree and textile shop",
+  "te": "చీరలు, బట్టల షాప్",
+  "hi": "साड़ी और कपड़े की दुकान",
+  "kn": "ಸೀರೆ ಮತ್ತು ಬಟ್ಟೆ ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.kirana": {
+  "en": "Kirana and general store",
+  "te": "కిరాణా, జనరల్ స్టోర్",
+  "hi": "किराना और जनरल स्टोर",
+  "kn": "ಕಿರಾಣಿ ಮತ್ತು ಜನರಲ್ ಸ್ಟೋರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.jewellery": {
+  "en": "Jewellery",
+  "te": "జ్యువెలరీ",
+  "hi": "ज्वेलरी",
+  "kn": "ಜ್ಯುವೆಲರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.electronics": {
+  "en": "Electronics and mobile shop",
+  "te": "ఎలక్ట్రానిక్స్, మొబైల్ షాప్",
+  "hi": "इलेक्ट्रॉनिक्स और मोबाइल की दुकान",
+  "kn": "ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್ ಮತ್ತು ಮೊಬೈಲ್ ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.fashion": {
+  "en": "Boutique and tailoring",
+  "te": "బొటిక్, టైలరింగ్",
+  "hi": "बुटीक और टेलरिंग",
+  "kn": "ಬೊಟಿಕ್ ಮತ್ತು ಟೈಲರಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.restaurant": {
+  "en": "Restaurant or cafe",
+  "te": "రెస్టారెంట్ లేదా కేఫ్",
+  "hi": "रेस्टोरेंट या कैफ़े",
+  "kn": "ರೆಸ್ಟೋರೆಂಟ್ ಅಥವಾ ಕೆಫೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.bakery": {
+  "en": "Bakery and sweets",
+  "te": "బేకరీ, స్వీట్స్",
+  "hi": "बेकरी और मिठाई",
+  "kn": "ಬೇಕರಿ ಮತ್ತು ಸ್ವೀಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.salon": {
+  "en": "Salon, beauty and spa",
+  "te": "సెలూన్, బ్యూటీ, స్పా",
+  "hi": "सैलून, ब्यूटी और स्पा",
+  "kn": "ಸಲೂನ್, ಬ್ಯೂಟಿ ಮತ್ತು ಸ್ಪಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.repair": {
+  "en": "Home repair services",
+  "te": "హోమ్ రిపేర్ సర్వీసులు",
+  "hi": "होम रिपेयर सर्विस",
+  "kn": "ಹೋಮ್ ರಿಪೇರಿ ಸೇವೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.clinic": {
+  "en": "Clinic",
+  "te": "క్లినిక్",
+  "hi": "क्लिनिक",
+  "kn": "ಕ್ಲಿನಿಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.coaching": {
+  "en": "Coaching",
+  "te": "కోచింగ్",
+  "hi": "कोचिंग",
+  "kn": "ಕೋಚಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.property": {
+  "en": "Real estate",
+  "te": "రియల్ ఎస్టేట్",
+  "hi": "रियल एस्टेट",
+  "kn": "ರಿಯಲ್ ಎಸ್ಟೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.cars": {
+  "en": "Car dealer",
+  "te": "కార్ డీలర్",
+  "hi": "कार डीलर",
+  "kn": "ಕಾರ್ ಡೀಲರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.gym": {
+  "en": "Gym and fitness",
+  "te": "జిమ్, ఫిట్‌నెస్",
+  "hi": "जिम और फ़िटनेस",
+  "kn": "ಜಿಮ್ ಮತ್ತು ಫಿಟ್‌ನೆಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.t.other": {
+  "en": "Something else",
+  "te": "ఇంకేదైనా",
+  "hi": "कुछ और",
+  "kn": "ಬೇರೆ ಏನಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.time": {
+  "en": "A good time",
+  "te": "మంచి టైమ్",
+  "hi": "सही समय",
+  "kn": "ಒಳ್ಳೆಯ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.time.morning": {
+  "en": "Morning",
+  "te": "ఉదయం",
+  "hi": "सुबह",
+  "kn": "ಬೆಳಿಗ್ಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.time.afternoon": {
+  "en": "Afternoon",
+  "te": "మధ్యాహ్నం",
+  "hi": "दोपहर",
+  "kn": "ಮಧ್ಯಾಹ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.time.evening": {
+  "en": "Evening",
+  "te": "సాయంత్రం",
+  "hi": "शाम",
+  "kn": "ಸಂಜೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.what": {
+  "en": "What do you sell? (optional)",
+  "te": "మీరు ఏం అమ్ముతారు? (ఇష్టమైతే)",
+  "hi": "आप क्या बेचते हैं? (ज़रूरी नहीं)",
+  "kn": "ನೀವು ಏನು ಮಾರುತ್ತೀರಿ? (ಬೇಕಾದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.consent": {
+  "en": "You can contact me about this.",
+  "te": "దీని గురించి మీరు నన్ను సంప్రదించవచ్చు.",
+  "hi": "आप इस बारे में मुझसे संपर्क कर सकते हैं।",
+  "kn": "ಈ ಬಗ್ಗೆ ನೀವು ನನ್ನನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.privacy": {
+  "en": "Read the privacy policy",
+  "te": "ప్రైవసీ పాలసీ చదవండి",
+  "hi": "प्राइवेसी पॉलिसी पढ़ें",
+  "kn": "ಪ್ರೈವೆಸಿ ಪಾಲಿಸಿ ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.submit": {
+  "en": "Ask for a demo",
+  "te": "డెమో అడగండి",
+  "hi": "डेमो माँगें",
+  "kn": "ಡೆಮೊ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.note": {
+  "en": "We reply within a day.",
+  "te": "ఒక రోజులో జవాబు ఇస్తాం.",
+  "hi": "हम एक दिन में जवाब देते हैं।",
+  "kn": "ಒಂದು ದಿನದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.ok.t": {
+  "en": "Thank you. We will be in touch.",
+  "te": "థాంక్యూ. మేము మిమ్మల్ని సంప్రదిస్తాం.",
+  "hi": "धन्यवाद। हम आपसे संपर्क करेंगे।",
+  "kn": "ಧನ್ಯವಾದ. ನಾವು ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.ok.d": {
+  "en": "If you do not hear from us within a day, write to {mail}.",
+  "te": "ఒక రోజులో మా నుంచి వినకపోతే, {mail} కి రాయండి.",
+  "hi": "अगर एक दिन में हमारी तरफ़ से जवाब न मिले, तो {mail} पर लिखें।",
+  "kn": "ಒಂದು ದಿನದಲ್ಲಿ ನಮ್ಮಿಂದ ಉತ್ತರ ಬರದಿದ್ದರೆ {mail} ಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.err.name": {
+  "en": "Add your name.",
+  "te": "మీ పేరు రాయండి.",
+  "hi": "अपना नाम लिखें।",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.err.contact": {
+  "en": "Add a phone number or an e-mail so we can reach you.",
+  "te": "మేము సంప్రదించడానికి ఫోన్ నంబర్ లేదా ఈ-మెయిల్ రాయండి.",
+  "hi": "हम संपर्क कर सकें इसके लिए फ़ोन नंबर या ई-मेल लिखें।",
+  "kn": "ನಾವು ಸಂಪರ್ಕಿಸಲು ಫೋನ್ ನಂಬರ್ ಅಥವಾ ಇ-ಮೇಲ್ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.err.consent": {
+  "en": "Tick the box so we may contact you.",
+  "te": "మేము సంప్రదించడానికి బాక్స్‌ని టిక్ చేయండి.",
+  "hi": "हम संपर्क कर सकें इसके लिए बॉक्स पर टिक करें।",
+  "kn": "ನಾವು ಸಂಪರ್ಕಿಸಲು ಬಾಕ್ಸ್‌ಗೆ ಟಿಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.err.rate": {
+  "en": "Too many tries. Please wait a little and try again.",
+  "te": "చాలా ప్రయత్నాలు జరిగాయి. కొంచెం ఆగి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "बहुत ज़्यादा कोशिशें हो गईं। थोड़ा रुककर फिर कोशिश करें।",
+  "kn": "ತುಂಬಾ ಪ್ರಯತ್ನಗಳಾದವು. ಸ್ವಲ್ಪ ಕಾಯ್ದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.err.check": {
+  "en": "The check did not pass. Please try again.",
+  "te": "చెక్ పాస్ కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "चेक पास नहीं हुआ। फिर कोशिश करें।",
+  "kn": "ಚೆಕ್ ಪಾಸ್ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.err.generic": {
+  "en": "Something went wrong. Please try again, or write to {mail}.",
+  "te": "ఏదో తప్పు జరిగింది. మళ్ళీ ప్రయత్నించండి, లేదా {mail} కి రాయండి.",
+  "hi": "कुछ गड़बड़ हो गई। फिर कोशिश करें, या {mail} पर लिखें।",
+  "kn": "ಏನೋ ತಪ್ಪಾಯಿತು. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ {mail} ಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ }
+}
