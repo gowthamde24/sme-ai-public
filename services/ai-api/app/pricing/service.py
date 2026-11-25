@@ -136,7 +136,7 @@ def balance_out(doc: dict[str, Any], rate: int | None = None) -> BalanceOut:
     free_left = int(doc.get("free_start_left_paise") or 0)
     return BalanceOut(
         balance_paise=paise, balance_text=inr(paise), minutes_estimate=minutes, summary_text=f"{inr(paise)} · {minutes_text(minutes)}", plan_id=doc["plan_id"], plan_name=doc["plan_name"],
-        low=minutes < LOW_MINUTES and max(int(doc["included_minutes"]) * 2 - int(doc.get("included_half_used") or 0), 0) == 0, topup_available=True, free_start_granted=bool(doc.get("free_start_granted")), free_start_left_paise=free_left,
+        low=minutes < LOW_MINUTES and max(int(doc["included_minutes"]) * 2 - int(doc.get("included_half_used") or 0), 0) == 0, topup_available=True, free_start_granted=bool(doc.get("free_start_granted")), owed_paise=max(int(doc.get("owed_paise") or 0), 0), free_start_left_paise=free_left,
         free_start_left_text=inr(free_left) if free_left else None, included_minutes=int(doc["included_minutes"]), included_minutes_left=left_half // 2,
         subscription=SubscriptionOut.model_validate(sub) if isinstance(sub, dict) else None,
     )

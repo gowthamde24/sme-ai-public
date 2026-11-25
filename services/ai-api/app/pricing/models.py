@@ -56,6 +56,7 @@ class BalanceOut(_Out):
     low: bool
     topup_available: bool
     free_start_granted: bool
+    owed_paise: int = 0          # whole paise owed after an inbound call ran past an empty wallet (0 otherwise); the next top-up pays it first
     free_start_left_paise: int
     free_start_left_text: str | None
     included_minutes: int

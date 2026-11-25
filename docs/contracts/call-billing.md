@@ -10,3 +10,5 @@ Before a call starts: an OUTBOUND call (a test call to your own phone is not out
 **Order of spending:** the credit that expires first is spent first, so the free trial credit goes before a top-up bought later. Included minutes of a plan go before any credit.
 **Charged once:** one row per call id (a retry or a repeated end event is a replay). **Reconcile:** the worker charges answered calls that ended without a charge row and logs a warning when it had to.
 The ledger of OUR costs (`ops.provider_usage`: carrier, voice, speech, model) is a separate record from this charge.
+
+**What is owed:** `GET /v1/tenants/{t}/billing/balance` carries `owed_paise` (whole paise; 0 unless an inbound call ran past an empty wallet). The next top-up pays it first, then the rest is the balance. `balance_paise` itself never goes below zero.

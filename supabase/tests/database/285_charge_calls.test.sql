@@ -40,12 +40,14 @@ select is(pg_temp.gate('a', 'inbound_ok'), 'true', 'B9: Rs 7.50 owed is under th
 update pricing.settings set inbound_floor_paise = 1000;
 select is(pg_temp.j(pg_temp.chg('a', 'cc_in2', 70, true), 'shortfall_paise'), '750', 'B10: a second call: the shortfall again');
 select is(pg_temp.gate('a', 'inbound_ok'), 'false', 'B11: past the floor the assistant stops answering inbound calls');
+select is(pg_temp.j(pg_temp.sc('a_owner', format('select public.pricing_balance(%L)::text', tests.tid('a'))), 'owed_paise'), '1500', 'B12: the balance answer says what is owed (two calls of Rs 7.50)');
 
 -- C. a top-up pays the debt first, then the wallet is whole again
 select pricing.credit(tests.tid('a'), 'topup', 'pay_cc_1', 10000);
 select is((select coalesce(owed_paise, 0) from pricing.debts where tenant_id = tests.tid('a')), 0::bigint, 'C1: the debt is paid first');
 select is(pricing.balance_of(tests.tid('a')), 8500::bigint, 'C2: the rest (Rs 100 less Rs 15) is the balance');
 select is(pg_temp.gate('a', 'inbound_ok') || pg_temp.gate('a', 'outbound_ok'), 'truetrue', 'C3: both directions are open again');
+select is(pg_temp.j(pg_temp.sc('a_owner', format('select public.pricing_balance(%L)::text', tests.tid('a'))), 'owed_paise'), '0', 'C3b: and nothing is owed any more');
 select pricing.credit(tests.tid('a'), 'free_start', 'fs_cc', 3000);
 select is((select coalesce(owed_paise, 0) from pricing.debts where tenant_id = tests.tid('a')), 0::bigint, 'C4: a free start never pays a debt (and there is none)');
 
