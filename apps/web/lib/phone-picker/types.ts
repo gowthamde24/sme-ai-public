@@ -8,7 +8,7 @@ export type NumberType = (typeof NUMBER_TYPES)[number];
 export const NUMBER_STATES = ["getting_ready", "ready", "calls_off", "calls_on"] as const;
 export type NumberState = (typeof NUMBER_STATES)[number];
 /** Why the picker is off or a number cannot be added now (`409 numbers_unavailable`, `fields: ["reason"]`). */
-export const UNAVAILABLE_REASONS = ["not_on_plan", "already_has_number", "paused", "wallet_low", "daily_limit"] as const;
+export const UNAVAILABLE_REASONS = ["not_on_plan", "already_has_number", "paused", "wallet_low", "daily_limit", "kyc_required"] as const;
 export type UnavailableReason = (typeof UNAVAILABLE_REASONS)[number];
 
 /** A number for sale: `number` is +91 and ten digits, `display` is how it is drawn. */

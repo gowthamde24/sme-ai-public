@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { JobsList, type JobsSheet } from "@/components/v2/app/jobs/JobsList";
+import { TellAssistant } from "@/components/v2/app/jobs/tell/LazyTellAssistant";
 import { SampleChip } from "@/components/v2/app/jobs/SampleChip";
 import { PageTop } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
@@ -14,12 +15,13 @@ import { listSuggestions, readJobs } from "@/lib/api/jobs";
 import { requireUser } from "@/lib/auth/session";
 import { JOB_FILTERS, type JobFilter } from "@/lib/jobs/types";
 import { readPackCached } from "@/lib/packs/read";
-import { jobsScreens } from "@/lib/screens/flag";
+import { jobsScreens, tellScreens } from "@/lib/screens/flag";
 
 import { setJobEnabledAction } from "./actions";
 import { changeSearchAction, planJobAction, startPlanAction, startSuggestionAction, testPlanAction } from "./new/actions";
 import { loadNewJobSheetAction } from "./sheet-actions";
 import { readSheetLoad } from "./sheet-load";
+import { describeAction, turnOnAction } from "./tell-actions";
 
 export const metadata = { title: `Jobs · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -29,7 +31,7 @@ export default async function JobsRoute({ params, searchParams }: PageProps<"/ap
   if (jobsScreens() === "off") notFound();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
-  const { filter, new: openNew } = await searchParams;
+  const { filter, new: openNew, tell } = await searchParams;
   const user = await requireUser();
   let role: string;
   try {
@@ -40,11 +42,25 @@ export default async function JobsRoute({ params, searchParams }: PageProps<"/ap
   }
   const lang = await getLang();
   const words = wordsFor(lang, ["jobs."]);
-  const jobs = await readJobs(user.accessToken, tenantId);
   const owns = role === "owner" || role === "admin";
+  const base = `/app/tenants/${tenantId}`;
+  // "Tell your assistant what to do" (TELL_SCREENS; `?tell=1`): the job in your own words, a draft as plain fields, Turn it on. Owner and Admin; with the flag off the address is the plain Jobs page.
+  if (tell === "1" && tellScreens() !== "off" && owns) {
+    return (
+      <main className={pageMain} lang={lang}>
+        <Link href={`${base}/jobs`} prefetch={false} className="mb-2 inline-flex min-h-11 items-center text-[15px] font-semibold text-muted no-underline">
+          {words["jobs.tell.back"]}
+        </Link>
+        <PageTop title={words["jobs.tell.title"] ?? "Tell your assistant what to do"} sub={words["jobs.tell.sub"]} />
+        <div className="mt-5">
+          <TellAssistant words={words} base={base} actions={{ describe: describeAction.bind(null, tenantId), turnOn: turnOnAction.bind(null, tenantId) }} />
+        </div>
+      </main>
+    );
+  }
+  const jobs = await readJobs(user.accessToken, tenantId);
   // the empty page offers the business type's suggested jobs (Owner and Admin start them; the others see no empty-state offer)
   const suggestions = jobs && jobs.length === 0 && owns ? ((await listSuggestions(user.accessToken, tenantId, (await readPackCached(user.accessToken, tenantId).catch(() => null))?.modules ?? null))?.items ?? []) : [];
-  const base = `/app/tenants/${tenantId}`;
   // the New job sheet (Owner and Admin): its ideas are read here only when the page needs them at once (no jobs yet: three live cards; `?new=1`: the sheet is open); otherwise the sheet asks when it is opened
   const sheet: JobsSheet | null = owns
     ? {
@@ -63,7 +79,7 @@ export default async function JobsRoute({ params, searchParams }: PageProps<"/ap
         </p>
       ) : null}
       {jobs ? (
-        <JobsList jobs={jobs} filter={f} words={words} base={base} actions={owns ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} suggestions={suggestions} suggestionActions={owns ? { start: startSuggestionAction.bind(null, tenantId) } : null} sheet={sheet ?? { actions: null, load: null, open: false }} />
+        <JobsList jobs={jobs} filter={f} words={words} base={base} actions={owns ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} suggestions={suggestions} suggestionActions={owns ? { start: startSuggestionAction.bind(null, tenantId) } : null} sheet={sheet ?? { actions: null, load: null, open: false }} tellHref={owns && tellScreens() !== "off" ? `${base}/jobs?tell=1` : null} />
       ) : (
         <section data-part="jobs-na" className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 md:p-6">
           <p className="m-0 text-ink">{words["jobs.page.na"]}</p>
