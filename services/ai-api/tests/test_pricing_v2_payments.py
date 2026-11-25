@@ -237,6 +237,22 @@ def test_an_order_paid_event_is_signed_mapped_and_settles_once_for_the_pricing_m
     assert set(repo.tokens) == {"hook-token"}, "every system call used the billing webhook's own account, never the scheduler's"
 
 
+def test_the_signed_webhook_settles_an_order_even_when_there_is_no_connectors_runtime() -> None:
+    """Found on the local smoke (25 Nov 2026): the route asked for the connectors runtime first and answered 404 where there is none (production has none); billing v2 never needs it."""
+    from types import SimpleNamespace
+
+    repo = PayRepo()
+    provider = razorpay()
+    repo.orders["order_NOCONN1"] = {"purpose": "topup", "base": 100000, "total": 118000}
+    hook = SimpleNamespace(token=lambda: "hook-token")
+    client, _ = make_client(pricing=PricingService(repo, provider), billing=SimpleNamespace(provider=provider, apply=lambda *a: None), billing_webhook=hook)
+    doc = {"event": "order.paid", "payload": {"order": {"entity": {"id": "order_NOCONN1", "amount_paid": 118000, "notes": {"tenant_id": str(TENANT_A.id), "purpose": "topup"}}}, "payment": {"entity": {"id": "pay_NOCONN1"}}}}
+    raw = json.dumps(doc).encode()
+    headers = {"x-razorpay-signature": hmac.new(HOOK.encode(), raw, hashlib.sha256).hexdigest(), "x-razorpay-event-id": "evt_nc"}
+    assert client.post("/v1/webhooks/razorpay-billing", content=raw, headers=headers).status_code == 200
+    assert repo.b["balance_paise"] == 155000 + 100000
+
+
 # ------------------------------------------------------------------------------------------------ the v1 trial is closed while PRICING_V2 is on
 def test_the_v1_trial_topups_and_upgrade_are_closed_when_the_new_pricing_is_on() -> None:
     client, _ = world()

@@ -9,6 +9,8 @@ while IFS= read -r line; do   # the declared staging settings (plain values; bas
   case "$line" in ''|'#'*) ;; *=*) export "$line" ;; esac
 done < deploy/settings/staging/api.env
 set -a
+# the declared file says `@env:SUPABASE_PUBLISHABLE_KEY` (the deploy fills it in): the staging project's public key, from the Supabase CLI
+SUPABASE_PUBLISHABLE_KEY="$(supabase projects api-keys --project-ref uiallwgywitryxatcqxf --agent no -o json | python3 -c 'import sys,json; print(next(k["api_key"] for k in json.load(sys.stdin) if k.get("type")=="publishable"))')"
 while IFS= read -r line; do   # every secret the staging API declares (deploy/settings/staging/api.secrets), into this process only; one that cannot be read is skipped
   case "$line" in ''|'#'*) continue ;; esac
   name="${line%%=*}"; ref="${line#*=}"; ref="${ref%%:*}"
