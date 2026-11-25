@@ -25,7 +25,7 @@ SIGNUP_OPEN=true SIGNUP_PHONE_SENDER=fake SIGNUP_FAKE_CODE_ECHO=true     # the s
 WHAT_YOU_SELL_LISTS=true PRICING_V2=true JOBS=on JOBS_GET_PAID=on ADMIN_CONSOLE=true
 CONTACT_FORM=true CAPTCHA_PROVIDER=none
 BILLING_CHARGE_CALLS=true CALL_COORDINATION=true
-WEBHOOKS_OUT=on WORKSPACE_SECRETS=fake DEVELOPER_API=test             # workspace keys live in memory; nothing reaches Secret Manager
+WEBHOOKS_OUT=on CRM_PUSH=on INDIAMART_PULL=on WORKSPACE_SECRETS=fake DEVELOPER_API=test             # workspace keys live in memory; nothing reaches Secret Manager
 PHONE_PICKER=true KYC_PER_CLIENT=true KYC_RETURN_URL=https://app.local.invalid/app/phone/kyc-return
 # the fake VoiceLink (scripts/fake_voicelink.py, started below): no real client, number or purchase
 VOICELINK_USERNAME=fake VOICELINK_PASSWORD=fake VOICELINK_API_BASE="http://127.0.0.1:${FAKE_VOICELINK_PORT:-8099}" PICKER_CLIENT_ID=1 PICKER_BOT_ID=1
