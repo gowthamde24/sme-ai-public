@@ -36,17 +36,17 @@ export function ImportTable({ rows, added, file, cut, t, busy, progress, onRows,
       {cut ? <p className="m-0 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink">{t("jobs.sell.imp.cut")}</p> : null}
       <ul data-part="import-rows" className="m-0 flex max-h-[52dvh] list-none flex-col divide-y divide-line overflow-y-auto rounded-2xl border border-line bg-surface p-0 md:max-h-[58dvh]">
         {rows.map((r, i) => (
-          <li key={r.id} data-row={r.status} className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1.5 px-3 py-2.5 md:grid-cols-[minmax(0,1fr)_9rem_minmax(0,12rem)_auto] ${r.status === "duplicate" ? "opacity-60" : ""}`}>
-            <input value={r.name} onChange={(e) => set(r.id, { name: e.target.value })} aria-label={t("jobs.sell.imp.name_of", { n: i + 1 })} placeholder={t("jobs.sell.imp.col.name")} maxLength={120} disabled={busy} className={`${field} col-span-2 md:col-span-1`} />
-            <label className="relative col-start-1 md:col-start-auto">
+          <li key={r.id} data-row={r.status} className={`grid grid-cols-[minmax(0,1fr)_7.25rem] items-center gap-x-2 gap-y-0.5 px-3 py-2 md:grid-cols-[minmax(0,1fr)_9rem_minmax(0,12rem)_auto] md:gap-y-0 ${r.status === "duplicate" ? "opacity-60" : ""}`}>
+            <input value={r.name} onChange={(e) => set(r.id, { name: e.target.value })} aria-label={t("jobs.sell.imp.name_of", { n: i + 1 })} placeholder={t("jobs.sell.imp.col.name")} maxLength={120} disabled={busy} className={field} />
+            <label className="relative">
               <span aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-muted">₹</span>
               <input value={r.priceText.replace(/^\s*(₹|rs\.?|inr)\s*/i, "")} onChange={(e) => set(r.id, { priceText: e.target.value })} aria-label={t("jobs.sell.imp.price_of", { n: i + 1 })} inputMode="decimal" maxLength={20} disabled={busy} className={`${field} pl-7`} />
             </label>
-            <span data-part="row-status" className={`order-last col-span-2 flex items-center gap-1.5 text-[14px] font-semibold leading-snug md:order-none md:col-span-1 ${TONE[r.status]}`}>
+            <span data-part="row-status" className={`col-start-1 row-start-2 flex items-center gap-1.5 text-[14px] font-semibold leading-snug md:col-start-auto md:row-start-auto ${TONE[r.status]}`}>
               {r.status === "ok" ? <Check aria-hidden="true" className="size-4 shrink-0" /> : null}
               {t(`jobs.sell.imp.s.${r.status}`)}
             </span>
-            <button type="button" aria-label={t("jobs.sell.imp.remove", { n: i + 1 })} disabled={busy} onClick={() => onRows(restatus(rows.filter((x) => x.id !== r.id), added))} className="col-start-2 row-start-2 grid size-11 place-items-center rounded-full text-muted hover:bg-surface-2 md:col-start-auto md:row-start-auto">
+            <button type="button" aria-label={t("jobs.sell.imp.remove", { n: i + 1 })} disabled={busy} onClick={() => onRows(restatus(rows.filter((x) => x.id !== r.id), added))} className="col-start-2 row-start-2 grid size-11 place-items-center justify-self-end rounded-full text-muted hover:bg-surface-2 md:col-start-auto md:row-start-auto">
               <X aria-hidden="true" className="size-4" />
             </button>
           </li>
