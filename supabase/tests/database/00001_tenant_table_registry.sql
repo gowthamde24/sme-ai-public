@@ -597,6 +597,14 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with e as (insert into public.webhook_endpoints (tenant_id, url, events, secret_last4, created_by) values (%1$L, 'https://hooks.example.com/generic', array['lead.created'], 'wxyz', %5$L) returning id)
      insert into public.webhook_deliveries (id, tenant_id, endpoint_id, event_id, event, subject_kind) select %2$L, %1$L, e.id, gen_random_uuid(), 'test.ping', 'test' from e$$,
    'status = status', $$delete from public.webhook_deliveries where id = %2$L$$, false),
+  -- results into a business's own CRM or sheet (migration 20261231992330): written only by crm_connection_* (Owner or Admin) and, for the log, by the queueing function and the worker's crm_delivery_record
+  ('crm_connections',
+   $$insert into public.crm_connections (id, tenant_id, type, events, created_by) values (%2$L, %1$L, 'hubspot', array['lead.created'], %5$L)$$,
+   'active = active', $$delete from public.crm_connections where id = %2$L$$, true),
+  ('crm_deliveries',
+   $$with e as (insert into public.crm_connections (tenant_id, type, events, created_by) values (%1$L, 'hubspot', array['lead.created'], %5$L) returning id)
+     insert into public.crm_deliveries (id, tenant_id, connection_id, event_id, event, subject_kind, subject_id, dedupe_key) select %2$L, %1$L, e.id, gen_random_uuid(), 'lead.created', 'lead', gen_random_uuid(), 'lead.created:' || gen_random_uuid()::text from e$$,
+   'status = status', $$delete from public.crm_deliveries where id = %2$L$$, false),
   -- a workspace's own switch per helper (migration 20261231170000): written only by agent_switch_set
   ('tenant_agent_switches',
    $$insert into public.tenant_agent_switches (id, tenant_id, agent_name, enabled, updated_by) values (%2$L, %1$L, 'research', false, %5$L) on conflict (tenant_id, agent_name) do update set id = excluded.id$$,
@@ -1008,6 +1016,10 @@ select t, r, s, i, u, d from (values
   ('webhook_endpoints', 'sales', false, false, false, false), ('webhook_endpoints', 'viewer', false, false, false, false),
   ('webhook_deliveries', 'owner', true, false, false, false), ('webhook_deliveries', 'admin', true, false, false, false),
   ('webhook_deliveries', 'sales', false, false, false, false), ('webhook_deliveries', 'viewer', false, false, false, false),
+  ('crm_connections', 'owner', true, false, false, false), ('crm_connections', 'admin', true, false, false, false),
+  ('crm_connections', 'sales', false, false, false, false), ('crm_connections', 'viewer', false, false, false, false),
+  ('crm_deliveries', 'owner', true, false, false, false), ('crm_deliveries', 'admin', true, false, false, false),
+  ('crm_deliveries', 'sales', false, false, false, false), ('crm_deliveries', 'viewer', false, false, false, false),
   ('tenant_agent_switches', 'owner', true, false, false, false), ('tenant_agent_switches', 'admin', true, false, false, false),
   ('tenant_agent_switches', 'sales', false, false, false, false), ('tenant_agent_switches', 'viewer', false, false, false, false),
   ('ai_team_standups', 'owner', true, false, false, false), ('ai_team_standups', 'admin', true, false, false, false),

@@ -238,6 +238,9 @@ class Runtime:
     # outbound webhooks (app/webhooks_out.WebhooksOut)
     # None: WEBHOOKS_OUT=off, every route answers 404
     webhooks_out: Any = None
+    # results into a business's own CRM or sheet (app/crm_push.CrmPush)
+    # None: CRM_PUSH=off, every route answers 404
+    crm_push: Any = None
     # Jobs (app/jobs): the flags and the pack files; None: JOBS=off, every /jobs route answers 404
     jobs: JobsRuntime | None = None
     calls: CallsService | None = None

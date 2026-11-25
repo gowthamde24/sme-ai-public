@@ -46,7 +46,7 @@ class Target(_Out):
     """Where "Open" goes for an item: a quote, a lead (its follow-ups), an enquiry, an order, a message held for approval or a call request."""
 
     # material_quote: the building-materials quote; campaign: a message campaign; fees: the school's fee list (the id is the workspace's)
-    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "billing", "material_quote", "campaign", "fees", "phone_call", "message", "calls", "price_list"]
+    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "billing", "material_quote", "campaign", "fees", "phone_call", "message", "calls", "price_list", "connectors"]
     id: uuid.UUID
 
 
@@ -79,6 +79,8 @@ class NeedsYouItem(_Out):
         "phone_needs_prices",
         # 24 Nov 2026 (migration 20261231992210): the call balance is under about 4 minutes of calls and no included minutes are left; the item opens the top-up page (target billing)
         "credits_low",
+        # 25 Nov 2026 (migration 20261231992330): a connected CRM or sheet gave up on a result; the item opens Connectors
+        "crm_push_failing",
     ]
     id: uuid.UUID
     customer: str
