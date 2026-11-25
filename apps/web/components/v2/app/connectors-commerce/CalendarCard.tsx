@@ -13,7 +13,7 @@ const NAMES: Record<CalendarKind, string> = { calendly: "Calendly", calcom: "Cal
 
 /**
  * A calendar (docs/contracts/commerce-notify.md section D). Calendly and Cal.com: a booking made on the owner's own page arrives here and becomes a visit (and a lead, ask-first unless the owner names a consent question); Outlook: the
- * owner's own calendar, with its busy times blocking our slots. Outlook says "Needs setup by us" until Stack19 has registered its Microsoft app. A token typed here is sent once and cleared; Cal.com's address and secret are shown once.
+ * owner's own calendar, with its busy times blocking our slots. Outlook says "Needs setup by us" until we have registered our Microsoft app. A token typed here is sent once and cleared; Cal.com's address and secret are shown once.
  */
 export function CalendarCard({ calendar, words, actions, readOnly, open, onToggle }: { calendar: Calendar; words: Words; actions: CommerceActions; readOnly: boolean; open: boolean; onToggle: () => void }) {
   const t = makeT(words);

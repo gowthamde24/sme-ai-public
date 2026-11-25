@@ -134882,10 +134882,10 @@
   }
  },
  "cn.shop.shopify.step.1": {
-  "en": "In Shopify, open Settings, then Apps, and make an app for Stack19.",
-  "te": "Shopify లో Settings, తర్వాత Apps తెరిచి, Stack19 కోసం ఒక యాప్ చేయండి.",
-  "hi": "Shopify में Settings, फिर Apps खोलें और Stack19 के लिए एक ऐप बनाएँ।",
-  "kn": "Shopify ನಲ್ಲಿ Settings, ನಂತರ Apps ತೆರೆದು Stack19 ಗಾಗಿ ಒಂದು ಆ್ಯಪ್ ಮಾಡಿ.",
+  "en": "In Shopify, open Settings, then Apps, and make an app for {brand}.",
+  "te": "Shopify లో Settings, తర్వాత Apps తెరిచి, {brand} కోసం ఒక యాప్ చేయండి.",
+  "hi": "Shopify में Settings, फिर Apps खोलें और {brand} के लिए एक ऐप बनाएँ।",
+  "kn": "Shopify ನಲ್ಲಿ Settings, ನಂತರ Apps ತೆರೆದು {brand} ಗಾಗಿ ಒಂದು ಆ್ಯಪ್ ಮಾಡಿ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -136895,10 +136895,10 @@
   }
  },
  "cn.reason.public_address_missing": {
-  "en": "Stack19's public address is not set up yet, so a store cannot send us events. We are on it.",
-  "te": "Stack19 పబ్లిక్ అడ్రస్ ఇంకా సెటప్ కాలేదు, కాబట్టి స్టోర్ మాకు ఈవెంట్లు పంపలేదు. మేము చూస్తున్నాం.",
-  "hi": "Stack19 का सार्वजनिक पता अभी सेट नहीं है, इसलिए स्टोर हमें इवेंट नहीं भेज सकता। हम देख रहे हैं।",
-  "kn": "Stack19 ಸಾರ್ವಜನಿಕ ವಿಳಾಸ ಇನ್ನೂ ಸೆಟ್ ಆಗಿಲ್ಲ, ಹಾಗಾಗಿ ಸ್ಟೋರ್ ನಮಗೆ ಈವೆಂಟ್ ಕಳಿಸಲಾಗದು. ನಾವು ನೋಡುತ್ತಿದ್ದೇವೆ.",
+  "en": "{brand}'s public address is not set up yet, so a store cannot send us events. We are on it.",
+  "te": "{brand} పబ్లిక్ అడ్రస్ ఇంకా సెటప్ కాలేదు, కాబట్టి స్టోర్ మాకు ఈవెంట్లు పంపలేదు. మేము చూస్తున్నాం.",
+  "hi": "{brand} का सार्वजनिक पता अभी सेट नहीं है, इसलिए स्टोर हमें इवेंट नहीं भेज सकता। हम देख रहे हैं।",
+  "kn": "{brand} ಸಾರ್ವಜನಿಕ ವಿಳಾಸ ಇನ್ನೂ ಸೆಟ್ ಆಗಿಲ್ಲ, ಹಾಗಾಗಿ ಸ್ಟೋರ್ ನಮಗೆ ಈವೆಂಟ್ ಕಳಿಸಲಾಗದು. ನಾವು ನೋಡುತ್ತಿದ್ದೇವೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -136939,10 +136939,10 @@
   }
  },
  "cn.reason.calendar_no_public_address": {
-  "en": "Stack19's public address is not set up yet, so a calendar cannot send us bookings. We are on it.",
-  "te": "Stack19 పబ్లిక్ అడ్రస్ ఇంకా సెటప్ కాలేదు, కాబట్టి క్యాలెండర్ మాకు బుకింగ్‌లు పంపలేదు. మేము చూస్తున్నాం.",
-  "hi": "Stack19 का सार्वजनिक पता अभी सेट नहीं है, इसलिए कैलेंडर हमें बुकिंग नहीं भेज सकता। हम देख रहे हैं।",
-  "kn": "Stack19 ಸಾರ್ವಜನಿಕ ವಿಳಾಸ ಇನ್ನೂ ಸೆಟ್ ಆಗಿಲ್ಲ, ಹಾಗಾಗಿ ಕ್ಯಾಲೆಂಡರ್ ನಮಗೆ ಬುಕಿಂಗ್ ಕಳಿಸಲಾಗದು. ನಾವು ನೋಡುತ್ತಿದ್ದೇವೆ.",
+  "en": "{brand}'s public address is not set up yet, so a calendar cannot send us bookings. We are on it.",
+  "te": "{brand} పబ్లిక్ అడ్రస్ ఇంకా సెటప్ కాలేదు, కాబట్టి క్యాలెండర్ మాకు బుకింగ్‌లు పంపలేదు. మేము చూస్తున్నాం.",
+  "hi": "{brand} का सार्वजनिक पता अभी सेट नहीं है, इसलिए कैलेंडर हमें बुकिंग नहीं भेज सकता। हम देख रहे हैं।",
+  "kn": "{brand} ಸಾರ್ವಜನಿಕ ವಿಳಾಸ ಇನ್ನೂ ಸೆಟ್ ಆಗಿಲ್ಲ, ಹಾಗಾಗಿ ಕ್ಯಾಲೆಂಡರ್ ನಮಗೆ ಬುಕಿಂಗ್ ಕಳಿಸಲಾಗದು. ನಾವು ನೋಡುತ್ತಿದ್ದೇವೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
