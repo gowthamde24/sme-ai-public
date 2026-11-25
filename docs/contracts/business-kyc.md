@@ -17,18 +17,39 @@ Roles: Owner and Admin read; the Owner writes.
 * `POST .../business/submit` -> `submitted`; 422 `missing_documents` with `missing: ["PAN Card", ...]`; 409 `stuck` (our team has been told; nothing is lost).
 Refusals are `{ error: { code: "kyc_refused" | "kyc_unavailable", reason, message, ... } }`; 503 `kyc_unavailable` when VoiceLink does not answer.
 
-## The number picker: buy first, verify after (25 Nov 2026, the planner's decision)
-With `KYC_PER_CLIENT` on, `POST /numbers/claim` (Owner + second factor):
-1. makes the business's own VoiceLink client if it has none (the account details are the signed-in Owner's e-mail and the business name; account type and the rest of the business details are collected later, on the verify page), buys the number from our wallet for that client, attaches it with calls OFF and answers 201 `{number, display, type, state}` with **`state: "kyc_pending"`** until the business is verified; then `ready`.
-2. `kyc_pending` means: the number cannot place or take real calls (we enforce this ourselves, whatever VoiceLink allows): a call TO it is refused as "not active yet" (the caller is not answered by the assistant; the Owner sees a refused call); the Owner placing a call from it gets 409 `call_not_allowed` with `reason: "kyc_pending"`.
-3. If VoiceLink refuses to buy because the client's KYC is pending, nothing is paid and the answer is **409 `numbers_unavailable` with `reason: "kyc_required"`** (send the Owner to the verify page, which is `GET/POST /phone-kyc/business/...` above). If it was already paid and VoiceLink only refuses to MAP the number, the number is kept, our team is told, and the state stays `kyc_pending`. If the client cannot be made at all (for example the Owner's e-mail is already a VoiceLink user) the answer is the same 409 `kyc_required`.
-4. When VoiceLink approves the business, the worker marks it verified within a few minutes (the Owner does not have to open anything): `GET /numbers` then shows the number as `calls_off` (the Owner switches calls on) or `ready`.
-Document upload for the verify page is `POST /phone-kyc/business/documents` (JSON with base64); the steps and their words are above.
+## The number picker: verify first, then buy (26 Nov 2026, the owner's decision: the ONLY path for a new number)
+With `KYC_PER_CLIENT` on, `POST /numbers/claim` (Owner + second factor) buys a number only for a workspace whose own VoiceLink client is **verified**:
+1. Not verified (no client yet, or the KYC is not complete): **`409 numbers_unavailable` with `reason: "kyc_required"`**, before anything is locked, paid or recorded. Send the Owner to the verify step (`GET/POST /phone-kyc/business/...` below). Nothing is created by a refused claim.
+2. Verified: the number is bought from our wallet for that client and attached with calls ON (`201 {state: "ready"}`; `GET /numbers` then shows `calls_on`).
+3. `kyc_pending` survives only for a number bought earlier under the old buy-first rule: `GET /numbers` shows `kyc_pending` for it until VoiceLink approves the business (the worker marks it within a few minutes), then `calls_off` or `calls_on`. A call to or from such a number is refused as before.
+4. If VoiceLink still refuses to buy for a client we consider verified, nothing is paid and the answer is the same 409 `kyc_required`; if it was already paid and only the mapping is refused, the number is kept and the team is told (state `getting_ready`).
+Document upload is `POST /phone-kyc/business/documents` (JSON with base64).
 
-## Verify first, then buy (26 Nov 2026, the planner's decision; the second path next to "buy first, verify after")
+## Field rules (26 Nov 2026), checked on the server for every KYC step
+All fields below are mandatory. A refusal is `422 kyc_fields_invalid` with `fields` (the names, sorted) and `reasons` (one closed word per field); the value is never echoed or logged.
+| Field | Rule | Reason word |
+|---|---|---|
+| `account_type` | `individual` or `business` | `account_type_required` |
+| `full_name` | 2 to 120 characters, no markup | `name_required` |
+| `business_name` | business only: 2 to 120 characters | `business_name_required` |
+| `phone` | an Indian mobile: 10 digits starting 6 to 9 (`+91`, `91`, a leading 0, spaces, dashes and brackets are accepted and removed; the 10 digits are sent) | `mobile_invalid` |
+| `billing_address` | 8 to 300 characters | `address_required` |
+| `city` | 1 to 60 characters | `city_required` |
+| `state` | one of the 28 states and 8 union territories (any case) | `state_invalid` |
+| `pincode` | 6 digits, not starting 0 | `pincode_invalid` |
+| `accept_terms` | `true` | `terms_required` |
+| `pan_number` (`/pan`) | 5 letters, 4 digits, 1 letter (any case; sent in capitals), e.g. AAAAA9999A | `pan_invalid` |
+| `holder_name` (`/pan`) | 2 to 120 characters | `name_required` |
+| `gst_number` (`/gst`) | 15 characters: state code 01 to 38, PAN shape, entity digit, `Z`, check character (any case) | `gstin_invalid` |
+| `/gst` for an individual | a GSTIN belongs to a business account | `gstin_business_only` |
+| `document_type` (`/documents`) | `pan`, `aadhaar` or `gst` | `document_type_invalid` |
+| `content_type` (`/documents`) | `image/jpeg`, `image/png` or `application/pdf` | `file_type_invalid` |
+Files: up to 10 MB (`422 kyc_refused` with `reason: file_too_big`; an unreadable or wrong-looking file is `file_unreadable`). The older `pan_invalid` / `pan_mismatch` / `gst_invalid` words of VoiceLink's own answer stay as they were (`kyc_refused` with a `reason`).
+
+## Verify first, then buy: the steps (26 Nov 2026)
 The KYC steps belong to the business's own VoiceLink client, not to a number, so they work BEFORE any number is bought: the web's "Get a phone number" flow calls them in step 3 (Verification), after step 2 ("Your calling account") has made the client.
 1. `POST /phone-kyc/business/start` (201) makes the client (what step 2 does). Then `details`, `pan`, `aadhaar` (the DigiLocker address, opened on the person's own phone), `documents`, `gst` (businesses) and `submit`, in that order, with no number in the workspace. Nothing here asks for a number.
 2. **Poll `GET /phone-kyc/business`** and read `state`: `not_started` (no client yet: call `start`), `created` / `in_progress` (steps still to do; `step` and `steps{pan,aadhaar,gst}` say which), `submitted` (VoiceLink is reviewing: keep polling about every 10 seconds; the worker also marks it when it is approved), **`verified`** (done), `stuck` (our team has been told; show `words`). Only `verified` lets the next step be a purchase that starts with calls on.
 3. `POST /numbers/claim` for a workspace whose client is **verified**: the answer is `201 {state: "ready"}` and the number is attached with **calls ON**: `GET /numbers` shows `state: "calls_on"`. No `kyc_pending` state ever appears (migration 20261231992630).
-4. A workspace that is NOT verified yet still buys (buy first, verify after): `201 {state: "kyc_pending"}`, calls off; the numbers list shows `kyc_pending` until VoiceLink approves, then `calls_off` (the Owner switches calls on) or `calls_on`.
+4. A workspace that is NOT verified yet cannot buy a new number: `409 kyc_required` (see above).
 Number states of `GET /numbers`: `getting_ready`, `kyc_pending`, `calls_off`, `calls_on`. KYC states of `GET /phone-kyc/business`: as above. What VoiceLink allows a client to do before its KYC is complete is still to be verified by the first real purchase (the order above is what the reseller documentation implies); nothing in this API needs a purchase to open the KYC. The fake VoiceLink (`scripts/fake_voicelink.py`) and `scripts/smoke_local_phone.py --order both` cover both orders.

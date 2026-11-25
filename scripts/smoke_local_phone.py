@@ -69,6 +69,10 @@ def cleanup(tenant: str, fake_base: str, number: str) -> None:
            f"n as (delete from admin.alerts where kind = 'telephony_setting' and detail like 'Number picker:%' and created_at > now() - interval '30 minutes' returning 1) "
            "select (select count(*) from a) as purchases, (select count(*) from l) as lines, (select count(*) from b) as clients, (select count(*) from n) as alerts")
     r = sb.subprocess.run(["supabase", "db", "query", "--linked", sql], cwd=sb.ROOT, capture_output=True, text=True, timeout=120)
+    try:
+        fake(fake_base, "POST", "/_fake/reset")   # the fake forgets this run's client, e-mail and purchase too
+    except OSError:
+        pass
     print("cleanup of this run's fake rows:", "done" if r.returncode == 0 else "FAILED", "|", " ".join(l.strip() for l in r.stdout.splitlines() if any(k in l for k in ("purchases", "lines", "clients", "alerts"))))
 
 
@@ -78,7 +82,6 @@ def main() -> int:
     p.add_argument("--fake-url", default="http://127.0.0.1:8099")
     p.add_argument("--pack", default="textiles")
     p.add_argument("--i-know-this-is-staging", action="store_true")
-    p.add_argument("--order", choices=("both", "buy-first", "verify-first"), default="both", help="buy first and verify after, verify first and then buy, or both (default)")
     p.add_argument("--keep-rows", action="store_true", help="leave the fake client, purchase and line this run made in the staging database (default: delete them at the end)")
     p.add_argument("--open-picker", action="store_true", help="turn the platform switch of the number picker ON on staging for this run and put it back after")
     a = p.parse_args()
@@ -88,8 +91,7 @@ def main() -> int:
     was = picker_switch(True) if a.open_picker else None
     print(("picker switch on staging was " + ("on" if was else "off") + ", turned on for this run") if was is not None else "picker switch left as it is")
     try:
-        orders = ["buy-first", "verify-first"] if a.order == "both" else [a.order]
-        return max(body(a, o) for o in orders)
+        return body(a, "verify-first")
     finally:
         if was is not None and not was:
             picker_switch(False)
@@ -97,7 +99,11 @@ def main() -> int:
 
 
 def body(a: argparse.Namespace, order: str) -> int:
-    print(f"\n=== order: {order} ===")
+    print(f"\n=== order: {order} (the only path for a new number) ===")
+    try:
+        fake(a.fake_url, "POST", "/_fake/reset")   # the fake starts from nothing
+    except OSError:
+        pass
     run = sb.Run(a.api_url, a.pack)
     say = sb.say
     t = run.t
@@ -118,6 +124,9 @@ def body(a: argparse.Namespace, order: str) -> int:
 def steps(run: sb.Run, a: argparse.Namespace, offers: list, claimed: str, verify_first: bool) -> int:   # type: ignore[type-arg]
     say = sb.say
     t = run.t
+    st0, out0 = run.call("POST", f"{t}/numbers/claim", {"number": claimed, "type": "mobile"})   # nothing is bought before the KYC: a plain 409 kyc_required
+    why0 = (out0.get("error") or {}).get("reason") if isinstance(out0, dict) and isinstance(out0.get("error"), dict) else None
+    say("PASS" if st0 == 409 and why0 == "kyc_required" else "FAIL", "1b a purchase before the KYC is refused", f"HTTP {st0}, reason {why0}")
     st, out = run.call("GET", f"{t}/phone-kyc/business")
     say("PASS" if st == 200 else "FAIL", "2 KYC status", f"HTTP {st}, state {out.get('state') if isinstance(out, dict) else '?'}")
     if isinstance(out, dict) and out.get("state") == "verified":

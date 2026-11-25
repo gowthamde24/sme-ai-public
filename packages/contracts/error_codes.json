@@ -2390,6 +2390,21 @@
       "extras": []
     },
     {
+      "code": "kyc_fields_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "business_kyc"
+      ],
+      "default_message": "Please correct the marked fields.",
+      "wait": false,
+      "extras": [
+        "fields",
+        "reasons"
+      ]
+    },
+    {
       "code": "kyc_file_too_large",
       "statuses": [
         413

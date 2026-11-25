@@ -192,6 +192,7 @@ export const API_ERROR_CODES = [
   "kyc_closed",
   "kyc_document_not_offered",
   "kyc_field_not_supported",
+  "kyc_fields_invalid",
   "kyc_file_too_large",
   "kyc_file_type",
   "kyc_file_unreadable",

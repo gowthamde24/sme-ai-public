@@ -5,7 +5,8 @@ State is in memory and starts again with the process. Behaviour that mirrors the
   * a number bought for a client whose KYC is not complete is refused at `map-did` (the "buy first, verify after" path);
   * a KYC that was submitted is approved by `FAKE_VOICELINK_APPROVE_S` seconds later (default 20), or at once by `POST /_fake/approve/{client_id}`;
   * PAN "MISMATCH" in the holder name answers `pan_match_status` 2; a GST number that is not 15 characters is refused;
-  * the number list is made from a fixed pattern, so a search by digits always finds something.
+  * the number list is made from a fixed pattern, so a search by digits always finds something;
+  * the KYC steps need only the client: no number has to be bought first (the order the planner chose, 26 Nov 2026: verify first, then buy); `POST /_fake/reset` forgets everything.
 `GET /_fake/state` shows what it holds. Run alone: `python scripts/fake_voicelink.py [port]` (default 8099).
 """
 
@@ -266,6 +267,21 @@ async def final_submit(request: Request) -> JSONResponse:
         return refuse(422, {"missing_documents": missing})
     c["submitted_at"] = time.time()
     return ok({"submitted": True})
+
+
+@app.post("/_fake/reset")
+async def reset() -> JSONResponse:
+    """Forget every client, purchase and routing (our own client 1 stays): a smoke run that deleted its staging rows starts again from nothing."""
+    with _lock:
+        for cid in [c for c in CLIENTS if c != OUR_CLIENT_ID]:
+            del CLIENTS[cid]
+        for d in DIDS.values():
+            d.update(owner=None, locked=False, client_id=None)
+        ORDERS.clear()
+        ROUTINGS.clear()
+        LEADS.clear()
+        WALLET["balance"] = 25000.0
+    return ok({"reset": True})
 
 
 @app.post("/_fake/approve/{client_id}")

@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (502)
+## Codes (503)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -208,6 +208,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `kyc_closed` | 409 | phone_kyc |  |  | That filing is closed. Start a new one with a new request id. |
 | `kyc_document_not_offered` | 409 | phone_kyc |  |  | Plivo does not take that document right now. We have asked Plivo; their support said any one of GST, Certificate of Incorporation or Udyam is accepted. |
 | `kyc_field_not_supported` | 409 | phone_kyc |  |  | Plivo asks for a detail we do not collect yet. |
+| `kyc_fields_invalid` | 422 | business_kyc |  | fields, reasons | Please correct the marked fields. |
 | `kyc_file_too_large` | 413 | phone_kyc |  |  | That file is over 5 MB. Choose a smaller PDF or photo. |
 | `kyc_file_type` | 415 | phone_kyc |  |  | That does not look like a PDF, JPG or PNG file. |
 | `kyc_file_unreadable` | 422 | phone_kyc |  |  | That file is empty. |

@@ -138,18 +138,15 @@ class NumberService:
         return [Offer(r.number, display(r.number), kind) for r in rows[:PAGE]], len(rows) > PAGE
 
     def claim(self, token: str, tenant_id: uuid.UUID, number: str, kind: str, *, email: str = "", name: str = "") -> Claimed:
-        """Buy first, verify after (KYC_PER_CLIENT): the workspace's own VoiceLink client is made now (the Owner's e-mail and the business name are the account details), the number is bought from our wallet for it
-        and attached with calls OFF. While the business is not verified the state is `kyc_pending` and we ourselves refuse real calls on it. If VoiceLink will not buy or map a number for an unverified client,
-        the answer falls back to 409 `kyc_required` (the verify page) before anything is paid, or the number is kept and the state stays `kyc_pending` when it was already paid."""
+        """Verify first, then buy (KYC_PER_CLIENT; the owner's decision of 26 Nov 2026: the only path for a NEW number). The workspace's own VoiceLink client must already be VERIFIED; otherwise 409 `kyc_required` (the verify page)
+        before anything is locked, paid or recorded. The number is bought from our wallet for that client and attached with calls ON. `kyc_pending` survives only for a number bought under the earlier buy-first rule."""
         buyer = self._buyer
-        pending = False
+        pending = False   # kept for the shape of the answer: a NEW number is never bought while the business is unverified (26 Nov 2026); only rows bought earlier can still be `kyc_pending`
         if self._kyc is not None:
-            try:
-                client_id = self._kyc.ensure_client(token, tenant_id, email, name)
-            except ApiError:
-                raise PickerBlocked("kyc_required") from None
+            client_id = self._kyc.client_for(token, tenant_id)   # the workspace's own client, only when its KYC is complete: nothing is made or bought for an unverified one
+            if client_id is None:
+                raise PickerBlocked("kyc_required")
             buyer = replace(buyer, client_id=client_id)
-            pending = not self._kyc.verified(token, tenant_id)
         claim_id = self._repo.begin(token, tenant_id, number, kind)   # every platform rule, atomically, or a closed refusal
         try:
             bought = buy(self._api, buyer, number, kind)
