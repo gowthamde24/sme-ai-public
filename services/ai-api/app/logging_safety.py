@@ -46,6 +46,7 @@ ROUTE_WORDS = frozenset(
         "business", "aadhaar", "pan", "gst", "documents", "details",   # /phone-kyc/business steps
         "describe",   # POST /jobs/describe (24 Nov)
         "guides",   # GET /lead-sources/guides (24 Nov)
+        "contact", "contact-requests",   # the Talk-to-us form and its staff read (25 Nov)
         "credits", "topup-options", "refund", "failed",   # credits top-up routes
         "phone-line", "available", "release",   # /phone-line (18 Nov)
         "reply", "assign",   # POST /admin/support/tickets/{id}/reply and /assign (14 Nov)

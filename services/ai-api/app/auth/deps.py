@@ -216,6 +216,8 @@ class Runtime:
     phone_kyc: Any = None
     # business KYC per VoiceLink client (KYC_PER_CLIENT, Model B); None unless on
     business_kyc: Any = None
+    # the public "Talk to us" form is open (CONTACT_FORM); False = the route answers 404
+    contact_form: bool = False
     # the daily allowance of model-backed helpers (migration 991300); None = no limit (tests)
     daily_cap: Any = None
     # a business's own phone number (app/phone_numbers); None unless the provider is on

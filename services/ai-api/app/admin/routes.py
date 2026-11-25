@@ -262,6 +262,12 @@ def usage_google(principal: PrincipalDep, runtime: RuntimeDep) -> GoogleUsageOut
     return _guard(lambda: _service(runtime).usage_google(principal.token))
 
 
+@router.get("/contact-requests")
+def contact_requests(principal: PrincipalDep, runtime: RuntimeDep, limit: int = 50) -> dict[str, Any]:
+    """The "Talk to us" messages (owner and support staff; the read is written to the staff log)."""
+    return _guard(lambda: _service(runtime).contact_requests(principal.token, min(max(limit, 1), 200)))
+
+
 @router.get("/alerts", response_model=AlertsOut)
 def alerts(principal: PrincipalDep, runtime: RuntimeDep, include_acknowledged: bool = False) -> AlertsOut:
     return _guard(lambda: _service(runtime).alerts(principal.token, include_acknowledged))

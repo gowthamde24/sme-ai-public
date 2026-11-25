@@ -22,9 +22,9 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 
 from app.auth.deps import PrincipalDep, Runtime, get_runtime
-from app.dpdp.models import MarketingConsentIn, ProfileIn, PublicGrievanceIn, WaitlistIn
+from app.dpdp.models import ContactIn, MarketingConsentIn, ProfileIn, PublicGrievanceIn, WaitlistIn
 from app.dpdp.runtime import ANSWER_WITHIN_DAYS, SECURITY_LOG_DAYS, DpdpRuntime
-from app.errors import ApiError
+from app.errors import ApiError, not_found
 from app.logging_safety import one_line
 
 logger = logging.getLogger("app.dpdp")
@@ -105,6 +105,23 @@ def grievance(body: PublicGrievanceIn, request: Request, runtime: RuntimeDep) ->
     # never the person's words in a log: the reference and the kind only
     logger.info("grievance received reference=%s kind=%s replayed=%s", one_line(answer.get("reference")), one_line(body.kind), replayed)
     return JSONResponse(answer, status_code=200 if replayed else 201, headers={"Cache-Control": "no-store"})
+
+
+@public_router.post("/public/contact")
+def contact(body: ContactIn, request: Request, runtime: RuntimeDep) -> JSONResponse:
+    """\"Talk to us\" (docs/contracts/contact-form.md). 404 unless CONTACT_FORM is on. The captcha and the per-address and per-contact limits are the waitlist's."""
+    if not getattr(runtime, "contact_form", False):
+        raise not_found()
+    dpdp = _dpdp(runtime)
+    privacy, terms = _versions(runtime)
+    if body.notice_version != privacy or body.terms_version != terms:
+        raise ApiError(409, "policy_version_outdated", "The terms or the privacy notice have changed. Please read them again and send the form again.")
+    dpdp.guard(address=_address(request), contact=body.email or body.phone or "", token=body.captcha_token)
+    answer = dpdp.repository.contact_submit({"p_name": body.name, "p_phone": body.phone, "p_email": body.email, "p_business_kind": body.business_kind, "p_good_time": body.good_time, "p_sells": body.sells, "p_terms_version": body.terms_version, "p_notice_version": body.notice_version})
+    if answer.get("status") == "busy":
+        raise ApiError(503, "busy", "We are getting many messages right now. Please try again a little later.")
+    logger.info("contact status=%s", one_line(answer.get("status")))
+    return JSONResponse(answer, status_code=201 if answer.get("status") == "received" else 200, headers={"Cache-Control": "no-store"})
 
 
 @public_router.post("/public/waitlist")

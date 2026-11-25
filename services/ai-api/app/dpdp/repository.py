@@ -22,6 +22,9 @@ class DpdpRepository(Protocol):
     # the public doors (the public key)
     def grievance_submit(self, args: dict[str, Any]) -> dict[str, Any]: ...
     def waitlist_join(self, args: dict[str, Any]) -> dict[str, Any]: ...
+    def contact_submit(self, args: dict[str, Any]) -> dict[str, Any]: ...
+    def contact_due(self, token: str, limit: int) -> list[dict[str, Any]]: ...
+    def contact_mark(self, token: str, item_id: uuid.UUID) -> None: ...
     # the worker (the scheduler's token)
     def intake_due(self, token: str, limit: int) -> dict[str, Any]: ...
     def intake_mark(self, token: str, kind: str, item_id: uuid.UUID, what: str) -> None: ...
@@ -59,6 +62,15 @@ class PostgrestDpdpRepository:
 
     def waitlist_join(self, args: dict[str, Any]) -> dict[str, Any]:
         return self._rpc.object(self._anon_key, "waitlist_join", args)
+
+    def contact_submit(self, args: dict[str, Any]) -> dict[str, Any]:
+        return self._rpc.object(self._anon_key, "contact_submit", args)
+
+    def contact_due(self, token: str, limit: int) -> list[dict[str, Any]]:
+        return self._rpc.array(token, "scheduler_contact_due", {"p_limit": limit})
+
+    def contact_mark(self, token: str, item_id: uuid.UUID) -> None:
+        self._rpc.call(token, "scheduler_contact_mark", {"p_id": str(item_id)})
 
     def intake_due(self, token: str, limit: int) -> dict[str, Any]:
         return self._rpc.object(token, "scheduler_public_intake_due", {"p_limit": limit})

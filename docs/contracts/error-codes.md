@@ -54,7 +54,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `billing_unavailable` | 503 | billing, credits, main, pricing |  |  | Plans and billing are not available right now. |
 | `business_profile_unavailable` | 503 | businessprofile |  |  | The business profile is not available right now. |
 | `business_type_unavailable` | 422 | main |  |  | That kind of business is not available yet. Choose one of the kinds on the sign-up page. |
-| `busy` | 503 | errors, hardening |  |  | The service is busy. Try again in a moment. |
+| `busy` | 503 | dpdp, errors, hardening |  |  | The service is busy. Try again in a moment. |
 | `calculator_inconsistent` | 500 | materials |  |  | The calculator gave an answer that could not be trusted. Nothing was stored. |
 | `calculator_unavailable` | 503 | materials |  |  | The calculator is not available right now. |
 | `call_not_allowed` | 409 | telephony |  | reason | That call is not allowed. |

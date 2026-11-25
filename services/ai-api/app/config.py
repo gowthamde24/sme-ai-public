@@ -154,6 +154,8 @@ class Settings(BaseSettings):
     # database's own switch (signup.settings.open) decides whether a credit is granted.
     # SIGNUP_PHONE_SENDER: "none" (no code can be sent), "fake" (staging, tests) or "whatsapp".
     signup_open: bool = False
+    # the "Talk to us" form of the public pages (POST /v1/public/contact): off by default
+    contact_form: bool = False
     # calls are charged to the wallet at their end and the wallet decides whether a call may
     # start (migration 991700). OFF at deploy; on only after a staging proof (test-mode wallet).
     billing_charge_calls: bool = False

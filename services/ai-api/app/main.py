@@ -647,6 +647,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         numbers=build_numbers(settings, config.rest_url, config.anon_key, business_kyc),
         business_kyc=business_kyc,
+        contact_form=settings.contact_form,
         daily_cap=_daily_cap(config),
         sell_lists=(
             ListRepository(config.rest_url, config.anon_key)

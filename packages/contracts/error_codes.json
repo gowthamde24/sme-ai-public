@@ -482,6 +482,7 @@
         503
       ],
       "areas": [
+        "dpdp",
         "errors",
         "hardening"
       ],

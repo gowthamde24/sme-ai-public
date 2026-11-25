@@ -53,3 +53,26 @@ class MarketingConsentIn(_Strict):
 
 class ProfileIn(_Strict):
     display_name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+
+
+class ContactIn(_Strict):
+    """The "Talk to us" form of the public pages (docs/contracts/contact-form.md). Consent is the terms and privacy version the person saw and agreed to."""
+
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+    phone: Annotated[str, StringConstraints(strip_whitespace=True, min_length=7, max_length=30)] | None = None
+    email: Annotated[str, StringConstraints(strip_whitespace=True, min_length=5, max_length=200)] | None = None
+    business_kind: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)] | None = None
+    good_time: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)] | None = None
+    sells: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)] | None = None
+    consent: Literal[True]
+    terms_version: Version
+    notice_version: Version
+    captcha_token: Captcha | None = None
+
+    @model_validator(mode="after")
+    def _a_way_to_reach_them(self) -> ContactIn:
+        if not self.phone and not self.email:
+            raise ValueError("a phone number or an e-mail address is needed")
+        if self.email and not _EMAIL.match(self.email):
+            raise ValueError("that e-mail address does not look right")
+        return self

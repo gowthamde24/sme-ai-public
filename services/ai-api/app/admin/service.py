@@ -86,6 +86,7 @@ class AdminRepository(Protocol):
     def usage_google(self, token: str) -> dict[str, Any]: ...
     def usage_summary(self, token: str, start: str, end: str, limit: int) -> dict[str, Any]: ...
     def alerts_list(self, token: str, include_acknowledged: bool) -> dict[str, Any]: ...
+    def contact_requests(self, token: str, limit: int) -> dict[str, Any]: ...
     def alert_ack(self, token: str, alert_id: uuid.UUID) -> dict[str, Any]: ...
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def support_set(self, token: str, tenant_id: uuid.UUID, require_ok: bool) -> dict[str, Any]: ...
@@ -163,6 +164,9 @@ class PostgrestAdminRepository:
 
     def alerts_list(self, token: str, include_acknowledged: bool) -> dict[str, Any]:
         return self._rpc.object(token, "admin_alerts_list", {"p_include_acknowledged": include_acknowledged})
+
+    def contact_requests(self, token: str, limit: int) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_contact_requests", {"p_limit": limit})
 
     def alert_ack(self, token: str, alert_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "admin_alert_ack", {"p_id": str(alert_id)})
@@ -963,6 +967,9 @@ class AdminService:
             businesses=[UsageBusinessOut.model_validate({**x, "minutes": float(x.get("minutes") or 0), "lead_searches": int(x.get("lead_searches") or 0), "ai_tokens": int(x.get("ai_tokens") or 0),
                                                          "by_provider": {k: int(v) for k, v in (x.get("by_provider") or {}).items()}}) for x in d["businesses"]],
         )
+
+    def contact_requests(self, token: str, limit: int) -> dict[str, Any]:
+        return self._repo.contact_requests(token, limit)
 
     def alerts(self, token: str, include_acknowledged: bool) -> AlertsOut:
         return AlertsOut(items=[AlertOut.model_validate(x) for x in self._repo.alerts_list(token, include_acknowledged)["items"]])
