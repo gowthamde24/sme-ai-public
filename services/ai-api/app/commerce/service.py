@@ -38,7 +38,7 @@ SAFE_TOPICS_WOO = {"order.created", "order.updated"}
 
 
 class LeadIntake(Protocol):
-    def receive_form(self, secret: str, data: dict[str, Any]) -> None: ...
+    def receive_form(self, secret: str, data: dict[str, Any]) -> object: ...   # (the lead source service answers a lead id or None; the runner does not read it)
 
 
 def address_hash(token: str) -> str:

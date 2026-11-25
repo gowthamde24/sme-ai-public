@@ -129,7 +129,7 @@ def test_pan_gstin_and_document_rules_on_the_routes_and_no_identity_number_comes
         assert ok.status_code == 200 and stub.calls[-1] == ("pan", (MADE_UP_PAN, "Test Person")) and MADE_UP_PAN not in ok.text
         bad_gst = client.post(f"{T}/gst", json={"gst_number": "36AAAAA9999A1X5"}, headers=auth("a_owner"))
         assert bad_gst.json()["error"]["reasons"] == {"gst_number": "gstin_invalid"} and "36AAAAA9999A1X5" not in bad_gst.text
-        assert client.post(f"{T}/gst", json={"gst_number": MADE_UP_GSTIN}, headers=auth("a_owner")).status_code == 200 and stub.calls[-1] == ("gst", (MADE_UP_GSTIN,))
+        assert client.post(f"{T}/gst", json={"gst_number": MADE_UP_GSTIN}, headers=auth("a_owner")).status_code == 200 and list(stub.calls)[-1] == ("gst", (MADE_UP_GSTIN,))
     assert MADE_UP_PAN not in caplog.text and MADE_UP_GSTIN not in caplog.text
     individual, _ = world("individual")
     refused = individual.post(f"{T}/gst", json={"gst_number": MADE_UP_GSTIN}, headers=auth("a_owner"))

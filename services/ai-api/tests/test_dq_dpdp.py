@@ -537,5 +537,5 @@ def test_with_turnstile_the_token_is_checked_once_by_the_verify_route_and_the_fo
     assert calls == ["good-token-1234", "bad-token-5678"]
     assert "good-token-1234" not in caplog.text and "bad-token-5678" not in caplog.text, "the token is never logged"
     assert client.post("/v1/privacy/grievance", json=GOOD_GRIEVANCE).status_code == 201, "a form with no token passes the API's own guard when the web does the check"
-    plain = build_dpdp(Settings(captcha_provider="fake"), "http://rest.invalid", "anon")  # type: ignore[arg-type]
+    plain = build_dpdp(Settings(captcha_provider="fake"), "http://rest.invalid", "anon")
     assert isinstance(plain.captcha, FakeCaptcha) and plain.checker is not plain.captcha or isinstance(plain.checker, FakeCaptcha), "with fake the forms still check themselves"

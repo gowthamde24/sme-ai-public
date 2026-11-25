@@ -25,7 +25,7 @@ class Fake:
         path = request.url.path.replace("/api/v1", "")
         if path == "/auth/login":
             return httpx.Response(200, json={"data": {"access_token": "t"}})
-        body = json.loads(request.content) if request.content else None
+        body: Any = json.loads(request.content) if request.content else None
         self.calls.append((request.method, path, body))
         if self.down:
             return httpx.Response(503, json={})
