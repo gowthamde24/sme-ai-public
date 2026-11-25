@@ -112,6 +112,14 @@ def build(raw: dict[str, Any] | None, *, now: datetime | None = None) -> FactPac
         facts.append({"kind": "hours", "text": text})
     if holidays:
         facts.append({"kind": "hours", "text": "The business is closed on these dates (holidays): " + ", ".join(holidays[:12]) + "."})
+    if isinstance(raw.get("booking_fact"), dict) and raw["booking_fact"].get("text"):   # the owner's own booking page (app/calendar_in/links.py), only when they turned sharing on
+        facts.append({"kind": "booking", "text": str(raw["booking_fact"]["text"])})
+    if raw.get("orders"):   # the caller's own store orders (app/commerce/facts.py), only when the database function returned some
+        from app.commerce.facts import order_facts
+
+        order_lines, order_amounts = order_facts(raw["orders"])
+        facts += order_lines
+        allowed |= order_amounts
     price_lines: list[tuple[str, int]] = []
     for row in raw.get("prices") or []:
         try:

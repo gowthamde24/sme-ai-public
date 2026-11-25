@@ -119,8 +119,29 @@ class InboundStore:
         out = self._call("phone_fact_pack", {"p_tenant_id": str(tenant_id)})
         pack = out if isinstance(out, dict) else None
         if pack is not None:
+            from app.calendar_in import (
+                links as booking_links,  # CALENDAR_IN: the owner's own booking page, only when they turned sharing on
+            )
+
+            if booking_links.PROVIDER is not None:
+                try:
+                    fact = booking_links.PROVIDER(tenant_id)
+                except Exception:  # noqa: BLE001 - a call without the link is the call as before
+                    fact = None
+                if fact:
+                    pack["booking_fact"] = fact
             self._packs[tenant_id] = (now, dict(pack))
         return pack
+
+    def order_facts(self, tenant_id: uuid.UUID, caller: str | None) -> list[dict[str, Any]]:
+        """The caller's OWN store orders (at most three; migration 992340), for the call's fact pack. Only the caller's own number is looked up; [] when none, when the number is not a mobile or on any failure."""
+        from app.lead_sources.phones import check_phone
+
+        phone = check_phone(caller).stored if caller else None
+        if not phone:
+            return []
+        out = self._call("commerce_order_facts", {"p_tenant_id": str(tenant_id), "p_phone": phone})
+        return [r for r in out if isinstance(r, dict)] if isinstance(out, list) else []
 
     def talk_training(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """The Owner's "How I talk to customers" for this call (the scheduler account reads it); None when nothing is saved."""

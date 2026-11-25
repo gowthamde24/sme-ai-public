@@ -28,6 +28,7 @@ from app.browser_voice.limits import Ledger
 from app.browser_voice.routes import OWNER_SILENCE_MS, stt_mode_for
 from app.browser_voice.runtime import BrowserVoice
 from app.browser_voice.session import Parts
+from app.commerce import facts as commerce_facts
 from app.connectors.phone import normalise, normalise_line
 from app.conversation.fallback import FallbackTts
 from app.conversation.pronounce import default_pronunciations
@@ -306,10 +307,10 @@ async def _prepare(service: InboundService, bv: Any, start: Any, outbound: Outbo
     found = await inbound.find_line_quick(service.store.line_find, line_no)
     if not found or not found.get("tenant_id"):
         return None
-    return await _prepare_for(service, bv, uuid.UUID(str(found["tenant_id"])), business=found.get("business"), assistant=found.get("assistant"), outbound=outbound)
+    return await _prepare_for(service, bv, uuid.UUID(str(found["tenant_id"])), business=found.get("business"), assistant=found.get("assistant"), outbound=outbound, caller=getattr(start, "from_number", None))
 
 
-async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, business: str | None = None, assistant: str | None = None, outbound: OutboundCall | None = None) -> Prepared:
+async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, business: str | None = None, assistant: str | None = None, outbound: OutboundCall | None = None, caller: str | None = None) -> Prepared:
     """`business` and `assistant` are the workspace's own names (the line lookup; owner, 6 Nov 2026); without them the deployment's TELEPHONY_INBOUND_BUSINESS and the default assistant name."""
     language = outbound.language if outbound else service.language
     business = (business or "").strip() or service.business
@@ -325,6 +326,14 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             return default
 
     training, slots, corrections, sound_row, pack_raw = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("call_sound", None), read("fact_pack", None))
+    if commerce_facts.ENABLED and outbound is None and caller and isinstance(pack_raw, dict):   # the caller's own store orders (COMMERCE=on), looked up by their number
+        try:
+            orders = await asyncio.to_thread(service.store.order_facts, tenant, caller)
+        except Exception as exc:  # noqa: BLE001 - a call without order facts is the call as before
+            log.warning("exotel_inbound order_facts_unreadable %s", exc.__class__.__name__)
+            orders = []
+        if orders:
+            pack_raw = {**pack_raw, "orders": orders}
     stored = Stored.from_call_row(sound_row if isinstance(sound_row, dict) else None, training if isinstance(training, dict) else None)   # the workspace's voice, tone and speed: the SAME values and the same function as the previews (app/conversation/sound.py)
     slots = list(slots or [])
     labels = tuple(visit_label(sl) for sl in slots)

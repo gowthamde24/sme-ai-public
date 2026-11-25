@@ -39,6 +39,8 @@ ROUTE_WORDS = frozenset(
         "staff",   # GET /visits/staff, PUT /visits/staff/{id} (14 Nov)
         "practice",   # POST /talk-training/practice (app v4)
         "integrations", "google-calendar", "callback", "sync-now",   # Google Calendar (slice 4)
+        "calendars", "calendly", "calcom", "outlook",   # calendars in (section D)
+        "bookings", "needs-person",   # GET /calendars/bookings/needs-person
         "goodwill-credit", "unmask",   # POST /admin/businesses/{id}/goodwill-credit (14 Nov)
         "canned", "notes", "money", "summary", "failed-payments", "invoices.csv",   # admin 14 Nov
         "call-limit", "ask-consent", "ask-first", "dismiss", "rows", "unsend",   # tasks, imports
@@ -47,6 +49,8 @@ ROUTE_WORDS = frozenset(
         "business", "aadhaar", "pan", "gst", "documents", "details",   # /phone-kyc/business steps
         "describe",   # POST /jobs/describe (24 Nov)
         "guides",   # GET /lead-sources/guides (24 Nov)
+        "form-templates", "jotform",   # lead-form templates (25 Nov)
+        "commerce", "shopify", "woocommerce", "connections",   # Shopify, WooCommerce (B)
         "contact", "contact-requests",   # the Talk-to-us form and its staff read (25 Nov)
         "by-email", "wallet-debit", "webhook-failures",   # staff support routes (25 Nov)
         "credits", "topup-options", "refund", "failed",   # credits top-up routes
@@ -198,6 +202,7 @@ ROUTE_WORDS = frozenset(
         "scheduler", "draft-message",
         "voice", "research", "places", "business-profile", "ready", "metrics",
         # job BZ: connectors and webhooks (a secret in an address is never a word: always redacted)
+        "channels",   # /notify/channels/{kind}/test (notifications out)
         "connectors", "payment-links", "send", "record",
         "crm", "retry",   # results into a business's own CRM or sheet (25 Nov 2026)
         "missed-calls", "handle", "connect",

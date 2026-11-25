@@ -24,7 +24,7 @@ from typing import Any, Protocol
 from app.errors import ApiError, not_found
 from app.integrations.sheet import MAX_UPLOAD_BYTES, Grid, SheetRefused, load_grid
 from app.lead_sources import cards as cards_mod
-from app.lead_sources import consent_tick, indiamart_push, portals, reading
+from app.lead_sources import consent_tick, form_templates, indiamart_push, portals, reading
 from app.lead_sources import mapping as mp
 from app.lead_sources.dnd import DndLookup
 from app.lead_sources.meta import LeadgenRef, MetaError, MetaLeadFetcher, refs_of, signature_ok
@@ -788,6 +788,7 @@ class LeadSourcesService:
     @staticmethod
     def form_row(data: dict[str, Any]) -> dict[str, Any] | None:
         """A lead from a form or a webhook body: aliases accepted, extra fields ignored, a filled honeypot = a bot (None)."""
+        data = form_templates.flatten(data)   # a form tool's own envelope (Typeform, Tally, Jotform, Webflow, Google Ads) as a flat body; untouched while LEAD_FORM_TEMPLATES is off
         lower = {str(k).lower(): v for k, v in data.items() if isinstance(k, str)}
         for k, v in data.items():   # a form plugin's own names ("your-name") are read like "your_name"
             if isinstance(k, str) and "-" in k:
@@ -866,7 +867,7 @@ class LeadSourcesService:
         return out
 
     def receive_mail(self, secret: str, mail: Any) -> str:
-        parsed = portals.parse_mail(mail.sender, mail.subject, mail.text)
+        parsed = form_templates.tradeindia_mail(mail.sender, mail.subject, mail.text) or portals.parse_mail(mail.sender, mail.subject, mail.text)   # TradeIndia's own labels first (LEAD_FORM_TEMPLATES), then the portals' reader
         if parsed is None:
             if not _TOKEN.fullmatch(secret):
                 raise not_found()

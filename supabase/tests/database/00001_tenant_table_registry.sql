@@ -571,6 +571,8 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   -- Google Calendar sync (migration 20261231800000): the busy blocks (times only; written only by scheduler_gcal_busy_replace; a client sees at most the ids, Owner and Admin).
   -- 'integrations.google_calendar_links', 'integrations.google_event_links' and 'integrations.google_calendar_states' (outside the public schema: RLS forced, no client privileges, reached only through
   -- the definer functions; the link's google_email is personal data, docs/data-inventory.md) are classified here by this note
+  -- Calendars in (migration 20261231992360): 'integrations.calendar_connections', 'integrations.calendar_bookings', 'integrations.calendar_event_links' and 'integrations.calendar_states' are outside the public schema
+  -- as well (RLS forced, no client privileges, reached only through the calendar_* and scheduler_cal_* definer functions; no personal data: ids, closed words, times; docs/data-inventory.md) and are classified here by this note
   ('calendar_busy',
    $$insert into public.calendar_busy (id, tenant_id, source, starts_at, ends_at) values (%2$L, %1$L, 'google', now() + interval '1 day', now() + interval '1 day 1 hour') on conflict (tenant_id, source, starts_at, ends_at) do update set id = excluded.id$$,
    'source = source', $$delete from public.calendar_busy where id = %2$L$$, false),
@@ -605,6 +607,26 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with e as (insert into public.crm_connections (tenant_id, type, events, created_by) values (%1$L, 'hubspot', array['lead.created'], %5$L) returning id)
      insert into public.crm_deliveries (id, tenant_id, connection_id, event_id, event, subject_kind, subject_id, dedupe_key) select %2$L, %1$L, e.id, gen_random_uuid(), 'lead.created', 'lead', gen_random_uuid(), 'lead.created:' || gen_random_uuid()::text from e$$,
    'status = status', $$delete from public.crm_deliveries where id = %2$L$$, false),
+  -- commerce (migration 20261231992340): written only by commerce_* (the Owner's or Admin's for the connection; the scheduler account's for orders and checkouts)
+  ('commerce_connections',
+   $$insert into public.commerce_connections (id, tenant_id, kind, store_label, token_hash, created_by) values (%2$L, %1$L, 'shopify', 'generic-shop.myshopify.com', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L)$$,
+   'state = state', $$delete from public.commerce_connections where id = %2$L$$, true),
+  ('commerce_orders',
+   $$with c as (insert into public.commerce_connections (tenant_id, kind, store_label, token_hash, created_by) values (%1$L, 'woocommerce', 'generic-shop.example.com', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) returning id)
+     insert into public.commerce_orders (id, tenant_id, connection_id, external_id, number) select %2$L, %1$L, c.id, 'o-1', '#1' from c$$,
+   'status = status', $$delete from public.commerce_orders where id = %2$L$$, false),
+  ('commerce_checkouts',
+   $$with c as (insert into public.commerce_connections (tenant_id, kind, store_label, token_hash, created_by) values (%1$L, 'shopify', 'generic-cart.myshopify.com', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) returning id)
+     insert into public.commerce_checkouts (id, tenant_id, connection_id, external_id, due_at) select %2$L, %1$L, c.id, 'k-1', now() from c$$,
+   'status = status', $$delete from public.commerce_checkouts where id = %2$L$$, false),
+  -- notifications out (migration 20261231992345): written only by notify_channel_* (Owner or Admin), the queueing triggers and the worker's notify_delivery_record
+  ('notify_channels',
+   $$insert into public.notify_channels (id, tenant_id, kind, last4, created_by) values (%2$L, %1$L, 'teams', 'wxyz', %5$L)$$,
+   'last4 = last4', $$delete from public.notify_channels where id = %2$L$$, true),
+  ('notify_deliveries',
+   $$with c as (insert into public.notify_channels (tenant_id, kind, last4, created_by) values (%1$L, 'slack', 'wxyz', %5$L) returning id)
+     insert into public.notify_deliveries (id, tenant_id, channel_id, event, subject_kind) select %2$L, %1$L, c.id, 'low_balance', 'balance' from c$$,
+   'status = status', $$delete from public.notify_deliveries where id = %2$L$$, false),
   -- a workspace's own switch per helper (migration 20261231170000): written only by agent_switch_set
   ('tenant_agent_switches',
    $$insert into public.tenant_agent_switches (id, tenant_id, agent_name, enabled, updated_by) values (%2$L, %1$L, 'research', false, %5$L) on conflict (tenant_id, agent_name) do update set id = excluded.id$$,
@@ -1010,6 +1032,12 @@ select t, r, s, i, u, d from (values
   ('talk_training', 'sales', false, false, false, false), ('talk_training', 'viewer', false, false, false, false),
   ('developer_api_keys', 'owner', true, false, false, false), ('developer_api_keys', 'admin', true, false, false, false),
   ('developer_api_keys', 'sales', false, false, false, false), ('developer_api_keys', 'viewer', false, false, false, false),
+  ('commerce_connections', 'owner', true, false, false, false), ('commerce_connections', 'admin', true, false, false, false),
+  ('commerce_connections', 'sales', false, false, false, false), ('commerce_connections', 'viewer', false, false, false, false),
+  ('commerce_orders', 'owner', true, false, false, false), ('commerce_orders', 'admin', true, false, false, false),
+  ('commerce_orders', 'sales', true, false, false, false), ('commerce_orders', 'viewer', false, false, false, false),
+  ('commerce_checkouts', 'owner', true, false, false, false), ('commerce_checkouts', 'admin', true, false, false, false),
+  ('commerce_checkouts', 'sales', false, false, false, false), ('commerce_checkouts', 'viewer', false, false, false, false),
   ('developer_sandbox_leads', 'owner', true, false, false, false), ('developer_sandbox_leads', 'admin', true, false, false, false),
   ('developer_sandbox_leads', 'sales', false, false, false, false), ('developer_sandbox_leads', 'viewer', false, false, false, false),
   ('webhook_endpoints', 'owner', true, false, false, false), ('webhook_endpoints', 'admin', true, false, false, false),
@@ -1020,6 +1048,10 @@ select t, r, s, i, u, d from (values
   ('crm_connections', 'sales', false, false, false, false), ('crm_connections', 'viewer', false, false, false, false),
   ('crm_deliveries', 'owner', true, false, false, false), ('crm_deliveries', 'admin', true, false, false, false),
   ('crm_deliveries', 'sales', false, false, false, false), ('crm_deliveries', 'viewer', false, false, false, false),
+  ('notify_channels', 'owner', true, false, false, false), ('notify_channels', 'admin', true, false, false, false),
+  ('notify_channels', 'sales', false, false, false, false), ('notify_channels', 'viewer', false, false, false, false),
+  ('notify_deliveries', 'owner', true, false, false, false), ('notify_deliveries', 'admin', true, false, false, false),
+  ('notify_deliveries', 'sales', false, false, false, false), ('notify_deliveries', 'viewer', false, false, false, false),
   ('tenant_agent_switches', 'owner', true, false, false, false), ('tenant_agent_switches', 'admin', true, false, false, false),
   ('tenant_agent_switches', 'sales', false, false, false, false), ('tenant_agent_switches', 'viewer', false, false, false, false),
   ('ai_team_standups', 'owner', true, false, false, false), ('ai_team_standups', 'admin', true, false, false, false),
