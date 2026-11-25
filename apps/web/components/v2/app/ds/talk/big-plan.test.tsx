@@ -87,7 +87,7 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
 
   it("one person the owner named: their yes is the consent (owner_named), said in its own line (humanOnly: Telugu once the owner reviewed it)", () => {
     draw(live(plan(1, { ...BIG_EXTRAS, consent: { callable: 1, skipped: 0, ownerNamed: true, skippedSample: [], reasonCounts: {} } })));
-    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("ఈ వ్యక్తి పేరు మీరే చెప్పారు. మీ OK అంటే, వాళ్ళు ఒప్పుకున్నారని మీరు కన్ఫర్మ్ చేస్తున్నట్టు.");
+    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("You named this person yourself. Your OK is kept as the reason, with the date."); // English until the owner reviews the Telugu again (lawyer wording, 26 Nov 2026)
   });
 
   it("'WhatsAppలో అడగండి' is drawn only when a route is given (askConsent), and calls it; the daily limit line appears only when the API sends a non-null daily_cap", () => {
