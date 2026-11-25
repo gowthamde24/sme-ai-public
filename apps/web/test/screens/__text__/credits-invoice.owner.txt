@@ -1,0 +1,7 @@
+[← Credits and billing](/app/tenants/22222222-2222-2222-2222-222222222222/billing)
+# Invoice S19-2627-000001
+24 November 2026
+Stack19 GSTIN 36AAAAA0000A1Z5
+Sri Lakshmi Textiles GSTIN 36ABCDE1234F1Z5
+Stack19 credits ₹1,000 CGST 9% ₹90 SGST 9% ₹90 Total ₹1,180
+[button type=button: Print]

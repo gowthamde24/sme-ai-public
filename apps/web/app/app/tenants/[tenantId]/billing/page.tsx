@@ -9,8 +9,7 @@ import { pageMain } from "@/components/v2/app/ui";
 import { appT } from "@/i18n/app";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
-import { ApiAuthError, ApiRequestError, apiRequest, fetchTenant } from "@/lib/api/client";
-import { parseBillingBalance } from "@/lib/billing-v6/balance";
+import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { readWallet } from "@/lib/api/wallet";
 import { escalate } from "@/lib/api/failure";
@@ -18,7 +17,7 @@ import { requireUser } from "@/lib/auth/session";
 import { readBillingBalance, readInvoices, readPricing } from "@/lib/billing-v6/source";
 import { TOPUP_CHOICES } from "@/lib/billing-v6/mock-state";
 import { formatRupeesShort } from "@/lib/money";
-import { getOptions, getStatement, listTopups } from "@/lib/api/credits";
+import { getBalance, getOptions, getStatement, listTopups } from "@/lib/api/credits";
 import { balanceScreens, billingV2, creditsScreens, designV6, earlyAccess } from "@/lib/screens/flag";
 
 import { freeStartAction, setLimitAction, topupAction } from "./actions";
@@ -52,7 +51,7 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
   // CREDITS_SCREENS (29 Nov 2026): the balance, Add credits (Razorpay Checkout), the low-balance line, the statement and the GST invoices, on C1's credits routes (a part that cannot be read is left out, never filled in)
   if (creditsScreens()) {
     const [balance, options, topups, statement] = await Promise.all([
-      apiRequest(`/v1/tenants/${tenantId}/billing/balance`, user.accessToken).then(parseBillingBalance).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
+      getBalance(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
       getOptions(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
       listTopups(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
       getStatement(user.accessToken, tenantId, null).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),

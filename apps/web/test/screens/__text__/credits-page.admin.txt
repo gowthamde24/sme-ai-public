@@ -1,0 +1,13 @@
+# Credits and billing
+Your balance, what you used, and how to add more. Balance ₹4,825 about 96 minutes of calls Last top-up ₹1,000 Credits never run out. ₹1 of credit is ₹1. Calls use it as they happen.
+{label="Statement"}
+## Statement
+- Top-up + ₹1,000 24 Nov, 3:31 pm · Added · [Invoice S19-2627-000001](/app/tenants/22222222-2222-2222-2222-222222222222/billing/invoices/S19-2627-000001) ₹1,250
+- Calls − ₹25 24 Nov, 5:30 pm · Calls and messages ₹1,225
+{label="Invoices"}
+## Invoices
+- [Invoice S19-2627-000001](/app/tenants/22222222-2222-2222-2222-222222222222/billing/invoices/S19-2627-000001) ₹1,180
+- ₹500 · Not completed
+{label="Billing details"}
+## Billing details
+Your business name and GSTIN go on every invoice. Change them in Settings. [Open billing details](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business)

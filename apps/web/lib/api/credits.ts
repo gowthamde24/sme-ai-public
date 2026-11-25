@@ -1,5 +1,6 @@
 import { ApiAuthError, ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
+import { parseBillingBalance, type BillingBalance } from "../billing-v6/balance";
 import { bool, int, optStr, readRows, rec, str } from "./shape";
 
 /**
@@ -105,3 +106,4 @@ export async function getInvoice(token: string, t: string, number: string): Prom
   if (!/^[A-Z0-9-]{5,20}$/.test(number)) throw new ApiContractError("invoice number");
   return parseInvoice(await apiRequest(`${base(t)}/gst-invoices/${number}`, token));
 }
+export const getBalance = async (token: string, t: string): Promise<BillingBalance | null> => parseBillingBalance(await apiRequest(`${base(t)}/balance`, token));

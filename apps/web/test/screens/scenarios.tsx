@@ -54,6 +54,8 @@ import {
   parseAdmissionDetail, parseAdmissionList, parseFeeEntries, parseFeePlan, parseFeePlanList, parseFeeReceipt, parseFeeStatement, parseGuardianFees, parseLateFeesPreview, parsePending, parseProfile as parseInstitution, parseProgrammes, parseStudent, parseStudentList,
 } from "@/lib/api/education";
 import * as EDU from "@/lib/api/education-fixtures";
+import { parseInvoice, parseOptions, parseStatement, parseTopups } from "@/lib/api/credits";
+import { parseBillingBalance } from "@/lib/billing-v6/balance";
 import { parseList, parseLists, parseRows } from "@/lib/api/lists";
 import { parseOwnList } from "@/lib/api/numbers";
 import { parseCatalogue, parseReport } from "@/lib/api/reports";
@@ -1837,3 +1839,19 @@ add({ id: "what-you-sell-list-new", roles: ["owner", "admin"], render: () => lis
 add({ id: "developers", roles: ["owner", "admin"], render: () => withEnv({ DEVELOPER_KEYS_SCREENS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({}, { tab: "keys" }))), handlers: base });
 add({ id: "developers-overview", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({})), handlers: base });
 add({ id: "what-you-sell-mock-pricelist", roles: ["owner", "sales"], render: sellPage, handlers: sellPack("wholesale_b2b") });
+
+// CREDITS_SCREENS (29 Nov 2026): Credits and billing (balance, Add credits, low-balance line, statement, invoices) and one GST invoice
+const creditsEnv = <T,>(run: () => Promise<T>) => withEnv({ ...V6_ENV, CREDITS_SCREENS: "1" }, run);
+const CR_PRESETS = [500, 1000, 2000, 5000].map((r) => ({ added_paise: r * 100, gst_paise: r * 18, total_paise: r * 118, added_text: `₹${r.toLocaleString("en-IN")}`, gst_text: "", total_text: "" }));
+const crHandlers = (low: boolean, empty = false) => (role: Role): Record<string, Handler> => ({
+  ...base(role),
+  getBalance: () => parseBillingBalance({ balance_paise: low ? 25000 : 482500, balance_text: low ? "₹250" : "₹4,825", low, minutes_estimate: low ? 3 : 96 }),
+  getOptions: () => parseOptions({ gst_percent: 18, presets: CR_PRESETS, custom_min_rupees: 100, custom_max_rupees: 100000, mode: "fake", checkout_ready: true }),
+  listTopups: () => parseTopups({ items: empty ? [] : [{ order_id: "order_1", state: "paid", added_text: "₹1,000", total_text: "₹1,180", created_at: "2026-11-24T10:00:00Z", paid_at: "2026-11-24T10:01:00Z", invoice_number: "S19-2627-000001", refunded: false }, { order_id: "order_2", state: "abandoned", added_text: "₹500", total_text: "₹590", created_at: "2026-11-23T10:00:00Z", paid_at: null, invoice_number: null, refunded: false }] }),
+  getStatement: () => parseStatement({ items: empty ? [] : [{ at: "2026-11-24T10:01:00Z", kind: "credit", label: "Top-up", amount_paise: 100000, amount_text: "₹1,000", balance_after_text: "₹1,250", invoice_number: "S19-2627-000001" }, { at: "2026-11-24T12:00:00Z", kind: "usage", label: "Calls", amount_paise: -2500, amount_text: "-₹25", balance_after_text: "₹1,225", invoice_number: null }], has_more: false, balance_text: "₹1,225" }),
+  getInvoice: () => parseInvoice({ number: "S19-2627-000001", kind: "topup", issued_at: "2026-11-24T10:01:00Z", description: "Stack19 credits", subtotal_text: "₹1,000", gst_text: "₹180", total_text: "₹1,180", gst_percent: 18, tax_split: "cgst_sgst", cgst_text: "₹90", sgst_text: "₹90", buyer_name: "Sri Lakshmi Textiles", buyer_gstin: "36ABCDE1234F1Z5", seller_name: "Stack19", seller_gstin: "36AAAAA0000A1Z5", seller_details_missing: false }),
+});
+add({ id: "credits-page", roles: ["owner", "admin"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(false) });
+add({ id: "credits-page-low", roles: ["owner"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(true) });
+add({ id: "credits-page-empty", roles: ["owner"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(false, true) });
+add({ id: "credits-invoice", roles: ["owner", "admin"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/invoices/[number]/page")).default(props({ number: "S19-2627-000001" }))), handlers: crHandlers(false) });
