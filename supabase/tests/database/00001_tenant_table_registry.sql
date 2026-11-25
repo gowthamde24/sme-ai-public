@@ -485,7 +485,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    'style = style', $$delete from public.speaking_styles where tenant_id = %1$L$$, false),
   -- job DM: the AI assistant's settings (one row per workspace; written only by the Owner's function)
   ('assistant_settings',
-   $$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%1$L, 'Generic', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 540, 600) on conflict (tenant_id) do nothing$$,
+   $$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%1$L, 'Generic', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 600, 660) on conflict (tenant_id) do nothing$$,
    'max_discount_percent = max_discount_percent', $$delete from public.assistant_settings where tenant_id = %1$L$$, false),
   -- owner 15 Nov 2026: a price the assistant could not state (written only by the price_ask_* functions)
   ('price_asks',

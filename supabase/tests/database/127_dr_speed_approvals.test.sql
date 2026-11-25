@@ -1,6 +1,6 @@
 -- Job DR part A3 (migration 20261206090000): SPEED TO LEAD AND "APPROVE ONCE".
 --   A policy and calling hours   B the plan of a batch   C exclude and approve all   D the worker runs it   E a call's result   F caps   G standing rules per source   H hot-lead hand-off   I reports   J doors
--- The clock is pinned: Monday 2 November 2026, 11:00 India time (inside the default hours: Monday to Saturday, 09:00 to 19:00).
+-- The clock is pinned: Monday 2 November 2026, 11:00 India time (inside the default hours: Monday to Saturday, 10:00 to 19:00 since the lawyer's opinion of 25 Nov 2026).
 begin;
 select no_plan();
 select tests.seed_two_tenants();
@@ -42,7 +42,7 @@ insert into public.leads (id, tenant_id, company_id, contact_id, source) values
 insert into public.contacts (id, tenant_id, full_name, phone, phone_consent) values (tests.rid('bc1'), tests.tid('b'), 'Other Tenant', '+91 97000 00001', 'granted');
 
 -- ============================================================================ A. policy and calling hours
-select is(pg_temp.val('a_owner', format($q$select public.outreach_policy_get(%L) ->> 'night_call_minute'$q$, pg_temp.t('a'))), '570', 'A1 the default morning call is 09:30');
+select is(pg_temp.val('a_owner', format($q$select public.outreach_policy_get(%L) ->> 'night_call_minute'$q$, pg_temp.t('a'))), '600', 'A1 the default morning call is 10:00');
 select is(pg_temp.val('a_owner', format($q$select public.outreach_policy_get(%L) -> 'hours' ->> 'from'$q$, pg_temp.t('a'))), 'default', 'A2 the hours in force come from a default when nothing is saved');
 select is(pg_temp.val('a_sales', format($q$select public.outreach_policy_get(%L)::text$q$, pg_temp.t('a'))), 'ERR:42501', 'A3 Sales cannot read the policy');
 select is(pg_temp.val('a_owner', format($q$select public.outreach_policy_set(%L, '{"max_attempts": 2, "retry_gap_hours": 20}')::text$q$, pg_temp.t('a')), 'aal1'), 'ERR:SM306', 'A4 setting it needs the second factor');
@@ -54,8 +54,8 @@ select is(pg_temp.val('a_owner', format($q$select public.outreach_policy_set(%L,
 select is(app.outreach_in_hours(pg_temp.t('a'), '2026-11-02T11:00:00+05:30'), true, 'A10 Monday 11:00 is inside the hours');
 select is(app.outreach_in_hours(pg_temp.t('a'), '2026-11-01T11:00:00+05:30'), false, 'A11 Sunday is closed');
 select is(app.outreach_in_hours(pg_temp.t('a'), '2026-11-02T19:00:00+05:30'), false, 'A12 19:00 is closed');
-select is(app.outreach_slot(pg_temp.t('a'), '2026-11-01T11:00:00+05:30'), '2026-11-02T09:00:00+05:30'::timestamptz, 'A13 Sunday noon waits for Monday 09:00');
-select is(app.outreach_slot(pg_temp.t('a'), '2026-11-02T19:30:00+05:30'), '2026-11-03T09:00:00+05:30'::timestamptz, 'A14 Monday 19:30 waits for Tuesday 09:00');
+select is(app.outreach_slot(pg_temp.t('a'), '2026-11-01T11:00:00+05:30'), '2026-11-02T10:00:00+05:30'::timestamptz, 'A13 Sunday noon waits for Monday 10:00');
+select is(app.outreach_slot(pg_temp.t('a'), '2026-11-02T19:30:00+05:30'), '2026-11-03T10:00:00+05:30'::timestamptz, 'A14 Monday 19:30 waits for Tuesday 10:00');
 select is(app.outreach_slot(pg_temp.t('a'), '2026-11-02T12:00:00+05:30'), '2026-11-02T12:00:00+05:30'::timestamptz, 'A15 inside the hours the slot is now');
 select is(app.outreach_next_clock('2026-11-02T22:00:00+05:30', 570), '2026-11-03T09:30:00+05:30'::timestamptz, 'A16 the next 09:30 after Monday 22:00 is Tuesday');
 select is(app.outreach_next_clock('2026-11-02T07:00:00+05:30', 570), '2026-11-02T09:30:00+05:30'::timestamptz, 'A17 ... and after 07:00 it is the same morning');
@@ -130,8 +130,8 @@ select is(pg_temp.sch('select jsonb_array_length(public.scheduler_outreach_run(1
 select pg_temp.pin('2026-11-02T20:00:00+05:30'::timestamptz);
 update public.outreach_items set next_at = '2026-11-02T20:00:00+05:30', status = 'waiting' where batch_id = tests.rid('b1') and status = 'waiting';
 select is(pg_temp.sch('select jsonb_array_length(public.scheduler_outreach_run(10) -> ''calls'')::text'), '0', 'D7 after hours nothing is dialled');
-select is((select next_at from public.outreach_items where batch_id = tests.rid('b1') and contact_id = tests.rid('c1')), '2026-11-03T09:00:00+05:30'::timestamptz, 'D8 the call waits for the next morning');
-select pg_temp.pin('2026-11-03T09:00:00+05:30'::timestamptz);
+select is((select next_at from public.outreach_items where batch_id = tests.rid('b1') and contact_id = tests.rid('c1')), '2026-11-03T10:00:00+05:30'::timestamptz, 'D8 the call waits for the next morning (10:00)');
+select pg_temp.pin('2026-11-03T10:00:00+05:30'::timestamptz);
 select is(pg_temp.sch('select jsonb_array_length(public.scheduler_outreach_run(10) -> ''calls'')::text'), '2', 'D9 in the morning both are handed out');
 
 -- ============================================================================ E. a call's result
@@ -253,7 +253,7 @@ select is((select a.result || ':' || a.template from public.outreach_attempts a 
 -- an OLD enquiry (a sheet import, a late sync: 45 minutes old when the rule sees it, from the night) waits for the morning
 select is((select next_at from public.outreach_rules r, lateral app.outreach_rule_step(r, '2026-11-05T21:15:00+05:30'::timestamptz) where r.id = tests.rid('r1')), '2026-11-06T09:00:00+05:30'::timestamptz, 'G15b an enquiry from 21:15 seen at 22:00 (not fresh): the thank-you waits for 09:00');
 select ok(true, 'G16 (no free text exists on a rule any more)');
-select is((select next_action || '@' || next_at::text from public.outreach_items where lead_id = tests.rid('lm2')), 'call@' || '2026-11-06T09:30:00+05:30'::timestamptz::text, 'G17 and the item now waits for the morning call');
+select is((select next_action || '@' || next_at::text from public.outreach_items where lead_id = tests.rid('lm2')), 'call@' || '2026-11-06T10:00:00+05:30'::timestamptz::text, 'G17 and the item now waits for the morning call');
 select is((select count(*)::int from public.outreach_attempts where item_id = (select id from public.outreach_items where lead_id = tests.rid('lm2')) and channel = 'whatsapp'), 1, 'G18 one WhatsApp attempt (blocked)');
 select pg_temp.pin('2026-11-06T09:00:00+05:30'::timestamptz);
 select is(pg_temp.j(pg_temp.val('a_admin', format($q$select public.outreach_rule_state(%L, %L, 'pause')::text$q$, pg_temp.t('a'), tests.rid('r1'))), 'paused_reason'), 'owner', 'G19 an Admin pauses the rule');

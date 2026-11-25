@@ -93,14 +93,14 @@ select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"max_calls_per_customer_per
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"max_calls_per_customer_per_week": 15}')), 'ERR:22023', 'C19');
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"auto_pause_refusals_per_hour": 2}')), 'ERR:22023', 'C20 the pause threshold 3 to 100');
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"auto_pause_refusals_per_hour": null}')) like 'ERR%', false, 'C21 null = never pause on its own');
-select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [1,2], "from_minute": 540, "to_minute": 1260}}')) like 'ERR%', false, 'C22 hours of its own');
-select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [], "from_minute": 540, "to_minute": 600}}')), 'ERR:22023', 'C23 at least one day');
-select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [1,1], "from_minute": 540, "to_minute": 600}}')), 'ERR:22023', 'C24 a day once');
-select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [8], "from_minute": 540, "to_minute": 600}}')), 'ERR:22023', 'C25 days 1 to 7');
-select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [1], "from_minute": 600, "to_minute": 540}}')), 'ERR:22023', 'C26 it must end after it begins');
+select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [1,2], "from_minute": 600, "to_minute": 1260}}')) like 'ERR%', false, 'C22 hours of its own');
+select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [], "from_minute": 600, "to_minute": 660}}')), 'ERR:22023', 'C23 at least one day');
+select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [1,1], "from_minute": 600, "to_minute": 660}}')), 'ERR:22023', 'C24 a day once');
+select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [8], "from_minute": 600, "to_minute": 660}}')), 'ERR:22023', 'C25 days 1 to 7');
+select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [1], "from_minute": 660, "to_minute": 600}}')), 'ERR:22023', 'C26 it must end after it begins');
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [1], "from_minute": 500, "to_minute": 600}}')), 'ERR:22023', 'C27 not before 09:00');
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [1], "from_minute": 541, "to_minute": 600}}')), 'ERR:22023', 'C28 steps of 15 minutes');
-select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [1], "from_minute": 540, "to_minute": 1275}}')), 'ERR:22023', 'C29 not after 21:00');
+select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"hours": {"days": [1], "from_minute": 600, "to_minute": 1275}}')), 'ERR:22023', 'C29 not after 21:00');
 
 -- ============================================================================ D. lists
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"pronunciations": [{"written": "Kanchipuram", "spoken": "Kanchee-puram"}], "keywords": ["Kanchipuram", "jari"]}')) like 'ERR%', false, 'D1 pronunciations and key words');

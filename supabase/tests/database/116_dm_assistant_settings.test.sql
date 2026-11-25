@@ -12,7 +12,7 @@ create function pg_temp.sc(p_sql text) returns text language plpgsql as $$ begin
 create function pg_temp.base() returns jsonb language sql as $$
   select jsonb_build_object('name', 'Vani', 'voice_persona', 'female_warm', 'main_language', 'te', 'auto_switch_language', true, 'allow_english_mixing', true, 'style', 'warm', 'speed', 1.0,
     'may_answer_prices', true, 'may_book_visits', true, 'may_send_media', true, 'may_talk_dues', false, 'max_discount_percent', 5, 'handover_owner_asked', true, 'handover_upset', true,
-    'handover_order_above_paise', 5000000, 'call_days', jsonb_build_array(1, 2, 3, 4, 5, 6), 'call_from_minute', 540, 'call_to_minute', 1140) $$;
+    'handover_order_above_paise', 5000000, 'call_days', jsonb_build_array(1, 2, 3, 4, 5, 6), 'call_from_minute', 600, 'call_to_minute', 1140) $$;
 create function pg_temp.edu() returns jsonb language sql as $$
   select pg_temp.base() || '{"may_talk_dues": false, "may_answer_prices": false, "max_discount_percent": 0, "handover_order_above_paise": null}'::jsonb $$;
 create function pg_temp.save(p_user text, p_tenant text, p_settings jsonb, p_aal text default 'aal2') returns text language sql as $$
@@ -55,7 +55,7 @@ select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"max_discount_percent
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"call_days": []}'), 'ERR:22023', 'B13 at least one calling day');
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"call_days": [8]}'), 'ERR:22023', 'B14 days 1 to 7');
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"call_days": "mon"}'), 'ERR:22023', 'B15 days are a list');
-select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"call_from_minute": 480}'), 'ERR:22023', 'B16 no calls before 09:00');
+select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"call_from_minute": 480}'), 'ERR:22023', 'B16 no calls before 10:00');
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"call_to_minute": 1275}'), 'ERR:22023', 'B17 ...or after 21:00');
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"call_from_minute": 605}'), 'ERR:22023', 'B18 minutes in steps of 15');
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"call_from_minute": 1140, "call_to_minute": 1140}'), 'ERR:22023', 'B19 the hours must end after they begin');
@@ -117,7 +117,7 @@ select is(pg_temp.sc($$select app.operator_set_voice_persona('robot', 'te', 'fak
 select is(pg_temp.val('a_owner', 'select count(*)::text from voice.voice_personas'), 'ERR:42501', 'E7 the table is not readable by a client');
 
 -- ============================================================================ F. guards and doors
-select is(tests.outcome_as(tests.uid('a_owner'), format($$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%L, 'X', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 540, 600)$$, tests.tid('b'))), '42501', 'F1 DENY: a client cannot insert a row');
+select is(tests.outcome_as(tests.uid('a_owner'), format($$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%L, 'X', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 600, 660)$$, tests.tid('b'))), '42501', 'F1 DENY: a client cannot insert a row');
 select is(tests.outcome_as(tests.uid('a_owner'), format($$update public.assistant_settings set max_discount_percent = 50 where tenant_id = %L$$, tests.tid('a'))), '42501', 'F2 DENY: nor update one');
 select is(tests.outcome_as(tests.uid('a_owner'), format($$delete from public.assistant_settings where tenant_id = %L$$, tests.tid('a'))), '42501', 'F3 DENY: nor delete one');
 select is(pg_temp.sc(format($$update public.assistant_settings set max_discount_percent = 50 where tenant_id = %L$$, tests.tid('a'))), '42501', 'F4 not even the table''s owner changes a row except through the function (the guard)');

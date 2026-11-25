@@ -110,7 +110,7 @@ select is(pg_temp.tighten('b_owner', '{"messages_alone": false}'), 'ERR:42501', 
 select is((pg_temp.tighten('a_owner', '{"messages_alone": true}')::jsonb) ->> 'reason', 'would_loosen', 'E4 turning automatic sending ON is refused (it is off)');
 set local session_replication_role = replica;
 insert into public.outbox_settings (tenant_id, auto_send_enabled, per_customer_daily_limit) values (tests.tid('a'), true, 3) on conflict (tenant_id) do update set auto_send_enabled = true, per_customer_daily_limit = 3;
-update public.assistant_settings set max_discount_percent = 10, handover_order_above_paise = null, call_days = array[1, 2, 3]::smallint[], call_from_minute = 540, call_to_minute = 1140 where tenant_id = tests.tid('a');
+update public.assistant_settings set max_discount_percent = 10, handover_order_above_paise = null, call_days = array[1, 2, 3]::smallint[], call_from_minute = 600, call_to_minute = 1140 where tenant_id = tests.tid('a');
 reset session_replication_role;
 select is(pg_temp.kind(pg_temp.lim('a_owner'), 'message_routine', 'mode'), 'alone', 'E5 with automatic sending on, routine messages go alone');
 select is((pg_temp.tighten('a_owner', '{"messages_alone": false}')::jsonb) ->> 'ok', 'true', 'E6 the Owner stops automatic sending');
@@ -131,9 +131,9 @@ select is((select max_discount_percent from public.assistant_settings where tena
 select is((pg_temp.tighten('a_owner', '{"call_big_order_paise": 100000000}')::jsonb) ->> 'ok', 'true', 'E21 a big-order limit where there was none is a tightening');
 select is((pg_temp.tighten('a_owner', '{"call_big_order_paise": 200000000}')::jsonb) ->> 'reason', 'would_loosen', 'E22 raising it is refused');
 select is((pg_temp.tighten('a_owner', '{"call_hours": {"days": [1, 2, 3, 4]}}')::jsonb) ->> 'reason', 'would_loosen', 'E23 more calling days are refused');
-select is((pg_temp.tighten('a_owner', '{"call_hours": {"from_minute": 600, "to_minute": 1080, "days": [1, 2]}}')::jsonb) ->> 'ok', 'true', 'E25 shorter calling hours and fewer days are taken');
-select is((select call_days::text || call_from_minute || '-' || call_to_minute from public.assistant_settings where tenant_id = tests.tid('a')), '{1,2}600-1080', 'E26 ... stored');
-select is((pg_temp.tighten('a_owner', '{"call_hours": {"from_minute": 570}}')::jsonb) ->> 'reason', 'would_loosen', 'E24 an earlier start (inside the allowed range) is refused once the start has moved to 10:00');
+select is((pg_temp.tighten('a_owner', '{"call_hours": {"from_minute": 660, "to_minute": 1080, "days": [1, 2]}}')::jsonb) ->> 'ok', 'true', 'E25 shorter calling hours and fewer days are taken');
+select is((select call_days::text || call_from_minute || '-' || call_to_minute from public.assistant_settings where tenant_id = tests.tid('a')), '{1,2}660-1080', 'E26 ... stored');
+select is((pg_temp.tighten('a_owner', '{"call_hours": {"from_minute": 630}}')::jsonb) ->> 'reason', 'would_loosen', 'E24 an earlier start (inside the allowed range) is refused once the start has moved to 11:00');
 select is((pg_temp.tighten('a_owner', '{"call_hours": {"from_minute": 1080, "to_minute": 1080}}')::jsonb) ->> 'reason', 'invalid', 'E27 an empty window is invalid');
 -- all or nothing, unknown things, wrong shapes
 select is((pg_temp.tighten('a_owner', '{"message_daily_limit": 1, "call_media": false, "call_prices": true}')::jsonb) ->> 'reason', 'would_loosen', 'F1 one loosening in the list refuses the whole list');

@@ -104,7 +104,7 @@ select is(pg_temp.sc(format($q$insert into public.own_voices (id, tenant_id, sta
 create function pg_temp.settings(p_persona text) returns text language sql as $$
   select jsonb_build_object('name', 'Vani', 'voice_persona', p_persona, 'main_language', 'te', 'auto_switch_language', true, 'allow_english_mixing', true, 'style', 'warm', 'speed', 1.0, 'may_answer_prices', true,
     'may_book_visits', true, 'may_send_media', true, 'may_talk_dues', false, 'max_discount_percent', 5, 'handover_owner_asked', true, 'handover_upset', true, 'handover_order_above_paise', null,
-    'call_days', jsonb_build_array(1, 2, 3, 4, 5, 6), 'call_from_minute', 540, 'call_to_minute', 1140)::text $$;
+    'call_days', jsonb_build_array(1, 2, 3, 4, 5, 6), 'call_from_minute', 600, 'call_to_minute', 1140)::text $$;
 create function pg_temp.save(p_user text, p_tenant text, p_persona text) returns text language sql as $$
   select pg_temp.val(p_user, format($q$select public.assistant_settings_save(%L, %L::jsonb)::text$q$, tests.tid(p_tenant), pg_temp.settings(p_persona))) $$;
 select is((select count(*)::int from jsonb_array_elements(pg_temp.val('a_owner', format($q$select public.assistant_voices(%L)::text$q$, tests.tid('a')))::jsonb) e where e ->> 'persona' = 'own_voice'), 4, 'D1 the Owner''s own voice is listed as the persona own_voice in four languages');

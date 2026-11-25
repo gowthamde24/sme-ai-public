@@ -229,7 +229,7 @@ select is(pg_temp.prev('m1', 'recipients'), '10', 'E1 the preview counts the peo
 select is(pg_temp.prev('m1', 'total_amount_paise'), '10911900', 'E2 ... and the total of the amounts, from the list (Rs 1,09,119.00)');
 select is(pg_temp.prev('m1', 'first_due') || ' / ' || pg_temp.prev('m1', 'last_due'), '2026-11-10 / 2026-11-20', 'E3 ... the range of dates');
 select is(pg_temp.prev('m1', 'disclosure'), 'This message is from the business''s AI assistant.', 'E4 and the AI-disclosure line the outbox adds to a person''s first message');
-update public.talk_training set doc = '{"say_ai_when_greeting": false}' where tenant_id = tests.tid('a');
+update public.talk_training set doc = '{"say_ai_when_greeting": false, "ai_off_undertaking": {"at": "2026-11-26", "by": "owner"}}' where tenant_id = tests.tid('a');   -- an OFF counts only with the stored written undertaking (lawyer's opinion, 25 Nov 2026)
 select is(pg_temp.prev('m1', 'disclosure'), '', 'E4b with the greeting setting OFF the preview carries no AI sentence (the STOP wording is the template''s)');
 update public.talk_training set doc = '{"say_ai_when_greeting": true}' where tenant_id = tests.tid('a');
 select is(pg_temp.issues('m1'), 'none', 'E5 nothing stands in the way');

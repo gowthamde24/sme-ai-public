@@ -120,11 +120,13 @@ select pg_temp.inbound('dx10', '2026-10-05 23:20:00+05:30');
 select pg_temp.sub('dx_a10', 'dx10', 'assistant', 'reply_to_inbound', 'The assistant wrote this, setting off.');
 select is((select disclosure_added from public.outbox_messages where id = tests.rid('dx_a10')), true, 'B6: the old per-campaign switch is ignored: the label follows the business''s Talk setting (this business turned it on)');
 select is(app.outbox_mention_ai(tests.tid('a')), true, 'B7: the line follows the Talk training setting (owner, 20 Nov 2026), here ON');
-select is(app.outbox_mention_ai(tests.tid('b')), false, 'B8: a business that never chose: OFF by default (name only)');
+select is(app.outbox_mention_ai(tests.tid('b')), true, 'B8: a business that never chose: ON by default (lawyer''s opinion, 25 Nov 2026)');
 update public.talk_training set doc = '{"say_ai_when_greeting": false}' where tenant_id = tests.tid('a');
-select is(app.outbox_mention_ai(tests.tid('a')), false, 'B9: turned off explicitly: no line');
+select is(app.outbox_mention_ai(tests.tid('a')), true, 'B9: an OFF without the stored written undertaking is read as not chosen: the line stays');
+update public.talk_training set doc = '{"say_ai_when_greeting": false, "ai_off_undertaking": {"at": "2026-11-26", "by": "owner"}}' where tenant_id = tests.tid('a');
+select is(app.outbox_mention_ai(tests.tid('a')), false, 'B9b: turned off with the undertaking: no line');
 update public.talk_training set doc = '{"say_ai_when_greeting": "yes"}' where tenant_id = tests.tid('a');
-select is(app.outbox_mention_ai(tests.tid('a')), false, 'B10: anything but a real true/false counts as OFF');
+select is(app.outbox_mention_ai(tests.tid('a')), true, 'B10: anything but a real true/false counts as not chosen: the default, ON');
 
 select * from finish();
 rollback;

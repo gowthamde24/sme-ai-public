@@ -20,13 +20,13 @@ create function pg_temp.sw(p_user text, p_kind text, p_on text, p_tenant text de
 $$;
 
 -- ============================================================================ A. the AI line by message category
-insert into public.talk_training (tenant_id, doc, updated_by) values (tests.tid('a'), '{"say_ai_when_greeting": false, "say_ai_by_job": {"followups": "on", "store_visits": "off"}}'::jsonb, tests.uid('a_owner'))
+insert into public.talk_training (tenant_id, doc, updated_by) values (tests.tid('a'), '{"ai_off_undertaking": {"at": "2026-11-26", "by": "owner"}, "say_ai_when_greeting": false, "say_ai_by_job": {"followups": "on", "store_visits": "off"}}'::jsonb, tests.uid('a_owner'))
   on conflict (tenant_id) do update set doc = excluded.doc;
 select is(app.outbox_mention_ai(tests.tid('a'), 'followup'), true, 'A1 the follow-ups job says it is on: the line is added although the business setting is off');
 select is(app.outbox_mention_ai(tests.tid('a'), 'visit'), false, 'A2 the store-visits job off, the business off: no line');
 select is(app.outbox_mention_ai(tests.tid('a'), 'info'), false, 'A3 a message of no job follows the business setting (off)');
 select is(app.outbox_mention_ai(tests.tid('a'), null), false, 'A4 no category: the business setting');
-update public.talk_training set doc = '{"say_ai_when_greeting": true, "say_ai_by_job": {"followups": "on", "store_visits": "off"}}'::jsonb where tenant_id = tests.tid('a');
+update public.talk_training set doc = '{"ai_off_undertaking": {"at": "2026-11-26", "by": "owner"}, "say_ai_when_greeting": true, "say_ai_by_job": {"followups": "on", "store_visits": "off"}}'::jsonb where tenant_id = tests.tid('a');
 select is(app.outbox_mention_ai(tests.tid('a'), 'visit'), false, 'A5 the business on, the store-visits job off: no line');
 select is(app.outbox_mention_ai(tests.tid('a'), 'followup'), true, 'A6 ... the follow-ups job on: the line');
 select is(app.outbox_mention_ai(tests.tid('a'), 'order_status'), true, 'A7 ... a message of no job: the business setting (on)');
@@ -34,7 +34,7 @@ update public.talk_training set doc = '{"say_ai_when_greeting": true, "say_ai_by
 select is(app.outbox_mention_ai(tests.tid('a'), 'followup'), true, 'A8 a word that is not on or off is no override: the business setting');
 update public.talk_training set doc = '{"say_ai_when_greeting": true, "say_ai_by_job": "x"}'::jsonb where tenant_id = tests.tid('a');
 select is(app.outbox_mention_ai(tests.tid('a'), 'visit'), true, 'A9 a say_ai_by_job that is not an object is ignored');
-select is(app.outbox_mention_ai(tests.tid('b'), 'followup'), false, 'A10 a business that never chose: off');
+select is(app.outbox_mention_ai(tests.tid('b'), 'followup'), true, 'A10 a business that never chose: ON (the default, lawyer''s opinion 25 Nov 2026)');
 select is(app.outbox_mention_ai(tests.tid('a')), true, 'A11 the one-argument function still answers the business setting');
 
 -- ============================================================================ B. who may switch a job
