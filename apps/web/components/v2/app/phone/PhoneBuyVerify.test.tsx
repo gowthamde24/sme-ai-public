@@ -305,7 +305,8 @@ describe("Verify your business: the documents", () => {
     const link = await screen.findByRole("link", { name: "Open the DigiLocker link" });
     expect(link).toHaveAttribute("href", "https://digilocker.example/x");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
-    expect(screen.getByLabelText("Aadhaar file (photo or PDF)")).toBeInTheDocument();
+    // the upload opens only after the DigiLocker check reached the phone service (aadhaar_verified), never before
+    expect(screen.queryByLabelText("Aadhaar file (photo or PDF)")).toBeNull();
   });
   it("a business also gives the GST number and certificate; with every document in, 'Send for checking'; a document still missing is named", async () => {
     const a = verifyActions({ submit: vi.fn(async () => ({ ok: false as const, error: "refused" as const, reason: "missing_documents" as const, missing: ["GST Certificate"] })) });
@@ -511,17 +512,26 @@ describe("the PIN code fills the state and the city (VoiceLink knows a city only
 
 describe("Aadhaar (DigiLocker): stay on the page, read the status while the link is open, start again when it did not arrive", () => {
   const drawAadhaar = (a = verifyActions()) => drawVerify(STATUS({ state: "in_progress", step: "aadhaar", steps: { pan: true, aadhaar: false } }), a);
-  it("says to stay on the page until it moves you back, and ends the step when the status says aadhaar_verified", async () => {
+  it("says to stay on the page; when the status says aadhaar_verified the Aadhaar upload opens (the step does NOT end there), then Send, then Send for checking", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
-    const status = vi.fn(async () => STATUS({ state: "in_progress", step: "complete", steps: { pan: true, aadhaar: false }, aadhaarVerified: true }));
+    const checked = STATUS({ state: "in_progress", step: "aadhaar", steps: { pan: true, aadhaar: false }, aadhaarVerified: true });
+    const done = STATUS({ state: "in_progress", step: "complete", steps: { pan: true, aadhaar: true }, aadhaarVerified: true });
+    const status = vi.fn(async () => checked);
     drawAadhaar(verifyActions({ status }));
     fireEvent.click(screen.getByRole("button", { name: "Get the DigiLocker link" }));
     expect(await screen.findByText("Stay on the page until it moves you back.")).toBeInTheDocument();
     expect(status).not.toHaveBeenCalled();
     await act(async () => void vi.advanceTimersByTime(7100));
-    expect(status).toHaveBeenCalled();
+    await waitFor(() => expect(status).toHaveBeenCalled());
+    expect(await screen.findByText(/Your Aadhaar check reached us\. Now upload your Aadhaar file/)).toBeInTheDocument();
+    expect(document.querySelector('[data-part="submit"]')).toBeNull(); // not done: the document is still to go up
+    expect(document.querySelector('[data-doc="aadhaar"]')).not.toHaveAttribute("data-done");
+    vi.stubGlobal("fetch", vi.fn(async () => ({ json: async () => ({ ok: true, data: done }) })));
+    fireEvent.change(screen.getByLabelText("Aadhaar file (photo or PDF)"), { target: { files: [new File([new Uint8Array([1])], "aadhaar.pdf", { type: "application/pdf" })] } });
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
     await waitFor(() => expect(document.querySelector('[data-part="submit"]')).not.toBeNull());
     expect(document.querySelector('[data-doc="aadhaar"]')).toHaveAttribute("data-done");
+    vi.unstubAllGlobals();
     vi.useRealTimers();
   });
   it("when the person is back (or about 2 minutes passed) and it is still not done, 'Start the Aadhaar check again' asks for a new link", async () => {

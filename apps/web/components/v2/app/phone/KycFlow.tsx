@@ -47,8 +47,8 @@ export function Flow({ t, status, actions, prefill, busy, run, fail, setFail, re
   const account: AccountType = status.accountType ?? prefill?.accountType ?? "individual";
   const needs = DOCS[account];
   const details = status.state === "created";
-  // Aadhaar is done once the DigiLocker check reached the phone service (`aadhaar_verified`), or its document is in
-  const isDone = (d: DocType): boolean => status.steps[d] === true || (d === "aadhaar" && status.aadhaarVerified === true);
+  // A document step is done when its document is in. For Aadhaar the DigiLocker check (`aadhaar_verified`) only OPENS the upload: the document still goes up, then "Send for checking", and only `verified` ends it (real run, 26 Nov 2026)
+  const isDone = (d: DocType): boolean => status.steps[d] === true;
   const next = needs.find((d) => !isDone(d)) ?? null;
   const problem = fail ? (
     <div role="alert" data-part="verify-error" data-error={fail.error}>
@@ -73,7 +73,7 @@ export function Flow({ t, status, actions, prefill, busy, run, fail, setFail, re
                   <b className="text-base text-ink">{t(`pick.kyc.doc.${d}`)}</b>
                   <span className="text-sm text-muted">{done ? t("pick.kyc.uploaded") : d === next ? t("pick.kyc.chip.waiting") : ""}</span>
                 </div>
-                {d === next ? <DocStep t={t} doc={d} prefill={prefill} actions={actions} busy={busy} run={run} setFail={setFail} refresh={refresh} /> : null}
+                {d === next ? <DocStep t={t} doc={d} prefill={prefill} actions={actions} busy={busy} run={run} setFail={setFail} refresh={refresh} aadhaarChecked={status.aadhaarVerified === true} /> : null}
               </li>
             );
           })}
@@ -187,7 +187,7 @@ function Details({ t, account, prefill, busy, server, lookup, onSave }: { t: Say
   );
 }
 
-function DocStep({ t, doc, prefill, actions, busy, run, setFail, refresh }: { t: Say; doc: DocType; prefill: FlowProps["prefill"]; actions: VerifyActions; busy: boolean; run: FlowProps["run"]; setFail: FlowProps["setFail"]; refresh?: FlowProps["refresh"] }) {
+function DocStep({ t, doc, prefill, actions, busy, run, setFail, refresh, aadhaarChecked = false }: { t: Say; doc: DocType; prefill: FlowProps["prefill"]; actions: VerifyActions; busy: boolean; run: FlowProps["run"]; setFail: FlowProps["setFail"]; refresh?: FlowProps["refresh"]; aadhaarChecked?: boolean }) {
   const [number, setNumber] = React.useState("");
   const [holder, setHolder] = React.useState(prefill?.fullName ?? "");
   const [link, setLink] = React.useState<string | null>(null);
@@ -203,7 +203,7 @@ function DocStep({ t, doc, prefill, actions, busy, run, setFail, refresh }: { t:
   const fileBad = fileProblem(file);
 
   React.useEffect(() => {
-    if (doc !== "aadhaar" || openedAt === null) return;
+    if (doc !== "aadhaar" || openedAt === null || aadhaarChecked) return;
     const poll = setInterval(() => void actions.status().then((s) => (s ? refresh?.(s) : undefined)), 7000);
     const wait = setTimeout(() => setWaited(true), 120_000);
     const visible = () => document.visibilityState === "visible" && setBack(true);
@@ -213,7 +213,7 @@ function DocStep({ t, doc, prefill, actions, busy, run, setFail, refresh }: { t:
       clearTimeout(wait);
       document.removeEventListener("visibilitychange", visible);
     };
-  }, [doc, openedAt, actions, refresh]);
+  }, [doc, openedAt, actions, refresh, aadhaarChecked]);
 
   async function upload(): Promise<KycStatus | null> {
     if (!file) return null;
@@ -264,7 +264,9 @@ function DocStep({ t, doc, prefill, actions, busy, run, setFail, refresh }: { t:
     return (
       <div className="flex flex-col gap-4" data-part="doc-aadhaar">
         <p className="m-0 text-[15px] text-muted">{t("pick.kyc.aadhaar.body")}</p>
-        {link ? (
+        {aadhaarChecked ? (
+          <p role="status" data-part="aadhaar-checked" className="m-0 text-[15px] font-semibold text-ink">{t("pick.kyc.aadhaar.checked")}</p>
+        ) : link ? (
           <div className="flex flex-col gap-2" data-part="digilocker">
             <a href={link} target="_blank" rel="noopener noreferrer" className="break-all text-[15px] font-semibold text-ink underline underline-offset-4">
               {t("pick.kyc.aadhaar.open")}
@@ -289,7 +291,7 @@ function DocStep({ t, doc, prefill, actions, busy, run, setFail, refresh }: { t:
             </button>
           </div>
         )}
-        {link ? (
+        {aadhaarChecked ? (
           <>
             {fileField}
             <div>

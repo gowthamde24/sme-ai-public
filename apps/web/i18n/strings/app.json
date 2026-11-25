@@ -137763,5 +137763,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "pick.kyc.aadhaar.checked": {
+  "en": "Your Aadhaar check reached us. Now upload your Aadhaar file: the PDF from DigiLocker or a photo.",
+  "te": "మీ ఆధార్ చెక్ మాకు చేరింది. ఇప్పుడు మీ ఆధార్ ఫైల్ అప్‌లోడ్ చేయండి: DigiLocker నుంచి PDF లేదా ఫోటో.",
+  "hi": "आपकी आधार जाँच हम तक पहुँच गई। अब अपनी आधार फ़ाइल अपलोड करें: DigiLocker से PDF या फ़ोटो।",
+  "kn": "ನಿಮ್ಮ ಆಧಾರ್ ಚೆಕ್ ನಮಗೆ ತಲುಪಿದೆ. ಈಗ ನಿಮ್ಮ ಆಧಾರ್ ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ: DigiLocker ನಿಂದ PDF ಅಥವಾ ಫೋಟೋ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -32,7 +32,7 @@ function mockStatus(k: Kept): KycStatus {
   const state = k.state === "submitted" && Date.now() - k.at > 60_000 ? "verified" : k.state;
   const wants: DocType[] = k.type === "business" ? ["pan", "aadhaar", "gst"] : ["pan", "aadhaar"];
   const next = wants.find((d) => !k.docs.includes(d));
-  return { state, accountType: k.type, step: state === "verified" || state === "submitted" ? "complete" : next ?? "complete", steps: Object.fromEntries(wants.map((d) => [d, k.docs.includes(d)])) as KycStatus["steps"], missing: [], reason: null, aadhaarVerified: k.docs.includes("aadhaar") ? true : null, reserve: k.state === "not_started" ? { state: "none", amountText: null, priceText: "₹499", dueAt: null } : state === "verified" ? { state: "applied", amountText: "₹499", priceText: "₹499", dueAt: null } : { state: "held", amountText: "₹499", priceText: "₹499", dueAt: new Date(k.at + 14 * 86_400_000).toISOString() } };
+  return { state, accountType: k.type, step: state === "verified" || state === "submitted" ? "complete" : next ?? "complete", steps: Object.fromEntries(wants.map((d) => [d, k.docs.includes(d)])) as KycStatus["steps"], missing: [], reason: null, aadhaarVerified: k.ac || k.docs.includes("aadhaar") ? true : null, reserve: k.state === "not_started" ? { state: "none", amountText: null, priceText: "₹499", dueAt: null } : state === "verified" ? { state: "applied", amountText: "₹499", priceText: "₹499", dueAt: null } : { state: "held", amountText: "₹499", priceText: "₹499", dueAt: new Date(k.at + 14 * 86_400_000).toISOString() } };
 }
 const mock = (): boolean => kycPerClient() === "mock";
 const keep = async (k: Kept): Promise<KycResult> => ((await writeJar(COOKIE, k)) ? { ok: true, data: mockStatus(k) } : { ok: false, error: "down" });
