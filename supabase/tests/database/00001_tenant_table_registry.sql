@@ -605,30 +605,30 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$insert into public.call_complaints (id, tenant_id, kind, noted_by) values (%2$L, %1$L, 'to_business', %5$L)$$,
    'kind = kind', $$delete from public.call_complaints where id = %2$L$$, false),
   ('crm_connections',
-   $$insert into public.crm_connections (id, tenant_id, type, events, created_by) values (%2$L, %1$L, 'hubspot', array['lead.created'], %5$L)$$,
+   $$insert into public.crm_connections (id, tenant_id, type, events, created_by) values (%2$L, %1$L, 'hubspot', array['lead.created'], %5$L) on conflict (tenant_id, type) do update set updated_at = now()$$,
    'active = active', $$delete from public.crm_connections where id = %2$L$$, true),
   ('crm_deliveries',
-   $$with e as (insert into public.crm_connections (tenant_id, type, events, created_by) values (%1$L, 'hubspot', array['lead.created'], %5$L) returning id)
+   $$with e as (insert into public.crm_connections (tenant_id, type, events, created_by) values (%1$L, 'hubspot', array['lead.created'], %5$L) on conflict (tenant_id, type) do update set updated_at = now() returning id)
      insert into public.crm_deliveries (id, tenant_id, connection_id, event_id, event, subject_kind, subject_id, dedupe_key) select %2$L, %1$L, e.id, gen_random_uuid(), 'lead.created', 'lead', gen_random_uuid(), 'lead.created:' || gen_random_uuid()::text from e$$,
    'status = status', $$delete from public.crm_deliveries where id = %2$L$$, false),
   -- commerce (migration 20261231992340): written only by commerce_* (the Owner's or Admin's for the connection; the scheduler account's for orders and checkouts)
   ('commerce_connections',
-   $$insert into public.commerce_connections (id, tenant_id, kind, store_label, token_hash, created_by) values (%2$L, %1$L, 'shopify', 'generic-shop.myshopify.com', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L)$$,
+   $$insert into public.commerce_connections (id, tenant_id, kind, store_label, token_hash, created_by) values (%2$L, %1$L, 'shopify', 'generic-shop.myshopify.com', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) on conflict (tenant_id, kind) do update set updated_at = now()$$,
    'state = state', $$delete from public.commerce_connections where id = %2$L$$, true),
   ('commerce_orders',
-   $$with c as (insert into public.commerce_connections (tenant_id, kind, store_label, token_hash, created_by) values (%1$L, 'woocommerce', 'generic-shop.example.com', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) returning id)
-     insert into public.commerce_orders (id, tenant_id, connection_id, external_id, number) select %2$L, %1$L, c.id, 'o-1', '#1' from c$$,
+   $$with c as (insert into public.commerce_connections (tenant_id, kind, store_label, token_hash, created_by) values (%1$L, 'woocommerce', 'generic-shop.example.com', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) on conflict (tenant_id, kind) do update set updated_at = now() returning id)
+     insert into public.commerce_orders (id, tenant_id, connection_id, external_id, number) select %2$L, %1$L, c.id, 'o-' || %2$L::text, '#1' from c$$,
    'status = status', $$delete from public.commerce_orders where id = %2$L$$, false),
   ('commerce_checkouts',
-   $$with c as (insert into public.commerce_connections (tenant_id, kind, store_label, token_hash, created_by) values (%1$L, 'shopify', 'generic-cart.myshopify.com', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) returning id)
-     insert into public.commerce_checkouts (id, tenant_id, connection_id, external_id, due_at) select %2$L, %1$L, c.id, 'k-1', now() from c$$,
+   $$with c as (insert into public.commerce_connections (tenant_id, kind, store_label, token_hash, created_by) values (%1$L, 'shopify', 'generic-cart.myshopify.com', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) on conflict (tenant_id, kind) do update set updated_at = now() returning id)
+     insert into public.commerce_checkouts (id, tenant_id, connection_id, external_id, due_at) select %2$L, %1$L, c.id, 'k-' || %2$L::text, now() from c$$,
    'status = status', $$delete from public.commerce_checkouts where id = %2$L$$, false),
   -- notifications out (migration 20261231992345): written only by notify_channel_* (Owner or Admin), the queueing triggers and the worker's notify_delivery_record
   ('notify_channels',
-   $$insert into public.notify_channels (id, tenant_id, kind, last4, created_by) values (%2$L, %1$L, 'teams', 'wxyz', %5$L)$$,
+   $$insert into public.notify_channels (id, tenant_id, kind, last4, created_by) values (%2$L, %1$L, 'teams', 'wxyz', %5$L) on conflict (tenant_id, kind) do update set updated_at = now()$$,
    'last4 = last4', $$delete from public.notify_channels where id = %2$L$$, true),
   ('notify_deliveries',
-   $$with c as (insert into public.notify_channels (tenant_id, kind, last4, created_by) values (%1$L, 'slack', 'wxyz', %5$L) returning id)
+   $$with c as (insert into public.notify_channels (tenant_id, kind, last4, created_by) values (%1$L, 'slack', 'wxyz', %5$L) on conflict (tenant_id, kind) do update set updated_at = now() returning id)
      insert into public.notify_deliveries (id, tenant_id, channel_id, event, subject_kind) select %2$L, %1$L, c.id, 'low_balance', 'balance' from c$$,
    'status = status', $$delete from public.notify_deliveries where id = %2$L$$, false),
   -- a workspace's own switch per helper (migration 20261231170000): written only by agent_switch_set
