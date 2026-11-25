@@ -242,6 +242,7 @@ async def run_call(
     clock: Callable[[], float] | None = None,
     call_id_ready: Awaitable[uuid.UUID] | None = None,
     usage_recorder: UsageRecorder | None = None,
+    call_charger: Any = None,
 ) -> CallOutcome:
     """`call_id_ready` (owner, 6 Nov 2026: the first word must not wait for the database): the call's row is still being written; the greeting starts at once and the row is marked in progress
     (and finished) with the id when it is ready. If the row cannot be written, the call is ended: no row, no call."""
@@ -402,6 +403,9 @@ async def run_call(
     if usage_recorder is not None and row_id is not None:   # what each provider was used for, from the numbers the call measured; never breaks the call
         with suppress(Exception):
             await asyncio.to_thread(_record_usage, usage_recorder, plan, row_id, duration, usage, parts, (outcome_llm, getattr(translator, "llm", None)))
+    if call_charger is not None and row_id is not None and duration > 0:   # the wallet: answered seconds, once per call (the database makes a repeat a replay); a failure is the worker's reconcile pass's to mend
+        with suppress(Exception):
+            await asyncio.to_thread(call_charger.charge, plan.tenant_id, row_id, int(duration))
     for hook, wanted in ((on_do_not_call, result.do_not_call), (on_handover, result.handover)):
         if wanted and hook is not None:
             with suppress(Exception):

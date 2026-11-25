@@ -154,6 +154,9 @@ class Settings(BaseSettings):
     # database's own switch (signup.settings.open) decides whether a credit is granted.
     # SIGNUP_PHONE_SENDER: "none" (no code can be sent), "fake" (staging, tests) or "whatsapp".
     signup_open: bool = False
+    # calls are charged to the wallet at their end and the wallet decides whether a call may
+    # start (migration 991700). OFF at deploy; on only after a staging proof (test-mode wallet).
+    billing_charge_calls: bool = False
     # more than one API instance (24 Nov 2026): the live-call count and whisper / hang-up
     # go through the database; leave off while the API has one instance (max-instances 1)
     call_coordination: bool = False

@@ -661,6 +661,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('voice_note_usage',
    $$insert into public.voice_note_usage (tenant_id, ref_id, kind, seconds, chars, voice_code, language) values (%1$L, %2$L, 'note', 5, 50, 'fake-en', 'en')$$,
    'seconds = seconds', $$delete from public.voice_note_usage where ref_id = %2$L$$, false),
+  -- calls charged to the wallet (25 Nov 2026): 'pricing.debts' (a tenant table outside the public schema: no client role has any privilege on it, only the public.pricing_* functions touch it).
   -- credits top-up (24 Nov 2026): 'pricing.refunds' (a tenant table outside the public schema: no client role has any privilege on it, only the public.pricing_* functions touch it).
   -- daily allowance (24 Nov 2026): 'daily_caps.use' (a tenant table outside the public schema: no client role has any privilege on it, only public.daily_cap_take touches it).
   -- business KYC per client (24 Nov 2026): 'telephony.business_clients' (a tenant table outside the public schema: no client role has any privilege on it, only the public.business_client_* functions touch it).

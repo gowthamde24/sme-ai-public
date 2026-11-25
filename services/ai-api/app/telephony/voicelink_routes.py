@@ -77,6 +77,8 @@ async def admit(start: Any, settings: gate.Settings, *, find_line: Any, active_c
     found = await inbound.find_line_quick(find_line, line_no)
     if not found or found.get("provider") != PROVIDER:
         return gate.Refused("no_such_line")
+    if found.get("wallet_inbound_blocked") is True:   # BILLING_CHARGE_CALLS: the wallet is past its floor: no AI conversation until credits are added (migration 991700)
+        return gate.Refused("billing_blocked")
     decision = gate.check_inbound(settings, gate.InboundFacts(to_number=line_no, now=now, line_known=True, inbound_on=bool(found.get("inbound_on")), hours=hours, active_calls_total=active_calls, from_number=caller))
     if isinstance(decision, gate.Refused):
         return decision

@@ -263,7 +263,7 @@ async def answer(request: Request) -> Response:
         return _refuse(config, call_id, "no_such_line")
     if found.get("provider") != PROVIDER:
         return _refuse(config, call_id, "line_not_plivo")
-    if found.get("billing_blocked") is True:   # free early access: the business used its call minutes (the meter is enforced only while the platform switch is on)
+    if found.get("billing_blocked") is True or found.get("wallet_inbound_blocked") is True:   # free early access: the business used its call minutes (the meter is enforced only while the platform switch is on)
         forward = _forward_to(found, line_no, caller) if found.get("inbound_on") else None
         if forward is not None and caller is not None and FORWARDED.came_back(_fp(config, caller)):
             forward = None   # the same caller a moment ago: the shop's phone sent it back to us (no answer), so it is not rung again

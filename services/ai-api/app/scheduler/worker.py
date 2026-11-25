@@ -24,6 +24,7 @@ from app.ai_team.standup_runner import StandupRunner
 from app.autoreply.runner import AutoReplyRunner
 from app.autoreply.wiring import build_auto_reply
 from app.billing.alerts import FakeOwnerWhatsApp, UsageAlerts
+from app.billing.call_charge import CallCharger
 from app.billing.mail import (
     BillingReminders,
     EmailSender,
@@ -114,6 +115,7 @@ class Worker:
         outreach: OutreachRunner | None = None,
         phone_numbers: Any = None,
         usage_alerts: UsageAlerts | None = None,
+        call_reconcile: Callable[[str], int] | None = None,
         google_alerts: GoogleCapAlerts | None = None,
         auto_reply: AutoReplyRunner | None = None,
         lead_reader: LeadReadRunner | None = None,
@@ -157,6 +159,7 @@ class Worker:
         self._phone_numbers = phone_numbers   # gives back the numbers of closed workspaces (app/phone_numbers)
         # job DS part E2: the 80 and 100 percent alerts (e-mail and a FAKE WhatsApp message to the owner) and the close of a period (one overage invoice); only while the platform's billing switch is on
         self._usage_alerts = usage_alerts
+        self._call_reconcile = call_reconcile   # BILLING_CHARGE_CALLS: charges answered calls that ended without a charge row (app/billing/call_charge.py)
         # admin console (14 Nov 2026): the e-mail to the owner at 80 percent of a Google Maps free monthly cap
         self._google_alerts = google_alerts
         # job DY: the assistant's automatic answers to customers' WhatsApp messages (workspaces whose Owner switched it on); runs BEFORE the dispatch so an answer goes in the same tick
@@ -211,6 +214,7 @@ class Worker:
             self._outreach_pass(token)
             self._closed_lines_pass(token)
             self._usage_alerts_pass(token)
+            self._call_reconcile_pass(token)
             self._google_alerts_pass(token)
             self._plivo_balance_pass(token)
             self._token_expiry_pass(token)
@@ -403,6 +407,16 @@ class Worker:
         except Exception as exc:
             logger.error("usage alerts crashed: %s", exc.__class__.__name__)
 
+    def _call_reconcile_pass(self, token: str) -> None:
+        if self._call_reconcile is None:
+            return
+        try:
+            self._call_reconcile(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("call charge reconcile crashed: %s", exc.__class__.__name__)
+
     def _google_alerts_pass(self, token: str) -> None:
         if self._google_alerts is None:
             return
@@ -506,6 +520,7 @@ def build_worker(settings: Settings) -> Worker:
         template_sync=build_template_sync(settings, config.rest_url, config.anon_key),
         webhooks=build_webhook_runner(settings, config.rest_url, config.anon_key),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
+        call_reconcile=(lambda tok: CallCharger(RpcClient(config.rest_url, config.anon_key), lambda: tok).reconcile()) if settings.billing_charge_calls else None,
         google_alerts=GoogleCapAlerts(RpcClient(config.rest_url, config.anon_key), _billing_sender(settings)),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),

@@ -97,6 +97,7 @@ class InboundService:
     outbound_repo: Any = None   # app/telephony/plivo_outbound.PostgrestOutboundRepo: ends a placed call nobody answered (phase B)
     voicelink: Any = None   # app/telephony/voicelink_routes.VoicelinkConfig when VoiceLink calls are switched on here (VOICELINK_WS_TOKEN); None: the VoiceLink address answers nothing
     plivo: Any = None   # app/telephony/plivo_routes.PlivoConfig when Plivo calls are switched on here; None: the Plivo addresses answer "off"
+    charge: Any = None   # app/billing/call_charge.CallCharger: the wallet's charge at the end of a call (BILLING_CHARGE_CALLS); None: no charge
     usage: Any = None   # app/ops/usage.UsageRecorder: what each provider was used for at the end of a call (the usage ledger); None: nothing is recorded
 
 
@@ -542,7 +543,7 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
     try:
         summary_llm, summary_model = text_model(bv, max_tokens=500) if service.call_summaries else (None, model)
         result = await run_call(plan, line, parts, service.store.for_call(tenant), ledger=Ledger(bv.limits), model=summary_model, call_id_ready=begin_row, outcome_llm=summary_llm,
-                                today=lambda: inbound.now_utc().astimezone(timezone(timedelta(hours=5, minutes=30))).date().isoformat(), usage_recorder=service.usage)
+                                today=lambda: inbound.now_utc().astimezone(timezone(timedelta(hours=5, minutes=30))).date().isoformat(), usage_recorder=service.usage, call_charger=service.charge)
         outcome_name, cost = result.outcome or result.state, result.cost_paise
     except Exception as exc:  # noqa: BLE001 - only the class is kept
         log.error("phone_inbound crashed %s", exc.__class__.__name__)
