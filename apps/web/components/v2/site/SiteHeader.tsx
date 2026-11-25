@@ -12,6 +12,7 @@ import { type SiteLang } from "@/i18n/lang";
 import { SITE_LANGS } from "@/i18n/site-lang";
 import type { Theme } from "@/i18n/preferences";
 import { startEntry } from "@/lib/site/entry";
+import { loginHref } from "@/lib/site/login-url";
 import { websiteOnly } from "@/lib/site/mode";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
 import { waitlistMode } from "@/lib/waitlist/mode";
@@ -63,11 +64,9 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
-          {web ? null : (
-            <Link href="/login" className="hidden min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-lg px-3 text-[15px] font-bold text-ink hover:bg-surface-2 md:inline-flex">
-              {t("h2.nav.login")}
-            </Link>
-          )}
+          <a href={loginHref()} className="hidden min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-line px-4 text-[15px] font-bold text-ink hover:bg-surface-2 md:inline-flex">
+            {t("h2.nav.login")}
+          </a>
           {/* a phone keeps the one button in the bar (the landing v2 phone design) and finds the language and the theme in the menu */}
           <span className="hidden items-center gap-2 sm:flex">
             <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
@@ -81,7 +80,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
             label={t("nav.menu")}
             closeLabel={t("h3.menu.close")}
             items={nav.map((n, i) => ({ href: n.href, label: n.label, here: n.here, icon: NAV_ICONS[i] ?? NAV_ICONS[3] }))}
-            login={web ? undefined : { href: "/login", label: t("h2.nav.login") }}
+            login={{ href: loginHref(), label: t("h2.nav.login") }}
             cta={{ href: early.href, label: t("h3.menu.cta") }}
             icons={{ menu: <Menu className="size-5" aria-hidden="true" />, close: <X className="size-5" aria-hidden="true" />, login: <LogIn size={20} strokeWidth={2.1} aria-hidden="true" /> }}
           >

@@ -62,6 +62,14 @@ describe("website mode: the public pages (job DQ)", () => {
     expect(text(html)).toContain(siteDict(lang)["demo.title"]);
   });
 
+  it.each(cases)("%s: a 'Log in' link in the header and one in the footer, to the app's own sign-in (an address, not this site's closed /login) (owner, 26 Nov 2026)", (_n, lang, target) => {
+    const html = render(lang, target);
+    const logins = hrefs(html).filter((h) => /^https?:\/\/[^/]+\/login$/.test(h));
+    expect(logins.length, "header and footer (the mobile menu draws the same link)").toBeGreaterThanOrEqual(2);
+    expect([...new Set(logins)], "the app's address (SITE_APP_ORIGIN is not set), never the build's NEXT_PUBLIC_SITE_URL").toEqual(["https://app.stack19.com/login"]);
+    expect(text(html)).toContain(siteDict(lang)["h2.nav.login"]);
+  });
+
   it("the plans page has no form of its own: its buttons go to the contact page's", () => {
     const html = render("te", { kind: "page", page: "pricing" });
     expect(html).not.toContain('id="demo"');

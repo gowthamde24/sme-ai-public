@@ -7,7 +7,7 @@ import { legalT } from "@/i18n/legal";
 import type { SiteT } from "@/i18n/site";
 import { BRAND_NAME } from "@/design/brand";
 import { ADDRESSES, DOMAIN } from "@/lib/site/business";
-import { websiteOnly } from "@/lib/site/mode";
+import { loginHref } from "@/lib/site/login-url";
 import { sitePath } from "@/lib/site/paths";
 
 import { Faq, HowDemo, JobsDemo, Phone, Pipe, TryIt, Voices } from "./islands";
@@ -49,11 +49,9 @@ export function V9Hdr({ t, home = "" }: { t: SiteT; /** "/" on a page that is no
           <span className="lang-chip">
             {t("v9.hdr.8")}
           </span>
-          {websiteOnly() ? null : (
-            <Link href="/login" prefetch={false} className="hdr-login">
-              {t("h2.nav.login")}
-            </Link>
-          )}
+          <a href={loginHref()} className="hdr-login">
+            {t("h2.nav.login")}
+          </a>
           <a href={`${home}#early-access`} className="hdr-cta">
             {t("v9.hdr.9")}
           </a>
@@ -1339,6 +1337,11 @@ export function V9Ftr({ t, lang, home = "" }: { t: SiteT; lang: SiteLang; /** "/
                 <Link href={sitePath(lang, { kind: "page", page: "talk-to-us" })} prefetch={false}>
                   {t("nav.talk")}
                 </Link>
+              </li>
+              <li>
+                <a href={loginHref()}>
+                  {t("h2.nav.login")}
+                </a>
               </li>
               <li>
                 <CookieSettingsLink label={legal("legal.cookies.link")} />
