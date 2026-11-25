@@ -115,24 +115,24 @@ describe("the page header", () => {
 import { BalanceBox } from "./BalanceBox";
 import { v6PagesOf } from "@/components/v2/app/nav";
 
-describe("the money box of the side menu (owner, 13 Nov 2026): the rupee balance and what it buys, with Top up", () => {
+describe("the money box of the side menu (owner, 13 Nov 2026): the rupee balance and what it buys, with Add credits", () => {
   const T = "22222222-2222-4222-8222-222222222222";
-  it("says ₹1,550 and about 310 call minutes with Top up (to Billing) and nothing else: no Plan & usage, no Help, never 'credits', no old meters", () => {
+  it("says ₹1,550 and about 310 call minutes with Add credits (to Billing) and nothing else: no Plan & usage, no Help, never 'credits', no old meters", () => {
     render(<BalanceBox balance={{ text: "₹1,550", low: false, minutes: 310 }} tenantId={T} labels={{}} />);
     const box = document.querySelector('[data-part="balance-box"]') as HTMLElement;
     expect(box).toHaveTextContent("₹1,550");
     expect(box).toHaveTextContent("about 310 call minutes");
-    expect(screen.getByRole("link", { name: "Top up" })).toHaveAttribute("href", `/app/tenants/${T}/billing`);
+    expect(screen.getByRole("link", { name: "Add credits" })).toHaveAttribute("href", `/app/tenants/${T}/billing`);
     expect(screen.getAllByRole("link")).toHaveLength(1);
-    expect(box.textContent).not.toMatch(/credit|AI usage|Call minutes \d/i);
+    expect(box.textContent).not.toMatch(/AI usage|Call minutes \d/i);
   });
-  it("a low balance is red; no balance says nothing about money but keeps Top up", () => {
+  it("a low balance is red; no balance says nothing about money but keeps Add credits", () => {
     render(<BalanceBox balance={{ text: "₹40", low: true, minutes: null }} tenantId={T} labels={{}} />);
     expect(document.querySelector('[data-part="balance-amount"]')).toHaveClass("text-red-text");
     cleanup();
     render(<BalanceBox balance={null} tenantId={T} labels={{}} />);
     expect(document.querySelector('[data-part="balance-amount"]')).toBeNull();
-    expect(screen.getByRole("link", { name: "Top up" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Add credits" })).toBeInTheDocument();
   });
 });
 

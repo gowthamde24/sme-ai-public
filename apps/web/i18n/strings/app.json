@@ -451,10 +451,10 @@
   }
  },
  "palette.act.topup": {
-  "en": "Top up",
-  "te": "టాప్ అప్",
-  "hi": "टॉप अप",
-  "kn": "ಟಾಪ್ ಅಪ್",
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ యాడ్ చేయండి",
+  "hi": "क्रेडिट जोड़ें",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -60269,10 +60269,10 @@
   }
  },
  "nav.link.topup": {
-  "en": "Top up",
-  "te": "టాప్ అప్",
-  "hi": "टॉप अप",
-  "kn": "ಟಾಪ್ ಅಪ್",
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ యాడ్ చేయండి",
+  "hi": "क्रेडिट जोड़ें",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -69777,10 +69777,10 @@
   }
  },
  "tu.title": {
-  "en": "Usage and top-ups",
-  "te": "వాడకం మరియు టాప్-అప్‌లు",
-  "hi": "इस्तेमाल और टॉप-अप",
-  "kn": "ಬಳಕೆ ಮತ್ತು ಟಾಪ್-ಅಪ್‌ಗಳು",
+  "en": "Usage and credits",
+  "te": "వాడకం, క్రెడిట్స్",
+  "hi": "इस्तेमाल और क्रेडिट",
+  "kn": "ಬಳಕೆ ಮತ್ತು ಕ್ರೆಡಿಟ್",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -69821,10 +69821,10 @@
   }
  },
  "tu.owner_only": {
-  "en": "Only the owner can buy top-ups or change these settings.",
-  "te": "టాప్-అప్ కొనడం, ఈ సెట్టింగ్‌లు మార్చడం ఓనర్ మాత్రమే చేయగలరు.",
-  "hi": "टॉप-अप खरीदना या ये सेटिंग्स बदलना सिर्फ़ ओनर कर सकते हैं।",
-  "kn": "ಟಾಪ್-ಅಪ್ ಕೊಳ್ಳುವುದು, ಈ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಬದಲಾಯಿಸುವುದು ಓನರ್ ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "en": "Only the owner can add credits or change these settings.",
+  "te": "క్రెడిట్స్ యాడ్ చేయడం, ఈ సెట్టింగ్‌లు మార్చడం ఓనర్ మాత్రమే చేయగలరు.",
+  "hi": "क्रेडिट जोड़ना या ये सेटिंग्स बदलना सिर्फ़ ओनर कर सकते हैं।",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸುವುದು, ಈ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಬದಲಾಯಿಸುವುದು ಓನರ್ ಮಾತ್ರ ಮಾಡಬಹುದು.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -69942,10 +69942,10 @@
   }
  },
  "tu.bar.notincluded": {
-  "en": "Not included in your plan. A top-up still works.",
-  "te": "మీ ప్లాన్‌లో లేదు. టాప్-అప్ మాత్రం పనిచేస్తుంది.",
-  "hi": "आपके प्लान में शामिल नहीं है। टॉप-अप फिर भी चलता है।",
-  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ. ಟಾಪ್-ಅಪ್ ಆದರೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "en": "Not included in your plan. Added credits still work.",
+  "te": "మీ ప్లాన్‌లో లేదు. యాడ్ చేసిన క్రెడిట్స్ మాత్రం పనిచేస్తాయి.",
+  "hi": "आपके प्लान में शामिल नहीं है। जोड़े गए क्रेडिट फिर भी चलते हैं।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ. ಸೇರಿಸಿದ ಕ್ರೆಡಿಟ್ ಆದರೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -69953,10 +69953,10 @@
   }
  },
  "tu.bar.parts": {
-  "en": "Plan: {plan}. Top-ups left: {topup}.",
-  "te": "ప్లాన్: {plan}. టాప్-అప్‌లో మిగిలినవి: {topup}.",
-  "hi": "प्लान: {plan}। टॉप-अप में बाकी: {topup}।",
-  "kn": "ಪ್ಲಾನ್: {plan}. ಟಾಪ್-ಅಪ್‌ನಲ್ಲಿ ಉಳಿದಿದ್ದು: {topup}.",
+  "en": "Plan: {plan}. Added credits left: {topup}.",
+  "te": "ప్లాన్: {plan}. యాడ్ చేసిన క్రెడిట్స్‌లో మిగిలినవి: {topup}.",
+  "hi": "प्लान: {plan}। जोड़े गए क्रेडिट में बाकी: {topup}।",
+  "kn": "ಪ್ಲಾನ್: {plan}. ಸೇರಿಸಿದ ಕ್ರೆಡಿಟ್‌ನಲ್ಲಿ ಉಳಿದಿದ್ದು: {topup}.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -69986,10 +69986,10 @@
   }
  },
  "tu.bar.out.minutes": {
-  "en": "All used. New calls wait in a queue until you top up or the month starts again.",
-  "te": "అన్నీ వాడేశారు. టాప్-అప్ చేసే వరకు లేదా కొత్త నెల మొదలయ్యే వరకు కొత్త కాల్స్ క్యూలో ఆగుతాయి.",
-  "hi": "सब इस्तेमाल हो गए। टॉप-अप करने या नया महीना शुरू होने तक नई कॉल कतार में रुकेंगी।",
-  "kn": "ಎಲ್ಲವೂ ಬಳಕೆಯಾಗಿದೆ. ಟಾಪ್-ಅಪ್ ಮಾಡುವವರೆಗೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾಗುವವರೆಗೆ ಹೊಸ ಕಾಲ್‌ಗಳು ಸರದಿಯಲ್ಲಿ ಕಾಯುತ್ತವೆ.",
+  "en": "All used. New calls wait in a queue until you add credits or the month starts again.",
+  "te": "అన్నీ వాడేశారు. క్రెడిట్స్ యాడ్ చేసే వరకు లేదా కొత్త నెల మొదలయ్యే వరకు కొత్త కాల్స్ క్యూలో ఆగుతాయి.",
+  "hi": "सब इस्तेमाल हो गए। क्रेडिट जोड़ने या नया महीना शुरू होने तक नई कॉल कतार में रुकेंगी।",
+  "kn": "ಎಲ್ಲವೂ ಬಳಕೆಯಾಗಿದೆ. ಕ್ರೆಡಿಟ್ ಸೇರಿಸುವವರೆಗೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾಗುವವರೆಗೆ ಹೊಸ ಕಾಲ್‌ಗಳು ಸರದಿಯಲ್ಲಿ ಕಾಯುತ್ತವೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -69997,10 +69997,10 @@
   }
  },
  "tu.bar.out.messages": {
-  "en": "All used. Messages you start wait in the outbox until you top up or the month starts again.",
-  "te": "అన్నీ వాడేశారు. టాప్-అప్ చేసే వరకు లేదా కొత్త నెల మొదలయ్యే వరకు మీరు మొదలుపెట్టే మెసేజ్‌లు ఔట్‌బాక్స్‌లో ఆగుతాయి.",
-  "hi": "सब इस्तेमाल हो गए। टॉप-अप करने या नया महीना शुरू होने तक आपके शुरू किए मैसेज आउटबॉक्स में रुकेंगे।",
-  "kn": "ಎಲ್ಲವೂ ಬಳಕೆಯಾಗಿದೆ. ಟಾಪ್-ಅಪ್ ಮಾಡುವವರೆಗೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾಗುವವರೆಗೆ ನೀವು ಶುರುಮಾಡುವ ಮೆಸೇಜ್‌ಗಳು ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಕಾಯುತ್ತವೆ.",
+  "en": "All used. Messages you start wait in the outbox until you add credits or the month starts again.",
+  "te": "అన్నీ వాడేశారు. క్రెడిట్స్ యాడ్ చేసే వరకు లేదా కొత్త నెల మొదలయ్యే వరకు మీరు మొదలుపెట్టే మెసేజ్‌లు ఔట్‌బాక్స్‌లో ఆగుతాయి.",
+  "hi": "सब इस्तेमाल हो गए। क्रेडिट जोड़ने या नया महीना शुरू होने तक आपके शुरू किए मैसेज आउटबॉक्स में रुकेंगे।",
+  "kn": "ಎಲ್ಲವೂ ಬಳಕೆಯಾಗಿದೆ. ಕ್ರೆಡಿಟ್ ಸೇರಿಸುವವರೆಗೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾಗುವವರೆಗೆ ನೀವು ಶುರುಮಾಡುವ ಮೆಸೇಜ್‌ಗಳು ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಕಾಯುತ್ತವೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70008,10 +70008,10 @@
   }
  },
  "tu.bar.expiry": {
-  "en": "Unused top-up units stay until {date}, then they expire.",
-  "te": "వాడని టాప్-అప్ యూనిట్లు {date} వరకు ఉంటాయి, ఆ తర్వాత ముగిసిపోతాయి.",
-  "hi": "बिना इस्तेमाल हुए टॉप-अप यूनिट {date} तक रहते हैं, फिर खत्म हो जाते हैं।",
-  "kn": "ಬಳಸದ ಟಾಪ್-ಅಪ್ ಯೂನಿಟ್‌ಗಳು {date} ವರೆಗೆ ಇರುತ್ತವೆ, ಆಮೇಲೆ ಮುಗಿದುಹೋಗುತ್ತವೆ.",
+  "en": "Unused added credits stay until {date}, then they expire.",
+  "te": "వాడని క్రెడిట్స్ {date} వరకు ఉంటాయి, ఆ తర్వాత అయిపోతాయి.",
+  "hi": "बिना इस्तेमाल हुए जोड़े गए क्रेडिट {date} तक रहते हैं, फिर खत्म हो जाते हैं।",
+  "kn": "ಬಳಸದ ಸೇರಿಸಿದ ಕ್ರೆಡಿಟ್ {date} ವರೆಗೆ ಇರುತ್ತದೆ, ಆಮೇಲೆ ಮುಗಿದುಹೋಗುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70052,10 +70052,10 @@
   }
  },
  "tu.alert.100.minutes": {
-  "en": "Your minutes are used up. Calls are queued ({n} waiting). Top up to continue.",
-  "te": "మీ మినిట్స్ అయిపోయాయి. కాల్స్ క్యూలో ఉన్నాయి ({n} ఆగాయి). కొనసాగాలంటే టాప్-అప్ చేయండి.",
-  "hi": "आपके मिनट खत्म हो गए। कॉल कतार में हैं ({n} रुकी हैं)। जारी रखने के लिए टॉप-अप करें।",
-  "kn": "ನಿಮ್ಮ ನಿಮಿಷಗಳು ಮುಗಿದಿವೆ. ಕಾಲ್‌ಗಳು ಸರದಿಯಲ್ಲಿವೆ ({n} ಕಾಯುತ್ತಿವೆ). ಮುಂದುವರಿಯಲು ಟಾಪ್-ಅಪ್ ಮಾಡಿ.",
+  "en": "Your minutes are used up. Calls are queued ({n} waiting). Add credits to continue.",
+  "te": "మీ మినిట్స్ అయిపోయాయి. కాల్స్ క్యూలో ఉన్నాయి ({n} ఆగాయి). కొనసాగాలంటే క్రెడిట్స్ యాడ్ చేయండి.",
+  "hi": "आपके मिनट खत्म हो गए। कॉल कतार में हैं ({n} रुकी हैं)। जारी रखने के लिए क्रेडिट जोड़ें।",
+  "kn": "ನಿಮ್ಮ ನಿಮಿಷಗಳು ಮುಗಿದಿವೆ. ಕಾಲ್‌ಗಳು ಸರದಿಯಲ್ಲಿವೆ ({n} ಕಾಯುತ್ತಿವೆ). ಮುಂದುವರಿಯಲು ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70063,10 +70063,10 @@
   }
  },
  "tu.alert.100.messages": {
-  "en": "Your WhatsApp messages are used up. Messages you start are held in the outbox ({n} held). Top up to continue.",
-  "te": "మీ WhatsApp మెసేజ్‌లు అయిపోయాయి. మీరు మొదలుపెట్టే మెసేజ్‌లు ఔట్‌బాక్స్‌లో ఆగాయి ({n}). కొనసాగాలంటే టాప్-అప్ చేయండి.",
-  "hi": "आपके WhatsApp मैसेज खत्म हो गए। आपके शुरू किए मैसेज आउटबॉक्स में रुके हैं ({n})। जारी रखने के लिए टॉप-अप करें।",
-  "kn": "ನಿಮ್ಮ WhatsApp ಮೆಸೇಜ್‌ಗಳು ಮುಗಿದಿವೆ. ನೀವು ಶುರುಮಾಡುವ ಮೆಸೇಜ್‌ಗಳು ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ನಿಂತಿವೆ ({n}). ಮುಂದುವರಿಯಲು ಟಾಪ್-ಅಪ್ ಮಾಡಿ.",
+  "en": "Your WhatsApp messages are used up. Messages you start are held in the outbox ({n} held). Add credits to continue.",
+  "te": "మీ WhatsApp మెసేజ్‌లు అయిపోయాయి. మీరు మొదలుపెట్టే మెసేజ్‌లు ఔట్‌బాక్స్‌లో ఆగాయి ({n}). కొనసాగాలంటే క్రెడిట్స్ యాడ్ చేయండి.",
+  "hi": "आपके WhatsApp मैसेज खत्म हो गए। आपके शुरू किए मैसेज आउटबॉक्स में रुके हैं ({n})। जारी रखने के लिए क्रेडिट जोड़ें।",
+  "kn": "ನಿಮ್ಮ WhatsApp ಮೆಸೇಜ್‌ಗಳು ಮುಗಿದಿವೆ. ನೀವು ಶುರುಮಾಡುವ ಮೆಸೇಜ್‌ಗಳು ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ನಿಂತಿವೆ ({n}). ಮುಂದುವರಿಯಲು ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70085,10 +70085,10 @@
   }
  },
  "tu.cta.topup": {
-  "en": "Top up",
-  "te": "టాప్-అప్ చేయండి",
-  "hi": "टॉप-अप करें",
-  "kn": "ಟಾಪ್-ಅಪ್ ಮಾಡಿ",
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ యాడ్ చేయండి",
+  "hi": "क्रेडिट जोड़ें",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70162,10 +70162,10 @@
   }
  },
  "tu.needs.body.80.minutes": {
-  "en": "Your calls are at {n}% of this month's minutes. Top up to keep calling without a break.",
-  "te": "ఈ నెల మినిట్స్‌లో మీ కాల్స్ {n}% వాడారు. ఆగకుండా కాల్ చేయడానికి టాప్-అప్ చేయండి.",
-  "hi": "इस महीने के मिनट का {n}% कॉल में लग चुका है। बिना रुके कॉल जारी रखने के लिए टॉप-अप करें।",
-  "kn": "ಈ ತಿಂಗಳ ನಿಮಿಷಗಳಲ್ಲಿ ಕಾಲ್‌ಗಳು {n}% ಬಳಸಿವೆ. ನಿಲ್ಲದೆ ಕಾಲ್ ಮಾಡಲು ಟಾಪ್-ಅಪ್ ಮಾಡಿ.",
+  "en": "Your calls are at {n}% of this month's minutes. Add credits to keep calling without a break.",
+  "te": "ఈ నెల మినిట్స్‌లో మీ కాల్స్ {n}% వాడారు. ఆగకుండా కాల్ చేయడానికి క్రెడిట్స్ యాడ్ చేయండి.",
+  "hi": "इस महीने के मिनट का {n}% कॉल में लग चुका है। बिना रुके कॉल जारी रखने के लिए क्रेडिट जोड़ें।",
+  "kn": "ಈ ತಿಂಗಳ ನಿಮಿಷಗಳಲ್ಲಿ ಕಾಲ್‌ಗಳು {n}% ಬಳಸಿವೆ. ನಿಲ್ಲದೆ ಕಾಲ್ ಮಾಡಲು ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70173,10 +70173,10 @@
   }
  },
  "tu.needs.body.80.messages": {
-  "en": "Your messages are at {n}% of this month's WhatsApp messages. Top up so none are held.",
-  "te": "ఈ నెల WhatsApp మెసేజ్‌లలో మీవి {n}% వాడారు. ఏవీ ఆగకుండా టాప్-అప్ చేయండి.",
-  "hi": "इस महीने के WhatsApp मैसेज का {n}% लग चुका है। कोई रुके नहीं, इसलिए टॉप-अप करें।",
-  "kn": "ಈ ತಿಂಗಳ WhatsApp ಮೆಸೇಜ್‌ಗಳಲ್ಲಿ {n}% ಬಳಸಿದ್ದೀರಿ. ಯಾವುದೂ ನಿಲ್ಲದಿರಲು ಟಾಪ್-ಅಪ್ ಮಾಡಿ.",
+  "en": "Your messages are at {n}% of this month's WhatsApp messages. Add credits so none are held.",
+  "te": "ఈ నెల WhatsApp మెసేజ్‌లలో మీవి {n}% వాడారు. ఏవీ ఆగకుండా క్రెడిట్స్ యాడ్ చేయండి.",
+  "hi": "इस महीने के WhatsApp मैसेज का {n}% लग चुका है। कोई रुके नहीं, इसलिए क्रेडिट जोड़ें।",
+  "kn": "ಈ ತಿಂಗಳ WhatsApp ಮೆಸೇಜ್‌ಗಳಲ್ಲಿ {n}% ಬಳಸಿದ್ದೀರಿ. ಯಾವುದೂ ನಿಲ್ಲದಿರಲು ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70184,10 +70184,10 @@
   }
  },
  "tu.needs.body.100.minutes": {
-  "en": "{n} leads wait for a call. They are called by themselves after a top-up or when the month starts again.",
-  "te": "{n} లీడ్స్ కాల్ కోసం ఆగి ఉన్నారు. టాప్-అప్ తర్వాత లేదా కొత్త నెలలో వాళ్లకి కాల్స్ వాటంతటవే మొదలవుతాయి.",
-  "hi": "{n} लीड कॉल के इंतज़ार में हैं। टॉप-अप के बाद या नया महीना शुरू होने पर उन्हें अपने आप कॉल जाएगी।",
-  "kn": "{n} ಲೀಡ್‌ಗಳು ಕಾಲ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ. ಟಾಪ್-ಅಪ್ ಆದ ಮೇಲೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾದಾಗ ಅವರಿಗೆ ತಾನಾಗಿ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
+  "en": "{n} leads wait for a call. They are called by themselves after you add credits or when the month starts again.",
+  "te": "{n} లీడ్స్ కాల్ కోసం ఆగి ఉన్నారు. క్రెడిట్స్ యాడ్ చేశాక లేదా కొత్త నెలలో వాళ్లకి కాల్స్ వాటంతటవే మొదలవుతాయి.",
+  "hi": "{n} लीड कॉल के इंतज़ार में हैं। क्रेडिट जोड़ने के बाद या नया महीना शुरू होने पर उन्हें अपने आप कॉल जाएगी।",
+  "kn": "{n} ಲೀಡ್‌ಗಳು ಕಾಲ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ. ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿದ ಮೇಲೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾದಾಗ ಅವರಿಗೆ ತಾನಾಗಿ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70195,10 +70195,10 @@
   }
  },
  "tu.needs.body.100.messages": {
-  "en": "{n} messages wait in the outbox. They can go once you top up or the month starts again.",
-  "te": "{n} మెసేజ్‌లు ఔట్‌బాక్స్‌లో ఆగి ఉన్నాయి. టాప్-అప్ చేశాక లేదా కొత్త నెలలో అవి వెళ్లగలవు.",
-  "hi": "{n} मैसेज आउटबॉक्स में रुके हैं। टॉप-अप करने या नया महीना शुरू होने पर वे जा सकेंगे।",
-  "kn": "{n} ಮೆಸೇಜ್‌ಗಳು ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಕಾಯುತ್ತಿವೆ. ಟಾಪ್-ಅಪ್ ಆದ ಮೇಲೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳಲ್ಲಿ ಅವು ಹೋಗಬಹುದು.",
+  "en": "{n} messages wait in the outbox. They can go once you add credits or the month starts again.",
+  "te": "{n} మెసేజ్‌లు ఔట్‌బాక్స్‌లో ఆగి ఉన్నాయి. క్రెడిట్స్ యాడ్ చేశాక లేదా కొత్త నెలలో అవి వెళ్లగలవు.",
+  "hi": "{n} मैसेज आउटबॉक्स में रुके हैं। क्रेडिट जोड़ने या नया महीना शुरू होने पर वे जा सकेंगे।",
+  "kn": "{n} ಮೆಸೇಜ್‌ಗಳು ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಕಾಯುತ್ತಿವೆ. ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿದ ಮೇಲೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳಲ್ಲಿ ಅವು ಹೋಗಬಹುದು.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70228,10 +70228,10 @@
   }
  },
  "tu.wait.body": {
-  "en": "Calls are queued and start again by themselves after a top-up or when the new month begins. Leads are still captured, and free WhatsApp replies within 24 hours carry on.",
-  "te": "కాల్స్ క్యూలో ఉన్నాయి; టాప్-అప్ తర్వాత లేదా కొత్త నెల మొదలైనప్పుడు వాటంతటవే మళ్లీ మొదలవుతాయి. లీడ్స్ ఇప్పటికీ నమోదవుతాయి, 24 గంటల్లోపు ఉచిత WhatsApp జవాబులు కొనసాగుతాయి.",
-  "hi": "कॉल कतार में हैं और टॉप-अप के बाद या नया महीना शुरू होने पर अपने आप फिर शुरू होंगी। लीड अब भी दर्ज होती हैं, और 24 घंटे के अंदर मुफ़्त WhatsApp जवाब चलते रहते हैं।",
-  "kn": "ಕಾಲ್‌ಗಳು ಸರದಿಯಲ್ಲಿವೆ; ಟಾಪ್-ಅಪ್ ಆದ ಮೇಲೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾದಾಗ ತಾನಾಗಿ ಮತ್ತೆ ಶುರುವಾಗುತ್ತವೆ. ಲೀಡ್‌ಗಳು ಈಗಲೂ ದಾಖಲಾಗುತ್ತವೆ, 24 ಗಂಟೆಯೊಳಗಿನ ಉಚಿತ WhatsApp ಉತ್ತರಗಳು ಮುಂದುವರಿಯುತ್ತವೆ.",
+  "en": "Calls are queued and start again by themselves after you add credits or when the new month begins. Leads are still captured, and free WhatsApp replies within 24 hours carry on.",
+  "te": "కాల్స్ క్యూలో ఉన్నాయి; క్రెడిట్స్ యాడ్ చేశాక లేదా కొత్త నెల మొదలైనప్పుడు వాటంతటవే మళ్లీ మొదలవుతాయి. లీడ్స్ ఇప్పటికీ నమోదవుతాయి, 24 గంటల్లోపు ఉచిత WhatsApp జవాబులు కొనసాగుతాయి.",
+  "hi": "कॉल कतार में हैं और क्रेडिट जोड़ने के बाद या नया महीना शुरू होने पर अपने आप फिर शुरू होंगी। लीड अब भी दर्ज होती हैं, और 24 घंटे के अंदर मुफ़्त WhatsApp जवाब चलते रहते हैं।",
+  "kn": "ಕಾಲ್‌ಗಳು ಸರದಿಯಲ್ಲಿವೆ; ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿದ ಮೇಲೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾದಾಗ ತಾನಾಗಿ ಮತ್ತೆ ಶುರುವಾಗುತ್ತವೆ. ಲೀಡ್‌ಗಳು ಈಗಲೂ ದಾಖಲಾಗುತ್ತವೆ, 24 ಗಂಟೆಯೊಳಗಿನ ಉಚಿತ WhatsApp ಉತ್ತರಗಳು ಮುಂದುವರಿಯುತ್ತವೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70239,10 +70239,10 @@
   }
  },
  "tu.packs.title": {
-  "en": "Top up",
-  "te": "టాప్-అప్",
-  "hi": "टॉप-अप",
-  "kn": "ಟಾಪ್-ಅಪ್",
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ యాడ్ చేయండి",
+  "hi": "क्रेडिट जोड़ें",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70272,10 +70272,10 @@
   }
  },
  "tu.packs.carry": {
-  "en": "Unused top-up units carry over for 90 days. Your plan's own allowance starts again each month.",
-  "te": "వాడని టాప్-అప్ యూనిట్లు 90 రోజులు కొనసాగుతాయి. మీ ప్లాన్ సొంత కోటా ప్రతి నెలా కొత్తగా మొదలవుతుంది.",
-  "hi": "बिना इस्तेमाल हुए टॉप-अप यूनिट 90 दिन आगे चलते हैं। आपके प्लान का अपना कोटा हर महीने नए सिरे से शुरू होता है।",
-  "kn": "ಬಳಸದ ಟಾಪ್-ಅಪ್ ಯೂನಿಟ್‌ಗಳು 90 ದಿನ ಮುಂದುವರಿಯುತ್ತವೆ. ನಿಮ್ಮ ಪ್ಲಾನ್‌ನ ಸ್ವಂತ ಕೋಟಾ ಪ್ರತಿ ತಿಂಗಳು ಹೊಸದಾಗಿ ಶುರುವಾಗುತ್ತದೆ.",
+  "en": "Unused added credits carry over for 90 days. Your plan's own allowance starts again each month.",
+  "te": "వాడని క్రెడిట్స్ 90 రోజులు కొనసాగుతాయి. మీ ప్లాన్ సొంత కోటా ప్రతి నెలా కొత్తగా మొదలవుతుంది.",
+  "hi": "बिना इस्तेमाल हुए जोड़े गए क्रेडिट 90 दिन आगे चलते हैं। आपके प्लान का अपना कोटा हर महीने नए सिरे से शुरू होता है।",
+  "kn": "ಬಳಸದ ಸೇರಿಸಿದ ಕ್ರೆಡಿಟ್ 90 ದಿನ ಮುಂದುವರಿಯುತ್ತದೆ. ನಿಮ್ಮ ಪ್ಲಾನ್‌ನ ಸ್ವಂತ ಕೋಟಾ ಪ್ರತಿ ತಿಂಗಳು ಹೊಸದಾಗಿ ಶುರುವಾಗುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70283,10 +70283,10 @@
   }
  },
  "tu.packs.first": {
-  "en": "Your plan's allowance is used first, then the oldest top-up.",
-  "te": "ముందు మీ ప్లాన్ కోటా వాడతాం, తర్వాత అత్యంత పాత టాప్-అప్.",
-  "hi": "पहले आपके प्लान का कोटा इस्तेमाल होता है, फिर सबसे पुराना टॉप-अप।",
-  "kn": "ಮೊದಲು ನಿಮ್ಮ ಪ್ಲಾನ್ ಕೋಟಾ ಬಳಕೆಯಾಗುತ್ತದೆ, ಆಮೇಲೆ ಅತಿ ಹಳೆಯ ಟಾಪ್-ಅಪ್.",
+  "en": "Your plan's allowance is used first, then the oldest added credits.",
+  "te": "ముందు మీ ప్లాన్ కోటా వాడతాం, తర్వాత అందరికంటే పాత క్రెడిట్స్.",
+  "hi": "पहले आपके प्लान का कोटा इस्तेमाल होता है, फिर सबसे पुराने जोड़े गए क्रेडिट।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಪ್ಲಾನ್ ಕೋಟಾ ಬಳಕೆಯಾಗುತ್ತದೆ, ಆಮೇಲೆ ಅತಿ ಹಳೆಯ ಕ್ರೆಡಿಟ್.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70503,10 +70503,10 @@
   }
  },
  "tu.auto.title": {
-  "en": "Auto top-up",
-  "te": "ఆటో టాప్-అప్",
-  "hi": "ऑटो टॉप-अप",
-  "kn": "ಆಟೋ ಟಾಪ್-ಅಪ್",
+  "en": "Add credits automatically",
+  "te": "క్రెడిట్స్ ఆటోమేటిక్‌గా యాడ్ చేయడం",
+  "hi": "क्रेडिट अपने आप जोड़ना",
+  "kn": "ಕ್ರೆಡಿಟ್ ತಾನಾಗಿ ಸೇರಿಸುವುದು",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70525,10 +70525,10 @@
   }
  },
  "tu.auto.switch": {
-  "en": "Top up by itself when they run out",
-  "te": "అయిపోయినప్పుడు తనంతట తానే టాప్-అప్ చేయి",
-  "hi": "खत्म होने पर अपने आप टॉप-अप करें",
-  "kn": "ಮುಗಿದಾಗ ತಾನಾಗಿ ಟಾಪ್-ಅಪ್ ಮಾಡಿ",
+  "en": "Add credits by itself when they run out",
+  "te": "అయిపోయినప్పుడు తనంతట తానే క్రెడిట్స్ యాడ్ చేయి",
+  "hi": "खत्म होने पर अपने आप क्रेडिट जोड़ें",
+  "kn": "ಮುಗಿದಾಗ ತಾನಾಗಿ ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70701,10 +70701,10 @@
   }
  },
  "tu.set.pick_pack": {
-  "en": "Choose a pack to buy, or turn auto top-up off.",
-  "te": "కొనాల్సిన ప్యాక్ ఎంచుకోండి, లేదా ఆటో టాప్-అప్ ఆఫ్ చేయండి.",
-  "hi": "खरीदने के लिए पैक चुनें, या ऑटो टॉप-अप बंद करें।",
-  "kn": "ಕೊಳ್ಳಬೇಕಾದ ಪ್ಯಾಕ್ ಆರಿಸಿ, ಇಲ್ಲವೇ ಆಟೋ ಟಾಪ್-ಅಪ್ ಆಫ್ ಮಾಡಿ.",
+  "en": "Choose a pack to buy, or turn off adding credits automatically.",
+  "te": "కొనాల్సిన ప్యాక్ ఎంచుకోండి, లేదా ఆటోమేటిక్‌గా క్రెడిట్స్ యాడ్ చేయడం ఆఫ్ చేయండి.",
+  "hi": "खरीदने के लिए पैक चुनें, या क्रेडिट अपने आप जोड़ना बंद करें।",
+  "kn": "ಕೊಳ್ಳಬೇಕಾದ ಪ್ಯಾಕ್ ಆರಿಸಿ, ಇಲ್ಲವೇ ಕ್ರೆಡಿಟ್ ತಾನಾಗಿ ಸೇರಿಸುವುದನ್ನು ಆಫ್ ಮಾಡಿ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -70910,10 +70910,10 @@
   }
  },
  "tu.hist.title": {
-  "en": "Top-ups bought",
-  "te": "కొన్న టాప్-అప్‌లు",
-  "hi": "खरीदे गए टॉप-अप",
-  "kn": "ಕೊಂಡ ಟಾಪ್-ಅಪ್‌ಗಳು",
+  "en": "Credits bought",
+  "te": "కొన్న క్రెడిట్స్",
+  "hi": "खरीदे गए क्रेडिट",
+  "kn": "ಕೊಂಡ ಕ್ರೆಡಿಟ್",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -78577,10 +78577,10 @@
   }
  },
  "today.step.voice": {
-  "en": "Top up",
-  "te": "టాప్ అప్ చేయండి",
-  "hi": "टॉप अप करें",
-  "kn": "ಟಾಪ್ ಅಪ್ ಮಾಡಿ",
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ యాడ్ చేయండి",
+  "hi": "क्रेडिट जोड़ें",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -92378,10 +92378,10 @@
   }
  },
  "help.tip.billing.2": {
-  "en": "Top up when the balance is low; calls and messages are paid from it.",
-  "te": "బ్యాలెన్స్ తక్కువగా ఉన్నప్పుడు టాప్ అప్ చేయండి; కాల్స్, మెసేజ్‌ల ఖర్చు దాని నుంచే కట్ అవుతుంది.",
-  "hi": "Top up when the balance is low; calls and messages are paid from it.",
-  "kn": "Top up when the balance is low; calls and messages are paid from it.",
+  "en": "Add credits when the balance is low; calls and messages are paid from it.",
+  "te": "బ్యాలెన్స్ తక్కువగా ఉన్నప్పుడు క్రెడిట్స్ యాడ్ చేయండి; కాల్స్, మెసేజ్‌ల ఖర్చు దాని నుంచే కట్ అవుతుంది.",
+  "hi": "Add credits when the balance is low; calls and messages are paid from it.",
+  "kn": "Add credits when the balance is low; calls and messages are paid from it.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -97401,10 +97401,10 @@
   }
  },
  "cv6.plan.short": {
-  "en": "Your balance is not enough for this list. Add money in Billing first.",
-  "te": "ఈ లిస్ట్‌కి మీ బ్యాలెన్స్ సరిపోదు. ముందు బిల్లింగ్‌లో డబ్బు యాడ్ చేయండి.",
-  "hi": "Your balance is not enough for this list. Add money in Billing first.",
-  "kn": "Your balance is not enough for this list. Add money in Billing first.",
+  "en": "Your balance is not enough for this list. Add credits in Billing first.",
+  "te": "ఈ లిస్ట్‌కి మీ బ్యాలెన్స్ సరిపోదు. ముందు బిల్లింగ్‌లో క్రెడిట్స్ యాడ్ చేయండి.",
+  "hi": "Your balance is not enough for this list. Add credits in Billing first.",
+  "kn": "Your balance is not enough for this list. Add credits in Billing first.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -97647,10 +97647,10 @@
   }
  },
  "bv6.mock": {
-  "en": "Test data: the balance, top-ups and invoices here are made up and no real money moves.",
-  "te": "టెస్ట్ డేటా: ఇక్కడి బ్యాలెన్స్, టాప్-అప్‌లు, ఇన్వాయిస్‌లు డమ్మీవి, నిజమైన డబ్బు ఏదీ కదలదు.",
-  "hi": "Test data: the balance, top-ups and invoices here are made up and no real money moves.",
-  "kn": "Test data: the balance, top-ups and invoices here are made up and no real money moves.",
+  "en": "Test data: the balance, added credits and invoices here are made up and no real money moves.",
+  "te": "టెస్ట్ డేటా: ఇక్కడి బ్యాలెన్స్, యాడ్ చేసిన క్రెడిట్స్, ఇన్వాయిస్‌లు డమ్మీవి, నిజమైన డబ్బు ఏదీ కదలదు.",
+  "hi": "Test data: the balance, added credits and invoices here are made up and no real money moves.",
+  "kn": "Test data: the balance, added credits and invoices here are made up and no real money moves.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -97695,10 +97695,10 @@
   "humanOnly": true
  },
  "bv6.balance.low": {
-  "en": "Your balance is low. Add money so your assistant's calls do not wait.",
-  "te": "మీ బ్యాలెన్స్ తక్కువగా ఉంది. మీ అసిస్టెంట్ కాల్స్ ఆగకుండా డబ్బు యాడ్ చేయండి.",
-  "hi": "Your balance is low. Add money so your assistant's calls do not wait.",
-  "kn": "Your balance is low. Add money so your assistant's calls do not wait.",
+  "en": "Your balance is low. Add credits so your assistant's calls do not wait.",
+  "te": "మీ బ్యాలెన్స్ తక్కువగా ఉంది. మీ అసిస్టెంట్ కాల్స్ ఆగకుండా క్రెడిట్స్ యాడ్ చేయండి.",
+  "hi": "Your balance is low. Add credits so your assistant's calls do not wait.",
+  "kn": "Your balance is low. Add credits so your assistant's calls do not wait.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -97912,10 +97912,10 @@
   }
  },
  "bv6.topup.open": {
-  "en": "Add money",
-  "te": "డబ్బు యాడ్ చేయండి",
-  "hi": "Add money",
-  "kn": "Add money",
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ యాడ్ చేయండి",
+  "hi": "Add credits",
+  "kn": "Add credits",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -97924,10 +97924,10 @@
   "humanOnly": true
  },
  "bv6.topup.title": {
-  "en": "Add money",
-  "te": "డబ్బు యాడ్ చేయండి",
-  "hi": "Add money",
-  "kn": "Add money",
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ యాడ్ చేయండి",
+  "hi": "Add credits",
+  "kn": "Add credits",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -108683,10 +108683,10 @@
   "humanOnly": true
  },
  "ea.body": {
-  "en": "Use everything free while we are in early access. There is nothing to pay and no balance to top up.",
-  "te": "మేం ఎర్లీ యాక్సెస్‌లో ఉన్నంతవరకు అన్నీ ఫ్రీగా వాడండి. కట్టాల్సింది ఏమీ లేదు, టాప్ అప్ చేయాల్సిన బ్యాలెన్స్ లేదు.",
-  "hi": "Use everything free while we are in early access. There is nothing to pay and no balance to top up.",
-  "kn": "Use everything free while we are in early access. There is nothing to pay and no balance to top up.",
+  "en": "Use everything free while we are in early access. There is nothing to pay and no balance to add credits to.",
+  "te": "మేం ఎర్లీ యాక్సెస్‌లో ఉన్నంతవరకు అన్నీ ఫ్రీగా వాడండి. కట్టాల్సింది ఏమీ లేదు, క్రెడిట్స్ యాడ్ చేయాల్సిన బ్యాలెన్స్ లేదు.",
+  "hi": "Use everything free while we are in early access. There is nothing to pay and no balance to add credits to.",
+  "kn": "Use everything free while we are in early access. There is nothing to pay and no balance to add credits to.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -119571,10 +119571,10 @@
   "humanOnly": true
  },
  "bill.wallet.low.text": {
-  "en": "Add money so your assistant's calls do not wait.",
-  "te": "మీ అసిస్టెంట్ కాల్స్ ఆగకుండా డబ్బు యాడ్ చేయండి.",
-  "hi": "Add money so your assistant's calls do not wait.",
-  "kn": "Add money so your assistant's calls do not wait.",
+  "en": "Add credits so your assistant's calls do not wait.",
+  "te": "మీ అసిస్టెంట్ కాల్స్ ఆగకుండా క్రెడిట్స్ యాడ్ చేయండి.",
+  "hi": "Add credits so your assistant's calls do not wait.",
+  "kn": "Add credits so your assistant's calls do not wait.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -119583,10 +119583,10 @@
   "humanOnly": true
  },
  "bill.wallet.empty.text": {
-  "en": "Calls wait in a queue, they are not lost. They go out when you add money.",
-  "te": "కాల్స్ క్యూలో వెయిట్ చేస్తాయి, పోవు. మీరు డబ్బు యాడ్ చేశాక వెళ్తాయి.",
-  "hi": "Calls wait in a queue, they are not lost. They go out when you add money.",
-  "kn": "Calls wait in a queue, they are not lost. They go out when you add money.",
+  "en": "Calls wait in a queue, they are not lost. They go out when you add credits.",
+  "te": "కాల్స్ క్యూలో వెయిట్ చేస్తాయి, పోవు. మీరు క్రెడిట్స్ యాడ్ చేశాక వెళ్తాయి.",
+  "hi": "Calls wait in a queue, they are not lost. They go out when you add credits.",
+  "kn": "Calls wait in a queue, they are not lost. They go out when you add credits.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -129602,10 +129602,10 @@
   }
  },
  "cr.last": {
-  "en": "Last top-up",
-  "te": "చివరి టాప్-అప్",
-  "hi": "आख़िरी टॉप-अप",
-  "kn": "ಕೊನೆಯ ಟಾಪ್-ಅಪ್",
+  "en": "Last credits added",
+  "te": "చివరిసారి యాడ్ చేసిన క్రెడిట్స్",
+  "hi": "आख़िरी बार जोड़े गए क्रेडिट",
+  "kn": "ಕೊನೆಯ ಬಾರಿ ಸೇರಿಸಿದ ಕ್ರೆಡಿಟ್",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -129657,10 +129657,10 @@
   }
  },
  "cr.topups": {
-  "en": "Top-ups",
-  "te": "టాప్-అప్‌లు",
-  "hi": "टॉप-अप",
-  "kn": "ಟಾಪ್-ಅಪ್‌ಗಳು",
+  "en": "Credits added",
+  "te": "యాడ్ చేసిన క్రెడిట్స్",
+  "hi": "जोड़े गए क्रेडिट",
+  "kn": "ಸೇರಿಸಿದ ಕ್ರೆಡಿಟ್",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -129679,10 +129679,10 @@
   }
  },
  "cr.statement.none": {
-  "en": "Nothing yet. Top-ups and calls appear here as they happen.",
-  "te": "ఇంకేమీ లేదు. top-ups, కాల్స్ జరిగేకొద్దీ ఇక్కడ కనిపిస్తాయి.",
-  "hi": "अभी कुछ नहीं। top-ups और कॉल होते ही यहाँ दिखेंगे।",
-  "kn": "ಇನ್ನೂ ಏನೂ ಇಲ್ಲ. top-ups ಮತ್ತು ಕರೆಗಳು ಆದಂತೆ ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ.",
+  "en": "Nothing yet. Credits added and calls appear here as they happen.",
+  "te": "ఇంకేమీ లేదు. క్రెడిట్స్ యాడ్ చేసినవి, కాల్స్ జరిగేకొద్దీ ఇక్కడ కనిపిస్తాయి.",
+  "hi": "अभी कुछ नहीं। जोड़े गए क्रेडिट और कॉल होते ही यहाँ दिखेंगे।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಇಲ್ಲ. ಸೇರಿಸಿದ ಕ್ರೆಡಿಟ್ ಮತ್ತು ಕಾಲ್‌ಗಳು ಆದಂತೆ ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -129723,10 +129723,10 @@
   }
  },
  "cr.invoices.none": {
-  "en": "An invoice is made after each top-up and appears here.",
-  "te": "ప్రతి top-up తర్వాత ఇన్వాయిస్ తయారవుతుంది, ఇక్కడ కనిపిస్తుంది.",
-  "hi": "हर top-up के बाद इनवॉइस बनता है और यहाँ दिखता है।",
-  "kn": "ಪ್ರತಿ top-up ನಂತರ ಇನ್ವಾಯ್ಸ್ ಆಗುತ್ತದೆ, ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ.",
+  "en": "An invoice is made each time you add credits and appears here.",
+  "te": "మీరు క్రెడిట్స్ యాడ్ చేసిన ప్రతిసారీ ఇన్వాయిస్ తయారవుతుంది, ఇక్కడ కనిపిస్తుంది.",
+  "hi": "जब भी आप क्रेडिट जोड़ते हैं, इनवॉइस बनता है और यहाँ दिखता है।",
+  "kn": "ನೀವು ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿದ ಪ್ರತಿ ಬಾರಿ ಇನ್ವಾಯ್ಸ್ ಆಗುತ್ತದೆ, ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -132946,10 +132946,10 @@
   }
  },
  "cr.debt": {
-  "en": "Your balance is below zero by {n}. Your next top-up pays this first.",
-  "te": "మీ బ్యాలెన్స్ {n} జీరో కంటే తక్కువ ఉంది. మీ తర్వాతి టాప్-అప్ ముందు దీన్ని చెల్లిస్తుంది.",
-  "hi": "आपका बैलेंस {n} से ज़ीरो के नीचे है। आपका अगला टॉप-अप पहले इसे चुकाएगा।",
-  "kn": "ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್ {n} ರಷ್ಟು ಸೊನ್ನೆಗಿಂತ ಕಡಿಮೆ ಇದೆ. ನಿಮ್ಮ ಮುಂದಿನ ಟಾಪ್-ಅಪ್ ಮೊದಲು ಇದನ್ನು ಪಾವತಿಸುತ್ತದೆ.",
+  "en": "Your balance is below zero by {n}. The next credits you add pay this first.",
+  "te": "మీ బ్యాలెన్స్ {n} జీరో కంటే తక్కువ ఉంది. మీరు యాడ్ చేసే తర్వాతి క్రెడిట్స్ ముందు దీన్ని కట్టేస్తాయి.",
+  "hi": "आपका बैलेंस ज़ीरो से {n} नीचे है। आप जो अगले क्रेडिट जोड़ेंगे, वे पहले इसे चुकाएँगे।",
+  "kn": "ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್ ಸೊನ್ನೆಗಿಂತ {n} ಕಡಿಮೆ ಇದೆ. ನೀವು ಸೇರಿಸುವ ಮುಂದಿನ ಕ್ರೆಡಿಟ್ ಮೊದಲು ಇದನ್ನು ಕಟ್ಟುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",

@@ -44,12 +44,12 @@ describe("Billing (design system v6)", () => {
     expect(within(plan).getByRole("progressbar")).toHaveAttribute("value", "158");
     expect(within(plan).getByRole("link", { name: "Change plan" })).toHaveAttribute("href", "/app/tenants/t1/plans");
   });
-  it("shows the balance in rupees and call minutes, never the word credits", () => {
+  it("shows the balance in rupees and call minutes, and the action says Add credits", () => {
     render(<BillingV6 {...props()} />);
     const bal = screen.getByRole("region", { name: "Your balance" });
     expect(bal).toHaveTextContent("₹1,550");
     expect(bal).toHaveTextContent("About 310 call minutes");
-    expect(document.body.textContent).not.toMatch(/credit/i);
+    expect(bal.textContent).not.toMatch(/credit/i); // (the action "Add credits" is not in the balance box)
   });
   it("lists the three plans, marks the current one, and points the others to the picker", () => {
     render(<BillingV6 {...props()} />);
@@ -106,12 +106,12 @@ describe("Billing (design system v6)", () => {
   });
 });
 
-describe("Add money", () => {
+describe("Add credits", () => {
   it("opens a sheet marked TEST with four amounts, pays the chosen one and reads the page again", async () => {
     const topup = vi.fn(async () => ({ ok: true as const }));
     render(<BillingV6 {...props({ actions: { freeStart: async () => ({ ok: true }), topup } })} />);
-    fireEvent.click(screen.getByRole("button", { name: "Add money" }));
-    const sheet = screen.getByRole("dialog", { name: "Add money" });
+    fireEvent.click(screen.getByRole("button", { name: "Add credits" }));
+    const sheet = screen.getByRole("dialog", { name: "Add credits" });
     expect(within(sheet).getByText(/TEST: no real money moves/)).toBeInTheDocument();
     const radios = within(sheet).getAllByRole("radio");
     expect(radios.map((r) => r.textContent)).toEqual(["₹500", "₹1,000", "₹2,000", "₹5,000"]);
@@ -124,23 +124,23 @@ describe("Add money", () => {
   });
   it("closes with Escape and with Close", () => {
     render(<BillingV6 {...props()} />);
-    fireEvent.click(screen.getByRole("button", { name: "Add money" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add credits" }));
     fireEvent.keyDown(window, { key: "Escape" });
     expect(screen.queryByRole("dialog")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Add money" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add credits" }));
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(screen.queryByRole("dialog")).toBeNull();
   });
   it("shows the refusal in words", async () => {
     render(<BillingV6 {...props({ actions: { freeStart: async () => ({ ok: true }), topup: async () => ({ ok: false, error: "Only the owner can do this." }) } })} />);
-    fireEvent.click(screen.getByRole("button", { name: "Add money" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add credits" }));
     fireEvent.click(screen.getByRole("button", { name: "Pay (test)" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("Only the owner can do this.");
     expect(refresh).not.toHaveBeenCalled();
   });
   it("where no top-up exists yet there is no Pay button, only the reason", () => {
     render(<BillingV6 {...props({ balance: parseBillingBalance({ ...WIRE, topup_available: false }) })} />);
-    fireEvent.click(screen.getByRole("button", { name: "Add money" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add credits" }));
     const sheet = screen.getByRole("dialog");
     expect(sheet).toHaveTextContent("Nothing is charged until then");
     expect(within(sheet).queryByRole("button", { name: "Pay (test)" })).toBeNull();

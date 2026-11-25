@@ -1,8 +1,8 @@
 # Credits and billing
 Your balance, what you used, and how to add more.
-{role=status} Your balance is below zero by ₹35. Your next top-up pays this first.
+{role=status} Your balance is below zero by ₹35. The next credits you add pay this first.
 [button type=button: Add credits]
-Balance ₹0 Last top-up ₹1,000 Credits never run out. ₹1 of credit is ₹1. Calls use it as they happen.
+Balance ₹0 Last credits added ₹1,000 Credits never run out. ₹1 of credit is ₹1. Calls use it as they happen.
 {label="Statement"}
 ## Statement
 - Top-up + ₹1,000 24 Nov, 3:31 pm · Added · [Invoice S19-2627-000001](/app/tenants/22222222-2222-2222-2222-222222222222/billing/invoices/S19-2627-000001) ₹1,250

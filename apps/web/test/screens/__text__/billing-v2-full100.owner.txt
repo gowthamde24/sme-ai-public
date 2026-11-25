@@ -1,6 +1,6 @@
 # Billing
 Your wallet, what you used this month and your plan.
-[button type=button: Add money]
+[button type=button: Add credits]
 {role=note} Preview This is how billing will look when paid plans start. The numbers are made up and nothing is charged.
 {label="Wallet"}
 ## Wallet

@@ -1,13 +1,13 @@
 # Credits and billing
-Your balance, what you used, and how to add more. Balance ₹4,825 about 96 minutes of calls Last top-up None yet
+Your balance, what you used, and how to add more. Balance ₹4,825 about 96 minutes of calls Last credits added None yet
 [button type=button: Add credits]
 Credits never run out. ₹1 of credit is ₹1. Calls use it as they happen.
 {label="Statement"}
 ## Statement
-Nothing yet. Top-ups and calls appear here as they happen.
+Nothing yet. Credits added and calls appear here as they happen.
 {label="Invoices"}
 ## Invoices
-An invoice is made after each top-up and appears here.
+An invoice is made each time you add credits and appears here.
 {label="Billing details"}
 ## Billing details
 Your business name and GSTIN go on every invoice. Change them in Settings. [Open billing details](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business)

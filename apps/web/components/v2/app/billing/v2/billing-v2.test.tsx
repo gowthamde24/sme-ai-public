@@ -50,10 +50,10 @@ describe("Billing v2: the wallet", () => {
     expect(document.querySelector('[data-part="upgrade-hint"]')).toBeNull();
     expect(document.querySelector('[data-part="wallet-warn"]')).toBeNull();
   });
-  it("never says 'unlimited' or 'credits' and never the old plan names", () => {
+  it("never says 'unlimited' and never the old plan names", () => {
     for (const demo of ["normal", "low80", "full100", "over", "upgrade", "numbers"] as const) {
       render(<BillingV2 {...props(demo)} />);
-      expect(document.body.textContent ?? "", demo).not.toMatch(/unlimited|credits|lead desk|workforce|lead finder/i);
+      expect(document.body.textContent ?? "", demo).not.toMatch(/unlimited|lead desk|workforce|lead finder/i);
       cleanup();
     }
   });
@@ -75,7 +75,7 @@ describe("Billing v2: warnings at 80% and 100%", () => {
     const wallet = document.querySelector('[data-part="wallet-warn"]') as HTMLElement;
     expect(wallet.querySelector(".bl-chip")).toHaveAttribute("data-tone", "wait");
     expect(wallet).toHaveTextContent("Wallet is low");
-    expect(wallet).toHaveTextContent("Add money so your assistant's calls do not wait.");
+    expect(wallet).toHaveTextContent("Add credits so your assistant's calls do not wait.");
     expect(line("find_customers").querySelector('[data-part="warn"]')).toHaveAttribute("data-warn", "at80"); // 8 of 10 free searches
   });
   it("100%: a red chip, 'All used', and the price of an extra minute from the wallet", () => {
