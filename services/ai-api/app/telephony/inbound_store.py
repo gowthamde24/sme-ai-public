@@ -10,6 +10,7 @@ import uuid
 from typing import Any, Protocol
 
 from app.rpc_base import RpcClient
+from app.telephony.line_limits import WorkspaceLines
 from app.telephony.outcome import CallOutcome
 
 
@@ -23,8 +24,9 @@ FACT_PACK_TTL_S = 60.0
 
 
 class InboundStore:
-    def __init__(self, rpc: RpcClient, principal: Principal, *, wallet_enforced: bool = False, kyc_enforced: bool = False) -> None:
+    def __init__(self, rpc: RpcClient, principal: Principal, *, wallet_enforced: bool = False, kyc_enforced: bool = False, workspace_lines: WorkspaceLines | None = None) -> None:
         self._rpc, self._principal = rpc, principal
+        self.workspace_lines = workspace_lines   # EXTRA_LINES: how many calls a workspace may have at once (None = only the deployment's limit)
         self._kyc = kyc_enforced   # KYC_PER_CLIENT: a number whose business is not verified yet takes no real call
         self._wallet = wallet_enforced   # BILLING_CHARGE_CALLS: an inbound call past the wallet's floor is refused (see app.wallet_gate)
         self._lines: dict[str, tuple[float, dict[str, Any]]] = {}
@@ -38,7 +40,21 @@ class InboundStore:
         return self._rpc.call(self._principal.token(), function, args)
 
     def line_find(self, number: str) -> dict[str, Any] | None:
-        """The line's row (its workspace, whether it answers, the names a call says). A found line is remembered for LINE_TTL_S, so a call's admission does not wait for the database
+        """The line's row (its workspace, whether it answers, the names a call says), with `lines` (how many calls the workspace may have at once) when EXTRA_LINES is on and it could be read. The lines
+        come from their own, shorter memory (line_limits.py), so a line bought or paused applies within seconds, not within the minutes the row is kept."""
+        found = self._line_row(number)
+        if found is not None and self.workspace_lines is not None:
+            try:
+                tenant = uuid.UUID(str(found.get("tenant_id")))
+            except ValueError:
+                return found
+            total = self.workspace_lines.total(tenant)
+            if total is not None:
+                found = {**found, "lines": total}
+        return found
+
+    def _line_row(self, number: str) -> dict[str, Any] | None:
+        """A found line is remembered for LINE_TTL_S, so a call's admission does not wait for the database
         (owner, 6 Nov 2026: first sound under a second); a change to a line (switched off, renamed) applies within that time."""
         now = time.monotonic()
         hit = self._lines.get(number)

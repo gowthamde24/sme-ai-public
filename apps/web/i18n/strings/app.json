@@ -134264,5 +134264,291 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ln.add.title": {
+  "en": "Add a line",
+  "te": "లైన్ జోడించండి",
+  "hi": "लाइन जोड़ें",
+  "kn": "ಲೈನ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.price": {
+  "en": "₹{price} a month for each extra line.",
+  "te": "ఎక్స్‌ట్రా లైన్ ఒక్కోదానికి నెలకి ₹{price}.",
+  "hi": "हर एक्स्ट्रा लाइन के लिए ₹{price} महीना।",
+  "kn": "ಪ್ರತಿ ಎಕ್ಸ್‌ಟ್ರಾ ಲೈನ್‌ಗೆ ತಿಂಗಳಿಗೆ ₹{price}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.taken": {
+  "en": "Taken from your credits each month. GST was already added when you added credits.",
+  "te": "ప్రతి నెలా మీ క్రెడిట్స్ నుంచి తీసుకుంటాం. క్రెడిట్స్ యాడ్ చేసినప్పుడే GST కలిపాం.",
+  "hi": "हर महीने आपके क्रेडिट्स से कटेगा। क्रेडिट्स जोड़ते समय GST पहले ही जुड़ चुका है।",
+  "kn": "ಪ್ರತಿ ತಿಂಗಳು ನಿಮ್ಮ ಕ್ರೆಡಿಟ್ಸ್‌ನಿಂದ ತೆಗೆದುಕೊಳ್ಳುತ್ತೇವೆ. ಕ್ರೆಡಿಟ್ಸ್ ಸೇರಿಸಿದಾಗಲೇ GST ಸೇರಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.confirm": {
+  "en": "Add the line",
+  "te": "లైన్ జోడించండి",
+  "hi": "लाइन जोड़ें",
+  "kn": "ಲೈನ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.later": {
+  "en": "Not now",
+  "te": "ఇప్పుడు వద్దు",
+  "hi": "अभी नहीं",
+  "kn": "ಈಗ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.done": {
+  "en": "Done. One more call can run at a time.",
+  "te": "అయిపోయింది. ఇప్పుడు ఒకేసారి ఇంకో కాల్ నడవగలదు.",
+  "hi": "हो गया। अब एक साथ एक और कॉल चल सकता है।",
+  "kn": "ಆಯಿತು. ಈಗ ಒಂದೇ ಸಮಯದಲ್ಲಿ ಇನ್ನೊಂದು ಕರೆ ನಡೆಯಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.credits": {
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ యాడ్ చేయండి",
+  "hi": "क्रेडिट्स जोड़ें",
+  "kn": "ಕ್ರೆಡಿಟ್ಸ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.list.title": {
+  "en": "Extra lines",
+  "te": "ఎక్స్‌ట్రా లైన్లు",
+  "hi": "एक्स्ट्रा लाइनें",
+  "kn": "ಎಕ್ಸ್‌ಟ್ರಾ ಲೈನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.row.name": {
+  "en": "Extra line {n}",
+  "te": "ఎక్స్‌ట్రా లైన్ {n}",
+  "hi": "एक्स्ट्रा लाइन {n}",
+  "kn": "ಎಕ್ಸ್‌ಟ್ರಾ ಲೈನ್ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.row.renews": {
+  "en": "Renews on {date}",
+  "te": "{date} న రెన్యూ అవుతుంది",
+  "hi": "{date} को रिन्यू होगी",
+  "kn": "{date} ರಂದು ರಿನ್ಯೂ ಆಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.row.ends": {
+  "en": "Ends on {date}. It works until then.",
+  "te": "{date} న ఆగిపోతుంది. అప్పటివరకు పనిచేస్తుంది.",
+  "hi": "{date} को बंद होगी। तब तक चलेगी।",
+  "kn": "{date} ರಂದು ನಿಲ್ಲುತ್ತದೆ. ಅಲ್ಲಿಯವರೆಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.row.grace": {
+  "en": "Not paid yet. Add credits before {date} or it pauses.",
+  "te": "ఇంకా కట్ అవ్వలేదు. {date} లోపు క్రెడిట్స్ యాడ్ చేయండి, లేకపోతే ఆగిపోతుంది.",
+  "hi": "अभी पैसे नहीं कटे। {date} से पहले क्रेडिट्स जोड़ें, नहीं तो रुक जाएगी।",
+  "kn": "ಇನ್ನೂ ಹಣ ಕಟ್ ಆಗಿಲ್ಲ. {date} ಒಳಗೆ ಕ್ರೆಡಿಟ್ಸ್ ಸೇರಿಸಿ, ಇಲ್ಲದಿದ್ದರೆ ನಿಲ್ಲುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.row.paused": {
+  "en": "Paused. Add credits and it starts again.",
+  "te": "ఆగి ఉంది. క్రెడిట్స్ యాడ్ చేస్తే మళ్ళీ మొదలవుతుంది.",
+  "hi": "रुकी हुई है। क्रेडिट्स जोड़ेंगे तो फिर चालू हो जाएगी।",
+  "kn": "ನಿಂತಿದೆ. ಕ್ರೆಡಿಟ್ಸ್ ಸೇರಿಸಿದರೆ ಮತ್ತೆ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.row.getting": {
+  "en": "Getting ready",
+  "te": "రెడీ అవుతోంది",
+  "hi": "तैयार हो रही है",
+  "kn": "ರೆಡಿ ಆಗುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.row.cancel": {
+  "en": "Cancel this line",
+  "te": "ఈ లైన్ రద్దు చేయండి",
+  "hi": "यह लाइन रद्द करें",
+  "kn": "ಈ ಲೈನ್ ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.row.keep": {
+  "en": "Keep this line",
+  "te": "ఈ లైన్ ఉంచండి",
+  "hi": "यह लाइन रहने दें",
+  "kn": "ಈ ಲೈನ್ ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.err.not_enough_credits": {
+  "en": "There are not enough credits for a line.",
+  "te": "లైన్‌కి సరిపడా క్రెడిట్స్ లేవు.",
+  "hi": "लाइन के लिए क्रेडिट्स काफ़ी नहीं हैं।",
+  "kn": "ಲೈನ್‌ಗೆ ಸಾಕಷ್ಟು ಕ್ರೆಡಿಟ್ಸ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.err.at_limit": {
+  "en": "You have the most lines a workspace can have. Write to us if you need more.",
+  "te": "మీ దగ్గర ఒక వర్క్‌స్పేస్‌కి ఉండగల గరిష్ఠ లైన్లు ఉన్నాయి. ఇంకా కావాలంటే మాకు రాయండి.",
+  "hi": "आपके पास एक वर्कस्पेस में जितनी लाइनें हो सकती हैं उतनी हैं। और चाहिए तो हमें लिखें।",
+  "kn": "ನಿಮ್ಮ ಬಳಿ ಒಂದು ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ಇರಬಹುದಾದ ಗರಿಷ್ಠ ಲೈನ್‌ಗಳಿವೆ. ಇನ್ನೂ ಬೇಕಾದರೆ ನಮಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.err.no_number": {
+  "en": "Get a phone number first. Each number comes with two lines.",
+  "te": "ముందు ఫోన్ నంబర్ తీసుకోండి. ప్రతి నంబర్‌తో రెండు లైన్లు వస్తాయి.",
+  "hi": "पहले फ़ोन नंबर लीजिए। हर नंबर के साथ दो लाइनें आती हैं।",
+  "kn": "ಮೊದಲು ಫೋನ್ ನಂಬರ್ ತೆಗೆದುಕೊಳ್ಳಿ. ಪ್ರತಿ ನಂಬರ್‌ನೊಂದಿಗೆ ಎರಡು ಲೈನ್‌ಗಳು ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.err.paused": {
+  "en": "We cannot add lines right now.",
+  "te": "ఇప్పుడు లైన్లు జోడించలేం.",
+  "hi": "अभी लाइनें नहीं जोड़ सकते।",
+  "kn": "ಈಗ ಲೈನ್‌ಗಳನ್ನು ಸೇರಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.err.unavailable": {
+  "en": "We could not add the line just now. You were not charged. Try again in a minute.",
+  "te": "ఇప్పుడు లైన్ జోడించలేకపోయాం. మీకు డబ్బులు కట్ అవ్వలేదు. ఒక నిమిషంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी लाइन नहीं जोड़ पाए। आपके पैसे नहीं कटे। एक मिनट में फिर कोशिश कीजिए।",
+  "kn": "ಈಗ ಲೈನ್ ಸೇರಿಸಲಾಗಲಿಲ್ಲ. ನಿಮ್ಮ ಹಣ ಕಟ್ ಆಗಿಲ್ಲ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.err.forbidden": {
+  "en": "Only the Owner can add or cancel a line.",
+  "te": "లైన్ జోడించడం, రద్దు చేయడం ఓనర్ మాత్రమే చేయగలరు.",
+  "hi": "लाइन जोड़ना या रद्द करना सिर्फ़ मालिक कर सकते हैं।",
+  "kn": "ಲೈನ್ ಸೇರಿಸುವುದು, ರದ್ದು ಮಾಡುವುದು ಮಾಲೀಕರು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.err.stepup": {
+  "en": "Sign in again with your second code, then try again.",
+  "te": "రెండో కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, మళ్ళీ ప్రయత్నించండి.",
+  "hi": "दूसरे कोड से फिर साइन इन कीजिए, फिर कोशिश कीजिए।",
+  "kn": "ಎರಡನೇ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.err.down": {
+  "en": "That did not work just now. Try again in a minute.",
+  "te": "ఇప్పుడు అవ్వలేదు. ఒక నిమిషంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी नहीं हो पाया। एक मिनट में फिर कोशिश कीजिए।",
+  "kn": "ಈಗ ಆಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.err.not_found": {
+  "en": "We could not find that line.",
+  "te": "ఆ లైన్ కనిపించలేదు.",
+  "hi": "वह लाइन नहीं मिली।",
+  "kn": "ಆ ಲೈನ್ ಸಿಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ln.test": {
+  "en": "Test data. Nothing is charged.",
+  "te": "టెస్ట్ డేటా. డబ్బులు ఏమీ కట్ అవ్వవు.",
+  "hi": "टेस्ट डेटा। कुछ नहीं कटता।",
+  "kn": "ಟೆಸ್ಟ್ ಡೇಟಾ. ಯಾವ ಹಣವೂ ಕಟ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

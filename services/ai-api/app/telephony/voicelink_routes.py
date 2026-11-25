@@ -66,7 +66,7 @@ class VoicelinkConfig:
         return self.ws_token.encode()
 
 
-async def admit(start: Any, settings: gate.Settings, *, find_line: Any, active_calls: int, now: Any, hours: Any = None) -> inbound.Admitted | gate.Refused:
+async def admit(start: Any, settings: gate.Settings, *, find_line: Any, active_calls: int, now: Any, hours: Any = None, tenant_active: Any = None) -> inbound.Admitted | gate.Refused:
     """The VoiceLink counterpart of inbound.admit (which confirms the call with Exotel's own record: VoiceLink has none we can ask, so the secret address token is the confirmation)."""
     if settings.mode == "off":
         return gate.Refused("telephony_off")
@@ -82,10 +82,14 @@ async def admit(start: Any, settings: gate.Settings, *, find_line: Any, active_c
         return gate.Refused("workspace_paused")
     if found.get("wallet_inbound_blocked") is True:   # BILLING_CHARGE_CALLS: the wallet is past its floor: no AI conversation until credits are added (migration 991700)
         return gate.Refused("billing_blocked")
-    decision = gate.check_inbound(settings, gate.InboundFacts(to_number=line_no, now=now, line_known=True, inbound_on=bool(found.get("inbound_on")), hours=hours, active_calls_total=active_calls, from_number=caller))
+    tenant = uuid.UUID(str(found["tenant_id"]))
+    lines = found.get("lines")   # EXTRA_LINES: how many calls this workspace may have at once (absent: only the deployment's limit)
+    per_workspace = isinstance(lines, int) and not isinstance(lines, bool) and tenant_active is not None
+    decision = gate.check_inbound(settings, gate.InboundFacts(to_number=line_no, now=now, line_known=True, inbound_on=bool(found.get("inbound_on")), hours=hours, active_calls_total=active_calls, from_number=caller,
+                                                              workspace_lines=lines if per_workspace else None, active_calls_workspace=int(tenant_active(tenant)) if per_workspace else 0))
     if isinstance(decision, gate.Refused):
         return decision
-    return inbound.Admitted(tenant_id=uuid.UUID(str(found["tenant_id"])), talk=decision.talk, rule="voicelink_token")
+    return inbound.Admitted(tenant_id=tenant, talk=decision.talk, rule="voicelink_token")
 
 
 @router.websocket("/ws/{token}")
@@ -116,7 +120,8 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     began = inbound.monotonic()
     if start.custom.get("call") or start.custom.get("tenant"):   # a call WE placed (add_lead)
         return await _outbound(service, bv, live, wire, line, start, began)
-    decision = await admit(start, service.gate_settings, find_line=service.store.line_find, active_calls=live.count() if live is not None else 0, now=inbound.now_utc())
+    decision = await admit(start, service.gate_settings, find_line=service.store.line_find, active_calls=live.count() if live is not None else 0, now=inbound.now_utc(),
+                           tenant_active=getattr(live, "count_for_tenant", None))
     if isinstance(decision, gate.Refused):
         return await _refuse(wire, line, decision.reason)
     preparing = asyncio.ensure_future(_prepare(service, bv, start))
@@ -166,6 +171,11 @@ async def _outbound(service: InboundService, bv: Any, live: Any, wire: Any, line
         return await _refuse(wire, line, "no_admission")
     if live is not None and live.count() >= service.gate_settings.max_concurrent:
         return await _refuse(wire, line, "too_many_calls")
+    limits = getattr(service.store, "workspace_lines", None)   # EXTRA_LINES: this workspace's own lines (the call is not in the live count yet; the database's count would hold its own ringing row, so only this process's own is read here)
+    if live is not None and limits is not None:
+        total = await asyncio.to_thread(limits.total, tenant)
+        if total is not None and live.count_for(tenant) >= total:
+            return await _refuse(wire, line, "too_many_calls")
     typed = PENDING.take(row) if kind in ("goal", "task") else None
     if kind == "goal" and typed is None:
         return await _refuse(wire, line, "goal_missing")   # a call that is meant to carry the owner's goal never runs without it

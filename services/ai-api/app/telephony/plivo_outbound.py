@@ -28,6 +28,7 @@ from app.connectors.phone import normalise
 from app.rpc_base import RpcClient
 from app.telephony import gate, persona
 from app.telephony import tone as tone_mod
+from app.telephony.line_limits import WorkspaceLines
 from app.telephony.plivo_api import PlivoError
 
 log = logging.getLogger("app.telephony.plivo_outbound")
@@ -234,7 +235,8 @@ def answer_query(call_id: uuid.UUID, tenant_id: uuid.UUID, language: str, purpos
 class PlivoOutbound:
     def __init__(self, *, api: PlivoCaller, repo: OutboundRepo, gate_settings: gate.Settings, public_base: str, active_calls: Callable[[], int] = lambda: 0,
                  clock: Callable[[], datetime] = lambda: datetime.now(UTC), max_call_s: int = 180, api_for: Callable[[dict[str, Any]], PlivoCaller | None] | None = None, id_key: bytes = b"",
-                 provider: str = PROVIDER) -> None:
+                 provider: str = PROVIDER, lines: WorkspaceLines | None = None, active_for_tenant: Callable[[uuid.UUID], int] | None = None) -> None:
+        self._lines, self._active_for = lines, active_for_tenant   # EXTRA_LINES: a call is placed only while the workspace has a free line of its own (both given, or neither)
         self.provider = provider   # "plivo" or "voicelink": the word on the calls' rows and the kind of line this placer needs (the REST client behind `api` is the only other difference)
         self._id_key = id_key or os.urandom(32)   # keys the ids of the test-number list (a plain hash of a phone number could be guessed back)
         self._api, self._repo, self._gate, self._base = api, repo, gate_settings, public_base.rstrip("/")
@@ -298,7 +300,12 @@ class PlivoOutbound:
                 approved = self._repo.approved(token, tenant_id, approval_kind, approval_ref, number)
             except Exception as exc:  # noqa: BLE001 - an answer we could not get is a refusal (a refused row with its closed word), never an escape into the caller
                 log.warning("plivo_outbound approval not read: %s", exc.__class__.__name__)
-        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"), proof=proof, prospect=prospect, approval=approval_kind if approved else None, facts=facts, facts_unread=facts_unread, say_ai=say_ai)
+        workspace: tuple[int, int] | None = None   # (the workspace's lines, its calls live now): the plain reason a call is refused when every line is on a call
+        if self._lines is not None and self._active_for is not None and line is not None and self._gate.mode != "off":
+            total = self._lines.total(tenant_id)
+            if total is not None:
+                workspace = (total, self._active_for(tenant_id))
+        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, workspace=workspace, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"), proof=proof, prospect=prospect, approval=approval_kind if approved else None, facts=facts, facts_unread=facts_unread, say_ai=say_ai)
         if reason is not None:
             self._repo.begin(token, tenant_id, purpose, language, refuse_reason=reason)   # the refusal is recorded, with its closed word
             free = (line or {}).get("free_minutes")
@@ -341,7 +348,7 @@ class PlivoOutbound:
         log.info("plivo_outbound cancelled call_fp=%s", str(call_id)[:8])
         return "cancelled"
 
-    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE, approval: gate.Approval | None = None, billing_ok: bool = True, proof: bool | None = None, prospect: bool = False, facts: dict[str, Any] | None = None, facts_unread: bool = False, say_ai: bool = True) -> str | None:
+    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, workspace: tuple[int, int] | None = None, tone: str = tone_mod.DEFAULT_TONE, approval: gate.Approval | None = None, billing_ok: bool = True, proof: bool | None = None, prospect: bool = False, facts: dict[str, Any] | None = None, facts_unread: bool = False, say_ai: bool = True) -> str | None:
         if number is None:
             return "bad_number"
         if not have_line:
@@ -359,7 +366,8 @@ class PlivoOutbound:
                      "minutes_today": float(facts.get("minutes_today") or 0), "holidays": tuple(str(h) for h in (facts.get("holidays") or [])), "active_calls_to_number": int(facts.get("active_to_number") or 0), "recent_complaints": int(facts.get("complaints_10d") or 0)}
         out_facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=hours,
                                        approval=approval, approval_valid=True, **{"can_contact": own, "dnd": "no" if own else "unknown", **extra}, opening_line=opening, say_ai=say_ai, active_calls_total=self._active(),
-                                       billing_ok=billing_ok, proof_of_request=proof, prospect=prospect)
+                                       billing_ok=billing_ok, proof_of_request=proof, prospect=prospect,
+                                       workspace_lines=workspace[0] if workspace else None, active_calls_workspace=workspace[1] if workspace else 0)
         decision = gate.check_outbound(self._gate, out_facts)
         return decision.reason if isinstance(decision, gate.Refused) else None
 

@@ -115,3 +115,6 @@ Owner and Admin only. Shown when 2 or more customers asked us to stop, on or aft
 
 ## `indiamart_key_expired` (25 Nov 2026, migration 20261231992420)
 `needs_you` item kind: the scheduled IndiaMART pull (worker switch `INDIAMART_PULL`) found the workspace's own key refused (keys last 7 days) or gone. Owner and Admin only; one per workspace; `customer` is the fixed word "IndiaMART", `agent` `followup_desk`, `ref` `key`, `target` `{type: "lead_sources", id: the workspace}` (a new target type: the Lead sources page). It leaves by itself when a new key is saved. The web's kind list and target types must know it before `INDIAMART_PULL` is switched on anywhere that web serves.
+
+## `line_renewal` (26 Nov 2026, migration 20261231992500)
+`needs_you` item kind: an extra line ("calls at once", `docs/contracts/extra-lines.md`) could not be renewed because there are not enough credits: it is in its 3 days of grace (still works) or paused. Owner and Admin only. `customer` is the fixed word "Balance", `ref` is `lines`, `agent` is `followup_desk`, `target` is `{type: "billing", id: <the workspace id>}` (the web opens the top-up page). It leaves by itself when the line is paid on the next pass of the worker after credits are added. The sentence is the API's: "An extra line could not be renewed: there are not enough credits. Add credits so it keeps working."

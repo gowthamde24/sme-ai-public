@@ -209,3 +209,12 @@ describe("the voice-limit item never names our supplier or our costs to a custom
   });
 });
 
+describe("an extra line that could not be renewed (26 Nov 2026, migration 20261231992500)", () => {
+  it("is read as its own kind: 'Your balance', the API's plain sentence, and it opens Credits and billing", async () => {
+    const { parseNeedsYouItem } = await import("./today");
+    const item = parseNeedsYouItem({ kind: "line_renewal", id: "11111111-aaaa-4aaa-8aaa-000000000002", customer: "Balance", city: null, agent: "followup_desk", summary: "An extra line could not be renewed: there are not enough credits. Add credits so it keeps working.", at: "2026-11-26T10:00:00Z", amount_paise: null, target: { type: "billing", id: "22222222-2222-4222-8222-222222222222" } });
+    expect(item.kind).toBe("line_renewal");
+    expect(item.customer).toBe("Your balance");
+    expect(item.summary).toMatch(/not enough credits/);
+  });
+});

@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (477)
+## Codes (478)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -211,6 +211,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `lead_sources_unavailable` | 503 | lead_sources |  |  | This is not available right now. |
 | `limit_reached` | 409 | main |  |  | That is the most this workspace can hold. Remove something first. |
 | `line_not_found` | 422 | knowledge |  |  | That line is not in the call. |
+| `lines_unavailable` | 409 | extra_lines |  | fields, reason | (the sentence varies: show `message`) |
 | `live_not_available` | 422 | developer_api |  |  | Live keys are not available yet. Test keys work with simulated calls. |
 | `locked_for_business_type` | 422 | assistant_settings, callsettings |  |  | This business type does not allow that: a school's assistant makes no sales calls and none about dues or fees. |
 | `mapping_required_missing` | 422 | integrations |  |  | (the sentence varies: show `message`) |
@@ -256,7 +257,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_confirmable` | 409 | main |  |  | A line needs a saree type and a quantity that a person confirmed or corrected. |
 | `not_connected` | 409 | lead_sources |  |  | Connect this source first, then test it. |
 | `not_for_schools` | 422 | assistant_context, lead_profile, main, tasks |  | reason | Leads of a school are never sent to the AI. |
-| `not_found` | 404 | assistant, assistant_work, connectors, developer_api, errors, lead_sources, main |  |  | Not found. |
+| `not_found` | 404 | assistant, assistant_work, connectors, developer_api, errors, extra_lines, lead_sources, main |  | reason | Not found. |
 | `not_generated` | 404 | ai_team |  |  | Today's stand-up has not been made yet. |
 | `not_in_a_state_for_this` | 409 | connectors |  |  | This cannot be done in its present state. |
 | `not_in_plan` | 403 | lead_finder |  | feature, upgrade_to | Finding new customers is part of AI Workforce. |

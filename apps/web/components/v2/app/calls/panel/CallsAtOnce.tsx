@@ -1,14 +1,19 @@
-import { ADDRESSES } from "@/lib/site/business";
+import type { ExtraLines as ExtraOverview, LineActions } from "@/lib/extra-lines/types";
 import type { Lines } from "@/lib/phone-lines/types";
+import { ADDRESSES } from "@/lib/site/business";
 
 import { makeT, type Words } from "../../words";
+import { ExtraLines } from "./ExtraLines";
+
+/** EXTRA_LINES: what the Owner needs to add and cancel lines. Absent = the switch is off: "Add a line" is the mail to us, as it was. */
+export type ExtraProps = { overview: ExtraOverview; actions: LineActions; creditsHref: string; locale: string; test: boolean };
 
 /**
  * "Calls at once" on the Phone numbers page (owner, 29 Nov 2026; approved mock "Phone numbers"; Outpero study addendum 2): how many calls can run together, how many do now, and one flat tile per line: "Open" (dashed, nothing in it) or "On a call" (a solid edge and the calls category dot). The lines are shared
- * by every number. A neutral notice (a grey dot and one sentence, no box) says what a caller hears when every line is busy. "Add a line" is for the Owner only and has no price: it opens a mail to us (we add the line by hand). `lines` null = the route could not be read: one grey sentence, never a guess; `total` 0 = calls are not switched on.
+ * by every number. A neutral notice (a grey dot and one sentence, no box) says what a caller hears when every line is busy. "Add a line" is for the Owner only. With EXTRA_LINES off it has no price and opens a mail to us (we add the line by hand); with it on (`extra`) the total is the workspace's own and the Owner adds a line for the price shown, paid from the credits, and cancels it for the end of the month (ExtraLines.tsx). `lines` null = the route could not be read: one grey sentence, never a guess; `total` 0 = calls are not switched on.
  * Server markup. The words come from the string store (`cpn.once.`).
  */
-export function CallsAtOnce({ words, lines, owner, test = false }: { words: Words; lines: Lines | null; owner: boolean; test?: boolean }) {
+export function CallsAtOnce({ words, lines, owner, test = false, extra = null }: { words: Words; lines: Lines | null; owner: boolean; test?: boolean; extra?: ExtraProps | null }) {
   const t = makeT(words);
   const subject = encodeURIComponent(t("cpn.once.add"));
   return (
@@ -52,7 +57,8 @@ export function CallsAtOnce({ words, lines, owner, test = false }: { words: Word
         </>
       )}
       {test ? <p className="m-0 mt-2 text-sm text-muted">{t("cpn.once.test")}</p> : null}
-      {owner && lines !== null && lines.total > 0 ? (
+      {extra !== null && owner && lines !== null && lines.total > 0 ? <ExtraLines words={words} overview={extra.overview} actions={extra.actions} creditsHref={extra.creditsHref} locale={extra.locale} test={extra.test} /> : null}
+      {extra === null && owner && lines !== null && lines.total > 0 ? (
         <a data-part="add-line" href={`mailto:${ADDRESSES.support}?subject=${subject}`} className="mt-1 inline-flex min-h-11 items-center text-base font-semibold text-ink underline underline-offset-4">
           {t("cpn.once.add")}
         </a>

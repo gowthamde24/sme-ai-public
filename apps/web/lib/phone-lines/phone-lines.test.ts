@@ -29,7 +29,7 @@ describe("the answer of GET /phone-lines (docs/contracts/calls.md)", () => {
   it.each([
     ["not an object", [1]],
     ["null", null],
-    ["more than twenty lines", { total: MAX_LINES + 1, in_use: 0, lines: Array.from({ length: MAX_LINES + 1 }, (_, i) => ({ n: i + 1, state: "open" })) }],
+    ["more lines than a workspace can have (100)", { total: MAX_LINES + 1, in_use: 0, lines: Array.from({ length: MAX_LINES + 1 }, (_, i) => ({ n: i + 1, state: "open" })) }],
     ["in use above total", { total: 1, in_use: 2, lines: [{ n: 1, state: "open" }] }],
     ["negative", { total: 1, in_use: -1, lines: [{ n: 1, state: "open" }] }],
     ["a tile count that is not the total", { total: 2, in_use: 0, lines: [{ n: 1, state: "open" }] }],

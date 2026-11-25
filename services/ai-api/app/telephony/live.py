@@ -16,6 +16,9 @@ class LiveCalls:
         # the platform-wide live count from the database (app/telephony/cross.py keeps it fresh); 0 and never refreshed when there is one instance
         self.platform_live = 0
         self.platform_at = 0.0
+        # live calls of each workspace platform-wide (EXTRA_LINES; cross.py keeps it fresh); empty and never refreshed when there is one instance
+        self.tenant_live: dict[str, int] = {}
+        self.tenant_at = 0.0
 
     def add(self, tenant_id: uuid.UUID, call_id: uuid.UUID, line: PhoneLine) -> None:
         self._lines[call_id] = (tenant_id, line)
@@ -58,6 +61,14 @@ class LiveCalls:
 
     def count_for(self, tenant_id: uuid.UUID) -> int:
         return sum(1 for t, _ in self._lines.values() if t == tenant_id)
+
+    def count_for_tenant(self, tenant_id: uuid.UUID) -> int:
+        """Calls of one workspace live right now: the most of what this process holds and what the database counts for it on every instance (a fresh answer within 10 s; a stale one is ignored). A call that has been placed
+        and is still ringing is in the database's count, so a burst of calls placed together is counted a moment after the first of them."""
+        local = len({id(line) for t, line in self._lines.values() if t == tenant_id})
+        if self.tenant_at and time.monotonic() - self.tenant_at < 10.0:
+            return max(local, int(self.tenant_live.get(str(tenant_id), 0)))
+        return local
 
     async def hang_up(self, tenant_id: uuid.UUID, call_id: uuid.UUID, reason: str = "stopped") -> bool:
         """True when the call was here and has been ended. A call of another workspace is never reachable through this."""

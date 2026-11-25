@@ -282,6 +282,11 @@ export const creditsScreens = (value: string | undefined = process.env.CREDITS_S
 export const callsPanel = (value: string | undefined = process.env.CALLS_PANEL): boolean => value === "1";
 /** "Calls at once" on the Phone numbers page (same mock): how many calls can run together and how many do, from C1's `GET /v1/tenants/{t}/phone-lines` (docs/contracts/calls.md). `mock` = a made-up two-line answer (nothing is read), `1` = the API, unset = the card is not there. Only with CALLS_PANEL. */
 export const phoneLinesScreens = (value: string | undefined = process.env.PHONE_LINES_SCREENS): ScreenMode => screenMode(value);
+/**
+ * Extra lines (26 Nov 2026; the API's `EXTRA_LINES`, docs/contracts/extra-lines.md): the Owner adds a line to "Calls at once" (the price shown first, taken from the credits) and cancels it for the end of the month, and the
+ * public Pricing page gets one row "Extra calls at once". `mock` = a made-up answer kept in a cookie, nothing is charged (staging only); `1` = the API's routes; unset = the card as it was ("Add a line" opens a mail to us).
+ */
+export const extraLines = (value: string | undefined = process.env.EXTRA_LINES): ScreenMode => screenMode(value);
 
 /**
  * "Tell your assistant what to do" on Jobs (owner, 29 Nov 2026; mock "Tell your assistant what to do"; C1's `POST /jobs/describe`, docs/contracts/jobs-describe.md): the owner writes or says the job in their own words, a mode and a language, and sees a DRAFT as plain

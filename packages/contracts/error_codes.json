@@ -2426,6 +2426,21 @@
       "extras": []
     },
     {
+      "code": "lines_unavailable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "extra_lines"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "fields",
+        "reason"
+      ]
+    },
+    {
       "code": "live_not_available",
       "statuses": [
         422
@@ -2994,12 +3009,15 @@
         "connectors",
         "developer_api",
         "errors",
+        "extra_lines",
         "lead_sources",
         "main"
       ],
       "default_message": "Not found.",
       "wait": false,
-      "extras": []
+      "extras": [
+        "reason"
+      ]
     },
     {
       "code": "not_generated",

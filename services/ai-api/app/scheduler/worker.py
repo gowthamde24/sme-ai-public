@@ -42,6 +42,7 @@ from app.crm_push.runner import CrmPushRunner
 from app.crm_push.wiring import build_crm_push_runner
 from app.dpdp.mail import DpdpJobs
 from app.dpdp.wiring import build_dpdp_jobs
+from app.extra_lines.wiring import build_extra_lines_pass
 from app.google_calendar.sync import GoogleCalendarSync
 from app.google_calendar.wiring import build_google_calendar_sync
 from app.lead_finder.housekeeping import ConversationPlanExpiry, PlacesExpiry
@@ -119,6 +120,7 @@ class Worker:
         phone_numbers: Any = None,
         usage_alerts: UsageAlerts | None = None,
         call_reconcile: Callable[[str], int] | None = None,
+        extra_lines: Callable[[str], int] | None = None,
         kyc_refresh: Callable[[str], int] | None = None,
         google_alerts: GoogleCapAlerts | None = None,
         auto_reply: AutoReplyRunner | None = None,
@@ -166,6 +168,7 @@ class Worker:
         # job DS part E2: the 80 and 100 percent alerts (e-mail and a FAKE WhatsApp message to the owner) and the close of a period (one overage invoice); only while the platform's billing switch is on
         self._usage_alerts = usage_alerts
         self._kyc_refresh = kyc_refresh   # KYC_PER_CLIENT: businesses VoiceLink has approved since the last tick are marked verified (their number goes live)
+        self._extra_lines = extra_lines   # EXTRA_LINES: the monthly pass of the extra lines (app/extra_lines): renew, grace, pause, end
         self._call_reconcile = call_reconcile   # BILLING_CHARGE_CALLS: charges answered calls that ended without a charge row (app/billing/call_charge.py)
         # admin console (14 Nov 2026): the e-mail to the owner at 80 percent of a Google Maps free monthly cap
         self._google_alerts = google_alerts
@@ -226,6 +229,7 @@ class Worker:
             self._closed_lines_pass(token)
             self._usage_alerts_pass(token)
             self._call_reconcile_pass(token)
+            self._extra_lines_pass(token)
             self._kyc_refresh_pass(token)
             self._google_alerts_pass(token)
             self._plivo_balance_pass(token)
@@ -453,6 +457,16 @@ class Worker:
         except Exception as exc:
             logger.error("call charge reconcile crashed: %s", exc.__class__.__name__)
 
+    def _extra_lines_pass(self, token: str) -> None:
+        if self._extra_lines is None:
+            return
+        try:
+            self._extra_lines(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("extra lines pass crashed: %s", exc.__class__.__name__)
+
     def _kyc_refresh_pass(self, token: str) -> None:
         if self._kyc_refresh is None:
             return
@@ -581,6 +595,7 @@ def build_worker(settings: Settings) -> Worker:
         kyc_refresh=_kyc_refresh_for(settings, config),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         call_reconcile=(lambda tok: CallCharger(RpcClient(config.rest_url, config.anon_key), lambda: tok).reconcile()) if settings.billing_charge_calls else None,
+        extra_lines=build_extra_lines_pass(settings, config.rest_url, config.anon_key),
         google_alerts=GoogleCapAlerts(RpcClient(config.rest_url, config.anon_key), _billing_sender(settings)),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),

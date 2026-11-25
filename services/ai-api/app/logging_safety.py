@@ -23,6 +23,7 @@ ROUTE_WORDS = frozenset(
         "lists", "columns", "commit", "mappings",   # the lists of what you sell (28 Nov)
         "undo-price",   # POST /catalogue/items/{id}/undo-price (28 Nov)
         "phone-lines",   # GET /phone-lines (28 Nov)
+        "extra-lines", "keep",   # more calls at once: buy, cancel, keep a line (26 Nov)
         "lead-address", "test-lead",   # one lead address per job, a test lead (24 Nov)
         "phone-knows",   # GET /assistant/phone-knows (28 Nov)
         "signup", "consent", "phone", "verify", "trial-claim",   # opening sign-up (24 Nov)
