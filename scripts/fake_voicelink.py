@@ -258,7 +258,7 @@ async def kyc_status(request: Request) -> JSONResponse:
     done = _kyc_complete(int(request.query_params["client_id"]))
     docs = {k: {"uploaded": True} for k in c["docs"]}
     step = "complete" if done else ("review" if c["submitted_at"] else (c["steps"][-1] if c["steps"] else "details"))
-    return ok({"is_complete": done, "kyc_status": 1 if done else 0, "current_step": step, "documents": docs, "aadhaar_verified": bool(c.get("aadhaar_done")) or done})
+    return ok({"is_complete": done or bool(c.get("aadhaar_done")), "kyc_status": 1 if done else 0, "current_step": step, "documents": docs, "aadhaar_verified": bool(c.get("aadhaar_done")) or done})
 
 
 async def _step(request: Request, name: str, extra: dict[str, Any] | None = None) -> JSONResponse:

@@ -93,6 +93,11 @@ def _inr(paise: int) -> str:
     return f"₹{paise // 100:,}" if paise % 100 == 0 else f"₹{paise / 100:,.2f}"
 
 
+def is_verified(live: dict[str, Any]) -> bool:
+    """VoiceLink's own word that the business is verified: `kyc_status == 1` AND `is_complete`. NEVER `is_complete` alone: on the real account it became true right after the Aadhaar check while `kyc_status` stayed 0 (Pending) until the Aadhaar document upload and the final submit (26 Nov 2026)."""
+    return live.get("kyc_status") == 1 and live.get("is_complete") is True
+
+
 def _unavailable(exc: VoicelinkError) -> bool:
     return exc.reason in ("unreachable", "server", "auth")
 
@@ -133,7 +138,7 @@ class BusinessKycService:
         out["aadhaar_verified"] = verified_flag if isinstance(verified_flag, bool) else None
         step = live.get("current_step")
         out["step"] = step if isinstance(step, str) and step.isalpha() and len(step) < 20 else None
-        if live.get("is_complete") is True or live.get("kyc_status") == 1:
+        if is_verified(live):
             out["state"] = "verified"
             self._repo.put(token, tenant_id, int(row["client_id"]), None, "verified", None)
         return out
@@ -163,7 +168,7 @@ class BusinessKycService:
                 live = self._api.kyc_status(int(item["client_id"]))
             except (VoicelinkError, KeyError, ValueError, TypeError):
                 continue
-            if live.get("is_complete") is True or live.get("kyc_status") == 1:
+            if is_verified(live):
                 rpc.call(system_token, "business_client_mark_verified", {"p_tenant_id": str(item["tenant_id"])})
                 marked += 1
         try:   # the same pass: first months held too long go back, and the free-channel figure is kept for the low-stock alert

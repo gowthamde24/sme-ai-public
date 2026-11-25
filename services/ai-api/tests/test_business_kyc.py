@@ -533,3 +533,18 @@ def test_the_status_says_whether_the_digilocker_check_reached_voicelink_and_the_
     assert client.get(T, headers=auth("a_owner")).json()["aadhaar_verified"] is True
     vl.status_doc = {"documents": {}, "kyc_status": 0, "current_step": "pan"}
     assert client.get(T, headers=auth("a_owner")).json()["aadhaar_verified"] is None, "VoiceLink does not say: unknown, not false"
+
+
+def test_verified_is_voicelinks_kyc_status_one_and_complete_never_is_complete_alone() -> None:
+    from app.business_kyc.service import is_verified
+
+    assert is_verified({"kyc_status": 1, "is_complete": True}) is True
+    assert is_verified({"kyc_status": 0, "is_complete": True}) is False, "is_complete became true right after the Aadhaar check, while the status was still Pending (real account, 26 Nov 2026)"
+    assert is_verified({"kyc_status": 1, "is_complete": False}) is False
+    assert is_verified({"kyc_status": 1}) is False and is_verified({"is_complete": True}) is False and is_verified({}) is False
+    client, repo, vl, _ = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.status_doc = {"documents": {}, "kyc_status": 0, "is_complete": True, "current_step": "complete"}
+    assert client.get(T, headers=auth("a_owner")).json()["state"] != "verified" and repo.row is not None and repo.row["state"] != "verified"
+    vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True, "current_step": "complete"}
+    assert client.get(T, headers=auth("a_owner")).json()["state"] == "verified"

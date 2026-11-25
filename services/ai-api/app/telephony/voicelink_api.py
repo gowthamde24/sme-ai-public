@@ -295,7 +295,7 @@ class VoicelinkApi:
         return data if isinstance(data, dict) else {}
 
     def kyc_final_submit(self, client_id: int) -> dict[str, Any]:
-        """`POST /reseller/kyc/final-submit`. The reseller documentation shows no client_id for it: it is sent anyway; whatever VoiceLink answers is shown in plain words."""
+        """`POST /reseller/kyc/final-submit` with {client_id}: proven on the real account with no number bought (client 5911): it answered kyc_status 1, is_complete true, current_step complete. Whatever VoiceLink answers on a refusal is shown in plain words."""
         data = self._request("POST", "/reseller/kyc/final-submit", json_body={"client_id": int(client_id)})
         return data if isinstance(data, dict) else {}
 
