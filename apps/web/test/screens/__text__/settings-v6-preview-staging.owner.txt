@@ -21,7 +21,7 @@ Who can approve quotes
 Owners and Admins, with a second factor Quotes follow your quote rules, which the owner and admins set. [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes label="Edit Who can approve quotes")
 {label="Quotes"}
 ## Quotes
-[Open Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes label="Edit Quotes") The rules every quote follows: how long it is valid, the advance and the discount limit.
+[Open quote rules](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes label="Edit Quotes") The rules every quote follows: how long it is valid, the advance and the discount limit.
 {label="Connections"}
 ## Connections
 WhatsApp number

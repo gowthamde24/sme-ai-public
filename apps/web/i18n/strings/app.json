@@ -138181,5 +138181,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sv6.quotes.open": {
+  "en": "Open quote rules",
+  "te": "కొటేషన్ రూల్స్ తెరవండి",
+  "hi": "कोटेशन के नियम खोलें",
+  "kn": "ಕೊಟೇಶನ್ ನಿಯಮಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.search": {
+  "en": "Search by name",
+  "te": "పేరుతో వెతకండి",
+  "hi": "नाम से खोजें",
+  "kn": "ಹೆಸರಿನಿಂದ ಹುಡುಕಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.nomatch": {
+  "en": "Nothing matches that. Try fewer letters.",
+  "te": "అది దొరకలేదు. తక్కువ అక్షరాలు రాసి చూడండి.",
+  "hi": "कुछ नहीं मिला। कम अक्षर लिखकर देखें।",
+  "kn": "ಯಾವುದೂ ಸಿಗಲಿಲ್ಲ. ಕಡಿಮೆ ಅಕ್ಷರ ಬರೆದು ನೋಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

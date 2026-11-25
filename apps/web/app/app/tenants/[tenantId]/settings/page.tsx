@@ -209,7 +209,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         businessType={businessTypeNode}
         signOut={signOut}
         email={user.email}
-        words={wordsFor(lang, ["sv6.", "settings.biz.", "settings.language.", "set.f.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc.", "jobs.set.", "nset."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
+        words={wordsFor(lang, ["sv6.", "bt.title", "settings.biz.", "settings.language.", "set.f.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc.", "jobs.set.", "nset."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
         lang={lang}
         base={base}
         title={await menuTitle("settings", lang, user.accessToken, tenantId)}

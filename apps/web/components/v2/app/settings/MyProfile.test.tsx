@@ -17,7 +17,8 @@ describe("Settings > My profile", () => {
     const { rerender } = render(<MyProfile words={WORDS} name="Ravi Kumar" language="te" choices={CALL_LANGS} pictureUrl="https://lh3.googleusercontent.com/a" own={false} email="r@example.com" save={vi.fn()} picture={vi.fn()} />);
     expect(screen.getByLabelText("Your name")).toHaveValue("Ravi Kumar");
     expect(screen.getByRole("radio", { checked: true })).toHaveAttribute("value", "te");
-    expect(document.querySelector("img")).toHaveAttribute("src", "https://lh3.googleusercontent.com/a");
+    expect(document.querySelector("img")).toBeNull(); // the picture is a background (a link that ran out shows no broken-picture mark)
+    expect(document.querySelector("[style]")?.getAttribute("style")).toContain("https://lh3.googleusercontent.com/a");
     expect(screen.queryByRole("button", { name: "Remove picture" })).toBeNull();
     expect(screen.getByLabelText("Choose a picture")).toHaveAttribute("accept", "image/jpeg,image/png,image/webp");
     rerender(<MyProfile words={WORDS} name="Ravi Kumar" language="te" choices={CALL_LANGS} pictureUrl="https://x/own.jpg" own email="r@example.com" save={vi.fn()} picture={vi.fn()} />);
@@ -41,7 +42,8 @@ describe("the round mark of a person", () => {
   it("always has the letters, with the picture over them when there is one (no text of its own)", () => {
     render(<Avatar url="https://x/me.jpg" letters="RK" className="x" />);
     expect(screen.getByText("RK")).toBeInTheDocument();
-    expect(document.querySelector("img")).toHaveAttribute("alt", "");
+    expect(document.querySelector("img")).toBeNull();
+    expect(document.querySelector("[style]")?.getAttribute("style")).toContain("https://x/me.jpg");
     cleanup();
     render(<Avatar url={null} letters="RK" className="x" />);
     expect(document.querySelector("img")).toBeNull();

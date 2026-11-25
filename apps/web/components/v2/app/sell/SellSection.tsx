@@ -12,6 +12,9 @@ import { LazyWork, loadWork } from "./LazyWork";
 import { SellRowBody } from "./SellRow";
 import type { SellActions, Work } from "./types";
 
+/** A list this long gets a search box (a saree shop has dozens). */
+const SEARCH_FROM = 8;
+
 type Way = { id: "say" | "photos" | "sheet"; icon: ReactNode; href: string | null };
 
 /**
@@ -23,7 +26,10 @@ export function SellSection({ style, entries: first, words, base, actions, live,
   const t = makeT(words);
   const [entries, setEntries] = useState(first);
   const [work, setWork] = useState<Work | null>(null);
+  const [find, setFind] = useState("");
   const back = useRef<HTMLElement | null>(null);
+  const needle = find.trim().toLowerCase();
+  const shown = needle ? entries.filter((e) => e.name.toLowerCase().includes(needle)) : entries;
   const open = (w: Work, from: HTMLElement | null) => {
     back.current = from;
     setWork(w);
@@ -96,13 +102,17 @@ export function SellSection({ style, entries: first, words, base, actions, live,
           ) : null}
         </div>
         <p className="m-0 text-[14px] leading-snug text-muted">{t(`jobs.sell.style.${style}.for`)}</p>
+        {entries.length >= SEARCH_FROM ? (
+          <input type="search" data-part="find" value={find} onChange={(e) => setFind(e.target.value)} aria-label={t("jobs.sell.search")} placeholder={t("jobs.sell.search")} autoComplete="off" className="min-h-11 w-full rounded-xl border border-edge bg-surface px-3.5 text-[16px] text-ink" />
+        ) : null}
         {entries.length === 0 ? (
           <p data-part="empty" className="m-0 rounded-2xl border border-dashed border-edge px-4 py-6 text-center text-[15px] text-muted">
             {t("jobs.sell.empty")}
           </p>
         ) : (
           <ul className="m-0 flex list-none flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface p-0 shadow-[var(--v2-shadow)]">
-            {entries.map((e) => (
+            {shown.length === 0 ? <li data-part="no-match" className="px-4 py-5 text-center text-[15px] text-muted">{t("jobs.sell.nomatch")}</li> : null}
+            {shown.map((e) => (
               <li key={e.id} data-entry={e.id}>
                 {actions ? (
                   <button type="button" aria-haspopup="dialog" onPointerEnter={() => void loadWork()} onClick={(ev) => open({ kind: "edit", entry: e }, ev.currentTarget)} className="jb-press flex min-h-14 w-full items-center gap-3 border-0 bg-transparent px-4 py-2.5 text-left">

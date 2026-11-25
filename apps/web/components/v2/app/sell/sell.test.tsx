@@ -64,6 +64,21 @@ describe("each of the five styles draws its list in its own words", () => {
     section("services", { entries: [] });
     expect(screen.getByText(/Nothing here yet\. Say it, take a photo or import a sheet/)).toBeInTheDocument();
   });
+  it("a long list (8 or more) has a search box by name; a short one does not; nothing found says so (26 Nov 2026: a saree shop's 40 products had none)", () => {
+    const base = entriesOf("products");
+    const many = Array.from({ length: 9 }, (_, i) => ({ ...base[i % base.length], id: `5e110009-0000-4000-8000-0000000000${String(10 + i)}`, name: i === 4 ? "Kanchi pattu bridal" : `Saree ${i}` }) as SellEntry);
+    section("products", { entries: many.slice(0, 3) });
+    expect(document.querySelector('[data-part="find"]')).toBeNull();
+    cleanup();
+    section("products", { entries: many });
+    const find = document.querySelector('[data-part="find"]') as HTMLInputElement;
+    expect(find).toHaveAttribute("aria-label", "Search by name");
+    fireEvent.change(find, { target: { value: "kanchi" } });
+    expect(document.querySelectorAll("[data-entry]")).toHaveLength(1);
+    fireEvent.change(find, { target: { value: "zzz" } });
+    expect(screen.getByText("Nothing matches that. Try fewer letters.")).toBeInTheDocument();
+    expect(document.querySelectorAll("[data-entry]")).toHaveLength(0);
+  });
   it("the three ways to fill it, each with its own words and the style's example sentence", () => {
     section("properties");
     const fill = document.querySelector('[data-part="fill"]') as HTMLElement;

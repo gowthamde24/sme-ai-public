@@ -35,7 +35,7 @@ describe("the status of a call (C1's status wins; otherwise it is derived)", () 
 
 describe("the sentence of a call", () => {
   it("prefers the API's own sentence, then says a refusal, then the summary, the category, the result, the state", () => {
-    expect(callSentence(row({ outcome_sentence: "Booked a Saturday visit for 20 sarees." }))).toEqual({ kind: "api", text: "Booked a Saturday visit for 20 sarees." });
+    expect(callSentence(row({ outcome_sentence: "Booked a Saturday visit for 20 sarees." }))).toMatchObject({ kind: "api", text: "Booked a Saturday visit for 20 sarees." });
     expect(callSentence(row({ state: "refused", refuse_reason: "dnd" }))).toEqual({ kind: "refused", reason: "dnd" });
     expect(callSentence(row({ summary_short: "Wants 20 silk sarees." }))).toEqual({ kind: "summary", text: "Wants 20 silk sarees." });
     expect(callSentence(row({ category: "visit_booked" }))).toEqual({ kind: "category", category: "visit_booked" });
@@ -138,5 +138,17 @@ describe("a call whose state this screen does not know (a newer API, owner 17 No
   it("says Needs a look in the sentence, never an empty line", () => {
     const s = callSentence({ state: "unknown", live: false, outcomeSentence: null, summaryShort: null, category: null, outcome: null, refuseReason: null });
     expect(sentenceText(s, { "ph.state.unknown": "Needs a look" }, () => "")).toBe("Needs a look");
+  });
+});
+
+describe("the API's English sentence in a language with its own script (26 Nov 2026)", () => {
+  const api = { state: "completed", live: false, outcomeSentence: "Visit booked", summaryShort: null, category: "visit_booked", outcome: "positive", refuseReason: null } as never;
+  it("is replaced by the page's own words when the page has them and the API's sentence is plain English", () => {
+    expect(sentenceText(callSentence(api), { "outcome.cat.visit_booked": "విజిట్ బుక్ అయింది" }, () => "")).toBe("విజిట్ బుక్ అయింది");
+  });
+  it("stays as the API said it in English (the page's words are English too), or when the API's sentence is not plain English", () => {
+    expect(sentenceText(callSentence(api), { "outcome.cat.visit_booked": "Visit booked!" }, () => "")).toBe("Visit booked");
+    const own = { ...(api as object), outcomeSentence: "విజిట్ ఖరారు" } as never;
+    expect(sentenceText(callSentence(own), { "outcome.cat.visit_booked": "విజిట్ బుక్ అయింది" }, () => "")).toBe("విజిట్ ఖరారు");
   });
 });
