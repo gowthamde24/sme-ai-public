@@ -96,7 +96,7 @@ create table public.call_complaints (
   id         uuid primary key default gen_random_uuid(),
   tenant_id  uuid not null references public.tenants (id),
   kind       text not null check (kind in ('to_business', 'telecom_provider', 'regulator')),
-  call_id    uuid references public.phone_calls (id),
+  call_id    uuid,   -- a call of THIS workspace, checked by call_complaint_record (phone_calls has no (tenant_id, id) key to reference)
   noted_by   uuid not null,
   created_at timestamptz not null default now()
 );
@@ -110,6 +110,7 @@ grant select on public.call_complaints to authenticated;
 create policy call_complaints_select on public.call_complaints for select to authenticated
   using (tenant_id = any (((select app.my_tenant_ids_with_role(array['owner', 'admin']::public.app_role[])))::uuid[]));
 create trigger call_complaints_forbid_tenant_id_change before update on public.call_complaints for each row execute function app.forbid_tenant_id_change();
+create trigger audit_call_complaints after insert or update or delete on public.call_complaints for each row execute function app.audit_row_change('call_complaint', '');
 
 create function public.call_complaint_record(p_tenant_id uuid, p_kind text, p_call_id uuid default null) returns jsonb
 language plpgsql security definer set search_path = '' as

@@ -600,6 +600,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
      insert into public.webhook_deliveries (id, tenant_id, endpoint_id, event_id, event, subject_kind) select %2$L, %1$L, e.id, gen_random_uuid(), 'test.ping', 'test' from e$$,
    'status = status', $$delete from public.webhook_deliveries where id = %2$L$$, false),
   -- results into a business's own CRM or sheet (migration 20261231992330): written only by crm_connection_* (Owner or Admin) and, for the log, by the queueing function and the worker's crm_delivery_record
+  -- the lawyer's opinion (migration 20261231992610): a complaint about a workspace's outbound calls, written only by call_complaint_record
+  ('call_complaints',
+   $$insert into public.call_complaints (id, tenant_id, kind, noted_by) values (%2$L, %1$L, 'to_business', %5$L)$$,
+   'kind = kind', $$delete from public.call_complaints where id = %2$L$$, false),
   ('crm_connections',
    $$insert into public.crm_connections (id, tenant_id, type, events, created_by) values (%2$L, %1$L, 'hubspot', array['lead.created'], %5$L)$$,
    'active = active', $$delete from public.crm_connections where id = %2$L$$, true),
@@ -1044,6 +1048,8 @@ select t, r, s, i, u, d from (values
   ('webhook_endpoints', 'sales', false, false, false, false), ('webhook_endpoints', 'viewer', false, false, false, false),
   ('webhook_deliveries', 'owner', true, false, false, false), ('webhook_deliveries', 'admin', true, false, false, false),
   ('webhook_deliveries', 'sales', false, false, false, false), ('webhook_deliveries', 'viewer', false, false, false, false),
+  ('call_complaints', 'owner', true, false, false, false), ('call_complaints', 'admin', true, false, false, false),
+  ('call_complaints', 'sales', false, false, false, false), ('call_complaints', 'viewer', false, false, false, false),
   ('crm_connections', 'owner', true, false, false, false), ('crm_connections', 'admin', true, false, false, false),
   ('crm_connections', 'sales', false, false, false, false), ('crm_connections', 'viewer', false, false, false, false),
   ('crm_deliveries', 'owner', true, false, false, false), ('crm_deliveries', 'admin', true, false, false, false),
