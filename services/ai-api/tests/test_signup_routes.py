@@ -25,7 +25,7 @@ class FakeRepo:
         self.calls: list[tuple[str, tuple[Any, ...]]] = []
 
     def status(self, token: str) -> dict[str, Any]:
-        return {"open": True, "terms_version": "2026-11", "privacy_version": "2026-11", "aup_version": "2026-11", "email_confirmed": True, "email_blocked": False, "consent_done": False, "phone_verified": False, "trial_claimed": False}
+        return {"open": True, "terms_version": "2026-11", "privacy_version": "2026-11", "aup_version": "2026-11", "phone_required": True, "email_confirmed": True, "email_blocked": False, "consent_done": False, "phone_verified": False, "trial_claimed": False}
 
     def consent(self, token: str, kind: str, version: str) -> dict[str, Any]:
         self.calls.append(("consent", (kind, version)))
@@ -39,8 +39,8 @@ class FakeRepo:
         self.calls.append(("verify", (code_hash,)))
         return self.verify_out
 
-    def claim(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
-        self.calls.append(("claim", (tenant_id,)))
+    def claim(self, token: str, tenant_id: uuid.UUID, ip_hash: str | None = None) -> dict[str, Any]:
+        self.calls.append(("claim", (tenant_id, ip_hash)))
         return self.claim_out
 
 

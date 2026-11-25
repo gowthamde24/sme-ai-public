@@ -12,7 +12,7 @@ end $$;
 -- A. closed by default; the switch is for system accounts only
 select is(pg_temp.at('a_owner', $q$select (public.signup_status() ->> 'open')$q$), 'false', 'A1: sign-up is closed until the operator opens it');
 select is(pg_temp.at('a_owner', $q$select public.signup_phone_start(encode(sha256(convert_to('p1', 'UTF8')), 'hex'), encode(sha256(convert_to('c1', 'UTF8')), 'hex'), null) ->> 'reason'$q$), 'closed', 'A2: no phone code while closed');
-select is(pg_temp.at('a_owner', $q$select public.ops_signup_set(true, null, null, null, null)::text$q$), 'ERR:42501', 'A3: a member cannot open it');
+select is(pg_temp.at('a_owner', $q$select public.ops_signup_set(true, null, null, null, null, null, null, null)::text$q$), 'ERR:42501', 'A3: a member cannot open it');
 select is(pg_temp.at('anon', $q$select public.signup_status()::text$q$), 'ERR:42501', 'A4: nor a stranger read the status');
 select is(pg_temp.at('a_owner', format($q$select public.signup_trial_claim(%L) ->> 'reason'$q$, tests.tid('a'))), 'closed', 'A5: no credit while closed');
 select is(signup.email_key('A.B+news@Gmail.com'), signup.email_key('ab@googlemail.com'), 'A6: Gmail dots, +tags and googlemail are one identity');

@@ -56,8 +56,8 @@ class SignupRepository:
     def phone_verify(self, token: str, code_hash: str) -> dict[str, Any]:
         return self._rpc.object(token, "signup_phone_verify", {"p_code_hash": code_hash})
 
-    def claim(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
-        return self._rpc.object(token, "signup_trial_claim", {"p_tenant_id": str(tenant_id)})
+    def claim(self, token: str, tenant_id: uuid.UUID, ip_hash: str | None = None) -> dict[str, Any]:
+        return self._rpc.object(token, "signup_trial_claim", {"p_tenant_id": str(tenant_id), "p_ip_hash": ip_hash})
 
 
 # the closed words of the database -> the API's plain refusals (status, code, sentence)
@@ -150,8 +150,8 @@ class SignupService:
         if not out.get("ok"):
             raise _refusal(out)
 
-    def claim(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
-        out = self._repo.claim(token, tenant_id)
+    def claim(self, token: str, tenant_id: uuid.UUID, ip: str | None = None) -> dict[str, Any]:
+        out = self._repo.claim(token, tenant_id, self._mac("ip:" + ip)[:32] if ip else None)
         return {
             "granted": bool(out.get("granted")),
             "reason": out.get("reason"),

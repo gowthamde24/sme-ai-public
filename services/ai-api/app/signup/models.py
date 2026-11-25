@@ -16,6 +16,7 @@ class StatusOut(_Strict):
     terms_version: str
     privacy_version: str
     aup_version: str
+    phone_required: bool
     email_confirmed: bool
     email_blocked: bool
     consent_done: bool

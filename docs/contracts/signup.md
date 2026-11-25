@@ -4,7 +4,7 @@ Off (404) unless the API has `SIGNUP_OPEN=true`. The database's own switch `sign
 All routes need a signed-in person (Supabase token). No response carries a phone number, an e-mail, an address or a code (except `debug_code` on a staging API with `SIGNUP_PHONE_SENDER=fake` and `SIGNUP_FAKE_CODE_ECHO=true`; the API refuses to start with the echo in production).
 
 ## GET /v1/signup/status
-`{ open, terms_version, privacy_version, aup_version, email_confirmed, email_blocked, consent_done, phone_verified, trial_claimed }`. The screen shows the next missing step.
+`{ open, terms_version, privacy_version, aup_version, phone_required, email_confirmed, email_blocked, consent_done, phone_verified, trial_claimed }`. The screen shows the next missing step.
 
 ## POST /v1/signup/consent  `{ kind: "terms"|"privacy"|"aup", version }`
 200 `{ok:true}`. 422 when the version is not the current one (so an old tick never counts). Record all three (terms, privacy notice, acceptable-use policy) before the claim; `status` carries the three current versions.
@@ -19,3 +19,6 @@ Refusals (plain sentence in `message`, closed word in `reason`): 409 `signup_clo
 ## POST /v1/tenants/{t}/billing/trial-claim   Owner
 Always 200 `{ granted, reason, balance_paise }`. `granted:true` once per person. `reason` when not granted: `closed`, `email_unconfirmed`, `email_blocked`, `phone_not_verified`, `consent_missing`, `email_used` (this identity already had its credit; Gmail dots and +tags count as the same address), `daily_cap`, `already_granted` (this workspace), `phone_used`.
 The amount is `pricing.settings.free_start_paise` (Rs 100 = 10000 at launch; the web reads the text from the pricing catalogue, never a literal).
+
+## E-mail-only mode (until the WhatsApp phone code is live)
+`status.phone_required` tells the screen. When it is `false` the phone step is optional: an identity WITHOUT a verified phone may still claim, for a SMALLER credit (`email_only_paise`, default Rs 30; the screen reads the amount from the pricing catalogue / the claim's `balance_paise`, never a literal), with stricter limits: 3 claims an hour per address and per e-mail, and its own daily cap. Extra `reason` word: `rate`. A person who DID verify a phone still gets the full free start. The operator switches the mode with `ops_signup_set(..., p_phone_required => false)`; Turnstile at Supabase Auth and the confirmed e-mail are the front-door checks.

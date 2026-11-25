@@ -73,5 +73,7 @@ def phone_verify(
 
 
 @claim_router.post("/trial-claim", response_model=TrialClaimOut)
-def trial_claim(ctx: Owner, runtime: RuntimeDep) -> dict[str, Any]:
-    return _service(runtime).claim(ctx.principal.token, ctx.tenant.id)
+def trial_claim(request: Request, ctx: Owner, runtime: RuntimeDep) -> dict[str, Any]:
+    service = _service(runtime)
+    ip = client_ip(request.scope, service.proxy_hops)
+    return service.claim(ctx.principal.token, ctx.tenant.id, ip if ip != "unknown" else None)

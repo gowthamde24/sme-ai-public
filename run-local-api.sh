@@ -22,6 +22,8 @@ API_ENV=development API_CORS_ORIGINS=http://localhost:3000
 ADMIN_ENVIRONMENT=staging
 SIGNUP_OPEN=true SIGNUP_PHONE_SENDER=fake SIGNUP_FAKE_CODE_ECHO=true
 WHAT_YOU_SELL_LISTS=true PRICING_V2=true JOBS=on
+# LOCAL_ENV_OVERRIDES="PAGE_MAX_INFLIGHT=24 CALL_COORDINATION=true" ./run-local-api.sh : settings for this run only
+for pair in ${LOCAL_ENV_OVERRIDES:-}; do export "$pair"; done
 set +a
 cd services/ai-api
 exec "${VENV:-.venv}/bin/uvicorn" app.main:app --no-server-header --port "${PORT:-8000}"
