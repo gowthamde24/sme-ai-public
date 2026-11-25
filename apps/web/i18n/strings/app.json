@@ -132999,5 +132999,2436 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "cn.mock": {
+  "en": "Sample cards: nothing is sent or saved.",
+  "te": "శాంపిల్ కార్డ్‌లు: ఏదీ పంపరు, సేవ్ చేయరు.",
+  "hi": "नमूना कार्ड: कुछ भेजा या सेव नहीं होता।",
+  "kn": "ಸ್ಯಾಂಪಲ್ ಕಾರ್ಡ್‌ಗಳು: ಏನನ್ನೂ ಕಳಿಸುವುದಿಲ್ಲ, ಸೇವ್ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.close": {
+  "en": "Close",
+  "te": "మూసేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.connect": {
+  "en": "Connect",
+  "te": "కనెక్ట్ చేయండి",
+  "hi": "कनेक्ट करें",
+  "kn": "ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cancel": {
+  "en": "Cancel",
+  "te": "వద్దు",
+  "hi": "रहने दें",
+  "kn": "ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.save.choices": {
+  "en": "Save choices",
+  "te": "ఎంపికలు సేవ్ చేయండి",
+  "hi": "चुनाव सेव करें",
+  "kn": "ಆಯ್ಕೆಗಳನ್ನು ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.loading": {
+  "en": "Loading.",
+  "te": "లోడ్ అవుతోంది.",
+  "hi": "लोड हो रहा है।",
+  "kn": "ಲೋಡ್ ಆಗುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.copy": {
+  "en": "Copy",
+  "te": "కాపీ",
+  "hi": "कॉपी",
+  "kn": "ಕಾಪಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.copied": {
+  "en": "Copied",
+  "te": "కాపీ అయింది",
+  "hi": "कॉपी हो गया",
+  "kn": "ಕಾಪಿ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.copy.failed": {
+  "en": "Could not copy. Select the text and copy it by hand.",
+  "te": "కాపీ కాలేదు. టెక్స్ట్ సెలెక్ట్ చేసి చేత్తో కాపీ చేయండి.",
+  "hi": "कॉपी नहीं हुआ। टेक्स्ट चुनकर हाथ से कॉपी करें।",
+  "kn": "ಕಾಪಿ ಆಗಲಿಲ್ಲ. ಟೆಕ್ಸ್ಟ್ ಆರಿಸಿ ಕೈಯಿಂದ ಕಾಪಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.keys.note": {
+  "en": "Keys are sent once and never shown again. Only their last four characters are kept in view.",
+  "te": "కీలు ఒక్కసారే పంపుతాం, మళ్ళీ చూపించం. చివరి నాలుగు అక్షరాలు మాత్రమే కనిపిస్తాయి.",
+  "hi": "कीज़ एक ही बार भेजी जाती हैं, दोबारा नहीं दिखतीं। सिर्फ़ आख़िरी चार अक्षर दिखते हैं।",
+  "kn": "ಕೀಗಳನ್ನು ಒಮ್ಮೆ ಮಾತ್ರ ಕಳಿಸುತ್ತೇವೆ, ಮತ್ತೆ ತೋರಿಸುವುದಿಲ್ಲ. ಕೊನೆಯ ನಾಲ್ಕು ಅಕ್ಷರಗಳು ಮಾತ್ರ ಕಾಣುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.last4": {
+  "en": "Key ends in {last4}",
+  "te": "కీ చివర {last4}",
+  "hi": "कीज़ का अंत {last4}",
+  "kn": "ಕೀ ಕೊನೆಯಲ್ಲಿ {last4}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.disconnect": {
+  "en": "Disconnect",
+  "te": "డిస్‌కనెక్ట్ చేయండి",
+  "hi": "डिसकनेक्ट करें",
+  "kn": "ಡಿಸ್‌ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.disconnect.ask": {
+  "en": "Disconnect {name}? What was already received stays.",
+  "te": "{name} డిస్‌కనెక్ట్ చేయాలా? ఇప్పటికే వచ్చినవి అలాగే ఉంటాయి.",
+  "hi": "{name} डिसकनेक्ट करें? जो आ चुका है वह रहेगा।",
+  "kn": "{name} ಡಿಸ್‌ಕನೆಕ್ಟ್ ಮಾಡಬೇಕೇ? ಈಗಾಗಲೇ ಬಂದಿರುವುದು ಹಾಗೇ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.disconnect.yes": {
+  "en": "Yes, disconnect",
+  "te": "అవును, డిస్‌కనెక్ట్",
+  "hi": "हाँ, डिसकनेक्ट करें",
+  "kn": "ಹೌದು, ಡಿಸ್‌ಕನೆಕ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.state.connected": {
+  "en": "Connected",
+  "te": "కనెక్ట్ అయింది",
+  "hi": "कनेक्टेड",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.state.not": {
+  "en": "Not connected",
+  "te": "కనెక్ట్ కాలేదు",
+  "hi": "कनेक्ट नहीं है",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.state.setup": {
+  "en": "Needs setup by us",
+  "te": "మేము సెటప్ చేయాలి",
+  "hi": "हमें सेटअप करना है",
+  "kn": "ನಾವು ಸೆಟಪ್ ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.state.problem": {
+  "en": "Needs your attention",
+  "te": "మీరు చూడాలి",
+  "hi": "आपको देखना है",
+  "kn": "ನೀವು ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.group.shops": {
+  "en": "Online stores",
+  "te": "ఆన్‌లైన్ స్టోర్లు",
+  "hi": "ऑनलाइन स्टोर",
+  "kn": "ಆನ್‌ಲೈನ್ ಸ್ಟೋರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.group.shops.sub": {
+  "en": "New orders, cash-on-delivery orders and left carts reach you here, and your store's products can fill a list.",
+  "te": "కొత్త ఆర్డర్లు, క్యాష్ ఆన్ డెలివరీ ఆర్డర్లు, వదిలేసిన కార్ట్‌లు ఇక్కడికి వస్తాయి. మీ స్టోర్ ప్రొడక్ట్‌లతో ఒక లిస్ట్ నింపవచ్చు.",
+  "hi": "नए ऑर्डर, कैश ऑन डिलीवरी ऑर्डर और छोड़े गए कार्ट यहाँ आते हैं, और आपके स्टोर के प्रोडक्ट से एक लिस्ट भरी जा सकती है।",
+  "kn": "ಹೊಸ ಆರ್ಡರ್‌ಗಳು, ಕ್ಯಾಶ್ ಆನ್ ಡೆಲಿವರಿ ಆರ್ಡರ್‌ಗಳು, ಬಿಟ್ಟುಹೋದ ಕಾರ್ಟ್‌ಗಳು ಇಲ್ಲಿಗೆ ಬರುತ್ತವೆ, ನಿಮ್ಮ ಸ್ಟೋರ್ ಪ್ರೊಡಕ್ಟ್‌ಗಳಿಂದ ಒಂದು ಲಿಸ್ಟ್ ತುಂಬಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.before": {
+  "en": "Do this in your store first",
+  "te": "ముందు మీ స్టోర్‌లో ఇది చేయండి",
+  "hi": "पहले अपने स्टोर में यह करें",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಸ್ಟೋರ್‌ನಲ್ಲಿ ಇದನ್ನು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.shopify.step.1": {
+  "en": "In Shopify, open Settings, then Apps, and make an app for Stack19.",
+  "te": "Shopify లో Settings, తర్వాత Apps తెరిచి, Stack19 కోసం ఒక యాప్ చేయండి.",
+  "hi": "Shopify में Settings, फिर Apps खोलें और Stack19 के लिए एक ऐप बनाएँ।",
+  "kn": "Shopify ನಲ್ಲಿ Settings, ನಂತರ Apps ತೆರೆದು Stack19 ಗಾಗಿ ಒಂದು ಆ್ಯಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.shopify.step.2": {
+  "en": "Give it permission to read orders and products, and to see customer details.",
+  "te": "ఆర్డర్లు, ప్రొడక్ట్‌లు చదవడానికి, కస్టమర్ వివరాలు చూడడానికి దానికి అనుమతి ఇవ్వండి.",
+  "hi": "इसे ऑर्डर और प्रोडक्ट पढ़ने और ग्राहक की जानकारी देखने की अनुमति दें।",
+  "kn": "ಆರ್ಡರ್, ಪ್ರೊಡಕ್ಟ್ ಓದಲು ಮತ್ತು ಗ್ರಾಹಕರ ವಿವರ ನೋಡಲು ಅದಕ್ಕೆ ಅನುಮತಿ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.shopify.step.3": {
+  "en": "Copy the app's secret key. If it has an access token, copy that too; if it has a client id, copy that.",
+  "te": "యాప్ సీక్రెట్ కీ కాపీ చేయండి. యాక్సెస్ టోకెన్ ఉంటే అదీ, క్లయింట్ ఐడీ ఉంటే అదీ కాపీ చేయండి.",
+  "hi": "ऐप की सीक्रेट की कॉपी करें। एक्सेस टोकन हो तो वह भी, क्लाइंट आईडी हो तो वह भी कॉपी करें।",
+  "kn": "ಆ್ಯಪ್‌ನ ಸೀಕ್ರೆಟ್ ಕೀ ಕಾಪಿ ಮಾಡಿ. ಆಕ್ಸೆಸ್ ಟೋಕನ್ ಇದ್ದರೆ ಅದನ್ನೂ, ಕ್ಲೈಂಟ್ ಐಡಿ ಇದ್ದರೆ ಅದನ್ನೂ ಕಾಪಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.shopify.step.4": {
+  "en": "Paste them below and press Connect. We add the order and cart events for you.",
+  "te": "కింద పేస్ట్ చేసి Connect నొక్కండి. ఆర్డర్, కార్ట్ ఈవెంట్లను మేమే జోడిస్తాం.",
+  "hi": "नीचे पेस्ट करें और Connect दबाएँ। ऑर्डर और कार्ट के इवेंट हम जोड़ देते हैं।",
+  "kn": "ಕೆಳಗೆ ಪೇಸ್ಟ್ ಮಾಡಿ Connect ಒತ್ತಿ. ಆರ್ಡರ್ ಮತ್ತು ಕಾರ್ಟ್ ಈವೆಂಟ್‌ಗಳನ್ನು ನಾವೇ ಸೇರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.woocommerce.step.1": {
+  "en": "Your site must use https and pretty permalinks (WooCommerce needs them for its API).",
+  "te": "మీ సైట్ https, ప్రెట్టీ పర్మాలింకులు వాడాలి (WooCommerce API కి అవి కావాలి).",
+  "hi": "आपकी साइट https और प्रिटी परमालिंक पर होनी चाहिए (WooCommerce API को ये चाहिए)।",
+  "kn": "ನಿಮ್ಮ ಸೈಟ್ https ಮತ್ತು ಪ್ರೆಟ್ಟಿ ಪರ್ಮಾಲಿಂಕ್ ಬಳಸಬೇಕು (WooCommerce API ಗೆ ಅವು ಬೇಕು).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.woocommerce.step.2": {
+  "en": "In WordPress open WooCommerce, Settings, Advanced, REST API, and add a key.",
+  "te": "WordPress లో WooCommerce, Settings, Advanced, REST API తెరిచి, ఒక కీ జోడించండి.",
+  "hi": "WordPress में WooCommerce, Settings, Advanced, REST API खोलें और एक की जोड़ें।",
+  "kn": "WordPress ನಲ್ಲಿ WooCommerce, Settings, Advanced, REST API ತೆರೆದು ಒಂದು ಕೀ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.woocommerce.step.3": {
+  "en": "Give the key Read/Write permission, then copy the consumer key and the consumer secret.",
+  "te": "కీకి Read/Write అనుమతి ఇచ్చి, కన్స్యూమర్ కీ, కన్స్యూమర్ సీక్రెట్ కాపీ చేయండి.",
+  "hi": "की को Read/Write अनुमति दें, फिर कंज्यूमर की और कंज्यूमर सीक्रेट कॉपी करें।",
+  "kn": "ಕೀಗೆ Read/Write ಅನುಮತಿ ಕೊಟ್ಟು, ಕನ್ಸ್ಯೂಮರ್ ಕೀ ಮತ್ತು ಕನ್ಸ್ಯೂಮರ್ ಸೀಕ್ರೆಟ್ ಕಾಪಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.woocommerce.step.4": {
+  "en": "Paste them below and press Connect. We add the order events for you.",
+  "te": "కింద పేస్ట్ చేసి Connect నొక్కండి. ఆర్డర్ ఈవెంట్లను మేమే జోడిస్తాం.",
+  "hi": "नीचे पेस्ट करें और Connect दबाएँ। ऑर्डर के इवेंट हम जोड़ देते हैं।",
+  "kn": "ಕೆಳಗೆ ಪೇಸ್ಟ್ ಮಾಡಿ Connect ಒತ್ತಿ. ಆರ್ಡರ್ ಈವೆಂಟ್‌ಗಳನ್ನು ನಾವೇ ಸೇರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shopify.shop": {
+  "en": "Store address",
+  "te": "స్టోర్ అడ్రస్",
+  "hi": "स्टोर का पता",
+  "kn": "ಸ್ಟೋರ್ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shopify.shop.hint": {
+  "en": "The myshopify.com address, for example my-shop.myshopify.com.",
+  "te": "myshopify.com అడ్రస్, ఉదాహరణకు my-shop.myshopify.com.",
+  "hi": "myshopify.com वाला पता, जैसे my-shop.myshopify.com।",
+  "kn": "myshopify.com ವಿಳಾಸ, ಉದಾಹರಣೆಗೆ my-shop.myshopify.com.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shopify.token": {
+  "en": "Admin API access token",
+  "te": "Admin API యాక్సెస్ టోకెన్",
+  "hi": "Admin API एक्सेस टोकन",
+  "kn": "Admin API ಆಕ್ಸೆಸ್ ಟೋಕನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shopify.token.hint": {
+  "en": "For apps made inside the store admin. Fill this or the client id, not both.",
+  "te": "స్టోర్ అడ్మిన్‌లో చేసిన యాప్‌ల కోసం. ఇది లేదా క్లయింట్ ఐడీ నింపండి, రెండూ వద్దు.",
+  "hi": "स्टोर एडमिन में बने ऐप के लिए। यह या क्लाइंट आईडी भरें, दोनों नहीं।",
+  "kn": "ಸ್ಟೋರ್ ಅಡ್ಮಿನ್‌ನಲ್ಲಿ ಮಾಡಿದ ಆ್ಯಪ್‌ಗಳಿಗೆ. ಇದನ್ನು ಅಥವಾ ಕ್ಲೈಂಟ್ ಐಡಿ ತುಂಬಿ, ಎರಡೂ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shopify.client": {
+  "en": "Client id",
+  "te": "క్లయింట్ ఐడీ",
+  "hi": "क्लाइंट आईडी",
+  "kn": "ಕ್ಲೈಂಟ್ ಐಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shopify.client.hint": {
+  "en": "For apps made in the Shopify Dev Dashboard.",
+  "te": "Shopify Dev Dashboard లో చేసిన యాప్‌ల కోసం.",
+  "hi": "Shopify Dev Dashboard में बने ऐप के लिए।",
+  "kn": "Shopify Dev Dashboard ನಲ್ಲಿ ಮಾಡಿದ ಆ್ಯಪ್‌ಗಳಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shopify.secret": {
+  "en": "Client secret (API secret key)",
+  "te": "క్లయింట్ సీక్రెట్ (API సీక్రెట్ కీ)",
+  "hi": "क्लाइंट सीक्रेट (API सीक्रेट की)",
+  "kn": "ಕ್ಲೈಂಟ್ ಸೀಕ್ರೆಟ್ (API ಸೀಕ್ರೆಟ್ ಕೀ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shopify.secret.hint": {
+  "en": "Shopify signs every event with it, so we can tell it is really your store.",
+  "te": "ప్రతి ఈవెంట్‌కీ Shopify దీంతో సైన్ చేస్తుంది, అది మీ స్టోర్ నుంచే అని మేము తెలుసుకుంటాం.",
+  "hi": "Shopify हर इवेंट पर इससे साइन करता है, इसलिए हम जान पाते हैं कि वह आपके स्टोर से है।",
+  "kn": "ಪ್ರತಿ ಈವೆಂಟ್‌ಗೂ Shopify ಇದರಿಂದ ಸೈನ್ ಮಾಡುತ್ತದೆ, ಹಾಗಾಗಿ ಅದು ನಿಮ್ಮ ಸ್ಟೋರ್‌ನಿಂದಲೇ ಎಂದು ಗೊತ್ತಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.woo.site": {
+  "en": "Shop address",
+  "te": "షాప్ అడ్రస్",
+  "hi": "शॉप का पता",
+  "kn": "ಶಾಪ್ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.woo.site.hint": {
+  "en": "Your website, starting with https://.",
+  "te": "మీ వెబ్‌సైట్, https:// తో మొదలు.",
+  "hi": "आपकी वेबसाइट, https:// से शुरू।",
+  "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್, https:// ನಿಂದ ಶುರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.woo.key": {
+  "en": "Consumer key",
+  "te": "కన్స్యూమర్ కీ",
+  "hi": "कंज्यूमर की",
+  "kn": "ಕನ್ಸ್ಯೂಮರ್ ಕೀ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.woo.key.hint": {
+  "en": "Starts with ck_.",
+  "te": "ck_ తో మొదలవుతుంది.",
+  "hi": "ck_ से शुरू होती है।",
+  "kn": "ck_ ನಿಂದ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.woo.secret": {
+  "en": "Consumer secret",
+  "te": "కన్స్యూమర్ సీక్రెట్",
+  "hi": "कंज्यूमर सीक्रेट",
+  "kn": "ಕನ್ಸ್ಯೂಮರ್ ಸೀಕ್ರೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.connected": {
+  "en": "Connected. Orders from this store now reach you.",
+  "te": "కనెక్ట్ అయింది. ఈ స్టోర్ ఆర్డర్లు ఇప్పుడు మీకు వస్తాయి.",
+  "hi": "कनेक्ट हो गया। इस स्टोर के ऑर्डर अब आप तक आएँगे।",
+  "kn": "ಕನೆಕ್ಟ್ ಆಯಿತು. ಈ ಸ್ಟೋರ್‌ನ ಆರ್ಡರ್‌ಗಳು ಈಗ ನಿಮಗೆ ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.counts": {
+  "en": "Last 30 days: {orders} orders, {cod} cash on delivery, {carts} carts waiting.",
+  "te": "గత 30 రోజులు: {orders} ఆర్డర్లు, {cod} క్యాష్ ఆన్ డెలివరీ, {carts} కార్ట్‌లు వేచి ఉన్నాయి.",
+  "hi": "पिछले 30 दिन: {orders} ऑर्डर, {cod} कैश ऑन डिलीवरी, {carts} कार्ट इंतज़ार में।",
+  "kn": "ಕಳೆದ 30 ದಿನ: {orders} ಆರ್ಡರ್, {cod} ಕ್ಯಾಶ್ ಆನ್ ಡೆಲಿವರಿ, {carts} ಕಾರ್ಟ್ ಕಾಯುತ್ತಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.last": {
+  "en": "Last event: {when}.",
+  "te": "చివరి ఈవెంట్: {when}.",
+  "hi": "आख़िरी इवेंट: {when}।",
+  "kn": "ಕೊನೆಯ ಈವೆಂಟ್: {when}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.none": {
+  "en": "Nothing received yet.",
+  "te": "ఇంకా ఏమీ రాలేదు.",
+  "hi": "अभी कुछ नहीं आया।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಬಂದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.confirm": {
+  "en": "Orders to confirm",
+  "te": "కన్ఫర్మ్ చేయాల్సిన ఆర్డర్లు",
+  "hi": "कन्फ़र्म करने वाले ऑर्डर",
+  "kn": "ಕನ್ಫರ್ಮ್ ಮಾಡಬೇಕಾದ ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.confirm.hint": {
+  "en": "A new order becomes a lead, and your usual first call or message to new leads confirms it.",
+  "te": "కొత్త ఆర్డర్ ఒక లీడ్ అవుతుంది, కొత్త లీడ్స్‌కి మీరు పెట్టుకున్న మొదటి కాల్ లేదా మెసేజ్ దాన్ని కన్ఫర్మ్ చేస్తుంది.",
+  "hi": "नया ऑर्डर एक लीड बनता है, और नई लीड के लिए आपका सामान्य पहला कॉल या मैसेज उसे कन्फ़र्म करता है।",
+  "kn": "ಹೊಸ ಆರ್ಡರ್ ಒಂದು ಲೀಡ್ ಆಗುತ್ತದೆ, ಹೊಸ ಲೀಡ್‌ಗಳಿಗೆ ನಿಮ್ಮ ಸಾಮಾನ್ಯ ಮೊದಲ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಅದನ್ನು ಕನ್ಫರ್ಮ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.confirm.cod": {
+  "en": "Cash-on-delivery orders only",
+  "te": "క్యాష్ ఆన్ డెలివరీ ఆర్డర్లు మాత్రమే",
+  "hi": "सिर्फ़ कैश ऑन डिलीवरी ऑर्डर",
+  "kn": "ಕ್ಯಾಶ್ ಆನ್ ಡೆಲಿವರಿ ಆರ್ಡರ್‌ಗಳು ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.confirm.all": {
+  "en": "Every order",
+  "te": "ప్రతి ఆర్డర్",
+  "hi": "हर ऑर्डर",
+  "kn": "ಪ್ರತಿ ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.confirm.off": {
+  "en": "None",
+  "te": "ఏదీ వద్దు",
+  "hi": "कोई नहीं",
+  "kn": "ಯಾವುದೂ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.consent": {
+  "en": "My checkout asks customers to agree that I may call or message them about their order",
+  "te": "నా చెక్అవుట్‌లో కస్టమర్లు ఆర్డర్ గురించి కాల్ లేదా మెసేజ్ చేయడానికి అనుమతి ఇస్తారు",
+  "hi": "मेरे चेकआउट पर ग्राहक ऑर्डर के बारे में कॉल या मैसेज की अनुमति देते हैं",
+  "kn": "ನನ್ನ ಚೆಕ್‌ಔಟ್‌ನಲ್ಲಿ ಗ್ರಾಹಕರು ಆರ್ಡರ್ ಬಗ್ಗೆ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡಲು ಅನುಮತಿ ಕೊಡುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.consent.hint": {
+  "en": "Tick this only if it is true. Without it nobody is called: the lead waits for you to ask first.",
+  "te": "ఇది నిజమైతేనే టిక్ చేయండి. లేకపోతే ఎవరికీ కాల్ వెళ్లదు: ముందు మీరు అడిగే వరకు లీడ్ ఆగుతుంది.",
+  "hi": "यह सच हो तभी टिक करें। नहीं तो किसी को कॉल नहीं जाता: लीड आपके पहले पूछने तक रुकती है।",
+  "kn": "ಇದು ನಿಜವಾಗಿದ್ದರೆ ಮಾತ್ರ ಟಿಕ್ ಮಾಡಿ. ಇಲ್ಲದಿದ್ದರೆ ಯಾರಿಗೂ ಕಾಲ್ ಹೋಗುವುದಿಲ್ಲ: ಮೊದಲು ನೀವು ಕೇಳುವವರೆಗೆ ಲೀಡ್ ನಿಲ್ಲುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.abandoned": {
+  "en": "Call back shoppers who leave a cart",
+  "te": "కార్ట్ వదిలేసిన వారికి తిరిగి కాల్ చేయండి",
+  "hi": "कार्ट छोड़ने वालों को वापस कॉल करें",
+  "kn": "ಕಾರ್ಟ್ ಬಿಟ್ಟವರಿಗೆ ವಾಪಸ್ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.abandoned.hint": {
+  "en": "Only shoppers who gave a phone number. Your calling hours and do-not-call list still apply.",
+  "te": "ఫోన్ నంబర్ ఇచ్చిన వారికి మాత్రమే. మీ కాలింగ్ టైమ్, డు-నాట్-కాల్ లిస్ట్ అలాగే వర్తిస్తాయి.",
+  "hi": "सिर्फ़ उनको जिन्होंने फ़ोन नंबर दिया। आपके कॉलिंग घंटे और डू-नॉट-कॉल लिस्ट लागू रहते हैं।",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಕೊಟ್ಟವರಿಗೆ ಮಾತ್ರ. ನಿಮ್ಮ ಕಾಲಿಂಗ್ ಸಮಯ, ಡು-ನಾಟ್-ಕಾಲ್ ಲಿಸ್ಟ್ ಹಾಗೇ ಅನ್ವಯಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.wait": {
+  "en": "Minutes to wait before a cart counts as left",
+  "te": "కార్ట్ వదిలేసినట్టు లెక్కించే ముందు వేచి ఉండే నిమిషాలు",
+  "hi": "कार्ट छोड़ा हुआ मानने से पहले इंतज़ार के मिनट",
+  "kn": "ಕಾರ್ಟ್ ಬಿಟ್ಟಂತೆ ಎಣಿಸುವ ಮೊದಲು ಕಾಯುವ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.wait.hint": {
+  "en": "Between 15 and 1440.",
+  "te": "15 నుంచి 1440 మధ్య.",
+  "hi": "15 से 1440 के बीच।",
+  "kn": "15 ರಿಂದ 1440 ರ ನಡುವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.noabandoned": {
+  "en": "WooCommerce does not report left carts, so there is no cart call-back for it.",
+  "te": "WooCommerce వదిలేసిన కార్ట్‌లను చెప్పదు, కాబట్టి దీనికి కార్ట్ కాల్‌బ్యాక్ లేదు.",
+  "hi": "WooCommerce छोड़े गए कार्ट की जानकारी नहीं देता, इसलिए इसके लिए कार्ट कॉल-बैक नहीं है।",
+  "kn": "WooCommerce ಬಿಟ್ಟ ಕಾರ್ಟ್‌ಗಳನ್ನು ತಿಳಿಸುವುದಿಲ್ಲ, ಹಾಗಾಗಿ ಇದಕ್ಕೆ ಕಾರ್ಟ್ ಕಾಲ್‌ಬ್ಯಾಕ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.share": {
+  "en": "Let the phone assistant say where an order is",
+  "te": "ఆర్డర్ ఎక్కడుందో ఫోన్ అసిస్టెంట్ చెప్పనివ్వండి",
+  "hi": "फ़ोन असिस्टेंट को ऑर्डर कहाँ है यह बताने दें",
+  "kn": "ಆರ್ಡರ್ ಎಲ್ಲಿದೆ ಎಂದು ಫೋನ್ ಅಸಿಸ್ಟೆಂಟ್ ಹೇಳಲು ಬಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.share.hint": {
+  "en": "Only to the caller whose own number is on the order. No address is ever said.",
+  "te": "ఆర్డర్‌పై ఉన్న నంబర్ నుంచి కాల్ చేసిన వారికి మాత్రమే. అడ్రస్ ఎప్పుడూ చెప్పదు.",
+  "hi": "सिर्फ़ उस कॉलर को जिसका अपना नंबर ऑर्डर पर है। पता कभी नहीं बताया जाता।",
+  "kn": "ಆರ್ಡರ್‌ನಲ್ಲಿರುವ ನಂಬರ್‌ನಿಂದ ಕಾಲ್ ಮಾಡಿದವರಿಗೆ ಮಾತ್ರ. ವಿಳಾಸ ಎಂದಿಗೂ ಹೇಳುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.test.keys": {
+  "en": "Test the connection",
+  "te": "కనెక్షన్ టెస్ట్ చేయండి",
+  "hi": "कनेक्शन टेस्ट करें",
+  "kn": "ಕನೆಕ್ಷನ್ ಟೆಸ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.test.ok": {
+  "en": "The store answered and its events are set up.",
+  "te": "స్టోర్ జవాబిచ్చింది, ఈవెంట్లు సెట్ అయ్యాయి.",
+  "hi": "स्टोर ने जवाब दिया और इवेंट सेट हैं।",
+  "kn": "ಸ್ಟೋರ್ ಉತ್ತರಿಸಿತು, ಈವೆಂಟ್‌ಗಳು ಸೆಟ್ ಆಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.shop.test.bad": {
+  "en": "The test did not pass. The line above says why.",
+  "te": "టెస్ట్ పాస్ కాలేదు. పైన కారణం ఉంది.",
+  "hi": "टेस्ट पास नहीं हुआ। कारण ऊपर लिखा है।",
+  "kn": "ಟೆಸ್ಟ್ ಪಾಸ್ ಆಗಲಿಲ್ಲ. ಕಾರಣ ಮೇಲೆ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.manual.title": {
+  "en": "Add these in your store yourself. We could not add them for you.",
+  "te": "వీటిని మీ స్టోర్‌లో మీరే జోడించండి. మేము మీ కోసం జోడించలేకపోయాం.",
+  "hi": "इन्हें अपने स्टोर में खुद जोड़ें। हम आपके लिए नहीं जोड़ पाए।",
+  "kn": "ಇವುಗಳನ್ನು ನಿಮ್ಮ ಸ್ಟೋರ್‌ನಲ್ಲಿ ನೀವೇ ಸೇರಿಸಿ. ನಿಮಗಾಗಿ ನಮಗೆ ಸೇರಿಸಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.manual.address": {
+  "en": "Address to send events to",
+  "te": "ఈవెంట్లు పంపాల్సిన అడ్రస్",
+  "hi": "इवेंट भेजने का पता",
+  "kn": "ಈವೆಂಟ್‌ಗಳನ್ನು ಕಳಿಸಬೇಕಾದ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.manual.secret": {
+  "en": "Secret",
+  "te": "సీక్రెట్",
+  "hi": "सीक्रेट",
+  "kn": "ಸೀಕ್ರೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.manual.once": {
+  "en": "Shown only now. Copy it before you close this.",
+  "te": "ఇప్పుడు మాత్రమే కనిపిస్తుంది. ఇది మూసే ముందు కాపీ చేయండి.",
+  "hi": "सिर्फ़ अभी दिखता है। इसे बंद करने से पहले कॉपी कर लें।",
+  "kn": "ಈಗ ಮಾತ್ರ ಕಾಣುತ್ತದೆ. ಇದನ್ನು ಮುಚ್ಚುವ ಮೊದಲು ಕಾಪಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.manual.done": {
+  "en": "I have copied it",
+  "te": "కాపీ చేశాను",
+  "hi": "मैंने कॉपी कर लिया",
+  "kn": "ಕಾಪಿ ಮಾಡಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.title": {
+  "en": "Fill a list from my store",
+  "te": "నా స్టోర్ నుంచి లిస్ట్ నింపండి",
+  "hi": "मेरे स्टोर से लिस्ट भरें",
+  "kn": "ನನ್ನ ಸ್ಟೋರ್‌ನಿಂದ ಲಿಸ್ಟ್ ತುಂಬಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.hint": {
+  "en": "First you see what would be added. Nothing is saved until you press Save these items.",
+  "te": "ముందు ఏం జోడిస్తామో చూపిస్తాం. Save these items నొక్కే వరకు ఏదీ సేవ్ కాదు.",
+  "hi": "पहले आप देखते हैं कि क्या जुड़ेगा। Save these items दबाने तक कुछ सेव नहीं होता।",
+  "kn": "ಮೊದಲು ಏನು ಸೇರುತ್ತದೆ ಎಂದು ತೋರಿಸುತ್ತೇವೆ. Save these items ಒತ್ತುವವರೆಗೆ ಏನೂ ಸೇವ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.none": {
+  "en": "You have no list of products yet. Make one in What you sell, then come back.",
+  "te": "మీకు ఇంకా ప్రొడక్ట్స్ లిస్ట్ లేదు. What you sell లో ఒకటి చేసి తిరిగి రండి.",
+  "hi": "आपके पास अभी प्रोडक्ट की लिस्ट नहीं है। What you sell में एक बनाकर लौटें।",
+  "kn": "ನಿಮಗೆ ಇನ್ನೂ ಪ್ರೊಡಕ್ಟ್ ಲಿಸ್ಟ್ ಇಲ್ಲ. What you sell ನಲ್ಲಿ ಒಂದು ಮಾಡಿ ವಾಪಸ್ ಬನ್ನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.off": {
+  "en": "Lists are not open for your workspace yet.",
+  "te": "మీ వర్క్‌స్పేస్‌కి లిస్ట్‌లు ఇంకా తెరవలేదు.",
+  "hi": "आपके वर्कस्पेस के लिए लिस्ट अभी खुली नहीं हैं।",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ಲಿಸ್ಟ್‌ಗಳು ಇನ್ನೂ ತೆರೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.list": {
+  "en": "List to fill",
+  "te": "నింపాల్సిన లిస్ట్",
+  "hi": "भरने वाली लिस्ट",
+  "kn": "ತುಂಬಬೇಕಾದ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.preview": {
+  "en": "Show what would be added",
+  "te": "ఏం జోడిస్తామో చూపించండి",
+  "hi": "दिखाएँ क्या जुड़ेगा",
+  "kn": "ಏನು ಸೇರುತ್ತದೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.read": {
+  "en": "{n} products read from your store, {m} chosen to add.",
+  "te": "మీ స్టోర్ నుంచి {n} ప్రొడక్ట్‌లు చదివాం, {m} జోడించడానికి ఎంచుకున్నాయి.",
+  "hi": "आपके स्टोर से {n} प्रोडक्ट पढ़े, {m} जोड़ने के लिए चुने हैं।",
+  "kn": "ನಿಮ್ಮ ಸ್ಟೋರ್‌ನಿಂದ {n} ಪ್ರೊಡಕ್ಟ್ ಓದಿದ್ದೇವೆ, {m} ಸೇರಿಸಲು ಆರಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.col.name": {
+  "en": "Item",
+  "te": "ఐటమ్",
+  "hi": "आइटम",
+  "kn": "ಐಟಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.col.price": {
+  "en": "Price",
+  "te": "ధర",
+  "hi": "कीमत",
+  "kn": "ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.col.stock": {
+  "en": "Stock",
+  "te": "స్టాక్",
+  "hi": "स्टॉक",
+  "kn": "ಸ್ಟಾಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.keep": {
+  "en": "Add this item",
+  "te": "ఈ ఐటమ్ జోడించండి",
+  "hi": "यह आइटम जोड़ें",
+  "kn": "ಈ ಐಟಮ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.keep.row": {
+  "en": "Add {name}",
+  "te": "{name} జోడించండి",
+  "hi": "{name} जोड़ें",
+  "kn": "{name} ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.save": {
+  "en": "Save these items",
+  "te": "ఈ ఐటమ్‌లు సేవ్ చేయండి",
+  "hi": "ये आइटम सेव करें",
+  "kn": "ಈ ಐಟಮ್‌ಗಳನ್ನು ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.saved": {
+  "en": "{created} added, {updated} updated.",
+  "te": "{created} జోడించాం, {updated} అప్‌డేట్ చేశాం.",
+  "hi": "{created} जोड़े, {updated} अपडेट किए।",
+  "kn": "{created} ಸೇರಿಸಿದ್ದೇವೆ, {updated} ಅಪ್‌ಡೇಟ್ ಮಾಡಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cat.owner": {
+  "en": "Only the Owner can save prices. If you are an Admin, ask the Owner to press Save.",
+  "te": "ధరలను సేవ్ చేయగలిగేది Owner మాత్రమే. మీరు Admin అయితే, Save నొక్కమని Owner ని అడగండి.",
+  "hi": "कीमतें सिर्फ़ Owner सेव कर सकता है। आप Admin हैं तो Owner से Save दबाने को कहें।",
+  "kn": "ಬೆಲೆಗಳನ್ನು Owner ಮಾತ್ರ ಸೇವ್ ಮಾಡಬಹುದು. ನೀವು Admin ಆಗಿದ್ದರೆ, Save ಒತ್ತಲು Owner ಗೆ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.note.check_currency": {
+  "en": "Prices are taken as rupees. Look at them before you save.",
+  "te": "ధరలు రూపాయలుగా తీసుకున్నాం. సేవ్ చేసే ముందు చూడండి.",
+  "hi": "कीमतें रुपये मानी गई हैं। सेव करने से पहले देख लें।",
+  "kn": "ಬೆಲೆಗಳನ್ನು ರೂಪಾಯಿ ಎಂದು ತೆಗೆದುಕೊಂಡಿದ್ದೇವೆ. ಸೇವ್ ಮಾಡುವ ಮೊದಲು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.note.price_missing": {
+  "en": "Row {row} has no price, so its price is left empty.",
+  "te": "{row} వ వరుసకు ధర లేదు, కాబట్టి ధర ఖాళీగా ఉంటుంది.",
+  "hi": "पंक्ति {row} में कीमत नहीं है, इसलिए कीमत खाली रहेगी।",
+  "kn": "{row} ನೇ ಸಾಲಿಗೆ ಬೆಲೆ ಇಲ್ಲ, ಹಾಗಾಗಿ ಬೆಲೆ ಖಾಲಿ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.note.name_missing": {
+  "en": "Row {row} has no name and is left out.",
+  "te": "{row} వ వరుసకు పేరు లేదు, అందుకే వదిలేశాం.",
+  "hi": "पंक्ति {row} में नाम नहीं है, इसलिए छोड़ दी।",
+  "kn": "{row} ನೇ ಸಾಲಿಗೆ ಹೆಸರಿಲ್ಲ, ಹಾಗಾಗಿ ಬಿಟ್ಟಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.note.availability_word_missing": {
+  "en": "Your list has no word for the stock of row {row}, so it is left empty.",
+  "te": "{row} వ వరుస స్టాక్‌కి మీ లిస్ట్‌లో పదం లేదు, కాబట్టి ఖాళీగా ఉంటుంది.",
+  "hi": "पंक्ति {row} के स्टॉक के लिए आपकी लिस्ट में शब्द नहीं है, इसलिए खाली रहेगा।",
+  "kn": "{row} ನೇ ಸಾಲಿನ ಸ್ಟಾಕ್‌ಗೆ ನಿಮ್ಮ ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಪದ ಇಲ್ಲ, ಹಾಗಾಗಿ ಖಾಲಿ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.note.no_price_column": {
+  "en": "This list has no price column, so no prices are added.",
+  "te": "ఈ లిస్ట్‌లో ధర కాలమ్ లేదు, కాబట్టి ధరలు జోడించం.",
+  "hi": "इस लिस्ट में कीमत का कॉलम नहीं है, इसलिए कीमतें नहीं जुड़ेंगी।",
+  "kn": "ಈ ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಬೆಲೆಯ ಕಾಲಮ್ ಇಲ್ಲ, ಹಾಗಾಗಿ ಬೆಲೆಗಳನ್ನು ಸೇರಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.note.variable_products_one_row": {
+  "en": "A product with variations is one row at its current price.",
+  "te": "వేరియేషన్లు ఉన్న ప్రొడక్ట్ ప్రస్తుత ధరతో ఒకే వరుస అవుతుంది.",
+  "hi": "वेरिएशन वाला प्रोडक्ट अभी की कीमत पर एक पंक्ति बनता है।",
+  "kn": "ವೇರಿಯೇಶನ್ ಇರುವ ಪ್ರೊಡಕ್ಟ್ ಈಗಿನ ಬೆಲೆಯಲ್ಲಿ ಒಂದೇ ಸಾಲು ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.note.too_many": {
+  "en": "Only the first 1,000 items are shown.",
+  "te": "మొదటి 1,000 ఐటమ్‌లు మాత్రమే చూపిస్తున్నాం.",
+  "hi": "सिर्फ़ पहले 1,000 आइटम दिखाए गए हैं।",
+  "kn": "ಮೊದಲ 1,000 ಐಟಮ್‌ಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.note.partial": {
+  "en": "The store stopped answering part way, so this is only some of your products.",
+  "te": "స్టోర్ మధ్యలో జవాబివ్వడం ఆపింది, కాబట్టి ఇవి కొన్ని ప్రొడక్ట్‌లు మాత్రమే.",
+  "hi": "स्टोर बीच में जवाब देना बंद कर गया, इसलिए ये सिर्फ़ कुछ प्रोडक्ट हैं।",
+  "kn": "ಸ್ಟೋರ್ ಮಧ್ಯದಲ್ಲಿ ಉತ್ತರಿಸುವುದನ್ನು ನಿಲ್ಲಿಸಿತು, ಹಾಗಾಗಿ ಇವು ಕೆಲವು ಪ್ರೊಡಕ್ಟ್‌ಗಳು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.note.other": {
+  "en": "Something about this preview needs a look.",
+  "te": "ఈ ప్రివ్యూలో ఒకటి చూడాలి.",
+  "hi": "इस प्रीव्यू में कुछ देखना है।",
+  "kn": "ಈ ಪ್ರಿವ್ಯೂನಲ್ಲಿ ಒಂದು ನೋಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.group.notify": {
+  "en": "Messages to your team chat",
+  "te": "మీ టీమ్ చాట్‌కి మెసేజ్‌లు",
+  "hi": "आपकी टीम चैट पर मैसेज",
+  "kn": "ನಿಮ್ಮ ಟೀಮ್ ಚಾಟ್‌ಗೆ ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.group.notify.sub": {
+  "en": "A short message in Slack, Telegram or Microsoft Teams when a lead arrives, a call is missed, a call ends or your balance is low.",
+  "te": "లీడ్ వచ్చినప్పుడు, కాల్ మిస్ అయినప్పుడు, కాల్ ముగిసినప్పుడు, బ్యాలెన్స్ తక్కువైనప్పుడు Slack, Telegram లేదా Microsoft Teams లో చిన్న మెసేజ్.",
+  "hi": "लीड आने, कॉल मिस होने, कॉल ख़त्म होने या बैलेंस कम होने पर Slack, Telegram या Microsoft Teams में छोटा मैसेज।",
+  "kn": "ಲೀಡ್ ಬಂದಾಗ, ಕಾಲ್ ಮಿಸ್ ಆದಾಗ, ಕಾಲ್ ಮುಗಿದಾಗ ಅಥವಾ ಬ್ಯಾಲೆನ್ಸ್ ಕಡಿಮೆಯಾದಾಗ Slack, Telegram ಅಥವಾ Microsoft Teams ನಲ್ಲಿ ಚಿಕ್ಕ ಮೆಸೇಜ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.slack.how": {
+  "en": "In Slack, add an Incoming Webhook to the channel you want, then paste its address here.",
+  "te": "Slack లో మీకు కావాల్సిన ఛానెల్‌కి Incoming Webhook జోడించి, దాని అడ్రస్ ఇక్కడ పేస్ట్ చేయండి.",
+  "hi": "Slack में अपने चुने चैनल पर Incoming Webhook जोड़ें, फिर उसका पता यहाँ पेस्ट करें।",
+  "kn": "Slack ನಲ್ಲಿ ನಿಮಗೆ ಬೇಕಾದ ಚಾನೆಲ್‌ಗೆ Incoming Webhook ಸೇರಿಸಿ, ಅದರ ವಿಳಾಸ ಇಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.telegram.how": {
+  "en": "In Telegram, make a bot with @BotFather, add it to your chat, then paste the bot token and the chat id here.",
+  "te": "Telegram లో @BotFather తో బాట్ చేసి, మీ చాట్‌లో చేర్చి, బాట్ టోకెన్, చాట్ ఐడీ ఇక్కడ పేస్ట్ చేయండి.",
+  "hi": "Telegram में @BotFather से बॉट बनाएँ, उसे अपनी चैट में जोड़ें, फिर बॉट टोकन और चैट आईडी यहाँ पेस्ट करें।",
+  "kn": "Telegram ನಲ್ಲಿ @BotFather ಮೂಲಕ ಬಾಟ್ ಮಾಡಿ, ನಿಮ್ಮ ಚಾಟ್‌ಗೆ ಸೇರಿಸಿ, ಬಾಟ್ ಟೋಕನ್ ಮತ್ತು ಚಾಟ್ ಐಡಿ ಇಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.teams.how": {
+  "en": "In Teams, make a Workflow that starts when a webhook request arrives and posts to your channel, then paste its address here. The older Office 365 connector addresses no longer work.",
+  "te": "Teams లో వెబ్‌హుక్ రిక్వెస్ట్ రాగానే మీ ఛానెల్‌లో పోస్ట్ చేసే Workflow చేసి, దాని అడ్రస్ ఇక్కడ పేస్ట్ చేయండి. పాత Office 365 కనెక్టర్ అడ్రస్‌లు ఇక పనిచేయవు.",
+  "hi": "Teams में ऐसा Workflow बनाएँ जो वेबहुक रिक्वेस्ट आने पर आपके चैनल में पोस्ट करे, फिर उसका पता यहाँ पेस्ट करें। पुराने Office 365 कनेक्टर पते अब नहीं चलते।",
+  "kn": "Teams ನಲ್ಲಿ ವೆಬ್‌ಹುಕ್ ರಿಕ್ವೆಸ್ಟ್ ಬಂದಾಗ ನಿಮ್ಮ ಚಾನೆಲ್‌ಗೆ ಪೋಸ್ಟ್ ಮಾಡುವ Workflow ಮಾಡಿ, ಅದರ ವಿಳಾಸ ಇಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ. ಹಳೆಯ Office 365 ಕನೆಕ್ಟರ್ ವಿಳಾಸಗಳು ಇನ್ನು ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.label": {
+  "en": "Name for this channel",
+  "te": "ఈ ఛానెల్‌కి పేరు",
+  "hi": "इस चैनल का नाम",
+  "kn": "ಈ ಚಾನೆಲ್‌ಗೆ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.label.hint": {
+  "en": "Only for you, so you can tell channels apart. Optional.",
+  "te": "మీ కోసమే, ఛానెల్‌లను గుర్తుపట్టడానికి. ఇష్టమైతే.",
+  "hi": "सिर्फ़ आपके लिए, चैनल पहचानने को। चाहें तो।",
+  "kn": "ನಿಮಗಾಗಿ ಮಾತ್ರ, ಚಾನೆಲ್‌ಗಳನ್ನು ಗುರುತಿಸಲು. ಬೇಕಿದ್ದರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.connected": {
+  "en": "Connected. Press Send a test message to see it work.",
+  "te": "కనెక్ట్ అయింది. పనిచేస్తుందో చూడడానికి Send a test message నొక్కండి.",
+  "hi": "कनेक्ट हो गया। चलता है या नहीं देखने के लिए Send a test message दबाएँ।",
+  "kn": "ಕನೆಕ್ಟ್ ಆಯಿತು. ಕೆಲಸ ಮಾಡುತ್ತದೆಯೇ ನೋಡಲು Send a test message ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.events": {
+  "en": "What to hear about",
+  "te": "ఏవి తెలుసుకోవాలి",
+  "hi": "किस बारे में बताना है",
+  "kn": "ಯಾವುದರ ಬಗ್ಗೆ ತಿಳಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.ev.new_lead": {
+  "en": "A new lead arrives",
+  "te": "కొత్త లీడ్ వచ్చినప్పుడు",
+  "hi": "नई लीड आती है",
+  "kn": "ಹೊಸ ಲೀಡ್ ಬಂದಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.ev.missed_call": {
+  "en": "A call to your number is missed",
+  "te": "మీ నంబర్‌కి కాల్ మిస్ అయినప్పుడు",
+  "hi": "आपके नंबर पर कॉल मिस होती है",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್‌ಗೆ ಕಾಲ್ ಮಿಸ್ ಆದಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.ev.call_outcome": {
+  "en": "A call ends with a result",
+  "te": "కాల్ ఫలితంతో ముగిసినప్పుడు",
+  "hi": "कॉल नतीजे के साथ ख़त्म होती है",
+  "kn": "ಕಾಲ್ ಫಲಿತಾಂಶದೊಂದಿಗೆ ಮುಗಿದಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.ev.low_balance": {
+  "en": "Your call balance is low",
+  "te": "మీ కాల్ బ్యాలెన్స్ తక్కువైనప్పుడు",
+  "hi": "आपका कॉल बैलेंस कम है",
+  "kn": "ನಿಮ್ಮ ಕಾಲ್ ಬ್ಯಾಲೆನ್ಸ್ ಕಡಿಮೆಯಾದಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.fields": {
+  "en": "What a message may show",
+  "te": "మెసేజ్‌లో ఏం చూపించవచ్చు",
+  "hi": "मैसेज में क्या दिख सकता है",
+  "kn": "ಮೆಸೇಜ್‌ನಲ್ಲಿ ಏನು ತೋರಿಸಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.fields.hint": {
+  "en": "Nothing else is ever put in a message: no full number, no e-mail, no address.",
+  "te": "మెసేజ్‌లో ఇంకేదీ ఉండదు: పూర్తి నంబర్, ఈమెయిల్, అడ్రస్ ఏవీ ఉండవు.",
+  "hi": "मैसेज में इसके अलावा कुछ नहीं जाता: पूरा नंबर, ईमेल, पता कुछ नहीं।",
+  "kn": "ಮೆಸೇಜ್‌ನಲ್ಲಿ ಬೇರೇನೂ ಇರುವುದಿಲ್ಲ: ಪೂರ್ಣ ನಂಬರ್, ಈಮೇಲ್, ವಿಳಾಸ ಯಾವುದೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.nf.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.nf.phone_masked": {
+  "en": "Phone number with only the first three digits",
+  "te": "ఫోన్ నంబర్, మొదటి మూడు అంకెలు మాత్రమే",
+  "hi": "फ़ोन नंबर, सिर्फ़ पहले तीन अंक",
+  "kn": "ಫೋನ್ ನಂಬರ್, ಮೊದಲ ಮೂರು ಅಂಕೆ ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.nf.outcome": {
+  "en": "Result of the call",
+  "te": "కాల్ ఫలితం",
+  "hi": "कॉल का नतीजा",
+  "kn": "ಕಾಲ್‌ನ ಫಲಿತಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.nf.reason": {
+  "en": "The short reason for the result",
+  "te": "ఫలితానికి చిన్న కారణం",
+  "hi": "नतीजे का छोटा कारण",
+  "kn": "ಫಲಿತಾಂಶದ ಚಿಕ್ಕ ಕಾರಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.language": {
+  "en": "Language of the messages",
+  "te": "మెసేజ్‌ల భాష",
+  "hi": "मैसेज की भाषा",
+  "kn": "ಮೆಸೇಜ್‌ಗಳ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.language.hint": {
+  "en": "Telugu, Hindi and Kannada wording is still being checked by a person.",
+  "te": "తెలుగు, హిందీ, కన్నడ పదాలను ఇంకా ఒక వ్యక్తి చూస్తున్నారు.",
+  "hi": "तेलुगु, हिंदी और कन्नड़ के शब्द अभी किसी व्यक्ति द्वारा जाँचे जा रहे हैं।",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಪದಗಳನ್ನು ಇನ್ನೂ ಒಬ್ಬ ವ್ಯಕ್ತಿ ಪರಿಶೀಲಿಸುತ್ತಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.test": {
+  "en": "Send a test message",
+  "te": "టెస్ట్ మెసేజ్ పంపండి",
+  "hi": "टेस्ट मैसेज भेजें",
+  "kn": "ಟೆಸ್ಟ್ ಮೆಸೇಜ್ ಕಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.test.ok": {
+  "en": "The test message reached {name}.",
+  "te": "టెస్ట్ మెసేజ్ {name} కి చేరింది.",
+  "hi": "टेस्ट मैसेज {name} तक पहुँचा।",
+  "kn": "ಟೆಸ್ಟ್ ಮೆಸೇಜ್ {name} ಗೆ ತಲುಪಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.test.bad": {
+  "en": "The test message did not go. {why}",
+  "te": "టెస్ట్ మెసేజ్ వెళ్లలేదు. {why}",
+  "hi": "टेस्ट मैसेज नहीं गया। {why}",
+  "kn": "ಟೆಸ್ಟ್ ಮೆಸೇಜ್ ಹೋಗಲಿಲ್ಲ. {why}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.notify.counts": {
+  "en": "Last 24 hours: {sent} sent, {failed} failed, {held} held back by the limit.",
+  "te": "గత 24 గంటలు: {sent} వెళ్ళాయి, {failed} విఫలమయ్యాయి, {held} పరిమితి వల్ల ఆపాం.",
+  "hi": "पिछले 24 घंटे: {sent} गए, {failed} फ़ेल, {held} सीमा के कारण रोके गए।",
+  "kn": "ಕಳೆದ 24 ಗಂಟೆ: {sent} ಹೋದವು, {failed} ವಿಫಲ, {held} ಮಿತಿಯಿಂದ ತಡೆದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.health.ok": {
+  "en": "Working. Last message {when}.",
+  "te": "పనిచేస్తోంది. చివరి మెసేజ్ {when}.",
+  "hi": "चल रहा है। आख़िरी मैसेज {when}।",
+  "kn": "ಕೆಲಸ ಮಾಡುತ್ತಿದೆ. ಕೊನೆಯ ಮೆಸೇಜ್ {when}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.health.problem": {
+  "en": "Messages are not getting through. {why}",
+  "te": "మెసేజ్‌లు చేరడం లేదు. {why}",
+  "hi": "मैसेज नहीं पहुँच रहे। {why}",
+  "kn": "ಮೆಸೇಜ್‌ಗಳು ತಲುಪುತ್ತಿಲ್ಲ. {why}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.health.never": {
+  "en": "Nothing sent yet.",
+  "te": "ఇంకా ఏమీ పంపలేదు.",
+  "hi": "अभी कुछ नहीं भेजा।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಕಳಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.group.calendars": {
+  "en": "Calendars and booking",
+  "te": "క్యాలెండర్లు, బుకింగ్",
+  "hi": "कैलेंडर और बुकिंग",
+  "kn": "ಕ್ಯಾಲೆಂಡರ್‌ಗಳು ಮತ್ತು ಬುಕಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.group.calendars.sub": {
+  "en": "A booking made on your Calendly or Cal.com page becomes a visit. Outlook keeps your own busy times out of your slots.",
+  "te": "మీ Calendly లేదా Cal.com పేజీలో జరిగిన బుకింగ్ ఒక విజిట్ అవుతుంది. Outlook మీ బిజీ టైమ్‌లను స్లాట్ల నుంచి తీసేస్తుంది.",
+  "hi": "आपके Calendly या Cal.com पेज पर हुई बुकिंग एक विज़िट बनती है। Outlook आपके व्यस्त समय को स्लॉट से बाहर रखता है।",
+  "kn": "ನಿಮ್ಮ Calendly ಅಥವಾ Cal.com ಪುಟದಲ್ಲಿ ಆದ ಬುಕಿಂಗ್ ಒಂದು ವಿಸಿಟ್ ಆಗುತ್ತದೆ. Outlook ನಿಮ್ಮ ಬ್ಯುಸಿ ಸಮಯವನ್ನು ಸ್ಲಾಟ್‌ಗಳಿಂದ ಹೊರಗಿಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.calendly.how": {
+  "en": "In Calendly, make a personal access token (Integrations, API and webhooks) and paste it here. We set up the booking events for you.",
+  "te": "Calendly లో పర్సనల్ యాక్సెస్ టోకెన్ (Integrations, API and webhooks) చేసి ఇక్కడ పేస్ట్ చేయండి. బుకింగ్ ఈవెంట్లను మేమే సెటప్ చేస్తాం.",
+  "hi": "Calendly में पर्सनल एक्सेस टोकन (Integrations, API and webhooks) बनाकर यहाँ पेस्ट करें। बुकिंग इवेंट हम सेट कर देते हैं।",
+  "kn": "Calendly ನಲ್ಲಿ ಪರ್ಸನಲ್ ಆಕ್ಸೆಸ್ ಟೋಕನ್ (Integrations, API and webhooks) ಮಾಡಿ ಇಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ. ಬುಕಿಂಗ್ ಈವೆಂಟ್‌ಗಳನ್ನು ನಾವೇ ಸೆಟಪ್ ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.calcom.how": {
+  "en": "Press Connect. We then show an address and a secret once; add them in Cal.com under Settings, Developer, Webhooks.",
+  "te": "Connect నొక్కండి. అప్పుడు ఒక అడ్రస్, సీక్రెట్ ఒక్కసారే చూపిస్తాం; వాటిని Cal.com లో Settings, Developer, Webhooks కింద జోడించండి.",
+  "hi": "Connect दबाएँ। फिर हम एक पता और सीक्रेट एक बार दिखाते हैं; उन्हें Cal.com में Settings, Developer, Webhooks के नीचे जोड़ें।",
+  "kn": "Connect ಒತ್ತಿ. ನಂತರ ಒಂದು ವಿಳಾಸ ಮತ್ತು ಸೀಕ್ರೆಟ್ ಒಮ್ಮೆ ತೋರಿಸುತ್ತೇವೆ; ಅವನ್ನು Cal.com ನಲ್ಲಿ Settings, Developer, Webhooks ಅಡಿಯಲ್ಲಿ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.calcom.paste": {
+  "en": "Add these in Cal.com now. They are shown only once.",
+  "te": "ఇవి ఇప్పుడే Cal.com లో జోడించండి. ఒక్కసారే కనిపిస్తాయి.",
+  "hi": "इन्हें अभी Cal.com में जोड़ें। ये सिर्फ़ एक बार दिखते हैं।",
+  "kn": "ಇವನ್ನು ಈಗಲೇ Cal.com ನಲ್ಲಿ ಸೇರಿಸಿ. ಇವು ಒಮ್ಮೆ ಮಾತ್ರ ಕಾಣುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.calendly.token": {
+  "en": "Personal access token",
+  "te": "పర్సనల్ యాక్సెస్ టోకెన్",
+  "hi": "पर्सनल एक्सेस टोकन",
+  "kn": "ಪರ್ಸನಲ್ ಆಕ್ಸೆಸ್ ಟೋಕನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.calendly.token.hint": {
+  "en": "From your Calendly account. It stays with us and is never shown again.",
+  "te": "మీ Calendly అకౌంట్ నుంచి. ఇది మా దగ్గరే ఉంటుంది, మళ్ళీ చూపించం.",
+  "hi": "आपके Calendly अकाउंट से। यह हमारे पास रहता है और दोबारा नहीं दिखता।",
+  "kn": "ನಿಮ್ಮ Calendly ಅಕೌಂಟ್‌ನಿಂದ. ಇದು ನಮ್ಮ ಬಳಿಯೇ ಇರುತ್ತದೆ, ಮತ್ತೆ ತೋರಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.label": {
+  "en": "Name for this connection",
+  "te": "ఈ కనెక్షన్‌కి పేరు",
+  "hi": "इस कनेक्शन का नाम",
+  "kn": "ಈ ಕನೆಕ್ಷನ್‌ಗೆ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.label.hint": {
+  "en": "Only for you. Optional.",
+  "te": "మీ కోసమే. ఇష్టమైతే.",
+  "hi": "सिर्फ़ आपके लिए। चाहें तो।",
+  "kn": "ನಿಮಗಾಗಿ ಮಾತ್ರ. ಬೇಕಿದ್ದರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.link": {
+  "en": "Your booking page address",
+  "te": "మీ బుకింగ్ పేజీ అడ్రస్",
+  "hi": "आपकी बुकिंग पेज का पता",
+  "kn": "ನಿಮ್ಮ ಬುಕಿಂಗ್ ಪುಟದ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.link.hint": {
+  "en": "The page your customers book on. Optional.",
+  "te": "మీ కస్టమర్లు బుక్ చేసే పేజీ. ఇష్టమైతే.",
+  "hi": "वह पेज जहाँ आपके ग्राहक बुक करते हैं। चाहें तो।",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರು ಬುಕ್ ಮಾಡುವ ಪುಟ. ಬೇಕಿದ್ದರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.share": {
+  "en": "Let the assistant give out my booking page address",
+  "te": "నా బుకింగ్ పేజీ అడ్రస్‌ని అసిస్టెంట్ ఇవ్వనివ్వండి",
+  "hi": "असिस्टेंट को मेरी बुकिंग पेज का पता देने दें",
+  "kn": "ನನ್ನ ಬುಕಿಂಗ್ ಪುಟದ ವಿಳಾಸವನ್ನು ಅಸಿಸ್ಟೆಂಟ್ ಕೊಡಲು ಬಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.share.hint": {
+  "en": "Off until you turn it on. It needs the address above.",
+  "te": "మీరు ఆన్ చేసే వరకు ఆఫ్. పైన అడ్రస్ కావాలి.",
+  "hi": "आप चालू करें तब तक बंद। ऊपर का पता चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡುವವರೆಗೆ ಆಫ್. ಮೇಲಿನ ವಿಳಾಸ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.consent": {
+  "en": "The question on your booking form that asks for permission to be called or messaged",
+  "te": "కాల్ లేదా మెసేజ్ చేయడానికి అనుమతి అడిగే మీ బుకింగ్ ఫారమ్‌లోని ప్రశ్న",
+  "hi": "आपके बुकिंग फ़ॉर्म का वह सवाल जो कॉल या मैसेज की अनुमति माँगता है",
+  "kn": "ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡಲು ಅನುಮತಿ ಕೇಳುವ ನಿಮ್ಮ ಬುಕಿಂಗ್ ಫಾರ್ಮ್‌ನ ಪ್ರಶ್ನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.consent.hint": {
+  "en": "Type the question exactly as your customers see it (10 to 200 letters). Leave it empty if you have none: then no one is called until you ask first.",
+  "te": "మీ కస్టమర్లు చూసే విధంగానే ప్రశ్నని టైప్ చేయండి (10 నుంచి 200 అక్షరాలు). లేకపోతే ఖాళీగా వదిలేయండి: అప్పుడు మీరు ముందు అడిగే వరకు ఎవరికీ కాల్ వెళ్లదు.",
+  "hi": "सवाल वैसे ही लिखें जैसे आपके ग्राहक देखते हैं (10 से 200 अक्षर)। न हो तो खाली छोड़ें: तब आपके पहले पूछने तक किसी को कॉल नहीं जाता।",
+  "kn": "ಪ್ರಶ್ನೆಯನ್ನು ನಿಮ್ಮ ಗ್ರಾಹಕರು ನೋಡುವಂತೆಯೇ ಟೈಪ್ ಮಾಡಿ (10 ರಿಂದ 200 ಅಕ್ಷರ). ಇಲ್ಲದಿದ್ದರೆ ಖಾಲಿ ಬಿಡಿ: ಆಗ ನೀವು ಮೊದಲು ಕೇಳುವವರೆಗೆ ಯಾರಿಗೂ ಕಾಲ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.needs.note": {
+  "en": "A booking that does not fit a free slot is kept for a person to place. It does not show in Needs you yet.",
+  "te": "ఖాళీ స్లాట్‌కి సరిపోని బుకింగ్‌ని ఒక వ్యక్తి పెట్టడానికి ఉంచుతాం. ఇది ఇంకా Needs you లో కనిపించదు.",
+  "hi": "जो बुकिंग खाली स्लॉट में नहीं बैठती वह किसी व्यक्ति के रखने के लिए रखी जाती है। यह अभी Needs you में नहीं दिखती।",
+  "kn": "ಖಾಲಿ ಸ್ಲಾಟ್‌ಗೆ ಹೊಂದದ ಬುಕಿಂಗ್ ಅನ್ನು ಒಬ್ಬ ವ್ಯಕ್ತಿ ಇಡಲು ಇಟ್ಟಿರುತ್ತೇವೆ. ಇದು ಇನ್ನೂ Needs you ನಲ್ಲಿ ಕಾಣುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.connected": {
+  "en": "Connected.",
+  "te": "కనెక్ట్ అయింది.",
+  "hi": "कनेक्ट हो गया।",
+  "kn": "ಕನೆಕ್ಟ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.counts": {
+  "en": "Last 30 days: {booked} booked, {cancelled} cancelled.",
+  "te": "గత 30 రోజులు: {booked} బుక్ అయ్యాయి, {cancelled} రద్దు అయ్యాయి.",
+  "hi": "पिछले 30 दिन: {booked} बुक हुईं, {cancelled} रद्द हुईं।",
+  "kn": "ಕಳೆದ 30 ದಿನ: {booked} ಬುಕ್ ಆದವು, {cancelled} ರದ್ದಾದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.needs": {
+  "en": "{n} bookings could not be placed in a free slot and need a person.",
+  "te": "{n} బుకింగ్‌లు ఖాళీ స్లాట్‌లో పెట్టలేకపోయాం, ఒక వ్యక్తి చూడాలి.",
+  "hi": "{n} बुकिंग खाली स्लॉट में नहीं रखी जा सकीं, किसी व्यक्ति को देखना है।",
+  "kn": "{n} ಬುಕಿಂಗ್‌ಗಳನ್ನು ಖಾಲಿ ಸ್ಲಾಟ್‌ನಲ್ಲಿ ಇಡಲಾಗಲಿಲ್ಲ, ಒಬ್ಬ ವ್ಯಕ್ತಿ ನೋಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.reconnect": {
+  "en": "The permission was taken back. Connect again to carry on.",
+  "te": "అనుమతి వెనక్కి తీసుకున్నారు. కొనసాగడానికి మళ్ళీ కనెక్ట్ చేయండి.",
+  "hi": "अनुमति वापस ले ली गई। आगे चलने के लिए फिर कनेक्ट करें।",
+  "kn": "ಅನುಮತಿ ವಾಪಸ್ ತೆಗೆದುಕೊಂಡಿದ್ದಾರೆ. ಮುಂದುವರಿಯಲು ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.attention": {
+  "en": "The last update did not go through. It is tried again by itself.",
+  "te": "చివరి అప్‌డేట్ కాలేదు. అదే మళ్ళీ ప్రయత్నిస్తుంది.",
+  "hi": "आख़िरी अपडेट नहीं हुआ। यह अपने-आप फिर कोशिश करता है।",
+  "kn": "ಕೊನೆಯ ಅಪ್‌ಡೇಟ್ ಆಗಲಿಲ್ಲ. ಅದು ತಾನಾಗಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.again": {
+  "en": "Connect again",
+  "te": "మళ్ళీ కనెక్ట్ చేయండి",
+  "hi": "फिर से कनेक्ट करें",
+  "kn": "ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.synced": {
+  "en": "Busy times last read {when}.",
+  "te": "బిజీ టైమ్‌లు చివరిగా {when} కి చదివాం.",
+  "hi": "व्यस्त समय आख़िरी बार {when} को पढ़ा।",
+  "kn": "ಬ್ಯುಸಿ ಸಮಯವನ್ನು ಕೊನೆಯದಾಗಿ {when} ಕ್ಕೆ ಓದಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.notsynced": {
+  "en": "Busy times not read yet.",
+  "te": "బిజీ టైమ్‌లు ఇంకా చదవలేదు.",
+  "hi": "व्यस्त समय अभी नहीं पढ़ा।",
+  "kn": "ಬ್ಯುಸಿ ಸಮಯ ಇನ್ನೂ ಓದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.outlook.how": {
+  "en": "Sign in to your Microsoft account and give permission to use your calendar. Works with Outlook.com and Microsoft 365.",
+  "te": "మీ Microsoft అకౌంట్‌తో సైన్ ఇన్ చేసి, క్యాలెండర్ వాడడానికి అనుమతి ఇవ్వండి. Outlook.com, Microsoft 365 రెండిటితో పనిచేస్తుంది.",
+  "hi": "अपने Microsoft अकाउंट से साइन इन करें और कैलेंडर इस्तेमाल की अनुमति दें। Outlook.com और Microsoft 365 दोनों के साथ चलता है।",
+  "kn": "ನಿಮ್ಮ Microsoft ಅಕೌಂಟ್‌ನಿಂದ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಕ್ಯಾಲೆಂಡರ್ ಬಳಸಲು ಅನುಮತಿ ಕೊಡಿ. Outlook.com ಮತ್ತು Microsoft 365 ಎರಡರಲ್ಲೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.outlook.connect": {
+  "en": "Connect Outlook",
+  "te": "Outlook కనెక్ట్ చేయండి",
+  "hi": "Outlook कनेक्ट करें",
+  "kn": "Outlook ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.outlook.setup": {
+  "en": "We have not finished setting this up on our side yet. Nothing for you to do; this card turns on when we are ready.",
+  "te": "ఇది మా వైపు ఇంకా సెటప్ పూర్తి కాలేదు. మీరు ఏమీ చేయక్కర్లేదు; మేము సిద్ధమైనప్పుడు ఈ కార్డ్ ఆన్ అవుతుంది.",
+  "hi": "इसे हमारी तरफ़ से अभी सेटअप पूरा नहीं हुआ है। आपको कुछ करना नहीं है; हम तैयार होंगे तो यह कार्ड चालू हो जाएगा।",
+  "kn": "ಇದರ ಸೆಟಪ್ ನಮ್ಮ ಕಡೆ ಇನ್ನೂ ಮುಗಿದಿಲ್ಲ. ನೀವು ಏನೂ ಮಾಡಬೇಕಿಲ್ಲ; ನಾವು ಸಿದ್ಧರಾದಾಗ ಈ ಕಾರ್ಡ್ ಆನ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.write": {
+  "en": "Put my appointments in my Outlook calendar",
+  "te": "నా అపాయింట్‌మెంట్లు నా Outlook క్యాలెండర్‌లో పెట్టండి",
+  "hi": "मेरी अपॉइंटमेंट मेरे Outlook कैलेंडर में रखें",
+  "kn": "ನನ್ನ ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್‌ಗಳನ್ನು ನನ್ನ Outlook ಕ್ಯಾಲೆಂಡರ್‌ನಲ್ಲಿ ಇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.write.hint": {
+  "en": "Only the purpose and the number of people. Never a phone number or an e-mail.",
+  "te": "ఉద్దేశం, మనుషుల సంఖ్య మాత్రమే. ఫోన్ నంబర్ లేదా ఈమెయిల్ ఎప్పుడూ కాదు.",
+  "hi": "सिर्फ़ मक़सद और लोगों की गिनती। फ़ोन नंबर या ईमेल कभी नहीं।",
+  "kn": "ಉದ್ದೇಶ ಮತ್ತು ಜನರ ಸಂಖ್ಯೆ ಮಾತ್ರ. ಫೋನ್ ನಂಬರ್ ಅಥವಾ ಈಮೇಲ್ ಎಂದಿಗೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.block": {
+  "en": "Keep my busy Outlook times out of my slots",
+  "te": "నా బిజీ Outlook టైమ్‌లను నా స్లాట్ల నుంచి తీసేయండి",
+  "hi": "मेरे व्यस्त Outlook समय को मेरे स्लॉट से बाहर रखें",
+  "kn": "ನನ್ನ ಬ್ಯುಸಿ Outlook ಸಮಯವನ್ನು ನನ್ನ ಸ್ಲಾಟ್‌ಗಳಿಂದ ಹೊರಗಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.cal.block.hint": {
+  "en": "Read again every 30 minutes.",
+  "te": "ప్రతి 30 నిమిషాలకు మళ్ళీ చదువుతాం.",
+  "hi": "हर 30 मिनट में फिर पढ़ा जाता है।",
+  "kn": "ಪ್ರತಿ 30 ನಿಮಿಷಕ್ಕೆ ಮತ್ತೆ ಓದುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.outlook.back.connected": {
+  "en": "Outlook is connected.",
+  "te": "Outlook కనెక్ట్ అయింది.",
+  "hi": "Outlook कनेक्ट हो गया।",
+  "kn": "Outlook ಕನೆಕ್ಟ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.outlook.back.denied": {
+  "en": "You did not give permission, so Outlook is not connected.",
+  "te": "మీరు అనుమతి ఇవ్వలేదు, కాబట్టి Outlook కనెక్ట్ కాలేదు.",
+  "hi": "आपने अनुमति नहीं दी, इसलिए Outlook कनेक्ट नहीं हुआ।",
+  "kn": "ನೀವು ಅನುಮತಿ ಕೊಡಲಿಲ್ಲ, ಹಾಗಾಗಿ Outlook ಕನೆಕ್ಟ್ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.outlook.back.expired": {
+  "en": "That sign-in took too long or was used already. Start again.",
+  "te": "ఆ సైన్ ఇన్ ఎక్కువ సేపు తీసుకుంది లేదా ఇప్పటికే వాడారు. మళ్ళీ మొదలుపెట్టండి.",
+  "hi": "वह साइन इन बहुत देर तक चला या पहले ही इस्तेमाल हो चुका। फिर से शुरू करें।",
+  "kn": "ಆ ಸೈನ್ ಇನ್ ಬಹಳ ಹೊತ್ತು ತೆಗೆದುಕೊಂಡಿತು ಅಥವಾ ಈಗಾಗಲೇ ಬಳಸಲಾಗಿದೆ. ಮತ್ತೆ ಶುರು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.outlook.back.missing_scope": {
+  "en": "The calendar permission was not ticked. Start again and tick it.",
+  "te": "క్యాలెండర్ అనుమతి టిక్ చేయలేదు. మళ్ళీ మొదలుపెట్టి టిక్ చేయండి.",
+  "hi": "कैलेंडर की अनुमति टिक नहीं की गई। फिर शुरू करें और टिक करें।",
+  "kn": "ಕ್ಯಾಲೆಂಡರ್ ಅನುಮತಿ ಟಿಕ್ ಮಾಡಿಲ್ಲ. ಮತ್ತೆ ಶುರು ಮಾಡಿ ಟಿಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.outlook.back.error": {
+  "en": "Something went wrong while connecting Outlook. Try again.",
+  "te": "Outlook కనెక్ట్ చేస్తుండగా ఏదో తప్పు జరిగింది. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "Outlook कनेक्ट करते समय कुछ गड़बड़ हुई। फिर कोशिश करें।",
+  "kn": "Outlook ಕನೆಕ್ಟ್ ಮಾಡುವಾಗ ಏನೋ ತಪ್ಪಾಯಿತು. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.outlook.back.invalid": {
+  "en": "That sign-in link was not valid. Start again from Connectors.",
+  "te": "ఆ సైన్ ఇన్ లింక్ చెల్లదు. Connectors నుంచి మళ్ళీ మొదలుపెట్టండి.",
+  "hi": "वह साइन इन लिंक सही नहीं था। Connectors से फिर शुरू करें।",
+  "kn": "ಆ ಸೈನ್ ಇನ್ ಲಿಂಕ್ ಸರಿಯಿಲ್ಲ. Connectors ನಿಂದ ಮತ್ತೆ ಶುರು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.outlook.back.needs_setup": {
+  "en": "Outlook is not ready on our side yet.",
+  "te": "Outlook మా వైపు ఇంకా సిద్ధంగా లేదు.",
+  "hi": "Outlook हमारी तरफ़ अभी तैयार नहीं है।",
+  "kn": "Outlook ನಮ್ಮ ಕಡೆ ಇನ್ನೂ ಸಿದ್ಧವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.np.title": {
+  "en": "Bookings that need a person",
+  "te": "ఒక వ్యక్తి చూడాల్సిన బుకింగ్‌లు",
+  "hi": "बुकिंग जिन्हें किसी व्यक्ति को देखना है",
+  "kn": "ಒಬ್ಬ ವ್ಯಕ್ತಿ ನೋಡಬೇಕಾದ ಬುಕಿಂಗ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.np.sub": {
+  "en": "The customer is already in your leads. Place the visit by hand in Appointments.",
+  "te": "కస్టమర్ ఇప్పటికే మీ లీడ్స్‌లో ఉన్నారు. విజిట్‌ని Appointments లో చేత్తో పెట్టండి.",
+  "hi": "ग्राहक पहले से आपकी लीड में है। विज़िट को Appointments में हाथ से रखें।",
+  "kn": "ಗ್ರಾಹಕರು ಈಗಾಗಲೇ ನಿಮ್ಮ ಲೀಡ್ಸ್‌ನಲ್ಲಿ ಇದ್ದಾರೆ. ವಿಸಿಟ್ ಅನ್ನು Appointments ನಲ್ಲಿ ಕೈಯಿಂದ ಇಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.np.no_lead": {
+  "en": "No phone number came with it",
+  "te": "దానితో ఫోన్ నంబర్ రాలేదు",
+  "hi": "इसके साथ फ़ोन नंबर नहीं आया",
+  "kn": "ಅದರೊಂದಿಗೆ ಫೋನ್ ನಂಬರ್ ಬರಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.np.closed": {
+  "en": "You are closed then",
+  "te": "ఆ టైమ్‌లో మీరు మూసి ఉంటారు",
+  "hi": "उस समय आप बंद हैं",
+  "kn": "ಆ ಸಮಯದಲ್ಲಿ ನೀವು ಮುಚ್ಚಿರುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.np.slot": {
+  "en": "That time is not a slot",
+  "te": "ఆ టైమ్ ఒక స్లాట్ కాదు",
+  "hi": "वह समय स्लॉट नहीं है",
+  "kn": "ಆ ಸಮಯ ಸ್ಲಾಟ್ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.np.full": {
+  "en": "That slot is full",
+  "te": "ఆ స్లాట్ నిండిపోయింది",
+  "hi": "वह स्लॉट भरा है",
+  "kn": "ಆ ಸ್ಲಾಟ್ ತುಂಬಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.np.past": {
+  "en": "That time has passed",
+  "te": "ఆ టైమ్ దాటిపోయింది",
+  "hi": "वह समय बीत चुका है",
+  "kn": "ಆ ಸಮಯ ಮುಗಿದುಹೋಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.np.other": {
+  "en": "Needs a look",
+  "te": "చూడాలి",
+  "hi": "देखना है",
+  "kn": "ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.group.forms": {
+  "en": "Lead forms and web forms",
+  "te": "లీడ్ ఫారమ్‌లు, వెబ్ ఫారమ్‌లు",
+  "hi": "लीड फ़ॉर्म और वेब फ़ॉर्म",
+  "kn": "ಲೀಡ್ ಫಾರ್ಮ್‌ಗಳು ಮತ್ತು ವೆಬ್ ಫಾರ್ಮ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.group.forms.sub": {
+  "en": "Steps to send the answers of Google Ads, Typeform, Tally, Jotform, LinkedIn, Webflow forms and TradeIndia mails to your lead address.",
+  "te": "Google Ads, Typeform, Tally, Jotform, LinkedIn, Webflow ఫారమ్‌ల జవాబులు, TradeIndia మెయిల్స్ మీ లీడ్ అడ్రస్‌కి పంపే స్టెప్స్.",
+  "hi": "Google Ads, Typeform, Tally, Jotform, LinkedIn, Webflow फ़ॉर्म के जवाब और TradeIndia मेल अपने लीड पते पर भेजने के स्टेप।",
+  "kn": "Google Ads, Typeform, Tally, Jotform, LinkedIn, Webflow ಫಾರ್ಮ್‌ಗಳ ಉತ್ತರಗಳು ಮತ್ತು TradeIndia ಮೇಲ್‌ಗಳನ್ನು ನಿಮ್ಮ ಲೀಡ್ ವಿಳಾಸಕ್ಕೆ ಕಳಿಸುವ ಸ್ಟೆಪ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.form.web": {
+  "en": "A form that posts to your lead address",
+  "te": "మీ లీడ్ అడ్రస్‌కి పోస్ట్ చేసే ఫారమ్",
+  "hi": "आपके लीड पते पर पोस्ट करने वाला फ़ॉर्म",
+  "kn": "ನಿಮ್ಮ ಲೀಡ್ ವಿಳಾಸಕ್ಕೆ ಪೋಸ್ಟ್ ಮಾಡುವ ಫಾರ್ಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.form.mail": {
+  "en": "A lead mail forwarded to your lead address",
+  "te": "మీ లీడ్ అడ్రస్‌కి ఫార్వర్డ్ చేసే లీడ్ మెయిల్",
+  "hi": "आपके लीड पते पर फ़ॉरवर्ड होने वाली लीड मेल",
+  "kn": "ನಿಮ್ಮ ಲೀಡ್ ವಿಳಾಸಕ್ಕೆ ಫಾರ್ವರ್ಡ್ ಆಗುವ ಲೀಡ್ ಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.form.sample": {
+  "en": "What the tool sends",
+  "te": "టూల్ పంపేది",
+  "hi": "टूल जो भेजता है",
+  "kn": "ಟೂಲ್ ಕಳಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.form.theirs": {
+  "en": "Their field",
+  "te": "వారి ఫీల్డ్",
+  "hi": "उनका फ़ील्ड",
+  "kn": "ಅವರ ಫೀಲ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.form.ours": {
+  "en": "Our field",
+  "te": "మా ఫీల్డ్",
+  "hi": "हमारा फ़ील्ड",
+  "kn": "ನಮ್ಮ ಫೀಲ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.form.verify": {
+  "en": "Not checked yet with a real account",
+  "te": "నిజమైన అకౌంట్‌తో ఇంకా చూడనివి",
+  "hi": "असली अकाउंट से अभी जाँचे नहीं गए",
+  "kn": "ನಿಜವಾದ ಅಕೌಂಟ್‌ನಿಂದ ಇನ್ನೂ ಪರೀಕ್ಷಿಸದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.fail.mfa": {
+  "en": "Enter your authenticator code first, then try again.",
+  "te": "ముందు మీ ఆథెంటికేటర్ కోడ్ ఇచ్చి, మళ్ళీ ప్రయత్నించండి.",
+  "hi": "पहले अपना ऑथेंटिकेटर कोड डालें, फिर कोशिश करें।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್ ಕೊಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.fail.forbidden": {
+  "en": "Only an Owner or an Admin can do this.",
+  "te": "ఇది Owner లేదా Admin మాత్రమే చేయగలరు.",
+  "hi": "यह सिर्फ़ Owner या Admin कर सकता है।",
+  "kn": "ಇದನ್ನು Owner ಅಥವಾ Admin ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.fail.unavailable": {
+  "en": "This is not available right now. Try again in a minute.",
+  "te": "ఇది ఇప్పుడు అందుబాటులో లేదు. ఒక నిమిషం తర్వాత ప్రయత్నించండి.",
+  "hi": "यह अभी उपलब्ध नहीं है। एक मिनट बाद कोशिश करें।",
+  "kn": "ಇದು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.fail.needs_setup": {
+  "en": "We have not finished setting this up on our side yet.",
+  "te": "ఇది మా వైపు ఇంకా సెటప్ పూర్తి కాలేదు.",
+  "hi": "इसे हमारी तरफ़ से अभी सेटअप पूरा नहीं हुआ है।",
+  "kn": "ಇದರ ಸೆಟಪ್ ನಮ್ಮ ಕಡೆ ಇನ್ನೂ ಮುಗಿದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.fail.invalid": {
+  "en": "Something you typed is not right. Check it and try again.",
+  "te": "మీరు టైప్ చేసినది సరిగా లేదు. చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपने जो लिखा वह सही नहीं है। देखकर फिर कोशिश करें।",
+  "kn": "ನೀವು ಟೈಪ್ ಮಾಡಿದ್ದು ಸರಿಯಿಲ್ಲ. ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.fail.soon": {
+  "en": "Please wait a little before trying again.",
+  "te": "మళ్ళీ ప్రయత్నించే ముందు కొంచెం ఆగండి.",
+  "hi": "फिर कोशिश करने से पहले थोड़ा रुकें।",
+  "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುವ ಮೊದಲು ಸ್ವಲ್ಪ ನಿಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.fail.other": {
+  "en": "That did not work. Try again.",
+  "te": "అది పని చేయలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "वह नहीं हुआ। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.bad_credentials": {
+  "en": "The store did not accept these keys. Check them and try again.",
+  "te": "స్టోర్ ఈ కీలను అంగీకరించలేదు. చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "स्टोर ने ये कीज़ नहीं मानीं। देखकर फिर कोशिश करें।",
+  "kn": "ಸ್ಟೋರ್ ಈ ಕೀಗಳನ್ನು ಒಪ್ಪಲಿಲ್ಲ. ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.no_permission": {
+  "en": "The keys do not allow this. Give the app permission for orders, products and webhooks.",
+  "te": "ఈ కీలకు దీనికి అనుమతి లేదు. ఆర్డర్లు, ప్రొడక్ట్‌లు, వెబ్‌హుక్స్‌కి యాప్‌కి అనుమతి ఇవ్వండి.",
+  "hi": "इन कीज़ को इसकी अनुमति नहीं है। ऐप को ऑर्डर, प्रोडक्ट और वेबहुक की अनुमति दें।",
+  "kn": "ಈ ಕೀಗಳಿಗೆ ಇದಕ್ಕೆ ಅನುಮತಿ ಇಲ್ಲ. ಆ್ಯಪ್‌ಗೆ ಆರ್ಡರ್, ಪ್ರೊಡಕ್ಟ್, ವೆಬ್‌ಹುಕ್ ಅನುಮತಿ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.unreachable": {
+  "en": "We could not reach it. Check the address and that the site is online.",
+  "te": "దాన్ని చేరలేకపోయాం. అడ్రస్, సైట్ ఆన్‌లైన్‌లో ఉందా చూడండి.",
+  "hi": "हम वहाँ नहीं पहुँच पाए। पता और साइट ऑनलाइन है या नहीं देखें।",
+  "kn": "ಅದನ್ನು ತಲುಪಲಾಗಲಿಲ್ಲ. ವಿಳಾಸ ಮತ್ತು ಸೈಟ್ ಆನ್‌ಲೈನ್ ಇದೆಯೇ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.not_found": {
+  "en": "We could not find its API at that address.",
+  "te": "ఆ అడ్రస్‌లో దాని API దొరకలేదు.",
+  "hi": "उस पते पर उसका API नहीं मिला।",
+  "kn": "ಆ ವಿಳಾಸದಲ್ಲಿ ಅದರ API ಸಿಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.rate_limited": {
+  "en": "It asked us to slow down. Try again in a minute.",
+  "te": "నెమ్మదిగా వెళ్ళమని అడిగింది. ఒక నిమిషం తర్వాత ప్రయత్నించండి.",
+  "hi": "उसने धीमे चलने को कहा। एक मिनट बाद कोशिश करें।",
+  "kn": "ನಿಧಾನವಾಗಿ ಹೋಗಲು ಹೇಳಿತು. ಒಂದು ನಿಮಿಷದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.webhooks_not_registered": {
+  "en": "We could not add the event addresses in your store. Add them yourself with the address shown, then press Test the connection.",
+  "te": "మీ స్టోర్‌లో ఈవెంట్ అడ్రస్‌లు జోడించలేకపోయాం. చూపిన అడ్రస్‌తో మీరే జోడించి, Test the connection నొక్కండి.",
+  "hi": "आपके स्टोर में इवेंट के पते नहीं जोड़ पाए। दिखाए गए पते से खुद जोड़ें, फिर Test the connection दबाएँ।",
+  "kn": "ನಿಮ್ಮ ಸ್ಟೋರ್‌ನಲ್ಲಿ ಈವೆಂಟ್ ವಿಳಾಸಗಳನ್ನು ಸೇರಿಸಲಾಗಲಿಲ್ಲ. ತೋರಿಸಿದ ವಿಳಾಸದಿಂದ ನೀವೇ ಸೇರಿಸಿ, ನಂತರ Test the connection ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.signature_wrong": {
+  "en": "The store's events do not match its secret key. Check the secret key.",
+  "te": "స్టోర్ ఈవెంట్లు దాని సీక్రెట్ కీతో సరిపోవడం లేదు. సీక్రెట్ కీ చూడండి.",
+  "hi": "स्टोर के इवेंट उसकी सीक्रेट की से मेल नहीं खाते। सीक्रेट की देखें।",
+  "kn": "ಸ್ಟೋರ್‌ನ ಈವೆಂಟ್‌ಗಳು ಅದರ ಸೀಕ್ರೆಟ್ ಕೀ ಜೊತೆ ಹೊಂದುತ್ತಿಲ್ಲ. ಸೀಕ್ರೆಟ್ ಕೀ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.store_address_invalid": {
+  "en": "That store address is not one we can use. Use the myshopify.com address, or the shop's https address.",
+  "te": "ఆ స్టోర్ అడ్రస్ మేము వాడలేము. myshopify.com అడ్రస్ లేదా షాప్ https అడ్రస్ వాడండి.",
+  "hi": "वह स्टोर पता हम इस्तेमाल नहीं कर सकते। myshopify.com वाला पता या शॉप का https पता दें।",
+  "kn": "ಆ ಸ್ಟೋರ್ ವಿಳಾಸವನ್ನು ನಾವು ಬಳಸಲಾಗದು. myshopify.com ವಿಳಾಸ ಅಥವಾ ಶಾಪ್‌ನ https ವಿಳಾಸ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.credentials_invalid": {
+  "en": "Fill the access token or the client id, one of the two, and the secret key.",
+  "te": "యాక్సెస్ టోకెన్ లేదా క్లయింట్ ఐడీ, రెండిట్లో ఒకటి, సీక్రెట్ కీ నింపండి.",
+  "hi": "एक्सेस टोकन या क्लाइंट आईडी, दोनों में से एक, और सीक्रेट की भरें।",
+  "kn": "ಆಕ್ಸೆಸ್ ಟೋಕನ್ ಅಥವಾ ಕ್ಲೈಂಟ್ ಐಡಿ, ಎರಡರಲ್ಲಿ ಒಂದು, ಮತ್ತು ಸೀಕ್ರೆಟ್ ಕೀ ತುಂಬಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.secret_required": {
+  "en": "Fill in the address or token the first time.",
+  "te": "మొదటిసారి అడ్రస్ లేదా టోకెన్ నింపండి.",
+  "hi": "पहली बार पता या टोकन भरें।",
+  "kn": "ಮೊದಲ ಬಾರಿ ವಿಳಾಸ ಅಥವಾ ಟೋಕನ್ ತುಂಬಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.slack_url": {
+  "en": "That is not a Slack incoming webhook address. It starts with https://hooks.slack.com/services/.",
+  "te": "అది Slack incoming webhook అడ్రస్ కాదు. అది https://hooks.slack.com/services/ తో మొదలవుతుంది.",
+  "hi": "वह Slack incoming webhook का पता नहीं है। वह https://hooks.slack.com/services/ से शुरू होता है।",
+  "kn": "ಅದು Slack incoming webhook ವಿಳಾಸ ಅಲ್ಲ. ಅದು https://hooks.slack.com/services/ ನಿಂದ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.telegram_token": {
+  "en": "That is not a Telegram bot token. It looks like 123456:ABC and comes from @BotFather.",
+  "te": "అది Telegram బాట్ టోకెన్ కాదు. అది 123456:ABC లా ఉంటుంది, @BotFather నుంచి వస్తుంది.",
+  "hi": "वह Telegram बॉट टोकन नहीं है। वह 123456:ABC जैसा दिखता है और @BotFather से मिलता है।",
+  "kn": "ಅದು Telegram ಬಾಟ್ ಟೋಕನ್ ಅಲ್ಲ. ಅದು 123456:ABC ಥರ ಇರುತ್ತದೆ, @BotFather ನಿಂದ ಸಿಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.telegram_chat": {
+  "en": "The chat id must be a number, or @name for a channel.",
+  "te": "చాట్ ఐడీ ఒక నంబర్ అయి ఉండాలి, లేదా ఛానెల్‌కి @name.",
+  "hi": "चैट आईडी एक नंबर होनी चाहिए, या चैनल के लिए @name।",
+  "kn": "ಚಾಟ್ ಐಡಿ ಒಂದು ನಂಬರ್ ಆಗಿರಬೇಕು, ಅಥವಾ ಚಾನೆಲ್‌ಗೆ @name.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.teams_url": {
+  "en": "That is not a Teams Workflows address. It is an https address ending in logic.azure.com or powerplatform.com.",
+  "te": "అది Teams Workflows అడ్రస్ కాదు. అది logic.azure.com లేదా powerplatform.com తో ముగిసే https అడ్రస్.",
+  "hi": "वह Teams Workflows का पता नहीं है। वह logic.azure.com या powerplatform.com पर ख़त्म होने वाला https पता है।",
+  "kn": "ಅದು Teams Workflows ವಿಳಾಸ ಅಲ್ಲ. ಅದು logic.azure.com ಅಥವಾ powerplatform.com ನಲ್ಲಿ ಮುಗಿಯುವ https ವಿಳಾಸ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.teams_legacy": {
+  "en": "That is an old Office 365 connector address, which Microsoft has switched off. Make a Workflow instead.",
+  "te": "అది పాత Office 365 కనెక్టర్ అడ్రస్, Microsoft దాన్ని ఆపేసింది. బదులుగా Workflow చేయండి.",
+  "hi": "वह पुराना Office 365 कनेक्टर पता है, जिसे Microsoft ने बंद कर दिया है। इसकी जगह Workflow बनाएँ।",
+  "kn": "ಅದು ಹಳೆಯ Office 365 ಕನೆಕ್ಟರ್ ವಿಳಾಸ, Microsoft ಅದನ್ನು ಆಫ್ ಮಾಡಿದೆ. ಬದಲಿಗೆ Workflow ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.choices": {
+  "en": "One of the choices is not allowed. Reload the page and try again.",
+  "te": "ఎంపికల్లో ఒకటి అనుమతించలేదు. పేజీ రీలోడ్ చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "चुनावों में से एक मान्य नहीं है। पेज रीलोड करके फिर कोशिश करें।",
+  "kn": "ಆಯ್ಕೆಗಳಲ್ಲಿ ಒಂದು ಒಪ್ಪಿಗೆಯಾಗಲಿಲ್ಲ. ಪುಟ ರೀಲೋಡ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.calendar_key_refused": {
+  "en": "Calendly did not accept this token. Make a new one and try again.",
+  "te": "Calendly ఈ టోకెన్‌ని అంగీకరించలేదు. కొత్తది చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "Calendly ने यह टोकन नहीं माना। नया बनाकर फिर कोशिश करें।",
+  "kn": "Calendly ಈ ಟೋಕನ್ ಒಪ್ಪಲಿಲ್ಲ. ಹೊಸದು ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.calendar_plan_refused": {
+  "en": "Your Calendly plan does not allow booking events to be sent to us. Check the plan with Calendly.",
+  "te": "మీ Calendly ప్లాన్ బుకింగ్ ఈవెంట్లను మాకు పంపడానికి అనుమతించదు. Calendly తో ప్లాన్ చూసుకోండి.",
+  "hi": "आपका Calendly प्लान बुकिंग इवेंट हमें भेजने की अनुमति नहीं देता। Calendly से प्लान देखें।",
+  "kn": "ನಿಮ್ಮ Calendly ಪ್ಲಾನ್ ಬುಕಿಂಗ್ ಈವೆಂಟ್‌ಗಳನ್ನು ನಮಗೆ ಕಳಿಸಲು ಅನುಮತಿಸುವುದಿಲ್ಲ. Calendly ಜೊತೆ ಪ್ಲಾನ್ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.calendar_link_invalid": {
+  "en": "That booking page address is not one we accept. Use your own calendly.com or cal.com address.",
+  "te": "ఆ బుకింగ్ పేజీ అడ్రస్ మేము అంగీకరించం. మీ సొంత calendly.com లేదా cal.com అడ్రస్ వాడండి.",
+  "hi": "वह बुकिंग पेज का पता हम नहीं मानते। अपना calendly.com या cal.com का पता दें।",
+  "kn": "ಆ ಬುಕಿಂಗ್ ಪುಟದ ವಿಳಾಸವನ್ನು ನಾವು ಒಪ್ಪುವುದಿಲ್ಲ. ನಿಮ್ಮದೇ calendly.com ಅಥವಾ cal.com ವಿಳಾಸ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.calendar_vendor_unavailable": {
+  "en": "The calendar service did not answer. Try again in a minute.",
+  "te": "క్యాలెండర్ సర్వీస్ జవాబివ్వలేదు. ఒక నిమిషం తర్వాత ప్రయత్నించండి.",
+  "hi": "कैलेंडर सर्विस ने जवाब नहीं दिया। एक मिनट बाद कोशिश करें।",
+  "kn": "ಕ್ಯಾಲೆಂಡರ್ ಸರ್ವೀಸ್ ಉತ್ತರಿಸಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.calendar_needs_reconnect": {
+  "en": "The permission was taken back. Connect again.",
+  "te": "అనుమతి వెనక్కి తీసుకున్నారు. మళ్ళీ కనెక్ట్ చేయండి.",
+  "hi": "अनुमति वापस ले ली गई। फिर कनेक्ट करें।",
+  "kn": "ಅನುಮತಿ ವಾಪಸ್ ತೆಗೆದುಕೊಂಡಿದ್ದಾರೆ. ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.calendar_not_connected": {
+  "en": "This calendar is not connected yet.",
+  "te": "ఈ క్యాలెండర్ ఇంకా కనెక్ట్ కాలేదు.",
+  "hi": "यह कैलेंडर अभी कनेक्ट नहीं है।",
+  "kn": "ಈ ಕ್ಯಾಲೆಂಡರ್ ಇನ್ನೂ ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.list_not_products": {
+  "en": "Pick a list of products to fill from a store.",
+  "te": "స్టోర్ నుంచి నింపడానికి ప్రొడక్ట్స్ లిస్ట్ ఎంచుకోండి.",
+  "hi": "स्टोर से भरने के लिए प्रोडक्ट की लिस्ट चुनें।",
+  "kn": "ಸ್ಟೋರ್‌ನಿಂದ ತುಂಬಲು ಪ್ರೊಡಕ್ಟ್ ಲಿಸ್ಟ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.public_address_missing": {
+  "en": "Stack19's public address is not set up yet, so a store cannot send us events. We are on it.",
+  "te": "Stack19 పబ్లిక్ అడ్రస్ ఇంకా సెటప్ కాలేదు, కాబట్టి స్టోర్ మాకు ఈవెంట్లు పంపలేదు. మేము చూస్తున్నాం.",
+  "hi": "Stack19 का सार्वजनिक पता अभी सेट नहीं है, इसलिए स्टोर हमें इवेंट नहीं भेज सकता। हम देख रहे हैं।",
+  "kn": "Stack19 ಸಾರ್ವಜನಿಕ ವಿಳಾಸ ಇನ್ನೂ ಸೆಟ್ ಆಗಿಲ್ಲ, ಹಾಗಾಗಿ ಸ್ಟೋರ್ ನಮಗೆ ಈವೆಂಟ್ ಕಳಿಸಲಾಗದು. ನಾವು ನೋಡುತ್ತಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.commerce_unavailable": {
+  "en": "Connecting a store is not available right now. Try again in a minute.",
+  "te": "స్టోర్ కనెక్ట్ చేయడం ఇప్పుడు అందుబాటులో లేదు. ఒక నిమిషం తర్వాత ప్రయత్నించండి.",
+  "hi": "स्टोर कनेक्ट करना अभी उपलब्ध नहीं है। एक मिनट बाद कोशिश करें।",
+  "kn": "ಸ್ಟೋರ್ ಕನೆಕ್ಟ್ ಮಾಡುವುದು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.notify_out_unavailable": {
+  "en": "Messages out are not available right now. Try again in a minute.",
+  "te": "మెసేజ్‌లు పంపడం ఇప్పుడు అందుబాటులో లేదు. ఒక నిమిషం తర్వాత ప్రయత్నించండి.",
+  "hi": "मैसेज भेजना अभी उपलब्ध नहीं है। एक मिनट बाद कोशिश करें।",
+  "kn": "ಮೆಸೇಜ್ ಕಳಿಸುವುದು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.calendar_secret_unavailable": {
+  "en": "Calendars are not available right now. Try again in a minute.",
+  "te": "క్యాలెండర్లు ఇప్పుడు అందుబాటులో లేవు. ఒక నిమిషం తర్వాత ప్రయత్నించండి.",
+  "hi": "कैलेंडर अभी उपलब्ध नहीं हैं। एक मिनट बाद कोशिश करें।",
+  "kn": "ಕ್ಯಾಲೆಂಡರ್‌ಗಳು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.calendar_no_public_address": {
+  "en": "Stack19's public address is not set up yet, so a calendar cannot send us bookings. We are on it.",
+  "te": "Stack19 పబ్లిక్ అడ్రస్ ఇంకా సెటప్ కాలేదు, కాబట్టి క్యాలెండర్ మాకు బుకింగ్‌లు పంపలేదు. మేము చూస్తున్నాం.",
+  "hi": "Stack19 का सार्वजनिक पता अभी सेट नहीं है, इसलिए कैलेंडर हमें बुकिंग नहीं भेज सकता। हम देख रहे हैं।",
+  "kn": "Stack19 ಸಾರ್ವಜನಿಕ ವಿಳಾಸ ಇನ್ನೂ ಸೆಟ್ ಆಗಿಲ್ಲ, ಹಾಗಾಗಿ ಕ್ಯಾಲೆಂಡರ್ ನಮಗೆ ಬುಕಿಂಗ್ ಕಳಿಸಲಾಗದು. ನಾವು ನೋಡುತ್ತಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.invalid_value": {
+  "en": "Something you typed is not right. Check it and try again.",
+  "te": "మీరు టైప్ చేసినది సరిగా లేదు. చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपने जो लिखा वह सही नहीं है। देखकर फिर कोशिश करें।",
+  "kn": "ನೀವು ಟೈಪ್ ಮಾಡಿದ್ದು ಸರಿಯಿಲ್ಲ. ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.bad_address": {
+  "en": "The address or token no longer works. Connect again with a new one.",
+  "te": "అడ్రస్ లేదా టోకెన్ ఇక పనిచేయదు. కొత్తదితో మళ్ళీ కనెక్ట్ చేయండి.",
+  "hi": "पता या टोकन अब नहीं चलता। नए के साथ फिर कनेक्ट करें।",
+  "kn": "ವಿಳಾಸ ಅಥವಾ ಟೋಕನ್ ಇನ್ನು ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ. ಹೊಸದರೊಂದಿಗೆ ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.rejected": {
+  "en": "The other side refused the message.",
+  "te": "అవతలి వైపు మెసేజ్‌ని తిరస్కరించింది.",
+  "hi": "दूसरी तरफ़ ने मैसेज नहीं लिया।",
+  "kn": "ಆ ಕಡೆಯವರು ಮೆಸೇಜ್ ತಿರಸ್ಕರಿಸಿದರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.timeout": {
+  "en": "It took too long to answer.",
+  "te": "జవాబివ్వడానికి చాలా సమయం తీసుకుంది.",
+  "hi": "जवाब देने में बहुत देर लगी।",
+  "kn": "ಉತ್ತರಿಸಲು ಬಹಳ ಸಮಯ ತೆಗೆದುಕೊಂಡಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.refused": {
+  "en": "We could not connect to it.",
+  "te": "దానికి కనెక్ట్ కాలేకపోయాం.",
+  "hi": "हम उससे कनेक्ट नहीं हो पाए।",
+  "kn": "ಅದಕ್ಕೆ ಕನೆಕ್ಟ್ ಆಗಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.tls": {
+  "en": "Its secure connection could not be checked.",
+  "te": "దాని సురక్షిత కనెక్షన్ చెక్ చేయలేకపోయాం.",
+  "hi": "उसका सुरक्षित कनेक्शन जाँचा नहीं जा सका।",
+  "kn": "ಅದರ ಸುರಕ್ಷಿತ ಕನೆಕ್ಷನ್ ಪರಿಶೀಲಿಸಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.server": {
+  "en": "The other side had a problem. We try again by ourselves.",
+  "te": "అవతలి వైపు సమస్య ఉంది. మేము మళ్ళీ ప్రయత్నిస్తాం.",
+  "hi": "दूसरी तरफ़ कोई गड़बड़ है। हम अपने-आप फिर कोशिश करते हैं।",
+  "kn": "ಆ ಕಡೆ ಸಮಸ್ಯೆ ಇದೆ. ನಾವೇ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.blocked": {
+  "en": "That address is not one we can send to.",
+  "te": "ఆ అడ్రస్‌కి మేము పంపలేము.",
+  "hi": "उस पते पर हम नहीं भेज सकते।",
+  "kn": "ಆ ವಿಳಾಸಕ್ಕೆ ನಾವು ಕಳಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.no_secret": {
+  "en": "The saved key is gone. Connect again.",
+  "te": "సేవ్ చేసిన కీ పోయింది. మళ్ళీ కనెక్ట్ చేయండి.",
+  "hi": "सेव की हुई की नहीं रही। फिर कनेक्ट करें।",
+  "kn": "ಸೇವ್ ಮಾಡಿದ ಕೀ ಹೋಗಿದೆ. ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cn.reason.redirect": {
+  "en": "The address sent us somewhere else, which we do not follow.",
+  "te": "అడ్రస్ మమ్మల్ని వేరే చోటికి పంపింది, మేము అలా వెళ్లము.",
+  "hi": "पते ने हमें कहीं और भेज दिया, हम वहाँ नहीं जाते।",
+  "kn": "ವಿಳಾಸ ನಮ್ಮನ್ನು ಬೇರೆಡೆಗೆ ಕಳಿಸಿತು, ನಾವು ಹಾಗೆ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
