@@ -29,7 +29,11 @@ describe("the production web flags (owner, 25 Nov 2026: Customer Zero sees the r
     expect(JSON.stringify(prod)).not.toMatch(/mock|[0-9a-f]{8}-[0-9a-f]{4}-/);
   });
   it("never has a staging-only, demo, test-call, staff, developer, offer or draft-legal flag", () => {
-    for (const k of ["PREVIEW_JOBS", "DEMO_CALL", "GUIDED_DEMO", "TEST_CALL_TONE", "STAFF_CONSOLE", "DEVELOPER_KEYS_SCREENS", "OFFER_SCREENS", "LEGAL_DRAFT_PAGES", "ASSISTANT_WORK_SCREENS", "ASSISTANT_WORK_TENANTS", "WAITLIST", "RAZORPAY_CHECKOUT", "BILLING_V2", "AUTO_REPLY_SCREENS", "SWEEP_SCREENS", "OWNER_TALK_PREFS"]) expect(Object.keys(prod), k).not.toContain(k);
+    for (const k of ["PREVIEW_JOBS", "DEMO_CALL", "GUIDED_DEMO", "TEST_CALL_TONE", "STAFF_CONSOLE", "DEVELOPER_KEYS_SCREENS", "OFFER_SCREENS", "LEGAL_DRAFT_PAGES", "ASSISTANT_WORK_TENANTS", "WAITLIST", "RAZORPAY_CHECKOUT", "BILLING_V2", "AUTO_REPLY_SCREENS", "SWEEP_SCREENS", "OWNER_TALK_PREFS"]) expect(Object.keys(prod), k).not.toContain(k);
+  });
+  it("may have the 'Do it' bar for every workspace (ASSISTANT_WORK_SCREENS=1, owner, 29 Nov 2026) but never a list of workspaces for it, and the Tell and industry-page flags, when set, are the real thing (`1`, never `mock`) and exist on staging too", () => {
+    expect(prod.ASSISTANT_WORK_TENANTS, "no list of workspace ids in production: unset means every workspace").toBeUndefined();
+    for (const k of ["ASSISTANT_WORK_SCREENS", "TELL_SCREENS", "INDUSTRY_PAGES"]) if (k in prod) { expect(prod[k], k).toBe("1"); expect(staging, k).toHaveProperty(k); }
   });
   it("has TEST_CALL_SCREENS (29 Nov 2026): outbound calling is on in production in sandbox mode, so the owner's \"Place a test call\" is the way to ring the sandbox list; the web sends only an id from the API's list and the API's gate refuses any number off that list", () => {
     expect(prod.TEST_CALL_SCREENS).toBe("1");
