@@ -22,7 +22,7 @@ def world(on: bool = True) -> tuple[Any, FakeDpdpRepository]:
     repo = FakeDpdpRepository()
     runtime = DpdpRuntime(repo, privacy_email="privacy@example.test", hello_email="hello@example.test")
     client, _ = make_client(dpdp=runtime, policies=VERSIONS)
-    app_runtime = client.app.state.runtime
+    app_runtime = client.app.state.runtime  # type: ignore[attr-defined]
     object.__setattr__(app_runtime, "contact_form", on)
     return client, repo
 

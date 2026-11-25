@@ -108,7 +108,7 @@ def test_the_steps_forward_the_numbers_and_never_echo_them(caplog: pytest.LogCap
     client, repo, vl, _ = world()
     client.post(f"{T}/start", headers=auth("a_owner"))
     d = client.post(f"{T}/details", json={"account_type": "business", "business_name": "Padma Silks", "full_name": "Padma Devi", "phone": "9848012345", "billing_address": "12 Main Road, Guntur", "accept_terms": True}, headers=auth("a_owner"))
-    assert d.status_code == 200 and repo.row["state"] == "in_progress" and repo.row["account_type"] == "business"
+    assert d.status_code == 200 and repo.row["state"] == "in_progress" and repo.row["account_type"] == "business"  # type: ignore[index]
     p = client.post(f"{T}/pan", json={"pan_number": PAN.lower(), "holder_name": "Padma Devi"}, headers=auth("a_owner"))
     g = client.post(f"{T}/gst", json={"gst_number": "37AAAAA0000A1Z5"}, headers=auth("a_owner"))
     assert p.status_code == 200 and g.status_code == 200
@@ -161,10 +161,10 @@ def test_submit_lists_what_is_missing_and_a_strange_refusal_tells_the_team() -> 
     assert r.status_code == 422 and r.json()["error"]["missing"] == ["PAN Card", "Aadhaar"] and not told
     vl.fail["/reseller/kyc/final-submit"] = (422, {})
     r = client.post(f"{T}/submit", headers=auth("a_owner"))
-    assert r.status_code == 409 and r.json()["error"]["reason"] == "stuck" and repo.row["state"] == "stuck" and len(told) == 1
+    assert r.status_code == 409 and r.json()["error"]["reason"] == "stuck" and repo.row["state"] == "stuck" and len(told) == 1  # type: ignore[index]
     del vl.fail["/reseller/kyc/final-submit"]
     ok = client.post(f"{T}/submit", headers=auth("a_owner"))
-    assert ok.status_code == 200 and repo.row["state"] == "submitted"
+    assert ok.status_code == 200 and repo.row["state"] == "submitted"  # type: ignore[index]
 
 
 def test_voicelink_down_is_a_plain_503() -> None:
@@ -182,7 +182,7 @@ def test_a_complete_kyc_is_noticed_and_only_then_a_client_for_buying() -> None:
     vl.status_doc = {"documents": {"pan": {"uploaded": True}}, "current_step": "gst", "kyc_status": 0}
     assert client.get(T, headers=auth("a_owner")).json()["steps"] == {"pan": True}
     vl.status_doc = {"documents": {"pan": {"uploaded": True}, "aadhaar": {"uploaded": True}}, "kyc_status": 1, "is_complete": True}
-    assert service.client_for("t", TENANT_A.id) == 101 and repo.row["state"] == "verified"
+    assert service.client_for("t", TENANT_A.id) == 101 and repo.row["state"] == "verified"  # type: ignore[index]
     assert client.get(T, headers=auth("a_owner")).json()["state"] == "verified"
 
 
@@ -217,8 +217,8 @@ def _numbers_world(kyc: Any, vl_buy: Any = None) -> tuple[Any, list[Any], list[i
             return vl_buy(settings, number)
         return Bought(number=number, did_id=1, order_number="o", stage="routed", cost_inr=300.0)
 
-    original = svc.buy
-    svc.buy = fake_buy  # type: ignore[assignment]
+    original = svc.buy  # type: ignore[attr-defined]
+    svc.buy = fake_buy  # type: ignore[attr-defined]
     service = NumberService(Numbers(), None, BuyerSettings(client_id=5879, bot_id=1), kyc=kyc)  # type: ignore[arg-type]
     return service, [original], bought
 
@@ -238,7 +238,7 @@ def test_buy_first_verify_after_the_number_is_bought_for_the_businesses_own_clie
         assert service.claim("t", TENANT_A.id, "+919876543211", "mobile").state == "ready"
         assert len([c for c in vl.calls if c[1] == "/reseller/client/create"]) == 1, "one client per business"
     finally:
-        svc.buy = restore[0]
+        svc.buy = restore[0]  # type: ignore[attr-defined]
 
 
 def test_voicelink_refusing_for_an_unverified_client_falls_back_to_kyc_required_or_keeps_the_paid_number() -> None:
@@ -256,7 +256,7 @@ def test_voicelink_refusing_for_an_unverified_client_falls_back_to_kyc_required_
             service.claim("t", TENANT_A.id, "+919876543210", "mobile", email="o@example.test", name="X")
         assert err.value.reason == "kyc_required"
     finally:
-        svc.buy = restore[0]
+        svc.buy = restore[0]  # type: ignore[attr-defined]
     told: list[str] = []
     service, restore, _ = _numbers_world(kyc, lambda s, n: Bought(number=n, did_id=1, order_number="o", stage="bought", cost_inr=300.0, kyc_refused=True))
     service._alert = told.append
@@ -264,7 +264,7 @@ def test_voicelink_refusing_for_an_unverified_client_falls_back_to_kyc_required_
         out = service.claim("t", TENANT_A.id, "+919876543212", "mobile", email="o@example.test", name="X")
         assert out.state == "kyc_pending" and len(told) == 1
     finally:
-        svc.buy = restore[0]
+        svc.buy = restore[0]  # type: ignore[attr-defined]
 
 
 def test_a_voicelink_client_that_cannot_be_made_is_kyc_required() -> None:
@@ -278,7 +278,7 @@ def test_a_voicelink_client_that_cannot_be_made_is_kyc_required() -> None:
             service.claim("t", TENANT_A.id, "+919876543210", "mobile", email="o@example.test", name="X")
         assert err.value.reason == "kyc_required" and bought == []
     finally:
-        svc.buy = restore[0]
+        svc.buy = restore[0]  # type: ignore[attr-defined]
 
 
 def test_the_worker_marks_the_businesses_voicelink_has_approved() -> None:
@@ -294,6 +294,6 @@ def test_the_worker_marks_the_businesses_voicelink_has_approved() -> None:
             return [{"tenant_id": str(TENANT_A.id), "client_id": 101}] if function == "business_client_pending" else None
 
     rpc = Rpc()
-    assert kyc.refresh_pending("sys", rpc) == 0 and [c[0] for c in rpc.calls] == ["business_client_pending"]
+    assert kyc.refresh_pending("sys", rpc) == 0 and [c[0] for c in rpc.calls] == ["business_client_pending"]  # type: ignore[arg-type]
     vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
-    assert kyc.refresh_pending("sys", rpc) == 1 and rpc.calls[-1] == ("business_client_mark_verified", {"p_tenant_id": str(TENANT_A.id)})
+    assert kyc.refresh_pending("sys", rpc) == 1 and rpc.calls[-1] == ("business_client_mark_verified", {"p_tenant_id": str(TENANT_A.id)})  # type: ignore[arg-type]

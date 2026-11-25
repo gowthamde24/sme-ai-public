@@ -39,7 +39,7 @@ THE_LIST = {"id": LIST, "name": "Dress materials", "kind": "products", "columns"
 
 
 def test_headings_find_their_columns_by_label_by_role_words_and_the_default_price() -> None:
-    got = importer.auto_mapping(COLUMNS, ["Item", "Wholesale Price", "Rate", "Stock", "Colour", "Remarks"])
+    got = importer.auto_mapping(COLUMNS, ["Item", "Wholesale Price", "Rate", "Stock", "Colour", "Remarks"])  # type: ignore[arg-type]
     assert got == {"Item": "name", "Wholesale Price": "wholesale_price", "Rate": "retail_price", "Stock": "stock", "Colour": "colour", "Remarks": None}
 
 

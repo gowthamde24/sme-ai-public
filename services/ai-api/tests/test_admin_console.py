@@ -227,7 +227,7 @@ def test_usage_and_cost_and_the_google_lines_and_the_alerts() -> None:
 
 def world(fail: Exception | None = None) -> tuple[Any, FakeAdmin]:
     repo = FakeAdmin(fail)
-    client, _ = make_client(admin=AdminService(repo))
+    client, _ = make_client(admin=AdminService(repo))  # type: ignore[arg-type]
     return client, repo
 
 
@@ -305,7 +305,7 @@ def test_the_shop_owners_switch_is_the_owners_alone() -> None:
 
 def test_the_overview_is_one_call_with_rupee_text_and_the_environment_tag() -> None:
     repo = FakeAdmin()
-    client, _ = make_client(admin=AdminService(repo, "staging"))
+    client, _ = make_client(admin=AdminService(repo, "staging"))  # type: ignore[arg-type]
     o = client.get("/v1/admin/overview", headers=auth("a_owner")).json()
     assert o["environment"] == {"key": "staging", "label": "Staging · test data"} and o["role"] == "owner"
     assert o["badges"] == {"businesses": 128, "support_open": 7, "health_issues": 2, "compliance_open": 3}
@@ -324,7 +324,7 @@ def test_each_role_gets_only_its_parts_of_the_overview() -> None:
     for role, money, queue in (("owner", True, True), ("finance", True, False), ("support", False, True)):
         repo = FakeAdmin()
         repo.role = role
-        client, _ = make_client(admin=AdminService(repo))
+        client, _ = make_client(admin=AdminService(repo))  # type: ignore[arg-type]
         o = client.get("/v1/admin/overview", headers=auth("a_owner")).json()
         assert (o["kpis"]["mrr"] is not None) == money and (o["kpis"]["gross_margin"] is not None) == money and (o["costs_this_month"] is not None) == money, role
         assert (o["support_queue"] is not None) == queue, role

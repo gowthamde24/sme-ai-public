@@ -28,7 +28,7 @@ def world(*answers: Any, cap: Any = None) -> tuple[Any, Scripted, FakeTurnDb, An
     db = FakeTurnDb()
     agents = SimpleNamespace(assistant_db=lambda token, run_id: db, assistant_llm=lambda: llm, llm_for=lambda job: (lambda: llm), unavailable=None)
     client, _ = make_client(agents=agents, jobs=JobsRuntime(directory=PACKS), packs=FakePacks())  # type: ignore[arg-type]
-    runtime = client.app.state.runtime
+    runtime = client.app.state.runtime  # type: ignore[attr-defined]
     if cap is not None:
         object.__setattr__(runtime, "daily_cap", cap)
     return client, llm, db, runtime

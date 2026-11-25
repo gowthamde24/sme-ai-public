@@ -116,7 +116,7 @@ def test_a_pending_business_takes_no_real_call_in_either_direction() -> None:
     rpc.answers["phone_line_for_tenant"] = {"provider": "voicelink", "kyc_pending": True}
     out = PostgrestOutboundRepo(rpc, "voicelink", kyc_enforced=True).line_for_tenant("t", T)  # type: ignore[arg-type]
     assert out is not None and out["billing_blocked"] is True and out["kyc_blocked"] is True
-    assert "billing_blocked" not in (PostgrestOutboundRepo(rpc, "voicelink").line_for_tenant("t", T) or {})
+    assert "billing_blocked" not in (PostgrestOutboundRepo(rpc, "voicelink").line_for_tenant("t", T) or {})  # type: ignore[arg-type]
     assert OutboundRefused("billing_blocked", kyc_pending=True).kyc_pending is True
 
 
