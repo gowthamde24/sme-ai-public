@@ -36,7 +36,10 @@ from app.billing.mail import (
 from app.billing.provider import BillingProvider, build_provider
 from app.billing.repository import PostgrestBillingRepository
 from app.billing.service import BillingService
+from app.calendar_in.sync import OutlookSync
+from app.calendar_in.wiring import build_outlook_sync
 from app.catalogue.storage import HttpStorageClient, StorageClient
+from app.commerce.wiring import CommerceRunner, build_commerce_runner
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.crm_push.runner import CrmPushRunner
 from app.crm_push.wiring import build_crm_push_runner
@@ -55,6 +58,8 @@ from app.notifications.repository import PostgrestNotificationsRepository
 from app.notifications.runner import PushRunner
 from app.notifications.webpush import WebPushSender
 from app.notifications.wiring import build_vapid
+from app.notify_out.runner import NotifyRunner
+from app.notify_out.wiring import build_notify_runner
 from app.observability.sentry import capture as sentry_capture
 from app.observability.sentry import init_sentry
 from app.ops.alerts import GoogleCapAlerts
@@ -130,12 +135,15 @@ class Worker:
         orphan_calls: OrphanCalls | None = None,
         standups: StandupRunner | None = None,
         google_calendar: GoogleCalendarSync | None = None,
+        outlook: OutlookSync | None = None,
         plivo_balance: PlivoBalanceCheck | None = None,
         token_expiry: TokenExpiryCheck | None = None,
         template_sync: TemplateStatusSync | None = None,
         webhooks: WebhookRunner | None = None,
         indiamart_pull: IndiaMartPuller | None = None,
         crm_push: CrmPushRunner | None = None,
+        notify: NotifyRunner | None = None,
+        commerce: CommerceRunner | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -185,6 +193,8 @@ class Worker:
         self._standups = standups
         # appointment booking slice 4: our appointments to the Owner's Google Calendar, its busy times back, the push channel (None: not configured)
         self._google_calendar = google_calendar
+        # Outlook / Microsoft 365: appointments out as events, busy times back (None unless CALENDAR_IN=on and the Microsoft app is registered)
+        self._outlook = outlook
         # owner decision 19 Nov 2026: Plivo's balance read once a day (None unless PLIVO_BALANCE_CHECK is on); a Needs-you item and a WhatsApp message to the owner's own number when it is low
         self._plivo_balance = plivo_balance
         # planner 20 Nov 2026: the WhatsApp platform token's expiry read from Meta once a day (None unless TOKEN_EXPIRY_CHECK is on)
@@ -197,6 +207,10 @@ class Worker:
         self._indiamart_pull = indiamart_pull
         # results into a business's own CRM or sheet (None unless CRM_PUSH=on and the secret store exists)
         self._crm_push = crm_push
+        # commerce-notify section C: Slack, Telegram and Teams messages (None unless NOTIFY_OUT=on and the secret store exists)
+        self._notify = notify
+        # commerce-notify section B: abandoned-cart call-backs and the old-row clean-up (None unless COMMERCE=on and the secret store exists)
+        self._commerce = commerce
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -236,9 +250,12 @@ class Worker:
             self._token_expiry_pass(token)
             self._template_sync_pass(token)
             self._google_calendar_pass(token)
+            self._outlook_pass(token)
             self._webhooks_pass(token)
             self._indiamart_pass(token)
             self._crm_push_pass(token)
+            self._commerce_pass(token)
+            self._notify_pass(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -360,6 +377,17 @@ class Worker:
         except Exception as exc:   # a failed pass never fails the tick
             logger.error("lead reader pass crashed: %s", exc.__class__.__name__)
 
+    def _commerce_pass(self, token: str) -> None:
+        """Shopify checkouts whose wait is over become a call-back lead (app/commerce/wiring.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._commerce is None:
+            return
+        try:
+            self._commerce.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("commerce pass crashed: %s", exc.__class__.__name__)
+
     def _webhooks_pass(self, token: str) -> None:
         """Outbound webhooks: the due deliveries are sent and recorded (app/webhooks_out/runner.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
         if self._webhooks is None:
@@ -393,6 +421,17 @@ class Worker:
         except Exception as exc:
             logger.error("crm push pass crashed: %s", exc.__class__.__name__)
 
+    def _notify_pass(self, token: str) -> None:
+        """Notifications out: the due messages are sent and recorded (app/notify_out/runner.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._notify is None:
+            return
+        try:
+            self._notify.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("notify pass crashed: %s", exc.__class__.__name__)
+
     def _google_calendar_pass(self, token: str) -> None:
         """Appointments to Google Calendar and busy times back (app/google_calendar/sync.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
         if self._google_calendar is None:
@@ -403,6 +442,17 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("google calendar pass crashed: %s", exc.__class__.__name__)
+
+    def _outlook_pass(self, token: str) -> None:
+        """Appointments to Outlook and busy times back (app/calendar_in/sync.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._outlook is None:
+            return
+        try:
+            self._outlook.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("outlook pass crashed: %s", exc.__class__.__name__)
 
     def _plivo_balance_pass(self, token: str) -> None:
         """The daily Plivo balance check (app/ops/plivo_balance.py). The database says whether a read is due, so most ticks do nothing. A failure here never fails the tick (a refused token does, so we sign in again)."""
@@ -568,6 +618,7 @@ def build_worker(settings: Settings) -> Worker:
     vapid = build_vapid(settings)
     repository = PostgrestSchedulerRepository(config.rest_url, config.anon_key)
     lead_sources = build_lead_sources(settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, build_key_ring(settings))
+    lead_sources = build_lead_sources(settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, build_key_ring(settings)) if settings.commerce == "on" else None
     return Worker(
         repository,
         adapter,
@@ -587,11 +638,14 @@ def build_worker(settings: Settings) -> Worker:
         orphan_calls=OrphanCalls.over_rpc(config.rest_url, config.anon_key, int(settings.telephony_max_call_s)),
         standups=StandupRunner(PostgrestAiTeamRepository(config.rest_url, config.anon_key)),
         google_calendar=build_google_calendar_sync(settings, config.rest_url, config.anon_key),
+        outlook=build_outlook_sync(settings, config.rest_url, config.anon_key),
         plivo_balance=build_plivo_balance(settings, config.rest_url, config.anon_key, adapter),
         token_expiry=build_token_expiry(settings, config.rest_url, config.anon_key),
         template_sync=build_template_sync(settings, config.rest_url, config.anon_key),
         webhooks=build_webhook_runner(settings, config.rest_url, config.anon_key),
         crm_push=build_crm_push_runner(settings, config.rest_url, config.anon_key),
+        notify=build_notify_runner(settings, config.rest_url, config.anon_key),
+        commerce=build_commerce_runner(settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, lead_sources),
         kyc_refresh=_kyc_refresh_for(settings, config),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         call_reconcile=(lambda tok: CallCharger(RpcClient(config.rest_url, config.anon_key), lambda: tok).reconcile()) if settings.billing_charge_calls else None,

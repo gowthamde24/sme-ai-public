@@ -509,6 +509,21 @@ class Settings(BaseSettings):
     # JOBS_GET_PAID: off (default) hides the "get paid" job templates (Get paid ships in v1.1).
     jobs: Literal["off", "on"] = "off"
     jobs_get_paid: Literal["off", "on"] = "off"
+    # Commerce and notifications (docs/contracts/commerce-notify.md). Each switch is off by
+    # default; production stays off until the owner's gate.
+    #   COMMERCE      Shopify and WooCommerce orders, abandoned carts, catalogue (app/commerce)
+    #   NOTIFY_OUT    Slack, Telegram, Teams messages (app/notify_out)
+    #   CALENDAR_IN   Calendly and Cal.com bookings in, Outlook calendar (app/calendar_in)
+    #   LEAD_FORM_TEMPLATES  Typeform, Tally, Jotform, Webflow, Google Ads, TradeIndia readers
+    # The first three need WORKSPACE_SECRETS (their keys live in Secret Manager).
+    commerce: Literal["off", "on"] = "off"
+    notify_out: Literal["off", "on"] = "off"
+    calendar_in: Literal["off", "on"] = "off"
+    lead_form_templates: Literal["off", "on"] = "off"
+    # Outlook calendar: the OAuth app Stack19 registers (commerce-notify.md section D). Missing:
+    # the card says "needs setup by us".
+    microsoft_oauth_client_id: SecretStr | None = None
+    microsoft_oauth_client_secret: SecretStr | None = None
     # Who speaks on a call: haiku (default, steady) | sarvam (Sarvam 105B first, ~320 ms faster
     # to the first word, behind a first-token deadline that falls back to Haiku).
     # Measured 31 Oct 2026: docs/runbooks/phone-model.md.

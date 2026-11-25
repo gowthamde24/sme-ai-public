@@ -1,0 +1,472 @@
+{
+ "note": "Each card shows how to send leads from one form tool to your lead address. A person who did not agree is still kept as a lead, but nobody is called or messaged until consent is asked.",
+ "templates": [
+  {
+   "id": "google_ads",
+   "name": "Google Ads lead form",
+   "group": "forms",
+   "channel": "json",
+   "docs": [
+    "https://developers.google.com/google-ads/webhook/docs/implementation"
+   ],
+   "steps": [
+    "In Google Ads, open the lead form asset (or the lead form extension) of your campaign and choose 'Webhook integration' under 'Lead delivery option'.",
+    "Paste this address as the Webhook URL: {ADDRESS}",
+    "In the Key box type any word you like. Google sends it with every lead; we do not need it, because the secret address already protects this door.",
+    "Add one yes/no question to the form: the word 'consent' must be in its name, and its text is the sentence the person agrees to (for example: I agree that Sree Silks may call or WhatsApp me about my enquiry).",
+    "Press 'Send test data' in Google Ads. A test lead appears in your Leads within a minute. A person who did not agree is still kept as a lead, but we ask first before we call."
+   ],
+   "sample": {
+    "lead_id": "GA-9000-0001",
+    "api_version": "1.0",
+    "form_id": 123456789012,
+    "campaign_id": 123456789013,
+    "gcl_id": "GCL-SAMPLE-0001",
+    "google_key": "any-word",
+    "is_test": false,
+    "lead_submit_time": "{NOW}",
+    "user_column_data": [
+     {
+      "column_id": "FULL_NAME",
+      "column_name": "Full Name",
+      "string_value": "Asha Rao"
+     },
+     {
+      "column_id": "PHONE_NUMBER",
+      "column_name": "Phone Number",
+      "string_value": "+919000011101"
+     },
+     {
+      "column_id": "EMAIL",
+      "column_name": "User Email",
+      "string_value": "asha@example.test"
+     },
+     {
+      "column_id": "CITY",
+      "column_name": "City",
+      "string_value": "Hyderabad"
+     },
+     {
+      "column_id": "CONSENT",
+      "column_name": "I agree that Sree Silks may call or WhatsApp me about my enquiry",
+      "string_value": "yes"
+     }
+    ]
+   },
+   "mapping": {
+    "user_column_data FULL_NAME (or FIRST_NAME + LAST_NAME)": "name",
+    "user_column_data PHONE_NUMBER (or WORK_PHONE)": "phone",
+    "user_column_data EMAIL (or WORK_EMAIL)": "email",
+    "user_column_data CITY": "city",
+    "lead_id": "external_id (the same lead sent twice is one lead)",
+    "a column with 'consent' in its id or name": "consent (its column_name is the wording the person saw)",
+    "lead_submit_time": "consent_at (else the time we received it)",
+    "other columns": "message"
+   },
+   "consent": "The form needs one yes/no question with 'consent' in its name. Google sends the question's own text as column_name (a deprecated field that may be missing): when it is missing the lead is kept but nobody is called until consent is asked.",
+   "verify": [
+    "How a custom question appears in user_column_data (its column_id is not documented as CONSENT: check one real test lead and rename the question if needed).",
+    "Whether column_name is still sent (the documentation calls it deprecated)."
+   ]
+  },
+  {
+   "id": "typeform",
+   "name": "Typeform",
+   "group": "forms",
+   "channel": "json",
+   "docs": [
+    "https://www.typeform.com/developers/webhooks/",
+    "https://www.typeform.com/developers/webhooks/example-payload/",
+    "https://www.typeform.com/developers/responses/JSON-response-explanation/"
+   ],
+   "steps": [
+    "In your typeform open Connect, then Webhooks, then 'Add a webhook'.",
+    "Paste this address as the Destination URL: {ADDRESS}. It must start with https.",
+    "Add a Phone number question and an Email question. In the question's settings set its reference to 'phone' and 'email' (the reference is not shown to the person).",
+    "Add a Yes/No or Legal question whose reference is 'consent' and whose text is the sentence the person agrees to (for example: I agree that Sree Silks may call or WhatsApp me about my enquiry).",
+    "Switch the webhook on and press 'View deliveries', then 'Send test request'. A test lead appears in your Leads."
+   ],
+   "sample": {
+    "event_id": "01HXSAMPLE0001",
+    "event_type": "form_response",
+    "form_response": {
+     "form_id": "abcDEF12",
+     "token": "tf-9000-0001",
+     "landed_at": "{NOW}",
+     "submitted_at": "{NOW}",
+     "hidden": {},
+     "definition": {
+      "id": "abcDEF12",
+      "title": "Enquiry",
+      "fields": [
+       {
+        "id": "f1",
+        "title": "Your name",
+        "type": "short_text",
+        "ref": "name"
+       },
+       {
+        "id": "f2",
+        "title": "Phone number",
+        "type": "phone_number",
+        "ref": "phone"
+       },
+       {
+        "id": "f3",
+        "title": "Email",
+        "type": "email",
+        "ref": "email"
+       },
+       {
+        "id": "f4",
+        "title": "What do you need?",
+        "type": "long_text",
+        "ref": "message"
+       },
+       {
+        "id": "f5",
+        "title": "I agree that Sree Silks may call or WhatsApp me about my enquiry",
+        "type": "legal",
+        "ref": "consent"
+       }
+      ]
+     },
+     "answers": [
+      {
+       "type": "text",
+       "text": "Ravi Kumar",
+       "field": {
+        "id": "f1",
+        "type": "short_text",
+        "ref": "name"
+       }
+      },
+      {
+       "type": "phone_number",
+       "phone_number": "+919000011102",
+       "field": {
+        "id": "f2",
+        "type": "phone_number",
+        "ref": "phone"
+       }
+      },
+      {
+       "type": "email",
+       "email": "ravi@example.test",
+       "field": {
+        "id": "f3",
+        "type": "email",
+        "ref": "email"
+       }
+      },
+      {
+       "type": "text",
+       "text": "Price list for silk sarees please",
+       "field": {
+        "id": "f4",
+        "type": "long_text",
+        "ref": "message"
+       }
+      },
+      {
+       "type": "boolean",
+       "boolean": true,
+       "field": {
+        "id": "f5",
+        "type": "legal",
+        "ref": "consent"
+       }
+      }
+     ]
+    }
+   },
+   "mapping": {
+    "answer type phone_number": "phone",
+    "answer type email": "email",
+    "text answer whose reference or question has 'name'": "name",
+    "text answer whose reference or question has 'message', 'requirement' or 'enquiry'": "message",
+    "a yes/no or legal answer with 'consent' in its reference or question": "consent (the question's text is the wording the person saw)",
+    "form_response.submitted_at": "consent_at",
+    "form_response.token": "external_id",
+    "definition.title": "the form's name kept with the consent",
+    "other answers": "message"
+   },
+   "consent": "One Yes/No or Legal question with the reference 'consent'. A webhook without it still makes a lead; we ask before calling.",
+   "verify": [
+    "The 'phone_number' answer type appears in Typeform's JSON response explanation page and in third-party write-ups but not in the answer-type table of the webhook example page: check one real delivery.",
+    "Whether Typeform's webhook test request carries a real answers list."
+   ]
+  },
+  {
+   "id": "tally",
+   "name": "Tally",
+   "group": "forms",
+   "channel": "json",
+   "docs": [
+    "https://tally.so/help/webhooks"
+   ],
+   "steps": [
+    "In Tally open your form, then Integrations, then Webhooks, then 'Connect'.",
+    "Paste this address as the Endpoint URL: {ADDRESS}",
+    "Add a Phone number question and an Email question (Tally sends their type, so no naming is needed).",
+    "Add a Checkboxes question with one option, the sentence the person agrees to (for example: I agree that Sree Silks may call or WhatsApp me about my enquiry). Put the word 'consent' in the question's label.",
+    "Press 'Test' in Tally. A test lead appears in your Leads. A form without the consent question still makes a lead; we ask before calling."
+   ],
+   "sample": {
+    "eventId": "tally-evt-9000-0001",
+    "eventType": "FORM_RESPONSE",
+    "createdAt": "{NOW}",
+    "data": {
+     "responseId": "tally-resp-9000-0001",
+     "submissionId": "tally-sub-9000-0001",
+     "respondentId": "r1",
+     "formId": "wFx9Zl",
+     "formName": "Enquiry",
+     "createdAt": "{NOW}",
+     "fields": [
+      {
+       "key": "question_a",
+       "label": "Your name",
+       "type": "INPUT_TEXT",
+       "value": "Meena Iyer"
+      },
+      {
+       "key": "question_b",
+       "label": "Phone",
+       "type": "INPUT_PHONE_NUMBER",
+       "value": "+919000011103"
+      },
+      {
+       "key": "question_c",
+       "label": "Email",
+       "type": "INPUT_EMAIL",
+       "value": "meena@example.test"
+      },
+      {
+       "key": "question_d",
+       "label": "What do you need?",
+       "type": "TEXTAREA",
+       "value": "Bridal collection, 5 pieces"
+      },
+      {
+       "key": "question_e",
+       "label": "Consent",
+       "type": "CHECKBOXES",
+       "value": [
+        "opt_1"
+       ],
+       "options": [
+        {
+         "id": "opt_1",
+         "text": "I agree that Sree Silks may call or WhatsApp me about my enquiry"
+        }
+       ]
+      },
+      {
+       "key": "question_e_opt_1",
+       "label": "Consent (I agree that Sree Silks may call or WhatsApp me about my enquiry)",
+       "type": "CHECKBOXES",
+       "value": true
+      }
+     ]
+    }
+   },
+   "mapping": {
+    "INPUT_PHONE_NUMBER": "phone",
+    "INPUT_EMAIL": "email",
+    "INPUT_TEXT whose label has 'name'": "name",
+    "TEXTAREA": "message",
+    "a CHECKBOXES question with 'consent' in its label": "consent (the ticked option's text is the wording the person saw)",
+    "data.createdAt": "consent_at",
+    "data.responseId": "external_id",
+    "data.formName": "the form's name kept with the consent",
+    "HIDDEN_FIELDS and CALCULATED_FIELDS": "ignored"
+   },
+   "consent": "One Checkboxes question with 'consent' in its label; its ticked option is the sentence the person agreed to.",
+   "verify": [
+    "The exact label Tally gives a single-option checkbox entry (the documentation shows 'Checkboxes (option text)' for its own example question): check one real delivery."
+   ]
+  },
+  {
+   "id": "jotform",
+   "name": "Jotform",
+   "group": "forms",
+   "channel": "multipart",
+   "docs": [
+    "https://www.jotform.com/help/245-how-to-send-submission-data-via-a-webhook/",
+    "https://www.jotform.com/answers/17741001-webhook-integration-recieving-multipart-form-data-instead-of-json"
+   ],
+   "steps": [
+    "In the Jotform Form Builder open Settings, then Integrations, search for Webhooks and click it.",
+    "Paste this address in the 'Add WebHook' box: {ADDRESS}/jotform . Jotform sends its answers as a multipart form, which this address (and only this one) reads.",
+    "Click 'Complete Integration', then 'Finish'.",
+    "In the form, give the phone field the unique name 'phone', the e-mail field 'email', the name field 'name' and the message field 'message' (Properties, then Advanced, then Unique Name).",
+    "Add a checkbox with one option, the sentence the person agrees to (for example: I agree that Sree Silks may call or WhatsApp me about my enquiry), and give it the unique name 'consent'. Submit the form once yourself: a lead appears in your Leads."
+   ],
+   "sample": {
+    "formID": "9000000000001",
+    "submissionID": "9000000000002",
+    "rawRequest": {
+     "q3_name": {
+      "first": "Kiran",
+      "last": "Reddy"
+     },
+     "q4_phone": {
+      "full": "+91 90000 11104"
+     },
+     "q5_email": "kiran@example.test",
+     "q6_message": "Need 20 pieces for a wedding",
+     "q7_consent": [
+      "I agree that Sree Silks may call or WhatsApp me about my enquiry"
+     ]
+    }
+   },
+   "mapping": {
+    "q<number>_name (first and last)": "name",
+    "q<number>_phone": "phone",
+    "q<number>_email": "email",
+    "q<number>_message": "message",
+    "q<number>_consent (a checkbox)": "consent (the ticked option's text is the wording the person saw; the time is when we received it)",
+    "submissionID": "external_id (verify)"
+   },
+   "consent": "One checkbox field whose unique name contains 'consent'. Jotform sends no time of its own that we know of, so the consent time is when we received the submission.",
+   "verify": [
+    "Jotform's help page names only rawRequest; formID and submissionID are seen in third-party write-ups, not in Jotform's documentation.",
+    "How the Phone field's answer is shaped inside rawRequest (full, or area and phone): both are read.",
+    "How a checkbox answer is shaped in rawRequest (a list of the ticked options' text is assumed).",
+    "Jotform's 5-second timeout for a webhook."
+   ]
+  },
+  {
+   "id": "linkedin_lead_gen",
+   "name": "LinkedIn Lead Gen Forms (through Zapier or Make)",
+   "group": "forms",
+   "channel": "json",
+   "docs": [
+    "https://help.zapier.com/hc/en-us/articles/8496049749133-How-to-get-started-with-LinkedIn-Ads-on-Zapier"
+   ],
+   "steps": [
+    "In Zapier make a Zap: trigger 'LinkedIn Lead Gen Forms', event 'New Lead Gen Form Response (Sponsored content)' (or Organic content for a company page). You need the Account Manager or Campaign Manager role on the ads account.",
+    "Action: 'Webhooks by Zapier', event 'POST', payload type 'Json'. URL: {ADDRESS}",
+    "Under Data add these names and pick the LinkedIn answer for each: name (first name and last name from LinkedIn, one after the other), phone, email, message (company and job title if you like), lead_id (the response's id).",
+    "Add consent = yes only if your LinkedIn form asks the person for permission; add consent_text = the exact sentence the person saw on the form; add consent_at = the time of the response from the trigger.",
+    "In Make the same recipe is: module 'LinkedIn Lead Gen Forms' then module 'HTTP, Make a request' (POST, body type Raw, content type JSON). Test the Zap with a test lead."
+   ],
+   "sample": {
+    "name": "Divya Menon",
+    "phone": "+919000011105",
+    "email": "divya@example.test",
+    "message": "Acme Foods, Purchase Manager",
+    "lead_id": "li-9000-0001",
+    "consent": "yes",
+    "consent_text": "I agree that Sree Silks may call or WhatsApp me about my enquiry",
+    "consent_at": "{NOW}"
+   },
+   "mapping": {
+    "your Zap's Data name": "our field",
+    "name": "name (first name and last name together; or send first_name and last_name and we join them)",
+    "phone": "phone",
+    "email": "email",
+    "message": "message",
+    "lead_id": "external_id",
+    "consent, consent_text, consent_at": "the consent evidence"
+   },
+   "consent": "LinkedIn's own form has its consent and privacy text. Copy the exact sentence into consent_text and send consent=yes only for responses that agreed. Without them the lead is kept and we ask before calling.",
+   "verify": [
+    "Zapier does not publish the output field names of the LinkedIn Lead Gen Forms trigger: choose them in the Zap editor with a real test lead.",
+    "Whether the trigger gives a 'consent' answer for the form's legal checkbox, and the response's time.",
+    "Make's LinkedIn module names."
+   ]
+  },
+  {
+   "id": "webflow",
+   "name": "Webflow forms",
+   "group": "forms",
+   "channel": "json",
+   "docs": [
+    "https://developers.webflow.com/data/reference/webhooks/events/form-submission",
+    "https://developers.webflow.com/data/docs/working-with-webhooks",
+    "https://help.webflow.com/hc/en-us/articles/33961347548563-How-do-I-add-forms-in-Webflow"
+   ],
+   "steps": [
+    "In Webflow open Site settings, then Apps and integrations, then Webhooks, then 'Add webhook'. Trigger type: Form submission.",
+    "Paste this address as the Webhook URL: {ADDRESS}",
+    "Webhooks made in the dashboard cannot be signed; the secret address protects this door, so keep it private.",
+    "In the form give the fields the names Name, Phone, Email and Message. Add a checkbox whose name is the sentence the person agrees to and starts with the word Consent (for example: Consent: I agree that Sree Silks may call or WhatsApp me about my enquiry).",
+    "Publish the site and submit the form once yourself: a lead appears in your Leads."
+   ],
+   "sample": {
+    "triggerType": "form_submission",
+    "payload": {
+     "name": "Enquiry",
+     "siteId": "site9000",
+     "data": {
+      "Name": "Suresh Babu",
+      "Phone": "+919000011106",
+      "Email": "suresh@example.test",
+      "Message": "Do you stitch blouses?",
+      "Consent: I agree that Sree Silks may call or WhatsApp me about my enquiry": "true"
+     },
+     "schema": [
+      {
+       "fieldName": "Name",
+       "fieldType": "FormTextInput",
+       "fieldElementId": "e1"
+      }
+     ],
+     "submittedAt": "{NOW}",
+     "id": "wf-sub-9000-0001",
+     "formId": "wf-form-9000",
+     "formElementId": null
+    }
+   },
+   "mapping": {
+    "data field with 'phone' or 'mobile' in its name": "phone",
+    "data field with 'email'": "email",
+    "data field with 'name'": "name",
+    "data field with 'message' or 'requirement'": "message",
+    "a checkbox whose name has 'consent'": "consent (the checkbox's name is the wording, or a hidden field 'consent_text' holds it)",
+    "payload.submittedAt": "consent_at",
+    "payload.id": "external_id (verify)",
+    "payload.name": "the form's name kept with the consent"
+   },
+   "consent": "One checkbox whose field name contains 'consent' and is the sentence itself (or a hidden field named consent_text with the sentence).",
+   "verify": [
+    "Webflow's documentation does not say how a ticked checkbox appears in payload.data (true, on or yes are all read).",
+    "Which of payload.id and payload.formId identifies the submission (the documentation words both oddly).",
+    "Whether a Webflow form can hold a hidden input without custom code."
+   ]
+  },
+  {
+   "id": "tradeindia",
+   "name": "TradeIndia lead e-mails",
+   "group": "mail",
+   "channel": "mail",
+   "docs": [
+    "https://www.tradeindia.com/about-us/user-guide.html"
+   ],
+   "steps": [
+    "In TradeIndia open your account settings and make sure inquiry e-mails go to one e-mail address you control.",
+    "Forward those e-mails to your Stack19 e-mail lead address (Lead sources, E-mail forwarding), or set that address as the inquiry e-mail.",
+    "Each e-mail is read by its 'Label: value' lines (buyer name, mobile, e-mail, city, product requirement). An e-mail without a number or an address is kept in the unparsed list for you to read.",
+    "TradeIndia hides some buyer contact details behind its own login: such an e-mail has no number and stays in the unparsed list."
+   ],
+   "sample": {
+    "sender": "inquiry@tradeindia.com",
+    "subject": "New buy inquiry on TradeIndia",
+    "text": "Buyer Name: Anil Sharma\nMobile No: +91 90000 11107\nEmail: anil@example.test\nCity: Surat\nProduct Requirement: Silk saree, 50 pieces\nQuantity: 50 pieces\n"
+   },
+   "mapping": {
+    "Buyer Name, Contact Person, Name": "name",
+    "Mobile, Mobile No, Phone": "phone",
+    "Email": "email",
+    "City, Location": "city",
+    "Product, Product Requirement, Requirement, Quantity": "message"
+   },
+   "consent": "A portal e-mail carries no consent: the lead is kept and we ask before calling.",
+   "verify": [
+    "TradeIndia does not publish its lead e-mail layout: the labels above are the usual ones, NOT from a real mail. Forward one real mail and check how it is read."
+   ]
+  }
+ ]
+}

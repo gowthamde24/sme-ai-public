@@ -64,6 +64,10 @@ from app.business_kyc.routes import router as business_kyc_router
 from app.business_kyc.wiring import build_business_kyc
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
+from app.calendar_in import links as booking_links
+from app.calendar_in.routes import member_router as calendar_in_member_router
+from app.calendar_in.routes import public_router as calendar_in_public_router
+from app.calendar_in.wiring import build_calendar_in
 from app.callsettings.repository import PostgrestCallSettingsRepository
 from app.callsettings.routes import router as call_settings_router
 from app.callsettings.service import CallSettingsService
@@ -74,6 +78,10 @@ from app.catalogue import errors as catalogue_errors
 from app.catalogue.repository import PostgrestCatalogueRepository
 from app.catalogue.routes import router as catalogue_router
 from app.catalogue.storage import HttpStorageClient
+from app.commerce import facts as commerce_facts
+from app.commerce.routes import public_router as commerce_public_router
+from app.commerce.routes import router as commerce_router
+from app.commerce.wiring import build_commerce
 from app.config import AuthConfig, ConfigurationError, Settings, build_auth_config, get_settings
 from app.connectors.repository import PostgrestConnectorsRepository
 from app.connectors.routes import router as connectors_router
@@ -173,6 +181,9 @@ from app.lead_finder.service import LeadFinderService
 from app.lead_profile.repository import PostgrestLeadProfileRepository
 from app.lead_profile.routes import router as lead_profile_router
 from app.lead_profile.service import LeadProfileService
+from app.lead_sources import form_templates
+from app.lead_sources.form_template_routes import public_router as form_template_intake_router
+from app.lead_sources.form_template_routes import router as form_template_router
 from app.lead_sources.routes import public_router as lead_intake_router
 from app.lead_sources.routes import router as lead_sources_router
 from app.lead_sources.wiring import build_lead_sources
@@ -197,6 +208,8 @@ from app.materials.routes import router as materials_router
 from app.notifications.routes import me_router as notifications_me_router
 from app.notifications.routes import router as notifications_router
 from app.notifications.wiring import build_notifications
+from app.notify_out.routes import router as notify_out_router
+from app.notify_out.wiring import build_notify_out
 from app.numbers.routes import router as numbers_router
 from app.numbers.wiring import build_numbers
 from app.observability.sentry import init_sentry
@@ -560,6 +573,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_import_v2=True,
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
         workspace_secrets=workspace_secrets,
+        calendar_in=build_calendar_in(
+            settings, config.rest_url, config.supabase_url, config.anon_key, workspace_secrets
+        ),
         google_calendar=build_google_calendar(
             settings, config.rest_url, config.supabase_url, config.anon_key, workspace_secrets
         ),
@@ -581,6 +597,16 @@ def build_runtime(settings: Settings) -> Runtime | None:
             settings, config.rest_url, config.anon_key, workspace_secrets
         ),
         crm_push=build_crm_push(settings, config.rest_url, config.anon_key, workspace_secrets),
+        commerce=build_commerce(
+            settings,
+            config.rest_url,
+            f"{config.supabase_url}/auth/v1",
+            config.anon_key,
+            workspace_secrets,
+        ),
+        notify_out=build_notify_out(
+            settings, config.rest_url, config.anon_key, workspace_secrets
+        ),
         lead_finder=LeadFinderService(
             PostgrestLeadFinderRepository(config.rest_url, config.anon_key),
             mode=settings.lead_finder,
@@ -1356,6 +1382,9 @@ def _tasks_service(settings: Settings, config: AuthConfig, phone_inbound: Any) -
 def create_app(settings: Settings | None = None, *, runtime: Runtime | None = None) -> FastAPI:
     settings = settings or get_settings()
     runtime = runtime if runtime is not None else build_runtime(settings)
+    form_templates.ENABLED = settings.lead_form_templates == "on"  # LEAD_FORM_TEMPLATES
+    commerce_facts.ENABLED = settings.commerce == "on"  # COMMERCE: calls look up orders
+    booking_links.PROVIDER = runtime.calendar_in.booking_link if runtime is not None and runtime.calendar_in is not None else None
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
@@ -1665,6 +1694,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(calendar_public_router)
     app.include_router(google_calendar_member_router)
     app.include_router(google_calendar_public_router)
+    app.include_router(calendar_in_member_router)
+    app.include_router(calendar_in_public_router)
     app.include_router(policy_router)
     app.include_router(privacy_me_router)
     app.include_router(privacy_router)
@@ -1680,6 +1711,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_templates_router)
     app.include_router(lead_playbook_router)
     app.include_router(knowledge_router)
+    app.include_router(form_template_router)
+    app.include_router(form_template_intake_router)
     app.include_router(lead_sources_router)
     app.include_router(assistant_work_router)
     app.include_router(talk_training_router)
@@ -1693,6 +1726,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(developer_api_router)
     app.include_router(webhooks_out_router)
     app.include_router(crm_push_router)
+    app.include_router(notify_out_router)
+    app.include_router(commerce_router)
+    app.include_router(commerce_public_router)
     app.include_router(developer_v1_router)
     app.include_router(jobs_router)
     app.include_router(jobs_describe_router)
