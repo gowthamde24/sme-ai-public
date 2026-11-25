@@ -65,6 +65,7 @@ def build_lead_sources(settings: Settings, rest_url: str, auth_url: str, anon_ke
         public_base_url=base,
         service_account_email=settings.google_sheets_service_account_email,
         indiamart_available=settings.indiamart_provider != "off" or (settings.workspace_secrets or "off") != "off",   # the installation's key, or each workspace's own
+        indiamart_push=settings.indiamart_push == "on",
         after_arrival=first_touch_runner(settings, rest_url, anon_key),
     )
 

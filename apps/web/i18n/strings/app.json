@@ -67445,10 +67445,10 @@
   }
  },
  "lsrc.card.portals.body": {
-  "en": "Forward the portal's lead e-mails to your own address. We read them and add the lead.",
-  "te": "పోర్టల్ లీడ్ ఈమెయిల్స్‌ను మీ స్వంత అడ్రస్‌కి ఫార్వర్డ్ చేయండి. మేము చదివి లీడ్ చేరుస్తాం.",
-  "hi": "पोर्टल की लीड ईमेल अपने पते पर फ़ॉरवर्ड करें। हम उन्हें पढ़कर लीड जोड़ देंगे।",
-  "kn": "ಪೋರ್ಟಲ್‌ನ ಲೀಡ್ ಇಮೇಲ್‌ಗಳನ್ನು ನಿಮ್ಮ ವಿಳಾಸಕ್ಕೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ. ನಾವು ಓದಿ ಲೀಡ್ ಸೇರಿಸುತ್ತೇವೆ.",
+  "en": "Set this address as the e-mail where your portal sends leads. Nothing to send on by hand: we read each mail and add the lead.",
+  "te": "మీ పోర్టల్ లీడ్స్ పంపే ఈమెయిల్‌గా ఈ అడ్రస్ పెట్టండి. చేత్తో ఏమీ పంపక్కర్లేదు, ప్రతి ఈమెయిల్ చదివి లీడ్ చేరుస్తాం.",
+  "hi": "अपने पोर्टल के लीड ई-मेल की जगह यह address डाल दें। हाथ से कुछ भेजना नहीं है, हम हर ई-मेल पढ़कर लीड जोड़ देंगे।",
+  "kn": "ನಿಮ್ಮ ಪೋರ್ಟಲ್ ಲೀಡ್ಸ್ ಕಳುಹಿಸುವ ಇಮೇಲ್ ಆಗಿ ಈ address ಹಾಕಿ. ಕೈಯಾರೆ ಏನೂ ಕಳುಹಿಸಬೇಕಿಲ್ಲ, ಪ್ರತಿ ಇಮೇಲ್ ಓದಿ ಲೀಡ್ ಸೇರಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -67819,10 +67819,10 @@
   }
  },
  "lsrc.secret.email": {
-  "en": "E-mail address to forward to",
-  "te": "ఫార్వర్డ్ చేయాల్సిన ఈమెయిల్ అడ్రస్",
-  "hi": "जिस पते पर फ़ॉरवर्ड करना है वह ईमेल",
-  "kn": "ಫಾರ್ವರ್ಡ್ ಮಾಡಬೇಕಾದ ಇಮೇಲ್ ವಿಳಾಸ",
+  "en": "Your lead e-mail address",
+  "te": "మీ లీడ్ ఈమెయిల్ అడ్రస్",
+  "hi": "आपका लीड ई-मेल address",
+  "kn": "ನಿಮ್ಮ ಲೀಡ್ ಇಮೇಲ್ address",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -75266,10 +75266,10 @@
   }
  },
  "sc.email_forward.what": {
-  "en": "Forward their lead e-mails to your own address and each one becomes a lead.",
-  "te": "వారి లీడ్ ఈమెయిల్‌లను మీ చిరునామాకు ఫార్వర్డ్ చేయండి, ప్రతిదీ ఒక లీడ్ అవుతుంది.",
-  "hi": "उनके लीड ई-मेल अपने पते पर फ़ॉरवर्ड करें, हर एक लीड बन जाता है।",
-  "kn": "ಅವರ ಲೀಡ್ ಇಮೇಲ್‌ಗಳನ್ನು ನಿಮ್ಮ ವಿಳಾಸಕ್ಕೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ, ಪ್ರತಿಯೊಂದೂ ಲೀಡ್ ಆಗುತ್ತದೆ.",
+  "en": "Set this address as the e-mail where your portal sends leads. Each mail becomes a lead by itself.",
+  "te": "మీ పోర్టల్ లీడ్స్ పంపే ఈమెయిల్‌గా ఈ అడ్రస్ పెట్టండి. ప్రతి ఈమెయిల్ దానంతట అదే లీడ్ అవుతుంది.",
+  "hi": "अपने पोर्टल के लीड ई-मेल की जगह यह address डालें। हर ई-मेल अपने आप लीड बन जाता है।",
+  "kn": "ನಿಮ್ಮ ಪೋರ್ಟಲ್ ಲೀಡ್ಸ್ ಕಳುಹಿಸುವ ಇಮೇಲ್ ಆಗಿ ಈ address ಹಾಕಿ. ಪ್ರತಿ ಇಮೇಲ್ ತಾನಾಗಿ ಲೀಡ್ ಆಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -75651,10 +75651,10 @@
   }
  },
  "sc.mail.how": {
-  "en": "Forward each lead e-mail from the portal to this address.",
-  "te": "పోర్టల్ నుంచి వచ్చే ప్రతి లీడ్ ఈమెయిల్‌ను ఈ చిరునామాకు ఫార్వర్డ్ చేయండి.",
-  "hi": "पोर्टल से आने वाला हर लीड ई-मेल इस पते पर फ़ॉरवर्ड करें।",
-  "kn": "ಪೋರ್ಟಲ್‌ನಿಂದ ಬರುವ ಪ್ರತಿ ಲೀಡ್ ಇಮೇಲ್ ಅನ್ನು ಈ ವಿಳಾಸಕ್ಕೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ.",
+  "en": "In your portal's account settings, set this as the e-mail that receives your leads. Only if the portal mails your own Gmail: make the Gmail rule once, shown below.",
+  "te": "మీ పోర్టల్ అకౌంట్ settings లో లీడ్స్ వచ్చే ఈమెయిల్‌గా దీన్ని పెట్టండి. పోర్టల్ మీ సొంత Gmail కే పంపితేనే: కింద చూపిన Gmail rule ఒక్కసారి చేయండి.",
+  "hi": "अपने पोर्टल की अकाउंट settings में लीड मिलने वाले ई-मेल की जगह यह डालें। पोर्टल सिर्फ़ आपके अपने Gmail पर भेजता हो तभी: नीचे दिया Gmail rule एक बार बना लें।",
+  "kn": "ನಿಮ್ಮ ಪೋರ್ಟಲ್ ಅಕೌಂಟ್ settings ನಲ್ಲಿ ಲೀಡ್ಸ್ ಬರುವ ಇಮೇಲ್ ಆಗಿ ಇದನ್ನು ಹಾಕಿ. ಪೋರ್ಟಲ್ ನಿಮ್ಮ ಸ್ವಂತ Gmail ಗೆ ಮಾತ್ರ ಕಳುಹಿಸುವುದಾದರೆ: ಕೆಳಗೆ ತೋರಿಸಿದ Gmail rule ಒಂದು ಬಾರಿ ಮಾಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -75662,10 +75662,10 @@
   }
  },
  "sc.mail.address": {
-  "en": "Your forwarding address",
-  "te": "మీ ఫార్వర్డింగ్ చిరునామా",
-  "hi": "आपका फ़ॉरवर्डिंग पता",
-  "kn": "ನಿಮ್ಮ ಫಾರ್ವರ್ಡಿಂಗ್ ವಿಳಾಸ",
+  "en": "Your lead e-mail address",
+  "te": "మీ లీడ్ ఈమెయిల్ అడ్రస్",
+  "hi": "आपका लीड ई-मेल address",
+  "kn": "ನಿಮ್ಮ ಲೀಡ್ ಇಮೇಲ್ address",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -76905,10 +76905,10 @@
   }
  },
  "sc.mail.code": {
-  "en": "Gmail asks for this code to confirm forwarding",
-  "te": "ఫార్వార్డింగ్ నిర్ధారణకు జీమెయిల్ ఈ కోడ్ అడుగుతుంది",
-  "hi": "फ़ॉरवर्डिंग की पुष्टि के लिए जीमेल यह कोड माँगता है",
-  "kn": "ಫಾರ್ವರ್ಡಿಂಗ್ ದೃಢೀಕರಣಕ್ಕೆ ಜೀಮೇಲ್ ಈ ಕೋಡ್ ಕೇಳುತ್ತದೆ",
+  "en": "Gmail asks for this code to confirm the rule",
+  "te": "రూల్ నిర్ధారణకు జీమెయిల్ ఈ కోడ్ అడుగుతుంది",
+  "hi": "रूल की पुष्टि के लिए जीमेल यह कोड माँगता है",
+  "kn": "ರೂಲ್ ದೃಢೀಕರಣಕ್ಕೆ ಜೀಮೇಲ್ ಈ ಕೋಡ್ ಕೇಳುತ್ತದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -77774,10 +77774,10 @@
   }
  },
  "ld.source.email_forward": {
-  "en": "Forwarded e-mail",
-  "te": "ఫార్వర్డ్ చేసిన ఈమెయిల్",
-  "hi": "फ़ॉरवर्ड किया गया ईमेल",
-  "kn": "ಫಾರ್ವರ್ಡ್ ಮಾಡಿದ ಇಮೇಲ್",
+  "en": "Portal e-mail",
+  "te": "పోర్టల్ ఈమెయిల్",
+  "hi": "पोर्टल ई-मेल",
+  "kn": "ಪೋರ್ಟಲ್ ಇಮೇಲ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -109058,10 +109058,10 @@
   }
  },
  "scc.off.email_forward": {
-  "en": "Forward your portal e-mails here. Ask us to switch this on.",
-  "te": "మీ పోర్టల్ ఈమెయిల్స్‌ను ఇక్కడికి ఫార్వర్డ్ చేయండి. ఆన్ చేయమని మమ్మల్ని అడగండి.",
-  "hi": "अपने पोर्टल के ई-मेल यहाँ फ़ॉरवर्ड करें। हमसे इसे चालू करने को कहें।",
-  "kn": "ನಿಮ್ಮ ಪೋರ್ಟಲ್ ಇಮೇಲ್‌ಗಳನ್ನು ಇಲ್ಲಿಗೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ. ಆನ್ ಮಾಡಲು ನಮ್ಮನ್ನು ಕೇಳಿ.",
+  "en": "Your portal leads arrive here by e-mail. Ask us to switch this on.",
+  "te": "మీ పోర్టల్ లీడ్స్ ఇక్కడికి ఈమెయిల్‌తో వస్తాయి. ఆన్ చేయమని మమ్మల్ని అడగండి.",
+  "hi": "आपके पोर्टल की लीड यहाँ ई-मेल से आती हैं। हमसे इसे चालू करने को कहें।",
+  "kn": "ನಿಮ್ಮ ಪೋರ್ಟಲ್ ಲೀಡ್ಸ್ ಇಲ್ಲಿಗೆ ಇಮೇಲ್ ಮೂಲಕ ಬರುತ್ತವೆ. ಆನ್ ಮಾಡಲು ನಮ್ಮನ್ನು ಕೇಳಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -134479,6 +134479,72 @@
   "te": "టెస్ట్ డేటా. డబ్బులు ఏమీ కట్ అవ్వవు.",
   "hi": "टेस्ट डेटा। कुछ नहीं कटता।",
   "kn": "ಟೆಸ್ಟ್ ಡೇಟಾ. ಯಾವ ಹಣವೂ ಕಟ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ld.source.sulekha": {
+  "en": "Sulekha",
+  "te": "సులేఖ",
+  "hi": "सुलेखा",
+  "kn": "ಸುಲೇಖಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ld.source.tradeindia": {
+  "en": "TradeIndia",
+  "te": "ట్రేడ్‌ఇండియా",
+  "hi": "ट्रेडइंडिया",
+  "kn": "ಟ್ರೇಡ್‌ಇಂಡಿಯಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.sulekha": {
+  "en": "Sulekha",
+  "te": "సులేఖ (Sulekha)",
+  "hi": "सुलेखा (Sulekha)",
+  "kn": "ಸುಲೇಖಾ (Sulekha)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.tradeindia": {
+  "en": "TradeIndia",
+  "te": "ట్రేడ్‌ఇండియా (TradeIndia)",
+  "hi": "ट्रेडइंडिया (TradeIndia)",
+  "kn": "ಟ್ರೇಡ್‌ಇಂಡಿಯಾ (TradeIndia)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.needs_new_key": {
+  "en": "Needs a new key",
+  "te": "కొత్త key కావాలి",
+  "hi": "नई key चाहिए",
+  "kn": "ಹೊಸ key ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.problem.indiamart_key_expired": {
+  "en": "IndiaMART no longer accepts your key, so no new leads are coming in. A key lasts 7 days: paste a new one and they start again.",
+  "te": "IndiaMART మీ key ని ఇక తీసుకోవడం లేదు, కాబట్టి కొత్త లీడ్స్ రావడం లేదు. key 7 రోజులే పనిచేస్తుంది: కొత్తది పేస్ట్ చేస్తే మళ్ళీ వస్తాయి.",
+  "hi": "IndiaMART अब आपकी key नहीं ले रहा, इसलिए नई लीड नहीं आ रहीं। key 7 दिन चलती है: नई paste करें, फिर आने लगेंगी।",
+  "kn": "IndiaMART ಈಗ ನಿಮ್ಮ key ಅನ್ನು ಸ್ವೀಕರಿಸುತ್ತಿಲ್ಲ, ಹಾಗಾಗಿ ಹೊಸ ಲೀಡ್ಸ್ ಬರುತ್ತಿಲ್ಲ. key 7 ದಿನ ಮಾತ್ರ ಇರುತ್ತದೆ: ಹೊಸದನ್ನು paste ಮಾಡಿದರೆ ಮತ್ತೆ ಬರುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

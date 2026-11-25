@@ -507,6 +507,7 @@ select is(
         'app.call_openings_worker',   -- the call-openings bucket's storage rules (migration 20261231310000): only the telephony worker reads and writes it   -- Needs you (migration 20261231280000): the Cartesia cap's warnings, in the notice workspace only, for its Owner and Admin
         'app.today_fees_overdue',
         'app.today_templates_needing_change',   -- Needs you (migration 20261231986800): a message WhatsApp sent back, for the Owner and Admin   -- Needs you (migration 20261228100000): a school's overdue fees as a count and a total, for its Owner and Admin
+        'app.today_indiamart_key_expired',   -- Needs you (migration 20261231992420): the scheduled IndiaMART pull found the workspace's own key refused, Owner and Admin only
         'app.today_credits_low',   -- Needs you (migration 20261231992210): the balance is under about 4 minutes of calls, Owner and Admin only
         'app.today_line_renewal',   -- Needs you (migration 20261231992500): an extra line's renewal could not be paid, Owner and Admin only
         'app.today_phone_needs_prices',   -- Needs you (migration 20261231989000): a phone line with no price list, Owner and Admin only

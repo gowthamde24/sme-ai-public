@@ -28,5 +28,5 @@ Running Calling · Book a site visit · 9 people
 form:
 Make a plan for the leads from
 <select name=source label="Make a plan for the leads from">
-  options: IndiaMART=indiamart | JustDial=justdial | 99acres | MagicBricks=magicbricks | Housing.com=housing | Meta lead ads=meta_lead_ads | Your website form=website_form | Webhook (Zapier, n8n)=webhook | Forwarded e-mail=email_forward | Excel or CSV file=excel_upload* | Google Sheet=google_sheet | Pasted list=pasted_list | Contacts file=vcard
+  options: IndiaMART=indiamart | JustDial=justdial | 99acres | MagicBricks=magicbricks | Housing.com=housing | Sulekha=sulekha | TradeIndia=tradeindia | Meta lead ads=meta_lead_ads | Your website form=website_form | Webhook (Zapier, n8n)=webhook | Portal e-mail=email_forward | Excel or CSV file=excel_upload* | Google Sheet=google_sheet | Pasted list=pasted_list | Contacts file=vcard
 [button type=submit: Make a plan]

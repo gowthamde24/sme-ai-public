@@ -104,6 +104,8 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return "Add your prices so the phone assistant can answer them: a price on each item, or a price list. Until then it tells callers the team will call back."
     if kind == "crm_push_failing":
         return f"{_TOOLS.get(ref, 'A connected tool')} is not receiving your results: some could not be sent after several tries. Open Connectors to see why."
+    if kind == "indiamart_key_expired":
+        return "IndiaMART no longer accepts your key, so no new IndiaMART leads are coming in. A key lasts 7 days: paste a new one on the Lead sources page."
     if kind == "credits_low":
         return "Your call balance is almost used up: under 4 minutes of calls are left. Top up so calls do not stop."
     if kind == "line_renewal":
@@ -131,7 +133,7 @@ _CAMPAIGN_WORDS = {"payment_due": "payment reminder", "fee_due": "fee reminder",
 # the "customer" of a row that is not about one customer
 _TOOLS = {"hubspot": "HubSpot", "zoho_crm": "Zoho CRM", "leadsquared": "LeadSquared", "selldo": "Sell.Do", "pipedrive": "Pipedrive", "freshsales": "Freshsales", "kylas": "Kylas", "bitrix24": "Bitrix24",
           "salesforce": "Salesforce", "google_sheets": "Your Google Sheet", "airtable": "Airtable", "notion": "Notion"}
-_NOT_A_CUSTOMER = {"crm_push_failing": "Connected tool", "fees_overdue": "Fees due", "voice_credits": "Voice credits", "message_needs_change": "WhatsApp message", "phone_needs_prices": "Phone assistant", "credits_low": "Balance", "line_renewal": "Balance"}
+_NOT_A_CUSTOMER = {"crm_push_failing": "Connected tool", "fees_overdue": "Fees due", "voice_credits": "Voice credits", "message_needs_change": "WhatsApp message", "phone_needs_prices": "Phone assistant", "credits_low": "Balance", "line_renewal": "Balance", "indiamart_key_expired": "IndiaMART"}
 
 
 _STEP_TEXT = {

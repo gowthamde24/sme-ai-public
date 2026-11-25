@@ -37,6 +37,7 @@ class FakeLeadSourcesRepository:
         self.website: dict[str, Any] = {}     # job EK: the website form token of the workspace
         self.indiamart_answer: dict[str, Any] | Exception = {}   # the scheduled IndiaMART pull's word on the key (public.indiamart_pull_status)
         self.status_asked = 0
+        self.live_tags: list[str] = []   # the tag each live post was stored under
         self.ticks: list[dict[str, Any]] = []  # JOBS S1: every consent tick the API stored (kinds, wording version)
 
     # the core, simplified
@@ -227,7 +228,12 @@ class FakeLeadSourcesRepository:
         self.hits += 1
         if self.hits > self.rate_after:
             return {"status": "rate"}
-        out = self._core(self.sources_[sid]["tag"], self.sources_[sid]["consent_id"], rows, True, False)
+        src = self.sources_[sid]
+        tag = src["tag"]   # as migration 20261231992410: a mail or web-address source takes the portal a row names
+        if src["kind"] in ("email_forward", "webhook") and rows and rows[0].get("tag") in ("indiamart", "justdial", "99acres", "magicbricks", "housing", "sulekha", "tradeindia"):
+            tag = rows[0]["tag"]
+        self.live_tags.append(tag)
+        out = self._core(tag, src["consent_id"], rows, True, False)
         self.sources_[sid]["received_count"] += out["counts"]["ready"] + out["counts"]["duplicates_merged"]
         return {"status": "received", "counts": out["counts"]}
 

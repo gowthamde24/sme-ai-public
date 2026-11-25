@@ -213,7 +213,7 @@ async def run_setup_test(setup_id: str, body: SetupTestIn, ctx: Manager, runtime
         return setups.result(bool(got["ok"]), got.get("reason"), str(got["detail"]))
     sources = await asyncio.to_thread(service.sources, ctx.principal.token, ctx.tenant.id)
     if body.test == "send_test_mail":
-        return setups.received_test(sources, "email_forward", "forwarding address")
+        return setups.received_test(sources, "email_forward", "lead e-mail address")
     return setups.received_test(sources, "website_form", "website form")
 
 
