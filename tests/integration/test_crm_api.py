@@ -1059,8 +1059,11 @@ def test_there_are_no_delete_endpoints(world: World) -> None:
     w = world
     spec = w.client.get("/openapi.json").json()
     # the one delete route: removing an outbound webhook address (settings, not business data)
-    # and disconnecting a CRM or sheet (release 2, the connector's own settings and its stored key, not business data)
-    allowed = {"/v1/tenants/{tenant_id}/developer/webhooks/{webhook_id}", "/v1/tenants/{tenant_id}/connectors/crm/{type_}"}
+    # and disconnecting a CRM or sheet (release 2: the connector's own settings, not business data)
+    allowed = {
+        "/v1/tenants/{tenant_id}/developer/webhooks/{webhook_id}",
+        "/v1/tenants/{tenant_id}/connectors/crm/{type_}",
+    }
     deletes = [p for p, ops in spec["paths"].items() if "delete" in ops and p not in allowed]
     assert deletes == []
 

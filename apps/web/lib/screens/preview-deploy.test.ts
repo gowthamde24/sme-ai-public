@@ -25,7 +25,8 @@ describe("the production web flags (owner, 25 Nov 2026: Customer Zero sees the r
   const prod = flags("production-web-flags.env");
   const staging = flags("staging-web-flags.env");
   it("every value is the real API (`1`): no `mock`, no list of workspace ids, no `0`", () => {
-    for (const [k, v] of Object.entries(prod)) expect(v, k).toBe("1");
+    // the one value that is not `1`: the PUBLIC Cloudflare Turnstile site key of the check box (release 2; the API's matching secret is in Secret Manager, never here)
+    for (const [k, v] of Object.entries(prod)) if (k === "TURNSTILE_SITE_KEY") expect(v, k).toMatch(/^0x4[A-Za-z0-9_-]{15,40}$/); else expect(v, k).toBe("1");
     expect(JSON.stringify(prod)).not.toMatch(/mock|[0-9a-f]{8}-[0-9a-f]{4}-/);
   });
   it("never has a staging-only, demo, test-call, staff, developer, offer or draft-legal flag", () => {
