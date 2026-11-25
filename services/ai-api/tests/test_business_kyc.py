@@ -27,6 +27,40 @@ class Repo:
         self.row: dict[str, Any] | None = None
         self.waiting = False
         self.waits = 0
+        self.balance = 100000   # paise
+        self.price = 49900
+        self.reserve: dict[str, Any] | None = None
+        self.refunds = 0
+        self.removed = 0
+
+    def reserve_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        r = self.reserve
+        return {"price_paise": self.price, "state": r["state"] if r else "none", "amount_paise": r["amount"] if r else 0, "due_at": None}
+
+    def reserve_place(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        if self.reserve and self.reserve["state"] == "held":
+            return {"placed": True, "replayed": True, "amount_paise": self.reserve["amount"]}
+        if self.balance < self.price:
+            return {"placed": False, "reason": "credits_needed", "needed_paise": self.price, "balance_paise": self.balance}
+        self.balance -= self.price
+        self.reserve = {"state": "held", "amount": self.price}
+        return {"placed": True, "replayed": False, "amount_paise": self.price}
+
+    def reserve_close(self, token: str, tenant_id: uuid.UUID, outcome: str) -> bool:
+        if not self.reserve or self.reserve["state"] != "held":
+            return False
+        if outcome == "refunded":
+            self.balance += self.reserve["amount"]
+            self.refunds += 1
+            self.reserve["state"] = "refunded"
+        else:
+            self.reserve["state"] = "applied"
+        return True
+
+    def client_remove(self, token: str, tenant_id: uuid.UUID) -> None:
+        self.removed += 1
+        if self.row and self.row["state"] != "verified":
+            self.row = None
 
     def wait_get(self, token: str, tenant_id: uuid.UUID) -> bool:
         return self.waiting
@@ -331,9 +365,9 @@ def test_the_worker_marks_the_businesses_voicelink_has_approved() -> None:
             return [{"tenant_id": str(TENANT_A.id), "client_id": 101}] if function == "business_client_pending" else None
 
     rpc = Rpc()
-    assert kyc.refresh_pending("sys", rpc) == 0 and [c[0] for c in rpc.calls] == ["business_client_pending"]  # type: ignore[arg-type]
+    assert kyc.refresh_pending("sys", rpc) == 0 and [c[0] for c in rpc.calls] == ["business_client_pending", "scheduler_line_reserves_due"]  # type: ignore[arg-type]   # the same pass also looks for first months held too long
     vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
-    assert kyc.refresh_pending("sys", rpc) == 1 and rpc.calls[-1] == ("business_client_mark_verified", {"p_tenant_id": str(TENANT_A.id)})  # type: ignore[arg-type]
+    assert kyc.refresh_pending("sys", rpc) == 1 and ("business_client_mark_verified", {"p_tenant_id": str(TENANT_A.id)}) in rpc.calls  # type: ignore[arg-type]
 
 
 # ------------------------------------------------------------------------------------------------ no free channel at VoiceLink (the probe of 25 Nov 2026)
@@ -385,5 +419,83 @@ def test_a_waiting_business_cannot_buy_a_number() -> None:
         with pytest.raises(PickerBlocked) as err:
             service.claim("t", TENANT_A.id, "+919876543210", "mobile")
         assert err.value.reason == "kyc_required" and bought == []
+    finally:
+        svc.buy = restore[0]  # type: ignore[attr-defined]
+
+
+# ------------------------------------------------------------------------------------------------ the first month of the number (the planner's money rule, 26 Nov 2026)
+def test_the_first_month_is_debited_when_the_client_is_made_and_too_little_credit_creates_nothing() -> None:
+    client, repo, vl, _ = world()
+    repo.balance = 1000
+    poor = client.post(f"{T}/start", headers=auth("a_owner"))
+    assert poor.status_code == 402 and poor.json()["error"]["code"] == "credits_needed" and poor.json()["error"]["needed_paise"] == 49900 and poor.json()["error"]["needed_text"] == "₹499"
+    assert repo.row is None and repo.reserve is None and [c for c in vl.calls if c[1] == "/reseller/client/create"] == [] and repo.balance == 1000
+    repo.balance = 100000
+    ok = client.post(f"{T}/start", headers=auth("a_owner"))
+    assert ok.status_code == 201 and ok.json()["state"] == "created" and repo.balance == 100000 - 49900
+    assert ok.json()["reserve"]["state"] == "held" and ok.json()["reserve"]["amount_text"] == "₹499" and ok.json()["reserve"]["price_text"] == "₹499"
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    assert repo.balance == 100000 - 49900, "starting again debits nothing more"
+
+
+def test_a_business_that_waits_for_a_line_is_not_charged_until_the_client_is_made() -> None:
+    client, repo, vl, _ = world()
+    vl.free_channels = 0
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    assert repo.balance == 100000 and repo.reserve is None
+    vl.free_channels = 1
+    assert client.get(T, headers=auth("a_owner")).json()["state"] == "created" and repo.balance == 100000 - 49900
+
+
+def test_if_voicelink_refuses_after_the_debit_the_money_goes_straight_back() -> None:
+    client, repo, vl, _ = world()
+    vl.fail["/reseller/client/create"] = (422, {})
+    refused = client.post(f"{T}/start", headers=auth("a_owner"))
+    assert refused.status_code == 422 and repo.balance == 100000 and repo.refunds == 1 and repo.reserve is not None and repo.reserve["state"] == "refunded"
+
+
+def test_cancel_refunds_deletes_the_client_and_lets_the_business_start_again_but_never_a_verified_one() -> None:
+    client, repo, vl, _ = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    got = client.post(f"{T}/cancel", headers=auth("a_owner"))
+    assert got.status_code == 200 and got.json()["state"] == "not_started" and repo.balance == 100000 and repo.refunds == 1 and repo.removed == 1
+    assert ("DELETE", "/reseller/client/delete/101", None) in vl.calls
+    assert client.post(f"{T}/cancel", headers=auth("a_admin")).status_code == 403
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
+    client.get(T, headers=auth("a_owner"))   # marks it verified
+    assert client.post(f"{T}/cancel", headers=auth("a_owner")).status_code == 422
+
+
+def test_the_workers_release_gives_back_a_reserve_held_too_long_and_is_idempotent() -> None:
+    client, repo, vl, kyc = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    calls: list[tuple[str, dict[str, Any]]] = []
+
+    class Rpc:
+        def call(self, token: str, fn: str, args: dict[str, Any]) -> Any:
+            calls.append((fn, args))
+            if fn == "scheduler_line_reserves_due":
+                return [{"tenant_id": str(TENANT_A.id), "client_id": 101}] if len([c for c in calls if c[0] == "scheduler_line_reserve_refund"]) == 0 else []
+            return {"refunded": True}
+
+    assert kyc.release_due("sys", Rpc()) == 1 and kyc.release_due("sys", Rpc()) == 0
+    assert ("scheduler_line_reserve_refund", {"p_tenant_id": str(TENANT_A.id), "p_reason": "expired"}) in calls
+    assert ("DELETE", "/reseller/client/delete/101", None) in vl.calls
+    vl.free_channels = 1
+    kyc.note_stock("sys", Rpc())
+    assert ("scheduler_channel_stock_put", {"p_free": 1}) in calls
+
+
+def test_a_purchase_applies_the_held_first_month() -> None:
+    client, repo, vl, kyc = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
+    service, restore, bought = _numbers_world(kyc)
+    import app.numbers.service as svc
+
+    try:
+        assert service.claim("t", TENANT_A.id, "+919876543211", "mobile").state == "ready"
+        assert repo.reserve is not None and repo.reserve["state"] == "applied" and repo.balance == 100000 - 49900
     finally:
         svc.buy = restore[0]  # type: ignore[attr-defined]

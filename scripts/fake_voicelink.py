@@ -222,6 +222,19 @@ def _multipart_fields(content_type: str, body: bytes) -> dict[str, str]:
     return out
 
 
+@app.delete("/reseller/client/delete/{client_id}")
+async def delete_client(client_id: int) -> JSONResponse:
+    """An abandoned client goes and its channels return to the pool (to be confirmed on the real account)."""
+    if client_id == OUR_CLIENT_ID or client_id not in CLIENTS:
+        return refuse(404)
+    with _lock:
+        del CLIENTS[client_id]
+        for d in DIDS.values():
+            if d["client_id"] == client_id:
+                d["client_id"] = None
+    return ok({"client_id": client_id, "deleted": True})
+
+
 @app.post("/reseller/client/update/{client_id}")
 async def update_client(client_id: int, request: Request) -> JSONResponse:
     """Move channels between clients (the real endpoint needs the whole profile; the fake reads channel_count only)."""

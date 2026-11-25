@@ -86,5 +86,51 @@ select is((select count(*) from jsonb_array_elements(admin.computed_alerts('fina
 select pg_temp.sc('a_owner', 'aal2', format($q$select public.business_line_wait_clear(%L)::text$q$, tests.tid('a')));
 select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.business_line_wait_get(%L) ->> 'waiting')$q$, tests.tid('a'))), 'false', 'J9: cleared once the client exists');
 select is(has_table_privilege('authenticated', 'telephony.line_waits', 'select'), false, 'J10: the table is closed to every client role');
+-- K. the first month of a number, held on the wallet (migration 992650)
+select is((select extra_number_paise from pricing.settings), 49900::bigint, 'K1: a phone number with its first line is Rs 499 (config)');
+select is(pg_temp.sc('a_sales', 'aal2', format($q$select public.line_reserve_place(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'K2: only the Owner places it');
+select is(pg_temp.sc('a_owner', 'aal1', format($q$select public.line_reserve_place(%L)::text$q$, tests.tid('a'))) like 'ERR:%', true, 'K3: with a second factor');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.line_reserve_place(%L) ->> 'reason')$q$, tests.tid('a'))), 'credits_needed', 'K4: too little credit: nothing is placed and it says so');
+select is((select count(*) from telephony.line_reserves where tenant_id = tests.tid('a')), 0::bigint, 'K5: and nothing was created');
+select pricing.credit(tests.tid('a'), 'topup', 'pay_res_k1', 100000);
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.line_reserve_place(%L) ->> 'placed')$q$, tests.tid('a'))), 'true', 'K6: with credit it is placed');
+select is(pricing.balance_of(tests.tid('a')), 100000::bigint - 49900, 'K7: the first month left the balance');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.line_reserve_place(%L) ->> 'replayed')$q$, tests.tid('a'))), 'true', 'K8: a second call debits nothing more');
+select is(pricing.balance_of(tests.tid('a')), 100000::bigint - 49900, 'K9: the balance did not move');
+select is((select count(*) from pricing.usage where tenant_id = tests.tid('a') and kind = 'number_reserved'), 1::bigint, 'K10: one usage row of the new kind');
+select is((select string_agg(x ->> 'label', ',') from jsonb_array_elements(pricing.statement_internal(tests.tid('a'), null, null, 100, null) -> 'items') x where x ->> 'label' like 'Held%'), 'Held for your phone number', 'K11: the statement says it in plain words');
+select is(pg_temp.sc('a_admin', 'aal2', format($q$select public.line_reserve_close(%L, 'refunded')::text$q$, tests.tid('a'))), 'ERR:42501', 'K12: an Admin cannot cancel it');
+select is(pg_temp.sc('b_owner', 'aal2', format($q$select public.line_reserve_close(%L, 'refunded')::text$q$, tests.tid('a'))), 'ERR:42501', 'K13: nor another workspace');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.line_reserve_close(%L, 'refunded') ->> 'closed')$q$, tests.tid('a'))), 'true', 'K14: the Owner cancels: refunded');
+select is(pricing.balance_of(tests.tid('a')), 100000::bigint, 'K15: the whole amount is back');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.line_reserve_close(%L, 'refunded') ->> 'closed')$q$, tests.tid('a'))), 'false', 'K16: a second cancel refunds nothing');
+select is(pricing.balance_of(tests.tid('a')), 100000::bigint, 'K17: the balance did not move again');
+select is((select string_agg(x ->> 'label', ',') from jsonb_array_elements(pricing.statement_internal(tests.tid('a'), null, null, 100, null) -> 'items') x where x ->> 'label' like 'Refund%'), 'Refund to your balance', 'K18: the refund shows on the statement');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.line_reserve_place(%L) ->> 'replayed')$q$, tests.tid('a'))), 'false', 'K19: after a refund it can be placed again');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.line_reserve_close(%L, 'applied') ->> 'closed')$q$, tests.tid('a'))), 'true', 'K20: a bought number applies it: no money moves');
+select is(pricing.balance_of(tests.tid('a')), 100000::bigint - 49900, 'K21: the number fee stays paid');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.line_reserve_close(%L, 'refunded') ->> 'closed')$q$, tests.tid('a'))), 'false', 'K22: an applied one cannot be refunded');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select public.line_reserve_close(%L, 'gift')::text$q$, tests.tid('a'))), 'ERR:22023', 'K23: closed outcomes only');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.line_reserve_get(%L) ->> 'state')$q$, tests.tid('a'))), 'applied', 'K24: the state can be read');
+select is(has_table_privilege('authenticated', 'telephony.line_reserves', 'select'), false, 'K25: the table is closed to every client role');
+select is(has_function_privilege('anon', 'public.scheduler_line_reserves_due(integer)', 'execute'), false, 'K26: a stranger cannot list due reserves');
+select is(pg_temp.sc('a_owner', 'aal2', 'select public.scheduler_line_reserves_due(10)::text'), 'ERR:42501', 'K27: nor a member (the worker only)');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select public.scheduler_line_reserve_refund(%L, 'expired')::text$q$, tests.tid('a'))), 'ERR:42501', 'K28: nor refund');
+
+-- L. lines included in a number
+insert into public.phone_numbers (tenant_id, number, provider, inbound_on, label) values (tests.tid('b'), '+009876500001', 'voicelink', true, 'old');
+insert into public.phone_numbers (tenant_id, number, provider, inbound_on, label, included_lines) values (tests.tid('b'), '+009876500002', 'voicelink', true, 'new', 1);
+select is(app.included_lines(tests.tid('b')), 3, 'L1: an older number keeps 2 lines and a new one has 1');
+select is(app.workspace_lines(tests.tid('b')), 3, 'L2: the workspace total follows');
+
+-- M. channel stock for the staff alert
+select is(has_function_privilege('anon', 'public.scheduler_channel_stock_put(integer)', 'execute'), false, 'M1: a stranger cannot report the stock');
+select is(pg_temp.sc('a_owner', 'aal2', 'select public.scheduler_channel_stock_put(1)::text'), 'ERR:42501', 'M2: nor a member');
+insert into ops.channel_stock (free_channels) values (1) on conflict (only_row) do update set free_channels = 1, seen_at = now();
+select is((select count(*) from jsonb_array_elements(admin.computed_alerts('support')) x where x ->> 'kind' = 'channels_low'), 1::bigint, 'M3: one free channel raises the low-stock alert');
+update ops.channel_stock set free_channels = 4;
+select is((select count(*) from jsonb_array_elements(admin.computed_alerts('support')) x where x ->> 'kind' = 'channels_low'), 0::bigint, 'M4: four do not');
+update ops.channel_stock set free_channels = 0, seen_at = now() - interval '3 days';
+select is((select count(*) from jsonb_array_elements(admin.computed_alerts('support')) x where x ->> 'kind' = 'channels_low'), 0::bigint, 'M5: a figure older than two days is not trusted');
 select * from finish();
 rollback;

@@ -40,6 +40,25 @@ def db_count(sql: str) -> int:
     return -1
 
 
+def db_exec(sql: str) -> bool:
+    ref_file = sb.ROOT / "supabase" / ".temp" / "project-ref"
+    if not ref_file.exists() or ref_file.read_text().strip() != sb.STAGING_REF:
+        return False
+    return sb.subprocess.run(["supabase", "db", "query", "--linked", sql], cwd=sb.ROOT, capture_output=True, text=True, timeout=120).returncode == 0
+
+
+def balance(run: sb.Run) -> int:
+    """The wallet balance in paise, read from the database (the API's balance answer is cached for a few seconds)."""
+    return db_count(f"select pricing.balance_of('{run.tenant}') as n")
+
+
+def ensure_credits(run: sb.Run, want: int) -> None:
+    """The demo workspace needs the first month in its wallet: a synthetic adjustment lot is added through the staging database when the balance is lower (the amount is made up; nobody is charged)."""
+    have = balance(run)
+    if 0 <= have < want:
+        db_exec(f"select pricing.credit('{run.tenant}', 'adjustment', 'smoke:{sb.uuid.uuid4().hex[:12]}', {want - have})")
+
+
 def picker_switch(value: bool) -> bool | None:
     """STAGING only (the checkout must be linked to it): flips ops.picker_settings.enabled, the platform switch of the number picker, and returns what it was (None when it cannot be read or set)."""
     ref_file = sb.ROOT / "supabase" / ".temp" / "project-ref"
@@ -104,11 +123,45 @@ def main() -> int:
     was = picker_switch(True) if a.open_picker else None
     print(("picker switch on staging was " + ("on" if was else "off") + ", turned on for this run") if was is not None else "picker switch left as it is")
     try:
-        return body(a, "verify-first")
+        code = body(a, "verify-first")
+        return max(code, cancel_body(a))
     finally:
         if was is not None and not was:
             picker_switch(False)
             print("picker switch put back to off")
+
+
+def cancel_body(a: argparse.Namespace) -> int:
+    """Second scenario: the business starts (a channel is free), the first month is held, then it cancels: refunded in full, the client deleted at VoiceLink (its channel returns), and it may start again."""
+    print("\n=== cancel: the held month goes back ===")
+    run = sb.Run(a.api_url, a.pack)
+    say, t = sb.say, run.t
+    try:
+        fake(a.fake_url, "POST", "/_fake/reset")
+        fake(a.fake_url, "POST", "/_fake/add-channel?n=1")
+        ensure_credits(run, 150000)
+        before = balance(run)
+        st, out = run.call("POST", f"{t}/phone-kyc/business/start")
+        held = balance(run)
+        exempt = db_count(f"select case when billing_exempt then 1 else 0 end as n from public.tenants where id = '{run.tenant}'") == 1
+        say("PASS" if st == 201 and out.get("state") == "created" and held == (before if exempt else before - 49900) else "FAIL", "C1 start with a free channel: client made, Rs 499 held" + (" (exempt workspace: Rs 0)" if exempt else ""), f"HTTP {st}, state {out.get('state') if isinstance(out, dict) else '?'}, balance {before} -> {held}")
+        st, out = run.call("POST", f"{t}/phone-kyc/business/cancel")
+        back = balance(run)
+        say("PASS" if st == 200 and out.get("state") == "not_started" and back == before else "FAIL", "C2 cancel: refunded in full, nothing left", f"HTTP {st}, state {out.get('free') if False else (out.get('state') if isinstance(out, dict) else '?')}, balance {held} -> {back}")
+        free = fake(a.fake_url, "GET", "/_fake/state").get("free_channels")
+        say("PASS" if free == 1 else "FAIL", "C3 the abandoned client was deleted: its channel is free again", f"free channels {free}")
+        st, out = run.call("POST", f"{t}/phone-kyc/business/cancel")
+        say("PASS" if st == 200 and balance(run) == before else "FAIL", "C4 a second cancel refunds nothing more", f"HTTP {st}, balance {balance(run)}")
+    finally:
+        if not a.keep_rows:
+            db_exec(f"delete from telephony.business_clients where tenant_id = '{run.tenant}' and state <> 'verified'")
+            db_exec(f"delete from telephony.line_waits where tenant_id = '{run.tenant}'")
+            try:
+                fake(a.fake_url, "POST", "/_fake/reset")
+            except OSError:
+                pass
+    print(f"\n{sb.RESULTS.count('PASS')} PASS, {sb.RESULTS.count('FAIL')} FAIL, {sb.RESULTS.count('SKIP')} SKIP")
+    return 1 if "FAIL" in sb.RESULTS else 0
 
 
 def body(a: argparse.Namespace, order: str) -> int:
@@ -120,6 +173,7 @@ def body(a: argparse.Namespace, order: str) -> int:
     run = sb.Run(a.api_url, a.pack)
     say = sb.say
     t = run.t
+    ensure_credits(run, 150000)
     st, out = run.call("GET", f"{t}/numbers/available?type=mobile&prefix=9001")
     offers = out.get("numbers", []) if isinstance(out, dict) else []
     why = (out.get("error") or {}).get("reason") if isinstance(out, dict) and isinstance(out.get("error"), dict) else None
@@ -141,6 +195,7 @@ def steps(run: sb.Run, a: argparse.Namespace, offers: list, claimed: str, verify
     why0 = (out0.get("error") or {}).get("reason") if isinstance(out0, dict) and isinstance(out0.get("error"), dict) else None
     say("PASS" if st0 == 409 and why0 == "kyc_required" else "FAIL", "1b a purchase before the KYC is refused", f"HTTP {st0}, reason {why0}")
     # no free channel at VoiceLink (the fake's pool is all on our own client, as on the real account): the business WAITS for its line, it is not turned away
+    bal_before = balance(run)
     stw, outw = run.call("POST", f"{t}/phone-kyc/business/start")
     say("PASS" if stw == 201 and isinstance(outw, dict) and outw.get("state") == "waiting_for_line" and "short while" in str(outw.get("words")) else "FAIL", "2a no free channel: the business waits", f"HTTP {stw}, state {outw.get('state') if isinstance(outw, dict) else '?'}")
     waits = db_count(f"select count(*) as n from telephony.line_waits where tenant_id = '{run.tenant}'")
@@ -150,6 +205,10 @@ def steps(run: sb.Run, a: argparse.Namespace, offers: list, claimed: str, verify
     fake(a.fake_url, "POST", "/_fake/add-channel?n=1")   # the staff bought a channel at VoiceLink
     stw3, outw3 = run.call("GET", f"{t}/phone-kyc/business")
     say("PASS" if stw3 == 200 and outw3.get("state") == "created" and db_count(f"select count(*) as n from telephony.line_waits where tenant_id = '{run.tenant}'") == 0 else "FAIL", "2d the next poll makes the client and the wait ends", f"state {outw3.get('state') if isinstance(outw3, dict) else '?'}")
+    bal_after_client = balance(run)
+    exempt = db_count(f"select case when billing_exempt then 1 else 0 end as n from public.tenants where id = '{run.tenant}'") == 1
+    want_after = bal_before if exempt else bal_before - 49900   # a billing-exempt demo workspace pays nothing (the reserve row is still made, for 0); pgTAP 297 proves the debit
+    say("PASS" if bal_after_client == want_after and (outw3.get("reserve") or {}).get("state") == "held" else "FAIL", "2e the first month (Rs 499) was held when the client was made" + (" (exempt workspace: Rs 0)" if exempt else ""), f"balance {bal_before} -> {bal_after_client}, reserve {(outw3.get('reserve') or {}).get('state') if isinstance(outw3, dict) else '?'}")
     st, out = run.call("GET", f"{t}/phone-kyc/business")
     say("PASS" if st == 200 else "FAIL", "2 KYC status", f"HTTP {st}, state {out.get('state') if isinstance(out, dict) else '?'}")
     if isinstance(out, dict) and out.get("state") == "verified":
@@ -192,6 +251,8 @@ def steps(run: sb.Run, a: argparse.Namespace, offers: list, claimed: str, verify
     want = "calls_on" if verify_first else None
     ok = st == 200 and bool(rows) and (want is None or rows[0].get("state") == want)
     say("PASS" if ok else "FAIL", "12 my numbers", f"HTTP {st}, {len(rows)} number(s), state {rows[0].get('state') if rows else None}" + (f" (want {want})" if want else ""))
+    st5, out5 = run.call("GET", f"{t}/phone-kyc/business")
+    say("PASS" if st5 == 200 and (out5.get("reserve") or {}).get("state") == "applied" and balance(run) == bal_after_client else "FAIL", "13 the held month is now the number fee (nothing moved)", f"reserve {(out5.get('reserve') or {}).get('state') if isinstance(out5, dict) else '?'}")
     print(f"\n{sb.RESULTS.count('PASS')} PASS, {sb.RESULTS.count('FAIL')} FAIL, {sb.RESULTS.count('SKIP')} SKIP")
     return 1 if "FAIL" in sb.RESULTS else 0
 

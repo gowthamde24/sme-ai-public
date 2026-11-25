@@ -105,7 +105,7 @@ class PostgrestPricingRepository:
         return list(self._rpc.array(token, "pricing_invoices", {"p_tenant_id": str(tenant_id)}))
 
 
-def _plan_lines(p: dict[str, Any], extra_number_paise: int = 29900) -> list[str]:
+def _plan_lines(p: dict[str, Any], extra_number_paise: int = 49900) -> list[str]:
     lines = [f"{inr(p['monthly_paise'])} a month" + (" for your business number and the app" if p["included_minutes"] == 0 else "")]
     lines.append(f"{p['included_minutes']:,} call minutes included, then {inr(p['rate_paise_per_minute'])} a minute" if p["included_minutes"] else f"{inr(p['rate_paise_per_minute'])} a minute for calls")
     lines.append(f"{p['numbers_included']} business number included, {inr(extra_number_paise)} a month for each extra one")
@@ -114,7 +114,7 @@ def _plan_lines(p: dict[str, Any], extra_number_paise: int = 29900) -> list[str]
     return lines
 
 
-def plan_out(p: dict[str, Any], extra_number_paise: int = 29900) -> PlanOut:
+def plan_out(p: dict[str, Any], extra_number_paise: int = 49900) -> PlanOut:
     return PlanOut(
         id=p["id"], name=p["name"], monthly_paise=p["monthly_paise"], monthly_text=f"{inr(p['monthly_paise'])} a month", included_minutes=p["included_minutes"], rate_paise_per_minute=p["rate_paise_per_minute"], rate_text=f"{inr(p['rate_paise_per_minute'])} a minute",
         numbers_included=p["numbers_included"], lead_finder=bool(p["lead_finder"]), free_searches_month=p["free_searches_month"], extra_search_paise=p["extra_search_paise"], lines=_plan_lines(p, extra_number_paise),
@@ -123,7 +123,7 @@ def plan_out(p: dict[str, Any], extra_number_paise: int = 29900) -> PlanOut:
 
 def catalogue_out(doc: dict[str, Any]) -> CatalogueOut:
     gst = float(doc["gst_percent"])
-    extra = int(doc.get("extra_number_paise") or 29900)
+    extra = int(doc.get("extra_number_paise") or 49900)
     return CatalogueOut(gst_percent=gst, gst_text=f"+{gst:g}% GST on invoices", free_start_paise=int(doc["free_start_paise"]), free_start_text=f"{inr(int(doc['free_start_paise']))} free to start, no card",
                         extra_number_paise=extra, extra_number_text=f"{inr(extra)} a month for each extra number", plans=[plan_out(p, extra) for p in doc["plans"]])
 

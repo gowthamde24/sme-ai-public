@@ -263,6 +263,14 @@ class VoicelinkApi:
             raise VoicelinkError("server")
         return client_id
 
+    def delete_client(self, client_id: int) -> bool:
+        """`DELETE /reseller/client/delete/{id}`: an abandoned business's client goes, so the channel it held should return to our pool (to be confirmed on the real account). True when VoiceLink says it is gone (or never was)."""
+        try:
+            self._request("DELETE", f"/reseller/client/delete/{int(client_id)}")
+            return True
+        except VoicelinkError as exc:
+            return exc.status == 404
+
     def kyc_status(self, client_id: int) -> dict[str, Any]:
         data = self._request("GET", "/reseller/kyc/status", params={"client_id": int(client_id)})
         return data if isinstance(data, dict) else {}

@@ -19,6 +19,7 @@ class StatusOut(_Strict):
     missing: list[str]
     reason: str | None
     words: str | None
+    reserve: dict[str, object] | None = None   # the first month of the number held on the wallet: {state: none|held|refunded|applied, amount_paise, amount_text, price_paise, price_text, due_at}
 
 
 class DetailsIn(_Strict):

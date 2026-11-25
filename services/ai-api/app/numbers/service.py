@@ -13,7 +13,6 @@ from collections.abc import Callable
 from dataclasses import dataclass, replace
 from typing import Any, Protocol
 
-from app.errors import ApiError
 from app.numbers.buyer import TYPES, BuyerSettings, PickerRefused, buy
 from app.rpc_base import RpcClient
 from app.telephony.voicelink_api import VoicelinkApi, VoicelinkError
@@ -157,6 +156,8 @@ class NumberService:
             word = {"number_taken": "number_taken", "wallet_low": "wallet_low", "kyc_required": "kyc_required"}.get(refused.reason, "unavailable")
             raise PickerBlocked(word) from None
         self._repo.finish(token, claim_id, bought.stage, None, round(bought.cost_inr * 100), bought.order_number)
+        if self._kyc is not None and hasattr(self._kyc, "reserve_applied"):
+            self._kyc.reserve_applied(token, tenant_id)   # the first month held at the calling-account step is now the number fee
         if bought.complete:
             self._repo.attach(token, claim_id)
             return Claimed(bought.number, display(bought.number), kind, "kyc_pending" if pending else "ready")
