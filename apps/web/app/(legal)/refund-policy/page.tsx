@@ -1,20 +1,9 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 
-import { LegalDoc } from "@/components/v2/legal/LegalDoc";
-import { getSiteLang } from "@/i18n/get-lang";
-import { legalMetadata } from "@/lib/legal/page-metadata";
-import { legalDraftPages } from "@/lib/screens/flag";
-
-export async function generateMetadata(): Promise<Metadata> {
-  // a draft is never indexed
-  return legalMetadata("/refund-policy", "Refund and Cancellation Policy", "When you can cancel, and when we refund. Draft.", false);
-}
-
-export const dynamic = "force-dynamic";
-
-/** /refund-policy: the Refund and Cancellation Policy, a DRAFT (owner's D13; lib/legal/refund-text.ts). It exists only where LEGAL_DRAFT_PAGES is on (staging); everywhere else it is a plain 404. English only; always under the draft banner. */
-export default async function RefundPolicyPage() {
-  if (!legalDraftPages()) notFound();
-  return <LegalDoc id="refund" lang={await getSiteLang()} />;
+/**
+ * /refund-policy used to show the longer legal draft (owner's D13). There is ONE refund page now: /refunds (launch public pages, 29 Nov 2026; planner decision: 14 days for unused credits from the day of purchase, credits never expire,
+ * refunds only for unused credits, to the original payment method, by writing to hello@). The old address leads there, so no link or bookmark breaks. The legal text (lib/legal/refund-text.ts) stays in the repository for the lawyer's review.
+ */
+export default function RefundPolicyPage(): never {
+  permanentRedirect("/refunds");
 }

@@ -13,6 +13,9 @@ import talk from "./talk-types.json";
  */
 export const FREE_START = { rupees: 100, minutes: 20 } as const;
 
+/** Unused credits can be refunded within this many days of the purchase (planner decision, 29 Nov 2026; the same number as the legal draft's 14-day window). */
+export const REFUND_DAYS = 14;
+
 export type HelpArticle = { slug: string; key: "setup" | "sell" | "number" | "sources" | "billing" | "rules" | "recording" | "delete" | "languages" | "contact"; /** The wording waits for the owner's approval (what the product tells people on a call): shown with the Draft tag. */ draft?: true };
 
 /** The ten help articles, in the order of the help center. */
@@ -51,6 +54,7 @@ export function pubVars(): Record<string, string | number> {
     cancel: RETENTION.deletionCancelDays,
     days: RESPONSE_DAYS.requests,
     hours: RESPONSE_HOURS.withdrawal,
+    refund_days: REFUND_DAYS,
   };
 }
 
