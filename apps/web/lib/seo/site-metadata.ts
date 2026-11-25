@@ -3,7 +3,9 @@ import type { Metadata } from "next";
 import { BRAND_NAME } from "@/design/brand";
 import { fillPlain } from "@/i18n/fill";
 import type { SiteLang } from "@/i18n/lang";
+import { pubDict } from "@/i18n/public";
 import { siteDict } from "@/i18n/site";
+import { articleBySlug, articleKeys, pubVars } from "@/lib/public/data";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
 
@@ -21,7 +23,16 @@ export function pageText(lang: SiteLang, target: SiteTarget): { title: string; d
     const pack = SITE_PACKS.find((p) => p.slug === target.slug);
     if (pack) return { title: fillPlain(textIn(pack.meta.title, lang)), description: fillPlain(textIn(pack.meta.description, lang)), image: ogImagePathForSlug(pack.slug, lang), imageAlt: fillPlain(textIn(pack.hero.h1, lang)) };
   }
-  const key = target.kind === "page" ? ({ pricing: "pricing", "how-it-works": "how", security: "security", contact: "contact", help: "help" } as const)[target.page] : "pricing";
+  const pub = pubDict(lang);
+  if (target.kind === "article") {
+    const a = articleBySlug(target.slug);
+    if (a) return { title: fillPlain(`${pub[articleKeys(a).title]}: {brand}`, pubVars()), description: fillPlain(pub[articleKeys(a).summary], pubVars()), image: home.image, imageAlt: fillPlain(home.imageAlt) };
+  }
+  if (target.kind === "page") {
+    const own = ({ status: "status", "acceptable-use": "aup", refunds: "refund", "talk-to-us": "talk", help: "help", pricing: "price" } as Record<string, string | undefined>)[target.page];
+    if (own) return { title: fillPlain(pub[`pub.${own}.meta.t` as keyof typeof pub], pubVars()), description: fillPlain(pub[`pub.${own}.meta.d` as keyof typeof pub], pubVars()), image: home.image, imageAlt: fillPlain(home.imageAlt) };
+  }
+  const key = target.kind === "page" ? ({ pricing: "pricing", "how-it-works": "how", security: "security", contact: "contact" } as Record<string, "pricing" | "how" | "security" | "contact">)[target.page] ?? "pricing" : "pricing";
   return { title: fillPlain(d[`meta.${key}.title`]), description: fillPlain(d[`meta.${key}.description`]), image: home.image, imageAlt: fillPlain(home.imageAlt) };
 }
 

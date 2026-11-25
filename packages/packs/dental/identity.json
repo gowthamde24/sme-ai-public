@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "dental",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "dental clinics",
+    "te": "డెంటల్ క్లినిక్‌లు"
+  }
+}

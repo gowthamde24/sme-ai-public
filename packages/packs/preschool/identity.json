@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "preschool",
+  "status": "draft",
+  "sell_style": "courses",
+  "plural_names": {
+    "en": "preschools and daycares",
+    "te": "ప్రీస్కూల్స్, డేకేర్‌లు"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "agri_nursery",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "nurseries and farm suppliers",
+    "te": "నర్సరీలు, ఫార్మ్ సప్లయర్లు"
+  }
+}

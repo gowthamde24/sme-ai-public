@@ -54,6 +54,10 @@ import {
   parseAdmissionDetail, parseAdmissionList, parseFeeEntries, parseFeePlan, parseFeePlanList, parseFeeReceipt, parseFeeStatement, parseGuardianFees, parseLateFeesPreview, parsePending, parseProfile as parseInstitution, parseProgrammes, parseStudent, parseStudentList,
 } from "@/lib/api/education";
 import * as EDU from "@/lib/api/education-fixtures";
+import { parseActivity, parseActivityUsage, parseEndpoints, parseEvents } from "@/lib/api/webhooks-out";
+import { parseBalanceAndDebt, parseInvoice, parseOptions, parseStatement, parseTopups } from "@/lib/api/credits";
+import { parseBillingBalance } from "@/lib/billing-v6/balance";
+import { parseList, parseLists, parseRows } from "@/lib/api/lists";
 import { parseOwnList } from "@/lib/api/numbers";
 import { parseCatalogue, parseReport } from "@/lib/api/reports";
 import * as RPT from "@/lib/api/reports-fixtures";
@@ -1021,7 +1025,8 @@ add({ id: "accept", roles: ["owner"], render: async () => (await import("@/app/a
 // always was), and `today-default-pack` below runs the default business type of an existing workspace and must read exactly like `today`.
 const CONSTRUCTION = otherPackIds().find((i) => workspacePack(i).modules.includes("deliveries"))!;
 // a business type that ships no example data (the Lead Desk types): Today must not offer to load an empty sample
-const NO_EXAMPLES = selectableIds().find((i) => !workspacePack(i).hasExampleData)!;
+// the first pack by name without example data was "auto_dealer" until 29 Nov 2026 (41 more types were added); the snapshot is that one
+const NO_EXAMPLES = selectableIds().find((i) => i === "auto_dealer" && !workspacePack(i).hasExampleData) ?? selectableIds().find((i) => !workspacePack(i).hasExampleData)!;
 const EDUCATION = otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!;
 const packOf = (id: string, source: "signup" | "default" | "legacy" = "signup") => () => workspacePack(id, source);
 const packCardReads: Record<string, Handler> = {
@@ -1463,6 +1468,7 @@ add({ id: "import-leads", render: withLeadsFlag("mock", async () => (await impor
 add({ id: "add-lead", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/add-lead/page")).default(props({}))), handlers: base });
 add({ id: "import-leads-off", roles: ["owner"], render: withLeadsFlag(undefined, async () => (await import("@/app/app/tenants/[tenantId]/import/page")).default(props({}))), handlers: base });
 add({ id: "lead-sources", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/lead-sources/page")).default(props({}))), handlers: base });
+add({ id: "lead-source-guide", roles: ["owner", "admin"], render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/lead-sources/guides/[guide]/page")).default(props({ guide: "sheet" }))), handlers: base });
 // -- scenarios: top-ups (web/ds-topups)
 // Night 4 F2 (TOPUP_SCREENS=mock): Settings > Plan with Usage and top-ups, and Today. The fake provider's cookie cannot be read outside a request, so every scenario shows its review default (80 percent of the minutes); the other states are in the unit tests.
 const withEnv = async <T,>(vars: Record<string, string>, run: () => Promise<T>): Promise<T> => {
@@ -1816,4 +1822,55 @@ add({ id: "what-you-sell-mock", roles: ["owner", "admin", "sales"], render: sell
 add({ id: "what-you-sell-mock-services", roles: ["owner"], render: sellPage, handlers: sellPack("clinic") });
 add({ id: "what-you-sell-mock-courses", roles: ["owner"], render: sellPage, handlers: sellPack("coaching") });
 add({ id: "what-you-sell-mock-properties", roles: ["owner"], render: sellPage, handlers: sellPack("real_estate") });
+// WHAT_YOU_SELL_LISTS (29 Nov 2026): the owner's own lists, a list as a table, the columns, Add a list
+const LIST_ID = "33333333-3333-4333-8333-333333333333";
+const WYS_LIST = { id: LIST_ID, name: "Dress materials", kind: "products", is_main: false, row_count: 3, columns: [
+  { key: "name", label: "Name", type: "text", choices: [], role: null, billing_period: null, quote_default: false },
+  { key: "lining", label: "Lining", type: "choice", choices: ["Cotton", "Satin"], role: null, billing_period: null, quote_default: false },
+  { key: "retail", label: "Retail price", type: "rupees", choices: [], role: "price", billing_period: "one_time", quote_default: true },
+  { key: "stock", label: "Availability", type: "choice", choices: ["In stock", "Few left", "Out of stock"], role: "availability", billing_period: null, quote_default: false },
+] };
+const WYS_ROWS = { items: [{ id: "r1", name: "Cotton dress material, blue", cells: { lining: "Cotton", retail: 145000, stock: "In stock" }, active: true }, { id: "r2", name: "Chanderi dress material, mustard", cells: { lining: "Satin", retail: null, stock: "Few left" }, active: true }], next_cursor: null };
+const listsEnv = <T,>(run: () => Promise<T>) => withEnv({ JOBS: "mock", WHAT_YOU_SELL_LISTS: "1" }, run);
+const listsHandlers = (role: Role): Record<string, Handler> => ({ ...base(role), getWorkspacePack: packOf("textiles"), getLists: () => parseLists({ lists: [WYS_LIST, { ...WYS_LIST, id: "44444444-4444-4444-8444-444444444444", name: "Ebooks and guides", kind: "digital", row_count: 18 }] }), getList: () => parseList(WYS_LIST), getRows: () => parseRows(WYS_ROWS) });
+add({ id: "what-you-sell-lists-home", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/page")).default(props({}))), handlers: listsHandlers });
+add({ id: "what-you-sell-list", roles: ["owner", "admin", "sales"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/[listId]/page")).default(props({ listId: LIST_ID }))), handlers: listsHandlers });
+add({ id: "what-you-sell-list-columns", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/[listId]/columns/page")).default(props({ listId: LIST_ID }))), handlers: listsHandlers });
+add({ id: "what-you-sell-list-new", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/new/page")).default(props({}))), handlers: listsHandlers });
+add({ id: "developers", roles: ["owner", "admin"], render: () => withEnv({ DEVELOPER_KEYS_SCREENS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({}, { tab: "keys" }))), handlers: base });
+add({ id: "developers-overview", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({})), handlers: base });
 add({ id: "what-you-sell-mock-pricelist", roles: ["owner", "sales"], render: sellPage, handlers: sellPack("wholesale_b2b") });
+
+// CREDITS_SCREENS (29 Nov 2026): Credits and billing (balance, Add credits, low-balance line, statement, invoices) and one GST invoice
+const creditsEnv = <T,>(run: () => Promise<T>) => withEnv({ ...V6_ENV, CREDITS_SCREENS: "1" }, run);
+const CR_PRESETS = [500, 1000, 2000, 5000].map((r) => ({ added_paise: r * 100, gst_paise: r * 18, total_paise: r * 118, added_text: `₹${r.toLocaleString("en-IN")}`, gst_text: "", total_text: "" }));
+const crHandlers = (low: boolean, empty = false) => (role: Role): Record<string, Handler> => ({
+  ...base(role),
+  getBalance: () => parseBalanceAndDebt({ balance_paise: low ? 25000 : 482500, balance_text: low ? "₹250" : "₹4,825", low, minutes_estimate: low ? 3 : 96 }),
+  getOptions: () => parseOptions({ gst_percent: 18, presets: CR_PRESETS, custom_min_rupees: 100, custom_max_rupees: 100000, mode: "fake", checkout_ready: true }),
+  listTopups: () => parseTopups({ items: empty ? [] : [{ order_id: "order_1", state: "paid", added_text: "₹1,000", total_text: "₹1,180", created_at: "2026-11-24T10:00:00Z", paid_at: "2026-11-24T10:01:00Z", invoice_number: "S19-2627-000001", refunded: false }, { order_id: "order_2", state: "abandoned", added_text: "₹500", total_text: "₹590", created_at: "2026-11-23T10:00:00Z", paid_at: null, invoice_number: null, refunded: false }] }),
+  getStatement: () => parseStatement({ items: empty ? [] : [{ at: "2026-11-24T10:01:00Z", kind: "credit", label: "Top-up", amount_paise: 100000, amount_text: "₹1,000", balance_after_text: "₹1,250", invoice_number: "S19-2627-000001" }, { at: "2026-11-24T12:00:00Z", kind: "usage", label: "Calls", amount_paise: -2500, amount_text: "-₹25", balance_after_text: "₹1,225", invoice_number: null }], has_more: false, balance_text: "₹1,225" }),
+  getInvoice: () => parseInvoice({ number: "S19-2627-000001", kind: "topup", issued_at: "2026-11-24T10:01:00Z", description: "Stack19 credits", subtotal_text: "₹1,000", gst_text: "₹180", total_text: "₹1,180", gst_percent: 18, tax_split: "cgst_sgst", cgst_text: "₹90", sgst_text: "₹90", buyer_name: "Sri Lakshmi Textiles", buyer_gstin: "36ABCDE1234F1Z5", seller_name: "Stack19", seller_gstin: "36AAAAA0000A1Z5", seller_details_missing: false }),
+});
+add({ id: "credits-page", roles: ["owner", "admin"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(false) });
+add({ id: "credits-page-low", roles: ["owner"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(true) });
+add({ id: "credits-page-empty", roles: ["owner"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(false, true) });
+add({ id: "credits-page-debt", roles: ["owner"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: (role) => ({ ...crHandlers(true)(role), getBalance: () => parseBalanceAndDebt({ balance_paise: -3500, low: true }) }) });
+add({ id: "credits-invoice", roles: ["owner", "admin"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/invoices/[number]/page")).default(props({ number: "S19-2627-000001" }))), handlers: crHandlers(false) });
+
+// Developers > Webhooks and Activity (C1's webhooks-out.md and developer-api.md): one address that is failing and one that is fine, the five events, the counts and the requests; and the same tabs while the API has them off (404)
+const HOOK_ID = "55555555-5555-4555-8555-555555555555";
+const hookRaw = (id: string, url: string, over: Record<string, unknown> = {}) => ({ id, url, events: ["call.completed", "lead.created"], send_transcript: false, active: true, secret_last4: "k3Fq", secret_version: 1, created_at: "2026-11-24T10:00:00Z", created_by: "x", rotated_at: null, health: { status: "ok", failing_since: null, dead_letters_7d: 0, last_delivered_at: "2026-11-25T08:00:00Z" }, ...over });
+const devTab = (tab: string) => () => withEnv({}, async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({}, { tab })));
+const devOpen = (role: Role): Record<string, Handler> => ({
+  ...base(role),
+  listEndpoints: () => parseEndpoints({ items: [hookRaw(HOOK_ID, "https://hooks.example.com/stack19", { health: { status: "failing", failing_since: "2026-11-25T06:00:00Z", dead_letters_7d: 2, last_delivered_at: null } }), hookRaw("66666666-6666-4666-8666-666666666666", "https://crm.example.com/in")] }),
+  listEvents: () => parseEvents({ items: ["call.completed", "call.missed", "lead.created", "lead.updated", "job.outcome"].map((event) => ({ event, description: `When ${event.replace(".", " ")}` })) }),
+  getActivityUsage: () => parseActivityUsage({ today: { requests: 12, leads: 3, calls_simulated: 1, campaigns: 0, errors: 2 }, month: { requests: 1500, leads: 40, calls_simulated: 9, campaigns: 1, errors: 7 }, limits: { requests_per_minute: 60, calls_per_minute: 10, campaigns_per_minute: 5, concurrent_calls: 10 } }),
+  listActivity: () => parseActivity({ items: [{ id: "a1", key_name: "Website form", method: "POST", route: "/api/v1/leads", status: 201, latency_ms: 84, at: "2026-11-25T09:30:00Z" }, { id: "a2", key_name: "Website form", method: "POST", route: "/api/v1/leads", status: 422, latency_ms: 12, at: "2026-11-25T09:20:00Z" }], next_before: null }),
+});
+const devClosed = (role: Role): Record<string, Handler> => ({ ...base(role), listEndpoints: () => { throw new ApiRequestError(404, "not_found", "off"); }, listEvents: () => { throw new ApiRequestError(404, "not_found", "off"); }, getActivityUsage: () => { throw new ApiRequestError(404, "not_found", "off"); }, listActivity: () => { throw new ApiRequestError(404, "not_found", "off"); } });
+add({ id: "developers-webhooks", roles: ["owner", "admin"], render: devTab("hooks"), handlers: devOpen });
+add({ id: "developers-webhooks-closed", roles: ["owner"], render: devTab("hooks"), handlers: devClosed });
+add({ id: "developers-activity", roles: ["owner", "admin"], render: devTab("activity"), handlers: devOpen });
+add({ id: "developers-activity-closed", roles: ["owner"], render: devTab("activity"), handlers: devClosed });

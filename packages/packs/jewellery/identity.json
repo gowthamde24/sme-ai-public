@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "jewellery",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "jewellery shops",
+    "te": "నగల షాపులు"
+  }
+}

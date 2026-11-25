@@ -1,7 +1,7 @@
 # Catalogue
 Your sarees with photos and prices. Customers see the ones you have published. [Add a saree](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new) Drafts: 1. Customers do not see them yet. Open one with Edit, show it to customers and press Publish. Show
 <select label="Stock">
-  options: all sarees=all* | sarees in stock=available | sarees with few left=few_left | made-to-order sarees=made_to_order
+  options: all sarees=all* | sarees in stock=available | sarees with few left=few_left | made-to-order sarees=made_to_order | sarees out of stock=out_of_stock
 made of
 <select label="Fabric">
   options: any fabric=any* | Kanchi pattu=kanchi_pattu | Dharmavaram silk=dharmavaram_silk | Soft silk=soft_silk | Cotton silk=cotton_silk | Banarasi=banarasi | Mysore silk=mysore_silk | Uppada=uppada | Pure cotton=pure_cotton | Georgette=georgette | Other=other

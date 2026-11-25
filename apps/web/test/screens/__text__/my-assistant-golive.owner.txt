@@ -10,7 +10,7 @@ Only these two are needed. Everything else has a working default. Still on defau
 - [Knowledge](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=knowledge)
 - [Voice & tone](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=voice)
 - [Rules](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=rules)
-These work as they are. You can change them any time, also after going live.
+These work as they are. You can change them any time, also after going live. Add your price list so the assistant can answer prices. [Price lists](/app/tenants/22222222-2222-2222-2222-222222222222/what-you-sell)
 [button type=button: Go live]
 Going live lets your assistant answer real customers by phone and chat. You can pause at any time.
 {role=note} Test mode: going live here only changes the status shown. No phone line is switched on.

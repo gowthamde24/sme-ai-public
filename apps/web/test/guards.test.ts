@@ -239,6 +239,9 @@ describe("server-only code stays on the server", () => {
     // And "What you sell" (JOBS): a photo or sheet of the owner's goes up to this app's OWN route `<workspace>/what-you-sell/upload` (a path it is given): no token, never the API.
     const SELL_UPLOAD = path.join("components", "v2", "app", "sell", "upload-post.ts");
     expect(read(path.join(WEB_ROOT, SELL_UPLOAD))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
+    // And "Verify your business" (KYC_PER_CLIENT): a document (jpg, png or pdf, up to 10 MB) is posted to this app's OWN route `<workspace>/phone-number/kyc-document` (a path it is given): no token, never the API; the route passes it on and drops it.
+    const KYC_UPLOAD = path.join("components", "v2", "app", "phone", "VerifyBusiness.tsx");
+    expect(read(path.join(WEB_ROOT, KYC_UPLOAD))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, NAV_COUNTS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     // And the ⌘K palette's records (owner, 6 Nov): this app's OWN route `<workspace>/search?q=` a moment after the typing stops (a path built from the workspace id): no token, never the API.
     const PALETTE_SEARCH = path.join("components", "v2", "app", "palette", "CommandPalette.tsx");
@@ -246,7 +249,7 @@ describe("server-only code stays on the server", () => {
     // And My AI team v2 (job ai-team-v2): the day's poll every 20 s, a helper's panel and the stand-up's sound, from this app's OWN routes `<workspace>/ai-team/day|panel|standup-audio` (paths built from the workspace id): no token, never the API.
     const AITEAM = ["AiTeamView.tsx", "HelperPanel.tsx", "StandupCard.tsx"].map((f) => path.join("components", "v2", "app", "aiteam", f));
     for (const f of AITEAM) expect(read(path.join(WEB_ROOT, f))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
-    expect(callers).toEqual([...AITEAM, NAV_COUNTS, PALETTE_SEARCH, ACTIVITY_POLL, LIVE_CALLS, VOICE_INPUT, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SELL_UPLOAD, SESSION_CHECK, VOICE_CHAT, WORK_POST, path.join("lib", "api", "client.ts")].sort());
+    expect(callers).toEqual([...AITEAM, KYC_UPLOAD, NAV_COUNTS, PALETTE_SEARCH, ACTIVITY_POLL, LIVE_CALLS, VOICE_INPUT, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SELL_UPLOAD, SESSION_CHECK, VOICE_CHAT, WORK_POST, path.join("lib", "api", "client.ts")].sort());
     expect(read(path.join(WEB_ROOT, WORK_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, LIVE_CALLS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, VOICE_INPUT))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);

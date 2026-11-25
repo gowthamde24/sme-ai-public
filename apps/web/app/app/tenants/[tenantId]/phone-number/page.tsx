@@ -10,13 +10,19 @@ import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
-import { phonePicker } from "@/lib/screens/flag";
+import { CallsAtOnce } from "@/components/v2/app/calls/panel/CallsAtOnce";
+import { readPhoneLines } from "@/lib/phone-lines/source";
+import { callsPanel, kycPerClient, phonePicker } from "@/lib/screens/flag";
 import { requireUser } from "@/lib/auth/session";
 import { PhoneNumberSimple } from "@/components/v2/app/phone/PhoneNumberSimple";
 import { PhonePicker } from "@/components/v2/app/phone/LazyPhonePicker";
+import { PhoneBuy } from "@/components/v2/app/phone/LazyPhoneBuy";
+import { VerifyBusiness } from "@/components/v2/app/phone/LazyVerifyBusiness";
+import { readStatus } from "@/lib/phone-kyc/source";
 import { readNumber, readOwn } from "@/lib/phone-picker/source";
 import { menuTitle } from "../menu-title";
 import { claimNumberAction, ownNumberAction, searchNumbersAction } from "./picker-actions";
+import { buyNumberAction, kycAadhaarAction, kycDetailsAction, kycGstAction, kycPanAction, kycStartAction, kycStatusAction, kycSubmitAction, searchAvailableAction } from "./kyc-actions";
 
 export const metadata = { title: `Your business number · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -26,7 +32,7 @@ export const dynamic = "force-dynamic";
  * /app/tenants/[tenantId]/phone-number (sidebar v2, AI team > Phone number; Owner and Admin): the number the assistant calls customers from. There is no telephony yet (real calls stay off until the lawyer review and a registered
  * number), so the page says so honestly: "Not set up yet · coming soon". It shows no number, takes no input and connects nothing. The WhatsApp number is a different thing (Integrations > WhatsApp).
  */
-export default async function PhoneNumberPage({ params }: PageProps<"/app/tenants/[tenantId]/phone-number">) {
+export default async function PhoneNumberPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/phone-number">) {
   const user = await requireUser();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
@@ -42,21 +48,80 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
   const lang = await getLang();
   const t = appT(lang);
   if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("phone.title")} message={t("int.admins_only")} />;
+  // CALLS_PANEL + PHONE_LINES_SCREENS: "Calls at once" under the number (C1's GET /phone-lines); the card is not there when the flag is off
+  const read = callsPanel() ? await readPhoneLines(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : ({ mode: "unread" } as const))) : ({ mode: "off" } as const);
+  const once =
+    read.mode === "off" ? null : (
+      <CallsAtOnce words={wordsFor(lang, ["cpn.once."])} lines={read.mode === "ok" ? read.lines : null} owner={tenant.role === "owner"} test={read.mode === "ok" && read.mock} />
+    );
   // PHONE_PICKER (owner, 28 Nov 2026): the owner picks their own number from a list; the registration steps below stay for workspaces that are not on the picker
   if (phonePicker() !== "off") {
     const own = await readOwn(user.accessToken, tenantId);
+    // KYC_PER_CLIENT (owner, 29 Nov 2026; C1's Model B): with the picker, the business has its OWN account. No number yet = "Get a phone number" in four steps; a number (or an account started) that is not verified yet = "Verify your business". When the API
+    // does not have the part (404) or the number is verified, the picker below is drawn as it was.
+    const status = kycPerClient() !== "off" ? await readStatus(user.accessToken, tenantId) : null;
+    if (status && !(own && status.state === "verified")) {
+      const { verify, buy } = await searchParams;
+      const here = `/app/tenants/${tenantId}/phone-number`;
+      const mock = kycPerClient() === "mock" || phonePicker() === "mock";
+      const showBuy = !own && (buy === "1" || (status.state === "not_started" && verify !== "1"));
+      if (showBuy) {
+        return (
+          <main className={pageMain} lang={lang}>
+            <PageTop title={t("pick.buy.title")} sub={t("pick.buy.sub")} />
+            <div className="mt-4">
+              <PhoneBuy
+                words={wordsFor(lang, ["pick."])}
+                canEdit={tenant.role === "owner"}
+                email={user.email}
+                mock={mock}
+                verifyHref={`${here}?verify=1`}
+                actions={{ search: searchAvailableAction.bind(null, tenantId), buy: buyNumberAction.bind(null, tenantId) }}
+              />
+            </div>
+          </main>
+        );
+      }
+      return (
+        <main className={pageMain} lang={lang}>
+          <PageTop title={t("pick.kyc.title")} sub={own ? `${own.display} · ${t(`pick.type.short.${own.type}` as "pick.type.short.mobile")}` : t("pick.kyc.sub.none")} />
+          <div className="mt-4">
+            <VerifyBusiness
+              words={wordsFor(lang, ["pick."])}
+              status={status}
+              own={own}
+              canEdit={tenant.role === "owner"}
+              mock={mock}
+              buyHref={`${here}?buy=1`}
+              actions={{
+                status: kycStatusAction.bind(null, tenantId),
+                start: kycStartAction.bind(null, tenantId),
+                details: kycDetailsAction.bind(null, tenantId),
+                pan: kycPanAction.bind(null, tenantId),
+                gst: kycGstAction.bind(null, tenantId),
+                aadhaar: kycAadhaarAction.bind(null, tenantId),
+                submit: kycSubmitAction.bind(null, tenantId),
+                uploadUrl: `${here}/kyc-document`,
+              }}
+            />
+          </div>
+        </main>
+      );
+    }
     return (
       <main className={pageMain} lang={lang}>
         <PageTop title={await menuTitle("phone", lang, user.accessToken, tenantId)} sub={t("pick.sub")} />
         <div className="mt-4">
           <PhonePicker
-            words={wordsFor(lang, ["pick."])}
+            words={wordsFor(lang, ["pick.", "phn.kyc."])}
+            verifyHref={`/app/tenants/${tenantId}/phone-number?verify=1`}
             own={own}
             canEdit={tenant.role === "owner"}
             mock={phonePicker() === "mock"}
             actions={{ search: searchNumbersAction.bind(null, tenantId), claim: claimNumberAction.bind(null, tenantId), poll: ownNumberAction.bind(null, tenantId) }}
           />
         </div>
+        {once}
       </main>
     );
   }
@@ -66,6 +131,7 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
     <main className={pageMain} lang={lang}>
       <PageTop title={await menuTitle("phone", lang, user.accessToken, tenantId)} sub={t("phn.sub")} />
       <PhoneNumberSimple words={wordsFor(lang, ["phn.", "pick.type.short."])} own={own} />
+      {once}
     </main>
   );
 }

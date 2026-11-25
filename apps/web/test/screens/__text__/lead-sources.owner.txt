@@ -1,5 +1,11 @@
 # Lead sources
 Places where new leads arrive by themselves. Each one has its own address.
+summary: Before you start calling Read the five rules
+- 1 Only call people who agreed. People who asked about your business, or said yes to calls. Not bought or collected lists.
+- 2 We fix the calling hours. Calls go out between 9 am and 9 pm. Outside these hours they wait.
+- 3 Do-not-call is automatic. When someone asks you to stop, they are added to your do-not-call list and are never called again.
+- 4 Your business is the caller. You are responsible for who is called and what is said. We place the call for you.
+- 5 Phone rules may apply. The national do-not-disturb list and phone company rules can stop some calls, mostly calls about offers.
 {role=note} Test mode: nothing is received and the addresses are made up.
 {label="Meta Lead Ads (Facebook and Instagram)"}
 ## Meta Lead Ads (Facebook and Instagram)
@@ -27,3 +33,13 @@ Send leads from any other tool to this address. Nothing set up yet.
 {label="Mails we could not read"}
 ## Mails we could not read
 Add these leads by hand, then discard the mail. No unread mails.
+{label="Guides for each source"}
+## Guides for each source
+Works with anything that can send a web request.
+- [Facebook and Instagram Leads from your ads arrive here as soon as someone fills the form.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources/guides/fb)
+- [Google Sheets Every new row of your sheet becomes a lead.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources/guides/sheet)
+- [My website A form on your site, or a snippet your developer adds.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources/guides/web)
+- [My CRM Send leads from the tool your team already uses.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources/guides/crm)
+- [IndiaMART and JustDial Enquiries from the portals reach you without copying.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources/guides/mart)
+- [An automation tool Zapier, Make, n8n, Pabbly and others.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources/guides/auto)
+- [Developer or API For someone who writes code: a key and a few lines.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources/guides/dev)

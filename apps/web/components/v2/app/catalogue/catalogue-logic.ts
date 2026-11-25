@@ -5,7 +5,7 @@ import { COLOURS, FABRICS, OCCASIONS, PRICE_BANDS, type Colour, type Fabric, typ
  * request. The API filters by fabric, colour, occasion, price band and "in stock" (in stock or few left); it has no name search and cannot pick "few left" or "made to order" alone, so the page does those on
  * the items it has read (the same trade the Outbox makes: the newest items of the list, up to MAX_SCANNED).
  */
-export const STOCK_CHOICES = ["available", "few_left", "made_to_order"] as const;
+export const STOCK_CHOICES = ["available", "few_left", "made_to_order", "out_of_stock"] as const;
 export type StockChoice = (typeof STOCK_CHOICES)[number];
 
 export type CatalogueQuery = {
@@ -103,7 +103,7 @@ export function apiFilters(q: CatalogueQuery, admin: boolean): ItemFilters {
 }
 
 /** True when the page must look at more than one API page to fill a screen, because it narrows by itself. */
-export const narrowsItself = (q: CatalogueQuery): boolean => q.q !== "" || q.stock === "few_left" || q.stock === "made_to_order";
+export const narrowsItself = (q: CatalogueQuery): boolean => q.q !== "" || q.stock === "few_left" || q.stock === "made_to_order" || q.stock === "out_of_stock";
 
 const fold = (s: string) => s.toLocaleLowerCase("en-IN").normalize("NFKD").replace(/\p{M}/gu, "");
 
@@ -113,6 +113,7 @@ export function narrow(items: readonly ItemSummary[], q: CatalogueQuery): ItemSu
   return items.filter((i) => {
     if (q.stock === "few_left" && i.stock_status !== "few_left") return false;
     if (q.stock === "made_to_order" && i.stock_status !== "made_to_order") return false;
+    if (q.stock === "out_of_stock" && i.stock_status !== "out_of_stock") return false;
     if (terms.length === 0) return true;
     const hay = fold(`${i.name} ${i.border ?? ""} ${i.fabric_label}`);
     return terms.every((t) => hay.includes(t));
@@ -120,12 +121,13 @@ export function narrow(items: readonly ItemSummary[], q: CatalogueQuery): ItemSu
 }
 
 /** The badge a card carries. A hidden item is marked first (only Owner and Admin ever see one). */
-export type Badge = "inactive" | "few_left" | "made_to_order";
+export type Badge = "inactive" | "few_left" | "made_to_order" | "out_of_stock";
 export function badgesOf(i: Pick<ItemSummary, "active" | "stock_status">): Badge[] {
   const out: Badge[] = [];
   if (!i.active) out.push("inactive");
   if (i.stock_status === "few_left") out.push("few_left");
   if (i.stock_status === "made_to_order") out.push("made_to_order");
+  if (i.stock_status === "out_of_stock") out.push("out_of_stock");
   return out;
 }
 

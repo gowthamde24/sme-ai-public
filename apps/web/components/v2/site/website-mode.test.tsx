@@ -14,6 +14,7 @@ import { SITE_LANGS } from "@/i18n/site-lang";
 import { siteDict } from "@/i18n/site";
 import { isServed } from "@/lib/site/mode";
 import { SITE_PACKS } from "@/lib/site/packs";
+import { HELP_ARTICLES } from "@/lib/public/data";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
 import { allTargets } from "@/lib/site/routes";
 
@@ -36,8 +37,8 @@ const served = allTargets().filter((t) => isServed(t, "website"));
 const cases = served.flatMap((t) => SITE_LANGS.map((l) => [`${name(t)} ${l}`, l, t] as const));
 
 describe("website mode: the public pages (job DQ)", () => {
-  it("serves exactly the home page, the three business pages, plans and contact", () => {
-    expect(served.map(name)).toEqual(["home", "pricing", "contact", ...SITE_PACKS.map((p) => p.slug)]);
+  it("serves exactly the home page, the three business pages, plans, contact, the launch pages (help and its articles, status, acceptable use, refunds, Talk to us)", () => {
+    expect(served.map(name)).toEqual(["home", "pricing", "contact", "help", "status", "acceptable-use", "refunds", "talk-to-us", ...HELP_ARTICLES.map((a) => a.slug), ...SITE_PACKS.map((p) => p.slug)]);
   });
 
   it.each(cases)("%s: no link to sign in, sign up or the app; 'Join early access' instead; no 'Start trial'; nothing unfilled", (_n, lang, target) => {
@@ -70,7 +71,7 @@ describe("website mode: the public pages (job DQ)", () => {
   it("the footer lists only the pages that are served; the pages that are not are not linked from anywhere", () => {
     for (const lang of SITE_LANGS) {
       const all = cases.filter(([, l]) => l === lang).flatMap(([, , t]) => hrefs(render(lang, t)));
-      for (const page of ["how-it-works", "security", "help"] as const) expect(all.filter((h) => h.endsWith(`/${page}`)), `${lang} ${page}`).toEqual([]);
+      for (const page of ["how-it-works", "security"] as const) expect(all.filter((h) => h.endsWith(`/${page}`)), `${lang} ${page}`).toEqual([]);
       expect(all).toContain(sitePath(lang, { kind: "page", page: "pricing" }));
       expect(all).toContain(sitePath(lang, { kind: "page", page: "contact" }));
     }

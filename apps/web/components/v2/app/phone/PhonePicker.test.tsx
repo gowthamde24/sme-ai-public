@@ -6,7 +6,7 @@ import type { ClaimResult, OwnNumber, SearchResult } from "@/lib/phone-picker/ty
 
 import { PhonePicker } from "./PhonePicker";
 
-const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("pick.")));
+const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("pick.") || k.startsWith("phn.kyc.")));
 const N = (n: string) => ({ number: n, display: `+91 ${n.slice(3, 8)} ${n.slice(8)}`, type: "mobile" as const });
 const LIST: SearchResult = { ok: true, numbers: [N("+919429492465"), N("+919429492466")], page: 1, more: false };
 const MINE = (state: OwnNumber["state"]): OwnNumber => ({ ...N("+919429492465"), state, label: null });
@@ -16,6 +16,22 @@ const actions = (over: Partial<{ search: SearchResult; claim: ClaimResult; poll:
   poll: vi.fn(async () => over.poll ?? null),
 });
 afterEach(cleanup);
+
+describe("a number that waits for the business to be verified (kyc_pending)", () => {
+  it("shows the neutral notice with the Verify link, hides the forwarding steps and keeps asking until it is active", async () => {
+    const a = actions({ poll: MINE("ready") });
+    vi.useFakeTimers();
+    render(<PhonePicker words={WORDS} actions={a} own={MINE("kyc_pending")} canEdit verifyHref="/v?verify=1" />);
+    expect(screen.getByRole("status")).toHaveTextContent("Your number is not active until your business is verified.");
+    expect(screen.getByRole("link", { name: "Verify now." })).toHaveAttribute("href", "/v?verify=1");
+    expect(document.querySelector('[data-part="forwarding"]')).toBeNull();
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(a.poll).toHaveBeenCalled();
+    vi.useRealTimers();
+    await waitFor(() => expect(document.querySelector('[data-part="forwarding"]')).not.toBeNull());
+    expect(screen.queryByRole("link", { name: "Verify now." })).toBeNull();
+  });
+});
 
 describe("the number picker", () => {
   it("is three plain steps; step 1 is open, the others one grey line, and there is no price anywhere", () => {

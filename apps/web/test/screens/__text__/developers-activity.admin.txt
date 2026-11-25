@@ -1,0 +1,11 @@
+# Developers
+Use your assistant from your own tools: send leads, place calls, and get every result back.
+{label="Developers"} [Overview](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=overview) [API keys](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=keys) [Webhooks](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=hooks) [API activity](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=activity current=page) [Docs and downloads](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=docs)
+Requests made with your API keys in the last 30 days. No request contents are kept.
+table:
+  | th Activity | th Requests | th Leads added | th Test calls | th Errors |
+  | th Today | 12 | 3 | 1 | 2 |
+  | th This month | 1,500 | 40 | 9 | 7 |
+Limits for each key: 60 requests a minute, 10 calls a minute, 10 calls at once.
+- POST /api/v1/leads 201 Website form · 25 Nov, 3:00 pm 84 ms
+- POST /api/v1/leads 422 Website form · 25 Nov, 2:50 pm 12 ms

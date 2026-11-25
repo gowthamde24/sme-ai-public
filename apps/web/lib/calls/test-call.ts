@@ -33,7 +33,7 @@ export const isTestNumberId = (v: unknown): v is string => typeof v === "string"
 /** The gate's closed words (app/telephony/gate.py REASONS) that an outbound test call can meet; each has its own sentence (`tc.no.<word>`). Any other word is said by `tc.no.other`. */
 export const REFUSED_REASONS = [
   "telephony_off", "live_not_confirmed", "bad_number", "not_on_sandbox_list", "not_approved", "workspace_paused", "billing_blocked", "purpose_not_allowed", "school_rule",
-  "no_such_line", "outside_window", "outside_hours", "holiday", "weekly_limit", "daily_cap", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "no_ai_disclosure", "already_calling", "too_many_calls",
+  "no_such_line", "kyc_pending", "outside_window", "outside_hours", "holiday", "weekly_limit", "daily_cap", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "no_ai_disclosure", "already_calling", "too_many_calls",
 ] as const;
 /** Money, consent and privacy sentences wait for a person's review: English in every language until then (`humanOnly` in the store). */
 export const REVIEW_REASONS = ["billing_blocked", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown"] as const;

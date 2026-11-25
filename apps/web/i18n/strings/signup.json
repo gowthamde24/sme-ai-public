@@ -784,5 +784,368 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "signup.type.describe.label": {
+  "en": "Or describe what you sell",
+  "te": "లేదా మీరు ఏం అమ్ముతారో చెప్పండి",
+  "hi": "या बताइए कि आप क्या बेचते हैं",
+  "kn": "ಅಥವಾ ನೀವು ಏನು ಮಾರುತ್ತೀರಿ ಎಂದು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.describe.hint": {
+  "en": "A few words, in any language. For example: sweets and cakes, home delivery.",
+  "te": "కొన్ని మాటలు చాలు, ఏ భాషలోనైనా. ఉదాహరణకు: స్వీట్స్, కేక్స్, home delivery.",
+  "hi": "कुछ शब्द काफ़ी हैं, किसी भी भाषा में। जैसे: मिठाई और केक, home delivery।",
+  "kn": "ಕೆಲವು ಪದಗಳು ಸಾಕು, ಯಾವ ಭಾಷೆಯಲ್ಲಾದರೂ. ಉದಾಹರಣೆಗೆ: ಸಿಹಿತಿಂಡಿ, ಕೇಕ್, home delivery.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.describe.button": {
+  "en": "Find my type",
+  "te": "నా రకం కనుక్కోండి",
+  "hi": "मेरा प्रकार खोजें",
+  "kn": "ನನ್ನ ಪ್ರಕಾರ ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.describe.closest": {
+  "en": "Closest match",
+  "te": "దగ్గరగా సరిపోయేది",
+  "hi": "सबसे करीबी मेल",
+  "kn": "ಹತ್ತಿರದ ಹೊಂದಾಣಿಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.describe.use": {
+  "en": "Use this",
+  "te": "ఇది తీసుకోండి",
+  "hi": "यह चुनें",
+  "kn": "ಇದನ್ನು ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.describe.none": {
+  "en": "We could not match that. Try other words, or choose Something else.",
+  "te": "అది సరిపోలేదు. వేరే మాటలు రాయండి, లేదా Something else ఎంచుకోండి.",
+  "hi": "यह मेल नहीं खाया। दूसरे शब्द आज़माइए, या Something else चुनिए।",
+  "kn": "ಅದು ಹೊಂದಲಿಲ್ಲ. ಬೇರೆ ಪದಗಳನ್ನು ಬರೆಯಿರಿ, ಅಥವಾ Something else ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.title": {
+  "en": "One quick check",
+  "te": "ఒక చిన్న చెక్",
+  "hi": "एक छोटी जाँच",
+  "kn": "ಒಂದು ಸಣ್ಣ ಪರಿಶೀಲನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.sub": {
+  "en": "Two things before your business is made: you agree to our terms, and we check your phone number.",
+  "te": "మీ బిజినెస్ తయారు చేసే ముందు రెండు పనులు: మా terms కి అంగీకరించాలి, మీ ఫోన్ నంబర్‌ని చెక్ చేస్తాం.",
+  "hi": "आपका बिज़नेस बनाने से पहले दो काम: हमारी terms मानें, और हम आपका फ़ोन नंबर जाँचते हैं।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಮಾಡುವ ಮೊದಲು ಎರಡು ಕೆಲಸ: ನಮ್ಮ terms ಒಪ್ಪಿ, ನಿಮ್ಮ ಫೋನ್ ನಂಬರ್ ಪರಿಶೀಲಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.terms": {
+  "en": "I agree to the Terms of Use (version {v}).",
+  "te": "నేను Terms of Use (వెర్షన్ {v}) కి అంగీకరిస్తున్నాను.",
+  "hi": "मैं Terms of Use (वर्ज़न {v}) से सहमत हूँ।",
+  "kn": "ನಾನು Terms of Use (ವರ್ಷನ್ {v}) ಗೆ ಒಪ್ಪುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.privacy": {
+  "en": "I have read the Privacy Policy (version {v}).",
+  "te": "నేను Privacy Policy (వెర్షన్ {v}) చదివాను.",
+  "hi": "मैंने Privacy Policy (वर्ज़न {v}) पढ़ ली है।",
+  "kn": "ನಾನು Privacy Policy (ವರ್ಷನ್ {v}) ಓದಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.read.terms": {
+  "en": "Read the terms",
+  "te": "terms చదవండి",
+  "hi": "terms पढ़ें",
+  "kn": "terms ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.read.privacy": {
+  "en": "Read the privacy policy",
+  "te": "privacy policy చదవండి",
+  "hi": "privacy policy पढ़ें",
+  "kn": "privacy policy ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.agree": {
+  "en": "Agree and continue",
+  "te": "అంగీకరించి కొనసాగండి",
+  "hi": "सहमत होकर आगे बढ़ें",
+  "kn": "ಒಪ್ಪಿ ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.phone.l": {
+  "en": "Mobile number",
+  "te": "మొబైల్ నంబర్",
+  "hi": "मोबाइल नंबर",
+  "kn": "ಮೊಬೈಲ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.phone.h": {
+  "en": "We send a 6-digit code. We use it only to check that you are a real person, and we never share it.",
+  "te": "6 అంకెల code పంపుతాం. మీరు నిజమైన వ్యక్తి అని చెక్ చేయడానికి మాత్రమే వాడతాం, ఎవరికీ ఇవ్వం.",
+  "hi": "हम 6 अंकों का code भेजते हैं। इसे सिर्फ़ यह जाँचने के लिए इस्तेमाल करते हैं कि आप असली इंसान हैं, किसी को नहीं देते।",
+  "kn": "ನಾವು 6 ಅಂಕಿಯ code ಕಳುಹಿಸುತ್ತೇವೆ. ನೀವು ನಿಜವಾದ ವ್ಯಕ್ತಿ ಎಂದು ಪರಿಶೀಲಿಸಲು ಮಾತ್ರ ಬಳಸುತ್ತೇವೆ, ಯಾರಿಗೂ ಕೊಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.phone.send": {
+  "en": "Send the code",
+  "te": "code పంపండి",
+  "hi": "code भेजें",
+  "kn": "code ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.code.sent": {
+  "en": "We sent a code. It works for 10 minutes.",
+  "te": "code పంపాం. ఇది 10 నిమిషాలు పనిచేస్తుంది.",
+  "hi": "code भेज दिया है। यह 10 मिनट चलेगा।",
+  "kn": "code ಕಳುಹಿಸಿದ್ದೇವೆ. ಇದು 10 ನಿಮಿಷ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.code.l": {
+  "en": "The 6-digit code",
+  "te": "6 అంకెల code",
+  "hi": "6 अंकों का code",
+  "kn": "6 ಅಂಕಿಯ code",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.code.verify": {
+  "en": "Check the code",
+  "te": "code చెక్ చేయండి",
+  "hi": "code जाँचें",
+  "kn": "code ಪರಿಶೀಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.code.resend": {
+  "en": "Send a new code",
+  "te": "కొత్త code పంపండి",
+  "hi": "नया code भेजें",
+  "kn": "ಹೊಸ code ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.signup_closed": {
+  "en": "Sign-up is not open yet.",
+  "te": "sign-up ఇంకా తెరవలేదు.",
+  "hi": "sign-up अभी खुला नहीं है।",
+  "kn": "sign-up ಇನ್ನೂ ತೆರೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.email_unconfirmed": {
+  "en": "Confirm your e-mail address first: open the link we sent you.",
+  "te": "ముందు మీ ఈమెయిల్ చిరునామాను confirm చేయండి: మేము పంపిన లింక్ తెరవండి.",
+  "hi": "पहले अपना ईमेल पता confirm करें: हमारा भेजा लिंक खोलिए।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸ confirm ಮಾಡಿ: ನಾವು ಕಳುಹಿಸಿದ ಲಿಂಕ್ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.email_not_allowed": {
+  "en": "This kind of e-mail address cannot be used. Use your own e-mail address.",
+  "te": "ఇలాంటి ఈమెయిల్ చిరునామా వాడలేరు. మీ సొంత ఈమెయిల్ చిరునామా వాడండి.",
+  "hi": "इस तरह का ईमेल पता नहीं चलेगा। अपना खुद का ईमेल पता इस्तेमाल करें।",
+  "kn": "ಇಂತಹ ಇಮೇಲ್ ವಿಳಾಸ ಬಳಸಲಾಗುವುದಿಲ್ಲ. ನಿಮ್ಮ ಸ್ವಂತ ಇಮೇಲ್ ವಿಳಾಸ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.rate_limited": {
+  "en": "Too many tries. Wait an hour and try again.",
+  "te": "చాలా ప్రయత్నాలు అయ్యాయి. ఒక గంట ఆగి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "बहुत कोशिशें हो गईं। एक घंटा रुककर फिर कोशिश कीजिए।",
+  "kn": "ತುಂಬಾ ಪ್ರಯತ್ನಗಳಾದವು. ಒಂದು ಗಂಟೆ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.phone_taken": {
+  "en": "This number belongs to another account.",
+  "te": "ఈ నంబర్‌ని ఇంకో అకౌంట్ ఇప్పటికే వాడుతోంది.",
+  "hi": "यह नंबर किसी और अकाउंट में पहले से इस्तेमाल हो रहा है।",
+  "kn": "ಈ ನಂಬರ್ ಅನ್ನು ಬೇರೆ ಅಕೌಂಟ್ ಈಗಾಗಲೇ ಬಳಸುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.phone_code_unavailable": {
+  "en": "We cannot send a code right now. Try again in a few minutes.",
+  "te": "ఇప్పుడు code పంపలేకపోతున్నాం. కొన్ని నిమిషాల తర్వాత ప్రయత్నించండి.",
+  "hi": "अभी code नहीं भेज पा रहे। कुछ मिनट बाद कोशिश कीजिए।",
+  "kn": "ಈಗ code ಕಳುಹಿಸಲಾಗುತ್ತಿಲ್ಲ. ಕೆಲವು ನಿಮಿಷಗಳ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.validation_error": {
+  "en": "Check the number: a mobile number of 10 digits.",
+  "te": "నంబర్ చూడండి: 10 అంకెల మొబైల్ నంబర్.",
+  "hi": "नंबर जाँचिए: 10 अंकों का मोबाइल नंबर।",
+  "kn": "ನಂಬರ್ ಪರಿಶೀಲಿಸಿ: 10 ಅಂಕಿಯ ಮೊಬೈಲ್ ನಂಬರ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.code_wrong": {
+  "en": "That code is not right. Check it and try again.",
+  "te": "ఆ code సరైనది కాదు. చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "वह code सही नहीं है। जाँचकर फिर कोशिश कीजिए।",
+  "kn": "ಆ code ಸರಿಯಲ್ಲ. ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.code_expired": {
+  "en": "That code has run out. Send a new one.",
+  "te": "ఆ code గడువు తీరింది. కొత్తది పంపండి.",
+  "hi": "वह code पुराना हो गया। नया भेजिए।",
+  "kn": "ಆ code ಅವಧಿ ಮುಗಿದಿದೆ. ಹೊಸದನ್ನು ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.code_missing": {
+  "en": "Ask for a code first.",
+  "te": "ముందు code అడగండి.",
+  "hi": "पहले code मँगवाइए।",
+  "kn": "ಮೊದಲು code ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.code_locked": {
+  "en": "Too many wrong tries. Send a new code.",
+  "te": "చాలా తప్పు ప్రయత్నాలు. కొత్త code పంపండి.",
+  "hi": "बहुत ग़लत कोशिशें हुईं। नया code भेजिए।",
+  "kn": "ತುಂಬಾ ತಪ್ಪು ಪ್ರಯತ್ನಗಳು. ಹೊಸ code ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.version_outdated": {
+  "en": "The terms were just updated. Reload the page and tick again.",
+  "te": "terms ఇప్పుడే మారాయి. పేజీని reload చేసి మళ్ళీ tick చేయండి.",
+  "hi": "terms अभी बदले हैं। पेज reload करके फिर tick कीजिए।",
+  "kn": "terms ಈಗಷ್ಟೇ ಬದಲಾಗಿವೆ. ಪುಟ reload ಮಾಡಿ ಮತ್ತೆ tick ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "su.err.unavailable": {
+  "en": "We could not do that just now. Try again in a minute.",
+  "te": "ఇప్పుడు అది చేయలేకపోయాం. ఒక నిమిషం తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो पाया। एक मिनट बाद फिर कोशिश कीजिए।",
+  "kn": "ಈಗ ಅದನ್ನು ಮಾಡಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

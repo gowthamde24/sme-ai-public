@@ -40,7 +40,7 @@ describe("a kind of business on the first sign-up step", () => {
       return svg;
     });
     expect(icons.every((c) => c?.includes("lucide"))).toBe(true);
-    expect(new Set(icons).size).toBe(cards.length);
+    expect(new Set(icons).size).toBe(new Set(cards.map((c) => c.owlProp)).size); // one picture per prop (several of the 54 types share one)
     const { container } = render(<PackCard card={{ ...cards[0], owlProp: "a_prop_nobody_drew" }} href="/x" hint="h" />);
     expect(container.querySelector("[data-accent] svg")!.getAttribute("class")).toContain("lucide-store");
   });

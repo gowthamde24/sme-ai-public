@@ -1,0 +1,65 @@
+# Edit columns
+Dress materials Most lists do not need this page. Adding a list already picks the columns.
+-
+[button type=button disabled: Move up]
+[button type=button disabled: Move down]
+Column name
+<text label="Column name" disabled maxlength=40 value=Name>
+Type
+<select label="Type" disabled>
+  options: Text=text* | Number=number | Rupees=rupees | Yes or no=yes_no | Choice=choice | Photo=photo | Link=link | Date=date | Date and time=datetime | Duration=duration
+Meaning
+<select label="Meaning" disabled>
+  options: Nothing special=* | Availability=availability | Quantity in stock=quantity | How to buy=how_to_buy | Description=description
+-
+[button type=button disabled: Move up]
+[button type=button: Move down]
+Column name
+<text label="Column name" maxlength=40 value=Lining>
+Type
+<select label="Type" disabled>
+  options: Text=text | Number=number | Rupees=rupees | Yes or no=yes_no | Choice=choice* | Photo=photo | Link=link | Date=date | Date and time=datetime | Duration=duration
+Meaning
+<select label="Meaning">
+  options: Nothing special=* | Availability=availability | Quantity in stock=quantity | How to buy=how_to_buy | Description=description
+[button type=button: Remove]
+[button type=button: More]
+The choices, separated by commas
+<text label="The choices, separated by commas" maxlength=400 value=Cotton, Satin>
+-
+[button type=button: Move up]
+[button type=button: Move down]
+Column name
+<text label="Column name" maxlength=40 value=Retail price>
+Type
+<select label="Type" disabled>
+  options: Text=text | Number=number | Rupees=rupees* | Yes or no=yes_no | Choice=choice | Photo=photo | Link=link | Date=date | Date and time=datetime | Duration=duration
+Meaning
+<select label="Meaning">
+  options: Nothing special= | This is a price=price* | Availability=availability | Quantity in stock=quantity | How to buy=how_to_buy | Description=description
+[button type=button: Remove]
+[button type=button: More]
+Billing
+<select label="Billing">
+  options: one time=one_time* | per month=per_month | per year=per_year | per hour=per_hour | per day=per_day | per unit=per_unit | from
+<radio name=wls-quote label="Quote this price by default" checked>
+Quote this price by default
+-
+[button type=button: Move up]
+[button type=button disabled: Move down]
+Column name
+<text label="Column name" maxlength=40 value=Availability>
+Type
+<select label="Type" disabled>
+  options: Text=text | Number=number | Rupees=rupees | Yes or no=yes_no | Choice=choice* | Photo=photo | Link=link | Date=date | Date and time=datetime | Duration=duration
+Meaning
+<select label="Meaning">
+  options: Nothing special= | Availability=availability* | Quantity in stock=quantity | How to buy=how_to_buy | Description=description
+[button type=button: Remove]
+[button type=button: More]
+The choices, separated by commas
+<text label="The choices, separated by commas" maxlength=400 value=In stock, Few left, Out of stock>
+[button type=button: + Add a column]
+4 of 12 columns The assistant says only the numbers in the price columns, with the billing period you chose. A number in any other column is never said as a price.
+[button type=button: Save columns]
+[button type=button: Cancel]

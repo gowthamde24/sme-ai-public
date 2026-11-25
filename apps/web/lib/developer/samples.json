@@ -1,0 +1,6 @@
+{
+ "curl": "curl https://api.stack19.in/v1/me \\\n  -H \"Authorization: Bearer YOUR_KEY\"\n\n# a call that checks everything and dials nobody\ncurl -X POST https://api.stack19.in/v1/calls \\\n  -H \"Authorization: Bearer YOUR_KEY\" \\\n  -H \"Idempotency-Key: first-try-001\" \\\n  -d '{\"to\":\"+919800000000\",\"job\":\"enquiry_call\",\"dry_run\":true}'",
+ "node": "const res = await fetch(\"https://api.stack19.in/v1/calls\", {\n  method: \"POST\",\n  headers: {\n    Authorization: \"Bearer YOUR_KEY\",\n    \"Idempotency-Key\": \"first-try-001\",\n  },\n  body: JSON.stringify({ to: \"+919800000000\", job: \"enquiry_call\", dry_run: true }),\n});\nconsole.log(await res.json());",
+ "python": "import requests\n\nres = requests.post(\n    \"https://api.stack19.in/v1/calls\",\n    headers={\"Authorization\": \"Bearer YOUR_KEY\", \"Idempotency-Key\": \"first-try-001\"},\n    json={\"to\": \"+919800000000\", \"job\": \"enquiry_call\", \"dry_run\": True},\n)\nprint(res.json())"
+}
+

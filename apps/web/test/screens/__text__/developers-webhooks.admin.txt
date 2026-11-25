@@ -1,0 +1,21 @@
+# Developers
+Use your assistant from your own tools: send leads, place calls, and get every result back.
+{label="Developers"} [Overview](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=overview) [API keys](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=keys) [Webhooks](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=hooks current=page) [API activity](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=activity) [Docs and downloads](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=docs)
+We send each event to your address as it happens, signed so you can check it came from us.
+-
+{role=status} Some events could not be delivered to https://hooks.example.com/stack19 after every retry.
+https://hooks.example.com/stack19 call.completed · lead.created On · Nothing delivered yet · Secret ends k3Fq
+[button type=button: Send a test]
+[button type=button: Delivery log]
+[button type=button: Change]
+[button type=button: Switch off]
+[button type=button: New secret]
+[button type=button: Delete]
+- https://crm.example.com/in call.completed · lead.created On · Last delivered 25 Nov, 1:30 pm · Secret ends k3Fq
+[button type=button: Send a test]
+[button type=button: Delivery log]
+[button type=button: Change]
+[button type=button: Switch off]
+[button type=button: New secret]
+[button type=button: Delete]
+[button type=button: Add an address]

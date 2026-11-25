@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "software_saas",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "software companies",
+    "te": "సాఫ్ట్‌వేర్ కంపెనీలు"
+  }
+}

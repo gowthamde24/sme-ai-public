@@ -15,7 +15,7 @@ import type { SiteTarget } from "@/lib/site/paths";
 export function SiteShell({ lang, theme, t, target, children }: { lang: SiteLang; theme?: Theme; t: SiteT; target: SiteTarget; children: ReactNode }) {
   return (
     <V2Root theme={theme} lang={lang} site className="min-h-screen">
-      <div id="top" data-screen="landing" {...(target.kind === "home" ? { "data-dots": "" } : {})} data-page={target.kind === "home" ? "home" : target.kind === "page" ? target.page : "business"}>
+      <div id="top" data-screen="landing" {...(target.kind === "home" ? { "data-dots": "" } : {})} data-page={target.kind === "home" ? "home" : target.kind === "page" ? target.page : target.kind === "article" ? "help-article" : "business"}>
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-charcoal focus:px-4 focus:py-3 focus:text-on-charcoal">
           {t("skip")}
         </a>

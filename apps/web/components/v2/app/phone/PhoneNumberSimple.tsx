@@ -1,12 +1,13 @@
 import type { OwnNumber } from "@/lib/phone-picker/types";
 
 import { makeT, type Words } from "../words";
+import { KycPendingNotice } from "./KycPendingNotice";
 
 /**
  * The Phone numbers page where there is no picker (owner, 29 Nov 2026: the numbers come from VoiceLink only; no registration, no city to pick, no number to give back): the number the assistant answers, what type it is and
  * whether calls are on, as three open rows; or ONE line, "We set up your number for you." The words come from the string store (`phn.`); the number is shown as `+91 XXXXX XXXXX` and never with a price.
  */
-export function PhoneNumberSimple({ words, own }: { words: Words; own: OwnNumber | null }) {
+export function PhoneNumberSimple({ words, own, verifyHref }: { words: Words; own: OwnNumber | null; verifyHref?: string }) {
   const t = makeT(words);
   if (!own) {
     return (
@@ -15,8 +16,14 @@ export function PhoneNumberSimple({ words, own }: { words: Words; own: OwnNumber
       </p>
     );
   }
-  const calls = own.state === "getting_ready" ? "getting" : own.state === "calls_on" ? "on" : "off";
+  const calls = own.state === "getting_ready" ? "getting" : own.state === "kyc_pending" ? "pending" : own.state === "calls_on" ? "on" : "off";
   return (
+    <>
+    {own.state === "kyc_pending" && verifyHref ? (
+      <div className="mt-5 max-w-2xl">
+        <KycPendingNotice words={words} verifyHref={verifyHref} />
+      </div>
+    ) : null}
     <dl data-part="phone-own" className="m-0 mt-5 flex max-w-2xl flex-col border-t border-line">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line py-4">
         <dt className="text-[15px] text-muted">{t("phn.number")}</dt>
@@ -37,5 +44,6 @@ export function PhoneNumberSimple({ words, own }: { words: Words; own: OwnNumber
         </dd>
       </div>
     </dl>
+    </>
   );
 }

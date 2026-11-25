@@ -157,7 +157,7 @@ export const NAV: readonly NavGroup[] = [
     items: [
       { id: "integrations", label: "Integrations", icon: "integrations", path: "/integrations", module: "integrations", roles: ADMINS },
       // night 4: where leads arrive from (Meta, IndiaMART, portals, the website form, a sheet, a webhook); a tab of Settings
-      { id: "lead-sources", label: "Lead sources", icon: "integrations", path: "/lead-sources", feature: "leads", roles: ADMINS },
+      { id: "lead-sources", label: "Lead sources", icon: "integrations", path: "/lead-sources", also: ["/developers"], feature: "leads", roles: ADMINS },
     ],
   },
 ];

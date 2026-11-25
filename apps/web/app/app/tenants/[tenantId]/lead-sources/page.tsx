@@ -2,6 +2,8 @@ import { escalate } from "@/lib/api/failure";
 import { redirect } from "next/navigation";
 
 import { LazyLeadSources } from "@/components/v2/app/lead-desk/LazyLeadSources";
+import { BeforeYouCall } from "@/components/v2/app/lead-desk/BeforeYouCall";
+import { GuideCards } from "@/components/v2/app/lead-desk/GuideCards";
 import { MoreWays } from "@/components/v2/app/lead-desk/MoreWays";
 import { CARD_KINDS, type CardKind } from "@/lib/sources/types";
 import { SourceCards } from "@/components/v2/app/lead-desk/LazySourceCards";
@@ -12,7 +14,8 @@ import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { readSources, sourcesMode } from "@/lib/lead-desk/sources/source";
-import { jobsScreens } from "@/lib/screens/flag";
+import { BeforeYouStart } from "@/components/v2/app/calls/panel/BeforeYouStart";
+import { callsPanel, jobsScreens } from "@/lib/screens/flag";
 import { cardsMode, sourcesApiFor } from "@/lib/sources/server";
 
 import {
@@ -62,6 +65,8 @@ export default async function LeadSourcesRoute({
   const words = wordsFor(lang, [
     "scc.",
     "lsrc.",
+    "bsc.",
+    "lsg.",
     "li.consent.",
     "li.err.",
     "li.refused.",
@@ -70,6 +75,7 @@ export default async function LeadSourcesRoute({
     "sc.",
     "lsrc.copy",
     ...(jobsScreens() !== "off" ? ["jobs.trust.consent"] : []),
+    ...(callsPanel() ? ["cpn.rules.", "cpn.rule."] : []),
   ]);
   const list =
     read.mode === "ok" ? (
@@ -94,6 +100,9 @@ export default async function LeadSourcesRoute({
         title={await menuTitle("sources", lang, got.ctx.accessToken, tenantId)}
         sub={cards?.ok ? words["sc.sub"] : words["lsrc.sub"]}
       />
+      <div className="mt-4">
+        {callsPanel() ? <BeforeYouStart words={words} open={false} /> : <BeforeYouCall words={words} open={false} />}
+      </div>
       {cards?.ok ? (
         <SourceCards
           words={words}
@@ -120,6 +129,9 @@ export default async function LeadSourcesRoute({
         // the one error line is for a page that shows nothing: when the cards are drawn, the older list of addresses ("More ways") is simply not there (it said "could not be loaded" under working cards)
         <p className={mutedText}>{words["lsrc.unavailable"]}</p>
       )}
+      <div className="mt-8">
+        <GuideCards words={words} base={`/app/tenants/${tenantId}`} />
+      </div>
     </main>
   );
 }

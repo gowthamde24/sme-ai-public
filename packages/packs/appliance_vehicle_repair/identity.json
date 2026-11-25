@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "appliance_vehicle_repair",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "repair shops",
+    "te": "రిపేర్ షాపులు"
+  }
+}

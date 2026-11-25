@@ -1,0 +1,20 @@
+# Developers
+Use your assistant from your own tools: send leads, place calls, and get every result back.
+{label="Developers"} [Overview](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=overview current=page) [API keys](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=keys) [Webhooks](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=hooks) [API activity](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=activity) [Docs and downloads](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=docs)
+- 1
+## Make an API key
+Start with a test key. Test keys never call anyone. [API keys](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=keys)
+- 2
+## Make your first request
+Ask who you are, then try a call with dry_run on: everything is checked and nobody is dialled.
+- 3
+## Get results by webhook
+Every call outcome, summary and the details it captured are sent to your address. [Webhooks](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=hooks)
+Base address
+https://api.stack19.in/v1
+Sign in with
+Authorization: Bearer YOUR_KEY
+Add an Idempotency-Key header to every request that writes: sending it twice never makes two calls.
+{role=group label="Language"} [cURL](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=overview&lang=curl current=true) [Node](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=overview&lang=node) [Python](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=overview&lang=python)
+curl https://api.stack19.in/v1/me \ -H "Authorization: Bearer YOUR_KEY" # a call that checks everything and dials nobody curl -X POST https://api.stack19.in/v1/calls \ -H "Authorization: Bearer YOUR_KEY" \ -H "Idempotency-Key: first-try-001" \ -d '{"to":"+919800000000","job":"enquiry_call","dry_run":true}'
+{role=note} Not open yet. It arrives with the developer API.

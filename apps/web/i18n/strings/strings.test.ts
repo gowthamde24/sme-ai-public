@@ -2,13 +2,14 @@ import { describe, expect, it } from "vitest";
 import site from "@/i18n/strings/site.json";
 import legal from "@/i18n/strings/legal.json";
 import login from "@/i18n/strings/login.json";
+import pub from "@/i18n/strings/public.json";
 import { SITE_LANGS } from "@/i18n/site-lang";
 import { TRANSLATED_LANGS, dictFor, keepHyphenatedWordsWhole } from "@/i18n/strings";
 import { FORBIDDEN_CLAIMS as FORBIDDEN } from "@/i18n/strings/forbidden";
 import { withTrialDays } from "@/lib/plan/trial-days";
 
 type Entry = { en: string; te: string; hi: string; kn: string; ta?: string; status: Record<string, string>; only?: string[] };
-const SETS: Record<string, Record<string, Entry>> = { site, login, legal } as never;
+const SETS: Record<string, Record<string, Entry>> = { site, login, legal, pub } as never;
 // Tamil (ta) is a language of the public website only: an entry has it where the site has a Tamil text; the others fall back to their English (and the test of the unused keys below says which)
 const langsOf = (e: Entry) => e.only ?? [...TRANSLATED_LANGS, ...(e.ta !== undefined ? ["ta"] : [])];
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
