@@ -48,6 +48,8 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   // Cartesia voice near or past its limit (C1, 6 Nov): the API's own sentence, and Plan & usage
   voice_credits: { kind: "today.kind.voice", step: "today.step.voice", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
   credits_low: { kind: "today.kind.voice", step: "today.step.voice", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" }, // C1's balance-low item (target {type: "billing"}): opens Credits and billing
+  // a connected CRM or sheet gave up on a result (migration 20261231992330, target {type: "connectors"}): opens Connectors
+  crm_push_failing: { kind: "today.kind.crm", step: "today.step.crm", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
   // a customer we already know enquired again (C1 #799): "Open chat", the hot-lead tone; the reason is OUR words in every language
   enquired_again: { kind: "today.kind.enquired", step: "today.step.enquired", tone: "bg-red-bg text-red-text", who: "today.fact.customer" },
   // a kind this screen does not know (a newer API): a plain "New item" row with the customer and Open, never a guess
