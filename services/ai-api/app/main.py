@@ -125,6 +125,8 @@ from app.erasure.routes import router as erasure_router
 from app.errors import ApiError, error_body, install_error_handlers, mfa_required, request_id_of
 from app.evidence.repository import PostgrestEvidenceRepository
 from app.evidence.routes import router as evidence_router
+from app.extra_lines.routes import router as extra_lines_router
+from app.extra_lines.wiring import build_extra_lines
 from app.followups import errors as followup_errors
 from app.followups.messages import FOLLOWUP_REFUSALS
 from app.followups.repository import PostgrestFollowupsRepository
@@ -366,7 +368,11 @@ def _call_commands(settings: Settings, config: AuthConfig, phone: Any, live: Liv
     """Calls across API instances (CALL_COORDINATION); None with one instance."""
     if not settings.call_coordination or phone is None or getattr(phone, "store", None) is None:
         return None
-    return RpcCommandStore(RpcClient(config.rest_url, config.anon_key), phone.store.scheduler_token)
+    return RpcCommandStore(
+        RpcClient(config.rest_url, config.anon_key),
+        phone.store.scheduler_token,
+        per_workspace=settings.extra_lines,
+    )
 
 
 def _signup_service(settings: Settings, config: AuthConfig) -> SignupService | None:
@@ -489,7 +495,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
     live_calls = LiveCalls()
     business_kyc = build_business_kyc(settings, config.rest_url, config.anon_key)
     phone_inbound = build_phone_inbound(
-        settings, config.rest_url, config.supabase_url, config.anon_key
+        settings, config.rest_url, config.supabase_url, config.anon_key, live_calls
     )
     billing_provider = _billing_provider(settings)
     # the provider usage ledger, as the scheduler account; None when that account is not configured
@@ -656,6 +662,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
             PostgrestStatusRepository(config.rest_url, config.anon_key)
         ),
         numbers=build_numbers(settings, config.rest_url, config.anon_key, business_kyc),
+        extra_lines=build_extra_lines(
+            settings, config.rest_url, config.anon_key, business_kyc, phone_inbound
+        ),
         business_kyc=business_kyc,
         contact_form=settings.contact_form,
         daily_cap=_daily_cap(config),
@@ -1701,6 +1710,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_finder_router)
     app.include_router(calls_router)
     app.include_router(phone_lines_router)
+    app.include_router(extra_lines_router)
     app.include_router(assistant_tools_router)
     app.include_router(phone_inbound_router)
     app.include_router(plivo_router)

@@ -70,6 +70,8 @@ contacted_at_invalid
 context_changed
 cooling_off
 correction_invalid
+credentials_invalid
+crm_push_unavailable
 custom_field_limit
 custom_fields_unavailable
 custom_value_invalid
@@ -193,10 +195,12 @@ lead_search_unavailable
 lead_sources_unavailable
 limit_reached
 line_not_found
+lines_unavailable
 live_not_available
 locked_for_business_type
 mail_failed
 mail_unavailable
+mapping_invalid
 mapping_required_missing
 marketing_blocked
 marks_bad_request
@@ -217,6 +221,7 @@ model_unavailable
 module_off
 name_invalid
 needs_photo
+needs_setup_by_us
 no_approved_quote
 no_consent_template
 no_notes
@@ -386,6 +391,7 @@ secret_request_used
 secrets_unavailable
 session_ended
 setting_invalid
+settings_invalid
 sheet_link_invalid
 sheet_not_public
 sheet_refused

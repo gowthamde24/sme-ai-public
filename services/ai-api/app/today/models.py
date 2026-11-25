@@ -81,6 +81,8 @@ class NeedsYouItem(_Out):
         "credits_low",
         # 25 Nov 2026 (migration 20261231992330): a connected CRM or sheet gave up on a result; the item opens Connectors
         "crm_push_failing",
+        # 26 Nov 2026 (migration 20261231992500): an extra line's monthly renewal could not be paid (grace days, or paused); the item opens the top-up page (target billing)
+        "line_renewal",
     ]
     id: uuid.UUID
     customer: str

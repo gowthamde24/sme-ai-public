@@ -19,6 +19,7 @@ from app.scheduler.session import PrincipalSession
 from app.telephony.inbound import ExotelCalls, trial_rule
 from app.telephony.inbound_routes import InboundService
 from app.telephony.inbound_store import InboundStore
+from app.telephony.line_limits import WorkspaceLines
 from app.telephony.opening_store import OpeningStore
 from app.telephony.plivo_api import PlivoApi
 from app.telephony.plivo_outbound import PlivoOutbound, PostgrestOutboundRepo
@@ -30,7 +31,7 @@ from app.voice.budget import RpcVoiceBudget
 from app.workspace_secrets import GcpSecretStore
 
 
-def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, anon_key: str) -> InboundService | None:
+def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, anon_key: str, live: Any = None) -> InboundService | None:
     """Inbound calls on the Exotel sandbox (job phone-calls part 5). None unless TELEPHONY_MODE is
     sandbox or live AND the stream secret, the public address and the scheduler account are set.
     Exotel's own key (to confirm each call) is optional here: without it every call is refused."""
@@ -53,6 +54,9 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
     if settings.exotel_sid and settings.exotel_api_key and token:
         calls = ExotelCalls(settings.exotel_api_base or f"https://{settings.exotel_subdomain}", settings.exotel_sid, settings.exotel_api_key, token)
     principal = PrincipalSession(f"{supabase_url}/auth/v1", anon_key, str(settings.scheduler_email), password)
+    # EXTRA_LINES: each workspace has its own number of calls at once (its lines); the deployment's TELEPHONY_MAX_CONCURRENT stays the hard cap above them
+    limits = WorkspaceLines(RpcClient(rest_url, anon_key), principal.token) if getattr(settings, "extra_lines", False) and live is not None else None
+    per_workspace: dict[str, Any] = {"lines": limits, "active_for_tenant": live.count_for_tenant} if limits is not None else {}
     vl_login = bool(settings.voicelink_username and settings.voicelink_username.get_secret_value() and settings.voicelink_password and settings.voicelink_password.get_secret_value())
     choice = (settings.telephony_provider or "").strip().lower()
     use_voicelink = choice == "voicelink" or (choice == "" and vl_login and not (settings.plivo_auth_id and len(plivo_token) >= 16))   # VoiceLink is the provider whose login is given (owner, 24 Nov 2026), unless TELEPHONY_PROVIDER says otherwise
@@ -66,16 +70,16 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         if gs.outbound and vl_login and len(vl_token) >= 32:   # outbound calls: TELEPHONY_OUTBOUND=true AND the VoiceLink login and the bot's address token (the gate still decides every call)
             api = VoicelinkApi(settings.voicelink_username.get_secret_value() if settings.voicelink_username else "", settings.voicelink_password.get_secret_value() if settings.voicelink_password else "", base_url=settings.voicelink_api_base)
             placer = PlivoOutbound(api=VoicelinkCaller(api, public_base=base, ws_token=lambda: vl_token), repo=outbound_repo, gate_settings=gs, public_base=base, max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)),
-                                   id_key=hashlib.sha256(("test-number|" + vl_token).encode()).digest(), provider="voicelink")
+                                   id_key=hashlib.sha256(("test-number|" + vl_token).encode()).digest(), provider="voicelink", **per_workspace)
     elif gs.outbound and len(plivo_token) >= 16 and settings.plivo_auth_id:   # outbound calls: TELEPHONY_OUTBOUND=true AND the Plivo Auth ID and Auth Token (the gate still decides every call)
         def api_for(line: dict[str, Any]) -> PlivoApi | None:
             sub_id, sub_token = line.get("external_ref"), tokens(line) if tokens is not None else None
             return PlivoApi(str(sub_id), sub_token) if sub_id and sub_token else None
 
         placer = PlivoOutbound(api=PlivoApi(settings.plivo_auth_id, plivo_token), repo=outbound_repo, gate_settings=gs, public_base=base, max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)), api_for=api_for,
-                              id_key=hashlib.sha256(("test-number|" + plivo_token).encode()).digest())
+                              id_key=hashlib.sha256(("test-number|" + plivo_token).encode()).digest(), **per_workspace)
     return InboundService(
-        secret=secret.encode("utf-8") if len(secret) >= 32 else b"", public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal, wallet_enforced=bool(getattr(settings, "billing_charge_calls", False)), kyc_enforced=bool(getattr(settings, "kyc_per_client", False))), calls=calls,
+        secret=secret.encode("utf-8") if len(secret) >= 32 else b"", public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal, wallet_enforced=bool(getattr(settings, "billing_charge_calls", False)), kyc_enforced=bool(getattr(settings, "kyc_per_client", False)), workspace_lines=limits), calls=calls,
         charge=CallCharger(RpcClient(rest_url, anon_key), principal.token) if getattr(settings, "billing_charge_calls", False) else None,
         cost_paise_per_minute=settings.telephony_cost_paise_per_minute, cost_pulse_s=settings.telephony_cost_pulse_s, cost_paise_per_minute_inbound=settings.telephony_cost_paise_per_minute_inbound, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
         llm_choice=phone_llm_choice(settings)[0], first_token_s=phone_llm_choice(settings)[1], business=settings.telephony_inbound_business, recording_notice=settings.voicelink_recording_expected,

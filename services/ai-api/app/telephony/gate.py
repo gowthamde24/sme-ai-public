@@ -117,6 +117,8 @@ class OutboundFacts:
     say_ai: bool = True                   # the RESOLVED setting "Say 'AI assistant' when greeting" (app/opening/greeting.py): true = the opening must say it is an AI; false (the owner's default) = the name only, nothing required
     active_calls_to_number: int = 0
     active_calls_total: int = 0
+    workspace_lines: int | None = None    # EXTRA_LINES: the lines THIS workspace has (2 for each number + the extra lines it bought); None = not counted per workspace (the deployment's limit alone)
+    active_calls_workspace: int = 0       # the calls this workspace has live now
 
 
 def is_promotional(purpose: str) -> bool:
@@ -190,6 +192,8 @@ def check_outbound(settings: Settings, f: OutboundFacts) -> Allowed | Refused:
         return Refused("already_calling")
     if f.active_calls_total >= settings.max_concurrent:
         return Refused("too_many_calls")
+    if f.workspace_lines is not None and f.active_calls_workspace >= f.workspace_lines:
+        return Refused("too_many_calls")   # every line of the workspace is on a call (the plain reason an outbound call is refused: "all your lines are busy")
     return Allowed(promotional)
 
 
@@ -202,6 +206,8 @@ class InboundFacts:
     hours: Hours | None = None      # inside these the assistant talks; outside it only leaves a short message (see InboundDecision)
     blocked_caller: bool = False
     active_calls_total: int = 0
+    workspace_lines: int | None = None   # EXTRA_LINES: the lines of the workspace that owns the number; None = the deployment's limit alone
+    active_calls_workspace: int = 0
     from_number: str | None = None   # the caller (None: not known; a sandbox then relies on the stream's own check)
 
 
@@ -225,7 +231,9 @@ def check_inbound(settings: Settings, f: InboundFacts) -> InboundDecision | Refu
     if f.blocked_caller:
         return Refused("blocked_caller")
     if f.active_calls_total >= settings.max_concurrent:
-        return Refused("too_many_calls")
+        return Refused("too_many_calls")   # the deployment's hard safety limit, above every workspace's own lines
+    if f.workspace_lines is not None and f.active_calls_workspace >= f.workspace_lines:
+        return Refused("too_many_calls")   # this workspace's lines are all busy: the caller hears the line is busy
     if f.hours is not None:
         local = f.now.astimezone(IST)
         minute = local.hour * 60 + local.minute

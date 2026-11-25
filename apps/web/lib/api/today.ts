@@ -9,7 +9,7 @@ import { isCanonicalUuid } from "./crm";
  * What a person is shown depends on their role, decided by the database: a Viewer gets zeros and empty lists, Sales get the cards and the recent steps but nothing
  * to approve, an Admin gets approvals, and only the Owner is asked about money held on closed orders. A screen should show what it is given.
  */
-export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval" | "hot_lead_waiting" | "outreach_paused" | "material_quote_approval" | "campaign_approval" | "fees_overdue" | "person_requested" | "visit_requested" | "voice_credits" | "credits_low" | "enquired_again" | "crm_push_failing" | "unknown_item";
+export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval" | "hot_lead_waiting" | "outreach_paused" | "material_quote_approval" | "campaign_approval" | "fees_overdue" | "person_requested" | "visit_requested" | "voice_credits" | "credits_low" | "enquired_again" | "crm_push_failing" | "line_renewal" | "unknown_item";
 export type NeedsYouAgent = "quote_writer" | "followup_desk" | "order_desk";
 
 /**
@@ -97,7 +97,7 @@ function when(v: unknown, what: string): string {
 // 4 Nov (C1 #307): a draft building-materials quote, a draft campaign (a fee reminder ...), a school's overdue fees (one row: a count and a total, no child's name)
 // 6 Nov (C1, after #376): voice_credits, Cartesia voice at 80 or 100 percent of today's limit or this month's credits (the summary is the API's; target {type: "billing", id: the workspace}); the platform owner's workspace, Owner and Admin only
 // 17 Nov (C1 #799): enquired_again, a known customer enquired again through a live source (a new arrival on their lead, the standing rule ran): "reply or call back", target the lead; once per customer, gone when the lead is no longer New or a message went out
-const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "outbox_approval", "call_approval", "hot_lead_waiting", "outreach_paused", "material_quote_approval", "campaign_approval", "fees_overdue", "person_requested", "visit_requested", "voice_credits", "credits_low", "enquired_again", "crm_push_failing"];
+const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "outbox_approval", "call_approval", "hot_lead_waiting", "outreach_paused", "material_quote_approval", "campaign_approval", "fees_overdue", "person_requested", "visit_requested", "voice_credits", "credits_low", "enquired_again", "crm_push_failing", "line_renewal"];
 const AGENTS: readonly NeedsYouAgent[] = ["quote_writer", "followup_desk", "order_desk"];
 
 export function parseTarget(json: unknown): Target {
@@ -118,7 +118,7 @@ export function parseNeedsYouItem(json: unknown): NeedsYouItem {
     id,
     // a message or a call about a lead with no company on record has no customer name: the API sends null and the card says "a customer"
     // the voice limit's row is about the shop's ₹ balance, never a "customer" called "Voice credits" (owner, 14 Nov: the row reads "₹ balance is low · Top up", never "Voice credits")
-    customer: kind === "voice_credits" || kind === "credits_low" ? "Your balance" : customer === null && (kind === "outbox_approval" || kind === "call_approval" || kind === "hot_lead_waiting") ? "" : text(customer, "customer", 200),
+    customer: kind === "voice_credits" || kind === "credits_low" || kind === "line_renewal" ? "Your balance" : customer === null && (kind === "outbox_approval" || kind === "call_approval" || kind === "hot_lead_waiting") ? "" : text(customer, "customer", 200),
     city: city as string | null,
     agent: agent as NeedsYouAgent,
     // the API's sentence about the voice limit names our supplier and our costs; a customer is only told what matters to them (owner, 13 Nov 2026: "₹ balance is low · Top up")
@@ -154,7 +154,7 @@ function isUnknownKind(item: unknown): boolean {
   // The kinds decided IN PLACE on Today with their target's id (a held message, a call request, a person's or a visit request, an enquiry again) stay strict: a wrong target there is a contract error.
   return LINK_ONLY.includes(item.kind as NeedsYouKind) && isRecord(item.target) && typeof item.target.type === "string" && !TARGET_TYPES.includes(item.target.type as TargetType);
 }
-const LINK_ONLY: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "hot_lead_waiting", "outreach_paused", "material_quote_approval", "campaign_approval", "fees_overdue", "voice_credits", "credits_low", "crm_push_failing"];
+const LINK_ONLY: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "hot_lead_waiting", "outreach_paused", "material_quote_approval", "campaign_approval", "fees_overdue", "voice_credits", "credits_low", "crm_push_failing", "line_renewal"];
 
 /**
  * An item of a kind this screen does not know is shown as a generic row ("Needs a look", the customer, Open), never dropped silently and never a broken page (owner, 17 Nov: the owner must never miss an item). It is logged so somebody builds

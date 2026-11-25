@@ -1,12 +1,13 @@
 /**
  * "Calls at once" on the Phone numbers page (owner, 29 Nov 2026; C1's `GET /v1/tenants/{t}/phone-lines`, docs/contracts/calls.md, Owner and Admin): how many calls this deployment lets run together (`total`, at most 20), how many are running now (`in_use`, our own live-call
- * counter) and one tile per line (`open` or `on_call`). The lines are shared by every number of the business. Nothing else is in the answer: no number, no caller. Pure: no fetch, no React.
+ * counter) and one tile per line (`open` or `on_call`). The lines are shared by every number of the business. With EXTRA_LINES on, `total` is the workspace's own lines (2 for each number + the extra lines it bought). Nothing else is in the answer: no number, no caller. Pure: no fetch, no React.
  */
 export const LINE_STATES = ["open", "on_call"] as const;
 export type LineState = (typeof LINE_STATES)[number];
 export type Line = { n: number; state: LineState };
 export type Lines = { total: number; inUse: number; lines: Line[] };
-export const MAX_LINES = 20;
+/** The most lines one workspace can be shown: 20 is the default limit, and Stack19 raises it for one workspace (up to 100). */
+export const MAX_LINES = 100;
 
 /** The test screen's answer (PHONE_LINES_SCREENS=mock): two lines, one on a call (the server always lists the busy lines first). Nothing is read. */
 export const MOCK_LINES: Lines = { total: 2, inUse: 1, lines: [{ n: 1, state: "on_call" }, { n: 2, state: "open" }] };
@@ -30,5 +31,10 @@ export function parseLines(json: unknown): Lines | null {
     if (!(LINE_STATES as readonly unknown[]).includes(r.state)) return null;
     seen.add(r.n);
   }
+  return tiles(total, inUse);
+}
+
+/** One tile per line, the first `inUse` on a call (the server always lists the busy lines first). */
+export function tiles(total: number, inUse: number): Lines {
   return { total, inUse, lines: Array.from({ length: total }, (_, i) => ({ n: i + 1, state: i < inUse ? "on_call" : "open" })) };
 }

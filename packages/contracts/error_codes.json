@@ -901,6 +901,30 @@
       "extras": []
     },
     {
+      "code": "credentials_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "crm_push"
+      ],
+      "default_message": "Fill in every key. A key has no spaces.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "crm_push_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "crm_push"
+      ],
+      "default_message": "",
+      "wait": true,
+      "extras": []
+    },
+    {
       "code": "custom_field_limit",
       "statuses": [
         409
@@ -1854,6 +1878,7 @@
       ],
       "areas": [
         "activity",
+        "crm_push",
         "developer_api",
         "leads",
         "marksmessages",
@@ -2426,6 +2451,21 @@
       "extras": []
     },
     {
+      "code": "lines_unavailable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "extra_lines"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "fields",
+        "reason"
+      ]
+    },
+    {
       "code": "live_not_available",
       "statuses": [
         422
@@ -2472,6 +2512,18 @@
         "credits"
       ],
       "default_message": "We cannot send e-mail right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "mapping_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "crm_push"
+      ],
+      "default_message": "One of the field names does not look right. Use the name the other tool shows.",
       "wait": false,
       "extras": []
     },
@@ -2718,6 +2770,18 @@
         "main"
       ],
       "default_message": "An active item needs a photo. Add one, or make the item inactive first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "needs_setup_by_us",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "crm_push"
+      ],
+      "default_message": "",
       "wait": false,
       "extras": []
     },
@@ -3019,12 +3083,15 @@
         "connectors",
         "developer_api",
         "errors",
+        "extra_lines",
         "lead_sources",
         "main"
       ],
       "default_message": "Not found.",
       "wait": false,
-      "extras": []
+      "extras": [
+        "reason"
+      ]
     },
     {
       "code": "not_generated",
@@ -4822,6 +4889,20 @@
       ]
     },
     {
+      "code": "settings_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "crm_push"
+      ],
+      "default_message": "Fill in every setting with the text the other tool shows.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
       "code": "sheet_link_invalid",
       "statuses": [
         422
@@ -5567,6 +5648,7 @@
         "connectors",
         "conversation",
         "crm",
+        "crm_push",
         "dues",
         "education",
         "erasure",

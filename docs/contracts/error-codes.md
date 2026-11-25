@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (479)
+## Codes (485)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -88,6 +88,8 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `context_changed` | 409 | assistant_context |  | current | Someone else saved these notes first. Read the new text and save again. |
 | `cooling_off` | 409 | main |  |  | The waiting period has not ended yet. Try again after it. |
 | `correction_invalid` | 422 | telephony |  |  | A note can't hold a phone number or an e-mail address. |
+| `credentials_invalid` | 422 | crm_push |  |  | Fill in every key. A key has no spaces. |
+| `crm_push_unavailable` | 503 | crm_push | yes |  | (the sentence varies: show `message`) |
 | `custom_field_limit` | 409 | main |  |  | This business has the most fields it can have for that. |
 | `custom_fields_unavailable` | 503 | customfields |  |  | Custom fields are not available on this system. |
 | `custom_value_invalid` | 422 | main |  |  | That value does not fit this field. |
@@ -164,7 +166,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `invalid` | 422 | activity |  | field | Say which limit to tighten. |
 | `invalid_call` | 422 | developer_api |  | fields | Send a lead_id (the id of a lead you posted) and, if you like, dry_run: true. |
 | `invalid_campaign` | 422 | developer_api |  | fields | (the sentence varies: show `message`) |
-| `invalid_cursor` | 400, 422 | activity, developer_api, leads, marksmessages, outcomes, webhooks_out |  |  | Invalid pagination cursor. |
+| `invalid_cursor` | 400, 422 | activity, crm_push, developer_api, leads, marksmessages, outcomes, webhooks_out |  |  | Invalid pagination cursor. |
 | `invalid_decision` | 422 | enquiries |  |  | A correction carries the corrected value; a confirm or a reject carries none. |
 | `invalid_delivery_state` | 422 | quotes |  |  | The delivery state is not a state or union territory code. |
 | `invalid_hours` | 422 | lead_finder |  |  | The calling hours must start before they end. |
@@ -211,10 +213,12 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `lead_sources_unavailable` | 503 | lead_sources |  |  | This is not available right now. |
 | `limit_reached` | 409 | main |  |  | That is the most this workspace can hold. Remove something first. |
 | `line_not_found` | 422 | knowledge |  |  | That line is not in the call. |
+| `lines_unavailable` | 409 | extra_lines |  | fields, reason | (the sentence varies: show `message`) |
 | `live_not_available` | 422 | developer_api |  |  | Live keys are not available yet. Test keys work with simulated calls. |
 | `locked_for_business_type` | 422 | assistant_settings, callsettings |  |  | This business type does not allow that: a school's assistant makes no sales calls and none about dues or fees. |
 | `mail_failed` | 502 | admin |  |  | The e-mail did not go. Try again in a moment. |
 | `mail_unavailable` | 503 | admin, credits |  |  | We cannot send e-mail right now. |
+| `mapping_invalid` | 422 | crm_push |  |  | One of the field names does not look right. Use the name the other tool shows. |
 | `mapping_required_missing` | 422 | integrations |  |  | (the sentence varies: show `message`) |
 | `marketing_blocked` | 409 | outbox |  |  | WhatsApp treats the hello as marketing and this customer has not agreed to marketing. Call instead. |
 | `marks_bad_request` | 422 | marksmessages |  |  | That kind or language is not available. |
@@ -235,6 +239,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `module_off` | 403 | main |  |  | That is not part of this kind of business, so it is switched off. |
 | `name_invalid` | 422 | jobs |  |  | A helper's name cannot be only digits, a web address, an e-mail address or a phone number, and has at most 40 characters. |
 | `needs_photo` | 409 | main |  |  | An active item needs a photo. Add one, or make the item inactive first. |
+| `needs_setup_by_us` | 409 | crm_push |  |  | (the sentence varies: show `message`) |
 | `no_approved_quote` | 409 | main |  |  | This customer has no approved quote without an order yet, so no order can be made. |
 | `no_consent_template` | 409 | outbox |  |  | WhatsApp only allows an approved template after 24 hours of silence from the customer, and the consent_ask template is not approved yet. |
 | `no_notes` | 422 | assistant_context |  |  | Write or add some notes first, then test them. |
@@ -258,7 +263,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_confirmable` | 409 | main |  |  | A line needs a saree type and a quantity that a person confirmed or corrected. |
 | `not_connected` | 409 | lead_sources |  |  | Connect this source first, then test it. |
 | `not_for_schools` | 422 | assistant_context, lead_profile, main, tasks |  | reason | Leads of a school are never sent to the AI. |
-| `not_found` | 404 | assistant, assistant_work, connectors, developer_api, errors, lead_sources, main |  |  | Not found. |
+| `not_found` | 404 | assistant, assistant_work, connectors, developer_api, errors, extra_lines, lead_sources, main |  | reason | Not found. |
 | `not_generated` | 404 | ai_team |  |  | Today's stand-up has not been made yet. |
 | `not_in_a_state_for_this` | 409 | connectors |  |  | This cannot be done in its present state. |
 | `not_in_plan` | 403 | lead_finder |  | feature, upgrade_to | Finding new customers is part of AI Workforce. |
@@ -404,6 +409,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `secrets_unavailable` | 503 | assistant_work |  |  | Keys can't be saved here yet. |
 | `session_ended` | 401 | admin |  |  | Your session ended after 30 minutes without activity. Sign in again. |
 | `setting_invalid` | 422 | jobs |  | fields | That choice is not one of the options. |
+| `settings_invalid` | 422 | crm_push |  | reason | Fill in every setting with the text the other tool shows. |
 | `sheet_link_invalid` | 422 | lead_sources |  |  | That is not a Google Sheets link. |
 | `sheet_not_public` | 422 | lead_sources |  |  | Share the sheet as 'Anyone with the link can view', or publish it to the web, and try again. |
 | `sheet_refused` | 422 | assistant_context, lead_sources |  | reason | That file is too big. |
@@ -462,7 +468,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `unsupported_type` | 415 | knowledge, lead_sources |  |  | That kind of body is not accepted. |
 | `upstream_error` | 502 | agent_runs, assistant, catalogue, erasure, main, materials, today, voice_notes |  |  | The data layer failed. |
 | `upstream_unavailable` | 502 | lead_sources |  |  | Try again shortly. |
-| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, jobs, lead_profile, lead_sources, main, materials, numbers, opening, orders, outbox, outcomes, search, signup, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
+| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, crm_push, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, jobs, lead_profile, lead_sources, main, materials, numbers, opening, orders, outbox, outcomes, search, signup, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
 | `value_not_accepted` | 422 | enquiries |  |  | (the sentence varies: show `message`) |
 | `vision_unavailable` | 503 | assistant_context |  |  | Reading pictures and PDFs is not switched on for this system. Paste the text instead. |
 | `visit_state` | 409 | main |  |  | That cannot be done in the state the visit is in now. Reload and look again. |
