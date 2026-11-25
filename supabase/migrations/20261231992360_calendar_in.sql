@@ -104,6 +104,7 @@ create table integrations.calendar_bookings (
   check (ends_at > starts_at)
 );
 create index calendar_bookings_recent_idx on integrations.calendar_bookings (tenant_id, created_at desc);
+create index calendar_bookings_visit_idx on integrations.calendar_bookings (tenant_id, visit_id) where visit_id is not null;
 comment on table integrations.calendar_bookings is 'A booking the vendor told us about: its own booking id and what we did with it. No name, number or e-mail address. Volume: no audit trigger.';
 comment on column integrations.calendar_bookings.external_id is 'SAFE: the vendor''s own booking id (a Calendly invitee address or a Cal.com booking uid). CLEAN-EXEMPT: strict pattern';
 comment on column integrations.calendar_bookings.state is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
@@ -114,7 +115,7 @@ create table integrations.calendar_event_links (
   tenant_id        uuid not null references public.tenants (id),
   visit_id         uuid not null,
   txn_id           text not null check (txn_id ~ '^s19[0-9a-f]{32}$'),
-  event_id         text check (event_id ~ '^[A-Za-z0-9_=+/-]{5,400}$'),
+  event_id         text check (char_length(event_id) between 5 and 400 and event_id ~ '^[A-Za-z0-9_=+/-]+$'),
   state            text not null default 'pending' check (state in ('pending', 'written', 'deleted')),
   last_pushed_hash text check (last_pushed_hash ~ '^[0-9a-f]{64}$'),
   visit_updated_at timestamptz,
@@ -687,7 +688,7 @@ set search_path = ''
 as $$
 begin
   perform app.cal_scheduler_gate();
-  if p_tenant_id is null or p_visit_id is null or p_state not in ('written', 'deleted') or (p_event_id is not null and p_event_id !~ '^[A-Za-z0-9_=+/-]{5,400}$')
+  if p_tenant_id is null or p_visit_id is null or p_state not in ('written', 'deleted') or (p_event_id is not null and not (char_length(p_event_id) between 5 and 400 and p_event_id ~ '^[A-Za-z0-9_=+/-]+$'))
      or (p_hash is not null and p_hash !~ '^[0-9a-f]{64}$') or p_visit_updated_at is null then
     perform app.cal_error('invalid');
   end if;

@@ -117,6 +117,7 @@ grant select (id, tenant_id, connection_id, external_id, status, due_at, total_p
 create policy commerce_checkouts_select on public.commerce_checkouts for select to authenticated
   using (tenant_id = any (((select app.my_tenant_ids_with_role(array['owner', 'admin']::public.app_role[])))::uuid[]));
 create index commerce_checkouts_due on public.commerce_checkouts (due_at) where status = 'pending';
+create index commerce_checkouts_tenant on public.commerce_checkouts (tenant_id, connection_id);
 
 -- ---------------------------------------------------------------------------------------------------------------- what a connection looks like to the app (never a key, never the address token)
 create function app.commerce_connection_json(c public.commerce_connections) returns jsonb
