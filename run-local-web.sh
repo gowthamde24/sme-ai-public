@@ -42,6 +42,8 @@ export CREDITS_SCREENS=1 BILLING_V2=$ON BALANCE_SCREENS=1 RAZORPAY_CHECKOUT=1   
 export LEADS_SCREENS=1 OUTREACH_SCREENS=1 SOURCE_CARDS_SCREENS=1 SWEEP_SCREENS=mock       # Lead sources, guides, Lead Finder
 export DEVELOPER_KEYS_SCREENS=1                                                           # Developers: keys, Webhooks and Activity tabs (API: DEVELOPER_API=test, WEBHOOKS_OUT=on, WORKSPACE_SECRETS=fake)
 export TELL_SCREENS=$ON                                                                   # Jobs: "Tell your assistant what to do" (mock = a made-up reading, no model cost)
+export CRM_PUSH_SCREENS=$ON                                                               # Connectors: CRM and sheet cards (API: CRM_PUSH=on) with the stores, team-chat, calendar and lead-form cards below them (API: COMMERCE, NOTIFY_OUT, CALENDAR_IN, LEAD_FORM_TEMPLATES)
+export EXTRA_LINES=mock                                                                   # Phone numbers: "Add a line" (Rs 149 a month, the price first), the lines bought, cancel and keep; mock like "Calls at once" above
 export STAFF_CONSOLE=mock                                                                 # the staff console at /staff (a sample; ?role=owner|support|finance)
 export LEGAL_DRAFT_PAGES=1 INDUSTRY_PAGES=1 WAITLIST=mock                                 # public pages: pricing, help, status, use policy, refunds, Talk to us (the form is answered with a made-up reference)
 export FIRST_RUN_TYPE=1 FIRST_DAY_OPEN=1 TODAY_OPEN=1 SETTINGS_OPEN=1 TEMPLATES_PLAIN=1 MY_ASSISTANT_OPEN=1 CALLS_OPEN=1 LEADS_OPEN=1 REPORTS_OPEN=1 FILTERS_OPEN=1   # the plain-field screens, as production has them

@@ -18,7 +18,7 @@ export const CHIPS = ["Google Sheets", "Google Forms", "Zapier", "Make", "n8n", 
  * The Connectors page (docs/contracts/crm-push.md): where the results of calls and leads can be sent, a card for each tool. A card is a boxed thing you connect (the one place boxes are used here); everything else is flat. The web address card is the
  * outbound webhook path (Developers > Webhooks), shown here because it is how Zapier, Make, n8n and Pabbly are reached.
  */
-export function ConnectorsView({ words, ui, page, actions, readOnly, webhooks, developersHref }: { words: Words; ui: string; page: ConnectorsPage; actions: ConnectorActions; readOnly: boolean; webhooks: { count: number } | null; developersHref: string }) {
+export function ConnectorsView({ words, ui, page, actions, readOnly, webhooks, developersHref, children }: { words: Words; ui: string; page: ConnectorsPage; actions: ConnectorActions; readOnly: boolean; webhooks: { count: number } | null; developersHref: string; /** What sits below the CRM cards on the same tab (the commerce, team-chat and calendar cards). */ children?: React.ReactNode }) {
   const t = makeT(words);
   const [openType, setOpenType] = React.useState<string | null>(null);
   return (
@@ -74,6 +74,7 @@ export function ConnectorsView({ words, ui, page, actions, readOnly, webhooks, d
           </li>
         </ul>
       </div>
+      {children}
     </main>
   );
 }

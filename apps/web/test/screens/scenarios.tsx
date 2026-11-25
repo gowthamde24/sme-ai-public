@@ -1838,6 +1838,7 @@ add({ id: "what-you-sell-list", roles: ["owner", "admin", "sales"], render: () =
 add({ id: "what-you-sell-list-columns", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/[listId]/columns/page")).default(props({ listId: LIST_ID }))), handlers: listsHandlers });
 add({ id: "what-you-sell-list-new", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/new/page")).default(props({}))), handlers: listsHandlers });
 add({ id: "developers", roles: ["owner", "admin"], render: () => withEnv({ DEVELOPER_KEYS_SCREENS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({}, { tab: "keys" }))), handlers: base });
+add({ id: "connectors", roles: ["owner", "admin"], render: () => withEnv({ CRM_PUSH_SCREENS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/connectors/page")).default(props({}))), handlers: base });
 add({ id: "developers-overview", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({})), handlers: base });
 add({ id: "what-you-sell-mock-pricelist", roles: ["owner", "sales"], render: sellPage, handlers: sellPack("wholesale_b2b") });
 

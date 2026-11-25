@@ -23,6 +23,7 @@ ADMIN_ENVIRONMENT=staging
 SIGNUP_OPEN=true SIGNUP_PHONE_SENDER=fake SIGNUP_FAKE_CODE_ECHO=true
 WHAT_YOU_SELL_LISTS=true PRICING_V2=true JOBS=on
 WEBHOOKS_OUT=on WORKSPACE_SECRETS=fake CONTACT_FORM=true   # Developers > Webhooks (fake signing-secret store), the public Talk to us form (run-local-web.sh)
+CRM_PUSH=on COMMERCE=on NOTIFY_OUT=on CALENDAR_IN=on LEAD_FORM_TEMPLATES=on INDIAMART_PUSH=on   # Connectors (CRM, stores, team chat, calendars, lead-form guides). INDIAMART_PULL stays OFF everywhere: it asks IndiaMART with a real key
 # LOCAL_ENV_OVERRIDES="PAGE_MAX_INFLIGHT=24 CALL_COORDINATION=true" ./run-local-api.sh : settings for this run only
 for pair in ${LOCAL_ENV_OVERRIDES:-}; do export "$pair"; done
 set +a
