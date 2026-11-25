@@ -433,7 +433,7 @@ def test_rules_that_disagree_read_as_null_not_as_the_first() -> None:
 def test_the_other_kinds_read_their_own_places() -> None:
     w = World(offers=(offer(cap=2),))
     visits = w.get("store_visits").json()
-    assert {s["key"]: s["value"] for s in visits["settings"]["main"] + visits["settings"]["more"]} == {"from_hour": "09:00", "to_hour": "20:30", "slot_minutes": "minutes_30", "buffer_minutes": "minutes_0", "say_ai_when_greeting": "business"}
+    assert {s["key"]: s["value"] for s in visits["settings"]["main"] + visits["settings"]["more"]} == {"from_hour": "10:00", "to_hour": "20:30", "slot_minutes": "minutes_30", "buffer_minutes": "minutes_0", "say_ai_when_greeting": "business"}
     assert visits["when"] == {"from_hour": "09:00", "to_hour": "20:30", "days": ["mon", "tue", "wed", "thu", "fri", "sat"], "pace_per_hour": None}
     followups = w.get("followups").json()
     assert {s["key"]: s["value"] for s in followups["settings"]["main"]} == {"nudges": "nudges_2", "gap_days": "days_3"}
