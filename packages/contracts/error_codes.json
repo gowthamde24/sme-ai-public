@@ -138,6 +138,18 @@
       "extras": []
     },
     {
+      "code": "ai_undertaking_required",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "talk_training"
+      ],
+      "default_message": "To stop saying it is an AI assistant, first accept the written undertaking.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "already_has_number",
       "statuses": [
         409
@@ -218,7 +230,8 @@
         429
       ],
       "areas": [
-        "connectors"
+        "connectors",
+        "notify_out"
       ],
       "default_message": "Please wait a few minutes before asking again.",
       "wait": true,
@@ -515,6 +528,138 @@
       "extras": []
     },
     {
+      "code": "calendar_key_refused",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Calendly did not accept that key. Make a new personal access token and paste it.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_link_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Use the https address of your own Calendly or Cal.com booking page.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_needs_reconnect",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Connect Outlook again: Microsoft no longer accepts the old permission.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_needs_setup",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "This connection needs a step from us first. We will tell you when it is ready.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_no_public_address",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "This system has no public address yet, so a calendar cannot send bookings here.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_not_connected",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "This calendar is not connected.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_plan_refused",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Calendly does not allow webhooks on this account. Check the plan and your role in Calendly.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_secret_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "The key store did not answer. Try again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_try_later",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Too many connection attempts. Try again in a few minutes.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "calendar_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_vendor_unavailable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "The calendar service did not answer. Try again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "call_not_allowed",
       "statuses": [
         409
@@ -665,6 +810,20 @@
       "extras": []
     },
     {
+      "code": "channel_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "notify_out"
+      ],
+      "default_message": "Check the choices and try again.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
       "code": "code_expired",
       "statuses": [
         422
@@ -710,6 +869,30 @@
       ],
       "default_message": "That code is not right.",
       "wait": false,
+      "extras": []
+    },
+    {
+      "code": "commerce_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "commerce"
+      ],
+      "default_message": "That did not work. Try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "commerce_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "commerce"
+      ],
+      "default_message": "Connecting a store is not available right now. Try again in a minute.",
+      "wait": true,
       "extras": []
     },
     {
@@ -2031,6 +2214,7 @@
         422
       ],
       "areas": [
+        "commerce",
         "main"
       ],
       "default_message": "A value was not accepted.",
@@ -2464,6 +2648,18 @@
         "fields",
         "reason"
       ]
+    },
+    {
+      "code": "list_not_products",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "commerce"
+      ],
+      "default_message": "Pick a list of products to fill from a store.",
+      "wait": false,
+      "extras": []
     },
     {
       "code": "live_not_available",
@@ -3302,6 +3498,18 @@
       ],
       "default_message": "This is not available on this system.",
       "wait": false,
+      "extras": []
+    },
+    {
+      "code": "notify_out_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "notify_out"
+      ],
+      "default_message": "Notifications are not available right now. Try again in a minute.",
+      "wait": true,
       "extras": []
     },
     {
@@ -5377,6 +5585,8 @@
         413
       ],
       "areas": [
+        "calendar_in",
+        "commerce",
         "connectors",
         "lead_sources"
       ],
@@ -5538,6 +5748,8 @@
       ],
       "areas": [
         "billing",
+        "calendar_in",
+        "commerce",
         "connectors",
         "errors",
         "lead_sources",
@@ -5926,10 +6138,11 @@
       ],
       "areas": [
         "billing",
+        "commerce",
         "connectors"
       ],
       "default_message": "Not available right now.",
-      "wait": false,
+      "wait": true,
       "extras": []
     },
     {

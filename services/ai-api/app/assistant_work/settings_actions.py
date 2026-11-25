@@ -74,7 +74,7 @@ SETTINGS: dict[str, Setting] = {
     "lead_finder": Setting(
         "Lead Finder limits", "lead-finder.get_settings", "lead-finder.put_settings",
         {"fit_bar": Field("int", 50, 100, label="how well a business must fit (percent)"), "daily_call_cap": Field("int", 0, 500, label="qualifying calls a day"),
-         "call_from_hour": Field("int", 9, 20, label="calls start (hour)"), "call_to_hour": Field("int", 10, 21, label="calls end (hour)"),
+         "call_from_hour": Field("int", 10, 20, label="calls start (hour)"), "call_to_hour": Field("int", 10, 21, label="calls end (hour)"),
          "searches_per_day": Field("int", 1, 20, label="searches a day"), "results_per_search": Field("int", 1, 20, label="results per search")},
         "PUT", keep=("fit_bar", "daily_call_cap", "call_from_hour", "call_to_hour", "searches_per_day", "results_per_search"),
     ),

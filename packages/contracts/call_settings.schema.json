@@ -6,7 +6,7 @@
   "$defs": {
     "CallHours": {
       "additionalProperties": false,
-      "description": "Calling days (Monday = 1 to Sunday = 7) and hours as minutes after midnight, in steps of 15, from 09:00 (540) to 21:00 (1260).",
+      "description": "Calling days (Monday = 1 to Sunday = 7) and hours as minutes after midnight, in steps of 15, from 10:00 (600) to 21:00 (1260).",
       "properties": {
         "days": {
           "items": {
@@ -21,14 +21,14 @@
         },
         "from_minute": {
           "maximum": 1260,
-          "minimum": 540,
+          "minimum": 600,
           "multipleOf": 15,
           "title": "From Minute",
           "type": "integer"
         },
         "to_minute": {
           "maximum": 1260,
-          "minimum": 540,
+          "minimum": 600,
           "multipleOf": 15,
           "title": "To Minute",
           "type": "integer"

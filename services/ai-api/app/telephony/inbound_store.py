@@ -100,6 +100,10 @@ class InboundStore:
         out = self._call("phone_mention_ai_for_call", {"p_tenant_id": str(tenant_id)})
         return out is not False
 
+    def monitored(self, tenant_id: uuid.UUID) -> bool:
+        """Has this workspace's Owner switched on listening in / taking over a live call (public.phone_monitored_for_call)? False when nothing is saved or anything is unclear: the line is then not said."""
+        return self._call("phone_monitored_for_call", {"p_tenant_id": str(tenant_id)}) is True
+
     def call_sound(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """The workspace's voice choices, voice gender, speed and style for this call (the scheduler account reads them; app/conversation/sound.py decides what they mean). None when unreadable."""
         out = self._call("call_sound_for_call", {"p_tenant_id": str(tenant_id)})

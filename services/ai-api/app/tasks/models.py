@@ -81,8 +81,8 @@ class Question(_Strict):
 
 class Window(_Strict):
     date: str = "today"
-    from_minute: Annotated[int, Field(ge=540, le=1260, multiple_of=15)] = 600
-    to_minute: Annotated[int, Field(ge=540, le=1260, multiple_of=15)] = 1140
+    from_minute: Annotated[int, Field(ge=600, le=1260, multiple_of=15)] = 600
+    to_minute: Annotated[int, Field(ge=600, le=1260, multiple_of=15)] = 1140
 
     @model_validator(mode="after")
     def _ordered(self) -> Window:

@@ -5,15 +5,15 @@ OWNER DECISION: approve once, not per contact. One plan for a whole batch (an up
 ## 1. Calling policy (one per workspace)
 `GET /outreach/policy` (Owner, Admin) / `PUT /outreach/policy` (Owner + second factor):
 ```json
-{ "night_call_minute": 570,          // minutes after midnight, 09:30; 540..720 step 15: the morning call for a lead that arrived after hours
+{ "night_call_minute": 600,          // minutes after midnight, 10:00; 600..720 step 15: the morning call for a lead that arrived after hours
   "max_attempts": 3,                  // 1..6 call attempts per lead
   "retry_gap_hours": 18,              // 1..48: 3 attempts spread over about 2 days
   "then_whatsapp": true,              // after the last unanswered attempt, WhatsApp (if allowed)
   "whatsapp_after_hours": true,       // a lead after hours gets the WhatsApp thank-you when the quiet hours end (09:00 India time by default), never at night
   "handoff_reminder_minutes": 15,     // 5..120
   "call_paise_per_minute": 400,       // estimate used in the plan and the reports
-  "retry_steps": [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 570}],   // rules v2 (15 Nov 2026): what a LEAD RULE does when a call is not answered: call again after 10 minutes, then after 2 hours, then the next morning at 09:30 (always inside the calling hours); 1..6 steps, each `{after_minutes: 1..4320}` or `{next_morning_minute: 0..1439}`. Batches keep the call settings' retry rules.
-  "hours": { "days": [1,2,3,4,5,6], "from_minute": 540, "to_minute": 1140, "from": "assistant"|"call_settings" } }   // read only: the calling hours in force (call settings override the AI assistant's)
+  "retry_steps": [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 600}],   // rules v2 (15 Nov 2026): what a LEAD RULE does when a call is not answered: call again after 10 minutes, then after 2 hours, then the next morning at 10:00 (always inside the calling hours); 1..6 steps, each `{after_minutes: 1..4320}` or `{next_morning_minute: 0..1439}`. Batches keep the call settings' retry rules.
+  "hours": { "days": [1,2,3,4,5,6], "from_minute": 600, "to_minute": 1140, "from": "assistant"|"call_settings" } }   // read only: the calling hours in force (call settings override the AI assistant's)
 ```
 ## 2. A batch plan (one approval for everyone)
 `POST /outreach/batches` (Owner, Admin, Sales build a draft; id chosen by the client):
@@ -40,7 +40,7 @@ A caps hit pauses the batch: `status:"paused"`, `paused_reason:"cap_calls"|"cap_
 - **`GET /outreach/rule-templates`** (Owner, Admin) `{items: [{key, moment: "first"|"missed", label, language, status: "approved"|"submitted"|"draft"|"missing", preview, variables: ["first_name","business_name"]}]}`: the two templates a rule may name, the status for the business language (a rejected or paused one reads as `draft`; no row at all reads as `missing`), and the words with sample values (Ravi, Sri Lakshmi Silks).
 ## 4. What happens to one lead (the rules in code, not a model)
 - In hours: first call at arrival + `within_minutes`. After hours: a rule with `channel: "both"` sends the first template when the quiet hours end, 09:00 India time by default (owner, 18 Nov 2026: never at night; if `whatsapp_after_hours`, the person agreed to WhatsApp, and the template is approved) and calls next morning at `night_call_minute`; a rule with `channel: "call"` only calls next morning (call first, 5 Nov 2026).
-- A lead rule's retries are the policy's `retry_steps`: after 10 minutes, after 2 hours, the next morning at 09:30, all moved into the calling hours: 4 calls at most. After the last unanswered call a rule with `channel: "both"` sends the missed-call template (if `then_whatsapp`, consent, approved) and stops; a rule with `channel: "call"` just stops. If the very first call cannot even start (`failed`), the first template goes at once and the retries go on. The weekly calls-per-customer limit of the call settings counts the calls of OTHER lists and rules, not the ladder of the same lead. (A batch keeps the call settings' retry kinds `retry_no_answer` / `retry_busy`.)
+- A lead rule's retries are the policy's `retry_steps`: after 10 minutes, after 2 hours, the next morning at 10:00, all moved into the calling hours: 4 calls at most. After the last unanswered call a rule with `channel: "both"` sends the missed-call template (if `then_whatsapp`, consent, approved) and stops; a rule with `channel: "call"` just stops. If the very first call cannot even start (`failed`), the first template goes at once and the retries go on. The weekly calls-per-customer limit of the call settings counts the calls of OTHER lists and rules, not the ladder of the same lead. (A batch keeps the call settings' retry kinds `retry_no_answer` / `retry_busy`.)
 - A lead who says no, or STOP, is never contacted again; a wrong number stops and is marked.
 - Never a stranger: only the workspace's own contacts. A contact without consent for the channel, suppressed, erased, or without a number is skipped and counted in `skipped`.
 ## 5. Outcomes of the generic pack (added to `/outcomes`)

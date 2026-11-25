@@ -48,7 +48,7 @@ def test_a_plan_draft_has_closed_words_and_bounded_text() -> None:
 
 
 def test_the_window_stays_inside_the_calling_hours_in_steps_of_fifteen_minutes() -> None:
-    assert Window(from_minute=540, to_minute=1260).to_minute == 1260
+    assert Window(from_minute=600, to_minute=1260).to_minute == 1260
     for minute in ({"from_minute": 530}, {"to_minute": 1290}, {"from_minute": 605}):
         with pytest.raises(ValidationError):
             Window.model_validate(minute)

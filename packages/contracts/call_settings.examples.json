@@ -121,7 +121,7 @@
           5,
           6
         ],
-        "from_minute": 540,
+        "from_minute": 600,
         "to_minute": 1140,
         "source": "assistant"
       },
@@ -243,7 +243,7 @@
         5,
         6
       ],
-      "from_minute": 540,
+      "from_minute": 600,
       "to_minute": 1140
     },
     "locked": {},
@@ -571,7 +571,7 @@
         5,
         6
       ],
-      "from_minute": 540,
+      "from_minute": 600,
       "to_minute": 1140
     },
     "locked": {},
@@ -699,7 +699,7 @@
           5,
           6
         ],
-        "from_minute": 540,
+        "from_minute": 600,
         "to_minute": 1020,
         "source": "assistant"
       },
@@ -821,7 +821,7 @@
         5,
         6
       ],
-      "from_minute": 540,
+      "from_minute": 600,
       "to_minute": 1020
     },
     "locked": {
@@ -1038,7 +1038,7 @@
           5,
           6
         ],
-        "from_minute": 540,
+        "from_minute": 600,
         "to_minute": 1140,
         "source": "assistant"
       },

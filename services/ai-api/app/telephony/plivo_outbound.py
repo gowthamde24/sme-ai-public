@@ -1,7 +1,7 @@
 """Placing a call on Plivo (job 3 phase B, 10 Nov 2026): the gate, the call's row, Plivo's API, and the mapping of how a call that was never answered ended.
 
   place(token, tenant, to, ...)   1. the business's own Plivo line is the caller id (Plivo: it must be a number rented from Plivo)
-                                  2. THE GATE (app/telephony/gate.py check_outbound): the mode, the sandbox list (only numbers the owner owns while the deployment is a sandbox), hours 09:00 to 21:00 IST,
+                                  2. THE GATE (app/telephony/gate.py check_outbound): the mode, the sandbox list (only numbers the owner owns while the deployment is a sandbox), hours 10:00 to 21:00 IST,
                                      DND, consent, "the AI says it is an AI", the open lines. A refusal is stored on a `refused` call row with its closed word, and nothing is dialled.
                                   3. the call row is begun (queued), Plivo is asked to dial (answer_url = our outbound-answer with the row's id, hangup_url = our hangup with the same), the row is marked ringing.
   When the callee picks up, Plivo asks the answer URL (signed); the media socket then runs the same pipeline as an inbound call (inbound_routes.run_admitted with `outbound=`).
@@ -363,7 +363,9 @@ class PlivoOutbound:
                 hours = gate.Hours(days=[int(d) for d in row_hours["days"]], from_minute=int(row_hours.get("from_minute", gate.WINDOW_FROM_MINUTE)), to_minute=int(row_hours.get("to_minute", gate.WINDOW_TO_MINUTE)))
             extra = {"can_contact": facts.get("can_contact") is True, "suppressed": facts.get("suppressed") is True, "erased_or_archived": facts.get("erased_or_archived") is True,
                      "calls_to_contact_this_week": int(facts.get("weekly_calls") or 0), "weekly_limit": max(1, int(facts.get("weekly_limit") or 1)), "calls_today": int(facts.get("calls_today") or 0),
-                     "minutes_today": float(facts.get("minutes_today") or 0), "holidays": tuple(str(h) for h in (facts.get("holidays") or [])), "active_calls_to_number": int(facts.get("active_to_number") or 0), "recent_complaints": int(facts.get("complaints_10d") or 0)}
+                     "minutes_today": float(facts.get("minutes_today") or 0), "holidays": tuple(str(h) for h in (facts.get("holidays") or [])), "active_calls_to_number": int(facts.get("active_to_number") or 0), "recent_complaints": int(facts.get("complaints_10d") or 0),
+                     "enquiry_age_days": float(facts["enquiry_age_days"]) if facts.get("enquiry_age_days") is not None else None, "registered_consent": facts.get("registered_consent") is True,
+                     "own_number_verified": facts.get("own_number_verified") is True, "usage_ack": facts.get("usage_ack") is True, "logged_complaints": int(facts.get("logged_complaints_10d") or 0)}
         out_facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=hours,
                                        approval=approval, approval_valid=True, **{"can_contact": own, "dnd": "no" if own else "unknown", **extra}, opening_line=opening, say_ai=say_ai, active_calls_total=self._active(),
                                        billing_ok=billing_ok, proof_of_request=proof, prospect=prospect,

@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (485)
+## Codes (502)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -27,13 +27,14 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `agents_unavailable` | 503 | agent_runs |  |  | Agents are not available right now. |
 | `ai_limit` | 429 | jobs | yes | reason | That is enough describing for today. Try again tomorrow. |
 | `ai_team_unavailable` | 503 | ai_team |  |  | This is not available right now. |
+| `ai_undertaking_required` | 409 | talk_training |  |  | To stop saying it is an AI assistant, first accept the written undertaking. |
 | `already_has_number` | 409 | phone_numbers |  |  | This business already has a phone number. Give it back first. |
 | `already_member` | 409 | main |  |  | You are already a member of that workspace. |
 | `already_queued` | 409 | outbox |  |  | A message is already waiting for this customer's reply. |
 | `already_sent` | 409 | outbox |  |  | This message was already sent. |
 | `already_voided` | 409 | main |  |  | That was already voided. |
 | `archived` | 409 | agent_runs, crm, enquiries, evidence |  |  | This record is archived; an admin must restore it first. |
-| `asked_too_soon` | 429 | connectors | yes |  | Please wait a few minutes before asking again. |
+| `asked_too_soon` | 429 | connectors, notify_out | yes |  | Please wait a few minutes before asking again. |
 | `assistant_context_unavailable` | 503 | assistant_context |  |  | The assistant's notes are not available right now. |
 | `assistant_not_ready` | 409 | assistant_status, jobs |  | missing | The assistant needs a business name and a connected phone number before it can go live. |
 | `assistant_not_set_up` | 409 | assistant_settings |  |  | Set up your AI assistant first (Settings, AI assistant); then its name can be changed here. |
@@ -57,6 +58,17 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `busy` | 503 | dpdp, errors, hardening |  |  | The service is busy. Try again in a moment. |
 | `calculator_inconsistent` | 500 | materials |  |  | The calculator gave an answer that could not be trusted. Nothing was stored. |
 | `calculator_unavailable` | 503 | materials |  |  | The calculator is not available right now. |
+| `calendar_key_refused` | 422 | calendar_in |  |  | Calendly did not accept that key. Make a new personal access token and paste it. |
+| `calendar_link_invalid` | 422 | calendar_in |  |  | Use the https address of your own Calendly or Cal.com booking page. |
+| `calendar_needs_reconnect` | 409 | calendar_in |  |  | Connect Outlook again: Microsoft no longer accepts the old permission. |
+| `calendar_needs_setup` | 409 | calendar_in |  |  | This connection needs a step from us first. We will tell you when it is ready. |
+| `calendar_no_public_address` | 503 | calendar_in |  |  | This system has no public address yet, so a calendar cannot send bookings here. |
+| `calendar_not_connected` | 409 | calendar_in |  |  | This calendar is not connected. |
+| `calendar_plan_refused` | 422 | calendar_in |  |  | Calendly does not allow webhooks on this account. Check the plan and your role in Calendly. |
+| `calendar_secret_unavailable` | 503 | calendar_in |  |  | The key store did not answer. Try again in a moment. |
+| `calendar_try_later` | 429 | calendar_in | yes |  | Too many connection attempts. Try again in a few minutes. |
+| `calendar_unavailable` | 503 | calendar_in |  |  | Not available right now. |
+| `calendar_vendor_unavailable` | 502 | calendar_in |  |  | The calendar service did not answer. Try again in a moment. |
 | `call_not_allowed` | 409 | telephony |  | reason | That call is not allowed. |
 | `call_not_here` | 409 | telephony |  |  | That call is not on this server, or it has already ended. |
 | `call_provider_failed` | 502 | connectors, telephony |  | reason | The call could not be placed. |
@@ -69,10 +81,13 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `cap_required` | 422 | main |  |  | Set a monthly limit above zero for this. |
 | `captcha_failed` | 400 | dpdp |  |  | We could not check that you are a person. Please try again. |
 | `catalogue_unavailable` | 503 | catalogue, materials |  |  | The catalogue is not available right now. |
+| `channel_invalid` | 422 | notify_out |  | reason | Check the choices and try again. |
 | `code_expired` | 422 | signup |  |  | That code is too old. Ask for a new one. |
 | `code_locked` | 429 | signup | yes |  | Too many wrong codes. Ask for a new code. |
 | `code_missing` | 422 | signup |  |  | Ask for a new code first. |
 | `code_wrong` | 422 | signup |  |  | That code is not right. |
+| `commerce_failed` | 502 | commerce |  |  | That did not work. Try again. |
+| `commerce_unavailable` | 503 | commerce | yes |  | Connecting a store is not available right now. Try again in a minute. |
 | `company_has_no_website` | 409 | agent_runs |  |  | This company has no website to research. |
 | `confirm_needed` | 409 | assistant_work |  |  | Confirm this on the card first. |
 | `confirm_required` | 422 | whatsapp |  |  | Press Confirm to send this to WhatsApp for review. |
@@ -178,7 +193,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `invalid_target` | 422 | agent_runs |  |  | This agent cannot work on that kind of record. |
 | `invalid_text` | 422 | conversation |  | fields | The opening line must be 10 to 300 characters and may use only {customer}, {assistant}, {business} and {agent_role}. |
 | `invalid_transition` | 409 | main |  |  | That status change is not allowed. |
-| `invalid_value` | 422 | main |  |  | A value was not accepted. |
+| `invalid_value` | 422 | commerce, main |  |  | A value was not accepted. |
 | `invitation_invalid` | 400 | team |  |  | That code is not valid. Check it and try again, or ask for a new one. |
 | `invitation_locked` | 429 | team | yes |  | Too many tries. Wait a little and try again. |
 | `invitation_not_pending` | 409 | main |  |  | That invitation was already used. |
@@ -214,6 +229,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `limit_reached` | 409 | main |  |  | That is the most this workspace can hold. Remove something first. |
 | `line_not_found` | 422 | knowledge |  |  | That line is not in the call. |
 | `lines_unavailable` | 409 | extra_lines |  | fields, reason | (the sentence varies: show `message`) |
+| `list_not_products` | 409 | commerce |  |  | Pick a list of products to fill from a store. |
 | `live_not_available` | 422 | developer_api |  |  | Live keys are not available yet. Test keys work with simulated calls. |
 | `locked_for_business_type` | 422 | assistant_settings, callsettings |  |  | This business type does not allow that: a school's assistant makes no sales calls and none about dues or fees. |
 | `mail_failed` | 502 | admin |  |  | The e-mail did not go. Try again in a moment. |
@@ -281,6 +297,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `nothing_to_test` | 409 | lead_sources |  |  | There is nothing to test for this source yet. |
 | `nothing_to_undo` | 409 | assistant_work, catalogue |  | fields, reason | This change cannot be undone. |
 | `notifications_unavailable` | 503 | notifications |  |  | This is not available on this system. |
+| `notify_out_unavailable` | 503 | notify_out | yes |  | Notifications are not available right now. Try again in a minute. |
 | `number_not_available` | 409 | phone_numbers |  |  | That number is not available any more. Choose another. |
 | `number_on_dnd` | 422 | developer_api |  |  | This number is on the Do-Not-Disturb list. We don't call it. |
 | `number_provider_unavailable` | 502 | phone_numbers |  |  | The phone provider did not answer. Try again in a minute. |
@@ -448,7 +465,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `timeline_unavailable` | 503 | timeline |  |  | The timeline is not available right now. |
 | `today_unavailable` | 503 | today |  |  | This is not available right now. |
 | `token_expiring` | 409 | assistant, main |  |  | Your session is about to expire. Sign in again and retry. |
-| `too_large` | 413 | connectors, lead_sources |  |  | Too large. |
+| `too_large` | 413 | calendar_in, commerce, connectors, lead_sources |  |  | Too large. |
 | `too_many_calls` | 429 | developer_api | yes |  | Ten calls are already open in this workspace. Wait for one to finish. |
 | `too_many_invitations` | 409 | main |  |  | Twenty invitations are waiting. Revoke one first. |
 | `too_many_keys` | 409 | developer_api |  |  | This workspace already has 10 active keys. Revoke one first. |
@@ -461,7 +478,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `trial_already_started` | 409 | main |  |  | This workspace has already started its trial. |
 | `trip_state` | 409 | main |  |  | That cannot be done in the state the trip is in now. Reload and look again. |
 | `type_change_refused` | 409 | workspace |  | reason | This business type cannot be changed now. |
-| `unauthorized` | 401, 403 | billing, connectors, errors, lead_sources, main, telephony, whatsapp |  |  | Not allowed. |
+| `unauthorized` | 401, 403 | billing, calendar_in, commerce, connectors, errors, lead_sources, main, telephony, whatsapp |  |  | Not allowed. |
 | `unavailable` | 503 | assistant_activity, pronunciation |  |  | This is not available right now. |
 | `unknown_voice` | 422 | conversation, voicesample |  | fields | That voice is not one of the voices on the list for this language. |
 | `unreadable_file` | 422 | knowledge |  |  | That file could not be read. |
@@ -488,7 +505,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `wallet_empty` | 402 | developer_api |  |  | The wallet cannot cover this call. Add money in the app and try again. |
 | `webhook_url_invalid` | 422 | webhooks_out |  | reason | (the sentence varies: show `message`) |
 | `webhooks_out_unavailable` | 503 | webhooks_out | yes |  | Webhooks are not available right now. Try again in a minute. |
-| `webhooks_unavailable` | 503 | billing, connectors |  |  | Not available right now. |
+| `webhooks_unavailable` | 503 | billing, commerce, connectors | yes |  | Not available right now. |
 | `whatsapp_connect_refused` | 502 | whatsapp |  |  | WhatsApp did not accept the connection. Try again in a minute. |
 | `whatsapp_no_access` | 409 | whatsapp |  |  | We cannot reach that number yet. Finish the sign-up in Meta's window and try again. |
 | `whatsapp_not_configured` | 409 | whatsapp |  |  | Connecting WhatsApp is not available right now. |

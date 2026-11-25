@@ -545,6 +545,8 @@ class Settings(BaseSettings):
     # SANDBOX ONLY, for testing (owner, 28 Nov 2026): a sandbox-list number ignores the
     # calling hours. Ignored in live mode. Remove before the 2 Dec real-data gate.
     telephony_sandbox_ignores_hours: bool = False
+    # the global kill switch in front of every real (non-sandbox) outbound call; off until the telecom provider has answered (lawyer's opinion, 25 Nov 2026)
+    outbound_real: bool = False
     # The named lists of "What you sell" (28 Nov 2026): off until the planner turns it on.
     what_you_sell_lists: bool = False
     # The number picker (28 Nov 2026): a business picks its own VoiceLink number; we buy it with OUR
@@ -570,7 +572,7 @@ class Settings(BaseSettings):
     # Live take-over (job TO, owner decision 10 Nov 2026): a short spoken announcement to the caller
     # when a person from the business takes over. OFF by default (the owner will choose);
     # TAKEOVER_ANNOUNCE=true turns it on.
-    takeover_announce: bool = False
+    takeover_announce: bool = True   # a person joining a live call is announced to the caller (lawyer's opinion, 25 Nov 2026; was off)
     takeover_allowed: bool = False
     # TAKEOVER_ALLOWED: listening in on a live call is NOT available at launch (owner, 18 Nov 2026)  # noqa: E501
     exotel_stream_secret: SecretStr | None = None

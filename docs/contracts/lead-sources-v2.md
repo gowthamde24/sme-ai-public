@@ -47,13 +47,13 @@ Errors (HTTP 409 unless noted, body `{code, message}`; closed words): `not_conne
 RULE = {
   "enabled": true,
   "in_hours":    { "action": "call", "call_within_minutes": 2 },
-  "after_hours": { "whatsapp_now": true, "call_at_minute": 570 },
+  "after_hours": { "whatsapp_now": true, "call_at_minute": 600 },
   "retries":     { "max_attempts": 3, "gap_hours": 4, "then_whatsapp": true },
   "handoff":     { "hot_lead": true, "to": "owner" | "<member user id>", "reminder_minutes": 15 }
 }
 ```
 
-`null` for a source = it follows `default`. Ranges: `call_within_minutes` 1 to 120; `call_at_minute` 540 to 720 in steps of 15 (570 = 09:30); `max_attempts` 1 to 6 (3 = the first call and two retries); `gap_hours` 1 to 48; the calling hours and the per-day call limit are the existing settings and always apply. It reads and writes `/outreach/policy` (workspace values) and the per-source `/outreach/rules` rows; nothing else stores it. Every lead keeps an outcome and a reason (`/leads/{id}/touches`).
+`null` for a source = it follows `default`. Ranges: `call_within_minutes` 1 to 120; `call_at_minute` 600 to 720 in steps of 15 (600 = 10:00); `max_attempts` 1 to 6 (3 = the first call and two retries); `gap_hours` 1 to 48; the calling hours and the per-day call limit are the existing settings and always apply. It reads and writes `/outreach/policy` (workspace values) and the per-source `/outreach/rules` rows; nothing else stores it. Every lead keeps an outcome and a reason (`/leads/{id}/touches`).
 
 ## e. Cost per visit per source
 

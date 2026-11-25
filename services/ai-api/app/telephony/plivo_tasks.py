@@ -1,6 +1,6 @@
 """The Lead Desk call flow on Plivo (job 3 step 3, owner 10 Nov 2026): a task the owner APPROVED (Vijaya's plan card) places its calls here, one person at a time.
 
-  TaskRunner (app/tasks/runner.py)  ->  PlivoTaskDialer.call(...)  ->  PlivoOutbound.place(...)  [the gate decides: mode, sandbox list, hours 09:00-21:00 IST, DND, consent, "says it is an AI", concurrency]
+  TaskRunner (app/tasks/runner.py)  ->  PlivoTaskDialer.call(...)  ->  PlivoOutbound.place(...)  [the gate decides: mode, sandbox list, hours 10:00-21:00 IST, DND, consent, "says it is an AI", concurrency]
                                                                     ->  wait for the call row to end  ->  CallResult
 
 Before a dial the DATABASE has already decided the money: `task_claim` hands out the next person only while the task is running and under its cap (a paused or capped task claims nobody), and the runner adds the

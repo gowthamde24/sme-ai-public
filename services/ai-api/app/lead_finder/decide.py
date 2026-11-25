@@ -158,7 +158,7 @@ def reason_line(buyer: BuyerType | None, stock: StockMatch, place: Place, *, use
 
 def within_hours(now: datetime, s: Settings) -> bool:
     local = now.astimezone(IST)
-    return s.call_from_hour <= local.hour < s.call_to_hour and 9 <= local.hour < 21
+    return s.call_from_hour <= local.hour < s.call_to_hour and 10 <= local.hour < 21
 
 
 def decide(place: Place, data: PackLeadFinder, stock: list[StockLine], settings: Settings, situation: Situation, *, km: float | None = None,

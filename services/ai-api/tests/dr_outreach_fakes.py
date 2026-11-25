@@ -44,9 +44,9 @@ class FakeOutreachRepository:
 
     def policy_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._hit("policy_get", tenant_id)
-        return {"night_call_minute": 570, "max_attempts": 3, "retry_gap_hours": 18, "then_whatsapp": True, "whatsapp_after_hours": True, "handoff_reminder_minutes": 15, "call_paise_per_minute": 400,
-                "retry_steps": [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 570}],
-                "hours": {"days": [1, 2, 3, 4, 5, 6], "from_minute": 540, "to_minute": 1140, "from": "assistant", "holidays": []}, "saved": False}
+        return {"night_call_minute": 600, "max_attempts": 3, "retry_gap_hours": 18, "then_whatsapp": True, "whatsapp_after_hours": True, "handoff_reminder_minutes": 15, "call_paise_per_minute": 400,
+                "retry_steps": [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 600}],
+                "hours": {"days": [1, 2, 3, 4, 5, 6], "from_minute": 600, "to_minute": 1140, "from": "assistant", "holidays": []}, "saved": False}
 
     def policy_set(self, token: str, tenant_id: uuid.UUID, settings: dict[str, Any]) -> dict[str, Any]:
         self._hit("policy_set", settings)

@@ -82,12 +82,13 @@ from app.commerce import facts as commerce_facts
 from app.commerce.routes import public_router as commerce_public_router
 from app.commerce.routes import router as commerce_router
 from app.commerce.wiring import build_commerce
+from app.compliance.routes import admin_router as compliance_admin_router
+from app.compliance.routes import router as compliance_router
+from app.compliance.service import ComplianceService
 from app.config import AuthConfig, ConfigurationError, Settings, build_auth_config, get_settings
 from app.connectors.repository import PostgrestConnectorsRepository
 from app.connectors.routes import router as connectors_router
 from app.connectors.webhooks import router as webhooks_router
-from app.crm_push.routes import router as crm_push_router
-from app.crm_push.wiring import build_crm_push
 from app.connectors.wiring import build_connectors
 from app.conversation import audio_turn, speaker
 from app.conversation.engines import real_engine_factory
@@ -103,6 +104,8 @@ from app.credits.service import CreditsService, PostgrestCreditsRepository
 from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
 from app.crm.routes import router as crm_router
+from app.crm_push.routes import router as crm_push_router
+from app.crm_push.wiring import build_crm_push
 from app.customfields.errors import CustomFieldLimitError, CustomValueInvalidError
 from app.customfields.repository import PostgrestCustomFieldsRepository
 from app.customfields.routes import router as custom_fields_router
@@ -688,6 +691,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
             PostgrestStatusRepository(config.rest_url, config.anon_key)
         ),
         numbers=build_numbers(settings, config.rest_url, config.anon_key, business_kyc),
+        compliance=ComplianceService(RpcClient(config.rest_url, config.anon_key)),
         extra_lines=build_extra_lines(
             settings, config.rest_url, config.anon_key, business_kyc, phone_inbound
         ),
@@ -1747,6 +1751,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(calls_router)
     app.include_router(phone_lines_router)
     app.include_router(extra_lines_router)
+    app.include_router(compliance_router)
+    app.include_router(compliance_admin_router)
     app.include_router(assistant_tools_router)
     app.include_router(phone_inbound_router)
     app.include_router(plivo_router)

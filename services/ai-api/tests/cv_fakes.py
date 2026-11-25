@@ -32,7 +32,7 @@ class FakeVoiceNotes:
 
     def settings(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("settings", token)
-        return {"enabled": False, "speed": 1.0, "call_from_hour": 9, "call_to_hour": 21, "recording": False, "choices": {}, "updated_at": None}
+        return {"enabled": False, "speed": 1.0, "call_from_hour": 10, "call_to_hour": 21, "recording": False, "choices": {}, "updated_at": None}
 
     def set_settings(self, token: str, tenant_id: uuid.UUID, enabled: bool, speed: float, call_from_hour: int, call_to_hour: int) -> dict[str, Any]:
         self._go("set_settings", token, enabled, speed, call_from_hour, call_to_hour)
@@ -44,7 +44,7 @@ class FakeVoiceNotes:
 
     def set_choice(self, token: str, tenant_id: uuid.UUID, language: str, voice_code: str | None) -> dict[str, Any]:
         self._go("set_choice", token, language, voice_code)
-        return {"enabled": True, "speed": 1.0, "call_from_hour": 9, "call_to_hour": 21, "recording": False, "choices": {} if voice_code is None else {language: voice_code}, "updated_at": NOW}
+        return {"enabled": True, "speed": 1.0, "call_from_hour": 10, "call_to_hour": 21, "recording": False, "choices": {} if voice_code is None else {language: voice_code}, "updated_at": NOW}
 
     def disclosure(self, token: str, tenant_id: uuid.UUID, language: str) -> dict[str, Any]:
         self._go("disclosure", token, language)

@@ -30,6 +30,7 @@ ROUTE_WORDS = frozenset(
         "numbers", "claim",   # the number picker routes (28 Nov)
         "dev",   # GET /v1/dev/outbox, registered in development only (25 Nov)
         "portals",   # GET /lead-sources/portals (sa/connectors-rest, 26 Nov)
+        "usage-ack", "registered-consent", "call-complaints", "ai-undertaking", "compliance", "abandoned-calls",   # calling compliance, lawyer's opinion (26 Nov)
         "template",   # POST /conversations/{id}/template (a template picked in a chat, 16 Nov)
         "marketing-consent", "consented",   # campaigns S3, 17 Nov
         "briefing",   # GET /today/briefing (the briefing numbers, 19 Nov)
