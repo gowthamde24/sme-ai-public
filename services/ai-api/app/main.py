@@ -78,6 +78,8 @@ from app.config import AuthConfig, ConfigurationError, Settings, build_auth_conf
 from app.connectors.repository import PostgrestConnectorsRepository
 from app.connectors.routes import router as connectors_router
 from app.connectors.webhooks import router as webhooks_router
+from app.crm_push.routes import router as crm_push_router
+from app.crm_push.wiring import build_crm_push
 from app.connectors.wiring import build_connectors
 from app.conversation import audio_turn, speaker
 from app.conversation.engines import real_engine_factory
@@ -565,6 +567,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         webhooks_out=build_webhooks_out(
             settings, config.rest_url, config.anon_key, workspace_secrets
         ),
+        crm_push=build_crm_push(settings, config.rest_url, config.anon_key, workspace_secrets),
         lead_finder=LeadFinderService(
             PostgrestLeadFinderRepository(config.rest_url, config.anon_key),
             mode=settings.lead_finder,
@@ -1669,6 +1672,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(developer_router)
     app.include_router(developer_api_router)
     app.include_router(webhooks_out_router)
+    app.include_router(crm_push_router)
     app.include_router(developer_v1_router)
     app.include_router(jobs_router)
     app.include_router(jobs_describe_router)

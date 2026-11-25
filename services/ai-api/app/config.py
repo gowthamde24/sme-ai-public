@@ -492,6 +492,16 @@ class Settings(BaseSettings):
     # A web-address lead source also reads IndiaMART's Push API body
     # (app/lead_sources/indiamart_push.py). Off by default.
     indiamart_push: Literal["off", "on"] = "off"
+    # Results into the business's own CRM or sheet (docs/contracts/crm-push.md): off (default;
+    # the routes answer 404 and the worker pushes nothing: the kill switch) | on. Needs
+    # WORKSPACE_SECRETS (the keys live in Secret Manager). Zoho CRM and Salesforce stay "needs
+    # setup by us" until the owner registers our client with each vendor and these are set.
+    # Production stays off until the owner's gate.
+    crm_push: Literal["off", "on"] = "off"
+    crm_push_zoho_client_id: str | None = None
+    crm_push_zoho_client_secret: SecretStr | None = None
+    crm_push_salesforce_client_id: str | None = None
+    crm_push_salesforce_client_secret: SecretStr | None = None
     # Jobs (jobs contract 1.0, 1.1): off (default) | on. Off: every /jobs route is a 404.
     # JOBS_GET_PAID: off (default) hides the "get paid" job templates (Get paid ships in v1.1).
     jobs: Literal["off", "on"] = "off"

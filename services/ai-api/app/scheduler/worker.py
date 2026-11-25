@@ -38,6 +38,8 @@ from app.billing.repository import PostgrestBillingRepository
 from app.billing.service import BillingService
 from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
+from app.crm_push.runner import CrmPushRunner
+from app.crm_push.wiring import build_crm_push_runner
 from app.dpdp.mail import DpdpJobs
 from app.dpdp.wiring import build_dpdp_jobs
 from app.google_calendar.sync import GoogleCalendarSync
@@ -131,6 +133,7 @@ class Worker:
         template_sync: TemplateStatusSync | None = None,
         webhooks: WebhookRunner | None = None,
         indiamart_pull: IndiaMartPuller | None = None,
+        crm_push: CrmPushRunner | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -189,6 +192,8 @@ class Worker:
         self._webhooks = webhooks
         # connectors plan C1 item 5: IndiaMART leads pulled for businesses with their own key (None unless INDIAMART_PULL=on and the secret store exists)
         self._indiamart_pull = indiamart_pull
+        # results into a business's own CRM or sheet (None unless CRM_PUSH=on and the secret store exists)
+        self._crm_push = crm_push
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -229,6 +234,7 @@ class Worker:
             self._google_calendar_pass(token)
             self._webhooks_pass(token)
             self._indiamart_pass(token)
+            self._crm_push_pass(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -371,6 +377,17 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("indiamart pass crashed: %s", exc.__class__.__name__)
+
+    def _crm_push_pass(self, token: str) -> None:
+        """Results into the business's own CRM or sheet: the due pushes are sent and recorded (app/crm_push/runner.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._crm_push is None:
+            return
+        try:
+            self._crm_push.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("crm push pass crashed: %s", exc.__class__.__name__)
 
     def _google_calendar_pass(self, token: str) -> None:
         """Appointments to Google Calendar and busy times back (app/google_calendar/sync.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
@@ -560,6 +577,7 @@ def build_worker(settings: Settings) -> Worker:
         token_expiry=build_token_expiry(settings, config.rest_url, config.anon_key),
         template_sync=build_template_sync(settings, config.rest_url, config.anon_key),
         webhooks=build_webhook_runner(settings, config.rest_url, config.anon_key),
+        crm_push=build_crm_push_runner(settings, config.rest_url, config.anon_key),
         kyc_refresh=_kyc_refresh_for(settings, config),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         call_reconcile=(lambda tok: CallCharger(RpcClient(config.rest_url, config.anon_key), lambda: tok).reconcile()) if settings.billing_charge_calls else None,

@@ -40,6 +40,9 @@ export const jobsScreens = (value?: string): ScreenMode => screenMode(value ?? p
 export const taskScreens = (value: string | undefined = process.env.TASK_SCREENS): ScreenMode => screenMode(value);
 export const topupScreens = (value: string | undefined = process.env.TOPUP_SCREENS): ScreenMode => (earlyAccess() ? "off" : screenMode(value));
 
+/** Connectors (25 Nov 2026, docs/contracts/crm-push.md): results into the business's own CRM or sheet. `1` = the API (its own switch CRM_PUSH must be on too: the API answers 404 while off, and the page says "not open yet"), `mock` = sample cards for review and pictures (nothing is sent or stored), unset = the page is not there. */
+export const crmPushScreens = (value: string | undefined = process.env.CRM_PUSH_SCREENS): ScreenMode => screenMode(value);
+
 export const voiceSampleScreens = (value: string | undefined = process.env.VOICE_SAMPLE_SCREENS): ScreenMode => screenMode(value);
 
 /** Night 5: Settings > AI assistant > "Opening line" (the text of the greeting, with {customer} {assistant} {business} {agent_role}, a voice preview, the "mention that I am an AI assistant" switch, and a per-campaign override). C1's API ships separately (lib/api/opening-line.ts has the assumed contract): `mock` = fake data kept in a cookie (nothing is sent, no sound), `1` = the API, unset = the part is not there. */

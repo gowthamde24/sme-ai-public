@@ -490,6 +490,8 @@ select is(
         'public.webhook_endpoints_list', 'public.webhook_endpoint_create', 'public.webhook_endpoint_update', 'public.webhook_endpoint_rotate', 'public.webhook_endpoint_delete', 'public.webhook_endpoint_test', 'public.webhook_deliveries_list', 'public.webhook_deliveries_claim', 'public.webhook_delivery_record', 'public.webhook_purge',
         -- IndiaMART scheduled pull (migration 20261231992400): the worker's four start with the scheduler check; the status proves Owner or Admin first
         'public.scheduler_indiamart_links', 'public.scheduler_indiamart_begin', 'public.scheduler_indiamart_apply', 'public.scheduler_indiamart_key_state', 'public.indiamart_pull_status',
+        -- results into a business's own CRM or sheet (migration 20261231992330): the Owner's or Admin's six and the log (each proves the role), the worker's three (each starts with the scheduler check)
+        'public.crm_connections_list', 'public.crm_connection_save', 'public.crm_connection_update', 'public.crm_connection_delete', 'public.crm_connection_tested', 'public.crm_deliveries_retry', 'public.crm_deliveries_list', 'public.crm_deliveries_claim', 'public.crm_delivery_record', 'public.crm_purge',
         'app.edu_terms_valid',  -- a CHECK on institution_profiles.terms runs with the writer's rights
         -- the proof-photo bucket's storage rules are evaluated as the caller, who must be able to run this one
         'app.pod_bucket_tenant',
@@ -506,6 +508,7 @@ select is(
         'app.today_indiamart_key_expired',   -- Needs you (migration 20261231992420): the scheduled IndiaMART pull found the workspace's own key refused, Owner and Admin only
         'app.today_credits_low',   -- Needs you (migration 20261231992210): the balance is under about 4 minutes of calls, Owner and Admin only
         'app.today_phone_needs_prices',   -- Needs you (migration 20261231989000): a phone line with no price list, Owner and Admin only
+        'app.today_crm_push_failing',   -- Needs you (migration 20261231992330): a connected CRM or sheet gave up on a result, Owner and Admin only
         'app.today_calls_paused',   -- Needs you: outbound calls paused after 2 stops in 10 days (migration 20261231987300); answers the caller's own workspace, Owner and Admin only
         -- the own-voice bucket's storage rules are evaluated as the caller, who must be able to run this one (job DP part 5)
         'app.ovc_bucket_tenant')),
@@ -603,6 +606,8 @@ select is(
                      'public.workspace_entitlements',
                      'public.webhook_endpoints_list', 'public.webhook_endpoint_create', 'public.webhook_endpoint_update', 'public.webhook_endpoint_rotate', 'public.webhook_endpoint_delete', 'public.webhook_endpoint_test', 'public.webhook_deliveries_list', 'public.webhook_deliveries_claim', 'public.webhook_delivery_record', 'public.webhook_purge',
                      'public.scheduler_indiamart_links', 'public.scheduler_indiamart_begin', 'public.scheduler_indiamart_apply', 'public.scheduler_indiamart_key_state', 'public.indiamart_pull_status',
+        -- results into a business's own CRM or sheet (migration 20261231992330): the Owner's or Admin's six and the log (each proves the role), the worker's three (each starts with the scheduler check)
+        'public.crm_connections_list', 'public.crm_connection_save', 'public.crm_connection_update', 'public.crm_connection_delete', 'public.crm_connection_tested', 'public.crm_deliveries_retry', 'public.crm_deliveries_list', 'public.crm_deliveries_claim', 'public.crm_delivery_record', 'public.crm_purge',
                      'public.catalogue_material_save', 'public.site_save', 'public.site_get', 'public.sites_list', 'public.invoice_record', 'public.invoices_import', 'public.invoice_void', 'public.payment_record', 'public.payment_void', 'public.credit_limit_set', 'public.dues_statement', 'public.dues_summary', 'public.credit_check', 'public.dues_ledger', 'public.material_item_inputs', 'public.material_policy_create', 'public.material_policy_get', 'public.material_quote_build', 'public.material_quote_draft', 'public.material_quote_approve', 'public.material_quote_reject', 'public.material_quote_get', 'public.material_quotes_list', 'public.create_order_from_material_quote', 'public.trip_plan', 'public.trip_update', 'public.trip_set_status', 'public.trip_deliver', 'public.pod_ensure_bucket', 'public.trip_get', 'public.trips_list', 'public.delivery_challan_get', 'public.trip_update_submit',
                      -- job RESEND: the trial reminder e-mails
                      'public.scheduler_billing_trial_due', 'public.scheduler_billing_trial_mark',
