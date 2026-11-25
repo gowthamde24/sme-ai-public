@@ -5,6 +5,7 @@ Link the business's WhatsApp number, so messages to customers can go out and the
 ## Your WhatsApp number
 Needs attention The system does not have the access key named SHOP_TOKEN. The person who runs the system must add it. Until then nothing can be sent. Last changed: Oct 6, 2026, 8:30 AM (1 hour ago) On a test or demo system, messages go to a stand-in on that machine, never to customers. Ask the person who runs the system which kind this is.
 [button type=button disabled: Switch on]
+[button type=button: Disconnect]
 ## Connect your WhatsApp number
 WhatsApp connect is being set up. The button will be here soon.
 summary: More choices (for support only)

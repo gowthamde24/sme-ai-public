@@ -4,7 +4,7 @@ const RULES = [1, 2, 3, 4, 5] as const;
 
 /**
  * "Before you start calling" (owner, 29 Nov 2026; approved mock "Calls" and "Lead sources"): the five plain rules of calling, as open rows on the page (no card, one ink line above, hairlines between). Open on the Calls page; folded on Lead sources, where the summary reads "Read the five rules".
- * The calling hours are the call gate's own (9 am to 9 pm, set by us, not by the business); do-not-call is automatic; the business is the caller. Server markup: a native <details>, no script. The words come from the string store (`cpn.rules.`, `cpn.rule.`).
+ * The calling hours are the call gate's own (10 am to 9 pm, set by us, not by the business); do-not-call is automatic; the business is the caller. Server markup: a native <details>, no script. The words come from the string store (`cpn.rules.`, `cpn.rule.`).
  */
 export function BeforeYouStart({ words, open }: { words: Words; open: boolean }) {
   const t = makeT(words);

@@ -27,6 +27,10 @@ select tests.rid('b_fk_visit'), tests.tid('b'), l.id, l.contact_id, date '2026-1
 
 -- appointment booking: a visit may name a staff member; the generic attack needs a tenant-B staff member to aim at
 insert into public.store_staff (id, tenant_id, name, created_by) values (tests.rid('b_fk_staff'), tests.tid('b'), 'Synthetic staff', tests.uid('b_owner'));
+-- release 2 connectors: the deliveries and orders of a connection reference it by (tenant, id); the generic attack needs a tenant-B connection and channel to aim at
+insert into public.crm_connections (id, tenant_id, type, events, created_by) values (tests.rid('b_fk_crm'), tests.tid('b'), 'hubspot', array['lead.created'], tests.uid('b_owner'));
+insert into public.notify_channels (id, tenant_id, kind, created_by) values (tests.rid('b_fk_notify'), tests.tid('b'), 'slack', tests.uid('b_owner'));
+insert into public.commerce_connections (id, tenant_id, kind, store_label, token_hash, created_by) values (tests.rid('b_fk_commerce'), tests.tid('b'), 'shopify', 'synthetic-shop.myshopify.com', md5('b_fk_commerce') || md5('b_fk_commerce2'), tests.uid('b_owner'));
 
 -- job CK: a custom field value references its definition; the generic attack needs a tenant-B definition to aim at
 insert into public.custom_field_defs (id, tenant_id, entity, code, label, kind, source)

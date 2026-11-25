@@ -173,7 +173,7 @@ describe("the command box and the plan card", () => {
     say(SILK);
     const c = await card();
     fireEvent.click(c.getByRole("button", { name: "Test call to my phone" }));
-    expect(await screen.findByText("Test calls and messages are only sent between 9 am and 9 pm.")).toBeInTheDocument();
+    expect(await screen.findByText("Test calls and messages are only sent between 10 am and 9 pm.")).toBeInTheDocument();
     expect(c.getByRole("button", { name: "Test call to my phone" })).toBeDisabled();
     expect(c.getByRole("button", { name: "Start" })).toBeEnabled();
     expect(c.queryByRole("alert")).toBeNull();

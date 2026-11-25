@@ -31,9 +31,9 @@ describe("the call list", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Your phone will ring first");
   });
   it("a refusal shows OUR sentence on that row", async () => {
-    show({}, { connect: vi.fn(async () => ({ ok: false as const, error: "Calls can only be made from 9 am to 9 pm India time." })) });
+    show({}, { connect: vi.fn(async () => ({ ok: false as const, error: "Calls can only be made from 10 am to 9 pm India time." })) });
     await act(async () => void fireEvent.click(screen.getAllByRole("button", { name: "Call" })[0]));
-    expect(screen.getByRole("alert")).toHaveTextContent("9 am to 9 pm");
+    expect(screen.getByRole("alert")).toHaveTextContent("10 am to 9 pm");
   });
   it("a Sales member can write the outcome but has no call button", () => {
     show({ canCall: false });

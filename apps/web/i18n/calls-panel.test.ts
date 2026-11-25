@@ -40,7 +40,10 @@ describe("the calls panel strings", () => {
     }
   });
   it("Telugu, Hindi and Kannada are DRAFTS until a person who reads the language reviews them", () => {
-    for (const k of keys) expect(dict[k].status, k).toEqual({ te: "draft", hi: "draft", kn: "draft" });
+    for (const k of keys) {
+      expect({ hi: dict[k].status.hi, kn: dict[k].status.kn }, k).toEqual({ hi: "draft", kn: "draft" });
+      expect(["draft", "reviewed"]).toContain(dict[k].status.te);
+    } // Telugu is approved (owner, 26 Nov 2026)
   });
   it("the rules say what the call gate does (9 am to 9 pm) in every language, and no string writes a price", () => {
     for (const lang of ["en", "te", "hi", "kn"] as const) {

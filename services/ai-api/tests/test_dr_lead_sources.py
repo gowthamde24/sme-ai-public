@@ -198,6 +198,7 @@ def test_the_sheet_fetcher_reads_csv_follows_google_redirects_only_and_never_a_s
 MAILS = {
     "indiamart": ("leads@indiamart.com", "Buyer Enquiry for Silk Sarees", "Buyer Name: Ravi Kumar\nMobile: +91-98765 43210\nEmail: ravi@example.test\nCity: Hyderabad\nRequirement: Need 40 sarees for a wedding\n"),
     "justdial": ("noreply@justdial.com", "JD Lead", "Name\nAnita\nMobile\n9123456789\nLooking for: 2BHK flat\nArea: Madhapur\n"),
+    "sulekha": ("leads@sulekha.com", "New Sulekha lead: Wedding Photographers in Hyderabad", "Customer Name: Priya Menon\nMobile Number: +91 90000 12345\nEmail: priya@example.test\nLocality: Kukatpally, Hyderabad\nService Required: Wedding photographer for 2 days\nLead ID: SK-0001\n"),
     "99acres": ("response@99acres.com", "99acres Response: 3BHK in Kondapur", "Name : Kiran Rao\nEmail : kiran@example.test\nPhone : 9876501234\nMessage : Please send the brochure\n"),
     "magicbricks": ("leads@magicbricks.com", "MagicBricks Lead", "Contact Name: Sita Devi\nContact Mobile: 9000011111\nContact Email: sita@example.test\nProperty Details: 2BHK, Gachibowli\n"),
     "housing": ("alerts@housing.com", "Housing.com Lead", "Lead Name: Arjun\nPhone: 8123456789\nMessage: Looking for a plot\n"),
@@ -211,6 +212,29 @@ def test_each_portals_lead_mail_is_read(portal: str) -> None:
     assert parsed is not None and parsed.portal == portal
     assert parsed.row.get("phone") or parsed.row.get("email")
     assert parsed.row.get("name") and parsed.row.get("message")
+
+
+SULEKHA_OTHER_LAYOUTS = {
+    # a table: the label on one line and its value on the next
+    "table": ("alerts@sulekha.com", "You have a new customer enquiry", "Customer Name\nArun Babu\nMobile\n9111100000\nCategory\nAC repair and service\nLocation\nGachibowli\n"),
+    # forwarded to the shop's own address from a personal mailbox, no sender domain to go by: the word Sulekha in the subject names it
+    "subject only": ("owner@gmail.test", "Fwd: Sulekha lead for Interior designers", "Name: Fatima Noor\nPhone: 9222200000\nLead Details: 2BHK interior, budget open\nCity: Vijayawada\n"),
+}
+
+
+@pytest.mark.parametrize("layout", list(SULEKHA_OTHER_LAYOUTS))
+def test_a_sulekha_mail_in_another_layout_is_read(layout: str) -> None:
+    sender, subject, body = SULEKHA_OTHER_LAYOUTS[layout]
+    parsed = portals.parse_mail(sender, subject, body)
+    assert parsed is not None and parsed.portal == "sulekha"
+    assert parsed.row.get("name") and parsed.row.get("phone") and parsed.row.get("message")
+
+
+def test_a_sulekha_mail_gives_the_city_and_the_service_as_what_they_asked_for() -> None:
+    sender, subject, body = MAILS["sulekha"]
+    parsed = portals.parse_mail(sender, subject, body)
+    assert parsed is not None
+    assert parsed.row["city"] == "Kukatpally, Hyderabad" and parsed.row["message"] == "Wedding photographer for 2 days" and parsed.row["email"] == "priya@example.test"
 
 
 def test_a_forwarded_mail_is_unwrapped_and_still_read() -> None:

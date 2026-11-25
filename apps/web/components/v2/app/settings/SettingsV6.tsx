@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { CookieSettingsLink } from "@/components/v2/legal/CookieSettingsLink";
+import { sitePath } from "@/lib/site/paths";
 import { settingsOpen } from "@/lib/screens/flag";
 import type { ReactNode } from "react";
 
@@ -57,6 +59,11 @@ export type SettingsV6Props = {
   simple?: boolean;
   /** JOBS on (the simplicity pass): Your assistant, Connections and Developer keys as plain sentences with one button each. With it off nothing changes. */
   jobs?: boolean;
+  /** Sign out in Settings (owner, 26 Nov 2026): the server action the frame uses; absent = no such card. */
+  signOut?: () => Promise<void>;
+  email?: string | null;
+  /** Settings > Business type (the Owner only): the card's inside, built by the page (it needs the list of types). */
+  businessType?: ReactNode;
 };
 
 const WA_STATUS: Record<ConnectionState, Status> = { connected: "completed", connecting: "spam", needs_attention: "rejected", not_connected: "no_answer" };
@@ -136,7 +143,7 @@ function Card({ id, title, edit, children }: { id: string; title: string; edit?:
  * invented: a value that cannot be read says "Not set yet". ONE place edits here: the Business card (name and city, with one "Publish"); everything else is changed on its own screen. The old tabbed Settings stays at `?section=...`. Privacy and data lines are human-only drafts and
  * start no deletion or export from this page. Developer API keys are test mode only: no key is ever shown.
  */
-export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, assistant = null, owner = false, dncHref = null, simple = false, jobs = false }: SettingsV6Props) {
+export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, assistant = null, owner = false, dncHref = null, simple = false, jobs = false, signOut, email = null, businessType = null }: SettingsV6Props) {
   const t = makeT(words);
   const settings = `${base}/settings`;
   const biz = data.business;
@@ -309,6 +316,34 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
             ))}
           </ul>
         </Card>
+
+        {businessType ? <Card id="business-type" title={t("bt.title")}>{businessType}</Card> : null}
+
+        <Card id="legal" title={t("sv6.legal.title")}>
+          <ul className="mt-1 flex flex-col" data-part="settings-legal-links">
+            {([["privacy", "/privacy", "sv6.legal.privacy"], ["terms", "/terms", "sv6.legal.terms"], ["delete", "/data-deletion", "sv6.legal.delete"], ["contact", sitePath(lang, { kind: "page", page: "contact" }), "sv6.legal.contact"], ["help", `${base}/help`, "sv6.legal.help"]] as const).map(([k, href, key]) => (
+              <li key={k}>
+                <Link href={href} prefetch={false} data-legal={k} className="inline-flex min-h-11 items-center text-base font-semibold text-ink underline underline-offset-4">
+                  {t(key)}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <CookieSettingsLink label={t("sv6.legal.cookies")} className="inline-flex min-h-11 items-center text-base font-semibold text-ink underline underline-offset-4" />
+            </li>
+          </ul>
+        </Card>
+
+        {signOut ? (
+          <Card id="account" title={t("sv6.account.title")}>
+            {email ? <p className="mt-2 text-sm text-muted">{t("sv6.account.signed", { email })}</p> : null}
+            <form action={signOut} className="mt-3">
+              <button type="submit" data-part="settings-signout" className={btnQuiet}>
+                {t("sv6.account.signout")}
+              </button>
+            </form>
+          </Card>
+        ) : null}
 
         {admin ? (
           data.developer && developerActions ? (

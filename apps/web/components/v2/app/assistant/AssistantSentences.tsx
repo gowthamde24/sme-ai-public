@@ -13,10 +13,10 @@ import { JbCard, PillField } from "../settings/simple-b";
 import { jbHelp } from "../settings/simple-b-styles";
 import type { Say } from "../words";
 
-/** The calling hours the API takes: 09:00 to 21:00 in steps of 15 minutes. */
+/** The calling hours the API takes: 10:00 to 21:00 in steps of 15 minutes. */
 const HOUR_OPTIONS: readonly string[] = (() => {
   const out: string[] = [];
-  for (let m = 9 * 60; m <= 21 * 60; m += HOURS.stepMinutes) out.push(`${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`);
+  for (let m = 10 * 60; m <= 21 * 60; m += HOURS.stepMinutes) out.push(`${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`);
   return out;
 })();
 

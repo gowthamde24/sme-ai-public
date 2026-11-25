@@ -16,6 +16,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
+from app.business_kyc import rules
 from app.business_kyc.models import (
     AadhaarOut,
     DetailsIn,
@@ -23,7 +24,6 @@ from app.business_kyc.models import (
     PanIn,
     StatusOut,
     UploadIn,
-    details_fields,
 )
 from app.business_kyc.service import BusinessKycService
 from app.errors import not_found
@@ -43,28 +43,52 @@ def _service(runtime: Runtime) -> BusinessKycService:
 
 @router.get("", response_model=StatusOut)
 def status(ctx: Reader, runtime: RuntimeDep) -> dict[str, Any]:
-    return _service(runtime).status(ctx.principal.token, ctx.tenant.id)
+    service = _service(runtime)
+    out = service.status(ctx.principal.token, ctx.tenant.id)
+    if out["state"] == "waiting_for_line" and ctx.role == Role.OWNER:   # a channel may be free by now: the Owner's own screen retries (no worker needed)
+        out = service.retry_waiting(ctx.principal.token, ctx.tenant.id, ctx.principal.email or "", getattr(ctx.tenant, "name", "") or "")
+    return {**out, "reserve": service.reserve_info(ctx.principal.token, ctx.tenant.id)}
 
 
 @router.post("/start", response_model=StatusOut, status_code=201)
 def start(ctx: Owner, runtime: RuntimeDep) -> dict[str, Any]:
     p = ctx.principal
-    return _service(runtime).start(p.token, ctx.tenant.id, p.email or "", getattr(ctx.tenant, "name", "") or "", None)
+    service = _service(runtime)
+    out = service.start(p.token, ctx.tenant.id, p.email or "", getattr(ctx.tenant, "name", "") or "", None)
+    return {**out, "reserve": service.reserve_info(p.token, ctx.tenant.id)}
+
+
+@router.post("/cancel", response_model=StatusOut)
+def cancel(ctx: Owner, runtime: RuntimeDep) -> dict[str, Any]:
+    """Stop before the number is bought: the first month is refunded, the unverified client is deleted (its channel returns) and the business can start again. Not for a verified business."""
+    service = _service(runtime)
+    out = service.cancel(ctx.principal.token, ctx.tenant.id)
+    return {**out, "reserve": service.reserve_info(ctx.principal.token, ctx.tenant.id)}
 
 
 @router.post("/details", response_model=StatusOut)
 def details(body: DetailsIn, ctx: Owner, runtime: RuntimeDep) -> dict[str, Any]:
-    return _service(runtime).details(ctx.principal.token, ctx.tenant.id, details_fields(body))
+    clean, bad = rules.check_details(body.model_dump())
+    if bad:
+        raise rules.refuse(bad)
+    return _service(runtime).details(ctx.principal.token, ctx.tenant.id, clean)
 
 
 @router.post("/pan", response_model=StatusOut)
 def pan(body: PanIn, ctx: Owner, runtime: RuntimeDep) -> dict[str, Any]:
-    return _service(runtime).pan(ctx.principal.token, ctx.tenant.id, body.pan_number, body.holder_name)
+    pan_number, holder, bad = rules.check_pan(body.model_dump())
+    if bad:
+        raise rules.refuse(bad)
+    return _service(runtime).pan(ctx.principal.token, ctx.tenant.id, pan_number, holder)
 
 
 @router.post("/gst", response_model=StatusOut)
 def gst(body: GstIn, ctx: Owner, runtime: RuntimeDep) -> dict[str, Any]:
-    return _service(runtime).gst(ctx.principal.token, ctx.tenant.id, body.gst_number)
+    service = _service(runtime)
+    gstin, bad = rules.check_gstin(body.model_dump(), service.status(ctx.principal.token, ctx.tenant.id).get("account_type"))
+    if bad:
+        raise rules.refuse(bad)
+    return service.gst(ctx.principal.token, ctx.tenant.id, gstin)
 
 
 @router.post("/aadhaar", response_model=AadhaarOut)
@@ -74,7 +98,10 @@ def aadhaar(ctx: Owner, runtime: RuntimeDep) -> dict[str, Any]:
 
 @router.post("/documents", response_model=StatusOut)
 def documents(body: UploadIn, ctx: Owner, runtime: RuntimeDep) -> dict[str, Any]:
-    return _service(runtime).upload(ctx.principal.token, ctx.tenant.id, body.document_type, body.content_type, body.content_base64)
+    bad = rules.check_document(body.model_dump())
+    if bad:
+        raise rules.refuse(bad)
+    return _service(runtime).upload(ctx.principal.token, ctx.tenant.id, str(body.document_type), str(body.content_type), body.content_base64)
 
 
 @router.post("/submit", response_model=StatusOut)

@@ -83,7 +83,7 @@ describe("the changes of one job's page (Owner and Admin only)", () => {
     api.addJobFaq.mockRejectedValueOnce(new ApiRequestError(422, "faq_not_allowed", "x"));
     expect(await addJobFaqAction(T, J, "Discounts?", "Yes, 20 percent off.")).toMatchObject({ ok: false, code: "faq_not_allowed", error: "A job answer may not promise a price or a discount." });
     api.testJob.mockRejectedValueOnce(new ApiRequestError(409, "quiet_hours", "x"));
-    expect(await testJobAction(T, J, "call")).toMatchObject({ ok: false, code: "quiet_hours", error: "Test calls and messages are only sent between 9 am and 9 pm." });
+    expect(await testJobAction(T, J, "call")).toMatchObject({ ok: false, code: "quiet_hours", error: "Test calls and messages are only sent between 10 am and 9 pm." });
   });
   it("Sales and Viewer are refused before anything is asked; so are a bad workspace id and a bad job id", async () => {
     for (const role of ["sales", "viewer"]) {

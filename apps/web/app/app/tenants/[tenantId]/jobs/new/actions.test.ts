@@ -50,12 +50,12 @@ describe("start a job: the server actions", () => {
   });
   it("the refusals of the contract are said in our words, and the closed code stays for the screen", async () => {
     h.mode.v = "on";
-    for (const [code, status, text] of [["plan_expired", 409, "This plan has expired: say it again."], ["job_off_by_plan", 403, "This job is not part of your plan."], ["job_unknown_kind", 422, "This kind of job does not exist."], ["consent_required", 422, "First confirm that these people agreed to be contacted."], ["jobs_limit", 409, "You have reached the most jobs one workspace can have (100)."]] as const) {
+    for (const [code, status, text] of [["plan_expired", 409, "This plan has expired: say it again."], ["job_off_by_plan", 403, "This job is not part of your plan."], ["job_unknown_kind", 422, "This kind of job does not exist."], ["consent_required", 422, "First tick that these people wrote to you or that their consent is recorded."], ["jobs_limit", 409, "You have reached the most jobs one workspace can have (100)."]] as const) {
       h.req.mockRejectedValueOnce(new ApiRequestError(status, code, "x"));
       expect(await startPlanAction(T, "p-1"), code).toMatchObject({ ok: false, error: text, code });
     }
     h.req.mockRejectedValueOnce(new ApiRequestError(409, "quiet_hours", "x"));
-    expect(await testPlanAction(T, "p-1", "call")).toMatchObject({ ok: false, code: "quiet_hours", error: "Test calls and messages are only sent between 9 am and 9 pm." });
+    expect(await testPlanAction(T, "p-1", "call")).toMatchObject({ ok: false, code: "quiet_hours", error: "Test calls and messages are only sent between 10 am and 9 pm." });
   });
   it("the sentence is checked FIRST: too short or too long is refused before anything else, even for someone who may not", async () => {
     h.tenant.mockResolvedValue({ role: "viewer" });

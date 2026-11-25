@@ -131,4 +131,4 @@ async def test_an_english_line_uses_the_english_greeting() -> None:
 async def test_nothing_saved_or_an_unreadable_training_still_opens_the_call_with_the_standard_line() -> None:
     for store in (TrainingStore(None), TrainingStore(raises=True)):
         prepared = await _prepare_for(service(store), voice(), TENANT, business="Padma Silks")
-        assert prepared.text == persona.PLAIN_INBOUND_OPENING["te"].replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT), "a call without the training opens with the name only (the default setting is OFF)"
+        assert prepared.text == persona.INBOUND_OPENING["te"].replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT), "a call without the training opens with the name only (the default setting is OFF)"

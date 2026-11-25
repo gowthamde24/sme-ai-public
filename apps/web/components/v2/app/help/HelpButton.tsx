@@ -13,7 +13,10 @@ import { useScreenTip } from "./help-store";
  * The "?" in the top bar of every workspace screen (owner 31 Oct): a small icon button that opens the help of the screen you are on (its three lines and the link to the full guide, when the screen has a tip), or the way to the list of guides when it has not. It
  * opens under the button, closes with its own button, Escape or a tap outside, remembers nothing and sends nothing.
  */
-export function HelpButton({ base, labels }: { base: string; labels?: Labels }) {
+/** The legal pages the ? menu lists (the contact page's address is per language, so the server gives them). */
+export type LegalHrefs = Record<"contact" | "privacy" | "terms" | "deletion", { href: string; label: string }>;
+
+export function HelpButton({ base, labels, legal = null }: { base: string; labels?: Labels; legal?: LegalHrefs | null }) {
   const tip = useScreenTip();
   const [open, setOpen] = useState(false);
   const id = useId();
@@ -71,6 +74,16 @@ export function HelpButton({ base, labels }: { base: string; labels?: Labels }) 
                 {word(labels, "frame.help", "Help")}
               </Link>
             )}
+            {legal ? (
+              // the legal row of every workspace page lives here now (owner, 26 Nov 2026): Contact, Privacy notice, Terms, and "Delete your data" (two clicks from anywhere)
+              <nav aria-label="Privacy and legal" data-part="help-legal" className="mt-3 flex flex-wrap gap-x-4 border-t border-line pt-2">
+                {(["contact", "privacy", "terms", "deletion"] as const).map((k) => (
+                  <Link key={k} href={legal[k].href} prefetch={false} onClick={() => setOpen(false)} data-legal={k} className="inline-flex min-h-11 items-center text-sm font-medium text-ink underline-offset-4 hover:underline">
+                    {legal[k].label}
+                  </Link>
+                ))}
+              </nav>
+            ) : null}
           </div>
           <button type="button" onClick={() => setOpen(false)} aria-label={tip?.closeLabel ?? word(labels, "notify.close", "Close")} className="grid size-10 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-2">
             <X className="size-5" aria-hidden="true" />

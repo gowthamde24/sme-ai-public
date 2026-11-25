@@ -1,7 +1,8 @@
-import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+const nav = vi.hoisted(() => ({ refresh: (() => undefined) as () => void }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => nav.refresh() }) }));
 vi.mock("./LazyConnectWithFacebook", async () => ({ ConnectWithFacebook: (await import("./ConnectWithFacebook")).ConnectWithFacebook }));
 
 import { wordsFor } from "@/i18n/app-words";
@@ -425,5 +426,67 @@ describe("the small rules", () => {
     expect(failureWord({ delivery_error: null, failure_code: "template_required" }, t)).toMatch(/approved message template/);
     expect(failureWord({ delivery_error: "something_new", failure_code: null }, t)).toBe("It did not go. The reason is not known.");
     expect(failureWord({ delivery_error: null, failure_code: null }, t)).toBeNull();
+  });
+});
+
+describe("Disconnect (owner, 26 Nov 2026: the Meta recordings start from Disconnect, then Connect again)", () => {
+  const SIGNUP = { config: { available: true, appId: "APP1", configId: "CFG1", graphVersion: "v25.0", missing: [], onboardingTypes: ["cloud_api"], embeddedVersion: "v5" as const, launchExtras: null }, connect: vi.fn(async () => ({ ok: true as const, data: { connected: true, displayPhone: "+91 98765 43210", verifiedName: "Test Silks", status: "active" } })) };
+  const acts = (over: Partial<AccountActions> = {}): AccountActions => ({
+    save: vi.fn(),
+    activate: vi.fn(async () => ({ ok: true as const, data: parseAccount(ACCOUNT) })),
+    disable: vi.fn(async () => ({ ok: true as const, data: parseAccount({ ...ACCOUNT, status: "disabled" }) })),
+    disconnect: vi.fn(async () => ({ ok: true as const, data: parseAccount({ ...ACCOUNT, status: "disabled" }) })),
+    ...over,
+  });
+  it("a connected number has a Disconnect button that asks first, in plain words, and only then calls it", async () => {
+    const a = acts();
+    render(<ConnectWhatsapp words={WORDS} account={parseAccount(ACCOUNT)} canEdit actions={a} signup={SIGNUP} />);
+    await press("Disconnect");
+    expect(a.disconnect).not.toHaveBeenCalled();
+    expect(screen.getByText("Disconnect this WhatsApp number? Messages stop until you connect again. Your chats stay.")).toBeInTheDocument();
+    await press("Keep it connected");
+    expect(a.disconnect).not.toHaveBeenCalled();
+    await press("Disconnect");
+    const box = document.querySelector('[data-part="disconnect-confirm"]') as HTMLElement;
+    await act(async () => fireEvent.click(within(box).getByRole("button", { name: "Disconnect" })));
+    expect(a.disconnect).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Disconnected. Connect again to use this number.")).toBeInTheDocument();
+  });
+  it("after the disconnect (status disabled) the page says so and shows the Connect with Facebook card again", async () => {
+    const a = acts();
+    render(<ConnectWhatsapp words={WORDS} account={parseAccount(ACCOUNT)} canEdit actions={a} signup={SIGNUP} />);
+    expect(document.querySelector('[data-part="reconnect-note"]')).toBeNull();
+    await press("Disconnect");
+    const box = document.querySelector('[data-part="disconnect-confirm"]') as HTMLElement;
+    await act(async () => fireEvent.click(within(box).getByRole("button", { name: "Disconnect" })));
+    expect(document.querySelector('[data-part="reconnect-note"]')).toHaveTextContent("This number was disconnected. Connect again to use it.");
+    expect(screen.getByRole("button", { name: "Connect with Facebook" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Disconnect" })).toBeNull(); // nothing left to disconnect
+  });
+  it("an account that is already disabled when the page opens shows the same line and the card", () => {
+    render(<ConnectWhatsapp words={WORDS} account={parseAccount({ ...ACCOUNT, status: "disabled" })} canEdit actions={acts()} signup={SIGNUP} />);
+    expect(document.querySelector('[data-part="reconnect-note"]')).toHaveTextContent("This number was disconnected. Connect again to use it.");
+    expect(screen.getByRole("button", { name: "Connect with Facebook" })).toBeInTheDocument();
+  });
+  it("no Disconnect for an Admin (they only read) or when the screen was drawn without the action", () => {
+    render(<ConnectWhatsapp words={WORDS} account={parseAccount(ACCOUNT)} canEdit={false} actions={acts()} />);
+    expect(screen.queryByRole("button", { name: "Disconnect" })).toBeNull();
+    cleanup();
+    render(<ConnectWhatsapp words={WORDS} account={parseAccount(ACCOUNT)} canEdit actions={acts({ disconnect: undefined })} />);
+    expect(screen.queryByRole("button", { name: "Disconnect" })).toBeNull();
+  });
+  it("after Meta's window finished, the state card says Connected at once, without a reload", async () => {
+    const refresh = vi.fn();
+    nav.refresh = refresh;
+    const finish = { type: "WA_EMBEDDED_SIGNUP", event: "FINISH", data: { waba_id: "123456789", phone_number_id: "987654321" } };
+    (window as unknown as { FB: unknown }).FB = { init: vi.fn(), login: (cb: (r: { authResponse: { code: string } }) => void) => cb({ authResponse: { code: "CODE1234567890" } }) };
+    render(<ConnectWhatsapp words={WORDS} account={parseAccount({ configured: false })} canEdit actions={acts()} signup={SIGNUP} />);
+    expect(document.querySelector('[data-wa-state="not_connected"]')).not.toBeNull();
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Connect with Facebook" })));
+    await act(async () => void window.dispatchEvent(new MessageEvent("message", { data: JSON.stringify(finish), origin: "https://www.facebook.com" })));
+    await waitFor(() => expect(document.querySelector('[data-wa-state="connected"]')).not.toBeNull());
+    expect(screen.getByText(/Your number \+91 98765 43210 is connected/)).toBeInTheDocument();
+    expect(refresh).toHaveBeenCalled(); // and the page is read again in the background
+    delete (window as unknown as { FB?: unknown }).FB;
   });
 });

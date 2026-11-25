@@ -24,7 +24,7 @@ A = TENANT_A.id
 V = f"/v1/tenants/{A}/voice-notes"
 R = f"/v1/tenants/{A}/reports"
 PREVIEW_ID = str(uuid.UUID(int=0x9E))
-SETTINGS = {"enabled": True, "speed": 1.0, "call_from_hour": 9, "call_to_hour": 21}
+SETTINGS = {"enabled": True, "speed": 1.0, "call_from_hour": 10, "call_to_hour": 21}
 ALL_THREE = ("a_owner", "a_admin", "a_sales")
 OWNER_ADMIN = ("a_owner", "a_admin")
 OWNER = ("a_owner",)

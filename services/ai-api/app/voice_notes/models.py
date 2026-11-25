@@ -21,9 +21,9 @@ class _Strict(BaseModel):
 class VoiceSettingsIn(_Strict):
     enabled: bool
     speed: float = Field(ge=0.75, le=1.25)
-    # the hours (India time, 9 to 21) inside which a call is asked of a person; one setting for the call list and the voice notes (ADR 0084 part 4)
-    call_from_hour: int = Field(ge=9, le=21)
-    call_to_hour: int = Field(ge=9, le=21)
+    # the hours (India time, 10 to 21) inside which a call is asked of a person; one setting for the call list and the voice notes (ADR 0084 part 4)
+    call_from_hour: int = Field(ge=10, le=21)
+    call_to_hour: int = Field(ge=10, le=21)
 
 
 class VoiceSettingsOut(_Strict):

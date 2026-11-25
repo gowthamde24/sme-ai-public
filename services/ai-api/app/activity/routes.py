@@ -80,8 +80,8 @@ class QuietHoursIn(BaseModel):
 class CallHoursIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
     days: list[Annotated[int, Field(strict=True, ge=1, le=7)]] | None = Field(default=None, min_length=1, max_length=7)
-    from_minute: StrictInt | None = Field(default=None, ge=540, le=1260, multiple_of=15)
-    to_minute: StrictInt | None = Field(default=None, ge=540, le=1260, multiple_of=15)
+    from_minute: StrictInt | None = Field(default=None, ge=600, le=1260, multiple_of=15)
+    to_minute: StrictInt | None = Field(default=None, ge=600, le=1260, multiple_of=15)
 
 
 class TightenIn(BaseModel):

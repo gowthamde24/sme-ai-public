@@ -88,8 +88,8 @@ describe("the made-up months (BILLING_V2=mock)", () => {
     expect(w.planKey).toBe("payg");
     expect(w.lines.find((l) => l.feature === "calls")).toMatchObject({ used: 420, included: null, warn: "none" });
   });
-  it("numbers: three numbers, two extra at ₹299", () => {
-    expect(mockWallet("numbers", {}).lines.find((l) => l.feature === "numbers")).toMatchObject({ used: 3, included: 1, spentPaise: 59_800 });
+  it("numbers: three numbers, two extra at ₹499", () => {
+    expect(mockWallet("numbers", {}).lines.find((l) => l.feature === "numbers")).toMatchObject({ used: 3, included: 1, spentPaise: 99_800 });
   });
   it("a limit chosen on the screen is kept and warns by itself", async () => {
     expect(await saveLimit("tok", T, "calls", 20_000)).toEqual({ ok: true });

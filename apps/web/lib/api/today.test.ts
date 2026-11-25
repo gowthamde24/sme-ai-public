@@ -209,3 +209,22 @@ describe("the voice-limit item never names our supplier or our costs to a custom
   });
 });
 
+describe("an extra line that could not be renewed (26 Nov 2026, migration 20261231992500)", () => {
+  it("is read as its own kind: 'Your balance', the API's plain sentence, and it opens Credits and billing", async () => {
+    const { parseNeedsYouItem } = await import("./today");
+    const item = parseNeedsYouItem({ kind: "line_renewal", id: "11111111-aaaa-4aaa-8aaa-000000000002", customer: "Balance", city: null, agent: "followup_desk", summary: "An extra line could not be renewed: there are not enough credits. Add credits so it keeps working.", at: "2026-11-26T10:00:00Z", amount_paise: null, target: { type: "billing", id: "22222222-2222-4222-8222-222222222222" } });
+    expect(item.kind).toBe("line_renewal");
+    expect(item.customer).toBe("Your balance");
+    expect(item.summary).toMatch(/not enough credits/);
+  });
+});
+
+describe("the IndiaMART key was refused (25 Nov 2026, migration 20261231992420)", () => {
+  it("is read as its own kind, keeps the customer word IndiaMART and the API's sentence, and has a Lead sources target", async () => {
+    const { parseNeedsYouItem } = await import("./today");
+    const item = parseNeedsYouItem({ kind: "indiamart_key_expired", id: "11111111-aaaa-4aaa-8aaa-000000000003", customer: "IndiaMART", city: null, agent: "followup_desk", summary: "IndiaMART no longer accepts your key, so no new IndiaMART leads are coming in.", at: "2026-11-25T10:00:00Z", amount_paise: null, target: { type: "lead_sources", id: "11111111-aaaa-4aaa-8aaa-000000000004" } });
+    expect(item.kind).toBe("indiamart_key_expired");
+    expect(item.customer).toBe("IndiaMART");
+    expect(item.target).toEqual({ type: "lead_sources", id: "11111111-aaaa-4aaa-8aaa-000000000004" });
+  });
+});

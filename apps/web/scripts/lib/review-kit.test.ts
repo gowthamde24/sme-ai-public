@@ -193,7 +193,7 @@ describe("importing a filled sheet: writing", () => {
     expect(after[k].hi).toBe("सुधारा हुआ टेक्स्ट");
     expect(after[k].status.hi).toBe("reviewed");
     expect(after[k].te).toBe(before[k].te);
-    expect(after[k].status.te).toBe("draft");
+    expect(after[k].status.te).toBe(before[k].status.te); // (the other languages are untouched; Telugu is approved by the owner, 26 Nov 2026)
     for (const other of Object.keys(before).filter((x) => x !== k)) expect(after[other], other).toEqual(before[other]);
   });
   it("a sample chat (the same text in every dictionary) is written in all four", () => {

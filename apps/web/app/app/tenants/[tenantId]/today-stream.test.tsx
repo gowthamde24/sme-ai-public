@@ -159,7 +159,8 @@ describe("the briefing line", () => {
 
   it("says the same words as when the page waited for everything (one quote: the quote at the top; the menu's number)", async () => {
     await show();
-    // the quote of the fixture is the top decision of the list and the briefing links to it
+    // the quote of the fixture is the top decision of the list and the briefing links to it (the band streams in: wait for it, a slow machine draws it a moment later)
+    await waitFor(() => expect(briefing()).not.toBeNull());
     expect(briefing()).toHaveTextContent(/35 new enquiries to look at.*One quote of ₹50,400 for Synthetic Buyer is waiting for you/);
     expect(briefing()?.querySelector("a")).not.toBeNull();
   });

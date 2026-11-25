@@ -7,7 +7,7 @@ import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { failureOf } from "@/lib/api/failure";
-import { activateWhatsapp, connectWhatsapp, disableWhatsapp, putWhatsappAccount, SIGNUP_CODE, SIGNUP_ID, type Connected, type ConnectInput, type WhatsappAccount } from "@/lib/api/whatsapp";
+import { activateWhatsapp, connectWhatsapp, disableWhatsapp, disconnectWhatsapp, putWhatsappAccount, SIGNUP_CODE, SIGNUP_ID, type Connected, type ConnectInput, type WhatsappAccount } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
 
 /**
@@ -39,6 +39,10 @@ export async function activateWhatsappAction(tenantId: string): Promise<Out<What
 }
 export async function disableWhatsappAction(tenantId: string): Promise<Out<WhatsappAccount>> {
   return run(tenantId, true, (token) => disableWhatsapp(token, tenantId));
+}
+/** "Disconnect" (Owner, with the second factor): the account is switched off and our app leaves its webhooks; the chats stay. The answer is the account as it now stands (`disabled`). */
+export async function disconnectWhatsappAction(tenantId: string): Promise<Out<WhatsappAccount>> {
+  return run(tenantId, true, (token) => disconnectWhatsapp(token, tenantId));
 }
 
 /**

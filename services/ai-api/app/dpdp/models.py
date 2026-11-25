@@ -15,6 +15,11 @@ Captcha = Annotated[str, StringConstraints(max_length=2048)]
 _EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
+class TurnstileVerifyIn(_Strict):
+    token: Annotated[str, StringConstraints(min_length=1, max_length=2048)]
+    ip: Annotated[str, StringConstraints(max_length=64)] | None = None   # the person's address as the web saw it (a hint for Cloudflare and the key of the limit)
+
+
 class PublicGrievanceIn(_Strict):
     grievance_id: ApiUuid | None = None
     name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]

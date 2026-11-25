@@ -138,6 +138,18 @@
       "extras": []
     },
     {
+      "code": "ai_undertaking_required",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "talk_training"
+      ],
+      "default_message": "To stop saying it is an AI assistant, first accept the written undertaking.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "already_has_number",
       "statuses": [
         409
@@ -218,7 +230,8 @@
         429
       ],
       "areas": [
-        "connectors"
+        "connectors",
+        "notify_out"
       ],
       "default_message": "Please wait a few minutes before asking again.",
       "wait": true,
@@ -515,6 +528,138 @@
       "extras": []
     },
     {
+      "code": "calendar_key_refused",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Calendly did not accept that key. Make a new personal access token and paste it.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_link_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Use the https address of your own Calendly or Cal.com booking page.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_needs_reconnect",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Connect Outlook again: Microsoft no longer accepts the old permission.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_needs_setup",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "This connection needs a step from us first. We will tell you when it is ready.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_no_public_address",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "This system has no public address yet, so a calendar cannot send bookings here.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_not_connected",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "This calendar is not connected.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_plan_refused",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Calendly does not allow webhooks on this account. Check the plan and your role in Calendly.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_secret_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "The key store did not answer. Try again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_try_later",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Too many connection attempts. Try again in a few minutes.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "calendar_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "Not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calendar_vendor_unavailable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "calendar_in"
+      ],
+      "default_message": "The calendar service did not answer. Try again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "call_not_allowed",
       "statuses": [
         409
@@ -665,6 +810,20 @@
       "extras": []
     },
     {
+      "code": "channel_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "notify_out"
+      ],
+      "default_message": "Check the choices and try again.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
       "code": "code_expired",
       "statuses": [
         422
@@ -710,6 +869,30 @@
       ],
       "default_message": "That code is not right.",
       "wait": false,
+      "extras": []
+    },
+    {
+      "code": "commerce_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "commerce"
+      ],
+      "default_message": "That did not work. Try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "commerce_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "commerce"
+      ],
+      "default_message": "Connecting a store is not available right now. Try again in a minute.",
+      "wait": true,
       "extras": []
     },
     {
@@ -898,6 +1081,46 @@
       ],
       "default_message": "A note can't hold a phone number or an e-mail address.",
       "wait": false,
+      "extras": []
+    },
+    {
+      "code": "credentials_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "crm_push"
+      ],
+      "default_message": "Fill in every key. A key has no spaces.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "credits_needed",
+      "statuses": [
+        402
+      ],
+      "areas": [
+        "business_kyc"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "balance_paise",
+        "needed_paise",
+        "needed_text"
+      ]
+    },
+    {
+      "code": "crm_push_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "crm_push"
+      ],
+      "default_message": "",
+      "wait": true,
       "extras": []
     },
     {
@@ -1854,6 +2077,7 @@
       ],
       "areas": [
         "activity",
+        "crm_push",
         "developer_api",
         "leads",
         "marksmessages",
@@ -2006,6 +2230,7 @@
         422
       ],
       "areas": [
+        "commerce",
         "main"
       ],
       "default_message": "A value was not accepted.",
@@ -2179,6 +2404,21 @@
       "default_message": "Plivo asks for a detail we do not collect yet.",
       "wait": false,
       "extras": []
+    },
+    {
+      "code": "kyc_fields_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "business_kyc"
+      ],
+      "default_message": "Please correct the marked fields.",
+      "wait": false,
+      "extras": [
+        "fields",
+        "reasons"
+      ]
     },
     {
       "code": "kyc_file_too_large",
@@ -2426,6 +2666,33 @@
       "extras": []
     },
     {
+      "code": "lines_unavailable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "extra_lines"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "fields",
+        "reason"
+      ]
+    },
+    {
+      "code": "list_not_products",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "commerce"
+      ],
+      "default_message": "Pick a list of products to fill from a store.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "live_not_available",
       "statuses": [
         422
@@ -2447,6 +2714,43 @@
         "callsettings"
       ],
       "default_message": "This business type does not allow that: a school's assistant makes no sales calls and none about dues or fees.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "mail_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "The e-mail did not go. Try again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "mail_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "admin",
+        "credits"
+      ],
+      "default_message": "We cannot send e-mail right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "mapping_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "crm_push"
+      ],
+      "default_message": "One of the field names does not look right. Use the name the other tool shows.",
       "wait": false,
       "extras": []
     },
@@ -2693,6 +2997,18 @@
         "main"
       ],
       "default_message": "An active item needs a photo. Add one, or make the item inactive first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "needs_setup_by_us",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "crm_push"
+      ],
+      "default_message": "",
       "wait": false,
       "extras": []
     },
@@ -2994,12 +3310,15 @@
         "connectors",
         "developer_api",
         "errors",
+        "extra_lines",
         "lead_sources",
         "main"
       ],
       "default_message": "Not found.",
       "wait": false,
-      "extras": []
+      "extras": [
+        "reason"
+      ]
     },
     {
       "code": "not_generated",
@@ -3210,6 +3529,18 @@
       ],
       "default_message": "This is not available on this system.",
       "wait": false,
+      "extras": []
+    },
+    {
+      "code": "notify_out_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "notify_out"
+      ],
+      "default_message": "Notifications are not available right now. Try again in a minute.",
+      "wait": true,
       "extras": []
     },
     {
@@ -4797,6 +5128,20 @@
       ]
     },
     {
+      "code": "settings_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "crm_push"
+      ],
+      "default_message": "Fill in every setting with the text the other tool shows.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
       "code": "sheet_link_invalid",
       "statuses": [
         422
@@ -5271,6 +5616,8 @@
         413
       ],
       "areas": [
+        "calendar_in",
+        "commerce",
         "connectors",
         "lead_sources"
       ],
@@ -5432,6 +5779,8 @@
       ],
       "areas": [
         "billing",
+        "calendar_in",
+        "commerce",
         "connectors",
         "errors",
         "lead_sources",
@@ -5542,6 +5891,7 @@
         "connectors",
         "conversation",
         "crm",
+        "crm_push",
         "dues",
         "education",
         "erasure",
@@ -5819,10 +6169,11 @@
       ],
       "areas": [
         "billing",
+        "commerce",
         "connectors"
       ],
       "default_message": "Not available right now.",
-      "wait": false,
+      "wait": true,
       "extras": []
     },
     {

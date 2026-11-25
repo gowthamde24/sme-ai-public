@@ -48,7 +48,11 @@ def world(*, saved_line: str | None = None, mention_ai: bool = False) -> tuple[A
 
     repo = FakeChoices()
     repo.opening = lambda token, tenant_id: {"mention_ai": mention_ai, "lines": [{"language": "en", "campaign_id": None, "text": saved_line}] if saved_line else [], "campaign_overrides": []}  # type: ignore[method-assign]
-    client, _ = make_client(workspace=repo, call_voice=CallVoicePreview(default_config(), factory, today=lambda: "2026-10-29"))
+    from tests.test_tt_talk_training import FakeRepo as TrainingRepo
+
+    training = TrainingRepo()   # these tests are about the words, with the AI sentence OFF (the Owner's written undertaking is stored): the default is ON since the lawyer's opinion of 25 Nov 2026
+    training.rows[TENANT_A.id] = {"doc": {"say_ai_when_greeting": False, "ai_off_undertaking": {"at": "2026-11-26", "by": "owner"}}, "updated_at": "2026-11-26T00:00:00+00:00"}
+    client, _ = make_client(workspace=repo, talk_training=training, call_voice=CallVoicePreview(default_config(), factory, today=lambda: "2026-10-29"))
     return client, repo, texts
 
 
@@ -187,7 +191,7 @@ def test_a_name_is_spoken_only_when_the_owner_set_one_and_the_default_line_never
     saved = client.put(f"{BASE}", json={**settings_data.defaults_for("textiles"), "name": "Priya"}, headers=auth("a_owner"))
     assert saved.status_code == 200, saved.text
     after = post(client, {"language": "en"}).json()["spoken_text"]
-    assert after == f"Hello, this is Priya from {TENANT_A.name}. I'm calling about your enquiry. Is this a good time to talk?"   # (the default setting is OFF: the name only)
+    assert after == f"Hello, this is Priya, the AI assistant of {TENANT_A.name}. I'm calling about your enquiry. Is this a good time to talk?"   # (saving the assistant's settings takes the setting back to the default, ON)
     assert post(client, {"language": "te"}).json()["spoken_text"].startswith("నమస్కారం అండీ, నేను Priya,")
 
 

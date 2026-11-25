@@ -19,7 +19,7 @@ select is((select count(*)::int from public.assistant_settings), 0, 'A3 nothing 
 -- one full save (Owner, second factor) creates the row
 select is(pg_temp.val('a_owner', format($q$select public.assistant_settings_save(%L, %L::jsonb)::text is not null$q$, tests.tid('a'), jsonb_build_object('name', 'Meera', 'voice_persona', 'female_warm', 'main_language', 'te',
   'auto_switch_language', true, 'allow_english_mixing', true, 'style', 'warm', 'speed', 1.0, 'may_answer_prices', true, 'may_book_visits', true, 'may_send_media', true, 'may_talk_dues', false,
-  'max_discount_percent', 5, 'handover_owner_asked', true, 'handover_upset', true, 'handover_order_above_paise', 5000000, 'call_days', jsonb_build_array(1, 2, 3, 4, 5, 6), 'call_from_minute', 540,
+  'max_discount_percent', 5, 'handover_owner_asked', true, 'handover_upset', true, 'handover_order_above_paise', 5000000, 'call_days', jsonb_build_array(1, 2, 3, 4, 5, 6), 'call_from_minute', 600,
   'call_to_minute', 1140)::text), 'aal2'), 'true', 'B1 the full save still works with a name');
 select is(pg_temp.nameof('a'), 'Meera', 'B2 the name is Meera');
 

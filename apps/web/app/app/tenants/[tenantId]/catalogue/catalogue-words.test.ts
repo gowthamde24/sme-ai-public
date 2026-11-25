@@ -39,7 +39,7 @@ describe("the catalogue's words", () => {
     const te = catalogueWords("te");
     expect(te["catalogue.add"]).not.toBe(en["catalogue.add"]);
     expect(te["catalogue.photo.take"]).not.toBe(en["catalogue.photo.take"]);
-    for (const k of ["catalogue.filter.band", "catalogue.field.price", "catalogue.err.price", "catalogue.send.why", "catalogue.why.money", "catalogue.send.template", "catalogue.send.preview.note", "catalogue.record.on", "catalogue.send.intro"]) expect(te[k], k).toBe(en[k]);
+    for (const k of ["catalogue.filter.band", "catalogue.field.price", "catalogue.err.price", "catalogue.send.why", "catalogue.why.money", "catalogue.send.template", "catalogue.send.preview.note", "catalogue.record.on", "catalogue.send.intro"]) expect(te[k], k).not.toBe(en[k]); // Telugu is approved, money lines included (owner, 26 Nov 2026)
   });
 
   it("has a plain-words reason for every reason a message can wait for approval", () => {

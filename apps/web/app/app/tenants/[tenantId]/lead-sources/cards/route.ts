@@ -79,6 +79,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       case "website":
         done = await api.website();
         break;
+      case "portals":
+        done = await api.portals();
+        break;
       case "resume":
         if (typeof body.card !== "string" || !/^[a-z_]{1,20}$/.test(body.card)) return bad;
         done = await api.resume(body.card);

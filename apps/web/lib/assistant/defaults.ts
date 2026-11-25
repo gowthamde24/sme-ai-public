@@ -19,7 +19,7 @@ const BASE: AssistantSettings = {
   may: { prices: true, visits: true, whatsapp: true, dues: false },
   maxDiscount: 0,
   handover: { owner: true, upset: true, orderAbove: null },
-  hours: { from: "09:00", to: "19:00", days: ["mon", "tue", "wed", "thu", "fri", "sat"] },
+  hours: { from: "10:00", to: "19:00", days: ["mon", "tue", "wed", "thu", "fri", "sat"] },
 };
 
 /**

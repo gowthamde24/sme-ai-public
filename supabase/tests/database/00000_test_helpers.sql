@@ -641,6 +641,13 @@ begin
   insert into public.developer_sandbox_leads (id, tenant_id, key_id, idem_key, body_sha, name, phone, email, notes, custom_fields, consent, next_step) values
     (tests.rid(p || '_er_dlead'), t, tests.rid(p || '_er_dkey'), 'dvaq7', repeat('d', 64), 'Dvaq7 Kumar', '+919845012346', 'dvaq7@example.test', 'Dvaq7 wants 40 sarees',
      '{"budget": "Dvaq7"}'::jsonb, '{"given": true, "text": "Dvaq7 agreed"}'::jsonb, 'none');
+  -- online stores (release 2): a shopper's number on an order and a shopper's number and name on an unfinished checkout carry business canaries, erased with the workspace and swept
+  insert into public.commerce_connections (id, tenant_id, kind, store_label, token_hash, created_by) values
+    (tests.rid(p || '_er_cconn'), t, 'shopify', 'cmq7-shop.myshopify.com', md5(p || '_er_cconn') || md5(p || '_er_cconn2'), tests.uid(p || '_owner'));
+  insert into public.commerce_orders (id, tenant_id, connection_id, external_id, number, phone) values
+    (tests.rid(p || '_er_cord'), t, tests.rid(p || '_er_cconn'), 'cmq7-1', '#1001', '+919845012399');
+  insert into public.commerce_checkouts (id, tenant_id, connection_id, external_id, due_at, phone, name) values
+    (tests.rid(p || '_er_cchk'), t, tests.rid(p || '_er_cconn'), 'cmq7-chk-1', now() + interval '1 hour', '+919845012398', 'Cmq7 Shopper');
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).

@@ -70,6 +70,7 @@ export const CODE_WORDS = {
   customer_stopped: "apierr.code.customer_stopped",
   dnd: "apierr.code.dnd",
   no_consent: "apierr.code.no_consent",
+  ai_undertaking_required: "apierr.code.ai_undertaking_required",
   import_file_changed: "apierr.code.import_file_changed",
   file_too_large: "apierr.code.file_too_large",
   file_type: "apierr.code.file_type",

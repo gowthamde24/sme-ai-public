@@ -28,7 +28,7 @@ select is((select monthly_paise::text || '/' || rate_paise_per_minute || '/' || 
 select is((select count(*) from pricing.plans where yearly_paise = monthly_paise * 10), 3::bigint, 'A4: yearly is ten months'' price (two months free) on every plan');
 select is(pg_temp.j(public.pricing_catalogue()::text, 'gst_percent'), '18.00', 'A5: GST is 18 percent');
 select is((select string_agg(name || '/' || free_searches_month || '/' || extra_search_paise, ' ' order by sort) from pricing.plans), 'Pay as you go/2/4900 Pro/10/3900 Business/100/2900', 'A5b: the owner''s names and Lead Finder allowances on every plan (2 / 10 / 100, then Rs 49 / 39 / 29)');
-select is(pg_temp.j(public.pricing_catalogue()::text, 'extra_number_paise'), '29900', 'A5c: every extra number is Rs 299 a month');
+select is(pg_temp.j(public.pricing_catalogue()::text, 'extra_number_paise'), '49900', 'A5c: every extra number is Rs 499 a month');
 select is((public.pricing_catalogue() -> 'plans' -> 0) ? 'yearly_paise', false, 'A5d: the catalogue shows no yearly price (monthly plans only)');
 select is((select free_start_paise from pricing.settings), 5000::bigint, 'A6: the free start is Rs 50');
 select is(pg_temp.sc('a_viewer', $q$select public.pricing_catalogue()::text$q$) like '{%', true, 'A7: any signed-in user reads the catalogue');

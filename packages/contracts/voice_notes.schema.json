@@ -356,13 +356,13 @@
         },
         "call_from_hour": {
           "maximum": 21,
-          "minimum": 9,
+          "minimum": 10,
           "title": "Call From Hour",
           "type": "integer"
         },
         "call_to_hour": {
           "maximum": 21,
-          "minimum": 9,
+          "minimum": 10,
           "title": "Call To Hour",
           "type": "integer"
         }

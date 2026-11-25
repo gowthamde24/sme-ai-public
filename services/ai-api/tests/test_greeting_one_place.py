@@ -69,9 +69,9 @@ def test_a_draft_from_the_screen_beats_everything_and_an_unreadable_greeting_is_
 def test_the_ai_sentence_is_added_when_the_greeting_does_not_say_it() -> None:
     runtime, ctx = world(lines=[], greeting={"en": "Hello from {business}."})
     got = resolve.resolve(runtime, ctx, "en")
-    assert got.says_ai is False and got.text == "Hello from Synthetic Silks.", "the default setting is OFF: the Owner's greeting as written"
-    on = resolve.resolve(runtime, ctx, "en", mention_ai=True)
-    assert on.says_ai is True and on.text.startswith("Hello from Synthetic Silks.") and on.text.endswith("I'm an AI assistant.")
+    assert got.says_ai is True and got.text.startswith("Hello from Synthetic Silks.") and got.text.endswith("I'm an AI assistant."), "the default setting is ON: the AI sentence is added"
+    off = resolve.resolve(runtime, ctx, "en", mention_ai=False)
+    assert off.says_ai is False and off.text == "Hello from Synthetic Silks."
 
 
 def test_the_greeting_takes_the_four_placeholders_and_nothing_else_in_braces() -> None:

@@ -493,3 +493,49 @@ def test_the_voicelink_entry_says_what_is_true_about_recording() -> None:
     entry = next(s for s in client.get("/v1/privacy/subprocessors").json()["subprocessors"] if s["id"] == "voicelink")
     assert "VoiceLink can record calls on its own network when recording is switched on" in entry["data"] and "check that every day" in entry["data"]
     assert "recording is off" not in entry["data"]
+
+
+# ============================================================================ the web's check box: POST /v1/public/turnstile/verify (release 2)
+def test_the_verify_route_answers_ok_for_a_good_token_and_not_ok_for_a_bad_one_and_never_stores_anything() -> None:
+    client, repo, _ = world(captcha=FakeCaptcha(), checker=FakeCaptcha())
+    assert client.post("/v1/public/turnstile/verify", json={"token": "pass"}).json() == {"ok": True}
+    assert client.post("/v1/public/turnstile/verify", json={"token": "nope", "ip": "1.2.3.4"}).json() == {"ok": False}
+    assert client.post("/v1/public/turnstile/verify", json={}).status_code == 422 and client.post("/v1/public/turnstile/verify", json={"token": "x" * 2049}).status_code == 422
+    assert client.post("/v1/public/turnstile/verify", json={"token": "pass", "extra": 1}).status_code == 422
+    assert repo.waitlist == {}, "checking a token stores nothing"
+
+
+def test_the_verify_route_is_limited_per_person_not_per_web_server() -> None:
+    client, _, runtime = world(checker=FakeCaptcha())
+    for _ in range(60):
+        assert client.post("/v1/public/turnstile/verify", json={"token": "pass", "ip": "9.9.9.9"}).status_code == 200
+    assert client.post("/v1/public/turnstile/verify", json={"token": "pass", "ip": "9.9.9.9"}).status_code == 429
+    assert client.post("/v1/public/turnstile/verify", json={"token": "pass", "ip": "8.8.8.8"}).status_code == 200, "another person is not limited"
+    assert runtime.by_check is not None
+
+
+def test_with_turnstile_the_token_is_checked_once_by_the_verify_route_and_the_forms_come_with_no_token(caplog: pytest.LogCaptureFixture) -> None:
+    from app.config import Settings
+    from app.dpdp.wiring import build_dpdp
+
+    calls: list[str | None] = []
+
+    class Counting:
+        name = "counting"
+
+        def ok(self, token: str | None, remote_ip: str | None) -> bool:
+            calls.append(token)
+            return token == "good-token-1234"
+
+    runtime = build_dpdp(Settings(captcha_provider="turnstile", captcha_secret="s3cret"), "http://rest.invalid", "anon")  # type: ignore[arg-type]
+    assert isinstance(runtime.captcha, NoCaptcha) and isinstance(runtime.checker, TurnstileCaptcha), "the forms do not check again (a Turnstile token is single use); the verify route does"
+    runtime.checker = Counting()
+    client, repo, _ = world(captcha=runtime.captcha, checker=runtime.checker)
+    with caplog.at_level("DEBUG"):
+        assert client.post("/v1/public/turnstile/verify", json={"token": "good-token-1234"}).json() == {"ok": True}
+        assert client.post("/v1/public/turnstile/verify", json={"token": "bad-token-5678"}).json() == {"ok": False}
+    assert calls == ["good-token-1234", "bad-token-5678"]
+    assert "good-token-1234" not in caplog.text and "bad-token-5678" not in caplog.text, "the token is never logged"
+    assert client.post("/v1/privacy/grievance", json=GOOD_GRIEVANCE).status_code == 201, "a form with no token passes the API's own guard when the web does the check"
+    plain = build_dpdp(Settings(captcha_provider="fake"), "http://rest.invalid", "anon")
+    assert isinstance(plain.captcha, FakeCaptcha) and plain.checker is not plain.captcha or isinstance(plain.checker, FakeCaptcha), "with fake the forms still check themselves"

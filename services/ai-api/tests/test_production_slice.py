@@ -103,6 +103,7 @@ def test_the_full_stack_deploys_from_its_declared_files_sandbox_one_warm_instanc
     deploy = next(line for line in done.stdout.splitlines() if "gcloud run deploy sme-api" in line).replace("\\", "")
     for must in ("TELEPHONY_MODE=sandbox", "TELEPHONY_OUTBOUND=true", "TELEPHONY_MAX_CONCURRENT=2", "TELEPHONY_SANDBOX_IGNORES_HOURS=true", "TASKS_DIALER=|", "AGENTS_ENABLED=true", "PRIVACY_VERSION=2026-11-26", "TERMS_VERSION=2026-11-26", "SCHEDULER_EMAIL=scheduler@example.test",
                  "PUBLIC_BASE_URL=https://sme-api-111222333.asia-south1.run.app", "WORKSPACE_SECRETS_PROJECT=prod-project-test", "MAIL_FROM=noreply@example.test", "LLM_MODEL=claude-haiku-5-5",
+                 "CONTACT_FORM=true", "CAPTCHA_PROVIDER=turnstile", "CAPTCHA_SECRET=sme-turnstile-secret:latest",   # release 2: the Turnstile check and the Talk-to-us form go together
                  "--no-cpu-throttling", "--min-instances 1", "--max-instances 1", "ANTHROPIC_API_KEY=sme-anthropic-api-key:latest", "PLIVO_AUTH_TOKEN=sme-plivo-auth-token:latest",
                  "TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest", "SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest",
                  # VoiceLink, the only provider (24 Nov 2026): the provider word, the per-minute cost it charges, and the three secrets (bot address token, login)
@@ -110,7 +111,7 @@ def test_the_full_stack_deploys_from_its_declared_files_sandbox_one_warm_instanc
         assert must in deploy, must
     # no WhatsApp Cloud API setting in production (WHATSAPP_*): only OUTBOX_WHATSAPP=true, which records the owner's own "I sent it" for a message sent by hand (owner, 28 Nov 2026)
     assert "OUTBOX_WHATSAPP=true" in deploy
-    for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=false", "WHATSAPP_", "staging", "CAPTCHA"):
+    for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=false", "WHATSAPP_", "staging", "1x0000000000000000000000000000000AA"):   # (never the staging TEST secret)
         assert never not in deploy, never
 
 

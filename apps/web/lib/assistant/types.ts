@@ -42,8 +42,8 @@ export type AssistantSettings = {
 const isBool = (v: unknown): v is boolean => typeof v === "boolean";
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const oneOf = <T extends string>(list: readonly T[], v: unknown): v is T => typeof v === "string" && (list as readonly string[]).includes(v);
-/** The API takes calling hours from 09:00 to 21:00 in steps of 15 minutes only (job DO). */
-export const HOURS = { min: "09:00", max: "21:00", stepMinutes: 15 } as const;
+/** The API takes calling hours from 10:00 to 21:00 in steps of 15 minutes only (job DO; the start moved from 09:00 on 26 Nov 2026, lawyer's opinion: the lawful window is 10:00 to 21:00). */
+export const HOURS = { min: "10:00", max: "21:00", stepMinutes: 15 } as const;
 const TIME = /^(09|1\d|20):(00|15|30|45)$|^21:00$/;
 
 /** A name a person may give the assistant: letters (any script), digits and spaces, at most NAME_MAX, at least one letter; no markup and no punctuation. */

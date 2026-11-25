@@ -38,6 +38,7 @@ from app.tenancy.models import Role
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["talk-training"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 Owner = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER))]
+OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
 REASONS = ("price_or_promise", "too_many_questions", "too_many_never_say", "too_many_say_like", "too_many_objections", "too_many_examples", "duplicate", "invalid")
 
 
@@ -117,6 +118,21 @@ def put_talk_training(ctx: Owner, runtime: RuntimeDep, doc: Annotated[dict[str, 
         raise ApiError(422, "talk_training_invalid", "Something in the training can't be saved.", extra={"reason": "invalid"}) from None
     row = _repo(runtime).save(ctx.principal.token, ctx.tenant.id, body.model_dump(mode="json"))
     return _out(runtime, ctx, row)
+
+
+@router.post("/talk-training/ai-undertaking", response_model=TalkTrainingOut, status_code=201)
+def accept_ai_undertaking(ctx: OwnerStrong, runtime: RuntimeDep) -> TalkTrainingOut:
+    """The Owner accepts the written undertaking that allows the greeting to stop saying it is an AI assistant (never claim to be a person, say so when asked, every call without the mention is logged). Stored with the
+    date and who; it changes nothing else: the setting itself is still chosen on the "How I speak" screen."""
+    from datetime import UTC, datetime
+
+    from app.how_speaks.routes import _row_and_training
+    from app.opening import greeting
+
+    row, training = _row_and_training(runtime, ctx)
+    doc = training.model_dump(mode="json")
+    saved = _repo(runtime).save_undertaking(ctx.principal.token, ctx.tenant.id, doc, str(ctx.principal.user_id), datetime.now(UTC).isoformat(timespec="seconds"), greeting.UNDERTAKING_VERSION)
+    return _out(runtime, ctx, saved if isinstance(saved, dict) else row)
 
 
 @router.post("/talk-training/reset", response_model=TalkTrainingOut)

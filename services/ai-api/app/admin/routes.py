@@ -14,7 +14,7 @@ from collections.abc import Callable
 from datetime import date
 from typing import Annotated, Any, Literal, TypeVar
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Path, Query
 from fastapi.responses import PlainTextResponse
 
 from app.admin.service import (
@@ -48,6 +48,7 @@ from app.admin.service import (
     OverviewOut,
     OwnerOkRequiredError,
     ReasonRequiredError,
+    ResendIn,
     SearchOut,
     SecondConfirmRequiredError,
     SecondFactorRequiredError,
@@ -67,6 +68,8 @@ from app.admin.service import (
     UsageSummaryOut,
 )
 from app.auth.deps import PrincipalDep, Runtime, TenantContext, get_runtime, require_tenant_role
+from app.credits.receipt_mail import send_invoice
+from app.credits.service import invoice_out
 from app.errors import ApiError, not_found
 from app.tenancy.models import Role
 
@@ -278,6 +281,19 @@ def business_statement(tenant_id: uuid.UUID, principal: PrincipalDep, runtime: R
 def wallet_debit(tenant_id: uuid.UUID, body: GoodwillIn, principal: PrincipalDep, runtime: RuntimeDep) -> dict[str, Any]:
     """Owner and finance only. Takes Rs 1 to Rs 3,000 back from the business's balance (never below zero); the same checks as the goodwill credit: the amount typed twice, a reason in words, a fresh authenticator code, one key per click."""
     return _guard(lambda: _service(runtime).wallet_debit(principal.token, tenant_id, body))
+
+
+@router.post("/businesses/{tenant_id}/invoices/{number}/resend")
+def resend_invoice(tenant_id: uuid.UUID, number: Annotated[str, Path(pattern=r"^(S19|C19)-[0-9]{4}-[0-9]{6}$")], body: ResendIn, principal: PrincipalDep, runtime: RuntimeDep) -> dict[str, Any]:
+    """Owner, support and finance. E-mails one invoice of THAT business to its Owner's address again. Needs a reason code and words (422 `reason_required`), and a fresh authenticator code (403 `second_confirm_required`). Audited; the shop owner's activity log says "Stack19 support sent you an invoice again". Answers `{sent, to_hint}`; 502 `mail_failed` when the e-mail did not go (the audit line stays: it was asked), 503 `mail_unavailable` with no sender."""
+    done = _guard(lambda: _service(runtime).invoice_resend(principal.token, tenant_id, number, body))
+    if runtime.mail_sender is None:
+        raise ApiError(503, "mail_unavailable", "We cannot send e-mail right now.")
+    to = str(done["to"])
+    if not send_invoice(runtime.mail_sender, invoice_out(done["invoice"]), to):
+        raise ApiError(502, "mail_failed", "The e-mail did not go. Try again in a moment.")
+    name, _, domain = to.partition("@")
+    return {"sent": True, "to_hint": f"{name[:1]}***@{domain}"}
 
 
 @router.get("/webhook-failures")

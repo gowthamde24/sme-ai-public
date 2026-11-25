@@ -51,7 +51,8 @@ describe("Settings (design system v6)", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Settings" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "?" })).toBeInTheDocument();
     const order = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(order).toEqual(["Business", "Team", "Quotes", "Connections", "Notifications", "Language and theme", "Privacy and data", "Developer API keys"]);
+    expect(order).toEqual(["Business", "Team", "Quotes", "Connections", "Notifications", "Language and theme", "Privacy and data", "Privacy and legal", "Developer API keys"]);
+    expect(screen.getByRole("link", { name: "Delete your data" })).toHaveAttribute("href", "/data-deletion"); // two clicks from anywhere: Settings, then this
   });
 
   it("Business shows the real values, says 'Not set yet' for what has no reader, and sends each Edit to the screen that already does it", () => {

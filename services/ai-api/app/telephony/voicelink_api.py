@@ -33,6 +33,7 @@ class VoicelinkError(PlivoError):
     """A refusal or a failure of VoiceLink (a subclass of PlivoError so the placer, the dialers and the routes that already catch it need no change). `reason` is a closed word."""
 
     data: dict[str, Any] = {}   # the `data` object of a 4xx answer (closed fields only are read), empty otherwise
+    message: str = ""            # VoiceLink's own `message` of a 4xx answer, up to 200 characters: read only to tell one refusal from another, never logged or shown
 
 
 @dataclass(frozen=True)
@@ -139,6 +140,7 @@ class VoicelinkApi:
                     detail = r.json()
                     inner = detail.get("data") if isinstance(detail, dict) else None
                     refused.data = inner if isinstance(inner, dict) else {}
+                    refused.message = str(detail.get("message") or "")[:200] if isinstance(detail, dict) else ""
                 except ValueError:
                     refused.data = {}
                 raise refused
@@ -160,6 +162,16 @@ class VoicelinkApi:
             return Wallet(float(w["balance"]), str(w.get("currency") or data.get("currency") or "INR"))   # type: ignore[index,union-attr]
         except (KeyError, TypeError, ValueError, AttributeError):
             raise VoicelinkError("server") from None
+
+    def free_channels(self) -> int | None:
+        """The channels of OUR pool that no client holds (`reseller/profile` > channels.available); None when VoiceLink does not say. Every business client needs one (the probe of 25 Nov 2026)."""
+        try:
+            data = self._request("GET", "/reseller/profile")
+            channels = data.get("channels") if isinstance(data, dict) else None
+            value = channels.get("available") if isinstance(channels, dict) else None
+            return int(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else None
+        except VoicelinkError:
+            return None
 
     def purchased_dids(self) -> list[dict[str, Any]]:
         """Our numbers at VoiceLink: [{did_number (digits with 91), type_label, expiry_date, is_expired, client_id, ...}] (first page, 100)."""
@@ -213,6 +225,14 @@ class VoicelinkApi:
         except (KeyError, TypeError, ValueError, AttributeError):
             raise VoicelinkError("server") from None
 
+    def add_channel(self, *, count: int, months: int = 1) -> LockedOrder:
+        """`POST /reseller/purchase/add-channel`: a draft order for CHANNELS ONLY (no number locked; accepted by the real account on 26 Nov 2026, one channel, one month, first month prorated). Nothing is charged until `confirm_purchase`."""
+        data = self._request("POST", "/reseller/purchase/add-channel", json_body={"channel_count": int(count), "months": int(months)})
+        try:
+            return LockedOrder(order_id=int(data["order_id"]), did_count=0, total=float(data.get("channel_total") or 0))
+        except (KeyError, TypeError, ValueError, AttributeError):
+            raise VoicelinkError("server") from None
+
     def order_summary(self, order_id: int) -> OrderSummary:
         """The server's own totals of a draft order (`GET /reseller/purchase/summary/{id}`): what the order would cost, how many numbers and channels it holds, and the wallet it would be paid from."""
         data = self._request("GET", f"/reseller/purchase/summary/{int(order_id)}")
@@ -240,11 +260,24 @@ class VoicelinkApi:
                                 "channel_count": int(channel_count), "negative_threshold": 0, "wallet_bypass": 1}
         if phone:
             body["phone"] = phone
-        data = self._request("POST", "/reseller/client/create", json_body=body)
+        try:
+            data = self._request("POST", "/reseller/client/create", json_body=body)
+        except VoicelinkError as exc:
+            if exc.status == 422 and "channel" in exc.message.lower():   # "Channel count cannot exceed available channels (0).": our pool has no free channel
+                raise VoicelinkError("no_channel", exc.status) from None
+            raise
         client_id = data.get("client_id") if isinstance(data, dict) else None
         if isinstance(client_id, bool) or not isinstance(client_id, int) or client_id <= 0:
             raise VoicelinkError("server")
         return client_id
+
+    def delete_client(self, client_id: int) -> bool:
+        """`DELETE /reseller/client/delete/{id}`: an abandoned business's client goes, so the channel it held should return to our pool (to be confirmed on the real account). True when VoiceLink says it is gone (or never was)."""
+        try:
+            self._request("DELETE", f"/reseller/client/delete/{int(client_id)}")
+            return True
+        except VoicelinkError as exc:
+            return exc.status == 404
 
     def kyc_status(self, client_id: int) -> dict[str, Any]:
         data = self._request("GET", "/reseller/kyc/status", params={"client_id": int(client_id)})
@@ -262,7 +295,7 @@ class VoicelinkApi:
         return data if isinstance(data, dict) else {}
 
     def kyc_final_submit(self, client_id: int) -> dict[str, Any]:
-        """`POST /reseller/kyc/final-submit`. The reseller documentation shows no client_id for it: it is sent anyway; whatever VoiceLink answers is shown in plain words."""
+        """`POST /reseller/kyc/final-submit` with {client_id}: proven on the real account with no number bought (client 5911): it answered kyc_status 1, is_complete true, current_step complete. Whatever VoiceLink answers on a refusal is shown in plain words."""
         data = self._request("POST", "/reseller/kyc/final-submit", json_body={"client_id": int(client_id)})
         return data if isinstance(data, dict) else {}
 

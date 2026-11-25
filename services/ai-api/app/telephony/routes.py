@@ -197,6 +197,8 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
             raise ApiError(409, "call_not_allowed", "Verify your business first: this number cannot place calls until then.", extra={"reason": "kyc_pending"}) from None
         if refused.wallet_low:   # BILLING_CHARGE_CALLS: not enough balance for a minute of calling
             raise ApiError(409, "call_not_allowed", "There is not enough balance to place a call. Add credits first.", extra={"reason": "wallet_low"}) from None
+        if refused.reason == "too_many_calls":   # every line of the workspace is on a call (EXTRA_LINES), or the deployment's limit is reached
+            raise ApiError(409, "call_not_allowed", "All your lines are on calls right now. Try again when one ends.", extra={"reason": "too_many_calls"}) from None
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
     except PlivoError as failure:
         # a refused login is its own closed word (the Owner and the planner see what to fix), any other failure stays the general one (28 Nov 2026)

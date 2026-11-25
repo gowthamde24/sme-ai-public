@@ -11,7 +11,8 @@ import { BASE_TONE, type HowSpeaks, type SpeakTone } from "@/lib/talk-training/s
 import { SOUNDS_LIKE, type Gender, type PickerLang, type PickerVoice } from "@/lib/voice-picker/types";
 
 import type { SpeaksPanel } from "../assistant/HowAssistantSpeaks";
-import { alertBox, btnQuiet, fieldHelp, okBox } from "../ui";
+import { Tick } from "../ds/Tick";
+import { alertBox, btnMain, btnQuiet, fieldHelp, okBox } from "../ui";
 import { makeT, type Words } from "../words";
 
 export type ChooseVoice = (language: PickerLang, voiceId: string | null) => Promise<{ ok: true } | { ok: false; error: string }>;
@@ -167,6 +168,8 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
     });
   };
 
+  const [offAsk, setOffAsk] = React.useState(false);
+  const [accepted, setAccepted] = React.useState(false);
   const change = (c: Parameters<SpeaksPanel["save"]>[0]) => {
     if (!speaks || saving) return;
     startSpeaks(async () => {
@@ -424,13 +427,29 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
 
       {sayAi ? (
         <div data-part="vc-sayai" className="flex flex-col">
-          <button type="button" role="switch" aria-checked={sayAi.value} disabled={!canEdit} onClick={() => change({ sayAi: !sayAi.value })} className="inline-flex min-h-12 items-center gap-3 self-start rounded-lg pr-2 text-left text-[16px] font-semibold text-ink disabled:opacity-60">
+          <button type="button" role="switch" aria-checked={sayAi.value} disabled={!canEdit} onClick={() => (sayAi.value ? (setAccepted(false), setOffAsk((o) => !o)) : change({ sayAi: true }))} aria-expanded={sayAi.value ? offAsk : undefined} className="inline-flex min-h-12 items-center gap-3 self-start rounded-lg pr-2 text-left text-[16px] font-semibold text-ink disabled:opacity-60">
             <span aria-hidden="true" className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border ${sayAi.value ? "border-brand-edge bg-brand" : "border-edge bg-surface-2"}`}>
               <span className={`absolute size-5 rounded-full shadow ${sayAi.value ? "left-6 bg-on-brand" : "left-1 bg-muted"}`} />
             </span>
             {t("vc.ai.t")}
           </button>
           <p className={`${fieldHelp} mt-0`}>{t("vc.ai.d")}</p>
+          {!sayAi.value && sayAi.undertakingAt ? <p className={`${fieldHelp} mt-0`}>{t("vc.ai.off.since", { date: new Date(sayAi.undertakingAt).toLocaleDateString(uiLang === "en" ? "en-IN" : uiLang, { day: "numeric", month: "short", year: "numeric" }) })}</p> : null}
+          {sayAi.value && offAsk ? (
+            <div role="group" aria-labelledby="vc-ai-off-t" data-part="vc-ai-undertaking" className="mt-3 flex flex-col gap-3 border-y border-line py-4">
+              <h3 id="vc-ai-off-t" className="m-0 text-[16px] font-semibold text-ink">{t("vc.ai.off.t")}</h3>
+              <p className={`${fieldHelp} m-0`}>{t("vc.ai.off.draft")}</p>
+              <ul className="m-0 list-disc pl-5 text-[15px] text-ink">
+                {[1, 2, 3, 4].map((n) => <li key={n}>{t(`vc.ai.off.${n}` as "vc.ai.off.1")}</li>)}
+              </ul>
+              <Tick id="vc-ai-accept" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} label={<span className="text-[15px] font-semibold text-ink">{t("vc.ai.off.accept")}</span>} />
+              <p className={`${fieldHelp} m-0`}>{t("vc.ai.off.date", { date: new Date().toLocaleDateString(uiLang === "en" ? "en-IN" : uiLang, { day: "numeric", month: "short", year: "numeric" }) })}</p>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className={btnMain} disabled={!accepted || saving} onClick={() => { change({ sayAi: false, sayAiUndertaking: true }); setOffAsk(false); }}>{t("vc.ai.off.go")}</button>
+                <button type="button" className={btnQuiet} onClick={() => setOffAsk(false)}>{t("vc.ai.off.keep")}</button>
+              </div>
+            </div>
+          ) : null}
         </div>
       ) : null}
 

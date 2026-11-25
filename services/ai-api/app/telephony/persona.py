@@ -84,6 +84,19 @@ RECORDING_NOTICE = {
     "kn": "ನಮ್ಮ service ಇನ್ನೂ ಚೆನ್ನಾಗಿ ಮಾಡೋಕೆ ಈ call record ಆಗಬಹುದು.",
 }
 RECORDING_NOTICE_APPROVED = frozenset({"en"})
+# Listening in (lawyer's written opinion, 25 Nov 2026): a workspace whose Owner may listen to or take over a live call says so in the opening. English until a native reader approves the others (same rule as the recording notice).
+MONITOR_NOTICE = {"en": "This call may be monitored.", "te": "ఈ call monitor అవ్వచ్చు.", "hi": "यह call monitor हो सकती है।", "kn": "ಈ call monitor ಆಗಬಹುದು."}
+MONITOR_NOTICE_APPROVED = frozenset({"en"})
+
+
+def with_monitoring_notice(language: str, opening: str) -> str:
+    """The opening with "This call may be monitored." after its first sentence (after the recording notice when there is one); said once."""
+    notice = MONITOR_NOTICE[language] if language in MONITOR_NOTICE_APPROVED and language in MONITOR_NOTICE else MONITOR_NOTICE["en"]
+    if notice in opening or MONITOR_NOTICE["en"] in opening:
+        return opening
+    first = first_sentence(opening)
+    rest = opening[len(first):].lstrip()
+    return f"{first} {notice} {rest}".strip() if rest else f"{first} {notice}"
 
 
 def with_recording_notice(language: str, opening: str) -> str:

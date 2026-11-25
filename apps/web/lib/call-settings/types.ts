@@ -28,7 +28,7 @@ export type CallSettings = {
   listening_sounds: boolean;
   pronunciations: { written: string; spoken: string }[];
   keywords: string[];
-  /** null = follow the AI assistant's calling hours (Settings > AI assistant). Minutes after midnight, 09:00 (540) to 21:00 (1260), steps of 15; days 1 (Monday) to 7. */
+  /** null = follow the AI assistant's calling hours (Settings > AI assistant). Minutes after midnight, 10:00 (600) to 21:00 (1260; older saved hours may start at 09:00 and are still read), steps of 15; days 1 (Monday) to 7. */
   hours: { days: number[]; from_minute: number; to_minute: number } | null;
   holidays: string[];
   max_calls_per_customer_per_week: number;

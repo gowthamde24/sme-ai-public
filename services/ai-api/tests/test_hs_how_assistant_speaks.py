@@ -168,13 +168,18 @@ def test_there_is_no_region_in_the_answer_and_an_old_region_is_accepted_but_chan
     assert SpeakingService(speaking).style_for("t", TENANT_A.id, "te") == ("everyday_mixed", "neutral")
 
 
-def test_say_ai_when_greeting_is_off_until_chosen_then_a_boolean_and_null_resets_it() -> None:
+def test_say_ai_when_greeting_is_on_until_an_off_with_the_undertaking_then_a_boolean_and_null_resets_it() -> None:
     client, training, _ = world("textiles")
-    assert client.get(URL, headers=auth("a_owner")).json()["say_ai_when_greeting"] == {"value": False, "saved": False}
+    first = client.get(URL, headers=auth("a_owner")).json()["say_ai_when_greeting"]
+    assert first["value"] is True and first["saved"] is False, "the default is ON (lawyer's opinion, 25 Nov 2026)"
     on = client.put(URL, json={"say_ai_when_greeting": True}, headers=auth("a_owner")).json()["say_ai_when_greeting"]
-    assert on == {"value": True, "saved": True} and training.rows[TENANT_A.id]["doc"]["say_ai_when_greeting"] is True
-    assert client.put(URL, json={"say_ai_when_greeting": False}, headers=auth("a_owner")).json()["say_ai_when_greeting"] == {"value": False, "saved": True}
-    assert client.put(URL, json={"say_ai_when_greeting": None}, headers=auth("a_owner")).json()["say_ai_when_greeting"] == {"value": False, "saved": False}
+    assert on["value"] is True and on["saved"] is True and training.rows[TENANT_A.id]["doc"]["say_ai_when_greeting"] is True
+    plain_off = client.put(URL, json={"say_ai_when_greeting": False}, headers=auth("a_owner")).json()["say_ai_when_greeting"]
+    assert plain_off["value"] is True, "an OFF without the written undertaking is read as not chosen: ON"
+    off = client.put(URL, json={"say_ai_when_greeting": False, "say_ai_undertaking": {"accepted": True}}, headers=auth("a_owner")).json()["say_ai_when_greeting"]
+    assert off["value"] is False and off["saved"] is True and off["undertaking_accepted_at"] is not None
+    reset = client.put(URL, json={"say_ai_when_greeting": None}, headers=auth("a_owner")).json()["say_ai_when_greeting"]
+    assert reset["value"] is True and reset["saved"] is False
     bad: object
     for bad in ("yes", 1, "true", {}):
         assert client.put(URL, json={"say_ai_when_greeting": bad}, headers=auth("a_owner")).status_code == 422, bad

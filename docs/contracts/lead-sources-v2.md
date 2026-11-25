@@ -47,13 +47,13 @@ Errors (HTTP 409 unless noted, body `{code, message}`; closed words): `not_conne
 RULE = {
   "enabled": true,
   "in_hours":    { "action": "call", "call_within_minutes": 2 },
-  "after_hours": { "whatsapp_now": true, "call_at_minute": 570 },
+  "after_hours": { "whatsapp_now": true, "call_at_minute": 600 },
   "retries":     { "max_attempts": 3, "gap_hours": 4, "then_whatsapp": true },
   "handoff":     { "hot_lead": true, "to": "owner" | "<member user id>", "reminder_minutes": 15 }
 }
 ```
 
-`null` for a source = it follows `default`. Ranges: `call_within_minutes` 1 to 120; `call_at_minute` 540 to 720 in steps of 15 (570 = 09:30); `max_attempts` 1 to 6 (3 = the first call and two retries); `gap_hours` 1 to 48; the calling hours and the per-day call limit are the existing settings and always apply. It reads and writes `/outreach/policy` (workspace values) and the per-source `/outreach/rules` rows; nothing else stores it. Every lead keeps an outcome and a reason (`/leads/{id}/touches`).
+`null` for a source = it follows `default`. Ranges: `call_within_minutes` 1 to 120; `call_at_minute` 600 to 720 in steps of 15 (600 = 10:00); `max_attempts` 1 to 6 (3 = the first call and two retries); `gap_hours` 1 to 48; the calling hours and the per-day call limit are the existing settings and always apply. It reads and writes `/outreach/policy` (workspace values) and the per-source `/outreach/rules` rows; nothing else stores it. Every lead keeps an outcome and a reason (`/leads/{id}/touches`).
 
 ## e. Cost per visit per source
 
@@ -73,7 +73,7 @@ Same card object as above (`state`, `received_count`, `received_total`, `last_le
 
 ### Slice 4: IndiaMART with the owner's own Lead Manager key — BUILT (15 Nov 2026; Owner only for connect and disconnect, the database decides)
 
-Built as described below, with these facts: `connect` checks the key with IndiaMART first (nothing is stored for a refused key: `422 key_rejected`; `429 rate_limited`; `502 provider_unreachable`), the body is only `{key}` (anything else is 422, and the key is never echoed in an error). `test` answers `{ok, kind: "indiamart", result: "key_valid"|"key_rejected"|"rate_limited", message, lead: null}` (the test label is "Check your IndiaMART key"). `disconnect` deletes the key from the database row and from Secret Manager (`workspace_secret_clear`, migration 20261231920000). There is no scheduled pull yet: the card's "Pull now" is `POST /lead-sources/indiamart/pull`.
+Built as described below, with these facts: `connect` checks the key with IndiaMART first (nothing is stored for a refused key: `422 key_rejected`; `429 rate_limited`; `502 provider_unreachable`), the body is only `{key}` (anything else is 422, and the key is never echoed in an error). `test` answers `{ok, kind: "indiamart", result: "key_valid"|"key_rejected"|"rate_limited", message, lead: null}` (the test label is "Check your IndiaMART key"). `disconnect` deletes the key from the database row and from Secret Manager (`workspace_secret_clear`, migration 20261231920000). The card's "Pull now" is `POST /lead-sources/indiamart/pull`. A scheduled pull (worker switch `INDIAMART_PULL`, off by default; migration `20261231992400`, `app/lead_sources/indiamart_pull.py`) does the same by itself every 15 minutes for a workspace with its own key and the real-data gate open: the same buyer twice is one lead (IndiaMART's own query id), and a key IndiaMART refuses turns the card to `status: needs_attention` with `problem.code: key_expired` (headline "Needs a new key", fix `paste_key`) until a new key is saved.
 
 * `POST /lead-sources/cards/indiamart/connect` (Owner or Admin). Body `{ "key": "<CRM key from IndiaMART Lead Manager>" }`, 20 to 64 characters of letters, digits, `-`, `_`, `=`. The server asks IndiaMART for a one-hour window with that key; a rejected key answers `422 {code: "key_rejected", message: "IndiaMART did not accept this key. Check it in Lead Manager > Import/Export Leads."}` and nothing is stored. An accepted key goes to the workspace secret store (never returned, never logged, never read by the assistant) and the card answers `state: "connected"` with `last_checked_at`.
 * `POST /lead-sources/cards/indiamart/test`: asks IndiaMART again with the stored key. Answer `{ result: "key_valid" | "key_rejected" | "rate_limited", checked_at }`. It creates no lead.
@@ -85,7 +85,7 @@ Built as described below, with these facts: `connect` checks the key with IndiaM
 
 The card's `test_label` is "Send a test portal e-mail to your Leads" ALWAYS (also when the card is off, and `can_test` is then false): the web uses a non-null `test_label` as its switch for the once-only address. `/connect` answers 409 `not_available` while the inbound mail domain is not configured. The test answer is `{ok, kind, result: "lead_created", portal, message, lead}`; `portal` is the portal whose format the sample matched.
 
-* `POST /lead-sources/cards/email_forward/connect`: answers the card plus `connect: {type: "copy", shown_once: true, fields: [{label: "Forward portal e-mails to", value: "leads+<token>@<inbound domain>", secret: true}], steps: [3 short steps]}`; only the token's hash is kept (lose it: `/rotate`).
+* `POST /lead-sources/cards/email_forward/connect`: answers the card plus `connect: {type: "copy", shown_once: true, fields: [{label: "Your lead e-mail address", value: "leads+<token>@<inbound domain>", secret: true}], steps: [3 short steps]}`; only the token's hash is kept (lose it: `/rotate`).
 * `POST /lead-sources/cards/email_forward/test`: one canned portal mail goes through the REAL parser; `result: "lead_created"`, a test lead (`is_test`, +00 number) tagged with the portal the parser recognised; the answer also says which portal format matched (`portal`), so the owner sees the parser works.
 * `POST /lead-sources/cards/email_forward/disconnect`: kills the address.
 * A mail the parser cannot read becomes an entry in `GET /lead-sources/unparsed` (already live) with the sender and the first lines; the card shows how many are waiting and `needs_attention` when more than 3 are.
@@ -151,6 +151,7 @@ Every lead-source card now carries `text`: for each English sentence a reference
 | `card.connecting` | Connecting |
 | `card.linked` | Linked |
 | `card.needs_a_look` | Needs a look |
+| `card.needs_new_key` | Needs a new key |
 | `card.not_connected` | Not connected |
 | `card.not_linked` | Not linked |
 | `card.nothing_added` | Nothing added yet |
@@ -165,12 +166,13 @@ Every lead-source card now carries `text`: for each English sentence a reference
 | `detail.wa_connect_in_integrations` | Connect it in Integrations: new chats become leads by themselves |
 | `detail.wa_connecting` | Waiting for WhatsApp to finish connecting |
 | `detail.waiting_first` | Waiting for the first lead |
-| `off.email_forward` | Forward your portal e-mails here. Ask us to switch this on. |
+| `off.email_forward` | Your portal leads arrive here by e-mail. Ask us to switch this on. |
 | `off.google_ads` | Leads from your Google Ads lead forms. Ask us to switch this on. |
 | `off.indiamart` | Paste your IndiaMART key here. |
 | `off.meta` | Facebook and Instagram lead ads will connect here. |
 | `off.missed_calls` | Missed calls become leads when phone calls are switched on. |
 | `off.website` | A form for your website. Ask us to switch this on. |
+| `problem.indiamart_key_expired` | IndiaMART no longer accepts your key, so no new leads are coming in. A key lasts 7 days: paste a new one and they start again. |
 | `problem.sheet_needs_attention` | A Google Sheet you linked cannot be read now. Open it and check that it is still shared and has the same columns. |
 | `problem.source_paused` | This is paused, so no new leads come in. |
 | `test.email_forward` | Send a test portal e-mail to your Leads |
@@ -183,3 +185,21 @@ Every lead-source card now carries `text`: for each English sentence a reference
 * The hosted form and the pasted snippet now carry a hidden field `consent_text` (the exact wording they show: "I agree that {business} may call or WhatsApp me about my enquiry"). A post with `consent` yes AND that wording stores the consent as before. An OLD pasted snippet (no hidden field) no longer records consent: the lead stays ask-first until the owner pastes the new snippet.
 * A connected tool (webhook, a form builder) that sends `consent: true` is believed only with `consent_text` (the wording the person saw, 10 to 800 characters) AND `consent_at` (when they agreed: ISO 8601, not in the future, at most 30 days old), and may add `consent_form` (the form or page name, up to 80 characters). Stored in `lead_consent_evidence` (`disclaimer_text`, `consent_given_at`, `form_name`). Without them, or with a time that does not fit: ask-first, nothing is consented, the lead is still created.
 * The Website card help sentence (the web holds the words): "If your form tool sends a consent tick, it must also send the exact words the person saw (consent_text) and when they agreed (consent_at, for example 2026-11-18T10:30:00Z), and may add the form's name (consent_form). Without them the person stays ask-first: no automatic call or WhatsApp until they agree." Short form: "A consent tick counts only with the wording the person saw and the time they agreed; otherwise we ask first."
+
+
+## Portal leads arrive by themselves and say which portal (owner decision, 25 Nov 2026: "forwarded e-mail is not a good idea, it should be automatic")
+
+* **The lead's source is the real portal.** A mail to the lead e-mail address is read by `portals.parse_mail`; the portal it names (`indiamart`, `justdial`, `sulekha`, `tradeindia`, `99acres`, `magicbricks`, `housing`) goes in the row as `tag`, and the intake tags the arrival and the lead with it (migration `20261231992410`, which also adds the tags `sulekha` and `tradeindia` to `lead_tag_ok`, `call_back_proof` and `outbox_active_conversation`). A mail no portal is recognised in keeps the source's own tag `email_forward` (the web shows it as "Portal e-mail", not "Forwarded e-mail"). Only a mail source and a web-address source take a tag from the row; a website form never does, and a tag outside the seven is ignored. The Lead sources e-mail card counts all seven tags.
+* **The way in.** First: the owner sets the address as the e-mail that receives leads in the portal's own account settings (nothing to send on by hand). Second, only when the portal can mail only the owner's Gmail: one Gmail rule made once (`GET /lead-sources/portals` returns `mail.steps` and `mail.gmail_rule`, the exact Gmail filter steps).
+* **`GET /lead-sources/portals`** (Owner, Admin) answers `{note, portals: [{id, name, tag, how, state, ways, steps?, docs, ask_text}], mail: {steps, gmail_rule}}`. `how` is `automatic` (IndiaMART only) or `account_manager`, whose `state` is the fixed sentence "Available through your portal account manager"; `ask_text` is the short message the shop's owner sends the portal's team (what to ask for: a lead API or webhook to the owner's address). `{WEB_ADDRESS}` and `{MAIL_ADDRESS}` in it are shown as a plain pointer here, because the addresses are shown once: the web writes the real ones in when it holds them.
+* **IndiaMART Push API** (switch `INDIAMART_PUSH`, off by default): IndiaMART documents that a seller sets a web address in Lead Manager (Import/Export Leads, the three dots, Push API, choose Other, paste the address, confirm an OTP) and that IndiaMART then POSTs each new lead as JSON (`CODE`, `STATUS`, `RESPONSE` with `UNIQUE_QUERY_ID`, `SENDER_NAME`, `SENDER_MOBILE`, `SENDER_EMAIL`, `SENDER_CITY`, `QUERY_MESSAGE` ...), retrying until it gets an HTTP 200. A web-address lead source (kind `webhook`) is that address; with the switch on it understands that body (plain, wrapped in an outer object, a list), tags the lead `indiamart`, de-duplicates by `UNIQUE_QUERY_ID` and answers **200** (every other lead post answers 202). It is a paid IndiaMART add-on and IndiaMART deactivates it when the address refuses leads for 48 hours.
+* **What the research found (25 Nov 2026).** Only IndiaMART publishes, for sellers, a way to set up lead delivery on their own (Pull API with the CRM key: built; Push API: built). For JustDial, 99acres, MagicBricks, Housing.com, Sulekha and TradeIndia no public developer documentation of a lead API or webhook for a business was found; the CRM vendors' own guides all say the portal's account manager switches it on from the portal's side. So those six have no connector: they show the honest state above, the e-mail way, and the message to send. TradeIndia shows an "Inquiry API" (User ID, Profile ID, API key) in the seller's account but publishes no documentation of it, so nothing is built on a guess.
+* **Documents behind this** (all public pages, read 25 Nov 2026):
+  * IndiaMART Push API: https://help.indiamart.com/knowledge-base/integration-of-indiamarts-lead-manager-crm-push-api-with-third-party-crms-real-time-push-of-leads
+  * IndiaMART Pull API: https://help.indiamart.com/knowledge-base/lms-crm-integration-v2
+  * JustDial, set up by the account manager (a CRM vendor's guide): https://help.leadsquared.com/integrate-justdial-with-leadsquared/ and https://support.kylas.io/portal/en/kb/articles/how-to-integrate-justdial-to-get-leads-in-kylas-crm
+  * 99acres push, activated by 99acres: https://support.sell.do/support/solutions/articles/6000068700-99acres-integration and https://docs.neodove.com/admin-portal/integrations/99acres-integration
+  * MagicBricks push, activated by MagicBricks: https://brixi-docs.pages.dev/integrations/lead-providers/magic-bricks and https://help.leadsquared.com/?p=16722
+  * TradeIndia Inquiry API credentials (no TradeIndia documentation found): https://support.kylas.io/portal/en/kb/articles/how-to-integrate-kylas-crm-with-your-trade-india-account-to-capture-leads
+  * Sulekha and Housing.com: nothing public found.
+* **Switches:** `INDIAMART_PUSH` (api) and `INDIAMART_PULL` (worker), both off by default; see `docs/runbooks/hosting-env-and-secrets.md`.

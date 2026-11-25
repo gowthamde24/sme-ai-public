@@ -28,7 +28,7 @@ PACKS = Path(__file__).resolve().parents[3] / "packages" / "packs"
 A = TENANT_A.id
 B = f"/v1/tenants/{A}/call-settings"
 CAMPAIGN = uuid.UUID(int=0xCA)
-HOURS = {"days": [1, 2, 3, 4, 5, 6], "from_minute": 540, "to_minute": 1140}
+HOURS = {"days": [1, 2, 3, 4, 5, 6], "from_minute": 600, "to_minute": 1140}
 
 
 def good(**changes: Any) -> dict[str, Any]:
@@ -131,9 +131,9 @@ BAD = [
     ("max_calls_per_customer_per_week", 15),
     ("auto_pause_refusals_per_hour", 2),
     ("auto_pause_refusals_per_hour", 101),
-    ("hours", {"days": [], "from_minute": 540, "to_minute": 600}),
-    ("hours", {"days": [1, 1], "from_minute": 540, "to_minute": 600}),
-    ("hours", {"days": [8], "from_minute": 540, "to_minute": 600}),
+    ("hours", {"days": [], "from_minute": 600, "to_minute": 660}),
+    ("hours", {"days": [1, 1], "from_minute": 600, "to_minute": 660}),
+    ("hours", {"days": [8], "from_minute": 600, "to_minute": 660}),
     ("hours", {"days": [1], "from_minute": 600, "to_minute": 540}),
     ("hours", {"days": [1], "from_minute": 500, "to_minute": 600}),
     ("hours", {"days": [1], "from_minute": 541, "to_minute": 600}),
@@ -183,7 +183,7 @@ def test_the_limits_at_their_edges_are_accepted() -> None:
     client, _ = world()
     edge = good(
         retry_busy={"count": 0, "gap_minutes": 5}, retry_no_answer={"count": 5, "gap_minutes": 1440}, concurrent_calls=20, silence_timeout_seconds=3, max_call_seconds=1800,
-        max_calls_per_customer_per_week=14, auto_pause_refusals_per_hour=100, hours={"days": [1, 2, 3, 4, 5, 6, 7], "from_minute": 540, "to_minute": 1260},
+        max_calls_per_customer_per_week=14, auto_pause_refusals_per_hour=100, hours={"days": [1, 2, 3, 4, 5, 6, 7], "from_minute": 600, "to_minute": 1260},
         pronunciations=[{"written": f"Name {i}", "spoken": "Say"} for i in range(50)], keywords=[f"word{i:03d}" for i in range(100)],
         handover=[{"topic": t, "person_name": "Suresh", "phone": "+919876500001"} for t in ("pricing", "payment", "delivery", "complaint", "visit", "other")],
     )
@@ -231,7 +231,7 @@ def test_hours_null_follows_the_ai_assistant_and_a_set_hours_wins() -> None:
     assert out["assistant_hours"] == {"days": [1, 2, 3], "from_minute": 600, "to_minute": 900}
     assert out["effective"]["hours"] == {"days": [1, 2, 3], "from_minute": 600, "to_minute": 900, "source": "assistant"}
     saved = client.put(B, json=good(hours=HOURS), headers=auth("a_owner")).json()
-    assert saved["effective"]["hours"]["source"] == "workspace" and saved["effective"]["hours"]["from_minute"] == 540
+    assert saved["effective"]["hours"]["source"] == "workspace" and saved["effective"]["hours"]["from_minute"] == 600
 
 
 def test_the_school_rule_a_school_cannot_switch_on_sales_or_dues_calls() -> None:

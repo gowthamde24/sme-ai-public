@@ -472,7 +472,7 @@ class RouteTurn:
                 confirmation = got.get("gmail_confirmation")
                 if isinstance(confirmation, dict) and confirmation.get("code"):
                     copy.append({"label": "Gmail's confirmation code", "value": str(confirmation["code"]), "code": False})
-                steps = ["Copy your lead address below.", *[str(g["text"]) for g in got.get("gmail_filter_guide") or []], "Then press 'Check' after the next lead e-mail."]
+                steps = ["Copy your lead address below and set it as the lead e-mail in your portal account.", *[str(g["text"]) for g in got.get("gmail_filter_guide") or []], "Then press 'Check' after the next lead e-mail."]
                 return w("setup", language), setups.card(tenant_id, kind, copy=copy, portals=setups.PORTALS, test="send_test_mail", steps=steps)
             got = self.lead_sources.website(token, tenant_id)
             copy = [{"label": "The form code", "value": str(got["snippet"]), "code": True}, {"label": "The form link (no website needed)", "value": str(got["form_link"]), "code": False},

@@ -54,6 +54,11 @@ export function parseClaimed(json: unknown, type: NumberType): OwnNumber {
 export async function claimNumber(accessToken: string, tenantId: string, number: string, type: NumberType): Promise<OwnNumber> {
   return parseClaimed(await apiRequest(`${base(tenantId)}/claim`, accessToken, { method: "POST", body: JSON.stringify({ number }) }), type);
 }
+/** "How you will use this number" (call-compliance.md, 26 Nov 2026): the Owner's acceptance is stored before the purchase; a real outbound call is refused with `usage_not_accepted` until it is. Owner + second factor. The version label is C1's. */
+export const USAGE_VERSION = "2026-11";
+export async function acceptUsage(accessToken: string, tenantId: string): Promise<void> {
+  await apiRequest(`${base(tenantId)}/usage-ack`, accessToken, { method: "POST", body: JSON.stringify({ version: USAGE_VERSION }) });
+}
 export async function listOwn(accessToken: string, tenantId: string): Promise<OwnNumber[]> {
   return parseOwnList(await apiRequest(base(tenantId), accessToken));
 }

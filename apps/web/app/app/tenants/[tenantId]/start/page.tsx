@@ -15,6 +15,7 @@ import { leadDeskSteps } from "@/lib/packs/lead-activation";
 import { readPackCached } from "@/lib/packs/read";
 
 import { TypePicker } from "@/components/v2/app/start/TypePicker";
+import { typeKeywords } from "@/lib/packs/type-search";
 import { listPacks } from "@/lib/api/pack";
 import { firstRunType } from "@/lib/screens/flag";
 
@@ -66,7 +67,7 @@ export default async function StartPage({ params }: PageProps<"/app/tenants/[ten
         <h1 className={pageH1}>{t("start.page.title")}</h1>
         <div className="mt-6 max-w-3xl">
           <TypePicker
-            choices={packs.map((p) => ({ id: p.packId, name: names(p), line: p.summary[lang] ?? p.summary.en ?? "" }))}
+            choices={packs.map((p) => ({ id: p.packId, name: names(p), line: p.summary[lang] ?? p.summary.en ?? "", keywords: typeKeywords(p) }))}
             words={Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("start.type.")))}
             save={setPackAction.bind(null, tenantId)}
           />

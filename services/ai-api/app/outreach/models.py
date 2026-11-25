@@ -51,7 +51,7 @@ RetryStep = AfterMinutes | NextMorning
 
 
 class PolicyIn(_Strict):
-    night_call_minute: Annotated[int, Field(ge=540, le=720, multiple_of=15, strict=True)] | None = None
+    night_call_minute: Annotated[int, Field(ge=600, le=720, multiple_of=15, strict=True)] | None = None
     max_attempts: Annotated[int, Field(ge=1, le=6, strict=True)] | None = None
     retry_gap_hours: Annotated[int, Field(ge=1, le=48, strict=True)] | None = None
     then_whatsapp: bool | None = None
@@ -81,7 +81,7 @@ class PolicyOut(_Out):
     whatsapp_after_hours: bool
     handoff_reminder_minutes: int
     call_paise_per_minute: int
-    retry_steps: list[dict[str, int]] = Field(default_factory=lambda: [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 570}])
+    retry_steps: list[dict[str, int]] = Field(default_factory=lambda: [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 600}])
     hours: HoursOut
     saved: bool
 
@@ -304,7 +304,7 @@ class StepRetryAfter(_Out):
 
 class StepRetryMorning(_Out):
     kind: Literal["retry"]
-    next_morning: str   # "09:30"
+    next_morning: str   # "10:00"
 
 
 class StepWhatsapp(_Out):

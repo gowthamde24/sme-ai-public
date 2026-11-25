@@ -15,7 +15,7 @@ vi.mock("@/components/v2/app/whatsapp/LazyConnectWithFacebook", async () => ({ C
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/whatsapp", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/whatsapp")>()), getWhatsappAccount: (...a: unknown[]) => getWhatsappAccount(...a), getConnectConfig: (...a: unknown[]) => getConnectConfig(...a), listTemplates: (...a: unknown[]) => listTemplates(...a) }));
-vi.mock("./actions", () => ({ connectWithFacebookAction: vi.fn(), saveWhatsappAction: vi.fn(), activateWhatsappAction: vi.fn(), disableWhatsappAction: vi.fn(), submitDraftsAction: vi.fn(), submitTemplateAction: vi.fn(), syncTemplatesAction: vi.fn() }));
+vi.mock("./actions", () => ({ connectWithFacebookAction: vi.fn(), saveWhatsappAction: vi.fn(), activateWhatsappAction: vi.fn(), disableWhatsappAction: vi.fn(), disconnectWhatsappAction: vi.fn(), submitDraftsAction: vi.fn(), submitTemplateAction: vi.fn(), syncTemplatesAction: vi.fn() }));
 
 import ConnectPage from "./page";
 

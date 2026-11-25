@@ -12,6 +12,7 @@ export type CardsBody =
   | { op: "pull" }
   | { op: "email"; rotate?: boolean }
   | { op: "website" }
+  | { op: "portals" }
   | { op: "resume"; card: string }
   | { op: "test"; card: string }
   | { op: "disconnect"; card: string }

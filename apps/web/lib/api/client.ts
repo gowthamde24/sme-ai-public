@@ -25,7 +25,7 @@ export class ApiRequestError extends Error {
   }
 }
 
-export type RefusalExtra = { approval?: { id: string; kind: string }; fields?: string[]; /** `409 free_minutes_used_up` (read by ./free-minutes, server only): the free minutes of the month and the day they restart (YYYY-MM-DD). */ free?: { minutes: number; restartsOn: string } };
+export type RefusalExtra = { approval?: { id: string; kind: string }; fields?: string[]; /** A `422 kyc_fields_invalid`: each bad field with ONE closed word (never the value). */ reasons?: Record<string, string>; /** A `402 credits_needed` (the money step of the phone account): what is missing from the credits, as the API says it (paise and a ready sentence part such as "₹499"). */ needed?: { paise: number | null; text: string }; /** `409 free_minutes_used_up` (read by ./free-minutes, server only): the free minutes of the month and the day they restart (YYYY-MM-DD). */ free?: { minutes: number; restartsOn: string } };
 const CLOSED = /^[A-Za-z0-9_.:-]{1,80}$/;
 /** The closed extras of a refusal body: `approval` (top level of the body, or inside `error`) and `fields` (the same); anything that is not a short closed word is dropped. */
 function extraOf(body: unknown, err: ApiError["error"] | null): RefusalExtra | undefined {
@@ -39,7 +39,16 @@ function extraOf(body: unknown, err: ApiError["error"] | null): RefusalExtra | u
     const fields = fieldsRaw.filter((f): f is string => typeof f === "string" && CLOSED.test(f) && f.length <= 40).slice(0, 10);
     if (fields.length > 0) out.fields = fields;
   }
-  return out.approval || out.fields ? out : undefined;
+  const reasonsRaw = isRecord(inner.reasons) ? inner.reasons : isRecord(top.reasons) ? top.reasons : null;
+  if (reasonsRaw) {
+    const reasons: Record<string, string> = {};
+    for (const [k, w] of Object.entries(reasonsRaw).slice(0, 20)) if (CLOSED.test(k) && typeof w === "string" && CLOSED.test(w)) reasons[k] = w;
+    if (Object.keys(reasons).length > 0) out.reasons = reasons;
+  }
+  const text = typeof inner.needed_text === "string" && inner.needed_text.length <= 40 ? inner.needed_text : typeof top.needed_text === "string" && top.needed_text.length <= 40 ? top.needed_text : null;
+  const paiseRaw = typeof inner.needed_paise === "number" ? inner.needed_paise : typeof top.needed_paise === "number" ? top.needed_paise : null;
+  if (text) out.needed = { paise: paiseRaw !== null && Number.isInteger(paiseRaw) && paiseRaw >= 0 ? paiseRaw : null, text };
+  return out.approval || out.fields || out.reasons || out.needed ? out : undefined;
 }
 
 export class ApiContractError extends Error {}

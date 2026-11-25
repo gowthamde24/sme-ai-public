@@ -403,7 +403,7 @@ describe("the Settings page cards (JOBS)", () => {
   });
   it("JOBS on: Business, Team, Notifications and Language and theme are sentences, with the same titles in the same places", () => {
     render(<SettingsV6 {...props({ simple: true })} />);
-    expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual(["Business", "Team", "Quotes", "Connections", "Notifications", "Language and theme", "Privacy and data", "Developer API keys"]);
+    expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual(["Business", "Team", "Quotes", "Connections", "Notifications", "Language and theme", "Privacy and data", "Privacy and legal", "Developer API keys"]);
     expect(card("settings-business")).toHaveTextContent("My business is called");
     expect(within(card("settings-team")).getAllByRole("listitem").map((l) => said(l))).toEqual(["You are the owner.", "Ravi can run the business.", "A team member can work with customers."]);
     expect(within(card("settings-team")).getByRole("link", { name: "Add or change people" })).toHaveAttribute("href", "/app/tenants/t1/team");

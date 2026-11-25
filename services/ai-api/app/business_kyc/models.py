@@ -2,9 +2,9 @@
 
 # ruff: noqa: E501
 
-from typing import Annotated, Any, Literal
+from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import BaseModel, ConfigDict
 
 
 class _Strict(BaseModel):
@@ -12,34 +12,38 @@ class _Strict(BaseModel):
 
 
 class StatusOut(_Strict):
-    state: Literal["not_started", "created", "in_progress", "submitted", "verified", "stuck"]
+    state: Literal["not_started", "waiting_for_line", "created", "in_progress", "submitted", "verified", "stuck"]
     account_type: Literal["individual", "business"] | None
     step: str | None
     steps: dict[str, bool]
+    aadhaar_verified: bool | None = None   # the DigiLocker check reached VoiceLink (None until VoiceLink says; false while it is still pending)
     missing: list[str]
     reason: str | None
     words: str | None
+    reserve: dict[str, object] | None = None   # the first month of the number held on the wallet: {state: none|held|refunded|applied, amount_paise, amount_text, price_paise, price_text, due_at}
 
 
 class DetailsIn(_Strict):
-    account_type: Literal["individual", "business"]
-    business_name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=120)] | None = None
-    full_name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=120)]
-    phone: Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^\+?[0-9 ()-]{10,16}$")]
-    billing_address: Annotated[str, StringConstraints(strip_whitespace=True, min_length=8, max_length=300)]
-    state: Annotated[str, StringConstraints(strip_whitespace=True, max_length=60)] | None = None
-    city: Annotated[str, StringConstraints(strip_whitespace=True, max_length=60)] | None = None
-    pincode: Annotated[str, StringConstraints(pattern=r"^[0-9]{6}$")] | None = None
-    accept_terms: Literal[True]
+    """Lenient on purpose: every rule is checked by app/business_kyc/rules.py, which answers 422 `kyc_fields_invalid` with a closed word per field (`reasons`), never the value."""
+
+    account_type: str | None = None
+    business_name: str | None = None
+    full_name: str | None = None
+    phone: str | None = None
+    billing_address: str | None = None
+    state: str | None = None
+    city: str | None = None
+    pincode: str | None = None
+    accept_terms: bool | None = None
 
 
 class PanIn(_Strict):
-    pan_number: Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^[A-Za-z]{5}[0-9]{4}[A-Za-z]$")]
-    holder_name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=120)]
+    pan_number: str | None = None
+    holder_name: str | None = None
 
 
 class GstIn(_Strict):
-    gst_number: Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^[0-9]{2}[A-Za-z0-9]{10}[0-9][A-Za-z0-9]{2}$")]
+    gst_number: str | None = None
 
 
 class AadhaarOut(_Strict):
@@ -47,15 +51,6 @@ class AadhaarOut(_Strict):
 
 
 class UploadIn(_Strict):
-    document_type: Literal["pan", "aadhaar", "gst"]
-    content_type: Literal["image/jpeg", "image/png", "application/pdf"]
+    document_type: str | None = None   # pan | aadhaar | gst (checked by rules.check_document)
+    content_type: str | None = None    # image/jpeg | image/png | application/pdf
     content_base64: str
-
-
-def details_fields(body: DetailsIn) -> dict[str, Any]:
-    out: dict[str, Any] = {"account_type": body.account_type, "full_name": body.full_name, "phone": body.phone, "billing_address": body.billing_address}
-    for key in ("business_name", "state", "city", "pincode"):
-        value = getattr(body, key)
-        if value:
-            out[key] = value
-    return out

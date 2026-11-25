@@ -34,9 +34,10 @@ export const isTestNumberId = (v: unknown): v is string => typeof v === "string"
 export const REFUSED_REASONS = [
   "telephony_off", "live_not_confirmed", "bad_number", "not_on_sandbox_list", "not_approved", "workspace_paused", "billing_blocked", "purpose_not_allowed", "school_rule",
   "no_such_line", "kyc_pending", "outside_window", "outside_hours", "holiday", "weekly_limit", "daily_cap", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "no_ai_disclosure", "already_calling", "too_many_calls",
+  "enquiry_too_old", "outbound_not_real", "no_own_number", "usage_not_accepted",
 ] as const;
 /** Money, consent and privacy sentences wait for a person's review: English in every language until then (`humanOnly` in the store). */
-export const REVIEW_REASONS = ["billing_blocked", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown"] as const;
+export const REVIEW_REASONS = ["billing_blocked", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "enquiry_too_old"] as const;
 export function refusedKey(reason: string | null | undefined): string {
   return reason && (REFUSED_REASONS as readonly string[]).includes(reason) ? `tc.no.${reason}` : "tc.no.other";
 }

@@ -10,6 +10,7 @@ NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint s
 # ruff: noqa: E501
 
 import logging
+from datetime import UTC, datetime
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Response
@@ -70,6 +71,16 @@ def _row_and_training(runtime: Runtime, ctx: TenantContext) -> tuple[dict[str, A
     return (row if saved else None), training
 
 
+def _undertaking_at(training: TalkTraining) -> datetime | None:
+    u = training.ai_off_undertaking
+    if not greeting.has_undertaking(training.model_dump(mode="json")) or u is None:
+        return None
+    try:
+        return datetime.fromisoformat(str(u["at"]))
+    except ValueError:
+        return None
+
+
 def _owner_name(runtime: Runtime, ctx: TenantContext) -> str | None:
     """The Owner's own first name (from their profile). Only an Owner reading it: an Admin's profile is not the Owner's."""
     if ctx.role != Role.OWNER or runtime.workspace is None:
@@ -105,7 +116,7 @@ def _out(runtime: Runtime, ctx: TenantContext) -> HowAssistantSpeaksOut:
             preview=IntroducePreviewOut(te=_preview("te", value, business, pick), en=_preview("en", value, business, pick)),
         ),
         background=BackgroundOut(value=ambience.valid(training.background), saved=training.background is not None, options=[BackgroundOption(id=word, label=dict(ambience.LABELS[word]), sample_url=background_samples.sample_url(word)) for word in ambience.BACKGROUNDS]),  # type: ignore[arg-type]
-        say_ai_when_greeting=SayAiOut(value=greeting.resolve_greeting_disclosure(training.say_ai_when_greeting), saved=training.say_ai_when_greeting is not None),
+        say_ai_when_greeting=SayAiOut(value=greeting.resolved_from(training.model_dump(mode="json")), saved=training.say_ai_when_greeting is not None, undertaking_accepted_at=_undertaking_at(training)),
         pack_defaults=PackDefaultsOut(tone=pack_default, words=register.DEFAULT_STYLE),  # type: ignore[arg-type]
         legacy_address=(training.address if row is not None else None),
         updated_at=row.get("updated_at") if row is not None else None,
@@ -122,6 +133,9 @@ def get_how_assistant_speaks(ctx: OwnerOrAdmin, runtime: RuntimeDep, response: R
 def put_how_assistant_speaks(ctx: OwnerStrong, runtime: RuntimeDep, body: HowAssistantSpeaksIn, response: Response) -> HowAssistantSpeaksOut:
     response.headers["Cache-Control"] = "no-store"
     sent = body.model_fields_set
+    if body.say_ai_undertaking is not None:   # the Owner accepted the written undertaking: stored first (when and who), so the "off" in the same request is allowed
+        _, current = _row_and_training(runtime, ctx)
+        _repo(runtime).save_undertaking(ctx.principal.token, ctx.tenant.id, current.model_dump(mode="json"), str(ctx.principal.user_id), datetime.now(UTC).isoformat(timespec="seconds"), greeting.UNDERTAKING_VERSION)
     # 1. check every part before writing any
     pick: introduce.Introduce | None = None
     if "introduce_as" in sent and body.introduce_as is not None:
@@ -140,7 +154,7 @@ def put_how_assistant_speaks(ctx: OwnerStrong, runtime: RuntimeDep, body: HowAss
         if "tone" in sent:
             doc["tone"] = body.tone   # None = back to "not chosen yet" (the business type decides)
         if "say_ai_when_greeting" in sent:
-            doc["say_ai_when_greeting"] = body.say_ai_when_greeting   # None = back to the default: the name only
+            doc["say_ai_when_greeting"] = body.say_ai_when_greeting   # None = back to the default: ON
         if "background" in sent:
             doc["background"] = body.background   # None = back to "not chosen yet": off
         if "introduce_as" in sent:

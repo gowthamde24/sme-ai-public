@@ -34,6 +34,6 @@ describe("the background and the AI switch go in the same document (voices-tones
     const got = await putHowSpeaks("tok", T, { background: "shop", sayAi: true });
     expect(JSON.parse(String((f.mock.calls[0] as unknown as [string, RequestInit])[1].body))).toEqual({ background: "shop", say_ai_when_greeting: true });
     expect(got.background?.value).toBe("shop");
-    expect(got.sayAi).toEqual({ value: true, saved: true });
+    expect(got.sayAi).toEqual({ value: true, saved: true, undertakingAt: null });
   });
 });

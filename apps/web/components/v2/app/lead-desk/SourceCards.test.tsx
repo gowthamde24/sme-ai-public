@@ -129,10 +129,10 @@ describe("Lead source cards", () => {
     reply = (b) => (b.op === "email" ? { ok: true, data: { address: b.rotate ? "new@leads.test" : "old@leads.test", guide: [{ step: 1, text: "Open Gmail" }], portals: [] } } : { ok: true, data: CARDS });
     show();
     fireEvent.click(within(card("email_forward")).getByRole("button", { name: "Get your address" }));
-    expect(((await screen.findByLabelText("Your forwarding address")) as HTMLInputElement).value).toBe("old@leads.test");
+    expect(((await screen.findByLabelText("Your lead e-mail address")) as HTMLInputElement).value).toBe("old@leads.test");
     expect(screen.getByText("Open Gmail")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: /Make a new address/ }));
-    await waitFor(() => expect((screen.getByLabelText("Your forwarding address") as HTMLInputElement).value).toBe("new@leads.test"));
+    await waitFor(() => expect((screen.getByLabelText("Your lead e-mail address") as HTMLInputElement).value).toBe("new@leads.test"));
   });
   it("website: the snippet and the ready form link", async () => {
     reply = (b) => (b.op === "website" ? { ok: true, data: { snippet: "<script src=x></script>", formLink: "https://f.test/1" } } : { ok: true, data: CARDS });
@@ -162,7 +162,7 @@ describe("Lead source cards", () => {
     reply = (b) => (b.op === "email" ? { ok: true, data: { address: "a@leads.test", guide: [], portals: [], confirmation: { code: "987654321", receivedAt: null } } } : { ok: true, data: CARDS });
     show();
     fireEvent.click(within(card("email_forward")).getByRole("button", { name: "Get your address" }));
-    expect(((await screen.findByLabelText("Gmail asks for this code to confirm forwarding")) as HTMLInputElement).value).toBe("987654321");
+    expect(((await screen.findByLabelText("Gmail asks for this code to confirm the rule")) as HTMLInputElement).value).toBe("987654321");
   });
   it("WhatsApp not connected points to Integrations", () => {
     show({ initial: CARDS.map((c) => (c.kind === "whatsapp" ? { ...c, status: "not_connected" as const } : c)) });
@@ -282,5 +282,37 @@ describe("the card words as codes (C1 #832)", () => {
     expect(refText(words, null, "No code")).toBe("No code");
     expect(readCodes(undefined)).toEqual({ detail: null, problemMessage: null, testLabel: null });
     expect(readCodes({ detail: { code: "Bad Code!", params: {} } }).detail).toBeNull();
+  });
+});
+
+describe("portals without a connector (the e-mail card)", () => {
+  const PORTALS = [
+    { id: "justdial", name: "JustDial", askText: "Please switch on lead delivery to (your lead e-mail address from the Lead sources page). Thank you." },
+    { id: "sulekha", name: "Sulekha", askText: "Sulekha team: send my leads to (your lead e-mail address from the Lead sources page)." },
+  ];
+  const connected = CARDS.map((c) => (c.kind === "email_forward" ? { ...c, state: "connected" as const, status: "connected" as const, canTest: true, canDisconnect: true, testLabel: "Send a test e-mail lead", costSource: "email_forward" } : c));
+  it("each portal says it is set up by its account manager and has a Copy message button; the shop's own address is written in only while this page holds it", async () => {
+    const copied: string[] = [];
+    Object.defineProperty(navigator, "clipboard", { value: { writeText: async (x: string) => void copied.push(x) }, configurable: true });
+    const info = { fields: [{ label: "Forward portal e-mails to", value: "leads+SECRET@in.example" }], steps: ["Open the portal's e-mail settings."] };
+    reply = (b) => (b.op === "portals" ? { ok: true, data: PORTALS } : b.op === "rotate" ? { ok: true, data: info } : { ok: true, data: connected });
+    show({ initial: connected });
+    const row = await screen.findByText("JustDial");
+    expect(row).toBeTruthy();
+    expect(screen.getAllByText("Available through your portal account manager")).toHaveLength(2);
+    expect(screen.getByText(/shown once|not on screen now/i)).toBeTruthy(); // no address is held yet: the API's pointer stays in the message
+    fireEvent.click(screen.getByRole("button", { name: "Copy message: JustDial" }));
+    await waitFor(() => expect(copied[0]).toContain("(your lead e-mail address from the Lead sources page)"));
+    fireEvent.click(within(card("email_forward")).getByRole("button", { name: "Make a new address" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Yes, make a new one" }));
+    await screen.findByLabelText("Forward portal e-mails to");
+    fireEvent.click(screen.getByRole("button", { name: "Copy message: Sulekha" }));
+    await waitFor(() => expect(copied[1]).toBe("Sulekha team: send my leads to leads+SECRET@in.example."));
+  });
+  it("draws nothing when the list cannot be read, and not for a card that is not the e-mail card", async () => {
+    reply = (b) => (b.op === "portals" ? { ok: false, error: "down" } : { ok: true, data: connected });
+    show({ initial: connected });
+    await waitFor(() => expect(calls.some((c) => c.op === "portals")).toBe(true));
+    expect(screen.queryByText("Available through your portal account manager")).toBeNull();
   });
 });

@@ -1,5 +1,5 @@
 {
- "version": 1,
+ "version": 2,
  "note": "How to send leads from a tool to a job's lead address. {ADDRESS} stands for the address shown once when it was made. Consent: a lead arrives 'ask first' unless the tool also sends consent_text and consent_at.",
  "guides": [
   {
@@ -138,6 +138,26 @@
     "email": "email",
     "city": "city",
     "message": "message"
+   },
+   "recipe": {
+    "title": "Zap, setting by setting",
+    "lines": [
+     "Trigger: the app where the lead first appears (a form, a sheet, a CRM, a Facebook lead form).",
+     "Action app: Webhooks by Zapier. Action event: POST.",
+     "URL: {ADDRESS}",
+     "Payload Type: json",
+     "Data: name, phone, email, city, message (one row each; pick the matching field from the trigger for each).",
+     "Wrap Request In Array: No. Unflatten: Yes. Headers: leave empty.",
+     "If the form has a consent tick, also send consent_text (the sentence the person saw) and consent_at (the time they ticked), so the lead is not held for a consent question.",
+     "Test the action: the lead shows in the activity list here."
+    ],
+    "payload": {
+     "name": "Kiran",
+     "phone": "9700099999",
+     "email": "k@example.com",
+     "city": "Warangal",
+     "message": "Price list please"
+    }
    }
   },
   {
@@ -164,6 +184,25 @@
     "email": "email",
     "city": "city",
     "message": "message"
+   },
+   "recipe": {
+    "title": "Scenario, setting by setting",
+    "lines": [
+     "First module: the app where the lead first appears (a form, a sheet, a CRM).",
+     "Second module: HTTP, then Make a request.",
+     "URL: {ADDRESS}. Method: POST.",
+     "Headers: Content-Type = application/json",
+     "Body type: Raw. Content type: JSON (application/json). Parse response: No.",
+     "Request content: {\"name\": \"<name from module 1>\", \"phone\": \"<phone from module 1>\", \"email\": \"<email>\", \"city\": \"<city>\", \"message\": \"<message>\"} (pick each value from the first module with the picker).",
+     "Run once. The lead shows in the activity list here."
+    ],
+    "payload": {
+     "name": "Divya",
+     "phone": "9988776655",
+     "email": "d@example.com",
+     "city": "Tirupati",
+     "message": "Need a quote"
+    }
    }
   },
   {
@@ -174,7 +213,8 @@
     "In your workflow add the node HTTP Request after your trigger.",
     "Method POST, URL {ADDRESS}, Send Body on, body content type JSON.",
     "Add the fields name, phone, email, city, message (use expressions from the trigger).",
-    "Execute the node, then look at the activity list here."
+    "Execute the node, then look at the activity list here.",
+    "Or import the ready workflow below and change only the first two nodes."
    ],
    "sample": {
     "name": "Ramesh",
@@ -189,6 +229,120 @@
     "email": "email",
     "city": "city",
     "message": "message"
+   },
+   "template": {
+    "title": "n8n workflow to import",
+    "filename": "stack19-send-lead.n8n.json",
+    "how": "In n8n open a new workflow, choose the three dots, then Import from file (or paste the text with Ctrl+V on the canvas). Replace the sample node with your own trigger and keep the last node.",
+    "workflow": {
+     "name": "Send new leads to Stack19",
+     "nodes": [
+      {
+       "parameters": {},
+       "id": "5d6f1e10-0c8e-4c3a-9a51-000000000001",
+       "name": "When you press Test",
+       "type": "n8n-nodes-base.manualTrigger",
+       "typeVersion": 1,
+       "position": [
+        0,
+        0
+       ]
+      },
+      {
+       "parameters": {
+        "assignments": {
+         "assignments": [
+          {
+           "id": "a1",
+           "name": "name",
+           "value": "Sample Lead",
+           "type": "string"
+          },
+          {
+           "id": "a2",
+           "name": "phone",
+           "value": "9000000010",
+           "type": "string"
+          },
+          {
+           "id": "a3",
+           "name": "email",
+           "value": "sample.lead@example.com",
+           "type": "string"
+          },
+          {
+           "id": "a4",
+           "name": "city",
+           "value": "Guntur",
+           "type": "string"
+          },
+          {
+           "id": "a5",
+           "name": "message",
+           "value": "Test from n8n",
+           "type": "string"
+          }
+         ]
+        },
+        "options": {}
+       },
+       "id": "5d6f1e10-0c8e-4c3a-9a51-000000000002",
+       "name": "A sample lead (replace with your trigger)",
+       "type": "n8n-nodes-base.set",
+       "typeVersion": 3.4,
+       "position": [
+        240,
+        0
+       ]
+      },
+      {
+       "parameters": {
+        "method": "POST",
+        "url": "{ADDRESS}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ name: $json.name, phone: $json.phone, email: $json.email, city: $json.city, message: $json.message }) }}",
+        "options": {}
+       },
+       "id": "5d6f1e10-0c8e-4c3a-9a51-000000000003",
+       "name": "Send to Stack19",
+       "type": "n8n-nodes-base.httpRequest",
+       "typeVersion": 4.2,
+       "position": [
+        520,
+        0
+       ]
+      }
+     ],
+     "connections": {
+      "When you press Test": {
+       "main": [
+        [
+         {
+          "node": "A sample lead (replace with your trigger)",
+          "type": "main",
+          "index": 0
+         }
+        ]
+       ]
+      },
+      "A sample lead (replace with your trigger)": {
+       "main": [
+        [
+         {
+          "node": "Send to Stack19",
+          "type": "main",
+          "index": 0
+         }
+        ]
+       ]
+      }
+     },
+     "pinData": {},
+     "settings": {
+      "executionOrder": "v1"
+     }
+    }
    }
   },
   {
@@ -215,6 +369,24 @@
     "email": "email",
     "city": "city",
     "message": "message"
+   },
+   "recipe": {
+    "title": "Workflow, setting by setting",
+    "lines": [
+     "Trigger: the app where the lead first appears (a form, a sheet, a CRM).",
+     "Action: API by Pabbly, then Execute API Request.",
+     "API URL: {ADDRESS}. Request type: POST.",
+     "Headers: Content-Type = application/json",
+     "Payload type: JSON. Body: name, phone, email, city, message (map each value from the trigger).",
+     "Save and send a test. The lead shows in the activity list here."
+    ],
+    "payload": {
+     "name": "Lakshmi",
+     "phone": "9444400000",
+     "email": "l@example.com",
+     "city": "Madurai",
+     "message": "Brochure"
+    }
    }
   },
   {
@@ -250,7 +422,8 @@
     "Use any form plugin that can send a webhook (Contact Form 7 with a webhook add-on, WPForms, Fluent Forms, Elementor Forms).",
     "Add a webhook to your form: URL {ADDRESS}, method POST, format JSON or form data.",
     "Name the fields name, phone, email, city and message (or use the plugin's field mapping).",
-    "Submit the form once, then check the activity list here."
+    "Submit the form once, then check the activity list here.",
+    "Contact Form 7 has no webhook of its own: paste the PHP snippet below into your theme's functions.php (or a snippets plugin) and change the field names if yours differ."
    ],
    "sample": {
     "name": "Test",
@@ -263,7 +436,22 @@
     "your-email": "email",
     "your-message": "message"
    },
-   "note": "Our own form snippet (a plain HTML form) also works on any WordPress page: use Website form instead."
+   "note": "Our own form snippet (a plain HTML form) also works on any WordPress page: use Website form instead.",
+   "snippet": "add_action('wpcf7_mail_sent', function ($form) {\n  $data = WPCF7_Submission::get_instance()->get_posted_data();\n  $body = array(\n    'name' => isset($data['your-name']) ? $data['your-name'] : '',\n    'phone' => isset($data['your-phone']) ? $data['your-phone'] : '',\n    'email' => isset($data['your-email']) ? $data['your-email'] : '',\n    'message' => isset($data['your-message']) ? $data['your-message'] : '',\n  );\n  wp_remote_post('{ADDRESS}', array('headers' => array('Content-Type' => 'application/json'), 'body' => wp_json_encode($body), 'timeout' => 8));\n});",
+   "also_sends": [
+    {
+     "name": "Test",
+     "phone": "9000000012",
+     "email": "test@example.com",
+     "message": "Sent by the PHP snippet"
+    },
+    {
+     "your-name": "Test",
+     "your-phone": "9000000013",
+     "your-email": "test@example.com",
+     "your-message": "Sent by a form plugin with its own field names"
+    }
+   ]
   },
   {
    "id": "wix",
@@ -273,7 +461,8 @@
     "In Wix open Automations and make an automation: trigger Form submitted, pick your form.",
     "Action: Send HTTP request (or Send a webhook), method POST, URL {ADDRESS}, body JSON.",
     "Body fields: name, phone, email, city, message from the form.",
-    "Submit the form once and check the activity list here."
+    "Submit the form once and check the activity list here.",
+    "If your Wix plan has no Send HTTP request action: turn on Dev mode, make a form on your own collection named Leads, and paste the code below into backend/data.js."
    ],
    "sample": {
     "name": "Test",
@@ -286,7 +475,17 @@
     "email": "email",
     "city": "city",
     "message": "message"
-   }
+   },
+   "snippet": "import { fetch } from 'wix-fetch';\n\nexport function Leads_afterInsert(item, context) {\n  return fetch('{ADDRESS}', {\n    method: 'post',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify({ name: item.name, phone: item.phone, email: item.email, message: item.message }),\n  }).then(() => item);\n}",
+   "note": "The collection needs the fields name, phone, email and message.",
+   "also_sends": [
+    {
+     "name": "Test",
+     "phone": "9000000014",
+     "email": "test@example.com",
+     "message": "Sent by the Velo code"
+    }
+   ]
   },
   {
    "id": "google_sheets",

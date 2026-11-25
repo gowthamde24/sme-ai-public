@@ -123,6 +123,17 @@ def _mode(provider: BillingProvider | None) -> Mode:
     return "test" if mode == "test" else "live" if mode == "live" else "fake"
 
 
+def invoice_out(d: dict[str, Any]) -> InvoiceDetailOut:
+    """The invoice as the Owner's screen and the e-mail show it (also used by the staff resend)."""
+    return InvoiceDetailOut(
+        number=d["number"], kind=d["kind"], issued_at=d["issued_at"], description=_kind_text(d["kind"]), subtotal_paise=int(d["subtotal_paise"]), gst_paise=int(d["gst_paise"]), total_paise=int(d["total_paise"]),
+        subtotal_text=inr(int(d["subtotal_paise"])), gst_text=inr(int(d["gst_paise"])), total_text=inr(int(d["total_paise"])), gst_percent=float(d["gst_percent"]), tax_split=d.get("tax_split"),
+        cgst_paise=int(d["cgst_paise"]), sgst_paise=int(d["sgst_paise"]), igst_paise=int(d["igst_paise"]), against_number=d.get("against_number"), buyer_name=d.get("buyer_name"), buyer_gstin=d.get("buyer_gstin"),
+        buyer_state_code=d.get("buyer_state_code"), seller_name=d.get("seller_name"), seller_gstin=d.get("seller_gstin"), seller_address=d.get("seller_address"), seller_sac=d.get("seller_sac"),
+        seller_details_missing=not (d.get("seller_name") and d.get("seller_gstin")),
+    )
+
+
 class CreditsService:
     def __init__(self, repository: CreditsRepository, pricing: PricingService) -> None:
         self._repo = repository
@@ -204,14 +215,7 @@ class CreditsService:
         )
 
     def invoice(self, token: str, tenant_id: uuid.UUID, number: str) -> InvoiceDetailOut:
-        d = self._repo.invoice_detail(token, tenant_id, number)
-        return InvoiceDetailOut(
-            number=d["number"], kind=d["kind"], issued_at=d["issued_at"], description=_kind_text(d["kind"]), subtotal_paise=int(d["subtotal_paise"]), gst_paise=int(d["gst_paise"]), total_paise=int(d["total_paise"]),
-            subtotal_text=inr(int(d["subtotal_paise"])), gst_text=inr(int(d["gst_paise"])), total_text=inr(int(d["total_paise"])), gst_percent=float(d["gst_percent"]), tax_split=d.get("tax_split"),
-            cgst_paise=int(d["cgst_paise"]), sgst_paise=int(d["sgst_paise"]), igst_paise=int(d["igst_paise"]), against_number=d.get("against_number"), buyer_name=d.get("buyer_name"), buyer_gstin=d.get("buyer_gstin"),
-            buyer_state_code=d.get("buyer_state_code"), seller_name=d.get("seller_name"), seller_gstin=d.get("seller_gstin"), seller_address=d.get("seller_address"), seller_sac=d.get("seller_sac"),
-            seller_details_missing=not (d.get("seller_name") and d.get("seller_gstin")),
-        )
+        return invoice_out(self._repo.invoice_detail(token, tenant_id, number))
 
     # ------------------------------------------------------------------------------------------------ the refund (staff)
     def refund(self, token: str, tenant_id: uuid.UUID, order_id: str, body: RefundIn) -> RefundOut:

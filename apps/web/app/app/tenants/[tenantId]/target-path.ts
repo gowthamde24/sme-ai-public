@@ -40,6 +40,10 @@ export async function targetPaths(accessToken: string, tenantId: string, targets
         return `${base}/price-list`;
       case "billing": // the voice credits' warning (the id is the workspace's own): Settings > Plan & usage
         return `${base}/settings?section=plan`;
+      case "connectors": // a connected CRM or sheet is not receiving results: Connectors shows why
+        return `${base}/connectors`;
+      case "lead_sources": // the IndiaMART key was refused: Lead sources is where the new key is pasted
+        return `${base}/lead-sources`;
       case "outbox_message":
       case "call_request":
       case "phone_call":

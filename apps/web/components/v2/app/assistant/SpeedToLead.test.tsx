@@ -11,10 +11,10 @@ const INITIAL: SpeedRules = { default: DEFAULT_SPEED_RULE, perSource: {} };
 afterEach(cleanup);
 
 describe("How fast your assistant follows up", () => {
-  it("shows the one rule in plain words with the usual 09:30 call, and every place follows it", () => {
+  it("shows the one rule in plain words with the usual 10:00 call, and every place follows it", () => {
     render(<SpeedToLead words={words} initial={INITIAL} canEdit save={vi.fn()} securityHref="/s" />);
     expect((screen.getByLabelText("In calling hours, call within") as HTMLSelectElement).value).toBe("2");
-    expect(screen.getByText("09:30")).toBeTruthy();
+    expect(screen.getByText("10:00")).toBeTruthy();
     expect(document.querySelectorAll('[data-own="no"]')).toHaveLength(8);
     expect(screen.getByText(/never called or messaged/)).toBeTruthy();
   });

@@ -18,7 +18,7 @@ import { settle } from "@/lib/api/part";
 import { getConnectConfig, getWhatsappAccount } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
 
-import { activateWhatsappAction, connectWithFacebookAction, disableWhatsappAction, saveWhatsappAction } from "./actions";
+import { activateWhatsappAction, connectWithFacebookAction, disableWhatsappAction, disconnectWhatsappAction, saveWhatsappAction } from "./actions";
 import { BRAND_NAME } from "@/design/brand";
 
 export const metadata = { title: `Connect WhatsApp · ${BRAND_NAME}` };
@@ -66,7 +66,7 @@ export default async function ConnectWhatsappPage({ params }: PageProps<"/app/te
             account={account.data}
             canEdit={tenant.role === "owner"}
             signup={{ config, connect: connectWithFacebookAction.bind(null, tenantId) }}
-            actions={{ save: saveWhatsappAction.bind(null, tenantId), activate: activateWhatsappAction.bind(null, tenantId), disable: disableWhatsappAction.bind(null, tenantId) }}
+            actions={{ save: saveWhatsappAction.bind(null, tenantId), activate: activateWhatsappAction.bind(null, tenantId), disable: disableWhatsappAction.bind(null, tenantId), disconnect: disconnectWhatsappAction.bind(null, tenantId) }}
           />
         ) : (
           <PartProblem kind={account.kind} retryAfter={account.retryAfter} words={words} title={t("wa.state.title")} />

@@ -1,17 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+
+import { btnMain } from "../ui";
 
 import type { PackState } from "@/app/app/tenants/[tenantId]/start/actions";
 import { makeT, type Words } from "../words";
-import { TYPE_TILE } from "./tile";
+import { TypeSearch } from "./TypeSearch";
 
-export type TypeChoice = { id: string; name: string; line: string };
+export type TypeChoice = { id: string; name: string; line: string; /** synonyms and the name in other languages, for the search */ keywords?: string };
 
 /**
  * "What kind of business?" (owner, 25 Nov 2026): asked ONCE, for a workspace made without a type, so that the first steps, the words and the fields are the business's own and not a saree shop's. The
- * types come from the API's list (`GET /packs`), one boxed TILE each (name, one grey line; 3 per row; the chosen one has an ink border, never a tint: BOXED vs OPEN, tiles that are compared); the choice is saved with `PUT /pack` and the page then
+ * types come from the API's list (`GET /packs`), one boxed TILE each (name, one grey line; 3 per row; the chosen one has an ink border, never a tint: BOXED vs OPEN, tiles that are compared) under a search box (TypeSearch: matches first, Enter takes the only match); the choice is saved with `PUT /pack` and the page then
  * shows that type's Get started steps.
  */
 export function TypePicker({ choices, words, save }: { choices: readonly TypeChoice[]; words: Words; save: (code: string) => Promise<PackState> }) {
@@ -20,35 +22,46 @@ export function TypePicker({ choices, words, save }: { choices: readonly TypeCho
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [picked, setPicked] = useState<string | null>(null);
-  const choose = (id: string) => {
+  const [saved, setSaved] = useState(false);
+  // a pick is only a pick: nothing is saved until "Continue" (owner, 25 Nov 2026: a black border alone told him nothing)
+  const pick = (id: string) => {
     setPicked(id);
     setError(null);
+  };
+  // once saved, the page is asked again for the first steps; if this picker is still there a moment later (a cached read), it is asked again, a few times
+  useEffect(() => {
+    if (!saved) return;
+    const timers = [1500, 4000, 8000].map((ms) => setTimeout(() => router.refresh(), ms));
+    return () => timers.forEach(clearTimeout);
+  }, [saved, router]);
+  const go = () => {
+    if (!picked) return;
+    setError(null);
     start(async () => {
-      const r = await save(id);
-      if (r.ok) router.refresh();
-      else {
-        setPicked(null);
+      const r = await save(picked);
+      if (r.ok) {
+        setSaved(true);
+        router.refresh();
+      } else {
         setError(t(r.error === "step_up" ? "start.type.err.step_up" : r.error === "role" ? "start.type.err.role" : "start.type.err"));
       }
     });
   };
+  const name = choices.find((c) => c.id === picked)?.name ?? "";
   return (
     <fieldset data-part="start-type" className="m-0 min-w-0 border-0 p-0">
       <legend className="mb-1 text-[20px] font-semibold text-ink">{t("start.type.title")}</legend>
       <p className="m-0 mb-3 text-[15px] text-muted">{t("start.type.sub")}</p>
-      <div role="radiogroup" aria-label={t("start.type.title")} className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 lg:grid-cols-3">
-        {choices.map((c) => (
-          <label
-            key={c.id}
-            data-type={c.id}
-            data-picked={picked === c.id ? "" : undefined}
-            className={TYPE_TILE}
-          >
-            <input type="radio" name="start-type" value={c.id} checked={picked === c.id} disabled={pending} onChange={() => choose(c.id)} className="sr-only" />
-            <span className="block text-[16px] font-semibold text-ink">{c.name}</span>
-            {c.line ? <span className="block text-sm text-muted">{c.line}</span> : null}
-          </label>
-        ))}
+      <TypeSearch choices={choices} words={words} value={picked} onPick={pick} disabled={pending || saved} />
+      <div className="mt-4 flex flex-col gap-2" data-part="type-next">
+        <p className="m-0 text-[15px] text-muted" role="status" data-part="type-status">
+          {saved ? t("start.type.saved", { name }) : pending ? t("start.type.saving") : picked ? t("start.type.chosen", { name }) : t("start.type.pickfirst")}
+        </p>
+        <div>
+          <button type="button" data-part="type-continue" disabled={!picked || pending || saved} onClick={go} className={btnMain}>
+            {pending || saved ? t("start.type.saving.btn") : picked ? t("start.type.continue.with", { name }) : t("start.type.continue")}
+          </button>
+        </div>
       </div>
       {error ? (
         <p role="alert" className="m-0 mt-3 text-[15px] font-medium text-red-text">

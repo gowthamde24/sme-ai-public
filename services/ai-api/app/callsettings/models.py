@@ -49,11 +49,11 @@ class Pronunciation(_Strict):
 
 
 class CallHours(_Strict):
-    """Calling days (Monday = 1 to Sunday = 7) and hours as minutes after midnight, in steps of 15, from 09:00 (540) to 21:00 (1260)."""
+    """Calling days (Monday = 1 to Sunday = 7) and hours as minutes after midnight, in steps of 15, from 10:00 (600) to 21:00 (1260)."""
 
     days: Annotated[list[DayNumber], Field(min_length=1, max_length=7)]
-    from_minute: Annotated[int, Field(ge=540, le=1260, multiple_of=15)]
-    to_minute: Annotated[int, Field(ge=540, le=1260, multiple_of=15)]
+    from_minute: Annotated[int, Field(ge=600, le=1260, multiple_of=15)]
+    to_minute: Annotated[int, Field(ge=600, le=1260, multiple_of=15)]
 
     @model_validator(mode="after")
     def _order(self) -> "CallHours":

@@ -36,21 +36,30 @@ from app.billing.mail import (
 from app.billing.provider import BillingProvider, build_provider
 from app.billing.repository import PostgrestBillingRepository
 from app.billing.service import BillingService
+from app.calendar_in.sync import OutlookSync
+from app.calendar_in.wiring import build_outlook_sync
 from app.catalogue.storage import HttpStorageClient, StorageClient
+from app.commerce.wiring import CommerceRunner, build_commerce_runner
 from app.config import ConfigurationError, Settings, build_auth_config
+from app.crm_push.runner import CrmPushRunner
+from app.crm_push.wiring import build_crm_push_runner
 from app.dpdp.mail import DpdpJobs
 from app.dpdp.wiring import build_dpdp_jobs
+from app.extra_lines.wiring import build_extra_lines_pass
 from app.google_calendar.sync import GoogleCalendarSync
 from app.google_calendar.wiring import build_google_calendar_sync
 from app.lead_finder.housekeeping import ConversationPlanExpiry, PlacesExpiry
 from app.lead_profile.read_runner import LeadReadRunner
 from app.lead_profile.read_wiring import build_lead_reader
+from app.lead_sources.indiamart_pull import IndiaMartPuller, build_indiamart_puller
 from app.lead_sources.sync import SheetSync
 from app.lead_sources.wiring import build_lead_sources
 from app.notifications.repository import PostgrestNotificationsRepository
 from app.notifications.runner import PushRunner
 from app.notifications.webpush import WebPushSender
 from app.notifications.wiring import build_vapid
+from app.notify_out.runner import NotifyRunner
+from app.notify_out.wiring import build_notify_runner
 from app.observability.sentry import capture as sentry_capture
 from app.observability.sentry import init_sentry
 from app.ops.alerts import GoogleCapAlerts
@@ -116,6 +125,7 @@ class Worker:
         phone_numbers: Any = None,
         usage_alerts: UsageAlerts | None = None,
         call_reconcile: Callable[[str], int] | None = None,
+        extra_lines: Callable[[str], int] | None = None,
         kyc_refresh: Callable[[str], int] | None = None,
         google_alerts: GoogleCapAlerts | None = None,
         auto_reply: AutoReplyRunner | None = None,
@@ -125,10 +135,15 @@ class Worker:
         orphan_calls: OrphanCalls | None = None,
         standups: StandupRunner | None = None,
         google_calendar: GoogleCalendarSync | None = None,
+        outlook: OutlookSync | None = None,
         plivo_balance: PlivoBalanceCheck | None = None,
         token_expiry: TokenExpiryCheck | None = None,
         template_sync: TemplateStatusSync | None = None,
         webhooks: WebhookRunner | None = None,
+        indiamart_pull: IndiaMartPuller | None = None,
+        crm_push: CrmPushRunner | None = None,
+        notify: NotifyRunner | None = None,
+        commerce: CommerceRunner | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -161,6 +176,7 @@ class Worker:
         # job DS part E2: the 80 and 100 percent alerts (e-mail and a FAKE WhatsApp message to the owner) and the close of a period (one overage invoice); only while the platform's billing switch is on
         self._usage_alerts = usage_alerts
         self._kyc_refresh = kyc_refresh   # KYC_PER_CLIENT: businesses VoiceLink has approved since the last tick are marked verified (their number goes live)
+        self._extra_lines = extra_lines   # EXTRA_LINES: the monthly pass of the extra lines (app/extra_lines): renew, grace, pause, end
         self._call_reconcile = call_reconcile   # BILLING_CHARGE_CALLS: charges answered calls that ended without a charge row (app/billing/call_charge.py)
         # admin console (14 Nov 2026): the e-mail to the owner at 80 percent of a Google Maps free monthly cap
         self._google_alerts = google_alerts
@@ -177,6 +193,8 @@ class Worker:
         self._standups = standups
         # appointment booking slice 4: our appointments to the Owner's Google Calendar, its busy times back, the push channel (None: not configured)
         self._google_calendar = google_calendar
+        # Outlook / Microsoft 365: appointments out as events, busy times back (None unless CALENDAR_IN=on and the Microsoft app is registered)
+        self._outlook = outlook
         # owner decision 19 Nov 2026: Plivo's balance read once a day (None unless PLIVO_BALANCE_CHECK is on); a Needs-you item and a WhatsApp message to the owner's own number when it is low
         self._plivo_balance = plivo_balance
         # planner 20 Nov 2026: the WhatsApp platform token's expiry read from Meta once a day (None unless TOKEN_EXPIRY_CHECK is on)
@@ -185,6 +203,14 @@ class Worker:
         self._template_sync = template_sync
         # connectors plan C1 item 2: outbound webhooks (None unless WEBHOOKS_OUT=on and the secret store exists)
         self._webhooks = webhooks
+        # connectors plan C1 item 5: IndiaMART leads pulled for businesses with their own key (None unless INDIAMART_PULL=on and the secret store exists)
+        self._indiamart_pull = indiamart_pull
+        # results into a business's own CRM or sheet (None unless CRM_PUSH=on and the secret store exists)
+        self._crm_push = crm_push
+        # commerce-notify section C: Slack, Telegram and Teams messages (None unless NOTIFY_OUT=on and the secret store exists)
+        self._notify = notify
+        # commerce-notify section B: abandoned-cart call-backs and the old-row clean-up (None unless COMMERCE=on and the secret store exists)
+        self._commerce = commerce
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -217,13 +243,19 @@ class Worker:
             self._closed_lines_pass(token)
             self._usage_alerts_pass(token)
             self._call_reconcile_pass(token)
+            self._extra_lines_pass(token)
             self._kyc_refresh_pass(token)
             self._google_alerts_pass(token)
             self._plivo_balance_pass(token)
             self._token_expiry_pass(token)
             self._template_sync_pass(token)
             self._google_calendar_pass(token)
+            self._outlook_pass(token)
             self._webhooks_pass(token)
+            self._indiamart_pass(token)
+            self._crm_push_pass(token)
+            self._commerce_pass(token)
+            self._notify_pass(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -345,6 +377,17 @@ class Worker:
         except Exception as exc:   # a failed pass never fails the tick
             logger.error("lead reader pass crashed: %s", exc.__class__.__name__)
 
+    def _commerce_pass(self, token: str) -> None:
+        """Shopify checkouts whose wait is over become a call-back lead (app/commerce/wiring.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._commerce is None:
+            return
+        try:
+            self._commerce.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("commerce pass crashed: %s", exc.__class__.__name__)
+
     def _webhooks_pass(self, token: str) -> None:
         """Outbound webhooks: the due deliveries are sent and recorded (app/webhooks_out/runner.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
         if self._webhooks is None:
@@ -356,6 +399,39 @@ class Worker:
         except Exception as exc:
             logger.error("webhooks pass crashed: %s", exc.__class__.__name__)
 
+    def _indiamart_pass(self, token: str) -> None:
+        """IndiaMART leads for the businesses with their own key (app/lead_sources/indiamart_pull.py). The database says who is due, so most ticks do nothing. A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._indiamart_pull is None:
+            return
+        try:
+            self._indiamart_pull.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("indiamart pass crashed: %s", exc.__class__.__name__)
+
+    def _crm_push_pass(self, token: str) -> None:
+        """Results into the business's own CRM or sheet: the due pushes are sent and recorded (app/crm_push/runner.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._crm_push is None:
+            return
+        try:
+            self._crm_push.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("crm push pass crashed: %s", exc.__class__.__name__)
+
+    def _notify_pass(self, token: str) -> None:
+        """Notifications out: the due messages are sent and recorded (app/notify_out/runner.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._notify is None:
+            return
+        try:
+            self._notify.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("notify pass crashed: %s", exc.__class__.__name__)
+
     def _google_calendar_pass(self, token: str) -> None:
         """Appointments to Google Calendar and busy times back (app/google_calendar/sync.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
         if self._google_calendar is None:
@@ -366,6 +442,17 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("google calendar pass crashed: %s", exc.__class__.__name__)
+
+    def _outlook_pass(self, token: str) -> None:
+        """Appointments to Outlook and busy times back (app/calendar_in/sync.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._outlook is None:
+            return
+        try:
+            self._outlook.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("outlook pass crashed: %s", exc.__class__.__name__)
 
     def _plivo_balance_pass(self, token: str) -> None:
         """The daily Plivo balance check (app/ops/plivo_balance.py). The database says whether a read is due, so most ticks do nothing. A failure here never fails the tick (a refused token does, so we sign in again)."""
@@ -419,6 +506,16 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("call charge reconcile crashed: %s", exc.__class__.__name__)
+
+    def _extra_lines_pass(self, token: str) -> None:
+        if self._extra_lines is None:
+            return
+        try:
+            self._extra_lines(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("extra lines pass crashed: %s", exc.__class__.__name__)
 
     def _kyc_refresh_pass(self, token: str) -> None:
         if self._kyc_refresh is None:
@@ -520,6 +617,7 @@ def build_worker(settings: Settings) -> Worker:
     storage = HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key)
     vapid = build_vapid(settings)
     repository = PostgrestSchedulerRepository(config.rest_url, config.anon_key)
+    lead_sources = build_lead_sources(settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, build_key_ring(settings))
     return Worker(
         repository,
         adapter,
@@ -539,18 +637,24 @@ def build_worker(settings: Settings) -> Worker:
         orphan_calls=OrphanCalls.over_rpc(config.rest_url, config.anon_key, int(settings.telephony_max_call_s)),
         standups=StandupRunner(PostgrestAiTeamRepository(config.rest_url, config.anon_key)),
         google_calendar=build_google_calendar_sync(settings, config.rest_url, config.anon_key),
+        outlook=build_outlook_sync(settings, config.rest_url, config.anon_key),
         plivo_balance=build_plivo_balance(settings, config.rest_url, config.anon_key, adapter),
         token_expiry=build_token_expiry(settings, config.rest_url, config.anon_key),
         template_sync=build_template_sync(settings, config.rest_url, config.anon_key),
         webhooks=build_webhook_runner(settings, config.rest_url, config.anon_key),
+        crm_push=build_crm_push_runner(settings, config.rest_url, config.anon_key),
+        notify=build_notify_runner(settings, config.rest_url, config.anon_key),
+        commerce=build_commerce_runner(settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, lead_sources),
         kyc_refresh=_kyc_refresh_for(settings, config),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         call_reconcile=(lambda tok: CallCharger(RpcClient(config.rest_url, config.anon_key), lambda: tok).reconcile()) if settings.billing_charge_calls else None,
+        extra_lines=build_extra_lines_pass(settings, config.rest_url, config.anon_key),
         google_alerts=GoogleCapAlerts(RpcClient(config.rest_url, config.anon_key), _billing_sender(settings)),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,
-        lead_sheets=SheetSync(build_lead_sources(settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, build_key_ring(settings))),
+        lead_sheets=SheetSync(lead_sources),
+        indiamart_pull=build_indiamart_puller(settings, config.rest_url, config.anon_key, lead_sources),
         voice=VoiceNotes(repository, *build_note_voice(settings)),
     )
 

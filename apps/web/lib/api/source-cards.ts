@@ -2,7 +2,7 @@ import { ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { putSourceCosts } from "./outreach";
 import { listSources, setSourceStatus } from "./lead-sources";
-import { parseAuthorize, parseCards, parseConnect, parseCosts, parseEmail, parsePages, parseTest, parseWebsite, type Card, type ConnectInfo, type EmailAddress, type MetaPage, type SourceError, type TestResult, type WebsiteSnippet } from "@/lib/sources/types";
+import { parseAuthorize, parseCards, parseConnect, parseCosts, parseEmail, parsePages, parsePortals, parseTest, parseWebsite, type Card, type ConnectInfo, type EmailAddress, type MetaPage, type Portal, type SourceError, type TestResult, type WebsiteSnippet } from "@/lib/sources/types";
 
 /**
  * The lead-source cards from C1's API (contract-context-sources.md part B), under `/v1/tenants/{id}/lead-sources`, the signed-in person's own token, SERVER SIDE ONLY (Owner and Admin):
@@ -60,6 +60,7 @@ export async function indiaMartKey(token: string, tenantId: string, crmKey: stri
 export const indiaMartDisconnect = async (token: string, tenantId: string): Promise<void> => void (await apiRequest(`${base(tenantId)}/indiamart/disconnect`, token, post()));
 export const getEmailAddress = async (token: string, tenantId: string): Promise<EmailAddress> => need(parseEmail(await apiRequest(`${base(tenantId)}/email-address`, token)));
 export const rotateEmailAddress = async (token: string, tenantId: string): Promise<EmailAddress> => need(parseEmail(await apiRequest(`${base(tenantId)}/email-address/rotate`, token, post())));
+export const getPortals = async (token: string, tenantId: string): Promise<Portal[]> => need(parsePortals(await apiRequest(`${base(tenantId)}/portals`, token)));
 export const getWebsite = async (token: string, tenantId: string): Promise<WebsiteSnippet> => need(parseWebsite(await apiRequest(`${base(tenantId)}/website`, token)));
 
 /** The kinds of live source a card stands for (the API's own grouping in `lead_sources/cards.py`). */

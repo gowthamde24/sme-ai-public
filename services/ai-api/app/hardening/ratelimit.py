@@ -53,6 +53,7 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("subprocessors", "/v1/privacy/subprocessors", True, 60),
     PublicRule("grievance", "/v1/privacy/grievance", True, 6),  # a person filing a grievance (the hour's allowance is in the route)
     PublicRule("waitlist", "/v1/public/waitlist", True, 6),
+    PublicRule("turnstile_verify", "/v1/public/turnstile/verify", True, 300),   # the web asks for every checked form: one address (the web server) for all visitors, so a roomy 300 a minute; each person has 60 in the route
     PublicRule("contact", "/v1/public/contact", True, 6),   # the "Talk to us" form: six an hour from one address, like the waitlist
     PublicRule("lead_templates", "/v1/lead-templates", False, 60),  # job DR / A1: the nine business types and their templates (static data)
     PublicRule("lead_intake", "/v1/lead-intake/", False, 60),  # job DR / A2: a website form, a webhook, a portal's mail, Meta (the secret address is the credential; the database holds its own caps)
@@ -66,6 +67,7 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("voice_style_samples", "/v1/voice-style-samples/", False, 120),   # the pre-recorded style previews (static files, no data)  # job voice-picker: the pre-rendered samples (static files, no data)
     PublicRule("google_calendar_callback", "/v1/integrations/google-calendar/callback", True, 20),  # appointment booking slice 4: Google sends the browser back after the consent screen (the signed, one-time state is the credential)
     PublicRule("google_calendar_push", "/v1/integrations/google-calendar/push", True, 600),  # Google's push notifications (the channel token is the credential; a burst is debounced in the database)
+    PublicRule("outlook_calendar_callback", "/v1/calendars/outlook/callback", True, 20),  # commerce-notify D: Microsoft sends the browser back after the consent screen (the signed, one-time state is the credential)
     PublicRule("docs", "/docs", False, 20),
     PublicRule("redoc", "/redoc", False, 20),
     PublicRule("openapi", "/openapi.json", True, 20),

@@ -2,7 +2,7 @@
 Places where new leads arrive by themselves. Each one has its own address.
 summary: Before you start calling Read the five rules
 - 1 Only call people who agreed. People who asked about your business, or said yes to calls. Not bought or collected lists.
-- 2 We fix the calling hours. Calls go out between 9 am and 9 pm. Outside these hours they wait.
+- 2 We fix the calling hours. Calls go out between 10 am and 9 pm. Outside these hours they wait.
 - 3 Do-not-call is automatic. When someone asks you to stop, they are added to your do-not-call list and are never called again.
 - 4 Your business is the caller. You are responsible for who is called and what is said. We place the call for you.
 - 5 Phone rules may apply. The national do-not-disturb list and phone company rules can stop some calls, mostly calls about offers.
@@ -17,7 +17,7 @@ Bring your IndiaMART leads in, with duplicates merged. Nothing set up yet.
 [button type=button: Set it up]
 {label="JustDial and other portals"}
 ## JustDial and other portals
-Forward the portal's lead e-mails to your own address. We read them and add the lead. Nothing set up yet.
+Set this address as the e-mail where your portal sends leads. Nothing to send on by hand: we read each mail and add the lead. Nothing set up yet.
 [button type=button: Set it up]
 {label="Your website form"}
 ## Your website form

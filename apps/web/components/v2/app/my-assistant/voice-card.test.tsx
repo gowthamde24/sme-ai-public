@@ -332,12 +332,22 @@ describe("the voice card, \"Your assistant's voice\" (owner, 20 Nov 2026)", () =
     const sw = within(row).getByRole("switch", { name: "Say 'AI assistant' when greeting" });
     expect(sw).toHaveAttribute("aria-checked", "false");
     expect(row).toHaveTextContent("If a customer asks, it always says it's your AI assistant.");
+    expect(row).toHaveTextContent("On unless you turn it off.");
     fireEvent.click(sw);
     await waitFor(() => expect(save).toHaveBeenCalledWith({ sayAi: true }));
     await waitFor(() => expect(within(row).getByRole("switch")).toHaveAttribute("aria-checked", "true"));
     await act(async () => void (await new Promise((r) => setTimeout(r, 20)))); // the first save is over
+    // turning it OFF opens the short written undertaking (accept + date); nothing is saved until it is accepted
     fireEvent.click(within(row).getByRole("switch"));
-    await waitFor(() => expect(save).toHaveBeenLastCalledWith({ sayAi: false }));
+    const box = within(row).getByRole("group", { name: "Switch off the AI greeting" });
+    expect(box).toHaveTextContent("Draft: the wording waits for the advocate's review.");
+    expect(box).toHaveTextContent("The assistant will never say it is a person.");
+    expect(box).toHaveTextContent(/Date: \d/);
+    expect(within(box).getByRole("button", { name: "Switch it off" })).toBeDisabled();
+    expect(save).not.toHaveBeenLastCalledWith({ sayAi: false });
+    fireEvent.click(within(box).getByRole("checkbox", { name: "I accept this undertaking" }));
+    fireEvent.click(within(box).getByRole("button", { name: "Switch it off" }));
+    await waitFor(() => expect(save).toHaveBeenLastCalledWith({ sayAi: false, sayAiUndertaking: true }));
     cleanup();
     setup({ speaks: { initial: H({ say_ai_when_greeting: undefined }), demo: false, save: vi.fn() as never } });
     expect(screen.queryByRole("switch")).toBeNull();

@@ -75,5 +75,18 @@ select is(pg_temp.staff('s_finance', 10, format($q$select public.admin_wallet_de
 select is(pg_temp.staff('s_finance', 10, format($q$select (jsonb_path_query_first(public.admin_statement(%L) -> 'items', '$[*] ? (@.label == "Taken back by Stack19")') ->> 'amount_paise')$q$, tests.tid('a'))), '-1000', 'E13: the statement shows the taking back');
 select is(pg_temp.staff('s_support', 10, $q$select jsonb_array_length(public.admin_webhook_failures(10) -> 'items')::text$q$) >= '1', true, 'E14: support sees the failing webhook');
 select is(pg_temp.staff('s_finance', 10, $q$select public.admin_webhook_failures(10)::text$q$) like 'ERR:%', true, 'E15: finance does not (support and owner only)');
+-- F. staff resend an invoice (migration 20261231992350): the right staff, a reason, a fresh second factor, THAT business's invoice only, an audit line the Owner can see
+create temp table inv as select pricing.invoice(tests.tid('a'), 'topup', 'pay_resend_1', 100000) ->> 'number' as n;
+create temp table inv_b as select pricing.invoice(tests.tid('b'), 'topup', 'pay_resend_2', 50000) ->> 'number' as n;
+select is(pg_temp.sc('a_owner', format($q$select public.admin_invoice_resend(%L, %L, 'other', 'a reason')::text$q$, tests.tid('a'), (select n from inv))) like 'ERR:%', true, 'F1: a workspace Owner cannot ask for a staff resend');
+select is(has_function_privilege('anon', 'public.admin_invoice_resend(uuid, text, text, text)', 'execute'), false, 'F2: a stranger has no door');
+select is(pg_temp.staff('s_support', 10, format($q$select public.admin_invoice_resend(%L, %L, 'customer_asked', 'ab')::text$q$, tests.tid('a'), (select n from inv))), 'ERR:SM946', 'F3: a reason in words is needed');
+select is(pg_temp.staff('s_support', 99999, format($q$select public.admin_invoice_resend(%L, %L, 'customer_asked', 'they lost the mail')::text$q$, tests.tid('a'), (select n from inv))) like 'ERR:%', true, 'F4: a stale second factor is refused');
+select is(pg_temp.staff('s_support', 10, format($q$select public.admin_invoice_resend(%L, 'not-a-number', 'customer_asked', 'they lost the mail')::text$q$, tests.tid('a'))), 'ERR:22023', 'F5: a malformed number is refused');
+select is(pg_temp.staff('s_support', 10, format($q$select public.admin_invoice_resend(%L, %L, 'customer_asked', 'they lost the mail')::text$q$, tests.tid('a'), (select n from inv_b))), 'ERR:23503', 'F6: another business''s invoice is not found');
+select ok(pg_temp.staff('s_support', 10, format($q$select (public.admin_invoice_resend(%L, %L, 'customer_asked', 'they lost the mail') ->> 'to')$q$, tests.tid('a'), (select n from inv))) in (select u.email from public.memberships m join auth.users u on u.id = m.user_id where m.tenant_id = tests.tid('a') and m.role = 'owner'), 'F7: support gets an Owner''s address of that business');
+select is(pg_temp.staff('s_finance', 10, format($q$select (public.admin_invoice_resend(%L, %L, 'billing_dispute', 'a copy for the CA') -> 'invoice' ->> 'total_paise')$q$, tests.tid('a'), (select n from inv))), '118000', 'F8: finance gets the invoice amounts (Rs 1,000 and 18% GST)');
+select is((select count(*) from admin.audit where action = 'resend_invoice' and tenant_id = tests.tid('a') and customer_visible and target_kind = 'invoice'), 2::bigint, 'F9: each resend is audited and visible to the Owner');
+select is(pg_temp.sc('a_owner', format($q$select (public.activity_log(%L, 50, null, null, 'support') -> 'items' -> 0 ->> 'summary')$q$, tests.tid('a'))), 'Stack19 support sent you an invoice again', 'F10: the Owner''s activity log says so in plain words');
 select * from finish();
 rollback;

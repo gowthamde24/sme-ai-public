@@ -1,0 +1,96 @@
+# Connectors
+Send what the assistant finds out into the tools you already use.
+{role=note} Only your own leads and calls are sent. Calling hours, consent and do-not-call stay as they are.
+{role=note} These are sample cards for review. Nothing is sent or saved.
+{label="Works with anything that can send a web request"}
+## Works with anything that can send a web request
+- Google Sheets
+- Google Forms
+- Zapier
+- Make
+- n8n
+- Pabbly Connect
+- HubSpot
+- Zoho CRM
+- LeadSquared
+- Sell.Do
+- Pipedrive
+- Freshsales
+- Kylas
+- Bitrix24
+- Airtable
+- Notion
+- Salesforce
+- Your own server
+-
+## HubSpot
+Connected
+[button type=button: Open]
+-
+## Zoho CRM
+Needs setup by us
+[button type=button: Open]
+-
+## LeadSquared
+Not connected
+[button type=button: Open]
+-
+## Send results to a web address
+Not connected [Open webhooks](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=hooks) For Zapier, Make, n8n, Pabbly Connect or your own server. Each result arrives as a signed web request.
+{role=note} Sample cards: nothing is sent or saved.
+{label="Online stores"}
+## Online stores
+New orders, cash-on-delivery orders and left carts reach you here, and your store's products can fill a list.
+-
+### Shopify
+Connected
+[button type=button: Open]
+-
+### WooCommerce
+Needs your attention
+[button type=button: Open]
+{label="Messages to your team chat"}
+## Messages to your team chat
+A short message in Slack, Telegram or Microsoft Teams when a lead arrives, a call is missed, a call ends or your balance is low.
+-
+### Slack
+Connected
+[button type=button: Open]
+-
+### Telegram
+Needs your attention
+[button type=button: Open]
+-
+### Microsoft Teams
+Not connected
+[button type=button: Open]
+{label="Calendars and booking"}
+## Calendars and booking
+A booking made on your Calendly or Cal.com page becomes a visit. Outlook keeps your own busy times out of your slots.
+-
+### Calendly
+Connected
+[button type=button: Open]
+-
+### Cal.com
+Not connected
+[button type=button: Open]
+-
+### Outlook / Microsoft 365
+Needs setup by us
+[button type=button: Open]
+### Bookings that need a person
+The customer is already in your leads. Place the visit by hand in Appointments.
+- Calendly That time is not a slot
+- Calendly You are closed then
+{label="Lead forms and web forms"}
+## Lead forms and web forms
+Steps to send the answers of Google Ads, Typeform, Tally, Jotform, LinkedIn, Webflow forms and TradeIndia mails to your lead address.
+-
+### Typeform
+A form that posts to your lead address
+[button type=button: Open]
+-
+### TradeIndia
+A lead mail forwarded to your lead address
+[button type=button: Open]

@@ -51,7 +51,7 @@ select is((select (pg_temp.val('a_owner', format($q$select (public.outreach_rule
 select is(pg_temp.val('a_owner', format($q$select (public.outreach_rules_list(%L) -> 0 ? 'message_text')::text$q$, tests.tid('a'))), 'false', 'A6 a rule shows no message text');
 
 -- B. the policy: the retry steps
-select is(pg_temp.val('a_owner', format($q$select (public.outreach_policy_get(%L) -> 'retry_steps')::text$q$, tests.tid('a'))), '[{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 570}]', 'B1 the default ladder: 10 minutes, 2 hours, next morning 09:30');
+select is(pg_temp.val('a_owner', format($q$select (public.outreach_policy_get(%L) -> 'retry_steps')::text$q$, tests.tid('a'))), '[{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 600}]', 'B1 the default ladder: 10 minutes, 2 hours, next morning 10:00');
 select is(pg_temp.val('a_owner', format($q$select public.outreach_policy_set(%L, '{"retry_steps": [{"after_minutes": 0}]}'::jsonb)::text$q$, tests.tid('a'))), 'ERR:22023', 'B2 a step of zero minutes is invalid');
 select is(pg_temp.val('a_owner', format($q$select public.outreach_policy_set(%L, '{"retry_steps": [{"after_minutes": 5, "next_morning_minute": 570}]}'::jsonb)::text$q$, tests.tid('a'))), 'ERR:22023', 'B3 a step is one thing or the other');
 select is(pg_temp.val('a_owner', format($q$select public.outreach_policy_set(%L, '{"retry_steps": []}'::jsonb)::text$q$, tests.tid('a'))), 'ERR:22023', 'B4 at least one step');
@@ -85,11 +85,11 @@ select pg_temp.sch('select public.scheduler_outreach_run(10)::text');
 select is((pg_temp.res(pg_temp.item('r1', 'l1'), 'no_answer')::jsonb ->> 'next_at')::timestamptz, '2026-11-02T13:15:00+05:30'::timestamptz, 'D5 no answer again: the next call in 2 hours');
 select pg_temp.pin('2026-11-02T13:15:00+05:30'::timestamptz);
 select pg_temp.sch('select public.scheduler_outreach_run(10)::text');
-select is((pg_temp.res(pg_temp.item('r1', 'l1'), 'busy')::jsonb ->> 'next_at')::timestamptz, '2026-11-03T09:30:00+05:30'::timestamptz, 'D6 and again: the next morning at 09:30');
-select pg_temp.pin('2026-11-03T09:30:00+05:30'::timestamptz);
+select is((pg_temp.res(pg_temp.item('r1', 'l1'), 'busy')::jsonb ->> 'next_at')::timestamptz, '2026-11-03T10:00:00+05:30'::timestamptz, 'D6 and again: the next morning at 10:00');
+select pg_temp.pin('2026-11-03T10:00:00+05:30'::timestamptz);
 select pg_temp.sch('select public.scheduler_outreach_run(10)::text');
 select is(pg_temp.res(pg_temp.item('r1', 'l1'), 'no_answer')::jsonb ->> 'whatsapp', 'missed', 'D7 the fourth call is not answered: the missed-call template comes next');
-select is(pg_temp.due(pg_temp.item('r1', 'l1')), 'whatsapp@2026-11-03 09:30:00', 'D8 ... now');
+select is(pg_temp.due(pg_temp.item('r1', 'l1')), 'whatsapp@2026-11-03 10:00:00', 'D8 ... now');
 select is((select (pg_temp.sch('select (public.scheduler_outreach_run(10) ->> ''whatsapp'')'))), '1', 'D9 one WhatsApp is sent');
 select is((select a.result || ':' || a.template from public.outreach_attempts a where a.item_id = pg_temp.item('r1', 'l1') and a.channel = 'whatsapp'), 'sent:missed_call_followup', 'D10 it is the missed-call template');
 select is((select i.status from public.outreach_items i where i.id = pg_temp.item('r1', 'l1')), 'done', 'D11 and the lead is done: four calls and one template');

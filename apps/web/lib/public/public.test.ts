@@ -34,7 +34,7 @@ describe("the launch pages' words", () => {
     for (const id of TALK_TIMES) expect(Object.keys(pub)).toContain(`pub.talk.time.${id}`);
   });
   it("Telugu, Hindi and Kannada are drafts, in their own script, with English as the fallback in reviewed-only mode", () => {
-    for (const [k, v] of Object.entries(pub)) expect((v as { status: Record<string, string> }).status, k).toEqual({ te: "draft", hi: "draft", kn: "draft" });
+    for (const [k, v] of Object.entries(pub)) { const st = (v as { status: Record<string, string> }).status; expect({ hi: st.hi, kn: st.kn }, k).toEqual({ hi: "draft", kn: "draft" }); expect(["draft", "reviewed"]).toContain(st.te); } // Telugu: approved by the owner, 26 Nov 2026
     expect(pubDict("te")["pub.price.title"]).toMatch(/[ఀ-౿]/);
   });
 });

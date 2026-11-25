@@ -54,7 +54,7 @@ def test_the_screens_defaults_are_the_very_words_a_call_speaks() -> None:
     defaults = client.get(f"{BASE}/opening-line", headers=h).json()["defaults"]
     for lang in ("en", "te", "hi", "kn"):
         spoken = client.get(f"{BASE}/opening-line/preview?language={lang}", headers=h).json()
-        assert spoken["text"] == defaults[lang]["without_ai"].replace("{business}", TENANT_A.name), lang   # (the default setting is OFF: the name only)
+        assert spoken["text"] == defaults[lang]["with_ai"].replace("{business}", TENANT_A.name), lang   # (the default setting is ON: it says it is the AI assistant, lawyer's opinion 25 Nov 2026)
         assert "{assistant}" not in defaults[lang]["with_ai"] and "{customer}" not in defaults[lang]["without_ai"], "no name and no customer are needed for the default"
 
 
@@ -156,15 +156,15 @@ def test_the_preview_is_the_greeting_a_customer_hears_with_the_live_business_nam
     h = auth("a_owner")
     q = f"{BASE}/opening-line/preview?language=en&customer=Ravi"
     first = client.get(q, headers=h).json()
-    assert first["says_ai"] is False and first["mention_ai"] is False and TENANT_A.name in first["text"], "the default setting is OFF: the name only"
+    assert first["says_ai"] is True and first["mention_ai"] is True and TENANT_A.name in first["text"], "the default setting is ON: it says it is the AI assistant (lawyer's opinion, 25 Nov 2026)"
     client.put(f"{BASE}/opening-line", json={"language": "en", "text": "Hi {customer}, {assistant} from {business} here."}, headers=h)
     client.put(f"{BASE}/mention-ai", json={"mention_ai": False}, headers=h)
     off = client.get(q, headers=auth("a_sales")).json()
-    assert off["text"] == f"Hi Ravi, your assistant from {TENANT_A.name} here." and off["says_ai"] is False and off["mention_ai"] is False, "the old switch is not read any more; no name was set: the phrase stands where the name would, no name is made up and no hole is spoken"
+    assert off["text"] == f"Hi Ravi, your assistant from {TENANT_A.name} here. I'm an AI assistant." and off["says_ai"] is True and off["mention_ai"] is True, "the default is ON and the old switch is not read any more; no name was set: the phrase stands where the name would, no name is made up and no hole is spoken"
     camp = str(uuid.uuid4())
     assert client.put(f"{BASE}/mention-ai", json={"mention_ai": True, "campaign_id": camp}, headers=h).status_code == 200
     on = client.get(q + f"&campaign_id={camp}", headers=h).json()
-    assert on["says_ai"] is False and on["text"].startswith("Hi Ravi, your assistant from"), "a campaign's old switch is not read either"
+    assert on["says_ai"] is True and on["text"].startswith("Hi Ravi, your assistant from"), "a campaign's old switch is not read either"
     assert client.put(f"{BASE}/mention-ai", json={"mention_ai": None}, headers=h).status_code == 422 and repo.row["mention_ai"] is False
 
 

@@ -40,14 +40,14 @@ describe("How your assistant speaks, test mode (SPEAKS_PANEL_SCREENS=mock): made
     expect(later.words.kn).toMatchObject({ style: "everyday_pure", saved: true });
     // the background and the AI switch: made up like the API's (the default is the quiet office and OFF), kept, and null puts them back
     expect(later.background).toMatchObject({ value: "quiet_office", saved: false });
-    expect(later.sayAi).toEqual({ value: false, saved: false });
+    expect(later.sayAi).toEqual({ value: true, saved: false, undertakingAt: null }); // ON by default (lawyer, 25 Nov 2026)
     const set = await saveSpeaks(CTX, { background: "shop", sayAi: true, tone: "quick" }, F);
     expect(set.background).toMatchObject({ value: "shop", saved: true });
-    expect(set.sayAi).toEqual({ value: true, saved: true });
+    expect(set.sayAi).toEqual({ value: true, saved: true, undertakingAt: null });
     expect(set.tone.value).toBe("quick");
     const back = await saveSpeaks(CTX, { background: null, sayAi: null }, F);
     expect(back.background).toMatchObject({ value: "quiet_office", saved: false });
-    expect(back.sayAi).toEqual({ value: false, saved: false });
+    expect(back.sayAi).toEqual({ value: true, saved: false, undertakingAt: null });
     await saveSpeaks(CTX, { tone: "respectful" }, F);
     const reset = await saveSpeaks(CTX, { tone: null }, { ...F, legacyAddress: "ji" });
     expect(reset.tone).toMatchObject({ value: "respectful", source: "migrated" }); // back to what the old setting maps to

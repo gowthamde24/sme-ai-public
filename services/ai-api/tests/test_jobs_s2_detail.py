@@ -42,7 +42,7 @@ def rule(n: int = 1, *, active: bool = True, reason: str | None = None, within: 
 class Outreach:
     def __init__(self, *rules: Any, steps: list[dict[str, int]] | None = None) -> None:
         self.rows = list(rules)
-        self.pol = SimpleNamespace(retry_steps=steps if steps is not None else [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 570}])
+        self.pol = SimpleNamespace(retry_steps=steps if steps is not None else [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 600}])
         self.calls: list[tuple[str, Any]] = []
         self.refuse: Exception | None = None
 
@@ -105,7 +105,7 @@ class AssistantSettings_:
     """Settings > AI assistant: get (the saved settings, a name of its own) and save (the whole document)."""
 
     def __init__(self, saved: bool = True) -> None:
-        self.read = AssistantSettingsRead.model_validate({**assistant_data.defaults_for(None), "name": "Priya", "main_language": "te", "call_from_minute": 540, "call_to_minute": 1260, "call_days": [1, 2, 3, 4, 5, 6]})
+        self.read = AssistantSettingsRead.model_validate({**assistant_data.defaults_for(None), "name": "Priya", "main_language": "te", "call_from_minute": 600, "call_to_minute": 1260, "call_days": [1, 2, 3, 4, 5, 6]})
         self.saved, self.saves = saved, []   # type: ignore[var-annotated]
 
     def get(self, token: str, tenant_id: uuid.UUID) -> Any:
@@ -417,9 +417,9 @@ def test_the_page_has_an_etag_and_a_304_on_a_repeat() -> None:
 def test_speed_to_lead_reads_its_rules_its_policy_and_the_assistants_hours() -> None:
     body = World(outreach=Outreach(rule(1, within=10, channel="both", language="te"), rule(2, within=10, channel="both", language="te"), steps=[{"after_minutes": 10}, {"after_minutes": 120}])).get("speed_to_lead").json()
     values = {s["key"]: s["value"] for s in body["settings"]["main"] + body["settings"]["more"]}
-    assert values == {"when": "after_10_min", "language": "te", "tries": "tries_2", "thank_you_whatsapp": True, "from_hour": "09:00", "to_hour": "21:00", "say_ai_when_greeting": "business"}
+    assert values == {"when": "after_10_min", "language": "te", "tries": "tries_2", "thank_you_whatsapp": True, "from_hour": "10:00", "to_hour": "21:00", "say_ai_when_greeting": "business"}
     assert [s["key"] for s in body["settings"]["main"]] == ["when", "language", "tries", "thank_you_whatsapp"]
-    assert body["when"] == {"from_hour": "09:00", "to_hour": "21:00", "days": ["mon", "tue", "wed", "thu", "fri", "sat"], "pace_per_hour": None}
+    assert body["when"] == {"from_hour": "10:00", "to_hour": "21:00", "days": ["mon", "tue", "wed", "thu", "fri", "sat"], "pace_per_hour": None}
     assert body["results"]["numbers"] == {"called": 10, "picked_up": 5, "visits": 2}
     assert body["test_channel"] == "call"
 
@@ -491,7 +491,7 @@ def test_a_toggle_accepts_on_and_off_and_answers_booleans() -> None:
 def test_tries_keeps_the_owners_own_steps_and_fills_only_the_gap() -> None:
     w = World(outreach=Outreach(rule(1), steps=[{"after_minutes": 30}]))
     assert setting(w.patch("speed_to_lead", {"settings": {"tries": "tries_3"}}).json(), "tries")["value"] == "tries_3"
-    assert last(w.outreach.calls, "policy_save") == {"retry_steps": [{"after_minutes": 30}, {"after_minutes": 120}, {"next_morning_minute": 570}]}
+    assert last(w.outreach.calls, "policy_save") == {"retry_steps": [{"after_minutes": 30}, {"after_minutes": 120}, {"next_morning_minute": 600}]}
     assert setting(w.patch("speed_to_lead", {"settings": {"tries": "tries_1"}}).json(), "tries")["value"] == "tries_1"
     assert last(w.outreach.calls, "policy_save") == {"retry_steps": [{"after_minutes": 30}]}
 
@@ -586,7 +586,7 @@ def test_the_greeting_override_is_one_setting_of_every_job_that_speaks_and_the_p
         assert setting(w.get(kind).json(), "say_ai_when_greeting")["options"] == ["business", "on", "off"]
     assert "say_ai_when_greeting" not in [s["key"] for s in w.get("researcher").json()["settings"]["main"] + w.get("researcher").json()["settings"]["more"]]
     plain = [s["text"] for s in w.get("speed_to_lead").json()["says"] if s["channel"] == "call"]
-    assert plain and not any("AI" in t for t in plain)   # the business setting is off: the name only
+    assert plain and all("AI" in t for t in plain)   # the default is ON (the lawyer's opinion, 25 Nov 2026): the greeting says it is an AI assistant
     body = w.patch("speed_to_lead", {"settings": {"say_ai_when_greeting": "on"}}).json()
     assert setting(body, "say_ai_when_greeting")["value"] == "on" and (w.training.doc or {})["say_ai_by_job"] == {"speed_to_lead": "on"}
     assert all("AI" in s["text"] for s in body["says"])
@@ -595,7 +595,9 @@ def test_the_greeting_override_is_one_setting_of_every_job_that_speaks_and_the_p
     assert (w.training.doc or {})["say_ai_by_job"] == {}
     business_on = World(doc={"say_ai_when_greeting": True})
     assert all("AI" in s["text"] for s in business_on.get("followups").json()["says"])
-    off = World(doc={"say_ai_when_greeting": True, "say_ai_by_job": {"followups": "off"}})
+    no_undertaking = World(doc={"say_ai_when_greeting": True, "say_ai_by_job": {"followups": "off"}})
+    assert all("AI" in s["text"] for s in no_undertaking.get("followups").json()["says"]), "an off without the stored undertaking is read as on"
+    off = World(doc={"say_ai_when_greeting": True, "say_ai_by_job": {"followups": "off"}, "ai_off_undertaking": {"at": "2026-11-26T09:00:00+00:00", "by": "u1"}})
     assert not any("AI" in s["text"] for s in off.get("followups").json()["says"]) and all("AI" in s["text"] for s in off.get("offers").json()["says"])
 
 

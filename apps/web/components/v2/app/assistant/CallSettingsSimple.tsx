@@ -24,8 +24,8 @@ type Props = { campaign?: CampaignMode; words: Parameters<typeof makeT>[0]; init
 /** The tries: 0 to 5 more times. The pauses between them: a short list of the common ones (a saved value outside it still shows and stays). */
 const COUNTS = [0, 1, 2, 3, 4, 5] as const;
 const GAPS = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 480, 720, 1440] as const;
-/** Times of the calling hours: every 15 minutes between 9:00 am and 9:00 pm (the same range as the old time boxes). */
-const TIMES = Array.from({ length: 49 }, (_, i) => 540 + i * 15);
+/** Times of the calling hours: every 15 minutes between 10:00 am and 9:00 pm (the same range as the old time boxes). */
+const TIMES = Array.from({ length: 45 }, (_, i) => 600 + i * 15);
 const range = (from: number, to: number, step = 1): number[] => Array.from({ length: Math.floor((to - from) / step) + 1 }, (_, i) => from + i * step);
 const chip = (on: boolean) => `jb-press min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 const sub = "m-0 font-display text-[15px] font-bold text-ink";
@@ -124,7 +124,7 @@ export function CallSettingsSimple({ words, initial, locked, canEdit, mock, save
               {retry("retry_no_answer", "jobs.rules.cs.noans")}
               {badge("retry")}
             </div>
-            <Tick label={t("calls.hours.follow")} checked={hours === null} onChange={(e) => set({ hours: e.target.checked ? null : { days: [1, 2, 3, 4, 5, 6], from_minute: 540, to_minute: 1140 } })} />
+            <Tick label={t("calls.hours.follow")} checked={hours === null} onChange={(e) => set({ hours: e.target.checked ? null : { days: [1, 2, 3, 4, 5, 6], from_minute: 600, to_minute: 1140 } })} />
             {hours ? (
               <>
                 <Sentence

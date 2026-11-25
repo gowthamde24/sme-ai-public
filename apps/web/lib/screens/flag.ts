@@ -40,6 +40,9 @@ export const jobsScreens = (value?: string): ScreenMode => screenMode(value ?? p
 export const taskScreens = (value: string | undefined = process.env.TASK_SCREENS): ScreenMode => screenMode(value);
 export const topupScreens = (value: string | undefined = process.env.TOPUP_SCREENS): ScreenMode => (earlyAccess() ? "off" : screenMode(value));
 
+/** Connectors (25 Nov 2026, docs/contracts/crm-push.md): results into the business's own CRM or sheet. `1` = the API (its own switch CRM_PUSH must be on too: the API answers 404 while off, and the page says "not open yet"), `mock` = sample cards for review and pictures (nothing is sent or stored), unset = the page is not there. */
+export const crmPushScreens = (value: string | undefined = process.env.CRM_PUSH_SCREENS): ScreenMode => screenMode(value);
+
 export const voiceSampleScreens = (value: string | undefined = process.env.VOICE_SAMPLE_SCREENS): ScreenMode => screenMode(value);
 
 /** Night 5: Settings > AI assistant > "Opening line" (the text of the greeting, with {customer} {assistant} {business} {agent_role}, a voice preview, the "mention that I am an AI assistant" switch, and a per-campaign override). C1's API ships separately (lib/api/opening-line.ts has the assumed contract): `mock` = fake data kept in a cookie (nothing is sent, no sound), `1` = the API, unset = the part is not there. */
@@ -279,6 +282,11 @@ export const creditsScreens = (value: string | undefined = process.env.CREDITS_S
 export const callsPanel = (value: string | undefined = process.env.CALLS_PANEL): boolean => value === "1";
 /** "Calls at once" on the Phone numbers page (same mock): how many calls can run together and how many do, from C1's `GET /v1/tenants/{t}/phone-lines` (docs/contracts/calls.md). `mock` = a made-up two-line answer (nothing is read), `1` = the API, unset = the card is not there. Only with CALLS_PANEL. */
 export const phoneLinesScreens = (value: string | undefined = process.env.PHONE_LINES_SCREENS): ScreenMode => screenMode(value);
+/**
+ * Extra lines (26 Nov 2026; the API's `EXTRA_LINES`, docs/contracts/extra-lines.md): the Owner adds a line to "Calls at once" (the price shown first, taken from the credits) and cancels it for the end of the month, and the
+ * public Pricing page gets one row "Extra calls at once". `mock` = a made-up answer kept in a cookie, nothing is charged (staging only); `1` = the API's routes; unset = the card as it was ("Add a line" opens a mail to us).
+ */
+export const extraLines = (value: string | undefined = process.env.EXTRA_LINES): ScreenMode => screenMode(value);
 
 /**
  * "Tell your assistant what to do" on Jobs (owner, 29 Nov 2026; mock "Tell your assistant what to do"; C1's `POST /jobs/describe`, docs/contracts/jobs-describe.md): the owner writes or says the job in their own words, a mode and a language, and sees a DRAFT as plain

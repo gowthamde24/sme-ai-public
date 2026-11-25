@@ -217,14 +217,14 @@
         },
         "call_from_minute": {
           "maximum": 1260,
-          "minimum": 540,
+          "minimum": 600,
           "multipleOf": 15,
           "title": "Call From Minute",
           "type": "integer"
         },
         "call_to_minute": {
           "maximum": 1260,
-          "minimum": 540,
+          "minimum": 600,
           "multipleOf": 15,
           "title": "Call To Minute",
           "type": "integer"
@@ -366,14 +366,14 @@
         },
         "call_from_minute": {
           "maximum": 1260,
-          "minimum": 540,
+          "minimum": 600,
           "multipleOf": 15,
           "title": "Call From Minute",
           "type": "integer"
         },
         "call_to_minute": {
           "maximum": 1260,
-          "minimum": 540,
+          "minimum": 600,
           "multipleOf": 15,
           "title": "Call To Minute",
           "type": "integer"
