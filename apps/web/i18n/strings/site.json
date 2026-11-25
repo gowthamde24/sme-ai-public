@@ -13393,17 +13393,17 @@
   "ta": "2 Lead Finder searches, then ₹49 each"
  },
  "v9.pricing.10": {
-  "en": "1 business number (extra ₹299)",
-  "te": "1 business number (extra ₹299)",
-  "hi": "1 business number (extra ₹299)",
-  "kn": "1 business number (extra ₹299)",
+  "en": "1 business number (extra ₹499)",
+  "te": "1 business number (extra ₹499)",
+  "hi": "1 business number (extra ₹499)",
+  "kn": "1 business number (extra ₹499)",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "1 business number (extra ₹299)"
+  "ta": "1 business number (extra ₹499)"
  },
  "v9.pricing.11": {
   "en": "Set up yourself with the assistant",
@@ -15369,17 +15369,17 @@
   "ta": "Which number does it call from?"
  },
  "v9.faq.a1": {
-  "en": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
-  "te": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
-  "hi": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
-  "kn": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
+  "en": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
+  "te": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
+  "hi": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
+  "kn": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start."
+  "ta": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start."
  },
  "v9.faq.q2": {
   "en": "How does it handle new enquiries?",

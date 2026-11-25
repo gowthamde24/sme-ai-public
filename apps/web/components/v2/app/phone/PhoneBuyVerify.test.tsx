@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const nav = vi.hoisted(() => ({ push: vi.fn(), refresh: vi.fn() }));
@@ -506,5 +506,64 @@ describe("the PIN code fills the state and the city (VoiceLink knows a city only
     fireEvent.click(screen.getByRole("button", { name: "Save and continue" }));
     expect(await screen.findByText("Pick the city name as your post office writes it.")).toBeInTheDocument();
     expect(screen.getByLabelText("City")).toHaveValue("Anantapur");
+  });
+});
+
+describe("Aadhaar (DigiLocker): stay on the page, read the status while the link is open, start again when it did not arrive", () => {
+  const drawAadhaar = (a = verifyActions()) => drawVerify(STATUS({ state: "in_progress", step: "aadhaar", steps: { pan: true, aadhaar: false } }), a);
+  it("says to stay on the page until it moves you back, and ends the step when the status says aadhaar_verified", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const status = vi.fn(async () => STATUS({ state: "in_progress", step: "complete", steps: { pan: true, aadhaar: false }, aadhaarVerified: true }));
+    drawAadhaar(verifyActions({ status }));
+    fireEvent.click(screen.getByRole("button", { name: "Get the DigiLocker link" }));
+    expect(await screen.findByText("Stay on the page until it moves you back.")).toBeInTheDocument();
+    expect(status).not.toHaveBeenCalled();
+    await act(async () => void vi.advanceTimersByTime(7100));
+    expect(status).toHaveBeenCalled();
+    await waitFor(() => expect(document.querySelector('[data-part="submit"]')).not.toBeNull());
+    expect(document.querySelector('[data-doc="aadhaar"]')).toHaveAttribute("data-done");
+    vi.useRealTimers();
+  });
+  it("when the person is back (or about 2 minutes passed) and it is still not done, 'Start the Aadhaar check again' asks for a new link", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const aadhaar = vi.fn(async () => ({ ok: true as const, data: { url: "https://digilocker.example/new" } }));
+    drawAadhaar(verifyActions({ aadhaar, status: vi.fn(async () => STATUS({ state: "in_progress", step: "aadhaar", steps: { pan: true, aadhaar: false }, aadhaarVerified: false })) }));
+    fireEvent.click(screen.getByRole("button", { name: "Get the DigiLocker link" }));
+    await screen.findByText("Stay on the page until it moves you back.");
+    expect(screen.queryByRole("button", { name: "Start the Aadhaar check again" })).toBeNull();
+    await act(async () => void vi.advanceTimersByTime(121_000));
+    fireEvent.click(await screen.findByRole("button", { name: "Start the Aadhaar check again" }));
+    await waitFor(() => expect(aadhaar).toHaveBeenCalledTimes(2));
+    expect(screen.queryByRole("button", { name: "Start the Aadhaar check again" })).toBeNull(); // the wait starts again with the new link
+    vi.useRealTimers();
+  });
+});
+
+describe("the money step: the first month of the number is held from the credits (C1, 26 Nov 2026)", () => {
+  it("too little credit is not an error screen: one sentence and Add credits; nothing was created", async () => {
+    const start = vi.fn(async () => ({ ok: false as const, error: "credits_needed" as const, needed: "₹499" }));
+    render(<PhoneBuy words={WORDS} actions={buyActions()} canEdit email="asha@shop.in" verifyHref="/v" kycFirst kyc={{ status: STATUS({ state: "not_started", accountType: null }), actions: verifyActions({ start, creditsHref: "/app/tenants/t1/billing" }) }} />);
+    await screen.findByText("+91 94294 92465");
+    fireEvent.click(screen.getAllByRole("radio")[0]);
+    fireEvent.click(screen.getByRole("button", { name: "Use this number" }));
+    fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "Asha Rao" } });
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+    expect(screen.getByText(/₹499 for the first month of your number is held from your credits/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Start verification" }));
+    expect(await screen.findByText(/You need ₹499 more in your credits to start/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Add credits" })).toHaveAttribute("href", "/app/tenants/t1/billing");
+    expect(document.querySelector('[data-part="verify-error"]')).toBeNull();
+  });
+  it("what is held is said, and 'Stop and get my credits back' asks once, refunds and starts over", async () => {
+    const held = STATUS({ state: "created", reserve: { state: "held", amountText: "₹499", priceText: "₹499", dueAt: "2026-12-10T00:00:00Z" } });
+    const cancel = vi.fn(async () => ({ ok: true as const, data: STATUS({ state: "not_started", accountType: null, reserve: { state: "refunded", amountText: "₹499", priceText: "₹499", dueAt: null } }) }));
+    drawVerify(held, verifyActions({ cancel }));
+    expect(screen.getByText("₹499 is held for your phone number. It is given back if you do not finish in 14 days.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Stop and get my credits back" }));
+    expect(cancel).not.toHaveBeenCalled();
+    expect(screen.getByText(/gives ₹499 back to your balance/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Yes, stop and refund" }));
+    await waitFor(() => expect(cancel).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(document.querySelector('[data-part="verify"]')).toHaveAttribute("data-state", "not_started"));
   });
 });

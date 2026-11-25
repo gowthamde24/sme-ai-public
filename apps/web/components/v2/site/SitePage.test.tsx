@@ -135,7 +135,7 @@ describe("the home page (landing v9, approved by the owner on 23 Nov 2026: mocks
   });
   it("the plans are the plan data's: three cards with their monthly prices, extra minutes, searches and the 18% GST line", () => {
     const t = text(home());
-    for (const s of ["Pay as you go", "₹499", "Pro", "₹1,999", "Business", "₹5,999", "Calls ₹5 a minute", "Extra minutes ₹5", "500 minutes included", "1,500 minutes included", "extra ₹299", "All prices exclude 18% GST"]) expect(t, s).toContain(s);
+    for (const s of ["Pay as you go", "₹499", "Pro", "₹1,999", "Business", "₹5,999", "Calls ₹5 a minute", "Extra minutes ₹5", "500 minutes included", "1,500 minutes included", "extra ₹499", "All prices exclude 18% GST"]) expect(t, s).toContain(s);
     expect(t).not.toMatch(/yearly|annual|2 months free|price lock/i);
   });
   it("the interactive parts are real controls: tabs with a tablist, the questions as buttons that say whether they are open, the job draft's chips as pressed-state buttons", () => {
@@ -208,7 +208,7 @@ describe("The assistant's flow on the business pages and the other pages (night 
 });
 
 describe("no price of ours anywhere on the public site except the three paid plans (owner's final numbers, 19 Nov 2026) and no 'no card' claim", () => {
-  const OWN = new Set(["\u20b9499", "\u20b91,999", "\u20b95,999", "\u20b95", "\u20b9299", "\u20b950", "\u20b949", "\u20b939", "\u20b929", "\u20b9100"]); // (\u20b9100: the free start of the launch pricing page and help)
+  const OWN = new Set(["\u20b9499", "\u20b91,999", "\u20b95,999", "\u20b95", "\u20b9499", "\u20b950", "\u20b949", "\u20b939", "\u20b929", "\u20b9100"]); // (\u20b9100: the free start of the launch pricing page and help)
   it.each(cases)("%s: no amount except the plans' own, no card claim", (_n, lang, target) => {
     // landing v2's labelled examples show a customer's own budget and the visitor's own estimate in rupees (never a price of ours): the hero stage, the sample call and the leak; the plans' own numbers are lib/site/plans.ts
     const html = render(lang, target).replace(/data-part="leak"[\s\S]*?<\/section>/, ""); // the counter's own estimate in rupees (the visitor's sliders) is not a price of ours

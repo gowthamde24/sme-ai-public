@@ -134464,10 +134464,10 @@
   }
  },
  "ln.err.no_number": {
-  "en": "Get a phone number first. Each number comes with two lines.",
-  "te": "ముందు ఫోన్ నంబర్ తీసుకోండి. ప్రతి నంబర్‌తో రెండు లైన్లు వస్తాయి.",
-  "hi": "पहले फ़ोन नंबर लीजिए। हर नंबर के साथ दो लाइनें आती हैं।",
-  "kn": "ಮೊದಲು ಫೋನ್ ನಂಬರ್ ತೆಗೆದುಕೊಳ್ಳಿ. ಪ್ರತಿ ನಂಬರ್‌ನೊಂದಿಗೆ ಎರಡು ಲೈನ್‌ಗಳು ಬರುತ್ತವೆ.",
+  "en": "Get a phone number first. A new number comes with one call line.",
+  "te": "ముందు ఫోన్ నంబర్ తీసుకోండి. కొత్త నంబర్‌తో ఒక కాల్ లైన్ వస్తుంది.",
+  "hi": "पहले फ़ोन नंबर लें। नए नंबर के साथ एक कॉल लाइन आती है।",
+  "kn": "ಮೊದಲು ಫೋನ್ ನಂಬರ್ ತೆಗೆದುಕೊಳ್ಳಿ. ಹೊಸ ನಂಬರ್‌ನೊಂದಿಗೆ ಒಂದು ಕಾಲ್ ಲೈನ್ ಬರುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -137258,10 +137258,10 @@
   }
  },
  "pick.buy.s3.now.start": {
-  "en": "Start by creating your calling account. It takes a few minutes and you can stop and come back.",
-  "te": "ముందు మీ కాలింగ్ అకౌంట్ తయారు చేయండి. కొద్ది నిమిషాలు పడుతుంది, ఆపి మళ్ళీ రావచ్చు.",
-  "hi": "पहले अपना कॉलिंग अकाउंट बनाएँ। इसमें कुछ मिनट लगते हैं, आप रुककर बाद में लौट सकते हैं।",
-  "kn": "ಮೊದಲು ನಿಮ್ಮ ಕಾಲಿಂಗ್ ಅಕೌಂಟ್ ಮಾಡಿ. ಕೆಲವು ನಿಮಿಷ ಬೇಕು, ನಿಲ್ಲಿಸಿ ಮತ್ತೆ ಬರಬಹುದು.",
+  "en": "Start by creating your calling account. It takes a few minutes and you can stop and come back. {price} for the first month of your number is held from your credits and given back if you do not finish.",
+  "te": "ముందు మీ కాలింగ్ అకౌంట్ తయారు చేయండి. కొద్ది నిమిషాలు పడుతుంది, ఆపి మళ్ళీ రావచ్చు. మీ నంబర్ మొదటి నెల కోసం {price} మీ క్రెడిట్స్ నుంచి ఆపి ఉంచుతాం, పూర్తి చేయకపోతే తిరిగి ఇచ్చేస్తాం.",
+  "hi": "पहले अपना कॉलिंग अकाउंट बनाएँ। इसमें कुछ मिनट लगते हैं, आप रुककर बाद में लौट सकते हैं। आपके नंबर के पहले महीने के लिए {price} आपके क्रेडिट से रोका जाता है और पूरा न करें तो वापस दे दिया जाता है।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಕಾಲಿಂಗ್ ಅಕೌಂಟ್ ಮಾಡಿ. ಕೆಲವು ನಿಮಿಷ ಬೇಕು, ನಿಲ್ಲಿಸಿ ಮತ್ತೆ ಬರಬಹುದು. ನಿಮ್ಮ ನಂಬರ್‌ನ ಮೊದಲ ತಿಂಗಳಿಗೆ {price} ನಿಮ್ಮ ಕ್ರೆಡಿಟ್‌ನಿಂದ ತಡೆದಿಡುತ್ತೇವೆ, ಮುಗಿಸದಿದ್ದರೆ ವಾಪಸ್ ಕೊಡುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -137626,6 +137626,138 @@
   "te": "మీ పోస్టాఫీస్ రాసే విధంగా సిటీ పేరు ఎంచుకోండి.",
   "hi": "शहर का नाम वैसा चुनें जैसा आपका डाकघर लिखता है।",
   "kn": "ನಿಮ್ಮ ಪೋಸ್ಟ್ ಆಫೀಸ್ ಬರೆಯುವಂತೆ ಸಿಟಿ ಹೆಸರು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.reserve.held": {
+  "en": "{amount} is held for your phone number. It is given back if you do not finish in 14 days.",
+  "te": "{amount} మీ ఫోన్ నంబర్ కోసం ఆపి ఉంచాం. 14 రోజుల్లో పూర్తి చేయకపోతే తిరిగి ఇచ్చేస్తాం.",
+  "hi": "{amount} आपके फ़ोन नंबर के लिए रोका गया है। 14 दिन में पूरा न करें तो वापस दे दिया जाएगा।",
+  "kn": "{amount} ನಿಮ್ಮ ಫೋನ್ ನಂಬರ್‌ಗಾಗಿ ತಡೆದಿಡಲಾಗಿದೆ. 14 ದಿನದಲ್ಲಿ ಮುಗಿಸದಿದ್ದರೆ ವಾಪಸ್ ಕೊಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.reserve.refunded": {
+  "en": "{amount} was given back to your balance.",
+  "te": "{amount} మీ బ్యాలెన్స్‌కి తిరిగి వచ్చింది.",
+  "hi": "{amount} आपके बैलेंस में वापस आ गया।",
+  "kn": "{amount} ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್‌ಗೆ ವಾಪಸ್ ಬಂದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.reserve.stop": {
+  "en": "Stop and get my credits back",
+  "te": "ఆపి నా క్రెడిట్స్ తిరిగి తీసుకోండి",
+  "hi": "रोकें और मेरे क्रेडिट वापस लें",
+  "kn": "ನಿಲ್ಲಿಸಿ, ನನ್ನ ಕ್ರೆಡಿಟ್ ವಾಪಸ್ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.reserve.ask": {
+  "en": "This stops the verification and gives {amount} back to your balance. You can start again later.",
+  "te": "ఇది వెరిఫికేషన్‌ని ఆపి {amount} మీ బ్యాలెన్స్‌కి తిరిగి ఇస్తుంది. తర్వాత మళ్ళీ మొదలుపెట్టవచ్చు.",
+  "hi": "इससे वेरिफ़िकेशन रुक जाएगा और {amount} आपके बैलेंस में वापस आ जाएगा। बाद में फिर शुरू कर सकते हैं।",
+  "kn": "ಇದು ವೆರಿಫಿಕೇಶನ್ ನಿಲ್ಲಿಸಿ {amount} ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್‌ಗೆ ವಾಪಸ್ ಕೊಡುತ್ತದೆ. ನಂತರ ಮತ್ತೆ ಶುರು ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.reserve.yes": {
+  "en": "Yes, stop and refund",
+  "te": "అవును, ఆపి తిరిగి ఇవ్వండి",
+  "hi": "हाँ, रोकें और वापस करें",
+  "kn": "ಹೌದು, ನಿಲ್ಲಿಸಿ ವಾಪಸ್ ಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.reserve.no": {
+  "en": "Keep going",
+  "te": "కొనసాగించండి",
+  "hi": "जारी रखें",
+  "kn": "ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.reserve.note": {
+  "en": "Starting holds {price} from your credits for the first month of your number. It is given back if you do not finish.",
+  "te": "మొదలుపెడితే మీ నంబర్ మొదటి నెల కోసం {price} మీ క్రెడిట్స్ నుంచి ఆపి ఉంచుతాం. పూర్తి చేయకపోతే తిరిగి ఇచ్చేస్తాం.",
+  "hi": "शुरू करने पर आपके नंबर के पहले महीने के लिए {price} आपके क्रेडिट से रोका जाता है। पूरा न करें तो वापस दे दिया जाता है।",
+  "kn": "ಶುರು ಮಾಡಿದರೆ ನಿಮ್ಮ ನಂಬರ್‌ನ ಮೊದಲ ತಿಂಗಳಿಗೆ {price} ನಿಮ್ಮ ಕ್ರೆಡಿಟ್‌ನಿಂದ ತಡೆದಿಡುತ್ತೇವೆ. ಮುಗಿಸದಿದ್ದರೆ ವಾಪಸ್ ಕೊಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.credits.needed": {
+  "en": "You need {needed} more in your credits to start. It is held for your phone number and given back if you do not finish.",
+  "te": "మొదలుపెట్టడానికి మీ క్రెడిట్స్‌లో {needed} ఇంకా కావాలి. అది మీ ఫోన్ నంబర్ కోసం ఆపి ఉంచుతాం, పూర్తి చేయకపోతే తిరిగి ఇచ్చేస్తాం.",
+  "hi": "शुरू करने के लिए आपके क्रेडिट में {needed} और चाहिए। वह आपके फ़ोन नंबर के लिए रोका जाता है, पूरा न करें तो वापस दे दिया जाता है।",
+  "kn": "ಶುರು ಮಾಡಲು ನಿಮ್ಮ ಕ್ರೆಡಿಟ್‌ನಲ್ಲಿ ಇನ್ನೂ {needed} ಬೇಕು. ಅದು ನಿಮ್ಮ ಫೋನ್ ನಂಬರ್‌ಗಾಗಿ ತಡೆದಿಡಲಾಗುತ್ತದೆ, ಮುಗಿಸದಿದ್ದರೆ ವಾಪಸ್ ಕೊಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.credits.add": {
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ జోడించండి",
+  "hi": "क्रेडिट जोड़ें",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.aadhaar.stay": {
+  "en": "Stay on the page until it moves you back.",
+  "te": "ఇది మిమ్మల్ని వెనక్కి తెచ్చే వరకు ఈ పేజీలోనే ఉండండి.",
+  "hi": "जब तक यह आपको वापस न ले आए, इस पेज पर ही रहें।",
+  "kn": "ಇದು ನಿಮ್ಮನ್ನು ವಾಪಸ್ ತರುವವರೆಗೆ ಈ ಪುಟದಲ್ಲೇ ಇರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.aadhaar.pending": {
+  "en": "The Aadhaar check has not reached us yet.",
+  "te": "ఆధార్ చెక్ ఇంకా మాకు చేరలేదు.",
+  "hi": "आधार की जाँच अभी हम तक नहीं पहुँची।",
+  "kn": "ಆಧಾರ್ ಚೆಕ್ ಇನ್ನೂ ನಮಗೆ ತಲುಪಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.aadhaar.again": {
+  "en": "Start the Aadhaar check again",
+  "te": "ఆధార్ చెక్ మళ్ళీ మొదలుపెట్టండి",
+  "hi": "आधार की जाँच फिर से शुरू करें",
+  "kn": "ಆಧಾರ್ ಚೆಕ್ ಮತ್ತೆ ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

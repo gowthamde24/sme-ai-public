@@ -7,7 +7,7 @@ import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import type { KycReason, KycStatus } from "@/lib/api/business-kyc";
 import { requireUser } from "@/lib/auth/session";
-import { checkGst, checkPan, readStatus, saveDetails, startAadhaar, startAccount, submitAll, type KycError, type KycResult } from "@/lib/phone-kyc/source";
+import { cancelAccount, checkGst, checkPan, readStatus, saveDetails, startAadhaar, startAccount, submitAll, type KycError, type KycResult } from "@/lib/phone-kyc/source";
 import { acceptUsageStep, claimNumber, searchNumbers } from "@/lib/phone-picker/source";
 import type { OwnNumber, SearchResult, UnavailableReason } from "@/lib/phone-picker/types";
 import { lookupPin, type PinFound } from "@/lib/phone-kyc/pincode";
@@ -93,4 +93,11 @@ export async function kycSubmitAction(tenantId: string): Promise<KycResult> {
 export async function kycPinAction(tenantId: string, pin: unknown): Promise<PinFound | null> {
   const who = await owner(tenantId);
   return who && !off() ? lookupPin(pin) : null;
+}
+export async function kycCancelAction(tenantId: string): Promise<KycResult> {
+  const who = await owner(tenantId);
+  if (!who || off()) return forbidden;
+  const out = await cancelAccount(who.token, tenantId);
+  revalidatePath(`/app/tenants/${tenantId}/phone-number`);
+  return out;
 }

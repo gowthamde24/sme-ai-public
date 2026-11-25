@@ -152,11 +152,11 @@ describe("Billing v2: the upgrade hint", () => {
 });
 
 describe("Billing v2: numbers on demand", () => {
-  it("1 number included, each extra ₹299 a month, and 'Add a number' goes to the Phone number page (nothing is bought here)", () => {
+  it("1 number included, each extra ₹499 a month, and 'Add a number' goes to the Phone number page (nothing is bought here)", () => {
     render(<BillingV2 {...props("numbers")} />);
     expect(line("numbers")).toHaveTextContent("You have 3 numbers");
-    expect(line("numbers")).toHaveTextContent("1 number is included. Each extra number is ₹299 a month.");
-    expect(line("numbers")).toHaveTextContent("Extra numbers this month: ₹598");
+    expect(line("numbers")).toHaveTextContent("1 number is included. Each extra number is ₹499 a month.");
+    expect(line("numbers")).toHaveTextContent("Extra numbers this month: ₹998");
     expect(within(line("numbers")).getByRole("link", { name: "Add a number" })).toHaveAttribute("href", "/app/tenants/t1/phone-number");
     expect(within(line("numbers")).queryByRole("button")).toBeNull();
   });

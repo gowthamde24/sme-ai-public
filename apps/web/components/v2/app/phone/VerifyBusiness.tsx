@@ -8,9 +8,12 @@ import type { AccountType, KycStatus } from "@/lib/api/business-kyc";
 import type { KycResult } from "@/lib/phone-kyc/source";
 import type { OwnNumber } from "@/lib/phone-picker/types";
 
-import { btnMain } from "../ui";
+import { formatRupeesShort } from "@/lib/money";
+import { EXTRA_NUMBER_PAISE } from "@/lib/plan/plans-v2";
+
+import { btnMain, fieldHelp } from "../ui";
 import { makeT, type Words } from "../words";
-import { Flow, type Fail, type VerifyActions } from "./KycFlow";
+import { CreditsNeeded, Flow, ReserveNote, type Fail, type VerifyActions } from "./KycFlow";
 import { PREFILL_KEY } from "./kyc-shared";
 import { Notice, Seg, Step } from "./steps";
 
@@ -97,6 +100,8 @@ export function VerifyBusiness({ words, status: first, own, canEdit, actions, bu
                   </button>
                 </div>
               ) : null}
+              {fail?.error === "credits_needed" ? <CreditsNeeded t={t} needed={fail.needed} href={actions.creditsHref} /> : null}
+              <p className={`${fieldHelp} m-0`}>{t("pick.kyc.reserve.note", { price: formatRupeesShort(EXTRA_NUMBER_PAISE) })}</p>
             </div>
           )}
         </Step>
@@ -104,7 +109,7 @@ export function VerifyBusiness({ words, status: first, own, canEdit, actions, bu
           {working || stuck ? <p className="m-0 mt-1 text-[15px] text-muted">{t(status.accountType === "business" || type === "business" ? "pick.kyc.s3.body.business" : "pick.kyc.s3.body")}</p> : null}
           {working && canEdit ? (
             open ? (
-              <Flow t={t} status={status} actions={actions} prefill={prefill} busy={busy} run={run} fail={fail} setFail={setFail} />
+              <Flow t={t} status={status} actions={actions} prefill={prefill} busy={busy} run={run} fail={fail} setFail={setFail} refresh={setStatus} />
             ) : (
               <div className="mt-3">
                 <button type="button" data-part="start-verification" onClick={() => setOpen(true)} className={btnMain}>
@@ -114,6 +119,7 @@ export function VerifyBusiness({ words, status: first, own, canEdit, actions, bu
             )
           ) : null}
           {working && !canEdit ? <p className="m-0 mt-2 text-[15px] text-muted">{t("pick.err.forbidden")}</p> : null}
+          {started ? <div className="mt-2"><ReserveNote t={t} status={status} canEdit={canEdit} busy={busy} onCancel={actions.cancel ? () => void run(actions.cancel as () => Promise<KycResult>) : undefined} /></div> : null}
           {waitingLine ? (
             <p role="status" data-part="waiting-line" className="m-0 mt-2 text-[15px] text-muted">
               {t("pick.kyc.waiting")}

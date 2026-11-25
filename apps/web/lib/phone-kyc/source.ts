@@ -1,5 +1,5 @@
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
-import { DOC_TYPES, fieldReasons, kycAadhaar, kycDetails, kycDocument, kycGst, kycPan, kycStart, kycSubmit, readKyc, refusalReason, type AccountType, type DocType, type KycDetails, type KycReason, type KycStatus } from "@/lib/api/business-kyc";
+import { DOC_TYPES, fieldReasons, kycAadhaar, kycCancel, kycDetails, kycDocument, kycGst, kycPan, kycStart, kycSubmit, readKyc, refusalReason, type AccountType, type DocType, type KycDetails, type KycReason, type KycStatus } from "@/lib/api/business-kyc";
 import { clearJar, readJar, writeJar } from "@/lib/mock/jar";
 import { kycPerClient } from "@/lib/screens/flag";
 
@@ -14,8 +14,8 @@ export const COOKIE = "sme_kyc_mock";
 export const MAX_FILE_BYTES = RULE_MAX_FILE_BYTES;
 export const FILE_TYPES = RULE_FILE_TYPES;
 
-export type KycError = "invalid" | "forbidden" | "step_up" | "down" | "refused";
-export type KycRefusal = { ok: false; error: KycError; reason?: KycReason; missing?: string[]; /** a `422 kyc_fields_invalid`: each bad field and its closed word */ fieldReasons?: Record<string, string> };
+export type KycError = "invalid" | "forbidden" | "step_up" | "down" | "refused" | "credits_needed";
+export type KycRefusal = { ok: false; error: KycError; reason?: KycReason; missing?: string[]; /** a `422 kyc_fields_invalid`: each bad field and its closed word */ fieldReasons?: Record<string, string>; /** `credits_needed`: what is missing, as the API says it ("₹499") */ needed?: string };
 export type KycResult<T = KycStatus> = { ok: true; data: T } | KycRefusal;
 
 const text = (v: unknown, min: number, max: number): string | null => (typeof v === "string" && v.trim().length >= min && v.trim().length <= max ? v.trim() : null);
@@ -32,7 +32,7 @@ function mockStatus(k: Kept): KycStatus {
   const state = k.state === "submitted" && Date.now() - k.at > 60_000 ? "verified" : k.state;
   const wants: DocType[] = k.type === "business" ? ["pan", "aadhaar", "gst"] : ["pan", "aadhaar"];
   const next = wants.find((d) => !k.docs.includes(d));
-  return { state, accountType: k.type, step: state === "verified" || state === "submitted" ? "complete" : next ?? "complete", steps: Object.fromEntries(wants.map((d) => [d, k.docs.includes(d)])) as KycStatus["steps"], missing: [], reason: null };
+  return { state, accountType: k.type, step: state === "verified" || state === "submitted" ? "complete" : next ?? "complete", steps: Object.fromEntries(wants.map((d) => [d, k.docs.includes(d)])) as KycStatus["steps"], missing: [], reason: null, aadhaarVerified: k.docs.includes("aadhaar") ? true : null, reserve: k.state === "not_started" ? { state: "none", amountText: null, priceText: "₹499", dueAt: null } : state === "verified" ? { state: "applied", amountText: "₹499", priceText: "₹499", dueAt: null } : { state: "held", amountText: "₹499", priceText: "₹499", dueAt: new Date(k.at + 14 * 86_400_000).toISOString() } };
 }
 const mock = (): boolean => kycPerClient() === "mock";
 const keep = async (k: Kept): Promise<KycResult> => ((await writeJar(COOKIE, k)) ? { ok: true, data: mockStatus(k) } : { ok: false, error: "down" });
@@ -41,6 +41,7 @@ export function refused(error: unknown): KycRefusal {
   if (error instanceof ApiAuthError) throw error;
   if (error instanceof ApiRequestError) {
     if (error.status === 403) return { ok: false, error: error.code === "mfa_required" || error.code === "step_up_required" ? "step_up" : "forbidden" };
+    if (error.status === 402 && error.code === "credits_needed") return { ok: false, error: "credits_needed", needed: error.extra?.needed?.text };
     const fr = fieldReasons(error);
     if (fr) return { ok: false, error: "invalid", fieldReasons: fr };
     const r = refusalReason(error);
@@ -194,4 +195,20 @@ export async function submitAll(token: string, tenantId: string): Promise<KycRes
 /** Test screen only: start again. */
 export async function resetMock(): Promise<void> {
   if (mock()) await clearJar(COOKIE);
+}
+
+/** "Stop and get my credits back" (Owner; not for a verified business): the held month is refunded in full, the unverified account is deleted and the state is `not_started` again. */
+export async function cancelAccount(token: string, tenantId: string): Promise<KycResult> {
+  if (kycPerClient() === "off") return { ok: false, error: "invalid" };
+  if (mock()) {
+    const k = await readJar(COOKIE, parseKept, NONE);
+    if (k.state === "verified") return { ok: false, error: "refused", reason: "step_order" };
+    await clearJar(COOKIE);
+    return { ok: true, data: mockStatus(NONE) };
+  }
+  try {
+    return { ok: true, data: await kycCancel(token, tenantId) };
+  } catch (error) {
+    return refused(error);
+  }
 }

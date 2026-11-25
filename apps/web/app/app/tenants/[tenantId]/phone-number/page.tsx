@@ -25,7 +25,7 @@ import { readNumber, readOwn } from "@/lib/phone-picker/source";
 import { menuTitle } from "../menu-title";
 import { addLineAction, cancelLineAction, keepLineAction } from "./lines-actions";
 import { claimNumberAction, ownNumberAction, searchNumbersAction } from "./picker-actions";
-import { buyNumberAction, kycAadhaarAction, kycDetailsAction, kycGstAction, kycPanAction, kycPinAction, kycStartAction, kycStatusAction, kycSubmitAction, searchAvailableAction } from "./kyc-actions";
+import { buyNumberAction, kycAadhaarAction, kycDetailsAction, kycGstAction, kycPanAction, kycCancelAction, kycPinAction, kycStartAction, kycStatusAction, kycSubmitAction, searchAvailableAction } from "./kyc-actions";
 
 export const metadata = { title: `Your business number · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -106,6 +106,8 @@ export default async function PhoneNumberPage({ params, searchParams }: PageProp
                     aadhaar: kycAadhaarAction.bind(null, tenantId),
                     submit: kycSubmitAction.bind(null, tenantId),
                     pin: kycPinAction.bind(null, tenantId),
+                    cancel: kycCancelAction.bind(null, tenantId),
+                    creditsHref: `/app/tenants/${tenantId}/billing`,
                     uploadUrl: `${here}/kyc-document`,
                   },
                 }}
@@ -134,6 +136,8 @@ export default async function PhoneNumberPage({ params, searchParams }: PageProp
                 aadhaar: kycAadhaarAction.bind(null, tenantId),
                 submit: kycSubmitAction.bind(null, tenantId),
                     pin: kycPinAction.bind(null, tenantId),
+                    cancel: kycCancelAction.bind(null, tenantId),
+                    creditsHref: `/app/tenants/${tenantId}/billing`,
                 uploadUrl: `${here}/kyc-document`,
               }}
             />

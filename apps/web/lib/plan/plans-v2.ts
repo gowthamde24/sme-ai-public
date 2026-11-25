@@ -27,7 +27,7 @@ export const PLAN_TERMS: Readonly<Record<PlanKey, PlanTerms>> = {
 export const MINUTE_PAISE = 5_00;
 /** 1 number is included; each extra number a month, on every plan. */
 export const NUMBERS_INCLUDED = 1;
-export const EXTRA_NUMBER_PAISE = 299_00;
+export const EXTRA_NUMBER_PAISE = 499_00;
 export const GST_PERCENT = 18;
 /** The free start for a new business. */
 export const FREE_START_PAISE = 50_00;

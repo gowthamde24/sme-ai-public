@@ -40,7 +40,7 @@ describe("pricing (the approved mock)", () => {
   });
   it("lists what you pay for, has no draft tags (call charging is wired) and says GST is extra", () => {
     const t = text(h);
-    for (const s of ["From ₹5 a minute", "₹299 a month", "Nothing to pay", "Free", "At Meta's price"]) expect(t, s).toContain(s);
+    for (const s of ["From ₹5 a minute", "₹499 a month", "Nothing to pay", "Free", "At Meta's price"]) expect(t, s).toContain(s);
     expect(h).not.toContain('data-part="draft-tag"');
     expect(t).not.toContain("Draft: to be confirmed");
     expect(t).toContain("18% GST is added on your invoice");

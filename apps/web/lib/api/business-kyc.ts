@@ -19,6 +19,9 @@ export type KycReason = (typeof KYC_REASONS)[number];
 export const DOC_TYPES = ["pan", "aadhaar", "gst"] as const;
 export type DocType = (typeof DOC_TYPES)[number];
 
+/** The first month of the number, held from the credits when the account is made (business-kyc.md, "The first month of the number"). */
+export const RESERVE_STATES = ["none", "held", "refunded", "applied"] as const;
+export type Reserve = { state: (typeof RESERVE_STATES)[number]; amountText: string | null; priceText: string | null; dueAt: string | null };
 export type KycStatus = {
   state: KycState;
   accountType: AccountType | null;
@@ -29,12 +32,21 @@ export type KycStatus = {
   /** names of documents still missing after a submit (short plain names, at most 6) */
   missing: string[];
   reason: KycReason | null;
+  /** the money held for the number (absent from an older API) */
+  reserve?: Reserve | null;
+  /** the DigiLocker check reached the phone service: true; still pending: false; the service does not say: null (the old `steps.aadhaar` is only about an uploaded document) */
+  aadhaarVerified?: boolean | null;
 };
 
 const base = (tenantId: string): string => (isCanonicalUuid(tenantId) ? `/v1/tenants/${tenantId}/phone-kyc/business` : bad("tenant id"));
 
 const reasonOf = (v: unknown): KycReason | null => (typeof v === "string" ? ((KYC_REASONS as readonly string[]).includes(v) ? (v as KycReason) : "refused") : null);
 
+function parseReserve(v: unknown): Reserve | null {
+  if (!isRec(v) || !(RESERVE_STATES as readonly unknown[]).includes(v.state)) return null;
+  const t = (x: unknown): string | null => (typeof x === "string" && x.length > 0 && x.length <= 40 ? x : null);
+  return { state: v.state as Reserve["state"], amountText: t(v.amount_text), priceText: t(v.price_text), dueAt: typeof v.due_at === "string" ? v.due_at.slice(0, 40) : null };
+}
 export function parseStatus(json: unknown): KycStatus {
   const x = rec(json, "kyc");
   const steps: Partial<Record<DocType, boolean>> = {};
@@ -48,6 +60,8 @@ export function parseStatus(json: unknown): KycStatus {
     steps,
     missing,
     reason: reasonOf(x.reason),
+    reserve: parseReserve(x.reserve),
+    aadhaarVerified: typeof x.aadhaar_verified === "boolean" ? x.aadhaar_verified : null,
   };
 }
 /** `422 kyc_fields_invalid` (business-kyc.md, 26 Nov 2026): each bad field of the form and its closed word (`mobile_invalid`, `pincode_invalid`, ...). Null for any other refusal. */
@@ -68,6 +82,7 @@ export async function readKyc(token: string, tenantId: string): Promise<KycStatu
 }
 const post = async (token: string, tenantId: string, tail: string, body: unknown): Promise<unknown> => apiRequest(`${base(tenantId)}/${tail}`, token, { method: "POST", body: JSON.stringify(body) });
 
+export const kycCancel = async (token: string, tenantId: string): Promise<KycStatus> => parseStatus(await post(token, tenantId, "cancel", {}));
 export const kycStart = async (token: string, tenantId: string): Promise<KycStatus> => parseStatus(await post(token, tenantId, "start", {}));
 export type KycDetails = { accountType: AccountType; businessName: string | null; fullName: string; phone: string; billingAddress: string; state: string | null; city: string | null; pincode: string | null };
 export const kycDetails = async (token: string, tenantId: string, d: KycDetails): Promise<KycStatus> =>
