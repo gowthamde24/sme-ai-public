@@ -75,6 +75,7 @@ def test_every_route_without_a_sign_in_has_a_rate_rule_and_is_on_the_known_list(
         "/v1/privacy/subprocessors",  # job DQ: the processors as data (public, cached)
         "/v1/privacy/grievance",  # job DQ: a grievance from anyone (rate limited; the database holds its own caps)
         "/v1/public/waitlist",  # job DQ: the public site's waitlist (rate limited; the database holds its own caps)
+        "/v1/public/turnstile/verify",  # release 2: the web's check box (Cloudflare Turnstile): one check of a single-use token, per-person limit in the route
         "/v1/public/contact",  # the "Talk to us" form (CONTACT_FORM; captcha, per-address and per-contact limits, the database holds its own cap)
         "/v1/packs", "/v1/auth/providers",  # job CK: the sign-up cards and the sign-up providers (public by design, no tenant data)
         "/v1/webhooks/whatsapp", "/v1/webhooks/razorpay", "/v1/webhooks/razorpay-billing", "/v1/webhooks/cashfree", "/v1/webhooks/fake-payments",  # jobs BR, BZ: signed or secret-path webhooks

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from app.billing.mail import EmailSender
 from app.config import Settings
-from app.dpdp.captcha import build_captcha
+from app.dpdp.captcha import NoCaptcha, build_captcha
 from app.dpdp.mail import DpdpJobs, IntakeMail, LapseErasure
 from app.dpdp.repository import PostgrestDpdpRepository
 from app.dpdp.runtime import DpdpRuntime
@@ -12,11 +12,14 @@ from app.dpdp.runtime import DpdpRuntime
 
 def build_dpdp(settings: Settings, rest_url: str, anon_key: str) -> DpdpRuntime:
     secret = settings.captcha_secret.get_secret_value() if settings.captcha_secret else None
+    verifier = build_captcha(settings.captcha_provider, secret)
     return DpdpRuntime(
         PostgrestDpdpRepository(rest_url, anon_key),
         privacy_email=settings.privacy_email,
         hello_email=settings.hello_email,
-        captcha=build_captcha(settings.captcha_provider, secret),
+        # a Turnstile token is single use: with turnstile the web's check box is checked ONCE, by `POST /v1/public/turnstile/verify`, and the forms arrive with `captcha_token: null`
+        captcha=NoCaptcha() if settings.captcha_provider == "turnstile" else verifier,
+        checker=verifier,
     )
 
 

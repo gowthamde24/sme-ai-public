@@ -4,6 +4,7 @@
     GET  /v1/privacy/notice          {privacy_version, terms_version, contact, grievance, retention, purposes}
     GET  /v1/privacy/subprocessors   {version, updated_on, wording, subprocessors: [...]}   the companies that process personal data, as data
     POST /v1/privacy/grievance       {grievance_id?, name, contact, kind, details, language?, captcha_token?}   -> 201 {reference, status, received_at, answer_due_on, answer_within_days}
+    POST /v1/public/turnstile/verify {token, ip?}   -> 200 {ok}   the web's check box (Cloudflare Turnstile): ONE check of a single-use token; ok false for a bad token; 429 past 60 a minute for one address; the token is never logged
     POST /v1/public/waitlist         {name, business_type, city, phone?, email?, language, marketing_opt_in, notice_version, captcha_token?}   -> 201 {status: joined} | 200 {status: already_joined}
   A SIGNED-IN PERSON
     GET  /v1/me/consents             the state of each purpose and the history
@@ -22,7 +23,14 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 
 from app.auth.deps import PrincipalDep, Runtime, get_runtime
-from app.dpdp.models import ContactIn, MarketingConsentIn, ProfileIn, PublicGrievanceIn, WaitlistIn
+from app.dpdp.models import (
+    ContactIn,
+    MarketingConsentIn,
+    ProfileIn,
+    PublicGrievanceIn,
+    TurnstileVerifyIn,
+    WaitlistIn,
+)
 from app.dpdp.runtime import ANSWER_WITHIN_DAYS, SECURITY_LOG_DAYS, DpdpRuntime
 from app.errors import ApiError, not_found
 from app.logging_safety import one_line
@@ -105,6 +113,17 @@ def grievance(body: PublicGrievanceIn, request: Request, runtime: RuntimeDep) ->
     # never the person's words in a log: the reference and the kind only
     logger.info("grievance received reference=%s kind=%s replayed=%s", one_line(answer.get("reference")), one_line(body.kind), replayed)
     return JSONResponse(answer, status_code=200 if replayed else 201, headers={"Cache-Control": "no-store"})
+
+
+@public_router.post("/public/turnstile/verify")
+def turnstile_verify(body: TurnstileVerifyIn, request: Request, runtime: RuntimeDep) -> JSONResponse:
+    """Does this Turnstile token come from a person? `{ok: true}` or `{ok: false}`; never an explanation and never the token in a log. The web asks before it accepts a form or a sign-in after failures (lib/security/turnstile.ts)."""
+    dpdp = _dpdp(runtime)
+    key = "check:" + (body.ip or _address(request))
+    if not dpdp.by_check.allow(key):
+        raise ApiError(429, "rate_limited", "Too many requests. Please try again a little later.", retry_after=int(dpdp.by_check.retry_after(key)))
+    ok = dpdp.checker.ok(body.token, body.ip)
+    return JSONResponse({"ok": bool(ok)}, headers={"Cache-Control": "no-store"})
 
 
 @public_router.post("/public/contact")

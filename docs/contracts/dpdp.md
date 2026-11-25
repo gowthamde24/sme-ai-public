@@ -60,3 +60,9 @@ Cookie banner, the privacy page layout and the wording of the notice are C2's. T
 - The person's data download is a zip with every `.json` file ALSO as `.csv` (the workspace one too: `tables/<name>.json` and `.csv`), plus `consents.json`/`.csv`.
 - Profile: `display_name` may not contain `< > { } \ |` (422).
 - The lapse erasure is OFF until the operator switches it on (`docs/runbooks/dpdp-operations.md`); the screen should still show the dates from `/billing/access`.
+
+## The web's check box: `POST /v1/public/turnstile/verify` (release 2, 26 Nov 2026)
+No sign-in. Body `{token, ip?}` (strict; `token` 1 to 2048 characters). Answer `200 {"ok": true|false}` and nothing else: no reason, and the token is never logged or stored. 429 `rate_limited` past 60 checks a minute for one person (the key is `ip` when the web sends it, else the caller's address); the public rate rule `turnstile_verify` allows 300 a minute for the web server as a whole.
+A Cloudflare Turnstile token is **single use**, so exactly one place checks it. With `CAPTCHA_PROVIDER=turnstile` (and `CAPTCHA_SECRET`) that place is THIS route: the web (`lib/security/turnstile.ts`, only when `TURNSTILE_SITE_KEY` is set) asks it for the waitlist, "Talk to us" and the sign-in after failures, and sends the forms on with `captcha_token: null`; the forms' own check (`captcha` in the runtime) is then off. With `none` the route answers `ok: true` for any token; with `fake` (tests) only the token `pass` is good, and the forms still check themselves. The privacy grievance form has no check box on the web and stays open (a legal channel).
+Known limit: a program that posts straight to the API instead of through the web is not asked for a token (the per-address and per-contact limits and the database caps still apply).
+

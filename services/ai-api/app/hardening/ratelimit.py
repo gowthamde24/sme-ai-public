@@ -53,6 +53,7 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("subprocessors", "/v1/privacy/subprocessors", True, 60),
     PublicRule("grievance", "/v1/privacy/grievance", True, 6),  # a person filing a grievance (the hour's allowance is in the route)
     PublicRule("waitlist", "/v1/public/waitlist", True, 6),
+    PublicRule("turnstile_verify", "/v1/public/turnstile/verify", True, 300),   # the web asks for every checked form: one address (the web server) for all visitors, so a roomy 300 a minute; each person has 60 in the route
     PublicRule("contact", "/v1/public/contact", True, 6),   # the "Talk to us" form: six an hour from one address, like the waitlist
     PublicRule("lead_templates", "/v1/lead-templates", False, 60),  # job DR / A1: the nine business types and their templates (static data)
     PublicRule("lead_intake", "/v1/lead-intake/", False, 60),  # job DR / A2: a website form, a webhook, a portal's mail, Meta (the secret address is the credential; the database holds its own caps)

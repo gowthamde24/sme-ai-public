@@ -14,6 +14,7 @@ SECURITY_LOG_DAYS = 395  # audit and security rows are purged after this many da
 ANSWER_WITHIN_DAYS = 30  # the database sets the same 30 days (migration 20261202090200); a test keeps the two equal
 PER_ADDRESS_PER_HOUR = 5
 PER_CONTACT_PER_HOUR = 3
+CHECKS_PER_MINUTE = 60  # per person (the web sends the person's address), so one busy web server is not one person
 
 
 @dataclass
@@ -22,6 +23,10 @@ class DpdpRuntime:
     privacy_email: str | None = None
     hello_email: str | None = None
     captcha: CaptchaVerifier = field(default_factory=NoCaptcha)
+    # the check of the web's check box (`POST /v1/public/turnstile/verify`): a Turnstile token is single use, so exactly ONE place checks it. With CAPTCHA_PROVIDER=turnstile that place is this route (the web
+    # asks it and sends the forms on with `captcha_token: null`), and `captcha` above (the forms' own check) stays off; with `fake` or `none` the forms check as before and this route answers with the same verifier.
+    checker: CaptchaVerifier = field(default_factory=NoCaptcha)
+    by_check: SlidingWindow = field(default_factory=lambda: SlidingWindow(CHECKS_PER_MINUTE, 60.0))
     by_address: SlidingWindow = field(default_factory=lambda: SlidingWindow(PER_ADDRESS_PER_HOUR, 3600.0))
     by_contact: SlidingWindow = field(default_factory=lambda: SlidingWindow(PER_CONTACT_PER_HOUR, 3600.0))
 
