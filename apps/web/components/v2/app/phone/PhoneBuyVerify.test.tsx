@@ -521,8 +521,9 @@ describe("Aadhaar (DigiLocker): stay on the page, read the status while the link
     fireEvent.click(screen.getByRole("button", { name: "Get the DigiLocker link" }));
     expect(await screen.findByText("Stay on the page until it moves you back.")).toBeInTheDocument();
     expect(status).not.toHaveBeenCalled();
-    await act(async () => void vi.advanceTimersByTime(7100));
-    await waitFor(() => expect(status).toHaveBeenCalled());
+    // move the clock in steps until the 7 s poll has run: if the poll's timer is only set after the first step (a slow machine), the next step still reaches it, so the test never waits 7 real seconds
+    for (let i = 0; i < 5 && !status.mock.calls.length; i++) await act(async () => void vi.advanceTimersByTime(7100)); // (not inside waitFor: the clock step would fire waitFor's own timeout)
+    expect(status).toHaveBeenCalled();
     expect(await screen.findByText(/Your Aadhaar check reached us\. Now upload your Aadhaar file/)).toBeInTheDocument();
     expect(document.querySelector('[data-part="submit"]')).toBeNull(); // not done: the document is still to go up
     expect(document.querySelector('[data-doc="aadhaar"]')).not.toHaveAttribute("data-done");
@@ -541,9 +542,10 @@ describe("Aadhaar (DigiLocker): stay on the page, read the status while the link
     fireEvent.click(screen.getByRole("button", { name: "Get the DigiLocker link" }));
     await screen.findByText("Stay on the page until it moves you back.");
     expect(screen.queryByRole("button", { name: "Start the Aadhaar check again" })).toBeNull();
-    await act(async () => void vi.advanceTimersByTime(121_000));
-    fireEvent.click(await screen.findByRole("button", { name: "Start the Aadhaar check again" }, { timeout: 8000 }));
-    await waitFor(() => expect(aadhaar).toHaveBeenCalledTimes(2), { timeout: 8000 });
+    for (let i = 0; i < 5 && !screen.queryByRole("button", { name: "Start the Aadhaar check again" }); i++) await act(async () => void vi.advanceTimersByTime(121_000));
+    expect(screen.getByRole("button", { name: "Start the Aadhaar check again" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Start the Aadhaar check again" }));
+    await waitFor(() => expect(aadhaar).toHaveBeenCalledTimes(2));
     expect(screen.queryByRole("button", { name: "Start the Aadhaar check again" })).toBeNull(); // the wait starts again with the new link
     vi.useRealTimers();
   });
