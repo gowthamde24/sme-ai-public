@@ -30,7 +30,7 @@ OVERRIDES = ("business", "on", "off")
 
 
 def doc_of(business: bool | None, job: str, word: str) -> dict[str, Any]:
-    doc: dict[str, Any] = {}
+    doc: dict[str, Any] = {"ai_off_undertaking": {"at": "2026-11-26", "by": "owner"}}   # an OFF counts only with the Owner's stored written undertaking (lawyer's opinion, 25 Nov 2026)
     if business is not None:
         doc["say_ai_when_greeting"] = business
     if word != "business":
@@ -38,20 +38,24 @@ def doc_of(business: bool | None, job: str, word: str) -> dict[str, Any]:
     return doc
 
 
+def effective(business: bool | None) -> bool:
+    return True if business is None else business   # the default is ON
+
+
 def expected(business: bool | None, word: str) -> bool:
-    return True if word == "on" else False if word == "off" else bool(business)
+    return True if word == "on" else False if word == "off" else effective(business)
 
 
 # ------------------------------------------------------------------------------------------------------------------ the one rule
 @pytest.mark.parametrize("business", [None, False, True])
 @pytest.mark.parametrize("word", OVERRIDES)
 @pytest.mark.parametrize("job", greeting.JOB_KINDS)
-def test_the_resolved_setting_of_a_job_is_its_override_else_the_business_else_off(business: bool | None, word: str, job: str) -> None:
+def test_the_resolved_setting_of_a_job_is_its_override_else_the_business_else_on(business: bool | None, word: str, job: str) -> None:
     doc = doc_of(business, job, word)
     assert greeting.resolved_for_job(doc, job) is expected(business, word)
     other = next(k for k in greeting.JOB_KINDS if k != job)
-    assert greeting.resolved_for_job(doc, other) is bool(business)   # another job is not touched
-    assert greeting.resolved_for_job(doc, None) is bool(business)    # a call that belongs to no job follows the business
+    assert greeting.resolved_for_job(doc, other) is effective(business)   # another job is not touched
+    assert greeting.resolved_for_job(doc, None) is effective(business)    # a call that belongs to no job follows the business
 
 
 def test_a_word_that_is_not_on_or_off_or_a_job_that_is_not_one_is_no_override() -> None:
@@ -99,7 +103,7 @@ def test_a_call_we_place_opens_with_its_jobs_setting(business: bool, word: str, 
     assert ("AI" in heard) is expected(business, word), (job, word, business, heard)
     other = next(k for k in ("speed_to_lead", "followups", "store_visits", "offers") if k != job)
     elsewhere, _ = phone_parts(voice(), BUSINESS, "en", "haiku", doc, assistant="Priya", outbound=outbound_for(other))
-    assert ("AI" in str(elsewhere.greeting_for("en"))) is bool(business)   # another job's call does not follow this job's word
+    assert ("AI" in str(elsewhere.greeting_for("en"))) is effective(business)   # another job's call does not follow this job's word
 
 
 @pytest.mark.parametrize("word", OVERRIDES)
@@ -113,7 +117,7 @@ def test_a_speed_to_lead_call_opens_as_the_page_says(business: bool, word: str, 
 
 
 def test_a_call_that_belongs_to_no_job_follows_the_business_setting() -> None:
-    doc = {"say_ai_when_greeting": False, "say_ai_by_job": {"speed_to_lead": "on", "followups": "on", "store_visits": "on", "offers": "on", "answer_calls": "on"}}
+    doc = {"ai_off_undertaking": {"at": "2026-11-26", "by": "owner"}, "say_ai_when_greeting": False, "say_ai_by_job": {"speed_to_lead": "on", "followups": "on", "store_visits": "on", "offers": "on", "answer_calls": "on"}}
     call = OutboundCall(row_id=uuid.uuid4(), language="en", purpose="sales_followup", goal=None, opening_line=opening_for("task", "en"), kind="task", tone="friendly")   # job None
     parts, _ = phone_parts(voice(), BUSINESS, "en", "haiku", doc, assistant="Priya", outbound=call)
     assert "AI" not in str(parts.greeting_for("en"))
@@ -149,7 +153,7 @@ def test_a_task_call_is_placed_for_its_templates_job_with_that_jobs_setting(busi
     assert asked["job"] == job and asked["say_ai"] is greeting.resolved_for_job(doc, job)
     assert lookups == [job]
     if job is None:
-        assert asked["say_ai"] is bool(business)   # a custom or feedback task: the business setting, whatever any job says
+        assert asked["say_ai"] is effective(business)   # a custom or feedback task: the business setting, whatever any job says
 
 
 def test_the_job_travels_from_placing_to_answering() -> None:
@@ -191,7 +195,7 @@ def test_the_standing_rules_dialer_places_its_calls_for_the_speed_to_lead_job(wo
 def test_the_phone_servers_lookup_reads_the_job_override_from_the_saved_document(monkeypatch: pytest.MonkeyPatch) -> None:
     import app.talk_training.repository as repository
 
-    saved: dict[str, Any] = {"doc": {"say_ai_when_greeting": False, "say_ai_by_job": {"followups": "on"}}}
+    saved: dict[str, Any] = {"doc": {"ai_off_undertaking": {"at": "2026-11-26", "by": "owner"}, "say_ai_when_greeting": False, "say_ai_by_job": {"followups": "on"}}}
 
     class Fake:
         def __init__(self, *a: Any, **k: Any) -> None: ...

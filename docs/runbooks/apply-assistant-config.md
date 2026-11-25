@@ -7,7 +7,7 @@ export HOSTED_SUPABASE_PUBLISHABLE_KEY=<the public key: supabase projects api-ke
 cd /Volumes/Stack19/stack19/sme-ai-public
 services/ai-api/.venv/bin/python scripts/apply_assistant_config.py --workspace <slug> \
   --supabase-url https://ijmsusgyilwskpjxfauu.supabase.co --api https://sme-api-488341211094.asia-south1.run.app \
-  --days 1-6 --from 09:00 --to 19:00            # the shop's own days and hours
+  --days 1-6 --from 10:00 --to 19:00            # the shop's own days and hours
 ```
 1. First run = a DRY RUN: it prints what would change ("assistant.style: 'warm' -> 'respectful'", ...). Read it with the planner. Nothing is written.
 2. Add `--apply` and run again: it writes the assistant settings, the Telugu voice, how the assistant speaks (tone, AI mention off), the never-say list and the first questions. A value already set is not written again.

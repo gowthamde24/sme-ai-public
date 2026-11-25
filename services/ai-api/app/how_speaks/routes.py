@@ -154,7 +154,7 @@ def put_how_assistant_speaks(ctx: OwnerStrong, runtime: RuntimeDep, body: HowAss
         if "tone" in sent:
             doc["tone"] = body.tone   # None = back to "not chosen yet" (the business type decides)
         if "say_ai_when_greeting" in sent:
-            doc["say_ai_when_greeting"] = body.say_ai_when_greeting   # None = back to the default: the name only
+            doc["say_ai_when_greeting"] = body.say_ai_when_greeting   # None = back to the default: ON
         if "background" in sent:
             doc["background"] = body.background   # None = back to "not chosen yet": off
         if "introduce_as" in sent:

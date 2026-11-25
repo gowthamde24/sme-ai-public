@@ -853,7 +853,7 @@ def test_the_practice_parts_are_the_phone_calls_with_the_training_and_never_cart
     parts = bv_routes.practice_parts(bv_of(), runtime, ctx, "te")
     tts: Any = parts.tts
     assert tts.primary_budget == 0, "Sarvam only: Cartesia is for real test calls"
-    assert "AI" not in str(parts.greeting_for("te")) and "Padma Silks" in str(parts.greeting_for("te")) and "Padma Silks" in str(parts.system_for("te"))
+    assert "AI" in str(parts.greeting_for("te")) and "Padma Silks" in str(parts.greeting_for("te")) and "Padma Silks" in str(parts.system_for("te"))
     assert bv_routes.PracticeCallSession.is_practice and issubclass(bv_routes.PracticeCallSession, VoiceSession)
 
 

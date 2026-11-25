@@ -46,7 +46,7 @@ def test_the_draft_has_the_words_in_the_customers_language_and_sends_nothing(w: 
 def test_the_words_follow_the_customers_language(w: World) -> None:
     w.db.consent_info["language"] = "te"
     said = w.client.get(BASE + f"/leads/{LEAD}/consent-ask", headers=auth("a_owner")).json()["text"]
-    assert "Tenant A" in said and "AI assistant" not in said and "STOP" in said, "the default greeting is the business name only (owner, 20 Nov 2026)"
+    assert "Tenant A" in said and "AI assistant" in said and "STOP" in said, "the default greeting says it is the AI assistant (lawyer's opinion, 25 Nov 2026)"
     assert w.client.get(BASE + f"/leads/{LEAD}/consent-ask", headers=auth("a_owner")).json()["language"] == "te"
 
 

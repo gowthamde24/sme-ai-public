@@ -698,6 +698,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   -- calls charged to the wallet (25 Nov 2026): 'pricing.debts' (a tenant table outside the public schema: no client role has any privilege on it, only the public.pricing_* functions touch it).
   -- credits top-up (24 Nov 2026): 'pricing.refunds' (a tenant table outside the public schema: no client role has any privilege on it, only the public.pricing_* functions touch it).
   -- daily allowance (24 Nov 2026): 'daily_caps.use' (a tenant table outside the public schema: no client role has any privilege on it, only public.daily_cap_take touches it).
+  -- extra lines, calling compliance and waiting for a line (26 Nov 2026): 'ops.line_caps', 'pricing.extra_lines', 'telephony.number_usage_acks', 'telephony.line_waits', 'telephony.line_reserves' (tenant tables outside the public schema: no client role has any privilege on them, only their public.* functions touch them).
   -- business KYC per client (24 Nov 2026): 'telephony.business_clients' (a tenant table outside the public schema: no client role has any privilege on it, only the public.business_client_* functions touch it).
   -- more than one API instance (24 Nov 2026): 'telephony.call_commands' (a tenant table outside the public schema: no client role has any privilege on it, only the public.call_command_* functions touch it).
   -- sign-up opening (24 Nov 2026): 'signup.trial_identities' (a tenant table outside the public schema: no client role has any privilege on it, only the public.signup_* functions touch it).

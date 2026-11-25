@@ -80,7 +80,7 @@ def test_the_words_of_the_preview_change_with_the_tone_and_the_voice_does_not() 
     for style in ("warm", "respectful", "quick"):
         body = client.get(f"{PREVIEW}/text?language=te&style={style}&name=Vani", headers=auth("a_owner")).json()
         said[style] = body["text"]
-        assert body["sound"]["voice_id"] == "te-kavitha" and "AI assistant" not in body["text"] and body["style"] == style
+        assert body["sound"]["voice_id"] == "te-kavitha" and "AI assistant" in body["text"] and body["style"] == style
     assert len(set(said.values())) == 3, "Friendly, Respectful and Short-and-quick are three different sets of words"
 
 
@@ -97,10 +97,10 @@ def test_twelve_a_minute_per_workspace_then_a_429() -> None:
     assert codes[:PREVIEW_PER_MINUTE] == [200] * PREVIEW_PER_MINUTE and codes[-1] == 429
 
 
-def test_the_preview_speaks_the_real_business_name_and_the_name_only_by_default() -> None:
+def test_the_preview_speaks_the_real_business_name_and_says_it_is_the_ai_assistant_by_default() -> None:
     client, _, _ = world()
     body = client.get(f"{PREVIEW}/text?language=en&style=warm&name=Vani", headers=auth("a_owner")).json()
-    assert "Vani" in body["text"] and "AI assistant" not in body["text"] and body["business_name"] == TENANT_A.name and body["assistant_name"] == "Vani"
+    assert "Vani" in body["text"] and "AI assistant" in body["text"] and body["business_name"] == TENANT_A.name and body["assistant_name"] == "Vani"
     assert client.get(f"{PREVIEW}/text?language=en&style=warm&name=Vani", headers=auth("a_viewer")).status_code in (403, 404)
 
 

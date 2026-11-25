@@ -44,6 +44,9 @@ class FakeRepo:
         self.rows[tenant_id] = {"doc": doc, "updated_at": "2026-11-05T12:00:00+00:00"}
         return self.rows[tenant_id]
 
+    def save_undertaking(self, token: str, tenant_id: uuid.UUID, doc: dict[str, Any], by: str, at: str, version: str) -> dict[str, Any]:
+        return self.save(token, tenant_id, {**doc, "ai_off_undertaking": {"at": at, "by": by, "version": version}})
+
     def reset(self, token: str, tenant_id: uuid.UUID) -> None:
         self.rows.pop(tenant_id, None)
 

@@ -1280,7 +1280,7 @@
         "from_minute": {
           "default": 600,
           "maximum": 1260,
-          "minimum": 600,
+          "minimum": 540,
           "multipleOf": 15,
           "title": "From Minute",
           "type": "integer"
@@ -1288,7 +1288,7 @@
         "to_minute": {
           "default": 1140,
           "maximum": 1260,
-          "minimum": 600,
+          "minimum": 540,
           "multipleOf": 15,
           "title": "To Minute",
           "type": "integer"

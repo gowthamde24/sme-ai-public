@@ -99,7 +99,7 @@ def test_the_card_and_hear_it_are_the_same_text_in_every_state_and_language(stor
         assert "{" not in text and "}" not in text
         if name and lang in ("te", "en", "hi", "kn"):   # (the named wording exists for te, en, hi, kn; the other languages leave the name out)
             assert name in text, (lang, text)
-        assert not render.says_ai(text), text   # the default setting is OFF: the name only (owner, 20 Nov 2026); the old switch is not read
+        assert render.says_ai(text), text   # the default setting is ON: it says it is the business's AI assistant (lawyer's opinion, 25 Nov 2026); the old switch is not read
 
 
 def test_a_name_typed_on_the_screen_and_not_yet_saved_is_on_the_card_and_in_hear_it() -> None:
@@ -122,7 +122,7 @@ def test_the_source_says_whether_the_line_is_stored_or_the_default() -> None:
 def test_the_telugu_default_names_the_owners_assistant_and_no_retired_name() -> None:
     client = world(stored=False, mention_ai=True, name="kallu")
     text = client.get(f"{BASE}/opening-line/resolved", params={"language": "te"}, headers=auth("a_owner")).json()["resolved_opening_line"]
-    assert "kallu" in text and TENANT_A.name in text and not render.says_ai(text) and not RETIRED.search(text)
+    assert "kallu" in text and TENANT_A.name in text and render.says_ai(text) and not RETIRED.search(text)
 
 
 def test_the_test_call_opens_with_the_same_line() -> None:

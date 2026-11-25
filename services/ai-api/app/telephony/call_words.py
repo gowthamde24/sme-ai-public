@@ -26,7 +26,7 @@ REFUSED_SENTENCE = {
     "outside_window": "Not called: outside calling hours", "outside_hours": "Not called: outside calling hours", "holiday": "Not called: a holiday",
     "no_consent": "Not called: no consent", "no_proof_of_request": "Not called: this person has not asked us to call", "prospect_no_ai_call": "Not called: Lead Finder prospects are never called by the assistant", "suppressed": "Not called: asked us to stop", "dnd": "Not called: on the do-not-disturb list", "dnd_unknown": "Not called: do-not-disturb could not be checked",
     "workspace_paused": "Not called: the assistant is paused", "complaints_pause": "Not called: calls are paused after people asked us to stop", "billing_blocked": "Not called: balance too low",
-    "enquiry_too_old": "Not called: the person's enquiry is too old to call about (7 days; an application 3 months) and no registered consent is recorded",
+    "enquiry_too_old": "Not called: the person's enquiry is too old to call about (seven days; an application, three months) and no registered consent is recorded",
     "outbound_not_real": "Not called: real outgoing calls are not switched on yet", "no_own_number": "Not called: the business needs its own verified number first",
     "usage_not_accepted": "Not called: the owner has not yet accepted how the number will be used",
 }

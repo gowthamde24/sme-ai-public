@@ -6322,18 +6322,6 @@
       "default_message": "This is not available on this system.",
       "wait": false,
       "extras": []
-    },
-    {
-      "code": "ai_undertaking_required",
-      "statuses": [
-        409
-      ],
-      "areas": [
-        "talk_training"
-      ],
-      "default_message": "To stop saying it is an AI assistant, first accept the written undertaking.",
-      "wait": false,
-      "extras": []
     }
   ],
   "families": [
