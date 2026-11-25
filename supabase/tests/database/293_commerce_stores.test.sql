@@ -44,7 +44,7 @@ select is(pg_temp.q('a_owner', $q$select public.commerce_connection_by_token(rep
 -- ---- orders
 select is(pg_temp.q('x5', $q$select public.commerce_order_upsert(%L, '00000000-0000-4000-8000-0000000000c1', 'o1', '#1001', 'placed', 'cod', 129900, 'Silk saree x2', '', '+919800000001', now(), 'chk-1') ->> 'created'$q$), 'true', 'D1 a new order');
 select is(pg_temp.q('x5', $q$select public.commerce_order_upsert(%L, '00000000-0000-4000-8000-0000000000c1', 'o1', '#1001', 'shipped', 'cod', 129900, '', 'AWB123', '+919800000001', now(), null) ->> 'created'$q$), 'false', 'D2 the same order again is an update');
-select is(pg_temp.q('x5', $q$select count(*)::text from public.commerce_orders where tenant_id = %L$q$), '1', 'D3 one row');
+select is((select count(*)::text from public.commerce_orders where tenant_id = tests.tid('a')), '1', 'D3 one row');   -- read as the table owner: the scheduler account is not a member and RLS shows it no rows
 select is(pg_temp.q('x5', $q$select public.commerce_order_upsert(%L, '00000000-0000-4000-8000-0000000000c1', 'o1', '#1001', 'cancelled', 'cod', 0, '', '', null, now(), null) ->> 'status'$q$), 'cancelled', 'D4 cancelled');
 select is(pg_temp.q('x5', $q$select public.commerce_order_upsert(%L, '00000000-0000-4000-8000-0000000000c1', 'o1', '#1001', 'placed', 'cod', 0, '', '', null, now(), null) ->> 'status'$q$), 'cancelled', 'D5 a late "placed" event does not undo a cancellation');
 select is(pg_temp.q('x5', $q$select public.commerce_order_upsert(%L, '00000000-0000-4000-8000-0000000000c1', 'o2', 'bad number!', 'placed', 'cod', 1, '', '', null, now(), null)::text$q$), 'ERR:22023', 'D6 a number with odd characters is refused');
@@ -66,12 +66,12 @@ select pg_temp.q('a_owner', $q$select public.commerce_settings_set(%L, '00000000
 -- ---- checkouts
 select is(pg_temp.q('x5', $q$select public.commerce_checkout_upsert(%L, '00000000-0000-4000-8000-0000000000c1', 'chk-1', '+919800000002', 'Mina', 50000, 'Dupatta', false, 30) ->> 'status'$q$), 'pending', 'F1 a started checkout waits');
 select is(pg_temp.q('x5', $q$select public.commerce_checkout_upsert(%L, '00000000-0000-4000-8000-0000000000c1', 'chk-2', '+919800000003', 'Ravi', 60000, 'Kurta', false, 5) ->> 'status'$q$), 'ERR:22023', 'F2 a wait under 15 minutes is refused');
-select is(pg_temp.q('x5', $q$select count(*)::text from public.commerce_checkouts where tenant_id = %L and status = 'pending'$q$), '1', 'F3 one waiting');
+select is((select count(*)::text from public.commerce_checkouts where tenant_id = tests.tid('a') and status = 'pending'), '1', 'F3 one waiting');
 select is(pg_temp.q('x5', $q$select jsonb_array_length(public.commerce_checkouts_claim(10))::text$q$), '0', 'F4 nothing is due yet');
 update public.commerce_checkouts set due_at = now() - interval '1 minute';
 select is(pg_temp.q('x5', $q$select (public.commerce_checkouts_claim(10) -> 0 ->> 'phone')$q$), '+919800000002', 'F5 a due checkout is claimed with the number it needs');
 select is(pg_temp.q('x5', $q$select jsonb_array_length(public.commerce_checkouts_claim(10))::text$q$), '0', 'F6 ... and leased, not claimed twice');
-select is(pg_temp.q('x5', $q$select public.commerce_checkout_finish((select id from public.commerce_checkouts where external_id = 'chk-1'), 'done')::text$q$), 'true', 'F7 done');
+select is(pg_temp.q('x5', 'select public.commerce_checkout_finish(' || quote_literal((select id::text from public.commerce_checkouts where external_id = 'chk-1')) || '::uuid, ''done'')::text'), 'true', 'F7 done');
 select is((select coalesce(phone, 'wiped') || '/' || coalesce(name, 'wiped') from public.commerce_checkouts where external_id = 'chk-1'), 'wiped/wiped', 'F8 the number and the name are wiped');
 select is(pg_temp.q('x5', $q$select public.commerce_checkout_finish(gen_random_uuid(), 'sideways')::text$q$), 'ERR:22023', 'F9 a closed result');
 select pg_temp.q('x5', $q$select public.commerce_checkout_upsert(%L, '00000000-0000-4000-8000-0000000000c1', 'chk-3', '+919800000004', 'Asha', 100, 'x', false, 20)::text$q$);
