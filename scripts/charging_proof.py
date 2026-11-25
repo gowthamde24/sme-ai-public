@@ -9,6 +9,8 @@ The API must be the local one from ./run-local-api.sh (BILLING_CHARGE_CALLS and 
   * checks the gates the phone lookups use (`app.wallet_gate`) and the worker's reconcile query (`pricing_uncharged_calls`).
 Every check prints PASS or FAIL with the exact numbers; the same text is the proof report. Nothing is dialled, nothing is sent, no money moves (test mode)."""
 
+# ruff: noqa: E501
+
 from __future__ import annotations
 
 import argparse
