@@ -5,8 +5,8 @@ form:
 ## Business details
 Business name
 <text name=name label="Business name" required maxlength=120 autocomplete=organization value=Pavers Corner (synthetic)>
-Customers see this name in messages and calls. You can change it any time. City or area
-<text name=town label="City or area" maxlength=80 minlength=2 autocomplete=address-level2 value=Guntur>
+Customers see this name in messages and calls. You can change it any time. City or town
+<text name=town label="City or town" maxlength=80 minlength=2 autocomplete=address-level2 value=Guntur>
 legend: Languages you talk to customers in
 <checkbox name=languages label="English" value=en checked>
 English

@@ -9,8 +9,8 @@ Customers see this name in messages and calls. You can change it any time. Busin
 <text label="Business type" placeholder="Choose or search your business type" autocomplete=off>
 [button type=button: Business type]
 <hidden name=type value=>
-Changing the kind of business changes the words, the checklist and the starter messages. Your customers, leads and messages stay. City or area
-<text name=town label="City or area" maxlength=80 minlength=2 autocomplete=address-level2 value=Guntur>
+Changing the kind of business changes the words, the checklist and the starter messages. Your customers, leads and messages stay. City or town
+<text name=town label="City or town" maxlength=80 minlength=2 autocomplete=address-level2 value=Guntur>
 Business phone
 <tel name=phone label="Business phone" maxlength=20 inputmode=tel autocomplete=tel value=+00 000 000 0001>
 The number customers can call you on. You can leave it empty.
