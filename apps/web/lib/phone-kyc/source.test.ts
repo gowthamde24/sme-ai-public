@@ -10,6 +10,9 @@ vi.mock("@/lib/screens/flag", async (orig) => ({ ...(await orig<typeof import("@
 
 import { ApiRequestError } from "@/lib/api/client";
 
+const request = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), apiRequest: (...a: unknown[]) => request(...a) }));
+
 import { checkGst, checkPan, readStatus, refused, saveDetails, sendDocument, startAadhaar, startAccount, submitAll } from "./source";
 
 const details = { accountType: "individual", fullName: "Asha Rao", phone: "+91 98765 43210", billingAddress: "12 Main Road, Anantapur", city: "Anantapur", state: "Andhra Pradesh", pincode: "515001", acceptTerms: true };
@@ -38,6 +41,11 @@ describe("Verify your business in the test screen (KYC_PER_CLIENT=mock): nothing
   it("a phone typed with +91, 91 or a leading 0 is accepted and goes as +91 and ten digits; the state must be one of the list", async () => {
     await startAccount("t", "x", "individual");
     for (const phone of ["98765 43210", "+91 98765-43210", "091 98765 43210", "919876543210"]) expect(await saveDetails("t", "x", { ...details, phone })).toMatchObject({ ok: true });
+    // (live) the number goes on as ten digits, never with a "+": the phone service refuses it
+    jar.mode = "1";
+    request.mockResolvedValue({ state: "in_progress", account_type: "individual", steps: {} });
+    await saveDetails("t", "55555555-5555-4555-8555-555555555555", { ...details, phone: "+91 98765-43210" });
+    expect(JSON.parse((request.mock.calls.at(-1) as unknown as [string, string, { body: string }])[2].body).phone).toBe("9876543210");
   });
   it("a 422 kyc_fields_invalid keeps each field with its closed word (never the value)", () => {
     const e = new ApiRequestError(422, "kyc_fields_invalid", "x", undefined, undefined, undefined, { fields: ["phone", "pincode"], reasons: { phone: "mobile_invalid", pincode: "pincode_invalid" } });

@@ -88,7 +88,7 @@ export async function saveDetails(token: string, tenantId: string, input: Record
   const pin = pinProblem(str(input.pincode)) === null ? str(input.pincode).trim() : null;
   if (kycPerClient() === "off" || (type !== "individual" && type !== "business") || !fullName || !digits || !address || !city || !state || !pin || input.acceptTerms !== true) return { ok: false, error: "invalid" };
   if (type === "business" && !businessName) return { ok: false, error: "invalid" };
-  const phone = `+91${digits}`;
+  const phone = digits; // ten digits only: the phone service refuses a '+' (real probe, 25 Nov 2026)
   if (mock()) {
     const k = await readJar(COOKIE, parseKept, NONE);
     if (k.state === "not_started") return { ok: false, error: "refused", reason: "not_started" };

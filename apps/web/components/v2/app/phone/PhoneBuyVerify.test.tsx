@@ -475,3 +475,36 @@ describe("Get a phone number: verification first, then buy (owner, 26 Nov 2026)"
     expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
   });
 });
+
+describe("the PIN code fills the state and the city (VoiceLink knows a city only as its own list spells it)", () => {
+  it("a complete PIN fills State and City; the person can correct them; a field the person typed is not overwritten", async () => {
+    const pin = vi.fn(async () => ({ state: "Andhra Pradesh", city: "Ananthapuramu" }));
+    drawVerify(STATUS({ state: "created" }), verifyActions({ pin }));
+    fireEvent.change(screen.getByLabelText("PIN code"), { target: { value: "515001" } });
+    await waitFor(() => expect(screen.getByLabelText("City")).toHaveValue("Ananthapuramu"));
+    expect(screen.getByLabelText("State")).toHaveValue("Andhra Pradesh");
+    expect(screen.getByText("State and city are filled in from the PIN. Change them if they are wrong.")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("City"), { target: { value: "Dharmavaram" } });
+    fireEvent.change(screen.getByLabelText("PIN code"), { target: { value: "515002" } });
+    await waitFor(() => expect(pin).toHaveBeenCalledWith("515002"));
+    expect(screen.getByLabelText("City")).toHaveValue("Dharmavaram");
+    expect(pin).not.toHaveBeenCalledWith("51500");
+  });
+  it("no answer from the directory: nothing is filled and the person types the two fields", async () => {
+    const pin = vi.fn(async () => null);
+    drawVerify(STATUS({ state: "created" }), verifyActions({ pin }));
+    fireEvent.change(screen.getByLabelText("PIN code"), { target: { value: "515001" } });
+    await waitFor(() => expect(pin).toHaveBeenCalled());
+    expect(screen.getByLabelText("City")).toHaveValue("");
+    expect(screen.queryByText(/filled in from the PIN/)).toBeNull();
+  });
+  it("the phone service's city refusal says: pick the city name as your post office writes it, under City", async () => {
+    const a = verifyActions({ details: vi.fn(async () => ({ ok: false as const, error: "invalid" as const, fieldReasons: { city: "city_not_found" } })) });
+    drawVerify(STATUS({ state: "created" }), a);
+    for (const [label, value] of Object.entries({ "Full name": "Asha Rao", "Phone number": "98765 43210", "Billing address": "12 Main Road, Anantapur", City: "Anantapur", State: "Andhra Pradesh", "PIN code": "515001" })) fireEvent.change(screen.getByLabelText(label), { target: { value } });
+    fireEvent.click(document.querySelector('input[type="checkbox"]') as HTMLElement);
+    fireEvent.click(screen.getByRole("button", { name: "Save and continue" }));
+    expect(await screen.findByText("Pick the city name as your post office writes it.")).toBeInTheDocument();
+    expect(screen.getByLabelText("City")).toHaveValue("Anantapur");
+  });
+});

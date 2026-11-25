@@ -52,6 +52,7 @@ export function parseStatus(json: unknown): KycStatus {
 }
 /** `422 kyc_fields_invalid` (business-kyc.md, 26 Nov 2026): each bad field of the form and its closed word (`mobile_invalid`, `pincode_invalid`, ...). Null for any other refusal. */
 export function fieldReasons(error: unknown): Record<string, string> | null {
+  if (error instanceof ApiRequestError && error.code === "city_not_found") return { city: "city_not_found" }; // (C1's name for the city the phone service does not know)
   return error instanceof ApiRequestError && error.code === "kyc_fields_invalid" && error.extra?.reasons ? error.extra.reasons : null;
 }
 /** A refusal's closed reason (`error.reason`, else the `fields` word the client keeps); `missing_documents` also carries the names of the documents. */

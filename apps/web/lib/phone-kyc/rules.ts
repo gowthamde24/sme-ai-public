@@ -7,7 +7,7 @@ export const INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry",
 ] as const;
 
-export type Problem = "gst_business" | "required" | "name" | "phone" | "address" | "city" | "state" | "pin" | "terms" | "pan" | "holder" | "gst" | "email" | "file_type" | "file_size" | "file_empty";
+export type Problem = "city_lookup" | "gst_business" | "required" | "name" | "phone" | "address" | "city" | "state" | "pin" | "terms" | "pan" | "holder" | "gst" | "email" | "file_type" | "file_size" | "file_empty";
 
 const letters = (s: string): number => (s.match(/\p{L}/gu) ?? []).length;
 export const MIN_ADDRESS = 8;
@@ -64,8 +64,15 @@ export function detailsProblems(v: DetailsInput, business: boolean): Partial<Rec
 /** The API's closed word for a bad field (business-kyc.md) as the sentence of the same field here, so the server and the screen say the same thing. A word this screen does not know is "required". */
 export const REASON_PROBLEM: Readonly<Record<string, Problem>> = {
   account_type_required: "required", name_required: "name", business_name_required: "name", mobile_invalid: "phone", address_required: "address", city_required: "city", state_invalid: "state", pincode_invalid: "pin",
-  terms_required: "terms", pan_invalid: "pan", gstin_invalid: "gst", gstin_business_only: "gst_business", document_type_invalid: "required", file_type_invalid: "file_type",
+  terms_required: "terms", city_not_found: "city_lookup", pan_invalid: "pan", gstin_invalid: "gst", gstin_business_only: "gst_business", document_type_invalid: "required", file_type_invalid: "file_type",
 };
 export const reasonProblem = (word: string): Problem => REASON_PROBLEM[word] ?? "required";
 /** The form field (of the details form) each API field name belongs to. */
 export const API_FIELD: Readonly<Record<string, keyof DetailsInput>> = { full_name: "fullName", business_name: "businessName", phone: "phone", billing_address: "billingAddress", city: "city", state: "state", pincode: "pincode", accept_terms: "terms" };
+
+/** The India Post directory's state name as one of ours (its spelling differs for a few: "&", "NCT of Delhi", ...); null when it is not one of the 36. */
+const STATE_ALIAS: Readonly<Record<string, string>> = { "jammu & kashmir": "Jammu and Kashmir", "andaman & nicobar islands": "Andaman and Nicobar Islands", "nct of delhi": "Delhi", "dadra & nagar haveli": "Dadra and Nagar Haveli and Daman and Diu", "daman & diu": "Dadra and Nagar Haveli and Daman and Diu", "dadra and nagar haveli": "Dadra and Nagar Haveli and Daman and Diu", "daman and diu": "Dadra and Nagar Haveli and Daman and Diu", orissa: "Odisha", pondicherry: "Puducherry", uttaranchal: "Uttarakhand" };
+export function stateFromPostal(name: string): string | null {
+  const k = name.trim().toLowerCase();
+  return INDIAN_STATES.find((x) => x.toLowerCase() === k) ?? STATE_ALIAS[k] ?? null;
+}

@@ -10,6 +10,7 @@ import { requireUser } from "@/lib/auth/session";
 import { checkGst, checkPan, readStatus, saveDetails, startAadhaar, startAccount, submitAll, type KycError, type KycResult } from "@/lib/phone-kyc/source";
 import { acceptUsageStep, claimNumber, searchNumbers } from "@/lib/phone-picker/source";
 import type { OwnNumber, SearchResult, UnavailableReason } from "@/lib/phone-picker/types";
+import { lookupPin, type PinFound } from "@/lib/phone-kyc/pincode";
 import { kycPerClient, phonePicker } from "@/lib/screens/flag";
 
 /**
@@ -86,4 +87,10 @@ export async function kycSubmitAction(tenantId: string): Promise<KycResult> {
   const out = who && !off() ? await submitAll(who.token, tenantId) : forbidden;
   if (out.ok) revalidatePath(`/app/tenants/${tenantId}/phone-number`);
   return out;
+}
+
+/** The state and the city of a PIN code (the verification form fills them in; the person can correct them). The PIN is the only thing that leaves; a failure is "not found". */
+export async function kycPinAction(tenantId: string, pin: unknown): Promise<PinFound | null> {
+  const who = await owner(tenantId);
+  return who && !off() ? lookupPin(pin) : null;
 }

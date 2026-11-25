@@ -20,6 +20,8 @@ export type VerifyActions = {
   gst: (gstNumber: string) => Promise<KycResult>;
   aadhaar: () => Promise<KycResult<{ url: string }>>;
   submit: () => Promise<KycResult>;
+  /** the state and the city of a complete PIN code (the form fills them in); absent or null = the person types them */
+  pin?: (pin: string) => Promise<{ state: string | null; city: string | null } | null>;
   /** the address that takes one document (multipart `type` + `file`); answers the same words as the actions */
   uploadUrl: string;
 };
@@ -49,7 +51,7 @@ export function Flow({ t, status, actions, prefill, busy, run, fail, setFail }: 
   ) : null;
   return (
     <div className="mt-4 flex flex-col gap-5" data-part="verify-flow">
-      {details ? <Details t={t} account={account} prefill={prefill} busy={busy} server={fail?.fieldReasons ?? null} onSave={(input) => void run(() => actions.details(input))} /> : null}
+      {details ? <Details t={t} account={account} prefill={prefill} busy={busy} server={fail?.fieldReasons ?? null} lookup={actions.pin} onSave={(input) => void run(() => actions.details(input))} /> : null}
       {!details ? (
         <ul className="m-0 flex list-none flex-col p-0">
           {needs.map((d) => {
@@ -82,10 +84,26 @@ export function Flow({ t, status, actions, prefill, busy, run, fail, setFail }: 
 const problemText = (t: Say, p: Problem | null | undefined): string | null => (p ? t(`pick.kyc.e.${p}` as "pick.kyc.e.required") : null);
 
 /** The details of the business's account. Every field is mandatory (owner, 26 Nov 2026): "Required" beside each label, a plain sentence under a field once it was touched or the form was sent, "Save and continue" off until all is valid; what was typed stays when a message shows. */
-function Details({ t, account, prefill, busy, server, onSave }: { t: Say; account: AccountType; prefill: FlowProps["prefill"]; busy: boolean; server: Record<string, string> | null; onSave: (input: Record<string, unknown>) => void }) {
+function Details({ t, account, prefill, busy, server, lookup, onSave }: { t: Say; account: AccountType; prefill: FlowProps["prefill"]; busy: boolean; server: Record<string, string> | null; lookup?: VerifyActions["pin"]; onSave: (input: Record<string, unknown>) => void }) {
   const [v, setV] = React.useState<DetailsInput>({ businessName: "", fullName: prefill?.fullName ?? "", phone: "", billingAddress: "", city: "", state: "", pincode: "", terms: false });
   const [touched, setTouched] = React.useState<Partial<Record<keyof DetailsInput, boolean>>>({});
   const [sent, setSent] = React.useState(false);
+  // a complete PIN fills the state and the city (the person can correct them; a field the person typed in is never overwritten)
+  const typed = React.useRef<{ state?: boolean; city?: boolean }>({});
+  const [pinNote, setPinNote] = React.useState<"looking" | "filled" | null>(null);
+  const pinAsked = React.useRef(0);
+  // asked when the 6th digit is typed (not in an effect); an older answer that arrives late is dropped
+  const onPin = (value: string) => {
+    const mine = ++pinAsked.current;
+    if (!lookup || !/^[1-9][0-9]{5}$/.test(value)) return setPinNote(null);
+    setPinNote("looking");
+    void lookup(value).then((found) => {
+      if (mine !== pinAsked.current) return;
+      if (!found) return setPinNote(null);
+      setV((x) => ({ ...x, state: typed.current.state || !found.state ? x.state : found.state, city: typed.current.city || !found.city ? x.city : found.city }));
+      setPinNote(found.state || found.city ? "filled" : null);
+    });
+  };
   const problems = detailsProblems(v, account === "business");
   const valid = Object.keys(problems).length === 0;
   // the API's own word for a bad field (a `422 kyc_fields_invalid`) is said with the same sentence as the screen's check, until that field is changed
@@ -129,10 +147,10 @@ function Details({ t, account, prefill, busy, server, onSave }: { t: Say; accoun
       </RequiredField>
       <div className="grid grid-cols-1 gap-4 min-[560px]:grid-cols-3">
         <RequiredField t={t} id="kyc-city" label={t("pick.kyc.f.city")} error={shown("city")}>
-          <input {...ctl("city", "kyc-city")} type="text" autoComplete="address-level2" maxLength={60} value={v.city} onChange={set("city")} />
+          <input {...ctl("city", "kyc-city")} type="text" autoComplete="address-level2" maxLength={60} value={v.city} onChange={(e) => ((typed.current.city = true), set("city")(e))} />
         </RequiredField>
         <RequiredField t={t} id="kyc-state" label={t("pick.kyc.f.state")} error={shown("state")}>
-          <select {...ctl("state", "kyc-state")} autoComplete="address-level1" value={v.state} onChange={set("state")}>
+          <select {...ctl("state", "kyc-state")} autoComplete="address-level1" value={v.state} onChange={(e) => ((typed.current.state = true), set("state")(e))}>
             <option value="">{t("pick.kyc.f.state.choose")}</option>
             {INDIAN_STATES.map((x) => (
               <option key={x} value={x}>
@@ -141,8 +159,8 @@ function Details({ t, account, prefill, busy, server, onSave }: { t: Say; accoun
             ))}
           </select>
         </RequiredField>
-        <RequiredField t={t} id="kyc-pin" label={t("pick.kyc.f.pin")} error={shown("pincode")}>
-          <input {...ctl("pincode", "kyc-pin")} type="text" inputMode="numeric" autoComplete="postal-code" maxLength={6} value={v.pincode} onChange={(e) => (setEdited((x) => ({ ...x, pincode: true })), setV((x) => ({ ...x, pincode: e.target.value.replace(/\D/g, "") })))} />
+        <RequiredField t={t} id="kyc-pin" label={t("pick.kyc.f.pin")} hint={pinNote === "looking" ? t("pick.kyc.pin.looking") : pinNote === "filled" ? t("pick.kyc.pin.filled") : undefined} error={shown("pincode")}>
+          <input {...ctl("pincode", "kyc-pin")} type="text" inputMode="numeric" autoComplete="postal-code" maxLength={6} value={v.pincode} onChange={(e) => { const digits = e.target.value.replace(/\D/g, ""); setEdited((x) => ({ ...x, pincode: true })); setV((x) => ({ ...x, pincode: digits })); onPin(digits); }} />
         </RequiredField>
       </div>
       <div className="border-t border-ink">

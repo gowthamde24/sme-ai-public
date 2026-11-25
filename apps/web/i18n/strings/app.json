@@ -137598,5 +137598,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "pick.kyc.pin.looking": {
+  "en": "Looking up the state and city…",
+  "te": "రాష్ట్రం, సిటీ వెతుకుతున్నాం…",
+  "hi": "राज्य और शहर ढूँढ रहे हैं…",
+  "kn": "ರಾಜ್ಯ, ಸಿಟಿ ಹುಡುಕುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.pin.filled": {
+  "en": "State and city are filled in from the PIN. Change them if they are wrong.",
+  "te": "రాష్ట్రం, సిటీ PIN నుంచి నింపాం. తప్పు ఉంటే మార్చండి.",
+  "hi": "राज्य और शहर PIN से भरे गए हैं। गलत हों तो बदल दें।",
+  "kn": "ರಾಜ್ಯ, ಸಿಟಿ PIN ನಿಂದ ತುಂಬಿದ್ದೇವೆ. ತಪ್ಪಿದ್ದರೆ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.city_lookup": {
+  "en": "Pick the city name as your post office writes it.",
+  "te": "మీ పోస్టాఫీస్ రాసే విధంగా సిటీ పేరు ఎంచుకోండి.",
+  "hi": "शहर का नाम वैसा चुनें जैसा आपका डाकघर लिखता है।",
+  "kn": "ನಿಮ್ಮ ಪೋಸ್ಟ್ ಆಫೀಸ್ ಬರೆಯುವಂತೆ ಸಿಟಿ ಹೆಸರು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
