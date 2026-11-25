@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { expectNoSentenceForm } from "@/test/helpers/no-sentence-form";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -460,5 +462,105 @@ describe("a real workspace: the reading call, the writes with a client-side id, 
     expect(document.querySelector("[data-entry]")?.textContent).not.toMatch(/minutes|hour/);
     const built = buildEntry("services", "5e110002-0000-4000-8000-000000000077", { ...EMPTY.services, name: "Monthly membership", minutes: "", price: "1500" }, null, true);
     expect(built).toMatchObject({ ok: true, entry: { minutes: null, pricePaise: 150_000 } });
+  });
+});
+
+describe("a saree shop's price list: Import a sheet reads it, shows a table to check, and adds only what is ready (26 Nov 2026)", () => {
+  const CSV_TEXT = readFileSync(path.resolve(__dirname, "../../../../lib/sell/__fixtures__/sarees.csv"), "utf8");
+  const fileOf = (name: string, text: string, type = "text/csv") => {
+    const f = new File([text], name, { type });
+    if (typeof f.text !== "function") Object.defineProperty(f, "text", { value: async () => text });
+    return f;
+  };
+  const open = async (a: SellActions) => {
+    section("products", { actions: a, live: true });
+    fireEvent.click(screen.getByText("Import a sheet"));
+    return (await screen.findByRole("dialog")) as HTMLElement;
+  };
+  const pickFile = (dialog: HTMLElement, file: File) => fireEvent.change(dialog.querySelector('[data-part="pick-file"]') as HTMLInputElement, { target: { files: [file] } });
+
+  it("a CSV: a table of every row with one plain status each, the counts, and nothing saved yet", async () => {
+    const a = actions();
+    const dialog = await open(a);
+    expect(within(dialog).getByText(/an Excel or CSV file, a PDF, or a photo of the list/)).toBeInTheDocument();
+    pickFile(dialog, fileOf("sarees.csv", CSV_TEXT));
+    expect(await within(dialog).findByText("We read 10 rows from sarees.csv. Fix what is marked, then add them.")).toBeInTheDocument();
+    const counts = dialog.querySelector('[data-part="import-counts"]') as HTMLElement;
+    expect(counts).toHaveTextContent("7 ready");
+    expect(counts).toHaveTextContent("2 need a look");
+    expect(counts).toHaveTextContent("1 left out (same name twice)");
+    expect(dialog.querySelectorAll("[data-row]")).toHaveLength(10);
+    expect(within(dialog).getByText("Add a price")).toBeInTheDocument();
+    expect(within(dialog).getByText("Write the price as a number, like 24,500")).toBeInTheDocument();
+    expect(within(dialog).getByText("Same name twice: left out")).toBeInTheDocument();
+    expect(within(dialog).getByText("Nothing is added until you press the button.")).toBeInTheDocument();
+    expect(a.save).not.toHaveBeenCalled();
+    expect(a.read).not.toHaveBeenCalled(); // an Excel or CSV file is read in the browser, never sent
+  });
+  it("fixing a price or removing a row changes the counts at once; the button says how many it adds, and adds them one by one", async () => {
+    const a = actions();
+    const dialog = await open(a);
+    pickFile(dialog, fileOf("sarees.csv", CSV_TEXT));
+    await within(dialog).findByText(/We read 10 rows/);
+    const rows = [...dialog.querySelectorAll("[data-row]")];
+    const chanderi = rows.find((r) => (r.querySelector("input") as HTMLInputElement).value === "Chanderi plain") as HTMLElement;
+    fireEvent.change(chanderi.querySelectorAll("input")[1], { target: { value: "2,500" } });
+    const noPrice = rows.find((r) => (r.querySelector("input") as HTMLInputElement).value === "Cotton saree daily wear") as HTMLElement;
+    fireEvent.click(within(noPrice).getByRole("button", { name: /Remove row/ }));
+    expect(dialog.querySelector('[data-part="import-counts"]')).toHaveTextContent("8 ready");
+    const add = within(dialog).getByRole("button", { name: "Add 8 sarees" });
+    fireEvent.click(add);
+    await waitFor(() => expect(a.save).toHaveBeenCalledTimes(8));
+    const first = (a.save as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(first[0]).toBe("products");
+    expect(first[2]).toMatchObject({ name: "Kanchi pattu bridal red", price: "24500", colours: ["red"], stock: "in_stock", count: "5" });
+    expect(first[3]).toMatchObject({ fabric: "kanchi_pattu" });
+    expect(await within(dialog).findByText("8 sarees added.")).toBeInTheDocument();
+    expect(within(dialog).getByText("A saree shows to customers once it has a photo. Add the photos next.")).toBeInTheDocument();
+    expect(within(dialog).getByRole("link", { name: "Add photos" })).toHaveAttribute("href", `${BASE}/catalogue`);
+  });
+  it("a refusal stops the run, says why, and keeps the rows that were not added", async () => {
+    const save = vi.fn().mockResolvedValueOnce({ ok: true as const, data: { entry: entriesOf("products")[0], photosPath: null, note: null } }).mockResolvedValue({ ok: false as const, kind: "invalid" as const, error: "Busy. Try again in a minute." });
+    const dialog = await open(actions({ save }));
+    pickFile(dialog, fileOf("sarees.csv", CSV_TEXT));
+    await within(dialog).findByText(/We read 10 rows/);
+    fireEvent.click(within(dialog).getByRole("button", { name: "Add 7 sarees" }));
+    expect(await within(dialog).findByText("Busy. Try again in a minute.")).toBeInTheDocument();
+    expect(save).toHaveBeenCalledTimes(2);
+    expect(dialog.querySelectorAll('[data-row="ok"]')).toHaveLength(6); // one was added; six wait (the second "Kanchi pattu bridal red" stays left out: that saree was added)
+  });
+  it("an Excel file (.xlsx) is read in the browser and gives the same rows as the CSV", async () => {
+    const xlsx = readFileSync(path.resolve(__dirname, "../../../../lib/sell/__fixtures__/sarees.xlsx"));
+    const f = new File([xlsx], "sarees.xlsx");
+    Object.defineProperty(f, "arrayBuffer", { value: async () => xlsx.buffer.slice(xlsx.byteOffset, xlsx.byteOffset + xlsx.byteLength) });
+    const dialog = await open(actions());
+    pickFile(dialog, f);
+    expect(await within(dialog).findByText(/We read 10 rows from sarees.xlsx/)).toBeInTheDocument();
+    expect(dialog.querySelector('[data-part="import-counts"]')).toHaveTextContent("7 ready");
+  });
+  it("an old .xls, an empty file, a header with no rows and a file that is not a list each say what to do, in plain words", async () => {
+    const dialog = await open(actions());
+    pickFile(dialog, fileOf("old.xls", "x", "application/vnd.ms-excel"));
+    expect(await within(dialog).findByText(/Old Excel files \(\.xls\) cannot be read/)).toBeInTheDocument();
+    pickFile(dialog, fileOf("empty.csv", " \n"));
+    expect(await within(dialog).findByText("That file has nothing in it.")).toBeInTheDocument();
+    pickFile(dialog, fileOf("head.csv", "Name,Price\n"));
+    expect(await within(dialog).findByText(/We could not find any sarees in that/)).toBeInTheDocument();
+  });
+  it("a PDF or a photo goes up and the price-list reading turns it into the same table; when reading is not switched on it says so", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ json: async () => ({ ok: true, file_id: "5e110009-0000-4000-8000-0000000000bb" }) })));
+    const price = { style: "pricelist", id: "5e110009-0000-4000-8000-0000000000c1", name: "Banarasi georgette", moq: 1, unit: "piece", rates: [{ fromQty: 1, ratePaise: 980_000 }], goodUntil: null } as unknown as SellEntry;
+    const a = actions({ read: vi.fn(async () => ({ ok: true as const, data: { entries: [price], unclear: false, notes: [] } })) });
+    const dialog = await open(a);
+    pickFile(dialog, new File(["%PDF"], "list.pdf", { type: "application/pdf" }));
+    expect(await within(dialog).findByText(/We read 1 rows from list.pdf/)).toBeInTheDocument();
+    expect(a.read).toHaveBeenCalledWith("pricelist", { kind: "sheet", fileId: "5e110009-0000-4000-8000-0000000000bb" });
+    expect((dialog.querySelectorAll("[data-row] input")[1] as HTMLInputElement).value).toBe("9800");
+    cleanup();
+    const off = actions({ read: vi.fn(async () => ({ ok: false as const, kind: "unavailable" as const, error: "n" })) });
+    const d2 = await open(off);
+    pickFile(d2, new File(["x"], "list.jpg", { type: "image/jpeg" }));
+    expect(await within(d2).findByText(/Reading a PDF or a photo of a list is not switched on/)).toBeInTheDocument();
+    vi.unstubAllGlobals();
   });
 });

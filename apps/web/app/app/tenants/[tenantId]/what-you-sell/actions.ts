@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 import type { Reply } from "@/components/v2/app/cc/kit";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
-import { getCatalogueItem, putQuantity } from "@/lib/api/catalogue";
+import { FABRICS, getCatalogueItem, putQuantity } from "@/lib/api/catalogue";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { failureOf } from "@/lib/api/failure";
 import { productOf, putSellEntry, readSellDrafts, readUnderstood, removeSellEntry, type SellReading } from "@/lib/api/what-you-sell";
@@ -34,7 +34,7 @@ const isStyle = (v: unknown): v is SellStyle => typeof v === "string" && (SELL_S
 
 export type Saved = { entry: SellEntry; photosPath: string | null; note: "count" | null };
 /** What the sheet knows of the entry it is changing and the form cannot say: a course's seats are the owner's own count ("2 seats left"), kept unless the total changed. `freshId` is the id the sheet minted for a NEW entry (the same one on a retry). */
-export type SaveExtra = { freshId?: string; course?: { seats: { state: string; count: number | null }; total: number | null } };
+export type SaveExtra = { freshId?: string; /** a NEW saree made from a price list: the fabric read from its name (the sheet's form has no fabric) */ fabric?: string; course?: { seats: { state: string; count: number | null }; total: number | null } };
 
 function priorCourse(extra: SaveExtra | undefined): CourseEntry | null {
   const c = extra?.course;
@@ -90,7 +90,9 @@ export async function saveEntryAction(tenantId: string, style: SellStyle, id: st
   const f = form as SellForm["products"];
   const built = buildEntry("products", entryId, f, before, owner);
   if (!built.ok || built.entry.style !== "products") return { ok: false, kind: "invalid", error: built.ok ? ctx.t("apierr.invalid") : ctx.t(`jobs.sell.err.${built.code}` as Parameters<typeof ctx.t>[0]), ...(built.ok ? {} : { fields: [built.field] }) };
-  const saved = await saveItemAction(tenantId, entryId, productSaveInput(built.entry, owner, f.price));
+  const fabric = id === null && typeof extra?.fabric === "string" ? FABRICS.find((x) => x === extra.fabric) : undefined;
+  const entryToSave = fabric ? { ...built.entry, keep: { ...built.entry.keep, fabric } } : built.entry;
+  const saved = await saveItemAction(tenantId, entryId, productSaveInput(entryToSave, owner, f.price));
   if (!saved.ok) return { ok: false, kind: saved.mfa ? "mfa" : "invalid", error: saved.error, ...(saved.mfa ? { mfa: true } : {}) };
   let note: Saved["note"] = null;
   if (built.entry.stock.count !== null) {

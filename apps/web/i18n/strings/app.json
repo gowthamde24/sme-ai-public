@@ -138324,5 +138324,368 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.sell.imp.title": {
+  "en": "Check your list",
+  "te": "మీ లిస్ట్ చెక్ చేయండి",
+  "hi": "अपनी लिस्ट जाँचें",
+  "kn": "ನಿಮ್ಮ ಲಿಸ್ಟ್ ಚೆಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.pick": {
+  "en": "Choose your price list: an Excel or CSV file, a PDF, or a photo of the list. You check every row before anything is added.",
+  "te": "మీ ప్రైస్ లిస్ట్ ఎంచుకోండి: Excel లేదా CSV ఫైల్, PDF, లేదా లిస్ట్ ఫోటో. ఏదైనా యాడ్ అయ్యే ముందు ప్రతి లైన్ మీరే చెక్ చేస్తారు.",
+  "hi": "अपनी प्राइस लिस्ट चुनें: Excel या CSV फ़ाइल, PDF, या लिस्ट की फ़ोटो। कुछ भी जुड़ने से पहले हर लाइन आप जाँचते हैं।",
+  "kn": "ನಿಮ್ಮ ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಆರಿಸಿ: Excel ಅಥವಾ CSV ಫೈಲ್, PDF, ಇಲ್ಲವೇ ಲಿಸ್ಟ್‌ನ ಫೋಟೋ. ಏನಾದರೂ ಸೇರುವ ಮೊದಲು ಪ್ರತಿ ಸಾಲನ್ನು ನೀವೇ ಚೆಕ್ ಮಾಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.pick.go": {
+  "en": "Choose your list",
+  "te": "లిస్ట్ ఎంచుకోండి",
+  "hi": "लिस्ट चुनें",
+  "kn": "ಲಿಸ್ಟ್ ಆರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.found": {
+  "en": "We read {n} rows from {file}. Fix what is marked, then add them.",
+  "te": "{file} నుంచి {n} లైన్లు చదివాం. గుర్తు పెట్టినవి సరిచేసి, తర్వాత యాడ్ చేయండి.",
+  "hi": "{file} से {n} लाइनें पढ़ीं। निशान वाली ठीक करें, फिर जोड़ें।",
+  "kn": "{file} ನಿಂದ {n} ಸಾಲುಗಳನ್ನು ಓದಿದೆವು. ಗುರುತು ಹಾಕಿದ್ದನ್ನು ಸರಿಮಾಡಿ, ಆಮೇಲೆ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.ready": {
+  "en": "{n} ready",
+  "te": "{n} రెడీ",
+  "hi": "{n} तैयार",
+  "kn": "{n} ರೆಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.fix": {
+  "en": "{n} need a look",
+  "te": "{n} చూడాలి",
+  "hi": "{n} देखनी हैं",
+  "kn": "{n} ನೋಡಬೇಕು",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.skip": {
+  "en": "{n} left out (same name twice)",
+  "te": "{n} వదిలేశాం (ఒకే పేరు రెండుసార్లు)",
+  "hi": "{n} छोड़ी गईं (एक ही नाम दो बार)",
+  "kn": "{n} ಬಿಟ್ಟಿದ್ದೇವೆ (ಒಂದೇ ಹೆಸರು ಎರಡು ಬಾರಿ)",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.col.name": {
+  "en": "Saree name",
+  "te": "చీర పేరు",
+  "hi": "साड़ी का नाम",
+  "kn": "ಸೀರೆ ಹೆಸರು",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.name_of": {
+  "en": "Name, row {n}",
+  "te": "పేరు, లైన్ {n}",
+  "hi": "नाम, लाइन {n}",
+  "kn": "ಹೆಸರು, ಸಾಲು {n}",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.price_of": {
+  "en": "Price in rupees, row {n}",
+  "te": "రూపాయల్లో ధర, లైన్ {n}",
+  "hi": "रुपयों में कीमत, लाइन {n}",
+  "kn": "ರೂಪಾಯಿಯಲ್ಲಿ ಬೆಲೆ, ಸಾಲು {n}",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.remove": {
+  "en": "Remove row {n}",
+  "te": "లైన్ {n} తీసేయండి",
+  "hi": "लाइन {n} हटाएँ",
+  "kn": "ಸಾಲು {n} ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.s.ok": {
+  "en": "Ready",
+  "te": "రెడీ",
+  "hi": "तैयार",
+  "kn": "ರೆಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.s.no_price": {
+  "en": "Add a price",
+  "te": "ధర రాయండి",
+  "hi": "कीमत लिखें",
+  "kn": "ಬೆಲೆ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.s.bad_price": {
+  "en": "Write the price as a number, like 24,500",
+  "te": "ధరని నంబర్‌గా రాయండి, ఉదాహరణకు 24,500",
+  "hi": "कीमत नंबर में लिखें, जैसे 24,500",
+  "kn": "ಬೆಲೆಯನ್ನು ನಂಬರ್‌ನಲ್ಲಿ ಬರೆಯಿರಿ, ಉದಾಹರಣೆಗೆ 24,500",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.s.no_name": {
+  "en": "Add a name",
+  "te": "పేరు రాయండి",
+  "hi": "नाम लिखें",
+  "kn": "ಹೆಸರು ಬರೆಯಿರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.s.duplicate": {
+  "en": "Same name twice: left out",
+  "te": "ఒకే పేరు రెండుసార్లు: వదిలేశాం",
+  "hi": "एक ही नाम दो बार: छोड़ दी",
+  "kn": "ಒಂದೇ ಹೆಸರು ಎರಡು ಬಾರಿ: ಬಿಟ್ಟಿದ್ದೇವೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.s.too_cheap": {
+  "en": "A price starts at ₹1",
+  "te": "ధర ₹1 నుంచి మొదలవుతుంది",
+  "hi": "कीमत ₹1 से शुरू होती है",
+  "kn": "ಬೆಲೆ ₹1 ರಿಂದ ಶುರುವಾಗುತ್ತದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.add": {
+  "en": "Add {n} sarees",
+  "te": "{n} చీరలు యాడ్ చేయండి",
+  "hi": "{n} साड़ियाँ जोड़ें",
+  "kn": "{n} ಸೀರೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.add.one": {
+  "en": "Add 1 saree",
+  "te": "1 చీర యాడ్ చేయండి",
+  "hi": "1 साड़ी जोड़ें",
+  "kn": "1 ಸೀರೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.adding": {
+  "en": "Adding {done} of {total}…",
+  "te": "{total}లో {done} యాడ్ అవుతున్నాయి…",
+  "hi": "{total} में से {done} जुड़ रही हैं…",
+  "kn": "{total} ರಲ್ಲಿ {done} ಸೇರುತ್ತಿವೆ…",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.cancel": {
+  "en": "Cancel",
+  "te": "క్యాన్సిల్",
+  "hi": "रद्द करें",
+  "kn": "ಕ್ಯಾನ್ಸಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.note": {
+  "en": "Nothing is added until you press the button.",
+  "te": "మీరు బటన్ నొక్కే వరకు ఏదీ యాడ్ కాదు.",
+  "hi": "आप बटन दबाएँगे तब तक कुछ नहीं जुड़ेगा।",
+  "kn": "ನೀವು ಬಟನ್ ಒತ್ತುವವರೆಗೆ ಏನೂ ಸೇರುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.none_ready": {
+  "en": "Nothing is ready to add yet. Fix the marked rows or remove them.",
+  "te": "యాడ్ చేయడానికి ఇంకా ఏదీ రెడీగా లేదు. గుర్తు పెట్టిన లైన్లు సరిచేయండి లేదా తీసేయండి.",
+  "hi": "जोड़ने के लिए अभी कुछ तैयार नहीं। निशान वाली लाइनें ठीक करें या हटा दें।",
+  "kn": "ಸೇರಿಸಲು ಇನ್ನೂ ಏನೂ ರೆಡಿ ಇಲ್ಲ. ಗುರುತು ಹಾಕಿದ ಸಾಲುಗಳನ್ನು ಸರಿಮಾಡಿ ಅಥವಾ ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.cut": {
+  "en": "That was a long list: the first 200 rows are here. Add them, then load the rest.",
+  "te": "లిస్ట్ చాలా పెద్దది: మొదటి 200 లైన్లు ఇక్కడ ఉన్నాయి. వాటిని యాడ్ చేసి, మిగతావి తర్వాత లోడ్ చేయండి.",
+  "hi": "लिस्ट बहुत लंबी थी: पहली 200 लाइनें यहाँ हैं। इन्हें जोड़ें, फिर बाकी लोड करें।",
+  "kn": "ಲಿಸ್ಟ್ ತುಂಬಾ ಉದ್ದ ಇತ್ತು: ಮೊದಲ 200 ಸಾಲುಗಳು ಇಲ್ಲಿವೆ. ಅವನ್ನು ಸೇರಿಸಿ, ಉಳಿದದ್ದನ್ನು ಆಮೇಲೆ ಲೋಡ್ ಮಾಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.done": {
+  "en": "{n} sarees added.",
+  "te": "{n} చీరలు యాడ్ అయ్యాయి.",
+  "hi": "{n} साड़ियाँ जुड़ गईं।",
+  "kn": "{n} ಸೀರೆ ಸೇರಿದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.photo": {
+  "en": "A saree shows to customers once it has a photo. Add the photos next.",
+  "te": "ఫోటో ఉన్న చీర మాత్రమే కస్టమర్లకు కనిపిస్తుంది. తర్వాత ఫోటోలు యాడ్ చేయండి.",
+  "hi": "फ़ोटो होने पर ही साड़ी ग्राहकों को दिखती है। अब फ़ोटो जोड़ें।",
+  "kn": "ಫೋಟೋ ಇದ್ದರೆ ಮಾತ್ರ ಸೀರೆ ಗ್ರಾಹಕರಿಗೆ ಕಾಣುತ್ತದೆ. ಮುಂದೆ ಫೋಟೋ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.photos_go": {
+  "en": "Add photos",
+  "te": "ఫోటోలు యాడ్ చేయండి",
+  "hi": "फ़ोटो जोड़ें",
+  "kn": "ಫೋಟೋ ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.left": {
+  "en": "{n} rows are still here: fix them or close.",
+  "te": "{n} లైన్లు ఇంకా ఉన్నాయి: సరిచేయండి లేదా మూసేయండి.",
+  "hi": "{n} लाइनें अभी बाकी हैं: ठीक करें या बंद करें।",
+  "kn": "{n} ಸಾಲುಗಳು ಇನ್ನೂ ಇವೆ: ಸರಿಮಾಡಿ ಅಥವಾ ಮುಚ್ಚಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.err.empty": {
+  "en": "That file has nothing in it.",
+  "te": "ఆ ఫైల్‌లో ఏమీ లేదు.",
+  "hi": "उस फ़ाइल में कुछ नहीं है।",
+  "kn": "ಆ ಫೈಲ್‌ನಲ್ಲಿ ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.err.no_rows": {
+  "en": "We could not find any sarees in that. Check that each line has a name and a price.",
+  "te": "అందులో చీరలు ఏవీ కనిపించలేదు. ప్రతి లైన్‌లో పేరు, ధర ఉన్నాయో చూడండి.",
+  "hi": "उसमें कोई साड़ी नहीं मिली। देखें कि हर लाइन में नाम और कीमत है।",
+  "kn": "ಅದರಲ್ಲಿ ಯಾವ ಸೀರೆಯೂ ಸಿಗಲಿಲ್ಲ. ಪ್ರತಿ ಸಾಲಿನಲ್ಲಿ ಹೆಸರು, ಬೆಲೆ ಇದೆಯೇ ನೋಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.err.xls": {
+  "en": "Old Excel files (.xls) cannot be read. Open it in Excel and save it again as .xlsx or CSV.",
+  "te": "పాత Excel ఫైల్స్ (.xls) చదవలేం. Excelలో తెరిచి .xlsx లేదా CSV గా మళ్ళీ సేవ్ చేయండి.",
+  "hi": "पुरानी Excel फ़ाइलें (.xls) पढ़ी नहीं जातीं। Excel में खोलकर .xlsx या CSV में फिर से सेव करें।",
+  "kn": "ಹಳೆಯ Excel ಫೈಲ್ (.xls) ಓದಲಾಗುವುದಿಲ್ಲ. Excel ನಲ್ಲಿ ತೆರೆದು .xlsx ಅಥವಾ CSV ಆಗಿ ಮತ್ತೆ ಸೇವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.err.unreadable": {
+  "en": "We could not read that file. Open it in Excel, save it again as .xlsx or CSV, and try once more.",
+  "te": "ఆ ఫైల్ చదవలేకపోయాం. Excelలో తెరిచి .xlsx లేదా CSV గా మళ్ళీ సేవ్ చేసి, ఇంకోసారి ట్రై చేయండి.",
+  "hi": "वह फ़ाइल पढ़ी नहीं गई। Excel में खोलकर .xlsx या CSV में फिर सेव करें और एक बार फिर कोशिश करें।",
+  "kn": "ಆ ಫೈಲ್ ಓದಲಾಗಲಿಲ್ಲ. Excel ನಲ್ಲಿ ತೆರೆದು .xlsx ಅಥವಾ CSV ಆಗಿ ಮತ್ತೆ ಸೇವ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.sell.imp.err.no_read": {
+  "en": "Reading a PDF or a photo of a list is not switched on for your shop yet. Save the list as an Excel or CSV file, or add sarees one by one.",
+  "te": "PDF లేదా లిస్ట్ ఫోటో చదవడం మీ షాప్‌కి ఇంకా ఆన్ కాలేదు. లిస్ట్‌ని Excel లేదా CSV ఫైల్‌గా సేవ్ చేయండి, లేదా చీరలను ఒక్కొక్కటిగా యాడ్ చేయండి.",
+  "hi": "PDF या लिस्ट की फ़ोटो पढ़ना आपकी दुकान के लिए अभी चालू नहीं है। लिस्ट को Excel या CSV फ़ाइल में सेव करें, या साड़ियाँ एक-एक करके जोड़ें।",
+  "kn": "PDF ಅಥವಾ ಲಿಸ್ಟ್ ಫೋಟೋ ಓದುವುದು ನಿಮ್ಮ ಅಂಗಡಿಗೆ ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ. ಲಿಸ್ಟ್ ಅನ್ನು Excel ಅಥವಾ CSV ಫೈಲ್ ಆಗಿ ಸೇವ್ ಮಾಡಿ, ಇಲ್ಲವೇ ಸೀರೆಗಳನ್ನು ಒಂದೊಂದಾಗಿ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
