@@ -434,10 +434,10 @@ def test_the_other_kinds_read_their_own_places() -> None:
     w = World(offers=(offer(cap=2),))
     visits = w.get("store_visits").json()
     assert {s["key"]: s["value"] for s in visits["settings"]["main"] + visits["settings"]["more"]} == {"from_hour": "10:00", "to_hour": "20:30", "slot_minutes": "minutes_30", "buffer_minutes": "minutes_0", "say_ai_when_greeting": "business"}
-    assert visits["when"] == {"from_hour": "09:00", "to_hour": "20:30", "days": ["mon", "tue", "wed", "thu", "fri", "sat"], "pace_per_hour": None}
+    assert visits["when"] == {"from_hour": "10:00", "to_hour": "20:30", "days": ["mon", "tue", "wed", "thu", "fri", "sat"], "pace_per_hour": None}
     followups = w.get("followups").json()
     assert {s["key"]: s["value"] for s in followups["settings"]["main"]} == {"nudges": "nudges_2", "gap_days": "days_3"}
-    assert followups["when"] == {"from_hour": "10:00", "to_hour": "21:00", "days": ["mon", "tue", "wed", "thu", "fri", "sat"], "pace_per_hour": None}
+    assert followups["when"] == {"from_hour": "09:00", "to_hour": "21:00", "days": ["mon", "tue", "wed", "thu", "fri", "sat"], "pace_per_hour": None}
     assert {s["key"]: s["value"] for s in w.get("offers").json()["settings"]["main"]} == {"weekly_cap": "cap_2"}
     assert {s["key"]: s["value"] for s in w.get("researcher").json()["settings"]["main"]} == {"results_per_search": "results_10", "fit_bar": "fit_70"}
     assert w.get("answer_calls").json()["settings"] == {"main": [], "more": [{"key": "say_ai_when_greeting", "type": "choice", "value": "business", "options": ["business", "on", "off"]}]}
