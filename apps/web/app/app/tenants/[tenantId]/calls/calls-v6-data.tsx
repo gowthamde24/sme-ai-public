@@ -11,7 +11,9 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchTimeline, type TimelineItem } from "@/lib/api/customer-timeline";
 import { callsHref, defaultCallId, parseCallsQuery, shortWhen } from "@/lib/calls/filter";
 import { refuseWhy } from "@/lib/calls/view";
-import { jobsScreens, teachScreens, testCallScreens } from "@/lib/screens/flag";
+import { BeforeYouStart } from "@/components/v2/app/calls/panel/BeforeYouStart";
+import { HearItYourself } from "@/components/v2/app/calls/panel/Lazy";
+import { browserVoice, callsPanel, jobsScreens, teachScreens, testCallScreens } from "@/lib/screens/flag";
 
 import { hangUpCallAction } from "./actions";
 import { approveCallQuoteAction, whisperCallAction } from "./v6-actions";
@@ -44,7 +46,10 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
   let call: CallDetail | null = null;
   let timeline: TimelineItem[] | null = null;
   const simple = jobsScreens() !== "off";
-  const words = wordsFor(lang, ["calls6.", "ph.", "outcome.cat.", "outcome.result.", "dst.teach", "today.err.", ...(simple ? ["jobs.pg.calls."] : [])], ["dta.btn.working", ...(simple ? ["jobs.pg.more"] : [])]);
+  // CALLS_PANEL: the rules, and (for the Owner and Admin, where BROWSER_VOICE is on) the browser test call with the words of the talk body it draws
+  const panel = callsPanel();
+  const hear = panel && writer && browserVoice();
+  const words = wordsFor(lang, ["calls6.", "ph.", "outcome.cat.", "outcome.result.", "dst.teach", "today.err.", ...(simple ? ["jobs.pg.calls."] : []), ...(panel ? ["cpn.rules.", "cpn.rule.", "cpn.hear."] : []), ...(hear ? ["dst.", "bv.chat.plan.", "bv.chat.state.", "bv.chat.err.", "bv.end.", "bv.live.", "tt.practice."] : [])], ["dta.btn.working", ...(simple ? ["jobs.pg.more"] : [])]);
   const now = clock();
   const why = (reason: string | null) => words[`ph.why.${refuseWhy(reason)}`] ?? "";
   const listed = await Promise.allSettled([listCalls(token, tenantId, cursor)]).then(([r]) => r);
@@ -71,6 +76,12 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
   } catch {
     language = null;
   }
+  const top = panel ? (
+    <div className="flex min-w-0 flex-col gap-4">
+      {hear ? <HearItYourself words={words} language={new Intl.DisplayNames([lang], { type: "language" }).of(lang) ?? lang} base={base} /> : null}
+      <BeforeYouStart words={words} open />
+    </div>
+  ) : null;
   const takeOverUrl: string | null = null; // listening in and taking over is not offered at launch (owner, 18 Nov): the API answers 409 takeover_unavailable
   const liveControls = call && call.live
     ? {
@@ -103,6 +114,7 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
       liveControls={liveControls}
       help={helpTipFor(lang, base, "calls", true)}
       testHref={owner && testCallScreens() ? `${base}/calls?test=1` : null}
+      top={top}
       repoll={anyLive && !cursor ? <Repoll seconds={page?.pollAfterS ?? 5} /> : null}
       simple={simple}
     />

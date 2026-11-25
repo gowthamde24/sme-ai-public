@@ -31,6 +31,8 @@ export type BillingV6Props = {
   topupAmounts: ReadonlyArray<{ paise: number; text: string }>;
   actions: { freeStart: () => Promise<Result>; topup: (paise: number) => Promise<Result> };
   mock: boolean;
+  /** CALLS_PANEL: "How calls are billed", drawn by the page under the plan and balance; null = nothing */
+  facts?: ReactNode;
 };
 
 const dateText = (iso: string | null, lang: string): string => (iso ? new Date(iso).toLocaleDateString(lang, { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Kolkata" }) : "");
@@ -39,7 +41,7 @@ const dateText = (iso: string | null, lang: string): string => (iso ? new Date(i
  * Billing of design system v6 (owner 13 Nov 2026): plain-language cards. YOUR PLAN (name and price from `GET /v1/pricing`, Edit = the plan picker with its Razorpay checkout), YOUR BALANCE in rupees with the free start and ONE main button, Add money (a sheet marked TEST), and INVOICES (marked TEST until
  * C1's invoices exist). Money is ₹ and never "credits"; every money line is shown as the API or the page's test state made it.
  */
-export function BillingV6({ words, lang, base, help, balance, pricing, invoices, owner, topupAmounts, actions, mock }: BillingV6Props) {
+export function BillingV6({ words, lang, base, help, balance, pricing, invoices, owner, topupAmounts, actions, mock, facts }: BillingV6Props) {
   const t = makeT(words);
   const header = (add: ReactNode) => <PageHeader title={t("bv6.title")} sub={t("bv6.sub")} right={<>{help}{add}</>} />;
   if (balance === null) {
@@ -145,6 +147,8 @@ export function BillingV6({ words, lang, base, help, balance, pricing, invoices,
           {pricing.gstText ? <p className="mt-2 text-sm text-muted">{pricing.gstText}</p> : null}
         </section>
       ) : null}
+
+      {facts}
 
       <section aria-labelledby="bv6-invoices" data-part="invoices" className={`${card} mt-4`}>
         <h2 id="bv6-invoices" className={sectionTitle}>

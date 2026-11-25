@@ -30,6 +30,8 @@ export type BillingV2Props = {
   owner: boolean;
   topupAmounts: ReadonlyArray<{ paise: number; text: string }>;
   actions: { freeStart: () => Promise<Result>; topup: (paise: number) => Promise<Result>; setLimit: (feature: string, paise: number | null) => Promise<Result> };
+  /** CALLS_PANEL: "How calls are billed", drawn by the page before the "How billing works" folds; null = nothing */
+  facts?: ReactNode;
 };
 
 const TONE_ICON = { done: Check, wait: Clock, fail: AlertTriangle, info: Info } as const;
@@ -68,7 +70,7 @@ function warnSentence(t: Say, line: UsageLine): string | null {
  * sentence with the amount inside; warnings at 80% and 100% as solid chips with one sentence each; the upgrade hint when another plan would cost less this month; numbers on demand ("Add a number" goes to the Phone number page, nothing is bought here); and, under one "More choices", the three plans and how
  * billing works. Money is ₹ and never "credits"; no plan is called "unlimited". A made-up month (mock) is marked "Preview" at the top: the paid-plan parts (limits, warnings, numbers) start with paid plans, so nothing here is claimed as live.
  */
-export function BillingV2({ words, lang, base, help, wallet, owner, topupAmounts, actions }: BillingV2Props) {
+export function BillingV2({ words, lang, base, help, wallet, owner, topupAmounts, actions, facts }: BillingV2Props) {
   const t = makeT(words);
   const num = (n: number) => n.toLocaleString(lang, { maximumFractionDigits: 1 });
   if (wallet === null) {
@@ -234,6 +236,7 @@ export function BillingV2({ words, lang, base, help, wallet, owner, topupAmounts
       </section>
 
       <div className="mt-4">
+        {facts}
         <MoreChoices title={t("bill.how.title")} sub={t("bill.how.sub")}>
           <section aria-labelledby="bl-plans" data-part="plans">
             <h3 id="bl-plans" className="m-0 font-display text-base font-semibold">

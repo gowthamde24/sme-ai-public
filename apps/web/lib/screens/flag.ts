@@ -262,3 +262,8 @@ export const industryPages = (value: string | undefined = process.env.INDUSTRY_P
 
 /** The call rules, outreach rules, assistant name and developer keys as plain labelled fields (owner, 25 Nov / 29 Nov 2026: no fill-in-the-blank sentences): the JOBS sentence look draws only when SETTINGS_OPEN is off. */
 export const sentenceForms = (): boolean => jobsScreens() !== "off" && !settingsOpen();
+
+/** The calls panel (owner, 29 Nov 2026; mock "Calls", "Phone numbers", "Credits and billing"; Outpero study): "Before you start calling" (five plain rules, open on Calls, closed on Lead sources), "Hear it yourself" (a test call in the browser, through BROWSER_VOICE), and "How calls are billed" under Credits and billing. `1` = on; unset = off (production until the owner says). */
+export const callsPanel = (value: string | undefined = process.env.CALLS_PANEL): boolean => value === "1";
+/** "Calls at once" on the Phone numbers page (same mock): how many calls can run together and how many do, from C1's `GET /v1/tenants/{t}/phone-lines` (docs/contracts/calls.md). `mock` = a made-up two-line answer (nothing is read), `1` = the API, unset = the card is not there. Only with CALLS_PANEL. */
+export const phoneLinesScreens = (value: string | undefined = process.env.PHONE_LINES_SCREENS): ScreenMode => screenMode(value);

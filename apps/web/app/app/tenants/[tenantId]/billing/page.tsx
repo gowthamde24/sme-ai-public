@@ -16,7 +16,8 @@ import { requireUser } from "@/lib/auth/session";
 import { readBillingBalance, readInvoices, readPricing } from "@/lib/billing-v6/source";
 import { TOPUP_CHOICES } from "@/lib/billing-v6/mock-state";
 import { formatRupeesShort } from "@/lib/money";
-import { balanceScreens, billingV2, designV6, earlyAccess } from "@/lib/screens/flag";
+import { CallBillingFacts } from "@/components/v2/app/calls/panel/CallBillingFacts";
+import { balanceScreens, billingV2, callsPanel, designV6, earlyAccess } from "@/lib/screens/flag";
 
 import { freeStartAction, setLimitAction, topupAction } from "./actions";
 
@@ -45,6 +46,8 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
   // free early access (EARLY_ACCESS=1): nothing to pay, no balance, no top-up, no plan to pick; a link that still points here says so
   if (earlyAccess()) return (<main className={pageMain} lang={lang}><PageTop title={t("ea.title")} sub={t("ea.body")} /></main>);
   const base = `/app/tenants/${tenantId}`;
+  // CALLS_PANEL: "How calls are billed" (rows tagged Draft until the owner confirms them)
+  const facts = callsPanel() ? <CallBillingFacts words={wordsFor(lang, ["cpn.bill."])} /> : null;
   // BILLING_V2 (owner's final pricing): ONE ₹ wallet with a usage line per feature, limits, warnings, the upgrade hint and numbers on demand; unset = the page below, unchanged
   if (billingV2() !== "off") {
     const demo = (await searchParams).demo;
@@ -56,6 +59,7 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
         base={base}
         help={helpTipFor(lang, base, "billing", true)}
         wallet={wallet}
+        facts={facts}
         owner={tenant.role === "owner"}
         topupAmounts={TOPUP_CHOICES.map((paise) => ({ paise, text: formatRupeesShort(paise) }))}
         actions={{ freeStart: freeStartAction.bind(null, tenantId), topup: topupAction.bind(null, tenantId), setLimit: setLimitAction.bind(null, tenantId) }}
@@ -76,6 +80,7 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
       topupAmounts={TOPUP_CHOICES.map((paise) => ({ paise, text: formatRupeesShort(paise) }))}
       actions={{ freeStart: freeStartAction.bind(null, tenantId), topup: topupAction.bind(null, tenantId) }}
       mock={balanceScreens() === "mock"}
+      facts={facts}
     />
   );
 }
