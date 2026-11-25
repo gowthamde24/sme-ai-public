@@ -132955,5 +132955,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "phn.kyc.pending": {
+  "en": "Your number is not active until your business is verified.",
+  "te": "మీ బిజినెస్ వెరిఫై అయ్యే వరకు మీ నంబర్ యాక్టివ్ కాదు.",
+  "hi": "आपका बिज़नेस वेरिफ़ाई होने तक आपका नंबर चालू नहीं होता।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ವೆರಿಫೈ ಆಗುವವರೆಗೆ ನಿಮ್ಮ ನಂಬರ್ ಆಕ್ಟಿವ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phn.kyc.go": {
+  "en": "Verify now.",
+  "te": "ఇప్పుడే వెరిఫై చేయండి.",
+  "hi": "अभी वेरिफ़ाई करें।",
+  "kn": "ಈಗಲೇ ವೆರಿಫೈ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phn.calls.pending": {
+  "en": "Not active until verified",
+  "te": "వెరిఫై అయ్యే వరకు యాక్టివ్ కాదు",
+  "hi": "वेरिफ़ाई होने तक चालू नहीं",
+  "kn": "ವೆರಿಫೈ ಆಗುವವರೆಗೆ ಆಕ್ಟಿವ್ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.kyc_pending": {
+  "en": "Your number is not active until your business is verified. No call was made. Verify your business, then try again.",
+  "te": "మీ బిజినెస్ వెరిఫై అయ్యే వరకు మీ నంబర్ యాక్టివ్ కాదు. కాల్ వెళ్ళలేదు. బిజినెస్ వెరిఫై చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपका बिज़नेस वेरिफ़ाई होने तक आपका नंबर चालू नहीं होता। कोई कॉल नहीं लगी। बिज़नेस वेरिफ़ाई करके दोबारा कोशिश करें।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ವೆರಿಫೈ ಆಗುವವರೆಗೆ ನಿಮ್ಮ ನಂಬರ್ ಆಕ್ಟಿವ್ ಅಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ. ಬಿಸಿನೆಸ್ ವೆರಿಫೈ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

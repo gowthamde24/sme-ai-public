@@ -113,7 +113,8 @@ export default async function PhoneNumberPage({ params, searchParams }: PageProp
         <PageTop title={await menuTitle("phone", lang, user.accessToken, tenantId)} sub={t("pick.sub")} />
         <div className="mt-4">
           <PhonePicker
-            words={wordsFor(lang, ["pick."])}
+            words={wordsFor(lang, ["pick.", "phn.kyc."])}
+            verifyHref={`/app/tenants/${tenantId}/phone-number?verify=1`}
             own={own}
             canEdit={tenant.role === "owner"}
             mock={phonePicker() === "mock"}

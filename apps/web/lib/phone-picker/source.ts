@@ -1,7 +1,7 @@
 import { claimNumber as apiClaim, listAvailable, listOwn, reasonOf } from "@/lib/api/numbers";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { clearJar, readJar, writeJar } from "@/lib/mock/jar";
-import { phonePicker } from "@/lib/screens/flag";
+import { kycPerClient, phonePicker } from "@/lib/screens/flag";
 
 import { displayNumber, isNumber, isPrefix, isType, type ClaimResult, type NumberType, type OwnNumber, type PickNumber, type Refusal, type SearchResult } from "./types";
 
@@ -75,7 +75,10 @@ export async function readOwn(token: string, tenantId: string): Promise<OwnNumbe
   if (mode === "off") return null;
   if (mode === "mock") {
     const kept = await readJar(COOKIE, parseKept, null);
-    return kept ? { number: kept.number, display: displayNumber(kept.number), type: kept.type, state: Date.now() - kept.at < 60_000 ? "getting_ready" : "ready", label: null } : null;
+    if (!kept) return null;
+    // with the business's own account (KYC_PER_CLIENT) a bought number is not active until the business is verified (C1: buy first, verify after)
+    const verified = kycPerClient() === "off" || (await (await import("@/lib/phone-kyc/source")).readStatus(token, tenantId))?.state === "verified";
+    return { number: kept.number, display: displayNumber(kept.number), type: kept.type, state: Date.now() - kept.at < 60_000 ? "getting_ready" : verified ? "ready" : "kyc_pending", label: null };
   }
   try {
     return (await listOwn(token, tenantId))[0] ?? null;
