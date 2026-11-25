@@ -96091,10 +96091,10 @@
   }
  },
  "mya.p.call.help": {
-  "en": "Rings a phone on the test list. Never a customer.",
-  "te": "టెస్ట్ లిస్ట్‌లోని ఫోన్‌కి రింగ్ చేస్తుంది. ఎప్పుడూ కస్టమర్‌కి కాదు.",
-  "hi": "Rings a phone on the test list. Never a customer.",
-  "kn": "Rings a phone on the test list. Never a customer.",
+  "en": "Calls a phone on your test list so you hear your assistant. It never calls a customer.",
+  "te": "టెస్ట్ లిస్ట్‌లోని ఫోన్‌కి కాల్ చేస్తుంది, మీ అసిస్టెంట్ ఎలా మాట్లాడుతుందో మీరు వినడానికి. కస్టమర్‌కి ఎప్పుడూ కాల్ చేయదు.",
+  "hi": "Calls a phone on your test list so you hear your assistant. It never calls a customer.",
+  "kn": "Calls a phone on your test list so you hear your assistant. It never calls a customer.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
