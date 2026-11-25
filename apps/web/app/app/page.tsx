@@ -15,6 +15,7 @@ import { listPacks } from "@/lib/api/pack";
 import { firstRunType } from "@/lib/screens/flag";
 
 import { signOut } from "./actions";
+import { typeKeywords } from "@/lib/packs/type-search";
 import { CreateTenantForm } from "./create-tenant-form";
 import { readMeCached } from "./me-read";
 import { BRAND_NAME } from "@/design/brand";
@@ -30,7 +31,7 @@ export default async function AppPage() {
   const t = makeT(words);
   // FIRST_RUN_TYPE: the business types, asked as plain rows before a workspace is made (a failed read = the form as it was)
   const packs = firstRunType() ? await listPacks().catch(() => []) : [];
-  const types = packs.map((p) => ({ id: p.packId, name: p.names[lang] ?? p.names.en, line: p.summary[lang] ?? p.summary.en ?? "" }));
+  const types = packs.map((p) => ({ id: p.packId, name: p.names[lang] ?? p.names.en, line: p.summary[lang] ?? p.summary.en ?? "", keywords: typeKeywords(p) }));
 
   let me: Me | null = null;
   try {

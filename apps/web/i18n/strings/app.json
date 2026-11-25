@@ -137774,5 +137774,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "start.type.q": {
+  "en": "Search your business",
+  "te": "మీ బిజినెస్ వెతకండి",
+  "hi": "अपना बिज़नेस खोजें",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.q.ph": {
+  "en": "For example saree, bakery, clinic",
+  "te": "ఉదాహరణకు చీర, బేకరీ, క్లినిక్",
+  "hi": "जैसे साड़ी, बेकरी, क्लिनिक",
+  "kn": "ಉದಾಹರಣೆಗೆ ಸೀರೆ, ಬೇಕರಿ, ಕ್ಲಿನಿಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.q.none": {
+  "en": "No business type matches that.",
+  "te": "దానికి సరిపోయే బిజినెస్ రకం లేదు.",
+  "hi": "इससे मिलता कोई बिज़नेस प्रकार नहीं है।",
+  "kn": "ಅದಕ್ಕೆ ಹೊಂದುವ ಬಿಸಿನೆಸ್ ಪ್ರಕಾರ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.q.other": {
+  "en": "Choose {name}",
+  "te": "{name} ఎంచుకోండి",
+  "hi": "{name} चुनें",
+  "kn": "{name} ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.q.all": {
+  "en": "Show all types",
+  "te": "అన్ని రకాలు చూపండి",
+  "hi": "सभी प्रकार दिखाएँ",
+  "kn": "ಎಲ್ಲ ಪ್ರಕಾರ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.q.less": {
+  "en": "Show only matches",
+  "te": "సరిపోయేవే చూపండి",
+  "hi": "सिर्फ़ मिलते हुए दिखाएँ",
+  "kn": "ಹೊಂದುವವು ಮಾತ್ರ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.q.count": {
+  "en": "{n} types match",
+  "te": "{n} రకాలు సరిపోతాయి",
+  "hi": "{n} प्रकार मिलते हैं",
+  "kn": "{n} ಪ್ರಕಾರ ಹೊಂದುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
