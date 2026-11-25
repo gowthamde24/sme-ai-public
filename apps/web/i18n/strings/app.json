@@ -137201,5 +137201,93 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "pick.buy.s3.now.t": {
+  "en": "Verify now",
+  "te": "ఇప్పుడే వెరిఫై చేయండి",
+  "hi": "अभी वेरिफ़ाई करें",
+  "kn": "ಈಗಲೇ ವೆರಿಫೈ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.now.tag": {
+  "en": "Recommended",
+  "te": "సిఫార్సు",
+  "hi": "सुझाया गया",
+  "kn": "ಸೂಚಿತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.now.d": {
+  "en": "Do it here, in a few minutes. Keep your PAN ready, and your phone for Aadhaar. The number is bought only after you are verified.",
+  "te": "ఇక్కడే, కొద్ది నిమిషాల్లో చేయండి. మీ PAN సిద్ధంగా ఉంచండి, ఆధార్ కోసం మీ ఫోన్ కూడా. వెరిఫై అయిన తర్వాతే నంబర్ కొంటాం.",
+  "hi": "यहीं, कुछ मिनट में कर लें। अपना PAN तैयार रखें, और आधार के लिए अपना फ़ोन। वेरिफ़ाई होने के बाद ही नंबर ख़रीदा जाएगा।",
+  "kn": "ಇಲ್ಲೇ, ಕೆಲವು ನಿಮಿಷಗಳಲ್ಲಿ ಮಾಡಿ. ನಿಮ್ಮ PAN ಸಿದ್ಧವಾಗಿಡಿ, ಆಧಾರ್‌ಗೆ ನಿಮ್ಮ ಫೋನ್ ಕೂಡ. ವೆರಿಫೈ ಆದ ಮೇಲೆಯೇ ನಂಬರ್ ಖರೀದಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.later.t": {
+  "en": "Verify after buying",
+  "te": "కొన్న తర్వాత వెరిఫై చేయండి",
+  "hi": "ख़रीदने के बाद वेरिफ़ाई करें",
+  "kn": "ಖರೀದಿಸಿದ ಮೇಲೆ ವೆರಿಫೈ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.later.d": {
+  "en": "You verify yourself after you buy. A quick check of your PAN and Aadhaar makes you, not us, the registered owner of the number. Until it is done the number cannot make calls.",
+  "te": "నంబర్ తీసుకున్న తర్వాత మీరే వెరిఫై చేసుకుంటారు. మీ PAN, ఆధార్ చిన్న చెక్‌తో ఆ నంబర్‌కి రిజిస్టర్డ్ ఓనర్ మీరే అవుతారు, మేము కాదు. అది పూర్తయ్యే వరకు ఆ నంబర్ నుంచి కాల్స్ చేయలేరు.",
+  "hi": "ख़रीदने के बाद आप ख़ुद वेरिफ़ाई करते हैं। आपके PAN और आधार की छोटी जाँच से नंबर के रजिस्टर्ड मालिक आप बनते हैं, हम नहीं। जब तक यह पूरा नहीं होता, उस नंबर से कॉल नहीं हो सकती।",
+  "kn": "ನಂಬರ್ ಖರೀದಿಸಿದ ಮೇಲೆ ನೀವೇ ವೆರಿಫೈ ಮಾಡುತ್ತೀರಿ. ನಿಮ್ಮ PAN, ಆಧಾರ್‌ನ ಸಣ್ಣ ಚೆಕ್‌ನಿಂದ ಆ ನಂಬರ್‌ನ ರಿಜಿಸ್ಟರ್ಡ್ ಮಾಲೀಕರು ನೀವೇ ಆಗುತ್ತೀರಿ, ನಾವಲ್ಲ. ಅದು ಮುಗಿಯುವವರೆಗೆ ಆ ನಂಬರ್‌ನಿಂದ ಕಾಲ್ ಮಾಡಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.now.start": {
+  "en": "Start by creating your calling account. It takes a few minutes and you can stop and come back.",
+  "te": "ముందు మీ కాలింగ్ అకౌంట్ తయారు చేయండి. కొద్ది నిమిషాలు పడుతుంది, ఆపి మళ్ళీ రావచ్చు.",
+  "hi": "पहले अपना कॉलिंग अकाउंट बनाएँ। इसमें कुछ मिनट लगते हैं, आप रुककर बाद में लौट सकते हैं।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಕಾಲಿಂಗ್ ಅಕೌಂಟ್ ಮಾಡಿ. ಕೆಲವು ನಿಮಿಷ ಬೇಕು, ನಿಲ್ಲಿಸಿ ಮತ್ತೆ ಬರಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.now.done": {
+  "en": "You are verified. Go on to the last step.",
+  "te": "మీరు వెరిఫై అయ్యారు. చివరి స్టెప్‌కి వెళ్ళండి.",
+  "hi": "आप वेरिफ़ाई हो गए। आख़िरी स्टेप पर चलें।",
+  "kn": "ನೀವು ವೆರಿಫೈ ಆಗಿದ್ದೀರಿ. ಕೊನೆಯ ಸ್ಟೆಪ್‌ಗೆ ಹೋಗಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.now.wait": {
+  "en": "Continue opens when you are verified.",
+  "te": "మీరు వెరిఫై అయ్యాక కొనసాగించండి తెరుచుకుంటుంది.",
+  "hi": "आप वेरिफ़ाई हो जाएँ तब आगे बढ़ें खुलता है।",
+  "kn": "ನೀವು ವೆರಿಫೈ ಆದ ಮೇಲೆ ಮುಂದುವರಿಸಿ ತೆರೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

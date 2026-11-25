@@ -94,6 +94,19 @@ export default async function PhoneNumberPage({ params, searchParams }: PageProp
                 mock={mock}
                 verifyHref={`${here}?verify=1`}
                 actions={{ search: searchAvailableAction.bind(null, tenantId), buy: buyNumberAction.bind(null, tenantId) }}
+                kyc={{
+                  status,
+                  actions: {
+                    status: kycStatusAction.bind(null, tenantId),
+                    start: kycStartAction.bind(null, tenantId),
+                    details: kycDetailsAction.bind(null, tenantId),
+                    pan: kycPanAction.bind(null, tenantId),
+                    gst: kycGstAction.bind(null, tenantId),
+                    aadhaar: kycAadhaarAction.bind(null, tenantId),
+                    submit: kycSubmitAction.bind(null, tenantId),
+                    uploadUrl: `${here}/kyc-document`,
+                  },
+                }}
               />
             </div>
           </main>

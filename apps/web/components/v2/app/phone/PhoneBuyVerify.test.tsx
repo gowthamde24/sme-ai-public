@@ -318,3 +318,55 @@ describe("Verify your business: the documents", () => {
     expect(screen.getByText("Only the owner can pick the number.")).toBeInTheDocument();
   });
 });
+
+describe("Get a phone number: step 3 offers Verify now, on this page (owner, 26 Nov 2026)", () => {
+  const toStep3 = async (kyc: { status: KycStatus; actions: VerifyActions } | null) => {
+    const out = render(<PhoneBuy words={WORDS} actions={buyActions()} canEdit email="asha@shop.in" verifyHref="/v?verify=1" kyc={kyc} />);
+    await screen.findByText("+91 94294 92465");
+    fireEvent.click(screen.getAllByRole("radio")[0]);
+    fireEvent.click(screen.getByRole("button", { name: "Use this number" }));
+    fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "Asha Rao" } });
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+    return out;
+  };
+  it("two plain choices, Verify now (recommended) first and chosen; Continue waits until you are verified", async () => {
+    const { container } = await toStep3({ status: STATUS({ state: "not_started", accountType: null }), actions: verifyActions() });
+    const choice = document.querySelector('[data-part="verify-choice"]') as HTMLElement;
+    const radios = within(choice).getAllByRole("radio");
+    expect(radios).toHaveLength(2);
+    expect(radios[0]).toBeChecked();
+    expect(choice).toHaveTextContent("Verify now");
+    expect(choice).toHaveTextContent("Recommended");
+    expect(choice).toHaveTextContent("Verify after buying");
+    expect(screen.getByRole("button", { name: "Start verification" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+    expect(screen.getByText("Continue opens when you are verified.")).toBeInTheDocument();
+    expectNoSentenceForm(container);
+  });
+  it("Start verification opens the account with the type chosen in step 2, then the details form, on this page (no reload)", async () => {
+    const actions = verifyActions();
+    await toStep3({ status: STATUS({ state: "not_started", accountType: null }), actions });
+    fireEvent.click(screen.getByRole("button", { name: "Start verification" }));
+    await waitFor(() => expect(actions.start).toHaveBeenCalledWith("individual"));
+    expect(await screen.findByLabelText("Phone number")).toBeInTheDocument();
+    expect(nav.refresh).not.toHaveBeenCalled();
+  });
+  it("when the check says verified, Continue opens and the last step follows", async () => {
+    await toStep3({ status: STATUS({ state: "verified" }), actions: verifyActions() });
+    expect(screen.getByText("You are verified. Go on to the last step.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+    expect(states()).toEqual(["done", "done", "done", "now"]);
+  });
+  it("Verify after buying is the old text and Continue is open at once", async () => {
+    await toStep3({ status: STATUS({ state: "not_started", accountType: null }), actions: verifyActions() });
+    const choice = document.querySelector('[data-part="verify-choice"]') as HTMLElement;
+    fireEvent.click(within(choice).getAllByRole("radio")[1]);
+    expect(screen.queryByRole("button", { name: "Start verification" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeEnabled();
+  });
+  it("without the verification pieces (an API without them) step 3 only says that you verify after buying", async () => {
+    await toStep3(null);
+    expect(document.querySelector('[data-part="verify-choice"]')).toBeNull();
+    expect(screen.getByText("You verify yourself after you buy.")).toBeInTheDocument();
+  });
+});
