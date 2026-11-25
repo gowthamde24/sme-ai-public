@@ -138687,5 +138687,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "mya.g.title.live": {
+  "en": "Your assistant is live",
+  "te": "మీ అసిస్టెంట్ లైవ్‌లో ఉంది",
+  "hi": "आपका असिस्टेंट लाइव है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಲೈವ್ ಆಗಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

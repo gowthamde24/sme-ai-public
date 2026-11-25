@@ -26,12 +26,14 @@ export function GoLivePanel({ words, base, status, button, mock, knows = null }:
   return (
     <section data-part="mya-golive-tab" aria-labelledby="mya-g-h" className={`${surface} flex flex-col gap-4`}>
       <div className="flex flex-wrap items-center gap-3">
+        {/* a live assistant is not asked to "go live" again, and its state is said once (the page's own chip above already says Live) */}
         <h2 id="mya-g-h" className="font-display text-xl font-semibold">
-          {t("mya.g.title")}
+          {status.state === "live" ? t("mya.g.title.live") : t("mya.g.title")}
         </h2>
-        <StatusPill status={STATE_PILL[status.state]}>{status.state === "not_live" ? t("mya.g.state.not_live") : t(`nav.assistant.${status.state}` as "nav.assistant.live")}</StatusPill>
+        {status.state === "live" ? null : <StatusPill status={STATE_PILL[status.state]}>{status.state === "not_live" ? t("mya.g.state.not_live") : t(`nav.assistant.${status.state}` as "nav.assistant.live")}</StatusPill>}
       </div>
       <p className="m-0 text-base">{t(`mya.g.sub.${status.state}` as "mya.g.sub.live")}</p>
+      {status.state === "live" && status.missing.length === 0 ? null : (
       <div>
         <p className="m-0 text-base font-semibold">{t("mya.g.need")}</p>
         <ul className="m-0 mt-2 flex list-none flex-col gap-1 p-0" data-part="mya-requirements">
@@ -55,6 +57,7 @@ export function GoLivePanel({ words, base, status, button, mock, knows = null }:
         </ul>
         <p className="mt-1 text-sm text-muted">{t("mya.missing.only")}</p>
       </div>
+      )}
       {status.usingDefaults.length > 0 ? (
         <div data-part="mya-defaults-list">
           <p className="m-0 text-base font-semibold">{t("mya.g.defaults")}</p>
