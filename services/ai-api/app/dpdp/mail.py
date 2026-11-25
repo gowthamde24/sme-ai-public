@@ -82,6 +82,12 @@ def compose_lapse_warning(business: str, erase_on: str, to: str, language: str =
     return _compose("lapse_warning", to, mail_language(language), f"lapse-warning-{tenant_id}-{erase_on}-{to}", business=business, date=erase_on)
 
 
+def compose_contact_inbox(item: dict[str, Any], to: str) -> Email:
+    """The hello inbox is told THAT a "Talk to us" message arrived, with the reference and the two non-personal answers; never the name, phone or e-mail (staff read the message in the admin console)."""
+    lines = [f"A new \"Talk to us\" message has arrived: {item['reference']}.", f"Kind of business: {item.get('business_kind') or '-'}", f"Good time: {item.get('good_time') or '-'}", "The details are in the admin console."]
+    return Email(to=to, subject=f"New message {item['reference']}", body="\n".join(lines) + "\n", html=to_html(lines, "Stack19 contact"), idempotency_key=f"contact-{item['id']}")
+
+
 class IntakeMail:
     """One pass of the worker: e-mail what the two public doors stored."""
 
@@ -111,6 +117,13 @@ class IntakeMail:
                     sent += 1
             except (KeyError, ValueError):
                 logger.error("dpdp mail: an unexpected waitlist item was skipped")
+        for item in self._repo.contact_due(token, self._limit):
+            try:
+                if self._hello and self._sender.send(compose_contact_inbox(item, self._hello)):
+                    self._repo.contact_mark(token, uuid.UUID(str(item["id"])))
+                    sent += 1
+            except (KeyError, ValueError):
+                logger.error("dpdp mail: an unexpected contact item was skipped")
         return sent
 
 

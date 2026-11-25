@@ -75,10 +75,11 @@ def test_every_route_without_a_sign_in_has_a_rate_rule_and_is_on_the_known_list(
         "/v1/privacy/subprocessors",  # job DQ: the processors as data (public, cached)
         "/v1/privacy/grievance",  # job DQ: a grievance from anyone (rate limited; the database holds its own caps)
         "/v1/public/waitlist",  # job DQ: the public site's waitlist (rate limited; the database holds its own caps)
+        "/v1/public/contact",  # the "Talk to us" form (CONTACT_FORM; captcha, per-address and per-contact limits, the database holds its own cap)
         "/v1/packs", "/v1/auth/providers",  # job CK: the sign-up cards and the sign-up providers (public by design, no tenant data)
         "/v1/webhooks/whatsapp", "/v1/webhooks/razorpay", "/v1/webhooks/razorpay-billing", "/v1/webhooks/cashfree", "/v1/webhooks/fake-payments",  # jobs BR, BZ: signed or secret-path webhooks
         "/v1/webhooks/exotel/{token}/missed-call", "/v1/webhooks/exotel/{token}/call-status",
-        "/api/v1/leads", "/api/v1/leads/{lead_id}", "/api/v1/usage",  # ADR 0121: the developer API (a key is the credential, checked by the database; rate rule developer_api)
+        "/api/v1/leads", "/api/v1/leads/{lead_id}", "/api/v1/usage", "/api/v1/me", "/api/v1/calls", "/api/v1/calls/{call_id}", "/api/v1/campaigns", "/api/v1/campaigns/{campaign_id}", "/api/v1/activity",  # ADR 0121: the developer API (a key is the credential, checked by the database; rate rule developer_api)
         "/v1/telephony/voicelink/webhook/{token}", "/v1/telephony/voicelink/inbound_call/{token}",  # VoiceLink (26 Nov 2026): its call events and its dynamic inbound routing; the secret token is in the path (rate rule voicelink_telephony)
         "/v1/telephony/plivo/answer", "/v1/telephony/plivo/outbound-answer", "/v1/telephony/plivo/hangup", "/v1/telephony/plivo/stream-status",  # job 3 phase A: Plivo's signed requests (rate rule plivo_telephony)
         "/v1/integrations/google-calendar/callback", "/v1/integrations/google-calendar/push",  # appointment booking slice 4: Google's browser redirect (signed one-time state) and push notifications (channel token)

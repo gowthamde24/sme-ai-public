@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "categories.schema.json",
+  "title": "The groups of business types and their search words",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "categories",
+    "packs",
+    "keywords"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "$comment": {
+      "type": "string"
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "colour"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]{3,12}$"
+          },
+          "name": {
+            "type": "object",
+            "required": [
+              "en"
+            ],
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            }
+          },
+          "colour": {
+            "enum": [
+              "call",
+              "chat",
+              "visit",
+              "offer",
+              "find"
+            ]
+          }
+        }
+      }
+    },
+    "packs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "keywords": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 200
+      }
+    }
+  }
+}

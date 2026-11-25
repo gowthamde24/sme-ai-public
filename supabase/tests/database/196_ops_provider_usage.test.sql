@@ -16,8 +16,8 @@ create function pg_temp.rec(p_user text, p_provider text, p_unit text, p_units t
   select pg_temp.sc(p_user, format($q$select public.ops_record_usage(%L, %L, %L, %s, %L, %L, %s)::text$q$, tests.tid('a'), p_provider, p_unit, p_units, p_kind, p_ref, p_at)) $$;
 
 -- A. the seed: the rate card
-select is((select count(*) from ops.provider_rates), 15::bigint, 'A1: fifteen starting rates (ten of 13 Nov and the five Google SKUs of 14 Nov)');
-select is((select string_agg(distinct provider, ',' order by provider) from ops.provider_rates), 'anthropic,cartesia,google,meta,plivo,sarvam', 'A2: every provider has a rate');
+select is((select count(*) from ops.provider_rates), 18::bigint, 'A1: eighteen rates (ten of 13 Nov, the five Google SKUs of 14 Nov, VoiceLink and the two Haiku 5.5 rates of 24 Nov)');
+select is((select string_agg(distinct provider, ',' order by provider) from ops.provider_rates), 'anthropic,cartesia,google,meta,plivo,sarvam,voicelink', 'A2: every provider has a rate');
 select is((select cost_micro_paise from ops.provider_rates where provider = 'plivo' and unit = 'second'), 633333::bigint, 'A3: Plivo: Rs 0.38 a minute as micro-paise a second');
 select is((select count(*) from ops.provider_rates where provider = 'meta' and rate_source <> 'estimate'), 0::bigint, 'A4: the Meta per-message rates are estimates (not confirmed)');
 select throws_ok($q$insert into ops.provider_rates (provider, unit, cost_micro_paise, valid_from, rate_source, note) values ('plivo', 'character', 1, now(), 'estimate', 'x')$q$, '23514', null, 'A5: a unit that does not belong to the provider is refused');
@@ -42,7 +42,7 @@ select is(pg_temp.j(pg_temp.rec('outsider', 'plivo', 'second', '90', 'call', 'ca
 select is(pg_temp.j(pg_temp.rec('outsider', 'sarvam', 'character', '5', 'call', 'call-c-0002'), 'cost_paise'), '2', 'C2: 5 Sarvam characters = 1.5 paise: half rounds UP to 2');
 select is(pg_temp.j(pg_temp.rec('outsider', 'sarvam', 'character', '3', 'call', 'call-c-0003'), 'cost_paise'), '1', 'C3: 0.9 paise rounds to 1');
 select is(pg_temp.j(pg_temp.rec('outsider', 'sarvam', 'character', '1', 'call', 'call-c-0004'), 'cost_paise'), '0', 'C4: 0.3 paise rounds to 0 (the line is still kept)');
-select is(pg_temp.j(pg_temp.rec('outsider', 'anthropic', 'token_in', '1000', 'assistant_turn', 'run-c-0005:usage-1'), 'cost_paise'), '9', 'C5: 1,000 input tokens = 8.5 paise: rounds up to 9');
+select is(pg_temp.j(pg_temp.rec('outsider', 'anthropic', 'token_in', '1000', 'assistant_turn', 'run-c-0005:usage-1'), 'cost_paise'), '1', 'C5: 1,000 input tokens at the Haiku 5.5 rate (0.85 paise) round up to 1');
 select is(pg_temp.j(pg_temp.rec('outsider', 'meta', 'message_marketing', '1', 'message', 'wamid.c-0006'), 'cost_paise'), '60', 'C6: one marketing message = the 60 paise estimate');
 select is(pg_temp.j(pg_temp.rec('outsider', 'meta', 'message_service', '1', 'message', 'wamid.c-0007'), 'cost_paise'), '0', 'C7: a service message costs 0 and is still recorded');
 select is(pg_temp.j(pg_temp.rec('outsider', 'google', 'search', '1', 'search', 'search-c-0008'), 'cost_paise'), '300', 'C8: one Places request = Rs 3');

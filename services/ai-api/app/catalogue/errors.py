@@ -17,6 +17,10 @@ class PhotoFilesMissingError(RepositoryError):
     """SM523: the photo's files are not in storage (the upload did not finish)."""
 
 
+class NothingToUndoError(RepositoryError):
+    """SM851: no price change of this item in the last 30 days that is not already an undo."""
+
+
 class PhotoRejectedError(Exception):
     """An uploaded file that cannot be used. `code` is one of: too_large, unsupported_type, unreadable, too_big_pixels, animated."""
 

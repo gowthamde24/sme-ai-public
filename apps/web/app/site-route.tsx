@@ -10,6 +10,9 @@ import { isServed } from "@/lib/site/mode";
 import { resolveSite } from "@/lib/site/routes";
 import { chatAvailable } from "@/lib/site/whatsapp";
 
+import { readHealth } from "@/lib/public/health";
+
+import { requestTalk } from "./public-actions";
 import { prepareContactChat, prepareQuoteChat } from "./site-actions";
 import { joinWaitlist } from "./waitlist-actions";
 
@@ -27,6 +30,6 @@ export async function SiteRoute({ segments }: { segments: string[] }) {
   const hit = resolveSite(segments);
   if (!hit || !isServed(hit.target)) notFound();
   const jar = await cookies();
-  const actions: SiteActions = { contactChat: prepareContactChat, quoteChat: prepareQuoteChat, chatAvailable: chatAvailable(), waitlist: joinWaitlist };
+  const actions: SiteActions = { contactChat: prepareContactChat, quoteChat: prepareQuoteChat, chatAvailable: chatAvailable(), waitlist: joinWaitlist, talk: requestTalk, ...(hit.target.kind === "page" && hit.target.page === "status" ? { health: await readHealth() } : {}) };
   return <SitePage lang={hit.lang} theme={readTheme(jar.get(THEME_COOKIE)?.value)} target={hit.target} actions={actions} />;
 }

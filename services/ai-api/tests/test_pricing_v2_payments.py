@@ -52,7 +52,7 @@ class PayRepo(FakeRepo):
         self.orders[order_id] = {"purpose": purpose, "base": base, "total": base + (base * 18 + 50) // 100}
         return {"order_id": order_id, "total_paise": self.orders[order_id]["total"]}
 
-    def order_settle(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_ref: str) -> dict[str, Any]:
+    def order_settle(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_ref: str, paid_paise: int | None = None) -> dict[str, Any]:
         self.tokens.append(token)
         o = self.orders[order_id]
         first = "paid" not in o
@@ -61,6 +61,11 @@ class PayRepo(FakeRepo):
             self.b["balance_paise"] += o["base"]
         self.calls.append(("order_settle", (order_id, payment_ref)))
         return {"settled": first}
+
+    def order_failed(self, token: str, order_id: str, code: str) -> dict[str, Any]:
+        self.tokens.append(token)
+        self.calls.append(("order_failed", (order_id, code)))
+        return {"recorded": True, "reason": None}
 
     def provider_event(self, token: str, tenant_id: uuid.UUID, event_id: str, kind: str, amount_paise: int | None) -> dict[str, Any]:
         self.tokens.append(token)
@@ -230,6 +235,22 @@ def test_an_order_paid_event_is_signed_mapped_and_settles_once_for_the_pricing_m
     assert ("provider_event", ("razorpay:evt_2", "charge_succeeded", 199900)) in repo.calls
     assert CATALOGUE["gst_percent"] == 18.0
     assert set(repo.tokens) == {"hook-token"}, "every system call used the billing webhook's own account, never the scheduler's"
+
+
+def test_the_signed_webhook_settles_an_order_even_when_there_is_no_connectors_runtime() -> None:
+    """Found on the local smoke (25 Nov 2026): the route asked for the connectors runtime first and answered 404 where there is none (production has none); billing v2 never needs it."""
+    from types import SimpleNamespace
+
+    repo = PayRepo()
+    provider = razorpay()
+    repo.orders["order_NOCONN1"] = {"purpose": "topup", "base": 100000, "total": 118000}
+    hook = SimpleNamespace(token=lambda: "hook-token")
+    client, _ = make_client(pricing=PricingService(repo, provider), billing=SimpleNamespace(provider=provider, apply=lambda *a: None), billing_webhook=hook)
+    doc = {"event": "order.paid", "payload": {"order": {"entity": {"id": "order_NOCONN1", "amount_paid": 118000, "notes": {"tenant_id": str(TENANT_A.id), "purpose": "topup"}}}, "payment": {"entity": {"id": "pay_NOCONN1"}}}}
+    raw = json.dumps(doc).encode()
+    headers = {"x-razorpay-signature": hmac.new(HOOK.encode(), raw, hashlib.sha256).hexdigest(), "x-razorpay-event-id": "evt_nc"}
+    assert client.post("/v1/webhooks/razorpay-billing", content=raw, headers=headers).status_code == 200
+    assert repo.b["balance_paise"] == 155000 + 100000
 
 
 # ------------------------------------------------------------------------------------------------ the v1 trial is closed while PRICING_V2 is on

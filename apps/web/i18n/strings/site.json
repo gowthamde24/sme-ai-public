@@ -8420,17 +8420,6 @@
    "kn": "draft"
   }
  },
- "h2.num.title.kyc": {
-  "en": "Your own business number. KYC done online.",
-  "te": "మీ సొంత బిజినెస్ నంబర్. KYC ఆన్‌లైన్‌లోనే.",
-  "hi": "आपका अपना बिज़नेस नंबर। KYC ऑनलाइन।",
-  "kn": "ನಿಮ್ಮದೇ ಬಿಸಿನೆಸ್ ನಂಬರ್. KYC ಆನ್‌ಲೈನ್‌ನಲ್ಲೇ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "h2.num.title": {
   "en": "Your own business number",
   "te": "మీ సొంత బిజినెస్ నంబర్",
@@ -8497,17 +8486,6 @@
    "kn": "draft"
   }
  },
- "h2.num.step.2": {
-  "en": "GST or Udyam",
-  "te": "GST లేదా ఉద్యమ్",
-  "hi": "GST या उद्यम",
-  "kn": "GST ಅಥವಾ ಉದ್ಯಮ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "h2.num.step.2.d": {
   "en": "Checked",
   "te": "చూశాం",
@@ -8546,17 +8524,6 @@
   "te": "నమూనా వ్యాపారం కోసం ఒక ఉదాహరణ నంబర్ కార్డ్.",
   "hi": "एक नमूना कारोबार का उदाहरण नंबर कार्ड।",
   "kn": "ಮಾದರಿ ವ್ಯಾಪಾರಕ್ಕಾಗಿ ಒಂದು ಉದಾಹರಣೆ ನಂಬರ್ ಕಾರ್ಡ್.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h2.num.kyc.how": {
-  "en": "Upload your business PAN and your GST or Udyam certificate, we take you through the KYC online, and the number goes live in your workspace once it is verified.",
-  "te": "మీ బిజినెస్ PAN, GST లేదా ఉద్యమ్ సర్టిఫికెట్ అప్‌లోడ్ చేయండి, KYC ఆన్‌లైన్‌లో చేయిస్తాం, వెరిఫై అయ్యాక నంబర్ మీ వర్క్‌స్పేస్‌లో పనిచేస్తుంది.",
-  "hi": "अपना बिज़नेस PAN और GST या उद्यम सर्टिफ़िकेट अपलोड करें, KYC हम ऑनलाइन कराते हैं, और जाँच के बाद नंबर आपके वर्कस्पेस में चालू हो जाता है।",
-  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ PAN ಮತ್ತು GST ಅಥವಾ ಉದ್ಯಮ್ ಸರ್ಟಿಫಿಕೇಟ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, KYC ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಮಾಡಿಸುತ್ತೇವೆ, ಖಚಿತವಾದ ಮೇಲೆ ನಂಬರ್ ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ನಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -8973,17 +8940,6 @@
   "te": "అవును. ప్రతి వ్యాపారానికి కాల్స్ కోసం సొంత బిజినెస్ నంబర్ వస్తుంది.",
   "hi": "हाँ। हर कारोबार को कॉल के लिए अपना बिज़नेस नंबर मिलता है।",
   "kn": "ಹೌದು. ಪ್ರತಿ ವ್ಯಾಪಾರಕ್ಕೂ ಕರೆಗಳಿಗೆ ಸ್ವಂತ ಬಿಸಿನೆಸ್ ನಂಬರ್ ಸಿಗುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h2.faq.7.kyc": {
-  "en": "Upload your business PAN and your GST or Udyam certificate, we take you through the KYC online, and the number goes live once it is verified.",
-  "te": "మీ బిజినెస్ PAN, GST లేదా ఉద్యమ్ సర్టిఫికెట్ అప్‌లోడ్ చేయండి, KYC ఆన్‌లైన్‌లో చేయిస్తాం, వెరిఫై అయ్యాక నంబర్ పనిచేస్తుంది.",
-  "hi": "अपना बिज़नेस PAN और GST या उद्यम सर्टिफ़िकेट अपलोड करें, KYC हम ऑनलाइन कराते हैं, और जाँच के बाद नंबर चालू हो जाता है।",
-  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ PAN ಮತ್ತು GST ಅಥವಾ ಉದ್ಯಮ್ ಸರ್ಟಿಫಿಕೇಟ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, KYC ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಮಾಡಿಸುತ್ತೇವೆ, ಖಚಿತವಾದ ಮೇಲೆ ನಂಬರ್ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9760,11 +9716,11 @@
   }
  },
  "price.faq.6.a": {
-  "en": "With paid plans (from February 2027), every plan includes 1 phone number. Extra numbers are ₹{number} a month each, and you can add as many as you want. One business verification (KYC) covers all your numbers. If you release a number, we hold it for 30 days.",
-  "te": "Paid plans తో (2027 February నుంచి), ప్రతి plan లో 1 phone number included. ఎక్కువ numbers ఒక్కోటి నెలకి ₹{number}, ఎన్ని కావాలంటే అన్ని తీసుకోవచ్చు. ఒక business verification (KYC) మీ numbers అన్నింటికీ సరిపోతుంది. ఒక number వదిలేస్తే, 30 రోజులు మీ కోసం ఉంచుతాం.",
-  "hi": "Paid plans के साथ (फरवरी 2027 से), हर plan में 1 phone number शामिल है। Extra numbers ₹{number} महीना प्रति number। एक business verification (KYC) आपके सभी numbers के लिए काफ़ी है। कोई number छोड़ें तो हम उसे 30 दिन रोककर रखते हैं।",
-  "kn": "Paid plans ನೊಂದಿಗೆ (2027 ಫೆಬ್ರವರಿಯಿಂದ), ಪ್ರತಿ plan ನಲ್ಲಿ 1 phone number ಒಳಗೊಂಡಿದೆ. ಹೆಚ್ಚುವರಿ numbers ತಿಂಗಳಿಗೆ ಒಂದಕ್ಕೆ ₹{number}, ಎಷ್ಟು ಬೇಕಾದರೂ ಸೇರಿಸಬಹುದು. ಒಂದು business verification (KYC) ನಿಮ್ಮ ಎಲ್ಲಾ numbers ಗೆ ಸಾಕು. ಒಂದು number ಬಿಟ್ಟರೆ, 30 ದಿನ ಇಟ್ಟುಕೊಳ್ಳುತ್ತೇವೆ.",
-  "ta": "Paid plans-இல் (2027 பிப்ரவரி முதல்), ஒவ்வொரு plan-இலும் 1 phone number உண்டு. கூடுதல் numbers ஒவ்வொன்றும் மாதம் ₹{number}, எத்தனை வேண்டுமானாலும் சேர்க்கலாம். ஒரே business verification (KYC) உங்கள் எல்லா numbers-க்கும் போதும். ஒரு number-ஐ விட்டுவிட்டால், 30 நாட்களுக்கு அதை வைத்திருப்போம்.",
+  "en": "With paid plans (from February 2027), every plan includes 1 phone number. Extra numbers are ₹{number} a month each, and you can add as many as you want. If you release a number, we hold it for 30 days.",
+  "te": "Paid plans తో (2027 February నుంచి), ప్రతి plan లో 1 phone number included. ఎక్కువ numbers ఒక్కోటి నెలకి ₹{number}, ఎన్ని కావాలంటే అన్ని తీసుకోవచ్చు. ఒక number వదిలేస్తే, 30 రోజులు మీ కోసం ఉంచుతాం.",
+  "hi": "Paid plans के साथ (फरवरी 2027 से), हर plan में 1 phone number शामिल है। Extra numbers ₹{number} महीना प्रति number। कोई number छोड़ें तो हम उसे 30 दिन रोककर रखते हैं।",
+  "kn": "Paid plans ನೊಂದಿಗೆ (2027 ಫೆಬ್ರವರಿಯಿಂದ), ಪ್ರತಿ plan ನಲ್ಲಿ 1 phone number ಒಳಗೊಂಡಿದೆ. ಹೆಚ್ಚುವರಿ numbers ತಿಂಗಳಿಗೆ ಒಂದಕ್ಕೆ ₹{number}, ಎಷ್ಟು ಬೇಕಾದರೂ ಸೇರಿಸಬಹುದು. ಒಂದು number ಬಿಟ್ಟರೆ, 30 ದಿನ ಇಟ್ಟುಕೊಳ್ಳುತ್ತೇವೆ.",
+  "ta": "Paid plans-இல் (2027 பிப்ரவரி முதல்), ஒவ்வொரு plan-இலும் 1 phone number உண்டு. கூடுதல் numbers ஒவ்வொன்றும் மாதம் ₹{number}, எத்தனை வேண்டுமானாலும் சேர்க்கலாம். ஒரு number-ஐ விட்டுவிட்டால், 30 நாட்களுக்கு அதை வைத்திருப்போம்.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11271,19 +11227,6 @@
   "hi": "आपकी list में जुड़ गया",
   "kn": "ನಿಮ್ಮ list ಗೆ ಸೇರಿದೆ",
   "ta": "உங்கள் list-இல் சேர்ந்தது",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  }
- },
- "h4.m.kyc": {
-  "en": "KYC done",
-  "te": "KYC అయింది",
-  "hi": "KYC हो गया",
-  "kn": "KYC ಆಯಿತು",
-  "ta": "KYC முடிந்தது",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -13112,43 +13055,17 @@
   "ta": "Your own number"
  },
  "v9.guard.10": {
-  "en": "Numbers are requested against your business KYC, so calls come from your own line.",
-  "te": "Numbers are requested against your business KYC, so calls come from your own line.",
-  "hi": "Numbers are requested against your business KYC, so calls come from your own line.",
-  "kn": "Numbers are requested against your business KYC, so calls come from your own line.",
+  "en": "We set up your own business number for you, so calls come from your own line.",
+  "te": "We set up your own business number for you, so calls come from your own line.",
+  "hi": "We set up your own business number for you, so calls come from your own line.",
+  "kn": "We set up your own business number for you, so calls come from your own line.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "Numbers are requested against your business KYC, so calls come from your own line."
- },
- "v9.guard.11": {
-  "en": "Business KYC",
-  "te": "Business KYC",
-  "hi": "Business KYC",
-  "kn": "Business KYC",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "Business KYC"
- },
- "v9.guard.12": {
-  "en": "KYC filed",
-  "te": "KYC filed",
-  "hi": "KYC filed",
-  "kn": "KYC filed",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft",
-   "ta": "draft"
-  },
-  "ta": "KYC filed"
+  "ta": "We set up your own business number for you, so calls come from your own line."
  },
  "v9.guard.13": {
   "en": "Your business number",
@@ -15452,17 +15369,17 @@
   "ta": "Which number does it call from?"
  },
  "v9.faq.a1": {
-  "en": "Your own dedicated business number provisioned against your shop KYC. Extra numbers are ₹299 a month once paid plans start.",
-  "te": "Your own dedicated business number provisioned against your shop KYC. Extra numbers are ₹299 a month once paid plans start.",
-  "hi": "Your own dedicated business number provisioned against your shop KYC. Extra numbers are ₹299 a month once paid plans start.",
-  "kn": "Your own dedicated business number provisioned against your shop KYC. Extra numbers are ₹299 a month once paid plans start.",
+  "en": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
+  "te": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
+  "hi": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
+  "kn": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "Your own dedicated business number provisioned against your shop KYC. Extra numbers are ₹299 a month once paid plans start."
+  "ta": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start."
  },
  "v9.faq.q2": {
   "en": "How does it handle new enquiries?",
@@ -15801,5 +15718,57 @@
    "kn": "draft",
    "ta": "draft"
   }
+ },
+ "nav.status": {
+  "en": "Status",
+  "te": "స్టేటస్",
+  "hi": "स्टेटस",
+  "kn": "ಸ್ಟೇಟಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "நிலை"
+ },
+ "nav.aup": {
+  "en": "Acceptable use",
+  "te": "ఆమోదయోగ్య వినియోగం",
+  "hi": "स्वीकार्य उपयोग",
+  "kn": "ಒಪ್ಪಿಗೆಯ ಬಳಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "ஏற்கத்தக்க பயன்பாடு"
+ },
+ "nav.refunds": {
+  "en": "Refunds",
+  "te": "రిఫండ్స్",
+  "hi": "रिफ़ंड",
+  "kn": "ರಿಫಂಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "பணம் திரும்பப் பெறுதல்"
+ },
+ "nav.talk": {
+  "en": "Talk to us",
+  "te": "మాతో మాట్లాడండి",
+  "hi": "हमसे बात करें",
+  "kn": "ನಮ್ಮೊಂದಿಗೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  },
+  "ta": "எங்களுடன் பேசுங்கள்"
  }
 }

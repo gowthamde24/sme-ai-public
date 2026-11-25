@@ -222,6 +222,14 @@ class CartesiaStreamTts:
 REPLY_MAX_TOKENS = 400
 
 
+def _price_equivalent_input(usage: dict[str, Any]) -> int:
+    """Input tokens in the ledger's one unit: what the request cost, as if all at the plain input price. Tokens read from the cache cost a tenth, tokens written to it a quarter more."""
+    plain = _tokens(usage.get("input_tokens"))
+    read = _tokens(usage.get("cache_read_input_tokens"))
+    wrote = _tokens(usage.get("cache_creation_input_tokens"))
+    return plain + round(read * 0.1) + round(wrote * 1.25)
+
+
 def _tokens(value: object) -> int:
     """A token count from a provider's `usage`: a whole number of zero or more; anything else is 0."""
     return value if isinstance(value, int) and not isinstance(value, bool) and value > 0 else 0
@@ -251,7 +259,9 @@ class AnthropicStream:
         forms = [self._thinking_form[model]] if model in self._thinking_form else ["disabled", "between_tools"]
         for form in forms:
             thinking = {"type": form}
-            body = {"model": model, "max_tokens": self._max_tokens, "system": system, "messages": messages, "stream": True, "thinking": thinking}
+            # the system prompt is the same on every turn of a call: cached (measured 24 Nov 2026: 4,550 of 4,691 tokens read from the cache, the first token no slower)
+            cached_system = [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}]
+            body = {"model": model, "max_tokens": self._max_tokens, "system": cached_system, "messages": messages, "stream": True, "thinking": thinking}
             try:
                 async with self._client.stream("POST", ANTHROPIC, headers={"x-api-key": self._key, "anthropic-version": "2023-06-01"}, json=body) as resp:
                     if resp.status_code == 400 and form == "disabled" and b"between_tools" in await resp.aread():
@@ -270,7 +280,7 @@ class AnthropicStream:
                                 yield str(event["delta"]["text"])
                             elif kind == "message_start":   # the input tokens of the request (and the first count of the output)
                                 usage = (event.get("message") or {}).get("usage") or {}
-                                seen_in, seen_out = _tokens(usage.get("input_tokens")), _tokens(usage.get("output_tokens"))
+                                seen_in, seen_out = _price_equivalent_input(usage), _tokens(usage.get("output_tokens"))
                             elif kind == "message_delta":   # the output tokens so far (a running total)
                                 seen_out = max(seen_out, _tokens((event.get("usage") or {}).get("output_tokens")))
                     finally:   # also when the caller spoke over the reply and the stream was closed early: the provider bills what it produced

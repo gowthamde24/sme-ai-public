@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (447)
+## Codes (477)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -25,7 +25,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `agents_busy` | 503 | agent_runs |  |  | Agents are busy. Try again shortly. |
 | `agents_disabled` | 409 | assistant, main |  |  | Agents are not enabled for this workspace. |
 | `agents_unavailable` | 503 | agent_runs |  |  | Agents are not available right now. |
-| `ai_limit` | 429 | jobs | yes | reason | (the sentence varies: show `message`) |
+| `ai_limit` | 429 | jobs | yes | reason | That is enough describing for today. Try again tomorrow. |
 | `ai_team_unavailable` | 503 | ai_team |  |  | This is not available right now. |
 | `already_has_number` | 409 | phone_numbers |  |  | This business already has a phone number. Give it back first. |
 | `already_member` | 409 | main |  |  | You are already a member of that workspace. |
@@ -51,10 +51,10 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `bad_cursor` | 422 | admin, knowledge, lead_finder |  |  | That page marker is not valid. |
 | `bad_request` | 400 | connectors, errors, whatsapp |  |  | Bad request. |
 | `being_sent` | 409 | outbox |  |  | This message is being handed over right now. Look again in a minute. |
-| `billing_unavailable` | 503 | billing, main, pricing |  |  | Plans and billing are not available right now. |
+| `billing_unavailable` | 503 | billing, credits, main, pricing |  |  | Plans and billing are not available right now. |
 | `business_profile_unavailable` | 503 | businessprofile |  |  | The business profile is not available right now. |
 | `business_type_unavailable` | 422 | main |  |  | That kind of business is not available yet. Choose one of the kinds on the sign-up page. |
-| `busy` | 503 | errors, hardening |  |  | The service is busy. Try again in a moment. |
+| `busy` | 503 | dpdp, errors, hardening |  |  | The service is busy. Try again in a moment. |
 | `calculator_inconsistent` | 500 | materials |  |  | The calculator gave an answer that could not be trusted. Nothing was stored. |
 | `calculator_unavailable` | 503 | materials |  |  | The calculator is not available right now. |
 | `call_not_allowed` | 409 | telephony |  | reason | That call is not allowed. |
@@ -69,6 +69,10 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `cap_required` | 422 | main |  |  | Set a monthly limit above zero for this. |
 | `captcha_failed` | 400 | dpdp |  |  | We could not check that you are a person. Please try again. |
 | `catalogue_unavailable` | 503 | catalogue, materials |  |  | The catalogue is not available right now. |
+| `code_expired` | 422 | signup |  |  | That code is too old. Ask for a new one. |
+| `code_locked` | 429 | signup | yes |  | Too many wrong codes. Ask for a new code. |
+| `code_missing` | 422 | signup |  |  | Ask for a new code first. |
+| `code_wrong` | 422 | signup |  |  | That code is not right. |
 | `company_has_no_website` | 409 | agent_runs |  |  | This company has no website to research. |
 | `confirm_needed` | 409 | assistant_work |  |  | Confirm this on the card first. |
 | `confirm_required` | 422 | whatsapp |  |  | Press Confirm to send this to WhatsApp for review. |
@@ -96,6 +100,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `date_out_of_range` | 422 | ai_team |  |  | Only today's stand-up can be made. |
 | `date_past` | 409 | main |  |  | That date has already passed. |
 | `deliveries_unavailable` | 503 | deliveries |  |  | Deliveries are not available right now. |
+| `describe_unavailable` | 503 | jobs |  |  | We could not read that just now. Please try again. |
 | `details_unavailable` | 409 | lead_finder |  |  | The business details could not be fetched from Google Maps right now. Try again in a minute. |
 | `discard_draft_to_rerun` | 409 | main |  |  | Discard the current draft to re-run. |
 | `disclosure_not_reviewed` | 409 | voice_notes |  |  | The spoken AI line for this language has not been reviewed yet. |
@@ -104,7 +109,9 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `dues_unavailable` | 503 | dues |  |  | Dues are not available right now. |
 | `duplicate_value` | 409 | main |  |  | (the sentence varies: show `message`) |
 | `education_unavailable` | 503 | education, integrations |  |  | Education is not available right now. |
+| `email_not_allowed` | 422 | signup |  |  | Please use your own, permanent e-mail address. |
 | `email_not_confirmed` | 403 | main |  |  | Confirm your email address first: use the link we sent you. |
+| `email_unconfirmed` | 409 | signup |  |  | Confirm your e-mail first. |
 | `empty_enquiry` | 422 | enquiries |  |  | There is no text left to store after cleaning it. |
 | `enhance_busy` | 429 | enhance | yes |  | That is a lot of rewrites for one hour. Try again a little later. |
 | `enhance_unavailable` | 503 | enhance |  |  | Enhance is not available right now. |
@@ -155,7 +162,9 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `integrations_unavailable` | 503 | integrations |  |  | This is not available on this system. |
 | `internal_error` | 500 | errors |  |  | Something went wrong on our side. |
 | `invalid` | 422 | activity |  | field | Say which limit to tighten. |
-| `invalid_cursor` | 400, 422 | activity, developer_api, leads, marksmessages, outcomes |  |  | Invalid pagination cursor. |
+| `invalid_call` | 422 | developer_api |  | fields | Send a lead_id (the id of a lead you posted) and, if you like, dry_run: true. |
+| `invalid_campaign` | 422 | developer_api |  | fields | (the sentence varies: show `message`) |
+| `invalid_cursor` | 400, 422 | activity, developer_api, leads, marksmessages, outcomes, webhooks_out |  |  | Invalid pagination cursor. |
 | `invalid_decision` | 422 | enquiries |  |  | A correction carries the corrected value; a confirm or a reject carries none. |
 | `invalid_delivery_state` | 422 | quotes |  |  | The delivery state is not a state or union territory code. |
 | `invalid_hours` | 422 | lead_finder |  |  | The calling hours must start before they end. |
@@ -194,6 +203,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `lead_finder_off` | 409 | lead_finder |  |  | Finding new customers is switched off right now. |
 | `lead_finder_unavailable` | 503 | lead_finder |  |  | Finding new customers is not available right now. |
 | `lead_has_no_company` | 409 | agent_runs |  |  | This lead has no company yet. Link a company first. |
+| `lead_has_no_number` | 422 | developer_api |  |  | This lead has no phone number, so it cannot be called. |
 | `lead_intake_unavailable` | 503 | lead_sources |  |  | Not available right now. |
 | `lead_playbook_unavailable` | 503 | leadspack |  |  | This is not available right now. |
 | `lead_profile_unavailable` | 503 | lead_profile |  |  | This is not available on this system. |
@@ -234,6 +244,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `no_subscription` | 409 | main |  |  | Choose a plan first: a top-up or an upgrade needs one. |
 | `no_template` | 409 | leadspack |  |  | This business type has no lead playbook. |
 | `no_text_found` | 422 | knowledge |  |  | No text was found in that file. |
+| `no_usable_contacts` | 422 | developer_api |  | refused | None of the contacts could be used: each needs a valid phone number and consent. See `refused` for the reason of each. |
 | `no_whatsapp` | 409 | outbox |  |  | WhatsApp is not connected for this business. |
 | `nobody_to_ask` | 422 | turns |  |  | Nobody left out needs asking. |
 | `not_a_search` | 422 | lead_finder |  |  | Say what to find and where, for example: find new retailers in Jayanagar. |
@@ -245,7 +256,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_confirmable` | 409 | main |  |  | A line needs a saree type and a quantity that a person confirmed or corrected. |
 | `not_connected` | 409 | lead_sources |  |  | Connect this source first, then test it. |
 | `not_for_schools` | 422 | assistant_context, lead_profile, main, tasks |  | reason | Leads of a school are never sent to the AI. |
-| `not_found` | 404 | assistant, assistant_work, connectors, errors, lead_sources, main |  |  | Not found. |
+| `not_found` | 404 | assistant, assistant_work, connectors, developer_api, errors, lead_sources, main |  |  | Not found. |
 | `not_generated` | 404 | ai_team |  |  | Today's stand-up has not been made yet. |
 | `not_in_a_state_for_this` | 409 | connectors |  |  | This cannot be done in its present state. |
 | `not_in_plan` | 403 | lead_finder |  | feature, upgrade_to | Finding new customers is part of AI Workforce. |
@@ -261,9 +272,10 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `nothing_to_cancel` | 409 | main |  |  | There is no active plan to cancel. |
 | `nothing_to_quote` | 422 | lead_finder |  |  | The suggested items' item types are switched off: there is nothing to put in a draft. |
 | `nothing_to_test` | 409 | lead_sources |  |  | There is nothing to test for this source yet. |
-| `nothing_to_undo` | 409 | assistant_work |  |  | This change cannot be undone. |
+| `nothing_to_undo` | 409 | assistant_work, catalogue |  | fields, reason | This change cannot be undone. |
 | `notifications_unavailable` | 503 | notifications |  |  | This is not available on this system. |
 | `number_not_available` | 409 | phone_numbers |  |  | That number is not available any more. Choose another. |
+| `number_on_dnd` | 422 | developer_api |  |  | This number is on the Do-Not-Disturb list. We don't call it. |
 | `number_provider_unavailable` | 502 | phone_numbers |  |  | The phone provider did not answer. Try again in a minute. |
 | `numbers_unavailable` | 503 | numbers, phone_numbers |  | fields, reason | This is not available right now. |
 | `open_payment_link` | 409 | connectors |  |  | This order already has an open payment link. |
@@ -297,8 +309,10 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `payment_not_verified` | 402 | pricing |  |  | The payment could not be verified. Nothing was added. |
 | `payment_provider_failed` | 502 | connectors |  |  | The payment service could not make the link. Nothing was sent to the customer. |
 | `payment_required` | 422 | pricing |  |  | This change has an amount to pay. Pay it first. |
+| `phone_code_unavailable` | 503 | signup |  |  | We cannot send a code right now. Please try again later. |
 | `phone_invalid` | 422 | jobs |  |  | That is not a phone number we can use. Check the digits. |
 | `phone_kyc_required` | 409 | phone_numbers |  |  | The phone provider has not accepted your business registration. A number can be taken once it has. |
+| `phone_taken` | 409 | signup |  |  | That phone number is already used by another account. |
 | `photo_animated` | 422 | catalogue |  |  | Use a still photo, not an animation. |
 | `photo_files_missing` | 409 | main |  |  | The photo did not finish uploading. Try again. |
 | `photo_too_big` | 422 | catalogue |  |  | That photo has too many pixels. Use a smaller one. |
@@ -349,7 +363,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `quote_text_refused` | 409 | quotes |  |  | The stored quote cannot be rendered. |
 | `quote_text_unavailable` | 503 | quotes |  |  | Quote text is not available right now. |
 | `quotes_unavailable` | 503 | lead_finder, quotes |  |  | Quotes are not available right now. |
-| `rate_limited` | 429 | conversation, dpdp, errors, hardening, integrations, lead_sources, pronunciation, voicesample, whatsapp | yes |  | Request failed. |
+| `rate_limited` | 429 | conversation, developer_api, dpdp, errors, hardening, integrations, lead_sources, pronunciation, signup, voicesample, whatsapp | yes |  | Request failed. |
 | `reader_unavailable` | 503 | knowledge |  |  | Pictures and scanned pages cannot be read yet. Type or paste the text instead. |
 | `real_data_gate_closed` | 409 | main |  |  | This workspace accepts synthetic data only for now: use an e-mail address on a reserved domain (such as example.test) and a phone number that starts with +00. |
 | `real_data_not_open` | 422 | assistant_work |  |  | (the sentence varies: show `message`) |
@@ -359,6 +373,11 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `recording_not_base64` | 422 | ownvoice |  |  | That recording could not be read. |
 | `recording_too_large` | 413 | ownvoice |  |  | That recording is too big. |
 | `recordings_not_removed` | 502 | ownvoice |  |  | The recordings could not be removed right now. Press delete again in a moment. |
+| `refund_already_done` | 409 | credits |  |  | That top-up already has a refund. |
+| `refund_declined` | 502 | credits |  |  | The payment provider did not refund. Nothing changed: the balance is back. |
+| `refund_not_a_topup` | 404 | credits |  |  | That is not a paid top-up of this business. |
+| `refund_nothing_unused` | 409 | credits |  |  | Nothing is left to refund: the balance from that top-up was used. |
+| `refund_unconfirmed` | 502 | credits |  |  | The refund was asked for but not confirmed. Do not repeat it: check the payment at Razorpay first. The unused balance stays taken out until you do. |
 | `replay` | 409 | lead_sources |  | reason | This call was already received or is too old. |
 | `reports_unavailable` | 503 | reports |  |  | Reports are not available right now. |
 | `requirement_confirmed` | 409 | main |  |  | This enquiry already has a confirmed requirement. Discard it first. |
@@ -389,6 +408,8 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `sheet_unreachable` | 502 | lead_sources |  |  | Google Sheets could not be reached. Try again. |
 | `sheets_unavailable` | 503 | lead_sources |  |  | Google Sheets cannot be read right now. |
 | `shop_closed` | 409 | main |  |  | The shop is closed that day. |
+| `signup_closed` | 409 | signup |  |  | Sign-up is not open yet. |
+| `signup_refused` | 409 | signup |  |  | That did not work. Please try again. |
 | `site_contact_invalid` | 422 | main |  |  | That site contact is not a contact of this business. |
 | `sites_unavailable` | 503 | sites |  |  | Sites are not available right now. |
 | `slot_full` | 409 | main |  |  | Every place in that time is taken. Choose another time. |
@@ -400,6 +421,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `speaking_style_unavailable` | 503 | how_speaks, speaking |  |  | This is not available right now. |
 | `speech_unavailable` | 422 | voice |  |  | Spoken answers are not switched on for this system. |
 | `standup_limit` | 429 | ai_team | yes |  | You can make the stand-up again 3 times a day. Try again tomorrow morning. |
+| `statement_dates_invalid` | 422 | credits |  |  | The end date is before the start date. |
 | `stopped_by_customer` | 409 | jobs, main, outbox |  |  | This customer asked us to stop. Nothing can be sent until they write again. |
 | `storage_unavailable` | 503 | privacy |  |  | Files cannot be made on this system. |
 | `student_not_active` | 409 | main |  |  | The student left or was erased, so this cannot be done. |
@@ -419,10 +441,15 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `today_unavailable` | 503 | today |  |  | This is not available right now. |
 | `token_expiring` | 409 | assistant, main |  |  | Your session is about to expire. Sign in again and retry. |
 | `too_large` | 413 | connectors, lead_sources |  |  | Too large. |
+| `too_many_calls` | 429 | developer_api | yes |  | Ten calls are already open in this workspace. Wait for one to finish. |
 | `too_many_invitations` | 409 | main |  |  | Twenty invitations are waiting. Revoke one first. |
 | `too_many_keys` | 409 | developer_api |  |  | This workspace already has 10 active keys. Revoke one first. |
 | `too_many_photos` | 409 | main |  |  | An item can have at most 8 photos. |
 | `too_many_previews` | 429 | voice_notes | yes |  | Too many samples this hour. Try again later. |
+| `too_many_webhooks` | 409 | webhooks_out |  |  | This workspace already has 5 webhook endpoints. Delete one first. |
+| `topup_amount_invalid` | 422 | credits |  |  | Choose a whole number of rupees from ₹100 to ₹1,00,000. |
+| `topup_not_verified` | 402 | credits |  |  | We could not verify this payment, so nothing was added. If money left your account, wait a few minutes: it is added when the bank confirms. |
+| `topup_order_unknown` | 404 | credits |  |  | We could not find that payment. |
 | `trial_already_started` | 409 | main |  |  | This workspace has already started its trial. |
 | `trip_state` | 409 | main |  |  | That cannot be done in the state the trip is in now. Reload and look again. |
 | `type_change_refused` | 409 | workspace |  | reason | This business type cannot be changed now. |
@@ -433,7 +460,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `unsupported_type` | 415 | knowledge, lead_sources |  |  | That kind of body is not accepted. |
 | `upstream_error` | 502 | agent_runs, assistant, catalogue, erasure, main, materials, today, voice_notes |  |  | The data layer failed. |
 | `upstream_unavailable` | 502 | lead_sources |  |  | Try again shortly. |
-| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, jobs, lead_profile, lead_sources, main, materials, numbers, opening, orders, outbox, outcomes, search, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
+| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, jobs, lead_profile, lead_sources, main, materials, numbers, opening, orders, outbox, outcomes, search, signup, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
 | `value_not_accepted` | 422 | enquiries |  |  | (the sentence varies: show `message`) |
 | `vision_unavailable` | 503 | assistant_context |  |  | Reading pictures and PDFs is not switched on for this system. Paste the text instead. |
 | `visit_state` | 409 | main |  |  | That cannot be done in the state the visit is in now. Reload and look again. |
@@ -450,6 +477,9 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `voice_too_long` | 422 | voice_notes |  |  | The sample is too long. |
 | `voice_unavailable` | 503 | assistant_context, jobs, voice, voice_notes |  |  | Voice is not available right now. |
 | `waiting_for_whatsapp` | 403 | main |  |  | Connect your WhatsApp to start. Until then you can set everything up, but messages, AI calls and campaigns stay off. |
+| `wallet_empty` | 402 | developer_api |  |  | The wallet cannot cover this call. Add money in the app and try again. |
+| `webhook_url_invalid` | 422 | webhooks_out |  | reason | (the sentence varies: show `message`) |
+| `webhooks_out_unavailable` | 503 | webhooks_out | yes |  | Webhooks are not available right now. Try again in a minute. |
 | `webhooks_unavailable` | 503 | billing, connectors |  |  | Not available right now. |
 | `whatsapp_connect_refused` | 502 | whatsapp |  |  | WhatsApp did not accept the connection. Try again in a minute. |
 | `whatsapp_no_access` | 409 | whatsapp |  |  | We cannot reach that number yet. Finish the sign-up in Meta's window and try again. |

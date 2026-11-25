@@ -40,7 +40,6 @@ async def razorpay_billing(request: Request) -> JSONResponse:
     billing = getattr(runtime, "billing", None)
     if billing is None or billing.provider.name != "razorpay":
         raise not_found()
-    connectors = _connectors(request)
     raw = await _body(request)
     try:
         events = billing.provider.verify_webhook(await _headers(request), raw)
@@ -58,9 +57,9 @@ async def razorpay_billing(request: Request) -> JSONResponse:
         except RepositoryError:
             raise ApiError(503, "webhooks_unavailable", "Not available right now.") from None
         return JSONResponse({"ok": True})
-    token = _token(connectors)
+    token = _token(_connectors(request))   # only the old billing path needs the connectors runtime (billing v2 does not: production may have none)
     for event in events:
-        if event.kind == "order_paid":   # only billing v2 knows paid orders
+        if event.kind in ("order_paid", "payment_failed"):   # only billing v2 knows paid and failed orders
             continue
         try:
             billing.apply(token, event)

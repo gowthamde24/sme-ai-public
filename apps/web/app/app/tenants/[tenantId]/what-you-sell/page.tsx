@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { EffectLine } from "@/components/v2/app/jobs/pages/parts";
 import { SampleChip } from "@/components/v2/app/jobs/SampleChip";
 import { PageTop } from "@/components/v2/app/parts";
+import { ListCards } from "@/components/v2/app/lists/ListCards";
 import { SellSection } from "@/components/v2/app/sell/LazySection";
 import { pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
@@ -11,11 +12,12 @@ import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
+import { getLists } from "@/lib/api/lists";
 import { readWhatYouSell } from "@/lib/api/what-you-sell";
 import { requireUser } from "@/lib/auth/session";
 import { personaOf } from "@/lib/jobs/sample-fixtures";
 import { readPackCached } from "@/lib/packs/read";
-import { jobsScreens } from "@/lib/screens/flag";
+import { jobsScreens, whatYouSellLists } from "@/lib/screens/flag";
 import { previewSample } from "@/lib/screens/preview";
 import { ENTRY_PATH, oldPagesOf, styleOfPack } from "@/lib/sell/style";
 import { SELL_STYLES } from "@/lib/sell/types";
@@ -44,7 +46,7 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
     notFound();
   }
   const lang = await getLang();
-  const words = wordsFor(lang, ["jobs.sell.", "catalogue.colour."], ["jobs.tb.s5.security", "jobs.sample", "jobs.sample.note"]);
+  const words = wordsFor(lang, ["jobs.sell.", "catalogue.colour.", ...(whatYouSellLists() ? ["wls."] : [])], ["jobs.tb.s5.security", "jobs.sample", "jobs.sample.note"]);
   const pack = await readPackCached(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null));
   const pick = typeof asked === "string" && jobsScreens() === "mock" ? SELL_STYLES.find((s) => s === asked) : undefined;
   // a SAMPLE business of the staging preview (lib/screens/preview.ts) sells in its own style; "my business" and everyone else follow the pack
@@ -54,10 +56,17 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
   const base = `/app/tenants/${tenantId}`;
   const owns = role === "owner" || role === "admin";
   const read = await readWhatYouSell(user.accessToken, tenantId, style, modules, owns);
+  // the owner's own lists (flag WHAT_YOU_SELL_LISTS): a list that cannot be read leaves the page whole, the lists are then not drawn
+  const lists = whatYouSellLists() ? await getLists(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const old = oldPagesOf(style, modules, jobsScreens() === "mock").map((o) => ({ href: `${base}${o.path}`, word: o.word }));
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={words["jobs.sell.page.title"] ?? "What you sell"} sub={words["jobs.sell.page.sub"]} />
+      {lists ? (
+        <div className="mt-5">
+          <ListCards lists={lists} words={words} base={base + "/what-you-sell"} canAdd={owns} />
+        </div>
+      ) : null}
       {read.state === "ready" ? (
         <>
           {read.data.sample ? (

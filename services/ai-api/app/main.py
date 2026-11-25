@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import logging
 import secrets
 from collections.abc import AsyncIterator
@@ -59,6 +60,8 @@ from app.browser_voice.routes import parse_stt_modes
 from app.browser_voice.routes import router as browser_voice_router
 from app.browser_voice.runtime import BrowserVoice
 from app.browser_voice.store import PostgrestUsageStore
+from app.business_kyc.routes import router as business_kyc_router
+from app.business_kyc.wiring import build_business_kyc
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
 from app.callsettings.repository import PostgrestCallSettingsRepository
@@ -84,6 +87,9 @@ from app.conversation.picker import router as voice_picker_router
 from app.conversation.picker import style_public_router as voice_style_samples_router
 from app.conversation.preview import CallVoicePreview
 from app.conversation.voices import default_config as voice_catalogue
+from app.credits.routes import admin_router as credits_admin_router
+from app.credits.routes import router as credits_router
+from app.credits.service import CreditsService, PostgrestCreditsRepository
 from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
 from app.crm.routes import router as crm_router
@@ -95,6 +101,7 @@ from app.deliveries.repository import PostgrestDeliveriesRepository
 from app.deliveries.routes import router as deliveries_router
 from app.developer_api.routes import api_router as developer_api_router
 from app.developer_api.routes import router as developer_router
+from app.developer_api.v1 import v1_router as developer_v1_router
 from app.developer_api.wiring import build_developer_api
 from app.dpdp.routes import me_router as dpdp_me_router
 from app.dpdp.routes import public_router as dpdp_public_router
@@ -142,6 +149,7 @@ from app.integrations.routes_calendar import public_router as calendar_public_ro
 from app.integrations.routes_contacts import router as contacts_by_phone_router
 from app.integrations.routes_import import router as spreadsheet_import_router
 from app.integrations.routes_policy import router as policy_router
+from app.jobs.describe_routes import router as jobs_describe_router
 from app.jobs.detail_routes import router as job_detail_router
 from app.jobs.routes import ops_router as job_samples_ops_router
 from app.jobs.routes import router as jobs_router
@@ -235,10 +243,17 @@ from app.quotes.repository import PostgrestQuotesRepository
 from app.quotes.routes import router as quotes_router
 from app.reports.repository import PostgrestReportsRepository
 from app.reports.routes import router as reports_router
+from app.rpc_base import RpcClient
 from app.scheduler.repository import PostgrestSchedulerRepository
 from app.scheduler.routes import router as scheduler_router
 from app.search.routes import PostgrestSearch
 from app.search.routes import router as search_router
+from app.sell_lists.repository import ListRepository
+from app.sell_lists.routes import router as sell_lists_router
+from app.signup.routes import claim_router as signup_claim_router
+from app.signup.routes import router as signup_router
+from app.signup.sender import FakeSender, NoSender, PhoneCodeSender, WhatsAppCodeSender
+from app.signup.service import SignupRepository, SignupService
 from app.sites import errors as site_errors
 from app.sites.repository import PostgrestSitesRepository
 from app.sites.routes import router as sites_router
@@ -259,7 +274,9 @@ from app.team.repository import PostgrestTeamRepository
 from app.team.routes import public_router as team_public_router
 from app.team.routes import router as team_router
 from app.telephony.background_samples import router as background_samples_router
+from app.telephony.cross import RpcCommandStore, run_worker
 from app.telephony.inbound_routes import router as phone_inbound_router
+from app.telephony.lines_routes import router as phone_lines_router
 from app.telephony.live import LiveCalls
 from app.telephony.plivo_routes import router as plivo_router
 from app.telephony.repository import CallStateError, PostgrestCallsRepository
@@ -292,9 +309,12 @@ from app.voice_notes.repository import PostgrestVoiceNotesRepository
 from app.voice_notes.routes import router as voice_notes_router
 from app.voicesample.routes import router as voice_sample_router
 from app.voicesample.service import VoiceSampleService
+from app.webhooks_out.routes import router as webhooks_out_router
+from app.webhooks_out.wiring import build_webhooks_out
 from app.websearch.repository import PostgrestResearchUsageRepository
 from app.websearch.routes import router as research_router
 from app.websearch.wiring import build_research_web
+from app.whatsapp.graph import GraphClient
 from app.whatsapp.metered import metered
 from app.whatsapp.repository import WhatsAppStateError
 from app.whatsapp.routes import public_router as whatsapp_public_router
@@ -326,6 +346,63 @@ def _outbox_adapter(settings: Settings) -> ChannelAdapter:
         return build_adapter(settings.outbox_adapter, settings)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
+
+
+def _daily_cap(config: AuthConfig) -> Any:
+    """The daily allowance of a model-backed helper (migration 991300)."""
+    rpc = RpcClient(config.rest_url, config.anon_key)
+
+    def take(token: str, tenant_id: Any, feature: str, limit: int) -> bool:
+        args = {"p_tenant_id": str(tenant_id), "p_feature": feature, "p_limit": limit}
+        out = rpc.object(token, "daily_cap_take", args)
+        return bool(out.get("ok"))
+
+    return take
+
+
+def _call_commands(settings: Settings, config: AuthConfig, phone: Any, live: LiveCalls) -> Any:
+    """Calls across API instances (CALL_COORDINATION); None with one instance."""
+    if not settings.call_coordination or phone is None or getattr(phone, "store", None) is None:
+        return None
+    return RpcCommandStore(RpcClient(config.rest_url, config.anon_key), phone.store.scheduler_token)
+
+
+def _signup_service(settings: Settings, config: AuthConfig) -> SignupService | None:
+    """Opening sign-up: None unless SIGNUP_OPEN.
+
+    The phone and code hashes are keyed with the suppression key (refused at start-up without
+    it); the fake code echo is refused in production."""
+    if not settings.signup_open:
+        return None
+    key = settings.suppression_hmac_key
+    if key is None:
+        raise RuntimeError("SIGNUP_OPEN needs SUPPRESSION_HMAC_KEY")
+    echo = settings.signup_fake_code_echo
+    fake_sender = settings.signup_phone_sender == "fake"
+    if echo and (settings.admin_environment == "production" or not fake_sender):
+        raise RuntimeError("SIGNUP_FAKE_CODE_ECHO needs a staging API with the fake sender")
+    sender: PhoneCodeSender = NoSender()
+    if fake_sender:
+        sender = FakeSender(echo=echo)
+    elif settings.signup_phone_sender == "whatsapp":
+        token = settings.signup_whatsapp_token
+        if not settings.signup_whatsapp_phone_number_id or token is None:
+            raise RuntimeError("SIGNUP_PHONE_SENDER=whatsapp needs the number id and the token")
+        graph = GraphClient(settings.whatsapp_api_base, settings.whatsapp_graph_version)
+        sender = WhatsAppCodeSender(
+            graph,
+            settings.signup_whatsapp_phone_number_id,
+            token.get_secret_value(),
+            settings.signup_whatsapp_template,
+        )
+    secret = hashlib.sha256(b"signup-opening:" + key.get_secret_value().encode()).digest()
+    return SignupService(
+        SignupRepository(config.rest_url, config.anon_key),
+        secret,
+        sender,
+        echo_code=echo,
+        proxy_hops=settings.trusted_proxy_hops,
+    )
 
 
 def _signing_key(settings: Settings) -> bytes:
@@ -373,7 +450,7 @@ def _billing_provider(settings: Settings) -> BillingProvider:
             and settings.billing_razorpay_webhook_secret is not None
             else None
         )
-        return build_provider(settings.billing_provider, keys)
+        return build_provider(settings.billing_provider, keys, live_ok=settings.razorpay_live_ok)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
 
@@ -400,6 +477,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
     )
     key_ring = build_key_ring(settings)
     voice_stack = build_voice(settings)
+    live_calls = LiveCalls()
+    business_kyc = build_business_kyc(settings, config.rest_url, config.anon_key)
     phone_inbound = build_phone_inbound(
         settings, config.rest_url, config.supabase_url, config.anon_key
     )
@@ -407,6 +486,13 @@ def build_runtime(settings: Settings) -> Runtime | None:
     # the provider usage ledger, as the scheduler account; None when that account is not configured
     usage = build_usage_recorder(settings, config)
     billing_webhook = _billing_webhook_session(settings, config)
+    pricing_service = (
+        PricingService(
+            PostgrestPricingRepository(config.rest_url, config.anon_key), billing_provider
+        )
+        if settings.pricing_v2
+        else None
+    )
     workspace_secrets = build_workspace_secrets(settings, config.rest_url, config.anon_key)
     return Runtime(
         verifier=TokenVerifier.from_config(config),
@@ -476,6 +562,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         developer_api=build_developer_api(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
         ),
+        webhooks_out=build_webhooks_out(
+            settings, config.rest_url, config.anon_key, workspace_secrets
+        ),
         lead_finder=LeadFinderService(
             PostgrestLeadFinderRepository(config.rest_url, config.anon_key),
             mode=settings.lead_finder,
@@ -493,7 +582,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
             announce_takeover=settings.takeover_announce,
             takeover_allowed=settings.takeover_allowed,
         ),
-        live_calls=LiveCalls(),
+        live_calls=live_calls,
+        call_commands=_call_commands(settings, config, phone_inbound, live_calls),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         call_voice=_call_voice(settings),
         browser_voice=_browser_voice(settings, config),
@@ -534,13 +624,15 @@ def build_runtime(settings: Settings) -> Runtime | None:
         call_settings=CallSettingsService(
             PostgrestCallSettingsRepository(config.rest_url, config.anon_key)
         ),
-        pricing=(
-            PricingService(
-                PostgrestPricingRepository(config.rest_url, config.anon_key), billing_provider
+        pricing=pricing_service,
+        credits=(
+            CreditsService(
+                PostgrestCreditsRepository(config.rest_url, config.anon_key), pricing_service
             )
-            if settings.pricing_v2
+            if pricing_service is not None
             else None
         ),
+        signup=_signup_service(settings, config),
         billing_webhook=billing_webhook,
         admin=(
             AdminService(
@@ -553,7 +645,15 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_status=AssistantStatusService(
             PostgrestStatusRepository(config.rest_url, config.anon_key)
         ),
-        numbers=build_numbers(settings, config.rest_url, config.anon_key),
+        numbers=build_numbers(settings, config.rest_url, config.anon_key, business_kyc),
+        business_kyc=business_kyc,
+        contact_form=settings.contact_form,
+        daily_cap=_daily_cap(config),
+        sell_lists=(
+            ListRepository(config.rest_url, config.anon_key)
+            if settings.what_you_sell_lists
+            else None
+        ),
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
         assistant_settings=AssistantSettingsService(
             PostgrestAssistantSettingsRepository(config.rest_url, config.anon_key)
@@ -1250,8 +1350,14 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             from app.telephony.greeting_audio import start_warm
 
             warming = asyncio.create_task(start_warm(phone, voice, stop=stop_warm))
+        coordination: asyncio.Task[None] | None = None
+        if runtime is not None and runtime.call_commands and runtime.live_calls is not None:
+            commands, live = runtime.call_commands, runtime.live_calls
+            coordination = asyncio.create_task(run_worker(live, commands, stop_warm))
         yield
         stop_warm.set()
+        if coordination is not None:
+            coordination.cancel()
         if warming is not None:
             warming.cancel()
         if runtime is not None:
@@ -1512,10 +1618,15 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(call_settings_router)
     app.include_router(pricing_public_router)
     app.include_router(pricing_router)
+    app.include_router(signup_router)
+    app.include_router(signup_claim_router)
+    app.include_router(credits_router)
+    app.include_router(credits_admin_router)
     app.include_router(admin_router)
     app.include_router(admin_tenant_router)
     app.include_router(assistant_status_router)
     app.include_router(numbers_router)
+    app.include_router(sell_lists_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_context_router)
@@ -1538,6 +1649,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(dpdp_me_router)
     app.include_router(speaking_router)
     app.include_router(phone_kyc_router)
+    app.include_router(business_kyc_router)
     app.include_router(phone_numbers_router)
     app.include_router(how_speaks_router)
     app.include_router(bootstrap_router)
@@ -1556,7 +1668,10 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(glance_router)
     app.include_router(developer_router)
     app.include_router(developer_api_router)
+    app.include_router(webhooks_out_router)
+    app.include_router(developer_v1_router)
     app.include_router(jobs_router)
+    app.include_router(jobs_describe_router)
     app.include_router(do_not_call_router)
     app.include_router(job_faq_router)
     app.include_router(sell_router)
@@ -1570,6 +1685,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(tasks_router)
     app.include_router(lead_finder_router)
     app.include_router(calls_router)
+    app.include_router(phone_lines_router)
     app.include_router(assistant_tools_router)
     app.include_router(phone_inbound_router)
     app.include_router(plivo_router)

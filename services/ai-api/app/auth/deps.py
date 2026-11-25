@@ -161,6 +161,10 @@ class Runtime:
     call_settings: CallSettingsService | None = None
     # billing v2 (the final pricing, 13 Nov 2026): None unless PRICING_V2 is on
     pricing: Any = None
+    # opening sign-up (24 Nov 2026): None unless SIGNUP_OPEN is on
+    signup: Any = None
+    # the credits top-up (24 Nov 2026): None unless PRICING_V2 is on
+    credits: Any = None
     # admin console (Stack19 staff only, 13 Nov 2026): None unless ADMIN_CONSOLE is on
     admin: Any = None
     # the billing webhook's own sign-in (PrincipalSession); None unless configured
@@ -171,6 +175,7 @@ class Runtime:
     # "My assistant": Not live / In training / Live and the Go live / Pause button
     assistant_status: Any = None
     numbers: Any = None   # the number picker's service; None: its routes answer 503
+    sell_lists: Any = None   # WHAT_YOU_SELL_LISTS: the lists' repository; None: 404
     # job DM: outcomes of calls and WhatsApp follow-ups (positive, negative, unclear)
     outcomes: OutcomesRepository | None = None
     # job DM: the AI assistant's settings per workspace (Settings > AI assistant)
@@ -209,6 +214,12 @@ class Runtime:
     workspace_secrets: Any = None
     # the in-app KYC of a business's phone number (app/phone_kyc); None without a Plivo account
     phone_kyc: Any = None
+    # business KYC per VoiceLink client (KYC_PER_CLIENT, Model B); None unless on
+    business_kyc: Any = None
+    # the public "Talk to us" form is open (CONTACT_FORM); False = the route answers 404
+    contact_form: bool = False
+    # the daily allowance of model-backed helpers (migration 991300); None = no limit (tests)
+    daily_cap: Any = None
     # a business's own phone number (app/phone_numbers); None unless the provider is on
     phone_numbers: Any = None
     # how the assistant talks on calls (app/talk_training: the Owner's training)
@@ -224,10 +235,15 @@ class Runtime:
     # the developer API (app/developer_api.DeveloperApi)
     # None: DEVELOPER_API=off, every route answers 404
     developer_api: Any = None
+    # outbound webhooks (app/webhooks_out.WebhooksOut)
+    # None: WEBHOOKS_OUT=off, every route answers 404
+    webhooks_out: Any = None
     # Jobs (app/jobs): the flags and the pack files; None: JOBS=off, every /jobs route answers 404
     jobs: JobsRuntime | None = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
+    # calls across API instances (CALL_COORDINATION): None with one instance
+    call_commands: Any = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
     voice_sample: VoiceSampleService | None = None
     # job voice-picker: the opening line in the chosen voice; None = no preview here

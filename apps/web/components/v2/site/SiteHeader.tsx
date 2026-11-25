@@ -41,6 +41,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
     { href: `${base}#lead-finder`, label: t("h2.nav.finder"), here: false },
     { href: onHome ? "#pricing" : pricingPage, label: t("nav.pricing"), here: target.kind === "page" && target.page === "pricing" },
     { href: `${base}#faq`, label: t("h4.nav.faq"), here: false },
+    { href: sitePath(lang, { kind: "page", page: "help" }), label: t("nav.help"), here: target.kind === "article" || (target.kind === "page" && target.page === "help") },
   ];
   // "Get early access": the home page's closing form; on a page without the form, where "start" leads today
   // (website mode and the app-open home page both say "Join early access": one call to action, owner 11 Nov 2026)

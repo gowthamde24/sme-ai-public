@@ -49,9 +49,11 @@ class _Subscription:
 
 class FakeBillingProvider:
     name = "fake"
+    mode = "fake"
 
     def __init__(self) -> None:
         self._subs: dict[str, _Subscription] = {}
+        self.refunds: dict[str, tuple[str, int]] = {}   # refund id -> (payment id, paise): what was sent back (tests look here)
         self.charges: dict[str, OneOffCharge] = {}   # the one-off payments taken (tests look here)
 
     def create_subscription(self, request: CreateSubscription) -> ProviderSubscription:
@@ -96,6 +98,12 @@ class FakeBillingProvider:
     def verify_order_payment(self, order_id: str, payment_id: str, signature: str) -> bool:
         """The fake checkout returns payment `pay_fake_...` and signature `sig_fake_ok`."""
         return payment_id.startswith("pay_fake_") and signature == "sig_fake_ok"
+
+    def refund_payment(self, payment_id: str, amount_paise: int, idempotency_key: str) -> str:
+        """A refund with no network: the same key always answers the same refund id."""
+        refund_id = "rfnd_fake_" + hashlib.sha256(f"{payment_id}:{amount_paise}:{idempotency_key}".encode()).hexdigest()[:20]
+        self.refunds.setdefault(refund_id, (payment_id, amount_paise))
+        return refund_id
 
     def change_plan(self, reference: str, price_paise: int | None) -> None:
         sub = self._subs.get(reference)

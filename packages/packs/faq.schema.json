@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "faq.schema.json",
+  "title": "The starter FAQ questions of a business type (questions only, never answers)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pack",
+    "version",
+    "questions"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "$comment": {
+      "type": "string"
+    },
+    "pack": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,30}$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "ask"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^q[0-9]{1,2}$"
+          },
+          "ask": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "en"
+            ],
+            "properties": {
+              "en": {
+                "type": "string",
+                "minLength": 5,
+                "maxLength": 140
+              },
+              "te": {
+                "type": "string",
+                "maxLength": 140
+              },
+              "hi": {
+                "type": "string",
+                "maxLength": 140
+              },
+              "kn": {
+                "type": "string",
+                "maxLength": 140
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

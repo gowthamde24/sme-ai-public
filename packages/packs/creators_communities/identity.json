@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "creators_communities",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "creators and communities",
+    "te": "క్రియేటర్లు, కమ్యూనిటీలు"
+  }
+}

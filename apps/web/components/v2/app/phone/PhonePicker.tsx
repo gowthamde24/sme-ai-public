@@ -7,6 +7,7 @@ import { COMPANIES, NUMBER_TYPES, forwardCode, isPrefix, type ClaimResult, type 
 
 import { btnMain, btnQuiet, fieldInput, fieldLabel } from "../ui";
 import { makeT, type Words } from "../words";
+import { KycPendingNotice } from "./KycPendingNotice";
 
 /**
  * The number picker (owner, 28 Nov 2026; mock "Phone numbers"): three plain steps on the page, no card, hairlines between them. 1 Pick your number (the type, "starts with", Search, the numbers as radio rows, ONE orange
@@ -31,7 +32,7 @@ function Step({ n, title, state, children }: { n: number; title: string; state: 
   );
 }
 
-export function PhonePicker({ words, actions, own, canEdit, mock = false }: { words: Words; actions: PickerActions; own: OwnNumber | null; canEdit: boolean; mock?: boolean }) {
+export function PhonePicker({ words, actions, own, canEdit, mock = false, verifyHref }: { words: Words; actions: PickerActions; own: OwnNumber | null; canEdit: boolean; mock?: boolean; verifyHref?: string }) {
   const t = makeT(words);
   const [type, setType] = React.useState<NumberType>("mobile");
   const [prefix, setPrefix] = React.useState("");
@@ -45,10 +46,10 @@ export function PhonePicker({ words, actions, own, canEdit, mock = false }: { wo
   const [mine, setMine] = React.useState<OwnNumber | null>(own);
   const [company, setCompany] = React.useState<Company>("airtel");
 
-  // after a claim the number is "getting ready": ask again every 3 seconds until it is ready
+  // after a claim the number is "getting ready", and not active until the business is verified: ask again every 3 seconds (every 10 while it waits for the verification, which the worker marks within minutes)
   React.useEffect(() => {
-    if (!mine || mine.state !== "getting_ready") return;
-    const id = setInterval(() => void actions.poll().then((n) => n && setMine(n)), 3000);
+    if (!mine || (mine.state !== "getting_ready" && mine.state !== "kyc_pending")) return;
+    const id = setInterval(() => void actions.poll().then((n) => n && setMine(n)), mine.state === "kyc_pending" ? 10_000 : 3000);
     return () => clearInterval(id);
   }, [mine, actions]);
 
@@ -177,9 +178,10 @@ export function PhonePicker({ words, actions, own, canEdit, mock = false }: { wo
             {!mine ? t("pick.s2.body") : mine.state === "getting_ready" ? t("pick.s2.getting", { number: mine.display }) : t("pick.s2.ready", { number: mine.display })}
           </p>
         </Step>
-        <Step n={3} title={t("pick.s3.title")} state={mine && mine.state !== "getting_ready" ? "now" : "off"}>
+        <Step n={3} title={t("pick.s3.title")} state={mine && mine.state !== "getting_ready" && mine.state !== "kyc_pending" ? "now" : "off"}>
+          {mine?.state === "kyc_pending" && verifyHref ? <KycPendingNotice words={words} verifyHref={verifyHref} /> : null}
           <p className="m-0 mt-1 text-[15px] text-muted">{t("pick.s3.body")}</p>
-          {mine && mine.state !== "getting_ready" ? (
+          {mine && mine.state !== "getting_ready" && mine.state !== "kyc_pending" ? (
             <div className="mt-4 flex flex-col gap-3" data-part="forwarding">
               <div className="flex flex-col gap-1">
                 <label htmlFor="pick-company" className={fieldLabel}>

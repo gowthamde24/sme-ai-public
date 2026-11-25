@@ -425,6 +425,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('lead_sources',
    $$insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, token_hint, created_by) values (%2$L, %1$L, 'webhook', 'webhook', 'Generic source', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), 'abcd', %5$L)$$,
    'label = label', $$delete from public.lead_sources where id = %2$L$$, true),
+  ('lead_source_activity',
+   $$with s as (insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, token_hint, created_by) values (gen_random_uuid(), %1$L, 'webhook', 'webhook', 'Activity source', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), 'abcd', %5$L) returning id)
+     insert into public.lead_source_activity (id, tenant_id, source_id, outcome, reason) select %2$L, %1$L, s.id, 'accepted', 'new_lead' from s$$,
+   'reason = reason', $$delete from public.lead_source_activity where tenant_id = %1$L$$, false),
   ('lead_consents',
    $$insert into public.lead_consents (id, tenant_id, list_name, purpose, basis, how_collected, statement_version, confirmed_by) values (%2$L, %1$L, 'Generic list', 'Generic purpose', 'explicit_consent', 'Generic way', 'dr-2026-10-27', %5$L)$$,
    'list_name = list_name', $$delete from public.lead_consents where id = %2$L$$, false),
@@ -575,6 +579,8 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$insert into public.talk_training (id, tenant_id, doc, updated_by) values (%2$L, %1$L, '{"address": "plain"}'::jsonb, %5$L) on conflict (tenant_id) do update set id = excluded.id$$,
    'doc = doc', $$delete from public.talk_training where id = %2$L$$, false),
   -- the developer API, D1: 'integrations.developer_api_usage' (a counter per key and minute outside the public schema: no client can reach it, no audit trigger because of its volume, no personal data) is classified here by this note
+  -- the developer API, D2 (migration 20261231992100): 'integrations.developer_api_calls', 'integrations.developer_api_campaigns', 'integrations.developer_api_campaign_contacts' and 'integrations.developer_api_activity'
+  -- (outside the public schema: RLS forced, no client privileges, no audit trigger because of their volume, no personal data; pgTAP 168 pins this) are classified here by this note
   -- the developer API, D1 (migration 20261231210000): keys (written only by developer_key_*), and the TEST sandbox leads (written only by developer_sandbox_lead_create, as the worker)
   ('developer_api_keys',
    $$insert into public.developer_api_keys (id, tenant_id, name, key_hash, prefix, last4, scopes, created_by) values (%2$L, %1$L, 'Generic key', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), 'sk_test_abcd', 'wxyz', array['leads:read'], %5$L)$$,
@@ -583,6 +589,14 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with k as (insert into public.developer_api_keys (tenant_id, name, key_hash, prefix, last4, scopes, created_by) values (%1$L, 'Generic key', encode(sha256(convert_to(%2$L || 'k', 'UTF8')), 'hex'), 'sk_test_abcd', 'wxyz', array['leads:write'], %5$L) returning id)
      insert into public.developer_sandbox_leads (id, tenant_id, key_id, idem_key, body_sha, name, phone, consent, next_step) select %2$L, %1$L, k.id, 'idem', repeat('a', 64), 'Generic lead', '+919800000001', '{"given": true}'::jsonb, 'none' from k$$,
    'status = status', $$delete from public.developer_sandbox_leads where id = %2$L$$, true),
+  -- outbound webhooks (migration 20261231992000): written only by webhook_endpoint_* (Owner or Admin) and, for the log, by the queueing triggers and the worker's webhook_delivery_record
+  ('webhook_endpoints',
+   $$insert into public.webhook_endpoints (id, tenant_id, url, events, secret_last4, created_by) values (%2$L, %1$L, 'https://hooks.example.com/generic', array['lead.created'], 'wxyz', %5$L)$$,
+   'active = active', $$delete from public.webhook_endpoints where id = %2$L$$, true),
+  ('webhook_deliveries',
+   $$with e as (insert into public.webhook_endpoints (tenant_id, url, events, secret_last4, created_by) values (%1$L, 'https://hooks.example.com/generic', array['lead.created'], 'wxyz', %5$L) returning id)
+     insert into public.webhook_deliveries (id, tenant_id, endpoint_id, event_id, event, subject_kind) select %2$L, %1$L, e.id, gen_random_uuid(), 'test.ping', 'test' from e$$,
+   'status = status', $$delete from public.webhook_deliveries where id = %2$L$$, false),
   -- a workspace's own switch per helper (migration 20261231170000): written only by agent_switch_set
   ('tenant_agent_switches',
    $$insert into public.tenant_agent_switches (id, tenant_id, agent_name, enabled, updated_by) values (%2$L, %1$L, 'research', false, %5$L) on conflict (tenant_id, agent_name) do update set id = excluded.id$$,
@@ -647,6 +661,12 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('voice_note_usage',
    $$insert into public.voice_note_usage (tenant_id, ref_id, kind, seconds, chars, voice_code, language) values (%1$L, %2$L, 'note', 5, 50, 'fake-en', 'en')$$,
    'seconds = seconds', $$delete from public.voice_note_usage where ref_id = %2$L$$, false),
+  -- calls charged to the wallet (25 Nov 2026): 'pricing.debts' (a tenant table outside the public schema: no client role has any privilege on it, only the public.pricing_* functions touch it).
+  -- credits top-up (24 Nov 2026): 'pricing.refunds' (a tenant table outside the public schema: no client role has any privilege on it, only the public.pricing_* functions touch it).
+  -- daily allowance (24 Nov 2026): 'daily_caps.use' (a tenant table outside the public schema: no client role has any privilege on it, only public.daily_cap_take touches it).
+  -- business KYC per client (24 Nov 2026): 'telephony.business_clients' (a tenant table outside the public schema: no client role has any privilege on it, only the public.business_client_* functions touch it).
+  -- more than one API instance (24 Nov 2026): 'telephony.call_commands' (a tenant table outside the public schema: no client role has any privilege on it, only the public.call_command_* functions touch it).
+  -- sign-up opening (24 Nov 2026): 'signup.trial_identities' (a tenant table outside the public schema: no client role has any privilege on it, only the public.signup_* functions touch it).
   -- billing v2 (13 Nov 2026): 'pricing.subscriptions', 'pricing.wallet_lots', 'pricing.usage', 'pricing.invoices', 'pricing.free_starts', 'pricing.events', 'pricing.orders', 'ops.provider_usage', 'ops.number_purchases' (tenant tables outside the public schema: no client role has any privilege on them, only the public.pricing_* / public.ops_* functions reach them, proved by pgTAP 193 and 196 and the exempt list of test 93) are classified here by this comment.
   -- admin console (13 Nov 2026): 'admin.audit', 'admin.access_grants', 'admin.access_approvals', 'admin.tenant_support_settings', 'admin.support_tickets', 'admin.business_notes', 'admin.plan_changes' (tenant tables outside the public schema: no client role has any privilege on them, only the public.admin_* / public.support_access_* functions read and write them; tested in 197_admin_foundation)
   -- job DI: plans and billing. Written only by definer functions (the owner starts a trial and cancels; the channel account records call seconds and applies provider events); read by Owner and Admin.
@@ -984,6 +1004,10 @@ select t, r, s, i, u, d from (values
   ('developer_api_keys', 'sales', false, false, false, false), ('developer_api_keys', 'viewer', false, false, false, false),
   ('developer_sandbox_leads', 'owner', true, false, false, false), ('developer_sandbox_leads', 'admin', true, false, false, false),
   ('developer_sandbox_leads', 'sales', false, false, false, false), ('developer_sandbox_leads', 'viewer', false, false, false, false),
+  ('webhook_endpoints', 'owner', true, false, false, false), ('webhook_endpoints', 'admin', true, false, false, false),
+  ('webhook_endpoints', 'sales', false, false, false, false), ('webhook_endpoints', 'viewer', false, false, false, false),
+  ('webhook_deliveries', 'owner', true, false, false, false), ('webhook_deliveries', 'admin', true, false, false, false),
+  ('webhook_deliveries', 'sales', false, false, false, false), ('webhook_deliveries', 'viewer', false, false, false, false),
   ('tenant_agent_switches', 'owner', true, false, false, false), ('tenant_agent_switches', 'admin', true, false, false, false),
   ('tenant_agent_switches', 'sales', false, false, false, false), ('tenant_agent_switches', 'viewer', false, false, false, false),
   ('ai_team_standups', 'owner', true, false, false, false), ('ai_team_standups', 'admin', true, false, false, false),
@@ -1002,6 +1026,7 @@ select t, r, s, i, u, d from (values
   ('knowledge_sources', 'owner', true, false, false, false), ('knowledge_sources', 'admin', true, false, false, false), ('knowledge_sources', 'sales', false, false, false, false), ('knowledge_sources', 'viewer', false, false, false, false),
   ('knowledge_facts', 'owner', true, false, false, false), ('knowledge_facts', 'admin', true, false, false, false), ('knowledge_facts', 'sales', false, false, false, false), ('knowledge_facts', 'viewer', false, false, false, false),
   ('lead_sources', 'owner', true, false, false, false), ('lead_sources', 'admin', true, false, false, false), ('lead_sources', 'sales', false, false, false, false), ('lead_sources', 'viewer', false, false, false, false),
+  ('lead_source_activity', 'owner', true, false, false, false), ('lead_source_activity', 'admin', true, false, false, false), ('lead_source_activity', 'sales', false, false, false, false), ('lead_source_activity', 'viewer', false, false, false, false),
   ('lead_consents', 'owner', true, false, false, false), ('lead_consents', 'admin', true, false, false, false), ('lead_consents', 'sales', false, false, false, false), ('lead_consents', 'viewer', false, false, false, false),
   ('lead_intakes', 'owner', true, false, false, false), ('lead_intakes', 'admin', true, false, false, false), ('lead_intakes', 'sales', false, false, false, false), ('lead_intakes', 'viewer', false, false, false, false),
   ('lead_source_costs', 'owner', true, false, false, false), ('lead_source_costs', 'admin', true, false, false, false), ('lead_source_costs', 'sales', false, false, false, false), ('lead_source_costs', 'viewer', false, false, false, false),

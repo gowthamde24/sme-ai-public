@@ -20,7 +20,12 @@ from typing import Any
 # complete), plus the framework's documentation routes. Anything else in a path is user-supplied.
 ROUTE_WORDS = frozenset(
     {
+        "lists", "columns", "commit", "mappings",   # the lists of what you sell (28 Nov)
+        "undo-price",   # POST /catalogue/items/{id}/undo-price (28 Nov)
+        "phone-lines",   # GET /phone-lines (28 Nov)
+        "lead-address", "test-lead",   # one lead address per job, a test lead (24 Nov)
         "phone-knows",   # GET /assistant/phone-knows (28 Nov)
+        "signup", "consent", "phone", "verify", "trial-claim",   # opening sign-up (24 Nov)
         "numbers", "claim",   # the number picker routes (28 Nov)
         "template",   # POST /conversations/{id}/template (a template picked in a chat, 16 Nov)
         "marketing-consent", "consented",   # campaigns S3, 17 Nov
@@ -38,6 +43,12 @@ ROUTE_WORDS = frozenset(
         "call-limit", "ask-consent", "ask-first", "dismiss", "rows", "unsend",   # tasks, imports
         "alerts", "ack", "google",   # admin usage and alerts (14 Nov)
         "phone-kyc", "options",   # /phone-kyc (14 Nov)
+        "business", "aadhaar", "pan", "gst", "documents", "details",   # /phone-kyc/business steps
+        "describe",   # POST /jobs/describe (24 Nov)
+        "guides",   # GET /lead-sources/guides (24 Nov)
+        "contact", "contact-requests",   # the Talk-to-us form and its staff read (25 Nov)
+        "by-email", "wallet-debit", "webhook-failures",   # staff support routes (25 Nov)
+        "credits", "topup-options", "refund", "failed",   # credits top-up routes
         "phone-line", "available", "release",   # /phone-line (18 Nov)
         "reply", "assign",   # POST /admin/support/tickets/{id}/reply and /assign (14 Nov)
         "demo", "start", "end",   # POST /calls/demo/start and /end (13 Nov)
@@ -68,6 +79,8 @@ ROUTE_WORDS = frozenset(
         "secrets",
         # 5 Nov 2026 (C1): the developer API (ADR 0121): /api/v1/... and Settings -> Developers
         "api", "developer", "keys",
+        # 25 Nov 2026 (C1): outbound webhooks (/developer/webhooks/{id}/rotate-secret, /deliveries)
+        "deliveries", "rotate-secret",
         # 5 Nov 2026 (C1): guided setups (POST /assistant/setups/{id}/test)
         "setups",
         # 6 Nov 2026 (C1): My AI team v2 (/ai-team/day, /ai-team/{helper}, /ai-team/standup)

@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "furniture",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "furniture shops",
+    "te": "ఫర్నిచర్ షాపులు"
+  }
+}

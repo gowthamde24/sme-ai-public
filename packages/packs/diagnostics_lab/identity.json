@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "diagnostics_lab",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "diagnostic labs",
+    "te": "డయాగ్నోస్టిక్ ల్యాబ్‌లు"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "../faq.schema.json",
+  "pack": "digital_products",
+  "version": 1,
+  "$comment": "Starter questions only: the owner writes the answers, and the assistant says 'I will ask the owner' until then.",
+  "questions": [
+    {
+      "code": "q1",
+      "ask": {
+        "en": "What are your opening hours?"
+      }
+    },
+    {
+      "code": "q2",
+      "ask": {
+        "en": "Where are you, and how do I reach you?"
+      }
+    },
+    {
+      "code": "q3",
+      "ask": {
+        "en": "How do I pay, and do you give a bill?"
+      }
+    },
+    {
+      "code": "q4",
+      "ask": {
+        "en": "What does it cost, and is there a minimum?"
+      }
+    },
+    {
+      "code": "q5",
+      "ask": {
+        "en": "Do you deliver or come to me?"
+      }
+    },
+    {
+      "code": "q6",
+      "ask": {
+        "en": "How do I get the file after paying?"
+      }
+    },
+    {
+      "code": "q7",
+      "ask": {
+        "en": "Is it a one-time price?"
+      }
+    },
+    {
+      "code": "q8",
+      "ask": {
+        "en": "Can I get a refund?"
+      }
+    },
+    {
+      "code": "q9",
+      "ask": {
+        "en": "Which format is it in?"
+      }
+    },
+    {
+      "code": "q10",
+      "ask": {
+        "en": "Do I get updates?"
+      }
+    }
+  ]
+}

@@ -9,11 +9,15 @@ import { FreshPhotos } from "./FreshPhotos";
 import { Gallery } from "./Gallery";
 import { vocab } from "./ItemCard";
 import { SendToCustomer } from "./SendToCustomer";
+import { UndoPrice } from "./UndoPrice";
 import type { SendActions } from "./catalogue-types";
 import { soonestExpiry } from "./catalogue-logic";
 
+/** "9 Nov, 3:40 pm" in the shop's own time (India). */
+const changedAt = (iso: string): string => new Date(iso).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true });
+
 /** The saree's page (job BC): the big photos, the details in words, and, for the people who may, "Send to a customer" and Edit. A hidden saree is said to be hidden and cannot be sent. */
-export function ItemView({ base, item, role, words, lead, saved, send }: { base: string; item: Item; role: Role; words: TodayWords; lead: { leadId: string; label: string } | null; saved: boolean; send: SendActions | null }) {
+export function ItemView({ base, item, role, words, lead, saved, send, undo = null }: { base: string; item: Item; role: Role; words: TodayWords; lead: { leadId: string; label: string } | null; saved: boolean; send: SendActions | null ; /** "Undo price change" (the Owner only; the page passes it when the API says who last changed the item) */ undo?: (() => Promise<{ ok: true } | { ok: false; error: "nothing_to_undo" | "forbidden" | "invalid" | "mfa_required" | "down" }>) | null}) {
   const admin = role === "owner" || role === "admin";
   const rows: [string, React.ReactNode][] = [
     [say(words, "catalogue.field.fabric"), vocab(words, "fabric", item.fabric, item.fabric_label)],
@@ -44,9 +48,17 @@ export function ItemView({ base, item, role, words, lead, saved, send }: { base:
             <p className="flex flex-wrap gap-2">
               {!item.active ? <span data-badge="inactive" className={`${badge} border border-edge bg-surface-2 text-ink`}>{say(words, "catalogue.badge.inactive")}</span> : null}
               {item.stock_status === "few_left" ? <span data-badge="few_left" className={`${badge} bg-amber-bg text-amber-text`}>{say(words, "catalogue.stock.few_left")}</span> : null}
+              {item.stock_status === "out_of_stock" ? <span data-badge="out_of_stock" className={`${badge} border border-ink font-bold text-ink`}>{say(words, "catalogue.stock.out_of_stock")}</span> : null}
               {item.stock_status === "made_to_order" ? <span data-badge="made_to_order" className={`${badge} bg-info-bg text-info-text`}>{say(words, "catalogue.stock.made_to_order")}</span> : null}
             </p>
             <p className="text-xl font-semibold">{item.price_text ?? item.price_band_label}</p>
+            {item.updated_by_name !== undefined ? (
+              <p data-part="last-changed" className="m-0 text-[15px] text-muted">
+                {item.updated_by_name ? say(words, "catalogue.price.changed_by", { name: item.updated_by_name, when: changedAt(item.updated_at) }) : say(words, "catalogue.price.changed", { when: changedAt(item.updated_at) })}
+              </p>
+            ) : null}
+            {/* eslint-disable-next-line react-hooks/purity -- the 30-day window only decides whether Undo is offered; the server enforces it */}
+            {undo && role === "owner" && item.updated_by_name !== undefined && item.price_paise !== null && Date.now() - Date.parse(item.updated_at) < 30 * 86_400_000 ? <UndoPrice undo={undo} words={words} /> : null}
           </div>
           {admin ? (
             <Link href={`${base}/catalogue/${item.id}/edit`} className={secondary}>

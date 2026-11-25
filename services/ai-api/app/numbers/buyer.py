@@ -19,6 +19,7 @@ Every refusal is a closed word; no price, number or id is ever put in a message 
 
 from __future__ import annotations
 
+import json
 import logging
 from dataclasses import dataclass
 from typing import Literal
@@ -59,10 +60,19 @@ class Bought:
     order_number: str
     stage: Literal["bought", "mapped", "routed"]   # how far the set-up got: only "routed" is a number that works
     cost_inr: float                     # what we paid (for our audit; never shown to a customer)
+    kyc_refused: bool = False           # the set-up stopped because VoiceLink wants the client's KYC first (buy first, verify after)
 
     @property
     def complete(self) -> bool:
         return self.stage == "routed"
+
+
+def _about_kyc(exc: VoicelinkError) -> bool:
+    """VoiceLink refused because the client's KYC is not complete (its answer names it): only that word is read, never logged."""
+    try:
+        return "kyc" in json.dumps(exc.data).lower()
+    except (TypeError, ValueError):
+        return False
 
 
 def find(api: VoicelinkApi, number: str, did_type: int) -> AvailableDid | None:
@@ -92,7 +102,7 @@ def buy(api: VoicelinkApi, settings: BuyerSettings, number: str, kind: str) -> B
             order = api.lock_did(did.did_id, settings.months)
         except VoicelinkError as exc:
             if exc.reason == "refused":
-                raise PickerRefused("number_taken") from None
+                raise PickerRefused("kyc_required" if _about_kyc(exc) else "number_taken") from None
             raise
         summary = api.order_summary(order.order_id)
         if summary.did_count != 1 or summary.channel_count != 0 or summary.total > settings.max_total_inr or summary.wallet_balance - summary.total < 0:
@@ -100,8 +110,9 @@ def buy(api: VoicelinkApi, settings: BuyerSettings, number: str, kind: str) -> B
         order_number = api.confirm_purchase(order.order_id)   # <- the money moves here
     except VoicelinkError as exc:
         log.warning("number_picker vendor_failed reason=%s", exc.reason)
-        raise PickerRefused("vendor_unavailable") from None
+        raise PickerRefused("kyc_required" if _about_kyc(exc) else "vendor_unavailable") from None
     stage: Literal["bought", "mapped", "routed"] = "bought"
+    kyc_refused = False
     try:
         api.map_did(client_id=settings.client_id, did_id=did.did_id, description="Stack19 customer number", recording=settings.recording)
         stage = "mapped"
@@ -109,4 +120,5 @@ def buy(api: VoicelinkApi, settings: BuyerSettings, number: str, kind: str) -> B
         stage = "routed"
     except VoicelinkError as exc:   # the number is bought and ours: say how far it got; never raise (the caller records it and tells the team)
         log.warning("number_picker setup_incomplete stage=%s reason=%s", stage, exc.reason)
-    return Bought(number=did.number, did_id=did.did_id, order_number=order_number, stage=stage, cost_inr=summary.total)
+        kyc_refused = _about_kyc(exc)
+    return Bought(number=did.number, did_id=did.did_id, order_number=order_number, stage=stage, cost_inr=summary.total, kyc_refused=kyc_refused)

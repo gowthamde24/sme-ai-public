@@ -21,6 +21,9 @@ class FakeDpdpRepository:
         self.waitlist: dict[str, dict[str, Any]] = {}
         self.due_intake: dict[str, Any] = {"grievances": [], "waitlist": []}
         self.due_lapse: dict[str, Any] = {"warn": [], "erase": []}
+        self.contacts: dict[str, dict[str, Any]] = {}
+        self.due_contacts: list[dict[str, Any]] = []
+        self.contact_marks: list[str] = []
         self.marks: list[tuple[str, str, str]] = []
         self.warned: list[uuid.UUID] = []
         self.erased: list[uuid.UUID] = []
@@ -87,6 +90,21 @@ class FakeDpdpRepository:
         status = "already_joined" if key in self.waitlist else "joined"
         self.waitlist[key] = args
         return {"status": status, "marketing_opt_in": args["p_marketing_opt_in"]}
+
+    def contact_submit(self, args: dict[str, Any]) -> dict[str, Any]:
+        self._note("contact_submit", args)
+        key = (args["p_email"] or args["p_phone"] or "").lower()
+        if key in self.contacts:
+            return {"status": "duplicate", "reference": self.contacts[key]["ref"]}
+        ref = f"TQ-{len(self.contacts) + 1:08X}"
+        self.contacts[key] = {**args, "ref": ref}
+        return {"status": "received", "reference": ref}
+
+    def contact_due(self, token: str, limit: int) -> list[dict[str, Any]]:
+        return list(self.due_contacts)
+
+    def contact_mark(self, token: str, item_id: uuid.UUID) -> None:
+        self.contact_marks.append(str(item_id))
 
     # the worker
     def intake_due(self, token: str, limit: int) -> dict[str, Any]:

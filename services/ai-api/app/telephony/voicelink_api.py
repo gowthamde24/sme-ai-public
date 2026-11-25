@@ -32,6 +32,8 @@ CLOSED_STATUS = {401: "auth", 403: "auth", 422: "refused", 400: "refused", 404: 
 class VoicelinkError(PlivoError):
     """A refusal or a failure of VoiceLink (a subclass of PlivoError so the placer, the dialers and the routes that already catch it need no change). `reason` is a closed word."""
 
+    data: dict[str, Any] = {}   # the `data` object of a 4xx answer (closed fields only are read), empty otherwise
+
 
 @dataclass(frozen=True)
 class Wallet:
@@ -104,14 +106,23 @@ class VoicelinkApi:
             raise VoicelinkError("server") from None
         return token
 
-    def _request(self, method: str, path: str, *, json_body: dict[str, Any] | None = None, params: dict[str, Any] | None = None) -> Any:
+    def _request(
+        self,
+        method: str,
+        path: str,
+        *,
+        json_body: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
+        form: dict[str, Any] | None = None,
+        files: dict[str, tuple[str, bytes, str]] | None = None,
+    ) -> Any:
         for attempt in (1, 2):
             with self._lock:
                 if self._token is None:
                     self._token = self._login()
                 token = self._token
             try:
-                r = self._client.request(method, path, json=json_body, params=params, headers={"Authorization": f"Bearer {token}", "Accept": "application/json"})
+                r = self._client.request(method, path, json=json_body, params=params, data=form, files=files, headers={"Authorization": f"Bearer {token}", "Accept": "application/json"})
             except httpx.HTTPError as exc:
                 log.warning("voicelink %s %s unreachable: %s", method, path.split("?")[0], exc.__class__.__name__)
                 raise VoicelinkError("unreachable") from None
@@ -123,7 +134,14 @@ class VoicelinkApi:
                 raise VoicelinkError("server", r.status_code)
             if r.status_code >= 400:
                 log.warning("voicelink %s %s refused status=%s", method, path.split("?")[0], r.status_code)
-                raise VoicelinkError(CLOSED_STATUS.get(r.status_code, "refused"), r.status_code)
+                refused = VoicelinkError(CLOSED_STATUS.get(r.status_code, "refused"), r.status_code)
+                try:   # what VoiceLink said about WHY (e.g. the list of missing documents): closed fields only are read by the caller, never logged
+                    detail = r.json()
+                    inner = detail.get("data") if isinstance(detail, dict) else None
+                    refused.data = inner if isinstance(inner, dict) else {}
+                except ValueError:
+                    refused.data = {}
+                raise refused
             try:
                 body = r.json()
             except ValueError:
@@ -214,6 +232,39 @@ class VoicelinkApi:
         if description:
             body["description"] = description[:200]
         self._request("POST", "/reseller/client/map-did", json_body=body)
+
+    # ------------------------------------------------------------------------------------------------ one client per business (Model B, KYC_PER_CLIENT)
+    def create_client(self, *, username: str, email: str, first_name: str, last_name: str, password: str, phone: str | None = None, channel_count: int = 1) -> int:
+        """`POST /reseller/client/create`: the business's own VoiceLink client. `wallet_bypass=1`: billing debits OUR wallet (we bill in our credits); `negative_threshold=0`."""
+        body: dict[str, Any] = {"username": username, "email": email, "first_name": first_name, "last_name": last_name, "password": password, "is_active": 1,
+                                "channel_count": int(channel_count), "negative_threshold": 0, "wallet_bypass": 1}
+        if phone:
+            body["phone"] = phone
+        data = self._request("POST", "/reseller/client/create", json_body=body)
+        client_id = data.get("client_id") if isinstance(data, dict) else None
+        if isinstance(client_id, bool) or not isinstance(client_id, int) or client_id <= 0:
+            raise VoicelinkError("server")
+        return client_id
+
+    def kyc_status(self, client_id: int) -> dict[str, Any]:
+        data = self._request("GET", "/reseller/kyc/status", params={"client_id": int(client_id)})
+        return data if isinstance(data, dict) else {}
+
+    def kyc_step(self, step: str, client_id: int, fields: dict[str, Any]) -> dict[str, Any]:
+        """One KYC step for a client: `register-details`, `pan-verify`, `aadhaar-init`, `gst-verify` (the step's own fields; the identity numbers are never logged)."""
+        paths = {"register-details": "step-1-register-details", "pan-verify": "step-2-pan-verify", "aadhaar-init": "step-3-aadhaar-init", "gst-verify": "step-4-gst-verify"}
+        data = self._request("POST", f"/reseller/kyc/{paths[step]}", json_body={"client_id": int(client_id), **fields})
+        return data if isinstance(data, dict) else {}
+
+    def kyc_upload(self, client_id: int, document_type: str, file_name: str, content: bytes, content_type: str) -> dict[str, Any]:
+        """The document goes to VoiceLink as multipart (their rule); it is held in memory for this call only."""
+        data = self._request("POST", "/reseller/kyc/upload-document", form={"client_id": str(int(client_id)), "document_type": document_type}, files={"document": (file_name, content, content_type)})
+        return data if isinstance(data, dict) else {}
+
+    def kyc_final_submit(self, client_id: int) -> dict[str, Any]:
+        """`POST /reseller/kyc/final-submit`. The reseller documentation shows no client_id for it: it is sent anyway; whatever VoiceLink answers is shown in plain words."""
+        data = self._request("POST", "/reseller/kyc/final-submit", json_body={"client_id": int(client_id)})
+        return data if isinstance(data, dict) else {}
 
     def create_routing(self, *, did_id: int, bot_id: int) -> int:
         """Point a number at our WebSocket bot for inbound and outbound (`POST /call-routing/create`: 3 = WebSocket bot both ways). Returns the routing id."""

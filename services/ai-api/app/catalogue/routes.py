@@ -16,6 +16,7 @@ from fastapi.concurrency import run_in_threadpool
 
 from app.auth.deps import AnyMember, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.catalogue import service
+from app.catalogue.errors import NothingToUndoError
 from app.catalogue.images import MAX_UPLOAD_BYTES
 from app.catalogue.models import (
     CatalogueItemIn,
@@ -35,6 +36,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}/catalogue", tags=["catalogue"
 
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
 Limit = Annotated[int, Query(ge=1, le=50)]
 
 
@@ -142,6 +144,17 @@ def put_item(
         },
     )
     return SaveResultOut(item=_item(runtime, ctx, iid), created=saved.get("created") is True)
+
+
+@router.post("/items/{item_id}/undo-price", response_model=CatalogueItemOut)
+def undo_price(item_id: str, ctx: OwnerStrong, runtime: RuntimeDep) -> CatalogueItemOut:
+    """Put back the price the item had before its LAST price change, if that change is under 30 days old and was not itself an undo (28 Nov 2026). The Owner only; a second factor only when the Owner turned one on. The undo is recorded."""
+    iid = _row_id(item_id)
+    try:
+        _repo(runtime).undo_price(ctx.principal.token, ctx.tenant.id, iid)
+    except NothingToUndoError:
+        raise ApiError(409, "nothing_to_undo", "There is no price change to undo for this item.", extra={"reason": "nothing_to_undo", "fields": ["nothing_to_undo"]}) from None
+    return _item(runtime, ctx, iid)
 
 
 @router.put("/items/{item_id}/quantity", response_model=CatalogueItemOut)

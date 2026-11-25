@@ -24,7 +24,7 @@ OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, s
 Kind = Literal["mobile", "landline"]
 WORDS = {
     "paused": "We cannot add numbers right now.", "not_on_plan": "Your plan does not include another number.", "already_has_number": "Your plan includes one number, and you have it.",
-    "daily_limit": "We cannot add numbers right now, we have told our team.", "wallet_low": "We cannot add numbers right now, we have told our team.", "number_taken": "That number was just taken. Please pick another.", "unavailable": "We cannot add numbers right now.",
+    "kyc_required": "Verify your business first to get a number in its name.", "daily_limit": "We cannot add numbers right now, we have told our team.", "wallet_low": "We cannot add numbers right now, we have told our team.", "number_taken": "That number was just taken. Please pick another.", "unavailable": "We cannot add numbers right now.",
 }
 
 
@@ -107,7 +107,7 @@ def claim(ctx: OwnerStrong, runtime: RuntimeDep, body: ClaimIn) -> ClaimedOut:
     if service_alert is not None:
         service._alert = lambda detail: service_alert(False, detail)  # noqa: SLF001 - the scheduler account raises the Needs-you item
     try:
-        done = service.claim(ctx.principal.token, ctx.tenant.id, body.number, body.type)
+        done = service.claim(ctx.principal.token, ctx.tenant.id, body.number, body.type, email=ctx.principal.email or "", name=getattr(ctx.tenant, "name", "") or "")
     except PickerBlocked as exc:
         raise _blocked(exc) from None
     return ClaimedOut(number=done.number, display=display(done.number) if not done.display else done.display, type=done.type, state=done.state)

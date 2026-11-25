@@ -787,19 +787,6 @@ export function V9Guard({ t }: { t: SiteT }) {
               {t("v9.guard.10")}
             </p>
             <div className="kyc">
-              <div className="kyc-card">
-                <b>
-                  {t("v9.guard.11")}
-                </b>
-                <div className="ln"></div>
-                <div className="ln s"></div>
-                <span className="kyc-stamp">
-                  {t("v9.guard.12")}
-                </span>
-              </div>
-              <span className="kyc-arrow">
-                {"→"}
-              </span>
               <div className="kyc-num">
                 <small>
                   {t("v9.guard.13")}
@@ -1301,6 +1288,16 @@ export function V9Ftr({ t, lang, home = "" }: { t: SiteT; lang: SiteLang; /** "/
                   {t("v9.ftr.20")}
                 </a>
               </li>
+              <li>
+                <Link href={sitePath(lang, { kind: "page", page: "help" })} prefetch={false}>
+                  {t("nav.help")}
+                </Link>
+              </li>
+              <li>
+                <Link href={sitePath(lang, { kind: "page", page: "status" })} prefetch={false}>
+                  {t("nav.status")}
+                </Link>
+              </li>
             </ul>
           </div>
           <div className="ftr-col">
@@ -1326,6 +1323,21 @@ export function V9Ftr({ t, lang, home = "" }: { t: SiteT; lang: SiteLang; /** "/
               <li>
                 <Link href="/data-deletion" prefetch={false}>
                   {t("v9.ftr.25")}
+                </Link>
+              </li>
+              <li>
+                <Link href={sitePath(lang, { kind: "page", page: "acceptable-use" })} prefetch={false}>
+                  {t("nav.aup")}
+                </Link>
+              </li>
+              <li>
+                <Link href={sitePath(lang, { kind: "page", page: "refunds" })} prefetch={false}>
+                  {t("nav.refunds")}
+                </Link>
+              </li>
+              <li>
+                <Link href={sitePath(lang, { kind: "page", page: "talk-to-us" })} prefetch={false}>
+                  {t("nav.talk")}
                 </Link>
               </li>
               <li>

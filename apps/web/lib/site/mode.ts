@@ -13,9 +13,9 @@ export const siteMode = (value: string | undefined = process.env.SITE_MODE): Sit
 export const websiteOnly = (): boolean => siteMode() === "website";
 
 /** The fixed pages of the site that website mode serves (the business types' pages and the home page always are). */
-export const WEBSITE_PAGES: readonly SitePage[] = ["pricing", "contact"];
+export const WEBSITE_PAGES: readonly SitePage[] = ["pricing", "contact", "help", "status", "acceptable-use", "refunds", "talk-to-us"];
 
-export const isServed = (target: SiteTarget, mode: SiteMode = siteMode()): boolean => mode === "app" || target.kind !== "page" || WEBSITE_PAGES.includes(target.page);
+export const isServed = (target: SiteTarget, mode: SiteMode = siteMode()): boolean => mode === "app" || target.kind === "home" || target.kind === "pack" || (target.kind === "article" ? WEBSITE_PAGES.includes("help") : WEBSITE_PAGES.includes(target.page));
 
 /** The addresses website mode answers with "Opening soon" (the app and everything that signs a person in). */
 const CLOSED = ["/app", "/staff", "/login", "/signup", "/setup", "/auth"] as const;

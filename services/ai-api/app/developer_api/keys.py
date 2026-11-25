@@ -16,7 +16,7 @@ from zoneinfo import ZoneInfo
 PREFIX = "sk_test_"
 _ALPHABET = string.ascii_letters + string.digits
 _KEY = re.compile(r"sk_test_[A-Za-z0-9]{40}")
-SCOPES = ("leads:write", "leads:read", "calls:read", "campaigns:write", "webhooks", "usage:read")
+SCOPES = ("leads:write", "leads:read", "calls:read", "calls:write", "campaigns:write", "campaigns:read", "webhooks", "usage:read")
 IST = ZoneInfo("Asia/Kolkata")
 # test mode's calling hours: Monday to Saturday, 10:00 to 19:00 India time (the app's default); live mode will use the workspace's own
 TEST_DAYS = (1, 2, 3, 4, 5, 6)

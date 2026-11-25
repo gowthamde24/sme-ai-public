@@ -57,8 +57,8 @@ describe("search engines and website mode (job DQ)", () => {
     const urls = s.map((e) => e.url);
     const expected = allTargets().filter((t) => isServed(t)).flatMap((t) => LANDING_LANGS.map((l) => `https://stack19.com${sitePath(l, t)}`));
     expect(urls).toEqual([...expected, "https://stack19.com/privacy", "https://stack19.com/terms", "https://stack19.com/data-deletion"]);
-    for (const gone of ["how-it-works", "security", "help"]) expect(urls.filter((u) => u.endsWith(`/${gone}`))).toEqual([]);
-    expect(urls).toEqual(expect.arrayContaining(["https://stack19.com/pricing", "https://stack19.com/contact", "https://stack19.com/hi/construction", "https://stack19.com/kn/education", "https://stack19.com/textiles"]));
+    for (const gone of ["how-it-works", "security"]) expect(urls.filter((u) => u.endsWith(`/${gone}`))).toEqual([]);
+    expect(urls).toEqual(expect.arrayContaining(["https://stack19.com/pricing", "https://stack19.com/contact", "https://stack19.com/help", "https://stack19.com/help/set-up-your-assistant", "https://stack19.com/te/status", "https://stack19.com/acceptable-use", "https://stack19.com/refunds", "https://stack19.com/talk-to-us", "https://stack19.com/hi/construction", "https://stack19.com/kn/education", "https://stack19.com/textiles"]));
     expect(new Set(urls).size).toBe(urls.length);
     for (const e of s.filter((x) => x.url.endsWith("/contact") || x.url.endsWith("/te/contact"))) expect(Object.keys(e.alternates?.languages ?? {}).sort()).toEqual(["en-IN", "hi-IN", "kn-IN", "ta-IN", "te-IN"]);
   });

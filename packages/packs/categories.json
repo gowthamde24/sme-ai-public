@@ -1,0 +1,218 @@
+{
+  "$schema": "./categories.schema.json",
+  "$comment": "The groups the business types are shown in at sign-up and on first run (owner, 29 Nov 2026), and the words a person may type to find one. The web draws the groups from this file through GET /v1/packs; the order here is the order on the screen. Data only.",
+  "categories": [
+    {
+      "id": "retail",
+      "name": {
+        "en": "Retail and wholesale",
+        "te": "రిటైల్, హోల్‌సేల్",
+        "hi": "रिटेल और थोक",
+        "kn": "ರಿಟೇಲ್ ಮತ್ತು ಸಗಟು"
+      },
+      "colour": "offer"
+    },
+    {
+      "id": "food",
+      "name": {
+        "en": "Food",
+        "te": "ఫుడ్",
+        "hi": "खाना",
+        "kn": "ಆಹಾರ"
+      },
+      "colour": "offer"
+    },
+    {
+      "id": "services",
+      "name": {
+        "en": "Services",
+        "te": "సర్వీసులు",
+        "hi": "सेवाएँ",
+        "kn": "ಸೇವೆಗಳು"
+      },
+      "colour": "find"
+    },
+    {
+      "id": "health",
+      "name": {
+        "en": "Health",
+        "te": "హెల్త్",
+        "hi": "स्वास्थ्य",
+        "kn": "ಆರೋಗ್ಯ"
+      },
+      "colour": "chat"
+    },
+    {
+      "id": "education",
+      "name": {
+        "en": "Education",
+        "te": "విద్య",
+        "hi": "शिक्षा",
+        "kn": "ಶಿಕ್ಷಣ"
+      },
+      "colour": "chat"
+    },
+    {
+      "id": "property",
+      "name": {
+        "en": "Property and vehicles",
+        "te": "ప్రాపర్టీ, వాహనాలు",
+        "hi": "प्रॉपर्टी और वाहन",
+        "kn": "ಆಸ್ತಿ ಮತ್ತು ವಾಹನ"
+      },
+      "colour": "visit"
+    },
+    {
+      "id": "money",
+      "name": {
+        "en": "Money and advice",
+        "te": "మనీ, సలహా",
+        "hi": "पैसा और सलाह",
+        "kn": "ಹಣ ಮತ್ತು ಸಲಹೆ"
+      },
+      "colour": "call"
+    },
+    {
+      "id": "digital",
+      "name": {
+        "en": "Digital and online",
+        "te": "డిజిటల్, ఆన్‌లైన్",
+        "hi": "डिजिटल और ऑनलाइन",
+        "kn": "ಡಿಜಿಟಲ್ ಮತ್ತು ಆನ್‌ಲೈನ್"
+      },
+      "colour": "call"
+    },
+    {
+      "id": "fitness",
+      "name": {
+        "en": "Fitness and sport",
+        "te": "ఫిట్‌నెస్, స్పోర్ట్",
+        "hi": "फ़िटनेस और खेल",
+        "kn": "ಫಿಟ್‌ನೆಸ್ ಮತ್ತು ಕ್ರೀಡೆ"
+      },
+      "colour": "visit"
+    },
+    {
+      "id": "other",
+      "name": {
+        "en": "Travel and other",
+        "te": "ట్రావెల్, ఇతరం",
+        "hi": "यात्रा और अन्य",
+        "kn": "ಪ್ರಯಾಣ ಮತ್ತು ಇತರೆ"
+      },
+      "colour": "find"
+    }
+  ],
+  "packs": {
+    "textiles": "retail",
+    "kirana": "retail",
+    "jewellery": "retail",
+    "electronics": "retail",
+    "furniture": "retail",
+    "stationery_gifts": "retail",
+    "hardware_paint": "retail",
+    "pharmacy": "retail",
+    "fashion_tailor": "retail",
+    "wholesale_b2b": "retail",
+    "online_store": "digital",
+    "restaurant": "food",
+    "bakery_sweets": "food",
+    "catering_tiffin": "food",
+    "cloud_kitchen": "food",
+    "salon_beauty": "services",
+    "home_repair": "services",
+    "cleaning_pest": "services",
+    "appliance_vehicle_repair": "services",
+    "photography": "services",
+    "event_wedding": "services",
+    "interiors_solar": "services",
+    "laundry_dry_cleaning": "services",
+    "clinic": "health",
+    "dental": "health",
+    "physio_rehab": "health",
+    "vet_pet": "health",
+    "diagnostics_lab": "health",
+    "coaching": "education",
+    "education": "education",
+    "preschool": "education",
+    "arts_music": "education",
+    "skills_training": "education",
+    "online_courses": "digital",
+    "real_estate": "property",
+    "construction_materials": "property",
+    "auto_dealer": "property",
+    "car_service": "property",
+    "vehicle_rental": "property",
+    "hotel_homestay": "property",
+    "insurance_loans": "money",
+    "finance_agent": "money",
+    "legal_ca": "money",
+    "consultants_agencies": "digital",
+    "digital_products": "digital",
+    "software_saas": "digital",
+    "creators_communities": "digital",
+    "gym": "fitness",
+    "yoga_studio": "fitness",
+    "sports_academy": "fitness",
+    "travel": "other",
+    "agri_nursery": "other",
+    "ngo_trust": "other",
+    "general_business": "other"
+  },
+  "keywords": {
+    "textiles": "saree sarees silk cotton handloom fabric cloth garments",
+    "kirana": "grocery groceries provision general store supermarket daily needs",
+    "jewellery": "jewellery jewelry gold silver diamond ornaments",
+    "electronics": "mobile mobiles phone laptop electronics appliances tv",
+    "furniture": "furniture sofa bed wardrobe home decor",
+    "stationery_gifts": "stationery gifts books pens toys printing",
+    "hardware_paint": "hardware paint tools plumbing electrical sanitary",
+    "pharmacy": "pharmacy medical store medicines chemist",
+    "fashion_tailor": "boutique tailor tailoring stitching blouse dress garments fashion",
+    "wholesale_b2b": "wholesale distributor trader dealer bulk",
+    "online_store": "online store ecommerce d2c brand website shop shopify instagram",
+    "restaurant": "restaurant cafe hotel dhaba food joint",
+    "bakery_sweets": "bakery cake sweets mithai confectionery",
+    "catering_tiffin": "catering tiffin meals lunch box party food",
+    "cloud_kitchen": "cloud kitchen delivery only food",
+    "salon_beauty": "salon beauty parlour parlor spa makeup hair skin",
+    "home_repair": "plumber electrician carpenter handyman repair painter ac",
+    "cleaning_pest": "cleaning housekeeping pest control fumigation sofa cleaning",
+    "appliance_vehicle_repair": "repair service centre mobile repair appliance fridge washing machine",
+    "photography": "photographer photography videographer studio album",
+    "event_wedding": "event wedding planner decorator party",
+    "interiors_solar": "interiors interior design solar panels false ceiling",
+    "laundry_dry_cleaning": "laundry dry cleaning ironing wash",
+    "clinic": "clinic doctor hospital diagnostics health",
+    "dental": "dental dentist teeth orthodontist",
+    "physio_rehab": "physiotherapy physio rehab chiropractic",
+    "vet_pet": "vet veterinary pet animals dog cat",
+    "diagnostics_lab": "lab laboratory scan x-ray blood test",
+    "coaching": "coaching tuition classes training institute",
+    "education": "school college university institute",
+    "preschool": "preschool playschool nursery daycare kindergarten",
+    "arts_music": "music dance art drawing singing classes",
+    "skills_training": "skills vocational training computer course itc",
+    "online_courses": "online course creator youtube teacher e-learning",
+    "real_estate": "real estate property broker plots flats builder agent",
+    "construction_materials": "cement steel bricks sand tiles construction materials",
+    "auto_dealer": "car bike showroom dealer vehicles auto",
+    "car_service": "garage car service bike service workshop mechanic",
+    "vehicle_rental": "rental rent vehicles equipment cab jcb",
+    "hotel_homestay": "hotel homestay lodge resort guest house",
+    "insurance_loans": "insurance loans agent policy finance",
+    "finance_agent": "finance mutual funds investment advisor stock",
+    "legal_ca": "lawyer advocate ca chartered accountant tax gst auditor",
+    "consultants_agencies": "consultant agency freelancer marketing design developer",
+    "digital_products": "ebook digital product template software file download",
+    "software_saas": "software saas app platform it company",
+    "creators_communities": "creator influencer community membership newsletter",
+    "gym": "gym fitness trainer workout",
+    "yoga_studio": "yoga meditation wellness studio zumba",
+    "sports_academy": "sports academy cricket badminton football coaching camp",
+    "travel": "travel tours trips agency holiday packages",
+    "agri_nursery": "agriculture nursery plants seeds fertiliser farm supplies",
+    "ngo_trust": "ngo trust charity foundation volunteers",
+    "general_business": "other business anything else"
+  }
+}

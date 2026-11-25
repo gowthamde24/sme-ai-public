@@ -22,7 +22,7 @@ Colour = Literal[
 Zari = Literal["none", "light", "rich"]
 Occasion = Literal["wedding", "festival", "daily", "party"]
 PriceBand = Literal["under_5k", "5k_10k", "10k_25k", "25k_50k", "above_50k"]
-Stock = Literal["in_stock", "few_left", "made_to_order"]
+Stock = Literal["in_stock", "few_left", "made_to_order", "out_of_stock"]
 
 FABRICS: tuple[str, ...] = Fabric.__args__  # type: ignore[attr-defined]
 COLOURS: tuple[str, ...] = Colour.__args__  # type: ignore[attr-defined]
@@ -53,6 +53,7 @@ STOCK_LABEL: dict[str, str] = {
     "in_stock": "In stock",
     "few_left": "Few left",
     "made_to_order": "Made to order",
+    "out_of_stock": "Out of stock",
 }
 
 

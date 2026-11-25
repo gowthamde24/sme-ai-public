@@ -138,9 +138,11 @@ UNANSWERED = {"busy": ("busy", "busy"), "no-answer": ("no_answer", "no_answer"),
 class OutboundRefused(Exception):
     """The gate (or the setup) said no. `reason` is one of the gate's closed words; the refusal is already on a `refused` call row."""
 
-    def __init__(self, reason: str, free_minutes: dict[str, Any] | None = None) -> None:
+    def __init__(self, reason: str, free_minutes: dict[str, Any] | None = None, *, wallet_low: bool = False, kyc_pending: bool = False) -> None:
         super().__init__(reason)
         self.reason = reason
+        self.kyc_pending = kyc_pending   # billing_blocked because the business is not verified yet (KYC_PER_CLIENT): the Owner is told `kyc_pending`
+        self.wallet_low = wallet_low   # billing_blocked because the balance does not cover a minute at the plan's rate (BILLING_CHARGE_CALLS): the Owner is told `wallet_low`
         # `billing_blocked` for a business with its own free-minutes number (Customer Zero): {minutes, restarts_on}, so the answer to the Owner can say so in one plain sentence (None for every other refusal)
         self.free_minutes = free_minutes
 
@@ -161,13 +163,22 @@ class OutboundRepo(Protocol):
 class PostgrestOutboundRepo:
     """The database side, with the CALLER's token (an Owner's for a test call, the phone server's for the dialer)."""
 
-    def __init__(self, rpc: RpcClient, provider: str = PROVIDER) -> None:
+    def __init__(self, rpc: RpcClient, provider: str = PROVIDER, *, wallet_enforced: bool = False, kyc_enforced: bool = False) -> None:
+        self._kyc = kyc_enforced
+        self._wallet = wallet_enforced   # BILLING_CHARGE_CALLS: an outbound call needs a minute of balance (or included minutes)
         self._rpc = rpc
         self._provider = provider   # the provider word of the calls and the line this repository places (plivo | voicelink)
 
     def line_for_tenant(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         out = self._rpc.call(token, "phone_line_for_tenant", {"p_tenant_id": str(tenant_id), "p_provider": self._provider})
-        return out if isinstance(out, dict) else None
+        if not isinstance(out, dict):
+            return None
+        if self._kyc and out.get("kyc_pending") is True:
+            out = {**out, "billing_blocked": True, "kyc_blocked": True}
+        wallet = out.get("wallet")
+        if self._wallet and isinstance(wallet, dict) and wallet.get("outbound_ok") is False:
+            out = {**out, "billing_blocked": True, "wallet_low": True}
+        return out
 
     def begin(self, token: str, tenant_id: uuid.UUID, purpose: str, language: str, refuse_reason: str | None = None) -> uuid.UUID:
         out = self._rpc.object(token, "phone_call_begin", {"p_tenant_id": str(tenant_id), "p_direction": "outbound", "p_provider": self._provider, "p_sandbox": True, "p_purpose": purpose, "p_language": language,
@@ -291,7 +302,7 @@ class PlivoOutbound:
         if reason is not None:
             self._repo.begin(token, tenant_id, purpose, language, refuse_reason=reason)   # the refusal is recorded, with its closed word
             free = (line or {}).get("free_minutes")
-            raise OutboundRefused(reason, free if reason == "billing_blocked" and isinstance(free, dict) else None)
+            raise OutboundRefused(reason, free if reason == "billing_blocked" and isinstance(free, dict) else None, wallet_low=reason == "billing_blocked" and bool((line or {}).get("wallet_low")), kyc_pending=reason == "billing_blocked" and bool((line or {}).get("kyc_blocked")))
         assert number is not None and line is not None  # noqa: S101 - _decide refused otherwise
         call_id = self._repo.begin(token, tenant_id, purpose, language)
         if self._gate.mode == "live":

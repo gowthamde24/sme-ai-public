@@ -15,6 +15,7 @@ import dataclasses
 import hmac
 import json
 import logging
+import re
 import uuid
 from contextlib import suppress
 from dataclasses import dataclass
@@ -77,6 +78,10 @@ async def admit(start: Any, settings: gate.Settings, *, find_line: Any, active_c
     found = await inbound.find_line_quick(find_line, line_no)
     if not found or found.get("provider") != PROVIDER:
         return gate.Refused("no_such_line")
+    if found.get("kyc_blocked") is True:   # buy first, verify after: until the business is approved the number takes no real call ("not active yet")
+        return gate.Refused("workspace_paused")
+    if found.get("wallet_inbound_blocked") is True:   # BILLING_CHARGE_CALLS: the wallet is past its floor: no AI conversation until credits are added (migration 991700)
+        return gate.Refused("billing_blocked")
     decision = gate.check_inbound(settings, gate.InboundFacts(to_number=line_no, now=now, line_known=True, inbound_on=bool(found.get("inbound_on")), hours=hours, active_calls_total=active_calls, from_number=caller))
     if isinstance(decision, gate.Refused):
         return decision
@@ -259,7 +264,7 @@ async def webhook(request: Request, token: str) -> JSONResponse:
     direction = "inbound" if kind.upper() in ("INBOUND", "VL-IN") else "outbound" if kind.upper() in ("OUTBOUND", "VL-OUT") else kind[:10].lower()
     seconds = str(_pick(body, "duration", "call_duration", "talk_duration") or "")[:8]
     key = config.fingerprint_key()
-    log.info("voicelink_webhook event=%s call_fp=%s direction=%s status=%s duration=%s ours=%s", event, inbound.fingerprint(key, call_id), direction, status, seconds, row is not None and tenant is not None)
+    log.info("voicelink_webhook event=%s call_fp=%s direction=%s status=%s duration=%s ours=%s", _log_safe(event), inbound.fingerprint(key, call_id), _log_safe(direction), _log_safe(status), _log_safe(seconds), row is not None and tenant is not None)
     if row is not None and tenant is not None:
         if event == "call.initiated":
             await asyncio.to_thread(_mark_ringing, service, tenant, row, call_id)
@@ -268,6 +273,11 @@ async def webhook(request: Request, token: str) -> JSONResponse:
             if ended:
                 log.info("voicelink_outbound ended call_fp=%s state=%s", str(row)[:8], ended)
     return JSONResponse({"ok": True})
+
+
+def _log_safe(value: str) -> str:
+    """A value from the carrier's request, made safe for one log line: no line breaks, only letters, digits and a few signs, at most 40 characters."""
+    return re.sub(r"[^A-Za-z0-9_.:-]", "", value.replace("\r", "").replace("\n", ""))[:40]
 
 
 def _shape(body: dict[str, Any], depth: int = 0) -> str:

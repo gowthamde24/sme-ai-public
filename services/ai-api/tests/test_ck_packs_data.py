@@ -53,7 +53,9 @@ def test_there_are_the_three_deep_business_types_and_the_nine_leads_and_calls_ty
     deep = {"construction_materials", "education", "textiles"}
     nine = {"real_estate", "coaching", "clinic", "insurance_loans", "auto_dealer", "interiors_solar", "travel", "gym", "wholesale_b2b"}
     general = {"general_business"}  # job DT: "Other business", the generic Lead Desk type
-    assert set(pc.load_packs()) == deep | nine | general
+    # and the 41 business types added 29 Nov 2026 (reports/business-type-catalogue.md): data only, each from the generic pack with its own words
+    added = {"kirana", "jewellery", "electronics", "furniture", "stationery_gifts", "hardware_paint", "pharmacy", "fashion_tailor", "online_store", "restaurant", "bakery_sweets", "catering_tiffin", "cloud_kitchen", "salon_beauty", "home_repair", "cleaning_pest", "appliance_vehicle_repair", "photography", "event_wedding", "laundry_dry_cleaning", "dental", "physio_rehab", "vet_pet", "diagnostics_lab", "preschool", "arts_music", "skills_training", "online_courses", "car_service", "vehicle_rental", "hotel_homestay", "finance_agent", "legal_ca", "consultants_agencies", "digital_products", "software_saas", "creators_communities", "yoga_studio", "sports_academy", "agri_nursery", "ngo_trust"}
+    assert set(pc.load_packs()) == deep | nine | general | added
 
 
 def test_exactly_one_pack_is_the_default_and_it_is_the_published_textile_pack() -> None:

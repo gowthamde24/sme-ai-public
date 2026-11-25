@@ -688,6 +688,7 @@ class LeadSourcesService:
         if status == "unknown":
             raise not_found()
         if status == "rate":
+            self.record_activity(secret, "refused", "rate_limited")
             raise ApiError(429, "rate_limited", "Too many requests. Try again in a minute.", headers={"Retry-After": "60"})
         problems = out.get("problems")
         if isinstance(problems, list):
@@ -698,7 +699,58 @@ class LeadSourcesService:
         arrived = (isinstance(counts.get("ready"), int) and counts["ready"] > 0) or (isinstance(again, int) and again > 0)   # a new lead, or a known customer enquiring again: the rule runs now
         if status == "received" and arrived:
             self._first_touch()
+        if status == "received":
+            outcome, reason = activity_of(counts, again if isinstance(again, int) else 0)
+            self.record_activity(secret, outcome, reason)
         return status
+
+    def record_activity(self, secret: str, outcome: str, reason: str) -> None:
+        """One closed row per post for the activity list (never a field of the post). Best effort: the lead is already handled, a failure here never changes the answer."""
+        try:
+            self.repo.activity_add(self._worker(), token_hash(secret), outcome, reason, False)
+        except Exception as exc:  # noqa: BLE001 - only the class is logged
+            logger.warning("lead intake: the activity row could not be written (%s)", exc.__class__.__name__)
+
+    def source_activity(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, limit: int = 50) -> dict[str, Any]:
+        return self.repo.activity(token, tenant_id, source_id, limit)
+
+    def job_address(self, token: str, tenant_id: uuid.UUID, job_id: str) -> dict[str, Any] | None:
+        return self.repo.job_address(token, tenant_id, job_id)
+
+    def source_dry_run(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, sample: dict[str, Any]) -> dict[str, Any]:
+        """"Send a test lead": what a post like this WOULD become at this address, with nothing stored as a lead. The activity list records that a test was tried."""
+        row = self.form_row(sample)
+        if row is None:
+            outcome, reason, mapped = "refused", "bot", {}
+        else:
+            ticked = bool(row.pop("_ticked", False))
+            for key in ("_ctext", "_cat", "_cform"):
+                row.pop(key, None)
+            mapped = {k: ("set" if v else "empty") for k, v in row.items() if k != "consent"}
+            prepared = self.prepare([dict(row)], external_prefix=None)
+            if not prepared.rows:
+                outcome, reason = "refused", "invalid"
+            elif ticked:
+                outcome, reason = "accepted", "new_lead"
+            else:
+                outcome, reason = "accepted", "ask_first"
+        self.repo.test_logged(token, tenant_id, source_id, outcome, reason)
+        return {"outcome": outcome, "reason": reason, "mapped": mapped, "stored": False}
+
+    def job_address_ensure(self, token: str, tenant_id: uuid.UUID, job_id: str, source_id: uuid.UUID) -> tuple[dict[str, Any], bool]:
+        """The lead address of one job: the same address on every call; made (a webhook source, linked to the job) the first time, its secret shown only then."""
+        existing = self.repo.job_address(token, tenant_id, job_id)
+        if existing is not None:
+            return {**existing, "secret": None}, False
+        from app.lead_sources.models import SourceCreate
+
+        out, created = self.source_create(token, tenant_id, SourceCreate(source_id=source_id, kind="webhook", label=f"Form for {job_id.replace('_', ' ')}"))
+        linked = self.repo.job_link(token, tenant_id, job_id, source_id)
+        return {
+            "source_id": linked["source_id"], "job_id": job_id, "status": out["status"], "token_hint": out.get("token_hint"),
+            "last_received_at": out.get("last_received_at"), "received_count": out.get("received_count", 0), "label": out["label"],
+            "secret": out.get("secret"),
+        }, created
 
     def _first_touch(self) -> None:
         """A NEW lead is stored: the outreach step runs now, in a thread (the arrival is answered at once), instead of at the worker's next minute. The database still decides everything (hours, consent, caps)."""
@@ -750,6 +802,7 @@ class LeadSourcesService:
         if not _TOKEN.fullmatch(secret):
             raise not_found()
         if row is None:
+            self.record_activity(secret, "refused", "bot")
             return   # a bot: answered like a success, nothing stored
         ticked, evidence = row.pop("_ticked", False), (row.pop("_ctext", None), row.pop("_cat", None), row.pop("_cform", None))
         if ticked:
@@ -940,3 +993,26 @@ def mp_default_tag(kind: str) -> str:
 
 
 __all__ = ["LeadSourcesService", "SheetRef", "tag_of", "token_hash"]
+
+
+def activity_of(counts: dict[str, Any], again: int) -> tuple[str, str]:
+    """The closed outcome and reason of a post from the database's counts (never a field of the post)."""
+    def n(key: str) -> int:
+        value = counts.get(key)
+        return value if isinstance(value, int) and not isinstance(value, bool) else 0
+
+    if n("ready") > 0:
+        return "accepted", "new_lead"
+    if again > 0:
+        return "accepted", "known_customer"
+    if n("no_consent") > 0:
+        return "accepted", "ask_first"
+    if n("dnd") > 0:
+        return "accepted", "on_do_not_call"
+    if n("duplicates_merged") > 0 or n("already_imported") > 0:
+        return "duplicate", "duplicate"
+    if n("blocked") > 0:
+        return "refused", "blocked"
+    if n("invalid") > 0:
+        return "refused", "invalid"
+    return "refused", "nothing_taken"

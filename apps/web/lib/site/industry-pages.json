@@ -174,6 +174,296 @@
     "Can you deliver to Kukatpally?",
     "We can! Tell me the day you want it, and I'll check the truck for you."
    ]
+  },
+  {
+   "slug": "kirana",
+   "pack": "kirana",
+   "label": "For kirana and general stores",
+   "headline": "Take every home-delivery enquiry, even in the counter rush.",
+   "sub": "Your assistant answers calls and WhatsApp while you serve, tells people what you stock and whether you deliver, and puts the orders to follow up on your Today screen.",
+   "sections": [
+    {
+     "title": "What your customers ask",
+     "text": "Do you home deliver? Is the price on the list today's price? Do you have this brand? Can I order on WhatsApp and pay on delivery? Your assistant answers from your list, and says it will check with you when it does not know."
+    },
+    {
+     "title": "What you add first",
+     "text": "Add your first item: its name, brand, pack size, price and whether it is in stock. Your list is what the assistant reads from."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Weekly deals and order-ready messages are drafts. They wait for your OK before they go to a customer."
+    }
+   ],
+   "metaTitle": "AI phone assistant for kirana and general stores | Stack19",
+   "metaDescription": "Answers kirana-store calls and WhatsApp in Telugu, Hindi, Kannada and English, shares what you stock, and lists the orders to follow up.",
+   "call": [
+    "Do you home deliver, and is there a minimum order?",
+    "We deliver nearby. I will check the minimum with the shop and tell you. What would you like to order?",
+    "A bag of rice and a litre of oil.",
+    "Noted. I am passing this to the shop now, and they will confirm the total with you."
+   ]
+  },
+  {
+   "slug": "jewellery",
+   "pack": "jewellery",
+   "label": "For jewellery shops",
+   "headline": "Never miss a customer who is asking about a piece.",
+   "sub": "Your assistant picks up calls and WhatsApp when you are with a customer, tells people about your collection and your making charges, and lines up who wants to visit the shop.",
+   "sections": [
+    {
+     "title": "What your customers ask",
+     "text": "What is today's rate? Do you take old gold in exchange? What is the making charge? Do you give a bill with purity details? Do you have a monthly savings scheme? Your assistant answers from what you write, and asks you when it is not sure."
+    },
+    {
+     "title": "What you add first",
+     "text": "Add your first piece: its name, metal, weight, making charge, price and a photo. Rates are yours to set; the assistant never makes up a price."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Festival offers and scheme reminders are drafts. Nothing goes to a customer until you say OK."
+    }
+   ],
+   "metaTitle": "AI phone assistant for jewellery shops | Stack19",
+   "metaDescription": "Answers jewellery-shop calls and WhatsApp in Telugu, Hindi, Kannada and English, shares your collection, and lists who wants to visit.",
+   "call": [
+    "Do you take old gold in exchange?",
+    "Yes, we look at old gold in exchange. The shop will check the purity when you bring it. Would you like to come this week?",
+    "Saturday evening.",
+    "Saturday evening is noted. I will let the shop know, and they will confirm the time with you."
+   ]
+  },
+  {
+   "slug": "electronics",
+   "pack": "electronics",
+   "label": "For electronics and mobile shops",
+   "headline": "Answer \"is it in stock?\" before the customer tries the next shop.",
+   "sub": "Your assistant picks up when the counter is busy, tells callers what models you have and what they cost, and notes who wants to come and see a phone.",
+   "sections": [
+    {
+     "title": "What your customers ask",
+     "text": "Is this model in stock? What is the warranty and who services it? Do you give EMI? Do you take my old phone in exchange? Do you give a GST bill? Your assistant answers from your list and passes the rest to you."
+    },
+    {
+     "title": "What you add first",
+     "text": "Add your first product: its name, brand, model, price, warranty and whether it is in stock, with a photo if you have one."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Festival sale messages and repair-ready messages are drafts. They go out only after you approve them."
+    }
+   ],
+   "metaTitle": "AI phone assistant for electronics and mobile shops | Stack19",
+   "metaDescription": "Answers electronics-shop calls and WhatsApp in Telugu, Hindi, Kannada and English, shares models and prices, and lists who wants to visit.",
+   "call": [
+    "Is this phone in stock in black?",
+    "Let me check the list. Yes, it is listed as available in black. Would you like to come and see it today?",
+    "Does it come with a warranty?",
+    "It does. The shop will tell you the details when you visit. I will keep it aside for you. What time suits you?"
+   ]
+  },
+  {
+   "slug": "boutiques",
+   "pack": "fashion_tailor",
+   "label": "For boutiques and tailors",
+   "headline": "Book fittings and answer design enquiries while you stitch.",
+   "sub": "Your assistant takes calls and WhatsApp while your hands are busy, tells people what you make and how long it takes, and books fitting slots you can see on Today.",
+   "sections": [
+    {
+     "title": "What your customers ask",
+     "text": "How long does stitching take? Can I book a fitting? Do you do alterations? Can you copy a design from a photo? Do you take rush orders? Your assistant answers from what you write and asks you for the rest."
+    },
+    {
+     "title": "What you add first",
+     "text": "Add your first design and your first service: a name, fabric, size and price for a design, and a price from and the time for a service like alterations."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Festival and wedding-season offers, and the message that a stitching order is ready, are drafts. You approve each one."
+    }
+   ],
+   "metaTitle": "AI phone assistant for boutiques and tailors | Stack19",
+   "metaDescription": "Answers boutique and tailoring calls and WhatsApp in Telugu, Hindi, Kannada and English, books fitting slots, and shares what you make.",
+   "call": [
+    "Can I book a fitting for this week?",
+    "Yes, I can note a fitting for you. Which day and time suit you?",
+    "Thursday afternoon.",
+    "Thursday afternoon is noted. The boutique will confirm it with you."
+   ]
+  },
+  {
+   "slug": "restaurants",
+   "pack": "restaurant",
+   "label": "For restaurants and cafes",
+   "headline": "Take table bookings without leaving the kitchen.",
+   "sub": "Your assistant answers the phone and WhatsApp during the rush, tells people your menu and timings, and notes table bookings on your Today screen.",
+   "sections": [
+    {
+     "title": "What your customers ask",
+     "text": "Can I book a table for tonight? Do you have a vegetarian menu? Do you do home delivery or takeaway? Is there parking? Do you take large group bookings? Your assistant answers from your menu and your notes, and asks you when it does not know."
+    },
+    {
+     "title": "What you add first",
+     "text": "Add your first dish: its name, section, price, veg or non-veg, and a photo. Your menu is what the assistant reads from."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Weekend specials and thank-you messages are drafts. They go out only when you approve them."
+    }
+   ],
+   "metaTitle": "AI phone assistant for restaurants and cafes | Stack19",
+   "metaDescription": "Answers restaurant calls and WhatsApp in Telugu, Hindi, Kannada and English, shares your menu, and notes table bookings.",
+   "call": [
+    "Can I book a table for four tonight?",
+    "I can note a booking for four tonight. What time would you like to come?",
+    "Eight o'clock.",
+    "Eight o'clock for four is noted. The restaurant will confirm it with you shortly."
+   ]
+  },
+  {
+   "slug": "bakeries",
+   "pack": "bakery_sweets",
+   "label": "For bakeries and sweet shops",
+   "headline": "Catch every custom cake order, even while you bake.",
+   "sub": "Your assistant answers calls and WhatsApp while you work, tells people what you make and how early to order, and lines up the orders to confirm.",
+   "sections": [
+    {
+     "title": "What your customers ask",
+     "text": "Can I order a custom cake, and how many days before? Do you make eggless cakes? Can you write a message on the cake? Do you deliver, and how far? Do you take bulk orders for festivals? Your assistant answers from your list and asks you for the rest."
+    },
+    {
+     "title": "What you add first",
+     "text": "Add your first item: its name, weight or size, price, how early to order and a photo."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Festival box offers and order-ready messages are drafts. Each one waits for your OK."
+    }
+   ],
+   "metaTitle": "AI phone assistant for bakeries and sweet shops | Stack19",
+   "metaDescription": "Answers bakery calls and WhatsApp in Telugu, Hindi, Kannada and English, shares what you make, and lines up custom cake orders.",
+   "call": [
+    "I want an eggless chocolate cake for Sunday.",
+    "Eggless chocolate is on our list. I will note it for Sunday. What weight would you like, and what should be written on it?",
+    "One kilo, with Happy Birthday Asha.",
+    "Noted: one kilo, eggless chocolate, Happy Birthday Asha. The bakery will confirm the price and the time with you."
+   ]
+  },
+  {
+   "slug": "salons",
+   "pack": "salon_beauty",
+   "label": "For salons, beauty and spa",
+   "headline": "Fill your slots without picking up the phone mid-service.",
+   "sub": "Your assistant answers calls and WhatsApp while your hands are busy, tells people your services and prices, and notes appointments on your Today screen.",
+   "sections": [
+    {
+     "title": "What your customers ask",
+     "text": "Can I book for today? What does a haircut or a facial cost? Do you do bridal makeup and trials? Do you have a female or male stylist? Is there a package or membership? Your assistant answers from your list and asks you for the rest."
+    },
+    {
+     "title": "What you add first",
+     "text": "Add your first service: its name, price from and how long it takes, then your slots."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Festival and bridal offers, and the message that suggests booking again, are drafts. You approve them."
+    }
+   ],
+   "metaTitle": "AI phone assistant for salons, beauty and spa | Stack19",
+   "metaDescription": "Answers salon calls and WhatsApp in Telugu, Hindi, Kannada and English, shares your services, and notes appointment requests.",
+   "call": [
+    "Can I book a haircut for today?",
+    "I can note a request for today. What time would you like to come?",
+    "Around six in the evening.",
+    "Six in the evening is noted. The salon will confirm if that slot is free."
+   ]
+  },
+  {
+   "slug": "home-repair",
+   "pack": "home_repair",
+   "label": "For plumbers, electricians and carpenters",
+   "headline": "Answer the job enquiry while your hands are in the work.",
+   "sub": "Your assistant takes calls and WhatsApp while you are on a job, tells people which areas you cover and what a visit costs, and notes the jobs to book.",
+   "sections": [
+    {
+     "title": "What your customers ask",
+     "text": "Can someone come today? What is the visit charge? Do you give a warranty on the work? Which areas do you cover? Do you bring the spare parts? Your assistant answers from what you write and asks you for the rest."
+    },
+    {
+     "title": "What you add first",
+     "text": "Add your first service: its name, the price from and the time it takes to finish."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Follow-up messages and the message that a job is done are drafts. Nothing goes to a customer until you say OK."
+    }
+   ],
+   "metaTitle": "AI phone assistant for home repair services | Stack19",
+   "metaDescription": "Answers plumber, electrician and carpenter calls and WhatsApp in Telugu, Hindi, Kannada and English, and notes the jobs to book.",
+   "call": [
+    "My tap is leaking. Can someone come today?",
+    "I am sorry about the leak. Which area are you in? I will check with the plumber about today.",
+    "Near the bus stand.",
+    "Noted, near the bus stand. The plumber will call you to confirm the time."
+   ]
+  },
+  {
+   "slug": "gyms",
+   "pack": "gym",
+   "label": "For gyms and fitness studios",
+   "headline": "Turn every \"what are the fees?\" call into a trial session.",
+   "sub": "Your assistant answers calls and WhatsApp while you train members, tells people your plans and timings, and books trial sessions you can see on Today.",
+   "sections": [
+    {
+     "title": "What your customers ask",
+     "text": "Can I try a free session? What are the plans and fees? Do you have a trainer? What are the timings? Is there a joining fee? Your assistant answers from what you write and asks you for the rest."
+    },
+    {
+     "title": "What you add first",
+     "text": "Add your first plan: its name, price per month and how long it lasts, then personal training as a service."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Messages to members who missed workouts, and renewal reminders, are drafts. You approve them first."
+    }
+   ],
+   "metaTitle": "AI phone assistant for gyms and fitness studios | Stack19",
+   "metaDescription": "Answers gym calls and WhatsApp in Telugu, Hindi, Kannada and English, shares plans and timings, and books trial sessions.",
+   "call": [
+    "Can I try a session before I join?",
+    "Yes, you can ask for a trial session. Which day would you like to come?",
+    "Tomorrow morning.",
+    "Tomorrow morning is noted. The gym will confirm the time with you."
+   ]
+  },
+  {
+   "slug": "small-business",
+   "pack": "general_business",
+   "label": "For any other business",
+   "headline": "Answer every enquiry, whatever you sell.",
+   "sub": "Your assistant picks up calls and WhatsApp when you are busy, tells people what you do, what it costs and when you are open, and notes who to follow up.",
+   "sections": [
+    {
+     "title": "What your customers ask",
+     "text": "What do you sell or do? What are your timings? Where are you? How do I pay? Do you deliver? Your assistant answers from what you write, and asks you when it does not know."
+    },
+    {
+     "title": "What you add first",
+     "text": "Add your first item: choose whether you sell products or services, then its name, price and whether it is available."
+    },
+    {
+     "title": "You stay in charge",
+     "text": "Follow-ups and offers are drafts. They wait for your OK before they go to a customer."
+    }
+   ],
+   "metaTitle": "AI phone assistant for small businesses | Stack19",
+   "metaDescription": "Answers your business calls and WhatsApp in Telugu, Hindi, Kannada and English, shares what you sell, and notes who to follow up.",
+   "call": [
+    "What do you sell, and when are you open?",
+    "I can tell you what the business offers and its timings. What are you looking for?",
+    "I need a price for something.",
+    "I will note what you need, and the owner will get back to you with the price."
+   ]
   }
  ]
 }

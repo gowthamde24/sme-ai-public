@@ -119,7 +119,7 @@
       "areas": [
         "jobs"
       ],
-      "default_message": "",
+      "default_message": "That is enough describing for today. Try again tomorrow.",
       "wait": true,
       "extras": [
         "reason"
@@ -444,6 +444,7 @@
       ],
       "areas": [
         "billing",
+        "credits",
         "main",
         "pricing"
       ],
@@ -481,6 +482,7 @@
         503
       ],
       "areas": [
+        "dpdp",
         "errors",
         "hardening"
       ],
@@ -659,6 +661,54 @@
         "materials"
       ],
       "default_message": "The catalogue is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "code_expired",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "That code is too old. Ask for a new one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "code_locked",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "Too many wrong codes. Ask for a new code.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "code_missing",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "Ask for a new code first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "code_wrong",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "That code is not right.",
       "wait": false,
       "extras": []
     },
@@ -995,6 +1045,18 @@
       "extras": []
     },
     {
+      "code": "describe_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "jobs"
+      ],
+      "default_message": "We could not read that just now. Please try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "details_unavailable",
       "statuses": [
         409
@@ -1092,6 +1154,18 @@
       "extras": []
     },
     {
+      "code": "email_not_allowed",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "Please use your own, permanent e-mail address.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "email_not_confirmed",
       "statuses": [
         403
@@ -1100,6 +1174,18 @@
         "main"
       ],
       "default_message": "Confirm your email address first: use the link we sent you.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "email_unconfirmed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "Confirm your e-mail first.",
       "wait": false,
       "extras": []
     },
@@ -1733,6 +1819,34 @@
       ]
     },
     {
+      "code": "invalid_call",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "Send a lead_id (the id of a lead you posted) and, if you like, dry_run: true.",
+      "wait": false,
+      "extras": [
+        "fields"
+      ]
+    },
+    {
+      "code": "invalid_campaign",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "fields"
+      ]
+    },
+    {
       "code": "invalid_cursor",
       "statuses": [
         400,
@@ -1743,7 +1857,8 @@
         "developer_api",
         "leads",
         "marksmessages",
-        "outcomes"
+        "outcomes",
+        "webhooks_out"
       ],
       "default_message": "Invalid pagination cursor.",
       "wait": false,
@@ -2211,6 +2326,18 @@
         "agent_runs"
       ],
       "default_message": "This lead has no company yet. Link a company first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_has_no_number",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "This lead has no phone number, so it cannot be called.",
       "wait": false,
       "extras": []
     },
@@ -2705,6 +2832,20 @@
       "extras": []
     },
     {
+      "code": "no_usable_contacts",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "None of the contacts could be used: each needs a valid phone number and consent. See `refused` for the reason of each.",
+      "wait": false,
+      "extras": [
+        "refused"
+      ]
+    },
+    {
       "code": "no_whatsapp",
       "statuses": [
         409
@@ -2851,6 +2992,7 @@
         "assistant",
         "assistant_work",
         "connectors",
+        "developer_api",
         "errors",
         "lead_sources",
         "main"
@@ -3048,11 +3190,15 @@
         409
       ],
       "areas": [
-        "assistant_work"
+        "assistant_work",
+        "catalogue"
       ],
       "default_message": "This change cannot be undone.",
       "wait": false,
-      "extras": []
+      "extras": [
+        "fields",
+        "reason"
+      ]
     },
     {
       "code": "notifications_unavailable",
@@ -3075,6 +3221,18 @@
         "phone_numbers"
       ],
       "default_message": "That number is not available any more. Choose another.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "number_on_dnd",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "This number is on the Do-Not-Disturb list. We don't call it.",
       "wait": false,
       "extras": []
     },
@@ -3485,6 +3643,18 @@
       "extras": []
     },
     {
+      "code": "phone_code_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "We cannot send a code right now. Please try again later.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "phone_invalid",
       "statuses": [
         422
@@ -3505,6 +3675,18 @@
         "phone_numbers"
       ],
       "default_message": "The phone provider has not accepted your business registration. A number can be taken once it has.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "phone_taken",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "That phone number is already used by another account.",
       "wait": false,
       "extras": []
     },
@@ -4136,12 +4318,14 @@
       ],
       "areas": [
         "conversation",
+        "developer_api",
         "dpdp",
         "errors",
         "hardening",
         "integrations",
         "lead_sources",
         "pronunciation",
+        "signup",
         "voicesample",
         "whatsapp"
       ],
@@ -4254,6 +4438,66 @@
         "ownvoice"
       ],
       "default_message": "The recordings could not be removed right now. Press delete again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "refund_already_done",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "That top-up already has a refund.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "refund_declined",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "The payment provider did not refund. Nothing changed: the balance is back.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "refund_not_a_topup",
+      "statuses": [
+        404
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "That is not a paid top-up of this business.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "refund_nothing_unused",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "Nothing is left to refund: the balance from that top-up was used.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "refund_unconfirmed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "The refund was asked for but not confirmed. Do not repeat it: check the payment at Razorpay first. The unused balance stays taken out until you do.",
       "wait": false,
       "extras": []
     },
@@ -4628,6 +4872,30 @@
       "extras": []
     },
     {
+      "code": "signup_closed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "Sign-up is not open yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "signup_refused",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "signup"
+      ],
+      "default_message": "That did not work. Please try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "site_contact_invalid",
       "statuses": [
         422
@@ -4758,6 +5026,18 @@
       ],
       "default_message": "You can make the stand-up again 3 times a day. Try again tomorrow morning.",
       "wait": true,
+      "extras": []
+    },
+    {
+      "code": "statement_dates_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "The end date is before the start date.",
+      "wait": false,
       "extras": []
     },
     {
@@ -4999,6 +5279,18 @@
       "extras": []
     },
     {
+      "code": "too_many_calls",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "Ten calls are already open in this workspace. Wait for one to finish.",
+      "wait": true,
+      "extras": []
+    },
+    {
       "code": "too_many_invitations",
       "statuses": [
         409
@@ -5044,6 +5336,54 @@
       ],
       "default_message": "Too many samples this hour. Try again later.",
       "wait": true,
+      "extras": []
+    },
+    {
+      "code": "too_many_webhooks",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "webhooks_out"
+      ],
+      "default_message": "This workspace already has 5 webhook endpoints. Delete one first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "topup_amount_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "Choose a whole number of rupees from ₹100 to ₹1,00,000.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "topup_not_verified",
+      "statuses": [
+        402
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "We could not verify this payment, so nothing was added. If money left your account, wait a few minutes: it is added when the bank confirms.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "topup_order_unknown",
+      "statuses": [
+        404
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "We could not find that payment.",
+      "wait": false,
       "extras": []
     },
     {
@@ -5221,6 +5561,7 @@
         "outbox",
         "outcomes",
         "search",
+        "signup",
         "sites",
         "telephony",
         "tenancy",
@@ -5431,6 +5772,44 @@
       ],
       "default_message": "Connect your WhatsApp to start. Until then you can set everything up, but messages, AI calls and campaigns stay off.",
       "wait": false,
+      "extras": []
+    },
+    {
+      "code": "wallet_empty",
+      "statuses": [
+        402
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "The wallet cannot cover this call. Add money in the app and try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "webhook_url_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "webhooks_out"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
+      "code": "webhooks_out_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "webhooks_out"
+      ],
+      "default_message": "Webhooks are not available right now. Try again in a minute.",
+      "wait": true,
       "extras": []
     },
     {

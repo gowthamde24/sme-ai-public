@@ -42,7 +42,7 @@ const day = (v: unknown, what: string): string | null => {
 
 /** The stock of a catalogue row: a count of 0 is "sold out", the catalogue's own words otherwise. */
 export function stockOf(status: ItemBase["stock_status"], count: number | null): StockState {
-  if (count === 0) return "sold_out";
+  if (count === 0 || status === "out_of_stock") return "sold_out";
   return status;
 }
 

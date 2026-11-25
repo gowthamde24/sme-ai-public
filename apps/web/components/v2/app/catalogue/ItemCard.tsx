@@ -11,7 +11,7 @@ import { Photo } from "./Photo";
 /** The words of a closed list in the person's language, else the API's own English label. */
 export const vocab = (words: TodayWords, kind: string, code: string, fallback: string): string => words[`catalogue.${kind}.${code}`] ?? fallback;
 
-const BADGE_TONE = { inactive: "bg-surface-2 text-ink border border-edge", few_left: "bg-amber-bg text-amber-text", made_to_order: "bg-info-bg text-info-text" } as const;
+const BADGE_TONE = { inactive: "bg-surface-2 text-ink border border-edge", few_left: "bg-amber-bg text-amber-text", made_to_order: "bg-info-bg text-info-text", out_of_stock: "border border-ink font-bold text-ink" } as const;
 
 /**
  * A card of the grid: the cover (lazy), the name, the fabric, the price (the exact price if the Owner set one, else the band) and the badges. A hidden item is drawn greyed, for Owner and Admin only.

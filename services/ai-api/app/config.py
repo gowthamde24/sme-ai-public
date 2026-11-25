@@ -3,7 +3,7 @@ from datetime import date
 from functools import lru_cache
 from typing import Any, Literal
 
-from pydantic import SecretStr, field_validator
+from pydantic import SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Supabase Auth signs access tokens with ES256 (JWKS) by default; legacy projects use HS256.
@@ -149,6 +149,27 @@ class Settings(BaseSettings):
     # Billing v2: the owner's final pricing of 13 Nov 2026
     # (docs-private/plans/billing-v2-final-pricing.md). On in staging, off in production.
     pricing_v2: bool = False
+    # opening sign-up (24 Nov 2026; docs/contracts/signup.md): the routes exist only when
+    # SIGNUP_OPEN is on (off in production until the planner and the owner's gate). The
+    # database's own switch (signup.settings.open) decides whether a credit is granted.
+    # SIGNUP_PHONE_SENDER: "none" (no code can be sent), "fake" (staging, tests) or "whatsapp".
+    signup_open: bool = False
+    # the "Talk to us" form of the public pages (POST /v1/public/contact): off by default
+    contact_form: bool = False
+    # calls are charged to the wallet at their end and the wallet decides whether a call may
+    # start (migration 991700). OFF at deploy; on only after a staging proof (test-mode wallet).
+    billing_charge_calls: bool = False
+    # more than one API instance (24 Nov 2026): the live-call count and whisper / hang-up
+    # go through the database; leave off while the API has one instance (max-instances 1)
+    call_coordination: bool = False
+    signup_phone_sender: str = "none"
+    # the WhatsApp sender (SIGNUP_PHONE_SENDER=whatsapp): Stack19's OWN number id, an approved
+    # Authentication template and a token (secret) that may send from it
+    signup_whatsapp_phone_number_id: str | None = None
+    signup_whatsapp_template: str = "stack19_signup_code"
+    signup_whatsapp_token: SecretStr | None = None
+    # staging proof only: the start answer carries the code; refused in production
+    signup_fake_code_echo: bool = False
     admin_console: bool = False   # the staff console API (/v1/admin); staging only
     admin_environment: str = "production"   # "staging" or "production" (Overview tag)
     # C12: Razorpay Subscriptions in TEST mode only (rzp_test_ keys). The secrets come only from the
@@ -203,6 +224,10 @@ class Settings(BaseSettings):
     cashfree_client_id: str | None = None
     cashfree_client_secret: SecretStr | None = None
     cashfree_env: str = "sandbox"  # sandbox | production
+    # The live-mode guard (credits top-up, 24 Nov 2026): a Razorpay LIVE key (rzp_live_...) in
+    # either key setting stops the process at start unless this is true. Off everywhere (production
+    # too) until the owner says live payments may start; the keys are the owner's.
+    razorpay_live_ok: bool = False
     public_base_url: str | None = None  # https address of this API as providers reach it
     # Job DR / A2: lead sources. Off or unset by default (an unset door answers "not available").
     # The website form, the webhook and a public Google Sheet need no key.
@@ -294,6 +319,19 @@ class Settings(BaseSettings):
     terms_effective_from: date | None = None
     privacy_effective_from: date | None = None
     policy_enforce: bool = False
+
+    @model_validator(mode="after")
+    def _a_live_razorpay_key_needs_an_explicit_yes(self) -> "Settings":
+        """A live key moves real money: refused at start unless RAZORPAY_LIVE_OK is true."""
+        for name in ("billing_razorpay_key_id", "razorpay_key_id"):
+            key = getattr(self, name)
+            live = isinstance(key, str) and key.strip().startswith("rzp_live_")
+            if live and not self.razorpay_live_ok:
+                raise ValueError(
+                    f"{name.upper()} is a Razorpay LIVE key: set RAZORPAY_LIVE_OK=true to allow "
+                    "live payments, or use a rzp_test_ key"
+                )
+        return self
 
     @field_validator("voicelink_ws_token", mode="before")
     @classmethod
@@ -443,6 +481,10 @@ class Settings(BaseSettings):
     # The developer API (ADR 0121; docs/contracts/developer-api.md): off (default) |
     # test (test-mode keys and the sandbox; no live keys exist)
     developer_api: Literal["off", "test"] = "off"
+    # Outbound webhooks (docs/contracts/webhooks-out.md): off (default; the routes answer 404 and
+    # the worker sends nothing: the kill switch) | on. Needs WORKSPACE_SECRETS (the signing
+    # secrets live in Secret Manager). Production stays off until the owner's gate.
+    webhooks_out: Literal["off", "on"] = "off"
     # Jobs (jobs contract 1.0, 1.1): off (default) | on. Off: every /jobs route is a 404.
     # JOBS_GET_PAID: off (default) hides the "get paid" job templates (Get paid ships in v1.1).
     jobs: Literal["off", "on"] = "off"
@@ -468,9 +510,16 @@ class Settings(BaseSettings):
     # SANDBOX ONLY, for testing (owner, 28 Nov 2026): a sandbox-list number ignores the
     # calling hours. Ignored in live mode. Remove before the 2 Dec real-data gate.
     telephony_sandbox_ignores_hours: bool = False
+    # The named lists of "What you sell" (28 Nov 2026): off until the planner turns it on.
+    what_you_sell_lists: bool = False
     # The number picker (28 Nov 2026): a business picks its own VoiceLink number; we buy it with OUR
     # money. Off until the planner turns it on (and the database switch is on too).
     phone_picker: bool = False
+    # business KYC per VoiceLink client (Model B, 24 Nov 2026; docs/contracts/business-kyc.md):
+    # off in production. ON: a number is bought under the workspace's OWN client once its KYC
+    # is complete (else `kyc_required`); KYC_RETURN_URL is the page DigiLocker returns to.
+    kyc_per_client: bool = False
+    kyc_return_url: str | None = None
     picker_client_id: int | None = None      # OUR VoiceLink client the bought numbers are given to
     picker_bot_id: int | None = None         # OUR WebSocket bot the numbers are pointed at
     picker_wallet_floor_inr: int = 1000      # never buy with less than this in our VoiceLink wallet

@@ -1058,7 +1058,10 @@ def test_unauthenticated_and_invalid_tokens_get_401(world: World) -> None:
 def test_there_are_no_delete_endpoints(world: World) -> None:
     w = world
     spec = w.client.get("/openapi.json").json()
-    assert [p for p, ops in spec["paths"].items() if "delete" in ops] == []
+    # the one delete route: removing an outbound webhook address (settings, not business data)
+    allowed = {"/v1/tenants/{tenant_id}/developer/webhooks/{webhook_id}"}
+    deletes = [p for p, ops in spec["paths"].items() if "delete" in ops and p not in allowed]
+    assert deletes == []
 
 
 def test_granting_consent_to_a_suppressed_contact_is_a_409(world: World) -> None:

@@ -7,7 +7,7 @@ import { bad, bool, int, oneOf, optStr, readRows, rec, str } from "./shape";
 /**
  * The number picker's routes (C1; contract note reports/number-picker-contract-note.md, DRAFT: the shapes may change after C1's probe). SERVER ONLY, with the person's own token.
  *   GET  /numbers/available?type&prefix&page   Owner, Admin   numbers for sale (a read: nothing is reserved; never a price, never a phone-company id)
- *   POST /numbers/claim {number}               Owner + second factor   the server buys it, connects it, attaches it with calls OFF; answers `getting_ready`
+ *   POST /numbers/claim {number}               Owner + second factor   the server buys it, connects it, attaches it with calls OFF; answers `kyc_pending` until the business is verified (then `ready` or `calls_off`; `getting_ready` while it is being connected)
  *   GET  /numbers                              any member   the workspace's numbers and where each stands
  * The `display` the server sends is not trusted: a number is drawn from its digits (+91 XXXXX XXXXX).
  */

@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Literal, Protocol
 
-EventKind = Literal["charge_succeeded", "charge_failed", "halted", "cancelled", "order_paid"]
+EventKind = Literal["charge_succeeded", "charge_failed", "halted", "cancelled", "order_paid", "payment_failed"]
 
 
 @dataclass(frozen=True)
@@ -51,6 +51,8 @@ class ProviderEvent:
     # an order the provider says was paid (kind order_paid): which order and which payment
     order_id: str | None = None
     payment_id: str | None = None
+    # a payment_failed event: the provider's reason as a plain word (payment_failed, payment_cancelled, ...)
+    reason: str | None = None
 
 
 @dataclass(frozen=True)
@@ -89,6 +91,7 @@ class ChargeResult:
 
 class BillingProvider(Protocol):
     name: str
+    mode: str   # "test", "live" or "fake": what a payment on this provider really is (shown to the web so a test payment is never mistaken for a real one)
 
     def create_subscription(self, request: CreateSubscription) -> ProviderSubscription:
         """Register the subscription with a trial. Raises PaymentMethodDeclinedError when the payment method cannot be authorised. Charges nothing."""
@@ -115,6 +118,10 @@ class BillingProvider(Protocol):
         """The checkout's own answer for a paid order: true only when the signature is the provider's."""
         ...
 
+    def refund_payment(self, payment_id: str, amount_paise: int, idempotency_key: str) -> str:
+        """Send `amount_paise` of a payment back to the customer's payment method; answers the provider's refund id. Raises NotSupportedError when the provider could not do it (nothing was refunded)."""
+        ...
+
     def change_plan(self, reference: str, price_paise: int | None) -> None:
         """From the next charge on, the subscription costs `price_paise` a month (an upgrade). Unknown reference: nothing happens."""
         ...
@@ -128,8 +135,8 @@ class BillingProvider(Protocol):
         ...
 
 
-def build_provider(name: str, razorpay: tuple[str, str, str] | None = None) -> BillingProvider:
-    """The provider named by BILLING_PROVIDER: `fake` (default) or `razorpay` (TEST keys only: key id, key secret, webhook secret). Anything else stops the process at start rather than silently choosing one."""
+def build_provider(name: str, razorpay: tuple[str, str, str] | None = None, *, live_ok: bool = False) -> BillingProvider:
+    """The provider named by BILLING_PROVIDER: `fake` (default) or `razorpay` (key id, key secret, webhook secret; a LIVE key only with RAZORPAY_LIVE_OK). Anything else stops the process at start rather than silently choosing one."""
     if name == "fake":
         from app.billing.fake import FakeBillingProvider
 
@@ -139,5 +146,5 @@ def build_provider(name: str, razorpay: tuple[str, str, str] | None = None) -> B
 
         if razorpay is None:
             raise ValueError("BILLING_PROVIDER=razorpay needs BILLING_RAZORPAY_KEY_ID, BILLING_RAZORPAY_KEY_SECRET and BILLING_RAZORPAY_WEBHOOK_SECRET")
-        return RazorpayBilling(*razorpay)
+        return RazorpayBilling(*razorpay, live_ok=live_ok)
     raise ValueError("BILLING_PROVIDER must be 'fake' or 'razorpay'")

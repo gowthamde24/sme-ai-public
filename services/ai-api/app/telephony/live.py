@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import time
 import uuid
 
 from app.telephony.line import PhoneLine
@@ -12,6 +13,9 @@ from app.telephony.line import PhoneLine
 class LiveCalls:
     def __init__(self) -> None:
         self._lines: dict[uuid.UUID, tuple[uuid.UUID, PhoneLine]] = {}   # call id -> (tenant id, line)
+        # the platform-wide live count from the database (app/telephony/cross.py keeps it fresh); 0 and never refreshed when there is one instance
+        self.platform_live = 0
+        self.platform_at = 0.0
 
     def add(self, tenant_id: uuid.UUID, call_id: uuid.UUID, line: PhoneLine) -> None:
         self._lines[call_id] = (tenant_id, line)
@@ -38,8 +42,19 @@ class LiveCalls:
         entry[1].whispers.append(text)
         return True
 
+    def local_count(self) -> int:
+        """Calls held by this process (a call known by two ids is one call)."""
+        return len({id(entry[1]) for entry in self._lines.values()})
+
     def count(self) -> int:
-        return len(self._lines)
+        """Calls live right now: the most of what this process holds and what the database counts for the whole platform (a fresh answer within 10 s; a stale one is ignored)."""
+        local = self.local_count()
+        if self.platform_at and time.monotonic() - self.platform_at < 10.0:
+            return max(local, self.platform_live)
+        return local
+
+    def call_ids(self) -> list[uuid.UUID]:
+        return list(self._lines.keys())
 
     def count_for(self, tenant_id: uuid.UUID) -> int:
         return sum(1 for t, _ in self._lines.values() if t == tenant_id)

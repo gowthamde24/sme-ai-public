@@ -27,13 +27,20 @@ const groupOf = (j: Job): Group => jobState(j);
  * The Jobs page (JOBS; the renamed Office): every job as a compact row in one card, grouped Needs you, Running, Off, with the filter chips (All, Running, Needs you, Off), "New job" and the Do-Not-Call link. A job the owner named shows its own voice, language and
  * number as chips. There is no fixed number of jobs. Without `sheet` (the Start a job page flow) "New job" is the old link to that page. Nothing here sends anything: a switch only stops or starts that one job.
  */
-export function JobsList({ jobs, filter, words, base, actions, suggestions = [], suggestionActions = null, sheet = null }: { jobs: readonly Job[]; filter: JobFilter; words: Words; base: string; actions: JobActions | null; suggestions?: readonly Suggestion[]; suggestionActions?: SuggestionActions | null; sheet?: JobsSheet | null }) {
+export function JobsList({ jobs, filter, words, base, actions, suggestions = [], suggestionActions = null, sheet = null, tellHref = null }: { jobs: readonly Job[]; filter: JobFilter; words: Words; base: string; actions: JobActions | null; suggestions?: readonly Suggestion[]; suggestionActions?: SuggestionActions | null; sheet?: JobsSheet | null; /** "+ Tell your assistant what to do" (TELL_SCREENS): the address of the screen, or null = no link */ tellHref?: string | null }) {
   const t = makeT(words);
   const shown = filterJobs(jobs, filter);
   const grouped = filter === "all" ? GROUPS.map((g) => ({ g, rows: shown.filter((j) => groupOf(j) === g) })).filter((x) => x.rows.length > 0) : [{ g: null, rows: shown }];
   const rowOf = (j: Job) => <JobLine key={j.id} job={j} words={words} base={base} actions={actions} />;
   return (
     <div data-part="jobs-list" className="flex flex-col gap-4">
+      {tellHref ? (
+        <p className="m-0">
+          <Link href={tellHref} prefetch={false} data-part="tell-link" className="inline-flex min-h-11 items-center text-base font-semibold text-ink underline underline-offset-4">
+            {t("jobs.tell.link")}
+          </Link>
+        </p>
+      ) : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <nav aria-label={t("jobs.page.filters")} className="-mx-1 flex max-w-full gap-2 overflow-x-auto px-1 py-0.5">
           {JOB_FILTERS.map((f) => (

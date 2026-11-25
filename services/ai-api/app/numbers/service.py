@@ -10,9 +10,10 @@ from __future__ import annotations
 import logging
 import uuid
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Protocol
 
+from app.errors import ApiError
 from app.numbers.buyer import TYPES, BuyerSettings, PickerRefused, buy
 from app.rpc_base import RpcClient
 from app.telephony.voicelink_api import VoicelinkApi, VoicelinkError
@@ -105,11 +106,22 @@ class Claimed:
 
 
 class NumberService:
-    def __init__(self, repo: NumberRepository, api: VoicelinkApi, buyer: BuyerSettings, *, alert: Callable[[str], None] | None = None) -> None:
+    def __init__(
+        self,
+        repo: NumberRepository,
+        api: VoicelinkApi,
+        buyer: BuyerSettings,
+        *,
+        alert: Callable[[str], None] | None = None,
+        kyc: Any = None,
+    ) -> None:
         self._repo, self._api, self._buyer, self._alert = repo, api, buyer, alert
+        self._kyc = kyc   # KYC_PER_CLIENT (app/business_kyc): the workspace's own VoiceLink client; buy first, verify after
 
     def numbers(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
-        return [{"number": r["number"], "display": display(str(r["number"])), "type": r.get("kind") or "mobile", "state": r.get("state"), "label": r.get("label")} for r in self._repo.listing(token, tenant_id)]
+        pending = self._kyc is not None and not self._kyc.verified(token, tenant_id) and self._kyc.has_client(token, tenant_id)
+        rows = self._repo.listing(token, tenant_id)
+        return [{"number": r["number"], "display": display(str(r["number"])), "type": r.get("kind") or "mobile", "state": "kyc_pending" if pending else r.get("state"), "label": r.get("label")} for r in rows]
 
     def available(self, token: str, tenant_id: uuid.UUID, kind: str, prefix: str, page: int = 1) -> tuple[list[Offer], bool]:
         reason = self._repo.check(token, tenant_id)
@@ -125,19 +137,35 @@ class NumberService:
             raise PickerBlocked("unavailable") from None
         return [Offer(r.number, display(r.number), kind) for r in rows[:PAGE]], len(rows) > PAGE
 
-    def claim(self, token: str, tenant_id: uuid.UUID, number: str, kind: str) -> Claimed:
+    def claim(self, token: str, tenant_id: uuid.UUID, number: str, kind: str, *, email: str = "", name: str = "") -> Claimed:
+        """Buy first, verify after (KYC_PER_CLIENT): the workspace's own VoiceLink client is made now (the Owner's e-mail and the business name are the account details), the number is bought from our wallet for it
+        and attached with calls OFF. While the business is not verified the state is `kyc_pending` and we ourselves refuse real calls on it. If VoiceLink will not buy or map a number for an unverified client,
+        the answer falls back to 409 `kyc_required` (the verify page) before anything is paid, or the number is kept and the state stays `kyc_pending` when it was already paid."""
+        buyer = self._buyer
+        pending = False
+        if self._kyc is not None:
+            try:
+                client_id = self._kyc.ensure_client(token, tenant_id, email, name)
+            except ApiError:
+                raise PickerBlocked("kyc_required") from None
+            buyer = replace(buyer, client_id=client_id)
+            pending = not self._kyc.verified(token, tenant_id)
         claim_id = self._repo.begin(token, tenant_id, number, kind)   # every platform rule, atomically, or a closed refusal
         try:
-            bought = buy(self._api, self._buyer, number, kind)
+            bought = buy(self._api, buyer, number, kind)
         except PickerRefused as refused:
             self._repo.finish(token, claim_id, "failed", refused.reason)
             if refused.reason in ("wallet_low", "vendor_unavailable"):
                 self._tell(f"Number picker: a purchase was stopped ({refused.reason}). " + ("Top up the VoiceLink wallet." if refused.reason == "wallet_low" else "Check VoiceLink's purchase list: an order may have gone through."))
-            raise PickerBlocked("number_taken" if refused.reason == "number_taken" else "wallet_low" if refused.reason == "wallet_low" else "unavailable") from None
+            word = {"number_taken": "number_taken", "wallet_low": "wallet_low", "kyc_required": "kyc_required"}.get(refused.reason, "unavailable")
+            raise PickerBlocked(word) from None
         self._repo.finish(token, claim_id, bought.stage, None, round(bought.cost_inr * 100), bought.order_number)
         if bought.complete:
             self._repo.attach(token, claim_id)
-            return Claimed(bought.number, display(bought.number), kind, "ready")
+            return Claimed(bought.number, display(bought.number), kind, "kyc_pending" if pending else "ready")
+        if pending and bought.kyc_refused:   # paid, but VoiceLink wants the client's KYC before it maps the number: the number is ours; the team finishes the set-up once the business is verified
+            self._tell("Number picker: a number was bought for a business whose KYC is not complete and VoiceLink would not map it yet. Map it to the client and point it at the bot after approval.")
+            return Claimed(bought.number, display(bought.number), kind, "kyc_pending")
         self._tell(f"Number picker: a number was bought but its set-up stopped at '{bought.stage}'. Finish it in the VoiceLink portal (give it to the client, then point it at the bot).")
         return Claimed(bought.number, display(bought.number), kind, "getting_ready")
 

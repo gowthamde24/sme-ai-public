@@ -22,7 +22,7 @@ from app.billing.gate import classify as billing_classify
 
 Level = Literal["read", "write", "sensitive"]
 Sensitive = Literal["money", "sending", "members", "deleting", "billing", "secrets"]
-ScreenOnly = Literal["real_data_gate", "billing", "workspace_deletion", "erasure", "assistant_itself", "internal", "binary_upload", "developer_keys", "safety_switch", "owner_says_so", "outside_sign_in"]
+ScreenOnly = Literal["real_data_gate", "billing", "workspace_deletion", "erasure", "assistant_itself", "internal", "binary_upload", "developer_keys", "developer_webhooks", "safety_switch", "owner_says_so", "outside_sign_in"]
 Undo = Literal["snapshot", "inverse", "none"]
 
 TENANT = "/v1/tenants/{tenant_id}"
@@ -38,6 +38,7 @@ SCREEN_ONLY_RULES: tuple[tuple[str, re.Pattern[str], ScreenOnly], ...] = (
     ("W", re.compile(r"^/support-access(/|$)"), "safety_switch"),                            # "Require my OK before support views my account" and the OK itself: the owner, on a screen, never by the assistant (admin console, 13 Nov)
     ("W", re.compile(r"^/do-not-call(/|$)"), "safety_switch"),                                # adding a number to the do-not-call list or taking one off: the owner, on a screen (the rule that a customer's own stop can never be removed is the database's; the assistant does not touch the list)
     ("W", re.compile(r"^/outbox/messages/[^/]+/mark-sent$"), "owner_says_so"),               # "I sent it": the owner's own word that THEY pressed send in their own WhatsApp; the assistant cannot know it, so it never says it
+    ("W", re.compile(r"^/developer/webhooks(/|$)"), "developer_webhooks"),   # a webhook's address decides where a business's data is sent, and its secret is shown once: the Owner or Admin, on a screen
     ("W", re.compile(r"^/developer/keys(/|$)"), "developer_keys"),
     ("W", re.compile(r"^/integrations/google-calendar/(connect|disconnect)$"), "outside_sign_in"),   # connecting (Google's consent screen in the Owner's browser) or disconnecting Google Calendar: the Owner, on a screen                          # making, rotating or revoking an API key: its secret is shown once, on the screen, never in the chat
     ("*", re.compile(r"^/(assistant|conversations)(/|$)"), "assistant_itself"),              # the chat and the voice themselves (the assistant does not call its own door)

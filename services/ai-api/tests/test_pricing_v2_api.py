@@ -63,8 +63,8 @@ def test_the_balance_shows_rupees_and_minutes_and_never_the_word_credits() -> No
 
 
 def test_low_balance_and_the_free_start_left_and_the_included_minutes() -> None:
-    low = world(balance_paise=4000, minutes_estimate=8, free_start_left_paise=4000, free_start_granted=True).get(f"{URL}/balance", headers=auth("a_owner")).json()
-    assert low["low"] is True and low["free_start_left_text"] == "₹40"
+    low = world(balance_paise=1500, minutes_estimate=3, free_start_left_paise=1500, free_start_granted=True).get(f"{URL}/balance", headers=auth("a_owner")).json()
+    assert low["low"] is True and low["free_start_left_text"] == "₹15"
     sub = {"interval": "monthly", "status": "active", "period_end": "2026-12-13T00:00:00+00:00", "cancel_at_period_end": False, "price_locked_until": "2027-11-13T00:00:00+00:00"}
     inc = world(plan_id="sales_assistant", plan_name="Sales Assistant", included_minutes=500, included_half_used=120, subscription=sub).get(f"{URL}/balance", headers=auth("a_owner")).json()
     assert inc["included_minutes_left"] == 440 and inc["subscription"]["interval"] == "monthly"
@@ -119,3 +119,9 @@ def test_off_it_is_404_as_if_it_did_not_exist() -> None:
     assert client.get(f"{URL}/balance", headers=auth("a_owner")).status_code == 404
     assert client.get("/v1/pricing", headers=auth("a_owner")).status_code == 404
     assert client.post(f"{URL}/free-start", headers=auth("a_owner")).status_code == 404
+
+
+def test_the_balance_says_how_much_is_owed_after_a_call_ran_past_an_empty_wallet() -> None:
+    owed = world(balance_paise=0, minutes_estimate=0, owed_paise=750).get(f"{URL}/balance", headers=auth("a_owner")).json()
+    assert owed["owed_paise"] == 750 and owed["balance_paise"] == 0
+    assert world().get(f"{URL}/balance", headers=auth("a_owner")).json()["owed_paise"] == 0

@@ -23,6 +23,8 @@ paths = [
   '''services/ai-api/app/auth/jwt\.py''',
   '''apps/web/components/v2/legal/LegalDoc\.tsx''',
   '''apps/web/scripts/audit-auth\.mjs''',
+  # a browser storage NAME (`s19.verify.prefill`) in a constant called PREFILL_KEY: an identifier, not a secret (checked 25 Nov 2026)
+  '''apps/web/components/v2/app/phone/PhoneBuy\.tsx''',
   # RPC function names next to the word `token` (`self._rpc.object(token, "pricing_v3_...", ...)`): identifiers, not keys (checked 19 Nov 2026: no secret in the file)
   '''services/ai-api/app/pricing/v3_service\.py''',
 ]

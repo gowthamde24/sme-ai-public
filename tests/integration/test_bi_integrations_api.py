@@ -239,13 +239,13 @@ def test_the_stock_import_changes_only_the_named_items_of_this_business(client: 
     f = csv_file([["Design", "Qty"], [names[0], "1"], [names[1].upper(), "0"], [f"No such saree {tag}", "5"], ["బాలాజీ", "4"]])
     job = uid()
     pv = up(client, ow, f"/preview?kind=stock&job_id={job}", f).json()
-    assert [(r["status"], r["old_status"], r["new_status"]) for r in pv["rows"]] == [("will_change", "in_stock", "few_left"), ("will_change", "in_stock", "made_to_order"), ("not_found", None, "in_stock"), ("not_found", None, "in_stock")]
+    assert [(r["status"], r["old_status"], r["new_status"]) for r in pv["rows"]] == [("will_change", "in_stock", "few_left"), ("will_change", "in_stock", "out_of_stock"), ("not_found", None, "in_stock"), ("not_found", None, "in_stock")]
     assert operator_sql.sql(f"select stock_status from public.catalogue_items where tenant_id = '{ow.t.id}' and name = '{names[0]}'") == "in_stock", "a preview changes nothing"
     assert up(client, ow, f"/{job}/confirm", f, "owner", weak=True).status_code == 403
     done = up(client, ow, f"/{job}/confirm", f).json()
     assert done["result"]["counts"]["updated"] == 2 and done["result"]["counts"]["not_found"] == 2
     assert operator_sql.sql(f"select stock_status from public.catalogue_items where tenant_id = '{ow.t.id}' and name = '{names[0]}'") == "few_left"
-    assert operator_sql.sql(f"select stock_status from public.catalogue_items where tenant_id = '{ow.t.id}' and name = '{names[1]}'") == "made_to_order"
+    assert operator_sql.sql(f"select stock_status from public.catalogue_items where tenant_id = '{ow.t.id}' and name = '{names[1]}'") == "out_of_stock"
     assert operator_sql.sql(f"select stock_status from public.catalogue_items where tenant_id = '{eval_world.b.id}' and name = '{names[0]}'") == "in_stock", "the other business's item with the same name is untouched"
     assert up(client, ow, f"/{job}/confirm", f).json()["replay"] is True
 

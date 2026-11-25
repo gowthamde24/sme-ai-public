@@ -271,7 +271,7 @@ export interface MaterialItemIn {
   name: string;
   sell_unit: "piece" | "sq_ft" | "sq_m" | "box" | "bag" | "tonne" | "cft" | "truckload";
   area_unit?: "sq_ft" | "sq_m" | null;
-  stock_status?: "in_stock" | "few_left" | "made_to_order";
+  stock_status?: "in_stock" | "few_left" | "made_to_order" | "out_of_stock";
   active?: boolean;
   price_paise?: number | null;
 }
@@ -286,7 +286,7 @@ export interface MaterialItemOut {
   name: string;
   sell_unit: "piece" | "sq_ft" | "sq_m" | "box" | "bag" | "tonne" | "cft" | "truckload";
   area_unit: "sq_ft" | "sq_m" | null;
-  stock_status: "in_stock" | "few_left" | "made_to_order";
+  stock_status: "in_stock" | "few_left" | "made_to_order" | "out_of_stock";
   active: boolean;
   price_paise: number | null;
   price_text: string | null;
@@ -307,7 +307,7 @@ export interface MaterialItemSummaryOut {
   name: string;
   sell_unit: "piece" | "sq_ft" | "sq_m" | "box" | "bag" | "tonne" | "cft" | "truckload";
   area_unit: "sq_ft" | "sq_m" | null;
-  stock_status: "in_stock" | "few_left" | "made_to_order";
+  stock_status: "in_stock" | "few_left" | "made_to_order" | "out_of_stock";
   active: boolean;
   price_paise: number | null;
   price_text: string | null;

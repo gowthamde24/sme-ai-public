@@ -19,9 +19,11 @@ from zoneinfo import ZoneInfo
 
 IST = ZoneInfo("Asia/Kolkata")
 MAX_TOKENS = 1500           # the whole pack (measured 28 Nov with count_tokens: Telugu about 1.1 characters a token, English about 2.6)
-BUDGET = {"prices": 500, "catalogue": 350, "faq": 350}   # tokens per section; the notes get what is left
+BUDGET = {"prices": 500, "catalogue": 350, "items": 250, "faq": 350}   # tokens per section; the notes get what is left
 DAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 STOCK = {"in_stock": "in stock", "few_left": "only a few left", "made_to_order": "made to order"}
+PERIODS = {"one_time": "", "per_month": " per month", "per_year": " per year", "per_hour": " per hour", "per_day": " per day", "per_unit": " per unit"}   # a from-price is never in the pack
+STOCK = {"in_stock": "in stock", "few_left": "only a few left", "made_to_order": "made to order", "out_of_stock": "out of stock"}
 UNITS = {"piece": "piece", "metre": "metre", "meter": "metre", "kg": "kg", "set": "set", "dozen": "dozen", "pair": "pair", "service": "service", "course": "course", "listing": "listing"}
 REMOVED = "(price: ask the price list)"
 
@@ -120,7 +122,11 @@ def build(raw: dict[str, Any] | None, *, now: datetime | None = None) -> FactPac
             gst = int(row.get("tax_bps") or 0) / 100
         except (KeyError, TypeError, ValueError):
             continue
-        if row.get("tier") is True:   # a price-list rate for a bigger order: "from 50" is the quantity at which this rate starts, not a minimum order
+        label = " ".join(str(row.get("label") or "").split())[:40]
+        period = PERIODS.get(str(row.get("period") or ""))
+        if label and period is not None:   # a price column of one of the owner's lists: the item AND the column's name travel with the amount, so two prices of one item can never be swapped
+            line = f"{name}, {label}: {rupees(paise)}{period}" + (" (the usual price: say this one when the caller does not say which)" if row.get("default") is True else "")
+        elif row.get("tier") is True:   # a price-list rate for a bigger order: "from 50" is the quantity at which this rate starts, not a minimum order
             line = f"{name}: {rupees(paise)} per {unit}" + (f" when you buy {moq} or more" if moq > 1 else "")
         else:
             line = f"{name}: {rupees(paise)} per {unit}" + (f", minimum order {moq}" if moq > 1 else "") + (f", plus {gst:g}% GST" if gst else "")
@@ -142,6 +148,17 @@ def build(raw: dict[str, Any] | None, *, now: datetime | None = None) -> FactPac
         occasions = ", ".join(str(o) for o in row.get("occasions") or [])
         cat.append(f"{name}: {str(row.get('fabric') or '').replace('_', ' ')}" + (f", colours {colours}" if colours else "") + (f", for {occasions}" if occasions else "") + f", {STOCK.get(str(row.get('stock')), 'ask the team about stock')}. (no price in the catalogue)")
     facts += [{"kind": "catalogue", "text": t} for t in _take(cat, BUDGET["catalogue"])]
+    item_lines: list[str] = []
+    for row in raw.get("items") or []:   # an availability word and a short description of a list item: said as the list states them, nothing promised beyond
+        try:
+            name = " ".join(str(row["name"]).split())[:80]
+        except (KeyError, TypeError):
+            continue
+        av = " ".join(strip_amounts(str(row.get("availability") or "")).split())[:60]
+        desc = " ".join(strip_amounts(str(row.get("description") or "")).split())[:200]
+        if av or desc:
+            item_lines.append(f"{name}" + (f": {av}" if av else "") + (f". {desc}" if desc else ""))
+    facts += [{"kind": "item", "text": t} for t in _take(item_lines, BUDGET["items"])]
     faq = [f"Customers ask: {' '.join(strip_amounts(str(r.get('q') or '')).split())} Answer: {' '.join(strip_amounts(str(r.get('a') or '')).split())}" for r in raw.get("faqs") or [] if isinstance(r, dict) and r.get("q") and r.get("a")]
     facts += [{"kind": "faq", "text": t} for t in _take(faq, BUDGET["faq"])]
     used_tokens = sum(tokens(f["text"]) for f in facts)

@@ -171,3 +171,37 @@ def read_file(runtime: Any, ctx: Any, style: str, file_id: Any) -> Reading:
         raise ApiError(422, "file_unreadable", READ_WORDS["unreadable"], extra={"reason": "unreadable", "fields": ["unreadable"]})
     table = next((t for t in u.tables if len(t) >= 2 and any(_PRICE_HEAD.search(h or "") for h in t[0])), None) or price_table(u.tables) or (table_from_text(u.text) or None)
     return drafts_from_table(style, table or [])
+
+
+def load_table(runtime: Any, ctx: Any, file_id: Any) -> tuple[list[list[str]], str]:
+    """The first usable table of a dropped file (and its text), by the same reading as read_file: for the list import, which maps ANY heading, not only a price table."""
+    from app.assistant_work.extract import ReadRefused
+    from app.assistant_work.imports import price_table
+    from app.assistant_work.service import AI_ALLOWANCE_CODES, FileTurn
+    from app.assistant_work.vision import model_vision
+    from app.errors import ApiError, not_found
+    from app.jobs.sell_routes import READ_WORDS
+
+    store = getattr(runtime, "assistant_work", None)
+    allowed = getattr(runtime, "assistant_work_tenants", None)
+    if store is None or (allowed is not None and ctx.tenant.id not in allowed):
+        raise not_found()
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    tasks = runtime.tasks
+    turn = FileTurn(store, cast(Any, None), runtime.lead_sources, reader=getattr(runtime, "assistant_file_reader", None), school=(lambda: tasks is None or tasks.is_school(runtime, token, tenant)), vision=model_vision(runtime, token, tenant))
+    try:
+        f = store.file_get(token, tenant, file_id)
+    except Exception:  # noqa: BLE001
+        raise ApiError(404, "file_gone", READ_WORDS["gone"]) from None
+    try:
+        u = turn._understand(str(f.get("name") or "file"), str(f.get("kind") or ""), str(f.get("data_base64") or ""))  # noqa: SLF001
+    except ReadRefused as exc:
+        raise ApiError(422, "file_unreadable", READ_WORDS.get(exc.code, READ_WORDS["unreadable"]), extra={"reason": exc.code, "fields": [exc.code]}) from None
+    except ApiError as exc:
+        if exc.code in AI_ALLOWANCE_CODES:
+            raise ApiError(429, "ai_limit", READ_WORDS["run_limit_reached"], extra={"reason": "run_limit_reached"}) from None
+        raise
+    if u is None:
+        raise ApiError(422, "file_unreadable", READ_WORDS["unreadable"], extra={"reason": "unreadable", "fields": ["unreadable"]})
+    table = next((t for t in u.tables if len(t) >= 2), None) or price_table(u.tables) or table_from_text(u.text)
+    return table, u.text

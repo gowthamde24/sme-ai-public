@@ -496,6 +496,10 @@ def test_only_companies_have_a_name_filter(env: tuple[TestClient, FakeCrmReposit
 
 
 # ==== no deletes ====
+# the one delete route: removing an outbound webhook address (settings, not business data)
+DELETE_ALLOWED = {"/v1/tenants/{tenant_id}/developer/webhooks/{webhook_id}"}
+
+
 @pytest.mark.parametrize("entity", ENTITIES)
 def test_there_is_no_delete_endpoint(
     env: tuple[TestClient, FakeCrmRepository], entity: str
@@ -505,7 +509,8 @@ def test_there_is_no_delete_endpoint(
     for path in (url(entity), url(entity, suffix=f"/{rid}")):
         assert client.delete(path, headers=auth("a_owner")).status_code == 405
     spec = client.get("/openapi.json").json()
-    assert [p for p, ops in spec["paths"].items() if "delete" in ops] == []
+    deletes = [p for p, ops in spec["paths"].items() if "delete" in ops and p not in DELETE_ALLOWED]
+    assert deletes == []
     assert rid in {str(r.id) for r in crm.rows[(entity, TENANT_A.id)].values()}
 
 

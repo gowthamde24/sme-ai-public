@@ -27,7 +27,7 @@ log = logging.getLogger("app.ops.usage")
 
 MAX_BATCH = 50   # the database function takes at most this many lines at once
 REF_ID = re.compile(r"^[A-Za-z0-9_.:-]{3,100}$")   # the database's own pattern for a reference
-PROVIDERS = ("cartesia", "sarvam", "plivo", "anthropic", "meta", "google")
+PROVIDERS = ("cartesia", "sarvam", "plivo", "anthropic", "meta", "google", "voicelink")
 COOLDOWN_S = 30.0   # after a failed write, do not try again for this long (a breaker, not a queue: what was not recorded is not recorded)
 TIMEOUT_S = 4.0     # a recorder never holds a call's end or a send for longer than this
 

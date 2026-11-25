@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "legal_ca",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "legal and tax consultants",
+    "te": "లీగల్, ట్యాక్స్ కన్సల్టెంట్లు"
+  }
+}

@@ -126,8 +126,12 @@ def test_the_sign_up_cards_need_no_sign_in_and_list_the_three_business_types() -
     assert r.status_code == 200, r.text
     body = r.json()["packs"]
     # job DR: the nine leads-and-calls types are previews too, listed after the published one by id
-    assert [p["pack_id"] for p in body] == ["textiles", "auto_dealer", "clinic", "coaching", "construction_materials", "education", "other", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]
-    assert [p["validated"] for p in body] == [True] + [False] * 12
+    ids = [p["pack_id"] for p in body]
+    # the published one first, then every preview by its id (the generic pack is "other" on screens: it sorts as its own id, general_business); 54 types since 29 Nov 2026
+    assert ids[0] == "textiles" and len(ids) == 54 and "other" in ids and "general_business" not in ids
+    assert ids[1:] == sorted(ids[1:], key=lambda i: "general_business" if i == "other" else i)
+    assert {"auto_dealer", "clinic", "coaching", "construction_materials", "education", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b", "kirana", "restaurant", "salon_beauty", "digital_products"} <= set(ids)
+    assert [p["validated"] for p in body] == [True] + [False] * 53
     assert all(p["names"]["en"] and p["summary"]["en"] and p["status"] in ("preview", "published") for p in body)
 
 
@@ -148,7 +152,10 @@ def test_a_draft_pack_and_an_unreadable_pack_are_never_served(tmp_path: Path) ->
     (tmp_path / "p" / "education" / "pack.json").write_text(json.dumps(draft), encoding="utf-8")
     (tmp_path / "p" / "construction_materials" / "pack.json").write_text("{not json", encoding="utf-8")
     listed = PackRegistry(tmp_path / "p").selectable()
-    assert [p.pack_id for p in listed.packs] == ["textiles", "auto_dealer", "clinic", "coaching", "general_business", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]  # job DR: the nine previews stay (job DT: and the generic one; the registry holds its own id, the route says "other")
+    got = [p.pack_id for p in listed.packs]
+    # education (made a draft) and construction_materials (unreadable) are gone; the other 52 are served, the published one first, the rest by id (job DR, job DT: the registry holds the generic pack's own id, the route says "other")
+    assert got[0] == "textiles" and len(got) == 52 and "education" not in got and "construction_materials" not in got and "general_business" in got
+    assert got[1:] == sorted(got[1:])
 
 
 def test_the_default_directory_is_the_checkouts_packs() -> None:
@@ -591,3 +598,22 @@ def test_an_unknown_pack_from_the_database_is_a_422_on_the_pack_field_not_a_502(
     client, _ = make_client(packs=packs)
     r = client.put(f"/v1/tenants/{TENANT_A.id}/pack", json={"pack": "no_such_pack"}, headers=auth("a_owner"))
     assert r.status_code == 422 and r.json()["error"]["code"] == "validation_error" and r.json()["error"]["fields"] == ["pack"], r.text
+
+
+def test_categories_and_keywords_come_from_the_file_and_a_missing_or_partial_file_is_never_an_error(tmp_path: Path) -> None:
+    """28 Nov 2026 (packages/packs/categories.json): no pack id in code; a pack the file does not name has no category and no keywords."""
+    import shutil
+
+    shutil.copytree(PACKS, tmp_path / "p")
+    (tmp_path / "p" / "categories.json").unlink(missing_ok=True)
+    plain = PackRegistry(tmp_path / "p").selectable()
+    assert plain.categories == [] and all(p.category is None and p.keywords == "" for p in plain.packs)
+    doc = {"categories": [{"id": "shops", "name": {"en": "Shops", "te": "షాపులు"}, "colour": "rose"}, {"id": "broken"}], "packs": {"textiles": "shops", "gym": "no_such_group"}, "keywords": {"textiles": "  saree   silk  cloth ", "ghost_pack": "x"}}
+    (tmp_path / "p" / "categories.json").write_text(json.dumps(doc), encoding="utf-8")
+    listed = PackRegistry(tmp_path / "p").selectable()
+    assert [c.id for c in listed.categories] == ["shops"], "a category that does not fit the shape is left out, the order is the file's"
+    by_id = {p.pack_id: p for p in listed.packs}
+    assert by_id["textiles"].category == "shops" and by_id["textiles"].keywords == "saree silk cloth"
+    assert by_id["gym"].category is None, "a pack pointing at a group that does not exist has no category"
+    (tmp_path / "p" / "categories.json").write_text("{not json", encoding="utf-8")
+    assert PackRegistry(tmp_path / "p").selectable().categories == []

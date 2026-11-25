@@ -54,7 +54,7 @@ Zari:
   options: No zari=none* | Light zari=light | Rich zari=rich
 . Stock:
 <select label="Stock">
-  options: In stock=in_stock* | Few left=few_left | Made to order=made_to_order
+  options: In stock=in_stock* | Few left=few_left | Made to order=made_to_order | Out of stock=out_of_stock
 . Border
 <text label="Border" maxlength=120 described-by="Optional. A few words, for example: Temple border in gold zari.">
 Optional. A few words, for example: Temple border in gold zari.

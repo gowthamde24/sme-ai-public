@@ -29,6 +29,7 @@ from app.logging_safety import one_line
 from app.opening.resolve import say_ai_setting
 from app.talk_training import introduce
 from app.talk_training.routes import training_for
+from app.telephony.cross import ask_other_instance
 from app.telephony.free_minutes import free_minutes_used_up
 from app.telephony.models import (
     CallDetailOut,
@@ -192,6 +193,10 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
         used_up = free_minutes_used_up(refused.free_minutes)
         if used_up is not None:   # Customer Zero's own number of free minutes is used up: one plain sentence (the web translates by the code and the two extras)
             raise ApiError(409, "free_minutes_used_up", used_up[0], extra={"minutes": used_up[1], "restarts_on": used_up[2]}) from None
+        if refused.kyc_pending:   # KYC_PER_CLIENT: the number is bought but the business is not verified yet
+            raise ApiError(409, "call_not_allowed", "Verify your business first: this number cannot place calls until then.", extra={"reason": "kyc_pending"}) from None
+        if refused.wallet_low:   # BILLING_CHARGE_CALLS: not enough balance for a minute of calling
+            raise ApiError(409, "call_not_allowed", "There is not enough balance to place a call. Add credits first.", extra={"reason": "wallet_low"}) from None
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
     except PlivoError as failure:
         # a refused login is its own closed word (the Owner and the planner see what to fix), any other failure stays the general one (28 Nov 2026)
@@ -276,11 +281,16 @@ async def whisper(call_id: str, ctx: OwnerAdmin, runtime: RuntimeDep, body: Whis
         _service(runtime).get(ctx.principal.token, ctx.tenant.id, cid)   # proves the call is this workspace's
     except CallStateError:
         raise not_found() from None
-    if live.line_of(ctx.tenant.id, cid) is None:
+    here = live.line_of(ctx.tenant.id, cid) is not None
+    cross: Any = getattr(runtime, "call_commands", None)
+    if not here and cross is None:
         raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
     if not _audit_event(runtime, ctx, cid, "whisper", text_chars=len(body.text)):   # audited BEFORE it is done, by length only (never the words); no entry, no whisper
         raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
-    if not live.whisper(ctx.tenant.id, cid, body.text):
+    if here:
+        if not live.whisper(ctx.tenant.id, cid, body.text):
+            raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
+    elif not await ask_other_instance(cross, ctx.principal.token, ctx.tenant.id, cid, "whisper", body.text):   # the call is held by another API instance: its own instance does it within about a second
         raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
     return {"status": "sent"}
 
@@ -309,10 +319,13 @@ async def hang_up(call_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[st
     if live is None:
         raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
     try:
-        _service(runtime).get(ctx.principal.token, ctx.tenant.id, cid)   # proves the call is this workspace's (the database raises "not found" for any other)
+        detail = _service(runtime).get(ctx.principal.token, ctx.tenant.id, cid)   # proves the call is this workspace's (the database raises "not found" for any other)
     except CallStateError:
         raise not_found() from None
+    cross: Any = getattr(runtime, "call_commands", None)
     if not await live.hang_up(ctx.tenant.id, cid):
+        if cross is not None and getattr(detail, "state", "") == "in_progress" and await ask_other_instance(cross, ctx.principal.token, ctx.tenant.id, cid, "hang_up"):
+            return {"status": "hanging_up"}
         # not on a live audio stream here: a call we placed that is still RINGING is ended through Plivo (cancelled), anything else has ended or is on another server
         placer = getattr(runtime.phone_inbound, "outbound", None) if runtime.phone_inbound is not None else None
         done = "not_ringing"

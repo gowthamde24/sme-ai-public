@@ -20,7 +20,7 @@ describe("the business types a new person may choose (GET /v1/packs)", () => {
     expect(apiPublicRequest).toHaveBeenCalledWith("/v1/packs");
     expect(packs.map((p) => p.packId)).toEqual(selectableIds());
     expect(packs[0].validated).toBe(true); // the reviewed type comes first
-    for (const p of packs) expect(p).toMatchObject({ names: { en: expect.any(String), te: expect.any(String) }, accent: expect.stringMatching(/^[a-z_]+$/), owlProp: expect.stringMatching(/^[a-z_]+$/) });
+    for (const p of packs) expect(p).toMatchObject({ names: { en: expect.any(String) }, accent: expect.stringMatching(/^[a-z_]+$/), owlProp: expect.stringMatching(/^[a-z_]+$/) });
     expect(packs.find((p) => p.packId === defaultPackId())?.validated).toBe(true);
   });
   it.each([[null], [{}], [{ packs: [] }], [{ packs: [{ pack_id: "Bad Id" }] }], [{ packs: [{ ...packsWire().packs[0], status: "live" }] }], [{ packs: [{ ...packsWire().packs[0], names: { te: "x" } }] }], [{ packs: [{ ...packsWire().packs[0], validated: "yes" }] }]])("%j is a contract error, never a card", async (body) => {

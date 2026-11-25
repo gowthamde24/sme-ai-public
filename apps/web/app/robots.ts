@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function robots(): Promise<MetadataRoute.Robots> {
   if (!(await requestIndexable())) return { rules: [{ userAgent: "*", disallow: "/" }] };
   return {
-    rules: [{ userAgent: "*", allow: ["/", "/te", "/hi", "/kn", "/ta", "/privacy", "/terms", "/data-deletion"], disallow: ["/app", "/staff", "/auth", "/api", "/login", "/signup", "/setup", "/landing", "/opening-soon"] }],
+    rules: [{ userAgent: "*", allow: ["/", "/te", "/hi", "/kn", "/ta", "/privacy", "/terms", "/data-deletion", "/pricing", "/help", "/status", "/acceptable-use", "/refunds", "/talk-to-us", "/for"], disallow: ["/app", "/staff", "/auth", "/api", "/login", "/signup", "/setup", "/landing", "/opening-soon"] }],
     sitemap: `${PUBLIC_URL}/sitemap.xml`,
     host: PUBLIC_URL,
   };

@@ -12,8 +12,11 @@ describe("the sign-up cards", () => {
     const cards = signupCards(packs, "en");
     expect(cards.map((c) => c.id)).toEqual(selectableIds());
     for (const c of cards) expect(c).toMatchObject({ name: expect.any(String), tagline: expect.any(String), accent: expect.stringMatching(/^[a-z_]+$/), owlProp: expect.stringMatching(/^[a-z_]+$/) });
-    expect(signupCards(packs, "te")[1].name).toBe(packs[1].names.te);
-    expect(signupCards(packs, "ta")[1].name).toBe(packs[1].names.en); // a language with no text yet reads English
+    const withTe = packs.findIndex((p) => p.names.te); // (most of the 54 types have English names only until a person writes the others)
+    expect(signupCards(packs, "te")[withTe].name).toBe(packs[withTe].names.te);
+    expect(signupCards(packs, "ta")[withTe].name).toBe(packs[withTe].names.en); // a language with no text yet reads English
+    const without = packs.findIndex((p) => !p.names.te);
+    if (without >= 0) expect(signupCards(packs, "te")[without].name).toBe(packs[without].names.en); // no Telugu name: English
   });
   it("say which types no real owner has reviewed yet", () => {
     expect(signupCards(packs, "en").some((c) => !c.validated)).toBe(true);

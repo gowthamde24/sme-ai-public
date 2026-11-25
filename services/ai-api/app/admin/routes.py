@@ -122,6 +122,12 @@ def businesses(principal: PrincipalDep, runtime: RuntimeDep, q: Annotated[str | 
     return _guard(lambda: _service(runtime).businesses(principal.token, q, limit, cursor, sort))
 
 
+@router.get("/businesses/by-email")
+def find_by_email(email: str, principal: PrincipalDep, runtime: RuntimeDep) -> dict[str, Any]:
+    """Find a business by its Owner's e-mail (owner, support, finance; the exact address, or the start of one of at least four letters; logged)."""
+    return _guard(lambda: _service(runtime).find_by_email(principal.token, email))
+
+
 @router.get("/overview", response_model=OverviewOut)
 def overview(principal: PrincipalDep, runtime: RuntimeDep) -> OverviewOut:
     """Everything the Overview screen draws, in ONE call: sidebar counts, the four KPIs, the support queue, health per component, the newest-active businesses, our costs per provider and the margin."""
@@ -260,6 +266,30 @@ def usage_summary(principal: PrincipalDep, runtime: RuntimeDep, start: Annotated
 def usage_google(principal: PrincipalDep, runtime: RuntimeDep) -> GoogleUsageOut:
     """One line per Google Maps SKU this month: requests used against the FREE monthly cap, the percentage, and a state (ok, warn at the alert percentage, over). The API stops asking Google at the cap."""
     return _guard(lambda: _service(runtime).usage_google(principal.token))
+
+
+@router.get("/businesses/{tenant_id}/statement")
+def business_statement(tenant_id: uuid.UUID, principal: PrincipalDep, runtime: RuntimeDep, start: str | None = None, end: str | None = None, limit: int = 100, before: str | None = None) -> dict[str, Any]:
+    """A business's wallet statement (every credit and debit, with the balance after each; owner, support, finance; logged). Same shape as the Owner's own statement."""
+    return _guard(lambda: _service(runtime).statement(principal.token, tenant_id, start, end, min(max(limit, 1), 200), before))
+
+
+@router.post("/businesses/{tenant_id}/wallet-debit", status_code=201)
+def wallet_debit(tenant_id: uuid.UUID, body: GoodwillIn, principal: PrincipalDep, runtime: RuntimeDep) -> dict[str, Any]:
+    """Owner and finance only. Takes Rs 1 to Rs 3,000 back from the business's balance (never below zero); the same checks as the goodwill credit: the amount typed twice, a reason in words, a fresh authenticator code, one key per click."""
+    return _guard(lambda: _service(runtime).wallet_debit(principal.token, tenant_id, body))
+
+
+@router.get("/webhook-failures")
+def webhook_failures(principal: PrincipalDep, runtime: RuntimeDep, limit: int = 50) -> dict[str, Any]:
+    """The businesses whose outbound webhook endpoints keep failing (owner, support; logged)."""
+    return _guard(lambda: _service(runtime).webhook_failures(principal.token, min(max(limit, 1), 200)))
+
+
+@router.get("/contact-requests")
+def contact_requests(principal: PrincipalDep, runtime: RuntimeDep, limit: int = 50) -> dict[str, Any]:
+    """The "Talk to us" messages (owner and support staff; the read is written to the staff log)."""
+    return _guard(lambda: _service(runtime).contact_requests(principal.token, min(max(limit, 1), 200)))
 
 
 @router.get("/alerts", response_model=AlertsOut)

@@ -167,11 +167,11 @@ describe("ReviewQueuePage", () => {
     expect(screen.queryByRole("link", { name: "← Workspace" })).toBeNull();
   });
 
-  it("shows who-you-want-to-find banner with version and short id prefix", async () => {
+  it("shows the kind-of-customer banner with its version and no hash", async () => {
     render(await ReviewQueuePage(props()));
-    expect(screen.getByText(/Who you want to find:/i)).toBeInTheDocument();
+    expect(screen.getByText(/The kind of customer you want:/i)).toBeInTheDocument();
     expect(screen.getByText(/Version 1/i)).toBeInTheDocument();
-    expect(screen.getByText(/0123456789ab/i)).toBeInTheDocument();
+    expect(screen.queryByText(/0123456789ab/i)).toBeNull(); // no hash shown to the owner
   });
 
   it("indicates when no active profile exists", async () => {
@@ -206,7 +206,7 @@ describe("ReviewQueuePage", () => {
 
   it("defaults to hidden-score check enabled", async () => {
     render(await ReviewQueuePage(props()));
-    expect(screen.getByText("Hidden-score check: ON")).toBeInTheDocument();
+    expect(screen.getByText("Scores stay hidden until you mark a lead")).toBeInTheDocument();
     expect(fetchReviewQueue).toHaveBeenCalledWith(
       "tok",
       TENANT,
@@ -218,7 +218,7 @@ describe("ReviewQueuePage", () => {
 
   it("toggles hidden-score check off when ?blind=false", async () => {
     render(await ReviewQueuePage(props({ query: { blind: "false" } })));
-    expect(screen.getByText("Hidden-score check: OFF")).toBeInTheDocument();
+    expect(screen.getByText("Scores are shown")).toBeInTheDocument();
     expect(fetchReviewQueue).toHaveBeenCalledWith(
       "tok",
       TENANT,
@@ -232,7 +232,7 @@ describe("ReviewQueuePage", () => {
     expect(options.blind).toBe(true);
     expect(options.score_band).toBeUndefined();
     expect(screen.queryByRole("link", { name: "Priority (80+)" })).not.toBeInTheDocument();
-    expect(screen.getByText(/Score filters show only/i)).toBeInTheDocument();
+    expect(screen.getByText(/Score filters appear when/i)).toBeInTheDocument();
   });
 
   it("offers band filters only in the deliberate non-blind view", async () => {
@@ -245,7 +245,7 @@ describe("ReviewQueuePage", () => {
       expect.objectContaining({ blind: false, score_band: "priority" }),
     );
     expect(screen.getByRole("link", { name: "Priority (80+)" })).toBeInTheDocument();
-    expect(screen.queryByText(/Score filters show only/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Score filters appear when/i)).not.toBeInTheDocument();
   });
 
   it("gives every lead card its own label id, generated per render", async () => {
@@ -291,7 +291,7 @@ describe("ReviewQueuePage", () => {
   it("shows evidence link pointing to the lead detail page", async () => {
     render(await ReviewQueuePage(props()));
     const evidenceLinks = screen.getAllByRole("link", {
-      name: "View evidence & details →",
+      name: "Open this lead →",
     });
     expect(evidenceLinks[0]).toHaveAttribute(
       "href",
@@ -397,7 +397,7 @@ describe("ReviewQueuePage", () => {
   it("keeps 'unreviewed' when turning blindness off and when paging", async () => {
     fetchReviewQueue.mockResolvedValue({ ...standardQueue, next_cursor: "cur-1" });
     render(await ReviewQueuePage(props({ query: { unreviewed: "true" } })));
-    expect(screen.getByRole("link", { name: /Hidden-score check: ON/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Scores stay hidden until you mark a lead/i })).toHaveAttribute(
       "href",
       `/app/tenants/${TENANT}/review?blind=false&unreviewed=true`,
     );

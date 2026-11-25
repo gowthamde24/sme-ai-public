@@ -1,6 +1,6 @@
 # The Stack19 developer API: the contract (C1 -> C2 and developers; job developer-api)
 
-Status: **published 5 Nov 2026, contract first; TEST MODE only.** The routes land in parts (D1 keys and leads, D2 calls and usage, D3 webhooks, D4 the OpenAPI check). Job
+Status: **published 5 Nov 2026, contract first; TEST MODE only.** The routes land in parts (D1 keys and leads, D2 calls, campaigns, usage, /me and the activity log (**built, 25 Nov 2026**), D3 webhooks, D4 the OpenAPI check (**built with D2**)). Job
 `~/Desktop/stack19-jobs/job-developer-api.md`, ADR 0121. Live mode (`sk_live_`) does not exist yet: it waits for the lawyer's review, a verified business, and the owner's approval of live calls.
 
 ## 0. In one line
@@ -28,7 +28,7 @@ Errors have the one shape `{error:{code,message,retry_after,request_id}}`. JSON 
   - At most 10 active keys per workspace -> `409 too_many_keys`.
 - `POST /developer/keys/{key_id}/rotate` -> `{key, secret}`. A new secret; the old one stops working at once.
 - `POST /developer/keys/{key_id}/revoke` -> `{key}` (`revoked_at` set). It can't be undone; make a new key.
-- Scopes: `leads:write`, `leads:read`, `calls:read`, `campaigns:write`, `webhooks`, `usage:read`. At least one.
+- Scopes: `leads:write`, `leads:read`, `calls:write`, `calls:read`, `campaigns:write`, `campaigns:read`, `webhooks`, `usage:read`. At least one. (`calls:write` and `campaigns:read` are new in D2: keys made before have only what they had; make a new key.) `GET /me` needs no scope.
 
 ### Webhooks (D3)
 - `GET /developer/webhooks` -> `{items: [{id, url, events: [...], active, created_at, secret_last4}]}`
@@ -40,8 +40,9 @@ Errors have the one shape `{error:{code,message,retry_after,request_id}}`. JSON 
 - `GET /developer/webhooks/{id}/deliveries?before=` -> `{items: [{id, event, event_id, status: "pending" | "delivered" | "failed" | "retrying", attempts, last_status_code | null, last_error: null | "timeout" | "refused" | "tls" | "status", next_attempt_at | null, created_at}], next_before}`. The last 30 days. The bodies are not kept.
 - Events: `lead.created`, `lead.updated`, `call.completed`, `visit.booked`, `quote.approved`, `test.ping`.
 
-### Usage
-- `GET /developer/usage` -> `{mode: "test", today: {requests, leads, calls_simulated}, month: {requests, leads, calls_simulated}, limits: {requests_per_minute: 60, concurrent_calls: 10}}`.
+### Usage and API activity
+- `GET /developer/usage` -> `{mode: "test", today: {requests, leads, calls_simulated, campaigns, errors}, month: {...same}, limits: {requests_per_minute: 60, calls_per_minute: 10, campaigns_per_minute: 5, concurrent_calls: 10}}`. `errors` = requests answered 400 or above (from the activity log).
+- `GET /developer/activity?key_id=&limit=&before=` -> `{items: [{id, key_id, key_name, method, route, status, latency_ms, at}], next_before}` (Owner, Admin; newest first; the last 30 days; at most 100 a page; `key_id` narrows to one key). `route` is the route template (`/api/v1/leads/{lead_id}`), never the real path. **No bodies, no query strings, no addresses, no key are kept.** An unknown key leaves no row (there is no workspace to file it under).
 
 ## 3. The developer API (`/api/v1`, a key)
 
@@ -93,23 +94,59 @@ Header **`Idempotency-Key`** (1 to 100 characters) is required -> `400 idempoten
 - The list is oldest change first, at most 100 a page; `{items, next_after}`.
 - Another workspace's id, or one that doesn't exist -> `404`.
 
-### GET /api/v1/calls/{id} (`calls:read`) (D2)
+### GET /api/v1/me (any live key)
+`{mode: "test", key: {id, name, mode, prefix, last4, scopes, ip_allow, created_at, rotated_at, last_used_at}, workspace: {id, name}}`. Never the secret or its hash.
+
+### POST /api/v1/calls (`calls:write`)
+`{lead_id, dry_run?: false}` places a **simulated** call to a lead you posted. Nobody is dialled, in test mode, whatever the gates say. Header **`Idempotency-Key`** is required (same rules as POST /leads: same key + same body -> `200` with `Idempotent-Replayed: true` and the first call; another body -> `409 idempotency_conflict`); **a `dry_run` needs none and stores nothing.**
+- **The gates are the app's own, in this order:**
+
+  | Gate | Test mode | Refusal |
+  |---|---|---|
+  | `sandbox` | the lead is on this workspace's sandbox list (another workspace's lead is not) | `404 not_found` |
+  | `number` | the lead has a phone number | `422 lead_has_no_number` |
+  | `consent` | the lead's consent is on file | `422 consent_required` |
+  | `dnd` | not on the Do-Not-Disturb list (any number ending `0000`) | `422 number_on_dnd` |
+  | `wallet` | the wallet covers a call (simulated: **every number ending `9999` has an empty wallet**) | `402 wallet_empty` |
+  | `capacity` | at most 10 open calls in the workspace and 10 calls a minute per key | `429 too_many_calls` / `429 rate_limited`, with `Retry-After` (checked after the idempotency replay, so a retry still gets its call) |
+  | `calling_hours` | Monday to Saturday, 10:00 to 19:00 India time | never a refusal: outside the hours the call is queued for the next opening (`status: "queued"`, `scheduled_for`) |
+- `dry_run: true` -> `200 {dry_run: true, mode, lead_id, would_place, blocked_by: null | "<code>", starts: "now" | "at_opening", starts_at, gates: [{gate, ok, code}]}`. Every gate is evaluated and listed, none is skipped at the first failure. The lead must still exist (`404`).
+- A real call -> `201` the call (below). **The simulated call runs 30 seconds from `scheduled_for`** and then completes with the outcome of the number's last digit (the table in POST /leads); the lead's `status`, `outcome` and `next_step` follow when the call completes, and the lead lists the call in `calls`.
+- Body errors -> `422 invalid_call` (`fields`). Only `lead_id` (a uuid string) and `dry_run` (a real boolean) are allowed.
+
+### GET /api/v1/calls/{id} and GET /api/v1/calls?lead_id=&limit=&after= (`calls:read`)
 ```json
 { "id": "uuid", "mode": "test", "lead_id": "uuid", "status": "queued" | "in_progress" | "completed" | "failed", "outcome": null | "interested" | "not_interested" | "callback" | "no_answer" | "visit_booked",
-  "started_at": null | "iso", "ended_at": null | "iso", "duration_seconds": null | 42, "summary": null | "...", "transcript": null | [ { "speaker": "assistant" | "caller", "text": "..." } ],
-  "cost": { "minutes": 1, "paise": 0 } }
+  "scheduled_for": "iso", "started_at": null | "iso", "ended_at": null | "iso", "duration_seconds": null | 30, "summary": null | "Simulated call: ...", "transcript": null,
+  "cost": { "minutes": 1, "paise": 0 }, "created_at": "iso" }
 ```
-- `transcript` is given only when the workspace allows it (Settings -> Calls -> "share transcripts with the API"); otherwise null.
-- A test call costs nothing (`paise: 0`).
+- The list is oldest first, at most 100 a page; `{items, next_after}`. Another workspace's id -> `404`.
+- `transcript` is always null in test mode (a simulated call has no recording). A test call costs nothing (`paise: 0`; `minutes` is the billable minute it would take: 0 for `no_answer`, else 1).
 
-### POST /api/v1/campaigns, POST /api/v1/campaigns/{id}/contacts (`campaigns:write`) (D2)
-- `POST /campaigns` `{name, language?}` -> `201 {campaign: {id, mode, name, status: "draft", contacts: 0}}`.
-- `POST /campaigns/{id}/contacts` (`Idempotency-Key` required) `{contacts: [<lead body>, ... at most 500]}` -> `{added, duplicates, refused: [{index, code}]}`.
-  - The same rules apply to each contact: consent, dedupe and DND.
-- A campaign is **not started by the API** in v1: the Owner starts it in the app (the app's own approval rule).
+### POST /api/v1/campaigns, GET /api/v1/campaigns, GET /api/v1/campaigns/{id}
+A campaign is **a list of consented contacts and a job**.
+- `POST /campaigns` (`campaigns:write`, `Idempotency-Key` required) `{name, language?, job: {name, goal?}, contacts: [<lead body>, ... 1 to 500]}` -> `201 {campaign, refused: [{index, code}]}`.
+  - `job.name` is 1 to 60 characters, `job.goal` at most 300: what the calls are for.
+  - Each contact is checked like POST /leads, **on its own** (one bad contact does not sink the rest). A contact is refused with `invalid_lead`, `lead_has_no_number`, `consent_required` or `number_on_dnd` (listed in `refused` by its `index`). The others become sandbox leads (the same number in the workspace's sandbox is the existing lead and counts as a `duplicate`).
+  - No usable contact at all -> `422 no_usable_contacts` (with `refused`). A bad shape -> `422 invalid_campaign` (`fields`).
+  - Same key + same body -> `200`, `Idempotent-Replayed: true`, the same campaign. At most 5 campaigns a minute per key (`429 rate_limited`).
+  - `campaign` = `{id, mode, name, language, job: {name, goal}, status: "draft", contacts, added, duplicates, created_at, lead_ids}`.
+- `GET /campaigns/{id}` (`campaigns:read`) the campaign with its `lead_ids`; `GET /campaigns?limit=&after=` -> `{items, next_after}` (oldest first, without `lead_ids`).
+- A campaign is **not started by the API**: the Owner starts it in the app (the app's own approval rule). (This replaces the first draft's separate `POST /campaigns/{id}/contacts`.)
+
+### GET /api/v1/activity?limit=&before= (`usage:read`)
+The workspace's API requests of the last 30 days, newest first: the same items as Settings -> Developers -> activity. `{items, next_before}`.
 
 ### GET /api/v1/usage (`usage:read`)
 The same object as `GET /developer/usage`.
+
+### Rate limits (per key)
+- 60 requests a minute on everything -> `429 rate_limited` with `Retry-After` and `X-RateLimit-*` headers; plus **10 calls a minute**, **10 open calls** in the workspace and **5 campaigns a minute**.
+
+### The generated documents (for developers and the web team)
+- **`docs/contracts/developer-api.openapi.json`** (OpenAPI 3.1) and **`docs/contracts/developer-api.postman_collection.json`** (Postman 2.1; variables `base_url` and `api_key`, never a key) are **generated from the code** by `scripts/developer_openapi.py` (`make contracts` writes them; a test fails when they are stale). The /developers page links them as downloads. Postman collection import: Postman -> Import -> the file; set `api_key` to a test key.
+- New error codes (all in `docs/contracts/error-codes.md`): `invalid_call`, `invalid_campaign`, `no_usable_contacts`, `lead_has_no_number`, `number_on_dnd`, `wallet_empty`, `too_many_calls`. The web maps them to plain sentences.
+- The activity log, calls and campaigns live in tables outside the public schema; no client can read them; they are kept 30 days.
 
 ## 4. Webhooks: signing and delivery (D3)
 - `POST` to the endpoint, JSON body `{id: "evt_...", type: "call.completed", mode: "test", created_at, data: {...the object}}`.
