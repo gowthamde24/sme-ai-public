@@ -230,11 +230,10 @@ describe("Verify your business: where it stands", () => {
     fireEvent.change(screen.getByLabelText("Phone number"), { target: { value: "+91 98765 43210" } });
     fireEvent.change(screen.getByLabelText("Billing address"), { target: { value: "12 Main Road, Anantapur" } });
     fireEvent.change(screen.getByLabelText("PIN code"), { target: { value: "5150ab01" } });
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByRole("button", { name: "Save and continue" }));
+    fireEvent.click(document.querySelector('input[type="checkbox"]') as HTMLElement);
+    fireEvent.click(screen.getByText("Save and continue"));
     await waitFor(() => expect(a.details).toHaveBeenCalledWith({ accountType: "individual", businessName: "", fullName: "Asha Rao", phone: "+91 98765 43210", billingAddress: "12 Main Road, Anantapur", city: "", state: "", pincode: "515001", acceptTerms: true }));
-    await screen.findByRole("heading", { name: /PAN card/ }).catch(() => undefined);
-    expect(document.querySelector('[data-doc="pan"]')).not.toBeNull();
+    await waitFor(() => expect(document.querySelector('[data-doc="pan"]')).not.toBeNull()); // a plain selector: a role query over the whole page is what made this test slow
   });
 });
 
