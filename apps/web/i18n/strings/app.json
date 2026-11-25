@@ -137289,5 +137289,61 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tc.no.enquiry_too_old": {
+  "en": "This person's written enquiry is more than 7 days old, so an automatic call is not allowed. No call was made. Record their consent, or wait for a new enquiry.",
+  "te": "This person's written enquiry is more than 7 days old, so an automatic call is not allowed. No call was made. Record their consent, or wait for a new enquiry.",
+  "hi": "This person's written enquiry is more than 7 days old, so an automatic call is not allowed. No call was made. Record their consent, or wait for a new enquiry.",
+  "kn": "This person's written enquiry is more than 7 days old, so an automatic call is not allowed. No call was made. Record their consent, or wait for a new enquiry.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "tc.no.outbound_not_real": {
+  "en": "Real outbound calls are not switched on for this business yet. No call was made. Only test numbers can be rung.",
+  "te": "ఈ బిజినెస్‌కి నిజమైన అవుట్‌బౌండ్ కాల్స్ ఇంకా ఆన్ కాలేదు. కాల్ వెళ్ళలేదు. టెస్ట్ నంబర్లకే కాల్ చేయగలం.",
+  "hi": "इस बिज़नेस के लिए असली आउटबाउंड कॉल अभी चालू नहीं हैं। कोई कॉल नहीं लगी। सिर्फ़ टेस्ट नंबरों पर कॉल हो सकती है।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗೆ ನಿಜವಾದ ಔಟ್‌ಬೌಂಡ್ ಕಾಲ್‌ಗಳು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ. ಟೆಸ್ಟ್ ನಂಬರ್‌ಗಳಿಗೆ ಮಾತ್ರ ಕರೆ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.no_own_number": {
+  "en": "This business has no phone number of its own yet. No call was made. Get a phone number first.",
+  "te": "ఈ బిజినెస్‌కి సొంత ఫోన్ నంబర్ ఇంకా లేదు. కాల్ వెళ్ళలేదు. ముందు ఫోన్ నంబర్ తీసుకోండి.",
+  "hi": "इस बिज़नेस का अपना फ़ोन नंबर अभी नहीं है। कोई कॉल नहीं लगी। पहले फ़ोन नंबर लें।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗೆ ತನ್ನದೇ ಫೋನ್ ನಂಬರ್ ಇನ್ನೂ ಇಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ. ಮೊದಲು ಫೋನ್ ನಂಬರ್ ತೆಗೆದುಕೊಳ್ಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.usage_not_accepted": {
+  "en": "You have not accepted \"How you will use this number\" yet. No call was made. Accept it on the phone number page, then try again.",
+  "te": "\"ఈ నంబర్‌ని మీరు ఎలా వాడతారు\" ని మీరు ఇంకా అంగీకరించలేదు. కాల్ వెళ్ళలేదు. ఫోన్ నంబర్ పేజీలో అంగీకరించి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपने \"इस नंबर का आप कैसे इस्तेमाल करेंगे\" अभी स्वीकार नहीं किया। कोई कॉल नहीं लगी। फ़ोन नंबर पेज पर स्वीकार करें, फिर दोबारा कोशिश करें।",
+  "kn": "\"ಈ ನಂಬರ್ ಅನ್ನು ನೀವು ಹೇಗೆ ಬಳಸುತ್ತೀರಿ\" ಅನ್ನು ನೀವು ಇನ್ನೂ ಒಪ್ಪಿಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ. ಫೋನ್ ನಂಬರ್ ಪುಟದಲ್ಲಿ ಒಪ್ಪಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.ai_undertaking_required": {
+  "en": "To switch the AI greeting off, accept the written undertaking first. Nothing was changed.",
+  "te": "AI గ్రీటింగ్ ఆఫ్ చేయడానికి ముందు రాతపూర్వక హామీని అంగీకరించండి. ఏదీ మారలేదు.",
+  "hi": "AI ग्रीटिंग बंद करने के लिए पहले लिखित वचन स्वीकार करें। कुछ नहीं बदला।",
+  "kn": "AI ಗ್ರೀಟಿಂಗ್ ಆಫ್ ಮಾಡಲು ಮೊದಲು ಲಿಖಿತ ಭರವಸೆಯನ್ನು ಒಪ್ಪಿ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

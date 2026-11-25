@@ -39,6 +39,7 @@ export async function saveSpeaksAction(tenantId: string, input: unknown): Promis
     if (error instanceof ApiRequestError) {
       if (error.code === "mfa_required") return { ok: false, error: "mfa" };
       if (error.status === 403) return { ok: false, error: "forbidden" };
+      if (error.status === 409 && error.code === "ai_undertaking_required") return { ok: false, error: "say_ai_undertaking" }; // the greeting cannot go off without the written undertaking (C1, call-compliance.md)
       if (error.status === 422) {
         // a refusal of a save that carried Introduce as is most likely that; any other refusal is "not accepted" (nothing was saved)
         return { ok: false, error: change.introduceAs ? "introduce" : "rejected" };

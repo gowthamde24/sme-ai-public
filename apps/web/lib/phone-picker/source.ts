@@ -1,4 +1,4 @@
-import { claimNumber as apiClaim, listAvailable, listOwn, reasonOf } from "@/lib/api/numbers";
+import { acceptUsage, claimNumber as apiClaim, listAvailable, listOwn, reasonOf } from "@/lib/api/numbers";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { clearJar, readJar, writeJar } from "@/lib/mock/jar";
 import { kycPerClient, phonePicker } from "@/lib/screens/flag";
@@ -64,6 +64,19 @@ export async function claimNumber(token: string, tenantId: string, number: unkno
   }
   try {
     return { ok: true, number: await apiClaim(token, tenantId, number, type) };
+  } catch (error) {
+    return refused(error);
+  }
+}
+
+/** The Owner ticked "How you will use this number": the acceptance is stored (before the purchase). The test screen keeps nothing. */
+export async function acceptUsageStep(token: string, tenantId: string): Promise<Refusal | { ok: true }> {
+  const mode = phonePicker();
+  if (mode === "off") return { ok: false, error: "invalid" };
+  if (mode === "mock") return { ok: true };
+  try {
+    await acceptUsage(token, tenantId);
+    return { ok: true };
   } catch (error) {
     return refused(error);
   }

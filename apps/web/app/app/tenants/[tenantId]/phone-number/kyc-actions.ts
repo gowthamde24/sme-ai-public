@@ -8,7 +8,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import type { KycReason, KycStatus } from "@/lib/api/business-kyc";
 import { requireUser } from "@/lib/auth/session";
 import { checkGst, checkPan, readStatus, saveDetails, startAadhaar, startAccount, submitAll, type KycError, type KycResult } from "@/lib/phone-kyc/source";
-import { claimNumber, searchNumbers } from "@/lib/phone-picker/source";
+import { acceptUsageStep, claimNumber, searchNumbers } from "@/lib/phone-picker/source";
 import type { OwnNumber, SearchResult, UnavailableReason } from "@/lib/phone-picker/types";
 import { kycPerClient, phonePicker } from "@/lib/screens/flag";
 
@@ -48,6 +48,9 @@ export async function buyNumberAction(tenantId: string, input: { number: unknown
   if (input?.agree !== true) return { ok: false, error: "invalid" };
   const started = await startAccount(who.token, tenantId, input.accountType);
   if (!started.ok) return { ok: false, error: started.error, reason: started.reason };
+  // the tick of step 4 is stored first (C1: a real outbound call is refused until it is)
+  const accepted = await acceptUsageStep(who.token, tenantId);
+  if (!accepted.ok) return { ok: false, error: accepted.error, reason: "reason" in accepted ? accepted.reason : undefined };
   const claimed = await claimNumber(who.token, tenantId, input.number, input.type);
   revalidatePath(`/app/tenants/${tenantId}/phone-number`);
   if (!claimed.ok) return { ok: false, error: claimed.error, reason: claimed.reason };
