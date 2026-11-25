@@ -262,3 +262,15 @@ export const industryPages = (value: string | undefined = process.env.INDUSTRY_P
 
 /** The call rules, outreach rules, assistant name and developer keys as plain labelled fields (owner, 25 Nov / 29 Nov 2026: no fill-in-the-blank sentences): the JOBS sentence look draws only when SETTINGS_OPEN is off. */
 export const sentenceForms = (): boolean => jobsScreens() !== "off" && !settingsOpen();
+
+/**
+ * "Tell your assistant what to do" on Jobs (owner, 29 Nov 2026; mock "Tell your assistant what to do"; C1's `POST /jobs/describe`, docs/contracts/jobs-describe.md): the owner writes or says the job in their own words, a mode and a language, and sees a DRAFT as plain
+ * labelled fields (Name, Who, When, What it does, Language, what it asks first, calling hours) before anything is switched on; "Looks right? Turn it on" uses the normal job start and the normal job change. Needs JOBS too. `mock` = a made-up reading kept in
+ * the server (nothing is sent to the model, nothing is stored), `1` = the API, unset = the part is not there (production).
+ */
+export const tellScreens = (value: string | undefined = process.env.TELL_SCREENS): ScreenMode => screenMode(value);
+/**
+ * Phone numbers with the business's OWN account (Model B; C1's docs/contracts/business-kyc.md, the API flag KYC_PER_CLIENT): with PHONE_PICKER on too, "Get a phone number" is four steps in one page (Choose a number, Your calling account, Verification, How you will use
+ * this number) and "Verify your business" is a status page with the steps and "Start verification". `mock` = a made-up status kept in a cookie (nothing is sent, no document leaves the page), `1` = C1's `/phone-kyc/business` routes, unset = the three-step picker as it was.
+ */
+export const kycPerClient = (value: string | undefined = process.env.KYC_PER_CLIENT): ScreenMode => screenMode(value);

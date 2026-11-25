@@ -127543,5 +127543,1677 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.tell.link": {
+  "en": "+ Tell your assistant what to do",
+  "te": "+ మీ అసిస్టెంట్‌కి ఏం చేయాలో చెప్పండి",
+  "hi": "+ अपने असिस्टेंट को बताइए क्या करना है",
+  "kn": "+ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಏನು ಮಾಡಬೇಕೆಂದು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.back": {
+  "en": "← Jobs",
+  "te": "← జాబ్స్",
+  "hi": "← जॉब्स",
+  "kn": "← ಜಾಬ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.title": {
+  "en": "Tell your assistant what to do",
+  "te": "మీ అసిస్టెంట్‌కి ఏం చేయాలో చెప్పండి",
+  "hi": "अपने असिस्टेंट को बताइए क्या करना है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಏನು ಮಾಡಬೇಕೆಂದು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.sub": {
+  "en": "Write it in your own words, in any language. You see what it understood before anything is switched on.",
+  "te": "మీ సొంత మాటల్లో, ఏ భాషలోనైనా రాయండి. ఏదైనా ఆన్ చేసే ముందు అసిస్టెంట్ ఏం అర్థం చేసుకుందో మీకు కనిపిస్తుంది.",
+  "hi": "अपने शब्दों में, किसी भी भाषा में लिखिए। कुछ भी चालू होने से पहले आप देख लेते हैं कि असिस्टेंट ने क्या समझा।",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಮಾತುಗಳಲ್ಲಿ, ಯಾವುದೇ ಭಾಷೆಯಲ್ಲಿ ಬರೆಯಿರಿ. ಏನಾದರೂ ಆನ್ ಆಗುವ ಮುನ್ನ ಅಸಿಸ್ಟೆಂಟ್ ಏನು ಅರ್ಥಮಾಡಿಕೊಂಡಿದೆ ಎಂದು ನಿಮಗೆ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.only": {
+  "en": "Only the owner or an admin can ask the assistant to start a job.",
+  "te": "అసిస్టెంట్‌కి జాబ్ మొదలుపెట్టమని చెప్పడం ఓనర్ లేదా అడ్మిన్ మాత్రమే చేయగలరు.",
+  "hi": "असिस्टेंट से जॉब शुरू करवाना सिर्फ़ ओनर या एडमिन कर सकते हैं।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಜಾಬ್ ಶುರು ಮಾಡಲು ಹೇಳುವುದು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.label": {
+  "en": "What should it do?",
+  "te": "అది ఏం చేయాలి?",
+  "hi": "इसे क्या करना है?",
+  "kn": "ಅದು ಏನು ಮಾಡಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.ph.1": {
+  "en": "Call everyone who asks about a saree and book a visit",
+  "te": "చీర గురించి అడిగిన ప్రతి ఒక్కరికి కాల్ చేసి, షాప్‌కి రమ్మని చెప్పండి",
+  "hi": "साड़ी के बारे में पूछने वाले हर व्यक्ति को कॉल करें और दुकान आने का समय तय करें",
+  "kn": "ಸೀರೆ ಬಗ್ಗೆ ಕೇಳಿದ ಎಲ್ಲರಿಗೂ ಕಾಲ್ ಮಾಡಿ, ಅಂಗಡಿಗೆ ಬರುವ ಸಮಯ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.ph.2": {
+  "en": "Remind customers about their quote after two days",
+  "te": "రెండు రోజుల తర్వాత కస్టమర్లకు వాళ్ల కోట్ గురించి గుర్తు చేయండి",
+  "hi": "दो दिन बाद ग्राहकों को उनके कोट की याद दिलाएँ",
+  "kn": "ಎರಡು ದಿನದ ನಂತರ ಗ್ರಾಹಕರಿಗೆ ಅವರ ಕೋಟ್ ಬಗ್ಗೆ ನೆನಪಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.ph.3": {
+  "en": "చీర గురించి అడిగిన వాళ్లందరికీ వెంటనే ఫోన్ చేసి, షాప్‌కి రమ్మని చెప్పు",
+  "te": "చీర గురించి అడిగిన వాళ్లందరికీ వెంటనే ఫోన్ చేసి, షాప్‌కి రమ్మని చెప్పు",
+  "hi": "साड़ी के बारे में पूछने वाले सभी को तुरंत फ़ोन करो और दुकान आने को कहो",
+  "kn": "ಸೀರೆ ಬಗ್ಗೆ ಕೇಳಿದ ಎಲ್ಲರಿಗೂ ತಕ್ಷಣ ಫೋನ್ ಮಾಡಿ, ಅಂಗಡಿಗೆ ಬರಲು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.lang": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.lang.any": {
+  "en": "Any language",
+  "te": "ఏ భాషైనా",
+  "hi": "कोई भी भाषा",
+  "kn": "ಯಾವುದೇ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.mode.title": {
+  "en": "What is it for?",
+  "te": "ఇది దేనికి?",
+  "hi": "यह किसके लिए है?",
+  "kn": "ಇದು ಯಾವುದಕ್ಕಾಗಿ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.mode.enquiry.t": {
+  "en": "New enquiries, right now",
+  "te": "కొత్త ఎంక్వైరీలు, వెంటనే",
+  "hi": "नई पूछताछ, तुरंत",
+  "kn": "ಹೊಸ ಎನ್‌ಕ್ವೈರಿಗಳು, ತಕ್ಷಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.mode.enquiry.d": {
+  "en": "Reacts the moment someone asks.",
+  "te": "ఎవరైనా అడిగిన క్షణమే స్పందిస్తుంది.",
+  "hi": "कोई पूछे उसी पल जवाब देता है।",
+  "kn": "ಯಾರಾದರೂ ಕೇಳಿದ ಕ್ಷಣವೇ ಸ್ಪಂದಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.mode.list.t": {
+  "en": "A list of people",
+  "te": "వ్యక్తుల లిస్ట్",
+  "hi": "लोगों की लिस्ट",
+  "kn": "ಜನರ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.mode.list.d": {
+  "en": "Works through people who said yes.",
+  "te": "ఓకే అన్నవాళ్లను ఒక్కొక్కరిగా సంప్రదిస్తుంది.",
+  "hi": "हाँ कहने वालों से एक-एक करके बात करता है।",
+  "kn": "ಒಪ್ಪಿಗೆ ಕೊಟ್ಟವರನ್ನು ಒಬ್ಬೊಬ್ಬರಾಗಿ ಸಂಪರ್ಕಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.mode.incoming.t": {
+  "en": "Incoming calls",
+  "te": "వచ్చే కాల్స్",
+  "hi": "आने वाले कॉल",
+  "kn": "ಬರುವ ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.mode.incoming.d": {
+  "en": "Answers when people call you.",
+  "te": "మీకు ఎవరైనా కాల్ చేస్తే జవాబిస్తుంది.",
+  "hi": "कोई आपको कॉल करे तो जवाब देता है।",
+  "kn": "ಯಾರಾದರೂ ನಿಮಗೆ ಕಾಲ್ ಮಾಡಿದರೆ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.go": {
+  "en": "Continue",
+  "te": "కొనసాగించండి",
+  "hi": "आगे बढ़ें",
+  "kn": "ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.template": {
+  "en": "Start from a template",
+  "te": "టెంప్లేట్‌తో మొదలుపెట్టండి",
+  "hi": "टेम्पलेट से शुरू करें",
+  "kn": "ಟೆಂಪ್ಲೇಟ್‌ನಿಂದ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.reading": {
+  "en": "Reading what you wrote…",
+  "te": "మీరు రాసింది చదువుతున్నాం…",
+  "hi": "आपने जो लिखा उसे पढ़ रहे हैं…",
+  "kn": "ನೀವು ಬರೆದದ್ದನ್ನು ಓದುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.err.text": {
+  "en": "Write a little more about the job (at least 3 letters).",
+  "te": "జాబ్ గురించి ఇంకొంచెం రాయండి (కనీసం 3 అక్షరాలు).",
+  "hi": "जॉब के बारे में थोड़ा और लिखिए (कम से कम 3 अक्षर)।",
+  "kn": "ಜಾಬ್ ಬಗ್ಗೆ ಇನ್ನೂ ಸ್ವಲ್ಪ ಬರೆಯಿರಿ (ಕನಿಷ್ಠ 3 ಅಕ್ಷರ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.err.nomatch": {
+  "en": "I could not match that to a job we have. Say it another way, or start from a template.",
+  "te": "అది మా దగ్గరున్న ఏ జాబ్‌కీ సరిపోలేదు. వేరే విధంగా చెప్పండి, లేదా టెంప్లేట్‌తో మొదలుపెట్టండి.",
+  "hi": "यह हमारे किसी जॉब से मेल नहीं खाया। दूसरे तरीके से बताइए, या टेम्पलेट से शुरू करें।",
+  "kn": "ಇದು ನಮ್ಮ ಯಾವ ಜಾಬ್‌ಗೂ ಹೊಂದಲಿಲ್ಲ. ಬೇರೆ ರೀತಿ ಹೇಳಿ, ಅಥವಾ ಟೆಂಪ್ಲೇಟ್‌ನಿಂದ ಶುರು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.err.ai_limit": {
+  "en": "That is enough describing for today. Try again tomorrow, or start from a template.",
+  "te": "ఈ రోజుకి ఇంతే చెప్పగలరు. రేపు మళ్లీ ప్రయత్నించండి, లేదా టెంప్లేట్‌తో మొదలుపెట్టండి.",
+  "hi": "आज के लिए इतना काफ़ी है। कल फिर कोशिश करें, या टेम्पलेट से शुरू करें।",
+  "kn": "ಇವತ್ತಿಗೆ ಇಷ್ಟು ಸಾಕು. ನಾಳೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಟೆಂಪ್ಲೇಟ್‌ನಿಂದ ಶುರು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.err.unavailable": {
+  "en": "We could not read that just now. Please try again.",
+  "te": "ఇప్పుడు అది చదవలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+  "hi": "अभी इसे पढ़ नहीं पाए। फिर से कोशिश करें।",
+  "kn": "ಈಗ ಅದನ್ನು ಓದಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.nothing": {
+  "en": "Nothing is switched on yet. It starts only when you turn it on.",
+  "te": "ఇంకా ఏదీ ఆన్ కాలేదు. మీరు ఆన్ చేసినప్పుడే మొదలవుతుంది.",
+  "hi": "अभी कुछ भी चालू नहीं है। आप चालू करेंगे तभी शुरू होगा।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಆನ್ ಆಗಿಲ್ಲ. ನೀವು ಆನ್ ಮಾಡಿದಾಗ ಮಾತ್ರ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.draft.title": {
+  "en": "Here is what it understood",
+  "te": "అసిస్టెంట్ ఇలా అర్థం చేసుకుంది",
+  "hi": "असिस्टेंट ने यह समझा",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಹೀಗೆ ಅರ್ಥಮಾಡಿಕೊಂಡಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.f.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.f.who": {
+  "en": "Who",
+  "te": "ఎవరికి",
+  "hi": "किसके लिए",
+  "kn": "ಯಾರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.f.when": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.f.does": {
+  "en": "What it does",
+  "te": "ఏం చేస్తుంది",
+  "hi": "क्या करता है",
+  "kn": "ಏನು ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.f.language": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.f.asks": {
+  "en": "What it asks first",
+  "te": "మొదట ఏం అడుగుతుంది",
+  "hi": "सबसे पहले क्या पूछता है",
+  "kn": "ಮೊದಲು ಏನು ಕೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.who.speed_to_lead": {
+  "en": "Everyone who asks about your business",
+  "te": "మీ బిజినెస్ గురించి అడిగే ప్రతి ఒక్కరికి",
+  "hi": "आपके बिज़नेस के बारे में पूछने वाला हर व्यक्ति",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ಕೇಳುವ ಪ್ರತಿಯೊಬ್ಬರಿಗೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.who.answer_calls": {
+  "en": "Everyone who calls you",
+  "te": "మీకు కాల్ చేసే ప్రతి ఒక్కరికి",
+  "hi": "आपको कॉल करने वाला हर व्यक्ति",
+  "kn": "ನಿಮಗೆ ಕಾಲ್ ಮಾಡುವ ಪ್ರತಿಯೊಬ್ಬರಿಗೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.who.followups": {
+  "en": "Customers who asked a price and went quiet",
+  "te": "రేటు అడిగి సైలెంట్ అయిన కస్టమర్లకు",
+  "hi": "जिन ग्राहकों ने रेट पूछा और फिर चुप हो गए",
+  "kn": "ರೇಟ್ ಕೇಳಿ ಸುಮ್ಮನಾದ ಗ್ರಾಹಕರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.who.store_visits": {
+  "en": "Customers who want to visit your shop",
+  "te": "మీ షాప్‌కి రావాలనుకునే కస్టమర్లకు",
+  "hi": "जो ग्राहक आपकी दुकान आना चाहते हैं",
+  "kn": "ನಿಮ್ಮ ಅಂಗಡಿಗೆ ಬರಲು ಬಯಸುವ ಗ್ರಾಹಕರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.who.offers": {
+  "en": "Customers who said yes to offers",
+  "te": "ఆఫర్లకు ఓకే అన్న కస్టమర్లకు",
+  "hi": "जिन ग्राहकों ने ऑफ़र के लिए हाँ कहा",
+  "kn": "ಆಫರ್‌ಗಳಿಗೆ ಒಪ್ಪಿಗೆ ಕೊಟ್ಟ ಗ್ರಾಹಕರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.who.researcher": {
+  "en": "New shops that could buy from you",
+  "te": "మీ దగ్గర కొనగలిగే కొత్త షాపులు",
+  "hi": "नई दुकानें जो आपसे खरीद सकती हैं",
+  "kn": "ನಿಮ್ಮಿಂದ ಖರೀದಿಸಬಹುದಾದ ಹೊಸ ಅಂಗಡಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.does.speed_to_lead": {
+  "en": "Calls each new enquiry",
+  "te": "ప్రతి కొత్త ఎంక్వైరీకి కాల్ చేస్తుంది",
+  "hi": "हर नई पूछताछ पर कॉल करता है",
+  "kn": "ಪ್ರತಿ ಹೊಸ ಎನ್‌ಕ್ವೈರಿಗೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.does.answer_calls": {
+  "en": "Picks up when you cannot and takes down what the caller wants",
+  "te": "మీరు ఎత్తలేనప్పుడు కాల్ ఎత్తి, కాల్ చేసిన వాళ్లకు ఏం కావాలో రాసుకుంటుంది",
+  "hi": "आप न उठा पाएँ तो कॉल उठाता है और कॉल करने वाले की बात लिख लेता है",
+  "kn": "ನೀವು ಎತ್ತಲಾಗದಿದ್ದಾಗ ಕಾಲ್ ಎತ್ತಿ, ಕರೆ ಮಾಡಿದವರಿಗೆ ಏನು ಬೇಕೆಂದು ಬರೆದುಕೊಳ್ಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.does.followups": {
+  "en": "Writes a reminder and waits for your OK",
+  "te": "రిమైండర్ రాసి, మీ ఓకే కోసం ఆగుతుంది",
+  "hi": "रिमाइंडर लिखता है और आपके OK का इंतज़ार करता है",
+  "kn": "ರಿಮೈಂಡರ್ ಬರೆದು, ನಿಮ್ಮ ಓಕೆಗಾಗಿ ಕಾಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.does.store_visits": {
+  "en": "Books visits and reminds customers before they come",
+  "te": "విజిట్‌లు బుక్ చేసి, రావడానికి ముందు కస్టమర్లకు గుర్తు చేస్తుంది",
+  "hi": "विज़िट बुक करता है और आने से पहले ग्राहकों को याद दिलाता है",
+  "kn": "ವಿಸಿಟ್‌ಗಳನ್ನು ಬುಕ್ ಮಾಡಿ, ಬರುವ ಮುನ್ನ ಗ್ರಾಹಕರಿಗೆ ನೆನಪಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.does.offers": {
+  "en": "Tells customers who said yes about your offer",
+  "te": "ఓకే అన్న కస్టమర్లకు మీ ఆఫర్ గురించి చెబుతుంది",
+  "hi": "हाँ कहने वाले ग्राहकों को आपके ऑफ़र के बारे में बताता है",
+  "kn": "ಒಪ್ಪಿಗೆ ಕೊಟ್ಟ ಗ್ರಾಹಕರಿಗೆ ನಿಮ್ಮ ಆಫರ್ ಬಗ್ಗೆ ಹೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.does.researcher": {
+  "en": "Finds shops near you that could buy and shows you the best ones",
+  "te": "మీ దగ్గర్లో కొనగలిగే షాపులను వెతికి, మంచివి మీకు చూపిస్తుంది",
+  "hi": "आपके पास की दुकानें ढूँढता है जो खरीद सकती हैं और सबसे अच्छी दिखाता है",
+  "kn": "ನಿಮ್ಮ ಹತ್ತಿರದ ಖರೀದಿಸಬಹುದಾದ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ, ಉತ್ತಮವಾದವನ್ನು ತೋರಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.asks.speed_to_lead": {
+  "en": "It says who it is and why it is calling, then asks if now is a good time.",
+  "te": "తను ఎవరో, ఎందుకు కాల్ చేస్తోందో చెప్పి, ఇప్పుడు మాట్లాడవచ్చా అని అడుగుతుంది.",
+  "hi": "यह बताता है कि वह कौन है और क्यों कॉल कर रहा है, फिर पूछता है कि अभी बात करने का सही समय है या नहीं।",
+  "kn": "ತಾನು ಯಾರು, ಏಕೆ ಕಾಲ್ ಮಾಡುತ್ತಿದೆ ಎಂದು ಹೇಳಿ, ಈಗ ಮಾತನಾಡಬಹುದೇ ಎಂದು ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.asks.answer_calls": {
+  "en": "It greets the caller and asks how it can help.",
+  "te": "కాల్ చేసిన వాళ్లని పలకరించి, ఎలా సహాయం చేయగలనో అడుగుతుంది.",
+  "hi": "कॉल करने वाले को नमस्ते कहता है और पूछता है कि कैसे मदद कर सकता है।",
+  "kn": "ಕರೆ ಮಾಡಿದವರನ್ನು ಮಾತನಾಡಿಸಿ, ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು ಎಂದು ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.asks.followups": {
+  "en": "It reminds them of what they asked about and asks if they still want it.",
+  "te": "వాళ్లు ఏం అడిగారో గుర్తు చేసి, ఇంకా కావాలా అని అడుగుతుంది.",
+  "hi": "उन्हें याद दिलाता है कि उन्होंने क्या पूछा था और पूछता है कि अब भी चाहिए या नहीं।",
+  "kn": "ಅವರು ಏನು ಕೇಳಿದ್ದರು ಎಂದು ನೆನಪಿಸಿ, ಇನ್ನೂ ಬೇಕೇ ಎಂದು ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.asks.store_visits": {
+  "en": "It asks which day suits them and offers a time.",
+  "te": "ఏ రోజు వీలవుతుందో అడిగి, ఒక టైమ్ చెబుతుంది.",
+  "hi": "पूछता है कि कौन सा दिन ठीक रहेगा और एक समय सुझाता है।",
+  "kn": "ಯಾವ ದಿನ ಅನುಕೂಲ ಎಂದು ಕೇಳಿ, ಒಂದು ಸಮಯ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.asks.offers": {
+  "en": "It tells them about the offer and asks if they want to know more.",
+  "te": "ఆఫర్ గురించి చెప్పి, ఇంకా తెలుసుకోవాలనుకుంటున్నారా అని అడుగుతుంది.",
+  "hi": "ऑफ़र के बारे में बताता है और पूछता है कि और जानना चाहेंगे या नहीं।",
+  "kn": "ಆಫರ್ ಬಗ್ಗೆ ಹೇಳಿ, ಇನ್ನಷ್ಟು ತಿಳಿಯಬೇಕೇ ಎಂದು ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.asks.researcher": {
+  "en": "It does not talk to anyone: it only finds shops and shows them to you.",
+  "te": "ఇది ఎవరితోనూ మాట్లాడదు: షాపులను వెతికి మీకు చూపిస్తుంది, అంతే.",
+  "hi": "यह किसी से बात नहीं करता: सिर्फ़ दुकानें ढूँढकर आपको दिखाता है।",
+  "kn": "ಇದು ಯಾರೊಂದಿಗೂ ಮಾತನಾಡುವುದಿಲ್ಲ: ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ ನಿಮಗೆ ತೋರಿಸುತ್ತದೆ ಅಷ್ಟೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.when.default": {
+  "en": "As set in the job",
+  "te": "జాబ్‌లో సెట్ చేసినట్లు",
+  "hi": "जॉब में जैसा सेट है",
+  "kn": "ಜಾಬ್‌ನಲ್ಲಿ ಸೆಟ್ ಮಾಡಿದಂತೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.language.default": {
+  "en": "Same as the customer",
+  "te": "కస్టమర్ మాట్లాడే భాషలోనే",
+  "hi": "ग्राहक की भाषा में ही",
+  "kn": "ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.tbd": {
+  "en": "I could not tell",
+  "te": "నాకు తెలియలేదు",
+  "hi": "मैं समझ नहीं पाया",
+  "kn": "ನನಗೆ ತಿಳಿಯಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.tbd.hint": {
+  "en": "I could not tell this one. Please choose it.",
+  "te": "ఇది నాకు తెలియలేదు. మీరే ఎంచుకోండి.",
+  "hi": "यह मैं समझ नहीं पाया। आप चुन लीजिए।",
+  "kn": "ಇದು ನನಗೆ ತಿಳಿಯಲಿಲ್ಲ. ನೀವೇ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.usual": {
+  "en": "Keep the usual",
+  "te": "మామూలుగా ఉంచండి",
+  "hi": "आम सेटिंग रखें",
+  "kn": "ಸಾಮಾನ್ಯದಂತೆ ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.yes": {
+  "en": "Yes",
+  "te": "అవును",
+  "hi": "हाँ",
+  "kn": "ಹೌದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.no": {
+  "en": "No",
+  "te": "కాదు",
+  "hi": "नहीं",
+  "kn": "ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.unclear": {
+  "en": "A few things were not clear from what you said: {list}. Please choose them yourself.",
+  "te": "మీరు చెప్పిన దాంట్లో కొన్ని స్పష్టంగా లేవు: {list}. వాటిని మీరే ఎంచుకోండి.",
+  "hi": "आपकी बात से कुछ चीज़ें साफ़ नहीं हुईं: {list}। इन्हें आप खुद चुन लीजिए।",
+  "kn": "ನೀವು ಹೇಳಿದ್ದರಲ್ಲಿ ಕೆಲವು ಸ್ಪಷ್ಟವಾಗಿಲ್ಲ: {list}. ಅವನ್ನು ನೀವೇ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.choose_first": {
+  "en": "Choose the marked ones first, then you can turn it on.",
+  "te": "గుర్తు పెట్టినవి ముందు ఎంచుకోండి, తర్వాత ఆన్ చేయవచ్చు.",
+  "hi": "पहले निशान वाले चुनिए, फिर आप इसे चालू कर सकते हैं।",
+  "kn": "ಗುರುತು ಹಾಕಿದವನ್ನು ಮೊದಲು ಆರಿಸಿ, ನಂತರ ಆನ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.on": {
+  "en": "Looks right? Turn it on",
+  "te": "సరిగ్గా ఉందా? ఆన్ చేయండి",
+  "hi": "ठीक लग रहा है? चालू करें",
+  "kn": "ಸರಿ ಅನಿಸುತ್ತದೆಯೇ? ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.turning": {
+  "en": "Turning it on…",
+  "te": "ఆన్ చేస్తున్నాం…",
+  "hi": "चालू कर रहे हैं…",
+  "kn": "ಆನ್ ಮಾಡುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.change": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.cancel": {
+  "en": "Cancel",
+  "te": "వద్దు",
+  "hi": "रद्द करें",
+  "kn": "ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tell.waiting": {
+  "en": "It needs your OK first. You will find it in Needs you on Today.",
+  "te": "ముందు మీ ఓకే కావాలి. అది ఈరోజు పేజీలో మీ నిర్ణయం కావాలి విభాగంలో ఉంటుంది.",
+  "hi": "पहले आपका OK चाहिए। यह आज पेज पर आपको देखना है वाले हिस्से में मिलेगा।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಓಕೆ ಬೇಕು. ಅದು ಇಂದು ಪುಟದ ನಿಮ್ಮ ಗಮನ ಬೇಕು ವಿಭಾಗದಲ್ಲಿ ಸಿಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.title": {
+  "en": "Get a phone number",
+  "te": "ఫోన్ నంబర్ తీసుకోండి",
+  "hi": "फ़ोन नंबर लीजिए",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.sub": {
+  "en": "Four short steps. You can stop and come back: nothing is bought until the last one.",
+  "te": "నాలుగు చిన్న స్టెప్పులు. మధ్యలో ఆపి మళ్లీ రావచ్చు: చివరి స్టెప్ వరకు ఏదీ కొనరు.",
+  "hi": "चार छोटे स्टेप। बीच में रुककर वापस आ सकते हैं: आख़िरी स्टेप तक कुछ भी नहीं ख़रीदा जाता।",
+  "kn": "ನಾಲ್ಕು ಚಿಕ್ಕ ಸ್ಟೆಪ್‌ಗಳು. ನಡುವೆ ನಿಲ್ಲಿಸಿ ಮತ್ತೆ ಬರಬಹುದು: ಕೊನೆಯ ಸ್ಟೆಪ್‌ವರೆಗೆ ಏನನ್ನೂ ಖರೀದಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s1.t": {
+  "en": "Choose a number",
+  "te": "నంబర్ ఎంచుకోండి",
+  "hi": "नंबर चुनिए",
+  "kn": "ನಂಬರ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s1.note": {
+  "en": "Mobile numbers get answered more often on call-backs.",
+  "te": "కాల్‌బ్యాక్‌లో మొబైల్ నంబర్లకు ఎక్కువసార్లు జవాబు వస్తుంది.",
+  "hi": "कॉल-बैक में मोबाइल नंबर ज़्यादा उठाए जाते हैं।",
+  "kn": "ಕಾಲ್‌ಬ್ಯಾಕ್‌ನಲ್ಲಿ ಮೊಬೈಲ್ ನಂಬರ್‌ಗಳಿಗೆ ಹೆಚ್ಚು ಉತ್ತರ ಸಿಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s2.t": {
+  "en": "Your calling account",
+  "te": "మీ కాలింగ్ అకౌంట్",
+  "hi": "आपका कॉलिंग अकाउंट",
+  "kn": "ನಿಮ್ಮ ಕಾಲಿಂಗ್ ಅಕೌಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s2.body": {
+  "en": "We ask this once and use it for every number you add later.",
+  "te": "ఇది ఒక్కసారే అడుగుతాం, తర్వాత మీరు చేర్చే ప్రతి నంబర్‌కీ వాడుతాం.",
+  "hi": "यह हम एक बार पूछते हैं और आगे जोड़े गए हर नंबर के लिए यही इस्तेमाल करते हैं।",
+  "kn": "ಇದನ್ನು ಒಮ್ಮೆ ಮಾತ್ರ ಕೇಳುತ್ತೇವೆ, ನಂತರ ನೀವು ಸೇರಿಸುವ ಪ್ರತಿ ನಂಬರ್‌ಗೂ ಬಳಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.type": {
+  "en": "Account type",
+  "te": "అకౌంట్ రకం",
+  "hi": "अकाउंट का प्रकार",
+  "kn": "ಅಕೌಂಟ್ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.type.individual": {
+  "en": "Individual",
+  "te": "వ్యక్తిగతం",
+  "hi": "व्यक्तिगत",
+  "kn": "ವೈಯಕ್ತಿಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.type.business": {
+  "en": "Business",
+  "te": "బిజినెస్",
+  "hi": "बिज़नेस",
+  "kn": "ಬಿಸಿನೆಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.name": {
+  "en": "Full name",
+  "te": "పూర్తి పేరు",
+  "hi": "पूरा नाम",
+  "kn": "ಪೂರ್ಣ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.email": {
+  "en": "Email",
+  "te": "ఈమెయిల్",
+  "hi": "ईमेल",
+  "kn": "ಇಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s2.note": {
+  "en": "You cannot change these later. Check them once.",
+  "te": "ఇవి తర్వాత మార్చలేరు. ఒకసారి చెక్ చేసుకోండి.",
+  "hi": "इन्हें बाद में बदला नहीं जा सकता। एक बार जाँच लें।",
+  "kn": "ಇವನ್ನು ನಂತರ ಬದಲಿಸಲು ಆಗುವುದಿಲ್ಲ. ಒಮ್ಮೆ ಪರಿಶೀಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.err.name": {
+  "en": "Write your full name, at least two letters.",
+  "te": "మీ పూర్తి పేరు రాయండి, కనీసం రెండు అక్షరాలు.",
+  "hi": "अपना पूरा नाम लिखिए, कम से कम दो अक्षर।",
+  "kn": "ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರು ಬರೆಯಿರಿ, ಕನಿಷ್ಠ ಎರಡು ಅಕ್ಷರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.next": {
+  "en": "Continue",
+  "te": "కొనసాగించండి",
+  "hi": "आगे बढ़ें",
+  "kn": "ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.back": {
+  "en": "Back",
+  "te": "వెనక్కి",
+  "hi": "पीछे",
+  "kn": "ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.t": {
+  "en": "Verification",
+  "te": "వెరిఫికేషన్",
+  "hi": "वेरिफ़िकेशन",
+  "kn": "ವೆರಿಫಿಕೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.head": {
+  "en": "You verify yourself after you buy.",
+  "te": "నంబర్ తీసుకున్న తర్వాత మీరే వెరిఫై చేసుకుంటారు.",
+  "hi": "नंबर लेने के बाद आप खुद वेरिफ़ाई करते हैं।",
+  "kn": "ನಂಬರ್ ಪಡೆದ ನಂತರ ನೀವೇ ವೆರಿಫೈ ಮಾಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.body": {
+  "en": "A quick check of your PAN and Aadhaar makes you, not us, the registered owner of the number. Until it is done the number cannot make calls.",
+  "te": "మీ PAN, ఆధార్ చిన్న చెక్‌తో ఆ నంబర్‌కి రిజిస్టర్డ్ ఓనర్ మీరే అవుతారు, మేము కాదు. అది పూర్తయ్యే వరకు ఆ నంబర్ నుంచి కాల్స్ చేయలేరు.",
+  "hi": "PAN और आधार की एक छोटी जाँच से उस नंबर के रजिस्टर्ड मालिक आप बनते हैं, हम नहीं। यह पूरी होने तक नंबर से कॉल नहीं हो सकते।",
+  "kn": "ನಿಮ್ಮ PAN ಮತ್ತು ಆಧಾರ್‌ನ ಸಣ್ಣ ಪರಿಶೀಲನೆಯಿಂದ ಆ ನಂಬರ್‌ನ ನೋಂದಾಯಿತ ಮಾಲೀಕರು ನೀವೇ ಆಗುತ್ತೀರಿ, ನಾವಲ್ಲ. ಅದು ಮುಗಿಯುವವರೆಗೆ ಆ ನಂಬರ್‌ನಿಂದ ಕಾಲ್ ಮಾಡಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s4.t": {
+  "en": "How you will use this number",
+  "te": "ఈ నంబర్‌ని మీరు ఎలా వాడతారు",
+  "hi": "आप इस नंबर का इस्तेमाल कैसे करेंगे",
+  "kn": "ಈ ನಂಬರ್ ಅನ್ನು ನೀವು ಹೇಗೆ ಬಳಸುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s4.ack": {
+  "en": "I will call only people who contacted me, enquired, or bought from me. I will not use bought or collected lists. I can show where each person's details came from. I am responsible for the calls I make.",
+  "te": "నన్ను సంప్రదించినవాళ్లకు, ఎంక్వైరీ చేసినవాళ్లకు, నా దగ్గర కొన్నవాళ్లకు మాత్రమే కాల్ చేస్తాను. కొన్న లేదా సేకరించిన లిస్ట్‌లు వాడను. ప్రతి వ్యక్తి వివరాలు ఎక్కడినుంచి వచ్చాయో చూపించగలను. నేను చేసే కాల్స్‌కి నేనే బాధ్యుడిని.",
+  "hi": "मैं सिर्फ़ उन्हीं को कॉल करूँगा जिन्होंने मुझसे संपर्क किया, पूछताछ की, या मुझसे खरीदा। मैं खरीदी या इकट्ठा की हुई लिस्ट इस्तेमाल नहीं करूँगा। हर व्यक्ति की जानकारी कहाँ से आई, यह मैं दिखा सकता हूँ। मैं जो कॉल करता हूँ उनकी ज़िम्मेदारी मेरी है।",
+  "kn": "ನನ್ನನ್ನು ಸಂಪರ್ಕಿಸಿದವರಿಗೆ, ಎನ್‌ಕ್ವೈರಿ ಮಾಡಿದವರಿಗೆ ಅಥವಾ ನನ್ನಿಂದ ಖರೀದಿಸಿದವರಿಗೆ ಮಾತ್ರ ಕಾಲ್ ಮಾಡುತ್ತೇನೆ. ಖರೀದಿಸಿದ ಅಥವಾ ಸಂಗ್ರಹಿಸಿದ ಲಿಸ್ಟ್‌ಗಳನ್ನು ಬಳಸುವುದಿಲ್ಲ. ಪ್ರತಿಯೊಬ್ಬರ ವಿವರ ಎಲ್ಲಿಂದ ಬಂತು ಎಂದು ತೋರಿಸಬಲ್ಲೆ. ನಾನು ಮಾಡುವ ಕಾಲ್‌ಗಳ ಜವಾಬ್ದಾರಿ ನನ್ನದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.confirm": {
+  "en": "Confirm and get this number",
+  "te": "ధృవీకరించి ఈ నంబర్ తీసుకోండి",
+  "hi": "पक्का करें और यह नंबर लें",
+  "kn": "ಖಚಿತಪಡಿಸಿ ಈ ನಂಬರ್ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.getting": {
+  "en": "Getting your number…",
+  "te": "మీ నంబర్ తీసుకుంటున్నాం…",
+  "hi": "आपका नंबर ले रहे हैं…",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್ ಪಡೆಯುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.why.kyc_required": {
+  "en": "Verify your business first to get a number in its name.",
+  "te": "మీ బిజినెస్ పేరుతో నంబర్ తీసుకోవడానికి ముందు వెరిఫై చేసుకోండి.",
+  "hi": "अपने बिज़नेस के नाम पर नंबर लेने के लिए पहले उसे वेरिफ़ाई करें।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಹೆಸರಿನಲ್ಲಿ ನಂಬರ್ ಪಡೆಯಲು ಮೊದಲು ಅದನ್ನು ವೆರಿಫೈ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.title": {
+  "en": "Verify your business",
+  "te": "మీ బిజినెస్‌ని వెరిఫై చేయండి",
+  "hi": "अपना बिज़नेस वेरिफ़ाई करें",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ವೆರಿಫೈ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.sub.none": {
+  "en": "Verify before you get a number.",
+  "te": "నంబర్ తీసుకునే ముందు వెరిఫై చేయండి.",
+  "hi": "नंबर लेने से पहले वेरिफ़ाई करें।",
+  "kn": "ನಂಬರ್ ಪಡೆಯುವ ಮುನ್ನ ವೆರಿಫೈ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.test": {
+  "en": "Test screen: nothing is sent and no document leaves this page.",
+  "te": "టెస్ట్ స్క్రీన్: ఏదీ పంపరు, ఏ డాక్యుమెంట్ ఈ పేజీ దాటి వెళ్లదు.",
+  "hi": "टेस्ट स्क्रीन: कुछ भी भेजा नहीं जाता और कोई डॉक्यूमेंट इस पेज से बाहर नहीं जाता।",
+  "kn": "ಟೆಸ್ಟ್ ಸ್ಕ್ರೀನ್: ಏನನ್ನೂ ಕಳಿಸುವುದಿಲ್ಲ, ಯಾವ ಡಾಕ್ಯುಮೆಂಟ್ ಕೂಡ ಈ ಪುಟ ಬಿಟ್ಟು ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.blocked": {
+  "en": "This number cannot make calls until you finish. Calls to it are answered already.",
+  "te": "మీరు పూర్తి చేసే వరకు ఈ నంబర్ నుంచి కాల్స్ చేయలేరు. దానికి వచ్చే కాల్స్‌కి ఇప్పటికే జవాబిస్తున్నాం.",
+  "hi": "जब तक आप पूरा नहीं करते, इस नंबर से कॉल नहीं हो सकते। इस पर आने वाले कॉल का जवाब अभी भी दिया जाता है।",
+  "kn": "ನೀವು ಮುಗಿಸುವವರೆಗೆ ಈ ನಂಬರ್‌ನಿಂದ ಕಾಲ್ ಮಾಡಲು ಆಗುವುದಿಲ್ಲ. ಇದಕ್ಕೆ ಬರುವ ಕಾಲ್‌ಗಳಿಗೆ ಈಗಲೇ ಉತ್ತರಿಸಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.nonumber": {
+  "en": "Do this first, then choose your number. It takes about five minutes.",
+  "te": "ముందు ఇది చేయండి, తర్వాత మీ నంబర్ ఎంచుకోండి. సుమారు ఐదు నిమిషాలు పడుతుంది.",
+  "hi": "पहले यह करें, फिर अपना नंबर चुनें। इसमें करीब पाँच मिनट लगते हैं।",
+  "kn": "ಮೊದಲು ಇದನ್ನು ಮಾಡಿ, ನಂತರ ನಿಮ್ಮ ನಂಬರ್ ಆರಿಸಿ. ಸುಮಾರು ಐದು ನಿಮಿಷ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.verified": {
+  "en": "Your business is verified.",
+  "te": "మీ బిజినెస్ వెరిఫై అయింది.",
+  "hi": "आपका बिज़नेस वेरिफ़ाई हो गया है।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ವೆರಿಫೈ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s1.t": {
+  "en": "Number chosen",
+  "te": "నంబర్ ఎంచుకున్నారు",
+  "hi": "नंबर चुन लिया",
+  "kn": "ನಂಬರ್ ಆರಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s1.todo": {
+  "en": "Choose a number",
+  "te": "నంబర్ ఎంచుకోండి",
+  "hi": "नंबर चुनिए",
+  "kn": "ನಂಬರ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s1.body": {
+  "en": "{number} is yours.",
+  "te": "{number} మీది.",
+  "hi": "{number} आपका है।",
+  "kn": "{number} ನಿಮ್ಮದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s1.link": {
+  "en": "Choose a number",
+  "te": "నంబర్ ఎంచుకోండి",
+  "hi": "नंबर चुनिए",
+  "kn": "ನಂಬರ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s2.t": {
+  "en": "Calling account",
+  "te": "కాలింగ్ అకౌంట్",
+  "hi": "कॉलिंग अकाउंट",
+  "kn": "ಕಾಲಿಂಗ್ ಅಕೌಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s3.t": {
+  "en": "Verify with PAN and Aadhaar",
+  "te": "PAN, ఆధార్‌తో వెరిఫై చేయండి",
+  "hi": "PAN और आधार से वेरिफ़ाई करें",
+  "kn": "PAN ಮತ್ತು ಆಧಾರ್‌ನಿಂದ ವೆರಿಫೈ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s3.body": {
+  "en": "It takes about five minutes. You need your PAN card and your phone for the Aadhaar code.",
+  "te": "సుమారు ఐదు నిమిషాలు పడుతుంది. మీ PAN కార్డ్, ఆధార్ కోడ్ కోసం మీ ఫోన్ కావాలి.",
+  "hi": "इसमें करीब पाँच मिनट लगते हैं। आपको PAN कार्ड और आधार कोड के लिए अपना फ़ोन चाहिए।",
+  "kn": "ಸುಮಾರು ಐದು ನಿಮಿಷ ಬೇಕು. ನಿಮ್ಮ PAN ಕಾರ್ಡ್ ಮತ್ತು ಆಧಾರ್ ಕೋಡ್‌ಗಾಗಿ ನಿಮ್ಮ ಫೋನ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s3.body.business": {
+  "en": "It takes about ten minutes. You need your PAN card, your GST number and certificate, and your phone for the Aadhaar code.",
+  "te": "సుమారు పది నిమిషాలు పడుతుంది. మీ PAN కార్డ్, GST నంబర్, సర్టిఫికెట్, ఆధార్ కోడ్ కోసం మీ ఫోన్ కావాలి.",
+  "hi": "इसमें करीब दस मिनट लगते हैं। आपको PAN कार्ड, GST नंबर और सर्टिफ़िकेट, और आधार कोड के लिए अपना फ़ोन चाहिए।",
+  "kn": "ಸುಮಾರು ಹತ್ತು ನಿಮಿಷ ಬೇಕು. ನಿಮ್ಮ PAN ಕಾರ್ಡ್, GST ನಂಬರ್ ಮತ್ತು ಸರ್ಟಿಫಿಕೇಟ್, ಆಧಾರ್ ಕೋಡ್‌ಗಾಗಿ ನಿಮ್ಮ ಫೋನ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s4.t": {
+  "en": "Ready to call",
+  "te": "కాల్ చేయడానికి రెడీ",
+  "hi": "कॉल करने के लिए तैयार",
+  "kn": "ಕಾಲ್ ಮಾಡಲು ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s4.body": {
+  "en": "It is ready to call when the check is done. We show it here.",
+  "te": "చెక్ పూర్తయ్యాక కాల్ చేయడానికి రెడీ అవుతుంది. అది ఇక్కడ చూపిస్తాం.",
+  "hi": "जाँच पूरी होने पर यह कॉल के लिए तैयार हो जाता है। हम इसे यहीं दिखाएँगे।",
+  "kn": "ಪರಿಶೀಲನೆ ಮುಗಿದ ಮೇಲೆ ಕಾಲ್ ಮಾಡಲು ಸಿದ್ಧವಾಗುತ್ತದೆ. ಅದನ್ನು ಇಲ್ಲಿ ತೋರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s4.checking": {
+  "en": "We are checking it. This page updates by itself.",
+  "te": "చెక్ చేస్తున్నాం. ఈ పేజీ దానంతట అదే అప్‌డేట్ అవుతుంది.",
+  "hi": "हम जाँच रहे हैं। यह पेज अपने आप अपडेट होता है।",
+  "kn": "ಪರಿಶೀಲಿಸುತ್ತಿದ್ದೇವೆ. ಈ ಪುಟ ತಾನಾಗಿ ಅಪ್‌ಡೇಟ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.s4.done": {
+  "en": "Done. Your business is verified.",
+  "te": "అయిపోయింది. మీ బిజినెస్ వెరిఫై అయింది.",
+  "hi": "हो गया। आपका बिज़नेस वेरिफ़ाई हो गया है।",
+  "kn": "ಮುಗಿಯಿತು. ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ವೆರಿಫೈ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.chip.waiting": {
+  "en": "Waiting for you",
+  "te": "మీ కోసం ఆగుతోంది",
+  "hi": "आपका इंतज़ार है",
+  "kn": "ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.chip.checking": {
+  "en": "We are checking it",
+  "te": "చెక్ చేస్తున్నాం",
+  "hi": "हम जाँच रहे हैं",
+  "kn": "ಪರಿಶೀಲಿಸುತ್ತಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.chip.done": {
+  "en": "Verified",
+  "te": "వెరిఫై అయింది",
+  "hi": "वेरिफ़ाई हो गया",
+  "kn": "ವೆರಿಫೈ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.chip.stuck": {
+  "en": "Our team has been told",
+  "te": "మా టీమ్‌కి చెప్పాం",
+  "hi": "हमारी टीम को बता दिया गया है",
+  "kn": "ನಮ್ಮ ಟೀಮ್‌ಗೆ ತಿಳಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.start": {
+  "en": "Start verification",
+  "te": "వెరిఫికేషన్ మొదలుపెట్టండి",
+  "hi": "वेरिफ़िकेशन शुरू करें",
+  "kn": "ವೆರಿಫಿಕೇಶನ್ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.save": {
+  "en": "Save and continue",
+  "te": "సేవ్ చేసి కొనసాగించండి",
+  "hi": "सेव करके आगे बढ़ें",
+  "kn": "ಸೇವ್ ಮಾಡಿ ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.send": {
+  "en": "Send",
+  "te": "పంపండి",
+  "hi": "भेजें",
+  "kn": "ಕಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.submit": {
+  "en": "Send for checking",
+  "te": "చెక్ కోసం పంపండి",
+  "hi": "जाँच के लिए भेजें",
+  "kn": "ಪರಿಶೀಲನೆಗೆ ಕಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.uploaded": {
+  "en": "Uploaded",
+  "te": "అప్‌లోడ్ అయింది",
+  "hi": "अपलोड हो गया",
+  "kn": "ಅಪ್‌ಲೋಡ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.kept": {
+  "en": "Your documents go to the phone service to be checked. We do not keep them or your PAN and GST numbers.",
+  "te": "మీ డాక్యుమెంట్లు చెక్ చేయడానికి ఫోన్ సర్వీస్‌కి వెళ్తాయి. వాటిని, మీ PAN, GST నంబర్లను మేము దాచుకోము.",
+  "hi": "आपके डॉक्यूमेंट जाँच के लिए फ़ोन सेवा के पास जाते हैं। हम उन्हें और आपके PAN व GST नंबर को अपने पास नहीं रखते।",
+  "kn": "ನಿಮ್ಮ ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳು ಪರಿಶೀಲನೆಗಾಗಿ ಫೋನ್ ಸೇವೆಗೆ ಹೋಗುತ್ತವೆ. ಅವನ್ನು ಮತ್ತು ನಿಮ್ಮ PAN, GST ನಂಬರ್‌ಗಳನ್ನು ನಾವು ಇಟ್ಟುಕೊಳ್ಳುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.missing": {
+  "en": "Still missing: {list}.",
+  "te": "ఇంకా కావాల్సినవి: {list}.",
+  "hi": "अभी बाकी हैं: {list}।",
+  "kn": "ಇನ್ನೂ ಬೇಕಾದವು: {list}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.business": {
+  "en": "Business name",
+  "te": "బిజినెస్ పేరు",
+  "hi": "बिज़नेस का नाम",
+  "kn": "ಬಿಸಿನೆಸ್ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.phone": {
+  "en": "Phone number",
+  "te": "ఫోన్ నంబర్",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.address": {
+  "en": "Billing address",
+  "te": "బిల్లింగ్ అడ్రస్",
+  "hi": "बिलिंग पता",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.city": {
+  "en": "City",
+  "te": "నగరం",
+  "hi": "शहर",
+  "kn": "ನಗರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.state": {
+  "en": "State",
+  "te": "రాష్ట్రం",
+  "hi": "राज्य",
+  "kn": "ರಾಜ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.pin": {
+  "en": "PIN code",
+  "te": "పిన్ కోడ్",
+  "hi": "पिन कोड",
+  "kn": "ಪಿನ್ ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.terms": {
+  "en": "I agree to the terms of the phone service.",
+  "te": "ఫోన్ సర్వీస్ నిబంధనలకు నేను ఒప్పుకుంటున్నాను.",
+  "hi": "मैं फ़ोन सेवा की शर्तों से सहमत हूँ।",
+  "kn": "ಫೋನ್ ಸೇವೆಯ ನಿಯಮಗಳಿಗೆ ನಾನು ಒಪ್ಪುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.pan": {
+  "en": "PAN number",
+  "te": "PAN నంబర్",
+  "hi": "PAN नंबर",
+  "kn": "PAN ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.holder": {
+  "en": "Name on the PAN card",
+  "te": "PAN కార్డ్‌లో ఉన్న పేరు",
+  "hi": "PAN कार्ड पर लिखा नाम",
+  "kn": "PAN ಕಾರ್ಡ್‌ನಲ್ಲಿರುವ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.holder.hint": {
+  "en": "Type it exactly as on the card.",
+  "te": "కార్డ్‌లో ఉన్నట్లే టైప్ చేయండి.",
+  "hi": "कार्ड पर जैसा लिखा है वैसा ही टाइप करें।",
+  "kn": "ಕಾರ್ಡ್‌ನಲ್ಲಿ ಇರುವಂತೆಯೇ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.gst": {
+  "en": "GST number",
+  "te": "GST నంబర్",
+  "hi": "GST नंबर",
+  "kn": "GST ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.gst.hint": {
+  "en": "15 characters",
+  "te": "15 అక్షరాలు",
+  "hi": "15 अक्षर",
+  "kn": "15 ಅಕ್ಷರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.doc.pan": {
+  "en": "PAN card",
+  "te": "PAN కార్డ్",
+  "hi": "PAN कार्ड",
+  "kn": "PAN ಕಾರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.doc.pan.file": {
+  "en": "PAN card photo or PDF",
+  "te": "PAN కార్డ్ ఫోటో లేదా PDF",
+  "hi": "PAN कार्ड की फ़ोटो या PDF",
+  "kn": "PAN ಕಾರ್ಡ್ ಫೋಟೋ ಅಥವಾ PDF",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.doc.aadhaar": {
+  "en": "Aadhaar",
+  "te": "ఆధార్",
+  "hi": "आधार",
+  "kn": "ಆಧಾರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.doc.aadhaar.file": {
+  "en": "Aadhaar file (photo or PDF)",
+  "te": "ఆధార్ ఫైల్ (ఫోటో లేదా PDF)",
+  "hi": "आधार फ़ाइल (फ़ोटो या PDF)",
+  "kn": "ಆಧಾರ್ ಫೈಲ್ (ಫೋಟೋ ಅಥವಾ PDF)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.doc.gst": {
+  "en": "GST certificate",
+  "te": "GST సర్టిఫికెట్",
+  "hi": "GST सर्टिफ़िकेट",
+  "kn": "GST ಸರ್ಟಿಫಿಕೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.doc.gst.file": {
+  "en": "GST certificate (photo or PDF)",
+  "te": "GST సర్టిఫికెట్ (ఫోటో లేదా PDF)",
+  "hi": "GST सर्टिफ़िकेट (फ़ोटो या PDF)",
+  "kn": "GST ಸರ್ಟಿಫಿಕೇಟ್ (ಫೋಟೋ ಅಥವಾ PDF)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.file.hint": {
+  "en": "A clear photo or PDF, up to 10 MB.",
+  "te": "స్పష్టమైన ఫోటో లేదా PDF, 10 MB వరకు.",
+  "hi": "साफ़ फ़ोटो या PDF, 10 MB तक।",
+  "kn": "ಸ್ಪಷ್ಟ ಫೋಟೋ ಅಥವಾ PDF, 10 MB ವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.aadhaar.body": {
+  "en": "Aadhaar is checked through DigiLocker. Open the link on your own phone: it is you who confirms it, not us.",
+  "te": "ఆధార్‌ని డిజిలాకర్ ద్వారా చెక్ చేస్తారు. లింక్‌ని మీ సొంత ఫోన్‌లో తెరవండి: ధృవీకరించేది మీరే, మేము కాదు.",
+  "hi": "आधार की जाँच डिजिलॉकर से होती है। लिंक अपने ही फ़ोन पर खोलें: पक्का आप करते हैं, हम नहीं।",
+  "kn": "ಆಧಾರ್ ಅನ್ನು ಡಿಜಿಲಾಕರ್ ಮೂಲಕ ಪರಿಶೀಲಿಸುತ್ತಾರೆ. ಲಿಂಕ್ ಅನ್ನು ನಿಮ್ಮ ಸ್ವಂತ ಫೋನ್‌ನಲ್ಲಿ ತೆರೆಯಿರಿ: ಖಚಿತಪಡಿಸುವವರು ನೀವೇ, ನಾವಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.aadhaar.get": {
+  "en": "Get the DigiLocker link",
+  "te": "డిజిలాకర్ లింక్ తీసుకోండి",
+  "hi": "डिजिलॉकर लिंक लें",
+  "kn": "ಡಿಜಿಲಾಕರ್ ಲಿಂಕ್ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.aadhaar.open": {
+  "en": "Open the DigiLocker link",
+  "te": "డిజిలాకర్ లింక్ తెరవండి",
+  "hi": "डिजिलॉकर लिंक खोलें",
+  "kn": "ಡಿಜಿಲಾಕರ್ ಲಿಂಕ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.aadhaar.copy": {
+  "en": "Copy the link",
+  "te": "లింక్ కాపీ చేయండి",
+  "hi": "लिंक कॉपी करें",
+  "kn": "ಲಿಂಕ್ ಕಾಪಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.unavailable": {
+  "en": "We could not reach the verification service. Please try again in a few minutes.",
+  "te": "వెరిఫికేషన్ సర్వీస్‌కి కనెక్ట్ కాలేకపోయాం. కొన్ని నిమిషాల్లో మళ్లీ ప్రయత్నించండి.",
+  "hi": "वेरिफ़िकेशन सेवा से कनेक्ट नहीं हो पाए। कुछ मिनट बाद फिर कोशिश करें।",
+  "kn": "ವೆರಿಫಿಕೇಶನ್ ಸೇವೆಗೆ ಕನೆಕ್ಟ್ ಆಗಲಿಲ್ಲ. ಕೆಲವು ನಿಮಿಷಗಳ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.email_in_use": {
+  "en": "That e-mail address is already used for another phone-service account. Please contact us.",
+  "te": "ఆ ఈమెయిల్ ఇప్పటికే వేరే ఫోన్ సర్వీస్ అకౌంట్‌కి వాడారు. మమ్మల్ని సంప్రదించండి.",
+  "hi": "वह ईमेल पहले से किसी दूसरे फ़ोन सेवा अकाउंट में इस्तेमाल हो रहा है। कृपया हमसे संपर्क करें।",
+  "kn": "ಆ ಇಮೇಲ್ ಈಗಾಗಲೇ ಬೇರೊಂದು ಫೋನ್ ಸೇವೆಯ ಅಕೌಂಟ್‌ಗೆ ಬಳಕೆಯಾಗಿದೆ. ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.pan_mismatch": {
+  "en": "The name does not match the PAN card. Type it exactly as on the card.",
+  "te": "పేరు PAN కార్డ్‌తో సరిపోలలేదు. కార్డ్‌లో ఉన్నట్లే టైప్ చేయండి.",
+  "hi": "नाम PAN कार्ड से मेल नहीं खाता। कार्ड पर जैसा लिखा है वैसा ही टाइप करें।",
+  "kn": "ಹೆಸರು PAN ಕಾರ್ಡ್‌ಗೆ ಹೊಂದುತ್ತಿಲ್ಲ. ಕಾರ್ಡ್‌ನಲ್ಲಿ ಇರುವಂತೆಯೇ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.pan_invalid": {
+  "en": "That PAN is not valid. Check the ten characters and try again.",
+  "te": "ఆ PAN సరైనది కాదు. పది అక్షరాలు చెక్ చేసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "वह PAN सही नहीं है। दस अक्षर जाँचकर फिर कोशिश करें।",
+  "kn": "ಆ PAN ಸರಿಯಿಲ್ಲ. ಹತ್ತು ಅಕ್ಷರ ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.gst_invalid": {
+  "en": "That GST number could not be verified. Check the 15 characters and try again.",
+  "te": "ఆ GST నంబర్‌ని వెరిఫై చేయలేకపోయాం. 15 అక్షరాలు చెక్ చేసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "वह GST नंबर वेरिफ़ाई नहीं हो पाया। 15 अक्षर जाँचकर फिर कोशिश करें।",
+  "kn": "ಆ GST ನಂಬರ್ ಅನ್ನು ವೆರಿಫೈ ಮಾಡಲು ಆಗಲಿಲ್ಲ. 15 ಅಕ್ಷರ ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.step_order": {
+  "en": "Please finish the earlier step first.",
+  "te": "ముందు ఇంతకుముందు స్టెప్ పూర్తి చేయండి.",
+  "hi": "पहले पिछला स्टेप पूरा करें।",
+  "kn": "ಮೊದಲು ಹಿಂದಿನ ಸ್ಟೆಪ್ ಮುಗಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.file_unreadable": {
+  "en": "The file could not be read. Please upload a clear photo or PDF (up to 10 MB).",
+  "te": "ఫైల్ చదవలేకపోయాం. స్పష్టమైన ఫోటో లేదా PDF అప్‌లోడ్ చేయండి (10 MB వరకు).",
+  "hi": "फ़ाइल पढ़ी नहीं जा सकी। साफ़ फ़ोटो या PDF अपलोड करें (10 MB तक)।",
+  "kn": "ಫೈಲ್ ಓದಲು ಆಗಲಿಲ್ಲ. ಸ್ಪಷ್ಟ ಫೋಟೋ ಅಥವಾ PDF ಅಪ್‌ಲೋಡ್ ಮಾಡಿ (10 MB ವರೆಗೆ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.file_too_big": {
+  "en": "That file is bigger than 10 MB.",
+  "te": "ఆ ఫైల్ 10 MB కంటే పెద్దది.",
+  "hi": "वह फ़ाइल 10 MB से बड़ी है।",
+  "kn": "ಆ ಫೈಲ್ 10 MB ಗಿಂತ ದೊಡ್ಡದಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.missing_documents": {
+  "en": "Some documents are still missing.",
+  "te": "కొన్ని డాక్యుమెంట్లు ఇంకా లేవు.",
+  "hi": "कुछ डॉक्यूमेंट अभी बाकी हैं।",
+  "kn": "ಕೆಲವು ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳು ಇನ್ನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.refused": {
+  "en": "That could not be saved. Please check the details and try again.",
+  "te": "అది సేవ్ కాలేదు. వివరాలు చెక్ చేసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह सेव नहीं हो पाया। जानकारी जाँचकर फिर कोशिश करें।",
+  "kn": "ಅದು ಸೇವ್ ಆಗಲಿಲ್ಲ. ವಿವರ ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.not_started": {
+  "en": "Start the verification first.",
+  "te": "ముందు వెరిఫికేషన్ మొదలుపెట్టండి.",
+  "hi": "पहले वेरिफ़िकेशन शुरू करें।",
+  "kn": "ಮೊದಲು ವೆರಿಫಿಕೇಶನ್ ಶುರು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.err.stuck": {
+  "en": "We could not finish. Our team has been told; your details are kept as they were.",
+  "te": "పూర్తి చేయలేకపోయాం. మా టీమ్‌కి చెప్పాం; మీ వివరాలు అలాగే ఉన్నాయి.",
+  "hi": "हम इसे पूरा नहीं कर पाए। हमारी टीम को बता दिया गया है; आपकी जानकारी जैसी थी वैसी ही है।",
+  "kn": "ಮುಗಿಸಲು ಆಗಲಿಲ್ಲ. ನಮ್ಮ ಟೀಮ್‌ಗೆ ತಿಳಿಸಲಾಗಿದೆ; ನಿಮ್ಮ ವಿವರಗಳು ಹಾಗೆಯೇ ಇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
