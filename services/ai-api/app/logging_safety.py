@@ -199,6 +199,7 @@ ROUTE_WORDS = frozenset(
         "voice", "research", "places", "business-profile", "ready", "metrics",
         # job BZ: connectors and webhooks (a secret in an address is never a word: always redacted)
         "connectors", "payment-links", "send", "record",
+        "crm", "retry",   # results into a business's own CRM or sheet (25 Nov 2026)
         "missed-calls", "handle", "connect",
         "razorpay", "cashfree", "fake-payments", "exotel", "missed-call", "call-status",
         "plivo", "outbound-answer", "place", "test-numbers",

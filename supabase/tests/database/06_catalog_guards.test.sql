@@ -507,6 +507,7 @@ select is(
         'app.today_templates_needing_change',   -- Needs you (migration 20261231986800): a message WhatsApp sent back, for the Owner and Admin   -- Needs you (migration 20261228100000): a school's overdue fees as a count and a total, for its Owner and Admin
         'app.today_credits_low',   -- Needs you (migration 20261231992210): the balance is under about 4 minutes of calls, Owner and Admin only
         'app.today_phone_needs_prices',   -- Needs you (migration 20261231989000): a phone line with no price list, Owner and Admin only
+        'app.today_crm_push_failing',   -- Needs you (migration 20261231992330): a connected CRM or sheet gave up on a result, Owner and Admin only
         'app.today_calls_paused',   -- Needs you: outbound calls paused after 2 stops in 10 days (migration 20261231987300); answers the caller's own workspace, Owner and Admin only
         -- the own-voice bucket's storage rules are evaluated as the caller, who must be able to run this one (job DP part 5)
         'app.ovc_bucket_tenant')),
