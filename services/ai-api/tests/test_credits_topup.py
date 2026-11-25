@@ -636,3 +636,15 @@ def test_the_invoice_mail_needs_a_sender_and_an_address() -> None:
     client2.post(f"{CR}/topups/{o2['order_id']}/confirm", json={"payment_id": "pay_MAIL003", "signature": sign(o2["order_id"], "pay_MAIL003")}, headers=auth("a_owner"))   # a token without an address: nothing is mailed
     assert mail.sent == []
     assert client2.post(f"{URL}/gst-invoices/{ledger2.invoices[0]}/email", headers=auth("a_owner")).json()["error"]["code"] == "mail_unavailable"
+
+
+def test_the_dev_outbox_shows_what_the_fake_sender_was_asked_to_send() -> None:
+    from app.billing.mail import FakeEmailSender
+
+    mail = FakeEmailSender()
+    client, _, _ = world(mail=mail)
+    o = make_order(client, 1000)
+    client.post(f"{CR}/topups/{o['order_id']}/confirm", json={"payment_id": "pay_DEV0001", "signature": sign(o["order_id"], "pay_DEV0001")}, headers=auth("a_owner", email="o@example.test"))
+    seen = client.get("/v1/dev/outbox", headers=auth("a_owner")).json()
+    assert [m["to"] for m in seen["emails"]] == ["o@example.test"] and "receipt" in seen["emails"][0]["subject"].lower()
+    assert client.get("/v1/dev/outbox").status_code == 401

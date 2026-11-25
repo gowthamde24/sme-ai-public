@@ -1628,6 +1628,10 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(signup_router)
     app.include_router(signup_claim_router)
     app.include_router(credits_router)
+    if settings.is_development:   # what the fake e-mail sender was asked to send (local look only)
+        from app.devtools import router as dev_router
+
+        app.include_router(dev_router)
     app.include_router(credits_admin_router)
     app.include_router(admin_router)
     app.include_router(admin_tenant_router)
