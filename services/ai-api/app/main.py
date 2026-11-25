@@ -389,7 +389,7 @@ def _signup_service(settings: Settings, config: AuthConfig) -> SignupService | N
 
         sms = build_sms_sender(settings.sms_provider)
         if isinstance(sms, NoSms):
-            raise RuntimeError("SIGNUP_PHONE_SENDER=sms needs SMS_PROVIDER (fake until a gateway is built)")
+            raise RuntimeError("SIGNUP_PHONE_SENDER=sms needs SMS_PROVIDER=fake")
         sender = SmsCodeSender(sms)
     elif settings.signup_phone_sender == "whatsapp":
         token = settings.signup_whatsapp_token

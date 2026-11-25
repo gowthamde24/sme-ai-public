@@ -163,7 +163,8 @@ class Settings(BaseSettings):
     # go through the database; leave off while the API has one instance (max-instances 1)
     call_coordination: bool = False
     signup_phone_sender: str = "none"   # none | fake | whatsapp | sms
-    # SMS (app/sms): off | fake. No real gateway is built yet (India's DLT sender id and templates come first).
+    # SMS (app/sms): off | fake. No real gateway yet (India's DLT sender id and
+    # templates come first).
     sms_provider: str = "off"
     # the WhatsApp sender (SIGNUP_PHONE_SENDER=whatsapp): Stack19's OWN number id, an approved
     # Authentication template and a token (secret) that may send from it

@@ -3,7 +3,14 @@
 import pytest
 
 from app.signup.sender import PhoneCodeUnavailable
-from app.sms.sender import FakeSms, NoSms, SmsCodeSender, SmsMessage, SmsUnavailable, build_sms_sender
+from app.sms.sender import (
+    FakeSms,
+    NoSms,
+    SmsCodeSender,
+    SmsMessage,
+    SmsUnavailable,
+    build_sms_sender,
+)
 
 
 def test_off_cannot_send_and_fake_keeps_the_message() -> None:
@@ -33,7 +40,8 @@ def test_a_bad_number_or_text_is_refused_before_any_gateway() -> None:
 
 
 def test_the_builder_knows_only_off_and_fake() -> None:
-    assert isinstance(build_sms_sender("off"), NoSms) and isinstance(build_sms_sender("fake"), FakeSms)
+    assert isinstance(build_sms_sender("off"), NoSms)
+    assert isinstance(build_sms_sender("fake"), FakeSms)
     with pytest.raises(ValueError):
         build_sms_sender("twilio")
 
