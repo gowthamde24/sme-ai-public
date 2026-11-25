@@ -6,7 +6,7 @@ Roles: **import and preview** = Owner, Admin, Sales; **the consent confirmation*
 Synthetic data only while the workspace's real-data gate is closed: a real number or e-mail is refused row by row with `reason:"real_data_gate"` (nothing else changes).
 
 ## 0. The source tags (`leads.source`, exact strings; the cost table and the reports use the same)
-`indiamart` `justdial` `99acres` `magicbricks` `housing` `meta_lead_ads` `website_form` `webhook` `excel_upload` `google_sheet` `pasted_list` `vcard`
+`indiamart` `justdial` `99acres` `magicbricks` `housing` `sulekha` `tradeindia` `meta_lead_ads` `website_form` `webhook` `excel_upload` `google_sheet` `pasted_list` `vcard`
 Every import and every live source writes exactly one of these into `leads.source` (text). The Source cost table (A3) is keyed by the same strings.
 
 ## 1. Bulk: file, Google Sheet, pasted list, vCard (Owner, Admin, Sales)

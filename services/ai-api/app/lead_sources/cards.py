@@ -9,7 +9,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 ORDER = ("website", "missed_calls", "meta", "click_to_whatsapp", "indiamart", "email_forward", "google_ads", "sheets", "files", "whatsapp")
-EMAIL_TAGS = ("email_forward", "justdial", "99acres", "magicbricks", "housing")
+EMAIL_TAGS = ("email_forward", "justdial", "sulekha", "tradeindia", "99acres", "magicbricks", "housing")
 WEBSITE_TAGS = ("website_form", "webhook")
 FILE_TAGS = ("excel_upload", "google_sheet", "pasted_list", "vcard")
 TITLES = {
@@ -43,7 +43,7 @@ CODES: dict[str, str] = {
     "Connect it in Integrations: new chats become leads by themselves": "detail.wa_connect_in_integrations",
     "Connect WhatsApp first: then a chat that starts from your Instagram or Facebook ad becomes a lead": "detail.ctwa_connect_wa_first",
     "Paste the link of a Google Sheet: every new row becomes a lead": "detail.sheets_paste_link",
-    "Facebook and Instagram lead ads will connect here.": "off.meta", "Paste your IndiaMART key here.": "off.indiamart", "Forward your portal e-mails here. Ask us to switch this on.": "off.email_forward",
+    "Facebook and Instagram lead ads will connect here.": "off.meta", "Paste your IndiaMART key here.": "off.indiamart", "Your portal leads arrive here by e-mail. Ask us to switch this on.": "off.email_forward",
     "A form for your website. Ask us to switch this on.": "off.website", "Missed calls become leads when phone calls are switched on.": "off.missed_calls",
     "Leads from your Google Ads lead forms. Ask us to switch this on.": "off.google_ads",
     "This is paused, so no new leads come in.": "problem.source_paused",
@@ -175,7 +175,7 @@ def build_cards(sources: list[dict[str, Any]], stats: dict[str, Any], available:
         received, last = _count(stats, ("indiamart",))
         problem = {"code": "key_expired", "message": "IndiaMART no longer accepts your key, so no new leads are coming in. A key lasts 7 days: paste a new one and they start again.", "fix": _action("paste_key", "Paste your IndiaMART key")}
         cards["indiamart"] = _card("indiamart", "needs_attention", "Needs a new key", None, received, last, _action("paste_key", "Paste your IndiaMART key"), problem=problem, total=_total(stats, ("indiamart",)))
-    cards["email_forward"] = _source_card("email_forward", sources, ("email_forward",), EMAIL_TAGS, stats, now, on=available.email_forward, off_label="Forward your portal e-mails here. Ask us to switch this on.", connect=_action("copy_address", "Copy your address"), resume_label="Turn back on")
+    cards["email_forward"] = _source_card("email_forward", sources, ("email_forward",), EMAIL_TAGS, stats, now, on=available.email_forward, off_label="Your portal leads arrive here by e-mail. Ask us to switch this on.", connect=_action("copy_address", "Copy your address"), resume_label="Turn back on")
     cards["website"] = _source_card("website", sources, ("website_form", "webhook"), WEBSITE_TAGS, stats, now, on=available.website, off_label="A form for your website. Ask us to switch this on.", connect=_action("copy_snippet", "Copy the form"), resume_label="Turn back on")
 
     received, last = _count(stats, FILE_TAGS)

@@ -129,10 +129,10 @@ describe("Lead source cards", () => {
     reply = (b) => (b.op === "email" ? { ok: true, data: { address: b.rotate ? "new@leads.test" : "old@leads.test", guide: [{ step: 1, text: "Open Gmail" }], portals: [] } } : { ok: true, data: CARDS });
     show();
     fireEvent.click(within(card("email_forward")).getByRole("button", { name: "Get your address" }));
-    expect(((await screen.findByLabelText("Your forwarding address")) as HTMLInputElement).value).toBe("old@leads.test");
+    expect(((await screen.findByLabelText("Your lead e-mail address")) as HTMLInputElement).value).toBe("old@leads.test");
     expect(screen.getByText("Open Gmail")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: /Make a new address/ }));
-    await waitFor(() => expect((screen.getByLabelText("Your forwarding address") as HTMLInputElement).value).toBe("new@leads.test"));
+    await waitFor(() => expect((screen.getByLabelText("Your lead e-mail address") as HTMLInputElement).value).toBe("new@leads.test"));
   });
   it("website: the snippet and the ready form link", async () => {
     reply = (b) => (b.op === "website" ? { ok: true, data: { snippet: "<script src=x></script>", formLink: "https://f.test/1" } } : { ok: true, data: CARDS });

@@ -49,7 +49,7 @@ export interface ImportIn {
   sheet_url?: string | null;
   use_ai?: boolean;
   mapping?: Record<string, number> | null;
-  source?: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "meta_lead_ads" | "website_form" | "webhook" | "email_forward" | "excel_upload" | "google_sheet" | "pasted_list" | "vcard" | "lead_finder" | "missed_calls" | "google_ads" | null;
+  source?: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "sulekha" | "tradeindia" | "meta_lead_ads" | "website_form" | "webhook" | "email_forward" | "excel_upload" | "google_sheet" | "pasted_list" | "vcard" | "lead_finder" | "missed_calls" | "google_ads" | null;
   consent_confirmed?: boolean;
   import_id: string;
   consent?: ConsentIn | null;
@@ -115,7 +115,7 @@ export interface PreviewIn {
   sheet_url?: string | null;
   use_ai?: boolean;
   mapping?: Record<string, number> | null;
-  source?: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "meta_lead_ads" | "website_form" | "webhook" | "email_forward" | "excel_upload" | "google_sheet" | "pasted_list" | "vcard" | "lead_finder" | "missed_calls" | "google_ads" | null;
+  source?: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "sulekha" | "tradeindia" | "meta_lead_ads" | "website_form" | "webhook" | "email_forward" | "excel_upload" | "google_sheet" | "pasted_list" | "vcard" | "lead_finder" | "missed_calls" | "google_ads" | null;
   consent_confirmed?: boolean;
 }
 
@@ -204,7 +204,7 @@ export interface SourceCreate {
   source_id: string;
   kind: "website_form" | "webhook" | "email_forward" | "meta_lead_ads" | "indiamart" | "missed_calls" | "google_ads";
   label: string;
-  portal?: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | null;
+  portal?: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "sulekha" | "tradeindia" | null;
   consent?: ConsentIn | null;
   cost_per_lead_paise?: number | null;
 }
@@ -212,7 +212,7 @@ export interface SourceCreate {
 export interface SourceOut {
   id: string;
   kind: "website_form" | "webhook" | "email_forward" | "meta_lead_ads" | "indiamart" | "missed_calls" | "google_ads";
-  tag: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "meta_lead_ads" | "website_form" | "webhook" | "email_forward" | "excel_upload" | "google_sheet" | "pasted_list" | "vcard" | "lead_finder" | "missed_calls" | "google_ads";
+  tag: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "sulekha" | "tradeindia" | "meta_lead_ads" | "website_form" | "webhook" | "email_forward" | "excel_upload" | "google_sheet" | "pasted_list" | "vcard" | "lead_finder" | "missed_calls" | "google_ads";
   label: string;
   status: "active" | "paused" | "disconnected";
   created_at: string;
@@ -227,7 +227,7 @@ export interface SourceOut {
 export interface SourceWithSecretOut {
   id: string;
   kind: "website_form" | "webhook" | "email_forward" | "meta_lead_ads" | "indiamart" | "missed_calls" | "google_ads";
-  tag: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "meta_lead_ads" | "website_form" | "webhook" | "email_forward" | "excel_upload" | "google_sheet" | "pasted_list" | "vcard" | "lead_finder" | "missed_calls" | "google_ads";
+  tag: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "sulekha" | "tradeindia" | "meta_lead_ads" | "website_form" | "webhook" | "email_forward" | "excel_upload" | "google_sheet" | "pasted_list" | "vcard" | "lead_finder" | "missed_calls" | "google_ads";
   label: string;
   status: "active" | "paused" | "disconnected";
   created_at: string;

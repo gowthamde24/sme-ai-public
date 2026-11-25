@@ -11,8 +11,8 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_vali
 
 from app.crm.models import ApiUuid
 
-SourceTag = Literal["indiamart", "justdial", "99acres", "magicbricks", "housing", "meta_lead_ads", "website_form", "webhook", "email_forward", "excel_upload", "google_sheet", "pasted_list", "vcard", "lead_finder", "missed_calls", "google_ads"]
-Portal = Literal["indiamart", "justdial", "99acres", "magicbricks", "housing"]
+SourceTag = Literal["indiamart", "justdial", "99acres", "magicbricks", "housing", "sulekha", "tradeindia", "meta_lead_ads", "website_form", "webhook", "email_forward", "excel_upload", "google_sheet", "pasted_list", "vcard", "lead_finder", "missed_calls", "google_ads"]
+Portal = Literal["indiamart", "justdial", "99acres", "magicbricks", "housing", "sulekha", "tradeindia"]
 SourceKind = Literal["website_form", "webhook", "email_forward", "meta_lead_ads", "indiamart", "missed_calls", "google_ads"]
 ReadKind = Literal["file", "paste", "vcard", "sheet"]
 MAX_FILE_BYTES = 3_000_000
