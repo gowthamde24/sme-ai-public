@@ -5,7 +5,7 @@ Switch: API `EXTRA_LINES` (off) and the database switch `ops.line_settings.enabl
 ## The rule
 - A workspace's lines = **2 for each phone number** it has + the **extra lines** it bought that are working. "Calls at once" is that number: the gate refuses a new call beyond it (see `calls.md`, "Calls at once").
 - An extra line costs **Rs 149 a month** (`ops.line_settings.price_paise`, 14900), taken from the credits wallet when it is bought and again every month. Our cost at VoiceLink is about Rs 99 a channel. GST was already added when the credits were bought: nothing more is taken.
-- At most **20 lines** in a workspace (`ops.line_settings.default_cap`); Stack19 changes one workspace's limit with `app.operator_set_line_cap(tenant, max)`. The 2 included lines of a number are not rows: they cannot be cancelled.
+- At most **20 lines** in a workspace (`ops.line_settings.default_cap`); Stack19 changes one workspace's limit with `app.operator_set_line_cap(tenant, max)`. The included lines of a number (1 for a number bought from 26 Nov 2026, `phone_numbers.included_lines`; 2 for an older one) are not rows: they cannot be cancelled.
 - Only the **Owner** adds or cancels (with the second factor when the Owner has turned it on). Owner and Admin read.
 - A workspace that is not billed (`tenants.billing_exempt`: Customer Zero, demos) pays nothing.
 
