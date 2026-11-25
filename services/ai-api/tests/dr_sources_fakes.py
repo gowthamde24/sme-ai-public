@@ -35,6 +35,8 @@ class FakeLeadSourcesRepository:
         self.stats: dict[str, Any] = {}       # job EB: what lead_source_cards_stats would return
         self.inbound: dict[str, Any] = {}     # job EB: the forwarding address token of the workspace
         self.website: dict[str, Any] = {}     # job EK: the website form token of the workspace
+        self.indiamart_answer: dict[str, Any] | Exception = {}   # the scheduled IndiaMART pull's word on the key (public.indiamart_pull_status)
+        self.status_asked = 0
         self.ticks: list[dict[str, Any]] = []  # JOBS S1: every consent tick the API stored (kinds, wording version)
 
     # the core, simplified
@@ -262,6 +264,12 @@ class FakeLeadSourcesRepository:
         return True
 
     # job EB part B: the Sources page
+    def indiamart_status(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        self.status_asked += 1
+        if isinstance(self.indiamart_answer, Exception):
+            raise self.indiamart_answer
+        return self.indiamart_answer
+
     def cards_stats(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self.calls.append("cards_stats")
         return self.stats

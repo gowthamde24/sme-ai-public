@@ -45,6 +45,7 @@ from app.google_calendar.wiring import build_google_calendar_sync
 from app.lead_finder.housekeeping import ConversationPlanExpiry, PlacesExpiry
 from app.lead_profile.read_runner import LeadReadRunner
 from app.lead_profile.read_wiring import build_lead_reader
+from app.lead_sources.indiamart_pull import IndiaMartPuller, build_indiamart_puller
 from app.lead_sources.sync import SheetSync
 from app.lead_sources.wiring import build_lead_sources
 from app.notifications.repository import PostgrestNotificationsRepository
@@ -129,6 +130,7 @@ class Worker:
         token_expiry: TokenExpiryCheck | None = None,
         template_sync: TemplateStatusSync | None = None,
         webhooks: WebhookRunner | None = None,
+        indiamart_pull: IndiaMartPuller | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -185,6 +187,8 @@ class Worker:
         self._template_sync = template_sync
         # connectors plan C1 item 2: outbound webhooks (None unless WEBHOOKS_OUT=on and the secret store exists)
         self._webhooks = webhooks
+        # connectors plan C1 item 5: IndiaMART leads pulled for businesses with their own key (None unless INDIAMART_PULL=on and the secret store exists)
+        self._indiamart_pull = indiamart_pull
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -224,6 +228,7 @@ class Worker:
             self._template_sync_pass(token)
             self._google_calendar_pass(token)
             self._webhooks_pass(token)
+            self._indiamart_pass(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -355,6 +360,17 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("webhooks pass crashed: %s", exc.__class__.__name__)
+
+    def _indiamart_pass(self, token: str) -> None:
+        """IndiaMART leads for the businesses with their own key (app/lead_sources/indiamart_pull.py). The database says who is due, so most ticks do nothing. A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._indiamart_pull is None:
+            return
+        try:
+            self._indiamart_pull.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("indiamart pass crashed: %s", exc.__class__.__name__)
 
     def _google_calendar_pass(self, token: str) -> None:
         """Appointments to Google Calendar and busy times back (app/google_calendar/sync.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
@@ -520,6 +536,7 @@ def build_worker(settings: Settings) -> Worker:
     storage = HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key)
     vapid = build_vapid(settings)
     repository = PostgrestSchedulerRepository(config.rest_url, config.anon_key)
+    lead_sources = build_lead_sources(settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, build_key_ring(settings))
     return Worker(
         repository,
         adapter,
@@ -550,7 +567,8 @@ def build_worker(settings: Settings) -> Worker:
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,
-        lead_sheets=SheetSync(build_lead_sources(settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, build_key_ring(settings))),
+        lead_sheets=SheetSync(lead_sources),
+        indiamart_pull=build_indiamart_puller(settings, config.rest_url, config.anon_key, lead_sources),
         voice=VoiceNotes(repository, *build_note_voice(settings)),
     )
 

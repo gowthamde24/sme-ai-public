@@ -47,6 +47,8 @@ CODES: dict[str, str] = {
     "A form for your website. Ask us to switch this on.": "off.website", "Missed calls become leads when phone calls are switched on.": "off.missed_calls",
     "Leads from your Google Ads lead forms. Ask us to switch this on.": "off.google_ads",
     "This is paused, so no new leads come in.": "problem.source_paused",
+    "Needs a new key": "card.needs_new_key",
+    "IndiaMART no longer accepts your key, so no new leads are coming in. A key lasts 7 days: paste a new one and they start again.": "problem.indiamart_key_expired",
     "A Google Sheet you linked cannot be read now. Open it and check that it is still shared and has the same columns.": "problem.sheet_needs_attention",
     "Continue with Facebook": "action.meta_connect", "Paste your IndiaMART key": "action.indiamart_connect", "Copy the form": "action.website_copy", "Add a file or a list": "action.files_add", "Link a sheet": "action.sheets_link",
     "Open Integrations": "action.open_integrations", "Open my sheets": "action.open_sheets", "Open Google Sheets": "action.open_google_sheets",
@@ -168,6 +170,11 @@ def build_cards(sources: list[dict[str, Any]], stats: dict[str, Any], available:
     cards: dict[str, dict[str, Any]] = {}
     cards["meta"] = _source_card("meta", sources, ("meta_lead_ads",), ("meta_lead_ads",), stats, now, on=available.meta, off_label="Facebook and Instagram lead ads will connect here.", connect=_action("oauth", "Continue with Facebook"), resume_label="Turn back on")
     cards["indiamart"] = _source_card("indiamart", sources, ("indiamart",), ("indiamart",), stats, now, on=available.indiamart, off_label="Paste your IndiaMART key here.", connect=_action("paste_key", "Paste your IndiaMART key"), resume_label="Turn back on")
+    pull = stats.get("indiamart_pull") or {}
+    if pull.get("key_state") == "expired" and cards["indiamart"]["status"] == "connected":   # the scheduled pull found the key refused (or gone): the owner sees it on the card until a new key is pasted
+        received, last = _count(stats, ("indiamart",))
+        problem = {"code": "key_expired", "message": "IndiaMART no longer accepts your key, so no new leads are coming in. A key lasts 7 days: paste a new one and they start again.", "fix": _action("paste_key", "Paste your IndiaMART key")}
+        cards["indiamart"] = _card("indiamart", "needs_attention", "Needs a new key", None, received, last, _action("paste_key", "Paste your IndiaMART key"), problem=problem, total=_total(stats, ("indiamart",)))
     cards["email_forward"] = _source_card("email_forward", sources, ("email_forward",), EMAIL_TAGS, stats, now, on=available.email_forward, off_label="Forward your portal e-mails here. Ask us to switch this on.", connect=_action("copy_address", "Copy your address"), resume_label="Turn back on")
     cards["website"] = _source_card("website", sources, ("website_form", "webhook"), WEBSITE_TAGS, stats, now, on=available.website, off_label="A form for your website. Ask us to switch this on.", connect=_action("copy_snippet", "Copy the form"), resume_label="Turn back on")
 

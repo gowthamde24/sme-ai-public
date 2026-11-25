@@ -1,4 +1,4 @@
-"""Lead e-mails of the property and business portals (job DR / A2): IndiaMART, JustDial, 99acres, MagicBricks, Housing. A portal mails the business "a buyer is interested", with the buyer's name, number,
+"""Lead e-mails of the property and business portals (job DR / A2): IndiaMART, JustDial, Sulekha, 99acres, MagicBricks, Housing. A portal mails the business "a buyer is interested", with the buyer's name, number,
 address and what they want as `Label: value` lines. The parsers read those lines by label, in any order, from the mail or from the same mail forwarded (the forwarding headers are skipped).
 
 These parsers are written from the portals' typical lead mails, NOT from real samples: the labels below are the usual ones and may differ. A mail that yields neither a number nor an address is NOT
@@ -21,6 +21,7 @@ _FORWARD_HEADER = re.compile(r"^\s*(?:-{2,}\s*Forwarded message\s*-{2,}|Begin fo
 PORTALS: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {
     "indiamart": (("indiamart.com",), ("indiamart", "buyer enquiry", "buy lead")),
     "justdial": (("justdial.com", "jd.com"), ("justdial", "just dial", "jd lead")),
+    "sulekha": (("sulekha.com",), ("sulekha",)),
     "99acres": (("99acres.com",), ("99acres",)),
     "magicbricks": (("magicbricks.com",), ("magicbricks", "magic bricks")),
     "housing": (("housing.com",), ("housing.com", "housing lead")),
@@ -36,6 +37,7 @@ _LABELS: dict[str, tuple[str, ...]] = {
 _PER_PORTAL_EXTRA: dict[str, dict[str, tuple[str, ...]]] = {
     "indiamart": {"message": ("enquiry for", "product name", "requirement details")},
     "justdial": {"message": ("category", "service required", "services")},
+    "sulekha": {"message": ("service", "service needed", "service required", "category", "sub category", "lead details", "job details", "customer requirement")},
     "99acres": {"message": ("property", "property id", "response message")},
     "magicbricks": {"message": ("property", "enquiry message")},
     "housing": {"message": ("project", "property", "lead message")},
