@@ -2,7 +2,10 @@ import type { ReactNode } from "react";
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
+import { LegalFooterGate } from "@/components/v2/legal/LegalFooterGate";
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
+import { legalT } from "@/i18n/legal";
+import { sitePath } from "@/lib/site/paths";
 import { InstallHint } from "@/components/v2/pwa/LazyInstallHint";
 import { V2Root } from "@/components/v2/V2Root";
 import { frameLabels } from "@/i18n/app";
@@ -55,7 +58,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
         </a>
         <SideNav memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} mark={small} still={still} />
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small} palette={paletteNames(lang)} still={still} frame={frame}>
+          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small} palette={paletteNames(lang)} still={still} frame={frame} legalLinks={{ contact: { href: sitePath(lang, { kind: "page", page: "contact" }), label: legalT(lang)("legal.contact.name") }, privacy: { href: "/privacy", label: legalT(lang)("legal.privacy.name") }, terms: { href: "/terms", label: legalT(lang)("legal.terms.name") }, deletion: { href: "/data-deletion", label: legalT(lang)("legal.deletion.name") } }}>
             <span lang={lang}>
               <LangSelect lang={lang} label={t("lang.label")} />
             </span>
@@ -70,9 +73,11 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
             <LabelsProvider labels={labels}>{children}</LabelsProvider>
           </div>
           {/* Privacy Policy, Terms and Cookie settings (job BH); above the bottom bar on a phone, with room for the floating orb (56px + 16px) under the last thing on the page */}
-          <footer data-frame="legal" className="border-t border-line px-4 pb-[calc(5rem+72px)] pt-1 md:px-8 md:pb-2 print:hidden">
-            <LegalLinks lang={lang} />
-          </footer>
+          <LegalFooterGate>
+            <footer data-frame="legal" className="border-t border-line px-4 pb-[calc(5rem+72px)] pt-1 md:px-8 md:pb-2 print:hidden">
+              <LegalLinks lang={lang} />
+            </footer>
+          </LegalFooterGate>
         </div>
         <div className="fixed inset-x-0 bottom-0 z-40 md:hidden print:hidden">
           <InstallHint labels={labels} />

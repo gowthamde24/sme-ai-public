@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 import { AccountMenu } from "./AccountMenu";
 import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
-import { HelpButton } from "./help/HelpButton";
+import { HelpButton, type LegalHrefs } from "./help/HelpButton";
 import { FeelParts } from "./feel/LazyFeel";
 import { LiveBar, LiveIsland, LivePing } from "./live/LazyLiveCalls";
 import { NotificationBell } from "./notify/NotificationBell";
@@ -21,7 +21,7 @@ import { useWorkspace, type Membership } from "./use-workspace";
  * (`children`, drawn by the server in the chosen language). Outside a workspace the phone has no bottom bar, so the user menu sits here instead.
  * Sidebar v2: in a workspace a desktop has "Search or ask anything ⌘K" and a phone a search button; both (and ⌘K / Ctrl+K) open the command palette (owner, 6 Nov 2026), never the assistant on its own; the bar is solid at the top of the page and frosted (`.v2-glass`, with its solid fallback) once the page scrolls under it.
  */
-export function TopBar({ memberships, labels, email, signOut, mark, children, palette = null, still = false, frame: given = null }: { memberships: readonly Membership[]; labels?: Labels; email: string | null; signOut: () => Promise<void>; mark: ReactNode; children: ReactNode; /** The command palette's words (palette/names.ts); null = no palette (a frame drawn without them, a test). */ palette?: PaletteSetup | null; /** The demo video (job demo-video): the bell asks nothing and shows no count. */ still?: boolean; /** The frame (app v4 reads it: on a phone the person and Sign out move here from "More", which v4 does not have). */ frame?: FrameData | null }) {
+export function TopBar({ memberships, labels, email, signOut, mark, children, palette = null, still = false, frame: given = null, legalLinks = null }: { /** the legal pages the ? menu lists (hrefs drawn on the server: the contact page is per language) */ legalLinks?: LegalHrefs | null; memberships: readonly Membership[]; labels?: Labels; email: string | null; signOut: () => Promise<void>; mark: ReactNode; children: ReactNode; /** The command palette's words (palette/names.ts); null = no palette (a frame drawn without them, a test). */ palette?: PaletteSetup | null; /** The demo video (job demo-video): the bell asks nothing and shows no count. */ still?: boolean; /** The frame (app v4 reads it: on a phone the person and Sign out move here from "More", which v4 does not have). */ frame?: FrameData | null }) {
   const { current } = useWorkspace(memberships);
   const frame = useFrameData(given ?? ({} as FrameData));
   const v4 = frame?.v4 === true;
@@ -41,13 +41,14 @@ export function TopBar({ memberships, labels, email, signOut, mark, children, pa
         {v4 && current ? <LiveBar tenantId={current.id} labels={labels} enabled /> : null}
         {current ? (
           <span className={v4 ? "max-md:hidden" : "contents"}>
-            <HelpButton base={`/app/tenants/${current.id}`} labels={labels} />
+            <HelpButton base={`/app/tenants/${current.id}`} labels={labels} legal={legalLinks} />
           </span>
         ) : null}
         {current ? <NotificationBell key={current.id} tenantId={current.id} labels={labels} still={still} /> : null}
         <span className={v4 ? "contents max-md:hidden" : "contents"}>{children}</span>
-        {current && !v4 ? null : (
-          <div className="md:hidden">
+        {/* the account menu is at the top right on every size (owner, 26 Nov 2026: Sign out was hard to find at the foot of the side menu, and out of reach in a short window); on a phone it also carries the language, theme and Help */}
+        {(
+          <div>
             <AccountMenu
               email={email}
               signOut={signOut}
@@ -57,7 +58,7 @@ export function TopBar({ memberships, labels, email, signOut, mark, children, pa
               mark={mark}
               extra={
                 v4 && current ? (
-                  <div className="flex flex-col gap-2 border-y border-line px-3 py-2" data-part="person-menu-extra">
+                  <div className="flex flex-col gap-2 border-y border-line px-3 py-2 md:hidden" data-part="person-menu-extra">
                     <div className="flex flex-wrap items-center gap-2">{children}</div>
                     <Link href={`/app/tenants/${current.id}/help`} className="inline-flex min-h-11 items-center text-sm font-semibold text-ink underline-offset-4 hover:underline">
                       {word(labels, "frame.help", "Help")}

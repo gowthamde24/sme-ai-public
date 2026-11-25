@@ -137851,5 +137851,280 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "start.type.continue": {
+  "en": "Continue",
+  "te": "కొనసాగించండి",
+  "hi": "आगे बढ़ें",
+  "kn": "ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.saving.btn": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सेव हो रहा है…",
+  "kn": "ಸೇವ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.pickfirst": {
+  "en": "Choose the closest one, then press Continue.",
+  "te": "దగ్గరగా ఉన్నది ఎంచుకుని, కొనసాగించండి నొక్కండి.",
+  "hi": "सबसे करीब वाला चुनें, फिर आगे बढ़ें दबाएँ।",
+  "kn": "ಹತ್ತಿರದ್ದನ್ನು ಆರಿಸಿ, ನಂತರ ಮುಂದುವರಿಸಿ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.chosen": {
+  "en": "You chose {name}. Press Continue: we save it and show the first steps for this business.",
+  "te": "మీరు {name} ఎంచుకున్నారు. కొనసాగించండి నొక్కండి: సేవ్ చేసి ఈ బిజినెస్ మొదటి స్టెప్స్ చూపిస్తాం.",
+  "hi": "आपने {name} चुना। आगे बढ़ें दबाएँ: हम इसे सेव करके इस बिज़नेस के पहले स्टेप दिखाएँगे।",
+  "kn": "ನೀವು {name} ಆರಿಸಿದ್ದೀರಿ. ಮುಂದುವರಿಸಿ ಒತ್ತಿ: ಸೇವ್ ಮಾಡಿ ಈ ಬಿಸಿನೆಸ್‌ನ ಮೊದಲ ಹಂತಗಳನ್ನು ತೋರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.saving": {
+  "en": "Saving your choice…",
+  "te": "మీ ఎంపిక సేవ్ అవుతోంది…",
+  "hi": "आपकी पसंद सेव हो रही है…",
+  "kn": "ನಿಮ್ಮ ಆಯ್ಕೆ ಸೇವ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.saved": {
+  "en": "Saved: {name}. Opening your first steps…",
+  "te": "సేవ్ అయింది: {name}. మీ మొదటి స్టెప్స్ తెరుస్తున్నాం…",
+  "hi": "सेव हो गया: {name}। आपके पहले स्टेप खुल रहे हैं…",
+  "kn": "ಸೇವ್ ಆಯಿತು: {name}. ನಿಮ್ಮ ಮೊದಲ ಹಂತಗಳನ್ನು ತೆರೆಯುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.legal.privacy": {
+  "en": "Privacy notice",
+  "te": "గోప్యతా నోటీసు",
+  "hi": "गोपनीयता नोटिस",
+  "kn": "ಗೌಪ್ಯತಾ ನೋಟಿಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.legal.terms": {
+  "en": "Terms of Use",
+  "te": "వినియోగ నిబంధనలు",
+  "hi": "उपयोग की शर्तें",
+  "kn": "ಬಳಕೆಯ ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.legal.delete": {
+  "en": "Delete your data",
+  "te": "మీ డేటా తొలగింపు",
+  "hi": "अपना डेटा हटाएँ",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾ ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.legal.contact": {
+  "en": "Contact",
+  "te": "సంప్రదించండి",
+  "hi": "संपर्क करें",
+  "kn": "ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.legal.cookies": {
+  "en": "Cookie settings",
+  "te": "కుకీ సెట్టింగ్‌లు",
+  "hi": "कुकी सेटिंग",
+  "kn": "ಕುಕೀ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.legal.title": {
+  "en": "Privacy and legal",
+  "te": "ప్రైవసీ, చట్టపరమైనవి",
+  "hi": "प्राइवेसी और क़ानूनी",
+  "kn": "ಪ್ರೈವಸಿ ಮತ್ತು ಕಾನೂನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.legal.help": {
+  "en": "Help",
+  "te": "సహాయం",
+  "hi": "मदद",
+  "kn": "ಸಹಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.account.title": {
+  "en": "Your account",
+  "te": "మీ అకౌంట్",
+  "hi": "आपका अकाउंट",
+  "kn": "ನಿಮ್ಮ ಅಕೌಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.account.signout": {
+  "en": "Sign out",
+  "te": "సైన్ అవుట్",
+  "hi": "साइन आउट",
+  "kn": "ಸೈನ್ ಔಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.account.signed": {
+  "en": "Signed in as {email}.",
+  "te": "{email} గా సైన్ ఇన్ అయ్యారు.",
+  "hi": "{email} के रूप में साइन इन हैं।",
+  "kn": "{email} ಆಗಿ ಸೈನ್ ಇನ್ ಆಗಿದ್ದೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bt.title": {
+  "en": "Business type",
+  "te": "బిజినెస్ రకం",
+  "hi": "बिज़नेस का प्रकार",
+  "kn": "ಬಿಸಿನೆಸ್ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bt.current": {
+  "en": "Your business type:",
+  "te": "మీ బిజినెస్ రకం:",
+  "hi": "आपके बिज़नेस का प्रकार:",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಪ್ರಕಾರ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bt.change": {
+  "en": "Change business type",
+  "te": "బిజినెస్ రకం మార్చండి",
+  "hi": "बिज़नेस का प्रकार बदलें",
+  "kn": "ಬಿಸಿನೆಸ್ ಪ್ರಕಾರ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bt.confirm": {
+  "en": "Change to {name}? Your existing things stay; the questions and fields for the new type are added.",
+  "te": "{name} కి మార్చాలా? ఇప్పటివి అలాగే ఉంటాయి; కొత్త రకానికి ప్రశ్నలు, ఫీల్డ్‌లు కలుపుతాం.",
+  "hi": "{name} में बदलें? आपका मौजूदा सब कुछ वैसे ही रहता है; नए प्रकार के सवाल और फ़ील्ड जुड़ जाते हैं।",
+  "kn": "{name} ಗೆ ಬದಲಿಸಬೇಕೆ? ಈಗಿರುವುದೆಲ್ಲ ಹಾಗೆಯೇ ಇರುತ್ತದೆ; ಹೊಸ ಪ್ರಕಾರದ ಪ್ರಶ್ನೆಗಳು, ಫೀಲ್ಡ್‌ಗಳು ಸೇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bt.yes": {
+  "en": "Change to {name}",
+  "te": "{name} కి మార్చండి",
+  "hi": "{name} में बदलें",
+  "kn": "{name} ಗೆ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bt.no": {
+  "en": "Not now",
+  "te": "ఇప్పుడు వద్దు",
+  "hi": "अभी नहीं",
+  "kn": "ಈಗ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bt.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bt.saved": {
+  "en": "Saved: {name}. The questions and fields for it are added.",
+  "te": "సేవ్ అయింది: {name}. దానికి ప్రశ్నలు, ఫీల్డ్‌లు కలిపాం.",
+  "hi": "सेव हो गया: {name}। इसके सवाल और फ़ील्ड जोड़ दिए गए।",
+  "kn": "ಸೇವ್ ಆಯಿತು: {name}. ಅದರ ಪ್ರಶ್ನೆಗಳು, ಫೀಲ್ಡ್‌ಗಳು ಸೇರಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.type.continue.with": {
+  "en": "Continue with {name}",
+  "te": "{name} తో కొనసాగించండి",
+  "hi": "{name} के साथ आगे बढ़ें",
+  "kn": "{name} ನೊಂದಿಗೆ ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

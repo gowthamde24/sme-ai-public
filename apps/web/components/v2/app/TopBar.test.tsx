@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 vi.mock("next/navigation", () => ({ usePathname: () => "/app/tenants/11111111-1111-4111-8111-111111111111", useRouter: () => ({ refresh: () => undefined, push: () => undefined }), useSearchParams: () => new URLSearchParams() }));
 vi.mock("./notify/NotificationBell", () => ({ NotificationBell: () => null }));
 vi.mock("./help/HelpButton", () => ({ HelpButton: () => null }));
+vi.mock("./LazyAppearance", () => ({ Appearance: () => null })); // (the account menu is now in the bar on every size; its lazy part is not what this test is about)
 
 vi.mock("./LazyTopSearch", async () => ({ TopSearch: (await import("./TopSearch")).TopSearch }));
 vi.mock("next/dynamic", () => ({ default: () => function Palette(p: Record<string, unknown>) { const [M, setM] = React.useState<React.ComponentType<Record<string, unknown>> | null>(null); React.useEffect(() => void import("./palette/CommandPalette").then((m) => setM(() => m.CommandPalette as unknown as React.ComponentType<Record<string, unknown>>)), []); return M ? <M {...p} /> : null; } }));
