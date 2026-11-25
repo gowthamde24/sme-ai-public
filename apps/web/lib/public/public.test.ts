@@ -57,7 +57,7 @@ describe("Talk to us: what the server accepts", () => {
   it("stores nothing for now and says ok", async () => {
     const r = readTalk(good);
     if (!r.ok) throw new Error("x");
-    expect(await storeTalk(r.value)).toEqual({ ok: true });
+    expect(await storeTalk(r.value)).toEqual({ ok: true }); // mock or off: kept nowhere, as before
   });
 });
 
@@ -74,5 +74,46 @@ describe("the status page's reading of /health", () => {
     expect((await readHealth(at, async () => new Response("", { status: 503 }))).api).toBe("down");
     expect((await readHealth(at, async () => new Response(JSON.stringify({ status: "bad" }), { status: 200 }))).api).toBe("down");
     expect((await readHealth(at, async () => { throw new Error("net"); })).api).toBe("down");
+  });
+});
+
+describe("storeTalk posts to C1's contact route", async () => {
+  const { vi } = await import("vitest");
+  const client = await import("@/lib/api/client");
+  const policy = await import("@/lib/api/policy");
+  const value = { name: "Asha", phone: "+919876543210", email: null, type: "clinic" as const, time: "morning" as const, what: "", lang: "en" };
+  const pub = (impl: (path: string, init?: { body?: unknown }) => Promise<unknown>) => {
+    vi.spyOn(client, "apiPublicRequest").mockImplementation(impl as never);
+    vi.spyOn(policy, "getCurrentPolicies").mockResolvedValue({ terms: "t1", privacy: "p1" });
+  };
+  const refuse = (status: number, code: string) => new client.ApiRequestError(status, code, "x");
+  it("sends the body with both versions and consent, and shows the reference", async () => {
+    let seen: unknown;
+    pub(async (_p, init) => ((seen = init?.body), { status: "received", reference: "TQ-1A2B3C4D" }));
+    expect(await storeTalk(value, "on")).toEqual({ ok: true, reference: "TQ-1A2B3C4D" });
+    expect(seen).toEqual({ name: "Asha", phone: "+919876543210", business_kind: "clinic", good_time: "morning", consent: true, terms_version: "t1", notice_version: "p1", captcha_token: null });
+  });
+  it("a duplicate shows the same thanks; a reference of the wrong shape is left out", async () => {
+    pub(async () => ({ status: "duplicate", reference: "TQ-ABCD1234" }));
+    expect(await storeTalk(value, "on")).toEqual({ ok: true, reference: "TQ-ABCD1234" });
+    pub(async () => ({ status: "received", reference: "<script>" }));
+    expect(await storeTalk(value, "on")).toEqual({ ok: true });
+  });
+  it("an outdated version is read again and sent once more", async () => {
+    let n = 0;
+    pub(async () => {
+      if (++n === 1) throw refuse(409, "policy_version_outdated");
+      return { status: "received", reference: "TQ-ABCD1234" };
+    });
+    expect(await storeTalk(value, "on")).toEqual({ ok: true, reference: "TQ-ABCD1234" });
+    expect(n).toBe(2);
+  });
+  it("every refusal is one plain word", async () => {
+    for (const [status, code, word] of [[429, "rate_limited", "rate"], [400, "captcha_failed", "check"], [422, "validation_error", "invalid"], [503, "busy", "busy"], [500, "x", "down"], [404, "not_found", "down"]] as const) {
+      pub(async () => {
+        throw refuse(status, code);
+      });
+      expect(await storeTalk(value, "on"), code).toEqual({ ok: false, error: word });
+    }
   });
 });

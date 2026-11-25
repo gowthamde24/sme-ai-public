@@ -134,10 +134,28 @@ describe("acceptable use and refunds: drafts for approval", () => {
 
 const words = (): TalkWords => {
   const d = pubDict("en");
-  return { name: d["pub.talk.name"], contact: d["pub.talk.contact"], type: d["pub.talk.type"], choose: "Choose", time: d["pub.talk.time"], what: d["pub.talk.what"], consent: d["pub.talk.consent"], privacy: d["pub.talk.privacy"], submit: d["pub.talk.submit"], note: d["pub.talk.note"], okTitle: "Thank you", okBody: "ok", errName: "need name", errContact: "need contact", errConsent: "need consent", errRate: "rate", errCheck: "check", errGeneric: "generic", types: [{ id: "clinic", label: "Clinic" }], times: [{ id: "morning", label: "Morning" }] };
+  return { name: d["pub.talk.name"], contact: d["pub.talk.contact"], type: d["pub.talk.type"], choose: "Choose", time: d["pub.talk.time"], what: d["pub.talk.what"], consent: d["pub.talk.consent"], privacy: d["pub.talk.privacy"], submit: d["pub.talk.submit"], note: d["pub.talk.note"], okTitle: "Thank you", okBody: "ok", errBusy: "busy", okRef: "We received it. Reference {ref}.", errName: "need name", errContact: "need contact", errConsent: "need consent", errRate: "rate", errCheck: "check", errGeneric: "generic", types: [{ id: "clinic", label: "Clinic" }], times: [{ id: "morning", label: "Morning" }] };
 };
 
 describe("Talk to us", () => {
+  it("shows the reference when the request was stored, and the busy refusal as one sentence", async () => {
+    const ok = vi.fn(async () => ({ ok: true as const, reference: "TQ-1A2B3C4D" }));
+    rtl(<TalkForm lang="en" words={words()} action={ok} privacyHref="/privacy" />);
+    fireEvent.change(screen.getByLabelText("Your name"), { target: { value: "Asha" } });
+    fireEvent.change(screen.getByLabelText(/Phone, WhatsApp number or e-mail/), { target: { value: "98480 12345" } });
+    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByRole("button", { name: "Ask for a demo" }));
+    await waitFor(() => expect(screen.getByText("We received it. Reference TQ-1A2B3C4D.")).toBeInTheDocument());
+    cleanup();
+    const busy = vi.fn(async () => ({ ok: false as const, error: "busy" as const }));
+    rtl(<TalkForm lang="en" words={words()} action={busy} privacyHref="/privacy" />);
+    fireEvent.change(screen.getByLabelText("Your name"), { target: { value: "Asha" } });
+    fireEvent.change(screen.getByLabelText(/Phone, WhatsApp number or e-mail/), { target: { value: "98480 12345" } });
+    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByRole("button", { name: "Ask for a demo" }));
+    await waitFor(() => expect(screen.getByText("busy")).toBeInTheDocument());
+  });
+
   it("is plain labelled fields: name, phone or e-mail, kind of business, a good time, what you sell, the consent box; no sentence form", () => {
     const out = html("en", page("talk-to-us"));
     for (const id of ["tk-name", "tk-contact", "tk-type", "tk-time", "tk-what"]) expect(out).toContain(`id="${id}"`);

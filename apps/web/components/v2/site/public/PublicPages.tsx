@@ -206,7 +206,7 @@ export function TalkPage({ p, lang, action }: { p: PubT; lang: SiteLang; action:
   const v = pubVars();
   const words: TalkWords = {
     name: p("pub.talk.name"), contact: p("pub.talk.contact"), type: p("pub.talk.type"), choose: p("pub.talk.type.choose"), time: p("pub.talk.time"), what: p("pub.talk.what"), consent: p("pub.talk.consent"), privacy: p("pub.talk.privacy"), submit: p("pub.talk.submit"), note: p("pub.talk.note"),
-    okTitle: p("pub.talk.ok.t"), okBody: p("pub.talk.ok.d", v), errName: p("pub.talk.err.name"), errContact: p("pub.talk.err.contact"), errConsent: p("pub.talk.err.consent"), errRate: p("pub.talk.err.rate"), errCheck: p("pub.talk.err.check"), errGeneric: p("pub.talk.err.generic", v),
+    okTitle: p("pub.talk.ok.t"), okBody: p("pub.talk.ok.d", v), errName: p("pub.talk.err.name"), errContact: p("pub.talk.err.contact"), errConsent: p("pub.talk.err.consent"), errRate: p("pub.talk.err.rate"), errCheck: p("pub.talk.err.check"), errGeneric: p("pub.talk.err.generic", v), errBusy: p("pub.talk.err.busy", v), okRef: p("pub.talk.ok.ref"),
     types: TALK_TYPES.map((id) => ({ id, label: p(`pub.talk.t.${id}` as PubKey) })), times: TALK_TIMES.map((id) => ({ id, label: p(`pub.talk.time.${id}` as PubKey) })),
   };
   return (

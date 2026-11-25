@@ -8,7 +8,7 @@ import type { TalkAction } from "@/lib/public/demo";
 
 export type TalkWords = {
   name: string; contact: string; type: string; choose: string; time: string; what: string; consent: string; privacy: string; submit: string; note: string;
-  okTitle: string; okBody: string; errName: string; errContact: string; errConsent: string; errRate: string; errCheck: string; errGeneric: string;
+  okTitle: string; okBody: string; errName: string; errContact: string; errConsent: string; errRate: string; errCheck: string; errGeneric: string; errBusy: string; /** "We received it. Reference {ref}." (a stored request only). */ okRef: string;
   types: readonly { id: string; label: string }[]; times: readonly { id: string; label: string }[];
 };
 
@@ -29,10 +29,11 @@ export function TalkForm({ lang, words, action, privacyHref, turnstile = null }:
   const [trap, setTrap] = useState("");
   const [problem, setProblem] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const [token, setToken] = useState<string | null>(null);
   const [again, setAgain] = useState(0);
-  const errors: Record<string, string> = { name: words.errName, contact: words.errContact, consent: words.errConsent, rate: words.errRate, check: words.errCheck, invalid: words.errGeneric };
+  const errors: Record<string, string> = { name: words.errName, contact: words.errContact, consent: words.errConsent, rate: words.errRate, check: words.errCheck, invalid: words.errGeneric, busy: words.errBusy, down: words.errGeneric };
   if (done) {
     return (
       <div role="status" className="max-w-xl border-y border-line py-5" data-part="talk-done">
@@ -40,6 +41,11 @@ export function TalkForm({ lang, words, action, privacyHref, turnstile = null }:
           <span aria-hidden="true" className="size-2.5 shrink-0 rounded-full bg-green-text" />
           {words.okTitle}
         </p>
+        {reference ? (
+          <p className="mt-2 text-base font-semibold text-ink" data-part="talk-ref">
+            {words.okRef.replace("{ref}", reference)}
+          </p>
+        ) : null}
         <p className="mt-2 text-base text-muted">{words.okBody}</p>
       </div>
     );
@@ -54,7 +60,10 @@ export function TalkForm({ lang, words, action, privacyHref, turnstile = null }:
         start(async () => {
           try {
             const out = await action({ lang, name, contact, type: type || "other", time, what, consent, website: trap, turnstileToken: token });
-            if (out.ok) setDone(true);
+            if (out.ok) {
+              setReference(out.reference ?? null);
+              setDone(true);
+            }
             else {
               setProblem(errors[out.error] ?? words.errGeneric);
               setAgain((n) => n + 1);

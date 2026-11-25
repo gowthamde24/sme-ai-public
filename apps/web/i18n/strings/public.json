@@ -1947,10 +1947,10 @@
   }
  },
  "pub.talk.ok.d": {
-  "en": "If you do not hear from us within a day, write to {mail}.",
-  "te": "ఒక రోజులో మా నుంచి వినకపోతే, {mail} కి రాయండి.",
-  "hi": "अगर एक दिन में हमारी तरफ़ से जवाब न मिले, तो {mail} पर लिखें।",
-  "kn": "ಒಂದು ದಿನದಲ್ಲಿ ನಮ್ಮಿಂದ ಉತ್ತರ ಬರದಿದ್ದರೆ {mail} ಗೆ ಬರೆಯಿರಿ.",
+  "en": "We will reply by WhatsApp or e-mail within a day. If you do not hear from us, write to {mail}.",
+  "te": "ఒక రోజులో WhatsApp లేదా ఈమెయిల్ ద్వారా జవాబిస్తాం. మా నుంచి ఏమీ రాకపోతే {mail} కి రాయండి.",
+  "hi": "हम एक दिन में WhatsApp या ईमेल से जवाब देंगे। हमसे कुछ न मिले तो {mail} पर लिखें।",
+  "kn": "ಒಂದು ದಿನದಲ್ಲಿ WhatsApp ಅಥವಾ ಇಮೇಲ್ ಮೂಲಕ ಉತ್ತರಿಸುತ್ತೇವೆ. ನಮ್ಮಿಂದ ಏನೂ ಬರದಿದ್ದರೆ {mail} ಗೆ ಬರೆಯಿರಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -2017,6 +2017,28 @@
   "te": "ఏదో తప్పు జరిగింది. మళ్ళీ ప్రయత్నించండి, లేదా {mail} కి రాయండి.",
   "hi": "कुछ गड़बड़ हो गई। फिर कोशिश करें, या {mail} पर लिखें।",
   "kn": "ಏನೋ ತಪ್ಪಾಯಿತು. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ {mail} ಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.ok.ref": {
+  "en": "We received it. Reference {ref}.",
+  "te": "మాకు అందింది. రిఫరెన్స్ {ref}.",
+  "hi": "हमें मिल गया। रेफ़रेंस {ref}।",
+  "kn": "ನಮಗೆ ಸಿಕ್ಕಿತು. ರೆಫರೆನ್ಸ್ {ref}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pub.talk.err.busy": {
+  "en": "We have had too many messages today. Please write to {mail} instead.",
+  "te": "ఈరోజు మాకు చాలా మెసేజ్‌లు వచ్చాయి. {mail} కి రాయండి.",
+  "hi": "आज हमें बहुत मैसेज मिले हैं। {mail} पर लिखिए।",
+  "kn": "ಇಂದು ನಮಗೆ ತುಂಬಾ ಮೆಸೇಜ್‌ಗಳು ಬಂದಿವೆ. {mail} ಗೆ ಬರೆಯಿರಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
