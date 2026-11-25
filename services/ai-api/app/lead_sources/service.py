@@ -48,9 +48,9 @@ AVG_CALL_MINUTES = 3
 _NS = uuid.UUID("5c1f2f55-0d0b-4b8e-9a3b-6a1d5f0c7e21")
 _FORM_ALIASES = {
     "name": ("name", "full_name", "fullname", "your_name", "customer_name", "first_name"),
-    "phone": ("phone", "mobile", "whatsapp", "contact_number", "phone_number", "mobile_number", "contact", "tel", "from", "callfrom", "call_from", "caller", "caller_id", "callerid", "cli", "calling_number", "from_number"),
-    "email": ("email", "e-mail", "email_address", "mail"),
-    "message": ("message", "requirement", "enquiry", "inquiry", "comments", "comment", "query", "note", "notes"),
+    "phone": ("phone", "your_phone", "your_mobile", "mobile", "whatsapp", "contact_number", "phone_number", "mobile_number", "contact", "tel", "from", "callfrom", "call_from", "caller", "caller_id", "callerid", "cli", "calling_number", "from_number"),
+    "email": ("email", "e-mail", "e_mail", "your_email", "email_address", "mail"),
+    "message": ("message", "your_message", "requirement", "enquiry", "inquiry", "comments", "comment", "query", "note", "notes"),
     "city": ("city", "location", "town"),
     "external_id": ("external_id", "lead_id", "id", "callsid", "call_sid", "calluuid", "call_uuid"),
 }
@@ -434,7 +434,14 @@ class LeadSourcesService:
             meta=self._available("meta_lead_ads"), indiamart=self.indiamart_available,
             email_forward=self._available("email_forward"), website=self.receiver is not None, missed_calls=self.receiver is not None, google_ads=self.receiver is not None,
         )
-        return cards_mod.build_cards(self.repo.sources(token, tenant_id), self.repo.cards_stats(token, tenant_id), available)
+        sources = self.repo.sources(token, tenant_id)
+        stats = self.repo.cards_stats(token, tenant_id)
+        if available.indiamart and any(x.get("kind") == "indiamart" and x.get("status") == "active" for x in sources):
+            try:
+                stats = {**stats, "indiamart_pull": self.repo.indiamart_status(token, tenant_id)}   # the scheduled pull's word on the key; a card never fails for it
+            except Exception as exc:   # noqa: BLE001
+                logger.warning("indiamart status not read: %s", exc.__class__.__name__)
+        return cards_mod.build_cards(sources, stats, available)
 
     def email_address(self, token: str, tenant_id: uuid.UUID, *, rotate: bool = False) -> dict[str, Any]:
         """The workspace's forwarding address (made on first use, shown again as often as asked; `rotate` makes a new one and the old one stops working)."""
@@ -774,6 +781,9 @@ class LeadSourcesService:
     def form_row(data: dict[str, Any]) -> dict[str, Any] | None:
         """A lead from a form or a webhook body: aliases accepted, extra fields ignored, a filled honeypot = a bot (None)."""
         lower = {str(k).lower(): v for k, v in data.items() if isinstance(k, str)}
+        for k, v in data.items():   # a form plugin's own names ("your-name") are read like "your_name"
+            if isinstance(k, str) and "-" in k:
+                lower.setdefault(k.lower().replace("-", "_"), v)
         if str(lower.get("_hp") or "").strip():
             return None
         columns = data.get("user_column_data")
