@@ -33,7 +33,10 @@ describe("the extra-lines strings", () => {
     }
   });
   it("Telugu, Hindi and Kannada are DRAFTS for the owner's reviewer", () => {
-    for (const k of keys) expect(dict[k].status, k).toEqual({ te: "draft", hi: "draft", kn: "draft" });
+    for (const k of keys) {
+      expect({ hi: dict[k].status.hi, kn: dict[k].status.kn }, k).toEqual({ hi: "draft", kn: "draft" });
+      expect(["draft", "reviewed"]).toContain(dict[k].status.te);
+    } // Telugu is approved (owner, 26 Nov 2026)
   });
   it("the price is a placeholder, never typed; Telugu says క్రెడిట్స్ and keeps the business words in English", () => {
     expect(dict["ln.price"].en).toContain("{price}");
@@ -55,7 +58,7 @@ describe("the Pricing page row", () => {
     for (const lang of ["te", "hi", "kn", "ta"] as const) {
       expect(row[lang].trim().length).toBeGreaterThan(0);
       expect(placeholders(row[lang]), lang).toEqual(["line"]);
-      expect(row.status[lang], lang).toBe("draft");
+      expect(row.status[lang], lang).toBe(lang === "te" ? "reviewed" : "draft"); // Telugu approved by the owner, 26 Nov 2026
     }
   });
   it("takes its number from the plan facts, the same one the app's price comes from", () => {

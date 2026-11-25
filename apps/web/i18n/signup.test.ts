@@ -26,7 +26,7 @@ describe("the sign-up string store (Job AC, C5)", () => {
     }
   });
   it("every non-English string is a DRAFT", () => {
-    for (const k of keys) for (const l of TRANSLATED_LANGS) expect(data[k].status[l], `${k}:${l}`).toBe("draft");
+    for (const k of keys) for (const l of TRANSLATED_LANGS) expect(data[k].status[l], `${k}:${l}`).toMatch(l === "te" ? /^(draft|reviewed)$/ : /^draft$/); // Telugu: approved by the owner, 26 Nov 2026
   });
   it("uses each language's own script, except the strings that stay English until a person reviews them (the terms)", () => {
     const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
