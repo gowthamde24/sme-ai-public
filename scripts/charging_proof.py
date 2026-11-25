@@ -214,18 +214,24 @@ def main() -> int:
     say(rm.get("charged_paise") == 500, "4e ... and charges it (60 s = 2 blocks = Rs 5.00)", 500, rm.get("charged_paise"))
     say(not [x for x in p.uncharged() if str(x.get("call_id")) in (t1, t2)], "4f ... and never lists a sandbox or simulated call", "none", "none listed")
 
-    # ---- 5. run the wallet empty with OUTBOUND calls: the wallet never goes below zero, no debt
+    # ---- 5. run the wallet empty with an OUTBOUND call: the wallet never goes below zero and the rest is a debt (planner's decision, 26 Nov: no free minutes)
     bal_now = int(p.balance()["balance_paise"])
     g0 = p.gate()
     say(g0.get("outbound_ok") is True and g0.get("inbound_ok") is True, "5a with credit in the wallet both gates are open", "outbound_ok, inbound_ok", g0)
-    cid = p.call_row(direction="outbound", seconds=3600, answered=True)   # a long call: 120 blocks = Rs 300; the wallet holds less
-    rl = p.charge(cid, 3600)
-    note(f"   an outbound call of 3600 s asks Rs {rl.get('charged_paise', 0) / 100:.2f} with Rs {bal_now / 100:.2f} in the wallet: shortfall {rl.get('shortfall_paise')} paise")
+    drained = 0
+    while int(p.balance()["balance_paise"]) >= 2500:   # full-length outbound calls (300 s = Rs 25 each) until the wallet holds less than one more
+        p.charge(p.call_row(direction="outbound", seconds=300, answered=True), 300)
+        drained += 1
+    note(f"   {drained} outbound calls of 300 s (Rs 25.00 each) paid from the wallet; it now holds Rs {int(p.balance()['balance_paise']) / 100:.2f}")
+    bal_now = int(p.balance()["balance_paise"])
+    cid = p.call_row(direction="outbound", seconds=300, answered=True)   # the longest call production allows (TELEPHONY_MAX_CALL_S): 10 blocks = Rs 25; the wallet holds less
+    rl = p.charge(cid, 300)
+    note(f"   an outbound call of 300 s asks Rs {rl.get('charged_paise', 0) / 100:.2f} with Rs {bal_now / 100:.2f} in the wallet: shortfall {rl.get('shortfall_paise')} paise")
     say(int(p.balance()["balance_paise"]) == 0, "5b the wallet stops at zero, never below", 0, p.balance().get("balance_paise"))
-    say(p.owed() == 0, "5c an OUTBOUND call leaves no debt (it was checked before it started)", 0, p.owed())
+    say(p.owed() == int(rl.get("shortfall_paise", -1)) and p.owed() > 0, "5c the unpaid part of an OUTBOUND call is a debt, like an inbound one (no free minutes)", rl.get("shortfall_paise"), p.owed())
     g1 = p.gate()
     say(g1.get("outbound_ok") is False, "5d outbound is refused now (wallet_low): the balance is under one minute (Rs 5) and the plan has no included minutes", "outbound_ok false", g1)
-    say(g1.get("inbound_ok") is True, "5e inbound is still answered (no debt yet)", "inbound_ok true", g1)
+    say(g1.get("inbound_ok") is True, "5e inbound is still answered (the debt is under the Rs 50 floor)", "inbound_ok true", g1)
 
     # ---- 6. inbound past an empty wallet: a debt, up to the floor (Rs 50), then billing_blocked
     done = 0
@@ -261,7 +267,7 @@ def main() -> int:
     rows = sql(f"select coalesce(sum(charged_paise), 0) as c, coalesce(sum(shortfall_paise), 0) as s from pricing.usage where tenant_id = '{p.tenant}' and kind = 'call'")  # noqa: S608
     asked, short = int(rows[0]["c"]), int(rows[0]["s"])
     charged = asked - short   # what the wallet actually paid: the statement shows money that moved, not the part nobody could pay
-    note(f"   usage rows asked {asked} paise; of that {short} paise could not be paid (the outbound call of 3600 s left {int(rl.get('shortfall_paise') or 0)} and three inbound calls left 6000 as a debt); the wallet paid {charged}")
+    note(f"   usage rows asked {asked} paise; of that {short} paise could not be paid (the outbound call of 300 s left {int(rl.get('shortfall_paise') or 0)} as a debt and the inbound calls the rest); the wallet paid {charged}")
     say(kinds.get("credit", 0) >= 3 and kinds.get("usage", 0) >= 1 and usage_total == int(charged) + owed, "8a the statement lists the credits (trial, top-ups) and the money the calls took (paid from the wallet, plus the debt a top-up paid)", f"credits >= 3, usage sum {int(charged)} + {owed}", f"{kinds}, usage sum {usage_total}")
     closing = int(st.get("closing_paise", -1)) if isinstance(st, dict) else -1
     say(closing == int(p.balance().get("balance_paise", -2)), "8a2 the statement closes at the balance (the debt the second top-up paid is a line of its own)", p.balance().get("balance_paise"), closing)
