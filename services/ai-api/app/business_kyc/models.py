@@ -16,6 +16,7 @@ class StatusOut(_Strict):
     account_type: Literal["individual", "business"] | None
     step: str | None
     steps: dict[str, bool]
+    aadhaar_verified: bool | None = None   # the DigiLocker check reached VoiceLink (None until VoiceLink says; false while it is still pending)
     missing: list[str]
     reason: str | None
     words: str | None

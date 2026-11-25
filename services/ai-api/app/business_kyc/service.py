@@ -129,6 +129,8 @@ class BusinessKycService:
         raw_docs = live.get("documents")
         docs: dict[str, Any] = raw_docs if isinstance(raw_docs, dict) else {}
         out["steps"] = {k: bool(isinstance(v, dict) and v.get("uploaded")) for k, v in docs.items() if k in ("pan", "aadhaar", "gst")}
+        verified_flag = live.get("aadhaar_verified")
+        out["aadhaar_verified"] = verified_flag if isinstance(verified_flag, bool) else None
         step = live.get("current_step")
         out["step"] = step if isinstance(step, str) and step.isalpha() and len(step) < 20 else None
         if live.get("is_complete") is True or live.get("kyc_status") == 1:

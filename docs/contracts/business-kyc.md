@@ -5,7 +5,7 @@ Identity numbers (PAN, GSTIN) and documents pass through the API to VoiceLink an
 Roles: Owner and Admin read; the Owner writes.
 
 ## GET /v1/tenants/{t}/phone-kyc/business
-`{ state, account_type, step, steps:{pan,aadhaar,gst: uploaded?}, missing:[...], reason, words }`. `state`: `not_started`, `created`, `in_progress`, `submitted`, `verified`, `stuck`. `words` is a plain sentence for `reason` when there is one.
+`{ state, account_type, step, steps:{pan,aadhaar,gst: uploaded?}, aadhaar_verified, missing:[...], reason, words, reserve }`. `aadhaar_verified`: true when the DigiLocker check reached VoiceLink, false while it is pending, null when VoiceLink does not say. `state`: `not_started`, `created`, `in_progress`, `submitted`, `verified`, `stuck`. `words` is a plain sentence for `reason` when there is one.
 
 ## The steps (Owner), each answers the same status shape
 * `POST .../business/start` 201: makes the business's own VoiceLink client (once; its e-mail is the Owner's; one channel; billing on OUR wallet). 422 `email_in_use`.
@@ -77,3 +77,10 @@ A phone number with its first call line costs **Rs 499 a month** (`pricing.setti
 
 ## Buying channels (adapter, off)
 `app/telephony/channel_stock.py` (`VOICELINK_CHANNEL_BUY`, default off) buys channels for OUR pool with exactly three calls and no number: `purchase/add-channel` -> `purchase/summary/{id}` -> `purchase/confirm`. Guards before the confirm: a count of 1 to 3, a total no higher than `VOICELINK_CHANNEL_BUY_MAX_INR` (default Rs 200), a summary of exactly the channels asked and no number, and a wallet that keeps `VOICELINK_CHANNEL_WALLET_FLOOR_INR` (default Rs 500) after paying. Nothing calls it yet (the low-stock auto-buy is for later).
+
+## The Aadhaar (DigiLocker) step: stay on the page, poll, ask again (real finding, 26 Nov 2026)
+`POST /phone-kyc/business/aadhaar` answers `{redirect_url}` (a DigiLocker address, opened on the PERSON'S OWN PHONE). **The result reaches VoiceLink only if the redirect after "Allow" completes**: the owner's first real attempt closed the page during the redirect, the token became invalid and the status stayed `aadhaar_verified: false`.
+* The verification step tells the person: **"Stay on the page until it moves you back."** (do not close it after Allow).
+* The web **polls `GET /phone-kyc/business`** (about every 5 to 10 seconds while the link is open) and watches `aadhaar_verified`: `true` ends the step.
+* If the person has come back, or about **2 minutes** have passed since the link was opened, and `aadhaar_verified` is still `false` or `null`, the web offers **"Start the Aadhaar check again"**, which is simply `POST /phone-kyc/business/aadhaar` again (a NEW link each time; no state is lost, nothing is charged). The API does not time the wait: the web knows when it opened the link.
+* Real VoiceLink answers proven with NO number bought (client 5911): step 1 saved; step 2 `pan-verify` -> `pan_verified: true`, `pan_match_status: 1` ("Matched"); `upload-document` (png) accepted, the status shows `documents.pan.uploaded: true` (VoiceLink echoes the document number: ours is dropped, never stored or returned); step 3 `aadhaar-init` returns the DigiLocker address. Still unproven: the Aadhaar document upload, final submit, and whether deleting a client returns its channel.

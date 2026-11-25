@@ -258,7 +258,7 @@ async def kyc_status(request: Request) -> JSONResponse:
     done = _kyc_complete(int(request.query_params["client_id"]))
     docs = {k: {"uploaded": True} for k in c["docs"]}
     step = "complete" if done else ("review" if c["submitted_at"] else (c["steps"][-1] if c["steps"] else "details"))
-    return ok({"is_complete": done, "kyc_status": 1 if done else 0, "current_step": step, "documents": docs})
+    return ok({"is_complete": done, "kyc_status": 1 if done else 0, "current_step": step, "documents": docs, "aadhaar_verified": bool(c.get("aadhaar_done")) or done})
 
 
 async def _step(request: Request, name: str, extra: dict[str, Any] | None = None) -> JSONResponse:
@@ -360,6 +360,15 @@ async def fake_add_channel(n: int = 1) -> JSONResponse:
     """Stands for the staff buying channels at VoiceLink (the real flow is purchase/add-channel + confirm)."""
     POOL["total"] += max(int(n), 0)
     return ok({"free_channels": free_channels()})
+
+
+@app.post("/_fake/aadhaar-done/{client_id}")
+async def aadhaar_done(client_id: int) -> JSONResponse:
+    """The person finished DigiLocker and the redirect completed: VoiceLink now knows (the real one stays `aadhaar_verified: false` if the page was closed during the redirect)."""
+    if client_id not in CLIENTS:
+        return refuse(404)
+    CLIENTS[client_id]["aadhaar_done"] = True
+    return ok({"client_id": client_id})
 
 
 @app.post("/_fake/approve/{client_id}")

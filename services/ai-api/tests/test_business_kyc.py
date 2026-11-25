@@ -517,3 +517,19 @@ def test_a_purchase_applies_the_held_first_month() -> None:
         assert repo.reserve is not None and repo.reserve["state"] == "applied" and repo.balance == 100000 - 49900
     finally:
         svc.buy = restore[0]  # type: ignore[attr-defined]
+
+
+def test_the_status_says_whether_the_digilocker_check_reached_voicelink_and_the_link_can_be_asked_for_again() -> None:
+    client, repo, vl, _ = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.status_doc = {"documents": {}, "kyc_status": 0, "current_step": "aadhaar", "aadhaar_verified": False}
+    pending = client.get(T, headers=auth("a_owner")).json()
+    assert pending["aadhaar_verified"] is False and pending["state"] != "verified"
+    first = client.post(f"{T}/aadhaar", headers=auth("a_owner"))
+    second = client.post(f"{T}/aadhaar", headers=auth("a_owner"))   # "Start the Aadhaar check again": a new link each time
+    assert first.status_code == 200 and second.status_code == 200 and first.json()["redirect_url"].startswith("https://") and second.json()["redirect_url"].startswith("https://")
+    assert len([c for c in vl.calls if c[1] == "/reseller/kyc/step-3-aadhaar-init"]) == 2
+    vl.status_doc = {"documents": {}, "kyc_status": 0, "current_step": "pan", "aadhaar_verified": True}
+    assert client.get(T, headers=auth("a_owner")).json()["aadhaar_verified"] is True
+    vl.status_doc = {"documents": {}, "kyc_status": 0, "current_step": "pan"}
+    assert client.get(T, headers=auth("a_owner")).json()["aadhaar_verified"] is None, "VoiceLink does not say: unknown, not false"
