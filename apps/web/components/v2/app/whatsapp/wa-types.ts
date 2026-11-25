@@ -7,6 +7,8 @@ export interface AccountActions {
   save: (f: { wabaId: string; phoneNumberId: string; displayPhone: string; coexistence: boolean; tokenRef: string }) => Promise<Out<WhatsappAccount>>;
   activate: () => Promise<Out<WhatsappAccount>>;
   disable: () => Promise<Out<WhatsappAccount>>;
+  /** Disconnect: off and out of the account's webhooks; optional so a screen drawn without it shows no such button. */
+  disconnect?: () => Promise<Out<WhatsappAccount>>;
 }
 /** What a reply came to: the outbox's own state and closed reason (the policy decides; the screen only says it). */
 export interface ReplyResult {

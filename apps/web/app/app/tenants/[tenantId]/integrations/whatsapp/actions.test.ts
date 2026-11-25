@@ -10,10 +10,10 @@ vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", emai
 vi.mock("@/lib/api/whatsapp", async (orig) => {
   const real = await orig<typeof import("@/lib/api/whatsapp")>();
   const wrap = (n: string) => (...a: unknown[]) => h.api(n, ...a);
-  return { ...real, putWhatsappAccount: wrap("put"), activateWhatsapp: wrap("activate"), disableWhatsapp: wrap("disable"), connectWhatsapp: wrap("connect") };
+  return { ...real, putWhatsappAccount: wrap("put"), activateWhatsapp: wrap("activate"), disableWhatsapp: wrap("disable"), disconnectWhatsapp: wrap("disconnect"), connectWhatsapp: wrap("connect") };
 });
 
-import { activateWhatsappAction, connectWithFacebookAction, disableWhatsappAction, saveWhatsappAction } from "./actions";
+import { activateWhatsappAction, connectWithFacebookAction, disableWhatsappAction, disconnectWhatsappAction, saveWhatsappAction } from "./actions";
 
 const GOOD = { wabaId: "123456789", phoneNumberId: "987654321", displayPhone: "+91 98765 43210", coexistence: false, tokenRef: "SHOP_TOKEN" };
 beforeEach(() => h.api.mockReset().mockResolvedValue({ configured: true }));
@@ -28,6 +28,10 @@ describe("the Connect WhatsApp actions", () => {
     expect(h.api).toHaveBeenLastCalledWith("activate", "tok", T);
     await disableWhatsappAction(T);
     expect(h.api).toHaveBeenLastCalledWith("disable", "tok", T);
+  });
+  it("disconnect goes to the API's disconnect with the person's token and answers the account as it now stands", async () => {
+    expect(await disconnectWhatsappAction(T)).toEqual({ ok: true, data: { configured: true } });
+    expect(h.api).toHaveBeenLastCalledWith("disconnect", "tok", T);
   });
   it.each([{ ...GOOD, wabaId: "abc" }, { ...GOOD, phoneNumberId: "" }, { ...GOOD, tokenRef: "a b" }, { ...GOOD, displayPhone: "x".repeat(41) }, { ...GOOD, coexistence: "yes" }])("refuse %j before asking", async (bad) => {
     expect(await saveWhatsappAction(T, bad as never)).toMatchObject({ ok: false, kind: "invalid" });

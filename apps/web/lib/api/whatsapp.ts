@@ -89,6 +89,11 @@ export async function disableWhatsapp(token: string, tenantId: string): Promise<
   await post(`${base(tenantId)}/whatsapp/account/disable`, token);
   return getWhatsappAccount(token, tenantId);
 }
+/** "Disconnect" (Owner + second factor): C1's `POST /whatsapp/disconnect` switches the account off and takes our app off the account's webhooks; the account row stays with `status: "disabled"` (nothing of the chats is touched). */
+export async function disconnectWhatsapp(token: string, tenantId: string): Promise<WhatsappAccount> {
+  await post(`${base(tenantId)}/whatsapp/disconnect`, token);
+  return getWhatsappAccount(token, tenantId);
+}
 /**
  * "Connect with Facebook" (Meta Embedded Signup, Customer Zero; C1's `GET /whatsapp/connect/config`, Owner and Admin): what the browser needs to open Meta's window: our public app id, the signup configuration id and the Graph version.
  * `available` is false until the server has all it needs (`missing` names what is not there). The app SECRET never comes here.

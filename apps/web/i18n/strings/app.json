@@ -36692,10 +36692,10 @@
   }
  },
  "wa.state.needs_attention.disabled": {
-  "en": "This number was switched off, so nothing goes out. Switch it on again when you want messages to go.",
-  "te": "ఈ నంబర్ ఆఫ్ చేశారు, కాబట్టి ఏదీ వెళ్ళదు. మెసేజ్‌లు వెళ్ళాలంటే మళ్ళీ ఆన్ చేయండి.",
-  "hi": "यह नंबर बंद किया गया है, इसलिए कुछ नहीं जाता। मैसेज भेजने हों तो फिर चालू करें।",
-  "kn": "ಈ ನಂಬರ್ ಆಫ್ ಮಾಡಲಾಗಿದೆ, ಹಾಗಾಗಿ ಏನೂ ಹೋಗುವುದಿಲ್ಲ. ಮೆಸೇಜ್ ಹೋಗಬೇಕಾದರೆ ಮತ್ತೆ ಆನ್ ಮಾಡಿ.",
+  "en": "This number was disconnected or switched off, so nothing goes out. Connect again to use it.",
+  "te": "ఈ నంబర్ డిస్‌కనెక్ట్ లేదా ఆఫ్ అయింది, అందుకే ఏదీ వెళ్లదు. వాడాలంటే మళ్ళీ కనెక్ట్ చేయండి.",
+  "hi": "यह नंबर डिस्कनेक्ट या बंद हो गया है, इसलिए कुछ नहीं जाता। इस्तेमाल के लिए दोबारा कनेक्ट करें।",
+  "kn": "ಈ ನಂಬರ್ ಡಿಸ್‌ಕನೆಕ್ಟ್ ಅಥವಾ ಆಫ್ ಆಗಿದೆ, ಅದಕ್ಕೇ ಏನೂ ಹೋಗುವುದಿಲ್ಲ. ಬಳಸಲು ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
   "status": {
    "te": "reviewed",
    "hi": "draft",
@@ -138121,6 +138121,61 @@
   "te": "{name} తో కొనసాగించండి",
   "hi": "{name} के साथ आगे बढ़ें",
   "kn": "{name} ನೊಂದಿಗೆ ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.btn.disconnect": {
+  "en": "Disconnect",
+  "te": "డిస్‌కనెక్ట్ చేయండి",
+  "hi": "डिस्कनेक्ट करें",
+  "kn": "ಡಿಸ್‌ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.disconnect.ask": {
+  "en": "Disconnect this WhatsApp number? Messages stop until you connect again. Your chats stay.",
+  "te": "ఈ WhatsApp నంబర్‌ని డిస్‌కనెక్ట్ చేయాలా? మళ్ళీ కనెక్ట్ చేసే వరకు మెసేజ్‌లు ఆగుతాయి. మీ చాట్‌లు అలాగే ఉంటాయి.",
+  "hi": "इस WhatsApp नंबर को डिस्कनेक्ट करें? दोबारा कनेक्ट करने तक मैसेज रुक जाएँगे। आपकी चैट वैसी ही रहेंगी।",
+  "kn": "ಈ WhatsApp ನಂಬರ್ ಡಿಸ್‌ಕನೆಕ್ಟ್ ಮಾಡಬೇಕೆ? ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡುವವರೆಗೆ ಮೆಸೇಜ್‌ಗಳು ನಿಲ್ಲುತ್ತವೆ. ನಿಮ್ಮ ಚಾಟ್‌ಗಳು ಹಾಗೆಯೇ ಇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.disconnect.no": {
+  "en": "Keep it connected",
+  "te": "కనెక్ట్ అయి ఉంచండి",
+  "hi": "जुड़ा रहने दें",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿಯೇ ಇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fb.disabled": {
+  "en": "This number was disconnected. Connect again to use it.",
+  "te": "ఈ నంబర్ డిస్‌కనెక్ట్ అయింది. వాడాలంటే మళ్ళీ కనెక్ట్ చేయండి.",
+  "hi": "यह नंबर डिस्कनेक्ट हो गया है। इस्तेमाल के लिए दोबारा कनेक्ट करें।",
+  "kn": "ಈ ನಂಬರ್ ಡಿಸ್‌ಕನೆಕ್ಟ್ ಆಗಿದೆ. ಬಳಸಲು ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.said.disconnected": {
+  "en": "Disconnected. Connect again to use this number.",
+  "te": "డిస్‌కనెక్ట్ అయింది. ఈ నంబర్ వాడాలంటే మళ్ళీ కనెక్ట్ చేయండి.",
+  "hi": "डिस्कनेक्ट हो गया। इस नंबर के लिए दोबारा कनेक्ट करें।",
+  "kn": "ಡಿಸ್‌ಕನೆಕ್ಟ್ ಆಯಿತು. ಈ ನಂಬರ್‌ಗೆ ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

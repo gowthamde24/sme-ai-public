@@ -27,16 +27,29 @@ export function ConnectWhatsapp({ words, account: initial, canEdit, actions, sig
   const t = makeT(words);
   const id = useId();
   const [account, setAccount] = useState(initial);
+  // the page was read again (router.refresh after a connect): take the new account, and forget what was only shown in the meantime
+  const [seen, setSeen] = useState(initial);
+  const [fresh, setFresh] = useState<Connected | null>(null);
+  if (initial !== seen) {
+    setSeen(initial);
+    setAccount(initial);
+    setFresh(null);
+  }
+  const [asking, setAsking] = useState(false);
   const first = account.configured ? account : null;
   const [form, setForm] = useState({ wabaId: first?.waba_id ?? "", phoneNumberId: first?.phone_number_id ?? "", displayPhone: first?.display_phone ?? "", coexistence: first?.coexistence ?? false, tokenRef: first?.token_ref ?? "" });
-  const [busy, setBusy] = useState<"save" | "on" | "off" | null>(null);
+  const [busy, setBusy] = useState<"save" | "on" | "off" | "disconnect" | null>(null);
   const [failure, setFailure] = useState<Failed | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
   const [said, setSaid] = useState<string | null>(null);
-  const { state, why } = connectionState(account);
+  // a number just connected in Meta's window shows as Connected at once (the page is read again in the background)
+  const { state: read, why: readWhy } = connectionState(account);
+  const state = fresh ? "connected" : read;
+  const why = fresh ? null : readWhy;
+  const disconnected = account.configured && account.status === "disabled" && !fresh;
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [k]: k === "coexistence" ? e.target.checked : e.target.value });
 
-  async function run(kind: "save" | "on" | "off") {
+  async function run(kind: "save" | "on" | "off" | "disconnect") {
     setFailure(null);
     setSaid(null);
     if (kind === "save") {
@@ -45,11 +58,13 @@ export function ConnectWhatsapp({ words, account: initial, canEdit, actions, sig
       if (p) return;
     }
     setBusy(kind);
-    const r = await (kind === "save" ? actions.save(form) : kind === "on" ? actions.activate() : actions.disable());
+    const r = await (kind === "save" ? actions.save(form) : kind === "on" ? actions.activate() : kind === "off" ? actions.disable() : actions.disconnect!());
     setBusy(null);
     if (!r.ok) return setFailure(r);
     setAccount(r.data);
-    setSaid(t(kind === "save" ? "wa.said.saved" : kind === "on" ? "wa.said.on" : "wa.said.off"));
+    setAsking(false);
+    setFresh(null);
+    setSaid(t(kind === "save" ? "wa.said.saved" : kind === "on" ? "wa.said.on" : kind === "off" ? "wa.said.off" : "wa.said.disconnected"));
   }
 
   return (
@@ -66,7 +81,7 @@ export function ConnectWhatsapp({ words, account: initial, canEdit, actions, sig
             </p>
           </div>
         </div>
-        <p className="text-base">{t(why ? `wa.state.${state}.${why}` : `wa.state.${state}.body`, { phone: first?.display_phone ?? first?.phone_number_id ?? "", ref: first?.token_ref ?? "" })}</p>
+        <p className="text-base">{t(why ? `wa.state.${state}.${why}` : `wa.state.${state}.body`, { phone: fresh?.displayPhone ?? first?.display_phone ?? first?.phone_number_id ?? "", ref: first?.token_ref ?? "" })}</p>
         {first?.updated_at ? (
           <p className={help}>
             {t("wa.state.updated")} <LocalTime iso={first.updated_at} />
@@ -84,6 +99,24 @@ export function ConnectWhatsapp({ words, account: initial, canEdit, actions, sig
                 {busy === "off" ? t("dta.btn.working") : t("wa.btn.off")}
               </button>
             )}
+            {actions.disconnect && first.status !== "disabled" ? (
+              <button key="disconnect" type="button" data-act="disconnect" onClick={() => setAsking(true)} disabled={busy !== null || asking} className={secondary}>
+                {t("wa.btn.disconnect")}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+        {asking ? (
+          <div role="group" aria-label={t("wa.btn.disconnect")} data-part="disconnect-confirm" className="flex flex-col gap-2 border-y border-line py-3">
+            <p className="m-0 text-base text-ink">{t("wa.disconnect.ask")}</p>
+            <div className="flex flex-wrap gap-3">
+              <button type="button" data-act="disconnect-yes" onClick={() => run("disconnect")} disabled={busy !== null} className={primary}>
+                {busy === "disconnect" ? t("dta.btn.working") : t("wa.btn.disconnect")}
+              </button>
+              <button type="button" onClick={() => setAsking(false)} disabled={busy !== null} className={secondary}>
+                {t("wa.disconnect.no")}
+              </button>
+            </div>
           </div>
         ) : null}
         {said ? (
@@ -93,9 +126,15 @@ export function ConnectWhatsapp({ words, account: initial, canEdit, actions, sig
         ) : null}
       </section>
 
+      {canEdit && signup && disconnected ? (
+        <p role="status" data-part="reconnect-note" className="m-0 text-base text-ink">
+          {t("wa.fb.disabled")}
+        </p>
+      ) : null}
+
       {canEdit && signup ? (
         signup.config?.available && signup.config.appId && signup.config.configId ? (
-          <ConnectWithFacebook words={words} config={{ appId: signup.config.appId, configId: signup.config.configId, graphVersion: signup.config.graphVersion, coexistence: signup.config.onboardingTypes.includes("coexistence"), launchExtras: signup.config.launchExtras }} connect={signup.connect} onConnected={() => router.refresh()} />
+          <ConnectWithFacebook words={words} config={{ appId: signup.config.appId, configId: signup.config.configId, graphVersion: signup.config.graphVersion, coexistence: signup.config.onboardingTypes.includes("coexistence"), launchExtras: signup.config.launchExtras }} connect={signup.connect} onConnected={(c) => (setFresh(c), router.refresh())} />
         ) : (
           <section className={card} data-part="connect-facebook-soon">
             <h2 className={h2}>{t("wa.fb.title")}</h2>
