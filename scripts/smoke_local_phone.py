@@ -78,6 +78,7 @@ def main() -> int:
     p.add_argument("--fake-url", default="http://127.0.0.1:8099")
     p.add_argument("--pack", default="textiles")
     p.add_argument("--i-know-this-is-staging", action="store_true")
+    p.add_argument("--order", choices=("both", "buy-first", "verify-first"), default="both", help="buy first and verify after, verify first and then buy, or both (default)")
     p.add_argument("--keep-rows", action="store_true", help="leave the fake client, purchase and line this run made in the staging database (default: delete them at the end)")
     p.add_argument("--open-picker", action="store_true", help="turn the platform switch of the number picker ON on staging for this run and put it back after")
     a = p.parse_args()
@@ -87,14 +88,16 @@ def main() -> int:
     was = picker_switch(True) if a.open_picker else None
     print(("picker switch on staging was " + ("on" if was else "off") + ", turned on for this run") if was is not None else "picker switch left as it is")
     try:
-        return body(a)
+        orders = ["buy-first", "verify-first"] if a.order == "both" else [a.order]
+        return max(body(a, o) for o in orders)
     finally:
         if was is not None and not was:
             picker_switch(False)
             print("picker switch put back to off")
 
 
-def body(a: argparse.Namespace) -> int:
+def body(a: argparse.Namespace, order: str) -> int:
+    print(f"\n=== order: {order} ===")
     run = sb.Run(a.api_url, a.pack)
     say = sb.say
     t = run.t
@@ -106,13 +109,13 @@ def body(a: argparse.Namespace) -> int:
         return 1
     claimed = offers[0]["number"]
     try:
-        return steps(run, a, offers, claimed)
+        return steps(run, a, offers, claimed, order == "verify-first")
     finally:
         if not a.keep_rows:
             cleanup(run.tenant, a.fake_url, claimed)
 
 
-def steps(run: sb.Run, a: argparse.Namespace, offers: list, claimed: str) -> int:   # type: ignore[type-arg]
+def steps(run: sb.Run, a: argparse.Namespace, offers: list, claimed: str, verify_first: bool) -> int:   # type: ignore[type-arg]
     say = sb.say
     t = run.t
     st, out = run.call("GET", f"{t}/phone-kyc/business")
@@ -131,18 +134,32 @@ def steps(run: sb.Run, a: argparse.Namespace, offers: list, claimed: str) -> int
         ):
             st, out = run.call("POST", f"{t}/phone-kyc/business{path}", body)
             say("PASS" if st in (200, 201) else "FAIL", f"KYC {name}", f"HTTP {st}, code {sb.code_of(out)}")
+    def approve() -> None:
+        state = fake(a.fake_url, "GET", "/_fake/state")
+        clients = sorted(int(k) for k in state["clients"] if int(k) > 1)
+        if clients:
+            fake(a.fake_url, "POST", f"/_fake/approve/{clients[-1]}")
+            say("PASS", "10 approved at the fake", f"client {clients[-1]} (this stands for VoiceLink's own review)")
+
+    def verified() -> None:
+        st2, out2 = run.call("GET", f"{t}/phone-kyc/business")
+        say("PASS" if st2 == 200 and out2.get("state") == "verified" else "FAIL", "11 KYC now verified", f"HTTP {st2}, state {out2.get('state') if isinstance(out2, dict) else '?'}")
+
+    if verify_first:   # the second path: the whole verification BEFORE any number is bought; the purchase then starts with calls ON
+        approve()
+        verified()
     st, out = run.call("POST", f"{t}/numbers/claim", {"number": claimed, "type": "mobile"})
     first = out.get("state") if isinstance(out, dict) else None
-    say("PASS" if st == 201 and first in ("kyc_pending", "ready", "getting_ready") else "FAIL", "9 claim before approval", f"HTTP {st}, state {first}, code {sb.code_of(out)}")
-    state = fake(a.fake_url, "GET", "/_fake/state")
-    clients = sorted(int(k) for k in state["clients"] if int(k) > 1)
-    if clients:
-        fake(a.fake_url, "POST", f"/_fake/approve/{clients[-1]}")
-        say("PASS", "10 approved at the fake", f"client {clients[-1]} (this stands for VoiceLink's own review)")
-    st, out = run.call("GET", f"{t}/phone-kyc/business")
-    say("PASS" if st == 200 and out.get("state") == "verified" else "FAIL", "11 KYC now verified", f"HTTP {st}, state {out.get('state') if isinstance(out, dict) else '?'}")
+    allowed = ("ready",) if verify_first else ("kyc_pending", "ready", "getting_ready")
+    say("PASS" if st == 201 and first in allowed else "FAIL", "9 claim " + ("after the KYC (verify first)" if verify_first else "before approval (buy first)"), f"HTTP {st}, state {first}, code {sb.code_of(out)}")
+    if not verify_first:
+        approve()
+        verified()
     st, out = run.call("GET", f"{t}/numbers")
-    say("PASS" if st == 200 and out.get("numbers") else "FAIL", "12 my numbers", f"HTTP {st}, {len(out.get('numbers', [])) if isinstance(out, dict) else 0} number(s)")
+    rows = out.get("numbers", []) if isinstance(out, dict) else []
+    want = "calls_on" if verify_first else None
+    ok = st == 200 and bool(rows) and (want is None or rows[0].get("state") == want)
+    say("PASS" if ok else "FAIL", "12 my numbers", f"HTTP {st}, {len(rows)} number(s), state {rows[0].get('state') if rows else None}" + (f" (want {want})" if want else ""))
     print(f"\n{sb.RESULTS.count('PASS')} PASS, {sb.RESULTS.count('FAIL')} FAIL, {sb.RESULTS.count('SKIP')} SKIP")
     return 1 if "FAIL" in sb.RESULTS else 0
 
