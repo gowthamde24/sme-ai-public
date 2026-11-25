@@ -20,10 +20,11 @@ describe("credits: C1's answers, checked", () => {
     expect(inv.draft).toBe(true);
     expect(inv.lines).toEqual([{ label: "CGST 9%", text: "₹90" }, { label: "SGST 9%", text: "₹90" }]);
   });
-  it("the debt: from debt_paise, or from a balance below zero; none otherwise", () => {
-    expect(parseBalanceAndDebt({ balance_paise: 0, debt_paise: 3500 }).debtPaise).toBe(3500);
-    expect(parseBalanceAndDebt({ balance_paise: -2000 })).toEqual({ balance: null, debtPaise: 2000 });
-    expect(parseBalanceAndDebt({ balance_paise: 5000 }).debtPaise).toBeNull();
+  it("what is owed is read only from owed_paise (C1 sends no debt otherwise, and the balance never goes below 0)", () => {
+    expect(parseBalanceAndDebt({ balance_paise: 0, owed_paise: 3500 }).debtPaise).toBe(3500);
+    expect(parseBalanceAndDebt({ balance_paise: 0, debt_paise: 3500, shortfall_paise: 3500 }).debtPaise).toBeNull();
+    expect(parseBalanceAndDebt({ balance_paise: -2000 })).toEqual({ balance: null, debtPaise: null });
+    expect(parseBalanceAndDebt({ balance_paise: 5000, owed_paise: 0 }).debtPaise).toBeNull();
     expect(parseBalanceAndDebt("nope")).toEqual({ balance: null, debtPaise: null });
   });
   it("refusals are closed words", () => {

@@ -107,14 +107,13 @@ export async function getInvoice(token: string, t: string, number: string): Prom
   return parseInvoice(await apiRequest(`${base(t)}/gst-invoices/${number}`, token));
 }
 /**
- * The balance, and the debt when the wallet ran past zero (C1's docs/contracts/call-billing.md: an inbound call is answered up to a small floor below zero and the shortfall is a debt the next top-up pays first). The debt is read from `debt_paise` (or `shortfall_paise`) when the API sends it,
- * else from a balance below zero; null when there is none. A balance the page cannot read is null (never invented).
+ * The balance, and what is owed when the wallet ran past zero (C1's docs/contracts/call-billing.md: an inbound call is answered up to a small floor and the shortfall is a debt the next top-up pays first). C1 (26 Nov) does NOT expose the debt yet: `balance_paise` never goes below 0, so
+ * nothing is read from it. The line is drawn only when the balance answer carries `owed_paise` (a whole number above 0, which C1 offered to add); until then it never shows. A balance the page cannot read is null (never invented).
  */
 export type Balance = { balance: BillingBalance | null; debtPaise: number | null };
 export function parseBalanceAndDebt(json: unknown): Balance {
   const x = isRec(json) ? json : {};
-  const debt = [x.debt_paise, x.shortfall_paise].find((v) => typeof v === "number" && Number.isSafeInteger(v) && v > 0);
-  const neg = typeof x.balance_paise === "number" && Number.isSafeInteger(x.balance_paise) && x.balance_paise < 0 ? -x.balance_paise : null;
-  return { balance: parseBillingBalance(json), debtPaise: (debt as number | undefined) ?? neg };
+  const owed = typeof x.owed_paise === "number" && Number.isSafeInteger(x.owed_paise) && x.owed_paise > 0 ? x.owed_paise : null;
+  return { balance: parseBillingBalance(json), debtPaise: owed };
 }
 export const getBalance = async (token: string, t: string): Promise<Balance> => parseBalanceAndDebt(await apiRequest(`${base(t)}/balance`, token));
