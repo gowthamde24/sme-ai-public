@@ -99,7 +99,7 @@ export function TalkForm({ lang, words, action, privacyHref, turnstile = null }:
         <label htmlFor="tk-what" className={label}>{words.what}</label>
         <input id="tk-what" maxLength={200} value={what} onChange={(e) => setWhat(e.target.value)} className={field} />
       </div>
-      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+      <div aria-hidden="true" className="sr-only">
         <input tabIndex={-1} autoComplete="off" name="website" value={trap} onChange={(e) => setTrap(e.target.value)} />
       </div>
       <label className="flex items-start gap-3 border-t border-line pt-4 text-base">

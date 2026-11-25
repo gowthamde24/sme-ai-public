@@ -36,7 +36,7 @@ try {
           fs.writeFileSync(path.join(shots, `${p.replace(/\//g, "_").slice(1)}-${width}-${dark ? "dark" : "light"}.png`), Buffer.from(data, "base64"));
         }
       }
-      for (const l of tab.logs.filter((x) => !/favicon|Download the React DevTools|Fast Refresh|\[HMR\]/.test(x))) problems.push(`${width}px ${dark ? "dark" : "light"} ${lang}: ${l}`);
+      for (const l of tab.logs.filter((x) => !/favicon|Download the React DevTools|Fast Refresh|\[HMR\]|interest-cohort/.test(x))) problems.push(`${width}px ${dark ? "dark" : "light"} ${lang}: ${l}`);
     } finally {
       await tab.close();
     }

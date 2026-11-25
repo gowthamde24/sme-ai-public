@@ -187,7 +187,7 @@ export function StatusPublic({ p, health }: { p: PubT; health?: Health }) {
 export function RulesPage({ t, p, kind }: { t: SiteT; p: PubT; kind: "aup" | "refund" }) {
   const v = pubVars();
   const n = kind === "aup" ? 5 : 4;
-  const items = Array.from({ length: n }, (_, i) => ({ head: p(`pub.${kind}.${i + 1}.h` as PubKey), text: p(`pub.${kind}.${i + 1}.t` as PubKey) }));
+  const items = Array.from({ length: n }, (_, i) => ({ head: p(`pub.${kind}.${i + 1}.h` as PubKey), text: p(`pub.${kind}.${i + 1}.t` as PubKey, v) }));
   return (
     <>
       <PubHead title={p(`pub.${kind}.title` as PubKey)} sub={p(`pub.${kind}.sub` as PubKey)} draft={p("pub.c.draft")} />

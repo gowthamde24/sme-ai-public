@@ -123,7 +123,11 @@ describe("acceptable use and refunds: drafts for approval", () => {
     const out = html("en", page("refunds"));
     expect(out.match(/data-part="draft-tag"/g)).toHaveLength(1);
     expect(out.match(/<li class="grid grid-cols-\[2rem/g)).toHaveLength(4);
+    expect(text(out)).toContain("within 14 days of the day you bought them");
+    expect(text(out)).toContain("Credits never expire.");
+    expect(text(out)).toContain("payment method you paid with");
     expect(text(out)).toContain("We answer within 2 working days.");
+    expect(text(out)).not.toMatch(/7 days/);
     expect(out).toContain("hello@stack19.com");
   });
 });
