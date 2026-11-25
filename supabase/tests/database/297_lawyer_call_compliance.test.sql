@@ -74,5 +74,17 @@ select is(has_function_privilege('anon', 'public.phone_monitored_for_call(uuid)'
 
 -- I. the new refusal words fit on a call row
 select is((select count(*) from pg_constraint where conrelid = 'public.phone_calls'::regclass and pg_get_constraintdef(oid) like '%enquiry_too_old%' and pg_get_constraintdef(oid) like '%usage_not_accepted%'), 1::bigint, 'I1: the call row may hold the new refusal words');
+-- J. a business waiting for a free VoiceLink channel (migration 992640)
+select is(pg_temp.sc('a_sales', 'aal2', format($q$select public.business_line_wait_put(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'J1: only the Owner marks a wait');
+select is(pg_temp.sc('b_owner', 'aal2', format($q$select public.business_line_wait_put(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'J2: not for another workspace');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.business_line_wait_put(%L) ->> 'tries')$q$, tests.tid('a'))), '1', 'J3: the Owner marks it');
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.business_line_wait_put(%L) ->> 'tries')$q$, tests.tid('a'))), '2', 'J4: and a retry counts');
+select is(pg_temp.sc('a_admin', 'aal2', format($q$select (public.business_line_wait_get(%L) ->> 'waiting')$q$, tests.tid('a'))), 'true', 'J5: an Admin can read it');
+select is(pg_temp.sc('b_owner', 'aal2', format($q$select (public.business_line_wait_get(%L) ->> 'waiting')$q$, tests.tid('b'))), 'false', 'J6: the other workspace is not waiting');
+select is((select count(*) from jsonb_array_elements(admin.computed_alerts('support')) x where x ->> 'kind' = 'no_free_channels'), 1::bigint, 'J7: staff see the alert while anyone waits');
+select is((select count(*) from jsonb_array_elements(admin.computed_alerts('finance')) x where x ->> 'kind' = 'no_free_channels'), 0::bigint, 'J8: finance does not (owner and support only)');
+select pg_temp.sc('a_owner', 'aal2', format($q$select public.business_line_wait_clear(%L)::text$q$, tests.tid('a')));
+select is(pg_temp.sc('a_owner', 'aal2', format($q$select (public.business_line_wait_get(%L) ->> 'waiting')$q$, tests.tid('a'))), 'false', 'J9: cleared once the client exists');
+select is(has_table_privilege('authenticated', 'telephony.line_waits', 'select'), false, 'J10: the table is closed to every client role');
 select * from finish();
 rollback;

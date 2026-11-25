@@ -28,6 +28,18 @@ def fake(base: str, method: str, path: str) -> dict:
         return json.loads(r.read())
 
 
+def db_count(sql: str) -> int:
+    """One count from the staging database (this checkout must be linked to it); -1 when it cannot be read."""
+    ref_file = sb.ROOT / "supabase" / ".temp" / "project-ref"
+    if not ref_file.exists() or ref_file.read_text().strip() != sb.STAGING_REF:
+        return -1
+    r = sb.subprocess.run(["supabase", "db", "query", "--linked", sql], cwd=sb.ROOT, capture_output=True, text=True, timeout=120)
+    for line in r.stdout.splitlines():
+        if '"n"' in line:
+            return int(line.split(":")[1].strip().rstrip(","))
+    return -1
+
+
 def picker_switch(value: bool) -> bool | None:
     """STAGING only (the checkout must be linked to it): flips ops.picker_settings.enabled, the platform switch of the number picker, and returns what it was (None when it cannot be read or set)."""
     ref_file = sb.ROOT / "supabase" / ".temp" / "project-ref"
@@ -66,6 +78,7 @@ def cleanup(tenant: str, fake_base: str, number: str) -> None:
     sql = (f"with a as (delete from ops.number_purchases where tenant_id = '{tenant}' and number = '{number}' and order_number like 'FAKE-%' returning 1), "
            f"l as (delete from public.phone_numbers where tenant_id = '{tenant}' and number = '{number}' and provider = 'voicelink' returning 1), "
            f"b as (delete from telephony.business_clients where tenant_id = '{tenant}' and client_id in ({ids}) returning 1), "
+           f"w as (delete from telephony.line_waits where tenant_id = '{tenant}' returning 1), "
            f"n as (delete from admin.alerts where kind = 'telephony_setting' and detail like 'Number picker:%' and created_at > now() - interval '30 minutes' returning 1) "
            "select (select count(*) from a) as purchases, (select count(*) from l) as lines, (select count(*) from b) as clients, (select count(*) from n) as alerts")
     r = sb.subprocess.run(["supabase", "db", "query", "--linked", sql], cwd=sb.ROOT, capture_output=True, text=True, timeout=120)
@@ -127,6 +140,16 @@ def steps(run: sb.Run, a: argparse.Namespace, offers: list, claimed: str, verify
     st0, out0 = run.call("POST", f"{t}/numbers/claim", {"number": claimed, "type": "mobile"})   # nothing is bought before the KYC: a plain 409 kyc_required
     why0 = (out0.get("error") or {}).get("reason") if isinstance(out0, dict) and isinstance(out0.get("error"), dict) else None
     say("PASS" if st0 == 409 and why0 == "kyc_required" else "FAIL", "1b a purchase before the KYC is refused", f"HTTP {st0}, reason {why0}")
+    # no free channel at VoiceLink (the fake's pool is all on our own client, as on the real account): the business WAITS for its line, it is not turned away
+    stw, outw = run.call("POST", f"{t}/phone-kyc/business/start")
+    say("PASS" if stw == 201 and isinstance(outw, dict) and outw.get("state") == "waiting_for_line" and "short while" in str(outw.get("words")) else "FAIL", "2a no free channel: the business waits", f"HTTP {stw}, state {outw.get('state') if isinstance(outw, dict) else '?'}")
+    waits = db_count(f"select count(*) as n from telephony.line_waits where tenant_id = '{run.tenant}'")
+    say("PASS" if waits == 1 else "FAIL", "2b the staff alert has its row (no_free_channels)", f"{waits} waiting")
+    stw2, outw2 = run.call("GET", f"{t}/phone-kyc/business")
+    say("PASS" if stw2 == 200 and outw2.get("state") == "waiting_for_line" else "FAIL", "2c the Owner's poll still waits (nothing is free)", f"state {outw2.get('state') if isinstance(outw2, dict) else '?'}")
+    fake(a.fake_url, "POST", "/_fake/add-channel?n=1")   # the staff bought a channel at VoiceLink
+    stw3, outw3 = run.call("GET", f"{t}/phone-kyc/business")
+    say("PASS" if stw3 == 200 and outw3.get("state") == "created" and db_count(f"select count(*) as n from telephony.line_waits where tenant_id = '{run.tenant}'") == 0 else "FAIL", "2d the next poll makes the client and the wait ends", f"state {outw3.get('state') if isinstance(outw3, dict) else '?'}")
     st, out = run.call("GET", f"{t}/phone-kyc/business")
     say("PASS" if st == 200 else "FAIL", "2 KYC status", f"HTTP {st}, state {out.get('state') if isinstance(out, dict) else '?'}")
     if isinstance(out, dict) and out.get("state") == "verified":

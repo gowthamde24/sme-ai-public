@@ -16,6 +16,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
+from app.business_kyc import rules
 from app.business_kyc.models import (
     AadhaarOut,
     DetailsIn,
@@ -24,7 +25,6 @@ from app.business_kyc.models import (
     StatusOut,
     UploadIn,
 )
-from app.business_kyc import rules
 from app.business_kyc.service import BusinessKycService
 from app.errors import not_found
 from app.tenancy.models import Role
@@ -43,7 +43,11 @@ def _service(runtime: Runtime) -> BusinessKycService:
 
 @router.get("", response_model=StatusOut)
 def status(ctx: Reader, runtime: RuntimeDep) -> dict[str, Any]:
-    return _service(runtime).status(ctx.principal.token, ctx.tenant.id)
+    service = _service(runtime)
+    out = service.status(ctx.principal.token, ctx.tenant.id)
+    if out["state"] == "waiting_for_line" and ctx.role == Role.OWNER:   # a channel may be free by now: the Owner's own screen retries (no worker needed)
+        out = service.retry_waiting(ctx.principal.token, ctx.tenant.id, ctx.principal.email or "", getattr(ctx.tenant, "name", "") or "")
+    return out
 
 
 @router.post("/start", response_model=StatusOut, status_code=201)

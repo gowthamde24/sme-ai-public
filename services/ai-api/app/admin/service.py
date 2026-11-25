@@ -463,7 +463,7 @@ class UsageSummaryOut(_Out):
 
 class AlertOut(_Out):
     id: uuid.UUID
-    kind: Literal["google_cap", "credential_expiry", "plivo_balance", "worker_stale", "quiet_line", "wallet_low", "webhook_failing", "kyc_pending", "abandoned_calls", "complaints_paused"]
+    kind: Literal["google_cap", "credential_expiry", "plivo_balance", "worker_stale", "quiet_line", "wallet_low", "webhook_failing", "kyc_pending", "abandoned_calls", "complaints_paused", "no_free_channels"]
     severity: Literal["warn", "over"]
     title: str
     detail: str | None

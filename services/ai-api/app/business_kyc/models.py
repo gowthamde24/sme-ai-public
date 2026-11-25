@@ -12,7 +12,7 @@ class _Strict(BaseModel):
 
 
 class StatusOut(_Strict):
-    state: Literal["not_started", "created", "in_progress", "submitted", "verified", "stuck"]
+    state: Literal["not_started", "waiting_for_line", "created", "in_progress", "submitted", "verified", "stuck"]
     account_type: Literal["individual", "business"] | None
     step: str | None
     steps: dict[str, bool]

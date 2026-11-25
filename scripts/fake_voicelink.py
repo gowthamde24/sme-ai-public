@@ -24,6 +24,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 APPROVE_S = float(os.environ.get("FAKE_VOICELINK_APPROVE_S", "20"))
+POOL_DEFAULT = int(os.environ.get("FAKE_VOICELINK_CHANNELS", "2"))   # channels our reseller account owns; OUR client holds them all, so none is free (as on the real account, 25 Nov 2026)
 OUR_CLIENT_ID = 1   # PICKER_CLIENT_ID in the local run: our own client, KYC complete
 app = FastAPI(title="fake-voicelink", docs_url=None, redoc_url=None)
 _lock = threading.Lock()
@@ -34,6 +35,15 @@ ORDERS: dict[int, dict[str, Any]] = {}
 ROUTINGS: list[dict[str, Any]] = []
 LEADS: list[dict[str, Any]] = []
 WALLET = {"balance": 25000.0}
+POOL = {"total": POOL_DEFAULT}
+CHANNEL_RATE = 99.0   # per channel per month (a guess; the real rate is to be confirmed)
+
+
+def free_channels() -> int:
+    held = 0
+    for cid, c in CLIENTS.items():
+        held += int(c.get("channels", POOL_DEFAULT if cid == OUR_CLIENT_ID else 0))
+    return POOL["total"] - held
 for i in range(40):   # numbers for sale: 9xxxx for mobile (type 2), 40xx for landline (type 3); the rate is a plain Rs 300 / Rs 400
     mobile = i < 30
     digits = f"91{9000000000 + 1234500 + i * 111}" if mobile else f"91{4000000000 + 2345600 + i * 101}"
@@ -67,7 +77,8 @@ async def login() -> JSONResponse:
 
 @app.get("/reseller/profile")
 async def profile() -> JSONResponse:
-    return ok({"currency": "INR", "wallet": {"balance": WALLET["balance"], "currency": "INR"}})
+    allocated = POOL["total"] - free_channels()
+    return ok({"currency": "INR", "wallet": {"balance": WALLET["balance"], "currency": "INR"}, "channels": {"available": free_channels(), "total_allocated": allocated, "total_purchased": POOL["total"]}})
 
 
 @app.get("/reseller/did/purchased")
@@ -124,8 +135,23 @@ async def summary(order_id: int) -> JSONResponse:
     o = ORDERS.get(order_id)
     if o is None:
         return refuse(404)
-    total = sum(DIDS[i]["monthly_rate"] for i in o["dids"]) * o["months"]
-    return ok({"total": total, "did_count": len(o["dids"]), "channel_count": 0, "wallet_balance": WALLET["balance"]})
+    total = sum(DIDS[i]["monthly_rate"] for i in o["dids"]) * o["months"] + CHANNEL_RATE * o.get("channels", 0) * o["months"]
+    return ok({"total": total, "did_count": len(o["dids"]), "channel_count": o.get("channels", 0), "wallet_balance": WALLET["balance"]})
+
+
+@app.post("/reseller/purchase/add-channel")
+async def add_channel(request: Request) -> JSONResponse:
+    """Channels for our pool (a draft order, like a number; a channels-only order is allowed here, which the real API's documentation implies but does not state)."""
+    body = await request.json()
+    with _lock:
+        oid = int(body.get("order_id") or 0)
+        if not oid or oid not in ORDERS:
+            _next["order"] += 1
+            oid = _next["order"]
+            ORDERS[oid] = {"dids": [], "months": int(body.get("months") or 1), "paid": False}
+        ORDERS[oid]["channels"] = int(body.get("channel_count") or 1)
+        ORDERS[oid]["months"] = int(body.get("months") or ORDERS[oid]["months"])
+    return ok({"order_id": oid, "channel_count": ORDERS[oid]["channels"], "channel_total": CHANNEL_RATE * ORDERS[oid]["channels"] * ORDERS[oid]["months"], "channel_monthly_rate": CHANNEL_RATE})
 
 
 @app.post("/reseller/purchase/confirm")
@@ -134,11 +160,12 @@ async def confirm(request: Request) -> JSONResponse:
     o = ORDERS.get(int(body.get("order_id") or 0))
     if o is None or o["paid"]:
         return refuse(422)
-    total = sum(DIDS[i]["monthly_rate"] for i in o["dids"]) * o["months"]
+    total = sum(DIDS[i]["monthly_rate"] for i in o["dids"]) * o["months"] + CHANNEL_RATE * o.get("channels", 0) * o["months"]
     if total > WALLET["balance"]:
         return refuse(422, {"error": "wallet low"})
     with _lock:
         WALLET["balance"] -= total
+        POOL["total"] += int(o.get("channels", 0))
         o["paid"] = True
         for i in o["dids"]:
             DIDS[i]["owner"] = "us"
@@ -165,10 +192,13 @@ async def create_client(request: Request) -> JSONResponse:
     email = str(body.get("email") or "").lower()
     if not email or any(c["email"] == email for c in CLIENTS.values()):
         return refuse(422, {"error": "email already used"})
+    wanted = int(body.get("channel_count") or 0)
     with _lock:
+        if wanted < 1 or wanted > free_channels():   # the real refusal text of 25 Nov 2026
+            return refuse(422, {}, f"Channel count cannot exceed available channels ({max(free_channels(), 0)}).")
         _next["client"] += 1
         cid = _next["client"]
-        CLIENTS[cid] = {"email": email, "username": body.get("username"), "kyc_done": False, "docs": {}, "submitted_at": None, "steps": []}
+        CLIENTS[cid] = {"email": email, "username": body.get("username"), "kyc_done": False, "docs": {}, "submitted_at": None, "steps": [], "channels": wanted}
     return ok({"client_id": cid})
 
 
@@ -190,6 +220,21 @@ def _multipart_fields(content_type: str, body: bytes) -> dict[str, str]:
         if name and not part.get_filename():
             out[str(name)] = str(part.get_content()).strip()
     return out
+
+
+@app.post("/reseller/client/update/{client_id}")
+async def update_client(client_id: int, request: Request) -> JSONResponse:
+    """Move channels between clients (the real endpoint needs the whole profile; the fake reads channel_count only)."""
+    body = await request.json()
+    c = CLIENTS.get(client_id)
+    if c is None:
+        return refuse(404)
+    want = int(body.get("channel_count") or 0)
+    have = int(c.get("channels", POOL_DEFAULT if client_id == OUR_CLIENT_ID else 0))
+    if want < 1 or want - have > free_channels():
+        return refuse(422, {}, f"Channel count cannot exceed available channels ({max(free_channels(), 0)}).")
+    c["channels"] = want
+    return ok({"client_id": client_id})
 
 
 @app.get("/reseller/kyc/status")
@@ -281,7 +326,15 @@ async def reset() -> JSONResponse:
         ROUTINGS.clear()
         LEADS.clear()
         WALLET["balance"] = 25000.0
+        POOL["total"] = POOL_DEFAULT
     return ok({"reset": True})
+
+
+@app.post("/_fake/add-channel")
+async def fake_add_channel(n: int = 1) -> JSONResponse:
+    """Stands for the staff buying channels at VoiceLink (the real flow is purchase/add-channel + confirm)."""
+    POOL["total"] += max(int(n), 0)
+    return ok({"free_channels": free_channels()})
 
 
 @app.post("/_fake/approve/{client_id}")
@@ -318,7 +371,7 @@ async def add_lead(request: Request) -> JSONResponse:
 
 @app.get("/_fake/state")
 async def state() -> JSONResponse:
-    return JSONResponse({"wallet": WALLET, "bought": [d["did_number"] for d in DIDS.values() if d["owner"] == "us"], "clients": {str(k): {"kyc_done": _kyc_complete(k), "docs": sorted(v["docs"])} for k, v in CLIENTS.items()}, "routings": len(ROUTINGS), "leads": LEADS[-10:]})
+    return JSONResponse({"wallet": WALLET, "free_channels": free_channels(), "channels_total": POOL["total"], "bought": [d["did_number"] for d in DIDS.values() if d["owner"] == "us"], "clients": {str(k): {"kyc_done": _kyc_complete(k), "docs": sorted(v["docs"])} for k, v in CLIENTS.items()}, "routings": len(ROUTINGS), "leads": LEADS[-10:]})
 
 
 if __name__ == "__main__":

@@ -36,6 +36,7 @@ WORDS = {
     "missing_documents": "Some documents are still missing.",
     "refused": "That could not be saved. Please check the details and try again.",
     "not_started": "Start the verification first.",
+    "no_line_yet": "We are setting up your line. This takes a short while.",
     "stuck": "We could not finish. Our team has been told; your details are kept as they were.",
 }
 
@@ -55,6 +56,16 @@ class RpcRepo:
 
     def put(self, token: str, tenant_id: uuid.UUID, client_id: int, account_type: str | None, state: str, reason: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "business_client_put", {"p_tenant_id": str(tenant_id), "p_client_id": client_id, "p_account_type": account_type, "p_state": state, "p_reason": reason})
+
+    def wait_get(self, token: str, tenant_id: uuid.UUID) -> bool:
+        out = self._rpc.call(token, "business_line_wait_get", {"p_tenant_id": str(tenant_id)})
+        return isinstance(out, dict) and out.get("waiting") is True
+
+    def wait_put(self, token: str, tenant_id: uuid.UUID) -> None:
+        self._rpc.call(token, "business_line_wait_put", {"p_tenant_id": str(tenant_id)})
+
+    def wait_clear(self, token: str, tenant_id: uuid.UUID) -> None:
+        self._rpc.call(token, "business_line_wait_clear", {"p_tenant_id": str(tenant_id)})
 
 
 def refusal(reason: str, *, status: int = 422, extra: dict[str, Any] | None = None) -> ApiError:
@@ -82,6 +93,8 @@ class BusinessKycService:
     def status(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         row = self._row(token, tenant_id)
         if row is None:
+            if self._waiting(token, tenant_id):
+                return {"state": "waiting_for_line", "account_type": None, "step": None, "steps": {}, "missing": [], "reason": "no_line_yet", "words": WORDS["no_line_yet"]}
             return {"state": "not_started", "account_type": None, "step": None, "steps": {}, "missing": [], "reason": None, "words": None}
         out: dict[str, Any] = {"state": row["state"], "account_type": row.get("account_type"), "step": None, "steps": {}, "missing": [], "reason": row.get("reason"), "words": WORDS.get(str(row.get("reason") or ""))}
         if row["state"] == "verified":
@@ -145,20 +158,47 @@ class BusinessKycService:
                 return int(row["client_id"])
         return None
 
+    def _waiting(self, token: str, tenant_id: uuid.UUID) -> bool:
+        wait_get = getattr(self._repo, "wait_get", None)
+        try:
+            return bool(wait_get(token, tenant_id)) if wait_get is not None else False
+        except Exception:   # noqa: BLE001 - an unreadable marker is "not waiting": the status then says not started and the Owner may try again
+            return False
+
+    def _set_waiting(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        """No free channel at VoiceLink for this business's own client: it WAITS (the staff console says so; the Owner is told, not turned away)."""
+        wait_put = getattr(self._repo, "wait_put", None)
+        if wait_put is not None:
+            wait_put(token, tenant_id)
+        log.warning("business_kyc no_free_channel tenant_fp=%s", str(tenant_id)[:8])
+        return self.status(token, tenant_id)
+
+    def retry_waiting(self, token: str, tenant_id: uuid.UUID, email: str, name: str) -> dict[str, Any]:
+        """The Owner's screen read the status while the business waits for a line: if a channel is free now the client is made (the same call as `start`)."""
+        return self.start(token, tenant_id, email, name, None)
+
     # ------------------------------------------------------------------------------------------ steps
     def start(self, token: str, tenant_id: uuid.UUID, email: str, name: str, phone: str | None) -> dict[str, Any]:
         if self._row(token, tenant_id) is not None:
             return self.status(token, tenant_id)
+        free = self._api.free_channels()
+        if free is not None and free < 1:   # known to be empty: do not even ask (VoiceLink would refuse)
+            return self._set_waiting(token, tenant_id)
         first, _, last = (name.strip() or "Business owner").partition(" ")
         try:
             client_id = self._api.create_client(
                 username="s19-" + tenant_id.hex[:12], email=email, first_name=first[:40] or "Business", last_name=(last or "Owner")[:40], password=secrets.token_urlsafe(18), phone=phone, channel_count=1,
             )
         except VoicelinkError as exc:
+            if exc.reason == "no_channel":
+                return self._set_waiting(token, tenant_id)
             if _unavailable(exc):
                 raise refusal("unavailable", status=503) from None
             raise refusal("email_in_use") from None
         self._repo.put(token, tenant_id, client_id, None, "created", None)
+        wait_clear = getattr(self._repo, "wait_clear", None)
+        if wait_clear is not None:
+            wait_clear(token, tenant_id)
         return self.status(token, tenant_id)
 
     def _step(self, token: str, tenant_id: uuid.UUID, step: str, fields: dict[str, Any], *, account_type: str | None = None) -> dict[str, Any]:

@@ -25,6 +25,18 @@ PAN = "ABCDE1234F"
 class Repo:
     def __init__(self) -> None:
         self.row: dict[str, Any] | None = None
+        self.waiting = False
+        self.waits = 0
+
+    def wait_get(self, token: str, tenant_id: uuid.UUID) -> bool:
+        return self.waiting
+
+    def wait_put(self, token: str, tenant_id: uuid.UUID) -> None:
+        self.waiting = True
+        self.waits += 1
+
+    def wait_clear(self, token: str, tenant_id: uuid.UUID) -> None:
+        self.waiting = False
 
     def get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         return dict(self.row) if self.row else None
@@ -39,6 +51,7 @@ class FakeVoiceLink:
         self.calls: list[tuple[str, str, Any]] = []
         self.status_doc: dict[str, Any] = {"documents": {}, "current_step": "details", "kyc_status": 0}
         self.fail: dict[str, tuple[int, dict[str, Any]]] = {}
+        self.free_channels: int | None = None   # None: the profile does not say; 0: none free (create is refused with VoiceLink's own words)
 
     def handler(self, request: httpx.Request) -> httpx.Response:
         path = request.url.path.replace("/api/v1", "")
@@ -53,7 +66,11 @@ class FakeVoiceLink:
         if path in self.fail:
             status, data = self.fail[path]
             return httpx.Response(status, json={"status": False, "data": data, "message": "x"})
+        if path == "/reseller/profile":
+            return httpx.Response(200, json={"status": True, "data": {"wallet": {"balance": 5000, "currency": "INR"}, **({"channels": {"available": self.free_channels, "total_allocated": 2, "total_purchased": 2}} if self.free_channels is not None else {})}})
         if path == "/reseller/client/create":
+            if self.free_channels == 0:
+                return httpx.Response(422, json={"status": False, "message": "Channel count cannot exceed available channels (0).", "data": {}})
             return httpx.Response(200, json={"status": True, "data": {"client_id": 101}})
         if path == "/reseller/kyc/status":
             return httpx.Response(200, json={"status": True, "data": self.status_doc})
@@ -317,3 +334,56 @@ def test_the_worker_marks_the_businesses_voicelink_has_approved() -> None:
     assert kyc.refresh_pending("sys", rpc) == 0 and [c[0] for c in rpc.calls] == ["business_client_pending"]  # type: ignore[arg-type]
     vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
     assert kyc.refresh_pending("sys", rpc) == 1 and rpc.calls[-1] == ("business_client_mark_verified", {"p_tenant_id": str(TENANT_A.id)})  # type: ignore[arg-type]
+
+
+# ------------------------------------------------------------------------------------------------ no free channel at VoiceLink (the probe of 25 Nov 2026)
+def test_with_no_free_channel_the_business_waits_for_its_line_instead_of_being_turned_away() -> None:
+    client, repo, vl, _ = world()
+    vl.free_channels = 0
+    got = client.post(f"{T}/start", headers=auth("a_owner"))
+    assert got.status_code == 201 and got.json()["state"] == "waiting_for_line" and got.json()["words"] == "We are setting up your line. This takes a short while."
+    assert repo.waiting and repo.row is None and [c for c in vl.calls if c[1] == "/reseller/client/create"] == [], "known to be empty: VoiceLink is not even asked"
+    still = client.get(T, headers=auth("a_owner")).json()   # the Owner's screen polls: still waiting, the retry does not make a client
+    assert still["state"] == "waiting_for_line" and repo.row is None
+    assert client.get(T, headers=auth("a_admin")).json()["state"] == "waiting_for_line", "an Admin sees it too"
+    assert [c for c in vl.calls if c[1] == "/reseller/client/create"] == []
+    vl.free_channels = 1   # the staff bought a channel
+    later = client.get(T, headers=auth("a_owner", email="owner@example.test")).json()
+    assert later["state"] == "created" and repo.row is not None and repo.row["client_id"] == 101 and repo.waiting is False
+    assert len([c for c in vl.calls if c[1] == "/reseller/client/create"]) == 1
+
+
+def test_a_refusal_for_no_channel_is_a_wait_even_when_the_pool_cannot_be_read_and_any_other_refusal_keeps_its_word() -> None:
+    client, repo, vl, _ = world()
+    vl.fail["/reseller/client/create"] = (422, {})   # a refusal that is not about channels
+    other = client.post(f"{T}/start", headers=auth("a_owner"))
+    assert other.status_code == 422 and other.json()["error"]["reason"] == "email_in_use" and repo.waiting is False
+    original = vl.handler
+
+    def pool_unreadable(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/reseller/profile"):
+            return httpx.Response(404, json={"status": False, "data": {}})
+        if request.url.path.endswith("/reseller/client/create"):
+            return httpx.Response(422, json={"status": False, "message": "Channel count cannot exceed available channels (0).", "data": {}})
+        return original(request)
+
+    api = VoicelinkApi("u", "p", base_url="https://vl.test/api/v1", client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(pool_unreadable)))
+    waiting_repo = Repo()
+    c2, _ = make_client(business_kyc=BusinessKycService(waiting_repo, api, return_url="https://stack19.test/kyc/done"))
+    got = c2.post(f"{T}/start", headers=auth("a_owner"))
+    assert got.status_code == 201 and got.json()["state"] == "waiting_for_line" and waiting_repo.waiting
+
+
+def test_a_waiting_business_cannot_buy_a_number() -> None:
+    client, repo, vl, kyc = world()
+    vl.free_channels = 0
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    service, restore, bought = _numbers_world(kyc)
+    import app.numbers.service as svc
+
+    try:
+        with pytest.raises(PickerBlocked) as err:
+            service.claim("t", TENANT_A.id, "+919876543210", "mobile")
+        assert err.value.reason == "kyc_required" and bought == []
+    finally:
+        svc.buy = restore[0]  # type: ignore[attr-defined]
