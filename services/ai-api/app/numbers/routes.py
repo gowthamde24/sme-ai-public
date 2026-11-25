@@ -107,7 +107,7 @@ def claim(ctx: OwnerStrong, runtime: RuntimeDep, body: ClaimIn) -> ClaimedOut:
     if service_alert is not None:
         service._alert = lambda detail: service_alert(False, detail)  # noqa: SLF001 - the scheduler account raises the Needs-you item
     try:
-        done = service.claim(ctx.principal.token, ctx.tenant.id, body.number, body.type)
+        done = service.claim(ctx.principal.token, ctx.tenant.id, body.number, body.type, email=ctx.principal.email or "", name=getattr(ctx.tenant, "name", "") or "")
     except PickerBlocked as exc:
         raise _blocked(exc) from None
     return ClaimedOut(number=done.number, display=display(done.number) if not done.display else done.display, type=done.type, state=done.state)

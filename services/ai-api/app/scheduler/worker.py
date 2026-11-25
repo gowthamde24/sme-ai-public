@@ -116,6 +116,7 @@ class Worker:
         phone_numbers: Any = None,
         usage_alerts: UsageAlerts | None = None,
         call_reconcile: Callable[[str], int] | None = None,
+        kyc_refresh: Callable[[str], int] | None = None,
         google_alerts: GoogleCapAlerts | None = None,
         auto_reply: AutoReplyRunner | None = None,
         lead_reader: LeadReadRunner | None = None,
@@ -159,6 +160,7 @@ class Worker:
         self._phone_numbers = phone_numbers   # gives back the numbers of closed workspaces (app/phone_numbers)
         # job DS part E2: the 80 and 100 percent alerts (e-mail and a FAKE WhatsApp message to the owner) and the close of a period (one overage invoice); only while the platform's billing switch is on
         self._usage_alerts = usage_alerts
+        self._kyc_refresh = kyc_refresh   # KYC_PER_CLIENT: businesses VoiceLink has approved since the last tick are marked verified (their number goes live)
         self._call_reconcile = call_reconcile   # BILLING_CHARGE_CALLS: charges answered calls that ended without a charge row (app/billing/call_charge.py)
         # admin console (14 Nov 2026): the e-mail to the owner at 80 percent of a Google Maps free monthly cap
         self._google_alerts = google_alerts
@@ -215,6 +217,7 @@ class Worker:
             self._closed_lines_pass(token)
             self._usage_alerts_pass(token)
             self._call_reconcile_pass(token)
+            self._kyc_refresh_pass(token)
             self._google_alerts_pass(token)
             self._plivo_balance_pass(token)
             self._token_expiry_pass(token)
@@ -417,6 +420,16 @@ class Worker:
         except Exception as exc:
             logger.error("call charge reconcile crashed: %s", exc.__class__.__name__)
 
+    def _kyc_refresh_pass(self, token: str) -> None:
+        if self._kyc_refresh is None:
+            return
+        try:
+            self._kyc_refresh(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("kyc refresh crashed: %s", exc.__class__.__name__)
+
     def _google_alerts_pass(self, token: str) -> None:
         if self._google_alerts is None:
             return
@@ -451,6 +464,17 @@ class Worker:
                 deadline = self._monotonic()
                 wait = 0
             stop.wait(wait)
+
+
+def _kyc_refresh_for(settings: Settings, config: Any) -> Callable[[str], int] | None:
+    """KYC_PER_CLIENT: the worker asks VoiceLink about the businesses still waiting (needs the VoiceLink login and KYC_RETURN_URL, like the API)."""
+    from app.business_kyc.wiring import build_business_kyc
+
+    service = build_business_kyc(settings, config.rest_url, config.anon_key)
+    if service is None:
+        return None
+    rpc = RpcClient(config.rest_url, config.anon_key)
+    return lambda token: service.refresh_pending(token, rpc)
 
 
 def _billing_sender(settings: Settings) -> EmailSender:
@@ -519,6 +543,7 @@ def build_worker(settings: Settings) -> Worker:
         token_expiry=build_token_expiry(settings, config.rest_url, config.anon_key),
         template_sync=build_template_sync(settings, config.rest_url, config.anon_key),
         webhooks=build_webhook_runner(settings, config.rest_url, config.anon_key),
+        kyc_refresh=_kyc_refresh_for(settings, config),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         call_reconcile=(lambda tok: CallCharger(RpcClient(config.rest_url, config.anon_key), lambda: tok).reconcile()) if settings.billing_charge_calls else None,
         google_alerts=GoogleCapAlerts(RpcClient(config.rest_url, config.anon_key), _billing_sender(settings)),

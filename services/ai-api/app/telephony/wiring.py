@@ -56,7 +56,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
     vl_login = bool(settings.voicelink_username and settings.voicelink_username.get_secret_value() and settings.voicelink_password and settings.voicelink_password.get_secret_value())
     choice = (settings.telephony_provider or "").strip().lower()
     use_voicelink = choice == "voicelink" or (choice == "" and vl_login and not (settings.plivo_auth_id and len(plivo_token) >= 16))   # VoiceLink is the provider whose login is given (owner, 24 Nov 2026), unless TELEPHONY_PROVIDER says otherwise
-    outbound_repo = PostgrestOutboundRepo(RpcClient(rest_url, anon_key), provider="voicelink" if use_voicelink else "plivo", wallet_enforced=bool(getattr(settings, "billing_charge_calls", False)))
+    outbound_repo = PostgrestOutboundRepo(RpcClient(rest_url, anon_key), provider="voicelink" if use_voicelink else "plivo", wallet_enforced=bool(getattr(settings, "billing_charge_calls", False)), kyc_enforced=bool(getattr(settings, "kyc_per_client", False)))
     tokens = None   # the Auth Token of a subaccount's line: read from Secret Manager by the line's account_ref (WORKSPACE_SECRETS=gcp); without it only the main account's lines are believed
     if (settings.workspace_secrets or "off").strip().lower() == "gcp" and settings.workspace_secrets_project:
         with suppress(ValueError):
@@ -75,7 +75,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         placer = PlivoOutbound(api=PlivoApi(settings.plivo_auth_id, plivo_token), repo=outbound_repo, gate_settings=gs, public_base=base, max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)), api_for=api_for,
                               id_key=hashlib.sha256(("test-number|" + plivo_token).encode()).digest())
     return InboundService(
-        secret=secret.encode("utf-8") if len(secret) >= 32 else b"", public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal, wallet_enforced=bool(getattr(settings, "billing_charge_calls", False))), calls=calls,
+        secret=secret.encode("utf-8") if len(secret) >= 32 else b"", public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal, wallet_enforced=bool(getattr(settings, "billing_charge_calls", False)), kyc_enforced=bool(getattr(settings, "kyc_per_client", False))), calls=calls,
         charge=CallCharger(RpcClient(rest_url, anon_key), principal.token) if getattr(settings, "billing_charge_calls", False) else None,
         cost_paise_per_minute=settings.telephony_cost_paise_per_minute, cost_pulse_s=settings.telephony_cost_pulse_s, cost_paise_per_minute_inbound=settings.telephony_cost_paise_per_minute_inbound, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
         llm_choice=phone_llm_choice(settings)[0], first_token_s=phone_llm_choice(settings)[1], business=settings.telephony_inbound_business, recording_notice=settings.voicelink_recording_expected,

@@ -102,6 +102,36 @@ class BusinessKycService:
             self._repo.put(token, tenant_id, int(row["client_id"]), None, "verified", None)
         return out
 
+    def ensure_client(self, token: str, tenant_id: uuid.UUID, email: str, name: str) -> int:
+        """The workspace's own VoiceLink client: made now if it has none (the account details are the signed-in Owner's e-mail and the business name). Raises the plain refusal of `start` when VoiceLink cannot."""
+        row = self._row(token, tenant_id)
+        if row is None:
+            self.start(token, tenant_id, email, name, None)
+            row = self._row(token, tenant_id)
+        if row is None:
+            raise refusal("unavailable", status=503)
+        return int(row["client_id"])
+
+    def has_client(self, token: str, tenant_id: uuid.UUID) -> bool:
+        return self._row(token, tenant_id) is not None
+
+    def verified(self, token: str, tenant_id: uuid.UUID) -> bool:
+        return self.client_for(token, tenant_id) is not None
+
+    def refresh_pending(self, system_token: str, rpc: RpcClient) -> int:
+        """The worker's pass: ask VoiceLink about each client still waiting and mark the approved ones, so a number goes live without the owner opening a page. Returns how many were marked."""
+        marked = 0
+        waiting = rpc.call(system_token, "business_client_pending", {"p_limit": 50})
+        for item in waiting if isinstance(waiting, list) else []:
+            try:
+                live = self._api.kyc_status(int(item["client_id"]))
+            except (VoicelinkError, KeyError, ValueError, TypeError):
+                continue
+            if live.get("is_complete") is True or live.get("kyc_status") == 1:
+                rpc.call(system_token, "business_client_mark_verified", {"p_tenant_id": str(item["tenant_id"])})
+                marked += 1
+        return marked
+
     def client_for(self, token: str, tenant_id: uuid.UUID) -> int | None:
         """The client number may be bought under: only when its KYC is complete."""
         row = self._row(token, tenant_id)

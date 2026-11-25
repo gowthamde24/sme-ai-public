@@ -193,6 +193,8 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
         used_up = free_minutes_used_up(refused.free_minutes)
         if used_up is not None:   # Customer Zero's own number of free minutes is used up: one plain sentence (the web translates by the code and the two extras)
             raise ApiError(409, "free_minutes_used_up", used_up[0], extra={"minutes": used_up[1], "restarts_on": used_up[2]}) from None
+        if refused.kyc_pending:   # KYC_PER_CLIENT: the number is bought but the business is not verified yet
+            raise ApiError(409, "call_not_allowed", "Verify your business first: this number cannot place calls until then.", extra={"reason": "kyc_pending"}) from None
         if refused.wallet_low:   # BILLING_CHARGE_CALLS: not enough balance for a minute of calling
             raise ApiError(409, "call_not_allowed", "There is not enough balance to place a call. Add credits first.", extra={"reason": "wallet_low"}) from None
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None

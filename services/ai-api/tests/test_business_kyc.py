@@ -186,7 +186,7 @@ def test_a_complete_kyc_is_noticed_and_only_then_a_client_for_buying() -> None:
     assert client.get(T, headers=auth("a_owner")).json()["state"] == "verified"
 
 
-def test_the_picker_wants_a_verified_business_and_buys_under_its_own_client() -> None:
+def _numbers_world(kyc: Any, vl_buy: Any = None) -> tuple[Any, list[Any], list[int]]:
     class Numbers:
         begun = 0
 
@@ -204,28 +204,96 @@ def test_the_picker_wants_a_verified_business_and_buys_under_its_own_client() ->
             return {}
 
         def listing(self, *a: Any) -> list[dict[str, Any]]:
-            return []
+            return [{"number": "+919876543210", "kind": "mobile", "state": "calls_off", "label": None}]
+
+    import app.numbers.service as svc
+    from app.numbers.buyer import Bought
 
     bought: list[int] = []
 
     def fake_buy(api: Any, settings: BuyerSettings, number: str, kind: str) -> Any:
         bought.append(settings.client_id)
-        from app.numbers.buyer import Bought
-
+        if vl_buy is not None:
+            return vl_buy(settings, number)
         return Bought(number=number, did_id=1, order_number="o", stage="routed", cost_inr=300.0)
-
-    import app.numbers.service as svc
 
     original = svc.buy
     svc.buy = fake_buy  # type: ignore[assignment]
+    service = NumberService(Numbers(), None, BuyerSettings(client_id=5879, bot_id=1), kyc=kyc)  # type: ignore[arg-type]
+    return service, [original], bought
+
+
+def test_buy_first_verify_after_the_number_is_bought_for_the_businesses_own_client_and_is_kyc_pending() -> None:
+    client, repo, vl, kyc = world()
+    service, restore, bought = _numbers_world(kyc)
+    import app.numbers.service as svc
+
     try:
-        clients = {"none": None}
-        service = NumberService(Numbers(), None, BuyerSettings(client_id=5879, bot_id=1), client_for=lambda token, tenant: clients.get("c"))  # type: ignore[arg-type]
-        with pytest.raises(PickerBlocked) as err:
-            service.claim("t", TENANT_A.id, "+919876543210", "mobile")
-        assert err.value.reason == "kyc_required" and Numbers.begun == 0   # nothing was reserved
-        clients["c"] = 101  # type: ignore[assignment]
-        service.claim("t", TENANT_A.id, "+919876543210", "mobile")
-        assert bought == [101]
+        out = service.claim("t", TENANT_A.id, "+919876543210", "mobile", email="owner@example.test", name="Padma Silks")
+        assert out.state == "kyc_pending" and bought == [101]   # the client was made now (with the owner's e-mail) and the number bought for it
+        assert [c for c in vl.calls if c[1] == "/reseller/client/create"][0][2]["email"] == "owner@example.test"
+        assert service.numbers("t", TENANT_A.id)[0]["state"] == "kyc_pending"
+        vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
+        assert service.numbers("t", TENANT_A.id)[0]["state"] == "calls_off" and repo.row is not None and repo.row["state"] == "verified"
+        assert service.claim("t", TENANT_A.id, "+919876543211", "mobile").state == "ready"
+        assert len([c for c in vl.calls if c[1] == "/reseller/client/create"]) == 1, "one client per business"
     finally:
-        svc.buy = original
+        svc.buy = restore[0]
+
+
+def test_voicelink_refusing_for_an_unverified_client_falls_back_to_kyc_required_or_keeps_the_paid_number() -> None:
+    import app.numbers.service as svc
+    from app.numbers.buyer import Bought, PickerRefused
+
+    client, repo, vl, kyc = world()
+
+    def refuse(settings: BuyerSettings, number: str) -> Any:
+        raise PickerRefused("kyc_required")
+
+    service, restore, _ = _numbers_world(kyc, refuse)
+    try:
+        with pytest.raises(PickerBlocked) as err:
+            service.claim("t", TENANT_A.id, "+919876543210", "mobile", email="o@example.test", name="X")
+        assert err.value.reason == "kyc_required"
+    finally:
+        svc.buy = restore[0]
+    told: list[str] = []
+    service, restore, _ = _numbers_world(kyc, lambda s, n: Bought(number=n, did_id=1, order_number="o", stage="bought", cost_inr=300.0, kyc_refused=True))
+    service._alert = told.append
+    try:
+        out = service.claim("t", TENANT_A.id, "+919876543212", "mobile", email="o@example.test", name="X")
+        assert out.state == "kyc_pending" and len(told) == 1
+    finally:
+        svc.buy = restore[0]
+
+
+def test_a_voicelink_client_that_cannot_be_made_is_kyc_required() -> None:
+    import app.numbers.service as svc
+
+    client, repo, vl, kyc = world()
+    vl.fail["/reseller/client/create"] = (422, {})
+    service, restore, bought = _numbers_world(kyc)
+    try:
+        with pytest.raises(PickerBlocked) as err:
+            service.claim("t", TENANT_A.id, "+919876543210", "mobile", email="o@example.test", name="X")
+        assert err.value.reason == "kyc_required" and bought == []
+    finally:
+        svc.buy = restore[0]
+
+
+def test_the_worker_marks_the_businesses_voicelink_has_approved() -> None:
+    client, repo, vl, kyc = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+
+    class Rpc:
+        def __init__(self) -> None:
+            self.calls: list[tuple[str, dict[str, Any]]] = []
+
+        def call(self, token: str, function: str, args: dict[str, Any]) -> Any:
+            self.calls.append((function, args))
+            return [{"tenant_id": str(TENANT_A.id), "client_id": 101}] if function == "business_client_pending" else None
+
+    rpc = Rpc()
+    assert kyc.refresh_pending("sys", rpc) == 0 and [c[0] for c in rpc.calls] == ["business_client_pending"]
+    vl.status_doc = {"documents": {}, "kyc_status": 1, "is_complete": True}
+    assert kyc.refresh_pending("sys", rpc) == 1 and rpc.calls[-1] == ("business_client_mark_verified", {"p_tenant_id": str(TENANT_A.id)})

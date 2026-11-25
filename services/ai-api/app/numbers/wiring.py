@@ -25,5 +25,4 @@ def build_numbers(settings: Settings, rest_url: str, anon_key: str, business_kyc
         return None
     api = VoicelinkApi(user, password, base_url=settings.voicelink_api_base)
     buyer = BuyerSettings(client_id=int(settings.picker_client_id), bot_id=int(settings.picker_bot_id), wallet_floor_inr=float(settings.picker_wallet_floor_inr), max_total_inr=float(settings.picker_max_total_inr))
-    resolver = business_kyc.client_for if business_kyc is not None else None   # KYC_PER_CLIENT: the number goes to the workspace's own client
-    return NumberService(PostgrestNumberRepository(rest_url, anon_key), api, buyer, client_for=resolver)
+    return NumberService(PostgrestNumberRepository(rest_url, anon_key), api, buyer, kyc=business_kyc)   # KYC_PER_CLIENT: the number goes to the workspace's own client

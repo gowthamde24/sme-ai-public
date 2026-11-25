@@ -104,3 +104,30 @@ def test_an_outbound_call_is_refused_wallet_low_when_the_balance_does_not_cover_
     off = PostgrestOutboundRepo(rpc, "voicelink", wallet_enforced=False)  # type: ignore[arg-type]
     assert "billing_blocked" not in (off.line_for_tenant("t", T) or {})
     assert OutboundRefused("billing_blocked", wallet_low=True).wallet_low is True and OutboundRefused("billing_blocked").wallet_low is False
+
+
+def test_a_pending_business_takes_no_real_call_in_either_direction() -> None:
+    rpc = Rpc()
+    rpc.answers["phone_line_find"] = {"tenant_id": str(T), "provider": "voicelink", "inbound_on": True, "kyc_pending": True}
+    store = InboundStore(rpc, SimplePrincipal(), kyc_enforced=True)  # type: ignore[arg-type]
+    assert store.line_find("+911")["kyc_blocked"] is True  # type: ignore[index]
+    rpc.answers["phone_line_find"]["kyc_pending"] = False
+    assert store.line_find("+911")["kyc_blocked"] is False, "approved: the very next call is answered (a blocked answer is not cached)"  # type: ignore[index]
+    rpc.answers["phone_line_for_tenant"] = {"provider": "voicelink", "kyc_pending": True}
+    out = PostgrestOutboundRepo(rpc, "voicelink", kyc_enforced=True).line_for_tenant("t", T)  # type: ignore[arg-type]
+    assert out is not None and out["billing_blocked"] is True and out["kyc_blocked"] is True
+    assert "billing_blocked" not in (PostgrestOutboundRepo(rpc, "voicelink").line_for_tenant("t", T) or {})
+    assert OutboundRefused("billing_blocked", kyc_pending=True).kyc_pending is True
+
+
+def test_voicelink_refuses_a_call_to_an_unverified_number_as_not_active() -> None:
+    class Start:
+        from_number = "+919876543210"
+        to_number = "+911234567890"
+
+    def find(number: str) -> dict[str, Any]:
+        return {"tenant_id": str(T), "provider": "voicelink", "inbound_on": True, "kyc_blocked": True}
+
+    settings = gate.Settings(mode="live", live_confirmed=True)
+    out = asyncio.run(admit(Start(), settings, find_line=find, active_calls=0, now=__import__("datetime").datetime.now(__import__("datetime").UTC)))
+    assert isinstance(out, gate.Refused) and out.reason == "workspace_paused"

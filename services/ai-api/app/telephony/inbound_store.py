@@ -23,8 +23,9 @@ FACT_PACK_TTL_S = 60.0
 
 
 class InboundStore:
-    def __init__(self, rpc: RpcClient, principal: Principal, *, wallet_enforced: bool = False) -> None:
+    def __init__(self, rpc: RpcClient, principal: Principal, *, wallet_enforced: bool = False, kyc_enforced: bool = False) -> None:
         self._rpc, self._principal = rpc, principal
+        self._kyc = kyc_enforced   # KYC_PER_CLIENT: a number whose business is not verified yet takes no real call
         self._wallet = wallet_enforced   # BILLING_CHARGE_CALLS: an inbound call past the wallet's floor is refused (see app.wallet_gate)
         self._lines: dict[str, tuple[float, dict[str, Any]]] = {}
         self._packs: dict[uuid.UUID, tuple[float, dict[str, Any]]] = {}
@@ -50,6 +51,10 @@ class InboundStore:
             wallet = found.get("wallet")
             blocked = isinstance(wallet, dict) and wallet.get("inbound_ok") is False
             found["wallet_inbound_blocked"] = blocked
+        if found is not None and self._kyc:
+            kyc_blocked = found.get("kyc_pending") is True
+            found["kyc_blocked"] = kyc_blocked
+            blocked = blocked or kyc_blocked
         if found is not None and not blocked:   # a "blocked" answer is never remembered: after a top-up the very next call must be answered
             self._lines[number] = (now, dict(found))
         else:

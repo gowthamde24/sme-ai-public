@@ -17,5 +17,10 @@ Roles: Owner and Admin read; the Owner writes.
 * `POST .../business/submit` -> `submitted`; 422 `missing_documents` with `missing: ["PAN Card", ...]`; 409 `stuck` (our team has been told; nothing is lost).
 Refusals are `{ error: { code: "kyc_refused" | "kyc_unavailable", reason, message, ... } }`; 503 `kyc_unavailable` when VoiceLink does not answer.
 
-## The number picker
-With `KYC_PER_CLIENT` on, `POST /numbers/claim` answers 409 `numbers_unavailable` with `reason: "kyc_required"` ("Verify your business first to get a number in its name.") until the KYC is complete; then the number is bought under the workspace's OWN client.
+## The number picker: buy first, verify after (25 Nov 2026, the planner's decision)
+With `KYC_PER_CLIENT` on, `POST /numbers/claim` (Owner + second factor):
+1. makes the business's own VoiceLink client if it has none (the account details are the signed-in Owner's e-mail and the business name; account type and the rest of the business details are collected later, on the verify page), buys the number from our wallet for that client, attaches it with calls OFF and answers 201 `{number, display, type, state}` with **`state: "kyc_pending"`** until the business is verified; then `ready`.
+2. `kyc_pending` means: the number cannot place or take real calls (we enforce this ourselves, whatever VoiceLink allows): a call TO it is refused as "not active yet" (the caller is not answered by the assistant; the Owner sees a refused call); the Owner placing a call from it gets 409 `call_not_allowed` with `reason: "kyc_pending"`.
+3. If VoiceLink refuses to buy because the client's KYC is pending, nothing is paid and the answer is **409 `numbers_unavailable` with `reason: "kyc_required"`** (send the Owner to the verify page, which is `GET/POST /phone-kyc/business/...` above). If it was already paid and VoiceLink only refuses to MAP the number, the number is kept, our team is told, and the state stays `kyc_pending`. If the client cannot be made at all (for example the Owner's e-mail is already a VoiceLink user) the answer is the same 409 `kyc_required`.
+4. When VoiceLink approves the business, the worker marks it verified within a few minutes (the Owner does not have to open anything): `GET /numbers` then shows the number as `calls_off` (the Owner switches calls on) or `ready`.
+Document upload for the verify page is `POST /phone-kyc/business/documents` (JSON with base64); the steps and their words are above.
