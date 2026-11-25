@@ -27,7 +27,7 @@ select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.reln
 select is((select count(*) from information_schema.role_table_grants where table_schema = 'integrations' and table_name like 'calendar_%' and grantee in ('anon', 'authenticated', 'service_role', 'PUBLIC')),
           0::bigint, 'A: no client role holds anything on them');
 select is((select count(*) from information_schema.columns where table_schema = 'integrations' and table_name in ('calendar_connections', 'calendar_bookings', 'calendar_event_links', 'calendar_states')
-            and column_name ~ '(^|_)(token|secret|refresh_token|access_token|signing_key|password)($|_)'), 0::bigint, 'A: no column could hold a key');
+            and column_name !~ 'last4$' and column_name ~ '(^|_)(token|secret|refresh_token|access_token|signing_key|password)($|_)'), 0::bigint, 'A: no column could hold a key (secret_last4 is the last four characters, a label)');
 select ok((select pg_get_constraintdef(oid) like '%outlook%' from pg_constraint where conname = 'calendar_busy_source_check'), 'A: a busy block may come from Outlook');
 
 -- B: who may

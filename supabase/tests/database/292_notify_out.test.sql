@@ -43,14 +43,15 @@ update public.notify_channels set events = array['new_lead', 'missed_call', 'cal
 update public.notify_channels set events = array['new_lead'] where tenant_id = tests.tid('a') and kind = 'telegram';
 
 -- ---- queueing: a lead, a missed call, an outcome
-create temp table fx as select gen_random_uuid() as contact_id, gen_random_uuid() as lead_id;
-insert into public.contacts (id, tenant_id, full_name, phone, email) select contact_id, tests.tid('a'), 'Ravi Kumar', '+919876543210', 'ravi@example.test' from fx;
-insert into public.leads (id, tenant_id, contact_id, source) select lead_id, tests.tid('a'), contact_id, 'website' from fx;
+create temp table fx as select gen_random_uuid() as contact_id, gen_random_uuid() as lead_id, gen_random_uuid() as company_id;
+insert into public.companies (id, tenant_id, name) select company_id, tests.tid('a'), 'Notify test company' from fx;
+insert into public.contacts (id, tenant_id, company_id, full_name, phone, email) select contact_id, tests.tid('a'), company_id, 'Ravi Kumar', '+919876543210', 'ravi@example.test' from fx;
+insert into public.leads (id, tenant_id, company_id, contact_id, source) select lead_id, tests.tid('a'), company_id, contact_id, 'website' from fx;
 select is((select count(*)::text from public.notify_deliveries where event = 'new_lead'), '2', 'B1 a new lead is queued for each channel that asked (Slack and Telegram)');
 select is((select count(*)::text from public.notify_deliveries where subject_id is not null and event = 'new_lead' and tenant_id = tests.tid('b')), '0', 'B2 another workspace queues nothing');
 update public.leads set status = 'in_review' where id = (select lead_id from fx);
 select is((select count(*)::text from public.notify_deliveries where event = 'new_lead'), '2', 'B3 a change to the lead queues nothing more');
-insert into public.leads (tenant_id, contact_id, source, is_test) select tests.tid('a'), contact_id, 'website', true from fx;
+insert into public.leads (tenant_id, company_id, contact_id, source, is_test) select tests.tid('a'), company_id, contact_id, 'website', true from fx;
 select is((select count(*)::text from public.notify_deliveries where event = 'new_lead'), '2', 'B4 a test lead queues nothing');
 insert into integrations.missed_calls (id, tenant_id, provider, provider_call_id, caller_last4, received_at, outcome) values ('00000000-0000-4000-8000-0000000000d3', tests.tid('a'), 'fake', 'missed-1', '4321', now(), 'needs_owner');
 select is((select count(*)::text from public.notify_deliveries where event = 'missed_call'), '1', 'B5 a missed call is queued for the channel that asked (Slack only)');
