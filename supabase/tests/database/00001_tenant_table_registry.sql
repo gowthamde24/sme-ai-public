@@ -427,7 +427,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    'label = label', $$delete from public.lead_sources where id = %2$L$$, true),
   ('lead_source_activity',
    $$with s as (insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, token_hint, created_by) values (gen_random_uuid(), %1$L, 'webhook', 'webhook', 'Activity source', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), 'abcd', %5$L) returning id)
-     insert into public.lead_source_activity (tenant_id, source_id, outcome, reason) select %1$L, s.id, 'accepted', 'new_lead' from s$$,
+     insert into public.lead_source_activity (id, tenant_id, source_id, outcome, reason) select %2$L, %1$L, s.id, 'accepted', 'new_lead' from s$$,
    'reason = reason', $$delete from public.lead_source_activity where tenant_id = %1$L$$, false),
   ('lead_consents',
    $$insert into public.lead_consents (id, tenant_id, list_name, purpose, basis, how_collected, statement_version, confirmed_by) values (%2$L, %1$L, 'Generic list', 'Generic purpose', 'explicit_consent', 'Generic way', 'dr-2026-10-27', %5$L)$$,

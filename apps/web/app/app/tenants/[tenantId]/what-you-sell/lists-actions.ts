@@ -82,19 +82,19 @@ export async function saveRowAction(tenantId: string, listId: string, rowId: str
   if (!me || !canWrite(me.role)) return no("forbidden");
   const name = clean(input.name, ROW_NAME_MAX);
   if (!name || typeof input.cells !== "object" || input.cells === null) return no("validation_error");
-  const cells: Record<string, Cell> = {};
+  const cells = new Map<string, Cell>();   // a Map, not an object: a column key from the browser can never become a property name
   for (const [k, v] of Object.entries(input.cells)) {
     if (rupeeKeys.includes(k)) {
       if (me.role !== "owner") continue;
-      if (v === "" || v === null) cells[k] = null;
+      if (v === "" || v === null) cells.set(k, null);
       else {
         const paise = typeof v === "number" ? v : typeof v === "string" ? parseRupees(v) : null;
         if (paise === null) return { ok: false, error: "not_a_price", fields: [k] };
-        cells[k] = paise;
+        cells.set(k, paise);
       }
-    } else cells[k] = v === "" ? null : typeof v === "string" || typeof v === "number" || typeof v === "boolean" || v === null ? v : null;
+    } else cells.set(k, v === "" ? null : typeof v === "string" || typeof v === "number" || typeof v === "boolean" || v === null ? v : null);
   }
-  const out = await wrap(tenantId, () => putRow(me.token, tenantId, listId, rowId, { name, cells, active: input.active !== false }));
+  const out = await wrap(tenantId, () => putRow(me.token, tenantId, listId, rowId, { name, cells: Object.fromEntries(cells), active: input.active !== false }));
   if (out.ok) revalidatePath(`/app/tenants/${tenantId}/what-you-sell`);
   return out;
 }

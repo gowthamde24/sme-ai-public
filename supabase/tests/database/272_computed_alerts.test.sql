@@ -4,7 +4,7 @@ select no_plan();
 select tests.seed_two_tenants();
 
 create function pg_temp.kinds(p_role text) returns text language sql as $$
-  select coalesce(string_agg(e ->> 'kind', ',' order by e ->> 'kind'), '') from jsonb_array_elements(admin.computed_alerts(p_role)) e $$;
+  select coalesce(string_agg(e ->> 'kind', ',' order by e ->> 'kind'), '') from jsonb_array_elements(admin.computed_alerts(p_role)) e where e ->> 'kind' <> 'wallet_low' $$;   -- the fixture workspaces hold no credit; the wallet_low alert has its own checks in 288
 
 set local session_replication_role = replica;
 delete from scheduler.heartbeat;

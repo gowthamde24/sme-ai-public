@@ -15,6 +15,7 @@ import dataclasses
 import hmac
 import json
 import logging
+import re
 import uuid
 from contextlib import suppress
 from dataclasses import dataclass
@@ -263,7 +264,7 @@ async def webhook(request: Request, token: str) -> JSONResponse:
     direction = "inbound" if kind.upper() in ("INBOUND", "VL-IN") else "outbound" if kind.upper() in ("OUTBOUND", "VL-OUT") else kind[:10].lower()
     seconds = str(_pick(body, "duration", "call_duration", "talk_duration") or "")[:8]
     key = config.fingerprint_key()
-    log.info("voicelink_webhook event=%s call_fp=%s direction=%s status=%s duration=%s ours=%s", event, inbound.fingerprint(key, call_id), direction, status, seconds, row is not None and tenant is not None)
+    log.info("voicelink_webhook event=%s call_fp=%s direction=%s status=%s duration=%s ours=%s", _log_safe(event), inbound.fingerprint(key, call_id), _log_safe(direction), _log_safe(status), _log_safe(seconds), row is not None and tenant is not None)
     if row is not None and tenant is not None:
         if event == "call.initiated":
             await asyncio.to_thread(_mark_ringing, service, tenant, row, call_id)
@@ -272,6 +273,11 @@ async def webhook(request: Request, token: str) -> JSONResponse:
             if ended:
                 log.info("voicelink_outbound ended call_fp=%s state=%s", str(row)[:8], ended)
     return JSONResponse({"ok": True})
+
+
+def _log_safe(value: str) -> str:
+    """A value from the carrier's request, made safe for one log line: no line breaks, only letters, digits and a few signs, at most 40 characters."""
+    return re.sub(r"[^A-Za-z0-9_.:-]", "", value.replace("\r", "").replace("\n", ""))[:40]
 
 
 def _shape(body: dict[str, Any], depth: int = 0) -> str:
