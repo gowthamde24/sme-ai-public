@@ -15770,5 +15770,18 @@
    "ta": "draft"
   },
   "ta": "எங்களுடன் பேசுங்கள்"
+ },
+ "pp.sh.lines": {
+  "en": "Extra calls at once: ₹{line} per line per month",
+  "te": "ఒకేసారి ఎక్స్‌ట్రా calls: ఒక్కో line కి నెలకి ₹{line}",
+  "hi": "एक साथ एक्स्ट्रा calls: हर line के लिए ₹{line}/महीना",
+  "kn": "ಒಂದೇ ಸಮಯದ ಎಕ್ಸ್‌ಟ್ರಾ calls: ಪ್ರತಿ line ಗೆ ತಿಂಗಳಿಗೆ ₹{line}",
+  "ta": "ஒரே நேரத்தில் கூடுதல் calls: ஒவ்வொரு line-க்கும் மாதம் ₹{line}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft",
+   "ta": "draft"
+  }
  }
 }

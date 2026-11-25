@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { btnPrimary, btnSecondary, card } from "@/components/v2/site/ui";
 import type { SiteKey, SiteT } from "@/i18n/site";
+import { extraLines } from "@/lib/screens/flag";
 import { PUBLIC_PLANS, planVars, rupees, type PublicPlan } from "@/lib/site/plans";
 
 const TAG: Record<PublicPlan["id"], SiteKey> = { payg: "pp.payg.t", pro: "pp.pro.t", business: "pp.biz.t" };
@@ -73,6 +74,12 @@ export function PublicPlanCards({ t, start }: { t: SiteT; start: { href: string;
               {t(`pp.sh.${n}` as const, v)}
             </li>
           ))}
+          {extraLines() !== "off" ? (
+            <li data-part="extra-lines-row" className="flex items-start gap-2">
+              <Check className="mt-1 size-4 shrink-0 text-green-text" aria-hidden="true" />
+              {t("pp.sh.lines", v)}
+            </li>
+          ) : null}
         </ul>
       </section>
       <p className="mt-4 max-w-3xl text-sm text-muted">{t("pp.hint", v)}</p>
