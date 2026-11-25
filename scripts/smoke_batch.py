@@ -208,7 +208,7 @@ def check_developer_api(run: Run) -> None:
         auth = {"Authorization": f"Bearer {secret}", "Content-Type": "application/json", "Idempotency-Key": "smoke-" + uuid.uuid4().hex}
         consent = {"given": True, "text": "I agree to be called about my enquiry", "at": "2026-11-25T10:00:00+00:00"}
         st, lead = raw_post(f"{run.api}/api/v1/leads", json.dumps({"name": "Smoke API Lead", "phone": "+9198000" + str(10000 + uuid.uuid4().int % 89999), "source": "smoke", "consent": consent}).encode(), auth)
-        lead_id = (lead or {}).get("lead", {}).get("id") if isinstance(lead, dict) else None
+        lead_id = ((lead or {}).get("id") or (lead or {}).get("lead", {}).get("id")) if isinstance(lead, dict) else None   # the answer IS the lead object
         if st not in (200, 201) or not lead_id:
             return say("FAIL", "8 developer API dry run", f"post lead: HTTP {st} {code_of(lead)}")
         auth["Idempotency-Key"] = "smoke-" + uuid.uuid4().hex
