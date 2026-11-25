@@ -134572,5 +134572,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sc.portals.title": {
+  "en": "Portals that need their team to switch it on",
+  "te": "వాళ్ల టీమ్ ఆన్ చేయాల్సిన పోర్టల్స్",
+  "hi": "जिन पोर्टल्स की टीम को ऑन करना पड़ता है",
+  "kn": "ಅವರ ಟೀಮ್ ಆನ್ ಮಾಡಬೇಕಾದ ಪೋರ್ಟಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.portals.how": {
+  "en": "These portals send leads only after their own team switches it on for your account. Send them the message below. Or set your lead address as the e-mail that receives leads in your portal account.",
+  "te": "ఈ పోర్టల్స్ వాళ్ల టీమ్ మీ అకౌంట్‌కి ఆన్ చేస్తేనే leads పంపుతాయి. కింద మెసేజ్ వాళ్లకి పంపండి. లేదా మీ lead address‌ను మీ పోర్టల్ అకౌంట్‌లో leads వచ్చే e-mail గా పెట్టండి.",
+  "hi": "ये पोर्टल्स तभी leads भेजते हैं जब उनकी टीम आपके अकाउंट के लिए इसे ऑन करती है। नीचे का मैसेज उन्हें भेजें। या अपना lead address पोर्टल अकाउंट में leads आने वाले e-mail की जगह डालें।",
+  "kn": "ಈ ಪೋರ್ಟಲ್‌ಗಳ ಟೀಮ್ ನಿಮ್ಮ ಅಕೌಂಟ್‌ಗೆ ಆನ್ ಮಾಡಿದರೆ ಮಾತ್ರ leads ಕಳಿಸುತ್ತವೆ. ಕೆಳಗಿನ ಮೆಸೇಜ್ ಅವರಿಗೆ ಕಳಿಸಿ. ಅಥವಾ ನಿಮ್ಮ lead address ಅನ್ನು ಪೋರ್ಟಲ್ ಅಕೌಂಟ್‌ನಲ್ಲಿ leads ಬರುವ e-mail ಆಗಿ ಹಾಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.portal.state": {
+  "en": "Available through your portal account manager",
+  "te": "మీ పోర్టల్ అకౌంట్ మేనేజర్ ద్వారా వస్తుంది",
+  "hi": "आपके पोर्टल अकाउंट मैनेजर के ज़रिए मिलता है",
+  "kn": "ನಿಮ್ಮ ಪೋರ್ಟಲ್ ಅಕೌಂಟ್ ಮ್ಯಾನೇಜರ್ ಮೂಲಕ ಸಿಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.portal.copy": {
+  "en": "Copy message",
+  "te": "మెసేజ్ copy చేయండి",
+  "hi": "मैसेज copy करें",
+  "kn": "ಮೆಸೇಜ್ copy ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.portal.noaddr": {
+  "en": "Your lead address is not on screen now, so the message points to this page. Make a new address to have it written in.",
+  "te": "మీ lead address ఇప్పుడు స్క్రీన్ మీద లేదు, అందుకే మెసేజ్‌లో ఈ పేజీ చూపిస్తుంది. అడ్రస్ రాయాలంటే కొత్త address చేసుకోండి.",
+  "hi": "आपका lead address अभी स्क्रीन पर नहीं है, इसलिए मैसेज में इस पेज का इशारा है। address लिखवाना हो तो नया address बनाएँ।",
+  "kn": "ನಿಮ್ಮ lead address ಈಗ ಸ್ಕ್ರೀನ್ ಮೇಲೆ ಇಲ್ಲ, ಅದಕ್ಕೆ ಮೆಸೇಜ್‌ನಲ್ಲಿ ಈ ಪುಟದ ಸೂಚನೆ ಇದೆ. address ಬರೆಸಬೇಕಾದರೆ ಹೊಸ address ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

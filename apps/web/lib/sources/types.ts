@@ -65,6 +65,13 @@ export function parseEmail(json: unknown): EmailAddress | null {
   const guide = Array.isArray(json.gmail_filter_guide) ? json.gmail_filter_guide.filter(isRec).slice(0, 10).flatMap((g, i) => (s(g.text, 300) ? [{ step: typeof g.step === "number" ? g.step : i + 1, text: s(g.text, 300) as string }] : [])) : [];
   return { address: s(json.address, 200) as string, guide, portals: Array.isArray(json.sample_portals) ? json.sample_portals.filter((x): x is string => typeof x === "string").slice(0, 8) : [], confirmation: isRec(json.gmail_confirmation) && s(json.gmail_confirmation.code, 40) ? { code: s(json.gmail_confirmation.code, 40) as string, receivedAt: s(json.gmail_confirmation.received_at, 40) } : null };
 }
+/** A portal that has no connector of its own (JustDial, 99acres, MagicBricks, Housing, Sulekha, TradeIndia): the portal's team switches lead delivery on; `askText` is the short message the owner sends them (contract lead-sources-v2.md, "Portal leads arrive by themselves"). */
+export type Portal = { id: string; name: string; askText: string };
+/** `GET /lead-sources/portals`: only the portals that are set up by their account manager; IndiaMART (automatic) has its own card. Anything unreadable is left out. */
+export function parsePortals(json: unknown): Portal[] | null {
+  if (!isRec(json) || !Array.isArray(json.portals)) return null;
+  return json.portals.filter(isRec).slice(0, 12).flatMap((p) => (p.how === "account_manager" && s(p.id, 40) && s(p.name, 60) && s(p.ask_text, 2000) ? [{ id: s(p.id, 40) as string, name: s(p.name, 60) as string, askText: s(p.ask_text, 2000) as string }] : []));
+}
 export function parseWebsite(json: unknown): WebsiteSnippet | null {
   return isRec(json) && s(json.snippet, 4000) ? { snippet: s(json.snippet, 4000) as string, formLink: s(json.form_link, 500), webhookUrl: s(json.webhook_url, 500) } : null;
 }
