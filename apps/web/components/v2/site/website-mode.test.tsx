@@ -66,7 +66,7 @@ describe("website mode: the public pages (job DQ)", () => {
     const html = render(lang, target);
     const logins = hrefs(html).filter((h) => /^https?:\/\/[^/]+\/login$/.test(h));
     expect(logins.length, "header and footer (the mobile menu draws the same link)").toBeGreaterThanOrEqual(2);
-    expect(new Set(logins).size).toBe(1);
+    expect([...new Set(logins)], "the app's address (SITE_APP_ORIGIN is not set), never the build's NEXT_PUBLIC_SITE_URL").toEqual(["https://app.stack19.com/login"]);
     expect(text(html)).toContain(siteDict(lang)["h2.nav.login"]);
   });
 
