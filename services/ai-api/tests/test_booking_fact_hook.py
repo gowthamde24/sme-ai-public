@@ -1,4 +1,5 @@
-"""The owner's own booking page in the phone assistant's fact pack (commerce-notify section D): said only when the provider returns a fact."""
+"""The owner's own booking page in the phone assistant's fact pack (commerce-notify section D):
+said only when the provider returns a fact."""
 
 from __future__ import annotations
 
@@ -27,7 +28,7 @@ def test_the_booking_fact_reaches_the_pack_only_when_the_provider_gives_one() ->
     try:
         pack = _Store().fact_pack(tenant) or {}
         built = fact_pack.build(pack)
-        assert any(f["kind"] == "booking" and "https://calendly.com/demo/30min" in f["text"] for f in built.facts)
+        assert any(f["kind"] == "booking" and "https://calendly.com/demo/30min" in f["text"] for f in built.facts)  # noqa: E501
         links.PROVIDER = lambda t: None
         assert "booking_fact" not in (_Store().fact_pack(tenant) or {})
         links.PROVIDER = lambda t: (_ for _ in ()).throw(RuntimeError("down"))

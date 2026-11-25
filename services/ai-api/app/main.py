@@ -1388,7 +1388,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     runtime = runtime if runtime is not None else build_runtime(settings)
     form_templates.ENABLED = settings.lead_form_templates == "on"  # LEAD_FORM_TEMPLATES
     commerce_facts.ENABLED = settings.commerce == "on"  # COMMERCE: calls look up orders
-    booking_links.PROVIDER = runtime.calendar_in.booking_link if runtime is not None and runtime.calendar_in is not None else None
+    booking_links.PROVIDER = runtime.calendar_in.booking_link if runtime is not None and runtime.calendar_in is not None else None  # noqa: E501
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:

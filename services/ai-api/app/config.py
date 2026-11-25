@@ -548,7 +548,8 @@ class Settings(BaseSettings):
     # SANDBOX ONLY, for testing (owner, 28 Nov 2026): a sandbox-list number ignores the
     # calling hours. Ignored in live mode. Remove before the 2 Dec real-data gate.
     telephony_sandbox_ignores_hours: bool = False
-    # the global kill switch in front of every real (non-sandbox) outbound call; off until the telecom provider has answered (lawyer's opinion, 25 Nov 2026)
+    # the global kill switch in front of every real (non-sandbox) outbound call; off until the
+    # telecom provider has answered (lawyer's opinion, 25 Nov 2026)
     outbound_real: bool = False
     # The named lists of "What you sell" (28 Nov 2026): off until the planner turns it on.
     what_you_sell_lists: bool = False
@@ -563,8 +564,8 @@ class Settings(BaseSettings):
     # Buying the channel at VoiceLink for an extra line. OFF = the fake provider (nothing is
     # bought, nothing is called); ON needs the VoiceLink login, never without the planner.
     voicelink_channel_buy: bool = False
-    voicelink_channel_buy_max_inr: float = 200.0           # the most one channel purchase may cost in all (a hard cap, rupees)
-    voicelink_channel_wallet_floor_inr: float = 500.0      # never buy with less than this left in our VoiceLink wallet afterwards
+    voicelink_channel_buy_max_inr: float = 200.0           # the most one channel purchase may cost in all (a hard cap, rupees)  # noqa: E501
+    voicelink_channel_wallet_floor_inr: float = 500.0      # never buy with less than this left in our VoiceLink wallet afterwards  # noqa: E501
     # business KYC per VoiceLink client (Model B, 24 Nov 2026; docs/contracts/business-kyc.md):
     # off in production. ON: a number is bought under the workspace's OWN client once its KYC
     # is complete (else `kyc_required`); KYC_RETURN_URL is the page DigiLocker returns to.
@@ -577,7 +578,7 @@ class Settings(BaseSettings):
     # Live take-over (job TO, owner decision 10 Nov 2026): a short spoken announcement to the caller
     # when a person from the business takes over. OFF by default (the owner will choose);
     # TAKEOVER_ANNOUNCE=true turns it on.
-    takeover_announce: bool = True   # a person joining a live call is announced to the caller (lawyer's opinion, 25 Nov 2026; was off)
+    takeover_announce: bool = True   # a person joining a live call is announced to the caller (lawyer's opinion, 25 Nov 2026; was off)  # noqa: E501
     takeover_allowed: bool = False
     # TAKEOVER_ALLOWED: listening in on a live call is NOT available at launch (owner, 18 Nov 2026)  # noqa: E501
     exotel_stream_secret: SecretStr | None = None

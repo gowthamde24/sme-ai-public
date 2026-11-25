@@ -267,7 +267,8 @@ class Runtime:
     # extra lines: more "calls at once" for a workspace (app/extra_lines)
     # None: EXTRA_LINES=off, every route answers 404
     extra_lines: Any = None
-    # the lawyer's opinion (25 Nov 2026): number usage statement, registered consent, complaints (app/compliance)
+    # the lawyer's opinion (25 Nov 2026): number usage statement, registered consent,
+    # complaints (app/compliance)
     compliance: Any = None
 
 
