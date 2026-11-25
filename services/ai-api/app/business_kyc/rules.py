@@ -35,6 +35,7 @@ REASONS: dict[str, str] = {
     "address_required": "Enter the billing address (at least 8 characters).",
     "city_required": "Enter the city.",
     "state_invalid": "Choose the state from the list.",
+    "city_not_found": "Pick the city name as your post office writes it.",
     "pincode_invalid": "Enter the 6-digit PIN code.",
     "terms_required": "Please accept the terms to continue.",
     "pan_invalid": "A PAN has 5 letters, 4 digits and 1 letter, like AAAAA9999A.",

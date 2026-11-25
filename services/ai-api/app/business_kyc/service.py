@@ -15,6 +15,7 @@ import uuid
 from collections.abc import Callable
 from typing import Any, Protocol
 
+from app.business_kyc import rules
 from app.errors import ApiError
 from app.rpc_base import RpcClient
 from app.telephony.voicelink_api import VoicelinkApi, VoicelinkError
@@ -305,6 +306,8 @@ class BusinessKycService:
             if _unavailable(exc):
                 raise refusal("unavailable", status=503) from None
             data = exc.data
+            if step == "register-details" and "city" in exc.message.lower() and "not found" in exc.message.lower():   # VoiceLink's own list of cities per state: "City 'Anantapur' was not found in the selected state."
+                raise rules.refuse({"city": "city_not_found"}) from None
             if step == "pan-verify" and data.get("pan_match_status") == 2:
                 raise refusal("pan_mismatch") from None
             raise refusal({"pan-verify": "pan_invalid", "gst-verify": "gst_invalid"}.get(step, "step_order" if exc.status == 422 else "refused")) from None

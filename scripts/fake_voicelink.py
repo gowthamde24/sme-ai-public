@@ -270,8 +270,20 @@ async def _step(request: Request, name: str, extra: dict[str, Any] | None = None
     return ok({"step": name, **(extra or {})})
 
 
+# VoiceLink keeps its own list of cities per state (the real account refused "Anantapur" and accepted "Ananthapuramu", 26 Nov 2026); the fake knows a few and accepts any city of a state it does not list
+CITIES = {"telangana": ["Hyderabad", "Warangal", "Karimnagar"], "andhra pradesh": ["Ananthapuramu", "Guntur", "Visakhapatnam", "Vijayawada"], "gujarat": ["Ahmedabad", "Surat", "Vadodara"]}
+
+
 @app.post("/reseller/kyc/step-1-register-details")
 async def step1(request: Request) -> JSONResponse:
+    body = await request.json()
+    state, city = str(body.get("state") or "").strip().lower(), str(body.get("city") or "").strip()
+    if not city:
+        return refuse(422, {}, "Please provide your city.")
+    if len("".join(ch for ch in str(body.get("phone") or "") if ch.isdigit())) not in range(7, 16) or "+" in str(body.get("phone") or ""):
+        return refuse(422, {}, "The phone field must be between 7 and 15 digits.")
+    if state in CITIES and city.casefold() not in [c.casefold() for c in CITIES[state]]:
+        return refuse(422, {}, f"City \"{city}\" was not found in the selected state.")
     return await _step(request, "details")
 
 

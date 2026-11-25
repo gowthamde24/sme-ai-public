@@ -1096,6 +1096,22 @@
       "extras": []
     },
     {
+      "code": "credits_needed",
+      "statuses": [
+        402
+      ],
+      "areas": [
+        "business_kyc"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "balance_paise",
+        "needed_paise",
+        "needed_text"
+      ]
+    },
+    {
       "code": "crm_push_unavailable",
       "statuses": [
         503

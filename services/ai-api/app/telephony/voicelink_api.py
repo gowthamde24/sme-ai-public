@@ -225,6 +225,14 @@ class VoicelinkApi:
         except (KeyError, TypeError, ValueError, AttributeError):
             raise VoicelinkError("server") from None
 
+    def add_channel(self, *, count: int, months: int = 1) -> LockedOrder:
+        """`POST /reseller/purchase/add-channel`: a draft order for CHANNELS ONLY (no number locked; accepted by the real account on 26 Nov 2026, one channel, one month, first month prorated). Nothing is charged until `confirm_purchase`."""
+        data = self._request("POST", "/reseller/purchase/add-channel", json_body={"channel_count": int(count), "months": int(months)})
+        try:
+            return LockedOrder(order_id=int(data["order_id"]), did_count=0, total=float(data.get("channel_total") or 0))
+        except (KeyError, TypeError, ValueError, AttributeError):
+            raise VoicelinkError("server") from None
+
     def order_summary(self, order_id: int) -> OrderSummary:
         """The server's own totals of a draft order (`GET /reseller/purchase/summary/{id}`): what the order would cost, how many numbers and channels it holds, and the wallet it would be paid from."""
         data = self._request("GET", f"/reseller/purchase/summary/{int(order_id)}")

@@ -560,6 +560,8 @@ class Settings(BaseSettings):
     # Buying the channel at VoiceLink for an extra line. OFF = the fake provider (nothing is
     # bought, nothing is called); ON needs the VoiceLink login, never without the planner.
     voicelink_channel_buy: bool = False
+    voicelink_channel_buy_max_inr: float = 200.0           # the most one channel purchase may cost in all (a hard cap, rupees)
+    voicelink_channel_wallet_floor_inr: float = 500.0      # never buy with less than this left in our VoiceLink wallet afterwards
     # business KYC per VoiceLink client (Model B, 24 Nov 2026; docs/contracts/business-kyc.md):
     # off in production. ON: a number is bought under the workspace's OWN client once its KYC
     # is complete (else `kyc_required`); KYC_RETURN_URL is the page DigiLocker returns to.

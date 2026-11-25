@@ -88,6 +88,7 @@ export const API_ERROR_CODES = [
   "cooling_off",
   "correction_invalid",
   "credentials_invalid",
+  "credits_needed",
   "crm_push_unavailable",
   "custom_field_limit",
   "custom_fields_unavailable",

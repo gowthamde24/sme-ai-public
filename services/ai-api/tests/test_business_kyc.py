@@ -408,6 +408,24 @@ def test_a_refusal_for_no_channel_is_a_wait_even_when_the_pool_cannot_be_read_an
     assert got.status_code == 201 and got.json()["state"] == "waiting_for_line" and waiting_repo.waiting
 
 
+def test_a_city_voicelink_does_not_know_is_a_plain_field_error_never_an_echo() -> None:
+    client, repo, vl, _ = world()
+    client.post(f"{T}/start", headers=auth("a_owner"))
+    vl.fail["/reseller/kyc/step-1-register-details"] = (422, {})
+    original = vl.handler
+
+    def city_refused(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/step-1-register-details"):
+            return httpx.Response(422, json={"status": False, "message": "City 'Anantapur' was not found in the selected state.", "data": {}})
+        return original(request)
+
+    api = VoicelinkApi("u", "p", base_url="https://vl.test/api/v1", client=httpx.Client(base_url="https://vl.test/api/v1", transport=httpx.MockTransport(city_refused)))
+    c2, _ = make_client(business_kyc=BusinessKycService(repo, api, return_url="https://stack19.test/kyc/done"))
+    good = {"account_type": "individual", "full_name": "Test Person", "phone": "9999900000", "billing_address": "12 Test Road, Test Town", "city": "Anantapur", "state": "Andhra Pradesh", "pincode": "515001", "accept_terms": True}
+    got = c2.post(f"{T}/details", json=good, headers=auth("a_owner"))
+    assert got.status_code == 422 and got.json()["error"]["code"] == "kyc_fields_invalid" and got.json()["error"]["reasons"] == {"city": "city_not_found"} and "Anantapur" not in got.text
+
+
 def test_a_waiting_business_cannot_buy_a_number() -> None:
     client, repo, vl, kyc = world()
     vl.free_channels = 0

@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (503)
+## Codes (504)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -104,6 +104,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `cooling_off` | 409 | main |  |  | The waiting period has not ended yet. Try again after it. |
 | `correction_invalid` | 422 | telephony |  |  | A note can't hold a phone number or an e-mail address. |
 | `credentials_invalid` | 422 | crm_push |  |  | Fill in every key. A key has no spaces. |
+| `credits_needed` | 402 | business_kyc |  | balance_paise, needed_paise, needed_text | (the sentence varies: show `message`) |
 | `crm_push_unavailable` | 503 | crm_push | yes |  | (the sentence varies: show `message`) |
 | `custom_field_limit` | 409 | main |  |  | This business has the most fields it can have for that. |
 | `custom_fields_unavailable` | 503 | customfields |  |  | Custom fields are not available on this system. |
