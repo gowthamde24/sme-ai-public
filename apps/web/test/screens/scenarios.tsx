@@ -54,6 +54,7 @@ import {
   parseAdmissionDetail, parseAdmissionList, parseFeeEntries, parseFeePlan, parseFeePlanList, parseFeeReceipt, parseFeeStatement, parseGuardianFees, parseLateFeesPreview, parsePending, parseProfile as parseInstitution, parseProgrammes, parseStudent, parseStudentList,
 } from "@/lib/api/education";
 import * as EDU from "@/lib/api/education-fixtures";
+import { parseActivity, parseActivityUsage, parseEndpoints, parseEvents } from "@/lib/api/webhooks-out";
 import { parseInvoice, parseOptions, parseStatement, parseTopups } from "@/lib/api/credits";
 import { parseBillingBalance } from "@/lib/billing-v6/balance";
 import { parseList, parseLists, parseRows } from "@/lib/api/lists";
@@ -1855,3 +1856,20 @@ add({ id: "credits-page", roles: ["owner", "admin"], render: () => creditsEnv(as
 add({ id: "credits-page-low", roles: ["owner"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(true) });
 add({ id: "credits-page-empty", roles: ["owner"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}))), handlers: crHandlers(false, true) });
 add({ id: "credits-invoice", roles: ["owner", "admin"], render: () => creditsEnv(async () => (await import("@/app/app/tenants/[tenantId]/billing/invoices/[number]/page")).default(props({ number: "S19-2627-000001" }))), handlers: crHandlers(false) });
+
+// Developers > Webhooks and Activity (C1's webhooks-out.md and developer-api.md): one address that is failing and one that is fine, the five events, the counts and the requests; and the same tabs while the API has them off (404)
+const HOOK_ID = "55555555-5555-4555-8555-555555555555";
+const hookRaw = (id: string, url: string, over: Record<string, unknown> = {}) => ({ id, url, events: ["call.completed", "lead.created"], send_transcript: false, active: true, secret_last4: "k3Fq", secret_version: 1, created_at: "2026-11-24T10:00:00Z", created_by: "x", rotated_at: null, health: { status: "ok", failing_since: null, dead_letters_7d: 0, last_delivered_at: "2026-11-25T08:00:00Z" }, ...over });
+const devTab = (tab: string) => () => withEnv({}, async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({}, { tab })));
+const devOpen = (role: Role): Record<string, Handler> => ({
+  ...base(role),
+  listEndpoints: () => parseEndpoints({ items: [hookRaw(HOOK_ID, "https://hooks.example.com/stack19", { health: { status: "failing", failing_since: "2026-11-25T06:00:00Z", dead_letters_7d: 2, last_delivered_at: null } }), hookRaw("66666666-6666-4666-8666-666666666666", "https://crm.example.com/in")] }),
+  listEvents: () => parseEvents({ items: ["call.completed", "call.missed", "lead.created", "lead.updated", "job.outcome"].map((event) => ({ event, description: `When ${event.replace(".", " ")}` })) }),
+  getActivityUsage: () => parseActivityUsage({ today: { requests: 12, leads: 3, calls_simulated: 1, campaigns: 0, errors: 2 }, month: { requests: 1500, leads: 40, calls_simulated: 9, campaigns: 1, errors: 7 }, limits: { requests_per_minute: 60, calls_per_minute: 10, campaigns_per_minute: 5, concurrent_calls: 10 } }),
+  listActivity: () => parseActivity({ items: [{ id: "a1", key_name: "Website form", method: "POST", route: "/api/v1/leads", status: 201, latency_ms: 84, at: "2026-11-25T09:30:00Z" }, { id: "a2", key_name: "Website form", method: "POST", route: "/api/v1/leads", status: 422, latency_ms: 12, at: "2026-11-25T09:20:00Z" }], next_before: null }),
+});
+const devClosed = (role: Role): Record<string, Handler> => ({ ...base(role), listEndpoints: () => { throw new ApiRequestError(404, "not_found", "off"); }, listEvents: () => { throw new ApiRequestError(404, "not_found", "off"); }, getActivityUsage: () => { throw new ApiRequestError(404, "not_found", "off"); }, listActivity: () => { throw new ApiRequestError(404, "not_found", "off"); } });
+add({ id: "developers-webhooks", roles: ["owner", "admin"], render: devTab("hooks"), handlers: devOpen });
+add({ id: "developers-webhooks-closed", roles: ["owner"], render: devTab("hooks"), handlers: devClosed });
+add({ id: "developers-activity", roles: ["owner", "admin"], render: devTab("activity"), handlers: devOpen });
+add({ id: "developers-activity-closed", roles: ["owner"], render: devTab("activity"), handlers: devClosed });

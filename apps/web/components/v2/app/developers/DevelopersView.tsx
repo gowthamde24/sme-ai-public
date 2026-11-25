@@ -11,7 +11,7 @@ export type Tab = (typeof TABS)[number];
 /**
  * The Developers page (mock "Developers"): Overview (three steps, the base address, a first request in cURL, Node or Python), the tabs, and plain "not open yet" notices for what C1's developer API has not opened. Developer-facing text is English (`lang="en"`); the page's own words arrive as props.
  */
-export function DevelopersView({ words, ui, base, tab, lang, keys }: { words: Readonly<Record<string, string>>; ui: string; base: string; tab: Tab; lang: Lang; keys: ReactNode }) {
+export function DevelopersView({ words, ui, base, tab, lang, keys, hooks, activity }: { words: Readonly<Record<string, string>>; ui: string; base: string; tab: Tab; lang: Lang; keys: ReactNode; hooks?: ReactNode; activity?: ReactNode }) {
   return (
     <main className={pageMain} lang={ui}>
       <PageTop title={words["dvp.title"] ?? "Developers"} sub={words["dvp.sub"]} />
@@ -72,7 +72,9 @@ export function DevelopersView({ words, ui, base, tab, lang, keys }: { words: Re
           </>
         ) : null}
         {tab === "keys" ? keys : null}
-        {tab === "hooks" || tab === "activity" || tab === "docs" ? (
+        {tab === "hooks" ? hooks : null}
+        {tab === "activity" ? activity : null}
+        {tab === "docs" ? (
           <p role="note" className="m-0 border-y border-line py-3 text-[15px] text-muted">
             {words["dvp.soon"]}
           </p>

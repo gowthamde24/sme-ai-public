@@ -1,0 +1,4 @@
+# Developers
+Use your assistant from your own tools: send leads, place calls, and get every result back.
+{label="Developers"} [Overview](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=overview) [API keys](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=keys) [Webhooks](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=hooks) [API activity](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=activity current=page) [Docs and downloads](/app/tenants/22222222-2222-2222-2222-222222222222/developers?tab=docs)
+{role=note} API activity is not open for your workspace yet.

@@ -130062,5 +130062,830 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "dvh.hooks.title": {
+  "en": "Webhooks",
+  "te": "వెబ్‌హుక్స్",
+  "hi": "वेबहुक",
+  "kn": "ವೆಬ್‌ಹುಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.hooks.sub": {
+  "en": "We send each event to your address as it happens, signed so you can check it came from us.",
+  "te": "ప్రతి సంఘటనను జరిగినప్పుడే మీ అడ్రస్‌కి పంపిస్తాం, మా నుంచే వచ్చిందని చెక్ చేసుకునేలా సైన్ చేసి.",
+  "hi": "हर घटना होते ही आपके पते पर भेजते हैं, साइन करके ताकि आप जाँच सकें कि हमसे आई है।",
+  "kn": "ಪ್ರತಿ ಘಟನೆಯನ್ನು ಆದಾಗಲೇ ನಿಮ್ಮ ವಿಳಾಸಕ್ಕೆ ಕಳಿಸುತ್ತೇವೆ, ನಮ್ಮಿಂದಲೇ ಬಂದಿದೆ ಎಂದು ಪರಿಶೀಲಿಸಲು ಸೈನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.off": {
+  "en": "Webhooks are not open for your workspace yet.",
+  "te": "మీ వర్క్‌స్పేస్‌కి వెబ్‌హుక్స్ ఇంకా తెరవలేదు.",
+  "hi": "आपके वर्कस्पेस के लिए वेबहुक अभी नहीं खुले हैं।",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ವೆಬ್‌ಹುಕ್ ಇನ್ನೂ ತೆರೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.none": {
+  "en": "No address yet. Add one to start getting events.",
+  "te": "ఇంకా అడ్రస్ లేదు. ఈవెంట్స్ రావడానికి ఒకటి add చేయండి.",
+  "hi": "अभी कोई पता नहीं। इवेंट पाने के लिए एक जोड़ें।",
+  "kn": "ಇನ್ನೂ ವಿಳಾಸ ಇಲ್ಲ. ಈವೆಂಟ್ ಪಡೆಯಲು ಒಂದನ್ನು ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.add": {
+  "en": "Add an address",
+  "te": "అడ్రస్ add చేయండి",
+  "hi": "पता जोड़ें",
+  "kn": "ವಿಳಾಸ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.add.url": {
+  "en": "Your address (https)",
+  "te": "మీ అడ్రస్ (https)",
+  "hi": "आपका पता (https)",
+  "kn": "ನಿಮ್ಮ ವಿಳಾಸ (https)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.add.events": {
+  "en": "What to send",
+  "te": "ఏం పంపాలి",
+  "hi": "क्या भेजना है",
+  "kn": "ಏನು ಕಳಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.add.transcript": {
+  "en": "Include the call transcript",
+  "te": "కాల్ ట్రాన్స్‌క్రిప్ట్ కూడా పంపండి",
+  "hi": "कॉल का ट्रांसक्रिप्ट भी भेजें",
+  "kn": "ಕರೆಯ ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಟ್ ಕೂಡ ಕಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.add.transcript.t": {
+  "en": "Only the Owner can turn this on. It sends what was said on the call.",
+  "te": "Owner మాత్రమే దీన్ని ఆన్ చేయగలరు. కాల్‌లో మాట్లాడినది పంపుతుంది.",
+  "hi": "सिर्फ़ Owner इसे चालू कर सकते हैं। कॉल में जो कहा गया वह भेजता है।",
+  "kn": "Owner ಮಾತ್ರ ಇದನ್ನು ಆನ್ ಮಾಡಬಹುದು. ಕರೆಯಲ್ಲಿ ಮಾತಾಡಿದ್ದನ್ನು ಕಳಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सहेजें",
+  "kn": "ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.secret.title": {
+  "en": "Your signing secret",
+  "te": "మీ సైనింగ్ సీక్రెట్",
+  "hi": "आपका साइनिंग सीक्रेट",
+  "kn": "ನಿಮ್ಮ ಸೈನಿಂಗ್ ಸೀಕ್ರೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.secret.t": {
+  "en": "Copy it now. We show it once and cannot show it again. Use it to check the signature of each event.",
+  "te": "ఇప్పుడే కాపీ చేయండి. ఒక్కసారే చూపిస్తాం, మళ్ళీ చూపించలేం. ప్రతి ఈవెంట్ సిగ్నేచర్ చెక్ చేయడానికి వాడండి.",
+  "hi": "अभी कॉपी करें। हम इसे एक ही बार दिखाते हैं, दोबारा नहीं दिखा सकते। हर इवेंट का सिग्नेचर जाँचने में इस्तेमाल करें।",
+  "kn": "ಈಗಲೇ ಕಾಪಿ ಮಾಡಿ. ಒಂದೇ ಬಾರಿ ತೋರಿಸುತ್ತೇವೆ, ಮತ್ತೆ ತೋರಿಸಲಾಗದು. ಪ್ರತಿ ಈವೆಂಟ್‌ನ ಸಿಗ್ನೇಚರ್ ಪರಿಶೀಲಿಸಲು ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.secret.copy": {
+  "en": "Copy",
+  "te": "కాపీ",
+  "hi": "कॉपी",
+  "kn": "ಕಾಪಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.secret.copied": {
+  "en": "Copied",
+  "te": "కాపీ అయింది",
+  "hi": "कॉपी हो गया",
+  "kn": "ಕಾಪಿ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.secret.saved": {
+  "en": "I have saved it",
+  "te": "నేను సేవ్ చేసుకున్నాను",
+  "hi": "मैंने सहेज लिया",
+  "kn": "ನಾನು ಉಳಿಸಿಕೊಂಡಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.row.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.row.off": {
+  "en": "Switched off",
+  "te": "ఆఫ్ చేశారు",
+  "hi": "बंद किया",
+  "kn": "ಆಫ್ ಮಾಡಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.row.last": {
+  "en": "Last delivered {when}",
+  "te": "చివరిగా అందింది {when}",
+  "hi": "आख़िरी बार पहुँचा {when}",
+  "kn": "ಕೊನೆಯದಾಗಿ ತಲುಪಿದ್ದು {when}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.row.never": {
+  "en": "Nothing delivered yet",
+  "te": "ఇంకా ఏదీ అందలేదు",
+  "hi": "अभी कुछ नहीं पहुँचा",
+  "kn": "ಇನ್ನೂ ಏನೂ ತಲುಪಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.row.secret": {
+  "en": "Secret ends {last4}",
+  "te": "సీక్రెట్ చివర {last4}",
+  "hi": "सीक्रेट का अंत {last4}",
+  "kn": "ಸೀಕ್ರೆಟ್ ಕೊನೆ {last4}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.failing": {
+  "en": "Some events could not be delivered to {url} after every retry.",
+  "te": "{url} కి కొన్ని ఈవెంట్స్ అన్ని ప్రయత్నాల తర్వాత కూడా అందలేదు.",
+  "hi": "{url} पर कुछ इवेंट हर कोशिश के बाद भी नहीं पहुँचे।",
+  "kn": "{url} ಗೆ ಕೆಲವು ಈವೆಂಟ್ ಎಲ್ಲಾ ಪ್ರಯತ್ನಗಳ ನಂತರವೂ ತಲುಪಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.test": {
+  "en": "Send a test",
+  "te": "టెస్ట్ పంపండి",
+  "hi": "टेस्ट भेजें",
+  "kn": "ಟೆಸ್ಟ್ ಕಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.tested": {
+  "en": "A test event will be sent within a minute.",
+  "te": "ఒక నిమిషంలో టెస్ట్ ఈవెంట్ వెళ్తుంది.",
+  "hi": "एक मिनट में टेस्ट इवेंट भेजा जाएगा।",
+  "kn": "ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಟೆಸ್ಟ್ ಈವೆಂಟ್ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.log": {
+  "en": "Delivery log",
+  "te": "డెలివరీ లాగ్",
+  "hi": "डिलीवरी लॉग",
+  "kn": "ಡೆಲಿವರಿ ಲಾಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.hide": {
+  "en": "Hide log",
+  "te": "లాగ్ దాచండి",
+  "hi": "लॉग छिपाएँ",
+  "kn": "ಲಾಗ್ ಮರೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.edit": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.pause": {
+  "en": "Switch off",
+  "te": "ఆఫ్ చేయండి",
+  "hi": "बंद करें",
+  "kn": "ಆಫ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.resume": {
+  "en": "Switch on",
+  "te": "ఆన్ చేయండి",
+  "hi": "चालू करें",
+  "kn": "ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.rotate": {
+  "en": "New secret",
+  "te": "కొత్త సీక్రెట్",
+  "hi": "नया सीक्रेट",
+  "kn": "ಹೊಸ ಸೀಕ್ರೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.rotate.t": {
+  "en": "The old secret stops working at once.",
+  "te": "పాత సీక్రెట్ వెంటనే పని చేయడం ఆగిపోతుంది.",
+  "hi": "पुराना सीक्रेट तुरंत काम करना बंद कर देता है।",
+  "kn": "ಹಳೆಯ ಸೀಕ್ರೆಟ್ ತಕ್ಷಣ ಕೆಲಸ ಮಾಡುವುದು ನಿಲ್ಲುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.delete": {
+  "en": "Delete",
+  "te": "తొలగించండి",
+  "hi": "हटाएँ",
+  "kn": "ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.delete.t": {
+  "en": "Delete this address? Its log and secret go too.",
+  "te": "ఈ అడ్రస్ తొలగించాలా? దాని లాగ్, సీక్రెట్ కూడా పోతాయి.",
+  "hi": "यह पता हटाएँ? इसका लॉग और सीक्रेट भी चले जाएँगे।",
+  "kn": "ಈ ವಿಳಾಸ ಅಳಿಸಬೇಕೇ? ಅದರ ಲಾಗ್, ಸೀಕ್ರೆಟ್ ಕೂಡ ಹೋಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.delete.yes": {
+  "en": "Yes, delete",
+  "te": "అవును, తొలగించండి",
+  "hi": "हाँ, हटाएँ",
+  "kn": "ಹೌದು, ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.log.none": {
+  "en": "Nothing sent in the last 30 days.",
+  "te": "గత 30 రోజుల్లో ఏదీ పంపలేదు.",
+  "hi": "पिछले 30 दिनों में कुछ नहीं भेजा।",
+  "kn": "ಕಳೆದ 30 ದಿನಗಳಲ್ಲಿ ಏನೂ ಕಳಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.log.attempts": {
+  "en": "{n} tries",
+  "te": "{n} ప్రయత్నాలు",
+  "hi": "{n} कोशिशें",
+  "kn": "{n} ಪ್ರಯತ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.log.more": {
+  "en": "Show earlier",
+  "te": "ముందున్నవి చూపించండి",
+  "hi": "पहले वाले दिखाएँ",
+  "kn": "ಹಿಂದಿನವು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.st.pending": {
+  "en": "Waiting to send",
+  "te": "పంపడానికి వేచి ఉంది",
+  "hi": "भेजने का इंतज़ार",
+  "kn": "ಕಳಿಸಲು ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.st.retrying": {
+  "en": "Trying again",
+  "te": "మళ్ళీ ప్రయత్నిస్తోంది",
+  "hi": "फिर कोशिश हो रही है",
+  "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.st.delivered": {
+  "en": "Delivered",
+  "te": "అందింది",
+  "hi": "पहुँच गया",
+  "kn": "ತಲುಪಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.st.dead": {
+  "en": "Gave up",
+  "te": "ఆపేశాం",
+  "hi": "छोड़ दिया",
+  "kn": "ನಿಲ್ಲಿಸಿದೆವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.err.timeout": {
+  "en": "No answer in time",
+  "te": "సమయానికి జవాబు రాలేదు",
+  "hi": "समय पर जवाब नहीं आया",
+  "kn": "ಸಮಯಕ್ಕೆ ಉತ್ತರ ಬರಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.err.refused": {
+  "en": "Connection refused",
+  "te": "కనెక్షన్ తిరస్కరించింది",
+  "hi": "कनेक्शन मना किया",
+  "kn": "ಕನೆಕ್ಷನ್ ನಿರಾಕರಿಸಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.err.tls": {
+  "en": "Certificate problem",
+  "te": "సర్టిఫికెట్ సమస్య",
+  "hi": "सर्टिफ़िकेट की समस्या",
+  "kn": "ಸರ್ಟಿಫಿಕೇಟ್ ಸಮಸ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.err.status": {
+  "en": "Your server answered with an error",
+  "te": "మీ సర్వర్ ఎర్రర్‌తో జవాబిచ్చింది",
+  "hi": "आपके सर्वर ने एरर दिया",
+  "kn": "ನಿಮ್ಮ ಸರ್ವರ್ ಎರರ್ ಕೊಟ್ಟಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.err.redirect": {
+  "en": "The address redirects (not followed)",
+  "te": "అడ్రస్ మరో చోటికి పంపుతోంది (ఫాలో చేయం)",
+  "hi": "पता कहीं और भेजता है (हम नहीं मानते)",
+  "kn": "ವಿಳಾಸ ಬೇರೆಡೆ ಕಳಿಸುತ್ತದೆ (ಅನುಸರಿಸುವುದಿಲ್ಲ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.err.blocked": {
+  "en": "The address is not public",
+  "te": "అడ్రస్ పబ్లిక్ కాదు",
+  "hi": "पता सार्वजनिक नहीं है",
+  "kn": "ವಿಳಾಸ ಸಾರ್ವಜನಿಕವಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.err.dns": {
+  "en": "The name was not found",
+  "te": "పేరు దొరకలేదు",
+  "hi": "नाम नहीं मिला",
+  "kn": "ಹೆಸರು ಸಿಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.err.too_large": {
+  "en": "Too large to send",
+  "te": "పంపడానికి చాలా పెద్దది",
+  "hi": "भेजने के लिए बहुत बड़ा",
+  "kn": "ಕಳಿಸಲು ತುಂಬಾ ದೊಡ್ಡದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.err.no_secret": {
+  "en": "No signing secret",
+  "te": "సైనింగ్ సీక్రెట్ లేదు",
+  "hi": "साइनिंग सीक्रेट नहीं",
+  "kn": "ಸೈನಿಂಗ್ ಸೀಕ್ರೆಟ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.length": {
+  "en": "The address is too long (500 characters at most).",
+  "te": "అడ్రస్ చాలా పెద్దది (గరిష్టంగా 500 అక్షరాలు).",
+  "hi": "पता बहुत लंबा है (अधिकतम 500 अक्षर)।",
+  "kn": "ವಿಳಾಸ ತುಂಬಾ ಉದ್ದ (ಗರಿಷ್ಠ 500 ಅಕ್ಷರ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.scheme": {
+  "en": "The address must start with https://",
+  "te": "అడ్రస్ https:// తో మొదలవ్వాలి.",
+  "hi": "पता https:// से शुरू होना चाहिए।",
+  "kn": "ವಿಳಾಸ https:// ನಿಂದ ಶುರುವಾಗಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.userinfo": {
+  "en": "Leave the user name and password out of the address.",
+  "te": "అడ్రస్‌లో యూజర్ నేమ్, పాస్‌వర్డ్ వద్దు.",
+  "hi": "पते में यूज़र नेम और पासवर्ड न रखें।",
+  "kn": "ವಿಳಾಸದಲ್ಲಿ ಯೂಸರ್ ನೇಮ್, ಪಾಸ್‌ವರ್ಡ್ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.host": {
+  "en": "Use a real site name, not a number or a local name.",
+  "te": "నిజమైన సైట్ పేరు వాడండి, నంబర్ లేదా లోకల్ పేరు కాదు.",
+  "hi": "असली साइट का नाम इस्तेमाल करें, नंबर या लोकल नाम नहीं।",
+  "kn": "ನಿಜವಾದ ಸೈಟ್ ಹೆಸರು ಬಳಸಿ, ನಂಬರ್ ಅಥವಾ ಲೋಕಲ್ ಹೆಸರು ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.port": {
+  "en": "Use port 443, or a port from 1024 up.",
+  "te": "పోర్ట్ 443 లేదా 1024 పైన ఉన్నది వాడండి.",
+  "hi": "पोर्ट 443 या 1024 से ऊपर का पोर्ट इस्तेमाल करें।",
+  "kn": "ಪೋರ್ಟ್ 443 ಅಥವಾ 1024 ಮೇಲಿನದು ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.private": {
+  "en": "That address points inside a private network. Use a public one.",
+  "te": "ఆ అడ్రస్ ప్రైవేట్ నెట్‌వర్క్ లోపలికి వెళ్తోంది. పబ్లిక్ ఒకటి వాడండి.",
+  "hi": "वह पता निजी नेटवर्क के अंदर जाता है। सार्वजनिक पता इस्तेमाल करें।",
+  "kn": "ಆ ವಿಳಾಸ ಖಾಸಗಿ ನೆಟ್‌ವರ್ಕ್ ಒಳಗೆ ಹೋಗುತ್ತದೆ. ಸಾರ್ವಜನಿಕ ವಿಳಾಸ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.dns": {
+  "en": "We could not find that site name.",
+  "te": "ఆ సైట్ పేరు మాకు దొరకలేదు.",
+  "hi": "वह साइट का नाम हमें नहीं मिला।",
+  "kn": "ಆ ಸೈಟ್ ಹೆಸರು ನಮಗೆ ಸಿಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.none": {
+  "en": "Use an https:// address and choose at least one event.",
+  "te": "https:// అడ్రస్ వాడండి, కనీసం ఒక ఈవెంట్ ఎంచుకోండి.",
+  "hi": "https:// पता इस्तेमाल करें और कम से कम एक इवेंट चुनें।",
+  "kn": "https:// ವಿಳಾಸ ಬಳಸಿ, ಕನಿಷ್ಠ ಒಂದು ಈವೆಂಟ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.too_many": {
+  "en": "You can have 5 addresses. Delete one to add another.",
+  "te": "5 అడ్రస్‌లు ఉండొచ్చు. కొత్తది add చేయడానికి ఒకటి తొలగించండి.",
+  "hi": "5 पते रख सकते हैं। नया जोड़ने के लिए एक हटाएँ।",
+  "kn": "5 ವಿಳಾಸ ಇರಬಹುದು. ಹೊಸದನ್ನು ಸೇರಿಸಲು ಒಂದನ್ನು ಅಳಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.unavailable": {
+  "en": "We could not do that just now. Try again in a minute.",
+  "te": "ఇప్పుడు అది చేయలేకపోయాం. ఒక నిమిషం తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो पाया। एक मिनट बाद फिर कोशिश कीजिए।",
+  "kn": "ಈಗ ಅದನ್ನು ಮಾಡಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.forbidden": {
+  "en": "Only the Owner or an Admin can change this.",
+  "te": "దీన్ని Owner లేదా Admin మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ Owner या Admin बदल सकते हैं।",
+  "kn": "ಇದನ್ನು Owner ಅಥವಾ Admin ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.fail.mfa": {
+  "en": "Confirm your second step first.",
+  "te": "ముందు మీ రెండో స్టెప్ నిర్ధారించండి.",
+  "hi": "पहले अपना दूसरा स्टेप पक्का करें।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಎರಡನೇ ಸ್ಟೆಪ್ ದೃಢೀಕರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.title": {
+  "en": "Activity",
+  "te": "యాక్టివిటీ",
+  "hi": "गतिविधि",
+  "kn": "ಚಟುವಟಿಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.sub": {
+  "en": "Requests made with your API keys in the last 30 days. No request contents are kept.",
+  "te": "గత 30 రోజుల్లో మీ API కీలతో వచ్చిన రిక్వెస్ట్‌లు. రిక్వెస్ట్ లోపలి వివరాలు ఉంచం.",
+  "hi": "पिछले 30 दिनों में आपकी API कुंजियों से आए अनुरोध। अनुरोध की सामग्री नहीं रखी जाती।",
+  "kn": "ಕಳೆದ 30 ದಿನಗಳಲ್ಲಿ ನಿಮ್ಮ API ಕೀಗಳಿಂದ ಬಂದ ರಿಕ್ವೆಸ್ಟ್‌ಗಳು. ರಿಕ್ವೆಸ್ಟ್ ಒಳಗಿನ ವಿವರ ಇಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.off": {
+  "en": "API activity is not open for your workspace yet.",
+  "te": "API యాక్టివిటీ మీ వర్క్‌స్పేస్‌కి ఇంకా తెరవలేదు.",
+  "hi": "API गतिविधि आपके वर्कस्पेस के लिए अभी नहीं खुली है।",
+  "kn": "API ಚಟುವಟಿಕೆ ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ಇನ್ನೂ ತೆರೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.none": {
+  "en": "No requests yet.",
+  "te": "ఇంకా రిక్వెస్ట్‌లు లేవు.",
+  "hi": "अभी कोई अनुरोध नहीं।",
+  "kn": "ಇನ್ನೂ ರಿಕ್ವೆಸ್ಟ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.use.today": {
+  "en": "Today",
+  "te": "ఈరోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.use.month": {
+  "en": "This month",
+  "te": "ఈ నెల",
+  "hi": "इस महीने",
+  "kn": "ಈ ತಿಂಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.use.requests": {
+  "en": "Requests",
+  "te": "రిక్వెస్ట్‌లు",
+  "hi": "अनुरोध",
+  "kn": "ರಿಕ್ವೆಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.use.leads": {
+  "en": "Leads added",
+  "te": "చేరిన లీడ్స్",
+  "hi": "जुड़े लीड",
+  "kn": "ಸೇರಿದ ಲೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.use.calls": {
+  "en": "Test calls",
+  "te": "టెస్ట్ కాల్స్",
+  "hi": "टेस्ट कॉल",
+  "kn": "ಟೆಸ್ಟ್ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.use.errors": {
+  "en": "Errors",
+  "te": "ఎర్రర్లు",
+  "hi": "एरर",
+  "kn": "ಎರರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.use.limits": {
+  "en": "Limits for each key: {r} requests a minute, {c} calls a minute, {n} calls at once.",
+  "te": "ప్రతి కీకి పరిమితులు: నిమిషానికి {r} రిక్వెస్ట్‌లు, నిమిషానికి {c} కాల్స్, ఒకేసారి {n} కాల్స్.",
+  "hi": "हर कुंजी की सीमाएँ: प्रति मिनट {r} अनुरोध, प्रति मिनट {c} कॉल, एक साथ {n} कॉल।",
+  "kn": "ಪ್ರತಿ ಕೀಗೆ ಮಿತಿಗಳು: ನಿಮಿಷಕ್ಕೆ {r} ರಿಕ್ವೆಸ್ಟ್, ನಿಮಿಷಕ್ಕೆ {c} ಕರೆ, ಒಂದೇ ಬಾರಿ {n} ಕರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.more": {
+  "en": "Show earlier",
+  "te": "ముందున్నవి చూపించండి",
+  "hi": "पहले वाले दिखाएँ",
+  "kn": "ಹಿಂದಿನವು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dvh.act.key": {
+  "en": "Key",
+  "te": "కీ",
+  "hi": "कुंजी",
+  "kn": "ಕೀ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

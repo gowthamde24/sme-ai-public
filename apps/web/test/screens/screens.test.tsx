@@ -139,6 +139,7 @@ vi.mock("@/lib/api/team", async (orig) => (await import("./state")).wrap(await o
 vi.mock("@/lib/api/whatsapp", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/whatsapp")>(), ["getWhatsappAccount", "getConnectConfig", "listTemplates", "listConversations", "getThread", "listChatTemplates"]));
 vi.mock("@/lib/api/lists", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lists")>(), ["getLists", "getList", "getRows"]));
 vi.mock("@/lib/api/credits", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/credits")>(), ["getBalance", "getOptions", "listTopups", "getStatement", "getInvoice"]));
+vi.mock("@/lib/api/webhooks-out", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/webhooks-out")>(), ["listEndpoints", "listEvents", "getActivityUsage", "listActivity"]));
 vi.mock("@/lib/api/numbers", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/numbers")>(), ["listOwn"]));
 vi.mock("@/lib/api/gstin", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/gstin")>(), ["getBusinessProfile"]));
 vi.mock("@/lib/api/policy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/policy")>(), ["getPolicyStatus"]));
