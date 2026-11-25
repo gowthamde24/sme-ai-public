@@ -14,9 +14,9 @@ To
 <date name=to label="To" value=2026-10-06>
 [button type=submit: Show]
 [button type=button: Download PDF]
-- Enquiries 1 ▼ 50% vs yesterday
-- Visits booked 0 ▼ 1
-- Sales from visits ₹0 ▼ ₹2,40,000
+- Enquiries 1 ▼ 1 fewer enquiries than yesterday
+- Visits booked 0 ▼ 1 fewer visits than yesterday
+- Sales from visits ₹0 ▼ ₹2,40,000 less in sales than yesterday
 - Cost of your assistant – Not available yet
 {label="Enquiries and visits per day"}
 ## Enquiries and visits per day

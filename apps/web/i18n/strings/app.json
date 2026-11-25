@@ -138214,5 +138214,115 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "rv6.than.14": {
+  "en": "the previous 14 days",
+  "te": "ముందటి 14 రోజులతో",
+  "hi": "पिछले 14 दिनों",
+  "kn": "ಹಿಂದಿನ 14 ದಿನ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.than.today": {
+  "en": "yesterday",
+  "te": "నిన్నటితో",
+  "hi": "कल",
+  "kn": "ನಿನ್ನೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.than.other": {
+  "en": "the time before",
+  "te": "ముందటి టైమ్‌తో",
+  "hi": "पिछली अवधि",
+  "kn": "ಹಿಂದಿನ ಅವಧಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.d.e.up": {
+  "en": "{n} more enquiries than {than}",
+  "te": "{than} పోలిస్తే {n} ఎంక్వైరీలు ఎక్కువ",
+  "hi": "{than} से {n} एंक्वायरी ज़्यादा",
+  "kn": "{than}ಗಿಂತ {n} ಎನ್‌ಕ್ವೈರಿ ಹೆಚ್ಚು",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.d.e.down": {
+  "en": "{n} fewer enquiries than {than}",
+  "te": "{than} పోలిస్తే {n} ఎంక్వైరీలు తక్కువ",
+  "hi": "{than} से {n} एंक्वायरी कम",
+  "kn": "{than}ಗಿಂತ {n} ಎನ್‌ಕ್ವೈರಿ ಕಡಿಮೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.d.v.up": {
+  "en": "{n} more visits than {than}",
+  "te": "{than} పోలిస్తే {n} విజిట్లు ఎక్కువ",
+  "hi": "{than} से {n} विज़िट ज़्यादा",
+  "kn": "{than}ಗಿಂತ {n} ವಿಸಿಟ್ ಹೆಚ್ಚು",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.d.v.down": {
+  "en": "{n} fewer visits than {than}",
+  "te": "{than} పోలిస్తే {n} విజిట్లు తక్కువ",
+  "hi": "{than} से {n} विज़िट कम",
+  "kn": "{than}ಗಿಂತ {n} ವಿಸಿಟ್ ಕಡಿಮೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.d.s.up": {
+  "en": "{n} more in sales than {than}",
+  "te": "{than} పోలిస్తే సేల్స్ {n} ఎక్కువ",
+  "hi": "{than} से बिक्री {n} ज़्यादा",
+  "kn": "{than}ಗಿಂತ ಮಾರಾಟ {n} ಹೆಚ್ಚು",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.d.s.down": {
+  "en": "{n} less in sales than {than}",
+  "te": "{than} పోలిస్తే సేల్స్ {n} తక్కువ",
+  "hi": "{than} से बिक्री {n} कम",
+  "kn": "{than}ಗಿಂತ ಮಾರಾಟ {n} ಕಡಿಮೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.d.same": {
+  "en": "The same as {than}",
+  "te": "{than} పోలిస్తే అంతే",
+  "hi": "{than} जितना ही",
+  "kn": "{than}ನಷ್ಟೇ",
+  "status": {
+   "te": "reviewed",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -109,14 +109,14 @@ describe("Reports (the approved mock)", () => {
     expect(document.querySelector('[data-part="partial-day"]')).toBeNull();
     expect(document.querySelector('[data-part="today-so-far"]')).toBeNull();
   });
-  it("each figure says up or down against the period before: percent for enquiries, the difference for visits and rupees for sales", () => {
+  it("each figure says how much, in its unit, and against what (never a bare number): enquiries, visits and rupees of sales", () => {
     render(<ReportsV6 {...props()} />);
-    expect(document.querySelector('[data-kpi="enquiries"] em')).toHaveTextContent("▲ 400% vs previous 14 days");
-    expect(document.querySelector('[data-kpi="visits"] em')).toHaveTextContent("▲ 2");
-    expect(document.querySelector('[data-kpi="sales"] em')).toHaveTextContent("▲ ₹2,40,000");
+    expect(document.querySelector('[data-kpi="enquiries"] em')).toHaveTextContent("▲ 4 more enquiries than the previous 14 days");
+    expect(document.querySelector('[data-kpi="visits"] em')).toHaveTextContent("▲ 2 more visits than the previous 14 days");
+    expect(document.querySelector('[data-kpi="sales"] em')).toHaveTextContent("▲ ₹2,40,000 more in sales than the previous 14 days");
     cleanup();
     render(<ReportsV6 {...props({ series: series({ enquiries: { perDay: PERIOD.days.map(() => 0), total: 2, previous: 8, sources: [] } }) })} />);
-    expect(document.querySelector('[data-kpi="enquiries"] em')).toHaveTextContent("▼ 75% vs previous 14 days");
+    expect(document.querySelector('[data-kpi="enquiries"] em')).toHaveTextContent("▼ 6 fewer enquiries than the previous 14 days");
     expect(document.querySelector('[data-kpi="enquiries"] em')).toHaveClass("text-red-text");
   });
   it("a figure the API could not give says so, never a made-up number", () => {

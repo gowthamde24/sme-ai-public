@@ -15,8 +15,8 @@ To
 [button type=submit: Show]
 [button type=button: Download PDF]
 - Enquiries – Not available yet
-- Visits booked 3 ▲ 3
-- Sales from visits ₹0 • ₹0
+- Visits booked 3 ▲ 3 more visits than the previous 14 days
+- Sales from visits ₹0 • The same as the previous 14 days
 - Cost of your assistant – Not available yet
 {label="Enquiries and visits per day"}
 ## Enquiries and visits per day
