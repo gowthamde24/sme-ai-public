@@ -645,6 +645,7 @@ def test_nothing_is_reachable_that_should_not_be(ow: OrderWorld) -> None:
     # The ONLY definer functions of the public schema with "order" in their name, NAMED (not counted). The first three are the order engine's callable surface; each proves a role first (ADR 0021).
     # catalogue_photos_reorder (job AY, ADR 0069) matches the pattern only because "reorder" contains "order": it puts a catalogue item's photos in a new order, is Owner/Admin only (role proven
     # first, pgTAP 80), reads and writes only the caller's own business's rows, and has nothing to do with orders.
+    # commerce_order_upsert / commerce_order_lead_sent / commerce_order_facts (online stores, 992340): STORE orders (Shopify, WooCommerce), not shop orders of this engine: each proves app.is_scheduler() (the system account) FIRST and a signed-in person gets the deny error (pgTAP 293)
     names = operator_sql.sql(
         "select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname like '%order%' and p.prosecdef"
     )
@@ -652,7 +653,7 @@ def test_nothing_is_reachable_that_should_not_be(ow: OrderWorld) -> None:
     # pricing_order_create / pricing_order_settle (billing v2, 13 Nov 2026) match "%order%" only because they are PAYMENT orders (a Razorpay order for a top-up, the pay-as-you-go fee or a plan change), not shop orders:
     # create is the Owner's, settle is the Owner's (after the checked signature) or the system's (the signed webhook); the role is proven first, the amount is priced and the settling done inside the database, once per order (pgTAP 195)
     # pricing_order_failed / pricing_topup_orders (Razorpay top-up, 992200): the same payment orders: the system records a failed payment; the Owner lists the top-up orders of their own business (pgTAP 275)
-    assert names == "catalogue_photos_reorder,create_order_from_material_quote,create_order_from_quote,create_order_policy_version,pricing_order_create,pricing_order_failed,pricing_order_settle,pricing_topup_orders,record_order_event"
+    assert names == "catalogue_photos_reorder,commerce_order_facts,commerce_order_lead_sent,commerce_order_upsert,create_order_from_material_quote,create_order_from_quote,create_order_policy_version,pricing_order_create,pricing_order_failed,pricing_order_settle,pricing_topup_orders,record_order_event"
     # and it is closed to the anonymous caller and to a member who is not Owner or Admin
     sales = ow.users["sales"]
     assert pg(ow.w.stack, None, "POST", "/rpc/catalogue_photos_reorder", json={"p_tenant_id": str(ow.t.id), "p_item_id": uid(), "p_photo_ids": []}).status_code in (401, 403)

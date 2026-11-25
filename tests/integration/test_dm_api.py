@@ -146,7 +146,7 @@ def test_the_assistant_settings_defaults_save_preview_and_the_simulated_test_cal
     assert bad.status_code == 422
     pre = client.get(f"{url}/preview", params={"language": "te", "style": "warm"}, headers=bearer(a.users["admin"]))
     conforms(pre.json(), ASSISTANT, "PreviewOut")
-    assert "Priya" in pre.json()["text"] and "AI" not in pre.json()["text"]   # (the default setting is OFF: the name only)
+    assert "Priya" in pre.json()["text"] and "AI" in pre.json()["text"]   # (the default setting is ON: it says it is the AI assistant; lawyer's opinion, 25 Nov 2026)
     call = client.post(f"{url}/test-call", headers=bearer(a.users["owner"]))
     conforms(call.json(), ASSISTANT, "TestCallOut")
     assert call.json()["mode"] == "fake"

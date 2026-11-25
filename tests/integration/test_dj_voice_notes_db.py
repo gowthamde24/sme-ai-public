@@ -113,7 +113,7 @@ def test_the_plan_names_the_voices_provider_and_speaker_and_the_hook_speaks_with
     owner = a.users["owner"]
     code = f"sarvam-kavya-en-{uuid.uuid4().hex[:6]}"
     operator_sql.sql(f"select app.operator_register_voice('{code}', 'sarvam', 'en', 'Kavya, English', 'kavya', 'a native English speaker (synthetic test)')")
-    assert app.put(f"/v1/tenants/{a.id}/voice-notes/settings", json={"enabled": True, "speed": 1.0, "call_from_hour": 9, "call_to_hour": 21}, headers=bearer(owner)).status_code == 200
+    assert app.put(f"/v1/tenants/{a.id}/voice-notes/settings", json={"enabled": True, "speed": 1.0, "call_from_hour": 10, "call_to_hour": 21}, headers=bearer(owner)).status_code == 200
     assert app.put(f"/v1/tenants/{a.id}/voice-notes/choices/en", json={"voice_code": code}, headers=bearer(owner)).status_code == 200
     try:
         # a campaign with voice on, approved, whose first step is due: the real worker asks for the plan

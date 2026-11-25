@@ -40,6 +40,10 @@ SELECT_OF: dict[str, str] = {
     "workspace_secrets": "id,tenant_id,kind,secret_name,last4,set_by,set_at",   # where the key is; never the key, never the fingerprint (no column grant)
     "developer_api_keys": "id,tenant_id,name,mode,prefix,last4,scopes,ip_allow,created_by,created_at,rotated_at,revoked_at",   # never the key's hash (no column grant)
     "calendar_busy": "id,tenant_id",   # Google Calendar busy blocks: a member sees that they exist, never the times (no column grant)
+    # online stores (migration 20261231992340): the column grants of the three tables; the store's webhook hash and a shopper's number and name are not granted to any client
+    "commerce_connections": "id,tenant_id,kind,store_label,secret_last4,state,problem,webhooks_registered,last_event_at,created_at,updated_at,settings",
+    "commerce_orders": "id,tenant_id,connection_id,external_id,number,status,payment,total_paise,items_text,tracking,lead_sent_at,placed_at,created_at,updated_at",
+    "commerce_checkouts": "id,tenant_id,connection_id,external_id,status,due_at,total_paise,items_text,created_at,updated_at",
 }
 
 class PrivacyRepository(Protocol):

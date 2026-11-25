@@ -131,7 +131,7 @@ def test_voice_is_off_until_the_owner_with_a_second_factor_switches_it_on(scene:
     conforms(first, "VoiceSettingsOut", VOICE)
     assert first["enabled"] is False and first["choices"] == {} and first["recording"] is False
     assert app.get(v(a, "/settings"), headers=bearer(sales)).status_code == 403
-    body = {"enabled": True, "speed": 1.0, "call_from_hour": 9, "call_to_hour": 21}
+    body = {"enabled": True, "speed": 1.0, "call_from_hour": 10, "call_to_hour": 21}
     assert app.put(v(a, "/settings"), json=body, headers=bearer(admin)).status_code == 403, "only the Owner"
     weak = {"Authorization": f"Bearer {aal1_token(stack, owner)}"}
     assert app.put(v(a, "/settings"), json=body, headers=weak).json()["error"]["code"] == "mfa_required"
