@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
-import { CommerceConnectors, bindActions } from "@/components/v2/app/connectors-commerce";
+import { bindActions } from "@/components/v2/app/connectors-commerce/actions";
+import { CommerceConnectors } from "@/components/v2/app/connectors-commerce/LazyCommerceConnectors";
 import * as commerceMoves from "@/components/v2/app/connectors-commerce/commerce-actions";
 import { ConnectorsView } from "@/components/v2/app/connectors/ConnectorsView";
 import { BRAND_NAME } from "@/design/brand";
