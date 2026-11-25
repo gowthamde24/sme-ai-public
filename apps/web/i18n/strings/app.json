@@ -130887,5 +130887,401 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "cpn.rules.title": {
+  "en": "Before you start calling",
+  "te": "కాల్ చేయడం మొదలుపెట్టే ముందు",
+  "hi": "कॉल शुरू करने से पहले",
+  "kn": "ಕರೆ ಮಾಡುವ ಮೊದಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rules.read": {
+  "en": "Read the five rules",
+  "te": "ఐదు రూల్స్ చదవండి",
+  "hi": "पाँच नियम पढ़ें",
+  "kn": "ಐದು ನಿಯಮಗಳನ್ನು ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rule.1.b": {
+  "en": "Only call people who agreed.",
+  "te": "అనుమతి ఇచ్చినవాళ్లకే కాల్ చేయండి.",
+  "hi": "सिर्फ़ उन्हीं को कॉल करें जिन्होंने अनुमति दी है।",
+  "kn": "ಅನುಮತಿ ಕೊಟ್ಟವರಿಗೆ ಮಾತ್ರ ಕರೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rule.1.t": {
+  "en": "People who asked about your business, or said yes to calls. Not bought or collected lists.",
+  "te": "మీ బిజినెస్ గురించి అడిగినవాళ్లు, లేదా కాల్స్‌కి అనుమతి ఇచ్చినవాళ్లు. కొన్న లేదా సేకరించిన లిస్ట్‌లు వద్దు.",
+  "hi": "जिन्होंने आपके बिज़नेस के बारे में पूछा, या कॉल के लिए हाँ कहा। ख़रीदी या जमा की हुई लिस्ट नहीं।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ಕೇಳಿದವರು, ಅಥವಾ ಕರೆಗಳಿಗೆ ಹೌದು ಎಂದವರು. ಖರೀದಿಸಿದ ಅಥವಾ ಸಂಗ್ರಹಿಸಿದ ಲಿಸ್ಟ್ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rule.2.b": {
+  "en": "We fix the calling hours.",
+  "te": "కాల్ చేసే టైమ్ మేమే ఫిక్స్ చేస్తాం.",
+  "hi": "कॉल का समय हम तय करते हैं।",
+  "kn": "ಕರೆ ಮಾಡುವ ಸಮಯ ನಾವು ನಿಗದಿ ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rule.2.t": {
+  "en": "Calls go out between 9 am and 9 pm. Outside these hours they wait.",
+  "te": "కాల్స్ ఉదయం 9 నుంచి రాత్రి 9 లోపే వెళ్తాయి. ఆ టైమ్ దాటితే వేచి ఉంటాయి.",
+  "hi": "कॉल सुबह 9 बजे से रात 9 बजे के बीच जाते हैं। इस समय के बाहर वे रुके रहते हैं।",
+  "kn": "ಕರೆಗಳು ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರೊಳಗೆ ಹೋಗುತ್ತವೆ. ಆ ಸಮಯದ ಹೊರಗೆ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rule.3.b": {
+  "en": "Do-not-call is automatic.",
+  "te": "డు-నాట్-కాల్ ఆటోమేటిక్.",
+  "hi": "डू-नॉट-कॉल अपने आप होता है।",
+  "kn": "ಡು-ನಾಟ್-ಕಾಲ್ ತಾನಾಗಿ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rule.3.t": {
+  "en": "When someone asks you to stop, they are added to your do-not-call list and are never called again.",
+  "te": "ఎవరైనా ఆపమని అడిగితే, వాళ్లు మీ డు-నాట్-కాల్ లిస్ట్‌లో చేరతారు. మళ్లీ ఎప్పుడూ కాల్ చేయం.",
+  "hi": "जब कोई रोकने को कहता है, वह आपकी डू-नॉट-कॉल लिस्ट में जुड़ जाता है और उसे दोबारा कॉल नहीं किया जाता।",
+  "kn": "ಯಾರಾದರೂ ನಿಲ್ಲಿಸಿ ಎಂದರೆ, ಅವರು ನಿಮ್ಮ ಡು-ನಾಟ್-ಕಾಲ್ ಲಿಸ್ಟ್‌ಗೆ ಸೇರುತ್ತಾರೆ. ಅವರಿಗೆ ಮತ್ತೆ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rule.4.b": {
+  "en": "Your business is the caller.",
+  "te": "కాల్ చేసేది మీ బిజినెస్.",
+  "hi": "कॉल करने वाला आपका बिज़नेस है।",
+  "kn": "ಕರೆ ಮಾಡುವವರು ನಿಮ್ಮ ಬಿಸಿನೆಸ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rule.4.t": {
+  "en": "You are responsible for who is called and what is said. We place the call for you.",
+  "te": "ఎవరికి కాల్ చేస్తారో, ఏం చెప్తారో బాధ్యత మీదే. కాల్ మేము చేసిపెడతాం.",
+  "hi": "किसे कॉल हो और क्या कहा जाए, यह ज़िम्मेदारी आपकी है। कॉल हम आपके लिए लगाते हैं।",
+  "kn": "ಯಾರಿಗೆ ಕರೆ ಮಾಡುತ್ತೀರಿ, ಏನು ಹೇಳುತ್ತೀರಿ ಎಂಬ ಜವಾಬ್ದಾರಿ ನಿಮ್ಮದು. ಕರೆಯನ್ನು ನಾವು ನಿಮ್ಮ ಪರವಾಗಿ ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rule.5.b": {
+  "en": "Phone rules may apply.",
+  "te": "ఫోన్ రూల్స్ వర్తించవచ్చు.",
+  "hi": "फ़ोन के नियम लागू हो सकते हैं।",
+  "kn": "ಫೋನ್ ನಿಯಮಗಳು ಅನ್ವಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.rule.5.t": {
+  "en": "The national do-not-disturb list and phone company rules can stop some calls, mostly calls about offers.",
+  "te": "నేషనల్ డు-నాట్-డిస్టర్బ్ లిస్ట్, ఫోన్ కంపెనీ రూల్స్ వల్ల కొన్ని కాల్స్ ఆగిపోవచ్చు, ముఖ్యంగా ఆఫర్ల కాల్స్.",
+  "hi": "नेशनल डू-नॉट-डिस्टर्ब लिस्ट और फ़ोन कंपनी के नियम कुछ कॉल रोक सकते हैं, ज़्यादातर ऑफ़र वाले कॉल।",
+  "kn": "ನ್ಯಾಷನಲ್ ಡು-ನಾಟ್-ಡಿಸ್ಟರ್ಬ್ ಲಿಸ್ಟ್ ಮತ್ತು ಫೋನ್ ಕಂಪನಿ ನಿಯಮಗಳು ಕೆಲವು ಕರೆಗಳನ್ನು ನಿಲ್ಲಿಸಬಹುದು, ಹೆಚ್ಚಾಗಿ ಆಫರ್ ಕರೆಗಳನ್ನು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.hear.title": {
+  "en": "Hear it yourself",
+  "te": "మీరే వినండి",
+  "hi": "खुद सुनकर देखें",
+  "kn": "ನೀವೇ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.hear.text": {
+  "en": "Talk to your assistant here, in this browser. Nobody is dialled and it costs nothing.",
+  "te": "ఈ బ్రౌజర్‌లోనే మీ అసిస్టెంట్‌తో మాట్లాడండి. ఎవరికీ కాల్ వెళ్లదు, ఖర్చు కూడా లేదు.",
+  "hi": "इसी ब्राउज़र में अपने असिस्टेंट से बात करें। किसी को कॉल नहीं जाता और कोई ख़र्च नहीं।",
+  "kn": "ಈ ಬ್ರೌಸರ್‌ನಲ್ಲೇ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಜೊತೆ ಮಾತನಾಡಿ. ಯಾರಿಗೂ ಕರೆ ಹೋಗುವುದಿಲ್ಲ, ಖರ್ಚೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.hear.start": {
+  "en": "Start a test call",
+  "te": "టెస్ట్ కాల్ మొదలుపెట్టండి",
+  "hi": "टेस्ट कॉल शुरू करें",
+  "kn": "ಟೆಸ್ಟ್ ಕರೆ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.title": {
+  "en": "Calls at once",
+  "te": "ఒకేసారి కాల్స్",
+  "hi": "एक साथ कॉल",
+  "kn": "ಒಂದೇ ಸಮಯದ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.count": {
+  "en": "{used} of {total} calls at once",
+  "te": "ఒకేసారి {total} కాల్స్‌లో {used}",
+  "hi": "एक साथ {total} में से {used} कॉल",
+  "kn": "ಒಂದೇ ಸಮಯದ {total} ಕರೆಗಳಲ್ಲಿ {used}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.shared": {
+  "en": "Shared by all your numbers.",
+  "te": "మీ నంబర్లన్నింటికీ కలిపి.",
+  "hi": "आपके सभी नंबरों के लिए साझा।",
+  "kn": "ನಿಮ್ಮ ಎಲ್ಲಾ ನಂಬರ್‌ಗಳಿಗೆ ಸೇರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.line": {
+  "en": "Line {n}",
+  "te": "లైన్ {n}",
+  "hi": "लाइन {n}",
+  "kn": "ಲೈನ್ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.open": {
+  "en": "Open",
+  "te": "ఖాళీ",
+  "hi": "खाली",
+  "kn": "ಖಾಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.busy": {
+  "en": "On a call",
+  "te": "కాల్‌లో ఉంది",
+  "hi": "कॉल पर",
+  "kn": "ಕರೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.note": {
+  "en": "When all lines are busy, a new caller hears a busy tone.",
+  "te": "అన్ని లైన్లు బిజీగా ఉంటే, కొత్తగా చేసినవాళ్లకి బిజీ టోన్ వినిపిస్తుంది.",
+  "hi": "जब सभी लाइनें व्यस्त हों, नया कॉल करने वाले को व्यस्त टोन सुनाई देती है।",
+  "kn": "ಎಲ್ಲಾ ಲೈನ್‌ಗಳು ಬ್ಯುಸಿ ಇದ್ದರೆ, ಹೊಸದಾಗಿ ಕರೆ ಮಾಡಿದವರಿಗೆ ಬ್ಯುಸಿ ಟೋನ್ ಕೇಳಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.add": {
+  "en": "Add a line",
+  "te": "లైన్ జోడించండి",
+  "hi": "लाइन जोड़ें",
+  "kn": "ಲೈನ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.none": {
+  "en": "Calls are not switched on for your business yet.",
+  "te": "మీ బిజినెస్‌కి కాల్స్ ఇంకా ఆన్ చేయలేదు.",
+  "hi": "आपके बिज़नेस के लिए कॉल अभी चालू नहीं हुए हैं।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್‌ಗೆ ಕರೆಗಳು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.unread": {
+  "en": "We could not read your lines just now. Try again in a minute.",
+  "te": "ఇప్పుడు మీ లైన్లు చదవలేకపోయాం. ఒక నిమిషం తర్వాత మళ్లీ చూడండి.",
+  "hi": "अभी आपकी लाइनें नहीं पढ़ पाए। एक मिनट बाद फिर देखें।",
+  "kn": "ಈಗ ನಿಮ್ಮ ಲೈನ್‌ಗಳನ್ನು ಓದಲು ಆಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.once.test": {
+  "en": "Test data. No line is read.",
+  "te": "టెస్ట్ డేటా. ఏ లైన్ చదవలేదు.",
+  "hi": "टेस्ट डेटा। कोई लाइन नहीं पढ़ी गई।",
+  "kn": "ಟೆಸ್ಟ್ ಡೇಟಾ. ಯಾವ ಲೈನ್ ಅನ್ನೂ ಓದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.bill.title": {
+  "en": "How calls are billed",
+  "te": "కాల్స్‌కి బిల్లింగ్ ఎలా",
+  "hi": "कॉल का बिल कैसे बनता है",
+  "kn": "ಕರೆಗಳ ಬಿಲ್ ಹೇಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.bill.draft": {
+  "en": "Draft: to be confirmed",
+  "te": "డ్రాఫ్ట్: ఇంకా నిర్ధారించాలి",
+  "hi": "ड्राफ़्ट: अभी पक्का होना बाकी",
+  "kn": "ಡ್ರಾಫ್ಟ್: ಇನ್ನೂ ಖಚಿತವಾಗಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.bill.1.b": {
+  "en": "Nobody picks up, or the line is busy",
+  "te": "ఎవరూ ఎత్తకపోతే, లేదా లైన్ బిజీగా ఉంటే",
+  "hi": "कोई फ़ोन नहीं उठाता, या लाइन व्यस्त है",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ, ಅಥವಾ ಲೈನ್ ಬ್ಯುಸಿ ಇದ್ದರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.bill.1.t": {
+  "en": "Nothing. You pay only for calls that are answered.",
+  "te": "ఏమీ లేదు. ఎత్తిన కాల్స్‌కి మాత్రమే చెల్లిస్తారు.",
+  "hi": "कुछ नहीं। आप सिर्फ़ उठाए गए कॉल के पैसे देते हैं।",
+  "kn": "ಏನೂ ಇಲ್ಲ. ಎತ್ತಿದ ಕರೆಗಳಿಗೆ ಮಾತ್ರ ಪಾವತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.bill.2.b": {
+  "en": "How a call is counted",
+  "te": "కాల్ ఎలా లెక్కిస్తారు",
+  "hi": "कॉल कैसे गिना जाता है",
+  "kn": "ಕರೆಯನ್ನು ಹೇಗೆ ಲೆಕ್ಕ ಹಾಕುತ್ತೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.bill.2.t": {
+  "en": "In blocks of 30 seconds, rounded up. A call of 1 minute 10 seconds is billed as 1 minute 30 seconds.",
+  "te": "30 సెకన్ల బ్లాక్‌లలో, పైకి రౌండ్ చేసి. 1 నిమిషం 10 సెకన్ల కాల్‌కి 1 నిమిషం 30 సెకన్లు బిల్ అవుతుంది.",
+  "hi": "30 सेकंड के ब्लॉक में, ऊपर की ओर। 1 मिनट 10 सेकंड के कॉल का बिल 1 मिनट 30 सेकंड बनता है।",
+  "kn": "30 ಸೆಕೆಂಡ್‌ಗಳ ಬ್ಲಾಕ್‌ಗಳಲ್ಲಿ, ಮೇಲಕ್ಕೆ ರೌಂಡ್ ಮಾಡಿ. 1 ನಿಮಿಷ 10 ಸೆಕೆಂಡ್‌ನ ಕರೆಗೆ 1 ನಿಮಿಷ 30 ಸೆಕೆಂಡ್ ಬಿಲ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.bill.3.b": {
+  "en": "Calls to you cost the same",
+  "te": "మీకు వచ్చే కాల్స్‌కి అదే ఖర్చు",
+  "hi": "आपके पास आने वाले कॉल का वही ख़र्च",
+  "kn": "ನಿಮಗೆ ಬರುವ ಕರೆಗಳಿಗೂ ಅದೇ ಖರ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.bill.3.t": {
+  "en": "A call your assistant answers costs the same as one it makes.",
+  "te": "మీ అసిస్టెంట్ ఎత్తే కాల్‌కి, అది చేసే కాల్‌కి ఒకే ఖర్చు.",
+  "hi": "आपका असिस्टेंट जो कॉल उठाता है, उसका ख़र्च उसके किए कॉल जितना ही है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಎತ್ತುವ ಕರೆಗೂ, ಅದು ಮಾಡುವ ಕರೆಗೂ ಒಂದೇ ಖರ್ಚು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.bill.4.b": {
+  "en": "Testing is free",
+  "te": "టెస్టింగ్ ఉచితం",
+  "hi": "टेस्टिंग मुफ़्त है",
+  "kn": "ಟೆಸ್ಟಿಂಗ್ ಉಚಿತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cpn.bill.4.t": {
+  "en": "Test calls and practice in the browser cost nothing.",
+  "te": "బ్రౌజర్‌లో టెస్ట్ కాల్స్, ప్రాక్టీస్‌కి ఖర్చు లేదు.",
+  "hi": "ब्राउज़र में टेस्ट कॉल और प्रैक्टिस पर कोई ख़र्च नहीं।",
+  "kn": "ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಟೆಸ್ಟ್ ಕರೆ ಮತ್ತು ಪ್ರಾಕ್ಟೀಸ್‌ಗೆ ಖರ್ಚು ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

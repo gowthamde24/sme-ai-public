@@ -18,7 +18,8 @@ import { readBillingBalance, readInvoices, readPricing } from "@/lib/billing-v6/
 import { TOPUP_CHOICES } from "@/lib/billing-v6/mock-state";
 import { formatRupeesShort } from "@/lib/money";
 import { getBalance, getOptions, getStatement, listTopups } from "@/lib/api/credits";
-import { balanceScreens, billingV2, creditsScreens, designV6, earlyAccess } from "@/lib/screens/flag";
+import { CallBillingFacts } from "@/components/v2/app/calls/panel/CallBillingFacts";
+import { balanceScreens, billingV2, callsPanel, creditsScreens, designV6, earlyAccess } from "@/lib/screens/flag";
 
 import { freeStartAction, setLimitAction, topupAction } from "./actions";
 import { confirmTopupAction, createTopupAction, failTopupAction, loadStatementAction } from "./credits-actions";
@@ -48,6 +49,8 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
   // free early access (EARLY_ACCESS=1): nothing to pay, no balance, no top-up, no plan to pick; a link that still points here says so
   if (earlyAccess()) return (<main className={pageMain} lang={lang}><PageTop title={t("ea.title")} sub={t("ea.body")} /></main>);
   const base = `/app/tenants/${tenantId}`;
+  // CALLS_PANEL: "How calls are billed" (rows tagged Draft until the owner confirms them)
+  const facts = callsPanel() ? <CallBillingFacts words={wordsFor(lang, ["cpn.bill."])} /> : null;
   // CREDITS_SCREENS (29 Nov 2026): the balance, Add credits (Razorpay Checkout), the low-balance line, the statement and the GST invoices, on C1's credits routes (a part that cannot be read is left out, never filled in)
   if (creditsScreens()) {
     const [balance, options, topups, statement] = await Promise.all([
@@ -67,6 +70,7 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
         topups={topups}
         statement={statement}
         owner={tenant.role === "owner"}
+        facts={facts}
         actions={{ create: createTopupAction.bind(null, tenantId), confirm: confirmTopupAction.bind(null, tenantId), fail: failTopupAction.bind(null, tenantId), statement: loadStatementAction.bind(null, tenantId) }}
       />
     );
@@ -82,6 +86,7 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
         base={base}
         help={helpTipFor(lang, base, "billing", true)}
         wallet={wallet}
+        facts={facts}
         owner={tenant.role === "owner"}
         topupAmounts={TOPUP_CHOICES.map((paise) => ({ paise, text: formatRupeesShort(paise) }))}
         actions={{ freeStart: freeStartAction.bind(null, tenantId), topup: topupAction.bind(null, tenantId), setLimit: setLimitAction.bind(null, tenantId) }}
@@ -102,6 +107,7 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
       topupAmounts={TOPUP_CHOICES.map((paise) => ({ paise, text: formatRupeesShort(paise) }))}
       actions={{ freeStart: freeStartAction.bind(null, tenantId), topup: topupAction.bind(null, tenantId) }}
       mock={balanceScreens() === "mock"}
+      facts={facts}
     />
   );
 }

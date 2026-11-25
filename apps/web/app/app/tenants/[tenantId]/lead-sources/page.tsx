@@ -14,7 +14,8 @@ import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { readSources, sourcesMode } from "@/lib/lead-desk/sources/source";
-import { jobsScreens } from "@/lib/screens/flag";
+import { BeforeYouStart } from "@/components/v2/app/calls/panel/BeforeYouStart";
+import { callsPanel, jobsScreens } from "@/lib/screens/flag";
 import { cardsMode, sourcesApiFor } from "@/lib/sources/server";
 
 import {
@@ -74,6 +75,7 @@ export default async function LeadSourcesRoute({
     "sc.",
     "lsrc.copy",
     ...(jobsScreens() !== "off" ? ["jobs.trust.consent"] : []),
+    ...(callsPanel() ? ["cpn.rules.", "cpn.rule."] : []),
   ]);
   const list =
     read.mode === "ok" ? (
@@ -99,7 +101,7 @@ export default async function LeadSourcesRoute({
         sub={cards?.ok ? words["sc.sub"] : words["lsrc.sub"]}
       />
       <div className="mt-4">
-        <BeforeYouCall words={words} open={false} />
+        {callsPanel() ? <BeforeYouStart words={words} open={false} /> : <BeforeYouCall words={words} open={false} />}
       </div>
       {cards?.ok ? (
         <SourceCards

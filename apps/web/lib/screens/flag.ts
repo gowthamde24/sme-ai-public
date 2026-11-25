@@ -274,3 +274,8 @@ export const whatYouSellLists = (value: string | undefined = process.env.WHAT_YO
  * PRICING_V2 must be on too: its routes answer 404 while it is off); anything else = the Billing page as it was. Off in production until the planner's run and the owner's Razorpay keys.
  */
 export const creditsScreens = (value: string | undefined = process.env.CREDITS_SCREENS): boolean => value === "1";
+
+/** The calls panel (owner, 29 Nov 2026; mock "Calls", "Phone numbers", "Credits and billing"; Outpero study): "Before you start calling" (five plain rules, open on Calls, closed on Lead sources), "Hear it yourself" (a test call in the browser, through BROWSER_VOICE), and "How calls are billed" under Credits and billing. `1` = on; unset = off (production until the owner says). */
+export const callsPanel = (value: string | undefined = process.env.CALLS_PANEL): boolean => value === "1";
+/** "Calls at once" on the Phone numbers page (same mock): how many calls can run together and how many do, from C1's `GET /v1/tenants/{t}/phone-lines` (docs/contracts/calls.md). `mock` = a made-up two-line answer (nothing is read), `1` = the API, unset = the card is not there. Only with CALLS_PANEL. */
+export const phoneLinesScreens = (value: string | undefined = process.env.PHONE_LINES_SCREENS): ScreenMode => screenMode(value);

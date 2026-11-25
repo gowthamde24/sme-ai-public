@@ -10,7 +10,9 @@ import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
-import { phonePicker } from "@/lib/screens/flag";
+import { CallsAtOnce } from "@/components/v2/app/calls/panel/CallsAtOnce";
+import { readPhoneLines } from "@/lib/phone-lines/source";
+import { callsPanel, phonePicker } from "@/lib/screens/flag";
 import { requireUser } from "@/lib/auth/session";
 import { PhoneNumberSimple } from "@/components/v2/app/phone/PhoneNumberSimple";
 import { PhonePicker } from "@/components/v2/app/phone/LazyPhonePicker";
@@ -42,6 +44,12 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
   const lang = await getLang();
   const t = appT(lang);
   if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("phone.title")} message={t("int.admins_only")} />;
+  // CALLS_PANEL + PHONE_LINES_SCREENS: "Calls at once" under the number (C1's GET /phone-lines); the card is not there when the flag is off
+  const read = callsPanel() ? await readPhoneLines(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : ({ mode: "unread" } as const))) : ({ mode: "off" } as const);
+  const once =
+    read.mode === "off" ? null : (
+      <CallsAtOnce words={wordsFor(lang, ["cpn.once."])} lines={read.mode === "ok" ? read.lines : null} owner={tenant.role === "owner"} test={read.mode === "ok" && read.mock} />
+    );
   // PHONE_PICKER (owner, 28 Nov 2026): the owner picks their own number from a list; the registration steps below stay for workspaces that are not on the picker
   if (phonePicker() !== "off") {
     const own = await readOwn(user.accessToken, tenantId);
@@ -57,6 +65,7 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
             actions={{ search: searchNumbersAction.bind(null, tenantId), claim: claimNumberAction.bind(null, tenantId), poll: ownNumberAction.bind(null, tenantId) }}
           />
         </div>
+        {once}
       </main>
     );
   }
@@ -66,6 +75,7 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
     <main className={pageMain} lang={lang}>
       <PageTop title={await menuTitle("phone", lang, user.accessToken, tenantId)} sub={t("phn.sub")} />
       <PhoneNumberSimple words={wordsFor(lang, ["phn.", "pick.type.short."])} own={own} />
+      {once}
     </main>
   );
 }

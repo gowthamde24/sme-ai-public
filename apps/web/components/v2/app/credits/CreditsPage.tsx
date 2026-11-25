@@ -16,7 +16,7 @@ type Actions = React.ComponentProps<typeof AddCredits>["actions"] & { statement:
  * Credits and billing (mock "Credits and billing"; C1's docs/contracts/credits-topup.md; flag CREDITS_SCREENS): the balance with how many minutes of calls it covers, the last top-up and Add credits (Owner), the low-balance line when the balance covers fewer than 4 minutes,
  * the statement, the invoices (one for each paid top-up, opened as a printable page) and a link to the billing details (the workspace name and GSTIN of Settings). Open rows between hairlines; nothing boxed. Admin sees everything and cannot add.
  */
-export function CreditsPage({ words, lang, base, balance, options, topups, statement, owner, actions, help }: { words: Words; lang: string; base: string; balance: BillingBalance | null; options: TopupOptions | null; topups: readonly Topup[] | null; statement: StatementData | null; owner: boolean; actions: Actions; help: React.ReactNode }) {
+export function CreditsPage({ words, lang, base, balance, options, topups, statement, owner, actions, help, facts }: { words: Words; lang: string; base: string; balance: BillingBalance | null; options: TopupOptions | null; topups: readonly Topup[] | null; statement: StatementData | null; owner: boolean; actions: Actions; help: React.ReactNode; /** "How calls are billed" (CALLS_PANEL), when on. */ facts?: React.ReactNode }) {
   const t = makeT(words);
   const minutes = balance?.minutesEstimate ?? null;
   const last = topups?.find((x) => x.state === "paid") ?? null;
@@ -40,6 +40,8 @@ export function CreditsPage({ words, lang, base, balance, options, topups, state
           {!balance?.low && add ? <div className="md:ml-auto">{add}</div> : null}
         </div>
         <p className="m-0 border-y border-line py-3 text-[15px] text-muted">{t("cr.note")}</p>
+
+        {facts}
 
         <section aria-labelledby="cr-st">
           <h2 id="cr-st" className="m-0 mb-2 font-display text-xl font-semibold">
