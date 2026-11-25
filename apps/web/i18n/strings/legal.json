@@ -1,12 +1,12 @@
 {
  "legal.draft.banner": {
   "en": "Draft, pending legal review. The text below may change before it is final.",
-  "te": "Draft, pending legal review. The text below may change before it is final.",
+  "te": "డ్రాఫ్ట్, లీగల్ రివ్యూ ఇంకా అవ్వలేదు. ఫైనల్ అయ్యే ముందు కింది టెక్స్ట్ మారవచ్చు.",
   "hi": "Draft, pending legal review. The text below may change before it is final.",
   "kn": "Draft, pending legal review. The text below may change before it is final.",
   "humanOnly": true,
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }

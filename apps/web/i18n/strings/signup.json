@@ -254,11 +254,11 @@
  },
  "signup.terms": {
   "en": "I agree to the {terms} and the {privacy}.",
-  "te": "I agree to the {terms} and the {privacy}.",
+  "te": "{terms}కి, {privacy}కి నేను ఒప్పుకుంటున్నాను.",
   "hi": "I agree to the {terms} and the {privacy}.",
   "kn": "I agree to the {terms} and the {privacy}.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -266,11 +266,11 @@
  },
  "signup.err.terms_required": {
   "en": "You need to agree to the Terms and the Privacy notice to create an account.",
-  "te": "You need to agree to the Terms and the Privacy notice to create an account.",
+  "te": "అకౌంట్ క్రియేట్ చేయడానికి మీరు టర్మ్స్‌కి, ప్రైవసీ నోటీస్‌కి ఒప్పుకోవాలి.",
   "hi": "You need to agree to the Terms and the Privacy notice to create an account.",
   "kn": "You need to agree to the Terms and the Privacy notice to create an account.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -322,11 +322,11 @@
  },
  "signup.terms.link": {
   "en": "Terms",
-  "te": "Terms",
+  "te": "టర్మ్స్",
   "hi": "Terms",
   "kn": "Terms",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -334,11 +334,11 @@
  },
  "signup.privacy.link": {
   "en": "Privacy notice",
-  "te": "Privacy notice",
+  "te": "ప్రైవసీ నోటీస్",
   "hi": "Privacy notice",
   "kn": "Privacy notice",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },
@@ -456,11 +456,11 @@
  },
  "signup.terms.continue": {
   "en": "By continuing, you agree to the {terms} and have read the {privacy}.",
-  "te": "By continuing, you agree to the {terms} and have read the {privacy}.",
+  "te": "కొనసాగిస్తే, మీరు {terms}కి ఒప్పుకుంటున్నారు, {privacy} చదివారు.",
   "hi": "By continuing, you agree to the {terms} and have read the {privacy}.",
   "kn": "By continuing, you agree to the {terms} and have read the {privacy}.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   },

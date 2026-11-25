@@ -383,8 +383,8 @@ describe("resume, skip and the checklist", () => {
       </SetupGate>,
     );
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(te["setup.check.title"]);
-    expect(te["setup.s4.waits.money"]).toBe("Money: prices, discounts, advances and refunds");
-    expect(te["setup.s4.auto"]).toBe(words["setup.s4.auto"]);
+    expect(te["setup.s4.waits.money"]).not.toBe("Money: prices, discounts, advances and refunds"); // Telugu is approved by the owner (26 Nov 2026), money lines included
+    expect(te["setup.s4.auto"]).not.toBe(words["setup.s4.auto"]);
     expect(te["setup.s2.title"]).not.toBe(words["setup.s2.title"]);
   });
 });

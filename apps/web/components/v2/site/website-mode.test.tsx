@@ -47,7 +47,7 @@ describe("website mode: the public pages (job DQ)", () => {
     for (const bad of ["/signup", "/login", "/app", "/setup"]) expect(links.filter((h) => h === bad || h.startsWith(`${bad}/`) || h.startsWith(`${bad}?`)), `${name(target)}: ${bad}`).toEqual([]);
     const d = siteDict(lang);
     // the home page (landing v9) says it in English until the owner reviews the new lines; the other pages have the reviewed words
-    expect(text(html)).toContain(target.kind === "home" ? "Join early access" : d["demo.cta"]);
+    expect(text(html)).toContain(target.kind === "home" ? d["v9.hdr.9"] : d["demo.cta"]);
     expect(text(html)).not.toContain(d["nav.signin"]);
     expect(text(html)).not.toContain(d["nav.start"]);
     expect(text(html)).not.toMatch(/\{(?!customer\}|business\})[a-z_]+\}/); // the home page's opening-line example shows {customer} and {business} as typed

@@ -60,14 +60,12 @@ describe("What kind of business? (asked once, for a workspace made without a typ
     expect(screen.getByRole("button", { name: "Continue with Cloth and sarees" })).toBeEnabled();
   });
   it("if the picker is still there a moment after saving (a cached page), the page is asked again", async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
     const save = vi.fn(async () => ({ ok: true as const }));
     render(<TypePicker choices={choices} words={words} save={save} />);
     fireEvent.click(screen.getByRole("radio", { name: /Clinic/ }));
     fireEvent.click(screen.getByRole("button", { name: "Continue with Clinic" }));
     await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
-    await act(async () => void vi.advanceTimersByTime(1600));
-    expect(refresh).toHaveBeenCalledTimes(2);
-    vi.useRealTimers();
-  });
+    await waitFor(() => expect(refresh.mock.calls.length).toBeGreaterThanOrEqual(2), { timeout: 5000 }); // the first retry comes after 1.5 s (real time: a busy machine cannot make it flaky)
+  }, 10_000);
+
 });

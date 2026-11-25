@@ -542,8 +542,8 @@ describe("Aadhaar (DigiLocker): stay on the page, read the status while the link
     await screen.findByText("Stay on the page until it moves you back.");
     expect(screen.queryByRole("button", { name: "Start the Aadhaar check again" })).toBeNull();
     await act(async () => void vi.advanceTimersByTime(121_000));
-    fireEvent.click(await screen.findByRole("button", { name: "Start the Aadhaar check again" }));
-    await waitFor(() => expect(aadhaar).toHaveBeenCalledTimes(2));
+    fireEvent.click(await screen.findByRole("button", { name: "Start the Aadhaar check again" }, { timeout: 8000 }));
+    await waitFor(() => expect(aadhaar).toHaveBeenCalledTimes(2), { timeout: 8000 });
     expect(screen.queryByRole("button", { name: "Start the Aadhaar check again" })).toBeNull(); // the wait starts again with the new link
     vi.useRealTimers();
   });

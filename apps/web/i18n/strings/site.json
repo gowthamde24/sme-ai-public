@@ -4202,7 +4202,7 @@
   "hi": "IndiaMART",
   "kn": "IndiaMART",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -4213,7 +4213,7 @@
   "hi": "JustDial",
   "kn": "JustDial",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -5020,7 +5020,7 @@
   "hi": "6:00",
   "kn": "6:00",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -5086,7 +5086,7 @@
   "hi": "9:47",
   "kn": "9:47",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -5152,7 +5152,7 @@
   "hi": "9:30",
   "kn": "9:30",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -5196,7 +5196,7 @@
   "hi": "9:32",
   "kn": "9:32",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -5251,7 +5251,7 @@
   "hi": "9:33",
   "kn": "9:33",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -7798,12 +7798,12 @@
  },
  "h2.finder.call": {
   "en": "Contact",
-  "te": "Contact",
+  "te": "కాంటాక్ట్ చేయండి",
   "hi": "Contact",
   "kn": "Contact",
   "ta": "Contact",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -7824,12 +7824,12 @@
  },
  "h2.finder.pin.1.what": {
   "en": "CBSE school",
-  "te": "CBSE school",
+  "te": "CBSE స్కూల్",
   "hi": "CBSE school",
   "kn": "CBSE school",
   "ta": "CBSE school",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -7837,12 +7837,12 @@
  },
  "h2.finder.pin.4.what": {
   "en": "International school",
-  "te": "International school",
+  "te": "ఇంటర్నేషనల్ స్కూల్",
   "hi": "International school",
   "kn": "International school",
   "ta": "International school",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -8677,7 +8677,7 @@
   "hi": "Pay as you go",
   "kn": "Pay as you go",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft"
   }
@@ -9371,7 +9371,7 @@
   "kn": "+ 18% GST",
   "ta": "+ 18% GST",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -9379,12 +9379,12 @@
  },
  "pp.pop": {
   "en": "Recommended",
-  "te": "Recommended",
+  "te": "రికమెండెడ్",
   "hi": "Recommended",
   "kn": "Recommended",
   "ta": "Recommended",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -9444,12 +9444,12 @@
  },
  "pp.included": {
   "en": "{n} minutes included",
-  "te": "{n} minutes included",
+  "te": "{n} నిమిషాలు ప్లాన్‌లోనే ఉన్నాయి",
   "hi": "{n} minutes शामिल",
   "kn": "{n} minutes ಒಳಗೊಂಡಿದೆ",
   "ta": "{n} minutes சேர்க்கப்பட்டுள்ளன",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -9509,12 +9509,12 @@
  },
  "pp.setup.prio": {
   "en": "Priority set-up",
-  "te": "Priority set-up",
+  "te": "ప్రయారిటీ సెటప్",
   "hi": "Priority set-up",
   "kn": "Priority set-up",
   "ta": "Priority set-up",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -9808,12 +9808,12 @@
  },
  "h3.phone.biz": {
   "en": "Business account",
-  "te": "Business account",
+  "te": "బిజినెస్ అకౌంట్",
   "hi": "Business account",
   "kn": "Business account",
   "ta": "Business account",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -9834,12 +9834,12 @@
  },
  "h3.phone.calllog": {
   "en": "Phone call, 1 min 20 s",
-  "te": "Phone call, 1 min 20 s",
+  "te": "ఫోన్ కాల్, 1 నిమి 20 సె",
   "hi": "Phone call, 1 min 20 s",
   "kn": "Phone call, 1 min 20 s",
   "ta": "Phone call, 1 min 20 s",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -9847,12 +9847,12 @@
  },
  "h3.phone.msg": {
   "en": "Message",
-  "te": "Message",
+  "te": "మెసేజ్",
   "hi": "Message",
   "kn": "Message",
   "ta": "Message",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -10016,12 +10016,12 @@
  },
  "h3.how.f.1.v": {
   "en": "EAMCET weekend batch",
-  "te": "EAMCET weekend batch",
+  "te": "EAMCET వీకెండ్ బ్యాచ్",
   "hi": "EAMCET weekend batch",
   "kn": "EAMCET weekend batch",
   "ta": "EAMCET weekend batch",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -10055,12 +10055,12 @@
  },
  "h3.how.f.3": {
   "en": "Visit",
-  "te": "Visit",
+  "te": "విజిట్",
   "hi": "Visit",
   "kn": "Visit",
   "ta": "Visit",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -10261,12 +10261,12 @@
  },
  "h3.found.2.l.2": {
   "en": "Budget",
-  "te": "Budget",
+  "te": "బడ్జెట్",
   "hi": "Budget",
   "kn": "Budget",
   "ta": "Budget",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -10287,12 +10287,12 @@
  },
  "h3.found.2.l.3": {
   "en": "Visit",
-  "te": "Visit",
+  "te": "విజిట్",
   "hi": "Visit",
   "kn": "Visit",
   "ta": "Visit",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -10326,12 +10326,12 @@
  },
  "h3.found.3.v.1": {
   "en": "A doctor's appointment",
-  "te": "Doctor appointment",
+  "te": "డాక్టర్ అపాయింట్‌మెంట్",
   "hi": "Doctor की appointment",
   "kn": "Doctor appointment",
   "ta": "Doctor appointment",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -10391,12 +10391,12 @@
  },
  "h3.found.4.l.1": {
   "en": "Order",
-  "te": "Order",
+  "te": "ఆర్డర్",
   "hi": "Order",
   "kn": "Order",
   "ta": "Order",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -10417,12 +10417,12 @@
  },
  "h3.found.4.l.2": {
   "en": "Pickup",
-  "te": "Pickup",
+  "te": "పికప్",
   "hi": "Pickup",
   "kn": "Pickup",
   "ta": "Pickup",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11552,7 +11552,7 @@
   "hi": "{brand}",
   "kn": "{brand}",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11561,11 +11561,11 @@
  },
  "v9.hdr.2": {
   "en": "Main",
-  "te": "Main",
+  "te": "హోమ్",
   "hi": "Main",
   "kn": "Main",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11574,11 +11574,11 @@
  },
  "v9.hdr.3": {
   "en": "How it works",
-  "te": "How it works",
+  "te": "ఇది ఎలా పనిచేస్తుంది",
   "hi": "How it works",
   "kn": "How it works",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11587,11 +11587,11 @@
  },
  "v9.hdr.4": {
   "en": "Lead Finder",
-  "te": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
   "hi": "Lead Finder",
   "kn": "Lead Finder",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11600,11 +11600,11 @@
  },
  "v9.hdr.5": {
   "en": "Voices",
-  "te": "Voices",
+  "te": "వాయిస్‌లు",
   "hi": "Voices",
   "kn": "Voices",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11613,11 +11613,11 @@
  },
  "v9.hdr.6": {
   "en": "Pricing",
-  "te": "Pricing",
+  "te": "ధరలు",
   "hi": "Pricing",
   "kn": "Pricing",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11626,11 +11626,11 @@
  },
  "v9.hdr.7": {
   "en": "Contact",
-  "te": "Contact",
+  "te": "కాంటాక్ట్",
   "hi": "Contact",
   "kn": "Contact",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11643,7 +11643,7 @@
   "hi": "English",
   "kn": "English",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11652,11 +11652,11 @@
  },
  "v9.hdr.9": {
   "en": "Join early access",
-  "te": "Join early access",
+  "te": "ఎర్లీ యాక్సెస్‌లో చేరండి",
   "hi": "Join early access",
   "kn": "Join early access",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11678,11 +11678,11 @@
  },
  "v9.hero.2": {
   "en": "▶ Hear a call",
-  "te": "▶ Hear a call",
+  "te": "▶ కాల్ వినండి",
   "hi": "▶ Hear a call",
   "kn": "▶ Hear a call",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11691,11 +11691,11 @@
  },
  "v9.hero.3": {
   "en": "Answer every call. Find new customers.",
-  "te": "Answer every call. Find new customers.",
+  "te": "ప్రతి కాల్‌కీ జవాబివ్వండి. కొత్త కస్టమర్లను వెతకండి.",
   "hi": "Answer every call. Find new customers.",
   "kn": "Answer every call. Find new customers.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11704,11 +11704,11 @@
  },
  "v9.hero.4": {
   "en": "An AI telecaller for small businesses. Calls, WhatsApp and new customers, in your language.",
-  "te": "An AI telecaller for small businesses. Calls, WhatsApp and new customers, in your language.",
+  "te": "చిన్న బిజినెస్‌ల కోసం AI టెలికాలర్. కాల్స్, WhatsApp, కొత్త కస్టమర్లు, మీ భాషలో.",
   "hi": "An AI telecaller for small businesses. Calls, WhatsApp and new customers, in your language.",
   "kn": "An AI telecaller for small businesses. Calls, WhatsApp and new customers, in your language.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11717,11 +11717,11 @@
  },
  "v9.hero.5": {
   "en": "Get free early access",
-  "te": "Get free early access",
+  "te": "ఫ్రీ ఎర్లీ యాక్సెస్ తీసుకోండి",
   "hi": "Get free early access",
   "kn": "Get free early access",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11730,11 +11730,11 @@
  },
  "v9.hero.6": {
   "en": "Free early access · set up with you",
-  "te": "Free early access · set up with you",
+  "te": "ఫ్రీ ఎర్లీ యాక్సెస్ · మీతో కలిసి సెటప్ చేస్తాం",
   "hi": "Free early access · set up with you",
   "kn": "Free early access · set up with you",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11743,11 +11743,11 @@
  },
  "v9.hero.7": {
   "en": "Telugu · Hindi · Kannada · English · First business goes live in December",
-  "te": "Telugu · Hindi · Kannada · English · First business goes live in December",
+  "te": "తెలుగు · హిందీ · కన్నడ · ఇంగ్లీష్ · మొదటి బిజినెస్ డిసెంబర్‌లో లైవ్ అవుతుంది",
   "hi": "Telugu · Hindi · Kannada · English · First business goes live in December",
   "kn": "Telugu · Hindi · Kannada · English · First business goes live in December",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11756,11 +11756,11 @@
  },
  "v9.hero.8": {
   "en": "Calls",
-  "te": "Calls",
+  "te": "కాల్స్",
   "hi": "Calls",
   "kn": "Calls",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11769,11 +11769,11 @@
  },
  "v9.hero.9": {
   "en": "Call",
-  "te": "Call",
+  "te": "కాల్",
   "hi": "Call",
   "kn": "Call",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11782,11 +11782,11 @@
  },
  "v9.hero.10": {
   "en": "Telugu",
-  "te": "Telugu",
+  "te": "తెలుగు",
   "hi": "Telugu",
   "kn": "Telugu",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11795,11 +11795,11 @@
  },
  "v9.hero.11": {
   "en": "1 min 12 s",
-  "te": "1 min 12 s",
+  "te": "1 నిమి 12 సె",
   "hi": "1 min 12 s",
   "kn": "1 min 12 s",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11808,11 +11808,11 @@
  },
  "v9.hero.12": {
   "en": "Today, 10:04",
-  "te": "Today, 10:04",
+  "te": "ఈరోజు, 10:04",
   "hi": "Today, 10:04",
   "kn": "Today, 10:04",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11821,11 +11821,11 @@
  },
  "v9.hero.13": {
   "en": "Summary",
-  "te": "Summary",
+  "te": "సమ్మరీ",
   "hi": "Summary",
   "kn": "Summary",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11834,11 +11834,11 @@
  },
  "v9.hero.14": {
   "en": "Details",
-  "te": "Details",
+  "te": "వివరాలు",
   "hi": "Details",
   "kn": "Details",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11847,11 +11847,11 @@
  },
  "v9.hero.15": {
   "en": "Asked about MPC batch timings and fees",
-  "te": "Asked about MPC batch timings and fees",
+  "te": "MPC బ్యాచ్ టైమింగ్స్, ఫీజుల గురించి అడిగారు",
   "hi": "Asked about MPC batch timings and fees",
   "kn": "Asked about MPC batch timings and fees",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11860,11 +11860,11 @@
  },
  "v9.hero.16": {
   "en": "The caller enquired after Inter results. The assistant answered in Telugu, sent the brochure on WhatsApp and booked a demo class for Saturday at 11:00.",
-  "te": "The caller enquired after Inter results. The assistant answered in Telugu, sent the brochure on WhatsApp and booked a demo class for Saturday at 11:00.",
+  "te": "ఇంటర్ రిజల్ట్స్ వచ్చాక కాలర్ ఎంక్వైరీ చేశారు. అసిస్టెంట్ తెలుగులో జవాబిచ్చింది, WhatsAppలో బ్రోచర్ పంపింది, శనివారం 11:00కి డెమో క్లాస్ బుక్ చేసింది.",
   "hi": "The caller enquired after Inter results. The assistant answered in Telugu, sent the brochure on WhatsApp and booked a demo class for Saturday at 11:00.",
   "kn": "The caller enquired after Inter results. The assistant answered in Telugu, sent the brochure on WhatsApp and booked a demo class for Saturday at 11:00.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11873,11 +11873,11 @@
  },
  "v9.hero.17": {
   "en": "Next",
-  "te": "Next",
+  "te": "తర్వాత",
   "hi": "Next",
   "kn": "Next",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11886,11 +11886,11 @@
  },
  "v9.hero.18": {
   "en": "Added to your Today screen",
-  "te": "Added to your Today screen",
+  "te": "మీ ఈరోజు స్క్రీన్‌లో యాడ్ చేశాం",
   "hi": "Added to your Today screen",
   "kn": "Added to your Today screen",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11899,11 +11899,11 @@
  },
  "v9.hero.19": {
   "en": "Caller",
-  "te": "Caller",
+  "te": "కాలర్",
   "hi": "Caller",
   "kn": "Caller",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11912,11 +11912,11 @@
  },
  "v9.hero.20": {
   "en": "Language",
-  "te": "Language",
+  "te": "భాష",
   "hi": "Language",
   "kn": "Language",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11925,11 +11925,11 @@
  },
  "v9.hero.21": {
   "en": "Telugu, English",
-  "te": "Telugu, English",
+  "te": "తెలుగు, ఇంగ్లీష్",
   "hi": "Telugu, English",
   "kn": "Telugu, English",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11938,11 +11938,11 @@
  },
  "v9.hero.22": {
   "en": "Interested in",
-  "te": "Interested in",
+  "te": "ఇంట్రెస్ట్",
   "hi": "Interested in",
   "kn": "Interested in",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11951,11 +11951,11 @@
  },
  "v9.hero.23": {
   "en": "MPC batch",
-  "te": "MPC batch",
+  "te": "MPC బ్యాచ్",
   "hi": "MPC batch",
   "kn": "MPC batch",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11964,11 +11964,11 @@
  },
  "v9.hero.24": {
   "en": "WhatsApp consent",
-  "te": "WhatsApp consent",
+  "te": "WhatsApp అనుమతి",
   "hi": "WhatsApp consent",
   "kn": "WhatsApp consent",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11977,11 +11977,11 @@
  },
  "v9.hero.25": {
   "en": "Yes",
-  "te": "Yes",
+  "te": "అవును",
   "hi": "Yes",
   "kn": "Yes",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -11990,11 +11990,11 @@
  },
  "v9.hero.26": {
   "en": "Visit booked",
-  "te": "Visit booked",
+  "te": "విజిట్ బుక్ అయింది",
   "hi": "Visit booked",
   "kn": "Visit booked",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12003,11 +12003,11 @@
  },
  "v9.hero.27": {
   "en": "Saturday, 11:00",
-  "te": "Saturday, 11:00",
+  "te": "శనివారం, 11:00",
   "hi": "Saturday, 11:00",
   "kn": "Saturday, 11:00",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12016,11 +12016,11 @@
  },
  "v9.hero.28": {
   "en": "Illustrative sample.",
-  "te": "Illustrative sample.",
+  "te": "ఉదాహరణ మాత్రమే.",
   "hi": "Illustrative sample.",
   "kn": "Illustrative sample.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12029,11 +12029,11 @@
  },
  "v9.hero.29": {
   "en": "Answers every call",
-  "te": "Answers every call",
+  "te": "ప్రతి కాల్‌కీ జవాబిస్తుంది",
   "hi": "Answers every call",
   "kn": "Answers every call",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12042,11 +12042,11 @@
  },
  "v9.hero.30": {
   "en": "Follows up on WhatsApp",
-  "te": "Follows up on WhatsApp",
+  "te": "WhatsAppలో ఫాలో-అప్ చేస్తుంది",
   "hi": "Follows up on WhatsApp",
   "kn": "Follows up on WhatsApp",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12055,11 +12055,11 @@
  },
  "v9.hero.31": {
   "en": "Finds new customers",
-  "te": "Finds new customers",
+  "te": "కొత్త కస్టమర్లను వెతుకుతుంది",
   "hi": "Finds new customers",
   "kn": "Finds new customers",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12068,11 +12068,11 @@
  },
  "v9.try.1": {
   "en": "Inside {brand}",
-  "te": "Inside {brand}",
+  "te": "{brand} లోపల",
   "hi": "Inside {brand}",
   "kn": "Inside {brand}",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12081,11 +12081,11 @@
  },
  "v9.try.2": {
   "en": "Tell it what to do. See the job.",
-  "te": "Tell it what to do. See the job.",
+  "te": "ఏం చేయాలో చెప్పండి. ఆ పనిని చూడండి.",
   "hi": "Tell it what to do. See the job.",
   "kn": "Tell it what to do. See the job.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12094,11 +12094,11 @@
  },
  "v9.try.3": {
   "en": "This is the real kind of screen you work in. Pick an idea or type your own.",
-  "te": "This is the real kind of screen you work in. Pick an idea or type your own.",
+  "te": "మీరు పని చేసే స్క్రీన్ నిజంగా ఇలాగే ఉంటుంది. ఒక ఐడియా ఎంచుకోండి, లేదా మీదే టైప్ చేయండి.",
   "hi": "This is the real kind of screen you work in. Pick an idea or type your own.",
   "kn": "This is the real kind of screen you work in. Pick an idea or type your own.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12111,7 +12111,7 @@
   "hi": "{brand}",
   "kn": "{brand}",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12120,11 +12120,11 @@
  },
  "v9.try.6": {
   "en": "Today",
-  "te": "Today",
+  "te": "ఈరోజు",
   "hi": "Today",
   "kn": "Today",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12133,11 +12133,11 @@
  },
  "v9.try.7": {
   "en": "Calls",
-  "te": "Calls",
+  "te": "కాల్స్",
   "hi": "Calls",
   "kn": "Calls",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12146,11 +12146,11 @@
  },
  "v9.try.8": {
   "en": "Leads",
-  "te": "Leads",
+  "te": "లీడ్స్",
   "hi": "Leads",
   "kn": "Leads",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12159,11 +12159,11 @@
  },
  "v9.try.9": {
   "en": "Chats",
-  "te": "Chats",
+  "te": "చాట్స్",
   "hi": "Chats",
   "kn": "Chats",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12172,11 +12172,11 @@
  },
  "v9.try.10": {
   "en": "Jobs",
-  "te": "Jobs",
+  "te": "పనులు",
   "hi": "Jobs",
   "kn": "Jobs",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12185,11 +12185,11 @@
  },
  "v9.try.11": {
   "en": "Reports",
-  "te": "Reports",
+  "te": "రిపోర్ట్స్",
   "hi": "Reports",
   "kn": "Reports",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12198,11 +12198,11 @@
  },
  "v9.try.12": {
   "en": "Settings",
-  "te": "Settings",
+  "te": "సెట్టింగ్స్",
   "hi": "Settings",
   "kn": "Settings",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12215,7 +12215,7 @@
   "hi": "B",
   "kn": "B",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12228,7 +12228,7 @@
   "hi": "Bright Path Academy",
   "kn": "Bright Path Academy",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12237,11 +12237,11 @@
  },
  "v9.try.15": {
   "en": "Start a job",
-  "te": "Start a job",
+  "te": "ఒక పని మొదలుపెట్టండి",
   "hi": "Start a job",
   "kn": "Start a job",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12250,11 +12250,11 @@
  },
  "v9.try.16": {
   "en": "● Assistant online",
-  "te": "● Assistant online",
+  "te": "● అసిస్టెంట్ ఆన్‌లైన్‌లో ఉంది",
   "hi": "● Assistant online",
   "kn": "● Assistant online",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12263,11 +12263,11 @@
  },
  "v9.greet.1": {
   "en": "It answers in the language the customer speaks, including the mixed way people really talk.",
-  "te": "It answers in the language the customer speaks, including the mixed way people really talk.",
+  "te": "కస్టమర్ మాట్లాడే భాషలోనే జవాబిస్తుంది, జనం నిజంగా కలిపి మాట్లాడే తీరులో కూడా.",
   "hi": "It answers in the language the customer speaks, including the mixed way people really talk.",
   "kn": "It answers in the language the customer speaks, including the mixed way people really talk.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12276,11 +12276,11 @@
  },
  "v9.how.1": {
   "en": "How it works",
-  "te": "How it works",
+  "te": "ఇది ఎలా పనిచేస్తుంది",
   "hi": "How it works",
   "kn": "How it works",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12289,11 +12289,11 @@
  },
  "v9.how.2": {
   "en": "From call to WhatsApp to your Today screen.",
-  "te": "From call to WhatsApp to your Today screen.",
+  "te": "కాల్ నుంచి WhatsAppకి, అక్కడి నుంచి మీ ఈరోజు స్క్రీన్‌కి.",
   "hi": "From call to WhatsApp to your Today screen.",
   "kn": "From call to WhatsApp to your Today screen.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12302,11 +12302,11 @@
  },
  "v9.how.3": {
   "en": "Leads from",
-  "te": "Leads from",
+  "te": "లీడ్స్ వచ్చేది",
   "hi": "Leads from",
   "kn": "Leads from",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12315,11 +12315,11 @@
  },
  "v9.how.4": {
   "en": "Website forms",
-  "te": "Website forms",
+  "te": "వెబ్‌సైట్ ఫారమ్‌లు",
   "hi": "Website forms",
   "kn": "Website forms",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12332,7 +12332,7 @@
   "hi": "WhatsApp",
   "kn": "WhatsApp",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12341,11 +12341,11 @@
  },
  "v9.how.6": {
   "en": "Uploaded lists",
-  "te": "Uploaded lists",
+  "te": "మీరు అప్‌లోడ్ చేసిన లిస్ట్‌లు",
   "hi": "Uploaded lists",
   "kn": "Uploaded lists",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12354,11 +12354,11 @@
  },
  "v9.how.7": {
   "en": "Google Sheets (soon)",
-  "te": "Google Sheets (soon)",
+  "te": "Google Sheets (త్వరలో)",
   "hi": "Google Sheets (soon)",
   "kn": "Google Sheets (soon)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12367,11 +12367,11 @@
  },
  "v9.how.8": {
   "en": "Meta ads (soon)",
-  "te": "Meta ads (soon)",
+  "te": "Meta యాడ్స్ (త్వరలో)",
   "hi": "Meta ads (soon)",
   "kn": "Meta ads (soon)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12380,11 +12380,11 @@
  },
  "v9.how.10": {
   "en": "Result goes to",
-  "te": "Result goes to",
+  "te": "ఫలితం వెళ్ళేది",
   "hi": "Result goes to",
   "kn": "Result goes to",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12393,11 +12393,11 @@
  },
  "v9.how.11": {
   "en": "Today screen",
-  "te": "Today screen",
+  "te": "ఈరోజు స్క్రీన్",
   "hi": "Today screen",
   "kn": "Today screen",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12406,11 +12406,11 @@
  },
  "v9.how.12": {
   "en": "Your CRM (soon)",
-  "te": "Your CRM (soon)",
+  "te": "మీ CRM (త్వరలో)",
   "hi": "Your CRM (soon)",
   "kn": "Your CRM (soon)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12419,11 +12419,11 @@
  },
  "v9.finder.1": {
   "en": "Lead Finder",
-  "te": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
   "hi": "Lead Finder",
   "kn": "Lead Finder",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12432,11 +12432,11 @@
  },
  "v9.finder.2": {
   "en": "Find new customers near you.",
-  "te": "Find new customers near you.",
+  "te": "మీ దగ్గర్లో కొత్త కస్టమర్లను వెతకండి.",
   "hi": "Find new customers near you.",
   "kn": "Find new customers near you.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12445,11 +12445,11 @@
  },
  "v9.finder.3": {
   "en": "It finds businesses that could buy from you. You review the list and call them.",
-  "te": "It finds businesses that could buy from you. You review the list and call them.",
+  "te": "మీ దగ్గర కొనగలిగే బిజినెస్‌లను ఇది వెతుకుతుంది. మీరు లిస్ట్ చూసి, వాళ్లకి కాల్ చేయండి.",
   "hi": "It finds businesses that could buy from you. You review the list and call them.",
   "kn": "It finds businesses that could buy from you. You review the list and call them.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12458,11 +12458,11 @@
  },
  "v9.finder.4": {
   "en": "Your shop",
-  "te": "Your shop",
+  "te": "మీ షాప్",
   "hi": "Your shop",
   "kn": "Your shop",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12471,11 +12471,11 @@
  },
  "v9.finder.5": {
   "en": "Textile showroom",
-  "te": "Textile showroom",
+  "te": "టెక్స్‌టైల్ షోరూమ్",
   "hi": "Textile showroom",
   "kn": "Textile showroom",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12484,11 +12484,11 @@
  },
  "v9.finder.6": {
   "en": "Coaching centre",
-  "te": "Coaching centre",
+  "te": "కోచింగ్ సెంటర్",
   "hi": "Coaching centre",
   "kn": "Coaching centre",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12497,11 +12497,11 @@
  },
  "v9.finder.7": {
   "en": "Wholesale saree dealer",
-  "te": "Wholesale saree dealer",
+  "te": "హోల్‌సేల్ చీరల డీలర్",
   "hi": "Wholesale saree dealer",
   "kn": "Wholesale saree dealer",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12510,11 +12510,11 @@
  },
  "v9.finder.8": {
   "en": "Clinic",
-  "te": "Clinic",
+  "te": "క్లినిక్",
   "hi": "Clinic",
   "kn": "Clinic",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12523,11 +12523,11 @@
  },
  "v9.finder.9": {
   "en": "New lead · sample",
-  "te": "New lead · sample",
+  "te": "కొత్త లీడ్ · ఉదాహరణ",
   "hi": "New lead · sample",
   "kn": "New lead · sample",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12536,11 +12536,11 @@
  },
  "v9.finder.10": {
   "en": "Wholesale Textiles Showroom",
-  "te": "Wholesale Textiles Showroom",
+  "te": "హోల్‌సేల్ టెక్స్‌టైల్స్ షోరూమ్",
   "hi": "Wholesale Textiles Showroom",
   "kn": "Wholesale Textiles Showroom",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12549,11 +12549,11 @@
  },
  "v9.finder.11": {
   "en": "Secunderabad · could buy from you",
-  "te": "Secunderabad · could buy from you",
+  "te": "సికింద్రాబాద్ · మీ దగ్గర కొనొచ్చు",
   "hi": "Secunderabad · could buy from you",
   "kn": "Secunderabad · could buy from you",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12562,11 +12562,11 @@
  },
  "v9.finder.12": {
   "en": "Review number",
-  "te": "Review number",
+  "te": "నంబర్ చెక్ చేయండి",
   "hi": "Review number",
   "kn": "Review number",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12575,11 +12575,11 @@
  },
  "v9.finder.13": {
   "en": "Save to list",
-  "te": "Save to list",
+  "te": "లిస్ట్‌లో సేవ్ చేయండి",
   "hi": "Save to list",
   "kn": "Save to list",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12588,11 +12588,11 @@
  },
  "v9.finder.14": {
   "en": "Sample result. Real results come from your own search.",
-  "te": "Sample result. Real results come from your own search.",
+  "te": "ఇది ఉదాహరణ ఫలితం. అసలు ఫలితాలు మీ సొంత సెర్చ్ నుంచి వస్తాయి.",
   "hi": "Sample result. Real results come from your own search.",
   "kn": "Sample result. Real results come from your own search.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12605,7 +12605,7 @@
   "hi": "₹49",
   "kn": "₹49",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12618,7 +12618,7 @@
   "hi": "Pay as you go",
   "kn": "Pay as you go",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12631,7 +12631,7 @@
   "hi": "₹39",
   "kn": "₹39",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12644,7 +12644,7 @@
   "hi": "Pro",
   "kn": "Pro",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12657,7 +12657,7 @@
   "hi": "₹29",
   "kn": "₹29",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12670,7 +12670,7 @@
   "hi": "Business",
   "kn": "Business",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12679,11 +12679,11 @@
  },
  "v9.voices.1": {
   "en": "Hear our voices",
-  "te": "Hear our voices",
+  "te": "మా వాయిస్‌లు వినండి",
   "hi": "Hear our voices",
   "kn": "Hear our voices",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12692,11 +12692,11 @@
  },
  "v9.voices.2": {
   "en": "Voices matched to each business.",
-  "te": "Voices matched to each business.",
+  "te": "ప్రతి బిజినెస్‌కి సరిపోయే వాయిస్‌లు.",
   "hi": "Voices matched to each business.",
   "kn": "Voices matched to each business.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12705,11 +12705,11 @@
  },
  "v9.voices.3": {
   "en": "Sample recordings are added as each language clears review. Both sides of these calls are AI voices.",
-  "te": "Sample recordings are added as each language clears review. Both sides of these calls are AI voices.",
+  "te": "ఒక్కో భాష రివ్యూ పూర్తయ్యాక, ఆ భాష శాంపిల్ రికార్డింగ్‌లు యాడ్ చేస్తాం. ఈ కాల్స్‌లో రెండు వైపులా AI వాయిస్‌లే.",
   "hi": "Sample recordings are added as each language clears review. Both sides of these calls are AI voices.",
   "kn": "Sample recordings are added as each language clears review. Both sides of these calls are AI voices.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12718,11 +12718,11 @@
  },
  "v9.jobs.1": {
   "en": "Two jobs, one assistant",
-  "te": "Two jobs, one assistant",
+  "te": "రెండు పనులు, ఒకే అసిస్టెంట్",
   "hi": "Two jobs, one assistant",
   "kn": "Two jobs, one assistant",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12731,11 +12731,11 @@
  },
  "v9.jobs.2": {
   "en": "Answer every call. Follow up every enquiry.",
-  "te": "Answer every call. Follow up every enquiry.",
+  "te": "ప్రతి కాల్‌కీ జవాబు. ప్రతి ఎంక్వైరీకీ ఫాలో-అప్.",
   "hi": "Answer every call. Follow up every enquiry.",
   "kn": "Answer every call. Follow up every enquiry.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12744,11 +12744,11 @@
  },
  "v9.wit.1": {
   "en": "While it talks",
-  "te": "While it talks",
+  "te": "మాట్లాడుతూనే",
   "hi": "While it talks",
   "kn": "While it talks",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12757,11 +12757,11 @@
  },
  "v9.wit.2": {
   "en": "It does the work around the call.",
-  "te": "It does the work around the call.",
+  "te": "కాల్ చుట్టూ ఉండే పనిని కూడా అదే చేస్తుంది.",
   "hi": "It does the work around the call.",
   "kn": "It does the work around the call.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12770,11 +12770,11 @@
  },
  "v9.wit.3": {
   "en": "While your assistant is on the call, the follow-up work gets done: WhatsApp details, bookings, tasks and a message to you.",
-  "te": "While your assistant is on the call, the follow-up work gets done: WhatsApp details, bookings, tasks and a message to you.",
+  "te": "మీ అసిస్టెంట్ కాల్‌లో ఉండగానే ఫాలో-అప్ పని అయిపోతుంది: WhatsAppలో వివరాలు, బుకింగ్‌లు, టాస్క్‌లు, మీకు ఒక మెసేజ్.",
   "hi": "While your assistant is on the call, the follow-up work gets done: WhatsApp details, bookings, tasks and a message to you.",
   "kn": "While your assistant is on the call, the follow-up work gets done: WhatsApp details, bookings, tasks and a message to you.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12783,11 +12783,11 @@
  },
  "v9.wit.4": {
   "en": "WhatsApp sent",
-  "te": "WhatsApp sent",
+  "te": "WhatsApp వెళ్ళింది",
   "hi": "WhatsApp sent",
   "kn": "WhatsApp sent",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12796,11 +12796,11 @@
  },
  "v9.wit.5": {
   "en": "Brochure and timings",
-  "te": "Brochure and timings",
+  "te": "బ్రోచర్, టైమింగ్స్",
   "hi": "Brochure and timings",
   "kn": "Brochure and timings",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12809,11 +12809,11 @@
  },
  "v9.wit.6": {
   "en": "Visit booked",
-  "te": "Visit booked",
+  "te": "విజిట్ బుక్ అయింది",
   "hi": "Visit booked",
   "kn": "Visit booked",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12822,11 +12822,11 @@
  },
  "v9.wit.7": {
   "en": "Saturday · 11:00",
-  "te": "Saturday · 11:00",
+  "te": "శనివారం · 11:00",
   "hi": "Saturday · 11:00",
   "kn": "Saturday · 11:00",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12835,11 +12835,11 @@
  },
  "v9.wit.8": {
   "en": "Added to Today",
-  "te": "Added to Today",
+  "te": "ఈరోజు స్క్రీన్‌లో యాడ్ అయింది",
   "hi": "Added to Today",
   "kn": "Added to Today",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12848,11 +12848,11 @@
  },
  "v9.wit.9": {
   "en": "Call back this enquiry",
-  "te": "Call back this enquiry",
+  "te": "ఈ ఎంక్వైరీకి తిరిగి కాల్ చేయండి",
   "hi": "Call back this enquiry",
   "kn": "Call back this enquiry",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12861,11 +12861,11 @@
  },
  "v9.wit.10": {
   "en": "Follow-up set",
-  "te": "Follow-up set",
+  "te": "ఫాలో-అప్ సెట్ అయింది",
   "hi": "Follow-up set",
   "kn": "Follow-up set",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12874,11 +12874,11 @@
  },
  "v9.wit.11": {
   "en": "Tomorrow · 10:00 reminder",
-  "te": "Tomorrow · 10:00 reminder",
+  "te": "రేపు · 10:00కి రిమైండర్",
   "hi": "Tomorrow · 10:00 reminder",
   "kn": "Tomorrow · 10:00 reminder",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12887,11 +12887,11 @@
  },
  "v9.wit.12": {
   "en": "Owner told",
-  "te": "Owner told",
+  "te": "ఓనర్‌కి చెప్పాం",
   "hi": "Owner told",
   "kn": "Owner told",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12900,11 +12900,11 @@
  },
  "v9.wit.13": {
   "en": "New visit booked for Saturday",
-  "te": "New visit booked for Saturday",
+  "te": "శనివారానికి కొత్త విజిట్ బుక్ అయింది",
   "hi": "New visit booked for Saturday",
   "kn": "New visit booked for Saturday",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12913,11 +12913,11 @@
  },
  "v9.wit.14": {
   "en": "Google Sheets & CRM (soon)",
-  "te": "Google Sheets & CRM (soon)",
+  "te": "Google Sheets & CRM (త్వరలో)",
   "hi": "Google Sheets & CRM (soon)",
   "kn": "Google Sheets & CRM (soon)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12926,11 +12926,11 @@
  },
  "v9.wit.15": {
   "en": "Rows added for you",
-  "te": "Rows added for you",
+  "te": "మీ కోసం వరుసలు యాడ్ అయ్యాయి",
   "hi": "Rows added for you",
   "kn": "Rows added for you",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12939,11 +12939,11 @@
  },
  "v9.guard.1": {
   "en": "Built in from day one",
-  "te": "Built in from day one",
+  "te": "మొదటి రోజు నుంచే ఉన్నాయి",
   "hi": "Built in from day one",
   "kn": "Built in from day one",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12952,11 +12952,11 @@
  },
  "v9.guard.2": {
   "en": "Guardrails that protect your business.",
-  "te": "Guardrails that protect your business.",
+  "te": "మీ బిజినెస్‌ని కాపాడే హద్దులు.",
   "hi": "Guardrails that protect your business.",
   "kn": "Guardrails that protect your business.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12965,11 +12965,11 @@
  },
  "v9.guard.3": {
   "en": "Only people who said yes",
-  "te": "Only people who said yes",
+  "te": "సరే అన్నవాళ్లకే",
   "hi": "Only people who said yes",
   "kn": "Only people who said yes",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12978,11 +12978,11 @@
  },
  "v9.guard.4": {
   "en": "It calls only where an enquiry or consent is on record. STOP works at once.",
-  "te": "It calls only where an enquiry or consent is on record. STOP works at once.",
+  "te": "ఎంక్వైరీ లేదా అనుమతి రికార్డ్‌లో ఉన్నవాళ్లకే కాల్ చేస్తుంది. STOP అంటే వెంటనే ఆగుతుంది.",
   "hi": "It calls only where an enquiry or consent is on record. STOP works at once.",
   "kn": "It calls only where an enquiry or consent is on record. STOP works at once.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -12991,11 +12991,11 @@
  },
  "v9.guard.5": {
   "en": "Yes, call me ✓",
-  "te": "Yes, call me ✓",
+  "te": "సరే, నాకు కాల్ చేయండి ✓",
   "hi": "Yes, call me ✓",
   "kn": "Yes, call me ✓",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13004,11 +13004,11 @@
  },
  "v9.guard.6": {
   "en": "Call scheduled · 10:00",
-  "te": "Call scheduled · 10:00",
+  "te": "కాల్ షెడ్యూల్ అయింది · 10:00",
   "hi": "Call scheduled · 10:00",
   "kn": "Call scheduled · 10:00",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13017,11 +13017,11 @@
  },
  "v9.guard.7": {
   "en": "consent on record",
-  "te": "consent on record",
+  "te": "అనుమతి రికార్డ్‌లో ఉంది",
   "hi": "consent on record",
   "kn": "consent on record",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13034,7 +13034,7 @@
   "hi": "STOP",
   "kn": "STOP",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13043,11 +13043,11 @@
  },
  "v9.guard.9": {
   "en": "Your own number",
-  "te": "Your own number",
+  "te": "మీ సొంత నంబర్",
   "hi": "Your own number",
   "kn": "Your own number",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13056,11 +13056,11 @@
  },
  "v9.guard.10": {
   "en": "We set up your own business number for you, so calls come from your own line.",
-  "te": "We set up your own business number for you, so calls come from your own line.",
+  "te": "మీ సొంత బిజినెస్ నంబర్‌ని మేమే సెటప్ చేసి ఇస్తాం, అందుకే కాల్స్ మీ సొంత లైన్ నుంచే వెళ్తాయి.",
   "hi": "We set up your own business number for you, so calls come from your own line.",
   "kn": "We set up your own business number for you, so calls come from your own line.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13069,11 +13069,11 @@
  },
  "v9.guard.13": {
   "en": "Your business number",
-  "te": "Your business number",
+  "te": "మీ బిజినెస్ నంబర్",
   "hi": "Your business number",
   "kn": "Your business number",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13086,7 +13086,7 @@
   "hi": "+91 80xx xxx xxx",
   "kn": "+91 80xx xxx xxx",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13095,11 +13095,11 @@
  },
  "v9.guard.15": {
   "en": "Quiet hours",
-  "te": "Quiet hours",
+  "te": "కాల్స్ లేని సమయం",
   "hi": "Quiet hours",
   "kn": "Quiet hours",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13108,11 +13108,11 @@
  },
  "v9.guard.16": {
   "en": "No calls from 9 pm to 10 am.",
-  "te": "No calls from 9 pm to 10 am.",
+  "te": "రాత్రి 9 నుంచి ఉదయం 10 వరకు కాల్స్ ఉండవు.",
   "hi": "No calls from 9 pm to 10 am.",
   "kn": "No calls from 9 pm to 10 am.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13121,11 +13121,11 @@
  },
  "v9.guard.17": {
   "en": "9 pm–10 am",
-  "te": "9 pm–10 am",
+  "te": "రాత్రి 9–ఉదయం 10",
   "hi": "9 pm–10 am",
   "kn": "9 pm–10 am",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13134,11 +13134,11 @@
  },
  "v9.guard.18": {
   "en": "9:40 pm → waits till morning",
-  "te": "9:40 pm → waits till morning",
+  "te": "రాత్రి 9:40 → ఉదయం వరకు ఆగుతుంది",
   "hi": "9:40 pm → waits till morning",
   "kn": "9:40 pm → waits till morning",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13147,11 +13147,11 @@
  },
  "v9.guard.19": {
   "en": "Calls again if busy",
-  "te": "Calls again if busy",
+  "te": "బిజీగా ఉంటే మళ్ళీ కాల్ చేస్తుంది",
   "hi": "Calls again if busy",
   "kn": "Calls again if busy",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13160,11 +13160,11 @@
  },
  "v9.guard.20": {
   "en": "Example",
-  "te": "Example",
+  "te": "ఉదాహరణ",
   "hi": "Example",
   "kn": "Example",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13173,11 +13173,11 @@
  },
  "v9.guard.21": {
   "en": "Tries again within calling hours, up to your limit.",
-  "te": "Tries again within calling hours, up to your limit.",
+  "te": "కాలింగ్ టైమ్‌లోనే మళ్ళీ ట్రై చేస్తుంది, మీరు పెట్టిన లిమిట్ వరకు.",
   "hi": "Tries again within calling hours, up to your limit.",
   "kn": "Tries again within calling hours, up to your limit.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13186,11 +13186,11 @@
  },
  "v9.guard.25": {
   "en": "Limits you control",
-  "te": "Limits you control",
+  "te": "మీ చేతిలో ఉండే లిమిట్స్",
   "hi": "Limits you control",
   "kn": "Limits you control",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13199,11 +13199,11 @@
  },
  "v9.guard.26": {
   "en": "Daily calls per customer",
-  "te": "Daily calls per customer",
+  "te": "ఒక్కో కస్టమర్‌కి రోజుకి కాల్స్",
   "hi": "Daily calls per customer",
   "kn": "Daily calls per customer",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13212,11 +13212,11 @@
  },
  "v9.guard.27": {
   "en": "Maximum call length",
-  "te": "Maximum call length",
+  "te": "ఒక్క కాల్‌కి మాక్సిమం టైమ్",
   "hi": "Maximum call length",
   "kn": "Maximum call length",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13225,11 +13225,11 @@
  },
  "v9.guard.28": {
   "en": "Calling hours",
-  "te": "Calling hours",
+  "te": "కాలింగ్ టైమ్",
   "hi": "Calling hours",
   "kn": "Calling hours",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13238,11 +13238,11 @@
  },
  "v9.calc.1": {
   "en": "What late call-backs cost you",
-  "te": "What late call-backs cost you",
+  "te": "ఆలస్యంగా తిరిగి కాల్ చేస్తే మీకు ఎంత నష్టం",
   "hi": "What late call-backs cost you",
   "kn": "What late call-backs cost you",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13251,11 +13251,11 @@
  },
  "v9.calc.2": {
   "en": "Every enquiry is a customer waiting.",
-  "te": "Every enquiry is a customer waiting.",
+  "te": "ప్రతి ఎంక్వైరీ అంటే ఎదురుచూస్తున్న ఒక కస్టమర్.",
   "hi": "Every enquiry is a customer waiting.",
   "kn": "Every enquiry is a customer waiting.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13264,11 +13264,11 @@
  },
  "v9.calc.3": {
   "en": "The same enquiry, with and without a fast call-back.",
-  "te": "The same enquiry, with and without a fast call-back.",
+  "te": "అదే ఎంక్వైరీ, వెంటనే తిరిగి కాల్ చేస్తే, చేయకపోతే.",
   "hi": "The same enquiry, with and without a fast call-back.",
   "kn": "The same enquiry, with and without a fast call-back.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13277,11 +13277,11 @@
  },
  "v9.pricing.1": {
   "en": "Pricing",
-  "te": "Pricing",
+  "te": "ధరలు",
   "hi": "Pricing",
   "kn": "Pricing",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13290,11 +13290,11 @@
  },
  "v9.pricing.2": {
   "en": "Simple plans in rupees.",
-  "te": "Simple plans in rupees.",
+  "te": "రూపాయల్లో సింపుల్ ప్లాన్‌లు.",
   "hi": "Simple plans in rupees.",
   "kn": "Simple plans in rupees.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13303,11 +13303,11 @@
  },
  "v9.pricing.3": {
   "en": "Monthly plans. Every plan has every feature. You pay for minutes and searches.",
-  "te": "Monthly plans. Every plan has every feature. You pay for minutes and searches.",
+  "te": "నెలవారీ ప్లాన్‌లు. ప్రతి ప్లాన్‌లో అన్ని ఫీచర్లు ఉంటాయి. మీరు నిమిషాలకి, సెర్చ్‌లకి పే చేస్తారు.",
   "hi": "Monthly plans. Every plan has every feature. You pay for minutes and searches.",
   "kn": "Monthly plans. Every plan has every feature. You pay for minutes and searches.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13320,7 +13320,7 @@
   "hi": "Pay as you go",
   "kn": "Pay as you go",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13333,7 +13333,7 @@
   "hi": "₹499",
   "kn": "₹499",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13342,11 +13342,11 @@
  },
  "v9.pricing.6": {
   "en": "/month",
-  "te": "/month",
+  "te": "/నెల",
   "hi": "/month",
   "kn": "/month",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13355,11 +13355,11 @@
  },
  "v9.pricing.7": {
   "en": "Start small.",
-  "te": "Start small.",
+  "te": "చిన్నగా మొదలుపెట్టండి.",
   "hi": "Start small.",
   "kn": "Start small.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13368,11 +13368,11 @@
  },
  "v9.pricing.8": {
   "en": "Calls ₹5 a minute",
-  "te": "Calls ₹5 a minute",
+  "te": "కాల్స్ నిమిషానికి ₹5",
   "hi": "Calls ₹5 a minute",
   "kn": "Calls ₹5 a minute",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13381,11 +13381,11 @@
  },
  "v9.pricing.9": {
   "en": "2 Lead Finder searches, then ₹49 each",
-  "te": "2 Lead Finder searches, then ₹49 each",
+  "te": "2 లీడ్ ఫైండర్ సెర్చ్‌లు, తర్వాత ఒక్కోటి ₹49",
   "hi": "2 Lead Finder searches, then ₹49 each",
   "kn": "2 Lead Finder searches, then ₹49 each",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13394,11 +13394,11 @@
  },
  "v9.pricing.10": {
   "en": "1 business number (extra ₹499)",
-  "te": "1 business number (extra ₹499)",
+  "te": "1 బిజినెస్ నంబర్ (ఎక్స్‌ట్రా ₹499)",
   "hi": "1 business number (extra ₹499)",
   "kn": "1 business number (extra ₹499)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13407,11 +13407,11 @@
  },
  "v9.pricing.11": {
   "en": "Set up yourself with the assistant",
-  "te": "Set up yourself with the assistant",
+  "te": "అసిస్టెంట్‌తో కలిసి మీరే సెటప్ చేసుకోండి",
   "hi": "Set up yourself with the assistant",
   "kn": "Set up yourself with the assistant",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13420,11 +13420,11 @@
  },
  "v9.pricing.12": {
   "en": "Get free early access",
-  "te": "Get free early access",
+  "te": "ఫ్రీ ఎర్లీ యాక్సెస్ తీసుకోండి",
   "hi": "Get free early access",
   "kn": "Get free early access",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13437,7 +13437,7 @@
   "hi": "Pro",
   "kn": "Pro",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13446,11 +13446,11 @@
  },
  "v9.pricing.14": {
   "en": "RECOMMENDED",
-  "te": "RECOMMENDED",
+  "te": "రికమెండెడ్",
   "hi": "RECOMMENDED",
   "kn": "RECOMMENDED",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13463,7 +13463,7 @@
   "hi": "₹1,999",
   "kn": "₹1,999",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13472,11 +13472,11 @@
  },
  "v9.pricing.16": {
   "en": "For a shop or clinic with daily calls.",
-  "te": "For a shop or clinic with daily calls.",
+  "te": "రోజూ కాల్స్ వచ్చే షాప్ లేదా క్లినిక్‌కి.",
   "hi": "For a shop or clinic with daily calls.",
   "kn": "For a shop or clinic with daily calls.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13485,11 +13485,11 @@
  },
  "v9.pricing.17": {
   "en": "500 minutes included",
-  "te": "500 minutes included",
+  "te": "500 నిమిషాలు ప్లాన్‌లోనే ఉంటాయి",
   "hi": "500 minutes included",
   "kn": "500 minutes included",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13498,11 +13498,11 @@
  },
  "v9.pricing.18": {
   "en": "Extra minutes ₹5",
-  "te": "Extra minutes ₹5",
+  "te": "ఎక్స్‌ట్రా నిమిషాలు ₹5",
   "hi": "Extra minutes ₹5",
   "kn": "Extra minutes ₹5",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13511,11 +13511,11 @@
  },
  "v9.pricing.19": {
   "en": "10 Lead Finder searches, then ₹39 each",
-  "te": "10 Lead Finder searches, then ₹39 each",
+  "te": "10 లీడ్ ఫైండర్ సెర్చ్‌లు, తర్వాత ఒక్కోదానికి ₹39",
   "hi": "10 Lead Finder searches, then ₹39 each",
   "kn": "10 Lead Finder searches, then ₹39 each",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13524,11 +13524,11 @@
  },
  "v9.pricing.20": {
   "en": "Business",
-  "te": "Business",
+  "te": "బిజినెస్",
   "hi": "Business",
   "kn": "Business",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13541,7 +13541,7 @@
   "hi": "₹5,999",
   "kn": "₹5,999",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13550,11 +13550,11 @@
  },
  "v9.pricing.22": {
   "en": "For busy teams and branches.",
-  "te": "For busy teams and branches.",
+  "te": "బిజీగా ఉండే టీమ్‌లకి, బ్రాంచ్‌లకి.",
   "hi": "For busy teams and branches.",
   "kn": "For busy teams and branches.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13563,11 +13563,11 @@
  },
  "v9.pricing.23": {
   "en": "1,500 minutes included",
-  "te": "1,500 minutes included",
+  "te": "1,500 నిమిషాలు ప్లాన్‌లోనే ఉంటాయి",
   "hi": "1,500 minutes included",
   "kn": "1,500 minutes included",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13576,11 +13576,11 @@
  },
  "v9.pricing.24": {
   "en": "100 Lead Finder searches, then ₹29 each",
-  "te": "100 Lead Finder searches, then ₹29 each",
+  "te": "100 లీడ్ ఫైండర్ సెర్చ్‌లు, తర్వాత ఒక్కోదానికి ₹29",
   "hi": "100 Lead Finder searches, then ₹29 each",
   "kn": "100 Lead Finder searches, then ₹29 each",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13589,11 +13589,11 @@
  },
  "v9.pricing.25": {
   "en": "Priority setup",
-  "te": "Priority setup",
+  "te": "ప్రయారిటీ సెటప్",
   "hi": "Priority setup",
   "kn": "Priority setup",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13602,11 +13602,11 @@
  },
  "v9.pricing.26": {
   "en": "Every plan includes",
-  "te": "Every plan includes",
+  "te": "ప్రతి ప్లాన్‌లో ఉండేవి",
   "hi": "Every plan includes",
   "kn": "Every plan includes",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13615,11 +13615,11 @@
  },
  "v9.pricing.27": {
   "en": "Telugu, Hindi, Kannada, English",
-  "te": "Telugu, Hindi, Kannada, English",
+  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్",
   "hi": "Telugu, Hindi, Kannada, English",
   "kn": "Telugu, Hindi, Kannada, English",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13628,11 +13628,11 @@
  },
  "v9.pricing.28": {
   "en": "Full voice list",
-  "te": "Full voice list",
+  "te": "పూర్తి వాయిస్ లిస్ట్",
   "hi": "Full voice list",
   "kn": "Full voice list",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13641,11 +13641,11 @@
  },
  "v9.pricing.29": {
   "en": "WhatsApp follow-up",
-  "te": "WhatsApp follow-up",
+  "te": "WhatsApp ఫాలో-అప్",
   "hi": "WhatsApp follow-up",
   "kn": "WhatsApp follow-up",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13654,11 +13654,11 @@
  },
  "v9.pricing.30": {
   "en": "Today screen & call summaries",
-  "te": "Today screen & call summaries",
+  "te": "ఈరోజు స్క్రీన్, కాల్ సమ్మరీలు",
   "hi": "Today screen & call summaries",
   "kn": "Today screen & call summaries",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13667,11 +13667,11 @@
  },
  "v9.pricing.31": {
   "en": "Billed per 30 seconds",
-  "te": "Billed per 30 seconds",
+  "te": "ప్రతి 30 సెకన్లకి బిల్ చేస్తాం",
   "hi": "Billed per 30 seconds",
   "kn": "Billed per 30 seconds",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13680,11 +13680,11 @@
  },
  "v9.pricing.32": {
   "en": "Unanswered calls free",
-  "te": "Unanswered calls free",
+  "te": "ఎవరూ ఎత్తని కాల్స్ ఫ్రీ",
   "hi": "Unanswered calls free",
   "kn": "Unanswered calls free",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13693,11 +13693,11 @@
  },
  "v9.pricing.33": {
   "en": "WhatsApp messages are charged at Meta’s own price, with no markup from us.",
-  "te": "WhatsApp messages are charged at Meta’s own price, with no markup from us.",
+  "te": "WhatsApp మెసేజ్‌లకి Meta సొంత ధరకే ఛార్జ్ చేస్తాం, మేం దాని మీద ఏమీ కలపం.",
   "hi": "WhatsApp messages are charged at Meta’s own price, with no markup from us.",
   "kn": "WhatsApp messages are charged at Meta’s own price, with no markup from us.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13706,11 +13706,11 @@
  },
  "v9.pricing.34": {
   "en": "All prices exclude 18% GST · Free early access until paid plans start.",
-  "te": "All prices exclude 18% GST · Free early access until paid plans start.",
+  "te": "అన్ని ధరలకి 18% GST అదనం · పెయిడ్ ప్లాన్‌లు మొదలయ్యే వరకు ఎర్లీ యాక్సెస్ ఫ్రీ.",
   "hi": "All prices exclude 18% GST · Free early access until paid plans start.",
   "kn": "All prices exclude 18% GST · Free early access until paid plans start.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13719,11 +13719,11 @@
  },
  "v9.faq.1": {
   "en": "Questions",
-  "te": "Questions",
+  "te": "ప్రశ్నలు",
   "hi": "Questions",
   "kn": "Questions",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13732,11 +13732,11 @@
  },
  "v9.faq.2": {
   "en": "Common questions from owners.",
-  "te": "Common questions from owners.",
+  "te": "ఓనర్లు ఎక్కువగా అడిగే ప్రశ్నలు.",
   "hi": "Common questions from owners.",
   "kn": "Common questions from owners.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13745,11 +13745,11 @@
  },
  "v9.cta.1": {
   "en": "Your next enquiry is waiting.",
-  "te": "Your next enquiry is waiting.",
+  "te": "మీ తర్వాతి ఎంక్వైరీ మీ కోసం ఆగుతోంది.",
   "hi": "Your next enquiry is waiting.",
   "kn": "Your next enquiry is waiting.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13758,11 +13758,11 @@
  },
  "v9.cta.2": {
   "en": "Start free in early access.",
-  "te": "Start free in early access.",
+  "te": "ఎర్లీ యాక్సెస్‌లో ఫ్రీగా మొదలుపెట్టండి.",
   "hi": "Start free in early access.",
   "kn": "Start free in early access.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13771,11 +13771,11 @@
  },
  "v9.cta.3": {
   "en": "Get free early access",
-  "te": "Get free early access",
+  "te": "ఫ్రీ ఎర్లీ యాక్సెస్ తీసుకోండి",
   "hi": "Get free early access",
   "kn": "Get free early access",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13784,11 +13784,11 @@
  },
  "v9.cta.4": {
   "en": "Or write to",
-  "te": "Or write to",
+  "te": "లేదా ఈ అడ్రస్‌కి మెయిల్ చేయండి",
   "hi": "Or write to",
   "kn": "Or write to",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13797,11 +13797,11 @@
  },
  "v9.cta.6": {
   "en": "First business goes live in December · set up with you",
-  "te": "First business goes live in December · set up with you",
+  "te": "మొదటి బిజినెస్ డిసెంబర్‌లో లైవ్ అవుతుంది · మీతో కలిసి సెటప్ చేస్తాం",
   "hi": "First business goes live in December · set up with you",
   "kn": "First business goes live in December · set up with you",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13810,11 +13810,11 @@
  },
  "v9.ftr.1": {
   "en": "Product",
-  "te": "Product",
+  "te": "ప్రొడక్ట్",
   "hi": "Product",
   "kn": "Product",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13823,11 +13823,11 @@
  },
  "v9.ftr.2": {
   "en": "How it works",
-  "te": "How it works",
+  "te": "ఇది ఎలా పనిచేస్తుంది",
   "hi": "How it works",
   "kn": "How it works",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13836,11 +13836,11 @@
  },
  "v9.ftr.3": {
   "en": "Voices",
-  "te": "Voices",
+  "te": "వాయిస్‌లు",
   "hi": "Voices",
   "kn": "Voices",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13849,11 +13849,11 @@
  },
  "v9.ftr.4": {
   "en": "Lead Finder",
-  "te": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
   "hi": "Lead Finder",
   "kn": "Lead Finder",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13862,11 +13862,11 @@
  },
  "v9.ftr.5": {
   "en": "Pricing",
-  "te": "Pricing",
+  "te": "ధరలు",
   "hi": "Pricing",
   "kn": "Pricing",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13875,11 +13875,11 @@
  },
  "v9.ftr.6": {
   "en": "Industries",
-  "te": "Industries",
+  "te": "ఇండస్ట్రీలు",
   "hi": "Industries",
   "kn": "Industries",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13888,11 +13888,11 @@
  },
  "v9.ftr.7": {
   "en": "Real estate",
-  "te": "Real estate",
+  "te": "రియల్ ఎస్టేట్",
   "hi": "Real estate",
   "kn": "Real estate",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13901,11 +13901,11 @@
  },
  "v9.ftr.8": {
   "en": "Education",
-  "te": "Education",
+  "te": "ఎడ్యుకేషన్",
   "hi": "Education",
   "kn": "Education",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13914,11 +13914,11 @@
  },
  "v9.ftr.9": {
   "en": "Healthcare",
-  "te": "Healthcare",
+  "te": "హెల్త్‌కేర్",
   "hi": "Healthcare",
   "kn": "Healthcare",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13927,11 +13927,11 @@
  },
  "v9.ftr.10": {
   "en": "Automotive",
-  "te": "Automotive",
+  "te": "ఆటోమొబైల్",
   "hi": "Automotive",
   "kn": "Automotive",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13940,11 +13940,11 @@
  },
  "v9.ftr.11": {
   "en": "Retail",
-  "te": "Retail",
+  "te": "రిటైల్",
   "hi": "Retail",
   "kn": "Retail",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13953,11 +13953,11 @@
  },
  "v9.ftr.12": {
   "en": "By language",
-  "te": "By language",
+  "te": "భాష ప్రకారం",
   "hi": "By language",
   "kn": "By language",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13966,11 +13966,11 @@
  },
  "v9.ftr.13": {
   "en": "Telugu",
-  "te": "Telugu",
+  "te": "తెలుగు",
   "hi": "Telugu",
   "kn": "Telugu",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13979,11 +13979,11 @@
  },
  "v9.ftr.14": {
   "en": "Hindi",
-  "te": "Hindi",
+  "te": "హిందీ",
   "hi": "Hindi",
   "kn": "Hindi",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -13992,11 +13992,11 @@
  },
  "v9.ftr.15": {
   "en": "Kannada",
-  "te": "Kannada",
+  "te": "కన్నడ",
   "hi": "Kannada",
   "kn": "Kannada",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14005,11 +14005,11 @@
  },
  "v9.ftr.16": {
   "en": "English",
-  "te": "English",
+  "te": "ఇంగ్లీష్",
   "hi": "English",
   "kn": "English",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14018,11 +14018,11 @@
  },
  "v9.ftr.17": {
   "en": "Resources",
-  "te": "Resources",
+  "te": "రిసోర్సెస్",
   "hi": "Resources",
   "kn": "Resources",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14031,11 +14031,11 @@
  },
  "v9.ftr.18": {
   "en": "Late-call calculator",
-  "te": "Late-call calculator",
+  "te": "లేట్ కాల్ కాలిక్యులేటర్",
   "hi": "Late-call calculator",
   "kn": "Late-call calculator",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14044,11 +14044,11 @@
  },
  "v9.ftr.19": {
   "en": "FAQ",
-  "te": "FAQ",
+  "te": "తరచూ అడిగే ప్రశ్నలు",
   "hi": "FAQ",
   "kn": "FAQ",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14057,11 +14057,11 @@
  },
  "v9.ftr.20": {
   "en": "Try-it preview",
-  "te": "Try-it preview",
+  "te": "ట్రై చేసి చూసే ప్రివ్యూ",
   "hi": "Try-it preview",
   "kn": "Try-it preview",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14070,11 +14070,11 @@
  },
  "v9.ftr.21": {
   "en": "Company",
-  "te": "Company",
+  "te": "కంపెనీ",
   "hi": "Company",
   "kn": "Company",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14083,11 +14083,11 @@
  },
  "v9.ftr.22": {
   "en": "Contact",
-  "te": "Contact",
+  "te": "కాంటాక్ట్",
   "hi": "Contact",
   "kn": "Contact",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14096,11 +14096,11 @@
  },
  "v9.ftr.23": {
   "en": "Privacy notice",
-  "te": "Privacy notice",
+  "te": "ప్రైవసీ నోటీసు",
   "hi": "Privacy notice",
   "kn": "Privacy notice",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14109,11 +14109,11 @@
  },
  "v9.ftr.24": {
   "en": "Terms",
-  "te": "Terms",
+  "te": "టర్మ్స్",
   "hi": "Terms",
   "kn": "Terms",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14122,11 +14122,11 @@
  },
  "v9.ftr.25": {
   "en": "Delete your data",
-  "te": "Delete your data",
+  "te": "మీ డేటా డిలీట్ చేయండి",
   "hi": "Delete your data",
   "kn": "Delete your data",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14174,11 +14174,11 @@
  },
  "v9.ftr.29": {
   "en": "Voices by",
-  "te": "Voices by",
+  "te": "వాయిస్‌లు ఇచ్చేది",
   "hi": "Voices by",
   "kn": "Voices by",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14191,7 +14191,7 @@
   "hi": "Cartesia",
   "kn": "Cartesia",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14200,11 +14200,11 @@
  },
  "v9.phone.online": {
   "en": "online",
-  "te": "online",
+  "te": "ఆన్‌లైన్",
   "hi": "online",
   "kn": "online",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14213,11 +14213,11 @@
  },
  "v9.phone.message": {
   "en": "Message",
-  "te": "Message",
+  "te": "మెసేజ్",
   "hi": "Message",
   "kn": "Message",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14226,11 +14226,11 @@
  },
  "v9.phone.today": {
   "en": "Today",
-  "te": "Today",
+  "te": "ఈరోజు",
   "hi": "Today",
   "kn": "Today",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14239,11 +14239,11 @@
  },
  "v9.how.w.tabs": {
   "en": "Demo language",
-  "te": "Demo language",
+  "te": "డెమో భాష",
   "hi": "Demo language",
   "kn": "Demo language",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14252,11 +14252,11 @@
  },
  "v9.how.w.asked": {
   "en": "Asked for",
-  "te": "Asked for",
+  "te": "అడిగింది",
   "hi": "Asked for",
   "kn": "Asked for",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14265,11 +14265,11 @@
  },
  "v9.how.w.language": {
   "en": "Language",
-  "te": "Language",
+  "te": "భాష",
   "hi": "Language",
   "kn": "Language",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14278,11 +14278,11 @@
  },
  "v9.how.w.followup": {
   "en": "Follow-up",
-  "te": "Follow-up",
+  "te": "ఫాలో-అప్",
   "hi": "Follow-up",
   "kn": "Follow-up",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14291,11 +14291,11 @@
  },
  "v9.how.w.status": {
   "en": "Status",
-  "te": "Status",
+  "te": "స్టేటస్",
   "hi": "Status",
   "kn": "Status",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14304,11 +14304,11 @@
  },
  "v9.how.w.added": {
   "en": "Added to Today",
-  "te": "Added to Today",
+  "te": "ఈరోజు స్క్రీన్‌లో యాడ్ అయింది",
   "hi": "Added to Today",
   "kn": "Added to Today",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14317,11 +14317,11 @@
  },
  "v9.try.w.ask": {
   "en": "What should your assistant do?",
-  "te": "What should your assistant do?",
+  "te": "మీ అసిస్టెంట్ ఏం చేయాలి?",
   "hi": "What should your assistant do?",
   "kn": "What should your assistant do?",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14330,11 +14330,11 @@
  },
  "v9.try.w.draft": {
   "en": "Your job draft",
-  "te": "Your job draft",
+  "te": "మీ పని డ్రాఫ్ట్",
   "hi": "Your job draft",
   "kn": "Your job draft",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14343,11 +14343,11 @@
  },
  "v9.try.w.preview": {
   "en": "Preview",
-  "te": "Preview",
+  "te": "ప్రివ్యూ",
   "hi": "Preview",
   "kn": "Preview",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14356,11 +14356,11 @@
  },
  "v9.try.w.who": {
   "en": "Who",
-  "te": "Who",
+  "te": "ఎవరికి",
   "hi": "Who",
   "kn": "Who",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14369,11 +14369,11 @@
  },
  "v9.try.w.says": {
   "en": "What it says",
-  "te": "What it says",
+  "te": "ఏం చెప్తుంది",
   "hi": "What it says",
   "kn": "What it says",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14382,11 +14382,11 @@
  },
  "v9.try.w.when": {
   "en": "When",
-  "te": "When",
+  "te": "ఎప్పుడు",
   "hi": "When",
   "kn": "When",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14395,11 +14395,11 @@
  },
  "v9.try.w.cost": {
   "en": "Cost",
-  "te": "Cost",
+  "te": "ఖర్చు",
   "hi": "Cost",
   "kn": "Cost",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14408,11 +14408,11 @@
  },
  "v9.try.w.cta": {
   "en": "Check the plan",
-  "te": "Check the plan",
+  "te": "ప్లాన్ చెక్ చేయండి",
   "hi": "Check the plan",
   "kn": "Check the plan",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14421,11 +14421,11 @@
  },
  "v9.try.enquiry.chip": {
   "en": "Call website enquiries",
-  "te": "Call website enquiries",
+  "te": "వెబ్‌సైట్ ఎంక్వైరీలకి కాల్ చేయండి",
   "hi": "Call website enquiries",
   "kn": "Call website enquiries",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14434,11 +14434,11 @@
  },
  "v9.try.enquiry.prompt": {
   "en": "Call new website enquiries in Telugu with consent and send shop location on WhatsApp.",
-  "te": "Call new website enquiries in Telugu with consent and send shop location on WhatsApp.",
+  "te": "అనుమతి ఉన్న కొత్త వెబ్‌సైట్ ఎంక్వైరీలకి తెలుగులో కాల్ చేసి, WhatsAppలో షాప్ లొకేషన్ పంపండి.",
   "hi": "Call new website enquiries in Telugu with consent and send shop location on WhatsApp.",
   "kn": "Call new website enquiries in Telugu with consent and send shop location on WhatsApp.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14447,11 +14447,11 @@
  },
  "v9.try.enquiry.who": {
   "en": "Website enquiries with consent",
-  "te": "Website enquiries with consent",
+  "te": "అనుమతి ఉన్న వెబ్‌సైట్ ఎంక్వైరీలు",
   "hi": "Website enquiries with consent",
   "kn": "Website enquiries with consent",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14460,11 +14460,11 @@
  },
  "v9.try.enquiry.say": {
   "en": "Speaks Telugu, confirms interest, texts brochure",
-  "te": "Speaks Telugu, confirms interest, texts brochure",
+  "te": "తెలుగులో మాట్లాడుతుంది, ఆసక్తి ఉందో కన్ఫర్మ్ చేస్తుంది, బ్రోచర్ మెసేజ్ చేస్తుంది",
   "hi": "Speaks Telugu, confirms interest, texts brochure",
   "kn": "Speaks Telugu, confirms interest, texts brochure",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14473,11 +14473,11 @@
  },
  "v9.try.enquiry.when": {
   "en": "Open hours · pauses at 9 pm quiet hours",
-  "te": "Open hours · pauses at 9 pm quiet hours",
+  "te": "పని వేళల్లో · రాత్రి 9కి క్వైట్ అవర్స్‌లో ఆగుతుంది",
   "hi": "Open hours · pauses at 9 pm quiet hours",
   "kn": "Open hours · pauses at 9 pm quiet hours",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14486,11 +14486,11 @@
  },
  "v9.try.enquiry.cost": {
   "en": "Free early access now (you approve first)",
-  "te": "Free early access now (you approve first)",
+  "te": "ఇప్పుడు ఎర్లీ యాక్సెస్ ఫ్రీ (ముందు మీరు ఓకే చేయాలి)",
   "hi": "Free early access now (you approve first)",
   "kn": "Free early access now (you approve first)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14499,11 +14499,11 @@
  },
  "v9.try.visits.chip": {
   "en": "Book site visits",
-  "te": "Book site visits",
+  "te": "సైట్ విజిట్‌లు బుక్ చేయండి",
   "hi": "Book site visits",
   "kn": "Book site visits",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14512,11 +14512,11 @@
  },
  "v9.try.visits.prompt": {
   "en": "Confirm Saturday site visit timings and share Google Maps location on WhatsApp.",
-  "te": "Confirm Saturday site visit timings and share Google Maps location on WhatsApp.",
+  "te": "శనివారం సైట్ విజిట్ టైమింగ్స్ కన్ఫర్మ్ చేసి, WhatsAppలో Google Maps లొకేషన్ షేర్ చేయండి.",
   "hi": "Confirm Saturday site visit timings and share Google Maps location on WhatsApp.",
   "kn": "Confirm Saturday site visit timings and share Google Maps location on WhatsApp.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14525,11 +14525,11 @@
  },
  "v9.try.visits.who": {
   "en": "Enquired property buyers",
-  "te": "Enquired property buyers",
+  "te": "ఎంక్వైరీ చేసిన ప్రాపర్టీ కొనేవాళ్లు",
   "hi": "Enquired property buyers",
   "kn": "Enquired property buyers",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14538,11 +14538,11 @@
  },
  "v9.try.visits.say": {
   "en": "Confirms visit slot and sends location pin",
-  "te": "Confirms visit slot and sends location pin",
+  "te": "విజిట్ స్లాట్ కన్ఫర్మ్ చేసి, లొకేషన్ పిన్ పంపుతుంది",
   "hi": "Confirms visit slot and sends location pin",
   "kn": "Confirms visit slot and sends location pin",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14551,11 +14551,11 @@
  },
  "v9.try.visits.when": {
   "en": "10:00 am – 9:00 pm calling hours",
-  "te": "10:00 am – 9:00 pm calling hours",
+  "te": "ఉదయం 10:00 – రాత్రి 9:00 కాలింగ్ సమయం",
   "hi": "10:00 am – 9:00 pm calling hours",
   "kn": "10:00 am – 9:00 pm calling hours",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14564,11 +14564,11 @@
  },
  "v9.try.visits.cost": {
   "en": "Free early access (you approve first)",
-  "te": "Free early access (you approve first)",
+  "te": "ఎర్లీ యాక్సెస్ ఫ్రీ (ముందు మీరు ఓకే చేయాలి)",
   "hi": "Free early access (you approve first)",
   "kn": "Free early access (you approve first)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14577,11 +14577,11 @@
  },
  "v9.try.demo.chip": {
   "en": "Remind about the demo class",
-  "te": "Remind about the demo class",
+  "te": "డెమో క్లాస్ గురించి గుర్తు చేయండి",
   "hi": "Remind about the demo class",
   "kn": "Remind about the demo class",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14590,11 +14590,11 @@
  },
  "v9.try.demo.prompt": {
   "en": "Remind students who enquired about the Sunday demo batch timings.",
-  "te": "Remind students who enquired about the Sunday demo batch timings.",
+  "te": "ఎంక్వైరీ చేసిన స్టూడెంట్స్‌కి ఆదివారం డెమో బ్యాచ్ టైమింగ్స్ గుర్తు చేయండి.",
   "hi": "Remind students who enquired about the Sunday demo batch timings.",
   "kn": "Remind students who enquired about the Sunday demo batch timings.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14603,11 +14603,11 @@
  },
  "v9.try.demo.who": {
   "en": "Coaching enquiry contacts",
-  "te": "Coaching enquiry contacts",
+  "te": "కోచింగ్ ఎంక్వైరీ కాంటాక్ట్స్",
   "hi": "Coaching enquiry contacts",
   "kn": "Coaching enquiry contacts",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14616,11 +14616,11 @@
  },
  "v9.try.demo.say": {
   "en": "Reminds class time and checks attendance",
-  "te": "Reminds class time and checks attendance",
+  "te": "క్లాస్ టైమ్ గుర్తు చేసి, వస్తున్నారో లేదో చెక్ చేస్తుంది",
   "hi": "Reminds class time and checks attendance",
   "kn": "Reminds class time and checks attendance",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14629,11 +14629,11 @@
  },
  "v9.try.demo.when": {
   "en": "Scheduled before batch inside open hours",
-  "te": "Scheduled before batch inside open hours",
+  "te": "బ్యాచ్‌కి ముందు, పని వేళల్లోనే షెడ్యూల్ చేస్తుంది",
   "hi": "Scheduled before batch inside open hours",
   "kn": "Scheduled before batch inside open hours",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14642,11 +14642,11 @@
  },
  "v9.try.demo.cost": {
   "en": "Free early access now (you approve first)",
-  "te": "Free early access now (you approve first)",
+  "te": "ఇప్పుడు ఎర్లీ యాక్సెస్ ఫ్రీ (ముందు మీరు ఓకే చేయాలి)",
   "hi": "Free early access now (you approve first)",
   "kn": "Free early access now (you approve first)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14655,11 +14655,11 @@
  },
  "v9.try.testdrive.chip": {
   "en": "Book test drives",
-  "te": "Book test drives",
+  "te": "టెస్ట్ డ్రైవ్‌లు బుక్ చేయండి",
   "hi": "Book test drives",
   "kn": "Book test drives",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14668,11 +14668,11 @@
  },
  "v9.try.testdrive.prompt": {
   "en": "Call car enquiries with consent and schedule weekday test drive slots.",
-  "te": "Call car enquiries with consent and schedule weekday test drive slots.",
+  "te": "అనుమతి ఉన్న కార్ ఎంక్వైరీలకి కాల్ చేసి, వీక్‌డేస్‌లో టెస్ట్ డ్రైవ్ స్లాట్‌లు షెడ్యూల్ చేయండి.",
   "hi": "Call car enquiries with consent and schedule weekday test drive slots.",
   "kn": "Call car enquiries with consent and schedule weekday test drive slots.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14681,11 +14681,11 @@
  },
  "v9.try.testdrive.who": {
   "en": "Showroom website enquiries",
-  "te": "Showroom website enquiries",
+  "te": "షోరూమ్ వెబ్‌సైట్ ఎంక్వైరీలు",
   "hi": "Showroom website enquiries",
   "kn": "Showroom website enquiries",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14694,11 +14694,11 @@
  },
  "v9.try.testdrive.say": {
   "en": "Checks preferred model and schedules visit",
-  "te": "Checks preferred model and schedules visit",
+  "te": "ఏ మోడల్ కావాలో అడిగి, విజిట్ షెడ్యూల్ చేస్తుంది",
   "hi": "Checks preferred model and schedules visit",
   "kn": "Checks preferred model and schedules visit",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14707,11 +14707,11 @@
  },
  "v9.try.testdrive.when": {
   "en": "Queued during open hours",
-  "te": "Queued during open hours",
+  "te": "పని వేళల్లో క్యూలో పెడుతుంది",
   "hi": "Queued during open hours",
   "kn": "Queued during open hours",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14720,11 +14720,11 @@
  },
  "v9.try.testdrive.cost": {
   "en": "Free early access · 1 business number included",
-  "te": "Free early access · 1 business number included",
+  "te": "ఎర్లీ యాక్సెస్ ఫ్రీ · 1 బిజినెస్ నంబర్ ఇందులోనే",
   "hi": "Free early access · 1 business number included",
   "kn": "Free early access · 1 business number included",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14733,11 +14733,11 @@
  },
  "v9.try.finder.chip": {
   "en": "Find new customers near me",
-  "te": "Find new customers near me",
+  "te": "నా దగ్గర్లో కొత్త కస్టమర్లను వెతకండి",
   "hi": "Find new customers near me",
   "kn": "Find new customers near me",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14746,11 +14746,11 @@
  },
  "v9.try.finder.prompt": {
   "en": "Preview textile retailers nearby and review numbers before choosing whom to call.",
-  "te": "Preview textile retailers nearby and review numbers before choosing whom to call.",
+  "te": "దగ్గర్లో ఉన్న టెక్స్‌టైల్ రిటైలర్లను ప్రివ్యూ చేసి, ఎవరికి కాల్ చేయాలో ఎంచుకునే ముందు నంబర్లు చెక్ చేయండి.",
   "hi": "Preview textile retailers nearby and review numbers before choosing whom to call.",
   "kn": "Preview textile retailers nearby and review numbers before choosing whom to call.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14759,11 +14759,11 @@
  },
  "v9.try.finder.who": {
   "en": "Nearby retail categories",
-  "te": "Nearby retail categories",
+  "te": "దగ్గర్లోని రిటైల్ కేటగిరీలు",
   "hi": "Nearby retail categories",
   "kn": "Nearby retail categories",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14772,11 +14772,11 @@
  },
  "v9.try.finder.say": {
   "en": "Builds reviewable call list for approval",
-  "te": "Builds reviewable call list for approval",
+  "te": "మీరు చెక్ చేసి ఓకే చేయడానికి కాల్ లిస్ట్ తయారు చేస్తుంది",
   "hi": "Builds reviewable call list for approval",
   "kn": "Builds reviewable call list for approval",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14785,11 +14785,11 @@
  },
  "v9.try.finder.when": {
   "en": "Early access preview · runs on approval",
-  "te": "Early access preview · runs on approval",
+  "te": "ఎర్లీ యాక్సెస్ ప్రివ్యూ · మీరు ఓకే చేశాకే నడుస్తుంది",
   "hi": "Early access preview · runs on approval",
   "kn": "Early access preview · runs on approval",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14798,11 +14798,11 @@
  },
  "v9.try.finder.cost": {
   "en": "Free early access (limited monthly searches)",
-  "te": "Free early access (limited monthly searches)",
+  "te": "ఎర్లీ యాక్సెస్ ఫ్రీ (నెలకి కొన్ని సెర్చ్‌లు మాత్రమే)",
   "hi": "Free early access (limited monthly searches)",
   "kn": "Free early access (limited monthly searches)",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14811,11 +14811,11 @@
  },
  "v9.voices.w.tabs": {
   "en": "Voice sample language",
-  "te": "Voice sample language",
+  "te": "వాయిస్ శాంపిల్ భాష",
   "hi": "Voice sample language",
   "kn": "Voice sample language",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14824,11 +14824,11 @@
  },
  "v9.voices.w.soon": {
   "en": "Sample soon",
-  "te": "Sample soon",
+  "te": "శాంపిల్ త్వరలో",
   "hi": "Sample soon",
   "kn": "Sample soon",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14837,11 +14837,11 @@
  },
  "v9.voices.l.real_estate": {
   "en": "Real estate",
-  "te": "Real estate",
+  "te": "రియల్ ఎస్టేట్",
   "hi": "Real estate",
   "kn": "Real estate",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14850,11 +14850,11 @@
  },
  "v9.voices.l.coaching_education": {
   "en": "Coaching / education",
-  "te": "Coaching / education",
+  "te": "కోచింగ్ / ఎడ్యుకేషన్",
   "hi": "Coaching / education",
   "kn": "Coaching / education",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14863,11 +14863,11 @@
  },
  "v9.voices.l.school_college": {
   "en": "School / college",
-  "te": "School / college",
+  "te": "స్కూల్ / కాలేజ్",
   "hi": "School / college",
   "kn": "School / college",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14876,11 +14876,11 @@
  },
  "v9.voices.l.clinic": {
   "en": "Clinic",
-  "te": "Clinic",
+  "te": "క్లినిక్",
   "hi": "Clinic",
   "kn": "Clinic",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14889,11 +14889,11 @@
  },
  "v9.voices.l.car_dealer": {
   "en": "Car dealer",
-  "te": "Car dealer",
+  "te": "కార్ డీలర్",
   "hi": "Car dealer",
   "kn": "Car dealer",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14902,11 +14902,11 @@
  },
  "v9.voices.l.saree_textile_shop": {
   "en": "Saree / textile shop",
-  "te": "Saree / textile shop",
+  "te": "చీరలు / టెక్స్‌టైల్ షాప్",
   "hi": "Saree / textile shop",
   "kn": "Saree / textile shop",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14915,11 +14915,11 @@
  },
  "v9.voices.l.wholesale": {
   "en": "Wholesale",
-  "te": "Wholesale",
+  "te": "హోల్‌సేల్",
   "hi": "Wholesale",
   "kn": "Wholesale",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14928,11 +14928,11 @@
  },
  "v9.voices.l.loans_insurance": {
   "en": "Loans / insurance",
-  "te": "Loans / insurance",
+  "te": "లోన్స్ / ఇన్సూరెన్స్",
   "hi": "Loans / insurance",
   "kn": "Loans / insurance",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14941,11 +14941,11 @@
  },
  "v9.voices.l.deep_confident": {
   "en": "Deep & confident",
-  "te": "Deep & confident",
+  "te": "గంభీరంగా, ధీమాగా",
   "hi": "Deep & confident",
   "kn": "Deep & confident",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14954,11 +14954,11 @@
  },
  "v9.voices.l.bright_young": {
   "en": "Bright & young",
-  "te": "Bright & young",
+  "te": "హుషారుగా, యంగ్‌గా",
   "hi": "Bright & young",
   "kn": "Bright & young",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14967,11 +14967,11 @@
  },
  "v9.voices.l.calm_reassuring": {
   "en": "Calm & reassuring",
-  "te": "Calm & reassuring",
+  "te": "ప్రశాంతంగా, భరోసాగా",
   "hi": "Calm & reassuring",
   "kn": "Calm & reassuring",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14980,11 +14980,11 @@
  },
  "v9.voices.l.energetic": {
   "en": "Energetic",
-  "te": "Energetic",
+  "te": "ఉత్సాహంగా",
   "hi": "Energetic",
   "kn": "Energetic",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -14993,11 +14993,11 @@
  },
  "v9.voices.l.warm_friendly": {
   "en": "Warm & friendly",
-  "te": "Warm & friendly",
+  "te": "ఆప్యాయంగా, ఫ్రెండ్లీగా",
   "hi": "Warm & friendly",
   "kn": "Warm & friendly",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15006,11 +15006,11 @@
  },
  "v9.voices.l.inbound": {
   "en": "Inbound",
-  "te": "Inbound",
+  "te": "ఇన్‌కమింగ్",
   "hi": "Inbound",
   "kn": "Inbound",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15019,11 +15019,11 @@
  },
  "v9.voices.l.outbound": {
   "en": "Outbound",
-  "te": "Outbound",
+  "te": "ఔట్‌గోయింగ్",
   "hi": "Outbound",
   "kn": "Outbound",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15032,11 +15032,11 @@
  },
  "v9.jobs.w.tabs": {
   "en": "Jobs",
-  "te": "Jobs",
+  "te": "పనులు",
   "hi": "Jobs",
   "kn": "Jobs",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15045,11 +15045,11 @@
  },
  "v9.jobs.answer.tab": {
   "en": "Answer every call",
-  "te": "Answer every call",
+  "te": "ప్రతి కాల్‌కీ జవాబు",
   "hi": "Answer every call",
   "kn": "Answer every call",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15058,11 +15058,11 @@
  },
  "v9.jobs.answer.title": {
   "en": "Answer inbound calls during your hours.",
-  "te": "Answer inbound calls during your hours.",
+  "te": "మీ పని వేళల్లో వచ్చే కాల్స్‌కి జవాబిస్తుంది.",
   "hi": "Answer inbound calls during your hours.",
   "kn": "Answer inbound calls during your hours.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15071,11 +15071,11 @@
  },
  "v9.jobs.answer.c0": {
   "en": "Speaks Telugu, Hindi, Kannada and English",
-  "te": "Speaks Telugu, Hindi, Kannada and English",
+  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్ మాట్లాడుతుంది",
   "hi": "Speaks Telugu, Hindi, Kannada and English",
   "kn": "Speaks Telugu, Hindi, Kannada and English",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15084,11 +15084,11 @@
  },
  "v9.jobs.answer.c1": {
   "en": "Sends approved WhatsApp details after the call",
-  "te": "Sends approved WhatsApp details after the call",
+  "te": "కాల్ అయ్యాక మీరు ఓకే చేసిన వివరాలు WhatsAppలో పంపుతుంది",
   "hi": "Sends approved WhatsApp details after the call",
   "kn": "Sends approved WhatsApp details after the call",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15097,11 +15097,11 @@
  },
  "v9.jobs.answer.c2": {
   "en": "Logs clear action items on your Today screen",
-  "te": "Logs clear action items on your Today screen",
+  "te": "చేయాల్సిన పనులను మీ ఈరోజు స్క్రీన్‌లో క్లియర్‌గా రాస్తుంది",
   "hi": "Logs clear action items on your Today screen",
   "kn": "Logs clear action items on your Today screen",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15110,11 +15110,11 @@
  },
  "v9.jobs.answer.v0s": {
   "en": "Incoming call · Answered",
-  "te": "Incoming call · Answered",
+  "te": "ఇన్‌కమింగ్ కాల్ · ఆన్సర్ చేసింది",
   "hi": "Incoming call · Answered",
   "kn": "Incoming call · Answered",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15123,11 +15123,11 @@
  },
  "v9.jobs.answer.v0t": {
   "en": "Asked for a Saturday appointment",
-  "te": "Asked for a Saturday appointment",
+  "te": "శనివారం అపాయింట్‌మెంట్ అడిగారు",
   "hi": "Asked for a Saturday appointment",
   "kn": "Asked for a Saturday appointment",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15136,11 +15136,11 @@
  },
  "v9.jobs.answer.v1s": {
   "en": "After the call · WhatsApp sent",
-  "te": "After the call · WhatsApp sent",
+  "te": "కాల్ తర్వాత · WhatsApp పంపింది",
   "hi": "After the call · WhatsApp sent",
   "kn": "After the call · WhatsApp sent",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15149,11 +15149,11 @@
  },
  "v9.jobs.answer.v1t": {
   "en": "Shop timings and the visit time agreed",
-  "te": "Shop timings and the visit time agreed",
+  "te": "షాప్ టైమింగ్స్, ఒప్పుకున్న విజిట్ టైమ్",
   "hi": "Shop timings and the visit time agreed",
   "kn": "Shop timings and the visit time agreed",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15162,11 +15162,11 @@
  },
  "v9.jobs.answer.v2s": {
   "en": "Today screen",
-  "te": "Today screen",
+  "te": "ఈరోజు స్క్రీన్",
   "hi": "Today screen",
   "kn": "Today screen",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15175,11 +15175,11 @@
  },
  "v9.jobs.answer.v2t": {
   "en": "Confirmed and logged",
-  "te": "Confirmed and logged",
+  "te": "కన్ఫర్మ్ అయింది, రాసుకుంది",
   "hi": "Confirmed and logged",
   "kn": "Confirmed and logged",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15188,11 +15188,11 @@
  },
  "v9.jobs.followup.tab": {
   "en": "Follow up every enquiry",
-  "te": "Follow up every enquiry",
+  "te": "ప్రతి ఎంక్వైరీకీ ఫాలో-అప్",
   "hi": "Follow up every enquiry",
   "kn": "Follow up every enquiry",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15201,11 +15201,11 @@
  },
  "v9.jobs.followup.title": {
   "en": "Follow up new enquiries automatically.",
-  "te": "Follow up new enquiries automatically.",
+  "te": "కొత్త ఎంక్వైరీలకి ఆటోమేటిక్‌గా ఫాలో-అప్ చేస్తుంది.",
   "hi": "Follow up new enquiries automatically.",
   "kn": "Follow up new enquiries automatically.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15214,11 +15214,11 @@
  },
  "v9.jobs.followup.c0": {
   "en": "Connects website forms, WhatsApp and uploaded lists",
-  "te": "Connects website forms, WhatsApp and uploaded lists",
+  "te": "వెబ్‌సైట్ ఫారమ్‌లు, WhatsApp, అప్‌లోడ్ చేసిన లిస్ట్‌లను కనెక్ట్ చేస్తుంది",
   "hi": "Connects website forms, WhatsApp and uploaded lists",
   "kn": "Connects website forms, WhatsApp and uploaded lists",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15227,11 +15227,11 @@
  },
  "v9.jobs.followup.c1": {
   "en": "Queues call-backs only where consent is recorded",
-  "te": "Queues call-backs only where consent is recorded",
+  "te": "అనుమతి రికార్డ్ అయిన చోట మాత్రమే కాల్-బ్యాక్‌లను క్యూలో పెడుతుంది",
   "hi": "Queues call-backs only where consent is recorded",
   "kn": "Queues call-backs only where consent is recorded",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15240,11 +15240,11 @@
  },
  "v9.jobs.followup.c2": {
   "en": "Sends offers only to contacts who opted in",
-  "te": "Sends offers only to contacts who opted in",
+  "te": "అనుమతి ఇచ్చిన కాంటాక్ట్స్‌కి మాత్రమే ఆఫర్లు పంపుతుంది",
   "hi": "Sends offers only to contacts who opted in",
   "kn": "Sends offers only to contacts who opted in",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15253,11 +15253,11 @@
  },
  "v9.jobs.followup.v0s": {
   "en": "Website enquiry",
-  "te": "Website enquiry",
+  "te": "వెబ్‌సైట్ ఎంక్వైరీ",
   "hi": "Website enquiry",
   "kn": "Website enquiry",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15266,11 +15266,11 @@
  },
  "v9.jobs.followup.v0t": {
   "en": "Call-back queued · consent recorded",
-  "te": "Call-back queued · consent recorded",
+  "te": "కాల్-బ్యాక్ క్యూలో ఉంది · అనుమతి రికార్డ్ అయింది",
   "hi": "Call-back queued · consent recorded",
   "kn": "Call-back queued · consent recorded",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15279,11 +15279,11 @@
  },
  "v9.jobs.followup.v1s": {
   "en": "WhatsApp enquiry",
-  "te": "WhatsApp enquiry",
+  "te": "WhatsApp ఎంక్వైరీ",
   "hi": "WhatsApp enquiry",
   "kn": "WhatsApp enquiry",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15292,11 +15292,11 @@
  },
  "v9.jobs.followup.v1t": {
   "en": "Approved brochure sent, visit slot asked",
-  "te": "Approved brochure sent, visit slot asked",
+  "te": "ఓకే చేసిన బ్రోచర్ పంపింది, విజిట్ స్లాట్ అడిగింది",
   "hi": "Approved brochure sent, visit slot asked",
   "kn": "Approved brochure sent, visit slot asked",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15305,11 +15305,11 @@
  },
  "v9.jobs.followup.v2s": {
   "en": "Follow-up",
-  "te": "Follow-up",
+  "te": "ఫాలో-అప్",
   "hi": "Follow-up",
   "kn": "Follow-up",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15318,11 +15318,11 @@
  },
  "v9.jobs.followup.v2t": {
   "en": "Reminder set for tomorrow, 10:00",
-  "te": "Reminder set for tomorrow, 10:00",
+  "te": "రేపు 10:00కి రిమైండర్ పెట్టింది",
   "hi": "Reminder set for tomorrow, 10:00",
   "kn": "Reminder set for tomorrow, 10:00",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15331,11 +15331,11 @@
  },
  "v9.faq.q0": {
   "en": "Which languages does the assistant speak?",
-  "te": "Which languages does the assistant speak?",
+  "te": "అసిస్టెంట్ ఏ భాషలు మాట్లాడుతుంది?",
   "hi": "Which languages does the assistant speak?",
   "kn": "Which languages does the assistant speak?",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15344,11 +15344,11 @@
  },
  "v9.faq.a0": {
   "en": "It speaks Telugu, Hindi, Kannada and English on calls and WhatsApp, including everyday mixed sentences.",
-  "te": "It speaks Telugu, Hindi, Kannada and English on calls and WhatsApp, including everyday mixed sentences.",
+  "te": "కాల్స్‌లో, WhatsAppలో తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్ మాట్లాడుతుంది, రోజూ మాట్లాడే మిక్స్ వాక్యాలతో సహా.",
   "hi": "It speaks Telugu, Hindi, Kannada and English on calls and WhatsApp, including everyday mixed sentences.",
   "kn": "It speaks Telugu, Hindi, Kannada and English on calls and WhatsApp, including everyday mixed sentences.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15357,11 +15357,11 @@
  },
  "v9.faq.q1": {
   "en": "Which number does it call from?",
-  "te": "Which number does it call from?",
+  "te": "ఏ నంబర్ నుంచి కాల్ చేస్తుంది?",
   "hi": "Which number does it call from?",
   "kn": "Which number does it call from?",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15370,11 +15370,11 @@
  },
  "v9.faq.a1": {
   "en": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
-  "te": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
+  "te": "మీ కోసం సెటప్ చేసిన మీ సొంత బిజినెస్ నంబర్ నుంచి. పెయిడ్ ప్లాన్‌లు మొదలయ్యాక ఎక్స్‌ట్రా నంబర్లు నెలకి ₹499.",
   "hi": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
   "kn": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15383,11 +15383,11 @@
  },
  "v9.faq.q2": {
   "en": "How does it handle new enquiries?",
-  "te": "How does it handle new enquiries?",
+  "te": "కొత్త ఎంక్వైరీలను ఎలా చూసుకుంటుంది?",
   "hi": "How does it handle new enquiries?",
   "kn": "How does it handle new enquiries?",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15396,11 +15396,11 @@
  },
  "v9.faq.a2": {
   "en": "Website and WhatsApp enquiries with consent are logged to your Today screen, answered on WhatsApp, and queued for a call-back inside your calling hours.",
-  "te": "Website and WhatsApp enquiries with consent are logged to your Today screen, answered on WhatsApp, and queued for a call-back inside your calling hours.",
+  "te": "అనుమతి ఉన్న వెబ్‌సైట్, WhatsApp ఎంక్వైరీలను మీ ఈరోజు స్క్రీన్‌లో రాస్తుంది, WhatsAppలో జవాబిస్తుంది, మీ కాలింగ్ సమయంలోనే కాల్-బ్యాక్ కోసం క్యూలో పెడుతుంది.",
   "hi": "Website and WhatsApp enquiries with consent are logged to your Today screen, answered on WhatsApp, and queued for a call-back inside your calling hours.",
   "kn": "Website and WhatsApp enquiries with consent are logged to your Today screen, answered on WhatsApp, and queued for a call-back inside your calling hours.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15409,11 +15409,11 @@
  },
  "v9.faq.q3": {
   "en": "What if a customer asks not to be called?",
-  "te": "What if a customer asks not to be called?",
+  "te": "కస్టమర్ కాల్ చేయొద్దని అడిగితే?",
   "hi": "What if a customer asks not to be called?",
   "kn": "What if a customer asks not to be called?",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15422,11 +15422,11 @@
  },
  "v9.faq.a3": {
   "en": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–10 am).",
-  "te": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–10 am).",
+  "te": "STOP అని జవాబిచ్చినా, వద్దని చెప్పినా వెంటనే అమలవుతుంది, రాత్రిపూట క్వైట్ అవర్స్‌లో (రాత్రి 9–ఉదయం 10) కాల్స్ ఆటోమేటిక్‌గా ఆగుతాయి.",
   "hi": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–10 am).",
   "kn": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–10 am).",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15435,11 +15435,11 @@
  },
  "v9.faq.q4": {
   "en": "Can I try it before paid plans start?",
-  "te": "Can I try it before paid plans start?",
+  "te": "పెయిడ్ ప్లాన్‌లు మొదలవకముందే ట్రై చేయొచ్చా?",
   "hi": "Can I try it before paid plans start?",
   "kn": "Can I try it before paid plans start?",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15448,11 +15448,11 @@
  },
  "v9.faq.a4": {
   "en": "Yes. Early access is free (first business goes live in December) and we set everything up with you.",
-  "te": "Yes. Early access is free (first business goes live in December) and we set everything up with you.",
+  "te": "అవును. ఎర్లీ యాక్సెస్ ఫ్రీ (మొదటి బిజినెస్ డిసెంబర్‌లో లైవ్ అవుతుంది), అన్నీ మీతో కలిసి మేమే సెటప్ చేస్తాం.",
   "hi": "Yes. Early access is free (first business goes live in December) and we set everything up with you.",
   "kn": "Yes. Early access is free (first business goes live in December) and we set everything up with you.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15461,12 +15461,12 @@
  },
  "v9.phone.live": {
   "en": "Live",
-  "te": "Live",
+  "te": "లైవ్",
   "hi": "Live",
   "kn": "Live",
   "ta": "Live",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15474,12 +15474,12 @@
  },
  "v9.phone.ended": {
   "en": "Call ended",
-  "te": "Call ended",
+  "te": "కాల్ అయిపోయింది",
   "hi": "Call ended",
   "kn": "Call ended",
   "ta": "Call ended",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15487,12 +15487,12 @@
  },
  "v9.phone.ai": {
   "en": "AI assistant",
-  "te": "AI assistant",
+  "te": "AI అసిస్టెంట్",
   "hi": "AI assistant",
   "kn": "AI assistant",
   "ta": "AI assistant",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15500,12 +15500,12 @@
  },
  "v9.guard.landline": {
   "en": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
-  "te": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
+  "te": "ఇప్పుడు ల్యాండ్‌లైన్ లాంటి (080) నంబర్. 9-సిరీస్ మొబైల్ నంబర్లు త్వరలో వస్తాయి.",
   "hi": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
   "kn": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
   "ta": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15513,12 +15513,12 @@
  },
  "v9.ftr.tm": {
   "en": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
-  "te": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
+  "te": "WhatsApp, Google Sheets, Meta వాటి ఓనర్ల ట్రేడ్‌మార్క్‌లు; కనెక్షన్ పేరు చెప్పడానికి మాత్రమే చూపిస్తున్నాం.",
   "hi": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
   "kn": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
   "ta": "WhatsApp, Google Sheets and Meta are trademarks of their owners; shown only to name the connection.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15526,12 +15526,12 @@
  },
  "v9.finder.price.title": {
   "en": "Extra searches",
-  "te": "Extra searches",
+  "te": "ఎక్స్‌ట్రా సెర్చ్‌లు",
   "hi": "Extra searches",
   "kn": "Extra searches",
   "ta": "Extra searches",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15539,12 +15539,12 @@
  },
  "v9.finder.price.note": {
   "en": "Price of each extra search. Some searches are included every month.",
-  "te": "Price of each extra search. Some searches are included every month.",
+  "te": "ఒక్కో ఎక్స్‌ట్రా సెర్చ్ ధర. ప్రతి నెలా కొన్ని సెర్చ్‌లు ప్లాన్‌లోనే ఉంటాయి.",
   "hi": "Price of each extra search. Some searches are included every month.",
   "kn": "Price of each extra search. Some searches are included every month.",
   "ta": "Price of each extra search. Some searches are included every month.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15552,12 +15552,12 @@
  },
  "v9.guard.t1.time": {
   "en": "10:00 am",
-  "te": "10:00 am",
+  "te": "ఉదయం 10:00",
   "hi": "10:00 am",
   "kn": "10:00 am",
   "ta": "10:00 am",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15565,12 +15565,12 @@
  },
  "v9.guard.t1.what": {
   "en": "Busy. It tries again later.",
-  "te": "Busy. It tries again later.",
+  "te": "బిజీ. తర్వాత మళ్ళీ ట్రై చేస్తుంది.",
   "hi": "Busy. It tries again later.",
   "kn": "Busy. It tries again later.",
   "ta": "Busy. It tries again later.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15578,12 +15578,12 @@
  },
  "v9.guard.t2.time": {
   "en": "1:30 pm",
-  "te": "1:30 pm",
+  "te": "మధ్యాహ్నం 1:30",
   "hi": "1:30 pm",
   "kn": "1:30 pm",
   "ta": "1:30 pm",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15591,12 +15591,12 @@
  },
  "v9.guard.t2.what": {
   "en": "No answer. It tries again.",
-  "te": "No answer. It tries again.",
+  "te": "ఎవరూ ఎత్తలేదు. మళ్ళీ ట్రై చేస్తుంది.",
   "hi": "No answer. It tries again.",
   "kn": "No answer. It tries again.",
   "ta": "No answer. It tries again.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15604,12 +15604,12 @@
  },
  "v9.guard.t3.time": {
   "en": "5:00 pm",
-  "te": "5:00 pm",
+  "te": "సాయంత్రం 5:00",
   "hi": "5:00 pm",
   "kn": "5:00 pm",
   "ta": "5:00 pm",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15617,12 +15617,12 @@
  },
  "v9.guard.t3.what": {
   "en": "Connected. Visit booked.",
-  "te": "Connected. Visit booked.",
+  "te": "కనెక్ట్ అయింది. విజిట్ బుక్ అయింది.",
   "hi": "Connected. Visit booked.",
   "kn": "Connected. Visit booked.",
   "ta": "Connected. Visit booked.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15630,12 +15630,12 @@
  },
  "v9.cmp.time": {
   "en": "4:10 pm",
-  "te": "4:10 pm",
+  "te": "సాయంత్రం 4:10",
   "hi": "4:10 pm",
   "kn": "4:10 pm",
   "ta": "4:10 pm",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15643,12 +15643,12 @@
  },
  "v9.cmp.enq": {
   "en": "A customer asks about a product.",
-  "te": "A customer asks about a product.",
+  "te": "ఒక కస్టమర్ ఒక ప్రొడక్ట్ గురించి అడుగుతారు.",
   "hi": "A customer asks about a product.",
   "kn": "A customer asks about a product.",
   "ta": "A customer asks about a product.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15656,12 +15656,12 @@
  },
  "v9.cmp.without": {
   "en": "Without a fast call-back",
-  "te": "Without a fast call-back",
+  "te": "వెంటనే కాల్-బ్యాక్ లేకపోతే",
   "hi": "Without a fast call-back",
   "kn": "Without a fast call-back",
   "ta": "Without a fast call-back",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15669,12 +15669,12 @@
  },
  "v9.cmp.without.t": {
   "en": "Nobody calls back, so they ask the next shop.",
-  "te": "Nobody calls back, so they ask the next shop.",
+  "te": "ఎవరూ తిరిగి కాల్ చేయరు, అందుకే వాళ్ళు పక్క షాప్‌ని అడుగుతారు.",
   "hi": "Nobody calls back, so they ask the next shop.",
   "kn": "Nobody calls back, so they ask the next shop.",
   "ta": "Nobody calls back, so they ask the next shop.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15682,12 +15682,12 @@
  },
  "v9.cmp.with": {
   "en": "With {brand}",
-  "te": "With {brand}",
+  "te": "{brand} తో",
   "hi": "With {brand}",
   "kn": "With {brand}",
   "ta": "With {brand}",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15695,12 +15695,12 @@
  },
  "v9.cmp.with.t": {
   "en": "Called back at 4:12 pm. Visit booked.",
-  "te": "Called back at 4:12 pm. Visit booked.",
+  "te": "సాయంత్రం 4:12కి తిరిగి కాల్ చేసింది. విజిట్ బుక్ అయింది.",
   "hi": "Called back at 4:12 pm. Visit booked.",
   "kn": "Called back at 4:12 pm. Visit booked.",
   "ta": "Called back at 4:12 pm. Visit booked.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
@@ -15708,12 +15708,12 @@
  },
  "v9.calc.4": {
   "en": "Example, not a promise.",
-  "te": "Example, not a promise.",
+  "te": "ఉదాహరణ, హామీ కాదు.",
   "hi": "Example, not a promise.",
   "kn": "Example, not a promise.",
   "ta": "Example, not a promise.",
   "status": {
-   "te": "draft",
+   "te": "reviewed",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
