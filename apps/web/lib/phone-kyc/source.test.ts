@@ -12,7 +12,7 @@ import { ApiRequestError } from "@/lib/api/client";
 
 import { checkGst, checkPan, readStatus, refused, saveDetails, sendDocument, startAadhaar, startAccount, submitAll } from "./source";
 
-const details = { accountType: "individual", fullName: "Asha Rao", phone: "+91 98765 43210", billingAddress: "12 Main Road, Anantapur", acceptTerms: true };
+const details = { accountType: "individual", fullName: "Asha Rao", phone: "+91 98765 43210", billingAddress: "12 Main Road, Anantapur", city: "Anantapur", state: "Andhra Pradesh", pincode: "515001", acceptTerms: true };
 const bytes = new Uint8Array([1, 2, 3]);
 beforeEach(() => {
   jar.value = null;
@@ -32,8 +32,16 @@ describe("Verify your business in the test screen (KYC_PER_CLIENT=mock): nothing
   });
   it("the details are checked again here: a short name, a bad phone, a bad PIN, terms not ticked, a business without its name", async () => {
     await startAccount("t", "x", "individual");
-    for (const bad of [{ fullName: "A" }, { phone: "abc" }, { pincode: "12" }, { acceptTerms: false }, { billingAddress: "short" }]) expect(await saveDetails("t", "x", { ...details, ...bad })).toEqual({ ok: false, error: "invalid" });
+    for (const bad of [{ fullName: "A" }, { phone: "abc" }, { phone: "5876543210" }, { pincode: "12" }, { pincode: "015001" }, { acceptTerms: false }, { billingAddress: "short" }, { city: "" }, { state: "" }, { state: "Atlantis" }]) expect(await saveDetails("t", "x", { ...details, ...bad })).toEqual({ ok: false, error: "invalid" });
     expect(await saveDetails("t", "x", { ...details, accountType: "business" })).toEqual({ ok: false, error: "invalid" });
+  });
+  it("a phone typed with +91, 91 or a leading 0 is accepted and goes as +91 and ten digits; the state must be one of the list", async () => {
+    await startAccount("t", "x", "individual");
+    for (const phone of ["98765 43210", "+91 98765-43210", "091 98765 43210", "919876543210"]) expect(await saveDetails("t", "x", { ...details, phone })).toMatchObject({ ok: true });
+  });
+  it("a 422 kyc_fields_invalid keeps each field with its closed word (never the value)", () => {
+    const e = new ApiRequestError(422, "kyc_fields_invalid", "x", undefined, undefined, undefined, { fields: ["phone", "pincode"], reasons: { phone: "mobile_invalid", pincode: "pincode_invalid" } });
+    expect(refused(e)).toEqual({ ok: false, error: "invalid", fieldReasons: { phone: "mobile_invalid", pincode: "pincode_invalid" } });
   });
   it("details before the account is started: step_order in words, not a crash", async () => {
     expect(await saveDetails("t", "x", details)).toEqual({ ok: false, error: "refused", reason: "not_started" });
@@ -42,6 +50,7 @@ describe("Verify your business in the test screen (KYC_PER_CLIENT=mock): nothing
     await startAccount("t", "x", "individual");
     await saveDetails("t", "x", details);
     expect(await checkPan("t", "x", "ABC", "Asha Rao")).toEqual({ ok: false, error: "invalid" });
+    expect(await checkPan("t", "x", "ABCDE1234F", "A")).toEqual({ ok: false, error: "invalid" });
     expect(await checkPan("t", "x", "ABCDE1234F", "mismatch")).toEqual({ ok: false, error: "refused", reason: "pan_mismatch" });
     expect(await checkPan("t", "x", "ABCDE1234F", "Asha Rao")).toMatchObject({ ok: true });
   });

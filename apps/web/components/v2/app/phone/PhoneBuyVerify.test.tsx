@@ -71,8 +71,16 @@ describe("Get a phone number: four steps in one page", () => {
     expect(screen.getByLabelText("Email")).toHaveValue("asha@shop.in");
     expect(screen.getByLabelText("Email")).toHaveAttribute("readonly");
     expect(screen.getByText("You cannot change these later. Check them once.")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-    expect(screen.getByRole("alert")).toHaveTextContent("Write your full name, at least two letters.");
+    // every field is mandatory: "Required" beside the label, Continue off until the name is a name, one plain sentence once the field was touched
+    expect(screen.getByLabelText("Full name")).toBeRequired();
+    expect(screen.getByLabelText("Email")).toBeRequired();
+    expect(within(step(2)).getAllByText("Required")).toHaveLength(2);
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+    fireEvent.blur(screen.getByLabelText("Full name"));
+    expect(screen.getByText("This is required.")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "A" } });
+    expect(screen.getByText("Write your full name, at least two letters.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
     expect(states()).toEqual(["done", "now", "off", "off"]);
     expectNoSentenceForm(container);
   });
@@ -229,10 +237,12 @@ describe("Verify your business: where it stands", () => {
     fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "Asha Rao" } });
     fireEvent.change(screen.getByLabelText("Phone number"), { target: { value: "+91 98765 43210" } });
     fireEvent.change(screen.getByLabelText("Billing address"), { target: { value: "12 Main Road, Anantapur" } });
+    fireEvent.change(screen.getByLabelText("City"), { target: { value: "Anantapur" } });
+    fireEvent.change(screen.getByLabelText("State"), { target: { value: "Andhra Pradesh" } });
     fireEvent.change(screen.getByLabelText("PIN code"), { target: { value: "5150ab01" } });
     fireEvent.click(document.querySelector('input[type="checkbox"]') as HTMLElement);
     fireEvent.click(screen.getByText("Save and continue"));
-    await waitFor(() => expect(a.details).toHaveBeenCalledWith({ accountType: "individual", businessName: "", fullName: "Asha Rao", phone: "+91 98765 43210", billingAddress: "12 Main Road, Anantapur", city: "", state: "", pincode: "515001", acceptTerms: true }));
+    await waitFor(() => expect(a.details).toHaveBeenCalledWith({ accountType: "individual", businessName: "", fullName: "Asha Rao", phone: "+91 98765 43210", billingAddress: "12 Main Road, Anantapur", city: "Anantapur", state: "Andhra Pradesh", pincode: "515001", acceptTerms: true }));
     await waitFor(() => expect(document.querySelector('[data-doc="pan"]')).not.toBeNull()); // a plain selector: a role query over the whole page is what made this test slow
   });
 });
@@ -278,11 +288,12 @@ describe("Verify your business: the documents", () => {
     const big = new File([new Uint8Array(1)], "big.pdf", { type: "application/pdf" });
     Object.defineProperty(big, "size", { value: 11 * 1024 * 1024 });
     fireEvent.change(screen.getByLabelText("PAN card photo or PDF"), { target: { files: [big] } });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("That file is bigger than 10 MB.");
+    expect(await screen.findByText("That file is bigger than 10 MB.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send" })).toBeDisabled();
     fireEvent.change(screen.getByLabelText("PAN card photo or PDF"), { target: { files: [file("a.gif", "image/gif")] } });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("The file could not be read."));
+    expect(await screen.findByText("Choose a photo (JPEG or PNG) or a PDF.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send" })).toBeDisabled();
+    expect(fetch).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
   it("Aadhaar: a DigiLocker link to open on your OWN phone ('it is you who confirms it, not us'), then the file", async () => {
@@ -320,8 +331,8 @@ describe("Verify your business: the documents", () => {
 });
 
 describe("Get a phone number: step 3 offers Verify now, on this page (owner, 26 Nov 2026)", () => {
-  const toStep3 = async (kyc: { status: KycStatus; actions: VerifyActions } | null) => {
-    const out = render(<PhoneBuy words={WORDS} actions={buyActions()} canEdit email="asha@shop.in" verifyHref="/v?verify=1" kyc={kyc} />);
+  const toStep3 = async (kyc: { status: KycStatus; actions: VerifyActions } | null, first = false) => {
+    const out = render(<PhoneBuy words={WORDS} actions={buyActions()} canEdit email="asha@shop.in" verifyHref="/v?verify=1" kyc={kyc} kycFirst={first} />);
     await screen.findByText("+91 94294 92465");
     fireEvent.click(screen.getAllByRole("radio")[0]);
     fireEvent.click(screen.getByRole("button", { name: "Use this number" }));
@@ -368,5 +379,99 @@ describe("Get a phone number: step 3 offers Verify now, on this page (owner, 26 
     await toStep3(null);
     expect(document.querySelector('[data-part="verify-choice"]')).toBeNull();
     expect(screen.getByText("You verify yourself after you buy.")).toBeInTheDocument();
+  });
+});
+
+describe("Verify with PAN and Aadhaar: every field is mandatory (owner, 26 Nov 2026)", () => {
+  const fill = (over: Record<string, string> = {}) => {
+    const v = { "Full name": "Asha Rao", "Phone number": "98765 43210", "Billing address": "12 Main Road, Anantapur", City: "Anantapur", State: "Andhra Pradesh", "PIN code": "515001", ...over };
+    for (const [label, value] of Object.entries(v)) fireEvent.change(screen.getByLabelText(label), { target: { value } });
+  };
+  it("each field says Required and is required; Save and continue stays off until all is valid; the state is a list of the 28 states and 8 territories", () => {
+    drawVerify(STATUS({ state: "created" }));
+    const form = document.querySelector('[data-part="details"]') as HTMLElement;
+    for (const label of ["Full name", "Phone number", "Billing address", "City", "State", "PIN code"]) {
+      expect(screen.getByLabelText(label)).toBeRequired();
+      expect(screen.getByLabelText(label)).toHaveAttribute("aria-required", "true");
+    }
+    expect(within(form).getAllByText("Required").length).toBeGreaterThanOrEqual(6);
+    const state = screen.getByLabelText("State") as HTMLSelectElement;
+    expect(state.tagName).toBe("SELECT");
+    expect(within(state).getAllByRole("option")).toHaveLength(37); // the prompt and 36
+    fill();
+    expect(screen.getByRole("button", { name: "Save and continue" })).toBeDisabled(); // the terms
+    fireEvent.click(document.querySelector('input[type="checkbox"]') as HTMLElement);
+    expect(screen.getByRole("button", { name: "Save and continue" })).toBeEnabled();
+  });
+  it("a plain sentence under a field once it was touched; the typed values stay; no red alert wall", () => {
+    drawVerify(STATUS({ state: "created" }));
+    fill({ "Phone number": "12345", "PIN code": "012345" });
+    expect(screen.queryByText(/mobile number/)).toBeNull(); // not touched yet
+    fireEvent.blur(screen.getByLabelText("Phone number"));
+    fireEvent.blur(screen.getByLabelText("PIN code"));
+    expect(screen.getByText("Write a 10-digit mobile number that starts with 6, 7, 8 or 9. +91 or 0 in front is fine.")).toBeInTheDocument();
+    expect(screen.getByText("Write the PIN code: exactly 6 digits, the first one not 0.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Phone number")).toHaveValue("12345");
+    expect(screen.getByLabelText("Phone number")).toHaveAttribute("aria-invalid", "true");
+    expect(document.querySelector('[data-part="details"] [role="alert"]')).toBeNull();
+    fireEvent.change(screen.getByLabelText("Phone number"), { target: { value: "+91 98765-43210" } });
+    expect(screen.queryByText(/10-digit mobile number/)).toBeNull();
+  });
+  it("the API's own word for a bad field (kyc_fields_invalid) is said under that field with the same sentence, until the field is changed", async () => {
+    const a = verifyActions({ details: vi.fn(async () => ({ ok: false as const, error: "invalid" as const, fieldReasons: { phone: "mobile_invalid", pincode: "pincode_invalid" } })) });
+    drawVerify(STATUS({ state: "created" }), a);
+    fill();
+    fireEvent.click(document.querySelector('input[type="checkbox"]') as HTMLElement);
+    fireEvent.click(screen.getByRole("button", { name: "Save and continue" }));
+    expect(await screen.findByText("Write a 10-digit mobile number that starts with 6, 7, 8 or 9. +91 or 0 in front is fine.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Full name")).toHaveValue("Asha Rao");
+    fireEvent.change(screen.getByLabelText("Phone number"), { target: { value: "98765 43211" } });
+    expect(screen.queryByText(/10-digit mobile number/)).toBeNull();
+    expect(screen.getByText("Write the PIN code: exactly 6 digits, the first one not 0.")).toBeInTheDocument();
+  });
+  it("PAN and GST: the shape is checked as typed, a GST number only for a business", () => {
+    drawVerify(STATUS({ state: "in_progress", step: "pan", steps: { pan: false, aadhaar: false } }));
+    expect(screen.getByLabelText("PAN number")).toBeRequired();
+    fireEvent.change(screen.getByLabelText("PAN number"), { target: { value: "ABCDE12" } });
+    fireEvent.blur(screen.getByLabelText("PAN number"));
+    expect(screen.getByText("A PAN has 5 letters, 4 digits and 1 letter, for example ABCDE1234F.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send" })).toBeDisabled();
+    cleanup();
+    drawVerify(STATUS({ state: "in_progress", accountType: "business", step: "gst", steps: { pan: true, aadhaar: true, gst: false } }));
+    fireEvent.change(screen.getByLabelText("GST number"), { target: { value: "99ABCDE1234F1Z5" } });
+    fireEvent.blur(screen.getByLabelText("GST number"));
+    expect(screen.getByText("A GST number has 15 characters, for example 36ABCDE1234F1Z5.")).toBeInTheDocument();
+  });
+});
+
+describe("Get a phone number: verification first, then buy (owner, 26 Nov 2026)", () => {
+  const toStep3 = async (status: KycStatus) => {
+    render(<PhoneBuy words={WORDS} actions={buyActions()} canEdit email="asha@shop.in" verifyHref="/v?verify=1" kyc={{ status, actions: verifyActions() }} kycFirst />);
+    await screen.findByText("+91 94294 92465");
+    fireEvent.click(screen.getAllByRole("radio")[0]);
+    fireEvent.click(screen.getByRole("button", { name: "Use this number" }));
+    fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "Asha Rao" } });
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+  };
+  it("step 3 is only the verification: no choice, no 'after buying', one sentence about what works before it", async () => {
+    await toStep3(STATUS({ state: "not_started", accountType: null }));
+    expect(document.querySelector('[data-part="verify-choice"]')).toBeNull();
+    expect(screen.queryByText("Verify after buying")).toBeNull();
+    expect(document.querySelector('[data-part="free-things"]')).toHaveTextContent("browser test call");
+    expect(screen.getByRole("button", { name: "Start verification" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+  });
+  it("the Buy button opens only when the status is verified", async () => {
+    await toStep3(STATUS({ state: "verified" }));
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+    expect(states()).toEqual(["done", "done", "done", "now"]);
+    fireEvent.click(screen.getByRole("checkbox"));
+    expect(document.querySelector('[data-part="confirm"]')).toBeEnabled();
+  });
+  it("while the phone service has no free line the page says so as a friendly wait, not an error", async () => {
+    await toStep3(STATUS({ state: "waiting_for_line" as KycStatus["state"] }));
+    expect(document.querySelector('[data-part="waiting-line"]')).toHaveTextContent("We are setting up your line. This takes a short while.");
+    expect(document.querySelector('[data-part="verify-error"]')).toBeNull();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
   });
 });

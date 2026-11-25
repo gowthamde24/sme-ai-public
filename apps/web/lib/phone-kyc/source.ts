@@ -1,7 +1,9 @@
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
-import { DOC_TYPES, kycAadhaar, kycDetails, kycDocument, kycGst, kycPan, kycStart, kycSubmit, readKyc, refusalReason, type AccountType, type DocType, type KycDetails, type KycReason, type KycStatus } from "@/lib/api/business-kyc";
+import { DOC_TYPES, fieldReasons, kycAadhaar, kycDetails, kycDocument, kycGst, kycPan, kycStart, kycSubmit, readKyc, refusalReason, type AccountType, type DocType, type KycDetails, type KycReason, type KycStatus } from "@/lib/api/business-kyc";
 import { clearJar, readJar, writeJar } from "@/lib/mock/jar";
 import { kycPerClient } from "@/lib/screens/flag";
+
+import { FILE_TYPES as RULE_FILE_TYPES, MAX_FILE_BYTES as RULE_MAX_FILE_BYTES, addressProblem, cityProblem, gstProblem, holderProblem, mobileDigits, nameProblem, panProblem, pinProblem, stateProblem } from "./rules";
 
 /**
  * Where "Verify your business" gets its status and does its steps (KYC_PER_CLIENT; C1's docs/contracts/business-kyc.md). `mock` = a made-up status kept in ONE small cookie of the browser (nothing is sent, no document leaves the page; the check "finishes" a minute
@@ -9,19 +11,14 @@ import { kycPerClient } from "@/lib/screens/flag";
  * sentences never reach the screen. PAN, GSTIN and the files pass through and are dropped: nothing here stores, logs or returns them.
  */
 export const COOKIE = "sme_kyc_mock";
-export const MAX_FILE_BYTES = 10 * 1024 * 1024;
-export const FILE_TYPES = ["image/jpeg", "image/png", "application/pdf"] as const;
+export const MAX_FILE_BYTES = RULE_MAX_FILE_BYTES;
+export const FILE_TYPES = RULE_FILE_TYPES;
 
 export type KycError = "invalid" | "forbidden" | "step_up" | "down" | "refused";
-export type KycRefusal = { ok: false; error: KycError; reason?: KycReason; missing?: string[] };
+export type KycRefusal = { ok: false; error: KycError; reason?: KycReason; missing?: string[]; /** a `422 kyc_fields_invalid`: each bad field and its closed word */ fieldReasons?: Record<string, string> };
 export type KycResult<T = KycStatus> = { ok: true; data: T } | KycRefusal;
 
-const PAN = /^[A-Za-z]{5}[0-9]{4}[A-Za-z]$/;
-const GST = /^[0-9]{2}[A-Za-z0-9]{10}[0-9][A-Za-z0-9]{2}$/;
-const PHONE = /^\+?[0-9 ()-]{10,16}$/;
-const PIN = /^[0-9]{6}$/;
 const text = (v: unknown, min: number, max: number): string | null => (typeof v === "string" && v.trim().length >= min && v.trim().length <= max ? v.trim() : null);
-const optText = (v: unknown, max: number): string | null | undefined => (v === undefined || v === null || v === "" ? null : text(v, 1, max) ?? undefined);
 
 type Kept = { state: KycStatus["state"]; type: AccountType | null; pc: boolean; ac: boolean; gc: boolean; docs: DocType[]; at: number };
 const NONE: Kept = { state: "not_started", type: null, pc: false, ac: false, gc: false, docs: [], at: 0 };
@@ -44,6 +41,8 @@ export function refused(error: unknown): KycRefusal {
   if (error instanceof ApiAuthError) throw error;
   if (error instanceof ApiRequestError) {
     if (error.status === 403) return { ok: false, error: error.code === "mfa_required" || error.code === "step_up_required" ? "step_up" : "forbidden" };
+    const fr = fieldReasons(error);
+    if (fr) return { ok: false, error: "invalid", fieldReasons: fr };
     const r = refusalReason(error);
     if (r && (error.status === 422 || error.status === 409 || error.status === 503)) return { ok: false, error: r.reason === "unavailable" ? "down" : "refused", reason: r.reason };
   }
@@ -78,21 +77,24 @@ export async function startAccount(token: string, tenantId: string, type: unknow
 
 export async function saveDetails(token: string, tenantId: string, input: Record<string, unknown>): Promise<KycResult> {
   const type = input.accountType;
-  const fullName = text(input.fullName, 2, 120);
-  const phone = typeof input.phone === "string" && PHONE.test(input.phone.trim()) ? input.phone.trim() : null;
-  const address = text(input.billingAddress, 8, 300);
-  const businessName = optText(input.businessName, 120);
-  const state = optText(input.state, 60);
-  const city = optText(input.city, 60);
-  const pin = input.pincode === undefined || input.pincode === null || input.pincode === "" ? null : typeof input.pincode === "string" && PIN.test(input.pincode) ? input.pincode : undefined;
-  if (kycPerClient() === "off" || (type !== "individual" && type !== "business") || !fullName || !phone || !address || businessName === undefined || state === undefined || city === undefined || pin === undefined || input.acceptTerms !== true) return { ok: false, error: "invalid" };
+  const str = (v: unknown): string => (typeof v === "string" ? v : "");
+  // every field is mandatory (owner, 26 Nov 2026): the same rules as the form (lib/phone-kyc/rules.ts), checked again here
+  const digits = mobileDigits(str(input.phone));
+  const businessName = text(input.businessName, 2, 120);
+  const fullName = nameProblem(str(input.fullName)) === null ? str(input.fullName).trim() : null;
+  const address = addressProblem(str(input.billingAddress)) === null ? str(input.billingAddress).trim() : null;
+  const city = cityProblem(str(input.city)) === null ? str(input.city).trim() : null;
+  const state = stateProblem(str(input.state)) === null ? str(input.state) : null;
+  const pin = pinProblem(str(input.pincode)) === null ? str(input.pincode).trim() : null;
+  if (kycPerClient() === "off" || (type !== "individual" && type !== "business") || !fullName || !digits || !address || !city || !state || !pin || input.acceptTerms !== true) return { ok: false, error: "invalid" };
   if (type === "business" && !businessName) return { ok: false, error: "invalid" };
+  const phone = `+91${digits}`;
   if (mock()) {
     const k = await readJar(COOKIE, parseKept, NONE);
     if (k.state === "not_started") return { ok: false, error: "refused", reason: "not_started" };
     return keep({ ...k, state: k.state === "created" ? "in_progress" : k.state, type });
   }
-  const d: KycDetails = { accountType: type, businessName, fullName, phone, billingAddress: address, state, city, pincode: pin };
+  const d: KycDetails = { accountType: type, businessName: type === "business" ? businessName : null, fullName, phone, billingAddress: address, state, city, pincode: pin };
   try {
     return { ok: true, data: await kycDetails(token, tenantId, d) };
   } catch (error) {
@@ -101,8 +103,8 @@ export async function saveDetails(token: string, tenantId: string, input: Record
 }
 
 export async function checkPan(token: string, tenantId: string, panNumber: unknown, holderName: unknown): Promise<KycResult> {
-  const name = text(holderName, 2, 120);
-  if (kycPerClient() === "off" || typeof panNumber !== "string" || !PAN.test(panNumber.trim()) || !name) return { ok: false, error: "invalid" };
+  const name = typeof holderName === "string" && holderProblem(holderName) === null ? holderName.trim() : null;
+  if (kycPerClient() === "off" || typeof panNumber !== "string" || panProblem(panNumber) !== null || !name) return { ok: false, error: "invalid" };
   if (mock()) {
     const k = await readJar(COOKIE, parseKept, NONE);
     if (k.state !== "in_progress") return { ok: false, error: "refused", reason: "step_order" };
@@ -117,7 +119,7 @@ export async function checkPan(token: string, tenantId: string, panNumber: unkno
 }
 
 export async function checkGst(token: string, tenantId: string, gstNumber: unknown): Promise<KycResult> {
-  if (kycPerClient() === "off" || typeof gstNumber !== "string" || !GST.test(gstNumber.trim())) return { ok: false, error: "invalid" };
+  if (kycPerClient() === "off" || typeof gstNumber !== "string" || gstProblem(gstNumber) !== null) return { ok: false, error: "invalid" };
   if (mock()) {
     const k = await readJar(COOKIE, parseKept, NONE);
     if (k.state !== "in_progress" || k.type !== "business") return { ok: false, error: "refused", reason: "step_order" };

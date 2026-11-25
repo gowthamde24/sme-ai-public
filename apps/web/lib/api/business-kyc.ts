@@ -9,7 +9,7 @@ import { bad, isRec, oneOf, optStr, rec, str } from "./shape";
  *   POST /phone-kyc/business/start      Owner          makes the business's own client (once; its e-mail is the signed-in Owner's)
  *   POST .../details | pan | gst | aadhaar | documents | submit      Owner
  */
-export const KYC_STATES = ["not_started", "created", "in_progress", "submitted", "verified", "stuck"] as const;
+export const KYC_STATES = ["not_started", "waiting_for_line", "created", "in_progress", "submitted", "verified", "stuck"] as const;
 export type KycState = (typeof KYC_STATES)[number];
 export const ACCOUNT_TYPES = ["individual", "business"] as const;
 export type AccountType = (typeof ACCOUNT_TYPES)[number];
@@ -49,6 +49,10 @@ export function parseStatus(json: unknown): KycStatus {
     missing,
     reason: reasonOf(x.reason),
   };
+}
+/** `422 kyc_fields_invalid` (business-kyc.md, 26 Nov 2026): each bad field of the form and its closed word (`mobile_invalid`, `pincode_invalid`, ...). Null for any other refusal. */
+export function fieldReasons(error: unknown): Record<string, string> | null {
+  return error instanceof ApiRequestError && error.code === "kyc_fields_invalid" && error.extra?.reasons ? error.extra.reasons : null;
 }
 /** A refusal's closed reason (`error.reason`, else the `fields` word the client keeps); `missing_documents` also carries the names of the documents. */
 export function refusalReason(error: unknown): { reason: KycReason; missing: string[] } | null {

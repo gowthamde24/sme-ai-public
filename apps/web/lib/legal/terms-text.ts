@@ -8,7 +8,7 @@ import type { LegalText } from "./types";
 export const TERMS: LegalText = {
   title: "Terms of Use",
   intro: [
-    "These are the terms for using {brand} during Free Early Access, between you (the business that signs up) and Stack19, {business_description} (\"we\", \"us\"). By ticking the box when you sign up, you agree to them. (Draft: for the owner's review)",
+    "These are the terms for using {brand} during Free Early Access, between you (the business that signs up) and Stack19, {business_description} (\"we\", \"us\"). By ticking the box when you sign up, you agree to them.",
   ],
   sections: [
     {

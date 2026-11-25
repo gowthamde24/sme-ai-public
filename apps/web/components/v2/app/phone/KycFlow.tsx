@@ -6,9 +6,11 @@ import type { AccountType, DocType, KycStatus } from "@/lib/api/business-kyc";
 import type { KycResult } from "@/lib/phone-kyc/source";
 
 import { Tick } from "../ds/Tick";
-import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel } from "../ui";
+import { btnMain, btnQuiet, fieldHelp, fieldInput } from "../ui";
 import type { Say } from "../words";
 import { refusalSentence } from "./kyc-shared";
+import { FieldError, RequiredField, describedBy } from "./kyc-field";
+import { API_FIELD, INDIAN_STATES, detailsProblems, fileProblem, gstProblem, holderProblem, panProblem, reasonProblem, type DetailsInput, type Problem } from "@/lib/phone-kyc/rules";
 
 export type VerifyActions = {
   status: () => Promise<KycStatus | null>;
@@ -21,22 +23,10 @@ export type VerifyActions = {
   /** the address that takes one document (multipart `type` + `file`); answers the same words as the actions */
   uploadUrl: string;
 };
-export type Fail = { error: string; reason?: string; missing?: string[] };
+export type Fail = { error: string; reason?: string; missing?: string[]; fieldReasons?: Record<string, string> };
 const DOCS: Record<AccountType, readonly DocType[]> = { individual: ["pan", "aadhaar"], business: ["pan", "aadhaar", "gst"] };
 const MAX_BYTES = 10 * 1024 * 1024;
 const TYPES = ["image/jpeg", "image/png", "application/pdf"];
-
-function Field({ id, label, hint, children }: { id: string; label: string; hint?: string; children: React.ReactNode }) {
-  return (
-    <div className="flex min-w-0 flex-col">
-      <label htmlFor={id} className={fieldLabel}>
-        {label}
-      </label>
-      {children}
-      {hint ? <p className={`${fieldHelp} m-0`}>{hint}</p> : null}
-    </div>
-  );
-}
 
 
 export type FlowProps = { t: Say; status: KycStatus; actions: VerifyActions; prefill: { accountType?: AccountType; fullName?: string } | null; busy: boolean; run: (go: () => Promise<KycResult>) => Promise<KycStatus | null>; fail: Fail | null; setFail: (f: Fail | null) => void };
@@ -49,13 +39,17 @@ export function Flow({ t, status, actions, prefill, busy, run, fail, setFail }: 
   const next = needs.find((d) => status.steps[d] !== true) ?? null;
   const problem = fail ? (
     <div role="alert" data-part="verify-error" data-error={fail.error}>
-      <p className="m-0 text-[15px] text-ink">{refusalSentence(t, fail.error, fail.reason)}</p>
+      {fail.fieldReasons && !details ? (
+        [...new Set(Object.values(fail.fieldReasons).map((w) => problemText(t, reasonProblem(w))))].map((x) => <p key={x} className="m-0 text-[15px] text-ink">{x}</p>)
+      ) : fail.fieldReasons ? null : (
+        <p className="m-0 text-[15px] text-ink">{refusalSentence(t, fail.error, fail.reason)}</p>
+      )}
       {fail.missing && fail.missing.length > 0 ? <p className="m-0 mt-1 text-[15px] text-ink">{t("pick.kyc.missing", { list: fail.missing.join(", ") })}</p> : null}
     </div>
   ) : null;
   return (
     <div className="mt-4 flex flex-col gap-5" data-part="verify-flow">
-      {details ? <Details t={t} account={account} prefill={prefill} busy={busy} onSave={(input) => void run(() => actions.details(input))} /> : null}
+      {details ? <Details t={t} account={account} prefill={prefill} busy={busy} server={fail?.fieldReasons ?? null} onSave={(input) => void run(() => actions.details(input))} /> : null}
       {!details ? (
         <ul className="m-0 flex list-none flex-col p-0">
           {needs.map((d) => {
@@ -85,51 +79,78 @@ export function Flow({ t, status, actions, prefill, busy, run, fail, setFail }: 
   );
 }
 
-function Details({ t, account, prefill, busy, onSave }: { t: Say; account: AccountType; prefill: FlowProps["prefill"]; busy: boolean; onSave: (input: Record<string, unknown>) => void }) {
-  const [v, setV] = React.useState({ businessName: "", fullName: prefill?.fullName ?? "", phone: "", billingAddress: "", city: "", state: "", pincode: "" });
-  const [terms, setTerms] = React.useState(false);
-  const set = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement>) => setV((s) => ({ ...s, [k]: e.target.value }));
+const problemText = (t: Say, p: Problem | null | undefined): string | null => (p ? t(`pick.kyc.e.${p}` as "pick.kyc.e.required") : null);
+
+/** The details of the business's account. Every field is mandatory (owner, 26 Nov 2026): "Required" beside each label, a plain sentence under a field once it was touched or the form was sent, "Save and continue" off until all is valid; what was typed stays when a message shows. */
+function Details({ t, account, prefill, busy, server, onSave }: { t: Say; account: AccountType; prefill: FlowProps["prefill"]; busy: boolean; server: Record<string, string> | null; onSave: (input: Record<string, unknown>) => void }) {
+  const [v, setV] = React.useState<DetailsInput>({ businessName: "", fullName: prefill?.fullName ?? "", phone: "", billingAddress: "", city: "", state: "", pincode: "", terms: false });
+  const [touched, setTouched] = React.useState<Partial<Record<keyof DetailsInput, boolean>>>({});
+  const [sent, setSent] = React.useState(false);
+  const problems = detailsProblems(v, account === "business");
+  const valid = Object.keys(problems).length === 0;
+  // the API's own word for a bad field (a `422 kyc_fields_invalid`) is said with the same sentence as the screen's check, until that field is changed
+  const [edited, setEdited] = React.useState<Partial<Record<keyof DetailsInput, boolean>>>({});
+  const fromServer = (k: keyof DetailsInput): string | null => {
+    const word = server ? Object.entries(server).find(([field]) => API_FIELD[field] === k)?.[1] : undefined;
+    return word && !edited[k] ? problemText(t, reasonProblem(word)) : null;
+  };
+  const shown = (k: keyof DetailsInput): string | null => (touched[k] || sent ? problemText(t, problems[k]) : null) ?? fromServer(k);
+  const set = (k: keyof DetailsInput) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => (setEdited((x) => ({ ...x, [k]: true })), setV((x) => ({ ...x, [k]: e.target.value })));
+  const touch = (k: keyof DetailsInput) => () => setTouched((x) => ({ ...x, [k]: true }));
+  const ctl = (k: keyof DetailsInput, id: string) => ({ id, required: true, "aria-required": true as const, "aria-invalid": shown(k) ? true : undefined, "aria-describedby": describedBy(id, shown(k)), onBlur: touch(k), className: fieldInput });
   return (
     <form
       data-part="details"
+      noValidate
       className="flex flex-col gap-4"
       onSubmit={(e) => {
         e.preventDefault();
-        onSave({ accountType: account, ...v, acceptTerms: terms });
+        setSent(true);
+        if (!valid) return;
+        setEdited({}); // a word the API sends back now is about THIS save; it goes away when that field is changed
+        onSave({ accountType: account, businessName: v.businessName.trim(), fullName: v.fullName.trim(), phone: v.phone.trim(), billingAddress: v.billingAddress.trim(), city: v.city.trim(), state: v.state, pincode: v.pincode.trim(), acceptTerms: v.terms });
       }}
     >
       {account === "business" ? (
-        <Field id="kyc-biz" label={t("pick.kyc.f.business")}>
-          <input id="kyc-biz" type="text" required maxLength={120} value={v.businessName} onChange={set("businessName")} className={fieldInput} />
-        </Field>
+        <RequiredField t={t} id="kyc-biz" label={t("pick.kyc.f.business")} error={shown("businessName")}>
+          <input {...ctl("businessName", "kyc-biz")} type="text" maxLength={120} value={v.businessName} onChange={set("businessName")} />
+        </RequiredField>
       ) : null}
       <div className="grid grid-cols-1 gap-4 min-[560px]:grid-cols-2">
-        <Field id="kyc-name" label={t("pick.buy.name")}>
-          <input id="kyc-name" type="text" required autoComplete="name" minLength={2} maxLength={120} value={v.fullName} onChange={set("fullName")} className={fieldInput} />
-        </Field>
-        <Field id="kyc-phone" label={t("pick.kyc.f.phone")}>
-          <input id="kyc-phone" type="tel" required autoComplete="tel" inputMode="tel" maxLength={16} value={v.phone} onChange={set("phone")} className={fieldInput} />
-        </Field>
+        <RequiredField t={t} id="kyc-name" label={t("pick.buy.name")} error={shown("fullName")}>
+          <input {...ctl("fullName", "kyc-name")} type="text" autoComplete="name" maxLength={120} value={v.fullName} onChange={set("fullName")} />
+        </RequiredField>
+        <RequiredField t={t} id="kyc-phone" label={t("pick.kyc.f.phone")} hint={t("pick.kyc.f.phone.hint")} error={shown("phone")}>
+          <input {...ctl("phone", "kyc-phone")} type="tel" autoComplete="tel" inputMode="tel" maxLength={18} value={v.phone} onChange={set("phone")} />
+        </RequiredField>
       </div>
-      <Field id="kyc-addr" label={t("pick.kyc.f.address")}>
-        <input id="kyc-addr" type="text" required autoComplete="street-address" minLength={8} maxLength={300} value={v.billingAddress} onChange={set("billingAddress")} className={fieldInput} />
-      </Field>
+      <RequiredField t={t} id="kyc-addr" label={t("pick.kyc.f.address")} error={shown("billingAddress")}>
+        <input {...ctl("billingAddress", "kyc-addr")} type="text" autoComplete="street-address" maxLength={300} value={v.billingAddress} onChange={set("billingAddress")} />
+      </RequiredField>
       <div className="grid grid-cols-1 gap-4 min-[560px]:grid-cols-3">
-        <Field id="kyc-city" label={t("pick.kyc.f.city")}>
-          <input id="kyc-city" type="text" autoComplete="address-level2" maxLength={60} value={v.city} onChange={set("city")} className={fieldInput} />
-        </Field>
-        <Field id="kyc-state" label={t("pick.kyc.f.state")}>
-          <input id="kyc-state" type="text" autoComplete="address-level1" maxLength={60} value={v.state} onChange={set("state")} className={fieldInput} />
-        </Field>
-        <Field id="kyc-pin" label={t("pick.kyc.f.pin")}>
-          <input id="kyc-pin" type="text" inputMode="numeric" autoComplete="postal-code" maxLength={6} value={v.pincode} onChange={(e) => setV((s) => ({ ...s, pincode: e.target.value.replace(/\D/g, "") }))} className={fieldInput} />
-        </Field>
+        <RequiredField t={t} id="kyc-city" label={t("pick.kyc.f.city")} error={shown("city")}>
+          <input {...ctl("city", "kyc-city")} type="text" autoComplete="address-level2" maxLength={60} value={v.city} onChange={set("city")} />
+        </RequiredField>
+        <RequiredField t={t} id="kyc-state" label={t("pick.kyc.f.state")} error={shown("state")}>
+          <select {...ctl("state", "kyc-state")} autoComplete="address-level1" value={v.state} onChange={set("state")}>
+            <option value="">{t("pick.kyc.f.state.choose")}</option>
+            {INDIAN_STATES.map((x) => (
+              <option key={x} value={x}>
+                {x}
+              </option>
+            ))}
+          </select>
+        </RequiredField>
+        <RequiredField t={t} id="kyc-pin" label={t("pick.kyc.f.pin")} error={shown("pincode")}>
+          <input {...ctl("pincode", "kyc-pin")} type="text" inputMode="numeric" autoComplete="postal-code" maxLength={6} value={v.pincode} onChange={(e) => (setEdited((x) => ({ ...x, pincode: true })), setV((x) => ({ ...x, pincode: e.target.value.replace(/\D/g, "") })))} />
+        </RequiredField>
       </div>
       <div className="border-t border-ink">
-        <Tick id="kyc-terms" checked={terms} onChange={(e) => setTerms(e.target.checked)} label={t("pick.kyc.f.terms")} />
+        <Tick id="kyc-terms" checked={v.terms} required aria-required="true" onChange={(e) => (setV((x) => ({ ...x, terms: e.target.checked })), touch("terms")())} label={`${t("pick.kyc.f.terms")} (${t("pick.kyc.req")})`} />
+        {shown("terms") ? <FieldError id="kyc-terms-err" text={shown("terms") as string} /> : null}
       </div>
       <div>
-        <button type="submit" data-part="save-details" disabled={busy || !terms} className={btnMain}>
+        <button type="submit" data-part="save-details" disabled={busy || !valid} className={btnMain}>
           {t("pick.kyc.save")}
         </button>
       </div>
@@ -143,6 +164,10 @@ function DocStep({ t, doc, prefill, actions, busy, run, setFail }: { t: Say; doc
   const [link, setLink] = React.useState<string | null>(null);
   const [file, setFile] = React.useState<File | null>(null);
   const [sending, setSending] = React.useState(false);
+  const [seen, setSeen] = React.useState<{ number?: boolean; holder?: boolean; file?: boolean }>({});
+  const numberProblem = doc === "gst" ? gstProblem(number) : doc === "pan" ? panProblem(number) : null;
+  const holderBad = doc === "pan" ? holderProblem(holder) : null;
+  const fileBad = fileProblem(file);
 
   async function upload(): Promise<KycStatus | null> {
     if (!file) return null;
@@ -173,10 +198,11 @@ function DocStep({ t, doc, prefill, actions, busy, run, setFail }: { t: Say; doc
     await upload();
     setSending(false);
   }
+  const fileError = seen.file ? problemText(t, fileBad) : null;
   const fileField = (
-    <Field id={`kyc-file-${doc}`} label={t(`pick.kyc.doc.${doc}.file`)} hint={t("pick.kyc.file.hint")}>
-      <input id={`kyc-file-${doc}`} type="file" accept="image/jpeg,image/png,application/pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="min-h-12 w-full rounded-lg border border-edge bg-surface px-3 py-2.5 text-base text-ink" />
-    </Field>
+    <RequiredField t={t} id={`kyc-file-${doc}`} label={t(`pick.kyc.doc.${doc}.file`)} hint={t("pick.kyc.file.hint")} error={fileError}>
+      <input id={`kyc-file-${doc}`} type="file" required aria-required="true" aria-invalid={fileError ? true : undefined} aria-describedby={describedBy(`kyc-file-${doc}`, fileError)} accept="image/jpeg,image/png,application/pdf" onChange={(e) => (setFile(e.target.files?.[0] ?? null), setSeen((x) => ({ ...x, file: true })))} className="min-h-12 w-full rounded-lg border border-edge bg-surface px-3 py-2.5 text-base text-ink" />
+    </RequiredField>
   );
   const disabled = busy || sending;
   if (doc === "aadhaar") {
@@ -214,7 +240,7 @@ function DocStep({ t, doc, prefill, actions, busy, run, setFail }: { t: Say; doc
           <>
             {fileField}
             <div>
-              <button type="button" data-part="send-doc" disabled={disabled || !file} onClick={() => void send()} className={btnMain}>
+              <button type="button" data-part="send-doc" disabled={disabled || fileBad !== null} onClick={() => void send()} className={btnMain}>
                 {t("pick.kyc.send")}
               </button>
             </div>
@@ -223,22 +249,24 @@ function DocStep({ t, doc, prefill, actions, busy, run, setFail }: { t: Say; doc
       </div>
     );
   }
-  const filled = doc === "pan" ? number.trim().length === 10 && holder.trim().length >= 2 : number.trim().length === 15;
+  const numError = seen.number ? problemText(t, numberProblem) : null;
+  const holderError = seen.holder ? problemText(t, holderBad) : null;
+  const filled = numberProblem === null && holderBad === null;
   return (
     <div className="flex flex-col gap-4" data-part={`doc-${doc}`}>
       <div className="grid grid-cols-1 gap-4 min-[560px]:grid-cols-2">
-        <Field id={`kyc-num-${doc}`} label={t(doc === "pan" ? "pick.kyc.f.pan" : "pick.kyc.f.gst")} hint={doc === "gst" ? t("pick.kyc.f.gst.hint") : undefined}>
-          <input id={`kyc-num-${doc}`} type="text" autoCapitalize="characters" autoComplete="off" maxLength={doc === "pan" ? 10 : 15} value={number} onChange={(e) => setNumber(e.target.value.replace(/\s/g, "").toUpperCase())} className={`${fieldInput} uppercase`} />
-        </Field>
+        <RequiredField t={t} id={`kyc-num-${doc}`} label={t(doc === "pan" ? "pick.kyc.f.pan" : "pick.kyc.f.gst")} hint={doc === "gst" ? t("pick.kyc.f.gst.hint") : t("pick.kyc.f.pan.hint")} error={numError}>
+          <input id={`kyc-num-${doc}`} type="text" required aria-required="true" aria-invalid={numError ? true : undefined} aria-describedby={describedBy(`kyc-num-${doc}`, numError)} onBlur={() => setSeen((x) => ({ ...x, number: true }))} autoCapitalize="characters" autoComplete="off" maxLength={doc === "pan" ? 10 : 15} value={number} onChange={(e) => setNumber(e.target.value.replace(/\s/g, "").toUpperCase())} className={fieldInput} />
+        </RequiredField>
         {doc === "pan" ? (
-          <Field id="kyc-holder" label={t("pick.kyc.f.holder")} hint={t("pick.kyc.f.holder.hint")}>
-            <input id="kyc-holder" type="text" autoComplete="off" maxLength={120} value={holder} onChange={(e) => setHolder(e.target.value)} className={fieldInput} />
-          </Field>
+          <RequiredField t={t} id="kyc-holder" label={t("pick.kyc.f.holder")} hint={t("pick.kyc.f.holder.hint")} error={holderError}>
+            <input id="kyc-holder" type="text" required aria-required="true" aria-invalid={holderError ? true : undefined} aria-describedby={describedBy("kyc-holder", holderError)} onBlur={() => setSeen((x) => ({ ...x, holder: true }))} autoComplete="off" maxLength={120} value={holder} onChange={(e) => setHolder(e.target.value)} className={fieldInput} />
+          </RequiredField>
         ) : null}
       </div>
       {fileField}
       <div>
-        <button type="button" data-part="send-doc" disabled={disabled || !filled || !file} onClick={() => void send()} className={btnMain}>
+        <button type="button" data-part="send-doc" disabled={disabled || !filled || fileBad !== null} onClick={() => void send()} className={btnMain}>
           {t("pick.kyc.send")}
         </button>
       </div>
@@ -263,19 +291,19 @@ export function KycInline({ t, status: first, actions, canEdit, account, fullNam
     const r = await go();
     setBusy(false);
     if (!r.ok) {
-      setFail({ error: r.error, reason: r.reason, missing: r.missing });
+      setFail({ error: r.error, reason: r.reason, missing: r.missing, fieldReasons: r.fieldReasons });
       return null;
     }
     setStatus(r.data);
     return r.data;
   };
   React.useEffect(() => {
-    if (status.state !== "submitted") return;
-    const id = setInterval(() => void actions.status().then((s) => (s ? setStatus(s) : undefined)), 10_000);
+    if (status.state !== "submitted" && status.state !== "waiting_for_line") return;
+    const id = setInterval(() => void actions.status().then((s) => (s ? setStatus(s) : undefined)), status.state === "submitted" ? 10_000 : 15_000);
     return () => clearInterval(id);
   }, [status.state, actions]);
   const state = status.state;
-  const chip = state === "verified" ? "done" : state === "submitted" ? "checking" : state === "stuck" ? "stuck" : "waiting";
+  const chip = state === "verified" ? "done" : state === "submitted" || state === "waiting_for_line" ? "checking" : state === "stuck" ? "stuck" : "waiting";
   if (!canEdit) return <p className="m-0 text-[15px] text-muted">{t("pick.err.forbidden")}</p>;
   return (
     <div className="flex flex-col gap-4" data-part="verify-inline" data-state={state}>
@@ -295,6 +323,11 @@ export function KycInline({ t, status: first, actions, canEdit, account, fullNam
         </div>
       ) : null}
       {state === "created" || state === "in_progress" ? <Flow t={t} status={status} actions={actions} prefill={prefill} busy={busy} run={run} fail={fail} setFail={setFail} /> : null}
+      {state === "waiting_for_line" ? (
+        <p role="status" data-part="waiting-line" className="m-0 text-[15px] text-muted">
+          {t("pick.kyc.waiting")}
+        </p>
+      ) : null}
       {state === "submitted" ? (
         <p role="status" className="m-0 text-[15px] text-muted">
           {t("pick.kyc.s4.checking")}

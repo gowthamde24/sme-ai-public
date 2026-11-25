@@ -94,6 +94,7 @@ export default async function PhoneNumberPage({ params, searchParams }: PageProp
                 mock={mock}
                 verifyHref={`${here}?verify=1`}
                 actions={{ search: searchAvailableAction.bind(null, tenantId), buy: buyNumberAction.bind(null, tenantId) }}
+                kycFirst
                 kyc={{
                   status,
                   actions: {

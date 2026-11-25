@@ -137345,5 +137345,258 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "pick.kyc.req": {
+  "en": "Required",
+  "te": "తప్పనిసరి",
+  "hi": "ज़रूरी",
+  "kn": "ಕಡ್ಡಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.required": {
+  "en": "This is required.",
+  "te": "ఇది తప్పనిసరి.",
+  "hi": "यह ज़रूरी है।",
+  "kn": "ಇದು ಕಡ್ಡಾಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.name": {
+  "en": "Write your full name, at least two letters.",
+  "te": "మీ పూర్తి పేరు రాయండి, కనీసం రెండు అక్షరాలు.",
+  "hi": "अपना पूरा नाम लिखें, कम से कम दो अक्षर।",
+  "kn": "ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರು ಬರೆಯಿರಿ, ಕನಿಷ್ಠ ಎರಡು ಅಕ್ಷರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.phone": {
+  "en": "Write a 10-digit mobile number that starts with 6, 7, 8 or 9. +91 or 0 in front is fine.",
+  "te": "6, 7, 8 లేదా 9తో మొదలయ్యే 10 అంకెల మొబైల్ నంబర్ రాయండి. ముందు +91 లేదా 0 ఉన్నా పర్లేదు.",
+  "hi": "6, 7, 8 या 9 से शुरू होने वाला 10 अंकों का मोबाइल नंबर लिखें। आगे +91 या 0 हो तो भी चलेगा।",
+  "kn": "6, 7, 8 ಅಥವಾ 9 ರಿಂದ ಶುರುವಾಗುವ 10 ಅಂಕಿಯ ಮೊಬೈಲ್ ನಂಬರ್ ಬರೆಯಿರಿ. ಮುಂದೆ +91 ಅಥವಾ 0 ಇದ್ದರೂ ಸರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.address": {
+  "en": "Write the full billing address, at least 10 characters.",
+  "te": "పూర్తి బిల్లింగ్ అడ్రస్ రాయండి, కనీసం 10 అక్షరాలు.",
+  "hi": "पूरा बिलिंग पता लिखें, कम से कम 10 अक्षर।",
+  "kn": "ಪೂರ್ಣ ಬಿಲ್ಲಿಂಗ್ ವಿಳಾಸ ಬರೆಯಿರಿ, ಕನಿಷ್ಠ 10 ಅಕ್ಷರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.city": {
+  "en": "Write the city, at least two letters.",
+  "te": "సిటీ రాయండి, కనీసం రెండు అక్షరాలు.",
+  "hi": "शहर लिखें, कम से कम दो अक्षर।",
+  "kn": "ಸಿಟಿ ಬರೆಯಿರಿ, ಕನಿಷ್ಠ ಎರಡು ಅಕ್ಷರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.state": {
+  "en": "Choose a state or union territory from the list.",
+  "te": "లిస్ట్ నుంచి రాష్ట్రాన్ని లేదా కేంద్రపాలిత ప్రాంతాన్ని ఎంచుకోండి.",
+  "hi": "सूची से राज्य या केंद्रशासित प्रदेश चुनें।",
+  "kn": "ಪಟ್ಟಿಯಿಂದ ರಾಜ್ಯ ಅಥವಾ ಕೇಂದ್ರಾಡಳಿತ ಪ್ರದೇಶ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.pin": {
+  "en": "Write the PIN code: exactly 6 digits, the first one not 0.",
+  "te": "PIN కోడ్ రాయండి: సరిగ్గా 6 అంకెలు, మొదటిది 0 కాకూడదు.",
+  "hi": "PIN कोड लिखें: ठीक 6 अंक, पहला अंक 0 नहीं।",
+  "kn": "PIN ಕೋಡ್ ಬರೆಯಿರಿ: ಸರಿಯಾಗಿ 6 ಅಂಕಿ, ಮೊದಲನೆಯದು 0 ಆಗಿರಬಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.terms": {
+  "en": "Tick this to go on.",
+  "te": "ముందుకు వెళ్లడానికి దీన్ని టిక్ చేయండి.",
+  "hi": "आगे बढ़ने के लिए इसे टिक करें।",
+  "kn": "ಮುಂದುವರಿಯಲು ಇದನ್ನು ಟಿಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.pan": {
+  "en": "A PAN has 5 letters, 4 digits and 1 letter, for example ABCDE1234F.",
+  "te": "PANలో 5 అక్షరాలు, 4 అంకెలు, 1 అక్షరం ఉంటాయి, ఉదాహరణకు ABCDE1234F.",
+  "hi": "PAN में 5 अक्षर, 4 अंक और 1 अक्षर होते हैं, जैसे ABCDE1234F।",
+  "kn": "PAN ನಲ್ಲಿ 5 ಅಕ್ಷರ, 4 ಅಂಕಿ, 1 ಅಕ್ಷರ ಇರುತ್ತದೆ, ಉದಾಹರಣೆಗೆ ABCDE1234F.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.holder": {
+  "en": "Write the name as on the PAN card, at least two letters.",
+  "te": "PAN కార్డ్‌లో ఉన్నట్టు పేరు రాయండి, కనీసం రెండు అక్షరాలు.",
+  "hi": "PAN कार्ड पर जैसा है वैसा नाम लिखें, कम से कम दो अक्षर।",
+  "kn": "PAN ಕಾರ್ಡ್‌ನಲ್ಲಿರುವಂತೆ ಹೆಸರು ಬರೆಯಿರಿ, ಕನಿಷ್ಠ ಎರಡು ಅಕ್ಷರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.gst": {
+  "en": "A GST number has 15 characters, for example 36ABCDE1234F1Z5.",
+  "te": "GST నంబర్‌లో 15 అక్షరాలు ఉంటాయి, ఉదాహరణకు 36ABCDE1234F1Z5.",
+  "hi": "GST नंबर में 15 अक्षर होते हैं, जैसे 36ABCDE1234F1Z5।",
+  "kn": "GST ನಂಬರ್‌ನಲ್ಲಿ 15 ಅಕ್ಷರ ಇರುತ್ತದೆ, ಉದಾಹರಣೆಗೆ 36ABCDE1234F1Z5.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.email": {
+  "en": "This e-mail does not look right. Sign in again with your e-mail.",
+  "te": "ఈ ఇ-మెయిల్ సరిగా లేదు. మీ ఇ-మెయిల్‌తో మళ్ళీ సైన్ ఇన్ చేయండి.",
+  "hi": "यह ई-मेल सही नहीं लगता। अपने ई-मेल से दोबारा साइन इन करें।",
+  "kn": "ಈ ಇ-ಮೇಲ್ ಸರಿಯಿಲ್ಲ. ನಿಮ್ಮ ಇ-ಮೇಲ್‌ನಿಂದ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.file_type": {
+  "en": "Choose a photo (JPEG or PNG) or a PDF.",
+  "te": "ఫోటో (JPEG లేదా PNG) లేదా PDF ఎంచుకోండి.",
+  "hi": "फ़ोटो (JPEG या PNG) या PDF चुनें।",
+  "kn": "ಫೋಟೋ (JPEG ಅಥವಾ PNG) ಅಥವಾ PDF ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.file_size": {
+  "en": "That file is bigger than 10 MB.",
+  "te": "ఆ ఫైల్ 10 MB కంటే పెద్దది.",
+  "hi": "वह फ़ाइल 10 MB से बड़ी है।",
+  "kn": "ಆ ಫೈಲ್ 10 MB ಗಿಂತ ದೊಡ್ಡದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.file_empty": {
+  "en": "That file is empty. Choose another one.",
+  "te": "ఆ ఫైల్ ఖాళీగా ఉంది. వేరొకటి ఎంచుకోండి.",
+  "hi": "वह फ़ाइल ख़ाली है। दूसरी चुनें।",
+  "kn": "ಆ ಫೈಲ್ ಖಾಲಿಯಿದೆ. ಬೇರೊಂದು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.state.choose": {
+  "en": "Choose a state",
+  "te": "రాష్ట్రాన్ని ఎంచుకోండి",
+  "hi": "राज्य चुनें",
+  "kn": "ರಾಜ್ಯ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.phone.hint": {
+  "en": "10 digits. +91 or 0 in front is fine.",
+  "te": "10 అంకెలు. ముందు +91 లేదా 0 ఉన్నా పర్లేదు.",
+  "hi": "10 अंक। आगे +91 या 0 हो तो भी चलेगा।",
+  "kn": "10 ಅಂಕಿ. ಮುಂದೆ +91 ಅಥವಾ 0 ಇದ್ದರೂ ಸರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.f.pan.hint": {
+  "en": "10 characters, for example ABCDE1234F",
+  "te": "10 అక్షరాలు, ఉదాహరణకు ABCDE1234F",
+  "hi": "10 अक्षर, जैसे ABCDE1234F",
+  "kn": "10 ಅಕ್ಷರ, ಉದಾಹರಣೆಗೆ ABCDE1234F",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.first.d": {
+  "en": "Verify your business first. When you are verified you can buy the number, and it starts with calls on.",
+  "te": "ముందు మీ బిజినెస్‌ని వెరిఫై చేయండి. వెరిఫై అయ్యాక నంబర్ కొనవచ్చు, అది కాల్స్ ఆన్‌తో మొదలవుతుంది.",
+  "hi": "पहले अपना बिज़नेस वेरिफ़ाई करें। वेरिफ़ाई होने पर आप नंबर ख़रीद सकते हैं, और वह कॉल चालू के साथ शुरू होता है।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ವೆರಿಫೈ ಮಾಡಿ. ವೆರಿಫೈ ಆದ ಮೇಲೆ ನಂಬರ್ ಖರೀದಿಸಬಹುದು, ಅದು ಕಾಲ್ ಆನ್‌ನೊಂದಿಗೆ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.buy.s3.first.free": {
+  "en": "Until then you can still make the browser test call, use the shared test line and build your assistant.",
+  "te": "అప్పటివరకు కూడా బ్రౌజర్ టెస్ట్ కాల్ చేయవచ్చు, షేర్డ్ టెస్ట్ లైన్ వాడవచ్చు, మీ అసిస్టెంట్‌ని తయారు చేసుకోవచ్చు.",
+  "hi": "तब तक भी आप ब्राउज़र टेस्ट कॉल कर सकते हैं, साझा टेस्ट लाइन इस्तेमाल कर सकते हैं और अपना असिस्टेंट बना सकते हैं।",
+  "kn": "ಅಲ್ಲಿಯವರೆಗೂ ಬ್ರೌಸರ್ ಟೆಸ್ಟ್ ಕಾಲ್ ಮಾಡಬಹುದು, ಹಂಚಿಕೆಯ ಟೆಸ್ಟ್ ಲೈನ್ ಬಳಸಬಹುದು, ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅನ್ನು ತಯಾರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.e.gst_business": {
+  "en": "A GST number is only for a business account.",
+  "te": "GST నంబర్ బిజినెస్ అకౌంట్‌కి మాత్రమే.",
+  "hi": "GST नंबर सिर्फ़ बिज़नेस अकाउंट के लिए है।",
+  "kn": "GST ನಂಬರ್ ಬಿಸಿನೆಸ್ ಅಕೌಂಟ್‌ಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pick.kyc.waiting": {
+  "en": "We are setting up your line. This takes a short while.",
+  "te": "మీ లైన్‌ని సెటప్ చేస్తున్నాం. కొద్దిసేపు పడుతుంది.",
+  "hi": "हम आपकी लाइन सेट कर रहे हैं। इसमें थोड़ा समय लगता है।",
+  "kn": "ನಿಮ್ಮ ಲೈನ್ ಸೆಟಪ್ ಮಾಡುತ್ತಿದ್ದೇವೆ. ಸ್ವಲ್ಪ ಸಮಯ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

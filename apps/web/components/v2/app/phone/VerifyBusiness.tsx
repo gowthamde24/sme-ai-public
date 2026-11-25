@@ -44,7 +44,7 @@ export function VerifyBusiness({ words, status: first, own, canEdit, actions, bu
     const r = await go();
     setBusy(false);
     if (!r.ok) {
-      setFail({ error: r.error, reason: r.reason, missing: r.missing });
+      setFail({ error: r.error, reason: r.reason, missing: r.missing, fieldReasons: r.fieldReasons });
       return null;
     }
     setStatus(r.data);
@@ -53,8 +53,9 @@ export function VerifyBusiness({ words, status: first, own, canEdit, actions, bu
 
   // while the check runs, ask again every ten seconds; when it is done the page draws the finished state
   React.useEffect(() => {
-    if (status.state !== "submitted") return;
-    const id = setInterval(() => void actions.status().then((s) => (s ? (setStatus(s), s.state === "verified" ? router.refresh() : undefined) : undefined)), 10_000);
+    // while the check runs (10 s) or while we set up the business's line at the phone service (15 s: C1's `waiting_for_line`), ask again
+    if (status.state !== "submitted" && status.state !== "waiting_for_line") return;
+    const id = setInterval(() => void actions.status().then((s) => (s ? (setStatus(s), s.state === "verified" ? router.refresh() : undefined) : undefined)), status.state === "submitted" ? 10_000 : 15_000);
     return () => clearInterval(id);
   }, [status.state, actions, router]);
 
@@ -62,8 +63,9 @@ export function VerifyBusiness({ words, status: first, own, canEdit, actions, bu
   const verified = status.state === "verified";
   const submitted = status.state === "submitted";
   const stuck = status.state === "stuck";
-  const working = started && !verified && !submitted && !stuck;
-  const chip = verified ? "done" : submitted ? "checking" : stuck ? "stuck" : "waiting";
+  const waitingLine = status.state === "waiting_for_line";
+  const working = started && !verified && !submitted && !stuck && !waitingLine;
+  const chip = verified ? "done" : submitted || waitingLine ? "checking" : stuck ? "stuck" : "waiting";
 
   return (
     <div className="flex max-w-3xl flex-col gap-4" data-part="verify" data-state={status.state}>
@@ -98,7 +100,7 @@ export function VerifyBusiness({ words, status: first, own, canEdit, actions, bu
             </div>
           )}
         </Step>
-        <Step n={3} title={t("pick.kyc.s3.t")} state={verified || submitted ? "done" : working || stuck ? "now" : "off"}>
+        <Step n={3} title={t("pick.kyc.s3.t")} state={verified || submitted ? "done" : working || stuck || waitingLine ? "now" : "off"}>
           {working || stuck ? <p className="m-0 mt-1 text-[15px] text-muted">{t(status.accountType === "business" || type === "business" ? "pick.kyc.s3.body.business" : "pick.kyc.s3.body")}</p> : null}
           {working && canEdit ? (
             open ? (
@@ -112,6 +114,11 @@ export function VerifyBusiness({ words, status: first, own, canEdit, actions, bu
             )
           ) : null}
           {working && !canEdit ? <p className="m-0 mt-2 text-[15px] text-muted">{t("pick.err.forbidden")}</p> : null}
+          {waitingLine ? (
+            <p role="status" data-part="waiting-line" className="m-0 mt-2 text-[15px] text-muted">
+              {t("pick.kyc.waiting")}
+            </p>
+          ) : null}
           {stuck ? (
             <p role="status" data-part="stuck" className="m-0 mt-2 text-[15px] text-ink">
               {t("pick.kyc.err.stuck")}
