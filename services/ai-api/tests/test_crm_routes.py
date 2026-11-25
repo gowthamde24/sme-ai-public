@@ -496,8 +496,12 @@ def test_only_companies_have_a_name_filter(env: tuple[TestClient, FakeCrmReposit
 
 
 # ==== no deletes ====
-# the delete routes: removing an outbound webhook address, and disconnecting a CRM or sheet (settings, not business data)
-DELETE_ALLOWED = {"/v1/tenants/{tenant_id}/developer/webhooks/{webhook_id}", "/v1/tenants/{tenant_id}/connectors/crm/{type_}"}
+# the delete routes: an outbound webhook address, and disconnecting a CRM or sheet
+# (settings, not business data)
+DELETE_ALLOWED = {
+    "/v1/tenants/{tenant_id}/developer/webhooks/{webhook_id}",
+    "/v1/tenants/{tenant_id}/connectors/crm/{type_}",
+}
 
 
 @pytest.mark.parametrize("entity", ENTITIES)
