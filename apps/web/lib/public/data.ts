@@ -2,6 +2,8 @@ import { PLAN_FACTS, PUBLIC_PLANS, rupees } from "@/lib/site/plans";
 import { ADDRESSES, RESPONSE_DAYS, RESPONSE_HOURS, RETENTION } from "@/lib/site/business";
 import type { PubKey } from "@/i18n/public";
 
+import talk from "./talk-types.json";
+
 /**
  * The facts the launch public pages state (pricing, help, status, use policy, refunds, Talk to us). The words are in i18n/strings/public.json (`pub.*`); the numbers and addresses are read from here and from lib/site/plans.ts and
  * lib/site/business.ts, never typed into a string.
@@ -52,9 +54,9 @@ export function pubVars(): Record<string, string | number> {
   };
 }
 
-/** The kinds of business in the Talk to us form (the top 15 of reports/business-type-catalogue.md, grouped as the form needs them); `other` is last. */
-export const TALK_TYPES = ["textiles", "kirana", "jewellery", "electronics", "fashion", "restaurant", "bakery", "salon", "repair", "clinic", "coaching", "property", "cars", "gym", "other"] as const;
-export type TalkType = (typeof TALK_TYPES)[number];
+/** The kinds of business in the Talk to us form (the top 15 of reports/business-type-catalogue.md, then "other"): data in talk-types.json, not code. */
+export const TALK_TYPES = talk.types as readonly string[];
+export type TalkType = string;
 export const TALK_TIMES = ["morning", "afternoon", "evening"] as const;
 export type TalkTime = (typeof TALK_TIMES)[number];
 

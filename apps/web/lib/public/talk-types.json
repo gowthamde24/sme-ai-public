@@ -1,0 +1,4 @@
+{
+ "_note": "The kinds of business in the Talk to us form: the top 15 of reports/business-type-catalogue.md plus 'other'. Data, not code (the lint rule keeps business types out of code); each id has its label in i18n/strings/public.json as pub.talk.t.<id>.",
+ "types": ["textiles", "kirana", "jewellery", "electronics", "fashion", "restaurant", "bakery", "salon", "repair", "clinic", "coaching", "property", "cars", "gym", "other"]
+}

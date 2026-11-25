@@ -143,7 +143,7 @@ describe("Talk to us", () => {
     expect(sentenceFormsIn(host)).toEqual([]);
   });
   it("does not call the action without a name, a contact or consent... the server says why; a good one shows the thank-you with the fallback address", async () => {
-    const action = vi.fn(async (_i: unknown) => ({ ok: true as const }));
+    const action = vi.fn(async () => ({ ok: true as const }));
     rtl(<TalkForm lang="en" words={words()} action={action} privacyHref="/privacy" />);
     fireEvent.change(screen.getByLabelText("Your name"), { target: { value: "Asha" } });
     fireEvent.change(screen.getByLabelText(/Phone, WhatsApp number or e-mail/), { target: { value: "98480 12345" } });
@@ -151,7 +151,7 @@ describe("Talk to us", () => {
     fireEvent.click(screen.getByRole("button", { name: "Ask for a demo" }));
     await waitFor(() => expect(screen.getByText("Thank you")).toBeInTheDocument());
     expect(action).toHaveBeenCalledTimes(1);
-    expect(action.mock.calls[0][0]).toMatchObject({ name: "Asha", contact: "98480 12345", consent: true, type: "other" });
+    expect((action.mock.calls[0] as unknown[])[0]).toMatchObject({ name: "Asha", contact: "98480 12345", consent: true, type: "other" });
   });
   it("shows the server's refusal as a dot and a sentence", async () => {
     const action = vi.fn(async () => ({ ok: false as const, error: "contact" as const }));

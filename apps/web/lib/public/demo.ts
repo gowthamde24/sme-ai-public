@@ -30,6 +30,7 @@ export function readTalk(input: unknown): { ok: true; value: TalkInput } | { ok:
  * Where a checked request goes. TODAY NOTHING IS STORED: there is no contact route in the API yet (C1 has the waitlist route only), so this keeps the request nowhere and the page says "if you do not hear from us within a day, write to hello@".
  * When the API has a contact route, call it here (one place) and nothing else changes.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- the one place a stored request will go
 export async function storeTalk(_value: TalkInput): Promise<TalkResult> {
   return { ok: true };
 }
