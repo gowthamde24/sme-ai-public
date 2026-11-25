@@ -8,14 +8,17 @@ const dict = appDict("en") as Record<string, string>;
 const BANNED = /guarantee|best in|#1|number one|testimonial|customers love|thousands of|trusted by|\b\d{2,}%/i;
 
 describe("the industry pages' data", () => {
-  it("six pages with one honest headline, exactly three plain sections and a sample call of their business type", () => {
-    expect(INDUSTRY_PAGES.map((p) => p.slug)).toEqual(["textiles", "clinics", "coaching", "real-estate", "car-dealers", "wholesale"]);
+  it("sixteen pages (the top 15 business types of reports/business-type-catalogue.md and wholesale) with one honest headline, exactly three plain sections and a sample call of four lines", () => {
+    expect(INDUSTRY_PAGES.map((p) => p.slug)).toEqual(["textiles", "clinics", "coaching", "real-estate", "car-dealers", "wholesale", "kirana", "jewellery", "electronics", "boutiques", "restaurants", "bakeries", "salons", "home-repair", "gyms", "small-business"]);
+    // the top 15 of the catalogue (wholesale is the extra page)
+    expect(INDUSTRY_PAGES.filter((p) => p.slug !== "wholesale")).toHaveLength(15);
     for (const p of INDUSTRY_PAGES) {
       expect(p.headline.length).toBeGreaterThan(10);
       expect(p.sections).toHaveLength(3);
       const call = (dict[`vc.cv.${p.pack}.friendly`] ?? "").split("\n").filter(Boolean);
-      expect(call, p.slug).toHaveLength(4);
-      expect([...p.call], p.slug).toEqual(call); // the copy in the data is the app's own sample call
+      // a type the app already has a sample call for: the copy in the data is the app's own; a newer type (the catalogue's) has its own made-up call here
+      if (call.length > 0) expect([...p.call], p.slug).toEqual(call);
+      expect(p.call, p.slug).toHaveLength(4);
       expect(p.metaDescription.length).toBeLessThanOrEqual(170);
     }
   });

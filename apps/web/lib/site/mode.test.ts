@@ -12,11 +12,12 @@ describe("website mode (job DQ)", () => {
     for (const v of [undefined, "", "app", "Website", "1", "true", " website"]) expect(siteMode(v)).toBe("app");
   });
 
-  it("serves the home page, the three business pages, plans, contact and nothing else of the site", () => {
+  it("serves the home page, the three business pages, plans, contact, help (and its articles), status, acceptable use, refunds and Talk to us, and nothing else of the site", () => {
     const served = allTargets().filter((t) => isServed(t, "website"));
-    expect(served).toEqual(allTargets().filter((t) => t.kind !== "page" || t.page === "pricing" || t.page === "contact"));
+    expect(served).toEqual(allTargets().filter((t) => t.kind !== "page" || WEBSITE_PAGES.includes(t.page)));
     expect(served.filter((t) => t.kind === "pack").map((t) => (t as { slug: string }).slug).sort()).toEqual(["construction", "education", "textiles"]);
-    expect([...WEBSITE_PAGES].sort()).toEqual(["contact", "pricing"]);
+    expect([...WEBSITE_PAGES].sort()).toEqual(["acceptable-use", "contact", "help", "pricing", "refunds", "status", "talk-to-us"]);
+    expect(SITE_PAGES.filter((p) => !WEBSITE_PAGES.includes(p))).toEqual(["how-it-works", "security"]);
     for (const page of SITE_PAGES.filter((p) => !WEBSITE_PAGES.includes(p))) expect(isServed({ kind: "page", page }, "website")).toBe(false);
   });
 

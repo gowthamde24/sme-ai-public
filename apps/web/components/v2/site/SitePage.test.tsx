@@ -193,15 +193,11 @@ describe("The assistant's flow on the business pages and the other pages (night 
       expect([...block.matchAll(/href="([^"]+)"/g)].map((m) => m[1])).toEqual(["/pricing"]);
     }
   });
-  it("the pricing page has the three paid plans (Pay as you go, Pro, Business) with their prices, worded 'With paid plans (from February 2027)', and no old plan name", () => {
+  it("the pricing page has the three plans (Pay as you go, Pro, Business) with their prices (launch pricing page, 29 Nov 2026: the approved mock; its tests are in public/PublicPages.test.tsx), and no old plan name", () => {
     const html = render("en", { kind: "page", page: "pricing" });
-    const paid = html.match(/data-plan-group="paid"[\s\S]*?data-part="every-plan"/)![0];
-    expect([...paid.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["Pay as you go", "Pro", "Business"]);
-    expect([...paid.matchAll(/data-part="plan-price"[\s\S]*?<span[^>]*>([^<]+)<\/span>/g)].map((m) => m[1])).toEqual(["\u20b9499", "\u20b91,999", "\u20b95,999"]);
-    expect(text(html)).toContain("With paid plans (from February 2027)");
+    expect([...html.matchAll(/data-plan="(\w+)"/g)].map((m) => m[1])).toEqual(["payg", "pro", "business"]);
+    expect(text(html)).toMatch(/\u20b9499[\s\S]*\u20b91,999[\s\S]*\u20b95,999/);
     expect(text(html)).not.toMatch(/Lead Desk|Workforce plans|Starter|Growth|unlimited/);
-    expect(html).not.toContain('data-plan-group="calls"');
-    expect(html).not.toContain('data-plan-group="main"');
   });
   it("how it works starts with the six steps, then the six AI workers of the full team", () => {
     const html = render("en", { kind: "page", page: "how-it-works" });
@@ -212,37 +208,16 @@ describe("The assistant's flow on the business pages and the other pages (night 
 });
 
 describe("no price of ours anywhere on the public site except the three paid plans (owner's final numbers, 19 Nov 2026) and no 'no card' claim", () => {
-  const OWN = new Set(["\u20b9499", "\u20b91,999", "\u20b95,999", "\u20b95", "\u20b9299", "\u20b950", "\u20b949", "\u20b939", "\u20b929"]);
+  const OWN = new Set(["\u20b9499", "\u20b91,999", "\u20b95,999", "\u20b95", "\u20b9299", "\u20b950", "\u20b949", "\u20b939", "\u20b929", "\u20b9100"]); // (\u20b9100: the free start of the launch pricing page and help)
   it.each(cases)("%s: no amount except the plans' own, no card claim", (_n, lang, target) => {
     // landing v2's labelled examples show a customer's own budget and the visitor's own estimate in rupees (never a price of ours): the hero stage, the sample call and the leak; the plans' own numbers are lib/site/plans.ts
     const html = render(lang, target).replace(/data-part="leak"[\s\S]*?<\/section>/, ""); // the counter's own estimate in rupees (the visitor's sliders) is not a price of ours
     const text = htmlText(html);
     for (const amount of text.match(/\u20b9\s?\d+(?:,\d{3})*/g) ?? []) expect(OWN.has(amount.replace(/\s/g, "")), `${amount} is not one of the plans' own numbers`).toBe(true);
     expect(text).not.toMatch(/\bRs\.?\s?\d|\bINR\b|रुपये\s?\d|\d\s?रुपये|రూపాయలు\s?\d/);
-    expect(text).not.toMatch(/\bno card\b|without a card|no credit card/i);
+    // the launch pages (pricing, help articles) say "No card" on purpose (planner decision, 25 Nov 2026: Rs 100 free to start, no card); the rest of the site does not claim it
+    if (target.kind !== "article" && !(target.kind === "page" && ["pricing", "help"].includes(target.page))) expect(text).not.toMatch(/\bno card\b|without a card|no credit card/i);
     expect(html).not.toMatch(/"price"|priceCurrency/);
-  });
-});
-
-describe("the pricing page", () => {
-  const html = render("en", { kind: "page", page: "pricing" });
-  const text = htmlText(html);
-  it("shows the three paid plans with their prices and what every plan includes, worded for paid plans from February 2027; early access is free and the button says so", () => {
-    for (const x of ["Pay as you go", "\u20b9499", "Pro", "\u20b91,999", "Recommended", "Business", "\u20b95,999", "+ 18% GST", "Calls: \u20b95 a minute", "500 minutes included", "1,500 minutes included", "Find customers: 2 searches free a month, then \u20b949 each", "Find customers: 10 searches a month, then \u20b939 each", "Find customers: 100 searches a month, then \u20b929 each", "Priority set-up", "Done-for-you setup", "Founding offer", "Early access is free. Paid plans start in February 2027"]) expect(text, x).toContain(x);
-    for (const x of ["1 phone number included. More numbers: \u20b9299 a month each", "Calls are billed every 30 seconds", "Calls nobody answers are free", "WhatsApp at Meta's own price, no markup from us", "No charge for AI actions", "Start with \u20b950 free in your wallet", "from about 300 minutes a month Pro costs less than Pay as you go"]) expect(text, x).toContain(x);
-    expect(text).toContain("Join early access");
-    expect(text.match(/Get free early access/g)).toHaveLength(3); // the plans' button (owner, 19 Nov 2026), and the same line as the home page
-    expect(text).toContain("Free early access until paid plans start");
-    expect(text).not.toMatch(/unlimited|most popular|Lead Desk/i);
-    expect(html).not.toMatch(/guarantee/i);
-  });
-  it("six questions as native disclosures; the paid-plan answers say 'With paid plans (from February 2027)' and the early-access ones say it is free", () => {
-    const faq = html.match(/<section[^>]*id="faq"[\s\S]*?<\/section>/)![0];
-    expect(text.includes("What is a minute?")).toBe(true);
-    for (const q of ["What is a minute?", "What if I run out of minutes?", "Can I change my plan?", "Is GST included?", "Is there a free start?", "How do phone numbers work?"]) expect(htmlText(faq), q).toContain(q);
-    expect(htmlText(faq).match(/With paid plans \(from February 2027\)/g)!.length).toBeGreaterThanOrEqual(5);
-    expect(htmlText(faq)).toContain("Early access is free, so there is nothing to run out of.");
-    expect(htmlText(faq)).not.toMatch(/500 minutes for|pilot/i);
   });
 });
 
@@ -317,12 +292,3 @@ describe("the contact and the calculator, when our WhatsApp number is not set up
   });
 });
 
-describe("free early access on the pricing page (owner's launch scope, 18 Nov)", () => {
-  it("says so above the future plans when EARLY_ACCESS is on, and keeps the old note when it is off", () => {
-    vi.stubEnv("EARLY_ACCESS", "1");
-    expect(render("en", { kind: "page", page: "pricing" })).toContain("Free during early access");
-    vi.stubEnv("EARLY_ACCESS", "");
-    expect(render("en", { kind: "page", page: "pricing" })).not.toContain("use everything free while we open");
-    vi.unstubAllEnvs();
-  });
-});

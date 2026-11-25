@@ -15,7 +15,7 @@ import { isServed } from "@/lib/site/mode";
 import { sitePath, SITE_PAGES, type SitePage, type SiteTarget } from "@/lib/site/paths";
 
 const row = "inline-flex min-h-11 min-w-11 items-center text-sm font-medium text-ink hover:underline";
-const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help" };
+const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help" | "nav.status" | "nav.aup" | "nav.refunds" | "nav.talk"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help", status: "nav.status", "acceptable-use": "nav.aup", refunds: "nav.refunds", "talk-to-us": "nav.talk" };
 
 /** The name of each language in that language, for the footer's language links (the same page in each). */
 
