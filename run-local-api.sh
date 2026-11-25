@@ -34,6 +34,8 @@ BILLING_EMAIL_SENDER=fake OUTBOX_ADAPTER=fake OUTREACH_DIALER=fake META_LEAD_PRO
 WEB_SEARCH_PROVIDER=fake PLACES_PROVIDER=fake METALS_PROVIDER=fake INDIAMART_PROVIDER=fake PAYMENTS_PROVIDER=fake CALLS_PROVIDER=fake LEAD_DND_PROVIDER=fake PHONE_NUMBERS_PROVIDER=fake GOOGLE_CALENDAR_FAKE=true
 # connectors (fake IndiaMART, payment links, calls) are bound to ONE workspace: the first declared staging work workspace, unless you name another
 INTEGRATIONS_TENANT_ID="${INTEGRATIONS_TENANT_ID:-${ASSISTANT_WORK_TENANTS%%;*}}"
+# this machine is the public address of the API and the web: the fake Google Calendar sends the browser back to it, payment and call links point at it
+PUBLIC_BASE_URL="http://localhost:${PORT:-8000}" PUBLIC_WEB_BASE_URL=http://localhost:3000
 EXOTEL_WEBHOOK_TOKEN=local-fake-webhook-token-0123456789   # the fake call bridge still checks one (a made-up local value)
 unset RESEND_API_KEY LEAD_RESEND_API_KEY LEAD_RESEND_WEBHOOK_SECRET WHATSAPP_ACCESS_TOKEN META_PAGE_TOKEN PLIVO_AUTH_ID PLIVO_AUTH_TOKEN EXOTEL_API_KEY EXOTEL_API_TOKEN EXOTEL_SID EXOTEL_STREAM_SECRET
 # the Razorpay TEST keys (sourced above, if the owner's file exists) keep BILLING_PROVIDER=razorpay in TEST mode; without them it stays the fake
