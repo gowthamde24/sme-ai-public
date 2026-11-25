@@ -268,3 +268,9 @@ export const sentenceForms = (): boolean => jobsScreens() !== "off" && !settings
  * answer 404 while it is off), anything else = the page as it was. Off in production until the planner's run.
  */
 export const whatYouSellLists = (value: string | undefined = process.env.WHAT_YOU_SELL_LISTS): boolean => value === "1";
+
+/**
+ * Credits and billing on C1's top-up routes (29 Nov 2026; docs/contracts/credits-topup.md): the balance with the minutes it covers, Add credits through Razorpay Checkout (the faked payment on staging), the low-balance line, the statement and the GST invoices. `1` = on (the API's own
+ * PRICING_V2 must be on too: its routes answer 404 while it is off); anything else = the Billing page as it was. Off in production until the planner's run and the owner's Razorpay keys.
+ */
+export const creditsScreens = (value: string | undefined = process.env.CREDITS_SCREENS): boolean => value === "1";

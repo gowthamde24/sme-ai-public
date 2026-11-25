@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { BillingV2 } from "@/components/v2/app/billing/v2/BillingV2";
+import { CreditsPage } from "@/components/v2/app/credits/CreditsPage";
 import { BillingV6 } from "@/components/v2/app/billing/BillingV6";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { ApiDownV2, NotShownV2, PageTop } from "@/components/v2/app/parts";
@@ -8,7 +9,8 @@ import { pageMain } from "@/components/v2/app/ui";
 import { appT } from "@/i18n/app";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
-import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError, apiRequest, fetchTenant } from "@/lib/api/client";
+import { parseBillingBalance } from "@/lib/billing-v6/balance";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { readWallet } from "@/lib/api/wallet";
 import { escalate } from "@/lib/api/failure";
@@ -16,9 +18,11 @@ import { requireUser } from "@/lib/auth/session";
 import { readBillingBalance, readInvoices, readPricing } from "@/lib/billing-v6/source";
 import { TOPUP_CHOICES } from "@/lib/billing-v6/mock-state";
 import { formatRupeesShort } from "@/lib/money";
-import { balanceScreens, billingV2, designV6, earlyAccess } from "@/lib/screens/flag";
+import { getOptions, getStatement, listTopups } from "@/lib/api/credits";
+import { balanceScreens, billingV2, creditsScreens, designV6, earlyAccess } from "@/lib/screens/flag";
 
 import { freeStartAction, setLimitAction, topupAction } from "./actions";
+import { confirmTopupAction, createTopupAction, failTopupAction, loadStatementAction } from "./credits-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +49,29 @@ export default async function BillingPage({ params, searchParams }: PageProps<"/
   // free early access (EARLY_ACCESS=1): nothing to pay, no balance, no top-up, no plan to pick; a link that still points here says so
   if (earlyAccess()) return (<main className={pageMain} lang={lang}><PageTop title={t("ea.title")} sub={t("ea.body")} /></main>);
   const base = `/app/tenants/${tenantId}`;
+  // CREDITS_SCREENS (29 Nov 2026): the balance, Add credits (Razorpay Checkout), the low-balance line, the statement and the GST invoices, on C1's credits routes (a part that cannot be read is left out, never filled in)
+  if (creditsScreens()) {
+    const [balance, options, topups, statement] = await Promise.all([
+      apiRequest(`/v1/tenants/${tenantId}/billing/balance`, user.accessToken).then(parseBillingBalance).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
+      getOptions(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
+      listTopups(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
+      getStatement(user.accessToken, tenantId, null).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)),
+    ]);
+    return (
+      <CreditsPage
+        words={wordsFor(lang, ["cr."])}
+        lang={lang}
+        base={base}
+        help={helpTipFor(lang, base, "billing", true)}
+        balance={balance}
+        options={options}
+        topups={topups}
+        statement={statement}
+        owner={tenant.role === "owner"}
+        actions={{ create: createTopupAction.bind(null, tenantId), confirm: confirmTopupAction.bind(null, tenantId), fail: failTopupAction.bind(null, tenantId), statement: loadStatementAction.bind(null, tenantId) }}
+      />
+    );
+  }
   // BILLING_V2 (owner's final pricing): ONE ₹ wallet with a usage line per feature, limits, warnings, the upgrade hint and numbers on demand; unset = the page below, unchanged
   if (billingV2() !== "off") {
     const demo = (await searchParams).demo;

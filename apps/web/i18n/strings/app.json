@@ -129556,5 +129556,511 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "cr.title": {
+  "en": "Credits and billing",
+  "te": "క్రెడిట్స్, బిల్లింగ్",
+  "hi": "क्रेडिट और बिलिंग",
+  "kn": "ಕ್ರೆಡಿಟ್ ಮತ್ತು ಬಿಲ್ಲಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.sub": {
+  "en": "Your balance, what you used, and how to add more.",
+  "te": "మీ బ్యాలెన్స్, మీరు వాడినది, ఇంకా ఎలా add చేయాలి.",
+  "hi": "आपका बैलेंस, क्या इस्तेमाल हुआ, और और कैसे जोड़ें।",
+  "kn": "ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್, ಬಳಸಿದ್ದು, ಮತ್ತು ಇನ್ನಷ್ಟು ಹೇಗೆ ಸೇರಿಸುವುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.balance": {
+  "en": "Balance",
+  "te": "బ్యాలెన్స్",
+  "hi": "बैलेंस",
+  "kn": "ಬ್ಯಾಲೆನ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.minutes": {
+  "en": "about {n} minutes of calls",
+  "te": "సుమారు {n} నిమిషాల కాల్స్",
+  "hi": "लगभग {n} मिनट के कॉल",
+  "kn": "ಸುಮಾರು {n} ನಿಮಿಷದ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.last": {
+  "en": "Last top-up",
+  "te": "చివరి టాప్-అప్",
+  "hi": "आख़िरी टॉप-अप",
+  "kn": "ಕೊನೆಯ ಟಾಪ್-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.none": {
+  "en": "None yet",
+  "te": "ఇంకా లేదు",
+  "hi": "अभी नहीं",
+  "kn": "ಇನ್ನೂ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.add": {
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ add చేయండి",
+  "hi": "क्रेडिट जोड़ें",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.note": {
+  "en": "Credits never run out. ₹1 of credit is ₹1. Calls use it as they happen.",
+  "te": "క్రెడిట్స్ ఎప్పుడూ అయిపోవు. ₹1 క్రెడిట్ అంటే ₹1. కాల్స్ జరిగేకొద్దీ వాడతాయి.",
+  "hi": "क्रेडिट कभी खत्म नहीं होते। ₹1 का क्रेडिट यानी ₹1। कॉल होते हुए इन्हें इस्तेमाल करते हैं।",
+  "kn": "ಕ್ರೆಡಿಟ್ ಎಂದೂ ಮುಗಿಯುವುದಿಲ್ಲ. ₹1 ಕ್ರೆಡಿಟ್ ಎಂದರೆ ₹1. ಕರೆಗಳು ಆಗುವಂತೆ ಬಳಕೆಯಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.low": {
+  "en": "Your balance is low: about {n} minutes of calls left.",
+  "te": "మీ బ్యాలెన్స్ తక్కువగా ఉంది: సుమారు {n} నిమిషాల కాల్స్ మిగిలాయి.",
+  "hi": "आपका बैलेंस कम है: लगभग {n} मिनट के कॉल बचे हैं।",
+  "kn": "ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್ ಕಡಿಮೆ ಇದೆ: ಸುಮಾರು {n} ನಿಮಿಷದ ಕರೆಗಳು ಉಳಿದಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.topups": {
+  "en": "Top-ups",
+  "te": "టాప్-అప్‌లు",
+  "hi": "टॉप-अप",
+  "kn": "ಟಾಪ್-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.statement": {
+  "en": "Statement",
+  "te": "స్టేట్‌మెంట్",
+  "hi": "स्टेटमेंट",
+  "kn": "ಸ್ಟೇಟ್‌ಮೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.statement.none": {
+  "en": "Nothing yet. Top-ups and calls appear here as they happen.",
+  "te": "ఇంకేమీ లేదు. top-ups, కాల్స్ జరిగేకొద్దీ ఇక్కడ కనిపిస్తాయి.",
+  "hi": "अभी कुछ नहीं। top-ups और कॉल होते ही यहाँ दिखेंगे।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಇಲ್ಲ. top-ups ಮತ್ತು ಕರೆಗಳು ಆದಂತೆ ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.more": {
+  "en": "Show earlier",
+  "te": "ముందున్నవి చూపించండి",
+  "hi": "पहले वाले दिखाएँ",
+  "kn": "ಹಿಂದಿನವು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.invoice": {
+  "en": "Invoice {n}",
+  "te": "ఇన్వాయిస్ {n}",
+  "hi": "इनवॉइस {n}",
+  "kn": "ಇನ್ವಾಯ್ಸ್ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.invoices": {
+  "en": "Invoices",
+  "te": "ఇన్వాయిస్లు",
+  "hi": "इनवॉइस",
+  "kn": "ಇನ್ವಾಯ್ಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.invoices.none": {
+  "en": "An invoice is made after each top-up and appears here.",
+  "te": "ప్రతి top-up తర్వాత ఇన్వాయిస్ తయారవుతుంది, ఇక్కడ కనిపిస్తుంది.",
+  "hi": "हर top-up के बाद इनवॉइस बनता है और यहाँ दिखता है।",
+  "kn": "ಪ್ರತಿ top-up ನಂತರ ಇನ್ವಾಯ್ಸ್ ಆಗುತ್ತದೆ, ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.details": {
+  "en": "Billing details",
+  "te": "బిల్లింగ్ వివరాలు",
+  "hi": "बिलिंग विवरण",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ವಿವರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.details.t": {
+  "en": "Your business name and GSTIN go on every invoice. Change them in Settings.",
+  "te": "మీ బిజినెస్ పేరు, GSTIN ప్రతి ఇన్వాయిస్‌లో ఉంటాయి. Settings లో మార్చండి.",
+  "hi": "आपका बिज़नेस नाम और GSTIN हर इनवॉइस पर आते हैं। Settings में बदलें।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಹೆಸರು ಮತ್ತು GSTIN ಪ್ರತಿ ಇನ್ವಾಯ್ಸ್‌ನಲ್ಲಿ ಇರುತ್ತವೆ. Settings ನಲ್ಲಿ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.details.go": {
+  "en": "Open billing details",
+  "te": "బిల్లింగ్ వివరాలు తెరవండి",
+  "hi": "बिलिंग विवरण खोलें",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ವಿವರ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.sheet.title": {
+  "en": "Add credits",
+  "te": "క్రెడిట్స్ add చేయండి",
+  "hi": "क्रेडिट जोड़ें",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.sheet.close": {
+  "en": "Close",
+  "te": "మూసివేయి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.sheet.custom": {
+  "en": "Another amount (₹{min} to ₹{max})",
+  "te": "ఇంకో మొత్తం (₹{min} నుంచి ₹{max})",
+  "hi": "कोई और रकम (₹{min} से ₹{max})",
+  "kn": "ಬೇರೆ ಮೊತ್ತ (₹{min} ರಿಂದ ₹{max})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.sheet.you_get": {
+  "en": "Credits you get",
+  "te": "మీకు వచ్చే క్రెడిట్స్",
+  "hi": "आपको मिलने वाले क्रेडिट",
+  "kn": "ನಿಮಗೆ ಸಿಗುವ ಕ್ರೆಡಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.sheet.gst": {
+  "en": "GST {p}%",
+  "te": "GST {p}% (జీఎస్టీ)",
+  "hi": "GST {p}% (जीएसटी)",
+  "kn": "GST {p}% (ಜಿಎಸ್‌ಟಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.sheet.total": {
+  "en": "You pay",
+  "te": "మీరు చెల్లించేది",
+  "hi": "आप देते हैं",
+  "kn": "ನೀವು ಪಾವತಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.sheet.pay": {
+  "en": "Pay {total}",
+  "te": "{total} చెల్లించండి",
+  "hi": "{total} दें",
+  "kn": "{total} ಪಾವತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.sheet.test": {
+  "en": "This is a test: no money moves.",
+  "te": "ఇది టెస్ట్: డబ్బు కదలదు.",
+  "hi": "यह टेस्ट है: कोई पैसा नहीं जाता।",
+  "kn": "ಇದು ಟೆಸ್ಟ್: ಹಣ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.sheet.never": {
+  "en": "Payment is by card, UPI or net banking through Razorpay. We never see your card.",
+  "te": "చెల్లింపు కార్డ్, UPI లేదా నెట్ బ్యాంకింగ్ ద్వారా Razorpay లో. మీ కార్డ్ మాకు కనిపించదు.",
+  "hi": "भुगतान कार्ड, UPI या नेट बैंकिंग से Razorpay के ज़रिए होता है। हम आपका कार्ड नहीं देखते।",
+  "kn": "ಪಾವತಿ ಕಾರ್ಡ್, UPI ಅಥವಾ ನೆಟ್ ಬ್ಯಾಂಕಿಂಗ್ ಮೂಲಕ Razorpay ನಲ್ಲಿ. ನಿಮ್ಮ ಕಾರ್ಡ್ ನಮಗೆ ಕಾಣುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.paid": {
+  "en": "Done. {added} added to your balance.",
+  "te": "అయింది. మీ బ్యాలెన్స్‌కి {added} add అయింది.",
+  "hi": "हो गया। आपके बैलेंस में {added} जुड़ गए।",
+  "kn": "ಆಯಿತು. ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್‌ಗೆ {added} ಸೇರಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.waiting": {
+  "en": "We are checking your payment. This takes a few seconds.",
+  "te": "మీ చెల్లింపును చెక్ చేస్తున్నాం. కొన్ని సెకన్లు పడుతుంది.",
+  "hi": "आपका भुगतान जाँच रहे हैं। कुछ सेकंड लगते हैं।",
+  "kn": "ನಿಮ್ಮ ಪಾವತಿ ಪರಿಶೀಲಿಸುತ್ತಿದ್ದೇವೆ. ಕೆಲವು ಸೆಕೆಂಡ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.err.amount": {
+  "en": "Choose an amount from ₹100 to ₹1,00,000, in whole rupees.",
+  "te": "₹100 నుంచి ₹1,00,000 మధ్య ఒక మొత్తం ఎంచుకోండి, పూర్తి రూపాయల్లో.",
+  "hi": "₹100 से ₹1,00,000 के बीच कोई रकम चुनें, पूरे रुपयों में।",
+  "kn": "₹100 ರಿಂದ ₹1,00,000 ನಡುವೆ ಒಂದು ಮೊತ್ತ ಆರಿಸಿ, ಪೂರ್ಣ ರೂಪಾಯಿಯಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.err.forbidden": {
+  "en": "Only the Owner can add credits.",
+  "te": "క్రెడిట్స్‌ని Owner మాత్రమే add చేయగలరు.",
+  "hi": "क्रेडिट सिर्फ़ Owner जोड़ सकते हैं।",
+  "kn": "ಕ್ರೆಡಿಟ್ ಅನ್ನು Owner ಮಾತ್ರ ಸೇರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.err.closed": {
+  "en": "Payment window closed. Nothing was charged. You can try again.",
+  "te": "చెల్లింపు విండో మూసేశారు. ఏమీ ఛార్జ్ కాలేదు. మళ్ళీ ప్రయత్నించవచ్చు.",
+  "hi": "भुगतान विंडो बंद हो गई। कुछ चार्ज नहीं हुआ। फिर कोशिश कर सकते हैं।",
+  "kn": "ಪಾವತಿ ವಿಂಡೋ ಮುಚ್ಚಿದೆ. ಏನೂ ಚಾರ್ಜ್ ಆಗಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.err.failed": {
+  "en": "The payment did not go through. Nothing was added. Try again.",
+  "te": "చెల్లింపు పూర్తి కాలేదు. ఏమీ add కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "भुगतान नहीं हो पाया। कुछ जुड़ा नहीं। फिर कोशिश कीजिए।",
+  "kn": "ಪಾವತಿ ಆಗಲಿಲ್ಲ. ಏನೂ ಸೇರಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.err.unavailable": {
+  "en": "We could not do that just now. Try again in a minute.",
+  "te": "ఇప్పుడు అది చేయలేకపోయాం. ఒక నిమిషం తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो पाया। एक मिनट बाद फिर कोशिश कीजिए।",
+  "kn": "ಈಗ ಅದನ್ನು ಮಾಡಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.kind.credit": {
+  "en": "Added",
+  "te": "add అయింది",
+  "hi": "जुड़ा",
+  "kn": "ಸೇರಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.kind.usage": {
+  "en": "Calls and messages",
+  "te": "కాల్స్, మెసేజ్‌లు",
+  "hi": "कॉल और संदेश",
+  "kn": "ಕರೆಗಳು, ಸಂದೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.kind.refund": {
+  "en": "Refund",
+  "te": "రీఫండ్",
+  "hi": "रिफ़ंड",
+  "kn": "ರೀಫಂಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.kind.expiry": {
+  "en": "Expired",
+  "te": "గడువు తీరింది",
+  "hi": "समय पूरा",
+  "kn": "ಅವಧಿ ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.state.pending": {
+  "en": "Waiting for payment",
+  "te": "చెల్లింపు కోసం చూస్తున్నాం",
+  "hi": "भुगतान का इंतज़ार",
+  "kn": "ಪಾವತಿಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.state.paid": {
+  "en": "Paid",
+  "te": "చెల్లించారు",
+  "hi": "चुकाया",
+  "kn": "ಪಾವತಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.state.failed": {
+  "en": "Did not go through",
+  "te": "పూర్తి కాలేదు",
+  "hi": "नहीं हो पाया",
+  "kn": "ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.state.abandoned": {
+  "en": "Not completed",
+  "te": "పూర్తి చేయలేదు",
+  "hi": "पूरा नहीं हुआ",
+  "kn": "ಪೂರ್ಣಗೊಂಡಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.inv.draft": {
+  "en": "Draft: the seller's tax details are not set yet, so this is not a tax invoice.",
+  "te": "డ్రాఫ్ట్: అమ్మేవారి tax వివరాలు ఇంకా సెట్ చేయలేదు, కాబట్టి ఇది tax invoice కాదు.",
+  "hi": "ड्राफ़्ट: बेचने वाले के tax विवरण अभी सेट नहीं हैं, इसलिए यह tax invoice नहीं है।",
+  "kn": "ಡ್ರಾಫ್ಟ್: ಮಾರಾಟಗಾರರ tax ವಿವರ ಇನ್ನೂ ಸೆಟ್ ಆಗಿಲ್ಲ, ಹಾಗಾಗಿ ಇದು tax invoice ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.inv.print": {
+  "en": "Print",
+  "te": "ప్రింట్",
+  "hi": "प्रिंट",
+  "kn": "ಪ್ರಿಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cr.inv.back": {
+  "en": "← Credits and billing",
+  "te": "← క్రెడిట్స్, బిల్లింగ్",
+  "hi": "← क्रेडिट और बिलिंग",
+  "kn": "← ಕ್ರೆಡಿಟ್ ಮತ್ತು ಬಿಲ್ಲಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
