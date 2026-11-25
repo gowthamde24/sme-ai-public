@@ -134550,5 +134550,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.kind.key": {
+  "en": "IndiaMART key",
+  "te": "ఇండియామార్ట్ కీ",
+  "hi": "इंडियामार्ट की",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್ ಕೀ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.key": {
+  "en": "Open Lead sources",
+  "te": "లీడ్ సోర్సెస్ తెరవండి",
+  "hi": "लीड सोर्सेस खोलें",
+  "kn": "ಲೀಡ್ ಸೋರ್ಸ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

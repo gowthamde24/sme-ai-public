@@ -43,6 +43,13 @@ describe("targetPaths: the phone assistant has no price list", () => {
   });
 });
 
+describe("targetPaths: the IndiaMART key was refused", () => {
+  it("`lead_sources` opens Lead sources", async () => {
+    const key = { type: "lead_sources" as const, id: T };
+    expect((await targetPaths("tok", T, [key]))(key)).toBe(`/app/tenants/${T}/lead-sources`);
+  });
+});
+
 describe("targetPaths: a quote opens its enquiry", () => {
   it("the newest 50 come from the list; an older one from the Today summary when it holds it; only what the summary does not hold is read one by one", async () => {
     summaryEnquiry.mockImplementation(async (_t: string, id: string) => (id === Q_SUMMARY ? E_SUMMARY : id === Q_UNPLACED ? null : undefined));
