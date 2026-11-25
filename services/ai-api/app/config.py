@@ -515,6 +515,14 @@ class Settings(BaseSettings):
     # The number picker (28 Nov 2026): a business picks its own VoiceLink number; we buy it with OUR
     # money. Off until the planner turns it on (and the database switch is on too).
     phone_picker: bool = False
+    # Extra lines (26 Nov 2026; migration 20261231992500): a workspace's "calls at once" is
+    # its own count (2 for each number + the extra lines it bought from its credits), not
+    # the deployment's. OFF until the planner turns it on (the database switch is off too).
+    # TELEPHONY_MAX_CONCURRENT stays as the hard cap above every workspace.
+    extra_lines: bool = False
+    # Buying the channel at VoiceLink for an extra line. OFF = the fake provider (nothing is
+    # bought, nothing is called); ON needs the VoiceLink login, never without the planner.
+    voicelink_channel_buy: bool = False
     # business KYC per VoiceLink client (Model B, 24 Nov 2026; docs/contracts/business-kyc.md):
     # off in production. ON: a number is bought under the workspace's OWN client once its KYC
     # is complete (else `kyc_required`); KYC_RETURN_URL is the page DigiLocker returns to.

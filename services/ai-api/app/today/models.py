@@ -79,6 +79,8 @@ class NeedsYouItem(_Out):
         "phone_needs_prices",
         # 24 Nov 2026 (migration 20261231992210): the call balance is under about 4 minutes of calls and no included minutes are left; the item opens the top-up page (target billing)
         "credits_low",
+        # 26 Nov 2026 (migration 20261231992500): an extra line's monthly renewal could not be paid (grace days, or paused); the item opens the top-up page (target billing)
+        "line_renewal",
     ]
     id: uuid.UUID
     customer: str

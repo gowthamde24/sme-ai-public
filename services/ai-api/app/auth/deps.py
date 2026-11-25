@@ -256,6 +256,9 @@ class Runtime:
     auto_reply: AutoReplySwitch | None = None
     # Google Calendar 2-way sync (app/google_calendar); None = not configured
     google_calendar: Any = None
+    # extra lines: more "calls at once" for a workspace (app/extra_lines)
+    # None: EXTRA_LINES=off, every route answers 404
+    extra_lines: Any = None
 
 
 @dataclass(frozen=True)

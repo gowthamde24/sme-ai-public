@@ -195,6 +195,7 @@ export const API_ERROR_CODES = [
   "lead_sources_unavailable",
   "limit_reached",
   "line_not_found",
+  "lines_unavailable",
   "live_not_available",
   "locked_for_business_type",
   "mapping_required_missing",

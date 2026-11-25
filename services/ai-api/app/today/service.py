@@ -104,6 +104,8 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return "Add your prices so the phone assistant can answer them: a price on each item, or a price list. Until then it tells callers the team will call back."
     if kind == "credits_low":
         return "Your call balance is almost used up: under 4 minutes of calls are left. Top up so calls do not stop."
+    if kind == "line_renewal":
+        return "An extra line could not be renewed: there are not enough credits. Add credits so it keeps working."
     if kind == "message_needs_change":
         return f"WhatsApp sent the message \"{ref}\" back. Open Chats, Templates to see why and change it."
     if kind == "material_quote_approval":
@@ -125,7 +127,7 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
 
 _CAMPAIGN_WORDS = {"payment_due": "payment reminder", "fee_due": "fee reminder", "delivery_update": "delivery update", "event": "event message", "exam": "exam message", "holiday": "holiday message"}
 # the "customer" of a row that is not about one customer
-_NOT_A_CUSTOMER = {"fees_overdue": "Fees due", "voice_credits": "Voice credits", "message_needs_change": "WhatsApp message", "phone_needs_prices": "Phone assistant", "credits_low": "Balance"}
+_NOT_A_CUSTOMER = {"fees_overdue": "Fees due", "voice_credits": "Voice credits", "message_needs_change": "WhatsApp message", "phone_needs_prices": "Phone assistant", "credits_low": "Balance", "line_renewal": "Balance"}
 
 
 _STEP_TEXT = {
