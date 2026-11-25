@@ -44,7 +44,7 @@ describe("Add a line (EXTRA_LINES on)", () => {
     expect(screen.queryByRole("group", { name: "Add a line" })).toBeNull();
   });
   it("confirming asks for the line once, says it is done and refreshes the page", async () => {
-    const add = vi.fn(async (): Promise<LineResult> => OK);
+    const add = vi.fn(async (_key: string): Promise<LineResult> => OK);
     draw(overview(), { add });
     fireEvent.click(screen.getByRole("button", { name: "Add a line" }));
     fireEvent.click(screen.getByRole("button", { name: "Add the line" }));

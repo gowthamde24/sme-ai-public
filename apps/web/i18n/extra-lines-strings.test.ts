@@ -49,7 +49,7 @@ describe("the extra-lines strings", () => {
 });
 
 describe("the Pricing page row", () => {
-  const row = (site as unknown as Record<string, Entry>)["pp.sh.lines"];
+  const row = (site as unknown as Record<string, Entry & { ta: string }>)["pp.sh.lines"] as Entry & { ta: string };
   it("is one plain row in English, Telugu, Hindi, Kannada and Tamil, the number a placeholder, drafts", () => {
     expect(row.en).toBe("Extra calls at once: ₹{line} per line per month");
     for (const lang of ["te", "hi", "kn", "ta"] as const) {
