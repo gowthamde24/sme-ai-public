@@ -151,7 +151,7 @@ describe("the call list", () => {
     api.connect.mockResolvedValue({ bridge_id: "b", status: "ringing", replayed: true });
     expect(await connectCallAction(T, CALL)).toEqual({ ok: true, replayed: true });
     api.connect.mockRejectedValueOnce(refusal(409, "outside_calling_hours"));
-    expect(await connectCallAction(T, CALL)).toEqual({ ok: false, error: expect.stringContaining("9 am to 9 pm") });
+    expect(await connectCallAction(T, CALL)).toEqual({ ok: false, error: expect.stringContaining("10 am to 9 pm") });
     api.connect.mockRejectedValueOnce(refusal(422, "customer_phone_unusable"));
     expect(await connectCallAction(T, CALL)).toEqual({ ok: false, error: expect.stringContaining("wrong number") });
     api.connect.mockRejectedValueOnce(refusal(502, "call_provider_failed"));

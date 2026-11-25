@@ -18,7 +18,7 @@ export type Ctx = { token: string; tenantId: string };
 export type Facts = { legacyAddress: LegacyAddress | null; packDefault: SpeakTone; ownerName: string | null };
 export type SpeaksRead = { mode: "off" } | { mode: "unavailable" } | { mode: "ok"; demo: boolean; data: HowSpeaks };
 
-type Kept = { t?: SpeakTone; w?: Partial<Record<SpeakLang, { s?: SpeakStyle }>>; i?: { k: IntroduceAs["kind"]; x: string | null }; b?: Background; a?: boolean; at?: string };
+type Kept = { t?: SpeakTone; w?: Partial<Record<SpeakLang, { s?: SpeakStyle }>>; i?: { k: IntroduceAs["kind"]; x: string | null }; b?: Background; a?: boolean; u?: string; at?: string };
 
 async function load(): Promise<Kept> {
   try {
@@ -51,7 +51,7 @@ function build(k: Kept, f: Facts): HowSpeaks {
   return {
     tone: { value: saved ? (k.t as SpeakTone) : toneFromLegacy(f.legacyAddress, f.packDefault), source: saved ? "saved" : migrated ? "migrated" : "pack_default", packDefault: f.packDefault, options: [] },
     background: { value: k.b ?? "quiet_office", saved: k.b !== undefined, options: ((["quiet_office", "shop", "off"] as const).map((id) => ({ id, label: BACKGROUND_WORDS[id] ?? { en: id }, sampleUrl: null }))) },
-    sayAi: { value: k.a ?? false, saved: k.a !== undefined },
+    sayAi: { value: k.a ?? true, saved: k.a !== undefined, undertakingAt: k.a === false ? (k.u ?? null) : null }, // ON by default (lawyer's opinion, 25 Nov 2026)
     words,
     introduceAs: { ...ia, ownerName: f.ownerName },
     packDefaults: { tone: f.packDefault },
@@ -98,8 +98,12 @@ export async function saveSpeaks(ctx: Ctx, change: SpeaksChange, facts: Facts, n
     else k.b = change.background;
   }
   if (change.sayAi !== undefined) {
-    if (change.sayAi === null) delete k.a;
-    else k.a = change.sayAi;
+    if (change.sayAi === null) { delete k.a; delete k.u; }
+    else if (change.sayAi === false) {
+      if (change.sayAiUndertaking !== true) throw new ApiRequestError(422, "validation_error", "undertaking_required");
+      k.a = false;
+      k.u = new Date(now).toISOString();
+    } else { k.a = true; delete k.u; }
   }
   if (change.introduceAs) {
     if (change.introduceAs.kind === "owner" && !facts.ownerName) throw new ApiRequestError(422, "validation_error", "no_owner_name"); // (the contract: with no first name in the profile, "My name" cannot be used)

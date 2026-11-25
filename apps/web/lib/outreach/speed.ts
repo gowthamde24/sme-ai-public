@@ -9,7 +9,7 @@ export type SpeedRule = {
   enabled: boolean;
   /** In calling hours: call within this many minutes (1 to 120). */
   callWithinMinutes: number;
-  /** Outside calling hours: a WhatsApp message now, and the call at this minute of the next day (540 to 720, steps of 15; 570 = 09:30). */
+  /** Outside calling hours: a WhatsApp message now, and the call at this minute of the next day (600 to 720, steps of 15; 600 = 10:00; an older saved 540 to 599 is still read). */
   whatsappNow: boolean;
   callAtMinute: number;
   /** No answer: tries in all (1 to 6), the gap between them (1 to 48 hours), then a WhatsApp message. */
@@ -23,10 +23,10 @@ export type SpeedRule = {
 };
 export type SpeedRules = { default: SpeedRule; perSource: Partial<Record<SpeedSource, SpeedRule | null>> };
 
-export const DEFAULT_SPEED_RULE: SpeedRule = { enabled: true, callWithinMinutes: 2, whatsappNow: true, callAtMinute: 570, maxAttempts: 3, gapHours: 4, thenWhatsapp: true, hotLead: true, handoffTo: "owner", reminderMinutes: 15 };
+export const DEFAULT_SPEED_RULE: SpeedRule = { enabled: true, callWithinMinutes: 2, whatsappNow: true, callAtMinute: 600, maxAttempts: 3, gapHours: 4, thenWhatsapp: true, hotLead: true, handoffTo: "owner", reminderMinutes: 15 };
 
 export const CALL_WITHIN = [1, 2, 5, 10, 15, 30, 60, 120] as const;
-export const CALL_AT = [540, 555, 570, 585, 600, 630, 660, 690, 720] as const;
+export const CALL_AT = [600, 630, 660, 690, 720] as const;
 export const ATTEMPTS = [1, 2, 3, 4, 5, 6] as const;
 export const GAPS = [1, 2, 4, 6, 12, 24, 48] as const;
 export const REMINDERS = [5, 10, 15, 30, 60] as const;
@@ -81,7 +81,7 @@ export const speedRulesBody = (rules: SpeedRules) => ({
 function inputRule(v: unknown): SpeedRule | null {
   if (!isRec(v)) return null;
   const enabled = bool(v.enabled), whatsappNow = bool(v.whatsappNow), thenWhatsapp = bool(v.thenWhatsapp), hotLead = bool(v.hotLead);
-  const within = intIn(v.callWithinMinutes, 1, 120), at = intIn(v.callAtMinute, 540, 720), attempts = intIn(v.maxAttempts, 1, 6), gap = intIn(v.gapHours, 1, 48), reminder = intIn(v.reminderMinutes, 1, 600);
+  const within = intIn(v.callWithinMinutes, 1, 120), at = intIn(v.callAtMinute, 600, 720), attempts = intIn(v.maxAttempts, 1, 6), gap = intIn(v.gapHours, 1, 48), reminder = intIn(v.reminderMinutes, 1, 600);
   const to = typeof v.handoffTo === "string" && /^[A-Za-z0-9-]{1,64}$/.test(v.handoffTo) ? v.handoffTo : null;
   if (enabled === null || whatsappNow === null || thenWhatsapp === null || hotLead === null || within === null || at === null || at % 15 !== 0 || attempts === null || gap === null || reminder === null || to === null) return null;
   return { enabled, callWithinMinutes: within, whatsappNow, callAtMinute: at, maxAttempts: attempts, gapHours: gap, thenWhatsapp, hotLead, handoffTo: to, reminderMinutes: reminder };

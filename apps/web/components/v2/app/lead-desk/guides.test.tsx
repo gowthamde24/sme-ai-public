@@ -16,7 +16,7 @@ describe("Before you start calling", () => {
     const rules = within(container.querySelector("ol") as HTMLElement).getAllByRole("listitem");
     expect(rules).toHaveLength(5);
     expect(rules[0]).toHaveTextContent("Only call people who agreed.");
-    expect(rules[1]).toHaveTextContent("Calls go out between 9 am and 9 pm");
+    expect(rules[1]).toHaveTextContent("Calls go out between 10 am and 9 pm");
     expect(rules[2]).toHaveTextContent("never called again");
     expect(rules[3]).toHaveTextContent("Your business is the caller.");
     expect(container.querySelector("details")).toHaveAttribute("open");

@@ -274,7 +274,12 @@ describe("AppFrame", () => {
         <main id="page">The page</main>
       </AppFrame>,
     );
-  it("has a footer with the Privacy notice, the Terms and Cookie settings, after the page and above the phone's bottom bar (job BH)", async () => {
+  it("inside a workspace there is no legal footer any more (owner, 26 Nov 2026); the links are in Settings > Privacy and legal and in the ? menu", () => {
+    const { container } = frame(owner);
+    expect(container.querySelector('[data-frame="legal"]')).toBeNull();
+  });
+  it("has a footer with the Privacy notice, the Terms and Cookie settings, after the page and above the phone's bottom bar (job BH), outside a workspace (the workspace list)", async () => {
+    nav.pathname = "/app";
     const { container } = frame(owner);
     const footer = container.querySelector('[data-frame="legal"]') as HTMLElement;
     expect(footer.tagName).toBe("FOOTER");

@@ -4,12 +4,13 @@ import { useActionState, useId } from "react";
 
 import { alertBox, btnMain, fieldInput, fieldLabel, formCard } from "@/components/v2/app/ui";
 
-import { TYPE_TILE } from "@/components/v2/app/start/tile";
+import { TypeSearch } from "@/components/v2/app/start/TypeSearch";
+import type { TypeRow } from "@/lib/packs/type-search";
 import { makeT, type Words } from "@/components/v2/app/words";
 
 import { createTenantAction, type TenantFormState } from "./actions";
 
-export type TypeRow = { id: string; name: string; line: string };
+export type { TypeRow };
 
 export function CreateTenantForm({ words, types = [] }: { words?: Words; /** FIRST_RUN_TYPE: the business types (plain rows) asked before the workspace is made; empty = the form as it was */ types?: readonly TypeRow[] }) {
   const t = makeT(words);
@@ -43,15 +44,7 @@ export function CreateTenantForm({ words, types = [] }: { words?: Words; /** FIR
       {types.length > 0 ? (
         <fieldset data-part="create-type" className="m-0 mt-2 min-w-0 border-0 p-0">
           <legend className={fieldLabel}>{t("start.type.title")}</legend>
-          <div role="radiogroup" aria-label={t("start.type.title")} className="mt-1 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
-            {types.map((p) => (
-              <label key={p.id} data-type={p.id} className={TYPE_TILE}>
-                <input type="radio" name="pack" value={p.id} required className="sr-only" />
-                <span className="block text-[16px] font-semibold text-ink">{p.name}</span>
-                {p.line ? <span className="block text-sm text-muted">{p.line}</span> : null}
-              </label>
-            ))}
-          </div>
+          <TypeSearch choices={types} words={words} name="pack" required />
         </fieldset>
       ) : null}
       {state?.error && (

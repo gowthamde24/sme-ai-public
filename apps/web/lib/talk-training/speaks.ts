@@ -22,7 +22,8 @@ export const BACKGROUNDS = ["off", "quiet_office", "busy_office", "call_centre",
 export type Background = (typeof BACKGROUNDS)[number];
 export type BackgroundState = { value: Background; saved: boolean; /** the words of each choice as the API says them, per language (en, te, hi, kn, ...) */ options: { id: Background; label: Partial<Record<string, string>>; /** the API path of its 6-second preview (null for Off) */ sampleUrl: string | null }[] };
 /** "Say 'AI assistant' when greeting" (greeting-disclosure.md): false until the owner turns it on; `saved` = the owner chose. */
-export type SayAiState = { value: boolean; saved: boolean };
+/** `undertakingAt`: when the Owner accepted the written undertaking that lets the greeting stay off (null while it is on). */
+export type SayAiState = { value: boolean; saved: boolean; undertakingAt: string | null };
 export const EXAMPLE_LANGS = ["te", "kn", "hi", "en"] as const;
 export type ExampleLang = (typeof EXAMPLE_LANGS)[number];
 export type ToneSource = "saved" | "migrated" | "pack_default";
@@ -42,7 +43,7 @@ export type HowSpeaks = {
   updatedAt: string | null;
 };
 /** What the Owner changes: any subset (a key left out is not changed). `tone: null` resets to the business type's usual. */
-export type SpeaksChange = { tone?: SpeakTone | null; words?: Partial<Record<SpeakLang, { style?: SpeakStyle }>>; introduceAs?: IntroduceAs; background?: Background | null; sayAi?: boolean | null };
+export type SpeaksChange = { tone?: SpeakTone | null; words?: Partial<Record<SpeakLang, { style?: SpeakStyle }>>; introduceAs?: IntroduceAs; background?: Background | null; sayAi?: boolean | null; /** Needed with `sayAi: false`: the Owner accepted the written undertaking (the API keeps the date and who). */ sayAiUndertaking?: true };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const one = <T extends string>(list: readonly T[], v: unknown): T | null => ((list as readonly unknown[]).includes(v) ? (v as T) : null);
@@ -114,18 +115,18 @@ export function parseBackground(raw: unknown): BackgroundState | null {
 
 /** `say_ai_when_greeting {value, saved}`: absent = the API does not have it (null: no switch is drawn). */
 export function parseSayAi(raw: unknown): SayAiState | null {
-  return isRec(raw) && typeof raw.value === "boolean" ? { value: raw.value, saved: raw.saved === true } : null;
+  return isRec(raw) && typeof raw.value === "boolean" ? { value: raw.value, saved: raw.saved === true, undertakingAt: typeof raw.undertaking_accepted_at === "string" ? raw.undertaking_accepted_at.slice(0, 40) : null } : null;
 }
 
 /** The contract's migration of the old "How to address customers": plain (never chosen) = the business type's usual; sir_madam, garu and ji = Respectful. Used by the mock; the API does it for real. */
 export const toneFromLegacy = (address: LegacyAddress | null, packDefault: SpeakTone): SpeakTone => (address === "sir_madam" || address === "garu" || address === "ji" ? "respectful" : packDefault);
 
-export type SpeaksProblem = "tone" | "language" | "style" | "introduce" | "background" | "say_ai" | "empty";
+export type SpeaksProblem = "tone" | "language" | "style" | "introduce" | "background" | "say_ai" | "say_ai_undertaking" | "empty";
 /** The browser's change, checked again on the server with the contract's rules; the problem is a closed word, never the API's text. */
 export function speaksProblem(c: unknown): SpeaksProblem | null {
   if (!isRec(c)) return "empty";
   const keys = Object.keys(c);
-  if (keys.length === 0 || keys.some((k) => !["tone", "words", "introduceAs", "background", "sayAi"].includes(k))) return "empty";
+  if (keys.length === 0 || keys.some((k) => !["tone", "words", "introduceAs", "background", "sayAi", "sayAiUndertaking"].includes(k))) return "empty";
   if (c.tone !== undefined && c.tone !== null && one(TONES, c.tone) === null) return "tone";
   if (c.words !== undefined) {
     if (!isRec(c.words) || Object.keys(c.words).length === 0) return "language";
@@ -136,6 +137,8 @@ export function speaksProblem(c: unknown): SpeaksProblem | null {
   }
   if (c.background !== undefined && c.background !== null && one(BACKGROUNDS, c.background) === null) return "background";
   if (c.sayAi !== undefined && c.sayAi !== null && typeof c.sayAi !== "boolean") return "say_ai";
+  if (c.sayAiUndertaking !== undefined && c.sayAiUndertaking !== true) return "say_ai";
+  if (c.sayAi === false && c.sayAiUndertaking !== true) return "say_ai_undertaking"; // switching the greeting off needs the written undertaking (lawyer's opinion, 25 Nov 2026)
   if (c.introduceAs !== undefined) {
     const ia = parseIntroduceAs(c.introduceAs);
     if (!ia || introduceProblem(ia) !== null) return "introduce";
@@ -151,5 +154,6 @@ export function speaksToApi(c: SpeaksChange): Record<string, unknown> {
     ...(c.introduceAs ? { introduce_as: introduceToApi(c.introduceAs) } : {}),
     ...(c.background !== undefined ? { background: c.background } : {}),
     ...(c.sayAi !== undefined ? { say_ai_when_greeting: c.sayAi } : {}),
+    ...(c.sayAiUndertaking ? { say_ai_undertaking: { accepted: true } } : {}),
   };
 }

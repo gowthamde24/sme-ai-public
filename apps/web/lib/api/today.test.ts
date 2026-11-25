@@ -218,3 +218,13 @@ describe("an extra line that could not be renewed (26 Nov 2026, migration 202612
     expect(item.summary).toMatch(/not enough credits/);
   });
 });
+
+describe("the IndiaMART key was refused (25 Nov 2026, migration 20261231992420)", () => {
+  it("is read as its own kind, keeps the customer word IndiaMART and the API's sentence, and has a Lead sources target", async () => {
+    const { parseNeedsYouItem } = await import("./today");
+    const item = parseNeedsYouItem({ kind: "indiamart_key_expired", id: "11111111-aaaa-4aaa-8aaa-000000000003", customer: "IndiaMART", city: null, agent: "followup_desk", summary: "IndiaMART no longer accepts your key, so no new IndiaMART leads are coming in.", at: "2026-11-25T10:00:00Z", amount_paise: null, target: { type: "lead_sources", id: "11111111-aaaa-4aaa-8aaa-000000000004" } });
+    expect(item.kind).toBe("indiamart_key_expired");
+    expect(item.customer).toBe("IndiaMART");
+    expect(item.target).toEqual({ type: "lead_sources", id: "11111111-aaaa-4aaa-8aaa-000000000004" });
+  });
+});

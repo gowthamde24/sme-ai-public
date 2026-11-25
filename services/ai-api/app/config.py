@@ -492,6 +492,9 @@ class Settings(BaseSettings):
     # (app/lead_sources/indiamart_pull.py). Off by default: nothing is asked of IndiaMART and
     # nothing is read from Secret Manager.
     indiamart_pull: Literal["off", "on"] = "off"
+    # A web-address lead source also reads IndiaMART's Push API body
+    # (app/lead_sources/indiamart_push.py). Off by default.
+    indiamart_push: Literal["off", "on"] = "off"
     # Results into the business's own CRM or sheet (docs/contracts/crm-push.md): off (default;
     # the routes answer 404 and the worker pushes nothing: the kill switch) | on. Needs
     # WORKSPACE_SECRETS (the keys live in Secret Manager). Zoho CRM and Salesforce stay "needs

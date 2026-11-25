@@ -2,7 +2,7 @@
 Every call your assistant answered or made
 summary: Before you start calling Read the five rules
 - 1 Only call people who agreed. People who asked about your business, or said yes to calls. Not bought or collected lists.
-- 2 We fix the calling hours. Calls go out between 9 am and 9 pm. Outside these hours they wait.
+- 2 We fix the calling hours. Calls go out between 10 am and 9 pm. Outside these hours they wait.
 - 3 Do-not-call is automatic. When someone asks you to stop, they are added to your do-not-call list and are never called again.
 - 4 Your business is the caller. You are responsible for who is called and what is said. We place the call for you.
 - 5 Phone rules may apply. The national do-not-disturb list and phone company rules can stop some calls, mostly calls about offers.

@@ -43,12 +43,17 @@ export function TypeTiles({ groups, words, name = "type", otherId = null, askOth
         <label htmlFor={`${uid}-search`} className={authLabel}>
           {words.label}
         </label>
-        <input id={`${uid}-search`} type="search" value={query} placeholder={words.placeholder} autoComplete="off" onChange={(e) => setQuery(e.target.value)} className={authField} />
+        <input id={`${uid}-search`} type="search" value={query} placeholder={words.placeholder} autoComplete="off" onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key !== "Enter" || e.nativeEvent.isComposing) return; e.preventDefault(); const only = shown.flatMap((g) => g.options); if (text !== "" && only.length === 1) choose(only[0].id); }} className={authField} />
       </div>
       {shown.length === 0 ? (
-        <p role="status" className="m-0 text-base text-muted">
-          {words.none}
-        </p>
+        <div role="status" className="flex flex-wrap items-center gap-3 text-base">
+          <span className="m-0 text-muted">{words.none}</span>
+          {otherId !== null && all.some((o) => o.id === otherId) ? (
+            <button type="button" onClick={() => choose(otherId)} className="inline-flex min-h-11 items-center rounded-full border border-edge px-4 text-sm font-semibold text-ink hover:bg-surface-2">
+              {all.find((o) => o.id === otherId)?.name}
+            </button>
+          ) : null}
+        </div>
       ) : (
         shown.map((g) => {
           const Icon = (g.icon ? ICONS[g.icon] : undefined) ?? Ellipsis;

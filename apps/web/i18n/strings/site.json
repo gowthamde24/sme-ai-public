@@ -4894,10 +4894,10 @@
   }
  },
  "v3.src.find.d": {
-  "en": "Import a spreadsheet or paste a list you already have. You confirm consent for the list, and the Researcher checks each lead before the first call.",
-  "te": "మీ దగ్గర ఉన్న స్ప్రెడ్‌షీట్ ఇంపోర్ట్ చేయండి, లేదా లిస్టు పేస్ట్ చేయండి. లిస్టుకు సమ్మతి ఉందని మీరు చెప్తారు, మొదటి కాల్‌కు ముందు రీసెర్చర్ ప్రతి లీడ్‌ని చూస్తుంది.",
-  "hi": "अपने पास की स्प्रेडशीट इंपोर्ट करें या सूची पेस्ट करें। सूची की सहमति आप पक्की करते हैं, और पहली कॉल से पहले रिसर्चर हर लीड को जाँचता है।",
-  "kn": "ನಿಮ್ಮ ಬಳಿ ಇರುವ ಸ್ಪ್ರೆಡ್‌ಶೀಟ್ ಇಂಪೋರ್ಟ್ ಮಾಡಿ ಅಥವಾ ಪಟ್ಟಿ ಪೇಸ್ಟ್ ಮಾಡಿ. ಪಟ್ಟಿಗೆ ಒಪ್ಪಿಗೆ ಇದೆ ಎಂದು ನೀವು ಖಚಿತಪಡಿಸುತ್ತೀರಿ, ಮೊದಲ ಕಾಲ್‌ಗೆ ಮೊದಲು ರಿಸರ್ಚರ್ ಪ್ರತಿ ಲೀಡ್ ಅನ್ನು ನೋಡುತ್ತದೆ.",
+  "en": "Import a spreadsheet or paste a list you already have. Each person must have written to you or have consent on record, and the Researcher checks each lead before the first call.",
+  "te": "మీ దగ్గర ఉన్న స్ప్రెడ్‌షీట్ ఇంపోర్ట్ చేయండి, లేదా లిస్టు పేస్ట్ చేయండి. ప్రతి వ్యక్తి మీకు రాసి ఉండాలి లేదా వాళ్ల సమ్మతి రికార్డ్‌లో ఉండాలి, మొదటి కాల్‌కు ముందు రీసెర్చర్ ప్రతి లీడ్‌ని చూస్తుంది.",
+  "hi": "अपने पास की स्प्रेडशीट इंपोर्ट करें या सूची पेस्ट करें। हर व्यक्ति ने आपको लिखा हो या उसकी सहमति रिकॉर्ड में हो, और पहली कॉल से पहले रिसर्चर हर लीड को जाँचता है।",
+  "kn": "ನಿಮ್ಮ ಬಳಿ ಇರುವ ಸ್ಪ್ರೆಡ್‌ಶೀಟ್ ಇಂಪೋರ್ಟ್ ಮಾಡಿ ಅಥವಾ ಪಟ್ಟಿ ಪೇಸ್ಟ್ ಮಾಡಿ. ಪ್ರತಿ ವ್ಯಕ್ತಿ ನಿಮಗೆ ಬರೆದಿರಬೇಕು ಅಥವಾ ಅವರ ಒಪ್ಪಿಗೆ ರೆಕಾರ್ಡ್‌ನಲ್ಲಿರಬೇಕು, ಮೊದಲ ಕಾಲ್‌ಗೆ ಮೊದಲು ರಿಸರ್ಚರ್ ಪ್ರತಿ ಲೀಡ್ ಅನ್ನು ನೋಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -13107,30 +13107,30 @@
   "ta": "Quiet hours"
  },
  "v9.guard.16": {
-  "en": "No calls from 9 pm to 9 am.",
-  "te": "No calls from 9 pm to 9 am.",
-  "hi": "No calls from 9 pm to 9 am.",
-  "kn": "No calls from 9 pm to 9 am.",
+  "en": "No calls from 9 pm to 10 am.",
+  "te": "No calls from 9 pm to 10 am.",
+  "hi": "No calls from 9 pm to 10 am.",
+  "kn": "No calls from 9 pm to 10 am.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "No calls from 9 pm to 9 am."
+  "ta": "No calls from 9 pm to 10 am."
  },
  "v9.guard.17": {
-  "en": "9 pm–9 am",
-  "te": "9 pm–9 am",
-  "hi": "9 pm–9 am",
-  "kn": "9 pm–9 am",
+  "en": "9 pm–10 am",
+  "te": "9 pm–10 am",
+  "hi": "9 pm–10 am",
+  "kn": "9 pm–10 am",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "9 pm–9 am"
+  "ta": "9 pm–10 am"
  },
  "v9.guard.18": {
   "en": "9:40 pm → waits till morning",
@@ -13393,17 +13393,17 @@
   "ta": "2 Lead Finder searches, then ₹49 each"
  },
  "v9.pricing.10": {
-  "en": "1 business number (extra ₹299)",
-  "te": "1 business number (extra ₹299)",
-  "hi": "1 business number (extra ₹299)",
-  "kn": "1 business number (extra ₹299)",
+  "en": "1 business number (extra ₹499)",
+  "te": "1 business number (extra ₹499)",
+  "hi": "1 business number (extra ₹499)",
+  "kn": "1 business number (extra ₹499)",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "1 business number (extra ₹299)"
+  "ta": "1 business number (extra ₹499)"
  },
  "v9.pricing.11": {
   "en": "Set up yourself with the assistant",
@@ -14550,17 +14550,17 @@
   "ta": "Confirms visit slot and sends location pin"
  },
  "v9.try.visits.when": {
-  "en": "9:00 am – 9:00 pm calling hours",
-  "te": "9:00 am – 9:00 pm calling hours",
-  "hi": "9:00 am – 9:00 pm calling hours",
-  "kn": "9:00 am – 9:00 pm calling hours",
+  "en": "10:00 am – 9:00 pm calling hours",
+  "te": "10:00 am – 9:00 pm calling hours",
+  "hi": "10:00 am – 9:00 pm calling hours",
+  "kn": "10:00 am – 9:00 pm calling hours",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "9:00 am – 9:00 pm calling hours"
+  "ta": "10:00 am – 9:00 pm calling hours"
  },
  "v9.try.visits.cost": {
   "en": "Free early access (you approve first)",
@@ -15265,17 +15265,17 @@
   "ta": "Website enquiry"
  },
  "v9.jobs.followup.v0t": {
-  "en": "Call-back queued · consent ticked",
-  "te": "Call-back queued · consent ticked",
-  "hi": "Call-back queued · consent ticked",
-  "kn": "Call-back queued · consent ticked",
+  "en": "Call-back queued · consent recorded",
+  "te": "Call-back queued · consent recorded",
+  "hi": "Call-back queued · consent recorded",
+  "kn": "Call-back queued · consent recorded",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "Call-back queued · consent ticked"
+  "ta": "Call-back queued · consent recorded"
  },
  "v9.jobs.followup.v1s": {
   "en": "WhatsApp enquiry",
@@ -15369,17 +15369,17 @@
   "ta": "Which number does it call from?"
  },
  "v9.faq.a1": {
-  "en": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
-  "te": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
-  "hi": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
-  "kn": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start.",
+  "en": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
+  "te": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
+  "hi": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
+  "kn": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "Your own dedicated business number, set up for you. Extra numbers are ₹299 a month once paid plans start."
+  "ta": "Your own dedicated business number, set up for you. Extra numbers are ₹499 a month once paid plans start."
  },
  "v9.faq.q2": {
   "en": "How does it handle new enquiries?",
@@ -15421,17 +15421,17 @@
   "ta": "What if a customer asks not to be called?"
  },
  "v9.faq.a3": {
-  "en": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–9 am).",
-  "te": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–9 am).",
-  "hi": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–9 am).",
-  "kn": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–9 am).",
+  "en": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–10 am).",
+  "te": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–10 am).",
+  "hi": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–10 am).",
+  "kn": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–10 am).",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft",
    "ta": "draft"
   },
-  "ta": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–9 am)."
+  "ta": "STOP replies and opt-outs take effect at once, and quiet hours pause calls automatically overnight (9 pm–10 am)."
  },
  "v9.faq.q4": {
   "en": "Can I try it before paid plans start?",

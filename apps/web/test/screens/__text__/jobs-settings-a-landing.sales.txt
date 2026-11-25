@@ -48,3 +48,17 @@ The app changes at once. Your assistant's languages are saved when you tap Save.
 - Export your data Ask for a file of your business data in Privacy.
 - Delete your account or workspace Deleting is done only in Privacy, with its own confirmation. Nothing is deleted from this page.
 - Consent records See who agreed to messages and who asked us to stop.
+{label="Privacy and legal"}
+## Privacy and legal
+- [Privacy notice](/privacy)
+- [Terms of Use](/terms)
+- [Delete your data](/data-deletion)
+- [Contact](/contact)
+- [Help](/app/tenants/22222222-2222-2222-2222-222222222222/help)
+-
+[button type=button: Cookie settings]
+{label="Your account"}
+## Your account
+Signed in as owner@example.test.
+form:
+[button type=submit: Sign out]

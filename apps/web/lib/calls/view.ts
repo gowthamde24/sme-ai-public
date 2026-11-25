@@ -12,6 +12,7 @@ const GROUP: Record<string, RefuseGroup> = {
   weekly_limit: "limit", daily_cap: "limit", minutes_cap: "limit", already_calling: "limit", too_many_calls: "limit",
   not_approved: "permission", no_consent: "permission", suppressed: "permission", erased_or_archived: "permission", dnd: "permission", dnd_unknown: "permission", blocked_caller: "permission",
   bad_number: "number",
+  enquiry_too_old: "permission", outbound_not_real: "setup", no_own_number: "setup", usage_not_accepted: "setup",
   purpose_not_allowed: "rule", school_rule: "rule", no_ai_disclosure: "rule",
 };
 /** A closed word the web does not know yet is still said, as one of the call rules. */

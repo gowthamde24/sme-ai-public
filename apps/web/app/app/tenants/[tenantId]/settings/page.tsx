@@ -118,6 +118,11 @@ import { signOutEverywhereAction } from "../../../actions";
 import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantActivity";
 import { readActivity } from "@/lib/assistant-work/source";
 import { appV4, assistantWorkScreens, designV6, jobsScreens, moreLanguages, sentenceForms } from "@/lib/screens/flag";
+import { signOut } from "@/app/app/actions";
+import { BusinessTypeCard } from "@/components/v2/app/settings/BusinessTypeCard";
+import { setPackAction } from "../start/actions";
+import { listPacks } from "@/lib/api/pack";
+import { typeKeywords } from "@/lib/packs/type-search";
 import { SettingsV6 } from "@/components/v2/app/settings/SettingsV6";
 import { BusinessSimple, LanguageSimple, NotificationsSimple } from "@/components/v2/app/settings/simple/Lazy";
 import { readSettingsV6 } from "./settings-v6-data";
@@ -186,9 +191,24 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     } catch {
       /* outside a request: follow the system */
     }
+    // Settings > Business type (Owner only): the current type and the same search box as the first-run page; a change asks first and uses the existing PUT /pack
+    const typePack = tenant.role === "owner" ? await readPackCached(user.accessToken, tenantId) : null;
+    const typeList = typePack ? await listPacks().catch(() => []) : [];
+    const businessTypeNode =
+      typePack && typeList.length > 0 ? (
+        <BusinessTypeCard
+          words={wordsFor(lang, ["bt.", "start.type."])}
+          current={{ id: typePack.packId, name: typePack.names[lang] ?? typePack.names.en }}
+          choices={typeList.map((p) => ({ id: p.packId, name: p.names[lang] ?? p.names.en, line: p.summary[lang] ?? p.summary.en ?? "", keywords: typeKeywords(p) }))}
+          save={setPackAction.bind(null, tenantId)}
+        />
+      ) : null;
     return (
       <>
       <SettingsV6
+        businessType={businessTypeNode}
+        signOut={signOut}
+        email={user.email}
         words={wordsFor(lang, ["sv6.", "settings.biz.", "settings.language.", "set.f.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc.", "jobs.set.", "nset."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
         lang={lang}
         base={base}

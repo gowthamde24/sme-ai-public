@@ -23,17 +23,17 @@ describe("Ask first: the two ways to bring in the people whose consent is unknow
     expect(screen.getByText(/templates are not approved yet/)).toBeInTheDocument();
   });
 
-  it("'I confirm they agreed' asks the in-app sentence first (nothing is sent), only 'Yes, I confirm' records it; 'Back' goes back", async () => {
+  it("'Record their consent' asks the in-app sentence first (nothing is sent), only 'Yes, record it' records it; 'Back' goes back", async () => {
     const onAsk = vi.fn(async (): Promise<AskOutcome> => ({ ok: true, result: result({ how: "owner_confirms", queued: null, blocked: null, blockedReasons: {}, templateStatus: null, newAction: { type: "confirm_action" } }) }));
     const onDone = vi.fn();
     render(<AskFirstActions t={t} people={12} channel="call" onAsk={onAsk} onDone={onDone} />);
-    fireEvent.click(screen.getByRole("button", { name: "I confirm they agreed" }));
-    expect(screen.getByText("I confirm these 12 people agreed to be called. This is recorded.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Record their consent" }));
+    expect(screen.getByText("Record that these 12 people agreed to be called. It is kept with the date.")).toBeInTheDocument();
     expect(onAsk).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Back" }));
     expect(screen.getByRole("button", { name: "Ask by WhatsApp" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "I confirm they agreed" }));
-    fireEvent.click(screen.getByRole("button", { name: "Yes, I confirm" }));
+    fireEvent.click(screen.getByRole("button", { name: "Record their consent" }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes, record it" }));
     await screen.findByText("Recorded. A new plan for 12 people is shown here, waiting for your yes.");
     expect(onAsk).toHaveBeenCalledWith("owner_confirms");
     expect(onDone).toHaveBeenCalledWith(expect.objectContaining({ how: "owner_confirms" }));
@@ -41,9 +41,9 @@ describe("Ask first: the two ways to bring in the people whose consent is unknow
 
   it("a message plan says 'messages' in the confirmation; a refusal is one closed sentence, never the API's words", async () => {
     render(<AskFirstActions t={t} people={4} channel="whatsapp" onAsk={async () => ({ ok: false, error: "state" })} />);
-    fireEvent.click(screen.getByRole("button", { name: "I confirm they agreed" }));
-    expect(screen.getByText("I confirm these 4 people agreed to get messages. This is recorded.")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Yes, I confirm" }));
+    fireEvent.click(screen.getByRole("button", { name: "Record their consent" }));
+    expect(screen.getByText("Record that these 4 people agreed to get messages. It is kept with the date.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Yes, record it" }));
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("This plan has changed. Open it again."));
   });
 

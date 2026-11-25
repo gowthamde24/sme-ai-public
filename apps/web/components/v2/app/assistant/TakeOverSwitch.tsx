@@ -41,6 +41,7 @@ export function TakeOverSwitch({ words, initial, canEdit, change }: { words?: Wo
         <li>{t("tov.rule.audit")}</li>
         <li>{t("tov.rule.assistant")}</li>
         <li>{t(state.announces ? "tov.rule.announce.on" : "tov.rule.announce.off")}</li>
+        {state.enabled ? <li data-part="monitor-line">{t("tov.rule.monitor")}</li> : null}
       </ul>
       <p className={fieldHelp}>{t("tov.default")}</p>
       {canEdit ? (

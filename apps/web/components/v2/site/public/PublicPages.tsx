@@ -194,6 +194,15 @@ export function RulesPage({ t, p, kind }: { t: SiteT; p: PubT; kind: "aup" | "re
       <PubHead title={p(`pub.${kind}.title` as PubKey)} sub={p(`pub.${kind}.sub` as PubKey)} draft={p("pub.c.draft")} />
       <PubBody>
         <Steps items={items} />
+        {kind === "aup" ? (
+          <section className="mt-8" data-part="aup-duties" aria-labelledby="pub-aup-duty">
+            <h2 id="pub-aup-duty" className="m-0 text-xl font-semibold">{p("pub.aup.duty.h")}</h2>
+            <p className="m-0 mt-1 text-sm text-muted">{p("pub.aup.duty.draft")}</p>
+            <ul className="mt-3 list-disc space-y-2 pl-6 text-base">
+              {[1, 2, 3, 4].map((i) => <li key={i}>{p(`pub.aup.duty.${i}` as PubKey)}</li>)}
+            </ul>
+          </section>
+        ) : null}
         <p className="mt-6 text-base">{p(kind === "aup" ? "pub.aup.end" : "pub.refund.end", v)}</p>
         {kind === "aup" ? <p className="mt-2 text-base text-muted">{p("pub.aup.ask", v)}</p> : null}
         <div className="mt-3"><EmailAddress address={ADDRESSES.hello} words={emailWords(t)} /></div>

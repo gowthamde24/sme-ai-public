@@ -25,7 +25,7 @@ import { readNumber, readOwn } from "@/lib/phone-picker/source";
 import { menuTitle } from "../menu-title";
 import { addLineAction, cancelLineAction, keepLineAction } from "./lines-actions";
 import { claimNumberAction, ownNumberAction, searchNumbersAction } from "./picker-actions";
-import { buyNumberAction, kycAadhaarAction, kycDetailsAction, kycGstAction, kycPanAction, kycStartAction, kycStatusAction, kycSubmitAction, searchAvailableAction } from "./kyc-actions";
+import { buyNumberAction, kycAadhaarAction, kycDetailsAction, kycGstAction, kycPanAction, kycCancelAction, kycPinAction, kycStartAction, kycStatusAction, kycSubmitAction, searchAvailableAction } from "./kyc-actions";
 
 export const metadata = { title: `Your business number · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -94,6 +94,23 @@ export default async function PhoneNumberPage({ params, searchParams }: PageProp
                 mock={mock}
                 verifyHref={`${here}?verify=1`}
                 actions={{ search: searchAvailableAction.bind(null, tenantId), buy: buyNumberAction.bind(null, tenantId) }}
+                kycFirst
+                kyc={{
+                  status,
+                  actions: {
+                    status: kycStatusAction.bind(null, tenantId),
+                    start: kycStartAction.bind(null, tenantId),
+                    details: kycDetailsAction.bind(null, tenantId),
+                    pan: kycPanAction.bind(null, tenantId),
+                    gst: kycGstAction.bind(null, tenantId),
+                    aadhaar: kycAadhaarAction.bind(null, tenantId),
+                    submit: kycSubmitAction.bind(null, tenantId),
+                    pin: kycPinAction.bind(null, tenantId),
+                    cancel: kycCancelAction.bind(null, tenantId),
+                    creditsHref: `/app/tenants/${tenantId}/billing`,
+                    uploadUrl: `${here}/kyc-document`,
+                  },
+                }}
               />
             </div>
           </main>
@@ -118,6 +135,9 @@ export default async function PhoneNumberPage({ params, searchParams }: PageProp
                 gst: kycGstAction.bind(null, tenantId),
                 aadhaar: kycAadhaarAction.bind(null, tenantId),
                 submit: kycSubmitAction.bind(null, tenantId),
+                    pin: kycPinAction.bind(null, tenantId),
+                    cancel: kycCancelAction.bind(null, tenantId),
+                    creditsHref: `/app/tenants/${tenantId}/billing`,
                 uploadUrl: `${here}/kyc-document`,
               }}
             />

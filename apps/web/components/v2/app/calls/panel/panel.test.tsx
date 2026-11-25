@@ -25,14 +25,14 @@ afterEach(() => {
 });
 
 describe("Before you start calling", () => {
-  it("is open on the Calls page: the five rules as numbered open rows, calling hours 9 am to 9 pm, do-not-call automatic, the business is the caller", () => {
+  it("is open on the Calls page: the five rules as numbered open rows, calling hours 10 am to 9 pm, do-not-call automatic, the business is the caller", () => {
     const { container } = render(<BeforeYouStart words={W} open />);
     const details = container.querySelector("details") as HTMLDetailsElement;
     expect(details.open).toBe(true);
     const rows = within(container.querySelector("ol") as HTMLElement).getAllByRole("listitem");
     expect(rows).toHaveLength(5);
     expect(rows[0]).toHaveTextContent("Only call people who agreed.");
-    expect(rows[1]).toHaveTextContent("We fix the calling hours. Calls go out between 9 am and 9 pm.");
+    expect(rows[1]).toHaveTextContent("We fix the calling hours. Calls go out between 10 am and 9 pm.");
     expect(rows[2]).toHaveTextContent("Do-not-call is automatic.");
     expect(rows[3]).toHaveTextContent("Your business is the caller.");
     expect(rows[4]).toHaveTextContent("Phone rules may apply.");

@@ -1,11 +1,11 @@
 import { ApiAuthError } from "@/lib/api/client";
 import { pullIndiaMart } from "@/lib/api/lead-sources";
 import type { PullResult } from "@/lib/lead-desk/sources/types";
-import { getCards, getEmailAddress, getWebsite, indiaMartDisconnect, indiaMartKey, metaConnect, metaDisconnect, metaPages, metaSelect, connectCard, disconnectCard, resumeCard, rotateCard, setCardCost, rotateEmailAddress, sourceErrorOf, testCard } from "@/lib/api/source-cards";
+import { getCards, getEmailAddress, getPortals, getWebsite, indiaMartDisconnect, indiaMartKey, metaConnect, metaDisconnect, metaPages, metaSelect, connectCard, disconnectCard, resumeCard, rotateCard, setCardCost, rotateEmailAddress, sourceErrorOf, testCard } from "@/lib/api/source-cards";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { sourceCardsScreens, type ScreenMode } from "@/lib/screens/flag";
 
-import { COST_SOURCE, type Card, type ConnectInfo, type Done, EmailAddress, MetaPage, TestResult, WebsiteSnippet } from "./types";
+import { COST_SOURCE, type Card, type ConnectInfo, type Done, EmailAddress, MetaPage, Portal, TestResult, WebsiteSnippet } from "./types";
 
 /** The one door the cards' route and the sources page go through: the API (`1`) or a stand-in in the memory of this server (`mock`, nothing leaves the process). Every call ends in `Done`: the data, or a closed word. */
 export type SourcesApi = {
@@ -21,6 +21,8 @@ export type SourcesApi = {
   pull(): Promise<Done<PullResult>>;
   email(rotate: boolean): Promise<Done<EmailAddress>>;
   website(): Promise<Done<WebsiteSnippet>>;
+  /** The portals that have no connector of their own, each with the message to send their team (the e-mail card shows them). */
+  portals(): Promise<Done<Portal[]>>;
   resume(card: string): Promise<Done<null>>;
   /** One marked test lead for a card (never real data). */
   test(card: string): Promise<Done<TestResult>>;
@@ -53,6 +55,7 @@ export const liveApi = (token: string, tenantId: string): SourcesApi => ({
   pull: () => wrap(() => pullIndiaMart(token, tenantId)),
   email: (rotate) => wrap(() => (rotate ? rotateEmailAddress(token, tenantId) : getEmailAddress(token, tenantId))),
   website: () => wrap(() => getWebsite(token, tenantId)),
+  portals: () => wrap(() => getPortals(token, tenantId)),
   resume: (card) => wrap(async () => (await resumeCard(token, tenantId, card), null)),
   test: (card) => wrap(() => testCard(token, tenantId, card)),
   disconnect: (card) => wrap(async () => (await disconnectCard(token, tenantId, card), null)),
@@ -76,6 +79,8 @@ const parseMock = (v: unknown): Mock | null => {
   for (const [k, n] of Object.entries(r.cost && typeof r.cost === "object" ? r.cost : {})) if (Object.values(COST_SOURCE).includes(k) && typeof n === "number") cost[k] = Math.min(Math.max(Math.trunc(n), 0), 10_000_000);
   return { t: r.t, on, last, cost, rotations: typeof r.rotations === "number" ? Math.min(Math.max(Math.trunc(r.rotations), 0), 99) : 0 };
 };
+const MOCK_ASK = (name: string) => `Hello ${name} team. I sell on ${name} and I want my new enquiries to reach my business tool by themselves. Please switch on lead delivery for my account to this e-mail address: (your lead e-mail address from the Lead sources page). Thank you.`;
+const PORTALS_MOCK: Portal[] = [["justdial", "JustDial"], ["99acres", "99acres"], ["magicbricks", "MagicBricks"], ["housing", "Housing"], ["sulekha", "Sulekha"], ["tradeindia", "TradeIndia"]].map(([id, name]) => ({ id, name, askText: MOCK_ASK(name) }));
 export function mockApi(tenantId: string): SourcesApi {
   const load = async (): Promise<Mock> => {
     const m = await readJar<Mock | null>(COOKIE, parseMock, null);
@@ -157,6 +162,7 @@ export function mockApi(tenantId: string): SourcesApi {
       await save(x);
       return ok({ address: address(x), guide: [{ step: 1, text: "Open Gmail and search for the lead e-mail." }, { step: 2, text: "Choose Filter messages like this, then Forward it to the address above." }], portals: ["JustDial", "Sulekha"], confirmation: null });
     },
+    portals: async () => ok(PORTALS_MOCK),
     resume: async (card) => (await turn(card, true), ok(null)),
     website: async () => {
       const x = await load();

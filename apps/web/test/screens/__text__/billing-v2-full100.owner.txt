@@ -17,7 +17,7 @@ Pro · Month ends December 13
   options: No limit=none* | ₹500=50000 | ₹1,000=100000 | ₹2,000=200000 | ₹5,000=500000
 -
 ### Phone numbers
-You have 1 number 1 number is included. Each extra number is ₹299 a month. [Add a number](/app/tenants/22222222-2222-2222-2222-222222222222/phone-number)
+You have 1 number 1 number is included. Each extra number is ₹499 a month. [Add a number](/app/tenants/22222222-2222-2222-2222-222222222222/phone-number)
 -
 ### Find customers
 12 of 10 free searches used
@@ -35,9 +35,9 @@ summary: How billing works Plans, prices and a few rules
 {label="Plans"}
 ### Plans
 Every plan gets every feature.
-- Pay as you go ₹499 a month + GST Calls ₹5 a minute 2 free searches, then ₹49 each 1 number included, each extra number ₹299 a month Set up yourself, with your assistant
-- Pro Most popular ₹1,999 a month + GST 500 minutes included, extra minutes ₹5 each 10 free searches, then ₹39 each 1 number included, each extra number ₹299 a month Set up yourself, with your assistant Your plan
-- Business ₹5,999 a month + GST 1,500 minutes included, extra minutes ₹5 each 100 free searches, then ₹29 each 1 number included, each extra number ₹299 a month Priority onboarding
+- Pay as you go ₹499 a month + GST Calls ₹5 a minute 2 free searches, then ₹49 each 1 number included, each extra number ₹499 a month Set up yourself, with your assistant
+- Pro Most popular ₹1,999 a month + GST 500 minutes included, extra minutes ₹5 each 10 free searches, then ₹39 each 1 number included, each extra number ₹499 a month Set up yourself, with your assistant Your plan
+- Business ₹5,999 a month + GST 1,500 minutes included, extra minutes ₹5 each 100 free searches, then ₹29 each 1 number included, each extra number ₹499 a month Priority onboarding
 All prices are plus 18 percent GST. [Change plan](/app/tenants/22222222-2222-2222-2222-222222222222/plans)
 - Calls are billed every 30 seconds. Calls nobody answers are free.
 - Nothing is charged for the assistant's actions or answers.

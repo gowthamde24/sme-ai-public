@@ -10,7 +10,7 @@ import { SourceCards } from "./SourceCards";
 
 afterEach(cleanup);
 const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => /^(sc|jobs\.trust|li)\./.test(k)));
-const SENTENCE = "The people who fill this form have agreed to be contacted by phone and WhatsApp. The form says so in words they can read.";
+const SENTENCE = "The form asks each person to agree to be contacted by phone and WhatsApp, in words they can read. Each answer is recorded with the date.";
 const base = { detail: null, received7d: 0, receivedTotal: 0, lastReceivedAt: null, problem: null, available: true, state: "off" as const, canTest: false, canDisconnect: false, testLabel: null, costPerLeadPaise: null, costSource: null };
 const CARDS: Card[] = [
   { ...base, kind: "meta", status: "not_connected", headline: "Not connected", action: "oauth" },
@@ -87,7 +87,7 @@ describe("the consent tick on an import (JOBS)", () => {
     draw("owner");
     await readPaste();
     expect(screen.getByRole("button", { name: "Check the list" })).toBeDisabled();
-    expect(screen.queryByLabelText("I confirm these people may be contacted for the reason below.")).toBeNull();
+    expect(screen.queryByLabelText("These people wrote to me (their enquiry is in writing), or their consent is recorded.")).toBeNull();
     fireEvent.click(screen.getByRole("checkbox", { name: SENTENCE }));
     // the four facts are still asked for: the list is not checked until they are filled in
     expect(screen.getByRole("button", { name: "Check the list" })).toBeDisabled();

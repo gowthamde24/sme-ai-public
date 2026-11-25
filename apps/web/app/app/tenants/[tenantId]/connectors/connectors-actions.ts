@@ -14,7 +14,7 @@ import { requireUser } from "@/lib/auth/session";
  * returned. What is checked here before asking: the tool is a known kind of word, every key and setting is plain text of a sane length, the events are the five known ones. The server checks them all again.
  */
 async function gate(tenantId: string): Promise<{ token: string } | Fail> {
-  if (!isCanonicalUuid(tenantId) || crmPushScreens() !== "1") return { ok: false, error: "other" };
+  if (!isCanonicalUuid(tenantId) || crmPushScreens() !== "on") return { ok: false, error: "other" };
   const user = await requireUser();
   try {
     const role = (await fetchTenant(user.accessToken, tenantId)).role;

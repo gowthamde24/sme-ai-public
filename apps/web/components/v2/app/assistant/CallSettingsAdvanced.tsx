@@ -189,7 +189,7 @@ function CallSettingsClassic({ words, initial, locked, canEdit, mock, saved, act
 
           <fieldset className={group}>
             <legend className={legend}>{t("calls.g.when")}{badge("when")}</legend>
-            <Check id="cs-follow" label={t("calls.hours.follow")} on={hours === null} onChange={(follow) => set({ hours: follow ? null : { days: [1, 2, 3, 4, 5, 6], from_minute: 540, to_minute: 1140 } })} />
+            <Check id="cs-follow" label={t("calls.hours.follow")} on={hours === null} onChange={(follow) => set({ hours: follow ? null : { days: [1, 2, 3, 4, 5, 6], from_minute: 600, to_minute: 1140 } })} />
             {hours ? (
               <>
                 <div className="flex flex-wrap gap-4">
@@ -197,13 +197,13 @@ function CallSettingsClassic({ words, initial, locked, canEdit, mock, saved, act
                     <label htmlFor="cs-from" className={fieldLabel}>
                       {t("asst.hours.from")}
                     </label>
-                    <input id="cs-from" type="time" min="09:00" max="21:00" step={900} value={clock(hours.from_minute)} onChange={(e) => set({ hours: { ...hours, from_minute: minutes(e.target.value) } })} className={fieldInput} />
+                    <input id="cs-from" type="time" min="10:00" max="21:00" step={900} value={clock(hours.from_minute)} onChange={(e) => set({ hours: { ...hours, from_minute: minutes(e.target.value) } })} className={fieldInput} />
                   </div>
                   <div>
                     <label htmlFor="cs-to" className={fieldLabel}>
                       {t("asst.hours.to")}
                     </label>
-                    <input id="cs-to" type="time" min="09:00" max="21:00" step={900} value={clock(hours.to_minute)} onChange={(e) => set({ hours: { ...hours, to_minute: minutes(e.target.value) } })} className={fieldInput} />
+                    <input id="cs-to" type="time" min="10:00" max="21:00" step={900} value={clock(hours.to_minute)} onChange={(e) => set({ hours: { ...hours, to_minute: minutes(e.target.value) } })} className={fieldInput} />
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2" role="group" aria-label={t("asst.hours.t")}>

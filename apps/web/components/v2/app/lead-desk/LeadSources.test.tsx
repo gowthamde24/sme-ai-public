@@ -82,7 +82,7 @@ describe("the lead sources page (night 4, item 4)", () => {
     draw(a);
     const card = screen.getByRole("region", { name: "JustDial and other portals" });
     fireEvent.click(within(card).getByRole("button", { name: "Set it up" }));
-    expect(within(card).getAllByRole("option").map((o) => o.textContent)).toEqual(["IndiaMART (IndiaMART)".replace(" (IndiaMART)", ""), "JustDial", "99acres", "MagicBricks", "Housing.com", "Any other (the same address works for all)"]);
+    expect(within(card).getAllByRole("option").map((o) => o.textContent)).toEqual(["IndiaMART (IndiaMART)".replace(" (IndiaMART)", ""), "JustDial", "99acres", "MagicBricks", "Housing.com", "Sulekha", "TradeIndia", "Any other (the same address works for all)"]);
     fireEvent.change(within(card).getByLabelText("Which portal?"), { target: { value: "99acres" } });
     await act(async () => fireEvent.click(within(card).getByRole("button", { name: "Add this source" })));
     expect(a.create).toHaveBeenCalledWith(expect.objectContaining({ kind: "email_forward", portal: "99acres" }));
@@ -94,7 +94,7 @@ describe("the lead sources page (night 4, item 4)", () => {
     draw(a);
     const card = screen.getByRole("region", { name: "Zapier, n8n or Make" });
     fireEvent.click(within(card).getByRole("button", { name: "Set it up" }));
-    fireEvent.click(within(card).getByLabelText("I confirm these people may be contacted for the reason below."));
+    fireEvent.click(within(card).getByLabelText("These people wrote to me (their enquiry is in writing), or their consent is recorded."));
     expect(within(card).getByRole("button", { name: "Add this source" })).toBeDisabled();
     fireEvent.change(within(card).getByLabelText("Name of this list"), { target: { value: "Leads" } });
     fireEvent.change(within(card).getByLabelText("What you will contact them about"), { target: { value: "Flats" } });

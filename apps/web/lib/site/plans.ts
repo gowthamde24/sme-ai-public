@@ -29,7 +29,7 @@ export const PUBLIC_PLANS: readonly PublicPlan[] = [
   { id: "business", name: "Business", monthly: 5999, minutes: 1500, find: { included: 100, then: 29 }, setup: "priority", recommended: false },
 ];
 /** The facts every paid plan shares (rupees, minutes, percent). */
-export const PLAN_FACTS = { gstPercent: 18, extraMinute: 5, extraNumber: 299, extraLine: 149, freeStart: 50, billingSeconds: 30, numberHoldDays: 30 } as const;
+export const PLAN_FACTS = { gstPercent: 18, extraMinute: 5, extraNumber: 499, extraLine: 149, freeStart: 50, billingSeconds: 30, numberHoldDays: 30 } as const;
 
 /** The monthly call minutes at which a dearer plan costs the same as the cheaper one on calls alone (extra minutes at the extra-minute price): Pay as you go -> Pro and Pro -> Business. Above it the dearer plan is cheaper. */
 export function planCrossovers(): { paygPro: number; proBusiness: number } {

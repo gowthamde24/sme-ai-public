@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const nav = vi.hoisted(() => ({ push: vi.fn(), refresh: vi.fn() }));
@@ -71,8 +71,16 @@ describe("Get a phone number: four steps in one page", () => {
     expect(screen.getByLabelText("Email")).toHaveValue("asha@shop.in");
     expect(screen.getByLabelText("Email")).toHaveAttribute("readonly");
     expect(screen.getByText("You cannot change these later. Check them once.")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-    expect(screen.getByRole("alert")).toHaveTextContent("Write your full name, at least two letters.");
+    // every field is mandatory: "Required" beside the label, Continue off until the name is a name, one plain sentence once the field was touched
+    expect(screen.getByLabelText("Full name")).toBeRequired();
+    expect(screen.getByLabelText("Email")).toBeRequired();
+    expect(within(step(2)).getAllByText("Required")).toHaveLength(2);
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+    fireEvent.blur(screen.getByLabelText("Full name"));
+    expect(screen.getByText("This is required.")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "A" } });
+    expect(screen.getByText("Write your full name, at least two letters.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
     expect(states()).toEqual(["done", "now", "off", "off"]);
     expectNoSentenceForm(container);
   });
@@ -229,10 +237,12 @@ describe("Verify your business: where it stands", () => {
     fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "Asha Rao" } });
     fireEvent.change(screen.getByLabelText("Phone number"), { target: { value: "+91 98765 43210" } });
     fireEvent.change(screen.getByLabelText("Billing address"), { target: { value: "12 Main Road, Anantapur" } });
+    fireEvent.change(screen.getByLabelText("City"), { target: { value: "Anantapur" } });
+    fireEvent.change(screen.getByLabelText("State"), { target: { value: "Andhra Pradesh" } });
     fireEvent.change(screen.getByLabelText("PIN code"), { target: { value: "5150ab01" } });
     fireEvent.click(document.querySelector('input[type="checkbox"]') as HTMLElement);
     fireEvent.click(screen.getByText("Save and continue"));
-    await waitFor(() => expect(a.details).toHaveBeenCalledWith({ accountType: "individual", businessName: "", fullName: "Asha Rao", phone: "+91 98765 43210", billingAddress: "12 Main Road, Anantapur", city: "", state: "", pincode: "515001", acceptTerms: true }));
+    await waitFor(() => expect(a.details).toHaveBeenCalledWith({ accountType: "individual", businessName: "", fullName: "Asha Rao", phone: "+91 98765 43210", billingAddress: "12 Main Road, Anantapur", city: "Anantapur", state: "Andhra Pradesh", pincode: "515001", acceptTerms: true }));
     await waitFor(() => expect(document.querySelector('[data-doc="pan"]')).not.toBeNull()); // a plain selector: a role query over the whole page is what made this test slow
   });
 });
@@ -278,11 +288,12 @@ describe("Verify your business: the documents", () => {
     const big = new File([new Uint8Array(1)], "big.pdf", { type: "application/pdf" });
     Object.defineProperty(big, "size", { value: 11 * 1024 * 1024 });
     fireEvent.change(screen.getByLabelText("PAN card photo or PDF"), { target: { files: [big] } });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("That file is bigger than 10 MB.");
+    expect(await screen.findByText("That file is bigger than 10 MB.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send" })).toBeDisabled();
     fireEvent.change(screen.getByLabelText("PAN card photo or PDF"), { target: { files: [file("a.gif", "image/gif")] } });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("The file could not be read."));
+    expect(await screen.findByText("Choose a photo (JPEG or PNG) or a PDF.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send" })).toBeDisabled();
+    expect(fetch).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
   it("Aadhaar: a DigiLocker link to open on your OWN phone ('it is you who confirms it, not us'), then the file", async () => {
@@ -294,7 +305,8 @@ describe("Verify your business: the documents", () => {
     const link = await screen.findByRole("link", { name: "Open the DigiLocker link" });
     expect(link).toHaveAttribute("href", "https://digilocker.example/x");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
-    expect(screen.getByLabelText("Aadhaar file (photo or PDF)")).toBeInTheDocument();
+    // the upload opens only after the DigiLocker check reached the phone service (aadhaar_verified), never before
+    expect(screen.queryByLabelText("Aadhaar file (photo or PDF)")).toBeNull();
   });
   it("a business also gives the GST number and certificate; with every document in, 'Send for checking'; a document still missing is named", async () => {
     const a = verifyActions({ submit: vi.fn(async () => ({ ok: false as const, error: "refused" as const, reason: "missing_documents" as const, missing: ["GST Certificate"] })) });
@@ -316,5 +328,252 @@ describe("Verify your business: the documents", () => {
     drawVerify(STATUS({ state: "created" }), verifyActions(), OWN, false);
     expect(screen.queryByRole("button", { name: "Start verification" })).toBeNull();
     expect(screen.getByText("Only the owner can pick the number.")).toBeInTheDocument();
+  });
+});
+
+describe("Get a phone number: step 3 offers Verify now, on this page (owner, 26 Nov 2026)", () => {
+  const toStep3 = async (kyc: { status: KycStatus; actions: VerifyActions } | null, first = false) => {
+    const out = render(<PhoneBuy words={WORDS} actions={buyActions()} canEdit email="asha@shop.in" verifyHref="/v?verify=1" kyc={kyc} kycFirst={first} />);
+    await screen.findByText("+91 94294 92465");
+    fireEvent.click(screen.getAllByRole("radio")[0]);
+    fireEvent.click(screen.getByRole("button", { name: "Use this number" }));
+    fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "Asha Rao" } });
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+    return out;
+  };
+  it("two plain choices, Verify now (recommended) first and chosen; Continue waits until you are verified", async () => {
+    const { container } = await toStep3({ status: STATUS({ state: "not_started", accountType: null }), actions: verifyActions() });
+    const choice = document.querySelector('[data-part="verify-choice"]') as HTMLElement;
+    const radios = within(choice).getAllByRole("radio");
+    expect(radios).toHaveLength(2);
+    expect(radios[0]).toBeChecked();
+    expect(choice).toHaveTextContent("Verify now");
+    expect(choice).toHaveTextContent("Recommended");
+    expect(choice).toHaveTextContent("Verify after buying");
+    expect(screen.getByRole("button", { name: "Start verification" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+    expect(screen.getByText("Continue opens when you are verified.")).toBeInTheDocument();
+    expectNoSentenceForm(container);
+  });
+  it("Start verification opens the account with the type chosen in step 2, then the details form, on this page (no reload)", async () => {
+    const actions = verifyActions();
+    await toStep3({ status: STATUS({ state: "not_started", accountType: null }), actions });
+    fireEvent.click(screen.getByRole("button", { name: "Start verification" }));
+    await waitFor(() => expect(actions.start).toHaveBeenCalledWith("individual"));
+    expect(await screen.findByLabelText("Phone number")).toBeInTheDocument();
+    expect(nav.refresh).not.toHaveBeenCalled();
+  });
+  it("when the check says verified, Continue opens and the last step follows", async () => {
+    await toStep3({ status: STATUS({ state: "verified" }), actions: verifyActions() });
+    expect(screen.getByText("You are verified. Go on to the last step.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+    expect(states()).toEqual(["done", "done", "done", "now"]);
+  });
+  it("Verify after buying is the old text and Continue is open at once", async () => {
+    await toStep3({ status: STATUS({ state: "not_started", accountType: null }), actions: verifyActions() });
+    const choice = document.querySelector('[data-part="verify-choice"]') as HTMLElement;
+    fireEvent.click(within(choice).getAllByRole("radio")[1]);
+    expect(screen.queryByRole("button", { name: "Start verification" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeEnabled();
+  });
+  it("without the verification pieces (an API without them) step 3 only says that you verify after buying", async () => {
+    await toStep3(null);
+    expect(document.querySelector('[data-part="verify-choice"]')).toBeNull();
+    expect(screen.getByText("You verify yourself after you buy.")).toBeInTheDocument();
+  });
+});
+
+describe("Verify with PAN and Aadhaar: every field is mandatory (owner, 26 Nov 2026)", () => {
+  const fill = (over: Record<string, string> = {}) => {
+    const v = { "Full name": "Asha Rao", "Phone number": "98765 43210", "Billing address": "12 Main Road, Anantapur", City: "Anantapur", State: "Andhra Pradesh", "PIN code": "515001", ...over };
+    for (const [label, value] of Object.entries(v)) fireEvent.change(screen.getByLabelText(label), { target: { value } });
+  };
+  it("each field says Required and is required; Save and continue stays off until all is valid; the state is a list of the 28 states and 8 territories", () => {
+    drawVerify(STATUS({ state: "created" }));
+    const form = document.querySelector('[data-part="details"]') as HTMLElement;
+    for (const label of ["Full name", "Phone number", "Billing address", "City", "State", "PIN code"]) {
+      expect(screen.getByLabelText(label)).toBeRequired();
+      expect(screen.getByLabelText(label)).toHaveAttribute("aria-required", "true");
+    }
+    expect(within(form).getAllByText("Required").length).toBeGreaterThanOrEqual(6);
+    const state = screen.getByLabelText("State") as HTMLSelectElement;
+    expect(state.tagName).toBe("SELECT");
+    expect(within(state).getAllByRole("option")).toHaveLength(37); // the prompt and 36
+    fill();
+    expect(screen.getByRole("button", { name: "Save and continue" })).toBeDisabled(); // the terms
+    fireEvent.click(document.querySelector('input[type="checkbox"]') as HTMLElement);
+    expect(screen.getByRole("button", { name: "Save and continue" })).toBeEnabled();
+  });
+  it("a plain sentence under a field once it was touched; the typed values stay; no red alert wall", () => {
+    drawVerify(STATUS({ state: "created" }));
+    fill({ "Phone number": "12345", "PIN code": "012345" });
+    expect(screen.queryByText(/mobile number/)).toBeNull(); // not touched yet
+    fireEvent.blur(screen.getByLabelText("Phone number"));
+    fireEvent.blur(screen.getByLabelText("PIN code"));
+    expect(screen.getByText("Write a 10-digit mobile number that starts with 6, 7, 8 or 9. +91 or 0 in front is fine.")).toBeInTheDocument();
+    expect(screen.getByText("Write the PIN code: exactly 6 digits, the first one not 0.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Phone number")).toHaveValue("12345");
+    expect(screen.getByLabelText("Phone number")).toHaveAttribute("aria-invalid", "true");
+    expect(document.querySelector('[data-part="details"] [role="alert"]')).toBeNull();
+    fireEvent.change(screen.getByLabelText("Phone number"), { target: { value: "+91 98765-43210" } });
+    expect(screen.queryByText(/10-digit mobile number/)).toBeNull();
+  });
+  it("the API's own word for a bad field (kyc_fields_invalid) is said under that field with the same sentence, until the field is changed", async () => {
+    const a = verifyActions({ details: vi.fn(async () => ({ ok: false as const, error: "invalid" as const, fieldReasons: { phone: "mobile_invalid", pincode: "pincode_invalid" } })) });
+    drawVerify(STATUS({ state: "created" }), a);
+    fill();
+    fireEvent.click(document.querySelector('input[type="checkbox"]') as HTMLElement);
+    fireEvent.click(screen.getByRole("button", { name: "Save and continue" }));
+    expect(await screen.findByText("Write a 10-digit mobile number that starts with 6, 7, 8 or 9. +91 or 0 in front is fine.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Full name")).toHaveValue("Asha Rao");
+    fireEvent.change(screen.getByLabelText("Phone number"), { target: { value: "98765 43211" } });
+    expect(screen.queryByText(/10-digit mobile number/)).toBeNull();
+    expect(screen.getByText("Write the PIN code: exactly 6 digits, the first one not 0.")).toBeInTheDocument();
+  });
+  it("PAN and GST: the shape is checked as typed, a GST number only for a business", () => {
+    drawVerify(STATUS({ state: "in_progress", step: "pan", steps: { pan: false, aadhaar: false } }));
+    expect(screen.getByLabelText("PAN number")).toBeRequired();
+    fireEvent.change(screen.getByLabelText("PAN number"), { target: { value: "ABCDE12" } });
+    fireEvent.blur(screen.getByLabelText("PAN number"));
+    expect(screen.getByText("A PAN has 5 letters, 4 digits and 1 letter, for example ABCDE1234F.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send" })).toBeDisabled();
+    cleanup();
+    drawVerify(STATUS({ state: "in_progress", accountType: "business", step: "gst", steps: { pan: true, aadhaar: true, gst: false } }));
+    fireEvent.change(screen.getByLabelText("GST number"), { target: { value: "99ABCDE1234F1Z5" } });
+    fireEvent.blur(screen.getByLabelText("GST number"));
+    expect(screen.getByText("A GST number has 15 characters, for example 36ABCDE1234F1Z5.")).toBeInTheDocument();
+  });
+});
+
+describe("Get a phone number: verification first, then buy (owner, 26 Nov 2026)", () => {
+  const toStep3 = async (status: KycStatus) => {
+    render(<PhoneBuy words={WORDS} actions={buyActions()} canEdit email="asha@shop.in" verifyHref="/v?verify=1" kyc={{ status, actions: verifyActions() }} kycFirst />);
+    await screen.findByText("+91 94294 92465");
+    fireEvent.click(screen.getAllByRole("radio")[0]);
+    fireEvent.click(screen.getByRole("button", { name: "Use this number" }));
+    fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "Asha Rao" } });
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+  };
+  it("step 3 is only the verification: no choice, no 'after buying', one sentence about what works before it", async () => {
+    await toStep3(STATUS({ state: "not_started", accountType: null }));
+    expect(document.querySelector('[data-part="verify-choice"]')).toBeNull();
+    expect(screen.queryByText("Verify after buying")).toBeNull();
+    expect(document.querySelector('[data-part="free-things"]')).toHaveTextContent("browser test call");
+    expect(screen.getByRole("button", { name: "Start verification" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+  });
+  it("the Buy button opens only when the status is verified", async () => {
+    await toStep3(STATUS({ state: "verified" }));
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+    expect(states()).toEqual(["done", "done", "done", "now"]);
+    fireEvent.click(screen.getByRole("checkbox"));
+    expect(document.querySelector('[data-part="confirm"]')).toBeEnabled();
+  });
+  it("while the phone service has no free line the page says so as a friendly wait, not an error", async () => {
+    await toStep3(STATUS({ state: "waiting_for_line" as KycStatus["state"] }));
+    expect(document.querySelector('[data-part="waiting-line"]')).toHaveTextContent("We are setting up your line. This takes a short while.");
+    expect(document.querySelector('[data-part="verify-error"]')).toBeNull();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+  });
+});
+
+describe("the PIN code fills the state and the city (VoiceLink knows a city only as its own list spells it)", () => {
+  it("a complete PIN fills State and City; the person can correct them; a field the person typed is not overwritten", async () => {
+    const pin = vi.fn(async () => ({ state: "Andhra Pradesh", city: "Ananthapuramu" }));
+    drawVerify(STATUS({ state: "created" }), verifyActions({ pin }));
+    fireEvent.change(screen.getByLabelText("PIN code"), { target: { value: "515001" } });
+    await waitFor(() => expect(screen.getByLabelText("City")).toHaveValue("Ananthapuramu"));
+    expect(screen.getByLabelText("State")).toHaveValue("Andhra Pradesh");
+    expect(screen.getByText("State and city are filled in from the PIN. Change them if they are wrong.")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("City"), { target: { value: "Dharmavaram" } });
+    fireEvent.change(screen.getByLabelText("PIN code"), { target: { value: "515002" } });
+    await waitFor(() => expect(pin).toHaveBeenCalledWith("515002"));
+    expect(screen.getByLabelText("City")).toHaveValue("Dharmavaram");
+    expect(pin).not.toHaveBeenCalledWith("51500");
+  });
+  it("no answer from the directory: nothing is filled and the person types the two fields", async () => {
+    const pin = vi.fn(async () => null);
+    drawVerify(STATUS({ state: "created" }), verifyActions({ pin }));
+    fireEvent.change(screen.getByLabelText("PIN code"), { target: { value: "515001" } });
+    await waitFor(() => expect(pin).toHaveBeenCalled());
+    expect(screen.getByLabelText("City")).toHaveValue("");
+    expect(screen.queryByText(/filled in from the PIN/)).toBeNull();
+  });
+  it("the phone service's city refusal says: pick the city name as your post office writes it, under City", async () => {
+    const a = verifyActions({ details: vi.fn(async () => ({ ok: false as const, error: "invalid" as const, fieldReasons: { city: "city_not_found" } })) });
+    drawVerify(STATUS({ state: "created" }), a);
+    for (const [label, value] of Object.entries({ "Full name": "Asha Rao", "Phone number": "98765 43210", "Billing address": "12 Main Road, Anantapur", City: "Anantapur", State: "Andhra Pradesh", "PIN code": "515001" })) fireEvent.change(screen.getByLabelText(label), { target: { value } });
+    fireEvent.click(document.querySelector('input[type="checkbox"]') as HTMLElement);
+    fireEvent.click(screen.getByRole("button", { name: "Save and continue" }));
+    expect(await screen.findByText("Pick the city name as your post office writes it.")).toBeInTheDocument();
+    expect(screen.getByLabelText("City")).toHaveValue("Anantapur");
+  });
+});
+
+describe("Aadhaar (DigiLocker): stay on the page, read the status while the link is open, start again when it did not arrive", () => {
+  const drawAadhaar = (a = verifyActions()) => drawVerify(STATUS({ state: "in_progress", step: "aadhaar", steps: { pan: true, aadhaar: false } }), a);
+  it("says to stay on the page; when the status says aadhaar_verified the Aadhaar upload opens (the step does NOT end there), then Send, then Send for checking", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const checked = STATUS({ state: "in_progress", step: "aadhaar", steps: { pan: true, aadhaar: false }, aadhaarVerified: true });
+    const done = STATUS({ state: "in_progress", step: "complete", steps: { pan: true, aadhaar: true }, aadhaarVerified: true });
+    const status = vi.fn(async () => checked);
+    drawAadhaar(verifyActions({ status }));
+    fireEvent.click(screen.getByRole("button", { name: "Get the DigiLocker link" }));
+    expect(await screen.findByText("Stay on the page until it moves you back.")).toBeInTheDocument();
+    expect(status).not.toHaveBeenCalled();
+    await act(async () => void vi.advanceTimersByTime(7100));
+    await waitFor(() => expect(status).toHaveBeenCalled());
+    expect(await screen.findByText(/Your Aadhaar check reached us\. Now upload your Aadhaar file/)).toBeInTheDocument();
+    expect(document.querySelector('[data-part="submit"]')).toBeNull(); // not done: the document is still to go up
+    expect(document.querySelector('[data-doc="aadhaar"]')).not.toHaveAttribute("data-done");
+    vi.stubGlobal("fetch", vi.fn(async () => ({ json: async () => ({ ok: true, data: done }) })));
+    fireEvent.change(screen.getByLabelText("Aadhaar file (photo or PDF)"), { target: { files: [new File([new Uint8Array([1])], "aadhaar.pdf", { type: "application/pdf" })] } });
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    await waitFor(() => expect(document.querySelector('[data-part="submit"]')).not.toBeNull());
+    expect(document.querySelector('[data-doc="aadhaar"]')).toHaveAttribute("data-done");
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
+  it("when the person is back (or about 2 minutes passed) and it is still not done, 'Start the Aadhaar check again' asks for a new link", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const aadhaar = vi.fn(async () => ({ ok: true as const, data: { url: "https://digilocker.example/new" } }));
+    drawAadhaar(verifyActions({ aadhaar, status: vi.fn(async () => STATUS({ state: "in_progress", step: "aadhaar", steps: { pan: true, aadhaar: false }, aadhaarVerified: false })) }));
+    fireEvent.click(screen.getByRole("button", { name: "Get the DigiLocker link" }));
+    await screen.findByText("Stay on the page until it moves you back.");
+    expect(screen.queryByRole("button", { name: "Start the Aadhaar check again" })).toBeNull();
+    await act(async () => void vi.advanceTimersByTime(121_000));
+    fireEvent.click(await screen.findByRole("button", { name: "Start the Aadhaar check again" }));
+    await waitFor(() => expect(aadhaar).toHaveBeenCalledTimes(2));
+    expect(screen.queryByRole("button", { name: "Start the Aadhaar check again" })).toBeNull(); // the wait starts again with the new link
+    vi.useRealTimers();
+  });
+});
+
+describe("the money step: the first month of the number is held from the credits (C1, 26 Nov 2026)", () => {
+  it("too little credit is not an error screen: one sentence and Add credits; nothing was created", async () => {
+    const start = vi.fn(async () => ({ ok: false as const, error: "credits_needed" as const, needed: "₹499" }));
+    render(<PhoneBuy words={WORDS} actions={buyActions()} canEdit email="asha@shop.in" verifyHref="/v" kycFirst kyc={{ status: STATUS({ state: "not_started", accountType: null }), actions: verifyActions({ start, creditsHref: "/app/tenants/t1/billing" }) }} />);
+    await screen.findByText("+91 94294 92465");
+    fireEvent.click(screen.getAllByRole("radio")[0]);
+    fireEvent.click(screen.getByRole("button", { name: "Use this number" }));
+    fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "Asha Rao" } });
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+    expect(screen.getByText(/₹499 for the first month of your number is held from your credits/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Start verification" }));
+    expect(await screen.findByText(/You need ₹499 more in your credits to start/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Add credits" })).toHaveAttribute("href", "/app/tenants/t1/billing");
+    expect(document.querySelector('[data-part="verify-error"]')).toBeNull();
+  });
+  it("what is held is said, and 'Stop and get my credits back' asks once, refunds and starts over", async () => {
+    const held = STATUS({ state: "created", reserve: { state: "held", amountText: "₹499", priceText: "₹499", dueAt: "2026-12-10T00:00:00Z" } });
+    const cancel = vi.fn(async () => ({ ok: true as const, data: STATUS({ state: "not_started", accountType: null, reserve: { state: "refunded", amountText: "₹499", priceText: "₹499", dueAt: null } }) }));
+    drawVerify(held, verifyActions({ cancel }));
+    expect(screen.getByText("₹499 is held for your phone number. It is given back if you do not finish in 14 days.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Stop and get my credits back" }));
+    expect(cancel).not.toHaveBeenCalled();
+    expect(screen.getByText(/gives ₹499 back to your balance/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Yes, stop and refund" }));
+    await waitFor(() => expect(cancel).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(document.querySelector('[data-part="verify"]')).toHaveAttribute("data-state", "not_started"));
   });
 });

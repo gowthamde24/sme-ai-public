@@ -7,9 +7,10 @@ import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import type { KycReason, KycStatus } from "@/lib/api/business-kyc";
 import { requireUser } from "@/lib/auth/session";
-import { checkGst, checkPan, readStatus, saveDetails, startAadhaar, startAccount, submitAll, type KycError, type KycResult } from "@/lib/phone-kyc/source";
-import { claimNumber, searchNumbers } from "@/lib/phone-picker/source";
+import { cancelAccount, checkGst, checkPan, readStatus, saveDetails, startAadhaar, startAccount, submitAll, type KycError, type KycResult } from "@/lib/phone-kyc/source";
+import { acceptUsageStep, claimNumber, searchNumbers } from "@/lib/phone-picker/source";
 import type { OwnNumber, SearchResult, UnavailableReason } from "@/lib/phone-picker/types";
+import { lookupPin, type PinFound } from "@/lib/phone-kyc/pincode";
 import { kycPerClient, phonePicker } from "@/lib/screens/flag";
 
 /**
@@ -48,6 +49,9 @@ export async function buyNumberAction(tenantId: string, input: { number: unknown
   if (input?.agree !== true) return { ok: false, error: "invalid" };
   const started = await startAccount(who.token, tenantId, input.accountType);
   if (!started.ok) return { ok: false, error: started.error, reason: started.reason };
+  // the tick of step 4 is stored first (C1: a real outbound call is refused until it is)
+  const accepted = await acceptUsageStep(who.token, tenantId);
+  if (!accepted.ok) return { ok: false, error: accepted.error, reason: "reason" in accepted ? accepted.reason : undefined };
   const claimed = await claimNumber(who.token, tenantId, input.number, input.type);
   revalidatePath(`/app/tenants/${tenantId}/phone-number`);
   if (!claimed.ok) return { ok: false, error: claimed.error, reason: claimed.reason };
@@ -82,5 +86,18 @@ export async function kycSubmitAction(tenantId: string): Promise<KycResult> {
   const who = await owner(tenantId);
   const out = who && !off() ? await submitAll(who.token, tenantId) : forbidden;
   if (out.ok) revalidatePath(`/app/tenants/${tenantId}/phone-number`);
+  return out;
+}
+
+/** The state and the city of a PIN code (the verification form fills them in; the person can correct them). The PIN is the only thing that leaves; a failure is "not found". */
+export async function kycPinAction(tenantId: string, pin: unknown): Promise<PinFound | null> {
+  const who = await owner(tenantId);
+  return who && !off() ? lookupPin(pin) : null;
+}
+export async function kycCancelAction(tenantId: string): Promise<KycResult> {
+  const who = await owner(tenantId);
+  if (!who || off()) return forbidden;
+  const out = await cancelAccount(who.token, tenantId);
+  revalidatePath(`/app/tenants/${tenantId}/phone-number`);
   return out;
 }

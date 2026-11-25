@@ -57,7 +57,7 @@ Shop
 Off
 A very quiet sound behind the voice on calls.
 [button type=button: Say 'AI assistant' when greeting]
-If a customer asks, it always says it's your AI assistant. [Test call to my phone](/app/tenants/22222222-2222-2222-2222-222222222222/calls?test=1) We call your own phone, so you hear it the way a customer does.
+On unless you turn it off. If a customer asks, it always says it's your AI assistant. [Test call to my phone](/app/tenants/22222222-2222-2222-2222-222222222222/calls?test=1) We call your own phone, so you hear it the way a customer does.
 {label="Greeting and more choices"}
 ## Greeting and more choices
 Test mode: these choices are kept in this browser only. Nothing is sent to your assistant yet.

@@ -6,7 +6,7 @@ import type { LegalText } from "./types";
 export const PRIVACY_HI: LegalText = {
   title: "Privacy notice",
   intro: [
-    "This notice says in plain words what {brand} keeps about people, why, who helps us handle it, where it is stored, how long we keep it, and how you can have it deleted or stop messages. (Draft: for the owner's review)",
+    "This notice says in plain words what {brand} keeps about people, why, who helps us handle it, where it is stored, how long we keep it, and how you can have it deleted or stop messages.",
     "{brand} is provided by Stack19, {business_description} (\"we\", \"us\"). Write to {privacy_email} for anything in this notice, and to {security_email} to report a security problem.",
   ],
   sections: [
@@ -23,7 +23,7 @@ export const PRIVACY_HI: LegalText = {
               ["Your customers", "Names, phone numbers, e-mail addresses, what they asked for; whether each person agreed to be contacted, and who said STOP.", "So the business can answer and follow up people who asked to hear from it. We handle this only for the business."],
               ["Messages and chats", "Messages drafted for or sent to customers, their status and history, who approved them; your chats with our AI assistant.", "To prepare, send and track messages; to answer you."],
               ["Calls", "If the business uses our AI assistant to call people who enquired: the words of the call written out as text, with its time, length, language and outcome. Calls are not recorded.", "So the business can read what was said."],
-              ["Phone number documents", "Documents needed to register your business phone number are given by you to our telephony provider (VoiceLink); Stack19 does not keep them. We keep only the application status. (Draft: for the owner's review)", "To register a business phone number for you."],
+              ["Phone number documents", "Documents needed to register your business phone number are given by you to our telephony provider (VoiceLink); Stack19 does not keep them. We keep only the application status.", "To register a business phone number for you."],
               ["Website visitors", "If you join the waitlist: your name, kind of business, city, phone number or e-mail, language, and whether you ticked the box for news. If you write to us: what you send.", "To reply and to keep the list you asked to join."],
               ["Records of use", "A security log of who did what in a workspace and when; counts of AI use; short-lived records of sign-in attempts.", "To keep the service safe and working."],
             ],

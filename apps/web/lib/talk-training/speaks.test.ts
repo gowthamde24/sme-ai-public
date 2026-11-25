@@ -44,6 +44,9 @@ describe("How your assistant speaks (C1's fixed contract): the shapes and the ru
     expect(speaksProblem({ background: "stadium" })).toBe("background");
     expect(speaksProblem({ sayAi: true })).toBeNull();
     expect(speaksProblem({ sayAi: "yes" })).toBe("say_ai");
+    expect(speaksProblem({ sayAi: false })).toBe("say_ai_undertaking"); // off only with the written undertaking
+    expect(speaksProblem({ sayAi: false, sayAiUndertaking: true })).toBeNull();
+    expect(speaksToApi({ sayAi: false, sayAiUndertaking: true })).toEqual({ say_ai_when_greeting: false, say_ai_undertaking: { accepted: true } });
     expect(speaksProblem({ words: { ml: { style: "everyday_pure" } } })).toBe("language");
     expect(speaksProblem({ words: { te: {} } })).toBe("language");
     expect(speaksProblem({ introduceAs: { kind: "custom", text: "Gowtham's AI assistant" } })).toBeNull();
@@ -65,7 +68,7 @@ describe("How your assistant speaks (C1's fixed contract): the shapes and the ru
     expect(h?.background).toMatchObject({ value: "shop", saved: true });
     expect(h?.background?.options.map((o) => o.id)).toEqual(["quiet_office", "shop", "off"]); // a word the web does not know is left out
     expect(h?.background?.options[0].label.te).toBe("ప్రశాంతమైన ఆఫీస్");
-    expect(h?.sayAi).toEqual({ value: true, saved: true });
+    expect(h?.sayAi).toEqual({ value: true, saved: true, undertakingAt: null });
     expect(parseHowSpeaks(RAW({ background: { value: "stadium", options: [] } }))?.background).toBeNull();
     expect(parseHowSpeaks(RAW({ say_ai_when_greeting: { value: "yes" } }))?.sayAi).toBeNull();
   });

@@ -13,7 +13,7 @@ describe("the three paid plans of the public site (owner's final numbers, 19 Nov
       ["Business", 5999, 1500, 100, 29, "priority"],
     ]);
     expect(PUBLIC_PLANS.filter((p) => p.recommended).map((p) => p.name)).toEqual(["Pro"]);
-    expect(PLAN_FACTS).toMatchObject({ gstPercent: 18, extraMinute: 5, extraNumber: 299, freeStart: 50, billingSeconds: 30, numberHoldDays: 30 });
+    expect(PLAN_FACTS).toMatchObject({ gstPercent: 18, extraMinute: 5, extraNumber: 499, freeStart: 50, billingSeconds: 30, numberHoldDays: 30 });
   });
   it("cross over at about 300 and 1,300 minutes a month on calls alone", () => {
     expect(planCrossovers()).toEqual({ paygPro: 300, proBusiness: 1300 });
@@ -22,7 +22,7 @@ describe("the three paid plans of the public site (owner's final numbers, 19 Nov
   });
   it("formats rupees with the Indian grouping", () => {
     expect(rupees(1999)).toBe("₹1,999");
-    expect(planVars()).toMatchObject({ minute: "5", number: "299", start: "50", pro: "1,999", payg_pro: "300", pro_biz: "1,300" });
+    expect(planVars()).toMatchObject({ minute: "5", number: "499", start: "50", pro: "1,999", payg_pro: "300", pro_biz: "1,300" });
   });
   it("the amounts written inside the pricing description are the plans' own, in every language", () => {
     for (const lang of LANDING_LANGS) {

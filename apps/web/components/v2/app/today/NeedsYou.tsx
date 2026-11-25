@@ -52,6 +52,8 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   crm_push_failing: { kind: "today.kind.crm", step: "today.step.crm", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
   // an extra line could not be renewed (26 Nov 2026, EXTRA_LINES): the API's own sentence, target {type: "billing"}: opens Credits and billing
   line_renewal: { kind: "today.kind.voice", step: "today.step.voice", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
+  // the scheduled IndiaMART pull found the key refused (keys last 7 days; migration 20261231992420, target {type: "lead_sources"}): opens Lead sources
+  indiamart_key_expired: { kind: "today.kind.key", step: "today.step.key", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
   // a customer we already know enquired again (C1 #799): "Open chat", the hot-lead tone; the reason is OUR words in every language
   enquired_again: { kind: "today.kind.enquired", step: "today.step.enquired", tone: "bg-red-bg text-red-text", who: "today.fact.customer" },
   // a kind this screen does not know (a newer API): a plain "New item" row with the customer and Open, never a guess

@@ -40,7 +40,7 @@ describe("pricing (the approved mock)", () => {
   });
   it("lists what you pay for, has no draft tags (call charging is wired) and says GST is extra", () => {
     const t = text(h);
-    for (const s of ["From ₹5 a minute", "₹299 a month", "Nothing to pay", "Free", "At Meta's price"]) expect(t, s).toContain(s);
+    for (const s of ["From ₹5 a minute", "₹499 a month", "Nothing to pay", "Free", "At Meta's price"]) expect(t, s).toContain(s);
     expect(h).not.toContain('data-part="draft-tag"');
     expect(t).not.toContain("Draft: to be confirmed");
     expect(t).toContain("18% GST is added on your invoice");
@@ -72,13 +72,13 @@ describe("help center", () => {
     expect(out).toContain(`href="${sitePath("en", page("help"))}"`);
     expect(out.includes('data-part="draft-tag"')).toBe(Boolean(a.draft));
   });
-  it("the articles state the numbers of the product, not typed ones: Rs 100, GST, 7 days, 48 hours, 9 am to 9 pm", () => {
+  it("the articles state the numbers of the product, not typed ones: Rs 100, GST, 7 days, 48 hours, 10 am to 9 pm", () => {
     const t = (slug: string) => text(html("en", { kind: "article", slug }));
     expect(t("billing-and-credits")).toContain("₹100 free");
     expect(t("billing-and-credits")).toContain("18% GST");
     expect(t("delete-your-data")).toMatch(/after 7 days/);
     expect(t("delete-your-data")).toMatch(/within 48 hours/);
-    expect(t("calling-rules")).toContain("between 9 am and 9 pm");
+    expect(t("calling-rules")).toContain("between 10 am and 9 pm");
   });
   it("search narrows the list by title, summary and the words of the article, and says so when nothing is found", async () => {
     const { HelpSearch } = await import("./HelpSearch");
@@ -120,6 +120,18 @@ describe("acceptable use and refunds: drafts for approval", () => {
     const rows = out.match(/<li class="grid grid-cols-\[2rem/g);
     expect(rows).toHaveLength(5);
     expect(out).toContain("hello@stack19.com");
+  });
+  it("acceptable use lists the client's duties as plain bullets, marked Draft until the advocate has reviewed them (lawyer's opinion, 25 Nov 2026)", () => {
+    const out = html("en", page("acceptable-use"));
+    const duties = out.slice(out.indexOf('data-part="aup-duties"'));
+    const t = text(duties);
+    expect(t).toContain("Your duties as the business that calls");
+    expect(t).toContain("Draft: it waits for our advocate's review and may change.");
+    expect(t).toContain("7 days only");
+    expect(t).toContain("are yours, not ours");
+    expect(t).toContain("We may pause or stop calling on your account at any time");
+    expect(t).not.toMatch(/I confirm|business confirms/);
+    expect(text(out)).toContain("whose consent is recorded");
   });
   it("refunds has four rules, the Draft tag and the hello@ address", () => {
     const out = html("en", page("refunds"));

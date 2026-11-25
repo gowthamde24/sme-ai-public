@@ -102,10 +102,10 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return "A customer you already know enquired again. Reply or call back: a repeat customer is a warm lead."
     if kind == "phone_needs_prices":
         return "Add your prices so the phone assistant can answer them: a price on each item, or a price list. Until then it tells callers the team will call back."
-    if kind == "crm_push_failing":
-        return f"{_TOOLS.get(ref, 'A connected tool')} is not receiving your results: some could not be sent after several tries. Open Connectors to see why."
     if kind == "indiamart_key_expired":
         return "IndiaMART no longer accepts your key, so no new IndiaMART leads are coming in. A key lasts 7 days: paste a new one on the Lead sources page."
+    if kind == "crm_push_failing":
+        return f"{_TOOLS.get(ref, 'A connected tool')} is not receiving your results: some could not be sent after several tries. Open Connectors to see why."
     if kind == "credits_low":
         return "Your call balance is almost used up: under 4 minutes of calls are left. Top up so calls do not stop."
     if kind == "line_renewal":

@@ -23,8 +23,8 @@ describe("what a month costs under each plan (the owner's final numbers, before 
     expect(monthCostPaise("business", use(1500))).toBe(rs(5999));
     expect(monthCostPaise("business", use(1600, 110))).toBe(rs(5999 + 500 + 10 * 29));
   });
-  it("each number after the first is ₹299 on every plan, and half minutes count", () => {
-    for (const p of PLAN_KEYS) expect(monthCostPaise(p, use(0, 0, 3)) - monthCostPaise(p, use(0, 0, 1))).toBe(rs(598));
+  it("each number after the first is ₹499 on every plan, and half minutes count", () => {
+    for (const p of PLAN_KEYS) expect(monthCostPaise(p, use(0, 0, 3)) - monthCostPaise(p, use(0, 0, 1))).toBe(rs(998));
     expect(monthCostPaise("payg", use(10.5))).toBe(rs(499) + 5250);
   });
   it("the table is the owner's: prices, included minutes, free searches, popular and priority", () => {

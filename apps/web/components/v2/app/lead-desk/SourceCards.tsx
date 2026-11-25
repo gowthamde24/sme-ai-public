@@ -12,6 +12,7 @@ import { makeT, type Words } from "../words";
 import { makeCardsPost, type CardsPost } from "./cards-post";
 import { ConsentTick } from "./ConsentTick";
 import { CopyBox } from "./CopyBox";
+import { PortalsList } from "./PortalsList";
 
 /** The state is a dot and a word (no pill): green only when it works, orange only when it needs the owner, grey otherwise. */
 const DOT: Record<Card["state"], string> = { connected: "bg-green-text", waiting: "bg-muted", needs_attention: "bg-brand", paused: "bg-muted", off: "border border-muted" };
@@ -180,6 +181,7 @@ function AddressCard({ card, t, words, post, onChanged }: { card: Card; t: T; wo
         <div><button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(true)}>{t("sc.addr.new")}</button></div>
       )}
       {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
+      {card.kind === "email_forward" ? <PortalsList words={words} post={post} address={shown?.fields[0]?.value ?? null} /> : null}
       <Tools card={card} t={t} words={words} post={post} onChanged={onChanged} />
       <CostBox card={card} t={t} post={post} onChanged={onChanged} />
     </div>

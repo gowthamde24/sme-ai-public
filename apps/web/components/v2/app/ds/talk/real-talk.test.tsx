@@ -250,7 +250,7 @@ describe("Talk live with the real voice", () => {
     expect(sentJson()).toContainEqual({ type: "confirm", action_id: ACTION, decision: "yes", second_confirm: true });
   });
 
-  it("'I confirm they agreed' on the card goes to this workspace with the plan's id, and the NEW plan card the API returns replaces the old one (the old action is dead)", async () => {
+  it("'Record their consent' on the card goes to this workspace with the plan's id, and the NEW plan card the API returns replaces the old one (the old action is dead)", async () => {
     const NEW = "66666666-6666-4666-8666-666666666666";
     askConsent.mockResolvedValue({ ok: true, result: { how: "owner_confirms", asked: 3, queued: null, blocked: null, blockedReasons: {}, templateStatus: null, newAction: { type: "confirm_action", action_id: NEW, title: "Call 17 people", summary: "S", steps: [], count: 17, channel: "call", estimate: null, status: "proposed" }, newTaskId: null } });
     const h = setup();
