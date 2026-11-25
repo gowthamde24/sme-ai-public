@@ -25,7 +25,7 @@ SIGNUP_OPEN=true SIGNUP_PHONE_SENDER=fake SIGNUP_FAKE_CODE_ECHO=true     # the s
 WHAT_YOU_SELL_LISTS=true PRICING_V2=true JOBS=on JOBS_GET_PAID=on ADMIN_CONSOLE=true
 CONTACT_FORM=true CAPTCHA_PROVIDER=none
 BILLING_CHARGE_CALLS=true CALL_COORDINATION=true
-WEBHOOKS_OUT=on CRM_PUSH=on INDIAMART_PULL=on WORKSPACE_SECRETS=fake DEVELOPER_API=test             # workspace keys live in memory; nothing reaches Secret Manager
+WEBHOOKS_OUT=on CRM_PUSH=on INDIAMART_PULL=on INDIAMART_PUSH=on EXTRA_LINES=true WORKSPACE_SECRETS=fake DEVELOPER_API=test             # workspace keys live in memory; nothing reaches Secret Manager
 PHONE_PICKER=true KYC_PER_CLIENT=true KYC_RETURN_URL=https://app.local.invalid/app/phone/kyc-return
 # the fake VoiceLink (scripts/fake_voicelink.py, started below): no real client, number or purchase
 VOICELINK_USERNAME=fake VOICELINK_PASSWORD=fake VOICELINK_API_BASE="http://127.0.0.1:${FAKE_VOICELINK_PORT:-8099}" PICKER_CLIENT_ID=1 PICKER_BOT_ID=1
@@ -45,24 +45,30 @@ set +a
 ROOT="$PWD"
 cd services/ai-api
 PY="${VENV:-.venv}/bin/python"
-FAKE_PID=""; PICKER_RESTORE=""
+FAKE_PID=""; RESTORE=""
+staging_sql() { ( cd "$ROOT" && supabase db query --linked "$1" 2>/dev/null ); }
 cleanup() {
   [ -n "$FAKE_PID" ] && kill "$FAKE_PID" 2>/dev/null || true
-  if [ "$PICKER_RESTORE" = off ]; then   # put the staging switch back as it was
-    ( cd "$ROOT" && supabase db query --linked "update ops.picker_settings set enabled = false" >/dev/null 2>&1 ) && echo "number picker switch on staging put back to off" || echo "COULD NOT put ops.picker_settings.enabled back to false: do it by hand"
-  fi
+  for t in $RESTORE; do   # put each staging platform switch back as it was (off)
+    staging_sql "update $t set enabled = false" >/dev/null && echo "$t on staging put back to off" || echo "COULD NOT put $t.enabled back to false: do it by hand"
+  done
 }
 trap cleanup EXIT INT TERM
+# Two platform switches live in the STAGING database, both off there: the number picker (ops.picker_settings.enabled) and the extra lines (ops.line_settings.enabled). For this local run they are turned ON (only from a checkout
+# linked to staging) and put back to OFF when this script ends (Ctrl-C included; a kill -9 leaves them on). The deployed staging API has PHONE_PICKER and EXTRA_LINES off and only the fake VoiceLink and the fake line channel
+# are reachable from here, so nothing real moves. OPEN_PICKER=0 leaves them alone.
+open_switch() {
+  local was; was="$(staging_sql "select enabled from $1" || true)"
+  case "$was" in   # (not a pipe into grep -q: pipefail would call that a failure)
+    *'"enabled": false'*) staging_sql "update $1 set enabled = true" >/dev/null && { RESTORE="$RESTORE $1"; echo "$1 on staging turned ON for this run (restored when this script ends)"; } ;;
+    *'"enabled": true'*) echo "$1 on staging was already on: left as it is" ;;
+  esac
+}
+if [ "${OPEN_PICKER:-1}" = 1 ] && [ "$(cat "$ROOT/supabase/.temp/project-ref" 2>/dev/null)" = uiallwgywitryxatcqxf ]; then
+  open_switch ops.picker_settings
+  open_switch ops.line_settings
+fi
 if [ "${FAKE_VOICELINK:-1}" = 1 ]; then   # the fake VoiceLink dies with this script
   "$PY" ../../scripts/fake_voicelink.py "${FAKE_VOICELINK_PORT:-8099}" & FAKE_PID=$!
-  # The number picker's platform switch lives in the STAGING database (ops.picker_settings.enabled, off). For this local run it is turned on so the picker can be clicked through, and put back to off when this script ends
-  # (Ctrl-C included; a kill -9 leaves it on). The deployed staging API has PHONE_PICKER off and only the fake VoiceLink is reachable from here, so nothing real moves. OPEN_PICKER=0 leaves the switch alone.
-  if [ "${OPEN_PICKER:-1}" = 1 ] && [ "$(cat "$ROOT/supabase/.temp/project-ref" 2>/dev/null)" = uiallwgywitryxatcqxf ]; then
-    was="$(supabase db query --linked "select enabled from ops.picker_settings" 2>/dev/null || true)"
-    case "$was" in   # (not a pipe into grep -q: pipefail would call that a failure)
-      *'"enabled": false'*) supabase db query --linked "update ops.picker_settings set enabled = true" >/dev/null 2>&1 && { PICKER_RESTORE=off; echo "number picker switch on staging turned ON for this run (restored when this script ends)"; } ;;
-      *'"enabled": true'*) echo "number picker switch on staging was already on: left as it is" ;;
-    esac
-  fi
 fi
 "${VENV:-.venv}/bin/uvicorn" app.main:app --no-server-header --port "${PORT:-8000}"
