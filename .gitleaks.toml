@@ -25,6 +25,15 @@ paths = [
   '''apps/web/scripts/audit-auth\.mjs''',
   # a browser storage NAME (`s19.verify.prefill`) in a constant called PREFILL_KEY: an identifier, not a secret (checked 25 Nov 2026)
   '''apps/web/components/v2/app/phone/PhoneBuy\.tsx''',
+  # the same browser storage NAME (`s19.verify.prefill`) in the shared KYC constants file (checked 25 Nov 2026): an identifier, not a secret
+  '''apps/web/components/v2/app/phone/kyc-shared\.ts''',
   # RPC function names next to the word `token` (`self._rpc.object(token, "pricing_v3_...", ...)`): identifiers, not keys (checked 19 Nov 2026: no secret in the file)
   '''services/ai-api/app/pricing/v3_service\.py''',
+]
+
+[[allowlists]]
+description = "made-up Slack webhook URLs in the notification tests (letters a-z in order, not real hooks; checked 25 Nov 2026)"
+targetRules = ["slack-webhook-url"]
+paths = [
+  '''services/ai-api/tests/test_notify_out\.py''',
 ]
