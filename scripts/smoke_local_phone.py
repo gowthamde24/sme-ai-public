@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import re
 import sys
 import urllib.request
 from pathlib import Path
@@ -44,12 +45,40 @@ def picker_switch(value: bool) -> bool | None:
     return was
 
 
+def cleanup(tenant: str, fake_base: str, number: str) -> None:
+    """Deletes what THIS run made in the staging database, so the demo workspace can pick a number again. Only when the VoiceLink behind the API is the fake one (its state lists the bought number and the client);
+    only this workspace's rows; only the fake purchase (order number FAKE-...), the fake client id the fake server knows and the line row of that number; and only an alert this run raised (last 30 minutes)."""
+    ref_file = sb.ROOT / "supabase" / ".temp" / "project-ref"
+    if not ref_file.exists() or ref_file.read_text().strip() != sb.STAGING_REF:
+        print("cleanup skipped: this checkout is not linked to staging")
+        return
+    try:
+        state = fake(fake_base, "GET", "/_fake/state")
+    except OSError:
+        print("cleanup skipped: the fake VoiceLink is not answering, so these rows cannot be proven fake")
+        return
+    digits = number.lstrip("+")
+    clients = [int(k) for k in state.get("clients", {}) if int(k) > 1]
+    if digits not in state.get("bought", []) or not clients or not re.fullmatch(r"\+91[0-9]{10}", number) or not re.fullmatch(r"[0-9a-f-]{36}", tenant):
+        print("cleanup skipped: nothing of this run is in the fake VoiceLink")
+        return
+    ids = ",".join(str(c) for c in clients)
+    sql = (f"with a as (delete from ops.number_purchases where tenant_id = '{tenant}' and number = '{number}' and order_number like 'FAKE-%' returning 1), "
+           f"l as (delete from public.phone_numbers where tenant_id = '{tenant}' and number = '{number}' and provider = 'voicelink' returning 1), "
+           f"b as (delete from telephony.business_clients where tenant_id = '{tenant}' and client_id in ({ids}) returning 1), "
+           f"n as (delete from admin.alerts where kind = 'telephony_setting' and detail like 'Number picker:%' and created_at > now() - interval '30 minutes' returning 1) "
+           "select (select count(*) from a) as purchases, (select count(*) from l) as lines, (select count(*) from b) as clients, (select count(*) from n) as alerts")
+    r = sb.subprocess.run(["supabase", "db", "query", "--linked", sql], cwd=sb.ROOT, capture_output=True, text=True, timeout=120)
+    print("cleanup of this run's fake rows:", "done" if r.returncode == 0 else "FAILED", "|", " ".join(l.strip() for l in r.stdout.splitlines() if any(k in l for k in ("purchases", "lines", "clients", "alerts"))))
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--api-url", default="http://localhost:8000")
     p.add_argument("--fake-url", default="http://127.0.0.1:8099")
     p.add_argument("--pack", default="textiles")
     p.add_argument("--i-know-this-is-staging", action="store_true")
+    p.add_argument("--keep-rows", action="store_true", help="leave the fake client, purchase and line this run made in the staging database (default: delete them at the end)")
     p.add_argument("--open-picker", action="store_true", help="turn the platform switch of the number picker ON on staging for this run and put it back after")
     a = p.parse_args()
     if not a.i_know_this_is_staging:
@@ -75,6 +104,17 @@ def body(a: argparse.Namespace) -> int:
     say("PASS" if st == 200 and offers else "FAIL", "1 numbers for sale", f"HTTP {st}, {len(offers)} offered, code {sb.code_of(out)}, reason {why}")
     if not offers:
         return 1
+    claimed = offers[0]["number"]
+    try:
+        return steps(run, a, offers, claimed)
+    finally:
+        if not a.keep_rows:
+            cleanup(run.tenant, a.fake_url, claimed)
+
+
+def steps(run: sb.Run, a: argparse.Namespace, offers: list, claimed: str) -> int:   # type: ignore[type-arg]
+    say = sb.say
+    t = run.t
     st, out = run.call("GET", f"{t}/phone-kyc/business")
     say("PASS" if st == 200 else "FAIL", "2 KYC status", f"HTTP {st}, state {out.get('state') if isinstance(out, dict) else '?'}")
     if isinstance(out, dict) and out.get("state") == "verified":
@@ -91,7 +131,7 @@ def body(a: argparse.Namespace) -> int:
         ):
             st, out = run.call("POST", f"{t}/phone-kyc/business{path}", body)
             say("PASS" if st in (200, 201) else "FAIL", f"KYC {name}", f"HTTP {st}, code {sb.code_of(out)}")
-    st, out = run.call("POST", f"{t}/numbers/claim", {"number": offers[0]["number"], "type": "mobile"})
+    st, out = run.call("POST", f"{t}/numbers/claim", {"number": claimed, "type": "mobile"})
     first = out.get("state") if isinstance(out, dict) else None
     say("PASS" if st == 201 and first in ("kyc_pending", "ready", "getting_ready") else "FAIL", "9 claim before approval", f"HTTP {st}, state {first}, code {sb.code_of(out)}")
     state = fake(a.fake_url, "GET", "/_fake/state")
