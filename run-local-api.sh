@@ -42,10 +42,27 @@ unset RESEND_API_KEY LEAD_RESEND_API_KEY LEAD_RESEND_WEBHOOK_SECRET WHATSAPP_ACC
 # LOCAL_ENV_OVERRIDES="PAGE_MAX_INFLIGHT=24 CALL_COORDINATION=false" ./run-local-api.sh : settings for this run only (applied last)
 for pair in ${LOCAL_ENV_OVERRIDES:-}; do export "$pair"; done
 set +a
+ROOT="$PWD"
 cd services/ai-api
 PY="${VENV:-.venv}/bin/python"
+FAKE_PID=""; PICKER_RESTORE=""
+cleanup() {
+  [ -n "$FAKE_PID" ] && kill "$FAKE_PID" 2>/dev/null || true
+  if [ "$PICKER_RESTORE" = off ]; then   # put the staging switch back as it was
+    ( cd "$ROOT" && supabase db query --linked "update ops.picker_settings set enabled = false" >/dev/null 2>&1 ) && echo "number picker switch on staging put back to off" || echo "COULD NOT put ops.picker_settings.enabled back to false: do it by hand"
+  fi
+}
+trap cleanup EXIT INT TERM
 if [ "${FAKE_VOICELINK:-1}" = 1 ]; then   # the fake VoiceLink dies with this script
   "$PY" ../../scripts/fake_voicelink.py "${FAKE_VOICELINK_PORT:-8099}" & FAKE_PID=$!
-  trap 'kill "$FAKE_PID" 2>/dev/null || true' EXIT INT TERM
+  # The number picker's platform switch lives in the STAGING database (ops.picker_settings.enabled, off). For this local run it is turned on so the picker can be clicked through, and put back to off when this script ends
+  # (Ctrl-C included; a kill -9 leaves it on). The deployed staging API has PHONE_PICKER off and only the fake VoiceLink is reachable from here, so nothing real moves. OPEN_PICKER=0 leaves the switch alone.
+  if [ "${OPEN_PICKER:-1}" = 1 ] && [ "$(cat "$ROOT/supabase/.temp/project-ref" 2>/dev/null)" = uiallwgywitryxatcqxf ]; then
+    was="$(supabase db query --linked "select enabled from ops.picker_settings" 2>/dev/null || true)"
+    case "$was" in   # (not a pipe into grep -q: pipefail would call that a failure)
+      *'"enabled": false'*) supabase db query --linked "update ops.picker_settings set enabled = true" >/dev/null 2>&1 && { PICKER_RESTORE=off; echo "number picker switch on staging turned ON for this run (restored when this script ends)"; } ;;
+      *'"enabled": true'*) echo "number picker switch on staging was already on: left as it is" ;;
+    esac
+  fi
 fi
 "${VENV:-.venv}/bin/uvicorn" app.main:app --no-server-header --port "${PORT:-8000}"

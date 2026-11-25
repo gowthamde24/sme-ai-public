@@ -2451,14 +2451,27 @@
       "extras": []
     },
     {
+      "code": "mail_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "The e-mail did not go. Try again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "mail_unavailable",
       "statuses": [
         503
       ],
       "areas": [
+        "admin",
         "credits"
       ],
-      "default_message": "We cannot send e-mail right now. Download the invoice from the screen instead.",
+      "default_message": "We cannot send e-mail right now.",
       "wait": false,
       "extras": []
     },

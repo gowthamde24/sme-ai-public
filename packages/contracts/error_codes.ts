@@ -197,6 +197,7 @@ export const API_ERROR_CODES = [
   "line_not_found",
   "live_not_available",
   "locked_for_business_type",
+  "mail_failed",
   "mail_unavailable",
   "mapping_required_missing",
   "marketing_blocked",

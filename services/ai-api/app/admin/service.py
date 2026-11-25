@@ -90,6 +90,7 @@ class AdminRepository(Protocol):
     def find_by_email(self, token: str, email: str) -> dict[str, Any]: ...
     def statement(self, token: str, tenant_id: uuid.UUID, start: str | None, end: str | None, limit: int, before: str | None) -> dict[str, Any]: ...
     def wallet_debit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]: ...
+    def invoice_resend(self, token: str, tenant_id: uuid.UUID, number: str, reason_code: str, reason_text: str) -> dict[str, Any]: ...
     def webhook_failures(self, token: str, limit: int) -> dict[str, Any]: ...
     def alert_ack(self, token: str, alert_id: uuid.UUID) -> dict[str, Any]: ...
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
@@ -180,6 +181,9 @@ class PostgrestAdminRepository:
 
     def wallet_debit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]:
         return self._rpc.object(token, "admin_wallet_debit", {"p_tenant_id": str(tenant_id), "p_amount_paise": amount_paise, "p_confirm_paise": confirm_paise, "p_reason_code": reason_code, "p_reason_text": reason_text, "p_key": key})
+
+    def invoice_resend(self, token: str, tenant_id: uuid.UUID, number: str, reason_code: str, reason_text: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_invoice_resend", {"p_tenant_id": str(tenant_id), "p_number": number, "p_reason_code": reason_code, "p_reason_text": reason_text})
 
     def webhook_failures(self, token: str, limit: int) -> dict[str, Any]:
         return self._rpc.object(token, "admin_webhook_failures", {"p_limit": limit})
@@ -505,6 +509,11 @@ class GoodwillIn(_Out):
     reason_code: ReasonCode
     reason_text: str = Field(min_length=3, max_length=300)   # money always needs words
     idempotency_key: str = Field(pattern=r"^[A-Za-z0-9_-]{8,64}$")   # one per click: a retry never credits twice
+
+
+class ResendIn(_Out):
+    reason_code: ReasonCode
+    reason_text: str = Field(min_length=3, max_length=300)
 
 
 class GoodwillOut(_Out):
@@ -996,6 +1005,9 @@ class AdminService:
     def wallet_debit(self, token: str, tenant_id: uuid.UUID, body: GoodwillIn) -> dict[str, Any]:
         d = self._repo.wallet_debit(token, tenant_id, body.amount_paise, body.confirm_paise, body.reason_code, body.reason_text, body.idempotency_key)
         return {"debited_paise": int(d["debited_paise"]), "debited_text": inr(int(d["debited_paise"])), "balance_paise": int(d["balance_paise"]), "balance_text": inr(int(d["balance_paise"])), "replayed": bool(d.get("replayed"))}
+
+    def invoice_resend(self, token: str, tenant_id: uuid.UUID, number: str, body: ResendIn) -> dict[str, Any]:
+        return self._repo.invoice_resend(token, tenant_id, number, body.reason_code, body.reason_text)
 
     def webhook_failures(self, token: str, limit: int) -> dict[str, Any]:
         return self._repo.webhook_failures(token, limit)
