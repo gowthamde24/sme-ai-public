@@ -2451,6 +2451,18 @@
       "extras": []
     },
     {
+      "code": "mail_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "credits"
+      ],
+      "default_message": "We cannot send e-mail right now. Download the invoice from the screen instead.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "mapping_required_missing",
       "statuses": [
         422

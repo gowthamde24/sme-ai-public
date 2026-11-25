@@ -8,9 +8,11 @@
   POST /v1/tenants/{t}/billing/credits/topups/{order}/failed      `{reason}` the checkout failed or was closed (Owner); the order can still be paid later
   GET  /v1/tenants/{t}/billing/credits/statement                  every addition and deduction with the balance after each (Owner, Admin)
   GET  /v1/tenants/{t}/billing/gst-invoices/{number}              one GST invoice or credit note in full (a number like S19-2627-000001: 26-27 is the financial year) (Owner, Admin)
+  POST /v1/tenants/{t}/billing/gst-invoices/{number}/email        mails that invoice to the signed-in person's own address -> {sent}; 503 mail_unavailable when no sender is set (Owner, Admin)
   POST /v1/admin/businesses/{t}/topups/{order}/refund             Stack19 staff (owner, finance): refund the UNUSED part of a top-up; needs a reason, a fresh authenticator code and an idempotency key
 NOTE: no `from __future__ import annotations` here (request models are attached at registration time)."""
 
+import logging
 import uuid
 from datetime import date, datetime
 from typing import Annotated
@@ -22,6 +24,7 @@ from app.auth.deps import PrincipalDep, Runtime, TenantContext, get_runtime, req
 from app.billing.errors import NotSupportedError
 from app.credits.errors import AlreadyRefundedError, NotAPaidTopupError, NothingUnusedError
 from app.credits.models import (
+    InvoiceMailOut,
     InvoiceDetailOut,
     RefundIn,
     RefundOut,
@@ -35,6 +38,7 @@ from app.credits.models import (
     TopupOrderOut,
     TopupsOut,
 )
+from app.credits.receipt_mail import send_invoice
 from app.credits.service import (
     CreditsService,
     RefundDeclinedError,
@@ -46,6 +50,7 @@ from app.credits.service import (
 from app.errors import ApiError, not_found
 from app.tenancy.models import Role
 
+logger = logging.getLogger("app.credits.routes")
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/billing", tags=["credits"])
 admin_router = APIRouter(prefix="/v1/admin", tags=["admin"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
@@ -89,7 +94,13 @@ def topups(ctx: OwnerAdmin, runtime: RuntimeDep, limit: Annotated[int, Query(ge=
 def confirm_topup(order_id: OrderId, body: TopupConfirmIn, ctx: Owner, runtime: RuntimeDep) -> TopupConfirmOut:
     """The checkout returned its payment id and signature: checked here, then the balance is topped up once and the GST invoice written. Safe to repeat; the webhook may have done it already (`replayed: true`)."""
     try:
-        return _service(runtime).confirm_topup(ctx.principal.token, ctx.tenant.id, order_id, body.payment_id, body.signature)
+        done = _service(runtime).confirm_topup(ctx.principal.token, ctx.tenant.id, order_id, body.payment_id, body.signature)
+        if not done.replayed and done.invoice_number:   # the receipt, once, to the person who paid; a failure to mail never undoes the payment
+            try:
+                send_invoice(runtime.mail_sender, _service(runtime).invoice(ctx.principal.token, ctx.tenant.id, done.invoice_number), ctx.principal.email)
+            except Exception:  # noqa: BLE001
+                logger.warning("the receipt e-mail was not sent")
+        return done
     except TopupOrderUnknownError:
         raise ApiError(404, "topup_order_unknown", "We could not find that payment.") from None
     except TopupNotVerifiedError:
@@ -116,6 +127,15 @@ def statement(
 @router.get("/gst-invoices/{number}", response_model=InvoiceDetailOut)
 def invoice_detail(number: Annotated[str, Path(pattern=r"^(S19|C19)-[0-9]{4}-[0-9]{6}$")], ctx: OwnerAdmin, runtime: RuntimeDep) -> InvoiceDetailOut:
     return _service(runtime).invoice(ctx.principal.token, ctx.tenant.id, number)
+
+
+@router.post("/gst-invoices/{number}/email", response_model=InvoiceMailOut)
+def email_invoice(number: Annotated[str, Path(pattern=r"^(S19|C19)-[0-9]{4}-[0-9]{6}$")], ctx: OwnerAdmin, runtime: RuntimeDep) -> InvoiceMailOut:
+    """The invoice goes to the address of the signed-in account only (never to an address typed into the request), so this cannot be used to send mail to a stranger."""
+    inv = _service(runtime).invoice(ctx.principal.token, ctx.tenant.id, number)
+    if runtime.mail_sender is None or not ctx.principal.email:
+        raise ApiError(503, "mail_unavailable", "We cannot send e-mail right now. Download the invoice from the screen instead.")
+    return InvoiceMailOut(sent=send_invoice(runtime.mail_sender, inv, ctx.principal.email))
 
 
 @admin_router.post("/businesses/{tenant_id}/topups/{order_id}/refund", response_model=RefundOut)
