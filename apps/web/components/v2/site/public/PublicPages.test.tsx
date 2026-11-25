@@ -7,6 +7,8 @@ import { htmlText } from "@/test/html-text";
 
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars", teluguFontVariable: "te-font", teluguDemoFontVariable: "te-demo-font" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
+// the lazy wrapper is a Next chunk boundary; in a test the form itself is drawn
+vi.mock("@/components/v2/site/public/LazyTalkForm", async () => ({ TalkForm: (await import("./TalkForm")).TalkForm }));
 vi.mock("@/components/v2/controls/Turnstile", () => ({ Turnstile: () => null }));
 
 import { pubDict } from "@/i18n/public";
