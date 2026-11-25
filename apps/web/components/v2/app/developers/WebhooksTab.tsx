@@ -31,6 +31,8 @@ export function WebhooksTab({ words, endpoints, events, owner, actions }: { word
   const [problem, setProblem] = React.useState<string | null>(null);
   const [note, setNote] = React.useState<string | null>(null);
   const [busy, setBusy] = React.useState(false);
+  // the list comes from the server and is replaced when it changes (a refresh after a save)
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   React.useEffect(() => setRows(endpoints), [endpoints]);
   const say = (f: HookFail): string => (f.error === "url" ? t(`dvh.fail.${f.reason ?? "none"}` as "dvh.fail.none") : f.error === "too_many" ? t("dvh.fail.too_many") : f.error === "other" ? t("dvh.fail.unavailable") : t(`dvh.fail.${f.error}` as "dvh.fail.mfa"));
   const run = async <T,>(go: () => Promise<Ok<T>>, done: (r: { ok: true } & T) => void) => {

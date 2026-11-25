@@ -21,9 +21,9 @@ from app.jobs.describe import (
     DescribeRefused,
     catalogue_facts,
 )
-from app.jobs.routes import JobsDep, jobs_on
+from app.jobs.routes import JobsDep
 
-router = APIRouter(prefix="/v1/tenants/{tenant_id}/jobs", tags=["jobs"], dependencies=[Depends(jobs_on)])
+router = APIRouter(prefix="/v1/tenants/{tenant_id}/jobs", tags=["jobs"])   # JOBS is checked by the `jobs` parameter AFTER the role (a read-only workspace is refused first)
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 
 

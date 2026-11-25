@@ -41,7 +41,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "outbox_settings", "outbox_messages", "outbox_message_media", "outbox_events",
     "store_settings", "store_visits", "store_staff", "booking_offers", "phone_kyc", "scheduler_settings", "scheduler_runs", "visit_reminders",
     "catalogue_items", "catalogue_photos", "sell_entries", "sell_lists", "sell_list_columns", "sell_list_rows", "sell_list_imports", "custom_field_defs", "custom_field_values",
-    "catalogue_items", "catalogue_photos", "lead_source_activity", "sell_entries", "custom_field_defs", "custom_field_values",
+    "lead_source_activity",
     "customer_sites", "ledger_accounts", "ledger_entries", "customer_credit_limits",
     "campaigns", "campaign_recipients", "campaign_steps", "call_list_items",
     "marks_send_log",

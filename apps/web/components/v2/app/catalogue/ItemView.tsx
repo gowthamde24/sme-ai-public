@@ -57,6 +57,7 @@ export function ItemView({ base, item, role, words, lead, saved, send, undo = nu
                 {item.updated_by_name ? say(words, "catalogue.price.changed_by", { name: item.updated_by_name, when: changedAt(item.updated_at) }) : say(words, "catalogue.price.changed", { when: changedAt(item.updated_at) })}
               </p>
             ) : null}
+            {/* eslint-disable-next-line react-hooks/purity -- the 30-day window only decides whether Undo is offered; the server enforces it */}
             {undo && role === "owner" && item.updated_by_name !== undefined && item.price_paise !== null && Date.now() - Date.parse(item.updated_at) < 30 * 86_400_000 ? <UndoPrice undo={undo} words={words} /> : null}
           </div>
           {admin ? (
