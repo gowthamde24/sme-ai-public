@@ -1,5 +1,5 @@
 """Notifications out (docs/contracts/commerce-notify.md section C): the three channels, what is accepted, what a message may say, the guarded send, the worker pass and its retry schedule. The fake repository
-answers as migration 20261231992350's functions do (the SQL smoke run and pgTAP 292 pin the database side: the rate limit, the collapse, the queueing). No test reaches the network: DNS is a table and the
+answers as migration 20261231992345's functions do (the SQL smoke run and pgTAP 292 pin the database side: the rate limit, the collapse, the queueing). No test reaches the network: DNS is a table and the
 other side is an httpx MockTransport."""
 
 # ruff: noqa: E501, S105, S106

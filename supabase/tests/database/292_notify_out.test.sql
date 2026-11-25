@@ -1,4 +1,4 @@
--- Notifications out (migration 20261231992350; docs/contracts/commerce-notify.md section C): the channels (every member reads, Owner or Admin change; the address or token is never in the database),
+-- Notifications out (migration 20261231992345; docs/contracts/commerce-notify.md section C): the channels (every member reads, Owner or Admin change; the address or token is never in the database),
 -- the queueing triggers (leads, missed calls, call outcomes: only for a channel that asked), what a message may say (name, masked phone, outcome, reason: nothing else), the worker's claim (20 a
 -- minute and 300 an hour per channel, more than 5 new-lead messages a minute collapsed into one), the record of an attempt, the low-balance scan, the log's 30 days and isolation between workspaces.
 begin;

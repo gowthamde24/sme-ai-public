@@ -611,7 +611,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with c as (insert into public.commerce_connections (tenant_id, kind, store_label, token_hash, created_by) values (%1$L, 'shopify', 'generic-cart.myshopify.com', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) returning id)
      insert into public.commerce_checkouts (id, tenant_id, connection_id, external_id, due_at) select %2$L, %1$L, c.id, 'k-1', now() from c$$,
    'status = status', $$delete from public.commerce_checkouts where id = %2$L$$, false),
-  -- notifications out (migration 20261231992350): written only by notify_channel_* (Owner or Admin), the queueing triggers and the worker's notify_delivery_record
+  -- notifications out (migration 20261231992345): written only by notify_channel_* (Owner or Admin), the queueing triggers and the worker's notify_delivery_record
   ('notify_channels',
    $$insert into public.notify_channels (id, tenant_id, kind, last4, created_by) values (%2$L, %1$L, 'teams', 'wxyz', %5$L)$$,
    'last4 = last4', $$delete from public.notify_channels where id = %2$L$$, true),

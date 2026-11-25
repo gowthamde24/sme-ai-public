@@ -1,4 +1,4 @@
-"""The database functions of migration 20261231992350 behind an interface. The people's calls carry the person's token (every member reads, Owner or Admin change, checked by the database); the worker's carry the scheduler account's."""
+"""The database functions of migration 20261231992345 behind an interface. The people's calls carry the person's token (every member reads, Owner or Admin change, checked by the database); the worker's carry the scheduler account's."""
 
 # ruff: noqa: E501
 
