@@ -476,3 +476,31 @@ def test_the_money_screens() -> None:
     c2, _ = world(NotStaffError("SM941"))
     for path in ("/v1/admin/money/summary?from=2026-11-01&to=2026-11-14", "/v1/admin/money/failed-payments", "/v1/admin/support/canned"):
         assert c2.get(path, headers=h).json()["error"]["code"] == "not_staff", path
+
+
+# ============================================================================ launch support gaps (25 Nov 2026)
+def test_staff_find_by_email_read_a_statement_take_credits_back_and_see_failing_webhooks() -> None:
+    client, fake = world()
+    repo: Any = fake
+    repo.find_by_email = lambda token, email: (repo._go("find_by_email", email), {"businesses": [row(T1, "Neelambari Silks (demo)")]})[1]
+    repo.statement = lambda token, tid, start, end, limit, before: (repo._go("statement", (tid, start, end, limit, before)), {"items": [], "has_more": False, "next_before": None, "opening_paise": 0, "closing_paise": 0, "balance_paise": 155000})[1]
+    repo.wallet_debit = lambda token, tid, amount, confirm, code, text, key: (repo._go("wallet_debit", (tid, amount, confirm, code, text, key)), {"debited_paise": amount, "balance_paise": 155000 - amount, "replayed": False})[1]
+    repo.webhook_failures = lambda token, limit: (repo._go("webhook_failures", limit), {"items": [{"tenant_id": str(T1), "business_name": "Neelambari Silks (demo)", "endpoint_id": str(uuid.UUID(int=8)), "failing_since": NOW.isoformat(), "events": ["lead.created"], "dead_7d": 3, "last_error": "timeout", "last_status_code": None}]})[1]
+    h = auth("a_owner")
+    assert client.get("/v1/admin/businesses/by-email", params={"email": "owner@example.test"}, headers=h).json()["businesses"][0]["tenant_id"] == str(T1)
+    assert client.get("/v1/admin/businesses/by-email", headers=h).status_code == 422
+    assert client.get(f"/v1/admin/businesses/{T1}/statement", params={"limit": 500}, headers=h).json()["balance_paise"] == 155000 and repo.calls[-1] == ("statement", (T1, None, None, 200, None))
+    body = {"amount_paise": 1000, "confirm_paise": 1000, "reason_code": "billing_dispute", "reason_text": "Agreed on the call", "idempotency_key": "click-debit-0001"}
+    got = client.post(f"/v1/admin/businesses/{T1}/wallet-debit", json=body, headers=h)
+    assert got.status_code == 201 and got.json() == {"debited_paise": 1000, "debited_text": "₹10", "balance_paise": 154000, "balance_text": "₹1,540", "replayed": False}
+    assert repo.calls[-1] == ("wallet_debit", (T1, 1000, 1000, "billing_dispute", "Agreed on the call", "click-debit-0001"))
+    for bad in ({**body, "amount_paise": 99}, {**body, "reason_text": "ab"}, {**body, "idempotency_key": "short"}, {k: v for k, v in body.items() if k != "confirm_paise"}):
+        assert client.post(f"/v1/admin/businesses/{T1}/wallet-debit", json=bad, headers=h).status_code == 422
+    assert client.get("/v1/admin/webhook-failures", headers=h).json()["items"][0]["dead_7d"] == 3
+
+
+def test_the_computed_alert_kinds_are_accepted_by_the_alerts_answer() -> None:
+    from app.admin.service import AlertOut
+
+    for kind in ("worker_stale", "quiet_line", "wallet_low", "webhook_failing", "kyc_pending"):
+        assert AlertOut.model_validate({"id": str(uuid.UUID(int=1)), "kind": kind, "severity": "warn", "title": "t", "detail": None, "created_at": NOW.isoformat(), "acknowledged": False}).kind == kind

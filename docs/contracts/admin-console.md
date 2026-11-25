@@ -156,3 +156,13 @@ The four screens against made-up data kept in a cookie (no network): the inbox, 
 1. Is `second_confirm` a second staff member or a re-entered second factor? (C2 prefers the second staff member for deletion and the re-entered factor for everything else.)
 2. Where do staff accounts live (a `staff` table, not `tenants`)? Is the console served from the same API or a separate service/host?
 3. The privacy period for `due_at` stays a 30-day draft until the owner approves the privacy text.
+
+
+## Launch support routes (25 Nov 2026; behind ADMIN_CONSOLE like the rest)
+* `GET /v1/admin/businesses/by-email?email=` (owner, support, finance): businesses whose Owner has that e-mail (exact, or the start of an address of at least four letters; at most 5; logged). Answer `{businesses: [BusinessRow]}`.
+* `GET /v1/admin/businesses/{t}/statement?start=&end=&limit=&before=` (owner, support, finance; logged): the business's wallet statement, the same shape as the Owner's `GET /billing/credits/statement`. A manual debit shows as "Taken back by Stack19".
+* `POST /v1/admin/businesses/{t}/wallet-debit` (owner, finance): takes Rs 1 to Rs 3,000 back (never below zero). Body as the goodwill credit: `amount_paise`, `confirm_paise`, `reason_code`, `reason_text`, `idempotency_key`; needs a fresh authenticator code. 201 `{debited_paise, debited_text, balance_paise, balance_text, replayed}`. Audited.
+* `GET /v1/admin/webhook-failures` (owner, support): `{items: [{tenant_id, business_name, endpoint_id, failing_since, events, dead_7d, last_error, last_status_code}]}` for endpoints failing now.
+* `GET /v1/admin/contact-requests?limit=` (owner, support): the "Talk to us" messages.
+* `GET /v1/admin/alerts` also carries these COMPUTED kinds: `wallet_low` (live-number businesses under four minutes of balance), `webhook_failing` (an endpoint failing over an hour), `kyc_pending` (a business waiting on verification over three days), next to `worker_stale` and `quiet_line`.
+Already there: search by name, id, GSTIN and phone numbers; the business detail with its balance and recent calls; goodwill credit; top-up refund (`POST /v1/admin/businesses/{t}/topups/{order}/refund`); assistant pause and resume; failed payments; tickets and notes; the audit log.

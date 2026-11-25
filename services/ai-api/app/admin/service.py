@@ -87,6 +87,10 @@ class AdminRepository(Protocol):
     def usage_summary(self, token: str, start: str, end: str, limit: int) -> dict[str, Any]: ...
     def alerts_list(self, token: str, include_acknowledged: bool) -> dict[str, Any]: ...
     def contact_requests(self, token: str, limit: int) -> dict[str, Any]: ...
+    def find_by_email(self, token: str, email: str) -> dict[str, Any]: ...
+    def statement(self, token: str, tenant_id: uuid.UUID, start: str | None, end: str | None, limit: int, before: str | None) -> dict[str, Any]: ...
+    def wallet_debit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]: ...
+    def webhook_failures(self, token: str, limit: int) -> dict[str, Any]: ...
     def alert_ack(self, token: str, alert_id: uuid.UUID) -> dict[str, Any]: ...
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def support_set(self, token: str, tenant_id: uuid.UUID, require_ok: bool) -> dict[str, Any]: ...
@@ -167,6 +171,18 @@ class PostgrestAdminRepository:
 
     def contact_requests(self, token: str, limit: int) -> dict[str, Any]:
         return self._rpc.object(token, "admin_contact_requests", {"p_limit": limit})
+
+    def find_by_email(self, token: str, email: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_find_by_email", {"p_email": email})
+
+    def statement(self, token: str, tenant_id: uuid.UUID, start: str | None, end: str | None, limit: int, before: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_statement", {"p_tenant_id": str(tenant_id), "p_from": start, "p_to": end, "p_limit": limit, "p_before": before})
+
+    def wallet_debit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_wallet_debit", {"p_tenant_id": str(tenant_id), "p_amount_paise": amount_paise, "p_confirm_paise": confirm_paise, "p_reason_code": reason_code, "p_reason_text": reason_text, "p_key": key})
+
+    def webhook_failures(self, token: str, limit: int) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_webhook_failures", {"p_limit": limit})
 
     def alert_ack(self, token: str, alert_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "admin_alert_ack", {"p_id": str(alert_id)})
@@ -443,7 +459,7 @@ class UsageSummaryOut(_Out):
 
 class AlertOut(_Out):
     id: uuid.UUID
-    kind: Literal["google_cap", "credential_expiry", "plivo_balance"]
+    kind: Literal["google_cap", "credential_expiry", "plivo_balance", "worker_stale", "quiet_line", "wallet_low", "webhook_failing", "kyc_pending"]
     severity: Literal["warn", "over"]
     title: str
     detail: str | None
@@ -970,6 +986,19 @@ class AdminService:
 
     def contact_requests(self, token: str, limit: int) -> dict[str, Any]:
         return self._repo.contact_requests(token, limit)
+
+    def find_by_email(self, token: str, email: str) -> dict[str, Any]:
+        return self._repo.find_by_email(token, email)
+
+    def statement(self, token: str, tenant_id: uuid.UUID, start: str | None, end: str | None, limit: int, before: str | None) -> dict[str, Any]:
+        return self._repo.statement(token, tenant_id, start, end, limit, before)
+
+    def wallet_debit(self, token: str, tenant_id: uuid.UUID, body: GoodwillIn) -> dict[str, Any]:
+        d = self._repo.wallet_debit(token, tenant_id, body.amount_paise, body.confirm_paise, body.reason_code, body.reason_text, body.idempotency_key)
+        return {"debited_paise": int(d["debited_paise"]), "debited_text": inr(int(d["debited_paise"])), "balance_paise": int(d["balance_paise"]), "balance_text": inr(int(d["balance_paise"])), "replayed": bool(d.get("replayed"))}
+
+    def webhook_failures(self, token: str, limit: int) -> dict[str, Any]:
+        return self._repo.webhook_failures(token, limit)
 
     def alerts(self, token: str, include_acknowledged: bool) -> AlertsOut:
         return AlertsOut(items=[AlertOut.model_validate(x) for x in self._repo.alerts_list(token, include_acknowledged)["items"]])
