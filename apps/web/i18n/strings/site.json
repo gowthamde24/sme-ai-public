@@ -3960,10 +3960,10 @@
   }
  },
  "ld.steps.sub": {
-  "en": "Six steps. You see every result, and you can ask {assistant} to do the next job for you.",
-  "te": "ఆరు స్టెప్పులు. ప్రతి ఫలితం మీకు కనిపిస్తుంది, తర్వాతి పనిని {assistant} చేత చేయించుకోవచ్చు.",
-  "hi": "छह स्टेप। हर नतीजा आपको दिखता है, और अगला काम आप {assistant} से करवा सकते हैं।",
-  "kn": "ಆರು ಸ್ಟೆಪ್‌ಗಳು. ಪ್ರತಿ ರಿಸಲ್ಟ್ ನಿಮಗೆ ಕಾಣುತ್ತದೆ, ಮುಂದಿನ ಕೆಲಸವನ್ನು {assistant} ಮೂಲಕ ಮಾಡಿಸಬಹುದು.",
+  "en": "Six steps. You see every result, and you can ask {assistant} to hand the next task to your AI team.",
+  "te": "ఆరు స్టెప్పులు. ప్రతి ఫలితం మీకు కనిపిస్తుంది, తర్వాతి పనిని {assistant} ద్వారా మీ AI టీమ్‌కి ఇవ్వవచ్చు.",
+  "hi": "छह स्टेप। हर नतीजा आपको दिखता है, और अगला काम आप {assistant} के ज़रिए अपनी AI टीम को दे सकते हैं।",
+  "kn": "ಆರು ಸ್ಟೆಪ್‌ಗಳು. ಪ್ರತಿ ರಿಸಲ್ಟ್ ನಿಮಗೆ ಕಾಣುತ್ತದೆ, ಮುಂದಿನ ಕೆಲಸವನ್ನು {assistant} ಮೂಲಕ ನಿಮ್ಮ AI ಟೀಮ್‌ಗೆ ಕೊಡಬಹುದು.",
   "ta": "ஆறு படிகள். ஒவ்வொரு முடிவும் உங்களுக்குத் தெரியும், அடுத்த வேலையையும் {assistant}-இடம் செய்யச் சொல்லலாம்.",
   "status": {
    "te": "reviewed",
@@ -10624,10 +10624,10 @@
   }
  },
  "h3.plan.t": {
-  "en": "Your plan for this job",
-  "te": "ఈ పనికి మీ ప్లాన్",
-  "hi": "इस काम के लिए आपका प्लान",
-  "kn": "ಈ ಕೆಲಸಕ್ಕೆ ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "en": "Your plan for this team member",
+  "te": "ఈ టీమ్ మెంబర్‌కి మీ ప్లాన్",
+  "hi": "इस टीम मेंबर के लिए आपका प्लान",
+  "kn": "ಈ ಟೀಮ್ ಮೆಂಬರ್‌ಗೆ ನಿಮ್ಮ ಪ್ಲಾನ್",
   "ta": "இந்த வேலைக்கான உங்கள் plan",
   "status": {
    "te": "reviewed",
@@ -12080,10 +12080,10 @@
   "ta": "Inside {brand}"
  },
  "v9.try.2": {
-  "en": "Tell it what to do. See the job.",
-  "te": "ఏం చేయాలో చెప్పండి. ఆ పనిని చూడండి.",
-  "hi": "इसे बताइए क्या करना है, और काम देखिए।",
-  "kn": "ಏನು ಮಾಡಬೇಕು ಅಂತ ಹೇಳಿ. ಕೆಲಸ ನೋಡಿ.",
+  "en": "Tell it what to do. See your AI team work.",
+  "te": "ఏం చేయాలో చెప్పండి. మీ AI టీమ్ పని చూడండి.",
+  "hi": "इसे बताइए क्या करना है, और अपनी AI टीम का काम देखिए।",
+  "kn": "ಏನು ಮಾಡಬೇಕು ಅಂತ ಹೇಳಿ. ನಿಮ್ಮ AI ಟೀಮ್ ಕೆಲಸ ನೋಡಿ.",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",
@@ -12171,10 +12171,10 @@
   "ta": "Chats"
  },
  "v9.try.10": {
-  "en": "Jobs",
-  "te": "పనులు",
-  "hi": "काम",
-  "kn": "ಕೆಲಸಗಳು",
+  "en": "AI Team",
+  "te": "AI టీమ్",
+  "hi": "AI टीम",
+  "kn": "AI ಟೀಮ್",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",
@@ -12236,10 +12236,10 @@
   "ta": "Bright Path Academy"
  },
  "v9.try.15": {
-  "en": "Start a job",
-  "te": "ఒక పని మొదలుపెట్టండి",
-  "hi": "काम शुरू करें",
-  "kn": "ಒಂದು ಕೆಲಸ ಶುರು ಮಾಡಿ",
+  "en": "Add a team member",
+  "te": "టీమ్ మెంబర్‌ని జోడించండి",
+  "hi": "टीम मेंबर जोड़ें",
+  "kn": "ಟೀಮ್ ಮೆಂಬರ್ ಸೇರಿಸಿ",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",
@@ -12717,10 +12717,10 @@
   "ta": "Sample recordings are added as each language clears review. Both sides of these calls are AI voices."
  },
  "v9.jobs.1": {
-  "en": "Two jobs, one assistant",
-  "te": "రెండు పనులు, ఒకే అసిస్టెంట్",
-  "hi": "दो काम, एक असिस्टेंट",
-  "kn": "ಎರಡು ಕೆಲಸ, ಒಬ್ಬ ಅಸಿಸ್ಟೆಂಟ್",
+  "en": "Two team members, one assistant",
+  "te": "ఇద్దరు టీమ్ మెంబర్లు, ఒకే అసిస్టెంట్",
+  "hi": "दो टीम मेंबर, एक असिस्टेंट",
+  "kn": "ಇಬ್ಬರು ಟೀಮ್ ಮೆಂಬರ್‌ಗಳು, ಒಬ್ಬ ಅಸಿಸ್ಟೆಂಟ್",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",
@@ -14329,10 +14329,10 @@
   "ta": "What should your assistant do?"
  },
  "v9.try.w.draft": {
-  "en": "Your job draft",
-  "te": "మీ పని డ్రాఫ్ట్",
-  "hi": "आपके काम का ड्राफ़्ट",
-  "kn": "ನಿಮ್ಮ ಕೆಲಸದ ಡ್ರಾಫ್ಟ್",
+  "en": "Your team member's draft",
+  "te": "మీ టీమ్ మెంబర్ డ్రాఫ్ట్",
+  "hi": "आपके टीम मेंबर का ड्राफ़्ट",
+  "kn": "ನಿಮ್ಮ ಟೀಮ್ ಮೆಂಬರ್ ಡ್ರಾಫ್ಟ್",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",
@@ -15031,10 +15031,10 @@
   "ta": "Outbound"
  },
  "v9.jobs.w.tabs": {
-  "en": "Jobs",
-  "te": "పనులు",
-  "hi": "काम",
-  "kn": "ಕೆಲಸಗಳು",
+  "en": "AI Team",
+  "te": "AI టీమ్",
+  "hi": "AI टीम",
+  "kn": "AI ಟೀಮ್",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",

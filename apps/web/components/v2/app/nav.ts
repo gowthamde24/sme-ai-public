@@ -121,7 +121,7 @@ export const NAV: readonly NavGroup[] = [
       // 17 Nov (owner): the standing rules and the calling hours are a tab of their own, apart from the one-off campaigns
       { id: "outreachrules", label: "Rules", icon: "campaigns", path: "/outreach/rules", feature: "outreach", roles: WRITERS },
       // campaigns S4 (17 Nov, behind OFFER_SCREENS): who said yes to offers; under More on the Campaigns row
-      { id: "jobs", label: "Jobs", icon: "jobs", path: "/jobs", also: ["/do-not-call"], feature: "jobs", roles: ALL_ROLES },
+      { id: "jobs", label: "AI Team", icon: "jobs", path: "/jobs", also: ["/do-not-call"], feature: "jobs", roles: ALL_ROLES },
       { id: "offerconsent", label: "Who wants offers", icon: "campaigns", path: "/marketing-consent", feature: "offers", roles: WRITERS },
       { id: "tasks", label: "Tasks", icon: "calls", path: "/tasks", feature: "tasks", roles: ALL_ROLES },
       { id: "leadreport", label: "Lead report", icon: "report", path: "/lead-report", feature: "outreach", roles: ADMINS },
@@ -505,7 +505,7 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
     rows: [
       { id: "v6-today", label: "Today", icon: "today", pages: ["today", "assistant"], count: "today" },
       // JOBS (owner 19 Nov): everything the assistant does for the shop, one row of its own; there only while JOBS is on (the page is offered by the feature "jobs")
-      { id: "v6-jobs", label: "Jobs", icon: "jobs", pages: ["jobs", "offerconsent", "calllist", "tasks"], onlyWith: "jobs" },
+      { id: "v6-jobs", label: "AI Team", icon: "jobs", pages: ["jobs", "offerconsent", "calllist", "tasks"], onlyWith: "jobs" },
       { id: "v6-myassistant", label: "My assistant", icon: "assistant", pages: ["myassistant", "train", "office"], status: "assistant" },
       { id: "v6-calls", label: "Calls", icon: "calls", pages: ["phonecalls", "live"], count: "calls" },
       { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox", "templates"], count: "chats" },

@@ -74,4 +74,4 @@ form:
 ## Developer API keys
 Test mode only Keys let your own software send enquiries to your assistant. Only test keys exist for now, and no key is shown on this page. No keys yet
 [button type=button disabled: Create a test key (coming soon)]
-[Preview Jobs](/app/preview)
+[Preview AI Team](/app/preview)

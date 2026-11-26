@@ -41,7 +41,7 @@ export default async function NewJobRoute({ params, searchParams }: PageProps<"/
   const lang = await getLang();
   const words = wordsFor(lang, ["jobs."]);
   const base = `/app/tenants/${tenantId}`;
-  const top = <PageTop title={words["jobs.new.title"] ?? "Start a job"} sub={words["jobs.new.sub"]} />;
+  const top = <PageTop title={words["jobs.new.title"] ?? "Add a team member"} sub={words["jobs.new.sub"]} />;
   if (role !== "owner" && role !== "admin") {
     return (
       <main className={pageMain} lang={lang}>

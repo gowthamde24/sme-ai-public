@@ -1,5 +1,5 @@
-# Preview Jobs
-Shows the new Jobs screens and the new billing screens in this browser only. Nobody else sees any change. Choose below what they show. Turn it off here or from the bar at the top. The preview is off.
+# Preview AI Team
+Shows the new AI Team screens and the new billing screens in this browser only. Nobody else sees any change. Choose below what they show. Turn it off here or from the bar at the top. The preview is off.
 form:
 <hidden name=on value=1>
 Show the screens with

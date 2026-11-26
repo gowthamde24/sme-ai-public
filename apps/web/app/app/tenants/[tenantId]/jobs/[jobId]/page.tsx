@@ -43,11 +43,11 @@ const load = cache(async (tenantId: string, jobId: string) => {
 
 /** The tab's title is the job's name (the one the owner gave it, else the plain name). */
 export async function generateMetadata({ params }: PageProps<"/app/tenants/[tenantId]/jobs/[jobId]">): Promise<Metadata> {
-  if (jobsScreens() === "off") return { title: `Jobs · ${BRAND_NAME}` };
+  if (jobsScreens() === "off") return { title: `AI Team · ${BRAND_NAME}` };
   const { tenantId, jobId } = await params;
-  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(jobId)) return { title: `Jobs · ${BRAND_NAME}` };
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(jobId)) return { title: `AI Team · ${BRAND_NAME}` };
   const { detail } = await load(tenantId, jobId);
-  const name = detail ? (detail.job.customName ?? wordsFor(await getLang(), ["jobs.kind."])[jobNameKey(detail.job.kind)] ?? "Jobs") : "Jobs";
+  const name = detail ? (detail.job.customName ?? wordsFor(await getLang(), ["jobs.kind."])[jobNameKey(detail.job.kind)] ?? "AI Team") : "AI Team";
   return { title: `${name} · ${BRAND_NAME}` };
 }
 
@@ -84,7 +84,7 @@ export default async function JobRoute({ params }: PageProps<"/app/tenants/[tena
     <main className={pageMain} lang={lang}>
       <nav aria-label={words["jobs.page.title"]} className="mb-4 flex items-center gap-1.5 text-sm text-muted">
         <Link href={`${base}/jobs`} prefetch={false} className="inline-flex min-h-11 items-center text-muted no-underline">
-          {words["jobs.page.title"] ?? "Jobs"}
+          {words["jobs.page.title"] ?? "Your AI team"}
         </Link>
         <ChevronRight aria-hidden="true" className="size-4" />
         <span aria-current="page" className="font-semibold text-ink">

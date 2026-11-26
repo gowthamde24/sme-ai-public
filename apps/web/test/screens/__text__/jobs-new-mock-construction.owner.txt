@@ -1,4 +1,4 @@
-# Start a job
+# Add a team member
 Say what you want in your own words. You will see the plan before anything happens.
 form:
 Say it, or type it
@@ -9,21 +9,21 @@ Say it, or type it
 [button type=button: Ask last month’s silk buyers how they liked it]
 -
 [button type=button: Call yesterday’s missed calls]
-{label="Jobs to start with"}
-## Jobs to start with
+{label="Team members to start with"}
+## Team members to start with
 Picked from your shop’s details and last week’s numbers. One tap starts one. You can change anything after.
 -
-### Call every new enquiry right away
+### Quick responder
 A new enquiry that gets an answer in minutes is far more likely to turn into a visit. Says: “Thank you for your enquiry. What can we help you with?”
 [button type=button: Start]
 [button type=button: Look first]
 -
-### Follow up on price questions and promises
+### Follow-up helper
 Customers who asked a price are easy to lose. A gentle follow-up keeps you in their mind. Says: “Hello, we are following up on your question. Can we help you with anything more?”
 [button type=button: Start]
 [button type=button: Look first]
 -
-### Book and remind store visits
+### Visit booker
 A reminder the day before helps customers come. Says: “Reminder: your visit is tomorrow. See you!”
 [button type=button: Start]
 [button type=button: Look first]
