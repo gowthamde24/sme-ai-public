@@ -74,12 +74,12 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
   const days = period.days;
   const labels = days.map((d) => ({ axis: String(Number(d.slice(8))), full: dayShort(d, lang) }));
   const partial = today !== undefined && days.length > 2 && days[days.length - 1] === today ? t("rv6.today.sofar") : null;
-  const vs = t(period.key === "14" ? "rv6.vs.14" : period.key === "today" ? "rv6.vs.today" : "rv6.vs.other");
+  const than = t(period.key === "14" ? "rv6.than.14" : period.key === "today" ? "rv6.than.today" : "rv6.than.other");
   const arrow = (c: Change) => (c.dir === "up" ? "▲" : c.dir === "down" ? "▼" : "•");
-  const delta = (c: Change, text: string, extra = true) => (
+  // never a bare number: what changed, in what unit, and compared with what ("35 fewer visits than the previous 14 days")
+  const delta = (c: Change, what: "e" | "v" | "s", amount: string) => (
     <em className={`m-0 text-[12.5px] font-bold not-italic ${c.dir === "down" ? "text-red-text" : c.dir === "up" ? "text-green-text" : "text-muted"}`}>
-      {arrow(c)} {text}
-      {extra ? ` ${vs}` : ""}
+      {arrow(c)} {c.dir === "same" ? t("rv6.d.same", { than }) : t(`rv6.d.${what}.${c.dir}`, { n: amount, than })}
     </em>
   );
   const e = series.enquiries;
@@ -319,9 +319,9 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
       ) : null}
 
       <ul data-part="tiles" className="m-0 mt-4 grid list-none grid-cols-1 gap-3.5 p-0 sm:grid-cols-2 xl:grid-cols-4">
-        {kpi("enquiries", t("rv6.kpi.enquiries"), e ? total(e.total) : null, eChange ? delta(eChange, eChange.percent !== null ? `${eChange.percent}%` : String(eChange.diff)) : null)}
-        {kpi("visits", t("rv6.kpi.visits"), v ? total(v.total) : null, vChange ? delta(vChange, String(vChange.diff), false) : null)}
-        {kpi("sales", t("rv6.kpi.sales"), s ? formatRupeesShort(s.total) : null, sChange ? delta(sChange, formatRupeesShort(sChange.diff), false) : null)}
+        {kpi("enquiries", t("rv6.kpi.enquiries"), e ? total(e.total) : null, eChange ? delta(eChange, "e", String(eChange.diff)) : null)}
+        {kpi("visits", t("rv6.kpi.visits"), v ? total(v.total) : null, vChange ? delta(vChange, "v", String(vChange.diff)) : null)}
+        {kpi("sales", t("rv6.kpi.sales"), s ? formatRupeesShort(s.total) : null, sChange ? delta(sChange, "s", formatRupeesShort(sChange.diff)) : null)}
         {open ? null : kpi("cost", t("rv6.kpi.cost"), cost !== null ? formatRupeesShort(cost) : null, <em className="text-[12.5px] not-italic text-muted">{v && v.total > 0 && cost !== null ? t("rv6.kpi.perVisit", { amount: formatRupeesShort(Math.round(cost / 100 / v.total) * 100) }) : t("rv6.kpi.costNote")}</em>)}
       </ul>
       {open && e && v ? (

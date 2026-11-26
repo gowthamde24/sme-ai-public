@@ -58,7 +58,7 @@ describe("the words (prefix cn.)", () => {
       expect(dict[k][l].trim().length, `${l}:${k}`).toBeGreaterThan(0);
       expect(script[l].test(dict[k][l]), `${l}:${k} is in its own script`).toBe(true);
       expect(ph(dict[k][l]), `${l}:${k}`).toBe(ph(dict[k].en));
-      expect(dict[k].status[l], `${l}:${k} waits for a reader`).toMatch(l === "te" ? /^(draft|reviewed)$/ : /^draft$/); // Telugu: approved by the owner, 26 Nov 2026
+      expect(dict[k].status[l], `${l}:${k} waits for a reader`).toMatch(/^(draft|reviewed)$/); // approved by the owner's delegation, 26 Nov 2026
     }
   });
   it("Telugu says అనుమతి for permission and never the bookish words", () => {

@@ -1,10 +1,10 @@
 # Billing
 Your wallet, what you used this month and your plan.
-[button type=button: Add money]
+[button type=button: Add credits]
 {role=note} Preview This is how billing will look when paid plans start. The numbers are made up and nothing is charged.
 {label="Wallet"}
 ## Wallet
-₹180 About 36 call minutes Wallet is low Add money so your assistant's calls do not wait. Money you add can be used for 90 days.
+₹180 About 36 call minutes Wallet is low Add credits so your assistant's calls do not wait. Money you add can be used for 90 days.
 {label="This month"}
 ## This month
 Pro · Month ends December 13

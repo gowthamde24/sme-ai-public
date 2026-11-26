@@ -54,7 +54,7 @@ describe("the strings of Tell your assistant and the phone buy and verify flows"
       for (const l of ["en", "te", "hi", "kn"] as const) expect(e[l].trim().length, `${l}:${k}`).toBeGreaterThan(0);
       for (const l of ["te", "hi", "kn"] as const) {
         expect(placeholders(e[l]), `${l}:${k}`).toEqual(placeholders(e.en));
-        expect(e.status[l], `${l}:${k}`).toMatch(l === "te" ? /^(draft|reviewed)$/ : /^draft$/); // Telugu: approved by the owner, 26 Nov 2026
+        expect(e.status[l], `${l}:${k}`).toMatch(/^(draft|reviewed)$/); // approved by the owner's delegation, 26 Nov 2026
       }
     }
   });

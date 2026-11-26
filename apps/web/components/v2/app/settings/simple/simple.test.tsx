@@ -83,7 +83,7 @@ describe("Business as sentences (JOBS)", () => {
     const oldAction = vi.fn(async (_p: unknown, _f: FormData) => ({ ok: true as const }));
     render(<BusinessForm action={oldAction} words={words} name="Pavers Corner" town="Guntur" languages={["en", "te"]} choices={CALL_LANGS} owner={OWNER} />);
     await type("Business name", "Glow Salon");
-    await type("City or area", "Vijayawada");
+    await type("City or town", "Vijayawada");
     await type("Business phone", "+91 90000 00000");
     await submit(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(oldAction).toHaveBeenCalled());

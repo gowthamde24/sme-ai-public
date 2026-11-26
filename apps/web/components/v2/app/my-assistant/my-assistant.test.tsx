@@ -151,7 +151,10 @@ describe("the Go live tab", () => {
     expect(screen.getByText(/answer real customers by phone and chat/)).toBeInTheDocument();
     expect(document.querySelector('[data-part="mya-mock"]')).toBeNull();
     expect(document.querySelector('[data-part="mya-defaults-list"]')).toBeNull();
-    expect(document.querySelector('[data-status="completed"]')).toHaveTextContent("Live");
+    // a live assistant is not asked to "go live" again, its state is said once, and there is no list of what is needed
+    expect(screen.getByRole("heading", { name: "Your assistant is live" })).toBeInTheDocument();
+    expect(document.querySelector('[data-status="completed"]')).toBeNull();
+    expect(document.querySelector('[data-part="mya-requirements"]')).toBeNull();
   });
   it("an unreadable status is an empty state with its next step", () => {
     render(<GoLivePanel base={BASE} status={null} button={null} mock={false} />);
@@ -173,7 +176,7 @@ describe("the Practice panel", () => {
     expect(panel.querySelector("[data-orb]")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Talk now" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Call my phone" })).toHaveAttribute("href", `${BASE}/calls?test=1`);
-    expect(screen.getByText("Rings a phone on the test list. Never a customer.")).toBeInTheDocument();
+    expect(screen.getByText("Calls a phone on your test list so you hear your assistant. It never calls a customer.")).toBeInTheDocument();
     expect(screen.getByText("Press Talk now, or type what a customer would ask.")).toBeInTheDocument();
   });
   it("without test calls the button is off and says why; there is no number anywhere", () => {

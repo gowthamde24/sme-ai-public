@@ -44,7 +44,7 @@ afterEach(() => {
 });
 
 describe("TOPUP_SCREENS off: nothing is there and nothing is read", () => {
-  it("no Usage and top-ups part in Settings, no banner, no Today cards", async () => {
+  it("no Usage and credits part in Settings, no banner, no Today cards", async () => {
     vi.stubEnv("PLAN_SCREENS", "mock");
     render(await SettingsPage(settingsProps({ section: "plan" })));
     expect(document.querySelector('[data-settings="topups"]')).toBeNull();
@@ -67,14 +67,14 @@ describe("TOPUP_SCREENS=mock", () => {
     expect(document.querySelector('[data-meter="minutes"]')).toBeNull();
     expect(document.querySelector('[data-meter="tu-minutes"]')).not.toBeNull();
     expect(screen.getByRole("button", { name: /^\+100 minutes/ })).toBeInTheDocument();
-    expect(screen.getByRole("switch", { name: /Top up by itself/ })).not.toBeChecked();
+    expect(screen.getByRole("switch", { name: /Add credits by itself/ })).not.toBeChecked();
     expect(screen.getByText(/Test mode: no money is taken/)).toBeInTheDocument();
   });
   it("an Admin sees the numbers and the record but no buttons", async () => {
     h.fetchTenant.mockResolvedValue(tenant("admin"));
     render(await SettingsPage(settingsProps({ section: "plan" })));
     expect(document.querySelector('[data-meter="tu-minutes"]')).not.toBeNull();
-    expect(screen.getByText("Only the owner can buy top-ups or change these settings.")).toBeInTheDocument();
+    expect(screen.getByText("Only the owner can add credits or change these settings.")).toBeInTheDocument();
     expect(document.querySelector("[data-pack]")).toBeNull();
   });
   it("with only TOPUP_SCREENS on (no plan screens) Settings still has the Plan part with just the usage", async () => {
@@ -106,7 +106,7 @@ describe("TOPUP_SCREENS=mock", () => {
     h.fetchTenant.mockRejectedValue(new Error("down"));
     expect(await topupLayoutBanner({ token: "tok", tenantId: TENANT, lang: "en" })).toBeNull();
   });
-  it("Today: the 'Needs you' card at 80 percent, and at 100 percent the card and '12 leads waiting for calls · Top up'", async () => {
+  it("Today: the 'Needs you' card at 80 percent, and at 100 percent the card and '12 leads waiting for calls · Add credits'", async () => {
     render(<>{await topupsToday({ token: "tok", tenantId: TENANT, lang: "en", owner: true })}</>);
     expect(document.querySelector("[data-topup-needs='80']")).not.toBeNull();
     expect(document.querySelector("[data-topup-waiting]")).toBeNull();
@@ -114,12 +114,12 @@ describe("TOPUP_SCREENS=mock", () => {
     h.jar.set(MOCK_COOKIE, JSON.stringify({ v: 1, ps: "2026-10-01", um: 300, ug: 10 }));
     render(<>{await topupsToday({ token: "tok", tenantId: TENANT, lang: "en", owner: true })}</>);
     expect(document.querySelector("[data-topup-needs='100']")).not.toBeNull();
-    expect(screen.getByRole("heading", { name: "12 leads waiting for calls · Top up" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "12 leads waiting for calls · Add credits" })).toBeInTheDocument();
   });
   it("/plans: the waiting card above the plans, and the team plans first, then the calls plans", async () => {
     h.jar.set(MOCK_COOKIE, JSON.stringify({ v: 1, ps: "2026-10-01", um: 300, ug: 10 }));
     render(await PlansPage(plansProps()));
-    expect(screen.getByRole("heading", { name: "12 leads waiting for calls · Top up" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "12 leads waiting for calls · Add credits" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 2, name: "Calls plans" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 2, name: "Team plans" })).toBeInTheDocument();
     expect(screen.getAllByRole("heading", { level: 3 }).map((x) => x.textContent)).toEqual(["Starter", "Growth", "Business", "Pay as you go", "Pro", "Business"]);

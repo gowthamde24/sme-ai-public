@@ -47,6 +47,33 @@ def status_of(row: dict[str, Any], live: bool) -> Status:
     return "completed"
 
 
+def code_of(row: dict[str, Any], live: bool) -> str:
+    """The closed word the sentence is made from, so a screen can word it in the person's own language (26 Nov 2026): `live`, `refused_<reason>` (or `refused`), `state_<state>`, `handover`, `category_<category>`,
+    `outcome_<outcome>` or `finished`. Always one of them, never empty; `outcome_sentence` stays as the English fallback and says exactly what the English of this code is."""
+    state = str(row.get("state") or "")
+    if live:
+        return "live"
+    if state == "refused":
+        reason = str(row.get("refuse_reason"))
+        return f"refused_{reason}" if reason in REFUSED_SENTENCE else "refused"
+    if state in STATE_SENTENCE:
+        return f"state_{state}"
+    if row.get("end_reason") == "handover" or row.get("handled_at"):
+        return "handover"
+    category = row.get("category")
+    if isinstance(category, str) and category in CATEGORY_SENTENCE:
+        return f"category_{category}"
+    outcome = row.get("outcome")
+    if str(outcome) in OUTCOME_SENTENCE:
+        return f"outcome_{outcome}"
+    return "finished"
+
+
+def all_codes() -> list[str]:
+    """Every code `code_of` can give (the web words each one; a test keeps this list and the sentences equal)."""
+    return sorted(["live", "refused", "handover", "finished", *(f"refused_{k}" for k in REFUSED_SENTENCE), *(f"state_{k}" for k in STATE_SENTENCE), *(f"category_{k}" for k in CATEGORY_SENTENCE), *(f"outcome_{k}" for k in OUTCOME_SENTENCE)])
+
+
 def sentence_of(row: dict[str, Any], live: bool) -> str:
     state = str(row.get("state") or "")
     if live:

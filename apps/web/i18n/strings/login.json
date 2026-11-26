@@ -6,8 +6,8 @@
   "kn": "ನೇರವಾಗಿ ವಿಷಯಕ್ಕೆ ಹೋಗಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "lang.label": {
@@ -17,8 +17,8 @@
   "kn": "ಭಾಷೆ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "theme.toDark": {
@@ -28,8 +28,8 @@
   "kn": "ಡಾರ್ಕ್ ಮೋಡ್ ಹಾಕಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "theme.toLight": {
@@ -39,8 +39,8 @@
   "kn": "ಲೈಟ್ ಮೋಡ್ ಹಾಕಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "home": {
@@ -50,19 +50,19 @@
   "kn": "ಹೋಮ್ ಪೇಜ್‌ಗೆ ವಾಪಸ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "side.title": {
   "en": "Your enquiries, quotes and follow-ups in one calm place.",
   "te": "మీ ఎంక్వైరీలు, కొటేషన్లు, ఫాలో-అప్‌లు అన్నీ ఒకేచోట, ప్రశాంతంగా.",
-  "hi": "आपकी पूछताछ, कोटेशन और फ़ॉलो-अप, सब एक ही जगह, आराम से।",
+  "hi": "आपकी एंक्वायरी, कोटेशन और फ़ॉलो-अप, सब एक ही जगह, आराम से।",
   "kn": "ನಿಮ್ಮ ಎನ್‌ಕ್ವೈರಿ, ಕೊಟೇಶನ್, ಫಾಲೋ-ಅಪ್ ಎಲ್ಲವೂ ಒಂದೇ ಕಡೆ, ಆರಾಮವಾಗಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "side.d": {
@@ -72,8 +72,8 @@
   "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ನಿಮ್ಮ ಲೀಡ್ಸ್‌ಗೆ ಕಾಲ್ ಮಾಡಿ ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತದೆ. ನೀವು ಒಮ್ಮೆ ಒಪ್ಪಿಗೆ ಕೊಟ್ಟರೆ ಸಾಕು, ಉಳಿದದ್ದನ್ನು ಅದೇ ನೋಡಿಕೊಳ್ಳುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.title": {
@@ -83,8 +83,8 @@
   "kn": "ಲಾಗಿನ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.sub": {
@@ -94,8 +94,8 @@
   "kn": "{brand}ಗೆ ಮತ್ತೆ ಸ್ವಾಗತ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.email": {
@@ -105,8 +105,8 @@
   "kn": "ಇಮೇಲ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.password": {
@@ -116,8 +116,8 @@
   "kn": "ಪಾಸ್‌ವರ್ಡ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.show": {
@@ -127,8 +127,8 @@
   "kn": "ಪಾಸ್‌ವರ್ಡ್ ತೋರಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.hide": {
@@ -138,8 +138,8 @@
   "kn": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆಮಾಡಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.submit": {
@@ -149,8 +149,8 @@
   "kn": "ಮುಂದುವರಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.forgot": {
@@ -160,8 +160,8 @@
   "kn": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ? ಬೇಗ ಬರುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.noRemember": {
@@ -171,8 +171,8 @@
   "kn": "ನಾವು ನಿಮ್ಮನ್ನು ಲಾಗಿನ್‌ನಲ್ಲಿ ಇಡುವುದಿಲ್ಲ. ಪ್ರತಿ ಸಲ ಕೋಡ್ ಹಾಕಬೇಕು.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.join": {
@@ -182,8 +182,8 @@
   "kn": "ಇನ್ನೂ ಸೇರಿಲ್ಲವೇ?",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signin.joinLink": {
@@ -193,8 +193,8 @@
   "kn": "ಸೈನ್ ಅಪ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "code.title": {
@@ -204,8 +204,8 @@
   "kn": "ನಿಮ್ಮ 6 ಅಂಕಿಯ ಕೋಡ್ ಹಾಕಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "code.sub": {
@@ -215,8 +215,8 @@
   "kn": "ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ತೆರೆದು, ಈಗಿನ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "code.label": {
@@ -226,8 +226,8 @@
   "kn": "6 ಅಂಕಿಯ ಕೋಡ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "code.hint": {
@@ -237,8 +237,8 @@
   "kn": "ಆರು ಅಂಕಿ, ನಡುವೆ ಖಾಲಿ ಜಾಗ ಬೇಡ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "code.verify": {
@@ -248,8 +248,8 @@
   "kn": "ಚೆಕ್ ಮಾಡಿ ಲಾಗಿನ್ ಮಾಡಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "code.back": {
@@ -259,8 +259,8 @@
   "kn": "ಲಾಗಿನ್‌ಗೆ ವಾಪಸ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "code.lost": {
@@ -270,8 +270,8 @@
   "kn": "ಫೋನ್ ಕಳೆದುಹೋಯಿತೇ? ನಿಮ್ಮ ಖಾತೆಯ ಮಾಲೀಕರಿಗೆ ರೀಸೆಟ್ ಮಾಡಲು ಹೇಳಿ. ನೀವೇ ರೀಸೆಟ್ ಮಾಡಿಕೊಳ್ಳುವ ಸೌಲಭ್ಯ ಬೇಗ ಬರುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "err.required": {
@@ -281,8 +281,8 @@
   "kn": "ನಿಮ್ಮ ಇಮೇಲ್ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ಹಾಕಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "err.signin": {
@@ -292,8 +292,8 @@
   "kn": "ಇಮೇಲ್ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ಹೊಂದುತ್ತಿಲ್ಲ, ಅಥವಾ ಖಾತೆ ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ. ಒಮ್ಮೆ ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "err.locked": {
@@ -303,8 +303,8 @@
   "kn": "ತುಂಬ ಸಲ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. 15 ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ನೋಡಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "err.refused": {
@@ -314,8 +314,8 @@
   "kn": "ನಿಮ್ಮ ಲಾಗಿನ್ ಒಪ್ಪಿಕೊಳ್ಳಲಿಲ್ಲ. ಮತ್ತೆ ಲಾಗಿನ್ ಮಾಡಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "err.expired": {
@@ -325,8 +325,8 @@
   "kn": "ನಿಮ್ಮ ಸೆಷನ್ ಮುಗಿದಿದೆ. ಮುಂದುವರಿಯಲು ಮತ್ತೆ ಲಾಗಿನ್ ಮಾಡಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "err.codeFormat": {
@@ -336,8 +336,8 @@
   "kn": "ಪೂರ್ತಿ 6 ಅಂಕಿ ಹಾಕಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "err.codeWrong": {
@@ -347,8 +347,8 @@
   "kn": "ಈ ಕೋಡ್ ಸರಿಯಿಲ್ಲ. ಹೊಸ ಕೋಡ್ ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "err.codeExpired": {
@@ -358,8 +358,8 @@
   "kn": "ಈ ಕೋಡ್‌ನ ಅವಧಿ ಮುಗಿದಿದೆ. ಆ್ಯಪ್‌ನಲ್ಲಿ ಈಗಿರುವ ಹೊಸ ಕೋಡ್ ಬಳಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "err.network": {
@@ -369,8 +369,8 @@
   "kn": "ಸರ್ವಿಸ್‌ಗೆ ಕನೆಕ್ಟ್ ಆಗಲಿಲ್ಲ. ನಿಮ್ಮ ಇಂಟರ್ನೆಟ್ ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "meta.title": {
@@ -380,8 +380,8 @@
   "kn": "ಲಾಗಿನ್ · {brand}",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "meta.description": {
@@ -391,8 +391,8 @@
   "kn": "{brand}ಗೆ ಲಾಗಿನ್ ಮಾಡಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.signin.title": {
@@ -402,8 +402,8 @@
   "kn": "ಲಾಗಿನ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.email": {
@@ -413,8 +413,8 @@
   "kn": "ಇಮೇಲ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.password": {
@@ -424,8 +424,8 @@
   "kn": "ಪಾಸ್‌ವರ್ಡ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.signin.submit": {
@@ -435,8 +435,8 @@
   "kn": "ಲಾಗಿನ್ ಆಗಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.forgot": {
@@ -446,8 +446,8 @@
   "kn": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.google": {
@@ -457,8 +457,8 @@
   "kn": "Google ಜೊತೆ ಮುಂದುವರಿಯಿರಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.notice.link": {
@@ -468,8 +468,8 @@
   "kn": "ಆ ಲಿಂಕ್ ಅವಧಿ ಮುಗಿದಿದೆ ಅಥವಾ ಈಗಾಗಲೇ ಬಳಸಲಾಗಿದೆ. \"ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?\" ಮೂಲಕ ಹೊಸದನ್ನು ಕೇಳಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.notice.reset": {
@@ -479,8 +479,8 @@
   "kn": "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಬದಲಾಗಿದೆ. ಹೊಸದರಿಂದ ಲಾಗಿನ್ ಆಗಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.notice.provider": {
@@ -490,8 +490,8 @@
   "kn": "ಆ ಖಾತೆಯಿಂದ ಲಾಗಿನ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ನಿಮ್ಮ ಇಮೇಲ್ ಬಳಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.notice.everywhere": {
@@ -501,8 +501,8 @@
   "kn": "ನೀವು ಎಲ್ಲಾ ಸಾಧನಗಳಿಂದ ಲಾಗೌಟ್ ಆಗಿದ್ದೀರಿ. ಇಲ್ಲಿ ಮತ್ತೆ ಲಾಗಿನ್ ಆಗಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.notice.nosignup": {
@@ -512,8 +512,8 @@
   "kn": "ಆ Google ವಿಳಾಸಕ್ಕೆ ಖಾತೆ ಇಲ್ಲ, ಮತ್ತು ಸದ್ಯ ಸೈನ್ ಅಪ್ ಮುಚ್ಚಿದೆ. ನಿಮ್ಮ ಖಾತೆ ಮಾಡಿದ ಇಮೇಲ್ ಬಳಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.err.invalid": {
@@ -523,8 +523,8 @@
   "kn": "ಸರಿಯಾದ ಇಮೇಲ್ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.err.check": {
@@ -534,8 +534,8 @@
   "kn": "ನೀವು ಮನುಷ್ಯರೇ ಎಂದು ಚೆಕ್ ಮಾಡುವ ಬಾಕ್ಸ್ ಟಿಕ್ ಮಾಡಿ, ನಂತರ ಮತ್ತೆ ಲಾಗಿನ್ ಆಗಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.err.confirm": {
@@ -545,8 +545,8 @@
   "kn": "ಮೊದಲು ನಿಮ್ಮ ಇಮೇಲ್ ದೃಢಪಡಿಸಿ: ನಾವು ಕಳುಹಿಸಿದ ಲಿಂಕ್ ಬಳಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.err.wrong": {
@@ -556,8 +556,8 @@
   "kn": "ಇಮೇಲ್ ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ಸರಿಯಿಲ್ಲ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.mfa.title": {
@@ -567,8 +567,8 @@
   "kn": "ನಿಮ್ಮ ಕೋಡ್ ನಮೂದಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.mfa.lead": {
@@ -578,8 +578,8 @@
   "kn": "ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ತೆರೆದು, ಈ ಖಾತೆಗೆ ಅದು ತೋರಿಸುವ ಆರು ಅಂಕೆಗಳನ್ನು ಟೈಪ್ ಮಾಡಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.mfa.label": {
@@ -589,8 +589,8 @@
   "kn": "ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.mfa.verify": {
@@ -600,8 +600,8 @@
   "kn": "ಚೆಕ್ ಮಾಡಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.mfa.checking": {
@@ -611,8 +611,8 @@
   "kn": "ಚೆಕ್ ಮಾಡಲಾಗುತ್ತಿದೆ...",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.mfa.signout": {
@@ -622,8 +622,8 @@
   "kn": "ಸೈನ್ ಔಟ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.mfa.err": {
@@ -633,8 +633,8 @@
   "kn": "ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಆರು ಅಂಕೆಗಳನ್ನು ನಮೂದಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.forgot.title": {
@@ -644,8 +644,8 @@
   "kn": "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ರೀಸೆಟ್ ಮಾಡಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.forgot.lead": {
@@ -655,8 +655,8 @@
   "kn": "ನಿಮ್ಮ ಖಾತೆಯ ಇಮೇಲ್ ವಿಳಾಸ ನಮೂದಿಸಿ. ಅದಕ್ಕೆ ಖಾತೆ ಇದ್ದರೆ, ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ಆರಿಸುವ ಲಿಂಕ್ ಕಳುಹಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.forgot.send": {
@@ -666,8 +666,8 @@
   "kn": "ಲಿಂಕ್ ಕಳುಹಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.forgot.sending": {
@@ -677,8 +677,8 @@
   "kn": "ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ...",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.forgot.back": {
@@ -688,8 +688,8 @@
   "kn": "ಲಾಗಿನ್‌ಗೆ ಹಿಂದೆ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.forgot.err": {
@@ -699,8 +699,8 @@
   "kn": "ಸರಿಯಾದ ಇಮೇಲ್ ವಿಳಾಸ ನಮೂದಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.mfa.wrong": {
@@ -710,8 +710,8 @@
   "kn": "ಆ ಕೋಡ್ ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಹೊಸ ಕೋಡ್ ಬಳಸಿ ಮತ್ತು ನಿಮ್ಮ ಫೋನ್ ಗಡಿಯಾರ ಸರಿಯಾಗಿದೆಯೇ ನೋಡಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "form.forgot.sent": {
@@ -721,8 +721,8 @@
   "kn": "ಆ ವಿಳಾಸಕ್ಕೆ ಖಾತೆ ಇದ್ದರೆ, ಪಾಸ್‌ವರ್ಡ್ ರೀಸೆಟ್ ಲಿಂಕ್ ಕಳುಹಿಸಿದ್ದೇವೆ. ನಿಮ್ಮ ಇಮೇಲ್ ನೋಡಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  }
 }

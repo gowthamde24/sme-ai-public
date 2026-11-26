@@ -10,15 +10,15 @@ const T = "22222222-2222-2222-2222-222222222222";
 const ITEM = "c27a36f2-ef14-5f33-b10f-3e03bade04aa";
 const FRESH = "5e110002-0000-4000-8000-0000000000f1";
 vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
-const m = vi.hoisted(() => ({ who: vi.fn(), saveItem: vi.fn(), getItem: vi.fn(), putQuantity: vi.fn(), fetchTenant: vi.fn(), pack: vi.fn(), put: vi.fn(), remove: vi.fn(), read: vi.fn() }));
+const m = vi.hoisted(() => ({ who: vi.fn(), saveItem: vi.fn(), getItem: vi.fn(), putQuantity: vi.fn(), fetchTenant: vi.fn(), pack: vi.fn(), put: vi.fn(), remove: vi.fn(), read: vi.fn(), readProducts: vi.fn() }));
 vi.mock("../retailers/finder-guard", async (orig) => ({ ...(await orig<typeof import("../retailers/finder-guard")>()), who: m.who }));
 vi.mock("../catalogue/catalogue-actions", () => ({ saveItemAction: m.saveItem }));
 vi.mock("@/lib/api/catalogue", async (orig) => ({ ...(await orig<typeof import("@/lib/api/catalogue")>()), getCatalogueItem: m.getItem, putQuantity: m.putQuantity }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: m.fetchTenant }));
 vi.mock("@/lib/packs/read", () => ({ readPackCached: m.pack }));
-vi.mock("@/lib/api/what-you-sell", async (orig) => ({ ...(await orig<typeof import("@/lib/api/what-you-sell")>()), putSellEntry: m.put, removeSellEntry: m.remove, readSellDrafts: m.read }));
+vi.mock("@/lib/api/what-you-sell", async (orig) => ({ ...(await orig<typeof import("@/lib/api/what-you-sell")>()), putSellEntry: m.put, removeSellEntry: m.remove, readSellDrafts: m.read, readProductDrafts: m.readProducts }));
 
-import { readAction, readSheetAction, removeEntryAction, saveEntryAction, understandAction } from "./actions";
+import { readAction, readProductsAction, readSheetAction, removeEntryAction, saveEntryAction, understandAction } from "./actions";
 
 const products = { ...EMPTY.products, name: "Red silk", price: "9,000", colours: ["red" as const], stock: "few_left" as const, count: "2" };
 beforeEach(() => {
@@ -226,3 +226,30 @@ describe("Say it and the photo/sheet reading", () => {
     expect(await readSheetAction(T, "products", "scan" as never)).toMatchObject({ ok: false, kind: "invalid" });
   });
 });
+
+describe("the products reading of a photo or a PDF (C1, 26 Nov 2026)", () => {
+  const reading = { drafts: [], unclear: false, notes: [], readBy: "ai_vision" as const, pages: 1 };
+  it("JOBS off: nothing is asked; a real workspace asks with the file id only, and a bad id never leaves", async () => {
+    expect(await readProductsAction(T, FRESH)).toMatchObject({ ok: false, kind: "invalid" });
+    vi.stubEnv("JOBS", "1");
+    m.readProducts.mockResolvedValue(reading);
+    expect(await readProductsAction(T, FRESH)).toEqual({ ok: true, data: reading });
+    expect(m.readProducts).toHaveBeenCalledWith("tok", T, FRESH);
+    expect(await readProductsAction(T, "nope")).toMatchObject({ ok: false, kind: "invalid" });
+    expect(m.readProducts).toHaveBeenCalledTimes(1);
+  });
+  it("each refusal is one plain sentence of ours: not switched on, HEIC (share as JPG), a scanned school sheet, the day's limit", async () => {
+    vi.stubEnv("JOBS", "1");
+    const t = appT("en");
+    const refuse = async (e: ApiRequestError) => {
+      m.readProducts.mockRejectedValueOnce(e);
+      return readProductsAction(T, FRESH);
+    };
+    expect(await refuse(new ApiRequestError(404, "not_found", "no"))).toMatchObject({ ok: false, kind: "unavailable", error: t("jobs.sell.imp.err.no_read") });
+    expect(await refuse(new ApiRequestError(422, "file_unreadable", "no", "heic"))).toMatchObject({ ok: false, error: t("jobs.sell.imp.err.heic") });
+    expect(t("jobs.sell.imp.err.heic")).toMatch(/JPG/);
+    expect(await refuse(new ApiRequestError(422, "validation_error", "no", "scanned_school"))).toMatchObject({ ok: false, error: t("jobs.sell.imp.err.scanned") });
+    expect(await refuse(new ApiRequestError(429, "ai_limit", "no"))).toMatchObject({ ok: false, error: t("jobs.sell.imp.err.ai_limit") });
+  });
+});
+

@@ -41,7 +41,7 @@ export function NavMeters({ counts, tenantId, labels, manages, onNavigate }: { c
         {manages ? (
           <>
             <Link prefetch={false} href={`${base}/settings?section=plan`} onClick={onNavigate} className={link}>
-              {word(labels, "nav.link.topup", "Top up")}
+              {word(labels, "nav.link.topup", "Add credits")}
             </Link>
             <span aria-hidden="true" className="text-muted">
               ·

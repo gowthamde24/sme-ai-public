@@ -41,9 +41,9 @@ describe("the two bars", () => {
     const min = within(document.querySelector('[data-meter="tu-minutes"]') as HTMLElement);
     expect(min.getByText("241.5 of 400 used")).toBeInTheDocument();
     expect(min.getByText("60% used · 158.5 left")).toBeInTheDocument();
-    expect(min.getByText("Plan: 300. Top-ups left: 100.")).toBeInTheDocument();
+    expect(min.getByText("Plan: 300. Added credits left: 100.")).toBeInTheDocument();
     expect(min.getByText("At this pace it runs out on 9 Oct.")).toBeInTheDocument();
-    expect(min.getByText("Unused top-up units stay until 4 Jan, then they expire.")).toBeInTheDocument();
+    expect(min.getByText("Unused added credits stay until 4 Jan, then they expire.")).toBeInTheDocument();
     expect(min.getByRole("meter")).toHaveAttribute("aria-valuenow", "60");
     expect(screen.getByText("This month: 1 Oct to 31 Oct. 26 days left.")).toBeInTheDocument();
     const msg = within(document.querySelector('[data-meter="tu-messages"]') as HTMLElement);
@@ -61,7 +61,7 @@ describe("the two bars", () => {
     expect(screen.getByText("90 used. This plan has no limit; you pay for what you use.")).toBeInTheDocument();
     cleanup();
     render(<UsageBars words={words} usage={mockUsage(state({ um: 0 }), "starter", NOW)} />);
-    expect(screen.getByText("Not included in your plan. A top-up still works.")).toBeInTheDocument();
+    expect(screen.getByText("Not included in your plan. Added credits still work.")).toBeInTheDocument();
   });
   it("never shows a rupee or a token for the AI", () => {
     render(<UsageBars words={words} usage={usageAt(300)} />);
@@ -81,13 +81,13 @@ describe("the notice at 80 and at 100 percent", () => {
     const b = screen.getByRole("status");
     expect(b).toHaveAttribute("data-topup-banner", "80");
     expect(b).toHaveTextContent("Your calls are at 80% of this month's minutes. At this pace they run out on 7 Oct.");
-    expect(screen.getByRole("link", { name: "Top up" })).toHaveAttribute("href", "/app/tenants/t/settings?section=plan#topups");
+    expect(screen.getByRole("link", { name: "Add credits" })).toHaveAttribute("href", "/app/tenants/t/settings?section=plan#topups");
   });
-  it("100 percent: an alert saying calls are queued and how many wait; an Admin is offered 'See usage', not 'Top up'", () => {
+  it("100 percent: an alert saying calls are queued and how many wait; an Admin is offered 'See usage', not 'Add credits'", () => {
     render(<TopupBanner words={words} usage={usageAt(300)} href="/h" canBuy={false} />);
-    expect(screen.getByRole("alert")).toHaveTextContent("Your minutes are used up. Calls are queued (12 waiting). Top up to continue.");
+    expect(screen.getByRole("alert")).toHaveTextContent("Your minutes are used up. Calls are queued (12 waiting). Add credits to continue.");
     expect(screen.getByRole("link", { name: "See usage" })).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Top up" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Add credits" })).toBeNull();
   });
   it("messages used up come before minutes at 80", () => {
     render(<TopupBanner words={words} usage={mockUsage(state({ um: 241.5, ug: 300 }), "calls_300", NOW)} href="/h" canBuy />);
@@ -100,7 +100,7 @@ describe("the notice at 80 and at 100 percent", () => {
     expect(within(card).getByText("Needs you")).toBeInTheDocument();
     expect(within(card).getByRole("heading", { name: "Call minutes are running low" })).toBeInTheDocument();
     expect(within(card).getByText("At this pace they run out on 7 Oct.")).toBeInTheDocument();
-    expect(within(card).getByRole("link", { name: "Top up" })).toBeInTheDocument();
+    expect(within(card).getByRole("link", { name: "Add credits" })).toBeInTheDocument();
     cleanup();
     render(<NeedsYouTopup words={words} usage={usageAt(300)} href="/h" canBuy />);
     expect(screen.getByRole("heading", { name: "Call minutes are used up" })).toBeInTheDocument();
@@ -109,12 +109,12 @@ describe("the notice at 80 and at 100 percent", () => {
 });
 
 describe("leads waiting for calls", () => {
-  it("'12 leads waiting for calls · Top up', and what stays true meanwhile", () => {
+  it("'12 leads waiting for calls · Add credits', and what stays true meanwhile", () => {
     render(<WaitingCard words={words} waiting={12} href="/h" canBuy />);
     const h = screen.getByRole("heading", { level: 2 });
-    expect(h).toHaveTextContent("12 leads waiting for calls · Top up");
-    expect(within(h).getByRole("link", { name: "Top up" })).toHaveAttribute("href", "/h");
-    expect(screen.getByText(/start again by themselves after a top-up or when the new month begins/)).toBeInTheDocument();
+    expect(h).toHaveTextContent("12 leads waiting for calls · Add credits");
+    expect(within(h).getByRole("link", { name: "Add credits" })).toHaveAttribute("href", "/h");
+    expect(screen.getByText(/start again by themselves after you add credits or when the new month begins/)).toBeInTheDocument();
     expect(screen.getByText(/Leads are still captured, and free WhatsApp replies within 24 hours carry on/)).toBeInTheDocument();
   });
   it("one lead; nothing at all when none wait", () => {
@@ -171,8 +171,8 @@ describe("buying a pack", () => {
     const b = within(document.querySelector('[data-pack="minutes_300"]') as HTMLElement);
     expect(b.getByText("+300 minutes")).toBeInTheDocument();
     expect(b.getByText("test price ₹1,274.40 with GST")).toBeInTheDocument();
-    expect(screen.getByText(/Unused top-up units carry over for 90 days/)).toBeInTheDocument();
-    expect(screen.getByText("Your plan's allowance is used first, then the oldest top-up.")).toBeInTheDocument();
+    expect(screen.getByText(/Unused added credits carry over for 90 days/)).toBeInTheDocument();
+    expect(screen.getByText("Your plan's allowance is used first, then the oldest added credits.")).toBeInTheDocument();
   });
   it("a real (non-placeholder) price is written without 'test'", () => {
     const v = view();
@@ -233,7 +233,7 @@ describe("buying a pack", () => {
 describe("auto top-up and pay per use", () => {
   it("both are OFF by default, with no limit fields showing", () => {
     controls(actions());
-    expect(screen.getByRole("switch", { name: /Top up by itself/ })).not.toBeChecked();
+    expect(screen.getByRole("switch", { name: /Add credits by itself/ })).not.toBeChecked();
     expect(screen.getByRole("switch", { name: /Pay per minute/ })).not.toBeChecked();
     expect(screen.getByRole("switch", { name: /Pay per message/ })).not.toBeChecked();
     expect(screen.queryByLabelText(/Monthly limit/)).toBeNull();
@@ -241,10 +241,10 @@ describe("auto top-up and pay per use", () => {
   it("turning auto top-up on offers the packs and a monthly limit; it needs a pack and a limit; saves the whole object in paise", async () => {
     const a = actions();
     controls(a);
-    fireEvent.click(screen.getByRole("switch", { name: /Top up by itself/ }));
+    fireEvent.click(screen.getByRole("switch", { name: /Add credits by itself/ }));
     fireEvent.change(screen.getByLabelText("Pack for minutes"), { target: { value: "" } });
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
-    expect(screen.getByRole("alert")).toHaveTextContent("Choose a pack to buy, or turn auto top-up off.");
+    expect(screen.getByRole("alert")).toHaveTextContent("Choose a pack to buy, or turn off adding credits automatically.");
     fireEvent.change(screen.getByLabelText("Pack for minutes"), { target: { value: "minutes_100" } });
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(screen.getByRole("alert")).toHaveTextContent("Enter a monthly limit in rupees above zero.");
@@ -324,7 +324,7 @@ describe("upgrading in the middle of the month", () => {
 describe("who can do what", () => {
   it("an Admin sees a note instead of the buttons; a read-only workspace says it is read-only", () => {
     controls(actions(), { canChange: false });
-    expect(screen.getByText("Only the owner can buy top-ups or change these settings.")).toBeInTheDocument();
+    expect(screen.getByText("Only the owner can add credits or change these settings.")).toBeInTheDocument();
     expect(document.querySelector("[data-pack]")).toBeNull();
     cleanup();
     controls(actions(), { readOnly: true });
@@ -349,7 +349,7 @@ describe("the whole part", () => {
     render(<TopupSection words={words} view={view({ um: 300 })} canChange mock upgrades={[]} currentName="Pro" actions={actions()} topupHref="/h" readOnly={false} {...over} />);
   it("title, the test-mode note, the bars, the alert, the waiting leads, the controls and the record", () => {
     section();
-    expect(screen.getByRole("heading", { name: "Usage and top-ups" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Usage and credits" })).toBeInTheDocument();
     expect(screen.getByText(/Test mode: no money is taken/)).toBeInTheDocument();
     expect(document.querySelector('[data-meter="tu-minutes"]')).not.toBeNull();
     expect(screen.getAllByRole("alert")[0]).toHaveTextContent("Your minutes are used up");

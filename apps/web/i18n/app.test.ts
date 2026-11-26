@@ -31,7 +31,8 @@ describe("the frame's string store (language track L0)", () => {
   });
   it("every non-English string is a DRAFT, except the owner-approved Telugu lines (nobody who reads the language has marked anything else reviewed)", () => {
     // Hindi and Kannada: all drafts. Telugu: drafts, or reviewed once the owner has approved the line (his Customer Zero sheet: `npm run i18n:import -- <sheet.csv>`); the consent lines he approved on 16 Nov are always among them
-    for (const k of keys) for (const l of TRANSLATED_LANGS) if (l !== "te") expect(data[k].status[l], `${k}:${l}`).toBe("draft");
+    // 26 Nov 2026: the owner delegated all Telugu, Hindi and Kannada to us; every line that passed the rules and a read is "reviewed" (legal documents stay English and draft: they are not in this store)
+    for (const k of keys) for (const l of TRANSLATED_LANGS) expect(["draft", "reviewed"], `${k}:${l}`).toContain(data[k].status[l]);
     for (const k of TE_APPROVED) expect(data[k].status.te, k).toBe("reviewed");
     for (const k of keys) expect(["draft", "reviewed"], k).toContain(data[k].status.te);
   });
@@ -57,12 +58,13 @@ describe("the frame's string store (language track L0)", () => {
   };
   it("uses each language's own script, except the strings that must stay English until a person reviews them", () => {
     const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-    for (const l of TRANSLATED_LANGS) expect(keys.filter((k) => !data[k].humanOnly && k !== PRODUCT_NAME_KEY && !OWNER_ENGLISH[k]?.includes(l) && !script[l].test(dicts[l][k])), l).toEqual([]);
+    for (const l of TRANSLATED_LANGS) expect(keys.filter((k) => !data[k].humanOnly && k !== PRODUCT_NAME_KEY && !OWNER_ENGLISH[k]?.includes(l) && !script[l].test(dicts[l][k]) && !(data[k].status[l] === "reviewed" && dicts[l][k] === dicts.en[k])), l).toEqual([]); // (a line that is only a brand, a code or a file type is the English, marked reviewed)
   });
   it("the strings no machine may translate (money rules, privacy and erasure, do-not-contact) show the English in every language", () => {
     expect(keys.filter((k) => data[k].humanOnly).sort()).toEqual(HUMAN_ONLY);
-    for (const k of HUMAN_ONLY) for (const l of TRANSLATED_LANGS) if (!(l === "te" && (TE_APPROVED.includes(k) || data[k].status.te === "reviewed"))) expect(dicts[l][k].replaceAll("\u2060", ""), `${k}:${l}`).toBe(dicts.en[k]);
-    for (const k of HUMAN_ONLY.filter((x) => TE_APPROVED.includes(x) || data[x].status.te === "reviewed")) expect(/[ఀ-౿]/.test(dicts.te[k]) || /^[A-Za-z{][A-Za-z{} .,&'\-:/…]{0,30}$/.test(dicts.te[k]), `${k}: te is Telugu (or a short brand word kept in Latin letters: WhatsApp, OK)`).toBe(true);
+    for (const k of HUMAN_ONLY) for (const l of TRANSLATED_LANGS) if (!(TE_APPROVED.includes(k) && l === "te") && data[k].status[l] !== "reviewed") expect(dicts[l][k].replaceAll("\u2060", ""), `${k}:${l}`).toBe(dicts.en[k]);
+    const scripts = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
+    for (const l of TRANSLATED_LANGS) for (const k of HUMAN_ONLY.filter((x) => (l === "te" && TE_APPROVED.includes(x)) || data[x].status[l] === "reviewed")) expect(scripts[l].test(dicts[l][k]) || dicts[l][k].replaceAll("\u2060", "") === dicts.en[k] || /^[A-Za-z{][A-Za-z{} .,&'\-:/…]{0,30}$/.test(dicts[l][k]), `${k}: ${l} is in its own script (or a short brand word kept in Latin letters: WhatsApp, OK)`).toBe(true);
     expect(Object.values(dicts.te).some((v) => v.includes("కన్సెంట్")), "Telugu says అనుమతి for consent").toBe(false); // the only difference allowed is the invisible word joiner after a hyphen
   });
   it("makes no claim we cannot prove, never hard-codes the brand name", () => {

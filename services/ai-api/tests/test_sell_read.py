@@ -100,7 +100,7 @@ def test_the_owners_words_and_the_refusals(w: World) -> None:
     assert r.status_code == 200 and [d["price_paise"] for d in r.json()["drafts"]] == [15_000, 60_000]
     assert w.read("services", {"kind": "talk", "text": "  "}).status_code == 422
     assert w.read("services", {"kind": "sheet"}).status_code == 422
-    assert w.read("products", {"kind": "talk", "text": "x 1"}).status_code == 404, "products are the catalogue's"
+    assert w.read("products", {"kind": "talk", "text": "x 1"}).status_code == 422, "products have their own reading (a photo or a PDF by file_id: tests/test_products_read.py); the sheet, photo and talk body is not theirs"
     assert w.read("services", {"kind": "sheet", "file_id": str(uuid.uuid4())}).status_code == 404
     assert w.read("services", {"kind": "talk", "text": "Haircut 300"}, "a_sales").status_code == 403
     assert w.read("services", {"kind": "talk", "text": "Haircut 300", "extra": 1}).status_code == 422

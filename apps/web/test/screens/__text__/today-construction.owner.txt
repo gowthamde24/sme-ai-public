@@ -52,8 +52,8 @@ form:
 - Follow-up Desk Waiting for you Drafted follow-up message number 2 · 1m
 - Dispatch Desk Waiting for you Order started · 30m
 - Site Measurer Working Working
-{label="Finish setting up"}
-## Finish setting up
+{label="Finish setup"}
+## Finish setup
 2 of 6 done
 - Tell us your business name and city Done
 - [Add your first products One by one, or import your price list. To do](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)

@@ -44,7 +44,7 @@ Short and quick The answer first, in a few words.
 A sample call
 - Customer హాయ్, రేపు తెరిచి ఉంటారా?
 - Your assistant ఉంటాం అండీ, రేపు పది నుంచి ఏడు వరకు. మీరు వస్తారా?
-- Customer ఏ time బాగుంటుంది?
+- Customer ఏ టైమ్ బాగుంటుంది?
 - Your assistant పదకొండు తర్వాత ఎప్పుడైనా ప్రశాంతంగా ఉంటుంది. మీ పేరు రాసుకుంటాను, మీ కోసం సిద్ధంగా ఉంటాం.
 This example wording is a draft.
 legend: Background sound
@@ -121,7 +121,7 @@ Say it like this Nothing yet.
 ## Practice
 Try your assistant the way a customer would.
 [button type=button: Talk now]
-[Call my phone](/app/tenants/22222222-2222-2222-2222-222222222222/calls?test=1) Rings a phone on the test list. Never a customer.
+[Call my phone](/app/tenants/22222222-2222-2222-2222-222222222222/calls?test=1) Calls a phone on your test list so you hear your assistant. It never calls a customer.
 {label="Your assistant's answers"}
 ### Your assistant's answers
 Press Talk now, or type what a customer would ask.

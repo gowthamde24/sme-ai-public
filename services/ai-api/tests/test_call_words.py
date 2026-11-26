@@ -57,3 +57,28 @@ def test_the_sentence_never_carries_what_was_said_or_a_name_or_a_number() -> Non
 def test_the_list_row_carries_both_new_fields() -> None:
     shaped = shape(row(category="visit_booked"), NOW)
     assert shaped["status"] == "completed" and shaped["outcome_sentence"] == "Visit booked"
+
+
+def test_every_row_carries_a_closed_code_next_to_its_english_sentence() -> None:
+    cases = [
+        (row(state="in_progress"), True, "live", "Talking now"),
+        (row(state="refused", refuse_reason="billing_blocked", ended_at=NOW), False, "refused_billing_blocked", call_words.REFUSED_SENTENCE["billing_blocked"]),
+        (row(state="no_answer", ended_at=NOW), False, "state_no_answer", "No answer"),
+        (row(state="completed", end_reason="handover", ended_at=NOW), False, "handover", "A person took over"),
+        (row(category="visit_booked"), False, "category_visit_booked", "Visit booked"),
+        (row(category=None, outcome="positive"), False, "outcome_positive", "The call went well"),
+        (row(category=None, outcome=None), False, "finished", "Call finished"),
+    ]
+    for r, live, code, sentence in cases:
+        assert call_words.code_of(r, live) == code and call_words.sentence_of(r, live) == sentence, code
+    shaped = shape(row(category="visit_booked"), NOW)
+    assert shaped["outcome_code"] == "category_visit_booked" and shaped["outcome_sentence"] == "Visit booked"
+    assert shaped["outcome_code"] in call_words.all_codes()
+
+
+def test_the_list_of_codes_and_the_sentences_agree() -> None:
+    codes = set(call_words.all_codes())
+    for table, prefix in ((call_words.CATEGORY_SENTENCE, "category_"), (call_words.OUTCOME_SENTENCE, "outcome_"), (call_words.STATE_SENTENCE, "state_"), (call_words.REFUSED_SENTENCE, "refused_")):
+        assert {prefix + k for k in table} <= codes
+    assert {"live", "refused", "handover", "finished"} <= codes
+    assert len(codes) == len(call_words.all_codes())

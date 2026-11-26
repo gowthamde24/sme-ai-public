@@ -206,3 +206,12 @@ describe("the owner's test call (C1's PR #434, POST /calls/place)", () => {
     await expect(placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "en", goal: GOOD })).rejects.toThrow();
   });
 });
+
+describe("outcome_code (C1, 26 Nov 2026)", () => {
+  it("is kept when it is a closed lower-case word and dropped otherwise (an API that does not send it leaves null)", () => {
+    const page = (code: unknown) => parseCallsPage({ items: [{ ...ROW, outcome_sentence: "Visit booked", outcome_code: code }], next_cursor: null, poll_after_s: 5 } as never).items[0].outcomeCode;
+    expect(page("category_visit_booked")).toBe("category_visit_booked");
+    expect(page(undefined)).toBeNull();
+    for (const bad of ["Visit booked", "../x", 5, "", "A_B"]) expect(page(bad), String(bad)).toBeNull();
+  });
+});

@@ -31,9 +31,9 @@ const isClassic = (i: ApiItem): i is ApiItem & { kind: ClassicKind } => CLASSIC.
  * and offers no button, because nobody should approve words they cannot read. The last 24 hours of the outbox are one promise that never rejects (`readDigest`), read under a Suspense each.
  * "At the store today" is `GET /visits/today` (any member), the usage card's weekly figure is `GET /ai-usage/week` (Owner and Admin) and a visit Agent OWL proposed is a card of its own (job AV).
  */
-/** "₹1,050 left · about 233 call minutes · Top up": the amount first, the minutes when the API gave them. No "credits", no supplier. */
+/** "₹1,050 left · about 233 call minutes · Add credits": the amount first, the minutes when the API gave them. No "credits", no supplier. */
 export function balanceLine(b: { text: string; minutesEstimate: number | null }): string {
-  return [`${b.text} left`, b.minutesEstimate !== null ? `about ${b.minutesEstimate} call minutes` : null, "Top up"].filter((x) => x !== null).join(" · ");
+  return [`${b.text} left`, b.minutesEstimate !== null ? `about ${b.minutesEstimate} call minutes` : null, "Add credits"].filter((x) => x !== null).join(" · ");
 }
 
 export async function readToday(accessToken: string, tenantId: string, role: Role, now: () => number = Date.now, pre: { /** The agents' status, when the page has already started that read (the band needs it too: one read, not two). */ agents?: Promise<Awaited<ReturnType<typeof readAgentsCached>>> } = {}): Promise<TodayData> {
@@ -61,7 +61,7 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
     const wantsCalls = t.needs_you.some((i) => i.kind === "call_approval");
     // a caller who asked for a person: the call says which lead to call back from (at most ten are read; one that cannot be read keeps its card, without Call back)
     const asked = t.needs_you.filter((i) => i.kind === "person_requested" || i.kind === "visit_requested").slice(0, 10);
-    // the balance row says the amount (owner, 14 Nov: "₹1,050 left · about 233 call minutes · Top up", not only "balance is low"); where the balance cannot be read the API-side sentence stays
+    // the balance row says the amount (owner, 14 Nov: "₹1,050 left · about 233 call minutes · Add credits", not only "balance is low"); where the balance cannot be read the API-side sentence stays
     const wantsBalance = t.needs_you.some((i) => i.kind === "voice_credits" || i.kind === "credits_low");
     const balance = wantsBalance ? await readBalance(accessToken, tenantId).catch(() => null) : null;
     const [where, messages, calls, briefs] = await Promise.all([

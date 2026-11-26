@@ -47,7 +47,7 @@ from app.autoreply.repository import PostgrestAutoReplySwitch
 from app.autoreply.routes import router as auto_reply_router
 from app.billing import errors as billing_errors
 from app.billing.mail import EmailSender, build_sender
-from app.billing.provider import BillingProvider, build_provider
+from app.billing.provider import BillingProvider, ClosedBilling, build_provider
 from app.billing.repository import PostgrestBillingRepository
 from app.billing.routes import plans_router as billing_plans_router
 from app.billing.routes import router as billing_router
@@ -481,9 +481,19 @@ def _billing_provider(settings: Settings) -> BillingProvider:
             and settings.billing_razorpay_webhook_secret is not None
             else None
         )
-        return build_provider(settings.billing_provider, keys, live_ok=settings.razorpay_live_ok)
+        provider = build_provider(
+            settings.billing_provider, keys, live_ok=settings.razorpay_live_ok
+        )
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
+    if settings.api_env == "production" and provider.mode != "live":
+        # the fake provider and a Razorpay TEST payment are free money on a real wallet:
+        # production takes payments only from a LIVE account
+        logging.getLogger("app.billing").warning(
+            "production has no LIVE payment account: every payment door is closed"
+        )
+        return ClosedBilling()
+    return provider
 
 
 def build_runtime(settings: Settings) -> Runtime | None:

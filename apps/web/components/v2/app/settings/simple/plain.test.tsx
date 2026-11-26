@@ -21,7 +21,7 @@ describe("Settings > Business without sentences (SETTINGS_OPEN)", () => {
   it("plain labelled fields, no sentence with a blank, no What-it-will-do box", () => {
     draw();
     expect(screen.getByLabelText("Business name")).toHaveValue("Pavers Corner");
-    expect(screen.getByLabelText("City or area")).toHaveValue("Guntur");
+    expect(screen.getByLabelText("City or town")).toHaveValue("Guntur");
     expect(screen.queryByText(/My business is called/)).toBeNull();
     expect(document.querySelector("[data-part='effect']")).toBeNull();
     expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();

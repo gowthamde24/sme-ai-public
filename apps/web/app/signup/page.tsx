@@ -3,6 +3,7 @@ import Link from "next/link";
 import { EmailDisclosure } from "@/components/v2/auth/EmailDisclosure";
 import { SignupClosed } from "@/components/v2/auth/SignupClosed";
 import { OrbMark } from "@/components/v2/app/mark/OrbMark";
+import { FacebookF, GoogleG } from "@/components/v2/auth/ProviderIcons";
 import { authAlert, authH1, authHint, authLead, authLink, authMain, authSecondary } from "@/components/v2/auth/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { getLang } from "@/i18n/get-lang";
@@ -141,12 +142,14 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
         <form id="signup-provider-form" action={continueWithProvider} className="flex flex-col">
           <input type="hidden" name="type" value={type} />
           {providers.google ? (
-            <button type="submit" name="provider" value="google" className={authSecondary}>
+            <button type="submit" name="provider" value="google" className={`${authSecondary} gap-2.5`}>
+              <GoogleG />
               {t("signup.google")}
             </button>
           ) : null}
           {providers.facebook ? (
-            <button type="submit" name="provider" value="facebook" className={authSecondary}>
+            <button type="submit" name="provider" value="facebook" className={`${authSecondary} gap-2.5`}>
+              <FacebookF />
               {t("signup.facebook")}
             </button>
           ) : null}

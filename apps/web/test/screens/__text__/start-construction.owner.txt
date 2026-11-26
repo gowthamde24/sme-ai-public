@@ -7,8 +7,8 @@ City or town
 <text name=town label="City or town" required maxlength=80 minlength=2 autocomplete=address-level2>
 Used in your messages and quotes.
 [button type=submit: Save]
-{label="Finish setting up"}
-## Finish setting up
+{label="Finish setup"}
+## Finish setup
 0 of 6 done
 - [Tell us your business name and city Two answers, then you are set. To do](/app/tenants/22222222-2222-2222-2222-222222222222/start)
 - [Add your first products One by one, or import your price list. To do](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)

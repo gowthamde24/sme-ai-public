@@ -11,13 +11,14 @@ import { escalate } from "@/lib/api/failure";
 import { getProfile, type BusinessProfile } from "@/lib/api/profile";
 import { requireUser } from "@/lib/auth/session";
 import { readActivation, usesChecklist } from "@/lib/packs/activation";
+import { readDayOneActivation } from "@/lib/packs/day-one-activation";
 import { leadDeskSteps } from "@/lib/packs/lead-activation";
 import { readPackCached } from "@/lib/packs/read";
 
 import { TypePicker } from "@/components/v2/app/start/TypePicker";
 import { typeKeywords } from "@/lib/packs/type-search";
 import { listPacks } from "@/lib/api/pack";
-import { firstRunType } from "@/lib/screens/flag";
+import { designV6, firstRunType } from "@/lib/screens/flag";
 
 import { saveProfileAction, setPackAction } from "./actions";
 import { BRAND_NAME } from "@/design/brand";
@@ -37,8 +38,11 @@ export default async function StartPage({ params }: PageProps<"/app/tenants/[ten
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
   let role: string;
+  let shop = "";
   try {
-    role = (await fetchTenant(user.accessToken, tenantId)).role;
+    const tenant = await fetchTenant(user.accessToken, tenantId);
+    role = tenant.role;
+    shop = tenant.name;
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -81,7 +85,9 @@ export default async function StartPage({ params }: PageProps<"/app/tenants/[ten
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
   }
-  const activation = await readActivation(user.accessToken, tenantId, pack, t, await leadDeskSteps(pack));
+  // ONE checklist: the seven steps of day one that Today counts ("Finish setup · 5 of 7"); the API's own list of six is only the fallback when the assistant's status cannot be read
+  const dayOne = designV6() ? await readDayOneActivation({ token: user.accessToken, tenantId, shop: profile?.name || shop, modules: pack.modules, base, t }).catch(() => null) : null;
+  const activation = dayOne ?? (await readActivation(user.accessToken, tenantId, pack, t, await leadDeskSteps(pack)));
   const dict = appDict(lang) as Record<string, string>;
   const words = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("start.")));
   return (

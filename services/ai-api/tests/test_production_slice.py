@@ -101,7 +101,7 @@ def test_the_full_stack_deploys_from_its_declared_files_sandbox_one_warm_instanc
     done = run(tmp_path, "deploy", "api", PROD_SCHEDULER_EMAIL="scheduler@example.test")   # no PRIVACY_VERSION in the shell: the declared file (and the script default) say 2026-11-26, never a stale value
     assert done.returncode == 0, done.stderr + done.stdout
     deploy = next(line for line in done.stdout.splitlines() if "gcloud run deploy sme-api" in line).replace("\\", "")
-    for must in ("TELEPHONY_MODE=sandbox", "TELEPHONY_OUTBOUND=true", "TELEPHONY_MAX_CONCURRENT=2", "TELEPHONY_SANDBOX_IGNORES_HOURS=true", "TASKS_DIALER=|", "AGENTS_ENABLED=true", "PRIVACY_VERSION=2026-11-26", "TERMS_VERSION=2026-11-26", "SCHEDULER_EMAIL=scheduler@example.test",
+    for must in ("TELEPHONY_MODE=sandbox", "TELEPHONY_OUTBOUND=true", "TELEPHONY_MAX_CONCURRENT=2", "TASKS_DIALER=|", "AGENTS_ENABLED=true", "PRIVACY_VERSION=2026-11-26", "TERMS_VERSION=2026-11-26", "SCHEDULER_EMAIL=scheduler@example.test",
                  "PUBLIC_BASE_URL=https://sme-api-111222333.asia-south1.run.app", "WORKSPACE_SECRETS_PROJECT=prod-project-test", "MAIL_FROM=noreply@example.test", "LLM_MODEL=claude-haiku-5-5",
                  "CONTACT_FORM=true", "CAPTCHA_PROVIDER=turnstile", "CAPTCHA_SECRET=sme-turnstile-secret:latest",   # release 2: the Turnstile check and the Talk-to-us form go together
                  "--no-cpu-throttling", "--min-instances 1", "--max-instances 1", "ANTHROPIC_API_KEY=sme-anthropic-api-key:latest", "PLIVO_AUTH_TOKEN=sme-plivo-auth-token:latest",

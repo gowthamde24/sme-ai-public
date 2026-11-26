@@ -5,10 +5,10 @@ import { randomUUID } from "node:crypto";
 import type { Reply } from "@/components/v2/app/cc/kit";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
-import { getCatalogueItem, putQuantity } from "@/lib/api/catalogue";
+import { FABRICS, getCatalogueItem, putQuantity } from "@/lib/api/catalogue";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { failureOf } from "@/lib/api/failure";
-import { productOf, putSellEntry, readSellDrafts, readUnderstood, removeSellEntry, type SellReading } from "@/lib/api/what-you-sell";
+import { productOf, putSellEntry, readProductDrafts, readSellDrafts, readUnderstood, removeSellEntry, type ProductsReading, type SellReading } from "@/lib/api/what-you-sell";
 import { readPackCached } from "@/lib/packs/read";
 import { buildEntry, productSaveInput } from "@/lib/sell/forms";
 import { understand } from "@/lib/sell/say";
@@ -34,7 +34,7 @@ const isStyle = (v: unknown): v is SellStyle => typeof v === "string" && (SELL_S
 
 export type Saved = { entry: SellEntry; photosPath: string | null; note: "count" | null };
 /** What the sheet knows of the entry it is changing and the form cannot say: a course's seats are the owner's own count ("2 seats left"), kept unless the total changed. `freshId` is the id the sheet minted for a NEW entry (the same one on a retry). */
-export type SaveExtra = { freshId?: string; course?: { seats: { state: string; count: number | null }; total: number | null } };
+export type SaveExtra = { freshId?: string; /** a NEW saree made from a price list: the fabric read from its name (the sheet's form has no fabric) */ fabric?: string; course?: { seats: { state: string; count: number | null }; total: number | null } };
 
 function priorCourse(extra: SaveExtra | undefined): CourseEntry | null {
   const c = extra?.course;
@@ -90,7 +90,9 @@ export async function saveEntryAction(tenantId: string, style: SellStyle, id: st
   const f = form as SellForm["products"];
   const built = buildEntry("products", entryId, f, before, owner);
   if (!built.ok || built.entry.style !== "products") return { ok: false, kind: "invalid", error: built.ok ? ctx.t("apierr.invalid") : ctx.t(`jobs.sell.err.${built.code}` as Parameters<typeof ctx.t>[0]), ...(built.ok ? {} : { fields: [built.field] }) };
-  const saved = await saveItemAction(tenantId, entryId, productSaveInput(built.entry, owner, f.price));
+  const fabric = id === null && typeof extra?.fabric === "string" ? FABRICS.find((x) => x === extra.fabric) : undefined;
+  const entryToSave = fabric ? { ...built.entry, keep: { ...built.entry.keep, fabric } } : built.entry;
+  const saved = await saveItemAction(tenantId, entryId, productSaveInput(entryToSave, owner, f.price));
   if (!saved.ok) return { ok: false, kind: saved.mfa ? "mfa" : "invalid", error: saved.error, ...(saved.mfa ? { mfa: true } : {}) };
   let note: Saved["note"] = null;
   if (built.entry.stock.count !== null) {
@@ -148,6 +150,25 @@ export async function readAction(tenantId: string, style: SellStyle, request: Re
     return { ok: true, data: await readSellDrafts(ctx.token, tenantId, style, input, await getLang()) };
   } catch (error) {
     if (error instanceof ApiRequestError && error.status === 404) return { ok: false, kind: "unavailable", error: ctx.t("jobs.sell.err.not_ready") };
+    return failureOf(error, ctx.t);
+  }
+}
+
+/** The products reading (a photo or a PDF of a price list; C1, 26 Nov 2026). Every refusal is a plain sentence of ours: not switched on, a scanned school sheet, a HEIC photo ("share it as JPG"), the day's reading limit. */
+export async function readProductsAction(tenantId: string, fileId: string): Promise<Reply<ProductsReading>> {
+  const ctx = await jobsWho(tenantId, DECIDERS);
+  if ("ok" in ctx) return ctx;
+  if (typeof fileId !== "string" || !isCanonicalUuid(fileId)) return invalid(ctx.t);
+  if (jobsScreens() === "mock") return { ok: false, kind: "unavailable", error: ctx.t("jobs.sell.imp.err.no_read") };
+  try {
+    return { ok: true, data: await readProductDrafts(ctx.token, tenantId, fileId) };
+  } catch (error) {
+    if (error instanceof ApiRequestError) {
+      if (error.status === 404) return { ok: false, kind: "unavailable", error: ctx.t("jobs.sell.imp.err.no_read") };
+      if (error.status === 422 && error.reason === "heic") return { ok: false, kind: "invalid", error: ctx.t("jobs.sell.imp.err.heic") };
+      if (error.status === 422 && error.reason === "scanned_school") return { ok: false, kind: "invalid", error: ctx.t("jobs.sell.imp.err.scanned") };
+      if (error.status === 429) return { ok: false, kind: "unavailable", error: ctx.t("jobs.sell.imp.err.ai_limit") };
+    }
     return failureOf(error, ctx.t);
   }
 }

@@ -2,7 +2,7 @@
  * The command palette's items, as data (owner, 6 Nov 2026: ⌘K is a real command palette, not a jump to the assistant). Pure: no React, no request; the client palette and its tests use it.
  *
  * - Pages: every menu row the person is offered (the same table and routes as the side menu), the Settings parts (Members, Plan & usage ...).
- * - Actions: Add a lead, Upload a file, Find new customers, Change calling hours, Train how it talks, Top up, each only where its page exists for this person.
+ * - Actions: Add a lead, Upload a file, Find new customers, Change calling hours, Train how it talks, Add credits, each only where its page exists for this person.
  * - Records: from the API's search (C1's GET /search), not here.
  * - Always last: "Ask the assistant: <text>", the one item that goes to the assistant.
  * A label matches in every language of the app and in English (`names`: the words of each language, the person's own first), whatever the case, the spaces or the punctuation.

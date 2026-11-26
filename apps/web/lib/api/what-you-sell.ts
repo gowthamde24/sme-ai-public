@@ -239,6 +239,31 @@ export async function readSellDrafts(token: string, tenantId: string, style: Sel
 }
 
 /**
+ * `POST /what-you-sell/products/read {file_id}` (C1, 26 Nov 2026): a photo (jpg, png, webp) or a PDF of a price list or a shelf, already dropped through the assistant's file route, turned into drafts: name, price in paise (null = none read), unit, a note and HOW SURE the reading is (`confidence`). Nothing is saved.
+ * HEIC answers 422 `file_unreadable` with reason `heic`; a scanned school sheet 422 `scanned_school`; the day's reading limit 429. The preview shows every draft, the unsure ones marked.
+ */
+export type ProductDraft = { name: string; pricePaise: number | null; unit: string | null; notes: string | null; confidence: "high" | "medium" | "low" };
+export type ProductsReading = { drafts: ProductDraft[]; unclear: boolean; notes: { code: "price_missing" | "too_many" | "unreadable"; row: number | null }[]; readBy: "text_layer" | "ai_vision" | null; pages: number };
+export function parseProductsReading(json: unknown): ProductsReading {
+  const r = rec(json, "reading");
+  const drafts: ProductDraft[] = [];
+  for (const raw of list(r.drafts, "drafts", 100)) {
+    if (!isRecord(raw)) continue;
+    const name = typeof raw.name === "string" ? raw.name.trim().slice(0, 120) : "";
+    if (name === "") continue;
+    const price = typeof raw.price_paise === "number" && Number.isSafeInteger(raw.price_paise) && raw.price_paise >= 0 ? raw.price_paise : null;
+    const conf = raw.confidence === "high" || raw.confidence === "medium" || raw.confidence === "low" ? raw.confidence : "low"; // a word we do not know is "unsure", never "sure"
+    drafts.push({ name, pricePaise: price, unit: typeof raw.unit === "string" ? raw.unit.slice(0, 20) : null, notes: typeof raw.notes === "string" && raw.notes.trim() !== "" ? raw.notes.trim().slice(0, 160) : null, confidence: conf });
+  }
+  const notes: ProductsReading["notes"] = [];
+  if (Array.isArray(r.notes)) for (const n of r.notes) if (isRecord(n) && (n.code === "price_missing" || n.code === "too_many" || n.code === "unreadable")) notes.push({ code: n.code, row: typeof n.row === "number" && Number.isSafeInteger(n.row) ? n.row : null });
+  return { drafts, unclear: r.unclear === true, notes, readBy: r.read_by === "text_layer" || r.read_by === "ai_vision" ? r.read_by : null, pages: typeof r.pages === "number" && Number.isSafeInteger(r.pages) && r.pages >= 0 ? r.pages : 0 };
+}
+export async function readProductDrafts(token: string, tenantId: string, fileId: string): Promise<ProductsReading> {
+  return parseProductsReading(await apiRequest(`${base(tenantId)}/what-you-sell/products/read`, token, { method: "POST", body: JSON.stringify({ file_id: uuid(fileId, "file id") }) }));
+}
+
+/**
  * What the section reads. null = the screens are off. `unready` = nothing to read yet for this business (the route answers 404 and no old route stands in): the section says so and links the old page. JOBS=mock: the made-up list of the style, through the same parsers
  * (`live: false`). A real read that fails is `unread` (the section says so; a rejected session is thrown by `apiRequest` as ever).
  */
