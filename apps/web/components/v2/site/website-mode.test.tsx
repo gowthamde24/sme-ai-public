@@ -49,7 +49,8 @@ describe("website mode: the public pages (job DQ)", () => {
     // the home page (landing v9) says it in English until the owner reviews the new lines; the other pages have the reviewed words
     expect(text(html)).toContain(target.kind === "home" ? d["v9.hdr.9"] : d["demo.cta"]);
     expect(text(html)).not.toContain(d["nav.signin"]);
-    expect(text(html)).not.toContain(d["nav.start"]);
+    // no "Start trial" button or link (the words of the label may appear inside other sentences: "काम शुरू करें")
+    expect(html).not.toMatch(new RegExp(`>\\s*${d["nav.start"].replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*<`));
     expect(text(html)).not.toMatch(/\{(?!customer\}|business\})[a-z_]+\}/); // the home page's opening-line example shows {customer} and {business} as typed
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
   });

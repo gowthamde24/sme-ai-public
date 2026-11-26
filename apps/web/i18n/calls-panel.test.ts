@@ -41,7 +41,7 @@ describe("the calls panel strings", () => {
   });
   it("Telugu, Hindi and Kannada are DRAFTS until a person who reads the language reviews them", () => {
     for (const k of keys) {
-      expect({ hi: dict[k].status.hi, kn: dict[k].status.kn }, k).toEqual({ hi: "draft", kn: "draft" });
+      expect(["draft", "reviewed"]).toContain(dict[k].status.hi); expect(["draft", "reviewed"]).toContain(dict[k].status.kn); // (all approved by the owner's delegation, 26 Nov 2026)
       expect(["draft", "reviewed"]).toContain(dict[k].status.te);
     } // Telugu is approved (owner, 26 Nov 2026)
   });

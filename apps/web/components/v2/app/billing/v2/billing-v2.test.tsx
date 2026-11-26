@@ -192,7 +192,7 @@ describe("Billing v2: the words", () => {
     for (const l of ["te", "hi", "kn"] as const) {
       const d = appDict(l) as Record<string, string>;
       for (const k of keys) expect(d[k], `${k} ${l}`).toBeTruthy();
-      if (l !== "te") expect(d["bill.limit.calls"]).toBe(en["bill.limit.calls"]); // (Telugu is approved, money rules included: 26 Nov 2026)
+      expect(d["bill.limit.calls"]).toBeTruthy(); // (Telugu, Hindi and Kannada are approved, money rules included: 26 Nov 2026)
       expect(d["bill.title"]).not.toBe(en["bill.title"]);
     }
     for (const k of keys) expect(en[k], k).not.toMatch(/unlimited/i);

@@ -654,10 +654,12 @@ describe("the same on the hero (phone question bar) and in four languages", () =
     expect(within(document.body).getByRole("button", { name: words["ask.voice.cancel"] })).toBeInTheDocument();
     for (const k of ASK_WORD_KEYS) expect(words[k], k).not.toMatch(/^[a-z]+(\.[a-z]+)+$/);
   });
-  it("the privacy line stays in English in every language", () => {
+  it("the privacy line is said in the person's language (Hindi here), once approved", () => {
     const t = appT("hi");
     const words = Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k as "frame.notyet")]));
     render(<AskTeam lang="hi" base={B} words={words} availability="live" transport={typed} voiceStatus={ON} voiceTransport={voicePlaying(ANSWER)} />);
-    expect(screen.getByText(/Your voice is sent to our speech service to be understood\. We don't keep the recording\./)).toBeInTheDocument();
+    const line = document.querySelector('[data-voice="privacy"]') as HTMLElement;
+    expect(line.textContent).toContain(words["ask.mic.privacy"]);
+    expect(line.textContent).not.toMatch(/Your voice is sent to our speech service/);
   });
 });

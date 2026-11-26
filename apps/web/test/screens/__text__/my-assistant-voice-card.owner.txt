@@ -44,7 +44,7 @@ Short and quick The answer first, in a few words.
 A sample call
 - Customer హాయ్, రేపు తెరిచి ఉంటారా?
 - Your assistant ఉంటాం అండీ, రేపు పది నుంచి ఏడు వరకు. మీరు వస్తారా?
-- Customer ఏ time బాగుంటుంది?
+- Customer ఏ టైమ్ బాగుంటుంది?
 - Your assistant పదకొండు తర్వాత ఎప్పుడైనా ప్రశాంతంగా ఉంటుంది. మీ పేరు రాసుకుంటాను, మీ కోసం సిద్ధంగా ఉంటాం.
 This example wording is a draft.
 legend: Background sound
