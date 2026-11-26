@@ -28,13 +28,18 @@ const live = (over: Partial<TalkLive> = {}): TalkLive => ({
 afterEach(cleanup);
 
 describe("Talk live inside Today's command bar (variant 'bar', the approved mock)", () => {
-  it("draws a red timer and the label (the orb is outside the box), YOU and YOUR ASSISTANT with the key numbers in orange", () => {
+  it("draws a red timer and the label (the orb is outside the box), the conversation as a chat (his words on the right, the assistant's on the left, who said it only for screen readers) with the key numbers in orange", () => {
     render(<TalkLiveBody variant="bar" live={live()} words={WORDS} language="తెలుగు" onType={() => undefined} />);
     expect(document.querySelector("[data-orb]")).toBeNull();
     expect(document.querySelector('[data-part="talk-timer"]')).toHaveTextContent("0:48");
     expect(document.querySelector('[data-part="talk-label"]')).toHaveTextContent("LIVE WITH YOUR ASSISTANT · SPEAKING");
-    expect(screen.getByText("You")).toBeInTheDocument();
-    expect(screen.getByText("Your assistant")).toBeInTheDocument();
+    const mine = document.querySelector('[data-who="owner"]') as HTMLElement;
+    const theirs = document.querySelector('[data-who="assistant"]') as HTMLElement;
+    expect(mine).toHaveClass("items-end"); // the owner's bubble on the right
+    expect(theirs).toHaveClass("items-start"); // the assistant's on the left
+    expect(mine.querySelector(".sr-only")).toHaveTextContent("You:");
+    expect(theirs.querySelector(".sr-only")).toHaveTextContent("Your assistant:");
+    expect(screen.queryByText("You", { selector: "small" })).toBeNull(); // no visible YOU / YOUR ASSISTANT label
     expect([...document.querySelectorAll("mark")].map((m) => m.textContent)).toEqual(expect.arrayContaining(["11", "10 am", "6 pm"]));
   });
 
@@ -81,4 +86,13 @@ describe("Talk live inside Today's command bar (variant 'bar', the approved mock
     expect(document.querySelector('[data-variant="bar"]')).toBeNull();
     expect(document.querySelector('[data-part="talk-live"]')).toHaveClass("flex-col");
   });
+
+  it("Interrupted is a small tag under the bubble; words still being heard are a lighter, dashed bubble", () => {
+    const l = live();
+    render(<TalkLiveBody variant="bar" live={{ ...l, lines: [...l.lines, { who: "assistant", text: "The price is", cut: true }, { who: "owner", text: "and the delivery", interim: true }] }} words={{ ...WORDS, "bv.live.interrupted": "Interrupted" }} language="తెలుగు" onType={() => undefined} />);
+    expect(document.querySelector('[data-part="interrupted"]')).toHaveTextContent("Interrupted");
+    const interim = document.querySelector('[data-interim="true"]') as HTMLElement;
+    expect(interim.querySelector("p")).toHaveClass("border-dashed", "opacity-70");
+  });
 });
+
