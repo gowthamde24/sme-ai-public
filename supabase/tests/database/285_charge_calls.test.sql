@@ -48,6 +48,8 @@ select is((select coalesce(owed_paise, 0) from pricing.debts where tenant_id = t
 select is(pricing.balance_of(tests.tid('a')), 8500::bigint, 'C2: the rest (Rs 100 less Rs 15) is the balance');
 select is(pg_temp.gate('a', 'inbound_ok') || pg_temp.gate('a', 'outbound_ok'), 'truetrue', 'C3: both directions are open again');
 select is(pg_temp.j(pg_temp.sc('a_owner', format('select public.pricing_balance(%L)::text', tests.tid('a'))), 'owed_paise'), '0', 'C3b: and nothing is owed any more');
+select is(pg_temp.j(pg_temp.sc('a_owner', format('select public.pricing_statement(%L)::text', tests.tid('a'))), 'closing_paise'), pg_temp.j(pg_temp.sc('a_owner', format('select public.pricing_statement(%L)::text', tests.tid('a'))), 'balance_paise'), 'C3c: the statement closes at the balance (the part of the top-up that paid the debt is a line of its own)');
+select is((select count(*) from jsonb_array_elements(pg_temp.sc('a_owner', format('select public.pricing_statement(%L)::text', tests.tid('a')))::jsonb -> 'items') i where i ->> 'label' = 'Calls taken while your balance was empty' and (i ->> 'amount_paise')::bigint = -1500), 1::bigint, 'C3d: ... "Calls taken while your balance was empty", minus Rs 15');
 select pricing.credit(tests.tid('a'), 'free_start', 'fs_cc', 3000);
 select is((select coalesce(owed_paise, 0) from pricing.debts where tenant_id = tests.tid('a')), 0::bigint, 'C4: a free start never pays a debt (and there is none)');
 
@@ -67,5 +69,16 @@ select is((select jsonb_array_length(pg_temp.sc('outsider', 'select public.prici
 select is(pg_temp.j(pg_temp.chg('a', 'cc_late', 33, true), 'half_minutes'), '2', 'E4: charging it');
 select is((select jsonb_array_length(pg_temp.sc('outsider', 'select public.pricing_uncharged_calls(10)::text')::jsonb)), 0, 'E5: and the list is empty');
 select is(has_table_privilege('authenticated', 'pricing.debts', 'select'), false, 'E6: the debts table is closed to members');
+
+-- G. an OUTBOUND call that runs past the wallet leaves the rest as a debt too (planner's decision, 26 Nov 2026: no free minutes)
+update pricing.wallet_lots set remaining_paise = 0 where tenant_id = tests.tid('a');
+select pricing.credit(tests.tid('a'), 'topup', 'pay_cc_g', 300);
+create temp table g_before as select coalesce((select owed_paise from pricing.debts where tenant_id = tests.tid('a')), 0) as owed;
+insert into public.phone_calls (id, tenant_id, direction, state, purpose, language, provider, created_by, answered_at, ended_at, duration_s, sandbox, simulated) values
+  (tests.rid('cc_outdebt'), tests.tid('a'), 'outbound', 'completed', 'sales_followup', 'te', 'plivo', tests.uid('a_owner'), now() - interval '10 min', now() - interval '5 min', 120, false, false);
+select is(pg_temp.j(pg_temp.chg('a', 'cc_outdebt', 120, true), 'shortfall_paise'), '700', 'G1: an outbound call of 120 s (Rs 10.00) with Rs 3.00 in the wallet: Rs 7.00 could not be paid');
+select is(pricing.balance_of(tests.tid('a')), 0::bigint, 'G2: the wallet stops at zero');
+select is((select owed_paise from pricing.debts where tenant_id = tests.tid('a')) - (select owed from g_before), 700::bigint, 'G3: the unpaid part is a debt, like an inbound call (no free minutes)');
+
 select * from finish();
 rollback;

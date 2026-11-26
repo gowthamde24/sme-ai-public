@@ -17,6 +17,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Literal, Protocol
 
+from app.billing.errors import NotSupportedError
+
 EventKind = Literal["charge_succeeded", "charge_failed", "halted", "cancelled", "order_paid", "payment_failed"]
 
 
@@ -133,6 +135,44 @@ class BillingProvider(Protocol):
     def verify_webhook(self, headers: Mapping[str, str], raw_body: bytes) -> list[ProviderEvent]:
         """Check the signature of the raw body and read the events. Raises NotSupportedError for a provider without webhooks."""
         ...
+
+
+class ClosedBilling:
+    """The provider of a PRODUCTION API that has no LIVE payment account (26 Nov 2026): nothing can be paid, so nothing can be credited or subscribed for. The fake provider accepts the signature `sig_fake_ok`
+    and a Razorpay TEST payment carries a valid signature too: on a production wallet either would be free money. Every payment door answers "not available"; reads and cancels that touch no money are harmless."""
+
+    name = "closed"
+    mode = "fake"
+
+    def create_subscription(self, request: CreateSubscription) -> ProviderSubscription:
+        raise NotSupportedError("payments are not open")
+
+    def set_trial_end(self, reference: str, trial_ends_at: datetime) -> None:
+        return None
+
+    def cancel_subscription(self, reference: str, *, at_period_end: bool, now: datetime) -> None:
+        return None
+
+    def charge_once(self, charge: OneOffCharge) -> ChargeResult:
+        raise NotSupportedError("payments are not open")
+
+    def create_order(self, request: OrderRequest) -> OrderCreated:
+        raise NotSupportedError("payments are not open")
+
+    def verify_order_payment(self, order_id: str, payment_id: str, signature: str) -> bool:
+        return False
+
+    def refund_payment(self, payment_id: str, amount_paise: int, idempotency_key: str) -> str:
+        raise NotSupportedError("payments are not open")
+
+    def change_plan(self, reference: str, price_paise: int | None) -> None:
+        return None
+
+    def events_until(self, now: datetime) -> list[ProviderEvent]:
+        return []
+
+    def verify_webhook(self, headers: Mapping[str, str], raw_body: bytes) -> list[ProviderEvent]:
+        raise NotSupportedError("payments are not open")
 
 
 def build_provider(name: str, razorpay: tuple[str, str, str] | None = None, *, live_ok: bool = False) -> BillingProvider:

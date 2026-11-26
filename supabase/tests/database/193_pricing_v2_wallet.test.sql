@@ -30,7 +30,7 @@ select is(pg_temp.j(public.pricing_catalogue()::text, 'gst_percent'), '18.00', '
 select is((select string_agg(name || '/' || free_searches_month || '/' || extra_search_paise, ' ' order by sort) from pricing.plans), 'Pay as you go/2/4900 Pro/10/3900 Business/100/2900', 'A5b: the owner''s names and Lead Finder allowances on every plan (2 / 10 / 100, then Rs 49 / 39 / 29)');
 select is(pg_temp.j(public.pricing_catalogue()::text, 'extra_number_paise'), '49900', 'A5c: every extra number is Rs 499 a month');
 select is((public.pricing_catalogue() -> 'plans' -> 0) ? 'yearly_paise', false, 'A5d: the catalogue shows no yearly price (monthly plans only)');
-select is((select free_start_paise from pricing.settings), 5000::bigint, 'A6: the free start is Rs 50');
+select is((select free_start_paise from pricing.settings), 10000::bigint, 'A6: the free start is Rs 100 (owner, 25 Nov 2026)');
 select is(pg_temp.sc('a_viewer', $q$select public.pricing_catalogue()::text$q$) like '{%', true, 'A7: any signed-in user reads the catalogue');
 select is(pg_temp.sc('anon', $q$select public.pricing_catalogue()::text$q$), 'ERR:42501', 'A7b: nobody signed out does');
 select throws_ok($q$insert into pricing.plans values ('bad', 1, 'Bad', 1000, 9999, 0, 500, 1, false, 1, 4900, false)$q$, '23514', null, 'A8: a yearly price that is not ten months is refused');
@@ -43,11 +43,11 @@ select is(pricing.gst_of(49900) || '/' || pricing.gst_of(199900) || '/' || prici
 select is(pricing.prorate(199900, 599900, 15, 30) || '/' || pricing.prorate(599900, 199900, 15, 30) || '/' || pricing.prorate(199900, 599900, 0, 30), '200000/-200000/0', 'B4: changing plan mid-period: an upgrade charges the share left, a downgrade credits it, nothing on the last day');
 
 -- C. the free start: once per workspace and once per verified phone
-select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.pricing_free_start_grant(%L, %L)::text$q$, tests.tid('a'), repeat('a', 64))), 'granted'), 'true', 'C1: the Owner gets the free Rs 50');
-select is(pg_temp.bal('a'), '5000', 'C2: it is in the balance');
-select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.pricing_balance(%L)::text$q$, tests.tid('a'))), 'free_start_left_paise'), '5000', 'C2b: and the balance says how much of the free start is left');
+select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.pricing_free_start_grant(%L, %L)::text$q$, tests.tid('a'), repeat('a', 64))), 'granted'), 'true', 'C1: the Owner gets the free Rs 100');
+select is(pg_temp.bal('a'), '10000', 'C2: it is in the balance');
+select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.pricing_balance(%L)::text$q$, tests.tid('a'))), 'free_start_left_paise'), '10000', 'C2b: and the balance says how much of the free start is left');
 select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.pricing_free_start_grant(%L, %L)::text$q$, tests.tid('a'), repeat('a', 64))), 'reason'), 'already_granted', 'C3: only once per workspace');
-select is(pg_temp.bal('a'), '5000', 'C4: and the balance did not grow');
+select is(pg_temp.bal('a'), '10000', 'C4: and the balance did not grow');
 select is(pg_temp.j(pg_temp.sc('b_owner', format($q$select public.pricing_free_start_grant(%L, %L)::text$q$, tests.tid('b'), repeat('a', 64))), 'reason'), 'phone_used', 'C5: the same verified phone cannot collect it for a second workspace');
 select is(pg_temp.sc('a_sales', format($q$select public.pricing_free_start_grant(%L, null)::text$q$, tests.tid('a'))), 'ERR:42501', 'C6: only the Owner');
 select is(pg_temp.sc('a_owner', format($q$select public.pricing_free_start_grant(%L, 'not-a-hash')::text$q$, tests.tid('a'))), 'ERR:22023', 'C7: a hash that is not a hash is refused');
@@ -56,9 +56,9 @@ select is(pg_temp.j(pg_temp.sc('b_owner', format($q$select public.pricing_free_s
 -- D. top-ups and GST
 select is(pg_temp.sc('a_owner', format($q$select public.pricing_topup_credit(%L, 'pay_TEST000000001', 100000)::text$q$, tests.tid('a'))), 'ERR:42501', 'D1: a top-up is credited by the system, never by the Owner');
 select is(pg_temp.j(pg_temp.sc('hook', format($q$select public.pricing_topup_credit(%L, 'pay_TEST000000001', 100000)::text$q$, tests.tid('a'))), 'credited'), 'true', 'D2: the payment provider''s signed event credits Rs 1,000');
-select is(pg_temp.bal('a'), '105000', 'D3: balance Rs 1,050 (free Rs 50 + Rs 1,000)');
+select is(pg_temp.bal('a'), '110000', 'D3: balance Rs 1,100 (free Rs 100 + Rs 1,000)');
 select is(pg_temp.j(pg_temp.sc('hook', format($q$select public.pricing_topup_credit(%L, 'pay_TEST000000001', 100000)::text$q$, tests.tid('a'))), 'credited'), 'false', 'D4: WEBHOOK REPLAY: the same payment credits nothing twice');
-select is(pg_temp.bal('a'), '105000', 'D5: balance unchanged');
+select is(pg_temp.bal('a'), '110000', 'D5: balance unchanged');
 select is((select subtotal_paise || '/' || gst_paise || '/' || total_paise from pricing.invoices where tenant_id = tests.tid('a') and ref = 'pay_TEST000000001'), '100000/18000/118000', 'D6: the invoice: Rs 1,000 + Rs 180 GST = Rs 1,180');
 select is((select count(*) from pricing.invoices where tenant_id = tests.tid('a')), 1::bigint, 'D7: one invoice per payment, also on a replay');
 select is((select number ~ '^S19-[0-9]{4}-[0-9]{6}$' from pricing.invoices where tenant_id = tests.tid('a')), true, 'D8: numbered');
@@ -66,13 +66,13 @@ select is(pg_temp.sc('hook', format($q$select public.pricing_topup_credit(%L, 'x
 
 -- E. calls on pay as you go (no subscription): Rs 5 a minute, per 30 seconds
 select is(pg_temp.j(pg_temp.chg('a', 'c1', 100, true), 'charged_paise'), '1000', 'E1: 100 s answered = 4 units of 30 s = Rs 10 at Rs 5 a minute');
-select is(pg_temp.bal('a'), '104000', 'E2: taken from the balance');
+select is(pg_temp.bal('a'), '109000', 'E2: taken from the balance');
 select is(pg_temp.j(pg_temp.chg('a', 'c1', 100, true), 'replayed'), 'true', 'E3: the same call reported twice is charged once');
-select is(pg_temp.bal('a'), '104000', 'E4: balance unchanged');
+select is(pg_temp.bal('a'), '109000', 'E4: balance unchanged');
 select is(pg_temp.j(pg_temp.chg('a', 'c2', 30, true), 'charged_paise'), '250', 'E5: 30 s = one unit = Rs 2.50');
 select is(pg_temp.j(pg_temp.chg('a', 'c3', 31, true), 'charged_paise'), '500', 'E6: 31 s = two units = Rs 5');
 select is(pg_temp.j(pg_temp.chg('a', 'c4', 300, false), 'charged_paise'), '0', 'E7: UNANSWERED CALLS ARE FREE');
-select is(pg_temp.bal('a'), '103250', 'E8: balance after Rs 10 + 2.50 + 5 = Rs 17.50 taken');
+select is(pg_temp.bal('a'), '108250', 'E8: balance after Rs 10 + 2.50 + 5 = Rs 17.50 taken');
 select is(pg_temp.sc('a_owner', format($q$select public.pricing_charge_call(%L, %L, 60, true)::text$q$, tests.tid('a'), tests.rid('c9'))), 'ERR:42501', 'E9: only the system reports a call');
 select is(pg_temp.sc('outsider', format($q$select public.pricing_can_start_call(%L)::text$q$, tests.tid('a')))::jsonb ->> 'allowed', 'true', 'E10: with a balance a call may start');
 
@@ -83,7 +83,7 @@ select is(pg_temp.j(pg_temp.chg('a', 'c10', 600, true), 'included_half'), '20', 
 insert into pricing.usage (tenant_id, kind, ref, half_minutes, included_half, charged_paise) values (tests.tid('a'), 'call', tests.rid('filler'), 979, 979, 0);   -- 999 of 1,000 half-minutes used
 select is(pg_temp.j(pg_temp.chg('a', 'c11', 90, true), 'included_half'), '1', 'F3: 3 units with 1 half-minute of the included left: 1 included');
 select is(pg_temp.j(pg_temp.chg('a', 'c12', 90, true), 'charged_paise'), '750', 'F4: then 3 units at half of Rs 5 = Rs 2.50 each = Rs 7.50');
-select is(pg_temp.bal('a'), (103250 - 500 - 750)::text, 'F5: only the paid units left the balance (c11: 2 paid units = Rs 5, c12: 3 = Rs 7.50)');
+select is(pg_temp.bal('a'), (108250 - 500 - 750)::text, 'F5: only the paid units left the balance (c11: 2 paid units = Rs 5, c12: 3 = Rs 7.50)');
 update pricing.subscriptions set plan_id = 'sales_lead_finder' where tenant_id = tests.tid('a');
 select is(pg_temp.j(pg_temp.chg('a', 'c13', 3000, true), 'charged_paise'), '0', 'F6: Business: 1,500 included minutes cover a 50-minute call');
 update pricing.subscriptions set plan_id = 'payg' where tenant_id = tests.tid('a');
