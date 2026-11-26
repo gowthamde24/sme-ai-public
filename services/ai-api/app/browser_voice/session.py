@@ -47,6 +47,7 @@ from app.conversation.turntaking import (
     stop_word_heard,
 )
 from app.conversation.voices import SPEAKS_INSTEAD
+from app.logging_safety import one_line
 from app.ops.usage import UsageRecorder, record_best_effort
 from app.turns.intent import (
     Intent,
@@ -255,6 +256,7 @@ class VoiceSession:
         elif kind == "error":
             self.usage.errors += 1
             message = {"type": "error", "code": str(data.get("code", "error")), "message": str(data.get("message", "")), "fatal": False}
+            log.warning("browser_voice_error code=%s", one_line(str(message["code"])))   # (26 Nov 2026) which closed code the owner's "That did not work" stood for: it was in no log
         elif kind == "caption":
             message = {"type": "caption", "who": data.get("who", "assistant"), "text": data.get("text", ""), "final": True, "spoken": bool(data.get("spoken", True))}
             if data.get("spoken_text"):
