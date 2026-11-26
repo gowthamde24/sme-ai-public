@@ -9,6 +9,8 @@ from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
+from app.plain_label import PlainLabel
+
 SLUG_PATTERN = r"^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$"
 
 
@@ -92,9 +94,7 @@ class AccountSetupIn(BaseModel):
     language: Literal["en", "te", "hi", "kn"]
     # job DT: what an "Other" business is, in the Owner's own words (2 to 60 characters; required
     # for "other", refused for any other type)
-    business_label: (
-        Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=60)] | None
-    ) = None
+    business_label: PlainLabel | None = None
     # job BI: the terms and privacy-notice versions the person accepted on the sign-up page (the
     # current ones: GET /v1/policies/current). Recorded before the business is made.
     accepted_terms_version: str | None = Field(

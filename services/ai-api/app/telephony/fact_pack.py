@@ -108,6 +108,9 @@ def build(raw: dict[str, Any] | None, *, now: datetime | None = None) -> FactPac
     facts: list[dict[str, str]] = []
     allowed: set[int] = set()
     holidays = tuple(str(h)[:10] for h in (raw.get("holidays") or []) if isinstance(h, str))
+    kind_of_business = " ".join(strip_amounts(str(raw.get("business_type") or "")).split())[:60]   # what the business says it is when it chose Other (its own words)
+    if kind_of_business:
+        facts.append({"kind": "business", "text": f"What kind of business this is: {kind_of_business}."})
     for text in _hours(raw.get("hours"), now, holidays):
         facts.append({"kind": "hours", "text": text})
     if holidays:

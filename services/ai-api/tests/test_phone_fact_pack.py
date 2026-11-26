@@ -227,3 +227,10 @@ def test_a_list_item_is_said_with_its_category_word() -> None:
     pack = fact_pack.build({"items": [{"name": "Silk piece", "category": "Blouses", "availability": "In stock", "description": "Soft silk"}, {"name": "Net", "category": "Dupattas"}, {"name": "Plain"}]})
     lines = [f["text"] for f in pack.facts if f["kind"] == "item"]
     assert lines == ["Silk piece (Blouses): In stock. Soft silk", "Net (Dupattas)"]
+
+
+def test_a_business_that_chose_other_says_what_kind_of_business_it_is() -> None:
+    pack = fact_pack.build({"business_type": "  Tent house and decorations  "})
+    assert [f["text"] for f in pack.facts if f["kind"] == "business"] == ["What kind of business this is: Tent house and decorations."]
+    assert not [f for f in fact_pack.build({"business_type": None}).facts if f["kind"] == "business"]
+    assert not [f for f in fact_pack.build({}).facts if f["kind"] == "business"]
