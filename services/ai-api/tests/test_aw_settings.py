@@ -305,3 +305,43 @@ def test_navigate_opens_the_pages_the_web_added_on_18_nov() -> None:
 def test_every_menu_page_request_reaches_the_router(text: str) -> None:
     """C2's orb check 18 Nov: 'Open the Rules page' was answered 'I can't open pages' because the gate did not know the word."""
     assert touches(text)
+
+
+# ============================================================================ "change your voice to Ramya" (26 Nov 2026)
+def _voice_world(choices: dict[str, str]) -> tuple[Any, list[dict[str, Any]]]:
+    from app.assistant_work.routed import RouteTurn
+
+    plans: list[dict[str, Any]] = []
+
+    def plan(token: str, tenant: Any, message: Any, conversation: Any, title: str, step: Any, **kw: Any) -> dict[str, Any]:
+        steps = [step] if isinstance(step, dict) else step
+        plans.append({"title": title, "steps": steps, **kw})
+        return {"plan_id": str(uuid.uuid4()), "title": title, "steps": steps, "status": "proposed", **kw}
+
+    stub = SimpleNamespace(_read=lambda tenant, token, tool, message: {"gender": "female", "languages": [{"language": k, "chosen_id": v, "default_id": v} for k, v in choices.items()]}, _plan=plan)
+    return (lambda changes, language="en": RouteTurn._assistant_voice(stub, "t", uuid.uuid4(), changes, uuid.uuid4(), None, language)), plans   # type: ignore[arg-type]
+
+
+def test_a_voice_is_found_by_name_in_the_catalogue_and_offered_as_an_undoable_card() -> None:
+    run, plans = _voice_world({"te": "te-kavitha"})
+    text, card = run({"language": "te", "voice": "Ramya"})
+    assert card is not None and len(plans) == 1 and plans[0]["second_factor"] is False and plans[0]["owner_only"] is True
+    (step,) = plans[0]["steps"]
+    assert step["tool"] == "ai-assistant.put_voices" and step["undoable"] is True and step["call"] == {"path": {}, "body": {"language": "te", "voice_id": "te-ramya"}}
+    assert "Kavitha -> Ramya" in plans[0]["title"] and "Shall I make it" in text
+
+
+def test_an_unknown_voice_is_never_guessed_and_the_same_voice_is_said_not_saved() -> None:
+    run, plans = _voice_world({"te": "te-ramya"})
+    text, card = run({"language": "te", "voice": "Nobody"})
+    assert card is None and "Nobody" in text and not plans
+    text, card = run({"language": "te", "voice": "ramya"})
+    assert card is None and "already" in text and not plans
+    text, card = run({"language": "en", "voice": "Ramya"})
+    assert card is None and "Ramya" in text and not plans, "Ramya is a Telugu voice: not in the English catalogue"
+
+
+def test_the_voice_setting_is_checked_like_the_others() -> None:
+    assert not isinstance(sa.check("assistant_voice", {"language": "te", "voice": "Ramya"}, "change your voice to Ramya"), str)
+    assert isinstance(sa.check("assistant_voice", {"language": "xx", "voice": "Ramya"}, "x"), str)
+    assert isinstance(sa.check("assistant_voice", {"voice": "<b>Ramya</b>"}, "x"), str)

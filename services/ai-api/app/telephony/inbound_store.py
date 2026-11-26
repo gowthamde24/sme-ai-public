@@ -109,6 +109,15 @@ class InboundStore:
         out = self._call("call_sound_for_call", {"p_tenant_id": str(tenant_id)})
         return out if isinstance(out, dict) else None
 
+    def employee_runtime(self, tenant_id: uuid.UUID, employee_id: uuid.UUID | None, line: str | None) -> dict[str, Any] | None:
+        """The AI employee that answers this line or does this task (migration 992750; the scheduler account): the default employee when none is named or the named one is not on. None when unreadable."""
+        out = self._call("employee_runtime", {"p_tenant_id": str(tenant_id), "p_employee_id": str(employee_id) if employee_id else None, "p_line": line})
+        return out if isinstance(out, dict) else None
+
+    def employee_tag(self, tenant_id: uuid.UUID, call_id: uuid.UUID, employee_id: uuid.UUID) -> None:
+        """Marks which AI employee took a call (migration 992760); best effort."""
+        self._call("employee_call_tag", {"p_tenant_id": str(tenant_id), "p_call_id": str(call_id), "p_employee_id": str(employee_id)})
+
     def telephony_alert(self, ok: bool, detail: str | None = None) -> None:
         """A "Needs you" item for the owner and finance (the scheduler account raises it): a telephony thing that needs a person, or its all-clear."""
         self._call("ops_telephony_setting_report", {"p_ok": ok, "p_detail": (detail or "")[:480] or None})

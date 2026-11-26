@@ -1,0 +1,6 @@
+# Contract: the business's own type label ("Other / Something else"), C1 -> C2, 26 Nov 2026
+The field already exists; this page states it in one place.
+* **Name:** `type_label` (string, 2 to 60 characters, plain text). It is in `GET /v1/tenants/{t}/workspace/profile` (`type`, `type_name`, `type_label`): `type_label` is the Owner's own words and is non-null only while `type` is `other` (the generic Lead Desk type); any other type returns `null`.
+* **Set:** at sign-up (`POST /v1/account/setup`: `business_type: "other"` requires `business_label`, refused for any other type) and later by `PATCH /v1/tenants/{t}/workspace/profile {type: "other", type_label}` or `{type_label}` alone. Owner only, no second factor; audited with the key names, never the value.
+* **Plain text (new, 26 Nov):** tags and `<` `>` characters are removed and spaces collapsed BEFORE the length rule: `<b>Tent house</b>` is stored as `Tent house`; a label that is empty or under 2 characters after that answers 422 `validation_error` (field `type_label`). The table also refuses `<` and `>` (migration 20261231992720).
+* **What reads it (new):** the phone fact pack carries it as `business_type` and the call is told `What kind of business this is: <label>.` (only for a business that chose Other). The owner's in-app assistant reads it through the profile route as any other profile field.

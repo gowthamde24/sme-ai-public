@@ -22,7 +22,7 @@ API_ENV=development API_CORS_ORIGINS=http://localhost:3000
 ADMIN_ENVIRONMENT=staging
 # ---- every API switch ON, locally only ------------------------------------------------------------
 SIGNUP_OPEN=true SIGNUP_PHONE_SENDER=fake SIGNUP_FAKE_CODE_ECHO=true     # the start answer returns the 6-digit code
-WHAT_YOU_SELL_LISTS=true PRICING_V2=true JOBS=on JOBS_GET_PAID=on ADMIN_CONSOLE=true
+WHAT_YOU_SELL_LISTS=true EMPLOYEES=true PRICING_V2=true JOBS=on JOBS_GET_PAID=on ADMIN_CONSOLE=true
 CONTACT_FORM=true CAPTCHA_PROVIDER=none
 BILLING_CHARGE_CALLS=true CALL_COORDINATION=true
 WEBHOOKS_OUT=on CRM_PUSH=on INDIAMART_PULL=on INDIAMART_PUSH=on EXTRA_LINES=true COMMERCE=on NOTIFY_OUT=on CALENDAR_IN=on LEAD_FORM_TEMPLATES=on WORKSPACE_SECRETS=fake DEVELOPER_API=test             # workspace keys live in memory; nothing reaches Secret Manager

@@ -581,3 +581,61 @@ describe("a saree shop's price list: Import a sheet reads it, shows a table to c
     vi.unstubAllGlobals();
   });
 });
+
+describe("importing into the list the owner chooses (26 Nov 2026)", () => {
+  const CSV_TEXT = "Name,Price\nCotton blue,1450\nGeorgette maroon,\n";
+  const TARGETS = [
+    { id: "11111111-1111-4111-8111-111111111111", name: "Dress materials", priceKey: "retail", categoryKey: "category", categoryChoices: ["Silk", "Cotton"] },
+    { id: "22222222-2222-4222-8222-222222222222", name: "Blouses", priceKey: "price", categoryKey: null, categoryChoices: [] },
+  ];
+  const open = async (a: SellActions) => {
+    render(<SellSection style="products" entries={entriesOf("products")} words={words} base={BASE} actions={a} live ownerPrice paths={{ photos: null, sheet: null }} oldLinks={[]} targets={TARGETS} />);
+    fireEvent.click(screen.getByText("Import a sheet"));
+    return (await screen.findByRole("dialog")) as HTMLElement;
+  };
+  it("asks where first (the catalogue's Sarees or one of his lists): no file can be chosen until he has", async () => {
+    const dialog = await open(actions());
+    const group = within(dialog).getByRole("radiogroup", { name: "Add them to which list?" });
+    expect([...group.querySelectorAll('[role="radio"]')].map((r) => r.textContent)).toEqual(["Sarees (the catalogue)", "Dress materials", "Blouses"]);
+    expect(within(dialog).getByText("Choose a list first.")).toBeInTheDocument();
+    expect(dialog.querySelector('[data-part="pick-file"]')).toBeDisabled();
+    fireEvent.click(within(group).getByRole("radio", { name: "Dress materials" }));
+    expect(dialog.querySelector('[data-part="pick-file"]')).not.toBeDisabled();
+  });
+  it("a file for a list goes up, is read by the list's reading, shows the check table, and the checked rows are saved into THAT list with the Category given to rows with none", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ json: async () => ({ ok: true, file_id: "5e110009-0000-4000-8000-0000000000bb" }) })));
+    const previewList = vi.fn(async () => ({ ok: true as const, data: { unclear: false, rows: [{ name: "Cotton blue", cells: { retail: 145000, category: "Cotton", lining: "Satin" } }, { name: "Georgette maroon", cells: { retail: null } }] as { name: string; cells: Record<string, string | number | boolean | null> }[] } }));
+    const commitList = vi.fn(async () => ({ ok: true as const, data: { created: 2, updated: 0 } }));
+    const a = actions({ previewList, commitList });
+    const dialog = await open(a);
+    fireEvent.click(within(dialog).getByRole("radio", { name: "Dress materials" }));
+    const f = new File([CSV_TEXT], "dress.csv", { type: "text/csv" });
+    fireEvent.change(dialog.querySelector('[data-part="pick-file"]') as HTMLInputElement, { target: { files: [f] } });
+    expect(await within(dialog).findByText("Adding to Dress materials")).toBeInTheDocument();
+    expect(previewList).toHaveBeenCalledWith("11111111-1111-4111-8111-111111111111", "5e110009-0000-4000-8000-0000000000bb");
+    expect(a.readProducts).not.toHaveBeenCalled();
+    expect(a.save).not.toHaveBeenCalled(); // nothing goes to the saree catalogue
+    const rows = [...dialog.querySelectorAll("[data-row]")] as HTMLElement[];
+    expect(rows).toHaveLength(2);
+    expect(rows[1]).toHaveAttribute("data-row", "ok"); // a price is optional in a list
+    expect((rows[0].querySelectorAll("input")[1] as HTMLInputElement).value).toBe("1450");
+    fireEvent.change(within(dialog).getByLabelText("Category for rows that have none"), { target: { value: "Silk" } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Add 2 sarees" }));
+    await waitFor(() => expect(commitList).toHaveBeenCalledTimes(1));
+    expect(commitList).toHaveBeenCalledWith("11111111-1111-4111-8111-111111111111", [
+      { name: "Cotton blue", cells: { lining: "Satin", category: "Cotton", retail: 145000 } },
+      { name: "Georgette maroon", cells: { category: "Silk" } },
+    ]);
+    expect(await within(dialog).findByText("2 items added to Dress materials.")).toBeInTheDocument();
+    expect(within(dialog).getByRole("link", { name: "Open Dress materials" })).toHaveAttribute("href", `${BASE}/what-you-sell/lists/11111111-1111-4111-8111-111111111111`);
+    vi.unstubAllGlobals();
+  });
+  it("with no list of his own there is nothing to choose: the catalogue as before", async () => {
+    render(<SellSection style="products" entries={entriesOf("products")} words={words} base={BASE} actions={actions()} live ownerPrice paths={{ photos: null, sheet: null }} oldLinks={[]} />);
+    fireEvent.click(screen.getByText("Import a sheet"));
+    const dialog = (await screen.findByRole("dialog")) as HTMLElement;
+    expect(within(dialog).queryByRole("radiogroup")).toBeNull();
+    expect(dialog.querySelector('[data-part="pick-file"]')).not.toBeDisabled();
+  });
+});
+

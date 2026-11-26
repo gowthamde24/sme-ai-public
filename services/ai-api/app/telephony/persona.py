@@ -252,7 +252,7 @@ def examples_block(language: str, business: str) -> str:
 
 
 def system_prompt(*, business: str, assistant: str | None, language: str, purpose: str, facts: Sequence[dict[str, Any]], customer_first_name: str | None, goal: str | None = None, notes: str = "",
-                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = (), opening: str | None = None, opening_says_ai: bool = True, tone: str | None = None, allow_prices: bool = False) -> str:
+                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = (), opening: str | None = None, opening_says_ai: bool = True, tone: str | None = None, allow_prices: bool = False, employee: str = "") -> str:
     """The rules of a phone call. The customer's words are DATA between a per-call delimiter. `opening`: the line the caller has ALREADY heard (an inbound call opens with it before the model is asked anything)."""
     marker = secrets.token_hex(6)
     who = assistant or "the assistant"
@@ -278,6 +278,8 @@ def system_prompt(*, business: str, assistant: str | None, language: str, purpos
         lines.append(f"The customer's first name is {customer_first_name}. Use it at most once.")
     if notes:
         lines.append(f"Notes from the owner about the business:\n{notes}")
+    if employee:   # the AI employee that answers this call (app/employees/apply.py): who it is and what it does; never above the rules in this prompt
+        lines.append(employee)
     # the Owner's training of how to talk (app/talk_training): address, questions, objections, example answers (style only), the never-say list (also enforced by code on every spoken line)
     from app.talk_training.prompt import blocks as training_blocks
 

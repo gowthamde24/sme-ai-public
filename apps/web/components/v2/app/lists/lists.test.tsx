@@ -7,10 +7,13 @@ import type { Column, RowPage, SellList } from "@/lib/lists/types";
 import { AddListForm } from "./AddListForm";
 import { ColumnsEditor } from "./ColumnsEditor";
 import { ListCards } from "./ListCards";
+import { ListSettings } from "./ListSettings";
 import { ListView } from "./ListView";
+import { StarterLists } from "./StarterLists";
 
 const push = vi.fn();
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push, refresh: vi.fn() }) }));
+const refresh = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push, refresh }) }));
 afterEach(() => {
   cleanup();
   push.mockClear();
@@ -87,11 +90,11 @@ describe("lists: one list", () => {
     expect(screen.getByLabelText(/Retail price/)).toBeDisabled();
     expect(screen.getAllByText("Only the Owner can change prices.").length).toBeGreaterThan(0);
   });
-  it("a dropdown filter for each choice column and a Sort by the quoted price", () => {
+  it("a row of filter chips for each choice column (a dropdown past 12 words) and a Sort by the quoted price", () => {
     render(<ListView list={LIST} initial={ROWS} owner canEdit words={words} base="/b" actions={acts()} />);
-    fireEvent.change(screen.getByLabelText("Lining"), { target: { value: "Satin" } });
+    fireEvent.click(within(screen.getByRole("group", { name: "Lining" })).getByRole("button", { name: "Satin" }));
     expect(document.querySelectorAll("[data-row]")).toHaveLength(1);
-    fireEvent.change(screen.getByLabelText("Lining"), { target: { value: "" } });
+    fireEvent.click(within(screen.getByRole("group", { name: "Lining" })).getByRole("button", { name: /all/i }));
     fireEvent.change(screen.getByLabelText("Sort"), { target: { value: "price" } });
     const order = Array.from(document.querySelectorAll("[data-row]")).map((e) => e.getAttribute("data-row"));
     expect(order).toEqual(["r1", "r3", "r2"]);
@@ -159,3 +162,77 @@ describe("lists: Edit columns", () => {
     expect(screen.getByRole("button", { name: "+ Add a column" })).toBeDisabled();
   });
 });
+
+describe("What you sell for a textile owner (26 Nov 2026)", () => {
+  it("a built-in list (the saree catalogue) leads to the screen where it is edited, not to a rows page; it does not count against the lists used", () => {
+    const sarees: SellList = { ...LIST, id: "22222222-2222-4222-8222-222222222222", name: "Sarees", builtin: "catalogue", editIn: "catalogue" };
+    render(<ListCards lists={[sarees, LIST]} words={words} base="/app/tenants/t/what-you-sell" canAdd />);
+    const card = document.querySelector(`[data-list="${sarees.id}"]`) as HTMLElement;
+    expect(card).toHaveAttribute("href", "/app/tenants/t/catalogue");
+    expect(card).toHaveTextContent("Edit in the catalogue");
+    expect(screen.getByText(/1 of 10/)).toBeInTheDocument();
+  });
+  it("'Add starter lists': one plain sentence of what it makes, nothing made until the button, then the page reads the lists again", async () => {
+    const make = vi.fn(async () => ({ ok: true as const, data: true as const }));
+    render(<StarterLists words={words} make={make} />);
+    expect(screen.getByText(/Sarees, Dress materials, Blouses, Dupattas, Fabric by the metre, and Stitching and alterations/)).toBeInTheDocument();
+    expect(screen.getByText(/Nothing is made until you press the button/)).toBeInTheDocument();
+    expect(make).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Add the six lists" }));
+    await waitFor(() => expect(make).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(refresh).toHaveBeenCalled());
+  });
+  it("a refusal of the starters is one plain sentence and the button comes back", async () => {
+    render(<StarterLists words={words} make={vi.fn(async () => ({ ok: false as const, error: "list_limit" as const }))} />);
+    fireEvent.click(screen.getByRole("button", { name: "Add the six lists" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(words["wls.err.list_limit"]);
+    expect(screen.getByRole("button", { name: "Add the six lists" })).toBeEnabled();
+  });
+  it("List settings: rename saves the new name; delete asks first (what goes with it) and only the second press deletes", async () => {
+    const rename = vi.fn(async (name: string) => ({ ok: true as const, data: { ...LIST, name } }));
+    const remove = vi.fn(async () => ({ ok: true as const, data: true as const }));
+    render(<ListSettings list={LIST} words={words} base="/b" rename={rename} remove={remove} />);
+    fireEvent.change(screen.getByLabelText("Name of the list"), { target: { value: "Dress fabrics" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(rename).toHaveBeenCalledWith("Dress fabrics"));
+    fireEvent.click(screen.getByRole("button", { name: "Delete this list" }));
+    expect(screen.getByRole("alert")).toHaveTextContent('Delete "Dress materials" and its 3 items? This cannot be undone.');
+    expect(remove).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Yes, delete it" }));
+    await waitFor(() => expect(remove).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/b"));
+  });
+  const CATEGORISED: SellList = { ...LIST, columns: [col("name", "Name", "text"), col("category", "Category", "choice", { choices: ["Silk", "Cotton", "Bridal"], role: "category" }), col("retail", "Price", "rupees", { role: "price", billingPeriod: "one_time", quoteDefault: true })] };
+  const CROWS: RowPage = { items: [
+    { id: "c1", name: "Kanchi bridal", cells: { category: "Bridal", retail: 2450000 }, active: true },
+    { id: "c2", name: "Mysore silk", cells: { category: "Silk", retail: 740000 }, active: true },
+    { id: "c3", name: "Plain thing", cells: { category: null, retail: 100000 }, active: true },
+    { id: "c4", name: "Uppada cotton", cells: { category: "Cotton", retail: 410000 }, active: true },
+  ], nextCursor: null };
+  it("the Category column is a row of filter chips (All first), a pressed chip filters, and the chips are buttons with aria-pressed", () => {
+    render(<ListView list={CATEGORISED} initial={CROWS} owner canEdit words={words} base="/b" actions={acts() as never} />);
+    const chips = screen.getByRole("group", { name: "Category" });
+    expect([...chips.querySelectorAll("button")].map((b) => b.textContent)).toEqual([words["wls.all"].replace("{name}", "Category"), "Silk", "Cotton", "Bridal"]);
+    expect(within(chips).getByRole("button", { name: words["wls.all"].replace("{name}", "Category") })).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(within(chips).getByRole("button", { name: "Silk" }));
+    expect(within(chips).getByRole("button", { name: "Silk" })).toHaveAttribute("aria-pressed", "true");
+    expect([...document.querySelectorAll("[data-row]")].map((r) => r.textContent)).toEqual([expect.stringContaining("Mysore silk")]);
+  });
+  it("'Group by Category' puts the items under the column's words in their order, those with no category last", () => {
+    render(<ListView list={CATEGORISED} initial={CROWS} owner canEdit words={words} base="/b" actions={acts() as never} />);
+    fireEvent.click(screen.getByLabelText("Group by Category"));
+    expect([...document.querySelectorAll("[data-group]")].map((g) => g.getAttribute("data-group"))).toEqual(["Silk", "Cotton", "Bridal", ""]);
+    expect(document.querySelector('[data-group=""]')).toHaveTextContent("No category");
+    expect([...document.querySelectorAll("[data-row]")].map((r) => r.getAttribute("data-row"))).toEqual(["c2", "c4", "c1", "c3"]);
+  });
+  it("'Add a column' offers Category as a named choice column (role category, the owner types his own words), once", () => {
+    const save = vi.fn(async (cols: unknown) => ({ ok: true as const, data: { ...LIST, columns: cols as never } }));
+    render(<ColumnsEditor list={LIST} words={words} back="/b" save={save as never} />);
+    fireEvent.click(screen.getByRole("button", { name: "+ Add a Category" }));
+    expect(screen.queryByRole("button", { name: "+ Add a Category" })).toBeNull(); // one Category column per list
+    const labels = screen.getAllByLabelText("Column name") as HTMLInputElement[];
+    expect(labels[labels.length - 1]).toHaveValue("Category");
+    expect(screen.getAllByLabelText("The choices, separated by commas").length).toBeGreaterThan(0);
+  });
+});
+

@@ -6,6 +6,7 @@
 NOTE: no `from __future__ import annotations` here (request objects are attached at registration time)."""
 
 import re
+import uuid
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Query
@@ -30,6 +31,7 @@ WORDS = {
 
 class NumberOut(BaseModel):
     model_config = ConfigDict(extra="forbid")
+    id: uuid.UUID | None = None   # the phone line's own id (an AI employee is given a line by it); none while the number is still getting ready
     number: str
     display: str
     type: str

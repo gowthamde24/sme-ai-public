@@ -183,8 +183,9 @@ async def _outbound(service: InboundService, bv: Any, live: Any, wire: Any, line
     questions = PENDING.take_questions(row) if kind in ("goal", "task") else ()
     tone, owner_test, intro = PENDING.take_extras(row) if kind in ("goal", "task") else ("friendly", False, None)
     person = PENDING.take_person(row) if kind in ("goal", "task") else (None, None)
+    employee_id = PENDING.take_employee(row)
     job = PENDING.take_job(row) if kind in ("goal", "task") else None
-    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=goal, opening_line=opening_for(kind, language, tone), kind=kind, tone=tone, owner_test=owner_test, introduce=intro, person_name=person[0], person_gender=person[1], questions=questions, job=job)
+    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=goal, opening_line=opening_for(kind, language, tone), kind=kind, tone=tone, owner_test=owner_test, introduce=intro, person_name=person[0], person_gender=person[1], questions=questions, job=job, employee_id=employee_id)
     full = dataclasses.replace(start, from_number=callee, to_number=ours)   # the pipeline reads the call as "the person -> our line", like every other provider
     decision = inbound.Admitted(tenant_id=tenant, talk=True, rule="voicelink_outbound")
     preparing = asyncio.ensure_future(_prepare(service, bv, full, outbound))

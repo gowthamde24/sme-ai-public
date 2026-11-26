@@ -34,6 +34,9 @@ class FakeLists:
     def get(self, token: str, tenant_id: uuid.UUID, list_id: uuid.UUID) -> dict[str, Any]:
         return self._go("get", str(list_id), {"id": str(list_id), "columns": []})
 
+    def starters(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._go("starters", None, {"created": ["Sarees"], "already_there": [], "skipped_cap": [], "lists": []})
+
     def create(self, token: str, tenant_id: uuid.UUID, list_id: uuid.UUID, name: str, kind: str) -> dict[str, Any]:
         return self._go("create", (name, kind), {"id": str(list_id), "name": name, "kind": kind, "columns": []})
 
@@ -122,3 +125,22 @@ def test_columns_carry_the_role_and_the_billing_period_through(w: tuple[Any, Fak
     assert client.put(f"{URL}/{LIST}/columns", json={"columns": cols, "confirm": True}, headers=auth("a_owner")).status_code == 200
     name, payload = repo.calls[-1]
     assert name == "columns" and payload[1] is True and payload[0][0]["billing_period"] == "per_month" and payload[0][1]["role"] == "how_to_buy"
+
+
+def test_the_starter_lists_route_is_for_owner_or_admin_and_answers_what_was_made(w: tuple[Any, FakeLists]) -> None:
+    client, repo = w
+    for user in ("a_sales", "a_viewer"):
+        assert client.post(f"{URL}/starters", headers=auth(user)).status_code == 403
+    assert not [c for c in repo.calls if c[0] == "starters"]
+    r = client.post(f"{URL}/starters", headers=auth("a_owner"))
+    assert r.status_code == 200 and r.json()["created"] == ["Sarees"] and r.json()["skipped_cap"] == []
+    assert client.post(f"{URL}/starters", headers=auth("a_admin")).status_code == 200
+    assert client.post(f"{URL}/starters", json={"x": 1}, headers=auth("a_owner")).status_code in (200, 422)
+
+
+def test_the_category_role_is_taken_and_the_flag_off_hides_the_starters() -> None:
+    client, repo = make_client(sell_lists=FakeLists())
+    body = {"columns": [{"label": "Category", "type": "choice", "choices": ["Silk", "Cotton"], "role": "category"}]}
+    assert client.put(f"{URL}/{LIST}/columns", json=body, headers=auth("a_owner")).status_code == 200
+    off, _ = make_client()
+    assert off.post(f"{URL}/starters", headers=auth("a_owner")).status_code == 404

@@ -29,6 +29,7 @@ from app.catalogue.errors import PhotoRejectedError
 from app.catalogue.storage import StorageClient
 from app.crm.models import _Strict
 from app.errors import ApiError
+from app.plain_label import PlainLabel
 from app.tenancy.models import Role
 from app.workspace.errors import TypeChangeRefusedError
 from app.workspace.models import Language
@@ -48,7 +49,7 @@ AddressLine = Annotated[str, StringConstraints(strip_whitespace=True, min_length
 Area = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=80)]
 Pincode = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^[1-9][0-9]{5}$")]
 TypeCode = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,30}$")]
-TypeLabel = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=60)]
+TypeLabel = PlainLabel
 PersonName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
 
 

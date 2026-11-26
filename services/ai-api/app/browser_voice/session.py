@@ -47,6 +47,7 @@ from app.conversation.turntaking import (
     stop_word_heard,
 )
 from app.conversation.voices import SPEAKS_INSTEAD
+from app.logging_safety import one_line
 from app.ops.usage import UsageRecorder, record_best_effort
 from app.turns.intent import (
     Intent,
@@ -255,6 +256,7 @@ class VoiceSession:
         elif kind == "error":
             self.usage.errors += 1
             message = {"type": "error", "code": str(data.get("code", "error")), "message": str(data.get("message", "")), "fatal": False}
+            log.warning("browser_voice_error code=%s", one_line(str(message["code"])))   # (26 Nov 2026) which closed code the owner's "That did not work" stood for: it was in no log
         elif kind == "caption":
             message = {"type": "caption", "who": data.get("who", "assistant"), "text": data.get("text", ""), "final": True, "spoken": bool(data.get("spoken", True))}
             if data.get("spoken_text"):
@@ -791,6 +793,13 @@ class VoiceSession:
     def check_in_words(self) -> dict[str, str]:
         return CHECK_IN
 
+    VOICE_DOWN_END_AFTER = 0   # a phone call ends after this many turns in a row in which the chosen voice could not speak (0: never; the screen keeps showing the words)
+
+    async def _voice_unavailable(self) -> None:
+        """The chosen voice cannot speak (no other voice may take its place: owner, 26 Nov 2026): one honest line, the answer stays on the screen as text."""
+        self.usage.errors += 1
+        await self._send({"type": "error", "code": "tts_unavailable", "message": "Voice is unavailable right now; the answer is shown here.", "fatal": False})
+
     async def _end_for_silence(self) -> None:
         self._ended = "idle"
         await self._say(GOODBYE_QUIET.get(self.language, GOODBYE_QUIET["en"]))
@@ -862,8 +871,17 @@ class VoiceSession:
         except Exception as err:
             self.usage.errors += 1
             log.warning("browser_voice_turn_failed code=%s", getattr(err, "code", type(err).__name__))
+            if isinstance(err, VoiceError) and str(getattr(err, "code", "")).startswith("tts"):
+                await self._voice_unavailable()
+                return
             await self._send({"type": "error", "code": getattr(err, "code", "turn_failed"), "message": "Something went wrong with that answer. Please ask again.", "fatal": False})
             return
+        if getattr(self.conv, "voice_down", None):   # the chosen voice could not speak (and no other voice may): the answer is on the screen, said so once
+            await self._voice_unavailable()
+            if self.VOICE_DOWN_END_AFTER and getattr(self.conv, "voice_down_turns", 0) >= self.VOICE_DOWN_END_AFTER:
+                self._ended = "voice_unavailable"
+                await self._send({"type": "limit", "reason": "voice_unavailable", "fatal": True})
+                return
         await self._audio_end(self.usage.turns)
         def ms(value: float | None) -> str:
             return "-" if value is None else str(round(value))

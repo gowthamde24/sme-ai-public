@@ -8,7 +8,7 @@ import { makeT, type Words } from "../words";
 /**
  * "Your lists" on What you sell (flag WHAT_YOU_SELL_LISTS; mock "What you sell"): one boxed card for each list the owner made (a thing you choose: one border, light radius, no shadow): its kind, its name, how many items, and Add a list. Opening a card opens the list.
  */
-export function ListCards({ lists, words, base, canAdd }: { lists: readonly SellList[]; words: Words; base: string; canAdd: boolean }) {
+export function ListCards({ lists, words, base, canAdd, tenantBase = base.replace(/\/what-you-sell$/, "") }: { lists: readonly SellList[]; words: Words; base: string; canAdd: boolean; /** `/app/tenants/<id>`: where a built-in list is edited */ tenantBase?: string }) {
   const t = makeT(words);
   return (
     <section data-part="lists" aria-labelledby="wls-h" className="flex flex-col gap-3">
@@ -25,18 +25,23 @@ export function ListCards({ lists, words, base, canAdd }: { lists: readonly Sell
       <p className="m-0 text-[15px] text-muted">{t("wls.sub")}</p>
       {lists.length > 0 ? (
         <ul className="m-0 grid list-none grid-cols-1 gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
-          {lists.map((l) => (
+          {lists.map((l) => {
+            // a built-in list (the saree catalogue, the old styles) has no rows route here: its card leads to the screen where the owner edits it
+            const editHref = l.builtin ? (l.editIn === "catalogue" ? `${tenantBase}/catalogue` : l.editIn === "price_list" ? `${tenantBase}/price-list` : base) : null;
+            return (
             <li key={l.id}>
-              <Link href={`${base}/lists/${l.id}`} data-list={l.id} className="flex min-h-[116px] flex-col gap-1.5 rounded-[14px] border border-line bg-surface p-[18px] no-underline hover:border-ink focus-visible:border-ink">
+              <Link href={editHref ?? `${base}/lists/${l.id}`} data-list={l.id} data-builtin={l.builtin ?? undefined} className="flex min-h-[116px] flex-col gap-1.5 rounded-[14px] border border-line bg-surface p-[18px] no-underline hover:border-ink focus-visible:border-ink">
                 <span className="text-[14px] font-semibold text-muted">{t(`wls.kind.${l.kind}` as "wls.kind.products")}</span>
                 <b className="text-[18px] font-bold text-ink">{l.name}</b>
                 <span className="mt-auto text-[15px] font-semibold text-ink">{t("wls.items", { n: l.rowCount })}</span>
+                {l.builtin ? <span className="text-[13px] text-muted">{t(`wls.builtin.${l.editIn ?? "what_you_sell"}` as "wls.builtin.catalogue")}</span> : null}
               </Link>
             </li>
-          ))}
+            );
+          })}
         </ul>
       ) : null}
-      <p className="m-0 text-[14px] text-muted">{t("wls.used", { n: lists.length, max: MAX_LISTS })}</p>
+      <p className="m-0 text-[14px] text-muted">{t("wls.used", { n: lists.filter((l) => !l.builtin).length, max: MAX_LISTS })}</p>
     </section>
   );
 }

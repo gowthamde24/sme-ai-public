@@ -6104,6 +6104,7 @@
       ],
       "areas": [
         "assistant_context",
+        "employees",
         "jobs",
         "voice",
         "voice_notes"

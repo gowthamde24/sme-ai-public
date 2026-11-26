@@ -379,8 +379,9 @@ async def outbound_answer(request: Request) -> Response:
     questions = PENDING.take_questions(row) if kind in ("goal", "task") else ()
     tone, owner_test, intro = PENDING.take_extras(row) if kind in ("goal", "task") else ("friendly", False, None)
     person = PENDING.take_person(row) if kind in ("goal", "task") else (None, None)
+    employee_id = PENDING.take_employee(row)
     job = PENDING.take_job(row) if kind in ("goal", "task") else None   # the job that placed the call: its own "say AI when greeting" applies
-    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=goal, opening_line=opening_for(kind, language, tone), kind=kind, tone=tone, owner_test=owner_test, introduce=intro, person_name=person[0], person_gender=person[1], questions=questions, job=job)
+    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=goal, opening_line=opening_for(kind, language, tone), kind=kind, tone=tone, owner_test=owner_test, introduce=intro, person_name=person[0], person_gender=person[1], questions=questions, job=job, employee_id=employee_id)
     BOOK.put(call_id, Admission(line_no, callee, tenant, outbound=outbound))
     token = inbound.mint(config.ws_secret(), inbound.monotonic(), call_id, "")
     log.info("plivo_outbound_answer admitted call_fp=%s", _fp(config, call_id))

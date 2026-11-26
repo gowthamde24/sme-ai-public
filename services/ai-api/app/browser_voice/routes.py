@@ -85,7 +85,7 @@ OWNER_ROLE = (
 OWNER_RULES = (
     "This person runs the business and may ask for anything the app can do: look something up, draft a message, change a setting, change your own name. Everything that changes something happens through a plan card they confirm, "
     "so for such a request say in one short sentence what you will do. Never say you only help customers, never send them to 'the person who set up the account', never say you cannot change your own name or a setting: "
-    "your name is a setting the owner can change. Never invent a business fact; if you do not know it, say you will check."
+    "your name is a setting the owner can change. Never invent a business fact. You have NO tools in this conversation: if you do not know it, say plainly that you cannot look that up here and that they can ask it in the Ask box, and never say you will check, look it up or find out. You cannot create a plan card in this conversation: never say a plan card, a confirmation or a screen will appear. This conversation with the owner is a chat or a voice conversation in the app, never a call: never call it a call."
 )
 
 
@@ -101,7 +101,7 @@ def system_prompt(*, business: str, assistant: str, language: str, opening_line:
         OWNER_RULES,
         f"Your opening line was: {opening_line}",
         f"Your goal: {GOAL}",
-        "Use only these facts; if something is not here, say you will check and never invent prices, dates or promises:",
+        "Use only these facts; if something is not here, say you cannot look that up here and they can ask it in the Ask box, and never invent prices, dates or promises:",
         *[f"- {fact}" for fact in facts],
         register_block(language, "everyday_mixed"),
         conversation_style_block(language, disclosure_on=mention_ai),
@@ -115,7 +115,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
     chosen, gender = voice_state(runtime, ctx)
     live_choices: dict[str, str] = dict(chosen)   # read again at the start of every turn (refresh), so a change in Settings speaks from the next turn
     live_gender = [gender]
-    tts = FallbackTts(bv.config, bv.factory, chosen=chosen, gender=gender, pronunciations=default_pronunciations())
+    tts = FallbackTts(bv.config, bv.factory, chosen=chosen, gender=gender, pronunciations=default_pronunciations(), strict=True)
     if not bv.talk_primary:
         tts.set_primary_budget(0)   # where VOICE_TALK_PRIMARY is off (production, until the owner says; owner 6 and 13 Nov 2026): Live talk speaks with Sarvam Bulbul
 
