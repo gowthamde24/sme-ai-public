@@ -120,7 +120,7 @@ class NumberService:
     def numbers(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         pending = self._kyc is not None and not self._kyc.verified(token, tenant_id) and self._kyc.has_client(token, tenant_id)
         rows = self._repo.listing(token, tenant_id)
-        return [{"number": r["number"], "display": display(str(r["number"])), "type": r.get("kind") or "mobile", "state": "kyc_pending" if pending else r.get("state"), "label": r.get("label")} for r in rows]
+        return [{"id": r.get("id"), "number": r["number"], "display": display(str(r["number"])), "type": r.get("kind") or "mobile", "state": "kyc_pending" if pending else r.get("state"), "label": r.get("label")} for r in rows]
 
     def available(self, token: str, tenant_id: uuid.UUID, kind: str, prefix: str, page: int = 1) -> tuple[list[Offer], bool]:
         reason = self._repo.check(token, tenant_id)
