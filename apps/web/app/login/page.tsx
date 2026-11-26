@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { GoogleG } from "@/components/v2/auth/ProviderIcons";
 import { authH1, authHint, authMain, authSecondary } from "@/components/v2/auth/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { authLang, formWords, type FormWords } from "@/i18n/auth";
@@ -30,7 +31,8 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       <LoginForm next={next} notice={NOTICE_KEYS[notice ?? ""] ? w[NOTICE_KEYS[notice ?? ""]] : undefined} turnstile={turnstileSiteKey()} words={{ email: w["form.email"], password: w["form.password"], submit: w["form.signin.submit"], forgot: w["form.forgot"] }} />
       {providers.google ? (
         <form action={signInWithGoogle} className="flex flex-col" data-part="google-sign-in">
-          <button type="submit" className={authSecondary}>
+          <button type="submit" className={`${authSecondary} gap-2.5`}>
+            <GoogleG />
             {w["form.google"]}
           </button>
         </form>
