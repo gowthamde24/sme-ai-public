@@ -14,7 +14,7 @@ describe("Responsibilities", () => {
   it("shows the nine jobs with the ticked ones and saves exactly the list, keeping an id it does not know", async () => {
     const { a } = show({ initialTab: "responsibilities", employee: employee({ responsibilities: ["faq_answers", "newer_job"] }) });
     const c = await card("What it takes care of");
-    expect(within(c).getAllByRole("checkbox")).toHaveLength(9);
+    expect(within(c).getAllByRole("checkbox")).toHaveLength(12); // three channels and the nine jobs
     expect(within(c).getByRole("checkbox", { name: "Answer common questions" })).toBeChecked();
     expect(within(c).getByRole("button", { name: "Save" })).toBeDisabled();
     fireEvent.click(within(c).getByRole("checkbox", { name: "Book store visits" }));
@@ -23,6 +23,19 @@ describe("Responsibilities", () => {
     fireEvent.click(within(c).getByRole("button", { name: "Save" }));
     await waitFor(() => expect(a.patch).toHaveBeenCalledWith({ responsibilities: ["enquiry_reply", "visit_booking", "newer_job"] }));
     expect(await within(c).findByText("Saved")).toBeInTheDocument();
+  });
+
+  it("WhatsApp is optional: unticked, and ticking it never blocks: it saves and says what is still needed, with the way to connect it", async () => {
+    const { a } = show({ initialTab: "responsibilities", employee: employee({ responsibilities: ["channel_phone", "enquiry_reply"], needs: [] }) });
+    const c = await card("What it takes care of");
+    expect(within(c).getByRole("checkbox", { name: "Answers phone calls" })).toBeChecked();
+    expect(within(c).getByRole("checkbox", { name: "Replies on WhatsApp" })).not.toBeChecked();
+    expect(within(c).queryByText(/WhatsApp needs a connection/)).toBeNull();
+    fireEvent.click(within(c).getByRole("checkbox", { name: "Replies on WhatsApp" }));
+    expect(within(c).getByText(/WhatsApp needs a connection/)).toBeInTheDocument();
+    expect(within(c).getByRole("link", { name: "Connect WhatsApp" })).toHaveAttribute("href", expect.stringMatching(/\/integrations\/whatsapp$/));
+    fireEvent.click(within(c).getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(a.patch).toHaveBeenCalledWith({ responsibilities: ["channel_phone", "channel_whatsapp", "enquiry_reply"] }));
   });
 
   it("is editable for the main assistant too, and read-only for a reader", async () => {

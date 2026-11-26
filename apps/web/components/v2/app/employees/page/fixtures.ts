@@ -36,6 +36,8 @@ export const employee = (over: Partial<Employee> = {}): Employee => ({
   personaIn: "employee",
   voices: { te: "te_ramya", en: "en_riya" },
   callsToday: 3,
+  channels: { phone: true, whatsapp: false, webChat: false },
+  needs: [],
   ...over,
 });
 export const defaultEmployee = (over: Partial<Employee> = {}): Employee => employee({ id: "22222222-2222-4222-8222-222222222222", name: "Asha", isDefault: true, personaIn: "my_assistant", ...over });

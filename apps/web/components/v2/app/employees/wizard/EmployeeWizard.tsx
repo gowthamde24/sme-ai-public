@@ -171,7 +171,7 @@ export function EmployeeWizard({ words, base, actions, voices }: { words?: Words
         {step === "name" ? <StepName t={t} d={draft} set={set} invalid={problem !== null} /> : null}
         {step === "voice" ? <StepVoice t={t} d={draft} catalogue={voices} toggleLang={toggleLang} pick={pick} play={(l) => void player.toggle(l, () => saveVoiceFor(l, draft.voices[l] ?? ""))} playing={player.playing} loading={player.loading} /> : null}
         {step === "rules" ? <StepRules t={t} d={draft} set={set} /> : null}
-        {step === "jobs" ? <StepJobs t={t} d={draft} set={set} /> : null}
+        {step === "jobs" ? <StepJobs t={t} d={draft} set={set} base={base} /> : null}
         {step === "preview" ? <StepPreview t={t} d={draft} employee={employee} said={player.said} play={(l) => void player.toggle(l)} playing={player.playing} loading={player.loading} /> : null}
         {last ? <StepOn t={t} d={draft} employee={employee} catalogue={voices} base={base} busy={busy} turnOn={turnOn} /> : null}
       </div>

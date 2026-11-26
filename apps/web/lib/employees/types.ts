@@ -4,6 +4,9 @@
  */
 export const ROLE_CODES = ["receptionist", "sales", "follow_up", "collections", "support", "appointments", "custom"] as const;
 export type RoleCode = (typeof ROLE_CODES)[number];
+/** Channels an AI employee has only when the owner ticks them (owner rule 26 Nov 2026: WhatsApp is optional). */
+export const CHANNEL_RESPONSIBILITIES = ["channel_phone", "channel_whatsapp", "channel_web_chat"] as const;
+export type ChannelResponsibility = (typeof CHANNEL_RESPONSIBILITIES)[number];
 export const RESPONSIBILITIES = ["enquiry_reply", "faq_answers", "visit_booking", "quote_chase", "lead_qualify", "follow_up", "review_request", "payment_reminder", "appointment_reminder"] as const;
 export type Responsibility = (typeof RESPONSIBILITIES)[number];
 export const ASK_FIRST = ["send_message", "make_call", "give_discount", "promise_date", "book_visit", "share_price", "send_media"] as const;
@@ -63,8 +66,14 @@ export type Employee = {
   readonly personaIn: "my_assistant" | "employee";
   readonly voices: Readonly<Record<string, string>>;
   readonly callsToday: number;
+  /** this employee's own channels, and what is still needed for them (C1, migration 992780) */
+  readonly channels: { readonly phone: boolean; readonly whatsapp: boolean; readonly webChat: boolean };
+  readonly needs: readonly ChannelNeed[];
 };
-export type EmployeeList = { readonly employees: readonly Employee[]; readonly limit: number };
+/** What an employee still needs before a channel it has works (C1: `needs`): turning a channel on never fails, the screen shows the step. */
+export type ChannelNeed = { readonly channel: "whatsapp"; readonly step: "connect_whatsapp" | "activate_whatsapp" };
+export type Channels = { readonly phone: boolean; readonly whatsapp: boolean; readonly webChat: boolean; readonly whatsappConnection: { readonly status: "none" | "pending" | "active" | "disabled"; readonly connected: boolean; readonly nextStep: "connect_whatsapp" | "activate_whatsapp" | null } };
+export type EmployeeList = { readonly employees: readonly Employee[]; readonly limit: number; readonly channels: Channels | null };
 
 export type ActivityCall = { readonly id: string; readonly direction: string; readonly state: string; readonly purpose: string | null; readonly language: string | null; readonly outcome: string | null; readonly durationS: number | null; readonly createdAt: string };
 

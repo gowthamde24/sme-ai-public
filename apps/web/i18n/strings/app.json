@@ -142559,5 +142559,159 @@
    "hi": "reviewed",
    "kn": "reviewed"
   }
+ },
+ "emp.resp.channel_phone": {
+  "en": "Answers phone calls",
+  "te": "ఫోన్ కాల్స్‌కి సమాధానం ఇస్తుంది",
+  "hi": "फ़ोन कॉल का जवाब देता है",
+  "kn": "ಫೋನ್ ಕಾಲ್‌ಗಳಿಗೆ ಉತ್ತರಿಸುತ್ತದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.channel_whatsapp": {
+  "en": "Replies on WhatsApp",
+  "te": "WhatsApp లో రిప్లై ఇస్తుంది",
+  "hi": "WhatsApp पर रिप्लाई देता है",
+  "kn": "WhatsApp ನಲ್ಲಿ ರಿಪ್ಲೈ ಕೊಡುತ್ತದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.channel_web_chat": {
+  "en": "Replies to website chat",
+  "te": "వెబ్‌సైట్ చాట్‌కి రిప్లై ఇస్తుంది",
+  "hi": "वेबसाइट चैट का रिप्लाई देता है",
+  "kn": "ವೆಬ್‌ಸೈಟ್ ಚಾಟ್‌ಗೆ ರಿಪ್ಲೈ ಕೊಡುತ್ತದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.channels.h": {
+  "en": "Where it talks to customers",
+  "te": "కస్టమర్లతో ఎక్కడ మాట్లాడుతుంది",
+  "hi": "ग्राहकों से कहाँ बात करता है",
+  "kn": "ಗ್ರಾಹಕರೊಂದಿಗೆ ಎಲ್ಲಿ ಮಾತನಾಡುತ್ತದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.channels.wa_needs": {
+  "en": "WhatsApp needs a connection.",
+  "te": "WhatsApp కి కనెక్షన్ కావాలి.",
+  "hi": "WhatsApp के लिए कनेक्शन चाहिए।",
+  "kn": "WhatsApp ಗೆ ಕನೆಕ್ಷನ್ ಬೇಕು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.channels.wa_connect": {
+  "en": "Connect WhatsApp",
+  "te": "WhatsApp కనెక్ట్ చేయండి",
+  "hi": "WhatsApp कनेक्ट करें",
+  "kn": "WhatsApp ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "sv6.con.wa.off": {
+  "en": "Add WhatsApp when you need it.",
+  "te": "అవసరమైనప్పుడు WhatsApp యాడ్ చేసుకోండి.",
+  "hi": "ज़रूरत हो तब WhatsApp जोड़ लें।",
+  "kn": "ಬೇಕಾದಾಗ WhatsApp ಸೇರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "sv6.con.wa.connect": {
+  "en": "Connect",
+  "te": "కనెక్ట్ చేయండి",
+  "hi": "कनेक्ट करें",
+  "kn": "ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "integrations.whatsapp.title.off": {
+  "en": "Add WhatsApp when you need it",
+  "te": "అవసరమైనప్పుడు WhatsApp యాడ్ చేసుకోండి",
+  "hi": "ज़रूरत हो तब WhatsApp जोड़ लें",
+  "kn": "ಬೇಕಾದಾಗ WhatsApp ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "integrations.whatsapp.body.off": {
+  "en": "You do not need it to start. Connect your business number when you want customers to write to you there.",
+  "te": "మొదలుపెట్టడానికి ఇది అవసరం లేదు. కస్టమర్లు అక్కడ మీకు రాయాలనుకున్నప్పుడు మీ బిజినెస్ నంబర్ కనెక్ట్ చేయండి.",
+  "hi": "शुरू करने के लिए इसकी ज़रूरत नहीं है। जब चाहें कि कस्टमर वहाँ आपको लिखें, तब अपना बिज़नेस नंबर कनेक्ट करें।",
+  "kn": "ಶುರು ಮಾಡಲು ಇದು ಬೇಕಾಗಿಲ್ಲ. ಕಸ್ಟಮರ್‌ಗಳು ಅಲ್ಲಿ ನಿಮಗೆ ಬರೆಯಬೇಕೆಂದಾಗ ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ನಂಬರ್ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "chats6.sub.nowa": {
+  "en": "Customers' messages · your assistant answers, you approve what matters",
+  "te": "కస్టమర్ల మెసేజ్‌లు · మీ అసిస్టెంట్ జవాబిస్తుంది, ముఖ్యమైనవి మీరు OK చేస్తారు",
+  "hi": "ग्राहकों के मैसेज · आपका असिस्टेंट जवाब देता है, ज़रूरी वाले आप मंज़ूर करते हैं",
+  "kn": "ಗ್ರಾಹಕರ ಮೆಸೇಜ್‌ಗಳು · ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಿಸುತ್ತದೆ, ಮುಖ್ಯವಾದವನ್ನು ನೀವು ಒಪ್ಪುತ್ತೀರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "chats6.empty.text.nowa": {
+  "en": "When a customer messages your business, the chat will show up here, with your assistant's replies.",
+  "te": "కస్టమర్ మీ బిజినెస్‌కి మెసేజ్ చేసినప్పుడు, చాట్ ఇక్కడ కనిపిస్తుంది, మీ అసిస్టెంట్ జవాబులతో పాటు.",
+  "hi": "जब कोई ग्राहक आपके बिज़नेस को मैसेज करेगा, चैट यहाँ दिखेगी, आपके असिस्टेंट के जवाब के साथ।",
+  "kn": "ಗ್ರಾಹಕರು ನಿಮ್ಮ ಬಿಸಿನೆಸ್‌ಗೆ ಮೆಸೇಜ್ ಮಾಡಿದಾಗ, ಚಾಟ್ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ, ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ನ ಉತ್ತರಗಳ ಜೊತೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wa.chats.sub.nowa": {
+  "en": "The people who wrote to your business or were written to, newest first. Open a chat to read it and reply.",
+  "te": "మీ బిజినెస్‌కి రాసినవారు లేదా మీరు రాసినవారు, కొత్తవి ముందు. చాట్ తెరిచి చదివి జవాబివ్వండి.",
+  "hi": "जिन्होंने आपके बिज़नेस को लिखा या जिन्हें लिखा गया, नए पहले। चैट खोलकर पढ़ें और जवाब दें।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್‌ಗೆ ಬರೆದವರು ಅಥವಾ ನೀವು ಬರೆದವರು, ಹೊಸದು ಮೊದಲು. ಚಾಟ್ ತೆರೆದು ಓದಿ, ಉತ್ತರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "wa.chats.empty.body.nowa": {
+  "en": "When a customer writes to your business, or you message one, the chat appears here.",
+  "te": "కస్టమర్ మీ బిజినెస్‌కి రాసినప్పుడు, లేదా మీరు రాసినప్పుడు, చాట్ ఇక్కడ కనిపిస్తుంది.",
+  "hi": "जब कोई कस्टमर आपके बिज़नेस को लिखे, या आप किसी को लिखें, तो चैट यहाँ दिखेगी।",
+  "kn": "ಕಸ್ಟಮರ್ ನಿಮ್ಮ ಬಿಸಿನೆಸ್‌ಗೆ ಬರೆದಾಗ, ಅಥವಾ ನೀವು ಬರೆದಾಗ, ಚಾಟ್ ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
  }
 }

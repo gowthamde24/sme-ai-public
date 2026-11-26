@@ -1,4 +1,4 @@
-import { ASK_FIRST, EMPLOYEE_LANGUAGES, REFUSALS, STATUSES, STYLES, isRole, type ActivityCall, type Autonomy, type Employee, type EmployeeList, type EmployeePatch, type EmployeeStatus, type Fail, type Hours, type Refusal } from "@/lib/employees/types";
+import { ASK_FIRST, EMPLOYEE_LANGUAGES, type ChannelNeed, type Channels, REFUSALS, STATUSES, STYLES, isRole, type ActivityCall, type Autonomy, type Employee, type EmployeeList, type EmployeePatch, type EmployeeStatus, type Fail, type Hours, type Refusal } from "@/lib/employees/types";
 
 import { ApiAuthError, ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
@@ -66,11 +66,36 @@ export function parseEmployee(row: unknown): Employee {
     personaIn: x.persona_in === "my_assistant" ? "my_assistant" : "employee",
     voices,
     callsToday: optInt(x.calls_today, "calls_today", 0, 1_000_000) ?? 0,
+    channels: parseOwnChannels(x.channels, strList(x.responsibilities, "responsibilities", 30, 60)),
+    needs: parseNeeds(x.needs),
+  };
+}
+function parseOwnChannels(v: unknown, responsibilities: readonly string[]): Employee["channels"] {
+  const x = v === undefined || v === null ? null : rec(v, "channels");
+  const has = (id: string) => responsibilities.includes(id);
+  return { phone: x ? x.phone === true : has("channel_phone"), whatsapp: x ? x.whatsapp === true : has("channel_whatsapp"), webChat: x ? x.web_chat === true : has("channel_web_chat") };
+}
+function parseNeeds(v: unknown): ChannelNeed[] {
+  if (v === undefined || v === null) return [];
+  return readRows(v, "needs", (row) => {
+    const x = rec(row, "need");
+    return { channel: "whatsapp" as const, step: oneOf(x.step, ["connect_whatsapp", "activate_whatsapp"] as const, "step") };
+  }, 5);
+}
+/** The workspace's channels: a channel is on ONLY when an employee that is on has it (C1: GET /channels). */
+export function parseChannels(json: unknown): Channels {
+  const x = rec(json, "channels");
+  const c = x.whatsapp_connection === undefined || x.whatsapp_connection === null ? {} : rec(x.whatsapp_connection, "whatsapp_connection");
+  return {
+    phone: x.phone === true,
+    whatsapp: x.whatsapp === true,
+    webChat: x.web_chat === true,
+    whatsappConnection: { status: c.status === undefined ? "none" : oneOf(c.status, ["none", "pending", "active", "disabled"] as const, "status"), connected: c.connected === true, nextStep: c.next_step === "connect_whatsapp" || c.next_step === "activate_whatsapp" ? c.next_step : null },
   };
 }
 export function parseEmployees(json: unknown): EmployeeList {
   const x = rec(json, "employees");
-  return { employees: readRows(x.employees, "employees", parseEmployee, 20), limit: int(x.limit, "limit", 1, 100) };
+  return { employees: readRows(x.employees, "employees", parseEmployee, 20), limit: int(x.limit, "limit", 1, 100), channels: x.channels === undefined || x.channels === null ? null : parseChannels(x.channels) };
 }
 export function parseActivity(json: unknown): ActivityCall[] {
   const x = rec(json, "activity");
@@ -92,6 +117,7 @@ export function refusalOf(error: unknown): Fail {
 }
 
 export const getEmployees = async (token: string, tenantId: string): Promise<EmployeeList> => parseEmployees(await apiRequest(base(tenantId), token));
+export const getChannels = async (token: string, tenantId: string): Promise<Channels> => parseChannels(await apiRequest(`/v1/tenants/${isCanonicalUuid(tenantId) ? tenantId : bad("id")}/channels`, token));
 export const getEmployee = async (token: string, tenantId: string, id: string): Promise<Employee> => parseEmployee(await apiRequest(path(tenantId, id), token));
 export async function createEmployee(token: string, tenantId: string, input: { id: string; roleCode: string; name: string }): Promise<Employee> {
   return parseEmployee(await apiRequest(base(tenantId), token, { method: "POST", body: JSON.stringify({ id: input.id, role_code: input.roleCode, name: input.name }) }));

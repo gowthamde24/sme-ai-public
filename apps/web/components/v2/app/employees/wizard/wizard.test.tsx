@@ -22,7 +22,7 @@ const VOICES: WizardVoice[] = [voice("te_ramya", "te", "Ramya"), voice("te_arun"
 const employee = (over: Partial<Employee> = {}): Employee => ({
   id: UUID, name: "Priya", roleCode: "receptionist", roleTitle: null, status: "draft", isDefault: false, responsibilities: ["enquiry_reply", "faq_answers"], extraInstructions: null, languages: ["te", "en"], autoSwitchLanguage: true, allowEnglishMixing: true, style: null, speed: null, openingLine: {},
   autonomy: { mayAnswerPrices: false, mayBookVisits: false, maySendMedia: false, mayTalkDues: false, maxDiscountPercent: 0, handoverOwnerAsked: true, handoverUpset: true, handoverOrderAbovePaise: null },
-  askFirst: ["send_message", "make_call", "give_discount", "promise_date"], hours: null, neverSay: [], phoneNumberId: null, personaIn: "employee", voices: {}, callsToday: 0, ...over,
+  askFirst: ["send_message", "make_call", "give_discount", "promise_date"], hours: null, neverSay: [], phoneNumberId: null, personaIn: "employee", voices: {}, callsToday: 0, channels: { phone: false, whatsapp: false, webChat: false }, needs: [], ...over,
 });
 const fail = (error: Refusal) => ({ ok: false as const, error });
 
@@ -312,6 +312,21 @@ describe("the new AI employee wizard", () => {
     await next();
     await toStep(6);
     expect(a.patch).toHaveBeenLastCalledWith(UUID, { responsibilities: ["visit_booking"], roleTitle: "Showroom helper" });
+  });
+
+  it("channels are optional: WhatsApp starts unticked, ticking it shows what is needed without blocking Next, and it is saved with the jobs", async () => {
+    const a = acts();
+    await toRules(a);
+    await next();
+    await toStep(5);
+    expect(screen.getByRole("checkbox", { name: "Replies on WhatsApp" })).not.toBeChecked();
+    expect(screen.queryByText(/WhatsApp needs a connection/)).toBeNull();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Replies on WhatsApp" }));
+    expect(screen.getByText(/WhatsApp needs a connection/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Connect WhatsApp" })).toHaveAttribute("href", expect.stringMatching(/\/integrations\/whatsapp$/));
+    await next();
+    await toStep(6);
+    expect(a.patch).toHaveBeenLastCalledWith(UUID, expect.objectContaining({ responsibilities: expect.arrayContaining(["channel_whatsapp"]) }));
   });
 
   it("preview plays each language's opening line and shows what it says; there is no test-call button", async () => {
