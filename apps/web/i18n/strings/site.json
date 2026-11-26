@@ -9612,11 +9612,11 @@
   }
  },
  "pp.sh.9": {
-  "en": "Start with ₹{start} free in your wallet",
-  "te": "వాలెట్‌లో ₹{start} ఫ్రీతో మొదలుపెట్టండి",
-  "hi": "वॉलेट में ₹{start} फ्री के साथ शुरू कीजिए",
-  "kn": "ನಿಮ್ಮ ವಾಲೆಟ್‌ನಲ್ಲಿ ₹{start} ಫ್ರೀ ಜೊತೆ ಶುರು ಮಾಡಿ",
-  "ta": "உங்கள் wallet-இல் ₹{start} இலவசத்துடன் ஆரம்பிக்கலாம்",
+  "en": "Start with a free credit: ₹{trial_email} with your e-mail, ₹{trial_phone} once you verify your phone",
+  "te": "ఫ్రీ క్రెడిట్‌తో మొదలుపెట్టండి: ఈమెయిల్‌తో ₹{trial_email}, ఫోన్ వెరిఫై చేస్తే ₹{trial_phone}",
+  "hi": "फ्री क्रेडिट के साथ शुरू कीजिए: ई-मेल से ₹{trial_email}, फ़ोन वेरिफ़ाई करने पर ₹{trial_phone}",
+  "kn": "ಫ್ರೀ ಕ್ರೆಡಿಟ್ ಜೊತೆ ಶುರು ಮಾಡಿ: ಇ-ಮೇಲ್‌ನಿಂದ ₹{trial_email}, ಫೋನ್ ವೆರಿಫೈ ಮಾಡಿದರೆ ₹{trial_phone}",
+  "ta": "இலவச credit-உடன் ஆரம்பிக்கலாம்: e-mail-க்கு ₹{trial_email}, phone verify செய்தால் ₹{trial_phone}",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",
@@ -9690,11 +9690,11 @@
   }
  },
  "price.faq.5.a": {
-  "en": "Early access is free. With paid plans (from February 2027), ₹{start} is added to your wallet when you join, so you can try your assistant before you pay anything.",
-  "te": "ఎర్లీ యాక్సెస్ ఫ్రీ. పెయిడ్ ప్లాన్లతో (ఫిబ్రవరి 2027 నుంచి), మీరు జాయిన్ అయినప్పుడు మీ వాలెట్‌లో ₹{start} వేస్తాం, ఏమీ పే చేయకముందే మీ అసిస్టెంట్‌ని ట్రై చేయవచ్చు.",
-  "hi": "अर्ली एक्सेस फ्री है। पेड प्लान के साथ (फरवरी 2027 से), जुड़ते ही आपके वॉलेट में ₹{start} जुड़ जाते हैं, ताकि कुछ भी पेमेंट करने से पहले आप अपना असिस्टेंट आज़मा सकें।",
-  "kn": "ಅರ್ಲಿ ಆಕ್ಸೆಸ್ ಫ್ರೀ. ಪೇಡ್ ಪ್ಲಾನ್‌ಗಳೊಂದಿಗೆ (2027 ಫೆಬ್ರವರಿಯಿಂದ), ನೀವು ಸೇರಿದಾಗ ನಿಮ್ಮ ವಾಲೆಟ್‌ಗೆ ₹{start} ಹಾಕುತ್ತೇವೆ, ಏನೂ ಹಣ ಕೊಡುವ ಮೊದಲೇ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅನ್ನು ಟ್ರೈ ಮಾಡಬಹುದು.",
-  "ta": "Early access இலவசம். Paid plans-இல் (2027 பிப்ரவரி முதல்), நீங்கள் சேரும்போது உங்கள் wallet-இல் ₹{start} சேர்க்கப்படும். எதுவும் கட்டுவதற்கு முன்பே உங்கள் assistant-ஐ முயன்று பார்க்கலாம்.",
+  "en": "Early access is free. With paid plans (from February 2027), a free credit is added to your wallet when you join: ₹{trial_email} with your e-mail, ₹{trial_phone} once you verify your phone. You can try your assistant before you pay anything.",
+  "te": "ఎర్లీ యాక్సెస్ ఫ్రీ. పెయిడ్ ప్లాన్లతో (ఫిబ్రవరి 2027 నుంచి), మీరు జాయిన్ అయినప్పుడు వాలెట్‌లో ఫ్రీ క్రెడిట్ వేస్తాం: ఈమెయిల్‌తో ₹{trial_email}, ఫోన్ వెరిఫై చేస్తే ₹{trial_phone}. ఏమీ పే చేయకముందే మీ అసిస్టెంట్‌ని ట్రై చేయవచ్చు.",
+  "hi": "अर्ली एक्सेस फ्री है। पेड प्लान के साथ (फरवरी 2027 से), जुड़ते ही आपके वॉलेट में फ्री क्रेडिट जुड़ता है: ई-मेल से ₹{trial_email}, फ़ोन वेरिफ़ाई करने पर ₹{trial_phone}। कुछ भी पेमेंट करने से पहले आप अपना असिस्टेंट आज़मा सकते हैं।",
+  "kn": "ಅರ್ಲಿ ಆಕ್ಸೆಸ್ ಫ್ರೀ. ಪೇಡ್ ಪ್ಲಾನ್‌ಗಳೊಂದಿಗೆ (2027 ಫೆಬ್ರವರಿಯಿಂದ), ನೀವು ಸೇರಿದಾಗ ನಿಮ್ಮ ವಾಲೆಟ್‌ಗೆ ಫ್ರೀ ಕ್ರೆಡಿಟ್ ಹಾಕುತ್ತೇವೆ: ಇ-ಮೇಲ್‌ನಿಂದ ₹{trial_email}, ಫೋನ್ ವೆರಿಫೈ ಮಾಡಿದರೆ ₹{trial_phone}. ಏನೂ ಹಣ ಕೊಡುವ ಮೊದಲೇ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅನ್ನು ಟ್ರೈ ಮಾಡಬಹುದು.",
+  "ta": "Early access இலவசம். Paid plans-இல் (2027 பிப்ரவரி முதல்), நீங்கள் சேரும்போது உங்கள் wallet-இல் இலவச credit சேர்க்கப்படும்: e-mail-க்கு ₹{trial_email}, phone verify செய்தால் ₹{trial_phone}. எதுவும் கட்டுவதற்கு முன்பே உங்கள் assistant-ஐ முயன்று பார்க்கலாம்.",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",
@@ -15783,5 +15783,551 @@
    "kn": "reviewed",
    "ta": "draft"
   }
+ },
+ "pp.d.title": {
+  "en": "What each plan includes",
+  "te": "ప్రతి ప్లాన్‌లో ఏమేం ఉంటాయి",
+  "hi": "हर प्लान में क्या-क्या मिलता है",
+  "kn": "ಪ್ರತಿ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಏನೇನಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "ஒவ்வொரு plan-இலும் என்ன இருக்கிறது"
+ },
+ "pp.d.sub": {
+  "en": "Every plan has every feature. The plans differ in the minutes, the searches and the set-up.",
+  "te": "ప్రతి ప్లాన్‌లో అన్ని ఫీచర్లూ ఉంటాయి. ప్లాన్లకు తేడా మినిట్లు, సెర్చ్‌లు, సెటప్‌లోనే.",
+  "hi": "हर प्लान में सारे फ़ीचर हैं। प्लान में फ़र्क सिर्फ़ मिनट, सर्च और सेटअप का है।",
+  "kn": "ಪ್ರತಿ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಎಲ್ಲಾ ಫೀಚರ್‌ಗಳಿವೆ. ಪ್ಲಾನ್‌ಗಳ ವ್ಯತ್ಯಾಸ ಮಿನಿಟ್, ಸರ್ಚ್, ಸೆಟಪ್‌ನಲ್ಲಿ ಮಾತ್ರ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "ஒவ்வொரு plan-இலும் எல்லா feature-களும் உண்டு. plan-களுக்கு இடையே வித்தியாசம் minutes, searches, set-up மட்டுமே."
+ },
+ "pp.d.col.feature": {
+  "en": "What you get",
+  "te": "మీకు ఏం వస్తుంది",
+  "hi": "आपको क्या मिलता है",
+  "kn": "ನಿಮಗೇನು ಸಿಗುತ್ತದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "உங்களுக்கு என்ன கிடைக்கும்"
+ },
+ "pp.d.row.price": {
+  "en": "Price a month",
+  "te": "నెలకు ధర",
+  "hi": "महीने का दाम",
+  "kn": "ತಿಂಗಳ ಬೆಲೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "மாதத்துக்கு விலை"
+ },
+ "pp.d.row.minutes": {
+  "en": "Call minutes included",
+  "te": "ప్లాన్‌లో ఉన్న కాల్ మినిట్లు",
+  "hi": "प्लान में शामिल कॉल मिनट",
+  "kn": "ಪ್ಲಾನ್‌ನಲ್ಲಿರುವ ಕಾಲ್ ಮಿನಿಟ್‌ಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "plan-இல் உள்ள call minutes"
+ },
+ "pp.d.val.minutes.none": {
+  "en": "None. You pay ₹{minute} a minute.",
+  "te": "ఏవీ లేవు. నిమిషానికి ₹{minute} చెల్లిస్తారు.",
+  "hi": "कोई नहीं। आप ₹{minute} प्रति मिनट देते हैं।",
+  "kn": "ಯಾವುದೂ ಇಲ್ಲ. ನಿಮಿಷಕ್ಕೆ ₹{minute} ಕೊಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "எதுவும் இல்லை. ஒரு நிமிடத்துக்கு ₹{minute} செலுத்துவீர்கள்."
+ },
+ "pp.d.val.minutes.n": {
+  "en": "{n} minutes",
+  "te": "{n} మినిట్లు",
+  "hi": "{n} मिनट",
+  "kn": "{n} ಮಿನಿಟ್‌ಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "{n} நிமிடங்கள்"
+ },
+ "pp.d.row.extra": {
+  "en": "Extra minutes",
+  "te": "ఎక్స్‌ట్రా మినిట్లు",
+  "hi": "एक्स्ट्रा मिनट",
+  "kn": "ಎಕ್ಸ್‌ಟ್ರಾ ಮಿನಿಟ್‌ಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "கூடுதல் நிமிடங்கள்"
+ },
+ "pp.d.val.extra": {
+  "en": "₹{minute} each",
+  "te": "ఒక్కోదానికి ₹{minute}",
+  "hi": "₹{minute} प्रति मिनट",
+  "kn": "ಒಂದಕ್ಕೆ ₹{minute}",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "ஒவ்வொன்றுக்கும் ₹{minute}"
+ },
+ "pp.d.row.find": {
+  "en": "Find customers searches",
+  "te": "కస్టమర్లను వెతికే సెర్చ్‌లు",
+  "hi": "कस्टमर ढूँढने वाले सर्च",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವ ಸರ್ಚ್‌ಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "Find customers தேடல்கள்"
+ },
+ "pp.d.val.find.payg": {
+  "en": "{n} free a month, then ₹{p} each",
+  "te": "నెలకు {n} ఉచితం, తర్వాత ఒక్కోదానికి ₹{p}",
+  "hi": "महीने में {n} मुफ़्त, फिर ₹{p} प्रति सर्च",
+  "kn": "ತಿಂಗಳಿಗೆ {n} ಉಚಿತ, ನಂತರ ಒಂದಕ್ಕೆ ₹{p}",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "மாதம் {n} இலவசம், பிறகு ஒவ்வொன்றுக்கும் ₹{p}"
+ },
+ "pp.d.val.find.n": {
+  "en": "{n} a month, then ₹{p} each",
+  "te": "నెలకు {n}, తర్వాత ఒక్కోదానికి ₹{p}",
+  "hi": "महीने में {n}, फिर ₹{p} प्रति सर्च",
+  "kn": "ತಿಂಗಳಿಗೆ {n}, ನಂತರ ಒಂದಕ್ಕೆ ₹{p}",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "மாதம் {n}, பிறகு ஒவ்வொன்றுக்கும் ₹{p}"
+ },
+ "pp.d.row.setup": {
+  "en": "Set-up",
+  "te": "సెటప్",
+  "hi": "सेटअप",
+  "kn": "ಸೆಟಪ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "செட்-அப்"
+ },
+ "pp.d.row.number": {
+  "en": "Phone number",
+  "te": "ఫోన్ నంబర్",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "ஃபோன் நம்பர்"
+ },
+ "pp.d.val.number": {
+  "en": "1 included",
+  "te": "1 ఉంటుంది",
+  "hi": "1 शामिल",
+  "kn": "1 ಸೇರಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "1 சேர்க்கப்பட்டுள்ளது"
+ },
+ "pp.d.row.line": {
+  "en": "Call line (one call at a time)",
+  "te": "కాల్ లైన్ (ఒకేసారి ఒక కాల్)",
+  "hi": "कॉल लाइन (एक बार में एक कॉल)",
+  "kn": "ಕಾಲ್ ಲೈನ್ (ಒಮ್ಮೆಗೆ ಒಂದು ಕಾಲ್)",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "Call line (ஒரே நேரத்தில் ஒரு call)"
+ },
+ "pp.d.val.line": {
+  "en": "1 included",
+  "te": "1 ఉంటుంది",
+  "hi": "1 शामिल",
+  "kn": "1 ಸೇರಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "1 சேர்க்கப்பட்டுள்ளது"
+ },
+ "pp.d.row.xnumber": {
+  "en": "Extra phone number",
+  "te": "ఎక్స్‌ట్రా ఫోన్ నంబర్",
+  "hi": "एक्स्ट्रा फ़ोन नंबर",
+  "kn": "ಎಕ್ಸ್‌ಟ್ರಾ ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "கூடுதல் phone number"
+ },
+ "pp.d.val.xnumber": {
+  "en": "₹{number} a month each, with 1 call line",
+  "te": "ఒక్కోదానికి నెలకు ₹{number}, 1 కాల్ లైన్‌తో",
+  "hi": "₹{number} महीना प्रति नंबर, 1 कॉल लाइन के साथ",
+  "kn": "ಒಂದಕ್ಕೆ ತಿಂಗಳಿಗೆ ₹{number}, 1 ಕಾಲ್ ಲೈನ್‌ನೊಂದಿಗೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "ஒவ்வொன்றுக்கும் மாதம் ₹{number}, 1 call line உடன்"
+ },
+ "pp.d.row.xline": {
+  "en": "Extra call line",
+  "te": "ఎక్స్‌ట్రా కాల్ లైన్",
+  "hi": "एक्स्ट्रा कॉल लाइन",
+  "kn": "ಎಕ್ಸ್‌ಟ್ರಾ ಕಾಲ್ ಲೈನ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "கூடுதல் call line"
+ },
+ "pp.d.val.xline": {
+  "en": "₹{line} a month each",
+  "te": "ఒక్కోదానికి నెలకు ₹{line}",
+  "hi": "₹{line} महीना प्रति लाइन",
+  "kn": "ಒಂದಕ್ಕೆ ತಿಂಗಳಿಗೆ ₹{line}",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "ஒவ்வொன்றுக்கும் மாதம் ₹{line}"
+ },
+ "pp.d.row.whatsapp": {
+  "en": "WhatsApp",
+  "te": "వాట్సాప్",
+  "hi": "व्हाट्सऐप",
+  "kn": "ವಾಟ್ಸಾಪ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "வாட்ஸ்அப்"
+ },
+ "pp.d.val.whatsapp": {
+  "en": "At Meta's own price, no markup from us",
+  "te": "Meta ధరకే, మా వైపు నుంచి మార్కప్ లేదు",
+  "hi": "Meta के अपने दाम पर, हमारी तरफ़ से कोई मार्कअप नहीं",
+  "kn": "Meta ಯ ಸ್ವಂತ ಬೆಲೆಗೇ, ನಮ್ಮ ಕಡೆಯಿಂದ ಮಾರ್ಕಪ್ ಇಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "Meta-வின் சொந்த விலையிலேயே, எங்கள் பக்கம் markup இல்லை"
+ },
+ "pp.d.row.langs": {
+  "en": "Languages",
+  "te": "భాషలు",
+  "hi": "भाषाएँ",
+  "kn": "ಭಾಷೆಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "மொழிகள்"
+ },
+ "pp.d.val.langs": {
+  "en": "Telugu, Hindi, Kannada and English",
+  "te": "తెలుగు, హిందీ, కన్నడ, ఇంగ్లీష్",
+  "hi": "तेलुगु, हिंदी, कन्नड़ और अंग्रेज़ी",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "தெலுங்கு, இந்தி, கன்னடம், ஆங்கிலம்"
+ },
+ "pp.d.row.team": {
+  "en": "Team members",
+  "te": "టీమ్ మెంబర్లు",
+  "hi": "टीम मेंबर",
+  "kn": "ಟೀಮ್ ಮೆಂಬರ್‌ಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "டீம் உறுப்பினர்கள்"
+ },
+ "pp.d.row.sources": {
+  "en": "Lead sources and connectors",
+  "te": "లీడ్ సోర్సులు, కనెక్టర్లు",
+  "hi": "लीड सोर्स और कनेक्टर",
+  "kn": "ಲೀಡ್ ಸೋರ್ಸ್‌ಗಳು, ಕನೆಕ್ಟರ್‌ಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "லீட் சோர்ஸ்கள், கனெக்டர்கள்"
+ },
+ "pp.d.val.yes": {
+  "en": "Included",
+  "te": "ఉంటాయి",
+  "hi": "शामिल",
+  "kn": "ಸೇರಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "சேர்க்கப்பட்டுள்ளது"
+ },
+ "pp.d.note": {
+  "en": "All prices are before 18% GST. Paid plans start in February 2027. Early access is free.",
+  "te": "అన్ని ధరలూ 18% GST కాకుండా. పెయిడ్ ప్లాన్లు 2027 ఫిబ్రవరిలో మొదలవుతాయి. ఎర్లీ యాక్సెస్ ఉచితం.",
+  "hi": "सभी दाम 18% GST से पहले के हैं। पेड प्लान फ़रवरी 2027 में शुरू होते हैं। अर्ली एक्सेस मुफ़्त है।",
+  "kn": "ಎಲ್ಲಾ ಬೆಲೆಗಳು 18% GST ಇಲ್ಲದೆ. ಪೇಡ್ ಪ್ಲಾನ್‌ಗಳು 2027 ಫೆಬ್ರವರಿಯಲ್ಲಿ ಶುರುವಾಗುತ್ತವೆ. ಅರ್ಲಿ ಆಕ್ಸೆಸ್ ಉಚಿತ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "எல்லா விலைகளும் 18% GST இல்லாமல். Paid plans 2027 பிப்ரவரியில் தொடங்கும். Early access இலவசம்."
+ },
+ "pp.min.t": {
+  "en": "How minutes are billed",
+  "te": "మినిట్లకు బిల్లింగ్ ఎలా జరుగుతుంది",
+  "hi": "मिनट का बिल कैसे बनता है",
+  "kn": "ಮಿನಿಟ್‌ಗಳ ಬಿಲ್ಲಿಂಗ್ ಹೇಗೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "நிமிடங்களுக்கு billing எப்படி"
+ },
+ "pp.min.1": {
+  "en": "Calls are billed every 30 seconds, rounded up. A 70-second call is three blocks.",
+  "te": "కాల్స్ ప్రతి 30 సెకన్లకు బిల్ అవుతాయి, పైకి రౌండ్ చేస్తాం. 70 సెకన్ల కాల్ అంటే మూడు బ్లాక్‌లు.",
+  "hi": "कॉल का बिल हर 30 सेकंड पर बनता है, ऊपर की ओर पूरा गिनकर। 70 सेकंड की कॉल यानी तीन ब्लॉक।",
+  "kn": "ಕಾಲ್‌ಗಳ ಬಿಲ್ ಪ್ರತಿ 30 ಸೆಕೆಂಡ್‌ಗೆ ಆಗುತ್ತದೆ, ಮೇಲಕ್ಕೆ ರೌಂಡ್ ಮಾಡಲಾಗುತ್ತದೆ. 70 ಸೆಕೆಂಡ್‌ನ ಕಾಲ್ ಎಂದರೆ ಮೂರು ಬ್ಲಾಕ್‌ಗಳು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "Calls ஒவ்வொரு 30 வினாடிக்கும் billing ஆகும், மேல்நோக்கி round செய்யப்படும். 70 வினாடி call என்பது மூன்று block."
+ },
+ "pp.min.2": {
+  "en": "Calls nobody answers cost nothing: no answer, busy or failed.",
+  "te": "ఎవరూ ఎత్తని కాల్స్‌కి ఏమీ చార్జ్ లేదు: ఎత్తకపోయినా, బిజీ అయినా, ఫెయిల్ అయినా.",
+  "hi": "जिस कॉल को कोई न उठाए उसका कोई चार्ज नहीं: न उठे, बिज़ी हो या फ़ेल हो जाए।",
+  "kn": "ಯಾರೂ ಎತ್ತದ ಕಾಲ್‌ಗಳಿಗೆ ಚಾರ್ಜ್ ಇಲ್ಲ: ಎತ್ತದಿದ್ದರೆ, ಬಿಜಿ ಆದರೆ ಅಥವಾ ಫೇಲ್ ಆದರೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "யாரும் எடுக்காத calls-க்கு கட்டணம் இல்லை: எடுக்காவிட்டாலும், busy ஆனாலும், fail ஆனாலும்."
+ },
+ "pp.min.3": {
+  "en": "Calls you receive cost the same as calls we make for you.",
+  "te": "మీకు వచ్చే కాల్స్‌కి, మేము మీ కోసం చేసే కాల్స్‌కి ఒకే ధర.",
+  "hi": "आपके पास आने वाली कॉल और हमारी की हुई कॉल का दाम एक ही है।",
+  "kn": "ನಿಮಗೆ ಬರುವ ಕಾಲ್‌ಗಳಿಗೂ ನಾವು ನಿಮಗಾಗಿ ಮಾಡುವ ಕಾಲ್‌ಗಳಿಗೂ ಒಂದೇ ಬೆಲೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "உங்களுக்கு வரும் calls-க்கும் நாங்கள் செய்யும் calls-க்கும் ஒரே விலை."
+ },
+ "pp.min.4": {
+  "en": "Testing is free: the test call in your browser and the practice screens cost nothing.",
+  "te": "టెస్టింగ్ ఉచితం: బ్రౌజర్‌లో టెస్ట్ కాల్, ప్రాక్టీస్ స్క్రీన్‌లకు ఏమీ చార్జ్ లేదు.",
+  "hi": "टेस्टिंग मुफ़्त है: ब्राउज़र में टेस्ट कॉल और प्रैक्टिस स्क्रीन का कोई चार्ज नहीं।",
+  "kn": "ಟೆಸ್ಟಿಂಗ್ ಉಚಿತ: ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಟೆಸ್ಟ್ ಕಾಲ್, ಪ್ರಾಕ್ಟೀಸ್ ಸ್ಕ್ರೀನ್‌ಗಳಿಗೆ ಚಾರ್ಜ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "Testing இலவசம்: browser-இல் test call, practice screens-க்கு கட்டணம் இல்லை."
+ },
+ "pp.min.5": {
+  "en": "The minutes your plan includes are used first. Then your credits: the credit that ends first is used first.",
+  "te": "ముందుగా మీ ప్లాన్‌లో ఉన్న మినిట్లు వాడతాం. తర్వాత క్రెడిట్స్: ముందు ముగిసే క్రెడిట్ ముందు వాడతాం.",
+  "hi": "पहले आपके प्लान के मिनट इस्तेमाल होते हैं। फिर क्रेडिट: जो क्रेडिट पहले खत्म होता है वह पहले इस्तेमाल होता है।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಪ್ಲಾನ್‌ನ ಮಿನಿಟ್‌ಗಳನ್ನು ಬಳಸುತ್ತೇವೆ. ನಂತರ ಕ್ರೆಡಿಟ್‌ಗಳು: ಮೊದಲು ಮುಗಿಯುವ ಕ್ರೆಡಿಟ್ ಮೊದಲು ಬಳಕೆಯಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "முதலில் உங்கள் plan-இல் உள்ள நிமிடங்கள் பயன்படும். பிறகு credits: முதலில் முடியும் credit முதலில் பயன்படும்."
+ },
+ "pp.min.6": {
+  "en": "18% GST is added when you add credits, not on each call.",
+  "te": "క్రెడిట్స్ యాడ్ చేసేటప్పుడు 18% GST కలుస్తుంది, ప్రతి కాల్‌కి కాదు.",
+  "hi": "क्रेडिट जोड़ते समय 18% GST लगता है, हर कॉल पर नहीं।",
+  "kn": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸುವಾಗ 18% GST ಸೇರುತ್ತದೆ, ಪ್ರತಿ ಕಾಲ್‌ಗೆ ಅಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "Credits சேர்க்கும்போது 18% GST சேரும், ஒவ்வொரு call-க்கும் அல்ல."
+ },
+ "pp.min.7": {
+  "en": "Free start: ₹{trial_email} when you sign up with your e-mail, ₹{trial_phone} once you verify your phone. The free credit lasts 90 days.",
+  "te": "ఉచిత స్టార్ట్: ఈమెయిల్‌తో సైన్ అప్ అయితే ₹{trial_email}, ఫోన్ వెరిఫై చేస్తే ₹{trial_phone}. ఉచిత క్రెడిట్ 90 రోజులు ఉంటుంది.",
+  "hi": "फ़्री स्टार्ट: ई-मेल से साइन अप करने पर ₹{trial_email}, फ़ोन वेरिफ़ाई करने पर ₹{trial_phone}। फ़्री क्रेडिट 90 दिन चलता है।",
+  "kn": "ಉಚಿತ ಸ್ಟಾರ್ಟ್: ಇ-ಮೇಲ್‌ನಿಂದ ಸೈನ್ ಅಪ್ ಮಾಡಿದರೆ ₹{trial_email}, ಫೋನ್ ವೆರಿಫೈ ಮಾಡಿದರೆ ₹{trial_phone}. ಉಚಿತ ಕ್ರೆಡಿಟ್ 90 ದಿನ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "இலவச தொடக்கம்: e-mail-இல் sign up செய்தால் ₹{trial_email}, phone verify செய்தால் ₹{trial_phone}. இலவச credit 90 நாட்கள் இருக்கும்."
+ },
+ "pp.min.refund": {
+  "en": "Refunds are explained on the Refund policy page.",
+  "te": "రీఫండ్ల వివరాలు రీఫండ్ పాలసీ పేజీలో ఉన్నాయి.",
+  "hi": "रिफ़ंड की जानकारी रिफ़ंड पॉलिसी पेज पर है।",
+  "kn": "ರೀಫಂಡ್ ವಿವರಗಳು ರೀಫಂಡ್ ಪಾಲಿಸಿ ಪುಟದಲ್ಲಿವೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "Refund விவரங்கள் Refund policy பக்கத்தில் உள்ளன."
+ },
+ "price.faq.7.q": {
+  "en": "What if nobody picks up?",
+  "te": "ఎవరూ ఫోన్ ఎత్తకపోతే?",
+  "hi": "अगर कोई फ़ोन न उठाए तो?",
+  "kn": "ಯಾರೂ ಫೋನ್ ಎತ್ತದಿದ್ದರೆ?",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "யாரும் phone எடுக்காவிட்டால்?"
+ },
+ "price.faq.7.a": {
+  "en": "No minutes are used and no money is taken. A call that nobody answers, a busy line or a failed call costs you nothing.",
+  "te": "మినిట్లు పోవు, డబ్బు కట్ కాదు. ఎవరూ ఎత్తని కాల్, బిజీ లైన్, ఫెయిల్ అయిన కాల్‌కి మీకు ఏమీ ఖర్చు కాదు.",
+  "hi": "कोई मिनट नहीं कटता और कोई पैसा नहीं लगता। जिस कॉल को कोई न उठाए, बिज़ी लाइन या फ़ेल हुई कॉल पर आपका कुछ खर्च नहीं होता।",
+  "kn": "ಮಿನಿಟ್ ಹೋಗುವುದಿಲ್ಲ, ಹಣ ಕಟ್ ಆಗುವುದಿಲ್ಲ. ಯಾರೂ ಎತ್ತದ ಕಾಲ್, ಬಿಜಿ ಲೈನ್ ಅಥವಾ ಫೇಲ್ ಆದ ಕಾಲ್‌ಗೆ ನಿಮಗೆ ಏನೂ ಖರ್ಚಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "minutes போகாது, பணம் எடுக்கப்படாது. யாரும் எடுக்காத call, busy line, fail ஆன call-க்கு உங்களுக்கு எதுவும் செலவாகாது."
+ },
+ "price.faq.8.q": {
+  "en": "What is a call line?",
+  "te": "కాల్ లైన్ అంటే ఏమిటి?",
+  "hi": "कॉल लाइन क्या है?",
+  "kn": "ಕಾಲ್ ಲೈನ್ ಎಂದರೇನು?",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "Call line என்றால் என்ன?"
+ },
+ "price.faq.8.a": {
+  "en": "A call line is one call at a time. Every plan has 1. If many customers call together, extra call lines (₹{line} a month each) let more calls happen at once.",
+  "te": "కాల్ లైన్ అంటే ఒకేసారి ఒక కాల్. ప్రతి ప్లాన్‌లో 1 ఉంటుంది. చాలామంది కస్టమర్లు ఒకేసారి చేస్తే, ఎక్స్‌ట్రా కాల్ లైన్లతో (ఒక్కోదానికి నెలకు ₹{line}) ఎక్కువ కాల్స్ ఒకేసారి నడుస్తాయి.",
+  "hi": "कॉल लाइन यानी एक बार में एक कॉल। हर प्लान में 1 है। बहुत से ग्राहक एक साथ कॉल करें तो एक्स्ट्रा कॉल लाइन (₹{line} महीना प्रति लाइन) से ज़्यादा कॉल एक साथ चल सकती हैं।",
+  "kn": "ಕಾಲ್ ಲೈನ್ ಎಂದರೆ ಒಮ್ಮೆಗೆ ಒಂದು ಕಾಲ್. ಪ್ರತಿ ಪ್ಲಾನ್‌ನಲ್ಲಿ 1 ಇದೆ. ಹಲವು ಗ್ರಾಹಕರು ಒಟ್ಟಿಗೆ ಕರೆ ಮಾಡಿದರೆ, ಎಕ್ಸ್‌ಟ್ರಾ ಕಾಲ್ ಲೈನ್‌ಗಳಿಂದ (ಒಂದಕ್ಕೆ ತಿಂಗಳಿಗೆ ₹{line}) ಹೆಚ್ಚು ಕಾಲ್‌ಗಳು ಒಟ್ಟಿಗೆ ನಡೆಯುತ್ತವೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed",
+   "ta": "draft"
+  },
+  "ta": "Call line என்பது ஒரே நேரத்தில் ஒரு call. ஒவ்வொரு plan-இலும் 1 உண்டு. பல customers ஒரே நேரத்தில் அழைத்தால், கூடுதல் call lines (ஒவ்வொன்றுக்கும் மாதம் ₹{line}) மூலம் அதிக calls ஒரே நேரத்தில் நடக்கும்."
  }
 }
