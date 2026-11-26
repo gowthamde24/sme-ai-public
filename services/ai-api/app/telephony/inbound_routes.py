@@ -257,7 +257,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
 
     # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it; on an outbound goal call a sentence that PROMISES an action is replaced by a true line, and the tone's particles are taken out
     stored = stored or Stored(training=training)
-    base_tts = FallbackTts(bv.config, bv.factory, chosen=dict(stored.choices), gender=stored.gender, pronunciations=default_pronunciations())   # the workspace's chosen voice and gender (before 21 Nov 2026 a call always spoke the default woman's voice)
+    base_tts = FallbackTts(bv.config, bv.factory, chosen=dict(stored.choices), gender=stored.gender, pronunciations=default_pronunciations(), strict=True)   # the workspace's chosen voice and gender (before 21 Nov 2026 a call always spoke the default woman's voice)
     base_tts.pace = clamp_speed(stored.speed)
     base_tts.style = tone_of(stored)[0]   # the speaking style's real voice settings (pitch, loudness, volume ...; friendly sends nothing extra)
     tts: Any = GuardedTts(base_tts, (training or {}).get("never_say") or [],
@@ -295,7 +295,7 @@ class Prepared:
 def _listening_voice(bv: Any, stored: Stored) -> Any:
     """A SEPARATE voice object for the assistant's small listening sounds (app/telephony/backchannel.py): the call's own voice and speed, so it sounds like her, and it never shares a turn with the voice that talks. None when it cannot be built (no listening sounds, never a failed call)."""
     try:
-        tts = FallbackTts(bv.config, bv.factory, chosen=dict(stored.choices), gender=stored.gender, pronunciations=default_pronunciations())
+        tts = FallbackTts(bv.config, bv.factory, chosen=dict(stored.choices), gender=stored.gender, pronunciations=default_pronunciations(), strict=True)
         tts.pace = clamp_speed(stored.speed)
         return tts
     except Exception:  # noqa: BLE001
