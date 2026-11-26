@@ -316,8 +316,8 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    'name = name', $$delete from public.ai_employees where id = %2$L$$, false),
   ('ai_employee_voices',
    $$with e as (insert into public.ai_employees (id, tenant_id, name, role_code, created_by) values (gen_random_uuid(), %1$L, 'Synthetic ' || left(%2$L, 6), 'custom', %5$L) returning id)
-     insert into public.ai_employee_voices (tenant_id, employee_id, language, voice_code) select %1$L, e.id, 'en', 'en-synthetic' from e$$,
-   'voice_code = voice_code', $$delete from public.ai_employee_voices where tenant_id = %1$L and voice_code = 'en-synthetic'$$, false),
+     insert into public.ai_employee_voices (id, tenant_id, employee_id, language, voice_code) select %2$L, %1$L, e.id, 'en', 'en-synthetic' from e$$,
+   'voice_code = voice_code', $$delete from public.ai_employee_voices where id = %2$L$$, false),
   ('sell_lists',
    $$insert into public.sell_lists (id, tenant_id, name, kind, created_by) values (%2$L, %1$L, 'Synthetic list ' || left(%2$L, 8), 'other', %5$L)$$,
    'name = name', $$delete from public.sell_lists where id = %2$L$$, false),

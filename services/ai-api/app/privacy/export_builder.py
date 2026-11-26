@@ -69,7 +69,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
 # the tables whose primary key is the workspace id itself (no `id` column)
 ORDER_BY_TENANT = frozenset({"lead_finder_settings", "tenant_agent_settings", "tenant_data_policy", "outbox_settings", "store_settings", "scheduler_settings", "business_profile", "institution_profiles", "voice_settings", "billing_subscriptions", "billing_topup_settings", "assistant_settings", "outreach_policy"})
 # the tables whose key is not `id`: the column that is unique within one workspace (job CV)
-ORDER_BY_OTHER = {"ai_employee_voices": "employee_id", "lead_source_costs": "source", "voice_choices": "language", "voice_note_usage": "ref_id", "billing_events": "event_id", "billing_usage_events": "ref_id", "billing_notices": "at", "billing_lapse_reminders": "day", "billing_pending_reminders": "day", "billing_trial_reminders": "day"}
+ORDER_BY_OTHER = {"lead_source_costs": "source", "voice_choices": "language", "voice_note_usage": "ref_id", "billing_events": "event_id", "billing_usage_events": "ref_id", "billing_notices": "at", "billing_lapse_reminders": "day", "billing_pending_reminders": "day", "billing_trial_reminders": "day"}
 
 
 @dataclass(frozen=True)
