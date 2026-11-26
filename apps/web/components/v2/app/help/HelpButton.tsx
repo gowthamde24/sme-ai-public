@@ -6,6 +6,7 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import { OrbMark } from "@/components/v2/app/mark/OrbMark";
 
+import { topIconButton } from "../frame-style";
 import { word, type Labels } from "../labels";
 import { useScreenTip } from "./help-store";
 
@@ -44,7 +45,7 @@ export function HelpButton({ base, labels, legal = null }: { base: string; label
         aria-label={label}
         title={label}
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-edge bg-surface text-ink transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line aria-expanded:border-brand-edge aria-expanded:bg-brand-bg"
+        className={topIconButton}
       >
         <CircleHelp className="size-5 text-brand-text" aria-hidden="true" />
       </button>

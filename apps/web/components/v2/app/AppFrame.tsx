@@ -19,6 +19,7 @@ import { Avatar } from "./Avatar";
 import { FRAME_LOADING, type FrameData } from "./contract";
 import { GroupTabs } from "./GroupTabs";
 import { lettersOf } from "./letters";
+import { quietSelect, topIconButton } from "./frame-style";
 import { UsageBanner } from "./UsageBanner";
 import { LabelsProvider } from "./robust/labels-context";
 import { RobustShell } from "./robust/RobustShell";
@@ -60,10 +61,10 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
         <div className="flex min-w-0 flex-1 flex-col">
           <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small} palette={paletteNames(lang)} still={still} frame={frame} legalLinks={{ contact: { href: sitePath(lang, { kind: "page", page: "contact" }), label: legalT(lang)("legal.contact.name") }, privacy: { href: "/privacy", label: legalT(lang)("legal.privacy.name") }, terms: { href: "/terms", label: legalT(lang)("legal.terms.name") }, deletion: { href: "/data-deletion", label: legalT(lang)("legal.deletion.name") } }}>
             <span lang={lang}>
-              <LangSelect lang={lang} label={t("lang.label")} />
+              <LangSelect lang={lang} label={t("lang.label")} className={quietSelect} />
             </span>
             <span lang={lang}>
-              <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
+              <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} className={topIconButton} />
             </span>
           </TopBar>
           <RobustShell labels={labels} />

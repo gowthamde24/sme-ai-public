@@ -12,7 +12,7 @@ import { THEME_COOKIE, serializePreference, type Theme } from "@/i18n/preference
  * the button starts with the light-mode label and corrects itself after mount (an update, not a hydration mismatch).
  * A click saves the functional cookie `sme_theme` and flips data-theme on every v2 wrapper and on <html> at once; no reload.
  */
-export function ThemeButton({ initial, toDark, toLight }: { initial?: Theme; toDark: string; toLight: string }) {
+export function ThemeButton({ initial, toDark, toLight, className }: { initial?: Theme; toDark: string; toLight: string; /** The app's top bar: its own classes in place of the bordered control (a quiet round icon button). */ className?: string }) {
   const systemDark = useMedia("(prefers-color-scheme: dark)"); // false on the server, the real value after mount
   const [chosen, setChosen] = useState<Theme | undefined>(initial);
   const mode: Theme = chosen ?? (systemDark ? "dark" : "light");
@@ -28,7 +28,7 @@ export function ThemeButton({ initial, toDark, toLight }: { initial?: Theme; toD
         document.documentElement.setAttribute("data-theme", next);
       }}
       aria-label={mode === "dark" ? toLight : toDark}
-      className={`${control} size-11 shrink-0`}
+      className={className ?? `${control} size-11 shrink-0`}
     >
       {mode === "dark" ? <Sun className="size-5" aria-hidden="true" /> : <Moon className="size-5" aria-hidden="true" />}
     </button>

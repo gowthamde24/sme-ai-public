@@ -40,7 +40,7 @@ export function MoreSheet({ current, memberships, email, signOut, accountMark, l
                 <p className="truncate font-display text-xl font-bold">{word(labels, "frame.more", "More")}</p>
                 <p className="truncate text-sm text-muted">{current.name}</p>
               </div>
-              <button ref={closeRef} type="button" onClick={onClose} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-edge bg-surface" aria-label={word(labels, "frame.close", "Close the menu")}>
+              <button ref={closeRef} type="button" onClick={onClose} data-part="more-close" className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-ink transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line" aria-label={word(labels, "frame.close", "Close the menu")}>
                 <SpriteIcon id="x" />
               </button>
             </div>

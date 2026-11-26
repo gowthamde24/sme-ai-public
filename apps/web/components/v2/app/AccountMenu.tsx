@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 import { Disclosure } from "./Disclosure";
 import { Appearance } from "./LazyAppearance";
+import { topIconButton } from "./frame-style";
 import { word, type Labels } from "./labels";
 
 const rowLink = "flex min-h-11 w-full items-center rounded-lg px-3 text-left text-base text-ink hover:bg-surface-2";
@@ -17,7 +18,7 @@ export function AccountMenu({ email, role, signOut, labels, collapsed = false, s
   const who = email ?? word(labels, "frame.account", "Your account");
   return (
     <Disclosure
-      summaryClassName={down ? "inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-edge bg-surface text-ink hover:bg-surface-2" : `flex min-h-12 w-full min-w-0 items-center gap-3 rounded-lg border border-line px-2 text-ink hover:bg-surface-2 ${collapsed ? "justify-center border-transparent px-0" : ""}`}
+      summaryClassName={down ? topIconButton : `flex min-h-12 w-full min-w-0 items-center gap-3 rounded-lg border border-line px-2 text-ink hover:bg-surface-2 ${collapsed ? "justify-center border-transparent px-0" : ""}`}
       panelClassName={`absolute z-50 rounded-xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)] ${down ? "right-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)]" : `bottom-full mb-1 ${collapsed ? "left-0 w-60" : "inset-x-0"}`}`}
       summary={
         <>

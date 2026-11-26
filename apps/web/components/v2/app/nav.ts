@@ -193,7 +193,7 @@ export const MENU_GROUPS: readonly { id: MenuGroupId; label: string }[] = [
   { id: "setup", label: "Setup" },
 ];
 export const MENU: readonly MenuEntry[] = [
-  { id: "today", group: "overview", label: "Today", icon: "today", members: ["today", "jobs"], bar: true, count: "today" },
+  { id: "today", group: "overview", label: "Today", icon: "today", members: ["today", "jobs", "employees"], bar: true, count: "today" },
   // Reports sits under Today (owner's review, 5 Nov)
   { id: "reports", group: "overview", label: "Reports", icon: "report", members: ["report", "leadreport"] },
   { id: "everything", group: "overview", label: "Everything it did", icon: "report", members: ["everything"] },
