@@ -70,22 +70,28 @@ class AutoReplyRunner:
             return item
         return {**item, "facts": [*(item.get("facts") or []), *({"kind": "notes", "text": line} for line in lines)]}
 
-    def _with_employee(self, token: str, item: dict[str, Any]) -> dict[str, Any]:
-        """EMPLOYEES (26 Nov 2026): the employee that answers WhatsApp: its words go into the prompt (never above the rules), its never-say words are checked on the reply. An unreadable employee leaves the item as it was."""
+    def _with_employee(self, token: str, item: dict[str, Any]) -> tuple[dict[str, Any], bool]:
+        """EMPLOYEES (26 Nov 2026): (the item with the employee's words, whether somebody answers WhatsApp). WhatsApp is OPTIONAL: it is a responsibility an employee has when the owner ticks it. When no employee that is on has it, nothing is answered
+        (False). The employee's words go into the prompt (never above the rules), its never-say words are checked on the reply. An unreadable employee leaves the item as it was (answered as before)."""
         if not self._employees_on or not hasattr(self._repository, "employee"):
-            return item
+            return item, True
         try:
             employee = self._repository.employee(token, uuid.UUID(str(item["tenant_id"])))
         except (KeyError, ValueError, RepositoryError):
-            return item
+            return item, True
         if not employee:
-            return item
+            return item, False
         from app.employees import apply as employees_apply
 
         name = str(employee.get("name") or "").strip()
-        return {**item, "employee": employees_apply.block(employee, channel="whatsapp"), "never_say": [str(w) for w in employee.get("never_say") or []], **({"assistant_name": name} if name and not employees_apply.is_default(employee) else {})}
+        return {**item, "employee": employees_apply.block(employee, channel="whatsapp"), "never_say": [str(w) for w in employee.get("never_say") or []], **({"assistant_name": name} if name and not employees_apply.is_default(employee) else {})}, True
 
     def _one(self, token: str, enquiry: uuid.UUID, item: dict[str, Any], result: Result) -> None:
+        item, answered_here = self._with_employee(token, item)
+        if not answered_here:   # no AI employee replies on WhatsApp: the message is left for the owner, nothing is sent or drafted
+            self._repository.skip(token, enquiry, "no AI employee replies on WhatsApp")
+            result.skipped += 1
+            return
         # a message about booking a visit is answered by code (free times, the number, reschedule, cancel): the database decides, the words are fixed
         booked = self._booking.handle(token, item) if self._booking is not None else None
         if booked is not None:
@@ -98,7 +104,7 @@ class AutoReplyRunner:
             else:
                 result.answered += 1
             return
-        item = self._with_employee(token, self._with_notes(token, item))
+        item = self._with_notes(token, item)
         draft = self._drafter.draft(item)
         if draft is None:
             self._repository.skip(token, enquiry, "model unavailable or unusable")

@@ -47,6 +47,9 @@ class FakeEmployees:
     def phone(self, token: str, tenant_id: uuid.UUID, employee_id: uuid.UUID, phone_number_id: uuid.UUID | None) -> dict[str, Any]:
         return self._go("phone", phone_number_id, {"id": str(employee_id)})
 
+    def channels(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._go("channels", None, {"phone": True, "whatsapp": False, "web_chat": False, "whatsapp_connection": {"status": "none", "connected": False, "next_step": "connect_whatsapp"}})
+
     def activity(self, token: str, tenant_id: uuid.UUID, employee_id: uuid.UUID, limit: int, before: str | None) -> dict[str, Any]:
         return self._go("activity", (limit, before), {"calls": []})
 
@@ -164,3 +167,12 @@ def test_the_preview_speaks_the_employees_own_voice_and_never_another_one(w: tup
     voice.fail = True
     down = client.post(f"{URL}/{EID}/preview", json={"language": "te", "text": "Hello there"}, headers=auth("a_owner"))
     assert down.status_code == 503 and down.json()["error"]["code"] == "voice_unavailable"
+
+
+def test_the_channels_are_readable_by_every_member_and_404_while_the_flag_is_off(w: tuple[Any, FakeEmployees]) -> None:
+    client, _ = w
+    for user in ("a_viewer", "a_sales", "a_owner"):
+        r = client.get(f"/v1/tenants/{TENANT_A.id}/channels", headers=auth(user))
+        assert r.status_code == 200 and r.json()["whatsapp"] is False and r.json()["whatsapp_connection"]["next_step"] == "connect_whatsapp"
+    off, _ = make_client()
+    assert off.get(f"/v1/tenants/{TENANT_A.id}/channels", headers=auth("a_owner")).status_code == 404

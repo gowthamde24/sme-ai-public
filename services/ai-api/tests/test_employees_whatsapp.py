@@ -93,3 +93,25 @@ def test_a_task_that_names_no_employee_is_called_as_before() -> None:
 
     dialer, api = _task_dialer(None, 10)
     assert ask(dialer).simulated is False and api.placed
+
+
+# ---- WhatsApp is optional (26 Nov 2026): nobody that is on has the responsibility -> nothing is answered or drafted
+class RepoNobody(FakeRepo):
+    def employee(self, token: str, tenant_id: Any) -> dict[str, Any] | None:
+        return None
+
+
+def test_when_no_employee_replies_on_whatsapp_the_message_is_left_for_the_owner() -> None:
+    repo = RepoNobody([tenant_item("Do you have silk?")])
+    drafter = FakeDrafter(Draft("Yes, we do.", "en", "Yes.", 0.9, False))
+    result = AutoReplyRunner(repo, drafter, employees_on=True).run("tok")
+    assert result.skipped == 1 and result.answered == 0 and not repo.submitted and not drafter.contexts
+    assert repo.skipped and "no AI employee replies on WhatsApp" in repo.skipped[0][1]
+
+
+def test_the_channel_is_a_responsibility_an_employee_has() -> None:
+    from app.employees import apply as ea
+
+    assert ea.has_channel({"responsibilities": ["channel_whatsapp", "follow_up"]}, "whatsapp") and not ea.has_channel({"responsibilities": ["channel_phone"]}, "whatsapp")
+    assert not ea.has_channel(None, "phone")
+    assert "reply on WhatsApp" in ea.block({"name": "Priya", "responsibilities": ["channel_whatsapp"], "persona_in": "employee"})

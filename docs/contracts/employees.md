@@ -21,6 +21,13 @@ A **workspace has one DEFAULT employee** (today's business assistant; its person
 * **The default employee** (`persona_in: "my_assistant"`): `name` is the assistant's name; `voices` are the workspace's voices; only `name`, `role_code`, `role_title`, `responsibilities`, `extra_instructions` and `never_say` are edited here; any other field answers 409 `settings_elsewhere` (the screen sends the owner to My assistant). Its voice and persona cannot be set per employee.
 * **Hours** are days 1 (Monday) to 7 (Sunday) and minutes of the day in India time, never wider than 10:00 to 21:00 (422/`hours_wider` otherwise): they only NARROW the legal calling window. Outside them an inbound line is answered by the default employee.
 
+## Channels are optional (owner rule, 26 Nov 2026; migration 992780)
+WhatsApp, the phone and website chat are CHANNELS: responsibilities `channel_phone` (answers phone calls), `channel_whatsapp` (replies on WhatsApp), `channel_web_chat` (replies to website chat) that an AI employee has only when the owner ticks them. A business that never uses WhatsApp never sees it.
+* `GET /v1/tenants/{t}/channels` (any member; also `channels` inside `GET /employees`) -> `{phone, whatsapp, web_chat: boolean, whatsapp_connection: {status: none|pending|active|disabled, connected, next_step: connect_whatsapp | activate_whatsapp | null}}`. A channel is on ONLY when at least one employee that is `on` has it. While `whatsapp` is false the web hides the WhatsApp setup, template tasks and Needs-you items about WhatsApp.
+* Every Employee has `channels: {phone, whatsapp, web_chat}` (its own responsibilities) and `needs: [{channel: "whatsapp", step: "connect_whatsapp" | "activate_whatsapp"}]` when it has WhatsApp but the number is not active: turning the responsibility on never fails, it answers with the next step. Turning it off (a PUT without `channel_whatsapp`, or pausing the employee) pauses the channel for it; history is kept.
+* A NEW workspace's default employee answers the phone only (`channel_phone`). The workspaces that exist today keep what they have: their default employee has phone and WhatsApp.
+* The WhatsApp auto-reply answers a message only when an employee that is on has `channel_whatsapp` (the default employee first); otherwise the message is left for the owner (nothing drafted, nothing sent). The reply is written by that employee (its block, name and never-say words).
+
 ## Closed refusals (`error.code`, also `error.reason`)
 409 `employee_limit` (the plan's number of employees), `name_taken` (case-insensitive, among live employees), `last_default`, `settings_elsewhere`; 422 `hours_wider`, `validation_error` (shape or value); 403/404 as usual.
 

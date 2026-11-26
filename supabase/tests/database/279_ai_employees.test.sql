@@ -99,5 +99,21 @@ select pg_temp.at('a_owner', format($q$select public.employee_status_set(%L, %L,
 select is(pg_temp.at('a_viewer', format($q$select (public.task_employee(%L, %L))::text$q$, tests.tid('a'), tests.rid('t1'))), null, 'I7: a paused employee does not do the task: the default does (no employee returned)');
 select is(pg_temp.at('a_owner', format($q$select ((public.employee_assign(%L, 'task', %L, null)) ->> 'employee_id')$q$, tests.tid('a'), tests.rid('t1'))), null, 'I8: the assignment can be taken away');
 
+-- J. channels are optional and derived (migration 992780): WhatsApp is a responsibility, off until the owner ticks it
+select is(pg_temp.at('a_viewer', format($q$select (public.workspace_channels(%L)) ->> 'whatsapp'$q$, tests.tid('a'))), 'false', 'J1: a workspace whose employees do not reply on WhatsApp has the channel off (nothing to nag about)');
+select is(pg_temp.at('a_viewer', format($q$select (public.workspace_channels(%L)) ->> 'phone'$q$, tests.tid('a'))), 'true', 'J2: the default employee of a new workspace answers the phone');
+select pg_temp.at('a_owner', format($q$select public.employee_status_set(%L, %L, 'on')::text$q$, tests.tid('a'), tests.rid('e2')));
+select is(pg_temp.at('a_owner', format($q$select ((public.employee_update(%L, %L, '{"responsibilities":["payment_reminder","channel_whatsapp"]}')) -> 'needs' -> 0 ->> 'step')$q$, tests.tid('a'), tests.rid('e2'))), 'connect_whatsapp', 'J3: turning WhatsApp on without a connection does not fail: it says the next step');
+select is(pg_temp.at('a_viewer', format($q$select (public.workspace_channels(%L)) ->> 'whatsapp'$q$, tests.tid('a'))), 'true', 'J4: the channel is on for the workspace as soon as one employee that is on has it');
+select is(pg_temp.at('a_viewer', format($q$select ((public.workspace_channels(%L)) -> 'whatsapp_connection') ->> 'next_step'$q$, tests.tid('a'))), 'connect_whatsapp', 'J5: and the connection says what is missing');
+select is(pg_temp.w(format($q$select (public.employee_for_channel(%L, 'whatsapp')) ->> 'name'$q$, tests.tid('a'))), 'Ravi', 'J6: the employee that answers WhatsApp is the one that has the responsibility');
+insert into integrations.whatsapp_accounts (tenant_id, waba_id, phone_number_id, coexistence, token_ref, status, created_by) values (tests.tid('a'), '1234567', '7654321', false, 'ref', 'active', tests.uid('a_owner'));
+select is(pg_temp.at('a_viewer', format($q$select ((public.workspace_channels(%L)) -> 'whatsapp_connection') ->> 'connected'$q$, tests.tid('a'))), 'true', 'J7: a connected number is connected');
+select is(pg_temp.at('a_viewer', format($q$select jsonb_array_length((public.employee_get(%L, %L)) -> 'needs')::text$q$, tests.tid('a'), tests.rid('e2'))), '0', 'J8: and nothing is needed any more');
+select pg_temp.at('a_owner', format($q$select public.employee_status_set(%L, %L, 'paused')::text$q$, tests.tid('a'), tests.rid('e2')));
+select is(pg_temp.at('a_viewer', format($q$select (public.workspace_channels(%L)) ->> 'whatsapp'$q$, tests.tid('a'))), 'false', 'J9: pausing the employee pauses the channel (its history stays)');
+select is(pg_temp.w(format($q$select (public.employee_for_channel(%L, 'whatsapp'))::text$q$, tests.tid('a'))), null, 'J10: nobody answers WhatsApp then: the channel does nothing');
+select is(pg_temp.at('a_viewer', format($q$select (public.employee_for_channel(%L, 'whatsapp'))::text$q$, tests.tid('a'))), 'ERR:42501', 'J11: only the scheduler asks who answers a channel');
+
 select * from finish();
 rollback;

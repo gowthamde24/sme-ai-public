@@ -17,6 +17,7 @@ ROLE_WORDS = {
 JOB_WORDS = {
     "enquiry_reply": "answer enquiries", "faq_answers": "answer common questions", "visit_booking": "book visits", "quote_chase": "follow up on quotes", "lead_qualify": "ask a new lead what they need",
     "follow_up": "follow up with customers", "review_request": "ask happy customers for a review", "payment_reminder": "remind customers about payments", "appointment_reminder": "remind customers of appointments",
+    "channel_phone": "answer phone calls", "channel_whatsapp": "reply on WhatsApp", "channel_web_chat": "reply to website chat",
 }
 ASK_WORDS = {
     "send_message": "send a message", "make_call": "call someone", "give_discount": "give a discount", "promise_date": "promise a date or a delivery time",
@@ -85,6 +86,11 @@ def apply(emp: Mapping[str, Any] | None, sound_row: dict[str, Any] | None, train
         train["greeting"] = {**base, **{str(k): str(v) for k, v in opening.items()}}   # (the AI disclosure is still added when it is missing)
     name = str(emp.get("name") or "").strip() or assistant
     return row, train, name
+
+
+def has_channel(emp: Mapping[str, Any] | None, channel: str) -> bool:
+    """Does this employee have the channel (`phone`, `whatsapp`, `web_chat`) as a responsibility? Channels are optional: an employee without it never works on it."""
+    return emp is not None and f"channel_{channel}" in (emp.get("responsibilities") or [])
 
 
 def within_hours(emp: Mapping[str, Any] | None, weekday: int, minute_of_day: int) -> bool:   # weekday 1 = Monday ... 7 = Sunday

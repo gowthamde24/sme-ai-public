@@ -128,6 +128,7 @@ from app.education.repository import PostgrestEducationRepository
 from app.education.routes import router as education_router
 from app.employees.lookup import task_employee_lookup
 from app.employees.repository import EmployeeRepository
+from app.employees.routes import channels_router
 from app.employees.routes import router as employees_router
 from app.enhance.routes import router as enhance_router
 from app.enquiries import repository as enquiries_repo
@@ -1713,6 +1714,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(numbers_router)
     app.include_router(sell_lists_router)
     app.include_router(employees_router)
+    app.include_router(channels_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_context_router)

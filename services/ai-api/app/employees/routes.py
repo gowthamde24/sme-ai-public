@@ -26,6 +26,7 @@ from app.plain_label import plain
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/employees", tags=["employees"])
+channels_router = APIRouter(prefix="/v1/tenants/{tenant_id}/channels", tags=["employees"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 OwnerAdminStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, strong=True))]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
@@ -138,6 +139,12 @@ def _run(fn: Any, *args: Any) -> Any:
 
 def _json(body: Any, status: int = 200) -> JSONResponse:
     return JSONResponse(body, status_code=status, headers={"Cache-Control": "no-store"})
+
+
+@channels_router.get("")
+def my_channels(ctx: AnyMember, runtime: RuntimeDep) -> JSONResponse:
+    """Which channels the business uses, DERIVED from its AI employees: `{phone, whatsapp, web_chat, whatsapp_connection: {status, connected, next_step}}`. A channel is on only when an employee that is on has it as a responsibility: the web hides the WhatsApp setup, template tasks and Needs-you items while `whatsapp` is false."""
+    return _json(_run(_repo(runtime).channels, ctx.principal.token, ctx.tenant.id))
 
 
 @router.get("")
