@@ -37,7 +37,7 @@ KEEP_FIRST = {"en-janvi": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8"}   # the Englis
 # the Bulbul v4 Flash voice behind each (language, gender) for an outage. Bulbul v3 is never used (owner decision 28 Oct): Malayalam and Tamil women have no v4 voice of their own, so a Hindi v4 voice of the same gender backs them up (an approximate outage fallback; verify when Sarvam credits allow)
 FALLBACK = {
     ("te", "female"): ("bulbul:v4-flash", "kavitha_te_conversation"), ("te", "male"): ("bulbul:v4-flash", "tarun_te_narration"),
-    ("en", "female"): ("bulbul:v4-flash", "shalini_en_customer"), ("en", "male"): ("bulbul:v4-flash", "shubh_enhi_customer"),
+    ("en", "female"): ("bulbul:v4-flash", "shalini_en_customer"), ("en", "male"): ("bulbul:v4-flash", "dev_en_conversational"),
     ("hi", "female"): ("bulbul:v4-flash", "kavya_hi_conversational"), ("hi", "male"): ("bulbul:v4-flash", "kabir_hi_conversational"),
     ("kn", "female"): ("bulbul:v4-flash", "chaitra_kn_conversation"), ("kn", "male"): ("bulbul:v4-flash", "chetan_kn_conversation"),
     ("ta", "female"): ("bulbul:v4-flash", "roopa_hi_conversational"), ("ta", "male"): ("bulbul:v4-flash", "gokul_ta_narration"),

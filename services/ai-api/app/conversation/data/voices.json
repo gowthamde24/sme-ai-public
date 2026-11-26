@@ -472,9 +472,9 @@
    "fallback": {
     "engine": "sarvam_v4",
     "model": "bulbul:v4-flash",
-    "voice": "shubh_enhi_customer",
+    "voice": "dev_en_conversational",
     "gender": "male",
-    "label": "shubh"
+    "label": "dev"
    },
    "provider": "cartesia",
    "listed": true,
@@ -503,9 +503,9 @@
    "fallback": {
     "engine": "sarvam_v4",
     "model": "bulbul:v4-flash",
-    "voice": "shubh_enhi_customer",
+    "voice": "dev_en_conversational",
     "gender": "male",
-    "label": "shubh"
+    "label": "dev"
    },
    "provider": "cartesia",
    "listed": true
@@ -533,9 +533,9 @@
    "fallback": {
     "engine": "sarvam_v4",
     "model": "bulbul:v4-flash",
-    "voice": "shubh_enhi_customer",
+    "voice": "dev_en_conversational",
     "gender": "male",
-    "label": "shubh"
+    "label": "dev"
    },
    "provider": "cartesia",
    "listed": true
@@ -562,9 +562,9 @@
    "fallback": {
     "engine": "sarvam_v4",
     "model": "bulbul:v4-flash",
-    "voice": "shubh_enhi_customer",
+    "voice": "dev_en_conversational",
     "gender": "male",
-    "label": "shubh"
+    "label": "dev"
    },
    "provider": "cartesia",
    "listed": true
@@ -592,9 +592,9 @@
    "fallback": {
     "engine": "sarvam_v4",
     "model": "bulbul:v4-flash",
-    "voice": "shubh_enhi_customer",
+    "voice": "dev_en_conversational",
     "gender": "male",
-    "label": "shubh"
+    "label": "dev"
    },
    "provider": "cartesia",
    "listed": true
