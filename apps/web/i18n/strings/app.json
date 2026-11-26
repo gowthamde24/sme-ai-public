@@ -138698,5 +138698,467 @@
    "hi": "reviewed",
    "kn": "reviewed"
   }
+ },
+ "oc.live": {
+  "en": "Talking now",
+  "te": "ఇప్పుడు మాట్లాడుతోంది",
+  "hi": "अभी बात चल रही है",
+  "kn": "ಈಗ ಮಾತಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused": {
+  "en": "The call was not placed",
+  "te": "కాల్ చేయలేదు",
+  "hi": "कॉल नहीं की गई",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_blocked_caller": {
+  "en": "Blocked caller",
+  "te": "బ్లాక్ చేసిన కాలర్",
+  "hi": "ब्लॉक किया हुआ कॉलर",
+  "kn": "ಬ್ಲಾಕ್ ಮಾಡಿದ ಕಾಲರ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_outside_window": {
+  "en": "Not called: outside calling hours",
+  "te": "కాల్ చేయలేదు: కాలింగ్ టైమ్ కాదు",
+  "hi": "कॉल नहीं की गई: कॉलिंग टाइम नहीं है",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಕಾಲಿಂಗ್ ಟೈಮ್ ಅಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_outside_hours": {
+  "en": "Not called: outside calling hours",
+  "te": "కాల్ చేయలేదు: కాలింగ్ టైమ్ కాదు",
+  "hi": "कॉल नहीं की गई: कॉलिंग टाइम नहीं है",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಕಾಲಿಂಗ್ ಟೈಮ್ ಅಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_holiday": {
+  "en": "Not called: a holiday",
+  "te": "కాల్ చేయలేదు: సెలవు రోజు",
+  "hi": "कॉल नहीं की गई: छुट्टी का दिन",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ರಜಾ ದಿನ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_no_consent": {
+  "en": "Not called: no consent",
+  "te": "కాల్ చేయలేదు: అనుమతి లేదు",
+  "hi": "कॉल नहीं की गई: अनुमति नहीं है",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಒಪ್ಪಿಗೆ ಇಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_no_proof_of_request": {
+  "en": "Not called: this person has not asked us to call",
+  "te": "కాల్ చేయలేదు: ఈ వ్యక్తి మమ్మల్ని కాల్ చేయమని అడగలేదు",
+  "hi": "कॉल नहीं की गई: इस व्यक्ति ने हमसे कॉल करने को नहीं कहा",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಈ ವ್ಯಕ್ತಿ ನಮಗೆ ಕಾಲ್ ಮಾಡಲು ಕೇಳಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_prospect_no_ai_call": {
+  "en": "Not called: Lead Finder prospects are never called by the assistant",
+  "te": "కాల్ చేయలేదు: లీడ్ ఫైండర్ ప్రాస్పెక్ట్స్‌కి అసిస్టెంట్ ఎప్పుడూ కాల్ చేయదు",
+  "hi": "कॉल नहीं की गई: लीड फाइंडर के प्रॉस्पेक्ट्स को असिस्टेंट कभी कॉल नहीं करता",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಲೀಡ್ ಫೈಂಡರ್ ಪ್ರಾಸ್ಪೆಕ್ಟ್‌ಗಳಿಗೆ ಅಸಿಸ್ಟೆಂಟ್ ಎಂದಿಗೂ ಕಾಲ್ ಮಾಡುವುದಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_suppressed": {
+  "en": "Not called: asked us to stop",
+  "te": "కాల్ చేయలేదు: ఆపమని చెప్పారు",
+  "hi": "कॉल नहीं की गई: रुकने को कहा था",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ನಿಲ್ಲಿಸಲು ಹೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_dnd": {
+  "en": "Not called: on the do-not-disturb list",
+  "te": "కాల్ చేయలేదు: డూ-నాట్-డిస్టర్బ్ లిస్ట్‌లో ఉన్నారు",
+  "hi": "कॉल नहीं की गई: डू-नॉट-डिस्टर्ब लिस्ट में है",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಡು-ನಾಟ್-ಡಿಸ್ಟರ್ಬ್ ಲಿಸ್ಟ್‌ನಲ್ಲಿದ್ದಾರೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_dnd_unknown": {
+  "en": "Not called: do-not-disturb could not be checked",
+  "te": "కాల్ చేయలేదు: డూ-నాట్-డిస్టర్బ్ లిస్ట్ చెక్ చేయలేకపోయాం",
+  "hi": "कॉल नहीं की गई: डू-नॉट-डिस्टर्ब लिस्ट चेक नहीं हो पाई",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಡು-ನಾಟ್-ಡಿಸ್ಟರ್ಬ್ ಲಿಸ್ಟ್ ಚೆಕ್ ಮಾಡಲಾಗಲಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_workspace_paused": {
+  "en": "Not called: the assistant is paused",
+  "te": "కాల్ చేయలేదు: అసిస్టెంట్ పాజ్‌లో ఉంది",
+  "hi": "कॉल नहीं की गई: असिस्टेंट पॉज़ पर है",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಅಸಿಸ್ಟೆಂಟ್ ಪಾಸ್‌ನಲ್ಲಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_complaints_pause": {
+  "en": "Not called: calls are paused after people asked us to stop",
+  "te": "కాల్ చేయలేదు: ఆపమని చెప్పినవాళ్ల వల్ల కాల్స్ పాజ్ అయ్యాయి",
+  "hi": "कॉल नहीं की गई: लोगों के रुकने को कहने के बाद कॉल पॉज़ हैं",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಜನ ನಿಲ್ಲಿಸಲು ಹೇಳಿದ ಮೇಲೆ ಕಾಲ್‌ಗಳು ಪಾಸ್ ಆಗಿವೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_billing_blocked": {
+  "en": "Not called: balance too low",
+  "te": "కాల్ చేయలేదు: బ్యాలెన్స్ తక్కువ",
+  "hi": "कॉल नहीं की गई: बैलेंस कम है",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಬ್ಯಾಲೆನ್ಸ್ ಕಡಿಮೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_enquiry_too_old": {
+  "en": "Not called: the person's enquiry is too old to call about (seven days; an application, three months) and no registered consent is recorded",
+  "te": "కాల్ చేయలేదు: ఈ వ్యక్తి ఎంక్వైరీ కాల్ చేయడానికి చాలా పాతది (ఏడు రోజులు; అప్లికేషన్ అయితే మూడు నెలలు), రిజిస్టర్ అయిన అనుమతి కూడా లేదు",
+  "hi": "कॉल नहीं की गई: इस व्यक्ति की एंक्वायरी कॉल के लिए बहुत पुरानी है (सात दिन; एप्लीकेशन हो तो तीन महीने) और रजिस्टर की हुई अनुमति भी नहीं है",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಈ ವ್ಯಕ್ತಿಯ ಎನ್‌ಕ್ವೈರಿ ಕಾಲ್‌ಗೆ ತುಂಬಾ ಹಳೆಯದು (ಏಳು ದಿನ; ಅಪ್ಲಿಕೇಶನ್ ಆದರೆ ಮೂರು ತಿಂಗಳು), ರಿಜಿಸ್ಟರ್ ಆದ ಒಪ್ಪಿಗೆಯೂ ಇಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_outbound_not_real": {
+  "en": "Not called: real outgoing calls are not switched on yet",
+  "te": "కాల్ చేయలేదు: నిజమైన అవుట్‌గోయింగ్ కాల్స్ ఇంకా ఆన్ చేయలేదు",
+  "hi": "कॉल नहीं की गई: असली आउटगोइंग कॉल अभी चालू नहीं हैं",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ನಿಜವಾದ ಔಟ್‌ಗೋಯಿಂಗ್ ಕಾಲ್‌ಗಳು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_no_own_number": {
+  "en": "Not called: the business needs its own verified number first",
+  "te": "కాల్ చేయలేదు: బిజినెస్‌కి ముందు సొంత వెరిఫై అయిన నంబర్ కావాలి",
+  "hi": "कॉल नहीं की गई: बिज़नेस को पहले अपना वेरिफ़ाइड नंबर चाहिए",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ಬಿಸಿನೆಸ್‌ಗೆ ಮೊದಲು ತನ್ನದೇ ವೆರಿಫೈ ಆದ ನಂಬರ್ ಬೇಕು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.refused_usage_not_accepted": {
+  "en": "Not called: the owner has not yet accepted how the number will be used",
+  "te": "కాల్ చేయలేదు: నంబర్ ఎలా వాడతారో ఓనర్ ఇంకా ఒప్పుకోలేదు",
+  "hi": "कॉल नहीं की गई: नंबर कैसे इस्तेमाल होगा, इसे ओनर ने अभी मंज़ूर नहीं किया",
+  "kn": "ಕಾಲ್ ಮಾಡಲಿಲ್ಲ: ನಂಬರ್ ಹೇಗೆ ಬಳಸುತ್ತೀರಿ ಎಂಬುದಕ್ಕೆ ಓನರ್ ಇನ್ನೂ ಒಪ್ಪಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.state_no_answer": {
+  "en": "No answer",
+  "te": "ఎవరూ ఎత్తలేదు",
+  "hi": "किसी ने नहीं उठाया",
+  "kn": "ಯಾರೂ ಎತ್ತಲಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.state_failed": {
+  "en": "The call did not connect",
+  "te": "కాల్ కలవలేదు",
+  "hi": "कॉल नहीं लगी",
+  "kn": "ಕಾಲ್ ಕನೆಕ್ಟ್ ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.outcome_no_answer": {
+  "en": "No answer",
+  "te": "ఎవరూ ఎత్తలేదు",
+  "hi": "किसी ने नहीं उठाया",
+  "kn": "ಯಾರೂ ಎತ್ತಲಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.outcome_failed": {
+  "en": "The call did not connect",
+  "te": "కాల్ కలవలేదు",
+  "hi": "कॉल नहीं लगी",
+  "kn": "ಕಾಲ್ ಕನೆಕ್ಟ್ ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.state_busy": {
+  "en": "The line was busy",
+  "te": "లైన్ బిజీగా ఉంది",
+  "hi": "लाइन बिज़ी थी",
+  "kn": "ಲೈನ್ ಬಿಜಿ ಇತ್ತು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.state_voicemail": {
+  "en": "Went to voicemail",
+  "te": "వాయిస్‌మెయిల్‌కి వెళ్లింది",
+  "hi": "वॉइसमेल पर चली गई",
+  "kn": "ವಾಯ್ಸ್‌ಮೇಲ್‌ಗೆ ಹೋಯಿತು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.state_cancelled": {
+  "en": "Cancelled before it was placed",
+  "te": "కాల్ చేయకముందే క్యాన్సిల్ చేశారు",
+  "hi": "कॉल लगने से पहले रद्द हो गई",
+  "kn": "ಕಾಲ್ ಮಾಡುವ ಮೊದಲೇ ಕ್ಯಾನ್ಸಲ್ ಆಯಿತು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.state_queued": {
+  "en": "Waiting to be placed",
+  "te": "కాల్ చేయడానికి వెయిట్ చేస్తోంది",
+  "hi": "कॉल लगने का इंतज़ार",
+  "kn": "ಕಾಲ್ ಮಾಡಲು ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.state_ringing": {
+  "en": "Ringing",
+  "te": "రింగ్ అవుతోంది",
+  "hi": "रिंग हो रही है",
+  "kn": "ರಿಂಗ್ ಆಗುತ್ತಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.handover": {
+  "en": "A person took over",
+  "te": "ఒక మనిషి తీసుకున్నారు",
+  "hi": "एक व्यक्ति ने संभाल लिया",
+  "kn": "ಒಬ್ಬರು ತೆಗೆದುಕೊಂಡರು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.category_interested": {
+  "en": "Interested; wants to know more",
+  "te": "ఆసక్తి ఉంది; ఇంకా తెలుసుకోవాలనుకుంటున్నారు",
+  "hi": "दिलचस्पी है; और जानना चाहते हैं",
+  "kn": "ಆಸಕ್ತಿ ಇದೆ; ಇನ್ನೂ ತಿಳಿಯಲು ಬಯಸುತ್ತಾರೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.category_visit_booked": {
+  "en": "Visit booked",
+  "te": "విజిట్ బుక్ అయింది",
+  "hi": "विज़िट बुक हो गई",
+  "kn": "ವಿಸಿಟ್ ಬುಕ್ ಆಯಿತು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.category_order_likely": {
+  "en": "Likely to order",
+  "te": "ఆర్డర్ ఇచ్చే అవకాశం ఉంది",
+  "hi": "ऑर्डर देने की संभावना है",
+  "kn": "ಆರ್ಡರ್ ಕೊಡುವ ಸಾಧ್ಯತೆ ಇದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.category_not_interested": {
+  "en": "Not interested",
+  "te": "ఆసక్తి లేదు",
+  "hi": "दिलचस्पी नहीं है",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.outcome_negative": {
+  "en": "Not interested",
+  "te": "ఆసక్తి లేదు",
+  "hi": "दिलचस्पी नहीं है",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.category_wrong_number": {
+  "en": "Wrong number",
+  "te": "తప్పు నంబర్",
+  "hi": "गलत नंबर",
+  "kn": "ತಪ್ಪು ನಂಬರ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.category_too_costly": {
+  "en": "Found it too costly",
+  "te": "చాలా ఖరీదు అనుకున్నారు",
+  "hi": "बहुत महँगा लगा",
+  "kn": "ತುಂಬಾ ದುಬಾರಿ ಅನಿಸಿತು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.category_call_back_later": {
+  "en": "Asked for a call back later",
+  "te": "తర్వాత ఫోన్ చేయమన్నారు",
+  "hi": "बाद में कॉल करने को कहा",
+  "kn": "ನಂತರ ಕಾಲ್ ಮಾಡಲು ಕೇಳಿದರು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.category_already_bought": {
+  "en": "Already bought elsewhere",
+  "te": "ఇప్పటికే వేరే చోట కొన్నారు",
+  "hi": "पहले ही कहीं और से खरीद लिया",
+  "kn": "ಈಗಾಗಲೇ ಬೇರೆ ಕಡೆ ಕೊಂಡಿದ್ದಾರೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.category_do_not_call": {
+  "en": "Asked us not to call again",
+  "te": "మళ్ళీ కాల్ చేయొద్దన్నారు",
+  "hi": "दोबारा कॉल न करने को कहा",
+  "kn": "ಮತ್ತೆ ಕಾಲ್ ಮಾಡಬೇಡಿ ಎಂದರು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.outcome_positive": {
+  "en": "The call went well",
+  "te": "కాల్ బాగా జరిగింది",
+  "hi": "कॉल अच्छी रही",
+  "kn": "ಕಾಲ್ ಚೆನ್ನಾಗಿ ನಡೆಯಿತು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.outcome_unclear": {
+  "en": "No clear result",
+  "te": "స్పష్టమైన ఫలితం లేదు",
+  "hi": "कोई साफ़ नतीजा नहीं",
+  "kn": "ಸ್ಪಷ್ಟ ಫಲಿತಾಂಶ ಇಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "oc.finished": {
+  "en": "Call finished",
+  "te": "కాల్ అయిపోయింది",
+  "hi": "कॉल ख़त्म हो गई",
+  "kn": "ಕಾಲ್ ಮುಗಿಯಿತು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
  }
 }

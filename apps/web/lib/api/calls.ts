@@ -64,6 +64,8 @@ export type CallRow = {
   canTakeOver: boolean;
   /** Design system v6 (all optional: an API from before them leaves them null and the web derives the status and the sentence, lib/calls/status.ts). C1 adds `outcome_sentence` (one plain English sentence, at most 160 characters) and `status` (completed|transferred|no_answer|rejected|spam|live). */
   outcomeSentence: string | null;
+  /** The closed word the sentence is made from (C1, 26 Nov 2026: live, refused_<reason>, state_<state>, handover, category_<category>, outcome_<outcome>, finished): the page words it in the person's language (`oc.<code>`), the English sentence is the last fallback. Null from an API that does not send it. */
+  outcomeCode: string | null;
   status: CallStatusWord | null;
   /** `cost_paise` and `duration_s` are in the contract already (docs/contracts/calls.md); null when absent. */
   costPaise: number | null;
@@ -130,6 +132,7 @@ export function parseCallRow(r: unknown): CallRow | null {
     simulated: r.simulated === true,
     canTakeOver: r.can_take_over === true,
     outcomeSentence: shortText(r.outcome_sentence, 160),
+    outcomeCode: typeof r.outcome_code === "string" && /^[a-z][a-z_]{0,59}$/.test(r.outcome_code) ? r.outcome_code : null,
     status: oneOf(r.status, CALL_STATUS_WORDS),
     costPaise: typeof r.cost_paise === "number" && Number.isInteger(r.cost_paise) && r.cost_paise >= 0 && r.cost_paise <= 100_000_000 ? r.cost_paise : null,
     durationS: typeof r.duration_s === "number" && r.duration_s >= 0 ? Math.min(Math.trunc(r.duration_s), 86_400) : null,
