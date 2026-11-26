@@ -5,6 +5,7 @@ import { EffectLine } from "@/components/v2/app/jobs/pages/parts";
 import { SampleChip } from "@/components/v2/app/jobs/SampleChip";
 import { PageTop } from "@/components/v2/app/parts";
 import { ListCards } from "@/components/v2/app/lists/ListCards";
+import { StarterLists } from "@/components/v2/app/lists/StarterLists";
 import { SellSection } from "@/components/v2/app/sell/LazySection";
 import { pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
@@ -22,6 +23,7 @@ import { previewSample } from "@/lib/screens/preview";
 import { ENTRY_PATH, oldPagesOf, styleOfPack } from "@/lib/sell/style";
 import { SELL_STYLES } from "@/lib/sell/types";
 
+import { commitListImportAction, createStartersAction, previewListImportAction } from "./lists-actions";
 import { readAction, readProductsAction, readSheetAction, removeEntryAction, saveEntryAction, understandAction } from "./actions";
 
 export const metadata = { title: `What you sell · ${BRAND_NAME}` };
@@ -64,6 +66,7 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
       <PageTop title={words["jobs.sell.page.title"] ?? "What you sell"} sub={words["jobs.sell.page.sub"]} />
       {lists ? (
         <div className="mt-5">
+          {owns && (pack?.modules ?? []).includes("catalogue") && lists.every((l) => l.builtin) ? <div className="mb-4"><StarterLists words={words} make={createStartersAction.bind(null, tenantId)} /></div> : null}
           <ListCards lists={lists} words={words} base={base + "/what-you-sell"} canAdd={owns} />
         </div>
       ) : null}
@@ -83,11 +86,12 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
             entries={read.data.entries}
             words={words}
             base={base}
-            actions={owns ? { save: saveEntryAction.bind(null, tenantId), remove: removeEntryAction.bind(null, tenantId), understand: understandAction.bind(null, tenantId), read: readAction.bind(null, tenantId), readSheet: readSheetAction.bind(null, tenantId), readProducts: readProductsAction.bind(null, tenantId) } : null}
+            actions={owns ? { save: saveEntryAction.bind(null, tenantId), remove: removeEntryAction.bind(null, tenantId), understand: understandAction.bind(null, tenantId), read: readAction.bind(null, tenantId), readSheet: readSheetAction.bind(null, tenantId), readProducts: readProductsAction.bind(null, tenantId), previewList: previewListImportAction.bind(null, tenantId), commitList: commitListImportAction.bind(null, tenantId) } : null}
             live={read.data.live}
             ownerPrice={role === "owner"}
             paths={ENTRY_PATH[style]}
             oldLinks={old}
+            targets={(lists ?? []).filter((l) => !l.builtin).map((l) => ({ id: l.id, name: l.name, priceKey: (l.columns.find((c) => c.role === "price" && c.quoteDefault) ?? l.columns.find((c) => c.role === "price"))?.key ?? null, categoryKey: l.columns.find((c) => c.role === "category")?.key ?? null, categoryChoices: l.columns.find((c) => c.role === "category")?.choices ?? [] }))}
           />
           {read.data.cut ? (
             <p data-part="cut" className="m-0 mt-3 text-[14px] text-muted">

@@ -27,6 +27,9 @@ export type ImportRow = {
   note?: string | null;
   /** the owner has looked at and changed it: the "check this one" flag goes */
   checked?: boolean;
+  /** Into a list of his own: the other cells the reading matched (kept as read), and a price is optional there */
+  cells?: Record<string, string | number | boolean | null>;
+  optionalPrice?: boolean;
 };
 export type Parsed = { rows: ImportRow[]; cut: boolean; headerFound: boolean; error: "empty" | "no_rows" | null };
 
@@ -113,10 +116,10 @@ let seq = 0;
 const rowId = () => `r${Date.now().toString(36)}${(seq++).toString(36)}`;
 
 /** The status of one row against the rows before it (the same name twice is one product). */
-export function statusOf(r: Pick<ImportRow, "name" | "priceText" | "price">, seen: ReadonlySet<string>): RowStatus {
+export function statusOf(r: Pick<ImportRow, "name" | "priceText" | "price" | "optionalPrice">, seen: ReadonlySet<string>): RowStatus {
   if (r.name.trim() === "") return "no_name";
   if (seen.has(r.name.trim().toLowerCase())) return "duplicate";
-  if (r.priceText.trim() === "") return "no_price";
+  if (r.priceText.trim() === "") return r.optionalPrice ? "ok" : "no_price";
   if (r.price === null) return "bad_price";
   if (r.price < MIN_RUPEES) return "too_cheap";
   return "ok";

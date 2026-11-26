@@ -42,19 +42,25 @@ export function ListView({ list, initial, owner, canEdit, words, base, actions }
   const [q, setQ] = React.useState("");
   const [filters, setFilters] = React.useState<Record<string, string>>({});
   const [sort, setSort] = React.useState("new");
+  const [grouped, setGrouped] = React.useState(false);
   const [editing, setEditing] = React.useState<string | null>(null);
   const [fresh, setFresh] = React.useState<string>("");
   const [problem, setProblem] = React.useState<string | null>(null);
   const [busy, setBusy] = React.useState(false);
   const name0 = list.columns[0];
   const cols = list.columns.filter((c) => c !== name0 && c.type !== "photo");
-  const choiceCols = cols.filter((c) => c.type === "choice" && c.key);
+  const choiceCols = cols.filter((c) => c.type === "choice" && c.key).sort((a, b) => Number(b.role === "category") - Number(a.role === "category"));
+  const category = choiceCols.find((c) => c.role === "category");
   const price = priceColumns(list).find((c) => c.quoteDefault) ?? priceColumns(list)[0];
   const say = (code: string) => t(`wls.err.${code}` as "wls.err.unavailable");
 
   // the rows to draw (cheap: at most a few hundred loaded rows)
   const kept = rows.filter((r) => choiceCols.every((c) => !filters[c.key as string] || r.cells[c.key as string] === filters[c.key as string]));
-  const shown = sort === "az" ? [...kept].sort((a, b) => a.name.localeCompare(b.name)) : sort === "price" && price?.key ? [...kept].sort((a, b) => Number(a.cells[price.key as string] ?? Infinity) - Number(b.cells[price.key as string] ?? Infinity)) : kept;
+  const sorted = sort === "az" ? [...kept].sort((a, b) => a.name.localeCompare(b.name)) : sort === "price" && price?.key ? [...kept].sort((a, b) => Number(a.cells[price.key as string] ?? Infinity) - Number(b.cells[price.key as string] ?? Infinity)) : kept;
+  // grouped by the Category column: the column's words in their order, items with no word last
+  const groupOf = (r: Row): string => (category ? String(r.cells[category.key as string] ?? "") : "");
+  const rank = (r: Row): number => (groupOf(r) === "" ? 9999 : Math.max(0, category?.choices.indexOf(groupOf(r)) ?? 0));
+  const shown = grouped && category ? sorted.map((r, k) => ({ r, k })).sort((a, b) => rank(a.r) - rank(b.r) || a.k - b.k).map((x) => x.r) : sorted;
 
   const search = async (text: string) => {
     setBusy(true);
@@ -120,17 +126,34 @@ export function ListView({ list, initial, owner, canEdit, words, base, actions }
           {t("wls.search")}
         </button>
       </form>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {choiceCols.map((c) => (
-          <select key={c.key} aria-label={c.label} value={filters[c.key as string] ?? ""} onChange={(e) => setFilters((f) => ({ ...f, [c.key as string]: e.target.value }))} className={`${fieldInput} w-auto`}>
-            <option value="">{t("wls.all", { name: c.label })}</option>
-            {c.choices.map((w) => (
-              <option key={w} value={w}>
-                {w}
-              </option>
-            ))}
-          </select>
-        ))}
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {choiceCols.map((c) =>
+          c.choices.length <= 12 ? (
+            // a filter chip row: All, then each word of the column (the Category column first); a pressed chip filters the loaded items
+            <div key={c.key} role="group" aria-label={c.label} data-part="chips" className="flex flex-wrap gap-2">
+              {["", ...c.choices].map((w) => (
+                <button key={w || "all"} type="button" aria-pressed={(filters[c.key as string] ?? "") === w} onClick={() => setFilters((f) => ({ ...f, [c.key as string]: w }))} className={`min-h-11 rounded-full border px-4 text-[15px] font-semibold ${(filters[c.key as string] ?? "") === w ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-ink"}`}>
+                  {w === "" ? t("wls.all", { name: c.label }) : w}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <select key={c.key} aria-label={c.label} value={filters[c.key as string] ?? ""} onChange={(e) => setFilters((f) => ({ ...f, [c.key as string]: e.target.value }))} className={`${fieldInput} w-auto`}>
+              <option value="">{t("wls.all", { name: c.label })}</option>
+              {c.choices.map((w) => (
+                <option key={w} value={w}>
+                  {w}
+                </option>
+              ))}
+            </select>
+          ),
+        )}
+        {category ? (
+          <label className="inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ink">
+            <input type="checkbox" data-action="group" checked={grouped} onChange={(e) => setGrouped(e.target.checked)} className="size-5" />
+            {t("wls.group", { name: category.label })}
+          </label>
+        ) : null}
         <select aria-label={t("wls.sort")} value={sort} onChange={(e) => setSort(e.target.value)} className={`${fieldInput} w-auto`}>
           <option value="new">{t("wls.sort.new")}</option>
           <option value="az">{t("wls.sort.az")}</option>
@@ -148,8 +171,14 @@ export function ListView({ list, initial, owner, canEdit, words, base, actions }
             <RowEditor key={fresh} rowId={fresh} row={null} list={list} owner={owner} t={t} actions={actions} onDone={saved} onCancel={() => setEditing(null)} onRemoved={removed} />
           </li>
         ) : null}
-        {shown.map((r) => (
-          <li key={r.id} data-row={r.id} className="border-b border-line">
+        {shown.map((r, i) => (
+          <React.Fragment key={r.id}>
+            {grouped && category && (i === 0 || groupOf(r) !== groupOf(shown[i - 1])) ? (
+              <li data-group={groupOf(r)} className="border-b border-line bg-surface-2 px-1 py-2 text-[14px] font-bold text-muted">
+                {groupOf(r) === "" ? t("wls.group.none") : groupOf(r)}
+              </li>
+            ) : null}
+          <li data-row={r.id} className="border-b border-line">
             {editing === r.id ? (
               <RowEditor rowId={r.id} row={r} list={list} owner={owner} t={t} actions={actions} onDone={saved} onCancel={() => setEditing(null)} onRemoved={removed} />
             ) : (
@@ -169,6 +198,7 @@ export function ListView({ list, initial, owner, canEdit, words, base, actions }
               </button>
             )}
           </li>
+          </React.Fragment>
         ))}
       </ul>
       {shown.length === 0 && editing !== "new" ? <p className="m-0 mt-4 text-[15px] text-muted">{t("wls.none")}</p> : null}

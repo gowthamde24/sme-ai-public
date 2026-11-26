@@ -4,10 +4,15 @@ Products · 3 items
 {role=search}
 <search label="Search" placeholder="Search" maxlength=80>
 [button type=submit: Search]
-<select label="Lining">
-  options: Lining: all=* | Cotton | Satin
-<select label="Availability">
-  options: Availability: all=* | In stock | Few left | Out of stock
+{role=group label="Lining"}
+[button type=button: Lining: all]
+[button type=button: Cotton]
+[button type=button: Satin]
+{role=group label="Availability"}
+[button type=button: Availability: all]
+[button type=button: In stock]
+[button type=button: Few left]
+[button type=button: Out of stock]
 <select label="Sort">
   options: Sort: newest first=new* | Sort: name, A to Z=az | Sort: Retail price, low to high=price
 -

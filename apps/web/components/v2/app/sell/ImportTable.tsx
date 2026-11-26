@@ -22,12 +22,13 @@ const field = "min-h-11 w-full min-w-0 rounded-xl border border-edge bg-surface 
  * The preview of a price list before anything is added (saree shop, owner's walk of 26 Nov): every row the sheet gave, each with one plain status, the name and the price editable in place, a way to remove a row, and ONE button that adds the rows that are ready.
  * On a laptop a row is one line (name, price, status, remove); on a phone the same row stacks (name, then price and remove, then its status), so nothing is cut off. Nothing here saves: `onAdd` is the owner pressing the button.
  */
-export function ImportTable({ rows, added, file, cut, reading = null, unreadable = false, t, busy, progress, onRows, onAdd, onCancel }: { rows: ImportRow[]; added: ReadonlySet<string>; file: string; cut: boolean; /** how a photo or PDF was read (null = a sheet, read exactly) */ reading?: "ai_vision" | "text_layer" | null; unreadable?: boolean; t: T; busy: boolean; progress: { done: number; total: number } | null; onRows: (rows: ImportRow[]) => void; onAdd: () => void; onCancel: () => void }) {
+export function ImportTable({ listName, fillCategory, rows, added, file, cut, reading = null, unreadable = false, t, busy, progress, onRows, onAdd, onCancel }: { /** the owner's list the rows go into (none: the saree catalogue) */ listName?: string; /** into a list with a Category column: one choice given to the rows that have none */ fillCategory?: { label: string; none: string; choices: readonly string[]; value: string; onChange: (v: string) => void }; rows: ImportRow[]; added: ReadonlySet<string>; file: string; cut: boolean; /** how a photo or PDF was read (null = a sheet, read exactly) */ reading?: "ai_vision" | "text_layer" | null; unreadable?: boolean; t: T; busy: boolean; progress: { done: number; total: number } | null; onRows: (rows: ImportRow[]) => void; onAdd: () => void; onCancel: () => void }) {
   const c = counts(rows);
   const set = (id: string, patch: Partial<ImportRow>) => onRows(restatus(rows.map((r) => (r.id === id ? { ...r, ...patch, checked: true } : r)), added)); // (changing a row is looking at it: its "please check" flag goes)
   const unsure = (r: ImportRow) => r.status === "ok" && (r.confidence === "medium" || r.confidence === "low") && !r.checked;
   return (
     <div data-part="import" className="flex flex-col gap-3">
+      {listName ? <p data-part="import-into" className="m-0 text-[15px] font-bold text-ink">{t("jobs.sell.imp.adding_to", { name: listName })}</p> : null}
       <p className="m-0 text-[15px] leading-snug text-ink">{t("jobs.sell.imp.found", { n: rows.length, file })}</p>
       <p data-part="import-counts" className="m-0 flex flex-wrap gap-x-3 gap-y-1 text-[14px] font-semibold">
         <span className="text-green-text">{t("jobs.sell.imp.ready", { n: c.ready })}</span>
@@ -37,6 +38,19 @@ export function ImportTable({ rows, added, file, cut, reading = null, unreadable
       </p>
       {reading ? <p data-part="import-reading" className="m-0 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink">{t(reading === "ai_vision" ? "jobs.sell.imp.vision" : "jobs.sell.imp.text")}</p> : null}
       {unreadable ? <p className="m-0 text-[14px] leading-snug text-amber-text">{t("jobs.sell.note.unreadable")}</p> : null}
+      {fillCategory ? (
+        <label className="flex flex-col gap-1 text-[14px] font-semibold text-ink">
+          {fillCategory.label}
+          <select value={fillCategory.value} disabled={busy} onChange={(e) => fillCategory.onChange(e.target.value)} className={field}>
+            <option value="">{fillCategory.none}</option>
+            {fillCategory.choices.map((w) => (
+              <option key={w} value={w}>
+                {w}
+              </option>
+            ))}
+          </select>
+        </label>
+      ) : null}
       {cut ? <p className="m-0 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink">{t("jobs.sell.imp.cut")}</p> : null}
       <ul data-part="import-rows" className="m-0 flex max-h-[52dvh] list-none flex-col divide-y divide-line overflow-y-auto rounded-2xl border border-line bg-surface p-0 md:max-h-[58dvh]">
         {rows.map((r, i) => (
@@ -49,6 +63,7 @@ export function ImportTable({ rows, added, file, cut, reading = null, unreadable
             <span data-part="row-status" className={`col-start-1 row-start-2 flex items-center gap-1.5 text-[14px] font-semibold leading-snug md:col-start-auto md:row-start-auto ${TONE[r.status]}`}>
               {r.status === "ok" ? <Check aria-hidden="true" className="size-4 shrink-0" /> : null}
               {t(`jobs.sell.imp.s.${r.status}`)}
+              {r.note ? <span data-part="row-note" className="font-normal text-muted"> · {r.note}</span> : null}
               {unsure(r) && r.status === "ok" ? <span data-part="row-check"> · {t("jobs.sell.imp.check")}</span> : null}
             </span>
             <button type="button" aria-label={t("jobs.sell.imp.remove", { n: i + 1 })} disabled={busy} onClick={() => onRows(restatus(rows.filter((x) => x.id !== r.id), added))} className="col-start-2 row-start-2 grid size-11 place-items-center justify-self-end rounded-full text-muted hover:bg-surface-2 md:col-start-auto md:row-start-auto">

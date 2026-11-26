@@ -10,7 +10,7 @@ import type { SellEntry, SellStyle } from "@/lib/sell/types";
 import { makeT, type Words } from "../words";
 import { LazyWork, loadWork } from "./LazyWork";
 import { SellRowBody } from "./SellRow";
-import type { SellActions, Work } from "./types";
+import type { ImportTarget, SellActions, Work } from "./types";
 
 /** A list this long gets a search box (a saree shop has dozens). */
 const SEARCH_FROM = 8;
@@ -22,7 +22,7 @@ type Way = { id: "say" | "photos" | "sheet"; icon: ReactNode; href: string | nul
  * The sheet that adds and changes an entry, and the "I understood" card, are ONE lazy chunk (`LazyWork`): this part ships only the buttons and the rows, so the route stays small. `paths` are the existing pages the buttons reuse in a real workspace (the catalogue's
  * photo page, the price list's import): a button with a path is a plain link.
  */
-export function SellSection({ style, entries: first, words, base, actions, live, ownerPrice, paths, oldLinks }: { style: SellStyle; entries: SellEntry[]; words: Words; base: string; actions: SellActions | null; live: boolean; ownerPrice: boolean; paths: { photos: string | null; sheet: string | null }; oldLinks: readonly { href: string; word: "old" | "old_prices" }[] }) {
+export function SellSection({ style, entries: first, words, base, actions, live, ownerPrice, paths, oldLinks, targets }: { /** the owner's own lists an import can go into */ targets?: ImportTarget[]; style: SellStyle; entries: SellEntry[]; words: Words; base: string; actions: SellActions | null; live: boolean; ownerPrice: boolean; paths: { photos: string | null; sheet: string | null }; oldLinks: readonly { href: string; word: "old" | "old_prices" }[] }) {
   const t = makeT(words);
   const [entries, setEntries] = useState(first);
   const [work, setWork] = useState<Work | null>(null);
@@ -136,7 +136,7 @@ export function SellSection({ style, entries: first, words, base, actions, live,
         ))}
       </section>
 
-      {work && actions ? <LazyWork style={style} work={work} words={words} base={base} actions={actions} live={live} ownerPrice={ownerPrice} paths={paths} onClose={close} onSaved={saved} onRemoved={removed} /> : null}
+      {work && actions ? <LazyWork style={style} work={work} words={words} base={base} actions={actions} live={live} ownerPrice={ownerPrice} paths={paths} targets={targets} onClose={close} onSaved={saved} onRemoved={removed} /> : null}
     </div>
   );
 }

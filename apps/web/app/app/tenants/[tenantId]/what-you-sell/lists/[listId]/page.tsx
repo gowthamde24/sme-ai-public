@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { ListSettings } from "@/components/v2/app/lists/ListSettings";
 import { ListView } from "@/components/v2/app/lists/ListView";
 import { PageTop } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
@@ -14,7 +15,7 @@ import { getList, getRows } from "@/lib/api/lists";
 import { requireUser } from "@/lib/auth/session";
 import { whatYouSellLists } from "@/lib/screens/flag";
 
-import { loadRowsAction, removeRowAction, saveRowAction } from "../../lists-actions";
+import { loadRowsAction, removeListAction, removeRowAction, renameListAction, saveRowAction } from "../../lists-actions";
 
 export const metadata = { title: `What you sell · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -67,6 +68,7 @@ export default async function ListPage({ params, searchParams }: PageProps<"/app
           actions={{ load: loadRowsAction.bind(null, tenantId, listId), save: saveRowAction.bind(null, tenantId, listId) as never, remove: removeRowAction.bind(null, tenantId, listId) }}
         />
       </div>
+      {role === "owner" || role === "admin" ? <ListSettings list={list} words={words} base={base} rename={renameListAction.bind(null, tenantId, listId)} remove={removeListAction.bind(null, tenantId, listId)} /> : null}
     </main>
   );
 }
