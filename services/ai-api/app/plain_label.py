@@ -14,7 +14,7 @@ _TAG = re.compile(r"<[^<>]*>")
 def plain(value: Any) -> Any:
     if not isinstance(value, str):
         return value
-    text = _TAG.sub(" ", value).replace("<", " ").replace(">", " ")
+    text = _TAG.sub("", value).replace("<", " ").replace(">", " ")
     return " ".join(text.split())
 
 

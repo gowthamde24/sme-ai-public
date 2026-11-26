@@ -126,6 +126,8 @@ from app.dues.routes import router as dues_router
 from app.education import errors as education_errors
 from app.education.repository import PostgrestEducationRepository
 from app.education.routes import router as education_router
+from app.employees.repository import EmployeeRepository
+from app.employees.routes import router as employees_router
 from app.enhance.routes import router as enhance_router
 from app.enquiries import repository as enquiries_repo
 from app.enquiries.repository import PostgrestEnquiriesRepository
@@ -711,6 +713,11 @@ def build_runtime(settings: Settings) -> Runtime | None:
         sell_lists=(
             ListRepository(config.rest_url, config.anon_key)
             if settings.what_you_sell_lists
+            else None
+        ),
+        employees=(
+            EmployeeRepository(config.rest_url, config.anon_key)
+            if settings.employees
             else None
         ),
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
@@ -1693,6 +1700,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(assistant_status_router)
     app.include_router(numbers_router)
     app.include_router(sell_lists_router)
+    app.include_router(employees_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_context_router)
