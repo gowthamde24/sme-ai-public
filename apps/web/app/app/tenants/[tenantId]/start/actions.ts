@@ -7,6 +7,8 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { countAll, loadExampleData, removeExampleData, resetExampleData, type ExampleResult } from "@/lib/api/example-data";
 import { setWorkspacePack } from "@/lib/api/pack";
+import { patchWorkspaceProfile } from "@/lib/api/workspace";
+import { labelOk, OTHER_ID, tidyLabel } from "@/lib/packs/other-label";
 import { saveProfile } from "@/lib/api/profile";
 import { requireUser } from "@/lib/auth/session";
 
@@ -78,15 +80,19 @@ export async function resetExampleAction(tenantId: string): Promise<void> {
   return exampleAction(tenantId, (token, id) => resetExampleData(token, id), "reset");
 }
 
-export type PackState = { ok: true } | { ok: false; error: "invalid" | "role" | "failed" | "session" | "step_up" };
+export type PackState = { ok: true } | { ok: false; error: "invalid" | "role" | "failed" | "session" | "step_up" | "label" };
 
 /** The owner's answer to "What kind of business?" (a workspace made without a type). Owner only; the API asks for the second factor and checks the code against its own list. */
-export async function setPackAction(tenantId: string, code: string): Promise<PackState> {
+export async function setPackAction(tenantId: string, code: string, label?: string): Promise<PackState> {
   if (!/^[a-z][a-z0-9_]{1,30}$/.test(String(code))) return { ok: false, error: "invalid" };
+  // "Other" needs the owner's own words for what the business is; no other type takes a label
+  const words = tidyLabel(label);
+  if (code === OTHER_ID && !labelOk(words)) return { ok: false, error: "label" };
   try {
     const who = await adminOf(tenantId);
     if (!who || who.tenant.role !== "owner") return { ok: false, error: "role" };
-    await setWorkspacePack(who.user.accessToken, tenantId, code);
+    if (code === OTHER_ID) await patchWorkspaceProfile(who.user.accessToken, tenantId, { type: "other", type_label: words });
+    else await setWorkspacePack(who.user.accessToken, tenantId, code);
     revalidatePath(`/app/tenants/${tenantId}`, "layout");
     return { ok: true };
   } catch (error) {

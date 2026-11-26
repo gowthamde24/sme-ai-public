@@ -139237,5 +139237,49 @@
    "hi": "reviewed",
    "kn": "reviewed"
   }
+ },
+ "start.type.other.label": {
+  "en": "What kind of business is it?",
+  "te": "ఇది ఏ రకమైన బిజినెస్?",
+  "hi": "यह किस तरह का बिज़नेस है?",
+  "kn": "ಇದು ಯಾವ ರೀತಿಯ ಬಿಸಿನೆಸ್?",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "start.type.other.example": {
+  "en": "For example: tent house",
+  "te": "ఉదాహరణకు: టెంట్ హౌస్",
+  "hi": "जैसे: टेंट हाउस",
+  "kn": "ಉದಾಹರಣೆಗೆ: ಟೆಂಟ್ ಹೌಸ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "start.type.other.hint": {
+  "en": "Write it in your own words, 3 to 60 letters. Your assistant uses it to know what you do.",
+  "te": "మీ మాటల్లో రాయండి, 3 నుంచి 60 అక్షరాలు. మీరు ఏం చేస్తారో తెలుసుకోవడానికి మీ అసిస్టెంట్ దీన్ని వాడుతుంది.",
+  "hi": "अपने शब्दों में लिखें, 3 से 60 अक्षर। आपका असिस्टेंट इससे जानता है कि आप क्या करते हैं।",
+  "kn": "ನಿಮ್ಮ ಮಾತಿನಲ್ಲಿ ಬರೆಯಿರಿ, 3 ರಿಂದ 60 ಅಕ್ಷರ. ನೀವು ಏನು ಮಾಡುತ್ತೀರಿ ಎಂದು ತಿಳಿಯಲು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಇದನ್ನು ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "start.type.other.err": {
+  "en": "Write what kind of business it is, 3 to 60 letters.",
+  "te": "ఇది ఏ రకమైన బిజినెస్సో రాయండి, 3 నుంచి 60 అక్షరాలు.",
+  "hi": "लिखें कि यह किस तरह का बिज़नेस है, 3 से 60 अक्षर।",
+  "kn": "ಇದು ಯಾವ ರೀತಿಯ ಬಿಸಿನೆಸ್ ಎಂದು ಬರೆಯಿರಿ, 3 ರಿಂದ 60 ಅಕ್ಷರ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
  }
 }
