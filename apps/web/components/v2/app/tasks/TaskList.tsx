@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { progressCounts, type TaskOut } from "@/lib/tasks/types";
 
-import { btnQuiet, listItemCard, listPlain, mutedText, pillAmber, pillBrand, pillGreen, pillNeutral } from "../ui";
+import { btnQuiet, listPlain, mutedText, pillAmber, pillBrand, pillGreen, pillNeutral } from "../ui";
 import { makeT, type Words } from "../words";
 import { dayText, TASK_STATE_WORD } from "./task-format";
 
@@ -17,7 +17,7 @@ export function TaskList({ tasks, words, base, lang, empty }: { tasks: readonly 
       {tasks.map((task) => {
         const { finished, of } = progressCounts(task.progress);
         return (
-          <li key={task.id} className={`${listItemCard} flex flex-col gap-2`}>
+          <li key={task.id} className="flex flex-col gap-2 border-t border-line pt-3 first:border-t-0 first:pt-0">
             <p className="line-clamp-3 text-base font-semibold [overflow-wrap:anywhere]">{task.instruction}</p>
             <p className="flex flex-wrap items-center gap-2 text-sm text-muted">
               <span className={PILL[task.status]}>{t(TASK_STATE_WORD[task.status])}</span>

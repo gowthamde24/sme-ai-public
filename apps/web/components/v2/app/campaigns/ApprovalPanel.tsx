@@ -12,6 +12,7 @@ import { Pill } from "../parts";
 import { Sheet } from "../sheet/Sheet";
 import { say, type TodayWords } from "../today/today-words";
 import { errorLine, help, okLine, primary, quiet } from "../visits/styles";
+import { cardBox } from "../Card";
 
 type Refused = { ok: false; error: string; mfa?: boolean; changed?: boolean };
 export type ApproveAction = (samplesSha256: string) => Promise<{ ok: true; planned: number; past: number; sendingOn: boolean } | Refused>;
@@ -67,14 +68,14 @@ export function ApprovalPanel({ preview, role, status, words, approve }: { previ
           </ul>
         </section>
       ) : null}
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 rounded-2xl border border-line p-4 md:grid-cols-4" data-part="totals">
+      <dl className={`${cardBox} grid grid-cols-2 gap-x-4 gap-y-2 md:grid-cols-4`} data-part="totals">
         <div><dt className="text-sm text-muted">{say(words, "camp.ap.people")}</dt><dd className="font-display text-2xl font-bold tabular-nums">{preview.recipients}</dd></div>
         {money ? <div><dt className="text-sm text-muted">{say(words, "camp.ap.total")}</dt><dd className="font-display text-2xl font-bold tabular-nums">{formatRupees(preview.total_amount_paise)}</dd></div> : null}
         {preview.first_due ? <div><dt className="text-sm text-muted">{say(words, "camp.ap.dates")}</dt><dd className="text-base font-semibold">{preview.first_due === preview.last_due ? preview.first_due : `${preview.first_due} – ${preview.last_due}`}</dd></div> : null}
         <div><dt className="text-sm text-muted">{say(words, "camp.ap.steps")}</dt><dd className="text-base font-semibold">{preview.campaign.steps.length}</dd></div>
       </dl>
       {preview.offer ? <OfferNumbers offer={preview.offer} words={words} /> : null}
-      <section aria-labelledby="ap-samples" className="flex flex-col gap-3">
+      <section aria-labelledby="ap-samples" className={`${cardBox} flex flex-col gap-3`}>
         <h2 id="ap-samples" className="font-display text-xl font-bold">{say(words, "camp.ap.samples")}</h2>
         <p className={help}>{say(words, "camp.ap.samples.help")}</p>
         {preview.samples.length === 0 ? (
@@ -152,7 +153,7 @@ export function offerCostLine(offer: OfferCountsOut, words: TodayWords): string 
 function OfferNumbers({ offer, words }: { offer: OfferCountsOut; words: TodayWords }) {
   const left = LEFT_OUT.filter((k) => (offer.left_out[k] ?? 0) > 0);
   return (
-    <section aria-labelledby="ap-offer" data-part="offer-numbers" className="flex flex-col gap-2 rounded-2xl border border-line p-4">
+    <section aria-labelledby="ap-offer" data-part="offer-numbers" className={`${cardBox} flex flex-col gap-2`}>
       <h2 id="ap-offer" className="font-display text-xl font-bold">{say(words, "of.ap.title")}</h2>
       <p className="text-base"><strong className="font-display text-2xl tabular-nums">{offer.will_receive}</strong> {say(words, "of.ap.will", { total: offer.recipients })}</p>
       {left.length > 0 ? (

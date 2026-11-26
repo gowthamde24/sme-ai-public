@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { MinutesBilled, PlanCompare } from "@/components/v2/site/PlanDetails";
 import { EmailAddress } from "@/components/v2/site/EmailAddress";
 import { emailWords } from "@/components/v2/site/email-words";
 import { HelpSearch, type HelpItem } from "@/components/v2/site/public/HelpSearch";
@@ -61,6 +62,9 @@ export function PricingPublic({ t, p, lang }: Props) {
             </li>
           ))}
         </ul>
+        {/* the detailed comparison and how minutes are billed (owner, 26 Nov 2026: "detailed, with extra minutes and all"); every number is lib/site/plans.ts */}
+        <PlanCompare t={t} />
+        <MinutesBilled t={t} lang={lang} />
         <div className="max-w-[760px]">
           <h2 className={subHead}>{p("pub.price.use.h")}</h2>
           <dl className="border-t border-ink" data-part="use-rows">

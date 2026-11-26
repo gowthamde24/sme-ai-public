@@ -110070,10 +110070,10 @@
   }
  },
  "nav.item.jobs": {
-  "en": "AI Team",
-  "te": "AI టీమ్",
-  "hi": "AI टीम",
-  "kn": "AI ಟೀಮ್",
+  "en": "Work",
+  "te": "పని",
+  "hi": "काम",
+  "kn": "ಕೆಲಸ",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",
@@ -141395,10 +141395,10 @@
   }
  },
  "nav.item.employees": {
-  "en": "AI Team",
-  "te": "AI టీమ్",
-  "hi": "AI टीम",
-  "kn": "AI ಟೀಮ್",
+  "en": "AI employees",
+  "te": "AI ఎంప్లాయీలు",
+  "hi": "AI एम्प्लॉयी",
+  "kn": "AI ಎಂಪ್ಲಾಯಿಗಳು",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",
@@ -142708,6 +142708,28 @@
   "te": "కస్టమర్ మీ బిజినెస్‌కి రాసినప్పుడు, లేదా మీరు రాసినప్పుడు, చాట్ ఇక్కడ కనిపిస్తుంది.",
   "hi": "जब कोई कस्टमर आपके बिज़नेस को लिखे, या आप किसी को लिखें, तो चैट यहाँ दिखेगी।",
   "kn": "ಕಸ್ಟಮರ್ ನಿಮ್ಮ ಬಿಸಿನೆಸ್‌ಗೆ ಬರೆದಾಗ, ಅಥವಾ ನೀವು ಬರೆದಾಗ, ಚಾಟ್ ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sw.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sw.off": {
+  "en": "Off",
+  "te": "ఆఫ్",
+  "hi": "बंद",
+  "kn": "ಆಫ್",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",

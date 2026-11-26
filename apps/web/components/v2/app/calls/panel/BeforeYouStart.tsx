@@ -1,4 +1,5 @@
 import { makeT, type Words } from "../../words";
+import { cardBox } from "../../Card";
 
 const RULES = [1, 2, 3, 4, 5] as const;
 
@@ -9,7 +10,7 @@ const RULES = [1, 2, 3, 4, 5] as const;
 export function BeforeYouStart({ words, open }: { words: Words; open: boolean }) {
   const t = makeT(words);
   return (
-    <section data-part="before-you-start" data-open={open ? "true" : "false"} className="min-w-0 border-y border-line">
+    <section data-part="before-you-start" data-open={open ? "true" : "false"} className={cardBox}>
       <details open={open} className="group">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2 [&::-webkit-details-marker]:hidden">
           <h2 className="m-0 min-w-0 font-display text-[17px] font-bold text-ink">{t("cpn.rules.title")}</h2>

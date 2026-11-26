@@ -19,7 +19,7 @@ export function AccountMenu({ email, role, signOut, labels, collapsed = false, s
   return (
     <Disclosure
       summaryClassName={down ? topIconButton : `flex min-h-12 w-full min-w-0 items-center gap-3 rounded-lg border border-line px-2 text-ink hover:bg-surface-2 ${collapsed ? "justify-center border-transparent px-0" : ""}`}
-      panelClassName={`absolute z-50 rounded-xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)] ${down ? "right-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)]" : `bottom-full mb-1 ${collapsed ? "left-0 w-60" : "inset-x-0"}`}`}
+      panelClassName={`absolute z-50 rounded-xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)] ${down ? "right-0 top-full mt-1 w-72 min-w-[280px] max-w-[calc(100vw-1rem)]" : `bottom-full mb-1 ${collapsed ? "left-0 w-60" : "inset-x-0"}`}`}
       summary={
         <>
           {mark}

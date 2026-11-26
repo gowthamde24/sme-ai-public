@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { PageTop } from "@/components/v2/app/parts";
-import { barRow, btnMain, fieldInput, fieldLabel, mutedText, pageH2, pageMain, surface } from "@/components/v2/app/ui";
+import { barRow, btnMain, fieldInput, fieldLabel, mutedText, pageMain, surface } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
@@ -13,6 +13,7 @@ import { sourceNames } from "@/lib/outreach/words";
 import { designV6, outreachScreens } from "@/lib/screens/flag";
 
 import { leadContext } from "../lead-context";
+import { Card } from "@/components/v2/app/Card";
 
 export const metadata = { title: `Lead report · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -81,19 +82,18 @@ export default async function LeadReportPage({ params, searchParams }: PageProps
         <p className={mutedText}>{words["ld.report.empty"]}</p>
       ) : (
         <>
-          <h2 className={pageH2}>{words["ld.report.total"]}</h2>
-          <section data-part="total" className={`${surface} flex flex-col gap-2`}>
+          <Card data-part="total" className="mt-6 flex flex-col gap-2" title={words["ld.report.total"]}>
             <p className="text-base">{(words["ld.report.total.line"] ?? "").replace("{leads}", String(report.total.leads)).replace("{calls}", String(report.total.calls)).replace("{bookings}", String(report.total.bookings))}</p>
             {bar(words["ld.report.connected"], report.total.connectedRate, `${Math.round(report.total.connectedRate)}%`)}
             {bar(words["ld.report.interested"], report.total.interestedPct, `${Math.round(report.total.interestedPct)}%`)}
             <p className="text-base">
               {words["ld.report.costper"]}: <strong>{cost(report.total.costPerBookingPaise)}</strong>
             </p>
-          </section>
-          <h2 className={pageH2}>{words["ld.report.bysource"]}</h2>
-          <ul data-part="sources" className="flex flex-col gap-3">
+          </Card>
+          <Card className="mt-4" title={words["ld.report.bysource"]}>
+          <ul data-part="sources" className="flex flex-col">
             {report.bySource.map((r) => (
-              <li key={r.source} data-source={r.source} className={`${surface} flex flex-col gap-2`}>
+              <li key={r.source} data-source={r.source} className="flex flex-col gap-2 border-t border-line py-4 first:border-t-0 first:pt-0 last:pb-0">
                 <p className="font-display text-lg font-bold">{sn[r.source] ?? r.source}</p>
                 <p className={`${mutedText} !mt-0`}>{(words["ld.report.row"] ?? "").replace("{leads}", String(r.leads)).replace("{calls}", String(r.calls))}</p>
                 <p className="text-base">
@@ -107,6 +107,7 @@ export default async function LeadReportPage({ params, searchParams }: PageProps
               </li>
             ))}
           </ul>
+          </Card>
           <p className={mutedText}>{words["ld.report.help"]}</p>
           <p className="mt-3">
             <Link href={`/app/tenants/${tenantId}/outreach`} className="font-semibold text-brand-text underline">

@@ -5,7 +5,8 @@ import { notFound, redirect } from "next/navigation";
 import { LazyImportScreen } from "@/components/v2/app/lead-desk/LazyImportScreen";
 import { PageTop } from "@/components/v2/app/parts";
 import { indiaClock, indiaDay } from "@/components/v2/app/today/time";
-import { btnQuiet, dataTable, dataTd, dataThCol, dataTr, mutedText, pageH2, pageMain, tableWrap } from "@/components/v2/app/ui";
+import { Card } from "@/components/v2/app/Card";
+import { btnQuiet, dataTable, dataTd, dataThCol, dataTr, mutedText, pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
@@ -64,11 +65,11 @@ export default async function ImportRoute({ params }: PageProps<"/app/tenants/[t
         }}
       />
       {sheets && sheets.mode === "unavailable" ? <p className={mutedText}>{words["li.links.unavailable"]}</p> : null}
-      <h2 className={pageH2}>{words["li.recent.title"]}</h2>
+      <Card className="mt-6" title={words["li.recent.title"]}>
       {recent.mode === "unavailable" ? (
         <p className={mutedText}>{words["li.recent.unavailable"]}</p>
       ) : recent.mode === "ok" && recent.items.length > 0 ? (
-        <div className={tableWrap}>
+        <div className="overflow-x-auto">
           <table className={dataTable}>
             <thead>
               <tr>
@@ -111,6 +112,7 @@ export default async function ImportRoute({ params }: PageProps<"/app/tenants/[t
       ) : (
         <p className={mutedText}>{words["li.recent.empty"]}</p>
       )}
+      </Card>
     </main>
   );
 }

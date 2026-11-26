@@ -10,6 +10,7 @@ import { dataThCol } from "../ui";
 import { makeT, type Words } from "../words";
 import { waSentence } from "./wa-model";
 import type { TemplateActions } from "./wa-types";
+import { cardBox } from "../Card";
 
 const btn = "inline-flex min-h-11 items-center justify-center rounded-[9px] border border-line bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
 const btnPrimary = "inline-flex min-h-11 items-center justify-center rounded-[9px] bg-brand px-3.5 text-sm font-bold text-on-brand disabled:opacity-60";
@@ -17,7 +18,7 @@ const btnPrimary = "inline-flex min-h-11 items-center justify-center rounded-[9p
 /**
  * The message templates (job CC, screen 5): a template is what may be sent to a customer whose 24 hours are over, and only an approved one is ever used. The Owner and an Admin can send the drafts to WhatsApp for review (all of them, after a question that names how many, or one row at a time) and ask what WhatsApp answered; each answer redraws the status pills from the templates the API returns. Sending needs the second factor, which the API asks: a refusal says so and links to Security. Nothing is sent to a customer from here. A Sales member only reads.
  */
-export function TemplatesList({ words, items: initial, actions = null, plain = false }: { /** TEMPLATES_PLAIN: plain rows instead of the table. */ plain?: boolean; words: Words; items: Template[]; /** null = read only (no buttons) */ actions?: TemplateActions | null }) {
+export function TemplatesList({ words, items: initial, actions = null, plain = false, bare = false }: { /** TEMPLATES_PLAIN: plain rows instead of the table. */ plain?: boolean; /** drawn inside a box that is already there (no box of its own) */ bare?: boolean; words: Words; items: Template[]; /** null = read only (no buttons) */ actions?: TemplateActions | null }) {
   const t = makeT(words);
   // the rows are the page's until an answer from the API replaces them; a new page read (initial changes) wins again
   const [own, setOwn] = React.useState<{ from: Template[]; rows: Template[] }>({ from: initial, rows: initial });
@@ -62,7 +63,7 @@ export function TemplatesList({ words, items: initial, actions = null, plain = f
     for (const x of items) groups.set(x.name.replace(/_v\d+$/, ""), [...(groups.get(x.name.replace(/_v\d+$/, "")) ?? []), x]);
     const plainName = (n: string) => (words[`wa.tpl.plain.${n}`] ? t(`wa.tpl.plain.${n}`) : (n.replace(/_/g, " ").charAt(0).toUpperCase() + n.replace(/_/g, " ").slice(1)));
     return (
-      <section data-whatsapp="templates" data-plain="" aria-label={t("wa.tpl.title")} className="flex flex-col gap-3">
+      <section data-whatsapp="templates" data-plain="" aria-label={t("wa.tpl.title")} className={bare ? "flex flex-col gap-3" : `${cardBox} flex flex-col gap-3`}>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <p className="m-0 min-w-0 flex-1 text-[15px] text-muted">{t("wa.tpl.plain.note")}</p>
           {actions ? (

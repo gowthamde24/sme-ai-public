@@ -7,6 +7,7 @@ import { CALL_LANG_NAMES, type CallLang } from "@/lib/assistant/types";
 import type { Done, Employee, EmployeeStatus, Refusal } from "@/lib/employees/types";
 
 import { pillGreen, pillAmber, pillNeutral, btnQuiet, btnMain, surface, alertBox } from "../ui";
+import { StatusSwitch } from "../ds/StatusSwitch";
 import { makeT, type Words } from "../words";
 
 export type EmployeeListActions = { setStatus: (id: string, status: "on" | "paused") => Promise<Done<Employee>> };
@@ -44,9 +45,13 @@ function Card({ e, base, words, actions }: { e: Employee; base: string; words: W
           </h2>
           <p className="m-0 text-[15px] text-muted">{e.isDefault ? `${roleName} · ${t("emp.default")}` : roleName}</p>
         </div>
-        <span className={chip(status)} data-part="emp-status">
-          {t(`emp.status.${status}`)}
-        </span>
+        {canSwitch && (status === "on" || status === "paused") ? (
+          <StatusSwitch on={status === "on"} label={e.name} onText={t("emp.status.on")} offText={t("emp.status.paused")} busy={busy} onChange={flip} />
+        ) : (
+          <span className={chip(status)} data-part="emp-status">
+            {t(`emp.status.${status}`)}
+          </span>
+        )}
       </div>
       <p className="m-0 text-sm text-muted">
         {langs}
@@ -58,9 +63,9 @@ function Card({ e, base, words, actions }: { e: Employee; base: string; words: W
         <Link href={`${base}/employees/${e.id}`} prefetch={false} className={btnQuiet}>
           {t("emp.open")}
         </Link>
-        {canSwitch && status !== "archived" ? (
-          <button type="button" disabled={busy} onClick={flip} data-part="emp-switch" className={status === "on" ? btnQuiet : btnMain}>
-            {status === "on" ? t("emp.pause") : status === "paused" ? t("emp.resume") : t("emp.turn_on")}
+        {canSwitch && status === "draft" ? (
+          <button type="button" disabled={busy} onClick={flip} data-part="emp-switch" className={btnMain}>
+            {t("emp.turn_on")}
           </button>
         ) : null}
       </div>

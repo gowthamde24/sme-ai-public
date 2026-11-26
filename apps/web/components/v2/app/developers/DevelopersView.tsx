@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { PageTop } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
 import { BASE_URL, LABEL, LANGS, SAMPLE, STEPS, type Lang } from "@/lib/developer/overview";
+import { cardBox } from "../Card";
 
 export const TABS = ["overview", "keys", "hooks", "activity", "docs"] as const;
 export type Tab = (typeof TABS)[number];
@@ -24,8 +25,8 @@ export function DevelopersView({ words, ui, base, tab, lang, keys, hooks, activi
       </nav>
       <div className="mt-4 flex max-w-3xl flex-col gap-4">
         {tab === "overview" ? (
-          <>
-            <ol className="m-0 flex list-none flex-col border-t border-ink p-0" lang="en" data-part="dev-steps">
+          <div data-part="dev-overview" className={`${cardBox} flex flex-col gap-4`}>
+            <ol className="m-0 flex list-none flex-col border-t border-line p-0" lang="en" data-part="dev-steps">
               {STEPS.map((s, i) => (
                 <li key={s.title} className="grid grid-cols-[34px_minmax(0,1fr)] gap-3 border-b border-line py-4">
                   <span aria-hidden="true" className={`grid size-[30px] place-items-center rounded-full border text-[15px] font-bold ${i === 0 ? "border-ink bg-ink text-surface" : "border-line text-muted"}`}>
@@ -66,16 +67,16 @@ export function DevelopersView({ words, ui, base, tab, lang, keys, hooks, activi
             <pre data-part="dev-sample" lang="en" className="m-0 max-w-full overflow-x-auto rounded-[10px] border border-line px-3.5 py-3 font-mono text-[14px] leading-[1.55] text-ink">
               <code>{SAMPLE[lang]}</code>
             </pre>
-            <p role="note" className="m-0 border-y border-line py-3 text-[15px] text-muted">
+            <p role="note" className="m-0 border-t border-line pt-3 text-[15px] text-muted">
               {words["dvp.soon"]}
             </p>
-          </>
+          </div>
         ) : null}
         {tab === "keys" ? keys : null}
         {tab === "hooks" ? hooks : null}
         {tab === "activity" ? activity : null}
         {tab === "docs" ? (
-          <p role="note" className="m-0 border-y border-line py-3 text-[15px] text-muted">
+          <p role="note" className={`${cardBox} m-0 text-[15px] text-muted`}>
             {words["dvp.soon"]}
           </p>
         ) : null}

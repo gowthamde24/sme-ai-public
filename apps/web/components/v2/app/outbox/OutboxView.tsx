@@ -13,6 +13,7 @@ import { SendingBanner } from "./SendingBanner";
 import { TABS, type OutboxTab } from "./reasons";
 import { presetDates, type LogFilters } from "./outbox-time";
 import { schedulerView } from "./scheduler-line";
+import { cardBox } from "../Card";
 
 export type OutboxViewProps = {
   /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */
@@ -130,6 +131,7 @@ export function OutboxView(p: OutboxViewProps) {
         ))}
       </nav>
 
+      <div data-part="outbox-filters" className={cardBox}>
       <form method="get" action={`${base}/outbox`} className="flex flex-wrap items-end gap-3" role="search">
         <input type="hidden" name="tab" value={tab} />
         <div className="min-w-48 flex-1">
@@ -154,7 +156,7 @@ export function OutboxView(p: OutboxViewProps) {
           {say(words, "outbox.filter")}
         </button>
       </form>
-      <p className="flex flex-wrap items-center gap-x-4 text-sm" data-part="quick-dates">
+      <p className="mb-0 mt-2 flex flex-wrap items-center gap-x-4 text-sm" data-part="quick-dates">
         <Link href={query({ ...presets.today, q: filters.q })} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline">
           {say(words, "outbox.range.today")}
         </Link>
@@ -167,6 +169,7 @@ export function OutboxView(p: OutboxViewProps) {
           </Link>
         ) : null}
       </p>
+      </div>
 
       {p.items === null ? (
         <div className={card}>

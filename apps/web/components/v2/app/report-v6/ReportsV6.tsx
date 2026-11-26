@@ -19,6 +19,7 @@ import { pageMain } from "../ui";
 import { makeT, type Words } from "../words";
 import { EnquiryChart, PrintButton, SalesChart } from "./Lazy";
 import { PeriodSimple } from "./PeriodSimple";
+import { cardBox } from "../Card";
 
 export type ReportsV6Props = {
   words: Words;
@@ -325,7 +326,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
         {open ? null : kpi("cost", t("rv6.kpi.cost"), cost !== null ? formatRupeesShort(cost) : null, <em className="text-[12.5px] not-italic text-muted">{v && v.total > 0 && cost !== null ? t("rv6.kpi.perVisit", { amount: formatRupeesShort(Math.round(cost / 100 / v.total) * 100) }) : t("rv6.kpi.costNote")}</em>)}
       </ul>
       {open && e && v ? (
-        <p data-part="sentence" className="m-0 mt-4 text-[16px] text-ink">
+        <p data-part="sentence" className={`${cardBox} m-0 mt-4 text-[16px] text-ink`}>
           {t("rv6.open.sentence", { e: total(e.total), v: total(v.total), s: s ? formatRupeesShort(s.total) : t("rv6.na") })}
         </p>
       ) : null}

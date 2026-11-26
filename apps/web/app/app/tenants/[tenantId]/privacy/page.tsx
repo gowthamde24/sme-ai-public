@@ -21,7 +21,8 @@ import {
   PreviewForm,
   ResultView,
 } from "./privacy-forms";
-import { alertBox, dataTable, dataTd, dataThCol, dataTr, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { Card } from "@/components/v2/app/Card";
+import { alertBox, dataTable, dataTd, dataThCol, dataTr, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
@@ -114,8 +115,7 @@ export default async function PrivacyPage({
         {t("prv.what_this_cannot_do_find_a")}
       </p>
 
-      <section aria-labelledby="new-heading">
-        <h2 id="new-heading" className={pageH2}>{t("prv.ask_for_an_erasure")}</h2>
+      <Card aria-labelledby="new-heading" className="mt-6" headingId="new-heading" title={t("prv.ask_for_an_erasure")}>
         {requests === null ? (
           <p role="alert" className={alertBox}>
             {t("prv.could_not_load_this_from_the")}
@@ -128,10 +128,9 @@ export default async function PrivacyPage({
             companies={companies}
           />
         )}
-      </section>
+      </Card>
 
-      <section aria-labelledby="requests-heading">
-        <h2 id="requests-heading" className={pageH2}>{t("prv.requests")}</h2>
+      <Card aria-labelledby="requests-heading" className="mt-4" headingId="requests-heading" title={t("prv.requests")}>
         {requests === null ? (
           <p role="alert" className={alertBox}>
             {t("prv.could_not_load_the_requests_from")}
@@ -207,7 +206,7 @@ export default async function PrivacyPage({
             </tbody>
           </table>
         )}
-      </section>
+      </Card>
     </main>
   );
 }

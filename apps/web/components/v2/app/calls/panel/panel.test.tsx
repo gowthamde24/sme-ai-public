@@ -11,6 +11,7 @@ import { appDict } from "@/i18n/app";
 import { MOCK_LINES, type Lines } from "@/lib/phone-lines/types";
 import { expectNoSentenceForm } from "@/test/helpers/no-sentence-form";
 
+import { cardBox } from "../../Card";
 import { BeforeYouStart } from "./BeforeYouStart";
 import { CallBillingFacts } from "./CallBillingFacts";
 import { CallsAtOnce } from "./CallsAtOnce";
@@ -46,10 +47,12 @@ describe("Before you start calling", () => {
     // (jsdom toggles the attribute on a click of the summary)
     expect(container.querySelectorAll("li")).toHaveLength(5);
   });
-  it("is flat: no box, no card per rule, no control, no sentence form", () => {
+  it("is one Card (the shared box, heading inside): no card per rule, no control, no sentence form", () => {
     const { container } = render(<BeforeYouStart words={W} open />);
     expect(container.querySelector("input,select,textarea,button")).toBeNull();
-    expect(container.innerHTML).not.toMatch(/rounded-(xl|2xl|\[14px\])|shadow/);
+    expect(container.querySelector("section")?.className).toBe(cardBox);
+    expect(container.querySelector("section h2")).not.toBeNull();
+    for (const li of container.querySelectorAll("li")) expect(li.className).not.toMatch(/rounded-(xl|2xl|\[14px\])|shadow/);
     expectNoSentenceForm(container);
   });
 });

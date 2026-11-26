@@ -13081,17 +13081,17 @@
   "ta": "Your business number"
  },
  "v9.guard.14": {
-  "en": "+91 80xx xxx xxx",
-  "te": "+91 80xx xxx xxx",
-  "hi": "+91 80xx xxx xxx",
-  "kn": "+91 80xx xxx xxx",
+  "en": "+91 9xxxx xxxxx",
+  "te": "+91 9xxxx xxxxx",
+  "hi": "+91 9xxxx xxxxx",
+  "kn": "+91 9xxxx xxxxx",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",
    "kn": "reviewed",
    "ta": "draft"
   },
-  "ta": "+91 80xx xxx xxx"
+  "ta": "+91 9xxxx xxxxx"
  },
  "v9.guard.15": {
   "en": "Quiet hours",
@@ -15499,11 +15499,11 @@
   }
  },
  "v9.guard.landline": {
-  "en": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
-  "te": "ఇప్పుడు ల్యాండ్‌లైన్ లాంటి (080) నంబర్. 9-సిరీస్ మొబైల్ నంబర్లు త్వరలో వస్తాయి.",
-  "hi": "अभी लैंडलाइन जैसे (080) नंबर। 9 से शुरू होने वाले मोबाइल नंबर जल्द आ रहे हैं।",
-  "kn": "ಈಗ ಲ್ಯಾಂಡ್‌ಲೈನ್ ತರಹದ (080) ನಂಬರ್. ಮೊಬೈಲ್ 9-ಸೀರೀಸ್ ನಂಬರ್‌ಗಳು ಬೇಗ ಬರಲಿವೆ.",
-  "ta": "Landline-style (080) today. Mobile 9-series numbers coming soon.",
+  "en": "A mobile number starting with 9, set up for you.",
+  "te": "9 తో మొదలయ్యే మొబైల్ నంబర్, మీ కోసం సెటప్ చేసి ఇస్తాం.",
+  "hi": "9 से शुरू होने वाला मोबाइल नंबर, आपके लिए सेट अप किया हुआ।",
+  "kn": "9 ರಿಂದ ಶುರುವಾಗುವ ಮೊಬೈಲ್ ನಂಬರ್, ನಿಮಗಾಗಿ ಸೆಟಪ್ ಮಾಡಿ ಕೊಡುತ್ತೇವೆ.",
+  "ta": "9-இல் தொடங்கும் mobile number, உங்களுக்காக set up செய்து தரப்படும்.",
   "status": {
    "te": "reviewed",
    "hi": "reviewed",

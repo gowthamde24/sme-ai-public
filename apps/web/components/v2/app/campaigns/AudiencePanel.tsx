@@ -15,6 +15,7 @@ import { Sheet } from "../sheet/Sheet";
 import { say, type TodayWords } from "../today/today-words";
 import { errorLine, field, help, label, okLine, primary, quiet, secondary } from "../visits/styles";
 import { parseList, type ParsedList } from "./campaign-logic";
+import { cardBox } from "../Card";
 
 type Refused = { ok: false; error: string; mfa?: boolean };
 type Added = { ok: true; added: number; skipped: { row: number; reason: string }[]; recipients: number } | Refused;
@@ -124,7 +125,7 @@ export function AudiencePanel({ status, money, fromLedger, studentParty = false,
     <div data-part="audience" className="flex flex-col gap-5">
       {canEdit && fresh ? <p role="note" className="rounded-lg border border-amber-text bg-amber-bg p-3 text-sm font-medium text-amber-text">{say(words, "camp.aud.backtodraft")}</p> : null}
       {canEdit && fromLedger ? (
-        <section aria-labelledby="aud-ledger" className="flex flex-col gap-3 rounded-2xl border border-line p-4">
+        <section aria-labelledby="aud-ledger" className={`${cardBox} flex flex-col gap-3`}>
           <h2 id="aud-ledger" className="font-display text-xl font-bold">{say(words, "camp.aud.ledger.title")}</h2>
           <p className={help}>{say(words, "camp.aud.ledger.help")}</p>
           <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">
@@ -150,7 +151,7 @@ export function AudiencePanel({ status, money, fromLedger, studentParty = false,
         </section>
       ) : null}
       {canEdit && actions.announce ? (
-        <section aria-labelledby="aud-students" className="flex flex-col gap-3 rounded-2xl border border-line p-4" data-part="students-audience">
+        <section aria-labelledby="aud-students" className={`${cardBox} flex flex-col gap-3`} data-part="students-audience">
           <h2 id="aud-students" className="font-display text-xl font-bold">{say(words, "camp.aud.students.title")}</h2>
           <p className={help}>{say(words, "camp.aud.students.help")}</p>
           <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">
@@ -189,7 +190,7 @@ export function AudiencePanel({ status, money, fromLedger, studentParty = false,
         </section>
       ) : null}
       {canEdit && !actions.announce ? (
-        <section aria-labelledby="aud-import" className="flex flex-col gap-3 rounded-2xl border border-line p-4">
+        <section aria-labelledby="aud-import" className={`${cardBox} flex flex-col gap-3`}>
           <h2 id="aud-import" className="font-display text-xl font-bold">{say(words, "camp.aud.import.title")}</h2>
           <p className={help}>{say(words, money ? "camp.aud.import.help.money" : "camp.aud.import.help")}</p>
           <label htmlFor="ai-file" className={label}>{say(words, "camp.aud.file")}</label>
@@ -228,7 +229,7 @@ export function AudiencePanel({ status, money, fromLedger, studentParty = false,
           {problem.mfa ? <Link href="/app/security" className="font-semibold underline">{say(words, "today.err.mfa.link")}</Link> : null}
         </div>
       ) : null}
-      <section aria-labelledby="aud-list" className="flex flex-col gap-2">
+      <section aria-labelledby="aud-list" className={`${cardBox} flex flex-col gap-2`}>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 id="aud-list" className="font-display text-xl font-bold">{say(words, "camp.aud.list", { n: total })}</h2>
           {canEdit && total > 0 ? <button type="button" className={secondary} disabled={busy} onClick={() => setConfirm("clear")}>{say(words, "camp.aud.clear")}</button> : null}
@@ -236,9 +237,9 @@ export function AudiencePanel({ status, money, fromLedger, studentParty = false,
         {recipients.length === 0 ? (
           <p className="text-base text-muted">{say(words, "camp.aud.empty")}</p>
         ) : (
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col">
             {recipients.map((r) => (
-              <li key={r.id} data-recipient={r.id} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-xl border border-line bg-surface px-3 py-2">
+              <li key={r.id} data-recipient={r.id} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-line py-2 first:border-t-0 first:pt-0">
                 <span className="min-w-0 font-semibold [overflow-wrap:anywhere]">{r.contact_name}<span className="block text-sm font-normal text-muted">{[r.due_date, r.reference].filter(Boolean).join(" · ")}</span></span>
                 {r.amount_paise !== null ? <span className="font-semibold tabular-nums">{formatRupees(r.amount_paise)}</span> : null}
                 {r.closed_reason ? <Pill tone={r.closed_reason === "paid" ? "green" : "neutral"}>{say(words, `camp.closed.${r.closed_reason}`)}</Pill> : null}

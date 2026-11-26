@@ -6,6 +6,7 @@ import type { Deliveries, Endpoint, EventKind, HookFail, NewEndpoint } from "@/l
 
 import { btnMain, btnQuiet, fieldInput, fieldLabel } from "../ui";
 import { makeT, type Words } from "../words";
+import { cardBox } from "../Card";
 
 type Ok<T> = ({ ok: true } & T) | HookFail;
 export type HookActions = {
@@ -46,7 +47,7 @@ export function WebhooksTab({ words, endpoints, events, owner, actions }: { word
   };
   const swap = (h: Endpoint) => setRows((cur) => cur.map((x) => (x.id === h.id ? h : x)));
   return (
-    <div className="flex flex-col gap-4" data-part="webhooks">
+    <div className={`${cardBox} flex flex-col gap-4`} data-part="webhooks">
       <p className="m-0 text-[15px] text-muted">{t("dvh.hooks.sub")}</p>
       {secret ? <SecretOnce secret={secret} words={words} onDone={() => setSecret(null)} /> : null}
       {problem ? (
@@ -59,8 +60,8 @@ export function WebhooksTab({ words, endpoints, events, owner, actions }: { word
           {note}
         </p>
       ) : null}
-      {rows.length === 0 && !form ? <p className="m-0 border-y border-line py-4 text-[15px] text-muted">{t("dvh.none")}</p> : null}
-      <ul className="m-0 flex list-none flex-col border-t border-ink p-0">
+      {rows.length === 0 && !form ? <p className="m-0 text-[15px] text-muted">{t("dvh.none")}</p> : null}
+      <ul className="m-0 flex list-none flex-col border-t border-line p-0">
         {rows.map((h) => (
           <HookRow key={h.id} h={h} words={words} events={events} owner={owner} busy={busy} editing={form?.id === h.id} onEdit={() => setForm({ id: h.id })} onCloseEdit={() => setForm(null)} actions={actions} run={run} swap={swap} setSecret={setSecret} setNote={setNote} onRemoved={(id) => setRows((c) => c.filter((x) => x.id !== id))} />
         ))}
@@ -107,7 +108,7 @@ function HookForm({ words, events, owner, busy, initial, onSave, onCancel }: { w
   const valid = url.trim().startsWith("https://") && url.trim().length >= 12 && picked.length > 0;
   return (
     <form
-      className="flex flex-col gap-3 rounded-xl border border-line p-4"
+      className="flex flex-col gap-3 border-t border-line pt-4"
       onSubmit={(e) => {
         e.preventDefault();
         if (valid) onSave({ url: url.trim(), events: [...picked], sendTranscript: owner ? transcript : (initial?.sendTranscript ?? false) });

@@ -7,6 +7,7 @@ import { LinkSentence } from "../jobs/pages/LazyLinkSentence";
 import { EffectLine, pgCard } from "../jobs/pages/parts";
 import { btnQuiet } from "../ui";
 import { makeT, type Words } from "../words";
+import { cardBox } from "../Card";
 
 export type LeadsFilterSimple = {
   /** the place in the address now (null = everywhere) */
@@ -26,7 +27,7 @@ export function LeadsFiltersSimple({ words, base, chip, q, counts, shown, chipHr
   const statuses = ["all", ...LEAD_CHIPS] as const;
   const plain = filtersOpen();
   return (
-    <section data-part="leads-filters" data-simple="" className={plain ? "flex flex-col gap-3" : `${pgCard} flex flex-col gap-3`}>
+    <section data-part="leads-filters" data-simple="" className={plain ? `${cardBox} flex flex-col gap-3` : `${pgCard} flex flex-col gap-3`}>
       <LinkSentence
         plain={plain}
         line="leads"

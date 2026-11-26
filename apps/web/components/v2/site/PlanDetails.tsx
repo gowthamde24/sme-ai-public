@@ -20,7 +20,7 @@ export function compareRows(t: SiteT): CompareRow[] {
   const each = (f: (p: PublicPlan) => string) => PUBLIC_PLANS.map(f) as unknown as [string, string, string];
   const same = (text: string) => each(() => text);
   return [
-    { id: "price", label: t("pp.d.row.price"), values: each((p) => `${rupees(p.monthly)} ${t("pp.gst")}`) },
+    { id: "monthly", label: t("pp.d.row.price"), values: each((p) => `${rupees(p.monthly)} ${t("pp.gst")}`) },
     { id: "minutes", label: t("pp.d.row.minutes"), values: each((p) => (p.minutes === null ? t("pp.d.val.minutes.none", v) : t("pp.d.val.minutes.n", { n: inr(p.minutes) }))) },
     { id: "extra", label: t("pp.d.row.extra"), values: same(t("pp.d.val.extra", v)) },
     { id: "find", label: t("pp.d.row.find"), values: each((p) => (p.minutes === null ? t("pp.d.val.find.payg", { n: p.find.included, p: p.find.then }) : t("pp.d.val.find.n", { n: p.find.included, p: p.find.then }))) },
@@ -79,7 +79,7 @@ export function PlanCompare({ t }: { t: SiteT }) {
       {/* a phone: a card for each plan, the same rows, nothing scrolls sideways */}
       <div className="mt-5 grid gap-4 md:hidden" data-part="compare-cards">
         {PUBLIC_PLANS.map((p, i) => (
-          <article key={p.id} className={`${card} ${p.recommended ? "border-brand-text ring-1 ring-brand-text" : ""}`} data-plan={p.id}>
+          <article key={p.id} className={`${card} ${p.recommended ? "border-brand-text ring-1 ring-brand-text" : ""}`} data-compare-plan={p.id}>
             <h3 className="text-xl font-semibold">{p.name}</h3>
             <dl className="mt-3 flex flex-col gap-3">
               {rows.map((r) => (

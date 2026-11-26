@@ -9,6 +9,7 @@ import { say, type TodayWords } from "../today/today-words";
 import { card } from "../visits/styles";
 import { AgeingBar } from "./AgeingBar";
 import { EntryVoid, type VoidAction } from "./EntryVoid";
+import { Card } from "../Card";
 
 /**
  * One party's account (jobs CO, CS): what was charged, what was paid, what is owed and how old it is, the claims still open with their due dates, and the entries newest first (a mistake is voided, never edited). The
@@ -38,11 +39,10 @@ export function StatementView({ statement, entries, words, base, receiptBase, ca
         <AgeingBar ageing={s.ageing} words={words} />
       </section>
       {s.open_invoices.length > 0 ? (
-        <section aria-labelledby="st-open" className="flex flex-col gap-2">
-          <h2 id="st-open" className="font-display text-xl font-bold">{k("open")}</h2>
-          <ul className="flex flex-col gap-2">
+        <Card aria-labelledby="st-open" headingId="st-open" title={k("open")}>
+          <ul className="flex flex-col">
             {s.open_invoices.map((o) => (
-              <li key={o.invoice_id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-surface px-3 py-2" data-open={o.invoice_id}>
+              <li key={o.invoice_id} className="flex flex-wrap items-center justify-between gap-2 border-t border-line py-2 first:border-t-0 first:pt-0" data-open={o.invoice_id}>
                 <span className="min-w-0 font-semibold [overflow-wrap:anywhere]">{o.invoice_no ?? o.reference ?? say(words, "due.entry.noref")}</span>
                 <span className="text-sm text-muted">{say(words, "due.due.on", { date: o.due_date })}</span>
                 <span className="font-semibold tabular-nums">{formatRupees(o.open_paise)}</span>
@@ -50,16 +50,15 @@ export function StatementView({ statement, entries, words, base, receiptBase, ca
               </li>
             ))}
           </ul>
-        </section>
+        </Card>
       ) : null}
-      <section aria-labelledby="st-entries" className="flex flex-col gap-2">
-        <h2 id="st-entries" className="font-display text-xl font-bold">{say(words, "due.entries")}</h2>
+      <Card aria-labelledby="st-entries" headingId="st-entries" title={say(words, "due.entries")}>
         {entries.length === 0 ? (
           <p className="text-base text-muted">{say(words, "due.entries.none")}</p>
         ) : (
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col">
             {entries.map((e) => (
-              <li key={e.id} className={`flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-xl border bg-surface px-3 py-2 ${e.voided ? "border-dashed border-edge opacity-70" : "border-line"}`} data-entry={e.id} data-kind={e.kind} data-voided={e.voided ? "true" : undefined}>
+              <li key={e.id} className={`flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-line py-2 first:border-t-0 first:pt-0 ${e.voided ? "opacity-70" : ""}`} data-entry={e.id} data-kind={e.kind} data-voided={e.voided ? "true" : undefined}>
                 <span className="min-w-0">
                   <span className="font-semibold">{words[`${prefix}.kind.${e.kind}`] ?? say(words, `due.kind.${e.kind}`)}</span>
                   <span className="block text-sm text-muted [overflow-wrap:anywhere]">
@@ -76,7 +75,7 @@ export function StatementView({ statement, entries, words, base, receiptBase, ca
             ))}
           </ul>
         )}
-      </section>
+      </Card>
     </div>
   );
 }

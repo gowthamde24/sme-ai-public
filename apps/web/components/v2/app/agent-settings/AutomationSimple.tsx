@@ -7,6 +7,7 @@ import * as React from "react";
 import { EVENING_HOURS, type SchedulerSettings } from "@/lib/api/scheduler";
 import { QUIET_END, QUIET_START, type OutboxSettings } from "@/lib/api/outbox";
 
+import { cardBox } from "../Card";
 import { JobChip } from "../ds/JobChip";
 import { Tick } from "../ds/Tick";
 import { PillSelect } from "../jobs/detail/SettingLines";
@@ -38,7 +39,7 @@ const choices = (list: number[], current: string) => [
 ];
 
 const PlainCtx = React.createContext(false);
-const plainCard = "flex flex-col gap-4 border-t border-line pt-6";
+const plainCard = `${cardBox} flex flex-col gap-4`;
 const plainFx = "m-0 text-[14px] text-muted";
 const jobsCard =
   "flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";

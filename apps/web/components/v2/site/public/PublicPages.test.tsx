@@ -48,6 +48,19 @@ describe("pricing (the approved mock)", () => {
   it("has one start button, to sign-up", () => {
     expect(h).toContain('href="/signup"');
   });
+  it("shows the detailed comparison and 'How minutes are billed' with the plans' own numbers (owner, 26 Nov 2026: detailed, with extra minutes)", () => {
+    const t = text(h);
+    expect(h).toContain('data-part="plan-compare"');
+    expect(h).toContain('data-part="minutes-billed"');
+    for (const x of ["What each plan includes", "Extra minutes", "₹5 each", "Extra phone number", "₹499 a month each, with 1 call line", "Extra call line", "₹149 a month each", "How minutes are billed", "every 30 seconds", "Testing is free"]) expect(t, x).toContain(x);
+  });
+  it("shows both detailed parts in every site language", () => {
+    for (const lang of SITE_LANGS) {
+      const out = html(lang, page("pricing"));
+      expect(out, lang).toContain('data-part="plan-compare"');
+      expect(out, lang).toContain('data-part="minutes-billed"');
+    }
+  });
 });
 
 describe("help center", () => {

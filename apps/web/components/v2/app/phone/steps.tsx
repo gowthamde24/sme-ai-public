@@ -8,7 +8,7 @@ import type * as React from "react";
 export type StepState = "now" | "done" | "off";
 export function Step({ n, title, state, summary, children }: { n: number; title: string; state: StepState; summary?: React.ReactNode; children?: React.ReactNode }) {
   return (
-    <li data-step={n} data-state-of={state} className="flex gap-4 border-b border-line py-5 first:border-t first:border-t-ink">
+    <li data-step={n} data-state-of={state} className="flex gap-4 border-b border-line py-5 first:pt-0 last:border-b-0 last:pb-0">
       <span aria-hidden="true" className={`grid size-7 shrink-0 place-items-center rounded-full border text-sm font-bold ${state === "now" ? "border-ink bg-ink text-surface" : state === "done" ? "border-ink text-ink" : "border-line text-muted"}`}>
         {state === "done" ? <Check className="size-4" strokeWidth={2.4} /> : n}
       </span>

@@ -208,7 +208,7 @@ describe("The assistant's flow on the business pages and the other pages (night 
 });
 
 describe("no price of ours anywhere on the public site except the three paid plans (owner's final numbers, 19 Nov 2026) and no 'no card' claim", () => {
-  const OWN = new Set(["\u20b9499", "\u20b91,999", "\u20b95,999", "\u20b95", "\u20b9499", "\u20b950", "\u20b949", "\u20b939", "\u20b929", "\u20b9100"]); // (\u20b9100: the free start of the launch pricing page and help)
+  const OWN = new Set(["\u20b9499", "\u20b91,999", "\u20b95,999", "\u20b95", "\u20b9499", "\u20b950", "\u20b949", "\u20b939", "\u20b929", "\u20b9100", "\u20b9149", "\u20b930"]); // (\u20b9100 and \u20b930: the free start of the launch pricing page and help; \u20b9149: the extra call line of the plan comparison)
   it.each(cases)("%s: no amount except the plans' own, no card claim", (_n, lang, target) => {
     // landing v2's labelled examples show a customer's own budget and the visitor's own estimate in rupees (never a price of ours): the hero stage, the sample call and the leak; the plans' own numbers are lib/site/plans.ts
     const html = render(lang, target).replace(/data-part="leak"[\s\S]*?<\/section>/, ""); // the counter's own estimate in rupees (the visitor's sliders) is not a price of ours
@@ -292,3 +292,10 @@ describe("the contact and the calculator, when our WhatsApp number is not set up
   });
 });
 
+describe("the phone number card of the public site (owner, 26 Nov 2026: we offer numbers starting with 9)", () => {
+  it.each(SITE_LANGS)("%s: the sample number starts with 9 and nothing says landline, 080 or 9-series coming soon", (lang) => {
+    const text = htmlText(render(lang, { kind: "home" }));
+    expect(text).toContain("+91 9xxxx xxxxx");
+    expect(text).not.toMatch(/80xx|\(080\)|landline|9-series|coming soon/i);
+  });
+});

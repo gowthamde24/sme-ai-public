@@ -16,6 +16,7 @@ import { makeT, type Words } from "../words";
 import { CreditsNeeded, Flow, ReserveNote, type Fail, type VerifyActions } from "./KycFlow";
 import { PREFILL_KEY } from "./kyc-shared";
 import { Notice, Seg, Step } from "./steps";
+import { cardBox } from "../Card";
 
 /**
  * "Verify your business" (KYC_PER_CLIENT; owner 29 Nov 2026; mock "Verify your business"): where the business's own phone account stands, as four steps (Number chosen, Calling account, Verify with PAN and Aadhaar, Ready to call), a neutral line that says what is
@@ -78,7 +79,7 @@ export function VerifyBusiness({ words, status: first, own, canEdit, actions, bu
         </p>
       ) : null}
       {verified ? <Notice part="verify-note">{t("pick.kyc.verified")}</Notice> : own ? <Notice warn part="verify-note">{t("pick.kyc.blocked")}</Notice> : <Notice part="verify-note">{t("pick.kyc.nonumber")}</Notice>}
-      <ol className="m-0 flex list-none flex-col p-0">
+      <ol className={`${cardBox} m-0 flex list-none flex-col`}>
         <Step n={1} title={own ? t("pick.kyc.s1.t") : t("pick.kyc.s1.todo")} state={own ? "done" : "now"} summary={own ? t("pick.kyc.s1.body", { number: own.display }) : undefined}>
           {own ? null : (
             <p className="m-0 mt-2">

@@ -19,6 +19,7 @@ import { ChipBar } from "../v6/ChipBar";
 import { LeadsFiltersSimple, type LeadsFilterSimple } from "./LeadsFiltersSimple";
 import { card, withPanel } from "../v6/ui";
 import { makeT, type Words } from "../words";
+import { cardBox } from "../Card";
 
 export type Touch = { at: string; kind: "first" | "repeat"; source: string };
 export type LeadsV6Props = {
@@ -108,7 +109,7 @@ export function LeadsV6Body({ words, lang, base, rows, counts, chip, q, sourceNa
         </>
       )}
       <div className={withPanel}>
-        <section aria-label={t("lv6.title")} className="min-w-0">
+        <section aria-label={t("lv6.title")} className={leadsOpen() && rows.length > 0 ? cardBox : "min-w-0"}>
           {rows.length === 0 ? (
             <p className={`${card} text-base text-muted`}>{t("lv6.none")}</p>
           ) : (

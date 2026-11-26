@@ -8,7 +8,8 @@ import { requireUser } from "@/lib/auth/session";
 
 import { recordConsentAction } from "./actions";
 import { ConsentForm } from "./consent-form";
-import { bodyText, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { Card } from "@/components/v2/app/Card";
+import { bodyText, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2, BackLink } from "@/components/v2/app/parts";
 import { Rich } from "@/components/v2/app/rich";
 import { makeT } from "@/components/v2/app/words";
@@ -70,8 +71,7 @@ export default async function ConsentPage({ params }: PageProps<"/app/tenants/[t
       <p className={bodyText}>
         <Rich t={t} k="cont.for_line" with={{ name: <strong>{contact.full_name}</strong> }} />
       </p>
-      <section aria-labelledby="now-heading">
-        <h2 id="now-heading" className={pageH2}>{t("cont.what_is_recorded_now")}</h2>
+      <Card aria-labelledby="now-heading" className="mt-6" headingId="now-heading" title={t("cont.what_is_recorded_now")}>
         <ul>
           {CHANNELS.map((c) => (
             <li key={c}>
@@ -80,11 +80,10 @@ export default async function ConsentPage({ params }: PageProps<"/app/tenants/[t
           ))}
         </ul>
         {contact.suppression_reason !== null && <p className={mutedText}>{t("cont.suppressed_note", { reason: contact.suppression_reason })}</p>}
-      </section>
-      <section aria-labelledby="record-heading">
-        <h2 id="record-heading" className={pageH2}>{t("cont.write_down_an_entry")}</h2>
+      </Card>
+      <Card aria-labelledby="record-heading" className="mt-4" headingId="record-heading" title={t("cont.write_down_an_entry")}>
         <ConsentForm words={words} action={recordConsentAction.bind(null, tenantId, contactId)} />
-      </section>
+      </Card>
     </main>
   );
 }

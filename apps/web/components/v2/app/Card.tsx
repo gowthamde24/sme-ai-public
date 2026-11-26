@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
 /**
- * THE one box for a section of a page (owner-approved boxy mock, 26 Nov 2026, mocks/app-v2-boxy): white, rounded 14 px, a thin border, one soft shadow, the heading INSIDE at the top. The page behind it is the soft tint (`--v2-bg`).
+ * THE one box for a section of a page (owner-approved boxy mock, 26 Nov 2026, mocks/app-v2-boxy): white, a 4 px radius (the shared token --v2-r-card), a thin border, one soft shadow, the heading INSIDE at the top. The page behind it is the soft tint (`--v2-bg`).
  * RULE (one rule so every page stays consistent): a section that is loose on the page, with a heading above its content, becomes a Card with a SectionHeading inside; a row list, a form or a table of that section goes in the Card's body. A Card never holds another Card: parts inside it are rows divided by hairlines.
  */
-export const cardBox = "min-w-0 rounded-[14px] border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
+export const cardBox = "min-w-0 rounded-[var(--v2-r-card)] border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
 
 /** The heading of a Card: 17 px, bold, with an optional count and one action on the right. */
 export function SectionHeading({ id, children, count, action, as: Tag = "h2" }: { id?: string; children: ReactNode; count?: ReactNode; action?: ReactNode; as?: "h2" | "h3" }) {

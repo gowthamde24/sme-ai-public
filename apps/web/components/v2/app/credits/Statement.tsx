@@ -16,10 +16,10 @@ export function Statement({ first, words, base, load }: { first: StatementData; 
   const [busy, setBusy] = React.useState(false);
   const [problem, setProblem] = React.useState<string | null>(null);
   const when = (iso: string) => new Date(iso).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true });
-  if (items.length === 0) return <p className="m-0 border-y border-line py-4 text-[15px] text-muted">{t("cr.statement.none")}</p>;
+  if (items.length === 0) return <p className="m-0 text-[15px] text-muted">{t("cr.statement.none")}</p>;
   return (
     <div data-part="statement">
-      <ul className="m-0 flex list-none flex-col border-t border-ink p-0">
+      <ul className="m-0 flex list-none flex-col border-t border-line p-0">
         {items.map((i, n) => (
           <li key={`${i.at}-${n}`} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-0.5 border-b border-line py-3">
             <b className="text-[16px] font-semibold text-ink">{i.label}</b>

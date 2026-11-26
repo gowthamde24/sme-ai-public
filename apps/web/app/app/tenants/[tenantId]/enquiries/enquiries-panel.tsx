@@ -6,8 +6,11 @@ import { LocalTime } from "../../../local-time";
 import { captureEnquiryAction } from "./actions";
 import { PasteEnquiryForm } from "./paste-enquiry-form";
 import { AddButton } from "@/components/v2/app/AddButton";
-import { alertBox, hintInline, link, listItemCard, listPlain, mutedText, pageH2 } from "@/components/v2/app/ui";
+import { Card } from "@/components/v2/app/Card";
+import { alertBox, hintInline, link, listPlain, mutedText } from "@/components/v2/app/ui";
 import { makeT, type Words } from "@/components/v2/app/words";
+
+const rowItem = "border-t border-line pt-3 first:border-t-0 first:pt-0"; // an item of a Card: a row between hairlines, not a box inside the box
 
 /**
  * The "Enquiries" section of a lead page: the enquiries pasted onto this lead, and (for an owner, admin or sales user) the form to paste a
@@ -29,8 +32,7 @@ export function EnquiriesPanel({
 }) {
   const t = makeT(words);
   return (
-    <section aria-labelledby="enquiries-heading">
-      <h2 id="enquiries-heading" className={pageH2}>{t("enq.enquiries")}</h2>
+    <Card aria-labelledby="enquiries-heading" className="mt-6" headingId="enquiries-heading" title={t("enq.enquiries")}>
       <p className={mutedText}>
         {t("enq.paste_an_e_mail_or_whatsapp")}
       </p>
@@ -43,7 +45,7 @@ export function EnquiriesPanel({
       ) : (
         <ul className={listPlain}>
           {enquiries.map((e) => (
-            <li key={e.id} className={listItemCard}>
+            <li key={e.id} className={rowItem}>
               <Link href={`/app/tenants/${tenantId}/enquiries/${e.id}`} className={link}>
                 {t("enq.enquiry_suffix", { channel: t(`enq.channel.${e.channel}`) })}
               </Link>{" "}
@@ -63,6 +65,6 @@ export function EnquiriesPanel({
       ) : (
         <p className={mutedText}>{t("enq.only_an_owner_admin_or_sales")}</p>
       )}
-    </section>
+    </Card>
   );
 }

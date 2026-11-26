@@ -34,10 +34,11 @@ import { contactWhatsAppAction, requestCallAction } from "./contact-actions";
 import { contactWords } from "./contact-words";
 import { recordSentMessageAction } from "./sent-message-actions";
 import { SentMessageForm } from "./sent-message-form";
-import { foldBody, foldCard, foldSummary, kvList, link, mutedText, pageH1, pageH2, pageMain, pageSub } from "@/components/v2/app/ui";
+import { foldBody, foldCard, foldSummary, kvList, link, mutedText, pageH1, pageMain, pageSub } from "@/components/v2/app/ui";
 import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
 import { partsWords } from "@/i18n/app-words";
 import { BRAND_NAME } from "@/design/brand";
+import { Card } from "@/components/v2/app/Card";
 
 export const metadata = { title: `Lead · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -193,8 +194,7 @@ export default async function LeadPage({
             noContact={contactId === null}
           />
         ) : null}
-        <section aria-labelledby="summary-heading">
-          <h2 id="summary-heading" className={pageH2}>{t("lead.about")}</h2>
+        <Card aria-labelledby="summary-heading" className="mt-6" headingId="summary-heading" title={t("lead.about")}>
           <dl className={kvList}>
             <dt>{t("lead.status")}</dt>
             <dd>{statusText}</dd>
@@ -205,7 +205,7 @@ export default async function LeadPage({
             <dt>{t("lead.origin")}</dt>
             <dd>{originText}</dd>
           </dl>
-        </section>
+        </Card>
 
         {profile ? <LeadProfileCard words={wordsFor(lang, ["lp."])} leadId={leadId} profile={profile} canEdit={WRITE_ROLES.includes(tenant.role)} fix={fixLeadFieldAction.bind(null, tenantId)} /> : null}
 

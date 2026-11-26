@@ -13,7 +13,7 @@ describe("the plan comparison", () => {
   const t = siteT("en");
   it("has one row for each thing and one value for each plan, with the numbers of PUBLIC_PLANS and PLAN_FACTS", () => {
     const rows = Object.fromEntries(compareRows(t).map((r) => [r.id, r.values]));
-    expect(rows.price).toEqual(PUBLIC_PLANS.map((p) => `${rupees(p.monthly)} + 18% GST`));
+    expect(rows.monthly).toEqual(PUBLIC_PLANS.map((p) => `${rupees(p.monthly)} + 18% GST`));
     expect(rows.minutes[1]).toBe("500 minutes");
     expect(rows.minutes[2]).toBe("1,500 minutes");
     expect(rows.minutes[0]).toContain(`₹${PLAN_FACTS.extraMinute} a minute`);

@@ -4,7 +4,8 @@ import { PageTop, SegmentLinks } from "@/components/v2/app/parts";
 import { TaskComposer } from "@/components/v2/app/tasks/TaskComposer";
 import { TaskList } from "@/components/v2/app/tasks/TaskList";
 import { powersOf } from "@/components/v2/app/tasks/task-actions";
-import { mutedText, pageMain, pageH2 } from "@/components/v2/app/ui";
+import { Card } from "@/components/v2/app/Card";
+import { mutedText, pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
@@ -52,9 +53,10 @@ export default async function TasksRoute({ params, searchParams }: PageProps<"/a
       <div className="mt-6 max-w-3xl">
         <TaskComposer words={words} base={base} actions={boundTaskActions(tenantId)} templates={offered} canPlan={powers.plan} initial={initial} focus={first(sp.new) === "1"} />
       </div>
-      <h2 className={pageH2}>{t("tk.lists.title")}</h2>
+      <Card className="mt-6" title={t("tk.lists.title")}>
       <SegmentLinks label={t("tk.lists.title")} items={TASK_TABS.map((k) => ({ key: k, label: `${t(`tk.tab.${k}`)} (${counts[k]})`, href: `${base}/tasks?tab=${k}`, current: k === tab }))} />
       {tasks.ok ? <TaskList tasks={shown} words={words} base={base} lang={lang} empty={t(`tk.empty.${tab}`)} /> : <p className={mutedText}>{t("frame.notyet")}</p>}
+      </Card>
     </main>
   );
 }
