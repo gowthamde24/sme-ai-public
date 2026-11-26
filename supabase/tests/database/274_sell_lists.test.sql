@@ -18,10 +18,11 @@ select is(pg_temp.at('a_owner', format($q$select (public.sell_list_create(%L, %L
 select is(pg_temp.at('a_owner', format($q$select public.sell_list_create(%L, %L, '   ', 'other')::text$q$, tests.tid('a'), tests.rid('l3'))), 'ERR:22023', 'A7: an empty name is invalid');
 select is(pg_temp.at('a_owner', format($q$select public.sell_list_create(%L, %L, 'x', 'gadgets')::text$q$, tests.tid('a'), tests.rid('l3'))), 'ERR:22023', 'A8: an unknown kind is invalid');
 select is(pg_temp.at('a_owner', format($q$select public.sell_list_create(%L, %L, 'Third', 'services')::text$q$, tests.tid('a'), tests.rid('l3'))) like '{%', true, 'A9: a third list on a trial');
-select is(pg_temp.at('a_owner', format($q$select public.sell_list_create(%L, %L, 'Fourth', 'services')::text$q$, tests.tid('a'), tests.rid('l4'))), 'ERR:SM841', 'A10: a trial workspace has at most 3 lists');
+select is(pg_temp.at('a_owner', format($q$select count(*)::text from (select public.sell_list_create(%L, gen_random_uuid(), 'Extra ' || g, 'other') from generate_series(1, 5) g) x$q$, tests.tid('a'))), '5', 'A10a: a trial workspace can have up to 8 lists (5 more)');
+select is(pg_temp.at('a_owner', format($q$select public.sell_list_create(%L, %L, 'Ninth', 'services')::text$q$, tests.tid('a'), tests.rid('l4'))), 'ERR:SM841', 'A10: a trial workspace has at most 8 lists');
 
 -- B. reads: members only, never another workspace's
-select is(pg_temp.at('a_viewer', format($q$select jsonb_array_length(public.sell_lists_list(%L) -> 'lists')::text$q$, tests.tid('a'))), '3', 'B1: any member reads the lists');
+select is(pg_temp.at('a_viewer', format($q$select jsonb_array_length(public.sell_lists_list(%L) -> 'lists')::text$q$, tests.tid('a'))), '8', 'B1: any member reads the lists');
 select is(pg_temp.at('b_owner', format($q$select public.sell_lists_list(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'B2: another workspace cannot');
 select is(pg_temp.at('b_owner', format($q$select jsonb_array_length(public.sell_lists_list(%L) -> 'lists')::text$q$, tests.tid('b'))), '0', 'B3: and has none of its own yet');
 

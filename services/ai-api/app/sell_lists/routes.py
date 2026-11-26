@@ -32,7 +32,7 @@ RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 OwnerAdminStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, strong=True))]
 Kind = Literal["products", "digital", "services", "bookings", "courses", "subscriptions", "rentals", "food", "events", "other"]
 ColumnType = Literal["text", "number", "rupees", "yes_no", "choice", "photo", "link", "date", "datetime", "duration"]
-Role_ = Literal["price", "availability", "quantity", "how_to_buy", "description"]
+Role_ = Literal["price", "availability", "quantity", "how_to_buy", "description", "category"]
 Period = Literal["one_time", "per_month", "per_year", "per_hour", "per_day", "per_unit", "from"]
 
 WORDS = {
@@ -112,6 +112,12 @@ def _json(body: Any, status: int = 200) -> JSONResponse:
 @router.get("")
 def my_lists(ctx: AnyMember, runtime: RuntimeDep) -> JSONResponse:
     return _json(_run(_repo(runtime).lists, ctx.principal.token, ctx.tenant.id))
+
+
+@router.post("/starters")
+def make_starters(ctx: OwnerAdminStrong, runtime: RuntimeDep) -> JSONResponse:
+    """The starter lists of the workspace's industry (textiles: Sarees, Dress materials, Blouses, Dupattas, Fabric by the metre, Stitching and alterations): only the missing ones, by name, as many as the list cap allows. A retry makes nothing twice."""
+    return _json(_run(_repo(runtime).starters, ctx.principal.token, ctx.tenant.id))
 
 
 @router.post("")

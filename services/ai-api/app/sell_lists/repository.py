@@ -34,6 +34,10 @@ class ListRepository:
     def get(self, token: str, tenant_id: uuid.UUID, list_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "sell_list_get", {"p_tenant_id": str(tenant_id), "p_id": str(list_id)})
 
+    def starters(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        """The pack's starter lists that do not exist yet (`public.sell_lists_starters_make`, migration 992710): `{created, already_there, skipped_cap, lists}`."""
+        return self._rpc.object(token, "sell_lists_starters_make", {"p_tenant_id": str(tenant_id)})
+
     def create(self, token: str, tenant_id: uuid.UUID, list_id: uuid.UUID, name: str, kind: str) -> dict[str, Any]:
         return self._rpc.object(token, "sell_list_create", {"p_tenant_id": str(tenant_id), "p_id": str(list_id), "p_name": name, "p_kind": kind})
 
