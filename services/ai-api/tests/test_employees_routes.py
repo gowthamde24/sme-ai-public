@@ -112,7 +112,8 @@ def test_request_shapes_are_strict(w: tuple[Any, FakeEmployees]) -> None:
         (client.put, f"{URL}/{EID}", {"speed": 3}),
         (client.put, f"{URL}/{EID}", {"languages": ["xx"]}),
         (client.put, f"{URL}/{EID}", {"autonomy": {"max_discount_percent": 101}}),
-        (client.put, f"{URL}/{EID}", {"hours": {"days": [9], "from_minute": 660, "to_minute": 1140}}),
+        (client.put, f"{URL}/{EID}", {"hours": {"days": [8], "from_minute": 660, "to_minute": 1140}}),
+        (client.put, f"{URL}/{EID}", {"hours": {"days": [0], "from_minute": 660, "to_minute": 1140}}),
         (client.put, f"{URL}/{EID}", {"ask_first": ["teleport"]}),
         (client.post, f"{URL}/{EID}/status", {"status": "draft"}),
     ]
@@ -135,3 +136,31 @@ def test_a_phone_number_can_be_given_or_taken_away(w: tuple[Any, FakeEmployees])
     assert client.put(f"{URL}/{EID}/phone", json={"phone_number_id": str(n)}, headers=auth("a_owner")).status_code == 200
     assert client.put(f"{URL}/{EID}/phone", json={"phone_number_id": None}, headers=auth("a_owner")).status_code == 200
     assert [c[1] for c in repo.calls if c[0] == "phone"] == [n, None]
+
+
+def test_the_preview_speaks_the_employees_own_voice_and_never_another_one(w: tuple[Any, FakeEmployees]) -> None:
+    from types import SimpleNamespace
+
+    class Voice:
+        def __init__(self) -> None:
+            self.calls: list[tuple[str, str | None, str]] = []
+            self.fail = False
+
+        async def speak(self, tenant_id: Any, language: str, chosen: str | None, text: str, gender: str = "female", pace: float = 1.0) -> tuple[bytes, str, str]:
+            from app.voice.interface import VoiceError
+
+            self.calls.append((language, chosen, text))
+            if self.fail:
+                raise VoiceError("tts_unavailable")
+            return b"RIFFxxxx", "cartesia", chosen or "te-sindhu"
+
+    repo = FakeEmployees()
+    repo.get = lambda token, tenant_id, employee_id: {"id": str(employee_id), "voices": {"te": "te-ramya"}, "opening_line": {"te": "నమస్కారం, నేను ప్రియ, AI అసిస్టెంట్."}}   # type: ignore[method-assign]
+    voice = Voice()
+    client, _ = make_client(employees=repo, call_voice=voice, workspace=SimpleNamespace(voice_choices=lambda token, tenant: {"choices": {}, "gender": "female"}))
+    r = client.post(f"{URL}/{EID}/preview", json={"language": "te"}, headers=auth("a_owner"))
+    assert r.status_code == 200 and r.json()["voice_id"] == "te-ramya" and voice.calls == [("te", "te-ramya", "నమస్కారం, నేను ప్రియ, AI అసిస్టెంట్.")]
+    assert client.post(f"{URL}/{EID}/preview", json={"language": "te"}, headers=auth("a_sales")).status_code == 403
+    voice.fail = True
+    down = client.post(f"{URL}/{EID}/preview", json={"language": "te", "text": "Hello there"}, headers=auth("a_owner"))
+    assert down.status_code == 503 and down.json()["error"]["code"] == "voice_unavailable"

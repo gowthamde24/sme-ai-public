@@ -64,7 +64,7 @@ class Autonomy(BaseModel):
 
 class Hours(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    days: Annotated[list[Annotated[int, Field(ge=0, le=6)]], Field(min_length=1, max_length=7)]
+    days: Annotated[list[Annotated[int, Field(ge=1, le=7)]], Field(min_length=1, max_length=7)]   # 1 = Monday ... 7 = Sunday (as in My assistant's call days)
     from_minute: Annotated[int, Field(ge=0, le=1439)]
     to_minute: Annotated[int, Field(ge=1, le=1440)]
 
@@ -181,3 +181,44 @@ def set_phone(employee_id: uuid.UUID, body: PhoneIn, ctx: OwnerAdminStrong, runt
 @router.get("/{employee_id}/activity")
 def activity(employee_id: uuid.UUID, ctx: AnyMember, runtime: RuntimeDep, limit: Annotated[int, Query(ge=1, le=100)] = 30, before: Annotated[str | None, Query(max_length=40)] = None) -> JSONResponse:
     return _json(_run(_repo(runtime).activity, ctx.principal.token, ctx.tenant.id, employee_id, limit, before))
+
+
+class PreviewAudio(BaseModel):
+    mime: str
+    base64: str
+
+
+class PreviewOut(BaseModel):
+    spoken_text: str
+    audio: PreviewAudio
+    engine: str
+    voice_id: str
+
+
+@router.post("/{employee_id}/preview")
+async def preview(employee_id: uuid.UUID, body: PreviewIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> JSONResponse:
+    """Hear this employee: its opening line for the language (or the words sent, or a short sample) in ITS voice for that language. The chosen voice or an error (503 `voice_unavailable`): another voice never stands in."""
+    import base64
+
+    from fastapi.concurrency import run_in_threadpool
+
+    from app.conversation.picker import voice_state
+    from app.conversation.voices import sample_text
+    from app.voice.interface import VoiceError
+
+    repo = _repo(runtime)
+    service = getattr(runtime, "call_voice", None)
+    if service is None:
+        raise ApiError(503, "voice_unavailable", "Voice samples are not available right now.")
+    emp = await run_in_threadpool(_run, repo.get, ctx.principal.token, ctx.tenant.id, employee_id)
+    voices = emp.get("voices") if isinstance(emp.get("voices"), dict) else {}
+    opening = emp.get("opening_line") if isinstance(emp.get("opening_line"), dict) else {}
+    text = body.text or opening.get(body.language) or sample_text(body.language)
+    _, gender = await run_in_threadpool(voice_state, runtime, ctx)
+    try:
+        wav, engine, voice_id = await service.speak(ctx.tenant.id, body.language, voices.get(body.language), plain(text), gender)
+    except VoiceError as err:
+        code = "rate_limited" if getattr(err, "code", "") == "rate_limited" else "voice_unavailable"
+        raise ApiError(429 if code == "rate_limited" else 503, code, "That sample cannot be played right now." if code == "voice_unavailable" else "Too many samples today.") from None
+    return _json({"spoken_text": plain(text), "audio": {"mime": "audio/wav", "base64": base64.b64encode(wav).decode("ascii")}, "engine": engine, "voice_id": voice_id})
+

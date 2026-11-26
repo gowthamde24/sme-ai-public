@@ -39,6 +39,7 @@ from app.conversation.providers import (
     SarvamRealtimeStt,
 )
 from app.conversation.sound import Stored, clamp_speed, resolve_sound, tone_of
+from app.employees import apply as employees_apply
 from app.errors import ApiError
 from app.logging_safety import one_line
 from app.opening import greeting
@@ -100,6 +101,7 @@ class InboundService:
     voicelink: Any = None   # app/telephony/voicelink_routes.VoicelinkConfig when VoiceLink calls are switched on here (VOICELINK_WS_TOKEN); None: the VoiceLink address answers nothing
     plivo: Any = None   # app/telephony/plivo_routes.PlivoConfig when Plivo calls are switched on here; None: the Plivo addresses answer "off"
     charge: Any = None   # app/billing/call_charge.CallCharger: the wallet's charge at the end of a call (BILLING_CHARGE_CALLS); None: no charge
+    employees_on: bool = False   # EMPLOYEES (26 Nov 2026): a call reads the AI employee that answers it (app/employees/apply.py); off: the single business assistant, as before
     usage: Any = None   # app/ops/usage.UsageRecorder: what each provider was used for at the end of a call (the usage ledger); None: nothing is recorded
 
 
@@ -119,6 +121,7 @@ class OutboundCall:
     person_name: str | None = None   # the called person's name when the contact record has one (Lead Desk): the Respectful tone says "Name గారు"
     person_gender: str | None = None # "male" | "female" only when the contact or the goal says so: it decides whether a title may be used
     job: str | None = None          # the job that placed the call (speed_to_lead, followups, store_visits, offers) or None: its own "say AI when greeting" override applies (app/opening/greeting.py)
+    employee_id: uuid.UUID | None = None   # the AI employee that does this call (None: the default one)
     kind: str = "goal"              # test | goal | task: which opening the call has (plivo_outbound.opening_for), so the answer can rebuild it with or without the AI words
     tone: str = "friendly"           # respectful | friendly | casual (app/telephony/tone.py): the register of a goal call; casual only on the Owner's own test call
 
@@ -217,7 +220,7 @@ def visit_label(slot: dict[str, Any]) -> str:
 
 
 def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = (), assistant: str | None = None,
-                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool | None = None, stored: Stored | None = None, first_token_s: float = 1.2, pack: FactPack | None = None, recording_notice: bool = False, monitor_notice: bool = False) -> tuple[Parts, str]:
+                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool | None = None, stored: Stored | None = None, first_token_s: float = 1.2, pack: FactPack | None = None, recording_notice: bool = False, monitor_notice: bool = False, employee: str = "") -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in the CALL's language (te-IN on a Telugu line; owner, 6 Nov 2026: "auto" let a caller's "hello" turn a Telugu call English),
     following the call when it switches (app/telephony/language_rule.py), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
@@ -269,7 +272,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         tts=tts,
         llm=llm,
         system_for=lambda lang: goal_prompt(lang) if outbound is not None and outbound.goal else persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose=outbound.purpose if outbound else "inbound", goal=outbound.goal if outbound else None, facts=list(pack.facts) if pack is not None else [], allow_prices=bool(pack is not None and pack.has_prices), customer_first_name=None, training=training, visit_slots=visit_labels,
-                                                      corrections=corrections, opening=opening_for(lang), opening_says_ai=gate.has_ai_disclosure(opening_for(lang)), tone=tone_of(stored)[0]),
+                                                      corrections=corrections, opening=opening_for(lang), opening_says_ai=gate.has_ai_disclosure(opening_for(lang)), tone=tone_of(stored)[0], employee=employee),
         greeting_for=opening_for,
         models={"fast": model, "strong": model},
         voice_for=lambda lang: resolve_sound(bv.config, stored, lang).voice.id,
@@ -289,6 +292,7 @@ class Prepared:
     rendering: "asyncio.Future[bytes | None] | None" = None
     background: str = "quiet_office"   # the quiet bed under our voice (app/telephony/ambience.py): quiet_office | shop | off
     ai_disclosed: bool = True   # whether the opening this call speaks really says it is an AI (stored on the call row, truthfully)
+    employee_id: str | None = None   # the AI employee that took this call (None: the flag is off)
     listening_tts: Any = None   # the separate voice object for the listening sounds (None: no listening sounds on this call)
 
 
@@ -310,10 +314,10 @@ async def _prepare(service: InboundService, bv: Any, start: Any, outbound: Outbo
     found = await inbound.find_line_quick(service.store.line_find, line_no)
     if not found or not found.get("tenant_id"):
         return None
-    return await _prepare_for(service, bv, uuid.UUID(str(found["tenant_id"])), business=found.get("business"), assistant=found.get("assistant"), outbound=outbound, caller=getattr(start, "from_number", None))
+    return await _prepare_for(service, bv, uuid.UUID(str(found["tenant_id"])), business=found.get("business"), assistant=found.get("assistant"), outbound=outbound, caller=getattr(start, "from_number", None), line=line_no)
 
 
-async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, business: str | None = None, assistant: str | None = None, outbound: OutboundCall | None = None, caller: str | None = None) -> Prepared:
+async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, business: str | None = None, assistant: str | None = None, outbound: OutboundCall | None = None, caller: str | None = None, line: str | None = None) -> Prepared:
     """`business` and `assistant` are the workspace's own names (the line lookup; owner, 6 Nov 2026); without them the deployment's TELEPHONY_INBOUND_BUSINESS and the default assistant name."""
     language = outbound.language if outbound else service.language
     business = (business or "").strip() or service.business
@@ -329,6 +333,13 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             return default
 
     training, slots, corrections, sound_row, pack_raw, monitored_raw = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("call_sound", None), read("fact_pack", None), read("monitored", False))
+    employee: dict[str, Any] | None = None
+    if service.employees_on:   # (26 Nov 2026) the AI employee that answers this line or does this task; the default employee when none is named; None when it cannot be read (the call is then the single assistant as before)
+        try:
+            employee = await asyncio.to_thread(service.store.employee_runtime, tenant, getattr(outbound, "employee_id", None), line)
+        except Exception as exc:  # noqa: BLE001
+            log.warning("exotel_inbound employee_unreadable %s", exc.__class__.__name__)
+        sound_row, training, assistant = employees_apply.apply(employee, sound_row if isinstance(sound_row, dict) else None, training if isinstance(training, dict) else None, assistant)
     monitored = bool(service.monitor_allowed and monitored_raw is True)   # only a workspace that can be listened to says so
     if commerce_facts.ENABLED and outbound is None and caller and isinstance(pack_raw, dict):   # the caller's own store orders (COMMERCE=on), looked up by their number
         try:
@@ -342,7 +353,7 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
     slots = list(slots or [])
     labels = tuple(visit_label(sl) for sl in slots)
     if service.parts_for is None:
-        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, first_token_s=service.first_token_s, recording_notice=service.recording_notice, monitor_notice=monitored, pack=fact_pack.build(pack_raw) if outbound is None and pack_raw is not None else None, assistant=assistant, corrections=tuple(corrections or ()), stored=stored, **cast(Any, {"outbound": outbound} if outbound is not None else {}))
+        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, first_token_s=service.first_token_s, recording_notice=service.recording_notice, monitor_notice=monitored, pack=fact_pack.build(pack_raw) if outbound is None and pack_raw is not None else None, assistant=assistant, employee=employees_apply.block(employee), corrections=tuple(corrections or ()), stored=stored, **cast(Any, {"outbound": outbound} if outbound is not None else {}))
     else:
         parts, model = service.parts_for(bv, business, language, service.llm_choice)
     text = parts.greeting_for(language)
@@ -371,7 +382,7 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
 
         parts.greeting_keep = keep_and_store
     return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering, ai_disclosed=not text or gate.has_ai_disclosure(text),
-                    background=ambience.valid((training or {}).get("background") if isinstance(training, dict) else None), listening_tts=_listening_voice(bv, stored))
+                    background=ambience.valid((training or {}).get("background") if isinstance(training, dict) else None), listening_tts=_listening_voice(bv, stored), employee_id=str(employee.get("id")) if isinstance(employee, dict) and employee.get("id") else None)
 
 
 def assistant_of(info: dict[str, Any] | None) -> str | None:
@@ -567,6 +578,9 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
             call_id = begin_row.result()
             if live is not None:
                 live.remove(call_id)
+            if prepared is not None and getattr(prepared, "employee_id", None):   # which AI employee took the call (best effort: the Calls list and the employee's activity read it)
+                with suppress(Exception):
+                    await asyncio.to_thread(service.store.employee_tag, tenant, call_id, uuid.UUID(str(prepared.employee_id)))
         if reserving is not None and budget is not None:   # what the call did not use goes back to the day
             with suppress(Exception):
                 hold = await reserving

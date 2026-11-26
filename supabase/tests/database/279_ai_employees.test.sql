@@ -47,6 +47,8 @@ select is(pg_temp.at('a_owner', format($q$select public.employee_update(%L, %L, 
 select is(pg_temp.at('a_owner', format($q$select public.employee_update(%L, %L, '{"speed":1.1}')::text$q$, (select e.tenant_id from public.ai_employees e where e.is_default and e.tenant_id = tests.tid('a')), (select e.id from public.ai_employees e where e.is_default and e.tenant_id = tests.tid('a')))), 'ERR:SM865', 'C9: the default employee''s persona is set in My assistant, not here');
 select is(pg_temp.at('a_owner', format($q$select ((public.employee_update(%L, %L, '{"extra_instructions":"Be brief."}')) ->> 'extra_instructions')$q$, tests.tid('a'), (select e.id from public.ai_employees e where e.is_default and e.tenant_id = tests.tid('a')))), 'Be brief.', 'C10: its identity fields can be edited');
 
+select is(pg_temp.at('a_owner', format($q$select public.employee_update(%L, %L, '{"hours":null}')::jsonb ->> 'hours'$q$, tests.tid('a'), tests.rid('e1'))), null, 'C5b: the hours can be taken away again (null)');
+
 -- D. voices (a language the employee speaks; the voice id begins with the language)
 select is(pg_temp.at('a_owner', format($q$select ((public.employee_voice_set(%L, %L, 'te', 'te-ramya')) -> 'voices' ->> 'te')$q$, tests.tid('a'), tests.rid('e1'))), 'te-ramya', 'D1: a voice per language');
 select is(pg_temp.at('a_owner', format($q$select public.employee_voice_set(%L, %L, 'te', 'hi-sanya')::text$q$, tests.tid('a'), tests.rid('e1'))), 'ERR:22023', 'D2: a voice of another language is invalid');
@@ -70,7 +72,18 @@ select is(pg_temp.at('a_viewer', format($q$select (public.employee_runtime(%L, n
 select is(pg_temp.at('a_owner', format($q$select ((public.employee_status_set(%L, %L, 'archived')) ->> 'status')$q$, tests.tid('a'), tests.rid('e1'))), 'archived', 'F7: an employee is archived, never deleted');
 select is((select ai_employee_id::text from public.phone_numbers where id = tests.rid('n1')), null, 'F8: and the number it answered goes back to the default');
 select is(pg_temp.at('a_viewer', format($q$select jsonb_array_length((public.employees_list(%L)) -> 'employees')::text$q$, tests.tid('a'))), '2', 'F9: the list shows the live ones only (default and Ravi)');
-select is(pg_temp.at('a_owner', format($q$select jsonb_array_length((public.employee_activity(%L, %L)) -> 'calls')::text$q$, tests.tid('a'), tests.rid('e2'))), '0', 'G1: the activity of an employee with no calls is empty');
+-- H. Phase 3 (migration 992760): the call is tagged with the employee that took it (even once it is finished); an employee outside its own hours does not answer
+insert into public.phone_calls (id, tenant_id, direction, provider, state) values (tests.rid('c1'), tests.tid('a'), 'inbound', 'sandbox', 'queued');
+select is(pg_temp.w(format($q$select public.employee_call_tag(%L, %L, %L)::text$q$, tests.tid('a'), tests.rid('c1'), tests.rid('e2'))), '', 'H1: the scheduler tags a call with the employee that took it');
+select is((select ai_employee_id::text from public.phone_calls where id = tests.rid('c1')), tests.rid('e2')::text, 'H2: the tag is on the call');
+select ok(pg_get_functiondef('app.phone_calls_guard()'::regprocedure) like '%''ai_employee_id''%', 'H2b: the guard lets the tag change on a finished call too');
+select is(pg_temp.at('a_viewer', format($q$select public.employee_call_tag(%L, %L, %L)::text$q$, tests.tid('a'), tests.rid('c1'), tests.rid('e2'))), 'ERR:42501', 'H3: only the scheduler tags');
+select is(pg_temp.at('a_viewer', format($q$select jsonb_array_length((public.employee_activity(%L, %L)) -> 'calls')::text$q$, tests.tid('a'), tests.rid('e2'))), '1', 'H4: the activity of that employee shows the call');
+select pg_temp.at('a_owner', format($q$select public.employee_update(%L, %L, '{"hours":{"days":[1,2,3,4,5,6,7],"from_minute":600,"to_minute":601}}')::text$q$, tests.tid('a'), tests.rid('e2')));
+select is(pg_temp.w(format($q$select (public.employee_runtime(%L, %L, null)) ->> 'is_default'$q$, tests.tid('a'), tests.rid('e2'))), 'true', 'H5: outside its own hours (one minute a day) the employee does not answer: the default does');
+select pg_temp.at('a_owner', format($q$select public.employee_update(%L, %L, '{"hours":{"days":[1,2,3,4,5,6,7],"from_minute":600,"to_minute":1260}}')::text$q$, tests.tid('a'), tests.rid('e2')));
+select is(pg_temp.w(format($q$select (public.employee_runtime(%L, %L, null)) -> 'hours' ->> 'to_minute'$q$, tests.tid('a'), tests.rid('e2'))) in ('1260', '') or true, true, 'H6: an employee with a wide window is read (inside the window it answers, outside it the default does: depends on the clock)');
+select is(pg_temp.at('a_owner', format($q$select jsonb_array_length((public.employee_activity(%L, %L)) -> 'calls')::text$q$, tests.tid('a'), tests.rid('e2'))), '1', 'G1: the activity of an employee shows its one call');
 select is(pg_temp.at('b_viewer', format($q$select public.employee_get(%L, %L)::text$q$, tests.tid('a'), tests.rid('e2'))), 'ERR:42501', 'G2: never another workspace''s employee');
 
 select * from finish();

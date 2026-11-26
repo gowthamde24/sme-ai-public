@@ -396,7 +396,7 @@ begin
       v_from := (p_patch -> 'hours' ->> 'from_minute')::integer;
       v_to := (p_patch -> 'hours' ->> 'to_minute')::integer;
       if jsonb_typeof(p_patch -> 'hours') <> 'object' or jsonb_typeof(p_patch -> 'hours' -> 'days') <> 'array' or v_from is null or v_to is null or v_from >= v_to
-         or exists (select 1 from jsonb_array_elements_text(p_patch -> 'hours' -> 'days') d where d !~ '^[0-6]$') or jsonb_array_length(p_patch -> 'hours' -> 'days') not between 1 and 7 then
+         or exists (select 1 from jsonb_array_elements_text(p_patch -> 'hours' -> 'days') d where d !~ '^[1-7]$') or jsonb_array_length(p_patch -> 'hours' -> 'days') not between 1 and 7 then
         perform app.employee_error('invalid');
       end if;
       if v_from < 600 or v_to > 1260 then   -- never wider than the legal calling window (10:00 to 21:00)
