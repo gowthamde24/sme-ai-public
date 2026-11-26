@@ -1,7 +1,7 @@
 # Billing
 Your plan, your balance in rupees, money you add and your invoices.
-[button type=button: Add money]
-{role=note} Test data: the balance, top-ups and invoices here are made up and no real money moves.
+[button type=button: Add credits]
+{role=note} Test data: the balance, added credits and invoices here are made up and no real money moves.
 {label="Your balance"}
 ## Your balance
 ₹1,550 About 310 call minutes

@@ -17,7 +17,7 @@ describe("Settings > Business form", () => {
     render(<BusinessForm action={vi.fn()} words={WORDS} name="Pavers Corner" town="Guntur" languages={["en", "te"]} choices={CALL_LANGS} />);
     expect(screen.getByLabelText("Business name")).toHaveValue("Pavers Corner");
     expect(screen.getByLabelText("Business name")).not.toBeDisabled();
-    expect(screen.getByLabelText("City or area")).toHaveValue("Guntur");
+    expect(screen.getByLabelText("City or town")).toHaveValue("Guntur");
     const boxes = screen.getAllByRole("checkbox");
     expect(boxes).toHaveLength(CALL_LANGS.length);
     expect(boxes.filter((b) => (b as HTMLInputElement).checked).map((b) => (b as HTMLInputElement).value).sort()).toEqual(["en", "te"]);

@@ -1,5 +1,5 @@
 # Credits and billing
-Your balance, what you used, and how to add more. Balance ₹4,825 about 96 minutes of calls Last top-up ₹1,000
+Your balance, what you used, and how to add more. Balance ₹4,825 about 96 minutes of calls Last credits added ₹1,000
 [button type=button: Add credits]
 Credits never run out. ₹1 of credit is ₹1. Calls use it as they happen.
 {label="Statement"}

@@ -13,14 +13,12 @@ describe("setupWords (job BJ)", () => {
     for (const k of ["catalogue.fabric.kanchi_pattu", "catalogue.colour.maroon", "catalogue.zari.rich", "catalogue.photo.err.net", "catalogue.err.name", "visits.hours.order", "visits.hours.save", "agentset.sending.on", "today.err.generic"]) expect(w[k], k).toBeTruthy();
     expect(Object.keys(w).some((k) => k.startsWith("outbox.") || k.startsWith("settings."))).toBe(false); // only what the wizard needs reaches the browser
   });
-  it("Telugu, Hindi and Kannada have every setup string translated, except the money, sending and 'what waits' lines, which stay English on purpose", () => {
+  it("Telugu, Hindi and Kannada have every setup string translated (the money, sending and 'what waits' lines too, approved 26 Nov 2026)", () => {
     const en = appDict("en") as Record<string, string>;
-    const stay = ["setup.s4.waits.title", "setup.s4.waits.money", "setup.s4.waits.complaints", "setup.s4.waits.calls", "setup.s4.auto", "setup.s4.quiet"];
     for (const lang of ["te", "hi", "kn"] as const) {
       const d = appDict(lang) as Record<string, string>;
       for (const k of Object.keys(en).filter((x) => x.startsWith("setup."))) {
-        if (stay.includes(k) && lang !== "te") expect(d[k].replaceAll(DEFAULT_NAME_BY_LANG[lang], DEFAULT_NAME_BY_LANG.en), `${lang}:${k}`).toBe(en[k]); // (the default name is said in the reader's language even in these lines)
-        else expect(d[k], `${lang}:${k}`).not.toBe(en[k]);
+        expect(d[k], `${lang}:${k}`).not.toBe(en[k]); // (26 Nov 2026: written and approved in all three languages, the money and "what waits" lines included)
         for (const ph of en[k].match(/\{\w+\}/g) ?? []) expect(d[k], `${lang}:${k}`).toContain(ph);
       }
     }

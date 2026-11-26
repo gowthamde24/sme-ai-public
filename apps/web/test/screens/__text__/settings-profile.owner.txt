@@ -3,7 +3,7 @@
 {label="My profile"}
 ## My profile
 ### My picture
-AS [image: ]
+AS
 form:
 Choose a picture
 <file name=picture label="Choose a picture" accept=image/jpeg,image/png,image/webp>

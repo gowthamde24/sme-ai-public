@@ -47,7 +47,10 @@ describe("Tamil words of the public site", () => {
   it("the home page's description names the product's four languages in every site language (and Tamil is not one of them)", () => {
     const d = (site as unknown as Record<string, Record<string, string>>)["meta.description"];
     expect(d.en).toMatch(/Telugu, English, Hindi and Kannada/);
-    for (const l of ["te", "hi", "kn"]) expect(d[l], l).toMatch(/Telugu, English, Hindi.*Kannada/);
+    // (26 Nov 2026: the four language names are written in each language's own script now)
+    expect(d.te).toMatch(/తెలుగు.*ఇంగ్లీష్.*హిందీ.*కన్నడ/);
+    expect(d.hi).toMatch(/तेलुगु.*अंग्रेज़ी.*हिन्दी.*कन्नड़/);
+    expect(d.kn).toMatch(/ತೆಲುಗು.*ಇಂಗ್ಲಿಷ್.*ಹಿಂದಿ.*ಕನ್ನಡ/);
     expect(d.ta).toMatch(/தெலுங்கு, ஆங்கிலம், இந்தி, கன்னடம்/);
     for (const l of ["en", "te", "hi", "kn", "ta"]) expect(d[l], l).not.toMatch(/Tamil|தமிழ்/);
   });

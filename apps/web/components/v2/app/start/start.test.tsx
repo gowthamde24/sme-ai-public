@@ -51,7 +51,7 @@ describe("the activation card on Today", () => {
     const { rerender } = render(<ActivationCard collapse base={base} t={t} activation={act(steps)} />);
     const row = document.querySelector('[data-start="card"]') as HTMLElement;
     expect(row).toHaveAttribute("data-collapsed", "true");
-    expect(row).toHaveTextContent("Finish setting up");
+    expect(row).toHaveTextContent("Finish setup");
     expect(row).toHaveTextContent("5 of 6 done");
     expect(screen.queryAllByRole("listitem")).toHaveLength(0);
     expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute("href", `${base}/f`);

@@ -49,7 +49,7 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
   // CALLS_PANEL: the rules, and (for the Owner and Admin, where BROWSER_VOICE is on) the browser test call with the words of the talk body it draws
   const panel = callsPanel();
   const hear = panel && writer && browserVoice();
-  const words = wordsFor(lang, ["calls6.", "bsc.", "ph.", "outcome.cat.", "outcome.result.", "dst.teach", "today.err.", ...(simple ? ["jobs.pg.calls."] : []), ...(panel ? ["cpn.rules.", "cpn.rule.", "cpn.hear."] : []), ...(hear ? ["dst.", "bv.chat.plan.", "bv.chat.state.", "bv.chat.err.", "bv.end.", "bv.live.", "tt.practice."] : [])], ["dta.btn.working", ...(simple ? ["jobs.pg.more"] : [])]);
+  const words = wordsFor(lang, ["calls6.", "bsc.", "ph.", "oc.", "outcome.cat.", "outcome.result.", "dst.teach", "today.err.", ...(simple ? ["jobs.pg.calls."] : []), ...(panel ? ["cpn.rules.", "cpn.rule.", "cpn.hear."] : []), ...(hear ? ["dst.", "bv.chat.plan.", "bv.chat.state.", "bv.chat.err.", "bv.end.", "bv.live.", "tt.practice."] : [])], ["dta.btn.working", ...(simple ? ["jobs.pg.more"] : [])]);
   const now = clock();
   const why = (reason: string | null) => words[`ph.why.${refuseWhy(reason)}`] ?? "";
   const listed = await Promise.allSettled([listCalls(token, tenantId, cursor)]).then(([r]) => r);

@@ -29,6 +29,6 @@ describe("Needs you: the voice credits warning (C1, 6 Nov: Cartesia at 80 and 10
     const a = screen.getByRole("article", { name: /Your balance/ });
     expect(within(a).getByText(SUMMARY)).toBeInTheDocument();
     expect(within(a).getByText("Balance", { selector: "span, p" })).toBeInTheDocument();
-    expect(within(a).getByRole("link", { name: /Top up/ })).toHaveAttribute("href", "/app/tenants/T/settings?section=plan");
+    expect(within(a).getByRole("link", { name: /Add credits/ })).toHaveAttribute("href", "/app/tenants/T/settings?section=plan");
   });
 });

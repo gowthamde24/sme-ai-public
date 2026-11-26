@@ -150,7 +150,7 @@ describe("the 'Finish setup' chip", () => {
   it("shows N/7, reopens the checklist and can be put away", () => {
     const dismiss = vi.fn(async () => undefined);
     render(<FinishChip done={3} base={BASE} words={WORDS} dismiss={dismiss} />);
-    expect(screen.getByRole("link", { name: "Finish setup · 3/7" })).toHaveAttribute("href", `${BASE}?setup=1`);
+    expect(screen.getByRole("link", { name: "Finish setup · 3 of 7" })).toHaveAttribute("href", `${BASE}?setup=1`);
     fireEvent.click(screen.getByRole("button", { name: "Hide this" }));
     expect(dismiss).toHaveBeenCalledTimes(1);
   });

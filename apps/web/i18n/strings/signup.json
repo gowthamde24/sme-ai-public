@@ -6,8 +6,8 @@
   "kn": "ನಿಮ್ಮ ಅಕೌಂಟ್ ರಚಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.sub": {
@@ -17,8 +17,8 @@
   "kn": "ನಿಮ್ಮ ಹೆಸರು ಮತ್ತು ನಿಮ್ಮ ವ್ಯಾಪಾರದಿಂದ ಶುರು ಮಾಡಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.name": {
@@ -28,8 +28,8 @@
   "kn": "ನಿಮ್ಮ ಹೆಸರು",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.email": {
@@ -39,8 +39,8 @@
   "kn": "ಇಮೇಲ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.password": {
@@ -50,8 +50,8 @@
   "kn": "ಪಾಸ್‌ವರ್ಡ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.password.hint": {
@@ -61,8 +61,8 @@
   "kn": "ಕನಿಷ್ಠ {n} ಅಕ್ಷರಗಳು.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.business": {
@@ -72,8 +72,8 @@
   "kn": "ವ್ಯಾಪಾರದ ಹೆಸರು",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.submit": {
@@ -83,8 +83,8 @@
   "kn": "ಅಕೌಂಟ್ ರಚಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.have": {
@@ -94,8 +94,8 @@
   "kn": "ಈಗಾಗಲೇ ಅಕೌಂಟ್ ಇದೆಯೇ?",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.signin": {
@@ -105,8 +105,8 @@
   "kn": "ಲಾಗಿನ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.err.weak_password": {
@@ -116,8 +116,8 @@
   "kn": "ಬಲವಾದ ಪಾಸ್ವರ್ಡ್ ಆರಿಸಿ: ಕನಿಷ್ಠ {n} ಅಕ್ಷರಗಳು, ಸಾಮಾನ್ಯ ಪಾಸ್ವರ್ಡ್ ಅಲ್ಲ, ಮತ್ತು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸದ ಭಾಗವಲ್ಲ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.err.unknown": {
@@ -127,8 +127,8 @@
   "kn": "ಏನೋ ತಪ್ಪಾಯಿತು. ಏನೂ ರಚನೆಯಾಗಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "checkemail.title": {
@@ -138,8 +138,8 @@
   "kn": "ನಿಮ್ಮ ಇಮೇಲ್ ನೋಡಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "checkemail.body": {
@@ -149,8 +149,8 @@
   "kn": "ನಾವು ನಿಮಗೆ ಒಂದು ಲಿಂಕ್ ಕಳುಹಿಸಿದ್ದೇವೆ. ಅಕೌಂಟ್ ರಚನೆ ಮುಗಿಸಲು ಅದನ್ನು ತೆರೆಯಿರಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "checkemail.nothing": {
@@ -160,8 +160,8 @@
   "kn": "ಏನೂ ಬಂದಿಲ್ಲವೇ? ಸ್ಪ್ಯಾಮ್ ಫೋಲ್ಡರ್ ನೋಡಿ, ಅಥವಾ ಕೆಲವು ನಿಮಿಷಗಳ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "checkemail.back": {
@@ -171,8 +171,8 @@
   "kn": "ಲಾಗಿನ್‌ಗೆ ಹಿಂತಿರುಗಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.title": {
@@ -182,8 +182,8 @@
   "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರವನ್ನು ಸಿದ್ಧಪಡಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.sub": {
@@ -193,8 +193,8 @@
   "kn": "ಎರಡು ಪ್ರಶ್ನೆಗಳು, ನಂತರ ನಿಮ್ಮ ಇಂದಿನ ಸ್ಕ್ರೀನ್.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.type": {
@@ -204,8 +204,8 @@
   "kn": "ಇದು ಯಾವ ರೀತಿಯ ವ್ಯಾಪಾರ?",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.type.other": {
@@ -215,8 +215,8 @@
   "kn": "ಇತರೆ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.language": {
@@ -226,8 +226,8 @@
   "kn": "ಆ್ಯಪ್ ಯಾವ ಭಾಷೆಯನ್ನು ಬಳಸಬೇಕು?",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.submit": {
@@ -237,8 +237,8 @@
   "kn": "ಮುಂದುವರಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.err.unknown": {
@@ -248,31 +248,31 @@
   "kn": "ಏನೋ ತಪ್ಪಾಯಿತು. ಏನೂ ಉಳಿಸಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.terms": {
   "en": "I agree to the {terms} and the {privacy}.",
   "te": "{terms}కి, {privacy}కి నేను ఒప్పుకుంటున్నాను.",
-  "hi": "I agree to the {terms} and the {privacy}.",
-  "kn": "I agree to the {terms} and the {privacy}.",
+  "hi": "मैं {terms} और {privacy} से सहमत हूँ।",
+  "kn": "ನಾನು {terms} ಮತ್ತು {privacy} ಗೆ ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತೇನೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   },
   "humanOnly": true
  },
  "signup.err.terms_required": {
   "en": "You need to agree to the Terms and the Privacy notice to create an account.",
   "te": "అకౌంట్ క్రియేట్ చేయడానికి మీరు టర్మ్స్‌కి, ప్రైవసీ నోటీస్‌కి ఒప్పుకోవాలి.",
-  "hi": "You need to agree to the Terms and the Privacy notice to create an account.",
-  "kn": "You need to agree to the Terms and the Privacy notice to create an account.",
+  "hi": "अकाउंट बनाने के लिए आपको शर्तों और प्राइवेसी नोटिस से सहमत होना होगा।",
+  "kn": "ಅಕೌಂಟ್ ಮಾಡಲು ನೀವು ಟರ್ಮ್ಸ್ ಮತ್ತು ಪ್ರೈವೆಸಿ ನೋಟಿಸ್‌ಗೆ ಒಪ್ಪಿಗೆ ಕೊಡಬೇಕು.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   },
   "humanOnly": true
  },
@@ -283,8 +283,8 @@
   "kn": "ಹಲವು ಬಾರಿ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. ಸ್ವಲ್ಪ ನಿಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.err.invalid": {
@@ -294,8 +294,8 @@
   "kn": "ನಿಮ್ಮ ಹೆಸರು, ಇಮೇಲ್ ವಿಳಾಸ ಮತ್ತು ವ್ಯವಹಾರದ ಹೆಸರನ್ನು ಪರಿಶೀಲಿಸಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.type.textiles": {
@@ -305,8 +305,8 @@
   "kn": "ಜವಳಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.type.construction": {
@@ -316,31 +316,31 @@
   "kn": "ನಿರ್ಮಾಣ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.terms.link": {
   "en": "Terms",
   "te": "టర్మ్స్",
-  "hi": "Terms",
-  "kn": "Terms",
+  "hi": "शर्तें",
+  "kn": "ಟರ್ಮ್ಸ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   },
   "humanOnly": true
  },
  "signup.privacy.link": {
   "en": "Privacy notice",
   "te": "ప్రైవసీ నోటీస్",
-  "hi": "Privacy notice",
-  "kn": "Privacy notice",
+  "hi": "प्राइवेसी नोटिस",
+  "kn": "ಪ್ರೈವೆಸಿ ನೋಟಿಸ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   },
   "humanOnly": true
  },
@@ -351,8 +351,8 @@
   "kn": "ಹಂತ {n} / 2",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.pack.title": {
@@ -362,8 +362,8 @@
   "kn": "ನೀವು ಯಾವ ರೀತಿಯ ವ್ಯಾಪಾರ ಮಾಡುತ್ತೀರಿ?",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.pack.sub": {
@@ -373,8 +373,8 @@
   "kn": "ಹತ್ತಿರದ್ದನ್ನು ಆರಿಸಿ. ಸ್ಕ್ರೀನ್‌ಗಳು, ಪದಗಳನ್ನು ಅದಕ್ಕೆ ತಕ್ಕಂತೆ ಹೊಂದಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.pack.choose": {
@@ -384,8 +384,8 @@
   "kn": "{name} ಆರಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.pack.preview": {
@@ -395,8 +395,8 @@
   "kn": "ನಿಜವಾದ ಮಾಲೀಕರು ಇನ್ನೂ ಪರಿಶೀಲಿಸಿಲ್ಲ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.err.unavailable": {
@@ -406,8 +406,8 @@
   "kn": "ಸೈನ್-ಅಪ್ ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಕೆಲವು ನಿಮಿಷಗಳ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.pack.change": {
@@ -417,8 +417,8 @@
   "kn": "ಬದಲಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.google": {
@@ -428,8 +428,8 @@
   "kn": "Google ಮೂಲಕ ಮುಂದುವರಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.facebook": {
@@ -439,8 +439,8 @@
   "kn": "Facebook ಮೂಲಕ ಮುಂದುವರಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.email.cta": {
@@ -450,19 +450,19 @@
   "kn": "ಇಮೇಲ್ ಮೂಲಕ ಮುಂದುವರಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.terms.continue": {
   "en": "By continuing, you agree to the {terms} and have read the {privacy}.",
   "te": "కొనసాగిస్తే, మీరు {terms}కి ఒప్పుకుంటున్నారు, {privacy} చదివారు.",
-  "hi": "By continuing, you agree to the {terms} and have read the {privacy}.",
-  "kn": "By continuing, you agree to the {terms} and have read the {privacy}.",
+  "hi": "आगे बढ़ने पर आप {terms} से सहमत होते हैं और आपने {privacy} पढ़ लिया है।",
+  "kn": "ಮುಂದುವರಿದರೆ, ನೀವು {terms} ಗೆ ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತೀರಿ ಮತ್ತು {privacy} ಓದಿದ್ದೀರಿ ಎಂದಾಗುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   },
   "humanOnly": true
  },
@@ -473,8 +473,8 @@
   "kn": "ಆ ರೀತಿಯಲ್ಲಿ ಸೈನ್ ಇನ್ ಮಾಡುವುದು ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ. ಸದ್ಯಕ್ಕೆ ನಿಮ್ಮ ಇಮೇಲ್ ಬಳಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.auto.title": {
@@ -484,8 +484,8 @@
   "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಹೊಂದಿಸುತ್ತಿದ್ದೇವೆ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.auto.sub": {
@@ -495,8 +495,8 @@
   "kn": "ಒಂದು ನಿಮಿಷ. ನೀವು ಇಂದು ಸ್ಕ್ರೀನ್‌ಗೆ ಹೋಗುತ್ತೀರಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.auto.working": {
@@ -506,8 +506,8 @@
   "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಹೊಂದಿಸುತ್ತಿದ್ದೇವೆ…",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.auto.retry": {
@@ -517,8 +517,8 @@
   "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.closed.title": {
@@ -528,8 +528,8 @@
   "kn": "ನಾವು ಶೀಘ್ರದಲ್ಲೇ ವ್ಯಾಪಾರಗಳಿಗೆ ತೆರೆಯುತ್ತಿದ್ದೇವೆ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.closed.body": {
@@ -539,8 +539,8 @@
   "kn": "ಹೊಸ ಸೈನ್-ಅಪ್‌ಗಳು ಇನ್ನೂ ತೆರೆದಿಲ್ಲ. ಮೊದಲಿಗರಲ್ಲಿ ಒಬ್ಬರಾಗಬೇಕಾದರೆ, ಮುಂಚಿತ ಪ್ರವೇಶ ಕೇಳಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.closed.early": {
@@ -550,8 +550,8 @@
   "kn": "ಮುಂಚಿತ ಪ್ರವೇಶ ಕೇಳಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.closed.write": {
@@ -561,8 +561,8 @@
   "kn": "ಈ ವಿಳಾಸಕ್ಕೆ ಬರೆದು ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ತಿಳಿಸಿ. ಫಾರ್ಮ್ ಇಲ್ಲ: ಈ ಪುಟದಲ್ಲಿ ಏನೂ ಸೇವ್ ಆಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.err.closed": {
@@ -572,19 +572,19 @@
   "kn": "ಸೈನ್-ಅಪ್ ಇನ್ನೂ ತೆರೆದಿಲ್ಲ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.marketing": {
   "en": "Also send me news and offers about {brand} (optional).",
-  "te": "{brand} గురించి వార్తలు, ఆఫర్లు కూడా పంపండి (ఐచ్ఛికం).",
+  "te": "{brand} గురించి వార్తలు, ఆఫర్లు కూడా పంపండి (ఆప్షనల్).",
   "hi": "{brand} की खबरें और ऑफ़र भी भेजें (वैकल्पिक)।",
   "kn": "{brand} ಬಗ್ಗೆ ಸುದ್ದಿ, ಆಫರ್‌ಗಳನ್ನೂ ಕಳುಹಿಸಿ (ಐಚ್ಛಿಕ).",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.leads.name": {
@@ -594,8 +594,8 @@
   "kn": "ಲೀಡ್‌ಗಳು ಬರುವ ಯಾವುದೇ ಬಿಸಿನೆಸ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.leads.tagline": {
@@ -605,8 +605,8 @@
   "kn": "ರಿಯಲ್ ಎಸ್ಟೇಟ್, ಕೋಚಿಂಗ್, ಕ್ಲಿನಿಕ್, ಇನ್ಶೂರೆನ್ಸ್, ಆಟೋ, ಇಂಟೀರಿಯರ್ಸ್, ಟ್ರಾವೆಲ್, ಜಿಮ್, ಹೋಲ್‌ಸೇಲ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.leads.title": {
@@ -616,8 +616,8 @@
   "kn": "ಇದು ಯಾವ ರೀತಿಯ ಬಿಸಿನೆಸ್?",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.leads.sub": {
@@ -627,8 +627,8 @@
   "kn": "ಹತ್ತಿರದದನ್ನು ಆರಿಸಿ. {assistant} ಅದಕ್ಕೆ ತಕ್ಕ ಪ್ರಶ್ನೆ, ಫಾಲೋ-ಅಪ್‌ಗಳಿಂದ ಶುರುಮಾಡುತ್ತಾರೆ; ನೀವು ಅವನ್ನು ಬದಲಿಸಬಹುದು.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.leads.back": {
@@ -638,8 +638,8 @@
   "kn": "ಎಲ್ಲಾ ಬಿಸಿನೆಸ್ ವಿಧಗಳಿಗೆ ಹಿಂತಿರುಗಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.label": {
@@ -649,8 +649,8 @@
   "kn": "ವ್ಯಾಪಾರದ ಪ್ರಕಾರ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.placeholder": {
@@ -660,8 +660,8 @@
   "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಪ್ರಕಾರವನ್ನು ಆರಿಸಿ ಅಥವಾ ಹುಡುಕಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.none": {
@@ -671,8 +671,8 @@
   "kn": "ಯಾವುದೂ ಹೊಂದಿಕೆಯಾಗಲಿಲ್ಲ. ಇತರೆ ಆರಿಸಿ ಮತ್ತು ನೀವು ಏನು ಮಾಡುತ್ತೀರಿ ಎಂದು ಹೇಳಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.group.deep": {
@@ -682,19 +682,19 @@
   "kn": "ವಿಶೇಷವಾಗಿ ರೂಪಿಸಿದ್ದು",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.group.leads": {
   "en": "Businesses with enquiries",
   "te": "ఎంక్వైరీలు వచ్చే బిజినెస్‌లు",
-  "hi": "पूछताछ वाले बिज़नेस",
+  "hi": "एंक्वायरी वाले बिज़नेस",
   "kn": "ವಿಚಾರಣೆಗಳು ಬರುವ ಬಿಸಿನೆಸ್‌ಗಳು",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.group.all": {
@@ -704,8 +704,8 @@
   "kn": "ವ್ಯಾಪಾರದ ಪ್ರಕಾರಗಳು",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.other": {
@@ -715,8 +715,8 @@
   "kn": "ಇತರೆ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.other.tagline": {
@@ -726,8 +726,8 @@
   "kn": "ಲೀಡ್ ಬರುವ ಬೇರೆ ಯಾವುದೇ ವ್ಯಾಪಾರ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.other.ask": {
@@ -737,8 +737,8 @@
   "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ ಯಾವುದು?",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.other.hint": {
@@ -748,8 +748,8 @@
   "kn": "2 ರಿಂದ 60 ಅಕ್ಷರ, ನಿಮ್ಮ ಮಾತಿನಲ್ಲಿ. ಸಾಮಾನ್ಯ ಸೆಟಪ್‌ನೊಂದಿಗೆ ಶುರು ಮಾಡುತ್ತೇವೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.name.label": {
@@ -759,8 +759,8 @@
   "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಹೆಸರು",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "setup.name.help": {
@@ -770,8 +770,8 @@
   "kn": "ಗ್ರಾಹಕರು ಈ ಹೆಸರನ್ನು ನೋಡುತ್ತಾರೆ. ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಯಾವಾಗ ಬೇಕಾದರೂ ಬದಲಾಯಿಸಬಹುದು.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.early": {
@@ -781,8 +781,8 @@
   "kn": "ಅರ್ಲಿ ಆಕ್ಸೆಸ್ ಸಮಯದಲ್ಲಿ ಉಚಿತ. ಪಾವತಿಸಬೇಕಾದದ್ದು ಏನೂ ಇಲ್ಲ, ಕಾರ್ಡ್ ಬೇಡ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.describe.label": {
@@ -792,19 +792,19 @@
   "kn": "ಅಥವಾ ನೀವು ಏನು ಮಾರುತ್ತೀರಿ ಎಂದು ಹೇಳಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.describe.hint": {
   "en": "A few words, in any language. For example: sweets and cakes, home delivery.",
-  "te": "కొన్ని మాటలు చాలు, ఏ భాషలోనైనా. ఉదాహరణకు: స్వీట్స్, కేక్స్, home delivery.",
-  "hi": "कुछ शब्द काफ़ी हैं, किसी भी भाषा में। जैसे: मिठाई और केक, home delivery।",
-  "kn": "ಕೆಲವು ಪದಗಳು ಸಾಕು, ಯಾವ ಭಾಷೆಯಲ್ಲಾದರೂ. ಉದಾಹರಣೆಗೆ: ಸಿಹಿತಿಂಡಿ, ಕೇಕ್, home delivery.",
+  "te": "కొన్ని మాటలు చాలు, ఏ భాషలోనైనా. ఉదాహరణకు: స్వీట్స్, కేక్స్, హోమ్ డెలివరీ.",
+  "hi": "कुछ शब्द काफ़ी हैं, किसी भी भाषा में। जैसे: मिठाई और केक, होम डिलीवरी।",
+  "kn": "ಕೆಲವು ಪದಗಳು ಸಾಕು, ಯಾವ ಭಾಷೆಯಲ್ಲಾದರೂ. ಉದಾಹರಣೆಗೆ: ಸಿಹಿತಿಂಡಿ, ಕೇಕ್, ಹೋಮ್ ಡೆಲಿವರಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.describe.button": {
@@ -814,8 +814,8 @@
   "kn": "ನನ್ನ ಪ್ರಕಾರ ಹುಡುಕಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.describe.closest": {
@@ -825,8 +825,8 @@
   "kn": "ಹತ್ತಿರದ ಹೊಂದಾಣಿಕೆ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.describe.use": {
@@ -836,19 +836,19 @@
   "kn": "ಇದನ್ನು ಆರಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "signup.type.describe.none": {
   "en": "We could not match that. Try other words, or choose Something else.",
-  "te": "అది సరిపోలేదు. వేరే మాటలు రాయండి, లేదా Something else ఎంచుకోండి.",
-  "hi": "यह मेल नहीं खाया। दूसरे शब्द आज़माइए, या Something else चुनिए।",
-  "kn": "ಅದು ಹೊಂದಲಿಲ್ಲ. ಬೇರೆ ಪದಗಳನ್ನು ಬರೆಯಿರಿ, ಅಥವಾ Something else ಆರಿಸಿ.",
+  "te": "అది సరిపోలేదు. వేరే మాటలు రాయండి, లేదా ఇంకేదైనా ఎంచుకోండి.",
+  "hi": "यह मेल नहीं खाया। दूसरे शब्द आज़माइए, या “कुछ और” चुनिए।",
+  "kn": "ಅದು ಹೊಂದಲಿಲ್ಲ. ಬೇರೆ ಪದಗಳನ್ನು ಬರೆಯಿರಿ, ಅಥವಾ “ಬೇರೆ ಏನಾದರೂ” ಆರಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.title": {
@@ -858,63 +858,63 @@
   "kn": "ಒಂದು ಸಣ್ಣ ಪರಿಶೀಲನೆ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.sub": {
   "en": "Two things before your business is made: you agree to our terms, and we check your phone number.",
-  "te": "మీ బిజినెస్ తయారు చేసే ముందు రెండు పనులు: మా terms కి అంగీకరించాలి, మీ ఫోన్ నంబర్‌ని చెక్ చేస్తాం.",
-  "hi": "आपका बिज़नेस बनाने से पहले दो काम: हमारी terms मानें, और हम आपका फ़ोन नंबर जाँचते हैं।",
-  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಮಾಡುವ ಮೊದಲು ಎರಡು ಕೆಲಸ: ನಮ್ಮ terms ಒಪ್ಪಿ, ನಿಮ್ಮ ಫೋನ್ ನಂಬರ್ ಪರಿಶೀಲಿಸುತ್ತೇವೆ.",
+  "te": "మీ బిజినెస్ తయారు చేసే ముందు రెండు పనులు: మా టర్మ్స్‌కి అంగీకరించాలి, మీ ఫోన్ నంబర్‌ని చెక్ చేస్తాం.",
+  "hi": "आपका बिज़नेस बनाने से पहले दो काम: हमारी शर्तें मानें, और हम आपका फ़ोन नंबर जाँचते हैं।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಮಾಡುವ ಮೊದಲು ಎರಡು ಕೆಲಸ: ನಮ್ಮ ಟರ್ಮ್ಸ್‌ಗೆ ನೀವು ಒಪ್ಪಬೇಕು, ಮತ್ತು ನಿಮ್ಮ ಫೋನ್ ನಂಬರ್ ಅನ್ನು ನಾವು ಪರಿಶೀಲಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.terms": {
   "en": "I agree to the Terms of Use (version {v}).",
-  "te": "నేను Terms of Use (వెర్షన్ {v}) కి అంగీకరిస్తున్నాను.",
-  "hi": "मैं Terms of Use (वर्ज़न {v}) से सहमत हूँ।",
-  "kn": "ನಾನು Terms of Use (ವರ್ಷನ್ {v}) ಗೆ ಒಪ್ಪುತ್ತೇನೆ.",
+  "te": "నేను టర్మ్స్ ఆఫ్ యూజ్ (వెర్షన్ {v})కి అంగీకరిస్తున్నాను.",
+  "hi": "मैं उपयोग की शर्तें (वर्ज़न {v}) से सहमत हूँ।",
+  "kn": "ನಾನು ಟರ್ಮ್ಸ್ ಆಫ್ ಯೂಸ್ (ವರ್ಷನ್ {v}) ಗೆ ಒಪ್ಪುತ್ತೇನೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.privacy": {
   "en": "I have read the Privacy Policy (version {v}).",
-  "te": "నేను Privacy Policy (వెర్షన్ {v}) చదివాను.",
-  "hi": "मैंने Privacy Policy (वर्ज़न {v}) पढ़ ली है।",
-  "kn": "ನಾನು Privacy Policy (ವರ್ಷನ್ {v}) ಓದಿದ್ದೇನೆ.",
+  "te": "నేను ప్రైవసీ పాలసీ (వెర్షన్ {v}) చదివాను.",
+  "hi": "मैंने प्राइवेसी पॉलिसी (वर्ज़न {v}) पढ़ ली है।",
+  "kn": "ನಾನು ಪ್ರೈವೆಸಿ ಪಾಲಿಸಿ (ವರ್ಷನ್ {v}) ಓದಿದ್ದೇನೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.read.terms": {
   "en": "Read the terms",
-  "te": "terms చదవండి",
-  "hi": "terms पढ़ें",
-  "kn": "terms ಓದಿ",
+  "te": "టర్మ్స్ చదవండి",
+  "hi": "शर्तें पढ़ें",
+  "kn": "ಟರ್ಮ್ಸ್ ಓದಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.read.privacy": {
   "en": "Read the privacy policy",
-  "te": "privacy policy చదవండి",
-  "hi": "privacy policy पढ़ें",
-  "kn": "privacy policy ಓದಿ",
+  "te": "ప్రైవసీ పాలసీ చదవండి",
+  "hi": "प्राइवेसी पॉलिसी पढ़ें",
+  "kn": "ಪ್ರೈವೆಸಿ ಪಾಲಿಸಿ ಓದಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.agree": {
@@ -924,8 +924,8 @@
   "kn": "ಒಪ್ಪಿ ಮುಂದುವರಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.phone.l": {
@@ -935,96 +935,96 @@
   "kn": "ಮೊಬೈಲ್ ನಂಬರ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.phone.h": {
   "en": "We send a 6-digit code. We use it only to check that you are a real person, and we never share it.",
-  "te": "6 అంకెల code పంపుతాం. మీరు నిజమైన వ్యక్తి అని చెక్ చేయడానికి మాత్రమే వాడతాం, ఎవరికీ ఇవ్వం.",
-  "hi": "हम 6 अंकों का code भेजते हैं। इसे सिर्फ़ यह जाँचने के लिए इस्तेमाल करते हैं कि आप असली इंसान हैं, किसी को नहीं देते।",
-  "kn": "ನಾವು 6 ಅಂಕಿಯ code ಕಳುಹಿಸುತ್ತೇವೆ. ನೀವು ನಿಜವಾದ ವ್ಯಕ್ತಿ ಎಂದು ಪರಿಶೀಲಿಸಲು ಮಾತ್ರ ಬಳಸುತ್ತೇವೆ, ಯಾರಿಗೂ ಕೊಡುವುದಿಲ್ಲ.",
+  "te": "6 అంకెల కోడ్ పంపుతాం. మీరు నిజమైన వ్యక్తి అని చెక్ చేయడానికి మాత్రమే వాడతాం, ఎవరికీ ఇవ్వం.",
+  "hi": "हम 6 अंकों का कोड भेजते हैं। इसे सिर्फ़ यह जाँचने के लिए इस्तेमाल करते हैं कि आप असली इंसान हैं, किसी को नहीं देते।",
+  "kn": "ನಾವು 6 ಅಂಕಿಯ ಕೋಡ್ ಕಳುಹಿಸುತ್ತೇವೆ. ನೀವು ನಿಜವಾದ ವ್ಯಕ್ತಿ ಎಂದು ಪರಿಶೀಲಿಸಲು ಮಾತ್ರ ಬಳಸುತ್ತೇವೆ, ಯಾರಿಗೂ ಕೊಡುವುದಿಲ್ಲ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.phone.send": {
   "en": "Send the code",
-  "te": "code పంపండి",
-  "hi": "code भेजें",
-  "kn": "code ಕಳುಹಿಸಿ",
+  "te": "కోడ్ పంపండి",
+  "hi": "कोड भेजें",
+  "kn": "ಕೋಡ್ ಕಳುಹಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.code.sent": {
   "en": "We sent a code. It works for 10 minutes.",
-  "te": "code పంపాం. ఇది 10 నిమిషాలు పనిచేస్తుంది.",
-  "hi": "code भेज दिया है। यह 10 मिनट चलेगा।",
-  "kn": "code ಕಳುಹಿಸಿದ್ದೇವೆ. ಇದು 10 ನಿಮಿಷ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "te": "కోడ్ పంపాం. ఇది 10 నిమిషాలు పనిచేస్తుంది.",
+  "hi": "कोड भेज दिया है। यह 10 मिनट चलेगा।",
+  "kn": "ಕೋಡ್ ಕಳುಹಿಸಿದ್ದೇವೆ. ಇದು 10 ನಿಮಿಷ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.code.l": {
   "en": "The 6-digit code",
-  "te": "6 అంకెల code",
-  "hi": "6 अंकों का code",
-  "kn": "6 ಅಂಕಿಯ code",
+  "te": "6 అంకెల కోడ్",
+  "hi": "6 अंकों का कोड",
+  "kn": "6 ಅಂಕಿಯ ಕೋಡ್",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.code.verify": {
   "en": "Check the code",
-  "te": "code చెక్ చేయండి",
-  "hi": "code जाँचें",
-  "kn": "code ಪರಿಶೀಲಿಸಿ",
+  "te": "కోడ్ చెక్ చేయండి",
+  "hi": "कोड जाँचें",
+  "kn": "ಕೋಡ್ ಚೆಕ್ ಮಾಡಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.code.resend": {
   "en": "Send a new code",
-  "te": "కొత్త code పంపండి",
-  "hi": "नया code भेजें",
-  "kn": "ಹೊಸ code ಕಳುಹಿಸಿ",
+  "te": "కొత్త కోడ్ పంపండి",
+  "hi": "नया कोड भेजें",
+  "kn": "ಹೊಸ ಕೋಡ್ ಕಳುಹಿಸಿ",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.signup_closed": {
   "en": "Sign-up is not open yet.",
-  "te": "sign-up ఇంకా తెరవలేదు.",
-  "hi": "sign-up अभी खुला नहीं है।",
-  "kn": "sign-up ಇನ್ನೂ ತೆರೆದಿಲ್ಲ.",
+  "te": "సైన్-అప్ ఇంకా తెరవలేదు.",
+  "hi": "साइन-अप अभी खुला नहीं है।",
+  "kn": "ಸೈನ್-ಅಪ್ ಇನ್ನೂ ತೆರೆದಿಲ್ಲ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.email_unconfirmed": {
   "en": "Confirm your e-mail address first: open the link we sent you.",
-  "te": "ముందు మీ ఈమెయిల్ చిరునామాను confirm చేయండి: మేము పంపిన లింక్ తెరవండి.",
-  "hi": "पहले अपना ईमेल पता confirm करें: हमारा भेजा लिंक खोलिए।",
-  "kn": "ಮೊದಲು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸ confirm ಮಾಡಿ: ನಾವು ಕಳುಹಿಸಿದ ಲಿಂಕ್ ತೆರೆಯಿರಿ.",
+  "te": "ముందు మీ ఈమెయిల్ చిరునామాను కన్ఫర్మ్ చేయండి: మేము పంపిన లింక్ తెరవండి.",
+  "hi": "पहले अपना ईमेल पता कन्फ़र्म करें: हमारा भेजा लिंक खोलिए।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸ ಕನ್ಫರ್ಮ್ ಮಾಡಿ: ನಾವು ಕಳುಹಿಸಿದ ಲಿಂಕ್ ತೆರೆಯಿರಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.email_not_allowed": {
@@ -1034,8 +1034,8 @@
   "kn": "ಇಂತಹ ಇಮೇಲ್ ವಿಳಾಸ ಬಳಸಲಾಗುವುದಿಲ್ಲ. ನಿಮ್ಮ ಸ್ವಂತ ಇಮೇಲ್ ವಿಳಾಸ ಬಳಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.rate_limited": {
@@ -1045,8 +1045,8 @@
   "kn": "ತುಂಬಾ ಪ್ರಯತ್ನಗಳಾದವು. ಒಂದು ಗಂಟೆ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.phone_taken": {
@@ -1056,19 +1056,19 @@
   "kn": "ಈ ನಂಬರ್ ಅನ್ನು ಬೇರೆ ಅಕೌಂಟ್ ಈಗಾಗಲೇ ಬಳಸುತ್ತಿದೆ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.phone_code_unavailable": {
   "en": "We cannot send a code right now. Try again in a few minutes.",
-  "te": "ఇప్పుడు code పంపలేకపోతున్నాం. కొన్ని నిమిషాల తర్వాత ప్రయత్నించండి.",
-  "hi": "अभी code नहीं भेज पा रहे। कुछ मिनट बाद कोशिश कीजिए।",
-  "kn": "ಈಗ code ಕಳುಹಿಸಲಾಗುತ್ತಿಲ್ಲ. ಕೆಲವು ನಿಮಿಷಗಳ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "te": "ఇప్పుడు కోడ్ పంపలేకపోతున్నాం. కొన్ని నిమిషాల తర్వాత ప్రయత్నించండి.",
+  "hi": "अभी कोड नहीं भेज पा रहे। कुछ मिनट बाद कोशिश कीजिए।",
+  "kn": "ಈಗ ಕೋಡ್ ಕಳುಹಿಸಲು ಆಗುತ್ತಿಲ್ಲ. ಕೆಲವು ನಿಮಿಷಗಳ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.validation_error": {
@@ -1078,63 +1078,63 @@
   "kn": "ನಂಬರ್ ಪರಿಶೀಲಿಸಿ: 10 ಅಂಕಿಯ ಮೊಬೈಲ್ ನಂಬರ್.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.code_wrong": {
   "en": "That code is not right. Check it and try again.",
-  "te": "ఆ code సరైనది కాదు. చూసి మళ్ళీ ప్రయత్నించండి.",
-  "hi": "वह code सही नहीं है। जाँचकर फिर कोशिश कीजिए।",
-  "kn": "ಆ code ಸರಿಯಲ್ಲ. ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "te": "ఆ కోడ్ సరైనది కాదు. చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "वह कोड सही नहीं है। जाँचकर फिर कोशिश कीजिए।",
+  "kn": "ಆ ಕೋಡ್ ಸರಿಯಿಲ್ಲ. ನೋಡಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.code_expired": {
   "en": "That code has run out. Send a new one.",
-  "te": "ఆ code గడువు తీరింది. కొత్తది పంపండి.",
-  "hi": "वह code पुराना हो गया। नया भेजिए।",
-  "kn": "ಆ code ಅವಧಿ ಮುಗಿದಿದೆ. ಹೊಸದನ್ನು ಕಳುಹಿಸಿ.",
+  "te": "ఆ కోడ్ గడువు తీరింది. కొత్తది పంపండి.",
+  "hi": "वह कोड पुराना हो गया। नया भेजिए।",
+  "kn": "ಆ ಕೋಡ್‌ನ ಸಮಯ ಮುಗಿದಿದೆ. ಹೊಸದನ್ನು ಕಳುಹಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.code_missing": {
   "en": "Ask for a code first.",
-  "te": "ముందు code అడగండి.",
-  "hi": "पहले code मँगवाइए।",
-  "kn": "ಮೊದಲು code ಕೇಳಿ.",
+  "te": "ముందు కోడ్ అడగండి.",
+  "hi": "पहले कोड मँगवाइए।",
+  "kn": "ಮೊದಲು ಕೋಡ್ ಕೇಳಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.code_locked": {
   "en": "Too many wrong tries. Send a new code.",
-  "te": "చాలా తప్పు ప్రయత్నాలు. కొత్త code పంపండి.",
-  "hi": "बहुत ग़लत कोशिशें हुईं। नया code भेजिए।",
-  "kn": "ತುಂಬಾ ತಪ್ಪು ಪ್ರಯತ್ನಗಳು. ಹೊಸ code ಕಳುಹಿಸಿ.",
+  "te": "చాలా తప్పు ప్రయత్నాలు. కొత్త కోడ్ పంపండి.",
+  "hi": "बहुत ग़लत कोशिशें हुईं। नया कोड भेजिए।",
+  "kn": "ತುಂಬಾ ತಪ್ಪು ಪ್ರಯತ್ನಗಳು. ಹೊಸ ಕೋಡ್ ಕಳುಹಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.version_outdated": {
   "en": "The terms were just updated. Reload the page and tick again.",
-  "te": "terms ఇప్పుడే మారాయి. పేజీని reload చేసి మళ్ళీ tick చేయండి.",
-  "hi": "terms अभी बदले हैं। पेज reload करके फिर tick कीजिए।",
-  "kn": "terms ಈಗಷ್ಟೇ ಬದಲಾಗಿವೆ. ಪುಟ reload ಮಾಡಿ ಮತ್ತೆ tick ಮಾಡಿ.",
+  "te": "టర్మ్స్ ఇప్పుడే మారాయి. పేజీని రీలోడ్ చేసి మళ్ళీ టిక్ చేయండి.",
+  "hi": "शर्तें अभी बदली हैं। पेज रीलोड करके फिर टिक कीजिए।",
+  "kn": "ಟರ್ಮ್ಸ್ ಈಗಷ್ಟೇ ಬದಲಾಗಿವೆ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ, ಮತ್ತೆ ಟಿಕ್ ಮಾಡಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  },
  "su.err.unavailable": {
@@ -1144,8 +1144,8 @@
   "kn": "ಈಗ ಅದನ್ನು ಮಾಡಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "reviewed",
-   "hi": "draft",
-   "kn": "draft"
+   "hi": "reviewed",
+   "kn": "reviewed"
   }
  }
 }

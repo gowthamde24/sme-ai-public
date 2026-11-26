@@ -7,8 +7,8 @@ export function Avatar({ url, letters, className }: { url: string | null; letter
     <span aria-hidden="true" className={`${className} relative overflow-hidden`}>
       {letters}
       {url ? (
-        // eslint-disable-next-line @next/next/no-img-element -- a signed link into the project's own Storage or Google's photo address (both named in img-src), shown as it is
-        <img src={url} alt="" className="absolute inset-0 size-full object-cover" />
+        // the picture is a CSS background, not an <img>: a link that has run out (Google's photo links do) then draws nothing, where an <img> that cannot load shows the browser's broken-picture mark over the letters (seen on the live app, 26 Nov). A background needs no script and is allowed by the same img-src.
+        <span className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${JSON.stringify(url)})` }} />
       ) : null}
     </span>
   );

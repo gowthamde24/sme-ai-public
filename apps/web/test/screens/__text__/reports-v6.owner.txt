@@ -14,9 +14,9 @@ To
 <date name=to label="To" value=2026-10-06>
 [button type=submit: Show]
 [button type=button: Download PDF]
-- Enquiries 5 ▲ 400% vs previous 14 days
-- Visits booked 2 ▲ 1
-- Sales from visits ₹2,40,000 ▲ ₹2,40,000
+- Enquiries 5 ▲ 4 more enquiries than the previous 14 days
+- Visits booked 2 ▲ 1 more visits than the previous 14 days
+- Sales from visits ₹2,40,000 ▲ ₹2,40,000 more in sales than the previous 14 days
 - Cost of your assistant ₹30 ₹15 per visit booked
 {label="Enquiries and visits per day"}
 ## Enquiries and visits per day

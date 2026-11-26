@@ -66,13 +66,13 @@ describe("SideNav", () => {
     expect(within(menu).getAllByRole("group").map((g) => g.getAttribute("aria-label"))).toEqual(["Overview", "Sell", "Business", "AI team", "Setup"]);
     expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Reports", "Talk to assistant", "Leads", "Find customers", "Calls", "Chats", "Follow-ups", "Store visits", "Catalogue", "Quotes", "Orders", "My AI team", "Train how it talks", "Phone number", "Settings"]);
   });
-  it("the foot holds Top up · Plan & usage · Help, the user card and Collapse menu; no meter until the numbers are known; Today shows the frame's count meanwhile", () => {
+  it("the foot holds Add credits · Plan & usage · Help, the user card and Collapse menu; no meter until the numbers are known; Today shows the frame's count meanwhile", () => {
     side(owner, loaded);
     expect(screen.queryByText("AI usage today")).toBeNull();
     expect(screen.queryByRole("meter")).toBeNull();
     expect(screen.getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
     expect(screen.getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
-    expect(screen.getByRole("link", { name: "Top up" })).toHaveAttribute("href", `/app/tenants/${A}/settings?section=plan`);
+    expect(screen.getByRole("link", { name: "Add credits" })).toHaveAttribute("href", `/app/tenants/${A}/settings?section=plan`);
     expect(screen.getByRole("link", { name: "Plan & usage" })).toBeInTheDocument();
     expect(screen.getAllByText("o@example.test").length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: "Collapse menu" })).toBeInTheDocument();
@@ -94,7 +94,7 @@ describe("SideNav", () => {
     expect(screen.getByRole("meter", { name: "Call minutes" })).toHaveAttribute("aria-valuetext", "412 / 600");
     expect(screen.getByRole("meter", { name: "AI usage" })).toHaveAttribute("aria-valuetext", "₹68 / ₹300");
   });
-  it("a role the API gives no minutes or rupees to sees no meter, and no Top up", async () => {
+  it("a role the API gives no minutes or rupees to sees no meter, and no Add credits", async () => {
     withCounts({ ...COUNTS, call_minutes: null, ai_usage: null });
     const { act } = await import("@testing-library/react");
     side(only("sales"), loaded);
@@ -102,7 +102,7 @@ describe("SideNav", () => {
       await new Promise((r) => setTimeout(r, 5));
     });
     expect(screen.queryByRole("meter")).toBeNull();
-    expect(screen.queryByRole("link", { name: "Top up" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Add credits" })).toBeNull();
     expect(screen.getByRole("link", { name: "Help" })).toBeInTheDocument();
   });
   it("says 'Not available yet' for the plan and the count while they cannot be read, and invents nothing", () => {
@@ -191,7 +191,7 @@ describe("TabBar", () => {
     expect(within(dialog).getByRole("link", { name: "Orders" })).toHaveAttribute("aria-current", "page");
     expect(within(dialog).getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
     expect(within(dialog).queryByRole("link", { name: "Leads" })).toBeNull(); // a tab of the bar, not in the sheet
-    expect(within(dialog).getByRole("link", { name: "Top up" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("link", { name: "Add credits" })).toBeInTheDocument();
     expect(within(dialog).getByText("Powered by Stack19")).toBeInTheDocument(); // the small credit at the foot of the sheet (owner 31 Oct)
     expect(within(dialog).getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
     expect(within(dialog).getByRole("button", { name: "Sign out" })).toHaveAttribute("type", "submit");

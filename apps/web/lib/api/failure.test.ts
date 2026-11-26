@@ -116,7 +116,7 @@ describe("plain words for the codes a shop meets (error-words job)", () => {
       const en = codeSentence(code, t);
       expect(en, code).toBeTruthy();
       // Telugu: the owner reviewed these lines (his Customer Zero sheets, 19 Nov), except the two whose English is being changed; Hindi and Kannada stay English
-      for (const lang of ["te", "kn", "hi"] as const) if (lang !== "te") expect(codeSentence(code, appT(lang))?.replaceAll("\u2060", ""), `${code}:${lang}`).toBe(en); // the invisible word joiner after a hyphen is the only difference allowed
+      for (const lang of ["te", "kn", "hi"] as const) expect(codeSentence(code, appT(lang)), `${code}:${lang}`).toBeTruthy(); // (26 Nov 2026: Telugu, Hindi and Kannada are written and approved by the owner's delegation, money lines included)
     }
   });
   it("says 'nothing was ...' only where that is certain", () => {

@@ -41,15 +41,15 @@ export function statusCounts(calls: readonly Statusable[]): Record<CallStatusWor
  *   5. what the state says (no answer, busy, voicemail, failed, cancelled, in progress ...: ph.state.*)
  */
 export type Sentence =
-  | { kind: "api"; text: string }
+  | { kind: "api"; text: string; code?: string; category?: string; state?: string }
   | { kind: "refused"; reason: string | null }
   | { kind: "summary"; text: string }
   | { kind: "category"; category: string }
   | { kind: "result"; result: string }
   | { kind: "state"; state: string };
 
-export function callSentence(c: Pick<CallRow, "state" | "live" | "outcomeSentence" | "summaryShort" | "category" | "outcome" | "refuseReason">): Sentence {
-  if (c.outcomeSentence) return { kind: "api", text: c.outcomeSentence };
+export function callSentence(c: Pick<CallRow, "state" | "live" | "outcomeSentence" | "summaryShort" | "category" | "outcome" | "refuseReason"> & { outcomeCode?: string | null }): Sentence {
+  if (c.outcomeSentence) return { kind: "api", text: c.outcomeSentence, code: c.outcomeCode ?? undefined, category: c.category ?? undefined, state: c.state };
   if (c.state === "refused") return { kind: "refused", reason: c.refuseReason };
   if (c.summaryShort) return { kind: "summary", text: c.summaryShort };
   if (c.category) return { kind: "category", category: c.category };
@@ -61,7 +61,13 @@ type W = Readonly<Record<string, string>>;
 /** The sentence in words. `why(reason)` is the page's own plain-words reason for a refused call (lib/calls/view.ts refuseWhy + ph.why.*). */
 export function sentenceText(s: Sentence, w: W, why: (reason: string | null) => string): string {
   switch (s.kind) {
-    case "api":
+    case "api": {
+      // the API's sentence is English. Its `outcome_code` (always sent since 26 Nov) is worded here in the person's language (`oc.<code>`); an API without the code falls back to the page's words for the category or state, and the English sentence is the last resort
+      const coded = s.code ? w[`oc.${s.code}`] : undefined;
+      if (coded) return coded;
+      const own = (s.category && (w[`outcome.cat.${s.category}`] ?? w[`ph.cat.${s.category}`])) || (s.state && w[`ph.state.${s.state}`]) || "";
+      return own && /^[\x20-\x7E₹…]+$/.test(s.text) && /[^\x00-\x7F]/.test(own) ? own : s.text;
+    }
     case "summary":
       return s.text;
     case "refused":

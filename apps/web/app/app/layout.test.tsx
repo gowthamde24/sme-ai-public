@@ -87,7 +87,7 @@ describe("the /app layout (the workspace frame)", () => {
     getMyProfile.mockResolvedValue({ displayName: "Ravi Kumar", language: "te", picture: "own", pictureUrl: "https://img.example/me.jpg" });
     const { container, unmount } = render(await AppLayout({ children: page }));
     expect(getMyProfile).toHaveBeenCalledWith("tok", T);
-    expect(container.querySelector('img[src="https://img.example/me.jpg"]')).not.toBeNull();
+    expect(container.querySelector('[style*="https://img.example/me.jpg"]')).not.toBeNull(); // the picture is a background (a dead link then draws nothing)
     expect(screen.getAllByText("RK").length).toBeGreaterThan(0);
     unmount();
     hdr.clear();

@@ -93,13 +93,13 @@ describe("the command palette (owner, 6 Nov 2026)", () => {
     fireEvent.click(screen.getByText(/Ask the assistant/));
     expect(nav.push).toHaveBeenCalledWith(`${B}/talk?ask=what+needs+me+today`);
   });
-  it("actions only where the person may do them: Top up for owners and admins", () => {
+  it("actions only where the person may do them: Add credits for owners and admins", () => {
     draw("owner");
-    type("top up");
+    type("add credits");
     expect(items()).toContain("action:topup");
     cleanup();
     draw("sales");
-    type("top up");
+    type("add credits");
     expect(items()).not.toContain("action:topup");
   });
 });
