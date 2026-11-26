@@ -28,9 +28,9 @@ export const FindsOutCard = card(lazy(() => import("./JobLists").then((m) => ({ 
 export const JobRenameForm = card(lazy(() => import("./JobRenameForm").then((m) => ({ default: m.JobRenameForm as typeof JobRenameFormType }))));
 export const TryCard = card(
   lazy(() => import("./JobTry").then((m) => ({ default: m.TryCard as typeof TryCardType }))),
-  <span data-skeleton="" className="jb-skeleton block h-36 rounded-2xl" />,
+  <span data-skeleton="" className="jb-skeleton block h-36 rounded-xl" />,
 );
 export const WhoTalks = card(
   lazy(() => import("./WhoTalks").then((m) => ({ default: m.WhoTalks as typeof WhoTalksType }))),
-  <span data-skeleton="" className="jb-skeleton block h-72 rounded-2xl" />,
+  <span data-skeleton="" className="jb-skeleton block h-72 rounded-xl" />,
 );

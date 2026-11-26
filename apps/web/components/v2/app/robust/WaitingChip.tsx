@@ -10,7 +10,7 @@ export function WaitingChip({ labels }: { labels?: Labels }) {
   const n = useQueued();
   if (online && n === 0) return null;
   return (
-    <span role="status" data-part="waiting-chip" className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-amber-text bg-amber-bg px-3 text-xs font-semibold text-amber-text">
+    <span role="status" data-part="waiting-chip" className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-amber-text bg-amber-bg px-3 text-xs font-semibold text-amber-text">
       <span aria-hidden="true" className="size-2 rounded-full bg-amber-text" />
       {word(labels, "frame.offline.waiting", "Waiting for network")}
       {n > 0 ? <span className="tabular-nums">· {n}</span> : null}

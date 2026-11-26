@@ -82,7 +82,7 @@ export function UsageCard({ usage, labels, loading = false, className = "" }: { 
           <p className="mt-2 text-sm text-muted">{word(labels, "frame.aimonth", "{percent}% of this month", { percent: usage.month_percent })}</p>
           {usage.state === "warn" ? <p className="mt-2 text-sm">{word(labels, "frame.aiwarn", "Your assistant has been busy today. It keeps working; at the limit it switches to a lighter mode until midnight.")}</p> : null}
           {usage.state === "light" ? (
-            <p className="mt-2 inline-block rounded-full border border-amber-text bg-amber-bg px-2.5 py-1 text-sm font-medium text-amber-text">
+            <p className="mt-2 inline-block rounded-md border border-amber-text bg-amber-bg px-2.5 py-1 text-sm font-medium text-amber-text">
               {word(labels, "frame.ailight", "Light mode until {time}", { time: indiaTime(until ?? usage.resets_at_today) })}
             </p>
           ) : null}

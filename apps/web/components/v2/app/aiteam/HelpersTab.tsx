@@ -23,7 +23,7 @@ export function HelpersTab({ tenantId, base, day, words, manages, onSwitch, mfaH
           const s = statusWords(lane.statusNow, null);
           return (
             <li key={lane.helper}>
-              <button type="button" onClick={() => setOpen(lane.helper)} aria-label={w("aiteam.open", { helper: name })} data-helper={lane.helper} className="flex min-h-24 w-full flex-col gap-2 rounded-[22px] border border-line bg-surface p-4 text-left shadow-[var(--v2-shadow)] hover:border-brand-edge">
+              <button type="button" onClick={() => setOpen(lane.helper)} aria-label={w("aiteam.open", { helper: name })} data-helper={lane.helper} className="flex min-h-24 w-full flex-col gap-2 rounded-xl border border-line bg-surface p-4 text-left shadow-[var(--v2-shadow)] hover:border-brand-edge">
                 <span className="flex items-center justify-between gap-2">
                   <span className="flex items-center gap-2 font-display text-lg font-bold">
                     <span aria-hidden="true" className={`size-3 rounded-full ${LANE_TONE[lane.helper].dot}`} />

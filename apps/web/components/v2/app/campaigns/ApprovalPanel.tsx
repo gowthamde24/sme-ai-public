@@ -61,7 +61,7 @@ export function ApprovalPanel({ preview, role, status, words, approve }: { previ
         </div>
       ) : null}
       {issues.length > 0 ? (
-        <section aria-labelledby="ap-issues" className="rounded-2xl border border-amber-text bg-amber-bg p-4" data-part="issues">
+        <section aria-labelledby="ap-issues" className="rounded-xl border border-amber-text bg-amber-bg p-4" data-part="issues">
           <h2 id="ap-issues" className="font-display text-lg font-bold text-amber-text">{say(words, "camp.ap.issues")}</h2>
           <ul className="mt-1 list-inside list-disc text-base text-amber-text">
             {issues.map((i) => (<li key={i}>{preview.issue_text[i] ?? say(words, "camp.ap.issue.other")}</li>))}
@@ -88,7 +88,7 @@ export function ApprovalPanel({ preview, role, status, words, approve }: { previ
                   {s.labels.map((l) => (<Pill key={l} tone="info">{say(words, `camp.sample.${l}`)}</Pill>))}
                   {s.amount_paise !== null ? <Pill tone="neutral">{formatRupees(s.amount_paise)}</Pill> : null}
                 </p>
-                <div className="max-w-md self-start whitespace-pre-wrap rounded-2xl rounded-tl-sm bg-green-bg p-3 text-base text-ink shadow-sm [overflow-wrap:anywhere]" data-part="bubble">{s.body}</div>
+                <div className="max-w-md self-start whitespace-pre-wrap rounded-xl rounded-tl-sm bg-green-bg p-3 text-base text-ink shadow-sm [overflow-wrap:anywhere]" data-part="bubble">{s.body}</div>
               </li>
             ))}
           </ul>
@@ -98,7 +98,7 @@ export function ApprovalPanel({ preview, role, status, words, approve }: { previ
       {!preview.sending_on ? <p role="note" className="rounded-lg border border-line bg-surface-2 p-3 text-sm">{say(words, "camp.ap.switchoff.now")}</p> : null}
       {status === "draft" ? (
         owner ? (
-          <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
+          <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 md:bottom-4">
               <button type="button" className={primary} disabled={!ready} onClick={() => { setChecked(false); setProblem(null); setOpen(true); }}>{say(words, "camp.ap.approve")}</button>
               {!ready ? <span className={help}>{say(words, issues.length > 0 ? "camp.ap.notready" : "camp.ap.nopeople")}</span> : null}
             </div>

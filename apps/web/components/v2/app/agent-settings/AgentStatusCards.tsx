@@ -18,7 +18,7 @@ export function SystemSwitchCard({ words, settings }: { words: TodayWords; setti
         <p className="text-sm text-muted">{say(words, "frame.notyet")}</p>
       ) : (
         <>
-          <p className={`inline-flex w-fit rounded-full px-3 py-1 text-base font-semibold ${settings.platform_switch_on ? "bg-green-bg text-green-text" : "bg-amber-bg text-amber-text"}`}>{say(words, settings.platform_switch_on ? "agentset.system.on" : "agentset.system.off")}</p>
+          <p className={`inline-flex w-fit rounded-md px-3 py-1 text-base font-semibold ${settings.platform_switch_on ? "bg-green-bg text-green-text" : "bg-amber-bg text-amber-text"}`}>{say(words, settings.platform_switch_on ? "agentset.system.on" : "agentset.system.off")}</p>
           <p className="text-sm text-muted">{say(words, settings.platform_switch_on ? "agentset.system.on.note" : "agentset.system.off.note")}</p>
         </>
       )}
@@ -47,7 +47,7 @@ export function SchedulerCard({ words, status, now }: { words: TodayWords; statu
               {say(words, "outbox.sched.stale", { minutes: v.minutes })}
             </p>
           ) : null}
-          <p data-line="releases-approved" className="rounded-2xl bg-surface-2 px-3.5 py-2.5 text-sm font-medium">
+          <p data-line="releases-approved" className="rounded-xl bg-surface-2 px-3.5 py-2.5 text-sm font-medium">
             {say(words, status.releases_approved ? "agentset.sched.approved" : "agentset.sched.approved.no")}
           </p>
           <dl className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
@@ -72,7 +72,7 @@ export function SchedulerCard({ words, status, now }: { words: TodayWords; statu
             <p className="mb-1.5 text-sm font-semibold">{say(words, "agentset.sched.today")}</p>
             <ul className="flex flex-wrap gap-2 text-sm">
               {(["sent", "reminders", "no_shows", "failed", "errors"] as const).map((k) => (
-                <li key={k} className="rounded-full bg-surface-2 px-3 py-1.5 font-medium">
+                <li key={k} className="rounded-md bg-surface-2 px-3 py-1.5 font-medium">
                   {say(words, `agentset.sched.count.${k}`, { n: status.today[k] })}
                 </li>
               ))}

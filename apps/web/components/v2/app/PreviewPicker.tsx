@@ -13,7 +13,7 @@ export function PreviewPicker({ choice, words }: { choice: PreviewChoice | null;
   const on = choice !== null;
   const [before, after] = t("preview.show", { choice: "\u0000" }).split("\u0000");
   const state = choice?.kind === "sample" ? t("preview.state_sample", { business: personaOf(choice.type).business }) : choice ? t("preview.state_mine") : null;
-  const btn = "inline-flex min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-base font-semibold text-on-brand";
+  const btn = "inline-flex min-h-11 items-center justify-center rounded-md border border-brand-edge bg-brand px-5 text-base font-semibold text-on-brand";
   return (
     <>
       <p data-part="preview-state" className="m-0 text-base font-semibold">

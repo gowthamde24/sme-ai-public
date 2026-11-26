@@ -349,7 +349,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
           data.developer && developerActions ? (
             <DeveloperKeysCard words={words} lang={lang} keys={data.developer.keys} usage={data.developer.usage} mock={data.developer.mock} actions={developerActions} simple={jobs && !settingsOpen()} />
           ) : (
-            <Card id="developer" title={t("sv6.dev.title")} edit={<span className="rounded-full border border-line bg-surface-2 px-3 py-1 text-sm font-semibold text-muted">{t("sv6.dev.test")}</span>}>
+            <Card id="developer" title={t("sv6.dev.title")} edit={<span className="rounded-md border border-line bg-surface-2 px-3 py-1 text-sm font-semibold text-muted">{t("sv6.dev.test")}</span>}>
               <p className="mt-2 text-base text-muted">{t("sv6.dev.text")}</p>
               <p className="mt-2 text-base font-semibold text-muted" data-part="dev-none">
                 {t("sv6.dev.none")}

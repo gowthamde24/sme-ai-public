@@ -33,7 +33,7 @@ export function TakeOverSwitch({ words, initial, canEdit, change }: { words?: Wo
     <section className={`${surface} flex flex-col gap-3`} aria-labelledby="tov-h" data-part="take-over">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h2 id="tov-h" className="text-lg font-semibold text-ink">{t("tov.title")}</h2>
-        <span data-state={state.enabled ? "on" : "off"} className={`rounded-full px-3 py-1 text-xs font-semibold ${state.enabled ? "bg-green-bg text-green-text" : "bg-surface-2 text-muted"}`}>{t(state.enabled ? "tov.on" : "tov.off")}</span>
+        <span data-state={state.enabled ? "on" : "off"} className={`rounded-md px-3 py-1 text-xs font-semibold ${state.enabled ? "bg-green-bg text-green-text" : "bg-surface-2 text-muted"}`}>{t(state.enabled ? "tov.on" : "tov.off")}</span>
       </div>
       <p className="text-sm text-muted">{t("tov.what")}</p>
       <ul className="list-disc pl-5 text-sm text-muted" data-part="take-over-rules">

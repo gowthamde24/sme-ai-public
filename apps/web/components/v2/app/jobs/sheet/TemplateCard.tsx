@@ -47,7 +47,7 @@ export function TemplateCard({ template: tpl, ctx, words, onUse, onSay, busy = f
   const sample = tpl.call ? pickSample(tpl.sampleAudio, ctx.lang, ctx.businessLang ?? null) : null;
   const needs = tpl.needs.map((n) => t(`jobs.tpl.needs.${n}`));
   return (
-    <article data-part="template-card" data-template={tpl.id} data-kind={tpl.kind} aria-label={title} className="jb-enter flex flex-col gap-3 rounded-2xl border border-line bg-surface p-3.5 md:p-4">
+    <article data-part="template-card" data-template={tpl.id} data-kind={tpl.kind} aria-label={title} className="jb-enter flex flex-col gap-3 rounded-xl border border-line bg-surface p-3.5 md:p-4">
       <div className="flex items-start gap-3">
         <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-bg text-brand-text">
           <Icon className="size-5" />
@@ -57,7 +57,7 @@ export function TemplateCard({ template: tpl, ctx, words, onUse, onSay, busy = f
           <p className="m-0 mt-0.5 flex items-center gap-1.5 text-[12.5px] font-semibold text-muted">
             <Chan aria-hidden="true" className="size-3.5" />
             {t(chanKey)}
-            {tpl.season !== "none" ? <span className="ml-1 rounded-full bg-surface-2 px-2 py-px text-[11.5px] text-ink">{t(`jobs.tpl.season.${tpl.season}`)}</span> : null}
+            {tpl.season !== "none" ? <span className="ml-1 rounded bg-surface-2 px-2 py-px text-[11.5px] text-ink">{t(`jobs.tpl.season.${tpl.season}`)}</span> : null}
           </p>
         </div>
       </div>
@@ -77,11 +77,11 @@ export function TemplateCard({ template: tpl, ctx, words, onUse, onSay, busy = f
         </p>
       ) : null}
       <div className="flex items-center gap-2.5">
-        <button type="button" data-action="use" onClick={() => onUse(tpl)} disabled={busy} className="jb-press inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60">
+        <button type="button" data-action="use" onClick={() => onUse(tpl)} disabled={busy} className="jb-press inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-md border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60">
           {t("jobs.tpl.use")}
         </button>
         {onSay ? (
-          <button type="button" data-action="say" onClick={() => onSay(tpl)} disabled={busy} aria-label={t("jobs.tpl.say_it", { title })} className="jb-press grid size-11 shrink-0 place-items-center rounded-full border border-edge bg-surface text-brand-text disabled:opacity-60">
+          <button type="button" data-action="say" onClick={() => onSay(tpl)} disabled={busy} aria-label={t("jobs.tpl.say_it", { title })} className="jb-press grid size-11 shrink-0 place-items-center rounded-md border border-edge bg-surface text-brand-text disabled:opacity-60">
             <Mic aria-hidden="true" className="size-5" />
           </button>
         ) : null}

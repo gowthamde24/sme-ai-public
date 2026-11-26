@@ -12,8 +12,8 @@ import { waSentence } from "./wa-model";
 import type { TemplateActions } from "./wa-types";
 import { cardBox } from "../Card";
 
-const btn = "inline-flex min-h-11 items-center justify-center rounded-[9px] border border-line bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
-const btnPrimary = "inline-flex min-h-11 items-center justify-center rounded-[9px] bg-brand px-3.5 text-sm font-bold text-on-brand disabled:opacity-60";
+const btn = "inline-flex min-h-11 items-center justify-center rounded-xl border border-line bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
+const btnPrimary = "inline-flex min-h-11 items-center justify-center rounded-xl bg-brand px-3.5 text-sm font-bold text-on-brand disabled:opacity-60";
 
 /**
  * The message templates (job CC, screen 5): a template is what may be sent to a customer whose 24 hours are over, and only an approved one is ever used. The Owner and an Admin can send the drafts to WhatsApp for review (all of them, after a question that names how many, or one row at a time) and ask what WhatsApp answered; each answer redraws the status pills from the templates the API returns. Sending needs the second factor, which the API asks: a refusal says so and links to Security. Nothing is sent to a customer from here. A Sales member only reads.

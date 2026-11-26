@@ -78,7 +78,7 @@ export function LiveCall({ words, call, backHref, testMode }: { words: Words; ca
       </section>
       <footer className="flex flex-col gap-3">
         {status === "live" ? (
-          <button type="button" onClick={() => setStatus("took_over")} className="inline-flex h-14 items-center justify-center rounded-2xl bg-ink px-6 text-base font-semibold text-bg">
+          <button type="button" onClick={() => setStatus("took_over")} className="inline-flex h-14 items-center justify-center rounded-xl bg-ink px-6 text-base font-semibold text-bg">
             {t("call.takeover")}
           </button>
         ) : null}
@@ -87,7 +87,7 @@ export function LiveCall({ words, call, backHref, testMode }: { words: Words; ca
             {t("call.end")}
           </button>
         ) : (
-          <Link href={backHref} className="inline-flex h-14 items-center justify-center rounded-2xl bg-ink px-6 text-base font-semibold text-bg">
+          <Link href={backHref} className="inline-flex h-14 items-center justify-center rounded-xl bg-ink px-6 text-base font-semibold text-bg">
             {t("call.back")}
           </Link>
         )}

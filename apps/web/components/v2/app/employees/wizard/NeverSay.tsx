@@ -50,9 +50,9 @@ export function NeverSay({ t, d, set }: { t: Say; d: Draft; set: (p: Partial<Dra
       ) : (
         <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
           {d.neverSay.map((w) => (
-            <li key={w} className="flex min-h-11 items-center gap-1 rounded-full border border-line bg-surface-2 pl-3 text-base">
+            <li key={w} className="flex min-h-11 items-center gap-1 rounded-md border border-line bg-surface-2 pl-3 text-base">
               <span className="[overflow-wrap:anywhere]">{w}</span>
-              <button type="button" aria-label={t("emp.wiz.never.remove", { word: w })} onClick={() => set({ neverSay: d.neverSay.filter((x) => x !== w) })} className="grid size-11 place-items-center rounded-full text-lg font-semibold text-muted hover:text-ink">
+              <button type="button" aria-label={t("emp.wiz.never.remove", { word: w })} onClick={() => set({ neverSay: d.neverSay.filter((x) => x !== w) })} className="grid size-11 place-items-center rounded-md text-lg font-semibold text-muted hover:text-ink">
                 <span aria-hidden="true">×</span>
               </button>
             </li>

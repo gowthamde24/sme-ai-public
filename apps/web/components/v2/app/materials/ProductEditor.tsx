@@ -263,7 +263,7 @@ export function ProductEditor(p: { base: string; itemId: string; item: MaterialI
           </select>
         </div>
         {p.fields && p.fields.length > 0 ? <CustomFieldsInputs fields={p.fields} values={custom} onChange={setCustom} words={{ title: say(words, "mat.specs.title"), yes: say(words, "fields.form.yes"), no: say(words, "fields.form.no"), pick: say(words, "fields.form.pick") }} idPrefix="mat-cf" disabled={busy} /> : null}
-        <div data-part="exact-price" className="rounded-2xl border border-line p-4">
+        <div data-part="exact-price" className="rounded-xl border border-line p-4">
           {owner ? (
             <>
               <label htmlFor="mat-price" className={label}>{say(words, "mat.field.price")} (₹)</label>
@@ -294,14 +294,14 @@ export function ProductEditor(p: { base: string; itemId: string; item: MaterialI
           </div>
           <div className="flex flex-wrap gap-2">
             <button type="button" disabled={busy || slots.length >= MAX_PHOTOS} onClick={() => takeRef.current?.click()} className={primary}>{say(words, "catalogue.photo.take")}</button>
-            <button type="button" disabled={busy || slots.length >= MAX_PHOTOS} onClick={() => chooseRef.current?.click()} className="inline-flex min-h-11 items-center justify-center rounded-full border border-edge px-[18px] text-[15px] font-semibold hover:bg-surface-2 disabled:opacity-60">{say(words, "catalogue.photo.choose")}</button>
+            <button type="button" disabled={busy || slots.length >= MAX_PHOTOS} onClick={() => chooseRef.current?.click()} className="inline-flex min-h-11 items-center justify-center rounded-md border border-edge px-[18px] text-[15px] font-semibold hover:bg-surface-2 disabled:opacity-60">{say(words, "catalogue.photo.choose")}</button>
             <input ref={takeRef} type="file" accept={PHOTO_TYPES.join(",")} capture="environment" className="sr-only" tabIndex={-1} aria-hidden="true" data-input="take" onChange={(e) => void addFiles(e.target.files)} />
             <input ref={chooseRef} type="file" accept={PHOTO_TYPES.join(",")} multiple className="sr-only" tabIndex={-1} aria-hidden="true" data-input="choose" onChange={(e) => void addFiles(e.target.files)} />
           </div>
           {picked.length ? (<ul className={`${errorLine} list-none`} role="alert">{picked.map((t) => (<li key={t}>{t}</li>))}</ul>) : null}
           {slots.length > 0 ? <PhotoTray slots={trayRows} words={words} name={name.trim() || say(words, "mat.products.add")} disabled={busy} onMove={(from, to) => setSlots((cur) => moveItem(cur, from, to))} onRemove={removeAt} onRetry={() => void save()} /> : null}
         </section>
-        <div className="rounded-2xl border border-line p-4">
+        <div className="rounded-xl border border-line p-4">
           <label className="flex min-h-11 items-center gap-3 text-base font-semibold">
             <input type="checkbox" className="size-6 shrink-0 accent-brand-text" checked={showActive} disabled={busy || liveCount === 0} onChange={(e) => setActive(e.target.checked)} aria-describedby="mat-active-help" />
             {say(words, "mat.field.active")}
@@ -318,7 +318,7 @@ export function ProductEditor(p: { base: string; itemId: string; item: MaterialI
             {problem.mfa ? (<Link href="/app/security" className="font-semibold underline">{say(words, "today.err.mfa.link")}</Link>) : null}
           </div>
         ) : null}
-        <div data-orb-avoid="" className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
+        <div data-orb-avoid="" className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 md:bottom-4">
           <button type="submit" disabled={busy} className={primary}>{busy ? say(words, "today.act.working") : say(words, "catalogue.save")}</button>
           <Link href={backHref} aria-disabled={busy} className={quiet}>{say(words, "today.act.cancel")}</Link>
         </div>

@@ -6,7 +6,7 @@ export function NameText({ text, chip }: { text: string; chip: string }) {
     <>
       {nameParts(text).map((p, i) =>
         p.kind === "name" ? (
-          <span key={i} data-part="name-chip" className="mx-0.5 inline-block rounded-full bg-brand-bg px-2.5 text-[0.92em] font-bold leading-6 text-brand-text">
+          <span key={i} data-part="name-chip" className="mx-0.5 inline-block rounded-md bg-brand-bg px-2.5 text-[0.92em] font-bold leading-6 text-brand-text">
             {chip}
           </span>
         ) : (

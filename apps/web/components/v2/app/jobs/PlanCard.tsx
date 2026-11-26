@@ -47,7 +47,7 @@ export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, 
   const from = hourText(t, plan.when.fromMin);
   const to = hourText(t, plan.when.toMin);
   return (
-    <article data-part="plan" data-channel={channel} aria-labelledby="plan-title" className="jb-enter rounded-[20px] border border-line bg-surface p-3.5 shadow-[var(--v2-shadow)] md:p-5">
+    <article data-part="plan" data-channel={channel} aria-labelledby="plan-title" className="jb-enter rounded-xl border border-line bg-surface p-3.5 shadow-[var(--v2-shadow)] md:p-5">
       <p className="m-0 mb-2 flex items-center gap-2 text-[11.5px] font-bold uppercase leading-tight tracking-wider text-muted">
         <span className="min-w-0 flex-1">{t("jobs.new.plan.eyebrow")}</span>
         <JobChip tone="info" className="shrink-0">

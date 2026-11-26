@@ -44,7 +44,7 @@ export type QueueComposerProps = {
 };
 
 export const POLL_MS = 5000;
-const pill = "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full px-4 text-[14px] font-semibold disabled:opacity-60";
+const pill = "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-md px-4 text-[14px] font-semibold disabled:opacity-60";
 const pill1 = `${pill} bg-brand text-on-brand font-bold`;
 const pill2 = `${pill} border border-line bg-surface text-ink hover:bg-surface-2`;
 
@@ -346,13 +346,13 @@ export function QueueComposer(p: QueueComposerProps) {
         </div>
         <div className="flex flex-wrap items-center gap-2" data-part="composer-tools">
           <div className="flex flex-wrap items-center gap-2">
-            <button type="button" aria-pressed={attach} onClick={() => setAttach((a) => !a)} className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-ink hover:bg-surface-2 aria-pressed:border-brand-edge" aria-label={t("chats6.attach")}>
+            <button type="button" aria-pressed={attach} onClick={() => setAttach((a) => !a)} className="inline-flex size-11 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-ink hover:bg-surface-2 aria-pressed:border-brand-edge" aria-label={t("chats6.attach")}>
               <Paperclip aria-hidden="true" className="size-5" />
             </button>
             <VoiceMic target={boxRef} focused />
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <select aria-label={t("wa.reply.language")} value={language} onChange={(e) => setLanguage(e.target.value)} className="min-h-11 shrink-0 rounded-full border border-line bg-surface px-3 text-[13px] text-ink">
+            <select aria-label={t("wa.reply.language")} value={language} onChange={(e) => setLanguage(e.target.value)} className="min-h-11 shrink-0 rounded-md border border-line bg-surface px-3 text-[13px] text-ink">
               {LANGS.map((l) => (
                 <option key={l} value={l}>
                   {t(`today.lang.${l}`)}

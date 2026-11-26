@@ -107,7 +107,7 @@ export function NotificationsSimple({ words, bare = false, plain = false }: { /*
   );
   if (bare) return <div className="flex flex-col gap-3" data-part="notifications-simple">{body}</div>;
   return (
-    <section aria-labelledby="nset-title" className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5" data-part="notifications">
+    <section aria-labelledby="nset-title" className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5" data-part="notifications">
       <h2 id="nset-title" className="m-0 font-display text-[17px] font-bold leading-tight text-ink">
         {t("nset.title")}
       </h2>

@@ -29,7 +29,7 @@ export function JobsEmpty({ words, base, actions, load }: { words: Words; base: 
   };
   const cards = popularOf(load.data.own).slice(0, 3);
   return (
-    <section data-empty="jobs" data-part="jobs-empty" className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4 md:p-6">
+    <section data-empty="jobs" data-part="jobs-empty" className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-4 md:p-6">
       <div className="text-center">
         <h2 className="m-0 font-display text-[20px] font-bold text-ink">{t("jobs.new.empty.title")}</h2>
         <p className="m-0 mx-auto mt-1 max-w-xl text-[14px] leading-snug text-muted">{t("jobs.new.empty.sub")}</p>
@@ -39,7 +39,7 @@ export function JobsEmpty({ words, base, actions, load }: { words: Words; base: 
           <TemplateCard key={tpl.id} template={tpl} ctx={ctx} words={words} index={i} compact onUse={(x) => sheet.show(null, { ask: textIn(x.ask, lang), template: x.id })} />
         ))}
       </div>
-      <button ref={say} type="button" data-part="say-instead" onClick={() => sheet.show(say.current)} className="flex min-h-12 items-center gap-2.5 rounded-full border border-edge bg-surface px-5 text-[15px] text-muted">
+      <button ref={say} type="button" data-part="say-instead" onClick={() => sheet.show(say.current)} className="flex min-h-12 items-center gap-2.5 rounded-md border border-edge bg-surface px-5 text-[15px] text-muted">
         <MessageSquare aria-hidden="true" className="size-[18px]" />
         {t("jobs.new.empty.say")}
       </button>

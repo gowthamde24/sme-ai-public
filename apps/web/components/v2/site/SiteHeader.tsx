@@ -64,7 +64,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
-          <a href={loginHref()} className="hidden min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-line px-4 text-[15px] font-bold text-ink hover:bg-surface-2 md:inline-flex">
+          <a href={loginHref()} className="hidden min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-md border border-line px-4 text-[15px] font-bold text-ink hover:bg-surface-2 md:inline-flex">
             {t("h2.nav.login")}
           </a>
           {/* a phone keeps the one button in the bar (the landing v2 phone design) and finds the language and the theme in the menu */}
@@ -72,7 +72,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: SiteLan
             <SiteLangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} langs={SITE_LANGS} />
             <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
           </span>
-          <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-[#c2410c] px-4 text-[15px] font-bold text-white sm:px-[18px]">
+          <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-md bg-[#c2410c] px-4 text-[15px] font-bold text-white sm:px-[18px]">
             <span className="xl:hidden">{early.short}</span>
             <span className="max-xl:hidden">{early.label}</span>
           </Link>

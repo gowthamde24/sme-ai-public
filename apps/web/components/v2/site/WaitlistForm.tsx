@@ -87,7 +87,7 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
     const input = "min-h-8 w-full border-0 bg-transparent text-base font-semibold text-ink";
     return (
       <form className="relative flex w-full flex-col items-center gap-3" data-part="waitlist" data-variant="bar" onSubmit={submit}>
-        <div className="h2-glass grid w-full items-center rounded-[26px] p-2 text-left lg:grid-cols-[repeat(4,minmax(0,1fr))_auto] lg:rounded-full">
+        <div className="h2-glass grid w-full items-center rounded-xl p-2 text-left lg:grid-cols-[repeat(4,minmax(0,1fr))_auto] lg:rounded-full">
           <label className={cell}>
             <span className={small}>{words.name}</span>
             <input id={`${idPrefix}-name`} autoComplete="name" maxLength={80} value={name} onChange={(e) => setName(e.target.value)} className={input} />
@@ -108,7 +108,7 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
             <span className={small}>{words.city}</span>
             <input id={`${idPrefix}-city`} autoComplete="address-level2" maxLength={80} value={city} onChange={(e) => setCity(e.target.value)} className={input} />
           </label>
-          <button type="submit" disabled={pending || (turnstile !== null && token === null)} className="m-1 inline-flex min-h-[60px] items-center justify-center gap-2 rounded-full bg-[#c2410c] px-[30px] text-[17px] font-extrabold text-white shadow-[0_10px_24px_-10px_rgba(194,65,12,.8)] disabled:opacity-60">
+          <button type="submit" disabled={pending || (turnstile !== null && token === null)} className="m-1 inline-flex min-h-[60px] items-center justify-center gap-2 rounded-md bg-[#c2410c] px-[30px] text-[17px] font-extrabold text-white shadow-[0_10px_24px_-10px_rgba(194,65,12,.8)] disabled:opacity-60">
             {words.submit}
           </button>
         </div>

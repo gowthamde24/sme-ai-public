@@ -336,7 +336,7 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
         </h2>
         <div role="radiogroup" aria-labelledby="li-src" className="mt-3 flex flex-wrap gap-2">
           {KINDS.map((k) => (
-            <button key={k} type="button" role="radio" aria-checked={kind === k} onClick={() => restart(k)} className={`min-h-11 rounded-full border px-4 text-base font-semibold ${kind === k ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-muted hover:bg-surface-2"}`}>
+            <button key={k} type="button" role="radio" aria-checked={kind === k} onClick={() => restart(k)} className={`min-h-11 rounded-md border px-4 text-base font-semibold ${kind === k ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-muted hover:bg-surface-2"}`}>
               {t(`li.src.${k}`)}
             </button>
           ))}

@@ -84,7 +84,7 @@ export function StandupCard({ base, date, isToday, initial, words, remake, compa
           disabled={!standup?.audio || loading}
           aria-pressed={playing}
           data-part="play"
-          className="order-2 inline-flex min-h-12 items-center gap-2 rounded-full bg-brand px-5 sm:order-none text-base font-semibold text-white shadow hover:opacity-90 disabled:opacity-50"
+          className="order-2 inline-flex min-h-12 items-center gap-2 rounded-md bg-brand px-5 sm:order-none text-base font-semibold text-white shadow hover:opacity-90 disabled:opacity-50"
         >
           <span aria-hidden="true">{playing ? "❚❚" : "▶"}</span>
           {playing ? w("aiteam.standup.pause") : isToday ? w("aiteam.standup.play") : w("aiteam.standup.play.day")}
@@ -93,7 +93,7 @@ export function StandupCard({ base, date, isToday, initial, words, remake, compa
           <h2 id={`standup-${compact ? "today" : "page"}`} className="flex flex-wrap items-center gap-2 font-display text-xl font-bold">
             {w("aiteam.standup.title")}
             {standup?.draft ? (
-              <span title={w("aiteam.standup.draft.why")} className="rounded-full border border-amber-text bg-amber-bg px-2 py-0.5 text-xs font-semibold text-amber-text" data-part="draft">
+              <span title={w("aiteam.standup.draft.why")} className="rounded border border-amber-text bg-amber-bg px-2 py-0.5 text-xs font-semibold text-amber-text" data-part="draft">
                 {w("aiteam.standup.draft")}
               </span>
             ) : null}

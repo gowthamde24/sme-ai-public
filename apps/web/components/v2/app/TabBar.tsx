@@ -86,7 +86,7 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
                   </span>
                 ) : null}
                 {n !== null ? (
-                  <span data-bar-badge={i.id} className="absolute -right-2.5 -top-1.5 grid min-w-5 place-items-center rounded-full bg-brand px-1 text-xs font-semibold leading-5 text-on-brand">
+                  <span data-bar-badge={i.id} className="absolute -right-2.5 -top-1.5 grid min-w-5 place-items-center rounded bg-brand px-1 text-xs font-semibold leading-5 text-on-brand">
                     <span className="sr-only">{text}: </span>
                     {n > 99 ? "99+" : n}
                   </span>

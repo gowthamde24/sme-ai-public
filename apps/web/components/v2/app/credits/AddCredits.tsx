@@ -78,7 +78,7 @@ export function AddCredits({ options, words, actions, label }: { options: TopupO
       </button>
       {open ? (
         <div role="dialog" aria-modal="true" aria-label={t("cr.sheet.title")} className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 md:items-center">
-          <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-[18px] bg-surface p-5 md:rounded-[18px]">
+          <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-xl bg-surface p-5 md:rounded-xl">
             <div className="flex items-center justify-between gap-3">
               <h2 className="m-0 font-display text-[22px] font-semibold">{t("cr.sheet.title")}</h2>
               <button type="button" onClick={() => setOpen(false)} className={btnQuiet}>

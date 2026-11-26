@@ -16,8 +16,8 @@
 [data-ui="v2"] .h2-try { box-shadow: 0 1px 0 color-mix(in srgb, var(--v2-surface) 90%, transparent) inset, 0 0 0 1px rgba(194,65,12, 0.35), 0 24px 50px -24px rgba(194,65,12, 0.55); }
 
 /* the stage's chips: a source or an outcome; an outcome lights when one arrives */
-[data-ui="v2"] .h2-node { display: flex; align-items: center; gap: 10px; border-radius: 14px; padding: 9px 14px 9px 10px; font-size: 14px; font-weight: 700; white-space: nowrap; color: var(--v2-ink); }
-[data-ui="v2"] .h2-ico { flex: none; width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: var(--v2-brand-bg); color: var(--v2-brand-text); }
+[data-ui="v2"] .h2-node { display: flex; align-items: center; gap: 10px; border-radius: 8px; padding: 9px 14px 9px 10px; font-size: 14px; font-weight: 700; white-space: nowrap; color: var(--v2-ink); }
+[data-ui="v2"] .h2-ico { flex: none; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--v2-brand-bg); color: var(--v2-brand-text); }
 [data-ui="v2"] .h2-out .h2-ico { background: var(--v2-green-bg); color: var(--v2-green-text); }
 [data-ui="v2"] .h2-out { transition: box-shadow 300ms ease, transform 300ms cubic-bezier(0.23, 1, 0.32, 1); }
 [data-ui="v2"] .h2-out[data-lit] { transform: scale(1.06); box-shadow: 0 0 0 2px #c2410c, 0 0 0 8px rgba(194,65,12, 0.14), 0 24px 50px -20px rgba(194,65,12, 0.6); }
@@ -68,7 +68,7 @@
 @media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-typeline { clip-path: none; animation: none; } }
 
 /* the business number: the KYC steps light up in turn, the bar fills, the number comes into focus */
-[data-ui="v2"] .h2-kbar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #ff9d6e, #c2410c, #c2410c); transform-origin: left; animation: h2-kbar 7s cubic-bezier(0.77, 0, 0.175, 1) infinite; }
+[data-ui="v2"] .h2-kbar { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #ff9d6e, #c2410c, #c2410c); transform-origin: left; animation: h2-kbar 7s cubic-bezier(0.77, 0, 0.175, 1) infinite; }
 @keyframes h2-kbar { 0% { transform: scaleX(0); } 55%, 90% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
 [data-ui="v2"] .h2-kdot { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--v2-surface-2); color: var(--v2-muted); animation: h2-kdot 7s ease infinite; }
 [data-ui="v2"] .h2-kdot-2 { animation-delay: 1.3s; } [data-ui="v2"] .h2-kdot-3 { animation-delay: 2.7s; }
@@ -88,9 +88,9 @@
 
 /* the leak's sliders (owner review, 6 Nov): orange up to the value (--p, set on the slider's wrapper), the light neutral track (--v2-border) after it, an orange thumb ringed in the surface colour */
 [data-ui="v2"] .h2-range { -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
-[data-ui="v2"] .h2-range::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: linear-gradient(90deg, var(--v2-ink) var(--p, 0%), var(--v2-border) var(--p, 0%)); }
+[data-ui="v2"] .h2-range::-webkit-slider-runnable-track { height: 6px; border-radius: 6px; background: linear-gradient(90deg, var(--v2-ink) var(--p, 0%), var(--v2-border) var(--p, 0%)); }
 [data-ui="v2"] .h2-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: var(--v2-ink); border: 3px solid var(--v2-surface); box-shadow: 0 1px 4px rgba(30, 30, 36, 0.28); }
-[data-ui="v2"] .h2-range::-moz-range-track { height: 6px; border-radius: 999px; background: var(--v2-border); }
+[data-ui="v2"] .h2-range::-moz-range-track { height: 6px; border-radius: 6px; background: var(--v2-border); }
 [data-ui="v2"] .h2-range::-moz-range-progress { height: 6px; border-radius: 999px; background: var(--v2-ink); }
 [data-ui="v2"] .h2-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--v2-ink); border: 3px solid var(--v2-surface); box-shadow: 0 1px 4px rgba(30, 30, 36, 0.28); }
-[data-ui="v2"] .h2-range:focus-visible { outline: 2.5px solid #c2410c; outline-offset: 3px; border-radius: 999px; }
+[data-ui="v2"] .h2-range:focus-visible { outline: 2.5px solid #c2410c; outline-offset: 3px; border-radius: 6px; }

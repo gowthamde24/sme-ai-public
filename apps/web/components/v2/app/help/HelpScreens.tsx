@@ -9,7 +9,7 @@ import type { Lang } from "@/i18n/lang";
 import { GUIDES, guideOf, nextGuide, type GuideId } from "./guides";
 
 const key = (k: string) => k as AppKey;
-const card = "flex h-full flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] transition-colors duration-150 hover:bg-surface-2 sm:p-5";
+const card = "flex h-full flex-col gap-3 rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] transition-colors duration-150 hover:bg-surface-2 sm:p-5";
 const goLink = "inline-flex min-h-11 items-center gap-2 rounded-lg border border-brand-edge bg-brand px-4 text-base font-semibold text-on-brand";
 
 /** Help: a calm list of short guides, each with Agent OWL in the mood that fits it (job BT). Every member may read it. */
@@ -61,7 +61,7 @@ export function HelpGuide({ id, t, base, lang, role }: { id: GuideId; t: AppT; b
         </div>
       </header>
       {g.englishOnly && lang !== "en" ? (
-        <p role="note" className="rounded-2xl bg-surface-2 px-4 py-3 text-sm text-muted">
+        <p role="note" className="rounded-xl bg-surface-2 px-4 py-3 text-sm text-muted">
           {t("help.english")}
         </p>
       ) : null}

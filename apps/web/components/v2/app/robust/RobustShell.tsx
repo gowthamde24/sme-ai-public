@@ -213,7 +213,7 @@ export function RobustShell({ labels }: { labels?: Labels }) {
               href={`/login?next=${encodeURIComponent(here)}`}
               target="_blank"
               rel="noopener"
-              className="inline-flex min-h-11 items-center rounded-full border border-brand-edge bg-brand px-5 text-base font-bold text-on-brand hover:brightness-95"
+              className="inline-flex min-h-11 items-center rounded-md border border-brand-edge bg-brand px-5 text-base font-bold text-on-brand hover:brightness-95"
             >
               {word(labels, "robust.session.signin", "Sign in again")}
             </a>

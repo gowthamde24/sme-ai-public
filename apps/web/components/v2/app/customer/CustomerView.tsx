@@ -44,7 +44,7 @@ export function CustomerView(p: CustomerViewProps) {
   const filters: CustomerFilter[] = ["all", "call", "message", "quote", "visit", "order", "follow_up"];
   const side = (
     <aside className="flex flex-col gap-4" data-part="customer-side">
-      <section aria-labelledby="cust-want" className="rounded-[22px] border border-line bg-surface p-4">
+      <section aria-labelledby="cust-want" className="rounded-xl border border-line bg-surface p-4">
         <h2 id="cust-want" className="m-0 font-display text-lg font-bold">
           {w["cust.v4.want.title"]}
         </h2>
@@ -61,7 +61,7 @@ export function CustomerView(p: CustomerViewProps) {
           <p className="m-0 mt-2 text-sm text-muted">{w["cust.v4.want.none"]}</p>
         )}
       </section>
-      <section aria-labelledby="cust-next" className="rounded-[22px] border border-line bg-surface p-4">
+      <section aria-labelledby="cust-next" className="rounded-xl border border-line bg-surface p-4">
         <h2 id="cust-next" className="m-0 font-display text-lg font-bold">
           {w["cust.v4.next.title"]}
         </h2>
@@ -73,7 +73,7 @@ export function CustomerView(p: CustomerViewProps) {
         ) : (
           <p className="m-0 mt-2 text-sm text-muted">{w["cust.v4.next.none"]}</p>
         )}
-        <Link href={p.main.href} className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#ff773c] px-5 font-extrabold text-[#1e1e24]" data-part="customer-main" data-at="side">
+        <Link href={p.main.href} className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-md bg-[#ff773c] px-5 font-extrabold text-[#1e1e24]" data-part="customer-main" data-at="side">
           {p.main.label}
         </Link>
       </section>
@@ -93,7 +93,7 @@ export function CustomerView(p: CustomerViewProps) {
               </span>
             ))}
         </p>
-        <p className="m-0 mt-1 inline-flex self-start rounded-full bg-brand-bg px-3 py-1 text-sm font-bold text-brand-text" data-part="customer-status">
+        <p className="m-0 mt-1 inline-flex self-start rounded-md bg-brand-bg px-3 py-1 text-sm font-bold text-brand-text" data-part="customer-status">
           {p.status}
         </p>
         {p.consent ? <ConsentChip {...p.consent} /> : null}
@@ -101,13 +101,13 @@ export function CustomerView(p: CustomerViewProps) {
       </header>
       {/* a phone (owner, 7 Nov): the main button, What they want as one row of chips that scrolls sideways, What's next as one line, then the timeline (it starts above the fold on 360 x 780) */}
       <div className="flex flex-col gap-3 sm:hidden" data-part="customer-phone">
-        <Link href={p.main.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#ff773c] px-5 font-extrabold text-[#1e1e24]" data-part="customer-main" data-at="phone">
+        <Link href={p.main.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-[#ff773c] px-5 font-extrabold text-[#1e1e24]" data-part="customer-main" data-at="phone">
           {p.main.label}
         </Link>
         {p.want.length ? (
           <ul aria-label={w["cust.v4.want.title"]} className="m-0 flex list-none gap-1.5 overflow-x-auto p-0 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-part="customer-want-chips">
             {p.want.map((r) => (
-              <li key={r.label} className="shrink-0 whitespace-nowrap rounded-full border border-line bg-surface px-3 py-1.5 text-sm">
+              <li key={r.label} className="shrink-0 whitespace-nowrap rounded-md border border-line bg-surface px-3 py-1.5 text-sm">
                 <span className="text-muted">{r.label} </span>
                 <span className="font-semibold text-ink">{r.value}</span>
               </li>
@@ -128,15 +128,15 @@ export function CustomerView(p: CustomerViewProps) {
           </h2>
           <nav aria-label={w["cust.v4.filters"]} className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {filters.map((f) => (
-              <Link key={f} href={p.filterHref(f)} aria-current={p.filter === f ? "page" : undefined} className={`inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-sm font-bold ${p.filter === f ? "bg-ink text-bg" : "bg-surface text-muted shadow-[inset_0_0_0_1.5px_var(--v2-border)] hover:text-ink"}`} data-filter={f}>
+              <Link key={f} href={p.filterHref(f)} aria-current={p.filter === f ? "page" : undefined} className={`inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-md px-4 text-sm font-bold ${p.filter === f ? "bg-ink text-bg" : "bg-surface text-muted shadow-[inset_0_0_0_1.5px_var(--v2-border)] hover:text-ink"}`} data-filter={f}>
                 {w[`cust.v4.filter.${f}`]}
               </Link>
             ))}
           </nav>
           {shown === null ? (
-            <p className="m-0 rounded-2xl border border-line bg-surface p-4 text-sm text-muted">{w["cust.v4.unreadable"]}</p>
+            <p className="m-0 rounded-xl border border-line bg-surface p-4 text-sm text-muted">{w["cust.v4.unreadable"]}</p>
           ) : shown.length === 0 ? (
-            <p className="m-0 rounded-2xl border border-line bg-surface p-4 text-sm text-muted">{w["cust.v4.empty"]}</p>
+            <p className="m-0 rounded-xl border border-line bg-surface p-4 text-sm text-muted">{w["cust.v4.empty"]}</p>
           ) : (
             <ol className="m-0 flex list-none flex-col gap-2 p-0" data-part="customer-timeline">
               {shown.map((i) => {
@@ -159,11 +159,11 @@ export function CustomerView(p: CustomerViewProps) {
                 return (
                   <li key={`${i.kind}-${i.target.id}-${i.at}`} data-kind={i.kind}>
                     {href ? (
-                      <Link href={href} className="flex gap-3 rounded-2xl border border-line bg-surface p-3 hover:border-brand-edge">
+                      <Link href={href} className="flex gap-3 rounded-xl border border-line bg-surface p-3 hover:border-brand-edge">
                         {body}
                       </Link>
                     ) : (
-                      <div className="flex gap-3 rounded-2xl border border-line bg-surface p-3">{body}</div>
+                      <div className="flex gap-3 rounded-xl border border-line bg-surface p-3">{body}</div>
                     )}
                   </li>
                 );

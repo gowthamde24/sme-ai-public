@@ -58,7 +58,7 @@ export function NewJobButton({ words, base, actions, initial, defaultOpen = fals
         onFocus={() => void loadSheet()}
         onTouchStart={() => void loadSheet()}
         onClick={() => sheet.show(btn.current)}
-        className={`jb-press inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-brand-edge bg-brand font-bold text-on-brand ${size === "sm" ? "min-h-10 px-3.5 text-[14px]" : "min-h-11 px-5 text-[15px]"}`}
+        className={`jb-press inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border border-brand-edge bg-brand font-bold text-on-brand ${size === "sm" ? "min-h-10 px-3.5 text-[14px]" : "min-h-11 px-5 text-[15px]"}`}
       >
         <Plus aria-hidden="true" className="size-4" />
         {t("jobs.page.start")}

@@ -35,13 +35,13 @@ export function AskCapabilities({ w, examples, onTry, guideHref }: { w: (key: st
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-3.5 text-sm font-medium text-ink transition-colors duration-150 hover:bg-surface-2 aria-expanded:border-brand-edge aria-expanded:bg-brand-bg"
+        className="inline-flex min-h-11 items-center gap-2 rounded-md border border-line bg-surface px-3.5 text-sm font-medium text-ink transition-colors duration-150 hover:bg-surface-2 aria-expanded:border-brand-edge aria-expanded:bg-brand-bg"
       >
         <CircleHelp className="size-5 text-brand-text" aria-hidden="true" />
         {w("ask.can.button")}
       </button>
       {open ? (
-        <section id={id} aria-label={w("ask.can.title")} className="w-full rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5">
+        <section id={id} aria-label={w("ask.can.title")} className="w-full rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5">
           <div className="flex items-start gap-3">
             <OrbMark px={48} mood="answering" className="size-12" />
             <h3 className="min-w-0 flex-1 pt-1 font-display text-xl font-semibold leading-tight">{w("ask.can.title")}</h3>
@@ -80,7 +80,7 @@ export function AskCapabilities({ w, examples, onTry, guideHref }: { w: (key: st
                 const Icon = WORKER_ICONS[n - 1];
                 return (
                   <li key={n} data-step={n} className="flex items-start gap-3 rounded-xl border border-line bg-surface-2 p-3">
-                    <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-brand-bg text-brand-text">
+                    <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-brand-bg text-brand-text">
                       <Icon className="size-6" />
                     </span>
                     <div className="min-w-0 text-sm">
@@ -109,7 +109,7 @@ export function AskCapabilities({ w, examples, onTry, guideHref }: { w: (key: st
                       setOpen(false);
                       onTry(q);
                     }}
-                    className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-sm font-medium text-ink hover:bg-surface-2"
+                    className="inline-flex min-h-11 items-center rounded-md border border-edge bg-surface px-4 text-sm font-medium text-ink hover:bg-surface-2"
                   >
                     {q}
                   </button>

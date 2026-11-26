@@ -42,7 +42,7 @@ export function PracticeCall({ prospect, words, base, langNames, run, draft, ope
   }
 
   return (
-    <details open={open || undefined} className="rounded-2xl bg-surface-2 px-3 py-1 sm:px-4" data-practice={prospect.id}>
+    <details open={open || undefined} className="rounded-xl bg-surface-2 px-3 py-1 sm:px-4" data-practice={prospect.id}>
       <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-brand-text">{t("lf.pc.open")}</summary>
       <div className="flex flex-col gap-3 pb-3">
         <p className="text-sm font-semibold text-info-text">{t("lf.pc.title")}</p>

@@ -26,7 +26,7 @@ type Part = "basics" | "behaviour";
 const PART_FIELDS: Record<Part, readonly (keyof Settings)[]> = { basics: ["name", "lang", "autoSwitch", "mixEnglish"], behaviour: ["may", "maxDiscount", "handover", "hours"] };
 export type SampleSource = { endpoint: string; mock: boolean };
 const block = `${surface} flex flex-col gap-4`;
-const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
+const chip = (on: boolean) => `min-h-11 rounded-md border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 
 function Switch({ on, label, onChange, disabled }: { on: boolean; label: string; onChange: (v: boolean) => void; disabled: boolean }) {
   return (
@@ -288,7 +288,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
         {extras.basics}
         </div>
 
-        <aside aria-labelledby="asst-prev-h" className="order-first flex flex-col gap-4 rounded-3xl bg-charcoal p-6 text-on-charcoal @5xl:sticky @5xl:top-24 @5xl:order-none @5xl:w-[380px] @5xl:flex-none">
+        <aside aria-labelledby="asst-prev-h" className="order-first flex flex-col gap-4 rounded-xl bg-charcoal p-6 text-on-charcoal @5xl:sticky @5xl:top-24 @5xl:order-none @5xl:w-[380px] @5xl:flex-none">
           <h3 id="asst-prev-h" className="text-xs font-bold uppercase tracking-[0.14em] text-brand">{t("asst.preview")}</h3>
           <div className="flex justify-center py-2">
             <Orb px={120} state="speak" halo />
@@ -338,7 +338,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
           {test.state === "running" ? <p role="status" className="text-center text-sm">{t("asst.test.running")}</p> : null}
           {test.state === "error" ? <p role="alert" className="text-center text-sm font-medium text-red-text">{t("asst.test.err")}</p> : null}
           {test.state === "done" ? (
-            <div data-part="test-call" role="status" className="rounded-2xl border border-white/20 p-3 text-left">
+            <div data-part="test-call" role="status" className="rounded-xl border border-white/20 p-3 text-left">
               <h4 className="text-sm font-bold">{t("asst.test.title")}</h4>
               <p className="mt-1 text-xs opacity-80">{test.call.note}</p>
               <ol className="mt-2 flex flex-col gap-2">

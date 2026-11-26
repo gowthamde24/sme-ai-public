@@ -34,7 +34,7 @@ export function AutoReply({ words, initial, canEdit, change, securityHref }: { w
     <section className={`${surface} flex flex-col gap-3`} aria-labelledby="ar-h" data-part="auto-reply">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h2 id="ar-h" className="text-lg font-semibold text-ink">{t("ar.title")}</h2>
-        <span data-state={state.enabled ? "on" : "off"} className={`rounded-full px-3 py-1 text-xs font-semibold ${state.enabled ? "bg-green-bg text-green-text" : "bg-surface-2 text-muted"}`}>{t(state.enabled ? "ar.on" : "ar.off")}</span>
+        <span data-state={state.enabled ? "on" : "off"} className={`rounded-md px-3 py-1 text-xs font-semibold ${state.enabled ? "bg-green-bg text-green-text" : "bg-surface-2 text-muted"}`}>{t(state.enabled ? "ar.on" : "ar.off")}</span>
       </div>
       <p className="text-sm text-muted">{t("ar.what")}</p>
       {state.rules.length > 0 ? (

@@ -142,7 +142,7 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
           <label htmlFor="job-say" className="text-[12px] font-bold uppercase tracking-wider text-muted">
             {t("jobs.new.label")}
           </label>
-          <div className="rounded-2xl border border-brand-edge bg-surface p-2 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--v2-brand)_25%,transparent)]">
+          <div className="rounded-xl border border-brand-edge bg-surface p-2 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--v2-brand)_25%,transparent)]">
             <textarea
               ref={boxRef}
               id="job-say"
@@ -158,7 +158,7 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
             />
             <div className="flex items-center justify-end gap-2">
               <VoiceMic target={boxRef} size="icon" />
-              <button type="submit" aria-label={t("jobs.new.go")} disabled={planning} className="jb-press grid size-11 shrink-0 place-items-center rounded-full border border-brand-edge bg-brand text-on-brand disabled:opacity-60">
+              <button type="submit" aria-label={t("jobs.new.go")} disabled={planning} className="jb-press grid size-11 shrink-0 place-items-center rounded-md border border-brand-edge bg-brand text-on-brand disabled:opacity-60">
                 <ArrowRight aria-hidden="true" className="size-5" />
               </button>
             </div>
@@ -175,14 +175,14 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
           ) : null}
         </form>
         {unclear ? (
-          <p role="status" data-part="plan-unclear" className="jb-enter m-0 rounded-2xl bg-surface-2 px-4 py-3 text-[15px] leading-snug text-ink">
+          <p role="status" data-part="plan-unclear" className="jb-enter m-0 rounded-xl bg-surface-2 px-4 py-3 text-[15px] leading-snug text-ink">
             {t("jobs.new.unclear")}
           </p>
         ) : null}
         <ul aria-label={t("jobs.new.examples")} className="m-0 flex list-none flex-wrap gap-2 p-0">
           {EXAMPLES.map((key) => (
             <li key={key}>
-              <button type="button" data-example={key} disabled={planning} onClick={() => example(key)} className="jb-press relative inline-flex min-h-9 items-center rounded-full border border-line bg-surface-2 px-3.5 text-[13.5px] font-semibold text-ink before:absolute before:-inset-y-1 before:inset-x-0 before:content-['']">
+              <button type="button" data-example={key} disabled={planning} onClick={() => example(key)} className="jb-press relative inline-flex min-h-9 items-center rounded-md border border-line bg-surface-2 px-3.5 text-[13.5px] font-semibold text-ink before:absolute before:-inset-y-1 before:inset-x-0 before:content-['']">
                 {t(key)}
               </button>
             </li>

@@ -110,7 +110,7 @@ export function DataImport({ tenantId, words, kinds = KINDS_DEFAULT }: { tenantI
             <legend className={labelClass}>{t("dta.src.label")}</legend>
             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("dta.src.label")}>
               {SOURCES.map((s) => (
-                <label key={s} className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-base font-semibold ${source === s ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
+                <label key={s} className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border px-4 text-base font-semibold ${source === s ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
                   <input type="radio" name="dta-source" value={s} checked={source === s} onChange={() => setSource(s)} className="size-5 accent-brand-text" />
                   {s === "sheet" ? t("dta.src.sheet") : s === "tally" ? "Tally" : "Vyapar"}
                 </label>
@@ -124,7 +124,7 @@ export function DataImport({ tenantId, words, kinds = KINDS_DEFAULT }: { tenantI
             <legend className={labelClass}>{t("dta.kind.label")}</legend>
             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("dta.kind.label")}>
               {kinds.map((k) => (
-                <label key={k} className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-base font-semibold ${kind === k ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
+                <label key={k} className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border px-4 text-base font-semibold ${kind === k ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
                   <input type="radio" name="dta-kind" value={k} checked={kind === k} onChange={() => setKind(k)} className="size-5 accent-brand-text" />
                   {t(`dta.kind.${k}`)}
                 </label>
@@ -143,7 +143,7 @@ export function DataImport({ tenantId, words, kinds = KINDS_DEFAULT }: { tenantI
               accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               onChange={(e) => choose(e.target.files?.[0] ?? null)}
               aria-describedby={`${id}-limits`}
-              className="block min-h-12 w-full rounded-lg border border-edge bg-surface px-3 py-2 text-base file:mr-3 file:min-h-9 file:rounded-full file:border file:border-edge file:bg-surface-2 file:px-4 file:font-semibold"
+              className="block min-h-12 w-full rounded-lg border border-edge bg-surface px-3 py-2 text-base file:mr-3 file:min-h-9 file:rounded-md file:border file:border-edge file:bg-surface-2 file:px-4 file:font-semibold"
             />
             <p id={`${id}-limits`} className={help}>
               {file ? `${file.name} (${Math.max(1, Math.round(file.size / 1000))} KB)` : t("dta.file.none")} {t("dta.file.limits")}

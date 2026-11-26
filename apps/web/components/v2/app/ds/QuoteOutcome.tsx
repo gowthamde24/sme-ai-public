@@ -11,8 +11,8 @@ import { makeT, type Words } from "../words";
 export type QuoteState = "waiting" | "approved" | "other";
 export type QuoteOut = { quoteId: string; type: "quote" | "material_quote"; state: QuoteState; totalPaise: number | null };
 
-const b1 = "inline-flex min-h-11 items-center justify-center rounded-[9px] bg-brand px-3 text-[13px] font-bold text-on-brand disabled:opacity-60";
-const b2 = "inline-flex min-h-11 items-center justify-center rounded-[9px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2";
+const b1 = "inline-flex min-h-11 items-center justify-center rounded-xl bg-brand px-3 text-[13px] font-bold text-on-brand disabled:opacity-60";
+const b2 = "inline-flex min-h-11 items-center justify-center rounded-xl border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2";
 
 /**
  * The quote a call or a chat left behind, as a card (approved mock; used by the Calls panel and the Chats customer card): the amount big ("₹24,500"), with a small "Quote" label (Calls) or what it is for (Chats), "Change" (opens the quote) and the approve button (Owner and Admin,
@@ -29,9 +29,9 @@ export function QuoteOutcome({ words, base, quote, approve, variant = "call", su
   const whatsapp = `${base}/quotes/${quote.quoteId}/whatsapp`;
   return (
     <div className="flex flex-col gap-2.5" data-part="quote-outcome" data-state={kind}>
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-line bg-surface p-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface p-3">
         <div className="min-w-0">
-          {variant === "call" ? <span className="inline-block rounded-full bg-brand-bg px-2 py-0.5 text-[11.5px] font-bold text-brand-text">{t(approved ? "calls6.quote.label.approved" : "calls6.quote.label")}</span> : null}
+          {variant === "call" ? <span className="inline-block rounded bg-brand-bg px-2 py-0.5 text-[11.5px] font-bold text-brand-text">{t(approved ? "calls6.quote.label.approved" : "calls6.quote.label")}</span> : null}
           {amount ? (
             <p className={`m-0 font-display font-bold tabular-nums ${variant === "call" ? "text-[22px] leading-tight" : "text-lg"}`}>{amount}</p>
           ) : (

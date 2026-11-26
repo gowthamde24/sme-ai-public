@@ -87,7 +87,7 @@ export function FeePlanForm({ base, planId, plan, copy, programmes, defaultYear,
           <p id="fp-year-h" className={help}>{say(words, "edu.plan.year.help")}</p>
         </div>
       </div>
-      <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line p-4" disabled={busy}>
+      <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl border border-line p-4" disabled={busy}>
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "edu.plan.lines")}</legend>
         <p className={help}>{say(words, "edu.plan.lines.help")}</p>
         {rows.map((r, i) => (
@@ -118,7 +118,7 @@ export function FeePlanForm({ base, planId, plan, copy, programmes, defaultYear,
           <p className="font-display text-lg font-bold tabular-nums" data-part="total">{say(words, "edu.plan.total")}: {read.ok ? formatRupees(read.total) : "—"}</p>
         </div>
       </fieldset>
-      <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line p-4" disabled={busy}>
+      <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl border border-line p-4" disabled={busy}>
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "edu.plan.late")}</legend>
         <p className={help}>{say(words, "edu.plan.late.help")}</p>
         <div role="radiogroup" aria-label={say(words, "edu.plan.late")} className="flex flex-col gap-1">

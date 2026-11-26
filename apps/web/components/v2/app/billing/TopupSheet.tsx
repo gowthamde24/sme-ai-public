@@ -46,7 +46,7 @@ export function TopupSheet({ words, amounts, available, gstText, pay }: { words:
       </button>
       {open ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 sm:items-center" onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
-          <div role="dialog" aria-modal="true" aria-labelledby="bv6-topup-h" data-part="topup-sheet" className="w-full max-w-md rounded-t-2xl border border-line bg-surface p-5 shadow-[var(--v2-shadow-pop)] sm:rounded-2xl">
+          <div role="dialog" aria-modal="true" aria-labelledby="bv6-topup-h" data-part="topup-sheet" className="w-full max-w-md rounded-t-xl border border-line bg-surface p-5 shadow-[var(--v2-shadow-pop)] sm:rounded-xl">
             <h2 id="bv6-topup-h" className="font-display text-xl font-semibold">
               {t("bv6.topup.title")}
             </h2>

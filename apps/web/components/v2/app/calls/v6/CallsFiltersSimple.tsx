@@ -45,7 +45,7 @@ export function CallsFiltersSimple({ words, base, query, counts, lines, shown, t
             {t("calls6.search.label")}. {t("calls6.search.note")}
           </span>
           <Search aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" />
-          <input type="search" name="q" defaultValue={query.q} maxLength={80} placeholder={t("calls6.search.placeholder")} className="write-ctl min-h-11 w-full rounded-full border border-line bg-surface pl-10 pr-3 text-[15px] text-ink placeholder:text-muted focus:border-brand-edge" />
+          <input type="search" name="q" defaultValue={query.q} maxLength={80} placeholder={t("calls6.search.placeholder")} className="write-ctl min-h-11 w-full rounded-md border border-line bg-surface pl-10 pr-3 text-[15px] text-ink placeholder:text-muted focus:border-brand-edge" />
         </label>
         <button type="submit" className={btnQuiet}>
           {t("calls6.search.go")}

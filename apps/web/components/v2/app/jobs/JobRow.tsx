@@ -24,7 +24,7 @@ function JobSwitch({ label, on, busy, onChange, onText, offText }: { label: stri
   );
 }
 
-const pc = "inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface px-2.5 text-[12.5px] font-semibold text-ink";
+const pc = "inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded border border-line bg-surface px-2.5 text-[12.5px] font-semibold text-ink";
 /** How a named job sounds: its language, its voice and the number it speaks from, as small outline chips (a word we do not know is left out, never shown as a code). */
 export function SpeaksChips({ speaks, t, words }: { speaks: JobSpeaks; t: Say; words: Words }) {
   const lang = speaks.language ? (words[`jobs.page.lang.${speaks.language}`] ? t(`jobs.page.lang.${speaks.language}`) : null) : null;
@@ -88,7 +88,7 @@ export function JobRow({ job, words, base, actions, chips = false }: { job: Job;
 
   return (
     <div data-job={job.id} data-job-kind={job.kind} className="flex items-center gap-3 px-4 py-2.5">
-      <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-brand-bg text-brand-text">
+      <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand-bg text-brand-text">
         <Icon className="size-[18px]" />
       </span>
       {/* the shared tap-target rule (`main a` = inline-flex, a row) would put the name, the result line and the chips side by side: this link stacks them (staging, 20 Nov: rows were squeezed into columns on a phone) */}

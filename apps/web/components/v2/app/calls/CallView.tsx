@@ -29,7 +29,7 @@ export type CallViewProps = {
   correct: ReactNode;
 };
 
-const card = "rounded-[22px] border border-line bg-surface p-4 md:p-5";
+const card = "rounded-xl border border-line bg-surface p-4 md:p-5";
 
 /**
  * One call (app v4 part 4, from app-Call.png; GET /calls/{id}). While it is live: the assistant's orb with the call's clock, what is being said (the newest line biggest, each line whole, in its own language), What X wants (filled in as
@@ -146,11 +146,11 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
         <div className="flex min-w-0 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <h1 className="m-0 font-display text-[26px] font-semibold leading-[1.15] [overflow-wrap:anywhere] md:text-4xl">{name}</h1>
-            <span className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-bold ${call.live ? "bg-brand-bg text-brand-text" : "bg-surface-2 text-muted"}`} data-part="call-state">
+            <span className={`inline-flex items-center rounded-md px-3 py-1 text-sm font-bold ${call.live ? "bg-brand-bg text-brand-text" : "bg-surface-2 text-muted"}`} data-part="call-state">
               {call.live ? "● " : ""}
               {w[`ph.state.${call.state}`]}
             </span>
-            {call.sandbox || call.simulated ? <span className="rounded-full bg-surface-2 px-2.5 py-1 text-xs font-bold text-muted">{w["ph.test"]}</span> : null}
+            {call.sandbox || call.simulated ? <span className="rounded bg-surface-2 px-2.5 py-1 text-xs font-bold text-muted">{w["ph.test"]}</span> : null}
           </div>
           <p className="m-0 text-sm text-muted">
             {[w[`ph.dir.${call.direction}`], language].filter(Boolean).join(" · ")} · <time dateTime={call.createdAt}>{when(call.createdAt)}</time>
@@ -169,7 +169,7 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
       </header>
       {call.live ? (
         <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[240px_minmax(0,1fr)_300px]">
-          <div className="flex items-center gap-3 rounded-[22px] border border-line bg-surface p-3 lg:flex-col lg:justify-center lg:gap-4 lg:p-5 lg:py-8" data-part="call-orb">
+          <div className="flex items-center gap-3 rounded-xl border border-line bg-surface p-3 lg:flex-col lg:justify-center lg:gap-4 lg:p-5 lg:py-8" data-part="call-orb">
             <div className="size-14 shrink-0 overflow-hidden rounded-full lg:size-40">
               <AssistantOrb state="listen" />
             </div>

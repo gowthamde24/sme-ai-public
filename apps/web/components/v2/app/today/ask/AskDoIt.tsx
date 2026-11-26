@@ -13,8 +13,8 @@ import { makeT, type Words } from "../../words";
 import type { TaskEntry } from "./use-do-it";
 import type { AskSession } from "./use-ask-session";
 
-const seg = "inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold";
-const chipClass = "inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2";
+const seg = "inline-flex min-h-11 items-center rounded-md px-4 text-sm font-semibold";
+const chipClass = "inline-flex min-h-11 items-center rounded-md border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2";
 
 /**
  * The "Ask | Do it" switch of the Ask box and, in "Do it" mode, the ready-made task chips that take the place of the question chips (a chip puts its example instruction in the line for the owner to change, then Send). A chunk of its own
@@ -32,7 +32,7 @@ export function DoItBar({ session }: { session: AskSession }) {
   const choices = Array.isArray(d.templates) ? d.templates : [];
   return (
     <div data-ask="do-it-bar" className="flex min-w-0 flex-col gap-2">
-      <div role="group" aria-label={t("tk.d.mode")} className="inline-flex self-start rounded-full border border-edge bg-surface p-1">
+      <div role="group" aria-label={t("tk.d.mode")} className="inline-flex self-start rounded-md border border-edge bg-surface p-1">
         <button type="button" aria-pressed={mode === "ask"} onClick={() => session.setMode("ask")} className={`${seg} ${mode === "ask" ? "bg-charcoal text-on-charcoal" : "text-ink hover:bg-surface-2"}`}>
           {t("tk.d.ask")}
         </button>

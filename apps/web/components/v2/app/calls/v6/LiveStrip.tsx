@@ -29,7 +29,7 @@ export function LiveStrip({ words, calls }: { words: Words; calls: readonly Live
   if (calls.length === 0) return null;
   const first = calls[0];
   return (
-    <section aria-label={t("calls6.live.title", { n: calls.length })} data-part="live-strip" className="flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-[var(--v2-shadow)]">
+    <section aria-label={t("calls6.live.title", { n: calls.length })} data-part="live-strip" className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 shadow-[var(--v2-shadow)]">
       <Orb px={44} state="listen" />
       <div className="min-w-0 flex-1">
         <p className="m-0 text-[15px] font-bold" role="status">
@@ -49,11 +49,11 @@ export function LiveStrip({ words, calls }: { words: Words; calls: readonly Live
           ))}
         </ul>
       </div>
-      <button type="button" aria-pressed={listening} onClick={() => setListening((l) => !l)} className="inline-flex min-h-11 items-center gap-1.5 rounded-[10px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 aria-pressed:border-brand-edge aria-pressed:bg-brand-bg aria-pressed:text-brand-text">
+      <button type="button" aria-pressed={listening} onClick={() => setListening((l) => !l)} className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 aria-pressed:border-brand-edge aria-pressed:bg-brand-bg aria-pressed:text-brand-text">
         <Headphones aria-hidden="true" className="size-4" />
         {listening ? t("calls6.live.listening") : t("calls6.live.listen")}
       </button>
-      <Link href={first.href} scroll={false} className="inline-flex min-h-11 items-center rounded-[10px] bg-brand px-3.5 text-[13px] font-bold text-on-brand">
+      <Link href={first.href} scroll={false} className="inline-flex min-h-11 items-center rounded-xl bg-brand px-3.5 text-[13px] font-bold text-on-brand">
         {t("calls6.live.open_name", { name: first.who })}
       </Link>
       {listening ? (

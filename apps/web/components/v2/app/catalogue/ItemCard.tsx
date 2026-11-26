@@ -29,7 +29,7 @@ export function ItemCard({ item, href, words, eager = false, edit = null }: { it
         href={href}
         data-item={item.id}
         data-hidden={hidden ? "true" : undefined}
-        className={`flex min-h-11 flex-1 flex-col overflow-hidden rounded-2xl border bg-surface hover:border-brand-edge ${hidden ? "border-dashed border-edge" : "border-line"}`}
+        className={`flex min-h-11 flex-1 flex-col overflow-hidden rounded-xl border bg-surface hover:border-brand-edge ${hidden ? "border-dashed border-edge" : "border-line"}`}
       >
         {addPhoto ? (
           <span aria-hidden="true" className="block h-20 border-b border-dashed border-edge bg-surface-2" />
@@ -60,7 +60,7 @@ export function ItemCard({ item, href, words, eager = false, edit = null }: { it
         </span>
       </Link>
       {addPhoto && edit ? (
-        <Link href={edit} data-part="add-photo" className="absolute inset-x-0 top-0 flex h-20 items-center justify-center gap-2 rounded-t-2xl text-base font-semibold text-brand-text hover:underline">
+        <Link href={edit} data-part="add-photo" className="absolute inset-x-0 top-0 flex h-20 items-center justify-center gap-2 rounded-t-xl text-base font-semibold text-brand-text hover:underline">
           <Camera className="size-5" aria-hidden="true" />
           {say(words, "catalogue.v6.addphoto")}
         </Link>

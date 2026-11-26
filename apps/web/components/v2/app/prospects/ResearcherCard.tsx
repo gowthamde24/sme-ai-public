@@ -34,7 +34,7 @@ export function FitRing({ score, words }: { score: number; words: Words }) {
   );
 }
 
-const secondary = "inline-flex min-h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-full border border-edge bg-surface px-3 text-[15px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60";
+const secondary = "inline-flex min-h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border border-edge bg-surface px-3 text-[15px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60";
 
 /**
  * One business the Researcher found, as in mock 05 (JOBS): the fit ring with the number and the word, the name and the chip (Strong fit, Good fit, Maybe), where it is, "Why it fits", "Talking points" (only when the API sent them) and the buttons: "Call from
@@ -55,7 +55,7 @@ export function ResearcherCard({ prospect: p, words, base, mark, badges }: { pro
           <div className="flex items-start justify-between gap-2">
             <h3 className="m-0 break-words font-display text-[17px] font-bold leading-snug">{p.name ?? t("lf.details.unavailable")}</h3>
             {word ? (
-              <span className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-surface-2 px-3 py-1 text-sm font-bold text-ink" data-part="fit-chip">
+              <span className="inline-flex shrink-0 items-center whitespace-nowrap rounded-md bg-surface-2 px-3 py-1 text-sm font-bold text-ink" data-part="fit-chip">
                 {t(`jobs.trust.fit.${word}`)}
               </span>
             ) : null}
@@ -97,7 +97,7 @@ export function ResearcherCard({ prospect: p, words, base, mark, badges }: { pro
       ) : (
         <div className="flex flex-col gap-2" data-part="prospect-contact">
           {tel ? (
-            <a href={tel} data-act="phone" className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-4 text-base font-bold text-on-brand">
+            <a href={tel} data-act="phone" className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md border border-brand-edge bg-brand px-4 text-base font-bold text-on-brand">
               <Phone aria-hidden="true" className="size-[18px]" />
               {t("lf.v6.call_phone")}
             </a>

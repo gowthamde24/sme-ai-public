@@ -30,7 +30,7 @@ export function LiveStatus({ talk, c }: { talk: PanelVoice; c: (key: string) => 
         </span>
         <span data-chat="live-state">{looking ? c("bv.looking") : c(WORD[state])}</span>
         {state === "speaking" ? (
-          <button type="button" data-chat="stop-talk" onClick={talk.bargeIn} className="ml-auto min-h-8 rounded-full border border-edge bg-surface px-3 text-xs font-semibold text-ink">
+          <button type="button" data-chat="stop-talk" onClick={talk.bargeIn} className="ml-auto min-h-8 rounded-md border border-edge bg-surface px-3 text-xs font-semibold text-ink">
             {c("bv.chat.stop")}
           </button>
         ) : null}

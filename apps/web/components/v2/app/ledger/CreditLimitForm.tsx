@@ -31,7 +31,7 @@ export function CreditLimitForm({ current, words, save }: { current: number | nu
     router.refresh();
   }
   return (
-    <form noValidate data-part="credit-limit" onSubmit={(e) => { e.preventDefault(); void go(); }} className="flex max-w-md flex-col gap-2 rounded-2xl border border-line p-4">
+    <form noValidate data-part="credit-limit" onSubmit={(e) => { e.preventDefault(); void go(); }} className="flex max-w-md flex-col gap-2 rounded-xl border border-line p-4">
       <label htmlFor="cl" className={label}>{say(words, "due.limit.label")} (₹)</label>
       <input id="cl" inputMode="decimal" value={text} disabled={busy} onChange={(e) => setText(e.target.value)} aria-describedby="cl-h" className={`${field} max-w-60`} />
       <p id="cl-h" className={help}>{paise !== null && paise > 0 ? `${rupeesInWords(paise)} (${formatRupees(paise)})` : say(words, "due.limit.help")}</p>

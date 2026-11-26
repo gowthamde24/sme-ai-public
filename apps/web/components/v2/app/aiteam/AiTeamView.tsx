@@ -192,7 +192,7 @@ export function AiTeamView({
                 ))}
                 {nowMinute !== null ? (
                   <At left={pct(axis, nowMinute)}>
-                    <span className="block w-max -translate-x-1/2 -translate-y-1 rounded-full bg-brand px-1.5 font-semibold text-white" data-part="now-label">
+                    <span className="block w-max -translate-x-1/2 -translate-y-1 rounded-md bg-brand px-1.5 font-semibold text-white" data-part="now-label">
                       {w("aiteam.now")} {clock(nowMinute)}
                     </span>
                   </At>
@@ -214,7 +214,7 @@ export function AiTeamView({
               const s = statusWords(lane.statusNow, elapsedOf(lane.statusNow?.since ?? null));
               return (
                 <li key={lane.helper}>
-                  <button type="button" onClick={() => setHelper(lane.helper)} data-lane-open={lane.helper} className={`inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold ${LANE_TONE[lane.helper].chip} ${lane.enabled ? "" : "opacity-70"}`}>
+                  <button type="button" onClick={() => setHelper(lane.helper)} data-lane-open={lane.helper} className={`inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-semibold ${LANE_TONE[lane.helper].chip} ${lane.enabled ? "" : "opacity-70"}`}>
                     <span>{helperWord(lane.helper)}</span>
                     {s ? <span className="font-normal">· {w(s.key, s.vars)}</span> : null}
                   </button>
@@ -232,7 +232,7 @@ export function AiTeamView({
 
 function DayChip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button type="button" aria-pressed={on} onClick={onClick} className={`inline-flex min-h-11 items-center rounded-full border px-4 text-base font-semibold ${on ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink hover:border-brand-edge"}`}>
+    <button type="button" aria-pressed={on} onClick={onClick} className={`inline-flex min-h-11 items-center rounded-md border px-4 text-base font-semibold ${on ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink hover:border-brand-edge"}`}>
       {children}
     </button>
   );
@@ -284,7 +284,7 @@ function LaneRow({ lane, day, axis, filter, nowMinute, base, name, w, tip, elaps
             <span aria-hidden="true" className={`block size-3 rounded-full ring-2 ring-surface ${tone.mark} ${m.kind === "followup_due" ? "opacity-40" : ""}`} />
           );
           const asBar = bar !== null && !m.needsOwner;
-          const cls = `group relative flex h-full items-center ${asBar ? "w-full min-w-2" : "min-w-8 -translate-x-1/2 justify-center"} rounded-full focus-visible:outline-2`;
+          const cls = `group relative flex h-full items-center ${asBar ? "w-full min-w-2" : "min-w-8 -translate-x-1/2 justify-center"} rounded-full round-ok focus-visible:outline-2`;
           return (
             <At key={m.id} left={left} {...(asBar ? { width: bar } : {})} {...(m.needsOwner ? { z: 10 } : {})}>
               {href ? (
@@ -343,8 +343,8 @@ function PhoneDay({ list, nowMinute, base, helperWord, w }: { list: Placed[]; no
         <span className="w-12 shrink-0 pt-0.5 text-sm tabular-nums text-muted">{m.before ? "⏳" : clockOf(m.t)}</span>
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="flex flex-wrap items-center gap-1.5">
-            <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${LANE_TONE[m.helper].chip}`}>{helperWord(m.helper)}</span>
-            {m.needsOwner ? <span className="rounded-full bg-brand px-2 py-0.5 text-xs font-bold text-white">⚑ {w("aiteam.flag")}</span> : null}
+            <span className={`rounded px-2 py-0.5 text-xs font-semibold ${LANE_TONE[m.helper].chip}`}>{helperWord(m.helper)}</span>
+            {m.needsOwner ? <span className="rounded bg-brand px-2 py-0.5 text-xs font-bold text-white">⚑ {w("aiteam.flag")}</span> : null}
             {m.seconds ? <span className="text-xs text-muted">{duration(m.seconds)}</span> : null}
           </span>
           <span className={`text-base [overflow-wrap:anywhere] ${m.kind === "followup_due" ? "text-muted" : "text-ink"}`}>{m.label}</span>
@@ -371,7 +371,7 @@ function PhoneDay({ list, nowMinute, base, helperWord, w }: { list: Placed[]; no
 function NowRow({ minute, word }: { minute: number; word: string }) {
   return (
     <li aria-hidden="true" data-part="now" className="my-1 flex items-center gap-2">
-      <span className="rounded-full bg-brand px-2 py-0.5 text-xs font-semibold text-white">
+      <span className="rounded bg-brand px-2 py-0.5 text-xs font-semibold text-white">
         {word} {clock(minute)}
       </span>
       <span className="h-0.5 flex-1 bg-brand" />

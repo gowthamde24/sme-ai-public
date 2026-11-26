@@ -76,7 +76,7 @@ export function QuoteBuilder(p: { base: string; requirementId: string; newQuoteI
       {p.lines.map((l) => {
         const chosen = p.items.find((i) => i.id === picks[l.lineNo]);
         return (
-          <fieldset key={l.lineNo} className="flex min-w-0 flex-col gap-2 rounded-2xl border border-line p-4" data-line={l.lineNo}>
+          <fieldset key={l.lineNo} className="flex min-w-0 flex-col gap-2 rounded-xl border border-line p-4" data-line={l.lineNo}>
             <legend className="px-1 font-display text-lg font-semibold">{say(words, "mat.b.line", { n: l.lineNo })}</legend>
             <p className="text-base font-semibold [overflow-wrap:anywhere]">{l.title}</p>
             <p className="text-sm text-muted [overflow-wrap:anywhere]">{l.measure}</p>
@@ -125,7 +125,7 @@ export function QuoteBuilder(p: { base: string; requirementId: string; newQuoteI
           <h2 id="b-fig" className="font-display text-xl font-bold">{say(words, "mat.b.figures")}</h2>
           <p role="note" className={okLine}>{say(words, shown.agrees ? "mat.b.agrees" : "mat.b.differs")}</p>
           <QuoteFigures figures={figures} words={words} />
-          <div data-orb-avoid="" className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
+          <div data-orb-avoid="" className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 md:bottom-4">
             <button type="button" className={primary} disabled={busy !== null || !shown.agrees} onClick={() => void draft()}>
               {busy === "draft" ? say(words, "today.act.working") : say(words, "mat.b.draft")}
             </button>

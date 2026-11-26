@@ -13,7 +13,7 @@ export function SectionHeading({ id, children, count, action, as: Tag = "h2" }: 
       <Tag id={id} className="m-0 font-display text-[17px] font-extrabold leading-snug text-ink">
         {children}
       </Tag>
-      {count !== undefined && count !== null ? <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-surface-2 px-2 text-sm font-bold text-muted">{count}</span> : null}
+      {count !== undefined && count !== null ? <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md bg-surface-2 px-2 text-sm font-bold text-muted">{count}</span> : null}
       {action ? <div className="ml-auto">{action}</div> : null}
     </div>
   );

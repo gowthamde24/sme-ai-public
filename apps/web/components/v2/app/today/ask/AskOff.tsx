@@ -35,7 +35,7 @@ export function AskOff({ words, look }: { words: AskWords; look: "card" | "panel
       <p className="text-base text-muted">{w("ask.off.line")}</p>
       {turnOn ? (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="button" data-ask="turn-on" disabled={pending} onClick={run} className="inline-flex min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60">
+          <button type="button" data-ask="turn-on" disabled={pending} onClick={run} className="inline-flex min-h-11 items-center justify-center rounded-md border border-brand-edge bg-brand px-5 text-[15px] font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60">
             {pending ? w("ask.off.working") : w("ask.off.turnon")}
           </button>
         </div>

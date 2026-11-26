@@ -56,7 +56,7 @@ export function TypeSearch({ choices, words, name = "start-type", value, onPick,
         <div role="status" data-part="type-none" className="flex flex-wrap items-center gap-3 text-[15px]">
           <span className="text-muted">{t("start.type.q.none")}</span>
           {other ? (
-            <button type="button" disabled={disabled} onClick={() => pick(other.id)} className="inline-flex min-h-11 items-center rounded-full border border-edge px-4 text-sm font-semibold text-ink hover:bg-surface-2">
+            <button type="button" disabled={disabled} onClick={() => pick(other.id)} className="inline-flex min-h-11 items-center rounded-md border border-edge px-4 text-sm font-semibold text-ink hover:bg-surface-2">
               {t("start.type.q.other", { name: other.name })}
             </button>
           ) : null}

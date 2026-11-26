@@ -30,7 +30,7 @@ export function ListCards({ lists, words, base, canAdd, tenantBase = base.replac
             const editHref = l.builtin ? (l.editIn === "catalogue" ? `${tenantBase}/catalogue` : l.editIn === "price_list" ? `${tenantBase}/price-list` : base) : null;
             return (
             <li key={l.id}>
-              <Link href={editHref ?? `${base}/lists/${l.id}`} data-list={l.id} data-builtin={l.builtin ?? undefined} className="flex min-h-[116px] flex-col gap-1.5 rounded-[14px] border border-line bg-surface p-[18px] no-underline hover:border-ink focus-visible:border-ink">
+              <Link href={editHref ?? `${base}/lists/${l.id}`} data-list={l.id} data-builtin={l.builtin ?? undefined} className="flex min-h-[116px] flex-col gap-1.5 rounded-xl border border-line bg-surface p-[18px] no-underline hover:border-ink focus-visible:border-ink">
                 <span className="text-[14px] font-semibold text-muted">{t(`wls.kind.${l.kind}` as "wls.kind.products")}</span>
                 <b className="text-[18px] font-bold text-ink">{l.name}</b>
                 <span className="mt-auto text-[15px] font-semibold text-ink">{t("wls.items", { n: l.rowCount })}</span>

@@ -55,7 +55,7 @@ export default async function EmployeeRoute({ params, searchParams }: PageProps<
     return (
       <main className={pageMain} lang={lang}>
         <PageTop title={words["emp.title"] ?? "Your AI team"} />
-        <section data-part="emp-na" className="mt-5 flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 md:p-6">
+        <section data-part="emp-na" className="mt-5 flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 md:p-6">
           <p className="m-0 text-ink">{words["emp.err.unavailable"]}</p>
           <p className="m-0">
             <Link href={`${base}/employees`} prefetch={false} className="font-semibold text-brand-text underline underline-offset-2">

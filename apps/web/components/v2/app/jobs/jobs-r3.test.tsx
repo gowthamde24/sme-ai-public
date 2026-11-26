@@ -36,7 +36,7 @@ describe("the Jobs page, the renamed Office", () => {
     expect(list.className).toContain("grid-cols-1");
     expect(list.className).toContain("lg:grid-cols-2");
     const card = list.querySelector("[data-job]") as HTMLElement;
-    expect(card.className).toMatch(/rounded-\[14px\]/);
+    expect(card.className).toMatch(/rounded-xl/);
     expect(card.className).toContain("border");
     expect(card.querySelector("a")?.className).toContain("min-w-0");
     expect(card.querySelector("svg[data-k]")).not.toBeNull();

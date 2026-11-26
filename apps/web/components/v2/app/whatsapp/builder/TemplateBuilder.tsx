@@ -15,7 +15,7 @@ import { MessageChecks } from "./MessageChecks";
 import { NameText } from "./NameText";
 import { WhatsAppPreview } from "./WhatsAppPreview";
 
-const card = "rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
+const card = "rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
 const field = "block w-full rounded-xl border border-edge bg-surface px-3 py-2 text-[16px] leading-snug text-ink";
 
 function Step({ n, title, sub, children, part }: { n: number; title: string; sub: string; children: ReactNode; part: string }) {
@@ -135,7 +135,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
             }}
             className="flex flex-col gap-3"
           >
-            <div className="rounded-2xl border border-brand-edge bg-surface p-2 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--v2-brand)_25%,transparent)]">
+            <div className="rounded-xl border border-brand-edge bg-surface p-2 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--v2-brand)_25%,transparent)]">
               <textarea ref={boxRef} aria-label={t("jobs.tb.s1.title")} rows={2} maxLength={DRAFT_TEXT_MAX} value={text} onChange={(e) => setText(e.target.value)} placeholder={t("jobs.tb.s1.placeholder")} data-voice="allow" className="block w-full resize-none rounded-xl border-0 bg-transparent px-2 py-1.5 text-[16px] leading-snug text-ink outline-none placeholder:text-muted" />
               <div className="flex items-center justify-end gap-2">
                 <VoiceMic target={boxRef} size="icon" />
@@ -143,7 +143,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
             </div>
             <p className="m-0 flex flex-wrap items-center gap-2 text-[15px] text-ink">
               {t("jobs.tb.s1.write_in")}
-              <span className="rounded-full bg-brand-bg px-3.5 py-1 text-[15px] font-semibold text-brand-text">{t("jobs.tb.s1.langs")}</span>
+              <span className="rounded-md bg-brand-bg px-3.5 py-1 text-[15px] font-semibold text-brand-text">{t("jobs.tb.s1.langs")}</span>
             </p>
             <button type="submit" disabled={writing || text.trim().length < 3} data-action="write" className={`${jobBtnMain} w-full`}>
               <Sparkles aria-hidden="true" className="size-4" />
@@ -173,7 +173,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
                   <div key={lang} data-draft={lang} className="min-w-0">
                     <div className="mb-1.5 flex items-center justify-between gap-2">
                       <b className="text-[15px] text-ink">{t(`jobs.tb.lang.${lang}`)}</b>
-                      <button type="button" data-action="edit" aria-expanded={open} onClick={() => setEditing((e) => ({ ...e, [lang]: !open }))} className="jb-press -my-2 inline-flex min-h-11 items-center gap-1 rounded-full px-2 text-[14px] font-semibold text-brand-text">
+                      <button type="button" data-action="edit" aria-expanded={open} onClick={() => setEditing((e) => ({ ...e, [lang]: !open }))} className="jb-press -my-2 inline-flex min-h-11 items-center gap-1 rounded-md px-2 text-[14px] font-semibold text-brand-text">
                         {open ? null : <Pencil aria-hidden="true" className="size-3.5" />}
                         {open ? t("jobs.tb.edit.done") : t("jobs.tb.edit")}
                       </button>
@@ -223,9 +223,9 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
       {message ? (
         <div className="grid gap-4 md:grid-cols-2 md:items-start">
           <Step n={3} part="step-preview" title={t("jobs.tb.s3.title")} sub={t("jobs.tb.s3.sub")}>
-            <div role="group" aria-label={t("jobs.tb.s3.title")} className="mx-auto mb-3 flex w-fit rounded-full bg-surface-2 p-1">
+            <div role="group" aria-label={t("jobs.tb.s3.title")} className="mx-auto mb-3 flex w-fit rounded-md bg-surface-2 p-1">
               {DRAFT_LANGS.map((l) => (
-                <button key={l} type="button" data-lang-switch={l} aria-pressed={previewLang === l} onClick={() => setPreviewLang(l)} className={`jb-press min-h-10 rounded-full px-5 text-[15px] font-semibold ${previewLang === l ? "bg-brand text-on-brand" : "text-ink"}`}>
+                <button key={l} type="button" data-lang-switch={l} aria-pressed={previewLang === l} onClick={() => setPreviewLang(l)} className={`jb-press min-h-10 rounded-md px-5 text-[15px] font-semibold ${previewLang === l ? "bg-brand text-on-brand" : "text-ink"}`}>
                   {t(`jobs.tb.lang.${l}`)}
                 </button>
               ))}
@@ -317,7 +317,7 @@ export function TemplateBuilder({ words, actions, secondFactor, mock, securityHr
 function ChangeBox({ t, text, setText, busy, onGo }: { t: ReturnType<typeof makeT>; text: string; setText: (s: string) => void; busy: boolean; onGo: () => void }) {
   const ref = useRef<HTMLTextAreaElement>(null);
   return (
-    <div data-part="change-box" className="mt-3 rounded-2xl border border-brand-edge bg-surface p-2">
+    <div data-part="change-box" className="mt-3 rounded-xl border border-brand-edge bg-surface p-2">
       <textarea ref={ref} aria-label={t("jobs.tb.change.go")} rows={2} maxLength={DRAFT_TEXT_MAX} value={text} onChange={(e) => setText(e.target.value)} placeholder={t("jobs.tb.change.placeholder")} data-voice="allow" className="block w-full resize-none rounded-xl border-0 bg-transparent px-2 py-1.5 text-[16px] leading-snug text-ink outline-none placeholder:text-muted" />
       <div className="flex items-center justify-end gap-2">
         <VoiceMic target={ref} size="icon" />

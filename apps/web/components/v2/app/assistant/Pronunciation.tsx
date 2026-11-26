@@ -91,7 +91,7 @@ export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoi
           <li key={e.id} data-part="pron-row" className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line bg-surface-2 px-3 py-2">
             <p className="min-w-0 text-base [overflow-wrap:anywhere]">
               <span className="font-semibold text-ink">{e.word}</span> <span className="text-muted">{t("pr.sounds")}</span> <span className="font-semibold text-ink">{e.soundsLike}</span>
-              <span className="ml-2 rounded-full bg-surface px-2 py-0.5 text-xs font-semibold text-muted">{e.language ? langNames[e.language] : t("pr.lang.all")}</span>
+              <span className="ml-2 rounded bg-surface px-2 py-0.5 text-xs font-semibold text-muted">{e.language ? langNames[e.language] : t("pr.lang.all")}</span>
             </p>
             <span className="flex gap-2">
               <button type="button" data-part="pron-hear" className={btnQuiet} disabled={hearing !== null} onClick={() => void hear(e.id, e.word, e.soundsLike, e.language ?? defaultLang)}>
@@ -120,7 +120,7 @@ export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoi
               <ul className="mt-1 flex flex-wrap gap-2">
                 {suggestions.map((s) => (
                   <li key={s.word}>
-                    <button type="button" className="inline-flex min-h-10 items-center rounded-full border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2" onClick={() => {
+                    <button type="button" className="inline-flex min-h-10 items-center rounded-md border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2" onClick={() => {
                         setWord(s.word);
                         if (s.soundsLike) setSound(s.soundsLike);
                       }}>

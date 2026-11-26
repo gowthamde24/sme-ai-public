@@ -93,10 +93,10 @@ export function TeamStrip({ team, deskTeam = null, waitingFor = new Set<string>(
       {cards === null || cards.length === 0 ? null : (
         <ul data-part="team-list" data-team={deskTeam !== null ? "lead-desk" : undefined} className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {cards.slice(0, TEAM_CARDS).map((c) => (
-            <li key={c.key} data-helper={c.key} data-status={c.status} className="flex min-w-0 flex-col gap-1.5 rounded-2xl border border-line bg-surface px-4 py-3">
+            <li key={c.key} data-helper={c.key} data-status={c.status} className="flex min-w-0 flex-col gap-1.5 rounded-xl border border-line bg-surface px-4 py-3">
               <div className="flex items-start justify-between gap-2">
                 <p className="min-w-0 font-semibold [overflow-wrap:anywhere]">{c.name}</p>
-                <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${PILL[c.status]}`}>{status(c.status)}</span>
+                <span className={`shrink-0 rounded px-2 py-0.5 text-xs font-semibold ${PILL[c.status]}`}>{status(c.status)}</span>
               </div>
               <p className="line-clamp-2 text-sm text-muted [overflow-wrap:anywhere]">{c.line}</p>
             </li>

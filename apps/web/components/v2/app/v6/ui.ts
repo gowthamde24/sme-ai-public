@@ -1,6 +1,6 @@
 /** Class strings the design-system-v6 pages share (Leads, Campaigns, Reports, Billing...): one card, one panel, one chip. Colours are the tokens only. */
-export const card = "rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5";
-export const cardQuiet = "rounded-2xl border border-line bg-surface-2 p-4";
+export const card = "rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5";
+export const cardQuiet = "rounded-xl border border-line bg-surface-2 p-4";
 export const sectionTitle = "font-display text-xl font-semibold";
 /** The filter chip of the approved mock: a small rounded box, the one in use filled with the ink colour, the others white with a thin line. */
 export const chipBase = "inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-xl border px-3 text-[13px]";

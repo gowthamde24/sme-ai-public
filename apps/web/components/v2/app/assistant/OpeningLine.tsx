@@ -13,7 +13,7 @@ type SaveOut = { ok: true } | { ok: false; error: string };
 export type OpeningLineActions = { save: (input: unknown) => Promise<SaveOut>; preview: ((language: CallLang, text: string, mentionAi: boolean, unsaved: boolean) => Promise<{ ok: true; preview: Preview } | { ok: false; error: string }>) | null };
 /** `workspace`: the business's own opening line. `campaign`: the same two settings for ONE campaign, where an empty text follows the business and the switch can follow it too. */
 export type Scope = { kind: "workspace" } | { kind: "campaign"; backHref: string };
-const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
+const chip = (on: boolean) => `min-h-11 rounded-md border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 
 /**
  * Settings > AI assistant > "Opening line" (night 5): what the assistant says first on a call. A box per language with the four placeholders as buttons, a live preview of the words with made-up values (the customer's first name, the
@@ -141,7 +141,7 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <span className="text-sm text-muted">{t("ope.insert")}</span>
             {PLACEHOLDERS.map((p) => (
-              <button key={p} type="button" onClick={() => insert(p)} className="min-h-11 rounded-full border border-edge bg-surface px-3 text-sm hover:bg-surface-2">
+              <button key={p} type="button" onClick={() => insert(p)} className="min-h-11 rounded-md border border-edge bg-surface px-3 text-sm hover:bg-surface-2">
                 {`{${p}}`}
               </button>
             ))}

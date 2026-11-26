@@ -329,7 +329,7 @@ function Bubble({ l, t }: { l: TalkLine; t: ReturnType<typeof makeT> }) {
   const mine = l.who === "owner";
   return (
     <div data-who={l.who} data-interim={l.interim ? "true" : undefined} className={`flex flex-col ${mine ? "items-end" : "items-start"}`}>
-      <p className={`m-0 max-w-[88%] rounded-2xl px-3.5 py-2 [overflow-wrap:anywhere] ${mine ? "border border-line bg-surface text-base leading-[1.45] text-ink" : "bg-surface-2 text-[17px] font-medium leading-[1.45] text-ink"} ${l.interim ? "border-dashed opacity-70" : ""}`}>
+      <p className={`m-0 max-w-[88%] rounded-xl px-3.5 py-2 [overflow-wrap:anywhere] ${mine ? "border border-line bg-surface text-base leading-[1.45] text-ink" : "bg-surface-2 text-[17px] font-medium leading-[1.45] text-ink"} ${l.interim ? "border-dashed opacity-70" : ""}`}>
         <span className="sr-only">{t(mine ? "tv6.talk.you" : "tv6.talk.assistant")}: </span>
         <Line text={l.text} />
       </p>
@@ -363,7 +363,7 @@ function BarBody({ live, t, language, onType, onAttach, mock, appLang, voiceHref
             <span aria-hidden="true" className="mr-2 inline-block size-2 rounded-full bg-red-text align-[1px] shadow-[0_0_0_4px_rgba(251,113,133,0.2)]" />
             {t("dst.live_with")} · {stateWord}
           </p>
-          <span data-part="talk-timer" className="inline-flex items-center gap-1 rounded-full bg-red-text px-2.5 py-0.5 font-mono text-[11.5px] font-extrabold tabular-nums text-bg">
+          <span data-part="talk-timer" className="inline-flex items-center gap-1 rounded bg-red-text px-2.5 py-0.5 font-mono text-[11.5px] font-extrabold tabular-nums text-bg">
             <span aria-hidden="true">●</span>
             {clock(live.seconds)}
           </span>
@@ -382,7 +382,7 @@ function BarBody({ live, t, language, onType, onAttach, mock, appLang, voiceHref
           <StepLine live={live} t={t} />
           <Notes live={live} t={t} />
           {live.plan ? (
-            <div data-part="talk-plan" className="mt-3 flex flex-wrap items-center gap-3 rounded-[14px] border border-line bg-surface-2 py-2.5 pl-3.5 pr-2.5">
+            <div data-part="talk-plan" className="mt-3 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface-2 py-2.5 pl-3.5 pr-2.5">
               <span aria-hidden="true">📋</span>
               <div className="min-w-0 flex-1 basis-48">
                 <p className="text-sm font-bold">{live.plan.what}</p>
@@ -401,13 +401,13 @@ function BarBody({ live, t, language, onType, onAttach, mock, appLang, voiceHref
                 )}
               </div>
               {waiting(live) && step.confirming ? (
-                <SecondStep plan={live.plan} t={t} step={step} busy={!!live.planBusy} mainClass="inline-flex min-h-11 items-center rounded-[9px] border border-brand-edge bg-brand px-3.5 text-[13.5px] font-bold text-on-brand hover:brightness-95 disabled:opacity-60" quietClass="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60" />
+                <SecondStep plan={live.plan} t={t} step={step} busy={!!live.planBusy} mainClass="inline-flex min-h-11 items-center rounded-xl border border-brand-edge bg-brand px-3.5 text-[13.5px] font-bold text-on-brand hover:brightness-95 disabled:opacity-60" quietClass="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60" />
               ) : waiting(live) ? (
                 <>
-                  <button type="button" disabled={live.planBusy} onClick={step.onYes} className="inline-flex min-h-11 items-center rounded-[9px] border border-brand-edge bg-brand px-3.5 text-[13.5px] font-bold text-on-brand hover:brightness-95 disabled:opacity-60">
+                  <button type="button" disabled={live.planBusy} onClick={step.onYes} className="inline-flex min-h-11 items-center rounded-xl border border-brand-edge bg-brand px-3.5 text-[13.5px] font-bold text-on-brand hover:brightness-95 disabled:opacity-60">
                     {t(yesKeyOf(live.plan))}
                   </button>
-                  <button type="button" disabled={live.planBusy} onClick={() => live.decide("change")} className="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60">
+                  <button type="button" disabled={live.planBusy} onClick={() => live.decide("change")} className="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60">
                     {t("dst.change")}
                   </button>
                 </>
@@ -443,7 +443,7 @@ function BarBody({ live, t, language, onType, onAttach, mock, appLang, voiceHref
             {t("dst.attach")}
           </button>
         ) : null}
-        <button type="button" onClick={live.end} className="inline-flex min-h-11 items-center rounded-[14px] bg-red-text px-5 text-sm font-extrabold text-bg">
+        <button type="button" onClick={live.end} className="inline-flex min-h-11 items-center rounded-xl bg-red-text px-5 text-sm font-extrabold text-bg">
           {t("dst.end")}
         </button>
       </div>

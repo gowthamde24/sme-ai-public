@@ -64,7 +64,7 @@ export function GoLivePanel({ words, base, status, button, mock, knows = null }:
           <ul className="m-0 mt-1 flex list-none flex-wrap gap-2 p-0">
             {status.usingDefaults.map((p) => (
               <li key={p}>
-                <Link href={tabHref(base, p === "voice" ? "voice" : p === "rules" ? "rules" : "knowledge")} className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-sm font-semibold hover:bg-surface-2">
+                <Link href={tabHref(base, p === "voice" ? "voice" : p === "rules" ? "rules" : "knowledge")} className="inline-flex min-h-11 items-center rounded-md border border-edge bg-surface px-4 text-sm font-semibold hover:bg-surface-2">
                   {t(`mya.tab.${p === "voice" ? "voice" : p === "rules" ? "rules" : "knowledge"}` as "mya.tab.voice")}
                 </Link>
               </li>

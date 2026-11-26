@@ -239,7 +239,7 @@ export function TellAssistant({ words, base, actions }: { words: Words; base: st
         }}
         className="flex flex-col"
       >
-        <div className="rounded-2xl border border-line bg-surface p-3 sm:p-4">
+        <div className="rounded-xl border border-line bg-surface p-3 sm:p-4">
           <label htmlFor="tell-say" className="sr-only">
             {t("jobs.tell.label")}
           </label>
@@ -281,7 +281,7 @@ export function TellAssistant({ words, base, actions }: { words: Words; base: st
                 data-mode={m}
                 disabled={busy}
                 onClick={() => setMode(m)}
-                className={`flex min-h-24 min-w-0 flex-col items-start gap-1 rounded-2xl border bg-surface p-4 text-left ${on ? "border-ink ring-1 ring-ink" : "border-line"}`}
+                className={`flex min-h-24 min-w-0 flex-col items-start gap-1 rounded-xl border bg-surface p-4 text-left ${on ? "border-ink ring-1 ring-ink" : "border-line"}`}
               >
                 <Icon data-k={MODE_TONE[m]} aria-hidden="true" className="size-6" strokeWidth={1.8} />
                 <b className="text-base font-semibold text-ink">{t(`jobs.tell.mode.${m}.t`)}</b>

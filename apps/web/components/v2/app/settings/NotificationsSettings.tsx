@@ -46,7 +46,7 @@ export function NotificationsSettings({ words }: { words: W }) {
           aria-labelledby="nset-calls"
           disabled={state === "unsupported" || (state === "denied" && !on)}
           onClick={() => void toggle()}
-          className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold disabled:opacity-50 ${on ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}
+          className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border px-4 text-sm font-semibold disabled:opacity-50 ${on ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}
           data-part="calls-switch"
         >
           <span aria-hidden="true" className={`size-2.5 rounded-full ${on ? "bg-[#ff773c]" : "bg-muted/60"}`} />
@@ -70,7 +70,7 @@ export function NotificationsSettings({ words }: { words: W }) {
               setFeel(feelState !== "on");
               if (feelState !== "on") setTimeout(() => feel("done"), 50); // (the first buzz, so the person feels what it is)
             }}
-            className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold ${feelState === "on" ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}
+            className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border px-4 text-sm font-semibold ${feelState === "on" ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}
             data-part="feel-switch"
           >
             <span aria-hidden="true" className={`size-2.5 rounded-full ${feelState === "on" ? "bg-[#ff773c]" : "bg-muted/60"}`} />

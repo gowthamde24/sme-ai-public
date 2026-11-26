@@ -45,7 +45,7 @@ export type ReportsV6Props = {
   simple?: boolean;
 };
 
-const card = "rounded-[18px] border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:px-[18px]";
+const card = "rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:px-[18px]";
 const h3 = "m-0 font-display text-base font-extrabold";
 const sub = "m-0 mb-3 mt-1 text-[12.5px] text-muted";
 const SRC_COLOURS = ["color-mix(in srgb, var(--v2-ink) 90%, transparent)", "color-mix(in srgb, var(--v2-ink) 66%, transparent)", "color-mix(in srgb, var(--v2-ink) 46%, transparent)", "color-mix(in srgb, var(--v2-ink) 28%, transparent)", "color-mix(in srgb, var(--v2-ink) 14%, transparent)"];
@@ -89,7 +89,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
   const cost = series.callCostPaise;
   const na = <em className="text-[12.5px] not-italic text-muted">{t("rv6.na")}</em>;
   const kpi = (id: string, label: string, value: string | null, note: ReactNode) => (
-    <li key={id} data-kpi={id} className="rounded-[18px] border border-line bg-surface px-4 py-3.5 shadow-[var(--v2-shadow)]">
+    <li key={id} data-kpi={id} className="rounded-xl border border-line bg-surface px-4 py-3.5 shadow-[var(--v2-shadow)]">
       <p className="m-0 text-[12.5px] text-muted">{label}</p>
       <p className="m-0 mb-0.5 mt-1 font-display text-[28px] font-extrabold leading-tight tracking-tight tabular-nums sm:text-[30px]">{value ?? "–"}</p>
       {value === null ? na : note}
@@ -109,15 +109,15 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
           <ul className="m-0 flex list-none gap-0 rounded-xl border border-line bg-surface p-[3px]">
             {periodTabs.map((p) => (
               <li key={p.key}>
-                <Link href={p.href} aria-current={period.key === p.key ? "page" : undefined} data-period={p.key} className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-[9px] px-3 text-[13px] ${period.key === p.key ? "bg-ink font-bold text-bg" : "text-muted hover:bg-surface-2"}`}>
+                <Link href={p.href} aria-current={period.key === p.key ? "page" : undefined} data-period={p.key} className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-xl px-3 text-[13px] ${period.key === p.key ? "bg-ink font-bold text-bg" : "text-muted hover:bg-surface-2"}`}>
                   {p.label}
                 </Link>
               </li>
             ))}
             <li>
               <details key={`${period.key}-${period.from}-${period.to}`} className="relative" data-period="custom">
-                <summary className={`inline-flex min-h-11 cursor-pointer list-none items-center whitespace-nowrap rounded-[9px] px-3 text-[13px] [&::-webkit-details-marker]:hidden ${period.key === "custom" ? "bg-ink font-bold text-bg" : "text-muted hover:bg-surface-2"}`}>{t("rv6.per.custom")}</summary>
-                <form action={`${base}/report`} method="get" className="absolute right-0 z-20 mt-2 flex w-64 flex-col gap-2 rounded-2xl border border-line bg-surface p-3 shadow-[var(--v2-shadow-pop)]">
+                <summary className={`inline-flex min-h-11 cursor-pointer list-none items-center whitespace-nowrap rounded-xl px-3 text-[13px] [&::-webkit-details-marker]:hidden ${period.key === "custom" ? "bg-ink font-bold text-bg" : "text-muted hover:bg-surface-2"}`}>{t("rv6.per.custom")}</summary>
+                <form action={`${base}/report`} method="get" className="absolute right-0 z-20 mt-2 flex w-64 flex-col gap-2 rounded-xl border border-line bg-surface p-3 shadow-[var(--v2-shadow-pop)]">
                   <input type="hidden" name="range" value="custom" />
                   <label className="flex flex-col gap-1 text-sm font-semibold">
                     {t("rv6.per.from")}
@@ -127,7 +127,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
                     {t("rv6.per.to")}
                     <input type="date" name="to" defaultValue={period.to} className="min-h-11 rounded-lg border border-edge bg-surface px-2 text-base font-normal" />
                   </label>
-                  <button type="submit" className="min-h-11 rounded-[9px] bg-brand px-3 text-[13px] font-bold text-on-brand">
+                  <button type="submit" className="min-h-11 rounded-xl bg-brand px-3 text-[13px] font-bold text-on-brand">
                     {t("rv6.per.apply")}
                   </button>
                 </form>

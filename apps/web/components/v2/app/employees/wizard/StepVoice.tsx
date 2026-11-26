@@ -6,7 +6,7 @@ import { btnQuiet, checkBox, fieldHelp } from "../../ui";
 import type { Say } from "../../words";
 import { WIZARD_LANGS, voicesFor, type Draft, type VoiceCatalogue, type WizardLang } from "./draft";
 
-const chip = "flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface px-4 text-base font-semibold has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg";
+const chip = "flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-line bg-surface px-4 text-base font-semibold has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg";
 const row = "flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-line bg-surface px-3 py-2 has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg";
 
 export type VoiceStepProps = {

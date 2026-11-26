@@ -18,7 +18,7 @@ export function PubHead({ title, sub, draft }: { title: string; sub?: string; dr
 /** A small outlined label, never a coloured pill: "Draft for approval". */
 export function DraftTag({ text }: { text: string }) {
   return (
-    <span data-part="draft-tag" className="ml-3 inline-block translate-y-[-0.15em] whitespace-nowrap rounded-full border border-edge px-2.5 py-0.5 align-middle text-sm font-semibold text-muted">
+    <span data-part="draft-tag" className="ml-3 inline-block translate-y-[-0.15em] whitespace-nowrap rounded-md border border-edge px-2.5 py-0.5 align-middle text-sm font-semibold text-muted">
       {text}
     </span>
   );

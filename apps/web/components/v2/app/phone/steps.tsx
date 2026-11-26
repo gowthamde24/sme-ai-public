@@ -27,9 +27,9 @@ export function Step({ n, title, state, summary, children }: { n: number; title:
 /** Two choices as one segmented control (Mobile | Landline, Individual | Business): real buttons, the chosen one pressed. */
 export function Seg<T extends string>({ label, value, options, onChange, disabled = false }: { label: string; value: T; options: readonly { value: T; label: string }[]; onChange: (v: T) => void; disabled?: boolean }) {
   return (
-    <div role="group" aria-label={label} className="inline-flex max-w-full rounded-full border border-line bg-surface p-1">
+    <div role="group" aria-label={label} className="inline-flex max-w-full rounded-md border border-line bg-surface p-1">
       {options.map((o) => (
-        <button key={o.value} type="button" disabled={disabled} aria-pressed={value === o.value} data-seg={o.value} onClick={() => onChange(o.value)} className={`min-h-11 min-w-0 rounded-full px-5 text-[15px] font-semibold ${value === o.value ? "bg-ink text-surface" : "text-muted"}`}>
+        <button key={o.value} type="button" disabled={disabled} aria-pressed={value === o.value} data-seg={o.value} onClick={() => onChange(o.value)} className={`min-h-11 min-w-0 rounded-md px-5 text-[15px] font-semibold ${value === o.value ? "bg-ink text-surface" : "text-muted"}`}>
           {o.label}
         </button>
       ))}

@@ -83,7 +83,7 @@ export function ItemFieldsSimple(p: ItemFormValues & ItemFormSetters) {
         <details data-part="colours" open={p.colours.length === 0} className="group">
           <summary className="flex min-h-11 cursor-pointer list-none flex-wrap items-center gap-2 text-[16px] text-ink [&::-webkit-details-marker]:hidden">
             <span>{t("jobs.pg.item.colours")}</span>
-            <b className="inline-flex items-center gap-1.5 rounded-full bg-brand-bg py-1 pl-3.5 pr-2.5 text-[16px] font-semibold text-brand-text">
+            <b className="inline-flex items-center gap-1.5 rounded-md bg-brand-bg py-1 pl-3.5 pr-2.5 text-[16px] font-semibold text-brand-text">
               {colourNames || t("jobs.pg.item.colours.none")}
               <ChevronDown aria-hidden="true" className="size-4 transition-transform group-open:rotate-180" />
             </b>

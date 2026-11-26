@@ -57,14 +57,14 @@ export function DevelopersView({ words, ui, base, tab, lang, keys, hooks, activi
             <p lang="en" className="m-0 text-[14px] text-muted">
               Add an Idempotency-Key header to every request that writes: sending it twice never makes two calls.
             </p>
-            <div role="group" aria-label="Language" className="inline-flex self-start rounded-full border border-line p-[3px]">
+            <div role="group" aria-label="Language" className="inline-flex self-start rounded-md border border-line p-[3px]">
               {LANGS.map((l) => (
-                <Link key={l} href={`${base}?tab=overview&lang=${l}`} aria-current={lang === l ? "true" : undefined} className={`inline-flex min-h-10 items-center rounded-full px-4 text-[15px] font-semibold ${lang === l ? "bg-ink text-surface" : "text-body"}`}>
+                <Link key={l} href={`${base}?tab=overview&lang=${l}`} aria-current={lang === l ? "true" : undefined} className={`inline-flex min-h-10 items-center rounded-md px-4 text-[15px] font-semibold ${lang === l ? "bg-ink text-surface" : "text-body"}`}>
                   {LABEL[l]}
                 </Link>
               ))}
             </div>
-            <pre data-part="dev-sample" lang="en" className="m-0 max-w-full overflow-x-auto rounded-[10px] border border-line px-3.5 py-3 font-mono text-[14px] leading-[1.55] text-ink">
+            <pre data-part="dev-sample" lang="en" className="m-0 max-w-full overflow-x-auto rounded-xl border border-line px-3.5 py-3 font-mono text-[14px] leading-[1.55] text-ink">
               <code>{SAMPLE[lang]}</code>
             </pre>
             <p role="note" className="m-0 border-t border-line pt-3 text-[15px] text-muted">

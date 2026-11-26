@@ -9,10 +9,10 @@
    ========================================================================== */
 [data-ui="v2"][data-jobs="1"] {
   /* radii, shadows, spacing, motion: the tokens every Jobs screen is built from */
-  --jb-r-sm: 8px;
-  --jb-r-md: 12px;
-  --jb-r-lg: 16px;
-  --jb-r-xl: 24px;
+  --jb-r-sm: 4px;
+  --jb-r-md: 6px;
+  --jb-r-lg: 8px;
+  --jb-r-xl: 8px;
   --jb-r-pill: 999px;
   --jb-sp-1: 4px;
   --jb-sp-2: 8px;
@@ -76,7 +76,7 @@
   gap: 5px;
   height: 28px;
   padding: 0 10px 0 8px;
-  border-radius: var(--jb-r-pill);
+  border-radius: 6px;
   font-size: 13px;
   font-weight: 650;
   line-height: 1;
@@ -232,7 +232,7 @@
     min-height: 28px !important;
     padding: 0 10px 0 8px !important;
     border: 0 !important;
-    border-radius: 999px !important;
+    border-radius: 6px!important;
     background: var(--p-bg) !important;
     color: var(--p-fg) !important;
     font-size: 13px !important;

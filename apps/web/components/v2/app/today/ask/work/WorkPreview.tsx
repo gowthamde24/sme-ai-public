@@ -33,14 +33,14 @@ export function WorkPreview({ words, base }: { words: Words; base: string }) {
       <fieldset className="flex flex-wrap items-center gap-2">
         <legend className="mb-1 text-sm font-semibold">{t("awp.role")}</legend>
         {(["owner", "sales"] as const).map((r) => (
-          <button key={r} type="button" aria-pressed={role === r} onClick={() => setRole(r)} className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold ${role === r ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}>
+          <button key={r} type="button" aria-pressed={role === r} onClick={() => setRole(r)} className={`inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold ${role === r ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}>
             {t(`awp.role.${r}`)}
           </button>
         ))}
       </fieldset>
       <section aria-label={t("awp.composer")} className="max-w-[440px]">
         <h2 className="mb-2 font-display text-lg font-semibold">{t("awp.composer")}</h2>
-        <form data-chat="form" className="flex min-w-0 flex-col gap-1 rounded-[16px] border border-edge bg-surface p-2.5 focus-within:border-brand-edge" {...work.dropProps} onSubmit={(e) => e.preventDefault()}>
+        <form data-chat="form" className="flex min-w-0 flex-col gap-1 rounded-md border border-edge bg-surface p-2.5 focus-within:border-brand-edge" {...work.dropProps} onSubmit={(e) => e.preventDefault()}>
           {work.chips}
           {work.input}
           <label htmlFor="preview-input" className="sr-only">
@@ -53,7 +53,7 @@ export function WorkPreview({ words, base }: { words: Words; base: string }) {
       <section aria-label={t("awp.cards")} className="max-w-[440px]">
         <h2 className="mb-2 font-display text-lg font-semibold">{t("awp.cards")}</h2>
         {/* the same bubble as the chat's answer */}
-        <div className="rounded-2xl bg-surface-2 px-3.5 py-2.5">{work.env ? <WorkCards key={role} cards={cards} env={work.env} /> : null}</div>
+        <div className="rounded-xl bg-surface-2 px-3.5 py-2.5">{work.env ? <WorkCards key={role} cards={cards} env={work.env} /> : null}</div>
       </section>
     </div>
   );

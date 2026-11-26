@@ -24,14 +24,14 @@ export function GuideView({ back, backWord, steps, code, works, workWith, note, 
           ))}
         </ol>
         {code ? (
-          <pre data-part="guide-code" className="m-0 max-w-full overflow-x-auto rounded-[10px] border border-line px-3.5 py-3 font-mono text-[14px] leading-[1.55] text-ink">
+          <pre data-part="guide-code" className="m-0 max-w-full overflow-x-auto rounded-xl border border-line px-3.5 py-3 font-mono text-[14px] leading-[1.55] text-ink">
             <code>{code}</code>
           </pre>
         ) : null}
         {works ? (
           <ul className="m-0 flex list-none flex-wrap gap-2 p-0" data-part="works-with">
             {workWith.map((w) => (
-              <li key={w} className="rounded-full border border-line px-3 py-1 text-[14px] text-body">
+              <li key={w} className="rounded-md border border-line px-3 py-1 text-[14px] text-body">
                 {w}
               </li>
             ))}

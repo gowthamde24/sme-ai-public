@@ -54,9 +54,9 @@ export function StudentsView({ title = null, base, words, role, students, progra
         {filtered ? <Link href={`${base}/students`} className={quiet}>{say(words, "edu.stu.clear")}</Link> : null}
       </form>
       {students === null ? (
-        <p role="alert" className="rounded-2xl border border-line p-4 text-base">{say(words, "edu.loaderr")}</p>
+        <p role="alert" className="rounded-xl border border-line p-4 text-base">{say(words, "edu.loaderr")}</p>
       ) : students.length === 0 ? (
-        <div className="flex max-w-xl items-start gap-4 rounded-[20px] border border-line bg-surface p-4 md:p-5" data-part="empty">
+        <div className="flex max-w-xl items-start gap-4 rounded-xl border border-line bg-surface p-4 md:p-5" data-part="empty">
           <OrbMark px={72} className="size-[72px]" />
           <div className="min-w-0">
             <p className="font-semibold">{say(words, filtered ? "edu.stu.none.filtered" : "edu.stu.none.title")}</p>

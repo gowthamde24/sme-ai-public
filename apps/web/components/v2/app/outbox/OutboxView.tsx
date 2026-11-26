@@ -46,14 +46,14 @@ export type OutboxViewProps = {
 };
 
 const tabLink = (on: boolean) =>
-  `inline-flex min-h-11 items-center justify-center gap-2 rounded-full border px-3 text-center text-base leading-tight max-md:py-1.5 md:-mb-px md:shrink-0 md:rounded-none md:border-0 md:border-b-2 md:px-4 md:whitespace-nowrap ${on ? "border-brand-edge bg-brand-bg font-semibold text-brand-text md:bg-transparent" : "border-edge font-medium text-muted hover:text-ink md:border-transparent"}`;
+  `inline-flex min-h-11 items-center justify-center gap-2 rounded-md border px-3 text-center text-base leading-tight max-md:py-1.5 md:-mb-px md:shrink-0 md:rounded-none md:border-0 md:border-b-2 md:px-4 md:whitespace-nowrap ${on ? "border-brand-edge bg-brand-bg font-semibold text-brand-text md:bg-transparent" : "border-edge font-medium text-muted hover:text-ink md:border-transparent"}`;
 
 /** Agent OWL's last check, in words: "last checked 2 min ago · next check 14:03", or the calm warning when it has not run for more than five minutes while it should. */
 function SchedulerLine({ s, now, words }: { s: SchedulerStatus; now: number; words: TodayWords }) {
   const v = schedulerView(s, now);
   if (v.state === "stale")
     return (
-      <p role="status" data-scheduler="stale" className="rounded-2xl border border-amber-text bg-amber-bg px-4 py-3 text-sm font-medium text-amber-text">
+      <p role="status" data-scheduler="stale" className="rounded-xl border border-amber-text bg-amber-bg px-4 py-3 text-sm font-medium text-amber-text">
         {say(words, "outbox.sched.stale", { minutes: v.minutes })}
       </p>
     );
@@ -98,7 +98,7 @@ export function OutboxView(p: OutboxViewProps) {
       {p.help}
       {p.settings?.platform_switch_on === false ? <SendingBanner words={words} demo={p.demo} /> : null}
       {p.settings && p.settings.platform_switch_on && !p.settings.auto_send_enabled ? (
-        <p data-note="auto-off" className="rounded-2xl bg-surface-2 px-4 py-3 text-sm">
+        <p data-note="auto-off" className="rounded-xl bg-surface-2 px-4 py-3 text-sm">
           {say(words, "outbox.autooff")}
           {role === "owner" ? (
             <>
@@ -122,7 +122,7 @@ export function OutboxView(p: OutboxViewProps) {
           <Link key={t} href={href({ tab: t })} aria-current={t === tab ? "page" : undefined} className={tabLink(t === tab)}>
             {say(words, `outbox.tab.${t}`)}
             {count(t) !== null && (count(t) as number) > 0 ? (
-              <span data-count={t} className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-sm font-bold ${t === "waiting" ? "bg-brand text-on-brand" : "bg-surface-2 text-ink"}`}>
+              <span data-count={t} className={`inline-flex h-6 min-w-6 items-center justify-center rounded-md px-1.5 text-sm font-bold ${t === "waiting" ? "bg-brand text-on-brand" : "bg-surface-2 text-ink"}`}>
                 <span aria-hidden="true">{(count(t) as number) > 999 ? "999+" : count(t)}</span>
                 <span className="sr-only">{say(words, `outbox.tab.count.${t}`, { n: count(t) as number })}</span>
               </span>

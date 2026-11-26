@@ -181,7 +181,7 @@ function Message({ m, t, words, now, canApprove, busy, onDecide }: { m: ThreadIt
   void now;
   return (
     <li className={`flex flex-col gap-1 ${mine ? "items-end" : "items-start"}`} data-direction={m.direction}>
-      <div className={`max-w-[85%] rounded-2xl border px-3 py-2 text-base ${mine ? "border-brand-edge bg-brand-bg text-ink" : "border-line bg-surface-2 text-ink"}`}>
+      <div className={`max-w-[85%] rounded-xl border px-3 py-2 text-base ${mine ? "border-brand-edge bg-brand-bg text-ink" : "border-line bg-surface-2 text-ink"}`}>
         <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{m.text}</p>
         {m.photos > 0 ? <p className="mt-1 text-sm text-muted">{t("wa.thread.photos", { n: m.photos })}</p> : null}
       </div>

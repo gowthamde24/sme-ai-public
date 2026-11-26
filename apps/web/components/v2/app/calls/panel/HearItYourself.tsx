@@ -29,7 +29,7 @@ export function HearItYourself({ words, language, base }: { words: Words; /** th
     live.start();
   };
   return (
-    <section data-part="hear-it-yourself" aria-label={t("cpn.hear.title")} className="min-w-0 rounded-[14px] border border-line bg-surface p-4 sm:px-[18px]">
+    <section data-part="hear-it-yourself" aria-label={t("cpn.hear.title")} className="min-w-0 rounded-xl border border-line bg-surface p-4 sm:px-[18px]">
       {live.active ? (
         <TalkLiveBody
           live={live}

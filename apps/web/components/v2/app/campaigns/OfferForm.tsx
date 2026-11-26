@@ -92,7 +92,7 @@ export function OfferForm(p: { base: string; campaignId: string; campaign: Campa
       {chosen ? (
         <section aria-labelledby="of-prev" data-part="offer-preview" className="flex flex-col gap-2">
           <h2 id="of-prev" className="font-display text-lg font-bold">{say(words, "of.preview")}</h2>
-          <div className="max-w-md self-start whitespace-pre-wrap rounded-2xl rounded-tl-sm bg-green-bg p-3 text-base text-ink shadow-sm [overflow-wrap:anywhere]">{preview(chosen.body, tidy, p.business)}</div>
+          <div className="max-w-md self-start whitespace-pre-wrap rounded-xl rounded-tl-sm bg-green-bg p-3 text-base text-ink shadow-sm [overflow-wrap:anywhere]">{preview(chosen.body, tidy, p.business)}</div>
           <p className={help}>{say(words, "of.preview.help")}</p>
         </section>
       ) : null}

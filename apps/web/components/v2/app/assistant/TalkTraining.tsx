@@ -23,7 +23,7 @@ export type TalkTrainingActions = { save: (input: unknown) => Promise<Out>; rese
 export type PracticeError = "forbidden" | "invalid" | "unavailable" | "busy" | "not_available" | "down";
 /** A practice call's next answer (app v4): the language, the turns so far (the last the customer's) and the unsaved training (null = the saved one). */
 export type PracticeFn = (language: CallLang, turns: PracticeTurn[], training: Doc | null) => Promise<{ ok: true; data: { reply: string; ended: boolean; handover: boolean } } | { ok: false; error: PracticeError }>;
-const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
+const chip = (on: boolean) => `min-h-11 rounded-md border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 const h3 = "text-base font-semibold text-ink";
 /** app v4: the greeting is written in these, in this order; Tamil, Malayalam and Marathi are hidden while they are paused (owner, 9 Nov 2026). */
 const PRACTICE_TURNS = 20; // the contract's limit on turns sent at once
@@ -137,7 +137,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
           <div className="mt-2 flex flex-wrap items-center gap-2" data-part="tt-greeting-insert">
             <span className="text-sm text-muted">{t("ope.insert")}</span>
             {PLACEHOLDERS.map((p) => (
-              <button key={p} type="button" disabled={off} onClick={() => change({ greeting: { ...doc.greeting, [lang]: `${doc.greeting[lang] ?? ""}{${p}}`.slice(0, LIMITS.greeting.max) } })} className="min-h-11 rounded-full border border-edge bg-surface px-3 text-sm hover:bg-surface-2">
+              <button key={p} type="button" disabled={off} onClick={() => change({ greeting: { ...doc.greeting, [lang]: `${doc.greeting[lang] ?? ""}{${p}}`.slice(0, LIMITS.greeting.max) } })} className="min-h-11 rounded-md border border-edge bg-surface px-3 text-sm hover:bg-surface-2">
                 {`{${p}}`}
               </button>
             ))}
@@ -364,7 +364,7 @@ function Practice({ offered, t, doc, langNames, first, practice, voice, unsaved,
       {turns.length ? (
         <ol className="m-0 flex list-none flex-col gap-2 p-0" aria-live="polite" data-part="tt-practice-turns">
           {turns.map((x, i) => (
-            <li key={i} className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${x.who === "customer" ? "self-end bg-surface-2 text-ink" : "self-start border border-line bg-brand-bg text-ink"}`} data-who={x.who}>
+            <li key={i} className={`max-w-[85%] rounded-xl px-3 py-2 text-sm ${x.who === "customer" ? "self-end bg-surface-2 text-ink" : "self-start border border-line bg-brand-bg text-ink"}`} data-who={x.who}>
               <span className="block text-xs font-bold text-muted">{x.who === "customer" ? t("tt.practice.you") : t("tt.practice.ai")}</span>
               <span lang={lang} className="[overflow-wrap:anywhere]">
                 {x.text}

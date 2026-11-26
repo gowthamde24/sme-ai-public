@@ -16,7 +16,7 @@ import { ownWords, rowWord } from "./nav-words";
 
 export { ownWords, rowWord };
 
-export const itemBase = "relative flex min-h-11 items-center gap-3 rounded-[10px] px-3 text-sm font-medium transition-colors duration-150 ease-out";
+export const itemBase = "relative flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-150 ease-out";
 export const itemIdle = "text-ink hover:bg-surface-2 active:bg-line";
 export const itemCurrent = "bg-surface-2 text-brand-text";
 /**
@@ -68,7 +68,7 @@ export function NavLink({ item, tenantId, on, labels, badge = null, collapsed = 
             {badge.text}
           </span>
         ) : (
-          <span data-nav-badge={item.id} className={`inline-flex h-6 shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2 text-xs font-semibold tabular-nums ${TONE[badge.tone]}`}>
+          <span data-nav-badge={item.id} className={`inline-flex h-6 shrink-0 items-center gap-1 whitespace-nowrap rounded px-2 text-xs font-semibold tabular-nums ${TONE[badge.tone]}`}>
             {badge.tone === "green" && item.id === "m-calls" ? <span aria-hidden="true" className="size-1.5 rounded-full bg-green-text" /> : null}
             {badge.text}
           </span>

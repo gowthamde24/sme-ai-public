@@ -111,7 +111,7 @@ export function VisitCard({ visit: v, role, actions, words, lang, now, today, ba
       <p className="text-sm text-muted">{say(words, v.party_size === 1 ? "visits.party.one" : "visits.party.other", { n: v.party_size })}</p>
       {v.customer && v.customer !== v.who ? <p className="text-base [overflow-wrap:anywhere]">{v.customer}</p> : null}
       {v.purpose ? <p className="text-base [overflow-wrap:anywhere]">{v.purpose}</p> : null}
-      {v.note ? <p className="whitespace-pre-wrap rounded-2xl bg-surface-2 px-3.5 py-3 text-base [overflow-wrap:anywhere]">{v.note}</p> : null}
+      {v.note ? <p className="whitespace-pre-wrap rounded-xl bg-surface-2 px-3.5 py-3 text-base [overflow-wrap:anywhere]">{v.note}</p> : null}
       {v.advance_requested && v.advance_paise !== null ? <p className="text-sm text-muted">{say(words, "visits.advance", { amount: formatINR(v.advance_paise / 100, { decimals: 2 }) })}</p> : null}
       {v.status === "cancelled" && v.cancel_reason ? <p className="text-sm text-muted [overflow-wrap:anywhere]">{say(words, "visits.cancelled.reason", { reason: v.cancel_reason })}</p> : null}
       {v.order_id ? (
@@ -138,7 +138,7 @@ export function VisitCard({ visit: v, role, actions, words, lang, now, today, ba
       {problem ? <Problem words={words} error={problem} base={base} /> : null}
 
       {mode === "move" ? (
-        <div className="flex flex-col gap-3 rounded-2xl bg-surface-2 p-3.5">
+        <div className="flex flex-col gap-3 rounded-xl bg-surface-2 p-3.5">
           <p className="font-semibold">{say(words, "visits.move.title")}</p>
           <SlotPicker words={words} lang={lang} min={slotsMin} value={pick} onChange={setPick} load={actions.slots} idPrefix={`move-${v.id}`} />
           <p className="text-sm text-muted">{say(words, "visits.move.hint")}</p>
@@ -154,7 +154,7 @@ export function VisitCard({ visit: v, role, actions, words, lang, now, today, ba
       ) : null}
 
       {mode === "cancel" ? (
-        <div className="flex flex-col gap-2 rounded-2xl bg-surface-2 p-3.5">
+        <div className="flex flex-col gap-2 rounded-xl bg-surface-2 p-3.5">
           <label htmlFor={`reason-${v.id}`} className={label}>
             {say(words, "visits.cancel.reason")}
           </label>
@@ -172,7 +172,7 @@ export function VisitCard({ visit: v, role, actions, words, lang, now, today, ba
       ) : null}
 
       {mode === "complete" ? (
-        <div className="flex flex-col gap-3 rounded-2xl bg-surface-2 p-3.5">
+        <div className="flex flex-col gap-3 rounded-xl bg-surface-2 p-3.5">
           <p className="font-semibold">{say(words, "visits.complete.title")}</p>
           <div className="flex flex-col gap-2">
             {canOrder ? (

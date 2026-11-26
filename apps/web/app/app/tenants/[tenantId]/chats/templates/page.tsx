@@ -85,7 +85,7 @@ export default async function TemplatesPage({ params }: PageProps<"/app/tenants/
         ) : null}
         {own ? (
           // JOBS: the table of the messages Stack19 itself sends (their technical names, WhatsApp's review) is not the owner's page: it sits in a closed part that opens by itself when one of them is waiting for the admin or was refused
-          <details data-part="system-messages" open={templates.ok ? templates.data.some((x) => x.status !== "approved") : true} className="rounded-2xl border border-line bg-surface p-4">
+          <details data-part="system-messages" open={templates.ok ? templates.data.some((x) => x.status !== "approved") : true} className="rounded-xl border border-line bg-surface p-4">
             <summary className="cursor-pointer list-none text-[15px] font-semibold text-ink">
               {t("jobs.tb.system.title")}
               <span className="mt-1 block text-[13px] font-normal text-muted">{t("jobs.tb.system.sub")}</span>

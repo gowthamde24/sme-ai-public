@@ -62,8 +62,8 @@ export function PackReport({ base, words, code, window, report, from, to, today,
         <button type="submit" className={primary}>{say(words, "rep.show")}</button>
         {from !== null || to !== null ? <Link href={`${base}/report/${code}`} className={quiet}>{say(words, "rep.reset")}</Link> : null}
       </form>
-      {problem ? <p role="alert" className="rounded-2xl border border-line p-4 text-base">{say(words, "rep.problem")}</p> : null}
-      {report === null && !problem ? <p role="alert" className="rounded-2xl border border-line p-4 text-base">{say(words, "rep.loaderr")}</p> : null}
+      {problem ? <p role="alert" className="rounded-xl border border-line p-4 text-base">{say(words, "rep.problem")}</p> : null}
+      {report === null && !problem ? <p role="alert" className="rounded-xl border border-line p-4 text-base">{say(words, "rep.loaderr")}</p> : null}
       {report ? (
         <>
           <KpiCards kpis={report.kpis} words={words} />

@@ -217,11 +217,11 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
                 className="ds-ln relative block max-h-[11rem] w-full min-w-0 resize-none overflow-y-auto border-0 bg-transparent p-0 font-medium text-ink caret-brand outline-none focus:outline-none focus-visible:outline-none"
               />
               {work.on ? (
-                <button type="button" data-part="attach" onClick={work.pick} aria-label={t("tv6.attach")} title={t("tv6.attach")} className="absolute right-0 top-0 grid size-9 place-items-center rounded-[10px] text-muted hover:text-ink">
+                <button type="button" data-part="attach" onClick={work.pick} aria-label={t("tv6.attach")} title={t("tv6.attach")} className="absolute right-0 top-0 grid size-9 place-items-center rounded-xl text-muted hover:text-ink">
                   <Paperclip className="size-[18px]" aria-hidden="true" />
                 </button>
               ) : (
-                              <Link href={`${base}/catalogue`} data-part="attach" aria-label={t("tv6.attach")} title={t("tv6.attach")} className="absolute right-0 top-0 grid size-9 place-items-center rounded-[10px] text-muted hover:text-ink">
+                              <Link href={`${base}/catalogue`} data-part="attach" aria-label={t("tv6.attach")} title={t("tv6.attach")} className="absolute right-0 top-0 grid size-9 place-items-center rounded-xl text-muted hover:text-ink">
                   <Paperclip className="size-[18px]" aria-hidden="true" />
                 </Link>
               )}

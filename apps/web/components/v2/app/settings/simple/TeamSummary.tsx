@@ -4,7 +4,7 @@ import type { Say } from "../../words";
 
 type Person = { name: string | null; role: string; you: boolean };
 
-const pill = (text: string): ReactNode => <b className="mx-0.5 inline-block rounded-full bg-brand-bg px-3 py-0.5 align-middle text-[15px] font-semibold leading-snug text-brand-text">{text}</b>;
+const pill = (text: string): ReactNode => <b className="mx-0.5 inline-block rounded-md bg-brand-bg px-3 py-0.5 align-middle text-[15px] font-semibold leading-snug text-brand-text">{text}</b>;
 
 /** The Team card of the Settings page under JOBS: who is on the team as plain sentences ("Ravi can run the business and the team."), read only. Adding and changing people is on the Team page. Drawn on the server (no script). */
 export function TeamSummary({ t, people }: { t: Say; people: readonly Person[] }) {

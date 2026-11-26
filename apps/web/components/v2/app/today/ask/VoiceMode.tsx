@@ -30,7 +30,7 @@ export function VoiceMode({ phase, caption, left, words, onTapOrb, onDone, onCan
   return (
     <div role="dialog" aria-modal="true" aria-label={words.title} data-voice="mode" data-phase={phase} className="fixed inset-0 z-[70] flex flex-col items-center bg-bg px-6 pb-8 pt-4 text-ink">
       <div className="flex w-full items-center justify-end">
-        <button type="button" onClick={onClose} aria-label={words.close} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-edge bg-surface hover:bg-surface-2">
+        <button type="button" onClick={onClose} aria-label={words.close} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-edge bg-surface hover:bg-surface-2">
           <X className="size-5" aria-hidden="true" />
         </button>
       </div>
@@ -51,15 +51,15 @@ export function VoiceMode({ phase, caption, left, words, onTapOrb, onDone, onCan
       <div className="flex w-full max-w-sm flex-col gap-3">
         {recording ? (
           <>
-            <button ref={button} type="button" onClick={onDone} className="inline-flex min-h-14 items-center justify-center rounded-2xl bg-ink px-6 text-base font-semibold text-bg">
+            <button ref={button} type="button" onClick={onDone} className="inline-flex min-h-14 items-center justify-center rounded-xl bg-ink px-6 text-base font-semibold text-bg">
               {words.done}
             </button>
-            <button type="button" onClick={onCancel} className="inline-flex min-h-12 items-center justify-center rounded-2xl px-6 text-base font-semibold text-brand-text">
+            <button type="button" onClick={onCancel} className="inline-flex min-h-12 items-center justify-center rounded-xl px-6 text-base font-semibold text-brand-text">
               {words.cancel}
             </button>
           </>
         ) : (
-          <button ref={button} type="button" onClick={onClose} className="inline-flex min-h-14 items-center justify-center rounded-2xl bg-ink px-6 text-base font-semibold text-bg">
+          <button ref={button} type="button" onClick={onClose} className="inline-flex min-h-14 items-center justify-center rounded-xl bg-ink px-6 text-base font-semibold text-bg">
             {words.show}
           </button>
         )}

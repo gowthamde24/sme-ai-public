@@ -225,7 +225,7 @@ export function PhoneBuy({ words, actions, canEdit, email, mock = false, verifyH
                 <fieldset className="m-0 flex flex-col gap-3 border-0 p-0" data-part="verify-choice">
                   <legend className="sr-only">{t("pick.buy.s3.t")}</legend>
                   {(["now", "later"] as const).map((w) => (
-                    <label key={w} data-choice={w} className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 ${verifyWhen === w ? "border-ink bg-surface" : "border-line bg-surface"}`}>
+                    <label key={w} data-choice={w} className={`flex cursor-pointer items-start gap-3 rounded-xl border p-4 ${verifyWhen === w ? "border-ink bg-surface" : "border-line bg-surface"}`}>
                       <input type="radio" name="verify-when" value={w} checked={verifyWhen === w} disabled={w === "now" && !canEdit} onChange={() => setVerifyWhen(w)} className="mt-1 size-5 shrink-0 accent-ink" />
                       <span className="min-w-0">
                         <b className="text-ink">
@@ -238,7 +238,7 @@ export function PhoneBuy({ words, actions, canEdit, email, mock = false, verifyH
                   ))}
                 </fieldset>
               ) : (
-                <div className="rounded-2xl border border-line bg-surface p-4" data-part="verify-box">
+                <div className="rounded-xl border border-line bg-surface p-4" data-part="verify-box">
                   <b className="text-ink">{t("pick.buy.s3.head")}</b>
                   <p className="m-0 mt-1.5 text-[15px] text-muted">{t("pick.buy.s3.body")}</p>
                 </div>

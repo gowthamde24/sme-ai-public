@@ -46,7 +46,7 @@ export default async function EmployeesRoute({ params }: PageProps<"/app/tenants
         {data ? (
           <EmployeeList employees={data.employees} limit={data.limit} words={words} base={base} canAdd={owns} actions={owns ? { setStatus: setEmployeeStatusAction.bind(null, tenantId) } : null} />
         ) : (
-          <section data-part="emp-na" className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 md:p-6">
+          <section data-part="emp-na" className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 md:p-6">
             <p className="m-0 text-ink">{words["emp.na"]}</p>
             <p className="m-0">
               <Link href={`${base}/jobs`} prefetch={false} className="font-semibold text-brand-text underline underline-offset-2">

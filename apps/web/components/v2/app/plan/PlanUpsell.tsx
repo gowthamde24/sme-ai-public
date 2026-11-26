@@ -20,7 +20,7 @@ export function PlanUpsell({ words, planHref, compact = false }: { words: Words;
       <p className="text-sm text-muted">{t("tier.upsell.now")}</p>
       {planHref ? (
         <p>
-          <Link href={planHref} data-upsell-link="" className="inline-flex min-h-11 items-center rounded-full border border-brand-edge bg-brand-bg px-4 text-[15px] font-semibold text-brand-text hover:brightness-95">
+          <Link href={planHref} data-upsell-link="" className="inline-flex min-h-11 items-center rounded-md border border-brand-edge bg-brand-bg px-4 text-[15px] font-semibold text-brand-text hover:brightness-95">
             {t("tier.upsell.see")}
           </Link>
         </p>

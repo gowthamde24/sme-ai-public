@@ -20,7 +20,7 @@ const HOUR_OPTIONS: readonly string[] = (() => {
   return out;
 })();
 
-const dayChip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
+const dayChip = (on: boolean) => `min-h-11 rounded-md border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 
 type Common = { t: Say; s: Settings; set: (p: Partial<Settings>) => void; disabled: boolean };
 

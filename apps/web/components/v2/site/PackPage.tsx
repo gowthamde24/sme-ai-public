@@ -47,7 +47,7 @@ export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT;
               <Link href={start.href} className={`${btnPrimary} rounded-full font-bold max-sm:w-full`}>
                 {start.label}
               </Link>
-              <Link href={sitePath(lang, { kind: "page", page: "pricing" })} className="inline-flex min-h-14 items-center justify-center rounded-full border-[1.5px] border-ink px-6 text-base font-semibold text-ink hover:bg-surface-2 max-sm:w-full">
+              <Link href={sitePath(lang, { kind: "page", page: "pricing" })} className="inline-flex min-h-14 items-center justify-center rounded-md border-[1.5px] border-ink px-6 text-base font-semibold text-ink hover:bg-surface-2 max-sm:w-full">
                 {t("nav.pricing")}
               </Link>
             </div>

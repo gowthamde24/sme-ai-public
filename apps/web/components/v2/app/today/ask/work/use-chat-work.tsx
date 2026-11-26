@@ -220,11 +220,11 @@ export function useChatWork(options: WorkOptions | null | undefined, base: strin
                   ) : null}
                 </span>
                 {c.status === "failed" ? (
-                  <button type="button" data-chat="file-retry" onClick={() => upload(c.key, c.file)} aria-label={t("bv.work.file.retry")} title={t("bv.work.file.retry")} className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink hover:bg-surface">
+                  <button type="button" data-chat="file-retry" onClick={() => upload(c.key, c.file)} aria-label={t("bv.work.file.retry")} title={t("bv.work.file.retry")} className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-ink hover:bg-surface">
                     <RotateCcw className="size-4" aria-hidden="true" />
                   </button>
                 ) : null}
-                <button type="button" data-chat="file-remove" onClick={() => remove(c.key)} aria-label={t("bv.work.file.remove", { name: c.file.name.slice(0, 80) })} title={t("bv.work.file.remove", { name: c.file.name.slice(0, 80) })} className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink hover:bg-surface">
+                <button type="button" data-chat="file-remove" onClick={() => remove(c.key)} aria-label={t("bv.work.file.remove", { name: c.file.name.slice(0, 80) })} title={t("bv.work.file.remove", { name: c.file.name.slice(0, 80) })} className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-ink hover:bg-surface">
                   <X className="size-4" aria-hidden="true" />
                 </button>
               </li>

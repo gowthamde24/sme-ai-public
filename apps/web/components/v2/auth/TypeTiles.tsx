@@ -49,7 +49,7 @@ export function TypeTiles({ groups, words, name = "type", otherId = null, askOth
         <div role="status" className="flex flex-wrap items-center gap-3 text-base">
           <span className="m-0 text-muted">{words.none}</span>
           {otherId !== null && all.some((o) => o.id === otherId) ? (
-            <button type="button" onClick={() => choose(otherId)} className="inline-flex min-h-11 items-center rounded-full border border-edge px-4 text-sm font-semibold text-ink hover:bg-surface-2">
+            <button type="button" onClick={() => choose(otherId)} className="inline-flex min-h-11 items-center rounded-md border border-edge px-4 text-sm font-semibold text-ink hover:bg-surface-2">
               {all.find((o) => o.id === otherId)?.name}
             </button>
           ) : null}
@@ -120,7 +120,7 @@ export function TypeTiles({ groups, words, name = "type", otherId = null, askOth
                   <span className="text-ink">
                     {words.describeClosest}: <b>{suggest.option.name}</b>
                   </span>
-                  <button type="button" onClick={() => choose(suggest.option!.id)} className="inline-flex min-h-11 items-center rounded-full bg-ink px-4 text-sm font-semibold text-surface">
+                  <button type="button" onClick={() => choose(suggest.option!.id)} className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 text-sm font-semibold text-surface">
                     {words.describeUse}
                   </button>
                 </>
@@ -134,7 +134,7 @@ export function TypeTiles({ groups, words, name = "type", otherId = null, askOth
                         setOtherText(described.trim().slice(0, OTHER_MAX));
                         choose(other.id);
                       }}
-                      className="inline-flex min-h-11 items-center rounded-full border border-edge px-4 text-sm font-semibold text-ink hover:bg-surface-2"
+                      className="inline-flex min-h-11 items-center rounded-md border border-edge px-4 text-sm font-semibold text-ink hover:bg-surface-2"
                     >
                       {other.name}
                     </button>

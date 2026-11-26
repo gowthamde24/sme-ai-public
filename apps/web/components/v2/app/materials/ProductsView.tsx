@@ -44,7 +44,7 @@ export function ProductsView({ title = null, base, words, role, items, more, inS
         </header>
         {help}
         <div className="flex flex-wrap items-center gap-2">
-          <Link href={toggle} data-chip={inStockOnly ? "on" : "off"} className={`inline-flex min-h-11 items-center rounded-full border px-4 text-base ${inStockOnly ? "border-brand-edge bg-brand-bg font-semibold text-brand-text" : "border-edge font-medium text-ink hover:bg-surface-2"}`}>
+          <Link href={toggle} data-chip={inStockOnly ? "on" : "off"} className={`inline-flex min-h-11 items-center rounded-md border px-4 text-base ${inStockOnly ? "border-brand-edge bg-brand-bg font-semibold text-brand-text" : "border-edge font-medium text-ink hover:bg-surface-2"}`}>
             {say(words, "mat.products.instock")}
           </Link>
           {admin ? (
@@ -79,7 +79,7 @@ export function ProductsView({ title = null, base, words, role, items, more, inS
             <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4" data-grid="items">
               {items.map((item, i) => (
                 <li key={item.id} className="min-w-0">
-                  <Link href={`${base}/materials/${item.id}`} data-item={item.id} data-hidden={item.active ? undefined : "true"} className={`flex h-full min-h-11 flex-col overflow-hidden rounded-2xl border bg-surface hover:border-brand-edge ${item.active ? "border-line" : "border-dashed border-edge"}`}>
+                  <Link href={`${base}/materials/${item.id}`} data-item={item.id} data-hidden={item.active ? undefined : "true"} className={`flex h-full min-h-11 flex-col overflow-hidden rounded-xl border bg-surface hover:border-brand-edge ${item.active ? "border-line" : "border-dashed border-edge"}`}>
                     <Photo src={item.cover?.thumb_url ?? null} width={item.cover?.width ?? 4} height={item.cover?.height ?? 5} alt="" words={words} eager={i < 2} className={item.active ? "" : "grayscale"} />
                     <span className="flex flex-1 flex-col gap-1 p-3">
                       <span className="line-clamp-2 text-base font-semibold leading-snug [overflow-wrap:anywhere]">{item.name}</span>

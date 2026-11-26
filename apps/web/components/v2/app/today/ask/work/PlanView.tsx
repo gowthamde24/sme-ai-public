@@ -112,7 +112,7 @@ export function PlanView({ plan: given, env }: { plan: WorkPlan; env: WorkEnv })
       ) : null}
       {ran ? (
         <div data-work="done" role="status" className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex min-h-8 items-center gap-1 rounded-full border border-green-text bg-green-bg px-3 text-sm font-semibold text-green-text">
+          <span className="inline-flex min-h-8 items-center gap-1 rounded-md border border-green-text bg-green-bg px-3 text-sm font-semibold text-green-text">
             <Check className="size-4" aria-hidden="true" />
             {t(plan.status === "done" ? "bv.work.plan.done" : "bv.work.plan.partly")}
           </span>

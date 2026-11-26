@@ -35,13 +35,13 @@ export function PeriodSimple({ words, lang, base, period }: { words: Words; lang
           <input type="hidden" name="range" value="custom" />
           <label className="flex flex-col gap-1 text-sm font-semibold">
             {t("rv6.per.from")}
-            <input type="date" name="from" defaultValue={period.from} className="write-ctl min-h-11 rounded-full border border-line bg-surface px-3 text-base font-normal" />
+            <input type="date" name="from" defaultValue={period.from} className="write-ctl min-h-11 rounded-md border border-line bg-surface px-3 text-base font-normal" />
           </label>
           <label className="flex flex-col gap-1 text-sm font-semibold">
             {t("rv6.per.to")}
-            <input type="date" name="to" defaultValue={period.to} className="write-ctl min-h-11 rounded-full border border-line bg-surface px-3 text-base font-normal" />
+            <input type="date" name="to" defaultValue={period.to} className="write-ctl min-h-11 rounded-md border border-line bg-surface px-3 text-base font-normal" />
           </label>
-          <button type="submit" className="min-h-11 rounded-full border border-edge bg-transparent px-[18px] text-[15px] font-semibold text-ink hover:bg-surface-2">
+          <button type="submit" className="min-h-11 rounded-md border border-edge bg-transparent px-[18px] text-[15px] font-semibold text-ink hover:bg-surface-2">
             {t("rv6.per.apply")}
           </button>
         </form>
@@ -52,20 +52,20 @@ export function PeriodSimple({ words, lang, base, period }: { words: Words; lang
           <input type="hidden" name="range" value="custom" />
           <label className="flex flex-col gap-1 text-sm font-semibold">
             {t("rv6.per.from")}
-            <input type="date" name="from" defaultValue={period.from} className="write-ctl min-h-11 rounded-full border border-line bg-surface px-3 text-base font-normal" />
+            <input type="date" name="from" defaultValue={period.from} className="write-ctl min-h-11 rounded-md border border-line bg-surface px-3 text-base font-normal" />
           </label>
           <label className="flex flex-col gap-1 text-sm font-semibold">
             {t("rv6.per.to")}
-            <input type="date" name="to" defaultValue={period.to} className="write-ctl min-h-11 rounded-full border border-line bg-surface px-3 text-base font-normal" />
+            <input type="date" name="to" defaultValue={period.to} className="write-ctl min-h-11 rounded-md border border-line bg-surface px-3 text-base font-normal" />
           </label>
-          <button type="submit" className="min-h-11 rounded-full border border-edge bg-transparent px-[18px] text-[15px] font-semibold text-ink hover:bg-surface-2">
+          <button type="submit" className="min-h-11 rounded-md border border-edge bg-transparent px-[18px] text-[15px] font-semibold text-ink hover:bg-surface-2">
             {t("rv6.per.apply")}
           </button>
         </form>
       </MoreBox>
       )}
       <div>
-        <PrintButton label={t("rv6.pdf")} className="inline-flex min-h-11 items-center rounded-full border border-edge px-[18px] text-[15px] font-semibold text-ink hover:bg-surface-2" />
+        <PrintButton label={t("rv6.pdf")} className="inline-flex min-h-11 items-center rounded-md border border-edge px-[18px] text-[15px] font-semibold text-ink hover:bg-surface-2" />
       </div>
     </section>
   );

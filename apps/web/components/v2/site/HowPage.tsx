@@ -31,7 +31,7 @@ export function HowPage({ t, lang }: { t: SiteT; lang: SiteLang }) {
             const Icon = WORKER_ICONS[s.n - 1];
             return (
               <li key={s.n} data-step={s.n} className={`${card} flex items-start gap-4`}>
-                <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-brand-bg text-brand-text">
+                <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-brand-bg text-brand-text">
                   <Icon className="size-6" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
@@ -40,7 +40,7 @@ export function HowPage({ t, lang }: { t: SiteT; lang: SiteLang }) {
                       {s.n}
                     </span>
                     {s.name}
-                    {s.early ? <span className="ml-2 inline-flex rounded-full bg-brand-bg px-2.5 py-0.5 align-middle text-xs font-extrabold text-brand-text">{t("hm.wf.early")}</span> : null}
+                    {s.early ? <span className="ml-2 inline-flex rounded bg-brand-bg px-2.5 py-0.5 align-middle text-xs font-extrabold text-brand-text">{t("hm.wf.early")}</span> : null}
                   </h3>
                   <p className="mt-0.5 text-base text-muted">{s.text}</p>
                   <p className="mt-1 text-sm font-bold text-muted">{s.you}</p>

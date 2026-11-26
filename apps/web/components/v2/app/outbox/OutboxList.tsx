@@ -101,7 +101,7 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
   }
 
   return (
-    <li className="flex flex-col rounded-[20px] border border-line bg-surface" data-write data-status={m.status} data-reason={m.reason}>
+    <li className="flex flex-col rounded-xl border border-line bg-surface" data-write data-status={m.status} data-reason={m.reason}>
       <button
         type="button"
         aria-expanded={open}
@@ -109,7 +109,7 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
         onClick={() => {
           if (!open) loadHistory();
           onToggle();
-        }} className="flex w-full min-w-0 flex-col gap-2 rounded-[20px] p-4 text-left hover:bg-surface-2 md:p-5">
+        }} className="flex w-full min-w-0 flex-col gap-2 rounded-xl p-4 text-left hover:bg-surface-2 md:p-5">
         <span className="flex flex-wrap items-center gap-2">
           <span className={`${badge} ${toneOf(m)}`}>{say(words, reasonKey(m.reason))}</span>
           <span className="text-sm text-muted">{say(words, "outbox.channel")}</span>
@@ -163,7 +163,7 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
               </div>
             </div>
           ) : (
-            <div className="rounded-2xl rounded-bl-sm bg-surface-2 px-4 py-3.5">
+            <div className="rounded-xl rounded-bl-sm bg-surface-2 px-4 py-3.5">
               <p lang={m.language} className="whitespace-pre-wrap text-base [overflow-wrap:anywhere]">
                 {text}
               </p>
@@ -171,7 +171,7 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
             </div>
           )}
           {gloss && !editing ? (
-            <div data-part="gloss" className="rounded-2xl border border-line px-4 py-3">
+            <div data-part="gloss" className="rounded-xl border border-line px-4 py-3">
               <p className="text-sm font-semibold text-muted">{say(words, "outbox.gloss")}</p>
               <p lang="en" className="mt-1 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">
                 {gloss}
@@ -214,7 +214,7 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
             </p>
           ) : null}
           {manual && !editing ? (
-            <div data-part="manual-send" className="flex flex-col gap-2 rounded-2xl border border-line px-4 py-3">
+            <div data-part="manual-send" className="flex flex-col gap-2 rounded-xl border border-line px-4 py-3">
               <div className="flex flex-wrap items-center gap-3">
                 {fitsInLink(text) ? (
                   <a href={waRoute} target="_blank" rel="noopener noreferrer" className={secondary}>

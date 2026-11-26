@@ -42,8 +42,8 @@ export function AddBySpeaking({ onSave, maxQ, maxA, disabled = false }: { onSave
     setA("");
   };
   const field = "block w-full rounded-lg border border-edge bg-surface px-3 py-2 text-base text-ink";
-  const primary = "inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-5 text-base font-semibold text-on-brand disabled:opacity-50";
-  const quiet = "inline-flex min-h-11 items-center justify-center rounded-full border border-edge px-5 text-base font-semibold text-ink";
+  const primary = "inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-5 text-base font-semibold text-on-brand disabled:opacity-50";
+  const quiet = "inline-flex min-h-11 items-center justify-center rounded-md border border-edge px-5 text-base font-semibold text-ink";
   if (!open) {
     return (
       <button type="button" onClick={() => setOpen(true)} data-part="add-by-speaking" className={`${quiet} mt-2 max-sm:w-full`}>
@@ -52,7 +52,7 @@ export function AddBySpeaking({ onSave, maxQ, maxA, disabled = false }: { onSave
     );
   }
   return (
-    <section aria-label={w("vi.add", "Add by speaking")} data-part="add-by-speaking-open" data-step={step} className="mt-3 flex flex-col gap-3 rounded-2xl border border-brand-edge bg-surface p-4">
+    <section aria-label={w("vi.add", "Add by speaking")} data-part="add-by-speaking-open" data-step={step} className="mt-3 flex flex-col gap-3 rounded-xl border border-brand-edge bg-surface p-4">
       {step === "q" || step === "a" ? (
         <>
           <p className="m-0 text-sm font-semibold text-muted">{w("vi.add.step", "Step {n} of 2", { n: step === "q" ? "1" : "2" })}</p>

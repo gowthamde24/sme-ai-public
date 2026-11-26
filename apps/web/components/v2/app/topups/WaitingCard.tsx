@@ -10,7 +10,7 @@ export function WaitingCard({ words, waiting, href, canBuy }: { words: Words; wa
   if (waiting <= 0) return null;
   const t = makeT(words);
   return (
-    <section aria-labelledby="tu-wait-h" data-topup-waiting={waiting} className="mb-6 rounded-[20px] border border-amber-text bg-amber-bg p-4 text-amber-text md:p-5">
+    <section aria-labelledby="tu-wait-h" data-topup-waiting={waiting} className="mb-6 rounded-xl border border-amber-text bg-amber-bg p-4 text-amber-text md:p-5">
       <h2 id="tu-wait-h" className="font-display text-xl font-semibold">
         {waiting === 1 ? t("tu.wait.title.one") : t("tu.wait.title", { n: waiting })}
         {" · "}

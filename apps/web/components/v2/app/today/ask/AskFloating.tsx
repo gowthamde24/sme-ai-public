@@ -110,7 +110,7 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
           wakeAsk();
           void import("./AskPanelHost");
         }}
-        className={`${today ? "md:hidden " : ""}[body:has([data-orb-avoid])_&]:max-md:hidden [body:has(main_:is(input,textarea,select):focus)_&]:max-md:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-brand-edge/70 bg-surface shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
+        className={`${today ? "md:hidden " : ""}[body:has([data-orb-avoid])_&]:max-md:hidden [body:has(main_:is(input,textarea,select):focus)_&]:max-md:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full round-ok border border-brand-edge/70 bg-surface shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
       >
         <Orb px={44} state={session?.floatOrb ?? "ambient"} />
         {unseen ? <span data-ask="dot" aria-hidden="true" className="absolute right-0 top-0 size-3.5 rounded-full border-2 border-surface bg-brand" /> : null}

@@ -50,7 +50,7 @@ export function FinderV4({ lang, t, w, words, base, finder, around, radar, check
                 <FinderRadar radar={radar} w={w} around={around} checked={checked} />
               </div>
             ) : null}
-            <section aria-labelledby="fc-title" tabIndex={0} className="flex min-w-0 flex-col gap-3 rounded-[22px] border border-line bg-surface p-3.5 sm:p-4 lg:sticky lg:top-20 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:max-h-[calc(100dvh-6rem)] lg:overflow-y-auto" data-part="finder-shops">
+            <section aria-labelledby="fc-title" tabIndex={0} className="flex min-w-0 flex-col gap-3 rounded-xl border border-line bg-surface p-3.5 sm:p-4 lg:sticky lg:top-20 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:max-h-[calc(100dvh-6rem)] lg:overflow-y-auto" data-part="finder-shops">
               <div className="flex flex-wrap items-baseline justify-between gap-x-3">
                 <h2 id="fc-title" className="m-0 font-display text-xl font-bold">
                   {w["lf.v4.found"]}
@@ -96,7 +96,7 @@ export function FinderV4({ lang, t, w, words, base, finder, around, radar, check
             </section>
           </div>
           {jobs ? (
-            <p role="note" data-part="public-listings" className="m-0 flex items-start gap-3 rounded-2xl border border-line bg-surface p-3.5 text-[15px]">
+            <p role="note" data-part="public-listings" className="m-0 flex items-start gap-3 rounded-xl border border-line bg-surface p-3.5 text-[15px]">
               <ShieldCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
               {t("jobs.trust.public")}
             </p>

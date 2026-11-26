@@ -78,7 +78,7 @@ export function MyProfile({ words, name, addressAs, language, choices, pictureUr
           <legend className={label}>{w("settings.me.lang")}</legend>
           <div className="flex flex-wrap gap-2">
             {choices.map((code) => (
-              <label key={code} className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-edge bg-surface px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg">
+              <label key={code} className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-edge bg-surface px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg">
                 <input type="radio" name="language" value={code} defaultChecked={code === language} disabled={saving} className="size-5 accent-brand-text" />
                 {CALL_LANG_NAMES[code]}
               </label>

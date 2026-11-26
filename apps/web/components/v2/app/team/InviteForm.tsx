@@ -139,10 +139,10 @@ export function InviteResult({ words, fresh, workspaceName }: { words: Words; fr
             >
               {copied === "yes" ? t("dta.btn.copied") : t("team.invite.copy")}
             </button>
-            <a href={whatsappShare(text)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
+            <a href={whatsappShare(text)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-md border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
               {t("team.invite.whatsapp")}
             </a>
-            <a href={mailShare(t("team.share.subject", { shop: workspaceName }), text)} className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
+            <a href={mailShare(t("team.share.subject", { shop: workspaceName }), text)} className="inline-flex min-h-11 items-center rounded-md border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
               {t("team.invite.email")}
             </a>
           </div>

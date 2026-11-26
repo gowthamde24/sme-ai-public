@@ -17,8 +17,8 @@ export type DncActions = {
 };
 
 const day = (iso: string): string => new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" }).format(new Date(iso));
-const btn = "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-edge bg-surface px-4 text-[15px] font-bold text-ink disabled:opacity-60";
-const btnMain = "inline-flex min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60";
+const btn = "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-edge bg-surface px-4 text-[15px] font-bold text-ink disabled:opacity-60";
+const btnMain = "inline-flex min-h-11 items-center justify-center rounded-md border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60";
 
 /**
  * The Do-Not-Call list (JOBS, mock 08 part 2): "N numbers. The assistant never calls or messages these.", a search box, "Add", and each number masked with the reason in words and the date. Remove is the Owner's alone and asks once, with the line
@@ -68,7 +68,7 @@ export function DoNotCallList({ page, q, words, base, actions, moreHref, lifted 
 
   const sub = count === 0 ? t("jobs.dnc.count.none") : count === 1 ? t("jobs.dnc.count.one") : t("jobs.dnc.count.many", { n: count.toLocaleString("en-IN") });
   return (
-    <section data-part="dnc" aria-labelledby={`${id}-t`} className="flex max-w-3xl flex-col gap-4 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5">
+    <section data-part="dnc" aria-labelledby={`${id}-t`} className="flex max-w-3xl flex-col gap-4 rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5">
       <div className="flex items-start gap-3">
         <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-xl bg-brand-bg text-brand-text">
           <Ban className="size-6" />
@@ -89,7 +89,7 @@ export function DoNotCallList({ page, q, words, base, actions, moreHref, lifted 
             {t("jobs.dnc.search")}
           </label>
           <Search aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 size-5 -translate-y-1/2 text-muted" />
-          <input id={`${id}-q`} name="q" type="search" inputMode="tel" defaultValue={q} maxLength={40} placeholder={t("jobs.dnc.search")} className="min-h-12 w-full rounded-2xl border border-edge bg-surface pl-11 pr-3 text-base text-ink focus:border-brand-edge" />
+          <input id={`${id}-q`} name="q" type="search" inputMode="tel" defaultValue={q} maxLength={40} placeholder={t("jobs.dnc.search")} className="min-h-12 w-full rounded-xl border border-edge bg-surface pl-11 pr-3 text-base text-ink focus:border-brand-edge" />
           <button type="submit" className="sr-only">
             {t("jobs.dnc.search.go")}
           </button>
@@ -104,7 +104,7 @@ export function DoNotCallList({ page, q, words, base, actions, moreHref, lifted 
 
       {adding && actions.add ? (
         <form
-          className="flex flex-col gap-2 rounded-2xl border border-line bg-surface-2 p-3"
+          className="flex flex-col gap-2 rounded-xl border border-line bg-surface-2 p-3"
           onSubmit={(e) => {
             e.preventDefault();
             void add();
@@ -173,7 +173,7 @@ export function DoNotCallList({ page, q, words, base, actions, moreHref, lifted 
                 </div>
               </div>
               {asking === e.id && actions.remove && dncRemovable(e) ? (
-                <div role="alertdialog" aria-label={t("jobs.dnc.remove.ask", { number: e.phoneMasked })} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface-2 p-3" data-part="dnc-confirm">
+                <div role="alertdialog" aria-label={t("jobs.dnc.remove.ask", { number: e.phoneMasked })} className="flex flex-col gap-2 rounded-xl border border-line bg-surface-2 p-3" data-part="dnc-confirm">
                   <p className="m-0 font-semibold">{t("jobs.dnc.remove.ask", { number: e.phoneMasked })}</p>
                   <p className="m-0 text-sm text-muted">{t("jobs.dnc.remove.rule")}</p>
                   {removeError ? (

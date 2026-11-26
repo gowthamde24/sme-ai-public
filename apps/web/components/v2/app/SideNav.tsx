@@ -68,11 +68,11 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
     <aside data-rail={collapsed ? "1" : undefined} className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[256px]"}${frame.ds ? ` ${collapsed ? "[--dk-side-w:72px]" : ""} [--dk-side-row:40px]` : ""}${settled ? "" : " transition-none!"} ${frame.v4 ? "nv-short" : ""} print:hidden`}>
       {frame.ds ? (
         <div data-part="menu-top" className={`flex shrink-0 items-center ${collapsed ? "flex-col gap-1 px-0 pb-1 pt-3" : "justify-between gap-2 py-2 pl-4 pr-2"}`}>
-          <Link href={homeHref} data-part="menu-logo" aria-label={BRAND_NAME} title={collapsed ? BRAND_NAME : undefined} data-tip={collapsed ? BRAND_NAME : undefined} className="inline-flex min-h-11 items-center gap-2.5 rounded-[10px]">
+          <Link href={homeHref} data-part="menu-logo" aria-label={BRAND_NAME} title={collapsed ? BRAND_NAME : undefined} data-tip={collapsed ? BRAND_NAME : undefined} className="inline-flex min-h-11 items-center gap-2.5 rounded-xl">
             <BrandMark px={28} />
             {collapsed ? null : <span className="font-display text-xl font-extrabold tracking-tight">{BRAND_NAME}</span>}
           </Link>
-          <button type="button" data-part="menu-toggle" onClick={toggle} aria-label={collapsed ? openWord : closeWord} title={collapsed ? openWord : closeWord} data-tip={collapsed ? openWord : closeWord} className="inline-flex size-11 shrink-0 items-center justify-center rounded-[10px] text-ink transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line">
+          <button type="button" data-part="menu-toggle" onClick={toggle} aria-label={collapsed ? openWord : closeWord} title={collapsed ? openWord : closeWord} data-tip={collapsed ? openWord : closeWord} className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl text-ink transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line">
             <SpriteIcon id={collapsed ? "panel-left-open" : "panel-left-close"} />
           </button>
         </div>

@@ -386,7 +386,7 @@ describe("AskTeam: the hero variant (the your assistant card of Today)", () => {
     const input = screen.getByRole("textbox", { name: "Your question for your assistant" });
     expect(input).toHaveAttribute("placeholder", "Ask your assistant anything, in any language…");
     expect(input.className).toContain("md:min-h-14");
-    expect(input.className).toContain("rounded-full");
+    expect(input.className).toContain("rounded-md");
     expect(screen.getAllByRole("listitem").map((li) => li.textContent)).toEqual(["One?", "Two?", "Three?"]);
     const send = screen.getByRole("button", { name: "Ask" });
     expect(send.className).toContain("md:size-14");

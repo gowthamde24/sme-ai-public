@@ -19,8 +19,8 @@ export type TalkToYouActions = {
   preview: (language: TalkLang, option: Patch) => Promise<PreviewResult>;
 };
 
-const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
-const hearBtn = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-edge bg-surface text-ink hover:bg-surface-2";
+const chip = (on: boolean) => `min-h-11 rounded-md border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
+const hearBtn = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-edge bg-surface text-ink hover:bg-surface-2";
 
 type Note = { kind: "saved"; token: string | null; changed: Field[] } | { kind: "undone" } | { kind: "error"; fail: Fail } | null;
 
@@ -162,7 +162,7 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
   const hearPlaying = playing !== null;
 
   return (
-    <section data-part="mya-talk-to-you" aria-labelledby="mya-ty-h" className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4 md:p-5">
+    <section data-part="mya-talk-to-you" aria-labelledby="mya-ty-h" className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-4 md:p-5">
       <div>
         <h2 id="mya-ty-h" className="m-0 font-display text-[18px] font-bold leading-tight md:text-xl">
           {t("vt.me.title")}
@@ -205,7 +205,7 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
           {t("vt.ex.label")} <span className="font-medium text-ink">“{example}”</span>
         </p>
         <div className="mt-1">
-          <button type="button" aria-pressed={hearPlaying} data-hear={`style:${shownStyle}`} onClick={() => hear("style", shownStyle)} className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2">
+          <button type="button" aria-pressed={hearPlaying} data-hear={`style:${shownStyle}`} onClick={() => hear("style", shownStyle)} className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2">
             {hearPlaying ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
             {t(hearPlaying ? "vt.stop" : "vt.hear")}
           </button>
@@ -277,7 +277,7 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
           <span>{t("otp.saved")}</span>
           <span data-part="otp-live">{t("otp.saved.live")}</span>
           {note.token ? (
-            <button type="button" disabled={busy} data-undo onClick={() => undo(note.token as string)} className="min-h-11 rounded-full border border-green-text bg-surface px-4 text-sm font-semibold text-green-text">
+            <button type="button" disabled={busy} data-undo onClick={() => undo(note.token as string)} className="min-h-11 rounded-md border border-green-text bg-surface px-4 text-sm font-semibold text-green-text">
               {t("otp.undo")}
             </button>
           ) : null}

@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
  * The small parts the plain-sentence pages share under JOBS (Catalogue, Reports, Phone number, Leads, Calls; the simplicity pass). Plain markup, no state and no "use client": a server page draws them, and a client form can too.
  * The choices that change (a pill inside a sentence) are `LinkSentence` (a lazy chunk); the parts here only hold them.
  */
-export const pgCard = "rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
+export const pgCard = "rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
 
 /** "What it will do:" / "Showing ..." with one live line (the same grey box as the job page and the rules). */
 export function EffectLine({ label, text, part = "effect" }: { label?: string; text: string; part?: string }) {

@@ -51,7 +51,7 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
     router.push(`${base}/jobs/${r.data.jobId}?started=1`);
   }
 
-  const ghost = "jb-press inline-flex min-h-10 items-center justify-center rounded-full border border-edge bg-surface px-4 text-[15px] font-semibold text-ink";
+  const ghost = "jb-press inline-flex min-h-10 items-center justify-center rounded-md border border-edge bg-surface px-4 text-[15px] font-semibold text-ink";
   return (
     <>
       <ul data-part="suggestions" className="m-0 flex list-none flex-col gap-2.5 p-0 md:gap-3">
@@ -62,7 +62,7 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
           const waitingFor = waiting.find((w) => w.kind === s.kind) ?? null;
           const isWaiting = waitingFor !== null;
           return (
-            <li key={s.kind} data-suggestion={s.kind} className="rounded-2xl border border-line bg-surface p-3.5 md:p-4">
+            <li key={s.kind} data-suggestion={s.kind} className="rounded-xl border border-line bg-surface p-3.5 md:p-4">
               <div className="flex items-start gap-3">
                 <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-bg text-brand-text">
                   <Icon className="size-5" />
@@ -77,7 +77,7 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
                   ) : null}
                 </div>
                 {compact ? (
-                  <button type="button" data-action="start" disabled={!actions || busy !== null || !s.ready || isWaiting} onClick={() => void start(s.kind)} className="jb-press inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60">
+                  <button type="button" data-action="start" disabled={!actions || busy !== null || !s.ready || isWaiting} onClick={() => void start(s.kind)} className="jb-press inline-flex min-h-10 shrink-0 items-center justify-center rounded-md border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60">
                     {t("jobs.new.start")}
                   </button>
                 ) : null}
@@ -88,7 +88,7 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
                     <span className="text-muted">{t("jobs.new.sug.says")}</span> {`“${s.preview}”`}
                   </p>
                   <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] gap-2.5">
-                    <button type="button" data-action="start" disabled={!actions || busy !== null || !s.ready || isWaiting} onClick={() => void start(s.kind)} className="jb-press inline-flex min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60">
+                    <button type="button" data-action="start" disabled={!actions || busy !== null || !s.ready || isWaiting} onClick={() => void start(s.kind)} className="jb-press inline-flex min-h-11 items-center justify-center rounded-md border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60">
                       {isBusy ? t("jobs.new.starting") : t("jobs.new.start")}
                     </button>
                     {onLook ? (

@@ -64,7 +64,7 @@ export function AdmissionForm({ base, admissionId, programmes, guardians, words,
           </select>
         </div>
       </div>
-      <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line p-4" disabled={busy}>
+      <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl border border-line p-4" disabled={busy}>
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "edu.adm.guardian")}</legend>
         {guardians.length > 0 ? (
           <div role="radiogroup" aria-label={say(words, "edu.adm.guardian")} className="flex flex-col gap-1">

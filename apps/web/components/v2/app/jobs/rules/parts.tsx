@@ -29,7 +29,7 @@ export function Sentence({ template, parts, line, className = "" }: { template: 
 
 /** A value that is read, not chosen here (a saved rule, the calling hours): the same pill as a choice, without the arrow. */
 export function Val({ children }: { children: ReactNode }) {
-  return <b className="mx-0.5 inline-block rounded-full bg-brand-bg px-3 py-0.5 align-middle text-[15px] font-semibold leading-snug text-brand-text">{children}</b>;
+  return <b className="mx-0.5 inline-block rounded-md bg-brand-bg px-3 py-0.5 align-middle text-[15px] font-semibold leading-snug text-brand-text">{children}</b>;
 }
 
 /** A choice from a list, as a pill inside a sentence. A value the list does not hold (an older saved one) is added, so what is saved always shows. */
@@ -40,7 +40,7 @@ export function Choose({ aria, value, options, text, disabled, onChange }: { ari
 
 /** A number typed inside a sentence (a limit that has no fixed list). Empty is allowed when `empty` says what it means. */
 export function PillNum({ aria, value, min, max, step = 1, placeholder, disabled, onChange }: { aria: string; value: string; min: number; max?: number; step?: number; placeholder?: string; disabled?: boolean; onChange: (v: string) => void }) {
-  return <input type="number" inputMode="numeric" aria-label={aria} min={min} max={max} step={step} placeholder={placeholder} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} className="write-ctl mx-0.5 my-0.5 min-h-10 w-24 rounded-full border border-[color:var(--v2-pill-edge)] bg-brand-bg px-3 text-center align-middle text-[16px] font-semibold text-brand-text placeholder:font-normal placeholder:text-muted disabled:opacity-80" />;
+  return <input type="number" inputMode="numeric" aria-label={aria} min={min} max={max} step={step} placeholder={placeholder} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} className="write-ctl mx-0.5 my-0.5 min-h-10 w-24 rounded-md border border-[color:var(--v2-pill-edge)] bg-brand-bg px-3 text-center align-middle text-[16px] font-semibold text-brand-text placeholder:font-normal placeholder:text-muted disabled:opacity-80" />;
 }
 
 /** "What it will do:" with one worked example (the same grey box as the job page). */

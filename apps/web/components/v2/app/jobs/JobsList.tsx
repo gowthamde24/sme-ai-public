@@ -14,7 +14,7 @@ import { NewJobButton } from "./sheet/NewJobButton";
 import type { SheetActions } from "./sheet/types";
 import { cardBox } from "../Card";
 
-const chip = "inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3.5 text-sm font-semibold";
+const chip = "inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-md border px-3.5 text-sm font-semibold";
 
 /** The New job sheet on the Jobs page: its actions (Owner and Admin; null = no button), the ideas the server already read (for the empty page and for `?new=1`) and whether the page was opened with the sheet open. */
 export type JobsSheet = { actions: SheetActions | null; load: SheetLoad | null; open: boolean };
@@ -53,7 +53,7 @@ export function JobsList({ jobs, filter, words, base, actions, suggestions = [],
         {sheet ? (
           <NewJobButton words={words} base={base} actions={sheet.actions} initial={sheet.load ?? undefined} defaultOpen={sheet.open && sheet.actions !== null} />
         ) : (
-          <Link href={`${base}/jobs/new`} prefetch={false} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand">
+          <Link href={`${base}/jobs/new`} prefetch={false} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand">
             <Plus aria-hidden="true" className="size-4" />
             {t("jobs.page.start")}
           </Link>
@@ -62,18 +62,18 @@ export function JobsList({ jobs, filter, words, base, actions, suggestions = [],
       {jobs.length === 0 && sheet?.actions && sheet.load && sheet.load.data.own.templates.length > 0 ? (
         <JobsEmpty words={words} base={base} actions={sheet.actions} load={sheet.load} />
       ) : jobs.length === 0 && suggestions.length > 0 ? (
-        <section data-empty="jobs" data-part="jobs-empty" className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4 md:p-6">
+        <section data-empty="jobs" data-part="jobs-empty" className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-4 md:p-6">
           <div className="text-center">
             <h2 className="m-0 font-display text-[20px] font-bold text-ink">{t("jobs.new.empty.title")}</h2>
             <p className="m-0 mx-auto mt-1 max-w-xl text-[14px] leading-snug text-muted">{t("jobs.new.empty.sub")}</p>
           </div>
           <SuggestedJobs suggestions={suggestions} words={words} base={base} actions={suggestionActions} compact />
-          <Link href={`${base}/jobs/new`} prefetch={false} data-part="say-instead" className="flex min-h-12 items-center rounded-full border border-edge bg-surface px-5 text-[15px] text-muted no-underline">
+          <Link href={`${base}/jobs/new`} prefetch={false} data-part="say-instead" className="flex min-h-12 items-center rounded-md border border-edge bg-surface px-5 text-[15px] text-muted no-underline">
             {t("jobs.new.empty.say")}
           </Link>
         </section>
       ) : shown.length === 0 ? (
-        <p data-empty="jobs" className="m-0 rounded-2xl border border-line bg-surface p-6 text-center text-muted">
+        <p data-empty="jobs" className="m-0 rounded-xl border border-line bg-surface p-6 text-center text-muted">
           {t(filter === "needs_you" && jobs.length > 0 ? "jobs.page.empty.needs" : "jobs.page.empty")}
         </p>
       ) : (

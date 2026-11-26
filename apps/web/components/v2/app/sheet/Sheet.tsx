@@ -40,10 +40,10 @@ export function Sheet({ open, onClose, title, children, busy = false, closeLabel
   };
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/50 md:items-center" data-sheet={id} onMouseDown={(e) => { if (e.target === e.currentTarget && !busy) onClose(); }}>
-      <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={`${id}-title`} tabIndex={-1} onKeyDown={onKey} className="max-h-[92dvh] w-full overflow-y-auto rounded-t-3xl border border-line bg-surface p-5 shadow-xl md:max-w-xl md:rounded-3xl">
+      <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={`${id}-title`} tabIndex={-1} onKeyDown={onKey} className="max-h-[92dvh] w-full overflow-y-auto rounded-t-xl border border-line bg-surface p-5 shadow-xl md:max-w-xl md:rounded-xl">
         <div className="flex items-start justify-between gap-3">
           <h2 id={`${id}-title`} className="font-display text-2xl font-bold leading-tight">{title}</h2>
-          <button type="button" disabled={busy} onClick={onClose} aria-label={closeLabel} className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-edge text-xl hover:bg-surface-2 disabled:opacity-60">
+          <button type="button" disabled={busy} onClick={onClose} aria-label={closeLabel} className="inline-flex size-11 shrink-0 items-center justify-center rounded-md border border-edge text-xl hover:bg-surface-2 disabled:opacity-60">
             <span aria-hidden="true">×</span>
           </button>
         </div>

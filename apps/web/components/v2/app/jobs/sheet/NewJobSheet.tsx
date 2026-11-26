@@ -220,7 +220,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
 
   const unclear = plan?.blockers.includes("unclear_who") === true;
   const folded = plan !== null && !unclear && !ideasOpen;
-  const chip = "jb-press relative inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3.5 text-[14px] font-semibold before:absolute before:-inset-y-1 before:inset-x-0 before:content-['']";
+  const chip = "jb-press relative inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-md border px-3.5 text-[14px] font-semibold before:absolute before:-inset-y-1 before:inset-x-0 before:content-['']";
 
   return (
     <div data-part="new-job-sheet" className="fixed inset-0 z-[85] flex items-end justify-center md:items-stretch md:justify-end">
@@ -232,7 +232,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
         aria-labelledby="njs-title"
         tabIndex={-1}
         onKeyDown={onKeyDown}
-        className="jb-sheet relative flex h-[92dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-surface text-ink shadow-[var(--v2-shadow)] outline-none md:h-auto md:max-h-none md:w-[520px] md:max-w-full md:rounded-l-3xl md:rounded-tr-none"
+        className="jb-sheet relative flex h-[92dvh] w-full flex-col overflow-hidden rounded-t-xl bg-surface text-ink shadow-[var(--v2-shadow)] outline-none md:h-auto md:max-h-none md:w-[520px] md:max-w-full md:rounded-l-xl md:rounded-tr-none"
       >
         <span aria-hidden="true" className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-edge opacity-70 md:hidden" />
         <header className="flex items-center justify-between gap-3 px-4 pb-2 pt-2 md:px-5 md:pt-4">
@@ -248,11 +248,11 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
             <label htmlFor="njs-say" className="text-[15px] font-bold leading-snug text-ink">
               {t("jobs.tpl.say.label")}
             </label>
-            <div className="rounded-2xl border border-brand-edge bg-surface p-2 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--v2-brand)_25%,transparent)]">
+            <div className="rounded-xl border border-brand-edge bg-surface p-2 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--v2-brand)_25%,transparent)]">
               <textarea ref={boxRef} id="njs-say" name="job-say" rows={2} maxLength={PLAN_TEXT_MAX} value={text} onChange={(e) => setText(e.target.value)} onKeyDown={onBoxKey} placeholder={t("jobs.new.placeholder")} data-voice="allow" className="block w-full resize-none rounded-xl border-0 bg-transparent px-2 py-1.5 text-[16px] leading-snug text-ink outline-none placeholder:text-muted" />
               <div className="flex items-center justify-end gap-2">
                 <VoiceMic target={boxRef} size="icon" />
-                <button type="submit" aria-label={t("jobs.new.go")} disabled={planning} className="jb-press grid size-11 shrink-0 place-items-center rounded-full border border-brand-edge bg-brand text-on-brand disabled:opacity-60">
+                <button type="submit" aria-label={t("jobs.new.go")} disabled={planning} className="jb-press grid size-11 shrink-0 place-items-center rounded-md border border-brand-edge bg-brand text-on-brand disabled:opacity-60">
                   <ArrowRight aria-hidden="true" className="size-5" />
                 </button>
               </div>
@@ -269,7 +269,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
             ) : null}
           </form>
           {unclear ? (
-            <p role="status" data-part="plan-unclear" className="jb-enter m-0 rounded-2xl bg-surface-2 px-4 py-3 text-[15px] leading-snug text-ink">
+            <p role="status" data-part="plan-unclear" className="jb-enter m-0 rounded-xl bg-surface-2 px-4 py-3 text-[15px] leading-snug text-ink">
               {t("jobs.new.unclear")}
             </p>
           ) : null}
@@ -278,8 +278,8 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
           {loaded.state === "loading" ? (
             <div data-part="ideas-loading" role="status" aria-label={t("jobs.tpl.loading")} className="flex flex-col gap-3">
               <Skeleton className="h-5 w-1/2" />
-              <Skeleton className="h-40 w-full rounded-2xl" />
-              <Skeleton className="h-40 w-full rounded-2xl" />
+              <Skeleton className="h-40 w-full rounded-xl" />
+              <Skeleton className="h-40 w-full rounded-xl" />
             </div>
           ) : null}
           {loaded.state === "failed" ? (
@@ -294,7 +294,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
           ) : null}
 
           {folded && load ? (
-            <button type="button" data-action="show-ideas" onClick={() => setIdeasOpen(true)} className="jb-press flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-4 text-left text-[15px] font-semibold text-ink">
+            <button type="button" data-action="show-ideas" onClick={() => setIdeasOpen(true)} className="jb-press flex min-h-12 items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 text-left text-[15px] font-semibold text-ink">
               <span>{t("jobs.tpl.folded")}</span>
               <ChevronDown aria-hidden="true" className="size-5 text-muted" />
             </button>
@@ -337,10 +337,10 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
                     {groups.map((g) => {
                       const open = openGoal === g.goal;
                       return (
-                        <li key={g.goal} data-goal={g.goal} className="overflow-hidden rounded-2xl border border-line bg-surface">
+                        <li key={g.goal} data-goal={g.goal} className="overflow-hidden rounded-xl border border-line bg-surface">
                           <button type="button" aria-expanded={open} onClick={() => setOpenGoal(open ? null : g.goal)} className="flex min-h-[52px] w-full items-center gap-3 px-3.5 py-2 text-left">
                             <span className="min-w-0 flex-1 text-[15px] font-bold text-ink">{t(`jobs.tpl.goal.${g.goal}`)}</span>
-                            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-surface-2 px-2 text-[13px] font-bold text-ink">{g.templates.length}</span>
+                            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded bg-surface-2 px-2 text-[13px] font-bold text-ink">{g.templates.length}</span>
                             <ChevronDown aria-hidden="true" className={`size-[18px] text-muted transition-transform ${open ? "rotate-180" : ""}`} />
                           </button>
                           {open ? (
@@ -351,7 +351,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
                                 return (
                                   <li key={tpl.id} data-idea={tpl.id} className="border-t border-line">
                                     <button type="button" aria-expanded={idea} onClick={() => setOpenIdea(idea ? null : tpl.id)} className="flex min-h-14 w-full items-center gap-3 px-3.5 py-2 text-left">
-                                      <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-surface-2 text-ink">
+                                      <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-xl bg-surface-2 text-ink">
                                         <Icon className="size-[18px]" />
                                       </span>
                                       <span className="min-w-0 flex-1">

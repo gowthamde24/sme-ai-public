@@ -18,10 +18,10 @@ export function BusinessLogo({ name, url, px = 40 }: { name: string; url: string
   const size = px >= 40 ? "size-10 text-base" : "size-8 text-sm";
   if (url && failed !== url) {
     // eslint-disable-next-line @next/next/no-img-element -- a signed address of the business's own picture: next/image would proxy it
-    return <img src={url} alt="" data-business-logo="image" onError={() => setFailed(url)} className={`${size} shrink-0 rounded-lg border border-line bg-surface object-contain`} />;
+    return <img src={url} alt="" data-business-logo="image" onError={() => setFailed(url)} className={`${size} shrink-0 rounded-full border border-line bg-surface object-contain`} />;
   }
   return (
-    <span data-business-logo="letters" aria-hidden="true" className={`${size} grid shrink-0 place-items-center rounded-lg bg-brand font-display font-bold text-on-brand`}>
+    <span data-business-logo="letters" aria-hidden="true" className={`${size} grid shrink-0 place-items-center rounded-full round-ok bg-brand font-display font-bold text-on-brand`}>
       {initialsOf(name)}
     </span>
   );

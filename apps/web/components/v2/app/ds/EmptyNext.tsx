@@ -10,7 +10,7 @@ import { btnMain } from "../ui";
  */
 export function EmptyNext({ title, text, action, help = null }: { title: string; text: string; action: { href: string; label: string }; help?: ReactNode }) {
   return (
-    <section data-part="empty-next" className="mx-auto flex max-w-xl flex-col items-center gap-3 rounded-2xl border border-line bg-surface px-6 py-10 text-center shadow-[var(--v2-shadow)]">
+    <section data-part="empty-next" className="mx-auto flex max-w-xl flex-col items-center gap-3 rounded-xl border border-line bg-surface px-6 py-10 text-center shadow-[var(--v2-shadow)]">
       <Orb px={72} state="ambient" />
       <h2 className="font-display text-xl font-semibold">{title}</h2>
       <p className="text-base text-muted">{text}</p>

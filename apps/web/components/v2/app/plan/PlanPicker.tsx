@@ -43,7 +43,7 @@ export function PlanPicker({ words, main, calls, currentId, canStart, blocked, m
       <li key={p.id} data-plan={p.id} className={`rounded-xl border p-4 ${chosen === p.id ? "border-brand-edge bg-brand-bg" : "border-line bg-surface"}`}>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="font-display text-xl font-semibold">{p.name}</h3>
-          {mine ? <span className="rounded-full border border-brand-edge bg-brand-bg px-2.5 py-0.5 text-sm font-semibold text-brand-text">{t("plan.picker.current")}</span> : null}
+          {mine ? <span className="rounded-md border border-brand-edge bg-brand-bg px-2.5 py-0.5 text-sm font-semibold text-brand-text">{t("plan.picker.current")}</span> : null}
         </div>
         <p className="mt-1 text-base">{p.priceInr === null ? t("plan.price.soon") : `₹${num(p.priceInr)}`}</p>
         <dl className="mt-3 flex flex-col gap-1.5 text-sm">

@@ -34,7 +34,7 @@ export function LowStock({ items, canCount, base, count, words, countsAvailable 
     });
   const asked = (i: LowStockItem) => (i.askedThisWeek > 0 ? t(i.askedIsApproximate ? "ls.asked.about" : "ls.asked", { n: i.askedThisWeek }) : null);
   return (
-    <section aria-labelledby="ls-title" className="flex flex-col gap-3 rounded-[22px] border border-line bg-surface p-4" data-part="low-stock">
+    <section aria-labelledby="ls-title" className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4" data-part="low-stock">
       <h2 id="ls-title" className="m-0 font-display text-lg font-bold">
         {t("ls.title")}
       </h2>

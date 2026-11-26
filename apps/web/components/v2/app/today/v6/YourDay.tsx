@@ -33,7 +33,7 @@ export default function YourDay({ view, words, tenantId, mockLive, liveCalls = [
     );
   }
   return (
-    <section data-part="your-day" aria-labelledby="your-day-h" className="min-w-0 rounded-[20px] border border-line bg-surface px-5 pb-2.5 pt-4 shadow-[var(--v2-shadow)]">
+    <section data-part="your-day" aria-labelledby="your-day-h" className="min-w-0 rounded-xl border border-line bg-surface px-5 pb-2.5 pt-4 shadow-[var(--v2-shadow)]">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-[12.5px] text-muted">
         <h2 id="your-day-h" className="min-w-0">
           <b className="mr-2.5 font-display text-[15px] text-ink">{t("tv6.day.title")}</b>

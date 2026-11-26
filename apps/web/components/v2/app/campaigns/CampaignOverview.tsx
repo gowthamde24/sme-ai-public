@@ -17,7 +17,7 @@ export function CampaignOverview({ base, campaign, words, canEdit, calls = null,
   return (
     <div data-part="overview" className="flex flex-col gap-4">
       {campaign.issues.length > 0 && campaign.status === "draft" ? (
-        <section aria-labelledby="ov-issues" className="rounded-2xl border border-amber-text bg-amber-bg p-4">
+        <section aria-labelledby="ov-issues" className="rounded-xl border border-amber-text bg-amber-bg p-4">
           <h2 id="ov-issues" className="font-display text-lg font-bold text-amber-text">{say(words, "camp.ap.issues")}</h2>
           <ul className="mt-1 list-inside list-disc text-base text-amber-text">{campaign.issues.map((i) => (<li key={i}>{campaign.issue_text[i] ?? say(words, "camp.ap.issue.other")}</li>))}</ul>
         </section>

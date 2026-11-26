@@ -29,9 +29,9 @@ export type CardActions = {
   mark?: (prospectId: string, input: { daysAgo: ContactDaysAgo; note: string }) => Promise<Reply<Prospect>>;
 };
 
-const chip = "inline-flex min-h-8 items-center whitespace-nowrap rounded-full px-3 text-sm font-bold";
+const chip = "inline-flex min-h-8 items-center whitespace-nowrap rounded-md px-3 text-sm font-bold";
 const CHIP: Record<ReturnType<typeof chipOf>, string> = { call_ready: "bg-[#ff773c] text-[#1e1e24]", needs_owner: "border-2 border-ink text-ink", skipped: "bg-surface-2 text-muted", other: "bg-surface-2 text-ink" };
-const btnNot = "inline-flex min-h-11 items-center justify-center rounded-full border-2 border-edge bg-surface px-4 font-bold text-ink disabled:opacity-60";
+const btnNot = "inline-flex min-h-11 items-center justify-center rounded-md border-2 border-edge bg-surface px-4 font-bold text-ink disabled:opacity-60";
 const btnLink = "inline-flex min-h-11 items-center text-sm font-semibold text-brand-text underline underline-offset-4 disabled:opacity-60";
 
 /**
@@ -83,7 +83,7 @@ export function ProspectCards({ items, words, base, canPractice, canSearch, labe
           const line = reasonLine(p, t);
           const factsLine = facts(p, t);
           return (
-            <li key={p.id} data-prospect={p.id} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3.5">
+            <li key={p.id} data-prospect={p.id} className="flex flex-col gap-2 rounded-xl border border-line bg-surface p-3.5">
               {jobs ? (
                 <ResearcherCard prospect={p} words={words} base={base} mark={!p.suppressed && p.status !== "not_interested" ? actions.mark : undefined} badges={<>{p.attribution ? <GoogleMark /> : null}{labelFixture && p.source === "fixture" ? <span className={pillClass("info")}>{t("lf.demo")}</span> : null}</>} />
               ) : (

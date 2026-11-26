@@ -22,7 +22,7 @@ function takeAutoTry(now: number): number | null {
 /** For a test: forget the automatic tries. */
 export const resetAutoTries = (): void => void (attempts.length = 0);
 
-const button = "inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-6 text-base font-bold text-on-brand hover:brightness-95";
+const button = "inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-edge bg-brand px-6 text-base font-bold text-on-brand hover:brightness-95";
 
 /**
  * "Try again" (job BW). With `auto` it also tries by itself, after 4 and then 8 seconds (a little jittered), only while the device is online and the tab is in front, and says so ("Trying again in 4 s…");

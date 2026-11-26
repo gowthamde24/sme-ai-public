@@ -23,7 +23,7 @@ const leadLabel = (h: LeadChoice) => [h.customer ?? h.contactName ?? "", h.custo
 function Preview({ photos, text, name, words }: { photos: readonly PhotoData[]; text: string; name: string; words: TodayWords }) {
   return (
     <div data-part="preview" className="flex max-w-sm flex-col gap-1">
-      <div className="rounded-2xl rounded-tl-sm border border-green-text bg-green-bg p-2">
+      <div className="rounded-xl rounded-tl-sm border border-green-text bg-green-bg p-2">
         {photos.length > 0 ? (
           <div className={`grid gap-1 overflow-hidden rounded-xl ${photos.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
             {photos.map((ph, i) => (
@@ -116,7 +116,7 @@ export function SendToCustomer({ itemId, name, photos, words, actions, lead: pre
 
   if (result && result.ok) {
     return (
-      <section aria-labelledby="send-heading" data-part="send" className="flex flex-col gap-3 rounded-[20px] border border-line bg-surface p-4 md:p-5">
+      <section aria-labelledby="send-heading" data-part="send" className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 md:p-5">
         <h2 id="send-heading" className="font-display text-2xl font-bold leading-tight">
           {say(words, "catalogue.send.title")}
         </h2>
@@ -153,7 +153,7 @@ export function SendToCustomer({ itemId, name, photos, words, actions, lead: pre
   }
 
   return (
-    <section aria-labelledby="send-heading" data-part="send" className="flex flex-col gap-4 rounded-[20px] border border-line bg-surface p-4 md:p-5">
+    <section aria-labelledby="send-heading" data-part="send" className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-4 md:p-5">
       <div>
         <h2 id="send-heading" className="font-display text-2xl font-bold leading-tight">
           {say(words, "catalogue.send.title")}

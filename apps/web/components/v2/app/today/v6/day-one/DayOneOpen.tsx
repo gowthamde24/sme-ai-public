@@ -110,7 +110,7 @@ export function DayOneOpen({ name, steps, canGoLive, actions, words, language, h
                 setTalk(true);
               }}
               aria-label={t("dst.talk_live")}
-              className="shrink-0 rounded-full focus-visible:outline-2"
+              className="shrink-0 rounded-full round-ok focus-visible:outline-2"
             >
               <OrbRing size="sm" state="ambient" />
             </button>

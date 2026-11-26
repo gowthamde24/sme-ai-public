@@ -69,7 +69,7 @@ export function FestivalSuggestion({ festival, words, base, actions }: { festiva
   return (
     <>
       {!hidden ? (
-        <section data-part="festival-suggestion" aria-label={t("jobs.tpl.fest.eyebrow")} className="jb-enter flex flex-col gap-3 rounded-2xl bg-brand-bg p-3.5">
+        <section data-part="festival-suggestion" aria-label={t("jobs.tpl.fest.eyebrow")} className="jb-enter flex flex-col gap-3 rounded-xl bg-brand-bg p-3.5">
           <p className="m-0 flex items-center gap-2 text-[12px] font-bold uppercase tracking-wider text-brand-text">
             <Sparkles aria-hidden="true" className="size-4" />
             {t("jobs.tpl.fest.eyebrow")}
@@ -77,10 +77,10 @@ export function FestivalSuggestion({ festival, words, base, actions }: { festiva
           </p>
           <p className="m-0 text-[17px] font-semibold leading-snug text-ink">{t(festival.days === 0 ? "jobs.tpl.fest.msg_today" : "jobs.tpl.fest.msg", { festival: festival.name, n: festival.days })}</p>
           <div className="flex flex-wrap gap-2.5">
-            <button ref={yes} type="button" data-action="fest-yes" onClick={() => sheet.show(yes.current, { season: festival.season })} className="jb-press inline-flex min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand">
+            <button ref={yes} type="button" data-action="fest-yes" onClick={() => sheet.show(yes.current, { season: festival.season })} className="jb-press inline-flex min-h-11 items-center justify-center rounded-md border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand">
               {t("jobs.tpl.fest.yes")}
             </button>
-            <button type="button" data-action="fest-later" onClick={later} className="jb-press inline-flex min-h-11 items-center justify-center rounded-full border border-edge bg-surface px-5 text-[15px] font-semibold text-ink">
+            <button type="button" data-action="fest-later" onClick={later} className="jb-press inline-flex min-h-11 items-center justify-center rounded-md border border-edge bg-surface px-5 text-[15px] font-semibold text-ink">
               {t("jobs.tpl.fest.no")}
             </button>
           </div>
@@ -88,9 +88,9 @@ export function FestivalSuggestion({ festival, words, base, actions }: { festiva
       ) : null}
       {toast ? (
         <div role="status" data-part="fest-toast" className="fixed inset-x-0 bottom-24 z-50 flex justify-center px-4 md:bottom-8">
-          <span className="jb-enter flex items-center gap-3 rounded-full bg-ink py-1.5 pl-4 pr-1.5 text-[14px] font-semibold text-bg shadow-[var(--v2-shadow)]">
+          <span className="jb-enter flex items-center gap-3 rounded-md bg-ink py-1.5 pl-4 pr-1.5 text-[14px] font-semibold text-bg shadow-[var(--v2-shadow)]">
             {t("jobs.tpl.fest.hidden")}
-            <button type="button" data-action="fest-undo" onClick={undo} className="inline-flex min-h-9 items-center rounded-full bg-bg px-3.5 text-[14px] font-bold text-ink">
+            <button type="button" data-action="fest-undo" onClick={undo} className="inline-flex min-h-9 items-center rounded-md bg-bg px-3.5 text-[14px] font-bold text-ink">
               {t("jobs.tpl.fest.undo")}
             </button>
           </span>

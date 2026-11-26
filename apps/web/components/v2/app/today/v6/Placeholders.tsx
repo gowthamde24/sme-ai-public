@@ -80,7 +80,7 @@ export const ResultsPlaceholder = () => (
 
 /** What a part says when its reads failed (one quiet sentence, with the page's own words). */
 export const PartUnavailable = ({ children }: { children: ReactNode }) => (
-  <p role="status" data-part="part-unavailable" className="rounded-2xl border border-line bg-surface px-4 py-3 text-base text-muted">
+  <p role="status" data-part="part-unavailable" className="rounded-xl border border-line bg-surface px-4 py-3 text-base text-muted">
     {children}
   </p>
 );

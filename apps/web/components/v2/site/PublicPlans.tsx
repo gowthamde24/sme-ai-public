@@ -37,7 +37,7 @@ export function PublicPlanCards({ t, start }: { t: SiteT; start: { href: string;
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-xl font-semibold">{p.name}</h3>
               {p.recommended ? (
-                <span className="inline-flex items-center rounded-full bg-brand px-2.5 py-0.5 text-sm font-semibold text-on-brand" data-part="recommended">
+                <span className="inline-flex items-center rounded-md bg-brand px-2.5 py-0.5 text-sm font-semibold text-on-brand" data-part="recommended">
                   {t("pp.pop")}
                 </span>
               ) : null}
@@ -94,7 +94,7 @@ export function PublicPlanColumn({ plan, t, start }: { plan: PublicPlan; t: Site
       <div>
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="m-0 font-display text-[26px] font-extrabold tracking-[-0.03em] lg:text-[30px]">{plan.name}</h3>
-          {plan.recommended ? <span className="inline-flex items-center rounded-full bg-[#c2410c] px-2.5 py-0.5 text-sm font-bold text-white">{t("pp.pop")}</span> : null}
+          {plan.recommended ? <span className="inline-flex items-center rounded-md bg-[#c2410c] px-2.5 py-0.5 text-sm font-bold text-white">{t("pp.pop")}</span> : null}
         </div>
         <p className="m-0 mt-2 font-display text-[34px] font-extrabold leading-none tracking-[-0.03em]" data-part="plan-cost">
           {rupees(plan.monthly)} <span className="text-base font-medium tracking-normal text-muted">{t("pp.mo")}</span>
@@ -110,7 +110,7 @@ export function PublicPlanColumn({ plan, t, start }: { plan: PublicPlan; t: Site
         ))}
       </ul>
       <div className="mt-auto flex flex-col gap-2">
-        <Link href={start.href} className={plan.recommended ? "inline-flex min-h-12 items-center justify-center rounded-full bg-[#c2410c] px-6 font-extrabold text-white shadow-[0_10px_24px_-10px_rgba(194,65,12,.8)]" : "inline-flex min-h-12 items-center justify-center rounded-full bg-surface px-6 font-bold shadow-[inset_0_0_0_1.5px_var(--v2-border)]"}>
+        <Link href={start.href} className={plan.recommended ? "inline-flex min-h-12 items-center justify-center rounded-md bg-[#c2410c] px-6 font-extrabold text-white shadow-[0_10px_24px_-10px_rgba(194,65,12,.8)]" : "inline-flex min-h-12 items-center justify-center rounded-md bg-surface px-6 font-bold shadow-[inset_0_0_0_1.5px_var(--v2-border)]"}>
           {start.label}
         </Link>
         <p className="m-0 text-center text-sm text-muted">{t("pp.cta.note")}</p>

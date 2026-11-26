@@ -59,7 +59,7 @@ export default function NotificationPanel({ host, panelRef, id, labels, onClose,
               role="region"
               aria-label={word(labels, "notify.title", "Notifications")}
               data-notify="panel"
-              className="fixed inset-x-3 top-[4.25rem] z-[60] max-h-[calc(100dvh-5.5rem)] overflow-y-auto rounded-2xl border border-line bg-surface p-4 text-ink shadow-[var(--v2-shadow-pop)] md:inset-x-auto md:right-8 md:w-[26rem]"
+              className="fixed inset-x-3 top-[4.25rem] z-[60] max-h-[calc(100dvh-5.5rem)] overflow-y-auto rounded-xl border border-line bg-surface p-4 text-ink shadow-[var(--v2-shadow-pop)] md:inset-x-auto md:right-8 md:w-[26rem]"
             >
               <div className="flex items-center justify-between gap-2">
                 <h2 className="font-display text-xl font-semibold">{word(labels, "notify.title", "Notifications")}</h2>
@@ -100,7 +100,7 @@ export default function NotificationPanel({ host, panelRef, id, labels, onClose,
                           </span>
                           <span className="flex shrink-0 flex-col items-end gap-1 text-sm text-muted">
                             <span>{ago(n.at)}</span>
-                            {isNew ? <span className="rounded-full border border-brand-edge bg-brand-bg px-2 text-sm font-semibold text-brand-text">{word(labels, "notify.new", "New")}</span> : null}
+                            {isNew ? <span className="rounded-md border border-brand-edge bg-brand-bg px-2 text-sm font-semibold text-brand-text">{word(labels, "notify.new", "New")}</span> : null}
                           </span>
                         </Link>
                       </li>

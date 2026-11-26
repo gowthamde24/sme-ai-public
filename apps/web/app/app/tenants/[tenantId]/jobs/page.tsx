@@ -81,10 +81,10 @@ export default async function JobsRoute({ params, searchParams }: PageProps<"/ap
       {jobs ? (
         <JobsList jobs={jobs} filter={f} words={words} base={base} actions={owns ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} suggestions={suggestions} suggestionActions={owns ? { start: startSuggestionAction.bind(null, tenantId) } : null} sheet={sheet ?? { actions: null, load: null, open: false }} tellHref={owns && tellScreens() !== "off" ? `${base}/jobs?tell=1` : null} />
       ) : (
-        <section data-part="jobs-na" className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 md:p-6">
+        <section data-part="jobs-na" className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 md:p-6">
           <p className="m-0 text-ink">{words["jobs.page.na"]}</p>
           <p className="m-0">
-            <Link href={`${base}/ai-team`} prefetch={false} className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-5 text-[15px] font-semibold text-ink no-underline">
+            <Link href={`${base}/ai-team`} prefetch={false} className="inline-flex min-h-11 items-center rounded-md border border-edge bg-surface px-5 text-[15px] font-semibold text-ink no-underline">
               {words["jobs.page.na_team"]}
             </Link>
           </p>

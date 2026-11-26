@@ -50,9 +50,9 @@ export function FieldsSection({ fields, entities, available, canEdit, notice, la
                   <li key={f.code} data-field={f.code} data-active={f.active} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2">
                     <span className={`min-w-0 flex-1 text-base ${f.active ? "font-medium" : "text-muted line-through"}`}>{textIn(f.label, lang)}</span>
                     <span className="text-sm text-muted">{t(`fields.kind.${f.kind}` as "fields.kind.text")}</span>
-                    {f.source === "pack" ? <span className="rounded-full border border-line bg-surface-2 px-2 text-sm text-muted">{t("fields.from_pack")}</span> : null}
-                    {f.required ? <span className="rounded-full border border-line bg-surface-2 px-2 text-sm text-muted">{t("fields.required")}</span> : null}
-                    {f.piiClass !== "none" ? <span className="rounded-full border border-amber-text bg-amber-bg px-2 text-sm font-medium text-amber-text">{t("fields.pii.personal")}</span> : null}
+                    {f.source === "pack" ? <span className="rounded-md border border-line bg-surface-2 px-2 text-sm text-muted">{t("fields.from_pack")}</span> : null}
+                    {f.required ? <span className="rounded-md border border-line bg-surface-2 px-2 text-sm text-muted">{t("fields.required")}</span> : null}
+                    {f.piiClass !== "none" ? <span className="rounded-md border border-amber-text bg-amber-bg px-2 text-sm font-medium text-amber-text">{t("fields.pii.personal")}</span> : null}
                     {editable ? (
                       <form action={setActive}>
                         <input type="hidden" name="field_id" value={f.id} />

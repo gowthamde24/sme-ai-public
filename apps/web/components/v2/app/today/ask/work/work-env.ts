@@ -21,6 +21,6 @@ export type WorkEnv = {
 };
 
 export const cardBox = "mt-2 rounded-xl border border-brand-edge bg-surface p-3";
-export const btnDo = "inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-base font-semibold text-on-brand disabled:opacity-60";
-export const btnOther = "inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
-export const btnSmall = "inline-flex min-h-11 items-center justify-center rounded-full border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
+export const btnDo = "inline-flex min-h-11 flex-1 items-center justify-center rounded-md border border-brand-edge bg-brand px-4 text-base font-semibold text-on-brand disabled:opacity-60";
+export const btnOther = "inline-flex min-h-11 flex-1 items-center justify-center rounded-md border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
+export const btnSmall = "inline-flex min-h-11 items-center justify-center rounded-md border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";

@@ -29,7 +29,7 @@ export function JobsToday({ jobs, words, base, actions, sheet = null, messagesTo
         <h2 id="jobs-today-heading" className="whitespace-nowrap font-display text-xl font-semibold md:text-2xl">
           {t("jobs.today.title")}
         </h2>
-        <span data-count={running.length} className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-surface-2 px-2 text-sm font-bold text-ink">
+        <span data-count={running.length} className="inline-flex h-7 min-w-7 items-center justify-center rounded-md bg-surface-2 px-2 text-sm font-bold text-ink">
           {running.length}
         </span>
         <span className="ml-auto flex shrink-0 items-center gap-1">
@@ -40,7 +40,7 @@ export function JobsToday({ jobs, words, base, actions, sheet = null, messagesTo
         </span>
       </div>
       {messagesToChange > 0 ? (
-        <Link href={`${base}/chats/templates`} prefetch={false} data-part="need-message" data-count={messagesToChange} className="jb-press flex min-h-14 items-center gap-3 rounded-2xl border border-[var(--jb-fail-bg)] bg-surface px-4 py-3 no-underline">
+        <Link href={`${base}/chats/templates`} prefetch={false} data-part="need-message" data-count={messagesToChange} className="jb-press flex min-h-14 items-center gap-3 rounded-xl border border-[var(--jb-fail-bg)] bg-surface px-4 py-3 no-underline">
           <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--jb-fail-soft)] text-ink">
             <MessageSquareWarning className="size-5" />
           </span>
@@ -67,7 +67,7 @@ export function JobsToday({ jobs, words, base, actions, sheet = null, messagesTo
           ))}
         </div>
       ) : (
-        <div className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
+        <div className="flex flex-col divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
           {jobs.map((j) => (
             <JobRow key={j.id} job={j} words={words} base={base} actions={actions} />
           ))}
