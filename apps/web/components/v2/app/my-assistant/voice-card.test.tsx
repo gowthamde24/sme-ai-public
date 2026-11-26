@@ -147,7 +147,7 @@ describe("the voice card, \"Your assistant's voice\" (owner, 20 Nov 2026)", () =
     expect(voice("te-karthik")).toHaveTextContent("In use");
     expect(voice("te-ramya")).toHaveAttribute("data-selected", "false");
     expect(root().querySelector('[data-group="male"]')).toContainElement(voice("te-karthik"));
-    expect(screen.getByText("Saved. New calls use it.")).toBeInTheDocument();
+    expect(screen.getByText(/^Saved: .+ for .+\. New calls use it\.$/)).toBeInTheDocument();
   });
 
   it("when the API still refuses a voice of the other gender (422) the card says so plainly and keeps the previous choice: nothing is made up", async () => {
@@ -156,7 +156,7 @@ describe("the voice card, \"Your assistant's voice\" (owner, 20 Nov 2026)", () =
     expect(await screen.findByRole("alert")).toHaveTextContent("That voice is not available yet.");
     expect(voice("te-ramya")).toHaveAttribute("data-selected", "true");
     expect(voice("te-karthik")).toHaveAttribute("data-selected", "false");
-    expect(screen.queryByText("Saved. New calls use it.")).toBeNull();
+    expect(screen.queryByText(/^Saved/)).toBeNull();
   });
 
   it("the language chips switch the row; each language has its own voices and its own one in use", () => {
@@ -257,7 +257,8 @@ describe("the voice card, \"Your assistant's voice\" (owner, 20 Nov 2026)", () =
     await waitFor(() => expect(choose).toHaveBeenCalledWith("te", "te-kavitha"));
     await waitFor(() => expect(voice("te-kavitha")).toHaveAttribute("data-selected", "true"));
     expect(voice("te-ramya")).toHaveAttribute("data-selected", "false");
-    expect(await screen.findByText("Saved. New calls use it.")).toBeInTheDocument();
+    expect(await screen.findByText("Saved: Kavitha for తెలుగు. New calls use it.")).toBeInTheDocument(); // the voice, the language, and a way to hear it now
+    expect(document.querySelector('[data-part="vc-saved-play"]')).toHaveTextContent("Play sample");
     expect(refresh).toHaveBeenCalled();
     cleanup();
     setup({ choose: vi.fn(async () => ({ ok: false as const, error: "invalid" })) });
@@ -441,4 +442,12 @@ describe("'Sounds like' chips of the open voice list (C1's voice categories)", (
     setup({ open: true });
     expect(document.querySelector('[data-part="vc-sounds"]')).toBeNull();
   });
+
+  it("each language chip shows the voice chosen for IT, and a sentence says a voice is chosen per language (choosing for Telugu leaves English as it is)", () => {
+    setup({}, { choices: { te: "te-ramya" } });
+    expect(document.querySelector('[data-part="vc-per-language"]')).toHaveTextContent("A voice is chosen for each language. A voice chosen for");
+    const chips = [...document.querySelectorAll('[data-part="vc-lang"] button')].map((b) => b.textContent);
+    expect(chips[0]).toContain("· Ramya"); // Telugu shows its voice; the other chips have none chosen, so they show none
+  });
 });
+

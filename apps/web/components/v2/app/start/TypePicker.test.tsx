@@ -33,7 +33,7 @@ describe("What kind of business? (asked once, for a workspace made without a typ
     expect(save).not.toHaveBeenCalled();
     expect(screen.getByText(/You chose Clinic\. Press Continue/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Continue with Clinic" }));
-    await waitFor(() => expect(save).toHaveBeenCalledWith("clinic"));
+    await waitFor(() => expect(save).toHaveBeenCalledWith("clinic", undefined));
     await waitFor(() => expect(refresh).toHaveBeenCalled());
     expect(await screen.findByText("Saved: Clinic. Opening your first steps…")).toBeInTheDocument();
   });
@@ -68,4 +68,23 @@ describe("What kind of business? (asked once, for a workspace made without a typ
     await waitFor(() => expect(refresh.mock.calls.length).toBeGreaterThanOrEqual(2), { timeout: 5000 }); // the first retry comes after 1.5 s (real time: a busy machine cannot make it flaky)
   }, 10_000);
 
+  it("Other asks 'What kind of business is it?' inline (3 to 60 letters, an example); Continue waits for it and sends the words with the code (owner, 26 Nov 2026)", async () => {
+    const save = vi.fn(async () => ({ ok: true as const }));
+    const withOther = [...choices, { id: "other", name: "Other", line: "" }];
+    render(<TypePicker choices={withOther} words={words} save={save} />);
+    expect(screen.queryByLabelText("What kind of business is it?")).toBeNull(); // not asked for the types that need no words
+    fireEvent.click(screen.getByRole("radio", { name: /Other/ }));
+    const field = screen.getByLabelText("What kind of business is it?") as HTMLInputElement;
+    expect(field).toHaveAttribute("placeholder", "For example: tent house");
+    expect(field).toBeRequired();
+    const go = screen.getByRole("button", { name: /Continue/ });
+    expect(go).toBeDisabled();
+    fireEvent.change(field, { target: { value: "ab" } });
+    expect(go).toBeDisabled(); // too short
+    fireEvent.change(field, { target: { value: "  Tent   house " } });
+    expect(go).toBeEnabled();
+    fireEvent.click(go);
+    await waitFor(() => expect(save).toHaveBeenCalledWith("other", "  Tent   house "));
+  });
 });
+

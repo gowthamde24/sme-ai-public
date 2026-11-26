@@ -299,3 +299,6 @@ export const tellScreens = (value: string | undefined = process.env.TELL_SCREENS
  * this number) and "Verify your business" is a status page with the steps and "Start verification". `mock` = a made-up status kept in a cookie (nothing is sent, no document leaves the page), `1` = C1's `/phone-kyc/business` routes, unset = the three-step picker as it was.
  */
 export const kycPerClient = (value: string | undefined = process.env.KYC_PER_CLIENT): ScreenMode => screenMode(value);
+
+/** AI employees (owner, 26 Nov 2026; C1's docs/contracts/employees.md, API flag EMPLOYEES): the AI Team page lists the employees, "New AI employee" is a wizard, each employee has its own page. `1` = the API; unset = off (the menu keeps the jobs page). */
+export const employeeScreens = (value: string | undefined = process.env.EMPLOYEES): ScreenMode => screenMode(value);

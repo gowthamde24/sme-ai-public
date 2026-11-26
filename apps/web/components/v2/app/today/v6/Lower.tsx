@@ -1,23 +1,19 @@
+import { Card, SectionHeading } from "../../Card";
 import type { Say } from "../../words";
 import type { ResultsStage, SourceCost } from "./results-data";
 
 /** One visit of "Today's visits": the time in India ("11:00"), the name, a line under it. */
 export type VisitRow = { id: string; time: string; who: string; line: string | null };
 
-const card = "rounded-[18px] border border-line bg-surface shadow-[var(--v2-shadow)]";
-const h2 = "mb-2.5 font-display text-[17px] font-extrabold";
 
 /** "Today's visits" (the final design): the time in the display font on the left, the name in bold, a line under it. Drawn only when the visits could be read. */
 export function VisitsCard({ rows, t }: { rows: readonly VisitRow[]; t: Say }) {
   return (
-    <section data-part="todays-visits" aria-labelledby="todays-visits-h" className="min-w-0">
-      <h2 id="todays-visits-h" className={h2}>
-        {t("tv6.vis.title")}
-      </h2>
+    <Card data-part="todays-visits" aria-labelledby="todays-visits-h" title={t("tv6.vis.title")} headingId="todays-visits-h">
       {rows.length === 0 ? (
-        <p data-part="empty-note" className={`${card} px-4 py-3.5 text-sm text-muted`}>{t("tv6.vis.none")}</p>
+        <p data-part="empty-note" className="m-0 text-sm text-muted">{t("tv6.vis.none")}</p>
       ) : (
-        <ul className={`${card} px-4 py-1.5`}>
+        <ul className="m-0 list-none p-0">
           {rows.map((r) => (
             <li key={r.id} className="flex gap-3 border-t border-line py-2.5 first:border-t-0">
               <span className="w-12 shrink-0 font-display text-[15px] font-extrabold">{r.time}</span>
@@ -29,7 +25,7 @@ export function VisitsCard({ rows, t }: { rows: readonly VisitRow[]; t: Say }) {
           ))}
         </ul>
       )}
-    </section>
+    </Card>
   );
 }
 
@@ -39,11 +35,8 @@ export function VisitsCard({ rows, t }: { rows: readonly VisitRow[]; t: Say }) {
  */
 export function ResultsCard({ stages, costs, t }: { stages: readonly ResultsStage[]; costs: readonly SourceCost[]; t: Say }) {
   return (
-    <section data-part="results" aria-labelledby="results-h" className="min-w-0">
-      <h2 id="results-h" className={h2}>
-        {t("tv6.res.title")}
-      </h2>
-      <div data-part={stages.length === 0 ? "empty-note" : undefined} className={`${card} p-4`}>
+    <Card data-part="results" aria-labelledby="results-h" title={t("tv6.res.title")} headingId="results-h">
+      <div data-part={stages.length === 0 ? "empty-note" : undefined}>
         {stages.length === 0 ? (
           <p className="text-sm text-muted">{t("tv6.res.none")}</p>
         ) : (
@@ -77,6 +70,6 @@ export function ResultsCard({ stages, costs, t }: { stages: readonly ResultsStag
           </ul>
         ) : null}
       </div>
-    </section>
+    </Card>
   );
 }

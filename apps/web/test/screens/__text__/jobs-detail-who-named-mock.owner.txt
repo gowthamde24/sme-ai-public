@@ -1,4 +1,4 @@
-{label="Jobs"} [Jobs](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Priya
+{label="Your AI team"} [Your AI team](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Priya
 #
 [button type=button: Priya]
 [button type=button: Rename]
@@ -9,11 +9,11 @@ When a customer books a visit, your assistant reminds them on WhatsApp so they c
 Says it is an AI if asked P Priya
 [button type=button: Rename]
 Customers hear: “Priya from Neelambari Silks”
-{label="This job speaks … in a … voice from …."} This job speaks
-<select label="This job speaks … in a … voice from …. (1)">
+{label="This team member speaks … in a … voice from …."} This team member speaks
+<select label="This team member speaks … in a … voice from …. (1)">
   options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn
 in a
-<select label="This job speaks … in a … voice from …. (2)">
+<select label="This team member speaks … in a … voice from …. (2)">
   options: friendly* | respectful | short and quick=quick
 voice from the shop number .
 friendly “Hi Suresh, …” · +91 98480 xxx10

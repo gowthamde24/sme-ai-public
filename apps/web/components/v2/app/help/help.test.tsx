@@ -93,7 +93,7 @@ describe("the '?' of a screen, in the top bar", () => {
     header();
     const button = screen.getByRole("button", { name: "Help for this screen" });
     expect(button).toHaveAttribute("aria-expanded", "false");
-    expect(button.className).toMatch(/min-h-11/);
+    expect(button.className).toMatch(/min-h-\[44px\]/); // 44 px, no border at rest
     expect(screen.queryByRole("region")).toBeNull();
     fireEvent.click(button);
     expect(button).toHaveAttribute("aria-expanded", "true");

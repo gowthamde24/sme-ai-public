@@ -28,7 +28,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <main id="main" className={authMain}>
       <h1 className={authH1}>{w["form.signin.title"]}</h1>
-      <LoginForm next={next} notice={NOTICE_KEYS[notice ?? ""] ? w[NOTICE_KEYS[notice ?? ""]] : undefined} turnstile={turnstileSiteKey()} words={{ email: w["form.email"], password: w["form.password"], submit: w["form.signin.submit"], forgot: w["form.forgot"] }} />
+      <LoginForm next={next} notice={NOTICE_KEYS[notice ?? ""] ? w[NOTICE_KEYS[notice ?? ""]] : undefined} turnstile={turnstileSiteKey()} words={{ email: w["form.email"], password: w["form.password"], submit: w["form.signin.submit"], forgot: w["form.forgot"], showPassword: w["form.password.show"], hidePassword: w["form.password.hide"] }} />
       {providers.google ? (
         <form action={signInWithGoogle} className="flex flex-col" data-part="google-sign-in">
           <button type="submit" className={`${authSecondary} gap-2.5`}>

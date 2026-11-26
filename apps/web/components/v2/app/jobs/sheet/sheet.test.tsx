@@ -192,7 +192,7 @@ describe("the New job sheet", () => {
   });
   it("opens as a dialog with the box, Popular for saree shops (4 live cards), More ideas by goal and Ideas from other businesses", () => {
     sheet(acts());
-    const dlg = screen.getByRole("dialog", { name: "New job" });
+    const dlg = screen.getByRole("dialog", { name: "New team member" });
     expect(within(dlg).getByText("Tell your assistant what you want done")).toBeInTheDocument();
     expect(within(dlg).getByRole("heading", { name: "Popular for saree shops" })).toBeInTheDocument();
     expect(dlg.querySelectorAll('[data-part="popular"] [data-part="template-card"]')).toHaveLength(4);
@@ -340,10 +340,10 @@ describe("the New job sheet", () => {
 describe("where the sheet is opened from", () => {
   it("the New job button opens the sheet (its chunk is loaded on the first touch) and Escape gives the focus back to it", async () => {
     render(<NewJobButton words={words} base={BASE} actions={acts()} />);
-    const btn = screen.getByRole("button", { name: "New job" });
+    const btn = screen.getByRole("button", { name: "New team member" });
     expect(screen.queryByRole("dialog")).toBeNull();
     fireEvent.click(btn);
-    expect(await screen.findByRole("dialog", { name: "New job" })).toBeInTheDocument();
+    expect(await screen.findByRole("dialog", { name: "New team member" })).toBeInTheDocument();
     await screen.findByRole("heading", { name: "Popular for saree shops" });
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
@@ -360,7 +360,7 @@ describe("where the sheet is opened from", () => {
     const a = acts();
     render(<JobsEmpty words={words} base={BASE} actions={a} load={LOAD} />);
     expect(document.querySelectorAll('[data-part="template-card"]')).toHaveLength(3);
-    expect(screen.getByRole("heading", { name: "No jobs yet" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "No team members yet" })).toBeInTheDocument();
     fireEvent.click(within(document.querySelector('[data-template="enquiry_call_right_away"]') as HTMLElement).getByRole("button", { name: "Use this" }));
     await waitFor(() => expect(a.plan).toHaveBeenCalledWith({ templateId: "enquiry_call_right_away", ask: "Call every new saree enquiry right away" }));
   });

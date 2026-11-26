@@ -59,7 +59,7 @@ describe("the Jobs page, the renamed Office", () => {
   });
   it("chips All / Running / Needs you / Paused with their counts; the open one is marked", () => {
     render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
-    expect([...screen.getByRole("navigation", { name: "Filter jobs" }).querySelectorAll("a")].map((a) => a.textContent)).toEqual(["All 8", "Running 5", "Needs you 2", "Paused 1"]);
+    expect([...screen.getByRole("navigation", { name: "Filter your team" }).querySelectorAll("a")].map((a) => a.textContent)).toEqual(["All 8", "Running 5", "Needs you 2", "Paused 1"]);
     expect(screen.getByRole("link", { name: "All 8" })).toHaveAttribute("aria-current", "true");
     expect(screen.getByRole("link", { name: "Paused 1" })).toHaveAttribute("href", `${BASE}/jobs?filter=paused`);
   });
@@ -105,16 +105,16 @@ describe("the Jobs page, the renamed Office", () => {
   });
   it("New job opens the sheet; Sales and Viewer (no actions) have no New job button", async () => {
     render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
-    fireEvent.click(screen.getByRole("button", { name: "New job" }));
-    expect(await screen.findByRole("dialog", { name: "New job" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "New team member" }));
+    expect(await screen.findByRole("dialog", { name: "New team member" })).toBeInTheDocument();
     cleanup();
     render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={null} sheet={{ actions: null, load: null, open: false }} />);
-    expect(screen.queryByRole("button", { name: "New job" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "New team member" })).toBeNull();
   });
   it("New job with no ideas read by the page (load null: a shop with jobs, or the read failed) asks for them when the sheet opens", async () => {
     const a = sheetActions();
     render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: a, load: null, open: false }} />);
-    fireEvent.click(screen.getByRole("button", { name: "New job" }));
+    fireEvent.click(screen.getByRole("button", { name: "New team member" }));
     await waitFor(() => expect(a.load).toHaveBeenCalledTimes(1));
     expect(await screen.findByRole("heading", { name: "Popular for saree shops" })).toBeInTheDocument();
   });
@@ -127,7 +127,7 @@ describe("the Jobs page, the renamed Office", () => {
   });
   it("empty for a role that cannot start jobs, or with no ideas yet: the old plain empty state still works", () => {
     const { container } = render(<JobsList jobs={[]} filter="all" words={words} base={BASE} actions={null} sheet={{ actions: null, load: null, open: false }} />);
-    expect(container.querySelector('[data-empty="jobs"]')).toHaveTextContent("No jobs here.");
+    expect(container.querySelector('[data-empty="jobs"]')).toHaveTextContent("No team members here.");
   });
   it("Needs you with nothing in it says so in plain words", () => {
     const calm = MOCK_PAGE_JOBS.filter((j) => j.status === "running");
@@ -136,10 +136,10 @@ describe("the Jobs page, the renamed Office", () => {
   });
   it("without a sheet (the old flow) New job is still the link to Start a job", () => {
     render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} />);
-    expect(screen.getByRole("link", { name: "New job" })).toHaveAttribute("href", `${BASE}/jobs/new`);
+    expect(screen.getByRole("link", { name: "New team member" })).toHaveAttribute("href", `${BASE}/jobs/new`);
   });
   it("the words of the page: heading sub line and Paused", () => {
-    expect(words["jobs.page.title"]).toBe("Jobs");
+    expect(words["jobs.page.title"]).toBe("Your AI team");
     expect(words["jobs.page.sub"]).toBe("What your assistant is doing for you");
     expect(words["jobs.filter.paused"]).toBe("Paused {n}");
   });
@@ -148,19 +148,19 @@ describe("the Jobs page, the renamed Office", () => {
 describe("Today: JOBS off or no sheet changes nothing", () => {
   it("without a sheet there is no New job button and no suggestion", () => {
     const { container } = render(<JobsToday jobs={MOCK_JOBS} words={words} base={BASE} actions={switches} />);
-    expect(screen.queryByRole("button", { name: "New job" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "New team member" })).toBeNull();
     expect(container.querySelector('[data-part="festival-suggestion"]')).toBeNull();
-    expect(screen.getByRole("link", { name: "See all jobs" })).toHaveAttribute("href", `${BASE}/jobs`);
+    expect(screen.getByRole("link", { name: "See your whole team" })).toHaveAttribute("href", `${BASE}/jobs`);
   });
   it("with a sheet: New job next to Running now, and the festival suggestion only when the calendar has one", async () => {
     const hint = festivalHint([{ season: "diwali", name: { en: "Diwali" }, date: "2026-12-03" }], "en", new Date("2026-11-19T10:00:00"));
     const { container, rerender } = render(<JobsToday jobs={MOCK_JOBS} words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), festival: hint }} />);
-    expect(screen.getByRole("button", { name: "New job" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "New team member" })).toBeInTheDocument();
     await waitFor(() => expect(container.querySelector('[data-part="festival-suggestion"]')).not.toBeNull());
     rerender(<JobsToday jobs={MOCK_JOBS} words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), festival: null }} />);
     expect(container.querySelector('[data-part="festival-suggestion"]')).toBeNull();
     rerender(<JobsToday jobs={MOCK_JOBS} words={words} base={BASE} actions={null} sheet={{ actions: null, festival: hint }} />);
-    expect(screen.queryByRole("button", { name: "New job" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "New team member" })).toBeNull();
     expect(container.querySelector('[data-part="festival-suggestion"]')).toBeNull();
   });
 });

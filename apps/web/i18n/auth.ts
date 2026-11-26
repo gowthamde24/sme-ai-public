@@ -39,7 +39,7 @@ export function authT(lang: Lang): AuthT {
  * Telugu, Kannada and Hindi are drafts for a native reader. The consent line under the form ("By continuing, you agree to the Terms ...") is not here: it stays English until a person has reviewed it.
  */
 export const FORM_KEYS = [
-  "form.signin.title", "form.email", "form.password", "form.signin.submit", "form.forgot", "form.google",
+  "form.signin.title", "form.email", "form.password", "form.password.show", "form.password.hide", "form.signin.submit", "form.forgot", "form.google",
   "form.notice.link", "form.notice.reset", "form.notice.provider", "form.notice.everywhere", "form.notice.nosignup",
   "form.err.invalid", "form.err.check", "form.err.confirm", "form.err.wrong",
   "form.mfa.title", "form.mfa.lead", "form.mfa.label", "form.mfa.verify", "form.mfa.checking", "form.mfa.signout", "form.mfa.err", "form.mfa.wrong",

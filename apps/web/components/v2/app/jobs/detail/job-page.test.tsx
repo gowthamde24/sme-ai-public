@@ -40,11 +40,11 @@ const part = (name: string) => document.querySelector(`[data-part="${name}"]`) a
 describe("the job page: the parts", () => {
   it("shows the name, what it does, the solid chip, the last run, the switch; When as plain labelled dropdowns (owner, 29 Nov: no sentences), at most four", () => {
     view();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Call every new enquiry right away");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Quick responder");
     expect(within(part("job-header")).getByText(/calls them within minutes/)).toBeInTheDocument();
     expect(part("job-header").querySelector(".jb-chip")).toHaveAttribute("data-tone", "info");
     expect(part("last-run")).toHaveTextContent("Last run 9 min ago");
-    expect(screen.getByRole("switch", { name: "Call every new enquiry right away" })).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("switch", { name: "Quick responder" })).toHaveAttribute("aria-checked", "true");
     const when = part("job-when");
     expect(within(when).getByRole("combobox", { name: "Call new enquiries" })).toHaveValue("right_away");
     expect(within(when).getByRole("combobox", { name: "Calls start at" })).toHaveValue("09:30");
@@ -69,7 +69,7 @@ describe("the job page: the parts", () => {
     expect(within(part("who-talks")).getAllByRole("combobox")[0]).toHaveValue("te");
     const href = within(says).getByRole("link", { name: "Change by saying it" }).getAttribute("href")!;
     expect(href.startsWith(`${BASE}?say=`)).toBe(true);
-    expect(decodeURIComponent(href)).toContain("Call every new enquiry right away");
+    expect(decodeURIComponent(href)).toContain("Quick responder");
   });
   it("What it finds out (round ticks), FAQs, More choices as details, Results with the four solid chips", () => {
     view();
@@ -107,7 +107,7 @@ describe("the job page: the parts", () => {
     for (const sel of document.querySelectorAll("select")) expect(sel).toBeDisabled();
     expect(screen.queryByRole("button", { name: "Add a question" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Test call to my phone" })).toBeNull();
-    expect(screen.getByText("Only the owner and admins can change this job.")).toBeInTheDocument();
+    expect(screen.getByText("Only the owner and admins can change this team member.")).toBeInTheDocument();
     cleanup();
     view("followups", null);
     expect(document.querySelector('[data-part="job-failure"] a')).toBeNull();
@@ -166,7 +166,7 @@ describe("the job page: changing things", () => {
     expect(within(part("job-when")).getByRole("combobox", { name: "Call new enquiries" })).not.toHaveAttribute("aria-invalid");
   });
   it("FAQs: a refused answer (422 faq_not_allowed) is said inline and the form stays open; question and answer stop at 300 characters", async () => {
-    const a = acts({ addFaq: vi.fn(async () => ({ ok: false as const, kind: "invalid" as const, error: "A job answer may not promise a price or a discount.", code: "faq_not_allowed" })) });
+    const a = acts({ addFaq: vi.fn(async () => ({ ok: false as const, kind: "invalid" as const, error: "A team member's answer may not promise a price or a discount.", code: "faq_not_allowed" })) });
     view("speed_to_lead", a);
     fireEvent.click(screen.getByRole("button", { name: "Add a question" }));
     expect(screen.getByLabelText("Question")).toHaveAttribute("maxlength", "300");
@@ -174,7 +174,7 @@ describe("the job page: changing things", () => {
     fireEvent.change(screen.getByLabelText("Question"), { target: { value: "Do you give discounts?" } });
     fireEvent.change(screen.getByLabelText("Answer"), { target: { value: "Yes, 20 percent off." } });
     fireEvent.click(screen.getByRole("button", { name: "Add" }));
-    expect(await within(part("job-faqs")).findByRole("alert")).toHaveTextContent("A job answer may not promise a price or a discount.");
+    expect(await within(part("job-faqs")).findByRole("alert")).toHaveTextContent("A team member's answer may not promise a price or a discount.");
     expect(screen.getByLabelText("Question")).toHaveValue("Do you give discounts?");
   });
   it("Test call: the answer is a plain sentence; in test mode it says nothing was called", async () => {
@@ -245,7 +245,7 @@ describe("the job page: renaming and the switch, with Undo", () => {
     expect(part("toast")).toHaveTextContent("Renamed to Priya");
     fireEvent.click(within(part("toast")).getByRole("button", { name: "Undo" }));
     await waitFor(() => expect(a.rename).toHaveBeenLastCalledWith(""));
-    expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent("Call every new enquiry right away");
+    expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent("Quick responder");
     expect(part("toast")).toBeNull();
   });
   it("Use the plain name clears the name; a name that is not allowed is not sent", async () => {
@@ -258,7 +258,7 @@ describe("the job page: renaming and the switch, with Undo", () => {
     expect(a.rename).not.toHaveBeenCalled();
     fireEvent.click(within(part("rename")).getByRole("button", { name: "Use the plain name" }));
     await waitFor(() => expect(a.rename).toHaveBeenCalledWith(""));
-    expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent("Book and remind store visits");
+    expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent("Visit booker");
     expect(part("toast")).toHaveTextContent("Back to the plain name");
   });
   it("the name box stops at 40 characters", () => {

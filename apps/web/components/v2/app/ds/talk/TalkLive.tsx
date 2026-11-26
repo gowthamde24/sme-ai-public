@@ -120,8 +120,19 @@ const TURN_ERROR: Readonly<Record<string, string>> = {
   action_state: "dst.err.state",
   forbidden: "dst.err.forbidden",
   not_available: "dst.err.unavailable",
+  // the model could not be asked or failed (C1, 26 Nov 2026): honest sentences, not the general "that did not work"
+  model_not_configured: "dst.err.model",
+  assistant_failed: "dst.err.model",
+  model_busy: "dst.err.busy",
+  run_limit_reached: "dst.err.limit",
+  agents_disabled: "dst.err.off",
+  token_expiring: "dst.err.token",
+  tts_unavailable: "dst.err.tts",
   daily_cap_exceeded: "dst.err.cap",
 };
+
+/** The sentences that say "Nothing was done." have a twin without it for a turn whose answer had already come. */
+const withAnswer = (key: string, answered: boolean): string => (answered && (key === "dst.err.turn" || key === "dst.err.model") ? `${key}.answered` : key);
 
 /** The line under the transcript of a real conversation: why it stopped (in plain words, with "Try again" where that helps), or the gentle notices. Never nothing. */
 function Notes({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
@@ -159,7 +170,8 @@ function Notes({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
       ) : null}
       {live.turnProblem && !p ? (
         <p role="status" data-part="talk-turn-problem" data-code={live.turnProblem} className="mt-2 text-sm font-medium text-red-text">
-          {t(TURN_ERROR[live.turnProblem] ?? "dst.err.turn", capVars(live.plan))}
+          {/* "Nothing was done." is dropped when an answer for the turn already arrived (the last line is the assistant's): it would be untrue */}
+          {t(withAnswer(TURN_ERROR[live.turnProblem] ?? "dst.err.turn", live.lines.at(-1)?.who === "assistant"), capVars(live.plan))}
         </p>
       ) : null}
       {live.muted && !p ? (
@@ -198,10 +210,10 @@ const waiting = (live: Live) => (live.real ? (live.planStatus ?? "proposed") ===
  * "Talk live" in place (design system v6): what the command bar shows while it is a live conversation. The real circle (components/v2/Orb) follows the state; a red timer under it; the label "LIVE WITH YOUR ASSISTANT · SPEAKING/LISTENING"; the transcript streams here (the owner's lines small and grey,
  * the assistant's larger, the key numbers in orange); a plan card appears inside with "Yes, start" and "Change". `controls` is the second row: moving sound bars with "Just talk. Interrupt any time.", the language, Mute, Type, End. Voice is mocked on staging (`mock`).
  */
-export function TalkLiveBody({ live, words, language, onType, onAttach, mock = !live.real, afterLine = null, variant = "card", appLang = "en" }: { live: Live; /** The bar's "Attach" button (a file goes into the conversation as a typed message while the voice call goes on); absent = no button. */ onAttach?: () => void; words?: Words; /** The app's language: the time phrase of a plan is written in it (the words arrive already in it). */ appLang?: string; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's composer (the final design): the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row; the orb is outside. */ variant?: "card" | "bar"; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
+export function TalkLiveBody({ live, words, language, onType, onAttach, mock = !live.real, afterLine = null, variant = "card", appLang = "en", voiceHref }: { /** Where the voice that talks to the owner is chosen: the bar says "Voice" with a Change voice link to it. */ voiceHref?: string; live: Live; /** The bar's "Attach" button (a file goes into the conversation as a typed message while the voice call goes on); absent = no button. */ onAttach?: () => void; words?: Words; /** The app's language: the time phrase of a plan is written in it (the words arrive already in it). */ appLang?: string; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's composer (the final design): the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row; the orb is outside. */ variant?: "card" | "bar"; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
   const t = makeT(words);
   const step = usePlanStep(live);
-  if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} onAttach={onAttach} mock={mock} appLang={appLang} />;
+  if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} onAttach={onAttach} mock={mock} appLang={appLang} voiceHref={voiceHref} />;
   const stateWord = stateWordOf(live, t);
   return (
     <div data-part="talk-live" data-talk-state={live.state} className="flex flex-col gap-4">
@@ -220,10 +232,7 @@ export function TalkLiveBody({ live, words, language, onType, onAttach, mock = !
           <ScrollBox live={live} t={t} className="mt-2 flex max-h-56 flex-col gap-2 overflow-y-auto">
             {live.lines.map((l, i) => (
               <div key={i}>
-                <p data-who={l.who} className={l.who === "owner" ? "text-sm text-muted" : "text-xl font-medium leading-snug"}>
-                  <Line text={l.text} />
-                  {l.cut ? <em className="ml-2 text-xs font-medium not-italic text-muted">{t("bv.live.interrupted")}</em> : null}
-                </p>
+                <Bubble l={l} t={t} />
                 {afterLine ? afterLine(l, i) : null}
               </div>
             ))}
@@ -312,6 +321,23 @@ export function TalkLiveBody({ live, words, language, onType, onAttach, mock = !
 }
 
 /** The live conversation as Today's composer draws it (the final design): inside the glass box, the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row. The orb is OUTSIDE the box and follows the conversation. Same state and lines as the card; only the layout differs. */
+/**
+ * One line of the live conversation as a chat bubble (owner, 26 Nov 2026): the OWNER's words on the right in a bordered bubble (the same look as the thread after the session ends), the assistant's on the left in its own bubble; words still being heard in a lighter, dashed one; "Interrupted" a small tag under the bubble.
+ * Who is speaking is said to screen readers (the visible "YOU / YOUR ASSISTANT" labels are gone: the side and the colour say it).
+ */
+function Bubble({ l, t }: { l: TalkLine; t: ReturnType<typeof makeT> }) {
+  const mine = l.who === "owner";
+  return (
+    <div data-who={l.who} data-interim={l.interim ? "true" : undefined} className={`flex flex-col ${mine ? "items-end" : "items-start"}`}>
+      <p className={`m-0 max-w-[88%] rounded-2xl px-3.5 py-2 [overflow-wrap:anywhere] ${mine ? "border border-line bg-surface text-base leading-[1.45] text-ink" : "bg-surface-2 text-[17px] font-medium leading-[1.45] text-ink"} ${l.interim ? "border-dashed opacity-70" : ""}`}>
+        <span className="sr-only">{t(mine ? "tv6.talk.you" : "tv6.talk.assistant")}: </span>
+        <Line text={l.text} />
+      </p>
+      {l.cut ? <small data-part="interrupted" className="mt-0.5 text-xs font-medium text-muted">{t("bv.live.interrupted")}</small> : null}
+    </div>
+  );
+}
+
 /** The transcript's own scrolling box: it follows the newest line, and a reader who scrolled up on purpose gets a "↓ New" pill instead (owner, 14 Nov). */
 function ScrollBox({ live, t, className, children }: { live: Live; t: ReturnType<typeof makeT>; className: string; children: React.ReactNode }) {
   const last = live.lines[live.lines.length - 1];
@@ -326,7 +352,7 @@ function ScrollBox({ live, t, className, children }: { live: Live; t: ReturnType
   );
 }
 
-function BarBody({ live, t, language, onType, onAttach, mock, appLang }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; onAttach?: () => void; mock: boolean; appLang: string }) {
+function BarBody({ live, t, language, onType, onAttach, mock, appLang, voiceHref }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; onAttach?: () => void; mock: boolean; appLang: string; voiceHref?: string }) {
   const step = usePlanStep(live);
   const stateWord = stateWordOf(live, t);
   return (
@@ -343,15 +369,14 @@ function BarBody({ live, t, language, onType, onAttach, mock, appLang }: { live:
           </span>
         </div>
         <div className="min-w-0">
+          {voiceHref ? (
+            <p data-part="talk-voice" className="m-0 mt-1 text-[13px] text-muted">
+              {t("tv6.talk.voice")} <a href={voiceHref} className="font-semibold text-brand-text underline underline-offset-2">{t("tv6.talk.voice.change")}</a>
+            </p>
+          ) : null}
           <ScrollBox live={live} t={t} className="mt-2 flex max-h-72 flex-col gap-2 overflow-y-auto">
             {live.lines.map((l, i) => (
-              <div key={i} data-who={l.who}>
-                {live.lines[i - 1]?.who !== l.who ? <small className="mb-0.5 block text-[11px] font-medium uppercase tracking-[0.06em] text-muted">{t(l.who === "owner" ? "tv6.talk.you" : "tv6.talk.assistant")}</small> : null}
-                <p className={l.who === "owner" ? "text-base leading-[1.45] text-muted" : "text-[19px] font-medium leading-[1.45] text-ink"}>
-                  <Line text={l.text} />
-                  {l.cut ? <em className="ml-2 text-xs font-medium not-italic text-muted">{t("bv.live.interrupted")}</em> : null}
-                </p>
-              </div>
+              <Bubble key={i} l={l} t={t} />
             ))}
           </ScrollBox>
           <StepLine live={live} t={t} />

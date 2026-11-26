@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import { PasswordField } from "@/components/v2/auth/PasswordField";
 import { authAlert, authField, authForm, authHint, authLabel, authRow, authSubmit } from "@/components/v2/auth/ui";
 import type { SignUpInput, SignUpResult } from "@/lib/api/signup";
 
@@ -10,7 +11,7 @@ import { MAX_PASSWORD, MIN_PASSWORD } from "@/lib/auth/password-policy";
 
 export type SignUpAction = (input: SignUpInput) => Promise<SignUpResult>;
 
-export type SignUpWords = { email: string; password: string; passwordHint: string; submit: string; errors: Record<string, string> };
+export type SignUpWords = { email: string; password: string; passwordHint: string; submit: string; errors: Record<string, string>; showPassword?: string; hidePassword?: string };
 
 /**
  * The e-mail way of step 2 (job CL): an address and a password, nothing else. The kind of business comes from step 1 (`businessType`); the name and the business name are not asked (the server derives them, the first
@@ -46,7 +47,7 @@ export function SignUpForm({ action, words, businessType, policyVersions }: { ac
       <label htmlFor="signup-password" className={authLabel}>
         {words.password}
       </label>
-      <input id="signup-password" className={authField} name="password" type="password" autoComplete="new-password" required minLength={MIN_PASSWORD} maxLength={MAX_PASSWORD} />
+      <PasswordField id="signup-password" className={authField} name="password" showLabel={words.showPassword} hideLabel={words.hidePassword} autoComplete="new-password" required minLength={MIN_PASSWORD} maxLength={MAX_PASSWORD} />
       <p className={authHint}>{words.passwordHint}</p>
       {error ? (
         <p role="alert" className={authAlert}>

@@ -1,18 +1,18 @@
-{label="Jobs"} [Jobs](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Call every new enquiry right away
-# Call every new enquiry right away
+{label="Your AI team"} [Your AI team](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Quick responder
+# Quick responder
 When someone enquires, your assistant calls them within minutes, answers their questions and tells you who is coming to the store. Running Last run 9 min ago On
-[button type=button disabled: Call every new enquiry right away]
+[button type=button disabled: Quick responder]
 {label="Who talks"}
 ## Who talks
-Says it is an AI if asked C Call every new enquiry right away Customers hear: “the assistant of Neelambari Silks”
-{label="This job speaks … in a … voice from …."} This job speaks
-<select label="This job speaks … in a … voice from …. (1)" disabled>
+Says it is an AI if asked Q Quick responder Customers hear: “the assistant of Neelambari Silks”
+{label="This team member speaks … in a … voice from …."} This team member speaks
+<select label="This team member speaks … in a … voice from …. (1)" disabled>
   options: the customer’s language=customer | English=en | Telugu=te* | Hindi=hi | Kannada=kn
 in a
-<select label="This job speaks … in a … voice from …. (2)" disabled>
+<select label="This team member speaks … in a … voice from …. (2)" disabled>
   options: friendly* | respectful | short and quick=quick
 voice from the shop number .
-friendly “Hi Suresh, …” · +91 98480 xxx10 What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am → call at 9:30 am. Call every new enquiry right away talks in Telugu from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.
+friendly “Hi Suresh, …” · +91 98480 xxx10 What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am → call at 9:30 am. Quick responder talks in Telugu from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.
 ## When
 Call new enquiries
 <select label="Call new enquiries" disabled>
@@ -57,8 +57,8 @@ Call from
   options: my business number=business_number* | my own number=my_number
 <checkbox label="Tell me on WhatsApp when a store visit is booked" disabled checked>
 Tell me on WhatsApp when a store visit is booked
-<checkbox label="Stop a customer's job after 3 tries" disabled checked>
-Stop a customer's job after 3 tries These always stay on: STOP and quiet hours. They never change here. [All settings for this job](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/rules?all=1)
+<checkbox label="Stop trying one customer after 3 tries" disabled checked>
+Stop trying one customer after 3 tries These always stay on: STOP and quiet hours. They never change here. [All settings for this team member](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/rules?all=1)
 ## Results
 Last 7 days
 38
@@ -70,4 +70,4 @@ store visits booked
 - Ravi Kumar Visit booked, Saturday, 4 pm Done
 - Padma Will be called Friday, 9:30 am Waiting
 - Anitha Number switched off. A WhatsApp was sent instead. WhatsApp sent instead
-Used 8 of your 60 free minutes this month Only the owner and admins can change this job.
+Used 8 of your 60 free minutes this month Only the owner and admins can change this team member.

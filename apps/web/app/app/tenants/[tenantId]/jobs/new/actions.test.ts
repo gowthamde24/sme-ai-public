@@ -50,7 +50,7 @@ describe("start a job: the server actions", () => {
   });
   it("the refusals of the contract are said in our words, and the closed code stays for the screen", async () => {
     h.mode.v = "on";
-    for (const [code, status, text] of [["plan_expired", 409, "This plan has expired: say it again."], ["job_off_by_plan", 403, "This job is not part of your plan."], ["job_unknown_kind", 422, "This kind of job does not exist."], ["consent_required", 422, "First tick that these people wrote to you or that their consent is recorded."], ["jobs_limit", 409, "You have reached the most jobs one workspace can have (100)."]] as const) {
+    for (const [code, status, text] of [["plan_expired", 409, "This plan has expired: say it again."], ["job_off_by_plan", 403, "This team member is not part of your plan."], ["job_unknown_kind", 422, "This kind of team member does not exist."], ["consent_required", 422, "First tick that these people wrote to you or that their consent is recorded."], ["jobs_limit", 409, "Your AI team is full: one workspace can have 100 team members."]] as const) {
       h.req.mockRejectedValueOnce(new ApiRequestError(status, code, "x"));
       expect(await startPlanAction(T, "p-1"), code).toMatchObject({ ok: false, error: text, code });
     }
@@ -128,13 +128,13 @@ describe("a card's Use this, the 101st job and the Lead Finder choices", () => {
   it("real mode: the id goes to the API; 422 job_unknown_template is a plain sentence with the closed code kept", async () => {
     h.mode.v = "on";
     h.req.mockRejectedValueOnce(new ApiRequestError(422, "job_unknown_template", "x"));
-    expect(await planJobAction(T, { templateId: "no_such_card", ask: SAREE_ASK })).toMatchObject({ ok: false, error: "That job idea is not available. Pick another one.", code: "job_unknown_template" });
+    expect(await planJobAction(T, { templateId: "no_such_card", ask: SAREE_ASK })).toMatchObject({ ok: false, error: "That team member idea is not available. Pick another one.", code: "job_unknown_template" });
     expect(JSON.parse(h.req.mock.calls[0][2].body)).toEqual({ template_id: "no_such_card", language: "en" });
   });
   it("the 101st job: 409 jobs_limit on a start is a plain sentence, for a plan and for a suggestion", async () => {
     h.mode.v = "on";
     h.req.mockRejectedValueOnce(new ApiRequestError(409, "jobs_limit", "x"));
-    expect(await startPlanAction(T, "p-1")).toMatchObject({ ok: false, code: "jobs_limit", error: "You have reached the most jobs one workspace can have (100)." });
+    expect(await startPlanAction(T, "p-1")).toMatchObject({ ok: false, code: "jobs_limit", error: "Your AI team is full: one workspace can have 100 team members." });
     h.req.mockRejectedValueOnce(new ApiRequestError(409, "jobs_limit", "x"));
     expect(await startSuggestionAction(T, "followups")).toMatchObject({ ok: false, code: "jobs_limit" });
   });

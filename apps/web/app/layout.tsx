@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   metadataBase: new URL(PUBLIC_URL), // the share pictures and canonical links are absolute (job BS)
   title: BRAND_NAME,
-  description: "One AI assistant that runs jobs for your shop.",
+  description: "One AI assistant that leads an AI team for your shop.",
   // installable on a phone (job BL): the manifest is app/manifest.ts; the circle icons are in public/icons
   applicationName: SHORT_NAME,
   appleWebApp: { capable: true, title: SHORT_NAME, statusBarStyle: "default" },

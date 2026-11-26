@@ -195,9 +195,12 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     // Settings > Business type (Owner only): the current type and the same search box as the first-run page; a change asks first and uses the existing PUT /pack
     const typePack = tenant.role === "owner" ? await readPackCached(user.accessToken, tenantId) : null;
     const typeList = typePack ? await listPacks().catch(() => []) : [];
+    // the owner's own words when the type is Other (shown instead of just "Other")
+    const typeLabel = typePack?.packId === "other" ? (await getWorkspaceProfile(user.accessToken, tenantId).catch(() => null))?.typeLabel ?? null : null;
     const businessTypeNode =
       typePack && typeList.length > 0 ? (
         <BusinessTypeCard
+          currentLabel={typeLabel}
           words={wordsFor(lang, ["bt.", "start.type."])}
           current={{ id: typePack.packId, name: typePack.names[lang] ?? typePack.names.en }}
           choices={typeList.map((p) => ({ id: p.packId, name: p.names[lang] ?? p.names.en, line: p.summary[lang] ?? p.summary.en ?? "", keywords: typeKeywords(p) }))}

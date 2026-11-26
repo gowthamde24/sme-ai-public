@@ -275,6 +275,7 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
       {note?.kind === "saved" ? (
         <p role="status" className={`${okBox} m-0 flex flex-wrap items-center gap-3`} data-part="otp-saved">
           <span>{t("otp.saved")}</span>
+          <span data-part="otp-live">{t("otp.saved.live")}</span>
           {note.token ? (
             <button type="button" disabled={busy} data-undo onClick={() => undo(note.token as string)} className="min-h-11 rounded-full border border-green-text bg-surface px-4 text-sm font-semibold text-green-text">
               {t("otp.undo")}

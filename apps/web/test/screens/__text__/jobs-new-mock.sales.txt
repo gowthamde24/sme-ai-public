@@ -1,2 +1,2 @@
-# Start a job
-Say what you want in your own words. You will see the plan before anything happens. Only the owner or an admin can start a job. You can see the jobs on the Jobs page.
+# Add a team member
+Say what you want in your own words. You will see the plan before anything happens. Only the owner or an admin can add a team member. You can see your team on the AI Team page.

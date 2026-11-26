@@ -10,7 +10,7 @@ export default async function JobsLoading() {
   const words = wordsFor(lang, ["jobs.page."]);
   return (
     <main className={pageMain} lang={lang} aria-busy="true">
-      <PageTop title={words["jobs.page.title"] ?? "Jobs"} sub={words["jobs.page.sub"]} />
+      <PageTop title={words["jobs.page.title"] ?? "Your AI team"} sub={words["jobs.page.sub"]} />
       <div data-part="jobs-skeleton" role="status" aria-label={words["jobs.page.loading"] ?? "Loading"} className="mt-4 flex flex-col gap-4">
         <div className="flex gap-2">
           {["w-20", "w-24", "w-28", "w-16"].map((w) => (

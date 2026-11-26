@@ -1,19 +1,19 @@
-{label="Jobs"} [Jobs](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Call every new enquiry right away
+{label="Your AI team"} [Your AI team](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Quick responder
 #
-[button type=button: Call every new enquiry right away]
+[button type=button: Quick responder]
 [button type=button: Rename]
 When someone enquires, your assistant calls them within minutes, answers their questions and tells you who is coming to the store. Running Last run 9 min ago On
-[button type=button: Call every new enquiry right away]
+[button type=button: Quick responder]
 {label="Who talks"}
 ## Who talks
-Says it is an AI if asked C Call every new enquiry right away
+Says it is an AI if asked Q Quick responder
 [button type=button: Rename]
 Customers hear: “the assistant of Neelambari Silks”
-{label="This job speaks … in a … voice from …."} This job speaks
-<select label="This job speaks … in a … voice from …. (1)">
+{label="This team member speaks … in a … voice from …."} This team member speaks
+<select label="This team member speaks … in a … voice from …. (1)">
   options: the customer’s language=customer | English=en | Telugu=te* | Hindi=hi | Kannada=kn
 in a
-<select label="This job speaks … in a … voice from …. (2)">
+<select label="This team member speaks … in a … voice from …. (2)">
   options: friendly* | respectful | short and quick=quick
 voice from the shop number .
 friendly “Hi Suresh, …” · +91 98480 xxx10
@@ -22,8 +22,8 @@ legend: Voice
 Ramya Recommended
 <radio name=who-voice-66666666-6666-4666-8666-666666666601 label="Kavitha" value=te-kavitha>
 Kavitha
-What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am → call at 9:30 am. Call every new enquiry right away talks in Telugu from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone. Or just ask your assistant
-[button type=button: “Make the visits job speak Telugu.”]
+What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am → call at 9:30 am. Quick responder talks in Telugu from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone. Or just ask your assistant
+[button type=button: “Make Visit booker speak Telugu.”]
 ## When
 Call new enquiries
 <select label="Call new enquiries">
@@ -42,7 +42,7 @@ What it will do: Ravi fills your form at 8:15 pm → thank-you WhatsApp at 9 am 
 - 9 am WhatsApp
 - 9:30 am call
 ## What it says
-[Change by saying it](/app/tenants/22222222-2222-2222-2222-222222222222?say=About%20%E2%80%9CCall%20every%20new%20enquiry%20right%20away%E2%80%9D%3A%20) On a call · English “ Namaskaram Ravi garu, this is the AI assistant of Neelambari Silks. You asked about our silk sarees. Which occasion is it for? ”
+[Change by saying it](/app/tenants/22222222-2222-2222-2222-222222222222?say=About%20%E2%80%9CQuick%20responder%E2%80%9D%3A%20) On a call · English “ Namaskaram Ravi garu, this is the AI assistant of Neelambari Silks. You asked about our silk sarees. Which occasion is it for? ”
 ## What it finds out
 <checkbox label="Which occasion it is for" checked>
 Which occasion it is for
@@ -71,8 +71,8 @@ Call from
   options: my business number=business_number* | my own number=my_number
 <checkbox label="Tell me on WhatsApp when a store visit is booked" checked>
 Tell me on WhatsApp when a store visit is booked
-<checkbox label="Stop a customer's job after 3 tries" checked>
-Stop a customer's job after 3 tries These always stay on: STOP and quiet hours. They never change here. [All settings for this job](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/rules?all=1)
+<checkbox label="Stop trying one customer after 3 tries" checked>
+Stop trying one customer after 3 tries These always stay on: STOP and quiet hours. They never change here. [All settings for this team member](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/rules?all=1)
 ## Results
 Last 7 days
 38

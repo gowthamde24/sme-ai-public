@@ -45,23 +45,23 @@ Visit · Thu, 8 Oct, 11:00 · 3 people · Bridal sarees 11:00
 {label="Running now"}
 ## Running now
 4
-[button type=button: New job]
-[See all jobs](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) [A message of yours needs a change WhatsApp sent it back. Open it to see why and change it. Open](/app/tenants/22222222-2222-2222-2222-222222222222/chats/templates)
+[button type=button: New team member]
+[See your whole team](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) [A message of yours needs a change WhatsApp sent it back. Open it to see why and change it. Open](/app/tenants/22222222-2222-2222-2222-222222222222/chats/templates)
 {label="Your assistant suggests"} Your assistant suggests Diwali is in 14 days. Want me to prepare the festival offer?
 [button type=button: Yes, show me]
 [button type=button: Not now]
-[Call every new enquiry right away Today: called 6 new enquiries · 4 picked up · 2 store visits booked](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666601)
-[button type=button: Call every new enquiry right away]
-[Answer my calls when I can’t Today: answered 3 calls · 1 missed · 2 messages sent](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666602)
-[button type=button: Answer my calls when I can’t]
-[Follow up on price questions and promises 2 messages need a template to go out Needs a fix Send template](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666603)
-[button type=button: Follow up on price questions and promises]
-[Send the festival offer to customers who said yes Ready to send to 38 customers Waiting for your OK](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666604)
-[button type=button: Send the festival offer to customers who said yes]
+[Quick responder Call every new enquiry right away Today: called 6 new enquiries · 4 picked up · 2 store visits booked](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666601)
+[button type=button: Quick responder]
+[Receptionist Answer my calls when I can’t Today: answered 3 calls · 1 missed · 2 messages sent](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666602)
+[button type=button: Receptionist]
+[Follow-up helper Follow up on price questions and promises 2 messages need a template to go out Needs a fix Send template](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666603)
+[button type=button: Follow-up helper]
+[Offer sender Send the festival offer to customers who said yes Ready to send to 38 customers Waiting for your OK](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666604)
+[button type=button: Offer sender]
 [Priya Done today: 3 reminders sent · 2 confirmed Done today](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666605)
 [button type=button: Priya]
-[Find new shops that could buy from me 1 of 1 free search left this month · last search 12 Nov](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666606)
-[button type=button: Find new shops that could buy from me]
+[Lead finder Find new shops that could buy from me 1 of 1 free search left this month · last search 12 Nov](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666606)
+[button type=button: Lead finder]
 {label="Your assistant is working on"}
 ## Your assistant is working on
 Nothing is running. Tell your assistant what to do above, and it shows here once you approve.

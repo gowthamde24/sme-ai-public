@@ -13,7 +13,7 @@ describe("the three paid plans of the public site (owner's final numbers, 19 Nov
       ["Business", 5999, 1500, 100, 29, "priority"],
     ]);
     expect(PUBLIC_PLANS.filter((p) => p.recommended).map((p) => p.name)).toEqual(["Pro"]);
-    expect(PLAN_FACTS).toMatchObject({ gstPercent: 18, extraMinute: 5, extraNumber: 499, freeStart: 50, billingSeconds: 30, numberHoldDays: 30 });
+    expect(PLAN_FACTS).toMatchObject({ gstPercent: 18, extraMinute: 5, extraNumber: 499, freeStart: 50, trialEmail: 30, trialPhone: 100, billingSeconds: 30, numberHoldDays: 30 });
   });
   it("cross over at about 300 and 1,300 minutes a month on calls alone", () => {
     expect(planCrossovers()).toEqual({ paygPro: 300, proBusiness: 1300 });

@@ -1,0 +1,16 @@
+[Back to your AI team](/app/tenants/22222222-2222-2222-2222-222222222222/employees) R
+# Ravi
+Follow-up helper On
+{role=tablist label="Parts of this AI employee"}
+[button type=button: Overview]
+[button type=button: Voice and language]
+[button type=button: Rules]
+[button type=button: Responsibilities]
+[button type=button: Activity]
+[button type=button: Phone]
+[hidden element <div>]
+[hidden element <div>]
+{role=tabpanel label="Rules"}
+[hidden element <div>]
+[hidden element <div>]
+[hidden element <div>]

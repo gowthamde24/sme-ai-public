@@ -40,7 +40,7 @@ describe("Settings > Business type (Owner only)", () => {
     expect(save).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("radio", { name: /Clinic/ }));
     fireEvent.click(screen.getByRole("button", { name: "Change to Clinic" }));
-    await waitFor(() => expect(save).toHaveBeenCalledWith("clinic"));
+    await waitFor(() => expect(save).toHaveBeenCalledWith("clinic", undefined));
     expect(await screen.findByText("Saved: Clinic. The questions and fields for it are added.")).toBeInTheDocument();
     expect(document.querySelector('[data-part="bt-current"]')).toHaveTextContent("Clinic");
     expect(refresh).toHaveBeenCalled();

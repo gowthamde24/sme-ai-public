@@ -12,12 +12,12 @@ Sections
 Using defaults
 {label="Your assistant's voice"}
 ## Your assistant's voice
-Pick a voice for each language. Customers hear it on calls. Test mode: these choices are kept in this browser only. Nothing is sent to your assistant yet. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
+Pick a voice for each language. Customers hear it on calls. Test mode: these choices are kept in this browser only. Nothing is sent to your assistant yet. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices. A voice is chosen for each language. A voice chosen for తెలుగు does not change the other languages.
 {role=group label="Language"}
-[button type=button: తెలుగు]
-[button type=button: हिन्दी]
-[button type=button: ಕನ್ನಡ]
-[button type=button: English]
+[button type=button: తెలుగు· Ramya]
+[button type=button: हिन्दी· Sanya]
+[button type=button: ಕನ್ನಡ· Disha]
+[button type=button: English· Janvi]
 legend: Voice
 {role=radiogroup label="Voice"} Women
 <radio name=vc-voice label="RamyaWomanRecommendedIn use" value=te-ramya checked>

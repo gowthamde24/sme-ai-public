@@ -76,6 +76,8 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
   const [playing, setPlaying] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState<string | null>(null);
   const [note, setNote] = React.useState<Note>(null);
+  // the voice just saved (shown with its language and a Play sample)
+  const [savedVoice, setSavedVoice] = React.useState<{ voice: PickerVoice; language: PickerLang } | null>(null);
   const [busy, startVoice] = React.useTransition();
   const audio = React.useRef<HTMLAudioElement | null>(null);
   const turn = React.useRef(0); // which press the sound that is coming back belongs to
@@ -160,6 +162,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
       const out = await choose(language, v.id).catch(() => ({ ok: false as const, error: "down" }));
       if (out.ok) {
         setNote("saved");
+        setSavedVoice({ voice: v, language });
         router.refresh();
       } else {
         setPicked((p) => ({ ...p, [language]: before }));
@@ -266,13 +269,21 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
       {picker ? (
         <>
           {languages.length > 1 ? (
-            <div role="group" aria-label={t("vt.lang")} className="flex flex-wrap gap-2" data-part="vc-lang">
-              {languages.map((l) => (
-                <button key={l} type="button" aria-pressed={l === lang} onClick={() => (stop(), setNote(null), setLang(l))} className={chip(l === lang)}>
-                  {langNames[l as CallLang]}
-                </button>
-              ))}
-            </div>
+            <>
+              <p className={`${fieldHelp} m-0`} data-part="vc-per-language">{t("vc.per_language", { language: langNames[lang as CallLang] ?? lang })}</p>
+              <div role="group" aria-label={t("vt.lang")} className="flex flex-wrap gap-2" data-part="vc-lang">
+                {languages.map((l) => {
+                  // each language shows the voice chosen for IT: choosing one for Telugu does not touch English
+                  const chosen = picker.voices.find((v) => v.id === (picked[l] ?? picker.active[l] ?? picker.choices[l] ?? ""));
+                  return (
+                    <button key={l} type="button" aria-pressed={l === lang} onClick={() => (stop(), setNote(null), setSavedVoice(null), setLang(l))} className={chip(l === lang)}>
+                      {langNames[l as CallLang]}
+                      {chosen ? <span className="ml-1.5 font-normal opacity-80">· {chosen.name}</span> : null}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
           ) : null}
 
           <fieldset className="m-0 min-w-0 border-0 p-0" data-part="vc-voices">
@@ -360,9 +371,15 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
             )}
             <div className="min-h-5" aria-live="polite">
               {note === "saved" ? (
-                <p role="status" className="m-0 mt-2 text-sm font-semibold text-green-text">
-                  {t("vc.saved")}
-                </p>
+                <div role="status" data-part="vc-saved" className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <p className="m-0 text-sm font-semibold text-green-text">{savedVoice ? t("vc.saved.for", { name: savedVoice.voice.name, language: langNames[savedVoice.language as CallLang] ?? savedVoice.language }) : t("vc.saved")}</p>
+                  {savedVoice ? (
+                    <button type="button" data-part="vc-saved-play" onClick={() => play(savedVoice.voice)} className={playBtn}>
+                      {playing === savedVoice.voice.id ? <Pause aria-hidden="true" className="size-4" /> : <Play aria-hidden="true" className="size-4" />}
+                      {t("vc.play_sample")}
+                    </button>
+                  ) : null}
+                </div>
               ) : null}
             </div>
             {note && note !== "saved" ? (

@@ -1,18 +1,18 @@
-{label="Jobs"} [Jobs](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Follow up on price questions and promises
-# Follow up on price questions and promises
+{label="Your AI team"} [Your AI team](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Follow-up helper
+# Follow-up helper
 When a customer asked a price or you promised to get back, your assistant follows up on WhatsApp so nobody is forgotten. Needs a fix Last run 9 min ago On
-[button type=button disabled: Follow up on price questions and promises]
+[button type=button disabled: Follow-up helper]
 {label="Who talks"}
 ## Who talks
-Says it is an AI if asked F Follow up on price questions and promises Customers hear: “the assistant of Neelambari Silks”
-{label="This job speaks … in a … voice from …."} This job speaks
-<select label="This job speaks … in a … voice from …. (1)" disabled>
+Says it is an AI if asked F Follow-up helper Customers hear: “the assistant of Neelambari Silks”
+{label="This team member speaks … in a … voice from …."} This team member speaks
+<select label="This team member speaks … in a … voice from …. (1)" disabled>
   options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn
 in a
-<select label="This job speaks … in a … voice from …. (2)" disabled>
+<select label="This team member speaks … in a … voice from …. (2)" disabled>
   options: friendly | respectful* | short and quick=quick
 voice from the shop number .
-respectful “Namaskaram Suresh garu, …” · +91 98480 xxx10 What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.
+respectful “Namaskaram Suresh garu, …” · +91 98480 xxx10 What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow-up helper talks in English from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.
 {role=alert} Why: WhatsApp only lets us write first with an approved template once a customer’s 24 hours are over. Pick a template and it goes out after your OK.
 - Sravani Reddy Asked a price 2 days ago. WhatsApp’s 24 hours are over.
 - Padma Asked about the blue Pochampally saree 3 days ago. WhatsApp’s 24 hours are over.
@@ -46,8 +46,8 @@ summary: More choices Rest day, who is left out, and more
 Rest day
 <select label="Rest day" disabled>
   options: none | Sunday=sunday* | Saturday and Sunday=weekend
-<checkbox label="Stop a customer's job after 3 tries" disabled checked>
-Stop a customer's job after 3 tries These always stay on: STOP and quiet hours. They never change here.
+<checkbox label="Stop trying one customer after 3 tries" disabled checked>
+Stop trying one customer after 3 tries These always stay on: STOP and quiet hours. They never change here.
 ## Results
 Last 7 days
 21
@@ -56,4 +56,4 @@ customers followed up
 replied
 - Sravani Reddy Asked a price 2 days ago. WhatsApp’s 24 hours are over. Not sent
 - Padma Asked about the blue Pochampally saree 3 days ago. WhatsApp’s 24 hours are over. Not sent
-Used 8 of your 60 free minutes this month Only the owner and admins can change this job.
+Used 8 of your 60 free minutes this month Only the owner and admins can change this team member.

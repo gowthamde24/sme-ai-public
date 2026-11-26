@@ -1,4 +1,4 @@
-# Start a job
+# Add a team member
 Say what you want in your own words. You will see the plan before anything happens.
 form:
 Say it, or type it
@@ -9,21 +9,21 @@ Say it, or type it
 [button type=button: Ask last month’s silk buyers how they liked it]
 -
 [button type=button: Call yesterday’s missed calls]
-{label="Jobs for a saree shop"}
-## Jobs for a saree shop
+{label="Team members for a saree shop"}
+## Team members for a saree shop
 Picked from your shop’s details and last week’s numbers. One tap starts one. You can change anything after.
 -
-### Call every new enquiry right away
+### Quick responder
 Last week 14 enquiries came in and 9 of them waited more than an hour for you. Says: “Thank you for asking about our silk sarees. Which occasion is it for?”
 [button type=button: Start]
 [button type=button: Look first]
 -
-### Follow up on price questions and promises
+### Follow-up helper
 5 customers asked a price this month and are still waiting for an answer. Says: “Namaskaram Sravani garu, the green Kanchipuram saree is ₹18,500. Shall I keep it for you?”
 [button type=button: Start]
 [button type=button: Look first]
 -
-### Book and remind store visits
+### Visit booker
 3 customers said they would visit. A reminder the day before helps them come. Says: “Reminder: tomorrow 11 am, Neelambari Silks, Begum Bazaar. See you!”
 [button type=button: Start]
 [button type=button: Look first]

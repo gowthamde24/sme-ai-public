@@ -70,7 +70,7 @@ describe("step 1: say it", () => {
     render(<TellAssistant words={words} base={BASE} actions={a} />);
     type("ab");
     fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-    expect(screen.getByRole("alert")).toHaveTextContent("Write a little more about the job (at least 3 letters).");
+    expect(screen.getByRole("alert")).toHaveTextContent("Write a little more about what you want done (at least 3 letters).");
     expect(a.describe).not.toHaveBeenCalled();
   });
   it("the chosen mode and language go with the words", async () => {
@@ -88,7 +88,7 @@ describe("step 2: the draft as plain labelled fields", () => {
   it("shows Name, Who, When, What it does, Language, what it asks first and the hours, and one neutral line: nothing is switched on yet", async () => {
     const a = acts();
     await goOn(a);
-    expect(screen.getByLabelText("Name")).toHaveValue("Call every new enquiry right away");
+    expect(screen.getByLabelText("Name")).toHaveValue("Quick responder");
     for (const label of ["Who", "What it does", "Language of the call", "What it asks first"]) expect(screen.getAllByText(label).length).toBeGreaterThan(0);
     expect(screen.getByLabelText("When it calls a new enquiry")).toHaveValue("right_away");
     expect(screen.getByLabelText("Calls start at")).toBeInTheDocument();
@@ -163,7 +163,7 @@ describe("refusals in plain words", () => {
     render(<TellAssistant words={words} base={BASE} actions={acts()} />);
     type("asdf asdf asdf");
     fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("I could not match that to a job we have. Say it another way, or start from a template.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("I could not match that to a team member we have. Say it another way, or start from a template.");
   });
   it("a kind we do not start from a description (custom) reads as not understood", async () => {
     const odd: TellDraft = { understood: true, templateId: "x_y", kind: "custom", goal: null, fields: [], unclear: [], nearest: [], unclearWords: null };

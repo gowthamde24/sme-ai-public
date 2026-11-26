@@ -1,9 +1,9 @@
-# Jobs
+# Your AI team
 What your assistant is doing for you
-{label="Filter jobs"} [All 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Paused 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
-[button type=button: New job]
-## No jobs yet
-A job is one thing your assistant does for you, like calling every new enquiry. Start with one.
+{label="Filter your team"} [All 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Paused 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
+[button type=button: New team member]
+## No team members yet
+A team member does one thing for you, like calling every new enquiry. Add one to start.
 {label="Call every new enquiry right away"}
 ### Call every new enquiry right away
 Phone call and WhatsApp N Neelambari Silks Business account Hi Lakshmi! Thank you for asking about Kanchipuram silk sarees at Neelambari Silks. We will call you to help you choose. – Neelambari Silks A Assistant Asha, the AI assistant of Neelambari Silks. Hi Lakshmi, you enquired about Kanchipuram silk sarees. A Is now a good time for two quick questions? A thank-you message and a quick call while they are still looking
