@@ -1,5 +1,5 @@
 # Contract: AI employees (C1 -> C2), 26 Nov 2026
-Status: built locally on branch `c1/ai-employees` (migrations 20261231992750, 20261231992760). API flag `EMPLOYEES` (404 on every route while off; web flag name is C2's). Design: `reports/ai-employees-design.md`.
+Status: built locally on branch `c1/ai-employees` (migrations 20261231992750, 992760, 992770). API flag `EMPLOYEES` (404 on every route while off; web flag name is C2's). Design: `reports/ai-employees-design.md`.
 
 A **workspace has one DEFAULT employee** (today's business assistant; its persona stays in "My assistant": name, voices, speed, tone) and, on a paid plan, up to four more (a trial has only the default). Each other employee has its own name, role, responsibilities, instructions, languages, voice per language, opening line, hours, what it may do alone, never-say words, and may answer a phone number. The owner's Today assistant is NOT an employee.
 
@@ -12,6 +12,7 @@ A **workspace has one DEFAULT employee** (today's business assistant; its person
 * `PUT /{id}/phone` `{phone_number_id | null}` the workspace line this employee answers (one employee per line; a line with none goes to the default employee).
 * `GET /{id}/activity?limit&before` -> `{calls: [{id, direction, state, purpose, language, outcome, duration_s, created_at}]}` the calls this employee took (the default employee's include every call made before the feature).
 * `POST /{id}/preview` `{language, text?}` -> `{spoken_text, audio: {mime: "audio/wav", base64}, engine, voice_id}`: its opening line (or `text`, or a sample) in ITS voice. A voice that cannot speak answers 503 `voice_unavailable`; another voice never stands in. 429 `rate_limited` over the day's sample cap.
+* `POST /assign` `{kind: "task" | "job", id, employee_id | null}` (Owner/Admin): the employee that does a task or a job (null: the default). A task's calls are made by it, inside its own hours (outside them the call is held: outcome `unclear`, category `call_back_later`).
 * A test call as an employee: `POST /v1/tenants/{t}/calls/place` takes the new field `employee_id` (the employee that makes it; none = the default).
 
 ## Employee shape
@@ -24,9 +25,10 @@ A **workspace has one DEFAULT employee** (today's business assistant; its person
 409 `employee_limit` (the plan's number of employees), `name_taken` (case-insensitive, among live employees), `last_default`, `settings_elsewhere`; 422 `hours_wider`, `validation_error` (shape or value); 403/404 as usual.
 
 ## What a call does with an employee (flag on)
+* WhatsApp auto-replies: the default employee's block, its name and its never-say words (a reply with one of them is held for the owner).
 * Inbound: the line's employee (Phase 3), else the default. Outbound: the placing task's or test call's employee, else the default. An employee that is not `on`, or is outside its hours, never answers: the default does. The call row is tagged (`ai_employee_id`).
 * The prompt gets ONE block after the platform rules: who it is, what it does, what it may not do alone, the owner's own words (as the owner's wishes, never above the rules). A non-default employee brings its own name, voices (a language it has no voice for gets the catalogue default, never the workspace's choice), speed, style and opening line (the AI disclosure is still added when it is missing). Every employee ADDS its never-say words to the workspace's.
 * Above every employee, in code: the money guard, consent, DND, the calling window, the lawyer-opinion rules, outbound caps, the wallet gate.
 
 ## The owner assistant (plan cards)
-Employees are write tools of the assistant catalogue (`employees.create_employee`, `employees.update_employee`, `employees.set_status`, `employees.set_voice`, `employees.set_phone`): the assistant proposes a plan card, the owner confirms. New setting `assistant_voice`: "change your voice to Ramya" is a plan card (language and voice name found in the catalogue; the Owner's second factor; saved through `PUT /voice-notes/choices/{language}`); a voice that is not in the catalogue for that language is named, never guessed.
+Employees are write tools of the assistant catalogue (`employees.create_employee`, `employees.update_employee`, `employees.set_status`, `employees.set_voice`, `employees.set_phone`): the assistant proposes a plan card, the owner confirms. New setting `assistant_voice`: "change your voice to Ramya" is a plan card (language and voice name found in the catalogue; saved through the screen's own `PUT /ai-assistant/voices {language, voice_id}`, Owner or Admin; Undo puts the old voice back); a voice that is not in the catalogue for that language is named, never guessed. It changes the workspace's voice (My assistant, the default employee), not another employee's.

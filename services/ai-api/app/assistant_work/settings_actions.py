@@ -90,10 +90,10 @@ SETTINGS: dict[str, Setting] = {
         "PUT", sensitive="sending",   # changes the EXISTING standing rule of that source (the route needs the Owner's second factor); `source` only says which one
     ),
     "assistant_voice": Setting(
-        "The assistant's voice", "voice-notes.get_settings", "voice-notes.put_choice",
+        "The assistant's voice", "ai-assistant.get_voices", "ai-assistant.put_voices",
         {"language": Field("choice", choices=("en", "te", "hi", "kn"), label="language"),
          "voice": Field("text", min_len=2, max_len=40, pattern=r"^[A-Za-z0-9 _-]{2,40}$", label="voice")},
-        "PUT",   # (owner, 26 Nov 2026) "change your voice to Ramya": a plan card; the route takes the language in its path and the voice code in its body (see routed._assistant_voice); the Owner's second factor
+        "PUT", second_factor=False,   # (owner, 26 Nov 2026) "change your voice to Ramya": a plan card (routed._assistant_voice); the screen's own route PUT /ai-assistant/voices takes {language, voice_id} (Owner or Admin, no second factor), Undo puts the voice back
     ),
     "assistant_name": Setting(
         "The assistant's name", "ai-assistant.get_name", "ai-assistant.put_name",

@@ -318,16 +318,16 @@ def _voice_world(choices: dict[str, str]) -> tuple[Any, list[dict[str, Any]]]:
         plans.append({"title": title, "steps": steps, **kw})
         return {"plan_id": str(uuid.uuid4()), "title": title, "steps": steps, "status": "proposed", **kw}
 
-    stub = SimpleNamespace(_read=lambda tenant, token, tool, message: {"choices": choices}, _plan=plan)
+    stub = SimpleNamespace(_read=lambda tenant, token, tool, message: {"gender": "female", "languages": [{"language": k, "chosen_id": v, "default_id": v} for k, v in choices.items()]}, _plan=plan)
     return (lambda changes, language="en": RouteTurn._assistant_voice(stub, "t", uuid.uuid4(), changes, uuid.uuid4(), None, language)), plans   # type: ignore[arg-type]
 
 
-def test_a_voice_is_found_by_name_in_the_catalogue_and_offered_as_a_card_with_the_second_factor() -> None:
+def test_a_voice_is_found_by_name_in_the_catalogue_and_offered_as_an_undoable_card() -> None:
     run, plans = _voice_world({"te": "te-kavitha"})
     text, card = run({"language": "te", "voice": "Ramya"})
-    assert card is not None and len(plans) == 1 and plans[0]["second_factor"] is True and plans[0]["owner_only"] is True
+    assert card is not None and len(plans) == 1 and plans[0]["second_factor"] is False and plans[0]["owner_only"] is True
     (step,) = plans[0]["steps"]
-    assert step["tool"] == "voice-notes.put_choice" and step["call"] == {"path": {"language": "te"}, "body": {"voice_code": "te-ramya"}}
+    assert step["tool"] == "ai-assistant.put_voices" and step["undoable"] is True and step["call"] == {"path": {}, "body": {"language": "te", "voice_id": "te-ramya"}}
     assert "Kavitha -> Ramya" in plans[0]["title"] and "Shall I make it" in text
 
 

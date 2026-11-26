@@ -243,8 +243,8 @@ class RouteTurn:
         return w("offer", language, summary=text), card_of_plan(plan)
 
     def _assistant_voice(self, token: str, tenant_id: uuid.UUID, changes: dict[str, Any], message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
-        """"Change your voice to Ramya" (owner, 26 Nov 2026): the voice is found BY NAME in the catalogue for the language (the owner's own, else the language of the chat); a card shows old -> new; the Owner's second factor
-        saves it through the screen's own route (PUT /voice-notes/choices/{language}). A voice that is not in the catalogue for that language is never guessed: the answer names what it could not find."""
+        """"Change your voice to Ramya" (owner, 26 Nov 2026): the voice is found BY NAME in the catalogue for the language (the owner's own, else the language of the chat); a card shows old -> new; the owner's OK
+        saves it through the screen's own route (PUT /ai-assistant/voices). A voice that is not in the catalogue for that language is never guessed: the answer names what it could not find."""
         from app.assistant_work import settings_actions as sa
         from app.conversation.voices import default_config
 
@@ -258,15 +258,15 @@ class RouteTurn:
         current = sa.current_of(spec, self._read(tenant_id, token, spec.get, message_id))
         if current is None:
             return w("unavailable", language), None
-        raw_choices = current.get("choices")
-        choices: dict[str, Any] = raw_choices if isinstance(raw_choices, dict) else {}
-        old_code = str(choices.get(lang) or "")
+        entries = current.get("languages")
+        entry = next((e for e in entries if isinstance(e, dict) and e.get("language") == lang), None) if isinstance(entries, list) else None
+        old_code = str((entry or {}).get("chosen_id") or "")
         new = found[0]
         if old_code == new.id:
             return w("same", language, summary=f"your {lang} voice is already {new.name}"), None
         old_name = catalogue[old_code].name if old_code in catalogue else "the standard voice"
         text = f"The assistant's voice ({lang}): {old_name} -> {new.name}"
-        plan = self._plan(token, tenant_id, message_id, conversation_id, text, {"tool": spec.put, "summary": text, "undoable": False, "call": {"path": {"language": lang}, "body": {"voice_code": new.id}}},
+        plan = self._plan(token, tenant_id, message_id, conversation_id, text, {"tool": spec.put, "summary": text, "undoable": True, "call": {"path": {}, "body": {"language": lang, "voice_id": new.id}}},
                           sensitive=spec.sensitive, owner_only=True, second_factor=spec.second_factor)
         return w("offer", language, summary=text), card_of_plan(plan)
 
