@@ -93,12 +93,12 @@ describe("website mode: the public pages (job DQ)", () => {
     expect(hrefs(html).some((h) => h.startsWith("mailto:hello@"))).toBe(true);
   });
 
-  it("making no claim we cannot prove: no 'stored in India', no 'includes GST', no 'most popular', no customer logos or praise", () => {
-    for (const lang of SITE_LANGS)
-      for (const [, , t] of cases.filter(([, l]) => l === lang)) {
-        const body = text(render(lang, t));
-        expect(body, `${lang} ${name(t)}`).not.toMatch(/stored in India|Data stored|include[sd]? GST|incl\.? GST|most popular|testimonial|trusted by|used by|customers love/i);
-      }
+  // one test per language (the check of every page in five languages in ONE test took over the 3 s limit of the slow-test gate)
+  it.each(SITE_LANGS)("making no claim we cannot prove (%s): no 'stored in India', no 'includes GST', no 'most popular', no customer logos or praise", (lang) => {
+    for (const [, , t] of cases.filter(([, l]) => l === lang)) {
+      const body = text(render(lang, t));
+      expect(body, `${lang} ${name(t)}`).not.toMatch(/stored in India|Data stored|include[sd]? GST|incl\.? GST|most popular|testimonial|trusted by|used by|customers love/i);
+    }
   });
 
   it("without the setting the sign-in and sign-up buttons are back", () => {
