@@ -12,8 +12,8 @@ import type { Say } from "../words";
 import { IntroduceAsField } from "./IntroduceAsField";
 
 const h3 = "text-base font-semibold text-ink";
-const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
-const hearBtn = "mt-2 inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2";
+const chip = (on: boolean) => `min-h-11 rounded-md border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
+const hearBtn = "mt-2 inline-flex min-h-11 items-center rounded-md border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2";
 
 export type SpeaksOut = { ok: true; data: HowSpeaks } | { ok: false; error: string };
 export type SpeaksPanel = { initial: HowSpeaks; /** the test mode (made-up choices kept in this browser): the panel says so */ demo: boolean; save: (change: SpeaksChange) => Promise<SpeaksOut> };
@@ -98,7 +98,7 @@ export function HowAssistantSpeaks({ t, langNames, business, off, panel, securit
   const toneNote = state.tone.source === "migrated" ? t("sp.tone.migrated") : state.tone.source === "pack_default" ? t("sp.tone.pack", { tone: t(`sp.tone.${state.tone.packDefault}`) }) : null;
   const errText = msg && !msg.ok ? (t(`sp.err.${msg.error}`) !== `sp.err.${msg.error}` ? t(`sp.err.${msg.error}`) : msg.error === "introduce" ? t("tt.err.introduce_as") : t("sp.err.rejected")) : null;
   return (
-    <section className="flex flex-col gap-5 rounded-2xl border border-line bg-surface-2/40 p-4" aria-labelledby="sp-h" data-part="sp-panel">
+    <section className="flex flex-col gap-5 rounded-xl border border-line bg-surface-2/40 p-4" aria-labelledby="sp-h" data-part="sp-panel">
       <div>
         <h3 id="sp-h" className="font-display text-lg font-semibold">
           {t("sp.title")}

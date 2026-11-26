@@ -53,10 +53,10 @@ export type VoiceCardProps = {
   testCallHref: string | null;
 };
 
-const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
+const chip = (on: boolean) => `min-h-11 rounded-md border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 const h3 = "m-0 text-[16px] font-semibold text-ink";
 const radio = "size-5 shrink-0 accent-brand-text";
-const playBtn = "inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border border-edge bg-surface px-4 text-sm font-semibold hover:bg-surface-2 disabled:opacity-50";
+const playBtn = "inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-md border border-edge bg-surface px-4 text-sm font-semibold hover:bg-surface-2 disabled:opacity-50";
 type Note = "saved" | "error" | "sample" | "live" | "rate" | "silent" | "unknown" | "unavailable" | "other" | null;
 
 /**
@@ -252,7 +252,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
   const shownFirst = chosenSounds ? mine.filter((v) => v.soundsLike === chosenSounds) : mine.some((v) => v.recommended) ? mine.filter((v) => v.recommended || v.id === inUse) : mine;
   const hiddenRest = chosenSounds ? [] : mine.filter((v) => !shownFirst.includes(v));
   return (
-    <section data-part="mya-voice-card" aria-labelledby="vc-h" className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-4 md:p-5">
+    <section data-part="mya-voice-card" aria-labelledby="vc-h" className="flex flex-col gap-5 rounded-xl border border-line bg-surface p-4 md:p-5">
       <div>
         <h2 id="vc-h" className="m-0 font-display text-[18px] font-bold leading-tight md:text-xl">
           {t("vc.title")}
@@ -298,7 +298,7 @@ export function VoiceCard({ words, uiLang, picker, languages, first, langNames, 
                   {categories.length > 0 ? (
                     <div role="group" aria-label={t("vc.sounds.t")} data-part="vc-sounds" className="mb-2 flex flex-wrap gap-2">
                       {[null, ...categories].map((c) => (
-                        <button key={c ?? "rec"} type="button" aria-pressed={chosenSounds === c} onClick={() => setSounds(c)} className={`min-h-9 rounded-full border px-3.5 text-sm font-semibold ${chosenSounds === c ? "border-ink bg-ink text-bg" : "border-line text-muted"}`}>
+                        <button key={c ?? "rec"} type="button" aria-pressed={chosenSounds === c} onClick={() => setSounds(c)} className={`min-h-9 rounded-md border px-3.5 text-sm font-semibold ${chosenSounds === c ? "border-ink bg-ink text-bg" : "border-line text-muted"}`}>
                           {c === null ? t("vp.recommended") : t(`vc.sounds.${c}`)}
                         </button>
                       ))}

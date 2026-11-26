@@ -56,7 +56,7 @@ export function AskPanel({ session, chips, onClose }: { session: AskSession; chi
         aria-label={w("ask.panel.title")}
         data-ask="panel"
         onKeyDown={onKeyDown}
-        className="absolute inset-x-0 bottom-0 flex h-[70dvh] flex-col overflow-hidden rounded-t-2xl border border-line bg-bg shadow-[var(--v2-shadow-pop)] motion-safe:animate-[ask-panel-in_160ms_ease-out] md:inset-x-auto md:bottom-6 md:right-6 md:h-[560px] md:max-h-[calc(100dvh-3rem)] md:w-[380px] md:rounded-2xl"
+        className="absolute inset-x-0 bottom-0 flex h-[70dvh] flex-col overflow-hidden rounded-t-xl border border-line bg-bg shadow-[var(--v2-shadow-pop)] motion-safe:animate-[ask-panel-in_160ms_ease-out] md:inset-x-auto md:bottom-6 md:right-6 md:h-[560px] md:max-h-[calc(100dvh-3rem)] md:w-[380px] md:rounded-xl"
       >
         <div className="flex min-h-14 shrink-0 items-center gap-3 border-b border-line px-4">
           <Orb px={28} state={s.mood === "listening" ? "listen" : s.asking && !s.answer ? "think" : s.playing || s.asking ? "speak" : "ambient"} analyser={analyser} />

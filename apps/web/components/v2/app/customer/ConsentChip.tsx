@@ -11,7 +11,7 @@ export function ConsentChip({ state, label, how, hint }: { state: "granted" | "w
   const tone = state === "granted" ? "border-green-text bg-green-bg text-green-text" : state === "withdrawn" ? "border-red-text bg-red-bg text-red-text" : "border-line bg-surface-2 text-muted";
   return (
     <div className="mt-1 flex flex-col items-start gap-1" data-part="consent-chip" data-state={state}>
-      <button type="button" title={how} aria-label={`${label}. ${hint}`} aria-expanded={open} onClick={() => setOpen((o) => !o)} className={`inline-flex min-h-11 items-center rounded-full border px-3 text-sm font-semibold ${tone}`}>
+      <button type="button" title={how} aria-label={`${label}. ${hint}`} aria-expanded={open} onClick={() => setOpen((o) => !o)} className={`inline-flex min-h-11 items-center rounded-md border px-3 text-sm font-semibold ${tone}`}>
         {label}
       </button>
       {open ? (

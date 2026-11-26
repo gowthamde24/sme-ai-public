@@ -8,7 +8,7 @@ import { field as inputClass, label as labelClass } from "../visits/styles";
 export type FieldInputWords = { title: string; yes: string; no: string; pick: string };
 export type FieldValues = Readonly<Record<string, CustomValue>>;
 
-const CHECK_CHIP = "inline-flex min-h-11 items-center gap-2 rounded-full border border-edge px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg has-[:checked]:font-semibold has-[:checked]:text-brand-text has-[:disabled]:opacity-60";
+const CHECK_CHIP = "inline-flex min-h-11 items-center gap-2 rounded-md border border-edge px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg has-[:checked]:font-semibold has-[:checked]:text-brand-text has-[:disabled]:opacity-60";
 
 /**
  * The extra fields of a business type on a form (job CL): one input for each active field, of the kind the field says (text, number, date, a choice, several choices, yes or no). Controlled: the form holds `values` and
@@ -18,7 +18,7 @@ export function CustomFieldsInputs({ fields, values, onChange, words, idPrefix, 
   if (fields.length === 0) return null;
   const set = (code: string, v: CustomValue) => onChange({ ...values, [code]: v });
   return (
-    <fieldset data-part="custom-fields" className="flex min-w-0 flex-col gap-4 rounded-2xl border border-line p-4">
+    <fieldset data-part="custom-fields" className="flex min-w-0 flex-col gap-4 rounded-xl border border-line p-4">
       <legend className="px-1 font-display text-lg font-semibold">{words.title}</legend>
       {fields.map((f) => {
         const id = `${idPrefix}-${f.code}`;

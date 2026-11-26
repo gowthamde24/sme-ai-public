@@ -128,7 +128,7 @@ export function ProgrammesView({ title = null, profile, programmes, role, words,
               </select>
             </div>
           </div>
-          <fieldset className="flex min-w-0 flex-col gap-2 rounded-2xl border border-line p-3" disabled={busy || !writer}>
+          <fieldset className="flex min-w-0 flex-col gap-2 rounded-xl border border-line p-3" disabled={busy || !writer}>
             <legend className="px-1 text-sm font-semibold">{say(words, "edu.profile.terms")}</legend>
             {terms.length === 0 ? <p className={help}>{say(words, "edu.profile.terms.none")}</p> : null}
             {terms.map((t, i) => (
@@ -154,7 +154,7 @@ export function ProgrammesView({ title = null, profile, programmes, role, words,
             ))}
             {terms.length < MAX_TERMS ? <div><button type="button" className={secondary} onClick={() => setTerms((c) => [...c, { label: "", start_month: start, end_month: start }])}>{say(words, "edu.profile.term.add")}</button></div> : null}
           </fieldset>
-          <fieldset className="flex min-w-0 flex-col gap-1 rounded-2xl border border-line p-3" disabled={busy || !writer}>
+          <fieldset className="flex min-w-0 flex-col gap-1 rounded-xl border border-line p-3" disabled={busy || !writer}>
             <legend className="px-1 text-sm font-semibold">{say(words, "edu.profile.langs")}</legend>
             <p className={help}>{say(words, "edu.profile.langs.help")}</p>
             <div className="flex flex-wrap gap-x-5">
@@ -188,7 +188,7 @@ export function ProgrammesView({ title = null, profile, programmes, role, words,
           {writer ? <button type="button" className={primary} onClick={() => openProgramme(null)}>{say(words, "edu.prog.add")}</button> : null}
         </div>
         {programmes.length === 0 ? (
-          <p className="rounded-2xl border border-line p-4 text-base text-muted" data-part="empty">{say(words, "edu.prog.empty")}</p>
+          <p className="rounded-xl border border-line p-4 text-base text-muted" data-part="empty">{say(words, "edu.prog.empty")}</p>
         ) : (
           <ul className="flex flex-col gap-3">
             {programmes.map((p) => (
@@ -212,11 +212,11 @@ export function ProgrammesView({ title = null, profile, programmes, role, words,
                         {p.groups.map((g) => (
                           <li key={g.id}>
                             {writer ? (
-                              <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-edge px-4 text-base font-semibold hover:bg-surface-2" onClick={() => openGroup(p, g)} aria-label={say(words, "edu.groups.edit", { label: g.label })}>
+                              <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-md border border-edge px-4 text-base font-semibold hover:bg-surface-2" onClick={() => openGroup(p, g)} aria-label={say(words, "edu.groups.edit", { label: g.label })}>
                                 {g.label}{g.timing ? ` · ${g.timing}` : ""} <span className="text-sm font-normal text-muted">{g.students}</span>{!g.active ? ` · ${say(words, "edu.inactive")}` : ""}
                               </button>
                             ) : (
-                              <span className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line px-4 text-base">{g.label}{g.timing ? ` · ${g.timing}` : ""} <span className="text-sm text-muted">{g.students}</span></span>
+                              <span className="inline-flex min-h-11 items-center gap-2 rounded-md border border-line px-4 text-base">{g.label}{g.timing ? ` · ${g.timing}` : ""} <span className="text-sm text-muted">{g.students}</span></span>
                             )}
                           </li>
                         ))}

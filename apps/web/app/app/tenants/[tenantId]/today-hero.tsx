@@ -63,7 +63,7 @@ export function planOrReport({ tenantId, lang, data, hour, standup }: { tenantId
   // a counted phrase: `key` + ".one" or ".other" (both in the string store), the number in Indian format
   const counted = (key: string, n: number) => (w[`${key}.${n === 1 ? "one" : "other"}`] ?? key).replace("{n}", n.toLocaleString("en-IN"));
   const base = `/app/tenants/${tenantId}`;
-  const card = "flex flex-col gap-3 rounded-[22px] border border-line bg-surface p-4 md:flex-row md:items-center md:justify-between md:p-5";
+  const card = "flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 md:flex-row md:items-center md:justify-between md:p-5";
   if (hour < 16) {
     const calls = data.needs ? data.needs.filter((c) => c.type === "call").length : 0;
     const quotes = data.needs ? data.needs.filter((c) => c.type === "item" && c.item.kind === "quote_approval").length : 0;
@@ -86,7 +86,7 @@ export function planOrReport({ tenantId, lang, data, hour, standup }: { tenantId
           )}
         </div>
         {lines.length ? (
-          <Link href={`${base}/followups`} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#ff773c] px-6 font-extrabold text-[#1e1e24]">
+          <Link href={`${base}/followups`} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-md bg-[#ff773c] px-6 font-extrabold text-[#1e1e24]">
             {w["today.v4.plan.start"]}
           </Link>
         ) : null}
@@ -102,7 +102,7 @@ export function planOrReport({ tenantId, lang, data, hour, standup }: { tenantId
           </h2>
           <p className="m-0 mt-1 text-sm text-muted">{w["today.v4.report.body"]}</p>
         </div>
-        <Link href={`${base}/ai-team`} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-ink px-6 font-extrabold text-bg">
+        <Link href={`${base}/ai-team`} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-md bg-ink px-6 font-extrabold text-bg">
           {w["today.v4.report.open"]}
         </Link>
       </section>

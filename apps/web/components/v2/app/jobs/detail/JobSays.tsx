@@ -31,7 +31,7 @@ export function JobSaysCard({ says, language, values, t, disabled, byKey, jobNam
           <p className="m-0 mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
             {t(`jobs.job.ch.${entry.channel}`)} · {t(`jobs.opt.language.${entry.language}`)}
           </p>
-          <p data-part="bubble" className="m-0 rounded-2xl rounded-tl-sm border border-line bg-surface-2 px-3.5 py-3 text-[15px] leading-relaxed text-ink">
+          <p data-part="bubble" className="m-0 rounded-xl rounded-tl-sm border border-line bg-surface-2 px-3.5 py-3 text-[15px] leading-relaxed text-ink">
             “{entry.text}”
           </p>
         </div>

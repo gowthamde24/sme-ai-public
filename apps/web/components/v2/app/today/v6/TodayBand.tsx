@@ -83,7 +83,7 @@ function DemoCallButton({ demoCall, live, t, tenantId }: { demoCall: NonNullable
   };
   return (
     <span data-part="demo-call" className="inline-flex flex-wrap items-center gap-2 normal-case tracking-normal">
-      <button type="button" onClick={() => void run()} disabled={busy} title={t("tv6.demo.hint")} className="inline-flex min-h-8 items-center rounded-full border border-line bg-surface-2 px-3 text-xs font-semibold text-ink hover:bg-surface disabled:opacity-60 max-md:min-h-11">
+      <button type="button" onClick={() => void run()} disabled={busy} title={t("tv6.demo.hint")} className="inline-flex min-h-8 items-center rounded-md border border-line bg-surface-2 px-3 text-xs font-semibold text-ink hover:bg-surface disabled:opacity-60 max-md:min-h-11">
         {live ? t("tv6.demo.end") : t("tv6.demo.start")}
       </button>
       {failed ? (
@@ -196,7 +196,7 @@ export function TodayBand(p: BandProps) {
       </div>
       {p.briefing !== undefined ? p.briefing : <Briefing facts={p.facts ?? { enquiries: null, visits: null }} top={p.top ?? null} waiting={p.waiting ?? null} words={p.words} />}
       {talking && !desktop ? (
-        <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-black/30">
+        <div className="mt-4 overflow-hidden rounded-xl border border-line bg-black/30">
           <LazyLiveBar variant="bar" words={p.words} appLang={p.lang} language={p.language} {...(isVoiceLang(p.businessLang) ? { voiceLanguage: p.businessLang, stt: p.businessLang } : {})} onClose={() => setTalking(false)} />
         </div>
       ) : null}
@@ -244,7 +244,7 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
             e.preventDefault();
             submit(text);
           }}
-          className="flex min-w-0 items-end gap-2 rounded-[28px] border border-line bg-surface py-1.5 pl-5 pr-1.5 shadow-[0_10px_30px_var(--ds-glow)]"
+          className="flex min-w-0 items-end gap-2 rounded-xl border border-line bg-surface py-1.5 pl-5 pr-1.5 shadow-[0_10px_30px_var(--ds-glow)]"
         >
           <label htmlFor="phone-ask" className="sr-only">
             {t("tv6.cmd.label")}
@@ -267,7 +267,7 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
             className="max-h-28 min-h-12 min-w-0 flex-1 resize-none border-0 bg-transparent p-0 py-3 text-base leading-6 text-ink outline-none placeholder:text-muted"
           />
           {text.trim() !== "" ? (
-            <button type="submit" data-part="phone-send" aria-label={t("tv6.send")} className="grid size-12 shrink-0 place-items-center rounded-full bg-brand text-on-brand">
+            <button type="submit" data-part="phone-send" aria-label={t("tv6.send")} className="grid size-12 shrink-0 place-items-center rounded-md bg-brand text-on-brand">
               <ArrowUp aria-hidden="true" className="size-5" />
             </button>
           ) : null}

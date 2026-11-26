@@ -147,10 +147,10 @@ export function HoursForm({ words, lang, settings, canEdit, save }: { words: Tod
         {closed.length === 0 ? <p className="text-sm text-muted">{say(words, "visits.closed.none")}</p> : null}
         <ul className="flex flex-wrap gap-2">
           {closed.map((d) => (
-            <li key={d} className="inline-flex items-center gap-1 rounded-full border border-line bg-surface-2 pl-3">
+            <li key={d} className="inline-flex items-center gap-1 rounded-md border border-line bg-surface-2 pl-3">
               <span className="font-semibold tabular-nums">{dayShort(d, lang)} {d.slice(0, 4)}</span>
               {canEdit ? (
-                <button type="button" aria-label={say(words, "visits.closed.remove", { date: d })} onClick={() => setClosed((c) => c.filter((x) => x !== d))} className="inline-flex size-11 items-center justify-center rounded-full text-lg font-semibold text-muted hover:bg-line">
+                <button type="button" aria-label={say(words, "visits.closed.remove", { date: d })} onClick={() => setClosed((c) => c.filter((x) => x !== d))} className="inline-flex size-11 items-center justify-center rounded-md text-lg font-semibold text-muted hover:bg-line">
                   <span aria-hidden="true">×</span>
                 </button>
               ) : (

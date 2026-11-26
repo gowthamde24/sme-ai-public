@@ -186,7 +186,7 @@ function ShopStep({ words, lang, q }: { words: TodayWords; lang: Lang; q: (k: st
         <legend className="mb-1.5 block text-sm font-semibold">{say(words, "setup.s1.lang")}</legend>
         <div className="flex flex-wrap gap-2">
           {LANGS.map((l) => (
-            <label key={l} lang={l} className="inline-flex min-h-11 items-center rounded-full border border-edge px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg has-[:checked]:font-semibold has-[:checked]:text-brand-text">
+            <label key={l} lang={l} className="inline-flex min-h-11 items-center rounded-md border border-edge px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg has-[:checked]:font-semibold has-[:checked]:text-brand-text">
               <input
                 type="radio"
                 name="setup-lang"

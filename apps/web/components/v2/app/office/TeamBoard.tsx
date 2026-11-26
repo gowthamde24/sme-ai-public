@@ -25,7 +25,7 @@ export function TeamBoard({ poses, names, stateText, selected, onSelect, label, 
                 type="button"
                 aria-pressed={on}
                 onClick={() => onSelect(on ? null : id)}
-                className={`flex min-h-24 w-full items-center gap-3 rounded-2xl border p-4 text-left ${on ? "border-brand-edge bg-brand-bg" : "border-line bg-surface hover:bg-surface-2"}`}
+                className={`flex min-h-24 w-full items-center gap-3 rounded-xl border p-4 text-left ${on ? "border-brand-edge bg-brand-bg" : "border-line bg-surface hover:bg-surface-2"}`}
               >
                 <AgentMark agent={id === "main" ? undefined : id} px={id === "main" ? 64 : 48} mood={id === "main" && pose === "working" ? "thinking" : undefined} off={pose === "off"} />
                 <span className="flex min-w-0 flex-col gap-0.5">

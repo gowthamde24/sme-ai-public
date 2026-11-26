@@ -62,7 +62,7 @@ export function Mispronounced({ text, language, endpoint, c, messageId }: { text
       <ul className="flex flex-wrap gap-1.5">
         {wordsOf(text).map((w) => (
           <li key={w}>
-            <button type="button" data-chat="mis-word" aria-pressed={word === w} onClick={() => setWord(w)} className={`inline-flex min-h-9 items-center rounded-full border px-3 text-sm ${word === w ? "border-brand-edge bg-brand text-on-brand" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}>
+            <button type="button" data-chat="mis-word" aria-pressed={word === w} onClick={() => setWord(w)} className={`inline-flex min-h-9 items-center rounded-md border px-3 text-sm ${word === w ? "border-brand-edge bg-brand text-on-brand" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}>
               {w}
             </button>
           </li>
@@ -79,10 +79,10 @@ export function Mispronounced({ text, language, endpoint, c, messageId }: { text
           <label htmlFor="mis-sound" className="text-sm font-semibold">{c("bv.chat.mis.sound")}</label>
           <input id="mis-sound" value={sound} maxLength={SOUND_MAX} onChange={(e) => setSound(e.target.value)} autoComplete="off" autoFocus className="min-h-11 w-full rounded-lg border border-edge bg-surface px-3 text-base text-ink" />
           <div className="flex gap-2">
-            <button type="submit" data-chat="mis-save" disabled={state === "saving" || cleanText(sound, SOUND_MAX) === null} className="inline-flex min-h-10 items-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-semibold text-on-brand disabled:opacity-50">
+            <button type="submit" data-chat="mis-save" disabled={state === "saving" || cleanText(sound, SOUND_MAX) === null} className="inline-flex min-h-10 items-center rounded-md border border-brand-edge bg-brand px-4 text-sm font-semibold text-on-brand disabled:opacity-50">
               {c("bv.chat.mis.save")}
             </button>
-            <button type="button" onClick={close} className="inline-flex min-h-10 items-center rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2">
+            <button type="button" onClick={close} className="inline-flex min-h-10 items-center rounded-md border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2">
               {c("bv.chat.mis.cancel")}
             </button>
           </div>

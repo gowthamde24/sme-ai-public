@@ -61,7 +61,7 @@ export function PanelTabs({ sections, label }: { sections: readonly Panel[]; lab
               tabIndex={on ? 0 : -1}
               data-tab={s.id}
               onClick={() => choose(s.id)}
-              className={`inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 text-sm font-semibold md:-mb-px md:rounded-none md:border-0 md:border-b-2 md:px-5 ${on ? "border-ink bg-ink text-bg md:border-brand-edge md:bg-transparent md:text-ink" : "border-edge bg-surface text-muted hover:bg-surface-2 md:border-transparent md:bg-transparent"}`}
+              className={`inline-flex min-h-11 shrink-0 items-center rounded-md border px-4 text-sm font-semibold md:-mb-px md:rounded-none md:border-0 md:border-b-2 md:px-5 ${on ? "border-ink bg-ink text-bg md:border-brand-edge md:bg-transparent md:text-ink" : "border-edge bg-surface text-muted hover:bg-surface-2 md:border-transparent md:bg-transparent"}`}
             >
               {s.label}
             </button>

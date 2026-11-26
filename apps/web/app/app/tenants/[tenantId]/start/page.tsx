@@ -95,7 +95,7 @@ export default async function StartPage({ params }: PageProps<"/app/tenants/[ten
       <h1 className={pageH1}>{t("start.page.title")}</h1>
       <p className={bodyText}>{t("start.page.sub")}</p>
       <div className="mt-6 grid max-w-3xl gap-6">
-        <section className="rounded-[20px] border border-line bg-surface p-4 md:p-5">
+        <section className="rounded-xl border border-line bg-surface p-4 md:p-5">
           <h2 className="mb-3 font-display text-xl font-semibold leading-tight">{t("start.profile.title")}</h2>
           <ProfileStep action={saveProfileAction.bind(null, tenantId)} words={words} name={profile?.name ?? ""} town={profile?.town ?? ""} backHref={base} />
         </section>

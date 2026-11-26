@@ -17,19 +17,19 @@ export function CustomerMap({ places, customers, withoutPlace, sites, w, unread 
         {w["map.honest"]}
       </p>
       {unread.customers || unread.sites ? (
-        <p role="alert" className="m-0 rounded-2xl border border-line bg-surface p-3 text-sm text-muted" data-part="map-unread">
+        <p role="alert" className="m-0 rounded-xl border border-line bg-surface p-3 text-sm text-muted" data-part="map-unread">
           {unread.customers && unread.sites ? w["map.unread.both"] : unread.customers ? w["map.unread.customers"] : w["map.unread.sites"]}
         </p>
       ) : null}
       {places.length === 0 ? (
-        <p className="m-0 rounded-2xl border border-line bg-surface p-4 text-sm text-muted" data-part="map-empty">
+        <p className="m-0 rounded-xl border border-line bg-surface p-4 text-sm text-muted" data-part="map-empty">
           {w["map.empty"]}
         </p>
       ) : (
         <ul className="m-0 grid list-none grid-cols-[minmax(0,1fr)] gap-3 p-0 md:grid-cols-2" data-part="map-places">
           {places.map((p) => (
             <li key={p.key} data-place={p.key}>
-              <section aria-labelledby={`pl-${p.key.replace(/[^a-z0-9]+/g, "-")}`} className="flex h-full flex-col gap-2 rounded-[22px] border border-line bg-surface p-4">
+              <section aria-labelledby={`pl-${p.key.replace(/[^a-z0-9]+/g, "-")}`} className="flex h-full flex-col gap-2 rounded-xl border border-line bg-surface p-4">
                 <h2 id={`pl-${p.key.replace(/[^a-z0-9]+/g, "-")}`} className="m-0 flex flex-wrap items-baseline justify-between gap-x-3 font-display text-lg font-bold">
                   <span className="[overflow-wrap:anywhere]">{p.city}</span>
                   <span className="text-sm font-semibold text-muted">{[p.entries.some((e) => e.kind === "customer") ? count("map.t.customers", p.entries.filter((e) => e.kind === "customer").length) : null, p.entries.some((e) => e.kind === "site") ? count("map.t.sites", p.entries.filter((e) => e.kind === "site").length) : null].filter(Boolean).join(" · ")}</span>

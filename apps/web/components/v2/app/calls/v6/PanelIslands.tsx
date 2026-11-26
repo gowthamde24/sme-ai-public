@@ -37,7 +37,7 @@ export type IslandsProps = {
 };
 
 const pad = "px-[18px]";
-const b2 = "inline-flex min-h-11 grow items-center whitespace-nowrap justify-center gap-1.5 rounded-[9px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
+const b2 = "inline-flex min-h-11 grow items-center whitespace-nowrap justify-center gap-1.5 rounded-xl border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
 
 /**
  * Everything under a call's summary in the right panel (approved mock), as one chunk of its own: the outcome card (a quote with Change / Approve, a booked visit, a call back), the recording player, the transcript as bubbles (the assistant's peach on the left, the caller's grey
@@ -66,7 +66,7 @@ export function PanelIslands(p: IslandsProps) {
             {p.lines.map((l, i) => (
               <li key={i} data-who={l.who} className={`flex flex-col ${l.who === "caller" ? "items-end" : "items-start"}`}>
                 <span className="sr-only">{l.who === "assistant" ? t("calls6.tr.assistant") : p.speaker}</span>
-                <span lang={l.who === "caller" && p.language ? p.language : undefined} className={`max-w-[86%] px-3 py-[9px] text-ink [overflow-wrap:break-word] ${l.who === "assistant" ? "rounded-[12px_12px_12px_4px] bg-brand-bg" : "rounded-[12px_12px_4px_12px] bg-surface-2"}`}>
+                <span lang={l.who === "caller" && p.language ? p.language : undefined} className={`max-w-[86%] px-3 py-[9px] text-ink [overflow-wrap:break-word] ${l.who === "assistant" ? "rounded-[8px_8px_8px_4px] bg-brand-bg" : "rounded-[8px_8px_4px_8px] bg-surface-2"}`}>
                   {l.text}
                 </span>
                 {l.textEn ? (
@@ -94,7 +94,7 @@ function Outcome({ p }: { p: IslandsProps }) {
     const when = p.whenText ?? o.day;
     return (
       <section className={box} data-part="call-outcome" data-outcome="visit" aria-label={t("calls6.outcome.title")}>
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-line bg-surface p-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface p-3">
           <p className="m-0 text-[15px] font-bold text-ink">{when ? t("calls6.outcome.visit.when", { when }) : t("calls6.outcome.visit")}</p>
           <Link href={`${p.base}/visits`} className={`${b2} flex-none`}>
             {t("calls6.outcome.visit.open")}
@@ -106,7 +106,7 @@ function Outcome({ p }: { p: IslandsProps }) {
   if (o.kind === "callback")
     return (
       <section className={box} data-part="call-outcome" data-outcome="callback" aria-label={t("calls6.outcome.title")}>
-        <p className="m-0 rounded-[14px] border border-line bg-surface p-3 text-[15px] font-bold text-ink">{p.whenText ? t("calls6.outcome.callback.when", { when: p.whenText }) : t("calls6.outcome.callback")}</p>
+        <p className="m-0 rounded-xl border border-line bg-surface p-3 text-[15px] font-bold text-ink">{p.whenText ? t("calls6.outcome.callback.when", { when: p.whenText }) : t("calls6.outcome.callback")}</p>
       </section>
     );
   return (

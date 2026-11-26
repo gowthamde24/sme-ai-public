@@ -45,7 +45,7 @@ export function ConnectorsView({ words, ui, page, actions, readOnly, webhooks, d
           <h2 className="m-0 text-[15px] font-semibold text-ink">{t("crm.chip.title")}</h2>
           <ul lang="en" className="m-0 mt-2 flex list-none flex-wrap gap-2 p-0">
             {CHIPS.map((c) => (
-              <li key={c} className="rounded-full border border-line px-3 py-1 text-[14px] text-muted">
+              <li key={c} className="rounded-md border border-line px-3 py-1 text-[14px] text-muted">
                 {c}
               </li>
             ))}

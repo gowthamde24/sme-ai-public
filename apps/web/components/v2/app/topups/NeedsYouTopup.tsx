@@ -19,8 +19,8 @@ export function NeedsYouTopup({ words, usage, href, canBuy }: { words: Words; us
   const stopped = alert.level === 100;
   const run = alert.meter.projectedRunOutOn;
   return (
-    <section aria-labelledby="tu-needs-h" data-topup-needs={alert.level} className="mb-6 flex flex-col gap-2 rounded-[20px] border border-line bg-surface p-4 md:p-5">
-      <p className={`w-fit rounded-full px-2.5 py-1 text-sm font-semibold ${stopped ? "bg-red-bg text-red-text" : "bg-amber-bg text-amber-text"}`}>{t("tu.needs.badge")}</p>
+    <section aria-labelledby="tu-needs-h" data-topup-needs={alert.level} className="mb-6 flex flex-col gap-2 rounded-xl border border-line bg-surface p-4 md:p-5">
+      <p className={`w-fit rounded-md px-2.5 py-1 text-sm font-semibold ${stopped ? "bg-red-bg text-red-text" : "bg-amber-bg text-amber-text"}`}>{t("tu.needs.badge")}</p>
       <h2 id="tu-needs-h" className="font-display text-xl font-semibold">
         {t(`tu.needs.${stopped ? "empty" : "low"}.${short}`)}
       </h2>

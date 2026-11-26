@@ -30,7 +30,7 @@ export function AgentMark({ agent, icon: own, px = 48, mood, off = false, classN
   if (!Icon) return <OrbMark px={px} mood={mood} off={off} className={className} />;
   const size = Math.round(px * 0.5);
   return (
-    <span data-agent-mark={agent} aria-hidden="true" className={`inline-flex shrink-0 items-center justify-center rounded-2xl bg-brand-bg text-brand-text ${dim} ${className}`}>
+    <span data-agent-mark={agent} aria-hidden="true" className={`inline-flex shrink-0 items-center justify-center rounded-xl bg-brand-bg text-brand-text ${dim} ${className}`}>
       <span style={{ display: "flex", width: px, height: px, alignItems: "center", justifyContent: "center" }}>
         <Icon width={size} height={size} strokeWidth={1.9} aria-hidden="true" />
       </span>

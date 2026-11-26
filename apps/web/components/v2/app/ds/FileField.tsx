@@ -144,7 +144,7 @@ export function FileField({ id, words, accept, maxBytes, typeError, sizeError, e
                 <span data-part="file-size">{fileSize(file.size)}</span> · {t("ds.file.change")}
               </span>
             </span>
-            <button type="button" onClick={remove} disabled={disabled} aria-label={t("ds.file.remove")} className="-mr-1 grid size-11 shrink-0 place-items-center rounded-full text-muted hover:bg-surface-2 hover:text-ink disabled:opacity-60">
+            <button type="button" onClick={remove} disabled={disabled} aria-label={t("ds.file.remove")} className="-mr-1 grid size-11 shrink-0 place-items-center rounded-md text-muted hover:bg-surface-2 hover:text-ink disabled:opacity-60">
               <X className="size-5" aria-hidden="true" />
             </button>
           </>

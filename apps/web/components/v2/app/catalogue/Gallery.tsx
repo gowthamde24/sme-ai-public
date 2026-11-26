@@ -24,7 +24,7 @@ export function Gallery({ photos, name, words }: { photos: readonly PhotoData[];
   const [index, setIndex] = React.useState(0);
   if (photos.length === 0)
     return (
-      <div data-gallery="none" className="flex aspect-[4/5] w-full max-w-xl items-center justify-center rounded-2xl border border-dashed border-edge bg-surface-2 p-4 text-center text-base text-muted">
+      <div data-gallery="none" className="flex aspect-[4/5] w-full max-w-xl items-center justify-center rounded-xl border border-dashed border-edge bg-surface-2 p-4 text-center text-base text-muted">
         {say(words, "catalogue.gallery.none")}
       </div>
     );
@@ -55,7 +55,7 @@ export function Gallery({ photos, name, words }: { photos: readonly PhotoData[];
               show(index - 1);
             }
           }}
-          className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-2xl border border-line [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-xl border border-line [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {photos.map((ph, i) => (
             <div key={ph.id} role="group" aria-roledescription="slide" aria-label={say(words, "catalogue.gallery.count", { n: i + 1, total: photos.length })} className="w-full shrink-0 snap-center">
@@ -65,10 +65,10 @@ export function Gallery({ photos, name, words }: { photos: readonly PhotoData[];
         </div>
         {photos.length > 1 ? (
           <>
-            <button type="button" aria-label={say(words, "catalogue.gallery.prev")} disabled={index === 0} onClick={() => show(index - 1)} className="absolute left-2 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-surface text-ink shadow-[var(--v2-shadow)] disabled:opacity-40">
+            <button type="button" aria-label={say(words, "catalogue.gallery.prev")} disabled={index === 0} onClick={() => show(index - 1)} className="absolute left-2 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-md border border-edge bg-surface text-ink shadow-[var(--v2-shadow)] disabled:opacity-40">
               <ChevronLeft className="size-6" aria-hidden="true" />
             </button>
-            <button type="button" aria-label={say(words, "catalogue.gallery.next")} disabled={index === photos.length - 1} onClick={() => show(index + 1)} className="absolute right-2 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-surface text-ink shadow-[var(--v2-shadow)] disabled:opacity-40">
+            <button type="button" aria-label={say(words, "catalogue.gallery.next")} disabled={index === photos.length - 1} onClick={() => show(index + 1)} className="absolute right-2 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-md border border-edge bg-surface text-ink shadow-[var(--v2-shadow)] disabled:opacity-40">
               <ChevronRight className="size-6" aria-hidden="true" />
             </button>
           </>

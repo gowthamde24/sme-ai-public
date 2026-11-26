@@ -16,7 +16,7 @@ import { card, field, secondary } from "./styles";
 import { VisitCard } from "./VisitCard";
 
 const FINISHED: ReadonlySet<Visit["status"]> = new Set(["completed", "no_show", "cancelled"]);
-const navButton = "inline-flex size-11 items-center justify-center rounded-full border border-edge bg-surface hover:bg-surface-2";
+const navButton = "inline-flex size-11 items-center justify-center rounded-md border border-edge bg-surface hover:bg-surface-2";
 
 export type VisitsViewProps = { /** App v4 (APP_V4): no second row of tabs (Store hours is a link at the top right) and the day opens when it is picked. */ v4?: boolean; /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
   /** The "?" tip of the screen (job BT): drawn under the heading. */
@@ -138,7 +138,7 @@ export function VisitsView(p: VisitsViewProps) {
                   <p className="text-sm text-muted">{say(words, p.visits.length === 1 ? "visits.count.one" : "visits.count.other", { n: p.visits.length })}</p>
                   <ul className="flex flex-col gap-3">
                     {live.map((v) => (
-                      <li key={v.id} id={`v-${v.id}`} className={`scroll-mt-24 rounded-[20px] ${p.focus === v.id ? "ring-2 ring-brand-edge" : ""}`}>
+                      <li key={v.id} id={`v-${v.id}`} className={`scroll-mt-24 rounded-xl ${p.focus === v.id ? "ring-2 ring-brand-edge" : ""}`}>
                         <VisitCard visit={v} role={role} actions={p.actions} words={words} lang={lang} now={p.now} today={today} base={base} slotsMin={today} />
                       </li>
                     ))}
@@ -150,7 +150,7 @@ export function VisitsView(p: VisitsViewProps) {
                       </h3>
                       <ul className="flex flex-col gap-3">
                         {finished.map((v) => (
-                          <li key={v.id} id={`v-${v.id}`} className={`scroll-mt-24 rounded-[20px] ${p.focus === v.id ? "ring-2 ring-brand-edge" : ""}`}>
+                          <li key={v.id} id={`v-${v.id}`} className={`scroll-mt-24 rounded-xl ${p.focus === v.id ? "ring-2 ring-brand-edge" : ""}`}>
                             <VisitCard visit={v} role={role} actions={p.actions} words={words} lang={lang} now={p.now} today={today} base={base} slotsMin={today} />
                           </li>
                         ))}
@@ -175,12 +175,12 @@ export function VisitsView(p: VisitsViewProps) {
                     {freeSlots.map((s) => (
                       <li key={s.start}>
                         {canBook ? (
-                          <Link href={href(day, `&time=${s.start}#book`)} className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-3.5 text-base font-semibold tabular-nums hover:bg-surface-2">
+                          <Link href={href(day, `&time=${s.start}#book`)} className="inline-flex min-h-11 items-center rounded-md border border-edge bg-surface px-3.5 text-base font-semibold tabular-nums hover:bg-surface-2">
                             {s.start}
                             <span className="ml-1.5 text-sm font-normal text-muted">{say(words, "visits.slot.free", { n: s.free })}</span>
                           </Link>
                         ) : (
-                          <span className="inline-flex min-h-11 items-center rounded-full border border-line px-3.5 text-base font-semibold tabular-nums">{s.start}</span>
+                          <span className="inline-flex min-h-11 items-center rounded-md border border-line px-3.5 text-base font-semibold tabular-nums">{s.start}</span>
                         )}
                       </li>
                     ))}

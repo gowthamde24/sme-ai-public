@@ -43,7 +43,7 @@ export function LeadsFiltersSimple({ words, base, chip, q, counts, shown, chipHr
         <label className="relative block min-w-0 flex-1 md:max-w-md">
           <span className="sr-only">{t("lv6.search.label")}</span>
           <Search aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" />
-          <input name="q" type="search" maxLength={80} defaultValue={q} placeholder={t("lv6.search.ph")} className="write-ctl min-h-11 w-full rounded-full border border-line bg-surface pl-10 pr-3 text-[15px] text-ink placeholder:text-muted focus:border-brand-edge" />
+          <input name="q" type="search" maxLength={80} defaultValue={q} placeholder={t("lv6.search.ph")} className="write-ctl min-h-11 w-full rounded-md border border-line bg-surface pl-10 pr-3 text-[15px] text-ink placeholder:text-muted focus:border-brand-edge" />
         </label>
         <button type="submit" className={btnQuiet}>
           {t("lv6.search.go")}

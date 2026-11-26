@@ -45,7 +45,7 @@ export function NewPill({ unseen, onClick, label, inside = false }: { unseen: bo
       type="button"
       data-part="new-pill"
       onClick={onClick}
-      className="absolute bottom-2 left-1/2 z-10 min-h-9 -translate-x-1/2 rounded-full border border-brand-edge bg-brand px-3.5 text-xs font-bold text-on-brand shadow-[var(--v2-shadow-pop)]"
+      className="absolute bottom-2 left-1/2 z-10 min-h-9 -translate-x-1/2 rounded-md border border-brand-edge bg-brand px-3.5 text-xs font-bold text-on-brand shadow-[var(--v2-shadow-pop)]"
     >
       {label}
     </button>

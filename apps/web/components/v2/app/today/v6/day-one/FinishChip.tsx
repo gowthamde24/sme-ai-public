@@ -9,7 +9,7 @@ import { STEP_IDS } from "./steps";
 export function FinishChip({ done, base, words, dismiss }: { done: number; base: string; words: Words; dismiss: () => Promise<void> }) {
   const t = makeT(words);
   return (
-    <div data-part="finish-chip" className="inline-flex max-w-full items-center self-start overflow-hidden rounded-full border border-white/30 bg-transparent text-xs font-semibold text-white/90">
+    <div data-part="finish-chip" className="inline-flex max-w-full items-center self-start overflow-hidden rounded-md border border-white/30 bg-transparent text-xs font-semibold text-white/90">
       <Link href={`${base}?setup=1`} className="inline-flex min-h-8 items-center px-3 hover:underline max-md:min-h-11">
         {t("tv6.chip.finish", { done, total: STEP_IDS.length })}
       </Link>

@@ -167,13 +167,13 @@ export function VoiceMic({ target, size = "icon", className = "", options, inlin
       disabled={state !== "idle"}
       aria-label={w("vi.lang.change", "Change the language it listens for")}
       data-part="hear"
-      className="inline-flex min-h-11 items-center rounded-full bg-surface-2 px-3 text-xs font-semibold text-muted hover:text-ink disabled:opacity-60"
+      className="inline-flex min-h-11 items-center rounded-md bg-surface-2 px-3 text-xs font-semibold text-muted hover:text-ink disabled:opacity-60"
     >
       {w("vi.lang", "Hearing: {lang}", { lang: hearName })}
     </button>
   );
   const undoButton = undo ? (
-    <button type="button" onClick={doUndo} aria-label={w("vi.undo.label", "Undo the last dictation")} data-part="undo" className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-brand-text hover:underline">
+    <button type="button" onClick={doUndo} aria-label={w("vi.undo.label", "Undo the last dictation")} data-part="undo" className="inline-flex min-h-11 items-center rounded-md px-3 text-sm font-semibold text-brand-text hover:underline">
       {w("vi.undo", "Undo")}
     </button>
   ) : null;
@@ -210,7 +210,7 @@ export function VoiceMic({ target, size = "icon", className = "", options, inlin
       ) : null}
     </>
   );
-  const micClass = `inline-flex items-center justify-center gap-2 rounded-full border font-semibold disabled:opacity-60 ${listening ? "vi-pulse border-[#ff773c] bg-[#ff773c] text-[#1e1e24]" : "border-edge bg-surface text-ink hover:border-brand-edge"}`;
+  const micClass = `inline-flex items-center justify-center gap-2 rounded-md border font-semibold disabled:opacity-60 ${listening ? "vi-pulse border-[#ff773c] bg-[#ff773c] text-[#1e1e24]" : "border-edge bg-surface text-ink hover:border-brand-edge"}`;
   const icon = listening ? <Square className="size-4 shrink-0 fill-current" aria-hidden="true" /> : <Mic className="size-5 shrink-0" aria-hidden="true" />;
 
   // a ONE-LINE field (owner, 9 Nov 2026): the field stays one line at full width; the microphone is a round button inside it at the right edge, and what it has to say (the language chip only while it listens or the field has focus, the state, Undo, a refusal) floats under the field without moving anything
@@ -224,7 +224,7 @@ export function VoiceMic({ target, size = "icon", className = "", options, inlin
         </button>
         {open ? (
           <div className={flow ? "mt-1 flex w-full max-w-full flex-col items-start gap-1" : "pointer-events-none absolute left-0 top-full z-20 mt-1 flex max-w-full flex-col items-start gap-1"} data-part="mic-panel">
-            <div className="pointer-events-auto flex flex-wrap items-center gap-1 rounded-full border border-line bg-surface px-1 shadow-[var(--v2-shadow)]">
+            <div className="pointer-events-auto flex flex-wrap items-center gap-1 rounded-md border border-line bg-surface px-1 shadow-[var(--v2-shadow)]">
               {chip}
               {listening ? <span className="px-2 text-sm font-semibold tabular-nums">{callClock(input.seconds)}</span> : null}
               {undoButton}

@@ -78,7 +78,7 @@ function UseInJob({ messageId, jobs, use, jobsHref, t }: { messageId: string; jo
             .split(/(\{job\})/)
             .map((part, i) =>
               part === "{job}" ? (
-                <select key={i} data-part="use-job" aria-label={t("jobs.tb.use.label")} value={jobId} disabled={busy} onChange={(e) => setJobId(e.target.value)} className="min-h-11 rounded-full border border-edge bg-surface-2 px-3.5 text-[16px] font-semibold text-ink">
+                <select key={i} data-part="use-job" aria-label={t("jobs.tb.use.label")} value={jobId} disabled={busy} onChange={(e) => setJobId(e.target.value)} className="min-h-11 rounded-md border border-edge bg-surface-2 px-3.5 text-[16px] font-semibold text-ink">
                   {jobs.map((j) => (
                     <option key={j.id} value={j.id}>
                       {nameOf(j)}
@@ -119,7 +119,7 @@ export function OwnMessages({ words, items: initial, actions, secondFactor, mock
   const [sent, setSent] = useState(false);
   const name = (m: OwnMessage) => (lang === "te" && m.title.te ? m.title.te : m.title.en);
   return (
-    <section data-part="own-messages" aria-labelledby="own-msgs-h" className="rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5">
+    <section data-part="own-messages" aria-labelledby="own-msgs-h" className="rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 id="own-msgs-h" className="m-0 font-display text-[18px] font-bold leading-tight text-ink md:text-xl">
@@ -136,7 +136,7 @@ export function OwnMessages({ words, items: initial, actions, secondFactor, mock
       </div>
       {actions && open ? (
         <div className="mt-4 border-t border-line pt-4">
-          <Suspense fallback={<span aria-hidden="true" data-skeleton="" className="jb-skeleton block h-48 rounded-2xl" />}>
+          <Suspense fallback={<span aria-hidden="true" data-skeleton="" className="jb-skeleton block h-48 rounded-xl" />}>
             <Builder
               words={words}
               actions={actions}
@@ -166,7 +166,7 @@ export function OwnMessages({ words, items: initial, actions, secondFactor, mock
       ) : (
         <ul className="m-0 mt-4 flex list-none flex-col gap-3 p-0">
           {items.map((m) => (
-            <li key={m.id} data-own={m.status} className={`rounded-2xl border p-3.5 ${m.status === "needs_change" ? "border-[var(--jb-fail-bg)]" : "border-line"}`}>
+            <li key={m.id} data-own={m.status} className={`rounded-xl border p-3.5 ${m.status === "needs_change" ? "border-[var(--jb-fail-bg)]" : "border-line"}`}>
               <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
                 <div className="min-w-0">
                   <p className="m-0 text-[16px] font-bold leading-snug text-ink">{name(m)}</p>

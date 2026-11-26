@@ -21,7 +21,7 @@ import { createEmployeeAction, patchEmployeeAction, previewEmployeeAction, setEm
 export const metadata = { title: `New AI employee · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
-const box = "m-0 mt-4 rounded-2xl border border-line bg-surface p-5 text-ink";
+const box = "m-0 mt-4 rounded-xl border border-line bg-surface p-5 text-ink";
 
 /**
  * /app/tenants/[tenantId]/employees/new (EMPLOYEES, owner 26 Nov 2026): the "New AI employee" wizard, seven screens (role, name, voice, rules, work, preview, turn on). Owner and Admin only; at the plan's limit the page says so instead of the wizard.

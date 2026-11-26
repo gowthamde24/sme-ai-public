@@ -14,13 +14,13 @@ export { EffectBox, MoreChoices, Sentence, Val } from "../../jobs/rules/parts";
 export function PillText({ aria, name, value, onChange, placeholder, maxLength, minLength, required = false, inputMode, autoComplete, pattern, disabled = false }: { aria: string; name?: string; value: string; onChange: (v: string) => void; placeholder?: string; maxLength?: number; minLength?: number; required?: boolean; inputMode?: "numeric" | "tel" | "text"; autoComplete?: string; pattern?: string; disabled?: boolean }) {
   const len = (value || placeholder || "").length + 3;
   const width = len <= 12 ? "w-[12ch]" : len <= 18 ? "w-[18ch]" : len <= 24 ? "w-[24ch]" : "w-[30ch]"; // (written out, so the style sheet has them)
-  return <input type="text" name={name} aria-label={aria} value={value} placeholder={placeholder} maxLength={maxLength} minLength={minLength} required={required} inputMode={inputMode} autoComplete={autoComplete} pattern={pattern} disabled={disabled} onChange={(e) => onChange(e.target.value)} className={`write-ctl ${width} mx-0.5 my-0.5 min-h-10 max-w-full rounded-full border border-[color:var(--v2-pill-edge)] bg-brand-bg px-3.5 py-1 align-middle text-[16px] font-semibold text-brand-text placeholder:font-normal placeholder:text-muted focus:border-brand-edge disabled:opacity-80`} />;
+  return <input type="text" name={name} aria-label={aria} value={value} placeholder={placeholder} maxLength={maxLength} minLength={minLength} required={required} inputMode={inputMode} autoComplete={autoComplete} pattern={pattern} disabled={disabled} onChange={(e) => onChange(e.target.value)} className={`write-ctl ${width} mx-0.5 my-0.5 min-h-10 max-w-full rounded-md border border-[color:var(--v2-pill-edge)] bg-brand-bg px-3.5 py-1 align-middle text-[16px] font-semibold text-brand-text placeholder:font-normal placeholder:text-muted focus:border-brand-edge disabled:opacity-80`} />;
 }
 
 /** The button of a choice of several, drawn as a pill inside a sentence (it opens `MultiPanel`, which the caller draws right under the sentence). */
 export function PillMulti({ aria, text, open, controls, onToggle }: { aria: string; text: string; open: boolean; controls: string; onToggle: () => void }) {
   return (
-    <button type="button" aria-label={aria} aria-expanded={open} aria-controls={controls} onClick={onToggle} className="jb-press write-ctl relative my-0.5 inline-flex min-h-10 max-w-full items-center gap-1.5 rounded-full border border-[color:var(--v2-pill-edge)] bg-brand-bg py-1 pl-3.5 pr-2.5 align-middle text-[16px] font-semibold text-brand-text">
+    <button type="button" aria-label={aria} aria-expanded={open} aria-controls={controls} onClick={onToggle} className="jb-press write-ctl relative my-0.5 inline-flex min-h-10 max-w-full items-center gap-1.5 rounded-md border border-[color:var(--v2-pill-edge)] bg-brand-bg py-1 pl-3.5 pr-2.5 align-middle text-[16px] font-semibold text-brand-text">
       <span className="min-w-0 truncate">{text}</span>
       <ChevronDown aria-hidden="true" className={`size-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
     </button>

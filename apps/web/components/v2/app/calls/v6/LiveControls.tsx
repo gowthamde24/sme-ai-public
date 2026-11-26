@@ -28,7 +28,7 @@ export function LiveControls({ words, whisper, end, takeOver, ringing }: LiveCon
   const [sent, setSent] = React.useState<"idle" | "ok" | "err">("idle");
   const [busy, start] = React.useTransition();
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border border-line bg-surface-2 p-4" data-part="live-controls" aria-label={t("calls6.live.controls")}>
+    <section className="flex flex-col gap-3 rounded-xl border border-line bg-surface-2 p-4" data-part="live-controls" aria-label={t("calls6.live.controls")}>
       <div className="flex flex-wrap items-center gap-2">
         <button type="button" aria-pressed={listen} onClick={() => setListen((l) => !l)} className={`${btnQuiet} aria-pressed:border-brand-edge aria-pressed:bg-brand-bg aria-pressed:text-brand-text`}>
           {listen ? t("calls6.live.listening") : t("calls6.live.listen")}

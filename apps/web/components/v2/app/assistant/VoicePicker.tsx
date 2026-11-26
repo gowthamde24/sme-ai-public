@@ -78,7 +78,7 @@ export function VoicePicker({ words, gender, rows, langNames, canEdit, endpoint,
   };
 
   return (
-    <section id={id} data-part="voice-picker" aria-labelledby="vp-h" className="rounded-[20px] border border-line bg-surface p-4 md:p-5">
+    <section id={id} data-part="voice-picker" aria-labelledby="vp-h" className="rounded-xl border border-line bg-surface p-4 md:p-5">
       <h2 id="vp-h" className="font-display text-xl font-semibold leading-tight">
         {title ?? t("vp.title")}
       </h2>
@@ -90,7 +90,7 @@ export function VoicePicker({ words, gender, rows, langNames, canEdit, endpoint,
         <p className="text-base font-semibold">{t("vp.gender.t")}</p>
         <div className="flex flex-wrap gap-2">
           {GENDERS.map((g) => (
-            <button key={g} type="button" role="radio" data-gender={g} aria-checked={gender === g} disabled={!canEdit || busy !== null} onClick={() => void pickGender(g)} className={`min-h-11 rounded-full border px-5 text-base font-semibold ${gender === g ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-ink hover:bg-surface-2"} disabled:opacity-70`}>
+            <button key={g} type="button" role="radio" data-gender={g} aria-checked={gender === g} disabled={!canEdit || busy !== null} onClick={() => void pickGender(g)} className={`min-h-11 rounded-md border px-5 text-base font-semibold ${gender === g ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-ink hover:bg-surface-2"} disabled:opacity-70`}>
               {t(`vp.gender.${g}` as "vp.gender.female")}
             </button>
           ))}

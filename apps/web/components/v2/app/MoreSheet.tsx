@@ -34,13 +34,13 @@ export function MoreSheet({ current, memberships, email, signOut, accountMark, l
   return (
         <div className="fixed inset-0 z-50">
           <div aria-hidden="true" className="absolute inset-0 bg-charcoal/50" onClick={onClose} />
-          <div role="dialog" aria-modal="true" aria-label={word(labels, "frame.menu.all", "All of the menu")} data-more-sheet="" className="v2-glass absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-y-auto rounded-t-2xl border-t border-line shadow-[var(--v2-shadow-pop)]">
+          <div role="dialog" aria-modal="true" aria-label={word(labels, "frame.menu.all", "All of the menu")} data-more-sheet="" className="v2-glass absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-y-auto rounded-t-xl border-t border-line shadow-[var(--v2-shadow-pop)]">
             <div className="flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-line px-4">
               <div className="min-w-0">
                 <p className="truncate font-display text-xl font-bold">{word(labels, "frame.more", "More")}</p>
                 <p className="truncate text-sm text-muted">{current.name}</p>
               </div>
-              <button ref={closeRef} type="button" onClick={onClose} data-part="more-close" className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-ink transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line" aria-label={word(labels, "frame.close", "Close the menu")}>
+              <button ref={closeRef} type="button" onClick={onClose} data-part="more-close" className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-ink transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line" aria-label={word(labels, "frame.close", "Close the menu")}>
                 <SpriteIcon id="x" />
               </button>
             </div>

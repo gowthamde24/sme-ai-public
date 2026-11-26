@@ -41,12 +41,12 @@ export function TodayHero({ incoming, results, sentence, words, talkHref, connec
     return () => offs.forEach((o) => o?.());
   }, [nIn, nOut]);
   const orb = (
-    <Link prefetch={false} href={talkHref} aria-label={words.talk} className="h2-orbwrap block size-28 overflow-hidden rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
+    <Link prefetch={false} href={talkHref} aria-label={words.talk} className="h2-orbwrap block size-28 overflow-hidden rounded-full round-ok focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
       <AssistantOrb state="idle" />
     </Link>
   );
   const inRow = (x: HeroIn) => (
-    <Link prefetch={false} key={x.id} href={x.href} className="flex min-h-11 min-w-0 items-center gap-2.5 rounded-2xl border border-line bg-surface/90 px-3 py-2 text-sm shadow-[0_10px_24px_-18px_rgba(30,30,36,.45)] hover:border-brand-edge" data-hero-in={x.id}>
+    <Link prefetch={false} key={x.id} href={x.href} className="flex min-h-11 min-w-0 items-center gap-2.5 rounded-xl border border-line bg-surface/90 px-3 py-2 text-sm shadow-[0_10px_24px_-18px_rgba(30,30,36,.45)] hover:border-brand-edge" data-hero-in={x.id}>
       <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-[#ff773c] shadow-[0_0_10px_rgba(255,119,60,.8)]" />
       <span className="min-w-0">
         <span className="block truncate font-semibold text-ink">{x.name}</span>
@@ -55,13 +55,13 @@ export function TodayHero({ incoming, results, sentence, words, talkHref, connec
     </Link>
   );
   const outRow = (x: HeroOut) => (
-    <Link prefetch={false} key={x.key} href={x.href} className="flex min-h-11 min-w-0 items-center gap-2.5 rounded-2xl border border-line bg-surface/90 px-3 py-2 text-sm font-semibold text-ink shadow-[0_10px_24px_-18px_rgba(30,30,36,.45)] hover:border-brand-edge" data-hero-out={x.key}>
+    <Link prefetch={false} key={x.key} href={x.href} className="flex min-h-11 min-w-0 items-center gap-2.5 rounded-xl border border-line bg-surface/90 px-3 py-2 text-sm font-semibold text-ink shadow-[0_10px_24px_-18px_rgba(30,30,36,.45)] hover:border-brand-edge" data-hero-out={x.key}>
       <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-[#ec486e] shadow-[0_0_10px_rgba(236,72,110,.7)]" />
       <span className="min-w-0 [overflow-wrap:anywhere]">{x.text}</span>
     </Link>
   );
   const empty = (
-    <div className="flex min-h-11 min-w-0 flex-col justify-center gap-1 rounded-2xl border border-dashed border-line bg-surface/80 px-3 py-2 text-sm" data-hero-in="none">
+    <div className="flex min-h-11 min-w-0 flex-col justify-center gap-1 rounded-xl border border-dashed border-line bg-surface/80 px-3 py-2 text-sm" data-hero-in="none">
       <span className="text-muted">{words.emptyIn}</span>
       {connectHref ? (
         <Link prefetch={false} href={connectHref} className="font-semibold text-brand-text underline underline-offset-4">
@@ -71,7 +71,7 @@ export function TodayHero({ incoming, results, sentence, words, talkHref, connec
     </div>
   );
   return (
-    <section aria-label={words.label} data-part="today-hero" className="relative overflow-hidden rounded-[22px] border border-line bg-[radial-gradient(ellipse_46%_80%_at_50%_42%,var(--v2-brand-bg),var(--v2-surface)_60%)]">
+    <section aria-label={words.label} data-part="today-hero" className="relative overflow-hidden rounded-xl border border-line bg-[radial-gradient(ellipse_46%_80%_at_50%_42%,var(--v2-brand-bg),var(--v2-surface)_60%)]">
       {/* tablet and desktop: the design's 300 px stage */}
       <div className="relative hidden h-[300px] md:block">
         <canvas ref={desk} aria-hidden="true" className="absolute inset-0 block size-full" />

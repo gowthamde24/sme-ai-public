@@ -40,7 +40,7 @@ export function AssistantActivity({ entries, range, words, lang, base, canUndo, 
     else setProblem({ id, key: out.error === "expired" ? "asstact.undo.expired" : out.error === "forbidden" ? "asstact.undo.forbidden" : "asstact.undo.err" });
   };
   const tab = (r: "today" | "week") => (
-    <a href={`${base}/settings?section=activity&range=${r}`} aria-current={range === r ? "page" : undefined} data-range={r} className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold ${range === r ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}>
+    <a href={`${base}/settings?section=activity&range=${r}`} aria-current={range === r ? "page" : undefined} data-range={r} className={`inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold ${range === r ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}>
       {t(`asstact.filter.${r}`)}
     </a>
   );
@@ -69,7 +69,7 @@ export function AssistantActivity({ entries, range, words, lang, base, canUndo, 
               <li key={e.actionId} data-activity={e.tool} data-status={e.status} className="rounded-xl border border-line bg-surface p-3">
                 <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
                   <p className="min-w-0 flex-1 text-base font-semibold [overflow-wrap:anywhere]">{e.summary}</p>
-                  <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-sm font-semibold ${pillOf[e.status]}`}>{t(`asstact.status.${e.status}`)}</span>
+                  <span className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-sm font-semibold ${pillOf[e.status]}`}>{t(`asstact.status.${e.status}`)}</span>
                 </div>
                 {e.changed ? <p className="mt-1 text-sm [overflow-wrap:anywhere]">{t("asstact.changed", { what: e.changed })}</p> : null}
                 {e.status === "failed" && e.error ? (
@@ -83,7 +83,7 @@ export function AssistantActivity({ entries, range, words, lang, base, canUndo, 
                   <time dateTime={e.at}>{whenText(lang, e.at)}</time>
                 </p>
                 {e.undo === "available" && canUndo ? (
-                  <button type="button" data-activity="undo" data-write disabled={busy === e.actionId} onClick={() => void undo(e.actionId)} className="mt-2 inline-flex min-h-11 items-center justify-center gap-1 rounded-full border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-60">
+                  <button type="button" data-activity="undo" data-write disabled={busy === e.actionId} onClick={() => void undo(e.actionId)} className="mt-2 inline-flex min-h-11 items-center justify-center gap-1 rounded-md border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-60">
                     <Undo2 className="size-4" aria-hidden="true" />
                     {busy === e.actionId ? t("asstact.undoing") : t("asstact.undo")}
                   </button>

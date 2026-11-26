@@ -17,7 +17,7 @@ export function visitHref(base: string, leadId: string | null): string {
   return leadId ? `${base}/visits?lead=${leadId}` : `${base}/visits`;
 }
 
-const link = "inline-flex min-h-11 items-center justify-center rounded-full border-2 border-edge bg-surface px-4 text-base font-bold text-ink hover:bg-surface-2";
+const link = "inline-flex min-h-11 items-center justify-center rounded-md border-2 border-edge bg-surface px-4 text-base font-bold text-ink hover:bg-surface-2";
 
 export function ProspectContact({ prospect, words, base }: { prospect: Pick<Prospect, "phone" | "leadId">; words: Words; base: string }) {
   const t = makeT(words);

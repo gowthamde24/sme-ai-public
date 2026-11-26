@@ -20,7 +20,7 @@ export function TierCard({ words, plan, items, move }: { words: Words; plan: Ent
         <h2 id="tier-heading" className="font-display text-xl font-semibold">
           {t("tier.title")}
         </h2>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-edge bg-brand-bg px-3 py-1 text-sm font-bold text-brand-text" data-tier-badge="">
+        <span className="inline-flex items-center gap-1.5 rounded-md border border-brand-edge bg-brand-bg px-3 py-1 text-sm font-bold text-brand-text" data-tier-badge="">
           <span className="sr-only">{t("tier.badge")}: </span>
           {tierName(plan)}
         </span>

@@ -54,7 +54,7 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, openCa
         {cards.map((c, i) => {
           const { Icon, k } = SOURCE_ICON[c.kind];
           return (
-          <li key={c.kind} className="flex h-full min-w-0 flex-col items-start gap-2 rounded-[14px] border border-line bg-surface p-[18px] text-left" data-card={c.kind} data-cstate={c.status} data-first={i === first ? "1" : undefined}>
+          <li key={c.kind} className="flex h-full min-w-0 flex-col items-start gap-2 rounded-xl border border-line bg-surface p-[18px] text-left" data-card={c.kind} data-cstate={c.status} data-first={i === first ? "1" : undefined}>
             <div className="flex w-full min-w-0 items-center gap-3">
               <Icon aria-hidden="true" data-k={k} className="size-6 shrink-0" strokeWidth={1.8} />
               <h3 className="min-w-0 text-[17px] font-semibold leading-snug text-ink">{t(`sc.${c.kind}` as "sc.meta")}</h3>
@@ -160,7 +160,7 @@ function AddressCard({ card, t, words, post, onChanged }: { card: Card; t: T; wo
   return (
     <div className="flex flex-col gap-3" data-part="address-card">
       {shown ? (
-        <div className="flex flex-col gap-3 rounded-2xl border border-edge bg-surface-2 p-4" data-panel={card.kind}>
+        <div className="flex flex-col gap-3 rounded-xl border border-edge bg-surface-2 p-4" data-panel={card.kind}>
           {shown.fields.map((f, i) => <CopyBox key={f.label} words={words ?? {}} id={`sc-addr-${card.kind}-${i}`} label={f.label} value={f.value} />)}
           <ol className="list-decimal pl-5 text-sm text-muted">{shown.steps.map((x) => <li key={x}>{x}</li>)}</ol>
           <p className={fieldHelp}>{t("sc.addr.once")}</p>
@@ -297,7 +297,7 @@ function Panel({ card, action, t, words, post, onChanged, consentTick }: { conse
 
   const connected = card.status === "connected";
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-edge bg-surface-2 p-4" data-panel={card.kind}>
+    <div className="flex flex-col gap-3 rounded-xl border border-edge bg-surface-2 p-4" data-panel={card.kind}>
       {action === "oauth" && !connected ? (
         <>
           <p className="text-sm text-muted">{t("sc.meta.how")}</p>

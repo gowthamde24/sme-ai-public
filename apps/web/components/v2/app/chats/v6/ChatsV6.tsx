@@ -55,7 +55,7 @@ export function ChatsV6(p: ChatsV6Props) {
       <label className="relative block">
         <span className="sr-only">{t("chats6.search.label")}</span>
         <Search aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" />
-        <input type="search" name="q" defaultValue={p.q} maxLength={80} placeholder={t("chats6.search.placeholder")} className="min-h-11 w-full rounded-[14px] border border-line bg-surface pl-10 pr-3 text-[14px] text-ink placeholder:text-muted focus:border-brand-edge" />
+        <input type="search" name="q" defaultValue={p.q} maxLength={80} placeholder={t("chats6.search.placeholder")} className="min-h-11 w-full rounded-xl border border-line bg-surface pl-10 pr-3 text-[14px] text-ink placeholder:text-muted focus:border-brand-edge" />
       </label>
       <button type="submit" className="sr-only">
         {t("chats6.search.go")}
@@ -95,7 +95,7 @@ export function ChatsV6(p: ChatsV6Props) {
               {t("chats6.chat.unread")}
             </p>
           ) : (
-            <div className="m-4 rounded-2xl border border-dashed border-line p-6 text-center text-base text-muted" data-part="chat-pick">
+            <div className="m-4 rounded-xl border border-dashed border-line p-6 text-center text-base text-muted" data-part="chat-pick">
               {t("chats6.pick")}
             </div>
           )}

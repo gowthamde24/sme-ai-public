@@ -94,7 +94,7 @@ export function SiteForm(p: { base: string; siteId: string; site: SiteOut | null
           <input id="site-pin" inputMode="numeric" value={pin} maxLength={6} disabled={busy} onChange={(e) => setPin(e.target.value)} className={field} />
         </div>
       </div>
-      <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line p-4">
+      <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl border border-line p-4">
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "site.field.map")}</legend>
         <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">
           <div>
@@ -114,7 +114,7 @@ export function SiteForm(p: { base: string; siteId: string; site: SiteOut | null
         </div>
         <p className={help}>{say(words, "site.map.help")}</p>
       </fieldset>
-      <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line p-4">
+      <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl border border-line p-4">
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "site.field.truck")}</legend>
         <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">
           <div>
@@ -135,7 +135,7 @@ export function SiteForm(p: { base: string; siteId: string; site: SiteOut | null
           <p id="site-notes-help" className={help}>{say(words, "site.field.notes.help")}</p>
         </div>
       </fieldset>
-      <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line p-4">
+      <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl border border-line p-4">
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "site.field.contact")}</legend>
         {site?.site_contact_id ? <p className="text-base">{say(words, "site.contact.now", { name: p.contactLabel ?? say(words, "site.contact.unknown") })}</p> : null}
         <div role="radiogroup" aria-label={say(words, "site.field.contact")} className="flex flex-col gap-1">
@@ -167,7 +167,7 @@ export function SiteForm(p: { base: string; siteId: string; site: SiteOut | null
           {problem.mfa ? <Link href="/app/security" className="font-semibold underline">{say(words, "today.err.mfa.link")}</Link> : null}
         </div>
       ) : null}
-      <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
+      <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 md:bottom-4">
         <button type="submit" disabled={busy} className={primary}>{busy ? say(words, "today.act.working") : say(words, "site.save")}</button>
         <Link href={`${p.base}/sites`} aria-disabled={busy} className={quiet}>{say(words, "today.act.cancel")}</Link>
       </div>

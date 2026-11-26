@@ -26,7 +26,7 @@ export function CallsTablePager({
   const [open, setOpen] = React.useState(0);
   const remaining = counts.slice(open).reduce((sum, n) => sum + n, 0);
   return (
-    <div className="overflow-hidden rounded-[14px] border border-line bg-surface shadow-[var(--v2-shadow)]" data-part="calls-table">
+    <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-[var(--v2-shadow)]" data-part="calls-table">
       <table className="block w-full border-collapse text-[13.5px] md:table">
         <caption className="sr-only">{caption}</caption>
         {head}

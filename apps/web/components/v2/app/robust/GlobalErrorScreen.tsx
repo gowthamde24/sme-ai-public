@@ -11,7 +11,7 @@ export function GlobalErrorScreen({ error, retry }: { error: Error & { digest?: 
               kind={500}
               reference={error.digest}
               action={
-                <button type="button" onClick={() => retry()} className="inline-flex min-h-12 items-center justify-center rounded-full border border-brand-edge bg-brand px-6 text-base font-bold text-on-brand hover:brightness-95">
+                <button type="button" onClick={() => retry()} className="inline-flex min-h-12 items-center justify-center rounded-md border border-brand-edge bg-brand px-6 text-base font-bold text-on-brand hover:brightness-95">
                   Try again
                 </button>
               }

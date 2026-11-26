@@ -235,7 +235,7 @@ export function AboutBusiness({ words, initial, endpoint, canEdit, lang, sources
           <p className={fieldHelp}>{t("ctx.prompts")}</p>
           <div className="flex flex-wrap gap-2">
             {headings.map((h) => (
-              <button key={h.key} type="button" onClick={() => addHeading(h.label)} className="min-h-11 rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-muted hover:bg-surface-2">
+              <button key={h.key} type="button" onClick={() => addHeading(h.label)} className="min-h-11 rounded-md border border-edge bg-surface px-4 text-sm font-semibold text-muted hover:bg-surface-2">
                 {h.label}
               </button>
             ))}
@@ -248,7 +248,7 @@ export function AboutBusiness({ words, initial, endpoint, canEdit, lang, sources
           <h3 className="text-base font-semibold text-ink">{t("ctx.add")}</h3>
           <div className="flex flex-wrap gap-2">
             {(["paste", "file", "voice"] as const).map((k) => (
-              <button key={k} type="button" aria-pressed={add === k} onClick={() => { setAdd(add === k ? null : k); setPreview(null); setAddProblem(null); }} className={`min-h-11 rounded-full border px-4 text-sm font-semibold ${add === k ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`}>
+              <button key={k} type="button" aria-pressed={add === k} onClick={() => { setAdd(add === k ? null : k); setPreview(null); setAddProblem(null); }} className={`min-h-11 rounded-md border px-4 text-sm font-semibold ${add === k ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`}>
                 {t(`ctx.add.${k}` as "ctx.add.paste")}
               </button>
             ))}
@@ -280,7 +280,7 @@ export function AboutBusiness({ words, initial, endpoint, canEdit, lang, sources
           {addProblem ? <p className={alertBox} role="alert">{addProblem === "nomic" ? t("ctx.add.voice.nomic") : addProblem === "changed" ? t("ctx.changed") : sentence(addProblem)}</p> : null}
 
           {preview ? (
-            <div className="flex flex-col gap-3 rounded-2xl border border-edge bg-surface-2 p-4" data-part="understood">
+            <div className="flex flex-col gap-3 rounded-xl border border-edge bg-surface-2 p-4" data-part="understood">
               <h4 className="text-base font-semibold text-ink">{t("ctx.pv.title")}</h4>
               {preview.warnings.map((w) => (
                 <p key={w} className={warnBox}>
@@ -294,7 +294,7 @@ export function AboutBusiness({ words, initial, endpoint, canEdit, lang, sources
                 <>
                   <ul className="flex flex-wrap gap-2" aria-label={t("ctx.pv.title")}>
                     {[...new Set(preview.understood.map((u) => u.section))].map((s) => (
-                      <li key={s} className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-muted">{t(`ctx.sec.${s}` as "ctx.sec.prices")}</li>
+                      <li key={s} className="rounded-md bg-surface px-3 py-1 text-xs font-semibold text-muted">{t(`ctx.sec.${s}` as "ctx.sec.prices")}</li>
                     ))}
                   </ul>
                   <p className={fieldHelp}>{t("ctx.pv.edit")}</p>

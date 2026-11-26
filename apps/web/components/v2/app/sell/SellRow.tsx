@@ -27,7 +27,7 @@ export function SellRowBody({ entry, t }: { entry: SellEntry; t: Say }) {
         {x.rates.length > 0 ? (
           <span data-part="rates" className="mt-1.5 flex flex-wrap gap-1.5">
             {x.rates.map((r) => (
-              <span key={r} className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[13px] font-semibold text-ink">
+              <span key={r} className="rounded bg-surface-2 px-2.5 py-0.5 text-[13px] font-semibold text-ink">
                 {r}
               </span>
             ))}
@@ -37,7 +37,7 @@ export function SellRowBody({ entry, t }: { entry: SellEntry; t: Say }) {
       {x.price || x.chip ? (
         <span className="flex shrink-0 flex-col items-end gap-1">
           {x.price ? <span className="text-[16px] font-bold leading-tight text-ink">{x.price}</span> : null}
-          {x.chip ? x.chip.solid ? <JobChip tone={x.chip.tone}>{x.chip.text}</JobChip> : <span data-part="chip" className="inline-flex h-7 items-center whitespace-nowrap rounded-full bg-[var(--jb-info-soft)] px-3 text-[13px] font-semibold text-ink">{x.chip.text}</span> : null}
+          {x.chip ? x.chip.solid ? <JobChip tone={x.chip.tone}>{x.chip.text}</JobChip> : <span data-part="chip" className="inline-flex h-7 items-center whitespace-nowrap rounded-md bg-[var(--jb-info-soft)] px-3 text-[13px] font-semibold text-ink">{x.chip.text}</span> : null}
         </span>
       ) : null}
     </>

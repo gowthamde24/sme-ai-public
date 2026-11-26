@@ -13,7 +13,7 @@ export function CloseBand({ t, lang }: { t: SiteT; lang: SiteLang }) {
   return (
     <section id="start" aria-labelledby="start-h" className="scroll-mt-20 bg-surface py-[84px] sm:py-[120px]">
       <div className={wrapHome}>
-        <div className="grid items-center gap-9 rounded-[36px] bg-night p-7 text-on-night sm:p-12 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-12 lg:p-[72px]">
+        <div className="grid items-center gap-9 rounded-xl bg-night p-7 text-on-night sm:p-12 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-12 lg:p-[72px]">
           <Orb px={140} state="speak" />
           <div>
             <h2 id="start-h" className="font-display text-[length:clamp(30px,calc(2.4vw_+_12px),46px)] font-extrabold leading-[1.08] tracking-[-0.025em] [text-wrap:balance]">

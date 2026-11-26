@@ -25,7 +25,7 @@ export function FinderQuota({ words, availability, plansHref, jobs = false, last
           <span>{[per === 1 ? t("jobs.trust.quota.one", { left }) : t("jobs.trust.quota.many", { per, left }), lastSearchAt ? t("jobs.trust.quota.last", { date: day(lastSearchAt) }) : null].filter(Boolean).join(" · ")}</span>
         </p>
         {findHref ? (
-          <a href={findHref} data-act="find-shops" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-6 text-base font-bold text-on-brand">
+          <a href={findHref} data-act="find-shops" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-edge bg-brand px-6 text-base font-bold text-on-brand">
             <Search aria-hidden="true" className="size-[18px]" />
             {t("jobs.trust.find")}
           </a>

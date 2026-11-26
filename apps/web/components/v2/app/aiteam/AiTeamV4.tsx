@@ -13,9 +13,9 @@ export type V4Tab = "report" | "shift" | "helpers";
 export function AiTeamTabs({ words, base, tabs, current, date, today }: { words: W; base: string; tabs: readonly V4Tab[]; current: V4Tab; date: string; today: string }) {
   const href = (t: V4Tab) => `${base}/ai-team?${new URLSearchParams({ tab: t, ...(date !== today ? { date } : {}) }).toString()}`;
   return (
-    <nav aria-label={w(words, "aiteam.v4.tabs")} className="flex w-full max-w-full gap-1 rounded-full border border-line bg-surface p-1 shadow-[var(--v2-shadow)] sm:inline-flex sm:w-auto" data-part="v4-tabs">
+    <nav aria-label={w(words, "aiteam.v4.tabs")} className="flex w-full max-w-full gap-1 rounded-md border border-line bg-surface p-1 shadow-[var(--v2-shadow)] sm:inline-flex sm:w-auto" data-part="v4-tabs">
       {tabs.map((t) => (
-        <Link key={t} href={href(t)} aria-current={t === current ? "page" : undefined} className={`inline-flex min-h-11 min-w-0 flex-auto items-center justify-center whitespace-nowrap rounded-full px-2 text-center text-sm font-semibold sm:flex-none sm:px-5 sm:text-base ${t === current ? "bg-charcoal text-on-charcoal" : "text-ink hover:bg-surface-2"}`}>
+        <Link key={t} href={href(t)} aria-current={t === current ? "page" : undefined} className={`inline-flex min-h-11 min-w-0 flex-auto items-center justify-center whitespace-nowrap rounded-md px-2 text-center text-sm font-semibold sm:flex-none sm:px-5 sm:text-base ${t === current ? "bg-charcoal text-on-charcoal" : "text-ink hover:bg-surface-2"}`}>
           {t === "report" && date !== today ? w(words, "aiteam.v4.tab.report.day") : w(words, `aiteam.v4.tab.${t}`)}
         </Link>
       ))}
@@ -26,7 +26,7 @@ export function AiTeamTabs({ words, base, tabs, current, date, today }: { words:
 /** "Example data": drawn while the page runs on the made-up day and stand-up (AI_TEAM_SCREENS=mock); never with the API's own. */
 export function ExampleData({ words }: { words: W }) {
   return (
-    <span data-part="example-data" className="ml-2 inline-flex items-center rounded-full border border-amber-text bg-amber-bg px-2.5 py-0.5 align-middle text-xs font-semibold text-amber-text">
+    <span data-part="example-data" className="ml-2 inline-flex items-center rounded border border-amber-text bg-amber-bg px-2.5 py-0.5 align-middle text-xs font-semibold text-amber-text">
       {w(words, "aiteam.v4.example")}
     </span>
   );
@@ -43,7 +43,7 @@ export function TodoTomorrow({ words, todos }: { words: W; todos: readonly Todo[
             <h3 className="m-0 font-display text-lg font-bold leading-snug">{w(words, `aiteam.v4.todo.${t.key}.${t.n === 1 ? "one" : "many"}`, { n: t.n.toLocaleString("en-IN") })}</h3>
             <p className="m-0 mt-1 text-sm text-muted">{w(words, `aiteam.v4.todo.${t.key}.b`)}</p>
           </div>
-          <Link href={t.href} className="inline-flex min-h-11 items-center self-start rounded-full bg-[#ff773c] px-5 text-base font-semibold text-[#1e1e24] hover:brightness-95">
+          <Link href={t.href} className="inline-flex min-h-11 items-center self-start rounded-md bg-[#ff773c] px-5 text-base font-semibold text-[#1e1e24] hover:brightness-95">
             {w(words, `aiteam.v4.todo.${t.key}.btn`)}
           </Link>
         </article>
@@ -66,7 +66,7 @@ export function EarlierReports({ words, base, locale, items, current }: { words:
               <li key={i.date} className="border-b border-line last:border-b-0">
                 <Link href={`${base}/ai-team?${new URLSearchParams({ tab: "report", date: i.date }).toString()}`} aria-current={i.date === current ? "page" : undefined} aria-label={w(words, "aiteam.v4.earlier.open", { day })} className={`flex min-h-12 items-center justify-between gap-3 px-4 py-3 text-base font-medium hover:bg-surface-2 ${i.date === current ? "bg-surface-2" : ""}`}>
                   <span>{day}</span>
-                  {i.seconds !== null ? <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-xs font-semibold text-muted tabular-nums">{i.seconds >= 60 ? w(words, "aiteam.v4.min", { n: String(Math.round(i.seconds / 60)) }) : w(words, "aiteam.standup.seconds", { seconds: String(i.seconds) })}</span> : null}
+                  {i.seconds !== null ? <span className="rounded bg-surface-2 px-2.5 py-0.5 text-xs font-semibold text-muted tabular-nums">{i.seconds >= 60 ? w(words, "aiteam.v4.min", { n: String(Math.round(i.seconds / 60)) }) : w(words, "aiteam.standup.seconds", { seconds: String(i.seconds) })}</span> : null}
                 </Link>
               </li>
             );

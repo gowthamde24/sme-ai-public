@@ -52,7 +52,7 @@ export type ItemEditorProps = {
 };
 
 const CHECK_CHIP =
-  "inline-flex min-h-11 items-center gap-2 rounded-full border border-edge px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg has-[:checked]:font-semibold has-[:checked]:text-brand-text has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:disabled]:opacity-60";
+  "inline-flex min-h-11 items-center gap-2 rounded-md border border-edge px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg has-[:checked]:font-semibold has-[:checked]:text-brand-text has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:disabled]:opacity-60";
 let slotSeq = 0;
 /** A key for a row of the tray: only needs to differ from the others on this page. */
 const newKey = () => `new-${++slotSeq}`;
@@ -439,7 +439,7 @@ export function ItemEditor(p: ItemEditorProps) {
 
         {p.fields && p.fields.length > 0 ? <CustomFieldsInputs fields={p.fields} values={custom} onChange={setCustom} words={{ title: say(words, "fields.form.title"), yes: say(words, "fields.form.yes"), no: say(words, "fields.form.no"), pick: say(words, "fields.form.pick") }} idPrefix="cat-cf" disabled={busy} /> : null}
 
-        <div data-part="exact-price" className="rounded-2xl border border-line p-4">
+        <div data-part="exact-price" className="rounded-xl border border-line p-4">
           {owner ? (
             <>
               <label htmlFor="cat-price" className={label}>
@@ -486,7 +486,7 @@ export function ItemEditor(p: ItemEditorProps) {
             <button type="button" disabled={busy || slots.length >= MAX_PHOTOS} onClick={() => takeRef.current?.click()} className={primary}>
               {say(words, "catalogue.photo.take")}
             </button>
-            <button type="button" disabled={busy || slots.length >= MAX_PHOTOS} onClick={() => chooseRef.current?.click()} className="inline-flex min-h-11 items-center justify-center rounded-full border border-edge px-[18px] text-[15px] font-semibold hover:bg-surface-2 disabled:opacity-60">
+            <button type="button" disabled={busy || slots.length >= MAX_PHOTOS} onClick={() => chooseRef.current?.click()} className="inline-flex min-h-11 items-center justify-center rounded-md border border-edge px-[18px] text-[15px] font-semibold hover:bg-surface-2 disabled:opacity-60">
               {say(words, "catalogue.photo.choose")}
             </button>
             <input ref={takeRef} type="file" accept={PHOTO_TYPES.join(",")} capture="environment" className="sr-only" tabIndex={-1} aria-hidden="true" data-input="take" onChange={(e) => void addFiles(e.target.files)} />
@@ -513,14 +513,14 @@ export function ItemEditor(p: ItemEditorProps) {
         </section>
 
         {p.simple ? (
-          <div className="rounded-2xl border border-line p-4">
+          <div className="rounded-xl border border-line p-4">
             <Tick label={<b className="font-semibold">{say(words, "catalogue.form.active")}</b>} sub={liveCount === 0 ? say(words, "catalogue.form.active.needs") : say(words, "catalogue.form.active.help")} checked={showActive} disabled={busy || liveCount === 0} onChange={(e) => {
                 setChosen((c) => ({ ...c, shown: true }));
                 setActive(e.target.checked);
               }} />
           </div>
         ) : (
-        <div className="rounded-2xl border border-line p-4">
+        <div className="rounded-xl border border-line p-4">
           <label className="flex min-h-11 items-center gap-3 text-base font-semibold">
             <input type="checkbox" className="size-6 shrink-0 accent-brand-text" checked={showActive} disabled={busy || liveCount === 0} onChange={(e) => setActive(e.target.checked)} aria-describedby="cat-active-help" />
             {say(words, "catalogue.form.active")}
@@ -546,7 +546,7 @@ export function ItemEditor(p: ItemEditorProps) {
           </div>
         ) : null}
 
-        <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
+        <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 md:bottom-4">
           <button type="submit" disabled={busy} className={primary}>
             {busy ? say(words, "today.act.working") : say(words, p.v6 && showActive && !item?.active ? "catalogue.v6.publish" : "catalogue.save")}
           </button>

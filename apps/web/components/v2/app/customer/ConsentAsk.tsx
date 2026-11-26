@@ -35,7 +35,7 @@ export function ConsentAsk({ words, preview, send }: { words: Readonly<Record<st
   return (
     <div className="mt-1 flex flex-col items-start gap-2" data-part="consent-ask">
       {step.s === "idle" || (step.s === "message" && step.again) ? (
-        <button type="button" onClick={() => void open()} className="inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold text-brand-text hover:underline">
+        <button type="button" onClick={() => void open()} className="inline-flex min-h-11 items-center rounded-md border border-line bg-surface px-4 text-sm font-semibold text-brand-text hover:underline">
           {w("button")}
         </button>
       ) : null}
@@ -49,10 +49,10 @@ export function ConsentAsk({ words, preview, send }: { words: Readonly<Record<st
           <p className="m-0 text-sm text-muted">{w(step.p.how === "template" ? "how.template" : "how.message")}</p>
           <p className="m-0 text-sm text-muted">{w("hint")}</p>
           <div className="flex flex-wrap gap-2">
-            <button type="button" disabled={busy} onClick={() => void go(step.p)} className="inline-flex min-h-11 items-center rounded-full bg-[#ff773c] px-5 font-extrabold text-[#1e1e24] disabled:opacity-60">
+            <button type="button" disabled={busy} onClick={() => void go(step.p)} className="inline-flex min-h-11 items-center rounded-md bg-[#ff773c] px-5 font-extrabold text-[#1e1e24] disabled:opacity-60">
               {w("send")}
             </button>
-            <button type="button" disabled={busy} onClick={() => setStep({ s: "idle" })} className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-brand-text hover:underline">
+            <button type="button" disabled={busy} onClick={() => setStep({ s: "idle" })} className="inline-flex min-h-11 items-center rounded-md px-4 text-sm font-semibold text-brand-text hover:underline">
               {w("cancel")}
             </button>
           </div>

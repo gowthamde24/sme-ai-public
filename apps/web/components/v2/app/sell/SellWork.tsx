@@ -26,10 +26,10 @@ import type { ImportTarget, SaveExtra, SellActions, Work } from "./types";
 const FOCUSABLE = 'a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
 /** The plain field (owner, 25 Nov 2026: no fill-in-the-blank sentences): a label above, the field full width, rounded corners, no tint. */
 const inputCls = "min-h-11 w-full rounded-lg border border-edge bg-transparent px-3 text-[16px] text-ink outline-none focus:border-brand-edge aria-[invalid=true]:border-red-text";
-const pill = "min-h-11 rounded-full border border-edge bg-surface-2 px-3.5 text-[16px] font-semibold text-ink outline-none focus:border-brand-edge aria-[invalid=true]:border-red-text";
+const pill = "min-h-11 rounded-md border border-edge bg-surface-2 px-3.5 text-[16px] font-semibold text-ink outline-none focus:border-brand-edge aria-[invalid=true]:border-red-text";
 const nameBox = "min-h-12 w-full rounded-xl border border-edge bg-surface px-3.5 text-[16px] text-ink outline-none focus:border-brand-edge aria-[invalid=true]:border-red-text";
-const btnMain = "jb-press inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-6 text-[16px] font-bold text-on-brand disabled:opacity-60";
-const btnQuiet = "jb-press inline-flex min-h-12 items-center justify-center rounded-full border border-edge bg-surface px-5 text-[16px] font-semibold text-ink";
+const btnMain = "jb-press inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-edge bg-brand px-6 text-[16px] font-bold text-on-brand disabled:opacity-60";
+const btnQuiet = "jb-press inline-flex min-h-12 items-center justify-center rounded-md border border-edge bg-surface px-5 text-[16px] font-semibold text-ink";
 
 type View =
   | { v: "say" }
@@ -80,7 +80,7 @@ function ColourPanel({ chosen, onChange, t }: { chosen: readonly string[]; onCha
         const on = chosen.includes(c);
         const full = !on && chosen.length >= MAX_COLOURS;
         return (
-          <button key={c} type="button" aria-pressed={on} disabled={full} onClick={() => onChange(on ? chosen.filter((x) => x !== c) : [...chosen, c])} className={`jb-press min-h-9 rounded-full border px-3 text-[14px] font-semibold disabled:opacity-40 ${on ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
+          <button key={c} type="button" aria-pressed={on} disabled={full} onClick={() => onChange(on ? chosen.filter((x) => x !== c) : [...chosen, c])} className={`jb-press min-h-9 rounded-md border px-3 text-[14px] font-semibold disabled:opacity-40 ${on ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
             {t(`catalogue.colour.${c}`)}
           </button>
         );
@@ -624,7 +624,7 @@ export default function SellWork({ style, work, words, base, actions, live, owne
   return (
     <div data-part="sell-work" className="fixed inset-0 z-[85] flex items-end justify-center md:items-stretch md:justify-end">
       <button type="button" tabIndex={-1} aria-hidden="true" onClick={onClose} className="sl-veil absolute inset-0 cursor-default border-0 bg-black/45 p-0" />
-      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="sell-title" tabIndex={-1} onKeyDown={onKeyDown} className="sl-sheet relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-surface text-ink shadow-[var(--v2-shadow)] outline-none md:max-h-none md:w-[520px] md:max-w-full md:rounded-l-3xl md:rounded-tr-none">
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="sell-title" tabIndex={-1} onKeyDown={onKeyDown} className="sl-sheet relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-xl bg-surface text-ink shadow-[var(--v2-shadow)] outline-none md:max-h-none md:w-[520px] md:max-w-full md:rounded-l-xl md:rounded-tr-none">
         <span aria-hidden="true" className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-edge opacity-70 md:hidden" />
         <header className="flex items-center justify-between gap-3 px-4 pb-2 pt-2 md:px-5 md:pt-4">
           <h2 id="sell-title" className="m-0 font-display text-[22px] font-bold leading-tight text-ink">
@@ -640,11 +640,11 @@ export default function SellWork({ style, work, words, base, actions, live, owne
               <label htmlFor="sell-say" className="text-[15px] font-bold leading-snug text-ink">
                 {t("jobs.sell.say.label")}
               </label>
-              <div className="rounded-2xl border border-brand-edge bg-surface p-2 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--v2-brand)_25%,transparent)]">
+              <div className="rounded-xl border border-brand-edge bg-surface p-2 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--v2-brand)_25%,transparent)]">
                 <textarea ref={boxRef} id="sell-say" name="sell-say" rows={3} maxLength={600} value={text} onChange={(e) => setText(e.target.value)} placeholder={SAY_EXAMPLE[style]} data-voice="allow" autoFocus className="block w-full resize-none rounded-xl border-0 bg-transparent px-2 py-1.5 text-[16px] leading-snug text-ink outline-none placeholder:text-muted" />
                 <div className="flex items-center justify-end gap-2">
                   <VoiceMic target={boxRef} size="icon" />
-                  <button type="submit" aria-label={t("jobs.sell.say.go")} disabled={busy} className="jb-press grid size-11 shrink-0 place-items-center rounded-full border border-brand-edge bg-brand text-on-brand disabled:opacity-60">
+                  <button type="submit" aria-label={t("jobs.sell.say.go")} disabled={busy} className="jb-press grid size-11 shrink-0 place-items-center rounded-md border border-brand-edge bg-brand text-on-brand disabled:opacity-60">
                     <ArrowRight aria-hidden="true" className="size-5" />
                   </button>
                 </div>
@@ -684,7 +684,7 @@ export default function SellWork({ style, work, words, base, actions, live, owne
                   <p className="m-0 text-[15px] font-bold text-ink">{t("jobs.sell.imp.target.title")}</p>
                   <div className="flex flex-wrap gap-2">
                     {[{ id: "catalogue", name: t("jobs.sell.imp.target.catalogue") }, ...targets.map((x) => ({ id: x.id, name: x.name }))].map((o) => (
-                      <button key={o.id} type="button" role="radio" aria-checked={target === o.id} onClick={() => setTarget(o.id)} className={`min-h-11 rounded-full border px-4 text-[15px] font-semibold ${target === o.id ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-ink"}`}>
+                      <button key={o.id} type="button" role="radio" aria-checked={target === o.id} onClick={() => setTarget(o.id)} className={`min-h-11 rounded-md border px-4 text-[15px] font-semibold ${target === o.id ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-ink"}`}>
                         {o.name}
                       </button>
                     ))}
@@ -729,12 +729,12 @@ export default function SellWork({ style, work, words, base, actions, live, owne
                   <q className="text-[15px] leading-snug text-ink">{view.text}</q>
                 </div>
               ) : null}
-              <ul className="m-0 flex list-none flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface p-0">
+              <ul className="m-0 flex list-none flex-col divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface p-0">
                 {view.entries.map((e, i) => (
                   <li key={e.id} className="flex min-h-14 items-center gap-3 px-4 py-2.5">
                     <SellRowBody entry={e} t={t} />
                     {view.entries.length > 1 ? (
-                      <button type="button" data-action="change-one" aria-label={`${t("jobs.sell.u.change")}: ${i + 1}`} onClick={() => setView({ v: "form", id: null, fresh: e.id, form: formOf(e), prior: null, hint: null, back: view.entries.filter((x) => x.id !== e.id) })} className="jb-press min-h-11 shrink-0 rounded-full border border-edge bg-surface px-3.5 text-[14px] font-semibold text-ink">
+                      <button type="button" data-action="change-one" aria-label={`${t("jobs.sell.u.change")}: ${i + 1}`} onClick={() => setView({ v: "form", id: null, fresh: e.id, form: formOf(e), prior: null, hint: null, back: view.entries.filter((x) => x.id !== e.id) })} className="jb-press min-h-11 shrink-0 rounded-md border border-edge bg-surface px-3.5 text-[14px] font-semibold text-ink">
                         {t("jobs.sell.u.change")}
                       </button>
                     ) : null}

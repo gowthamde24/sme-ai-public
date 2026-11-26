@@ -305,7 +305,7 @@ export function DeveloperKeysCard({ words, lang, keys, usage, mock, actions, sim
         <h2 id="sv6-developer" className={sectionTitle}>
           {t("sv6.dev.title")}
         </h2>
-        <span className="rounded-full border border-line bg-surface-2 px-3 py-1 text-sm font-semibold text-muted">{t("sv6.dev.test")}</span>
+        <span className="rounded-md border border-line bg-surface-2 px-3 py-1 text-sm font-semibold text-muted">{t("sv6.dev.test")}</span>
       </div>
       <p className="mt-2 text-base text-muted">{t("sv6.dk.text")}</p>
       {mock ? (

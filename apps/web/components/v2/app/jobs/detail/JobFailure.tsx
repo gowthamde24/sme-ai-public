@@ -33,7 +33,7 @@ export function FailureCard({ failure, fixCount, t, lang, fixHref, canChange }: 
         ))}
       </ul>
       {canChange && fixCount > 1 ? (
-        <Link href={fixHref} prefetch={false} className="jb-press mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand no-underline md:w-auto">
+        <Link href={fixHref} prefetch={false} className="jb-press mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-md border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand no-underline md:w-auto">
           {t("jobs.fail.fix_all", { n: fixCount })}
         </Link>
       ) : null}

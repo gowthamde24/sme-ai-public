@@ -9,7 +9,7 @@
    ========================================================================== */
 [data-ui="v2"] {
   color-scheme: light;
-  --v2-radius: 12px;
+  --v2-radius: 8px;
 
   --v2-bg: #ffffff;
   --v2-surface: #ffffff;

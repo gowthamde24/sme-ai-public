@@ -68,7 +68,7 @@ export function ItemView({ base, item, role, words, lead, saved, send, undo = nu
         </header>
 
         {!item.active ? (
-          <p role="note" className="rounded-2xl bg-surface-2 px-4 py-3 text-base">
+          <p role="note" className="rounded-xl bg-surface-2 px-4 py-3 text-base">
             {say(words, "catalogue.item.hidden")}
           </p>
         ) : null}

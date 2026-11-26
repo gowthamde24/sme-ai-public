@@ -21,8 +21,8 @@ export function PackProp({ owlProp, className }: { owlProp: string; className?: 
  */
 export function PackCard({ card, href, hint, notValidated }: { card: SignupCard; href: string; hint: string; /** The line for a type no real owner of that trade has reviewed yet ("Not validated by a real owner yet"). */ notValidated?: string }) {
   return (
-    <Link href={href} data-pack-card={card.id} className="group flex min-h-24 items-center gap-4 rounded-2xl border border-edge bg-surface p-4 transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line">
-      <span data-accent={card.accent} aria-hidden="true" className="grid size-14 shrink-0 place-items-center rounded-2xl bg-pack-bg text-pack-text">
+    <Link href={href} data-pack-card={card.id} className="group flex min-h-24 items-center gap-4 rounded-xl border border-edge bg-surface p-4 transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line">
+      <span data-accent={card.accent} aria-hidden="true" className="grid size-14 shrink-0 place-items-center rounded-xl bg-pack-bg text-pack-text">
         <PackProp owlProp={card.owlProp} className="size-7" />
       </span>
       <span className="min-w-0 flex-1">

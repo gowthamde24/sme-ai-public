@@ -37,7 +37,7 @@ export function WorkspaceSwitcher({ memberships, labels, plan, loading = false, 
         {current && !still ? (
           <span className="block truncate text-sm text-muted">{early ? word(labels, "frame.early", "Free early access") : (planText(plan, labels) ?? (loading ? "\u00a0" : <NotYetText labels={labels} className="" />))}</span>
         ) : null}
-        {current && pack ? <span data-accent={pack.accent} className="inline-block max-w-full truncate rounded-full bg-pack-bg px-2 text-sm text-pack-text">{pack.name}</span> : null}
+        {current && pack ? <span data-accent={pack.accent} className="inline-block max-w-full truncate rounded-md bg-pack-bg px-2 text-sm text-pack-text">{pack.name}</span> : null}
       </span>
     </>
   );

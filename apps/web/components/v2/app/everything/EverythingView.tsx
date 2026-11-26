@@ -33,13 +33,13 @@ export function EverythingView({ entries, words, base, lang, missing, example }:
   return (
     <section aria-label={w("ev.title")} data-part="everything" className="mt-4 flex flex-col gap-4">
       {example ? (
-        <p data-part="example-data" className="m-0 inline-flex w-fit items-center rounded-full border border-amber-text bg-amber-bg px-2.5 py-0.5 text-xs font-semibold text-amber-text">
+        <p data-part="example-data" className="m-0 inline-flex w-fit items-center rounded border border-amber-text bg-amber-bg px-2.5 py-0.5 text-xs font-semibold text-amber-text">
           {w("ev.example")}
         </p>
       ) : null}
       <nav aria-label={w("ev.filter")} className="flex flex-wrap gap-2" data-part="chips">
         {[null, ...KINDS].map((k) => (
-          <button key={k ?? "all"} type="button" aria-pressed={kind === k} onClick={() => setKind(k)} className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold ${kind === k ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}>
+          <button key={k ?? "all"} type="button" aria-pressed={kind === k} onClick={() => setKind(k)} className={`inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold ${kind === k ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}>
             {k ? w(`ev.kind.${k}`) : w("ev.all")} ({k ? count(k) : entries.length})
           </button>
         ))}
@@ -50,9 +50,9 @@ export function EverythingView({ entries, words, base, lang, missing, example }:
         </p>
       ) : null}
       {shown.length === 0 ? (
-        <p className="m-0 rounded-[22px] border border-line bg-surface p-4 text-base text-muted">{w("ev.empty")}</p>
+        <p className="m-0 rounded-xl border border-line bg-surface p-4 text-base text-muted">{w("ev.empty")}</p>
       ) : (
-        <ol className="m-0 flex list-none flex-col overflow-hidden rounded-[22px] border border-line bg-surface p-0 shadow-[var(--v2-shadow)]">
+        <ol className="m-0 flex list-none flex-col overflow-hidden rounded-xl border border-line bg-surface p-0 shadow-[var(--v2-shadow)]">
           {shown.map((e) => {
             const row = e.kind === "changes" ? e.vars.what : w(e.key, { ...e.vars, who: e.vars.who || w("ev.someone") });
             const state = gone[e.id];
@@ -70,14 +70,14 @@ export function EverythingView({ entries, words, base, lang, missing, example }:
                     )}
                   </p>
                   <p className="m-0 text-sm text-muted">
-                    <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs font-semibold">{w(`ev.kind.${e.kind}`)}</span>
+                    <span className="rounded bg-surface-2 px-2 py-0.5 text-xs font-semibold">{w(`ev.kind.${e.kind}`)}</span>
                     {e.practice ? <span className="ml-2 font-semibold">{w("ev.practice")}</span> : null}
                     {e.outcome && e.outcome !== "done" ? <span className="ml-2 font-semibold text-amber-text">{w(`ev.out.${e.outcome}`)}</span> : null}
                     {e.detail ? <span className="ml-2 [overflow-wrap:anywhere]">{e.detail}</span> : null}
                   </p>
                 </div>
                 {e.undo && !state ? (
-                  <button type="button" onClick={() => void undo(e)} disabled={busy !== null} data-part="undo" className="inline-flex min-h-11 items-center rounded-full border border-edge px-4 text-sm font-semibold hover:bg-surface-2 disabled:opacity-60">
+                  <button type="button" onClick={() => void undo(e)} disabled={busy !== null} data-part="undo" className="inline-flex min-h-11 items-center rounded-md border border-edge px-4 text-sm font-semibold hover:bg-surface-2 disabled:opacity-60">
                     {w("ev.undo")}
                   </button>
                 ) : null}

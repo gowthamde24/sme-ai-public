@@ -15,12 +15,12 @@ export function MoneyView({ summary, w, base, remind, duesHref, when }: MoneyVie
   const n = (key: string, v: number) => (w[`${key}.${v === 1 ? "one" : "other"}`] ?? "").replace("{n}", v.toLocaleString("en-IN"));
   if (summary === null)
     return (
-      <p role="alert" className="m-0 rounded-2xl border border-line bg-surface p-4 text-sm text-muted" data-state="unread">
+      <p role="alert" className="m-0 rounded-xl border border-line bg-surface p-4 text-sm text-muted" data-state="unread">
         {w["mo.unread"]}
       </p>
     );
   const stat = (key: string, amount: number, sub: string, tone: "plain" | "red") => (
-    <div className="flex flex-col gap-1 rounded-[22px] border border-line bg-surface p-4" data-stat={key}>
+    <div className="flex flex-col gap-1 rounded-xl border border-line bg-surface p-4" data-stat={key}>
       <p className="m-0 text-sm font-semibold text-muted">{w[`mo.${key}`]}</p>
       <p className={`m-0 font-display text-3xl font-bold tabular-nums ${tone === "red" && amount > 0 ? "text-red-text" : ""}`}>{formatRupeesShort(amount)}</p>
       <p className="m-0 text-sm text-muted">{sub}</p>
@@ -45,13 +45,13 @@ export function MoneyView({ summary, w, base, remind, duesHref, when }: MoneyVie
           ) : null}
         </div>
         {summary.top.length === 0 ? (
-          <p className="m-0 rounded-2xl border border-line bg-surface p-4 text-sm text-muted" data-state="empty">
+          <p className="m-0 rounded-xl border border-line bg-surface p-4 text-sm text-muted" data-state="empty">
             {w["mo.empty"]}
           </p>
         ) : (
           <ul className="m-0 flex list-none flex-col gap-2 p-0" data-part="money-top">
             {summary.top.map((r) => (
-              <li key={r.accountId ?? `${r.companyId}-${r.contactId}`} data-row={r.accountId ?? ""} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-2xl border border-line bg-surface p-3.5">
+              <li key={r.accountId ?? `${r.companyId}-${r.contactId}`} data-row={r.accountId ?? ""} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-line bg-surface p-3.5">
                 <div className="flex min-w-0 flex-col">
                   {r.companyId && duesHref ? (
                     <Link href={`${base}/dues/${r.companyId}`} className="font-semibold text-ink underline-offset-4 hover:underline [overflow-wrap:anywhere]">

@@ -13,7 +13,7 @@ import { DoItEntry } from "./AskDoItLazy";
 const VoiceMode = dynamic(() => import("./VoiceMode").then((m) => m.VoiceMode), { ssr: false }); // drawn only when the old recorder's circle is opened (not where the spoken conversation is on)
 import type { RecorderProblem } from "./use-recorder";
 
-const chipClass = "inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-50";
+const chipClass = "inline-flex min-h-11 items-center rounded-md border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-50";
 const KIND_WORD: Readonly<Record<string, string>> = { quote: "today.kind.quote", followup_draft: "today.kind.followup", reply_draft: "ask.kind.reply", enquiry: "ask.kind.enquiry", store_visit: "ask.kind.visit" };
 const PROBLEM_WORD: Readonly<Record<RecorderProblem, string>> = { denied: "ask.mic.denied", nomic: "ask.voice.nomic", short: "ask.voice.short", unsupported: "ask.mic.failed", failed: "ask.mic.failed" };
 /** What a failed answer says, by the code the route gave (typed and spoken questions share the first six). */
@@ -33,7 +33,7 @@ export function AskForm({ session, look, placeholder, inputId = "ask-input" }: {
   const s = session;
   const { w } = s;
   const round = look === "box" ? "rounded-lg size-12" : "rounded-full size-12 md:size-14";
-  const inputClass = look === "box" ? "min-h-12 min-w-0 flex-1 rounded-lg border border-edge bg-surface px-3 text-base text-ink placeholder:text-muted focus:border-brand-edge" : "min-h-12 min-w-0 flex-1 rounded-full border border-edge bg-bg px-5 text-base text-ink placeholder:text-muted focus:border-brand-edge md:min-h-14";
+  const inputClass = look === "box" ? "min-h-12 min-w-0 flex-1 rounded-lg border border-edge bg-surface px-3 text-base text-ink placeholder:text-muted focus:border-brand-edge" : "min-h-12 min-w-0 flex-1 rounded-md border border-edge bg-bg px-5 text-base text-ink placeholder:text-muted focus:border-brand-edge md:min-h-14";
   const soft = look !== "box";
   return (
     <>
@@ -270,7 +270,7 @@ export function AskAnswer({ session, chips = [], earlierWord, scrollRoot = false
             <p role="alert" className="mt-2 text-base font-medium text-red-text">
               {s.errorCode !== null && ERROR_WORD[s.errorCode] ? w(ERROR_WORD[s.errorCode]) : w("ask.sorry")}
               {s.asked !== "" && !s.heardByVoice ? (
-                <button type="button" data-ask="retry" onClick={s.retry} className="ml-3 inline-flex min-h-11 items-center rounded-full px-3 font-semibold text-brand-text hover:bg-surface-2">
+                <button type="button" data-ask="retry" onClick={s.retry} className="ml-3 inline-flex min-h-11 items-center rounded-md px-3 font-semibold text-brand-text hover:bg-surface-2">
                   {w("ask.retry")}
                 </button>
               ) : null}

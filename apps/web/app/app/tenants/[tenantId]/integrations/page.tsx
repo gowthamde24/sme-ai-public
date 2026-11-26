@@ -28,7 +28,7 @@ const AVAILABLE: { key: string; icon: LucideIcon; href: (base: string) => string
 ];
 
 /** The card of a "connect something" grid (a THING you connect = a card): one border, light radius, bare category icon left of the title, text left, one button. */
-const card = "flex h-full min-w-0 flex-col items-start gap-2 rounded-[14px] border border-line bg-surface p-[18px] text-left";
+const card = "flex h-full min-w-0 flex-col items-start gap-2 rounded-xl border border-line bg-surface p-[18px] text-left";
 
 /**
  * /app/tenants/[tenantId]/integrations (owner and admin): what can be connected. The price list import goes to the price-list page, WhatsApp to its Connect page and the calendar and the accounting export to Settings > Data (job CC);

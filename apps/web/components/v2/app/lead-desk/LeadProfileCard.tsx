@@ -73,7 +73,7 @@ export function LeadProfileCard({ words, leadId, profile, canEdit, fix }: { word
                     </span>
                   ) : null}
                   {canEdit && guessed ? (
-                    <button type="button" data-act="confirm" disabled={busy} onClick={() => save(f, value)} className="min-h-11 rounded-full border border-line px-3 text-sm font-semibold text-ink">
+                    <button type="button" data-act="confirm" disabled={busy} onClick={() => save(f, value)} className="min-h-11 rounded-md border border-line px-3 text-sm font-semibold text-ink">
                       {t("lp.card.right")}
                     </button>
                   ) : null}

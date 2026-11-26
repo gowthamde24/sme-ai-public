@@ -7,7 +7,7 @@ import { btnPrimary } from "@/components/v2/landing/ui";
  * skin-contract test enforce it.
  */
 /** The page's own <main>: it is the card. */
-export const authMain = "mx-auto w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-[var(--v2-shadow)] sm:p-8";
+export const authMain = "mx-auto w-full max-w-md rounded-xl border border-line bg-surface p-6 shadow-[var(--v2-shadow)] sm:p-8";
 export const authH1 = "mb-2 font-display text-3xl font-bold leading-tight sm:text-4xl";
 export const authLead = "mb-4 text-base text-muted";
 export const authForm = "flex flex-col";

@@ -11,8 +11,8 @@ import { secondary } from "../visits/styles";
 import { vocab } from "./ItemCard";
 import { bandText, STOCK_CHOICES, hrefFor, toggled, type CatalogueQuery } from "./catalogue-logic";
 
-const plainChip = (on: boolean) => `inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 text-[15px] leading-tight text-ink ${on ? "border-ink font-semibold" : "border-line font-medium hover:bg-surface-2"}`;
-const chipClass = (on: boolean) => `inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-[15px] leading-tight ${on ? "bg-brand-bg font-semibold text-brand-text" : "bg-surface-2 font-medium text-ink hover:bg-line"}`;
+const plainChip = (on: boolean) => `inline-flex min-h-11 items-center gap-1.5 rounded-md border px-4 text-[15px] leading-tight text-ink ${on ? "border-ink font-semibold" : "border-line font-medium hover:bg-surface-2"}`;
+const chipClass = (on: boolean) => `inline-flex min-h-11 items-center gap-1.5 rounded-md px-4 text-[15px] leading-tight ${on ? "bg-brand-bg font-semibold text-brand-text" : "bg-surface-2 font-medium text-ink hover:bg-line"}`;
 
 /**
  * The search and the filters of the catalogue under JOBS (the simplicity pass): ONE card with "Show [all sarees], made of [any fabric]." (the stock and the fabric, each a choice inside the sentence), the search box, and the one line that says what is shown now.
@@ -68,7 +68,7 @@ export function CatalogueFiltersSimple({ base, words, query, leadId, effect }: {
         {leadId ? <input type="hidden" name="lead" value={leadId} /> : null}
         <label className="min-w-48 flex-1 md:max-w-md">
           <span className="sr-only">{say(words, "catalogue.search.label")}</span>
-          <input id="catalogue-q" name="q" type="search" maxLength={100} defaultValue={query.q} placeholder={say(words, "catalogue.search.placeholder")} className="write-ctl min-h-11 w-full rounded-full border border-line bg-surface px-4 text-[15px] text-ink placeholder:text-muted focus:border-brand-edge" />
+          <input id="catalogue-q" name="q" type="search" maxLength={100} defaultValue={query.q} placeholder={say(words, "catalogue.search.placeholder")} className="write-ctl min-h-11 w-full rounded-md border border-line bg-surface px-4 text-[15px] text-ink placeholder:text-muted focus:border-brand-edge" />
         </label>
         <button type="submit" className={secondary}>
           {say(words, "catalogue.search.go")}

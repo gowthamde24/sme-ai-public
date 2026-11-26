@@ -50,7 +50,7 @@ export function HelpButton({ base, labels, legal = null }: { base: string; label
         <CircleHelp className="size-5 text-brand-text" aria-hidden="true" />
       </button>
       {open ? (
-        <div id={id} role="region" aria-label={label} className="absolute right-0 top-full z-[60] mt-2 flex w-[min(26rem,calc(100vw-1.5rem))] gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow-pop)]">
+        <div id={id} role="region" aria-label={label} className="absolute right-0 top-full z-[60] mt-2 flex w-[min(26rem,calc(100vw-1.5rem))] gap-3 rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow-pop)]">
           <OrbMark px={40} mood="answering" className="size-10 shrink-0" />
           <div className="min-w-0 flex-1">
             {tip ? (

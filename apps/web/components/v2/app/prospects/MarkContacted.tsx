@@ -11,7 +11,7 @@ import { makeT, type Words } from "../words";
 export type MarkContactedActions = { mark: (prospectId: string, input: { daysAgo: ContactDaysAgo; note: string }) => Promise<Reply<Prospect>> };
 type Shown = Pick<Prospect, "id" | "status" | "lastContactedAt" | "contactedBy" | "contactNote">;
 
-const btn = "inline-flex min-h-11 items-center justify-center rounded-full border-2 border-edge bg-surface px-4 font-bold text-ink disabled:opacity-60";
+const btn = "inline-flex min-h-11 items-center justify-center rounded-md border-2 border-edge bg-surface px-4 font-bold text-ink disabled:opacity-60";
 const day = (iso: string): string => new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" }).format(new Date(iso));
 
 /**
@@ -48,7 +48,7 @@ export function ContactedNote({ m, words }: { m: Pick<MarkState, "now" | "contac
   return (
     <div className="flex flex-col gap-1" data-part="contacted">
       <span className="flex flex-wrap items-center gap-2">
-        <span className="inline-flex min-h-8 items-center whitespace-nowrap rounded-full bg-ink px-3 text-sm font-bold text-surface" data-chip="contacted">
+        <span className="inline-flex min-h-8 items-center whitespace-nowrap rounded-md bg-ink px-3 text-sm font-bold text-surface" data-chip="contacted">
           {t("lf.v6.mark.chip", { date: day(m.now.lastContactedAt as string) })}
         </span>
         {m.now.contactedBy ? <span className="text-sm text-muted">{t("lf.v6.mark.by", { name: m.now.contactedBy })}</span> : null}
@@ -64,7 +64,7 @@ export function MarkForm({ m, words }: { m: MarkState; words: Words }) {
   const id = useId();
   return (
     <form
-      className="flex flex-col gap-2 rounded-2xl border border-line bg-surface-2 p-3"
+      className="flex flex-col gap-2 rounded-xl border border-line bg-surface-2 p-3"
       onSubmit={(e) => {
         e.preventDefault();
         void m.save();
@@ -85,7 +85,7 @@ export function MarkForm({ m, words }: { m: MarkState; words: Words }) {
       </label>
       <textarea id={`${id}-note`} value={m.note} maxLength={CONTACT_NOTE_MAX} rows={3} onChange={(e) => m.setNote(e.target.value)} placeholder={t("lf.v6.mark.note.ph")} className="rounded-xl border border-edge bg-surface p-3" data-part="mark-note" />
       <div className="flex flex-wrap gap-2">
-        <button type="submit" disabled={m.busy} className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-5 font-bold text-on-brand disabled:opacity-60" data-act="mark-save">
+        <button type="submit" disabled={m.busy} className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-5 font-bold text-on-brand disabled:opacity-60" data-act="mark-save">
           {t("lf.v6.mark.save")}
         </button>
         <button type="button" disabled={m.busy} className={btn} onClick={() => m.setOpen(false)} data-act="mark-cancel">

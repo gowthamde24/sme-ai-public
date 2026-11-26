@@ -152,7 +152,7 @@ export default function GuidedDemo({ words, routes, actions }: { words?: Words; 
   if (step === null)
     return slot
       ? createPortal(
-          <button type="button" data-part="guided-demo-start" onClick={start} title={t("gd.start")} className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-edge bg-brand px-3 text-sm font-semibold text-on-brand hover:brightness-95 max-[420px]:w-9 max-[420px]:px-0">
+          <button type="button" data-part="guided-demo-start" onClick={start} title={t("gd.start")} className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-brand-edge bg-brand px-3 text-sm font-semibold text-on-brand hover:brightness-95 max-[420px]:w-9 max-[420px]:px-0">
             <Play className="size-3.5" aria-hidden="true" />
             <span className="max-[420px]:sr-only">{t("gd.start")}</span>
           </button>,
@@ -163,7 +163,7 @@ export default function GuidedDemo({ words, routes, actions }: { words?: Words; 
   const done = step >= STEP_KEYS.length;
   const key = STEP_KEYS[Math.min(step, STEP_KEYS.length - 1)];
   return (
-    <section role="region" aria-label={t("gd.label")} data-part="guided-demo" className="fixed inset-x-3 bottom-20 z-40 flex max-h-[60vh] flex-col gap-2 overflow-y-auto rounded-[20px] border border-line bg-surface p-4 shadow-lg md:inset-x-auto md:bottom-4 md:left-4 md:w-[440px]">
+    <section role="region" aria-label={t("gd.label")} data-part="guided-demo" className="fixed inset-x-3 bottom-20 z-40 flex max-h-[60vh] flex-col gap-2 overflow-y-auto rounded-xl border border-line bg-surface p-4 shadow-lg md:inset-x-auto md:bottom-4 md:left-4 md:w-[440px]">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-semibold text-muted">{done ? t("gd.label") : t("gd.step", { n: String(step + 1), total: String(STEP_KEYS.length) })}</p>
         <button type="button" onClick={close} aria-label={t("gd.close")} title={t("gd.close")} className={`${quiet} !min-h-9 !px-2`}>

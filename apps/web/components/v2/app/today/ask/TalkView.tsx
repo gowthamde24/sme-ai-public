@@ -9,7 +9,7 @@ import { AskProvidedContext, AskVoiceContext, useStoredAsk } from "./ask-store";
 import type { Availability } from "./ask-types";
 import type { AskWords } from "./ask-words";
 
-const ChatCard = dynamic(() => import("./ChatCardHost"), { ssr: false, loading: () => <div aria-hidden="true" className="min-h-[24rem] rounded-2xl border border-line bg-surface" /> });
+const ChatCard = dynamic(() => import("./ChatCardHost"), { ssr: false, loading: () => <div aria-hidden="true" className="min-h-[24rem] rounded-xl border border-line bg-surface" /> });
 
 /**
  * "Talk to assistant" as a page of its own (owner rule, 6 Nov 2026: every menu item opens its own page): the same conversation as Today's composer and the floating panel (ONE session for the workspace, so a chat started here goes on there),
@@ -42,7 +42,7 @@ export function TalkView({ lang, base, availability, words, chips }: { lang: str
     );
   }
   return (
-    <section id="ask" data-part="talk" className="rounded-2xl border border-line bg-surface p-3">
+    <section id="ask" data-part="talk" className="rounded-xl border border-line bg-surface p-3">
       <AskCard lang={lang} base={base} availability={availability} words={words} chips={chips} onMood={() => undefined} />
     </section>
   );

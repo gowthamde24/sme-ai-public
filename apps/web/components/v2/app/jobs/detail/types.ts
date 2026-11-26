@@ -21,8 +21,8 @@ export type JobPageActions = {
 export type WhoExtra = { sampleEndpoint: string | null; target: WhoTarget | null; changeJob: ((jobId: string, patch: SpeaksPatch) => Promise<Reply<JobPatched>>) | null; /** The voices of the workspace's gender, the same list as the voice card (null = no voice list is drawn). */ voices?: readonly WhoVoiceName[] | null };
 
 /** A card of the job page: the same white card as the Jobs list. */
-export const jobCard = "rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
+export const jobCard = "rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
 export const jobH2 = "m-0 font-display text-[17px] font-bold leading-tight text-ink";
-export const jobBtn = "jb-press write-ctl inline-flex min-h-10 items-center justify-center gap-2 rounded-full border px-4 text-[15px] font-semibold disabled:opacity-60";
+export const jobBtn = "jb-press write-ctl inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-[15px] font-semibold disabled:opacity-60";
 export const jobBtnMain = `${jobBtn} border-brand-edge bg-brand text-on-brand`;
 export const jobBtnQuiet = `${jobBtn} border-edge bg-surface text-ink`;

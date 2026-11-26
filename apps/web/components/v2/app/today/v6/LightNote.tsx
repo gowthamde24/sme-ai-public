@@ -21,7 +21,7 @@ export function LightNote({ words, until, className = "" }: { words: Words; unti
   if (!until) return null;
   const t = makeT(words);
   return (
-    <p data-part="light-note" role="status" className={`inline-block rounded-full border border-amber-text bg-amber-bg px-2.5 py-1 text-sm font-medium text-amber-text ${className}`}>
+    <p data-part="light-note" role="status" className={`inline-block rounded-md border border-amber-text bg-amber-bg px-2.5 py-1 text-sm font-medium text-amber-text ${className}`}>
       {t("frame.ailight", { time: indiaTime(until) })}
     </p>
   );

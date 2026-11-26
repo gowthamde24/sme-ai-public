@@ -67,7 +67,7 @@ const WAVE = (
   </span>
 );
 
-const BTN = "inline-flex min-h-8 shrink-0 items-center rounded-full border px-3 text-[13px] font-extrabold no-underline";
+const BTN = "inline-flex min-h-8 shrink-0 items-center rounded-md border px-3 text-[13px] font-extrabold no-underline";
 
 /** The desktop bar (768 px and up), in the top bar. */
 export function LiveBar({ tenantId, labels, enabled }: { tenantId: string; labels?: Labels; enabled: boolean }) {
@@ -81,7 +81,7 @@ export function LiveBar({ tenantId, labels, enabled }: { tenantId: string; label
   const ringing = one !== null && !one.answered; // not answered yet: "Calling ...", no clock, nothing to read or take over
   const text = one ? (ringing ? SHOWN(labels, "frame.live.calling", "Calling {name}", { name: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : (ds ? SHOWN(labels, "frame.live.bar.one.v6", "Your assistant is on a call with {who}", { who: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : SHOWN(labels, "frame.live.bar.one", "{assistant} is on a call with {who}", { who: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }))) : SHOWN(labels, "frame.live.bar.many", "{n} calls live", { n: calls.length });
   return (
-    <div data-live-bar="" role="status" aria-live="polite" className="hidden min-w-0 max-w-full items-center gap-2.5 rounded-full bg-[#1e1e24] py-[5px] pl-3.5 pr-[5px] text-[13px] text-[#f9f8f6] shadow-[0_14px_34px_-14px_rgba(194,65,12,.6),0_0_0_1px_rgba(255,119,60,.35)] md:flex">
+    <div data-live-bar="" role="status" aria-live="polite" className="hidden min-w-0 max-w-full items-center gap-2.5 rounded-md bg-[#1e1e24] py-[5px] pl-3.5 pr-[5px] text-[13px] text-[#f9f8f6] shadow-[0_14px_34px_-14px_rgba(194,65,12,.6),0_0_0_1px_rgba(255,119,60,.35)] md:flex">
       <span aria-hidden="true" className="lv-dot" />
       <span className="max-lg:hidden">{WAVE}</span>
       <Link href={hrefOf(base, calls)} className="min-w-0 truncate text-[#d9d6d2] no-underline hover:underline">
@@ -116,7 +116,7 @@ export function LiveIsland({ tenantId, labels, enabled }: { tenantId: string; la
   const text = one ? (ringing ? SHOWN(labels, "frame.live.calling", "Calling {name}", { name: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : SHOWN(labels, "frame.live.island", "On a call · {who}", { who: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") })) : SHOWN(labels, "frame.live.bar.many", "{n} calls live", { n: calls.length });
   return (
     <div className="flex w-full justify-center pt-[max(0.5rem,env(safe-area-inset-top))] md:hidden" data-live-island-row="">
-      <Link href={hrefOf(base, calls)} data-live-island="" role="status" aria-live="polite" className="flex max-w-full items-center gap-2 rounded-full bg-[#1e1e24] py-1.5 pl-3 pr-1.5 text-xs font-extrabold text-white no-underline shadow-[0_12px_28px_-12px_rgba(194,65,12,.7),0_0_0_1px_rgba(255,119,60,.35)]">
+      <Link href={hrefOf(base, calls)} data-live-island="" role="status" aria-live="polite" className="flex max-w-full items-center gap-2 rounded-md bg-[#1e1e24] py-1.5 pl-3 pr-1.5 text-xs font-extrabold text-white no-underline shadow-[0_12px_28px_-12px_rgba(194,65,12,.7),0_0_0_1px_rgba(255,119,60,.35)]">
         <span aria-hidden="true" className="lv-dot" />
         {WAVE}
         <span className="min-w-0 truncate">{text}</span>
@@ -152,16 +152,16 @@ export function LivePing({ tenantId, labels, enabled }: { tenantId: string; labe
   const permission = React.useSyncExternalStore(subscribePing, pingPermission, () => "denied" as const); // (read again on every draw, so a change made in the browser's own settings shows when the next call starts)
   if (calls.length === 0 || setting !== "none" || permission !== "default") return null;
   return (
-    <div role="dialog" aria-label={SHOWN(labels, "frame.live.ask.t", "Get a notification when a call starts?")} data-live-ask="" className="fixed left-1/2 top-20 z-[70] flex w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow-pop)]">
+    <div role="dialog" aria-label={SHOWN(labels, "frame.live.ask.t", "Get a notification when a call starts?")} data-live-ask="" className="fixed left-1/2 top-20 z-[70] flex w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 flex-col gap-3 rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow-pop)]">
       <div>
         <p className="m-0 font-display text-base font-bold">{SHOWN(labels, "frame.live.ask.t", "Get a notification when a call starts?")}</p>
         <p className="m-0 mt-1 text-sm text-muted">{SHOWN(labels, "frame.live.ask.b", "It says who is calling and where they came from. Never a phone number.")}</p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={() => void askPing()} className="inline-flex min-h-11 items-center rounded-full bg-brand px-4 text-sm font-semibold text-on-brand" data-part="yes">
+        <button type="button" onClick={() => void askPing()} className="inline-flex min-h-11 items-center rounded-md bg-brand px-4 text-sm font-semibold text-on-brand" data-part="yes">
           {SHOWN(labels, "frame.live.ask.yes", "Yes, tell me")}
         </button>
-        <button type="button" onClick={() => setPing(false)} className="inline-flex min-h-11 items-center rounded-full border border-edge px-4 text-sm font-semibold" data-part="no">
+        <button type="button" onClick={() => setPing(false)} className="inline-flex min-h-11 items-center rounded-md border border-edge px-4 text-sm font-semibold" data-part="no">
           {SHOWN(labels, "frame.live.ask.no", "Not now")}
         </button>
       </div>

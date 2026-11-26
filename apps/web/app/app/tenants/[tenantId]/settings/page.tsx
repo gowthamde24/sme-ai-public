@@ -830,7 +830,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               </p>
             ) : null}
             <form action={signOutEverywhereAction}>
-              <button type="submit" className="inline-flex min-h-11 items-center justify-center rounded-full border border-red-text bg-red-bg px-[18px] text-[15px] font-semibold text-red-text hover:brightness-95">
+              <button type="submit" className="inline-flex min-h-11 items-center justify-center rounded-md border border-red-text bg-red-bg px-[18px] text-[15px] font-semibold text-red-text hover:brightness-95">
                 {t("settings.security.all.btn")}
               </button>
             </form>

@@ -51,7 +51,7 @@ export function TripCard({ trip, base, siteLabel, words, role, actions, uploadUr
   const steps = writer ? stepsFrom(trip.status) : [];
   const stepLabel = (s: string) => say(words, `trip.step.${s}`);
   return (
-    <li className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-4" data-trip={trip.id} data-status={trip.status}>
+    <li className="flex flex-col gap-2 rounded-xl border border-line bg-surface p-4" data-trip={trip.id} data-status={trip.status}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <p className="min-w-0 text-lg font-semibold">
           <Link href={here} className="hover:underline">{say(words, "trip.title", { order: trip.order_no, n: trip.trip_no })}</Link>

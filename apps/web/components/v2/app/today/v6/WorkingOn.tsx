@@ -26,7 +26,7 @@ export default function WorkingOn({ working, words }: { working: Working | null;
       setBusy(false);
     }
   };
-  const btn = "inline-flex min-h-11 items-center rounded-[10px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
+  const btn = "inline-flex min-h-11 items-center rounded-xl border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
   return (
     <Card data-part="working-on" aria-labelledby="working-on-h" title={t("tv6.wk.title")} headingId="working-on-h">
       <div>

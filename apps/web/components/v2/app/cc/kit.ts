@@ -57,4 +57,4 @@ const PILL = {
   info: "border-info-text bg-info-bg text-info-text",
 } as const;
 /** The class of a small status pill (14 px text, a border and a tint: the status is in the word too, never in the colour alone; with JOBS on, design/jobs.css draws it SOLID with its icon, by the `jb-pill-<tone>` class). */
-export const pillClass = (tone: keyof typeof PILL): string => `jb-pill jb-pill-${tone} inline-flex items-center rounded-full border px-2.5 py-0.5 text-sm font-semibold ${PILL[tone]}`;
+export const pillClass = (tone: keyof typeof PILL): string => `jb-pill jb-pill-${tone} inline-flex items-center rounded-md border px-2.5 py-0.5 text-sm font-semibold ${PILL[tone]}`;

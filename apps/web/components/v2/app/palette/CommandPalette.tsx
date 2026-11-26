@@ -148,7 +148,7 @@ export function CommandPalette({ tenantId, role, pack, labels, names, words, rec
   return createPortal(
     <div className="fixed inset-0 z-[65]" data-palette="" onKeyDown={onKey}>
       <div aria-hidden="true" className="absolute inset-0 bg-charcoal/30" onClick={onClose} />
-      <div role="dialog" aria-modal="true" aria-label={w("frame.search")} className="v2-glass absolute inset-0 flex flex-col overflow-hidden border-line md:inset-x-0 md:top-[12vh] md:bottom-auto md:mx-auto md:max-h-[70vh] md:w-[min(40rem,calc(100%-2rem))] md:rounded-2xl md:border md:shadow-[var(--v2-shadow-pop)]">
+      <div role="dialog" aria-modal="true" aria-label={w("frame.search")} className="v2-glass absolute inset-0 flex flex-col overflow-hidden border-line md:inset-x-0 md:top-[12vh] md:bottom-auto md:mx-auto md:max-h-[70vh] md:w-[min(40rem,calc(100%-2rem))] md:rounded-xl md:border md:shadow-[var(--v2-shadow-pop)]">
         <div className="flex items-start gap-2 border-b border-line px-4">
           <span className="flex h-14 shrink-0 items-center">
             <SpriteIcon id="search" className="size-5 shrink-0 text-muted" />

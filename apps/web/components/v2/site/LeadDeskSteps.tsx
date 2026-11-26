@@ -6,7 +6,7 @@ export function LeadDeskSteps({ t }: { t: SiteT }) {
   return (
     <ol aria-label={t("ld.steps.list")} className="grid gap-5 md:grid-cols-2 lg:grid-cols-3" data-part="ld-steps">
       {LD_STEPS.map((n) => (
-        <li key={n} data-ld-step={n} className="flex flex-col gap-2.5 rounded-[20px] border border-line bg-surface p-7">
+        <li key={n} data-ld-step={n} className="flex flex-col gap-2.5 rounded-xl border border-line bg-surface p-7">
           <span aria-hidden="true" className="flex size-10 items-center justify-center rounded-xl bg-brand-bg font-display text-lg font-extrabold text-brand-text">
             {n}
           </span>

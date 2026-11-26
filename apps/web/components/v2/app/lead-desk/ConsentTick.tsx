@@ -13,7 +13,7 @@ export function ConsentTick({ words, checked, onChange, id }: { words?: Words; c
   const t = makeT(words);
   return (
     <div data-part="consent-tick" className="flex flex-col gap-2">
-      <div className="rounded-2xl border border-line bg-surface p-3 sm:p-3.5">
+      <div className="rounded-xl border border-line bg-surface p-3 sm:p-3.5">
         <Tick id={id} checked={checked} onChange={(e) => onChange(e.target.checked)} aria-describedby={`${id}-help`} label={<span className="text-[16px] font-semibold leading-snug text-ink">{t("jobs.trust.consent")}</span>} />
       </div>
       <p id={`${id}-help`} className="m-0 flex items-start gap-2 text-sm text-muted">

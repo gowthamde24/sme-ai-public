@@ -13,7 +13,7 @@ import { say, type TodayWords } from "../today/today-words";
 import { errorLine, field, label, okLine, primary, secondary } from "../visits/styles";
 import type { SetupActions } from "./types";
 
-const ZARI_CHIP = "inline-flex min-h-11 items-center rounded-full border border-edge px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg has-[:checked]:font-semibold has-[:checked]:text-brand-text";
+const ZARI_CHIP = "inline-flex min-h-11 items-center rounded-md border border-edge px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg has-[:checked]:font-semibold has-[:checked]:text-brand-text";
 
 /** "Maroon Kanchi pattu": a name made from the fabric and the colour, which the person may change. */
 export const autoName = (words: TodayWords, fabric: Fabric, colour: Colour): string => `${say(words, `catalogue.colour.${colour}`)} ${say(words, `catalogue.fabric.${fabric}`)}`.slice(0, 120);

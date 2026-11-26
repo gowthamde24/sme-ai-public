@@ -17,10 +17,10 @@ export default async function JobsLoading() {
             <span key={w} aria-hidden="true" data-skeleton="" className={`jb-skeleton block h-9 rounded-full ${w}`} />
           ))}
         </div>
-        <div className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
+        <div className="flex flex-col divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
           {[0, 1, 2, 3, 4].map((i) => (
             <div key={i} className="flex items-center gap-3 px-4 py-3">
-              <Skeleton className="size-9 shrink-0 rounded-[10px]" />
+              <Skeleton className="size-9 shrink-0 rounded-xl" />
               <div className="flex min-w-0 flex-1 flex-col gap-2">
                 <Skeleton className="h-4 w-2/3" />
                 <Skeleton className="h-3.5 w-full" />

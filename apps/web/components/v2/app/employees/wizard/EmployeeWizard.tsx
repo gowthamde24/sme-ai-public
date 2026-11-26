@@ -153,7 +153,7 @@ export function EmployeeWizard({ words, base, actions, voices }: { words?: Words
       <nav aria-label={t("emp.wiz.steps")}>
         <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0">
           {STEPS.map((s, i) => (
-            <li key={s} aria-current={s === step ? "step" : undefined} data-step={s} className={`flex min-h-11 items-center gap-2 rounded-full border px-3 text-sm font-semibold ${s === step ? "border-brand-edge bg-brand-bg text-brand-text" : i < index ? "border-line bg-surface-2 text-ink" : "border-line text-muted"}`}>
+            <li key={s} aria-current={s === step ? "step" : undefined} data-step={s} className={`flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm font-semibold ${s === step ? "border-brand-edge bg-brand-bg text-brand-text" : i < index ? "border-line bg-surface-2 text-ink" : "border-line text-muted"}`}>
               <span aria-hidden="true">{i + 1}</span>
               <span className={s === step ? "" : "sr-only"}>{t(`emp.wiz.step.${s}`)}</span>
             </li>

@@ -208,7 +208,7 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
         {v5 ? (
           // Today v5: the totals after calls and the team strip, folded; a closed <details> costs the first paint nothing and works without script
           outcomes !== null || team !== null || deskTeam !== null ? (
-            <details data-part="v5-more" className="group rounded-2xl border border-line bg-surface">
+            <details data-part="v5-more" className="group rounded-xl border border-line bg-surface">
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2 text-base font-semibold [&::-webkit-details-marker]:hidden">
                 <span>{t("today.v5.more")}</span>
                 <span aria-hidden="true" className="text-muted transition-transform group-open:rotate-180">⌄</span>

@@ -165,7 +165,7 @@ export function BillingV6({ words, lang, base, help, balance, pricing, invoices,
                   <div className="min-w-0">
                     <p className="font-semibold">
                       {t(`bv6.inv.kind.${i.kind}`)}
-                      {i.test ? <span className="ml-2 rounded-full bg-surface-2 px-2 text-xs font-semibold text-muted">{t("bv6.inv.test")}</span> : null}
+                      {i.test ? <span className="ml-2 rounded bg-surface-2 px-2 text-xs font-semibold text-muted">{t("bv6.inv.test")}</span> : null}
                     </p>
                     <p className="text-sm text-muted">{dateText(i.at, lang)}</p>
                   </div>

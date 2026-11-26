@@ -20,13 +20,13 @@ export function ActivationCard({ activation, base, t, hide = null, hidden = [], 
   // five or more of the steps done (owner review, 1 Nov): the card folds into ONE row, "Finish setting up · 5 of 6 · Continue"
   if (collapse && activation.done >= 5)
     return (
-      <section aria-labelledby="start-h" data-start="card" data-collapsed="true" className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-1 rounded-[20px] border border-line bg-surface px-4 py-2">
+      <section aria-labelledby="start-h" data-start="card" data-collapsed="true" className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-line bg-surface px-4 py-2">
         <h2 id="start-h" className="font-display text-base font-semibold leading-tight">
           {t("start.title")}
         </h2>
         <p className="text-sm text-muted">· {t("start.count", { done: activation.done, total: activation.total })}</p>
         {next?.href ? (
-          <Link prefetch={false} href={hrefOf(base, next.href)} className="ml-auto inline-flex min-h-9 items-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95">
+          <Link prefetch={false} href={hrefOf(base, next.href)} className="ml-auto inline-flex min-h-9 items-center rounded-md border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95">
             {t("start.next")}
           </Link>
         ) : null}

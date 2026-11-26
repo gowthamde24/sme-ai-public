@@ -27,7 +27,7 @@ const GAPS = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 360, 480, 720, 1440]
 /** Times of the calling hours: every 15 minutes between 10:00 am and 9:00 pm (the same range as the old time boxes). */
 const TIMES = Array.from({ length: 45 }, (_, i) => 600 + i * 15);
 const range = (from: number, to: number, step = 1): number[] => Array.from({ length: Math.floor((to - from) / step) + 1 }, (_, i) => from + i * step);
-const chip = (on: boolean) => `jb-press min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
+const chip = (on: boolean) => `jb-press min-h-11 rounded-md border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 const sub = "m-0 font-display text-[15px] font-bold text-ink";
 
 /**

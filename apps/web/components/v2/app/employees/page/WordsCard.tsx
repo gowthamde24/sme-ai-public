@@ -27,10 +27,10 @@ export function NeverSayCard({ emp, words, canEdit, actions, onChange }: TabProp
       {list.length > 0 ? (
         <ul className="m-0 flex list-none flex-wrap gap-2 p-0" data-part="emp-never-list">
           {list.map((w) => (
-            <li key={w} className="inline-flex min-h-11 items-center gap-1 rounded-full border border-line bg-surface-2 pl-3 text-[15px] text-ink">
+            <li key={w} className="inline-flex min-h-11 items-center gap-1 rounded-md border border-line bg-surface-2 pl-3 text-[15px] text-ink">
               <span className="break-all">{w}</span>
               {canEdit ? (
-                <button type="button" aria-label={t("emp.page.never.remove", { word: w })} onClick={() => (save.clear(), setList((p) => p.filter((x) => x !== w)))} className="inline-flex size-11 items-center justify-center rounded-full text-lg font-bold text-muted hover:text-ink">
+                <button type="button" aria-label={t("emp.page.never.remove", { word: w })} onClick={() => (save.clear(), setList((p) => p.filter((x) => x !== w)))} className="inline-flex size-11 items-center justify-center rounded-md text-lg font-bold text-muted hover:text-ink">
                   <span aria-hidden="true">×</span>
                 </button>
               ) : (

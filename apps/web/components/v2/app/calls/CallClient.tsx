@@ -42,7 +42,7 @@ export function EndCall({ w, end, ringing = false }: { w: W; end: () => Promise<
           <button
             type="button"
             disabled={busy}
-            className="inline-flex min-h-11 items-center rounded-full bg-ink px-5 font-extrabold text-bg"
+            className="inline-flex min-h-11 items-center rounded-md bg-ink px-5 font-extrabold text-bg"
             onClick={() =>
               start(async () => {
                 const out = await end();
@@ -59,7 +59,7 @@ export function EndCall({ w, end, ringing = false }: { w: W; end: () => Promise<
           </button>
         </>
       ) : (
-        <button type="button" className="inline-flex min-h-11 items-center rounded-full bg-ink px-5 font-extrabold text-bg" onClick={() => setSure(true)}>
+        <button type="button" className="inline-flex min-h-11 items-center rounded-md bg-ink px-5 font-extrabold text-bg" onClick={() => setSure(true)}>
           {w["ph.end"]}
         </button>
       )}
@@ -117,7 +117,7 @@ export function CorrectIt({ w, start: given, labels, correct }: { w: W; start: F
   };
   return (
     <form
-      className="flex flex-col gap-3 rounded-2xl border border-line bg-surface-2 p-4"
+      className="flex flex-col gap-3 rounded-xl border border-line bg-surface-2 p-4"
       data-part="call-correct"
       onSubmit={(e) => {
         e.preventDefault();
@@ -260,7 +260,7 @@ export function TakeOver({ w, url, tokenUrl, audioFactory, socketFactory }: { w:
     );
   return (
     <div className="flex flex-col items-start gap-2 md:items-end" data-part="take-over" data-phase={phase}>
-      <button type="button" className="inline-flex min-h-11 items-center rounded-full border-2 border-ink px-5 font-extrabold text-ink hover:bg-surface-2" onClick={start}>
+      <button type="button" className="inline-flex min-h-11 items-center rounded-md border-2 border-ink px-5 font-extrabold text-ink hover:bg-surface-2" onClick={start}>
         {w["ph.take"]}
       </button>
       {phase === "back" ? (

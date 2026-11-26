@@ -97,7 +97,7 @@ export function CalendarFeed({ words, feed, make, revoke }: { words: Words; feed
             <button type="button" onClick={() => copy(fresh.url)} className={secondary}>
               {copied === "yes" ? t("dta.btn.copied") : t("dta.btn.copy")}
             </button>
-            <a href={fresh.webcal} className="inline-flex min-h-11 items-center rounded-full px-2 text-base font-semibold text-brand-text underline">
+            <a href={fresh.webcal} className="inline-flex min-h-11 items-center rounded-md px-2 text-base font-semibold text-brand-text underline">
               {t("dta.cal.phone")}
             </a>
           </div>

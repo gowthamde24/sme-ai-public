@@ -79,7 +79,7 @@ export function InstallHint({ labels }: { labels?: Labels }) {
     write(choice?.outcome === "accepted" ? markInstalled(read()) : dismiss(read(), Date.now()));
   };
   return (
-    <section data-part="install-hint" aria-label={word(labels, "pwa.hint.label", "Add to home screen")} className="mx-3 mb-2 flex items-start gap-3 rounded-2xl border border-line bg-surface p-3 shadow-[var(--v2-shadow-pop)]">
+    <section data-part="install-hint" aria-label={word(labels, "pwa.hint.label", "Add to home screen")} className="mx-3 mb-2 flex items-start gap-3 rounded-xl border border-line bg-surface p-3 shadow-[var(--v2-shadow-pop)]">
       <OrbMark px={40} className="size-10" />
       <div className="min-w-0 flex-1">
         <p className="font-display text-base font-semibold">{word(labels, "pwa.hint.title", "Add {brand} to your home screen", { brand: SHORT_NAME })}</p>

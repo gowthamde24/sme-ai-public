@@ -45,7 +45,7 @@ export function CallsFilters({ words, base, query, counts, lines }: CallsFilters
               {whenLabel(query.when)}
               <ChevronDown aria-hidden="true" className="size-3.5" />
             </summary>
-            <ul className="absolute right-0 z-20 m-0 mt-2 flex min-w-48 list-none flex-col rounded-2xl border border-line bg-surface p-1.5 shadow-[var(--v2-shadow-pop)]">
+            <ul className="absolute right-0 z-20 m-0 mt-2 flex min-w-48 list-none flex-col rounded-xl border border-line bg-surface p-1.5 shadow-[var(--v2-shadow-pop)]">
               {WHEN_RANGES.map((w) => (
                 <li key={w}>
                   <Link href={callsHref(base, { ...query, when: w })} aria-current={query.when === w ? "true" : undefined} className="flex min-h-11 items-center rounded-xl px-3 text-base text-ink hover:bg-surface-2 aria-[current]:font-semibold aria-[current]:text-brand-text">
@@ -60,7 +60,7 @@ export function CallsFilters({ words, base, query, counts, lines }: CallsFilters
               {lineLabel}
               <ChevronDown aria-hidden="true" className="size-3.5" />
             </summary>
-            <ul className="absolute right-0 z-20 m-0 mt-2 flex min-w-56 list-none flex-col rounded-2xl border border-line bg-surface p-1.5 shadow-[var(--v2-shadow-pop)]">
+            <ul className="absolute right-0 z-20 m-0 mt-2 flex min-w-56 list-none flex-col rounded-xl border border-line bg-surface p-1.5 shadow-[var(--v2-shadow-pop)]">
               <li>
                 <Link href={callsHref(base, { ...query, line: null })} aria-current={!query.line ? "true" : undefined} className="flex min-h-11 items-center rounded-xl px-3 text-base text-ink hover:bg-surface-2 aria-[current]:font-semibold aria-[current]:text-brand-text">
                   {t("calls6.line.all")}

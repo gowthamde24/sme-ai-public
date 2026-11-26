@@ -53,7 +53,7 @@ export function SellSection({ style, entries: first, words, base, actions, live,
     { id: "photos", icon: <Camera aria-hidden="true" className="size-5" />, href: live && paths.photos ? `${base}${paths.photos}` : null },
     { id: "sheet", icon: <FileSpreadsheet aria-hidden="true" className="size-5" />, href: live && paths.sheet ? `${base}${paths.sheet}` : null },
   ];
-  const card = "jb-press flex min-h-[88px] flex-col items-start gap-2 rounded-2xl border border-line bg-surface p-3 text-left no-underline shadow-[var(--v2-shadow)] md:flex-row md:gap-3 md:p-3.5";
+  const card = "jb-press flex min-h-[88px] flex-col items-start gap-2 rounded-xl border border-line bg-surface p-3 text-left no-underline shadow-[var(--v2-shadow)] md:flex-row md:gap-3 md:p-3.5";
 
   return (
     <div data-part="what-you-sell" data-sell-kind={style} className="mt-4 flex flex-col gap-5">
@@ -93,10 +93,10 @@ export function SellSection({ style, entries: first, words, base, actions, live,
         <div className="flex items-center justify-between gap-3">
           <h2 id="sell-list" className="m-0 flex items-center gap-2 font-display text-[20px] font-bold leading-tight text-ink">
             {t(`jobs.sell.style.${style}.title`)}
-            <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[13px] font-semibold text-muted">{entries.length}</span>
+            <span className="rounded bg-surface-2 px-2.5 py-0.5 text-[13px] font-semibold text-muted">{entries.length}</span>
           </h2>
           {actions ? (
-            <button type="button" data-action="add" aria-haspopup="dialog" onPointerEnter={() => void loadWork()} onFocus={() => void loadWork()} onTouchStart={() => void loadWork()} onClick={(e) => open({ kind: "add" }, e.currentTarget)} className="jb-press inline-flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-brand-edge bg-brand px-4 text-[15px] font-bold text-on-brand">
+            <button type="button" data-action="add" aria-haspopup="dialog" onPointerEnter={() => void loadWork()} onFocus={() => void loadWork()} onTouchStart={() => void loadWork()} onClick={(e) => open({ kind: "add" }, e.currentTarget)} className="jb-press inline-flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border border-brand-edge bg-brand px-4 text-[15px] font-bold text-on-brand">
               <Plus aria-hidden="true" className="size-4" />
               {t(`jobs.sell.style.${style}.add`)}
             </button>
@@ -107,7 +107,7 @@ export function SellSection({ style, entries: first, words, base, actions, live,
           <input type="search" data-part="find" value={find} onChange={(e) => setFind(e.target.value)} aria-label={t("jobs.sell.search")} placeholder={t("jobs.sell.search")} autoComplete="off" className="min-h-11 w-full rounded-xl border border-edge bg-surface px-3.5 text-[16px] text-ink" />
         ) : null}
         {entries.length === 0 ? (
-          <p data-part="empty" className="m-0 rounded-2xl border border-dashed border-edge px-4 py-6 text-center text-[15px] text-muted">
+          <p data-part="empty" className="m-0 rounded-xl border border-dashed border-edge px-4 py-6 text-center text-[15px] text-muted">
             {t("jobs.sell.empty")}
           </p>
         ) : (

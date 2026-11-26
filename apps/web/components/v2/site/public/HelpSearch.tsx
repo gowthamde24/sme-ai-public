@@ -13,7 +13,7 @@ export function HelpSearch({ items, words }: { items: readonly HelpItem[]; words
   return (
     <div>
       <form role="search" className="my-4 flex gap-2" onSubmit={(e) => e.preventDefault()}>
-        <input type="search" aria-label={words.label} placeholder={words.label} value={q} onChange={(e) => setQ(e.target.value)} className="min-h-12 min-w-0 flex-1 rounded-full border border-edge bg-bg px-5 text-base text-ink focus:border-brand-edge" />
+        <input type="search" aria-label={words.label} placeholder={words.label} value={q} onChange={(e) => setQ(e.target.value)} className="min-h-12 min-w-0 flex-1 rounded-md border border-edge bg-bg px-5 text-base text-ink focus:border-brand-edge" />
         <button type="submit" className="inline-flex min-h-12 shrink-0 items-center rounded-lg border border-edge bg-bg px-5 text-base font-semibold text-ink">{words.button}</button>
       </form>
       {shown.length === 0 ? (
@@ -25,7 +25,7 @@ export function HelpSearch({ items, words }: { items: readonly HelpItem[]; words
               <Link href={i.href} className="grid min-h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 py-4 text-ink no-underline">
                 <span className="text-lg font-semibold">
                   {i.title}
-                  {i.draft ? <span className="ml-2 rounded-full border border-line px-2 py-0.5 align-middle text-xs font-semibold text-muted">{i.draft}</span> : null}
+                  {i.draft ? <span className="ml-2 rounded border border-line px-2 py-0.5 align-middle text-xs font-semibold text-muted">{i.draft}</span> : null}
                 </span>
                 <span aria-hidden="true" className="row-span-2 text-muted">→</span>
                 <span className="text-sm text-muted">{i.summary}</span>

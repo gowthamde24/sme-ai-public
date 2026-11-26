@@ -38,12 +38,12 @@ export function AskCard({ lang, base, availability, words, chips, onMood }: { la
     return availability === "live" ? (
       <div data-ask="waiting" data-ask-where="card" aria-hidden="true" className="flex min-w-0 flex-col gap-3">
         <div className="flex items-center gap-2">
-          <div className="flex min-h-12 min-w-0 flex-1 items-center rounded-full border border-edge bg-bg px-5 text-base text-muted md:min-h-14">{words["ask.placeholder.hero"] ?? ""}</div>
+          <div className="flex min-h-12 min-w-0 flex-1 items-center rounded-md border border-edge bg-bg px-5 text-base text-muted md:min-h-14">{words["ask.placeholder.hero"] ?? ""}</div>
           <div className="size-12 shrink-0 rounded-full border border-edge bg-surface md:size-14" />
         </div>
         <ul className="flex flex-wrap gap-2">
           {chips.map((c) => (
-            <li key={c} className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-muted">
+            <li key={c} className="inline-flex min-h-11 items-center rounded-md border border-edge bg-surface px-4 text-sm font-semibold text-muted">
               {c}
             </li>
           ))}

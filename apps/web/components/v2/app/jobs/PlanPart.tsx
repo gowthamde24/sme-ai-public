@@ -2,8 +2,8 @@ import type { Users } from "lucide-react";
 import type { ReactNode } from "react";
 
 /** The small parts every plan card is made of (a titled row with an icon) and its two buttons' looks: shared by the plan card and its lazy research-plan part. */
-export const primary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60";
-export const secondary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60";
+export const primary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60";
+export const secondary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60";
 
 export function Part({ icon: Icon, label, children, part }: { icon: typeof Users; label: string; children: ReactNode; part: string }) {
   return (

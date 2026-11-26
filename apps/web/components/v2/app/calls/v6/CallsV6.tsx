@@ -79,7 +79,7 @@ export function CallsV6(p: CallsV6Props) {
         emptyPage ? null : (
           <>
             {p.testHref ? (
-              <Link href={p.testHref} className="inline-flex min-h-11 items-center rounded-[10px] bg-brand px-4 text-[13px] font-bold text-on-brand" data-part="test-call-entry">
+              <Link href={p.testHref} className="inline-flex min-h-11 items-center rounded-xl bg-brand px-4 text-[13px] font-bold text-on-brand" data-part="test-call-entry">
                 {t("calls6.test")}
               </Link>
             ) : null}
@@ -125,11 +125,11 @@ export function CallsV6(p: CallsV6Props) {
         <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className={`flex min-w-0 flex-col gap-3 ${open ? "hidden lg:flex" : ""}`}>
             {p.calls === null ? (
-              <p role="alert" className="m-0 rounded-2xl border border-line bg-surface p-4 text-sm text-muted">
+              <p role="alert" className="m-0 rounded-xl border border-line bg-surface p-4 text-sm text-muted">
                 {t("ph.unread")}
               </p>
             ) : shown.length === 0 ? (
-              <div className="rounded-2xl border border-line bg-surface p-6 text-center" data-part="calls-none">
+              <div className="rounded-xl border border-line bg-surface p-6 text-center" data-part="calls-none">
                 <p className="m-0 font-display text-lg font-semibold">{t("calls6.none.title")}</p>
                 <p className="m-0 mt-1 text-base text-muted">{t("calls6.none.text")}</p>
                 {filtered ? (
@@ -151,7 +151,7 @@ export function CallsV6(p: CallsV6Props) {
             {p.selected?.call ? (
               <CallPanel words={p.words} base={p.base} query={p.query} call={p.selected.call} timeline={p.selected.timeline} when={p.when} language={p.language} canRead={p.canRead} teach={p.teach} approve={p.approve} liveControls={p.liveControls} />
             ) : p.selectedId !== null ? (
-              <div className="rounded-2xl border border-line bg-surface p-5" data-part="call-panel-missing">
+              <div className="rounded-xl border border-line bg-surface p-5" data-part="call-panel-missing">
                 <Link href={callsHref(p.base, p.query)} className="text-sm font-semibold text-brand-text underline underline-offset-4">
                   {t("calls6.panel.back")}
                 </Link>
@@ -160,7 +160,7 @@ export function CallsV6(p: CallsV6Props) {
                 </p>
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-line bg-surface/60 p-6 text-center text-base text-muted" data-part="call-panel-empty">
+              <div className="rounded-xl border border-dashed border-line bg-surface/60 p-6 text-center text-base text-muted" data-part="call-panel-empty">
                 {t("calls6.panel.pick")}
               </div>
             )}

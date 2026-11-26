@@ -10,7 +10,7 @@ import { makeT, type Words } from "../../words";
 export type ChatListProps = { words: Words; base: string; filter: ChatFilter; q: string; chats: readonly Conversation[]; waiting: ReadonlySet<string>; selectedId: string | null; now: number; olderHref: string | null };
 
 const TONE: Record<Handling, string> = { reply_ready: "text-brand-text", needs_you: "text-red-text", assistant: "text-brand-text", done: "text-green-text" };
-const chip = "inline-flex min-h-11 items-center gap-1 whitespace-nowrap rounded-full border px-2.5 text-xs max-md:shrink-0 max-md:whitespace-nowrap";
+const chip = "inline-flex min-h-11 items-center gap-1 whitespace-nowrap rounded border px-2.5 text-xs max-md:shrink-0 max-md:whitespace-nowrap";
 
 const href = (base: string, filter: ChatFilter, q: string, id: string | null) => {
   const p = new URLSearchParams();

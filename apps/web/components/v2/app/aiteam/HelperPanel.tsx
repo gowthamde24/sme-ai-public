@@ -86,7 +86,7 @@ export function HelperPanel({ base, helper, name, words, manages, onSwitch, mfaH
                 <div className="flex items-center gap-3">
                   <span className="min-w-0 flex-1 text-base font-semibold">{w("aiteam.panel.switch")}</span>
                   {panel.canSwitch && manages && onSwitch ? (
-                    <button type="button" role="switch" aria-checked={panel.enabled} disabled={saving} onClick={() => void flip()} aria-label={`${w("aiteam.panel.switch")}: ${name}`} className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border transition-colors disabled:opacity-60 ${panel.enabled ? "border-brand-edge bg-brand" : "border-edge bg-surface-2"}`}>
+                    <button type="button" role="switch" aria-checked={panel.enabled} disabled={saving} onClick={() => void flip()} aria-label={`${w("aiteam.panel.switch")}: ${name}`} className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full round-ok border transition-colors disabled:opacity-60 ${panel.enabled ? "border-brand-edge bg-brand" : "border-edge bg-surface-2"}`}>
                       <span aria-hidden="true" className={`inline-block size-6 rounded-full bg-white shadow transition-transform ${panel.enabled ? "translate-x-7" : "translate-x-1"}`} />
                     </button>
                   ) : (
@@ -144,7 +144,7 @@ export function HelperPanel({ base, helper, name, words, manages, onSwitch, mfaH
                         <span className="w-12 shrink-0 text-sm tabular-nums text-muted">{clockOf(m.t)}</span>
                         <span className="min-w-0 flex-1 [overflow-wrap:anywhere]">{m.label}</span>
                         {m.seconds ? <span className="text-sm text-muted">{duration(m.seconds)}</span> : null}
-                        {m.needsOwner ? <span className="rounded-full bg-brand px-2 text-xs font-bold text-white">⚑</span> : null}
+                        {m.needsOwner ? <span className="rounded bg-brand px-2 text-xs font-bold text-white">⚑</span> : null}
                       </>
                     );
                     return (

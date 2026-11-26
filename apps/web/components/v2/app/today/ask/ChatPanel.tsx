@@ -37,7 +37,7 @@ import { PlanUpsell } from "../../plan/PlanUpsell";
 import { finderCards } from "./lead-finder-cards";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-const bubble = "max-w-[92%] rounded-2xl px-3.5 py-2.5";
+const bubble = "max-w-[92%] rounded-xl px-3.5 py-2.5";
 /** How a chat can end without a word on the screen: it went quiet, hit its time limit or was closed. The panel stays as it was (typing works; the microphone starts a new chat without a greeting). The other ends say why. */
 const QUIET_ENDS: readonly string[] = ["idle", "session", "left", "goodbye"];
 /** What a microphone problem of dictation says (the route's own codes are in ERROR_WORD). */
@@ -79,10 +79,10 @@ function PlanCard({ plan, c, base, onStatus, onSay }: { plan: ConfirmAction; c: 
       {plan.status === "proposed" && asking ? <p data-chat="plan-second" className="mt-2 text-base font-extrabold">{c("bv.chat.plan.second")}</p> : null}
       {plan.status === "proposed" ? (
         <div className="mt-3 flex gap-2">
-          <button type="button" data-chat="yes" data-write disabled={busy} onClick={() => void decide("yes")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-base font-semibold text-on-brand disabled:opacity-60">
+          <button type="button" data-chat="yes" data-write disabled={busy} onClick={() => void decide("yes")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-md border border-brand-edge bg-brand px-4 text-base font-semibold text-on-brand disabled:opacity-60">
             {c("bv.chat.yes")}
           </button>
-          <button type="button" data-chat="no" data-write disabled={busy} onClick={() => void decide("no")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-edge bg-surface px-4 text-base font-semibold text-ink disabled:opacity-60">
+          <button type="button" data-chat="no" data-write disabled={busy} onClick={() => void decide("no")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-md border border-edge bg-surface px-4 text-base font-semibold text-ink disabled:opacity-60">
             {c("bv.chat.no")}
           </button>
         </div>
@@ -145,7 +145,7 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, onSay, onNext, mis, onR
       ) : null}
       {onNext && x.chain && x.chain.length > 0 ? (
         <div data-chat="chain" className="flex flex-wrap items-center gap-2 self-start">
-          <button type="button" data-chat="next" data-write onClick={onNext} className="inline-flex min-h-11 items-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-semibold text-on-brand hover:brightness-95">
+          <button type="button" data-chat="next" data-write onClick={onNext} className="inline-flex min-h-11 items-center rounded-md border border-brand-edge bg-brand px-4 text-sm font-semibold text-on-brand hover:brightness-95">
             {c("bv.chat.next")}
           </button>
           <span className="text-xs text-muted">{c("bv.chat.next.left").replace("{n}", String(x.chain.length))}</span>
@@ -155,7 +155,7 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, onSay, onNext, mis, onR
         <div className="flex flex-wrap items-center gap-x-3 self-start">
           <p role="alert" data-chat="failed" className="text-base font-medium text-red-text">{x.errorCode !== null && ERROR_WORD[x.errorCode] ? w(ERROR_WORD[x.errorCode]) : x.task ? w("ask.error") : w("ask.sorry")}</p>
           {onRetry ? (
-            <button type="button" data-chat="retry" onClick={onRetry} className="inline-flex min-h-11 items-center rounded-full px-3 text-base font-semibold text-brand-text hover:bg-surface-2">
+            <button type="button" data-chat="retry" onClick={onRetry} className="inline-flex min-h-11 items-center rounded-md px-3 text-base font-semibold text-brand-text hover:bg-surface-2">
               {w("ask.retry")}
             </button>
           ) : null}
@@ -288,7 +288,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
             <ul data-chat="chips" className={`flex flex-wrap gap-2 ${bar ? "min-w-0" : ""}`}>
               {chips.map((chip) => (
                 <li key={chip}>
-                  <button type="button" data-write onClick={() => void s.ask(chip, chat.pill)} className={`inline-flex ${bar ? "min-h-9 px-3" : "min-h-10 px-3.5"} items-center rounded-full border border-edge bg-surface text-sm font-semibold text-ink hover:bg-surface-2`}>
+                  <button type="button" data-write onClick={() => void s.ask(chip, chat.pill)} className={`inline-flex ${bar ? "min-h-9 px-3" : "min-h-10 px-3.5"} items-center rounded-md border border-edge bg-surface text-sm font-semibold text-ink hover:bg-surface-2`}>
                     {chip}
                   </button>
                 </li>
@@ -306,17 +306,17 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
       onClick={dict.toggle}
       aria-label={dictating ? c("bv.chat.dictate.stop") : c("bv.chat.dictate")}
       title={dictating ? c("bv.chat.dictate.stop") : c("bv.chat.dictate")}
-      className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border disabled:opacity-50 ${dictating ? "border-brand-edge bg-brand text-on-brand" : "border-transparent bg-transparent text-ink hover:bg-surface-2"}`}
+      className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-md border disabled:opacity-50 ${dictating ? "border-brand-edge bg-brand text-on-brand" : "border-transparent bg-transparent text-ink hover:bg-surface-2"}`}
     >
       {dictating ? <Square className="size-5" aria-hidden="true" /> : <Mic className="size-5" aria-hidden="true" />}
     </button>
   );
   const sendEl = s.asking ? (
-    <button type="button" onClick={s.stop} aria-label={w("ask.stop")} title={w("ask.stop")} className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border border-edge bg-surface text-ink hover:bg-surface-2`}>
+    <button type="button" onClick={s.stop} aria-label={w("ask.stop")} title={w("ask.stop")} className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-md border border-edge bg-surface text-ink hover:bg-surface-2`}>
       <Square className="size-4" aria-hidden="true" />
     </button>
   ) : (
-    <button type="submit" disabled={(s.text.trim() === "" && !work.hasReady) || dictating || work.uploading} aria-label={c("bv.chat.send")} title={c("bv.chat.send")} className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border border-brand-edge bg-brand text-on-brand disabled:opacity-50`}>
+    <button type="submit" disabled={(s.text.trim() === "" && !work.hasReady) || dictating || work.uploading} aria-label={c("bv.chat.send")} title={c("bv.chat.send")} className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-md border border-brand-edge bg-brand text-on-brand disabled:opacity-50`}>
       <ArrowUp className="size-5" aria-hidden="true" />
     </button>
   );
@@ -334,7 +334,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
         onClick={() => (talk.active ? talk.stop() : void talk.start())}
         aria-label={talk.active ? c("bv.chat.live.stop") : c("bv.chat.live.start")}
         title={talk.active ? c("bv.chat.live.stop") : c("bv.chat.live.start")}
-        className="relative grid shrink-0 place-items-center rounded-full p-1 shadow-[var(--v2-shadow-pop)] disabled:opacity-60"
+        className="relative grid shrink-0 place-items-center rounded-full round-ok p-1 shadow-[var(--v2-shadow-pop)] disabled:opacity-60"
       >
         <span
           aria-hidden="true"
@@ -353,7 +353,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   );
   const plusEl = (
     <div className="relative shrink-0">
-      <button type="button" data-chat="plus" aria-haspopup="menu" aria-expanded={plusOpen} aria-label={c("bv.bar.plus")} title={c("bv.bar.plus")} onClick={() => setPlusOpen((v) => !v)} className="inline-flex size-10 items-center justify-center rounded-full text-ink hover:bg-surface-2">
+      <button type="button" data-chat="plus" aria-haspopup="menu" aria-expanded={plusOpen} aria-label={c("bv.bar.plus")} title={c("bv.bar.plus")} onClick={() => setPlusOpen((v) => !v)} className="inline-flex size-10 items-center justify-center rounded-md text-ink hover:bg-surface-2">
         <Plus className="size-5" aria-hidden="true" />
       </button>
       {plusOpen ? (
@@ -378,7 +378,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     <form
       data-write
       data-chat="form"
-      className="flex min-w-0 flex-col gap-1 rounded-[16px] border border-edge bg-surface p-2.5 focus-within:border-brand-edge"
+      className="flex min-w-0 flex-col gap-1 rounded-md border border-edge bg-surface p-2.5 focus-within:border-brand-edge"
       {...work.dropProps}
       onSubmit={(e) => {
         e.preventDefault();
@@ -432,7 +432,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
         {talk.micDenied ? <p role="alert" className="text-sm font-medium text-red-text">{voice.words["bv.mic.denied"]}</p> : null}
         {talk.end && !talk.active && !QUIET_ENDS.includes(talk.end) ? <p role="status" className="text-sm text-muted">{voice.words[`bv.end.${talk.end}`]}</p> : null}
         {talk.micDenied || talk.problem || dict.error || (talk.end && !talk.active && !QUIET_ENDS.includes(talk.end)) ? (
-          <button type="button" data-chat="type-instead" onClick={() => input.current?.focus()} className="min-h-9 rounded-full border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2">
+          <button type="button" data-chat="type-instead" onClick={() => input.current?.focus()} className="min-h-9 rounded-md border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2">
             {c("bv.live.typeinstead")}
           </button>
         ) : null}
@@ -440,7 +440,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     </>
   );
   const historyEl = (
-          <div className={`overflow-y-auto px-3 py-3 ${bar ? `order-3 max-h-[50vh] rounded-b-2xl border border-t-0 border-line bg-surface ${minimised ? "hidden" : ""}` : "min-h-0 flex-1"}`} data-chat="history-list">
+          <div className={`overflow-y-auto px-3 py-3 ${bar ? `order-3 max-h-[50vh] rounded-b-xl border border-t-0 border-line bg-surface ${minimised ? "hidden" : ""}` : "min-h-0 flex-1"}`} data-chat="history-list">
             <button type="button" data-chat="history-back" onClick={() => setView("chat")} className="mb-3 inline-flex min-h-10 items-center text-sm font-semibold text-brand-text underline underline-offset-2">
               {c("bv.chat.history.back")}
             </button>
@@ -465,7 +465,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           </div>
   );
   const bodyEl = (
-        <div ref={body} onScroll={onBodyScroll} className={`overflow-y-auto px-3 py-3 ${bar ? `order-3 max-h-[50vh] rounded-b-2xl border border-t-0 border-line bg-surface ${empty || minimised ? "hidden" : ""}` : "min-h-0 flex-1"}`} data-chat="body" aria-live="polite">
+        <div ref={body} onScroll={onBodyScroll} className={`overflow-y-auto px-3 py-3 ${bar ? `order-3 max-h-[50vh] rounded-b-xl border border-t-0 border-line bg-surface ${empty || minimised ? "hidden" : ""}` : "min-h-0 flex-1"}`} data-chat="body" aria-live="polite">
           {empty ? (
             <div data-chat="empty" className="flex flex-col gap-3">
               <p className="text-sm text-muted">{c("bv.chat.empty")}</p>
@@ -473,7 +473,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
             </div>
           ) : null}
           {s.resumable && s.earlier.length === 0 && s.phase === "idle" ? (
-            <button type="button" data-chat="continue" onClick={() => { talk.stop(); s.newChat(s.resumable!.id, s.resumable!.thread); }} className="mb-3 inline-flex min-h-10 max-w-full items-center truncate rounded-full border border-line bg-surface px-3 text-sm font-semibold text-brand-text">
+            <button type="button" data-chat="continue" onClick={() => { talk.stop(); s.newChat(s.resumable!.id, s.resumable!.thread); }} className="mb-3 inline-flex min-h-10 max-w-full items-center truncate rounded-md border border-line bg-surface px-3 text-sm font-semibold text-brand-text">
               {makeT(voice.words)("bv.chat.state.continue" as "bv.chat.new", { title: s.resumable.title })}
             </button>
           ) : null}
@@ -513,7 +513,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   // the conversation's header: who it is and how it speaks ("Your assistant · speaking in Telugu · Ramya"), the history, a new conversation, Minimise
   const speakingIn = c("bv.bar.speakingin").replace("{language}", voice.languageNames[chat.reply] ?? "");
   const convHeader = (
-    <div className={`order-2 flex min-h-11 shrink-0 items-center gap-2 border bg-surface px-3 ${minimised ? "rounded-2xl" : "rounded-t-2xl border-b-0"} border-line ${empty && view === "chat" ? "hidden" : ""}`}>
+    <div className={`order-2 flex min-h-11 shrink-0 items-center gap-2 border bg-surface px-3 ${minimised ? "rounded-xl" : "rounded-t-xl border-b-0"} border-line ${empty && view === "chat" ? "hidden" : ""}`}>
       <h2 className="min-w-0 flex-1 truncate font-display text-base font-semibold">
         {c("bv.chat.title")}
         <span data-chat="speaking-in" className="font-sans text-sm font-normal text-muted">
@@ -522,13 +522,13 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           {talk.voice?.name ? ` · ${talk.voice.name}` : ""}
         </span>
       </h2>
-      <button type="button" data-chat="history" onClick={() => void showHistory()} aria-label={c("bv.chat.history")} title={c("bv.chat.history")} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-full hover:bg-surface-2">
+      <button type="button" data-chat="history" onClick={() => void showHistory()} aria-label={c("bv.chat.history")} title={c("bv.chat.history")} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md hover:bg-surface-2">
         <History className="size-5" aria-hidden="true" />
       </button>
-      <button type="button" data-chat="new" onClick={() => { talk.stop(); s.newChat(); setView("chat"); }} aria-label={c("bv.chat.new")} title={c("bv.chat.new")} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-full hover:bg-surface-2">
+      <button type="button" data-chat="new" onClick={() => { talk.stop(); s.newChat(); setView("chat"); }} aria-label={c("bv.chat.new")} title={c("bv.chat.new")} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md hover:bg-surface-2">
         <Plus className="size-5" aria-hidden="true" />
       </button>
-      <button type="button" data-chat="minimise" aria-expanded={!minimised} onClick={() => setMinAt(minimised ? null : version)} className="inline-flex min-h-10 items-center gap-1 rounded-full px-3 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-ink">
+      <button type="button" data-chat="minimise" aria-expanded={!minimised} onClick={() => setMinAt(minimised ? null : version)} className="inline-flex min-h-10 items-center gap-1 rounded-md px-3 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-ink">
         {minimised ? <ChevronDown className="size-4" aria-hidden="true" /> : <ChevronUp className="size-4" aria-hidden="true" />}
         {minimised ? c("bv.bar.show") : c("bv.bar.minimise")}
       </button>
@@ -544,14 +544,14 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           {hint ?? caption}
         </p>
       </div>
-      <button type="button" data-chat="history" onClick={() => void showHistory()} aria-label={c("bv.chat.history")} title={c("bv.chat.history")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
+      <button type="button" data-chat="history" onClick={() => void showHistory()} aria-label={c("bv.chat.history")} title={c("bv.chat.history")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-surface-2">
         <History className="size-5" aria-hidden="true" />
       </button>
-      <button type="button" data-chat="new" onClick={() => { talk.stop(); s.newChat(); setView("chat"); }} aria-label={c("bv.chat.new")} title={c("bv.chat.new")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
+      <button type="button" data-chat="new" onClick={() => { talk.stop(); s.newChat(); setView("chat"); }} aria-label={c("bv.chat.new")} title={c("bv.chat.new")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-surface-2">
         <Plus className="size-5" aria-hidden="true" />
       </button>
       {variant === "panel" ? (
-        <button type="button" data-chat="close" onClick={() => { talk.stop(); onClose(); }} aria-label={c("bv.close")} title={c("bv.close")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
+        <button type="button" data-chat="close" onClick={() => { talk.stop(); onClose(); }} aria-label={c("bv.close")} title={c("bv.close")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-surface-2">
           <X className="size-5" aria-hidden="true" />
         </button>
       ) : null}
@@ -571,10 +571,10 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     // under Today's command bar: the conversation as bubbles, with "New conversation" and "Earlier conversations" (the one thread kept on the server, owner 14 Nov)
     const header = (
       <div data-chat="thread-head" className="flex shrink-0 items-center justify-end gap-1 border-b border-line px-2 py-1">
-        <button type="button" data-chat="history" onClick={() => void showHistory()} className="inline-flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-brand-text hover:bg-surface-2">
+        <button type="button" data-chat="history" onClick={() => void showHistory()} className="inline-flex min-h-9 items-center rounded-md px-3 text-xs font-semibold text-brand-text hover:bg-surface-2">
           {c("bv.chat.history")}
         </button>
-        <button type="button" data-chat="new" onClick={() => { talk.stop(); s.newChat(); setView("chat"); setFresh(true); }} className="inline-flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-brand-text hover:bg-surface-2">
+        <button type="button" data-chat="new" onClick={() => { talk.stop(); s.newChat(); setView("chat"); setFresh(true); }} className="inline-flex min-h-9 items-center rounded-md px-3 text-xs font-semibold text-brand-text hover:bg-surface-2">
           {c("bv.chat.new")}
         </button>
       </div>
@@ -583,14 +583,14 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
       // a fresh conversation: nothing to show, only the way back to the earlier ones
       return fresh ? (
         <div data-chat="thread-only" className="mt-3 flex justify-end">
-          <button type="button" data-chat="history" onClick={() => void showHistory()} className="inline-flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-brand-text hover:bg-surface-2">
+          <button type="button" data-chat="history" onClick={() => void showHistory()} className="inline-flex min-h-9 items-center rounded-md px-3 text-xs font-semibold text-brand-text hover:bg-surface-2">
             {c("bv.chat.history")}
           </button>
         </div>
       ) : null;
     }
     return (
-      <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="thread-only" className="mt-3 flex max-h-[min(60dvh,30rem)] min-h-40 min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface">
+      <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="thread-only" className="mt-3 flex max-h-[min(60dvh,30rem)] min-h-40 min-w-0 flex-col overflow-hidden rounded-xl border border-line bg-surface">
         {header}
         {view === "history" ? historyEl : bodyEl}
       </div>
@@ -609,7 +609,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
       </div>
     </div>
   ) : variant === "card" ? (
-    <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="card" onKeyDown={onKeyDown} className="flex h-[min(70dvh,34rem)] min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-bg">
+    <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="card" onKeyDown={onKeyDown} className="flex h-[min(70dvh,34rem)] min-w-0 flex-col overflow-hidden rounded-xl border border-line bg-bg">
       {content}
     </div>
   ) : (
@@ -623,7 +623,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
         aria-label={c("bv.chat.title")}
         data-chat="panel"
         onKeyDown={onKeyDown}
-        className="pointer-events-auto absolute inset-x-0 bottom-[var(--kb,0px)] flex max-h-[min(560px,calc(var(--vvh,100dvh)-0.5rem))] flex-col rounded-t-2xl border border-line bg-bg shadow-[var(--v2-shadow-pop)] motion-safe:animate-[ask-panel-in_160ms_ease-out] md:inset-x-auto md:bottom-28 md:right-4 md:max-h-[min(560px,calc(100dvh-8rem))] md:w-[440px] md:rounded-2xl"
+        className="pointer-events-auto absolute inset-x-0 bottom-[var(--kb,0px)] flex max-h-[min(560px,calc(var(--vvh,100dvh)-0.5rem))] flex-col rounded-t-xl border border-line bg-bg shadow-[var(--v2-shadow-pop)] motion-safe:animate-[ask-panel-in_160ms_ease-out] md:inset-x-auto md:bottom-28 md:right-4 md:max-h-[min(560px,calc(100dvh-8rem))] md:w-[440px] md:rounded-xl"
       >
         {content}
       </div>

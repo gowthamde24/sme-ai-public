@@ -55,7 +55,7 @@ export function TripForm(p: { base: string; rooms: readonly LineRoom[]; sites: r
         <label htmlFor="trip-date" className={label}>{say(words, "trip.field.date")}</label>
         <input id="trip-date" type="date" min={p.editing ? undefined : p.today} value={v.plannedDate} disabled={busy} onChange={(e) => set("plannedDate", e.target.value)} className={`${field} max-w-60`} />
       </div>
-      <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line p-4">
+      <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl border border-line p-4">
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "trip.field.load")}</legend>
         {p.rooms.map((r) => (
           <div key={r.lineNo}>
@@ -93,7 +93,7 @@ export function TripForm(p: { base: string; rooms: readonly LineRoom[]; sites: r
           {problem.mfa ? <Link href="/app/security" className="font-semibold underline">{say(words, "today.err.mfa.link")}</Link> : null}
         </div>
       ) : null}
-      <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
+      <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 md:bottom-4">
         <button type="submit" disabled={busy} className={primary}>{busy ? say(words, "today.act.working") : say(words, p.editing ? "trip.save.edit" : "trip.save.new")}</button>
         <Link href={p.backHref} aria-disabled={busy} className={quiet}>{say(words, "today.act.cancel")}</Link>
       </div>

@@ -134,9 +134,9 @@ export function LeadsV6Body({ words, lang, base, rows, counts, chip, q, sourceNa
                         </Link>
                         <span className="ml-2 inline-flex flex-wrap gap-1 align-middle">
                           {/* the "New" mark only when the status column does not already say New (owner audit, 14 Nov: the same word twice in a row) */}
-                          {r.isNew && r.chip !== "new" ? <span className="rounded-full bg-brand-bg px-2 text-xs font-semibold text-brand-text">{t("lv6.badge.new")}</span> : null}
-                          {r.hot ? <span className="rounded-full bg-surface-2 px-2 text-xs font-semibold text-ink">{t("lv6.badge.hot")}</span> : null}
-                          {r.nearby ? <span className="rounded-full bg-surface-2 px-2 text-xs font-semibold text-muted">{t("lv6.nearby")}</span> : null}
+                          {r.isNew && r.chip !== "new" ? <span className="rounded bg-brand-bg px-2 text-xs font-semibold text-brand-text">{t("lv6.badge.new")}</span> : null}
+                          {r.hot ? <span className="rounded bg-surface-2 px-2 text-xs font-semibold text-ink">{t("lv6.badge.hot")}</span> : null}
+                          {r.nearby ? <span className="rounded bg-surface-2 px-2 text-xs font-semibold text-muted">{t("lv6.nearby")}</span> : null}
                         </span>
                       </td>
                       <td className="block px-3 py-1 text-base text-muted max-md:col-span-2 max-md:row-start-2 max-md:line-clamp-2 max-md:p-0 max-md:text-sm md:table-cell md:py-3">{r.line || "-"}</td>

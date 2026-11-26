@@ -57,7 +57,7 @@ export function BusinessForm({ action, words, name, town, languages, choices, ow
         <legend className={label}>{w("settings.biz.langs")}</legend>
         <div className="flex flex-wrap gap-2">
           {choices.map((code) => (
-            <label key={code} className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-edge bg-surface px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg">
+            <label key={code} className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-edge bg-surface px-4 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg">
               <input type="checkbox" name="languages" value={code} defaultChecked={languages.includes(code)} disabled={pending} className="size-5 accent-brand-text" />
               {CALL_LANG_NAMES[code]}
             </label>
@@ -80,7 +80,7 @@ export function BusinessForm({ action, words, name, town, languages, choices, ow
           {w("settings.biz.save")}
         </button>
       </div>
-      <div className="rounded-2xl bg-surface-2 p-4" data-part="name-used">
+      <div className="rounded-xl bg-surface-2 p-4" data-part="name-used">
         <h3 className="mb-2 text-base font-semibold">{w("settings.biz.used.title")}</h3>
         <ul className="list-disc space-y-1 pl-5 text-base">
           {lines.map((n) => (
@@ -105,7 +105,7 @@ export function BusinessLogo({ action, words, logoUrl, initial }: { action: (pre
     <div className="flex flex-col gap-3" data-part="biz-logo">
       <h3 className="text-base font-semibold">{w("settings.biz.logo.title")}</h3>
       <div className="flex items-center gap-4">
-        <span className="inline-flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-edge bg-surface-2 text-2xl font-semibold" aria-hidden="true">
+        <span className="inline-flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-edge bg-surface-2 text-2xl font-semibold" aria-hidden="true">
           {logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- a signed link into the project's own Storage (already allowed in img-src), shown as it is
             <img src={logoUrl} alt="" className="size-full object-cover" />

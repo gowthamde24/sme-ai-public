@@ -42,7 +42,7 @@ const PlainCtx = React.createContext(false);
 const plainCard = `${cardBox} flex flex-col gap-4`;
 const plainFx = "m-0 text-[14px] text-muted";
 const jobsCard =
-  "flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
+  "flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
 const heading = "m-0 font-display text-[17px] font-bold leading-tight text-ink";
 const effectBox =
   "m-0 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink";

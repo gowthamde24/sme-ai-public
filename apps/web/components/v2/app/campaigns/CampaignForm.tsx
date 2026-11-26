@@ -115,7 +115,7 @@ export function CampaignForm(p: { base: string; campaignId: string; campaign: Ca
         <textarea id="cf-text" ref={area} rows={4} value={text} maxLength={600} disabled={busy} onChange={(e) => setText(e.target.value)} aria-describedby="cf-text-h" className={`${field} py-2`} />
         <div role="group" aria-label={say(words, "camp.field.fields")} className="mt-2 flex flex-wrap gap-2">
           {fieldsFor(kind).map((f) => (
-            <button key={f} type="button" disabled={busy} onClick={() => add(f)} className="inline-flex min-h-11 items-center rounded-full border border-edge px-3 text-sm font-semibold hover:bg-surface-2 disabled:opacity-60">{say(words, `camp.fieldname.${f}`)}</button>
+            <button key={f} type="button" disabled={busy} onClick={() => add(f)} className="inline-flex min-h-11 items-center rounded-md border border-edge px-3 text-sm font-semibold hover:bg-surface-2 disabled:opacity-60">{say(words, `camp.fieldname.${f}`)}</button>
           ))}
         </div>
         <p id="cf-text-h" className={help}>{say(words, "camp.field.text.help")}</p>
@@ -127,7 +127,7 @@ export function CampaignForm(p: { base: string; campaignId: string; campaign: Ca
           </div>
         ) : null}
       </div>
-      <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line p-4">
+      <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl border border-line p-4">
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "camp.steps.title")}</legend>
         <p className={help}>{say(words, "camp.steps.help")}</p>
         {steps.map((s, i) => (
@@ -147,7 +147,7 @@ export function CampaignForm(p: { base: string; campaignId: string; campaign: Ca
         <div><button type="button" className={secondary} disabled={busy || steps.length >= MAX_STEPS} onClick={() => setSteps((c) => [...c, { offset: String((Number(c[c.length - 1]?.offset) || 0) + 1), time: c[c.length - 1]?.time ?? "10:00" }])}>{say(words, "camp.steps.add")}</button></div>
       </fieldset>
       {money ? (
-        <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line p-4">
+        <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl border border-line p-4">
           <legend className="px-1 font-display text-lg font-semibold">{say(words, "camp.call.title")}</legend>
           <p className={help}>{say(words, "camp.call.help")}</p>
           <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">
@@ -174,7 +174,7 @@ export function CampaignForm(p: { base: string; campaignId: string; campaign: Ca
           {problem.mfa ? <Link href="/app/security" className="font-semibold underline">{say(words, "today.err.mfa.link")}</Link> : null}
         </div>
       ) : null}
-      <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
+      <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 md:bottom-4">
         <button type="submit" disabled={busy} className={primary}>{busy ? say(words, "today.act.working") : say(words, campaign ? "camp.save.edit" : "camp.save.new")}</button>
         <Link href={campaign ? `${p.base}/campaigns/${campaign.id}` : `${p.base}/campaigns`} aria-disabled={busy} className={quiet}>{say(words, "today.act.cancel")}</Link>
       </div>

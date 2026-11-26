@@ -16,7 +16,7 @@ export function GuideCards({ words, base }: { words: Words; base: string }) {
       <ul className="m-0 mt-2 grid list-none grid-cols-1 gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
         {GUIDE_IDS.map((g) => (
           <li key={g}>
-            <Link href={`${base}/lead-sources/guides/${g}`} data-guide={g} className="flex min-h-[116px] flex-col gap-1.5 rounded-[14px] border border-line bg-surface p-[18px] no-underline hover:border-ink focus-visible:border-ink">
+            <Link href={`${base}/lead-sources/guides/${g}`} data-guide={g} className="flex min-h-[116px] flex-col gap-1.5 rounded-xl border border-line bg-surface p-[18px] no-underline hover:border-ink focus-visible:border-ink">
               <b className="text-[17px] font-bold text-ink">{t(`lsg.${g}.t` as "lsg.fb.t")}</b>
               <span className="text-[15px] text-muted">{t(`lsg.${g}.x` as "lsg.fb.x")}</span>
             </Link>

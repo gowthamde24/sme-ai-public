@@ -20,7 +20,7 @@ const group = "flex flex-col gap-4 rounded-xl border border-line p-4";
 const legend = "px-1 text-base font-semibold";
 const clock = (minute: number): string => `${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`;
 const minutes = (hhmm: string): number => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));
-const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
+const chip = (on: boolean) => `min-h-11 rounded-md border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 
 function Num({ id, label, value, min, max, step = 1, onChange }: { id: string; label: string; value: number; min: number; max: number; step?: number; onChange: (n: number) => void }) {
   return (
@@ -79,7 +79,7 @@ function CallSettingsClassic({ words, initial, locked, canEdit, mock, saved, act
   );
   const hours = s.hours;
   const differs: readonly OverridableField[] = campaign ? overriddenFields(campaign.base, s) : [];
-  const badge = (g: Group) => (differs.some((f) => FIELD_GROUP[f] === g) ? <span data-different="" className="ml-2 rounded-full bg-brand-bg px-2.5 py-0.5 text-xs font-semibold text-brand-text">{t("calls.c.diff")}</span> : null);
+  const badge = (g: Group) => (differs.some((f) => FIELD_GROUP[f] === g) ? <span data-different="" className="ml-2 rounded bg-brand-bg px-2.5 py-0.5 text-xs font-semibold text-brand-text">{t("calls.c.diff")}</span> : null);
   /** "Use my assistant's settings": removes the campaign's override and puts the workspace's values back in the form. */
   const clearIt = async (c: CampaignMode) => {
     setBusy(true);

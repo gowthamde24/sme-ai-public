@@ -96,7 +96,7 @@ export function PhotoTray({ slots, words, name, disabled, onMove, onRemove, onRe
               </div>
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <p className="flex flex-wrap items-center gap-2 text-sm font-semibold">
-                  {i === 0 ? <span className="rounded-full bg-brand-bg px-2.5 py-0.5 text-brand-text">{say(words, "catalogue.photo.cover")}</span> : null}
+                  {i === 0 ? <span className="rounded-md bg-brand-bg px-2.5 py-0.5 text-brand-text">{say(words, "catalogue.photo.cover")}</span> : null}
                   <span>{say(words, "catalogue.gallery.count", { n, total: slots.length })}</span>
                   {s.fresh ? <span className="text-muted">{say(words, "catalogue.photo.new")}</span> : null}
                 </p>

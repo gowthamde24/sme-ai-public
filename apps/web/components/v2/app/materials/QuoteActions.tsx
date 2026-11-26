@@ -120,11 +120,11 @@ export function QuoteActions({ quote, role, base, words, actions, secondFactorMi
       ) : null}
 
       {writer ? (
-        <section aria-labelledby="mat-wa" className="flex flex-col gap-3 rounded-2xl border border-line p-4" data-part="whatsapp">
+        <section aria-labelledby="mat-wa" className="flex flex-col gap-3 rounded-xl border border-line p-4" data-part="whatsapp">
           <h2 id="mat-wa" className="font-display text-xl font-bold">{say(words, "mat.wa.title")}</h2>
           <div role="group" aria-label={say(words, "mat.wa.lang")} className="flex flex-wrap gap-2">
             {LANGS.map((l) => (
-              <button key={l} type="button" aria-pressed={message !== null && lang === l} onClick={() => void loadText(l)} className={`inline-flex min-h-11 items-center rounded-full border px-4 text-base ${message !== null && lang === l ? "border-brand-edge bg-brand-bg font-semibold text-brand-text" : "border-edge hover:bg-surface-2"}`}>
+              <button key={l} type="button" aria-pressed={message !== null && lang === l} onClick={() => void loadText(l)} className={`inline-flex min-h-11 items-center rounded-md border px-4 text-base ${message !== null && lang === l ? "border-brand-edge bg-brand-bg font-semibold text-brand-text" : "border-edge hover:bg-surface-2"}`}>
                 {say(words, `today.lang.${l}`)}
               </button>
             ))}
@@ -132,7 +132,7 @@ export function QuoteActions({ quote, role, base, words, actions, secondFactorMi
           {message ? (
             <>
               {!message.reviewed ? <p role="note" className="text-sm font-medium text-amber-text">{say(words, "mat.wa.draft")}</p> : null}
-              <div className="max-w-md self-start whitespace-pre-wrap rounded-2xl rounded-tl-sm bg-green-bg p-3 text-base text-ink shadow-sm [overflow-wrap:anywhere]" data-part="bubble">{message.text}</div>
+              <div className="max-w-md self-start whitespace-pre-wrap rounded-xl rounded-tl-sm bg-green-bg p-3 text-base text-ink shadow-sm [overflow-wrap:anywhere]" data-part="bubble">{message.text}</div>
               <div className="flex flex-wrap gap-2">
                 <button type="button" className={secondary} onClick={() => void copy()}>{copied ? say(words, "mat.wa.copied") : say(words, "mat.wa.copy")}</button>
               </div>

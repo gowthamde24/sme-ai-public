@@ -7,7 +7,7 @@ export type Status = (typeof STATUSES)[number];
 /** A status as a pill: a dot and the word (the word is passed in, in the person's language). The colour is never the only sign: the word is always there. The Live dot pulses unless the person asked for less motion. */
 export function StatusPill({ status, children, className = "" }: { status: Status; children: ReactNode; className?: string }) {
   return (
-    <span data-status={status} className={`inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-sm font-semibold ${className}`}>
+    <span data-status={status} className={`inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 text-sm font-semibold ${className}`}>
       <span data-dot="" aria-hidden="true" className="size-2 rounded-full bg-current" />
       {children}
     </span>

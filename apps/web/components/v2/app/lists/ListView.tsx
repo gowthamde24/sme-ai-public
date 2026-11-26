@@ -133,7 +133,7 @@ export function ListView({ list, initial, owner, canEdit, words, base, actions }
             // a filter chip row: All, then each word of the column (the Category column first); a pressed chip filters the loaded items
             <div key={c.key} role="group" aria-label={c.label} data-part="chips" className="flex flex-wrap gap-2">
               {["", ...c.choices].map((w) => (
-                <button key={w || "all"} type="button" aria-pressed={(filters[c.key as string] ?? "") === w} onClick={() => setFilters((f) => ({ ...f, [c.key as string]: w }))} className={`min-h-11 rounded-full border px-4 text-[15px] font-semibold ${(filters[c.key as string] ?? "") === w ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-ink"}`}>
+                <button key={w || "all"} type="button" aria-pressed={(filters[c.key as string] ?? "") === w} onClick={() => setFilters((f) => ({ ...f, [c.key as string]: w }))} className={`min-h-11 rounded-md border px-4 text-[15px] font-semibold ${(filters[c.key as string] ?? "") === w ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-ink"}`}>
                   {w === "" ? t("wls.all", { name: c.label }) : w}
                 </button>
               ))}

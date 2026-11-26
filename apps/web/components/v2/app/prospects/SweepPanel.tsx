@@ -38,7 +38,7 @@ function Card({ s, runs, w, lang, list, controls }: { s: Sweep; runs: readonly S
         <h3 className="m-0 font-display text-base font-bold">
           {s.query} · {s.area}
         </h3>
-        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${s.enabled ? "bg-green-bg text-green-text" : "bg-surface-2 text-muted"}`} data-part="sweep-state">
+        <span className={`inline-flex items-center rounded px-2.5 py-0.5 text-xs font-bold ${s.enabled ? "bg-green-bg text-green-text" : "bg-surface-2 text-muted"}`} data-part="sweep-state">
           {w[s.enabled ? "sw.on" : "sw.off"]}
         </span>
       </div>

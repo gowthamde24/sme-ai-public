@@ -68,17 +68,17 @@ export function CallList({ items, words, canCall, today, actions, tab, base, mor
     <div data-screen="call-list" className="flex flex-col gap-4">
       <nav aria-label={say(words, "camp.cl.tabs")} className="flex gap-2">
         {(["open", "done"] as const).map((k) => (
-          <Link key={k} href={`${base}/call-list${k === "done" ? "?tab=done" : ""}`} aria-current={tab === k ? "page" : undefined} className={`inline-flex min-h-11 items-center rounded-full border px-4 text-base font-semibold ${tab === k ? "border-brand-text bg-brand-bg text-brand-text" : "border-edge"}`}>{say(words, `camp.cl.tab.${k}`)}</Link>
+          <Link key={k} href={`${base}/call-list${k === "done" ? "?tab=done" : ""}`} aria-current={tab === k ? "page" : undefined} className={`inline-flex min-h-11 items-center rounded-md border px-4 text-base font-semibold ${tab === k ? "border-brand-text bg-brand-bg text-brand-text" : "border-edge"}`}>{say(words, `camp.cl.tab.${k}`)}</Link>
         ))}
       </nav>
       {!canCall && tab === "open" ? <p role="note" className={help}>{say(words, "camp.cl.nocall")}</p> : null}
       {notice ? <p role="status" className={okLine}>{notice}</p> : null}
       {items.length === 0 ? (
-        <p className="rounded-2xl border border-line p-4 text-base text-muted" data-part="empty">{say(words, tab === "open" ? "camp.cl.empty" : "camp.cl.emptydone")}</p>
+        <p className="rounded-xl border border-line p-4 text-base text-muted" data-part="empty">{say(words, tab === "open" ? "camp.cl.empty" : "camp.cl.emptydone")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {items.map((i) => (
-            <li key={i.id} data-item={i.id} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4">
+            <li key={i.id} data-item={i.id} className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="font-display text-lg font-bold [overflow-wrap:anywhere]">{i.contact_name}</p>

@@ -12,13 +12,13 @@ const at = (v: number) => `${50 + v * 45}%`;
  */
 export function FinderRadar({ radar, w, around, checked }: { radar: Radar; w: W; /** the area of the latest search ("Hyderabad"), or null */ around: string | null; checked: { checked: number; worth: number } | null }) {
   return (
-    <section aria-labelledby="fr-title" className="flex flex-col gap-3 rounded-[22px] border border-line bg-surface p-3 sm:p-4" data-part="finder-radar">
+    <section aria-labelledby="fr-title" className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-3 sm:p-4" data-part="finder-radar">
       <div className="flex flex-wrap items-center gap-2">
         <h2 id="fr-title" className="sr-only">
           {w["lf.v4.radar"]}
         </h2>
         {around ? (
-          <p className="m-0 inline-flex items-center gap-2 rounded-full bg-surface-2 px-3 py-1.5 text-sm font-semibold">
+          <p className="m-0 inline-flex items-center gap-2 rounded-md bg-surface-2 px-3 py-1.5 text-sm font-semibold">
             <span aria-hidden="true" className="size-2 rounded-full bg-[#ff773c]" />
             {(w["lf.v4.around"] ?? "{area}").replace("{area}", around)}
           </p>

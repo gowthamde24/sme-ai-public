@@ -65,7 +65,7 @@ function useAskHash() {
 function PhoneComposer({ words }: { words: AskWords }) {
   const open = () => document.querySelector<HTMLElement>('[data-ask="orb"]')?.click();
   return (
-    <button type="button" onClick={open} data-part="phone-composer" className="flex min-h-14 w-full items-center gap-3 rounded-2xl border border-line bg-surface px-4 text-left text-base text-muted shadow-[var(--v2-shadow)] md:hidden">
+    <button type="button" onClick={open} data-part="phone-composer" className="flex min-h-14 w-full items-center gap-3 rounded-xl border border-line bg-surface px-4 text-left text-base text-muted shadow-[var(--v2-shadow)] md:hidden">
       <span className="min-w-0 flex-1 truncate">{words["ask.placeholder.hero"] ?? words["ask.placeholder"]}</span>
       <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-full bg-brand text-on-brand">
         <Mic className="size-5" />
@@ -88,7 +88,7 @@ export function CommandBar({ lang, base, availability, words, chips }: { lang: s
   if (!desktop)
     return (
       <>
-        <div aria-hidden="true" data-part="command-bar" className="h-[12rem] rounded-2xl border border-line bg-surface max-md:hidden" />
+        <div aria-hidden="true" data-part="command-bar" className="h-[12rem] rounded-xl border border-line bg-surface max-md:hidden" />
         {v4 ? <PhoneComposer words={words} /> : null}
       </>
     );
@@ -102,7 +102,7 @@ export function CommandBar({ lang, base, availability, words, chips }: { lang: s
     );
   }
   return (
-    <section id="ask" data-part="command-bar" className="scroll-mt-24 rounded-2xl border border-line bg-surface p-3 max-md:hidden">
+    <section id="ask" data-part="command-bar" className="scroll-mt-24 rounded-xl border border-line bg-surface p-3 max-md:hidden">
       <AskCard lang={lang} base={base} availability={availability} words={words} chips={chips} onMood={() => undefined} />
     </section>
   );

@@ -28,12 +28,12 @@ export function CheckoutSheet({ t, title, lines, payLabel, busy, error, done, on
   }, [onClose]);
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-0 sm:items-center sm:p-4" data-checkout>
-      <div role="dialog" aria-modal="true" aria-labelledby="tu-pay-h" className="max-h-full w-full max-w-md overflow-y-auto rounded-t-2xl border border-line bg-surface p-4 sm:rounded-2xl sm:p-5">
+      <div role="dialog" aria-modal="true" aria-labelledby="tu-pay-h" className="max-h-full w-full max-w-md overflow-y-auto rounded-t-xl border border-line bg-surface p-4 sm:rounded-xl sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 id="tu-pay-h" className="font-display text-xl font-semibold">
             {title}
           </h2>
-          <span className="rounded-full border border-amber-text bg-amber-bg px-2.5 py-0.5 text-sm font-bold tracking-wide text-amber-text">{t("tu.pay.test")}</span>
+          <span className="rounded-md border border-amber-text bg-amber-bg px-2.5 py-0.5 text-sm font-bold tracking-wide text-amber-text">{t("tu.pay.test")}</span>
         </div>
         <p role="note" className="mt-2 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-sm font-medium text-amber-text">
           {t("tu.pay.nomoney")}

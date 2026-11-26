@@ -122,7 +122,7 @@ export function CallsTable({ words, base, query, items, selectedId, when, pageSi
   const firstBody = <tbody className="block md:table-row-group">{firstSlice.map(renderRow)}</tbody>;
   if (restSlices.length === 0) {
     return (
-      <div className="overflow-hidden rounded-[14px] border border-line bg-surface shadow-[var(--v2-shadow)]" data-part="calls-table">
+      <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-[var(--v2-shadow)]" data-part="calls-table">
         <table className="block w-full border-collapse text-[13.5px] md:table">
           <caption className="sr-only">{t("calls6.table.caption")}</caption>
           {thead}

@@ -17,7 +17,7 @@ import { alertBox, btnMain, btnQuiet, checkRow, fieldHelp, okBox } from "../ui";
 import { makeT, type Words } from "../words";
 import { GreetingBox, shownGreeting, type GreetingHandle } from "./GreetingBox";
 
-const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
+const chip = (on: boolean) => `min-h-11 rounded-md border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 const h3 = "m-0 text-[16px] font-semibold text-ink";
 const GREETING_NAMES = ["customer", "business", "assistant"] as const satisfies readonly Placeholder[];
 
@@ -176,7 +176,7 @@ export function VoiceTone({ words, voiceNames, first, training, actions, canEdit
   if (training === null) return null;
 
   return (
-    <section data-part="mya-voice-tone" aria-labelledby="vt-h" className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-4 md:p-5">
+    <section data-part="mya-voice-tone" aria-labelledby="vt-h" className="flex flex-col gap-5 rounded-xl border border-line bg-surface p-4 md:p-5">
       <div>
         <h2 id="vt-h" className="m-0 font-display text-[18px] font-bold leading-tight md:text-xl">
           {t("vt.gm.title")}
@@ -225,7 +225,7 @@ export function VoiceTone({ words, voiceNames, first, training, actions, canEdit
           {canEdit ? (
             <div className="flex flex-wrap items-center gap-2" data-part="vt-greeting-add">
               {GREETING_NAMES.map((p) => (
-                <button key={p} type="button" disabled={off} onClick={() => greetRef.current?.insert(p)} className="min-h-11 rounded-full border border-edge bg-surface px-3.5 text-sm font-semibold hover:bg-surface-2">
+                <button key={p} type="button" disabled={off} onClick={() => greetRef.current?.insert(p)} className="min-h-11 rounded-md border border-edge bg-surface px-3.5 text-sm font-semibold hover:bg-surface-2">
                   {t("vt.add", { what: pillText(p) })}
                 </button>
               ))}

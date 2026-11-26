@@ -33,9 +33,9 @@ export function PendingList({ base, words, rows, programmes, programme, more }: 
         {programme ? <Link href={`${base}/fees/pending`} className={quiet}>{say(words, "edu.stu.clear")}</Link> : null}
       </form>
       {rows === null ? (
-        <p role="alert" className="rounded-2xl border border-line p-4 text-base">{say(words, "edu.loaderr")}</p>
+        <p role="alert" className="rounded-xl border border-line p-4 text-base">{say(words, "edu.loaderr")}</p>
       ) : rows.length === 0 ? (
-        <p className="rounded-2xl border border-line p-4 text-base text-muted" data-part="empty">{say(words, "edu.pending.none")}</p>
+        <p className="rounded-xl border border-line p-4 text-base text-muted" data-part="empty">{say(words, "edu.pending.none")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {rows.map((r) => (

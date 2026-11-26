@@ -26,7 +26,7 @@ export function StarterLists({ words, make }: { words: Words; make: () => Promis
     setProblem(t(`wls.err.${r.error}` as "wls.err.unavailable"));
   };
   return (
-    <section data-part="starter-lists" aria-labelledby="wls-starter-h" className="rounded-[14px] border border-line bg-surface p-[18px]">
+    <section data-part="starter-lists" aria-labelledby="wls-starter-h" className="rounded-xl border border-line bg-surface p-[18px]">
       <h2 id="wls-starter-h" className="m-0 font-display text-xl font-semibold">
         {t("wls.starter.title")}
       </h2>

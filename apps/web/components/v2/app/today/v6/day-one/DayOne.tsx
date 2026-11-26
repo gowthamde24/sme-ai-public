@@ -64,10 +64,10 @@ function DayOneBoxed({ name, steps, canGoLive, missing, actions, words, language
       setBusy(false);
     }
   };
-  const card = "rounded-[22px] border border-line bg-surface shadow-[var(--v2-shadow)]";
+  const card = "rounded-xl border border-line bg-surface shadow-[var(--v2-shadow)]";
   return (
     <div data-part="day-one" className="flex flex-col gap-5">
-      <section className="ds-band grid min-w-0 items-start gap-[26px] rounded-[30px] border border-line p-[22px] lg:grid-cols-[minmax(0,1fr)_380px] lg:p-[26px_28px_24px]">
+      <section className="ds-band grid min-w-0 items-start gap-[26px] rounded-xl border border-line p-[22px] lg:grid-cols-[minmax(0,1fr)_380px] lg:p-[26px_28px_24px]">
         <div className="min-w-0">
           <header className="flex flex-col">
             <h2 className="font-display text-[28px] font-extrabold leading-[1.1] tracking-[-1px] md:text-[34px]">{t("tv6.d1.welcome", { name })}</h2>
@@ -82,7 +82,7 @@ function DayOneBoxed({ name, steps, canGoLive, missing, actions, words, language
           </header>
           <ol data-part="steps" className="mt-2 flex flex-col gap-3">
             {steps.map((s, i) => (
-              <li key={s.id} data-step={s.id} data-state={s.done ? "done" : s.current ? "current" : "todo"} aria-current={s.current ? "step" : undefined} className={`flex flex-wrap items-center gap-3.5 rounded-2xl border bg-surface px-[18px] py-3.5 ${s.current ? "border-brand-edge" : "border-line"}`}>
+              <li key={s.id} data-step={s.id} data-state={s.done ? "done" : s.current ? "current" : "todo"} aria-current={s.current ? "step" : undefined} className={`flex flex-wrap items-center gap-3.5 rounded-xl border bg-surface px-[18px] py-3.5 ${s.current ? "border-brand-edge" : "border-line"}`}>
                 <span aria-hidden="true" className={`grid size-[42px] shrink-0 place-items-center rounded-full text-[15px] font-bold ${s.done ? "bg-green-bg text-green-text" : s.current ? "bg-brand text-on-brand" : "bg-surface-2 text-muted"}`}>
                   {s.done ? <Check className="size-5" /> : i + 1}
                 </span>
@@ -105,7 +105,7 @@ function DayOneBoxed({ name, steps, canGoLive, missing, actions, words, language
                   </p>
                 </div>
                 {s.current ? (
-                  <Link href={s.href} className="inline-flex min-h-11 items-center rounded-[10px] border border-brand-edge bg-brand px-4 text-sm font-bold text-on-brand hover:brightness-95">
+                  <Link href={s.href} className="inline-flex min-h-11 items-center rounded-xl border border-brand-edge bg-brand px-4 text-sm font-bold text-on-brand hover:brightness-95">
                     {t("tv6.d1.start")}
                   </Link>
                 ) : (
@@ -165,7 +165,7 @@ function DayOneBoxed({ name, steps, canGoLive, missing, actions, words, language
                 <button type="button" onClick={() => {
                     primeAudio(); // the microphone is asked for IN this tap
                     setTalk(true);
-                  }} aria-label={t("dst.talk_live")} className="shrink-0 rounded-full focus-visible:outline-2">
+                  }} aria-label={t("dst.talk_live")} className="shrink-0 rounded-full round-ok focus-visible:outline-2">
                   <OrbRing size="md" state="ambient" />
                 </button>
                 <div className="min-w-0">

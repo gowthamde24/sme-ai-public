@@ -76,13 +76,13 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
 
   return (
     <section aria-label={w("aiteam.v4.scene")} data-standup-scene="" className="flex min-w-0 flex-col gap-3">
-      <div className="relative overflow-hidden rounded-[22px] border border-line bg-surface p-3 shadow-[var(--v2-shadow)] sm:p-4" data-part="scene">
+      <div className="relative overflow-hidden rounded-xl border border-line bg-surface p-3 shadow-[var(--v2-shadow)] sm:p-4" data-part="scene">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="m-0 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-semibold" data-part="when">
+          <p className="m-0 inline-flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-1.5 text-sm font-semibold" data-part="when">
             <span aria-hidden="true" className="size-2 rounded-full bg-[#ff773c]" />
             {clock ? (isToday ? w("aiteam.v4.chip.today", { time: clock }) : `${dayLabel}, ${clock}`) : dayLabel}
             {standup?.draft ? (
-              <span title={w("aiteam.standup.draft.why")} className="rounded-full border border-amber-text bg-amber-bg px-2 py-0.5 text-xs font-semibold text-amber-text" data-part="draft">
+              <span title={w("aiteam.standup.draft.why")} className="rounded border border-amber-text bg-amber-bg px-2 py-0.5 text-xs font-semibold text-amber-text" data-part="draft">
                 {w("aiteam.standup.draft")}
               </span>
             ) : null}
@@ -93,7 +93,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
             onClick={() => sound.toggle()}
             aria-pressed={sound.playing}
             data-part="play"
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-charcoal px-4 text-sm font-semibold text-on-charcoal shadow hover:opacity-90 disabled:opacity-50 sm:px-5 sm:text-base"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-charcoal px-4 text-sm font-semibold text-on-charcoal shadow hover:opacity-90 disabled:opacity-50 sm:px-5 sm:text-base"
           >
             <span aria-hidden="true">{sound.playing ? "❚❚" : "▶"}</span>
             {sound.playing ? w("aiteam.standup.pause") : w("aiteam.v4.hear")}
@@ -141,7 +141,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
         </div>
       </div>
 
-      <div className="rounded-[22px] border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5" data-part="report">
+      <div className="rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5" data-part="report">
         {step ? (
           <>
             <div className="flex items-baseline justify-between gap-3">

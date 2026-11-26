@@ -228,7 +228,7 @@ export async function CampaignPage({ accessToken, tenantId, tenant, pack, campai
   const last = data?.tab === "audience" ? data.rows[data.rows.length - 1] : undefined;
   const body =
     data === null ? (
-      <p role="alert" className="rounded-2xl border border-line p-4 text-base">{words["camp.loaderr"]}</p>
+      <p role="alert" className="rounded-xl border border-line p-4 text-base">{words["camp.loaderr"]}</p>
     ) : data.tab === "overview" ? (
       <CampaignOverview base={base} campaign={campaign} words={words} canEdit={canEdit} calls={calls} business={tenant.name ?? null} />
     ) : data.tab === "audience" ? (
@@ -293,7 +293,7 @@ export async function CallListPage({ accessToken, tenantId, tenant, raw }: Campa
         <p className="text-base text-muted">{words["camp.cl.sub"]}</p>
       </header>
       {page === null ? (
-        <p role="alert" className="rounded-2xl border border-line p-4 text-base">{words["camp.loaderr"]}</p>
+        <p role="alert" className="rounded-xl border border-line p-4 text-base">{words["camp.loaderr"]}</p>
       ) : (
         <CallList
           items={page.items}

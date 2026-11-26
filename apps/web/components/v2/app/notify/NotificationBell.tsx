@@ -137,7 +137,7 @@ export function NotificationBell({ tenantId, labels, still = false }: { tenantId
       >
         <Bell className="size-5" aria-hidden="true" />
         {count > 0 ? (
-          <span data-notify="count" aria-hidden="true" className="absolute -right-1 -top-1 grid min-w-5 place-items-center rounded-full border border-brand-edge bg-brand px-1 text-sm font-semibold leading-5 text-on-brand">
+          <span data-notify="count" aria-hidden="true" className="absolute -right-1 -top-1 grid min-w-5 place-items-center rounded-md border border-brand-edge bg-brand px-1 text-sm font-semibold leading-5 text-on-brand">
             {shown}
           </span>
         ) : null}

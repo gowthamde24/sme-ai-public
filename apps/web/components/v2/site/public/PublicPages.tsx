@@ -49,7 +49,7 @@ export function PricingPublic({ t, p, lang }: Props) {
         <h2 className="sr-only">{p("pub.price.plans.h")}</h2>
         <ul className="grid gap-3 md:grid-cols-3" data-part="plans">
           {PUBLIC_PLANS.map((plan) => (
-            <li key={plan.id} data-plan={plan.id} {...(plan.recommended ? { "data-chosen": "" } : {})} className={`flex flex-col gap-1.5 rounded-[14px] border bg-bg p-5 ${plan.recommended ? "border-ink ring-1 ring-ink" : "border-line"}`}>
+            <li key={plan.id} data-plan={plan.id} {...(plan.recommended ? { "data-chosen": "" } : {})} className={`flex flex-col gap-1.5 rounded-xl border bg-bg p-5 ${plan.recommended ? "border-ink ring-1 ring-ink" : "border-line"}`}>
               <h3 className="text-lg font-bold">{plan.name}</h3>
               <p className="font-display text-3xl font-extrabold tracking-tight">
                 {rupees(plan.monthly)} <small className="text-base font-semibold text-muted">{p("pub.price.mo")}</small>

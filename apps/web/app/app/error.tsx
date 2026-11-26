@@ -18,7 +18,7 @@ export default function AppError({ error, retry }: { error: Error & { digest?: s
   return (
     <main role="alert" className="mx-auto max-w-md p-6 text-center">
       <p>{word(labels, "problem.500.title", "Something went wrong on our side")}</p>
-      <button type="button" onClick={() => retry()} className="mt-3 min-h-11 rounded-full border border-edge px-5 font-semibold">
+      <button type="button" onClick={() => retry()} className="mt-3 min-h-11 rounded-md border border-edge px-5 font-semibold">
         {word(labels, "problem.retry", "Try again")}
       </button>
     </main>

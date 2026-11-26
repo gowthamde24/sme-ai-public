@@ -41,7 +41,7 @@ export function CallPlanLines({ plan, t: given, onSay, locked = false }: { plan:
             <li key={q.id} className="[overflow-wrap:anywhere]">
               <span>{q.text}</span>
               {onSay && !locked && plan.questions.length > 1 ? (
-                <button type="button" data-call-plan="remove" aria-label={t("bv.chat.plan.call.remove", { n: i + 1 })} onClick={() => onSay(`remove question ${i + 1}`)} className="ml-2 inline-flex min-h-8 items-center rounded-full px-2 text-xs font-semibold text-brand-text underline underline-offset-2">
+                <button type="button" data-call-plan="remove" aria-label={t("bv.chat.plan.call.remove", { n: i + 1 })} onClick={() => onSay(`remove question ${i + 1}`)} className="ml-2 inline-flex min-h-8 items-center rounded px-2 text-xs font-semibold text-brand-text underline underline-offset-2">
                   {t("bv.chat.plan.call.removebtn")}
                 </button>
               ) : null}
@@ -61,7 +61,7 @@ export function CallPlanLines({ plan, t: given, onSay, locked = false }: { plan:
             className="mt-1.5 flex gap-2"
           >
             <input type="text" value={extra} maxLength={200} onChange={(e) => setExtra(e.target.value)} aria-label={t("bv.chat.plan.call.add")} placeholder={t("bv.chat.plan.call.add")} autoComplete="off" className="min-h-10 min-w-0 flex-1 rounded-lg border border-line bg-surface px-2.5 text-sm" />
-            <button type="submit" disabled={extra.trim() === ""} className="inline-flex min-h-10 items-center rounded-full border border-edge bg-surface px-3 text-sm font-semibold disabled:opacity-60">
+            <button type="submit" disabled={extra.trim() === ""} className="inline-flex min-h-10 items-center rounded-md border border-edge bg-surface px-3 text-sm font-semibold disabled:opacity-60">
               {t("bv.chat.plan.call.addbtn")}
             </button>
           </form>

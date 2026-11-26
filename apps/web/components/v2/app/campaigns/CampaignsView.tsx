@@ -28,9 +28,9 @@ export function CampaignsView({ title = null, base, words, role, campaigns, more
       {saved ? <p role="status" className={okLine}>{say(words, "camp.saved")}</p> : null}
       {help}
       {campaigns === null ? (
-        <p role="alert" className="rounded-2xl border border-line p-4 text-base">{say(words, "camp.loaderr")}</p>
+        <p role="alert" className="rounded-xl border border-line p-4 text-base">{say(words, "camp.loaderr")}</p>
       ) : campaigns.length === 0 ? (
-        <div className="flex max-w-xl items-start gap-4 rounded-[20px] border border-line bg-surface p-4 md:p-5" data-part="empty">
+        <div className="flex max-w-xl items-start gap-4 rounded-xl border border-line bg-surface p-4 md:p-5" data-part="empty">
           <OrbMark px={72} className="size-[72px]" />
           <div className="min-w-0">
             <p className="font-semibold">{say(words, announcements ? "camp.ann.empty.title" : "camp.empty.title")}</p>

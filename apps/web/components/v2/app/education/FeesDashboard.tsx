@@ -35,7 +35,7 @@ export function FeesDashboard({ title = null, base, words, role, collection, tod
         </div>
       </header>
       {noPlans ? (
-        <div className="flex max-w-xl items-start gap-4 rounded-[20px] border border-line bg-surface p-4 md:p-5" data-part="no-plans">
+        <div className="flex max-w-xl items-start gap-4 rounded-xl border border-line bg-surface p-4 md:p-5" data-part="no-plans">
           <OrbMark px={72} className="size-[72px]" />
           <div className="min-w-0">
             <p className="font-semibold">{say(words, "edu.fees.noplans.title")}</p>
@@ -45,7 +45,7 @@ export function FeesDashboard({ title = null, base, words, role, collection, tod
         </div>
       ) : null}
       {collection === null ? (
-        <p role="alert" className="rounded-2xl border border-line p-4 text-base">{say(words, "edu.loaderr")}</p>
+        <p role="alert" className="rounded-xl border border-line p-4 text-base">{say(words, "edu.loaderr")}</p>
       ) : (
         <>
           <p className="text-sm text-muted" data-part="window">{say(words, "edu.fees.window", { from: collection.from, to: collection.to })}</p>

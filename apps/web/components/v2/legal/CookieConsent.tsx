@@ -58,7 +58,7 @@ function Panel({ words, consent }: { words: CookieWords; consent: Consent }) {
   };
   return (
     <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4" onKeyDown={onKeyDown} onMouseDown={(e) => e.target === e.currentTarget && closeCookieSettings()}>
-      <div ref={box} role="dialog" aria-modal="true" aria-labelledby="cookie-panel-h" data-cookie="panel" className="max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-line bg-bg p-5 text-ink shadow-[var(--v2-shadow)] sm:rounded-2xl">
+      <div ref={box} role="dialog" aria-modal="true" aria-labelledby="cookie-panel-h" data-cookie="panel" className="max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-xl border border-line bg-bg p-5 text-ink shadow-[var(--v2-shadow)] sm:rounded-xl">
         <h2 id="cookie-panel-h" ref={heading} tabIndex={-1} className="font-display text-2xl font-bold outline-none">
           {words["cookie.panel.title"]}
         </h2>

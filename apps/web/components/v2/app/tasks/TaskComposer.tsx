@@ -12,7 +12,7 @@ import { makeT, type Words } from "../words";
 import type { TaskActions } from "./task-actions";
 import { langName } from "./task-format";
 
-const chip = "inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold hover:bg-surface-2";
+const chip = "inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold hover:bg-surface-2";
 
 /**
  * The box of the Tasks page (night 4, job DR part B): "What should Vijaya do?", the ready-made task chips (a chip puts its example into the box for the owner to change), the language of the customers (or "same as I wrote"), an optional pasted

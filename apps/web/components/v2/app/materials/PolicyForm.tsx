@@ -52,14 +52,14 @@ export function PolicyForm(p: { base: string; versionId: string; current: Policy
   }
   return (
     <form data-screen="material-policy" noValidate onSubmit={(e) => { e.preventDefault(); void save(); }} className="flex max-w-2xl flex-col gap-5">
-      <fieldset className="flex flex-col gap-3 rounded-2xl border border-line p-4">
+      <fieldset className="flex flex-col gap-3 rounded-xl border border-line p-4">
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "mat.pol.qty")}</legend>
         {text("wastage", "pol-wastage", "mat.pol.wastage", "mat.pol.wastage.help")}
         <label className={CHECK}><input type="checkbox" className="size-6 shrink-0 accent-brand-text" checked={f.roundPallet} disabled={busy} onChange={(e) => set("roundPallet", e.target.checked)} />{say(words, "mat.pol.pallet")}</label>
         <label className={CHECK}><input type="checkbox" className="size-6 shrink-0 accent-brand-text" checked={f.billWastage} disabled={busy} onChange={(e) => set("billWastage", e.target.checked)} />{say(words, "mat.pol.billwaste")}</label>
         <p className={help}>{say(words, "mat.pol.billwaste.help")}</p>
       </fieldset>
-      <fieldset className="flex flex-col gap-3 rounded-2xl border border-line p-4">
+      <fieldset className="flex flex-col gap-3 rounded-xl border border-line p-4">
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "mat.pol.transport")}</legend>
         <div role="radiogroup" aria-label={say(words, "mat.pol.transport")} className="flex flex-col gap-1">
           {(["none", "per_trip", "per_km_slab"] as const).map((k) => (
@@ -100,7 +100,7 @@ export function PolicyForm(p: { base: string; versionId: string; current: Policy
           </>
         ) : null}
       </fieldset>
-      <fieldset className="flex flex-col gap-3 rounded-2xl border border-line p-4">
+      <fieldset className="flex flex-col gap-3 rounded-xl border border-line p-4">
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "mat.pol.handling")}</legend>
         <div role="radiogroup" aria-label={say(words, "mat.pol.handling")} className="flex flex-col gap-1">
           {(["none", "order", "trip"] as const).map((k) => (
@@ -109,12 +109,12 @@ export function PolicyForm(p: { base: string; versionId: string; current: Policy
         </div>
         {f.handling !== "none" ? (<>{text("handlingAmount", "pol-hamt", "mat.pol.hamount")}{text("handlingGst", "pol-hgst", "mat.pol.gst")}</>) : null}
       </fieldset>
-      <fieldset className="flex flex-col gap-3 rounded-2xl border border-line p-4">
+      <fieldset className="flex flex-col gap-3 rounded-xl border border-line p-4">
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "mat.pol.laying")}</legend>
         <label className={CHECK}><input type="checkbox" className="size-6 shrink-0 accent-brand-text" checked={f.laying} disabled={busy} onChange={(e) => set("laying", e.target.checked)} />{say(words, "mat.pol.laying.on")}</label>
         {f.laying ? (<>{text("layingRate", "pol-lrate", "mat.pol.lrate", "mat.pol.lrate.help")}{text("layingGst", "pol-lgst", "mat.pol.gst")}</>) : null}
       </fieldset>
-      <fieldset className="flex flex-col gap-3 rounded-2xl border border-line p-4">
+      <fieldset className="flex flex-col gap-3 rounded-xl border border-line p-4">
         <legend className="px-1 font-display text-lg font-semibold">{say(words, "mat.pol.terms")}</legend>
         {text("advance", "pol-adv", "mat.pol.advance", "mat.pol.advance.help")}
         {text("creditDays", "pol-credit", "mat.pol.credit", "mat.pol.credit.help", "numeric")}
@@ -127,7 +127,7 @@ export function PolicyForm(p: { base: string; versionId: string; current: Policy
           {problem.mfa ? <Link href="/app/security" className="font-semibold underline">{say(words, "today.err.mfa.link")}</Link> : null}
         </div>
       ) : null}
-      <div data-orb-avoid="" className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
+      <div data-orb-avoid="" className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 md:bottom-4">
         <button type="submit" disabled={busy} className={primary}>{busy ? say(words, "today.act.working") : say(words, "mat.pol.save")}</button>
         <Link href={`${p.base}/settings?section=quotes`} aria-disabled={busy} className={quiet}>{say(words, "today.act.cancel")}</Link>
       </div>

@@ -34,7 +34,7 @@ export function ReplyBox({ id, value, onChange, onSend, placeholder, maxLength, 
           onSend();
         }
       }}
-      className="block min-h-12 w-full resize-none overflow-y-hidden rounded-[14px] border border-line bg-surface px-3.5 py-3 text-[14px] leading-6 text-ink placeholder:text-muted focus:border-brand-edge disabled:opacity-60"
+      className="block min-h-12 w-full resize-none overflow-y-hidden rounded-xl border border-line bg-surface px-3.5 py-3 text-[14px] leading-6 text-ink placeholder:text-muted focus:border-brand-edge disabled:opacity-60"
     />
   );
 }

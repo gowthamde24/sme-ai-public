@@ -129,7 +129,7 @@ export function LanguageSimple({ words, lang, theme, assistant, bare = false, pl
   );
   if (bare) return body;
   return (
-    <section aria-labelledby="lang-simple-title" className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5" data-part="language">
+    <section aria-labelledby="lang-simple-title" className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5" data-part="language">
       <h2 id="lang-simple-title" className="m-0 font-display text-[17px] font-bold leading-tight text-ink">
         {t("settings.language.language")} / {t("settings.language.appearance")}
       </h2>

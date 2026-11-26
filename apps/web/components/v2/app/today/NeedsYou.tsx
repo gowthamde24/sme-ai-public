@@ -26,11 +26,11 @@ import { useFrameData } from "../frame-store";
 import { say, type TodayWords } from "./today-words";
 import type { CallCardRequest, NeedsCard, NeedsYouItem, OutboxCardMessage, Role } from "./types";
 
-const card = "flex flex-col gap-3 rounded-[20px] border border-line bg-surface p-4 md:p-5";
-const badge = "rounded-full px-2.5 py-1 text-sm font-semibold";
-const primary = "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60";
-const secondary = "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-edge bg-transparent px-[18px] text-[15px] font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
-const quiet = "inline-flex min-h-11 items-center justify-center rounded-full px-[18px] text-[15px] font-semibold whitespace-nowrap text-muted hover:bg-surface-2 disabled:opacity-60";
+const card = "flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 md:p-5";
+const badge = "rounded-md px-2.5 py-1 text-sm font-semibold";
+const primary = "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-brand-edge bg-brand px-5 text-[15px] font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60";
+const secondary = "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-edge bg-transparent px-[18px] text-[15px] font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
+const quiet = "inline-flex min-h-11 items-center justify-center rounded-md px-[18px] text-[15px] font-semibold whitespace-nowrap text-muted hover:bg-surface-2 disabled:opacity-60";
 const MAX_WORDS = 3000;
 
 /** `who` is what the first fact is called: a customer, or (Lead Desk's plans, callbacks and limits) the plan the card is about. */
@@ -76,15 +76,15 @@ function badgeOf(m: OutboxCardMessage | null): { key: string; tone: string } {
 
 type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null; lang: string; /** The design system v6 draws each row with an icon square, the title over its reason, and square buttons (the approved mock). */ design?: boolean; /** The design system v6: an outbox reply that carries a quote shows a link to that quote (its quote row is folded into it): the reply row's key to the quote's address. */ folds?: ReadonlyMap<string, string> | null; /** A desktop draws each thing as ONE row (badge, title, short reason, buttons); "Details" opens the whole card in its place. */ compact: boolean };
 
-const rowPrimary = "relative inline-flex min-h-9 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand max-md:px-3 after:absolute after:inset-x-0 after:-inset-y-1 after:content-[''] hover:brightness-95 disabled:opacity-60";
-const rowQuiet = "row-quiet inline-flex min-h-9 items-center justify-center rounded-full border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
+const rowPrimary = "relative inline-flex min-h-9 items-center justify-center rounded-md border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand max-md:px-3 after:absolute after:inset-x-0 after:-inset-y-1 after:content-[''] hover:brightness-95 disabled:opacity-60";
+const rowQuiet = "row-quiet inline-flex min-h-9 items-center justify-center rounded-md border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
 
 /** The icon square of a row in the design system v6: a rupee for a quote, a calendar for a visit, a phone for a call, a speech bubble for a message. */
 function RowIcon({ cardKey }: { cardKey: string }) {
   const k = cardKey.toLowerCase();
   const cls = "size-[18px]";
   return (
-    <span aria-hidden="true" data-needs-icon="" data-k={k.includes("quote") || k.includes("offer") ? "offer" : k.includes("visit") ? "visit" : k.includes("call") || k.includes("person") || k.includes("callback") ? "call" : "chat"} className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-brand-bg text-base font-bold text-brand-text">
+    <span aria-hidden="true" data-needs-icon="" data-k={k.includes("quote") || k.includes("offer") ? "offer" : k.includes("visit") ? "visit" : k.includes("call") || k.includes("person") || k.includes("callback") ? "call" : "chat"} className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand-bg text-base font-bold text-brand-text">
       {k.includes("quote") ? "₹" : k.includes("visit") ? <CalendarDays className={cls} /> : k.includes("call") || k.includes("person") || k.includes("callback") ? <Phone className={cls} /> : k.includes("outbox") || k.includes("message") ? <MessageCircle className={cls} /> : <FileText className={cls} />}
     </span>
   );
@@ -253,7 +253,7 @@ function Head({ tone, label, at, ctx, onCollapse }: { tone: string; label: strin
       <span className="flex items-center gap-2 text-sm text-muted">
         {whenLabel(at, ctx.now)}
         {onCollapse ? (
-          <button type="button" data-needs="less" aria-expanded="true" onClick={onCollapse} className="inline-flex min-h-9 items-center rounded-full px-2.5 text-sm font-semibold text-brand-text hover:bg-surface-2">
+          <button type="button" data-needs="less" aria-expanded="true" onClick={onCollapse} className="inline-flex min-h-9 items-center rounded-md px-2.5 text-sm font-semibold text-brand-text hover:bg-surface-2">
             {say(ctx.words, "today.row.less")}
           </button>
         ) : null}
@@ -329,7 +329,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
       </p>
       <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{item.kind === "enquired_again" ? say(words, "today.sum.enquired") : item.summary}</p>
       {item.kind === "plan_upsell" ? null : (
-      <dl className="flex flex-wrap gap-x-6 gap-y-2 rounded-2xl bg-surface-2 p-3">
+      <dl className="flex flex-wrap gap-x-6 gap-y-2 rounded-xl bg-surface-2 p-3">
         {facts.map(([label, value]) => (
           <div key={label} className="min-w-0 max-w-full">
             <dt className="text-sm text-muted">{label}</dt>
@@ -445,13 +445,13 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
         {c.city ? <span className="font-normal text-muted"> · {c.city}</span> : null}
       </h3>
       {m === null ? (
-        <p className="rounded-2xl bg-surface-2 p-3.5 text-base text-muted">{say(words, "today.notext")}</p>
+        <p className="rounded-xl bg-surface-2 p-3.5 text-base text-muted">{say(words, "today.notext")}</p>
       ) : editing ? (
         <div className="flex flex-col gap-2">
           <label htmlFor={`edit-${c.key}`} className="text-sm font-semibold">
             {say(words, "today.edit.label")}
           </label>
-          <DictTextarea id={`edit-${c.key}`} lang={m.language} value={draft} maxLength={MAX_WORDS} onChange={(e) => setDraft(e.target.value)} rows={6} className="min-h-32 w-full rounded-2xl border border-edge bg-bg p-3 text-base text-ink focus:border-brand-edge" />
+          <DictTextarea id={`edit-${c.key}`} lang={m.language} value={draft} maxLength={MAX_WORDS} onChange={(e) => setDraft(e.target.value)} rows={6} className="min-h-32 w-full rounded-xl border border-edge bg-bg p-3 text-base text-ink focus:border-brand-edge" />
           <p className="text-sm text-muted">{say(words, "today.edit.hint")}</p>
           {editError ? (
             <p role="alert" className="text-sm font-medium text-red-text">
@@ -469,7 +469,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
         </div>
       ) : (
         <>
-          <div className="rounded-2xl rounded-bl-sm bg-surface-2 px-4 py-3.5">
+          <div className="rounded-xl rounded-bl-sm bg-surface-2 px-4 py-3.5">
             {m.media.length > 0 ? (
               <div className="mb-2">
                 <MessagePhotos media={m.media} words={words} size="md" />
@@ -798,7 +798,7 @@ function VisitProposalCard({ c, ctx }: { c: Extract<NeedsCard, { type: "visit" }
         {say(words, "today.title.visit.proposed", { who: v.who })}
         {v.city ? <span className="font-normal text-muted"> · {v.city}</span> : null}
       </h3>
-      <dl className="flex flex-wrap gap-x-6 gap-y-2 rounded-2xl bg-surface-2 p-3">
+      <dl className="flex flex-wrap gap-x-6 gap-y-2 rounded-xl bg-surface-2 p-3">
         {facts.map(([label, value]) => (
           <div key={label} className="min-w-0 max-w-full">
             <dt className="text-sm text-muted">{label}</dt>
@@ -809,7 +809,7 @@ function VisitProposalCard({ c, ctx }: { c: Extract<NeedsCard, { type: "visit" }
       <p className="text-sm text-muted">{say(words, "today.visit.hint")}</p>
       <Note id={c.key} words={words} />
       {moving && actions?.visit ? (
-        <div className="flex flex-col gap-3 rounded-2xl bg-surface-2 p-3.5">
+        <div className="flex flex-col gap-3 rounded-xl bg-surface-2 p-3.5">
           <SlotPicker words={words} lang={lang} min={today} value={pick} onChange={setPick} load={actions.visit.slots} idPrefix={`pm-${c.key}`} />
           {moveError ? (
             <p role="alert" className="text-sm font-medium text-red-text">
@@ -857,7 +857,7 @@ function Toast({ words }: { words: TodayWords }) {
   return (
     <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-4 bottom-[calc(9rem+env(safe-area-inset-bottom))] z-50 flex justify-center md:inset-x-auto md:bottom-6 md:right-6">
       {toast ? (
-        <p key={toast.id} className="pointer-events-auto max-w-md rounded-2xl border border-line bg-charcoal px-4 py-3 text-base font-medium text-on-charcoal shadow-[var(--v2-shadow-pop)]">
+        <p key={toast.id} className="pointer-events-auto max-w-md rounded-xl border border-line bg-charcoal px-4 py-3 text-base font-medium text-on-charcoal shadow-[var(--v2-shadow-pop)]">
           {toast.text}
         </p>
       ) : null}
@@ -897,7 +897,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
           {say(words, "today.needsYou")}
         </h2>
         {shownTotal !== null ? (
-          <span data-count={shownTotal} className={`inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-sm font-bold ${shownTotal === 0 ? "bg-surface-2 text-muted" : "bg-brand text-on-brand"}`}>
+          <span data-count={shownTotal} className={`inline-flex h-7 min-w-7 items-center justify-center rounded-md px-2 text-sm font-bold ${shownTotal === 0 ? "bg-surface-2 text-muted" : "bg-brand text-on-brand"}`}>
             <span aria-hidden="true">{shownTotal}</span>
             <span className="sr-only">{say(words, "today.needs.count", { n: shownTotal })}</span>
           </span>
@@ -916,7 +916,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
         </p>
       ) : (
         <>
-          <ul id="needs-you-list" className={compact ? (design ? "flex flex-col divide-y divide-line [&_article]:rounded-none [&_article]:border-0" : "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0") : "flex flex-col gap-2.5"}>
+          <ul id="needs-you-list" className={compact ? (design ? "flex flex-col divide-y divide-line [&_article]:rounded-none [&_article]:border-0" : "flex flex-col divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0") : "flex flex-col gap-2.5"}>
             {list.map((c, i) => (
               <li key={c.key} className={!all && i >= 3 ? (design && i < 6 ? "hidden max-md:list-item" : "hidden") : ""}>
                 {draw(c, ctx)}

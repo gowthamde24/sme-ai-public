@@ -154,7 +154,7 @@ export const youMark = "ml-2 text-sm font-normal text-muted";
 /** The line under a page's title (the lead's city and status). */
 export const pageSub = "-mt-1 text-base text-muted";
 /** A folded part of a page ("I sent a message myself"): a card whose summary is a 48 px line. */
-export const foldCard = "mt-8 rounded-[20px] border border-line bg-surface";
+export const foldCard = "mt-8 rounded-xl border border-line bg-surface";
 export const foldSummary = "flex min-h-12 cursor-pointer items-center px-4 text-base font-semibold text-brand-text";
 export const foldBody = "px-4 pb-4";
 /** The not-found page: one centred column with the owl, a sentence and one way out. */

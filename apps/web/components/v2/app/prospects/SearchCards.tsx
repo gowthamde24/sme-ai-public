@@ -26,7 +26,7 @@ export function PlanCard({ search, words, canApprove, busy, onOk, onCancel }: { 
   const t = makeT(words);
   const cost = rupees(search.estCostPaise);
   return (
-    <div className="flex flex-col gap-3 rounded-2xl bg-surface-2 p-3 sm:p-4" data-plan-card="">
+    <div className="flex flex-col gap-3 rounded-xl bg-surface-2 p-3 sm:p-4" data-plan-card="">
       <div className="flex flex-wrap items-center gap-2">
         <h3 className={h3}>{t("lf.plan.title")}</h3>
         {search.provider === "fixture" ? <span className={pillClass("info")}>{t("lf.demo")}</span> : null}

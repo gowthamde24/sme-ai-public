@@ -64,7 +64,7 @@ export function QuoteDraft({ words, base, canMake, actions, open = false }: { wo
   const href = made ? draftQuoteHref(base, made.enquiryId, made.quoteId) : view?.made ? (view.enquiryId ? draftQuoteHref(base, view.enquiryId, view.quoteId) : `${base}/quotes`) : null;
   return (
     <details
-      className="rounded-2xl bg-surface-2 px-3 py-1 sm:px-4"
+      className="rounded-xl bg-surface-2 px-3 py-1 sm:px-4"
       data-quote-draft-box=""
       open={open}
       onToggle={(e) => {

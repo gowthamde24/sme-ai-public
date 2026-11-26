@@ -77,7 +77,7 @@ export function LiveNow({ tenantId }: { tenantId: string }) {
   const first = rows[0];
   if (!first) {
     return (
-      <p data-live="pill" data-state="idle" role="status" aria-label={`${title}: ${idle}`} className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-edge bg-surface px-3 text-sm font-medium text-muted">
+      <p data-live="pill" data-state="idle" role="status" aria-label={`${title}: ${idle}`} className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-edge bg-surface px-3 text-sm font-medium text-muted">
         <Eye className="size-4 shrink-0" aria-hidden="true" />
         <span>{idle}</span>
       </p>
@@ -93,14 +93,14 @@ export function LiveNow({ tenantId }: { tenantId: string }) {
         aria-controls={id}
         aria-label={`${title}: ${text}${rows.length > 1 ? ` ${word(labels, "frame.live.more", "+{n} more", { n: rows.length - 1 })}` : ""}`}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex min-h-10 max-w-full items-center gap-2 rounded-full border border-brand-edge bg-brand-bg px-3 text-sm font-semibold text-ink hover:brightness-95 aria-expanded:bg-surface"
+        className="inline-flex min-h-10 max-w-full items-center gap-2 rounded-md border border-brand-edge bg-brand-bg px-3 text-sm font-semibold text-ink hover:brightness-95 aria-expanded:bg-surface"
       >
         <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-green-text motion-safe:animate-pulse" />
         <span className="min-w-0 truncate md:max-w-[19rem]">{text}</span>
         <ChevronDown className="size-4 shrink-0 text-muted" aria-hidden="true" />
       </button>
       {open ? (
-        <div id={id} role="region" aria-label={title} className="absolute left-0 top-full z-[60] mt-2 w-[min(22rem,calc(100vw-2rem))] md:left-auto md:right-0 rounded-2xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)]">
+        <div id={id} role="region" aria-label={title} className="absolute left-0 top-full z-[60] mt-2 w-[min(22rem,calc(100vw-2rem))] md:left-auto md:right-0 rounded-xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)]">
           <p className="flex items-center gap-1.5 px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-muted">
             <span aria-hidden="true" className="size-2 rounded-full bg-green-text motion-safe:animate-pulse" />
             {title}

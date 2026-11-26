@@ -47,9 +47,9 @@ export function AdmissionsBoard({ title = null, base, words, role, admissions, p
         {filtered ? <Link href={`${base}/admissions`} className={quiet}>{say(words, "edu.stu.clear")}</Link> : null}
       </form>
       {admissions === null ? (
-        <p role="alert" className="rounded-2xl border border-line p-4 text-base">{say(words, "edu.loaderr")}</p>
+        <p role="alert" className="rounded-xl border border-line p-4 text-base">{say(words, "edu.loaderr")}</p>
       ) : admissions.length === 0 ? (
-        <div className="flex max-w-xl items-start gap-4 rounded-[20px] border border-line bg-surface p-4 md:p-5" data-part="empty">
+        <div className="flex max-w-xl items-start gap-4 rounded-xl border border-line bg-surface p-4 md:p-5" data-part="empty">
           <OrbMark px={72} className="size-[72px]" />
           <div className="min-w-0">
             <p className="font-semibold">{say(words, filtered ? "edu.stu.none.filtered" : "edu.adm.none.title")}</p>
@@ -67,7 +67,7 @@ export function AdmissionsBoard({ title = null, base, words, role, admissions, p
                   <ul className="flex flex-col gap-2">
                     {cards.map((a) => (
                       <li key={a.id}>
-                        <Link href={`${base}/admissions/${a.id}`} className="flex min-h-11 flex-col gap-1 rounded-2xl border border-line bg-surface p-3 hover:bg-surface-2" data-admission={a.id}>
+                        <Link href={`${base}/admissions/${a.id}`} className="flex min-h-11 flex-col gap-1 rounded-xl border border-line bg-surface p-3 hover:bg-surface-2" data-admission={a.id}>
                           <span className="font-semibold [overflow-wrap:anywhere]">{a.contact_name ?? say(words, "edu.adm.unknown")}</span>
                           <span className="text-sm text-muted">{[a.programme_name, say(words, `edu.source.${a.source}`)].filter(Boolean).join(" · ")}</span>
                           {a.next_visit ? <Pill tone="info">{say(words, "edu.adm.nextvisit", { date: a.next_visit.slice(0, 10) })}</Pill> : null}

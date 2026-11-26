@@ -52,7 +52,7 @@ export function ImportTable({ listName, fillCategory, rows, added, file, cut, re
         </label>
       ) : null}
       {cut ? <p className="m-0 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink">{t("jobs.sell.imp.cut")}</p> : null}
-      <ul data-part="import-rows" className="m-0 flex max-h-[52dvh] list-none flex-col divide-y divide-line overflow-y-auto rounded-2xl border border-line bg-surface p-0 md:max-h-[58dvh]">
+      <ul data-part="import-rows" className="m-0 flex max-h-[52dvh] list-none flex-col divide-y divide-line overflow-y-auto rounded-xl border border-line bg-surface p-0 md:max-h-[58dvh]">
         {rows.map((r, i) => (
           <li key={r.id} data-row={r.status} data-unsure={unsure(r) ? "true" : undefined} className={`${unsure(r) ? "bg-[var(--jb-info-soft)] " : ""}grid grid-cols-[minmax(0,1fr)_7.25rem] items-center gap-x-2 gap-y-0.5 px-3 py-2 md:grid-cols-[minmax(0,1fr)_9rem_minmax(0,12rem)_auto] md:gap-y-0 ${r.status === "duplicate" ? "opacity-60" : ""}`}>
             <input value={r.name} onChange={(e) => set(r.id, { name: e.target.value })} aria-label={t("jobs.sell.imp.name_of", { n: i + 1 })} placeholder={t("jobs.sell.imp.col.name")} maxLength={120} disabled={busy} className={field} />
@@ -66,7 +66,7 @@ export function ImportTable({ listName, fillCategory, rows, added, file, cut, re
               {r.note ? <span data-part="row-note" className="font-normal text-muted"> · {r.note}</span> : null}
               {unsure(r) && r.status === "ok" ? <span data-part="row-check"> · {t("jobs.sell.imp.check")}</span> : null}
             </span>
-            <button type="button" aria-label={t("jobs.sell.imp.remove", { n: i + 1 })} disabled={busy} onClick={() => onRows(restatus(rows.filter((x) => x.id !== r.id), added))} className="col-start-2 row-start-2 grid size-11 place-items-center justify-self-end rounded-full text-muted hover:bg-surface-2 md:col-start-auto md:row-start-auto">
+            <button type="button" aria-label={t("jobs.sell.imp.remove", { n: i + 1 })} disabled={busy} onClick={() => onRows(restatus(rows.filter((x) => x.id !== r.id), added))} className="col-start-2 row-start-2 grid size-11 place-items-center justify-self-end rounded-md text-muted hover:bg-surface-2 md:col-start-auto md:row-start-auto">
               <X aria-hidden="true" className="size-4" />
             </button>
           </li>
@@ -74,11 +74,11 @@ export function ImportTable({ listName, fillCategory, rows, added, file, cut, re
       </ul>
       {c.ready === 0 ? <p className="m-0 text-[14px] leading-snug text-muted">{t("jobs.sell.imp.none_ready")}</p> : <p className="m-0 text-[13.5px] leading-snug text-muted">{t("jobs.sell.imp.note")}</p>}
       <div className="flex flex-wrap gap-2.5">
-        <button type="button" data-action="import-add" disabled={busy || c.ready === 0} onClick={onAdd} className="jb-press inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-[16px] font-bold text-on-brand disabled:opacity-50">
+        <button type="button" data-action="import-add" disabled={busy || c.ready === 0} onClick={onAdd} className="jb-press inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-edge bg-brand px-5 text-[16px] font-bold text-on-brand disabled:opacity-50">
           <Check aria-hidden="true" className="size-4" />
           {progress ? t("jobs.sell.imp.adding", { done: progress.done, total: progress.total }) : c.ready === 1 ? t("jobs.sell.imp.add.one") : t("jobs.sell.imp.add", { n: c.ready })}
         </button>
-        <button type="button" disabled={busy} onClick={onCancel} className="jb-press inline-flex min-h-12 items-center justify-center rounded-full border border-line bg-surface px-5 text-[16px] font-semibold text-ink">
+        <button type="button" disabled={busy} onClick={onCancel} className="jb-press inline-flex min-h-12 items-center justify-center rounded-md border border-line bg-surface px-5 text-[16px] font-semibold text-ink">
           {t("jobs.sell.imp.cancel")}
         </button>
       </div>

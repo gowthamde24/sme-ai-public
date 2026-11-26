@@ -20,7 +20,7 @@ export function SetupChecklist({ words, items, onContinue, onOpen, onHide }: { w
           </h2>
           <p className="text-sm text-muted">{say(words, "setup.check.count", { done, total: items.length })}</p>
         </div>
-        <button type="button" onClick={onHide} aria-label={say(words, "setup.check.hide.label")} title={say(words, "setup.check.hide")} className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-muted hover:bg-surface-2">
+        <button type="button" onClick={onHide} aria-label={say(words, "setup.check.hide.label")} title={say(words, "setup.check.hide")} className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted hover:bg-surface-2">
           <X className="size-5" aria-hidden="true" />
         </button>
       </div>
@@ -51,7 +51,7 @@ export function SetupChecklist({ words, items, onContinue, onOpen, onHide }: { w
 export function SetupSlimBar({ words, items, onContinue, onHide }: { words: TodayWords; items: readonly Item[]; onContinue: () => void; onHide: () => void }) {
   const done = items.filter((i) => i.done).length;
   return (
-    <div data-setup="slim" className="flex min-h-12 flex-wrap items-center gap-x-2 gap-y-1 rounded-2xl border border-line bg-surface px-4 py-2 text-sm">
+    <div data-setup="slim" className="flex min-h-12 flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-line bg-surface px-4 py-2 text-sm">
       <span className="font-semibold text-ink">{say(words, "setup.check.title")}</span>
       <span aria-hidden="true" className="text-muted">·</span>
       <span className="text-muted">{say(words, "setup.check.count", { done, total: items.length })}</span>

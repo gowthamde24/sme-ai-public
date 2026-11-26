@@ -78,7 +78,7 @@ export function JobLine({ job, words, base, actions }: { job: Job; words: Words;
       data-job-kind={job.kind}
       data-part="job-card"
       data-state={off ? "off" : needs ? "needs" : "running"}
-      className={`flex h-full min-w-0 flex-col justify-center rounded-[14px] border bg-surface p-4 text-left ${needs ? "border-ink" : "border-line"}`}
+      className={`flex h-full min-w-0 flex-col justify-center rounded-xl border bg-surface p-4 text-left ${needs ? "border-ink" : "border-line"}`}
     >
       <div className={`flex gap-3 ${needs || off ? "flex-col sm:flex-row sm:items-center" : "items-center"}`}>
         <div className="flex min-w-0 flex-1 items-center gap-3">

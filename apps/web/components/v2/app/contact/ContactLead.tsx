@@ -112,7 +112,7 @@ export function ContactLead({ words, actions, bookHref, sareeHref, todayHref, ad
       </div>
 
       {mode !== "none" ? (
-        <form onSubmit={send} className="flex flex-col gap-3 rounded-2xl bg-surface-2 p-3.5" noValidate>
+        <form onSubmit={send} className="flex flex-col gap-3 rounded-xl bg-surface-2 p-3.5" noValidate>
           {mode === "whatsapp" ? (
             <>
               <div>

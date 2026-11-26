@@ -28,7 +28,7 @@ export function CampaignHub({ base, words, campaign, tab, children, notice }: { 
       {notice}
       <nav aria-label={say(words, "camp.tabs")} className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
         {TABS.map((k) => (
-          <Link key={k} href={k === "overview" ? here : `${here}?tab=${k}`} aria-current={tab === k ? "page" : undefined} className={`inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 text-base font-semibold ${tab === k ? "border-brand-text bg-brand-bg text-brand-text" : "border-edge"}`}>{say(words, `camp.tab.${k}`)}</Link>
+          <Link key={k} href={k === "overview" ? here : `${here}?tab=${k}`} aria-current={tab === k ? "page" : undefined} className={`inline-flex min-h-11 shrink-0 items-center rounded-md border px-4 text-base font-semibold ${tab === k ? "border-brand-text bg-brand-bg text-brand-text" : "border-edge"}`}>{say(words, `camp.tab.${k}`)}</Link>
         ))}
       </nav>
       {children}

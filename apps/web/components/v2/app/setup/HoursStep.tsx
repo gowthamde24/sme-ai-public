@@ -19,7 +19,7 @@ const clocks = (from: number, until: number): string[] => {
 const OPENS = clocks(6 * 60, 23 * 60);
 const CLOSES = clocks(7 * 60, 24 * 60);
 const DAY_CHIP =
-  "inline-flex min-h-11 min-w-12 items-center justify-center rounded-full border border-edge px-3 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg has-[:checked]:font-semibold has-[:checked]:text-brand-text";
+  "inline-flex min-h-11 min-w-12 items-center justify-center rounded-md border border-edge px-3 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg has-[:checked]:font-semibold has-[:checked]:text-brand-text";
 
 /** Where the form starts: the business's own saved hours, or, when it has none, usual saree-shop hours (Monday to Saturday, 10:00 to 20:30). One opening and closing time for every open day. */
 export function startingHours(settings: StoreSettings | null, saved: boolean): { days: Weekday[]; open: string; close: string; slot: number; parallel: number } {

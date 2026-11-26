@@ -36,7 +36,7 @@ export type CatalogueViewProps = { /** Design system v6 (DESIGN_V6): the page he
 };
 
 const chipClass = (on: boolean) =>
-  `inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 text-base leading-tight ${on ? "border-brand-edge bg-brand-bg font-semibold text-brand-text" : "border-edge font-medium text-ink hover:bg-surface-2"}`;
+  `inline-flex min-h-11 items-center gap-1.5 rounded-md border px-4 text-base leading-tight ${on ? "border-brand-edge bg-brand-bg font-semibold text-brand-text" : "border-edge font-medium text-ink hover:bg-surface-2"}`;
 
 function Chip({ href, on, children, words }: { href: string; on: boolean; children: React.ReactNode; words: TodayWords }) {
   return (
@@ -85,13 +85,13 @@ export function CatalogueView({ ds = false, title = null, base, words, role, que
         {ds ? null : help}
         {top}
         {drafts > 0 ? (
-          <p data-note="drafts" className="rounded-2xl bg-surface-2 px-4 py-3 text-base">
+          <p data-note="drafts" className="rounded-xl bg-surface-2 px-4 py-3 text-base">
             {say(words, "catalogue.v6.drafts", { n: drafts })}
           </p>
         ) : null}
 
         {lead ? (
-          <p data-note="lead" className="rounded-2xl bg-surface-2 px-4 py-3 text-base">
+          <p data-note="lead" className="rounded-xl bg-surface-2 px-4 py-3 text-base">
             {say(words, "catalogue.picking", { who: lead.label })}
           </p>
         ) : null}
@@ -118,7 +118,7 @@ export function CatalogueView({ ds = false, title = null, base, words, role, que
           </button>
         </form>
 
-        <details open={filters > 0} className="rounded-2xl border border-line bg-surface">
+        <details open={filters > 0} className="rounded-xl border border-line bg-surface">
           <summary className="flex min-h-11 cursor-pointer items-center px-4 text-base font-semibold">{filters > 0 ? say(words, "catalogue.filters.count", { n: filters }) : say(words, "catalogue.filters")}</summary>
           <div className="flex flex-col gap-4 border-t border-line p-4">
             {group(

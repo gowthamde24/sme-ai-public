@@ -6,7 +6,7 @@ export function CompanyShortcuts({ links }: { links: readonly { href: string; la
   return (
     <p className="mb-2 flex flex-wrap gap-2" data-part="company-shortcuts">
       {links.map((l) => (
-        <Link key={l.href} href={l.href} className="inline-flex min-h-11 items-center rounded-full border border-edge px-4 text-base font-semibold hover:bg-surface-2">
+        <Link key={l.href} href={l.href} className="inline-flex min-h-11 items-center rounded-md border border-edge px-4 text-base font-semibold hover:bg-surface-2">
           {l.label}
         </Link>
       ))}

@@ -46,7 +46,7 @@ export default async function NewJobRoute({ params, searchParams }: PageProps<"/
     return (
       <main className={pageMain} lang={lang}>
         {top}
-        <p data-part="only-owner" className="m-0 mt-4 rounded-2xl border border-line bg-surface p-5 text-muted">
+        <p data-part="only-owner" className="m-0 mt-4 rounded-xl border border-line bg-surface p-5 text-muted">
           {words["jobs.new.only"]}
         </p>
       </main>
