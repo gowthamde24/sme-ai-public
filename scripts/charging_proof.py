@@ -33,7 +33,7 @@ ROOT = Path(__file__).resolve().parents[1]
 import time  # noqa: E402
 
 EMAIL = f"charging-proof-{time.strftime('%m%d%H%M%S')}@demo.example.test"   # a new synthetic Owner (and so a new workspace) for every run; they all use the one password in Secret Manager
-SECRET = "sme-charging-proof-password"
+SECRET = "sme-charging-proof-password"   # a Secret Manager NAME (a placeholder for the value, which is never here), not a secret
 NAME = "Charging proof"
 LINES: list[str] = []
 FAILS: list[str] = []

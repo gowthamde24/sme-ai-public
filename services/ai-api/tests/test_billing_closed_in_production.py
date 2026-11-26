@@ -32,7 +32,7 @@ def test_production_with_a_razorpay_test_key_is_closed() -> None:
 
 
 def test_production_with_a_live_key_and_the_owners_flag_is_the_real_provider() -> None:
-    live = {**KEYS, "billing_razorpay_key_id": "rzp_live_ABCDEFGH123456"}
+    live = {**KEYS, "billing_razorpay_key_id": "rzp_live_ABCDEFGH123456"}   # a fake, synthetic key id (not a real account)
     provider = _billing_provider(settings(api_env="production", billing_provider="razorpay", razorpay_live_ok=True, **live))
     assert provider.mode == "live" and not isinstance(provider, ClosedBilling)
 
