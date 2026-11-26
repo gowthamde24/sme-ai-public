@@ -10,7 +10,7 @@ const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e
 let files = 0, edits = 0;
 const kinds = {};
 for (const dir of ["app", "components"]) for (const f of walk(path.join(ROOT, dir))) {
-  if (!/\.(tsx|ts)$/.test(f) || /\.test\.|\.d\.ts$/.test(f)) continue;
+  if (!/\.(tsx|ts)$/.test(f) || /(?:\.test\.|\.d\.ts$)/.test(f)) continue;
   const src = fs.readFileSync(f, "utf8");
   const out = src.replace(GROUP, (g) => {
     let next = g;

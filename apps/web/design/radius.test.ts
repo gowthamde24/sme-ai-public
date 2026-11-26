@@ -17,7 +17,7 @@ describe("corners", () => {
     const bad: string[] = [];
     for (const dir of ["app", "components"]) {
       for (const f of walk(path.join(WEB, dir))) {
-        if (!/\.tsx?$/.test(f) || /\.test\.|\.d\.ts$/.test(f)) continue;
+        if (!/\.tsx?$/.test(f) || /(?:\.test\.|\.d\.ts$)/.test(f)) continue;
         for (const g of fs.readFileSync(f, "utf8").match(GROUP) ?? []) for (const p of problems(g)) bad.push(`${path.relative(WEB, f)}: ${p.token} -> ${p.to}   (${g.trim().slice(0, 70)})`);
       }
     }
