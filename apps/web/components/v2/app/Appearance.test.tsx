@@ -35,4 +35,22 @@ describe("Appearance: Automatic, Light, Dark", () => {
     expect(screen.getByText("రూపం")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "డార్క్" })).toBeInTheDocument();
   });
+  it("three equal segments whose labels may wrap inside their own segment but never run under the next one: in English, Telugu, Hindi and Kannada (owner screenshot, 26 Nov 2026: 'Automatic' ran under 'Light'; measured in a browser at 260 to 360 px, light and dark: no label wider than its segment, every segment 44 px high)", async () => {
+    const { appDict } = await import("@/i18n/app");
+    for (const lang of ["en", "te", "hi", "kn"] as const) {
+      const dict = appDict(lang) as Record<string, string>;
+      const labels = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("frame.")));
+      const { container, unmount } = render(<Appearance labels={labels} />);
+      const grid = container.querySelector("[data-pick]")!.parentElement as HTMLElement;
+      expect(grid.className, lang).toContain("grid-cols-[repeat(3,minmax(0,1fr))]"); // equal widths that cannot be pushed wider by a word
+      for (const b of container.querySelectorAll<HTMLElement>("[data-pick]")) {
+        expect(b.className, `${lang} ${b.dataset.pick}`).toMatch(/min-w-0/);
+        expect(b.className, `${lang} ${b.dataset.pick}`).toMatch(/overflow-hidden/);
+        expect(b.className, `${lang} ${b.dataset.pick}`).toMatch(/\[overflow-wrap:anywhere\]/); // a long word breaks inside its segment
+        expect(b.className, `${lang} ${b.dataset.pick}`).toMatch(/min-h-11/); // 44 px
+      }
+      unmount();
+    }
+  });
 });
+
