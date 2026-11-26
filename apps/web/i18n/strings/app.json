@@ -139281,5 +139281,93 @@
    "hi": "reviewed",
    "kn": "reviewed"
   }
+ },
+ "dst.err.model": {
+  "en": "The assistant could not answer just now. Nothing was done.",
+  "te": "అసిస్టెంట్ ఇప్పుడు జవాబివ్వలేకపోయింది. ఏమీ చేయలేదు.",
+  "hi": "असिस्टेंट अभी जवाब नहीं दे पाया। कुछ नहीं किया गया।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಈಗ ಉತ್ತರಿಸಲಾಗಲಿಲ್ಲ. ಏನೂ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "dst.err.model.answered": {
+  "en": "The assistant could not finish that just now.",
+  "te": "అసిస్టెంట్ దాన్ని ఇప్పుడు పూర్తి చేయలేకపోయింది.",
+  "hi": "असिस्टेंट इसे अभी पूरा नहीं कर पाया।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಅದನ್ನು ಈಗ ಪೂರ್ಣಗೊಳಿಸಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "dst.err.busy": {
+  "en": "The assistant is busy. Try again in a moment.",
+  "te": "అసిస్టెంట్ బిజీగా ఉంది. కొంచెం సేపటి తర్వాత మళ్ళీ ట్రై చేయండి.",
+  "hi": "असिस्टेंट अभी व्यस्त है। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಬಿಜಿ ಇದೆ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "dst.err.limit": {
+  "en": "You have reached this hour's limit. Try again later.",
+  "te": "ఈ గంట లిమిట్‌కి చేరారు. కొంచెం సేపటి తర్వాత మళ్ళీ ట్రై చేయండి.",
+  "hi": "आप इस घंटे की लिमिट तक पहुँच गए हैं। बाद में फिर कोशिश करें।",
+  "kn": "ಈ ಗಂಟೆಯ ಲಿಮಿಟ್ ತಲುಪಿದ್ದೀರಿ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "dst.err.off": {
+  "en": "The assistant is switched off for now.",
+  "te": "అసిస్టెంట్ ప్రస్తుతం ఆఫ్‌లో ఉంది.",
+  "hi": "असिस्टेंट अभी बंद है।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಸದ್ಯಕ್ಕೆ ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "dst.err.token": {
+  "en": "Your sign-in is about to expire. Sign in again.",
+  "te": "మీ సైన్ ఇన్ త్వరలో ముగుస్తుంది. మళ్ళీ సైన్ ఇన్ చేయండి.",
+  "hi": "आपका साइन इन जल्दी खत्म होने वाला है। फिर से साइन इन करें।",
+  "kn": "ನಿಮ್ಮ ಸೈನ್ ಇನ್ ಬೇಗ ಮುಗಿಯಲಿದೆ. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "dst.err.tts": {
+  "en": "I could not speak that. The answer is shown above.",
+  "te": "అది చెప్పలేకపోయాను. జవాబు పైన చూపించాం.",
+  "hi": "मैं इसे बोल नहीं पाया। जवाब ऊपर दिखाया गया है।",
+  "kn": "ನನಗೆ ಅದನ್ನು ಹೇಳಲಾಗಲಿಲ್ಲ. ಉತ್ತರ ಮೇಲೆ ತೋರಿಸಿದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "dst.err.turn.answered": {
+  "en": "That did not work. Say it again, or type it.",
+  "te": "అది కాలేదు. ఇంకోసారి చెప్పండి, లేదా టైప్ చేయండి.",
+  "hi": "यह नहीं हो पाया। फिर से बोलें, या टाइप करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಇನ್ನೊಮ್ಮೆ ಹೇಳಿ, ಇಲ್ಲವೇ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
  }
 }

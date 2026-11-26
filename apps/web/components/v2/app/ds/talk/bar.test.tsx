@@ -94,5 +94,33 @@ describe("Talk live inside Today's command bar (variant 'bar', the approved mock
     const interim = document.querySelector('[data-interim="true"]') as HTMLElement;
     expect(interim.querySelector("p")).toHaveClass("border-dashed", "opacity-70");
   });
+
+  it("each closed error code of a turn has its own honest sentence (C1, 26 Nov 2026), in all four languages, and 'Nothing was done.' is dropped when the answer already arrived", async () => {
+    const { appDict } = await import("@/i18n/app");
+    const sentences: Record<string, string> = {
+      model_not_configured: "The assistant could not answer just now. Nothing was done.",
+      assistant_failed: "The assistant could not answer just now. Nothing was done.",
+      model_busy: "The assistant is busy. Try again in a moment.",
+      run_limit_reached: "You have reached this hour's limit. Try again later.",
+      agents_disabled: "The assistant is switched off for now.",
+      token_expiring: "Your sign-in is about to expire. Sign in again.",
+      tts_unavailable: "I could not speak that. The answer is shown above.",
+    };
+    for (const [code, text] of Object.entries(sentences)) {
+      const { unmount } = render(<TalkLiveBody variant="bar" live={live({ turnProblem: code, lines: [{ who: "owner", text: "hello" }] })} words={WORDS} language="తెలుగు" onType={() => undefined} />);
+      expect(document.querySelector('[data-part="talk-turn-problem"]'), code).toHaveTextContent(text);
+      unmount();
+    }
+    // the answer for this turn already arrived: no "Nothing was done."
+    for (const code of ["assistant_failed", "something_new"]) {
+      const { unmount } = render(<TalkLiveBody variant="bar" live={live({ turnProblem: code, lines: [{ who: "owner", text: "hello" }, { who: "assistant", text: "Hi" }] })} words={WORDS} language="తెలుగు" onType={() => undefined} />);
+      expect(document.querySelector('[data-part="talk-turn-problem"]')?.textContent, code).not.toMatch(/Nothing was done/);
+      unmount();
+    }
+    for (const l of ["te", "hi", "kn"] as const) {
+      const d = appDict(l) as Record<string, string>;
+      for (const k of ["dst.err.model", "dst.err.model.answered", "dst.err.busy", "dst.err.limit", "dst.err.off", "dst.err.token", "dst.err.tts", "dst.err.turn.answered"]) expect(d[k], `${l} ${k}`).toBeTruthy();
+    }
+  });
 });
 

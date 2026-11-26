@@ -120,8 +120,19 @@ const TURN_ERROR: Readonly<Record<string, string>> = {
   action_state: "dst.err.state",
   forbidden: "dst.err.forbidden",
   not_available: "dst.err.unavailable",
+  // the model could not be asked or failed (C1, 26 Nov 2026): honest sentences, not the general "that did not work"
+  model_not_configured: "dst.err.model",
+  assistant_failed: "dst.err.model",
+  model_busy: "dst.err.busy",
+  run_limit_reached: "dst.err.limit",
+  agents_disabled: "dst.err.off",
+  token_expiring: "dst.err.token",
+  tts_unavailable: "dst.err.tts",
   daily_cap_exceeded: "dst.err.cap",
 };
+
+/** The sentences that say "Nothing was done." have a twin without it for a turn whose answer had already come. */
+const withAnswer = (key: string, answered: boolean): string => (answered && (key === "dst.err.turn" || key === "dst.err.model") ? `${key}.answered` : key);
 
 /** The line under the transcript of a real conversation: why it stopped (in plain words, with "Try again" where that helps), or the gentle notices. Never nothing. */
 function Notes({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
@@ -159,7 +170,8 @@ function Notes({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
       ) : null}
       {live.turnProblem && !p ? (
         <p role="status" data-part="talk-turn-problem" data-code={live.turnProblem} className="mt-2 text-sm font-medium text-red-text">
-          {t(TURN_ERROR[live.turnProblem] ?? "dst.err.turn", capVars(live.plan))}
+          {/* "Nothing was done." is dropped when an answer for the turn already arrived (the last line is the assistant's): it would be untrue */}
+          {t(withAnswer(TURN_ERROR[live.turnProblem] ?? "dst.err.turn", live.lines.at(-1)?.who === "assistant"), capVars(live.plan))}
         </p>
       ) : null}
       {live.muted && !p ? (
