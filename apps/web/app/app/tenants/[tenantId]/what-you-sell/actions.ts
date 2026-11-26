@@ -8,7 +8,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { FABRICS, getCatalogueItem, putQuantity } from "@/lib/api/catalogue";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { failureOf } from "@/lib/api/failure";
-import { productOf, putSellEntry, readSellDrafts, readUnderstood, removeSellEntry, type SellReading } from "@/lib/api/what-you-sell";
+import { productOf, putSellEntry, readProductDrafts, readSellDrafts, readUnderstood, removeSellEntry, type ProductsReading, type SellReading } from "@/lib/api/what-you-sell";
 import { readPackCached } from "@/lib/packs/read";
 import { buildEntry, productSaveInput } from "@/lib/sell/forms";
 import { understand } from "@/lib/sell/say";
@@ -150,6 +150,25 @@ export async function readAction(tenantId: string, style: SellStyle, request: Re
     return { ok: true, data: await readSellDrafts(ctx.token, tenantId, style, input, await getLang()) };
   } catch (error) {
     if (error instanceof ApiRequestError && error.status === 404) return { ok: false, kind: "unavailable", error: ctx.t("jobs.sell.err.not_ready") };
+    return failureOf(error, ctx.t);
+  }
+}
+
+/** The products reading (a photo or a PDF of a price list; C1, 26 Nov 2026). Every refusal is a plain sentence of ours: not switched on, a scanned school sheet, a HEIC photo ("share it as JPG"), the day's reading limit. */
+export async function readProductsAction(tenantId: string, fileId: string): Promise<Reply<ProductsReading>> {
+  const ctx = await jobsWho(tenantId, DECIDERS);
+  if ("ok" in ctx) return ctx;
+  if (typeof fileId !== "string" || !isCanonicalUuid(fileId)) return invalid(ctx.t);
+  if (jobsScreens() === "mock") return { ok: false, kind: "unavailable", error: ctx.t("jobs.sell.imp.err.no_read") };
+  try {
+    return { ok: true, data: await readProductDrafts(ctx.token, tenantId, fileId) };
+  } catch (error) {
+    if (error instanceof ApiRequestError) {
+      if (error.status === 404) return { ok: false, kind: "unavailable", error: ctx.t("jobs.sell.imp.err.no_read") };
+      if (error.status === 422 && error.reason === "heic") return { ok: false, kind: "invalid", error: ctx.t("jobs.sell.imp.err.heic") };
+      if (error.status === 422 && error.reason === "scanned_school") return { ok: false, kind: "invalid", error: ctx.t("jobs.sell.imp.err.scanned") };
+      if (error.status === 429) return { ok: false, kind: "unavailable", error: ctx.t("jobs.sell.imp.err.ai_limit") };
+    }
     return failureOf(error, ctx.t);
   }
 }

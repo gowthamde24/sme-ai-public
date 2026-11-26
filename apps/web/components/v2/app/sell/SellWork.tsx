@@ -18,7 +18,7 @@ import { makeT, type Say, type Words } from "../words";
 import { SellRowBody } from "./SellRow";
 import { postSellFile } from "./upload-post";
 import { ImportTable } from "./ImportTable";
-import { parseSheetText, rowsFromCells, restatus, fabricIn, type ImportRow, type Parsed } from "@/lib/sell/sheet-parse";
+import { parseSheetText, rowsFromCells, rowsFromDrafts, restatus, fabricIn, type ImportRow, type Parsed } from "@/lib/sell/sheet-parse";
 import { xlsxCells } from "@/lib/sell/xlsx-cells";
 import { shortUnit } from "./sell-text";
 import type { SaveExtra, SellActions, Work } from "./types";
@@ -37,7 +37,7 @@ type View =
   | { v: "form"; id: string | null; fresh: string | null; form: SellForm[SellStyle]; prior: SellEntry | null; hint: string | null; /** the drafts still waiting on the "I understood" card: after this one is saved the card comes back */ back?: SellEntry[] }
   | { v: "pick"; from: "photos" | "sheet" }
   /** A saree shop's price list, read and waiting for the owner to check it: nothing is added until the button. */
-  | { v: "import"; rows: ImportRow[]; file: string; cut: boolean; saved: number }
+  | { v: "import"; rows: ImportRow[]; file: string; cut: boolean; saved: number; /** names (lower case) already added from this list: the same saree again is left out */ added?: string[]; reading?: "ai_vision" | "text_layer" | null; unreadable?: boolean }
   | { v: "understood"; entries: SellEntry[]; text: string | null; notes: SellNote[] }
   | { v: "done"; entry: SellEntry; photosPath: string | null; note: boolean }
   | { v: "message"; text: string; href: string | null };
@@ -308,7 +308,6 @@ export default function SellWork({ style, work, words, base, actions, live, owne
   const importing = live && style === "products";
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const saveIds = useRef(new Map<string, string>());
-  const addedNames = useRef(new Set<string>());
   // the id of a NEW entry is minted ONCE per opening of the sheet: a retry after a failure sends the same id (the API never makes a second row)
   const [freshId] = useState(() => newEntryId());
   const [view, setView] = useState<View>(() => (work.kind === "say" ? { v: "say" } : work.kind === "edit" ? { v: "form", id: work.entry.id, fresh: null, form: formOf(work.entry), prior: work.entry, hint: null } : work.kind === "add" ? { v: "form", id: null, fresh: freshId, form: structuredClone(EMPTY[style]), prior: null, hint: null } : work.kind === "read" && (reading || importing) ? { v: "pick", from: work.from } : { v: "message", text: "", href: null }));
@@ -413,6 +412,8 @@ export default function SellWork({ style, work, words, base, actions, live, owne
     setError(null);
     setMfa(false);
     let parsed: Parsed | null = null;
+    let readBy: "ai_vision" | "text_layer" | null = null;
+    let unreadable = false;
     try {
       if (/\.(csv|tsv|txt)$/.test(name) || file.type.startsWith("text/")) parsed = parseSheetText(await file.text());
       else if (name.endsWith(".xlsx")) parsed = rowsFromCells(await xlsxCells(await file.arrayBuffer()));
@@ -436,28 +437,31 @@ export default function SellWork({ style, work, words, base, actions, live, owne
         setBusy(false);
         return setError(t(`jobs.sell.file.${up.error}`));
       }
-      const r = await actions.read("pricelist", { kind: kind === "pdf" ? "sheet" : "photo", fileId: up.fileId });
+      // the products reading (C1, 26 Nov 2026): every draft comes back with how sure the reading is; the table shows them all and marks the unsure ones
+      const r = await actions.readProducts(up.fileId);
       if (!r.ok) {
         setBusy(false);
-        return setError(r.kind === "unavailable" ? t("jobs.sell.imp.err.no_read") : r.error);
+        return setError(r.error);
       }
-      const cells: string[][] = [["name", "price"], ...r.data.entries.flatMap((e) => (e.style === "pricelist" ? [[e.name, e.rates[0] ? String(Math.round(e.rates[0].ratePaise / 100)) : ""]] : []))];
-      parsed = rowsFromCells(cells);
-      if (parsed.error) parsed = { ...parsed, error: r.data.unclear ? "no_rows" : parsed.error };
+      parsed = rowsFromDrafts(r.data.drafts);
+      if (r.data.notes.some((n) => n.code === "too_many")) parsed = { ...parsed, cut: true };
+      readBy = r.data.readBy;
+      unreadable = r.data.unclear || r.data.notes.some((n) => n.code === "unreadable");
     }
     setBusy(false);
     if (parsed.error) return setError(t(parsed.error === "empty" ? "jobs.sell.imp.err.empty" : "jobs.sell.imp.err.no_rows"));
-    setView({ v: "import", rows: parsed.rows, file: file.name, cut: parsed.cut, saved: 0 });
+    setView({ v: "import", rows: parsed.rows, file: file.name, cut: parsed.cut, saved: 0, reading: readBy, unreadable });
   }
 
   /** The ready rows, one by one, each as the form of a typed saree (the same save, the same refusals); a refusal stops the run and keeps what is left on the screen. */
-  async function addImported(rows: ImportRow[]) {
+  async function addImported(rows: ImportRow[], addedBefore: string[]) {
     const ready = rows.filter((r) => r.status === "ok");
     setBusy(true);
     setError(null);
     setMfa(false);
     let left = rows;
     let saved = 0;
+    const names = new Set(addedBefore);
     for (const row of ready) {
       setProgress({ done: saved, total: ready.length });
       const id = saveIds.current.get(row.id) ?? newEntryId();
@@ -467,17 +471,17 @@ export default function SellWork({ style, work, words, base, actions, live, owne
       if (!r.ok) {
         setBusy(false);
         setProgress(null);
-        setView((v) => (v.v === "import" ? { ...v, rows: restatus(left, addedNames.current), saved: v.saved + saved } : v));
+        setView((v) => (v.v === "import" ? { ...v, rows: restatus(left, names), added: [...names], saved: v.saved + saved } : v));
         return refused(r);
       }
       onSaved(r.data.entry);
-      addedNames.current.add(row.name.trim().toLowerCase());
+      names.add(row.name.trim().toLowerCase());
       left = left.filter((x) => x.id !== row.id);
       saved++;
     }
     setBusy(false);
     setProgress(null);
-    setView((v) => (v.v === "import" ? { ...v, rows: restatus(left, addedNames.current), saved: v.saved + saved } : v));
+    setView((v) => (v.v === "import" ? { ...v, rows: restatus(left, names), added: [...names], saved: v.saved + saved } : v));
   }
 
   async function pick(file: File | undefined, from: "photos" | "sheet") {
@@ -649,7 +653,7 @@ export default function SellWork({ style, work, words, base, actions, live, owne
               </div>
             </div>
           ) : view.v === "import" ? (
-            <ImportTable rows={view.rows} added={addedNames.current} file={view.file} cut={view.cut} t={t} busy={busy} progress={progress} onRows={(rows) => setView((v) => (v.v === "import" ? { ...v, rows } : v))} onAdd={() => void addImported(view.rows)} onCancel={onClose} />
+            <ImportTable rows={view.rows} added={new Set(view.added ?? [])} file={view.file} cut={view.cut} reading={view.reading ?? null} unreadable={view.unreadable === true} t={t} busy={busy} progress={progress} onRows={(rows) => setView((v) => (v.v === "import" ? { ...v, rows } : v))} onAdd={() => void addImported(view.rows, view.added ?? [])} onCancel={onClose} />
           ) : null}
 
           {view.v === "understood" ? (

@@ -139160,5 +139160,82 @@
    "hi": "reviewed",
    "kn": "reviewed"
   }
+ },
+ "jobs.sell.imp.check": {
+  "en": "Please check this one",
+  "te": "దీన్ని ఒకసారి చూడండి",
+  "hi": "इसे एक बार देख लें",
+  "kn": "ಇದನ್ನು ಒಮ್ಮೆ ನೋಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.checkn": {
+  "en": "{n} to check",
+  "te": "{n} చూడాలి",
+  "hi": "{n} देखनी हैं",
+  "kn": "{n} ನೋಡಬೇಕು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.vision": {
+  "en": "Read from the picture by the assistant. It can misread: check every name and price against your list.",
+  "te": "అసిస్టెంట్ ఫోటోని చదివింది. తప్పుగా చదవొచ్చు: ప్రతి పేరు, ధర మీ లిస్ట్‌తో చెక్ చేయండి.",
+  "hi": "असिस्टेंट ने तस्वीर से पढ़ा है। गलत पढ़ सकता है: हर नाम और कीमत अपनी लिस्ट से मिला लें।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಫೋಟೋದಿಂದ ಓದಿದೆ. ತಪ್ಪಾಗಿ ಓದಿರಬಹುದು: ಪ್ರತಿ ಹೆಸರು, ಬೆಲೆಯನ್ನು ನಿಮ್ಮ ಲಿಸ್ಟ್‌ನೊಂದಿಗೆ ಚೆಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.text": {
+  "en": "Read from the text in the file. Check the rows against your list.",
+  "te": "ఫైల్‌లోని టెక్స్ట్ నుంచి చదివాం. లైన్లను మీ లిస్ట్‌తో చెక్ చేయండి.",
+  "hi": "फ़ाइल के टेक्स्ट से पढ़ा है। लाइनें अपनी लिस्ट से मिला लें।",
+  "kn": "ಫೈಲ್‌ನ ಟೆಕ್ಸ್ಟ್‌ನಿಂದ ಓದಿದೆ. ಸಾಲುಗಳನ್ನು ನಿಮ್ಮ ಲಿಸ್ಟ್‌ನೊಂದಿಗೆ ಚೆಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.err.heic": {
+  "en": "We cannot read HEIC photos. Share the photo as a JPG and try again.",
+  "te": "HEIC ఫోటోలు చదవలేం. ఫోటోని JPG గా షేర్ చేసి మళ్ళీ ట్రై చేయండి.",
+  "hi": "HEIC फ़ोटो पढ़ी नहीं जातीं। फ़ोटो को JPG में शेयर करके फिर कोशिश करें।",
+  "kn": "HEIC ಫೋಟೋ ಓದಲಾಗುವುದಿಲ್ಲ. ಫೋಟೋವನ್ನು JPG ಆಗಿ ಶೇರ್ ಮಾಡಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.err.scanned": {
+  "en": "This looks like a scanned school sheet, which is not a price list. Add your sarees from a list, a photo of a price list, or one by one.",
+  "te": "ఇది స్కాన్ చేసిన స్కూల్ షీట్‌లా ఉంది, ప్రైస్ లిస్ట్ కాదు. లిస్ట్ నుంచి, ప్రైస్ లిస్ట్ ఫోటో నుంచి, లేదా ఒక్కొక్కటిగా చీరలు యాడ్ చేయండి.",
+  "hi": "यह स्कैन की हुई स्कूल शीट लगती है, प्राइस लिस्ट नहीं। साड़ियाँ लिस्ट से, प्राइस लिस्ट की फ़ोटो से या एक-एक करके जोड़ें।",
+  "kn": "ಇದು ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಸ್ಕೂಲ್ ಶೀಟ್‌ನಂತಿದೆ, ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಅಲ್ಲ. ಸೀರೆಗಳನ್ನು ಲಿಸ್ಟ್‌ನಿಂದ, ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಫೋಟೋದಿಂದ ಅಥವಾ ಒಂದೊಂದಾಗಿ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "jobs.sell.imp.err.ai_limit": {
+  "en": "Today's reading limit is used. Try again tomorrow, or use an Excel or CSV file.",
+  "te": "ఈ రోజు చదివే లిమిట్ అయిపోయింది. రేపు మళ్ళీ ట్రై చేయండి, లేదా Excel/CSV ఫైల్ వాడండి.",
+  "hi": "आज की पढ़ने की लिमिट पूरी हो गई। कल फिर कोशिश करें, या Excel/CSV फ़ाइल इस्तेमाल करें।",
+  "kn": "ಇವತ್ತಿನ ಓದುವ ಲಿಮಿಟ್ ಮುಗಿದಿದೆ. ನಾಳೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಇಲ್ಲವೇ Excel/CSV ಫೈಲ್ ಬಳಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
  }
 }

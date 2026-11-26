@@ -22,7 +22,7 @@ import { previewSample } from "@/lib/screens/preview";
 import { ENTRY_PATH, oldPagesOf, styleOfPack } from "@/lib/sell/style";
 import { SELL_STYLES } from "@/lib/sell/types";
 
-import { readAction, readSheetAction, removeEntryAction, saveEntryAction, understandAction } from "./actions";
+import { readAction, readProductsAction, readSheetAction, removeEntryAction, saveEntryAction, understandAction } from "./actions";
 
 export const metadata = { title: `What you sell · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -83,7 +83,7 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
             entries={read.data.entries}
             words={words}
             base={base}
-            actions={owns ? { save: saveEntryAction.bind(null, tenantId), remove: removeEntryAction.bind(null, tenantId), understand: understandAction.bind(null, tenantId), read: readAction.bind(null, tenantId), readSheet: readSheetAction.bind(null, tenantId) } : null}
+            actions={owns ? { save: saveEntryAction.bind(null, tenantId), remove: removeEntryAction.bind(null, tenantId), understand: understandAction.bind(null, tenantId), read: readAction.bind(null, tenantId), readSheet: readSheetAction.bind(null, tenantId), readProducts: readProductsAction.bind(null, tenantId) } : null}
             live={read.data.live}
             ownerPrice={role === "owner"}
             paths={ENTRY_PATH[style]}

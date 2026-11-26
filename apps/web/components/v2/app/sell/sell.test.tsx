@@ -38,6 +38,7 @@ function actions(over: Partial<SellActions> = {}): SellActions {
     remove: vi.fn(async (_style: SellStyle, id: string) => ({ ok: true as const, data: { id } })),
     understand: vi.fn(async (style: SellStyle, text: string) => ({ ok: true as const, data: { form: understand(style, text) } })),
     read: vi.fn(async () => ({ ok: true as const, data: { entries: [], unclear: true, notes: [] } })),
+    readProducts: vi.fn(async () => ({ ok: true as const, data: { drafts: [], unclear: true, notes: [], readBy: null, pages: 0 } })),
     readSheet: vi.fn(async (style: SellStyle) => ({ ok: true as const, data: { entries: entriesOf(style).slice(0, 2) } })),
     ...over,
   };
@@ -547,20 +548,36 @@ describe("a saree shop's price list: Import a sheet reads it, shows a table to c
     pickFile(dialog, fileOf("head.csv", "Name,Price\n"));
     expect(await within(dialog).findByText(/We could not find any sarees in that/)).toBeInTheDocument();
   });
-  it("a PDF or a photo goes up and the price-list reading turns it into the same table; when reading is not switched on it says so", async () => {
+  it("a PDF or a photo goes up and the products reading turns it into the same table, the unsure rows marked; every refusal is one plain sentence", async () => {
     vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ json: async () => ({ ok: true, file_id: "5e110009-0000-4000-8000-0000000000bb" }) })));
-    const price = { style: "pricelist", id: "5e110009-0000-4000-8000-0000000000c1", name: "Banarasi georgette", moq: 1, unit: "piece", rates: [{ fromQty: 1, ratePaise: 980_000 }], goodUntil: null } as unknown as SellEntry;
-    const a = actions({ read: vi.fn(async () => ({ ok: true as const, data: { entries: [price], unclear: false, notes: [] } })) });
+    const readProducts = vi.fn(async () => ({
+      ok: true as const,
+      data: { drafts: [{ name: "Banarasi georgette", pricePaise: 980_000, unit: null, notes: null, confidence: "high" as const }, { name: "Soft silk blue", pricePaise: 620_000, unit: null, notes: "smudged", confidence: "low" as const }, { name: "Cotton daily", pricePaise: null, unit: null, notes: null, confidence: "medium" as const }], unclear: false, notes: [{ code: "price_missing" as const, row: 3 }], readBy: "ai_vision" as const, pages: 1 },
+    }));
+    const a = actions({ readProducts });
     const dialog = await open(a);
     pickFile(dialog, new File(["%PDF"], "list.pdf", { type: "application/pdf" }));
-    expect(await within(dialog).findByText(/We read 1 rows from list.pdf/)).toBeInTheDocument();
-    expect(a.read).toHaveBeenCalledWith("pricelist", { kind: "sheet", fileId: "5e110009-0000-4000-8000-0000000000bb" });
-    expect((dialog.querySelectorAll("[data-row] input")[1] as HTMLInputElement).value).toBe("9800");
+    expect(await within(dialog).findByText(/We read 3 rows from list.pdf/)).toBeInTheDocument();
+    expect(readProducts).toHaveBeenCalledWith("5e110009-0000-4000-8000-0000000000bb");
+    expect(a.read).not.toHaveBeenCalled();
+    expect(within(dialog).getByText(/Read from the picture by the assistant. It can misread/)).toBeInTheDocument();
+    const rows = [...dialog.querySelectorAll("[data-row]")] as HTMLElement[];
+    expect(rows[0]).not.toHaveAttribute("data-unsure"); // a sure row is not marked
+    expect(rows[1]).toHaveAttribute("data-unsure", "true");
+    expect(within(rows[1]).getByText(/Please check this one/)).toBeInTheDocument();
+    expect(within(rows[2]).getByText("Add a price")).toBeInTheDocument(); // a draft with no price needs one
+    expect(dialog.querySelector('[data-part="import-counts"]')).toHaveTextContent("1 to check");
+    fireEvent.change(rows[1].querySelectorAll("input")[1], { target: { value: "6,300" } }); // looking at it and changing it clears the mark
+    expect(dialog.querySelector('[data-part="import-counts"]')).not.toHaveTextContent("to check");
+    expect(dialog.querySelectorAll("[data-unsure]")).toHaveLength(0);
     cleanup();
-    const off = actions({ read: vi.fn(async () => ({ ok: false as const, kind: "unavailable" as const, error: "n" })) });
-    const d2 = await open(off);
-    pickFile(d2, new File(["x"], "list.jpg", { type: "image/jpeg" }));
-    expect(await within(d2).findByText(/Reading a PDF or a photo of a list is not switched on/)).toBeInTheDocument();
+    for (const [kind, error] of [["unavailable", "Reading a PDF or a photo of a list is not switched on for your shop yet. Save the list as an Excel or CSV file, or add sarees one by one."], ["invalid", "We cannot read HEIC photos. Share the photo as a JPG and try again."], ["unavailable", "Today's reading limit is used. Try again tomorrow, or use an Excel or CSV file."]] as const) {
+      const off = actions({ readProducts: vi.fn(async () => ({ ok: false as const, kind, error })) as never });
+      const d2 = await open(off);
+      pickFile(d2, new File(["x"], "list.jpg", { type: "image/jpeg" }));
+      expect(await within(d2).findByText(error)).toBeInTheDocument();
+      cleanup();
+    }
     vi.unstubAllGlobals();
   });
 });

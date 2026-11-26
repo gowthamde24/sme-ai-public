@@ -10,7 +10,7 @@ import { PACK_STYLE, liveSource, oldPagesOf, styleOfPack } from "@/lib/sell/styl
 import { SELL_STYLES } from "@/lib/sell/types";
 
 import { ApiRequestError } from "./client";
-import { parseCourse, parsePrice, parseProduct, parseProperty, parseSellList, parseSellPage, parseSellReading, parseService, parseStyleWord, productOf, putSellEntry, readSellDrafts, readUnderstood, readWhatYouSell, removeSellEntry, stockOf, wireOfEntry } from "./what-you-sell";
+import { parseProductsReading, parseCourse, parsePrice, parseProduct, parseProperty, parseSellList, parseSellPage, parseSellReading, parseService, parseStyleWord, productOf, putSellEntry, readSellDrafts, readUnderstood, readWhatYouSell, removeSellEntry, stockOf, wireOfEntry } from "./what-you-sell";
 
 const request = vi.hoisted(() => vi.fn());
 vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>()), apiRequest: request }));
@@ -381,3 +381,31 @@ describe("(kept) the made-up reading and the old rules", () => {
     expect(await readUnderstood("pricelist", "sheet")).toHaveLength(2);
   });
 });
+
+describe("the products reading answer (C1, 26 Nov 2026)", () => {
+  it("keeps every draft with its confidence; an unknown confidence word is 'low', never 'high'; a draft with no name is dropped", () => {
+    const r = parseProductsReading({
+      style: "products",
+      drafts: [
+        { name: "Kanchi pattu", price_paise: 2_450_000, unit: "piece", notes: null, confidence: "high" },
+        { name: "Soft silk", price_paise: null, unit: null, notes: "price smudged", confidence: "medium" },
+        { name: "Cotton", price_paise: 400_000, confidence: "very sure" },
+        { name: "  ", price_paise: 1, confidence: "high" },
+        { name: "Neg", price_paise: -5, confidence: "high" },
+      ],
+      unclear: false,
+      notes: [{ code: "price_missing", row: 2 }, { code: "too_many" }, { code: "nonsense", row: 1 }],
+      read_by: "ai_vision",
+      pages: 2,
+    });
+    expect(r.drafts.map((d) => [d.name, d.pricePaise, d.confidence])).toEqual([["Kanchi pattu", 2_450_000, "high"], ["Soft silk", null, "medium"], ["Cotton", 400_000, "low"], ["Neg", null, "high"]]);
+    expect(r.drafts[1].notes).toBe("price smudged");
+    expect(r.notes).toEqual([{ code: "price_missing", row: 2 }, { code: "too_many", row: null }]);
+    expect([r.readBy, r.pages, r.unclear]).toEqual(["ai_vision", 2, false]);
+  });
+  it("is strict about the answer's own shape", () => {
+    expect(() => parseProductsReading(null)).toThrow();
+    expect(() => parseProductsReading({ drafts: "x" })).toThrow();
+  });
+});
+

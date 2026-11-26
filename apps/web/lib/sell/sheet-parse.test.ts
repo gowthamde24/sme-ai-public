@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { cellsOf, counts, fabricIn, parseSheetText, restatus, rowsFromCells, rupeesFrom } from "./sheet-parse";
+import { cellsOf, counts, fabricIn, parseSheetText, restatus, rowsFromCells, rowsFromDrafts, rupeesFrom } from "./sheet-parse";
 
 const CSV = readFileSync(path.resolve(__dirname, "__fixtures__/sarees.csv"), "utf8");
 
@@ -39,7 +39,7 @@ describe("a saree shop's sheet", () => {
     expect(p.rows[7].status).toBe("duplicate"); // the second "Kanchi pattu bridal red"
     expect(by["Cotton saree daily wear"]).toBe("no_price");
     expect(by["Chanderi plain"]).toBe("bad_price"); // "2 thousand 5 hundred" is words
-    expect(counts(p.rows)).toEqual({ ready: 7, fix: 2, skipped: 1 });
+    expect(counts(p.rows)).toEqual({ ready: 7, fix: 2, skipped: 1, check: 0 });
   });
   it("recomputes after a correction: a fixed price is ready, a removed twin frees the other", () => {
     const p = parseSheetText(CSV);
@@ -59,5 +59,16 @@ describe("a saree shop's sheet", () => {
     expect(fabricIn("Kanchi pattu bridal red")).toBe("kanchi_pattu");
     expect(fabricIn("Dharmavaram silk maroon")).toBe("dharmavaram_silk");
     expect(fabricIn("Printed saree")).toBe("other");
+  });
+  it("rows from a photo or PDF reading keep how sure it was; an unsure ready row is counted 'to check' until the owner edits it; a draft with no price needs one", () => {
+    const p = rowsFromDrafts([
+      { name: "Kanchi pattu bridal", pricePaise: 2_450_000, notes: null, confidence: "high" },
+      { name: "Soft silk blue", pricePaise: 620_000, notes: "price smudged", confidence: "low" },
+      { name: "Cotton daily", pricePaise: null, notes: null, confidence: "medium" },
+    ]);
+    expect(p.rows.map((r) => [r.priceText, r.status, r.confidence])).toEqual([["24500", "ok", "high"], ["6200", "ok", "low"], ["", "no_price", "medium"]]);
+    expect(counts(p.rows)).toEqual({ ready: 2, fix: 1, skipped: 0, check: 1 });
+    expect(counts(restatus(p.rows.map((r) => (r.confidence === "low" ? { ...r, checked: true } : r)))).check).toBe(0);
+    expect(rowsFromDrafts([]).error).toBe("no_rows");
   });
 });

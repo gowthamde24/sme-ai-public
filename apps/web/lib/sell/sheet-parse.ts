@@ -21,6 +21,12 @@ export type ImportRow = {
   count: number | null;
   colour: Colour | null;
   status: RowStatus;
+  /** From a photo or a PDF only: how sure the reading was. A medium or low row says "Please check this one" until the owner edits it. */
+  confidence?: "high" | "medium" | "low";
+  /** a word of the reading about this row (colour, size...) */
+  note?: string | null;
+  /** the owner has looked at and changed it: the "check this one" flag goes */
+  checked?: boolean;
 };
 export type Parsed = { rows: ImportRow[]; cut: boolean; headerFound: boolean; error: "empty" | "no_rows" | null };
 
@@ -155,17 +161,26 @@ export function rowsFromCells(cells: string[][]): Parsed {
   return { rows: restatus(raw.slice(0, MAX_IMPORT_ROWS)), cut, headerFound, error: null };
 }
 
+/** Rows from the products reading of a photo or a PDF (every draft shown; the unsure ones carry their `confidence`). A draft with no price is `no_price` until the owner writes one. */
+export function rowsFromDrafts(drafts: readonly { name: string; pricePaise: number | null; notes: string | null; confidence: "high" | "medium" | "low" }[]): Parsed {
+  if (drafts.length === 0) return { rows: [], cut: false, headerFound: true, error: "no_rows" };
+  const raw: ImportRow[] = drafts.slice(0, MAX_IMPORT_ROWS).map((d) => ({ id: rowId(), name: d.name.slice(0, MAX_NAME), priceText: d.pricePaise === null ? "" : String(Math.round(d.pricePaise / 100)), price: null, count: null, colour: null, status: "ok" as RowStatus, confidence: d.confidence, note: d.notes }));
+  return { rows: restatus(raw), cut: drafts.length > MAX_IMPORT_ROWS, headerFound: true, error: null };
+}
+
 export const parseSheetText = (text: string): Parsed => rowsFromCells(cellsOf(text));
 
 /** What the owner can still do with the rows: how many will be saved and how many need a look. */
-export function counts(rows: readonly ImportRow[]): { ready: number; fix: number; skipped: number } {
+export function counts(rows: readonly ImportRow[]): { ready: number; fix: number; skipped: number; check: number } {
   let ready = 0;
   let fix = 0;
   let skipped = 0;
+  let check = 0;
   for (const r of rows) {
+    if (r.status === "ok" && (r.confidence === "medium" || r.confidence === "low") && !r.checked) check++;
     if (r.status === "ok") ready++;
     else if (r.status === "duplicate") skipped++;
     else fix++;
   }
-  return { ready, fix, skipped };
+  return { ready, fix, skipped, check };
 }
