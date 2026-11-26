@@ -9,7 +9,8 @@ import { requireUser } from "@/lib/auth/session";
 import { LocalTime } from "../../../local-time";
 import { backfillKeysAction } from "./actions";
 import { BackfillForm } from "./suppression-form";
-import { alertBox, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { Card } from "@/components/v2/app/Card";
+import { alertBox, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { Rich } from "@/components/v2/app/rich";
 import { makeT } from "@/components/v2/app/words";
@@ -71,8 +72,7 @@ export default async function SuppressionPage({ params }: PageProps<"/app/tenant
         {t("supp.a_suppression_key_lets_the_system")}
       </p>
 
-      <section aria-labelledby="status-heading">
-        <h2 id="status-heading" className={pageH2}>{t("supp.status")}</h2>
+      <Card aria-labelledby="status-heading" className="mt-6" headingId="status-heading" title={t("supp.status")}>
         {readiness === "unavailable" && (
           <p role="alert" className={alertBox}>
             <strong>{t("supp.not_ready")}</strong> {t("supp.status_unreadable")}
@@ -104,13 +104,12 @@ export default async function SuppressionPage({ params }: PageProps<"/app/tenant
             <Rich t={t} k="supp.checked_line" with={{ time: <LocalTime iso={checkedAt} /> }} />{status.key_version !== null && " " + t("supp.key_version_line", { n: status.key_version })}
           </p>
         )}
-      </section>
+      </Card>
 
       {(readiness === "unkeyed" || readiness === "clear") && (
-        <section aria-labelledby="backfill-heading">
-          <h2 id="backfill-heading" className={pageH2}>{t("supp.record_keys")}</h2>
+        <Card aria-labelledby="backfill-heading" className="mt-4" headingId="backfill-heading" title={t("supp.record_keys")}>
           <BackfillForm words={words} action={backfillKeysAction.bind(null, tenantId)} secondFactorMissing={secondFactorNeeded(user)} />
-        </section>
+        </Card>
       )}
     </main>
   );

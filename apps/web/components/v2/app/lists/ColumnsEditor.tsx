@@ -8,6 +8,7 @@ import type { ColumnInput } from "@/lib/api/lists";
 
 import { btnMain, btnQuiet, fieldInput, fieldLabel } from "../ui";
 import { makeT, type Words } from "../words";
+import { cardBox } from "../Card";
 
 type Draft = { key: string | null; label: string; type: string; choices: string; role: ColumnRole | ""; billing: string; quote: boolean; open: boolean; uid: string };
 const toDraft = (c: Column): Draft => ({ key: c.key, label: c.label, type: c.type, choices: c.choices.join(", "), role: c.role ?? "", billing: c.billingPeriod ?? "one_time", quote: c.quoteDefault, open: false, uid: crypto.randomUUID() });
@@ -48,9 +49,9 @@ export function ColumnsEditor({ list, words, back, save }: { list: SellList; wor
   };
   const id = (c: Draft, k: string) => `${c.uid}-${k}`;
   return (
-    <div data-part="columns-editor" className="flex flex-col">
-      <p className="m-0 border-y border-line py-3 text-[15px] text-muted">{t("wls.cols.hint")}</p>
-      <ol className="m-0 mt-2 flex list-none flex-col border-t border-ink p-0">
+    <div data-part="columns-editor" className={`${cardBox} flex flex-col`}>
+      <p className="m-0 pb-1 text-[15px] text-muted">{t("wls.cols.hint")}</p>
+      <ol className="m-0 mt-2 flex list-none flex-col border-t border-line p-0">
         {cols.map((c, i) => (
           <li key={c.uid} data-column={c.key ?? "new"} className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-3 border-b border-line py-4 md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1.2fr)_auto] md:items-end">
             <div className="flex gap-1 md:flex-col">
@@ -151,7 +152,7 @@ export function ColumnsEditor({ list, words, back, save }: { list: SellList; wor
         )}
         <span className="text-[14px] text-muted">{t("wls.cols.count", { n: cols.length, max: MAX_COLUMNS })}</span>
       </div>
-      <p className="m-0 mt-4 border-y border-line py-3 text-[15px] text-muted">{t("wls.col.note")}</p>
+      <p className="m-0 mt-4 border-t border-line pt-3 text-[15px] text-muted">{t("wls.col.note")}</p>
       {needsYes ? (
         <p role="alert" className="m-0 mt-3 text-[15px] font-semibold text-ink">
           {t("wls.col.hide")}

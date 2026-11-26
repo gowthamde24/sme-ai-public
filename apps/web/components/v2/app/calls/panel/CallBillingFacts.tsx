@@ -1,4 +1,5 @@
 import { makeT, type Words } from "../../words";
+import { cardBox } from "../../Card";
 
 const ROWS = [1, 2, 3, 4] as const;
 
@@ -8,11 +9,11 @@ const ROWS = [1, 2, 3, 4] as const;
 export function CallBillingFacts({ words }: { words: Words }) {
   const t = makeT(words);
   return (
-    <section data-part="call-billing" aria-labelledby="cpn-bill-h" className="mt-6 min-w-0">
+    <section data-part="call-billing" aria-labelledby="cpn-bill-h" className={`mt-6 ${cardBox}`}>
       <h2 id="cpn-bill-h" className="m-0 font-display text-xl font-semibold text-ink">
         {t("cpn.bill.title")}
       </h2>
-      <dl className="m-0 mt-2 border-t border-ink">
+      <dl className="m-0 mt-2 border-t border-line">
         {ROWS.map((n) => (
           <div key={n} data-row={n} className="grid gap-0.5 border-b border-line py-3.5">
             <dt className="min-w-0 font-bold text-ink">{t(`cpn.bill.${n}.b`)}</dt>

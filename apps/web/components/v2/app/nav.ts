@@ -121,9 +121,9 @@ export const NAV: readonly NavGroup[] = [
       // 17 Nov (owner): the standing rules and the calling hours are a tab of their own, apart from the one-off campaigns
       { id: "outreachrules", label: "Rules", icon: "campaigns", path: "/outreach/rules", feature: "outreach", roles: WRITERS },
       // campaigns S4 (17 Nov, behind OFFER_SCREENS): who said yes to offers; under More on the Campaigns row
-      { id: "jobs", label: "AI Team", icon: "jobs", path: "/jobs", also: ["/do-not-call"], feature: "jobs", roles: ALL_ROLES },
+      { id: "jobs", label: "Work", icon: "jobs", path: "/jobs", also: ["/do-not-call"], feature: "jobs", roles: ALL_ROLES },
       // AI employees (owner, 26 Nov 2026): while EMPLOYEES is on the AI Team row opens the list of employees; the jobs page stays under it
-      { id: "employees", label: "AI Team", icon: "jobs", path: "/employees", feature: "employees", roles: ALL_ROLES },
+      { id: "employees", label: "AI employees", icon: "jobs", path: "/employees", feature: "employees", roles: ALL_ROLES },
       { id: "offerconsent", label: "Who wants offers", icon: "campaigns", path: "/marketing-consent", feature: "offers", roles: WRITERS },
       { id: "tasks", label: "Tasks", icon: "calls", path: "/tasks", feature: "tasks", roles: ALL_ROLES },
       { id: "leadreport", label: "Lead report", icon: "report", path: "/lead-report", feature: "outreach", roles: ADMINS },

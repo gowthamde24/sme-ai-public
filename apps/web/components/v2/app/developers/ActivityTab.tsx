@@ -6,6 +6,7 @@ import type { Activity, ActivityUsage, HookFail } from "@/lib/api/webhooks-out";
 
 import { btnQuiet } from "../ui";
 import { makeT, type Words } from "../words";
+import { cardBox } from "../Card";
 
 /**
  * Settings > Developers > Activity (C1's docs/contracts/developer-api.md): today's and this month's counts, the limits of each key in one sentence, and the requests of the last 30 days (method, the route template, the status, how long it took, which key). No request contents exist to show.
@@ -24,7 +25,7 @@ export function ActivityTab({ words, usage, first, load }: { words: Words; usage
     ["dvh.use.errors", "errors"],
   ] as const;
   return (
-    <div className="flex flex-col gap-4" data-part="dev-activity">
+    <div className={`${cardBox} flex flex-col gap-4`} data-part="dev-activity">
       <p className="m-0 text-[15px] text-muted">{t("dvh.act.sub")}</p>
       {usage ? (
         <>
@@ -60,9 +61,9 @@ export function ActivityTab({ words, usage, first, load }: { words: Words; usage
         </>
       ) : null}
       {items.length === 0 ? (
-        <p className="m-0 border-y border-line py-4 text-[15px] text-muted">{t("dvh.act.none")}</p>
+        <p className="m-0 text-[15px] text-muted">{t("dvh.act.none")}</p>
       ) : (
-        <ul className="m-0 flex list-none flex-col border-t border-ink p-0">
+        <ul className="m-0 flex list-none flex-col border-t border-line p-0">
           {items.map((r) => (
             <li key={r.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 border-b border-line py-2.5 text-[14px]">
               <span lang="en" className="break-all font-mono text-ink">

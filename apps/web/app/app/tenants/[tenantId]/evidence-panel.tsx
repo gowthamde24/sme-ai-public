@@ -6,8 +6,11 @@ import { type EvidenceItem, type EvidencePage, type EvidenceTarget, referenceTex
 import { LocalTime } from "../../local-time";
 import { AddEvidenceForm } from "./add-evidence-form";
 import { addEvidenceAction } from "./evidence-actions";
-import { alertBox, bodyText, kvList, link, listItemCard, listPlain, mutedText, pageH2, pageH3, plainText, spaceTop } from "@/components/v2/app/ui";
+import { Card } from "@/components/v2/app/Card";
+import { alertBox, bodyText, kvList, link, listPlain, mutedText, pageH3, plainText, spaceTop } from "@/components/v2/app/ui";
 import { makeT, type Words } from "@/components/v2/app/words";
+
+const rowItem = "border-t border-line pt-3 first:border-t-0 first:pt-0"; // an item of a Card: a row between hairlines, not a box inside the box
 
 /**
  * The Evidence section of a company / lead page.
@@ -45,10 +48,7 @@ export function EvidencePanel({
   const t = makeT(words);
   const here = `/app/tenants/${tenantId}/${target}/${targetId}`;
   return (
-    <section aria-labelledby="evidence-heading">
-      <h2 id="evidence-heading" className={pageH2}>
-        {t("ws.evidence")}
-      </h2>
+    <Card aria-labelledby="evidence-heading" className="mt-6" headingId="evidence-heading" title={t("ws.evidence")}>
       <p className={mutedText}>
         {t("ws.sources_are_shown_as_plain_text")}
       </p>
@@ -94,14 +94,14 @@ export function EvidencePanel({
           />
         </>
       )}
-    </section>
+    </Card>
   );
 }
 
 function EvidenceRow({ item, words }: { item: EvidenceItem; words?: Words; }) {
   const t = makeT(words);
   return (
-    <li className={listItemCard}>
+    <li className={rowItem}>
       <dl className={kvList}>
         <dt>{t("ws.kind")}</dt>
         <dd>{t(`ws.evkind.${item.kind}`)}</dd>

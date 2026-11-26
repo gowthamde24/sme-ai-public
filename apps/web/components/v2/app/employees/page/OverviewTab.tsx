@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusSwitch } from "../../ds/StatusSwitch";
 import * as React from "react";
 
 import { CALL_LANG_NAMES, type CallLang } from "@/lib/assistant/types";
@@ -47,17 +48,16 @@ export function OverviewTab({ emp, words, canEdit, actions, onChange }: TabProps
     <>
       <Card title={t("emp.page.ov.status")} desc={emp.isDefault ? t("emp.default.d") : undefined}>
         <div className="flex flex-wrap items-center gap-3">
-          <span className={chip} data-part="emp-status-chip">
-            {t(`emp.status.${emp.status}`)}
-          </span>
-          {canSwitch && emp.status !== "on" ? (
+          {canSwitch && (emp.status === "on" || emp.status === "paused") ? (
+            <StatusSwitch on={emp.status === "on"} label={emp.name} onText={t("emp.status.on")} offText={t("emp.status.paused")} busy={status.busy} onChange={(next) => move(next ? "on" : "paused")} />
+          ) : (
+            <span className={chip} data-part="emp-status-chip">
+              {t(`emp.status.${emp.status}`)}
+            </span>
+          )}
+          {canSwitch && emp.status === "draft" ? (
             <button type="button" disabled={status.busy} onClick={() => move("on")} data-part="emp-turn-on" className={btnQuiet}>
-              {emp.status === "paused" ? t("emp.resume") : t("emp.turn_on")}
-            </button>
-          ) : null}
-          {canSwitch && emp.status === "on" ? (
-            <button type="button" disabled={status.busy} onClick={() => move("paused")} data-part="emp-pause" className={btnQuiet}>
-              {t("emp.pause")}
+              {t("emp.turn_on")}
             </button>
           ) : null}
           {canSwitch && !confirm ? (

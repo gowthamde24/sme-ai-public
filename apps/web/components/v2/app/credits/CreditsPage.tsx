@@ -11,6 +11,7 @@ import { Statement } from "./Statement";
 import { PageTop } from "../parts";
 import { pageMain } from "../ui";
 import { makeT, type Words } from "../words";
+import { Card, cardBox } from "../Card";
 
 type Actions = React.ComponentProps<typeof AddCredits>["actions"] & { statement: React.ComponentProps<typeof Statement>["load"] };
 
@@ -29,14 +30,15 @@ export function CreditsPage({ words, lang, base, balance, debtPaise, options, to
       <PageTop title={t("cr.title")} sub={t("cr.sub")} />
       <div className="mt-4 flex flex-col gap-4">
         {debtPaise ? (
-          <p role="status" data-part="debt" className="m-0 flex items-start gap-2 border-y border-line py-3 text-[15px] font-semibold text-ink">
+          <p role="status" data-part="debt" className={`${cardBox} m-0 flex items-start gap-2 text-[15px] font-semibold text-ink`}>
             <span aria-hidden="true" className="mt-2 size-2 shrink-0 rounded-full bg-brand" />
             <span className="min-w-0 flex-1">{t("cr.debt", { n: formatRupeesShort(debtPaise) })}</span>
             {add}
           </p>
         ) : null}
         {!debtPaise && balance?.low && minutes !== null ? <LowBalance minutes={minutes} words={words} add={add} /> : null}
-        <div className="flex flex-wrap items-end gap-x-9 gap-y-3 border-t border-ink pt-4" data-part="balance">
+        <Card data-part="balance" className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-end gap-x-9 gap-y-3">
           <div>
             <p className="m-0 text-sm text-muted">{t("cr.balance")}</p>
             <p className="m-0 font-display text-[40px] font-bold leading-none tracking-tight text-ink">{balance?.text ?? "—"}</p>
@@ -48,23 +50,18 @@ export function CreditsPage({ words, lang, base, balance, debtPaise, options, to
           </div>
           {!balance?.low && !debtPaise && add ? <div className="md:ml-auto">{add}</div> : null}
         </div>
-        <p className="m-0 border-y border-line py-3 text-[15px] text-muted">{t("cr.note")}</p>
+        <p className="m-0 border-t border-line pt-3 text-[15px] text-muted">{t("cr.note")}</p>
+        </Card>
 
         {facts}
 
-        <section aria-labelledby="cr-st">
-          <h2 id="cr-st" className="m-0 mb-2 font-display text-xl font-semibold">
-            {t("cr.statement")}
-          </h2>
+        <Card aria-labelledby="cr-st" headingId="cr-st" title={t("cr.statement")}>
           {statement ? <Statement first={statement} words={words} base={base} load={actions.statement} /> : <p className="m-0 text-[15px] text-muted">{t("cr.err.unavailable")}</p>}
-        </section>
+        </Card>
 
-        <section aria-labelledby="cr-inv">
-          <h2 id="cr-inv" className="m-0 mb-2 font-display text-xl font-semibold">
-            {t("cr.invoices")}
-          </h2>
+        <Card aria-labelledby="cr-inv" headingId="cr-inv" title={t("cr.invoices")}>
           {topups && topups.some((x) => x.invoiceNumber) ? (
-            <ul className="m-0 flex list-none flex-col border-t border-ink p-0" data-part="invoices">
+            <ul className="m-0 flex list-none flex-col border-t border-line p-0" data-part="invoices">
               {topups
                 .filter((x) => x.invoiceNumber)
                 .map((x) => (
@@ -80,7 +77,7 @@ export function CreditsPage({ words, lang, base, balance, debtPaise, options, to
                 ))}
             </ul>
           ) : (
-            <p className="m-0 border-y border-line py-4 text-[15px] text-muted">{t("cr.invoices.none")}</p>
+            <p className="m-0 text-[15px] text-muted">{t("cr.invoices.none")}</p>
           )}
           {topups && topups.some((x) => x.state !== "paid") ? (
             <ul className="m-0 mt-3 flex list-none flex-col p-0" data-part="topup-attempts">
@@ -95,17 +92,14 @@ export function CreditsPage({ words, lang, base, balance, debtPaise, options, to
                 ))}
             </ul>
           ) : null}
-        </section>
+        </Card>
 
-        <section aria-labelledby="cr-det">
-          <h2 id="cr-det" className="m-0 mb-2 font-display text-xl font-semibold">
-            {t("cr.details")}
-          </h2>
+        <Card aria-labelledby="cr-det" headingId="cr-det" title={t("cr.details")}>
           <p className="m-0 text-[15px] text-muted">{t("cr.details.t")}</p>
           <Link href={`${base}/settings?section=business`} className="mt-2 inline-flex min-h-11 items-center text-[15px] font-semibold text-ink underline underline-offset-4">
             {t("cr.details.go")}
           </Link>
-        </section>
+        </Card>
       </div>
     </main>
   );

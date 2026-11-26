@@ -10,6 +10,7 @@ import { say, type TodayWords } from "../today/today-words";
 import { errorLine, field, help, label, primary, quiet, secondary } from "../visits/styles";
 import { MAX_STEPS, exampleText, fieldsFor, fieldsUsed, insertField, isMoneyKind, readSteps, stepPhrase, type Field, type StepDraft } from "./campaign-logic";
 import type { Kind } from "@/lib/api/campaigns";
+import { cardBox } from "../Card";
 
 const LANGS = ["en", "te", "hi", "kn"] as const;
 type Refused = { ok: false; error: string; mfa?: boolean };
@@ -76,7 +77,7 @@ export function CampaignForm(p: { base: string; campaignId: string; campaign: Ca
   }
 
   return (
-    <form data-screen="campaign-form" noValidate onSubmit={(e) => { e.preventDefault(); void save(); }} className="flex max-w-2xl flex-col gap-5">
+    <form data-screen="campaign-form" noValidate onSubmit={(e) => { e.preventDefault(); void save(); }} className={`${cardBox} flex max-w-2xl flex-col gap-5`}>
       <div>
         <label htmlFor="cf-name" className={label}>{say(words, "camp.field.name")}</label>
         <input id="cf-name" value={name} maxLength={100} disabled={busy} onChange={(e) => setName(e.target.value)} aria-describedby="cf-name-h" className={field} />

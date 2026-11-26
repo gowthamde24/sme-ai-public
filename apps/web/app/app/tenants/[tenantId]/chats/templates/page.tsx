@@ -91,7 +91,7 @@ export default async function TemplatesPage({ params }: PageProps<"/app/tenants/
               <span className="mt-1 block text-[13px] font-normal text-muted">{t("jobs.tb.system.sub")}</span>
             </summary>
             <div className="mt-4">{templates.ok ? (
-              <TemplatesList plain={templatesPlain()} words={words} items={templates.data} actions={{ submitDrafts: submitDraftsAction.bind(null, tenantId), submitOne: submitTemplateAction.bind(null, tenantId), sync: syncTemplatesAction.bind(null, tenantId) }} />
+              <TemplatesList plain={templatesPlain()} bare words={words} items={templates.data} actions={{ submitDrafts: submitDraftsAction.bind(null, tenantId), submitOne: submitTemplateAction.bind(null, tenantId), sync: syncTemplatesAction.bind(null, tenantId) }} />
             ) : (
               <PartProblem kind={templates.kind} retryAfter={templates.retryAfter} words={words} title={t("wa.tpl.title")} />
             )}</div>

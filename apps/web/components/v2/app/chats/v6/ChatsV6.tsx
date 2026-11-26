@@ -77,7 +77,7 @@ export function ChatsV6(p: ChatsV6Props) {
     <main className={pageMain} lang={p.lang} data-screen="chats">
       {p.help}
       {header}
-      <div className="mt-4 grid grid-cols-[minmax(0,1fr)] overflow-clip border-y border-line lg:h-[calc(100vh-10rem)] lg:min-h-[400px] lg:grid-cols-[330px_minmax(0,1fr)_300px]">
+      <div className="mt-4 grid grid-cols-[minmax(0,1fr)] overflow-clip rounded-[var(--v2-r-card)] border border-line bg-surface shadow-[var(--v2-shadow)] lg:h-[calc(100vh-10rem)] lg:min-h-[400px] lg:grid-cols-[330px_minmax(0,1fr)_300px]">
         <div className={`${open ? "hidden lg:flex" : "flex"} min-h-0 flex-col lg:border-r lg:border-line`}>
           {p.chats === null ? (
             <p role="alert" className="m-0 p-4 text-sm text-muted">

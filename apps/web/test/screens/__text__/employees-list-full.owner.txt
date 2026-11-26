@@ -5,6 +5,7 @@ Each AI employee has a name, a job to do and a voice. They all know your busines
 Receptionist · Main assistant On తెలుగు · English · 4 calls today Answers every call and chat unless another AI employee has that number. [Open](/app/tenants/22222222-2222-2222-2222-222222222222/employees/66666666-6666-4666-8666-666666666666)
 - R
 ## [Ravi](/app/tenants/22222222-2222-2222-2222-222222222222/employees/55555555-5555-4555-8555-555555555555)
-Follow-up helper On తెలుగు · English · No calls today [Open](/app/tenants/22222222-2222-2222-2222-222222222222/employees/55555555-5555-4555-8555-555555555555)
-[button type=button: Pause]
+Follow-up helper
+[button type=button: Ravi]
+తెలుగు · English · No calls today [Open](/app/tenants/22222222-2222-2222-2222-222222222222/employees/55555555-5555-4555-8555-555555555555)
 [See every job your team is running](/app/tenants/22222222-2222-2222-2222-222222222222/jobs)

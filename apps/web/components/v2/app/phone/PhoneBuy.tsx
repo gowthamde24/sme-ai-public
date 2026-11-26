@@ -15,6 +15,7 @@ import { RequiredField, describedBy } from "./kyc-field";
 import { emailProblem, nameProblem } from "@/lib/phone-kyc/rules";
 import { Notice, Seg, Step } from "./steps";
 import { PREFILL_KEY, refusalSentence } from "./kyc-shared";
+import { cardBox } from "../Card";
 
 export { PREFILL_KEY, refusalSentence };
 
@@ -132,7 +133,7 @@ export function PhoneBuy({ words, actions, canEdit, email, mock = false, verifyH
           {t("pick.test")}
         </p>
       ) : null}
-      <ol className="m-0 flex list-none flex-col p-0">
+      <ol className={`${cardBox} m-0 flex list-none flex-col`}>
         <Step n={1} title={t("pick.buy.s1.t")} state={state(1)} summary={picked && now > 1 ? <span className="tabular-nums">{picked.display}</span> : undefined}>
           {now === 1 ? (
             <div className="mt-3 flex flex-col gap-4">

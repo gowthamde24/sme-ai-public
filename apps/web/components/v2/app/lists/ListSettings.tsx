@@ -7,6 +7,7 @@ import { NAME_MAX, type Done, type SellList } from "@/lib/lists/types";
 
 import { btnMain, btnQuiet, fieldInput, fieldLabel } from "../ui";
 import { makeT, type Words } from "../words";
+import { cardBox } from "../Card";
 
 /**
  * "List settings" at the foot of a list (owner, 26 Nov 2026: a list could be made but not renamed or deleted from the screen): rename it, or delete it with its items after one plain confirmation. Owner and Admin only (the page does not draw it for others).
@@ -40,7 +41,7 @@ export function ListSettings({ list, words, base, rename, remove }: { list: Sell
     setNote({ text: say(r.error), bad: true });
   };
   return (
-    <details data-part="list-settings" className="mt-8 border-t border-line pt-3">
+    <details data-part="list-settings" className={`mt-4 ${cardBox}`}>
       <summary className="flex min-h-11 cursor-pointer list-none items-center text-[15px] font-semibold text-muted [&::-webkit-details-marker]:hidden">{t("wls.settings.title")}</summary>
       <form onSubmit={(e) => void save(e)} className="mt-2 flex max-w-md flex-col gap-1">
         <label htmlFor="wls-rename" className={fieldLabel}>

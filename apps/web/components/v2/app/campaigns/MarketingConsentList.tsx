@@ -10,6 +10,7 @@ import { NOTE_MAX, NOTE_MIN, tidyNote, type MarketingState } from "@/lib/api/mar
 
 import { btnMainLink, btnQuiet, fieldInput, mutedText, pillAmber, pillGreen, pillNeutral, surface } from "../ui";
 import { makeT, type Words } from "../words";
+import { cardBox } from "../Card";
 
 type Result = { ok: true } | { ok: false; error: "stopped" | "invalid" | "forbidden" | "down" };
 const day = (iso: string | null, lang: string): string => {
@@ -46,6 +47,7 @@ export function MarketingConsentList({ words, lang, base, q, state, list, after,
           </li>
         ))}
       </ul>
+      <div data-part="mc-card" className={`${cardBox} flex flex-col gap-4`}>
       <form method="get" action={base} className="flex flex-wrap items-end gap-2" role="search">
         <label className="min-w-0 flex-1">
           <span className="sr-only">{t("mc.search")}</span>
@@ -68,12 +70,13 @@ export function MarketingConsentList({ words, lang, base, q, state, list, after,
           {t("mc.empty")}
         </p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col">
           {list.items.map((it) => (
             <Row key={it.contact_id} it={it} t={t} lang={lang} actions={actions} />
           ))}
         </ul>
       )}
+      </div>
       {list.next_cursor ? (
         <div>
           <Link href={link({ after: list.next_cursor })} className={btnQuiet} data-part="mc-more">
@@ -113,7 +116,7 @@ function Row({ it, t, lang, actions }: { it: ConsentItemOut; t: ReturnType<typeo
   const given = it.state === "granted" ? [it.via ? t(`mc.via.${it.via}`) : null, it.at ? day(it.at, lang) : null, personName(it.by), it.note].filter((x): x is string => !!x && !x.startsWith("mc.via.")) : [];
   const short = tidyNote(note) === null;
   return (
-    <li data-part="mc-row" data-state={it.state} className={`${surface} flex flex-col gap-2`}>
+    <li data-part="mc-row" data-state={it.state} className="flex flex-col gap-2 border-t border-line py-3 first:border-t-0 first:pt-0">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="m-0 font-display text-lg font-bold">{it.name ?? t("mc.noname")}</p>
         <span className="flex flex-wrap gap-2">

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { dayWords, type Todo } from "@/lib/aiteam/standup-steps";
 
 import { fill } from "./shift";
+import { Card } from "../Card";
 
 type W = Readonly<Record<string, string>>;
 const w = (words: W, k: string, vars?: Record<string, string>) => fill(words[k] ?? k, vars);
@@ -34,13 +35,10 @@ export function ExampleData({ words }: { words: W }) {
 /** "To do tomorrow": what waits for the owner, from the same counts as the menu's chips (never invented), each with the one button to where it is done. */
 export function TodoTomorrow({ words, todos }: { words: W; todos: readonly Todo[] }) {
   return (
-    <section aria-labelledby="v4-todo" className="flex flex-col gap-3" data-part="todo">
-      <h2 id="v4-todo" className="m-0 font-display text-xl font-bold">
-        {w(words, "aiteam.v4.todo")}
-      </h2>
-      {todos.length === 0 ? <p className="m-0 rounded-[22px] border border-line bg-surface p-4 text-base text-muted">{w(words, "aiteam.v4.todo.none")}</p> : null}
+    <Card data-part="todo" aria-labelledby="v4-todo" className="flex flex-col gap-3" headingId="v4-todo" title={w(words, "aiteam.v4.todo")}>
+      {todos.length === 0 ? <p className="m-0 text-base text-muted">{w(words, "aiteam.v4.todo.none")}</p> : null}
       {todos.map((t) => (
-        <article key={t.key} data-todo={t.key} className="flex flex-col gap-3 rounded-[22px] border border-line bg-surface p-4 shadow-[var(--v2-shadow)]">
+        <article key={t.key} data-todo={t.key} className="flex flex-col gap-3 border-t border-line pt-3 first:border-t-0 first:pt-0">
           <div>
             <h3 className="m-0 font-display text-lg font-bold leading-snug">{w(words, `aiteam.v4.todo.${t.key}.${t.n === 1 ? "one" : "many"}`, { n: t.n.toLocaleString("en-IN") })}</h3>
             <p className="m-0 mt-1 text-sm text-muted">{w(words, `aiteam.v4.todo.${t.key}.b`)}</p>
@@ -50,21 +48,18 @@ export function TodoTomorrow({ words, todos }: { words: W; todos: readonly Todo[
           </Link>
         </article>
       ))}
-    </section>
+    </Card>
   );
 }
 
 /** "Earlier reports": the days before that really had a stand-up, newest first, each a link to that day's report with how long it is. */
 export function EarlierReports({ words, base, locale, items, current }: { words: W; base: string; locale: string; items: readonly { date: string; seconds: number | null }[]; current: string }) {
   return (
-    <section aria-labelledby="v4-earlier" className="flex flex-col gap-3" data-part="earlier">
-      <h2 id="v4-earlier" className="m-0 font-display text-xl font-bold">
-        {w(words, "aiteam.v4.earlier")}
-      </h2>
+    <Card data-part="earlier" aria-labelledby="v4-earlier" headingId="v4-earlier" title={w(words, "aiteam.v4.earlier")}>
       {items.length === 0 ? (
-        <p className="m-0 rounded-[22px] border border-line bg-surface p-4 text-base text-muted">{w(words, "aiteam.v4.earlier.none")}</p>
+        <p className="m-0 text-base text-muted">{w(words, "aiteam.v4.earlier.none")}</p>
       ) : (
-        <ul className="m-0 list-none overflow-hidden rounded-[22px] border border-line bg-surface p-0 shadow-[var(--v2-shadow)]">
+        <ul className="m-0 list-none overflow-hidden p-0">
           {items.map((i) => {
             const day = dayWords(i.date, locale);
             return (
@@ -78,7 +73,7 @@ export function EarlierReports({ words, base, locale, items, current }: { words:
           })}
         </ul>
       )}
-    </section>
+    </Card>
   );
 }
 

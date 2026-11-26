@@ -2,7 +2,6 @@ import { count, dayLabelLong, dayOfIso } from "@/lib/topups/logic";
 import type { Invoice, Purchase } from "@/lib/topups/types";
 import { formatRupeesShort } from "@/lib/money";
 
-import { surfaceFlat } from "../ui";
 import { makeT, type Words } from "../words";
 import { SHORT } from "./alert-text";
 
@@ -21,9 +20,9 @@ export function TopupHistory({ words, history, invoices }: { words: Words; histo
         {history.length === 0 ? (
           <p className="mt-2 text-sm text-muted">{t("tu.hist.none")}</p>
         ) : (
-          <ul className="mt-2 flex flex-col gap-2">
+          <ul className="mt-2 flex flex-col gap-3">
             {history.map((p) => (
-              <li key={p.id} className={`${surfaceFlat} !p-3`} data-purchase={p.packCode}>
+              <li key={p.id} className="border-t border-line pt-3 first:border-t-0 first:pt-0" data-purchase={p.packCode}>
                 <p className="font-medium">{t(`tu.pack.${SHORT[p.kind]}`, { n: count(p.units) })}</p>
                 <p className="text-sm text-muted">
                   {dayLabelLong(dayOfIso(p.purchasedAt))} · {formatRupeesShort(p.totalPaise)} · {t(`tu.hist.src.${p.source}`)}
@@ -43,9 +42,9 @@ export function TopupHistory({ words, history, invoices }: { words: Words; histo
         ) : (
           <>
             <p className="mt-1 text-sm text-muted">{t("tu.inv.fake")}</p>
-            <ul className="mt-2 flex flex-col gap-2">
+            <ul className="mt-2 flex flex-col gap-3">
               {invoices.map((i) => (
-                <li key={i.id} className={`${surfaceFlat} !p-3`} data-invoice={i.number}>
+                <li key={i.id} className="border-t border-line pt-3 first:border-t-0 first:pt-0" data-invoice={i.number}>
                   <p className="font-medium">
                     {i.number} · {dayLabelLong(dayOfIso(i.issuedAt))}
                   </p>

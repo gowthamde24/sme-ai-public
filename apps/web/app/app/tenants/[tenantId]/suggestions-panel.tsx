@@ -4,8 +4,11 @@ import { LocalTime } from "../../local-time";
 import { ReviewClaimForms } from "./review-claim-form";
 import { SuggestionEvidence } from "./suggestion-evidence";
 import { reviewClaimAction } from "./suggestion-actions";
-import { alertBox, bodyText, detailsBox, listItemCard, listPlain, mutedText, pageH2, summaryLine } from "@/components/v2/app/ui";
+import { Card } from "@/components/v2/app/Card";
+import { alertBox, bodyText, detailsBox, listPlain, mutedText, summaryLine } from "@/components/v2/app/ui";
 import { makeT, type Words } from "@/components/v2/app/words";
+
+const rowItem = "border-t border-line pt-3 first:border-t-0 first:pt-0"; // an item of a Card: a row between hairlines, not a box inside the box
 
 /**
  * The "Agent suggestions" section of a company / lead page.
@@ -44,10 +47,7 @@ export function SuggestionsPanel({ tenantId, target, targetId, claims, canReview
   const t = makeT(words);
   const suggestions = (claims ?? []).filter((c) => c.created_via === "agent");
   return (
-    <section aria-labelledby="suggestions-heading">
-      <h2 id="suggestions-heading" className={pageH2}>
-        {t("ws.agent_suggestions")}
-      </h2>
+    <Card aria-labelledby="suggestions-heading" className="mt-6" headingId="suggestions-heading" title={t("ws.agent_suggestions")}>
       <p className={mutedText}>
         {t("ws.written_by_an_agent_shown_as")}
       </p>
@@ -60,7 +60,7 @@ export function SuggestionsPanel({ tenantId, target, targetId, claims, canReview
       ) : (
         <ul className={listPlain}>
           {suggestions.map((claim) => (
-            <li key={claim.id} className={listItemCard}>
+            <li key={claim.id} className={rowItem}>
               <p>
                 <strong>{claim.value}</strong>
               </p>
@@ -88,6 +88,6 @@ export function SuggestionsPanel({ tenantId, target, targetId, claims, canReview
           ))}
         </ul>
       )}
-    </section>
+    </Card>
   );
 }

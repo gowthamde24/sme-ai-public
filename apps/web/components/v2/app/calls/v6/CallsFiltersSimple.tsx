@@ -9,6 +9,7 @@ import { makeT, type Words } from "../../words";
 import { filtersOpen } from "@/lib/screens/flag";
 import { LinkSentence } from "../../jobs/pages/LazyLinkSentence";
 import { MoreBox, pgCard } from "../../jobs/pages/parts";
+import { cardBox } from "../../Card";
 
 export type CallsFiltersSimpleProps = { words: Words; base: string; query: CallsQuery; counts: Record<CallStatusWord | "all", number>; lines: readonly { id: string; label: string }[]; shown: number; total: number };
 
@@ -25,7 +26,7 @@ export function CallsFiltersSimple({ words, base, query, counts, lines, shown, t
   const plain = filtersOpen();
   const filtered = query.status !== "all" || query.when !== "any" || query.line !== null || query.q !== "";
   return (
-    <section data-part="calls-filters" data-simple="" aria-label={t("calls6.chips.label")} className={plain ? "flex flex-col gap-3" : `${pgCard} flex flex-col gap-3`}>
+    <section data-part="calls-filters" data-simple="" aria-label={t("calls6.chips.label")} className={plain ? `${cardBox} flex flex-col gap-3` : `${pgCard} flex flex-col gap-3`}>
       <LinkSentence
         plain={plain}
         line="calls"

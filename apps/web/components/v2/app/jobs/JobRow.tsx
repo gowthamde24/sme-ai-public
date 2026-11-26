@@ -8,6 +8,7 @@ import { resultSentence } from "@/lib/jobs/result";
 import { CHIP_TONE, jobNameKey, jobStatusKey, type Job, type JobKind, type JobSpeaks, type JobSwitched } from "@/lib/jobs/types";
 
 import { JobChip } from "../ds/JobChip";
+import { StatusSwitch } from "../ds/StatusSwitch";
 import type { Reply } from "../cc/kit";
 import { makeT, type Say, type Words } from "../words";
 import { GateNote } from "./GateNote";
@@ -16,12 +17,10 @@ export type JobActions = { setEnabled: (jobId: string, enabled: boolean) => Prom
 
 export const ICON: Record<JobKind, typeof Zap> = { speed_to_lead: Zap, answer_calls: Phone, followups: MessageCircle, store_visits: Store, offers: Gift, researcher: Search, payment_reminders: Wallet, custom: Sparkles };
 
-/** The switch of one job: a round-knob switch (design/jobs.css `jb-switch`), instant on a tap (optimistic) and put back if the change did not go through. The tap area is 44 px through the padding of its button. */
-function JobSwitch({ label, on, busy, onChange }: { label: string; on: boolean; busy: boolean; onChange: (next: boolean) => void }) {
+/** The switch of one job: the shared green-on, red-off StatusSwitch with the word beside it, instant on a tap (optimistic) and put back if the change did not go through. The tap area is 44 px through the padding of its button. */
+function JobSwitch({ label, on, busy, onChange, onText, offText }: { label: string; on: boolean; busy: boolean; onChange: (next: boolean) => void; onText: string; offText: string }) {
   return (
-    <button type="button" role="switch" aria-checked={on} aria-label={label} disabled={busy} onClick={() => onChange(!on)} className="jb-switch-hit write-ctl -my-2 -mr-2 grid min-h-11 min-w-11 shrink-0 place-items-center">
-      <span className="jb-switch" aria-hidden="true" data-on={on ? "" : undefined} />
-    </button>
+    <StatusSwitch on={on} label={label} onText={onText} offText={offText} busy={busy} onChange={onChange} />
   );
 }
 
@@ -111,7 +110,7 @@ export function JobRow({ job, words, base, actions, chips = false }: { job: Job;
           </span>
         ) : null}
       </Link>
-      <JobSwitch label={name} on={now.enabled} busy={busy || !actions} onChange={(next) => void change(next)} />
+      <JobSwitch label={name} on={now.enabled} busy={busy || !actions} onChange={(next) => void change(next)} onText={t("jobs.sw.on")} offText={t("jobs.sw.off")} />
     </div>
   );
 }

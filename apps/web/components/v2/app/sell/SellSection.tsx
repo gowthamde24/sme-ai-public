@@ -11,6 +11,7 @@ import { makeT, type Words } from "../words";
 import { LazyWork, loadWork } from "./LazyWork";
 import { SellRowBody } from "./SellRow";
 import type { ImportTarget, SellActions, Work } from "./types";
+import { cardBox } from "../Card";
 
 /** A list this long gets a search box (a saree shop has dozens). */
 const SEARCH_FROM = 8;
@@ -88,7 +89,7 @@ export function SellSection({ style, entries: first, words, base, actions, live,
         </section>
       ) : null}
 
-      <section aria-labelledby="sell-list" data-part="list" className="flex flex-col gap-2.5">
+      <section aria-labelledby="sell-list" data-part="list" className={`${cardBox} flex flex-col gap-2.5`}>
         <div className="flex items-center justify-between gap-3">
           <h2 id="sell-list" className="m-0 flex items-center gap-2 font-display text-[20px] font-bold leading-tight text-ink">
             {t(`jobs.sell.style.${style}.title`)}
@@ -110,7 +111,7 @@ export function SellSection({ style, entries: first, words, base, actions, live,
             {t("jobs.sell.empty")}
           </p>
         ) : (
-          <ul className="m-0 flex list-none flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface p-0 shadow-[var(--v2-shadow)]">
+          <ul className="-mx-4 m-0 flex list-none flex-col divide-y divide-line border-t border-line p-0 md:-mx-5">
             {shown.length === 0 ? <li data-part="no-match" className="px-4 py-5 text-center text-[15px] text-muted">{t("jobs.sell.nomatch")}</li> : null}
             {shown.map((e) => (
               <li key={e.id} data-entry={e.id}>

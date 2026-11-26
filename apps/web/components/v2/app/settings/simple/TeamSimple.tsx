@@ -6,6 +6,7 @@ import { useId, useState } from "react";
 import { LocalTime } from "@/app/app/local-time";
 import type { Member, NewInvitation } from "@/lib/api/team";
 
+import { cardBox } from "../../Card";
 import { FailureNote } from "../../cc/FailureNote";
 import { card, h2, help, okLine, primary, quiet, secondary, danger, type Failed } from "../../cc/kit";
 import { Choose } from "../../jobs/rules/parts";
@@ -28,7 +29,7 @@ export function TeamMembersSimple({ words, members, myRole, actions, plain = fal
   const [list, setList] = useState(members);
   const [message, setMessage] = useState<string | null>(null);
   return (
-    <section className={plain ? "flex flex-col gap-4" : card} aria-labelledby={`${id}-h`} data-team="members" data-simple="">
+    <section className={plain ? `${cardBox} flex flex-col gap-4` : card} aria-labelledby={`${id}-h`} data-team="members" data-simple="">
       <h2 id={`${id}-h`} className={h2}>
         {t("team.members.title")}
       </h2>
@@ -202,7 +203,7 @@ export function InviteSimple({ words, myRole, workspaceName, actions, plain = fa
     setLabel("");
   }
   return (
-    <section className={plain ? "flex flex-col gap-4 border-t border-line pt-6" : card} aria-labelledby={`${id}-h`} data-team="invite" data-simple="">
+    <section className={plain ? `${cardBox} flex flex-col gap-4` : card} aria-labelledby={`${id}-h`} data-team="invite" data-simple="">
       <h2 id={`${id}-h`} className={h2}>
         {t("team.invite.title")}
       </h2>

@@ -12,6 +12,7 @@ import { SuggestedJobs, type SuggestionActions } from "./SuggestedJobs";
 import { JobsEmpty } from "./sheet/LazyJobsEmpty";
 import { NewJobButton } from "./sheet/NewJobButton";
 import type { SheetActions } from "./sheet/types";
+import { cardBox } from "../Card";
 
 const chip = "inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3.5 text-sm font-semibold";
 
@@ -89,7 +90,7 @@ export function JobsList({ jobs, filter, words, base, actions, suggestions = [],
           ))}
         </div>
       )}
-      <Link href={`${base}/do-not-call`} prefetch={false} data-part="dnc-link" className="flex min-h-14 items-center gap-3 border-t border-line py-3 no-underline">
+      <Link href={`${base}/do-not-call`} prefetch={false} data-part="dnc-link" className={`${cardBox} flex min-h-14 items-center gap-3 no-underline`}>
         <Ban aria-hidden="true" className="size-[18px] shrink-0 text-muted" />
         <span className="min-w-0 flex-1">
           <span className="block text-[15px] font-semibold leading-snug text-ink">{t("jobs.page.dnc.title")}</span>

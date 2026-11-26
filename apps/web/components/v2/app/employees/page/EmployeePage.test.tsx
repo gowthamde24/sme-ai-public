@@ -92,12 +92,16 @@ describe("Overview", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("Another AI employee already has that name. Pick a different name.");
   });
 
-  it("turns on, pauses and shows the new status", async () => {
+  it("is a real switch: red and 'Paused' when off, green and 'On' when on; a tap turns it on and off", async () => {
     const { a } = show({ employee: employee({ status: "paused" }) });
-    fireEvent.click(await screen.findByRole("button", { name: "Turn on again" }));
+    const sw = await screen.findByRole("switch", { name: "Sunita" });
+    expect(sw).toHaveAttribute("aria-checked", "false");
+    expect(sw).toHaveTextContent("Paused");
+    fireEvent.click(sw);
     await waitFor(() => expect(a.setStatus).toHaveBeenCalledWith("on"));
-    expect(await screen.findByRole("button", { name: "Pause" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Pause" }));
+    await waitFor(() => expect(screen.getByRole("switch", { name: "Sunita" })).toHaveAttribute("aria-checked", "true"));
+    expect(screen.getByRole("switch", { name: "Sunita" })).toHaveTextContent("On");
+    fireEvent.click(screen.getByRole("switch", { name: "Sunita" }));
     await waitFor(() => expect(a.setStatus).toHaveBeenLastCalledWith("paused"));
   });
 
@@ -119,7 +123,7 @@ describe("Overview", () => {
   it("shows the refusal of a status change", async () => {
     const { a } = show();
     a.setStatus.mockResolvedValueOnce({ ok: false, error: "last_default" });
-    fireEvent.click(await screen.findByRole("button", { name: "Pause" }));
+    fireEvent.click(await screen.findByRole("switch", { name: "Sunita" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("The main assistant cannot be paused or archived.");
   });
 });

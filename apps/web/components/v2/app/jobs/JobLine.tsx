@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusSwitch } from "../ds/StatusSwitch";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -105,9 +106,7 @@ export function JobLine({ job, words, base, actions }: { job: Job; words: Words;
             {t("jobs.line.turn_on")}
           </button>
         ) : (
-          <button type="button" role="switch" aria-checked={true} aria-label={name} disabled={busy || !actions} onClick={() => void change(false)} className="jb-switch-hit write-ctl -my-2 -mr-2 grid min-h-11 min-w-11 shrink-0 place-items-center">
-            <span className="jb-switch" aria-hidden="true" data-on="" />
-          </button>
+          <StatusSwitch on label={name} onText={t("jobs.sw.on")} offText={t("jobs.sw.off")} busy={busy || !actions} onChange={() => void change(false)} />
         )}
       </div>
     </div>

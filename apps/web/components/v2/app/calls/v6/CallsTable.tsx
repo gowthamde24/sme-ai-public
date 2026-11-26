@@ -11,6 +11,7 @@ import { callsOpen } from "@/lib/screens/flag";
 
 import { makeT, type Words } from "../../words";
 import { CallsTablePager } from "./CallsTablePager";
+import { cardBox } from "../../Card";
 
 export const CALLS_PAGE_SIZE = 20;
 
@@ -54,8 +55,8 @@ export function CallsTable({ words, base, query, items, selectedId, when, pageSi
     const first = items.slice(0, pageSize);
     const rest = items.slice(pageSize);
     return (
-      <div data-part="calls-table" data-open="">
-        <ul className="m-0 flex list-none flex-col border-t border-ink p-0">{first.map(row)}</ul>
+      <div data-part="calls-table" data-open="" className={cardBox}>
+        <ul className="m-0 flex list-none flex-col p-0">{first.map(row)}</ul>
         {rest.length > 0 ? (
           <details className="group">
             <summary className="flex min-h-11 cursor-pointer list-none items-center py-3 text-[15px] font-semibold text-muted underline underline-offset-4 group-open:hidden [&::-webkit-details-marker]:hidden">{words["calls6.more"] ?? "Show more"}</summary>

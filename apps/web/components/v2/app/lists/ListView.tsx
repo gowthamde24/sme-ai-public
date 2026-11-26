@@ -7,6 +7,7 @@ import { parseRupees, priceColumns, rupees, type Cell, type Column, type Done, t
 
 import { btnMain, btnQuiet, fieldInput, fieldLabel } from "../ui";
 import { makeT, type Words } from "../words";
+import { cardBox } from "../Card";
 
 export type ListActions = {
   load: (q: string, cursor: string | null) => Promise<Done<RowPage>>;
@@ -100,7 +101,7 @@ export function ListView({ list, initial, owner, canEdit, words, base, actions }
   };
 
   return (
-    <div data-part="list-view" className="flex flex-col">
+    <div data-part="list-view" className={`${cardBox} flex flex-col`}>
       <div className="flex flex-wrap items-center gap-2">
         {canEdit ? (
           <button type="button" onClick={addItem} className={btnMain}>
@@ -165,7 +166,7 @@ export function ListView({ list, initial, owner, canEdit, words, base, actions }
           {problem}
         </p>
       ) : null}
-      <ul className="m-0 mt-4 flex list-none flex-col border-t border-ink p-0" data-part="rows">
+      <ul className="m-0 mt-4 flex list-none flex-col border-t border-line p-0" data-part="rows">
         {editing === "new" ? (
           <li className="border-b border-line">
             <RowEditor key={fresh} rowId={fresh} row={null} list={list} owner={owner} t={t} actions={actions} onDone={saved} onCancel={() => setEditing(null)} onRemoved={removed} />

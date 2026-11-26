@@ -7,6 +7,7 @@ import * as React from "react";
 
 import { say, type TodayWords } from "../today/today-words";
 import { errorLine, field, help, label, primary, quiet } from "../visits/styles";
+import { cardBox } from "../Card";
 
 const LANGS = ["en", "te", "hi", "kn"] as const;
 type Lang = (typeof LANGS)[number];
@@ -52,7 +53,7 @@ export function OfferForm(p: { base: string; campaignId: string; campaign: Campa
   }
 
   return (
-    <form data-screen="offer-form" noValidate onSubmit={(e) => { e.preventDefault(); void save(); }} className="flex max-w-2xl flex-col gap-5">
+    <form data-screen="offer-form" noValidate onSubmit={(e) => { e.preventDefault(); void save(); }} className={`${cardBox} flex max-w-2xl flex-col gap-5`}>
       <div>
         <label htmlFor="of-name" className={label}>{say(words, "camp.field.name")}</label>
         <input id="of-name" value={name} maxLength={100} disabled={busy} onChange={(e) => setName(e.target.value)} className={field} />

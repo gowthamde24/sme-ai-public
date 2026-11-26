@@ -8,6 +8,7 @@ import { URGENCIES, type FixField, type LeadProfile } from "@/lib/lead-desk/prof
 
 import { btnMain, fieldInput, pillAmber, pillNeutral } from "../ui";
 import { makeT, type Words } from "../words";
+import { Card } from "../Card";
 
 const ROWS: readonly FixField[] = ["need", "quantity", "area", "city", "budget", "timeline", "urgency"];
 
@@ -35,16 +36,13 @@ export function LeadProfileCard({ words, leadId, profile, canEdit, fix }: { word
     } else setError(true);
   };
   return (
-    <section aria-labelledby="lp-card-h" data-part="lead-profile" className="mt-4 flex flex-col gap-2">
-      <h2 id="lp-card-h" className="text-lg font-semibold text-ink">
-        {t("lp.card.title")}
-      </h2>
+    <Card data-part="lead-profile" aria-labelledby="lp-card-h" className="mt-4" headingId="lp-card-h" title={t("lp.card.title")}>
       <ul className="flex flex-col gap-2">
         {shown.map((f) => {
           const value = profile[f] as string;
           const guessed = profile.guessed.includes(f);
           return (
-            <li key={f} data-field={f} data-guessed={guessed ? "1" : "0"} className="flex flex-col gap-1 rounded-xl border border-line px-3 py-2">
+            <li key={f} data-field={f} data-guessed={guessed ? "1" : "0"} className="flex flex-col gap-1 border-t border-line pt-2 first:border-t-0 first:pt-0">
               <span className="text-sm text-muted">{t(`lp.f.${f}`)}</span>
               {editing === f ? (
                 <span className="flex flex-wrap items-center gap-2">
@@ -111,6 +109,6 @@ export function LeadProfileCard({ words, leadId, profile, canEdit, fix }: { word
           <p className="mt-1 whitespace-pre-wrap break-words text-ink">{profile.originalText}</p>
         </details>
       ) : null}
-    </section>
+    </Card>
   );
 }

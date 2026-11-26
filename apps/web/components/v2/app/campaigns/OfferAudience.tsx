@@ -6,6 +6,7 @@ import * as React from "react";
 
 import { say, type TodayWords } from "../today/today-words";
 import { errorLine, field, help, label, okLine, primary } from "../visits/styles";
+import { cardBox } from "../Card";
 
 type Refused = { ok: false; error: string; mfa?: boolean };
 export type AddConsentedAction = (dueDay: string, q: string) => Promise<{ ok: true; added: number; skipped: { row: number; reason: string }[]; recipients: number } | Refused>;
@@ -33,7 +34,7 @@ export function OfferAudience({ words, base, canEdit, today, action }: { words: 
     router.refresh();
   }
   return (
-    <section aria-labelledby="oa-h" data-part="offer-audience" className="flex flex-col gap-3 rounded-2xl border border-line p-4">
+    <section aria-labelledby="oa-h" data-part="offer-audience" className={`${cardBox} flex flex-col gap-3`}>
       <h2 id="oa-h" className="font-display text-xl font-bold">{say(words, "of.aud.title")}</h2>
       <p className={help}>{say(words, "of.aud.help")}</p>
       <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">

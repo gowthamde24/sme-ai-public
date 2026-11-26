@@ -8,6 +8,7 @@ import { LIST_KINDS, NAME_MAX, type Done, type ListKind, type SellList } from "@
 
 import { btnMain, btnQuiet, fieldInput, fieldLabel } from "../ui";
 import { makeT, type Words } from "../words";
+import { cardBox } from "../Card";
 
 /** The line icon and category colour of each kind (the product's five category colours). */
 const COLOUR: Readonly<Record<string, string>> = { call: "text-[color:var(--k-call)]", chat: "text-[color:var(--k-chat)]", visit: "text-[color:var(--k-visit)]", offer: "text-[color:var(--k-offer)]", find: "text-[color:var(--k-find)]" };
@@ -46,7 +47,7 @@ export function AddListForm({ words, base, create }: { words: Words; base: strin
     setProblem(t(`wls.err.${r.error}` as "wls.err.unavailable"));
   };
   return (
-    <form onSubmit={(e) => void submit(e)} className="flex flex-col gap-4" data-part="add-list">
+    <form onSubmit={(e) => void submit(e)} className={`${cardBox} flex flex-col gap-4`} data-part="add-list">
       <p className="m-0 text-sm font-bold text-muted">{t("wls.new.kind")}</p>
       <div role="radiogroup" aria-label={t("wls.new.kind")} className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         {LIST_KINDS.map((k) => {

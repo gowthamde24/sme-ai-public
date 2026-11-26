@@ -4,6 +4,7 @@ import { ADDRESSES } from "@/lib/site/business";
 
 import { makeT, type Words } from "../../words";
 import { ExtraLines } from "./ExtraLines";
+import { cardBox } from "../../Card";
 
 /** EXTRA_LINES: what the Owner needs to add and cancel lines. Absent = the switch is off: "Add a line" is the mail to us, as it was. */
 export type ExtraProps = { overview: ExtraOverview; actions: LineActions; creditsHref: string; locale: string; test: boolean };
@@ -17,7 +18,7 @@ export function CallsAtOnce({ words, lines, owner, test = false, extra = null }:
   const t = makeT(words);
   const subject = encodeURIComponent(t("cpn.once.add"));
   return (
-    <section data-part="calls-at-once" aria-labelledby="cpn-once-h" className="mt-8 min-w-0 border-t border-line pt-5">
+    <section data-part="calls-at-once" aria-labelledby="cpn-once-h" className={`mt-8 ${cardBox}`}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h2 id="cpn-once-h" className="m-0 font-display text-xl font-semibold text-ink">
           {t("cpn.once.title")}

@@ -8,6 +8,7 @@ import { COMPANIES, NUMBER_TYPES, forwardCode, isPrefix, type ClaimResult, type 
 import { btnMain, btnQuiet, fieldInput, fieldLabel } from "../ui";
 import { makeT, type Words } from "../words";
 import { KycPendingNotice } from "./KycPendingNotice";
+import { cardBox } from "../Card";
 
 /**
  * The number picker (owner, 28 Nov 2026; mock "Phone numbers"): three plain steps on the page, no card, hairlines between them. 1 Pick your number (the type, "starts with", Search, the numbers as radio rows, ONE orange
@@ -20,7 +21,7 @@ const ERR: Record<Refusal["error"], string> = { invalid: "pick.err.prefix", forb
 
 function Step({ n, title, state, children }: { n: number; title: string; state: "now" | "done" | "off"; children?: React.ReactNode }) {
   return (
-    <li data-step={n} data-state-of={state} className="flex gap-4 border-b border-line py-5 first:border-t first:border-t-ink">
+    <li data-step={n} data-state-of={state} className="flex gap-4 border-b border-line py-5 first:pt-0 last:border-b-0 last:pb-0">
       <span aria-hidden="true" className={`grid size-7 shrink-0 place-items-center rounded-full border text-sm font-bold ${state === "now" ? "border-ink bg-ink text-surface" : state === "done" ? "border-ink text-ink" : "border-muted text-muted"}`}>
         {state === "done" ? <Check className="size-4" strokeWidth={2.4} /> : n}
       </span>
@@ -96,7 +97,7 @@ export function PhonePicker({ words, actions, own, canEdit, mock = false, verify
           {t("pick.test")}
         </p>
       ) : null}
-      <ol className="m-0 flex list-none flex-col p-0">
+      <ol className={`${cardBox} m-0 flex list-none flex-col`}>
         <Step n={1} title={mine ? t("pick.mine") : t("pick.s1.title")} state={mine ? "done" : "now"}>
           {mine ? (
             <>

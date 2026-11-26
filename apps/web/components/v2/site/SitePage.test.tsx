@@ -292,3 +292,10 @@ describe("the contact and the calculator, when our WhatsApp number is not set up
   });
 });
 
+describe("the phone number card of the public site (owner, 26 Nov 2026: we offer numbers starting with 9)", () => {
+  it.each(SITE_LANGS)("%s: the sample number starts with 9 and nothing says landline, 080 or 9-series coming soon", (lang) => {
+    const text = htmlText(render(lang, { kind: "home" }));
+    expect(text).toContain("+91 9xxxx xxxxx");
+    expect(text).not.toMatch(/80xx|\(080\)|landline|9-series|coming soon/i);
+  });
+});
