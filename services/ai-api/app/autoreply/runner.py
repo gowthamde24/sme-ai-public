@@ -76,7 +76,7 @@ class AutoReplyRunner:
         if not self._employees_on or not hasattr(self._repository, "employee"):
             return item, True
         try:
-            employee = self._repository.employee(token, uuid.UUID(str(item["tenant_id"])))
+            employee = self._repository.employee(token, uuid.UUID(str(item["tenant_id"])))   # (an optional method of the repository: EMPLOYEES)
         except (KeyError, ValueError, RepositoryError):
             return item, True
         if not employee:
