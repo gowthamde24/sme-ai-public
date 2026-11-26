@@ -94,6 +94,20 @@ READ_WORDS = {
 }
 
 
+class ProductsReadIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    file_id: uuid.UUID
+
+
+@router.post("/products/read")
+def read_products_entries(body: ProductsReadIn, ctx: OwnerAdmin, _jobs: JobsDep, runtime: RuntimeDep) -> JSONResponse:
+    """A photo (a notebook, a printed list, a scan) or a PDF of a PRODUCTS price list becomes draft rows `{name, price_paise|null, unit|null, notes|null, confidence}` (nothing is saved, the file is dropped after a good
+    reading): the owner checks each and saves it as a catalogue item or a row of a list with the usual routes. The file is the one dropped with `POST /assistant/files`. Same rules as the other readings (docs/contracts/what-you-sell.md)."""
+    from app.jobs import products_read
+
+    return JSONResponse(products_read.read_products(runtime, ctx, body.file_id), headers={"Cache-Control": "no-store"})
+
+
 @router.post("/{style}/read")
 def read_entries(style: str, body: ReadIn, ctx: OwnerAdmin, jobs: JobsDep, runtime: RuntimeDep) -> JSONResponse:
     """A sheet, a picture or the owner's own words become draft entries (nothing is saved): the owner checks each and saves it with the usual PUT."""
