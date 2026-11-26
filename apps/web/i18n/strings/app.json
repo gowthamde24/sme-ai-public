@@ -140326,5 +140326,2238 @@
    "hi": "reviewed",
    "kn": "reviewed"
   }
+ },
+ "emp.wiz.step_of": {
+  "en": "Step {n} of {total}",
+  "te": "{total} స్టెప్స్‌లో {n}వ స్టెప్",
+  "hi": "{total} में से स्टेप {n}",
+  "kn": "{total} ರಲ್ಲಿ ಸ್ಟೆಪ್ {n}",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.steps": {
+  "en": "Steps",
+  "te": "స్టెప్స్",
+  "hi": "स्टेप",
+  "kn": "ಸ್ಟೆಪ್‌ಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.step.role": {
+  "en": "Role",
+  "te": "రోల్",
+  "hi": "रोल",
+  "kn": "ರೋಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.step.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.step.voice": {
+  "en": "Voice",
+  "te": "వాయిస్",
+  "hi": "आवाज़",
+  "kn": "ಧ್ವನಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.step.rules": {
+  "en": "Rules",
+  "te": "రూల్స్",
+  "hi": "रूल्स",
+  "kn": "ರೂಲ್ಸ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.step.jobs": {
+  "en": "Work",
+  "te": "పని",
+  "hi": "काम",
+  "kn": "ಕೆಲಸ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.step.preview": {
+  "en": "Preview",
+  "te": "ప్రివ్యూ",
+  "hi": "प्रीव्यू",
+  "kn": "ಪ್ರಿವ್ಯೂ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.step.on": {
+  "en": "Turn on",
+  "te": "ఆన్ చేయండి",
+  "hi": "चालू करें",
+  "kn": "ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.back": {
+  "en": "Back",
+  "te": "వెనక్కి",
+  "hi": "पीछे",
+  "kn": "ಹಿಂದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.next": {
+  "en": "Next",
+  "te": "తర్వాత",
+  "hi": "आगे",
+  "kn": "ಮುಂದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.saving": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सेव हो रहा है…",
+  "kn": "ಸೇವ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.back_list": {
+  "en": "Back to your AI team",
+  "te": "మీ AI టీమ్‌కి తిరిగి వెళ్ళండి",
+  "hi": "अपनी AI टीम पर वापस जाएँ",
+  "kn": "ನಿಮ್ಮ AI ಟೀಮ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.limit.h": {
+  "en": "You cannot add another AI employee",
+  "te": "ఇంకో AI ఎంప్లాయీని చేర్చలేరు",
+  "hi": "अब और AI एम्प्लॉयी नहीं जोड़ सकते",
+  "kn": "ಇನ್ನೊಬ್ಬ AI ಎಂಪ್ಲಾಯಿಯನ್ನು ಸೇರಿಸಲಾಗದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.role.h": {
+  "en": "What will this AI employee do?",
+  "te": "ఈ AI ఎంప్లాయీ ఏ పని చేస్తారు?",
+  "hi": "यह AI एम्प्लॉयी क्या काम करेगा?",
+  "kn": "ಈ AI ಎಂಪ್ಲಾಯಿ ಯಾವ ಕೆಲಸ ಮಾಡುತ್ತಾರೆ?",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.err.role": {
+  "en": "Choose a role to go on.",
+  "te": "ముందుకు వెళ్ళడానికి ఒక రోల్ ఎంచుకోండి.",
+  "hi": "आगे जाने के लिए एक रोल चुनें।",
+  "kn": "ಮುಂದೆ ಹೋಗಲು ಒಂದು ರೋಲ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.name.h": {
+  "en": "What will you call it?",
+  "te": "దీనికి ఏ పేరు పెడతారు?",
+  "hi": "इसका नाम क्या रखेंगे?",
+  "kn": "ಇದಕ್ಕೆ ಯಾವ ಹೆಸರು ಇಡುತ್ತೀರಿ?",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.name.hint": {
+  "en": "Customers will hear this name. Up to {max} letters.",
+  "te": "కస్టమర్లకు ఈ పేరు వినిపిస్తుంది. {max} అక్షరాల వరకు.",
+  "hi": "कस्टमर यही नाम सुनेंगे। {max} अक्षर तक।",
+  "kn": "ಕಸ್ಟಮರ್‌ಗೆ ಈ ಹೆಸರು ಕೇಳಿಸುತ್ತದೆ. {max} ಅಕ್ಷರಗಳವರೆಗೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.err.name_empty": {
+  "en": "Type a name to go on.",
+  "te": "ముందుకు వెళ్ళడానికి ఒక పేరు రాయండి.",
+  "hi": "आगे जाने के लिए एक नाम लिखें।",
+  "kn": "ಮುಂದೆ ಹೋಗಲು ಒಂದು ಹೆಸರು ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.err.name_long": {
+  "en": "The name can have up to {max} letters.",
+  "te": "పేరు {max} అక్షరాల లోపు ఉండాలి.",
+  "hi": "नाम {max} अक्षर तक का हो सकता है।",
+  "kn": "ಹೆಸರು {max} ಅಕ್ಷರಗಳೊಳಗೆ ಇರಬೇಕು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.voice.h": {
+  "en": "Which languages does it speak?",
+  "te": "ఇది ఏ భాషల్లో మాట్లాడుతుంది?",
+  "hi": "यह किन भाषाओं में बात करेगा?",
+  "kn": "ಇದು ಯಾವ ಭಾಷೆಗಳಲ್ಲಿ ಮಾತನಾಡುತ್ತದೆ?",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.voice.langs": {
+  "en": "Languages",
+  "te": "భాషలు",
+  "hi": "भाषाएँ",
+  "kn": "ಭಾಷೆಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.voice.pick": {
+  "en": "Voice for {language}",
+  "te": "{language}కి వాయిస్",
+  "hi": "{language} के लिए आवाज़",
+  "kn": "{language} ಗೆ ಧ್ವನಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.voice.loading": {
+  "en": "Getting the sample…",
+  "te": "శాంపిల్ తెస్తున్నాం…",
+  "hi": "सैंपल ला रहे हैं…",
+  "kn": "ಸ್ಯಾಂಪಲ್ ತರುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.voice.stop": {
+  "en": "Stop",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.voice.none": {
+  "en": "No voices are listed for {language} yet. The standard voice is used.",
+  "te": "{language}కి ఇంకా వాయిస్‌లు లేవు. స్టాండర్డ్ వాయిస్ వాడతాం.",
+  "hi": "{language} की आवाज़ें अभी लिस्ट में नहीं हैं। स्टैंडर्ड आवाज़ इस्तेमाल होगी।",
+  "kn": "{language} ಗೆ ಇನ್ನೂ ಧ್ವನಿಗಳು ಇಲ್ಲ. ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಧ್ವನಿ ಬಳಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.voice.recommended": {
+  "en": "Recommended",
+  "te": "సూచించినది",
+  "hi": "सुझाई गई",
+  "kn": "ಸೂಚಿಸಿದ್ದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.err.langs": {
+  "en": "Choose at least one language.",
+  "te": "కనీసం ఒక భాష ఎంచుకోండి.",
+  "hi": "कम से कम एक भाषा चुनें।",
+  "kn": "ಕನಿಷ್ಠ ಒಂದು ಭಾಷೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.err.voice": {
+  "en": "Pick a voice for {language}.",
+  "te": "{language}కి ఒక వాయిస్ ఎంచుకోండి.",
+  "hi": "{language} के लिए एक आवाज़ चुनें।",
+  "kn": "{language} ಗೆ ಒಂದು ಧ್ವನಿ ಆರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.rules.h": {
+  "en": "Rules for this AI employee",
+  "te": "ఈ AI ఎంప్లాయీకి రూల్స్",
+  "hi": "इस AI एम्प्लॉयी के रूल्स",
+  "kn": "ಈ AI ಎಂಪ್ಲಾಯಿಗೆ ರೂಲ್ಸ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.ask.h": {
+  "en": "Ask me first",
+  "te": "ముందు నన్ను అడగాలి",
+  "hi": "पहले मुझसे पूछें",
+  "kn": "ಮೊದಲು ನನ್ನನ್ನು ಕೇಳಬೇಕು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.ask.d": {
+  "en": "Tick what it must ask you about first. What you leave unticked, it does on its own.",
+  "te": "ముందు మిమ్మల్ని అడగాల్సినవి టిక్ చేయండి. టిక్ చేయనివి అదే చేసేస్తుంది.",
+  "hi": "जो पहले आपसे पूछना है उसे टिक करें। जो टिक नहीं करेंगे, वह यह खुद करेगा।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳಬೇಕಾದ್ದಕ್ಕೆ ಟಿಕ್ ಮಾಡಿ. ಟಿಕ್ ಮಾಡದ್ದನ್ನು ಅದೇ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.ask.send_message": {
+  "en": "Sending a message",
+  "te": "మెసేజ్ పంపడం",
+  "hi": "मैसेज भेजना",
+  "kn": "ಮೆಸೇಜ್ ಕಳುಹಿಸುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.ask.make_call": {
+  "en": "Making a call",
+  "te": "కాల్ చేయడం",
+  "hi": "कॉल करना",
+  "kn": "ಕರೆ ಮಾಡುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.ask.give_discount": {
+  "en": "Giving a discount",
+  "te": "డిస్కౌంట్ ఇవ్వడం",
+  "hi": "डिस्काउंट देना",
+  "kn": "ಡಿಸ್ಕೌಂಟ್ ಕೊಡುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.ask.promise_date": {
+  "en": "Promising a date",
+  "te": "ఒక డేట్‌కి మాట ఇవ్వడం",
+  "hi": "किसी तारीख का वादा करना",
+  "kn": "ಒಂದು ಡೇಟ್‌ಗೆ ಮಾತು ಕೊಡುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.ask.book_visit": {
+  "en": "Booking a visit",
+  "te": "విజిట్ బుక్ చేయడం",
+  "hi": "विज़िट बुक करना",
+  "kn": "ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.ask.share_price": {
+  "en": "Sharing a price",
+  "te": "ధర చెప్పడం",
+  "hi": "दाम बताना",
+  "kn": "ಬೆಲೆ ಹೇಳುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.ask.send_media": {
+  "en": "Sending photos or files",
+  "te": "ఫోటోలు, ఫైల్స్ పంపడం",
+  "hi": "फ़ोटो या फ़ाइल भेजना",
+  "kn": "ಫೋಟೋ, ಫೈಲ್ ಕಳುಹಿಸುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.hours.h": {
+  "en": "Working hours",
+  "te": "పని చేసే టైమ్",
+  "hi": "काम का समय",
+  "kn": "ಕೆಲಸದ ಸಮಯ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.hours.same": {
+  "en": "Same as the business",
+  "te": "బిజినెస్ టైమ్‌లాగే",
+  "hi": "बिज़नेस जैसा ही",
+  "kn": "ಬಿಸಿನೆಸ್ ಸಮಯದಂತೆಯೇ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.hours.only": {
+  "en": "Only these hours",
+  "te": "ఈ టైమ్‌లో మాత్రమే",
+  "hi": "सिर्फ़ इन घंटों में",
+  "kn": "ಈ ಸಮಯದಲ್ಲಿ ಮಾತ್ರ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.hours.days": {
+  "en": "Days",
+  "te": "రోజులు",
+  "hi": "दिन",
+  "kn": "ದಿನಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.hours.from": {
+  "en": "From",
+  "te": "నుంచి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.hours.to": {
+  "en": "To",
+  "te": "వరకు",
+  "hi": "तक",
+  "kn": "ವರೆಗೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.hours.note": {
+  "en": "It can only work between 10:00 and 21:00, India time. You can make it shorter, not longer.",
+  "te": "ఇది ఇండియా టైమ్ ప్రకారం 10:00 నుంచి 21:00 మధ్యే పని చేయగలదు. తగ్గించవచ్చు, పెంచలేరు.",
+  "hi": "यह भारत के समय में 10:00 से 21:00 के बीच ही काम कर सकता है। कम कर सकते हैं, बढ़ा नहीं सकते।",
+  "kn": "ಇದು ಭಾರತೀಯ ಸಮಯದಲ್ಲಿ 10:00 ರಿಂದ 21:00 ರ ನಡುವೆ ಮಾತ್ರ ಕೆಲಸ ಮಾಡಬಹುದು. ಕಡಿಮೆ ಮಾಡಬಹುದು, ಹೆಚ್ಚು ಮಾಡಲಾಗದು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.err.hours_days": {
+  "en": "Choose at least one day.",
+  "te": "కనీసం ఒక రోజు ఎంచుకోండి.",
+  "hi": "कम से कम एक दिन चुनें।",
+  "kn": "ಕನಿಷ್ಠ ಒಂದು ದಿನ ಆರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.err.hours_time": {
+  "en": "Type the times like 10:00 and 18:00, with the start before the end.",
+  "te": "టైమ్ 10:00, 18:00 లాగా రాయండి. మొదలు టైమ్ ముగింపు కంటే ముందు ఉండాలి.",
+  "hi": "समय 10:00 और 18:00 की तरह लिखें। शुरू का समय अंत से पहले हो।",
+  "kn": "ಸಮಯವನ್ನು 10:00, 18:00 ಹಾಗೆ ಬರೆಯಿರಿ. ಆರಂಭ ಅಂತ್ಯಕ್ಕಿಂತ ಮೊದಲು ಇರಬೇಕು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.day.1": {
+  "en": "Mon",
+  "te": "సోమ",
+  "hi": "सोम",
+  "kn": "ಸೋಮ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.day.2": {
+  "en": "Tue",
+  "te": "మంగళ",
+  "hi": "मंगल",
+  "kn": "ಮಂಗಳ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.day.3": {
+  "en": "Wed",
+  "te": "బుధ",
+  "hi": "बुध",
+  "kn": "ಬುಧ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.day.4": {
+  "en": "Thu",
+  "te": "గురు",
+  "hi": "गुरु",
+  "kn": "ಗುರು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.day.5": {
+  "en": "Fri",
+  "te": "శుక్ర",
+  "hi": "शुक्र",
+  "kn": "ಶುಕ್ರ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.day.6": {
+  "en": "Sat",
+  "te": "శని",
+  "hi": "शनि",
+  "kn": "ಶನಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.day.7": {
+  "en": "Sun",
+  "te": "ఆది",
+  "hi": "रवि",
+  "kn": "ಭಾನು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.never.h": {
+  "en": "Words it must never say",
+  "te": "ఇది ఎప్పుడూ అనకూడని మాటలు",
+  "hi": "जो शब्द यह कभी न बोले",
+  "kn": "ಇದು ಎಂದಿಗೂ ಹೇಳಬಾರದ ಮಾತುಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.never.label": {
+  "en": "Add a word or phrase",
+  "te": "ఒక మాట చేర్చండి",
+  "hi": "एक शब्द या बात जोड़ें",
+  "kn": "ಒಂದು ಮಾತು ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.never.hint": {
+  "en": "Up to {len} letters each.",
+  "te": "ఒక్కోటి {len} అక్షరాల వరకు.",
+  "hi": "हर एक {len} अक्षर तक।",
+  "kn": "ಒಂದೊಂದು {len} ಅಕ್ಷರಗಳವರೆಗೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.never.add": {
+  "en": "Add",
+  "te": "చేర్చండి",
+  "hi": "जोड़ें",
+  "kn": "ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.never.remove": {
+  "en": "Remove {word}",
+  "te": "{word} తీసేయండి",
+  "hi": "{word} हटाएँ",
+  "kn": "{word} ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.never.count": {
+  "en": "{n} of {max} words",
+  "te": "{max} లో {n} మాటలు",
+  "hi": "{max} में से {n} शब्द",
+  "kn": "{max} ರಲ್ಲಿ {n} ಮಾತುಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.never.full": {
+  "en": "You have added all the words you can.",
+  "te": "చేర్చగలిగినన్ని మాటలు చేర్చారు.",
+  "hi": "जितने शब्द जोड़ सकते थे, जोड़ दिए हैं।",
+  "kn": "ಸೇರಿಸಬಹುದಾದ ಎಲ್ಲಾ ಮಾತುಗಳನ್ನು ಸೇರಿಸಿದ್ದೀರಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.never.empty": {
+  "en": "No words added.",
+  "te": "ఏ మాటా చేర్చలేదు.",
+  "hi": "कोई शब्द नहीं जोड़ा।",
+  "kn": "ಯಾವ ಮಾತೂ ಸೇರಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.instr.h": {
+  "en": "Extra instructions",
+  "te": "ఎక్స్‌ట్రా ఇన్‌స్ట్రక్షన్స్",
+  "hi": "एक्स्ट्रा इंस्ट्रक्शन",
+  "kn": "ಎಕ್ಸ್ಟ್ರಾ ಇನ್‌ಸ್ಟ್ರಕ್ಷನ್ಸ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.instr.d": {
+  "en": "Anything else it should know or follow, in your own words. Only if you want.",
+  "te": "ఇది ఇంకా తెలుసుకోవాల్సింది, పాటించాల్సింది ఉంటే మీ మాటల్లో రాయండి. ఇష్టమైతేనే.",
+  "hi": "कुछ और जो इसे जानना या मानना है, अपने शब्दों में लिखें। मन हो तभी।",
+  "kn": "ಇದು ಇನ್ನೂ ತಿಳಿಯಬೇಕಾದ್ದು, ಪಾಲಿಸಬೇಕಾದ್ದು ಇದ್ದರೆ ನಿಮ್ಮ ಮಾತಿನಲ್ಲಿ ಬರೆಯಿರಿ. ಬೇಕಿದ್ದರೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.instr.count": {
+  "en": "{n} of {max}",
+  "te": "{max} లో {n}",
+  "hi": "{max} में से {n}",
+  "kn": "{max} ರಲ್ಲಿ {n}",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.err.instr_long": {
+  "en": "Make it {max} letters or fewer.",
+  "te": "{max} అక్షరాల లోపు చేయండి.",
+  "hi": "इसे {max} अक्षर या उससे कम करें।",
+  "kn": "ಇದನ್ನು {max} ಅಕ್ಷರಗಳೊಳಗೆ ಮಾಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.jobs.h": {
+  "en": "What should it take care of?",
+  "te": "ఇది ఏ పనులు చూసుకోవాలి?",
+  "hi": "यह कौन से काम संभालेगा?",
+  "kn": "ಇದು ಯಾವ ಕೆಲಸಗಳನ್ನು ನೋಡಿಕೊಳ್ಳಬೇಕು?",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.jobs.d": {
+  "en": "These are ticked for the role you chose. Tick or untick as you like.",
+  "te": "మీరు ఎంచుకున్న రోల్‌కి ఇవి టిక్ అయి ఉన్నాయి. మీకు నచ్చినట్టు టిక్ చేయండి, తీసేయండి.",
+  "hi": "आपके चुने रोल के लिए ये पहले से टिक हैं। अपनी मर्ज़ी से टिक करें या हटाएँ।",
+  "kn": "ನೀವು ಆರಿಸಿದ ರೋಲ್‌ಗೆ ಇವು ಟಿಕ್ ಆಗಿವೆ. ಬೇಕಾದಂತೆ ಟಿಕ್ ಮಾಡಿ ಅಥವಾ ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.enquiry_reply": {
+  "en": "Reply to new enquiries",
+  "te": "కొత్త ఎంక్వైరీలకు జవాబు ఇవ్వడం",
+  "hi": "नई इन्क्वायरी का जवाब देना",
+  "kn": "ಹೊಸ ಎನ್‌ಕ್ವೈರಿಗಳಿಗೆ ಉತ್ತರ ಕೊಡುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.faq_answers": {
+  "en": "Answer common questions",
+  "te": "అందరూ అడిగే ప్రశ్నలకు జవాబు ఇవ్వడం",
+  "hi": "आम सवालों के जवाब देना",
+  "kn": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರ ಕೊಡುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.visit_booking": {
+  "en": "Book store visits",
+  "te": "స్టోర్ విజిట్లు బుక్ చేయడం",
+  "hi": "स्टोर विज़िट बुक करना",
+  "kn": "ಸ್ಟೋರ್ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.quote_chase": {
+  "en": "Follow up on quotes",
+  "te": "కొటేషన్ల గురించి ఫాలో-అప్ చేయడం",
+  "hi": "कोटेशन पर फ़ॉलो-अप करना",
+  "kn": "ಕೊಟೇಶನ್ ಬಗ್ಗೆ ಫಾಲೋ-ಅಪ್ ಮಾಡುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.lead_qualify": {
+  "en": "Find out who is really interested",
+  "te": "ఎవరికి నిజంగా ఇంట్రెస్ట్ ఉందో తెలుసుకోవడం",
+  "hi": "पता करना कि किसे सच में इंटरेस्ट है",
+  "kn": "ಯಾರಿಗೆ ನಿಜವಾಗಿ ಇಂಟರೆಸ್ಟ್ ಇದೆ ಎಂದು ತಿಳಿಯುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.follow_up": {
+  "en": "Follow up with customers who have not decided",
+  "te": "ఇంకా నిర్ణయించుకోని కస్టమర్లకు ఫాలో-అప్ చేయడం",
+  "hi": "जिन्होंने अभी तय नहीं किया उन कस्टमर को फ़ॉलो-अप करना",
+  "kn": "ಇನ್ನೂ ತೀರ್ಮಾನಿಸದ ಕಸ್ಟಮರ್‌ಗಳಿಗೆ ಫಾಲೋ-ಅಪ್ ಮಾಡುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.review_request": {
+  "en": "Ask happy customers for a review",
+  "te": "సంతోషంగా ఉన్న కస్టమర్లను రివ్యూ అడగడం",
+  "hi": "खुश कस्टमर से रिव्यू माँगना",
+  "kn": "ಖುಷಿಯಾದ ಕಸ್ಟಮರ್‌ಗಳನ್ನು ರಿವ್ಯೂ ಕೇಳುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.payment_reminder": {
+  "en": "Remind about payments due",
+  "te": "రావాల్సిన పేమెంట్ల గురించి గుర్తు చేయడం",
+  "hi": "बाकी पेमेंट की याद दिलाना",
+  "kn": "ಬರಬೇಕಾದ ಪೇಮೆಂಟ್ ಬಗ್ಗೆ ನೆನಪಿಸುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.resp.appointment_reminder": {
+  "en": "Remind about visits and appointments",
+  "te": "విజిట్లు, అపాయింట్‌మెంట్ల గురించి గుర్తు చేయడం",
+  "hi": "विज़िट और अपॉइंटमेंट की याद दिलाना",
+  "kn": "ವಿಸಿಟ್, ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್ ಬಗ್ಗೆ ನೆನಪಿಸುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.title_field.label": {
+  "en": "Role title",
+  "te": "రోల్ టైటిల్",
+  "hi": "रोल टाइटल",
+  "kn": "ರೋಲ್ ಟೈಟಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.title_field.d": {
+  "en": "Shown on its card, for example Showroom helper. {min} to {max} letters. You need this or at least one ticked job.",
+  "te": "దాని కార్డ్ మీద కనిపిస్తుంది, ఉదాహరణకు షోరూమ్ హెల్పర్. {min} నుంచి {max} అక్షరాలు. ఇది లేదా కనీసం ఒక టిక్ చేసిన పని ఉండాలి.",
+  "hi": "इसके कार्ड पर दिखता है, जैसे शोरूम हेल्पर। {min} से {max} अक्षर। यह या कम से कम एक टिक किया काम चाहिए।",
+  "kn": "ಅದರ ಕಾರ್ಡ್ ಮೇಲೆ ಕಾಣಿಸುತ್ತದೆ, ಉದಾಹರಣೆಗೆ ಶೋರೂಮ್ ಹೆಲ್ಪರ್. {min} ರಿಂದ {max} ಅಕ್ಷರಗಳು. ಇದು ಅಥವಾ ಕನಿಷ್ಠ ಒಂದು ಟಿಕ್ ಮಾಡಿದ ಕೆಲಸ ಬೇಕು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.err.title_short": {
+  "en": "The role title needs {min} to {max} letters.",
+  "te": "రోల్ టైటిల్ {min} నుంచి {max} అక్షరాలు ఉండాలి.",
+  "hi": "रोल टाइटल {min} से {max} अक्षर का होना चाहिए।",
+  "kn": "ರೋಲ್ ಟೈಟಲ್ {min} ರಿಂದ {max} ಅಕ್ಷರ ಇರಬೇಕು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.err.need_job": {
+  "en": "Tick at least one job or give a role title.",
+  "te": "కనీసం ఒక పని టిక్ చేయండి, లేదా రోల్ టైటిల్ రాయండి.",
+  "hi": "कम से कम एक काम टिक करें, या रोल टाइटल लिखें।",
+  "kn": "ಕನಿಷ್ಠ ಒಂದು ಕೆಲಸ ಟಿಕ್ ಮಾಡಿ, ಅಥವಾ ರೋಲ್ ಟೈಟಲ್ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.preview.h": {
+  "en": "Hear how it will greet customers",
+  "te": "కస్టమర్లను ఎలా పలకరిస్తుందో వినండి",
+  "hi": "सुनें कि यह कस्टमर को कैसे नमस्ते कहेगा",
+  "kn": "ಕಸ್ಟಮರ್‌ಗೆ ಹೇಗೆ ನಮಸ್ಕಾರ ಹೇಳುತ್ತದೆ ಕೇಳಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.preview.d": {
+  "en": "This is its opening line in each language, in the voice you picked. The voice always says it is an AI assistant.",
+  "te": "మీరు ఎంచుకున్న వాయిస్‌లో, ప్రతి భాషలో దీని మొదటి మాట ఇది. ఇది AI అసిస్టెంట్ అని వాయిస్ ఎప్పుడూ చెబుతుంది.",
+  "hi": "आपकी चुनी आवाज़ में हर भाषा में इसकी पहली बात यह है। आवाज़ हमेशा बताती है कि यह AI असिस्टेंट है।",
+  "kn": "ನೀವು ಆರಿಸಿದ ಧ್ವನಿಯಲ್ಲಿ ಪ್ರತಿ ಭಾಷೆಯಲ್ಲಿ ಇದರ ಮೊದಲ ಮಾತು ಇದು. ಇದು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಧ್ವನಿ ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.preview.said": {
+  "en": "It says:",
+  "te": "ఇది ఇలా అంటుంది:",
+  "hi": "यह ऐसा बोलता है:",
+  "kn": "ಇದು ಹೀಗೆ ಹೇಳುತ್ತದೆ:",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.on.h": {
+  "en": "Ready to turn on?",
+  "te": "ఆన్ చేయడానికి సిద్ధమా?",
+  "hi": "चालू करने के लिए तैयार?",
+  "kn": "ಆನ್ ಮಾಡಲು ಸಿದ್ಧವೇ?",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.on.d": {
+  "en": "Check your choices. You can change all of them later on its page.",
+  "te": "మీరు ఎంచుకున్నవి చూసుకోండి. వీటన్నింటినీ తర్వాత దాని పేజీలో మార్చవచ్చు.",
+  "hi": "अपने चुने हुए देख लें। इन सबको बाद में इसके पेज पर बदल सकते हैं।",
+  "kn": "ನೀವು ಆರಿಸಿದ್ದನ್ನು ನೋಡಿಕೊಳ್ಳಿ. ಇವನ್ನೆಲ್ಲ ನಂತರ ಅದರ ಪೇಜ್‌ನಲ್ಲಿ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.sum.langs": {
+  "en": "Languages and voices",
+  "te": "భాషలు, వాయిస్‌లు",
+  "hi": "भाषाएँ और आवाज़ें",
+  "kn": "ಭಾಷೆಗಳು ಮತ್ತು ಧ್ವನಿಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.sum.ask": {
+  "en": "Asks you first",
+  "te": "ముందు మిమ్మల్ని అడిగేవి",
+  "hi": "पहले आपसे पूछता है",
+  "kn": "ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುವುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.sum.ask_none": {
+  "en": "Nothing: it does everything on its own.",
+  "te": "ఏదీ లేదు: అన్నీ అదే చేస్తుంది.",
+  "hi": "कुछ नहीं: सब खुद करता है।",
+  "kn": "ಏನೂ ಇಲ್ಲ: ಎಲ್ಲವನ್ನೂ ಅದೇ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.sum.hours_only": {
+  "en": "{days}, {from} to {to}",
+  "te": "{days}, {from} నుంచి {to} వరకు",
+  "hi": "{days}, {from} से {to} तक",
+  "kn": "{days}, {from} ರಿಂದ {to} ವರೆಗೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.sum.voice_default": {
+  "en": "standard voice",
+  "te": "స్టాండర్డ్ వాయిస్",
+  "hi": "स्टैंडर्ड आवाज़",
+  "kn": "ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಧ್ವನಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.sum.none": {
+  "en": "None",
+  "te": "ఏవీ లేవు",
+  "hi": "कुछ नहीं",
+  "kn": "ಏನೂ ಇಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.on.later": {
+  "en": "Save and turn on later",
+  "te": "సేవ్ చేయండి, తర్వాత ఆన్ చేయండి",
+  "hi": "सेव करें, बाद में चालू करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ, ನಂತರ ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.wiz.on.later_note": {
+  "en": "It stays on your AI team as “Not on yet”.",
+  "te": "ఇది మీ AI టీమ్‌లో “ఇంకా ఆన్ కాలేదు” అని ఉంటుంది.",
+  "hi": "यह आपकी AI टीम में “अभी चालू नहीं” दिखेगा।",
+  "kn": "ಇದು ನಿಮ್ಮ AI ಟೀಮ್‌ನಲ್ಲಿ “ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ” ಎಂದು ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "frame.sidebar.close": {
+  "en": "Close the sidebar",
+  "te": "సైడ్‌బార్ మూసేయండి",
+  "hi": "साइडबार बंद करें",
+  "kn": "ಸೈಡ್‌ಬಾರ್ ಮುಚ್ಚಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "frame.sidebar.open": {
+  "en": "Open the sidebar",
+  "te": "సైడ్‌బార్ తెరవండి",
+  "hi": "साइडबार खोलें",
+  "kn": "ಸೈಡ್‌ಬಾರ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "nav.item.employees": {
+  "en": "AI Team",
+  "te": "AI టీమ్",
+  "hi": "AI टीम",
+  "kn": "AI ಟೀಮ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.back": {
+  "en": "Back to your AI team",
+  "te": "మీ AI టీమ్‌కి వెనక్కి",
+  "hi": "अपनी AI टीम पर वापस",
+  "kn": "ನಿಮ್ಮ AI ಟೀಮ್‌ಗೆ ಹಿಂದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.tabs": {
+  "en": "Parts of this AI employee",
+  "te": "ఈ AI ఎంప్లాయీ భాగాలు",
+  "hi": "इस AI एम्प्लॉयी के हिस्से",
+  "kn": "ಈ AI ಎಂಪ್ಲಾಯಿಯ ಭಾಗಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.tab.overview": {
+  "en": "Overview",
+  "te": "ఓవర్‌వ్యూ",
+  "hi": "ओवरव्यू",
+  "kn": "ಓವರ್‌ವ್ಯೂ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.tab.voice": {
+  "en": "Voice and language",
+  "te": "వాయిస్, భాష",
+  "hi": "वॉइस और भाषा",
+  "kn": "ವಾಯ್ಸ್ ಮತ್ತು ಭಾಷೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.tab.rules": {
+  "en": "Rules",
+  "te": "రూల్స్",
+  "hi": "रूल्स",
+  "kn": "ರೂಲ್ಸ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.tab.responsibilities": {
+  "en": "Responsibilities",
+  "te": "పనులు",
+  "hi": "काम",
+  "kn": "ಕೆಲಸಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.tab.activity": {
+  "en": "Activity",
+  "te": "యాక్టివిటీ",
+  "hi": "एक्टिविटी",
+  "kn": "ಆ್ಯಕ್ಟಿವಿಟಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.tab.phone": {
+  "en": "Phone",
+  "te": "ఫోన్",
+  "hi": "फोन",
+  "kn": "ಫೋನ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.saved": {
+  "en": "Saved",
+  "te": "సేవ్ అయింది",
+  "hi": "सेव हो गया",
+  "kn": "ಸೇವ್ ಆಯಿತು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.loading": {
+  "en": "Loading",
+  "te": "లోడ్ అవుతోంది",
+  "hi": "लोड हो रहा है",
+  "kn": "ಲೋಡ್ ಆಗುತ್ತಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.default_note": {
+  "en": "This AI employee is your main assistant. Its voice and way of speaking are set in My assistant.",
+  "te": "ఈ AI ఎంప్లాయీ మీ మెయిన్ అసిస్టెంట్. దీని వాయిస్, మాట్లాడే తీరు My assistant లో సెట్ చేస్తారు.",
+  "hi": "यह AI एम्प्लॉयी आपका मुख्य असिस्टेंट है। इसकी वॉइस और बात करने का तरीका My assistant में सेट होता है।",
+  "kn": "ಈ AI ಎಂಪ್ಲಾಯಿ ನಿಮ್ಮ ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್. ಇದರ ವಾಯ್ಸ್ ಮತ್ತು ಮಾತನಾಡುವ ರೀತಿ My assistant ನಲ್ಲಿ ಸೆಟ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.default_link": {
+  "en": "Open My assistant",
+  "te": "My assistant ఓపెన్ చేయండి",
+  "hi": "My assistant खोलें",
+  "kn": "My assistant ಓಪನ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.ov.status": {
+  "en": "Status",
+  "te": "స్టేటస్",
+  "hi": "स्टेटस",
+  "kn": "ಸ್ಟೇಟಸ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.archive": {
+  "en": "Archive",
+  "te": "ఆర్కైవ్ చేయండి",
+  "hi": "आर्काइव करें",
+  "kn": "ಆರ್ಕೈವ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.archive.confirm": {
+  "en": "Archive keeps its history and frees its number.",
+  "te": "ఆర్కైవ్ చేస్తే దీని హిస్టరీ ఉంటుంది, దీని నంబర్ ఖాళీ అవుతుంది.",
+  "hi": "आर्काइव करने पर इसकी हिस्ट्री रहती है और इसका नंबर खाली हो जाता है।",
+  "kn": "ಆರ್ಕೈವ್ ಮಾಡಿದರೆ ಇದರ ಹಿಸ್ಟರಿ ಉಳಿಯುತ್ತದೆ, ಇದರ ನಂಬರ್ ಖಾಲಿ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.archive.yes": {
+  "en": "Yes, archive {name}",
+  "te": "అవును, {name}ని ఆర్కైవ్ చేయండి",
+  "hi": "हाँ, {name} को आर्काइव करें",
+  "kn": "ಹೌದು, {name} ಅನ್ನು ಆರ್ಕೈವ್ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.archive.no": {
+  "en": "No, keep it",
+  "te": "వద్దు, ఉంచండి",
+  "hi": "नहीं, रहने दें",
+  "kn": "ಬೇಡ, ಹಾಗೇ ಇರಲಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.ov.today": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.ov.speaks": {
+  "en": "Languages: {languages}",
+  "te": "భాషలు: {languages}",
+  "hi": "भाषाएँ: {languages}",
+  "kn": "ಭಾಷೆಗಳು: {languages}",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.ov.no_language": {
+  "en": "No language chosen yet.",
+  "te": "ఇంకా భాష ఎంచుకోలేదు.",
+  "hi": "अभी कोई भाषा नहीं चुनी है।",
+  "kn": "ಇನ್ನೂ ಭಾಷೆ ಆರಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.ov.summary": {
+  "en": "{name}: {role}, with {n} jobs to take care of.",
+  "te": "{name}: {role}, చూసుకోవాల్సిన పనులు {n}.",
+  "hi": "{name}: {role}, संभालने के लिए {n} काम।",
+  "kn": "{name}: {role}, ನೋಡಿಕೊಳ್ಳಬೇಕಾದ ಕೆಲಸಗಳು {n}.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.ov.about": {
+  "en": "Name and role",
+  "te": "పేరు, రోల్",
+  "hi": "नाम और रोल",
+  "kn": "ಹೆಸರು ಮತ್ತು ರೋಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.ov.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.ov.role": {
+  "en": "Role",
+  "te": "రోల్",
+  "hi": "रोल",
+  "kn": "ರೋಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.ov.title": {
+  "en": "Role title",
+  "te": "రోల్ టైటిల్",
+  "hi": "रोल टाइटल",
+  "kn": "ರೋಲ್ ಟೈಟಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.ov.title_help": {
+  "en": "Shown on its card, for example Showroom helper. {min} to {max} letters. Leave empty to use the role name.",
+  "te": "కార్డ్‌పై కనిపిస్తుంది, ఉదాహరణకు షోరూమ్ హెల్పర్. {min} నుంచి {max} అక్షరాలు. ఖాళీగా ఉంచితే రోల్ పేరు కనిపిస్తుంది.",
+  "hi": "कार्ड पर दिखता है, जैसे शोरूम हेल्पर। {min} से {max} अक्षर। खाली छोड़ें तो रोल का नाम दिखेगा।",
+  "kn": "ಕಾರ್ಡ್‌ನಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ, ಉದಾಹರಣೆಗೆ ಶೋರೂಮ್ ಹೆಲ್ಪರ್. {min} ರಿಂದ {max} ಅಕ್ಷರಗಳು. ಖಾಲಿ ಬಿಟ್ಟರೆ ರೋಲ್ ಹೆಸರು ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.langs": {
+  "en": "Languages it speaks",
+  "te": "మాట్లాడే భాషలు",
+  "hi": "बोलने की भाषाएँ",
+  "kn": "ಮಾತನಾಡುವ ಭಾಷೆಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.langs_help": {
+  "en": "Choose at least one. Each language you tick gets its own voice below.",
+  "te": "కనీసం ఒకటి సెలెక్ట్ చేయండి. టిక్ చేసిన ప్రతి భాషకి కింద ఒక వాయిస్ ఉంటుంది.",
+  "hi": "कम से कम एक चुनें। टिक की हुई हर भाषा की अपनी वॉइस नीचे होती है।",
+  "kn": "ಕನಿಷ್ಠ ಒಂದು ಆರಿಸಿ. ಟಿಕ್ ಮಾಡಿದ ಪ್ರತಿ ಭಾಷೆಗೆ ಕೆಳಗೆ ತನ್ನದೇ ವಾಯ್ಸ್ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.current": {
+  "en": "Voice now: {name}",
+  "te": "ఇప్పుడు వాయిస్: {name}",
+  "hi": "अभी की वॉइस: {name}",
+  "kn": "ಈಗಿನ ವಾಯ್ಸ್: {name}",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.none": {
+  "en": "No voice chosen yet. The standard voice speaks.",
+  "te": "ఇంకా వాయిస్ ఎంచుకోలేదు. స్టాండర్డ్ వాయిస్ మాట్లాడుతుంది.",
+  "hi": "अभी कोई वॉइस नहीं चुनी है। स्टैंडर्ड वॉइस बोलती है।",
+  "kn": "ಇನ್ನೂ ವಾಯ್ಸ್ ಆರಿಸಿಲ್ಲ. ಸ್ಟ್ಯಾಂಡರ್ಡ್ ವಾಯ್ಸ್ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.none_short": {
+  "en": "standard voice",
+  "te": "స్టాండర్డ్ వాయిస్",
+  "hi": "स्टैंडर्ड वॉइस",
+  "kn": "ಸ್ಟ್ಯಾಂಡರ್ಡ್ ವಾಯ್ಸ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.use": {
+  "en": "Use {name}",
+  "te": "{name} వాడండి",
+  "hi": "{name} चुनें",
+  "kn": "{name} ಬಳಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.in_use": {
+  "en": "In use",
+  "te": "వాడుకలో ఉంది",
+  "hi": "इस्तेमाल में है",
+  "kn": "ಬಳಕೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.recommended": {
+  "en": "Recommended",
+  "te": "సూచించినది",
+  "hi": "सुझाई गई",
+  "kn": "ಸೂಚಿಸಿದ್ದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.no_list": {
+  "en": "The voices cannot be listed right now. The voice in use stays as it is.",
+  "te": "ఇప్పుడు వాయిస్‌ల లిస్ట్ చూపలేకపోతున్నాం. ఇప్పుడున్న వాయిస్ అలాగే ఉంటుంది.",
+  "hi": "अभी वॉइस की लिस्ट नहीं दिखा पा रहे। अभी की वॉइस वैसी ही रहेगी।",
+  "kn": "ಈಗ ವಾಯ್ಸ್ ಲಿಸ್ಟ್ ತೋರಿಸಲು ಆಗುತ್ತಿಲ್ಲ. ಈಗಿರುವ ವಾಯ್ಸ್ ಹಾಗೇ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.play_failed": {
+  "en": "The sample could not be played. Try again.",
+  "te": "శాంపిల్ ప్లే కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "सैंपल प्ले नहीं हो पाया। फिर से कोशिश करें।",
+  "kn": "ಸ್ಯಾಂಪಲ್ ಪ್ಲೇ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.opening": {
+  "en": "Opening line in {language}",
+  "te": "{language}లో ఓపెనింగ్ లైన్",
+  "hi": "{language} में ओपनिंग लाइन",
+  "kn": "{language}ನಲ್ಲಿ ಓಪನಿಂಗ್ ಲೈನ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.opening_help": {
+  "en": "What it says first. {min} to {max} letters. It always says it is an AI assistant.",
+  "te": "ముందుగా ఏం చెప్తుందో అది. {min} నుంచి {max} అక్షరాలు. తాను AI అసిస్టెంట్ అని ఎప్పుడూ చెప్తుంది.",
+  "hi": "यह सबसे पहले क्या बोलता है। {min} से {max} अक्षर। यह हमेशा बताता है कि यह AI असिस्टेंट है।",
+  "kn": "ಮೊದಲು ಏನು ಹೇಳುತ್ತದೆ ಅದು. {min} ರಿಂದ {max} ಅಕ್ಷರಗಳು. ತಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.play_line": {
+  "en": "Play this line",
+  "te": "ఈ లైన్ ప్లే చేయండి",
+  "hi": "यह लाइन प्ले करें",
+  "kn": "ಈ ಲೈನ್ ಪ್ಲೇ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.speaks": {
+  "en": "How it speaks",
+  "te": "ఎలా మాట్లాడుతుంది",
+  "hi": "कैसे बोलता है",
+  "kn": "ಹೇಗೆ ಮಾತನಾಡುತ್ತದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.style": {
+  "en": "Style",
+  "te": "స్టైల్",
+  "hi": "स्टाइल",
+  "kn": "ಸ್ಟೈಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.style.friendly": {
+  "en": "Friendly",
+  "te": "ఫ్రెండ్లీ",
+  "hi": "फ्रेंडली",
+  "kn": "ಫ್ರೆಂಡ್ಲಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.style.respectful": {
+  "en": "Respectful",
+  "te": "గౌరవంగా",
+  "hi": "इज़्ज़त से",
+  "kn": "ಗೌರವದಿಂದ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.style.quick": {
+  "en": "Short and quick",
+  "te": "చిన్నగా, త్వరగా",
+  "hi": "छोटा और जल्दी",
+  "kn": "ಚಿಕ್ಕದಾಗಿ, ಬೇಗ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.style.casual": {
+  "en": "Casual",
+  "te": "కాజువల్",
+  "hi": "कैज़ुअल",
+  "kn": "ಕ್ಯಾಶುವಲ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.speed": {
+  "en": "Speed",
+  "te": "స్పీడ్",
+  "hi": "स्पीड",
+  "kn": "ಸ್ಪೀಡ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.speed_help": {
+  "en": "From {min} (slower) to {max} (faster). 1 is normal.",
+  "te": "{min} (నెమ్మది) నుంచి {max} (వేగం) వరకు. 1 అంటే మామూలు.",
+  "hi": "{min} (धीमा) से {max} (तेज़) तक। 1 मतलब नॉर्मल।",
+  "kn": "{min} (ನಿಧಾನ) ರಿಂದ {max} (ವೇಗ) ವರೆಗೆ. 1 ಎಂದರೆ ಸಾಮಾನ್ಯ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.auto": {
+  "en": "Switch to the customer's language",
+  "te": "కస్టమర్ భాషకి మారుతుంది",
+  "hi": "कस्टमर की भाषा में बदल जाए",
+  "kn": "ಕಸ್ಟಮರ್ ಭಾಷೆಗೆ ಬದಲಾಗುತ್ತದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.auto_help": {
+  "en": "If the customer speaks another language it speaks, it follows.",
+  "te": "కస్టమర్ ఇది మాట్లాడే మరో భాష మాట్లాడితే, అదే భాషలో మాట్లాడుతుంది.",
+  "hi": "कस्टमर अगर इसकी दूसरी भाषा में बोले, तो यह भी उसी में बोलता है।",
+  "kn": "ಕಸ್ಟಮರ್ ಇದು ಮಾತನಾಡುವ ಬೇರೆ ಭಾಷೆಯಲ್ಲಿ ಮಾತನಾಡಿದರೆ, ಇದೂ ಅದೇ ಭಾಷೆಯಲ್ಲಿ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.mix": {
+  "en": "Allow English words",
+  "te": "ఇంగ్లీష్ పదాలు వాడవచ్చు",
+  "hi": "अंग्रेज़ी शब्द बोलने दें",
+  "kn": "ಇಂಗ್ಲಿಷ್ ಪದಗಳನ್ನು ಬಳಸಬಹುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.voice.mix_help": {
+  "en": "It may use common English business words, the way people talk.",
+  "te": "మనం మాట్లాడినట్టే, మామూలు ఇంగ్లీష్ బిజినెస్ పదాలు వాడవచ్చు.",
+  "hi": "लोग जैसे बोलते हैं, वैसे आम अंग्रेज़ी बिज़नेस शब्द बोल सकता है।",
+  "kn": "ಜನ ಮಾತನಾಡುವಂತೆ, ಸಾಮಾನ್ಯ ಇಂಗ್ಲಿಷ್ ಬಿಸಿನೆಸ್ ಪದಗಳನ್ನು ಬಳಸಬಹುದು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.alone": {
+  "en": "What it may do alone",
+  "te": "తనంతట తాను ఏం చేయవచ్చు",
+  "hi": "यह अपने आप क्या कर सकता है",
+  "kn": "ತಾನಾಗಿ ಏನು ಮಾಡಬಹುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.alone_help": {
+  "en": "Everything you tick as ask-first waits for your OK.",
+  "te": "అడిగి చేయాలని టిక్ చేసినవన్నీ మీ ఓకే కోసం ఆగుతాయి.",
+  "hi": "जो आप पहले पूछने के लिए टिक करते हैं, वह आपके ओके का इंतज़ार करता है।",
+  "kn": "ಮೊದಲು ಕೇಳಬೇಕು ಎಂದು ಟಿಕ್ ಮಾಡಿದ್ದೆಲ್ಲ ನಿಮ್ಮ ಓಕೆಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.ask": {
+  "en": "Ask me first",
+  "te": "ముందు నన్ను అడగాలి",
+  "hi": "पहले मुझसे पूछे",
+  "kn": "ಮೊದಲು ನನ್ನನ್ನು ಕೇಳಬೇಕು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.ask_help": {
+  "en": "Tick what it must ask you about first.",
+  "te": "ముందు మిమ్మల్ని అడగాల్సినవి టిక్ చేయండి.",
+  "hi": "जिनके बारे में पहले आपसे पूछना है, उन्हें टिक करें।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳಬೇಕಾದವುಗಳನ್ನು ಟಿಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.may": {
+  "en": "It may do on its own",
+  "te": "తనంతట తానే చేయవచ్చు",
+  "hi": "अपने आप कर सकता है",
+  "kn": "ತಾನಾಗಿಯೇ ಮಾಡಬಹುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.may.prices": {
+  "en": "Answer questions about prices",
+  "te": "ధరల గురించి చెప్పవచ్చు",
+  "hi": "दाम के सवालों का जवाब दे सकता है",
+  "kn": "ಬೆಲೆ ಬಗ್ಗೆ ಹೇಳಬಹುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.may.visits": {
+  "en": "Book visits",
+  "te": "విజిట్లు బుక్ చేయవచ్చు",
+  "hi": "विज़िट बुक कर सकता है",
+  "kn": "ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಬಹುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.may.media": {
+  "en": "Send photos and files",
+  "te": "ఫోటోలు, ఫైళ్లు పంపవచ్చు",
+  "hi": "फोटो और फाइलें भेज सकता है",
+  "kn": "ಫೋಟೋ, ಫೈಲ್ ಕಳುಹಿಸಬಹುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.may.dues": {
+  "en": "Talk about money owed",
+  "te": "రావాల్సిన డబ్బు గురించి మాట్లాడవచ్చు",
+  "hi": "बाकी पैसों की बात कर सकता है",
+  "kn": "ಬರಬೇಕಾದ ಹಣದ ಬಗ್ಗೆ ಮಾತನಾಡಬಹುದು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.discount": {
+  "en": "Biggest discount it may give (%)",
+  "te": "ఇవ్వగల గరిష్ట డిస్కౌంట్ (%)",
+  "hi": "ज़्यादा से ज़्यादा डिस्काउंट (%)",
+  "kn": "ಹೆಚ್ಚೆಂದರೆ ಕೊಡಬಹುದಾದ ಡಿಸ್ಕೌಂಟ್ (%)",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.discount_help": {
+  "en": "A number from 0 to 100. 0 means no discount on its own.",
+  "te": "0 నుంచి 100 లోపు సంఖ్య. 0 అంటే తనంతట తాను డిస్కౌంట్ ఇవ్వదు.",
+  "hi": "0 से 100 के बीच का नंबर। 0 मतलब अपने आप कोई डिस्काउंट नहीं।",
+  "kn": "0 ರಿಂದ 100 ರ ನಡುವಿನ ಸಂಖ್ಯೆ. 0 ಎಂದರೆ ತಾನಾಗಿ ಡಿಸ್ಕೌಂಟ್ ಕೊಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.handover": {
+  "en": "Hand over to you",
+  "te": "మీకు హ్యాండ్ ఓవర్",
+  "hi": "आपको हैंड ओवर",
+  "kn": "ನಿಮಗೆ ಹ್ಯಾಂಡ್ ಓವರ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.handover_help": {
+  "en": "When to pass the call to you or your team.",
+  "te": "ఎప్పుడు కాల్‌ని మీకు లేదా మీ టీమ్‌కి ఇవ్వాలి.",
+  "hi": "कॉल कब आपको या आपकी टीम को देनी है।",
+  "kn": "ಕಾಲ್ ಅನ್ನು ಯಾವಾಗ ನಿಮಗೆ ಅಥವಾ ನಿಮ್ಮ ಟೀಮ್‌ಗೆ ಕೊಡಬೇಕು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.h_owner": {
+  "en": "When you ask for it",
+  "te": "మీరు అడిగినప్పుడు",
+  "hi": "जब आप माँगें",
+  "kn": "ನೀವು ಕೇಳಿದಾಗ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.h_upset": {
+  "en": "When the customer is upset",
+  "te": "కస్టమర్ కోపంగా ఉన్నప్పుడు",
+  "hi": "जब कस्टमर नाराज़ हो",
+  "kn": "ಕಸ್ಟಮರ್ ಕೋಪದಲ್ಲಿದ್ದಾಗ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.h_order": {
+  "en": "Order above this amount (₹)",
+  "te": "ఈ మొత్తం కంటే ఎక్కువ ఆర్డర్ (₹)",
+  "hi": "इस रकम से बड़ा ऑर्डर (₹)",
+  "kn": "ಈ ಮೊತ್ತಕ್ಕಿಂತ ದೊಡ್ಡ ಆರ್ಡರ್ (₹)",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.rules.h_order_help": {
+  "en": "Leave empty to never hand over because of the amount.",
+  "te": "మొత్తాన్ని బట్టి ఎప్పుడూ అప్పగించకూడదంటే ఖాళీగా ఉంచండి.",
+  "hi": "रकम की वजह से कभी हैंड ओवर नहीं करना हो तो खाली छोड़ें।",
+  "kn": "ಮೊತ್ತದ ಕಾರಣಕ್ಕೆ ಎಂದೂ ಹ್ಯಾಂಡ್ ಓವರ್ ಮಾಡಬಾರದು ಎಂದರೆ ಖಾಲಿ ಬಿಡಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.hours": {
+  "en": "Working hours",
+  "te": "పని చేసే సమయం",
+  "hi": "काम के घंटे",
+  "kn": "ಕೆಲಸದ ಸಮಯ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.hours_help": {
+  "en": "Only inside 10:00 to 21:00. Outside its hours the main assistant answers.",
+  "te": "10:00 నుంచి 21:00 లోపే. దీని సమయం కాకపోతే మెయిన్ అసిస్టెంట్ జవాబు ఇస్తుంది.",
+  "hi": "सिर्फ़ 10:00 से 21:00 के अंदर। इसके घंटों के बाहर मुख्य असिस्टेंट जवाब देता है।",
+  "kn": "10:00 ರಿಂದ 21:00 ರ ಒಳಗೆ ಮಾತ್ರ. ಇದರ ಸಮಯದ ಹೊರಗೆ ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.hours.same": {
+  "en": "Same as the business",
+  "te": "బిజినెస్ టైమ్ లాగే",
+  "hi": "बिज़नेस के जैसे ही",
+  "kn": "ಬಿಸಿನೆಸ್ ಸಮಯದಂತೆಯೇ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.hours.only": {
+  "en": "Only these hours",
+  "te": "ఈ సమయాల్లో మాత్రమే",
+  "hi": "सिर्फ़ इन घंटों में",
+  "kn": "ಈ ಸಮಯದಲ್ಲಿ ಮಾತ್ರ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.hours.days": {
+  "en": "Days",
+  "te": "రోజులు",
+  "hi": "दिन",
+  "kn": "ದಿನಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.hours.from": {
+  "en": "From",
+  "te": "నుంచి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.hours.to": {
+  "en": "To",
+  "te": "వరకు",
+  "hi": "तक",
+  "kn": "ವರೆಗೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.hours.outside": {
+  "en": "Outside these hours the main assistant answers.",
+  "te": "ఈ సమయం కాకుండా మిగతా టైమ్‌లో మెయిన్ అసిస్టెంట్ జవాబు ఇస్తుంది.",
+  "hi": "इन घंटों के बाहर मुख्य असिस्टेंट जवाब देता है।",
+  "kn": "ಈ ಸಮಯದ ಹೊರಗೆ ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.never": {
+  "en": "Words it must never say",
+  "te": "ఎప్పుడూ అనకూడని మాటలు",
+  "hi": "वे शब्द जो कभी नहीं बोलने चाहिए",
+  "kn": "ಎಂದೂ ಹೇಳಬಾರದ ಪದಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.never_help": {
+  "en": "Up to {max} words or short phrases. They are added to the words your business never says.",
+  "te": "{max} వరకు పదాలు లేదా చిన్న మాటలు. మీ బిజినెస్ ఎప్పుడూ అనని మాటలకి ఇవి కలుస్తాయి.",
+  "hi": "{max} तक शब्द या छोटे वाक्य। ये आपके बिज़नेस के न बोलने वाले शब्दों में जुड़ जाते हैं।",
+  "kn": "{max} ವರೆಗೆ ಪದಗಳು ಅಥವಾ ಚಿಕ್ಕ ಮಾತುಗಳು. ಇವು ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಹೇಳದ ಪದಗಳಿಗೆ ಸೇರುತ್ತವೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.never.none": {
+  "en": "No words added.",
+  "te": "ఏ పదాలూ చేర్చలేదు.",
+  "hi": "कोई शब्द नहीं जोड़ा है।",
+  "kn": "ಯಾವ ಪದವನ್ನೂ ಸೇರಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.never.add": {
+  "en": "Add a word or phrase",
+  "te": "పదం లేదా మాట చేర్చండి",
+  "hi": "शब्द या वाक्य जोड़ें",
+  "kn": "ಪದ ಅಥವಾ ಮಾತು ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.never.add_btn": {
+  "en": "Add",
+  "te": "చేర్చండి",
+  "hi": "जोड़ें",
+  "kn": "ಸೇರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.never.remove": {
+  "en": "Remove {word}",
+  "te": "{word} తీసేయండి",
+  "hi": "{word} हटाएँ",
+  "kn": "{word} ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.never.count": {
+  "en": "{n} of {max} words. Each up to {len} letters.",
+  "te": "{max} లో {n} పదాలు. ఒక్కోటి {len} అక్షరాల వరకు.",
+  "hi": "{max} में से {n} शब्द। हर एक {len} अक्षर तक।",
+  "kn": "{max} ರಲ್ಲಿ {n} ಪದಗಳು. ಒಂದೊಂದು {len} ಅಕ್ಷರಗಳವರೆಗೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.instr": {
+  "en": "Extra instructions",
+  "te": "ఎక్స్‌ట్రా ఇన్‌స్ట్రక్షన్స్",
+  "hi": "एक्स्ट्रा इंस्ट्रक्शन",
+  "kn": "ಎಕ್ಸ್‌ಟ್ರಾ ಇನ್‌ಸ್ಟ್ರಕ್ಷನ್ಸ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.instr_help": {
+  "en": "Anything else it should know or follow, in your own words. They never go above the platform rules.",
+  "te": "ఇంకేమైనా తెలుసుకోవాల్సినవి, పాటించాల్సినవి మీ మాటల్లో రాయండి. ఇవి ప్లాట్‌ఫామ్ రూల్స్ కంటే పైన ఉండవు.",
+  "hi": "और कुछ जो इसे पता होना चाहिए या मानना चाहिए, अपने शब्दों में लिखें। ये प्लेटफ़ॉर्म के रूल्स से ऊपर नहीं होते।",
+  "kn": "ಇನ್ನೇನಾದರೂ ತಿಳಿದಿರಬೇಕಾದದ್ದು ಅಥವಾ ಪಾಲಿಸಬೇಕಾದದ್ದು ಇದ್ದರೆ ನಿಮ್ಮ ಮಾತಿನಲ್ಲಿ ಬರೆಯಿರಿ. ಇವು ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ರೂಲ್ಸ್‌ಗಿಂತ ಮೇಲಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.instr.count": {
+  "en": "{n} of {max}",
+  "te": "{max} లో {n}",
+  "hi": "{max} में से {n}",
+  "kn": "{max} ರಲ್ಲಿ {n}",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.resp": {
+  "en": "What it takes care of",
+  "te": "ఏం చూసుకుంటుంది",
+  "hi": "क्या संभालता है",
+  "kn": "ಏನು ನೋಡಿಕೊಳ್ಳುತ್ತದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.resp_help": {
+  "en": "Tick the jobs it should do. Untick the ones it should leave alone.",
+  "te": "చేయాల్సిన పనులు టిక్ చేయండి. చేయకూడనివి టిక్ తీసేయండి.",
+  "hi": "जो काम करने हैं उन्हें टिक करें। जो नहीं करने उनका टिक हटा दें।",
+  "kn": "ಮಾಡಬೇಕಾದ ಕೆಲಸಗಳನ್ನು ಟಿಕ್ ಮಾಡಿ. ಮಾಡಬಾರದವುಗಳ ಟಿಕ್ ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.act": {
+  "en": "Calls it took",
+  "te": "తీసుకున్న కాల్స్",
+  "hi": "लिए गए कॉल",
+  "kn": "ತೆಗೆದುಕೊಂಡ ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.act_help": {
+  "en": "The newest first.",
+  "te": "కొత్తవి ముందు.",
+  "hi": "सबसे नए पहले।",
+  "kn": "ಹೊಸವು ಮೊದಲು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.act.empty": {
+  "en": "No calls yet. The calls it takes will show here.",
+  "te": "ఇంకా కాల్స్ లేవు. ఇది తీసుకునే కాల్స్ ఇక్కడ కనిపిస్తాయి.",
+  "hi": "अभी कोई कॉल नहीं। इसके लिए गए कॉल यहाँ दिखेंगे।",
+  "kn": "ಇನ್ನೂ ಕಾಲ್‌ಗಳಿಲ್ಲ. ಇದು ತೆಗೆದುಕೊಳ್ಳುವ ಕಾಲ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.act.more": {
+  "en": "Show more",
+  "te": "ఇంకా చూపించండి",
+  "hi": "और दिखाएँ",
+  "kn": "ಇನ್ನಷ್ಟು ತೋರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.act.in": {
+  "en": "Incoming",
+  "te": "ఇన్‌కమింగ్",
+  "hi": "इनकमिंग",
+  "kn": "ಇನ್‌ಕಮಿಂಗ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.act.out": {
+  "en": "Outgoing",
+  "te": "అవుట్‌గోయింగ్",
+  "hi": "आउटगोइंग",
+  "kn": "ಔಟ್‌ಗೋಯಿಂಗ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.act.no_result": {
+  "en": "No result written down",
+  "te": "రిజల్ట్ రాయలేదు",
+  "hi": "रिज़ल्ट नहीं लिखा",
+  "kn": "ರಿಸಲ್ಟ್ ಬರೆದಿಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.act.sec": {
+  "en": "{s} sec",
+  "te": "{s} సెకన్లు",
+  "hi": "{s} सेकंड",
+  "kn": "{s} ಸೆಕೆಂಡ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.act.min": {
+  "en": "{m} min {s} sec",
+  "te": "{m} నిమిషాలు {s} సెకన్లు",
+  "hi": "{m} मिनट {s} सेकंड",
+  "kn": "{m} ನಿಮಿಷ {s} ಸೆಕೆಂಡ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.phone": {
+  "en": "Phone line",
+  "te": "ఫోన్ లైన్",
+  "hi": "फोन लाइन",
+  "kn": "ಫೋನ್ ಲೈನ್",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.phone.help": {
+  "en": "Pick the phone line this AI employee answers. A line has one AI employee. A line with none goes to the main assistant.",
+  "te": "ఈ AI ఎంప్లాయీ జవాబు ఇచ్చే ఫోన్ లైన్ ఎంచుకోండి. ఒక లైన్‌కి ఒక AI ఎంప్లాయీ మాత్రమే. ఎవరూ లేని లైన్ మెయిన్ అసిస్టెంట్‌కి వెళ్తుంది.",
+  "hi": "वह फोन लाइन चुनें जिसका जवाब यह AI एम्प्लॉयी देता है। एक लाइन पर एक ही AI एम्प्लॉयी। जिस लाइन पर कोई नहीं, वह मुख्य असिस्टेंट के पास जाती है।",
+  "kn": "ಈ AI ಎಂಪ್ಲಾಯಿ ಉತ್ತರ ಕೊಡುವ ಫೋನ್ ಲೈನ್ ಆರಿಸಿ. ಒಂದು ಲೈನ್‌ಗೆ ಒಬ್ಬ AI ಎಂಪ್ಲಾಯಿ ಮಾತ್ರ. ಯಾರೂ ಇಲ್ಲದ ಲೈನ್ ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.phone.none": {
+  "en": "None",
+  "te": "ఏదీ కాదు",
+  "hi": "कोई नहीं",
+  "kn": "ಯಾವುದೂ ಇಲ್ಲ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.phone.none_help": {
+  "en": "The main assistant answers.",
+  "te": "మెయిన్ అసిస్టెంట్ జవాబు ఇస్తుంది.",
+  "hi": "मुख्य असिस्टेंट जवाब देता है।",
+  "kn": "ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.phone.taken": {
+  "en": "Already with {name}",
+  "te": "{name} దగ్గర ఇప్పటికే ఉంది",
+  "hi": "यह पहले से {name} के पास है",
+  "kn": "ಇದು ಈಗಾಗಲೇ {name} ಬಳಿ ಇದೆ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.phone.no_lines": {
+  "en": "No phone line can be picked yet. Add a number on the Phone number page first.",
+  "te": "ఇంకా ఎంచుకోవడానికి ఫోన్ లైన్ లేదు. ముందు ఫోన్ నంబర్ పేజీలో నంబర్ చేర్చండి.",
+  "hi": "अभी चुनने के लिए कोई फोन लाइन नहीं है। पहले फोन नंबर पेज पर नंबर जोड़ें।",
+  "kn": "ಆರಿಸಲು ಇನ್ನೂ ಫೋನ್ ಲೈನ್ ಇಲ್ಲ. ಮೊದಲು ಫೋನ್ ನಂಬರ್ ಪೇಜ್‌ನಲ್ಲಿ ನಂಬರ್ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "emp.page.phone.default": {
+  "en": "The main assistant answers every phone line that has no other AI employee.",
+  "te": "వేరే AI ఎంప్లాయీ లేని ప్రతి ఫోన్ లైన్‌కి మెయిన్ అసిస్టెంట్ జవాబు ఇస్తుంది.",
+  "hi": "जिस फोन लाइन पर कोई और AI एम्प्लॉयी नहीं है, उसका जवाब मुख्य असिस्टेंट देता है।",
+  "kn": "ಬೇರೆ AI ಎಂಪ್ಲಾಯಿ ಇಲ್ಲದ ಪ್ರತಿ ಫೋನ್ ಲೈನ್‌ಗೆ ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
  }
 }

@@ -57,6 +57,7 @@ import * as EDU from "@/lib/api/education-fixtures";
 import { parseActivity, parseActivityUsage, parseEndpoints, parseEvents } from "@/lib/api/webhooks-out";
 import { parseBalanceAndDebt, parseInvoice, parseOptions, parseStatement, parseTopups } from "@/lib/api/credits";
 import { parseBillingBalance } from "@/lib/billing-v6/balance";
+import { parseActivity as parseEmployeeActivity, parseEmployee, parseEmployees } from "@/lib/api/employees";
 import { parseList, parseLists, parseRows } from "@/lib/api/lists";
 import { parseOwnList } from "@/lib/api/numbers";
 import { parseCatalogue, parseReport } from "@/lib/api/reports";
@@ -1837,6 +1838,16 @@ add({ id: "what-you-sell-lists-home", roles: ["owner", "admin"], render: () => l
 add({ id: "what-you-sell-list", roles: ["owner", "admin", "sales"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/[listId]/page")).default(props({ listId: LIST_ID }))), handlers: listsHandlers });
 add({ id: "what-you-sell-list-columns", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/[listId]/columns/page")).default(props({ listId: LIST_ID }))), handlers: listsHandlers });
 add({ id: "what-you-sell-list-new", roles: ["owner", "admin"], render: () => listsEnv(async () => (await import("@/app/app/tenants/[tenantId]/what-you-sell/lists/new/page")).default(props({}))), handlers: listsHandlers });
+// EMPLOYEES (26 Nov 2026): the AI Team as employees, the New AI employee wizard and one employee's page (C1's docs/contracts/employees.md)
+const EMP_ID = "55555555-5555-4555-8555-555555555555";
+const EMP_BASE = { role_title: null, status: "on", is_default: false, responsibilities: ["enquiry_reply"], extra_instructions: null, languages: ["te", "en"], auto_switch_language: true, allow_english_mixing: true, style: "friendly", speed: null, opening_line: {}, autonomy: { may_answer_prices: true, may_book_visits: true, may_send_media: false, may_talk_dues: false, max_discount_percent: 0, handover_owner_asked: true, handover_upset: true, handover_order_above_paise: null }, ask_first: ["send_message", "make_call", "give_discount", "promise_date"], hours: null, never_say: [], phone_number_id: null, persona_in: "employee", voices: { te: "te-ramya" }, calls_today: 0 };
+const EMP_LIST = [{ ...EMP_BASE, id: "66666666-6666-4666-8666-666666666666", name: "Priya", role_code: "receptionist", role_title: "Receptionist", is_default: true, persona_in: "my_assistant", calls_today: 4 }, { ...EMP_BASE, id: EMP_ID, name: "Ravi", role_code: "follow_up", responsibilities: ["follow_up", "quote_chase"], calls_today: 0 }];
+const empEnv = <T,>(run: () => Promise<T>) => withEnv({ JOBS: "mock", EMPLOYEES: "1" }, run);
+const empHandlers = (limit: number) => (role: Role): Record<string, Handler> => ({ ...base(role), getEmployees: () => parseEmployees({ employees: EMP_LIST, limit }), getEmployee: () => parseEmployee(EMP_LIST[1]), getEmployeeActivity: () => parseEmployeeActivity({ calls: [{ id: "c1", direction: "outbound", state: "ended", purpose: "follow_up", language: "te", outcome: "interested", duration_s: 74, created_at: "2026-11-25T10:00:00Z" }] }) });
+add({ id: "employees-list", roles: ["owner", "admin", "sales"], render: () => empEnv(async () => (await import("@/app/app/tenants/[tenantId]/employees/page")).default(props({}))), handlers: empHandlers(5) });
+add({ id: "employees-list-full", roles: ["owner"], render: () => empEnv(async () => (await import("@/app/app/tenants/[tenantId]/employees/page")).default(props({}))), handlers: empHandlers(2) });
+add({ id: "employees-new", roles: ["owner", "admin"], render: () => empEnv(async () => (await import("@/app/app/tenants/[tenantId]/employees/new/page")).default(props({}))), handlers: empHandlers(5) });
+add({ id: "employees-page", roles: ["owner", "sales"], render: () => empEnv(async () => (await import("@/app/app/tenants/[tenantId]/employees/[employeeId]/page")).default(props({ employeeId: EMP_ID }, { tab: "rules" }))), handlers: empHandlers(5) });
 add({ id: "developers", roles: ["owner", "admin"], render: () => withEnv({ DEVELOPER_KEYS_SCREENS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({}, { tab: "keys" }))), handlers: base });
 add({ id: "connectors", roles: ["owner", "admin"], render: () => withEnv({ CRM_PUSH_SCREENS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/connectors/page")).default(props({}))), handlers: base });
 add({ id: "developers-overview", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/developers/page")).default(props({})), handlers: base });
