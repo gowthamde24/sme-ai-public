@@ -173,7 +173,7 @@ const LEGACY = ["shell", "card", "error", "hint", "row", "secondary"];
 function skinned(container: HTMLElement) {
   expect(container.querySelector("main")!.id).toBe("main");
   const used = new Set<string>();
-  for (const el of container.querySelectorAll("[class]")) for (const c of el.className.split(/\s+/)) used.add(c);
+  for (const el of container.querySelectorAll("[class]")) for (const c of (el.getAttribute("class") ?? "").split(/\s+/)) used.add(c);
   for (const bad of LEGACY) expect(used.has(bad), `legacy class "${bad}"`).toBe(false);
   expect(container.querySelector("[style]")).toBeNull(); // no inline style
 }

@@ -35,6 +35,11 @@ class PostgrestAutoReplyRepository:
         return result if isinstance(result, str) else ""
 
 
+    def employee(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
+        """The AI employee that answers this workspace's WhatsApp (an employee that is on and has the WhatsApp responsibility, the default one first); None when NOBODY does (WhatsApp is optional) or when it cannot be read."""
+        out = self._rpc.call(token, "employee_for_channel", {"p_tenant_id": str(tenant_id), "p_channel": "whatsapp"})
+        return out if isinstance(out, dict) else None
+
     def note(self, token: str, enquiry_id: uuid.UUID, promise: bool, kind: str | None, item: str | None, needed_by: str | None, product: str | None) -> dict[str, Any]:
         """After a reply (owner, 16 Nov 2026): the promise it made (Today's open items), the day the customer named, the product they asked about."""
         return self._rpc.object(token, "scheduler_auto_reply_note", {"p_enquiry_id": str(enquiry_id), "p_promise": promise, "p_kind": kind, "p_item": item, "p_needed_by": needed_by, "p_product": product})

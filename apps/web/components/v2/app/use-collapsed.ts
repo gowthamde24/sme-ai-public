@@ -5,6 +5,7 @@ import { useSyncExternalStore } from "react";
 const KEY = "sme_menu_collapsed";
 const listeners = new Set<() => void>();
 const NARROW = "(max-width: 1024px)";
+let heldHere: "1" | "0" | null = null; // a browser with no storage (a private window): the choice lasts for this page only
 
 function subscribe(notify: () => void) {
   listeners.add(notify);
@@ -20,24 +21,29 @@ function subscribe(notify: () => void) {
 function stored(): "1" | "0" | null {
   try {
     const v = window.localStorage.getItem(KEY);
-    return v === "1" || v === "0" ? v : null;
+    if (v === "1" || v === "0") return v;
   } catch {
-    return null;
+    /* no storage: the choice made on this page */
   }
+  return heldHere;
 }
-const snapshot = (): string => stored() ?? (window.matchMedia?.(NARROW).matches ? "1" : "0");
+const snapshotNarrow = (): string => stored() ?? (window.matchMedia?.(NARROW).matches ? "1" : "0");
+const snapshotWide = (): string => stored() ?? "0";
 
 /**
- * Whether the side menu is the narrow rail: what the person chose last time (kept in this browser, try/catch: it works without storage), else the narrow rail
- * on a tablet (1024px and under) and the full menu above. The first (server) render is the full menu; the browser's value arrives after hydration.
+ * Whether the side menu is the narrow rail: what the person chose last time (kept in this browser, try/catch: it works without storage), else, with `narrowDefault`, the narrow rail
+ * on a tablet (1024px and under) and the full menu above. The design system's menu (v6) passes `false`: it is the full menu until the person closes it with the button at its top.
+ * The first (server) render is the full menu; the browser's value arrives after hydration (no mismatch: it is a store, read the same way on both sides).
  */
-export function useCollapsed(): [boolean, () => void] {
-  const collapsed = useSyncExternalStore(subscribe, snapshot, () => "0") === "1";
+export function useCollapsed(narrowDefault = true): [boolean, () => void] {
+  const collapsed = useSyncExternalStore(subscribe, narrowDefault ? snapshotNarrow : snapshotWide, () => "0") === "1";
   const toggle = () => {
+    const next = collapsed ? "0" : "1";
     try {
-      window.localStorage.setItem(KEY, collapsed ? "0" : "1");
+      window.localStorage.setItem(KEY, next);
+      heldHere = null;
     } catch {
-      /* no storage: the choice lasts until the page is reloaded */
+      heldHere = next;
     }
     listeners.forEach((l) => l());
   };

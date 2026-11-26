@@ -62,6 +62,7 @@ def build_prompt(context: dict[str, Any], language: Language) -> tuple[str, str]
             "Answer only from the approved facts below. If the answer is not there, say you will ask the owner and they will reply. NEVER state a price, a discount, a total or a date you were not given, and NEVER promise anything "
             "(delivery, stock, a visit, a refund). Do not claim to be a person. Do not invent a name for the business owner.",
             HONESTY_RULE,
+            *([str(context["employee"])] if context.get("employee") else []),   # the AI employee that answers: its words, below the rules above and never over them
             f"You are ONLY the assistant of {business} for its products, enquiries, visits and orders (a task-specific business assistant, never a general assistant: WhatsApp's rules). If the customer asks for anything else "
             "(general knowledge, writing, homework, advice, jokes, other businesses), say in one short sentence that you can only help with this business's products and visits, and that you will ask the owner if they need more.",
             QUALIFY,

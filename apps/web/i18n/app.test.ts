@@ -87,7 +87,7 @@ describe("the frame's string store (language track L0)", () => {
     const frame = frameLabels("te");
     expect(Object.keys(frame).length).toBeLessThan(keys.length);
     expect(Object.keys(frame).some((k) => /^(enq|orders|fu|ws|rev|ag|prv|qp|pl|it|acct|cont|cust|supp|prod|comp|sug)\./.test(k))).toBe(false);
-    expect(new TextEncoder().encode(JSON.stringify(frame)).length).toBeLessThan(20_000); // job CF: it was 55 KB when it carried the words of the screens too
+    expect(new TextEncoder().encode(JSON.stringify(frame)).length).toBeLessThan(21_000); // (26 Nov 2026: 21 KB, the rail and the employees row added words) job CF: it was 55 KB when it carried the words of the screens too
     expect(frame["nav.item.today"]).toBeTruthy();
   });
   it("carries every word the frame's client parts look up (word(labels, key, english)), so a person who reads Telugu never gets an English fallback for them", () => {

@@ -21,7 +21,7 @@ import { ImportTable } from "./ImportTable";
 import { parseSheetText, rowsFromCells, rowsFromDrafts, restatus, fabricIn, type ImportRow, type Parsed } from "@/lib/sell/sheet-parse";
 import { xlsxCells } from "@/lib/sell/xlsx-cells";
 import { shortUnit } from "./sell-text";
-import type { SaveExtra, SellActions, Work } from "./types";
+import type { ImportTarget, SaveExtra, SellActions, Work } from "./types";
 
 const FOCUSABLE = 'a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
 /** The plain field (owner, 25 Nov 2026: no fill-in-the-blank sentences): a label above, the field full width, rounded corners, no tint. */
@@ -37,7 +37,7 @@ type View =
   | { v: "form"; id: string | null; fresh: string | null; form: SellForm[SellStyle]; prior: SellEntry | null; hint: string | null; /** the drafts still waiting on the "I understood" card: after this one is saved the card comes back */ back?: SellEntry[] }
   | { v: "pick"; from: "photos" | "sheet" }
   /** A saree shop's price list, read and waiting for the owner to check it: nothing is added until the button. */
-  | { v: "import"; rows: ImportRow[]; file: string; cut: boolean; saved: number; /** names (lower case) already added from this list: the same saree again is left out */ added?: string[]; reading?: "ai_vision" | "text_layer" | null; unreadable?: boolean }
+  | { v: "import"; rows: ImportRow[]; file: string; cut: boolean; saved: number; /** names (lower case) already added from this list: the same saree again is left out */ added?: string[]; /** into one of the owner's lists: which, its price and Category columns, and the Category given to rows that have none */ list?: { id: string; name: string; priceKey: string | null; categoryKey: string | null; choices: readonly string[]; fill: string }; reading?: "ai_vision" | "text_layer" | null; unreadable?: boolean }
   | { v: "understood"; entries: SellEntry[]; text: string | null; notes: SellNote[] }
   | { v: "done"; entry: SellEntry; photosPath: string | null; note: boolean }
   | { v: "message"; text: string; href: string | null };
@@ -297,7 +297,7 @@ function MoreFields({ style, form, set, t, base, entry, live }: { style: SellSty
  * THE WORK SHEET (one lazy chunk; a bottom sheet on the phone, a side panel from 768 px): Say it (a box and the app's own microphone), the add/change form in plain sentences with the choices inside (max 4 choices, the rest under More choices), the "I understood" card
  * (nothing is saved until Save) and the answer to Photos / Sheet in test mode. Every save goes through `actions.save`, which for a product of a real workspace is the OLD catalogue form's save.
  */
-export default function SellWork({ style, work, words, base, actions, live, ownerPrice, paths, onClose, onSaved, onRemoved }: { style: SellStyle; work: Work; words: Words; base: string; actions: SellActions; live: boolean; ownerPrice: boolean; paths: { photos: string | null; sheet: string | null }; onClose: () => void; onSaved: (e: SellEntry) => void; onRemoved?: (id: string) => void }) {
+export default function SellWork({ style, work, words, base, actions, live, ownerPrice, paths, targets = [], onClose, onSaved, onRemoved }: { style: SellStyle; work: Work; words: Words; base: string; actions: SellActions; live: boolean; ownerPrice: boolean; /** the owner's own lists an import can go into (the lists feature); none = the catalogue only */ targets?: ImportTarget[]; paths: { photos: string | null; sheet: string | null }; onClose: () => void; onSaved: (e: SellEntry) => void; onRemoved?: (id: string) => void }) {
   const t = makeT(words);
   void paths;
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -307,6 +307,8 @@ export default function SellWork({ style, work, words, base, actions, live, owne
   /** A real saree shop's "Import a sheet": the list is read in the browser (Excel, CSV) or by the reading call (PDF, photo), shown as a table to check, then added one by one like a typed saree. */
   const importing = live && style === "products";
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+  // where the list goes: the catalogue (sarees) or one of the owner's lists; with only the catalogue there is nothing to choose
+  const [target, setTarget] = useState<string>(targets.length === 0 ? "catalogue" : "");
   const saveIds = useRef(new Map<string, string>());
   // the id of a NEW entry is minted ONCE per opening of the sheet: a retry after a failure sends the same id (the API never makes a second row)
   const [freshId] = useState(() => newEntryId());
@@ -411,6 +413,8 @@ export default function SellWork({ style, work, words, base, actions, live, owne
     setBusy(true);
     setError(null);
     setMfa(false);
+    const into = targets.find((x) => x.id === target) ?? null;
+    if (into) return pickIntoList(file, into);
     let parsed: Parsed | null = null;
     let readBy: "ai_vision" | "text_layer" | null = null;
     let unreadable = false;
@@ -451,6 +455,54 @@ export default function SellWork({ style, work, words, base, actions, live, owne
     setBusy(false);
     if (parsed.error) return setError(t(parsed.error === "empty" ? "jobs.sell.imp.err.empty" : "jobs.sell.imp.err.no_rows"));
     setView({ v: "import", rows: parsed.rows, file: file.name, cut: parsed.cut, saved: 0, reading: readBy, unreadable });
+  }
+
+  /** Into one of the owner's own lists: the file (Excel, CSV, PDF or a photo) goes up, the list's reading matches its columns, and the same check table shows name and price; the other cells it matched are kept as read. */
+  async function pickIntoList(file: File, into: ImportTarget) {
+    if (!actions.previewList) return setError(t("jobs.sell.imp.err.no_read"));
+    if (file.size <= 0) return setError(t("jobs.sell.file.empty"));
+    if (file.size > MAX_FILE_BYTES) return setError(t("jobs.sell.file.size"));
+    setBusy(true);
+    setError(null);
+    setMfa(false);
+    const up = await postSellFile(base, file);
+    if (!up.ok) {
+      setBusy(false);
+      return setError(t(`jobs.sell.file.${up.error}`));
+    }
+    const r = await actions.previewList(into.id, up.fileId);
+    setBusy(false);
+    if (!r.ok) return setError(r.error);
+    if (r.data.rows.length === 0) return setError(t(r.data.unclear ? "jobs.sell.imp.err.unreadable" : "jobs.sell.imp.err.no_rows"));
+    const rows: ImportRow[] = r.data.rows.map((x, i) => {
+      const paise = into.priceKey ? x.cells[into.priceKey] : null;
+      const cells = { ...x.cells };
+      if (into.priceKey) delete cells[into.priceKey];
+      return { id: `l${i}`, name: x.name, priceText: typeof paise === "number" ? String(Math.round(paise / 100)) : "", price: null, count: null, colour: null, status: "ok", cells, optionalPrice: true, note: into.categoryKey && typeof x.cells[into.categoryKey] === "string" ? String(x.cells[into.categoryKey]) : null };
+    });
+    setView({ v: "import", rows: restatus(rows), file: file.name, cut: r.data.rows.length >= 1000, saved: 0, list: { id: into.id, name: into.name, priceKey: into.priceKey, categoryKey: into.categoryKey, choices: into.categoryChoices, fill: "" } });
+  }
+
+  /** Save the ready rows into the chosen list in ONE call (all or nothing): the rows' own cells, the price as paise, and the Category given to rows that have none. */
+  async function addToList(view: Extract<View, { v: "import" }>) {
+    const list = view.list;
+    if (!list || !actions.commitList) return;
+    const ready = view.rows.filter((r) => r.status === "ok");
+    setBusy(true);
+    setError(null);
+    setMfa(false);
+    const rows = ready.map((r) => {
+      const cells: Record<string, string | number | boolean | null> = { ...(r.cells ?? {}) };
+      if (list.priceKey && r.price !== null) cells[list.priceKey] = r.price * 100;
+      if (list.categoryKey && list.fill !== "" && (cells[list.categoryKey] === undefined || cells[list.categoryKey] === null || cells[list.categoryKey] === "")) cells[list.categoryKey] = list.fill;
+      return { name: r.name.trim(), cells };
+    });
+    const r = await actions.commitList(list.id, rows);
+    setBusy(false);
+    if (!r.ok) return refused(r);
+    const names = new Set([...(view.added ?? []), ...ready.map((x) => x.name.trim().toLowerCase())]);
+    const left = view.rows.filter((x) => x.status !== "ok");
+    setView({ ...view, rows: restatus(left, names), added: [...names], saved: view.saved + r.data.created + r.data.updated });
   }
 
   /** The ready rows, one by one, each as the form of a typed saree (the same save, the same refusals); a refusal stops the run and keeps what is left on the screen. */
@@ -627,11 +679,24 @@ export default function SellWork({ style, work, words, base, actions, live, owne
 
           {view.v === "pick" ? (
             <div data-part="pick" className="flex flex-col gap-3">
+              {importing && targets.length > 0 ? (
+                <div role="radiogroup" aria-label={t("jobs.sell.imp.target.title")} data-part="import-target" className="flex flex-col gap-2">
+                  <p className="m-0 text-[15px] font-bold text-ink">{t("jobs.sell.imp.target.title")}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[{ id: "catalogue", name: t("jobs.sell.imp.target.catalogue") }, ...targets.map((x) => ({ id: x.id, name: x.name }))].map((o) => (
+                      <button key={o.id} type="button" role="radio" aria-checked={target === o.id} onClick={() => setTarget(o.id)} className={`min-h-11 rounded-full border px-4 text-[15px] font-semibold ${target === o.id ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-ink"}`}>
+                        {o.name}
+                      </button>
+                    ))}
+                  </div>
+                  {target === "" ? <p className="m-0 text-[14px] text-muted">{t("jobs.sell.imp.target.choose")}</p> : null}
+                </div>
+              ) : null}
               <p className="m-0 text-[15px] leading-snug text-ink">{importing ? t("jobs.sell.imp.pick") : t(`jobs.sell.pick.${view.from}`)}</p>
-              <label className={`${btnMain} cursor-pointer ${busy ? "pointer-events-none opacity-60" : ""}`}>
+              <label className={`${btnMain} cursor-pointer ${busy || (importing && target === "") ? "pointer-events-none opacity-60" : ""}`}>
                 <Upload aria-hidden="true" className="size-4" />
                 {busy ? t("jobs.sell.pick.reading") : importing ? t("jobs.sell.imp.pick.go") : t(`jobs.sell.pick.${view.from}.go`)}
-                <input type="file" data-part="pick-file" accept={importing ? ".csv,.tsv,.txt,.xlsx,.xls,.pdf,image/*,.heic,.heif" : view.from === "photos" ? "image/*,.pdf,.heic,.heif" : ".csv,.tsv,.xls,.xlsx,.pdf"} disabled={busy} onChange={(e) => void pick(e.target.files?.[0], (view as Extract<View, { v: "pick" }>).from)} className="sr-only" />
+                <input type="file" data-part="pick-file" accept={importing ? ".csv,.tsv,.txt,.xlsx,.xls,.pdf,image/*,.heic,.heif" : view.from === "photos" ? "image/*,.pdf,.heic,.heif" : ".csv,.tsv,.xls,.xlsx,.pdf"} disabled={busy || (importing && target === "")} onChange={(e) => void pick(e.target.files?.[0], (view as Extract<View, { v: "pick" }>).from)} className="sr-only" />
               </label>
               <p className="m-0 text-[13.5px] leading-snug text-muted">{t("jobs.sell.u.note")}</p>
             </div>
@@ -640,12 +705,12 @@ export default function SellWork({ style, work, words, base, actions, live, owne
           {view.v === "import" && view.saved > 0 && view.rows.filter((r) => r.status === "ok").length === 0 && !busy ? (
             <div data-part="import-done" className="flex flex-col gap-3">
               <JobChip tone="done">{t("jobs.sell.done.chip")}</JobChip>
-              <p className="m-0 text-[16px] font-semibold leading-snug text-ink">{t("jobs.sell.imp.done", { n: view.saved })}</p>
-              <p className="m-0 text-[15px] leading-snug text-muted">{t("jobs.sell.imp.photo")}</p>
+              <p className="m-0 text-[16px] font-semibold leading-snug text-ink">{view.list ? t("jobs.sell.imp.done_list", { n: view.saved, name: view.list.name }) : t("jobs.sell.imp.done", { n: view.saved })}</p>
+              {view.list ? null : <p className="m-0 text-[15px] leading-snug text-muted">{t("jobs.sell.imp.photo")}</p>}
               {view.rows.some((r) => r.status !== "duplicate") ? <p className="m-0 text-[14px] text-muted">{t("jobs.sell.imp.left", { n: view.rows.filter((r) => r.status !== "duplicate").length })}</p> : null}
               <div className="flex flex-wrap gap-2.5">
-                <Link href={`${base}/catalogue`} prefetch={false} className={`${btnMain} no-underline`}>
-                  {t("jobs.sell.imp.photos_go")}
+                <Link href={view.list ? `${base}/what-you-sell/lists/${view.list.id}` : `${base}/catalogue`} prefetch={false} className={`${btnMain} no-underline`}>
+                  {view.list ? t("jobs.sell.imp.open_list", { name: view.list.name }) : t("jobs.sell.imp.photos_go")}
                 </Link>
                 <button type="button" onClick={onClose} className={btnQuiet}>
                   {t("jobs.sell.done.later")}
@@ -653,7 +718,7 @@ export default function SellWork({ style, work, words, base, actions, live, owne
               </div>
             </div>
           ) : view.v === "import" ? (
-            <ImportTable rows={view.rows} added={new Set(view.added ?? [])} file={view.file} cut={view.cut} reading={view.reading ?? null} unreadable={view.unreadable === true} t={t} busy={busy} progress={progress} onRows={(rows) => setView((v) => (v.v === "import" ? { ...v, rows } : v))} onAdd={() => void addImported(view.rows, view.added ?? [])} onCancel={onClose} />
+            <ImportTable listName={view.list?.name} fillCategory={view.list?.categoryKey ? { label: t("jobs.sell.imp.cat_fill"), none: t("jobs.sell.imp.cat_none"), choices: view.list.choices, value: view.list.fill, onChange: (v: string) => setView((cur) => (cur.v === "import" && cur.list ? { ...cur, list: { ...cur.list, fill: v } } : cur)) } : undefined} rows={view.rows} added={new Set(view.added ?? [])} file={view.file} cut={view.cut} reading={view.reading ?? null} unreadable={view.unreadable === true} t={t} busy={busy} progress={progress} onRows={(rows) => setView((v) => (v.v === "import" ? { ...v, rows } : v))} onAdd={() => void (view.list ? addToList(view) : addImported(view.rows, view.added ?? []))} onCancel={onClose} />
           ) : null}
 
           {view.v === "understood" ? (

@@ -5,7 +5,10 @@ import { redirect } from "next/navigation";
 
 import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { createList, getRows, putColumns, putRow, refusalOf, removeList, removeRow, renameList, type ColumnInput } from "@/lib/api/lists";
+import { commitListImport, createList, createStarterLists, getRows, previewListImport, type ImportPreview, putColumns, putRow, refusalOf, removeList, removeRow, renameList, type ColumnInput } from "@/lib/api/lists";
+import type { Reply } from "@/components/v2/app/cc/kit";
+import { getLang } from "@/i18n/get-lang";
+import { appT } from "@/i18n/app";
 import { requireUser } from "@/lib/auth/session";
 import { whatYouSellLists } from "@/lib/screens/flag";
 import { isKind, MAX_COLUMNS, NAME_MAX, ROW_NAME_MAX, parseRupees, type Cell, type Done, type ListKind, type Row, type RowPage, type SellList } from "@/lib/lists/types";
@@ -41,6 +44,57 @@ export async function createListAction(tenantId: string, input: { id: unknown; n
   const name = clean(input.name, NAME_MAX);
   if (!name || !isKind(input.kind) || typeof input.id !== "string" || !isCanonicalUuid(input.id)) return no("validation_error");
   const out = await wrap(tenantId, () => createList(me.token, tenantId, { id: input.id as string, name, kind: input.kind as ListKind }));
+  if (out.ok) revalidatePath(`/app/tenants/${tenantId}/what-you-sell`);
+  return out;
+}
+export async function createStartersAction(tenantId: string): Promise<Done<true>> {
+  const me = await who(tenantId);
+  if (!me || !canWrite(me.role)) return no("forbidden");
+  const out = await wrap(tenantId, async () => {
+    await createStarterLists(me.token, tenantId);
+    return true as const;
+  });
+  if (out.ok) revalidatePath(`/app/tenants/${tenantId}/what-you-sell`);
+  return out;
+}
+/** The sheet's own reply shape (a plain sentence of ours for each closed refusal), for the import that sits in the What you sell sheet. */
+async function asReply<T>(done: Promise<Done<T>>): Promise<Reply<T>> {
+  const r = await done;
+  if (r.ok) return r;
+  return { ok: false, kind: r.error === "forbidden" ? "forbidden" : r.error === "step_up_required" ? "mfa" : "invalid", error: appT(await getLang())(`wls.err.${r.error}` as "wls.err.unavailable"), ...(r.error === "step_up_required" ? { mfa: true } : {}) } as Reply<T>;
+}
+/** Preview a file into the chosen list (nothing is saved). */
+export async function previewListImportAction(tenantId: string, listId: string, fileId: string): Promise<Reply<{ rows: ImportPreview["rows"]; unclear: boolean }>> {
+  return asReply(
+    (async (): Promise<Done<{ rows: ImportPreview["rows"]; unclear: boolean }>> => {
+      const me = await who(tenantId);
+      if (!me || !canWrite(me.role)) return no("forbidden");
+      if (typeof listId !== "string" || !isCanonicalUuid(listId) || typeof fileId !== "string" || !isCanonicalUuid(fileId)) return no("validation_error");
+      const out = await wrap(tenantId, () => previewListImport(me.token, tenantId, listId, fileId));
+      return out.ok ? { ok: true, data: { rows: out.data.rows, unclear: out.data.unclear } } : out;
+    })(),
+  );
+}
+/** Save the owner's checked rows into the chosen list: at most 1,000, each a name and cells that are text, numbers, yes/no or nothing; the API checks every cell against its column. */
+export async function commitListImportAction(tenantId: string, listId: string, rows: readonly { name: unknown; cells: unknown }[]): Promise<Reply<{ created: number; updated: number }>> {
+  return asReply(commitIntoList(tenantId, listId, rows));
+}
+async function commitIntoList(tenantId: string, listId: string, rows: readonly { name: unknown; cells: unknown }[]): Promise<Done<{ created: number; updated: number }>> {
+  const me = await who(tenantId);
+  if (!me || !canWrite(me.role)) return no("forbidden");
+  if (typeof listId !== "string" || !isCanonicalUuid(listId) || !Array.isArray(rows) || rows.length === 0 || rows.length > 1000) return no("validation_error");
+  const clean_: { name: string; cells: Record<string, Cell> }[] = [];
+  for (const r of rows) {
+    const name = clean(r?.name, ROW_NAME_MAX);
+    if (!name || typeof r.cells !== "object" || r.cells === null || Array.isArray(r.cells)) return no("validation_error");
+    const cells: Record<string, Cell> = {};
+    for (const [k, v] of Object.entries(r.cells as Record<string, unknown>)) {
+      if (!/^[a-z][a-z0-9_]{0,40}$/.test(k)) return no("validation_error");
+      if (v === null || typeof v === "string" || typeof v === "boolean" || (typeof v === "number" && Number.isFinite(v))) cells[k] = typeof v === "string" ? v.slice(0, 200) : v;
+    }
+    clean_.push({ name, cells });
+  }
+  const out = await wrap(tenantId, () => commitListImport(me.token, tenantId, listId, clean_));
   if (out.ok) revalidatePath(`/app/tenants/${tenantId}/what-you-sell`);
   return out;
 }

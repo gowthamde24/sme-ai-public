@@ -8,6 +8,7 @@ import { markAllSeen, parseSeen, toAnnounce, unreadOf, type Notice } from "@/lib
 
 import { announcedIds, browserOptInRaw, seenRaw, setBrowserOptIn, subscribeDevice, writeAnnounced, writeSeen } from "./device";
 import { useNotifications } from "./use-notifications";
+import { topIconButton } from "../frame-style";
 import { word, type Labels } from "../labels";
 import type NotificationPanelType from "./NotificationPanel";
 
@@ -132,7 +133,7 @@ export function NotificationBell({ tenantId, labels, still = false }: { tenantId
         aria-expanded={open}
         aria-controls={open ? id : undefined}
         data-notify="bell"
-        className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-edge bg-surface text-ink transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line"
+        className={`relative ${topIconButton}`}
       >
         <Bell className="size-5" aria-hidden="true" />
         {count > 0 ? (

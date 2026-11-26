@@ -46,6 +46,7 @@ from app.conversation.turntaking import (
     is_command,
     spoken_prefix,
 )
+from app.voice.interface import VoiceError
 
 log = logging.getLogger("app.conversation")
 
@@ -113,6 +114,8 @@ class Conversation:
         self.router = router or (lambda text, tools, turn: route(text, tools_available=tools, turn_number=turn))   # the browser session routes by the conversational assistant's intent (job EA)
         self.on_stt = on_stt  # the browser session shows the caller's words as they come (partials and the final); the phone loop leaves it None
         self._epoch = 0
+        self.voice_down: str | None = None   # (26 Nov 2026, no fallback voices) the closed code when the chosen voice could not speak a piece of the latest turn (tts_unavailable | tts_budget); None when it spoke
+        self.voice_down_turns = 0   # how many turns in a row the chosen voice could not speak: the phone ends the call after MAX_SILENT_TURNS, the screen keeps showing the words
         self._reply_spec: Any = None
         self._reply_task: asyncio.Future[None] | None = None
         self._current: TurnTimings | None = None
@@ -442,6 +445,7 @@ class Conversation:
         begin = getattr(self.tts, "begin_turn", None)
         if begin is not None:
             begin()
+        self.voice_down = None
         background = [asyncio.ensure_future(self.tts.prewarm()), asyncio.ensure_future(self._filler(tm, epoch, tier))]
         spec, self._reply_spec = self._reply_spec, None
         if spec is not None and tier != "fast":
@@ -461,6 +465,7 @@ class Conversation:
             for task in (producer, *background):
                 with suppress(asyncio.CancelledError, Exception):
                     await task
+            self.voice_down_turns = self.voice_down_turns + 1 if self.voice_down else 0
             tm.tts_engine = str(getattr(self.tts, "served_engine", "") or "")
             tm.tts_fallback = str(getattr(self.tts, "fallback_reason", "") or "")
             log.info("conversation_turn language=%s model_tier=%s tts_engine=%s tts_fallback=%s clauses=%s interrupted=%s filler=%s first_audio_ms=%s", self.session.language, tm.model_tier, tm.tts_engine or "-", tm.tts_fallback or "-", tm.clauses, tm.interrupted, tm.filler_played, None if tm.after_final_ms is None else round(tm.after_final_ms))
@@ -496,19 +501,23 @@ class Conversation:
                 tm.tts_request_at = self.clock()
             clause: list[Any] = [piece, 0.0]
             self._clauses.append(clause)
-            async for pcm in self.tts.stream(piece, voice_language(piece, self.session.language)):
-                if epoch != self._epoch:
-                    return
-                if tm.first_audio_at is None:
-                    tm.first_audio_at = self.clock()
-                await self._gate.wait()   # a pause for a possible interruption holds the next audio here (B2)
-                async with self._write_lock:
+            try:
+                async for pcm in self.tts.stream(piece, voice_language(piece, self.session.language)):
                     if epoch != self._epoch:
                         return
-                    await self.playout.write(pcm)
-                    clause[1] += len(pcm) / 2 / rate
-                    self._tail += pcm
-                    del self._tail[: max(0, len(self._tail) - 20 * rate * 2)]   # the last 20 s are enough to say again what a pause cut off
+                    if tm.first_audio_at is None:
+                        tm.first_audio_at = self.clock()
+                    await self._gate.wait()   # a pause for a possible interruption holds the next audio here (B2)
+                    async with self._write_lock:
+                        if epoch != self._epoch:
+                            return
+                        await self.playout.write(pcm)
+                        clause[1] += len(pcm) / 2 / rate
+                        self._tail += pcm
+                        del self._tail[: max(0, len(self._tail) - 20 * rate * 2)]   # the last 20 s are enough to say again what a pause cut off
+            except VoiceError as err:   # the chosen voice cannot speak (and no other voice may): the words stay (caption, history), the sound is not made up
+                self.voice_down = str(getattr(err, "code", "") or "tts_unavailable")
+                log.warning("conversation_voice_down code=%s", self.voice_down)
 
     async def _filler(self, tm: TurnTimings, epoch: int, tier: str = "strong") -> None:
         if self.fillers is None:

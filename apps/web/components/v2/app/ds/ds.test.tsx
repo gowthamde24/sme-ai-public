@@ -49,7 +49,7 @@ describe("the v6 side menu (owner, 13 Nov 2026)", () => {
   const owner = menuGroupsV6("owner");
   it("is Today, My assistant, Calls, Chats, Leads, Campaigns, Reports, then Setup: Catalogue, Phone numbers, Billing", () => {
     expect(MENU_V6.map((g) => [g.label, g.rows.map((r) => r.label)])).toEqual([
-      ["", ["Today", "Jobs", "My assistant", "Calls", "Chats", "Leads", "Campaigns", "Reports"]],
+      ["", ["Today", "AI Team", "My assistant", "Calls", "Chats", "Leads", "Campaigns", "Reports"]],
       ["Setup", ["What you sell", "Catalogue", "Phone numbers", "Billing", "Settings"]],
     ]);
     const drawn = owner.map((g) => [g.label, g.items.map((i) => i.label)]);
@@ -157,7 +157,7 @@ describe("the v6 menu with JOBS on (planner decision 19 Nov)", () => {
   it("Campaigns and Rules leave the menu; the Jobs row comes after Today and carries Who wants offers, Call list and Tasks as its tabs", () => {
     const rows = menuGroupsV6("owner", view).flatMap((g) => g.items);
     expect(rows.map((r) => r.label)).not.toContain("Campaigns");
-    expect(rows.map((r) => r.label).slice(0, 2)).toEqual(["Today", "Jobs"]);
+    expect(rows.map((r) => r.label).slice(0, 2)).toEqual(["Today", "AI Team"]);
     const jobs = rows.find((r) => r.id === "v6-jobs");
     expect(jobs?.members).toEqual(["jobs", "offerconsent", "calllist", "tasks"].filter((m) => (jobs?.members as string[]).includes(m)));
     expect(jobs?.members).toContain("jobs");
@@ -166,7 +166,7 @@ describe("the v6 menu with JOBS on (planner decision 19 Nov)", () => {
   it("with JOBS off the menu is exactly as before: Campaigns, no Jobs", () => {
     const rows = menuGroupsV6("owner", off).flatMap((g) => g.items);
     expect(rows.map((r) => r.label)).toContain("Campaigns");
-    expect(rows.map((r) => r.label)).not.toContain("Jobs");
+    expect(rows.map((r) => r.label)).not.toContain("AI Team");
   });
 });
 

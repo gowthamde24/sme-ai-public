@@ -1,19 +1,19 @@
-{label="Jobs"} [Jobs](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Follow up on price questions and promises
+{label="Your AI team"} [Your AI team](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Follow-up helper
 #
-[button type=button: Follow up on price questions and promises]
+[button type=button: Follow-up helper]
 [button type=button: Rename]
 When a customer asked a price or you promised to get back, your assistant follows up on WhatsApp so nobody is forgotten. Needs a fix Last run 9 min ago On
-[button type=button: Follow up on price questions and promises]
+[button type=button: Follow-up helper]
 {label="Who talks"}
 ## Who talks
-Says it is an AI if asked F Follow up on price questions and promises
+Says it is an AI if asked F Follow-up helper
 [button type=button: Rename]
 Customers hear: “the assistant of Neelambari Silks”
-{label="This job speaks … in a … voice from …."} This job speaks
-<select label="This job speaks … in a … voice from …. (1)">
+{label="This team member speaks … in a … voice from …."} This team member speaks
+<select label="This team member speaks … in a … voice from …. (1)">
   options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn
 in a
-<select label="This job speaks … in a … voice from …. (2)">
+<select label="This team member speaks … in a … voice from …. (2)">
   options: friendly | respectful* | short and quick=quick
 voice from the shop number .
 respectful “Namaskaram Suresh garu, …” · +91 98480 xxx10
@@ -22,8 +22,8 @@ legend: Voice
 Janvi Recommended
 <radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Sophia" value=en-sophia>
 Sophia
-What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone. Or just ask your assistant
-[button type=button: “Make the visits job speak Telugu.”]
+What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow-up helper talks in English from the shop number. If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone. Or just ask your assistant
+[button type=button: “Make Visit booker speak Telugu.”]
 {role=alert} Why: WhatsApp only lets us write first with an approved template once a customer’s 24 hours are over. Pick a template and it goes out after your OK.
 - Sravani Reddy Asked a price 2 days ago. WhatsApp’s 24 hours are over. [Send template](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
 - Padma Asked about the blue Pochampally saree 3 days ago. WhatsApp’s 24 hours are over. [Send template](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
@@ -43,7 +43,7 @@ What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → 
 - 10 am WhatsApp
 - 10:30 am call
 ## What it says
-[Change by saying it](/app/tenants/22222222-2222-2222-2222-222222222222?say=About%20%E2%80%9CFollow%20up%20on%20price%20questions%20and%20promises%E2%80%9D%3A%20) WhatsApp message · English “ Namaskaram Ravi garu, this is the AI assistant of Neelambari Silks. You asked about a price. Shall I send you the details? ”
+[Change by saying it](/app/tenants/22222222-2222-2222-2222-222222222222?say=About%20%E2%80%9CFollow-up%20helper%E2%80%9D%3A%20) WhatsApp message · English “ Namaskaram Ravi garu, this is the AI assistant of Neelambari Silks. You asked about a price. Shall I send you the details? ”
 ## What it finds out
 <checkbox label="Which item and price they asked about" checked>
 Which item and price they asked about
@@ -60,8 +60,8 @@ summary: More choices Rest day, who is left out, and more
 Rest day
 <select label="Rest day">
   options: none | Sunday=sunday* | Saturday and Sunday=weekend
-<checkbox label="Stop a customer's job after 3 tries" checked>
-Stop a customer's job after 3 tries These always stay on: STOP and quiet hours. They never change here.
+<checkbox label="Stop trying one customer after 3 tries" checked>
+Stop trying one customer after 3 tries These always stay on: STOP and quiet hours. They never change here.
 ## Results
 Last 7 days
 21

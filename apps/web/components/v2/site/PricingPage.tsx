@@ -2,6 +2,7 @@ import { Gauge } from "lucide-react";
 import Link from "next/link";
 
 import { JsonLd, faqLd } from "@/components/v2/site/JsonLd";
+import { MinutesBilled, PlanCompare } from "@/components/v2/site/PlanDetails";
 import { PublicPlanCards } from "@/components/v2/site/PublicPlans";
 import { CtaBand, FaqList, Section } from "@/components/v2/site/sections";
 import { btnPrimary, btnSecondary, card, container, lead } from "@/components/v2/site/ui";
@@ -21,7 +22,7 @@ import { sitePath } from "@/lib/site/paths";
 export function PricingPage({ t, lang }: { t: SiteT; lang: SiteLang }) {
   const start = startEntry(t, lang, t("h2.nav.early"));
   const vars = planVars();
-  const faq = ([1, 2, 3, 4, 5, 6] as const).map((n) => ({ q: t(`price.faq.${n}.q`, vars), a: t(`price.faq.${n}.a`, vars) }));
+  const faq = ([1, 2, 3, 4, 5, 6, 7, 8] as const).map((n) => ({ q: t(`price.faq.${n}.q`, vars), a: t(`price.faq.${n}.a`, vars) }));
   return (
     <>
       <section aria-labelledby="h1" className={`${container} pb-6 pt-8 sm:pt-12`}>
@@ -53,6 +54,9 @@ export function PricingPage({ t, lang }: { t: SiteT; lang: SiteLang }) {
             <PublicPlanCards t={t} start={{ href: start.href, label: t("h3.cta") }} />
           </div>
         </div>
+
+        <PlanCompare t={t} />
+        <MinutesBilled t={t} lang={lang} />
 
         <div className="mt-10 grid gap-4 md:grid-cols-2">
           <article className={card} data-part="founding">

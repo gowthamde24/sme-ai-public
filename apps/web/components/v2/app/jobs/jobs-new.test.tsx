@@ -226,11 +226,11 @@ describe("the command box and the plan card", () => {
 describe("the suggested jobs", () => {
   it("a saree shop: four cards, each with why it fits (the shop's numbers), a preview of what it says, Start and Look first", () => {
     draw(acts());
-    expect(screen.getByRole("heading", { name: "Jobs for a saree shop" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Team members for a saree shop" })).toBeInTheDocument();
     const items = document.querySelectorAll("[data-suggestion]");
     expect([...items].map((i) => i.getAttribute("data-suggestion"))).toEqual(["speed_to_lead", "followups", "store_visits", "offers"]);
     const first = within(items[0] as HTMLElement);
-    expect(first.getByText("Call every new enquiry right away")).toBeInTheDocument();
+    expect(first.getByText("Quick responder")).toBeInTheDocument();
     expect(first.getByText("Last week 14 enquiries came in and 9 of them waited more than an hour for you.")).toBeInTheDocument();
     expect(first.getByText(/Which occasion is it for/)).toBeInTheDocument();
     expect(first.getByRole("button", { name: "Start" })).toBeInTheDocument();
@@ -240,7 +240,7 @@ describe("the suggested jobs", () => {
   });
   it("another kind of business: the plain three, under the plain heading", () => {
     draw(acts(), { saree: false });
-    expect(screen.getByRole("heading", { name: "Jobs to start with" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Team members to start with" })).toBeInTheDocument();
     expect(document.querySelectorAll("[data-suggestion]")).toHaveLength(3);
   });
   it("Start is one tap: it starts that job at once (no plan card) and lands on its page with the Started toast", async () => {
@@ -268,7 +268,7 @@ describe("the suggested jobs", () => {
     const sug = [{ kind: "speed_to_lead" as const, title: null, why: { code: "no_number", params: {} }, preview: "Hi", ready: false }];
     render(<NewJob words={words} base={BASE} actions={acts()} suggestions={sug} heading={null} initialPlan={null} />);
     const card = document.querySelector('[data-suggestion="speed_to_lead"]') as HTMLElement;
-    expect(within(card).getByText("Add a phone number first, then this job can start.")).toBeInTheDocument();
+    expect(within(card).getByText("Add a phone number first, then this team member can start.")).toBeInTheDocument();
     expect(within(card).getByRole("button", { name: "Start" })).toBeDisabled();
   });
   it("Look first opens the same plan card for that job, and starts nothing", async () => {
@@ -298,7 +298,7 @@ describe("the Jobs page with no jobs yet", () => {
   const stuff = { suggestions: mockSuggestions(SAREE).items, suggestionActions: { start: vi.fn(async (kind: Parameters<typeof mockStartedFor>[0]) => ({ ok: true as const, data: mockStartedFor(kind) })) } };
   it("shows the suggested jobs inline (a Start each, a way to look first) and a way to say it instead, in place of the plain note", async () => {
     const { container } = render(<JobsList jobs={[]} filter="all" words={words} base={BASE} actions={null} {...stuff} />);
-    expect(screen.getByRole("heading", { name: "No jobs yet" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "No team members yet" })).toBeInTheDocument();
     expect(container.querySelectorAll("[data-suggestion]")).toHaveLength(4);
     expect(screen.getAllByRole("button", { name: "Start" })).toHaveLength(4);
     expect(screen.getAllByRole("link", { name: "Look first" })[0]).toHaveAttribute("href", `${BASE}/jobs/new?look=speed_to_lead`);

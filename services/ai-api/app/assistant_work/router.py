@@ -43,6 +43,7 @@ _TOUCHES = re.compile(
     r"(show|open|pull up|take me to|go to)\b.{0,40}\b(chat|conversation|thread)\b|"
     r"\b(add|create|make)\b.{0,20}\b(product|saree|sari|item)s?\b|(open|show)\b.{0,20}\b(catalogue|catalog|sarees|products)\b|"
     r"\b(price lists?|price ranges?|quote (settings|policy|rules))\b|"
+    r"(change|set|switch|use|pick|choose|make)\b.{0,40}\b(voice|accent)\b(?!\s*(note|mail|message|call))|"
     r"invite\b.{0,30}\b(team|staff|member|people)|add\b.{0,20}\b(staff|member|team member)|google sheet|(set ?up|setup|connect)\b.{0,30}\b(voice|language|follow-?up|sheet)|"
     r"add\b.{0,40}\b(as a |as )?(lead|customer|contact)|new lead|example data|sample data|demo data|delete (my |the )?(workspace|account)|billing|subscription|cancel (my )?plan|real[- ]data)\b"
     r"|(బుక్|बुक|ಬುಕ್)\s*(చెయ్|చేయ|कर|ಮಾಡ)|(విజిట్|అపాయింట్‌?మెంట్|విజిట్‌)\s*(బుక్|మార్చ|రద్దు)|నిమిషాల్లో|నిమిషాలలో|मिनट में|ನಿಮಿಷದಲ್ಲಿ|కనెక్ట్ చేయ|కనెక్ట్ చెయ్|డిస్కనెక్ట్|టెస్ట్ చేయ|టెస్ట్ చెయ్|కనెక్ట్ చేసు|ఇండియామార్ట్|వెబ్‌సైట్ ఫారమ్|గూగుల్ షీట్|कनेक्ट|डिस्कनेक्ट|टेस्ट कर|ಕನೆಕ್ಟ್|ಡಿಸ್ಕನೆಕ್ಟ್|ಟೆಸ್ಟ್ ಮಾಡ|యాప్ భాష|భాషను|లిమిట్|పరిమితి|सीमा|लिमिट|ಮಿತಿ|ಲಿಮಿಟ್|డార్క్ మోడ్|లైట్ మోడ్|టాక్ లైవ్|కాల్ సమయ|కాల్స్ సమయం|ఆటో రిప్లై|ఆపండి|లీడ్‌గా చేర్చ|వర్క్‌స్పేస్|డిలీట్|ప్లాన్ రద్దు|కాల్ का समय|कॉल का समय|ऑटो रिप्लाई|रोक दो|लीड में जोड़|वर्कस्पेस|ಕರೆ ಸಮಯ|ಆಟೋ ರಿಪ್ಲೈ|ವರ್ಕ್‌ಸ್ಪೇಸ್",

@@ -28,13 +28,18 @@ const live = (over: Partial<TalkLive> = {}): TalkLive => ({
 afterEach(cleanup);
 
 describe("Talk live inside Today's command bar (variant 'bar', the approved mock)", () => {
-  it("draws a red timer and the label (the orb is outside the box), YOU and YOUR ASSISTANT with the key numbers in orange", () => {
+  it("draws a red timer and the label (the orb is outside the box), the conversation as a chat (his words on the right, the assistant's on the left, who said it only for screen readers) with the key numbers in orange", () => {
     render(<TalkLiveBody variant="bar" live={live()} words={WORDS} language="తెలుగు" onType={() => undefined} />);
     expect(document.querySelector("[data-orb]")).toBeNull();
     expect(document.querySelector('[data-part="talk-timer"]')).toHaveTextContent("0:48");
     expect(document.querySelector('[data-part="talk-label"]')).toHaveTextContent("LIVE WITH YOUR ASSISTANT · SPEAKING");
-    expect(screen.getByText("You")).toBeInTheDocument();
-    expect(screen.getByText("Your assistant")).toBeInTheDocument();
+    const mine = document.querySelector('[data-who="owner"]') as HTMLElement;
+    const theirs = document.querySelector('[data-who="assistant"]') as HTMLElement;
+    expect(mine).toHaveClass("items-end"); // the owner's bubble on the right
+    expect(theirs).toHaveClass("items-start"); // the assistant's on the left
+    expect(mine.querySelector(".sr-only")).toHaveTextContent("You:");
+    expect(theirs.querySelector(".sr-only")).toHaveTextContent("Your assistant:");
+    expect(screen.queryByText("You", { selector: "small" })).toBeNull(); // no visible YOU / YOUR ASSISTANT label
     expect([...document.querySelectorAll("mark")].map((m) => m.textContent)).toEqual(expect.arrayContaining(["11", "10 am", "6 pm"]));
   });
 
@@ -81,4 +86,41 @@ describe("Talk live inside Today's command bar (variant 'bar', the approved mock
     expect(document.querySelector('[data-variant="bar"]')).toBeNull();
     expect(document.querySelector('[data-part="talk-live"]')).toHaveClass("flex-col");
   });
+
+  it("Interrupted is a small tag under the bubble; words still being heard are a lighter, dashed bubble", () => {
+    const l = live();
+    render(<TalkLiveBody variant="bar" live={{ ...l, lines: [...l.lines, { who: "assistant", text: "The price is", cut: true }, { who: "owner", text: "and the delivery", interim: true }] }} words={{ ...WORDS, "bv.live.interrupted": "Interrupted" }} language="తెలుగు" onType={() => undefined} />);
+    expect(document.querySelector('[data-part="interrupted"]')).toHaveTextContent("Interrupted");
+    const interim = document.querySelector('[data-interim="true"]') as HTMLElement;
+    expect(interim.querySelector("p")).toHaveClass("border-dashed", "opacity-70");
+  });
+
+  it("each closed error code of a turn has its own honest sentence (C1, 26 Nov 2026), in all four languages, and 'Nothing was done.' is dropped when the answer already arrived", async () => {
+    const { appDict } = await import("@/i18n/app");
+    const sentences: Record<string, string> = {
+      model_not_configured: "The assistant could not answer just now. Please try again in a minute.",
+      assistant_failed: "The assistant could not answer just now. Please try again in a minute.",
+      model_busy: "The AI service is busy. Try again in a minute.",
+      run_limit_reached: "You have used this hour's assistant questions. It opens again soon.",
+      agents_disabled: "The assistant is switched off for this workspace.",
+      token_expiring: "Your session is about to expire. Sign in again.",
+      tts_unavailable: "I could not speak that answer. The words are on the screen.",
+    };
+    for (const [code, text] of Object.entries(sentences)) {
+      const { unmount } = render(<TalkLiveBody variant="bar" live={live({ turnProblem: code, lines: [{ who: "owner", text: "hello" }] })} words={WORDS} language="తెలుగు" onType={() => undefined} />);
+      expect(document.querySelector('[data-part="talk-turn-problem"]'), code).toHaveTextContent(text);
+      unmount();
+    }
+    // the answer for this turn already arrived: no "Nothing was done."
+    for (const code of ["assistant_failed", "something_new"]) {
+      const { unmount } = render(<TalkLiveBody variant="bar" live={live({ turnProblem: code, lines: [{ who: "owner", text: "hello" }, { who: "assistant", text: "Hi" }] })} words={WORDS} language="తెలుగు" onType={() => undefined} />);
+      expect(document.querySelector('[data-part="talk-turn-problem"]')?.textContent, code).not.toMatch(/Nothing was done/);
+      unmount();
+    }
+    for (const l of ["te", "hi", "kn"] as const) {
+      const d = appDict(l) as Record<string, string>;
+      for (const k of ["dst.err.model", "dst.err.model.answered", "dst.err.busy", "dst.err.limit", "dst.err.off", "dst.err.token", "dst.err.tts", "dst.err.turn.answered"]) expect(d[k], `${l} ${k}`).toBeTruthy();
+    }
+  });
 });
+

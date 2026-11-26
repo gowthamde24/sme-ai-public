@@ -47,7 +47,7 @@ class CallVoicePreview:
             raise VoiceError("rate_limited")
         self._spent = {k: v for k, v in self._spent.items() if k[1] == slot[1]}
         self._spent[slot] = self._spent.get(slot, 0) + len(text)
-        tts = FallbackTts(self._config, self._factory, chosen={language: voice.id}, gender=gender, clock=self._clock)
+        tts = FallbackTts(self._config, self._factory, chosen={language: voice.id}, gender=gender, clock=self._clock, strict=True)
         tts.pace = pace
         tts.begin_turn()
         pcm = b"".join([c async for c in tts.stream(text, language)])

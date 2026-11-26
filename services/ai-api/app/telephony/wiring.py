@@ -84,7 +84,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         cost_paise_per_minute=settings.telephony_cost_paise_per_minute, cost_pulse_s=settings.telephony_cost_pulse_s, cost_paise_per_minute_inbound=settings.telephony_cost_paise_per_minute_inbound, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
         llm_choice=phone_llm_choice(settings)[0], first_token_s=phone_llm_choice(settings)[1], business=settings.telephony_inbound_business, recording_notice=settings.voicelink_recording_expected, monitor_allowed=settings.takeover_allowed,
         max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)),
-        english_lines=True, call_summaries=True,
+        english_lines=True, call_summaries=True, employees_on=bool(getattr(settings, "employees", False)),
         url_format="text" if settings.exotel_stream_url_format == "text" else "json",
         our_sid=settings.exotel_sid or None,
         budget=RpcVoiceBudget(RpcClient(rest_url, anon_key), principal.token),
@@ -98,7 +98,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
     )
 
 
-def build_tasks_dialer(settings: Any, phone: Any, tone_for: Any = None, say_ai_for: Any = None) -> Any:
+def build_tasks_dialer(settings: Any, phone: Any, tone_for: Any = None, say_ai_for: Any = None, employee_for: Any = None) -> Any:
     """The dialer of approved Lead Desk tasks. `plivo` only when the phone service can place outbound calls (TELEPHONY_OUTBOUND, Plivo Auth ID and Token); otherwise the fake, loudly. Anything else is a mistake."""
     from app.tasks.dialer import FakeDialer
 
@@ -114,7 +114,7 @@ def build_tasks_dialer(settings: Any, phone: Any, tone_for: Any = None, say_ai_f
         return FakeDialer()
     from app.telephony.plivo_tasks import PlivoTaskDialer
 
-    return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for, say_ai_for=say_ai_for)
+    return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for, say_ai_for=say_ai_for, employee_for=employee_for)
 
 
 class NamedCallDialer:
@@ -132,7 +132,7 @@ class NamedCallDialer:
         return (self._real if phone and self._on_list(phone) else self._fallback).call(**kwargs)
 
 
-def build_named_dialer(settings: Any, phone: Any, fallback: Any, tone_for: Any = None, say_ai_for: Any = None) -> Any:
+def build_named_dialer(settings: Any, phone: Any, fallback: Any, tone_for: Any = None, say_ai_for: Any = None, employee_for: Any = None) -> Any:
     """The dialer for a plan whose one person the Owner named; None when this deployment cannot place outbound calls (then the plan runs on the ordinary dialer)."""
     placer = getattr(phone, "outbound", None)
     repo = getattr(phone, "outbound_repo", None)
@@ -140,7 +140,7 @@ def build_named_dialer(settings: Any, phone: Any, fallback: Any, tone_for: Any =
         return None
     from app.telephony.plivo_tasks import PlivoTaskDialer
 
-    real = PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for, say_ai_for=say_ai_for)
+    real = PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for, say_ai_for=say_ai_for, employee_for=employee_for)
     return NamedCallDialer(real, fallback, placer.on_sandbox)
 
 

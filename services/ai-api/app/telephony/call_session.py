@@ -71,6 +71,7 @@ class CallVoiceSession(VoiceSession):
     is_phone = True   # a phone call never gets the speaker check (owner decision 31 Oct 2026: off until the December lawyer review)
     # silence on a phone (owner, 6 Nov 2026): about 4 s quiet, one "హలో, ఉన్నారా?"; about 8 s in all, a short bye and the hang-up. Not while a person has taken the call over.
     PHONE_SILENCE_S = (4.0, 8.0)
+    VOICE_DOWN_END_AFTER = 3   # (26 Nov 2026, no fallback voices) the chosen voice could not speak for 3 turns in a row: the call ends instead of going on in another voice or in silence
 
     closing = False   # the goodbye has been said (owner, 11 Nov 2026): no "are you there?" check and no second goodbye after it; the line closes when the closing line has played
 

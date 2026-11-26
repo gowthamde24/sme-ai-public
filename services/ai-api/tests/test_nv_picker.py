@@ -286,7 +286,7 @@ def preview(*, primary_fails: bool = False) -> tuple[CallVoicePreview, list[tupl
     return CallVoicePreview(default_config(), factory, today=lambda: "2026-10-28"), built
 
 
-def test_the_preview_speaks_the_chosen_voice_the_default_when_unset_and_the_same_gender_fallback_when_the_primary_fails() -> None:
+def test_the_preview_speaks_the_chosen_voice_the_default_when_unset_and_never_another_voice_when_the_primary_fails() -> None:
     svc, built = preview()
     tid = uuid.uuid4()
     wav, engine, voice_id = asyncio.run(svc.speak(tid, "kn", "kn-prakash", "ನಮಸ್ಕಾರ ಸರ್", "male"))
@@ -295,8 +295,9 @@ def test_the_preview_speaks_the_chosen_voice_the_default_when_unset_and_the_same
     asyncio.run(svc2.speak(tid, "kn", None, "ನಮಸ್ಕಾರ ಸರ್"))
     assert built2[0] == ("sarvam_v4", default_config().catalogue["kn-chaitra"].voices.primary.voice), "unset: the default is the Bulbul v4 voice (21 Nov 2026)"
     svc3, built3 = preview(primary_fails=True)
-    _, engine3, _ = asyncio.run(svc3.speak(tid, "kn", "kn-prakash", "ನಮಸ್ಕಾರ ಸರ್", "male"))
-    assert engine3 == "sarvam_v4" and ("sarvam_v4", "chetan_kn_conversation") in built3, "the male voice falls back to the male voice"
+    with pytest.raises(VoiceError) as err3:
+        asyncio.run(svc3.speak(tid, "kn", "kn-prakash", "ನಮಸ್ಕಾರ ಸರ್", "male"))
+    assert err3.value.code == "tts_unavailable" and not [b for b in built3 if b[0] == "sarvam_v4"], "no fallback voices (owner, 26 Nov 2026): the chosen voice is the only one that speaks; a preview of it never plays another"
 
 
 def test_the_same_voice_and_text_are_spoken_once_and_the_daily_cap_stops_a_workspace() -> None:

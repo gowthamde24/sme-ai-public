@@ -23,6 +23,7 @@ ROLE_WORDS: dict[str, tuple[str, ...]] = {
     "quantity": ("qty", "quantity", "count", "pieces", "pcs", "units", "stock count"),
     "description": ("description", "details", "about", "notes", "remarks"),
     "how_to_buy": ("link", "url", "buy", "buy link", "booking link"),
+    "category": ("category", "type", "kind", "group", "section"),
 }
 _YES = {"yes", "y", "true", "1", "haan", "avunu", "ok"}
 _NO = {"no", "n", "false", "0", "nahi", "kadu"}
@@ -69,7 +70,7 @@ def auto_mapping(columns: list[dict[str, Any]], headings: list[str]) -> dict[str
         if pick is not None:
             out[h] = pick["key"]
             taken.add(pick["key"])
-    for role in ("availability", "quantity", "description", "how_to_buy"):   # 3. the other roles by plain words
+    for role in ("availability", "quantity", "description", "how_to_buy", "category"):   # 3. the other roles by plain words
         col = next((c for c in columns if c.get("role") == role and c["key"] not in taken), None)
         if col is None:
             continue

@@ -6,6 +6,7 @@ import * as React from "react";
 
 import { FRAME_LOADING } from "./contract";
 import { useFrameData } from "./frame-store";
+import { topIconButton } from "./frame-style";
 import { SpriteIcon } from "./icons";
 import type { Labels } from "./labels";
 import { OPEN_PALETTE } from "./palette/open-event";
@@ -99,7 +100,7 @@ export function TopSearch({ label, memberships, labels, palette, who, sidebarAtL
         <span className="min-w-0 flex-1 truncate">{label}</span>
         <kbd className="shrink-0 rounded-md border border-line bg-surface-2 px-1.5 font-sans text-xs text-muted">⌘K</kbd>
       </button>
-      <button type="button" data-top="search-phone" onClick={show} aria-haspopup="dialog" aria-label={label} className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-edge bg-surface text-ink md:hidden">
+      <button type="button" data-top="search-phone" onClick={show} aria-haspopup="dialog" aria-label={label} className={`${topIconButton} shrink-0 md:hidden`}>
         <SpriteIcon id="search" className="size-5" />
       </button>
       {open && current ? <CommandPalette tenantId={current.id} role={current.role} pack={frame.pack} labels={labels} names={palette.names} words={palette.words} recentKey={recentKey} onClose={close} /> : null}

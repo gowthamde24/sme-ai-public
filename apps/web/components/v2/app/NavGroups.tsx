@@ -16,9 +16,14 @@ import { ownWords, rowWord } from "./nav-words";
 
 export { ownWords, rowWord };
 
-export const itemBase = "relative flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors duration-150 ease-out";
+export const itemBase = "relative flex min-h-11 items-center gap-3 rounded-[10px] px-3 text-sm font-medium transition-colors duration-150 ease-out";
 export const itemIdle = "text-ink hover:bg-surface-2 active:bg-line";
 export const itemCurrent = "bg-surface-2 text-brand-text";
+/**
+ * The current row of the design menu (owner-approved boxy mock, 26 Nov 2026): a light brand tint, the label and the icon in the brand colour, and the icon drawn solid (its own shape filled at 30%, the line kept on top). The marks
+ * are `!` (important) on purpose: ds.css has an older, unlayered rule that gives the current row a neutral grey fill.
+ */
+export const itemCurrentTint = "bg-brand/10! text-brand-text! font-semibold [&_svg]:fill-current/30";
 
 const TONE: Record<Badge["tone"], string> = {
   brand: "min-w-6 justify-center bg-brand text-on-brand",
@@ -39,11 +44,11 @@ export function IntentLink(props: ComponentProps<typeof Link>) {
   return <Link {...props} prefetch={warm ? null : false} onPointerEnter={on} onFocus={on} />;
 }
 
-export function NavLink({ item, tenantId, on, labels, badge = null, collapsed = false, onNavigate, own = {} }: { item: MenuRow | NavItem; tenantId: string; on: boolean; labels?: Labels; badge?: Badge | null; collapsed?: boolean; onNavigate?: () => void; own?: Readonly<Record<string, string>> }) {
+export function NavLink({ item, tenantId, on, labels, badge = null, collapsed = false, onNavigate, own = {}, design = false }: { item: MenuRow | NavItem; tenantId: string; on: boolean; labels?: Labels; badge?: Badge | null; collapsed?: boolean; onNavigate?: () => void; own?: Readonly<Record<string, string>>; /** The design menu (v4 desktop, v6): the tinted current row, no bar at its edge. */ design?: boolean }) {
   const text = rowWord(item, labels, own);
   return (
-    <IntentLink href={hrefOf(item, tenantId)} aria-current={on ? "page" : undefined} title={collapsed ? text : undefined} onClick={onNavigate} data-nav-row={item.id} className={`${itemBase} ${collapsed ? "justify-center px-0" : ""} ${on ? itemCurrent : itemIdle}`}>
-      {on ? <span aria-hidden="true" className="absolute inset-y-2 left-0 w-1 rounded-r-full bg-brand-edge" /> : null}
+    <IntentLink href={hrefOf(item, tenantId)} aria-current={on ? "page" : undefined} title={collapsed ? text : undefined} data-tip={collapsed ? text : undefined} onClick={onNavigate} data-nav-row={item.id} className={`${itemBase} ${collapsed ? "justify-center px-0" : ""} ${on ? (design ? itemCurrentTint : itemCurrent) : itemIdle}`}>
+      {on && !design ? <span aria-hidden="true" className="absolute inset-y-2 left-0 w-1 rounded-r-full bg-brand-edge" /> : null}
       <NavIcon name={item.icon} />
       <span data-nav-label="" className={collapsed ? "sr-only" : "min-w-0 flex-1 py-1 leading-snug [overflow-wrap:anywhere]"}>{text}</span>
       {badge ? (
@@ -144,7 +149,7 @@ export function NavGroups({ groups, tenantId, activeItemId, labels, waiting = nu
             {isFolded ? null : (
               <div className="space-y-0.5">
                 {g.items.map((i) => (
-                  <NavLink key={i.id} item={i} tenantId={tenantId} on={activeItemId === i.id} labels={labels} badge={"status" in i && i.status === "assistant" ? (assistant ? { text: say(`nav.assistant.${assistant}`, assistant === "live" ? "Live" : assistant === "in_training" ? "In training" : "Not live", {}), tone: assistant === "live" ? "green" : assistant === "in_training" ? "soft" : "quiet" } : null) : (design ? badgeOfDesign : badgeOf)(i.count, counts, waiting, say)} collapsed={collapsed} onNavigate={onNavigate} own={own} />
+                  <NavLink key={i.id} item={i} tenantId={tenantId} on={activeItemId === i.id} labels={labels} badge={"status" in i && i.status === "assistant" ? (assistant ? { text: say(`nav.assistant.${assistant}`, assistant === "live" ? "Live" : assistant === "in_training" ? "In training" : "Not live", {}), tone: assistant === "live" ? "green" : assistant === "in_training" ? "soft" : "quiet" } : null) : (design ? badgeOfDesign : badgeOf)(i.count, counts, waiting, say)} collapsed={collapsed} onNavigate={onNavigate} own={own} design={design} />
                 ))}
               </div>
             )}

@@ -43,6 +43,12 @@ WORDS: dict[str, dict[str, str]] = {
         "hi": "बदलाव यह है: {summary}। कर दूँ? कार्ड पर एक बार देख लें।",
         "kn": "ಬದಲಾವಣೆ ಇದು: {summary}. ಮಾಡಲೇ? ಕಾರ್ಡ್‌ನಲ್ಲಿ ಒಮ್ಮೆ ನೋಡಿ.",
     },
+    "no_voice": {
+        "en": "I could not find a voice called {name} for {language_name}. Open Settings > My assistant > Voice to hear the ones there are.",
+        "te": "{language_name} కి {name} అనే వాయిస్ దొరకలేదు. ఉన్నవి వినడానికి Settings > My assistant > Voice తెరవండి.",
+        "hi": "{language_name} के लिए {name} नाम की आवाज़ नहीं मिली। जो हैं उन्हें सुनने के लिए Settings > My assistant > Voice खोलिए।",
+        "kn": "{language_name} ಗೆ {name} ಎಂಬ ಧ್ವನಿ ಸಿಗಲಿಲ್ಲ. ಇರುವವುಗಳನ್ನು ಕೇಳಲು Settings > My assistant > Voice ತೆರೆಯಿರಿ.",
+    },
     "no_rule": {
         "en": "You have no standing rule for {source} yet, so there is no first-call time to change. Make the rule in Leads -> Rules, then tell me the minutes.",
         "te": "{source} కి ఇంకా రూల్ లేదు, కాబట్టి మార్చడానికి మొదటి కాల్ సమయం లేదు. Leads -> Rules లో రూల్ చేయండి, తర్వాత నిమిషాలు చెప్పండి.",
@@ -223,6 +229,8 @@ class RouteTurn:
         spec = sa.SETTINGS[name]
         if name == "call_speed":
             return self._call_speed(token, tenant_id, changes, message_id, conversation_id, language)
+        if name == "assistant_voice":
+            return self._assistant_voice(token, tenant_id, changes, message_id, conversation_id, language)
         current = sa.current_of(spec, self._read(tenant_id, token, spec.get, message_id))
         if current is None:
             return w("unavailable", language), None
@@ -231,6 +239,34 @@ class RouteTurn:
             return w("same", language, summary=sa.summary(spec, current, changes).split(": ", 1)[-1]), None
         text = sa.summary(spec, current, changes)
         plan = self._plan(token, tenant_id, message_id, conversation_id, text, {"tool": spec.put, "summary": text, "undoable": True, "call": {"path": {}, "body": sa.body_for(spec, current, changes)}},
+                          sensitive=spec.sensitive, owner_only=True, second_factor=spec.second_factor)
+        return w("offer", language, summary=text), card_of_plan(plan)
+
+    def _assistant_voice(self, token: str, tenant_id: uuid.UUID, changes: dict[str, Any], message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
+        """"Change your voice to Ramya" (owner, 26 Nov 2026): the voice is found BY NAME in the catalogue for the language (the owner's own, else the language of the chat); a card shows old -> new; the owner's OK
+        saves it through the screen's own route (PUT /ai-assistant/voices). A voice that is not in the catalogue for that language is never guessed: the answer names what it could not find."""
+        from app.assistant_work import settings_actions as sa
+        from app.conversation.voices import default_config
+
+        spec = sa.SETTINGS["assistant_voice"]
+        lang = str(changes.get("language") or language)
+        wanted = " ".join(str(changes.get("voice") or "").split()).casefold()
+        catalogue = default_config().catalogue
+        found = [c for c in catalogue.values() if c.language == lang and wanted and (c.name.casefold() == wanted or c.id.casefold() == wanted)]
+        if not found:
+            return w("no_voice", language, name=str(changes.get("voice") or ""), language_name=lang), None
+        current = sa.current_of(spec, self._read(tenant_id, token, spec.get, message_id))
+        if current is None:
+            return w("unavailable", language), None
+        entries = current.get("languages")
+        entry = next((e for e in entries if isinstance(e, dict) and e.get("language") == lang), None) if isinstance(entries, list) else None
+        old_code = str((entry or {}).get("chosen_id") or "")
+        new = found[0]
+        if old_code == new.id:
+            return w("same", language, summary=f"your {lang} voice is already {new.name}"), None
+        old_name = catalogue[old_code].name if old_code in catalogue else "the standard voice"
+        text = f"The assistant's voice ({lang}): {old_name} -> {new.name}"
+        plan = self._plan(token, tenant_id, message_id, conversation_id, text, {"tool": spec.put, "summary": text, "undoable": True, "call": {"path": {}, "body": {"language": lang, "voice_id": new.id}}},
                           sensitive=spec.sensitive, owner_only=True, second_factor=spec.second_factor)
         return w("offer", language, summary=text), card_of_plan(plan)
 

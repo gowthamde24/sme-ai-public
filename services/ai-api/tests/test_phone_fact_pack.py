@@ -221,3 +221,16 @@ def test_an_out_of_stock_catalogue_item_is_said_as_out_of_stock_not_as_made_to_o
     raw = {"catalogue": [{"name": "Red kanchi", "fabric": "kanchi_pattu", "colours": ["red"], "occasions": ["wedding"], "stock": "out_of_stock"}]}
     text = text_of(fact_pack.build(raw, now=TUE_11))
     assert "Red kanchi" in text and "out of stock" in text and "made to order" not in text
+
+
+def test_a_list_item_is_said_with_its_category_word() -> None:
+    pack = fact_pack.build({"items": [{"name": "Silk piece", "category": "Blouses", "availability": "In stock", "description": "Soft silk"}, {"name": "Net", "category": "Dupattas"}, {"name": "Plain"}]})
+    lines = [f["text"] for f in pack.facts if f["kind"] == "item"]
+    assert lines == ["Silk piece (Blouses): In stock. Soft silk", "Net (Dupattas)"]
+
+
+def test_a_business_that_chose_other_says_what_kind_of_business_it_is() -> None:
+    pack = fact_pack.build({"business_type": "  Tent house and decorations  "})
+    assert [f["text"] for f in pack.facts if f["kind"] == "business"] == ["What kind of business this is: Tent house and decorations."]
+    assert not [f for f in fact_pack.build({"business_type": None}).facts if f["kind"] == "business"]
+    assert not [f for f in fact_pack.build({}).facts if f["kind"] == "business"]

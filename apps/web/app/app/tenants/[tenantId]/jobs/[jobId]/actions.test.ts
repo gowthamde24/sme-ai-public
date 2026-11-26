@@ -81,7 +81,7 @@ describe("the changes of one job's page (Owner and Admin only)", () => {
     api.patchJob.mockRejectedValueOnce(new ApiRequestError(422, "setting_invalid", "x", undefined, undefined, undefined, { fields: ["from_hour"] }));
     expect(await setJobSettingAction(T, J, "from_hour", "10:30")).toMatchObject({ ok: false, code: "setting_invalid", fields: ["from_hour"], error: "That choice was not accepted. Pick another one." });
     api.addJobFaq.mockRejectedValueOnce(new ApiRequestError(422, "faq_not_allowed", "x"));
-    expect(await addJobFaqAction(T, J, "Discounts?", "Yes, 20 percent off.")).toMatchObject({ ok: false, code: "faq_not_allowed", error: "A job answer may not promise a price or a discount." });
+    expect(await addJobFaqAction(T, J, "Discounts?", "Yes, 20 percent off.")).toMatchObject({ ok: false, code: "faq_not_allowed", error: "A team member's answer may not promise a price or a discount." });
     api.testJob.mockRejectedValueOnce(new ApiRequestError(409, "quiet_hours", "x"));
     expect(await testJobAction(T, J, "call")).toMatchObject({ ok: false, code: "quiet_hours", error: "Test calls and messages are only sent between 10 am and 9 pm." });
   });

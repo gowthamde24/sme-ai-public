@@ -37,7 +37,7 @@ const TARGET: WhoTarget = { id: "66666666-6666-4666-8666-666666666605", kind: "s
 const extra = (over: Partial<WhoExtra> = {}): WhoExtra => ({ sampleEndpoint: "/app/tenants/t/voice-pick", target: TARGET, changeJob: vi.fn(async () => patched()), voices: VOICES, ...over });
 const view = (kind = "speed_to_lead", a: JobPageActions | null = acts(), w: WhoExtra | null = extra()) => render(<JobPage detail={detailOf(kind)} words={words} base={BASE} lang="en" ago={{ unit: "min", n: 9 }} actions={a} whoExtra={w} />);
 const card = () => document.querySelector('[data-part="who-talks"]') as HTMLElement;
-const pill = (n: number) => within(card()).getByRole("combobox", { name: `This job speaks … in a … voice from …. (${n})` }) as HTMLSelectElement;
+const pill = (n: number) => within(card()).getByRole("combobox", { name: `This team member speaks … in a … voice from …. (${n})` }) as HTMLSelectElement;
 // the voice card's own list (voices-tones.md section 9): catalogue ids, first names, per language; one recorded, one only heard live
 const VOICES = [
   { id: "te-ramya", name: "Ramya", language: "te", recommended: true },
@@ -58,7 +58,7 @@ describe("Who talks: the card", () => {
     expect(card().querySelector('[data-part="who-number-word"]')).toHaveTextContent("the shop number");
     expect(within(card()).queryByRole("combobox", { name: /\(3\)/ })).toBeNull();
     expect(card().textContent).not.toMatch(/second number/i);
-    expect(within(card()).getByText(/This job speaks/)).toBeInTheDocument();
+    expect(within(card()).getByText(/This team member speaks/)).toBeInTheDocument();
     expect(card().querySelector('[data-part="who-ai-line"]')).toHaveTextContent("If a customer asks, it always says it's your AI assistant. Whether the greeting says it first is your choice in Voice & tone.");
     // no switch for the AI line anywhere
     expect(card().querySelectorAll('[role="switch"]')).toHaveLength(0);
@@ -138,7 +138,7 @@ describe("Who talks: it saves exactly the adapter's payload", () => {
 describe("Who talks: the job's own name", () => {
   it("no name: the plain job name, and customers hear only the assistant of the shop", () => {
     view();
-    expect(card().querySelector('[data-part="who-name"]')).toHaveTextContent("Call every new enquiry right away");
+    expect(card().querySelector('[data-part="who-name"]')).toHaveTextContent("Quick responder");
     expect(card().querySelector('[data-part="who-hear"]')).toHaveTextContent("Customers hear: “the assistant of Neelambari Silks”");
   });
   it("a set name shows “Priya from Neelambari Silks”; clearing it goes back to the plain name", async () => {
@@ -153,10 +153,10 @@ describe("Who talks: the job's own name", () => {
     expect(await screen.findByText("Customers hear: “Priya from Neelambari Silks”")).toBeInTheDocument();
     expect(card().querySelector('[data-part="who-name"]')).toHaveTextContent("Priya");
     fireEvent.click(within(card()).getByRole("button", { name: "Rename" }));
-    expect(card().querySelector("form")).toHaveTextContent("Clear it, and it goes back to “Call every new enquiry right away”.");
+    expect(card().querySelector("form")).toHaveTextContent("Clear it, and it goes back to “Quick responder”.");
     fireEvent.click(within(card()).getByRole("button", { name: "Use the plain name" }));
     await waitFor(() => expect(a.rename).toHaveBeenLastCalledWith(""));
-    await waitFor(() => expect(card().querySelector('[data-part="who-name"]')).toHaveTextContent("Call every new enquiry right away"));
+    await waitFor(() => expect(card().querySelector('[data-part="who-name"]')).toHaveTextContent("Quick responder"));
   });
   it("a name that is too long or has odd characters is refused before the API is asked", () => {
     const a = acts();
@@ -192,34 +192,34 @@ describe("Who talks: the voices play through the voice-pick route (the recorded 
   });
 });
 
-describe("Who talks: “Make the visits job speak Telugu” as a command to the assistant", () => {
+describe("Who talks: “Make Visit booker speak Telugu” as a command to the assistant", () => {
   it("shows the command, then a plan card in plain words; Yes changes only that job's language with the same patch; Undo puts it back", async () => {
     const changeJob = vi.fn<(id: string, p: SpeaksPatch) => Promise<ReturnType<typeof patched>>>(async () => patched());
     view("speed_to_lead", acts(), extra({ changeJob }));
     const cmd = () => card().querySelector('[data-part="who-command"]') as HTMLElement;
     expect(cmd()).toHaveTextContent("Or just ask your assistant");
-    fireEvent.click(within(cmd()).getByRole("button", { name: /Make the visits job speak Telugu/ }));
+    fireEvent.click(within(cmd()).getByRole("button", { name: /Make Visit booker speak Telugu/ }));
     const plan = cmd().querySelector('[data-part="who-plan"]') as HTMLElement;
-    expect(plan).toHaveTextContent("Change “Book and remind store visits”");
+    expect(plan).toHaveTextContent("Change “Visit booker”");
     expect(plan.querySelector('[data-part="who-plan-change"]')).toHaveTextContent("Language · English → Telugu");
     expect(plan).toHaveTextContent("Nothing already sent changes. Same voice, same number.");
     expect(changeJob).not.toHaveBeenCalled();
     fireEvent.click(within(plan).getByRole("button", { name: "Yes, change it" }));
     await waitFor(() => expect(changeJob).toHaveBeenCalledWith(TARGET.id, { language: "te" }));
-    expect(await screen.findByText("The visits job now speaks Telugu")).toBeInTheDocument();
+    expect(await screen.findByText("Visit booker now speaks Telugu")).toBeInTheDocument();
     fireEvent.click(within(cmd()).getByRole("button", { name: "Undo" }));
     await waitFor(() => expect(changeJob).toHaveBeenLastCalledWith(TARGET.id, { language: "en" }));
     expect(cmd().querySelector('[data-part="who-plan"]')).toBeNull();
-    expect(within(cmd()).getByRole("button", { name: /Make the visits job speak Telugu/ })).toBeInTheDocument();
+    expect(within(cmd()).getByRole("button", { name: /Make Visit booker speak Telugu/ })).toBeInTheDocument();
   });
   it("No changes nothing; a refusal shows its reason and keeps the plan", async () => {
     const changeJob = vi.fn(async () => ({ ok: false as const, kind: "forbidden" as const, error: "Not allowed." }));
     view("speed_to_lead", acts(), extra({ changeJob }));
     const cmd = () => card().querySelector('[data-part="who-command"]') as HTMLElement;
-    fireEvent.click(within(cmd()).getByRole("button", { name: /Make the visits job speak Telugu/ }));
+    fireEvent.click(within(cmd()).getByRole("button", { name: /Make Visit booker speak Telugu/ }));
     fireEvent.click(within(cmd()).getByRole("button", { name: "No" }));
     expect(changeJob).not.toHaveBeenCalled();
-    fireEvent.click(within(cmd()).getByRole("button", { name: /Make the visits job speak Telugu/ }));
+    fireEvent.click(within(cmd()).getByRole("button", { name: /Make Visit booker speak Telugu/ }));
     fireEvent.click(within(cmd()).getByRole("button", { name: "Yes, change it" }));
     expect(await screen.findByText("Not allowed.")).toBeInTheDocument();
     expect(cmd().querySelector('[data-part="who-plan"]')).toBeTruthy();

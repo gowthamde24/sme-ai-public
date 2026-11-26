@@ -24,8 +24,11 @@ export function WorkspaceSwitcher({ memberships, labels, plan, loading = false, 
   const name = current?.name ?? BRAND_NAME;
   // inside a workspace the top of the menu is the BUSINESS's own mark (its logo, or letters); outside one it is the product's
   const mark = current ? <BusinessLogo name={name} url={logoUrl} /> : <BrandMark />;
+  // the narrow rail: the mark only (the name is its tooltip and its accessible name)
   const body = collapsed ? (
-    mark
+    <span title={name} data-tip={name} className="inline-flex items-center">
+      {mark}
+    </span>
   ) : (
     <>
       {mark}
@@ -39,9 +42,9 @@ export function WorkspaceSwitcher({ memberships, labels, plan, loading = false, 
     </>
   );
   const frame = `flex min-h-16 w-full items-center gap-3 border-b border-line p-4 ${collapsed ? "justify-center px-0" : ""}`;
-  if (memberships.length < 2 || collapsed) {
+  if (memberships.length < 2) {
     return (
-      <Link href={current ? `/app/tenants/${current.id}` : "/app"} className={frame} aria-label={collapsed ? name : undefined} title={collapsed ? name : undefined}>
+      <Link href={current ? `/app/tenants/${current.id}` : "/app"} className={frame} aria-label={collapsed ? name : undefined} title={collapsed ? name : undefined} data-tip={collapsed ? name : undefined}>
         {body}
       </Link>
     );
@@ -49,12 +52,12 @@ export function WorkspaceSwitcher({ memberships, labels, plan, loading = false, 
   return (
     <Disclosure
       summaryClassName={`${frame} hover:bg-surface-2`}
-      panelClassName="absolute inset-x-2 top-full z-50 mt-1 max-h-[70dvh] overflow-y-auto rounded-xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)]"
+      panelClassName={`absolute top-full z-50 mt-1 max-h-[70dvh] overflow-y-auto rounded-xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)] ${collapsed ? "left-2 w-64" : "inset-x-2"}`}
       summary={
         <>
           {body}
-          <SpriteIcon id="chevron-down" className="size-4 shrink-0" />
-          <span className="sr-only">{word(labels, "frame.switch", "Switch workspace")}</span>
+          {collapsed ? null : <SpriteIcon id="chevron-down" className="size-4 shrink-0" />}
+          <span className="sr-only">{collapsed ? `${name}: ${word(labels, "frame.switch", "Switch workspace")}` : word(labels, "frame.switch", "Switch workspace")}</span>
         </>
       }
     >

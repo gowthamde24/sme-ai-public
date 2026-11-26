@@ -6,7 +6,7 @@ import type { PlanExtras } from "@/lib/api/plan-extras";
 import type { PlanWhen } from "@/lib/api/plan-when";
 
 export type TalkState = "listening" | "speaking" | "thinking";
-export type TalkLine = { who: "owner" | "assistant"; text: string; /** The person spoke over this answer: only the words up to there were heard. */ cut?: boolean };
+export type TalkLine = { who: "owner" | "assistant"; text: string; /** The person spoke over this answer: only the words up to there were heard. */ cut?: boolean; /** Words still being heard (not final): drawn in a lighter bubble. */ interim?: boolean };
 /**
  * The plan card. The made-up conversations fill `what`, `time`, `cost` and `hours`. A REAL plan (the API's `confirm_action`) fills `what` (its title), `summary`, and only the numbers the API gave: `people`, `messages`, `minutes`, `channel` and `cost` (rupees, from the estimate);
  * `time` and `hours` are then "" (nothing is invented: the API has no calling-hours field on a plan) and the card leaves them out.

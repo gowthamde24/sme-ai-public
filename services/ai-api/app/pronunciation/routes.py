@@ -135,7 +135,7 @@ async def preview(body: PreviewIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> Resp
         raise ApiError(429, "rate_limited", "Too many previews today. Please try again tomorrow.", retry_after=3600)
     _spent[day] = _spent.get(day, 0) + len(text)
     chosen, gender = voice_state(runtime, ctx)
-    tts = FallbackTts(bv.config, bv.factory, chosen=chosen, gender=gender)
+    tts = FallbackTts(bv.config, bv.factory, chosen=chosen, gender=gender, strict=True)
     tts.set_owner_words([OwnerWord(body.word, body.sounds_like, body.language)])
     tts.begin_turn()
     pcm = b"".join([chunk async for chunk in tts.stream(text, body.language)])

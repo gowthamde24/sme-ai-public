@@ -108,6 +108,9 @@ def build(raw: dict[str, Any] | None, *, now: datetime | None = None) -> FactPac
     facts: list[dict[str, str]] = []
     allowed: set[int] = set()
     holidays = tuple(str(h)[:10] for h in (raw.get("holidays") or []) if isinstance(h, str))
+    kind_of_business = " ".join(strip_amounts(str(raw.get("business_type") or "")).split())[:60]   # what the business says it is when it chose Other (its own words)
+    if kind_of_business:
+        facts.append({"kind": "business", "text": f"What kind of business this is: {kind_of_business}."})
     for text in _hours(raw.get("hours"), now, holidays):
         facts.append({"kind": "hours", "text": text})
     if holidays:
@@ -162,10 +165,11 @@ def build(raw: dict[str, Any] | None, *, now: datetime | None = None) -> FactPac
             name = " ".join(str(row["name"]).split())[:80]
         except (KeyError, TypeError):
             continue
+        kind = " ".join(strip_amounts(str(row.get("category") or "")).split())[:40]   # the list's category word ("Blouses"): one word with the item, so the assistant can say what it is
         av = " ".join(strip_amounts(str(row.get("availability") or "")).split())[:60]
         desc = " ".join(strip_amounts(str(row.get("description") or "")).split())[:200]
-        if av or desc:
-            item_lines.append(f"{name}" + (f": {av}" if av else "") + (f". {desc}" if desc else ""))
+        if kind or av or desc:
+            item_lines.append(f"{name}" + (f" ({kind})" if kind else "") + (f": {av}" if av else "") + (f". {desc}" if desc else ""))
     facts += [{"kind": "item", "text": t} for t in _take(item_lines, BUDGET["items"])]
     faq = [f"Customers ask: {' '.join(strip_amounts(str(r.get('q') or '')).split())} Answer: {' '.join(strip_amounts(str(r.get('a') or '')).split())}" for r in raw.get("faqs") or [] if isinstance(r, dict) and r.get("q") and r.get("a")]
     facts += [{"kind": "faq", "text": t} for t in _take(faq, BUDGET["faq"])]

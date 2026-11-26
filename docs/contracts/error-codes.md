@@ -502,7 +502,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `voice_provider_unreachable` | 502 | ownvoice |  |  | The voice could not be removed right now. Nothing changed. Press delete again in a moment. |
 | `voice_timeout` | 504 | voice |  |  | The speech service took too long. Try again. |
 | `voice_too_long` | 422 | voice_notes |  |  | The sample is too long. |
-| `voice_unavailable` | 503 | assistant_context, jobs, voice, voice_notes |  |  | Voice is not available right now. |
+| `voice_unavailable` | 503 | assistant_context, employees, jobs, voice, voice_notes |  |  | Voice is not available right now. |
 | `waiting_for_whatsapp` | 403 | main |  |  | Connect your WhatsApp to start. Until then you can set everything up, but messages, AI calls and campaigns stay off. |
 | `wallet_empty` | 402 | developer_api |  |  | The wallet cannot cover this call. Add money in the app and try again. |
 | `webhook_url_invalid` | 422 | webhooks_out |  | reason | (the sentence varies: show `message`) |

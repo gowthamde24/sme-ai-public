@@ -8,8 +8,8 @@ Say what you want. Your assistant writes it, checks it and sends it to WhatsApp 
 - Sent
 - WhatsApp is checking
 - Answer
-- Visit reminder Order update Approved Ready. Jobs can send it now.
-[button type=button: Use it in a job]
+- Visit reminder Order update Approved Ready. Your team can send it now.
+[button type=button: Use it with a team member]
 - Festival offer Order update Needs a change WhatsApp says this sounds like an offer, but you chose “about their order”. Take out the word discount, or send it as an offer instead.
 [button type=button: Change it by saying it]
 summary: The messages Stack19 sends for you WhatsApp checks these once. You only need to open this when one of them is waiting for you or was refused.

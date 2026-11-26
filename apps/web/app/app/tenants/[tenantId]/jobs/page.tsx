@@ -23,7 +23,7 @@ import { loadNewJobSheetAction } from "./sheet-actions";
 import { readSheetLoad } from "./sheet-load";
 import { describeAction, turnOnAction } from "./tell-actions";
 
-export const metadata = { title: `Jobs · ${BRAND_NAME}` };
+export const metadata = { title: `AI Team · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/jobs (JOBS, owner decision 19 Nov): every job the assistant runs for the shop, with a switch each, and "Start a job". Not there (404) while JOBS is off. Everyone who may open the workspace reads it; Owner and Admin switch. */
@@ -72,7 +72,7 @@ export default async function JobsRoute({ params, searchParams }: PageProps<"/ap
   const f: JobFilter = typeof filter === "string" && (JOB_FILTERS as readonly string[]).includes(filter) ? (filter as JobFilter) : "all";
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={words["jobs.page.title"] ?? "Jobs"} sub={words["jobs.page.sub"]} />
+      <PageTop title={words["jobs.page.title"] ?? "Your AI team"} sub={words["jobs.page.sub"]} />
       {jobs?.some((j) => j.sample) ? (
         <p data-part="sample-jobs" className="m-0 mb-3">
           <SampleChip words={words} note />

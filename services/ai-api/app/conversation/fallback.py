@@ -33,6 +33,8 @@ from app.voice.loudness import StreamNormaliser
 
 log = logging.getLogger("app.conversation.voice")
 BUDGET_WAIT_S = 1.5
+STRICT_TRIES = 3   # the chosen voice is tried this many times (the same voice each time) before the turn gives up on speaking
+STRICT_FIRST_AUDIO_MS = 2500   # how long the chosen voice may take to start (a slow start is not a reason to sound like somebody else)
 
 EngineFactory = Callable[[VoiceChoice, str], StreamingTts]  # (the chosen voice, the language) -> a ready engine
 
@@ -51,7 +53,8 @@ BAD_TEXT_CODES = ("http_400", "http_422")
 class FallbackTts:
     sample_rate = 24000
 
-    def __init__(self, config: VoiceConfig, factory: EngineFactory, *, prewarm_language: str = "te", clock: Callable[[], float] = time.monotonic, chosen: Mapping[str, str] | None = None, gender: str = "female", pronunciations: Pronunciations | None = None) -> None:
+    def __init__(self, config: VoiceConfig, factory: EngineFactory, *, prewarm_language: str = "te", clock: Callable[[], float] = time.monotonic, chosen: Mapping[str, str] | None = None, gender: str = "female", pronunciations: Pronunciations | None = None, strict: bool = False) -> None:
+        self.strict = strict   # owner, 26 Nov 2026: NO FALLBACK VOICES. True: only the chosen voice's own engine ever speaks; if it cannot, the turn raises VoiceError (tts_unavailable / tts_budget) and the screen shows the words
         self._speech = SpeechText(pronunciations or default_pronunciations())  # what an engine is given: normalised text, the lexicon (script, a workspace's own words), the English respellings
         self.config, self._factory, self._prewarm_language, self._clock = config, factory, prewarm_language, clock
         self.address_allow: tuple[str, ...] = ()   # the word of address the person chose in their profile (the owner chat); a call or a preview speaks none, whatever the model wrote
@@ -137,6 +140,10 @@ class FallbackTts:
             log.info("tts_skipped_no_words language=%s chars=%d", tag, len(text))
             return
         voices = self.config.for_language(language, self._chosen.get(language), self.gender)
+        if self.strict:
+            async for chunk in self._strict_piece(voices, language, text, tag):
+                yield chunk
+            return
         primary_text = self._speech.prepare(text, language, voices.primary.engine)
         fallback_text = self._speech.prepare(text, language, voices.fallback.engine)
         now = self._clock()
@@ -206,6 +213,58 @@ class FallbackTts:
             log.warning("tts_fallback engine=%s language=%s reason=%s timeout_ms=%s", voices.fallback.engine, tag, reason, self.config.first_audio_timeout_ms)
         async for chunk in self._fallback_piece(voices, language, fallback_text, tag):
             yield chunk
+
+    async def _strict_piece(self, voices: Any, language: str, text: str, tag: str) -> AsyncIterator[bytes]:
+        """One piece with the chosen voice and NOTHING else (owner, 26 Nov 2026: "a user must always hear the voice they chose"). Over our own cap on the engine, or the engine down after STRICT_TRIES
+        tries (same voice, longer wait for the first sound), is a closed error the screen turns into the words and one honest line; the other engine never speaks."""
+        choice = voices.primary
+        spoken_text = self._speech.prepare(text, language, choice.engine)
+        capped = choice.engine == "cartesia"   # our cap is on Cartesia (app/voice/budget.py)
+        if capped and self._budget_wait is not None:
+            wait, self._budget_wait = self._budget_wait, None
+            try:
+                self.primary_budget = max(0, int(await asyncio.wait_for(asyncio.shield(asyncio.ensure_future(wait)), BUDGET_WAIT_S)))
+            except Exception:  # noqa: BLE001 - no allowance in time: this voice cannot speak now
+                self.primary_budget = 0
+        if capped and self.primary_budget is not None and self.primary_chars + len(spoken_text) > self.primary_budget:
+            self._off_for_call("budget", choice.engine, tag, None)
+            raise VoiceError("tts_budget")
+        timeout = max(self.config.first_audio_timeout_ms, STRICT_FIRST_AUDIO_MS) / 1000.0
+        for attempt in range(1, STRICT_TRIES + 1):
+            started = time.perf_counter()
+            agen = self._engine(choice, language).stream(spoken_text, language)
+            try:
+                first = await asyncio.wait_for(agen.__anext__(), timeout)
+            except asyncio.CancelledError:
+                await _close(agen)
+                raise
+            except StopAsyncIteration:
+                reason = "empty"
+            except TimeoutError:
+                reason = "timeout"
+            except Exception as err:  # noqa: BLE001
+                reason = getattr(err, "code", type(err).__name__)
+                if reason in BAD_TEXT_CODES:
+                    await _close(agen)
+                    log.warning("tts_text_refused engine=%s language=%s code=%s", choice.engine, tag, reason)
+                    raise VoiceError("tts_unavailable") from None   # THIS text is refused: no other voice says it
+            else:
+                self.served_engine = choice.engine
+                self.primary_chars += len(spoken_text) if capped else 0
+                self.first_audio_ms = self.first_audio_ms if self.first_audio_ms is not None else (time.perf_counter() - started) * 1000.0
+                yield first
+                try:
+                    async for chunk in agen:
+                        yield chunk
+                except Exception as err:  # noqa: BLE001
+                    log.warning("tts_strict_failed_mid_piece engine=%s language=%s code=%s", choice.engine, tag, getattr(err, "code", type(err).__name__))
+                finally:
+                    await _close(agen)
+                return
+            await _close(agen)
+            log.warning("tts_strict_try_failed engine=%s language=%s attempt=%d reason=%s", choice.engine, tag, attempt, reason)
+        self.fallback_reason = "unavailable"
+        raise VoiceError("tts_unavailable")
 
     def _off_for_call(self, reason: str, engine: str, tag: str, err: BaseException | None) -> None:
         if self.primary_off:

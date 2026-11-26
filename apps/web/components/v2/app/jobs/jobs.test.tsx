@@ -28,7 +28,7 @@ describe("a job row", () => {
   it("shows the plain name, the ONE result line from its code and numbers, and no chip for a job that is simply running", () => {
     render(<JobRow job={job("speed_to_lead")} words={words} base={BASE} actions={acts()} />);
     const row = document.querySelector('[data-job-kind="speed_to_lead"]') as HTMLElement;
-    expect(within(row).getByText("Call every new enquiry right away")).toBeInTheDocument();
+    expect(within(row).getByText("Quick responder")).toBeInTheDocument();
     expect(within(row).getByText("Today: called 6 new enquiries · 4 picked up · 2 store visits booked")).toBeInTheDocument();
     expect(row.querySelector(".jb-chip")).toBeNull();
     expect(within(row).getByRole("link")).toHaveAttribute("href", `${BASE}/jobs/${job("speed_to_lead").id}`);
@@ -52,7 +52,7 @@ describe("a job row", () => {
     const variants = WIRE_JOB_VARIANTS.map(parseJob);
     const line = (j: (typeof variants)[number]) => {
       const { container } = render(<JobRow job={j} words={words} base={BASE} actions={null} />);
-      const text = (container.querySelector("a > span:nth-of-type(2)") as HTMLElement).textContent;
+      const text = (container.querySelector('[data-part="job-result"]') as HTMLElement).textContent;
       cleanup();
       return text;
     };
@@ -63,7 +63,7 @@ describe("a job row", () => {
     expect(byCode.no_whatsapp).toBe("WhatsApp is not connected yet");
     expect(byCode.no_number).toBe("There is no phone number yet");
     expect(byCode["search_left.never"]).toBe("1 of 1 free search left this month · no search yet");
-    expect(byCode.a_code_the_web_has_no_words_for).toBe("Working on it. Open the job to see more.");
+    expect(byCode.a_code_the_web_has_no_words_for).toBe("Working on it. Open it to see more.");
     expect(line(job("answer_calls"))).toBe("Today: answered 3 calls · 1 missed · 2 messages sent");
     expect(line(job("store_visits"))).toBe("Done today: 3 reminders sent · 2 confirmed");
     expect(line(job("researcher"))).toBe("1 of 1 free search left this month · last search 12 Nov");
@@ -86,7 +86,7 @@ describe("a job row", () => {
   it("the switch answers at once, calls the action once with the new state, and takes the API's answer", async () => {
     const a = acts();
     render(<JobRow job={job("speed_to_lead")} words={words} base={BASE} actions={a} />);
-    const sw = screen.getByRole("switch", { name: "Call every new enquiry right away" });
+    const sw = screen.getByRole("switch", { name: "Quick responder" });
     expect(sw).toHaveAttribute("aria-checked", "true");
     fireEvent.click(sw);
     expect(sw).toHaveAttribute("aria-checked", "false");
@@ -114,7 +114,7 @@ describe("Today's Running now and the Jobs page", () => {
     const runningNow = MOCK_JOBS.filter((j) => jobState(j) === "running").length;
     expect(container.querySelector("[data-count]")).toHaveAttribute("data-count", String(runningNow));
     expect(container.querySelectorAll("[data-job]")).toHaveLength(6);
-    expect(screen.getByRole("link", { name: "See all jobs" })).toHaveAttribute("href", `${BASE}/jobs`);
+    expect(screen.getByRole("link", { name: "See your whole team" })).toHaveAttribute("href", `${BASE}/jobs`);
     rerender(<JobsToday jobs={[]} words={words} base={BASE} actions={null} />);
     expect(container.querySelector('[data-part="jobs-today"]')).toBeNull();
   });
@@ -122,7 +122,7 @@ describe("Today's Running now and the Jobs page", () => {
     const { container, rerender } = render(<JobsList jobs={MOCK_JOBS} filter="all" words={words} base={BASE} actions={acts()} />);
     expect(screen.getByRole("link", { name: "All 6" })).toHaveAttribute("aria-current", "true");
     expect(screen.getByRole("link", { name: "Needs you 2" })).toHaveAttribute("href", `${BASE}/jobs?filter=needs_you`);
-    expect(screen.getByRole("link", { name: "New job" })).toHaveAttribute("href", `${BASE}/jobs/new`);
+    expect(screen.getByRole("link", { name: "New team member" })).toHaveAttribute("href", `${BASE}/jobs/new`);
     expect(container.querySelectorAll("[data-job]")).toHaveLength(6);
     // the six of the demo are all on; a paused job (a variant) is the one Paused shows
     const paused = parseJob(WIRE_JOB_VARIANTS.find((j) => (j.result as { code: string }).code === "paused_on")!);

@@ -1,7 +1,7 @@
 "use client";
 
 import { IntentLink as Link } from "./NavGroups";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 
 import { AccountMenu } from "./AccountMenu";
@@ -9,7 +9,7 @@ import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
 import { frameBand } from "./frame-style";
 import { SpriteIcon } from "./icons";
-import { itemBase, itemCurrent, itemIdle, NavGroups, ownWords } from "./NavGroups";
+import { itemBase, itemCurrent, itemIdle, NavGroups, NavLink, ownWords } from "./NavGroups";
 import { NavMeters } from "./LazyNavMeters";
 import { BalanceBox } from "./ds/BalanceBox";
 import { word, withPackWords, type Labels } from "./labels";
@@ -33,9 +33,14 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   const { current, pathname, tab, activeMenu, activeV4 } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
-  const [collapsedPref, toggle] = useCollapsed();
-  // design system v6 (owner, 13 Nov 2026): the menu is never collapsed, and its foot is the money box only (search is in the top bar, the person in the avatar menu)
-  const collapsed = frame.ds ? false : collapsedPref;
+  // design system v6: the menu is the full menu until the person closes it (the button at its top, owner-approved mock, 26 Nov 2026) to the 72px icon rail; the choice is kept in this browser. Its foot is Settings and the money box (search is in the top bar, the person in the avatar menu)
+  const [collapsed, toggle] = useCollapsed(!frame.ds);
+  // the width does not slide on the first paint (a person who closed the menu would see it shrink on every full page load)
+  const [settled, setSettled] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setSettled(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
   const aria = word(labels, "frame.menu.workspace", "Workspace menu");
   const counts = useNavCounts(current?.id ?? null);
   // the current row in view (a page of AI team or Setup on a short window)
@@ -52,9 +57,27 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   // design system v6 (DESIGN_V6): ONE short menu at every width from 768 px up
   const v6 = current && frame.ds ? menuGroupsV6(current.role, frame.pack) : null;
   const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
+  // v6: Settings leaves its group and sits at the foot, above the money box (the group "Setup" keeps the other rows, in their order)
+  const settings = v6?.flatMap((g) => g.items).find((i) => i.id === "v6-settings") ?? null;
+  const v6rows = v6 && settings ? v6.map((g) => ({ ...g, items: g.items.filter((i) => i.id !== "v6-settings") })).filter((g) => g.items.length > 0) : v6;
+  const activeV6 = v6 ? activeV6Id(v6, pathname, tab) : null;
+  const closeWord = word(labels, "frame.sidebar.close", "Close the sidebar");
+  const openWord = word(labels, "frame.sidebar.open", "Open the sidebar");
+  const homeHref = current ? `/app/tenants/${current.id}` : "/app";
   return (
-    <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[256px]"} ${frame.v4 ? "nv-short" : ""} print:hidden`}>
-      {desktop ? (
+    <aside data-rail={collapsed ? "1" : undefined} className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[256px]"}${frame.ds ? ` ${collapsed ? "[--dk-side-w:72px]" : ""} [--dk-side-row:40px]` : ""}${settled ? "" : " transition-none!"} ${frame.v4 ? "nv-short" : ""} print:hidden`}>
+      {frame.ds ? (
+        <div data-part="menu-top" className={`flex shrink-0 items-center ${collapsed ? "flex-col gap-1 px-0 pb-1 pt-3" : "justify-between gap-2 py-2 pl-4 pr-2"}`}>
+          <Link href={homeHref} data-part="menu-logo" aria-label={BRAND_NAME} title={collapsed ? BRAND_NAME : undefined} data-tip={collapsed ? BRAND_NAME : undefined} className="inline-flex min-h-11 items-center gap-2.5 rounded-[10px]">
+            <BrandMark px={28} />
+            {collapsed ? null : <span className="font-display text-xl font-extrabold tracking-tight">{BRAND_NAME}</span>}
+          </Link>
+          <button type="button" data-part="menu-toggle" onClick={toggle} aria-label={collapsed ? openWord : closeWord} title={collapsed ? openWord : closeWord} data-tip={collapsed ? openWord : closeWord} className="inline-flex size-11 shrink-0 items-center justify-center rounded-[10px] text-ink transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line">
+            <SpriteIcon id={collapsed ? "panel-left-open" : "panel-left-close"} />
+          </button>
+        </div>
+      ) : null}
+      {desktop && !frame.ds ? (
         <Link href={`/app/tenants/${current?.id}`} data-part="menu-logo" aria-label={BRAND_NAME} title={collapsed ? BRAND_NAME : undefined} className={`hidden min-h-10 items-center gap-2.5 px-4 pt-2 lg:flex ${collapsed ? "justify-center px-0" : ""}`}>
           <BrandMark px={28} />
           {collapsed ? null : <span className="font-display text-xl font-extrabold tracking-tight">{BRAND_NAME}</span>}
@@ -75,10 +98,10 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
         </div>
       ) : null}
       {/* the rows scroll on their own above the fixed foot (owner's review, 5 Nov: AI team and Setup must never sit hidden under the meters): a soft shadow at an edge says there is more; the current row is scrolled into view */}
-      <nav ref={navRef} aria-label={aria} data-nav-scroll="" className={`v2-scroll-hint min-h-0 flex-1 overflow-y-auto overscroll-contain p-2 lg:py-1${frame.v4 ? " [@media(max-height:900px)]:flex-none [@media(max-height:900px)]:overflow-visible" : ""}`}>
+      <nav ref={navRef} aria-label={aria} data-nav-scroll="" className={`v2-scroll-hint min-h-0 flex-1 overflow-y-auto overscroll-contain ${collapsed ? "px-3 py-2" : "p-2"} lg:py-1${frame.v4 ? " [@media(max-height:900px)]:flex-none [@media(max-height:900px)]:overflow-visible" : ""}`}>
         {current && v6 ? (
-          <div data-part="menu-v6" className="[&_[data-nav-row]]:min-h-10">
-            <NavGroups design groups={v6} tenantId={current.id} activeItemId={activeV6Id(v6, pathname, tab)} labels={labels} waiting={frame.waiting} counts={counts} collapsed={collapsed} own={ownWords(frame.pack, given_labels)} assistant={frame.assistant ?? null} />
+          <div data-part="menu-v6" className="lg:[&_[data-nav-row]]:min-h-10">
+            <NavGroups design groups={v6rows ?? v6} tenantId={current.id} activeItemId={activeV6} labels={labels} waiting={frame.waiting} counts={counts} collapsed={collapsed} own={ownWords(frame.pack, given_labels)} assistant={frame.assistant ?? null} />
           </div>
         ) : current && desktop ? (
           <>
@@ -108,13 +131,18 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
       </nav>
       {/* mt-auto: the foot (the balance and "Top up") stays at the BOTTOM of the menu even when the rows do not stretch (a short window: the rows above are `flex-none` then; owner, 19 Nov) */}
       <div className="mt-auto space-y-1.5 border-t border-line p-2">
-        {current && collapsed ? (
+        {frame.ds && current && settings ? (
+          <div data-part="menu-foot-rows">
+            <NavLink item={settings} tenantId={current.id} on={activeV6 === settings.id} labels={labels} collapsed={collapsed} own={ownWords(frame.pack, given_labels)} design />
+          </div>
+        ) : null}
+        {current && collapsed && !frame.ds ? (
           <Link href={`/app/tenants/${current.id}/help`} title={word(labels, "frame.help", "Help")} className={`${itemBase} w-full justify-center px-0 ${pathname.startsWith(`/app/tenants/${current.id}/help`) ? itemCurrent : itemIdle}`}>
             <SpriteIcon id="circle-help" className="size-5 shrink-0" />
             <span className="sr-only">{word(labels, "frame.help", "Help")}</span>
           </Link>
         ) : null}
-        {current && !collapsed ? (frame.earlyAccess ? null : frame.ds ? <BalanceBox balance={frame.balance ?? null} tenantId={current.id} labels={labels} /> : <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} />) : null}
+        {current && !collapsed ? (frame.earlyAccess ? null : frame.ds ? <div className="border-t border-line pt-1"><BalanceBox balance={frame.balance ?? null} tenantId={current.id} labels={labels} /></div> : <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} />) : null}
         {frame.ds ? null : <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} mark={mark} />}
         {frame.ds ? null : (
           <>
