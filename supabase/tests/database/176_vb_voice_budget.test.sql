@@ -17,6 +17,9 @@ begin
 exception when others then return 'ERR:' || sqlstate;
 end $$;
 
+-- the mechanism is tested with the original small limits (migration 992740 raised the real ones to a ceiling: Cartesia sponsors the voice)
+update public.voice_budget set daily_chars = 20000, per_call_chars = 2000 where engine = 'cartesia';
+
 -- A: the numbers the owner set
 select is((select daily_chars::text || '/' || per_call_chars || '/' || monthly_credits || '/' || period_day from public.voice_budget where engine = 'cartesia'), '20000/2000/100000/29', 'A1 20,000 a day, 2,000 a call, 100,000 a month from the 29th');
 select is(pg_temp.q('a_owner', $$select count(*)::text from public.voice_budget$$), 'ERR:42501', 'A2 no client reads the budget table');
