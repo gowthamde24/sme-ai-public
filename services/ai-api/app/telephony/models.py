@@ -64,7 +64,8 @@ class CallOut(BaseModel):
     callback_at: datetime | None = None
     # for the Calls page (13 Nov 2026): a closed status and one plain sentence made only from closed words (never a name, a number or what was said)
     status: Literal["completed", "transferred", "no_answer", "rejected", "spam", "live"] = "completed"
-    outcome_sentence: str = ""
+    outcome_sentence: str = ""   # the English fallback; the web words it per language from `outcome_code`
+    outcome_code: str = "finished"   # the closed word the sentence is made from (see call_words.all_codes): live, refused_<reason>, state_<state>, handover, category_<category>, outcome_<outcome>, finished
 
 
 class CallsOut(BaseModel):

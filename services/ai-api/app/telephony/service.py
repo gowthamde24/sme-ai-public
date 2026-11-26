@@ -81,7 +81,7 @@ def shape(row: dict[str, Any], now: datetime) -> dict[str, Any]:
         "lead_id": str(row["lead_id"]) if row.get("lead_id") else None, "task_id": str(row["task_id"]) if row.get("task_id") else None,
         "sandbox": bool(row.get("sandbox")), "simulated": bool(row.get("simulated")), "ai_disclosed": bool(row.get("ai_disclosed")), "recorded": False, "cost_paise": int(row.get("cost_paise") or 0),
         "callback_at": _parse(row.get("callback_at")),
-        "status": call_words.status_of(row, live), "outcome_sentence": call_words.sentence_of(row, live),
+        "status": call_words.status_of(row, live), "outcome_sentence": call_words.sentence_of(row, live), "outcome_code": call_words.code_of(row, live),
     }
 
 
