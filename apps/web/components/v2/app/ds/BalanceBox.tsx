@@ -22,7 +22,7 @@ export function BalanceBox({ balance, tenantId, labels, onNavigate }: { balance:
       ) : (
         <span />
       )}
-      <Link href={`${base}/billing`} onClick={onNavigate} className="shrink-0 text-sm font-semibold text-brand-text underline-offset-2 hover:underline">
+      <Link href={`${base}/billing`} onClick={onNavigate} className="shrink-0 text-sm font-semibold text-brand-text hover:underline">
         {word(labels, "nav.link.topup", "Add credits")}
       </Link>
     </div>
