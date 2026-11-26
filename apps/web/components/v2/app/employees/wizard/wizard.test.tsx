@@ -153,8 +153,8 @@ describe("the new AI employee wizard", () => {
     const a = acts();
     await toVoice(a);
     fireEvent.click(screen.getByRole("button", { name: "Back" }));
-    expect(screen.getByText("Step 2 of 7")).toBeInTheDocument();
-    expect((screen.getByLabelText("Name") as HTMLInputElement).value).toBe("Priya");
+    expect(await screen.findByText("Step 2 of 7")).toBeInTheDocument();   // (waited for: the step changes after the click settles; a loaded CI machine showed it late)
+    expect(((await screen.findByLabelText("Name")) as HTMLInputElement).value).toBe("Priya");
     fillName("Anu");
     await next();
     await toStep(3);
