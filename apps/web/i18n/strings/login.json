@@ -724,5 +724,27 @@
    "hi": "reviewed",
    "kn": "reviewed"
   }
+ },
+ "form.password.show": {
+  "en": "Show password",
+  "te": "పాస్‌వర్డ్ చూపించండి",
+  "hi": "पासवर्ड दिखाएँ",
+  "kn": "ಪಾಸ್‌ವರ್ಡ್ ತೋರಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "form.password.hide": {
+  "en": "Hide password",
+  "te": "పాస్‌వర్డ్ దాచండి",
+  "hi": "पासवर्ड छिपाएँ",
+  "kn": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
  }
 }

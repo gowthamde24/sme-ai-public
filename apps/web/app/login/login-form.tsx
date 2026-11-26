@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { lazy, Suspense, useActionState, useState } from "react";
 
+import { PasswordField } from "@/components/v2/auth/PasswordField";
 import { authAlert, authField, authForm, authLabel, authLink, authNotice, authRow, authSubmit } from "@/components/v2/auth/ui";
 
 import { type AuthFormState, signIn } from "./actions";
@@ -10,7 +11,7 @@ import { type AuthFormState, signIn } from "./actions";
 /** The check box is a chunk of its own, loaded only when it is needed (the sign-in page carries nothing for it otherwise). */
 const Turnstile = lazy(() => import("@/components/v2/controls/Turnstile").then((m) => ({ default: m.Turnstile })));
 
-export function LoginForm({ next, notice, turnstile = null, words = { email: "Email", password: "Password", submit: "Sign in", forgot: "Forgot your password?" } }: { next: string; notice?: string; /** The form's own words in the person's language (English when not given). */ words?: { email: string; password: string; submit: string; forgot: string }; /** The Turnstile site key when the check is on; the box is drawn after three failures in a row. */ turnstile?: string | null }) {
+export function LoginForm({ next, notice, turnstile = null, words = { email: "Email", password: "Password", submit: "Sign in", forgot: "Forgot your password?", showPassword: "Show password", hidePassword: "Hide password" } }: { next: string; notice?: string; /** The form's own words in the person's language (English when not given). */ words?: { email: string; password: string; submit: string; forgot: string; showPassword?: string; hidePassword?: string }; /** The Turnstile site key when the check is on; the box is drawn after three failures in a row. */ turnstile?: string | null }) {
   const [state, action, pending] = useActionState<AuthFormState, FormData>(
     signIn,
     undefined,
@@ -37,11 +38,12 @@ export function LoginForm({ next, notice, turnstile = null, words = { email: "Em
         maxLength={254}
       />
       <label htmlFor="password" className={authLabel}>{words.password}</label>
-      <input
+      <PasswordField
         id="password"
         className={authField}
         name="password"
-        type="password"
+        showLabel={words.showPassword}
+        hideLabel={words.hidePassword}
         autoComplete="current-password"
         required
         maxLength={72}
