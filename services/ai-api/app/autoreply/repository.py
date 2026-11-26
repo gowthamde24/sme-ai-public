@@ -14,6 +14,7 @@ class AutoReplyRepository(Protocol):
     def skip(self, token: str, enquiry_id: uuid.UUID, note: str) -> dict[str, Any]: ...
     def notes(self, token: str, tenant_id: uuid.UUID) -> str: ...
     def note(self, token: str, enquiry_id: uuid.UUID, promise: bool, kind: str | None, item: str | None, needed_by: str | None, product: str | None) -> dict[str, Any]: ...
+    def employee(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None: ...
 
 
 class PostgrestAutoReplyRepository:
@@ -34,6 +35,11 @@ class PostgrestAutoReplyRepository:
         result = self._rpc.call(token, "scheduler_assistant_context", {"p_tenant_id": str(tenant_id)})
         return result if isinstance(result, str) else ""
 
+
+    def employee(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
+        """The AI employee that answers this workspace's WhatsApp (the default employee: a WhatsApp number is not routed to another one yet); None when unreadable (the reply is the single assistant as before)."""
+        out = self._rpc.call(token, "employee_runtime", {"p_tenant_id": str(tenant_id), "p_employee_id": None, "p_line": None})
+        return out if isinstance(out, dict) else None
 
     def note(self, token: str, enquiry_id: uuid.UUID, promise: bool, kind: str | None, item: str | None, needed_by: str | None, product: str | None) -> dict[str, Any]:
         """After a reply (owner, 16 Nov 2026): the promise it made (Today's open items), the day the customer named, the product they asked about."""

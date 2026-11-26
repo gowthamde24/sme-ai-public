@@ -37,8 +37,8 @@ class Result:
 
 
 class AutoReplyRunner:
-    def __init__(self, repository: AutoReplyRepository, drafter: Drafter, booking: BookingFlow | None = None, today: Callable[[], date] | None = None) -> None:
-        self._repository, self._drafter = repository, drafter
+    def __init__(self, repository: AutoReplyRepository, drafter: Drafter, booking: BookingFlow | None = None, today: Callable[[], date] | None = None, employees_on: bool = False) -> None:
+        self._repository, self._drafter, self._employees_on = repository, drafter, employees_on
         self._today = today or (lambda: (datetime.now(UTC) + timedelta(hours=5, minutes=30)).date())   # India time
         # the Postgrest repository also speaks the booking calls (appointment booking); a repository without them (a test's) has no booking flow
         self._booking: BookingFlow | None = booking if booking is not None else (BookingFlow(repository) if hasattr(repository, "offer_slots") else None)  # type: ignore[arg-type]
@@ -70,6 +70,21 @@ class AutoReplyRunner:
             return item
         return {**item, "facts": [*(item.get("facts") or []), *({"kind": "notes", "text": line} for line in lines)]}
 
+    def _with_employee(self, token: str, item: dict[str, Any]) -> dict[str, Any]:
+        """EMPLOYEES (26 Nov 2026): the employee that answers WhatsApp: its words go into the prompt (never above the rules), its never-say words are checked on the reply. An unreadable employee leaves the item as it was."""
+        if not self._employees_on or not hasattr(self._repository, "employee"):
+            return item
+        try:
+            employee = self._repository.employee(token, uuid.UUID(str(item["tenant_id"])))
+        except (KeyError, ValueError, RepositoryError):
+            return item
+        if not employee:
+            return item
+        from app.employees import apply as employees_apply
+
+        name = str(employee.get("name") or "").strip()
+        return {**item, "employee": employees_apply.block(employee, channel="whatsapp"), "never_say": [str(w) for w in employee.get("never_say") or []], **({"assistant_name": name} if name and not employees_apply.is_default(employee) else {})}
+
     def _one(self, token: str, enquiry: uuid.UUID, item: dict[str, Any], result: Result) -> None:
         # a message about booking a visit is answered by code (free times, the number, reschedule, cancel): the database decides, the words are fixed
         booked = self._booking.handle(token, item) if self._booking is not None else None
@@ -83,7 +98,7 @@ class AutoReplyRunner:
             else:
                 result.answered += 1
             return
-        item = self._with_notes(token, item)
+        item = self._with_employee(token, self._with_notes(token, item))
         draft = self._drafter.draft(item)
         if draft is None:
             self._repository.skip(token, enquiry, "model unavailable or unusable")
@@ -93,6 +108,11 @@ class AutoReplyRunner:
         said, gloss = ensure_honest(str(item.get("text", "")), draft.text, draft.gloss_en, draft.language, str(item.get("business") or "the business"))
         draft = replace(draft, text=said, gloss_en=gloss)
         reason = must_hand_over(str(item.get("text", "")), confidence=draft.confidence, model_wants_person=draft.wants_person)
+        if reason is None and item.get("never_say"):   # a reply with a word this employee never says is held for the owner, not sent
+            from app.talk_training.guard import violates
+
+            if violates(draft.text, list(item["never_say"])):
+                reason = "never_say"
         answer = self._repository.submit(token, enquiry, draft.text, draft.language, draft.gloss_en, reason is not None)
         message = answer.get("message") or {}
         if answer.get("outcome") != "submitted":

@@ -51,6 +51,9 @@ class EmployeeRepository:
     def activity(self, token: str, tenant_id: uuid.UUID, employee_id: uuid.UUID, limit: int, before: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "employee_activity", {"p_tenant_id": str(tenant_id), "p_id": str(employee_id), "p_limit": limit, "p_before": before})
 
+    def assign(self, token: str, tenant_id: uuid.UUID, kind: str, item_id: uuid.UUID, employee_id: uuid.UUID | None) -> dict[str, Any]:
+        return self._rpc.object(token, "employee_assign", {"p_tenant_id": str(tenant_id), "p_kind": kind, "p_id": str(item_id), "p_employee_id": str(employee_id) if employee_id else None})
+
     def runtime(self, token: str, tenant_id: uuid.UUID, employee_id: uuid.UUID | None, line: str | None) -> dict[str, Any] | None:
         """What a call reads (the scheduler's account): the employee that answers, or None."""
         out = self._rpc.call(token, "employee_runtime", {"p_tenant_id": str(tenant_id), "p_employee_id": str(employee_id) if employee_id else None, "p_line": line})

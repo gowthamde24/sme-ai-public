@@ -8,6 +8,7 @@
   PUT  /v1/tenants/{t}/employees/{id}/voices/{language}      Owner/Admin: {voice_code} (a voice of the catalogue for that language)
   PUT  /v1/tenants/{t}/employees/{id}/phone                  Owner/Admin: {phone_number_id|null} the line this employee answers
   GET  /v1/tenants/{t}/employees/{id}/activity?limit&before  any member: the calls of this employee
+  POST /v1/tenants/{t}/employees/assign                      Owner/Admin: {kind: task|job, id, employee_id|null} the employee that does a task or a job
   POST /v1/tenants/{t}/employees/{id}/preview                Owner/Admin: {language, text?} the employee's opening line (or a sample) spoken in ITS voice (the chosen voice or an error)
 NOTE: no `from __future__ import annotations` (request models are attached to the endpoint signatures at registration time)."""
 
@@ -103,6 +104,13 @@ class PhoneIn(BaseModel):
     phone_number_id: uuid.UUID | None
 
 
+class AssignIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal["task", "job"]
+    id: uuid.UUID
+    employee_id: uuid.UUID | None
+
+
 class PreviewIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
     language: Lang
@@ -140,6 +148,12 @@ def my_employees(ctx: AnyMember, runtime: RuntimeDep) -> JSONResponse:
 @router.post("")
 def create_employee(body: EmployeeIn, ctx: OwnerAdminStrong, runtime: RuntimeDep) -> JSONResponse:
     return _json(_run(_repo(runtime).create, ctx.principal.token, ctx.tenant.id, body.id, body.role_code, plain(body.name)), 201)
+
+
+@router.post("/assign")
+def assign(body: AssignIn, ctx: OwnerAdminStrong, runtime: RuntimeDep) -> JSONResponse:
+    """A task or a job names the AI employee that does it (none: the default employee)."""
+    return _json(_run(_repo(runtime).assign, ctx.principal.token, ctx.tenant.id, body.kind, body.id, body.employee_id))
 
 
 @router.get("/{employee_id}")

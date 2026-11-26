@@ -19,6 +19,7 @@ import math
 import time
 import uuid
 from collections.abc import Callable
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from app.opening import greeting as greeting_mod
@@ -60,7 +61,9 @@ class PlivoTaskDialer:
     name = "plivo"
 
     def __init__(self, outbound: PlivoOutbound, repo: OutboundRepo, *, max_wait_s: float = 230.0, poll_s: float = 2.0, sleep: Callable[[float], None] = time.sleep,
-                 clock: Callable[[], float] = time.monotonic, tone_for: Callable[[str, uuid.UUID], str] | None = None, say_ai_for: Callable[[str, uuid.UUID, str | None], bool] | None = None) -> None:
+                 clock: Callable[[], float] = time.monotonic, tone_for: Callable[[str, uuid.UUID], str] | None = None, say_ai_for: Callable[[str, uuid.UUID, str | None], bool] | None = None, employee_for: Callable[[str, uuid.UUID, uuid.UUID], dict[str, Any] | None] | None = None, ist_now: Callable[[], datetime] | None = None) -> None:
+        self._ist_now = ist_now or (lambda: datetime.now(timezone(timedelta(hours=5, minutes=30))))   # (tests set the clock)
+        self._employee_for = employee_for   # EMPLOYEES: the AI employee a task names (None when it names none: the default one)
         self._outbound, self._repo, self._max_wait, self._poll, self._sleep, self._clock = outbound, repo, max_wait_s, poll_s, sleep, clock
         self._say_ai_for = say_ai_for   # the workspace's setting "Say 'AI assistant' when greeting" (default OFF); an unreadable setting is OFF
         self._tone_for = tone_for   # the workspace's default call tone, from its business type (packages/packs/call_tones.json); the goal text never decides it
@@ -90,11 +93,24 @@ class PlivoTaskDialer:
         if task_id is None:   # a call with no task behind it has no approval: refused loudly (a caller that forgot the task id must be found, not hidden as an ordinary failed call)
             log.error("plivo_task call refused: no task id was given")
             return _failed()
+        employee: dict[str, Any] | None = None
+        if self._employee_for is not None:
+            try:
+                employee = self._employee_for(token, tenant_id, task_id)
+            except Exception as exc:  # noqa: BLE001 - only the class is logged: an unreadable employee is the default one
+                log.warning("plivo_task employee lookup failed %s", exc.__class__.__name__)
+        if employee is not None:   # the employee's own hours only NARROW the legal window (India time): outside them the call is not made now
+            from app.employees.apply import within_hours
+
+            now = self._ist_now()
+            if not within_hours(employee, now.isoweekday(), now.hour * 60 + now.minute):
+                log.info("plivo_task call held reason=employee_hours")
+                return CallResult("unclear", "call_back_later", {}, [], 0, simulated=False)
         job = greeting_mod.JOB_OF_TASK_TEMPLATE.get(template)   # the job this task belongs to by its template: that job's own "say AI when greeting" applies
         say_ai = self._say_ai(token, tenant_id, job)
         try:
             placed = self._outbound.place(token, tenant_id, phone, language=language, purpose=PURPOSE, kind="goal", business=business, goal=goal_text(goal or "Follow up with the person.", questions), tone=self._tone(token, tenant_id), questions=ask_list(questions),
-                                         person_name=person_name or None, person_gender=tone_mod.addressee_gender(goal), approval_kind="task", approval_ref=task_id, say_ai=say_ai, job=job)
+                                         person_name=person_name or None, person_gender=tone_mod.addressee_gender(goal), approval_kind="task", approval_ref=task_id, say_ai=say_ai, job=job, employee_id=uuid.UUID(str(employee["id"])) if employee is not None and employee.get("id") else None)
         except OutboundRefused as exc:
             log.info("plivo_task call refused reason=%s", exc.reason)   # a closed word; the refused call row holds it too
             return _failed()

@@ -21,4 +21,4 @@ def build_auto_reply(settings: Settings, rest_url: str, anon_key: str) -> AutoRe
     if missing:
         logger.warning("automatic replies are off: %s", ", ".join(missing))
         return None
-    return AutoReplyRunner(PostgrestAutoReplyRepository(rest_url, anon_key), AnthropicDrafter(key, model))
+    return AutoReplyRunner(PostgrestAutoReplyRepository(rest_url, anon_key), AnthropicDrafter(key, model), employees_on=bool(getattr(settings, "employees", False)))

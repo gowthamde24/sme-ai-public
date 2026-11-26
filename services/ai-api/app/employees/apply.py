@@ -28,7 +28,7 @@ def is_default(emp: Mapping[str, Any] | None) -> bool:
     return emp is not None and emp.get("persona_in") == "my_assistant"
 
 
-def block(emp: Mapping[str, Any] | None) -> str:
+def block(emp: Mapping[str, Any] | None, channel: str = "call") -> str:
     """The employee's lines for the phone prompt: who it is, what it does, what it asks the owner first, and the owner's own words about it (as data). Empty when there is no employee."""
     if not emp:
         return ""
@@ -38,7 +38,8 @@ def block(emp: Mapping[str, Any] | None) -> str:
     lines = [f"YOU ARE {name}, {title} of this business." if name else f"You are {title} of this business."]
     if jobs:
         lines.append("Your jobs: " + ", ".join(jobs) + ". Outside these jobs, say the team will get back to the customer.")
-    ask = [ASK_WORDS[a] for a in emp.get("ask_first") or [] if a in ASK_WORDS]
+    skip = {"send_message", "make_call"} if channel == "whatsapp" else set()   # (a WhatsApp reply IS a message; the reply is held or sent by the owner's auto-send rules)
+    ask = [ASK_WORDS[a] for a in emp.get("ask_first") or [] if a in ASK_WORDS and a not in skip]
     if not is_default(emp) and ask:
         lines.append("You never do these on your own: " + ", ".join(ask) + ". Say the team will do it after the owner agrees.")
     raw_autonomy = emp.get("autonomy")

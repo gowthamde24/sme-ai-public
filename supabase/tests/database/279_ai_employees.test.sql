@@ -86,5 +86,18 @@ select is(pg_temp.w(format($q$select (public.employee_runtime(%L, %L, null)) -> 
 select is(pg_temp.at('a_owner', format($q$select jsonb_array_length((public.employee_activity(%L, %L)) -> 'calls')::text$q$, tests.tid('a'), tests.rid('e2'))), '1', 'G1: the activity of an employee shows its one call');
 select is(pg_temp.at('b_viewer', format($q$select public.employee_get(%L, %L)::text$q$, tests.tid('a'), tests.rid('e2'))), 'ERR:42501', 'G2: never another workspace''s employee');
 
+-- I. assignment (migration 992770): a task and a job name the employee that does them
+insert into public.tasks (id, tenant_id, instruction, language, created_by) values (tests.rid('t1'), tests.tid('a'), 'Call the customers about the new silks', 'en', tests.uid('a_owner'));
+insert into public.jobs_meta (id, tenant_id, kind, custom_name, created_by) values (tests.rid('j1'), tests.tid('a'), 'custom', 'Silk follow-up', tests.uid('a_owner'));
+select is(pg_temp.at('a_owner', format($q$select ((public.employee_assign(%L, 'task', %L, %L)) ->> 'employee_id')$q$, tests.tid('a'), tests.rid('t1'), tests.rid('e2'))), tests.rid('e2')::text, 'I1: a task can name its employee');
+select is(pg_temp.at('a_viewer', format($q$select ((public.task_employee(%L, %L)) ->> 'name')$q$, tests.tid('a'), tests.rid('t1'))), 'Ravi', 'I2: and every member (and the dialer) reads it back');
+select is(pg_temp.at('a_owner', format($q$select ((public.employee_assign(%L, 'job', %L, %L)) ->> 'employee_id')$q$, tests.tid('a'), tests.rid('j1'), tests.rid('e2'))), tests.rid('e2')::text, 'I3: a job can too');
+select is(pg_temp.at('a_sales', format($q$select public.employee_assign(%L, 'task', %L, %L)::text$q$, tests.tid('a'), tests.rid('t1'), tests.rid('e2'))), 'ERR:42501', 'I4: Sales cannot assign');
+select is(pg_temp.at('b_owner', format($q$select public.employee_assign(%L, 'task', %L, %L)::text$q$, tests.tid('b'), tests.rid('t1'), tests.rid('e2'))), 'ERR:23503', 'I5: another workspace cannot reach the task or the employee');
+select is(pg_temp.at('a_owner', format($q$select public.employee_assign(%L, 'task', %L, %L)::text$q$, tests.tid('a'), tests.rid('t1'), tests.rid('nobody'))), 'ERR:23503', 'I6: an unknown employee is refused');
+select pg_temp.at('a_owner', format($q$select public.employee_status_set(%L, %L, 'paused')::text$q$, tests.tid('a'), tests.rid('e2')));
+select is(pg_temp.at('a_viewer', format($q$select (public.task_employee(%L, %L))::text$q$, tests.tid('a'), tests.rid('t1'))), null, 'I7: a paused employee does not do the task: the default does (no employee returned)');
+select is(pg_temp.at('a_owner', format($q$select ((public.employee_assign(%L, 'task', %L, null)) ->> 'employee_id')$q$, tests.tid('a'), tests.rid('t1'))), null, 'I8: the assignment can be taken away');
+
 select * from finish();
 rollback;
