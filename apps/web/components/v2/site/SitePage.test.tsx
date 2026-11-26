@@ -208,7 +208,7 @@ describe("The assistant's flow on the business pages and the other pages (night 
 });
 
 describe("no price of ours anywhere on the public site except the three paid plans (owner's final numbers, 19 Nov 2026) and no 'no card' claim", () => {
-  const OWN = new Set(["\u20b9499", "\u20b91,999", "\u20b95,999", "\u20b95", "\u20b9499", "\u20b950", "\u20b949", "\u20b939", "\u20b929", "\u20b9100"]); // (\u20b9100: the free start of the launch pricing page and help)
+  const OWN = new Set(["\u20b9499", "\u20b91,999", "\u20b95,999", "\u20b95", "\u20b9499", "\u20b950", "\u20b949", "\u20b939", "\u20b929", "\u20b9100", "\u20b9149", "\u20b930"]); // (\u20b9100 and \u20b930: the free start of the launch pricing page and help; \u20b9149: the extra call line of the plan comparison)
   it.each(cases)("%s: no amount except the plans' own, no card claim", (_n, lang, target) => {
     // landing v2's labelled examples show a customer's own budget and the visitor's own estimate in rupees (never a price of ours): the hero stage, the sample call and the leak; the plans' own numbers are lib/site/plans.ts
     const html = render(lang, target).replace(/data-part="leak"[\s\S]*?<\/section>/, ""); // the counter's own estimate in rupees (the visitor's sliders) is not a price of ours
