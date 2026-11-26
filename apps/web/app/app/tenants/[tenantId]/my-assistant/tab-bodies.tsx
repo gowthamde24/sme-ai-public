@@ -179,7 +179,7 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
   if (myAssistantOpen())
     return (
       <div data-part="mya-voice">
-        <OpenTabs customers={cards} you={you} labels={{ customers: t("mya.open.customers"), you: t("mya.open.you"), tabs: t("mya.open.tabs") }} />
+        <OpenTabs customers={cards} you={you} labels={{ customers: t("mya.open.customers"), you: t("mya.open.you"), tabs: t("mya.open.tabs"), customersCap: t("mya.open.customers.cap"), youCap: t("mya.open.you.cap") }} />
       </div>
     );
   return (

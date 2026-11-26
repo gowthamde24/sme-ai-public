@@ -163,6 +163,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
             variant="bar"
             words={words}
             onAttach={work.on ? work.pick : undefined}
+            voiceHref={`${base}/ai-team/training?section=voice&for=you`}
             appLang={lang}
             language={native}
             voiceLanguage={chat.reply}

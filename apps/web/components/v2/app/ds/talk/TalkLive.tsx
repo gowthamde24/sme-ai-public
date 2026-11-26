@@ -210,10 +210,10 @@ const waiting = (live: Live) => (live.real ? (live.planStatus ?? "proposed") ===
  * "Talk live" in place (design system v6): what the command bar shows while it is a live conversation. The real circle (components/v2/Orb) follows the state; a red timer under it; the label "LIVE WITH YOUR ASSISTANT · SPEAKING/LISTENING"; the transcript streams here (the owner's lines small and grey,
  * the assistant's larger, the key numbers in orange); a plan card appears inside with "Yes, start" and "Change". `controls` is the second row: moving sound bars with "Just talk. Interrupt any time.", the language, Mute, Type, End. Voice is mocked on staging (`mock`).
  */
-export function TalkLiveBody({ live, words, language, onType, onAttach, mock = !live.real, afterLine = null, variant = "card", appLang = "en" }: { live: Live; /** The bar's "Attach" button (a file goes into the conversation as a typed message while the voice call goes on); absent = no button. */ onAttach?: () => void; words?: Words; /** The app's language: the time phrase of a plan is written in it (the words arrive already in it). */ appLang?: string; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's composer (the final design): the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row; the orb is outside. */ variant?: "card" | "bar"; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
+export function TalkLiveBody({ live, words, language, onType, onAttach, mock = !live.real, afterLine = null, variant = "card", appLang = "en", voiceHref }: { /** Where the voice that talks to the owner is chosen: the bar says "Voice" with a Change voice link to it. */ voiceHref?: string; live: Live; /** The bar's "Attach" button (a file goes into the conversation as a typed message while the voice call goes on); absent = no button. */ onAttach?: () => void; words?: Words; /** The app's language: the time phrase of a plan is written in it (the words arrive already in it). */ appLang?: string; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's composer (the final design): the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row; the orb is outside. */ variant?: "card" | "bar"; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
   const t = makeT(words);
   const step = usePlanStep(live);
-  if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} onAttach={onAttach} mock={mock} appLang={appLang} />;
+  if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} onAttach={onAttach} mock={mock} appLang={appLang} voiceHref={voiceHref} />;
   const stateWord = stateWordOf(live, t);
   return (
     <div data-part="talk-live" data-talk-state={live.state} className="flex flex-col gap-4">
@@ -352,7 +352,7 @@ function ScrollBox({ live, t, className, children }: { live: Live; t: ReturnType
   );
 }
 
-function BarBody({ live, t, language, onType, onAttach, mock, appLang }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; onAttach?: () => void; mock: boolean; appLang: string }) {
+function BarBody({ live, t, language, onType, onAttach, mock, appLang, voiceHref }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; onAttach?: () => void; mock: boolean; appLang: string; voiceHref?: string }) {
   const step = usePlanStep(live);
   const stateWord = stateWordOf(live, t);
   return (
@@ -369,6 +369,11 @@ function BarBody({ live, t, language, onType, onAttach, mock, appLang }: { live:
           </span>
         </div>
         <div className="min-w-0">
+          {voiceHref ? (
+            <p data-part="talk-voice" className="m-0 mt-1 text-[13px] text-muted">
+              {t("tv6.talk.voice")} <a href={voiceHref} className="font-semibold text-brand-text underline underline-offset-2">{t("tv6.talk.voice.change")}</a>
+            </p>
+          ) : null}
           <ScrollBox live={live} t={t} className="mt-2 flex max-h-72 flex-col gap-2 overflow-y-auto">
             {live.lines.map((l, i) => (
               <Bubble key={i} l={l} t={t} />

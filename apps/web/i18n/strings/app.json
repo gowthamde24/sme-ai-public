@@ -139369,5 +139369,93 @@
    "hi": "reviewed",
    "kn": "reviewed"
   }
+ },
+ "tv6.talk.voice": {
+  "en": "Your assistant's voice for you:",
+  "te": "మీకోసం మీ అసిస్టెంట్ వాయిస్:",
+  "hi": "आपके लिए आपके असिस्टेंट की आवाज़:",
+  "kn": "ನಿಮಗಾಗಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಧ್ವನಿ:",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "tv6.talk.voice.change": {
+  "en": "Change voice",
+  "te": "వాయిస్ మార్చండి",
+  "hi": "आवाज़ बदलें",
+  "kn": "ಧ್ವನಿ ಬದಲಿಸಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "mya.open.customers.cap": {
+  "en": "Your phone assistant: this is the voice your customers hear on calls.",
+  "te": "మీ ఫోన్ అసిస్టెంట్: కాల్స్‌లో మీ కస్టమర్లకు వినిపించే వాయిస్ ఇది.",
+  "hi": "आपका फ़ोन असिस्टेंट: कॉल पर आपके ग्राहकों को यही आवाज़ सुनाई देती है।",
+  "kn": "ನಿಮ್ಮ ಫೋನ್ ಅಸಿಸ್ಟೆಂಟ್: ಕಾಲ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ ಕೇಳುವ ಧ್ವನಿ ಇದು.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "mya.open.you.cap": {
+  "en": "Your assistant on Today: the voice that talks to you, in Talk live and in chat. Only you hear it.",
+  "te": "టుడేలో మీ అసిస్టెంట్: టాక్ లైవ్‌లో, చాట్‌లో మీతో మాట్లాడే వాయిస్. ఇది మీకు మాత్రమే వినిపిస్తుంది.",
+  "hi": "टुडे पर आपका असिस्टेंट: टॉक लाइव और चैट में आपसे बात करने वाली आवाज़। इसे सिर्फ़ आप सुनते हैं।",
+  "kn": "ಟುಡೇಯಲ್ಲಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್: ಟಾಕ್ ಲೈವ್ ಮತ್ತು ಚಾಟ್‌ನಲ್ಲಿ ನಿಮ್ಮೊಂದಿಗೆ ಮಾತಾಡುವ ಧ್ವನಿ. ಇದನ್ನು ನೀವು ಮಾತ್ರ ಕೇಳುತ್ತೀರಿ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "vc.saved.for": {
+  "en": "Saved: {name} for {language}. New calls use it.",
+  "te": "సేవ్ అయింది: {language}కి {name}. కొత్త కాల్స్ దీన్ని వాడతాయి.",
+  "hi": "सेव हो गया: {language} के लिए {name}। नई कॉल यही इस्तेमाल करेंगी।",
+  "kn": "ಸೇವ್ ಆಯಿತು: {language} ಗೆ {name}. ಹೊಸ ಕಾಲ್‌ಗಳು ಇದನ್ನು ಬಳಸುತ್ತವೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "vc.play_sample": {
+  "en": "Play sample",
+  "te": "శాంపిల్ ప్లే చేయండి",
+  "hi": "सैंपल सुनें",
+  "kn": "ಸ್ಯಾಂಪಲ್ ಪ್ಲೇ ಮಾಡಿ",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "vc.per_language": {
+  "en": "A voice is chosen for each language. A voice chosen for {language} does not change the other languages.",
+  "te": "ప్రతి భాషకి ఒక వాయిస్ ఎంచుకుంటారు. {language}కి ఎంచుకున్న వాయిస్ మిగతా భాషలను మార్చదు.",
+  "hi": "हर भाषा के लिए एक आवाज़ चुनी जाती है। {language} के लिए चुनी आवाज़ बाकी भाषाओं को नहीं बदलती।",
+  "kn": "ಪ್ರತಿ ಭಾಷೆಗೆ ಒಂದು ಧ್ವನಿ ಆರಿಸುತ್ತೀರಿ. {language} ಗೆ ಆರಿಸಿದ ಧ್ವನಿ ಬೇರೆ ಭಾಷೆಗಳನ್ನು ಬದಲಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
+ },
+ "otp.saved.live": {
+  "en": "If Talk live is open, the new voice starts from the next sentence.",
+  "te": "టాక్ లైవ్ తెరిచి ఉంటే, కొత్త వాయిస్ తర్వాతి వాక్యం నుంచి వినిపిస్తుంది.",
+  "hi": "अगर टॉक लाइव खुला है, तो नई आवाज़ अगले वाक्य से सुनाई देगी।",
+  "kn": "ಟಾಕ್ ಲೈವ್ ತೆರೆದಿದ್ದರೆ, ಹೊಸ ಧ್ವನಿ ಮುಂದಿನ ವಾಕ್ಯದಿಂದ ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "reviewed",
+   "hi": "reviewed",
+   "kn": "reviewed"
+  }
  }
 }
