@@ -8,13 +8,13 @@
 [data-ui="v2"][data-ds="6"] {
   color-scheme: light;
 
-  /* neutral off-white (owner, 14 Nov: the cream was too sepia): page #fafafa, cards white with a 1px #ececec edge, cool-grey text */
-  --v2-bg: #fafafa;
+  /* a soft cool tint behind white cards (owner approved the boxy mock, 26 Nov 2026; was neutral #fafafa): page #f1f3f8, cards white with a 1px #ececec edge, cool-grey text */
+  --v2-bg: #f1f3f8;
   --v2-surface: #ffffff;
   --v2-surface-2: #f4f5f7;
   --v2-ink: #16181d;
   --v2-muted: #5f6672;
-  --v2-border: #ececec;
+  --v2-border: #e3e6ee;
   --v2-border-strong: #868c97;
 
   --v2-brand: #c2410c;

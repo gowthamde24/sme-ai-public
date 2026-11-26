@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import { Card } from "../../Card";
 import { makeT, type Words } from "../../words";
 import { useStoredAsk } from "../ask/ask-store";
 import { hourText, percentDone, type Working } from "./lower-data";
@@ -27,11 +28,8 @@ export default function WorkingOn({ working, words }: { working: Working | null;
   };
   const btn = "inline-flex min-h-11 items-center rounded-[10px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
   return (
-    <section data-part="working-on" aria-labelledby="working-on-h" className="min-w-0">
-      <h2 id="working-on-h" className="mb-2.5 font-display text-[17px] font-extrabold">
-        {t("tv6.wk.title")}
-      </h2>
-      <div className="rounded-[18px] border border-line bg-surface p-4 shadow-[var(--v2-shadow)]">
+    <Card data-part="working-on" aria-labelledby="working-on-h" title={t("tv6.wk.title")} headingId="working-on-h">
+      <div>
         {working ? (
           <>
             <p className="text-sm font-bold">{working.title}</p>
@@ -66,6 +64,6 @@ export default function WorkingOn({ working, words }: { working: Working | null;
           </p>
         )}
       </div>
-    </section>
+    </Card>
   );
 }

@@ -46,7 +46,7 @@ export const NeedsPlaceholder = ({ rows = null }: { rows?: number | null }) => {
   const reserved = needsRowsReserved(rows);
   return (
     <NeedsBox>
-      <div aria-hidden="true" data-placeholder="" data-reserved-rows={reserved} className="flex min-w-0 flex-col gap-3">
+      <div aria-hidden="true" data-placeholder="" data-reserved-rows={reserved} className="flex min-w-0 flex-col gap-3 p-4 md:p-5">
         {reserved > 3 ? (
           <div className="flex h-11 items-center">
             <Placeholder className="h-7 w-40" />

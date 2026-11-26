@@ -1,5 +1,6 @@
 "use client";
 
+import { cardBox } from "../Card";
 import { telHref as telOf } from "@/components/v2/app/prospects/ProspectContact";
 import { queueSafe } from "../robust/offline-queue";
 import { DictTextarea } from "../voice-input/Dictatable";
@@ -890,9 +891,9 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
   const shownTotal = total;
   return (
     <FreshPhotos seconds={hasPhotos ? 600 : null}>
-    <section id="needs-you" aria-labelledby="needs-you-heading" {...(design ? { "data-needs-design": "" } : {})} className="flex min-w-0 scroll-mt-24 flex-col gap-3">
+    <section id="needs-you" aria-labelledby="needs-you-heading" {...(design ? { "data-needs-design": "" } : {})} className={`flex min-w-0 scroll-mt-24 flex-col gap-3${design ? ` ${cardBox}` : ""}`}>
       <div className="flex items-center gap-2.5">
-        <h2 id="needs-you-heading" className="font-display text-xl font-semibold md:text-2xl">
+        <h2 id="needs-you-heading" className={design ? "m-0 font-display text-[17px] font-extrabold leading-snug" : "font-display text-xl font-semibold md:text-2xl"}>
           {say(words, "today.needsYou")}
         </h2>
         {shownTotal !== null ? (
@@ -915,7 +916,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
         </p>
       ) : (
         <>
-          <ul id="needs-you-list" className={compact ? "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0" : "flex flex-col gap-2.5"}>
+          <ul id="needs-you-list" className={compact ? (design ? "flex flex-col divide-y divide-line [&_article]:rounded-none [&_article]:border-0" : "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0") : "flex flex-col gap-2.5"}>
             {list.map((c, i) => (
               <li key={c.key} className={!all && i >= 3 ? (design && i < 6 ? "hidden max-md:list-item" : "hidden") : ""}>
                 {draw(c, ctx)}

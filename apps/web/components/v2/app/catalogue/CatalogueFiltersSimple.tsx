@@ -1,3 +1,4 @@
+import { cardBox } from "../Card";
 import Link from "next/link";
 
 import { COLOURS, FABRICS, OCCASIONS, PRICE_BANDS } from "@/lib/api/catalogue";
@@ -41,7 +42,7 @@ export function CatalogueFiltersSimple({ base, words, query, leadId, effect }: {
     </>
   );
   return (
-    <section data-part="catalogue-filters" data-simple="" className={plain ? "flex flex-col gap-3" : `${pgCard} flex flex-col gap-3`}>
+    <section data-part="catalogue-filters" data-simple="" className={plain ? `${cardBox} flex flex-col gap-3` : `${pgCard} flex flex-col gap-3`}>
       <LinkSentence
         plain={plain}
         line="catalogue"
