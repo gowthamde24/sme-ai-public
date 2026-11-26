@@ -9,7 +9,8 @@
   color-scheme: light;
 
   /* a soft cool tint behind white cards (owner approved the boxy mock, 26 Nov 2026; was neutral #fafafa): page #f1f3f8, cards white with a 1px #ececec edge, cool-grey text */
-  --v2-bg: #f1f3f8;
+  --v2-bg: #eef2fa;
+  --v2-page-glow: radial-gradient(1100px 700px at 0% 0%, #f8faff 0%, rgba(248, 250, 255, 0) 70%), radial-gradient(1100px 700px at 100% 100%, #f6f8ff 0%, rgba(246, 248, 255, 0) 70%);
   --v2-surface: #ffffff;
   --v2-surface-2: #f4f5f7;
   --v2-ink: #16181d;
@@ -51,6 +52,7 @@
 }
 
 [data-ui="v2"][data-ds="6"][data-theme="dark"] {
+  --v2-page-glow: none;
   color-scheme: dark;
 
   --v2-bg: #0a0a0b;
@@ -95,6 +97,7 @@
 /* no explicit choice: follow the system (an explicit data-theme="light" keeps the light block above); the values are the dark block's, line for line */
 @media (prefers-color-scheme: dark) {
   [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) {
+    --v2-page-glow: none;
     color-scheme: dark;
 
     --v2-bg: #0a0a0b;
@@ -830,3 +833,25 @@
 }
 /* the current row keeps the same round corners as the hover (older rule above: 8px) */
 [data-ui="v2"][data-ds="6"] [data-nav-row][aria-current="page"] { border-radius: 10px; }
+
+/* ONE radius set for the signed-in app (owner, 26 Nov 2026: sharp like Meta's console; cards ~4 px, buttons and inputs ~6 px, chips 4 px; round only avatars, dots and switches).
+   Tailwind reads its radius from these variables, so every card, button, input and menu follows without a per-page change. */
+[data-ui="v2"][data-ds="6"] {
+  --v2-r-card: 4px;
+  --v2-r-btn: 6px;
+  --v2-r-input: 4px;
+  --v2-r-chip: 4px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --radius-3xl: 4px;
+}
+/* a pill-shaped BUTTON or LINK with text (it has side padding) is a 6 px button; round icon buttons, the orb, avatars and switches have no side padding class and stay round */
+[data-ui="v2"][data-ds="6"] :is(button, a):not([role="switch"]).rounded-full[class*="px-"] { border-radius: var(--v2-r-btn); }
+/* chips and status pills drawn as a span with text are 4 px chips */
+[data-ui="v2"][data-ds="6"] span.rounded-full[class*="px-"] { border-radius: var(--v2-r-chip); }
+/* the page behind the cards: a very light cool tint that brightens toward the corners (owner, 26 Nov 2026: like Meta's soft background, not flat grey). The glow is a token: the light block sets it, the dark blocks set none. */
+[data-ui="v2"][data-ds="6"] [data-frame="app"] { background-image: var(--v2-page-glow, none); background-attachment: fixed; }
