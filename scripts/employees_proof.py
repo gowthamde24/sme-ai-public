@@ -93,7 +93,7 @@ def main() -> int:
     say, note = cp.say, cp.note
     cfg = default_config()
     mine: list[str] = []
-    note(f"# AI employees proof, {datetime.now(IST):%d %b %Y %H:%M} India time, local API (EMPLOYEES on) on the staging database\n")
+    note(f"# AI employees proof, {datetime.now(IST):%d %b %Y %H:%M} India time, API {a.api_url} (EMPLOYEES on), staging database\n")
 
     # 1. the list, the default employee, the limit
     st, lst = p.go("GET", f"{p.t}/employees")
