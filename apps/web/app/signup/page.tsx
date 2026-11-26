@@ -160,7 +160,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
           action={signUp}
           businessType={type}
           policyVersions={policyVersions ?? undefined}
-          words={{ email: t("signup.email"), password: t("signup.password"), passwordHint: t("signup.password.hint", { n: MIN_PASSWORD }), submit: t("signup.submit"), errors }}
+          words={{ email: t("signup.email"), password: t("signup.password"), showPassword: t("signup.password.show"), hidePassword: t("signup.password.hide"), passwordHint: t("signup.password.hint", { n: MIN_PASSWORD }), submit: t("signup.submit"), errors }}
         />
       </EmailDisclosure>
       {dpdpScreens() !== "off" ? (

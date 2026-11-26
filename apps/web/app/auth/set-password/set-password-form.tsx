@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { authAlert, authField, authForm, authHint, authLabel, authSubmitSolo } from "@/components/v2/auth/ui";
+import { PasswordField } from "@/components/v2/auth/PasswordField";
 import type { AuthFormState } from "@/lib/auth/form-state";
 import { MIN_PASSWORD, MAX_PASSWORD } from "@/lib/auth/password-policy";
 
@@ -16,11 +17,10 @@ export function SetPasswordForm() {
   return (
     <form className={authForm} action={action}>
       <label htmlFor="password" className={authLabel}>New password</label>
-      <input
+      <PasswordField
         id="password"
         className={authField}
         name="password"
-        type="password"
         autoComplete="new-password"
         required
         minLength={MIN_PASSWORD}
@@ -28,11 +28,10 @@ export function SetPasswordForm() {
       />
       <p className={authHint}>At least {MIN_PASSWORD} characters. A few words in a row work well.</p>
       <label htmlFor="confirm" className={authLabel}>Type it again</label>
-      <input
+      <PasswordField
         id="confirm"
         className={authField}
         name="confirm"
-        type="password"
         autoComplete="new-password"
         required
         maxLength={MAX_PASSWORD}
