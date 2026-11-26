@@ -15,7 +15,7 @@ import type { Say } from "../../words";
 /** The WhatsApp bubble: the shop's name above (a round initial, "Business account"), the message as the customer reads it. */
 export function WaBubble({ business, text, t }: { business: string; text: string; t: Say }) {
   return (
-    <div data-part="preview-whatsapp" className="flex flex-col gap-1.5 rounded-xl bg-(--jb-wa-bg) p-2.5">
+    <div data-part="preview-whatsapp" className="flex flex-col gap-1.5 rounded-[12px] round-ok bg-(--jb-wa-bg) p-2.5">
       <p className="m-0 flex items-center gap-2 px-0.5 text-[13px] font-bold leading-tight text-(--jb-wa-ink)">
         <span aria-hidden="true" className="grid size-6 shrink-0 place-items-center rounded-full bg-brand text-[12px] font-bold text-on-brand">
           {business.trim().charAt(0).toUpperCase() || "S"}
@@ -25,7 +25,7 @@ export function WaBubble({ business, text, t }: { business: string; text: string
           <span className="block text-[12px] font-medium text-(--jb-wa-meta)">{t("jobs.tpl.wa.sub")}</span>
         </span>
       </p>
-      <p className="m-0 max-w-[94%] self-start whitespace-pre-line rounded-[2px_8px_8px_8px] bg-(--jb-wa-bubble) px-2.5 py-2 text-[14px] leading-[1.4] text-(--jb-wa-ink) shadow-[0_1px_1px_rgba(0,0,0,0.12)]">{text}</p>
+      <p className="m-0 max-w-[94%] self-start whitespace-pre-line rounded-[2px_12px_12px_12px] round-ok bg-(--jb-wa-bubble) px-2.5 py-2 text-[14px] leading-[1.4] text-(--jb-wa-ink) shadow-[0_1px_1px_rgba(0,0,0,0.12)]">{text}</p>
     </div>
   );
 }

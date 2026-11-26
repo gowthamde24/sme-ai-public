@@ -25,6 +25,8 @@ describe("corners", () => {
   });
 
   // a CSS rule may be round (50%, a pill) only for these shapes: avatars, dots, rings, the orb, switches and knobs, bars and tracks, thumbs, ticks, spinners; or a box whose width and height are the same
+  // PHONE MOCK-UPS (a picture of a phone on the public site: the device frame, its bubbles, the call card) keep their natural phone corners; the whole of phone-preview.css is that picture
+  const MOCK = /(?:^|[\s.>+~,(])(?:pp|pp-[\w-]+|mini-phone|mini-call|mini-wa|appwin|aw-[\w-]+|h3-dp-[\w-]+|cd|cd-[\w-]+|navy-object|navy-found|nf-[\w-]+|nfc)(?![\w-])/;
   const ROUND = /avatar|\bav\b|mini-av|dot|orb|knob|switch|\bsw\b|ring|bar|progress|track|thumb|tick|spinner|swatch|pulse|radar|pin|hub-core|play-btn|skeleton|wave|brand-bars|-fill|\bi\b|\bspan\b/i;
   it("no CSS border-radius above 8 px except round shapes", () => {
     const bad: string[] = [];
@@ -37,7 +39,7 @@ describe("corners", () => {
           const px = vals.map((v) => { const n = /^([\d.]+)(px|rem|em)$/.exec(v); return n ? Number(n[1]) * (n[2] === "px" ? 1 : 16) : 0; });
           if (px.every((n) => n <= 8)) continue;
           const w = /(?:^|[;\s])width:\s*([\w.]+)/.exec(m[2]), h = /(?:^|[;\s])height:\s*([\w.]+)/.exec(m[2]);
-          if ((w && h && w[1] === h[1]) || /aspect-ratio:\s*1\b/.test(m[2]) || ROUND.test(sel)) continue;
+          if ((w && h && w[1] === h[1]) || /aspect-ratio:\s*1\b/.test(m[2]) || ROUND.test(sel) || MOCK.test(` ${sel}`) || f.endsWith("phone-preview.css")) continue;
           bad.push(`${path.relative(WEB, f)}: ${sel.slice(0, 70)} { border-radius: ${r[1].trim()} }`);
         }
       }

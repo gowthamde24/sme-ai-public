@@ -18,9 +18,10 @@ export function isRoundShape(g) {
 const TEXT_PAD = /(?:^|\s)(?:[\w:-]+:)?p[xlr]-/;
 const INTERACTIVE = /(?:^|\s)(?:hover|focus-visible|focus|disabled|active|group-hover):/;
 const heightOf = (g) => { const h = dims(g, "h").map((x) => (x.startsWith("[") ? Number.parseFloat(x.slice(1)) / 4 : Number(x))); return h.length ? Math.min(...h) : null; };
-/** Problems of one class group: the names that must change, with what to use. A group with the class `round-ok` is on purpose round (the voice orb, a radio, a count badge). */
+/** Problems of one class group: the names that must change, with what to use. A group with the class `round-ok` is on purpose round or soft: the voice orb, a switch, a count badge, and PHONE MOCK-UPS (the device frame, chat bubbles and avatars inside a picture of a phone), which must look like a real phone. */
 export function problems(g) {
   const out = [];
+  if (/(?:^|\s)round-ok(?=\s|$)/.test(g)) return out;
   for (const m of g.matchAll(/(?:^|\s)((?:[\w:-]+:)?)rounded(-(?:[trblse]{1,2}))?-(2xl|3xl|4xl|\[(\d+(?:\.\d+)?)(px|rem)\])(?=\s|$)/g)) {
     const px = m[4] ? (m[5] === "rem" ? Number(m[4]) * 16 : Number(m[4])) : 99;
     if (px > 8) out.push({ kind: "big", token: `${m[1]}rounded${m[2] ?? ""}-${m[3]}`, to: `${m[1]}rounded${m[2] ?? ""}-xl` });
@@ -29,7 +30,6 @@ export function problems(g) {
     const to = m[2].replace(/(\d+(?:\.\d+)?)px/g, (x, n) => (Number(n) > 8 ? "8px" : x));
     if (to !== m[2]) out.push({ kind: "big", token: `${m[1]}${m[2]}]`, to: `${m[1]}${to}]` });
   }
-  if (/(?:^|\s)round-ok(?=\s|$)/.test(g)) return out;
   if (/(?:^|\s)(?:[\w:-]+:)?rounded-full(?=\s|$)/.test(g)) {
     const small = /(?:^|\s)px-(?:1|1\.5|2|2\.5)(?=\s)/.test(g) && /\btext-(?:xs|\[1[0-3](?:\.5)?px\])/.test(g);
     const to = small ? "rounded" : "rounded-md";

@@ -144,7 +144,7 @@
 [data-ui="v2"] .h3-dp::before { top: 17%; height: 14%; }
 [data-ui="v2"] .h3-dp::after { top: 35%; height: 7%; }
 [data-ui="v2"] .h3-dp-screen { position: relative; display: flex; width: 100%; height: 100%; flex-direction: column; overflow: hidden; border-radius: 10% / 4.9%; background-color: #0e0d10; }
-[data-ui="v2"] .h3-dp-island { position: absolute; top: 15px; left: 50%; z-index: 3; width: 88px; height: 25px; transform: translateX(-50%); border-radius: 6px; background: #000; }
+[data-ui="v2"] .h3-dp-island { position: absolute; top: 15px; left: 50%; z-index: 3; width: 88px; height: 25px; transform: translateX(-50%); border-radius: 999px; background: #000; }
 [data-ui="v2"] .h3-dp-status { position: absolute; top: 15px; left: 28px; right: 28px; z-index: 3; display: flex; align-items: center; justify-content: space-between; height: 25px; font-size: 14px; font-weight: 600; color: #fff; }
 [data-ui="v2"] .h3-dp-status-icons { display: inline-flex; align-items: center; gap: 5px; }
 [data-ui="v2"] .h3-dp-home { position: absolute; bottom: 13px; left: 50%; z-index: 3; width: 104px; height: 4px; transform: translateX(-50%); border-radius: 2px; background: rgba(255, 255, 255, 0.7); }
@@ -158,7 +158,7 @@
 [data-ui="v2"] .h3-dp-live { display: inline-flex; align-items: center; gap: 7px; margin: 0; font-size: 14px; color: #cfc9c3; }
 [data-ui="v2"] .h3-dp-live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #34c46f; }
 [data-ui="v2"] .h3-dp-capbox { display: flex; flex: 1; width: 100%; min-height: 0; flex-direction: column; justify-content: center; }
-[data-ui="v2"] .h3-dp-cap { display: flex; max-width: 92%; flex-direction: column; gap: 3px; border-radius: 8px; padding: 10px 14px 11px; font-size: 15px; line-height: 1.4; color: #fff; background: rgba(255, 255, 255, 0.09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
+[data-ui="v2"] .h3-dp-cap { display: flex; max-width: 92%; flex-direction: column; gap: 3px; border-radius: 18px; padding: 10px 14px 11px; font-size: 15px; line-height: 1.4; color: #fff; background: rgba(255, 255, 255, 0.09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
 [data-ui="v2"] .h3-dp-cap[data-from="them"] { align-self: flex-start; border-bottom-left-radius: 6px; }
 [data-ui="v2"] .h3-dp-cap[data-from="me"] { align-self: flex-end; border-bottom-right-radius: 6px; background: rgba(255, 255, 255, 0.16); }
 [data-ui="v2"] .h3-dp-who { font-size: 14px; font-weight: 600; color: #cbc5bf; }

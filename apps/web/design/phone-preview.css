@@ -294,7 +294,7 @@
   max-width: 84%;
   box-sizing: border-box;
   padding: 7px 10px 5px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 16px;
   line-height: 1.35;
   overflow-wrap: anywhere;
@@ -396,7 +396,7 @@
   gap: 6px;
   margin-top: 6px;
   padding: 4px 11px 4px 9px;
-  border-radius: 6px;
+  border-radius: 999px;
   background: var(--pp-chip);
   color: var(--pp-muted);
   font-size: 12.5px;
@@ -418,7 +418,7 @@
   box-sizing: border-box;
   max-width: 88%;
   padding: 8px 12px 9px;
-  border-radius: 8px;
+  border-radius: 16px;
   font-size: 15.5px;
   text-align: left;
 }
@@ -468,7 +468,7 @@
   box-sizing: border-box;
   min-height: 42px;
   padding: 0 14px;
-  border-radius: 8px;
+  border-radius: 21px;
   background: var(--pp-input);
   color: var(--pp-muted);
   font-size: 16px;
@@ -507,7 +507,7 @@
   .pp:not([data-pp-keep]) .pp-frame {
     padding: 0;
     border: 0;
-    border-radius: 8px;
+    border-radius: 18px;
     background: none;
     box-shadow: 0 6px 18px -10px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--pp-head-line);
     -webkit-mask-image: none;
@@ -517,7 +517,7 @@
   .pp:not([data-pp-keep])[data-pp-variant="peek"] .pp-screen {
     aspect-ratio: auto;
     min-height: 0;
-    border-radius: 8px;
+    border-radius: 18px;
   }
   .pp:not([data-pp-keep]) .pp-cam,
   .pp:not([data-pp-keep]) .pp-status,
